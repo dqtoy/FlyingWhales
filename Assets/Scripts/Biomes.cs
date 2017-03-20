@@ -116,7 +116,6 @@ public class Biomes : MonoBehaviour {
 				break;
 			}
 		}
-		Debug.Log ("SPECIAL RESOURCES GENERATED: " + Utilities.specialResourceCount);
 		GenerateBareBiome();
 
 	}

@@ -9,6 +9,20 @@ public class Utilities : MonoBehaviour {
 	public static int lastCitizenID = 0;
 	public static int lastCityID = 0;
 
+	public static string[] accidentCauses = new string[]{
+		"He died because he forgot to breath.",
+		"He died after falling off a cliff.",
+		"He died due to an infection from an arrow in the knee.",
+		"He died of heartbreak.",
+		"He died from an animal attack.",
+		"He died after a boulder rolled over him.",
+		"He died after a brick fell on his head.",
+		"He died after slipping on the floor.",
+		"He died from a landslide.",
+		"He died from drinking too much alcohol.",
+		"He died from eating poisonous mushrooms."
+	};
+		
 	public static int specialResourceCount = 0;
 	
 	/*
@@ -29,91 +43,55 @@ public class Utilities : MonoBehaviour {
 	}
 
 
-	public static Dictionary<BIOMES, SpecialResourceChance[]> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance[]> () { 
-		{BIOMES.BARE, new SpecialResourceChance[]{
-				new SpecialResourceChance(RESOURCE.NONE, 100),
-			}
+	public static Dictionary<BIOMES, SpecialResourceChance> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance> () { 
+		{BIOMES.BARE, new SpecialResourceChance(
+			new RESOURCE[] {RESOURCE.NONE}, 
+			new int[] {100})
 		
 		},
 
-		{BIOMES.GRASSLAND, new SpecialResourceChance[]{
-				new SpecialResourceChance(RESOURCE.WHEAT, 100),
-				new SpecialResourceChance(RESOURCE.RICE, 20),
-				new SpecialResourceChance(RESOURCE.DEER, 40),
-				new SpecialResourceChance(RESOURCE.CEDAR, 20),
-				new SpecialResourceChance(RESOURCE.GRANITE, 60),
-				new SpecialResourceChance(RESOURCE.SLATE, 35),
-				new SpecialResourceChance(RESOURCE.MITHRIL, 5),
-				new SpecialResourceChance(RESOURCE.COBALT, 5),
-			}
+		{BIOMES.GRASSLAND, new SpecialResourceChance(
+			new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.RICE, RESOURCE.DEER, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL, RESOURCE.COBALT}, 
+			new int[] {100, 20, 40, 20, 60, 35, 5, 5})
 
 		},
 
-		{BIOMES.WOODLAND, new SpecialResourceChance[]{
-				new SpecialResourceChance(RESOURCE.CORN, 40),
-				new SpecialResourceChance(RESOURCE.WHEAT, 12),
-				new SpecialResourceChance(RESOURCE.DEER, 65),
-				new SpecialResourceChance(RESOURCE.PIG, 25),
-				new SpecialResourceChance(RESOURCE.OAK, 90),
-				new SpecialResourceChance(RESOURCE.EBONY, 22),
-				new SpecialResourceChance(RESOURCE.GRANITE, 60),
-				new SpecialResourceChance(RESOURCE.SLATE, 12),
-				new SpecialResourceChance(RESOURCE.MANA_STONE, 5),
-				new SpecialResourceChance(RESOURCE.COBALT, 5),
-			}
+		{BIOMES.WOODLAND, new SpecialResourceChance(
+			new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.COBALT}, 
+			new int[] {40, 12, 65, 25, 90, 22, 60, 12, 5, 5})
 
 		},
 
 
-		{BIOMES.FOREST, new SpecialResourceChance[]{
-				new SpecialResourceChance(RESOURCE.EBONY, 15),
-				new SpecialResourceChance(RESOURCE.DEER, 40),
-				new SpecialResourceChance(RESOURCE.BEHEMOTH, 15),
-				new SpecialResourceChance(RESOURCE.MANA_STONE, 12),
-				new SpecialResourceChance(RESOURCE.MITHRIL, 8),
-				new SpecialResourceChance(RESOURCE.GOLD, 8),
-			}
+		{BIOMES.FOREST, new SpecialResourceChance(
+			new RESOURCE[] {RESOURCE.EBONY, RESOURCE.DEER, RESOURCE.BEHEMOTH, RESOURCE.MANA_STONE, RESOURCE.MITHRIL, RESOURCE.GOLD}, 
+			new int[] {15, 40, 15, 12, 8, 8})
 
 		},
 
-		{BIOMES.DESERT, new SpecialResourceChance[]{
-				new SpecialResourceChance(RESOURCE.DEER, 20),
-				new SpecialResourceChance(RESOURCE.PIG, 20),
-				new SpecialResourceChance(RESOURCE.SLATE, 15),
-				new SpecialResourceChance(RESOURCE.MARBLE, 15),
-				new SpecialResourceChance(RESOURCE.MITHRIL, 10),
-				new SpecialResourceChance(RESOURCE.COBALT, 10),
-				new SpecialResourceChance(RESOURCE.GOLD, 10),
-			}
+		{BIOMES.DESERT, new SpecialResourceChance(
+			new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.SLATE, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT, RESOURCE.GOLD}, 
+			new int[] {20, 20, 15, 15, 10, 10, 10})
 
 		},
 
-		{BIOMES.TUNDRA, new SpecialResourceChance[]{
-				new SpecialResourceChance(RESOURCE.DEER, 50),
-				new SpecialResourceChance(RESOURCE.PIG, 15),
-				new SpecialResourceChance(RESOURCE.CEDAR, 10),
-				new SpecialResourceChance(RESOURCE.GRANITE, 25),
-				new SpecialResourceChance(RESOURCE.SLATE, 10),
-				new SpecialResourceChance(RESOURCE.MANA_STONE, 5),
-				new SpecialResourceChance(RESOURCE.GOLD, 5),
-			}
-
+		{BIOMES.TUNDRA, new SpecialResourceChance(
+			new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.GOLD}, 
+			new int[] {50, 15, 10, 25, 10, 5, 5})
+				
 		},
 
-		{BIOMES.SNOW, new SpecialResourceChance[]{
-				new SpecialResourceChance(RESOURCE.CORN, 15),
-				new SpecialResourceChance(RESOURCE.WHEAT, 5),
-				new SpecialResourceChance(RESOURCE.DEER, 15),
-				new SpecialResourceChance(RESOURCE.PIG, 5),
-				new SpecialResourceChance(RESOURCE.MARBLE, 5),
-				new SpecialResourceChance(RESOURCE.MITHRIL, 3),
-				new SpecialResourceChance(RESOURCE.COBALT, 3),
-			}
+		{BIOMES.SNOW, new SpecialResourceChance(
+			new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT}, 
+			new int[] {15, 5, 15, 5, 5, 3, 3})
 
 		},
 
 	};
 
+//	public static string CauseOfAccident(){
+//		
+//	}
 
 	public static BASE_RESOURCE_TYPE GetBaseResourceType(RESOURCE resourceType){
 		if (resourceType == RESOURCE.CORN || resourceType == RESOURCE.WHEAT || resourceType == RESOURCE.RICE ||
