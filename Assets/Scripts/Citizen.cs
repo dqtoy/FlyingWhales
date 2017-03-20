@@ -78,7 +78,19 @@ public class Citizen {
 		EventManager.StartListening ("CitizenTurnActions", TurnActions);
 
 	}
+	internal void AddParents(Citizen father, Citizen mother){
+		this.father = father;
+		this.mother = mother;
+	}
 
+	internal void AddChild(Citizen child){
+		this.children.Add (child);
+	}
+	internal void AssignBirthday(MONTH month, int week, int year){
+		this.birthMonth = month;
+		this.birthWeek = week;
+		this.birthYear = year;
+	}
 	internal void TurnActions(){
 //		CheckAge ();
 		DeathReasons ();
