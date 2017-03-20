@@ -9,11 +9,18 @@ public class Utilities : MonoBehaviour {
 	public static int lastCitizenID = 0;
 	public static int lastCityID = 0;
 
-	public static int specialResourceCount = 0;
-
 	public static string[] accidentCauses = new string[]{
 		"He died because he forgot to breath.",
-
+		"He died after falling off a cliff.",
+		"He died due to an infection from an arrow in the knee.",
+		"He died of heartbreak.",
+		"He died from an animal attack.",
+		"He died after a boulder rolled over him.",
+		"He died after a brick fell on his head.",
+		"He died after slipping on the floor.",
+		"He died from a landslide.",
+		"He died from drinking too much alcohol.",
+		"He died from eating poisonous mushrooms."
 	};
 
 	public static int SetID<T>(T obj){
@@ -77,8 +84,8 @@ public class Utilities : MonoBehaviour {
 
 	};
 
-	public static string CauseOfAccident(){
-		
-	}
+//	public static string CauseOfAccident(){
+//		
+//	}
 
 }

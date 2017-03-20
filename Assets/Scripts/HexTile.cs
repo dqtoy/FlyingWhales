@@ -82,7 +82,7 @@ public class HexTile : MonoBehaviour {
 		int specialChance = UnityEngine.Random.Range (0, 100);
 
 		if(specialChance < 20){
-			Utilities.specialResourceCount += 1;
+//			Utilities.specialResourceCount += 1;
 			if(this.elevationType == ELEVATION.MOUNTAIN){
 				SpecialResourceChance specialResources = new SpecialResourceChance (
 					new RESOURCE[] {

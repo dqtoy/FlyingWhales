@@ -104,9 +104,9 @@ public enum RESOURCE{
 	GOLD,
 }
 
-public enum JOB_TYPE{
+public enum ROLE{
 	UNTRAINED,
-	FOOD, //Farming or Hunting
+	FOODIE, //Farming or Hunting
 	GATHERER, //Lumberyard or Quarry
 	MINER, 
 	TRADER,
@@ -114,4 +114,23 @@ public enum JOB_TYPE{
 	GUARDIAN,
 	ENVOY,
 	GENERAL,
+}
+
+public enum BEHAVIOR_TRAIT{
+	NAIVE,
+	SCHEMING,
+	WARMONGER,
+	PACIFIST,
+	CHARISMATIC,
+	REPULSIVE,
+	AGGRESSIVE,
+	DEFENSIVE,
+}
+
+public enum SKILL_TRAIT{
+	GREEN_THUMB,
+}
+
+public enum MISC_TRAIT{
+	BARREN,
 }
