@@ -1,15 +1,38 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿public enum RACE{
+	HUMANS,
+	ELVES,
+	MINGONS,
+	CROMADS
+}
 
-public class Enums : MonoBehaviour {
+public enum RESOURCE{
+	CORN,
+	WHEAT,
+	RICE,
+	DEER,
+	PIG,
+	BEHEMOTH,
+	CEDAR,
+	OAK,
+	EBONY,
+	GRANITE,
+	SLATE,
+	MARBLE,
+	MANA_STONE,
+	MITHRIL,
+	COBALT,
+	GOLD,
+	NONE
+}
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+public enum JOB_TYPE{
+	UNTRAINED,
+	FOOD, //Farming or Hunting
+	GATHERER, //Lumberyard or Quarry
+	MINER, 
+	TRADER,
+	SPY,
+	GUARDIAN,
+	ENVOY,
+	GENERAL
 }
