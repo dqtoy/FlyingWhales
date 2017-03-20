@@ -109,7 +109,6 @@ public class Citizen {
 					Death ();
 					if(this.gender == GENDER.FEMALE){
 						this.history += "She died of old age";
-
 					}else{
 						this.history += "He died of old age";
 					}
@@ -120,6 +119,15 @@ public class Citizen {
 				}
 			}
 		}
+	}
+	internal void DeathByStarvation(){
+		Death ();
+		if(this.gender == GENDER.FEMALE){
+			this.history += "She died of starvation";
+		}else{
+			this.history += "He died of starvation";
+		}
+		Debug.Log(this.name + " DIES OF STARVATION");
 	}
 	internal void Death(){
 //		this.kingdom.royaltyList.allRoyalties.Remove (this);
@@ -139,5 +147,13 @@ public class Citizen {
 //				this.kingdom.AssignNewLord (this.kingdom.royaltyList.successionRoyalties [0]);
 //			}
 //		}
+	}
+
+	internal void Campaign(CAMPAIGN type){
+		if(this.assignedRole != null){
+			if(this.assignedRole is General){
+				
+			}
+		}
 	}
 }

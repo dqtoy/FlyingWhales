@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 [System.Serializable]
 public class City{
@@ -24,6 +25,9 @@ public class City{
 	public int goldCount;
 	public int[] allResourceProduction;
 
+	[Space(5)]
+	public bool isStarving;
+
 	//generals
 	//incoming generals
 
@@ -38,6 +42,7 @@ public class City{
 		this.hasKing = false;
 
 		CreateInitialFamilies();
+		EventManager.StartListening ("Starvation", Starvation);
 	}
 
 	/*
@@ -45,5 +50,16 @@ public class City{
 	 * */
 	protected void CreateInitialFamilies(){
 
+	}
+
+	internal void Starvation(){
+		if(this.isStarving){
+			int deathChance = UnityEngine.Random.Range (0, 100);
+			if(deathChance < 5){
+				int youngestAge = this.citizens.Min (x => x.age);
+				List<Citizen> youngestCitizens = this.citizens.Where(x => x.age == youngestAge);
+				youngestCitizens [UnityEngine.Random.Range].DeathByStarvation ();
+			}
+		}
 	}
 }
