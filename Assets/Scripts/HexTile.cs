@@ -21,11 +21,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public ELEVATION elevationType;
 
 	public City city;
+	public Citizen occupant;
 
 	public bool isHabitable = false;
 	public bool isRoad = false;
-	public bool isOccupied = false;
-
 	public GameObject topLeft, topRight, right, bottomRight, bottomLeft, left;
 
 	public GameObject leftGround;
@@ -43,7 +42,41 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public List<HexTile> connectedTiles;
 
-	int[] allResourceValues;
+//	int[] allResourceValues;
+
+
+	internal void AssignDefaultResource(){
+		if(elevationType == ELEVATION.MOUNTAIN){
+			this.defaultResource = RESOURCE.GRANITE;
+		}else{
+			if (this.elevationType != ELEVATION.WATER) {
+				switch (biomeType) {
+				case BIOMES.BARE:
+					this.defaultResource = RESOURCE.NONE;
+					break;
+				case BIOMES.DESERT:
+					this.defaultResource = RESOURCE.GRANITE;
+					break;
+				case BIOMES.FOREST:
+					this.defaultResource = RESOURCE.OAK;
+					break;
+				case BIOMES.GRASSLAND:
+					this.defaultResource = RESOURCE.CORN;
+					break;
+				case BIOMES.SNOW:
+					this.defaultResource = RESOURCE.NONE;
+					break;
+				case BIOMES.TUNDRA:
+					this.defaultResource = RESOURCE.CORN;
+					break;
+				case BIOMES.WOODLAND:
+					this.defaultResource = RESOURCE.CEDAR;
+					break;
+
+				}
+			}
+		}
+	}
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
 	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.WATER); } }
@@ -92,7 +125,51 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.AllNeighbours = neighbours;
 	}
 	#endregion
+	
+	internal void AssignSpecialResource(){
+		int specialChance = UnityEngine.Random.Range (0, 100);
 
+		if(specialChance < 20){
+			Utilities.specialResourceCount += 1;
+			if(this.elevationType == ELEVATION.MOUNTAIN){
+				SpecialResourceChance[] specialResources = new SpecialResourceChance[] {
+					new SpecialResourceChance (RESOURCE.BEHEMOTH, 5),
+					new SpecialResourceChance (RESOURCE.SLATE, 60),
+					new SpecialResourceChance (RESOURCE.MARBLE, 40),
+					new SpecialResourceChance (RESOURCE.MANA_STONE, 15),
+					new SpecialResourceChance (RESOURCE.MITHRIL, 15),
+					new SpecialResourceChance (RESOURCE.COBALT, 15),
+					new SpecialResourceChance (RESOURCE.GOLD, 5),
+				};
+
+				this.specialResource = ComputeSpecialResource (specialResources);
+			}else{
+				if (this.elevationType != ELEVATION.WATER) {
+					this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
+				}
+			}
+		}
+	}
+
+	private RESOURCE ComputeSpecialResource(SpecialResourceChance[] specialResources){
+		int totalChance = 0;
+		int lowerLimit = 0;
+		for(int i = 0; i < specialResources.Length; i++){
+			totalChance += specialResources [i].chance;
+		}
+
+		int chance = UnityEngine.Random.Range (0, totalChance);
+		for(int i = 0; i < specialResources.Length; i++){
+			if(chance >= lowerLimit && chance < specialResources[i].chance){
+				return specialResources [i].resource;
+			}else{
+				lowerLimit = specialResources[i].chance;
+			}
+		}
+
+		return RESOURCE.NONE;
+
+	}
 //	public void GenerateTileDetails(){
 //		List<Tile> neighbours = tile.AllNeighbours.ToList ();
 //		for (int i = 0; i < neighbours.Count; i++) {
