@@ -99,18 +99,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		int specialChance = UnityEngine.Random.Range (0, 100);
 
 		if(specialChance < 20){
-			Utilities.specialResourceCount += 1;
+			//			Utilities.specialResourceCount += 1;
 			if(this.elevationType == ELEVATION.MOUNTAIN){
-				SpecialResourceChance[] specialResources = new SpecialResourceChance[] {
-					new SpecialResourceChance (RESOURCE.BEHEMOTH, 5),
-					new SpecialResourceChance (RESOURCE.SLATE, 60),
-					new SpecialResourceChance (RESOURCE.MARBLE, 40),
-					new SpecialResourceChance (RESOURCE.MANA_STONE, 15),
-					new SpecialResourceChance (RESOURCE.MITHRIL, 15),
-					new SpecialResourceChance (RESOURCE.COBALT, 15),
-					new SpecialResourceChance (RESOURCE.GOLD, 5),
-				};
-
+				SpecialResourceChance specialResources = new SpecialResourceChance (
+					new RESOURCE[] {
+						RESOURCE.BEHEMOTH,
+						RESOURCE.SLATE,
+						RESOURCE.MARBLE,
+						RESOURCE.MANA_STONE,
+						RESOURCE.MITHRIL,
+						RESOURCE.COBALT,
+						RESOURCE.GOLD
+					}, 
+					new int[] { 5, 60, 40, 15, 15, 15, 5 });
 				this.specialResource = ComputeSpecialResource (specialResources);
 			}else{
 				if (this.elevationType != ELEVATION.WATER) {
@@ -120,24 +121,23 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 
-	private RESOURCE ComputeSpecialResource(SpecialResourceChance[] specialResources){
+
+	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
 		int totalChance = 0;
 		int lowerLimit = 0;
-		for(int i = 0; i < specialResources.Length; i++){
-			totalChance += specialResources [i].chance;
+		for(int i = 0; i < specialResources.resource.Length; i++){
+			totalChance += specialResources.chance[i];
 		}
 
 		int chance = UnityEngine.Random.Range (0, totalChance);
-		for(int i = 0; i < specialResources.Length; i++){
-			if(chance >= lowerLimit && chance < specialResources[i].chance){
-				return specialResources [i].resource;
+		for(int i = 0; i < specialResources.resource.Length; i++){
+			if(chance >= lowerLimit && chance < specialResources.chance[i]){
+				return specialResources.resource[i];
 			}else{
-				lowerLimit = specialResources[i].chance;
+				lowerLimit = specialResources.chance[i];
 			}
 		}
-
 		return RESOURCE.NONE;
-
 	}
 	#endregion
 		
@@ -185,50 +185,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	#endregion
 	
 
-	internal void AssignSpecialResource(){
-		int specialChance = UnityEngine.Random.Range (0, 100);
-
-		if(specialChance < 20){
-//			Utilities.specialResourceCount += 1;
-			if(this.elevationType == ELEVATION.MOUNTAIN){
-			SpecialResourceChance specialResources = new SpecialResourceChance (
-					new RESOURCE[] {
-						RESOURCE.BEHEMOTH,
-						RESOURCE.SLATE,
-						RESOURCE.MARBLE,
-						RESOURCE.MANA_STONE,
-						RESOURCE.MITHRIL,
-						RESOURCE.COBALT,
-						RESOURCE.GOLD
-					}, 
-					new int[] { 5, 60, 40, 15, 15, 15, 5 });
-			this.specialResource = ComputeSpecialResource (specialResources);
-		}else{
-			if (this.elevationType != ELEVATION.WATER) {
-				this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
-			}
-		}
-	}
-
-
-	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
-		int totalChance = 0;
-		int lowerLimit = 0;
-		for(int i = 0; i < specialResources.resource.Length; i++){
-			totalChance += specialResources.chance[i];
-		}
-
-		int chance = UnityEngine.Random.Range (0, totalChance);
-		for(int i = 0; i < specialResources.resource.Length; i++){
-			if(chance >= lowerLimit && chance < specialResources.chance[i]){
-				return specialResources.resource[i];
-			}else{
-				lowerLimit = specialResources.chance[i];
-			}
-		}
-	}
-
-	
 	public void GenerateTileDetails(){
 		List<HexTile> neighbours = this.AllNeighbours.ToList ();
 		for (int i = 0; i < neighbours.Count; i++) {
