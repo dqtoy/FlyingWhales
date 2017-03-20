@@ -84,15 +84,17 @@ public class HexTile : MonoBehaviour {
 		if(specialChance < 20){
 			Utilities.specialResourceCount += 1;
 			if(this.elevationType == ELEVATION.MOUNTAIN){
-				SpecialResourceChance[] specialResources = new SpecialResourceChance[] {
-					new SpecialResourceChance (RESOURCE.BEHEMOTH, 5),
-					new SpecialResourceChance (RESOURCE.SLATE, 60),
-					new SpecialResourceChance (RESOURCE.MARBLE, 40),
-					new SpecialResourceChance (RESOURCE.MANA_STONE, 15),
-					new SpecialResourceChance (RESOURCE.MITHRIL, 15),
-					new SpecialResourceChance (RESOURCE.COBALT, 15),
-					new SpecialResourceChance (RESOURCE.GOLD, 5),
-				};
+				SpecialResourceChance specialResources = new SpecialResourceChance (
+					new RESOURCE[] {
+						RESOURCE.BEHEMOTH,
+						RESOURCE.SLATE,
+						RESOURCE.MARBLE,
+						RESOURCE.MANA_STONE,
+						RESOURCE.MITHRIL,
+						RESOURCE.COBALT,
+						RESOURCE.GOLD
+					}, 
+					new int[] { 5, 60, 40, 15, 15, 15, 5 });
 
 				this.specialResource = ComputeSpecialResource (specialResources);
 			}else{
@@ -103,19 +105,19 @@ public class HexTile : MonoBehaviour {
 		}
 	}
 
-	private RESOURCE ComputeSpecialResource(SpecialResourceChance[] specialResources){
+	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
 		int totalChance = 0;
 		int lowerLimit = 0;
-		for(int i = 0; i < specialResources.Length; i++){
-			totalChance += specialResources [i].chance;
+		for(int i = 0; i < specialResources.resource.Length; i++){
+			totalChance += specialResources.chance[i];
 		}
 
 		int chance = UnityEngine.Random.Range (0, totalChance);
-		for(int i = 0; i < specialResources.Length; i++){
-			if(chance >= lowerLimit && chance < specialResources[i].chance){
-				return specialResources [i].resource;
+		for(int i = 0; i < specialResources.resource.Length; i++){
+			if(chance >= lowerLimit && chance < specialResources.chance[i]){
+				return specialResources.resource[i];
 			}else{
-				lowerLimit = specialResources[i].chance;
+				lowerLimit = specialResources.chance[i];
 			}
 		}
 
