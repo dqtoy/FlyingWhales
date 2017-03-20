@@ -1,16 +1,18 @@
 fileFormatVersion: 2
-guid: da75a64547303be4a81dc772aaf0b2d4
-timeCreated: 1489987351
+guid: 1a71cb689a6ee95419ff2d9d1a7e43b8
+timeCreated: 1490004233
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: grassland_base
-    21300002: GrasslandTile_1
-    21300004: GrasslandTile_2
-    21300006: GrasslandTile_3
-    21300008: GrasslandTile_4
-    21300010: GrasslandTile_5
-    21300012: GrasslandTile_6
+    21300002: grassland_top_left
+    21300004: grassland_top_right
+    21300006: grassland_left
+    21300008: grassland_right
+    21300010: grassland_bot_left
+    21300012: grassland_bot_right
+    21300014: grassland_center_1
+    21300016: grassland_center_2
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -63,21 +65,73 @@ TextureImporter:
       name: grassland_base
       rect:
         serializedVersion: 2
-        x: 4
-        y: 663
+        x: 8
+        y: 656
         width: 396
-        height: 361
+        height: 359
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: GrasslandTile_1
+      name: grassland_top_left
       rect:
         serializedVersion: 2
-        x: 4
-        y: 529
+        x: 431
+        y: 910
+        width: 210
+        height: 107
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: grassland_top_right
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 919
+        width: 204
+        height: 97
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: grassland_left
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 720
+        width: 20
+        height: 186
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: grassland_right
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 716
+        width: 24
+        height: 184
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: grassland_bot_left
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 490
         width: 199
         height: 127
       alignment: 0
@@ -86,65 +140,39 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: GrasslandTile_2
+      name: grassland_bot_right
       rect:
         serializedVersion: 2
-        x: 211
-        y: 529
-        width: 198
-        height: 127
+        x: 215
+        y: 489
+        width: 201
+        height: 129
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: GrasslandTile_3
+      name: grassland_center_1
       rect:
         serializedVersion: 2
-        x: 4
-        y: 375
-        width: 14
-        height: 145
+        x: 22
+        y: 231
+        width: 85
+        height: 29
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: GrasslandTile_4
-      rect:
-        serializedVersion: 2
-        x: 33
-        y: 375
-        width: 14
-        height: 145
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: GrasslandTile_5
-      rect:
-        serializedVersion: 2
-        x: 26
-        y: 292
-        width: 138
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: GrasslandTile_6
+      name: grassland_center_2
       rect:
         serializedVersion: 2
         x: 18
         y: 136
-        width: 140
-        height: 124
+        width: 78
+        height: 68
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

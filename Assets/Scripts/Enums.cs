@@ -115,3 +115,11 @@ public enum JOB_TYPE{
 	ENVOY,
 	GENERAL,
 }
+
+public enum BASE_RESOURCE_TYPE{
+	FOOD,
+	WOOD,
+	STONE,
+	SPECIAL,
+	GOLD
+}
