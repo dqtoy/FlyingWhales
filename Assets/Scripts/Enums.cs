@@ -1,15 +1,116 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿public enum BIOMES{
+	SNOW,
+	TUNDRA,
+	DESERT,
+	GRASSLAND,
+	WOODLAND,
+	FOREST,
+	BARE,
+}
+public enum EQUATOR_LINE{
+	HORIZONTAL,
+	VERTICAL,
+	DIAGONAL_LEFT,
+	DIAGONAL_RIGHT,
+}
+public enum ELEVATION{
+	MOUNTAIN,
+	WATER,
+	PLAIN,
+}
 
-public class Enums : MonoBehaviour {
+public enum RACE{
+	HUMANS,
+	ELVES,
+	MINGONS,
+	CROMADS,
+}
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+public enum EVENTS{
+	EXPAND,
+	DECLARE_WAR,
+	DECLARE_PEACE,
+	GENERATE_ARMY,
+}
+
+public enum PATH_DIRECTION{
+	TOP_LEFT,
+	TOP_RIGHT,
+	RIGHT,
+	BOTTOM_RIGHT,
+	BOTTOM_LEFT,
+	LEFT
+}
+
+public enum JOB_TYPE{
+	FARMER,
+	WOODSMAN,
+	MINER,
+	ALCHEMIST,
+	MERCHANT,
+	HUNTER,
+	QUARRYMAN,
+	PIONEER,
+	NONE
+}
+
+public enum REPRESENTATIVES{
+	KING,
+	MAYOR,
+	CITIZENS,
+}
+public enum LORD_RELATIONSHIP{
+	RIVAL,
+	ENEMY,
+	COLD,
+	NEUTRAL,
+	WARM,
+	FRIEND,
+	ALLY,
+}
+
+public enum PATHFINDING_MODE{
+	NORMAL,
+	ROAD_CREATION,
+	COMBAT
+}
+
+public enum GENDER{
+	MALE,
+	FEMALE,
+}
+
+public enum MONTH{
+	NONE,
+	JANUARY,
+	FEBRUARY,
+	MARCH,
+	APRIL,
+	MAY,
+	JUNE,
+	JULY,
+	AUGUST,
+	SEPTEMBER,
+	OCTOBER,
+	NOVEMBER,
+	DECEMBER,
+}
+
+public enum RESOURCE{
+	CORN,
+	WHEAT,
+	RICE,
+	DEER,
+	PIG,
+	BEHEMOTH,
+	CEDAR,
+	OAK,
+	EBONY,
+	GRANITE,
+	SLATE,
+	MARBLE,
+	MANA_STONE,
+	MITHRIL,
+	COBALT,
+	GOLD,
 }
