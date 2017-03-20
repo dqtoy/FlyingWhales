@@ -42,18 +42,6 @@ public enum PATH_DIRECTION{
 	LEFT
 }
 
-public enum JOB_TYPE{
-	FARMER,
-	WOODSMAN,
-	MINER,
-	ALCHEMIST,
-	MERCHANT,
-	HUNTER,
-	QUARRYMAN,
-	PIONEER,
-	NONE
-}
-
 public enum REPRESENTATIVES{
 	KING,
 	MAYOR,
@@ -97,6 +85,7 @@ public enum MONTH{
 }
 
 public enum RESOURCE{
+	NONE,
 	CORN,
 	WHEAT,
 	RICE,
@@ -113,4 +102,16 @@ public enum RESOURCE{
 	MITHRIL,
 	COBALT,
 	GOLD,
+}
+
+public enum JOB_TYPE{
+	UNTRAINED,
+	FOOD, //Farming or Hunting
+	GATHERER, //Lumberyard or Quarry
+	MINER, 
+	TRADER,
+	SPY,
+	GUARDIAN,
+	ENVOY,
+	GENERAL,
 }
