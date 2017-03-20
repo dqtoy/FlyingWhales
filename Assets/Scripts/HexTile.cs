@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using PathFind;
 using System.Linq;
 
-public class HexTile : MonoBehaviour {
+public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public int xCoordinate;
 	public int yCoordinate;
 
@@ -23,7 +25,6 @@ public class HexTile : MonoBehaviour {
 
 	public bool isHabitable = false;
 	public bool isRoad = false;
-
 	public GameObject topLeft, topRight, right, bottomRight, bottomLeft, left;
 
 	public GameObject leftGround;
@@ -39,7 +40,7 @@ public class HexTile : MonoBehaviour {
 	public GameObject bottomLeftBorder;
 	public GameObject bottomRightBorder;
 
-
+	public List<HexTile> connectedTiles;
 
 //	int[] allResourceValues;
 
@@ -77,7 +78,54 @@ public class HexTile : MonoBehaviour {
 		}
 	}
 
+	public IEnumerable<HexTile> AllNeighbours { get; set; }
+	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.WATER); } }
 
+	void Start(){
+		connectedTiles = new List<HexTile>();
+	}
+
+	/*
+	 * Returns all Hex tiles gameobjects within a radius
+	 * 3 - 1 tile radius
+	 * 6 - 2 tile radius
+	 * 10 - 3 tile radius
+	 * */
+	public HexTile[] GetTilesInRange(float radius){
+		Collider2D[] nearHexes = Physics2D.OverlapCircleAll (new Vector2(transform.position.x, transform.position.y), radius, LayerMask.NameToLayer("Hextiles"));
+		HexTile[] nearTiles = new HexTile[nearHexes.Length];
+		for (int i = 0; i < nearTiles.Length; i++) {
+			if (nearHexes[i].name != this.name) {
+				nearTiles[i] = nearHexes[i].gameObject.GetComponent<HexTile>();
+			}
+		}
+		return nearTiles;
+	}
+
+	#region Pathfinding
+	public void FindNeighbours(HexTile[,] gameBoard) {
+		var neighbours = new List<HexTile>();
+
+		List<Point> possibleExits;
+
+		if ((yCoordinate % 2) == 0) {
+			possibleExits = Utilities.EvenNeighbours;
+		} else {
+			possibleExits = Utilities.OddNeighbours;
+		}
+
+		for (int i = 0; i < possibleExits.Count; i++) {
+			int neighbourCoordinateX = xCoordinate + possibleExits [i].X;
+			int neighbourCoordinateY = yCoordinate + possibleExits [i].Y;
+			if (neighbourCoordinateX >= 0 && neighbourCoordinateX < gameBoard.GetLength(0) && neighbourCoordinateY >= 0 && neighbourCoordinateY < gameBoard.GetLength(1)){
+				neighbours.Add (gameBoard [neighbourCoordinateX, neighbourCoordinateY]);
+			}
+
+		}
+		this.AllNeighbours = neighbours;
+	}
+	#endregion
+	
 	internal void AssignSpecialResource(){
 		int specialChance = UnityEngine.Random.Range (0, 100);
 
