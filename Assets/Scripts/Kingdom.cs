@@ -10,6 +10,7 @@ public class Kingdom{
 	public List<City> cities;
 	public Citizen king;
 	public List<Citizen> successionLine;
+	public List<Citizen> royaltyList;
 
 	public RESOURCE basicResource;
 	public RESOURCE rareResource;

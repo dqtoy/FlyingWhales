@@ -22,14 +22,15 @@ public class GridMap : MonoBehaviour {
 
 	public List<GameObject> listHexes;
 
-//	public Tile[,] GameBoard;
+	public HexTile[,] map;
 
 	void Awake(){
 		Instance = this;
 	}
 
 	internal void GenerateGrid () {
-//		GameBoard = new Tile[(int)width, (int)height];
+		map = new HexTile[(int)width, (int)height];
+		listHexes = new List<GameObject>();
 		for (int x = 0;  x < width; x++){
 			for(int y = 0; y < height; y++){
 				float xPosition = x * xOffset;
@@ -43,18 +44,14 @@ public class GridMap : MonoBehaviour {
 				hex.transform.position = new Vector3(xPosition, yPosition,0f);
 				hex.transform.localScale = new Vector3(tileSize,tileSize,0f);
 				hex.name = x + "," + y;
-				hex.GetComponent<HexTile> ().name = hex.name;
+				hex.GetComponent<HexTile>().name = hex.name;
+				hex.GetComponent<HexTile>().xCoordinate = x;
+				hex.GetComponent<HexTile>().yCoordinate = y;
 				listHexes.Add(hex);
-//				hex.GetComponent<HexTile>().tile = new Tile (x, y, hex.GetComponent<HexTile>());
-//				hex.GetComponent<HexTile>().GenerateResourceValues(); //TODO: Relocate to when biomes are chosen
-//				GameBoard [x, y] = hex.GetComponent<HexTile>().tile;
+				map[x, y] = hex.GetComponent<HexTile>();
 			}
 		}
-//		listHexes.ForEach(o => o.GetComponent<HexTile>().tile.FindNeighbours(GameBoard));
-	}
-
-	public void FindEveryTilesNeighbour(){
-//		listHexes.ForEach(o => o.GetComponent<HexTile>().tile.FindNeighbours(GameBoard));
+		listHexes.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(map));
 	}
 
 	internal GameObject GetHex(string hexName){

@@ -44,7 +44,24 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 //	int[] allResourceValues;
 
+	public IEnumerable<HexTile> AllNeighbours { get; set; }
+	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.WATER); } }
 
+	[ContextMenu("LALALA")]
+	public void Show(){
+		HexTile[] tiles = this.GetTilesInRange (13.5f);
+		for (int i = 0; i < tiles.Length; i++) {
+			if (tiles [i] != null) {
+				tiles [i].GetComponent<SpriteRenderer> ().color = Color.magenta;
+			}
+		}
+	}
+
+	void Start(){
+		connectedTiles = new List<HexTile>();
+	}
+
+	#region Resource
 	internal void AssignDefaultResource(){
 		if(elevationType == ELEVATION.MOUNTAIN){
 			this.defaultResource = RESOURCE.GRANITE;
@@ -78,13 +95,52 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 
-	public IEnumerable<HexTile> AllNeighbours { get; set; }
-	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.WATER); } }
+	internal void AssignSpecialResource(){
+		int specialChance = UnityEngine.Random.Range (0, 100);
 
-	void Start(){
-		connectedTiles = new List<HexTile>();
+		if(specialChance < 20){
+			//			Utilities.specialResourceCount += 1;
+			if(this.elevationType == ELEVATION.MOUNTAIN){
+				SpecialResourceChance specialResources = new SpecialResourceChance (
+					new RESOURCE[] {
+						RESOURCE.BEHEMOTH,
+						RESOURCE.SLATE,
+						RESOURCE.MARBLE,
+						RESOURCE.MANA_STONE,
+						RESOURCE.MITHRIL,
+						RESOURCE.COBALT,
+						RESOURCE.GOLD
+					}, 
+					new int[] { 5, 60, 40, 15, 15, 15, 5 });
+				this.specialResource = ComputeSpecialResource (specialResources);
+			}else{
+				if (this.elevationType != ELEVATION.WATER) {
+					this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
+				}
+			}
+		}
 	}
 
+
+	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
+		int totalChance = 0;
+		int lowerLimit = 0;
+		for(int i = 0; i < specialResources.resource.Length; i++){
+			totalChance += specialResources.chance[i];
+		}
+
+		int chance = UnityEngine.Random.Range (0, totalChance);
+		for(int i = 0; i < specialResources.resource.Length; i++){
+			if(chance >= lowerLimit && chance < specialResources.chance[i]){
+				return specialResources.resource[i];
+			}else{
+				lowerLimit = specialResources.chance[i];
+			}
+		}
+		return RESOURCE.NONE;
+	}
+	#endregion
+		
 	/*
 	 * Returns all Hex tiles gameobjects within a radius
 	 * 3 - 1 tile radius
@@ -92,11 +148,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	 * 10 - 3 tile radius
 	 * */
 	public HexTile[] GetTilesInRange(float radius){
-		Collider2D[] nearHexes = Physics2D.OverlapCircleAll (new Vector2(transform.position.x, transform.position.y), radius, LayerMask.NameToLayer("Hextiles"));
+		Collider2D[] nearHexes = Physics2D.OverlapCircleAll (new Vector2(transform.position.x, transform.position.y), radius);
 		HexTile[] nearTiles = new HexTile[nearHexes.Length];
 		for (int i = 0; i < nearTiles.Length; i++) {
 			if (nearHexes[i].name != this.name) {
 				nearTiles[i] = nearHexes[i].gameObject.GetComponent<HexTile>();
+//				nearHexes[i].gameObject.GetComponent<SpriteRenderer>().color = Color.black;
+//				Debug.Log (nearHexes [i].name);
 			}
 		}
 		return nearTiles;
@@ -126,181 +184,139 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	#endregion
 	
-	internal void AssignSpecialResource(){
-		int specialChance = UnityEngine.Random.Range (0, 100);
 
-		if(specialChance < 20){
-//			Utilities.specialResourceCount += 1;
-			if(this.elevationType == ELEVATION.MOUNTAIN){
-				SpecialResourceChance specialResources = new SpecialResourceChance (
-					new RESOURCE[] {
-						RESOURCE.BEHEMOTH,
-						RESOURCE.SLATE,
-						RESOURCE.MARBLE,
-						RESOURCE.MANA_STONE,
-						RESOURCE.MITHRIL,
-						RESOURCE.COBALT,
-						RESOURCE.GOLD
-					}, 
-					new int[] { 5, 60, 40, 15, 15, 15, 5 });
+	public void GenerateTileDetails(){
+		List<HexTile> neighbours = this.AllNeighbours.ToList ();
+		for (int i = 0; i < neighbours.Count; i++) {
+			
+			int neighbourX = neighbours [i].xCoordinate;
+			int neighbourY = neighbours [i].yCoordinate;
 
-				this.specialResource = ComputeSpecialResource (specialResources);
-			}else{
-				if (this.elevationType != ELEVATION.WATER) {
-					this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
+			Point difference = new Point((neighbourX - this.xCoordinate), (neighbourY - this.yCoordinate));
+			if (this.yCoordinate % 2 == 0) {
+				if (difference.X == -1 && difference.Y == 1) {
+					//top left
+					if (neighbours[i].biomeType != this.biomeType && neighbours[i].elevationType != ELEVATION.WATER) {
+						this.topLeftBorder.SetActive (true);
+					}
+				} else if (difference.X == 0 && difference.Y == 1) {
+					//top right
+					if (neighbours [i].biomeType != this.biomeType && neighbours [i].elevationType != ELEVATION.WATER) {
+						this.topRightBorder.SetActive (true);
+					}
+				} else if (difference.X == 1 && difference.Y == 0) {
+					//right
+					if (neighbours [i].elevationType == ELEVATION.WATER) {
+						this.rightGround.SetActive (true);
+					} else if (neighbours [i].biomeType != this.biomeType) {
+						this.rightBorder.SetActive (true);
+					}
+				} else if (difference.X == 0 && difference.Y == -1){
+					//bottom right
+					if (neighbours [i].elevationType == ELEVATION.WATER) {
+						this.bottomRightGround.SetActive (true);
+					} else if (neighbours [i].biomeType != this.biomeType) {
+						this.bottomRightBorder.SetActive (true);
+					}
+				} else if (difference.X == -1 && difference.Y == -1){
+					//bottom left
+					if (neighbours [i].elevationType == ELEVATION.WATER) {
+						this.bottomLeftGround.SetActive (true);
+					} else if (neighbours [i].biomeType != this.biomeType) {
+						this.bottomLeftBorder.SetActive (true);
+					}
+				} else if (difference.X == -1 && difference.Y == 0){
+					//left
+					if (neighbours [i].elevationType == ELEVATION.WATER) {
+						this.leftGround.SetActive (true);
+					} else if (neighbours [i].biomeType != this.biomeType) {
+						this.leftBorder.SetActive (true);
+					}
+				}
+			} else {
+				if (difference.X == 0 && difference.Y == 1) {
+					//top left
+					if (neighbours [i].biomeType != this.biomeType && neighbours [i].elevationType != ELEVATION.WATER) {
+						this.topLeftBorder.SetActive (true);
+					}
+				} else if (difference.X == 1 && difference.Y == 1) {
+					//top right
+					if (neighbours [i].biomeType != this.biomeType && neighbours [i].elevationType != ELEVATION.WATER) {
+						this.topRightBorder.SetActive (true);
+					}
+				} else if (difference.X == 1 && difference.Y == 0) {
+					//right
+					if (neighbours [i].elevationType == ELEVATION.WATER) {
+						this.rightGround.SetActive (true);
+					} else if (neighbours [i].biomeType != this.biomeType) {
+						this.rightBorder.SetActive (true);
+					}
+				} else if (difference.X == 1 && difference.Y == -1){
+					//bottom right
+					if (neighbours [i].elevationType == ELEVATION.WATER) {
+						this.bottomRightGround.SetActive (true);
+					} else if (neighbours [i].biomeType != this.biomeType) {
+						this.bottomRightBorder.SetActive (true);
+					}
+				} else if (difference.X == 0 && difference.Y == -1){
+					//bottom left
+					if (neighbours [i].elevationType == ELEVATION.WATER) {
+						this.bottomLeftGround.SetActive (true);
+					} else if (neighbours [i].biomeType != this.biomeType) {
+						this.bottomLeftBorder.SetActive (true);
+					}
+				} else if (difference.X == -1 && difference.Y == 0){
+					//left
+					if (neighbours [i].elevationType == ELEVATION.WATER) {
+						this.leftGround.SetActive (true);
+					} else if (neighbours [i].biomeType != this.biomeType) {
+						this.leftBorder.SetActive (true);
+					}
 				}
 			}
 		}
 	}
 
-	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
-		int totalChance = 0;
-		int lowerLimit = 0;
-		for(int i = 0; i < specialResources.resource.Length; i++){
-			totalChance += specialResources.chance[i];
-		}
-
-		int chance = UnityEngine.Random.Range (0, totalChance);
-		for(int i = 0; i < specialResources.resource.Length; i++){
-			if(chance >= lowerLimit && chance < specialResources.chance[i]){
-				return specialResources.resource[i];
-			}else{
-				lowerLimit = specialResources.chance[i];
+	public void SetTileSprites(Sprite baseSprite, Sprite leftSprite, Sprite rightSprite, Sprite leftCornerSprite, Sprite rightCornerSprite, Sprite[] centerSprite){
+		this.GetComponent<SpriteRenderer>().sprite = baseSprite;
+		this.leftGround.GetComponent<SpriteRenderer>().sprite = leftSprite;
+		this.rightGround.GetComponent<SpriteRenderer>().sprite = rightSprite;
+		this.bottomLeftGround.GetComponent<SpriteRenderer>().sprite = leftCornerSprite;
+		this.bottomRightGround.GetComponent<SpriteRenderer>().sprite = rightCornerSprite;
+		if (this.elevationType == ELEVATION.MOUNTAIN) {
+			this.centerPiece.SetActive(true);
+		} else {
+			if (this.biomeType == BIOMES.GRASSLAND) {
+				return;
+			} else if (this.biomeType == BIOMES.WOODLAND || this.biomeType == BIOMES.FOREST || this.biomeType == BIOMES.TUNDRA) {
+				this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite[Random.Range(0, centerSprite.Length)];
+				this.centerPiece.SetActive(true);
+				if (this.biomeType != BIOMES.TUNDRA) {
+					this.centerPiece.transform.localPosition = new Vector3 (0f, 0.37f, 0f);
+				}
+			} else {
+				int chanceForDetail = Random.Range (0, 100);
+				if (chanceForDetail < 25) {
+					this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite[Random.Range(0, centerSprite.Length)];
+					this.centerPiece.SetActive(true);
+					float randomXPosition = Random.Range(-1.30f, 1.30f);
+					float randomYPosition = Random.Range(-0.40f, 0.70f);
+					if (randomXPosition <= 0.45f && randomXPosition >= -0.45f) {
+						int chanceToModify = Random.Range(0, 100);
+						if (chanceToModify < 25) {
+							if (Mathf.Sign (randomYPosition) == 0) {
+								//negative
+								randomYPosition -= Random.Range(0.20f,0.40f);
+							} else {
+								//positive
+								randomYPosition += Random.Range(0.20f,0.40f);
+							}
+						}
+					}
+					this.centerPiece.transform.localPosition = new Vector3(randomXPosition, randomYPosition, 0f);
+				}
 			}
+
 		}
-
-		return RESOURCE.NONE;
-
 	}
-//	public void GenerateTileDetails(){
-//		List<Tile> neighbours = tile.AllNeighbours.ToList ();
-//		for (int i = 0; i < neighbours.Count; i++) {
-//
-//			int neighbourX = neighbours [i].X;
-//			int neighbourY = neighbours [i].Y;
-//
-//			Point difference = new Point((neighbours [i].X - this.tile.X), (neighbours [i].Y - this.tile.Y));
-//			if (this.tile.Y % 2 == 0) {
-//				if (difference.X == -1 && difference.Y == 1) {
-//					//top left
-//					if (neighbours[i].hexTile.biomeType != this.biomeType && neighbours[i].hexTile.elevationType != ELEVATION.WATER) {
-//						this.topLeftBorder.SetActive (true);
-//					}
-//				} else if (difference.X == 0 && difference.Y == 1) {
-//					//top right
-//					if (neighbours [i].hexTile.biomeType != this.biomeType && neighbours [i].hexTile.elevationType != ELEVATION.WATER) {
-//						this.topRightBorder.SetActive (true);
-//					}
-//				} else if (difference.X == 1 && difference.Y == 0) {
-//					//right
-//					if (neighbours [i].hexTile.elevationType == ELEVATION.WATER) {
-//						this.rightGround.SetActive (true);
-//					} else if (neighbours [i].hexTile.biomeType != this.biomeType) {
-//						this.rightBorder.SetActive (true);
-//					}
-//				} else if (difference.X == 0 && difference.Y == -1){
-//					//bottom right
-//					if (neighbours [i].hexTile.elevationType == ELEVATION.WATER) {
-//						this.bottomRightGround.SetActive (true);
-//					} else if (neighbours [i].hexTile.biomeType != this.biomeType) {
-//						this.bottomRightBorder.SetActive (true);
-//					}
-//				} else if (difference.X == -1 && difference.Y == -1){
-//					//bottom left
-//					if (neighbours [i].hexTile.elevationType == ELEVATION.WATER) {
-//						this.bottomLeftGround.SetActive (true);
-//					} else if (neighbours [i].hexTile.biomeType != this.biomeType) {
-//						this.bottomLeftBorder.SetActive (true);
-//					}
-//				} else if (difference.X == -1 && difference.Y == 0){
-//					//left
-//					if (neighbours [i].hexTile.elevationType == ELEVATION.WATER) {
-//						this.leftGround.SetActive (true);
-//					} else if (neighbours [i].hexTile.biomeType != this.biomeType) {
-//						this.leftBorder.SetActive (true);
-//					}
-//				}
-//			} else {
-//				if (difference.X == 0 && difference.Y == 1) {
-//					//top left
-//					if (neighbours [i].hexTile.biomeType != this.biomeType && neighbours [i].hexTile.elevationType != ELEVATION.WATER) {
-//						this.topLeftBorder.SetActive (true);
-//					}
-//				} else if (difference.X == 1 && difference.Y == 1) {
-//					//top right
-//					if (neighbours [i].hexTile.biomeType != this.biomeType && neighbours [i].hexTile.elevationType != ELEVATION.WATER) {
-//						this.topRightBorder.SetActive (true);
-//					}
-//				} else if (difference.X == 1 && difference.Y == 0) {
-//					//right
-//					if (neighbours [i].hexTile.elevationType == ELEVATION.WATER) {
-//						this.rightGround.SetActive (true);
-//					} else if (neighbours [i].hexTile.biomeType != this.biomeType) {
-//						this.rightBorder.SetActive (true);
-//					}
-//				} else if (difference.X == 1 && difference.Y == -1){
-//					//bottom right
-//					if (neighbours [i].hexTile.elevationType == ELEVATION.WATER) {
-//						this.bottomRightGround.SetActive (true);
-//					} else if (neighbours [i].hexTile.biomeType != this.biomeType) {
-//						this.bottomRightBorder.SetActive (true);
-//					}
-//				} else if (difference.X == 0 && difference.Y == -1){
-//					//bottom left
-//					if (neighbours [i].hexTile.elevationType == ELEVATION.WATER) {
-//						this.bottomLeftGround.SetActive (true);
-//					} else if (neighbours [i].hexTile.biomeType != this.biomeType) {
-//						this.bottomLeftBorder.SetActive (true);
-//					}
-//				} else if (difference.X == -1 && difference.Y == 0){
-//					//left
-//					if (neighbours [i].hexTile.elevationType == ELEVATION.WATER) {
-//						this.leftGround.SetActive (true);
-//					} else if (neighbours [i].hexTile.biomeType != this.biomeType) {
-//						this.leftBorder.SetActive (true);
-//					}
-//				}
-//			}
-//		}
-//	}
-
-//	public void SetTileSprites(Sprite baseSprite, Sprite leftSprite, Sprite rightSprite, Sprite leftCornerSprite, Sprite rightCornerSprite, Sprite[] centerSprite){
-//		this.GetComponent<SpriteRenderer>().sprite = baseSprite;
-//		this.leftGround.GetComponent<SpriteRenderer>().sprite = leftSprite;
-//		this.rightGround.GetComponent<SpriteRenderer>().sprite = rightSprite;
-//		this.bottomLeftGround.GetComponent<SpriteRenderer>().sprite = leftCornerSprite;
-//		this.bottomRightGround.GetComponent<SpriteRenderer>().sprite = rightCornerSprite;
-//		if (this.elevationType == ELEVATION.MOUNTAIN) {
-//			this.centerPiece.SetActive(true);
-//		} else {
-//			if (this.biomeType == BIOMES.GRASSLAND) {
-//				return;
-//			} else if (this.biomeType == BIOMES.WOODLAND || this.biomeType == BIOMES.FOREST) {
-//				this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite[Random.Range(0, centerSprite.Length)];
-//				this.centerPiece.SetActive(true);
-//			} else {
-//				int chanceForDetail = Random.Range (0, 100);
-//				if (chanceForDetail < 25) {
-//					this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite[Random.Range(0, centerSprite.Length)];
-//					this.centerPiece.SetActive(true);
-//					float randomXPosition = Random.Range(-1.30f, 1.30f);
-//					float randomYPosition = Random.Range(-0.40f, 0.70f);
-//					if (randomXPosition <= 0.45f && randomXPosition >= -0.45f) {
-//						int chanceToModify = Random.Range(0, 100);
-//						if (chanceToModify < 25) {
-//							if (Mathf.Sign (randomYPosition) == 0) {
-//								//negative
-//								randomYPosition -= Random.Range(0.20f,0.40f);
-//							} else {
-//								//positive
-//								randomYPosition += Random.Range(0.20f,0.40f);
-//							}
-//						}
-//					}
-//					this.centerPiece.transform.localPosition = new Vector3(randomXPosition, randomYPosition, 0f);
-//				}
-//			}
-//
-//		}
-//	}
 }

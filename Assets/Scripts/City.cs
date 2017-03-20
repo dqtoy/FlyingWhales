@@ -9,7 +9,6 @@ public class City{
 	public string name;
 	public HexTile hexTile;
 	public Kingdom kingdom;
-	public List<City> connectedCities;
 	public List<HexTile> ownedTiles;
 	public List<Citizen> citizens;
 	public string cityHistory;
@@ -33,7 +32,6 @@ public class City{
 		this.name = "City" + this.id.ToString();
 		this.hexTile = hexTile;
 		this.kingdom = kingdom;
-		this.connectedCities = new List<City>();
 		this.ownedTiles = new List<HexTile>();
 		this.citizens = new List<Citizen>();
 		this.cityHistory = string.Empty;

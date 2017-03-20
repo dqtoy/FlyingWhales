@@ -116,6 +116,14 @@ public enum ROLE{
 	GENERAL,
 }
 
+public enum BASE_RESOURCE_TYPE{
+	FOOD,
+	WOOD,
+	STONE,
+	SPECIAL,
+	GOLD
+}
+
 public enum BEHAVIOR_TRAIT{
 	NAIVE,
 	SCHEMING,
