@@ -133,4 +133,15 @@ public class Utilities : MonoBehaviour {
 		}
 	}
 	#endregion
+
+	public static void ChangeDescendantsRecursively(Citizen royalty, bool isDescendant){
+		royalty.isDirectDescendant = isDescendant;
+
+
+		for(int i = 0; i < royalty.children.Count; i++){
+			if(royalty.children[i] != null){
+				ChangeDescendantsRecursively (royalty.children [i], isDescendant);
+			}
+		}
+	}
 }

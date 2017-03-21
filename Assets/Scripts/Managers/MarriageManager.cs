@@ -9,20 +9,11 @@ public class MarriageManager : MonoBehaviour {
 	void Awake(){
 		Instance = this;
 	}
-	internal Citizen MakeBaby(Citizen father, Citizen mother, int age = 0, bool isLord = false){
+	internal Citizen MakeBaby(Citizen father, Citizen mother, int age = 0){
 		GENDER gender = (GENDER)(UnityEngine.Random.Range (0, System.Enum.GetNames (typeof(GENDER)).Length));
 		//		int age = 0;
-		if(isLord){
-			int randomGender = UnityEngine.Random.Range (0, 100);
-			if(randomGender < 20){
-				gender = GENDER.FEMALE;
-			}else{
-				gender = GENDER.MALE;
-			}
 
-			//			age = UnityEngine.Random.Range (16, 36);
-		}
-		Citizen child = new Citizen(father.kingdom, age, gender, father.generation + 1);
+		Citizen child = new Citizen(father.city, age, gender, father.generation + 1);
 		if(father.isDirectDescendant || mother.isDirectDescendant){
 			child.isDirectDescendant = true;
 		}
@@ -30,7 +21,8 @@ public class MarriageManager : MonoBehaviour {
 		mother.AddChild (child);
 		child.AddParents(father, mother);
 		if(child.isDirectDescendant){
-			child.kingdom.UpdateKingSuccession ();
+			child.city.kingdom.successionLine.Add (child);
+			child.city.kingdom.UpdateKingSuccession ();
 		}
 		//		father.kingdom.royaltyList.allRoyalties.Add (child);
 
@@ -48,7 +40,7 @@ public class MarriageManager : MonoBehaviour {
 			}
 			age = UnityEngine.Random.Range (lowerLimit, (otherSpouse.age + 11));
 		}
-		Citizen spouse = new Citizen(otherSpouse.kingdom, age, gender, otherSpouse.generation);
+		Citizen spouse = new Citizen(otherSpouse.city, age, gender, otherSpouse.generation);
 
 		Marry (otherSpouse, spouse);
 		return spouse;
@@ -63,13 +55,13 @@ public class MarriageManager : MonoBehaviour {
 		husband.isIndependent = true;
 		wife.isIndependent = true;
 
-		if (wife.kingdom.king.id == wife.id) {
+		if (wife.city.kingdom.king.id == wife.id) {
 			//if wife is currently queen of a kingdom, the husband will recieve the kingdom
 //			wife.kingdom.AssimilateKingdom (husband.kingdom);
 		}
 
 		//the wife will transfer to the court of the husband
-		wife.kingdom = husband.kingdom;
+		wife.city.kingdom = husband.city.kingdom;
 		//		wife.loyalLord = husband.kingdom.assignedLord;
 		//		husband.kingdom.royaltyList.allRoyalties.Add(wife);
 		//		wife.kingdom.royaltyList.allRoyalties.Remove(wife);

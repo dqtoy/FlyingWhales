@@ -11,7 +11,7 @@ public class Citizen {
 	public GENDER gender;
 	public int age;
 	public int generation;
-	public Kingdom kingdom;
+	public City city;
 	public ROLE role;
 	public Role assignedRole;
 	public List<BEHAVIOR_TRAIT> behaviorTraits;
@@ -39,13 +39,13 @@ public class Citizen {
 
 	private string history;
 
-	public Citizen(Kingdom kingdom, int age, GENDER gender, int generation){
+	public Citizen(City city, int age, GENDER gender, int generation){
 		this.id = Utilities.SetID (this);
 		this.name = "CITIZEN" + this.id;
 		this.age = age;
 		this.gender = gender;
 		this.generation = generation;
-		this.kingdom = kingdom;
+		this.city = city;
 		this.role = ROLE.UNTRAINED;
 		this.assignedRole = null;
 //		this.trait = GetTrait();
@@ -68,7 +68,7 @@ public class Citizen {
 		this.isPretender = false;
 		this.isDead = false;
 		this.history = string.Empty;
-//		this.kingdom.royaltyList.allRoyalties.Add (this);
+		this.city.citizens.Add (this);
 //		if(this.kingdom.assignedLord == null){
 //			this.loyalLord = this;
 //		}else{
@@ -143,7 +143,7 @@ public class Citizen {
 	}
 	internal void Death(){
 //		this.kingdom.royaltyList.allRoyalties.Remove (this);
-//		this.kingdom.royaltyList.successionRoyalties.Remove (this);
+		this.city.kingdom.successionLine.Remove (this);
 		this.isDead = true;
 		EventManager.StopListening ("CitizenTurnActions", TurnActions);
 //		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
