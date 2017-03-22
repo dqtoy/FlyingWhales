@@ -13,7 +13,7 @@ public class CityGenerator : MonoBehaviour {
 		Instance = this;
 	}
 
-	public void GenerateCities(List<GameObject> allHexes){
+	public void GenerateHabitableTiles(List<GameObject> allHexes){
 		habitableTiles = new List<HexTile>();
 
 		List<GameObject> elligibleTiles = new List<GameObject>(allHexes);
@@ -68,5 +68,5 @@ public class CityGenerator : MonoBehaviour {
 		habitableTiles.Add(hexTile);
 		hexTile.GetComponent<SpriteRenderer>().color = Color.black;
 	}
-
+		
 }

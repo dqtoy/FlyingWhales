@@ -9,8 +9,9 @@ public class MapGenerator : MonoBehaviour {
 		Biomes.Instance.GenerateElevation();
 		Biomes.Instance.GenerateBiome();
 		Biomes.Instance.GenerateTileDetails();
-		CityGenerator.Instance.GenerateCities(GridMap.Instance.listHexes);
+		CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 		PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.habitableTiles);
+		KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.habitableTiles);
 	}
 
 }
