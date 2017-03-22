@@ -160,6 +160,7 @@ public enum MISC_TRAIT{
 }
 
 public enum CAMPAIGN{
+	NONE,
 	OFFENSE,
 	DEFENSE,
 }
