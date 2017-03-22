@@ -10,6 +10,7 @@ public class City{
 	public string name;
 	public HexTile hexTile;
 	public Kingdom kingdom;
+	public Citizen governor;
 	public List<HexTile> ownedTiles;
 	public List<Citizen> citizens;
 	public string cityHistory;
@@ -27,7 +28,7 @@ public class City{
 
 	[Space(5)]
 	public bool isStarving;
-
+	public bool isDead;
 	//generals
 	//incoming generals
 
@@ -36,11 +37,13 @@ public class City{
 		this.name = "City" + this.id.ToString();
 		this.hexTile = hexTile;
 		this.kingdom = kingdom;
+		this.governor = null;
 		this.ownedTiles = new List<HexTile>();
 		this.citizens = new List<Citizen>();
 		this.cityHistory = string.Empty;
 		this.hasKing = false;
-
+		this.isStarving = false;
+		this.isDead = false;
 		EventManager.StartListening ("Starvation", Starvation);
 	}
 
@@ -376,4 +379,6 @@ public class City{
 			}
 		}
 	}
+
+
 }

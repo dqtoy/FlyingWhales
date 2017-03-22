@@ -57,6 +57,18 @@ public class Kingdom{
 		UpdateKingSuccession ();
 	}
 
+	internal void DethroneKing(Citizen newKing){
+		if(!newKing.isDirectDescendant){
+			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
+			Utilities.ChangeDescendantsRecursively (newKing, true);
+			Utilities.ChangeDescendantsRecursively (this.king, false);
+		}
+		this.king = newKing;
+		this.successionLine.Clear();
+		ChangeSuccessionLineRescursively (newKing);
+		this.successionLine.AddRange (GetSiblings (newKing));
+		UpdateKingSuccession ();
+	}
 	internal void ChangeSuccessionLineRescursively(Citizen royalty){
 		if(this.king.id != royalty.id){
 			if(!royalty.isDead){

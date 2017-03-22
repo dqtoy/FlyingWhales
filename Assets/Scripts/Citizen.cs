@@ -260,20 +260,22 @@ public class Citizen {
 		if(chosenCampaign != null){
 			chosenCampaign.registeredGenerals.Add (general);
 			AssignCampaignToGeneral (general, chosenCampaign);
-			if(chosenCampaign.registeredGenerals.Count >= this.GetArmyStrengthByPercentage(20f)){
+			if(chosenCampaign.registeredGenerals.Count >= this.campaignManager.GetGeneralCountByPercentage (20f)){
 				chosenCampaign.isFull = true;
 			}
 		}
 	}
 	internal void AssignCampaignToGeneral(Citizen general, Campaign chosenCampaign){
+		if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
+			((General)general.assignedRole).targetLocation = chosenCampaign.rallyPoint;
+		}else{
+			((General)general.assignedRole).targetLocation = chosenCampaign.targetCity.hexTile;
+		}
+		((General)general.assignedRole).warLeader = chosenCampaign.leader;
+		((General)general.assignedRole).campaignID = chosenCampaign.id;
 		((General)general.assignedRole).assignedCampaign = chosenCampaign.campaignType;
 		((General)general.assignedRole).targetCity = chosenCampaign.targetCity;
-		((General)general.assignedRole).targetLocation = chosenCampaign.targetCity.hexTile;
 		((General)general.assignedRole).location = general.assignedTile;
 	}
-	internal int GetArmyStrengthByPercentage(float percent){
-		float percentage = 0f; // (percent / 100f) * this.allControlledGenerals.Count;
 
-		return (int)percentage;
-	}
 }
