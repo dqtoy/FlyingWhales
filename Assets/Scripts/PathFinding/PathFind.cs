@@ -26,7 +26,7 @@ namespace PathFind {
 
 				double d;
 				Path<Node> newPath;
-//				if (pathfindingMode == PATHFINDING_MODE.ROAD_CREATION) {
+				if (pathfindingMode == PATHFINDING_MODE.ROAD_CREATION) {
 					foreach (Node n in path.LastStep.ValidTiles) {
 						d = distance (path.LastStep, n);
 						newPath = path.AddStep (n, d);
@@ -39,13 +39,13 @@ namespace PathFind {
 //						newPath = path.AddStep (n, d);
 //						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
 //					}
-//				} else {
-//					foreach (Node n in path.LastStep.RoadTiles) {
-//						d = distance (path.LastStep, n);
-//						newPath = path.AddStep (n, d);
-//						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
-//					}
-//				}
+				} else {
+					foreach (Node n in path.LastStep.RoadTiles) {
+						d = distance (path.LastStep, n);
+						newPath = path.AddStep (n, d);
+						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
+					}
+				}
 			}
 			return null;
 		}

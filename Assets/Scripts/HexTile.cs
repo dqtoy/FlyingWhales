@@ -40,12 +40,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameObject bottomLeftBorder;
 	public GameObject bottomRightBorder;
 
-	public List<HexTile> connectedTiles;
+	public List<HexTile> connectedTiles = new List<HexTile>();
 
 //	int[] allResourceValues;
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
-	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.WATER); } }
+	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN); } }
+	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
 
 	[ContextMenu("LALALA")]
 	public void Show(){
@@ -55,10 +56,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				tiles [i].GetComponent<SpriteRenderer> ().color = Color.magenta;
 			}
 		}
-	}
-
-	void Start(){
-		connectedTiles = new List<HexTile>();
 	}
 
 	#region Resource

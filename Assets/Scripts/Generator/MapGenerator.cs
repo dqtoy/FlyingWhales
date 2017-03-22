@@ -10,6 +10,7 @@ public class MapGenerator : MonoBehaviour {
 		Biomes.Instance.GenerateBiome();
 		Biomes.Instance.GenerateTileDetails();
 		CityGenerator.Instance.GenerateCities(GridMap.Instance.listHexes);
+		PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.habitableTiles);
 	}
 
 }
