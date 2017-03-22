@@ -44,7 +44,7 @@ public class GridMap : MonoBehaviour {
 				hex.transform.position = new Vector3(xPosition, yPosition,0f);
 				hex.transform.localScale = new Vector3(tileSize,tileSize,0f);
 				hex.name = x + "," + y;
-				hex.GetComponent<HexTile>().name = hex.name;
+				hex.GetComponent<HexTile>().tileName = hex.name;
 				hex.GetComponent<HexTile>().xCoordinate = x;
 				hex.GetComponent<HexTile>().yCoordinate = y;
 				listHexes.Add(hex);

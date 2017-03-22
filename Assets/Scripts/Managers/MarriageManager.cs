@@ -55,13 +55,13 @@ public class MarriageManager : MonoBehaviour {
 		husband.isIndependent = true;
 		wife.isIndependent = true;
 
-		if (wife.city.kingdom.king.id == wife.id) {
+//		if (wife.city.kingdom.king.id == wife.id) {
 			//if wife is currently queen of a kingdom, the husband will recieve the kingdom
 //			wife.kingdom.AssimilateKingdom (husband.kingdom);
-		}
+//		}
 
 		//the wife will transfer to the court of the husband
-		wife.city.kingdom = husband.city.kingdom;
+//		wife.city.kingdom = husband.city.kingdom;
 		//		wife.loyalLord = husband.kingdom.assignedLord;
 		//		husband.kingdom.royaltyList.allRoyalties.Add(wife);
 		//		wife.kingdom.royaltyList.allRoyalties.Remove(wife);

@@ -30,10 +30,6 @@ public class Kingdom{
 		this.kingdomHistory = string.Empty;
 		this.kingdomColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
 
-		for (int i = 0; i < cities.Count; i++) {
-			this.AddTileToKingdom(cities[i]);
-		}
-
 		if (race == RACE.HUMANS) {
 			this.basicResource = BASE_RESOURCE_TYPE.STONE;
 			this.rareResource = RESOURCE.MITHRIL;
@@ -48,6 +44,9 @@ public class Kingdom{
 			this.rareResource = RESOURCE.COBALT;
 		}
 
+		for (int i = 0; i < cities.Count; i++) {
+			this.AddTileToKingdom(cities[i]);
+		}
 	}
 
 
