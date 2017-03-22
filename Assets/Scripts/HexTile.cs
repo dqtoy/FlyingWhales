@@ -43,8 +43,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public List<HexTile> connectedTiles = new List<HexTile>();
 
-//	int[] allResourceValues;
-
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
 	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN); } }
 	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
@@ -360,4 +358,5 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			break;
 		}
 	}
+
 }

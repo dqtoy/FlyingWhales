@@ -9,5 +9,13 @@ public class GameManager : MonoBehaviour {
 		Instance = this;
 	}
 
+	[ContextMenu("Start Progression")]
+	public void StartProgression(){
+		InvokeRepeating ("WeekEnded", 0f, 1f); 
+	}
+
+	public void WeekEnded(){
+		EventManager.TriggerEvent ("ProduceResources");
+	}
 
 }
