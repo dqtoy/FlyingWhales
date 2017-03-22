@@ -8,7 +8,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public int xCoordinate;
 	public int yCoordinate;
 
-	public string name;
+	public string tileName;
 
 	public float elevationNoise;
 	public float moistureNoise;
@@ -21,10 +21,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public ELEVATION elevationType;
 
 	public City city;
-	public Citizen occupant;
+	public Citizen occupant = null;
 
 	public bool isHabitable = false;
 	public bool isRoad = false;
+	public bool isOccupied = false;
 	public GameObject topLeft, topRight, right, bottomRight, bottomLeft, left;
 
 	public GameObject leftGround;
@@ -40,12 +41,35 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameObject bottomLeftBorder;
 	public GameObject bottomRightBorder;
 
-	public List<HexTile> connectedTiles;
+	public List<HexTile> connectedTiles = new List<HexTile>();
 
 //	int[] allResourceValues;
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
-	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.WATER); } }
+	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN); } }
+	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
+
+	public List<HexTile> elligibleTilesForPurchase { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } } 
+
+//	public List<HexTile> allFoodNeighbours { get 
+//		{ return 
+//			AllNeighbours.Where(o => (o.specialResource == RESOURCE.NONE && Utilities.GetBaseResourceType(o.defaultResource) == BASE_RESOURCE_TYPE.FOOD) || 
+//				(Utilities.GetBaseResourceType(o.specialResource) == BASE_RESOURCE_TYPE.FOOD)).ToList(); 
+//		}
+//	}
+//
+//	public List<HexTile> allBaseResourceNeighbours { get 
+//		{ return 
+//			AllNeighbours.Where(o => (o.specialResource == RESOURCE.NONE && Utilities.GetBaseResourceType(o.defaultResource) == city.kingdom.basicResource) || 
+//				(Utilities.GetBaseResourceType(o.specialResource) == city.kingdom.basicResource)).ToList(); 
+//		}
+//	}
+//
+//	public List<HexTile> allNormalNeighbours { get 
+//		{ return 
+//			AllNeighbours.Where(o => o.specialResource == RESOURCE.NONE).ToList(); 
+//		}
+//	}
 
 	[ContextMenu("LALALA")]
 	public void Show(){
@@ -55,10 +79,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				tiles [i].GetComponent<SpriteRenderer> ().color = Color.magenta;
 			}
 		}
-	}
-
-	void Start(){
-		connectedTiles = new List<HexTile>();
 	}
 
 	#region Resource
@@ -94,7 +114,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 	}
-
 	internal void AssignSpecialResource(){
 		int specialChance = UnityEngine.Random.Range (0, 100);
 
@@ -120,8 +139,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 	}
-
-
 	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
 		int totalChance = 0;
 		int lowerLimit = 0;
@@ -184,7 +201,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	#endregion
 	
-
+	#region Tile Visuals
 	public void GenerateTileDetails(){
 		List<HexTile> neighbours = this.AllNeighbours.ToList ();
 		for (int i = 0; i < neighbours.Count; i++) {
@@ -276,7 +293,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 	}
-
 	public void SetTileSprites(Sprite baseSprite, Sprite leftSprite, Sprite rightSprite, Sprite leftCornerSprite, Sprite rightCornerSprite, Sprite[] centerSprite){
 		this.GetComponent<SpriteRenderer>().sprite = baseSprite;
 		this.leftGround.GetComponent<SpriteRenderer>().sprite = leftSprite;
@@ -317,6 +333,31 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				}
 			}
 
+		}
+	}
+
+
+	#endregion
+
+	public void OccupyTile(Citizen citizen){
+		this.isOccupied = true;
+		this.occupant = citizen;
+		switch (citizen.role) {
+		case ROLE.FOODIE:
+			this.GetComponent<SpriteRenderer> ().color = Color.green;
+			break;
+		case ROLE.GATHERER:
+			this.GetComponent<SpriteRenderer> ().color = Color.cyan;
+			break;
+		case ROLE.GENERAL:
+			this.GetComponent<SpriteRenderer> ().color = Color.red;
+			break;
+		case ROLE.MINER:
+			this.GetComponent<SpriteRenderer> ().color = Color.grey;
+			break;
+		default:
+			this.GetComponent<SpriteRenderer> ().color = Color.blue;
+			break;
 		}
 	}
 }

@@ -13,7 +13,7 @@ public class CityGenerator : MonoBehaviour {
 		Instance = this;
 	}
 
-	public void GenerateCities(List<GameObject> allHexes){
+	public void GenerateHabitableTiles(List<GameObject> allHexes){
 		habitableTiles = new List<HexTile>();
 
 		List<GameObject> elligibleTiles = new List<GameObject>(allHexes);
@@ -31,7 +31,13 @@ public class CityGenerator : MonoBehaviour {
 			HexTile[] adjacentTiles = currentHexTile.AllNeighbours.ToArray();
 			HexTile[] tilesInRange = currentHexTile.GetTilesInRange(14f);
 
-			HexTile[] foodTiles = adjacentTiles.Where(x => Utilities.GetBaseResourceType (x.defaultResource) == BASE_RESOURCE_TYPE.FOOD).ToArray();
+			HexTile[] foodTiles = adjacentTiles.Where(x => Utilities.GetBaseResourceType (x.defaultResource) == BASE_RESOURCE_TYPE.FOOD || 
+				Utilities.GetBaseResourceType (x.specialResource) == BASE_RESOURCE_TYPE.FOOD).ToArray();
+			
+			HexTile[] basicResourceTiles = adjacentTiles.Where(x => Utilities.GetBaseResourceType(x.defaultResource) == BASE_RESOURCE_TYPE.STONE ||
+				Utilities.GetBaseResourceType(x.defaultResource) == BASE_RESOURCE_TYPE.WOOD || Utilities.GetBaseResourceType(x.specialResource) == BASE_RESOURCE_TYPE.STONE ||
+				Utilities.GetBaseResourceType(x.specialResource) == BASE_RESOURCE_TYPE.WOOD).ToArray();
+
 
 			List<HexTile> specialTiles = new List<HexTile>();
 			List<HexTile> nearCityTiles = new List<HexTile>();
@@ -48,7 +54,7 @@ public class CityGenerator : MonoBehaviour {
 			}
 
 
-			if (foodTiles.Length >= 2 && specialTiles.Count >= 3 && nearCityTiles.Count <= 0) {
+			if (foodTiles.Length >= 2 && basicResourceTiles.Length >= 1 && specialTiles.Count >= 3 && nearCityTiles.Count <= 0) {
 				SetTileAsHabitable(currentHexTile);
 				elligibleTiles.Remove(currentHexTile.gameObject);
 				for (int j = 0; j < tilesInRange.Length; j++) {
@@ -68,5 +74,5 @@ public class CityGenerator : MonoBehaviour {
 		habitableTiles.Add(hexTile);
 		hexTile.GetComponent<SpriteRenderer>().color = Color.black;
 	}
-
+		
 }

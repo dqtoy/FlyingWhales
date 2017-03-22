@@ -24,6 +24,7 @@ public class Citizen {
 	public Citizen mother;
 	public Citizen spouse;
 	public List<Citizen> children;
+	public HexTile workLocation;
 	public CitizenChances citizenChances;
 	public CampaignManager campaignManager;
 	public MONTH birthMonth;
@@ -64,6 +65,7 @@ public class Citizen {
 		this.mother = null;
 		this.spouse = null;
 		this.children = new List<Citizen> ();
+		this.workLocation = null;
 		this.citizenChances = new CitizenChances ();
 		this.campaignManager = new CampaignManager (this);
 //		this.birthMonth = (MONTH) PoliticsPrototypeManager.Instance.month;

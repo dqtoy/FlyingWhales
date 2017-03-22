@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Role : MonoBehaviour {
+public class Role {
 	public Citizen citizen;
 
 	public Role(Citizen citizen){
