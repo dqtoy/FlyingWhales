@@ -5,6 +5,10 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager Instance = null;
 
+	public int month;
+	public int week;
+	public int year;
+
 	void Awake(){
 		Instance = this;
 	}
@@ -15,6 +19,16 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void WeekEnded(){
+		this.week += 1;
+		if (week > 4) {
+			this.week = 1;
+			this.month += 1;
+			if (this.month > 12) {
+				this.month = 1;
+				this.year += 1;
+			}
+		}
+		EventManager.TriggerEvent ("CitizenTurnActions");
 		EventManager.TriggerEvent ("ProduceResources");
 	}
 
