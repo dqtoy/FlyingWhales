@@ -17,22 +17,56 @@ public class Gatherer : Role {
 				resourceToUse = this.citizen.workLocation.specialResource;
 			}
 
+			int goldProduction = 40;
+			int resourceProduction = 0;
+			if (this.citizen.skillTraits.Contains (SKILL_TRAIT.EFFICIENT)) {
+				resourceProduction += 2;
+			} else if (this.citizen.skillTraits.Contains (SKILL_TRAIT.INEFFICIENT)) {
+				resourceProduction -= 2;
+			}
+
+			if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.EFFICIENT)) {
+				resourceProduction += 1;
+			} else if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.INEFFICIENT)) {
+				resourceProduction -= 1;
+			}
+
+			if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.EFFICIENT)) {
+				resourceProduction += 1;
+			} else if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.INEFFICIENT)) {
+				resourceProduction -= 1;
+			}
+
+			if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
+				goldProduction -= 5;
+			} else if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
+				goldProduction += 5;
+			}
+
+			if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
+				goldProduction -= 5;
+			} else if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
+				goldProduction += 5;
+			}
+
 			if (Utilities.GetBaseResourceType (resourceToUse) == BASE_RESOURCE_TYPE.STONE) {
 				if (resourceToUse == RESOURCE.GRANITE) {
-					return new int[]{ 0, 0, 10, 0, 0, 0, 40 };
+					resourceProduction += 10;
 				} else if (resourceToUse == RESOURCE.SLATE) {
-					return new int[]{ 0, 0, 14, 0, 0, 0, 40 };
+					resourceProduction += 14;
 				} else if (resourceToUse == RESOURCE.MARBLE) {
-					return new int[]{ 0, 0, 18, 0, 0, 0, 40 };
+					resourceProduction += 18;
 				}
+				return new int[]{ 0, 0, resourceProduction, 0, 0, 0, goldProduction };
 			} else if (Utilities.GetBaseResourceType (resourceToUse) == BASE_RESOURCE_TYPE.WOOD) {
 				if (resourceToUse == RESOURCE.CEDAR) {
-					return new int[]{ 0, 10, 0, 0, 0, 0, 40 };
+					resourceProduction += 10;
 				} else if (resourceToUse == RESOURCE.OAK) {
-					return new int[]{ 0, 14, 0, 0, 0, 0, 40 };
+					resourceProduction += 14;
 				} else if (resourceToUse == RESOURCE.EBONY) {
-					return new int[]{ 0, 18, 0, 0, 0, 0, 40 };
+					resourceProduction += 18;
 				}
+				return new int[]{ 0, 0, resourceProduction, 0, 0, 0, goldProduction };
 			}
 		}
 		return new int[]{ 0, 0, 0, 0, 0, 0, 0 };

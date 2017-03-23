@@ -13,6 +13,7 @@ public class EventManager : MonoBehaviour {
 	public CityEverydayTurnActions onCityEverydayTurnActions = new CityEverydayTurnActions();
 	public MassChangeSupportedCitizen onMassChangeSupportedCitizen =  new MassChangeSupportedCitizen();
 	public CitizenMove onCitizenMove =  new CitizenMove();
+	public CitizenDiedEvent onCitizenDiedEvent =  new CitizenDiedEvent();
 
 	void Awake(){
 		Instance = this;

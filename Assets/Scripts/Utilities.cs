@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 
 public class Utilities : MonoBehaviour {
@@ -46,6 +47,12 @@ public class Utilities : MonoBehaviour {
 		return 0;
 	}
 
+	public static T[] GetEnumValues<T>() where T : struct {
+		if (!typeof(T).IsEnum) {
+			throw new ArgumentException("GetValues<T> can only be called for types derived from System.Enum", "T");
+		}
+		return (T[])Enum.GetValues(typeof(T));
+	}
 
 	public static Dictionary<BIOMES, SpecialResourceChance> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance> () { 
 		{BIOMES.BARE, new SpecialResourceChance(

@@ -70,9 +70,9 @@ public class Citizen {
 		this.citizenChances = new CitizenChances ();
 		this.campaignManager = new CampaignManager (this);
 		this.relationshipKings = new List<RelationshipKings> ();
-//		this.birthMonth = (MONTH) PoliticsPrototypeManager.Instance.month;
-//		this.birthWeek = PoliticsPrototypeManager.Instance.week;
-//		this.birthYear = PoliticsPrototypeManager.Instance.year;
+		this.birthMonth = (MONTH) GameManager.Instance.month;
+		this.birthWeek = GameManager.Instance.week;
+		this.birthYear = GameManager.Instance.year;
 		this.isIndependent = false;
 		this.isMarried = false;
 		this.isDirectDescendant = false;
@@ -89,10 +89,105 @@ public class Citizen {
 //			this.loyalLord = this.kingdom.assignedLord;
 //		}
 
+		this.GenerateTraits();
+
 		EventManager.Instance.onCitizenTurnActions.AddListener (TurnActions);
-		EventManager.Instance.onMassChangeSupportedCitizen.AddListener (MassChangeSupportedCitizen);
+		EventManager.Instance.onMassChangeSupportedCitizen.AddListener (MassChangeSupportedCitizen);	
+	}
+
+	internal void GenerateTraits(){
+		if (this.mother == null || this.father == null) {
+			return;
+		}
+
+		//Generate Behaviour trait
+		int firstItem = 0;
+		int secondItem = 1;
+		for (int j = 0; j < 4; j++) {
+			BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
+			int chanceForTrait = UnityEngine.Random.Range (0, 100);
+			if (chanceForTrait <= 20) {
+				//the behaviour pairs are always contradicting
+				BEHAVIOR_TRAIT behaviourTrait1 = (BEHAVIOR_TRAIT)firstItem;
+				BEHAVIOR_TRAIT behaviourTrait2 = (BEHAVIOR_TRAIT)secondItem;
+				int chanceForTrait1 = 50;
+				int chanceForTrait2 = 50;
+
+				if (mother.behaviorTraits.Contains (behaviourTrait1)) { chanceForTrait1 += 15; chanceForTrait2 -= 15;}
+
+				if (father.behaviorTraits.Contains (behaviourTrait1)) { chanceForTrait1 += 15; chanceForTrait2 -= 15;}
+
+				if (mother.behaviorTraits.Contains (behaviourTrait2)) { chanceForTrait2 += 15; chanceForTrait1 -= 15;}
+
+				if (father.behaviorTraits.Contains (behaviourTrait2)) { chanceForTrait2 += 15; chanceForTrait1 -= 15;}
+
+				int traitChance = UnityEngine.Random.Range (0, (chanceForTrait1 + chanceForTrait2));
+				if (traitChance <= chanceForTrait1) {
+					this.behaviorTraits.Add (behaviourTrait1);
+				} else {
+					this.behaviorTraits.Add (behaviourTrait2);
+				}
+			}
+			firstItem += 2;
+			secondItem += 2;
+		}
+
+		//Generate Skill Trait
+		int chanceForSkillTraitLength = UnityEngine.Random.Range (0, 100);
+		int numOfSkillTraits = 0;
+		if (chanceForSkillTraitLength <= 20) {
+			numOfSkillTraits = 2;
+		} else if (chanceForSkillTraitLength >= 21 && chanceForSkillTraitLength <= 40) {
+			numOfSkillTraits = 1;
+		}
+
+		List<SKILL_TRAIT> skillTraits = new List<SKILL_TRAIT>();
+		if (father.skillTraits.Count > 0 || mother.skillTraits.Count > 0) {
+			int skillListChance = UnityEngine.Random.Range (0, 100);
+			if (skillListChance < 50) {
+				skillTraits.AddRange(father.skillTraits);
+				skillTraits.AddRange(mother.skillTraits);
+			} else {
+				skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+			}
+		} else {
+			skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+		}
+			
+		for (int j = 0; j < numOfSkillTraits; j++) {
+			SKILL_TRAIT chosenSkillTrait = skillTraits[UnityEngine.Random.Range(0, skillTraits.Count)];
+			this.skillTraits.Add (chosenSkillTrait);
+			if (numOfSkillTraits > 1) {
+				skillTraits.Remove (chosenSkillTrait);
+				if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
+					skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
+				} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
+					skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
+				} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
+					skillTraits.Remove (SKILL_TRAIT.THRIFTY);
+				} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
+					skillTraits.Remove (SKILL_TRAIT.LAVISH);
+				}
+			}
+		}
+
+		//misc traits
+		int chanceForMiscTraitLength = UnityEngine.Random.Range (0, 100);
+		int numOfMiscTraits = 0;
+		if (chanceForMiscTraitLength <= 10) {
+			numOfMiscTraits = 2;
+		} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 21) {
+			numOfMiscTraits = 1;
+		}
+
+		List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
+		for (int j = 0; j < numOfMiscTraits; j++) {
+			MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
+			this.miscTraits.Add (chosenMiscTrait);
+		}
 
 	}
+
 	internal int GetCampaignLimit(){
 		if(this.miscTraits.Contains(MISC_TRAIT.TACTICAL)){
 			return 3;
@@ -114,7 +209,7 @@ public class Citizen {
 	}
 	internal void TurnActions(){
 		AttemptToAge();
-		DeathReasons ();
+		DeathReasons();
 	}
 
 	protected void AttemptToAge(){
@@ -180,9 +275,11 @@ public class Citizen {
 			}
 		}
 		this.city.kingdom.successionLine.Remove (this);
+		this.city.citizens.Remove(this);
 		this.isDead = true;
 		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
 		EventManager.Instance.onMassChangeSupportedCitizen.RemoveListener (MassChangeSupportedCitizen);
+
 		if(this.role == ROLE.GENERAL){
 			if(((General)this.assignedRole).army.hp <= 0){
 				EventManager.Instance.onCitizenMove.RemoveListener (((General)this.assignedRole).Move);
@@ -192,12 +289,15 @@ public class Citizen {
 		if(this.role != ROLE.GENERAL){
 			this.city.citizens.Remove (this);
 		}
+			
+		EventManager.Instance.onCitizenDiedEvent.Invoke ();
 
 
 //		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
 //		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
 //		RoyaltyEventDelegate.onMassChangeLoyalty -= MassChangeLoyalty;
 //		PoliticsPrototypeManager.Instance.turnEnded -= TurnActions;
+
 //
 		if (this.id == this.city.kingdom.king.id) {
 			//ASSIGN NEW LORD, SUCCESSION

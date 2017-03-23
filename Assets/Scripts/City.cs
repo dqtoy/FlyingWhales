@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 [System.Serializable]
 public class City{
@@ -47,9 +48,10 @@ public class City{
 		this.isDead = false;
 		this.allResourceProduction = new int[]{ 0, 0, 0, 0, 0, 0, 0 };
 
-		this.CreateInitialFamilies ();
+		this.CreateInitialFamilies();
 
-		EventManager.Instance.onCitizenTurnActions.AddListener (CityEverydayTurnActions);
+		EventManager.Instance.onCityEverydayTurnActions.AddListener (CityEverydayTurnActions);
+		EventManager.Instance.onCitizenDiedEvent.AddListener (CheckCityDeath);
 	}
 
 
@@ -64,6 +66,7 @@ public class City{
 		CreateInitialFoodProducerFamily ();
 		CreateInitialGathererFamily ();
 		CreateInitialUntrainedFamily ();
+		GenerateInitialTraitsForInitialCitizens ();
 	}
 
 	private void BuyInitialTiles(){
@@ -278,6 +281,8 @@ public class City{
 		mother.AddChild (governor);
 		governor.AddParents(father, mother);
 		MarriageManager.Instance.Marry(father, mother);
+
+		this.governor = governor;
 
 		int siblingsChance = UnityEngine.Random.Range (0, 100);
 		if(siblingsChance < 25){
@@ -537,9 +542,71 @@ public class City{
 			}
 		}
 	}
+	private void GenerateInitialTraitsForInitialCitizens(){
+		for (int i = 0; i < this.citizens.Count; i++) {
+			Citizen currentCitizen = this.citizens[i];
+			currentCitizen.behaviorTraits.Clear();
+			currentCitizen.skillTraits.Clear();
+			currentCitizen.miscTraits.Clear();
 
+			//Generate Behaviour trait
+			int firstItem = 0;
+			int secondItem = 1;
+			for (int j = 0; j < 4; j++) {
+				BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
+				int chanceForTrait = UnityEngine.Random.Range (0, 100);
+				if (chanceForTrait <= 20) {
+					currentCitizen.behaviorTraits.Add (behaviourPair [UnityEngine.Random.Range (0, behaviourPair.Length)]);
+				}
+				firstItem += 2;
+				secondItem += 2;
+			}
 
-	internal void Starvation(){
+			int chanceForSkillTraitLength = UnityEngine.Random.Range (0, 100);
+			int numOfSkillTraits = 0;
+			if (chanceForSkillTraitLength <= 20) {
+				numOfSkillTraits = 2;
+			} else if (chanceForSkillTraitLength >= 21 && chanceForSkillTraitLength <= 40) {
+				numOfSkillTraits = 1;
+			}
+
+			//Generate Skill Traits
+			List<SKILL_TRAIT> skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+			for (int j = 0; j < numOfSkillTraits; j++) {
+				SKILL_TRAIT chosenSkillTrait = skillTraits[UnityEngine.Random.Range(0, skillTraits.Count)];
+				currentCitizen.skillTraits.Add (chosenSkillTrait);
+				if (numOfSkillTraits > 1) {
+					skillTraits.Remove (chosenSkillTrait);
+					if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
+						skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
+					} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
+						skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
+					} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
+						skillTraits.Remove (SKILL_TRAIT.THRIFTY);
+					} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
+						skillTraits.Remove (SKILL_TRAIT.LAVISH);
+					}
+				}
+			}
+
+			int chanceForMiscTraitLength = UnityEngine.Random.Range (0, 100);
+			int numOfMiscTraits = 0;
+			if (chanceForMiscTraitLength <= 10) {
+				numOfMiscTraits = 2;
+			} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 21) {
+				numOfMiscTraits = 1;
+			}
+
+			//Generate Misc Traits
+			List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
+			for (int j = 0; j < numOfMiscTraits; j++) {
+				MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
+				currentCitizen.miscTraits.Add (chosenMiscTrait);
+			}
+		}
+	}
+		
+	internal void TriggerStarvation(){
 		if(this.isStarving){
 			int deathChance = UnityEngine.Random.Range (0, 100);
 			if(deathChance < 5){
@@ -588,10 +655,11 @@ public class City{
 	internal void CheckBattleMidwayCity(){
 		
 	}
+
 	protected void CityEverydayTurnActions(){
 		ProduceResources ();
-		Starvation ();
 	}
+
 	#region Resource Production
 	protected void UpdateResourceProduction(){
 		for (int i = 0; i < this.citizens.Count; i++) {
@@ -612,6 +680,20 @@ public class City{
 		this.mithrilCount += this.allResourceProduction[4];
 		this.cobaltCount += this.allResourceProduction[5];
 		this.goldCount += this.allResourceProduction[6];
+
+		if (this.citizens.Count > this.sustainability) {
+			this.isStarving = true;
+			this.TriggerStarvation();
+		}
 	}
 	#endregion
+
+	internal void CheckCityDeath(){
+		if (this.citizens.Count <= 0) {
+			this.isDead = true;
+			this.hexTile.city = null;
+			EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
+			EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
+		}
+	}
 }
