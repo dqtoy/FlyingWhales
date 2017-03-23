@@ -95,24 +95,36 @@ public class Kingdom{
 		this.successionLine = orderedRoyalties;
 	}
 
-	internal void AssignNewLord(Citizen newLord){
+	internal void AssignNewKing(Citizen newKing){
+		if(newKing == null){
+			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+			this.king.city.CreateInitialRoyalFamily ();
+			this.king.CreateInitialRelationshipsToKings ();
+			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+
+		}else{
+			EventManager.Instance.onMassChangeSupportedCitizen.Invoke (newKing, this.king);
+
+			if(!newKing.isDirectDescendant){
+				//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
+				Utilities.ChangeDescendantsRecursively (newKing, true);
+				Utilities.ChangeDescendantsRecursively (this.king, false);
+			}
+			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+			this.king = newKing;
+			this.king.CreateInitialRelationshipsToKings ();
+			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+			this.successionLine.Clear();
+			ChangeSuccessionLineRescursively (newKing);
+			this.successionLine.AddRange (GetSiblings (newKing));
+			UpdateKingSuccession ();
+		}
+	}
+	internal void DethroneKing(Citizen newKing){
 //		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);
 
-		if(!newLord.isDirectDescendant){
-			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
-			Utilities.ChangeDescendantsRecursively (newLord, true);
-			Utilities.ChangeDescendantsRecursively (this.king, false);
-		}
-		this.king = newLord;
-		this.successionLine.Clear();
-		ChangeSuccessionLineRescursively (newLord);
-		this.successionLine.AddRange (GetSiblings (newLord));
-		UpdateKingSuccession ();
-	}
-
-	internal void DethroneKing(Citizen newKing){
 		if(!newKing.isDirectDescendant){
-			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
+//			RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
 			Utilities.ChangeDescendantsRecursively (newKing, true);
 			Utilities.ChangeDescendantsRecursively (this.king, false);
 		}

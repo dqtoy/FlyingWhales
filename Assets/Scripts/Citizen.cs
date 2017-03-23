@@ -27,6 +27,7 @@ public class Citizen {
 	public HexTile workLocation;
 	public CitizenChances citizenChances;
 	public CampaignManager campaignManager;
+	public List<RelationshipKings> relationshipKings;
 	public MONTH birthMonth;
 	public int birthWeek;
 	public int birthYear;
@@ -68,6 +69,7 @@ public class Citizen {
 		this.workLocation = null;
 		this.citizenChances = new CitizenChances ();
 		this.campaignManager = new CampaignManager (this);
+		this.relationshipKings = new List<RelationshipKings> ();
 		this.birthMonth = (MONTH) GameManager.Instance.month;
 		this.birthWeek = GameManager.Instance.week;
 		this.birthYear = GameManager.Instance.year;
@@ -87,8 +89,10 @@ public class Citizen {
 //			this.loyalLord = this.kingdom.assignedLord;
 //		}
 
-		EventManager.StartListening ("CitizenTurnActions", TurnActions);
 		this.GenerateTraits();
+
+		EventManager.Instance.onCitizenTurnActions.AddListener (TurnActions);
+		EventManager.Instance.onMassChangeSupportedCitizen.AddListener (MassChangeSupportedCitizen);	
 	}
 
 	internal void GenerateTraits(){
@@ -259,8 +263,11 @@ public class Citizen {
 		}
 		Debug.Log(this.name + " DIES OF STARVATION");
 	}
-	internal void Death(){
+	internal void Death(bool isDethroned = false, Citizen newKing = null){
 //		this.kingdom.royaltyList.allRoyalties.Remove (this);
+		if(isDethroned){
+			this.isPretender = true;
+		}
 		if(this.isPretender){
 			Citizen possiblePretender = GetPossiblePretender (this);
 			if(possiblePretender != null){
@@ -269,22 +276,39 @@ public class Citizen {
 		}
 		this.city.kingdom.successionLine.Remove (this);
 		this.isDead = true;
-
-		EventManager.StopListening ("CitizenTurnActions", TurnActions);
+		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
+		EventManager.Instance.onMassChangeSupportedCitizen.RemoveListener (MassChangeSupportedCitizen);
 		EventManager.TriggerEvent("CitizenDied");
 //		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
 //		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
 //		RoyaltyEventDelegate.onMassChangeLoyalty -= MassChangeLoyalty;
 //		PoliticsPrototypeManager.Instance.turnEnded -= TurnActions;
+
 //
-//		if(this.id == this.kingdom.assignedLord.id){
-//			//ASSIGN NEW LORD, SUCCESSION
-//			if (this.kingdom.royaltyList.successionRoyalties.Count <= 0) {
-//				this.kingdom.AssignNewLord (null);
-//			} else {
-//				this.kingdom.AssignNewLord (this.kingdom.royaltyList.successionRoyalties [0]);
-//			}
-//		}
+		if (this.id == this.city.kingdom.king.id) {
+			//ASSIGN NEW LORD, SUCCESSION
+			if (isDethroned) {
+				if (newKing != null) {
+					this.city.kingdom.AssignNewKing (newKing);
+				}
+			} else{ 
+				if (this.city.kingdom.successionLine.Count <= 0) {
+					this.city.kingdom.AssignNewKing (null);
+				} else {
+					this.city.kingdom.AssignNewKing (this.city.kingdom.successionLine [0]);
+				}
+			}
+		}
+	}
+	internal void MassChangeSupportedCitizen(Citizen newSupported, Citizen previousSupported){
+		if (this.supportedCitizen.Contains(previousSupported)) {
+			this.supportedCitizen.Remove (previousSupported);
+			if (this.city.kingdom.id != newSupported.city.kingdom.id) {
+				this.supportedCitizen.Add(this.city.kingdom.king);
+			} else {
+				this.supportedCitizen.Add(newSupported);
+			}
+		}
 	}
 	private Citizen GetPossiblePretender(Citizen citizen){
 		this.possiblePretenders.Clear ();
@@ -380,6 +404,15 @@ public class Citizen {
 		((General)general.assignedRole).assignedCampaign = chosenCampaign.campaignType;
 		((General)general.assignedRole).targetCity = chosenCampaign.targetCity;
 		((General)general.assignedRole).location = general.assignedTile;
+	}
+
+	internal void CreateInitialRelationshipsToKings(){
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			Kingdom otherKingdom = KingdomManager.Instance.allKingdoms[i];
+			if (otherKingdom.id != this.city.kingdom.id) {
+				this.relationshipKings.Add (new RelationshipKings (otherKingdom.king, 0));
+			}
+		}
 	}
 
 }

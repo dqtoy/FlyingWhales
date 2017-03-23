@@ -9,6 +9,7 @@ public class Utilities : MonoBehaviour {
 	public static int lastKingdomID = 0;
 	public static int lastCitizenID = 0;
 	public static int lastCityID = 0;
+	public static int lastCampaignID = 0;
 
 	public static string[] accidentCauses = new string[]{
 		"He died because he forgot to breath.",
@@ -39,6 +40,9 @@ public class Utilities : MonoBehaviour {
 		} else if (obj is Citizen) {
 			lastCitizenID += 1;
 			return lastCitizenID;
+		} else if (obj is Campaign) {
+			lastCampaignID += 1;
+			return lastCampaignID;
 		}
 		return 0;
 	}

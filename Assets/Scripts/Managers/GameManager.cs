@@ -28,8 +28,9 @@ public class GameManager : MonoBehaviour {
 				this.year += 1;
 			}
 		}
-		EventManager.TriggerEvent ("CitizenTurnActions");
+		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.TriggerEvent ("CityTurnActions");
+		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
 	}
 
 }
