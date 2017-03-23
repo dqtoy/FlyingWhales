@@ -16,6 +16,8 @@ public class Kingdom{
 	public BASE_RESOURCE_TYPE basicResource;
 	public RESOURCE rareResource;
 
+	protected List<Relationship<Kingdom>> relationshipsWithOtherKingdoms;
+
 	public Color kingdomColor;
 	public string kingdomHistory;
 
@@ -47,6 +49,9 @@ public class Kingdom{
 		for (int i = 0; i < cities.Count; i++) {
 			this.AddTileToKingdom(cities[i]);
 		}
+		this.relationshipsWithOtherKingdoms = new List<Relationship<Kingdom>>();
+		this.CreateInitialRelationships();
+		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
 	}
 
 
@@ -56,6 +61,27 @@ public class Kingdom{
 		this.cities.Add (tile.city);
 	}
 
+	protected void CreateInitialRelationships(){
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {
+				this.relationshipsWithOtherKingdoms.Add (new Relationship<Kingdom>(KingdomManager.Instance.allKingdoms [i]));
+			}
+		}
+	}
+
+	protected void NewKingdomCreated(Kingdom createdKingdom){
+		//Add relationship to newly created kingdom
+		if (createdKingdom.id == this.id) {
+			return;
+		}
+		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
+			if (this.relationshipsWithOtherKingdoms [i].objectInRelationship.id == createdKingdom.id) {
+				//this kingdom already has a relationship with created kingdom!
+				return;
+			}
+		}
+		this.relationshipsWithOtherKingdoms.Add(new Relationship<Kingdom>(createdKingdom));
+	}
 
 	internal void UpdateKingSuccession(){
 		List<Citizen> orderedMaleRoyalties = this.successionLine.Where (x => x.gender == GENDER.MALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
@@ -122,5 +148,20 @@ public class Kingdom{
 		}
 
 		return siblings;
+	}
+
+	internal Relationship<Kingdom> GetRelationshipWithOtherKingdom(Kingdom kingdomTarget){
+		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
+			if (this.relationshipsWithOtherKingdoms[i].objectInRelationship.id == kingdomTarget.id) {
+				return this.relationshipsWithOtherKingdoms[i];
+			}
+		}
+		return null;
+	}
+
+
+	//Destructor for unsubscribing listeners
+	~Kingdom(){
+		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);
 	}
 }

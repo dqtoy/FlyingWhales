@@ -24,7 +24,7 @@ public class City{
 	public int mithrilCount;
 	public int cobaltCount;
 	public int goldCount;
-	public int[] allResourceProduction;
+	public int[] allResourceProduction; //food, lumber, stone, mana stone, mithril, cobalt, gold
 
 	[Space(5)]
 	public bool isStarving;
@@ -44,10 +44,12 @@ public class City{
 		this.hasKing = false;
 		this.isStarving = false;
 		this.isDead = false;
+		this.allResourceProduction = new int[]{ 0, 0, 0, 0, 0, 0, 0 };
 
 		this.CreateInitialFamilies ();
 
 		EventManager.StartListening ("Starvation", Starvation);
+		EventManager.StartListening ("ProduceResources", ProduceResources);
 	}
 
 
@@ -56,8 +58,8 @@ public class City{
 	 * */
 	internal void CreateInitialFamilies(){
 		BuyInitialTiles ();
-		CreateInitialRoyalFamily ();
-		CreateInitialGovernorFamily ();
+//		CreateInitialRoyalFamily ();
+//		CreateInitialGovernorFamily ();
 		CreateInitialFoodProducerFamily ();
 		CreateInitialGathererFamily ();
 		CreateInitialUntrainedFamily ();
@@ -534,4 +536,27 @@ public class City{
 		}
 		return null;
 	}
+
+	#region Resource Production
+	protected void UpdateResourceProduction(){
+		for (int i = 0; i < this.citizens.Count; i++) {
+			if(this.citizens[i].assignedRole != null && this.citizens[i].workLocation != null){
+				int[] citizenProduction = this.citizens[i].assignedRole.GetResourceProduction();
+				for (int j = 0; j < citizenProduction.Length; j++) {
+					this.allResourceProduction[j] += citizenProduction[j];
+				}
+			}
+		}
+	}
+
+	protected void ProduceResources(){
+		this.sustainability = this.allResourceProduction[0];
+		this.lumberCount += this.allResourceProduction[1];
+		this.stoneCount += this.allResourceProduction[2];
+		this.manaStoneCount += this.allResourceProduction[3];
+		this.mithrilCount += this.allResourceProduction[4];
+		this.cobaltCount += this.allResourceProduction[5];
+		this.goldCount += this.allResourceProduction[6];
+	}
+	#endregion
 }

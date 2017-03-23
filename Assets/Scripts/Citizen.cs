@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-[System.Serializable]
+//[System.Serializable]
 public class Citizen {
 
 	public int id;
@@ -112,8 +112,14 @@ public class Citizen {
 		this.birthYear = year;
 	}
 	internal void TurnActions(){
-//		CheckAge ();
+		AttemptToAge();
 		DeathReasons ();
+	}
+
+	protected void AttemptToAge(){
+		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.week == this.birthWeek && GameManager.Instance.year > this.birthYear){
+			this.age += 1;
+		}
 	}
 
 	internal void DeathReasons(){
