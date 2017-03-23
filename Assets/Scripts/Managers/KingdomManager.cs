@@ -76,6 +76,17 @@ public class KingdomManager : MonoBehaviour {
 	public void GenerateNewKingdom(RACE race, List<HexTile> cities){
 		Kingdom newKingdom = new Kingdom (race, cities);
 		allKingdoms.Add(newKingdom);
+		EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
+	}
+
+	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
+		kingdom1.GetRelationshipWithOtherKingdom(kingdom2).isAtWar = true;
+		kingdom2.GetRelationshipWithOtherKingdom(kingdom1).isAtWar = true;
+	}
+
+	public void DeclarePeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
+		kingdom1.GetRelationshipWithOtherKingdom(kingdom2).isAtWar = false;
+		kingdom2.GetRelationshipWithOtherKingdom(kingdom1).isAtWar = false;
 	}
 
 }

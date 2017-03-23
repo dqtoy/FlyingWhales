@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-[System.Serializable]
+//[System.Serializable]
 public class Citizen {
 
 	public int id;
