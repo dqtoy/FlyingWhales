@@ -89,7 +89,8 @@ public class Citizen {
 //			this.loyalLord = this.kingdom.assignedLord;
 //		}
 
-		EventManager.StartListening ("CitizenTurnActions", TurnActions);
+		EventManager.Instance.onCitizenTurnActions.AddListener (TurnActions);
+		EventManager.Instance.onMassChangeSupportedCitizen.AddListener (MassChangeSupportedCitizen);
 
 	}
 	internal int GetCampaignLimit(){
@@ -180,7 +181,9 @@ public class Citizen {
 		}
 		this.city.kingdom.successionLine.Remove (this);
 		this.isDead = true;
-		EventManager.StopListening ("CitizenTurnActions", TurnActions);
+		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
+		EventManager.Instance.onMassChangeSupportedCitizen.RemoveListener (MassChangeSupportedCitizen);
+
 //		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
 //		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
 //		RoyaltyEventDelegate.onMassChangeLoyalty -= MassChangeLoyalty;
@@ -201,7 +204,7 @@ public class Citizen {
 			}
 		}
 	}
-	internal void MassChangeLoyalty(Citizen newSupported, Citizen previousSupported){
+	internal void MassChangeSupportedCitizen(Citizen newSupported, Citizen previousSupported){
 		if (this.supportedCitizen.Contains(previousSupported)) {
 			this.supportedCitizen.Remove (previousSupported);
 			if (this.city.kingdom.id != newSupported.city.kingdom.id) {

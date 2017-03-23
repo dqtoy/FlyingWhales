@@ -48,8 +48,7 @@ public class City{
 
 		this.CreateInitialFamilies ();
 
-		EventManager.StartListening ("Starvation", Starvation);
-		EventManager.StartListening ("ProduceResources", ProduceResources);
+		EventManager.Instance.onCitizenTurnActions.AddListener (CityEverydayTurnActions);
 	}
 
 
@@ -58,8 +57,8 @@ public class City{
 	 * */
 	internal void CreateInitialFamilies(){
 		BuyInitialTiles ();
-//		CreateInitialRoyalFamily ();
-//		CreateInitialGovernorFamily ();
+		CreateInitialRoyalFamily ();
+		CreateInitialGovernorFamily ();
 		CreateInitialFoodProducerFamily ();
 		CreateInitialGathererFamily ();
 		CreateInitialUntrainedFamily ();
@@ -163,7 +162,8 @@ public class City{
 //			}
 //		}
 	}
-	private void CreateInitialRoyalFamily(){
+	internal void CreateInitialRoyalFamily(){
+		this.kingdom.successionLine.Clear ();
 		GENDER gender = GENDER.MALE;
 		int randomGender = UnityEngine.Random.Range (0, 100);
 		if(randomGender < 20){
@@ -213,16 +213,18 @@ public class City{
 			if (childChance < 25) {
 				
 				int age1 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age1);
-				int age2 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age2);
-				int age3 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age3);
-
-
 				Citizen child1 = MarriageManager.Instance.MakeBaby (this.kingdom.king, this.kingdom.king.spouse, childAges[age1]);
+				childAges.RemoveAt (age1);
+
+				int age2 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child2 = MarriageManager.Instance.MakeBaby (this.kingdom.king, this.kingdom.king.spouse, childAges[age2]);
+				childAges.RemoveAt (age2);
+
+				int age3 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child3 = MarriageManager.Instance.MakeBaby (this.kingdom.king, this.kingdom.king.spouse, childAges[age3]);
+
+
+
 
 //				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - child1.age));
 //				child2.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - child2.age));
@@ -232,12 +234,13 @@ public class City{
 			} else if (childChance >= 25 && childChance < 50) {
 				
 				int age1 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age1);
-				int age2 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age2);
-
 				Citizen child1 = MarriageManager.Instance.MakeBaby (this.kingdom.king, this.kingdom.king.spouse, childAges[age1]);
+				childAges.RemoveAt (age1);
+
+				int age2 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child2 = MarriageManager.Instance.MakeBaby (this.kingdom.king, this.kingdom.king.spouse, childAges[age2]);
+
+
 
 //				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - child1.age));
 //				child2.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - child2.age));
@@ -300,16 +303,17 @@ public class City{
 			if (childChance < 25) {
 
 				int age1 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age1);
-				int age2 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age2);
-				int age3 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age3);
-
-
 				Citizen child1 = MarriageManager.Instance.MakeBaby (governor, spouse, childAges[age1]);
+				childAges.RemoveAt (age1);
+
+				int age2 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child2 = MarriageManager.Instance.MakeBaby (governor, spouse, childAges[age2]);
+				childAges.RemoveAt (age2);
+
+				int age3 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child3 = MarriageManager.Instance.MakeBaby (governor, spouse, childAges[age3]);
+
+
 
 				//				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - child1.age));
 				//				child2.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - child2.age));
@@ -319,11 +323,10 @@ public class City{
 			} else if (childChance >= 25 && childChance < 50) {
 
 				int age1 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age1);
-				int age2 = UnityEngine.Random.Range (0, childAges.Count);
-				childAges.RemoveAt (age2);
-
 				Citizen child1 = MarriageManager.Instance.MakeBaby (governor, spouse, childAges[age1]);
+				childAges.RemoveAt (age1);
+
+				int age2 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child2 = MarriageManager.Instance.MakeBaby (governor, spouse, childAges[age2]);
 
 				//				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - child1.age));
@@ -548,7 +551,10 @@ public class City{
 			}
 		}
 	}
-
+	protected void CityEverydayTurnActions(){
+		ProduceResources ();
+		Starvation ();
+	}
 	protected void ProduceResources(){
 		this.sustainability = this.allResourceProduction[0];
 		this.lumberCount += this.allResourceProduction[1];

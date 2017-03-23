@@ -96,18 +96,29 @@ public class Kingdom{
 	}
 
 	internal void AssignNewKing(Citizen newKing){
-		EventManager.TriggerEvent ("MassChangeLoyalty");
+		if(newKing == null){
+			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+			this.king.city.CreateInitialRoyalFamily ();
+			this.king.CreateInitialRelationshipsToKings ();
+			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 
-		if(!newKing.isDirectDescendant){
-			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
-			Utilities.ChangeDescendantsRecursively (newKing, true);
-			Utilities.ChangeDescendantsRecursively (this.king, false);
+		}else{
+			EventManager.Instance.onMassChangeSupportedCitizen.Invoke (newKing, this.king);
+
+			if(!newKing.isDirectDescendant){
+				//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
+				Utilities.ChangeDescendantsRecursively (newKing, true);
+				Utilities.ChangeDescendantsRecursively (this.king, false);
+			}
+			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+			this.king = newKing;
+			this.king.CreateInitialRelationshipsToKings ();
+			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+			this.successionLine.Clear();
+			ChangeSuccessionLineRescursively (newKing);
+			this.successionLine.AddRange (GetSiblings (newKing));
+			UpdateKingSuccession ();
 		}
-		this.king = newKing;
-		this.successionLine.Clear();
-		ChangeSuccessionLineRescursively (newKing);
-		this.successionLine.AddRange (GetSiblings (newKing));
-		UpdateKingSuccession ();
 	}
 	internal void DethroneKing(Citizen newKing){
 //		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);

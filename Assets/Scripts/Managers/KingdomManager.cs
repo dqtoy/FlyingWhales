@@ -71,12 +71,18 @@ public class KingdomManager : MonoBehaviour {
 		}
 		cityForElves.Add (elligibleTilesForElves [Random.Range (0, elligibleTilesForElves.Count)]);
 		GenerateNewKingdom (RACE.ELVES, cityForElves);
+		CreateInitialRelationshipKings ();
 	}
-
+	internal void CreateInitialRelationshipKings(){
+		for(int i = 0; i < this.allKingdoms.Count; i++){
+			this.allKingdoms [i].king.CreateInitialRelationshipsToKings ();
+		}
+	}
 	public void GenerateNewKingdom(RACE race, List<HexTile> cities){
 		Kingdom newKingdom = new Kingdom (race, cities);
 		allKingdoms.Add(newKingdom);
 		EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
+
 	}
 
 	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
@@ -93,6 +99,13 @@ public class KingdomManager : MonoBehaviour {
 		for (int i = 0; i < this.allKingdoms.Count; i++) {
 			if (this.allKingdoms[i].id != newKing.city.kingdom.id) {
 				this.allKingdoms[i].king.relationshipKings.Add (new RelationshipKings(newKing, 0));
+			}
+		}
+	}
+	public void RemoveRelationshipToOtherKings(Citizen oldKing){
+		for (int i = 0; i < this.allKingdoms.Count; i++) {
+			if (this.allKingdoms[i].id != oldKing.city.kingdom.id) {
+				this.allKingdoms[i].king.relationshipKings.RemoveAll (x => x.king.id == oldKing.id);
 			}
 		}
 	}
