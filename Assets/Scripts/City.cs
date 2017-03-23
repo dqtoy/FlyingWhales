@@ -50,9 +50,8 @@ public class City{
 
 		this.CreateInitialFamilies();
 
-		EventManager.Instance.onCitizenTurnActions.AddListener (CityEverydayTurnActions);
-		EventManager.StartListening ("CityTurnActions", CityTurnActions);
-		EventManager.StartListening ("CitizenDied", CheckCityDeath);
+		EventManager.Instance.onCityEverydayTurnActions.AddListener (CityEverydayTurnActions);
+		EventManager.Instance.onCitizenDiedEvent.AddListener (CheckCityDeath);
 	}
 
 
@@ -606,11 +605,6 @@ public class City{
 			}
 		}
 	}
-
-
-	internal void CityTurnActions(){
-		ProduceResources();
-	}
 		
 	internal void TriggerStarvation(){
 		if(this.isStarving){
@@ -661,10 +655,11 @@ public class City{
 	internal void CheckBattleMidwayCity(){
 		
 	}
+
 	protected void CityEverydayTurnActions(){
 		ProduceResources ();
-		Starvation ();
 	}
+
 	#region Resource Production
 	protected void UpdateResourceProduction(){
 		for (int i = 0; i < this.citizens.Count; i++) {
@@ -697,8 +692,8 @@ public class City{
 		if (this.citizens.Count <= 0) {
 			this.isDead = true;
 			this.hexTile.city = null;
-			EventManager.StopListening ("CityTurnActions", CityTurnActions);
-			EventManager.StopListening ("CitizenDied", CheckCityDeath);
+			EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
+			EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		}
 	}
 }

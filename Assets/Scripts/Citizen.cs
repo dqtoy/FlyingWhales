@@ -275,10 +275,12 @@ public class Citizen {
 			}
 		}
 		this.city.kingdom.successionLine.Remove (this);
+		this.city.citizens.Remove(this);
 		this.isDead = true;
 		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
 		EventManager.Instance.onMassChangeSupportedCitizen.RemoveListener (MassChangeSupportedCitizen);
-		EventManager.TriggerEvent("CitizenDied");
+		EventManager.Instance.onCitizenDiedEvent.Invoke ();
+
 //		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
 //		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
 //		RoyaltyEventDelegate.onMassChangeLoyalty -= MassChangeLoyalty;
