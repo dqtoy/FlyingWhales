@@ -16,12 +16,51 @@ public class Foodie : Role {
 				resourceToUse = this.citizen.workLocation.specialResource;
 			}
 
+			int foodProduction = 0;
+			int goldProduction = 40;
+			if (resourceToUse == RESOURCE.CORN || resourceToUse == RESOURCE.WHEAT || resourceToUse == RESOURCE.RICE) {
+				if (this.citizen.skillTraits.Contains (SKILL_TRAIT.GREEN_THUMB)) {
+					foodProduction += 2;
+				}
+				if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.GREEN_THUMB)) {
+					foodProduction += 1;
+				}
+				if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.GREEN_THUMB)) {
+					foodProduction += 1;
+				}
+			} else if (resourceToUse == RESOURCE.DEER || resourceToUse == RESOURCE.PIG || resourceToUse == RESOURCE.BEHEMOTH) {
+				if (this.citizen.skillTraits.Contains (SKILL_TRAIT.HUNTER)) {
+					foodProduction += 2;
+				}
+				if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.HUNTER)) {
+					foodProduction += 1;
+				}
+				if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.HUNTER)) {
+					foodProduction += 1;
+				}
+			}
+
+			if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
+				goldProduction -= 5;
+			} else if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
+				goldProduction += 5;
+			}
+
+			if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
+				goldProduction -= 5;
+			} else if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
+				goldProduction += 5;
+			}
+
 			if (resourceToUse == RESOURCE.CORN || resourceToUse == RESOURCE.DEER) {
-				return new int[]{ 12, 0, 0, 0, 0, 0, 40 };
+				foodProduction += 12;
+				return new int[]{ foodProduction, 0, 0, 0, 0, 0, goldProduction };
 			} else if (resourceToUse == RESOURCE.WHEAT || resourceToUse == RESOURCE.PIG) {
-				return new int[]{ 16, 0, 0, 0, 0, 0, 40 };
+				foodProduction += 16;
+				return new int[]{ foodProduction, 0, 0, 0, 0, 0, goldProduction };
 			} else if (resourceToUse == RESOURCE.RICE || resourceToUse == RESOURCE.BEHEMOTH) {
-				return new int[]{ 20, 0, 0, 0, 0, 0, 40 };
+				foodProduction += 20;
+				return new int[]{ foodProduction, 0, 0, 0, 0, 0, goldProduction };
 			}
 		}
 		return new int[]{ 0, 0, 0, 0, 0, 0, 0 };

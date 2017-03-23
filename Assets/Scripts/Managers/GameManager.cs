@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		EventManager.TriggerEvent ("CitizenTurnActions");
-		EventManager.TriggerEvent ("ProduceResources");
+		EventManager.TriggerEvent ("CityTurnActions");
 	}
 
 }
