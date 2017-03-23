@@ -78,4 +78,12 @@ public class KingdomManager : MonoBehaviour {
 		allKingdoms.Add(newKingdom);
 	}
 
+	public void AddRelationshipToOtherKings(Citizen newKing){
+		for (int i = 0; i < this.allKingdoms.Count; i++) {
+			if (this.allKingdoms[i].id != newKing.city.kingdom.id) {
+				this.allKingdoms[i].king.relationshipKings.Add (new RelationshipKings(newKing, 0));
+			}
+		}
+	}
+
 }
