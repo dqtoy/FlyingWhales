@@ -154,7 +154,7 @@ public class Citizen {
 					Debug.Log(this.name + " DIES OF OLD AGE");
 //					Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.week + "/" + PoliticsPrototypeManager.Instance.year + ": " + this.name + " DIED OF OLD AGE!");
 				}else{
-					this.citizenChances.oldAgeChance+= 0.05f;
+					this.citizenChances.oldAgeChance += 0.05f;
 				}
 			}
 		}
@@ -183,6 +183,16 @@ public class Citizen {
 		this.isDead = true;
 		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
 		EventManager.Instance.onMassChangeSupportedCitizen.RemoveListener (MassChangeSupportedCitizen);
+		if(this.role == ROLE.GENERAL){
+			if(((General)this.assignedRole).army.hp <= 0){
+				EventManager.Instance.onCitizenMove.RemoveListener (((General)this.assignedRole).Move);
+				this.city.citizens.Remove (this);
+			}
+		}
+		if(this.role != ROLE.GENERAL){
+			this.city.citizens.Remove (this);
+		}
+
 
 //		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
 //		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
@@ -204,6 +214,7 @@ public class Citizen {
 			}
 		}
 	}
+
 	internal void MassChangeSupportedCitizen(Citizen newSupported, Citizen previousSupported){
 		if (this.supportedCitizen.Contains(previousSupported)) {
 			this.supportedCitizen.Remove (previousSupported);
@@ -284,20 +295,27 @@ public class Citizen {
 			if(this.campaignManager.activeCampaigns[i] != null){
 				if(!this.campaignManager.activeCampaigns[i].isFull && !this.campaignManager.activeCampaigns[i].hasStarted){
 					chosenCampaign = this.campaignManager.activeCampaigns [i];
+					if(chosenCampaign != null){
+						List<HexTile> path = null;
+						if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
+							path = PathGenerator.Instance.GetPath (((General)general.assignedRole).location, chosenCampaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+						}else{
+							path = PathGenerator.Instance.GetPath (((General)general.assignedRole).location, chosenCampaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+						}
+						if(path != null){
+							chosenCampaign.registeredGenerals.Add (general);
+							AssignCampaignToGeneral (general, chosenCampaign, path);
+						}else{
+							continue;
+						}
+					}
 					break;
 				}
 			}
 		}
-
-		if(chosenCampaign != null){
-			chosenCampaign.registeredGenerals.Add (general);
-			AssignCampaignToGeneral (general, chosenCampaign);
-			if(chosenCampaign.registeredGenerals.Count >= this.campaignManager.GetGeneralCountByPercentage (20f)){
-				chosenCampaign.isFull = true;
-			}
-		}
 	}
-	internal void AssignCampaignToGeneral(Citizen general, Campaign chosenCampaign){
+	internal void AssignCampaignToGeneral(Citizen general, Campaign chosenCampaign, List<HexTile> path, out bool isAssigned){
+		
 		if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
 			((General)general.assignedRole).targetLocation = chosenCampaign.rallyPoint;
 		}else{
@@ -308,6 +326,10 @@ public class Citizen {
 		((General)general.assignedRole).assignedCampaign = chosenCampaign.campaignType;
 		((General)general.assignedRole).targetCity = chosenCampaign.targetCity;
 		((General)general.assignedRole).location = general.assignedTile;
+
+		if(chosenCampaign.registeredGenerals.Count >= this.campaignManager.GetGeneralCountByPercentage (20f)){
+			chosenCampaign.isFull = true;
+		}
 	}
 
 	internal void CreateInitialRelationshipsToKings(){

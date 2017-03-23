@@ -165,19 +165,19 @@ public class CampaignManager {
 	}
 
 	internal void GeneralHasArrived(Citizen general){
+		((General)general.assignedRole).targetLocation = null;
 		Campaign chosenCampaign = GetCampaignByID (((General)general.assignedRole).campaignID);
 		if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
 			if(((General)general.assignedRole).location == chosenCampaign.rallyPoint){
-				((General)general.assignedRole).targetLocation = null;
 				if(AreAllGeneralsOnRallyPoint(chosenCampaign)){
 					AttackCityNow (chosenCampaign);
 				}
 			}else if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){
-
+				//InitiateBattle
 			}
 		}else{
 			if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){
-
+				//InitiateDefense
 			}
 		}
 

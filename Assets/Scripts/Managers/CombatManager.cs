@@ -22,8 +22,8 @@ public class CombatManager : MonoBehaviour {
 			general2HPmultiplier = 1.20f; //Utilities.defenseBuff
 		}
 
-		int general1TotalHP = (int)(((General)general1.assignedRole).army.hp * general1HPmultiplier);
-		int general2TotalHP = (int)(((General)general2.assignedRole).army.hp * general2HPmultiplier);
+		int general1TotalHP = (int)(((General)general1.assignedRole).GetArmyHP() * general1HPmultiplier);
+		int general2TotalHP = (int)(((General)general2.assignedRole).GetArmyHP() * general2HPmultiplier);
 
 		if(general1TotalHP > general2TotalHP){
 			((General)general1.assignedRole).army.hp -= ((General)general2.assignedRole).army.hp;
