@@ -69,24 +69,25 @@ public class Kingdom{
 		this.successionLine = orderedRoyalties;
 	}
 
-	internal void AssignNewLord(Citizen newLord){
-//		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);
+	internal void AssignNewKing(Citizen newKing){
+		EventManager.TriggerEvent ("MassChangeLoyalty");
 
-		if(!newLord.isDirectDescendant){
-			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
-			Utilities.ChangeDescendantsRecursively (newLord, true);
-			Utilities.ChangeDescendantsRecursively (this.king, false);
-		}
-		this.king = newLord;
-		this.successionLine.Clear();
-		ChangeSuccessionLineRescursively (newLord);
-		this.successionLine.AddRange (GetSiblings (newLord));
-		UpdateKingSuccession ();
-	}
-
-	internal void DethroneKing(Citizen newKing){
 		if(!newKing.isDirectDescendant){
 			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
+			Utilities.ChangeDescendantsRecursively (newKing, true);
+			Utilities.ChangeDescendantsRecursively (this.king, false);
+		}
+		this.king = newKing;
+		this.successionLine.Clear();
+		ChangeSuccessionLineRescursively (newKing);
+		this.successionLine.AddRange (GetSiblings (newKing));
+		UpdateKingSuccession ();
+	}
+	internal void DethroneKing(Citizen newKing){
+//		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);
+
+		if(!newKing.isDirectDescendant){
+//			RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
 			Utilities.ChangeDescendantsRecursively (newKing, true);
 			Utilities.ChangeDescendantsRecursively (this.king, false);
 		}
