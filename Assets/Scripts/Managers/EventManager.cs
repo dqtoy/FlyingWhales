@@ -14,6 +14,8 @@ public class EventManager : MonoBehaviour {
 	public MassChangeSupportedCitizen onMassChangeSupportedCitizen =  new MassChangeSupportedCitizen();
 	public CitizenMove onCitizenMove =  new CitizenMove();
 	public CitizenDiedEvent onCitizenDiedEvent =  new CitizenDiedEvent();
+	public RegisterOnCampaign onRegisterOnCampaign = new RegisterOnCampaign();
+	public DeathArmy onDeathArmy = new DeathArmy();
 
 	void Awake(){
 		Instance = this;

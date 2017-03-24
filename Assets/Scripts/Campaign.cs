@@ -13,8 +13,9 @@ public class Campaign {
 	public HexTile rallyPoint;
 	public bool isFull;
 	public bool hasStarted;
+	public int neededArmyStrength;
 
-	public Campaign(Citizen leader, City targetCity, CAMPAIGN campaignType){
+	public Campaign(Citizen leader, City targetCity, CAMPAIGN campaignType, int neededArmyStrength = 0){
 		this.id = Utilities.SetID (this);
 		this.leader = leader;
 		this.targetCity = targetCity;
@@ -23,6 +24,7 @@ public class Campaign {
 		this.isFull = false;
 		this.hasStarted = false;
 		this.rallyPoint = null;
+		this.neededArmyStrength = neededArmyStrength;
 	}
 
 	internal int GetArmyStrength(){

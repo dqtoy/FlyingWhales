@@ -110,7 +110,7 @@ public class Kingdom{
 				Utilities.ChangeDescendantsRecursively (newKing, true);
 				Utilities.ChangeDescendantsRecursively (this.king, false);
 			}
-			newKing.role == ROLE.UNTRAINED;
+			newKing.role = ROLE.UNTRAINED;
 			newKing.assignedRole = null;
 			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 			this.king = newKing;

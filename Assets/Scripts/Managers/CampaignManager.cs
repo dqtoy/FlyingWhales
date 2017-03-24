@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CampaignManager {
 	public Citizen leader;
@@ -32,42 +33,81 @@ public class CampaignManager {
 	internal void CreateCampaign(){
 		if(this.activeCampaigns.Count < this.campaignLimit){
 			CAMPAIGN campaignType = GetTypeOfCampaign ();
+			Campaign newCampaign = null;
 			if(campaignType != CAMPAIGN.NONE){
 				if(campaignType == CAMPAIGN.OFFENSE){
 					if (this.targetableAttackCities.Count > 0) {
-						Campaign newCampaign = new Campaign (this.leader, this.targetableAttackCities [0], campaignType);
+						List<City> adjacentCities = this.targetableAttackCities.Where (x => x.CheckCityConnectivity (this.targetableDefenseCities)).ToList();
+						int neededArmy = (int)(this.targetableDefenseCities.Sum (x => x.GetCityArmyStrength ()) * 0.25f);
+						newCampaign = new Campaign (this.leader, adjacentCities[0], campaignType, neededArmy);
 						newCampaign.rallyPoint = GetRallyPoint ();
 						this.activeCampaigns.Add (newCampaign);
-						this.MakeCityActive (campaignType, this.targetableAttackCities [0]);
+						this.MakeCityActive (campaignType, adjacentCities[0]);
 					} else {
 						campaignType = CAMPAIGN.DEFENSE;
 						if(this.targetableDefenseCities.Count > 0){
-							Campaign newCampaign = new Campaign (this.leader, this.targetableDefenseCities [0], campaignType);
+							this.targetableDefenseCities = this.targetableDefenseCities.OrderBy(x => x.incomingGenerals.Min(y => (int?)((General)y.assignedRole).daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+							int neededArmy = this.targetableDefenseCities [0].GetTotalAttackerStrength ();
+							if(this.targetableDefenseCities[0].incomingGenerals.Count <= 0){
+								neededArmy = (int)(this.targetableDefenseCities.Sum (x => x.GetCityArmyStrength ()) * 0.25f);
+							}
+							newCampaign = new Campaign (this.leader, this.targetableDefenseCities [0], campaignType, neededArmy);
 							this.activeCampaigns.Add (newCampaign);
 							this.MakeCityActive (campaignType, this.targetableDefenseCities [0]);
 						}else{
 							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
+							return;
 						}
 					}
 				}else{
 					if (this.targetableDefenseCities.Count > 0) {
-						Campaign newCampaign = new Campaign (this.leader, this.targetableDefenseCities [0], campaignType);
+						this.targetableDefenseCities = this.targetableDefenseCities.OrderBy(x => x.incomingGenerals.Min(y => (int?)((General)y.assignedRole).daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+						int neededArmy = this.targetableDefenseCities [0].GetTotalAttackerStrength ();
+						if(this.targetableDefenseCities[0].incomingGenerals.Count <= 0){
+							neededArmy = (int)(this.targetableDefenseCities.Sum (x => x.GetCityArmyStrength ()) * 0.25f);
+						}
+						newCampaign = new Campaign (this.leader, this.targetableDefenseCities [0], campaignType, neededArmy);
 						this.activeCampaigns.Add (newCampaign);
 						this.MakeCityActive (campaignType, this.targetableDefenseCities [0]);
 					} else {
 						campaignType = CAMPAIGN.OFFENSE;
 						if(this.targetableAttackCities.Count > 0){
-							Campaign newCampaign = new Campaign (this.leader, this.targetableAttackCities [0], campaignType);
+							List<City> adjacentCities = this.targetableAttackCities.Where (x => x.CheckCityConnectivity (this.targetableDefenseCities)).ToList();
+							int neededArmy = (int)(this.targetableDefenseCities.Sum (x => x.GetCityArmyStrength ()) * 0.25f);
+							newCampaign = new Campaign (this.leader, adjacentCities[0], campaignType, neededArmy);
 							newCampaign.rallyPoint = GetRallyPoint ();
 							this.activeCampaigns.Add (newCampaign);
-							this.MakeCityActive (campaignType, this.targetableAttackCities [0]);
+							this.MakeCityActive (campaignType, adjacentCities[0]);
 						}else{
 							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
+							return;
 						}
 					}
 				}
+				EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
+
 			}
 		}
+	}
+	internal void CampaignDone(Campaign campaign){
+		Campaign doneCampaign = SearchCampaignByID (campaign.id);
+		for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
+			UnregisterGenerals (doneCampaign.registeredGenerals [i], doneCampaign);
+		}
+		this.activeCampaigns.Remove (doneCampaign);
+		doneCampaign = null;
+		CreateCampaign ();
+	}
+	internal void UnregisterGenerals(Citizen general, Campaign chosenCampaign){
+		((General)general.assignedRole).targetLocation = null;
+		((General)general.assignedRole).warLeader = null;
+		((General)general.assignedRole).campaignID = 0;
+		((General)general.assignedRole).assignedCampaign = CAMPAIGN.NONE;
+		((General)general.assignedRole).targetCity = null;
+		((General)general.assignedRole).daysBeforeArrival = 0;
+
+
+		chosenCampaign.registeredGenerals.Remove (general);
 	}
 	internal HexTile GetRallyPoint(){
 		return null;
@@ -166,7 +206,7 @@ public class CampaignManager {
 
 	internal void GeneralHasArrived(Citizen general){
 		((General)general.assignedRole).targetLocation = null;
-		Campaign chosenCampaign = GetCampaignByID (((General)general.assignedRole).campaignID);
+		Campaign chosenCampaign = SearchCampaignByID (((General)general.assignedRole).campaignID);
 		if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
 			if(((General)general.assignedRole).location == chosenCampaign.rallyPoint){
 				if(AreAllGeneralsOnRallyPoint(chosenCampaign)){
@@ -195,7 +235,7 @@ public class CampaignManager {
 		}
 		return true;
 	}
-	internal Campaign GetCampaignByID(int id){
+	internal Campaign SearchCampaignByID(int id){
 		for(int i = 0; i < this.activeCampaigns.Count; i++){
 			if(this.activeCampaigns[i].id == id){
 				return this.activeCampaigns [i];

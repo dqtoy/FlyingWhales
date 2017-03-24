@@ -15,6 +15,7 @@ public class City{
 	public List<HexTile> ownedTiles;
 	public List<Citizen> incomingGenerals;
 	[HideInInspector]public List<Citizen> citizens;
+	public List<City> connectedCities;
 	public string cityHistory;
 	public bool hasKing;
 
@@ -41,7 +42,9 @@ public class City{
 		this.kingdom = kingdom;
 		this.governor = null;
 		this.ownedTiles = new List<HexTile>();
+		this.incomingGenerals = new List<Citizen> ();
 		this.citizens = new List<Citizen>();
+		this.connectedCities = new List<City> ();
 		this.cityHistory = string.Empty;
 		this.hasKing = false;
 		this.isStarving = false;
@@ -695,5 +698,44 @@ public class City{
 			EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 			EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		}
+	}
+
+	internal bool CheckCityConnectivity (List<City> connections){
+		for(int i = 0; i < this.connectedCities.Count; i++){
+			for(int j = 0; j < connections.Count; j++){
+				if(this.connectedCities[i].id == connections[j].id){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	internal int GetCityArmyStrength(){
+		int total = 0;
+		for(int i = 0; i < this.citizens.Count; i++){
+			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
+				total += ((General)this.citizens [i].assignedRole).GetArmyHP ();
+			}
+		}
+		return total;
+	}
+	internal int GetTotalAttackerStrength(){
+		int total = 0;
+		for(int i = 0; i < this.incomingGenerals.Count; i++){
+			if(((General)this.incomingGenerals[i].assignedRole).assignedCampaign == CAMPAIGN.OFFENSE){
+				total += ((General)this.incomingGenerals[i].assignedRole).GetArmyHP ();
+			}
+		}
+		return total;	
+	}
+	internal List<Citizen> GetAllGenerals(){
+		List<Citizen> allGenerals = new List<Citizen> ();
+		for(int i = 0; i < this.citizens.Count; i++){
+			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
+				allGenerals.Add (this.citizens [i]);
+			}
+		}
+		return allGenerals;
 	}
 }
