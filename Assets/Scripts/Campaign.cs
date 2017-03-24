@@ -28,7 +28,7 @@ public class Campaign {
 	internal int GetArmyStrength(){
 		int total = 0;
 		for(int i = 0; i < this.registeredGenerals.Count; i++){
-			total += ((General)this.registeredGenerals[i].assignedRole).army.hp;
+			total += ((General)this.registeredGenerals[i].assignedRole).GetArmyHP();
 		}
 		return total;
 	}

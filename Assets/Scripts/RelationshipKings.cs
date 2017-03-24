@@ -15,7 +15,7 @@ public class RelationshipKings {
 	public int daysAtWar;
 
 	public RelationshipKings(Citizen king, int like){
-		//		this.id = id;
+//		this.id = id;
 		this.king = king;
 //		this.previousDecision = previousDecision;
 		this.like = like;
@@ -25,23 +25,26 @@ public class RelationshipKings {
 		this.isAtWar = false;
 	}
 
-
-
-	internal RELATIONSHIP_STATUS GetLordRelationship(int likeness){
-		if(likeness <= -81){
-			return RELATIONSHIP_STATUS.RIVAL;
-		}else if(likeness >= -80 && likeness <= -41){
-			return RELATIONSHIP_STATUS.ENEMY;
-		}else if(likeness >= -40 && likeness <= -21){
-			return RELATIONSHIP_STATUS.COLD;
-		}else if(likeness >= -20 && likeness <= 20){
-			return RELATIONSHIP_STATUS.NEUTRAL;
-		}else if(likeness >= 21 && likeness <= 40){
-			return RELATIONSHIP_STATUS.WARM;
-		}else if(likeness >= 41 && likeness <= 80){
-			return RELATIONSHIP_STATUS.FRIEND;
+	internal void UpdateKingRelationshipStatus(){
+		if(this.like <= -81){
+			this.lordRelationship = RELATIONSHIP_STATUS.RIVAL;
+		}else if(this.like >= -80 && this.like <= -41){
+			this.lordRelationship = RELATIONSHIP_STATUS.ENEMY;
+		}else if(this.like >= -40 && this.like <= -21){
+			this.lordRelationship = RELATIONSHIP_STATUS.COLD;
+		}else if(this.like >= -20 && this.like <= 20){
+			this.lordRelationship = RELATIONSHIP_STATUS.NEUTRAL;
+		}else if(this.like >= 21 && this.like <= 40){
+			this.lordRelationship = RELATIONSHIP_STATUS.WARM;
+		}else if(this.like >= 41 && this.like <= 80){
+			this.lordRelationship = RELATIONSHIP_STATUS.FRIEND;
 		}else{
-			return RELATIONSHIP_STATUS.ALLY;
+			this.lordRelationship = RELATIONSHIP_STATUS.ALLY;
 		}
+	}
+
+	internal void AdjustLikeness(int adjustment){
+		this.like += adjustment;
+		this.UpdateKingRelationshipStatus ();
 	}
 }
