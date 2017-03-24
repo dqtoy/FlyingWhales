@@ -23,7 +23,8 @@ public class CityGenerator : MonoBehaviour {
 			HexTile currentHexTile = elligibleTiles [i].GetComponent<HexTile>();
 			if (currentHexTile.xCoordinate >= (GridMap.Instance.width - 3) || currentHexTile.xCoordinate < 3 || 
 				currentHexTile.yCoordinate >= (GridMap.Instance.width - 3) || currentHexTile.yCoordinate < 3 ||
-				currentHexTile.elevationType == ELEVATION.WATER || currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+				currentHexTile.elevationType == ELEVATION.WATER || currentHexTile.elevationType == ELEVATION.MOUNTAIN || 
+				currentHexTile.specialResource != RESOURCE.NONE) {
 				//skip hextiles within 3 tiles of the edge
 				continue;
 			}
@@ -31,12 +32,13 @@ public class CityGenerator : MonoBehaviour {
 			HexTile[] adjacentTiles = currentHexTile.AllNeighbours.ToArray();
 			HexTile[] tilesInRange = currentHexTile.GetTilesInRange(14f);
 
-			HexTile[] foodTiles = adjacentTiles.Where(x => Utilities.GetBaseResourceType (x.defaultResource) == BASE_RESOURCE_TYPE.FOOD || 
-				Utilities.GetBaseResourceType (x.specialResource) == BASE_RESOURCE_TYPE.FOOD).ToArray();
+			HexTile[] foodTiles = adjacentTiles.Where(x => (x.specialResource == RESOURCE.NONE && Utilities.GetBaseResourceType (x.defaultResource) == BASE_RESOURCE_TYPE.FOOD) || 
+				(x.specialResource != RESOURCE.NONE && Utilities.GetBaseResourceType (x.specialResource) == BASE_RESOURCE_TYPE.FOOD)).ToArray();
 			
-			HexTile[] basicResourceTiles = adjacentTiles.Where(x => Utilities.GetBaseResourceType(x.defaultResource) == BASE_RESOURCE_TYPE.STONE ||
-				Utilities.GetBaseResourceType(x.defaultResource) == BASE_RESOURCE_TYPE.WOOD || Utilities.GetBaseResourceType(x.specialResource) == BASE_RESOURCE_TYPE.STONE ||
-				Utilities.GetBaseResourceType(x.specialResource) == BASE_RESOURCE_TYPE.WOOD).ToArray();
+			HexTile[] basicResourceTiles = adjacentTiles.Where(x => (x.specialResource == RESOURCE.NONE && Utilities.GetBaseResourceType(x.defaultResource) == BASE_RESOURCE_TYPE.STONE) ||
+				(x.specialResource == RESOURCE.NONE && Utilities.GetBaseResourceType(x.defaultResource) == BASE_RESOURCE_TYPE.WOOD) || 
+				(x.specialResource != RESOURCE.NONE && Utilities.GetBaseResourceType(x.specialResource) == BASE_RESOURCE_TYPE.STONE) ||
+				(x.specialResource != RESOURCE.NONE && Utilities.GetBaseResourceType(x.specialResource) == BASE_RESOURCE_TYPE.WOOD)).ToArray();
 
 
 			List<HexTile> specialTiles = new List<HexTile>();

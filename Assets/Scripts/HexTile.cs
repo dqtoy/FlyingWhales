@@ -22,10 +22,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public City city;
 	public Citizen occupant = null;
+	public ROLE roleIntendedForTile = ROLE.UNTRAINED;
 
 	public bool isHabitable = false;
 	public bool isRoad = false;
 	public bool isOccupied = false;
+	public bool isOwned = false;
 	public GameObject topLeft, topRight, right, bottomRight, bottomLeft, left;
 
 	public GameObject leftGround;
@@ -41,13 +43,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameObject bottomLeftBorder;
 	public GameObject bottomRightBorder;
 
+	public GameObject resourceVisualGO;
+
 	public List<HexTile> connectedTiles = new List<HexTile>();
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
 	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN); } }
 	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
 
-	public List<HexTile> elligibleTilesForPurchase { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } } 
+	public List<HexTile> elligibleNeighbourTilesForPurchase { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && !o.isOwned && !o.isHabitable).ToList(); } } 
 
 //	public List<HexTile> allFoodNeighbours { get 
 //		{ return 
@@ -76,6 +80,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			if (tiles [i] != null) {
 				tiles [i].GetComponent<SpriteRenderer> ().color = Color.magenta;
 			}
+		}
+	}
+
+	[ContextMenu("Show Occupant")]
+	public void ShowOccupant(){
+		if (this.isOccupied) {
+			Debug.Log ("Occupant: " + this.occupant.role.ToString ());
+		} else {
+			Debug.Log ("Not Occupied");
 		}
 	}
 
@@ -115,7 +128,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	internal void AssignSpecialResource(){
 		int specialChance = UnityEngine.Random.Range (0, 100);
 
-		if(specialChance < 20){
+		if(specialChance < 15){
 			//			Utilities.specialResourceCount += 1;
 			if(this.elevationType == ELEVATION.MOUNTAIN){
 				SpecialResourceChance specialResources = new SpecialResourceChance (
@@ -130,9 +143,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 					}, 
 					new int[] { 5, 60, 40, 15, 15, 15, 5 });
 				this.specialResource = ComputeSpecialResource (specialResources);
+				if (this.specialResource != RESOURCE.NONE) {
+					this.resourceVisualGO.GetComponent<SpriteRenderer> ().sprite = Resources.LoadAll<Sprite> ("Resources Icons")
+					.Where (x => x.name == this.specialResource.ToString ()).ToList () [0];
+					this.resourceVisualGO.SetActive (true);
+				}
 			}else{
 				if (this.elevationType != ELEVATION.WATER) {
 					this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
+					if (this.specialResource != RESOURCE.NONE) {
+						this.resourceVisualGO.GetComponent<SpriteRenderer> ().sprite = Resources.LoadAll<Sprite> ("Resources Icons")
+						.Where (x => x.name == this.specialResource.ToString ()).ToList () [0];
+						this.resourceVisualGO.SetActive (true);
+					}
 				}
 			}
 		}
@@ -140,16 +163,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
 		int totalChance = 0;
 		int lowerLimit = 0;
+		int upperLimit = specialResources.chance [0];
 		for(int i = 0; i < specialResources.resource.Length; i++){
 			totalChance += specialResources.chance[i];
 		}
 
 		int chance = UnityEngine.Random.Range (0, totalChance);
 		for(int i = 0; i < specialResources.resource.Length; i++){
-			if(chance >= lowerLimit && chance < specialResources.chance[i]){
+			if(chance >= lowerLimit && chance < upperLimit){
 				return specialResources.resource[i];
 			}else{
-				lowerLimit = specialResources.chance[i];
+				lowerLimit = upperLimit;
+				if (i + 1 < specialResources.resource.Length) {
+					upperLimit += specialResources.chance [i + 1];
+				}
 			}
 		}
 		return RESOURCE.NONE;
@@ -345,7 +372,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			this.GetComponent<SpriteRenderer> ().color = Color.green;
 			break;
 		case ROLE.GATHERER:
-			this.GetComponent<SpriteRenderer> ().color = Color.cyan;
+			this.GetComponent<SpriteRenderer> ().color = Color.gray;
 			break;
 		case ROLE.GENERAL:
 			this.GetComponent<SpriteRenderer> ().color = Color.red;

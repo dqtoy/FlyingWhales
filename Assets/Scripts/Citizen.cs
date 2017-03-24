@@ -281,6 +281,11 @@ public class Citizen {
 		EventManager.Instance.onMassChangeSupportedCitizen.RemoveListener (MassChangeSupportedCitizen);
 		EventManager.Instance.onCitizenDiedEvent.Invoke ();
 
+		if (this.workLocation != null) {
+			this.workLocation.occupant = null;
+			this.workLocation.isOccupied = false;
+		}
+
 //		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
 //		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
 //		RoyaltyEventDelegate.onMassChangeLoyalty -= MassChangeLoyalty;
@@ -417,4 +422,24 @@ public class Citizen {
 		}
 	}
 
+	internal void AssignRole(ROLE role){
+		this.role = role;
+		if (role == ROLE.FOODIE) {
+			this.assignedRole = new Foodie (this); 
+		} else if (role == ROLE.GATHERER) {
+			this.assignedRole = new Gatherer (this); 
+		} else if (role == ROLE.MINER) {
+			this.assignedRole = new Miner (this);
+		} else if (role == ROLE.GENERAL) {
+			this.assignedRole = new General (this);
+		} else if (role == ROLE.ENVOY) {
+			this.assignedRole = new Envoy (this);
+		} else if (role == ROLE.GUARDIAN) {
+			this.assignedRole = new Guardian (this);
+		} else if (role == ROLE.SPY) {
+			this.assignedRole = new Spy (this);
+		} else if (role == ROLE.TRADER) {
+			this.assignedRole = new Trader (this);
+		}
+	}
 }

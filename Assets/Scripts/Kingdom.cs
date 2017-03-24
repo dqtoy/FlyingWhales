@@ -14,7 +14,7 @@ public class Kingdom{
 //	public List<Citizen> royaltyList;
 
 	public BASE_RESOURCE_TYPE basicResource;
-	public RESOURCE rareResource;
+	public BASE_RESOURCE_TYPE rareResource;
 
 	protected List<Relationship<Kingdom>> relationshipsWithOtherKingdoms;
 
@@ -34,16 +34,16 @@ public class Kingdom{
 
 		if (race == RACE.HUMANS) {
 			this.basicResource = BASE_RESOURCE_TYPE.STONE;
-			this.rareResource = RESOURCE.MITHRIL;
+			this.rareResource = BASE_RESOURCE_TYPE.MITHRIL;
 		} else if (race == RACE.ELVES) {
 			this.basicResource = BASE_RESOURCE_TYPE.WOOD;
-			this.rareResource = RESOURCE.MANA_STONE;
+			this.rareResource = BASE_RESOURCE_TYPE.MANA_STONE;
 		} else if (race == RACE.MINGONS) {
 			this.basicResource = BASE_RESOURCE_TYPE.WOOD;
-			this.rareResource = RESOURCE.NONE;
+			this.rareResource = BASE_RESOURCE_TYPE.NONE;
 		} else {
 			this.basicResource = BASE_RESOURCE_TYPE.STONE;
-			this.rareResource = RESOURCE.COBALT;
+			this.rareResource = BASE_RESOURCE_TYPE.COBALT;
 		}
 
 		for (int i = 0; i < cities.Count; i++) {
