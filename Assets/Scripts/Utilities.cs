@@ -100,20 +100,113 @@ public class Utilities : MonoBehaviour {
 
 	};
 
+	public static Dictionary<ROLE, int> defaultCitizenCreationTable = new Dictionary<ROLE, int>(){
+		{ROLE.TRADER, 2},
+		{ROLE.GENERAL, 2},
+		{ROLE.SPY, 1},
+		{ROLE.ENVOY, 1},
+		{ROLE.GUARDIAN, 1}
+	};
+
+	public static Dictionary<BEHAVIOR_TRAIT, Dictionary<ROLE, int>> citizenCreationTable = new Dictionary<BEHAVIOR_TRAIT, Dictionary<ROLE, int>>(){
+		{BEHAVIOR_TRAIT.SCHEMING, new Dictionary<ROLE, int>(){
+				{ROLE.TRADER, 0},
+				{ROLE.GENERAL, 0},
+				{ROLE.SPY, 1},
+				{ROLE.ENVOY, 0},
+				{ROLE.GUARDIAN, -10}
+			}
+		},
+		{BEHAVIOR_TRAIT.NAIVE, new Dictionary<ROLE, int>(){
+				{ROLE.TRADER, 0},
+				{ROLE.GENERAL, 0},
+				{ROLE.SPY, -10},
+				{ROLE.ENVOY, 1},
+				{ROLE.GUARDIAN, 0}
+			}
+		},
+		{BEHAVIOR_TRAIT.WARMONGER, new Dictionary<ROLE, int>(){
+				{ROLE.TRADER, -1},
+				{ROLE.GENERAL, 1},
+				{ROLE.SPY, 1},
+				{ROLE.ENVOY, -10},
+				{ROLE.GUARDIAN, 0}
+			}
+		},
+		{BEHAVIOR_TRAIT.PACIFIST, new Dictionary<ROLE, int>(){
+				{ROLE.TRADER, 1},
+				{ROLE.GENERAL, -1},
+				{ROLE.SPY, -10},
+				{ROLE.ENVOY, 0},
+				{ROLE.GUARDIAN, 1}
+			}
+		},
+		{BEHAVIOR_TRAIT.CHARISMATIC, new Dictionary<ROLE, int>(){
+				{ROLE.TRADER, 0},
+				{ROLE.GENERAL, 0},
+				{ROLE.SPY, 0},
+				{ROLE.ENVOY, 0},
+				{ROLE.GUARDIAN, 0}
+			}
+		},
+		{BEHAVIOR_TRAIT.REPULSIVE, new Dictionary<ROLE, int>(){
+				{ROLE.TRADER, 0},
+				{ROLE.GENERAL, 0},
+				{ROLE.SPY, 0},
+				{ROLE.ENVOY, 0},
+				{ROLE.GUARDIAN, 0}
+			}
+		},
+		{BEHAVIOR_TRAIT.AGGRESSIVE, new Dictionary<ROLE, int>(){
+				{ROLE.TRADER, 0},
+				{ROLE.GENERAL, 0},
+				{ROLE.SPY, 0},
+				{ROLE.ENVOY, 0},
+				{ROLE.GUARDIAN, 0}
+			}
+		},
+		{BEHAVIOR_TRAIT.DEFENSIVE, new Dictionary<ROLE, int>(){
+				{ROLE.TRADER, 0},
+				{ROLE.GENERAL, 0},
+				{ROLE.SPY, 0},
+				{ROLE.ENVOY, 0},
+				{ROLE.GUARDIAN, 0}
+			}
+		},
+	};
+
 //	public static string CauseOfAccident(){
 //		
 //	}
 
 	public static BASE_RESOURCE_TYPE GetBaseResourceType(RESOURCE resourceType){
 		if (resourceType == RESOURCE.CORN || resourceType == RESOURCE.WHEAT || resourceType == RESOURCE.RICE ||
-			resourceType == RESOURCE.DEER || resourceType == RESOURCE.PIG || resourceType == RESOURCE.BEHEMOTH) {
+		    resourceType == RESOURCE.DEER || resourceType == RESOURCE.PIG || resourceType == RESOURCE.BEHEMOTH) {
 			return BASE_RESOURCE_TYPE.FOOD;
 		} else if (resourceType == RESOURCE.CEDAR || resourceType == RESOURCE.OAK || resourceType == RESOURCE.EBONY) {
 			return BASE_RESOURCE_TYPE.WOOD;
 		} else if (resourceType == RESOURCE.GRANITE || resourceType == RESOURCE.SLATE || resourceType == RESOURCE.MARBLE) {
 			return BASE_RESOURCE_TYPE.STONE;
+		} else if (resourceType == RESOURCE.MANA_STONE) {
+			return BASE_RESOURCE_TYPE.MANA_STONE;
+		} else if (resourceType == RESOURCE.MITHRIL) {
+			return BASE_RESOURCE_TYPE.MITHRIL;
+		} else if (resourceType == RESOURCE.COBALT) {
+			return BASE_RESOURCE_TYPE.COBALT;
 		}
-		return BASE_RESOURCE_TYPE.SPECIAL;
+		return BASE_RESOURCE_TYPE.NONE;
+	}
+
+
+	public static ROLE GetRoleThatProducesResource(BASE_RESOURCE_TYPE resourceType){
+		if (resourceType == BASE_RESOURCE_TYPE.FOOD) {
+			return ROLE.FOODIE;
+		} else if (resourceType == BASE_RESOURCE_TYPE.STONE || resourceType == BASE_RESOURCE_TYPE.WOOD) {
+			return ROLE.GATHERER;
+		} else if (resourceType == BASE_RESOURCE_TYPE.MANA_STONE || resourceType == BASE_RESOURCE_TYPE.MITHRIL || resourceType == BASE_RESOURCE_TYPE.COBALT) {
+			return ROLE.MINER;
+		}
+		return ROLE.UNTRAINED;
 	}
 
 	#region Pathfinding

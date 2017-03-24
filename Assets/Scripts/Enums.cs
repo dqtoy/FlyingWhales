@@ -33,6 +33,11 @@ public enum EVENTS{
 	GENERATE_ARMY,
 }
 
+public enum CITY_TASK { 
+	PURCHASE_TILE, 
+	ASSIGN_CITIZEN 
+}
+
 public enum PATH_DIRECTION{
 	TOP_LEFT,
 	TOP_RIGHT,
@@ -120,8 +125,11 @@ public enum BASE_RESOURCE_TYPE{
 	FOOD,
 	WOOD,
 	STONE,
-	SPECIAL,
-	GOLD
+	MANA_STONE,
+	MITHRIL,
+	COBALT,
+	GOLD,
+	NONE
 }
 
 public enum BEHAVIOR_TRAIT{
