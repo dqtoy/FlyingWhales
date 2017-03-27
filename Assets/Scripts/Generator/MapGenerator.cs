@@ -12,6 +12,8 @@ public class MapGenerator : MonoBehaviour {
 		CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 		PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.habitableTiles);
 		KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.habitableTiles);
+		UIManager.Instance.UpdateKingsGrid();
+		GameManager.Instance.StartProgression();
 	}
 
 }

@@ -9,13 +9,34 @@ public class GameManager : MonoBehaviour {
 	public int week;
 	public int year;
 
+	public float progressionSpeed = 1f;
+	public bool isPaused = false;
+
 	void Awake(){
 		Instance = this;
 	}
 
 	[ContextMenu("Start Progression")]
 	public void StartProgression(){
-		InvokeRepeating ("WeekEnded", 0f, 1f); 
+//		InvokeRepeating ("WeekEnded", 0f, 1f); 
+		StartCoroutine(WeekProgression());
+	}
+
+	public void TogglePause(){
+		this.isPaused = !this.isPaused;
+	}
+
+	public void SetProgressionSpeed(float speed){
+		this.progressionSpeed = speed;
+	}
+
+	IEnumerator WeekProgression(){
+		while (true) {
+			yield return new WaitForSeconds (progressionSpeed);
+			if (!isPaused) {
+				this.WeekEnded ();
+			}
+		}
 	}
 
 	public void WeekEnded(){

@@ -31,6 +31,7 @@ public class Citizen {
 	public MONTH birthMonth;
 	public int birthWeek;
 	public int birthYear;
+	public int prestige;
 	public int previousConversionMonth;
 	public int previousConversionYear;
 	public bool isIndependent;
@@ -43,12 +44,13 @@ public class Citizen {
 	public bool isDead;
 
 	private List<Citizen> possiblePretenders = new List<Citizen>();
+	private List<Citizen> closeRelatives = new List<Citizen>();
 	private string history;
 
 
 	public Citizen(City city, int age, GENDER gender, int generation){
 		this.id = Utilities.SetID (this);
-		this.name = "CITIZEN" + this.id;
+		this.name = RandomNameGenerator.GenerateRandomName();
 		this.age = age;
 		this.gender = gender;
 		this.generation = generation;
@@ -73,6 +75,7 @@ public class Citizen {
 		this.birthMonth = (MONTH) GameManager.Instance.month;
 		this.birthWeek = GameManager.Instance.week;
 		this.birthYear = GameManager.Instance.year;
+		this.prestige = 0;
 		this.isIndependent = false;
 		this.isMarried = false;
 		this.isDirectDescendant = false;
@@ -101,8 +104,8 @@ public class Citizen {
 		}
 
 		//Generate Behaviour trait
-		int firstItem = 0;
-		int secondItem = 1;
+		int firstItem = 1;
+		int secondItem = 2;
 		for (int j = 0; j < 4; j++) {
 			BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
 			int chanceForTrait = UnityEngine.Random.Range (0, 100);
@@ -149,9 +152,11 @@ public class Citizen {
 				skillTraits.AddRange(mother.skillTraits);
 			} else {
 				skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+				skillTraits.Remove (SKILL_TRAIT.NONE);
 			}
 		} else {
 			skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+			skillTraits.Remove (SKILL_TRAIT.NONE);
 		}
 			
 		for (int j = 0; j < numOfSkillTraits; j++) {
@@ -181,6 +186,7 @@ public class Citizen {
 		}
 
 		List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
+		miscTraits.Remove (MISC_TRAIT.NONE);
 		for (int j = 0; j < numOfMiscTraits; j++) {
 			MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
 			this.miscTraits.Add (chosenMiscTrait);
@@ -210,6 +216,9 @@ public class Citizen {
 	internal void TurnActions(){
 		AttemptToAge();
 		DeathReasons();
+		if (this.age >= 16 && this.gender == GENDER.MALE) {
+			AttemptToMarry ();
+		}
 	}
 
 	protected void AttemptToAge(){
@@ -217,6 +226,10 @@ public class Citizen {
 			this.age += 1;
 		}
 	}
+	protected void AttemptToMarry(){
+
+	}
+
 
 	internal void DeathReasons(){
 		if(isDead){
@@ -418,5 +431,25 @@ public class Citizen {
 		} else if (role == ROLE.TRADER) {
 			this.assignedRole = new Trader (this);
 		}
+	}
+
+	internal void UpdateCloseRelatives(){
+		this.closeRelatives.Clear();
+		//Mother and father
+		this.closeRelatives.Add(mother);
+		this.closeRelatives.Add(father);
+
+		//grandparents
+		this.closeRelatives.Add(father.father);
+		this.closeRelatives.Add(father.mother);
+		this.closeRelatives.Add(mother.father);
+		this.closeRelatives.Add(mother.mother);
+
+		//aunts and uncles
+		this.closeRelatives.AddRange(mother.GetSiblings(mother));
+		this.closeRelatives.AddRange(father.GetSiblings(father));
+
+		//children
+		this.closeRelatives.AddRange(this.children);
 	}
 }

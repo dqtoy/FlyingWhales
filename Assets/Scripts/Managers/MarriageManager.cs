@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MarriageManager : MonoBehaviour {
 
@@ -9,6 +10,7 @@ public class MarriageManager : MonoBehaviour {
 	void Awake(){
 		Instance = this;
 	}
+
 	internal Citizen MakeBaby(Citizen father, Citizen mother, int age = 0){
 		GENDER gender = (GENDER)(UnityEngine.Random.Range (0, System.Enum.GetNames (typeof(GENDER)).Length));
 		//		int age = 0;
@@ -61,11 +63,15 @@ public class MarriageManager : MonoBehaviour {
 //		}
 
 		//the wife will transfer to the court of the husband
-//		wife.city.kingdom = husband.city.kingdom;
+		wife.city.kingdom = husband.city.kingdom;
 		//		wife.loyalLord = husband.kingdom.assignedLord;
 		//		husband.kingdom.royaltyList.allRoyalties.Add(wife);
 		//		wife.kingdom.royaltyList.allRoyalties.Remove(wife);
 
 //		husband.kingdom.marriedCouples.Add(new MarriedCouple (husband, wife));
+	}
+
+	internal List<Citizen> GetElligibleBachelorettes(Citizen bachelor){
+		return null;
 	}
 }

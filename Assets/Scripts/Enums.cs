@@ -75,18 +75,18 @@ public enum GENDER{
 
 public enum MONTH{
 	NONE,
-	JANUARY,
-	FEBRUARY,
-	MARCH,
-	APRIL,
+	JAN,
+	FEB,
+	MAR,
+	APR,
 	MAY,
-	JUNE,
-	JULY,
-	AUGUST,
-	SEPTEMBER,
-	OCTOBER,
-	NOVEMBER,
-	DECEMBER,
+	JUN,
+	JUL,
+	AUG,
+	SEP,
+	OCT,
+	NOV,
+	DEC,
 }
 
 public enum RESOURCE{
@@ -133,6 +133,7 @@ public enum BASE_RESOURCE_TYPE{
 }
 
 public enum BEHAVIOR_TRAIT{
+	NONE,
 	NAIVE,
 	SCHEMING,
 	WARMONGER,
@@ -144,6 +145,7 @@ public enum BEHAVIOR_TRAIT{
 }
 
 public enum SKILL_TRAIT{
+	NONE,
 	GREEN_THUMB,
 	HUNTER,
 	EFFICIENT,
@@ -156,6 +158,7 @@ public enum SKILL_TRAIT{
 }
 
 public enum MISC_TRAIT{
+	NONE,
 	BARREN,
 	HORNY,
 	HOMOSEXUAL,

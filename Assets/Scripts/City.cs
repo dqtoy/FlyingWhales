@@ -533,8 +533,8 @@ public class City{
 			currentCitizen.miscTraits.Clear();
 
 			//Generate Behaviour trait
-			int firstItem = 0;
-			int secondItem = 1;
+			int firstItem = 1;
+			int secondItem = 2;
 			for (int j = 0; j < 4; j++) {
 				BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
 				int chanceForTrait = UnityEngine.Random.Range (0, 100);
@@ -555,6 +555,7 @@ public class City{
 
 			//Generate Skill Traits
 			List<SKILL_TRAIT> skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+			skillTraits.Remove (SKILL_TRAIT.NONE);
 			for (int j = 0; j < numOfSkillTraits; j++) {
 				SKILL_TRAIT chosenSkillTrait = skillTraits[UnityEngine.Random.Range(0, skillTraits.Count)];
 				currentCitizen.skillTraits.Add (chosenSkillTrait);
@@ -582,6 +583,7 @@ public class City{
 
 			//Generate Misc Traits
 			List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
+			miscTraits.Remove (MISC_TRAIT.NONE);
 			for (int j = 0; j < numOfMiscTraits; j++) {
 				MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
 				currentCitizen.miscTraits.Add (chosenMiscTrait);
@@ -647,7 +649,7 @@ public class City{
 
 	protected void CityEverydayTurnActions(){
 		this.ProduceResources();
-		this.AttemptToPerformAction();
+//		this.AttemptToPerformAction();
 	}
 
 	#region Resource Production
@@ -960,7 +962,7 @@ public class City{
 	#endregion
 
 	#region utlity functions
-	protected List<Citizen> GetCitizensWithRole(ROLE role){
+	internal List<Citizen> GetCitizensWithRole(ROLE role){
 		List<Citizen> citizensWithRole = new List<Citizen>();
 		for (int i = 0; i < this.citizens.Count; i++) {
 			if (this.citizens [i].role == role) {
