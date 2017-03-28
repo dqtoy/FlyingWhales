@@ -92,6 +92,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 
+	[ContextMenu("Show Pending Task")]
+	public void ShowCityPendingTask(){
+		for (int i = 0; i < this.city.pendingTask.Count; i++) {
+			Debug.Log (this.city.pendingTask.Keys.ElementAt (i).ToString () + " " + this.city.pendingTask [this.city.pendingTask.Keys.ElementAt (i)].tileName);
+		}
+	}
+
 	#region Resource
 	internal void AssignDefaultResource(){
 		if(elevationType == ELEVATION.MOUNTAIN){
@@ -383,6 +390,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		default:
 			this.GetComponent<SpriteRenderer> ().color = Color.blue;
 			break;
+		}
+	}
+
+	void OnMouseDown(){
+		if (this.isHabitable && this.city != null) {
+//			CameraMove.Instance.CenterCameraOn (this.gameObject);
+			UIManager.Instance.ShowCityInfo (this.city);
 		}
 	}
 

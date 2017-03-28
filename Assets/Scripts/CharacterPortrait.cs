@@ -4,12 +4,18 @@ using System.Collections;
 public class CharacterPortrait : MonoBehaviour {
 
 	public UI2DSprite kingdomColorGO;
+	public GameObject isDeadIcon;
 
-	private Citizen citizen;
+	public Citizen citizen;
 
 	public void SetCitizen(Citizen citizen){
 		this.citizen = citizen;
 		this.kingdomColorGO.color = this.citizen.city.kingdom.kingdomColor;
+		if (citizen.isDead) {
+			isDeadIcon.SetActive (true);
+		} else {
+			isDeadIcon.SetActive (false);
+		}
 	}
 
 	void OnHover(bool isOver){
@@ -20,9 +26,7 @@ public class CharacterPortrait : MonoBehaviour {
 		}
 	}
 
-	void OnSelect (bool isSelected){
-		if (isSelected) {
-			UIManager.Instance.ShowCitizenInfo (citizen);
-		}
+	void OnClick(){
+		UIManager.Instance.ShowCitizenInfo (citizen);
 	}
 }

@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour {
 	public UILabel smallInfoLbl;
 	public UI2DSprite ctizenPortraitBG;
 	public UIGrid kingsGrid;
+	public GameObject citizenInfoIsDeadIcon;
 
 	[Space(10)]
 	public UILabel citizenNameLbl;
@@ -39,6 +40,7 @@ public class UIManager : MonoBehaviour {
 	public UILabel cityCobaltLbl;
 	public UILabel cityMithrilLbl;
 	public UILabel cityFoodLbl;
+	public GameObject citizensParent;
 	public UIGrid foodProducersGrid;
 	public UIGrid gatherersGrid;
 	public UIGrid minersGrid;
@@ -51,12 +53,22 @@ public class UIManager : MonoBehaviour {
 	public UI2DSprite cityInfoCtizenPortraitBG;
 
 
+	private Citizen currentlyShowingCitizen;
+	private City currentlyShowingCity;
+
 	void Awake(){
 		Instance = this;
 	}
 
 	void Update(){
 		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.week.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
+		if (currentlyShowingCity != null) {
+			this.ShowCityInfo(currentlyShowingCity);
+		}
+
+		//		if (currentlyShowingCitizen != null) {
+		//			this.ShowCitizenInfo(currentlyShowingCitizen);
+		//		}
 	}
 
 	public void SetProgressionSpeed1X(){
@@ -90,12 +102,20 @@ public class UIManager : MonoBehaviour {
 	}
 
 	internal void ShowCitizenInfo(Citizen citizenToShow){
+		currentlyShowingCitizen = citizenToShow;
 		citizenNameLbl.text = "[b]" + citizenToShow.name + "[/b]";
 		citizenKingdomNameLbl.text = citizenToShow.city.kingdom.name;
 		citizenBdayLbl.text = "[b]" + ((MONTH)citizenToShow.birthMonth).ToString() + " " + citizenToShow.birthWeek.ToString() + ", " + citizenToShow.birthYear.ToString() + "(" + citizenToShow.age.ToString() + ")[/b]";
 		citizenCityNameLbl.text = "[b]" + citizenToShow.city.name + "[/b]";
 		citizenRoleLbl.text = "[b]" + citizenToShow.role.ToString() + "[/b]";
 		citizenPrestigeLbl.text = "[b]" + citizenToShow.prestige.ToString() + "[/b]";
+
+		if (citizenToShow.isDead) {
+			citizenInfoIsDeadIcon.SetActive (true);
+		} else {
+			citizenInfoIsDeadIcon.SetActive (false);
+		}
+
 
 		List<Transform> children = citizenTraitsGrid.GetChildList();
 		for (int i = 0; i < children.Count; i++) {
@@ -134,12 +154,16 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void HideCitizenInfo(){
+		currentlyShowingCitizen = null;
 		citizenInfoGO.SetActive (false);
 	}
 
 	public void ShowCityInfo(City cityToShow){
+		currentlyShowingCity = cityToShow;
 		cityNameLbl.text = cityToShow.name;
-		cityGovernorLbl.text = cityToShow.governor.name;
+		if (cityToShow.governor != null) {
+			cityGovernorLbl.text = cityToShow.governor.name;
+		}
 		cityKingdomLbl.text = cityToShow.kingdom.name;
 		cityGoldLbl.text = cityToShow.goldCount.ToString();
 		cityStoneLbl.text = cityToShow.stoneCount.ToString();
@@ -149,20 +173,90 @@ public class UIManager : MonoBehaviour {
 		cityMithrilLbl.text = cityToShow.mithrilCount.ToString();
 		cityFoodLbl.text = "CITIZENS: " + cityToShow.citizens.Count + "/" + cityToShow.sustainability.ToString();
 
-		List<Citizen> citizensConcerned = cityToShow.GetCitizensWithRole(ROLE.FOODIE);
-		for (int i = 0; i < citizensConcerned.Count; i++) {
-			
+		CharacterPortrait[] characters = citizensParent.GetComponentsInChildren<CharacterPortrait>();
+		if (characters.Length <= 0 || (characters.Length > 0 && characters [0].citizen.city.id != cityToShow.id) || (characters.Length > 0 && characters.Length != cityToShow.citizens.Count)) {
+			for (int i = 0; i < characters.Length; i++) {
+				Destroy (characters [i].gameObject);
+			}
+
+			List<Citizen> citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.FOODIE);
+			for (int i = 0; i < citizensConcerned.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, foodProducersGrid.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+				citizenGO.transform.localScale = Vector3.one;
+			}
+			citizensConcerned.Clear ();
+			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GATHERER);
+			for (int i = 0; i < citizensConcerned.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, gatherersGrid.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+				citizenGO.transform.localScale = Vector3.one;
+			}
+			citizensConcerned.Clear ();
+			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.MINER);
+			for (int i = 0; i < citizensConcerned.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, minersGrid.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+				citizenGO.transform.localScale = Vector3.one;
+			}
+			citizensConcerned.Clear ();
+			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.TRADER);
+			for (int i = 0; i < citizensConcerned.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, tradersGrid.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+				citizenGO.transform.localScale = Vector3.one;
+			}
+			citizensConcerned.Clear ();
+			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GENERAL);
+			for (int i = 0; i < citizensConcerned.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, generalsGrid.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+				citizenGO.transform.localScale = Vector3.one;
+			}
+			citizensConcerned.Clear ();
+			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.SPY);
+			for (int i = 0; i < citizensConcerned.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, spiesGrid.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+				citizenGO.transform.localScale = Vector3.one;
+			}
+			citizensConcerned.Clear ();
+			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.ENVOY);
+			for (int i = 0; i < citizensConcerned.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, envoysGrid.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+				citizenGO.transform.localScale = Vector3.one;
+			}
+			citizensConcerned.Clear ();
+			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GUARDIAN);
+			for (int i = 0; i < citizensConcerned.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, guardiansGrid.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+				citizenGO.transform.localScale = Vector3.one;
+			}
+			citizensConcerned.Clear ();
+			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.UNTRAINED);
+			for (int i = 0; i < citizensConcerned.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, untrainedGrid.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+				citizenGO.transform.localScale = Vector3.one;
+			}
+			foodProducersGrid.enabled = true;
+			gatherersGrid.enabled = true;
+			minersGrid.enabled = true;
+			tradersGrid.enabled = true;
+			generalsGrid.enabled = true;
+			spiesGrid.enabled = true;
+			envoysGrid.enabled = true;
+			guardiansGrid.enabled = true;
+			untrainedGrid.enabled = true;
 		}
-//		public UIGrid foodProducersGrid;
-//		public UIGrid gatherersGrid;
-//		public UIGrid minersGrid;
-//		public UIGrid tradersGrid;
-//		public UIGrid generalsGrid;
-//		public UIGrid spiesGrid;
-//		public UIGrid envoysGrid;
-//		public UIGrid guardiansGrid;
-//		public UIGrid untrainedGrid;
-//		public UI2DSprite cityInfoCtizenPortraitBG;
+		cityInfoGO.SetActive (true);
+	}
+
+	public void HideCityInfo(){
+		currentlyShowingCity = null;
+		cityInfoGO.SetActive (false);
 	}
 
 	internal void ShowSmallInfo(string info, Transform parent){
@@ -176,6 +270,7 @@ public class UIManager : MonoBehaviour {
 			newPos.y -= 30f;
 		}
 		smallInfoGO.transform.localPosition = newPos;
+		smallInfoGO.transform.parent = this.transform;
 		smallInfoGO.SetActive (true);
 	}
 
@@ -183,4 +278,5 @@ public class UIManager : MonoBehaviour {
 		smallInfoGO.SetActive (false);
 		smallInfoGO.transform.parent = this.transform;
 	}
+		
 }
