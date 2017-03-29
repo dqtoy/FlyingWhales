@@ -55,6 +55,17 @@ public class Kingdom{
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
 	}
 
+	internal List<Citizen> GetAllCitizensForMarriage(Citizen citizen){
+		List<Citizen> elligibleCitizens = new List<Citizen>();
+		for (int i = 0; i < this.cities.Count; i++) {
+			if (citizen.gender == GENDER.MALE) {
+				elligibleCitizens.AddRange (this.cities [i].elligibleBachelorettes);
+			} else {
+				elligibleCitizens.AddRange (this.cities [i].elligibleBachelors);
+			}
+		}
+		return elligibleCitizens;
+	}
 
 	internal void AddTileToKingdom(HexTile tile){
 		tile.city = new City (tile, this);
@@ -115,6 +126,7 @@ public class Kingdom{
 			newKing.assignedRole = null;
 			newKing.isKing = true;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+ 
 			this.king = newKing;
 			this.king.CreateInitialRelationshipsToKings ();
 			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);

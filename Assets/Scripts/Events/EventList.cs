@@ -1,5 +1,8 @@
 ﻿using UnityEngine.Events;
 
+//Generic Events
+public class WeekEndedEvent : UnityEvent{}
+
 //Kingdom Events
 public class NewKingdomEvent : UnityEvent<Kingdom>{}
 

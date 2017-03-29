@@ -6,7 +6,6 @@ using System.Linq;
 
 //[System.Serializable]
 public class Citizen {
-
 	public int id;
 	public string name;
 	public GENDER gender;
@@ -17,6 +16,7 @@ public class Citizen {
 	public ROLE role;
 	public Role assignedRole;
 	public HexTile assignedTile;
+	public RACE race;
 	public List<BEHAVIOR_TRAIT> behaviorTraits;
 	public List<SKILL_TRAIT> skillTraits;
 	public List<MISC_TRAIT> miscTraits;
@@ -36,6 +36,7 @@ public class Citizen {
 	public MONTH birthMonth;
 	public int birthWeek;
 	public int birthYear;
+	public int prestige;
 	public int previousConversionMonth;
 	public int previousConversionYear;
 	public bool isIndependent;
@@ -51,10 +52,14 @@ public class Citizen {
 	private List<Citizen> possiblePretenders = new List<Citizen>();
 	private string history;
 
+	public List<Citizen> dependentChildren{
+		get{ return this.children.Where (x => x.age < 16 && !x.isMarried).ToList ();}
+	}
+
 
 	public Citizen(City city, int age, GENDER gender, int generation){
 		this.id = Utilities.SetID (this);
-		this.name = "CITIZEN" + this.id;
+		this.name = RandomNameGenerator.GenerateRandomName();
 		this.age = age;
 		this.gender = gender;
 		this.generation = generation;
@@ -63,6 +68,7 @@ public class Citizen {
 		this.role = ROLE.UNTRAINED;
 		this.assignedRole = null;
 		this.assignedTile = null;
+		this.race = city.kingdom.race;
 		this.behaviorTraits = new List<BEHAVIOR_TRAIT> ();
 		this.skillTraits = new List<SKILL_TRAIT> ();
 		this.miscTraits = new List<MISC_TRAIT> ();
@@ -84,6 +90,7 @@ public class Citizen {
 		this.birthMonth = (MONTH) GameManager.Instance.month;
 		this.birthWeek = GameManager.Instance.week;
 		this.birthYear = GameManager.Instance.year;
+		this.prestige = 0;
 		this.isIndependent = false;
 		this.isMarried = false;
 		this.isDirectDescendant = false;
@@ -95,11 +102,7 @@ public class Citizen {
 		this.isDead = false;
 		this.history = string.Empty;
 		this.city.citizens.Add (this);
-//		if(this.kingdom.assignedLord == null){
-//			this.loyalLord = this;
-//		}else{
-//			this.loyalLord = this.kingdom.assignedLord;
-//		}
+
 
 		this.GenerateTraits();
 
@@ -114,8 +117,8 @@ public class Citizen {
 		}
 
 		//Generate Behaviour trait
-		int firstItem = 0;
-		int secondItem = 1;
+		int firstItem = 1;
+		int secondItem = 2;
 		for (int j = 0; j < 4; j++) {
 			BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
 			int chanceForTrait = UnityEngine.Random.Range (0, 100);
@@ -162,9 +165,11 @@ public class Citizen {
 				skillTraits.AddRange(mother.skillTraits);
 			} else {
 				skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+				skillTraits.Remove (SKILL_TRAIT.NONE);
 			}
 		} else {
 			skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+			skillTraits.Remove (SKILL_TRAIT.NONE);
 		}
 			
 		for (int j = 0; j < numOfSkillTraits; j++) {
@@ -194,6 +199,7 @@ public class Citizen {
 		}
 
 		List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
+		miscTraits.Remove (MISC_TRAIT.NONE);
 		for (int j = 0; j < numOfMiscTraits; j++) {
 			MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
 			this.miscTraits.Add (chosenMiscTrait);
@@ -223,13 +229,26 @@ public class Citizen {
 	internal void TurnActions(){
 		AttemptToAge();
 		DeathReasons();
+
 	}
 
 	protected void AttemptToAge(){
 		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.week == this.birthWeek && GameManager.Instance.year > this.birthYear){
 			this.age += 1;
+			if (this.age >= 16) {
+				this.citizenChances.marriageChance += 2;
+				this.AttemptToMarry();
+			}
 		}
 	}
+
+	protected void AttemptToMarry(){
+		int chanceToMarry = Random.Range (0, 100);
+		if (chanceToMarry < this.citizenChances.marriageChance) {
+			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this);
+		}
+	}
+
 
 	internal void DeathReasons(){
 		if(isDead){
@@ -540,7 +559,145 @@ public class Citizen {
 			this.assignedRole = new Spy (this);
 		} else if (role == ROLE.TRADER) {
 			this.assignedRole = new Trader (this);
+		} else if (role == ROLE.GOVERNOR) {
+			this.assignedRole = new Governor (this);
+		} else if (role == ROLE.KING) {
+			this.assignedRole = new King (this);
 		}
+		this.UpdatePrestige ();
+	}
+
+	internal bool IsRoyaltyCloseRelative(Citizen otherCitizen){
+		if (otherCitizen.id == this.father.id || otherCitizen.id == this.mother.id) {
+			//royalty is father or mother
+			return true;
+		}
+
+		if (this.father.father != null && this.father.mother != null && this.mother.father != null && this.mother.mother != null) {
+			if (otherCitizen.id == this.father.father.id || otherCitizen.id == this.father.mother.id ||
+				otherCitizen.id == this.mother.father.id || otherCitizen.id == this.mother.mother.id) {
+				//royalty is grand parent
+				return true;
+			}
+		}
+
+		for (int i = 0; i < this.father.children.Count; i++) {
+			if(otherCitizen.id == this.father.children[i].id){
+				//royalty is sibling
+				return true;
+			}
+		}
+
+		if (this.father.father != null) {
+			for (int i = 0; i < this.father.father.children.Count; i++) {
+				if (otherCitizen.id == this.father.father.children [i].id) {
+					//royalty is uncle or aunt from fathers side
+					return true;
+				}
+				for (int j = 0; j < this.father.father.children[i].children.Count; j++) {
+					if (otherCitizen.id == this.father.father.children[i].children[j].id) {
+						//citizen is cousin from father's side
+						return true;
+					}
+				}
+			}
+		}
+
+		if (this.mother.father != null) {
+			for (int i = 0; i < this.mother.father.children.Count; i++) {
+				if (otherCitizen.id == this.mother.father.children [i].id) {
+					//royalty is uncle or aunt from mothers side
+					return true;
+				}
+				for (int j = 0; j < this.mother.father.children[i].children.Count; j++) {
+					if (otherCitizen.id == this.mother.father.children[i].children[j].id) {
+						//citizen is cousin from mother's side
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	internal RelationshipKings GetRelationshipWithCitizen(Citizen citizen){
+		for (int i = 0; i < this.relationshipKings.Count; i++) {
+			if (relationshipKings [i].king.id == citizen.id) {
+				return relationshipKings[i];
+			}
+		}
+		return null;
+	}
+
+	internal void UpdatePrestige(){
+		int prestige = 0;
+
+		//compute prestige for role
+		if (this.isKing) {
+			prestige += 500;
+			for (int i = 0; i < this.relationshipKings.Count; i++) {
+				if (this.relationshipKings [i].lordRelationship == RELATIONSHIP_STATUS.FRIEND) {
+					prestige += 10;
+				} else if (this.relationshipKings [i].lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+					prestige += 30;
+				} else if (this.relationshipKings [i].lordRelationship == RELATIONSHIP_STATUS.ENEMY) {
+					prestige -= 10;
+				} else if (this.relationshipKings [i].lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+					prestige -= 30;
+				}
+			}
+
+			for (int i = 0; i < this.supportedCitizen.Count; i++) {
+				if (this.supportedCitizen [i].role == ROLE.GOVERNOR) {
+					prestige += 20;
+				}
+			}
+
+			for (int i = 0; i < ((King)this.assignedRole).ownedKingdom.cities.Count; i++) {
+				prestige += 15;
+			}
+		}
+		if (this.isGovernor) {
+			prestige += 350;
+
+			for (int i = 0; i < ((Governor)this.assignedRole).ownedCity.ownedTiles.Count; i++) {
+				prestige += 5;
+			}
+
+			for (int i = 0; i < this.supportedCitizen.Count; i++) {
+				if (this.supportedCitizen [i].role == ROLE.GOVERNOR) {
+					prestige += 20;
+				} else if (this.supportedCitizen [i].role == ROLE.KING) {
+					prestige += 60;
+				}
+			}
+		}
+		if (this.isMarried && this.spouse != null) {
+			if (this.spouse.isKing || this.spouse.isGovernor) {
+				prestige += 150;
+			}
+		}
+		if (this.role == ROLE.GENERAL) {
+			prestige += 200;
+		} else if (this.role == ROLE.SPY || this.role == ROLE.ENVOY || this.role == ROLE.GUARDIAN) {
+			prestige += 150;
+			for (int i = 0; i < ((Spy)this.assignedRole).successfulMissions; i++) {
+				prestige += 20;
+			}
+			for (int i = 0; i < ((Spy)this.assignedRole).unsuccessfulMissions; i++) {
+				prestige -= 5;
+			}
+		}  else {
+			if (this.role != ROLE.UNTRAINED) {
+				prestige += 100;
+			} else {
+				prestige += 50;
+			}
+		} 
+		//Add prestige for successors
+		this.prestige = prestige;
+
 	}
 	internal void AddSuccessionWar(Citizen enemy){
 		this.successionWars.Add (enemy);
