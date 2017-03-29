@@ -3,21 +3,20 @@ using System.Collections;
 
 public class CameraMove : MonoBehaviour {
 
+	public static CameraMove Instance = null;
+
 	float minFov = 60f;
 	float maxFov = 163f;
 	float sensitivity = 20f;
 
-	// Use this for initialization
-	void Start () {
-
+	void Awake(){
+		Instance = this;
 	}
 
-	// Update is called once per frame
 	void Update () {
 		float xAxisValue = Input.GetAxis("Horizontal");
 		float zAxisValue = Input.GetAxis("Vertical");
-		if(Camera.current != null)
-		{
+		if(Camera.current != null){
 			Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
 		}
 
@@ -25,5 +24,11 @@ public class CameraMove : MonoBehaviour {
 		fov += Input.GetAxis("Mouse ScrollWheel") * sensitivity;
 		fov = Mathf.Clamp(fov, minFov, maxFov);
 		Camera.main.fieldOfView = fov;
+
+	}
+
+	public void CenterCameraOn(GameObject GO){
+		Vector3 diff = Camera.main.ScreenToWorldPoint(GO.transform.position);
+		Camera.main.transform.Translate(new Vector3(diff.x, diff.y, 0.0f));
 	}
 }

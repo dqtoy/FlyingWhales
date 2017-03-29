@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour {
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
 		EventManager.Instance.onCitizenMove.Invoke ();
+		EventManager.Instance.onWeekEnd.Invoke();
 	}
 
 }

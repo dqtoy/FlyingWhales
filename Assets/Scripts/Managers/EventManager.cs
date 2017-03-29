@@ -4,10 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class EventManager : MonoBehaviour {
+	public static EventManager Instance;
 
 	private Dictionary <string, UnityEvent> eventDictionary;
 
-	public static EventManager Instance;
+	public Dictionary<EVENT_TYPES, List<GameEvent>> allEvents; 
+
+	public WeekEndedEvent onWeekEnd = new WeekEndedEvent();
 	public NewKingdomEvent onCreateNewKingdomEvent = new NewKingdomEvent();
 	public CitizenTurnActions onCitizenTurnActions = new CitizenTurnActions ();
 	public CityEverydayTurnActions onCityEverydayTurnActions = new CityEverydayTurnActions();
@@ -19,7 +22,7 @@ public class EventManager : MonoBehaviour {
 
 	void Awake(){
 		Instance = this;
-		this.Init();
+//		this.Init();
 	}
 
 	void Init (){

@@ -16,6 +16,10 @@ public class General : Role {
 	public int daysBeforeReleaseTask;
 	public bool isOnTheWay;
 	public GameObject generalAvatar;
+	public int battlesWon;
+	public int citiesInvaded;
+	public int successfulRaids;
+	public int unsuccessfulRaids;
 
 	public General(Citizen citizen): base(citizen){
 		this.location = citizen.city.hexTile;
@@ -29,6 +33,11 @@ public class General : Role {
 		this.daysBeforeArrival = 0;
 		this.daysBeforeReleaseTask = 0;
 		this.roads = new List<HexTile> ();
+		this.battlesWon = 0;
+		this.citiesInvaded = 0;
+		this.successfulRaids = 0;
+		this.unsuccessfulRaids = 0;
+
 		EventManager.Instance.onCitizenMove.AddListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.AddListener (RegisterOnCampaign);
 		EventManager.Instance.onDeathArmy.AddListener (DeathArmy);

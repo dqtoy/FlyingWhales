@@ -62,9 +62,9 @@ public class UIManager : MonoBehaviour {
 
 	void Update(){
 		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.week.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
-		if (currentlyShowingCity != null) {
-			this.ShowCityInfo(currentlyShowingCity);
-		}
+//		if (currentlyShowingCity != null) {
+//			this.ShowCityInfo(currentlyShowingCity);
+//		}
 
 		//		if (currentlyShowingCitizen != null) {
 		//			this.ShowCitizenInfo(currentlyShowingCitizen);
@@ -174,89 +174,103 @@ public class UIManager : MonoBehaviour {
 		cityFoodLbl.text = "CITIZENS: " + cityToShow.citizens.Count + "/" + cityToShow.sustainability.ToString();
 
 		CharacterPortrait[] characters = citizensParent.GetComponentsInChildren<CharacterPortrait>();
-		if (characters.Length <= 0 || (characters.Length > 0 && characters [0].citizen.city.id != cityToShow.id) || (characters.Length > 0 && characters.Length != cityToShow.citizens.Count)) {
-			for (int i = 0; i < characters.Length; i++) {
-				Destroy (characters [i].gameObject);
-			}
-
-			List<Citizen> citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.FOODIE);
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, foodProducersGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GATHERER);
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, gatherersGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.MINER);
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, minersGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.TRADER);
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, tradersGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GENERAL);
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, generalsGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.SPY);
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, spiesGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.ENVOY);
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, envoysGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GUARDIAN);
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, guardiansGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.UNTRAINED);
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, untrainedGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			foodProducersGrid.enabled = true;
-			gatherersGrid.enabled = true;
-			minersGrid.enabled = true;
-			tradersGrid.enabled = true;
-			generalsGrid.enabled = true;
-			spiesGrid.enabled = true;
-			envoysGrid.enabled = true;
-			guardiansGrid.enabled = true;
-			untrainedGrid.enabled = true;
+		for (int i = 0; i < characters.Length; i++) {
+			Destroy (characters [i].gameObject);
 		}
+
+		List<Citizen> citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.FOODIE);
+		for (int i = 0; i < citizensConcerned.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, foodProducersGrid.transform) as GameObject;
+			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+			citizenGO.transform.localScale = Vector3.one;
+		}
+		citizensConcerned.Clear ();
+		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GATHERER);
+		for (int i = 0; i < citizensConcerned.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, gatherersGrid.transform) as GameObject;
+			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+			citizenGO.transform.localScale = Vector3.one;
+		}
+		citizensConcerned.Clear ();
+		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.MINER);
+		for (int i = 0; i < citizensConcerned.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, minersGrid.transform) as GameObject;
+			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+			citizenGO.transform.localScale = Vector3.one;
+		}
+		citizensConcerned.Clear ();
+		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.TRADER);
+		for (int i = 0; i < citizensConcerned.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, tradersGrid.transform) as GameObject;
+			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+			citizenGO.transform.localScale = Vector3.one;
+		}
+		citizensConcerned.Clear ();
+		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GENERAL);
+		for (int i = 0; i < citizensConcerned.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, generalsGrid.transform) as GameObject;
+			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+			citizenGO.transform.localScale = Vector3.one;
+		}
+		citizensConcerned.Clear ();
+		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.SPY);
+		for (int i = 0; i < citizensConcerned.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, spiesGrid.transform) as GameObject;
+			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+			citizenGO.transform.localScale = Vector3.one;
+		}
+		citizensConcerned.Clear ();
+		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.ENVOY);
+		for (int i = 0; i < citizensConcerned.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, envoysGrid.transform) as GameObject;
+			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+			citizenGO.transform.localScale = Vector3.one;
+		}
+		citizensConcerned.Clear ();
+		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GUARDIAN);
+		for (int i = 0; i < citizensConcerned.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, guardiansGrid.transform) as GameObject;
+			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+			citizenGO.transform.localScale = Vector3.one;
+		}
+		citizensConcerned.Clear ();
+		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.UNTRAINED);
+		for (int i = 0; i < citizensConcerned.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, untrainedGrid.transform) as GameObject;
+			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+			citizenGO.transform.localScale = Vector3.one;
+		}
+		foodProducersGrid.Reposition();
+		gatherersGrid.Reposition();
+		minersGrid.Reposition();
+		tradersGrid.Reposition();
+		generalsGrid.Reposition();
+		spiesGrid.Reposition();
+		envoysGrid.Reposition();
+		guardiansGrid.Reposition();
+		untrainedGrid.Reposition();
+
+		foodProducersGrid.enabled = true;
+		gatherersGrid.enabled = true;
+		minersGrid.enabled = true;
+		tradersGrid.enabled = true;
+		generalsGrid.enabled = true;
+		spiesGrid.enabled = true;
+		envoysGrid.enabled = true;
+		guardiansGrid.enabled = true;
+		untrainedGrid.enabled = true;
 		cityInfoGO.SetActive (true);
 	}
 
 	public void HideCityInfo(){
 		currentlyShowingCity = null;
 		cityInfoGO.SetActive (false);
+	}
+
+	public void ShowGovernorInfo(){
+		if (this.currentlyShowingCity != null) {
+			this.ShowCitizenInfo (this.currentlyShowingCity.governor);
+		}
 	}
 
 	internal void ShowSmallInfo(string info, Transform parent){

@@ -48,6 +48,14 @@ public class City{
 		get{ return this.ownedTiles.Where (x => !x.isOccupied).ToList();}
 	}
 
+	public List<Citizen> elligibleBachelorettes{
+		get{ return this.citizens.Where(x => x.age >= 16 && x.gender == GENDER.FEMALE && !x.isMarried).ToList();}
+	}
+
+	public List<Citizen> elligibleBachelors{
+		get{ return this.citizens.Where(x => x.age >= 16 && x.gender == GENDER.MALE && !x.isMarried).ToList();}
+	}
+
 	public City(HexTile hexTile, Kingdom kingdom){
 		this.id = Utilities.SetID(this);
 		this.name = "City" + this.id.ToString();
@@ -73,8 +81,7 @@ public class City{
 
 		this.hexTile.isOccupied = true;
 
-		this.CreateInitialFamilies();
-		this.UpdateUnownedNeighbourTiles();
+//		this.CreateInitialFamilies();
 
 		EventManager.Instance.onCityEverydayTurnActions.AddListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener (CheckCityDeath);
@@ -95,6 +102,7 @@ public class City{
 		CreateInitialUntrainedFamily ();
 		GenerateInitialTraitsForInitialCitizens ();
 		UpdateResourceProduction ();
+		UpdateUnownedNeighbourTiles();
 	}
 
 	private void BuyInitialTiles(){
@@ -168,16 +176,24 @@ public class City{
 		if(randomGender < 20){
 			gender = GENDER.FEMALE;
 		}
-		this.kingdom.king = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
+		Citizen king = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
 		Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 		Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
+		king.role = ROLE.KING;
+		King job = new King (king);
+		king.assignedRole = job;
+		job.SetOwnedKingdom(this.kingdom);
+		this.kingdom.king = king;
+
 		this.kingdom.king.isKing = true;
 		this.kingdom.king.isDirectDescendant = true;
+
 		father.isDirectDescendant = true;
 		mother.isDirectDescendant = true;
 		father.isDead = true;
 		mother.isDead = true;
+
 		this.citizens.Remove(father);
 		this.citizens.Remove(mother);
 //		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), PoliticsPrototypeManager.Instance.year - father.age);
@@ -186,7 +202,7 @@ public class City{
 
 		father.AddChild (this.kingdom.king);
 		mother.AddChild (this.kingdom.king);
-		this.kingdom.king.AddParents(father, mother);
+		king.AddParents(father, mother);
 		MarriageManager.Instance.Marry(father, mother);
 
 		int siblingsChance = UnityEngine.Random.Range (0, 100);
@@ -271,6 +287,11 @@ public class City{
 		Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
 		governor.isGovernor = true;
+		governor.role = ROLE.GOVERNOR;
+		Governor job = new Governor (governor);
+		governor.assignedRole = job;
+		job.SetOwnedCity(this);
+
 		//		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), PoliticsPrototypeManager.Instance.year - father.age);
 		//		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), PoliticsPrototypeManager.Instance.year - mother.age);
 		//		this.kingdom.king.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - this.assignedLord.age));
@@ -419,8 +440,7 @@ public class City{
 			Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 			Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
-			producer.role = ROLE.FOODIE;
-			producer.assignedRole = new Foodie (producer);
+			producer.AssignRole (ROLE.FOODIE);
 			//		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), PoliticsPrototypeManager.Instance.year - father.age);
 			//		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), PoliticsPrototypeManager.Instance.year - mother.age);
 			//		this.kingdom.king.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - this.assignedLord.age));
@@ -476,8 +496,7 @@ public class City{
 			Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 			Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
-			gatherer.role = ROLE.GATHERER;
-			gatherer.assignedRole = new Gatherer (gatherer);
+			gatherer.AssignRole (ROLE.GATHERER);
 			//		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), PoliticsPrototypeManager.Instance.year - father.age);
 			//		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), PoliticsPrototypeManager.Instance.year - mother.age);
 			//		this.kingdom.king.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (PoliticsPrototypeManager.Instance.year - this.assignedLord.age));
@@ -1070,7 +1089,7 @@ public class City{
 		}
 	}
 
-	protected void AdjustResourceCount(BASE_RESOURCE_TYPE resourceType, int amount){
+	internal void AdjustResourceCount(BASE_RESOURCE_TYPE resourceType, int amount){
 		switch (resourceType) {
 		case BASE_RESOURCE_TYPE.FOOD:
 			this.sustainability += amount;
@@ -1172,4 +1191,12 @@ public class City{
 		return citizenCreationCosts;
 	}
 	#endregion
+
+	internal void RemoveCitizenFromCity(Citizen citizenToRemove){
+		this.citizens.Remove (citizenToRemove);
+	}
+
+	internal void AddCitizenToCity(Citizen citizenToAdd){
+		this.citizens.Add (citizenToAdd);
+	}
 }
