@@ -30,6 +30,7 @@ public class City{
 	public int[] allResourceProduction; //food, lumber, stone, mana stone, mithril, cobalt, gold
 
 	[Space(5)]
+	public IsActive isActive;
 	public bool isStarving;
 	public bool isDead;
 	//generals
@@ -52,6 +53,7 @@ public class City{
 		this.citizens = new List<Citizen>();
 		this.connectedCities = new List<City> ();
 		this.cityHistory = string.Empty;
+		this.isActive = new IsActive (false);
 		this.hasKing = false;
 		this.isStarving = false;
 		this.isDead = false;
@@ -1083,4 +1085,8 @@ public class City{
 		return citizenCreationCosts;
 	}
 	#endregion
+
+	internal void NewIsActive(){
+		this.isActive = new IsActive (false);
+	}
 }

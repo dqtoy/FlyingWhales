@@ -172,3 +172,10 @@ public enum CAMPAIGN{
 	OFFENSE,
 	DEFENSE,
 }
+
+public enum WAR_TYPE{
+	INTERNATIONAL,
+	CIVIL,
+	SUCCESSION,
+	NONE,
+}

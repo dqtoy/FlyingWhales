@@ -12,6 +12,7 @@ public class General : Role {
 	public Citizen warLeader;
 	public int campaignID;
 	public CAMPAIGN assignedCampaign;
+	public WAR_TYPE warType;
 	public int daysBeforeArrival;
 	public int daysBeforeReleaseTask;
 	public bool isOnTheWay;
@@ -25,6 +26,7 @@ public class General : Role {
 		this.army = new Army (GetInitialArmyHp());
 		this.campaignID = 0;
 		this.assignedCampaign = CAMPAIGN.NONE;
+		this.warType = WAR_TYPE.NONE;
 		this.isOnTheWay = false;
 		this.daysBeforeArrival = 0;
 		this.daysBeforeReleaseTask = 0;
@@ -59,23 +61,91 @@ public class General : Role {
 			this.citizen.Death ();
 		}
 	}
+	internal void RerouteToHome(){
+		if(this.location != this.citizen.city.hexTile){
+			this.targetLocation = this.citizen.city.hexTile;
+			this.roads.Clear ();
+			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.targetLocation, PATHFINDING_MODE.NORMAL).ToList();
+			this.roads = path;
+		}
+	}
+	internal void UnregisterThisGeneral(Campaign campaign){
+		if(campaign == null){
+			campaign = this.warLeader.campaignManager.SearchCampaignByID (this.campaignID);
+		}
+		campaign.registeredGenerals.Remove (this.citizen);
+
+		this.targetLocation = null;
+		this.warLeader = null;
+		this.campaignID = 0;
+		this.assignedCampaign = CAMPAIGN.NONE;
+		this.targetCity = null;
+		this.daysBeforeArrival = 0;
+		RerouteToHome ();
+		if(campaign.registeredGenerals.Count <= 0){
+			campaign.leader.campaignManager.CampaignDone (campaign);
+		}
+
+	}
 	internal void RegisterOnCampaign(Campaign campaign){
-		if(this.citizen.city.governor.supportedCitizen.Contains(campaign.leader)){
-			if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
-				List<HexTile> path = null;
-				if(campaign.campaignType == CAMPAIGN.OFFENSE){
-					path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
-				}else{
-					path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-					if(path.Count > campaign.targetCity.incomingGenerals.Where(x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE).Min(x => ((General)x.assignedRole).daysBeforeArrival)){
-						path = null;
+		if(campaign.warType == WAR_TYPE.INTERNATIONAL){
+			if(this.citizen.city.governor.supportedRebellion == null){
+				if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
+					List<HexTile> path = null;
+					if(campaign.campaignType == CAMPAIGN.OFFENSE){
+						path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+					}else{
+						path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+						if(path.Count > campaign.targetCity.incomingGenerals.Where(x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE).Min(x => ((General)x.assignedRole).daysBeforeArrival)){
+							path = null;
+						}
+					}
+					if(path != null){
+						AssignCampaign (campaign, path);
 					}
 				}
-				if(path != null){
-					AssignCampaign (campaign, path);
+			}
+		}else if(campaign.warType == WAR_TYPE.SUCCESSION){
+			if(this.citizen.city.governor.supportedHeir == null){
+				if(campaign.leader.isHeir){
+					if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
+						List<HexTile> path = null;
+						if(campaign.campaignType == CAMPAIGN.OFFENSE){
+							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+						}else{
+							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE).Min(x => ((General)x.assignedRole).daysBeforeArrival)){
+								path = null;
+							}
+						}
+						if(path != null){
+							AssignCampaign (campaign, path);
+						}
+					}
+				}
+			}else{
+				if(this.citizen.city.governor.supportedHeir.id == campaign.leader.id){
+					if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
+						List<HexTile> path = null;
+						if(campaign.campaignType == CAMPAIGN.OFFENSE){
+							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+						}else{
+							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE).Min(x => ((General)x.assignedRole).daysBeforeArrival)){
+								path = null;
+							}
+						}
+						if(path != null){
+							AssignCampaign (campaign, path);
+						}
+					}
 				}
 			}
+
+		}else if(campaign.warType == WAR_TYPE.CIVIL){
+
 		}
+
 
 	}
 	internal void AssignCampaign(Campaign chosenCampaign, List<HexTile> path){
@@ -87,8 +157,11 @@ public class General : Role {
 		this.warLeader = chosenCampaign.leader;
 		this.campaignID = chosenCampaign.id;
 		this.assignedCampaign = chosenCampaign.campaignType;
+		this.warType = chosenCampaign.warType;
 		this.targetCity = chosenCampaign.targetCity;
 		this.daysBeforeArrival = path.Count;
+		this.roads.Clear ();
+		this.roads = path;
 
 
 		chosenCampaign.registeredGenerals.Add (this.citizen);
@@ -105,20 +178,22 @@ public class General : Role {
 				this.roads.RemoveAt (0);
 				this.daysBeforeArrival -= 1;
 				if(this.location == this.targetLocation){
-					this.warLeader.campaignManager.GeneralHasArrived (this.citizen);
+					if(this.warLeader != null){
+						this.warLeader.campaignManager.GeneralHasArrived (this.citizen);
+					}
 					return;
 				}else{
-					if(this.location.city != null && this.location.isOccupied){
-						if(this.location.city.id != this.citizen.city.id){
-							bool isDead = false;
-							int armyNumber = this.army.hp;
-							this.location.city.CheckBattleMidwayCity ();
-							//							this.location.city.CheckBattleMidwayCity (this, ref armyNumber, ref isDead);
-							if(!isDead){
-								this.army.hp = armyNumber;
-							}
-						}
-					}
+//					if(this.location.city != null && this.location.isOccupied){
+//						if(this.location.city.id != this.citizen.city.id){
+//							bool isDead = false;
+//							int armyNumber = this.army.hp;
+//							this.location.city.CheckBattleMidwayCity ();
+//							//							this.location.city.CheckBattleMidwayCity (this, ref armyNumber, ref isDead);
+//							if(!isDead){
+//								this.army.hp = armyNumber;
+//							}
+//						}
+//					}
 				}
 
 			}

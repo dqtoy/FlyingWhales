@@ -15,5 +15,6 @@ public class CitizenMove: UnityEvent{}
 //Campaign
 public class RegisterOnCampaign: UnityEvent<Campaign>{}
 public class DeathArmy: UnityEvent{}
+public class UnsupportCitizen: UnityEvent<Citizen>{}
 
 

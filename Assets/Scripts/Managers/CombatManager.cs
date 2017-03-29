@@ -61,6 +61,9 @@ public class CombatManager : MonoBehaviour {
 		EventManager.Instance.onDeathArmy.Invoke ();
 		if(victoriousGeneral != null){
 			Debug.Log (city.name + " IS CONQUERED BY " + victoriousGeneral.city.name);
+			if(((General)victoriousGeneral.assignedRole).warLeader.city.kingdom.id == city.kingdom.id){
+				//CIVIL WAR OR SUCCESSION WAR, SEARCH FOR TARGET
+			}
 			for(int i = 0; i < city.incomingGenerals.Count; i++){
 				Campaign campaign = ((General)city.incomingGenerals[i].assignedRole).warLeader.campaignManager.SearchCampaignByID (((General)city.incomingGenerals[i].assignedRole).campaignID);
 				campaign.leader.campaignManager.CampaignDone (campaign);
@@ -134,5 +137,9 @@ public class CombatManager : MonoBehaviour {
 			((General)general1.assignedRole).army.hp = 0;
 		}
 		Debug.Log ("RESULTS: " + general1.name + " army hp left: " + ((General)general1.assignedRole).army.hp + "\n" + general2.name + " army hp left: " + ((General)general2.assignedRole).army.hp);
+	}
+
+	internal void BattleMidway(){
+		//MID WAY BATTLE IF supported is not the same
 	}
 }
