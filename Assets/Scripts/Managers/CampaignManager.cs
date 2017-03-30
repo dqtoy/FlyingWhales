@@ -8,6 +8,12 @@ public class CampaignManager {
 	public int campaignLimit;
 	public List<Campaign> activeCampaigns;
 	public List<Citizen> controlledGovernorsAndKings;
+
+	public List<CityWar> intlWarCities;
+	public List<CityWar> civilWarCities;
+	public List<CityWar> successionWarCities;
+	public List<CityWar> defenseWarCities;
+
 	public List<City> targetableAttackCities;
 	public List<City> targetableDefenseCities;
 	public List<City> activeAttackCities;
@@ -21,42 +27,53 @@ public class CampaignManager {
 		this.targetableDefenseCities = new List<City> ();
 		this.activeAttackCities = new List<City> ();
 		this.activeDefenseCities = new List<City> ();
-	}
-	internal void UpdateControlledGovernorsAndKings(){
-		this.controlledGovernorsAndKings.Clear ();
-		for(int i = 0; i < this.leader.city.kingdom.cities.Count; i++){
-			if(this.leader.city.kingdom.cities[i].governor.supportedCitizen.Contains(this.leader)){
-				this.controlledGovernorsAndKings.Add (this.leader.city.kingdom.cities [i].governor);
-			}
-		}
+		this.intlWarCities = new List<CityWar>();
+		this.civilWarCities = new List<CityWar>();
+		this.successionWarCities = new List<CityWar>();
 	}
 	internal void CreateCampaign(){
 		if(this.activeCampaigns.Count < this.campaignLimit){
+			int randomWarType = UnityEngine.Random.Range (0, 2);
 			CAMPAIGN campaignType = GetTypeOfCampaign ();
 			Campaign newCampaign = null;
 			if(campaignType != CAMPAIGN.NONE){
 				if(campaignType == CAMPAIGN.OFFENSE){
-					if (this.targetableAttackCities.Count > 0) {
-						List<City> adjacentCities = this.targetableAttackCities.Where (x => x.CheckCityConnectivity (this.targetableDefenseCities)).ToList();
-						int neededArmy = (int)(this.targetableDefenseCities.Sum (x => x.GetCityArmyStrength ()) * 0.25f);
-						newCampaign = new Campaign (this.leader, adjacentCities[0], campaignType, neededArmy);
-						newCampaign.rallyPoint = GetRallyPoint ();
-						this.activeCampaigns.Add (newCampaign);
-						this.MakeCityActive (campaignType, adjacentCities[0]);
-					} else {
+					
+					List<City> civilWarCities = this.civilWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
+					List<City> successionWarCities = this.successionWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
+					List<City> intlWarCities = this.intlWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
+
+					if(civilWarCities.Count <= 0 && successionWarCities.Count <= 0 && intlWarCities.Count <= 0){
 						campaignType = CAMPAIGN.DEFENSE;
-						if(this.targetableDefenseCities.Count > 0){
-							this.targetableDefenseCities = this.targetableDefenseCities.OrderBy(x => x.incomingGenerals.Min(y => (int?)((General)y.assignedRole).daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+						List<City> defenseCities = this.defenseWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
+						if(defenseCities.Count > 0){
+							defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Min(y => (int?)((General)y.assignedRole).daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
 							int neededArmy = this.targetableDefenseCities [0].GetTotalAttackerStrength ();
 							if(this.targetableDefenseCities[0].incomingGenerals.Count <= 0){
 								neededArmy = (int)(this.targetableDefenseCities.Sum (x => x.GetCityArmyStrength ()) * 0.25f);
 							}
-							newCampaign = new Campaign (this.leader, this.targetableDefenseCities [0], campaignType, neededArmy);
+							newCampaign = new Campaign (this.leader, this.targetableDefenseCities [0], campaignType, WAR_TYPE.NONE, neededArmy);
 							this.activeCampaigns.Add (newCampaign);
-							this.MakeCityActive (campaignType, this.targetableDefenseCities [0]);
+							this.MakeCityActive (newCampaign);
 						}else{
 							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
 							return;
+						}
+//						
+					} else {
+						for (int i = 0; i < this.leader.city.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
+//							if(this.leader.city.kingdom.relationshipsWithOtherKingdoms[i].isAtWar && this.leader.city.kingdom.relationshipsWithOtherKingdoms[i].isAdjacent){
+//								intlWarCities.AddRange (this.leader.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.cities.Where(x => !this.IsCityActive(x, campaignType)).ToList());
+//							}
+							WAR_TYPE warType = WAR_TYPE.NONE;
+							City target = null;
+							GetWarAndTarget (intlWarCities, civilWarCities, successionWarCities, ref warType, ref target);
+
+							int neededArmy = (int)(this.targetableDefenseCities.Sum (x => x.GetCityArmyStrength ()) * 0.25f);
+							newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
+							newCampaign.rallyPoint = GetRallyPoint ();
+							this.activeCampaigns.Add (newCampaign);
+							this.MakeCityActive (newCampaign);
 						}
 					}
 				}else{
@@ -66,18 +83,28 @@ public class CampaignManager {
 						if(this.targetableDefenseCities[0].incomingGenerals.Count <= 0){
 							neededArmy = (int)(this.targetableDefenseCities.Sum (x => x.GetCityArmyStrength ()) * 0.25f);
 						}
-						newCampaign = new Campaign (this.leader, this.targetableDefenseCities [0], campaignType, neededArmy);
+						newCampaign = new Campaign (this.leader, this.targetableDefenseCities [0], campaignType, WAR_TYPE.NONE, neededArmy);
 						this.activeCampaigns.Add (newCampaign);
-						this.MakeCityActive (campaignType, this.targetableDefenseCities [0]);
+						this.MakeCityActive (newCampaign);
 					} else {
 						campaignType = CAMPAIGN.OFFENSE;
 						if(this.targetableAttackCities.Count > 0){
-							List<City> adjacentCities = this.targetableAttackCities.Where (x => x.CheckCityConnectivity (this.targetableDefenseCities)).ToList();
+							List<City> civilWarCities = this.leader.civilWars.Select (x => x.city).ToList ();
+							List<City> successionWarCities = this.leader.successionWars.Select (x => x.city).ToList ();
+							List<City> intlWarCities = new List<City> ();
+							for(int i = 0; i < this.leader.city.kingdom.relationshipsWithOtherKingdoms.Count; i++){
+								if(this.leader.city.kingdom.relationshipsWithOtherKingdoms[i].isAtWar && this.leader.city.kingdom.relationshipsWithOtherKingdoms[i].isAdjacent){
+									intlWarCities.AddRange (this.leader.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.cities);
+								}
+							}
+							WAR_TYPE warType = WAR_TYPE.NONE;
+							City target = null;
+							GetWarAndTarget (intlWarCities, civilWarCities, successionWarCities, ref warType, ref target);
 							int neededArmy = (int)(this.targetableDefenseCities.Sum (x => x.GetCityArmyStrength ()) * 0.25f);
-							newCampaign = new Campaign (this.leader, adjacentCities[0], campaignType, neededArmy);
+							newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
 							newCampaign.rallyPoint = GetRallyPoint ();
 							this.activeCampaigns.Add (newCampaign);
-							this.MakeCityActive (campaignType, adjacentCities[0]);
+							this.MakeCityActive (newCampaign);
 						}else{
 							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
 							return;
@@ -89,11 +116,83 @@ public class CampaignManager {
 			}
 		}
 	}
+	internal bool IsCityActive(City city, CAMPAIGN campaignType){
+		if(campaignType == CAMPAIGN.OFFENSE){
+			for(int i = 0; i < this.activeAttackCities.Count; i++){
+				if(city.id == this.activeAttackCities[i].id){
+					return true;
+				}
+			}
+			return false;
+		}else{
+			for(int i = 0; i < this.activeDefenseCities.Count; i++){
+				if(city.id == this.activeDefenseCities[i].id){
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	internal void GetWarAndTarget(List<City> intlWarCities, List<City> civilWarCities, List<City> successionWarCities, ref WAR_TYPE warType, ref City target){
+		if(intlWarCities.Count > 0 && civilWarCities.Count > 0 && successionWarCities.Count > 0){
+			int chance = UnityEngine.Random.Range (0, 3);
+			if(chance == 0){
+				warType = WAR_TYPE.INTERNATIONAL;
+				target = intlWarCities [UnityEngine.Random.Range (0, intlWarCities.Count)];
+			}else if(chance == 1){
+				warType = WAR_TYPE.CIVIL;
+				target = civilWarCities [UnityEngine.Random.Range (0, civilWarCities.Count)];
+			}else{
+				warType = WAR_TYPE.SUCCESSION;
+				target = successionWarCities [UnityEngine.Random.Range (0, successionWarCities.Count)];
+			}
+		}else if(intlWarCities.Count > 0 && civilWarCities.Count > 0 && successionWarCities.Count <= 0){
+			int chance = UnityEngine.Random.Range (0, 2);
+			if(chance == 0){
+				warType = WAR_TYPE.INTERNATIONAL;
+				target = intlWarCities [UnityEngine.Random.Range (0, intlWarCities.Count)];
+			}else if(chance == 1){
+				warType = WAR_TYPE.CIVIL;
+				target = civilWarCities [UnityEngine.Random.Range (0, civilWarCities.Count)];
+			}
+		}else if(intlWarCities.Count > 0 && civilWarCities.Count <= 0 && successionWarCities.Count > 0){
+			int chance = UnityEngine.Random.Range (0, 2);
+			if(chance == 0){
+				warType = WAR_TYPE.INTERNATIONAL;
+				target = intlWarCities [UnityEngine.Random.Range (0, intlWarCities.Count)];
+			}else if(chance == 1){
+				warType = WAR_TYPE.SUCCESSION;
+				target = successionWarCities [UnityEngine.Random.Range (0, successionWarCities.Count)];
+			}
+		}else if(intlWarCities.Count <= 0 && civilWarCities.Count > 0 && successionWarCities.Count > 0){
+			int chance = UnityEngine.Random.Range (0, 2);
+			if(chance == 0){
+				warType = WAR_TYPE.CIVIL;
+				target = civilWarCities [UnityEngine.Random.Range (0, civilWarCities.Count)];
+			}else if(chance == 1){
+				warType = WAR_TYPE.SUCCESSION;
+				target = successionWarCities [UnityEngine.Random.Range (0, successionWarCities.Count)];
+			}
+		}else if(intlWarCities.Count > 0 && civilWarCities.Count <= 0 && successionWarCities.Count <= 0){
+			warType = WAR_TYPE.INTERNATIONAL;
+			target = intlWarCities [UnityEngine.Random.Range (0, intlWarCities.Count)];
+		}else if(intlWarCities.Count <= 0 && civilWarCities.Count > 0 && successionWarCities.Count <= 0){
+			warType = WAR_TYPE.CIVIL;
+			target = civilWarCities [UnityEngine.Random.Range (0, civilWarCities.Count)];
+		}else if(intlWarCities.Count <= 0 && civilWarCities.Count <= 0 && successionWarCities.Count > 0){
+			warType = WAR_TYPE.SUCCESSION;
+			target = successionWarCities [UnityEngine.Random.Range (0, successionWarCities.Count)];
+		}else{
+			warType = WAR_TYPE.NONE;
+			target = null;
+		}
+	}
 	internal void CampaignDone(Campaign campaign){
 		Campaign doneCampaign = SearchCampaignByID (campaign.id);
 		for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
 			UnregisterGenerals (doneCampaign.registeredGenerals [i], doneCampaign);
 		}
+		this.MakeCityInactive (doneCampaign);
 		this.activeCampaigns.Remove (doneCampaign);
 		doneCampaign = null;
 		CreateCampaign ();
@@ -105,7 +204,6 @@ public class CampaignManager {
 		((General)general.assignedRole).assignedCampaign = CAMPAIGN.NONE;
 		((General)general.assignedRole).targetCity = null;
 		((General)general.assignedRole).daysBeforeArrival = 0;
-
 
 		chosenCampaign.registeredGenerals.Remove (general);
 	}
@@ -153,30 +251,96 @@ public class CampaignManager {
 			}
 		}
 	}
-	internal void MakeCityActive(CAMPAIGN campaignType, City city){
-		if(campaignType == CAMPAIGN.OFFENSE){
-			City targetCity = this.targetableAttackCities.Find (x => x.id == city.id);
-			this.targetableAttackCities.Remove (targetCity);
-			this.activeAttackCities.Add (targetCity);
-		}else{
-			City targetCity = this.targetableDefenseCities.Find (x => x.id == city.id);
-			this.targetableDefenseCities.Remove (targetCity);
-			this.activeDefenseCities.Add (targetCity);
+	internal void MakeCityActive(Campaign campaign){
+		CityWar cityWar = null;
+		if(campaign.warType == WAR_TYPE.INTERNATIONAL){
+			cityWar = this.intlWarCities.Find (x => x.city.id == campaign.targetCity.id);
+		}else if(campaign.warType == WAR_TYPE.CIVIL){
+			cityWar = this.civilWarCities.Find (x => x.city.id == campaign.targetCity.id);
+		}else if(campaign.warType == WAR_TYPE.SUCCESSION){
+			cityWar = this.successionWarCities.Find (x => x.city.id == campaign.targetCity.id);
+		}else if(campaign.warType == WAR_TYPE.NONE){
+			cityWar = this.defenseWarCities.Find (x => x.city.id == campaign.targetCity.id);
 		}
+		if(cityWar != null){
+			cityWar.isActive = true;
+		}
+//		if(campaign.campaignType == CAMPAIGN.OFFENSE){
+//			CityWar cityWar = null;
+//			if(campaign.warType == WAR_TYPE.INTERNATIONAL){
+//				cityWar = this.intlWarCities.Find (x => x.city.id == campaign.targetCity.id);
+//			}else if(campaign.warType == WAR_TYPE.CIVIL){
+//				cityWar = this.civilWarCities.Find (x => x.city.id == campaign.targetCity.id);
+//			}else if(campaign.warType == WAR_TYPE.SUCCESSION){
+//				cityWar = this.successionWarCities.Find (x => x.city.id == campaign.targetCity.id);
+//			}
+//			if(cityWar != null){
+//				cityWar.isActive = true;
+//			}
+//		}else{
+//			CityWar cityWar = this.defenseWarCities.Find (x => x.city.id == campaign.targetCity.id);
+//			if(cityWar != null){
+//				cityWar.isActive = true;
+//			}
+////			CityWar cityWar = null;
+////			if(campaign.warType == WAR_TYPE.INTERNATIONAL){
+////				cityWar = this.intlWarCities.Find (x => x.city.id == campaign.targetCity.id);
+////			}else if(campaign.warType == WAR_TYPE.CIVIL){
+////				cityWar = this.civilWarCities.Find (x => x.city.id == campaign.targetCity.id);
+////			}else if(campaign.warType == WAR_TYPE.SUCCESSION){
+////				cityWar = this.successionWarCities.Find (x => x.city.id == campaign.targetCity.id);
+////			}
+////			if(cityWar != null){
+////				cityWar.isActive = true;
+////			}
+//		}
 	}
-	internal void MakeCityInactive(CAMPAIGN campaignType, City city){
-		if(campaignType == CAMPAIGN.OFFENSE){
-			City targetCity = this.activeAttackCities.Find (x => x.id == city.id);
-			this.activeAttackCities.Remove (targetCity);
-			if(!targetCity.isDead){
-				this.targetableAttackCities.Add (targetCity);
+	internal void MakeCityInactive(Campaign campaign){
+		CityWar cityWar = null;
+		if(campaign.warType == WAR_TYPE.INTERNATIONAL){
+			cityWar = this.intlWarCities.Find (x => x.city.id == campaign.targetCity.id);
+		}else if(campaign.warType == WAR_TYPE.CIVIL){
+			cityWar = this.civilWarCities.Find (x => x.city.id == campaign.targetCity.id);
+		}else if(campaign.warType == WAR_TYPE.SUCCESSION){
+			cityWar = this.successionWarCities.Find (x => x.city.id == campaign.targetCity.id);
+		}else if(campaign.warType == WAR_TYPE.NONE){
+			cityWar = this.defenseWarCities.Find (x => x.city.id == campaign.targetCity.id);
+		}
+		if(cityWar != null){
+			cityWar.isActive = false;
+			if(cityWar.city.isDead){
+				CitysDeath (cityWar);
 			}
-		}else{
-			City targetCity = this.activeDefenseCities.Find (x => x.id == city.id);
-			this.activeDefenseCities.Remove (targetCity);
-			if(!targetCity.isDead){
-				this.targetableDefenseCities.Add (targetCity);
-			}
+		}
+//		if(campaign.campaignType == CAMPAIGN.OFFENSE){
+//			
+//		}else{
+//			CityWar cityWar = this.defenseWarCities.Find (x => x.city.id == campaign.targetCity.id);
+//			if(cityWar != null){
+//				cityWar.isActive = false;
+//			}
+//			CityWar cityWar = null;
+//			if(campaign.warType == WAR_TYPE.INTERNATIONAL){
+//				cityWar = this.intlWarCities.Find (x => x.city.id == campaign.targetCity.id);
+//			}else if(campaign.warType == WAR_TYPE.CIVIL){
+//				cityWar = this.civilWarCities.Find (x => x.city.id == campaign.targetCity.id);
+//			}else if(campaign.warType == WAR_TYPE.SUCCESSION){
+//				cityWar = this.successionWarCities.Find (x => x.city.id == campaign.targetCity.id);
+//			}
+//			if(cityWar != null){
+//				cityWar.isActive = true;
+//			}
+//		}
+	}
+	internal void CitysDeath(CityWar cityWar){
+		if(cityWar.warType == WAR_TYPE.INTERNATIONAL){
+			this.intlWarCities.Remove (cityWar);
+		}else if(cityWar.warType == WAR_TYPE.CIVIL){
+			this.civilWarCities.Remove (cityWar);
+		}else if(cityWar.warType == WAR_TYPE.SUCCESSION){
+			this.successionWarCities.Remove (cityWar);
+		}else if(cityWar.warType == WAR_TYPE.NONE){
+			this.defenseWarCities.Remove (cityWar);
 		}
 	}
 	internal int GetGeneralCountByPercentage(float percent){

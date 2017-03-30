@@ -12,11 +12,11 @@ public class CitizenDiedEvent : UnityEvent{}
 
 //City Events
 public class CityEverydayTurnActions: UnityEvent{}
-public class MassChangeSupportedCitizen: UnityEvent<Citizen, Citizen>{}
 public class CitizenMove: UnityEvent{}
 
 //Campaign
 public class RegisterOnCampaign: UnityEvent<Campaign>{}
 public class DeathArmy: UnityEvent{}
+public class UnsupportCitizen: UnityEvent<Citizen>{}
 
 

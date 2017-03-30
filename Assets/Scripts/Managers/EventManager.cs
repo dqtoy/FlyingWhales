@@ -14,11 +14,11 @@ public class EventManager : MonoBehaviour {
 	public NewKingdomEvent onCreateNewKingdomEvent = new NewKingdomEvent();
 	public CitizenTurnActions onCitizenTurnActions = new CitizenTurnActions ();
 	public CityEverydayTurnActions onCityEverydayTurnActions = new CityEverydayTurnActions();
-	public MassChangeSupportedCitizen onMassChangeSupportedCitizen =  new MassChangeSupportedCitizen();
 	public CitizenMove onCitizenMove =  new CitizenMove();
 	public CitizenDiedEvent onCitizenDiedEvent =  new CitizenDiedEvent();
 	public RegisterOnCampaign onRegisterOnCampaign = new RegisterOnCampaign();
 	public DeathArmy onDeathArmy = new DeathArmy();
+	public UnsupportCitizen onUnsupportCitizen = new UnsupportCitizen();
 
 	void Awake(){
 		Instance = this;

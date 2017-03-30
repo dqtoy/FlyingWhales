@@ -9,7 +9,7 @@ public class Relationship<T> {
 	public RELATIONSHIP_STATUS relationshipStatus;
 //	public LORD_EVENTS previousInteraction = LORD_EVENTS.NONE;
 	public bool isFirstEncounter;
-//	public bool isAdjacent;
+	public bool isAdjacent;
 	public bool isAtWar;
 //	public int daysAtWar;
 
@@ -19,6 +19,7 @@ public class Relationship<T> {
 		this.UpdateRelationshipStatusBasedOnLike();
 		this.isFirstEncounter = true;
 		this.isAtWar = false;
+		this.isAdjacent = false;
 	}
 
 	protected void UpdateRelationshipStatusBasedOnLike(){

@@ -10,16 +10,18 @@ public class Campaign {
 	public City targetCity;
 	public List<Citizen> registeredGenerals;
 	public CAMPAIGN campaignType;
+	public WAR_TYPE warType;
 	public HexTile rallyPoint;
 	public bool isFull;
 	public bool hasStarted;
 	public int neededArmyStrength;
 
-	public Campaign(Citizen leader, City targetCity, CAMPAIGN campaignType, int neededArmyStrength = 0){
+	public Campaign(Citizen leader, City targetCity, CAMPAIGN campaignType, WAR_TYPE warType, int neededArmyStrength = 0){
 		this.id = Utilities.SetID (this);
 		this.leader = leader;
 		this.targetCity = targetCity;
 		this.campaignType = campaignType;
+		this.warType = warType;
 		this.registeredGenerals = new List<Citizen> ();
 		this.isFull = false;
 		this.hasStarted = false;

@@ -11,12 +11,13 @@ public class Kingdom{
 	public List<City> cities;
 	public Citizen king;
 	public List<Citizen> successionLine;
+	public List<Citizen> pretenders;
 //	public List<Citizen> royaltyList;
 
 	public BASE_RESOURCE_TYPE basicResource;
 	public BASE_RESOURCE_TYPE rareResource;
 
-	protected List<Relationship<Kingdom>> relationshipsWithOtherKingdoms;
+	public List<Relationship<Kingdom>> relationshipsWithOtherKingdoms;
 
 	public Color kingdomColor;
 	public string kingdomHistory;
@@ -108,22 +109,22 @@ public class Kingdom{
 
 	internal void AssignNewKing(Citizen newKing){
 		if(newKing == null){
-			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+//			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 			this.king.city.CreateInitialRoyalFamily ();
 			this.king.CreateInitialRelationshipsToKings ();
 			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 
 		}else{
-			EventManager.Instance.onMassChangeSupportedCitizen.Invoke (newKing, this.king);
-
 			if(!newKing.isDirectDescendant){
 				//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
 				Utilities.ChangeDescendantsRecursively (newKing, true);
 				Utilities.ChangeDescendantsRecursively (this.king, false);
 			}
-			newKing.role = ROLE.KING;
-			newKing.assignedRole = new King(newKing);
-			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+			newKing.role = ROLE.UNTRAINED;
+			newKing.assignedRole = null;
+			newKing.isKing = true;
+//			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+ 
 			this.king = newKing;
 			this.king.CreateInitialRelationshipsToKings ();
 			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
@@ -132,6 +133,32 @@ public class Kingdom{
 			this.successionLine.AddRange (GetSiblings (newKing));
 			UpdateKingSuccession ();
 		}
+	}
+	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
+		if(!newKing.isDirectDescendant){
+			Utilities.ChangeDescendantsRecursively (newKing, true);
+			Utilities.ChangeDescendantsRecursively (this.king, false);
+		}
+		newKing.role = ROLE.UNTRAINED;
+		newKing.assignedRole = null;
+		newKing.isKing = true;
+//		KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+		this.king = newKing;
+		this.king.CreateInitialRelationshipsToKings ();
+		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+		this.successionLine.Clear();
+		ChangeSuccessionLineRescursively (newKing);
+		this.successionLine.AddRange (GetSiblings (newKing));
+		UpdateKingSuccession ();
+
+		for(int i = 0; i < claimants.Count; i++){
+			newKing.AddSuccessionWar (claimants [i]);
+			newKing.campaignManager.CreateCampaign ();
+
+			claimants[i].AddSuccessionWar (newKing);
+			claimants[i].campaignManager.CreateCampaign ();
+		}
+
 	}
 	internal void DethroneKing(Citizen newKing){
 //		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);
@@ -142,6 +169,8 @@ public class Kingdom{
 			Utilities.ChangeDescendantsRecursively (this.king, false);
 		}
 		this.king = newKing;
+		this.king.CreateInitialRelationshipsToKings ();
+		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 		this.successionLine.Clear();
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (GetSiblings (newKing));
@@ -182,8 +211,19 @@ public class Kingdom{
 		}
 		return null;
 	}
-
-
+	internal void AddPretender(Citizen citizen){
+		this.pretenders.Add (citizen);
+		this.pretenders = this.pretenders.Distinct ().ToList ();
+	}
+	internal List<Citizen> GetPretenderClaimants(Citizen successor){
+		List<Citizen> pretenderClaimants = new List<Citizen> ();
+		for(int i = 0; i < this.pretenders.Count; i++){
+			if(this.pretenders[i].prestige > successor.prestige){
+				pretenderClaimants.Add (this.pretenders [i]);
+			}
+		}
+		return pretenderClaimants;
+	}
 	//Destructor for unsubscribing listeners
 	~Kingdom(){
 		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);
