@@ -610,6 +610,19 @@ public class Citizen {
 			}
 		}
 
+		for (int i = 0; i < this.children.Count; i++) {
+			if (this.children[i].id == otherCitizen.id){
+				//citizen is child
+				return true;
+			}
+			for (int j = 0; j < this.children[i].children.Count; j++) {
+				if (this.children[i].children[j].id == otherCitizen.id){
+					//citizen is grand child
+					return true;
+				}
+			}
+		}
+
 		return false;
 	}
 
@@ -656,6 +669,7 @@ public class Citizen {
 			}
 		}
 		if (this.isHeir && this.role != ROLE.GOVERNOR) {
+			prestige += 200;
 			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
 		}
 
@@ -681,6 +695,17 @@ public class Citizen {
 				prestige += 50;
 			}
 		} 
+
+		if (this.isPretender) {
+			prestige += 50;
+		}
+
+		if (this.city.kingdom.successionLine.Count > 1) {
+			if (this.city.kingdom.successionLine [1].id == this.id) {
+				prestige += 50;
+			}
+		}
+
 		//Add prestige for successors
 		this._prestige = prestige;
 
