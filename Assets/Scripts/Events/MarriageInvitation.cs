@@ -9,13 +9,14 @@ public class MarriageInvitation : GameEvent {
 
 	public MarriageInvitation(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.MARRIAGE_INVITATION;
-		this.description = startedBy.name + " is looking for a suitable wife as the vessel of his heir";
+//		this.description = startedBy.name + " is looking for a suitable wife as the vessel of his heir";
 		this.durationInWeeks = 8;
 		this.remainingWeeks = this.durationInWeeks;
 		this.goldForEvent = 0;
-		this.GetGoldForEvent ();
+//		this.GetGoldForEvent ();
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+//		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+//		EventManager.Instance.AddEventToDictionary(this);
 	}
 
 	internal override void PerformAction(){

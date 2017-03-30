@@ -21,14 +21,35 @@ public class EventManager : MonoBehaviour {
 	public UnsupportCitizen onUnsupportCitizen = new UnsupportCitizen();
 	public CheckCitizensSupportingMe onCheckCitizensSupportingMe = new CheckCitizensSupportingMe();
 
+	public EVENT_TYPES eventType;
+
+	[ContextMenu("Add Event")]
+	public void AddEvent(){
+		if (eventType == EVENT_TYPES.MARRIAGE_INVITATION) {
+			MarriageInvitation eventToCreate = new MarriageInvitation(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null);
+			this.AddEventToDictionary(eventToCreate);
+		}
+	}
+
 	void Awake(){
 		Instance = this;
-//		this.Init();
+		this.Init();
 	}
 
 	void Init (){
 		if (eventDictionary == null){
 			eventDictionary = new Dictionary<string, UnityEvent>();
+		}
+		if (allEvents == null) {
+			allEvents = new Dictionary<EVENT_TYPES, List<GameEvent>>();
+		}
+	}
+
+	public void AddEventToDictionary(GameEvent gameEvent){
+		if (allEvents.ContainsKey (gameEvent.eventType)) {
+			allEvents [gameEvent.eventType].Add(gameEvent);
+		} else {
+			allEvents.Add (gameEvent.eventType, new List<GameEvent> (){ gameEvent });
 		}
 	}
 

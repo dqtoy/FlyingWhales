@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class UIManager : MonoBehaviour {
 
@@ -8,10 +9,13 @@ public class UIManager : MonoBehaviour {
 
 	public GameObject characterPortraitPrefab;
 	public GameObject traitPrefab;
+	public GameObject gameEventPrefab;
+
 	public GameObject smallInfoGO;
 	public GameObject citizenInfoGO;
 	public GameObject cityInfoGO;
 	public GameObject eventsGo;
+	public GameObject eventsOfTypeGo;
 
 	public ButtonToggle pauseBtn;
 	public ButtonToggle x1Btn;
@@ -59,6 +63,19 @@ public class UIManager : MonoBehaviour {
 	public UI2DSprite cityInfoCtizenPortraitBG;
 	public GameObject citizensBtn;
 
+	[Space(10)]
+	public UIGrid gameEventsOfTypeGrid;
+	public Sprite assassinationIcon;
+	public Sprite rebellionPlotIcon;
+	public Sprite stateVisitIcon;
+	public Sprite borderConflictIcon;
+	public Sprite raidIcon;
+	public Sprite invasionPlotIcon;
+	public Sprite militarizationIcon;
+	public Sprite requestPeaceIcon;
+	public Sprite declareWarIcon;
+	public Sprite expansionIcon;
+	public Sprite marriageInvitationIcon;
 
 	private Citizen currentlyShowingCitizen;
 	private City currentlyShowingCity;
@@ -304,7 +321,7 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 
-	internal void ShowSmallInfo(string info, Transform parent){
+	public void ShowSmallInfo(string info, Transform parent){
 		smallInfoLbl.text = info;
 		smallInfoGO.transform.parent = parent;
 		smallInfoGO.transform.localPosition = Vector3.zero;
@@ -319,13 +336,89 @@ public class UIManager : MonoBehaviour {
 		smallInfoGO.SetActive (true);
 	}
 
-	internal void HideSmallInfo(){
+	public void HideSmallInfo(){
 		smallInfoGO.SetActive (false);
 		smallInfoGO.transform.parent = this.transform;
 	}
 
 	public void ToggleEventsMenu(){
 		eventsGo.SetActive(!eventsGo.activeSelf);
+	}
+	private GameObject lastClickedEventType = null;
+	public void ShowEventsOfType(GameObject GO){
+		
+		if (eventsOfTypeGo.activeSelf) {
+			if (lastClickedEventType != null) {
+				if (lastClickedEventType == GO) {
+					eventsOfTypeGo.SetActive (false);
+					return;
+				} else {
+					lastClickedEventType.GetComponent<ButtonToggle> ().OnClick ();
+				}
+			}
+		} 
+		lastClickedEventType = GO;
+		if (GO.name == "AllBtn") {
+			List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			for (int i = 0; i < EventManager.Instance.allEvents.Keys.Count; i++) {
+				EVENT_TYPES currentKey = EventManager.Instance.allEvents.Keys.ElementAt(i);
+				List<GameEvent> currentGameEventList = EventManager.Instance.allEvents[currentKey];
+				for (int j = 0; j < currentGameEventList.Count; j++) {
+					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
+					eventGO.GetComponent<EventItem>().SetEvent (currentGameEventList[j]);
+					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (currentKey));
+					eventGO.transform.localScale = Vector3.one;
+				}
+			}
+		} else {
+			EVENT_TYPES eventType = (EVENT_TYPES)(System.Enum.Parse (typeof(EVENT_TYPES), GO.name));
+			if (EventManager.Instance.allEvents.ContainsKey (eventType)) {
+				List<GameEvent> gameEventsOfType = EventManager.Instance.allEvents [eventType];
+				List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
+				for (int i = 0; i < children.Count; i++) {
+					Destroy (children [i].gameObject);
+				}
+				for (int i = 0; i < gameEventsOfType.Count; i++) {
+					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
+					eventGO.GetComponent<EventItem> ().SetEvent (gameEventsOfType [i]);
+					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (gameEventsOfType [i].eventType));
+					eventGO.transform.localScale = Vector3.one;
+				}
+			}
+		}
+		gameEventsOfTypeGrid.enabled = true;
+		eventsOfTypeGo.SetActive (true);
+	}
+
+	internal Sprite GetSpriteForEvent(EVENT_TYPES eventType){
+		switch (eventType) {
+		case EVENT_TYPES.ASSASSINATION:
+			return assassinationIcon;
+		case EVENT_TYPES.BORDER_CONFLICT:
+			return borderConflictIcon;
+		case EVENT_TYPES.EXPANSION:
+			return expansionIcon;
+		case EVENT_TYPES.INVASION_PLAN:
+			return invasionPlotIcon;
+		case EVENT_TYPES.KINGDOM_WAR:
+			return declareWarIcon;
+		case EVENT_TYPES.MARRIAGE_INVITATION:
+			return marriageInvitationIcon;
+		case EVENT_TYPES.MILITARIZATION:
+			return militarizationIcon;
+		case EVENT_TYPES.RAID:
+			return raidIcon;
+		case EVENT_TYPES.REBELLION_PLOT:
+			return rebellionPlotIcon;
+		case EVENT_TYPES.REQUEST_PEACE:
+			return requestPeaceIcon;
+		case EVENT_TYPES.STATE_VISIT:
+			return stateVisitIcon;
+		}
+		return assassinationIcon;
 	}
 
 

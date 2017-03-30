@@ -107,4 +107,26 @@ public class MarriageManager : MonoBehaviour {
 		}
 		return elligibleCitizens.OrderBy(x => x.age).ThenByDescending(x => x.city.kingdom.cities.Count).ToList(); //younger women are prioritized and women with more cities
 	}
+
+	internal void DivorceCouple(Citizen citizen1, Citizen citizen2){
+		citizen1.isMarried = false;
+		citizen2.isMarried = false;
+
+		citizen1.spouse = null;
+		citizen2.spouse = null;
+
+		for (int i = 0; i < this.allMarriedCouples.Count; i++) {
+			if (citizen1.gender == GENDER.MALE) {
+				if (this.allMarriedCouples [i].husband.id == citizen1.id && this.allMarriedCouples [i].wife.id == citizen2.id) {
+					this.allMarriedCouples.RemoveAt(i);
+					return;
+				}
+			} else {
+				if (this.allMarriedCouples [i].wife.id == citizen1.id && this.allMarriedCouples [i].husband.id == citizen2.id) {
+					this.allMarriedCouples.RemoveAt(i);
+					return;
+				}
+			}
+		}
+	}
 }

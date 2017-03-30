@@ -235,7 +235,7 @@ public class Citizen {
 	protected void AttemptToAge(){
 		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.week == this.birthWeek && GameManager.Instance.year > this.birthYear){
 			this.age += 1;
-			if (this.age >= 16) {
+			if (this.age >= 16 && !this.isMarried) {
 				this.citizenChances.marriageChance += 2;
 				this.AttemptToMarry();
 			}
@@ -330,6 +330,10 @@ public class Citizen {
 		if (this.workLocation != null) {
 			this.workLocation.occupant = null;
 			this.workLocation.isOccupied = false;
+		}
+
+		if (this.isMarried) {
+			MarriageManager.Instance.DivorceCouple (this, spouse);
 		}
 
 //		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
