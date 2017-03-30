@@ -167,6 +167,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 	}
+	public void SetTileColor(Color color){
+		gameObject.GetComponent<SpriteRenderer> ().color = color;
+	}
 	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
 		int totalChance = 0;
 		int lowerLimit = 0;

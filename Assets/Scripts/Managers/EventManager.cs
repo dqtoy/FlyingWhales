@@ -19,6 +19,7 @@ public class EventManager : MonoBehaviour {
 	public RegisterOnCampaign onRegisterOnCampaign = new RegisterOnCampaign();
 	public DeathArmy onDeathArmy = new DeathArmy();
 	public UnsupportCitizen onUnsupportCitizen = new UnsupportCitizen();
+	public CheckCitizensSupportingMe onCheckCitizensSupportingMe = new CheckCitizensSupportingMe();
 
 	void Awake(){
 		Instance = this;

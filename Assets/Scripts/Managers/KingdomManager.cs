@@ -113,4 +113,19 @@ public class KingdomManager : MonoBehaviour {
 		}
 	}
 
+	public void MakeKingdomDead(Kingdom kingdomToDie){
+		this.allKingdoms.Remove(kingdomToDie);
+		RemoveRelationshipToOtherKingdoms (kingdomToDie);
+	}
+
+	public void RemoveRelationshipToOtherKingdoms(Kingdom kingdomToRemove){
+		for (int i = 0; i < this.allKingdoms.Count; i++) {
+			for (int j = 0; j < this.allKingdoms[i].relationshipsWithOtherKingdoms.Count; j++) {
+				if (this.allKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship.id == kingdomToRemove.id) {
+					this.allKingdoms[i].relationshipsWithOtherKingdoms.RemoveAt(j);
+					break;
+				}
+			}
+		}
+	}
 }

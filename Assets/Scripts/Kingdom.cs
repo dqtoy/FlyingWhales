@@ -115,6 +115,12 @@ public class Kingdom{
 			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 
 		}else{
+			if (newKing.isMarried) {
+				if (newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
+					AssimilateKingdom (newKing.spouse.city.kingdom);
+					return;
+				}
+			}
 			if(!newKing.isDirectDescendant){
 				//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
 				Utilities.ChangeDescendantsRecursively (newKing, true);
@@ -224,6 +230,19 @@ public class Kingdom{
 		}
 		return pretenderClaimants;
 	}
+	internal void AssimilateKingdom(Kingdom newKingdom){
+		for(int i = 0; i < this.cities.Count; i++){
+			newKingdom.AddCityToKingdom (this.cities [i]);
+		}
+		KingdomManager.Instance.MakeKingdomDead(this);
+	}
+
+	internal void AddCityToKingdom(City city){
+		this.cities.Add (city);
+		city.kingdom = this;
+		city.hexTile.GetComponent<HexTile>().SetTileColor (this.kingdomColor);
+	}
+
 	//Destructor for unsubscribing listeners
 	~Kingdom(){
 		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);
