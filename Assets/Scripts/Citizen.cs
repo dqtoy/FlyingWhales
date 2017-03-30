@@ -20,9 +20,7 @@ public class Citizen {
 	public List<BEHAVIOR_TRAIT> behaviorTraits;
 	public List<SKILL_TRAIT> skillTraits;
 	public List<MISC_TRAIT> miscTraits;
-	public List<Citizen> supportedCitizen;
-	public Citizen supportedRebellion;
-	public Citizen supportedHeir;
+	public Citizen supportedCitizen;
 	public Citizen father;
 	public Citizen mother;
 	public Citizen spouse;
@@ -36,7 +34,6 @@ public class Citizen {
 	public MONTH birthMonth;
 	public int birthWeek;
 	public int birthYear;
-	public int prestige;
 	public int previousConversionMonth;
 	public int previousConversionYear;
 	public bool isIndependent;
@@ -74,9 +71,7 @@ public class Citizen {
 		this.miscTraits = new List<MISC_TRAIT> ();
 //		this.trait = GetTrait();
 //		this.trait = new TRAIT[]{TRAIT.VICIOUS, TRAIT.NONE};
-		this.supportedCitizen	= new List<Citizen>(); //initially to king
-		this.supportedRebellion	= null; //initially to king
-		this.supportedHeir = null; //initially to the first in line
+		this.supportedCitizen = null; //initially to king
 		this.father = null;
 		this.mother = null;
 		this.spouse = null;
@@ -107,7 +102,6 @@ public class Citizen {
 		this.GenerateTraits();
 
 		EventManager.Instance.onCitizenTurnActions.AddListener (TurnActions);
-		EventManager.Instance.onMassChangeSupportedCitizen.AddListener (MassChangeSupportedCitizen);
 		EventManager.Instance.onUnsupportCitizen.AddListener (UnsupportCitizen);
 	}
 
@@ -311,7 +305,6 @@ public class Citizen {
 		this.city.kingdom.successionLine.Remove (this);
 		this.isDead = true;
 		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
-		EventManager.Instance.onMassChangeSupportedCitizen.RemoveListener (MassChangeSupportedCitizen);
 		EventManager.Instance.onUnsupportCitizen.Invoke (this);
 		EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
 
@@ -414,27 +407,28 @@ public class Citizen {
 
 	}
 	internal void UnsupportCitizen(Citizen citizen){
-		if(this.supportedRebellion != null){
-			if(citizen.id == this.supportedRebellion.id){
-				this.supportedRebellion = null;
+		if(this.supportedCitizen != null){
+			if(citizen.id == this.supportedCitizen.id){
+				this.supportedCitizen = null;
 			}
 		}
-		if(this.supportedHeir != null){
-			if(citizen.id == this.supportedHeir.id){
-				this.supportedHeir = null;
+		for(int i = 0; i < this.city.citizens.Count; i++){
+			if(this.city.citizens[i].assignedRole != null && this.city.citizens[i].role == ROLE.GENERAL){
+				if(((General)this.city.citizens[i].assignedRole).warLeader.id == citizen.id){
+					((General)this.city.citizens [i].assignedRole).UnregisterThisGeneral (null);
+				}
 			}
 		}
+//		if(this.supportedHeir != null){
+//			if(citizen.id == this.supportedHeir.id){
+//				this.supportedHeir = null;
+//			}
+//		}
 //		if(this.isGovernor || this.isKing){
 //			if(this.id != citizen.id){
 //				this.supportedCitizen.Remove (citizen);
 //				if(this.isGovernor){
-//					for(int i = 0; i < this.city.citizens.Count; i++){
-//						if(this.city.citizens[i].assignedRole != null && this.city.citizens[i].role == ROLE.GENERAL){
-//							if(((General)this.city.citizens[i].assignedRole).warLeader.id == citizen.id){
-//								((General)this.city.citizens [i].assignedRole).UnregisterThisGeneral (null);
-//							}
-//						}
-//					}
+
 //				}
 //				if(this.isKing){
 //					for(int i = 0; i < this.city.kingdom.cities.Count; i++){
@@ -459,18 +453,6 @@ public class Citizen {
 		}
 //		this.civilWars.Clear ();
 		this.successionWars.Clear ();
-	}
-	internal void MassChangeSupportedCitizen(Citizen newSupported, Citizen previousSupported){
-		if (this.supportedCitizen.Contains(previousSupported)) {
-			this.supportedCitizen.Remove (previousSupported);
-			if(newSupported != null){
-				if (this.city.kingdom.id != newSupported.city.kingdom.id) {
-					this.supportedCitizen.Add(this.city.kingdom.king);
-				} else {
-					this.supportedCitizen.Add(newSupported);
-				}
-			}
-		}
 	}
 	private Citizen GetPossiblePretender(Citizen citizen){
 		this.possiblePretenders.Clear ();
@@ -648,11 +630,11 @@ public class Citizen {
 				}
 			}
 
-			for (int i = 0; i < this.supportedCitizen.Count; i++) {
-				if (this.supportedCitizen [i].role == ROLE.GOVERNOR) {
-					prestige += 20;
-				}
-			}
+//			for (int i = 0; i < this.supportedCitizen.Count; i++) {
+//				if (this.supportedCitizen [i].role == ROLE.GOVERNOR) {
+//					prestige += 20;
+//				}
+//			}
 
 			for (int i = 0; i < ((King)this.assignedRole).ownedKingdom.cities.Count; i++) {
 				prestige += 15;
@@ -665,13 +647,13 @@ public class Citizen {
 				prestige += 5;
 			}
 
-			for (int i = 0; i < this.supportedCitizen.Count; i++) {
-				if (this.supportedCitizen [i].role == ROLE.GOVERNOR) {
-					prestige += 20;
-				} else if (this.supportedCitizen [i].role == ROLE.KING) {
-					prestige += 60;
-				}
-			}
+//			for (int i = 0; i < this.supportedCitizen.Count; i++) {
+//				if (this.supportedCitizen [i].role == ROLE.GOVERNOR) {
+//					prestige += 20;
+//				} else if (this.supportedCitizen [i].role == ROLE.KING) {
+//					prestige += 60;
+//				}
+//			}
 		}
 		if (this.isMarried && this.spouse != null) {
 			if (this.spouse.isKing || this.spouse.isGovernor) {

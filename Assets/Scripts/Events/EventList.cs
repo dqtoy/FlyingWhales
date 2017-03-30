@@ -12,7 +12,6 @@ public class CitizenDiedEvent : UnityEvent{}
 
 //City Events
 public class CityEverydayTurnActions: UnityEvent{}
-public class MassChangeSupportedCitizen: UnityEvent<Citizen, Citizen>{}
 public class CitizenMove: UnityEvent{}
 
 //Campaign

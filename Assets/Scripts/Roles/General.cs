@@ -98,24 +98,27 @@ public class General : Role {
 	}
 	internal void RegisterOnCampaign(Campaign campaign){
 		if(campaign.warType == WAR_TYPE.INTERNATIONAL){
-			if(this.citizen.city.governor.supportedRebellion == null){
-				if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
-					List<HexTile> path = null;
-					if(campaign.campaignType == CAMPAIGN.OFFENSE){
-						path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
-					}else{
-						path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-						if(path.Count > campaign.targetCity.incomingGenerals.Where(x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE).Min(x => ((General)x.assignedRole).daysBeforeArrival)){
-							path = null;
+			if(this.citizen.city.governor.supportedCitizen == null){
+				if(campaign.leader.isKing){
+					if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
+						List<HexTile> path = null;
+						if(campaign.campaignType == CAMPAIGN.OFFENSE){
+							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+						}else{
+							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE).Min(x => ((General)x.assignedRole).daysBeforeArrival)){
+								path = null;
+							}
+						}
+						if(path != null){
+							AssignCampaign (campaign, path);
 						}
 					}
-					if(path != null){
-						AssignCampaign (campaign, path);
-					}
 				}
+
 			}
 		}else if(campaign.warType == WAR_TYPE.SUCCESSION){
-			if(this.citizen.city.governor.supportedHeir == null){
+			if(this.citizen.city.governor.supportedCitizen == null){
 				if(campaign.leader.isHeir){
 					if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
 						List<HexTile> path = null;
@@ -133,7 +136,7 @@ public class General : Role {
 					}
 				}
 			}else{
-				if(this.citizen.city.governor.supportedHeir.id == campaign.leader.id){
+				if(this.citizen.city.governor.supportedCitizen.id == campaign.leader.id){
 					if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
 						List<HexTile> path = null;
 						if(campaign.campaignType == CAMPAIGN.OFFENSE){

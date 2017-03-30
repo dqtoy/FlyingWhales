@@ -115,8 +115,6 @@ public class Kingdom{
 			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 
 		}else{
-//			EventManager.Instance.onMassChangeSupportedCitizen.Invoke (newKing, this.king);
-
 			if(!newKing.isDirectDescendant){
 				//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
 				Utilities.ChangeDescendantsRecursively (newKing, true);
@@ -137,8 +135,6 @@ public class Kingdom{
 		}
 	}
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
-//		EventManager.Instance.onMassChangeSupportedCitizen.Invoke (null, this.king);
-
 		if(!newKing.isDirectDescendant){
 			Utilities.ChangeDescendantsRecursively (newKing, true);
 			Utilities.ChangeDescendantsRecursively (this.king, false);

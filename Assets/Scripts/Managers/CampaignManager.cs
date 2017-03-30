@@ -31,21 +31,6 @@ public class CampaignManager {
 		this.civilWarCities = new List<CityWar>();
 		this.successionWarCities = new List<CityWar>();
 	}
-	internal void UpdateControlledGovernorsAndKings(){
-		this.controlledGovernorsAndKings.Clear ();
-		for(int i = 0; i < this.leader.city.kingdom.cities.Count; i++){
-			if(this.leader.city.kingdom.cities[i].governor.supportedCitizen.Contains(this.leader)){
-				this.controlledGovernorsAndKings.Add (this.leader.city.kingdom.cities [i].governor);
-			}
-		}
-		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.leader.city.kingdom.id){
-				if(KingdomManager.Instance.allKingdoms[i].king.supportedCitizen.Contains(this.leader)){
-					this.controlledGovernorsAndKings.Add (KingdomManager.Instance.allKingdoms[i].king); 
-				}
-			}
-		}
-	}
 	internal void CreateCampaign(){
 		if(this.activeCampaigns.Count < this.campaignLimit){
 			int randomWarType = UnityEngine.Random.Range (0, 2);
@@ -100,7 +85,7 @@ public class CampaignManager {
 						}
 						newCampaign = new Campaign (this.leader, this.targetableDefenseCities [0], campaignType, WAR_TYPE.NONE, neededArmy);
 						this.activeCampaigns.Add (newCampaign);
-						this.MakeCityActive (campaignType, this.targetableDefenseCities [0]);
+						this.MakeCityActive (newCampaign);
 					} else {
 						campaignType = CAMPAIGN.OFFENSE;
 						if(this.targetableAttackCities.Count > 0){
@@ -119,7 +104,7 @@ public class CampaignManager {
 							newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
 							newCampaign.rallyPoint = GetRallyPoint ();
 							this.activeCampaigns.Add (newCampaign);
-							this.MakeCityActive (campaignType, target);
+							this.MakeCityActive (newCampaign);
 						}else{
 							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
 							return;
@@ -146,18 +131,6 @@ public class CampaignManager {
 				}
 			}
 			return false;
-		}
-	}
-	internal void UpdateDefenseCities(){
-		this.targetableDefenseCities.Clear ();
-		if(this.leader.isKing){
-			for(int i = 0; i < this.leader.city.kingdom.cities.Count; i++){
-				if(this.leader.city.kingdom.cities[i].governor.supportedRebellion == null){
-					this.targetableDefenseCities.Add (this.leader.city.kingdom.cities [i]);
-				}
-			}
-		}else{
-			this.targetableDefenseCities.Add (this.leader.city);
 		}
 	}
 	internal void GetWarAndTarget(List<City> intlWarCities, List<City> civilWarCities, List<City> successionWarCities, ref WAR_TYPE warType, ref City target){

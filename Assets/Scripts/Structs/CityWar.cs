@@ -2,7 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
-public struct CityWar {
+public class CityWar {
 
 	public City city;
 	public bool isActive;
