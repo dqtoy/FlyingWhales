@@ -9,6 +9,7 @@ public class NewKingdomEvent : UnityEvent<Kingdom>{}
 //Citizen Events
 public class CitizenTurnActions: UnityEvent{}
 public class CitizenDiedEvent : UnityEvent{}
+public class CheckCitizensSupportingMe : UnityEvent<Citizen>{}
 
 //City Events
 public class CityEverydayTurnActions: UnityEvent{}
