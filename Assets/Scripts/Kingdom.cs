@@ -224,6 +224,16 @@ public class Kingdom{
 		}
 		return pretenderClaimants;
 	}
+	internal bool CheckForSpecificWar(Kingdom kingdom){
+		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
+			if(this.relationshipsWithOtherKingdoms[i].objectInRelationship.id == kingdom.id){
+				if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	//Destructor for unsubscribing listeners
 	~Kingdom(){
 		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);

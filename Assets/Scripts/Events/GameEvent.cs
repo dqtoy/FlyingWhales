@@ -43,4 +43,8 @@ public class GameEvent {
 
 	}
 
+	internal virtual void DoneCitizenAction(Citizen citizen){
+
+	}
+
 }

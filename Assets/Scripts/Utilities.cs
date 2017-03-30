@@ -5,7 +5,7 @@ using System;
 
 
 public class Utilities : MonoBehaviour {
-
+	private static System.Random rng = new System.Random(); 
 	public static int lastKingdomID = 0;
 	public static int lastCitizenID = 0;
 	public static int lastCityID = 0;
@@ -251,5 +251,19 @@ public class Utilities : MonoBehaviour {
 				ChangeDescendantsRecursively (royalty.children [i], isDescendant);
 			}
 		}
+	}
+
+	public static List<T> Shuffle<T>(List<T> list)  
+	{
+		List<T> newList = new List<T>(list);
+		int n = newList.Count;  
+		while (n > 1) {  
+			n--;  
+			int k = rng.Next(n + 1);  
+			T value = newList[k];  
+			newList[k] = newList[n];  
+			newList[n] = value;  
+		} 
+		return newList;
 	}
 }

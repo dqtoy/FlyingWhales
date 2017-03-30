@@ -8,7 +8,7 @@ public class EventManager : MonoBehaviour {
 
 	private Dictionary <string, UnityEvent> eventDictionary;
 
-	public Dictionary<EVENT_TYPES, List<GameEvent>> allEvents; 
+	public Dictionary<EVENT_TYPES, List<GameEvent>> allEvents;
 
 	public WeekEndedEvent onWeekEnd = new WeekEndedEvent();
 	public NewKingdomEvent onCreateNewKingdomEvent = new NewKingdomEvent();
@@ -19,6 +19,7 @@ public class EventManager : MonoBehaviour {
 	public RegisterOnCampaign onRegisterOnCampaign = new RegisterOnCampaign();
 	public DeathArmy onDeathArmy = new DeathArmy();
 	public UnsupportCitizen onUnsupportCitizen = new UnsupportCitizen();
+	public GameEventAction onGameEventAction = new GameEventAction();
 
 	void Awake(){
 		Instance = this;

@@ -304,6 +304,7 @@ public class Citizen {
 		}
 		this.city.kingdom.successionLine.Remove (this);
 		this.isDead = true;
+		this.assignedRole.OnDeath ();
 		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
 		EventManager.Instance.onUnsupportCitizen.Invoke (this);
 		EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
@@ -512,16 +513,16 @@ public class Citizen {
 			}
 		}
 	}
-	internal bool CheckForSpecificWar(Citizen citizen){
-		for(int i = 0; i < this.relationshipKings.Count; i++){
-			if(this.relationshipKings[i].king.id == citizen.id){
-				if(this.relationshipKings[i].isAtWar){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+//	internal bool CheckForSpecificWar(Citizen citizen){
+//		for(int i = 0; i < this.relationshipKings.Count; i++){
+//			if(this.relationshipKings[i].king.id == citizen.id){
+//				if(this.relationshipKings[i].isAtWar){
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+//	}
 
 	internal void AssignRole(ROLE role){
 		this.role = role;
@@ -696,5 +697,20 @@ public class Citizen {
 		this.campaignManager.successionWarCities.RemoveAll (x => x.city.id == enemy.city.id);
 		this.successionWars.Remove (enemy);
 	}
+	internal void DeteriorateRelationship(int amount, Citizen targetKing){
+		RelationshipKings relationship = SearchRelationshipByID (targetKing.id);
+		if(relationship != null){
+			relationship.AdjustLikeness (-amount);
+			//TRIGGER OTHER EVENTS
+		}
+	}
 
+	internal RelationshipKings SearchRelationshipByID(int id){
+		for(int i = 0; i < this.relationshipKings.Count; i++){
+			if(this.relationshipKings[i].king.id == id){
+				return this.relationshipKings [i];
+			}
+		}
+		return null;
+	}
 }

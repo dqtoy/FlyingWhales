@@ -35,7 +35,7 @@ public class CombatManager : MonoBehaviour {
 				}else{
 					friendlyGeneral = victoriousGeneral;
 					if(friendlyGeneral.city.id != attackers[i].city.id){
-						if (attackers [i].city.kingdom.king.CheckForSpecificWar(friendlyGeneral.city.kingdom.king)) {
+						if (attackers [i].city.kingdom.CheckForSpecificWar(friendlyGeneral.city.kingdom)) {
 							Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
 							Battle (ref attackerGeneral, ref friendlyGeneral);
 							attackers[i] = attackerGeneral;

@@ -19,4 +19,7 @@ public class RegisterOnCampaign: UnityEvent<Campaign>{}
 public class DeathArmy: UnityEvent{}
 public class UnsupportCitizen: UnityEvent<Citizen>{}
 
+//Game Events
+public class GameEventAction: UnityEvent<GameEvent, int>{}
+
 

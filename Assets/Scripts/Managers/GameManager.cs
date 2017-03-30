@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
 
@@ -51,10 +52,55 @@ public class GameManager : MonoBehaviour {
 				this.year += 1;
 			}
 		}
+//		TriggerBorderConflict ();
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
 		EventManager.Instance.onCitizenMove.Invoke ();
 		EventManager.Instance.onWeekEnd.Invoke();
 	}
 
+	private void TriggerBorderConflict(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < 1){
+			BorderConflict ();
+		}
+	}
+	private void BorderConflict(){
+		List<GameEvent> allBorderConflicts = EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT];
+		List<Kingdom> shuffledKingdoms = Utilities.Shuffle (KingdomManager.Instance.allKingdoms);
+
+		bool isEligible = false;
+		for(int i = 0; i < shuffledKingdoms.Count; i++){
+			for(int j = 0; j < shuffledKingdoms[i].relationshipsWithOtherKingdoms.Count; j++){
+				if(!shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].isAtWar && shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].isAdjacent){
+					if(SearchForEligibility(shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship, allBorderConflicts)){
+						//Add BorderConflict
+					}
+				}
+			}
+		}
+
+	}
+	private bool SearchForEligibility (Kingdom kingdom1, Kingdom kingdom2, List<GameEvent> borderConflicts){
+		for(int i = 0; i < borderConflicts.Count; i++){
+			if(!IsEligibleForConflict(kingdom1,kingdom2,((BorderConflict)borderConflicts[i]))){
+				return false;
+			}
+		}
+		return true;
+	}
+	private bool IsEligibleForConflict(Kingdom kingdom1, Kingdom kingdom2, BorderConflict borderConflict){
+		int counter = 0;
+		if(borderConflict.kingdom1.id == kingdom1.id || borderConflict.kingdom2.id == kingdom1.id){
+			counter += 1;
+		}
+		if(borderConflict.kingdom1.id == kingdom2.id || borderConflict.kingdom2.id == kingdom2.id){
+			counter += 1;
+		}
+		if(counter == 2){
+			return false;
+		}else{
+			return true;
+		}
+	}
 }

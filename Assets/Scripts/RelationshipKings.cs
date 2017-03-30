@@ -10,8 +10,8 @@ public class RelationshipKings {
 	public RELATIONSHIP_STATUS lordRelationship;
 //	public LORD_EVENTS previousInteraction = LORD_EVENTS.NONE;
 	public bool isFirstEncounter;
-	public bool isAdjacent;
-	public bool isAtWar;
+//	public bool isAdjacent;
+//	public bool isAtWar;
 	public int daysAtWar;
 
 	public RelationshipKings(Citizen king, int like){
@@ -21,8 +21,8 @@ public class RelationshipKings {
 		this.like = like;
 		this.isFirstEncounter = true;
 		this.lordRelationship = RELATIONSHIP_STATUS.NEUTRAL;
-		this.isAdjacent = false;
-		this.isAtWar = false;
+//		this.isAdjacent = false;
+//		this.isAtWar = false;
 	}
 
 	internal void UpdateKingRelationshipStatus(){
