@@ -18,7 +18,9 @@ public class GameManager : MonoBehaviour {
 
 	[ContextMenu("Start Progression")]
 	public void StartProgression(){
-//		InvokeRepeating ("WeekEnded", 0f, 1f); 
+//		InvokeRepeating ("WeekEnded", 0f, 1f);
+		UIManager.Instance.SetProgressionSpeed1X();
+		UIManager.Instance.x1Btn.OnClick();
 		StartCoroutine(WeekProgression());
 	}
 

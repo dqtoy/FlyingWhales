@@ -11,6 +11,12 @@ public class UIManager : MonoBehaviour {
 	public GameObject smallInfoGO;
 	public GameObject citizenInfoGO;
 	public GameObject cityInfoGO;
+	public GameObject eventsGo;
+
+	public ButtonToggle pauseBtn;
+	public ButtonToggle x1Btn;
+	public ButtonToggle x2Btn;
+	public ButtonToggle x4Btn;
 
 	[Space(10)]
 	public UILabel dateLbl;
@@ -51,6 +57,7 @@ public class UIManager : MonoBehaviour {
 	public UIGrid guardiansGrid;
 	public UIGrid untrainedGrid;
 	public UI2DSprite cityInfoCtizenPortraitBG;
+	public GameObject citizensBtn;
 
 
 	private Citizen currentlyShowingCitizen;
@@ -73,18 +80,49 @@ public class UIManager : MonoBehaviour {
 
 	public void SetProgressionSpeed1X(){
 		GameManager.Instance.SetProgressionSpeed(4f);
+		if (pauseBtn.isClicked) {
+			this.TogglePause();
+			pauseBtn.OnClick();
+		} else if (x2Btn.isClicked) {
+			x2Btn.OnClick();
+		} else if (x4Btn.isClicked) {
+			x4Btn.OnClick();
+		}
 	}
 
 	public void SetProgressionSpeed2X(){
 		GameManager.Instance.SetProgressionSpeed(2f);
+		if (pauseBtn.isClicked) {
+			this.TogglePause();
+			pauseBtn.OnClick();
+		} else if (x1Btn.isClicked) {
+			x1Btn.OnClick();
+		} else if (x4Btn.isClicked) {
+			x4Btn.OnClick();
+		}
 	}
 
 	public void SetProgressionSpeed4X(){
 		GameManager.Instance.SetProgressionSpeed(1f);
+		if (pauseBtn.isClicked) {
+			this.TogglePause();
+			pauseBtn.OnClick();
+		} else if (x2Btn.isClicked) {
+			x2Btn.OnClick();
+		} else if (x1Btn.isClicked) {
+			x1Btn.OnClick();
+		}
 	}
 
 	public void TogglePause(){
 		GameManager.Instance.TogglePause();
+		if (x1Btn.isClicked) {
+			x1Btn.OnClick();
+		} else if (x2Btn.isClicked) {
+			x2Btn.OnClick();
+		} else if (x4Btn.isClicked) {
+			x4Btn.OnClick();
+		}
 	}
 
 	internal void UpdateKingsGrid(){
@@ -173,6 +211,8 @@ public class UIManager : MonoBehaviour {
 		cityMithrilLbl.text = cityToShow.mithrilCount.ToString();
 		cityFoodLbl.text = "CITIZENS: " + cityToShow.citizens.Count + "/" + cityToShow.sustainability.ToString();
 
+		citizensBtn.GetComponent<ButtonToggle> ().OnClick ();
+
 		CharacterPortrait[] characters = citizensParent.GetComponentsInChildren<CharacterPortrait>();
 		for (int i = 0; i < characters.Length; i++) {
 			Destroy (characters [i].gameObject);
@@ -240,26 +280,17 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
-		foodProducersGrid.Reposition();
-		gatherersGrid.Reposition();
-		minersGrid.Reposition();
-		tradersGrid.Reposition();
-		generalsGrid.Reposition();
-		spiesGrid.Reposition();
-		envoysGrid.Reposition();
-		guardiansGrid.Reposition();
-		untrainedGrid.Reposition();
-
-		foodProducersGrid.enabled = true;
-		gatherersGrid.enabled = true;
-		minersGrid.enabled = true;
-		tradersGrid.enabled = true;
-		generalsGrid.enabled = true;
-		spiesGrid.enabled = true;
-		envoysGrid.enabled = true;
-		guardiansGrid.enabled = true;
-		untrainedGrid.enabled = true;
 		cityInfoGO.SetActive (true);
+		foodProducersGrid.repositionNow = true;
+		gatherersGrid.repositionNow = true;
+		minersGrid.repositionNow = true;
+		tradersGrid.repositionNow = true;
+		generalsGrid.repositionNow = true;
+		spiesGrid.repositionNow = true;
+		envoysGrid.repositionNow = true;
+		guardiansGrid.repositionNow = true;
+		untrainedGrid.repositionNow = true;
+
 	}
 
 	public void HideCityInfo(){
@@ -292,5 +323,10 @@ public class UIManager : MonoBehaviour {
 		smallInfoGO.SetActive (false);
 		smallInfoGO.transform.parent = this.transform;
 	}
-		
+
+	public void ToggleEventsMenu(){
+		eventsGo.SetActive(!eventsGo.activeSelf);
+	}
+
+
 }
