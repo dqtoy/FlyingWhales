@@ -22,11 +22,11 @@ public class EventManager : MonoBehaviour {
 	public GameEventAction onGameEventAction = new GameEventAction();
 	public CheckCitizensSupportingMe onCheckCitizensSupportingMe = new CheckCitizensSupportingMe();
 
-	public EVENT_TYPES eventType;
+	public EVENT_TYPES eventTypeForTesting;
 
 	[ContextMenu("Add Event")]
 	public void AddEvent(){
-		if (eventType == EVENT_TYPES.MARRIAGE_INVITATION) {
+		if (eventTypeForTesting == EVENT_TYPES.MARRIAGE_INVITATION) {
 			MarriageInvitation eventToCreate = new MarriageInvitation(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null);
 			this.AddEventToDictionary(eventToCreate);
 		}
@@ -52,6 +52,26 @@ public class EventManager : MonoBehaviour {
 		} else {
 			allEvents.Add (gameEvent.eventType, new List<GameEvent> (){ gameEvent });
 		}
+	}
+
+	public List<GameEvent> GetEventsOfType(EVENT_TYPES eventType){
+		if (this.allEvents.ContainsKey (eventType)) {
+			return this.allEvents[eventType];
+		}
+		return null;
+	}
+
+	public List<GameEvent> GetEventsOfTypePerKingdom(Kingdom kingdom, EVENT_TYPES eventType){
+		List<GameEvent> gameEventsOfTypePerKingdom = new List<GameEvent>();
+		if (this.allEvents.ContainsKey (eventType)) {
+			List<GameEvent> eventsOfType = this.allEvents[eventType];
+			for (int i = 0; i < eventsOfType.Count; i++) {
+				if (eventsOfType[i].startedByKingdom.id == kingdom.id) {
+					gameEventsOfTypePerKingdom.Add(eventsOfType[i]);
+				}
+			}
+		}
+		return gameEventsOfTypePerKingdom;
 	}
 
 //	public static void StartListening (string eventName, UnityAction listener){

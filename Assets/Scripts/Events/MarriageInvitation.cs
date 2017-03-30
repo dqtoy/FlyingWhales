@@ -9,14 +9,14 @@ public class MarriageInvitation : GameEvent {
 
 	public MarriageInvitation(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.MARRIAGE_INVITATION;
-//		this.description = startedBy.name + " is looking for a suitable wife as the vessel of his heir";
+		this.description = startedBy.name + " is looking for a suitable wife as the vessel of his heir";
 		this.durationInWeeks = 8;
 		this.remainingWeeks = this.durationInWeeks;
 		this.goldForEvent = 0;
-//		this.GetGoldForEvent ();
+		this.GetGoldForEvent ();
 
-//		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
-//		EventManager.Instance.AddEventToDictionary(this);
+		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		EventManager.Instance.AddEventToDictionary(this);
 	}
 
 	internal override void PerformAction(){
@@ -24,6 +24,7 @@ public class MarriageInvitation : GameEvent {
 			this.remainingWeeks -= 1;
 			this.elligibleCitizens = MarriageManager.Instance.GetElligibleCitizensForMarriage(this.startedBy);
 		} else {
+			this.elligibleCitizens = MarriageManager.Instance.GetElligibleCitizensForMarriage(this.startedBy);
 			//Choose bride
 			if (this.elligibleCitizens.Count > 0) {
 				Citizen chosenCitizen = this.elligibleCitizens[Random.Range(0, this.elligibleCitizens.Count)];

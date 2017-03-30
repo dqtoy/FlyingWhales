@@ -20,6 +20,7 @@ public class GameEvent {
 	public string description;
 	public string resolution;
 	public Citizen startedBy;
+	public Kingdom startedByKingdom;
 
 	public bool isActive;
 
@@ -37,6 +38,7 @@ public class GameEvent {
 		this.description = "";
 		this.resolution = "";
 		this.isActive = true;
+		this.startedByKingdom = startedBy.city.kingdom;
 	}
 
 	internal virtual void PerformAction(){
