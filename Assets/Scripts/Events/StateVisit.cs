@@ -41,6 +41,7 @@ public class StateVisit : GameEvent {
 
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		EventManager.Instance.allEvents [EVENT_TYPES.STATE_VISIT].Remove (this);
 	}
 	private void AdjustSuccessMeter(int amount){
 		this.successMeter += amount;

@@ -28,12 +28,23 @@ public class Assassination : GameEvent {
 		this.durationInWeeks -= 1;
 		if(this.durationInWeeks <= 0){
 			this.durationInWeeks = 0;
+			AssassinationMoment ();
 			DoneEvent ();
 		}
 	}
 
 	internal override void DoneEvent(){
+		if(this.spy != null){
+			((Spy)this.spy.assignedRole).inAction = false;
+		}
+		for(int i = 0; i < this.guardians.Count; i++){
+			((Guardian)this.guardians[i].assignedRole).inAction = false;
+		}
+		this.spy = null;
+		this.guardians.Clear ();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		EventManager.Instance.allEvents [EVENT_TYPES.ASSASSINATION].Remove (this);
+
 	}
 
 	private List<Kingdom> GetOtherKingdoms(){
@@ -63,7 +74,9 @@ public class Assassination : GameEvent {
 		}
 
 		if(spies.Count > 0){
-			return spies [UnityEngine.Random.Range (0, spies.Count)];
+			int random = UnityEngine.Random.Range (0, spies.Count);
+			((Spy)spies [random].assignedRole).inAction = true;
+			return spies [random];
 		}else{
 			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
@@ -177,7 +190,9 @@ public class Assassination : GameEvent {
 		return value;
 	}
 	private void AssassinateTarget(){
-		this.targetCitizen.Death ();
+		if(!targetCitizen.isDead){
+			this.targetCitizen.Death ();
+		}
 	}
 	private void SpyDiscovery(){
 		int chance = UnityEngine.Random.Range (0, 100);

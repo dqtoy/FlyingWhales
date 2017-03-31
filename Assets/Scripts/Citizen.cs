@@ -802,4 +802,16 @@ public class Citizen {
 		}
 
 	}
+
+	internal void InformedAboutHiddenEvent(GameEvent hiddenEvent, Citizen informer){
+		if(informer.id == this.id){
+			if(hiddenEvent is Assassination){
+				//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
+				Kingdom assassinKingdom = ((Assassination)hiddenEvent).assassinKingdom;
+				RelationshipKings relationship = this.SearchRelationshipByID (assassinKingdom.king.id);
+				relationship.AdjustLikeness (-15);
+			}
+		}
+		//Perform Counteraction
+	}
 }

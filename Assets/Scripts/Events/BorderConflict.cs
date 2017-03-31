@@ -181,6 +181,7 @@ public class BorderConflict : GameEvent {
 		if(chance < random){
 			((Envoy)chosenEnvoy.assignedRole).eventDuration = 2;
 			((Envoy)chosenEnvoy.assignedRole).currentEvent = this;
+			((Envoy)chosenEnvoy.assignedRole).inAction = true;
 			EventManager.Instance.onWeekEnd.AddListener (((Envoy)chosenEnvoy.assignedRole).WeeklyAction);
 
 			if(!isFromOthers){
@@ -225,6 +226,19 @@ public class BorderConflict : GameEvent {
 		}
 	}
 	internal override void DoneEvent(){
+		for(int i = 0; i < this.activeEnvoysIncrease.Count; i++){
+			((Envoy)this.activeEnvoysIncrease[i].assignedRole).inAction = false;
+		}
+		for(int i = 0; i < this.activeEnvoysReduce.Count; i++){
+			((Envoy)this.activeEnvoysReduce[i].assignedRole).inAction = false;
+		}
+		for(int i = 0; i < this.activeEnvoysReduceSelf.Count; i++){
+			((Envoy)this.activeEnvoysReduceSelf[i].assignedRole).inAction = false;
+		}
+		this.activeEnvoysIncrease.Clear ();
+		this.activeEnvoysReduce.Clear ();
+		this.activeEnvoysReduceSelf.Clear ();
+
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
 
