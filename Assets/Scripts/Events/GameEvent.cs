@@ -41,12 +41,10 @@ public class GameEvent {
 		this.startedByKingdom = startedBy.city.kingdom;
 	}
 
-	internal virtual void PerformAction(){
+	internal virtual void PerformAction(){}
 
-	}
+	internal virtual void DoneCitizenAction(Citizen citizen){}
 
-	internal virtual void DoneCitizenAction(Citizen citizen){
-
-	}
+	internal virtual void DoneEvent(){}
 
 }

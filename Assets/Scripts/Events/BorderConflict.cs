@@ -7,6 +7,7 @@ public class BorderConflict : GameEvent {
 	public Kingdom kingdom1;
 	public Kingdom kingdom2;
 	public List<Kingdom> otherKingdoms;
+	public List<Citizen> activeEnvoysReduceSelf;
 	public List<Citizen> activeEnvoysReduce;
 	public List<Citizen> activeEnvoysIncrease;
 
@@ -25,17 +26,51 @@ public class BorderConflict : GameEvent {
 	}
 
 	internal override void PerformAction(){
-		
+		IncreaseTensionPerWeek ();
+		InvolvedKingsTensionAdjustment ();
+		NotInvolvedKingsTensionAdjustment ();
+		CheckIfAlreadyAtWar ();
 	}
 	internal override void DoneCitizenAction(Citizen envoy){
 		if(!envoy.isDead){
-			
 			//Search for envoys task first on activeenvoys
 			//Do something here add tension or reduce depending on the envoys task
+			if(!SearchEnvoyWhere(this.activeEnvoysReduceSelf, envoy)){
+				if(!SearchEnvoyWhere(this.activeEnvoysReduce, envoy)){
+					if(!SearchEnvoyWhere(this.activeEnvoysIncrease, envoy)){
+						Debug.Log ("CAN'T FIND ENVOY!");
+					}else{
+						int tensionAmount = 15;
+						if(envoy.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
+							tensionAmount += 4;
+						}
+						AdjustTension (tensionAmount);
+					}
+				}else{
+					int tensionAmount = 15;
+					if(envoy.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
+						tensionAmount += 4;
+					}
+					AdjustTension (-tensionAmount);
+				}
+			}else{
+				int tensionAmount = 25;
+				if(envoy.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
+					tensionAmount += 5;
+				}
+				AdjustTension (-tensionAmount);
+			}
 		}
 		this.activeEnvoysReduce.Remove (envoy);
 	}
-//	internal void
+	internal bool SearchEnvoyWhere(List<Citizen> whereToSearch, Citizen envoy){
+		for(int i = 0; i < whereToSearch.Count; i++){
+			if(envoy.id == whereToSearch[i].id){
+				return true;
+			}
+		}
+		return false;
+	}
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
@@ -54,44 +89,101 @@ public class BorderConflict : GameEvent {
 		if(this.tension >= 100){
 			this.tension = 100;
 			//Deteriorate 15 points on each
+			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
+
+			this.kingdom1.king.DeteriorateRelationship(15, this.kingdom2.king);
+			this.kingdom2.king.DeteriorateRelationship(15, this.kingdom1.king);
+			DoneEvent ();
 		}else if(this.tension <= 0){
 			this.tension = 0;
 			//Conflict will end peacefully
+			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
+
+			DoneEvent ();
 		}
 	}
 
-	private void InvolvedKingsTensionAdjustment(Kingdom kingdom){
-		int random = UnityEngine.Random.Range (0, 100);
-		this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
-	}
+	private void InvolvedKingsTensionAdjustment(){
+		if(GameManager.Instance.week % 4 == 0){
+			//Send Envoys
+			SendEnvoy (this.kingdom1, this.kingdom2);
+			SendEnvoy (this.kingdom2, this.kingdom1);
+		}
 
+	}
+	private void NotInvolvedKingsTensionAdjustment(){
+		if(GameManager.Instance.week % 4 == 0){
+			for(int i = 0; i < this.otherKingdoms.Count; i++){
+				if(CheckForRelationship(this.otherKingdoms[i], true)){
+					SendEnvoy (this.otherKingdoms [i], null, true, true);	
+				}else if(CheckForRelationship(this.otherKingdoms[i], false)){
+					SendEnvoy (this.otherKingdoms [i], null, true, false);	
+				}
+			}
+		}
+	}
+	private bool CheckForRelationship(Kingdom otherKingdom, bool isIncrease){
+		RelationshipKings relationship1 = otherKingdom.king.SearchRelationshipByID (this.kingdom1.id);
+		RelationshipKings relationship2 = otherKingdom.king.SearchRelationshipByID (this.kingdom2.id);
+
+		List<RELATIONSHIP_STATUS> statuses = new List<RELATIONSHIP_STATUS> ();
+		statuses.Add (relationship1.lordRelationship);
+		statuses.Add (relationship2.lordRelationship);
+
+		if(isIncrease){
+			if(statuses.Contains(RELATIONSHIP_STATUS.ENEMY) || statuses.Contains(RELATIONSHIP_STATUS.RIVAL)){
+				if(!statuses.Contains(RELATIONSHIP_STATUS.FRIEND) && !statuses.Contains(RELATIONSHIP_STATUS.ALLY)){
+					return true;
+				}
+			}
+		}else{
+			if(statuses.Contains(RELATIONSHIP_STATUS.FRIEND) || statuses.Contains(RELATIONSHIP_STATUS.ALLY)){
+				if(!statuses.Contains(RELATIONSHIP_STATUS.ENEMY) && !statuses.Contains(RELATIONSHIP_STATUS.RIVAL)){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 	private void AdjustTension(int amount){
 		this.tension += amount;
 		CheckTensionMeter ();
 	}
-	private void SendEnvoy(Kingdom sender, Kingdom receiver){
-		int chance = 30;
+	private void SendEnvoy(Kingdom sender, Kingdom receiver, bool isFromOthers = false, bool isIncreaseTension = false){
+		int chance = 20;
 		Citizen chosenEnvoy = GetEnvoy (sender);
-		RelationshipKings relationship = sender.king.SearchRelationshipByID (receiver.king.id);
 
-		if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
-			chance += 15;
-		}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
-			chance += 10;
-		}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
-			chance += 5;
+		if(!isFromOthers){
+			chance = 30;
+			RelationshipKings relationship = sender.king.SearchRelationshipByID (receiver.king.id);
+			if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+				chance += 15;
+			}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+				chance += 10;
+			}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+				chance += 5;
+			}
 		}
+
 
 		int random = UnityEngine.Random.Range (0, 100);
 		if(chance < random){
 			((Envoy)chosenEnvoy.assignedRole).eventDuration = 2;
 			((Envoy)chosenEnvoy.assignedRole).currentEvent = this;
 			EventManager.Instance.onWeekEnd.AddListener (((Envoy)chosenEnvoy.assignedRole).WeeklyAction);
-			this.activeEnvoysReduce.Add (chosenEnvoy);
+
+			if(!isFromOthers){
+				this.activeEnvoysReduceSelf.Add (chosenEnvoy);
+			}else{
+				if(isIncreaseTension){
+					this.activeEnvoysIncrease.Add (chosenEnvoy);
+				}else{
+					this.activeEnvoysReduce.Add (chosenEnvoy);
+				}
+			}
 		}
-		if(chosenEnvoy.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
-			
-		}
+
 	}
 	private Citizen GetEnvoy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
@@ -138,5 +230,15 @@ public class BorderConflict : GameEvent {
 
 		return unwantedGovernors;
 	}
+	private void CheckIfAlreadyAtWar(){
+		if(this.kingdom1.GetRelationshipWithOtherKingdom(this.kingdom2).isAtWar){
+			DoneEvent ();
+		}
+	}
+	internal override void DoneEvent(){
+		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
 
+		//Remove UI Icon
+	}
 }

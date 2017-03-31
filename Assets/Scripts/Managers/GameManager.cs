@@ -75,8 +75,15 @@ public class GameManager : MonoBehaviour {
 				if(!shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].isAtWar && shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].isAdjacent){
 					if(SearchForEligibility(shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship, allBorderConflicts)){
 						//Add BorderConflict
+						BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
+						EventManager.Instance.AddEventToDictionary(borderConflict);
+						isEligible = true;
+						break;
 					}
 				}
+			}
+			if(isEligible){
+				break;
 			}
 		}
 
