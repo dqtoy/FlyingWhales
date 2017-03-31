@@ -767,4 +767,41 @@ public class Citizen {
 			}
 		}
 	}
+
+	internal void StateVisit(Citizen targetKing){
+		int acceptChance = UnityEngine.Random.Range (0, 100);
+		int acceptValue = 50;
+		RelationshipKings relationship = targetKing.SearchRelationshipByID (this.id);
+		if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+			acceptValue = 85;
+		}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM || relationship.lordRelationship == RELATIONSHIP_STATUS.NEUTRAL){
+			acceptValue = 75;
+		}
+		if(acceptChance < acceptValue){
+			if((targetKing.spouse != null && !targetKing.spouse.isDead) || targetKing.city.kingdom.successionLine.Count > 0){
+				Citizen visitor = null;
+				if((targetKing.spouse != null && !targetKing.spouse.isDead) && targetKing.city.kingdom.successionLine.Count > 0){
+					int chance = UnityEngine.Random.Range (0, 2);
+					if(chance == 0){
+						visitor = targetKing.spouse;
+					}else{
+						visitor = targetKing.city.kingdom.successionLine [0];
+					}
+				}else if((targetKing.spouse != null && !targetKing.spouse.isDead) && targetKing.city.kingdom.successionLine.Count <= 0){
+					visitor = targetKing.spouse;
+				}else if(targetKing.spouse == null && targetKing.city.kingdom.successionLine.Count > 0){
+					visitor = targetKing.city.kingdom.successionLine [0];
+				}
+				if(visitor != null){
+					StateVisit stateVisit = new StateVisit(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, this.city.kingdom, targetKing.city.kingdom, visitor);
+					EventManager.Instance.AddEventToDictionary (stateVisit);
+				}
+			}else{
+				Debug.Log ("STATE VISIT REJECTED RESPECTFULLY");
+			}
+		}else{
+			Debug.Log ("STATE VISIT REJECTED RESPECTFULLY");
+		}
+
+	}
 }

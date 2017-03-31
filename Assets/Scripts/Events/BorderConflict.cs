@@ -15,8 +15,12 @@ public class BorderConflict : GameEvent {
 
 	public BorderConflict(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
-		this.description = startedBy.name + " is looking for a suitable wife as the vessel of his heir";
-		this.durationInWeeks = 8;
+		if(startedBy != null){
+			this.description = startedBy.name + " has created a border conflict between " + kingdom1.name + " and " + kingdom2.name + ".";
+		}else{
+			this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
+		}
+		this.durationInWeeks = 0;
 		this.remainingWeeks = this.durationInWeeks;
 		this.tension = 20;
 		this.kingdom1 = kingdom1;
@@ -153,7 +157,9 @@ public class BorderConflict : GameEvent {
 	private void SendEnvoy(Kingdom sender, Kingdom receiver, bool isFromOthers = false, bool isIncreaseTension = false){
 		int chance = 20;
 		Citizen chosenEnvoy = GetEnvoy (sender);
-
+		if(chosenEnvoy == null){
+			return;
+		}
 		if(!isFromOthers){
 			chance = 30;
 			RelationshipKings relationship = sender.king.SearchRelationshipByID (receiver.king.id);

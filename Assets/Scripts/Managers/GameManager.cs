@@ -66,20 +66,29 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 	private void BorderConflict(){
-		List<GameEvent> allBorderConflicts = EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT];
+		List<GameEvent> allBorderConflicts = EventManager.Instance.GetEventsOfType(EVENT_TYPES.BORDER_CONFLICT);
 		List<Kingdom> shuffledKingdoms = Utilities.Shuffle (KingdomManager.Instance.allKingdoms);
 
 		bool isEligible = false;
 		for(int i = 0; i < shuffledKingdoms.Count; i++){
 			for(int j = 0; j < shuffledKingdoms[i].relationshipsWithOtherKingdoms.Count; j++){
 				if(!shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].isAtWar && shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].isAdjacent){
-					if(SearchForEligibility(shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship, allBorderConflicts)){
+					if(allBorderConflicts != null){
+						if(SearchForEligibility(shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship, allBorderConflicts)){
+							//Add BorderConflict
+							BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
+							EventManager.Instance.AddEventToDictionary(borderConflict);
+							isEligible = true;
+							break;
+						}
+					}else{
 						//Add BorderConflict
 						BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
 						EventManager.Instance.AddEventToDictionary(borderConflict);
 						isEligible = true;
 						break;
 					}
+
 				}
 			}
 			if(isEligible){
