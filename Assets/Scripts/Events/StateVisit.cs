@@ -168,9 +168,11 @@ public class StateVisit : GameEvent {
 		for(int i = 0; i < kingdom.cities.Count; i++){
 			if(!IsItThisGovernor(kingdom.cities[i].governor, unwantedGovernors)){
 				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
-					if(kingdom.cities[i].citizens[j].assignedRole != null && kingdom.cities[i].citizens[j].role == ROLE.ENVOY){
-						if(!((Envoy)kingdom.cities[i].citizens[j].assignedRole).inAction){
-							envoys.Add (kingdom.cities [i].citizens [j]);
+					if (!kingdom.cities [i].citizens [j].isDead) {
+						if (kingdom.cities [i].citizens [j].assignedRole != null && kingdom.cities [i].citizens [j].role == ROLE.ENVOY) {
+							if (!((Envoy)kingdom.cities [i].citizens [j].assignedRole).inAction) {
+								envoys.Add (kingdom.cities [i].citizens [j]);
+							}
 						}
 					}
 				}
@@ -180,32 +182,9 @@ public class StateVisit : GameEvent {
 		if(envoys.Count > 0){
 			return envoys [UnityEngine.Random.Range (0, envoys.Count)];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SENT ENVOY BECAUSE THERE IS NONE!");
+			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
 			return null;
 		}
-	}
-	private bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
-		for(int i = 0; i < unwantedGovernors.Count; i++){
-			if(governor.id == unwantedGovernors[i].id){
-				return true;
-			}	
-		}
-		return false;
-	}
-	private List<Citizen> GetUnwantedGovernors(Citizen king){
-		List<Citizen> unwantedGovernors = new List<Citizen> ();
-		for(int i = 0; i < king.civilWars.Count; i++){
-			if(king.civilWars[i].isGovernor){
-				unwantedGovernors.Add (king.civilWars [i]);
-			}
-		}
-		for(int i = 0; i < king.successionWars.Count; i++){
-			if(king.successionWars[i].isGovernor){
-				unwantedGovernors.Add (king.successionWars [i]);
-			}
-		}
-
-		return unwantedGovernors;
 	}
 
 	private void CheckVisitor(){

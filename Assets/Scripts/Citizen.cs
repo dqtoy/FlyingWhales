@@ -415,7 +415,9 @@ public class Citizen {
 			}
 		}
 
-
+		this.isKing = false;
+		this.isGovernor = false;
+		this.isHeir = false;
 	}
 	internal void UnsupportCitizen(Citizen citizen){
 		if(this.supportedCitizen != null){
@@ -519,7 +521,7 @@ public class Citizen {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			Kingdom otherKingdom = KingdomManager.Instance.allKingdoms[i];
 			if (otherKingdom.id != this.city.kingdom.id) {
-				this.relationshipKings.Add (new RelationshipKings (otherKingdom.king, 0));
+				this.relationshipKings.Add (new RelationshipKings (this, otherKingdom.king, 0));
 			}
 		}
 	}
@@ -726,12 +728,8 @@ public class Citizen {
 		this.campaignManager.successionWarCities.RemoveAll (x => x.city.id == enemy.city.id);
 		this.successionWars.Remove (enemy);
 	}
-	internal void DeteriorateRelationship(int amount, Citizen targetKing){
-		RelationshipKings relationship = SearchRelationshipByID (targetKing.id);
-		if(relationship != null){
-			relationship.AdjustLikeness (-amount);
-			//TRIGGER OTHER EVENTS
-		}
+	internal void DeteriorateRelationship(){
+		//TRIGGER OTHER EVENTS
 	}
 
 	internal RelationshipKings SearchRelationshipByID(int id){

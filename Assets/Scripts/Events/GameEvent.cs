@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class GameEvent {
@@ -50,4 +51,27 @@ public class GameEvent {
 
 	internal virtual void DoneEvent(){}
 
+	internal bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
+		for(int i = 0; i < unwantedGovernors.Count; i++){
+			if(governor.id == unwantedGovernors[i].id){
+				return true;
+			}	
+		}
+		return false;
+	}
+	internal List<Citizen> GetUnwantedGovernors(Citizen king){
+		List<Citizen> unwantedGovernors = new List<Citizen> ();
+		for(int i = 0; i < king.civilWars.Count; i++){
+			if(king.civilWars[i].isGovernor){
+				unwantedGovernors.Add (king.civilWars [i]);
+			}
+		}
+		for(int i = 0; i < king.successionWars.Count; i++){
+			if(king.successionWars[i].isGovernor){
+				unwantedGovernors.Add (king.successionWars [i]);
+			}
+		}
+
+		return unwantedGovernors;
+	}
 }

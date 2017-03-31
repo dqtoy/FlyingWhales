@@ -4,6 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class RelationshipKings {
 //	public int id;
+	public Citizen sourceKing;
 	public Citizen king;
 //	public DECISION previousDecision;
 	public int like;
@@ -14,8 +15,9 @@ public class RelationshipKings {
 //	public bool isAtWar;
 	public int daysAtWar;
 
-	public RelationshipKings(Citizen king, int like){
+	public RelationshipKings(Citizen sourceKing, Citizen king, int like){
 //		this.id = id;
+		this.sourceKing = sourceKing;
 		this.king = king;
 //		this.previousDecision = previousDecision;
 		this.like = like;
@@ -46,5 +48,6 @@ public class RelationshipKings {
 	internal void AdjustLikeness(int adjustment){
 		this.like += adjustment;
 		this.UpdateKingRelationshipStatus ();
+		sourceKing.DeteriorateRelationship ();
 	}
 }

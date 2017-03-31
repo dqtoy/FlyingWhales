@@ -24,6 +24,7 @@ public class Envoy : Role {
 			this.eventDuration = 0;
 			this.inAction = false;
 			currentEvent.DoneCitizenAction (this.citizen);
+			currentEvent = null;
 		}
 	}
 
