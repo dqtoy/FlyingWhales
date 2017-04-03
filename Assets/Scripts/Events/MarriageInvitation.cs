@@ -51,7 +51,16 @@ public class MarriageInvitation : GameEvent {
 					}
 				}
 
+				if (startedBy.father.isKing || startedBy.mother.isKing) {
+					startedBy.city.kingdom.king.GetRelationshipWithCitizen(chosenCitizen.city.kingdom.king).AdjustLikeness(15);
+				}
+				if (chosenCitizen.father.isKing || chosenCitizen.mother.isKing) {
+					chosenCitizen.city.kingdom.king.GetRelationshipWithCitizen(startedBy.city.kingdom.king).AdjustLikeness(15);
+				}
+
 				MarriageManager.Instance.Marry(startedBy, chosenCitizen);
+
+
 				this.endWeek = GameManager.Instance.week;
 				this.endMonth = GameManager.Instance.month;
 				this.endYear = GameManager.Instance.year;
@@ -60,7 +69,7 @@ public class MarriageInvitation : GameEvent {
 				if (cityRecievingGold != null) {
 					this.resolution += cityRecievingGold.name + ", " +  chosenCitizen.name + "'s home city, recieved " + this.goldForEvent.ToString() + " Gold as compensation.";
 				}
-				EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+				this.DoneEvent();
 				return;
 			}
 
@@ -68,7 +77,7 @@ public class MarriageInvitation : GameEvent {
 			this.endMonth = GameManager.Instance.month;
 			this.endYear = GameManager.Instance.year;
 			this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " was unable to marry.";
-			EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+			this.DoneEvent();
 			return;
 		}
 	}
@@ -81,5 +90,10 @@ public class MarriageInvitation : GameEvent {
 	protected void MoveCitizenToCity(Citizen citizenToMove, City targetCity){
 		citizenToMove.city.RemoveCitizenFromCity(citizenToMove);
 		targetCity.AddCitizenToCity(citizenToMove);
+	}
+
+	internal override void DoneEvent(){
+		this.isActive = false;
+		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 }

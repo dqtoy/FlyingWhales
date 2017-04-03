@@ -82,6 +82,7 @@ public class KingdomManager : MonoBehaviour {
 	public void GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false){
 		Kingdom newKingdom = new Kingdom (race, cities);
 		allKingdoms.Add(newKingdom);
+		this.UpdateKingdomAdjacency();
 		EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
 		if (isForInitial) {
 			cities [0].city.CreateInitialFamilies();
@@ -124,6 +125,25 @@ public class KingdomManager : MonoBehaviour {
 				if (this.allKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship.id == kingdomToRemove.id) {
 					this.allKingdoms[i].relationshipsWithOtherKingdoms.RemoveAt(j);
 					break;
+				}
+			}
+		}
+	}
+
+	public void UpdateKingdomAdjacency(){
+		for (int i = 0; i < this.allKingdoms.Count; i++) {
+			Kingdom currentKingdom = this.allKingdoms[i];
+			currentKingdom.ResetAdjacencyWithOtherKingdoms();
+			for (int j = 0; j < currentKingdom.cities.Count; j++) {
+				City currentCity = currentKingdom.cities[j];
+				for (int k = 0; k < currentCity.hexTile.connectedTiles.Count; k++) {
+					HexTile currentConnectedTile = currentCity.hexTile.connectedTiles[k];
+					if (currentConnectedTile.isOccupied && currentConnectedTile.city != null) {
+						if (currentConnectedTile.city.kingdom.id != currentKingdom.id) {
+							currentKingdom.GetRelationshipWithOtherKingdom(currentConnectedTile.city.kingdom).isAdjacent = true;
+							currentConnectedTile.city.kingdom.GetRelationshipWithOtherKingdom(currentKingdom).isAdjacent = true;
+						}
+					}
 				}
 			}
 		}

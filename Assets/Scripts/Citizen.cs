@@ -14,9 +14,9 @@ public class Citizen {
 	protected int _prestige;
 	public int prestigeFromSupport;
 	public City city;
+	public HexTile currentLocation;
 	public ROLE role;
 	public Role assignedRole;
-	public HexTile assignedTile;
 	public RACE race;
 	public List<BEHAVIOR_TRAIT> behaviorTraits;
 	public List<SKILL_TRAIT> skillTraits;
@@ -35,8 +35,9 @@ public class Citizen {
 	public MONTH birthMonth;
 	public int birthWeek;
 	public int birthYear;
-	public int previousConversionMonth;
-	public int previousConversionYear;
+	public int supportExpirationWeek;
+	public int supportExpirationMonth;
+	public int supportExpirationYear;
 	public bool isIndependent;
 	public bool isMarried;
 	public bool isDirectDescendant;
@@ -58,6 +59,10 @@ public class Citizen {
 		get{ return this.children.Where (x => x.age < 16 && !x.isMarried).ToList ();}
 	}
 
+	public List<RelationshipKings> friends{
+		get{ return this.relationshipKings.Where(x => x.lordRelationship == RELATIONSHIP_STATUS.FRIEND || x.lordRelationship == RELATIONSHIP_STATUS.ALLY).ToList();}
+	}
+
 
 	public Citizen(City city, int age, GENDER gender, int generation){
 		this.id = Utilities.SetID (this);
@@ -70,7 +75,6 @@ public class Citizen {
 		this.city = city;
 		this.role = ROLE.UNTRAINED;
 		this.assignedRole = null;
-		this.assignedTile = null;
 		this.race = city.kingdom.race;
 		this.behaviorTraits = new List<BEHAVIOR_TRAIT> ();
 		this.skillTraits = new List<SKILL_TRAIT> ();
@@ -83,6 +87,7 @@ public class Citizen {
 		this.spouse = null;
 		this.children = new List<Citizen> ();
 		this.workLocation = null;
+		this.currentLocation = this.city.hexTile;
 		this.citizenChances = new CitizenChances ();
 		this.campaignManager = new CampaignManager (this);
 		this.relationshipKings = new List<RelationshipKings> ();
@@ -227,9 +232,16 @@ public class Citizen {
 		this.birthYear = year;
 	}
 	internal void TurnActions(){
-		AttemptToAge();
-		DeathReasons();
-		UpdatePrestige();
+		this.AttemptToAge();
+		this.DeathReasons();
+		this.UpdatePrestige();
+		this.CheckSupportExpiration();
+	}
+
+	protected void CheckSupportExpiration(){
+		if (GameManager.Instance.year == this.supportExpirationYear && GameManager.Instance.month == this.supportExpirationMonth && GameManager.Instance.week == this.supportExpirationWeek) {
+			this.supportedCitizen = null;
+		}
 	}
 
 	protected void AttemptToAge(){
@@ -239,6 +251,14 @@ public class Citizen {
 				this.citizenChances.marriageChance += 2;
 				this.AttemptToMarry();
 			}
+			if (this.miscTraits.Contains(MISC_TRAIT.AMBITIOUS)) {
+				if (this.isPretender ||
+				   (this.city.kingdom.successionLine.Count > 1 && this.city.kingdom.successionLine [1].id == this.id) ||
+				   (this.city.kingdom.successionLine.Count > 2 && this.city.kingdom.successionLine [2].id == this.id)) {
+					AttemptToGrabPower ();
+				}
+			}
+
 		}
 	}
 
@@ -246,6 +266,13 @@ public class Citizen {
 		int chanceToMarry = Random.Range (0, 100);
 		if (chanceToMarry < this.citizenChances.marriageChance) {
 			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this);
+		}
+	}
+
+	protected void AttemptToGrabPower(){
+		int chanceToGrabPower = Random.Range (0, 100);
+		if (chanceToGrabPower < 10) {
+			PowerGrab newPowerGrab = new PowerGrab(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, this.city.kingdom.king);
 		}
 	}
 
@@ -813,5 +840,24 @@ public class Citizen {
 			}
 		}
 		//Perform Counteraction
+	}
+
+	internal List<Citizen> GetCitizensSupportingThisCitizen(){
+		List<Citizen> citizensSupportingMe = new List<Citizen>();
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			List<Citizen> allCitizensInKingdom = KingdomManager.Instance.allKingdoms[i].GetAllCitizensInKingdom();
+			for (int j = 0; j < allCitizensInKingdom.Count; j++) {
+				if (allCitizensInKingdom[i].supportedCitizen == null) {
+					if ((this.isKing || this.isHeir) && this.city.kingdom.id == allCitizensInKingdom [i].city.kingdom.id) {
+						citizensSupportingMe.Add(allCitizensInKingdom[i]);
+					}
+				} else {
+					if (allCitizensInKingdom [i].supportedCitizen.id == this.id) {
+						citizensSupportingMe.Add(allCitizensInKingdom[i]);
+					}
+				}
+			}
+		}
+		return citizensSupportingMe;
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class InvasionPlan : GameEvent {
 
@@ -8,18 +9,43 @@ public class InvasionPlan : GameEvent {
 	public Kingdom targetKingdom;
 
 	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom) : base (startWeek, startMonth, startYear, startedBy){
-		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
+		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
-		this.durationInWeeks = 8;
+		this.durationInWeeks = 0;
 		this.remainingWeeks = this.durationInWeeks;
 		this.sourceKingdom = sourceKingdom;
 		this.targetKingdom = targetKingdom;
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		EventManager.Instance.AddEventToDictionary(this);
+		this.StartMilitarizationEvent();
 	}
 
 	internal override void PerformAction(){
-		
+		if (this.startedBy.isDead) {
+			this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " died.";
+			this.DoneEvent();
+			return;
+		}
+		if (!this.startedBy.isKing) {
+			this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " is no longer king.";
+			this.DoneEvent();
+			return;
+		}
+		int chanceToSendJoinWarRequest = Random.Range (0, 100);
+		if (chanceToSendJoinWarRequest < 5) {
+			//Send envoy for Join War
+			List<Citizen> envoys = this.startedByKingdom.GetAllCitizensOfType(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
+			List<RelationshipKings> friends = this.startedBy.friends.Where(x => x.king.city.kingdom.IsKingdomAdjacentTo(this.targetKingdom)).ToList();
+			if (envoys.Count > 0 && friends.Count > 0) {
+				Envoy envoyToSend = (Envoy)envoys[Random.Range (0, envoys.Count)].assignedRole;
+				Citizen citizenToPersuade = friends[Random.Range(0, friends.Count)].king;
+				JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
+					citizenToPersuade, envoyToSend, this.targetKingdom);
+			} else {
+				Debug.Log ("Cannot send envoy because there are none or all of them are busy or there is no one to send envoy to");
+			}
+		}
 	}
 
 	internal override void DoneCitizenAction(Citizen citizen){
@@ -27,15 +53,25 @@ public class InvasionPlan : GameEvent {
 	}
 
 	internal override void DoneEvent(){
-		
+		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		this.isActive = false;
+	}
+
+	internal void MilitarizationDone(){
+		//TODO: position generals appropriately
+		this.resolution = "Invasion plan was successful and war is now declared between " + this.sourceKingdom.name + " and " + this.targetKingdom.name;
+		KingdomManager.Instance.DeclareWarBetweenKingdoms(this.sourceKingdom, this.targetKingdom);
+		this.DoneEvent();
 	}
 
 	private void StartMilitarizationEvent(){
 		Militarization currentMilitarization = null;
 		if(IsThereMilitarizationActive(ref currentMilitarization)){
-			currentMilitarization.durationInWeeks += 4;
+			currentMilitarization.remainingWeeks = currentMilitarization.durationInWeeks;
 		}else{
 			//New Militarization
+			Militarization newMilitarization  = new Militarization(this.startWeek, this.startMonth, this.startYear, this.startedBy);
+			newMilitarization.invasionPlanThatTriggeredEvent = this;
 		}
 	}
 

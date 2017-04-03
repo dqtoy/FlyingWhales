@@ -119,4 +119,12 @@ public class GameManager : MonoBehaviour {
 			return true;
 		}
 	}
+
+	public List<Citizen> GetAllCitizensOfType(ROLE role){
+		List<Citizen> allCitizensOfType = new List<Citizen>();
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			allCitizensOfType.AddRange (KingdomManager.Instance.allKingdoms[i].GetAllCitizensOfType (role));
+		}
+		return allCitizensOfType;
+	}
 }
