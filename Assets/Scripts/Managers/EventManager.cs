@@ -53,7 +53,6 @@ public class EventManager : MonoBehaviour {
 			allEvents.Add (gameEvent.eventType, new List<GameEvent> (){ gameEvent });
 		}
 	}
-
 	public List<GameEvent> GetEventsOfType(EVENT_TYPES eventType){
 		if (this.allEvents.ContainsKey (eventType)) {
 			return this.allEvents[eventType];

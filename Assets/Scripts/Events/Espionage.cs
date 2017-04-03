@@ -8,7 +8,6 @@ public class Espionage : GameEvent {
 	public Citizen spy;
 	public Espionage(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
-		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " is having an espionage event.";
 		this.durationInWeeks = 2;
 		this.remainingWeeks = this.durationInWeeks;
@@ -31,7 +30,7 @@ public class Espionage : GameEvent {
 		}
 		this.spy = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
+//		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
 	private Citizen GetSpy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
@@ -100,11 +99,23 @@ public class Espionage : GameEvent {
 		}
 		if(chance < value){
 			if(this.targetKingdom.king.id == this.sourceKingdom.king.id){
-				this.targetKingdom.king.InformedAboutHiddenEvent (chosenEvent, this.sourceKingdom.king);
-			}else{
-				RelationshipKings relationship = this.sourceKingdom.king.SearchRelationshipByID (this.targetKingdom.king.id);
+				this.targetKingdom.king.InformedAboutHiddenEvent (chosenEvent);
 				if(chosenEvent is Assassination){
-
+					//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
+					Kingdom assassinKingdom = ((Assassination)chosenEvent).assassinKingdom;
+					RelationshipKings relationship =this.targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
+					relationship.AdjustLikeness (-15);
+				}else if(chosenEvent is InvasionPlan){
+					//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
+					Kingdom sourceKingdom = ((InvasionPlan)chosenEvent).sourceKingdom;
+					RelationshipKings relationship = this.targetKingdom.king.SearchRelationshipByID (sourceKingdom.king.id);
+					relationship.AdjustLikeness (-20);
+				}
+			}else{
+//				Kingdom targetKingdomSpecific = null;
+//				Kingdom sourceKingdomSpecific = null;
+				if(chosenEvent is Assassination){
+					AssassinationExposed (chosenEvent);
 				}
 			}
 
@@ -130,6 +141,8 @@ public class Espionage : GameEvent {
 						value -= 40;
 					}
 					if(chance < value){
+						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
+						relationshipReverse.AdjustLikeness (10);
 						target.InformedAboutHiddenEvent (chosenEvent);
 					}
 
@@ -143,6 +156,8 @@ public class Espionage : GameEvent {
 						value -= 40;
 					}
 					if(chance < value){
+						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
+						relationshipReverse.AdjustLikeness (10);
 						target.InformedAboutHiddenEvent (chosenEvent);
 					}
 					relationshipToCreator.AdjustLikeness (-10);
@@ -156,6 +171,8 @@ public class Espionage : GameEvent {
 						value -= 40;
 					}
 					if(chance < value){
+						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
+						relationshipReverse.AdjustLikeness (10);
 						target.InformedAboutHiddenEvent (chosenEvent);
 					}
 					relationshipToCreator.AdjustLikeness (-15);

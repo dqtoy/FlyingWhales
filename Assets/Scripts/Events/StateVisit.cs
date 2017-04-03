@@ -7,19 +7,21 @@ public class StateVisit : GameEvent {
 	public Kingdom invitedKingdom;
 	public Citizen visitor;
 	public List<Kingdom> otherKingdoms;
-	public List<Citizen> activeIncreaseEnvoys;
-	public List<Citizen> activeDecreaseEnvoys;
+	public List<Citizen> helperEnvoys;
+	public List<Citizen> saboteurEnvoys;
 	public int successMeter;
 
-	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom inviterKingdom, Kingdom invitedKingdom, Citizen visitor) : base (startWeek, startMonth, startYear, startedBy){
+	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom invitedKingdom, Citizen visitor) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
 		this.description = startedBy.name + " invited " + invitedKingdom.king.name + " to visit his/her kingdom.";
 		this.durationInWeeks = 6;
 		this.remainingWeeks = this.durationInWeeks;
-		this.inviterKingdom = inviterKingdom;
+		this.inviterKingdom = startedBy.city.kingdom;
 		this.invitedKingdom = invitedKingdom;
 		this.visitor = visitor;
 		this.otherKingdoms = GetOtherKingdoms ();
+		this.helperEnvoys = new List<Citizen> ();
+		this.saboteurEnvoys = new List<Citizen> ();
 		this.successMeter = 50;
 		TriggerAssassinationEvent ();
 		TriggerSabotage ();
@@ -40,8 +42,16 @@ public class StateVisit : GameEvent {
 	}
 
 	internal override void DoneEvent(){
+		for(int i = 0; i < this.helperEnvoys.Count; i++){
+			((Envoy)this.helperEnvoys[i].assignedRole).inAction = false;
+		}
+		for(int i = 0; i < this.saboteurEnvoys.Count; i++){
+			((Envoy)this.saboteurEnvoys[i].assignedRole).inAction = false;
+		}
+		this.helperEnvoys.Clear ();
+		this.saboteurEnvoys.Clear ();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		EventManager.Instance.allEvents [EVENT_TYPES.STATE_VISIT].Remove (this);
+//		EventManager.Instance.allEvents [EVENT_TYPES.STATE_VISIT].Remove (this);
 	}
 	private void AdjustSuccessMeter(int amount){
 		this.successMeter += amount;
@@ -85,6 +95,8 @@ public class StateVisit : GameEvent {
 				}
 				if(chance < value){
 					//ASSASSINATION EVENT
+					Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.otherKingdoms[i].king, this.visitor);
+					EventManager.Instance.AddEventToDictionary(assassination);
 				}
 			}
 		}
@@ -156,8 +168,10 @@ public class StateVisit : GameEvent {
 				amount += 10;
 			}
 			if(isDecreaseSuccess){
+				this.saboteurEnvoys.Add (chosenEnvoy);
 				AdjustSuccessMeter (-amount);
 			}else{
+				this.helperEnvoys.Add (chosenEnvoy);
 				AdjustSuccessMeter (amount);
 			}
 		}
@@ -181,7 +195,9 @@ public class StateVisit : GameEvent {
 		}
 
 		if(envoys.Count > 0){
-			return envoys [UnityEngine.Random.Range (0, envoys.Count)];
+			int random = UnityEngine.Random.Range (0, envoys.Count);
+			((Envoy)envoys [random].assignedRole).inAction = true;
+			return envoys [random];
 		}else{
 			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
 			return null;

@@ -9,13 +9,13 @@ public class Assassination : GameEvent {
 	public List<Citizen> guardians;
 	public Citizen spy;
 
-	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom assassinKingdom, Citizen targetCitizen) : base (startWeek, startMonth, startYear, startedBy){
+	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " is planning on assassinating " + targetCitizen.name + ".";
 		this.durationInWeeks = 4;
 		this.remainingWeeks = this.durationInWeeks;
-		this.assassinKingdom = assassinKingdom;
+		this.assassinKingdom = startedBy.city.kingdom;
 		this.targetCitizen = targetCitizen;
 		this.otherKingdoms = GetOtherKingdoms ();
 		this.guardians = new List<Citizen>();
@@ -43,7 +43,7 @@ public class Assassination : GameEvent {
 		this.spy = null;
 		this.guardians.Clear ();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		EventManager.Instance.allEvents [EVENT_TYPES.ASSASSINATION].Remove (this);
+//		EventManager.Instance.allEvents [EVENT_TYPES.ASSASSINATION].Remove (this);
 
 	}
 

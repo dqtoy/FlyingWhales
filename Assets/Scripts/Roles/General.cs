@@ -21,6 +21,7 @@ public class General : Role {
 	public int citiesInvaded;
 	public int successfulRaids;
 	public int unsuccessfulRaids;
+	public bool inAction;
 
 	public General(Citizen citizen): base(citizen){
 		this.location = citizen.city.hexTile;
@@ -39,7 +40,7 @@ public class General : Role {
 		this.citiesInvaded = 0;
 		this.successfulRaids = 0;
 		this.unsuccessfulRaids = 0;
-
+		this.inAction = false;
 		EventManager.Instance.onCitizenMove.AddListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.AddListener (RegisterOnCampaign);
 		EventManager.Instance.onDeathArmy.AddListener (DeathArmy);
@@ -97,6 +98,9 @@ public class General : Role {
 
 	}
 	internal void RegisterOnCampaign(Campaign campaign){
+		if(this.inAction){
+			return;
+		}
 		if(campaign.warType == WAR_TYPE.INTERNATIONAL){
 			if(this.citizen.city.governor.supportedCitizen == null){
 				if(campaign.leader.isKing){
@@ -174,7 +178,7 @@ public class General : Role {
 		this.daysBeforeArrival = path.Count;
 		this.roads.Clear ();
 		this.roads = path;
-
+		this.inAction = true;
 
 		chosenCampaign.registeredGenerals.Add (this.citizen);
 		chosenCampaign.targetCity.incomingGenerals.Add (this.citizen);
@@ -195,6 +199,7 @@ public class General : Role {
 					}
 					return;
 				}else{
+					//CHECK FOR BATTLE MIDWAY
 //					if(this.location.city != null && this.location.isOccupied){
 //						if(this.location.city.id != this.citizen.city.id){
 //							bool isDead = false;

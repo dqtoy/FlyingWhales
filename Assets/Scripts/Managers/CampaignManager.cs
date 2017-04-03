@@ -378,10 +378,12 @@ public class CampaignManager {
 				}
 			}else if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){
 				//InitiateBattle
+				((General)general.assignedRole).inAction = false;
 			}
 		}else{
 			if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){
 				//InitiateDefense
+				((General)general.assignedRole).inAction = false;
 			}
 		}
 
