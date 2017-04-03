@@ -444,7 +444,6 @@ public class Citizen {
 
 		this.isKing = false;
 		this.isGovernor = false;
-		this.isHeir = false;
 	}
 	internal void UnsupportCitizen(Citizen citizen){
 		if(this.supportedCitizen != null){
@@ -818,7 +817,7 @@ public class Citizen {
 					visitor = targetKing.city.kingdom.successionLine [0];
 				}
 				if(visitor != null){
-					StateVisit stateVisit = new StateVisit(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, this.city.kingdom, targetKing.city.kingdom, visitor);
+					StateVisit stateVisit = new StateVisit(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, targetKing.city.kingdom, visitor);
 					EventManager.Instance.AddEventToDictionary (stateVisit);
 				}
 			}else{
@@ -830,15 +829,15 @@ public class Citizen {
 
 	}
 
-	internal void InformedAboutHiddenEvent(GameEvent hiddenEvent, Citizen informer){
-		if(informer.id == this.id){
-			if(hiddenEvent is Assassination){
-				//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
-				Kingdom assassinKingdom = ((Assassination)hiddenEvent).assassinKingdom;
-				RelationshipKings relationship = this.SearchRelationshipByID (assassinKingdom.king.id);
-				relationship.AdjustLikeness (-15);
-			}
-		}
+	internal void InformedAboutHiddenEvent(GameEvent hiddenEvent){
+//		if(informer.id == this.id){
+//			if(hiddenEvent is Assassination){
+//				//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
+//				Kingdom assassinKingdom = ((Assassination)hiddenEvent).assassinKingdom;
+//				RelationshipKings relationship = this.SearchRelationshipByID (assassinKingdom.king.id);
+//				relationship.AdjustLikeness (-15);
+//			}
+//		}
 		//Perform Counteraction
 	}
 

@@ -53,12 +53,23 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 //		TriggerBorderConflict ();
+//		TriggerRaid();
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
 		EventManager.Instance.onCitizenMove.Invoke ();
 		EventManager.Instance.onWeekEnd.Invoke();
 	}
-
+	private void TriggerRaid(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < 3){
+			Raid ();
+		}
+	}
+	private void Raid(){
+		Kingdom raiderOfTheLostArc = KingdomManager.Instance.allKingdoms [UnityEngine.Random.Range (0, KingdomManager.Instance.allKingdoms.Count)];
+		Raid raid = new Raid(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, raiderOfTheLostArc.king);
+		EventManager.Instance.AddEventToDictionary (raid);
+	}
 	private void TriggerBorderConflict(){
 		int chance = UnityEngine.Random.Range (0, 100);
 		if(chance < 1){
