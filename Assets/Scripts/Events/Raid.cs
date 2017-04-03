@@ -230,20 +230,20 @@ public class Raid : GameEvent {
 		if(this.raidedCity.lumberCount > 0 && this.raidedCity.stoneCount > 0){
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
-				resourceType == BASE_RESOURCE_TYPE.WOOD;
+				resourceType = BASE_RESOURCE_TYPE.WOOD;
 				return this.raidedCity.lumberCount;
 			}else{
-				resourceType == BASE_RESOURCE_TYPE.STONE;
+				resourceType = BASE_RESOURCE_TYPE.STONE;
 				return this.raidedCity.stoneCount;
 			}
 		}else if(this.raidedCity.lumberCount <= 0 && this.raidedCity.stoneCount > 0){
-			resourceType == BASE_RESOURCE_TYPE.STONE;
+			resourceType = BASE_RESOURCE_TYPE.STONE;
 			return this.raidedCity.stoneCount;
 		}else if(this.raidedCity.lumberCount > 0 && this.raidedCity.stoneCount <= 0){
-			resourceType == BASE_RESOURCE_TYPE.WOOD;
+			resourceType = BASE_RESOURCE_TYPE.WOOD;
 			return this.raidedCity.lumberCount;
 		}else{
-			resourceType == BASE_RESOURCE_TYPE.NONE;
+			resourceType = BASE_RESOURCE_TYPE.NONE;
 			return 0;
 		}
 	}
@@ -252,53 +252,53 @@ public class Raid : GameEvent {
 		if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount > 0){
 			int chance = UnityEngine.Random.Range (0, 3);
 			if(chance == 0){
-				resourceType == BASE_RESOURCE_TYPE.MANA_STONE;
+				resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
 				return this.raidedCity.manaStoneCount;
 			}else if(chance == 1){
-				resourceType == BASE_RESOURCE_TYPE.MITHRIL;
+				resourceType = BASE_RESOURCE_TYPE.MITHRIL;
 				return this.raidedCity.mithrilCount;
 			}else {
-				resourceType == BASE_RESOURCE_TYPE.COBALT;
+				resourceType = BASE_RESOURCE_TYPE.COBALT;
 				return this.raidedCity.cobaltCount;
 			}
 		}else if(this.raidedCity.manaStoneCount <= 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount > 0){
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
-				resourceType == BASE_RESOURCE_TYPE.MITHRIL;
+				resourceType = BASE_RESOURCE_TYPE.MITHRIL;
 				return this.raidedCity.mithrilCount;
 			}else {
-				resourceType == BASE_RESOURCE_TYPE.COBALT;
+				resourceType = BASE_RESOURCE_TYPE.COBALT;
 				return this.raidedCity.cobaltCount;
 			}
 		}else if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount <= 0 && this.raidedCity.cobaltCount > 0){
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
-				resourceType == BASE_RESOURCE_TYPE.MANA_STONE;
+				resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
 				return this.raidedCity.manaStoneCount;
 			}else {
-				resourceType == BASE_RESOURCE_TYPE.COBALT;
+				resourceType = BASE_RESOURCE_TYPE.COBALT;
 				return this.raidedCity.cobaltCount;
 			}
 		}else if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount <= 0){
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
-				resourceType == BASE_RESOURCE_TYPE.MANA_STONE;
+				resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
 				return this.raidedCity.manaStoneCount;
 			}else {
-				resourceType == BASE_RESOURCE_TYPE.MITHRIL;
+				resourceType = BASE_RESOURCE_TYPE.MITHRIL;
 				return this.raidedCity.mithrilCount;
 			}
 		}else if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount <= 0 && this.raidedCity.cobaltCount <= 0){
-			resourceType == BASE_RESOURCE_TYPE.MANA_STONE;
+			resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
 			return this.raidedCity.manaStoneCount;
 		}else if(this.raidedCity.manaStoneCount <= 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount <= 0){
-			resourceType == BASE_RESOURCE_TYPE.MITHRIL;
+			resourceType = BASE_RESOURCE_TYPE.MITHRIL;
 			return this.raidedCity.mithrilCount;
 		}else if(this.raidedCity.manaStoneCount <= 0 && this.raidedCity.mithrilCount <= 0 && this.raidedCity.cobaltCount > 0){
-			resourceType == BASE_RESOURCE_TYPE.COBALT;
+			resourceType = BASE_RESOURCE_TYPE.COBALT;
 			return this.raidedCity.cobaltCount;
 		}else{
-			resourceType == BASE_RESOURCE_TYPE.NONE;
+			resourceType = BASE_RESOURCE_TYPE.NONE;
 			return 0;
 		}
 	}

@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour {
 		}
 
 	}
-	private bool SearchForEligibility (Kingdom kingdom1, Kingdom kingdom2, List<GameEvent> borderConflicts){
+	internal bool SearchForEligibility (Kingdom kingdom1, Kingdom kingdom2, List<GameEvent> borderConflicts){
 		for(int i = 0; i < borderConflicts.Count; i++){
 			if(!IsEligibleForConflict(kingdom1,kingdom2,((BorderConflict)borderConflicts[i]))){
 				return false;

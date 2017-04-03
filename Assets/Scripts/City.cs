@@ -15,6 +15,7 @@ public class City{
 	public List<HexTile> ownedTiles;
 	public List<Citizen> incomingGenerals;
 	public List<Citizen> citizens;
+	public List<City> connectedCities;
 	public string cityHistory;
 	public bool hasKing;
 
