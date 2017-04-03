@@ -413,6 +413,10 @@ public class Citizen {
 				}
 				this.RemoveSuccessionAndCivilWars ();
 			}
+		}else{
+			if(this.city.governor.id == this.id){
+				this.city.AssignNewGovernor ();
+			}
 		}
 
 		this.isKing = false;
