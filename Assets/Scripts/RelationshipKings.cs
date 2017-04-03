@@ -7,7 +7,7 @@ public class RelationshipKings {
 	public Citizen sourceKing;
 	public Citizen king;
 //	public DECISION previousDecision;
-	public int like;
+	public float like;
 	public RELATIONSHIP_STATUS lordRelationship;
 //	public LORD_EVENTS previousInteraction = LORD_EVENTS.NONE;
 	public bool isFirstEncounter;
@@ -45,9 +45,30 @@ public class RelationshipKings {
 		}
 	}
 
-	internal void AdjustLikeness(int adjustment){
+	internal void AdjustLikeness(float adjustment){
+		if (adjustment < 0) {
+			//Deteriorating
+			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+				adjustment *= 0.75f;
+			}
+			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+				adjustment *= 1.25f;
+			}
+		} else {
+			//Increasing
+			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+				adjustment *= 1.25f;
+			}
+			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+				adjustment *= 0.75f;
+			}
+		}
 		this.like += adjustment;
 		this.UpdateKingRelationshipStatus ();
-		sourceKing.DeteriorateRelationship ();
+		if (adjustment < 0) {
+			sourceKing.DeteriorateRelationship ();
+		} else {
+
+		}
 	}
 }

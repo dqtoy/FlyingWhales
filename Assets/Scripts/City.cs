@@ -15,7 +15,6 @@ public class City{
 	public List<HexTile> ownedTiles;
 	public List<Citizen> incomingGenerals;
 	public List<Citizen> citizens;
-	public List<City> connectedCities;
 	public string cityHistory;
 	public bool hasKing;
 
@@ -66,7 +65,6 @@ public class City{
 		this.ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<Citizen> ();
 		this.citizens = new List<Citizen>();
-		this.connectedCities = new List<City> ();
 		this.cityHistory = string.Empty;
 		this.isActive = new IsActive (false);
 		this.hasKing = false;
@@ -82,6 +80,7 @@ public class City{
 		this.purchasabletilesWithUnneededResource = new List<HexTile>();
 
 		this.hexTile.isOccupied = true;
+		this.ownedTiles.Add(this.hexTile);
 
 //		this.CreateInitialFamilies();
 
@@ -680,6 +679,7 @@ public class City{
 		tileToOccupy.isOccupied = true;
 		tileToOccupy.OccupyTile(citizenToOccupy);
 		citizenToOccupy.workLocation = tileToOccupy;
+		citizenToOccupy.currentLocation = tileToOccupy;
 		this.UpdateResourceProduction();
 	}
 
@@ -772,6 +772,8 @@ public class City{
 				return;
 			}
 		}
+
+		bool isInMilitarization = EventManager.Instance.GetEventsOfTypePerKingdom(this.kingdom, EVENT_TYPES.MILITARIZATION).Count > 0;
 
 		if (this.AllTilesAreOccupied()) {
 			//Pick which of the three resources to produce, based on what tiles are available
@@ -997,17 +999,6 @@ public class City{
 		return true;
 	}
 
-	internal bool CheckCityConnectivity (List<City> connections){
-		for(int i = 0; i < this.connectedCities.Count; i++){
-			for(int j = 0; j < connections.Count; j++){
-				if(this.connectedCities[i].id == connections[j].id){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	internal int GetCityArmyStrength(){
 		int total = 0;
 		for(int i = 0; i < this.citizens.Count; i++){
@@ -1196,10 +1187,15 @@ public class City{
 
 	internal void RemoveCitizenFromCity(Citizen citizenToRemove){
 		this.citizens.Remove (citizenToRemove);
+		citizenToRemove.workLocation = null;
+		citizenToRemove.city = null;
+		citizenToRemove.currentLocation = null;
 	}
 
 	internal void AddCitizenToCity(Citizen citizenToAdd){
-		this.citizens.Add (citizenToAdd);
+		this.citizens.Add(citizenToAdd);
+		citizenToAdd.city = this;
+		citizenToAdd.currentLocation = this.hexTile;
 	}
 
 	internal void AssignNewGovernor(){

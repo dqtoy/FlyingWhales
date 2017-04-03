@@ -73,6 +73,14 @@ public class Kingdom{
 		this.cities.Add (tile.city);
 	}
 
+	internal List<Citizen> GetAllCitizensInKingdom(){
+		List<Citizen> allCitizens = new List<Citizen>();
+		for (int i = 0; i < this.cities.Count; i++) {
+			allCitizens.AddRange (this.cities [i].citizens);
+		}
+		return allCitizens;
+	}
+
 	protected void CreateInitialRelationships(){
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {
@@ -257,6 +265,42 @@ public class Kingdom{
 		this.cities.Add (city);
 		city.kingdom = this;
 		city.hexTile.GetComponent<HexTile>().SetTileColor (this.kingdomColor);
+	}
+
+	internal void ResetAdjacencyWithOtherKingdoms(){
+		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
+			this.relationshipsWithOtherKingdoms[i].isAdjacent = false;
+		}
+	}
+
+	internal List<Citizen> GetAllCitizensOfType(ROLE role){
+		List<Citizen> citizensOfType = new List<Citizen>();
+		for (int i = 0; i < this.cities.Count; i++) {
+			citizensOfType.AddRange (this.cities [i].GetCitizensWithRole(role));
+		}
+		return citizensOfType;
+	}
+
+	internal List<Kingdom> GetAdjacentKingdoms(){
+		List<Kingdom> adjacentKingdoms = new List<Kingdom>();
+		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
+			if (relationshipsWithOtherKingdoms[i].isAdjacent) {
+				adjacentKingdoms.Add(relationshipsWithOtherKingdoms[i].objectInRelationship);
+			}
+		}
+		return adjacentKingdoms;
+	}
+
+	internal bool IsKingdomAdjacentTo(Kingdom kingdomToCheck){
+		return this.GetRelationshipWithOtherKingdom(kingdomToCheck).isAdjacent;
+	}
+
+	internal List<HexTile> GetAllHexTilesInKingdom(){
+		List<HexTile> tilesOwnedByKingdom = new List<HexTile>();
+		for (int i = 0; i < this.cities.Count; i++) {
+			tilesOwnedByKingdom.AddRange (this.cities[i].ownedTiles);
+		}
+		return tilesOwnedByKingdom;
 	}
 
 	//Destructor for unsubscribing listeners
