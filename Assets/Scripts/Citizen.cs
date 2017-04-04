@@ -440,6 +440,10 @@ public class Citizen {
 				}
 				this.RemoveSuccessionAndCivilWars ();
 			}
+		}else{
+			if(this.city.governor.id == this.id){
+				this.city.AssignNewGovernor ();
+			}
 		}
 
 		this.isKing = false;
@@ -754,10 +758,150 @@ public class Citizen {
 		this.campaignManager.successionWarCities.RemoveAll (x => x.city.id == enemy.city.id);
 		this.successionWars.Remove (enemy);
 	}
-	internal void DeteriorateRelationship(){
+	internal void DeteriorateRelationship(RelationshipKings relationship){
 		//TRIGGER OTHER EVENTS
+		if(relationship.like >= -40){
+			int chance = UnityEngine.Random.Range (0, 100);
+			int value = 5;
+			if(relationship.king.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+				value = 8;
+			}else if(relationship.king.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+				value = 2;
+			}
+			if(chance < value){
+				//STATE VISIT
+				relationship.king.StateVisit(this);
+			}
+		}else{
+			InvasionPlan (relationship);
+			BorderConflict (relationship);
+			Assassination (relationship);
+		}
 	}
+	private void InvasionPlan(RelationshipKings relationship){
+		int chance = UnityEngine.Random.Range (0, 100);
+		int value = 4;
+		if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+			value = 8;
+		}
+		if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+			value = 2;
+		}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+			value = 6;
+			if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+				value = 12;
+			}
+		}
 
+		if(chance < value){
+			//INVASION PLAN
+		}else{
+			//STATE VISIT
+			int svChance = UnityEngine.Random.Range (0, 100);
+			int svValue = 4;
+			if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+				svValue = 8;
+			}
+			if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+				svValue = 6;
+				if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+					svValue = 12;
+				}
+			}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+				svValue = 2;
+			}
+			if(svChance < svValue){
+				this.StateVisit(relationship.king);
+			}
+		}
+	}
+	private void BorderConflict(RelationshipKings relationship){
+		int chance = UnityEngine.Random.Range (0, 100);
+		int value = 4;
+		if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+			value = 8;
+		}
+
+		if (this.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+			for (int i = 0; i < relationship.king.city.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
+				if (relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.id != this.city.kingdom.id) {
+					if (!relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].isAtWar && relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].isAdjacent) {
+						if (GameManager.Instance.SearchForEligibility (relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship, EventManager.Instance.GetEventsOfType (EVENT_TYPES.BORDER_CONFLICT))) {
+							RelationshipKings relationshipToOther = this.SearchRelationshipByID (relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.king.id);
+							if (relationshipToOther.lordRelationship != RELATIONSHIP_STATUS.FRIEND && relationshipToOther.lordRelationship != RELATIONSHIP_STATUS.ALLY) {
+								if (chance < value) {
+									//BorderConflict
+									BorderConflict borderConflict = new BorderConflict (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null, relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship);
+									EventManager.Instance.AddEventToDictionary (borderConflict);
+									break;
+								}	
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	private void Assassination(RelationshipKings relationship){
+		int chance = UnityEngine.Random.Range (0, 100);
+		int value = 5;
+		if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+			value = 10;
+		}
+		if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.SCHEMING)){
+			value = 10;
+			if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+				value = 20;
+			}
+		}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.NAIVE)){
+			value = 0;
+		}
+
+		if(chance < value){
+			Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king);
+			EventManager.Instance.AddEventToDictionary(assassination);
+		}
+	}
+	internal void ImproveRelationship(RelationshipKings relationship){
+		//Improvement of Relationship
+		if(relationship.like >= -40){
+			int chance = UnityEngine.Random.Range (0, 100);
+			int value = 25;
+			if(relationship.king.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+				value = 30;
+			}else if(relationship.king.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+				value = 10;
+			}
+			if(chance < value){
+				//CANCEL INVASION PLAN
+			}
+		}else{
+			CancelInvasionPlan (relationship);
+		}
+	}
+	private void CancelInvasionPlan(RelationshipKings relationship){
+		int chance = UnityEngine.Random.Range (0, 100);
+		int value = 15;
+		if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+			value = 5;
+		}
+
+		if(relationship.king.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+			value = 20;
+			if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+				value = 10;
+			}
+		}else if(relationship.king.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+			value = 5;
+			if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+				value = 0;
+			}
+		}
+
+		if(chance < value){
+			//CANCEL INVASION PLAN
+		}
+	}
 	internal RelationshipKings SearchRelationshipByID(int id){
 		for(int i = 0; i < this.relationshipKings.Count; i++){
 			if(this.relationshipKings[i].king.id == id){
@@ -830,14 +974,6 @@ public class Citizen {
 	}
 
 	internal void InformedAboutHiddenEvent(GameEvent hiddenEvent){
-//		if(informer.id == this.id){
-//			if(hiddenEvent is Assassination){
-//				//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
-//				Kingdom assassinKingdom = ((Assassination)hiddenEvent).assassinKingdom;
-//				RelationshipKings relationship = this.SearchRelationshipByID (assassinKingdom.king.id);
-//				relationship.AdjustLikeness (-15);
-//			}
-//		}
 		//Perform Counteraction
 	}
 

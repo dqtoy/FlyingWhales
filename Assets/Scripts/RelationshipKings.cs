@@ -54,6 +54,7 @@ public class RelationshipKings {
 			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
 				adjustment *= 1.25f;
 			}
+
 		} else {
 			//Increasing
 			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
@@ -62,13 +63,20 @@ public class RelationshipKings {
 			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
 				adjustment *= 0.75f;
 			}
+
 		}
 		this.like += adjustment;
+		if(this.like < -100){
+			this.like = -100;
+		}
+		else if(this.like > 100){
+			this.like = 100;
+		}
 		this.UpdateKingRelationshipStatus ();
 		if (adjustment < 0) {
-			sourceKing.DeteriorateRelationship ();
-		} else {
-
+			sourceKing.DeteriorateRelationship (this);
+		}else{
+			sourceKing.ImproveRelationship (this);
 		}
 	}
 }

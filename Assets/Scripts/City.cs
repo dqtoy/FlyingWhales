@@ -15,6 +15,7 @@ public class City{
 	public List<HexTile> ownedTiles;
 	public List<Citizen> incomingGenerals;
 	public List<Citizen> citizens;
+	public List<City> connectedCities;
 	public string cityHistory;
 	public bool hasKing;
 
@@ -1206,5 +1207,29 @@ public class City{
 		this.citizens.Add(citizenToAdd);
 		citizenToAdd.city = this;
 		citizenToAdd.currentLocation = this.hexTile;
+	}
+
+	internal void AssignNewGovernor(){
+		Citizen newGovernor = GetCitizenWithHighestPrestige ();
+		this.governor.isGovernor = false;
+
+		newGovernor.assignedRole = null;
+		newGovernor.role = ROLE.UNTRAINED;
+		newGovernor.isGovernor = true;
+		this.governor = newGovernor;
+
+	}
+	internal Citizen GetCitizenWithHighestPrestige(){
+		List<Citizen> prestigeCitizens = new List<Citizen> ();
+		int maxPrestige = this.citizens.Where (x => !x.isGovernor && !x.isDead).Max (x => x.prestige);
+		for(int i = 0; i < this.citizens.Count; i++){
+			if(this.citizens[i].prestige == maxPrestige){
+				if(!this.citizens[i].isDead && !this.citizens[i].isGovernor){
+					prestigeCitizens.Add (this.citizens [i]);
+				}
+			}
+		}
+
+		return prestigeCitizens [UnityEngine.Random.Range (0, prestigeCitizens.Count)];
 	}
 }

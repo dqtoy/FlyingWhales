@@ -123,6 +123,9 @@ public class Kingdom{
 			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 
 		}else{
+			if(newKing.city.governor.id == newKing.id){
+				newKing.city.AssignNewGovernor ();
+			}
 			if (newKing.isMarried) {
 				if (newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
 					AssimilateKingdom (newKing.spouse.city.kingdom);
@@ -149,6 +152,9 @@ public class Kingdom{
 		}
 	}
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
+		if(newKing.city.governor.id == newKing.id){
+			newKing.city.AssignNewGovernor ();
+		}
 		if(!newKing.isDirectDescendant){
 			Utilities.ChangeDescendantsRecursively (newKing, true);
 			Utilities.ChangeDescendantsRecursively (this.king, false);
