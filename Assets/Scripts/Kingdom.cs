@@ -297,6 +297,16 @@ public class Kingdom{
 		return tilesOwnedByKingdom;
 	}
 
+	internal List<Kingdom> GetKingdomsByRelationship(RELATIONSHIP_STATUS relationshipStatus){
+		List<Kingdom> kingdomsByRelationship = new List<Kingdom>();
+		for (int i = 0; i < this.king.relationshipKings.Count; i++) {
+			if (this.king.relationshipKings[i].lordRelationship == relationshipStatus) {
+				kingdomsByRelationship.Add(this.king.relationshipKings [i].king.city.kingdom);
+			}
+		}
+		return kingdomsByRelationship;
+	}
+
 	//Destructor for unsubscribing listeners
 	~Kingdom(){
 		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);
