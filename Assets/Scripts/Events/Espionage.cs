@@ -100,36 +100,38 @@ public class Espionage : GameEvent {
 		if(chance < value){
 			if(this.targetKingdom.king.id == this.sourceKingdom.king.id){
 				this.targetKingdom.king.InformedAboutHiddenEvent (chosenEvent);
-				if(chosenEvent is Assassination){
-					//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
-					Kingdom assassinKingdom = ((Assassination)chosenEvent).assassinKingdom;
-					RelationshipKings relationship =this.targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-					relationship.AdjustLikeness (-15);
-				}else if(chosenEvent is InvasionPlan){
-					//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
-					Kingdom sourceKingdom = ((InvasionPlan)chosenEvent).sourceKingdom;
-					RelationshipKings relationship = this.targetKingdom.king.SearchRelationshipByID (sourceKingdom.king.id);
-					relationship.AdjustLikeness (-20);
-				}
 			}else{
-//				Kingdom targetKingdomSpecific = null;
-//				Kingdom sourceKingdomSpecific = null;
+				Kingdom targetKingdomSpecific = null;
+				Kingdom sourceKingdomSpecific = null;
 				if(chosenEvent is Assassination){
-					AssassinationExposed (chosenEvent);
+					AssassinationExposed (chosenEvent, ref targetKingdomSpecific, ref sourceKingdomSpecific);
+				}else if(chosenEvent is InvasionPlan){
+					InvasionPlanExposed (chosenEvent, ref targetKingdomSpecific, ref sourceKingdomSpecific);
+				}
+				if(targetKingdomSpecific != null && sourceKingdomSpecific != null){
+					EventExposed (chosenEvent, targetKingdomSpecific, sourceKingdomSpecific);
 				}
 			}
 
 		}
 
 	}
-	private void AssassinationExposed(GameEvent chosenEvent){
+	private void AssassinationExposed(GameEvent chosenEvent, ref Kingdom target, ref Kingdom source){
+		target = ((Assassination)chosenEvent).targetCitizen.city.kingdom;
+		source = ((Assassination)chosenEvent).assassinKingdom;
+	}
+	private void InvasionPlanExposed(GameEvent chosenEvent, ref Kingdom target, ref Kingdom source){
+		target = ((InvasionPlan)chosenEvent).targetKingdom;
+		source = ((InvasionPlan)chosenEvent).sourceKingdom;
+	}
+	private void EventExposed(GameEvent chosenEvent, Kingdom targetKingdomSpecific, Kingdom sourceKingdomSpecific){
 		int chance = UnityEngine.Random.Range (0, 100);
-		Citizen target = ((Assassination)chosenEvent).targetCitizen;
-		Citizen assassin = ((Assassination)chosenEvent).assassinKingdom.king;
+		Citizen target = targetKingdomSpecific.king;
+		Citizen source = sourceKingdomSpecific.king;
 
 		if(target.isKing){
 			RelationshipKings relationship = this.sourceKingdom.king.SearchRelationshipByID (target.id);
-			RelationshipKings relationshipToCreator = this.sourceKingdom.king.SearchRelationshipByID (assassin.id);
+			RelationshipKings relationshipToCreator = this.sourceKingdom.king.SearchRelationshipByID (source.id);
 			if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM || relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
 				if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM){
 					int value = 25;
@@ -197,7 +199,9 @@ public class Espionage : GameEvent {
 		List<GameEvent> allEventsAffectionTarget = new List<GameEvent> ();
 
 		for(int i = 0; i < invasionPlanEvents.Count; i++){
-			
+			if(((InvasionPlan)invasionPlanEvents[i]).targetKingdom.id == this.targetKingdom.id && ((InvasionPlan)invasionPlanEvents[i]).sourceKingdom.id != this.sourceKingdom.id){
+				allEventsAffectionTarget.Add (assassinationEvents [i]);
+			}
 		}
 		for(int i = 0; i < joinWarEvents.Count; i++){
 
