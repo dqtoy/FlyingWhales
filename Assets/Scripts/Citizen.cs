@@ -336,7 +336,9 @@ public class Citizen {
 		}
 		this.city.kingdom.successionLine.Remove (this);
 		this.isDead = true;
-		this.assignedRole.OnDeath ();
+		if (this.assignedRole != null) {
+			this.assignedRole.OnDeath ();
+		}
 		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
 		EventManager.Instance.onUnsupportCitizen.Invoke (this);
 		EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
