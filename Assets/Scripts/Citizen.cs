@@ -583,7 +583,7 @@ public class Citizen {
 		} else if (role == ROLE.SPY) {
 			this.assignedRole = new Spy (this);
 		} else if (role == ROLE.TRADER) {
-			this.assignedRole = new Trader (this);
+			this.assignedRole = new Trader (this, this.city.tradeManager);
 		} else if (role == ROLE.GOVERNOR) {
 			this.assignedRole = new Governor (this);
 		} else if (role == ROLE.KING) {
@@ -795,6 +795,8 @@ public class Citizen {
 
 		if(chance < value){
 			//INVASION PLAN
+			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
+				this, this.city.kingdom, relationship.king.city.kingdom);
 		}else{
 			//STATE VISIT
 			int svChance = UnityEngine.Random.Range (0, 100);
@@ -874,6 +876,12 @@ public class Citizen {
 			}
 			if(chance < value){
 				//CANCEL INVASION PLAN
+				List<GameEvent> invasionPlans = EventManager.Instance.GetEventsOfType(EVENT_TYPES.INVASION_PLAN).Where(x => 
+					(((InvasionPlan)x).startedByKingdom.id == relationship.sourceKing.city.kingdom.id) && 
+					(((InvasionPlan)x).targetKingdom.id == relationship.king.city.kingdom.id)).ToList();
+				if (invasionPlans.Count > 0) {
+					((InvasionPlan)invasionPlans [0]).CancelEvent();
+				}
 			}
 		}else{
 			CancelInvasionPlan (relationship);
@@ -900,6 +908,12 @@ public class Citizen {
 
 		if(chance < value){
 			//CANCEL INVASION PLAN
+			List<GameEvent> invasionPlans = EventManager.Instance.GetEventsOfType(EVENT_TYPES.INVASION_PLAN).Where(x => 
+				(((InvasionPlan)x).startedByKingdom.id == relationship.sourceKing.city.kingdom.id) && 
+				(((InvasionPlan)x).targetKingdom.id == relationship.king.city.kingdom.id)).ToList();
+			if (invasionPlans.Count > 0) {
+				((InvasionPlan)invasionPlans [0]).CancelEvent();
+			}
 		}
 	}
 	internal RelationshipKings SearchRelationshipByID(int id){

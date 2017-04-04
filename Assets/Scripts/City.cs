@@ -684,6 +684,9 @@ public class City{
 		citizenToOccupy.workLocation = tileToOccupy;
 		citizenToOccupy.currentLocation = tileToOccupy;
 		this.UpdateResourceProduction();
+		if (citizenToOccupy.role == ROLE.TRADER) {
+			((Trader)citizenToOccupy.assignedRole).AssignTask();
+		}
 	}
 
 	protected HexTile FindTileForCitizen(Citizen citizen){
@@ -727,7 +730,7 @@ public class City{
 
 	protected void UpdateTradeManager(){
 		if (this.tradeManager.lastMonthUpdated != GameManager.Instance.month) {
-			this.tradeManager.UpdateTradeManager ();
+			this.tradeManager.UpdateNeededResources();
 		}
 	}
 
@@ -745,7 +748,7 @@ public class City{
 	}
 
 	protected void ProduceResources(){
-		this.sustainability = this.allResourceProduction[0];
+		this.sustainability = this.allResourceProduction[0] + tradeManager.sustainabilityBuff;
 		this.lumberCount += this.allResourceProduction[1];
 		this.stoneCount += this.allResourceProduction[2];
 		this.manaStoneCount += this.allResourceProduction[3];
