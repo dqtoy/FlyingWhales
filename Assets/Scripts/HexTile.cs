@@ -23,6 +23,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public City city;
 	public Citizen occupant = null;
 	public ROLE roleIntendedForTile = ROLE.UNTRAINED;
+	public STRUCTURE structureOnTile = STRUCTURE.NONE;
 
 	public bool isHabitable = false;
 	public bool isRoad = false;

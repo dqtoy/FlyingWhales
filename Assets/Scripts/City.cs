@@ -28,6 +28,7 @@ public class City{
 	public int cobaltCount;
 	public int goldCount;
 	public int[] allResourceProduction; //food, lumber, stone, mana stone, mithril, cobalt, gold
+	public TradeManager tradeManager;
 
 	[Space(5)]
 	public IsActive isActive;
@@ -72,6 +73,7 @@ public class City{
 		this.isStarving = false;
 		this.isDead = false;
 		this.allResourceProduction = new int[]{ 0, 0, 0, 0, 0, 0, 0 };
+		this.tradeManager = new TradeManager(this, this.kingdom);
 		this.citizenCreationTable = Utilities.defaultCitizenCreationTable;
 		this.pendingTask = new Dictionary<CITY_TASK, HexTile>();
 		this.allUnownedNeighbours = new List<HexTile>();
@@ -682,6 +684,9 @@ public class City{
 		citizenToOccupy.workLocation = tileToOccupy;
 		citizenToOccupy.currentLocation = tileToOccupy;
 		this.UpdateResourceProduction();
+		if (citizenToOccupy.role == ROLE.TRADER) {
+			((Trader)citizenToOccupy.assignedRole).AssignTask();
+		}
 	}
 
 	protected HexTile FindTileForCitizen(Citizen citizen){
@@ -712,6 +717,7 @@ public class City{
 		}
 		return null;
 	}
+
 	internal void CheckBattleMidwayCity(){
 		
 	}
@@ -719,6 +725,13 @@ public class City{
 	protected void CityEverydayTurnActions(){
 		this.ProduceResources();
 		this.AttemptToPerformAction();
+		this.UpdateTradeManager();
+	}
+
+	protected void UpdateTradeManager(){
+		if (this.tradeManager.lastMonthUpdated != GameManager.Instance.month) {
+			this.tradeManager.UpdateNeededResources();
+		}
 	}
 
 	#region Resource Production
@@ -735,7 +748,7 @@ public class City{
 	}
 
 	protected void ProduceResources(){
-		this.sustainability = this.allResourceProduction[0];
+		this.sustainability = this.allResourceProduction[0] + tradeManager.sustainabilityBuff;
 		this.lumberCount += this.allResourceProduction[1];
 		this.stoneCount += this.allResourceProduction[2];
 		this.manaStoneCount += this.allResourceProduction[3];
@@ -1028,7 +1041,7 @@ public class City{
 		return allGenerals;
 	}
 		
-	private bool IsProducingResource(BASE_RESOURCE_TYPE baseResourceType){
+	internal bool IsProducingResource(BASE_RESOURCE_TYPE baseResourceType){
 		bool result = false;
 		switch (baseResourceType) {
 		case BASE_RESOURCE_TYPE.FOOD:

@@ -51,6 +51,8 @@ public class GameEvent {
 
 	internal virtual void DoneEvent(){}
 
+	internal virtual void CancelEvent(){}
+
 	internal bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
 		for(int i = 0; i < unwantedGovernors.Count; i++){
 			if(governor.id == unwantedGovernors[i].id){

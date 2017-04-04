@@ -57,6 +57,11 @@ public class InvasionPlan : GameEvent {
 		this.isActive = false;
 	}
 
+	internal override void CancelEvent (){
+		this.resolution = "Event was cancelled.";
+		this.DoneEvent();
+	}
+
 	internal void MilitarizationDone(){
 		//TODO: position generals appropriately
 		this.resolution = "Invasion plan was successful and war is now declared between " + this.sourceKingdom.name + " and " + this.targetKingdom.name;
