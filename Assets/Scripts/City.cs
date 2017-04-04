@@ -107,6 +107,10 @@ public class City{
 		GenerateInitialTraitsForInitialCitizens ();
 		UpdateResourceProduction ();
 		UpdateUnownedNeighbourTiles();
+
+		for (int i = 0; i < this.citizens.Count; i++) {
+			this.citizens[i].UpdatePrestige();
+		}
 	}
 
 	private void BuyInitialTiles(){

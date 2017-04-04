@@ -14,8 +14,7 @@ public class ButtonToggle : MonoBehaviour {
 			isClicked = false;
 			this.GetComponent<UI2DSprite> ().sprite2D = normalSprite;
 		} else {
-			isClicked = true;
-			this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
+			SetAsClicked();
 		}
 	}
 
@@ -29,5 +28,10 @@ public class ButtonToggle : MonoBehaviour {
 				this.GetComponent<UI2DSprite> ().sprite2D = normalSprite;
 			}
 		}
+	}
+
+	public void SetAsClicked(){
+		isClicked = true;
+		this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
 	}
 }

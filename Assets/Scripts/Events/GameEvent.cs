@@ -43,6 +43,7 @@ public class GameEvent {
 		this.resolution = "";
 		this.isActive = true;
 		this.startedByKingdom = startedBy.city.kingdom;
+		Debug.LogError("New Event was created!");
 	}
 
 	internal virtual void PerformAction(){}

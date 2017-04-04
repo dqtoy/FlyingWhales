@@ -110,6 +110,7 @@ public class Citizen {
 
 
 		this.GenerateTraits();
+		this.UpdatePrestige();
 
 		EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
 		EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
