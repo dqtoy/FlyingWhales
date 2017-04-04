@@ -991,7 +991,25 @@ public class Citizen {
 	}
 
 	internal void InformedAboutHiddenEvent(GameEvent hiddenEvent){
+		//Reduce relationship between target and source
+		if(hiddenEvent is Assassination){
+			//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
+			Kingdom assassinKingdom = ((Assassination)hiddenEvent).assassinKingdom;
+			Kingdom targetKingdom = ((Assassination)hiddenEvent).targetCitizen.city.kingdom;
+
+			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
+			relationship.AdjustLikeness (-15);
+		}else if(hiddenEvent is InvasionPlan){
+			//An Invasion Plan discovered by the target Kingdom decreases the target kingdom's King's relationship by 20
+			Kingdom sourceKingdom = ((InvasionPlan)hiddenEvent).sourceKingdom;
+			Kingdom targetKingdom = ((InvasionPlan)hiddenEvent).targetKingdom;
+
+			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (sourceKingdom.king.id);
+			relationship.AdjustLikeness (-35);
+		}
+
 		//Perform Counteraction
+
 	}
 
 	internal List<Citizen> GetCitizensSupportingThisCitizen(){

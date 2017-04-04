@@ -379,6 +379,11 @@ public class CampaignManager {
 			}else if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){
 				//InitiateBattle
 				((General)general.assignedRole).inAction = false;
+
+				//If army is alive but no general, after task immediately return home
+				if(general.isDead){
+					((General)general.assignedRole).UnregisterThisGeneral (chosenCampaign);
+				}
 			}
 		}else{
 			if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){

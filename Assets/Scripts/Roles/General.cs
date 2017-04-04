@@ -101,6 +101,9 @@ public class General : Role {
 		if(this.inAction){
 			return;
 		}
+		if(this.citizen.isDead){
+			return;
+		}
 		if(campaign.warType == WAR_TYPE.INTERNATIONAL){
 			if(this.citizen.city.governor.supportedCitizen == null){
 				if(campaign.leader.isKing){
