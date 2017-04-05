@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject governorPortraitPrefab;
 	public GameObject traitPrefab;
 	public GameObject gameEventPrefab;
+	public GameObject relationshipLinePrefab;
 
 	public GameObject smallInfoGO;
 	public GameObject citizenInfoGO;
@@ -21,6 +22,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject kingdomInfoGO;
 	public GameObject eventsGo;
 	public GameObject eventsOfTypeGo;
+	public GameObject relationshipsGO;
 
 	public ButtonToggle pauseBtn;
 	public ButtonToggle x1Btn;
@@ -43,6 +45,7 @@ public class UIManager : MonoBehaviour {
 	public UILabel citizenPrestigeLbl;
 	public UIGrid citizenTraitsGrid;
 	public GameObject kingSpecificGO;
+	public ButtonToggle relationshipsBtn;
 
 	[Space(10)]
 	public UILabel cityNameLbl;
@@ -98,6 +101,18 @@ public class UIManager : MonoBehaviour {
 	public Sprite declareWarIcon;
 	public Sprite expansionIcon;
 	public Sprite marriageInvitationIcon;
+
+	[Space(10)]
+	public GameObject kingRelationshipsParentGO;
+	public GameObject governorRelationshipsParentGO;
+	public UIGrid kingRelationshipsGrid;
+	public UIGrid governorsRelationshipGrid;
+	public UI2DSprite mainLineSprite;
+	public UI2DSprite relationshipKingSprite;
+	public UILabel relationshipKingName;
+	public UILabel relationshipKingKingdomName;
+	public ButtonToggle kingRelationshipsBtn;
+	public ButtonToggle governorRelationshipsBtn;
 
 	private Citizen currentlyShowingCitizen;
 	private City currentlyShowingCity;
@@ -179,6 +194,10 @@ public class UIManager : MonoBehaviour {
 	}
 
 	internal void ShowCitizenInfo(Citizen citizenToShow){
+		if (relationshipsGO.activeSelf == true) {
+			this.HideRelationships ();
+		}
+
 		currentlyShowingCitizen = citizenToShow;
 		citizenNameLbl.text = "[b]" + citizenToShow.name + "[/b]";
 		citizenKingdomNameLbl.text = citizenToShow.city.kingdom.name;
@@ -269,6 +288,8 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
+		foodProducersGrid.enabled = true;
+
 		citizensConcerned.Clear ();
 		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GATHERER);
 		for (int i = 0; i < citizensConcerned.Count; i++) {
@@ -276,6 +297,8 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
+		gatherersGrid.enabled = true;
+
 		citizensConcerned.Clear ();
 		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.MINER);
 		for (int i = 0; i < citizensConcerned.Count; i++) {
@@ -283,6 +306,8 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
+		minersGrid.enabled = true;
+
 		citizensConcerned.Clear ();
 		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.TRADER);
 		for (int i = 0; i < citizensConcerned.Count; i++) {
@@ -290,6 +315,8 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
+		tradersGrid.enabled = true;
+
 		citizensConcerned.Clear ();
 		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GENERAL);
 		for (int i = 0; i < citizensConcerned.Count; i++) {
@@ -297,6 +324,8 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
+		generalsGrid.enabled = true;
+
 		citizensConcerned.Clear ();
 		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.SPY);
 		for (int i = 0; i < citizensConcerned.Count; i++) {
@@ -304,6 +333,8 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
+		spiesGrid.enabled = true;
+
 		citizensConcerned.Clear ();
 		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.ENVOY);
 		for (int i = 0; i < citizensConcerned.Count; i++) {
@@ -311,6 +342,7 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
+		envoysGrid.enabled = true;
 		citizensConcerned.Clear ();
 		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GUARDIAN);
 		for (int i = 0; i < citizensConcerned.Count; i++) {
@@ -318,6 +350,8 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
+		guardiansGrid.enabled = true;
+
 		citizensConcerned.Clear ();
 		citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.UNTRAINED);
 		for (int i = 0; i < citizensConcerned.Count; i++) {
@@ -325,24 +359,16 @@ public class UIManager : MonoBehaviour {
 			citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 			citizenGO.transform.localScale = Vector3.one;
 		}
-		cityInfoGO.SetActive (true);
-		foodProducersGrid.repositionNow = true;
-		gatherersGrid.repositionNow = true;
-		minersGrid.repositionNow = true;
-		tradersGrid.repositionNow = true;
-		generalsGrid.repositionNow = true;
-		spiesGrid.repositionNow = true;
-		envoysGrid.repositionNow = true;
-		guardiansGrid.repositionNow = true;
-		untrainedGrid.repositionNow = true;
+		untrainedGrid.enabled = true;
 
+		cityInfoGO.SetActive (true);
 	}
 
 	public void HideCityInfo(){
 		currentlyShowingCity = null;
 		cityInfoGO.SetActive (false);
 	}
-
+		
 	public void ShowKingdomInfo(Kingdom kingdom){
 		this.currentlyShowingKingdom = kingdom;
 		this.kingdomNameBigLbl.text = "[b]" + kingdom.name + "[/b]";
@@ -380,6 +406,7 @@ public class UIManager : MonoBehaviour {
 		this.kingdomInfoGO.SetActive (false);
 
 	}
+
 	public void OnClickShowKingdomSuccession(){
 		if(this.currentlyShowingKingdom == null){
 			return;
@@ -390,7 +417,6 @@ public class UIManager : MonoBehaviour {
 		for (int i = 0; i < children.Count; i++) {
 			Destroy (children [i].gameObject);
 		}
-
 		//POPULATE
 		for(int i = 0; i < this.currentlyShowingKingdom.successionLine.Count; i++){
 			if(i > 2){
@@ -586,6 +612,54 @@ public class UIManager : MonoBehaviour {
 		yield return null;
 		thisGrid.Reposition ();
 		yield return null;
+	}
+	public void ToggleRelationships(){
+		if (relationshipsGO.activeSelf == true) {
+			relationshipsGO.SetActive (false);
+		} else {
+			relationshipKingName.text = "King " + currentlyShowingCitizen.name;
+			relationshipKingKingdomName.text = currentlyShowingCitizen.city.kingdom.name;
+			relationshipKingSprite.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
+			relationshipsGO.SetActive (true);
+			kingRelationshipsBtn.SetAsClicked();
+			ShowKingRelationships ();
+		}
+	}
+	public void ShowKingRelationships(){
+		if (kingRelationshipsParentGO.activeSelf) {
+			return;
+		}
+		kingRelationshipsBtn.SetClickState(true);
+		governorRelationshipsBtn.SetClickState(false);
+		List<Transform> children = kingRelationshipsGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		for (int i = 0; i < currentlyShowingCitizen.relationshipKings.Count; i++) {
+			GameObject kingGO = GameObject.Instantiate(characterPortraitPrefab, kingRelationshipsGrid.transform) as GameObject;
+			kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.relationshipKings [i].king, true);
+			kingGO.transform.localScale = new Vector3(1.5f, 1.5f, 0);
+			kingGO.GetComponent<CharacterPortrait>().ShowRelationshipLine (currentlyShowingCitizen.relationshipKings [i],
+				currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
+			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
+
+		}
+		if (currentlyShowingCitizen.relationshipKings.Count > 1) {
+			mainLineSprite.height = 137 * currentlyShowingCitizen.relationshipKings.Count;
+			mainLineSprite.gameObject.SetActive(true);
+		}
+		governorRelationshipsParentGO.SetActive(false);
+		kingRelationshipsParentGO.SetActive(true);
+		kingRelationshipsGrid.enabled = true;
+	}
+	public void ShowGovernorRelationships(){
+
+	}
+
+	public void HideRelationships(){
+		relationshipsGO.SetActive (false);
+		relationshipsBtn.OnClick();
 	}
 
 	public void ShowGovernorInfo(){

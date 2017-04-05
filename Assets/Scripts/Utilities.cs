@@ -213,6 +213,25 @@ public class Utilities : MonoBehaviour {
 		return ROLE.UNTRAINED;
 	}
 
+	public static Color GetColorForRelationship(RELATIONSHIP_STATUS status){
+		if (status == RELATIONSHIP_STATUS.ALLY) {
+			return new Color (0, 139, 69);
+		} else if (status == RELATIONSHIP_STATUS.FRIEND) {
+			return new Color (0, 255, 127);
+		} else if (status == RELATIONSHIP_STATUS.WARM) {
+			return new Color (118, 238, 198);
+		} else if (status == RELATIONSHIP_STATUS.NEUTRAL) {
+			return Color.white;
+		} else if (status == RELATIONSHIP_STATUS.COLD) {
+			return new Color (240, 128, 128);
+		} else if (status == RELATIONSHIP_STATUS.ENEMY) {
+			return new Color (255, 64, 64);
+		} else if (status == RELATIONSHIP_STATUS.RIVAL) {
+			return new Color (255, 0, 0);
+		}
+		return Color.white;
+	}
+
 	#region Pathfinding
 	public static List<Point> EvenNeighbours {
 		get {
