@@ -53,6 +53,67 @@ public class Kingdom{
 		this.relationshipsWithOtherKingdoms = new List<Relationship<Kingdom>>();
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
+		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
+	}
+
+	protected void CreateInitialRelationships(){
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {
+				this.relationshipsWithOtherKingdoms.Add (new Relationship<Kingdom>(KingdomManager.Instance.allKingdoms [i]));
+			}
+		}
+	}
+
+	protected void NewKingdomCreated(Kingdom createdKingdom){
+		//Add relationship to newly created kingdom
+		if (createdKingdom.id == this.id) {
+			return;
+		}
+		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
+			if (this.relationshipsWithOtherKingdoms [i].objectInRelationship.id == createdKingdom.id) {
+				//this kingdom already has a relationship with created kingdom!
+				return;
+			}
+		}
+		this.relationshipsWithOtherKingdoms.Add(new Relationship<Kingdom>(createdKingdom));
+	}
+
+	protected void AttemptToExpand(){
+		if (EventManager.Instance.GetEventsOfTypePerKingdom (this, EVENT_TYPES.EXPANSION).Count > 0) {
+			return;
+		}
+
+		List<City> citiesThatCanExpand = new List<City>();
+		List<Citizen> allUnassignedAdultCitizens = new List<Citizen>();
+		List<Resource> expansionCost = new List<Resource> () {
+			new Resource (BASE_RESOURCE_TYPE.GOLD, 1000),
+			new Resource (this.basicResource, 200)
+		};
+
+		for (int i = 0; i < this.cities.Count; i++) {
+			if (this.cities[i].HasEnoughResourcesForAction(expansionCost) && this.cities[i].adjacentHabitableTiles.Count > 0) {
+				citiesThatCanExpand.Add(this.cities[i]);
+			}
+		}
+
+		float expansionChance = 0f;
+		for (int i = 0; i < citiesThatCanExpand.Count; i++) {
+			List<Citizen> untrainedCitizens = citiesThatCanExpand[i].GetCitizensWithRole(ROLE.UNTRAINED).Where(x => (x.spouse != null && x.spouse.role != ROLE.GOVERNOR) && x.age >= 16).ToList();
+			allUnassignedAdultCitizens.AddRange(untrainedCitizens);
+			expansionChance += 0.5f * untrainedCitizens.Count;
+		}
+
+		float chance = Random.Range(1f, expansionChance);
+		if (chance < expansionChance) {
+			Citizen highestPrestigeCitizen = allUnassignedAdultCitizens.OrderByDescending(x => x.prestige).First();
+			Expansion newExpansionEvent = new Expansion (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, highestPrestigeCitizen);
+		}
+
+//		if (possibleTilesToExpand.Count > 0) {
+//
+//		} else {
+//			Debug.Log(this.name + " could no longer expand because there are no more unoccupied adjacent tiles.");
+//		}
 	}
 
 	internal List<Citizen> GetAllCitizensForMarriage(Citizen citizen){
@@ -79,28 +140,6 @@ public class Kingdom{
 			allCitizens.AddRange (this.cities [i].citizens);
 		}
 		return allCitizens;
-	}
-
-	protected void CreateInitialRelationships(){
-		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {
-				this.relationshipsWithOtherKingdoms.Add (new Relationship<Kingdom>(KingdomManager.Instance.allKingdoms [i]));
-			}
-		}
-	}
-
-	protected void NewKingdomCreated(Kingdom createdKingdom){
-		//Add relationship to newly created kingdom
-		if (createdKingdom.id == this.id) {
-			return;
-		}
-		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
-			if (this.relationshipsWithOtherKingdoms [i].objectInRelationship.id == createdKingdom.id) {
-				//this kingdom already has a relationship with created kingdom!
-				return;
-			}
-		}
-		this.relationshipsWithOtherKingdoms.Add(new Relationship<Kingdom>(createdKingdom));
 	}
 
 	internal void UpdateKingSuccession(){
@@ -312,6 +351,8 @@ public class Kingdom{
 		}
 		return kingdomsByRelationship;
 	}
+
+
 
 	//Destructor for unsubscribing listeners
 	~Kingdom(){

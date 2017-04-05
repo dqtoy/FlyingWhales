@@ -589,10 +589,18 @@ public class Citizen {
 			this.assignedRole = new Trader (this, this.city.tradeManager);
 		} else if (role == ROLE.GOVERNOR) {
 			this.assignedRole = new Governor (this);
+			this.city.governor = this;
+			this.workLocation = this.city.hexTile;
 		} else if (role == ROLE.KING) {
 			this.assignedRole = new King (this);
 		}
 		this.UpdatePrestige ();
+	}
+
+	internal void Unemploy(){
+		this.spouse.role = ROLE.UNTRAINED;
+		this.spouse.assignedRole = null;
+		this.spouse.workLocation = null;
 	}
 
 	internal bool IsRoyaltyCloseRelative(Citizen otherCitizen){

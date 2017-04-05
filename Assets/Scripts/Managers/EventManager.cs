@@ -21,6 +21,7 @@ public class EventManager : MonoBehaviour {
 	public UnsupportCitizen onUnsupportCitizen = new UnsupportCitizen();
 	public GameEventAction onGameEventAction = new GameEventAction();
 	public CheckCitizensSupportingMe onCheckCitizensSupportingMe = new CheckCitizensSupportingMe();
+	public RecruitCitizensForExpansion onRecruitCitizensForExpansion = new RecruitCitizensForExpansion();
 
 	public EVENT_TYPES eventTypeForTesting;
 

@@ -3,15 +3,21 @@ using System.Collections;
 
 public class CharacterPortrait : MonoBehaviour {
 
+	public delegate void OnClickCharacterPortrait(Citizen citizenClicked);
+	public OnClickCharacterPortrait onClickCharacterPortrait;
+
 	public UI2DSprite kingdomColorGO;
 	public GameObject isDeadIcon;
+	public GameObject characterInfoGO;
+	public UILabel characterNameLbl;
+	public UILabel characterKingdomNameLbl;
 	public GameObject relationshipLine;
 	public GameObject[] relationshipCircles;
 
 	public Citizen citizen;
 	private bool isHoverEnabled = true;
 
-	public void SetCitizen(Citizen citizen){
+	public void SetCitizen(Citizen citizen, bool showInfo = false){
 		this.citizen = citizen;
 		this.kingdomColorGO.color = this.citizen.city.kingdom.kingdomColor;
 		if (citizen.isDead) {
@@ -19,6 +25,16 @@ public class CharacterPortrait : MonoBehaviour {
 		} else {
 			isDeadIcon.SetActive (false);
 		}
+
+		if (showInfo) {
+			ShowCitizenInfo();
+		}
+	}
+
+	public void ShowCitizenInfo(){
+		characterNameLbl.text = this.citizen.name;
+		characterKingdomNameLbl.text = this.citizen.city.kingdom.name;
+		characterInfoGO.SetActive(true);
 	}
 
 	public void DisableHover(){
@@ -48,6 +64,10 @@ public class CharacterPortrait : MonoBehaviour {
 	}
 
 	void OnClick(){
-		UIManager.Instance.ShowCitizenInfo(citizen);
+		if (onClickCharacterPortrait == null) {
+			UIManager.Instance.ShowCitizenInfo (citizen);
+		} else {
+			onClickCharacterPortrait(this.citizen);
+		}
 	}
 }

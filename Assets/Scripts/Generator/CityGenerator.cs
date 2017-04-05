@@ -9,6 +9,14 @@ public class CityGenerator : MonoBehaviour {
 
 	public List<HexTile> habitableTiles;
 
+	public Sprite elfCitySprite;
+	public Sprite elfFarmSprite;
+	public Sprite elfQuarrySprite;
+	public Sprite elfLumberyardSprite;
+	public Sprite elfTraderSprite;
+	public Sprite elfHuntingLodgeSprite;
+	public Sprite elfMiningSprite;
+
 	void Awake(){
 		Instance = this;
 	}

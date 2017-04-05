@@ -58,6 +58,10 @@ public class City{
 		get{ return this.citizens.Where(x => x.age >= 16 && x.gender == GENDER.MALE && !x.isMarried).ToList();}
 	}
 
+	public List<HexTile> adjacentHabitableTiles{
+		get{ return this.hexTile.connectedTiles.Where(x => !x.isOccupied).ToList();}
+	}
+
 	public City(HexTile hexTile, Kingdom kingdom){
 		this.id = Utilities.SetID(this);
 		this.name = "City" + this.id.ToString();
@@ -84,12 +88,14 @@ public class City{
 
 		this.hexTile.isOccupied = true;
 		this.ownedTiles.Add(this.hexTile);
+		this.hexTile.ShowCitySprite();
 
 //		this.CreateInitialFamilies();
 
-		EventManager.Instance.onCityEverydayTurnActions.AddListener (CityEverydayTurnActions);
-		EventManager.Instance.onCitizenDiedEvent.AddListener (CheckCityDeath);
-		EventManager.Instance.onCitizenDiedEvent.AddListener (UpdateHextileRoles);
+		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
+		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
+		EventManager.Instance.onRecruitCitizensForExpansion.AddListener(DonateCitizensToExpansion);
+//		EventManager.Instance.onCitizenDiedEvent.AddListener (UpdateHextileRoles);
 	}
 
 
@@ -662,7 +668,74 @@ public class City{
 			}
 		}
 	}
-		
+
+	internal void ExpandToThisCity(List<Citizen> citizensToOccupyCity){
+		this.citizens.AddRange(citizensToOccupyCity);
+		this.UpdateUnownedNeighbourTiles();
+
+		citizensToOccupyCity = citizensToOccupyCity.OrderBy(x => x.prestige).ToList();
+		//Assign Governor
+		citizensToOccupyCity.Last().AssignRole(ROLE.GOVERNOR);
+
+		//Assign Farmer
+		citizensToOccupyCity[0].AssignRole(ROLE.FOODIE);
+		HexTile tileForFarmer = this.purchasableFoodTiles[0];
+		this.PurchaseTile(tileForFarmer);
+		this.OccupyTile(tileForFarmer, citizensToOccupyCity[0]);
+
+		//Assign Gatherer
+		citizensToOccupyCity[1].AssignRole(ROLE.GATHERER);
+		if (this.purchasableBasicTiles.Count > 0) {
+			HexTile tileForGatherer = this.purchasableBasicTiles [0];
+			this.PurchaseTile(tileForGatherer);
+			this.OccupyTile(tileForGatherer, citizensToOccupyCity [1]);
+		} else {
+			HexTile tileForGatherer = this.purchasabletilesWithUnneededResource[0];
+			this.PurchaseTile(tileForGatherer);
+			this.OccupyTile(tileForGatherer, citizensToOccupyCity [1]);
+		}
+	}
+
+	protected void DonateCitizensToExpansion(Expansion expansionEvent, Kingdom kingdomToExpand){
+		if (this.kingdom.id != kingdomToExpand.id) {
+			return;
+		}
+		int donationLimit = 3;
+		List<Citizen> untrainedCitizens = this.GetCitizensWithRole(ROLE.UNTRAINED).Where(x => x.age >= 16 && (x.spouse != null && x.spouse.role != ROLE.GOVERNOR)).ToList();
+		if (untrainedCitizens.Count > 0) {
+			if (untrainedCitizens.Count < donationLimit) {
+				for (int i = 0; i < untrainedCitizens.Count; i++) {
+					if (untrainedCitizens[i].dependentChildren.Count > 0) {
+						untrainedCitizens.AddRange(untrainedCitizens[i].dependentChildren);
+					}
+					if (untrainedCitizens[i].spouse != null) {
+						untrainedCitizens.Add(untrainedCitizens[i].spouse);
+						untrainedCitizens[i].spouse.Unemploy();
+					}
+				}
+				expansionEvent.AddCitizensToExpansion(untrainedCitizens);
+			} else {
+				List<Citizen> citizensToJoinExpansion = new List<Citizen>(){
+					untrainedCitizens[0],
+					untrainedCitizens[1],
+					untrainedCitizens[2]
+				};
+
+				for (int i = 0; i < citizensToJoinExpansion.Count; i++) {
+					if (citizensToJoinExpansion[i].dependentChildren.Count > 0) {
+						citizensToJoinExpansion.AddRange(citizensToJoinExpansion[i].dependentChildren);
+					}
+					if (citizensToJoinExpansion[i].spouse != null) {
+						citizensToJoinExpansion.Add(citizensToJoinExpansion[i].spouse);
+						citizensToJoinExpansion[i].spouse.Unemploy();
+					}
+				}
+				expansionEvent.AddCitizensToExpansion(citizensToJoinExpansion);
+			}
+		}
+
+	}
+
 	internal void TriggerStarvation(){
 		if(this.isStarving){
 			int deathChance = UnityEngine.Random.Range (0, 100);
@@ -773,13 +846,8 @@ public class City{
 			this.hexTile.city = null;
 			EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 			EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
-			EventManager.Instance.onCitizenDiedEvent.RemoveListener (UpdateHextileRoles);
-		}
-	}
-
-	protected void UpdateHextileRoles(){
-		for (int i = 0; i < this.unoccupiedOwnedTiles.Count; i++) {
-			
+			EventManager.Instance.onRecruitCitizensForExpansion.RemoveListener(DonateCitizensToExpansion);
+//			EventManager.Instance.onCitizenDiedEvent.RemoveListener (UpdateHextileRoles);
 		}
 	}
 
@@ -1004,6 +1072,8 @@ public class City{
 			(x.specialResource == RESOURCE.NONE && Utilities.GetBaseResourceType (x.defaultResource) != this.kingdom.rareResource) || (x.specialResource != RESOURCE.NONE && Utilities.GetBaseResourceType (x.specialResource) != this.kingdom.basicResource) || 
 			(x.specialResource != RESOURCE.NONE && Utilities.GetBaseResourceType (x.specialResource) != this.kingdom.rareResource)).ToList();
 
+		this.purchasabletilesWithUnneededResource = this.purchasabletilesWithUnneededResource.Except(this.purchasableFoodTiles).ToList();
+
 
 	}
 
@@ -1126,7 +1196,7 @@ public class City{
 		}
 	}
 
-	protected bool HasEnoughResourcesForAction(List<Resource> resourceCost){
+	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
 		for (int i = 0; i < resourceCost.Count; i++) {
 			if (this.GetResourceAmountPerType (resourceCost [i].resourceType) < resourceCost [i].resourceQuantity) {
 				return false;
