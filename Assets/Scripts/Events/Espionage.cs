@@ -30,6 +30,8 @@ public class Espionage : GameEvent {
 		}
 		this.spy = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		this.isActive = false;
+
 //		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
 	private Citizen GetSpy(Kingdom kingdom){

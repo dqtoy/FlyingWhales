@@ -5,7 +5,7 @@ using System.Linq;
 
 public class PowerGrab : GameEvent {
 
-	private Citizen kingToOverthrow;
+	public Citizen kingToOverthrow;
 
 	public PowerGrab(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen kingToOverthrow) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.POWER_GRAB;

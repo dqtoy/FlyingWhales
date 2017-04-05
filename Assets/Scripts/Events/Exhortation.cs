@@ -4,7 +4,7 @@ using System.Collections;
 public class Exhortation : GameEvent {
 
 	public Citizen citizenSent;
-	private Citizen targetCitizen;
+	public Citizen targetCitizen;
 
 	public Exhortation(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen citizenSent, Citizen targetCitizen) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.EXHORTATION;
