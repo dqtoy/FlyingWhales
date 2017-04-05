@@ -43,6 +43,7 @@ public class Assassination : GameEvent {
 		this.spy = null;
 		this.guardians.Clear ();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		this.isActive = false;
 //		EventManager.Instance.allEvents [EVENT_TYPES.ASSASSINATION].Remove (this);
 
 	}

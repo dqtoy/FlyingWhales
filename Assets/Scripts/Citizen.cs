@@ -323,6 +323,7 @@ public class Citizen {
 	}
 	internal void Death(bool isDethroned = false, Citizen newKing = null){
 //		this.kingdom.royaltyList.allRoyalties.Remove (this);
+		Debug.Log("DEATH: " + this.name);
 		if(isDethroned){
 			this.isPretender = true;
 			this.city.kingdom.AddPretender (this);
@@ -452,18 +453,38 @@ public class Citizen {
 		this.isGovernor = false;
 	}
 	internal void UnsupportCitizen(Citizen citizen){
-		if(this.supportedCitizen != null){
-			if(citizen.id == this.supportedCitizen.id){
-				this.supportedCitizen = null;
+		if(this.isGovernor || this.isKing){
+			if(this.supportedCitizen != null){
+				if(citizen.id == this.supportedCitizen.id){
+					this.supportedCitizen = null;
+				}
 			}
-		}
-		for(int i = 0; i < this.city.citizens.Count; i++){
-			if(this.city.citizens[i].assignedRole != null && this.city.citizens[i].role == ROLE.GENERAL){
-				if(((General)this.city.citizens[i].assignedRole).warLeader.id == citizen.id){
-					((General)this.city.citizens [i].assignedRole).UnregisterThisGeneral (null);
+			if(this.isGovernor){
+				for(int i = 0; i < this.city.citizens.Count; i++){
+					if(this.city.citizens[i].assignedRole != null && this.city.citizens[i].role == ROLE.GENERAL){
+						if (((General)this.city.citizens [i].assignedRole).warLeader != null) {
+							if (((General)this.city.citizens [i].assignedRole).warLeader.id == citizen.id) {
+								((General)this.city.citizens [i].assignedRole).UnregisterThisGeneral (null);
+							}
+						}
+					}
+				}
+			}
+			if(this.isKing){
+				for(int i = 0; i < this.city.kingdom.cities.Count; i++){
+					for(int j = 0; j < this.city.kingdom.cities[i].citizens.Count; j++){
+						if(this.city.kingdom.cities[i].citizens[j].assignedRole != null && this.city.kingdom.cities[i].citizens[j].role == ROLE.GENERAL){
+							if(((General)this.city.kingdom.cities[i].citizens[j].assignedRole).warLeader != null){
+								if(((General)this.city.kingdom.cities[i].citizens[j].assignedRole).warLeader.id == citizen.id){
+									((General)this.city.kingdom.cities[i].citizens[j].assignedRole).UnregisterThisGeneral (null);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
+
 //		if(this.supportedHeir != null){
 //			if(citizen.id == this.supportedHeir.id){
 //				this.supportedHeir = null;

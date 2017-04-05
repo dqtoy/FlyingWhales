@@ -51,6 +51,8 @@ public class StateVisit : GameEvent {
 		this.helperEnvoys.Clear ();
 		this.saboteurEnvoys.Clear ();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		this.isActive = false;
+
 //		EventManager.Instance.allEvents [EVENT_TYPES.STATE_VISIT].Remove (this);
 	}
 	private void AdjustSuccessMeter(int amount){

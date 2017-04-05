@@ -20,7 +20,7 @@ public class Kingdom{
 	public List<Relationship<Kingdom>> relationshipsWithOtherKingdoms;
 
 	public Color kingdomColor;
-	public string kingdomHistory;
+	public List<History> kingdomHistory;
 
 	public Kingdom(RACE race, List<HexTile> cities){
 		this.id = Utilities.SetID(this);
@@ -28,9 +28,10 @@ public class Kingdom{
 		this.race = race;
 		this.king = null;
 		this.successionLine = new List<Citizen>();
+		this.pretenders = new List<Citizen> ();
 		this.cities = new List<City>();
 
-		this.kingdomHistory = string.Empty;
+		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
 
 		if (race == RACE.HUMANS) {
@@ -53,6 +54,7 @@ public class Kingdom{
 		this.relationshipsWithOtherKingdoms = new List<Relationship<Kingdom>>();
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
+		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 
 	internal List<Citizen> GetAllCitizensForMarriage(Citizen citizen){

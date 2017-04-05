@@ -30,6 +30,7 @@ public class BorderConflict : GameEvent {
 		this.activeEnvoysIncrease = new List<Citizen> ();
 		this.otherKingdoms = GetOtherKingdoms ();
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Debug.Log (this.description);
 	}
 
 	internal override void PerformAction(){
@@ -90,6 +91,8 @@ public class BorderConflict : GameEvent {
 	private void IncreaseTensionPerWeek(){
 		int tensionIncrease = UnityEngine.Random.Range (1, 6);
 		AdjustTension (tensionIncrease);
+		Debug.Log ("TENSION: "+ this.tension);
+
 	}
 
 	private void CheckTensionMeter(){
@@ -243,6 +246,7 @@ public class BorderConflict : GameEvent {
 		this.activeEnvoysReduceSelf.Clear ();
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		this.isActive = false;
 //		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
 
 		//Remove UI Icon

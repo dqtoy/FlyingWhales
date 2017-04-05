@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 	private void Raid(){
+		Debug.Log ("Raid");
 		Kingdom raiderOfTheLostArc = KingdomManager.Instance.allKingdoms [UnityEngine.Random.Range (0, KingdomManager.Instance.allKingdoms.Count)];
 		Raid raid = new Raid(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, raiderOfTheLostArc.king);
 		EventManager.Instance.AddEventToDictionary (raid);
@@ -77,6 +78,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 	private void BorderConflict(){
+		Debug.Log ("Border Conflict");
 		List<GameEvent> allBorderConflicts = EventManager.Instance.GetEventsOfType(EVENT_TYPES.BORDER_CONFLICT);
 		List<Kingdom> shuffledKingdoms = Utilities.Shuffle (KingdomManager.Instance.allKingdoms);
 

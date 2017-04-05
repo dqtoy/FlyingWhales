@@ -1,29 +1,30 @@
 fileFormatVersion: 2
 guid: fceff61e7f3789b4d86796e7f7724b2f
-timeCreated: 1490782660
+timeCreated: 1491378660
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: Events UI_0
     21300002: Events UI_1
-    21300004: Events UI_4
-    21300006: Events UI_5
-    21300008: Events UI_6
-    21300010: Events UI_7
-    21300012: Events UI_8
+    21300004: assassination
+    21300006: rebellion
+    21300008: statevisit
+    21300010: borderconflict
+    21300012: raid
     21300014: Events UI_9
-    21300016: Events UI_10
-    21300018: Events UI_11
-    21300020: Events UI_12
-    21300022: Events UI_13
-    21300024: Events UI_14
-    21300026: Events UI_15
+    21300016: campaign
+    21300018: militarization
+    21300020: peace
+    21300022: war
+    21300024: expansion
+    21300026: marriage
     21300028: Events UI_16
     21300030: Events UI_17
     21300032: Events UI_18
     21300034: Events UI_19
     21300036: Events UI_20
     21300038: Events UI_21
+    21300040: invasion
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -99,7 +100,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_4
+      name: assassination
       rect:
         serializedVersion: 2
         x: 200
@@ -107,12 +108,12 @@ TextureImporter:
         width: 29
         height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_5
+      name: rebellion
       rect:
         serializedVersion: 2
         x: 246
@@ -120,12 +121,12 @@ TextureImporter:
         width: 46
         height: 46
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_6
+      name: statevisit
       rect:
         serializedVersion: 2
         x: 309
@@ -133,12 +134,12 @@ TextureImporter:
         width: 56
         height: 37
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_7
+      name: borderconflict
       rect:
         serializedVersion: 2
         x: 380
@@ -146,12 +147,12 @@ TextureImporter:
         width: 44
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_8
+      name: raid
       rect:
         serializedVersion: 2
         x: 452
@@ -159,7 +160,7 @@ TextureImporter:
         width: 45
         height: 47
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -177,7 +178,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_10
+      name: invasion
       rect:
         serializedVersion: 2
         x: 137
@@ -185,12 +186,12 @@ TextureImporter:
         width: 47
         height: 33
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_11
+      name: militarization
       rect:
         serializedVersion: 2
         x: 200
@@ -198,12 +199,12 @@ TextureImporter:
         width: 48
         height: 54
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_12
+      name: peace
       rect:
         serializedVersion: 2
         x: 267
@@ -211,12 +212,12 @@ TextureImporter:
         width: 51
         height: 51
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_13
+      name: war
       rect:
         serializedVersion: 2
         x: 336
@@ -224,12 +225,12 @@ TextureImporter:
         width: 47
         height: 46
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_14
+      name: expansion
       rect:
         serializedVersion: 2
         x: 402
@@ -237,12 +238,12 @@ TextureImporter:
         width: 42
         height: 42
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_15
+      name: marriage
       rect:
         serializedVersion: 2
         x: 460
@@ -250,7 +251,7 @@ TextureImporter:
         width: 48
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

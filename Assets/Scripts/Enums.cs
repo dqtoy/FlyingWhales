@@ -217,3 +217,7 @@ public enum STRUCTURE{
 	MINISTRY,
 	KEEP
 }
+
+public enum HISTORY_IDENTIFIER{
+	NONE,
+}

@@ -10,7 +10,6 @@ public class Raid : GameEvent {
 
 	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
-		this.description = startedBy.name + " is sending someone to raid " + raidedCity.name + " of " + raidedCity.kingdom.name;
 		this.durationInWeeks = 3;
 		this.remainingWeeks = this.durationInWeeks;
 		this.sourceKingdom = startedBy.city.kingdom;
@@ -18,6 +17,9 @@ public class Raid : GameEvent {
 		this.raidedCity = GetRaidedCity();
 		this.otherKingdoms = GetOtherKingdoms ();
 		this.general = GetGeneral (this.sourceKingdom);
+		if(this.raidedCity != null){
+			this.description = startedBy.name + " is sending someone to raid " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name;
+		}
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 
@@ -35,6 +37,8 @@ public class Raid : GameEvent {
 		}
 		this.general = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		this.isActive = false;
+
 		//		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
 	private List<Kingdom> GetOtherKingdoms(){
@@ -54,10 +58,13 @@ public class Raid : GameEvent {
 			return null;
 		}
 		List<City> adjacentCities = new List<City> ();
-		for(int i = 0; i < this.general.city.connectedCities.Count; i++){
-			if(this.general.city.connectedCities[i].kingdom.id != this.general.city.kingdom.id){
-				adjacentCities.Add (this.general.city.connectedCities [i]);
+		for(int i = 0; i < this.general.city.hexTile.connectedTiles.Count; i++){
+			if(this.general.city.hexTile.connectedTiles[i].isOccupied){
+				if(this.general.city.hexTile.connectedTiles[i].city.kingdom.id != this.general.city.kingdom.id){
+					adjacentCities.Add (this.general.city.hexTile.connectedTiles[i].city);
+				}
 			}
+
 		}
 
 		if(adjacentCities.Count > 0){
@@ -85,7 +92,7 @@ public class Raid : GameEvent {
 
 		if(generals.Count > 0){
 			int random = UnityEngine.Random.Range (0, generals.Count);
-			((Spy)generals [random].assignedRole).inAction = true;
+			((General)generals [random].assignedRole).inAction = true;
 			return generals [random];
 		}else{
 			Debug.Log (kingdom.king.name + " CAN'T SEND GENERAL BECAUSE THERE IS NONE!");
