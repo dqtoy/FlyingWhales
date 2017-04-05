@@ -1051,4 +1051,13 @@ public class Citizen {
 		}
 		return citizensSupportingMe;
 	}
+
+	internal bool SearchForSuccessionWar(Citizen citizen){
+		for(int i = 0; i < this.successionWars.Count; i++){
+			if(this.successionWars[i].id == citizen.id){
+				return true;
+			}
+		}
+		return false;
+	}
 }

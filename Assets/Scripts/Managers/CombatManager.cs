@@ -35,18 +35,51 @@ public class CombatManager : MonoBehaviour {
 				}else{
 					friendlyGeneral = victoriousGeneral;
 					if(friendlyGeneral.city.id != attackers[i].city.id){
-						if (attackers [i].city.kingdom.CheckForSpecificWar(friendlyGeneral.city.kingdom)) {
-							Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
-							Battle (ref attackerGeneral, ref friendlyGeneral);
-							attackers[i] = attackerGeneral;
-							if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
-								victoriousGeneral = null;
-							} else if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp > 0) {
-								victoriousGeneral = friendlyGeneral;
-							} else if (((General)attackers[i].assignedRole).army.hp > 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
-								victoriousGeneral = attackers[i];
+						if(((General)attackers [i].assignedRole).warType == WAR_TYPE.INTERNATIONAL){
+							if (attackers [i].city.kingdom.CheckForSpecificWar(friendlyGeneral.city.kingdom)) {
+								Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
+								Battle (ref attackerGeneral, ref friendlyGeneral);
+								attackers[i] = attackerGeneral;
+								if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+									victoriousGeneral = null;
+								} else if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp > 0) {
+									victoriousGeneral = friendlyGeneral;
+								} else if (((General)attackers[i].assignedRole).army.hp > 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+									victoriousGeneral = attackers[i];
+								}
+								Debug.Log ("WINNER: " + victoriousGeneral.city.name);
 							}
-							Debug.Log ("WINNER: " + victoriousGeneral.city.name);
+						}else if(((General)attackers [i].assignedRole).warType == WAR_TYPE.SUCCESSION){
+							if(((General)attackers [i].assignedRole).warLeader.id != ((General)friendlyGeneral.assignedRole).warLeader.id){
+								if (((General)attackers [i].assignedRole).warLeader.SearchForSuccessionWar(((General)friendlyGeneral.assignedRole).warLeader)) {
+									Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
+									Battle (ref attackerGeneral, ref friendlyGeneral);
+									attackers[i] = attackerGeneral;
+									if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+										victoriousGeneral = null;
+									} else if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp > 0) {
+										victoriousGeneral = friendlyGeneral;
+									} else if (((General)attackers[i].assignedRole).army.hp > 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+										victoriousGeneral = attackers[i];
+									}
+									Debug.Log ("WINNER: " + victoriousGeneral.city.name);
+								}else{
+									if (attackers [i].city.kingdom.CheckForSpecificWar (friendlyGeneral.city.kingdom)) {
+										Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
+										Battle (ref attackerGeneral, ref friendlyGeneral);
+										attackers[i] = attackerGeneral;
+										if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+											victoriousGeneral = null;
+										} else if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp > 0) {
+											victoriousGeneral = friendlyGeneral;
+										} else if (((General)attackers[i].assignedRole).army.hp > 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+											victoriousGeneral = attackers[i];
+										}
+										Debug.Log ("WINNER: " + victoriousGeneral.city.name);
+									}
+								}
+							}
+
 						}
 					}
 				}
@@ -55,6 +88,13 @@ public class CombatManager : MonoBehaviour {
 		for(int i = 0; i < city.incomingGenerals.Count; i++){
 			if(((General)city.incomingGenerals[i].assignedRole).army.hp <= 0){
 				DeathByBattle (city.incomingGenerals [i], city);
+			}else{
+				if(victoriousGeneral != null){
+					if(((General)city.incomingGenerals[i].assignedRole).warType == WAR_TYPE.INTERNATIONAL){
+						//return home
+					}
+				}
+
 			}
 		}
 

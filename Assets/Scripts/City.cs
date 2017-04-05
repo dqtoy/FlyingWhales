@@ -1038,7 +1038,9 @@ public class City{
 		List<Citizen> allGenerals = new List<Citizen> ();
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
-				allGenerals.Add (this.citizens [i]);
+				if(((General)this.citizens[i].assignedRole).location == this.hexTile){
+					allGenerals.Add (this.citizens [i]);
+				}
 			}
 		}
 		return allGenerals;
