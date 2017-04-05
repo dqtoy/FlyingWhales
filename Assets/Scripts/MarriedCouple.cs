@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 [System.Serializable]
 public class MarriedCouple {
@@ -10,6 +11,10 @@ public class MarriedCouple {
 
 	protected bool isPregnant;
 	protected int remainingWeeksUntilBirth;
+
+	public List<Citizen> children{
+		get{ return this.husband.children.Intersect(this.wife.children).ToList();}
+	}
 
 	public MarriedCouple(Citizen husband, Citizen wife){
 		this.husband = husband;

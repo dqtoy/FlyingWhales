@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject eventsOfTypeGo;
 	public GameObject relationshipsGO;
 	public GameObject relationshipHistoryGO;
+	public GameObject familyTreeGO;
 
 	public ButtonToggle pauseBtn;
 	public ButtonToggle x1Btn;
@@ -117,6 +118,17 @@ public class UIManager : MonoBehaviour {
 	[Space(10)]
 	public UI2DSprite relationshipStatusSprite;
 	public UIGrid relationshipHistoryGrid;
+
+	[Space(10)]
+	public GameObject familyTreeFatherGO;
+	public GameObject familyTreeMotherGO;
+	public GameObject familyTreeSpouseGO;
+	public GameObject familyTreeChild1GO;
+	public GameObject familyTreeChild2GO;
+	public GameObject familyTreeChild3GO;
+	public GameObject familyTreeChild4GO;
+	public GameObject familyTreeChild5GO;
+	public UI2DSprite familyTreeInnerSprite;
 
 	private Citizen currentlyShowingCitizen;
 	private City currentlyShowingCity;
@@ -723,6 +735,10 @@ public class UIManager : MonoBehaviour {
 	public void HideSmallInfo(){
 		smallInfoGO.SetActive (false);
 		smallInfoGO.transform.parent = this.transform;
+	}
+
+	public void ShowFamilyTree(){
+		familyTreeGO.SetActive(true);
 	}
 
 	public void ToggleEventsMenu(){
