@@ -264,7 +264,9 @@ public class Citizen {
 	}
 
 	protected void AttemptToMarry(){
+		Debug.LogError ("Attempt To Marry");
 		int chanceToMarry = Random.Range (0, 100);
+		this.citizenChances.marriageChance = 100;
 		if (chanceToMarry < this.citizenChances.marriageChance) {
 			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this);
 		}
@@ -610,13 +612,25 @@ public class Citizen {
 			this.assignedRole = new Trader (this, this.city.tradeManager);
 		} else if (role == ROLE.GOVERNOR) {
 			this.assignedRole = new Governor (this);
+			this.city.governor = this;
+			this.workLocation = this.city.hexTile;
 		} else if (role == ROLE.KING) {
 			this.assignedRole = new King (this);
 		}
 		this.UpdatePrestige ();
 	}
 
+	internal void Unemploy(){
+		this.spouse.role = ROLE.UNTRAINED;
+		this.spouse.assignedRole = null;
+		this.spouse.workLocation = null;
+	}
+
 	internal bool IsRoyaltyCloseRelative(Citizen otherCitizen){
+		if (this.father == null || this.mother == null) {
+			return true;
+		}
+
 		if (otherCitizen.id == this.father.id || otherCitizen.id == this.mother.id) {
 			//royalty is father or mother
 			return true;

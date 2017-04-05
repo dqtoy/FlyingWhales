@@ -11,10 +11,9 @@ public class ButtonToggle : MonoBehaviour {
 
 	public void OnClick(){
 		if (isClicked) {
-			isClicked = false;
-			this.GetComponent<UI2DSprite> ().sprite2D = normalSprite;
+			SetClickState(false);
 		} else {
-			SetAsClicked();
+			SetClickState(true);
 		}
 	}
 
@@ -30,8 +29,13 @@ public class ButtonToggle : MonoBehaviour {
 		}
 	}
 
-	public void SetAsClicked(){
-		isClicked = true;
-		this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
+	public void SetClickState(bool isClicked){
+		this.isClicked = isClicked;
+		if (isClicked) {
+			this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
+		} else {
+			this.GetComponent<UI2DSprite> ().sprite2D = normalSprite;
+		}
 	}
+
 }

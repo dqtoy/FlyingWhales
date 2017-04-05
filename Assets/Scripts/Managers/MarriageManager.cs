@@ -86,8 +86,10 @@ public class MarriageManager : MonoBehaviour {
 				if (elligibleCitizensInKingdom[j].age >= (citizenSearchingForLove.age + 10)) {
 					continue;
 				}
-				if (citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom[j]).lordRelationship == RELATIONSHIP_STATUS.ENEMY) {
-					continue;
+				if (elligibleCitizensInKingdom [j].city.kingdom != citizenSearchingForLove.city.kingdom) {
+					if (citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY) {
+						continue;
+					}
 				}
 				if (citizenSearchingForLove.race != elligibleCitizensInKingdom[j].race) {
 					continue;
