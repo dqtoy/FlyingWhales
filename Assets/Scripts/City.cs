@@ -922,7 +922,7 @@ public class City{
 			pendingTiles.AddRange(this.unoccupiedOwnedTiles);
 			pendingTiles = pendingTiles.Distinct().ToList();
 
-
+			Debug.Log ("Train citizen :" + pendingTiles [0].tileName + " - " + pendingTiles [0].roleIntendedForTile);
 			if (this.HasEnoughResourcesForAction (GetCitizenCreationCostPerType (pendingTiles [0].roleIntendedForTile))) {
 				List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).Where (x => x.age >= 16).ToList ();
 				if (unemployedCitizens.Count > 0) {

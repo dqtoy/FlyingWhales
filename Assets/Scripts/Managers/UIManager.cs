@@ -161,7 +161,8 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void SetProgressionSpeed4X(){
-		GameManager.Instance.SetProgressionSpeed(1f);
+//		GameManager.Instance.SetProgressionSpeed(1f);
+		GameManager.Instance.SetProgressionSpeed(0.5f);
 		if (pauseBtn.isClicked) {
 			this.TogglePause();
 			pauseBtn.OnClick();
