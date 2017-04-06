@@ -51,7 +51,10 @@ public class GameEvent {
 
 	internal virtual void DoneCitizenAction(Citizen citizen){}
 
-	internal virtual void DoneEvent(){}
+	internal virtual void DoneEvent(){
+		Debug.LogError ("Game Event Ended!");
+		EventManager.Instance.onGameEventEnded.Invoke(this);
+	}
 
 	internal virtual void CancelEvent(){}
 

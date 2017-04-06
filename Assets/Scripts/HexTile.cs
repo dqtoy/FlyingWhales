@@ -46,6 +46,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public GameObject resourceVisualGO;
 	public GameObject structureGO;
+	public Transform eventsParent;
 
 	public List<HexTile> connectedTiles = new List<HexTile>();
 
@@ -54,6 +55,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
 
 	public List<HexTile> elligibleNeighbourTilesForPurchase { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && !o.isOwned && !o.isHabitable).ToList(); } } 
+
+	private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
 
 //	public List<HexTile> allFoodNeighbours { get 
 //		{ return 
@@ -99,6 +102,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		for (int i = 0; i < this.city.pendingTask.Count; i++) {
 			Debug.Log (this.city.pendingTask.Keys.ElementAt (i).ToString () + " " + this.city.pendingTask [this.city.pendingTask.Keys.ElementAt (i)].tileName);
 		}
+	}
+
+	void Start(){
+		EventManager.Instance.onGameEventEnded.AddListener(RemoveEvent);
+		EventManager.Instance.onShowEventsOfType.AddListener(ShowEventOnTile);
+		EventManager.Instance.onHideEvents.AddListener(HideEventsOnTile);
 	}
 
 	#region Resource
@@ -471,6 +480,53 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.isOccupied = false;
 		this.occupant = null;
 		this.GetComponent<SpriteRenderer> ().color = Color.clear;
+	}
+
+	public void AddEventOnTile(GameEvent gameEvent){
+		GameObject eventGO = GameObject.Instantiate (Resources.Load ("GameObjects/WorldEventItem") as GameObject, this.eventsParent) as GameObject;
+		eventGO.transform.localPosition = Vector3.zero;
+		eventGO.GetComponent<WorldEventItem> ().SetGameEvent(gameEvent);
+		eventGO.SetActive(false);
+		this.eventsOnTile.Add(eventGO.GetComponent<WorldEventItem>());
+	}
+
+	public void ShowEventOnTile(EVENT_TYPES eventType){
+		if (this.eventsOnTile.Count <= 0) {
+			return;
+		}
+		if (eventType == EVENT_TYPES.ALL) {
+			for (int i = 0; i < this.eventsOnTile.Count; i++) {
+				this.eventsOnTile [i].gameObject.SetActive (true);
+			}
+		} else {
+			for (int i = 0; i < this.eventsOnTile.Count; i++) {
+				if (this.eventsOnTile [i].gameEvent.eventType == eventType) {
+					this.eventsOnTile [i].gameObject.SetActive (true);
+				}
+			}
+		}
+	}
+
+	public void HideEventsOnTile(){
+		if (this.eventsOnTile.Count <= 0) {
+			return;
+		}
+		for (int i = 0; i < this.eventsOnTile.Count; i++) {
+			this.eventsOnTile [i].gameObject.SetActive(false);
+		}
+	}
+
+	public void RemoveEvent(GameEvent gameEvent){
+		if (this.eventsOnTile.Count <= 0) {
+			return;
+		}
+		for (int i = 0; i < this.eventsOnTile.Count; i++) {
+			if (this.eventsOnTile[i].gameEvent.eventID == gameEvent.eventID) {
+				Destroy(this.eventsOnTile[i].gameObject);
+				this.eventsOnTile.RemoveAt(i);
+				break;
+			}
+		}
 	}
 
 	void OnMouseDown(){

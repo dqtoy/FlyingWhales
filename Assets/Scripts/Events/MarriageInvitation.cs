@@ -15,6 +15,8 @@ public class MarriageInvitation : GameEvent {
 		this.goldForEvent = 0;
 		this.GetGoldForEvent ();
 
+		this.startedBy.city.hexTile.AddEventOnTile(this);
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}

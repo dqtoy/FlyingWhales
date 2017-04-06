@@ -21,7 +21,6 @@ public class HistoryPortrait : MonoBehaviour {
 		switch(this.history.identifier){
 		case HISTORY_IDENTIFIER.NONE:
 			return icons [0];
-			break;
 		}
 		return null;
 	}

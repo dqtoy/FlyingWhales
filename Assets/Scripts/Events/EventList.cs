@@ -23,7 +23,10 @@ public class UnsupportCitizen: UnityEvent<Citizen>{}
 //Game Events
 public class GameEventAction: UnityEvent<GameEvent, int>{}
 public class RecruitCitizensForExpansion: UnityEvent<Expansion, Kingdom>{}
+public class GameEventEnded: UnityEvent<GameEvent>{}
 
 //UI
 public class ForceUpdateUI: UnityEvent{}
 public class ForceUpdateEventUI: UnityEvent<GameEvent>{}
+public class ShowEventsOfType: UnityEvent<EVENT_TYPES>{}
+public class HideEvents: UnityEvent{}
