@@ -266,10 +266,18 @@ public class Citizen {
 	}
 
 	protected void AttemptToMarry(){
-		Debug.LogError ("Attempt To Marry");
+		List<Resource> marriageInvitationCost = new List<Resource> () {
+			new Resource (BASE_RESOURCE_TYPE.GOLD, 500)
+		};
+		if (!this.city.HasEnoughResourcesForAction (marriageInvitationCost)) {
+			return;
+		}
+
 		int chanceToMarry = Random.Range (0, 100);
 		this.citizenChances.marriageChance = 100;
 		if (chanceToMarry < this.citizenChances.marriageChance) {
+			Debug.LogError (this.name + " has started a marriage invitation event!");
+
 			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this);
 		}
 	}
@@ -371,8 +379,7 @@ public class Citizen {
 		EventManager.Instance.onCitizenDiedEvent.Invoke ();
 
 		if (this.workLocation != null) {
-			this.workLocation.occupant = null;
-			this.workLocation.isOccupied = false;
+			this.workLocation.UnoccupyTile();
 		}
 
 		if (this.isMarried) {
@@ -791,11 +798,27 @@ public class Citizen {
 			prestige += 200;
 		} else if (this.role == ROLE.SPY || this.role == ROLE.ENVOY || this.role == ROLE.GUARDIAN) {
 			prestige += 150;
-			for (int i = 0; i < ((Spy)this.assignedRole).successfulMissions; i++) {
-				prestige += 20;
-			}
-			for (int i = 0; i < ((Spy)this.assignedRole).unsuccessfulMissions; i++) {
-				prestige -= 5;
+			if (this.role == ROLE.SPY) {
+				for (int i = 0; i < ((Spy)this.assignedRole).successfulMissions; i++) {
+					prestige += 20;
+				}
+				for (int i = 0; i < ((Spy)this.assignedRole).unsuccessfulMissions; i++) {
+					prestige -= 5;
+				}
+			} else if (this.role == ROLE.ENVOY) {
+				for (int i = 0; i < ((Envoy)this.assignedRole).successfulMissions; i++) {
+					prestige += 20;
+				}
+				for (int i = 0; i < ((Envoy)this.assignedRole).unsuccessfulMissions; i++) {
+					prestige -= 5;
+				}
+			} else if (this.role == ROLE.GUARDIAN) {
+				for (int i = 0; i < ((Guardian)this.assignedRole).successfulMissions; i++) {
+					prestige += 20;
+				}
+				for (int i = 0; i < ((Guardian)this.assignedRole).unsuccessfulMissions; i++) {
+					prestige -= 5;
+				}
 			}
 		}  else {
 			if (this.role != ROLE.UNTRAINED) {

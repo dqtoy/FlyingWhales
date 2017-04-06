@@ -33,13 +33,15 @@ public class Trader : Role {
 		this.offeredResources.Clear();
 		this.offeredResources = tradeManager.DetermineOfferedResources();
 		this.targetCity = tradeManager.GetTargetCity();
+		if (this.targetCity == null) {
+			return;
+		}
+
 		this.pathToTargetCity = PathGenerator.Instance.GetPath(currentLocation, targetCity.hexTile, PATHFINDING_MODE.NORMAL).Reverse().ToList();
 		this.currentlySelling = this.offeredResources.Intersect(this.targetCity.tradeManager.neededResources).ToList();
 		this.goldIncomePerTurn = this.pathToTargetCity.Count * 5;
 
-		if (this.targetCity == null) {
-			return;
-		}
+
 			
 		if (this.currentlySelling.Contains (BASE_RESOURCE_TYPE.FOOD)) {
 			this.targetCity.tradeManager.sustainabilityBuff = 5;
@@ -123,6 +125,10 @@ public class Trader : Role {
 			this.AssignTask();
 
 		}
+	}
+
+	internal override int[] GetResourceProduction(){
+		return new int[]{ 0, 0, 0, 0, 0, 0, 40 };
 	}
 
 	internal override void OnDeath(){

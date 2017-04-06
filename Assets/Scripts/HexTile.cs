@@ -46,6 +46,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public GameObject resourceVisualGO;
 	public GameObject structureGO;
+	public Transform eventsParent;
 
 	public List<HexTile> connectedTiles = new List<HexTile>();
 
@@ -54,6 +55,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
 
 	public List<HexTile> elligibleNeighbourTilesForPurchase { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && !o.isOwned && !o.isHabitable).ToList(); } } 
+
+	private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
 
 //	public List<HexTile> allFoodNeighbours { get 
 //		{ return 
@@ -99,6 +102,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		for (int i = 0; i < this.city.pendingTask.Count; i++) {
 			Debug.Log (this.city.pendingTask.Keys.ElementAt (i).ToString () + " " + this.city.pendingTask [this.city.pendingTask.Keys.ElementAt (i)].tileName);
 		}
+	}
+
+	void Start(){
+		EventManager.Instance.onGameEventEnded.AddListener(RemoveEvent);
+		EventManager.Instance.onShowEventsOfType.AddListener(ShowEventOnTile);
+		EventManager.Instance.onHideEvents.AddListener(HideEventsOnTile);
 	}
 
 	#region Resource
@@ -379,6 +388,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public void ShowCitySprite(){
 		structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
 		structureGO.SetActive(true);
+		this.structureOnTile = STRUCTURE.CITY;
 	}
 
 	public void OccupyTile(Citizen citizen){
@@ -392,17 +402,21 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				if (this.defaultResource == RESOURCE.DEER || this.defaultResource == RESOURCE.PIG || this.defaultResource == RESOURCE.BEHEMOTH) {
 					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfHuntingLodgeSprite;
 					structureGO.SetActive(true);
+					this.structureOnTile = STRUCTURE.HUNTING_LODGE;
 				} else {
 					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfFarmSprite;
 					structureGO.SetActive(true);
+					this.structureOnTile = STRUCTURE.FARM;
 				}
 			} else {
 				if (this.specialResource == RESOURCE.DEER || this.specialResource == RESOURCE.PIG || this.specialResource == RESOURCE.BEHEMOTH) {
 					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfHuntingLodgeSprite;
 					structureGO.SetActive(true);
+					this.structureOnTile = STRUCTURE.HUNTING_LODGE;
 				} else {
 					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfFarmSprite;
 					structureGO.SetActive(true);
+					this.structureOnTile = STRUCTURE.FARM;
 				}
 			}
 			break;
@@ -411,31 +425,50 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				if (Utilities.GetBaseResourceType(this.defaultResource) == BASE_RESOURCE_TYPE.STONE) {
 					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfQuarrySprite;
 					structureGO.SetActive(true);
+					this.structureOnTile = STRUCTURE.QUARRY;
 				} else {
 					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfLumberyardSprite;
 					structureGO.SetActive(true);
+					this.structureOnTile = STRUCTURE.LUMBERYARD;
 				}
 			} else {
 				if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE) {
 					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfQuarrySprite;
 					structureGO.SetActive(true);
+					this.structureOnTile = STRUCTURE.QUARRY;
 				} else {
 					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfLumberyardSprite;
 					structureGO.SetActive(true);
+					this.structureOnTile = STRUCTURE.LUMBERYARD;
 				}
 			}
 			break;
 		case ROLE.GENERAL:
 			this.GetComponent<SpriteRenderer> ().color = Color.red;
+			this.structureOnTile = STRUCTURE.BARRACKS;
 			break;
 		case ROLE.MINER:
 //			this.GetComponent<SpriteRenderer> ().color = Color.grey;
 			structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfMiningSprite;
 			structureGO.SetActive(true);
+			this.structureOnTile = STRUCTURE.MINES;
 			break;
 		case ROLE.TRADER:
 			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfTraderSprite;
 			structureGO.SetActive (true);
+			this.structureOnTile = STRUCTURE.TRADING_POST;
+			break;
+		case ROLE.SPY:
+			this.GetComponent<SpriteRenderer> ().color = Color.red;
+			this.structureOnTile = STRUCTURE.SPY_GUILD;
+			break;
+		case ROLE.GUARDIAN:
+			this.GetComponent<SpriteRenderer> ().color = Color.red;
+			this.structureOnTile = STRUCTURE.KEEP;
+			break;
+		case ROLE.ENVOY:
+			this.GetComponent<SpriteRenderer> ().color = Color.red;
+			this.structureOnTile = STRUCTURE.MINISTRY;
 			break;
 		default:
 			this.GetComponent<SpriteRenderer> ().color = Color.blue;
@@ -443,9 +476,65 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 
+	public void UnoccupyTile(){
+		this.isOccupied = false;
+		this.occupant = null;
+		this.GetComponent<SpriteRenderer> ().color = Color.clear;
+	}
+
+	public void AddEventOnTile(GameEvent gameEvent){
+		GameObject eventGO = GameObject.Instantiate (Resources.Load ("GameObjects/WorldEventItem") as GameObject, this.eventsParent) as GameObject;
+		eventGO.transform.localPosition = Vector3.zero;
+		eventGO.GetComponent<WorldEventItem> ().SetGameEvent(gameEvent);
+		eventGO.SetActive(false);
+		this.eventsOnTile.Add(eventGO.GetComponent<WorldEventItem>());
+	}
+
+	public void ShowEventOnTile(EVENT_TYPES eventType){
+		if (this.eventsOnTile.Count <= 0) {
+			return;
+		}
+		if (eventType == EVENT_TYPES.ALL) {
+			for (int i = 0; i < this.eventsOnTile.Count; i++) {
+				this.eventsOnTile [i].gameObject.SetActive (true);
+			}
+		} else {
+			for (int i = 0; i < this.eventsOnTile.Count; i++) {
+				if (this.eventsOnTile [i].gameEvent.eventType == eventType) {
+					this.eventsOnTile [i].gameObject.SetActive (true);
+				}
+			}
+		}
+	}
+
+	public void HideEventsOnTile(){
+		if (this.eventsOnTile.Count <= 0) {
+			return;
+		}
+		for (int i = 0; i < this.eventsOnTile.Count; i++) {
+			this.eventsOnTile [i].gameObject.SetActive(false);
+		}
+	}
+
+	public void RemoveEvent(GameEvent gameEvent){
+		if (this.eventsOnTile.Count <= 0) {
+			return;
+		}
+		for (int i = 0; i < this.eventsOnTile.Count; i++) {
+			if (this.eventsOnTile[i].gameEvent.eventID == gameEvent.eventID) {
+				Destroy(this.eventsOnTile[i].gameObject);
+				this.eventsOnTile.RemoveAt(i);
+				break;
+			}
+		}
+	}
+
 	void OnMouseDown(){
+		if (UIManager.Instance.IsMouseOnUI ()) {
+			return;
+		}
 		if (this.isHabitable && this.isOccupied && this.city != null) {
-//			CameraMove.Instance.CenterCameraOn (this.gameObject);
+			CameraMove.Instance.CenterCameraOn(this.gameObject);
 			UIManager.Instance.ShowCityInfo (this.city);
 		}
 	}

@@ -16,6 +16,10 @@ public class InvasionPlan : GameEvent {
 		this.remainingWeeks = this.durationInWeeks;
 		this.sourceKingdom = sourceKingdom;
 		this.targetKingdom = targetKingdom;
+
+		this.sourceKingdom.cities[0].hexTile.AddEventOnTile(this);
+		this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 		this.StartMilitarizationEvent();
@@ -55,6 +59,7 @@ public class InvasionPlan : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}
 
 	internal override void CancelEvent (){

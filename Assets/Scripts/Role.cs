@@ -9,7 +9,7 @@ public class Role {
 	}
 
 	internal virtual int[] GetResourceProduction(){
-		return new int[]{ 0, 0, 0, 0, 0 };
+		return new int[]{ 0, 0, 0, 0, 0, 0, 40 };
 	}
 
 	internal virtual void OnDeath(){}

@@ -19,6 +19,7 @@ public class Raid : GameEvent {
 		this.general = GetGeneral (this.sourceKingdom);
 		if(this.raidedCity != null){
 			this.description = startedBy.name + " is sending someone to raid " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name;
+			this.raidedCity.hexTile.AddEventOnTile(this);
 		}
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
@@ -38,7 +39,7 @@ public class Raid : GameEvent {
 		this.general = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 		//		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
 	private List<Kingdom> GetOtherKingdoms(){

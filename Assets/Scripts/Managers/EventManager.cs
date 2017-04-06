@@ -22,6 +22,11 @@ public class EventManager : MonoBehaviour {
 	public GameEventAction onGameEventAction = new GameEventAction();
 	public CheckCitizensSupportingMe onCheckCitizensSupportingMe = new CheckCitizensSupportingMe();
 	public RecruitCitizensForExpansion onRecruitCitizensForExpansion = new RecruitCitizensForExpansion();
+	public ForceUpdateUI onForceUpdateUI = new ForceUpdateUI();
+	public GameEventEnded onGameEventEnded = new GameEventEnded();
+	public ShowEventsOfType onShowEventsOfType = new ShowEventsOfType();
+	public HideEvents onHideEvents = new HideEvents();
+
 
 	public EVENT_TYPES eventTypeForTesting;
 

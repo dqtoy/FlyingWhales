@@ -21,6 +21,8 @@ public class Assassination : GameEvent {
 		this.guardians = new List<Citizen>();
 		this.spy = GetSpy (assassinKingdom);
 		TriggerGuardian ();
+
+		this.targetCitizen.city.hexTile.AddEventOnTile(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 
@@ -44,6 +46,7 @@ public class Assassination : GameEvent {
 		this.guardians.Clear ();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 //		EventManager.Instance.allEvents [EVENT_TYPES.ASSASSINATION].Remove (this);
 
 	}

@@ -20,13 +20,15 @@ public class MarriedCouple {
 		this.husband = husband;
 		this.wife = wife;
 
-//		if (this.wife.children.Count < 5 && this.husband.children.Count < 5) {
-//			EventManager.Instance.onWeekEnd.AddListener(TurnActions);
-//		}
+
+
+		if (this.wife.children.Count < 5 && this.husband.children.Count < 5 && !this.wife.isDead && !this.husband.isDead) {
+			EventManager.Instance.onWeekEnd.AddListener(TurnActions);
+		}
 	}
 
 	protected void TurnActions(){
-		if (this.wife.children.Count < 5 && this.husband.children.Count < 5) {
+		if (this.wife.children.Count >= 5 || this.husband.children.Count >= 5 || this.wife.isDead || this.husband.isDead) {
 			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
 			return;
 		}
@@ -80,6 +82,7 @@ public class MarriedCouple {
 			this.isPregnant = true;
 			this.remainingWeeksUntilBirth = 36;
 			this.wife.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.wife.name + " is pregnant.", HISTORY_IDENTIFIER.NONE));
+			Debug.LogError (this.husband.name + " and " + this.wife.name + " has made a baby and will give birth in 9 months.");
 		}
 	}
 
@@ -87,7 +90,7 @@ public class MarriedCouple {
 		if (this.wife.isDead) {
 			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
 			this.isPregnant = false;
-			Debug.Log ("the baby died because the mother died");
+			Debug.LogError (this.husband.name + " and " + this.wife.name + "'s baby died because the mother died");
 			return;
 		}
 
@@ -95,10 +98,10 @@ public class MarriedCouple {
 			this.remainingWeeksUntilBirth -= 1;
 		} else {
 			//Give Birth
-			Citizen child = MarriageManager.Instance.MakeBaby(this.husband, this.wife);
+			Citizen baby = MarriageManager.Instance.MakeBaby(this.husband, this.wife);
 			this.isPregnant = false;
-			this.wife.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.wife.name + " gave birth to" + child.name + ".", HISTORY_IDENTIFIER.NONE));
-
+			this.wife.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.wife.name + " gave birth to" + baby.name + ".", HISTORY_IDENTIFIER.NONE));
+			Debug.LogError (this.husband.name + " and " + this.wife.name + " gave birth to " + baby.name);
 		}
 	}
 }

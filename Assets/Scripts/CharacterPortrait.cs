@@ -55,7 +55,6 @@ public class CharacterPortrait : MonoBehaviour {
 		if (!isHoverEnabled) {
 			return;
 		}
-
 		if (isOver) {
 			UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i]" + citizen.city.kingdom.name + "[/i]", this.transform);
 		} else {

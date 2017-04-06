@@ -136,4 +136,8 @@ public class MarriageManager : MonoBehaviour {
 			}
 		}
 	}
+
+	internal List<MarriedCouple> GetCouplesCitizenInvoledIn(Citizen citizen){
+		return allMarriedCouples.Where(x => x.husband.id == citizen.id || x.wife.id == citizen.id).ToList();
+	}
 }

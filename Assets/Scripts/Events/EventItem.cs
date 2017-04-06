@@ -3,8 +3,13 @@ using System.Collections;
 
 public class EventItem : MonoBehaviour {
 
+	public delegate void OnClickEvent(GameEvent gameEvent);
+	public OnClickEvent onClickEvent;
+
 	public GameEvent gameEvent;
 	public UI2DSprite eventIcon;
+
+
 
 	public void SetEvent(GameEvent gameEvent){
 		this.gameEvent = gameEvent;
@@ -19,5 +24,11 @@ public class EventItem : MonoBehaviour {
 //		if (isOver) {
 //			UIManager.Instance.ShowSmallInfo(this.gameEvent.eventType.ToString() + "\n")
 //		}
+	}
+
+	void OnClick(){
+		if (onClickEvent != null) {
+			onClickEvent(this.gameEvent);
+		}
 	}
 }
