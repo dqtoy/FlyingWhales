@@ -1091,7 +1091,7 @@ public class Citizen {
 
 	}
 
-	internal void InformedAboutHiddenEvent(GameEvent hiddenEvent){
+	internal void InformedAboutHiddenEvent(GameEvent hiddenEvent, Citizen spy){
 		//Reduce relationship between target and source
 		if(hiddenEvent is Assassination){
 			//An assassination discovered by the target kingdom decreases the target's kingdom relationship by 15
@@ -1100,6 +1100,7 @@ public class Citizen {
 
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
 			relationship.AdjustLikeness (-15);
+
 		}else if(hiddenEvent is InvasionPlan){
 			//An Invasion Plan discovered by the target Kingdom decreases the target kingdom's King's relationship by 20
 			Kingdom sourceKingdom = ((InvasionPlan)hiddenEvent).sourceKingdom;
@@ -1108,6 +1109,7 @@ public class Citizen {
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (sourceKingdom.king.id);
 			relationship.AdjustLikeness (-35);
 		}
+		spy.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, spy.name + " informed " + this.name + " about " + hiddenEvent.eventType.ToString(), HISTORY_IDENTIFIER.NONE));
 
 		//Perform Counteraction
 

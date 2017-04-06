@@ -20,6 +20,9 @@ public class Assassination : GameEvent {
 		this.otherKingdoms = GetOtherKingdoms ();
 		this.guardians = new List<Citizen>();
 		this.spy = GetSpy (assassinKingdom);
+		if(this.spy != null){
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name));
+		}
 		TriggerGuardian ();
 
 		this.targetCitizen.city.hexTile.AddEventOnTile(this);

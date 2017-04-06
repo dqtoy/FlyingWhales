@@ -84,11 +84,11 @@ public class Espionage : GameEvent {
 	}
 	private void ActualEspionage(){
 		if(this.spy == null){
-			Debug.Log ("CAN'T ASSASSINATE NO SPIES AVAILABLE");
+			Debug.Log ("CAN'T ESPIONAGE NO SPIES AVAILABLE");
 			return;
 		}
 		if(this.spy.isDead){
-			Debug.Log ("CAN'T ASSASSINATE, SPY IS DEAD!");
+			Debug.Log ("CAN'T ESPIONAGE, SPY IS DEAD!");
 			return;
 		}
 
@@ -104,7 +104,7 @@ public class Espionage : GameEvent {
 		}
 		if(chance < value){
 			if(this.targetKingdom.king.id == this.sourceKingdom.king.id){
-				this.targetKingdom.king.InformedAboutHiddenEvent (chosenEvent);
+				this.targetKingdom.king.InformedAboutHiddenEvent (chosenEvent, this.spy);
 			}else{
 				Kingdom targetKingdomSpecific = null;
 				Kingdom sourceKingdomSpecific = null;
@@ -150,7 +150,7 @@ public class Espionage : GameEvent {
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
 						relationshipReverse.AdjustLikeness (10);
-						target.InformedAboutHiddenEvent (chosenEvent);
+						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 					}
 
 				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
@@ -165,7 +165,7 @@ public class Espionage : GameEvent {
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
 						relationshipReverse.AdjustLikeness (10);
-						target.InformedAboutHiddenEvent (chosenEvent);
+						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 					}
 					relationshipToCreator.AdjustLikeness (-10);
 				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
@@ -180,7 +180,7 @@ public class Espionage : GameEvent {
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
 						relationshipReverse.AdjustLikeness (10);
-						target.InformedAboutHiddenEvent (chosenEvent);
+						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 					}
 					relationshipToCreator.AdjustLikeness (-15);
 
