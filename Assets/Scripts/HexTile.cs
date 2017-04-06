@@ -445,7 +445,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	void OnMouseDown(){
 		if (this.isHabitable && this.isOccupied && this.city != null) {
-//			CameraMove.Instance.CenterCameraOn (this.gameObject);
+			CameraMove.Instance.CenterCameraOn(this.gameObject);
 			UIManager.Instance.ShowCityInfo (this.city);
 		}
 	}

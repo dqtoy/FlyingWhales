@@ -55,7 +55,6 @@ public class CharacterPortrait : MonoBehaviour {
 		if (!isHoverEnabled) {
 			return;
 		}
-
 		if (isOver) {
 			UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i]" + citizen.city.kingdom.name + "[/i]", this.transform);
 		} else {
@@ -65,7 +64,9 @@ public class CharacterPortrait : MonoBehaviour {
 
 	void OnClick(){
 		if (onClickCharacterPortrait == null) {
-			UIManager.Instance.ShowCitizenInfo (citizen);
+			if (this.citizen.father != null || this.citizen.mother != null) {
+				UIManager.Instance.ShowCitizenInfo (citizen);
+			}
 		} else {
 			onClickCharacterPortrait(this.citizen);
 		}
