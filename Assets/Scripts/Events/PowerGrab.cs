@@ -14,6 +14,9 @@ public class PowerGrab : GameEvent {
 		this.durationInWeeks = 48;
 		this.remainingWeeks = this.durationInWeeks;
 		this.kingToOverthrow = this.startedBy.city.kingdom.king;
+
+		this.kingToOverthrow.city.hexTile.AddEventOnTile(this);
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
@@ -75,6 +78,7 @@ public class PowerGrab : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}
 
 }

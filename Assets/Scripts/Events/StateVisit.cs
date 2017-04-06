@@ -23,6 +23,7 @@ public class StateVisit : GameEvent {
 		this.helperEnvoys = new List<Citizen> ();
 		this.saboteurEnvoys = new List<Citizen> ();
 		this.successMeter = 50;
+		this.invitedKingdom.cities[0].hexTile.AddEventOnTile(this);
 		TriggerAssassinationEvent ();
 		TriggerSabotage ();
 		TriggerHelp ();
@@ -52,6 +53,7 @@ public class StateVisit : GameEvent {
 		this.saboteurEnvoys.Clear ();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 
 //		EventManager.Instance.allEvents [EVENT_TYPES.STATE_VISIT].Remove (this);
 	}

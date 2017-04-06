@@ -14,6 +14,9 @@ public class Espionage : GameEvent {
 		this.sourceKingdom = startedBy.city.kingdom;
 		this.spy = GetSpy (this.sourceKingdom);
 		this.targetKingdom = GetTargetKingdom ();
+		if (this.targetKingdom != null) {
+			this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
+		}
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 	internal override void PerformAction(){
@@ -31,7 +34,7 @@ public class Espionage : GameEvent {
 		this.spy = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 //		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
 	private Citizen GetSpy(Kingdom kingdom){

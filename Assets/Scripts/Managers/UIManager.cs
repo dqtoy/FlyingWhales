@@ -1022,51 +1022,58 @@ public class UIManager : MonoBehaviour {
 		specificEventDescriptionLbl.text = gameEvent.description;
 		specificEventStartDateLbl.text = "Started " + ((MONTH)gameEvent.startMonth).ToString() + " " + gameEvent.startWeek.ToString() + ", " + gameEvent.startYear.ToString();
 
+		if (gameEvent.eventType != EVENT_TYPES.BORDER_CONFLICT) {
+			specificEventProgBar.value = (float)((float)gameEvent.remainingWeeks / (float)gameEvent.durationInWeeks);
+		}
+
 		if (gameEvent.eventType == EVENT_TYPES.MARRIAGE_INVITATION) {
 			MarriageInvitation marriageEvent = (MarriageInvitation)gameEvent;
-
-			specificEventProgBar.value = (float)((float)marriageEvent.remainingWeeks / (float)marriageEvent.durationInWeeks);
-
-			List<Transform> children = specificEventStartedByGrid.GetChildList();
-			if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != marriageEvent.startedBy.id)) {
-				for (int i = 0; i < children.Count; i++) {
-					Destroy (children [i].gameObject);
-				}
-
-				GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
-				startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (marriageEvent.startedBy);
-				startedByGO.transform.localScale = Vector3.one;
-				startedByGO.transform.position = Vector3.zero;
-				StartCoroutine (RepositionGrid (specificEventStartedByGrid));
-			}
-
-			children = specificEventCandidatesGrid.GetChildList();
-
-			List<Citizen> elligibleCitizensCurrentlyShowed = new List<Citizen>();
-			for (int i = 0; i < children.Count; i++) {
-				elligibleCitizensCurrentlyShowed.Add(children [i].GetComponent<CharacterPortrait> ().citizen);
-			}
-
-			List<Citizen> additionalCitizens = marriageEvent.elligibleCitizens.Except (elligibleCitizensCurrentlyShowed).ToList();
-
-			if (additionalCitizens.Count > 0 || elligibleCitizensCurrentlyShowed.Count <= 0) {
-				for (int i = 0; i < children.Count; i++) {
-					Destroy (children [i].gameObject);
-				}
-
-				for (int i = 0; i < marriageEvent.elligibleCitizens.Count; i++) {
-					GameObject candidateGO = GameObject.Instantiate (characterPortraitPrefab, specificEventCandidatesGrid.transform) as GameObject;
-					candidateGO.GetComponent<CharacterPortrait> ().SetCitizen (marriageEvent.elligibleCitizens [i]);
-					candidateGO.transform.localScale = Vector3.one;
-					candidateGO.transform.position = Vector3.zero;
-				}
-				StartCoroutine (RepositionGrid (specificEventCandidatesGrid));
-			}
+			ShowMarriageInvitationEvent (marriageEvent);
 		}
 
 		specificEventResolutionLbl.text = gameEvent.resolution;
 		currentlyShowingEvent = gameEvent;
 		specificEventGO.SetActive(true);
+	}
+
+	private void ShowMarriageInvitationEvent(MarriageInvitation marriageEvent){
+		
+
+		List<Transform> children = specificEventStartedByGrid.GetChildList();
+		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != marriageEvent.startedBy.id)) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (marriageEvent.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
+		}
+
+		children = specificEventCandidatesGrid.GetChildList();
+
+		List<Citizen> elligibleCitizensCurrentlyShowed = new List<Citizen>();
+		for (int i = 0; i < children.Count; i++) {
+			elligibleCitizensCurrentlyShowed.Add(children [i].GetComponent<CharacterPortrait> ().citizen);
+		}
+
+		List<Citizen> additionalCitizens = marriageEvent.elligibleCitizens.Except (elligibleCitizensCurrentlyShowed).ToList();
+
+		if (additionalCitizens.Count > 0 || elligibleCitizensCurrentlyShowed.Count <= 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+
+			for (int i = 0; i < marriageEvent.elligibleCitizens.Count; i++) {
+				GameObject candidateGO = GameObject.Instantiate (characterPortraitPrefab, specificEventCandidatesGrid.transform) as GameObject;
+				candidateGO.GetComponent<CharacterPortrait> ().SetCitizen (marriageEvent.elligibleCitizens [i]);
+				candidateGO.transform.localScale = Vector3.one;
+				candidateGO.transform.position = Vector3.zero;
+			}
+			StartCoroutine (RepositionGrid (specificEventCandidatesGrid));
+		}
 	}
 
 	public void HideSpecificEvent(){

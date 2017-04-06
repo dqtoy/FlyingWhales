@@ -29,6 +29,10 @@ public class BorderConflict : GameEvent {
 		this.activeEnvoysReduce = new List<Citizen> ();
 		this.activeEnvoysIncrease = new List<Citizen> ();
 		this.otherKingdoms = GetOtherKingdoms ();
+
+		this.kingdom1.cities[0].hexTile.AddEventOnTile(this);
+		this.kingdom2.cities[0].hexTile.AddEventOnTile(this);
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.Log (this.description);
 	}
@@ -247,6 +251,7 @@ public class BorderConflict : GameEvent {
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 //		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
 
 		//Remove UI Icon

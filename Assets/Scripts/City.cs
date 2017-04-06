@@ -864,6 +864,17 @@ public class City{
 				}
 			}
 
+			if (isInMilitarization) {
+				if (!this.IsRoleMaxed(ROLE.GENERAL)) {
+					//buy tile for special roles
+					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Attempt to buy tile for special role");
+					List<HexTile> tilesWithNoSpecialResource = this.allUnownedNeighbours.Where (x => x.specialResource == RESOURCE.NONE).ToList ();
+					if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, tilesWithNoSpecialResource, false, true)) {
+						return;
+					}
+				}
+			}
+
 			if (!this.IsProducingResource (this.kingdom.basicResource) && this.purchasableBasicTiles.Count > 0) {
 				if (this.BuyTileFromList (this.kingdom.basicResource, this.purchasableBasicTiles)) {
 					return;
@@ -1019,7 +1030,7 @@ public class City{
 		return false;
 	}
 
-	protected bool BuyTileFromList(BASE_RESOURCE_TYPE resourceToProduce, List<HexTile> choices, bool forUnneededResource = false){
+	protected bool BuyTileFromList(BASE_RESOURCE_TYPE resourceToProduce, List<HexTile> choices, bool forUnneededResource = false, bool forMilitarization = false){
 		if (this.pendingTask.Count > 0) {
 			if (choices.Contains (this.pendingTask [0])) {
 				choices.Remove (this.pendingTask [0]);
@@ -1043,8 +1054,12 @@ public class City{
 					tileToPurchase.roleIntendedForTile = Utilities.GetRoleThatProducesResource (Utilities.GetBaseResourceType (tileToPurchase.specialResource));
 				}
 			} else {
-				//Choose non-producing role
-				tileToPurchase.roleIntendedForTile = this.GetNonProducingRoleToCreate ();
+				if (forMilitarization) {
+					tileToPurchase.roleIntendedForTile = ROLE.GENERAL;
+				} else {
+					//Choose non-producing role
+					tileToPurchase.roleIntendedForTile = this.GetNonProducingRoleToCreate ();
+				}
 			}
 		}
 
@@ -1150,10 +1165,20 @@ public class City{
 
 		if (traderCount >= traderLimit && generalCount >= generalLimit && spyCount >= spyLimit && envoyCount >= envoyLimit && guardianCount >= guardianLimit) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
+
+	protected bool IsRoleMaxed(ROLE roleToCheck){
+		int roleCount = this.GetCitizensWithRole(roleToCheck).Count;
+		int roleLimit = this.citizenCreationTable[roleToCheck];
+
+		if (roleCount >= roleLimit) {
+			return true;
+		}
+		return false;
+	}
+
 	private bool AllTilesAreOccupied(){
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			if (!this.ownedTiles [i].isOccupied) {

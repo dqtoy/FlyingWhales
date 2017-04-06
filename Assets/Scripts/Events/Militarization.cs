@@ -12,6 +12,9 @@ public class Militarization : GameEvent {
 		this.description = startedBy.name + " prioritizing the training of his generals and army, in preparation for war.";
 		this.durationInWeeks = Random.Range(16, 24);
 		this.remainingWeeks = this.durationInWeeks;
+
+		this.startedBy.city.hexTile.AddEventOnTile(this);
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
@@ -41,5 +44,6 @@ public class Militarization : GameEvent {
 		this.isActive = false;
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		invasionPlanThatTriggeredEvent.MilitarizationDone();
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}
 }
