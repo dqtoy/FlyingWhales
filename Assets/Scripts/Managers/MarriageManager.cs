@@ -19,6 +19,7 @@ public class MarriageManager : MonoBehaviour {
 		//		int age = 0;
 
 		Citizen child = new Citizen(father.city, age, gender, father.generation + 1);
+		child.AssignBirthday((MONTH)GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year);
 		if(father.isDirectDescendant || mother.isDirectDescendant){
 			child.isDirectDescendant = true;
 		}
@@ -76,6 +77,10 @@ public class MarriageManager : MonoBehaviour {
 		} else {
 			this.allMarriedCouples.Add (new MarriedCouple (citizen2, citizen1));
 		}
+
+		citizen1.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, citizen1.name + " married" + citizen2.name + ".", HISTORY_IDENTIFIER.NONE));
+		citizen2.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, citizen2.name + " married" + citizen1.name + ".", HISTORY_IDENTIFIER.NONE));
+
 	}
 
 	internal List<Citizen> GetElligibleCitizensForMarriage(Citizen citizenSearchingForLove){

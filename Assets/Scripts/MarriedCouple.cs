@@ -79,6 +79,7 @@ public class MarriedCouple {
 		if (pregnancyChance < chanceForPregnancy) {
 			this.isPregnant = true;
 			this.remainingWeeksUntilBirth = 36;
+			this.wife.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.wife.name + " is pregnant.", HISTORY_IDENTIFIER.NONE));
 		}
 	}
 
@@ -94,8 +95,10 @@ public class MarriedCouple {
 			this.remainingWeeksUntilBirth -= 1;
 		} else {
 			//Give Birth
-			MarriageManager.Instance.MakeBaby(this.husband, this.wife);
+			Citizen child = MarriageManager.Instance.MakeBaby(this.husband, this.wife);
 			this.isPregnant = false;
+			this.wife.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.wife.name + " gave birth to" + child.name + ".", HISTORY_IDENTIFIER.NONE));
+
 		}
 	}
 }

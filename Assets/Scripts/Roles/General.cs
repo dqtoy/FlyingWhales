@@ -7,6 +7,7 @@ public class General : Role {
 	public City targetCity;
 	public HexTile location;
 	public HexTile targetLocation;
+	public HexTile rallyPoint;
 	public List<HexTile> roads;
 	public Army army;
 	public Citizen warLeader;
@@ -27,6 +28,7 @@ public class General : Role {
 		this.location = citizen.city.hexTile;
 		this.targetLocation = null;
 		this.targetCity = null;
+		this.rallyPoint = null;
 		this.warLeader = null;
 		this.army = new Army (GetInitialArmyHp());
 		this.campaignID = 0;
@@ -68,7 +70,7 @@ public class General : Role {
 	}
 	internal void DeathArmy(){
 		if(this.army.hp <= 0){
-			this.citizen.Death ();
+			this.citizen.Death (DEATH_REASONS.BATTLE);
 		}
 	}
 	internal void RerouteToHome(){
@@ -81,21 +83,26 @@ public class General : Role {
 	}
 	internal void UnregisterThisGeneral(Campaign campaign){
 		if(campaign == null){
-			campaign = this.warLeader.campaignManager.SearchCampaignByID (this.campaignID);
-		}
-		campaign.registeredGenerals.Remove (this.citizen);
-
-		this.targetLocation = null;
-		this.warLeader = null;
-		this.campaignID = 0;
-		this.assignedCampaign = CAMPAIGN.NONE;
-		this.targetCity = null;
-		this.daysBeforeArrival = 0;
-		RerouteToHome ();
-		if(campaign.registeredGenerals.Count <= 0){
-			campaign.leader.campaignManager.CampaignDone (campaign);
+			if(this.warLeader != null){
+				campaign = this.warLeader.campaignManager.SearchCampaignByID (this.campaignID);
+			}
 		}
 
+		if(campaign != null){
+			campaign.registeredGenerals.Remove (this.citizen);
+			this.targetLocation = null;
+			this.warLeader = null;
+			this.campaignID = 0;
+			this.assignedCampaign = CAMPAIGN.NONE;
+			this.targetCity = null;
+			this.rallyPoint = null;
+			this.daysBeforeArrival = 0;
+			this.inAction = false;
+			RerouteToHome ();
+			if(campaign.registeredGenerals.Count <= 0){
+				campaign.leader.campaignManager.CampaignDone (campaign);
+			}
+		}
 	}
 	internal void RegisterOnCampaign(Campaign campaign){
 		if(this.inAction){
@@ -178,6 +185,7 @@ public class General : Role {
 		this.assignedCampaign = chosenCampaign.campaignType;
 		this.warType = chosenCampaign.warType;
 		this.targetCity = chosenCampaign.targetCity;
+		this.rallyPoint = chosenCampaign.rallyPoint;
 		this.daysBeforeArrival = path.Count;
 		this.roads.Clear ();
 		this.roads = path;
@@ -185,6 +193,12 @@ public class General : Role {
 
 		chosenCampaign.registeredGenerals.Add (this.citizen);
 		chosenCampaign.targetCity.incomingGenerals.Add (this.citizen);
+		if(chosenCampaign.rallyPoint != null){
+			if(chosenCampaign.rallyPoint.isOccupied){
+				chosenCampaign.rallyPoint.city.incomingGenerals.Add(this.citizen);
+			}
+		}
+
 
 	}
 

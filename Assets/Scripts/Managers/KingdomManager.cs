@@ -92,11 +92,17 @@ public class KingdomManager : MonoBehaviour {
 	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
 		kingdom1.GetRelationshipWithOtherKingdom(kingdom2).isAtWar = true;
 		kingdom2.GetRelationshipWithOtherKingdom(kingdom1).isAtWar = true;
+
+		kingdom1.AddInternationalWar(kingdom2);
+		kingdom2.AddInternationalWar(kingdom1);
 	}
 
 	public void DeclarePeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
 		kingdom1.GetRelationshipWithOtherKingdom(kingdom2).isAtWar = false;
 		kingdom2.GetRelationshipWithOtherKingdom(kingdom1).isAtWar = false;
+
+		kingdom1.RemoveInternationalWar(kingdom2);
+		kingdom2.RemoveInternationalWar(kingdom1);
 	}
 
 	public void AddRelationshipToOtherKings(Citizen newKing){

@@ -47,9 +47,9 @@ public class Citizen {
 	public bool isHeir;
 	public bool isBusy;
 	public bool isDead;
+	[HideInInspector]public List<History> history;
 
 	private List<Citizen> possiblePretenders = new List<Citizen>();
-	private string history;
 
 	public int prestige{
 		get{ return _prestige + prestigeFromSupport;}
@@ -105,7 +105,7 @@ public class Citizen {
 		this.isHeir = false;
 		this.isBusy = false;
 		this.isDead = false;
-		this.history = string.Empty;
+		this.history = new List<History>();
 		this.city.citizens.Add (this);
 
 
@@ -231,6 +231,8 @@ public class Citizen {
 		this.birthMonth = month;
 		this.birthWeek = week;
 		this.birthYear = year;
+
+		this.history.Add(new History((int)month, week, year, this.name + " was born.", HISTORY_IDENTIFIER.NONE));
 	}
 	internal void TurnActions(){
 		this.AttemptToAge();
@@ -285,28 +287,13 @@ public class Citizen {
 		}
 		float accidents = UnityEngine.Random.Range (0f, 99f);
 		if(accidents <= this.citizenChances.accidentChance){
-			Death ();
-			string accidentCause = Utilities.accidentCauses[UnityEngine.Random.Range(0, Utilities.accidentCauses.Length)];
-			if(this.gender == GENDER.FEMALE){
-				StringBuilder stringBuild = new StringBuilder (accidentCause);
-				stringBuild.Replace ("He", "She");
-				stringBuild.Replace ("he", "she");
-				stringBuild.Replace ("him", "her");
-				stringBuild.Replace ("his", "her");
-			}
-			this.history += accidentCause;
-			Debug.Log(this.name + ": " + accidentCause);
+			Death (DEATH_REASONS.ACCIDENT);
 //			Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.week + "/" + PoliticsPrototypeManager.Instance.year + ": " + this.name + " DIED OF ACCIDENT!");
 		}else{
 			if(this.age >= 60){
 				float oldAge = UnityEngine.Random.Range (0f, 99f);
 				if(oldAge <= this.citizenChances.oldAgeChance){
-					Death ();
-					if(this.gender == GENDER.FEMALE){
-						this.history += "She died of old age";
-					}else{
-						this.history += "He died of old age";
-					}
+					Death (DEATH_REASONS.OLD_AGE);
 					Debug.Log(this.name + " DIES OF OLD AGE");
 //					Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.week + "/" + PoliticsPrototypeManager.Instance.year + ": " + this.name + " DIED OF OLD AGE!");
 				}else{
@@ -316,17 +303,14 @@ public class Citizen {
 		}
 	}
 	internal void DeathByStarvation(){
-		Death ();
-		if(this.gender == GENDER.FEMALE){
-			this.history += "She died of starvation";
-		}else{
-			this.history += "He died of starvation";
-		}
+		Death (DEATH_REASONS.STARVATION);
+
 		Debug.Log(this.name + " DIES OF STARVATION");
 	}
-	internal void Death(bool isDethroned = false, Citizen newKing = null){
+	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isAbsolute = false){
 //		this.kingdom.royaltyList.allRoyalties.Remove (this);
 		Debug.Log("DEATH: " + this.name);
+		DeathHistory(reason);
 		if(isDethroned){
 			this.isPretender = true;
 			this.city.kingdom.AddPretender (this);
@@ -349,16 +333,41 @@ public class Citizen {
 		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
 
 		if(this.role == ROLE.GENERAL){
-			if(((General)this.assignedRole).army.hp <= 0){
+			if(isAbsolute){
+				if(((General)this.assignedRole).generalAvatar != null){
+					GameObject.Destroy(((General)this.assignedRole).generalAvatar);
+					((General)this.assignedRole).generalAvatar = null;
+				}
 				EventManager.Instance.onCitizenMove.RemoveListener (((General)this.assignedRole).Move);
 				EventManager.Instance.onRegisterOnCampaign.RemoveListener (((General)this.assignedRole).RegisterOnCampaign);
 				EventManager.Instance.onDeathArmy.RemoveListener (((General)this.assignedRole).DeathArmy);
+				((General)this.assignedRole).UnregisterThisGeneral(null);
+
+				this.city.citizens.Remove (this);
+			}else{
+				if(((General)this.assignedRole).army.hp <= 0){
+					if(((General)this.assignedRole).generalAvatar != null){
+						GameObject.Destroy(((General)this.assignedRole).generalAvatar);
+						((General)this.assignedRole).generalAvatar = null;
+					}
+					EventManager.Instance.onCitizenMove.RemoveListener (((General)this.assignedRole).Move);
+					EventManager.Instance.onRegisterOnCampaign.RemoveListener (((General)this.assignedRole).RegisterOnCampaign);
+					EventManager.Instance.onDeathArmy.RemoveListener (((General)this.assignedRole).DeathArmy);
+					((General)this.assignedRole).UnregisterThisGeneral(null);
+
+					this.city.citizens.Remove (this);
+				}
+			}
+
+		}
+		if(isAbsolute){
+			this.city.citizens.Remove (this);
+		}else{
+			if(this.role != ROLE.GENERAL){
 				this.city.citizens.Remove (this);
 			}
 		}
-		if(this.role != ROLE.GENERAL){
-			this.city.citizens.Remove (this);
-		}
+
 		EventManager.Instance.onCitizenDiedEvent.Invoke ();
 
 		if (this.workLocation != null) {
@@ -379,6 +388,7 @@ public class Citizen {
 		if (this.id == this.city.kingdom.king.id) {
 			//ASSIGN NEW LORD, SUCCESSION
 			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.city.kingdom.king);
+			this.city.kingdom.PassOnInternationalWar();
 			if (isDethroned) {
 				if (newKing != null) {
 					this.city.kingdom.AssignNewKing (newKing);
@@ -454,6 +464,34 @@ public class Citizen {
 
 		this.isKing = false;
 		this.isGovernor = false;
+	}
+	internal void DeathHistory(DEATH_REASONS reason){
+		switch (reason){
+		case DEATH_REASONS.OLD_AGE:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died of natural causes.", HISTORY_IDENTIFIER.NONE));
+			break;
+		case DEATH_REASONS.ACCIDENT:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died " + Utilities.accidentCauses[UnityEngine.Random.Range(0, Utilities.accidentCauses.Length)], HISTORY_IDENTIFIER.NONE));
+			break;
+		case DEATH_REASONS.BATTLE:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died in battle.", HISTORY_IDENTIFIER.NONE));
+			break;
+		case DEATH_REASONS.TREACHERY:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " hanged for treason.", HISTORY_IDENTIFIER.NONE));
+			break;
+		case DEATH_REASONS.ASSASSINATION:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died from an assassin's arrow.", HISTORY_IDENTIFIER.NONE));
+			break;
+		case DEATH_REASONS.REBELLION:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " hanged by an usurper.", HISTORY_IDENTIFIER.NONE));
+			break;
+		case DEATH_REASONS.INTERNATIONAL_WAR:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died at the hands of a foreign enemy.", HISTORY_IDENTIFIER.NONE));
+			break;
+		case DEATH_REASONS.STARVATION:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died of starvation.", HISTORY_IDENTIFIER.NONE));
+			break;
+		}
 	}
 	internal void UnsupportCitizen(Citizen citizen){
 		if(this.isGovernor || this.isKing){
@@ -783,7 +821,12 @@ public class Citizen {
 	}
 	internal void AddSuccessionWar(Citizen enemy){
 		this.successionWars.Add (enemy);
-		this.campaignManager.successionWarCities.Add (new CityWar (enemy.city, false, WAR_TYPE.SUCCESSION));
+		if(!this.campaignManager.SearchForSuccessionWarCities(enemy.city)){
+			this.campaignManager.successionWarCities.Add (new CityWar (enemy.city, false, WAR_TYPE.SUCCESSION));
+		}
+		if(!this.campaignManager.SearchForDefenseWarCities(this.city)){
+			this.campaignManager.defenseWarCities.Add (new CityWar (this.city, false, WAR_TYPE.SUCCESSION));
+		}
 	}
 	internal void RemoveSuccessionWar(Citizen enemy){
 		List<Campaign> campaign = this.campaignManager.activeCampaigns.FindAll (x => x.targetCity.id == enemy.city.id);

@@ -13,17 +13,17 @@ public class Utilities : MonoBehaviour {
 	public static int lastEventID = 0;
 
 	public static string[] accidentCauses = new string[]{
-		"He died because he forgot to breath.",
-		"He died after falling off a cliff.",
-		"He died due to an infection from an arrow in the knee.",
-		"He died of heartbreak.",
-		"He died from an animal attack.",
-		"He died after a boulder rolled over him.",
-		"He died after a brick fell on his head.",
-		"He died after slipping on the floor.",
-		"He died from a landslide.",
-		"He died from drinking too much alcohol.",
-		"He died from eating poisonous mushrooms."
+		"because he/she forgot to breath.",
+		"after falling off a cliff.",
+		"due to an infection from an arrow in the knee.",
+		"of heartbreak.",
+		"from an animal attack.",
+		"after a boulder rolled over him.",
+		"after a brick fell on his head.",
+		"after slipping on the floor.",
+		"from a landslide.",
+		"from drinking too much alcohol.",
+		"from eating poisonous mushrooms."
 	};
 		
 	public static int specialResourceCount = 0;

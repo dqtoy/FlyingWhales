@@ -101,9 +101,11 @@ public class City{
 	/*
 	 * Initialize City With Initial Citizens aka. Families
 	 * */
-	internal void CreateInitialFamilies(){
+	internal void CreateInitialFamilies(bool hasRoyalFamily = true){
 		BuyInitialTiles ();
-		CreateInitialRoyalFamily ();
+		if(hasRoyalFamily){
+			CreateInitialRoyalFamily ();
+		}
 		CreateInitialGovernorFamily ();
 		CreateInitialFoodProducerFamily ();
 		CreateInitialGathererFamily ();

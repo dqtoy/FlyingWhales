@@ -167,7 +167,7 @@ public class Assassination : GameEvent {
 			SpyDiscovery ();
 			int dieSpy = UnityEngine.Random.Range (0, 100);
 			if(dieSpy < 5){
-				this.spy.Death ();
+				this.spy.Death (DEATH_REASONS.TREACHERY);
 				Debug.Log (this.spy.name + " HAS DIED!");
 			}
 		}
@@ -192,7 +192,7 @@ public class Assassination : GameEvent {
 	}
 	private void AssassinateTarget(){
 		if(!targetCitizen.isDead){
-			this.targetCitizen.Death ();
+			this.targetCitizen.Death (DEATH_REASONS.ASSASSINATION);
 		}
 	}
 	private void SpyDiscovery(){

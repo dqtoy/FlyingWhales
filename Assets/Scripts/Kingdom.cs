@@ -13,6 +13,7 @@ public class Kingdom{
 	public List<Citizen> successionLine;
 	public List<Citizen> pretenders;
 //	public List<Citizen> royaltyList;
+	public List<CityWar> holderIntlWarCities;
 
 	public BASE_RESOURCE_TYPE basicResource;
 	public BASE_RESOURCE_TYPE rareResource;
@@ -190,6 +191,7 @@ public class Kingdom{
 			ChangeSuccessionLineRescursively (newKing);
 			this.successionLine.AddRange (GetSiblings (newKing));
 			UpdateKingSuccession ();
+			this.RetrieveInternationWar();
 		}
 	}
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
@@ -211,6 +213,7 @@ public class Kingdom{
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (GetSiblings (newKing));
 		UpdateKingSuccession ();
+		this.RetrieveInternationWar();
 
 		for(int i = 0; i < claimants.Count; i++){
 			newKing.AddSuccessionWar (claimants [i]);
@@ -354,8 +357,66 @@ public class Kingdom{
 		return kingdomsByRelationship;
 	}
 
+	internal void AddInternationalWar(Kingdom kingdom){
+		for(int i = 0; i < kingdom.cities.Count; i++){
+			if(!this.king.campaignManager.SearchForInternationalWarCities(kingdom.cities[i])){
+				this.king.campaignManager.intlWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
+			}
+		}
+		for(int i = 0; i < this.cities.Count; i++){
+			if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
+				this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
+			}
+//			if(this.cities[i].governor.supportedCitizen == null){
+//				if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
+//					this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
+//				}
+//			}else{
+//				if(!this.king.SearchForSuccessionWar(this.cities[i].governor.supportedCitizen)){
+//					if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
+//						this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
+//					}
+//				}
+//			}
+		}
+	}
 
+	internal void RemoveInternationalWar(Kingdom kingdom){
+		this.king.campaignManager.intlWarCities.RemoveAll(x => x.city.kingdom.id == kingdom.id);
+		for(int i = 0; i < this.king.campaignManager.activeCampaigns.Count; i++){
+			if(this.king.campaignManager.activeCampaigns[i].warType == WAR_TYPE.INTERNATIONAL){
+				if(this.king.campaignManager.activeCampaigns[i].targetCity.kingdom.id == kingdom.id){
+					this.king.campaignManager.CampaignDone(this.king.campaignManager.activeCampaigns[i]);
+				}
+			}
+		}
+	}
 
+	internal void PassOnInternationalWar(){
+		this.holderIntlWarCities.Clear();
+		this.holderIntlWarCities.AddRange(this.king.campaignManager.intlWarCities);
+	}
+	internal void RetrieveInternationWar(){
+		this.king.campaignManager.intlWarCities.AddRange(this.holderIntlWarCities);
+		this.holderIntlWarCities.Clear();
+	}
+
+	internal City SearchForCityById(int id){
+		for(int i = 0; i < this.cities.Count; i++){
+			if(this.cities[i].id == id){
+				return this.cities[i];
+			}
+		}
+		return null;
+	}
+
+	internal void ConquerCity(City city){
+		HexTile hex = city.hexTile;
+		city.kingdom.cities.Remove(city);
+		City newCity = new City(hex, this);
+		newCity.CreateInitialFamilies(false);
+		this.AddCityToKingdom(newCity);
+	}
 	//Destructor for unsubscribing listeners
 	~Kingdom(){
 		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);

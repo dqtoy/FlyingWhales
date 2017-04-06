@@ -172,7 +172,7 @@ public class Raid : GameEvent {
 				deadCitizen = citizens [UnityEngine.Random.Range (0, citizens.Count)];
 				isGovernor = deadCitizen.isGovernor;
 				isKing = deadCitizen.isKing;
-				deadCitizen.Death ();
+				deadCitizen.Death (DEATH_REASONS.INTERNATIONAL_WAR);
 			}
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
