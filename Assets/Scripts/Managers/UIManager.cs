@@ -139,6 +139,11 @@ public class UIManager : MonoBehaviour {
 	void Awake(){
 		Instance = this;
 	}
+
+	void Start(){
+		EventManager.Instance.onForceUpdateUI.AddListener(ForceUpdateUI);
+	}
+
 	void FixedUpdate(){
 		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.week.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
 		if (currentlyShowingCity != null) {
@@ -148,6 +153,12 @@ public class UIManager : MonoBehaviour {
 		//		if (currentlyShowingCitizen != null) {
 		//			this.ShowCitizenInfo(currentlyShowingCitizen);
 		//		}
+	}
+
+	private void ForceUpdateUI(){
+		if (cityInfoGO.activeSelf) {
+			this.ShowCityInfo(currentlyShowingCity, true);
+		}
 	}
 
 	public void SetProgressionSpeed1X(){
@@ -283,7 +294,7 @@ public class UIManager : MonoBehaviour {
 		citizenInfoGO.SetActive (false);
 	}
 
-	public void ShowCityInfo(City cityToShow){
+	public void ShowCityInfo(City cityToShow, bool forceUpdate = false){
 		if(cityToShow == null){
 			return;
 		}
@@ -304,13 +315,8 @@ public class UIManager : MonoBehaviour {
 
 
 		CharacterPortrait[] characters = citizensParent.GetComponentsInChildren<CharacterPortrait>();
-		List<Citizen> asd = new List<Citizen>();
-		for (int i = 0; i < characters.Length; i++) {
-			asd.Add (characters [i].GetComponent<CharacterPortrait> ().citizen);
-		}
-		List<Citizen> wala = cityToShow.citizens.Except (asd).ToList();
 
-		if (characters.Length != (cityToShow.citizens.Count - 2)) {
+		if (characters.Length != (cityToShow.citizens.Count - 2) || !cityInfoGO.activeSelf || forceUpdate) {
 			citizensBtn.GetComponent<ButtonToggle> ().OnClick ();
 			for (int i = 0; i < characters.Length; i++) {
 				Destroy (characters [i].gameObject);
@@ -761,16 +767,27 @@ public class UIManager : MonoBehaviour {
 		if (familyTreeGO.activeSelf) {
 			familyTreeGO.SetActive (false);
 		} else {
-			GameObject fatherGO = GameObject.Instantiate (characterPortraitPrefab, familyTreeFatherGO.transform) as GameObject;
-			fatherGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
-			fatherGO.transform.localPosition = Vector3.zero;
-			fatherGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.father);
-
-			GameObject motherGO = GameObject.Instantiate (characterPortraitPrefab, familyTreeMotherGO.transform) as GameObject;
-			motherGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
-			motherGO.transform.localPosition = Vector3.zero;
-			motherGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.mother);
-
+			if (familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>() != null) {
+				Destroy (familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+			}
+			if (currentlyShowingCitizen.father != null) {
+				GameObject fatherGO = GameObject.Instantiate (characterPortraitPrefab, familyTreeFatherGO.transform) as GameObject;
+				fatherGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
+				fatherGO.transform.localPosition = Vector3.zero;
+				fatherGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.father);
+			}
+			if (familyTreeMotherGO.GetComponentInChildren<CharacterPortrait>() != null) {
+				Destroy (familyTreeMotherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+			}
+			if (currentlyShowingCitizen.mother != null) {
+				GameObject motherGO = GameObject.Instantiate (characterPortraitPrefab, familyTreeMotherGO.transform) as GameObject;
+				motherGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
+				motherGO.transform.localPosition = Vector3.zero;
+				motherGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.mother);
+			}
+			if (familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>() != null) {
+				Destroy (familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+			}
 			if (currentlyShowingCitizen.spouse != null) {
 				GameObject spouseGO = GameObject.Instantiate (characterPortraitPrefab, familyTreeSpouseGO.transform) as GameObject;
 				spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
@@ -789,6 +806,11 @@ public class UIManager : MonoBehaviour {
 						}
 					}
 				}
+			}
+
+			CharacterPortrait[] children = familyTreeChildGrid.GetComponentsInChildren<CharacterPortrait>();
+			for (int i = 0; i < children.Length; i++) {
+				Destroy (children [i].gameObject);
 			}
 
 			List<Transform> childPositions = familyTreeChildGrid.GetChildList ();
@@ -824,8 +846,8 @@ public class UIManager : MonoBehaviour {
 		}
 
 		Destroy(familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait> ().gameObject);
-		List<Transform> children = familyTreeChildGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
+		CharacterPortrait[] children = familyTreeChildGrid.GetComponentsInChildren<CharacterPortrait>();
+		for (int i = 0; i < children.Length; i++) {
 			Destroy (children [i].gameObject);
 		}
 

@@ -362,8 +362,7 @@ public class Citizen {
 		EventManager.Instance.onCitizenDiedEvent.Invoke ();
 
 		if (this.workLocation != null) {
-			this.workLocation.occupant = null;
-			this.workLocation.isOccupied = false;
+			this.workLocation.UnoccupyTile();
 		}
 
 		if (this.isMarried) {
@@ -753,11 +752,27 @@ public class Citizen {
 			prestige += 200;
 		} else if (this.role == ROLE.SPY || this.role == ROLE.ENVOY || this.role == ROLE.GUARDIAN) {
 			prestige += 150;
-			for (int i = 0; i < ((Spy)this.assignedRole).successfulMissions; i++) {
-				prestige += 20;
-			}
-			for (int i = 0; i < ((Spy)this.assignedRole).unsuccessfulMissions; i++) {
-				prestige -= 5;
+			if (this.role == ROLE.SPY) {
+				for (int i = 0; i < ((Spy)this.assignedRole).successfulMissions; i++) {
+					prestige += 20;
+				}
+				for (int i = 0; i < ((Spy)this.assignedRole).unsuccessfulMissions; i++) {
+					prestige -= 5;
+				}
+			} else if (this.role == ROLE.ENVOY) {
+				for (int i = 0; i < ((Envoy)this.assignedRole).successfulMissions; i++) {
+					prestige += 20;
+				}
+				for (int i = 0; i < ((Envoy)this.assignedRole).unsuccessfulMissions; i++) {
+					prestige -= 5;
+				}
+			} else if (this.role == ROLE.GUARDIAN) {
+				for (int i = 0; i < ((Guardian)this.assignedRole).successfulMissions; i++) {
+					prestige += 20;
+				}
+				for (int i = 0; i < ((Guardian)this.assignedRole).unsuccessfulMissions; i++) {
+					prestige -= 5;
+				}
 			}
 		}  else {
 			if (this.role != ROLE.UNTRAINED) {

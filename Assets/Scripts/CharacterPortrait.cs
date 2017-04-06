@@ -64,9 +64,7 @@ public class CharacterPortrait : MonoBehaviour {
 
 	void OnClick(){
 		if (onClickCharacterPortrait == null) {
-			if (this.citizen.father != null || this.citizen.mother != null) {
-				UIManager.Instance.ShowCitizenInfo (citizen);
-			}
+			UIManager.Instance.ShowCitizenInfo (citizen);
 		} else {
 			onClickCharacterPortrait(this.citizen);
 		}

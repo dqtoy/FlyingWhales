@@ -125,7 +125,15 @@ public class PathGenerator : MonoBehaviour {
 	public IEnumerable<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
+		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
+			startingTile.isRoad = true;
+			destinationTile.isRoad = true;
+		}
 		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathfindingMode);
+		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
+			startingTile.isRoad = false;
+			destinationTile.isRoad = false;
+		}
 		return path;
 	}
 

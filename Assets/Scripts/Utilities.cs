@@ -201,6 +201,25 @@ public class Utilities : MonoBehaviour {
 		return BASE_RESOURCE_TYPE.NONE;
 	}
 
+	public static STRUCTURE GetStructureThatProducesResource(RESOURCE resourceType){
+		if (resourceType == RESOURCE.CORN || resourceType == RESOURCE.WHEAT || resourceType == RESOURCE.RICE) {
+			return STRUCTURE.FARM;
+		} else if (resourceType == RESOURCE.DEER || resourceType == RESOURCE.PIG || resourceType == RESOURCE.BEHEMOTH) {
+			return STRUCTURE.HUNTING_LODGE;
+		}else if (resourceType == RESOURCE.CEDAR || resourceType == RESOURCE.OAK || resourceType == RESOURCE.EBONY) {
+			return STRUCTURE.LUMBERYARD;
+		} else if (resourceType == RESOURCE.GRANITE || resourceType == RESOURCE.SLATE || resourceType == RESOURCE.MARBLE) {
+			return STRUCTURE.QUARRY;
+		} else if (resourceType == RESOURCE.MANA_STONE) {
+			return STRUCTURE.MINES;
+		} else if (resourceType == RESOURCE.MITHRIL) {
+			return STRUCTURE.MINES;
+		} else if (resourceType == RESOURCE.COBALT) {
+			return STRUCTURE.MINES;
+		}
+		return STRUCTURE.NONE;
+	}
+
 
 	public static ROLE GetRoleThatProducesResource(BASE_RESOURCE_TYPE resourceType){
 		if (resourceType == BASE_RESOURCE_TYPE.FOOD) {

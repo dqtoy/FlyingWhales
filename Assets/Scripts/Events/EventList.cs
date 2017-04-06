@@ -24,4 +24,5 @@ public class UnsupportCitizen: UnityEvent<Citizen>{}
 public class GameEventAction: UnityEvent<GameEvent, int>{}
 public class RecruitCitizensForExpansion: UnityEvent<Expansion, Kingdom>{}
 
-
+//UI
+public class ForceUpdateUI: UnityEvent{}
