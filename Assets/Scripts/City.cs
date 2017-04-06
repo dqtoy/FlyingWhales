@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-[System.Serializable]
+//[System.Serializable]
 public class City{
 
 	public int id;
@@ -917,6 +917,13 @@ public class City{
 				}
 			}
 
+			//if can't buy anything, default to food tile
+			if (this.purchasableFoodTiles.Count > 0) {
+				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.FOOD, this.purchasableFoodTiles)) {
+					return;
+				}
+			}
+
 		} else {
 			//Train citizen
 			List<HexTile> pendingTiles = new List<HexTile> ();
@@ -939,6 +946,9 @@ public class City{
 				Debug.Log ("Assigned citizen " + citizenToAssign.name + " to tile " + pendingTiles [0].tileName + " instead of training a new citizen");
 				this.OccupyTile (pendingTiles[0], citizenToAssign);
 			} else {
+				if (pendingTiles [0] == null || pendingTiles [0].roleIntendedForTile == ROLE.UNTRAINED) {
+					Debug.Log ((pendingTiles[0] == null).ToString() + "/" + pendingTiles[0].roleIntendedForTile.ToString());
+				}
 				Debug.Log ("Train citizen :" + pendingTiles [0].tileName + " - " + pendingTiles [0].roleIntendedForTile);
 				if (this.HasEnoughResourcesForAction (GetCitizenCreationCostPerType (pendingTiles [0].roleIntendedForTile))) {
 					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).Where (x => x.age >= 16).ToList ();

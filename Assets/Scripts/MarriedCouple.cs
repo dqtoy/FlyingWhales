@@ -20,13 +20,15 @@ public class MarriedCouple {
 		this.husband = husband;
 		this.wife = wife;
 
-		if (this.wife.children.Count < 5 && this.husband.children.Count < 5) {
+
+
+		if (this.wife.children.Count < 5 && this.husband.children.Count < 5 && !this.wife.isDead && !this.husband.isDead) {
 			EventManager.Instance.onWeekEnd.AddListener(TurnActions);
 		}
 	}
 
 	protected void TurnActions(){
-		if (this.wife.children.Count < 5 && this.husband.children.Count < 5) {
+		if (this.wife.children.Count >= 5 || this.husband.children.Count >= 5 || this.wife.isDead || this.husband.isDead) {
 			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
 			return;
 		}

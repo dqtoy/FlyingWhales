@@ -264,10 +264,18 @@ public class Citizen {
 	}
 
 	protected void AttemptToMarry(){
+		List<Resource> marriageInvitationCost = new List<Resource> () {
+			new Resource (BASE_RESOURCE_TYPE.GOLD, 500)
+		};
+		if (!this.city.HasEnoughResourcesForAction (marriageInvitationCost)) {
+			return;
+		}
+
 		int chanceToMarry = Random.Range (0, 100);
 		this.citizenChances.marriageChance = 100;
 		if (chanceToMarry < this.citizenChances.marriageChance) {
 			Debug.LogError (this.name + " has started a marriage invitation event!");
+
 			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this);
 		}
 	}
