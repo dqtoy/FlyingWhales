@@ -264,10 +264,10 @@ public class Citizen {
 	}
 
 	protected void AttemptToMarry(){
-		Debug.LogError ("Attempt To Marry");
 		int chanceToMarry = Random.Range (0, 100);
 		this.citizenChances.marriageChance = 100;
 		if (chanceToMarry < this.citizenChances.marriageChance) {
+			Debug.LogError (this.name + " has started a marriage invitation event!");
 			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this);
 		}
 	}

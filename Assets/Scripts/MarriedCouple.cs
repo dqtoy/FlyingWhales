@@ -20,9 +20,9 @@ public class MarriedCouple {
 		this.husband = husband;
 		this.wife = wife;
 
-//		if (this.wife.children.Count < 5 && this.husband.children.Count < 5) {
-//			EventManager.Instance.onWeekEnd.AddListener(TurnActions);
-//		}
+		if (this.wife.children.Count < 5 && this.husband.children.Count < 5) {
+			EventManager.Instance.onWeekEnd.AddListener(TurnActions);
+		}
 	}
 
 	protected void TurnActions(){
@@ -79,6 +79,7 @@ public class MarriedCouple {
 		if (pregnancyChance < chanceForPregnancy) {
 			this.isPregnant = true;
 			this.remainingWeeksUntilBirth = 36;
+			Debug.LogError (this.husband.name + " and " + this.wife.name + " has made a baby and will give birth in 9 months.");
 		}
 	}
 
@@ -86,7 +87,7 @@ public class MarriedCouple {
 		if (this.wife.isDead) {
 			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
 			this.isPregnant = false;
-			Debug.Log ("the baby died because the mother died");
+			Debug.LogError (this.husband.name + " and " + this.wife.name + "'s baby died because the mother died");
 			return;
 		}
 
@@ -94,8 +95,9 @@ public class MarriedCouple {
 			this.remainingWeeksUntilBirth -= 1;
 		} else {
 			//Give Birth
-			MarriageManager.Instance.MakeBaby(this.husband, this.wife);
+			Citizen baby = MarriageManager.Instance.MakeBaby(this.husband, this.wife);
 			this.isPregnant = false;
+			Debug.LogError (this.husband.name + " and " + this.wife.name + " gave birth to " + baby.name);
 		}
 	}
 }

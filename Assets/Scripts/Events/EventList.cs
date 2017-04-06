@@ -26,3 +26,4 @@ public class RecruitCitizensForExpansion: UnityEvent<Expansion, Kingdom>{}
 
 //UI
 public class ForceUpdateUI: UnityEvent{}
+public class ForceUpdateEventUI: UnityEvent<GameEvent>{}

@@ -14,6 +14,7 @@ public class MapGenerator : MonoBehaviour {
 		KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.habitableTiles);
 		UIManager.Instance.UpdateKingsGrid();
 		GameManager.Instance.StartProgression();
+		CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms[0].cities[0].hexTile.gameObject);
 	}
 
 }

@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject relationshipsGO;
 	public GameObject relationshipHistoryGO;
 	public GameObject familyTreeGO;
+	public GameObject specificEventGO;
 
 	public ButtonToggle pauseBtn;
 	public ButtonToggle x1Btn;
@@ -91,7 +92,6 @@ public class UIManager : MonoBehaviour {
 	public UIGrid kingdomEventsGrid;
 	public UIGrid kingdomGovernorsGrid;
 
-
 	[Space(10)]
 	public UIGrid gameEventsOfTypeGrid;
 	public Sprite assassinationIcon;
@@ -130,11 +130,26 @@ public class UIManager : MonoBehaviour {
 	public UI2DSprite familyTreeInnerSprite;
 	public GameObject nextMarriageBtn;
 
+	[Space(10)] //Specific Event UI
+	public UILabel specificEventNameLbl;
+	public UILabel specificEventStartDateLbl;
+	public UILabel specificEventDescriptionLbl;
+	public UILabel specificEventBarTitle;
+	public UIProgressBar specificEventProgBar;
+	public UIGrid specificEventStartedByGrid;
+	public UILabel specificEventCandidatesTitleLbl;
+	public UIGrid specificEventCandidatesGrid;
+	public UILabel specificEventMiscTitleLbl;
+	public UIGrid specificEventMiscGrid;
+	public UILabel specificEventResolutionLbl;
+
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	private Citizen currentlyShowingCitizen;
 	private City currentlyShowingCity;
 	private Kingdom currentlyShowingKingdom;
+	private GameEvent currentlyShowingEvent;
+	private GameObject lastClickedEventType = null;
 
 	void Awake(){
 		Instance = this;
@@ -146,13 +161,22 @@ public class UIManager : MonoBehaviour {
 
 	void FixedUpdate(){
 		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.week.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
-		if (currentlyShowingCity != null) {
-			this.ShowCityInfo(currentlyShowingCity);
+		if (cityInfoGO.activeSelf) {
+			if (currentlyShowingCity != null) {
+				this.ShowCityInfo (currentlyShowingCity);
+			}
+		}
+
+		if (specificEventGO.activeSelf) {
+			if (currentlyShowingEvent != null) {
+				this.ShowSpecificEvent (currentlyShowingEvent);
+			}
 		}
 
 		//		if (currentlyShowingCitizen != null) {
 		//			this.ShowCitizenInfo(currentlyShowingCitizen);
 		//		}
+//		Debug.Log(IsMouseOnUI());
 	}
 
 	private void ForceUpdateUI(){
@@ -877,10 +901,13 @@ public class UIManager : MonoBehaviour {
 
 	public void ToggleEventsMenu(){
 		eventsGo.SetActive(!eventsGo.activeSelf);
+		if (!eventsGo.activeSelf) {
+			eventsOfTypeGo.SetActive(false);
+		}
 	}
-	private GameObject lastClickedEventType = null;
+
+
 	public void ShowEventsOfType(GameObject GO){
-		
 		if (eventsOfTypeGo.activeSelf) {
 			if (lastClickedEventType != null) {
 				if (lastClickedEventType == GO) {
@@ -904,6 +931,7 @@ public class UIManager : MonoBehaviour {
 					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
 					eventGO.GetComponent<EventItem>().SetEvent (currentGameEventList[j]);
 					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (currentKey));
+					eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
 					eventGO.transform.localScale = Vector3.one;
 				}
 			}
@@ -919,12 +947,67 @@ public class UIManager : MonoBehaviour {
 					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
 					eventGO.GetComponent<EventItem> ().SetEvent (gameEventsOfType [i]);
 					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (gameEventsOfType [i].eventType));
+					eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
 					eventGO.transform.localScale = Vector3.one;
 				}
 			}
 		}
 		gameEventsOfTypeGrid.enabled = true;
 		eventsOfTypeGo.SetActive (true);
+	}
+		
+	public void ShowSpecificEvent(GameEvent gameEvent){
+		specificEventNameLbl.text = gameEvent.eventType.ToString();
+		specificEventDescriptionLbl.text = gameEvent.description;
+		specificEventStartDateLbl.text = "Started " + ((MONTH)gameEvent.startMonth).ToString() + " " + gameEvent.startWeek.ToString() + ", " + gameEvent.startYear.ToString();
+
+		if (gameEvent.eventType == EVENT_TYPES.MARRIAGE_INVITATION) {
+			MarriageInvitation marriageEvent = (MarriageInvitation)gameEvent;
+
+			specificEventProgBar.value = (float)((float)marriageEvent.remainingWeeks / (float)marriageEvent.durationInWeeks);
+
+			List<Transform> children = specificEventStartedByGrid.GetChildList();
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait>().SetCitizen (marriageEvent.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
+
+			children = specificEventCandidatesGrid.GetChildList();
+
+			List<Citizen> elligibleCitizensCurrentlyShowed = new List<Citizen>();
+			for (int i = 0; i < children.Count; i++) {
+				elligibleCitizensCurrentlyShowed.Add(children [i].GetComponent<CharacterPortrait> ().citizen);
+			}
+
+			List<Citizen> additionalCitizens = marriageEvent.elligibleCitizens.Intersect (elligibleCitizensCurrentlyShowed).ToList();
+
+			if (additionalCitizens.Count > 0 || elligibleCitizensCurrentlyShowed.Count <= 0) {
+				for (int i = 0; i < children.Count; i++) {
+					Destroy (children [i].gameObject);
+				}
+
+				for (int i = 0; i < marriageEvent.elligibleCitizens.Count; i++) {
+					GameObject candidateGO = GameObject.Instantiate (characterPortraitPrefab, specificEventCandidatesGrid.transform) as GameObject;
+					candidateGO.GetComponent<CharacterPortrait> ().SetCitizen (marriageEvent.elligibleCitizens [i]);
+					candidateGO.transform.localScale = Vector3.one;
+					candidateGO.transform.position = Vector3.zero;
+				}
+				StartCoroutine (RepositionGrid (specificEventCandidatesGrid));
+			}
+		}
+
+		specificEventResolutionLbl.text = gameEvent.resolution;
+		currentlyShowingEvent = gameEvent;
+		specificEventGO.SetActive(true);
+	}
+
+	public void HideSpecificEvent(){
+		specificEventGO.SetActive(false);
 	}
 
 	internal Sprite GetSpriteForEvent(EVENT_TYPES eventType){
@@ -955,5 +1038,19 @@ public class UIManager : MonoBehaviour {
 		return assassinationIcon;
 	}
 
+
+	public bool IsMouseOnUI(){
+		if( uiCamera != null ){
+			// pos is the Vector3 representing the screen position of the input
+			Ray inputRay = uiCamera.ScreenPointToRay(Input.mousePosition);    
+			RaycastHit hit;
+
+			if( Physics.Raycast( inputRay.origin, inputRay.direction, out hit, Mathf.Infinity, LayerMask.NameToLayer( "UI" ) ) ){
+				// UI was hit, so don't allow this input to fall through to the gameplay input handler
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
