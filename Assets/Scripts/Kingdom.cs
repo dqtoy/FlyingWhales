@@ -99,24 +99,28 @@ public class Kingdom{
 			}
 		}
 
-		float expansionChance = 0f;
-		for (int i = 0; i < citiesThatCanExpand.Count; i++) {
-			List<Citizen> untrainedCitizens = citiesThatCanExpand[i].GetCitizensWithRole(ROLE.UNTRAINED).Where(x => (x.spouse != null && x.spouse.role != ROLE.GOVERNOR) && x.age >= 16).ToList();
-			allUnassignedAdultCitizens.AddRange(untrainedCitizens);
-			expansionChance += 0.5f * untrainedCitizens.Count;
-		}
-
-		float chance = Random.Range(1f, expansionChance);
-		if (chance < expansionChance) {
-			Citizen highestPrestigeCitizen = allUnassignedAdultCitizens.OrderByDescending(x => x.prestige).First();
-			Expansion newExpansionEvent = new Expansion (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, highestPrestigeCitizen);
-		}
-
-//		if (possibleTilesToExpand.Count > 0) {
-//
-//		} else {
-//			Debug.Log(this.name + " could no longer expand because there are no more unoccupied adjacent tiles.");
+//		float expansionChance = 0f;
+//		for (int i = 0; i < citiesThatCanExpand.Count; i++) {
+//			List<Citizen> untrainedCitizens = citiesThatCanExpand[i].GetCitizensWithRole(ROLE.UNTRAINED).Where(x => (x.spouse != null && x.spouse.role != ROLE.GOVERNOR) && x.age >= 16).ToList();
+//			allUnassignedAdultCitizens.AddRange(untrainedCitizens);
+//			expansionChance += 0.5f * untrainedCitizens.Count;
 //		}
+
+//		float chance = Random.Range(1f, expansionChance);
+//		if (chance < expansionChance) {
+//			Citizen highestPrestigeCitizen = allUnassignedAdultCitizens.OrderByDescending(x => x.prestige).First();
+//			Expansion newExpansionEvent = new Expansion (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, highestPrestigeCitizen);
+//		}
+
+		if (citiesThatCanExpand.Count > 0) {
+			float expansionChance = 3f;
+			float chance = Random.Range (1f, expansionChance);
+			if (chance < expansionChance) {
+				Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
+				citiesThatCanExpand[0].AssignNewGovernor();
+				Expansion newExpansionEvent = new Expansion (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, governorToLeadExpansion);
+			}
+		}
 	}
 
 	internal List<Citizen> GetAllCitizensForMarriage(Citizen citizen){

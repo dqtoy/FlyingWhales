@@ -46,31 +46,31 @@ public class KingdomManager : MonoBehaviour {
 			habitableTiles.Remove (elligibleTilesForHumans[i]);
 		}
 
-		//Get Statrting City For Elves
-		List<HexTile> cityForElves = new List<HexTile>();
-		List<HexTile> elligibleTilesForElves = new List<HexTile>();
-		for (int i = 0; i < habitableTiles.Count; i++) {
-
-			List<HexTile> neighbours = habitableTiles[i].AllNeighbours.ToList();
-			List<HexTile> tilesContainingBaseResource = new List<HexTile>();
-			for (int j = 0; j < neighbours.Count; j++) {
-				if (neighbours[j].specialResource == RESOURCE.NONE) {
-					if (Utilities.GetBaseResourceType (neighbours[j].defaultResource) == BASE_RESOURCE_TYPE.WOOD) {
-						tilesContainingBaseResource.Add(neighbours[j]);
-					}
-				} else {
-					if (Utilities.GetBaseResourceType (neighbours[j].specialResource) == BASE_RESOURCE_TYPE.WOOD) {
-						tilesContainingBaseResource.Add(neighbours[j]);
-					}
-				}
-			}
-
-			if (tilesContainingBaseResource.Count > 0) {
-				elligibleTilesForElves.Add(habitableTiles[i]);
-			}
-		}
-		cityForElves.Add (elligibleTilesForElves [Random.Range (0, elligibleTilesForElves.Count)]);
-		GenerateNewKingdom (RACE.ELVES, cityForElves, true);
+//		//Get Statrting City For Elves
+//		List<HexTile> cityForElves = new List<HexTile>();
+//		List<HexTile> elligibleTilesForElves = new List<HexTile>();
+//		for (int i = 0; i < habitableTiles.Count; i++) {
+//
+//			List<HexTile> neighbours = habitableTiles[i].AllNeighbours.ToList();
+//			List<HexTile> tilesContainingBaseResource = new List<HexTile>();
+//			for (int j = 0; j < neighbours.Count; j++) {
+//				if (neighbours[j].specialResource == RESOURCE.NONE) {
+//					if (Utilities.GetBaseResourceType (neighbours[j].defaultResource) == BASE_RESOURCE_TYPE.WOOD) {
+//						tilesContainingBaseResource.Add(neighbours[j]);
+//					}
+//				} else {
+//					if (Utilities.GetBaseResourceType (neighbours[j].specialResource) == BASE_RESOURCE_TYPE.WOOD) {
+//						tilesContainingBaseResource.Add(neighbours[j]);
+//					}
+//				}
+//			}
+//
+//			if (tilesContainingBaseResource.Count > 0) {
+//				elligibleTilesForElves.Add(habitableTiles[i]);
+//			}
+//		}
+//		cityForElves.Add (elligibleTilesForElves [Random.Range (0, elligibleTilesForElves.Count)]);
+//		GenerateNewKingdom (RACE.ELVES, cityForElves, true);
 		CreateInitialRelationshipKings ();
 	}
 
