@@ -10,73 +10,73 @@ public class CombatManager : MonoBehaviour {
 		Instance = this;
 	}
 	internal void CityBattle(City city){
-		Citizen victoriousGeneral = null;
-		Citizen friendlyGeneral = null;
-		List<Citizen> attackers = city.incomingGenerals.Where (x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE && ((General)x.assignedRole).location == city.hexTile).ToList();
-		List<Citizen> defenders = new List<Citizen>();
-		defenders.AddRange (city.incomingGenerals.Where (x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.DEFENSE && ((General)x.assignedRole).location == city.hexTile).ToList ());
-		defenders.AddRange (city.incomingGenerals.Where (x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE && ((General)x.assignedRole).location == city.hexTile && ((General)x.assignedRole).rallyPoint == city.hexTile).ToList ());
+		General victoriousGeneral = null;
+		General friendlyGeneral = null;
+		List<General> attackers = city.incomingGenerals.Where (x => x.assignedCampaign == CAMPAIGN.OFFENSE && x.location == city.hexTile).ToList();
+		List<General> defenders = new List<General>();
+		defenders.AddRange (city.incomingGenerals.Where (x => x.assignedCampaign == CAMPAIGN.DEFENSE && x.location == city.hexTile).ToList ());
+		defenders.AddRange (city.incomingGenerals.Where (x => x.assignedCampaign == CAMPAIGN.OFFENSE && x.location == city.hexTile && x.rallyPoint == city.hexTile).ToList ());
 		defenders.AddRange (city.GetAllGenerals ());
-		defenders = defenders.OrderByDescending (x => ((General)x.assignedRole).army.hp).ToList();
+		defenders = defenders.OrderByDescending (x => x.army.hp).ToList();
 		for(int i = 0; i < attackers.Count; i++){
-			Citizen attackerGeneral = attackers [i];
+			General attackerGeneral = attackers [i];
 			if(defenders.Count > 0){
-				List<Citizen> newDefenders = new List<Citizen> (defenders);
+				List<General> newDefenders = new List<General> (defenders);
 				GoToBattle (ref newDefenders, ref attackerGeneral);
 				attackers [i] = attackerGeneral;
 				defenders = newDefenders;
-				if (defenders.Count <= 0 && ((General)attackers[i].assignedRole).army.hp > 0) {
+				if (defenders.Count <= 0 && attackers[i].army.hp > 0) {
 					//CITY DEFEATED AND CONQUERED --- IF ENEMY IS STILL ALIVE, AND YOU HAVE NO GENERALS LEFT
 					victoriousGeneral = attackers[i];
-					Debug.Log (city.name + " IS DEFEATED BY " + victoriousGeneral.city.name);
+					Debug.Log (city.name + " IS DEFEATED BY " + victoriousGeneral.citizen.city.name);
 				}
 			}else{
 				if(victoriousGeneral == null){
 					victoriousGeneral = attackers [i];
 				}else{
 					friendlyGeneral = victoriousGeneral;
-					if(friendlyGeneral.city.id != attackers[i].city.id){
-						if(((General)attackers [i].assignedRole).warType == WAR_TYPE.INTERNATIONAL){
-							if (attackers [i].city.kingdom.CheckForSpecificWar(friendlyGeneral.city.kingdom)) {
+					if(friendlyGeneral.citizen.city.id != attackers[i].citizen.city.id){
+						if(attackers [i].warType == WAR_TYPE.INTERNATIONAL){
+							if (attackers [i].citizen.city.kingdom.CheckForSpecificWar(friendlyGeneral.citizen.city.kingdom)) {
 								Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
 								Battle (ref attackerGeneral, ref friendlyGeneral);
 								attackers[i] = attackerGeneral;
-								if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+								if (attackers[i].army.hp <= 0 && friendlyGeneral.army.hp <= 0) {
 									victoriousGeneral = null;
-								} else if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp > 0) {
+								} else if (attackers[i].army.hp <= 0 && friendlyGeneral.army.hp > 0) {
 									victoriousGeneral = friendlyGeneral;
-								} else if (((General)attackers[i].assignedRole).army.hp > 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+								} else if (attackers[i].army.hp > 0 && friendlyGeneral.army.hp <= 0) {
 									victoriousGeneral = attackers[i];
 								}
-								Debug.Log ("WINNER: " + victoriousGeneral.city.name);
+								Debug.Log ("WINNER: " + victoriousGeneral.citizen.city.name);
 							}
-						}else if(((General)attackers [i].assignedRole).warType == WAR_TYPE.SUCCESSION){
-							if(((General)attackers [i].assignedRole).warLeader.id != ((General)friendlyGeneral.assignedRole).warLeader.id){
-								if (((General)attackers [i].assignedRole).warLeader.SearchForSuccessionWar(((General)friendlyGeneral.assignedRole).warLeader)) {
+						}else if(attackers [i].warType == WAR_TYPE.SUCCESSION){
+							if(attackers [i].warLeader.id != friendlyGeneral.warLeader.id){
+								if (attackers [i].warLeader.SearchForSuccessionWar(friendlyGeneral.warLeader)) {
 									Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
 									Battle (ref attackerGeneral, ref friendlyGeneral);
 									attackers[i] = attackerGeneral;
-									if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+									if (attackers[i].army.hp <= 0 && friendlyGeneral.army.hp <= 0) {
 										victoriousGeneral = null;
-									} else if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp > 0) {
+									} else if (attackers[i].army.hp <= 0 && friendlyGeneral.army.hp > 0) {
 										victoriousGeneral = friendlyGeneral;
-									} else if (((General)attackers[i].assignedRole).army.hp > 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+									} else if (attackers[i].army.hp > 0 && friendlyGeneral.army.hp <= 0) {
 										victoriousGeneral = attackers[i];
 									}
-									Debug.Log ("WINNER: " + victoriousGeneral.city.name);
+									Debug.Log ("WINNER: " + victoriousGeneral.citizen.city.name);
 								}else{
-									if (attackers [i].city.kingdom.CheckForSpecificWar (friendlyGeneral.city.kingdom)) {
+									if (attackers [i].citizen.city.kingdom.CheckForSpecificWar (friendlyGeneral.citizen.city.kingdom)) {
 										Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
 										Battle (ref attackerGeneral, ref friendlyGeneral);
 										attackers[i] = attackerGeneral;
-										if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+										if (attackers[i].army.hp <= 0 && friendlyGeneral.army.hp <= 0) {
 											victoriousGeneral = null;
-										} else if (((General)attackers[i].assignedRole).army.hp <= 0 && ((General)friendlyGeneral.assignedRole).army.hp > 0) {
+										} else if (attackers[i].army.hp <= 0 && friendlyGeneral.army.hp > 0) {
 											victoriousGeneral = friendlyGeneral;
-										} else if (((General)attackers[i].assignedRole).army.hp > 0 && ((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+										} else if (attackers[i].army.hp > 0 && friendlyGeneral.army.hp <= 0) {
 											victoriousGeneral = attackers[i];
 										}
-										Debug.Log ("WINNER: " + victoriousGeneral.city.name);
+										Debug.Log ("WINNER: " + victoriousGeneral.citizen.city.name);
 									}
 								}
 							}
@@ -86,12 +86,12 @@ public class CombatManager : MonoBehaviour {
 				}
 			}
 		}
-		city.incomingGenerals.RemoveAll(x => ((General)x.assignedRole).army.hp <= 0);
+		city.incomingGenerals.RemoveAll(x => x.army.hp <= 0);
 		for(int i = 0; i < city.incomingGenerals.Count; i++){
 			if(victoriousGeneral != null){
-				if(((General)victoriousGeneral.assignedRole).warType == WAR_TYPE.INTERNATIONAL){
-					if(((General)city.incomingGenerals[i].assignedRole).warType == WAR_TYPE.INTERNATIONAL){
-						Campaign campaign = ((General)city.incomingGenerals[i].assignedRole).warLeader.campaignManager.SearchCampaignByID (((General)city.incomingGenerals[i].assignedRole).campaignID);
+				if(victoriousGeneral.warType == WAR_TYPE.INTERNATIONAL){
+					if(city.incomingGenerals[i].warType == WAR_TYPE.INTERNATIONAL){
+						Campaign campaign = city.incomingGenerals[i].warLeader.campaignManager.SearchCampaignByID (city.incomingGenerals[i].campaignID);
 						if(campaign != null){
 							campaign.leader.campaignManager.CampaignDone (campaign);
 						}
@@ -102,11 +102,11 @@ public class CombatManager : MonoBehaviour {
 
 		EventManager.Instance.onDeathArmy.Invoke ();
 		if(victoriousGeneral != null){
-			Debug.Log (city.name + " IS CONQUERED BY " + victoriousGeneral.city.name);
+			Debug.Log (city.name + " IS CONQUERED BY " + victoriousGeneral.citizen.city.name);
 //			if(((General)victoriousGeneral.assignedRole).warLeader.city.kingdom.id == city.kingdom.id){
 //				//CIVIL WAR OR SUCCESSION WAR, SEARCH FOR TARGET
 //			}
-			Campaign campaign = ((General)victoriousGeneral.assignedRole).warLeader.campaignManager.SearchCampaignByID (((General)victoriousGeneral.assignedRole).campaignID);
+			Campaign campaign = victoriousGeneral.warLeader.campaignManager.SearchCampaignByID (victoriousGeneral.campaignID);
 			if(campaign != null){
 				campaign.leader.campaignManager.CampaignDone (campaign);
 			}
@@ -122,7 +122,7 @@ public class CombatManager : MonoBehaviour {
 			}
 			city.incomingGenerals.Clear();
 			city.isDead = true;
-			ConquerCity (victoriousGeneral.city.kingdom, city);
+			ConquerCity (victoriousGeneral.citizen.city.kingdom, city);
 //			for(int i = 0; i < city.incomingGenerals.Count; i++){
 //				Campaign campaign = ((General)city.incomingGenerals[i].assignedRole).warLeader.campaignManager.SearchCampaignByID (((General)city.incomingGenerals[i].assignedRole).campaignID);
 //				campaign.leader.campaignManager.CampaignDone (campaign);
@@ -139,28 +139,28 @@ public class CombatManager : MonoBehaviour {
 //			ConquerCity (victoriousGeneral.city.kingdomTile, this.visitingGenerals);
 		}
 	}
-	internal void GoToBattle(ref List<Citizen> friendlyGenerals, ref Citizen enemyGeneral){
-		List<Citizen> deadFriendlies = new List<Citizen> ();
+	internal void GoToBattle(ref List<General> friendlyGenerals, ref General enemyGeneral){
+		List<General> deadFriendlies = new List<General> ();
 
-		Citizen friendlyGeneral = null;
+		General friendlyGeneral = null;
 
 		for(int j = 0; j < friendlyGenerals.Count; j++){
 
 			friendlyGeneral = friendlyGenerals [j];
 
 			Battle (ref enemyGeneral, ref friendlyGeneral);
-			if (((General)friendlyGeneral.assignedRole).army.hp <= 0) {
+			if (friendlyGeneral.army.hp <= 0) {
 				friendlyGenerals.Remove (friendlyGeneral);
 				j--;
 			}
-			if(((General)enemyGeneral.assignedRole).army.hp <= 0){
+			if(enemyGeneral.army.hp <= 0){
 				break;
 			}
 		}
 	}
-	internal void DeathByBattle(Citizen general, City city){
+	internal void DeathByBattle(General general, City city){
 		city.incomingGenerals.Remove (general);
-		Campaign campaign = ((General)general.assignedRole).warLeader.campaignManager.SearchCampaignByID (((General)general.assignedRole).campaignID);
+		Campaign campaign = general.warLeader.campaignManager.SearchCampaignByID (general.campaignID);
 		if(campaign != null){
 			campaign.registeredGenerals.Remove (general);
 			if(campaign.registeredGenerals.Count <= 0){
@@ -171,46 +171,46 @@ public class CombatManager : MonoBehaviour {
 	internal void ConquerCity(Kingdom conqueror, City city){
 		conqueror.ConquerCity(city);
 	}
-	internal void Battle(ref Citizen general1, ref Citizen general2){
-		Debug.Log ("BATTLE: (" + general1.city.name + ") " + general1.name + " and (" + general2.city.name + ") " + general2.name);
-		Debug.Log ("enemy general army: " + ((General)general1.assignedRole).army.hp);
-		Debug.Log ("friendly general army: " + ((General)general2.assignedRole).army.hp);
+	internal void Battle(ref General general1, ref General general2){
+		Debug.Log ("BATTLE: (" + general1.citizen.city.name + ") " + general1.citizen.name + " and (" + general2.citizen.city.name + ") " + general2.citizen.name);
+		Debug.Log ("enemy general army: " + general1.army.hp);
+		Debug.Log ("friendly general army: " + general2.army.hp);
 
 		float general1HPmultiplier = 1f;
 		float general2HPmultiplier = 1f;
 
-		if(((General)general1.assignedRole).assignedCampaign == CAMPAIGN.DEFENSE){
+		if(general1.assignedCampaign == CAMPAIGN.DEFENSE){
 			general1HPmultiplier = 1.20f; //Utilities.defenseBuff
 		}
-		if(((General)general2.assignedRole).assignedCampaign == CAMPAIGN.DEFENSE){
+		if(general2.assignedCampaign == CAMPAIGN.DEFENSE){
 			general2HPmultiplier = 1.20f; //Utilities.defenseBuff
 		}
 
-		int general1TotalHP = (int)(((General)general1.assignedRole).GetArmyHP() * general1HPmultiplier);
-		int general2TotalHP = (int)(((General)general2.assignedRole).GetArmyHP() * general2HPmultiplier);
+		int general1TotalHP = (int)(general1.GetArmyHP() * general1HPmultiplier);
+		int general2TotalHP = (int)(general2.GetArmyHP() * general2HPmultiplier);
 
 		if(general1TotalHP > general2TotalHP){
-			((General)general1.assignedRole).army.hp -= ((General)general2.assignedRole).army.hp;
-			((General)general2.assignedRole).army.hp = 0;
+			general1.army.hp -= general2.army.hp;
+			general2.army.hp = 0;
 		}else{
-			((General)general2.assignedRole).army.hp -= ((General)general1.assignedRole).army.hp;
-			((General)general1.assignedRole).army.hp = 0;
+			general2.army.hp -= general1.army.hp;
+			general1.army.hp = 0;
 		}
-		Debug.Log ("RESULTS: " + general1.name + " army hp left: " + ((General)general1.assignedRole).army.hp + "\n" + general2.name + " army hp left: " + ((General)general2.assignedRole).army.hp);
+		Debug.Log ("RESULTS: " + general1.citizen.name + " army hp left: " + general1.army.hp + "\n" + general2.citizen.name + " army hp left: " + general2.army.hp);
 	}
 
-	internal void BattleMidway(Citizen general1, Citizen general2){
+	internal void BattleMidway(General general1, General general2){
 		//MID WAY BATTLE IF supported is not the same
 		Debug.Log("BATTLE MIDWAY!");
 
 		Battle(ref general1, ref general2);
 
-		if(((General)general1.assignedRole).army.hp <= 0){
-			general1.Death(DEATH_REASONS.BATTLE);
+		if(general1.army.hp <= 0){
+			general1.citizen.Death(DEATH_REASONS.BATTLE);
 		}
 
-		if(((General)general2.assignedRole).army.hp <= 0){
-			general2.Death(DEATH_REASONS.BATTLE);
+		if(general2.army.hp <= 0){
+			general2.citizen.Death(DEATH_REASONS.BATTLE);
 		}
 	}
 }

@@ -83,16 +83,6 @@ public class SuccessionPortrait : MonoBehaviour {
 						}
 					}
 				}
-				for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-					if(KingdomManager.Instance.allKingdoms[i].id != this.kingdom.id){
-						if (KingdomManager.Instance.allKingdoms [i].king.id != citizen.id) {
-							if (KingdomManager.Instance.allKingdoms [i].king.supportedCitizen == null) {
-								supporterCitizens.Add (KingdomManager.Instance.allKingdoms [i].king);
-							}
-						}
-					}
-
-				}
 			}else{
 				for(int i = 0; i < this.kingdom.cities.Count; i++){
 					for(int j = 0; j < this.kingdom.cities[i].citizens.Count; j++){
@@ -103,17 +93,6 @@ public class SuccessionPortrait : MonoBehaviour {
 										supporterCitizens.Add (this.kingdom.cities [i].citizens [j]);
 										break;
 									}
-								}
-							}
-						}
-					}
-				}
-				for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-					if (KingdomManager.Instance.allKingdoms [i].id != this.kingdom.id) {
-						if (KingdomManager.Instance.allKingdoms [i].king.id != citizen.id) {
-							if (KingdomManager.Instance.allKingdoms [i].king.supportedCitizen != null) {
-								if (KingdomManager.Instance.allKingdoms [i].king.supportedCitizen.id == citizen.id) {
-									supporterCitizens.Add (KingdomManager.Instance.allKingdoms [i].king);
 								}
 							}
 						}
@@ -135,13 +114,13 @@ public class SuccessionPortrait : MonoBehaviour {
 					}
 				}
 			}
-			for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-				if (KingdomManager.Instance.allKingdoms [i].id != this.kingdom.id) {
-					if (KingdomManager.Instance.allKingdoms [i].king.id != citizen.id) {
-						if (KingdomManager.Instance.allKingdoms [i].king.supportedCitizen != null) {
-							if (KingdomManager.Instance.allKingdoms [i].king.supportedCitizen.id == citizen.id) {
-								supporterCitizens.Add (KingdomManager.Instance.allKingdoms [i].king);
-							}
+		}
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			if (KingdomManager.Instance.allKingdoms [i].id != this.kingdom.id) {
+				if (KingdomManager.Instance.allKingdoms [i].king.id != citizen.id) {
+					if (KingdomManager.Instance.allKingdoms [i].king.supportedCitizen != null) {
+						if (KingdomManager.Instance.allKingdoms [i].king.supportedCitizen.id == citizen.id) {
+							supporterCitizens.Add (KingdomManager.Instance.allKingdoms [i].king);
 						}
 					}
 				}

@@ -48,7 +48,7 @@ public class CampaignManager {
 						campaignType = CAMPAIGN.DEFENSE;
 						List<City> defenseCities = this.defenseWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
 						if(defenseCities.Count > 0){
-							defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Min(y => (int?)((General)y.assignedRole).daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+							defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
 							int neededArmy = defenseCities [0].GetTotalAttackerStrength ();
 							if(defenseCities[0].incomingGenerals.Count <= 0){
 								neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
@@ -86,7 +86,7 @@ public class CampaignManager {
 				}else{
 					List<City> defenseCities = this.defenseWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
 					if(defenseCities.Count > 0){
-						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Min(y => (int?)((General)y.assignedRole).daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
 						int neededArmy = defenseCities [0].GetTotalAttackerStrength ();
 						if(defenseCities[0].incomingGenerals.Count <= 0){
 							neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
@@ -241,15 +241,15 @@ public class CampaignManager {
 		doneCampaign = null;
 		CreateCampaign ();
 	}
-	internal void UnregisterGenerals(Citizen general, Campaign chosenCampaign){
-		((General)general.assignedRole).targetLocation = null;
-		((General)general.assignedRole).warLeader = null;
-		((General)general.assignedRole).campaignID = 0;
-		((General)general.assignedRole).assignedCampaign = CAMPAIGN.NONE;
-		((General)general.assignedRole).targetCity = null;
-		((General)general.assignedRole).rallyPoint = null;
-		((General)general.assignedRole).daysBeforeArrival = 0;
-		((General)general.assignedRole).RerouteToHome();
+	internal void UnregisterGenerals(General general, Campaign chosenCampaign){
+		general.targetLocation = null;
+		general.warLeader = null;
+		general.campaignID = 0;
+		general.assignedCampaign = CAMPAIGN.NONE;
+		general.targetCity = null;
+		general.rallyPoint = null;
+		general.daysBeforeArrival = 0;
+		general.RerouteToHome();
 
 		chosenCampaign.registeredGenerals.Remove (general);
 	}
@@ -476,7 +476,7 @@ public class CampaignManager {
 	}
 	internal void AttackCityNow(Campaign chosenCampaign){
 		for(int i = 0; i < chosenCampaign.registeredGenerals.Count; i++){
-			((General)chosenCampaign.registeredGenerals[i].assignedRole).targetLocation = chosenCampaign.targetCity.hexTile;
+			chosenCampaign.registeredGenerals[i].targetLocation = chosenCampaign.targetCity.hexTile;
 		}
 
 		//remove from rally point
@@ -491,7 +491,7 @@ public class CampaignManager {
 	}
 	internal bool AreAllGeneralsOnRallyPoint(Campaign chosenCampaign){
 		for(int i = 0; i < chosenCampaign.registeredGenerals.Count; i++){
-			if(((General)chosenCampaign.registeredGenerals[i].assignedRole).location != chosenCampaign.rallyPoint){
+			if(chosenCampaign.registeredGenerals[i].location != chosenCampaign.rallyPoint){
 				return false;
 			}
 		}
