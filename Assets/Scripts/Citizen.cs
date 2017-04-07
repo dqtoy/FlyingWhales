@@ -964,7 +964,8 @@ public class Citizen {
 		}
 
 		if(chance < value){
-			Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king);
+			
+			Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king, ASSASSINATION_TRIGGER_REASONS.DETERIORATED);
 			EventManager.Instance.AddEventToDictionary(assassination);
 		}
 	}

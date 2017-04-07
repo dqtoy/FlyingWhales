@@ -99,7 +99,7 @@ public class StateVisit : GameEvent {
 				}
 				if(chance < value){
 					//ASSASSINATION EVENT
-					Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.otherKingdoms[i].king, this.visitor);
+					Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.otherKingdoms[i].king, this.visitor, ASSASSINATION_TRIGGER_REASONS.STATE_VISIT);
 					EventManager.Instance.AddEventToDictionary(assassination);
 				}
 			}

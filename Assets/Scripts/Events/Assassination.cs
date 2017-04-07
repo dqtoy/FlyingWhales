@@ -9,7 +9,7 @@ public class Assassination : GameEvent {
 	public List<Citizen> guardians;
 	public Citizen spy;
 
-	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen) : base (startWeek, startMonth, startYear, startedBy){
+	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, ASSASSINATION_TRIGGER_REASONS triggerReason = ASSASSINATION_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " is planning on assassinating " + targetCitizen.name + ".";
@@ -21,7 +21,16 @@ public class Assassination : GameEvent {
 		this.guardians = new List<Citizen>();
 		this.spy = GetSpy (assassinKingdom);
 		if(this.spy != null){
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name, HISTORY_IDENTIFIER.NONE));
+			if(triggerReason == ASSASSINATION_TRIGGER_REASONS.DETERIORATED){
+				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " because relationship has declined.", HISTORY_IDENTIFIER.NONE));
+
+			}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.STATE_VISIT){
+				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " because " + targetCitizen.city.kingdom.name + " is visiting a kingdom which he/she considers an enemy.", HISTORY_IDENTIFIER.NONE));
+
+			}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.NONE){
+				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name, HISTORY_IDENTIFIER.NONE));
+
+			}
 		}
 		TriggerGuardian ();
 
@@ -166,15 +175,71 @@ public class Assassination : GameEvent {
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = GetActualChancePercentage (this.spy);
 
+		bool hasBeenDiscovered = false;
+		bool hasDeflected = false;
+		bool hasAssassinated = false;
+		Citizen kingToBlame = null;
 		if(chance < value){
-			AssassinateTarget ();
-			SpyDiscovery ();
+			AssassinateTarget (ref hasAssassinated);
+			SpyDiscovery (ref hasBeenDiscovered, ref hasDeflected, ref kingToBlame);
+			if (hasAssassinated && hasBeenDiscovered) {
+				if (hasDeflected) {
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this.targetCitizen.name + ". "
+					+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
+				} else {
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this.targetCitizen.name + ". "
+					+ this.spy.name + "'s actions were discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
+				}
+
+			} else if (!hasAssassinated && hasBeenDiscovered) {
+				if (hasDeflected) {
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+					+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
+				} else {
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+					+ this.spy.name + "'s actions were discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
+				}
+			} else if (hasAssassinated && !hasBeenDiscovered) {
+				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this.targetCitizen.name + ". "
+				+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
+			} else if (!hasAssassinated && !hasBeenDiscovered) {
+				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+					+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
+			}
 		}else{
-			SpyDiscovery ();
+			SpyDiscovery (ref hasBeenDiscovered, ref hasDeflected, ref kingToBlame);
 			int dieSpy = UnityEngine.Random.Range (0, 100);
 			if(dieSpy < 5){
 				this.spy.Death (DEATH_REASONS.TREACHERY);
 				Debug.Log (this.spy.name + " HAS DIED!");
+
+				if (hasBeenDiscovered) {
+					if (hasDeflected) {
+						this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+							+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " died.", HISTORY_IDENTIFIER.NONE));
+					} else {
+						this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+							+ this.spy.name + "'s actions were discovered. " + this.spy.name + " died.", HISTORY_IDENTIFIER.NONE));
+					}
+
+				}else{
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+						+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " died.", HISTORY_IDENTIFIER.NONE));
+				}
+			}
+
+			if (hasBeenDiscovered) {
+				if (hasDeflected) {
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+						+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
+				} else {
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+						+ this.spy.name + "'s actions were discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
+				}
+
+			}else{
+				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+					+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 			}
 		}
 
@@ -196,12 +261,14 @@ public class Assassination : GameEvent {
 		value -= guardianPercent;
 		return value;
 	}
-	private void AssassinateTarget(){
+	private void AssassinateTarget(ref bool hasAssassinated){
 		if(!targetCitizen.isDead){
 			this.targetCitizen.Death (DEATH_REASONS.ASSASSINATION);
+			hasAssassinated = true;
 		}
+		hasAssassinated = false;
 	}
-	private void SpyDiscovery(){
+	private void SpyDiscovery(ref bool hasBeenDiscovered, ref bool hasDeflected, ref Citizen kingToBlame){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 20;
 		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
@@ -209,11 +276,14 @@ public class Assassination : GameEvent {
 		}
 
 		if(chance < value){
+			hasBeenDiscovered = true;
 			if(this.spy.behaviorTraits.Contains(BEHAVIOR_TRAIT.SCHEMING)){
 				int deflectChance = UnityEngine.Random.Range (0, 100);
 				if(deflectChance < 35){
 					Kingdom kingdomToBlame = GetRandomKingdomToBlame ();
 					if(kingdomToBlame != null){
+						hasDeflected = true;
+						kingToBlame = kingdomToBlame.king;
 						RelationshipKings relationship = this.targetCitizen.city.kingdom.king.SearchRelationshipByID (kingdomToBlame.king.id);
 						relationship.AdjustLikeness (-15);
 					}else{
