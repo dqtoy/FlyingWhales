@@ -17,6 +17,10 @@ public class JoinWar : GameEvent {
 		this.envoyToSend = envoyToSend;
 		this.kingdomToAttack = kingdomToAttack;
 
+		if(this.envoyToSend != null){
+			this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.startedBy.name + " sent " + this.envoyToSend.citizen.name
+			+ " to " + candidateForAlliance.name + " to persuade him/her to join his/her Invasion Plan against " + this.kingdomToAttack.king.name, HISTORY_IDENTIFIER.NONE));
+		}
 		this.candidateForAlliance.city.hexTile.AddEventOnTile(this);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -60,6 +64,8 @@ public class JoinWar : GameEvent {
 					this.startedBy.GetRelationshipWithCitizen(this.candidateForAlliance).AdjustLikeness(5);
 					InvasionPlan newInvasionPlan = new InvasionPlan(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
 						this.candidateForAlliance, this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
+					EventManager.Instance.AddEventToDictionary (newInvasionPlan);
+
 				}
 				this.DoneEvent();
 			}

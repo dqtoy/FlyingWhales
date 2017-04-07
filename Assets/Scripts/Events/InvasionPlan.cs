@@ -8,7 +8,7 @@ public class InvasionPlan : GameEvent {
 	public Kingdom sourceKingdom;
 	public Kingdom targetKingdom;
 
-	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom) : base (startWeek, startMonth, startYear, startedBy){
+	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom, INVASION_TRIGGER_REASONS reason = INVASION_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
@@ -17,6 +17,20 @@ public class InvasionPlan : GameEvent {
 		this.sourceKingdom = sourceKingdom;
 		this.targetKingdom = targetKingdom;
 
+		if(reason == INVASION_TRIGGER_REASONS.DISCOVERING_A){
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + " after discovering Assassination.", HISTORY_IDENTIFIER.NONE));
+
+		}else if(reason == INVASION_TRIGGER_REASONS.DISCOVERING_IP){
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + " after discovering Invasion Plan.", HISTORY_IDENTIFIER.NONE));
+
+		}else if(reason == INVASION_TRIGGER_REASONS.NONE){
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + ".", HISTORY_IDENTIFIER.NONE));
+
+		}else if(reason == INVASION_TRIGGER_REASONS.STATE_VISIT){
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + " after the failure of State Visit.", HISTORY_IDENTIFIER.NONE));
+		}else{
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + " in response to " + reason.ToString() + ".", HISTORY_IDENTIFIER.NONE));
+		}
 		this.sourceKingdom.cities[0].hexTile.AddEventOnTile(this);
 		this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
 

@@ -15,6 +15,7 @@ public class PowerGrab : GameEvent {
 		this.remainingWeeks = this.durationInWeeks;
 		this.kingToOverthrow = this.startedBy.city.kingdom.king;
 
+		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started gathering influence for his/her claim as next in line to the " + this.kingToOverthrow.city.kingdom.name + " throne.", HISTORY_IDENTIFIER.NONE));
 		this.kingToOverthrow.city.hexTile.AddEventOnTile(this);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);

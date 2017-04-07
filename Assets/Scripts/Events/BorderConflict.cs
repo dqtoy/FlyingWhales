@@ -108,8 +108,8 @@ public class BorderConflict : GameEvent {
 			RelationshipKings relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
 			RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
 
-			relationship1.AdjustLikeness (-15);
-			relationship2.AdjustLikeness (-15);
+			relationship1.AdjustLikeness (-15, EVENT_TYPES.BORDER_CONFLICT);
+			relationship2.AdjustLikeness (-15, EVENT_TYPES.BORDER_CONFLICT);
 
 			DoneEvent ();
 		}else if(this.tension <= 0){

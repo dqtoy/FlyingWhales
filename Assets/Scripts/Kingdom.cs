@@ -183,7 +183,7 @@ public class Kingdom{
 			newKing.assignedRole = null;
 			newKing.isKing = true;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
- 
+			newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 			this.king = newKing;
 			this.king.CreateInitialRelationshipsToKings ();
 			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
@@ -206,6 +206,8 @@ public class Kingdom{
 		newKing.assignedRole = null;
 		newKing.isKing = true;
 //		KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+
 		this.king = newKing;
 		this.king.CreateInitialRelationshipsToKings ();
 		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);

@@ -21,14 +21,20 @@ public class Assassination : GameEvent {
 		this.guardians = new List<Citizen>();
 		this.spy = GetSpy (assassinKingdom);
 		if(this.spy != null){
-			if(triggerReason == ASSASSINATION_TRIGGER_REASONS.DETERIORATED){
-				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " because relationship has declined.", HISTORY_IDENTIFIER.NONE));
+			if(triggerReason == ASSASSINATION_TRIGGER_REASONS.DISCOVERING_A){
+				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after discovering Assassination.", HISTORY_IDENTIFIER.NONE));
 
-			}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.STATE_VISIT){
+			}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.DISCOVERING_IP){
+				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after discovering Invasion Plan.", HISTORY_IDENTIFIER.NONE));
+
+			}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.STATE_VISITING){
 				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " because " + targetCitizen.city.kingdom.name + " is visiting a kingdom which he/she considers an enemy.", HISTORY_IDENTIFIER.NONE));
 
 			}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.NONE){
-				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name, HISTORY_IDENTIFIER.NONE));
+				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+
+			}else{
+				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after relationship deterioration due to " + triggerReason.ToString() + ".", HISTORY_IDENTIFIER.NONE));
 
 			}
 		}
@@ -285,18 +291,18 @@ public class Assassination : GameEvent {
 						hasDeflected = true;
 						kingToBlame = kingdomToBlame.king;
 						RelationshipKings relationship = this.targetCitizen.city.kingdom.king.SearchRelationshipByID (kingdomToBlame.king.id);
-						relationship.AdjustLikeness (-15);
+						relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
 					}else{
 						RelationshipKings relationship = this.targetCitizen.city.kingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-						relationship.AdjustLikeness (-15);
+						relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
 					}
 				}else{
 					RelationshipKings relationship = this.targetCitizen.city.kingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-					relationship.AdjustLikeness (-15);
+					relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
 				}
 			}else{
 				RelationshipKings relationship = this.targetCitizen.city.kingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-				relationship.AdjustLikeness (-15);
+				relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
 			}
 		}
 	}
