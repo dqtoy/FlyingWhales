@@ -71,9 +71,9 @@ public class City{
 
 	public City(HexTile hexTile, Kingdom kingdom){
 		this.id = Utilities.SetID(this);
-		this.name = "City" + this.id.ToString();
 		this.hexTile = hexTile;
 		this.kingdom = kingdom;
+		this.name = RandomNameGenerator.Instance.GenerateCityName(this.kingdom.race);
 		this.governor = null;
 		this.ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<Citizen> ();
@@ -203,6 +203,9 @@ public class City{
 		Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 		Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
+		father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
+		mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
+
 		king.role = ROLE.KING;
 		King job = new King (king);
 		king.assignedRole = job;
@@ -305,6 +308,9 @@ public class City{
 		Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 		Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
+		father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
+		mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
+
 		governor.isGovernor = true;
 		governor.role = ROLE.GOVERNOR;
 		Governor job = new Governor (governor);
@@ -404,6 +410,9 @@ public class City{
 		Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 		Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
+		father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
+		mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
+
 		general.role = ROLE.GENERAL;
 		general.assignedRole = new General (general);
 		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
@@ -453,6 +462,9 @@ public class City{
 			Citizen producer = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
 			Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 			Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
+
+			father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
+			mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
 			producer.AssignRole (ROLE.FOODIE);
 			father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
@@ -506,6 +518,9 @@ public class City{
 			Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 			Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
+			father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
+			mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
+
 			gatherer.AssignRole (ROLE.GATHERER);
 			father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
 			mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
@@ -558,6 +573,9 @@ public class City{
 			Citizen normal = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
 			Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 			Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
+
+			father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
+			mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
 			father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
 			mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);

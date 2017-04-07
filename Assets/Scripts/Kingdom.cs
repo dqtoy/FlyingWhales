@@ -25,8 +25,8 @@ public class Kingdom{
 
 	public Kingdom(RACE race, List<HexTile> cities){
 		this.id = Utilities.SetID(this);
-		this.name = "Kingdom" + this.id.ToString();
 		this.race = race;
+		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
 		this.successionLine = new List<Citizen>();
 		this.pretenders = new List<Citizen> ();
