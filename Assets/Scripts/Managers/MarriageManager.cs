@@ -72,6 +72,8 @@ public class MarriageManager : MonoBehaviour {
 		//		wife.loyalLord = husband.kingdom.assignedLord;
 		//		husband.kingdom.royaltyList.allRoyalties.Add(wife);
 		//		wife.kingdom.royaltyList.allRoyalties.Remove(wife);
+		citizen1.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, citizen1.name + " married " + citizen2.name + ".", HISTORY_IDENTIFIER.NONE));
+		citizen2.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, citizen2.name + " married " + citizen1.name + ".", HISTORY_IDENTIFIER.NONE));
 
 		if (citizen1.gender == GENDER.MALE) {
 			this.allMarriedCouples.Add (new MarriedCouple (citizen1, citizen2));
@@ -85,8 +87,7 @@ public class MarriageManager : MonoBehaviour {
 			}
 		}
 
-		citizen1.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, citizen1.name + " married" + citizen2.name + ".", HISTORY_IDENTIFIER.NONE));
-		citizen2.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, citizen2.name + " married" + citizen1.name + ".", HISTORY_IDENTIFIER.NONE));
+
 
 	}
 

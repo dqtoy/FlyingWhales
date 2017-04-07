@@ -44,7 +44,7 @@ public class GameEvent {
 		if(this.startedBy != null){
 			this.startedByKingdom = startedBy.city.kingdom;
 		}
-		Debug.LogError("New Event was created!");
+		Debug.LogError("New Event was created! " + this.eventType.ToString());
 	}
 
 	internal virtual void PerformAction(){}

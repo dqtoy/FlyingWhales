@@ -222,15 +222,18 @@ public class City{
 
 		this.citizens.Remove(father);
 		this.citizens.Remove(mother);
+
+		father.AddChild (this.kingdom.king);
+		mother.AddChild (this.kingdom.king);
+		king.AddParents(father, mother);
+
 		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
 		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
 		this.kingdom.king.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - this.kingdom.king.age));
 
 		king.isBusy = true;
 
-		father.AddChild (this.kingdom.king);
-		mother.AddChild (this.kingdom.king);
-		king.AddParents(father, mother);
+
 		MarriageManager.Instance.Marry(father, mother);
 
 		int siblingsChance = UnityEngine.Random.Range (0, 100);
@@ -317,6 +320,10 @@ public class City{
 		governor.assignedRole = job;
 		job.SetOwnedCity(this);
 
+		father.AddChild (governor);
+		mother.AddChild (governor);
+		governor.AddParents(father, mother);
+
 		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
 		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
 		governor.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - governor.age));
@@ -326,9 +333,7 @@ public class City{
 		this.citizens.Remove(father);
 		this.citizens.Remove(mother);
 
-		father.AddChild (governor);
-		mother.AddChild (governor);
-		governor.AddParents(father, mother);
+
 		MarriageManager.Instance.Marry(father, mother);
 
 		governor.isBusy = true;
@@ -415,6 +420,11 @@ public class City{
 
 		general.role = ROLE.GENERAL;
 		general.assignedRole = new General (general);
+
+		father.AddChild (general);
+		mother.AddChild (general);
+		general.AddParents(father, mother);
+
 		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
 		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
 		general.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - general.age));
@@ -424,9 +434,7 @@ public class City{
 		this.citizens.Remove(father);
 		this.citizens.Remove(mother);
 
-		father.AddChild (general);
-		mother.AddChild (general);
-		general.AddParents(father, mother);
+
 		MarriageManager.Instance.Marry(father, mother);
 
 		int spouseChance = UnityEngine.Random.Range (0, 2);
@@ -467,6 +475,11 @@ public class City{
 			mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
 			producer.AssignRole (ROLE.FOODIE);
+
+			father.AddChild (producer);
+			mother.AddChild (producer);
+			producer.AddParents(father, mother);
+
 			father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
 			mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
 			producer.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - producer.age));
@@ -476,9 +489,6 @@ public class City{
 			this.citizens.Remove(father);
 			this.citizens.Remove(mother);
 
-			father.AddChild (producer);
-			mother.AddChild (producer);
-			producer.AddParents(father, mother);
 			MarriageManager.Instance.Marry(father, mother);
 
 			int spouseChance = UnityEngine.Random.Range (0, 2);
@@ -522,6 +532,11 @@ public class City{
 			mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
 			gatherer.AssignRole (ROLE.GATHERER);
+
+			father.AddChild (gatherer);
+			mother.AddChild (gatherer);
+			gatherer.AddParents(father, mother);
+
 			father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
 			mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
 			gatherer.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - gatherer.age));
@@ -531,9 +546,7 @@ public class City{
 			this.citizens.Remove(father);
 			this.citizens.Remove(mother);
 
-			father.AddChild (gatherer);
-			mother.AddChild (gatherer);
-			gatherer.AddParents(father, mother);
+		
 			MarriageManager.Instance.Marry(father, mother);
 
 			int spouseChance = UnityEngine.Random.Range (0, 2);
@@ -577,6 +590,10 @@ public class City{
 			father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
 			mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
+			father.AddChild (normal);
+			mother.AddChild (normal);
+			normal.AddParents(father, mother);
+
 			father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
 			mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
 			normal.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - normal.age));
@@ -586,9 +603,7 @@ public class City{
 			this.citizens.Remove(father);
 			this.citizens.Remove(mother);
 
-			father.AddChild (normal);
-			mother.AddChild (normal);
-			normal.AddParents(father, mother);
+
 			MarriageManager.Instance.Marry(father, mother);
 
 			int spouseChance = UnityEngine.Random.Range (0, 2);

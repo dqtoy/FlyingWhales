@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject relationshipHistoryGO;
 	public GameObject familyTreeGO;
 	public GameObject specificEventGO;
+	public GameObject citizenHistoryGO;
 
 	public ButtonToggle pauseBtn;
 	public ButtonToggle x1Btn;
@@ -48,6 +49,7 @@ public class UIManager : MonoBehaviour {
 	public UILabel citizenRoleLbl;
 	public UILabel citizenPrestigeLbl;
 	public UIGrid citizenTraitsGrid;
+	public UIGrid citizenHistoryGrid;
 	public GameObject kingSpecificGO;
 	public ButtonToggle relationshipsBtn;
 	public ButtonToggle familyTreeBtn;
@@ -362,6 +364,29 @@ public class UIManager : MonoBehaviour {
 		relationshipHistoryGO.SetActive(false);
 		citizenInfoSuccessionGO.SetActive(false);
 	}
+	public void ShowCitizenHistory(){
+		if(this.currentlyShowingCitizen == null){
+			return;
+		}
+
+		List<Transform> children = this.citizenHistoryGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		for(int i = 0; i < this.currentlyShowingCitizen.history.Count; i++){
+			GameObject citizenGO = GameObject.Instantiate (this.historyPortraitPrefab, this.citizenHistoryGrid.transform) as GameObject;
+			citizenGO.GetComponent<HistoryPortrait> ().SetHistory (this.currentlyShowingCitizen.history[i]);
+			citizenGO.transform.localScale = Vector3.one;
+			citizenGO.transform.localPosition = Vector3.zero;
+		}
+
+		StartCoroutine (RepositionGrid (this.citizenHistoryGrid));
+		this.citizenHistoryGO.SetActive (true);
+	}
+	public void HideCitizenHistory(){
+		this.citizenHistoryGO.SetActive (false);
+	}
 
 	public void ShowCityInfo(City cityToShow, bool forceUpdate = false){
 		if(cityToShow == null){
@@ -592,17 +617,22 @@ public class UIManager : MonoBehaviour {
 			if(eventKeys[i] == EVENT_TYPES.BORDER_CONFLICT){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((BorderConflict)EventManager.Instance.allEvents[eventKeys[i]][j]).kingdom1.id == this.currentlyShowingKingdom.id || ((BorderConflict)EventManager.Instance.allEvents[eventKeys[i]][j]).kingdom2.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if(EventManager.Instance.allEvents[eventKeys[i]][j] is BorderConflict){
+							if(((BorderConflict)EventManager.Instance.allEvents[eventKeys[i]][j]).kingdom1.id == this.currentlyShowingKingdom.id || ((BorderConflict)EventManager.Instance.allEvents[eventKeys[i]][j]).kingdom2.id == this.currentlyShowingKingdom.id){
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
+
 					}
 
 				}
 			}else if(eventKeys[i] == EVENT_TYPES.STATE_VISIT){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((StateVisit)EventManager.Instance.allEvents[eventKeys[i]][j]).inviterKingdom.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is StateVisit) {
+							if (((StateVisit)EventManager.Instance.allEvents [eventKeys [i]] [j]).inviterKingdom.id == this.currentlyShowingKingdom.id) {
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
 					}
 
@@ -610,8 +640,10 @@ public class UIManager : MonoBehaviour {
 			}else if(eventKeys[i] == EVENT_TYPES.ASSASSINATION){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((Assassination)EventManager.Instance.allEvents[eventKeys[i]][j]).targetCitizen.city.kingdom.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Assassination) {
+							if (((Assassination)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetCitizen.city.kingdom.id == this.currentlyShowingKingdom.id) {
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
 					}
 
@@ -619,8 +651,10 @@ public class UIManager : MonoBehaviour {
 			}else if(eventKeys[i] == EVENT_TYPES.ESPIONAGE){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((Espionage)EventManager.Instance.allEvents[eventKeys[i]][j]).targetKingdom.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Espionage) {
+							if (((Espionage)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetKingdom.id == this.currentlyShowingKingdom.id) {
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
 					}
 
@@ -628,16 +662,20 @@ public class UIManager : MonoBehaviour {
 			}else if(eventKeys[i] == EVENT_TYPES.RAID){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((Raid)EventManager.Instance.allEvents[eventKeys[i]][j]).raidedCity.kingdom.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Raid) {
+							if (((Raid)EventManager.Instance.allEvents [eventKeys [i]] [j]).raidedCity.kingdom.id == this.currentlyShowingKingdom.id) {
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
 					}
 				}
 			}else if(eventKeys[i] == EVENT_TYPES.INVASION_PLAN){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((InvasionPlan)EventManager.Instance.allEvents[eventKeys[i]][j]).targetKingdom.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is InvasionPlan) {
+							if (((InvasionPlan)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetKingdom.id == this.currentlyShowingKingdom.id) {
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
 					}
 
@@ -645,8 +683,10 @@ public class UIManager : MonoBehaviour {
 			}else if(eventKeys[i] == EVENT_TYPES.MILITARIZATION){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((Militarization)EventManager.Instance.allEvents[eventKeys[i]][j]).startedByKingdom.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Militarization) {
+							if (((Militarization)EventManager.Instance.allEvents [eventKeys [i]] [j]).startedByKingdom.id == this.currentlyShowingKingdom.id) {
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
 					}
 
@@ -654,8 +694,10 @@ public class UIManager : MonoBehaviour {
 			}else if(eventKeys[i] == EVENT_TYPES.JOIN_WAR_REQUEST){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((JoinWar)EventManager.Instance.allEvents[eventKeys[i]][j]).candidateForAlliance.city.kingdom.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is JoinWar) {
+							if (((JoinWar)EventManager.Instance.allEvents [eventKeys [i]] [j]).candidateForAlliance.city.kingdom.id == this.currentlyShowingKingdom.id) {
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
 					}
 
@@ -663,8 +705,10 @@ public class UIManager : MonoBehaviour {
 			}else if(eventKeys[i] == EVENT_TYPES.POWER_GRAB){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((PowerGrab)EventManager.Instance.allEvents[eventKeys[i]][j]).kingToOverthrow.city.kingdom.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is PowerGrab) {
+							if (((PowerGrab)EventManager.Instance.allEvents [eventKeys [i]] [j]).kingToOverthrow.city.kingdom.id == this.currentlyShowingKingdom.id) {
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
 					}
 
@@ -672,8 +716,10 @@ public class UIManager : MonoBehaviour {
 			}else if(eventKeys[i] == EVENT_TYPES.EXHORTATION){
 				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
 					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(((Exhortation)EventManager.Instance.allEvents[eventKeys[i]][j]).targetCitizen.city.kingdom.id == this.currentlyShowingKingdom.id){
-							eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Exhortation) {
+							if (((Exhortation)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetCitizen.city.kingdom.id == this.currentlyShowingKingdom.id) {
+								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+							}
 						}
 					}
 				}
@@ -815,7 +861,7 @@ public class UIManager : MonoBehaviour {
 	public void ShowSmallInfo(string info, Transform parent){
 		smallInfoLbl.text = info;
 		smallInfoGO.transform.parent = parent;
-		smallInfoGO.transform.localPosition = Vector3.zero;
+		smallInfoGO.transform.localPosition = new Vector3 (0f, -60f, 0f);
 		Vector3 newPos = smallInfoGO.transform.localPosition;
 //		if (parent.name == "CharacterPortraitPrefab(Clone)") {
 //			newPos.y -= 85f;

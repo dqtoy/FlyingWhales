@@ -74,15 +74,16 @@ public class RandomNameGenerator : MonoBehaviour {
 
 	void Awake(){
 		Instance = this;
-	}
-
-	void Start(){
 		generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
 		generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
 		generatedElvenKingdomNames = new MarkovNameGenerator(baseElvenKingdomNames, 2, 5);
 		generatedElvenCityNames = new MarkovNameGenerator(baseElvenCityNames, 2, 5);
 		generatedElvenFemaleNames = new MarkovNameGenerator(baseElvenFemaleNames, 3, 4);
 		generatedElvenMaleNames = new MarkovNameGenerator(baseElvenMaleNames, 3, 4);
+	}
+
+	void Start(){
+		
 	}
 
 	public string GenerateRandomName(RACE race, GENDER gender){
