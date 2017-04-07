@@ -868,7 +868,7 @@ public class Citizen {
 		this.campaignManager.successionWarCities.RemoveAll (x => x.city.id == enemy.city.id);
 		this.successionWars.Remove (enemy);
 	}
-	internal void DeteriorateRelationship(RelationshipKings relationship){
+	internal void DeteriorateRelationship(RelationshipKings relationship, EVENT_TYPES reason, bool isDiscovery){
 		//TRIGGER OTHER EVENTS
 		if(relationship.like >= -40){
 			int chance = UnityEngine.Random.Range (0, 100);
@@ -880,15 +880,69 @@ public class Citizen {
 			}
 			if(chance < value){
 				//STATE VISIT
-				relationship.king.StateVisit(this);
+				STATEVISIT_TRIGGER_REASONS svReason = STATEVISIT_TRIGGER_REASONS.NONE;
+				if(isDiscovery){
+					if(reason == EVENT_TYPES.INVASION_PLAN){
+						svReason = STATEVISIT_TRIGGER_REASONS.DISCOVERING_IP;
+					}else{
+						svReason = STATEVISIT_TRIGGER_REASONS.DISCOVERING_A;
+					}
+				}else{
+					if (reason == EVENT_TYPES.ASSASSINATION) {
+						svReason = STATEVISIT_TRIGGER_REASONS.ASSASSINATION;
+					}else if (reason == EVENT_TYPES.BORDER_CONFLICT) {
+						svReason = STATEVISIT_TRIGGER_REASONS.BORDER_CONFLICT;
+					}else if (reason == EVENT_TYPES.ESPIONAGE) {
+						svReason = STATEVISIT_TRIGGER_REASONS.ESPIONAGE;
+					}else if (reason == EVENT_TYPES.RAID) {
+						svReason = STATEVISIT_TRIGGER_REASONS.RAID;
+					}else if (reason == EVENT_TYPES.STATE_VISIT) {
+						svReason = STATEVISIT_TRIGGER_REASONS.STATE_VISIT;
+					}
+				}
+				relationship.king.StateVisit(this, svReason);
 			}
 		}else{
-			InvasionPlan (relationship);
+			ASSASSINATION_TRIGGER_REASONS aReason = ASSASSINATION_TRIGGER_REASONS.NONE;
+			INVASION_TRIGGER_REASONS ipReason = INVASION_TRIGGER_REASONS.NONE;
+
+			if(isDiscovery){
+				if(reason == EVENT_TYPES.INVASION_PLAN){
+					aReason = ASSASSINATION_TRIGGER_REASONS.DISCOVERING_IP;
+					ipReason = INVASION_TRIGGER_REASONS.DISCOVERING_IP;
+				}else{
+					aReason = ASSASSINATION_TRIGGER_REASONS.DISCOVERING_A;
+					ipReason = INVASION_TRIGGER_REASONS.DISCOVERING_A;
+				}
+			}else{
+				if (reason == EVENT_TYPES.ASSASSINATION) {
+					aReason = ASSASSINATION_TRIGGER_REASONS.ASSASSINATION;
+					ipReason = INVASION_TRIGGER_REASONS.ASSASSINATION;
+
+				}else if (reason == EVENT_TYPES.BORDER_CONFLICT) {
+					aReason = ASSASSINATION_TRIGGER_REASONS.BORDER_CONFLICT;
+					ipReason = INVASION_TRIGGER_REASONS.BORDER_CONFLICT;
+
+				}else if (reason == EVENT_TYPES.ESPIONAGE) {
+					aReason = ASSASSINATION_TRIGGER_REASONS.ESPIONAGE;
+					ipReason = INVASION_TRIGGER_REASONS.ESPIONAGE;
+
+				}else if (reason == EVENT_TYPES.RAID) {
+					aReason = ASSASSINATION_TRIGGER_REASONS.RAID;
+					ipReason = INVASION_TRIGGER_REASONS.RAID;
+
+				}else if (reason == EVENT_TYPES.STATE_VISIT) {
+					aReason = ASSASSINATION_TRIGGER_REASONS.STATE_VISIT;
+					ipReason = INVASION_TRIGGER_REASONS.STATE_VISIT;
+
+				}
+			}
+			InvasionPlan (relationship, ipReason);
 			BorderConflict (relationship);
-			Assassination (relationship);
+			Assassination (relationship, aReason);
 		}
 	}
-	private void InvasionPlan(RelationshipKings relationship){
+	private void InvasionPlan(RelationshipKings relationship, INVASION_TRIGGER_REASONS reason){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 4;
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
@@ -906,7 +960,8 @@ public class Citizen {
 		if(chance < value){
 			//INVASION PLAN
 			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
-				this, this.city.kingdom, relationship.king.city.kingdom);
+				this, this.city.kingdom, relationship.king.city.kingdom, reason);
+			EventManager.Instance.AddEventToDictionary (invasionPlan);
 		}else{
 			//STATE VISIT
 			int svChance = UnityEngine.Random.Range (0, 100);
@@ -923,7 +978,23 @@ public class Citizen {
 				svValue = 2;
 			}
 			if(svChance < svValue){
-				this.StateVisit(relationship.king);
+				STATEVISIT_TRIGGER_REASONS svReason = STATEVISIT_TRIGGER_REASONS.NONE;
+				if(reason == INVASION_TRIGGER_REASONS.DISCOVERING_A){
+					svReason = STATEVISIT_TRIGGER_REASONS.DISCOVERING_A;
+				}else if(reason == INVASION_TRIGGER_REASONS.DISCOVERING_IP){
+					svReason = STATEVISIT_TRIGGER_REASONS.DISCOVERING_IP;
+				}else if (reason == INVASION_TRIGGER_REASONS.ASSASSINATION) {
+					svReason = STATEVISIT_TRIGGER_REASONS.ASSASSINATION;
+				}else if (reason == INVASION_TRIGGER_REASONS.BORDER_CONFLICT) {
+					svReason = STATEVISIT_TRIGGER_REASONS.BORDER_CONFLICT;
+				}else if (reason == INVASION_TRIGGER_REASONS.ESPIONAGE) {
+					svReason = STATEVISIT_TRIGGER_REASONS.ESPIONAGE;
+				}else if (reason == INVASION_TRIGGER_REASONS.RAID) {
+					svReason = STATEVISIT_TRIGGER_REASONS.RAID;
+				}else if (reason == INVASION_TRIGGER_REASONS.STATE_VISIT) {
+					svReason = STATEVISIT_TRIGGER_REASONS.STATE_VISIT;
+				}
+				this.StateVisit(relationship.king, svReason);
 			}
 		}
 	}
@@ -954,7 +1025,7 @@ public class Citizen {
 			}
 		}
 	}
-	private void Assassination(RelationshipKings relationship){
+	private void Assassination(RelationshipKings relationship, ASSASSINATION_TRIGGER_REASONS reason){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 5;
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
@@ -970,7 +1041,8 @@ public class Citizen {
 		}
 
 		if(chance < value){
-			Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king);
+			
+			Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king, reason);
 			EventManager.Instance.AddEventToDictionary(assassination);
 		}
 	}
@@ -1060,7 +1132,7 @@ public class Citizen {
 		}
 	}
 
-	internal void StateVisit(Citizen targetKing){
+	internal void StateVisit(Citizen targetKing, STATEVISIT_TRIGGER_REASONS reason){
 		int acceptChance = UnityEngine.Random.Range (0, 100);
 		int acceptValue = 50;
 		RelationshipKings relationship = targetKing.SearchRelationshipByID (this.id);
@@ -1085,7 +1157,7 @@ public class Citizen {
 					visitor = targetKing.city.kingdom.successionLine [0];
 				}
 				if(visitor != null){
-					StateVisit stateVisit = new StateVisit(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, targetKing.city.kingdom, visitor);
+					StateVisit stateVisit = new StateVisit(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, targetKing.city.kingdom, visitor, reason);
 					EventManager.Instance.AddEventToDictionary (stateVisit);
 				}
 			}else{
@@ -1105,7 +1177,7 @@ public class Citizen {
 			Kingdom targetKingdom = ((Assassination)hiddenEvent).targetCitizen.city.kingdom;
 
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-			relationship.AdjustLikeness (-15);
+			relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION, true);
 
 		}else if(hiddenEvent is InvasionPlan){
 			//An Invasion Plan discovered by the target Kingdom decreases the target kingdom's King's relationship by 20
@@ -1113,7 +1185,7 @@ public class Citizen {
 			Kingdom targetKingdom = ((InvasionPlan)hiddenEvent).targetKingdom;
 
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (sourceKingdom.king.id);
-			relationship.AdjustLikeness (-35);
+			relationship.AdjustLikeness (-35, EVENT_TYPES.INVASION_PLAN, true);
 		}
 		spy.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, spy.name + " informed " + this.name + " about " + hiddenEvent.eventType.ToString(), HISTORY_IDENTIFIER.NONE));
 

@@ -1427,6 +1427,8 @@ public class City{
 		newGovernor.role = ROLE.UNTRAINED;
 		newGovernor.isGovernor = true;
 		this.governor = newGovernor;
+		newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+
 
 	}
 	internal Citizen GetCitizenWithHighestPrestige(){

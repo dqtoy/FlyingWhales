@@ -45,7 +45,7 @@ public class RelationshipKings {
 		}
 	}
 
-	internal void AdjustLikeness(float adjustment){
+	internal void AdjustLikeness(float adjustment, EVENT_TYPES reason = EVENT_TYPES.ALL, bool isDiscovery = false){
 		if (adjustment < 0) {
 			//Deteriorating
 			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
@@ -74,7 +74,7 @@ public class RelationshipKings {
 		}
 		this.UpdateKingRelationshipStatus ();
 		if (adjustment < 0) {
-			sourceKing.DeteriorateRelationship (this);
+			sourceKing.DeteriorateRelationship (this, reason, isDiscovery);
 		}else{
 			sourceKing.ImproveRelationship (this);
 		}

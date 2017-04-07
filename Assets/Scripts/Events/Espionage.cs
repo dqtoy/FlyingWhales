@@ -112,6 +112,12 @@ public class Espionage : GameEvent {
 					AssassinationExposed (chosenEvent, ref targetKingdomSpecific, ref sourceKingdomSpecific);
 				}else if(chosenEvent is InvasionPlan){
 					InvasionPlanExposed (chosenEvent, ref targetKingdomSpecific, ref sourceKingdomSpecific);
+				}else if(chosenEvent is JoinWar){
+					JoinWar (chosenEvent, ref targetKingdomSpecific, ref sourceKingdomSpecific);
+				}else if(chosenEvent is Militarization){
+					Militarization (chosenEvent, ref targetKingdomSpecific, ref sourceKingdomSpecific);
+				}else if(chosenEvent is PowerGrab){
+					PowerGrab (chosenEvent, ref targetKingdomSpecific, ref sourceKingdomSpecific);
 				}
 				if(targetKingdomSpecific != null && sourceKingdomSpecific != null){
 					EventExposed (chosenEvent, targetKingdomSpecific, sourceKingdomSpecific);
@@ -129,6 +135,18 @@ public class Espionage : GameEvent {
 		target = ((InvasionPlan)chosenEvent).targetKingdom;
 		source = ((InvasionPlan)chosenEvent).sourceKingdom;
 	}
+	private void JoinWar(GameEvent chosenEvent, ref Kingdom target, ref Kingdom source){
+		target = ((JoinWar)chosenEvent).candidateForAlliance.city.kingdom;
+		source = ((JoinWar)chosenEvent).startedBy.city.kingdom;
+	}
+	private void Militarization(GameEvent chosenEvent, ref Kingdom target, ref Kingdom source){
+		target = ((Militarization)chosenEvent).startedBy.city.kingdom;
+		source = ((Militarization)chosenEvent).startedBy.city.kingdom;
+	}
+	private void PowerGrab(GameEvent chosenEvent, ref Kingdom target, ref Kingdom source){
+		target = ((PowerGrab)chosenEvent).kingToOverthrow.city.kingdom;
+		source = ((PowerGrab)chosenEvent).startedBy.city.kingdom;
+	}
 	private void EventExposed(GameEvent chosenEvent, Kingdom targetKingdomSpecific, Kingdom sourceKingdomSpecific){
 		int chance = UnityEngine.Random.Range (0, 100);
 		Citizen target = targetKingdomSpecific.king;
@@ -137,6 +155,9 @@ public class Espionage : GameEvent {
 		if(target.isKing){
 			RelationshipKings relationship = this.sourceKingdom.king.SearchRelationshipByID (target.id);
 			RelationshipKings relationshipToCreator = this.sourceKingdom.king.SearchRelationshipByID (source.id);
+			if(relationship == null){
+				return;
+			}
 			if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM || relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
 				if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM){
 					int value = 25;
@@ -167,7 +188,7 @@ public class Espionage : GameEvent {
 						relationshipReverse.AdjustLikeness (10);
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 					}
-					relationshipToCreator.AdjustLikeness (-10);
+					relationshipToCreator.AdjustLikeness (-10, EVENT_TYPES.ESPIONAGE);
 				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
 					int value = 80;
 					if(relationshipToCreator.lordRelationship == RELATIONSHIP_STATUS.WARM){
@@ -182,7 +203,7 @@ public class Espionage : GameEvent {
 						relationshipReverse.AdjustLikeness (10);
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 					}
-					relationshipToCreator.AdjustLikeness (-15);
+					relationshipToCreator.AdjustLikeness (-15, EVENT_TYPES.ESPIONAGE);
 
 				}
 

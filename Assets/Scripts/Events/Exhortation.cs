@@ -47,6 +47,9 @@ public class Exhortation : GameEvent {
 				this.targetCitizen.supportExpirationWeek = GameManager.Instance.week;
 				this.targetCitizen.supportExpirationMonth = GameManager.Instance.month;
 				this.targetCitizen.supportExpirationYear = GameManager.Instance.year + 2;
+				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was successful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+			}else{
+				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
 			}
 		}
 	}

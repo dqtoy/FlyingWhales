@@ -9,7 +9,7 @@ public class History {
 	public string description;
 	public HISTORY_IDENTIFIER identifier;
 
-	public History(int month, int week, int year, string description, HISTORY_IDENTIFIER identifier){
+	public History(int month, int week, int year, string description, HISTORY_IDENTIFIER identifier){ //= HISTORY_IDENTIFIER.NONE
 		this.month = month;
 		this.week = week;
 		this.year = year;

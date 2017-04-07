@@ -14,7 +14,7 @@ public class Militarization : GameEvent {
 		this.remainingWeeks = this.durationInWeeks;
 
 		this.startedBy.city.hexTile.AddEventOnTile(this);
-
+		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started a Militarization for his/her Invasion Plan.", HISTORY_IDENTIFIER.NONE));
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}

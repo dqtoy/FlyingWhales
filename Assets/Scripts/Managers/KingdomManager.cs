@@ -95,6 +95,10 @@ public class KingdomManager : MonoBehaviour {
 
 		kingdom1.AddInternationalWar(kingdom2);
 		kingdom2.AddInternationalWar(kingdom1);
+
+		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
+		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, kingdom2.king.name + " of " + kingdom2.name + " declares war against " + kingdom1.name + ".", HISTORY_IDENTIFIER.NONE));
+
 	}
 
 	public void DeclarePeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){

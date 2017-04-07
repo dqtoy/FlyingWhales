@@ -11,7 +11,8 @@ public class StateVisit : GameEvent {
 	public List<Citizen> saboteurEnvoys;
 	public int successMeter;
 
-	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom invitedKingdom, Citizen visitor) : base (startWeek, startMonth, startYear, startedBy){
+	private STATEVISIT_TRIGGER_REASONS svReason;
+	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom invitedKingdom, Citizen visitor, STATEVISIT_TRIGGER_REASONS reason = STATEVISIT_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
 		this.description = startedBy.name + " invited " + invitedKingdom.king.name + " to visit his/her kingdom.";
 		this.durationInWeeks = 6;
@@ -24,6 +25,7 @@ public class StateVisit : GameEvent {
 		this.saboteurEnvoys = new List<Citizen> ();
 		this.successMeter = 50;
 		this.invitedKingdom.cities[0].hexTile.AddEventOnTile(this);
+		this.svReason = reason;
 		TriggerAssassinationEvent ();
 		TriggerSabotage ();
 		TriggerHelp ();
@@ -73,8 +75,33 @@ public class StateVisit : GameEvent {
 		RelationshipKings inviterRelationship = inviterKingdom.king.SearchRelationshipByID (invitedKingdom.king.id);
 		RelationshipKings invitedRelationship = invitedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
 
-		inviterRelationship.AdjustLikeness (inviterPoints);
-		invitedRelationship.AdjustLikeness (invitedPoints);
+		inviterRelationship.AdjustLikeness (inviterPoints, EVENT_TYPES.STATE_VISIT);
+		invitedRelationship.AdjustLikeness (invitedPoints, EVENT_TYPES.STATE_VISIT);
+
+		if(this.visitor.isDead){
+			if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_A){
+				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit to improve relations with " + this.invitedKingdom.king.name + " after discovering Assassination. " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
+			}else if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_IP){
+				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit to improve relations with " + this.invitedKingdom.king.name + " after discovering Invasion Plan. " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
+			}else if(svReason == STATEVISIT_TRIGGER_REASONS.NONE){
+				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit to improve relations with " + this.invitedKingdom.king.name + ". " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
+			}else{
+				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit to improve relations with " + this.invitedKingdom.king.name + " after relationship deterioration due to" + this.svReason.ToString() + ". " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
+
+			}
+		}else{
+			if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_A){
+				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit to improve relations with " + this.invitedKingdom.king.name + " after discovering Assassination.", HISTORY_IDENTIFIER.NONE));
+			}else if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_IP){
+				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit to improve relations with " + this.invitedKingdom.king.name + " after discovering Invasion Plan.", HISTORY_IDENTIFIER.NONE));
+			}else if(svReason == STATEVISIT_TRIGGER_REASONS.NONE){
+				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit to improve relations with " + this.invitedKingdom.king.name + ".", HISTORY_IDENTIFIER.NONE));
+			}else{
+				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit to improve relations with " + this.invitedKingdom.king.name + " after relationship deterioration due to" + this.svReason.ToString() + ".", HISTORY_IDENTIFIER.NONE));
+
+			}
+
+		}
 
 	}
 
@@ -99,7 +126,7 @@ public class StateVisit : GameEvent {
 				}
 				if(chance < value){
 					//ASSASSINATION EVENT
-					Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.otherKingdoms[i].king, this.visitor);
+					Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.otherKingdoms[i].king, this.visitor, ASSASSINATION_TRIGGER_REASONS.STATE_VISITING);
 					EventManager.Instance.AddEventToDictionary(assassination);
 				}
 			}
@@ -213,7 +240,7 @@ public class StateVisit : GameEvent {
 			Debug.Log ("VISITOR DIED!");
 			RelationshipKings relationship = this.invitedKingdom.king.SearchRelationshipByID (this.inviterKingdom.king.id);
 			if(relationship.like <= 0){
-				relationship.AdjustLikeness (-50);
+				relationship.AdjustLikeness (-50, EVENT_TYPES.STATE_VISIT);
 			}else{
 				relationship.like = -50;
 				relationship.UpdateKingRelationshipStatus ();

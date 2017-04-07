@@ -153,11 +153,28 @@ public class Raid : GameEvent {
 			}
 
 		}
+		bool hasBeenDiscovered = false;
+		bool hasDeflected = false;
+		bool hasDeath = false;
+		Kingdom kingdomToBlame = null;
+		GeneralDiscovery (ref hasBeenDiscovered, ref hasDeflected, ref hasDeath, ref kingdomToBlame);
 
-		GeneralDiscovery ();
+		if(hasBeenDiscovered){
+			if(hasDeflected){
+				this.general.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.name + " raided " + this.raidedCity.name
+				+ " with a small group of raiders. The raid was successful. Their presence were discovered and their identities were revealed but " + this.general.name + " managed to deflect blame to " + kingdomToBlame.name + ".", HISTORY_IDENTIFIER.NONE));
+
+			}else{
+				this.general.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.name + " raided " + this.raidedCity.name
+					+ " with a small group of raiders. The raid was successful. Their presence were discovered and their identities were revealed.", HISTORY_IDENTIFIER.NONE));
+			}
+		}else{
+			this.general.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.name + " raided " + this.raidedCity.name
+				+ " with a small group of raiders. The raid was successful. Their presence were not discovered in time.", HISTORY_IDENTIFIER.NONE));
+		}
 
 	}
-	private void GeneralDiscovery(){
+	private void GeneralDiscovery(ref bool hasBeenDiscovered, ref bool hasDeflected, ref bool hasDeath, ref Kingdom kingdomBlame){
 		Citizen deadCitizen = null;
 		bool isGovernor = false;
 		bool isKing = false;
@@ -173,6 +190,7 @@ public class Raid : GameEvent {
 				deadCitizen = citizens [UnityEngine.Random.Range (0, citizens.Count)];
 				isGovernor = deadCitizen.isGovernor;
 				isKing = deadCitizen.isKing;
+				hasDeath = true;
 				deadCitizen.Death (DEATH_REASONS.INTERNATIONAL_WAR);
 			}
 		}
@@ -183,6 +201,7 @@ public class Raid : GameEvent {
 		}
 		if(chance < value){
 			//DISCOVERY
+			hasBeenDiscovered = true;
 			int amountToAdjust = -5;
 			if (deadCitizen != null) {
 				if (isGovernor || isKing) {
@@ -200,19 +219,21 @@ public class Raid : GameEvent {
 				if(deflectChance < 35){
 					Kingdom kingdomToBlame = GetRandomKingdomToBlame ();
 					if(kingdomToBlame != null){
+						hasDeflected = true;
+						kingdomBlame = kingdomToBlame;
 						RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(kingdomToBlame.king.id);
-						relationship.AdjustLikeness (amountToAdjust);
+						relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
 					}else{
 						RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(this.sourceKingdom.king.id);
-						relationship.AdjustLikeness (amountToAdjust);
+						relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
 					}
 				}else{
 					RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(this.sourceKingdom.king.id);
-					relationship.AdjustLikeness (amountToAdjust);
+					relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
 				}
 			}else{
 				RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(this.sourceKingdom.king.id);
-				relationship.AdjustLikeness (amountToAdjust);
+				relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
 			}
 		}
 	}
