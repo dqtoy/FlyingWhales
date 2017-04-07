@@ -323,7 +323,7 @@ public class Citizen {
 	}
 	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isAbsolute = false){
 //		this.kingdom.royaltyList.allRoyalties.Remove (this);
-		Debug.Log("DEATH: " + this.name);
+		Debug.LogError("DEATH: " + this.name);
 		DeathHistory(reason);
 		if(isDethroned){
 			this.isPretender = true;
