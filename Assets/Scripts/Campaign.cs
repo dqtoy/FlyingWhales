@@ -8,7 +8,7 @@ public class Campaign {
 	public int id;
 	public Citizen leader;
 	public City targetCity;
-	public List<Citizen> registeredGenerals;
+	public List<General> registeredGenerals;
 	public CAMPAIGN campaignType;
 	public WAR_TYPE warType;
 	public HexTile rallyPoint;
@@ -22,7 +22,7 @@ public class Campaign {
 		this.targetCity = targetCity;
 		this.campaignType = campaignType;
 		this.warType = warType;
-		this.registeredGenerals = new List<Citizen> ();
+		this.registeredGenerals = new List<General> ();
 		this.isFull = false;
 		this.hasStarted = false;
 		this.rallyPoint = null;
@@ -32,7 +32,7 @@ public class Campaign {
 	internal int GetArmyStrength(){
 		int total = 0;
 		for(int i = 0; i < this.registeredGenerals.Count; i++){
-			total += ((General)this.registeredGenerals[i].assignedRole).GetArmyHP();
+			total += this.registeredGenerals[i].GetArmyHP();
 		}
 		return total;
 	}

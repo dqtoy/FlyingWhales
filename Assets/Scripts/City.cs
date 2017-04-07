@@ -13,7 +13,7 @@ public class City{
 	public Kingdom kingdom;
 	public Citizen governor;
 	public List<HexTile> ownedTiles;
-	public List<Citizen> incomingGenerals;
+	public List<General> incomingGenerals;
 	public List<Citizen> citizens;
 	public string cityHistory;
 	public bool hasKing;
@@ -76,7 +76,7 @@ public class City{
 		this.kingdom = kingdom;
 		this.governor = null;
 		this.ownedTiles = new List<HexTile>();
-		this.incomingGenerals = new List<Citizen> ();
+		this.incomingGenerals = new List<General> ();
 		this.citizens = new List<Citizen>();
 		this.cityHistory = string.Empty;
 		this.isActive = new IsActive (false);
@@ -1212,18 +1212,18 @@ public class City{
 	internal int GetTotalAttackerStrength(){
 		int total = 0;
 		for(int i = 0; i < this.incomingGenerals.Count; i++){
-			if(((General)this.incomingGenerals[i].assignedRole).assignedCampaign == CAMPAIGN.OFFENSE){
-				total += ((General)this.incomingGenerals[i].assignedRole).GetArmyHP ();
+			if(this.incomingGenerals[i].assignedCampaign == CAMPAIGN.OFFENSE){
+				total += this.incomingGenerals[i].GetArmyHP ();
 			}
 		}
 		return total;	
 	}
-	internal List<Citizen> GetAllGenerals(){
-		List<Citizen> allGenerals = new List<Citizen> ();
+	internal List<General> GetAllGenerals(){
+		List<General> allGenerals = new List<General> ();
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
 				if(((General)this.citizens[i].assignedRole).location == this.hexTile){
-					allGenerals.Add (this.citizens [i]);
+					allGenerals.Add (((General)this.citizens [i].assignedRole));
 				}
 			}
 		}

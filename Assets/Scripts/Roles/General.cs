@@ -89,7 +89,7 @@ public class General : Role {
 		}
 
 		if(campaign != null){
-			campaign.registeredGenerals.Remove (this.citizen);
+			campaign.registeredGenerals.Remove (this);
 			this.targetLocation = null;
 			this.warLeader = null;
 			this.campaignID = 0;
@@ -120,7 +120,7 @@ public class General : Role {
 							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
 						}else{
 							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE).Min(x => ((General)x.assignedRole).daysBeforeArrival)){
+							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
 								path = null;
 							}
 						}
@@ -140,7 +140,7 @@ public class General : Role {
 							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
 						}else{
 							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE).Min(x => ((General)x.assignedRole).daysBeforeArrival)){
+							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
 								path = null;
 							}
 						}
@@ -157,7 +157,7 @@ public class General : Role {
 							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
 						}else{
 							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => ((General)x.assignedRole).assignedCampaign == CAMPAIGN.OFFENSE).Min(x => ((General)x.assignedRole).daysBeforeArrival)){
+							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
 								path = null;
 							}
 						}
@@ -191,11 +191,11 @@ public class General : Role {
 		this.roads = path;
 		this.inAction = true;
 
-		chosenCampaign.registeredGenerals.Add (this.citizen);
-		chosenCampaign.targetCity.incomingGenerals.Add (this.citizen);
+		chosenCampaign.registeredGenerals.Add (this);
+		chosenCampaign.targetCity.incomingGenerals.Add (this);
 		if(chosenCampaign.rallyPoint != null){
 			if(chosenCampaign.rallyPoint.isOccupied){
-				chosenCampaign.rallyPoint.city.incomingGenerals.Add(this.citizen);
+				chosenCampaign.rallyPoint.city.incomingGenerals.Add(this);
 			}
 		}
 

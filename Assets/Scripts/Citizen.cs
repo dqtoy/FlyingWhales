@@ -350,7 +350,8 @@ public class Citizen {
 				EventManager.Instance.onRegisterOnCampaign.RemoveListener (((General)this.assignedRole).RegisterOnCampaign);
 				EventManager.Instance.onDeathArmy.RemoveListener (((General)this.assignedRole).DeathArmy);
 				((General)this.assignedRole).UnregisterThisGeneral(null);
-
+//				((General)this.assignedRole) = null;
+				this.assignedRole = null;
 				this.city.citizens.Remove (this);
 			}else{
 				if(((General)this.assignedRole).army.hp <= 0){
@@ -362,7 +363,8 @@ public class Citizen {
 					EventManager.Instance.onRegisterOnCampaign.RemoveListener (((General)this.assignedRole).RegisterOnCampaign);
 					EventManager.Instance.onDeathArmy.RemoveListener (((General)this.assignedRole).DeathArmy);
 					((General)this.assignedRole).UnregisterThisGeneral(null);
-
+//					((General)this.assignedRole) = null;
+					this.assignedRole = null;
 					this.city.citizens.Remove (this);
 				}
 			}
@@ -855,7 +857,7 @@ public class Citizen {
 		List<Campaign> campaign = this.campaignManager.activeCampaigns.FindAll (x => x.targetCity.id == enemy.city.id);
 		for(int i = 0; i < campaign.Count; i++){
 			for(int j = 0; j < campaign[i].registeredGenerals.Count; j++){
-				((General)campaign[i].registeredGenerals [j].assignedRole).UnregisterThisGeneral (campaign[i]);
+				campaign[i].registeredGenerals [j].UnregisterThisGeneral (campaign[i]);
 			}
 			this.campaignManager.activeCampaigns.Remove (campaign[i]);
 		}
