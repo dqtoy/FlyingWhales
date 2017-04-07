@@ -9,7 +9,12 @@ public class MarriageInvitation : GameEvent {
 
 	public MarriageInvitation(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.MARRIAGE_INVITATION;
-		this.description = startedBy.name + " is looking for a suitable wife as the vessel of his heir";
+		if (startedBy.gender == GENDER.MALE) {
+			this.description = startedBy.name + " is looking for a suitable wife as the vessel of his heir";
+		} else {
+			this.description = startedBy.name + " is looking for a suitable husband.";
+		}
+
 		this.durationInWeeks = 8;
 		this.remainingWeeks = this.durationInWeeks;
 		this.goldForEvent = 0;
@@ -86,17 +91,21 @@ public class MarriageInvitation : GameEvent {
 					}
 				}
 
-				MarriageManager.Instance.Marry(startedBy, chosenCitizen);
-
-
 				this.endWeek = GameManager.Instance.week;
 				this.endMonth = GameManager.Instance.month;
 				this.endYear = GameManager.Instance.year;
-				this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " has selected " +
-				chosenCitizen.name + " as his wife. ";
+				if (startedBy.gender == GENDER.MALE) {
+					this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " has selected " +
+					chosenCitizen.name + " as his wife. ";
+				} else {
+					this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " has selected " +
+						chosenCitizen.name + " as her husband. ";
+				}
 				if (cityRecievingGold != null) {
 					this.resolution += cityRecievingGold.name + ", " +  chosenCitizen.name + "'s home city, recieved " + this.goldForEvent.ToString() + " Gold as compensation.";
 				}
+
+				MarriageManager.Instance.Marry(startedBy, chosenCitizen);
 				this.DoneEvent();
 				return;
 			}

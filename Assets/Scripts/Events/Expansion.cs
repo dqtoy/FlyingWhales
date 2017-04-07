@@ -24,51 +24,77 @@ public class Expansion : GameEvent {
 		this.originCity = startedBy.city;
 
 		Debug.LogError (this.description);
-
+		this.citizensJoiningExpansion.Add (this.startedBy);
+		this.startedBy.city.RemoveCitizenFromCity(this.startedBy);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
 
 	internal override void PerformAction(){
-		if (this.remainingRecruitmentPeriodInWeeks > 0) {
-			this.Recruit ();
+		if (this.remainingWeeks > 0) {
+			this.remainingWeeks -= 1;
 		} else {
-			if (!this.isExpanding) {
-				if (this.citizensJoiningExpansion.Where (x => x.age >= 16).ToList ().Count < 12) {
-					this.isExpanding = true;
-				} else {
-					this.resolution = "Expansion was cancelled because not enough citizens were recruited";
+			int disappearChance = Random.Range(0,100);
+			if (disappearChance < 15) {
+				//Disappear
+				this.resolution = "Expansion Citizens suddenly disappeared.";
+				this.DoneEvent();
+			} else {
+				//Expand
+				if (originCity.adjacentHabitableTiles.Count > 0) {
+					HexTile hexTileToExpandTo = originCity.adjacentHabitableTiles [Random.Range (0, originCity.adjacentHabitableTiles.Count)];
+					this.startedByKingdom.AddTileToKingdom(hexTileToExpandTo);
+//					this.GenerateCitizensForExpansion(hexTileToExpandTo.city);
+					hexTileToExpandTo.city.ExpandToThisCity(this.citizensJoiningExpansion);
+					this.resolution = "Expansion was successful, new city " + hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
 					this.DoneEvent ();
-					return;
-				}
-			}
-
-			if (this.isExpanding) {
-				if (this.remainingWeeks > 0) {
-					this.remainingWeeks -= 1;
 				} else {
-					
-					int disappearChance = Random.Range(0,100);
-					if (disappearChance < 15) {
-						//Disappear
-						this.resolution = "Expansion Citizens suddenly disappeared.";
-						this.DoneEvent();
-					} else {
-						//Expand
-						if (originCity.adjacentHabitableTiles.Count > 0) {
-							HexTile hexTileToExpandTo = originCity.adjacentHabitableTiles [Random.Range (0, originCity.adjacentHabitableTiles.Count)];
-							this.startedByKingdom.AddTileToKingdom(hexTileToExpandTo);
-							hexTileToExpandTo.city.ExpandToThisCity(this.citizensJoiningExpansion);
-							this.resolution = "Expansion was successful, new city " + hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
-							this.DoneEvent ();
-						} else {
-							this.resolution = "Expansion Citizens we're killed.";
-							this.DoneEvent ();
-						}
-					}
+					this.resolution = "Expansion Citizens we're killed.";
+					this.DoneEvent ();
 				}
 			}
 		}
+
+
+//		if (this.remainingRecruitmentPeriodInWeeks > 0) {
+//			this.Recruit ();
+//		} else {
+//			if (!this.isExpanding) {
+//				if (this.citizensJoiningExpansion.Where (x => x.age >= 16).ToList ().Count < 12) {
+//					this.isExpanding = true;
+//				} else {
+//					this.resolution = "Expansion was cancelled because not enough citizens were recruited";
+//					this.DoneEvent ();
+//					return;
+//				}
+//			}
+//
+//			if (this.isExpanding) {
+//				if (this.remainingWeeks > 0) {
+//					this.remainingWeeks -= 1;
+//				} else {
+//					
+//					int disappearChance = Random.Range(0,100);
+//					if (disappearChance < 15) {
+//						//Disappear
+//						this.resolution = "Expansion Citizens suddenly disappeared.";
+//						this.DoneEvent();
+//					} else {
+//						//Expand
+//						if (originCity.adjacentHabitableTiles.Count > 0) {
+//							HexTile hexTileToExpandTo = originCity.adjacentHabitableTiles [Random.Range (0, originCity.adjacentHabitableTiles.Count)];
+//							this.startedByKingdom.AddTileToKingdom(hexTileToExpandTo);
+//							hexTileToExpandTo.city.ExpandToThisCity(this.citizensJoiningExpansion);
+//							this.resolution = "Expansion was successful, new city " + hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
+//							this.DoneEvent ();
+//						} else {
+//							this.resolution = "Expansion Citizens we're killed.";
+//							this.DoneEvent ();
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 
 	internal void AddCitizensToExpansion(List<Citizen> citizensToAdd){
@@ -78,6 +104,18 @@ public class Expansion : GameEvent {
 	protected void Recruit(){
 		this.remainingRecruitmentPeriodInWeeks -= 1;
 		EventManager.Instance.onRecruitCitizensForExpansion.Invoke (this, this.startedByKingdom);
+	}
+
+	protected void GenerateCitizensForExpansion(City cityToExpandTo){
+		for (int i = 0; i < 11; i++) {
+			GENDER gender = GENDER.MALE;
+			int randomGender = UnityEngine.Random.Range (0, 100);
+			if(randomGender < 20){
+				gender = GENDER.FEMALE;
+			}
+			Citizen citizen = new Citizen (cityToExpandTo, Random.Range (16, 30), gender, this.startedBy.generation);
+			this.citizensJoiningExpansion.Add (citizen);
+		}
 	}
 
 	internal override void DoneEvent(){

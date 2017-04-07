@@ -57,7 +57,7 @@ public class Gatherer : Role {
 				} else if (resourceToUse == RESOURCE.MARBLE) {
 					resourceProduction += 18;
 				}
-				return new int[]{ 0, 0, resourceProduction, 0, 0, 0, goldProduction };
+				return new int[]{ 0, 0, resourceProduction, 0, 0, 0, goldProduction, 0 };
 			} else if (Utilities.GetBaseResourceType (resourceToUse) == BASE_RESOURCE_TYPE.WOOD) {
 				if (resourceToUse == RESOURCE.CEDAR) {
 					resourceProduction += 10;
@@ -66,9 +66,9 @@ public class Gatherer : Role {
 				} else if (resourceToUse == RESOURCE.EBONY) {
 					resourceProduction += 18;
 				}
-				return new int[]{ 0, 0, resourceProduction, 0, 0, 0, goldProduction };
+				return new int[]{ 0, 0, resourceProduction, 0, 0, 0, goldProduction, 0 };
 			}
 		}
-		return new int[]{ 0, 0, 0, 0, 0, 0, 0 };
+		return new int[]{ 0, 0, 0, 0, 0, 0, 0, 0 };
 	}
 }

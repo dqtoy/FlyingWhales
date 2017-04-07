@@ -66,16 +66,16 @@ public class Citizen {
 
 	public Citizen(City city, int age, GENDER gender, int generation){
 		this.id = Utilities.SetID (this);
-		this.name = "";
-		this.age = age;
+		this.race = city.kingdom.race;
 		this.gender = gender;
+		this.age = age;
+		this.name = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
 		this.generation = generation;
 		this._prestige = 0;
 		this.prestigeFromSupport = 0;
 		this.city = city;
 		this.role = ROLE.UNTRAINED;
 		this.assignedRole = null;
-		this.race = city.kingdom.race;
 		this.behaviorTraits = new List<BEHAVIOR_TRAIT> ();
 		this.skillTraits = new List<SKILL_TRAIT> ();
 		this.miscTraits = new List<MISC_TRAIT> ();
@@ -256,10 +256,18 @@ public class Citizen {
 	protected void AttemptToAge(){
 		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.week == this.birthWeek && GameManager.Instance.year > this.birthYear){
 			this.age += 1;
-			if (this.age >= 16 && !this.isMarried) {
-				this.citizenChances.marriageChance += 2;
-				this.AttemptToMarry();
+			if (this.gender == GENDER.MALE) {
+				if (this.age >= 16 && !this.isMarried) {
+					this.citizenChances.marriageChance += 2;
+					this.AttemptToMarry ();
+				}
+			} else {
+				if (this.isKing && this.age >= 16 && !this.isMarried) {
+					this.citizenChances.marriageChance += 2;
+					this.AttemptToMarry ();
+				}
 			}
+
 			if (this.miscTraits.Contains(MISC_TRAIT.AMBITIOUS)) {
 				if (this.isPretender ||
 				   (this.city.kingdom.successionLine.Count > 1 && this.city.kingdom.successionLine [1].id == this.id) ||

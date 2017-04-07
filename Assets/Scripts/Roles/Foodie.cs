@@ -54,15 +54,15 @@ public class Foodie : Role {
 
 			if (resourceToUse == RESOURCE.CORN || resourceToUse == RESOURCE.DEER) {
 				foodProduction += 12;
-				return new int[]{ foodProduction, 0, 0, 0, 0, 0, goldProduction };
+				return new int[]{ foodProduction, 0, 0, 0, 0, 0, goldProduction, 0 };
 			} else if (resourceToUse == RESOURCE.WHEAT || resourceToUse == RESOURCE.PIG) {
 				foodProduction += 16;
-				return new int[]{ foodProduction, 0, 0, 0, 0, 0, goldProduction };
+				return new int[]{ foodProduction, 0, 0, 0, 0, 0, goldProduction, 0 };
 			} else if (resourceToUse == RESOURCE.RICE || resourceToUse == RESOURCE.BEHEMOTH) {
 				foodProduction += 20;
-				return new int[]{ foodProduction, 0, 0, 0, 0, 0, goldProduction };
+				return new int[]{ foodProduction, 0, 0, 0, 0, 0, goldProduction, 0 };
 			}
 		}
-		return new int[]{ 0, 0, 0, 0, 0, 0, 0 };
+		return new int[]{ 0, 0, 0, 0, 0, 0, 0, 0 };
 	}
 }

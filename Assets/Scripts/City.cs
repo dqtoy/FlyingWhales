@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-//[System.Serializable]
+[System.Serializable]
 public class City{
 
 	public int id;
@@ -26,7 +26,7 @@ public class City{
 	public int mithrilCount;
 	public int cobaltCount;
 	public int goldCount;
-	public int[] allResourceProduction; //food, lumber, stone, mana stone, mithril, cobalt, gold
+	public int[] allResourceProduction; //food, lumber, stone, mana stone, mithril, cobalt, gold, additional gold
 	public TradeManager tradeManager;
 
 	[Space(5)]
@@ -83,7 +83,7 @@ public class City{
 		this.hasKing = false;
 		this.isStarving = false;
 		this.isDead = false;
-		this.allResourceProduction = new int[]{ 0, 0, 0, 0, 0, 0, 0 };
+		this.allResourceProduction = new int[]{ 0, 0, 0, 0, 0, 0, 0, 0 };
 		this.tradeManager = new TradeManager(this, this.kingdom);
 		this.citizenCreationTable = Utilities.defaultCitizenCreationTable;
 		this.pendingTask = new Dictionary<CITY_TASK, HexTile>();
@@ -100,6 +100,7 @@ public class City{
 //		this.CreateInitialFamilies();
 
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
+		EventManager.Instance.onCitizenDiedEvent.AddListener(UpdateHexTileRoles);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
 		EventManager.Instance.onRecruitCitizensForExpansion.AddListener(DonateCitizensToExpansion);
 //		EventManager.Instance.onCitizenDiedEvent.AddListener (UpdateHextileRoles);
@@ -678,30 +679,48 @@ public class City{
 	}
 
 	internal void ExpandToThisCity(List<Citizen> citizensToOccupyCity){
-		this.citizens.AddRange(citizensToOccupyCity);
-		this.UpdateUnownedNeighbourTiles();
+		BuyInitialTiles ();
+		CreateInitialFoodProducerFamily ();
+		CreateInitialGathererFamily ();
+		CreateInitialGeneralFamily ();
+		CreateInitialUntrainedFamily ();
+		GenerateInitialTraitsForInitialCitizens ();
+		UpdateResourceProduction ();
+		UpdateUnownedNeighbourTiles();
 
-		citizensToOccupyCity = citizensToOccupyCity.OrderBy(x => x.prestige).ToList();
-		//Assign Governor
-		citizensToOccupyCity.Last().AssignRole(ROLE.GOVERNOR);
-
-		//Assign Farmer
-		citizensToOccupyCity[0].AssignRole(ROLE.FOODIE);
-		HexTile tileForFarmer = this.purchasableFoodTiles[0];
-		this.PurchaseTile(tileForFarmer);
-		this.OccupyTile(tileForFarmer, citizensToOccupyCity[0]);
-
-		//Assign Gatherer
-		citizensToOccupyCity[1].AssignRole(ROLE.GATHERER);
-		if (this.purchasableBasicTiles.Count > 0) {
-			HexTile tileForGatherer = this.purchasableBasicTiles [0];
-			this.PurchaseTile(tileForGatherer);
-			this.OccupyTile(tileForGatherer, citizensToOccupyCity [1]);
-		} else {
-			HexTile tileForGatherer = this.purchasabletilesWithUnneededResource[0];
-			this.PurchaseTile(tileForGatherer);
-			this.OccupyTile(tileForGatherer, citizensToOccupyCity [1]);
+		for (int i = 0; i < this.citizens.Count; i++) {
+			this.citizens[i].UpdatePrestige();
 		}
+//		citizensToOccupyCity = citizensToOccupyCity.OrderBy(x => x.prestige).ToList();
+		//Assign Governor
+//		citizensToOccupyCity.Last().AssignRole(ROLE.GOVERNOR);
+
+//		this.CreateInitialFoodProducerFamily();
+//		this.CreateInitialGathererFamily();
+//		this.CreateInitialUntrainedFamily();
+//		this.GenerateInitialTraitsForInitialCitizens();
+
+//		for (int i = 0; i < citizensToOccupyCity.Count; i++) {
+//			this.AddCitizenToCity (citizensToOccupyCity [i]);
+//		}
+//		this.UpdateUnownedNeighbourTiles();
+//		//Assign Farmer
+//		citizensToOccupyCity[0].AssignRole(ROLE.FOODIE);
+//		HexTile tileForFarmer = this.purchasableFoodTiles[0];
+//		this.PurchaseTile(tileForFarmer);
+//		this.OccupyTile(tileForFarmer, citizensToOccupyCity[0]);
+//
+//		//Assign Gatherer
+//		citizensToOccupyCity[1].AssignRole(ROLE.GATHERER);
+//		if (this.purchasableBasicTiles.Count > 0) {
+//			HexTile tileForGatherer = this.purchasableBasicTiles [0];
+//			this.PurchaseTile(tileForGatherer);
+//			this.OccupyTile(tileForGatherer, citizensToOccupyCity [1]);
+//		} else {
+//			HexTile tileForGatherer = this.purchasabletilesWithUnneededResource[0];
+//			this.PurchaseTile(tileForGatherer);
+//			this.OccupyTile(tileForGatherer, citizensToOccupyCity [1]);
+//		}
 	}
 
 	protected void DonateCitizensToExpansion(Expansion expansionEvent, Kingdom kingdomToExpand){
@@ -809,6 +828,16 @@ public class City{
 		
 	}
 
+	internal void UpdateHexTileRoles(){
+		for (int i = 0; i < this.unoccupiedOwnedTiles.Count; i++) {
+			if (this.unoccupiedOwnedTiles[i].specialResource == RESOURCE.NONE) {
+				this.unoccupiedOwnedTiles[i].roleIntendedForTile = Utilities.GetRoleThatProducesResource (Utilities.GetBaseResourceType (this.unoccupiedOwnedTiles[i].defaultResource));
+			} else {
+				this.unoccupiedOwnedTiles[i].roleIntendedForTile = Utilities.GetRoleThatProducesResource (Utilities.GetBaseResourceType (this.unoccupiedOwnedTiles[i].specialResource));
+			}
+		}
+	}
+
 	protected void CityEverydayTurnActions(){
 		this.ProduceResources();
 		this.AttemptToPerformAction();
@@ -823,7 +852,7 @@ public class City{
 
 	#region Resource Production
 	protected void UpdateResourceProduction(){
-		this.allResourceProduction = new int[7];
+		this.allResourceProduction = new int[8];
 		for (int i = 0; i < this.citizens.Count; i++) {
 			if(this.citizens[i].isBusy && this.citizens[i].role != ROLE.UNTRAINED && this.citizens[i].role != ROLE.GOVERNOR && this.citizens[i].role != ROLE.KING){
 				int[] citizenProduction = this.citizens[i].assignedRole.GetResourceProduction();
@@ -834,14 +863,105 @@ public class City{
 		}
 	}
 
+	protected int GetNumberOfResourcesPerType(BASE_RESOURCE_TYPE resourceType){
+		if (resourceType == BASE_RESOURCE_TYPE.FOOD) {
+			return this.sustainability;
+		} else if (resourceType == BASE_RESOURCE_TYPE.WOOD) {
+			return this.lumberCount;
+		} else if (resourceType == BASE_RESOURCE_TYPE.STONE) {
+			return this.stoneCount;
+		} else if (resourceType == BASE_RESOURCE_TYPE.MANA_STONE) {
+			return this.manaStoneCount;
+		} else if (resourceType == BASE_RESOURCE_TYPE.MITHRIL) {
+			return this.mithrilCount;
+		} else if (resourceType == BASE_RESOURCE_TYPE.COBALT) {
+			return this.cobaltCount;
+		} else if (resourceType == BASE_RESOURCE_TYPE.GOLD) {
+			return this.goldCount;
+		}
+		return -1;
+	}
+
 	protected void ProduceResources(){
 		this.sustainability = this.allResourceProduction[0] + tradeManager.sustainabilityBuff;
 		this.lumberCount += this.allResourceProduction[1];
 		this.stoneCount += this.allResourceProduction[2];
-		this.manaStoneCount += this.allResourceProduction[3];
-		this.mithrilCount += this.allResourceProduction[4];
-		this.cobaltCount += this.allResourceProduction[5];
+
+		int basicResourceCount = 0;
+		List<Resource> rareResourceProductionCost = new List<Resource> () {
+			new Resource (this.kingdom.basicResource, 20)
+		};
+
+		//mana stone
+		if (this.allResourceProduction [3] > 0) {
+			basicResourceCount = this.GetNumberOfResourcesPerType (this.kingdom.basicResource);
+			int numberOfManaStonesProductionAfforded = basicResourceCount / 20;
+			int manaStonesCanProduce = this.allResourceProduction [3];
+
+			if (numberOfManaStonesProductionAfforded >= (manaStonesCanProduce / 10)) {
+				this.manaStoneCount += this.allResourceProduction [3];
+				this.AdjustResourceCount (this.kingdom.basicResource, -20 * (manaStonesCanProduce/10) );
+			} else {
+				if (numberOfManaStonesProductionAfforded > 0) {
+					this.manaStoneCount += Mathf.FloorToInt ((float)numberOfManaStonesProductionAfforded * 10);
+					this.AdjustResourceCount (this.kingdom.basicResource, -20 * numberOfManaStonesProductionAfforded);
+				}
+			}
+		}
+
+		//mithril
+		if (this.allResourceProduction [4] > 0) {
+			basicResourceCount = this.GetNumberOfResourcesPerType (this.kingdom.basicResource);
+			int numberOfMithrilProductionAfforded = basicResourceCount / 20;
+			int mithrilCanProduce = this.allResourceProduction [4];
+
+			if (numberOfMithrilProductionAfforded >= (mithrilCanProduce / 10)) {
+				this.mithrilCount += this.allResourceProduction [4];
+				this.AdjustResourceCount (this.kingdom.basicResource, -20 * (mithrilCanProduce / 10));
+			} else {
+				if (numberOfMithrilProductionAfforded > 0) {
+					this.mithrilCount += Mathf.FloorToInt ((float)numberOfMithrilProductionAfforded * 10);
+					this.AdjustResourceCount (this.kingdom.basicResource, -20 * numberOfMithrilProductionAfforded);
+				}
+			}
+		}
+
+		//cobalt
+		if (this.allResourceProduction [5] > 0) {
+			basicResourceCount = this.GetNumberOfResourcesPerType (this.kingdom.basicResource);
+			int numberOfCobaltProductionAfforded = basicResourceCount / 20;
+			int cobaltCanProduce = this.allResourceProduction [5];
+
+			if (numberOfCobaltProductionAfforded >= (cobaltCanProduce / 10)) {
+				this.cobaltCount += this.allResourceProduction [5];
+				this.AdjustResourceCount (this.kingdom.basicResource, -20 * (cobaltCanProduce / 10));
+			} else {
+				if (numberOfCobaltProductionAfforded > 0) {
+					this.cobaltCount += Mathf.FloorToInt ((float)numberOfCobaltProductionAfforded * 10);
+					this.AdjustResourceCount (this.kingdom.basicResource, -20 * numberOfCobaltProductionAfforded);
+				}
+			}
+		}
+
 		this.goldCount += this.allResourceProduction[6];
+
+
+		//additional gold from mines
+		if (this.allResourceProduction [7] > 0) {
+			basicResourceCount = this.GetNumberOfResourcesPerType (this.kingdom.basicResource);
+			int numberOfAddGoldProductionAfforded = basicResourceCount / 20;
+			int addGoldCanProduce = this.allResourceProduction [7];
+
+			if (numberOfAddGoldProductionAfforded >= (addGoldCanProduce / 40)) {
+				this.goldCount += this.allResourceProduction [7];
+				this.AdjustResourceCount (this.kingdom.basicResource, -20 * (addGoldCanProduce / 40));
+			} else {
+				if (numberOfAddGoldProductionAfforded > 0) {
+					this.goldCount += Mathf.FloorToInt ((float)numberOfAddGoldProductionAfforded * 40);
+					this.AdjustResourceCount (this.kingdom.basicResource, -20 * numberOfAddGoldProductionAfforded);
+				}
+			}
+		}
 
 		if (this.citizens.Count > this.sustainability) {
 			this.isStarving = true;
@@ -859,6 +979,7 @@ public class City{
 			EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 			EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 			EventManager.Instance.onRecruitCitizensForExpansion.RemoveListener(DonateCitizensToExpansion);
+			EventManager.Instance.onCitizenDiedEvent.RemoveListener(UpdateHexTileRoles);
 //			EventManager.Instance.onCitizenDiedEvent.RemoveListener (UpdateHextileRoles);
 		}
 	}
