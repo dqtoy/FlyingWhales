@@ -47,6 +47,7 @@ public class MarriageManager : MonoBehaviour {
 			age = UnityEngine.Random.Range (lowerLimit, (otherSpouse.age + 11));
 		}
 		Citizen spouse = new Citizen(otherSpouse.city, age, gender, otherSpouse.generation);
+		spouse.name = RandomNameGenerator.Instance.GenerateRandomName (spouse.city.kingdom.race, spouse.gender);
 
 		Marry (otherSpouse, spouse);
 		return spouse;
@@ -74,8 +75,14 @@ public class MarriageManager : MonoBehaviour {
 
 		if (citizen1.gender == GENDER.MALE) {
 			this.allMarriedCouples.Add (new MarriedCouple (citizen1, citizen2));
+			if (citizen1.race == RACE.HUMANS && citizen2.race == RACE.HUMANS) {
+				citizen2.ChangeSurname (citizen1);
+			}
 		} else {
 			this.allMarriedCouples.Add (new MarriedCouple (citizen2, citizen1));
+			if (citizen1.race == RACE.HUMANS && citizen2.race == RACE.HUMANS) {
+				citizen1.ChangeSurname (citizen2);
+			}
 		}
 
 		citizen1.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, citizen1.name + " married" + citizen2.name + ".", HISTORY_IDENTIFIER.NONE));

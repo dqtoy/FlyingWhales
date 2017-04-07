@@ -66,7 +66,7 @@ public class Citizen {
 
 	public Citizen(City city, int age, GENDER gender, int generation){
 		this.id = Utilities.SetID (this);
-		this.name = RandomNameGenerator.GenerateRandomName();
+		this.name = "";
 		this.age = age;
 		this.gender = gender;
 		this.generation = generation;
@@ -222,6 +222,12 @@ public class Citizen {
 	internal void AddParents(Citizen father, Citizen mother){
 		this.father = father;
 		this.mother = mother;
+
+		if (this.race == RACE.HUMANS) {
+			this.name = RandomNameGenerator.Instance.GetHumanFirstName (this.gender) + " " + this.father.name.Split (' ').ElementAt (1);
+		} else {
+			this.name = RandomNameGenerator.Instance.GenerateRandomName (this.race, this.gender);
+		}
 	}
 
 	internal void AddChild(Citizen child){
@@ -1215,5 +1221,10 @@ public class Citizen {
 			}
 		}
 		return false;
+	}
+
+	internal void ChangeSurname(Citizen citizenToGetSurnameFrom){
+		string newSurname = citizenToGetSurnameFrom.name.Split(' ').ElementAt(1);
+		this.name = this.name.Split (' ').ElementAt (0) + " " + newSurname;
 	}
 }
