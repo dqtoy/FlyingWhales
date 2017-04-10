@@ -36,6 +36,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameObject rightGround;
 	public GameObject bottomRightGround;
 	public GameObject centerPiece;
+	public GameObject topLeftGround;
+	public GameObject topRightGround;
 
 	public GameObject leftBorder;
 	public GameObject rightBorder;
@@ -259,12 +261,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			if (this.yCoordinate % 2 == 0) {
 				if (difference.X == -1 && difference.Y == 1) {
 					//top left
-					if (neighbours[i].biomeType != this.biomeType && neighbours[i].elevationType != ELEVATION.WATER) {
+					if (neighbours[i].elevationType == ELEVATION.WATER) {
+						this.topLeftGround.SetActive (true);
+					}else if (neighbours [i].biomeType != this.biomeType) {
 						this.topLeftBorder.SetActive (true);
 					}
 				} else if (difference.X == 0 && difference.Y == 1) {
 					//top right
-					if (neighbours [i].biomeType != this.biomeType && neighbours [i].elevationType != ELEVATION.WATER) {
+					if (neighbours[i].elevationType == ELEVATION.WATER) {
+						this.topRightGround.SetActive (true);
+					}else if (neighbours [i].biomeType != this.biomeType) {
 						this.topRightBorder.SetActive (true);
 					}
 				} else if (difference.X == 1 && difference.Y == 0) {
@@ -299,12 +305,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			} else {
 				if (difference.X == 0 && difference.Y == 1) {
 					//top left
-					if (neighbours [i].biomeType != this.biomeType && neighbours [i].elevationType != ELEVATION.WATER) {
+					if (neighbours[i].elevationType == ELEVATION.WATER) {
+						this.topLeftGround.SetActive (true);
+					}else if (neighbours [i].biomeType != this.biomeType) {
 						this.topLeftBorder.SetActive (true);
 					}
 				} else if (difference.X == 1 && difference.Y == 1) {
 					//top right
-					if (neighbours [i].biomeType != this.biomeType && neighbours [i].elevationType != ELEVATION.WATER) {
+					if (neighbours[i].elevationType == ELEVATION.WATER) {
+						this.topRightGround.SetActive (true);
+					}else if (neighbours [i].biomeType != this.biomeType) {
 						this.topRightBorder.SetActive (true);
 					}
 				} else if (difference.X == 1 && difference.Y == 0) {

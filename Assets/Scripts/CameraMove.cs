@@ -17,7 +17,9 @@ public class CameraMove : MonoBehaviour {
 	public float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
 	public Transform target;
-	public Camera eventsIconCamera;
+
+	public Camera eventIconCamera;
+	public Camera resourceIconCamera;
 
 	private float MIN_X = 66f;
 	private float MAX_X = 126f;
@@ -39,8 +41,8 @@ public class CameraMove : MonoBehaviour {
 		fov += Input.GetAxis("Mouse ScrollWheel") * (sensitivity * -1f);
 		fov = Mathf.Clamp(fov, minFov, maxFov);
 		Camera.main.orthographicSize = fov;
-		eventsIconCamera.orthographicSize = fov;
-
+		eventIconCamera.orthographicSize = fov;
+		resourceIconCamera.orthographicSize = fov;
 //		transform.position = new Vector3(
 //			Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
 //			Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
@@ -61,14 +63,20 @@ public class CameraMove : MonoBehaviour {
 	public void ShowWholeMap(){
 		CenterCameraOn (GridMap.Instance.map [25, 25].gameObject);
 		Camera.main.orthographicSize = maxFov;
-		eventsIconCamera.orthographicSize = maxFov;
-
+		eventIconCamera.orthographicSize = maxFov;
+		resourceIconCamera.orthographicSize = maxFov;
 	}
 
 	public void CenterCameraOn(GameObject GO){
 		Camera.main.orthographicSize = minFov;
+		eventIconCamera.orthographicSize = minFov;
+		resourceIconCamera.orthographicSize = minFov;
 		target = GO.transform;
 //		Vector3 diff = Camera.main.ScreenToWorldPoint(GO.transform.position);
 //		Camera.main.transform.Translate(new Vector3(diff.x, diff.y, 0.0f));
+	}
+
+	public void ToggleResourceIcons(){
+		resourceIconCamera.gameObject.SetActive(!resourceIconCamera.gameObject.activeSelf);
 	}
 }

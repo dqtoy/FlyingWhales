@@ -1144,6 +1144,10 @@ public class UIManager : MonoBehaviour {
 		specificEventGO.SetActive(false);
 	}
 
+	public void ToggleResourceIcons(){
+		CameraMove.Instance.ToggleResourceIcons();
+	}
+
 	internal Sprite GetSpriteForEvent(EVENT_TYPES eventType){
 		switch (eventType) {
 		case EVENT_TYPES.ASSASSINATION:
@@ -1171,7 +1175,6 @@ public class UIManager : MonoBehaviour {
 		}
 		return assassinationIcon;
 	}
-
 
 	public bool IsMouseOnUI(){
 		if( uiCamera != null ){
