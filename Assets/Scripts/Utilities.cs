@@ -304,4 +304,85 @@ public class Utilities : MonoBehaviour {
 		} 
 		return newList;
 	}
+
+	public static bool AreTwoGeneralsFriendly(General general1, General general2){
+		if(general1.citizen.city.kingdom.id != general2.citizen.city.kingdom.id){
+			if(general2.warLeader != null){
+				if(general1.citizen.city.kingdom.king.supportedCitizen != null){
+					if(general1.citizen.city.kingdom.king.supportedCitizen.id != general2.warLeader.id){
+						if(general2.citizen.city.governor.supportedCitizen != null){
+							if(general1.citizen.city.kingdom.king.supportedCitizen.id != general2.citizen.city.governor.supportedCitizen.id){
+								//CHECK VICE VERSA
+								if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
+									return false;
+								}
+							}
+						}else{
+							if (general1.citizen.city.kingdom.king.supportedCitizen.city.kingdom.id != general2.citizen.city.kingdom.id) {
+								if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
+									return false;
+								}
+							}else{
+								if(!general1.citizen.city.kingdom.king.supportedCitizen.isHeir){
+									if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
+										return false;
+									}
+								}
+							}
+						}
+					}
+				}else{
+					//CHECK VICE VERSA
+					if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
+						return false;
+					}
+				}
+
+			}else{
+				if (general1.citizen.city.kingdom.king.supportedCitizen != null) {
+					if(general2.citizen.city.governor.supportedCitizen != null){
+						if(general1.citizen.city.kingdom.king.supportedCitizen.id != general2.citizen.city.governor.supportedCitizen.id){
+							//CHECK VICE VERSA
+							if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
+								return false;
+							}
+						}
+					}else{
+						if (general1.citizen.city.kingdom.king.supportedCitizen.city.kingdom.id != general2.citizen.city.kingdom.id) {
+							if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
+								return false;
+							}
+						}else{
+							if(!general1.citizen.city.kingdom.king.supportedCitizen.isHeir){
+								if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
+									return false;
+								}
+							}
+						}
+					}
+				}else{
+					if(general1.citizen.city.kingdom.CheckForSpecificWar(general2.citizen.city.kingdom)){
+						return false;
+					}
+				}
+
+			}
+		}else{
+			if (general1.citizen.city.governor.id != general2.citizen.city.governor.id) {
+				if(general1.citizen.city.governor.supportedCitizen != null && general2.citizen.city.governor.supportedCitizen != null){
+					if(general1.citizen.city.governor.supportedCitizen.id != general2.citizen.city.governor.supportedCitizen.id){
+						return false;
+					}
+				}else{
+					if(general1.citizen.city.governor.supportedCitizen == null && general2.citizen.city.governor.supportedCitizen == null){
+						//BLANK ONLY
+					}else{
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
 }

@@ -115,6 +115,7 @@ public class Citizen {
 		EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
 		EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
 		EventManager.Instance.onCheckCitizensSupportingMe.AddListener(AddPrestigeToOtherCitizen);
+		EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
 	}
 
 	internal void GenerateTraits(){
@@ -329,7 +330,7 @@ public class Citizen {
 
 		Debug.Log(this.name + " DIES OF STARVATION");
 	}
-	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isAbsolute = false){
+	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 //		this.kingdom.royaltyList.allRoyalties.Remove (this);
 		Debug.LogError("DEATH: " + this.name);
 		DeathHistory(reason);
@@ -353,9 +354,11 @@ public class Citizen {
 		EventManager.Instance.onUnsupportCitizen.Invoke (this);
 		EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
 		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
+		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
+
 
 		if(this.role == ROLE.GENERAL){
-			if(isAbsolute){
+			if(isConquered){
 				if(((General)this.assignedRole).generalAvatar != null){
 					GameObject.Destroy(((General)this.assignedRole).generalAvatar);
 					((General)this.assignedRole).generalAvatar = null;
@@ -384,7 +387,7 @@ public class Citizen {
 			}
 
 		}
-		if(isAbsolute){
+		if(isConquered){
 			this.city.citizens.Remove (this);
 		}else{
 			if(this.role != ROLE.GENERAL){
@@ -416,11 +419,18 @@ public class Citizen {
 				if (newKing != null) {
 					this.city.kingdom.AssignNewKing (newKing);
 				}
-				//END SUCCESSION WAR
+				//END CIVIL WAR
 			} else{ 
 				if (this.city.kingdom.successionLine.Count <= 0) {
-					this.city.kingdom.AssignNewKing (null);
+					if (!isConquered) {
+						this.city.kingdom.AssignNewKing (null);
+					}
 				} else {
+					if(isConquered){
+						this.city.kingdom.AssignNewKing (this.city.kingdom.successionLine [0]);
+						this.RemoveSuccessionAndCivilWars ();
+						return;
+					}
 					if(this.successionWars.Count > 0){
 						if(this.successionWars.Count == 1){
 							this.city.kingdom.AssignNewKing (this.successionWars [0]);
@@ -860,12 +870,12 @@ public class Citizen {
 	}
 	internal void AddSuccessionWar(Citizen enemy){
 		this.successionWars.Add (enemy);
-		if(!this.campaignManager.SearchForSuccessionWarCities(enemy.city)){
+//		if(!this.campaignManager.SearchForSuccessionWarCities(enemy.city)){
 			this.campaignManager.successionWarCities.Add (new CityWar (enemy.city, false, WAR_TYPE.SUCCESSION));
-		}
-		if(!this.campaignManager.SearchForDefenseWarCities(this.city)){
+//		}
+//		if(!this.campaignManager.SearchForDefenseWarCities(this.city)){
 			this.campaignManager.defenseWarCities.Add (new CityWar (this.city, false, WAR_TYPE.SUCCESSION));
-		}
+//		}
 	}
 	internal void RemoveSuccessionWar(Citizen enemy){
 		List<Campaign> campaign = this.campaignManager.activeCampaigns.FindAll (x => x.targetCity.id == enemy.city.id);
@@ -875,7 +885,10 @@ public class Citizen {
 			}
 			this.campaignManager.activeCampaigns.Remove (campaign[i]);
 		}
-		this.campaignManager.successionWarCities.RemoveAll (x => x.city.id == enemy.city.id);
+		CityWar cityWar = this.campaignManager.successionWarCities.Find (x => x.city.id == enemy.city.id);
+		if(cityWar != null){
+			this.campaignManager.successionWarCities.Remove (cityWar);
+		}
 		this.successionWars.Remove (enemy);
 	}
 	internal void DeteriorateRelationship(RelationshipKings relationship, EVENT_TYPES reason, bool isDiscovery){
@@ -1230,9 +1243,20 @@ public class Citizen {
 		}
 		return false;
 	}
-
+	internal Citizen GetTargetSuccessionWar(City city){
+		for(int i = 0; i < this.successionWars.Count; i++){
+			if(this.successionWars[i].city.id == city.id){
+				return this.successionWars [i];
+			}
+		}
+		return null;
+	}
 	internal void ChangeSurname(Citizen citizenToGetSurnameFrom){
 		string newSurname = citizenToGetSurnameFrom.name.Split(' ').ElementAt(1);
 		this.name = this.name.Split (' ').ElementAt (0) + " " + newSurname;
+	}
+
+	internal void RemoveSuccessionWarCity (City city){
+		this.campaignManager.successionWarCities.RemoveAll (x => x.city == city.id);
 	}
 }

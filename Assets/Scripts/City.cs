@@ -36,6 +36,8 @@ public class City{
 	//generals
 	//incoming generals
 
+	private int weekCounter = 0;
+
 	protected Dictionary<ROLE, int> citizenCreationTable;
 	public Dictionary<CITY_TASK, HexTile> pendingTask;
 	protected List<HexTile> allUnownedNeighbours;
@@ -1372,12 +1374,14 @@ public class City{
 		}
 		return total;	
 	}
-	internal List<General> GetAllGenerals(){
+	internal List<General> GetAllGenerals(General attacker){
 		List<General> allGenerals = new List<General> ();
-		for(int i = 0; i < this.citizens.Count; i++){
-			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
-				if(((General)this.citizens[i].assignedRole).location == this.hexTile){
-					allGenerals.Add (((General)this.citizens [i].assignedRole));
+		if(attacker.citizen.city.governor.id != this.governor.id){
+			for(int i = 0; i < this.citizens.Count; i++){
+				if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
+					if(((General)this.citizens[i].assignedRole).location == this.hexTile){
+						allGenerals.Add (((General)this.citizens [i].assignedRole));
+					}
 				}
 			}
 		}
@@ -1579,5 +1583,9 @@ public class City{
 		}
 
 		return prestigeCitizens [UnityEngine.Random.Range (0, prestigeCitizens.Count)];
+	}
+
+	internal void SearchForTarget(Citizen winner, Citizen target){
+		
 	}
 }

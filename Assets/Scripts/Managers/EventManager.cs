@@ -26,7 +26,7 @@ public class EventManager : MonoBehaviour {
 	public GameEventEnded onGameEventEnded = new GameEventEnded();
 	public ShowEventsOfType onShowEventsOfType = new ShowEventsOfType();
 	public HideEvents onHideEvents = new HideEvents();
-
+	public RemoveSuccessionWarCity onRemoveSuccessionWarCity = new RemoveSuccessionWarCity();
 
 	public EVENT_TYPES eventTypeForTesting;
 

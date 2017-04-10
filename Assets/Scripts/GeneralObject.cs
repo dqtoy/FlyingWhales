@@ -6,8 +6,10 @@ public class GeneralObject : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other){
 		if(this.gameObject != null && other.gameObject != null){
-			if(other.gameObject.GetComponent<GeneralObject>().general.citizen.city.kingdom.id != this.general.citizen.city.kingdom.id){
-				CombatManager.Instance.BattleMidway(this.general, other.gameObject.GetComponent<GeneralObject>().general);
+			if(!Utilities.AreTwoGeneralsFriendly(other.gameObject.GetComponent<GeneralObject>().general, this.general)){
+				if(!Utilities.AreTwoGeneralsFriendly(this.general, other.gameObject.GetComponent<GeneralObject>().general)){
+					CombatManager.Instance.BattleMidway (this.general, other.gameObject.GetComponent<GeneralObject> ().general);
+				}
 			}
 		}
 

@@ -186,6 +186,7 @@ public class Kingdom{
 			newKing.role = ROLE.UNTRAINED;
 			newKing.assignedRole = null;
 			newKing.isKing = true;
+			newKing.isGovernor = false;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 			newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 			this.king = newKing;
@@ -209,6 +210,7 @@ public class Kingdom{
 		newKing.role = ROLE.UNTRAINED;
 		newKing.assignedRole = null;
 		newKing.isKing = true;
+		newKing.isGovernor = false;
 //		KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
@@ -225,6 +227,9 @@ public class Kingdom{
 			newKing.AddSuccessionWar (claimants [i]);
 			newKing.campaignManager.CreateCampaign ();
 
+			if(claimants[i].isGovernor){
+				claimants [i].supportedCitizen = claimants [i];
+			}
 			claimants[i].AddSuccessionWar (newKing);
 			claimants[i].campaignManager.CreateCampaign ();
 		}

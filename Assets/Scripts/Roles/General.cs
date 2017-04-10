@@ -24,6 +24,9 @@ public class General : Role {
 	public int unsuccessfulRaids;
 	public bool inAction;
 
+	internal Citizen target;
+	private int weekCounter = 0;
+
 	public General(Citizen citizen): base(citizen){
 		this.location = citizen.city.hexTile;
 		this.targetLocation = null;
@@ -129,45 +132,64 @@ public class General : Role {
 						}
 					}
 				}
-
 			}
 		}else if(campaign.warType == WAR_TYPE.SUCCESSION){
-			if(this.citizen.city.governor.supportedCitizen == null){
-				if(campaign.leader.isHeir){
-					if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
-						List<HexTile> path = null;
-						if(campaign.campaignType == CAMPAIGN.OFFENSE){
-							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
-						}else{
-							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
-								path = null;
+			if (this.citizen.city.kingdom.id == campaign.leader.city.kingdom.id){
+				if(this.citizen.city.governor.supportedCitizen == null){
+					if(campaign.leader.isHeir){
+						if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
+							List<HexTile> path = null;
+							if(campaign.campaignType == CAMPAIGN.OFFENSE){
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+							}else{
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+								if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
+									path = null;
+								}
+							}
+							if(path != null){
+								AssignCampaign (campaign, path);
 							}
 						}
-						if(path != null){
-							AssignCampaign (campaign, path);
+					}
+				}else{
+					if(this.citizen.city.governor.supportedCitizen.id == campaign.leader.id){
+						if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
+							List<HexTile> path = null;
+							if(campaign.campaignType == CAMPAIGN.OFFENSE){
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+							}else{
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+								if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
+									path = null;
+								}
+							}
+							if(path != null){
+								AssignCampaign (campaign, path);
+							}
 						}
 					}
 				}
 			}else{
-				if(this.citizen.city.governor.supportedCitizen.id == campaign.leader.id){
-					if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
-						List<HexTile> path = null;
-						if(campaign.campaignType == CAMPAIGN.OFFENSE){
-							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
-						}else{
-							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
-								path = null;
+				if(this.citizen.city.kingdom.king.supportedCitizen != null){
+					if (this.citizen.city.kingdom.king.supportedCitizen.id == campaign.leader.id) {
+						if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
+							List<HexTile> path = null;
+							if(campaign.campaignType == CAMPAIGN.OFFENSE){
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+							}else{
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+								if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
+									path = null;
+								}
 							}
-						}
-						if(path != null){
-							AssignCampaign (campaign, path);
+							if(path != null){
+								AssignCampaign (campaign, path);
+							}
 						}
 					}
 				}
 			}
-
 		}else if(campaign.warType == WAR_TYPE.CIVIL){
 
 		}
@@ -201,12 +223,46 @@ public class General : Role {
 
 
 	}
+	internal void SearchForTarget(){
+		Debug.Log (this.citizen.name + " instructed by " + this.warLeader.name + " is searching for " + this.target.name);
+		this.weekCounter += 1;
+		if(this.weekCounter <= 8){
+			int chance = UnityEngine.Random.Range (0, 100);
+			if(chance < (5 * this.weekCounter)){
+				//FOUND TARGET
+				Debug.Log("TARGET FOUND: " + target.name + ". He/She will be killed.");
+				if(target.isHeir){
+					target.Death (DEATH_REASONS.REBELLION, false, this.warLeader, false);
+				}else{
+					target.Death (DEATH_REASONS.TREACHERY, false,  this.warLeader, false);
+				}
 
+			}else{
+				if(this.weekCounter == 8){
+					//FOUND TARGET
+					Debug.Log("TARGET FOUND: " + target.name + ". He/She will be killed.");
+					if(target.isHeir){
+						target.Death (DEATH_REASONS.REBELLION, false, this.warLeader, false);
+					}else{
+						target.Death (DEATH_REASONS.TREACHERY, false, this.warLeader, false);
+					}
+
+				}
+			}
+			if(this.weekCounter == 8){
+				this.weekCounter = 0;
+				Campaign campaign = this.warLeader.campaignManager.SearchCampaignByID (this.campaignID);
+				if(campaign != null){
+					campaign.leader.campaignManager.CampaignDone (campaign);
+				}
+				EventManager.Instance.onWeekEnd.RemoveListener (this.SearchForTarget);
+			}
+		}
+	}
 	internal void Move(){
 		if(this.targetLocation != null){
 			if(this.roads.Count > 0){
-
-				//					this.generalAvatar.GetComponent<CitizenAvatar>().MakeCitizenMove (this.location, this.roads [0].hexTile);
+//				this.generalAvatar.GetComponent<CitizenAvatar>().MakeCitizenMove (this.location, this.roads [0].hexTile);
 				this.location = this.roads[0];
 				this.roads.RemoveAt (0);
 				this.daysBeforeArrival -= 1;
