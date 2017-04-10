@@ -685,8 +685,14 @@ public class Citizen {
 			this.assignedRole = new Governor (this);
 			this.city.governor = this;
 			this.workLocation = this.city.hexTile;
+			this.isGovernor = true;
+			this.isKing = false;
+			((Governor)this.assignedRole).SetOwnedCity(this.city);
 		} else if (role == ROLE.KING) {
 			this.assignedRole = new King (this);
+			this.isKing = true;
+			this.city.kingdom.king = this;
+			((King)this.assignedRole).SetOwnedKingdom(this.city.kingdom);
 		}
 		this.UpdatePrestige ();
 	}
@@ -777,8 +783,26 @@ public class Citizen {
 		return null;
 	}
 
+	internal Citizen GetKingParent(){
+		if (this.father != null) {
+			if (this.father.isKing) {
+				return this.father;
+			}
+		}
+
+		if (this.mother != null) {
+			if (this.mother.isKing) {
+				return this.mother;
+			}
+		}
+		return null;
+	}
 
 	internal void UpdatePrestige(){
+		if (this.city == null) {
+			return;
+		}
+
 		int prestige = 0;
 		this._prestige = 0;
 		this.prestigeFromSupport = 0;
@@ -1130,6 +1154,9 @@ public class Citizen {
 		return null;
 	}
 	protected void AddPrestigeToOtherCitizen(Citizen otherCitizen){
+		if (this.city == null) {
+			return;
+		}
 		if (this.supportedCitizen == null) {
 			if (otherCitizen.city.kingdom.id == this.city.kingdom.id) {
 				if (otherCitizen.isKing) {
@@ -1201,6 +1228,14 @@ public class Citizen {
 
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
 			relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION, true);
+			relationship.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				targetKingdom.name +  " discovered an assassination plot against it, launched by " + assassinKingdom.name,
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				false
+			));
 
 		}else if(hiddenEvent is InvasionPlan){
 			//An Invasion Plan discovered by the target Kingdom decreases the target kingdom's King's relationship by 20
@@ -1209,6 +1244,15 @@ public class Citizen {
 
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (sourceKingdom.king.id);
 			relationship.AdjustLikeness (-35, EVENT_TYPES.INVASION_PLAN, true);
+
+			relationship.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				targetKingdom.name +  " discovered an invasion plot against it, launched by " + sourceKingdom.name,
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				false
+			));
 		}
 		spy.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, spy.name + " informed " + this.name + " about " + hiddenEvent.eventType.ToString(), HISTORY_IDENTIFIER.NONE));
 

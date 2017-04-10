@@ -1,16 +1,22 @@
 fileFormatVersion: 2
-guid: 83e84b34e13bea040bda335a1b1dfc68
-timeCreated: 1491383882
+guid: b691b436b68a75f46a376910267f4409
+timeCreated: 1491804388
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: ElfStructures_0
-    21300002: ElfStructures_1
-    21300004: ElfStructures_5
-    21300006: ElfStructures_8
-    21300008: ElfStructures_9
-    21300010: ElfStructures_10
-    21300012: ElfStructures_11
+    21300000: elf_trader
+    21300002: elf_hunting_lodge
+    21300004: elf_spyguild
+    21300006: elf_quarry
+    21300008: ElfStructures_8
+    21300010: elf_city
+    21300012: elf_ministry
+    21300014: elf_mine
+    21300016: elf_lumberyard
+    21300018: elf_keep
+    21300020: elf_barracks
+    21300022: ElfStructures_21
+    21300024: elf_farm
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -60,25 +66,25 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ElfStructures_0
+      name: elf_trader
       rect:
         serializedVersion: 2
         x: 8
-        y: 635
-        width: 285
-        height: 381
+        y: 634
+        width: 287
+        height: 382
       alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: ElfStructures_1
+      name: elf_hunting_lodge
       rect:
         serializedVersion: 2
-        x: 297
+        x: 299
         y: 628
-        width: 307
+        width: 305
         height: 388
       alignment: 6
       pivot: {x: 0, y: 0}
@@ -86,20 +92,33 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: ElfStructures_5
+      name: elf_spyguild
+      rect:
+        serializedVersion: 2
+        x: 1009
+        y: 631
+        width: 333
+        height: 361
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: elf_quarry
       rect:
         serializedVersion: 2
         x: 620
         y: 744
         width: 312
-        height: 268
+        height: 266
       alignment: 9
-      pivot: {x: 0.1597742, y: 0.21096574}
+      pivot: {x: 0.1666829, y: 0.22632891}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: ElfStructures_8
+      name: elf_city
       rect:
         serializedVersion: 2
         x: 682
@@ -112,7 +131,20 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: ElfStructures_9
+      name: elf_ministry
+      rect:
+        serializedVersion: 2
+        x: 1424
+        y: 658
+        width: 343
+        height: 273
+      alignment: 9
+      pivot: {x: 0.16648825, y: 0.22064857}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: elf_mine
       rect:
         serializedVersion: 2
         x: 10
@@ -125,7 +157,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: ElfStructures_10
+      name: elf_lumberyard
       rect:
         serializedVersion: 2
         x: 335
@@ -138,7 +170,33 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: ElfStructures_11
+      name: elf_keep
+      rect:
+        serializedVersion: 2
+        x: 1060
+        y: 264
+        width: 336
+        height: 284
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: elf_barracks
+      rect:
+        serializedVersion: 2
+        x: 1464
+        y: 235
+        width: 302
+        height: 362
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: elf_farm
       rect:
         serializedVersion: 2
         x: 10
@@ -146,7 +204,7 @@ TextureImporter:
         width: 329
         height: 224
       alignment: 9
-      pivot: {x: 0.1454737, y: 0.20828421}
+      pivot: {x: 0.1712454, y: 0.21994217}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

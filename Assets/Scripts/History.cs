@@ -8,12 +8,14 @@ public class History {
 
 	public string description;
 	public HISTORY_IDENTIFIER identifier;
+	public bool isPositive;
 
-	public History(int month, int week, int year, string description, HISTORY_IDENTIFIER identifier){ //= HISTORY_IDENTIFIER.NONE
+	public History(int month, int week, int year, string description, HISTORY_IDENTIFIER identifier, bool isPositive = true){ //= HISTORY_IDENTIFIER.NONE
 		this.month = month;
 		this.week = week;
 		this.year = year;
 		this.description = description;
 		this.identifier = identifier;
+		this.isPositive = isPositive;
 	}
 }

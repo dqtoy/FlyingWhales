@@ -10,6 +10,13 @@ public class PathGenerator : MonoBehaviour {
 
 	private List<HexTile> roadTiles = new List<HexTile>();
 
+	[ContextMenu("Show all road tiles")]
+	public void ShowAllRoadTiles(){
+		foreach (HexTile h in roadTiles) {
+			h.SetTileColor(Color.clear);
+		}
+	}
+
 	void Awake(){
 		Instance = this;
 	}

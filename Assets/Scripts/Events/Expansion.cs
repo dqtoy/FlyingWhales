@@ -23,7 +23,7 @@ public class Expansion : GameEvent {
 		this.remainingRecruitmentPeriodInWeeks = this.recruitmentPeriodInWeeks;
 		this.originCity = startedBy.city;
 
-		Debug.LogError (this.description);
+		Debug.LogError(this.description);
 		this.citizensJoiningExpansion.Add (this.startedBy);
 		this.startedBy.city.RemoveCitizenFromCity(this.startedBy);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
