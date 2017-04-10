@@ -207,11 +207,7 @@ public class City{
 		father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
 		mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
-		king.role = ROLE.KING;
-		King job = new King (king);
-		king.assignedRole = job;
-		job.SetOwnedKingdom(this.kingdom);
-		this.kingdom.king = king;
+		king.AssignRole(ROLE.KING);
 
 		this.kingdom.king.isKing = true;
 		this.kingdom.king.isDirectDescendant = true;
@@ -315,11 +311,7 @@ public class City{
 		father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
 		mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
-		governor.isGovernor = true;
-		governor.role = ROLE.GOVERNOR;
-		Governor job = new Governor (governor);
-		governor.assignedRole = job;
-		job.SetOwnedCity(this);
+		governor.AssignRole(ROLE.GOVERNOR);
 
 		father.AddChild (governor);
 		mother.AddChild (governor);
@@ -694,6 +686,11 @@ public class City{
 	}
 
 	internal void ExpandToThisCity(List<Citizen> citizensToOccupyCity){
+		citizensToOccupyCity = citizensToOccupyCity.OrderBy(x => x.prestige).ToList();
+//		Assign Governor
+		citizensToOccupyCity.Last().city = this;
+		citizensToOccupyCity.Last().AssignRole(ROLE.GOVERNOR);
+
 		BuyInitialTiles ();
 		CreateInitialFoodProducerFamily ();
 		CreateInitialGathererFamily ();
@@ -706,9 +703,7 @@ public class City{
 		for (int i = 0; i < this.citizens.Count; i++) {
 			this.citizens[i].UpdatePrestige();
 		}
-//		citizensToOccupyCity = citizensToOccupyCity.OrderBy(x => x.prestige).ToList();
-		//Assign Governor
-//		citizensToOccupyCity.Last().AssignRole(ROLE.GOVERNOR);
+
 
 //		this.CreateInitialFoodProducerFamily();
 //		this.CreateInitialGathererFamily();
@@ -1110,8 +1105,8 @@ public class City{
 					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).Where (x => x.age >= 16).ToList ();
 					if (unemployedCitizens.Count > 0) {
 						this.AdjustResources (GetCitizenCreationCostPerType (pendingTiles [0].roleIntendedForTile));
-						this.OccupyTile (pendingTiles [0], unemployedCitizens [0]);
 						unemployedCitizens [0].AssignRole (pendingTiles [0].roleIntendedForTile);
+						this.OccupyTile (pendingTiles [0], unemployedCitizens [0]);
 					} else {
 						if (this.pendingTask.Count <= 0) {
 							this.pendingTask.Add (CITY_TASK.ASSIGN_CITIZEN, pendingTiles [0]);
@@ -1184,8 +1179,8 @@ public class City{
 					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).Where (x => x.age >= 16).ToList ();
 					if (unemployedCitizens.Count > 0) {
 						this.AdjustResources (GetCitizenCreationCostPerType (hexTileConcerned.roleIntendedForTile));
-						this.OccupyTile (hexTileConcerned, unemployedCitizens [0]);
 						unemployedCitizens [0].AssignRole (hexTileConcerned.roleIntendedForTile);
+						this.OccupyTile (hexTileConcerned, unemployedCitizens [0]);
 						this.pendingTask.Clear ();
 						return true;
 					}
@@ -1423,7 +1418,7 @@ public class City{
 		return citizensWithRole;
 	}
 
-	protected void AdjustResources(List<Resource> resource, bool reduce = true){
+	internal void AdjustResources(List<Resource> resource, bool reduce = true){
 		int currentResourceQuantity = 0;
 		Debug.Log ("Cost is: ");
 		for (int i = 0; i < resource.Count; i++) {
@@ -1559,13 +1554,8 @@ public class City{
 		Citizen newGovernor = GetCitizenWithHighestPrestige ();
 		this.governor.isGovernor = false;
 
-		newGovernor.assignedRole = null;
-		newGovernor.role = ROLE.UNTRAINED;
-		newGovernor.isGovernor = true;
-		this.governor = newGovernor;
+		newGovernor.AssignRole(ROLE.GOVERNOR);
 		newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-
-
 	}
 	internal Citizen GetCitizenWithHighestPrestige(){
 		List<Citizen> prestigeCitizens = new List<Citizen> ();

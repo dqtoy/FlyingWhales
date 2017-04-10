@@ -16,6 +16,10 @@ public class CityGenerator : MonoBehaviour {
 	public Sprite elfTraderSprite;
 	public Sprite elfHuntingLodgeSprite;
 	public Sprite elfMiningSprite;
+	public Sprite elfBarracks;
+	public Sprite elfSpyGuild;
+	public Sprite elfMinistry;
+	public Sprite elfKeep;
 
 	void Awake(){
 		Instance = this;

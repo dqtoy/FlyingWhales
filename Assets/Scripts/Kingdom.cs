@@ -92,6 +92,10 @@ public class Kingdom{
 			new Resource (BASE_RESOURCE_TYPE.GOLD, 1000),
 			new Resource (this.basicResource, 200)
 		};
+//		List<Resource> expansionCost = new List<Resource> () {
+//			new Resource (BASE_RESOURCE_TYPE.GOLD, 50),
+//			new Resource (this.basicResource, 20)
+//		};
 
 		for (int i = 0; i < this.cities.Count; i++) {
 			if (this.cities[i].HasEnoughResourcesForAction(expansionCost) && this.cities[i].adjacentHabitableTiles.Count > 0) {
@@ -114,10 +118,11 @@ public class Kingdom{
 
 		if (citiesThatCanExpand.Count > 0) {
 			float expansionChance = 3f;
-			float chance = Random.Range (1f, expansionChance);
+			float chance = Random.Range (1f, 100f);
 			if (chance < expansionChance) {
 				Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
 				citiesThatCanExpand[0].AssignNewGovernor();
+				citiesThatCanExpand[0].AdjustResources(expansionCost);
 				Expansion newExpansionEvent = new Expansion (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, governorToLeadExpansion);
 			}
 		}

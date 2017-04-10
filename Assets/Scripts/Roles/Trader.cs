@@ -36,6 +36,9 @@ public class Trader : Role {
 		if (this.targetCity == null) {
 			return;
 		}
+		if (this.currentLocation == null) {
+			return;
+		}
 
 		this.pathToTargetCity = PathGenerator.Instance.GetPath(currentLocation, targetCity.hexTile, PATHFINDING_MODE.NORMAL).Reverse().ToList();
 		this.currentlySelling = this.offeredResources.Intersect(this.targetCity.tradeManager.neededResources).ToList();

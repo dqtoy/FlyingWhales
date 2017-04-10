@@ -444,7 +444,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 			break;
 		case ROLE.GENERAL:
-			this.GetComponent<SpriteRenderer> ().color = Color.red;
+			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfBarracks;
+			structureGO.SetActive (true);
 			this.structureOnTile = STRUCTURE.BARRACKS;
 			break;
 		case ROLE.MINER:
@@ -459,26 +460,31 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			this.structureOnTile = STRUCTURE.TRADING_POST;
 			break;
 		case ROLE.SPY:
-			this.GetComponent<SpriteRenderer> ().color = Color.red;
+			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfSpyGuild;
+			structureGO.SetActive (true);
 			this.structureOnTile = STRUCTURE.SPY_GUILD;
 			break;
 		case ROLE.GUARDIAN:
-			this.GetComponent<SpriteRenderer> ().color = Color.red;
+			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfKeep;
+			structureGO.SetActive (true);
 			this.structureOnTile = STRUCTURE.KEEP;
 			break;
 		case ROLE.ENVOY:
-			this.GetComponent<SpriteRenderer> ().color = Color.red;
+			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfMinistry;
+			structureGO.SetActive (true);
 			this.structureOnTile = STRUCTURE.MINISTRY;
 			break;
-		default:
-			this.GetComponent<SpriteRenderer> ().color = Color.blue;
-			break;
+//		default:
+//			this.GetComponent<SpriteRenderer> ().color = Color.blue;
+//			break;
 		}
 	}
 
 	public void UnoccupyTile(){
 		this.isOccupied = false;
 		this.occupant = null;
+		this.structureGO.SetActive(false);
+		this.structureOnTile = STRUCTURE.NONE;
 		this.GetComponent<SpriteRenderer> ().color = Color.clear;
 	}
 

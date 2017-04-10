@@ -675,8 +675,14 @@ public class Citizen {
 			this.assignedRole = new Governor (this);
 			this.city.governor = this;
 			this.workLocation = this.city.hexTile;
+			this.isGovernor = true;
+			this.isKing = false;
+			((Governor)this.assignedRole).SetOwnedCity(this.city);
 		} else if (role == ROLE.KING) {
 			this.assignedRole = new King (this);
+			this.isKing = true;
+			this.city.kingdom.king = this;
+			((King)this.assignedRole).SetOwnedKingdom(this.city.kingdom);
 		}
 		this.UpdatePrestige ();
 	}
@@ -769,6 +775,10 @@ public class Citizen {
 
 
 	internal void UpdatePrestige(){
+		if (this.city == null) {
+			return;
+		}
+
 		int prestige = 0;
 		this._prestige = 0;
 		this.prestigeFromSupport = 0;
@@ -1117,6 +1127,9 @@ public class Citizen {
 		return null;
 	}
 	protected void AddPrestigeToOtherCitizen(Citizen otherCitizen){
+		if (this.city == null) {
+			return;
+		}
 		if (this.supportedCitizen == null) {
 			if (otherCitizen.city.kingdom.id == this.city.kingdom.id) {
 				if (otherCitizen.isKing) {

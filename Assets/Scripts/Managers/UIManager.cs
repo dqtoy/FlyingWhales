@@ -409,8 +409,10 @@ public class UIManager : MonoBehaviour {
 
 
 		CharacterPortrait[] characters = citizensParent.GetComponentsInChildren<CharacterPortrait>();
+		List<Citizen> citizensExcludingKingAndGovernor = cityToShow.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING).ToList();
 
-		if (characters.Length != (cityToShow.citizens.Count - 2) || !cityInfoGO.activeSelf || forceUpdate) {
+
+		if (characters.Length != citizensExcludingKingAndGovernor.Count || !cityInfoGO.activeSelf || forceUpdate) {
 			citizensBtn.GetComponent<ButtonToggle> ().OnClick ();
 			for (int i = 0; i < characters.Length; i++) {
 				Destroy (characters [i].gameObject);
