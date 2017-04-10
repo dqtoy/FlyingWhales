@@ -97,7 +97,7 @@ public class UIManager : MonoBehaviour {
 	public UIGrid kingdomEventsGrid;
 	public UIGrid kingdomGovernorsGrid;
 
-	[Space(10)]
+	[Space(10)] //Events UI
 	public UIGrid gameEventsOfTypeGrid;
 	public Sprite assassinationIcon;
 	public Sprite rebellionPlotIcon;
@@ -111,7 +111,7 @@ public class UIManager : MonoBehaviour {
 	public Sprite expansionIcon;
 	public Sprite marriageInvitationIcon;
 
-	[Space(10)]
+	[Space(10)] //Relationship UI
 	public GameObject kingRelationshipsParentGO;
 	public GameObject governorRelationshipsParentGO;
 	public UIGrid kingRelationshipsGrid;
@@ -123,9 +123,10 @@ public class UIManager : MonoBehaviour {
 	public ButtonToggle kingRelationshipsBtn;
 	public ButtonToggle governorRelationshipsBtn;
 
-	[Space(10)]
+	[Space(10)] //Relationship History UI
 	public UI2DSprite relationshipStatusSprite;
 	public UIGrid relationshipHistoryGrid;
+	public GameObject noRelationshipsToShowGO;
 
 	[Space(10)]
 	public GameObject familyTreeFatherGO;
@@ -847,6 +848,21 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void ShowRelationshipHistory(Citizen citizenInRelationshipWith){
+		RelationshipKings relationship = currentlyShowingCitizen.GetRelationshipWithCitizen(citizenInRelationshipWith);
+		if (relationship.relationshipHistory.Count <= 0) {
+			noRelationshipsToShowGO.SetActive (true);
+		} else {
+			noRelationshipsToShowGO.SetActive (false);
+		}
+
+		for (int i = 0; i < relationship.relationshipHistory.Count; i++) {
+			GameObject historyGO = GameObject.Instantiate (this.historyPortraitPrefab, this.relationshipHistoryGrid.transform) as GameObject;
+			historyGO.GetComponent<HistoryPortrait> ().SetHistory(relationship.relationshipHistory[i]);
+			historyGO.transform.localScale = Vector3.one;
+			historyGO.transform.localPosition = Vector3.zero;
+		}
+
+		relationshipStatusSprite.color = Utilities.GetColorForRelationship(relationship.lordRelationship);
 		relationshipHistoryGO.SetActive(true);
 	}
 

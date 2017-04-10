@@ -171,6 +171,14 @@ public class Espionage : GameEvent {
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
 						relationshipReverse.AdjustLikeness (10);
+						relationshipReverse.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							true
+						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 					}
 
@@ -186,9 +194,25 @@ public class Espionage : GameEvent {
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
 						relationshipReverse.AdjustLikeness (10);
+						relationshipReverse.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							true
+						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 					}
 					relationshipToCreator.AdjustLikeness (-10, EVENT_TYPES.ESPIONAGE);
+					relationshipToCreator.relationshipHistory.Add (new History (
+						GameManager.Instance.month,
+						GameManager.Instance.week,
+						GameManager.Instance.year,
+						relationshipToCreator.sourceKing + " found out about a " + chosenEvent.ToString() + " against his friend " + target.name + " launched by " + relationshipToCreator.king,
+						HISTORY_IDENTIFIER.KING_RELATIONS,
+						false
+					));
 				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
 					int value = 80;
 					if(relationshipToCreator.lordRelationship == RELATIONSHIP_STATUS.WARM){
@@ -201,9 +225,25 @@ public class Espionage : GameEvent {
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
 						relationshipReverse.AdjustLikeness (10);
+						relationshipReverse.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							true
+						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 					}
 					relationshipToCreator.AdjustLikeness (-15, EVENT_TYPES.ESPIONAGE);
+					relationshipToCreator.relationshipHistory.Add (new History (
+						GameManager.Instance.month,
+						GameManager.Instance.week,
+						GameManager.Instance.year,
+						relationshipToCreator.sourceKing + " found out about a " + chosenEvent.ToString() + " against his friend " + target.name + " launched by " + relationshipToCreator.king,
+						HISTORY_IDENTIFIER.KING_RELATIONS,
+						false
+					));
 
 				}
 

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class RelationshipKings {
@@ -14,6 +15,7 @@ public class RelationshipKings {
 //	public bool isAdjacent;
 //	public bool isAtWar;
 	public int daysAtWar;
+	public List<History> relationshipHistory;
 
 	public RelationshipKings(Citizen sourceKing, Citizen king, int like){
 //		this.id = id;
@@ -23,6 +25,7 @@ public class RelationshipKings {
 		this.like = like;
 		this.isFirstEncounter = true;
 		this.lordRelationship = RELATIONSHIP_STATUS.NEUTRAL;
+		this.relationshipHistory = new List<History>();
 //		this.isAdjacent = false;
 //		this.isAtWar = false;
 	}

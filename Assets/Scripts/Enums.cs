@@ -197,6 +197,7 @@ public enum EVENT_TYPES{
 	SUCCESSION_WAR,
 	MARRIAGE_INVITATION,
 	EXPANSION,
+	TRADE,
 	ALL
 }
 public enum EVENT_STATUS{
@@ -221,6 +222,7 @@ public enum STRUCTURE{
 
 public enum HISTORY_IDENTIFIER{
 	NONE,
+	KING_RELATIONS
 }
 
 public enum DEATH_REASONS{

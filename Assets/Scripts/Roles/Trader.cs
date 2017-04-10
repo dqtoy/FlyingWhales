@@ -50,6 +50,29 @@ public class Trader : Role {
 			this.targetCity.tradeManager.sustainabilityBuff = 5;
 		}
 
+		if (this.homeCity.kingdom.id != this.targetCity.kingdom.id) {
+			RelationshipKings rel1 = this.homeCity.kingdom.king.GetRelationshipWithCitizen(this.targetCity.kingdom.king);
+			RelationshipKings rel2 = this.targetCity.kingdom.king.GetRelationshipWithCitizen(this.homeCity.kingdom.king);
+			rel1.AdjustLikeness(2, EVENT_TYPES.TRADE);
+			rel2.AdjustLikeness(2, EVENT_TYPES.TRADE);
+			rel1.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				"Successful trade with city " + this.targetCity.name,
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				true
+			));
+
+			rel2.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				"Successful trade with city " + this.homeCity.name,
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				true
+			));
+		}
 
 		this.isWorking = true;
 		this.isGoingHome = false;

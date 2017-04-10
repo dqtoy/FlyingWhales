@@ -61,7 +61,16 @@ public class JoinWar : GameEvent {
 				int chanceForSuccess = Random.Range (0, 100);
 				if (chanceForSuccess < successRate) {
 					//target king will start invasion plan
-					this.startedBy.GetRelationshipWithCitizen(this.candidateForAlliance).AdjustLikeness(5);
+					RelationshipKings relationship = this.startedBy.GetRelationshipWithCitizen(this.candidateForAlliance);
+					relationship.AdjustLikeness(5);
+					relationship.relationshipHistory.Add (new History (
+						GameManager.Instance.month,
+						GameManager.Instance.week,
+						GameManager.Instance.year,
+						this.candidateForAlliance.name + " accepted a join war request from " + this.startedBy.name + " against " + this.kingdomToAttack.name,
+						HISTORY_IDENTIFIER.KING_RELATIONS,
+						true
+					));
 					InvasionPlan newInvasionPlan = new InvasionPlan(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
 						this.candidateForAlliance, this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
 					EventManager.Instance.AddEventToDictionary (newInvasionPlan);

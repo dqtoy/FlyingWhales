@@ -69,25 +69,87 @@ public class MarriageInvitation : GameEvent {
 					}
 				}
 
-				if (startedBy.father != null) {
-					if (startedBy.father.isKing) {
-						startedBy.city.kingdom.king.GetRelationshipWithCitizen(chosenCitizen.city.kingdom.king).AdjustLikeness(15);
-					}
-				}
-				if (startedBy.mother != null) {
-					if (startedBy.mother.isKing) {
-						startedBy.city.kingdom.king.GetRelationshipWithCitizen(chosenCitizen.city.kingdom.king).AdjustLikeness(15);
-					}
-				}
+				if (this.startedBy.isKing) {
+					//if startedBy is King
+					//check if chosenCitizen has a parent that is a king
+					Citizen chosenCitizenKingParent = chosenCitizen.GetKingParent();
+					if (chosenCitizenKingParent != null) {
+						RelationshipKings relationship = startedBy.city.kingdom.king.GetRelationshipWithCitizen(chosenCitizenKingParent);
+						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							true
+						));
 
-				if (chosenCitizen.father != null) {
-					if (chosenCitizen.father.isKing) {
-						chosenCitizen.city.kingdom.king.GetRelationshipWithCitizen(startedBy.city.kingdom.king).AdjustLikeness(15);
+						relationship = chosenCitizenKingParent.city.kingdom.king.GetRelationshipWithCitizen(this.startedBy);
+						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							true
+						));
+
 					}
-				}
-				if (chosenCitizen.mother != null) {
-					if (chosenCitizen.mother.isKing) {
-						chosenCitizen.city.kingdom.king.GetRelationshipWithCitizen(startedBy.city.kingdom.king).AdjustLikeness(15);
+				} else if (chosenCitizen.isKing) {
+					//if chosenCitizen is King
+					//check if startedBy has a parent that is a king
+					Citizen startedByKingParent = this.startedBy.GetKingParent ();
+					if (startedByKingParent != null) {
+						RelationshipKings relationship = startedBy.city.kingdom.king.GetRelationshipWithCitizen(startedByKingParent);
+						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.startedBy.name + " got married to" + startedByKingParent.name + "'s child " + chosenCitizen.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							true
+						));
+
+						relationship = startedByKingParent.city.kingdom.king.GetRelationshipWithCitizen(this.startedBy);
+						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.startedBy.name + " got married to" + startedByKingParent.name + "'s child " + chosenCitizen.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							true
+						));
+					}
+				} else {
+					//both citizens to be married are not kings, check if both citizens have parents that are king
+					Citizen startedByKingParent = startedBy.GetKingParent ();
+					Citizen chosenCitizenKingParent = chosenCitizen.GetKingParent ();
+					if (startedByKingParent != null && chosenCitizenKingParent != null) {
+						RelationshipKings relationship = startedByKingParent.city.kingdom.king.GetRelationshipWithCitizen(chosenCitizenKingParent);
+						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							startedByKingParent.name + "'s child " +  this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							true
+						));
+
+						relationship = chosenCitizenKingParent.city.kingdom.king.GetRelationshipWithCitizen(startedByKingParent);
+						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							startedByKingParent.name + "'s child " +  this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							true
+						));
 					}
 				}
 

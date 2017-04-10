@@ -78,6 +78,48 @@ public class StateVisit : GameEvent {
 		inviterRelationship.AdjustLikeness (inviterPoints, EVENT_TYPES.STATE_VISIT);
 		invitedRelationship.AdjustLikeness (invitedPoints, EVENT_TYPES.STATE_VISIT);
 
+		if (inviterPoints < 0) {
+			inviterRelationship.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				"State Visit fail",
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				false
+			));
+		} else {
+			inviterRelationship.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				"State Visit success",
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				true
+			));
+		}
+
+
+		if (invitedPoints < 0) {
+			invitedRelationship.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				"State Visit fail",
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				false
+			));
+		} else {
+			invitedRelationship.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				"State Visit success",
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				true
+			));
+		}
+
+
 		if(this.visitor.isDead){
 			if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_A){
 				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit to improve relations with " + this.invitedKingdom.king.name + " after discovering Assassination. " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
@@ -241,6 +283,14 @@ public class StateVisit : GameEvent {
 			RelationshipKings relationship = this.invitedKingdom.king.SearchRelationshipByID (this.inviterKingdom.king.id);
 			if(relationship.like <= 0){
 				relationship.AdjustLikeness (-50, EVENT_TYPES.STATE_VISIT);
+				relationship.relationshipHistory.Add (new History (
+					GameManager.Instance.month,
+					GameManager.Instance.week,
+					GameManager.Instance.year,
+					"Visitor from " + this.invitedKingdom.name + " died while visiting " + this.inviterKingdom.name,
+					HISTORY_IDENTIFIER.KING_RELATIONS,
+					false
+				));
 			}else{
 				relationship.like = -50;
 				relationship.UpdateKingRelationshipStatus ();

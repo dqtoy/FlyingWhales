@@ -223,17 +223,49 @@ public class Raid : GameEvent {
 						kingdomBlame = kingdomToBlame;
 						RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(kingdomToBlame.king.id);
 						relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.raidedCity.kingdom.king.name +  " caught a raider, that was from " + kingdomToBlame.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							false
+						));
 					}else{
 						RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(this.sourceKingdom.king.id);
 						relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.raidedCity.kingdom.king.name +  " caught a raider, that was from " + this.sourceKingdom.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							false
+						));
 					}
 				}else{
 					RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(this.sourceKingdom.king.id);
 					relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
+					relationship.relationshipHistory.Add (new History (
+						GameManager.Instance.month,
+						GameManager.Instance.week,
+						GameManager.Instance.year,
+						this.raidedCity.kingdom.king.name +  " caught a raider, that was from " + this.sourceKingdom.name,
+						HISTORY_IDENTIFIER.KING_RELATIONS,
+						false
+					));
 				}
 			}else{
 				RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(this.sourceKingdom.king.id);
 				relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
+				relationship.relationshipHistory.Add (new History (
+					GameManager.Instance.month,
+					GameManager.Instance.week,
+					GameManager.Instance.year,
+					this.raidedCity.kingdom.king.name +  " caught a raider, that was from " + this.sourceKingdom.name,
+					HISTORY_IDENTIFIER.KING_RELATIONS,
+					false
+				));
 			}
 		}
 	}

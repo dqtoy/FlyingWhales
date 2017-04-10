@@ -111,6 +111,23 @@ public class BorderConflict : GameEvent {
 			relationship1.AdjustLikeness (-15, EVENT_TYPES.BORDER_CONFLICT);
 			relationship2.AdjustLikeness (-15, EVENT_TYPES.BORDER_CONFLICT);
 
+			relationship1.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				" A border conflict between " + this.kingdom1.name +  " " + this.kingdom2.name + " reached full tension.",
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				false
+			));
+			relationship2.relationshipHistory.Add (new History (
+				GameManager.Instance.month,
+				GameManager.Instance.week,
+				GameManager.Instance.year,
+				" A border conflict between " + this.kingdom2.name +  " " + this.kingdom1.name + " reached full tension.",
+				HISTORY_IDENTIFIER.KING_RELATIONS,
+				false
+			));
+
 			DoneEvent ();
 		}else if(this.tension <= 0){
 			this.tension = 0;

@@ -4,6 +4,7 @@ using System.Collections;
 public class HistoryPortrait : MonoBehaviour {
 
 //	public UI2DSprite kingdomColorGO;
+	public UI2DSprite historyBG;
 	public UILabel dateLbl;
 	public UI2DSprite iconSprite;
 
@@ -14,6 +15,14 @@ public class HistoryPortrait : MonoBehaviour {
 		this.history = history;
 //		this.iconSprite.sprite2D = GetSprite ();
 //		this.iconSprite.MakePixelPerfect ();
+		if (history.identifier == HISTORY_IDENTIFIER.KING_RELATIONS) {
+			if (history.isPositive) {
+				historyBG.color = Color.green;
+			} else {
+				historyBG.color = Color.red;
+			}
+		}
+
 		this.dateLbl.text = "[b]" + ((MONTH)history.month).ToString () + " " + history.week.ToString () + ", " + history.year.ToString () + "[/b]";
 
 	}

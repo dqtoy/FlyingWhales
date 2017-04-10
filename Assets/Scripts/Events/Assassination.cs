@@ -292,17 +292,49 @@ public class Assassination : GameEvent {
 						kingToBlame = kingdomToBlame.king;
 						RelationshipKings relationship = this.targetCitizen.city.kingdom.king.SearchRelationshipByID (kingdomToBlame.king.id);
 						relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.targetCitizen.city.kingdom.king.name +  " caught an assassin, that was from " + kingdomToBlame.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							false
+						));
 					}else{
 						RelationshipKings relationship = this.targetCitizen.city.kingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
 						relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
+						relationship.relationshipHistory.Add (new History (
+							GameManager.Instance.month,
+							GameManager.Instance.week,
+							GameManager.Instance.year,
+							this.targetCitizen.city.kingdom.king.name +  " caught an assassin, that was from " + assassinKingdom.name,
+							HISTORY_IDENTIFIER.KING_RELATIONS,
+							false
+						));
 					}
 				}else{
 					RelationshipKings relationship = this.targetCitizen.city.kingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
 					relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
+					relationship.relationshipHistory.Add (new History (
+						GameManager.Instance.month,
+						GameManager.Instance.week,
+						GameManager.Instance.year,
+						this.targetCitizen.city.kingdom.king.name +  " caught an assassin, that was from " + assassinKingdom.name,
+						HISTORY_IDENTIFIER.KING_RELATIONS,
+						false
+					));
 				}
 			}else{
 				RelationshipKings relationship = this.targetCitizen.city.kingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
 				relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
+				relationship.relationshipHistory.Add (new History (
+					GameManager.Instance.month,
+					GameManager.Instance.week,
+					GameManager.Instance.year,
+					this.targetCitizen.city.kingdom.king.name +  " caught an assassin, that was from " + assassinKingdom.name,
+					HISTORY_IDENTIFIER.KING_RELATIONS,
+					false
+				));
 			}
 		}
 	}
