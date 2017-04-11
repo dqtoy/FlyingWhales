@@ -231,8 +231,10 @@ public class BorderConflict : GameEvent {
 				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
 					if (!kingdom.cities [i].citizens [j].isDead) {
 						if (kingdom.cities [i].citizens [j].assignedRole != null && kingdom.cities [i].citizens [j].role == ROLE.ENVOY) {
-							if (!((Envoy)kingdom.cities [i].citizens [j].assignedRole).inAction) {
-								envoys.Add (kingdom.cities [i].citizens [j]);
+							if (kingdom.cities [i].citizens [j].assignedRole is Envoy) {
+								if (!((Envoy)kingdom.cities [i].citizens [j].assignedRole).inAction) {
+									envoys.Add (kingdom.cities [i].citizens [j]);
+								}
 							}
 						}
 					}

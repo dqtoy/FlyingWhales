@@ -152,10 +152,20 @@ public class UIManager : MonoBehaviour {
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	private Citizen currentlyShowingCitizen;
-	private City currentlyShowingCity;
+	internal City currentlyShowingCity;
 	private Kingdom currentlyShowingKingdom;
 	private GameEvent currentlyShowingEvent;
 	private GameObject lastClickedEventType = null;
+
+	[Space(10)] //FOR TESTING
+	public GameObject goCreateEventUI;
+	public GameObject goRaid;
+	public GameObject goStateVisit;
+	public GameObject goMarriageInvitation;
+	public GameObject goPowerGrab;
+	public UIPopupList eventDropdownList;
+	public UILabel eventDropdownCurrentSelectionLbl;
+
 
 	void Awake(){
 		Instance = this;
@@ -1190,4 +1200,43 @@ public class UIManager : MonoBehaviour {
 		return false;
 	}
 
+
+
+
+
+
+
+//------------------------------------------------------------------------------------------- FOR TESTING ---------------------------------------------------------------------
+
+	public void OnValueChangeEventDropdown(){
+		eventDropdownCurrentSelectionLbl.text = this.eventDropdownList.value;
+		if(this.eventDropdownList.value == "Raid"){
+			goRaid.SetActive (true);
+			goStateVisit.SetActive (false);
+			goMarriageInvitation.SetActive (false);
+			goPowerGrab.SetActive (false);
+		}else if(this.eventDropdownList.value == "State Visit"){
+			goRaid.SetActive (false);
+			goStateVisit.SetActive (true);
+			goMarriageInvitation.SetActive (false);
+			goPowerGrab.SetActive (false);
+		}else if(this.eventDropdownList.value == "Marriage Invitation"){
+			goRaid.SetActive (false);
+			goStateVisit.SetActive (false);
+			goMarriageInvitation.SetActive (true);
+			goPowerGrab.SetActive (false);
+		}else if(this.eventDropdownList.value == "Power Grab"){
+			goRaid.SetActive (false);
+			goStateVisit.SetActive (false);
+			goMarriageInvitation.SetActive (false);
+			goPowerGrab.SetActive (true);
+		}
+	}
+
+	public void ShowCreateEventUI(){
+		this.goCreateEventUI.SetActive (true);
+	}
+	public void HideCreateEventUI(){
+		this.goCreateEventUI.SetActive (false);
+	}
 }

@@ -5,23 +5,31 @@ using System.Collections.Generic;
 public class Raid : GameEvent {
 	public Kingdom sourceKingdom;
 	public City raidedCity;
-	public Citizen general;
+	public General general;
 	public List<Kingdom> otherKingdoms;
 
-	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
-		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
+	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy, City raidedCity = null, General general = null) : base (startWeek, startMonth, startYear, startedBy){
+		this.eventType = EVENT_TYPES.RAID;
 		this.durationInWeeks = 3;
 		this.remainingWeeks = this.durationInWeeks;
 		this.sourceKingdom = startedBy.city.kingdom;
-		this.general = GetGeneral (this.sourceKingdom);
-		this.raidedCity = GetRaidedCity();
+		if(general == null){
+			this.general = GetGeneral (this.sourceKingdom);
+		}else{
+			this.general = general;
+		}
+		if(raidedCity == null){
+			this.raidedCity = GetRaidedCity();
+		}else{
+			this.raidedCity = raidedCity;
+		}
 		this.otherKingdoms = GetOtherKingdoms ();
-		this.general = GetGeneral (this.sourceKingdom);
 		if(this.raidedCity != null){
 			this.description = startedBy.name + " is sending someone to raid " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name;
 			this.raidedCity.hexTile.AddEventOnTile(this);
 		}
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Debug.LogError("RAID");
 	}
 
 	internal override void PerformAction(){
@@ -34,7 +42,7 @@ public class Raid : GameEvent {
 	}
 	internal override void DoneEvent(){
 		if(this.general != null){
-			((General)this.general.assignedRole).inAction = false;
+			this.general.inAction = false;
 		}
 		this.general = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
@@ -59,10 +67,10 @@ public class Raid : GameEvent {
 			return null;
 		}
 		List<City> adjacentCities = new List<City> ();
-		for(int i = 0; i < this.general.city.hexTile.connectedTiles.Count; i++){
-			if(this.general.city.hexTile.connectedTiles[i].isOccupied){
-				if(this.general.city.hexTile.connectedTiles[i].city.kingdom.id != this.general.city.kingdom.id){
-					adjacentCities.Add (this.general.city.hexTile.connectedTiles[i].city);
+		for(int i = 0; i < this.general.citizen.city.hexTile.connectedTiles.Count; i++){
+			if(this.general.citizen.city.hexTile.connectedTiles[i].isOccupied){
+				if(this.general.citizen.city.hexTile.connectedTiles[i].city.kingdom.id != this.general.citizen.city.kingdom.id){
+					adjacentCities.Add (this.general.citizen.city.hexTile.connectedTiles[i].city);
 				}
 			}
 
@@ -74,16 +82,18 @@ public class Raid : GameEvent {
 			return null;
 		}
 	}
-	private Citizen GetGeneral(Kingdom kingdom){
+	private General GetGeneral(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
-		List<Citizen> generals = new List<Citizen> ();
+		List<General> generals = new List<General> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
 			if(!IsItThisGovernor(kingdom.cities[i].governor, unwantedGovernors)){
 				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
 					if (!kingdom.cities [i].citizens [j].isDead) {
 						if (kingdom.cities [i].citizens [j].assignedRole != null && kingdom.cities [i].citizens [j].role == ROLE.GENERAL) {
-							if (!((General)kingdom.cities [i].citizens [j].assignedRole).inAction) {
-								generals.Add (kingdom.cities [i].citizens [j]);
+							if(kingdom.cities [i].citizens [j].assignedRole is General){
+								if (!((General)kingdom.cities [i].citizens [j].assignedRole).inAction) {
+									generals.Add (((General)kingdom.cities [i].citizens [j].assignedRole));
+								}
 							}
 						}
 					}
@@ -93,7 +103,7 @@ public class Raid : GameEvent {
 
 		if(generals.Count > 0){
 			int random = UnityEngine.Random.Range (0, generals.Count);
-			((General)generals [random].assignedRole).inAction = true;
+			generals [random].inAction = true;
 			return generals [random];
 		}else{
 			Debug.Log (kingdom.king.name + " CAN'T SEND GENERAL BECAUSE THERE IS NONE!");
@@ -121,35 +131,35 @@ public class Raid : GameEvent {
 		int stolenBasicResource = (int)(GetRandomBasicResource(ref basicResource) * 0.15f);
 		int stolenRareResource = (int)(GetRandomRareResource(ref rareResource) * 0.15f);
 
-		this.general.city.goldCount += stolenGold;
+		this.general.citizen.city.goldCount += stolenGold;
 		this.raidedCity.goldCount -= stolenGold;
-		Debug.Log (this.general.name + " of " + this.general.city.name + " has stolen " + stolenGold + " gold from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+		Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenGold + " gold from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
 
 		if(basicResource != BASE_RESOURCE_TYPE.NONE){
 			if(basicResource == BASE_RESOURCE_TYPE.WOOD){
-				this.general.city.lumberCount += stolenBasicResource;
+				this.general.citizen.city.lumberCount += stolenBasicResource;
 				this.raidedCity.lumberCount -= stolenBasicResource;
-				Debug.Log (this.general.name + " of " + this.general.city.name + " has stolen " + stolenBasicResource + " lumber from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenBasicResource + " lumber from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
 			}else if(basicResource == BASE_RESOURCE_TYPE.STONE){
-				this.general.city.stoneCount += stolenBasicResource;
+				this.general.citizen.city.stoneCount += stolenBasicResource;
 				this.raidedCity.stoneCount -= stolenBasicResource;
-				Debug.Log (this.general.name + " of " + this.general.city.name + " has stolen " + stolenBasicResource + " stone from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenBasicResource + " stone from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
 			}
 		}
 	
 		if(rareResource != BASE_RESOURCE_TYPE.NONE){
 			if(rareResource == BASE_RESOURCE_TYPE.MANA_STONE){
-				this.general.city.manaStoneCount += stolenRareResource;
+				this.general.citizen.city.manaStoneCount += stolenRareResource;
 				this.raidedCity.manaStoneCount -= stolenRareResource;
-				Debug.Log (this.general.name + " of " + this.general.city.name + " has stolen " + stolenRareResource + " mana stone from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenRareResource + " mana stone from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
 			}else if(rareResource == BASE_RESOURCE_TYPE.MITHRIL){
-				this.general.city.mithrilCount += stolenRareResource;
+				this.general.citizen.city.mithrilCount += stolenRareResource;
 				this.raidedCity.mithrilCount -= stolenRareResource;
-				Debug.Log (this.general.name + " of " + this.general.city.name + " has stolen " + stolenRareResource + " mithril from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenRareResource + " mithril from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
 			}else if(rareResource == BASE_RESOURCE_TYPE.COBALT){
-				this.general.city.cobaltCount += stolenRareResource;
+				this.general.citizen.city.cobaltCount += stolenRareResource;
 				this.raidedCity.cobaltCount -= stolenRareResource;
-				Debug.Log (this.general.name + " of " + this.general.city.name + " has stolen " + stolenRareResource + " cobalt from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenRareResource + " cobalt from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
 			}
 
 		}
@@ -161,15 +171,15 @@ public class Raid : GameEvent {
 
 		if(hasBeenDiscovered){
 			if(hasDeflected){
-				this.general.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.name + " raided " + this.raidedCity.name
-				+ " with a small group of raiders. The raid was successful. Their presence were discovered and their identities were revealed but " + this.general.name + " managed to deflect blame to " + kingdomToBlame.name + ".", HISTORY_IDENTIFIER.NONE));
+				this.general.citizen.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.citizen.name + " raided " + this.raidedCity.name
+					+ " with a small group of raiders. The raid was successful. Their presence were discovered and their identities were revealed but " + this.general.citizen.name + " managed to deflect blame to " + kingdomToBlame.name + ".", HISTORY_IDENTIFIER.NONE));
 
 			}else{
-				this.general.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.name + " raided " + this.raidedCity.name
+				this.general.citizen.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.citizen.name + " raided " + this.raidedCity.name
 					+ " with a small group of raiders. The raid was successful. Their presence were discovered and their identities were revealed.", HISTORY_IDENTIFIER.NONE));
 			}
 		}else{
-			this.general.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.name + " raided " + this.raidedCity.name
+			this.general.citizen.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.citizen.name + " raided " + this.raidedCity.name
 				+ " with a small group of raiders. The raid was successful. Their presence were not discovered in time.", HISTORY_IDENTIFIER.NONE));
 		}
 
@@ -196,7 +206,7 @@ public class Raid : GameEvent {
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 50;
-		if(this.general.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
+		if(this.general.citizen.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
 			value -= 15;
 		}
 		if(chance < value){
@@ -214,7 +224,7 @@ public class Raid : GameEvent {
 					amountToAdjust = -15;
 				}
 			}
-			if(this.general.behaviorTraits.Contains(BEHAVIOR_TRAIT.SCHEMING)){
+			if(this.general.citizen.behaviorTraits.Contains(BEHAVIOR_TRAIT.SCHEMING)){
 				int deflectChance = UnityEngine.Random.Range(0,100);
 				if(deflectChance < 35){
 					Kingdom kingdomToBlame = GetRandomKingdomToBlame ();

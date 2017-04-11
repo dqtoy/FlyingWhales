@@ -44,7 +44,7 @@ public class GameEvent {
 		if(this.startedBy != null){
 			this.startedByKingdom = startedBy.city.kingdom;
 		}
-		Debug.LogError("New Event was created! " + this.eventType.ToString());
+		Debug.LogError("New Event was created!");
 	}
 
 	internal virtual void PerformAction(){}
@@ -76,6 +76,11 @@ public class GameEvent {
 		for(int i = 0; i < king.successionWars.Count; i++){
 			if(king.successionWars[i].isGovernor){
 				unwantedGovernors.Add (king.successionWars [i]);
+			}
+		}
+		for(int i = 0; i < king.city.kingdom.cities.Count; i++){
+			if(king.city.kingdom.cities[i].governor.supportedCitizen != null){
+				unwantedGovernors.Add (king.city.kingdom.cities [i].governor);
 			}
 		}
 

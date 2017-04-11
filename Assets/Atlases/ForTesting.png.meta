@@ -1,35 +1,35 @@
 fileFormatVersion: 2
-guid: 3ff924b5b29a92c4b8cfc91ebdc1958d
-timeCreated: 1491890217
+guid: b728293fafde5b742b885c84c25fecc3
+timeCreated: 1491890318
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: City UI_0
-    21300002: City UI_1
-    21300004: City UI_2
-    21300006: City UI_3
-    21300008: City UI_4
-    21300010: City UI_5
-    21300012: City UI_6
-    21300014: City UI_7
-    21300016: City UI_8
-    21300018: City UI_9
-    21300020: City UI_10
-    21300022: City UI_11
-    21300024: City UI_12
-    21300026: City UI_13
-    21300028: City UI_14
-    21300030: City UI_15
-    21300032: City UI_16
-    21300034: City UI_17
-    21300036: City UI_18
-    21300038: City UI_19
-    21300040: City UI_20
-    21300042: City UI_21
-    21300044: City UI_22
-    21300046: City UI_23
-    21300048: City UI_24
-    21300050: City UI_25
+    21300000: ForTesting_0
+    21300002: ForTesting_1
+    21300004: ForTesting_2
+    21300006: ForTesting_3
+    21300008: ForTesting_4
+    21300010: ForTesting_5
+    21300012: ForTesting_6
+    21300014: ForTesting_7
+    21300016: ForTesting_8
+    21300018: ForTesting_9
+    21300020: ForTesting_10
+    21300022: ForTesting_11
+    21300024: ForTesting_12
+    21300026: ForTesting_13
+    21300028: ForTesting_14
+    21300030: ForTesting_15
+    21300032: ForTesting_16
+    21300034: ForTesting_17
+    21300036: ForTesting_18
+    21300038: ForTesting_19
+    21300040: ForTesting_20
+    21300042: ForTesting_21
+    21300044: ForTesting_22
+    21300046: ForTesting_23
+    21300048: ForTesting_24
+    21300050: ForTesting_25
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -45,7 +45,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 1
+  isReadable: 0
   grayScaleToAlpha: 0
   generateCubemap: 0
   cubemapConvolution: 0
@@ -53,10 +53,10 @@ TextureImporter:
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
   textureFormat: -3
-  maxTextureSize: 2048
+  maxTextureSize: 4096
   textureSettings:
-    filterMode: -1
-    aniso: -1
+    filterMode: 1
+    aniso: 16
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
@@ -71,24 +71,19 @@ TextureImporter:
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
-  alphaIsTransparency: 0
+  alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
-  buildTargetSettings:
-  - buildTarget: Standalone
-    maxTextureSize: 1024
-    textureFormat: -3
-    compressionQuality: 50
-    allowsAlphaSplitting: 0
+  buildTargetSettings: []
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: City UI_0
+      name: ForTesting_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 472
+        x: 0
+        y: 455
         width: 12
         height: 37
       alignment: 0
@@ -97,11 +92,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_1
+      name: ForTesting_1
       rect:
         serializedVersion: 2
-        x: 24
-        y: 472
+        x: 22
+        y: 455
         width: 7
         height: 37
       alignment: 0
@@ -110,11 +105,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_2
+      name: ForTesting_2
       rect:
         serializedVersion: 2
-        x: 38
-        y: 472
+        x: 36
+        y: 455
         width: 11
         height: 37
       alignment: 0
@@ -123,11 +118,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_3
+      name: ForTesting_3
       rect:
         serializedVersion: 2
-        x: 56
-        y: 450
+        x: 54
+        y: 433
         width: 12
         height: 59
       alignment: 0
@@ -136,11 +131,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_4
+      name: ForTesting_4
       rect:
         serializedVersion: 2
-        x: 72
-        y: 450
+        x: 70
+        y: 433
         width: 9
         height: 59
       alignment: 0
@@ -149,11 +144,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_5
+      name: ForTesting_5
       rect:
         serializedVersion: 2
-        x: 85
-        y: 450
+        x: 83
+        y: 433
         width: 12
         height: 59
       alignment: 0
@@ -162,11 +157,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_6
+      name: ForTesting_6
       rect:
         serializedVersion: 2
-        x: 7
-        y: 404
+        x: 5
+        y: 387
         width: 25
         height: 36
       alignment: 0
@@ -175,11 +170,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_7
+      name: ForTesting_7
       rect:
         serializedVersion: 2
-        x: 182
-        y: 392
+        x: 180
+        y: 375
         width: 55
         height: 57
       alignment: 0
@@ -188,11 +183,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_8
+      name: ForTesting_8
       rect:
         serializedVersion: 2
-        x: 240
-        y: 391
+        x: 238
+        y: 374
         width: 55
         height: 57
       alignment: 0
@@ -201,11 +196,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_9
+      name: ForTesting_9
       rect:
         serializedVersion: 2
-        x: 298
-        y: 392
+        x: 296
+        y: 375
         width: 55
         height: 57
       alignment: 0
@@ -214,11 +209,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_10
+      name: ForTesting_10
       rect:
         serializedVersion: 2
-        x: 7
-        y: 364
+        x: 5
+        y: 347
         width: 25
         height: 36
       alignment: 0
@@ -227,11 +222,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_11
+      name: ForTesting_11
       rect:
         serializedVersion: 2
-        x: 181
-        y: 332
+        x: 179
+        y: 315
         width: 55
         height: 57
       alignment: 0
@@ -240,11 +235,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_12
+      name: ForTesting_12
       rect:
         serializedVersion: 2
-        x: 240
-        y: 332
+        x: 238
+        y: 315
         width: 55
         height: 57
       alignment: 0
@@ -253,24 +248,24 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_13
+      name: ForTesting_13
       rect:
         serializedVersion: 2
-        x: 299
-        y: 332
-        width: 54
-        height: 57
+        x: 297
+        y: 213
+        width: 213
+        height: 159
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_14
+      name: ForTesting_14
       rect:
         serializedVersion: 2
-        x: 8
-        y: 327
+        x: 6
+        y: 310
         width: 23
         height: 33
       alignment: 0
@@ -279,11 +274,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_15
+      name: ForTesting_15
       rect:
         serializedVersion: 2
-        x: 7
-        y: 230
+        x: 5
+        y: 213
         width: 6
         height: 82
       alignment: 0
@@ -292,11 +287,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_16
+      name: ForTesting_16
       rect:
         serializedVersion: 2
-        x: 15
-        y: 230
+        x: 13
+        y: 213
         width: 6
         height: 82
       alignment: 0
@@ -305,11 +300,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_17
+      name: ForTesting_17
       rect:
         serializedVersion: 2
-        x: 23
-        y: 230
+        x: 21
+        y: 213
         width: 6
         height: 82
       alignment: 0
@@ -318,11 +313,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_18
+      name: ForTesting_18
       rect:
         serializedVersion: 2
-        x: 31
-        y: 230
+        x: 29
+        y: 213
         width: 6
         height: 82
       alignment: 0
@@ -331,11 +326,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_19
+      name: ForTesting_19
       rect:
         serializedVersion: 2
-        x: 39
-        y: 230
+        x: 37
+        y: 213
         width: 6
         height: 82
       alignment: 0
@@ -344,11 +339,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_20
+      name: ForTesting_20
       rect:
         serializedVersion: 2
-        x: 47
-        y: 230
+        x: 45
+        y: 213
         width: 6
         height: 82
       alignment: 0
@@ -357,11 +352,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_21
+      name: ForTesting_21
       rect:
         serializedVersion: 2
-        x: 55
-        y: 230
+        x: 53
+        y: 213
         width: 6
         height: 82
       alignment: 0
@@ -370,11 +365,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_22
+      name: ForTesting_22
       rect:
         serializedVersion: 2
-        x: 187
-        y: 273
+        x: 185
+        y: 256
         width: 44
         height: 44
       alignment: 0
@@ -383,11 +378,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_23
+      name: ForTesting_23
       rect:
         serializedVersion: 2
-        x: 8
-        y: 211
+        x: 6
+        y: 194
         width: 166
         height: 5
       alignment: 0
@@ -396,11 +391,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_24
+      name: ForTesting_24
       rect:
         serializedVersion: 2
-        x: 8
-        y: 17
+        x: 6
+        y: 0
         width: 5
         height: 183
       alignment: 0
@@ -409,11 +404,11 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: City UI_25
+      name: ForTesting_25
       rect:
         serializedVersion: 2
-        x: 24
-        y: 195
+        x: 22
+        y: 178
         width: 61
         height: 5
       alignment: 0

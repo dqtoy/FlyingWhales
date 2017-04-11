@@ -351,8 +351,9 @@ public class Citizen {
 			this.assignedRole.OnDeath ();
 		}
 		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
-		EventManager.Instance.onUnsupportCitizen.Invoke (this);
 		EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
+		EventManager.Instance.onUnsupportCitizen.Invoke (this);
+		this.UnsupportCitizen (this);
 		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
 		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
 
@@ -1105,12 +1106,15 @@ public class Citizen {
 			}
 			if(chance < value){
 				//CANCEL INVASION PLAN
-				List<GameEvent> invasionPlans = EventManager.Instance.GetEventsOfType(EVENT_TYPES.INVASION_PLAN).Where(x => 
-					(((InvasionPlan)x).startedByKingdom.id == relationship.sourceKing.city.kingdom.id) && 
-					(((InvasionPlan)x).targetKingdom.id == relationship.king.city.kingdom.id)).ToList();
-				if (invasionPlans.Count > 0) {
-					((InvasionPlan)invasionPlans [0]).CancelEvent();
+				if(EventManager.Instance.GetEventsOfType(EVENT_TYPES.INVASION_PLAN) != null){
+					List<GameEvent> invasionPlans = EventManager.Instance.GetEventsOfType(EVENT_TYPES.INVASION_PLAN).Where(x => 
+						(((InvasionPlan)x).startedByKingdom.id == relationship.sourceKing.city.kingdom.id) && 
+						(((InvasionPlan)x).targetKingdom.id == relationship.king.city.kingdom.id)).ToList();
+					if (invasionPlans.Count > 0) {
+						((InvasionPlan)invasionPlans [0]).CancelEvent();
+					}
 				}
+
 			}
 		}else{
 			CancelInvasionPlan (relationship);
@@ -1137,11 +1141,13 @@ public class Citizen {
 
 		if(chance < value){
 			//CANCEL INVASION PLAN
-			List<GameEvent> invasionPlans = EventManager.Instance.GetEventsOfType(EVENT_TYPES.INVASION_PLAN).Where(x => 
-				(((InvasionPlan)x).startedByKingdom.id == relationship.sourceKing.city.kingdom.id) && 
-				(((InvasionPlan)x).targetKingdom.id == relationship.king.city.kingdom.id)).ToList();
-			if (invasionPlans.Count > 0) {
-				((InvasionPlan)invasionPlans [0]).CancelEvent();
+			if (EventManager.Instance.GetEventsOfType (EVENT_TYPES.INVASION_PLAN) != null) {
+				List<GameEvent> invasionPlans = EventManager.Instance.GetEventsOfType (EVENT_TYPES.INVASION_PLAN).Where (x => 
+				(((InvasionPlan)x).startedByKingdom.id == relationship.sourceKing.city.kingdom.id) &&
+				                               (((InvasionPlan)x).targetKingdom.id == relationship.king.city.kingdom.id)).ToList ();
+				if (invasionPlans.Count > 0) {
+					((InvasionPlan)invasionPlans [0]).CancelEvent ();
+				}
 			}
 		}
 	}

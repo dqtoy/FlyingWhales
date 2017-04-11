@@ -7,7 +7,7 @@ public class Espionage : GameEvent {
 	public Kingdom targetKingdom;
 	public Citizen spy;
 	public Espionage(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
-		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
+		this.eventType = EVENT_TYPES.ESPIONAGE;
 		this.description = startedBy.name + " is having an espionage event.";
 		this.durationInWeeks = 2;
 		this.remainingWeeks = this.durationInWeeks;
@@ -45,8 +45,10 @@ public class Espionage : GameEvent {
 				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
 					if (!kingdom.cities [i].citizens [j].isDead) {
 						if (kingdom.cities [i].citizens [j].assignedRole != null && kingdom.cities [i].citizens [j].role == ROLE.SPY) {
-							if (!((Spy)kingdom.cities [i].citizens [j].assignedRole).inAction) {
-								spies.Add (kingdom.cities [i].citizens [j]);
+							if (kingdom.cities [i].citizens [j].assignedRole is Spy) {
+								if (!((Spy)kingdom.cities [i].citizens [j].assignedRole).inAction) {
+									spies.Add (kingdom.cities [i].citizens [j]);
+								}
 							}
 						}
 					}

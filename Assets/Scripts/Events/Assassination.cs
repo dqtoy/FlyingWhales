@@ -10,7 +10,7 @@ public class Assassination : GameEvent {
 	public Citizen spy;
 
 	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, ASSASSINATION_TRIGGER_REASONS triggerReason = ASSASSINATION_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
-		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
+		this.eventType = EVENT_TYPES.ASSASSINATION;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " is planning on assassinating " + targetCitizen.name + ".";
 		this.durationInWeeks = 4;
@@ -86,9 +86,12 @@ public class Assassination : GameEvent {
 				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
 					if (!kingdom.cities [i].citizens [j].isDead) {
 						if (kingdom.cities [i].citizens [j].assignedRole != null && kingdom.cities [i].citizens [j].role == ROLE.SPY) {
-							if (!((Spy)kingdom.cities [i].citizens [j].assignedRole).inAction) {
-								spies.Add (kingdom.cities [i].citizens [j]);
+							if(kingdom.cities [i].citizens [j].assignedRole is Spy){
+								if (!((Spy)kingdom.cities [i].citizens [j].assignedRole).inAction) {
+									spies.Add (kingdom.cities [i].citizens [j]);
+								}
 							}
+
 						}
 					}
 				}
@@ -112,8 +115,10 @@ public class Assassination : GameEvent {
 				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
 					if(!kingdom.cities[i].citizens[j].isDead){
 						if(kingdom.cities[i].citizens[j].assignedRole != null && kingdom.cities[i].citizens[j].role == ROLE.GUARDIAN){
-							if(!((Guardian)kingdom.cities[i].citizens[j].assignedRole).inAction){
-								guardian.Add (kingdom.cities [i].citizens [j]);
+							if(kingdom.cities[i].citizens[j].assignedRole is Guardian){
+								if(!((Guardian)kingdom.cities[i].citizens[j].assignedRole).inAction){
+									guardian.Add (kingdom.cities [i].citizens [j]);
+								}
 							}
 						}
 					}

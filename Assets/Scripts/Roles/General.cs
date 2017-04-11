@@ -115,20 +115,22 @@ public class General : Role {
 			return;
 		}
 		if(campaign.warType == WAR_TYPE.INTERNATIONAL){
-			if(this.citizen.city.governor.supportedCitizen == null){
-				if(campaign.leader.isKing){
-					if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
-						List<HexTile> path = null;
-						if(campaign.campaignType == CAMPAIGN.OFFENSE){
-							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
-						}else{
-							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-							if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
-								path = null;
+			if (this.citizen.city.kingdom.id == campaign.leader.city.kingdom.id) {
+				if (this.citizen.city.governor.supportedCitizen == null) {
+					if (campaign.leader.isKing) {
+						if (campaign.GetArmyStrength () < campaign.neededArmyStrength) {
+							List<HexTile> path = null;
+							if (campaign.campaignType == CAMPAIGN.OFFENSE) {
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList ();
+							} else {
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList ();
+								if (path.Count > campaign.targetCity.incomingGenerals.Where (x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min (x => x.daysBeforeArrival)) {
+									path = null;
+								}
 							}
-						}
-						if(path != null){
-							AssignCampaign (campaign, path);
+							if (path != null) {
+								AssignCampaign (campaign, path);
+							}
 						}
 					}
 				}
