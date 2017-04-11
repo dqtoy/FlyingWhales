@@ -255,7 +255,10 @@ public class CampaignManager {
 	}
 	internal HexTile GetRallyPoint(Campaign campaign){
 		City nearestCity = GetNearestCity(campaign.targetCity);
-		return nearestCity.hexTile;
+		if(nearestCity != null){
+			return nearestCity.hexTile;
+		}
+		return null;
 	}
 	internal City GetNearestCity(City targetCity){
 		List<City> eligibleCities = new List<City>();

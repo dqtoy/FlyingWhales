@@ -264,13 +264,19 @@ public class BorderConflict : GameEvent {
 		for(int i = 0; i < this.activeEnvoysReduceSelf.Count; i++){
 			((Envoy)this.activeEnvoysReduceSelf[i].assignedRole).inAction = false;
 		}
-		this.activeEnvoysIncrease.Clear ();
-		this.activeEnvoysReduce.Clear ();
-		this.activeEnvoysReduceSelf.Clear ();
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		this.endWeek = GameManager.Instance.week;
+		this.endMonth = GameManager.Instance.month;
+		this.endYear = GameManager.Instance.year;
+		string result = "deterioration";
+		if(this.tension <= 0){
+			result = "improvement";
+		}
+		this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Tension reached "
+			+ this.tension + " and caused " + result + " in relationship.";
 //		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
 
 		//Remove UI Icon

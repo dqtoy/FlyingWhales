@@ -60,11 +60,12 @@ public class Assassination : GameEvent {
 		for(int i = 0; i < this.guardians.Count; i++){
 			((Guardian)this.guardians[i].assignedRole).inAction = false;
 		}
-		this.spy = null;
-		this.guardians.Clear ();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		this.endMonth = GameManager.Instance.month;
+		this.endWeek = GameManager.Instance.week;
+		this.endYear = GameManager.Instance.year;
 //		EventManager.Instance.allEvents [EVENT_TYPES.ASSASSINATION].Remove (this);
 
 	}

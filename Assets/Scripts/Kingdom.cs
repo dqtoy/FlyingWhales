@@ -31,7 +31,7 @@ public class Kingdom{
 		this.successionLine = new List<Citizen>();
 		this.pretenders = new List<Citizen> ();
 		this.cities = new List<City>();
-
+		this.holderIntlWarCities = new List<CityWar> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
 
@@ -205,6 +205,8 @@ public class Kingdom{
 		}
 	}
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
+		Debug.Log ("SUCCESSION WAR");
+
 		if(newKing.city.governor.id == newKing.id){
 			newKing.city.AssignNewGovernor ();
 		}
@@ -374,6 +376,7 @@ public class Kingdom{
 	}
 
 	internal void AddInternationalWar(Kingdom kingdom){
+		Debug.Log ("INTERNATIONAL WAR");
 		for(int i = 0; i < kingdom.cities.Count; i++){
 			if(!this.king.campaignManager.SearchForInternationalWarCities(kingdom.cities[i])){
 				this.king.campaignManager.intlWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
@@ -395,6 +398,7 @@ public class Kingdom{
 //				}
 //			}
 		}
+		this.king.campaignManager.CreateCampaign ();
 	}
 
 	internal void RemoveInternationalWar(Kingdom kingdom){

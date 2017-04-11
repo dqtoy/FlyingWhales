@@ -1465,10 +1465,14 @@ public class City{
 	}
 
 	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
-		for (int i = 0; i < resourceCost.Count; i++) {
-			if (this.GetResourceAmountPerType (resourceCost [i].resourceType) < resourceCost [i].resourceQuantity) {
-				return false;
+		if(resourceCost != null){
+			for (int i = 0; i < resourceCost.Count; i++) {
+				if (this.GetResourceAmountPerType (resourceCost [i].resourceType) < resourceCost [i].resourceQuantity) {
+					return false;
+				}
 			}
+		}else{
+			return false;
 		}
 		return true;
 	}

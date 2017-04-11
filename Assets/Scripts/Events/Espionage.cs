@@ -31,10 +31,12 @@ public class Espionage : GameEvent {
 		if(this.spy != null){
 			((Spy)this.spy.assignedRole).inAction = false;
 		}
-		this.spy = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		this.endMonth = GameManager.Instance.month;
+		this.endWeek = GameManager.Instance.week;
+		this.endYear = GameManager.Instance.year;
 //		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
 	private Citizen GetSpy(Kingdom kingdom){

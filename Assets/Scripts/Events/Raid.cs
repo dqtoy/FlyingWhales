@@ -44,10 +44,13 @@ public class Raid : GameEvent {
 		if(this.general != null){
 			this.general.inAction = false;
 		}
-		this.general = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		this.endMonth = GameManager.Instance.month;
+		this.endWeek = GameManager.Instance.week;
+		this.endYear = GameManager.Instance.year;
+
 		//		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
 	private List<Kingdom> GetOtherKingdoms(){

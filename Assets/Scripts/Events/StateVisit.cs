@@ -52,12 +52,18 @@ public class StateVisit : GameEvent {
 		for(int i = 0; i < this.saboteurEnvoys.Count; i++){
 			((Envoy)this.saboteurEnvoys[i].assignedRole).inAction = false;
 		}
-		this.helperEnvoys.Clear ();
-		this.saboteurEnvoys.Clear ();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
+		this.endMonth = GameManager.Instance.month;
+		this.endWeek = GameManager.Instance.week;
+		this.endYear = GameManager.Instance.year;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
-
+		string result = "improvement";
+		if(this.successMeter <= 0){
+			result = "deterioration";
+		}
+		this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Success Meter reached "
+			+ this.successMeter + " and caused " + result + " in relationship.";
 //		EventManager.Instance.allEvents [EVENT_TYPES.STATE_VISIT].Remove (this);
 	}
 	private void AdjustSuccessMeter(int amount){

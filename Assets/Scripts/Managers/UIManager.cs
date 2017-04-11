@@ -183,11 +183,11 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 
-		if (specificEventGO.activeSelf) {
-			if (currentlyShowingEvent != null) {
-				this.ShowSpecificEvent (currentlyShowingEvent);
-			}
-		}
+//		if (specificEventGO.activeSelf) {
+//			if (currentlyShowingEvent != null) {
+//				this.ShowSpecificEvent (currentlyShowingEvent);
+//			}
+//		}
 
 		//		if (currentlyShowingCitizen != null) {
 		//			this.ShowCitizenInfo(currentlyShowingCitizen);
@@ -1096,20 +1096,117 @@ public class UIManager : MonoBehaviour {
 		specificEventDescriptionLbl.text = gameEvent.description;
 		specificEventStartDateLbl.text = "Started " + ((MONTH)gameEvent.startMonth).ToString() + " " + gameEvent.startWeek.ToString() + ", " + gameEvent.startYear.ToString();
 
-		if (gameEvent.eventType != EVENT_TYPES.BORDER_CONFLICT) {
+		if (gameEvent.eventType != EVENT_TYPES.BORDER_CONFLICT && gameEvent.eventType != EVENT_TYPES.STATE_VISIT) {
 			specificEventProgBar.value = (float)((float)gameEvent.remainingWeeks / (float)gameEvent.durationInWeeks);
 		}
 
 		if (gameEvent.eventType == EVENT_TYPES.MARRIAGE_INVITATION) {
 			MarriageInvitation marriageEvent = (MarriageInvitation)gameEvent;
 			ShowMarriageInvitationEvent (marriageEvent);
+		}else if (gameEvent.eventType == EVENT_TYPES.BORDER_CONFLICT) {
+			BorderConflict borderConflict = (BorderConflict)gameEvent;
+			ShowBorderConflictEvent (borderConflict);
+		}else if (gameEvent.eventType == EVENT_TYPES.STATE_VISIT) {
+			StateVisit stateVisit = (StateVisit)gameEvent;
+			ShowStateVisitEvent (stateVisit);
 		}
 
 		specificEventResolutionLbl.text = gameEvent.resolution;
 		currentlyShowingEvent = gameEvent;
 		specificEventGO.SetActive(true);
 	}
+	private void ShowBorderConflictEvent(BorderConflict borderConflict){
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
 
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
+
+		if(borderConflict.startedBy != null){
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
+		}
+
+
+		this.specificEventBarTitle.text = "Tension";
+		this.specificEventProgBar.value = (float)borderConflict.tension / 100f;
+		this.specificEventCandidatesTitleLbl.text = "PACIFIERS";
+		for(int i = 0; i < borderConflict.activeEnvoysReduce.Count; i++){
+			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysReduce[i].city.kingdom.king);
+			candidates.transform.localScale = Vector3.one;
+			candidates.transform.position = Vector3.zero;
+		}
+		StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
+
+		this.specificEventMiscTitleLbl.text = "PROVOKERS";
+		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
+		for(int i = 0; i < borderConflict.activeEnvoysIncrease.Count; i++){
+			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysIncrease[i].city.kingdom.king);
+			candidates.transform.localScale = Vector3.one;
+			candidates.transform.position = Vector3.zero;
+		}
+		StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+	}
+	private void ShowStateVisitEvent(StateVisit stateVisit){
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
+
+		if(stateVisit.startedBy != null){
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (stateVisit.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
+		}
+
+
+		this.specificEventBarTitle.text = "Success";
+		this.specificEventProgBar.value = (float)stateVisit.successMeter / 100f;
+		this.specificEventCandidatesTitleLbl.text = "SUPPORTERS";
+		for(int i = 0; i < stateVisit.helperEnvoys.Count; i++){
+			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (stateVisit.helperEnvoys[i].city.kingdom.king);
+			candidates.transform.localScale = Vector3.one;
+			candidates.transform.position = Vector3.zero;
+		}
+		StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
+
+		this.specificEventMiscTitleLbl.text = "SABOTEURS";
+		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
+		for(int i = 0; i < stateVisit.saboteurEnvoys.Count; i++){
+			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (stateVisit.saboteurEnvoys[i].city.kingdom.king);
+			candidates.transform.localScale = Vector3.one;
+			candidates.transform.position = Vector3.zero;
+		}
+		StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+	}
 	private void ShowMarriageInvitationEvent(MarriageInvitation marriageEvent){
 		
 
