@@ -1301,6 +1301,6 @@ public class Citizen {
 	}
 
 	internal void RemoveSuccessionWarCity (City city){
-		this.campaignManager.successionWarCities.RemoveAll (x => x.city == city.id);
+		this.campaignManager.successionWarCities.RemoveAll (x => x.city.id == city.id);
 	}
 }
