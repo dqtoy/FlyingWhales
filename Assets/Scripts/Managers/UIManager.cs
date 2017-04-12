@@ -148,6 +148,11 @@ public class UIManager : MonoBehaviour {
 	public UILabel specificEventMiscTitleLbl;
 	public UIGrid specificEventMiscGrid;
 	public UILabel specificEventResolutionLbl;
+	public GameObject goSpecificEventHidden;
+	public GameObject goSpecificHiddenEventItem;
+	public UILabel lblSpecificPilfered;
+	public UILabel lblSpecificEventCity;
+	public UILabel lblSpecificSuccessRate;
 
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
@@ -1095,7 +1100,17 @@ public class UIManager : MonoBehaviour {
 		specificEventNameLbl.text = gameEvent.eventType.ToString();
 		specificEventDescriptionLbl.text = gameEvent.description;
 		specificEventStartDateLbl.text = "Started " + ((MONTH)gameEvent.startMonth).ToString() + " " + gameEvent.startWeek.ToString() + ", " + gameEvent.startYear.ToString();
-
+		this.specificEventBarTitle.text = "Duration";
+		this.specificEventMiscTitleLbl.gameObject.SetActive(false);
+		this.lblSpecificEventCity.gameObject.SetActive(false);
+		this.lblSpecificPilfered.gameObject.SetActive(false);
+		this.lblSpecificSuccessRate.gameObject.SetActive(false);
+		this.goSpecificHiddenEventItem.SetActive(false);
+		if(gameEvent.eventStatus == EVENT_STATUS.HIDDEN){
+			this.goSpecificEventHidden.SetActive(true);
+		}else{
+			this.goSpecificEventHidden.SetActive(false);
+		}
 		if (gameEvent.eventType != EVENT_TYPES.BORDER_CONFLICT && gameEvent.eventType != EVENT_TYPES.STATE_VISIT) {
 			specificEventProgBar.value = (float)((float)gameEvent.remainingWeeks / (float)gameEvent.durationInWeeks);
 		}
@@ -1109,6 +1124,15 @@ public class UIManager : MonoBehaviour {
 		}else if (gameEvent.eventType == EVENT_TYPES.STATE_VISIT) {
 			StateVisit stateVisit = (StateVisit)gameEvent;
 			ShowStateVisitEvent (stateVisit);
+		}else if (gameEvent.eventType == EVENT_TYPES.RAID) {
+			Raid raid = (Raid)gameEvent;
+			ShowRaidEvent (raid);
+		}else if (gameEvent.eventType == EVENT_TYPES.ASSASSINATION) {
+			Assassination assassination = (Assassination)gameEvent;
+			ShowAssassinationEvent (assassination);
+		}else if (gameEvent.eventType == EVENT_TYPES.ESPIONAGE) {
+			Espionage espionage = (Espionage)gameEvent;
+			ShowEspionageEvent (espionage);
 		}
 
 		specificEventResolutionLbl.text = gameEvent.resolution;
@@ -1206,6 +1230,148 @@ public class UIManager : MonoBehaviour {
 			candidates.transform.position = Vector3.zero;
 		}
 		StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+	}
+	private void ShowAssassinationEvent(Assassination assassination){
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
+
+		if(assassination.startedBy != null){
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (assassination.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
+		}
+
+
+		this.specificEventCandidatesTitleLbl.text = "TARGET";
+		GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
+		candidates.GetComponent<CharacterPortrait> ().SetCitizen (assassination.targetCitizen);
+		candidates.transform.localScale = Vector3.one;
+		candidates.transform.position = Vector3.zero;
+		StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
+
+
+		this.specificEventMiscTitleLbl.text = "UNCOVERED";
+		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
+		for(int i = 0; i < assassination.uncovered.Count; i++){
+			GameObject uncovered = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
+			uncovered.GetComponent<CharacterPortrait> ().SetCitizen (assassination.uncovered[i]);
+			uncovered.transform.localScale = Vector3.one;
+			uncovered.transform.position = Vector3.zero;
+		}
+		StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+
+
+		this.lblSpecificSuccessRate.text = "SUCCESS RATE " + assassination.successRate + "%";
+		this.lblSpecificSuccessRate.gameObject.SetActive(true);
+
+	}
+	private void ShowEspionageEvent(Espionage espionage){
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
+
+		if(espionage.startedBy != null){
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (espionage.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
+		}
+			
+		this.specificEventCandidatesTitleLbl.text = "TARGET";
+		GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
+		candidates.GetComponent<CharacterPortrait> ().SetCitizen (espionage.targetKingdom.king);
+		candidates.transform.localScale = Vector3.one;
+		candidates.transform.position = Vector3.zero;
+		StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
+
+
+		this.specificEventMiscTitleLbl.text = "HIDDEN EVENTS";
+		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
+		for(int i = 0; i < espionage.allEventsAffectingTarget.Count; i++){
+			GameObject eventGO = GameObject.Instantiate (gameEventPrefab, this.specificEventMiscGrid.transform) as GameObject;
+			eventGO.GetComponent<EventItem>().SetEvent (espionage.allEventsAffectingTarget[i]);
+			eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent(espionage.allEventsAffectingTarget[i].eventType));
+			eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
+			eventGO.transform.localScale = Vector3.one;
+			eventGO.transform.position = Vector3.zero;
+		}
+		StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+
+
+		this.lblSpecificSuccessRate.text = "SUCCESS RATE " + espionage.successRate + "%";
+		this.lblSpecificSuccessRate.gameObject.SetActive(true);
+
+		if(espionage.chosenEvent != null && espionage.hasFound){
+			goSpecificHiddenEventItem.GetComponent<EventItem>().SetEvent (espionage.chosenEvent);
+			goSpecificHiddenEventItem.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent(espionage.chosenEvent.eventType));
+			goSpecificHiddenEventItem.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
+			goSpecificHiddenEventItem.SetActive(true);
+		}
+
+	}
+	private void ShowRaidEvent(Raid raid){
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
+
+		if(raid.startedBy != null){
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (raid.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
+		}
+
+
+		this.specificEventCandidatesTitleLbl.text = "TARGET";
+		this.lblSpecificEventCity.text = raid.raidedCity.name;
+		this.lblSpecificEventCity.gameObject.SetActive(true);
+
+		this.specificEventMiscTitleLbl.text = "PILFERED";
+		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
+		this.lblSpecificPilfered.text = raid.pilfered;
+		this.lblSpecificPilfered.gameObject.SetActive(true);
+
+		this.lblSpecificSuccessRate.text = "SUCCESS RATE 25%";
+		this.lblSpecificSuccessRate.gameObject.SetActive(true);
+
 	}
 	private void ShowMarriageInvitationEvent(MarriageInvitation marriageEvent){
 		

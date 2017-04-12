@@ -68,8 +68,12 @@ public class GameManager : MonoBehaviour {
 	private void Raid(){
 		Debug.Log ("Raid");
 		Kingdom raiderOfTheLostArc = KingdomManager.Instance.allKingdoms [UnityEngine.Random.Range (0, KingdomManager.Instance.allKingdoms.Count)];
-		Raid raid = new Raid(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, raiderOfTheLostArc.king);
-		EventManager.Instance.AddEventToDictionary (raid);
+		General general = GetGeneral(raiderOfTheLostArc);
+		City city = GetRaidedCity(general);
+		if(general != null && city != null){
+			Raid raid = new Raid(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, raiderOfTheLostArc.king, city, general);
+			EventManager.Instance.AddEventToDictionary (raid);
+		}
 	}
 	private void TriggerBorderConflict(){
 		int chance = UnityEngine.Random.Range (0, 100);
@@ -139,5 +143,54 @@ public class GameManager : MonoBehaviour {
 			allCitizensOfType.AddRange (KingdomManager.Instance.allKingdoms[i].GetAllCitizensOfType (role));
 		}
 		return allCitizensOfType;
+	}
+
+	private General GetGeneral(Kingdom kingdom){
+		List<Citizen> unwantedGovernors = Utilities.GetUnwantedGovernors (kingdom.king);
+		List<General> generals = new List<General> ();
+		for(int i = 0; i < kingdom.cities.Count; i++){
+			if(!Utilities.IsItThisGovernor(kingdom.cities[i].governor, unwantedGovernors)){
+				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
+					if (!kingdom.cities [i].citizens [j].isDead) {
+						if (kingdom.cities [i].citizens [j].assignedRole != null && kingdom.cities [i].citizens [j].role == ROLE.GENERAL) {
+							if(kingdom.cities [i].citizens [j].assignedRole is General){
+								if (!((General)kingdom.cities [i].citizens [j].assignedRole).inAction) {
+									generals.Add (((General)kingdom.cities [i].citizens [j].assignedRole));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if(generals.Count > 0){
+			int random = UnityEngine.Random.Range (0, generals.Count);
+			generals [random].inAction = true;
+			return generals [random];
+		}else{
+			Debug.Log (kingdom.king.name + " CAN'T SEND GENERAL BECAUSE THERE IS NONE!");
+			return null;
+		}
+	}
+	private City GetRaidedCity(General general){
+		if(general == null){
+			return null;
+		}
+		List<City> adjacentCities = new List<City> ();
+		for(int i = 0; i < general.citizen.city.hexTile.connectedTiles.Count; i++){
+			if(general.citizen.city.hexTile.connectedTiles[i].isOccupied){
+				if(general.citizen.city.hexTile.connectedTiles[i].city.kingdom.id != general.citizen.city.kingdom.id){
+					adjacentCities.Add (general.citizen.city.hexTile.connectedTiles[i].city);
+				}
+			}
+
+		}
+
+		if(adjacentCities.Count > 0){
+			return adjacentCities [UnityEngine.Random.Range (0, adjacentCities.Count)];
+		}else{
+			return null;
+		}
 	}
 }

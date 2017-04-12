@@ -1089,9 +1089,40 @@ public class Citizen {
 		}
 
 		if(chance < value){
-			
-			Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king, reason);
-			EventManager.Instance.AddEventToDictionary(assassination);
+			Citizen spy = GetSpy(this.city.kingdom);
+			if(spy != null){
+				Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king, spy, reason);
+				EventManager.Instance.AddEventToDictionary(assassination);
+			}
+		}
+	}
+	private Citizen GetSpy(Kingdom kingdom){
+		List<Citizen> unwantedGovernors = Utilities.GetUnwantedGovernors (kingdom.king);
+		List<Citizen> spies = new List<Citizen> ();
+		for(int i = 0; i < kingdom.cities.Count; i++){
+			if(!Utilities.IsItThisGovernor(kingdom.cities[i].governor, unwantedGovernors)){
+				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
+					if (!kingdom.cities [i].citizens [j].isDead) {
+						if (kingdom.cities [i].citizens [j].assignedRole != null && kingdom.cities [i].citizens [j].role == ROLE.SPY) {
+							if(kingdom.cities [i].citizens [j].assignedRole is Spy){
+								if (!((Spy)kingdom.cities [i].citizens [j].assignedRole).inAction) {
+									spies.Add (kingdom.cities [i].citizens [j]);
+								}
+							}
+
+						}
+					}
+				}
+			}
+		}
+
+		if(spies.Count > 0){
+			int random = UnityEngine.Random.Range (0, spies.Count);
+			((Spy)spies [random].assignedRole).inAction = true;
+			return spies [random];
+		}else{
+			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
+			return null;
 		}
 	}
 	internal void ImproveRelationship(RelationshipKings relationship){

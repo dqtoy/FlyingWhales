@@ -7,36 +7,42 @@ public class Assassination : GameEvent {
 	public Citizen targetCitizen;
 	public List<Kingdom> otherKingdoms;
 	public List<Citizen> guardians;
+	public List<Citizen> uncovered;
 	public Citizen spy;
+	public int successRate = 0;
 
-	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, ASSASSINATION_TRIGGER_REASONS triggerReason = ASSASSINATION_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
+	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, Citizen spy, ASSASSINATION_TRIGGER_REASONS triggerReason = ASSASSINATION_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ASSASSINATION;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
-		this.description = startedBy.name + " is planning on assassinating " + targetCitizen.name + ".";
 		this.durationInWeeks = 4;
 		this.remainingWeeks = this.durationInWeeks;
 		this.assassinKingdom = startedBy.city.kingdom;
 		this.targetCitizen = targetCitizen;
 		this.otherKingdoms = GetOtherKingdoms ();
 		this.guardians = new List<Citizen>();
-		this.spy = GetSpy (assassinKingdom);
-		if(this.spy != null){
-			if(triggerReason == ASSASSINATION_TRIGGER_REASONS.DISCOVERING_A){
-				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after discovering Assassination.", HISTORY_IDENTIFIER.NONE));
+		this.uncovered = new List<Citizen>();
+		this.spy = spy;
+		this.successRate = GetActualChancePercentage (this.spy);
+		if(triggerReason == ASSASSINATION_TRIGGER_REASONS.DISCOVERING_A){
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after discovering Assassination.", HISTORY_IDENTIFIER.NONE));
+			this.description = startedBy.name + " of " + startedBy.city.kingdom.name + " wants to assassinate " + targetCitizen.name + " of " + targetCitizen.city.kingdom.name + " after discovering Assassination.";
 
-			}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.DISCOVERING_IP){
-				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after discovering Invasion Plan.", HISTORY_IDENTIFIER.NONE));
+		}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.DISCOVERING_IP){
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after discovering Invasion Plan.", HISTORY_IDENTIFIER.NONE));
+			this.description = startedBy.name + " of " + startedBy.city.kingdom.name + " wants to assassinate " + targetCitizen.name + " of " + targetCitizen.city.kingdom.name + " after discovering Invasion Plan.";
 
-			}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.STATE_VISITING){
-				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " because " + targetCitizen.city.kingdom.name + " is visiting a kingdom which he/she considers an enemy.", HISTORY_IDENTIFIER.NONE));
+		}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.STATE_VISITING){
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " because " + targetCitizen.city.kingdom.name + " is visiting a kingdom which he/she considers an enemy.", HISTORY_IDENTIFIER.NONE));
+			this.description = startedBy.name + " of " + startedBy.city.kingdom.name + " wants to assassinate " + targetCitizen.name + " of " + targetCitizen.city.kingdom.name + " because " + targetCitizen.city.kingdom.name + " is visiting a kingdom which he/she considers an enemy.";
 
-			}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.NONE){
-				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+		}else if(triggerReason == ASSASSINATION_TRIGGER_REASONS.NONE){
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+			this.description = startedBy.name + " of " + startedBy.city.kingdom.name + " wants to assassinate " + targetCitizen.name + " of " + targetCitizen.city.kingdom.name;
 
-			}else{
-				startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after relationship deterioration due to " + triggerReason.ToString() + ".", HISTORY_IDENTIFIER.NONE));
+		}else{
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after relationship deterioration due to " + triggerReason.ToString() + ".", HISTORY_IDENTIFIER.NONE));
+			this.description = startedBy.name + " of " + startedBy.city.kingdom.name + " wants to assassinate " + targetCitizen.name + " of " + targetCitizen.city.kingdom.name + " after relationship deterioration due to " + triggerReason.ToString() + ".";
 
-			}
 		}
 		TriggerGuardian ();
 
@@ -45,9 +51,9 @@ public class Assassination : GameEvent {
 	}
 
 	internal override void PerformAction(){
-		this.durationInWeeks -= 1;
-		if(this.durationInWeeks <= 0){
-			this.durationInWeeks = 0;
+		this.remainingWeeks -= 1;
+		if(this.remainingWeeks <= 0){
+			this.remainingWeeks = 0;
 			AssassinationMoment ();
 			DoneEvent ();
 		}
@@ -185,13 +191,12 @@ public class Assassination : GameEvent {
 			return;
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
-		int value = GetActualChancePercentage (this.spy);
 
 		bool hasBeenDiscovered = false;
 		bool hasDeflected = false;
 		bool hasAssassinated = false;
 		Citizen kingToBlame = null;
-		if(chance < value){
+		if(chance < this.successRate){
 			AssassinateTarget (ref hasAssassinated);
 			SpyDiscovery (ref hasBeenDiscovered, ref hasDeflected, ref kingToBlame);
 			if (hasAssassinated && hasBeenDiscovered) {

@@ -6,6 +6,7 @@ using System.Linq;
 public class PowerGrab : GameEvent {
 
 	public Citizen kingToOverthrow;
+	public List<Citizen> uncovered;
 
 	public PowerGrab(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen kingToOverthrow) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.POWER_GRAB;
@@ -14,6 +15,7 @@ public class PowerGrab : GameEvent {
 		this.durationInWeeks = 48;
 		this.remainingWeeks = this.durationInWeeks;
 		this.kingToOverthrow = this.startedBy.city.kingdom.king;
+		this.uncovered = new List<Citizen>();
 
 		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started gathering influence for his/her claim as next in line to the " + this.kingToOverthrow.city.kingdom.name + " throne.", HISTORY_IDENTIFIER.NONE));
 		this.kingToOverthrow.city.hexTile.AddEventOnTile(this);

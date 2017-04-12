@@ -6,12 +6,14 @@ using System.Linq;
 public class Militarization : GameEvent {
 
 	internal InvasionPlan invasionPlanThatTriggeredEvent;
+	public List<Citizen> uncovered;
 
 	public Militarization(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.MILITARIZATION;
 		this.description = startedBy.name + " prioritizing the training of his generals and army, in preparation for war.";
 		this.durationInWeeks = Random.Range(16, 24);
 		this.remainingWeeks = this.durationInWeeks;
+		this.uncovered = new List<Citizen>();
 
 		this.startedBy.city.hexTile.AddEventOnTile(this);
 		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started a Militarization for his/her Invasion Plan.", HISTORY_IDENTIFIER.NONE));

@@ -385,4 +385,33 @@ public class Utilities : MonoBehaviour {
 
 		return true;
 	}
+
+	public static bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
+		for(int i = 0; i < unwantedGovernors.Count; i++){
+			if(governor.id == unwantedGovernors[i].id){
+				return true;
+			}	
+		}
+		return false;
+	}
+	public static List<Citizen> GetUnwantedGovernors(Citizen king){
+		List<Citizen> unwantedGovernors = new List<Citizen> ();
+		for(int i = 0; i < king.civilWars.Count; i++){
+			if(king.civilWars[i].isGovernor){
+				unwantedGovernors.Add (king.civilWars [i]);
+			}
+		}
+		for(int i = 0; i < king.successionWars.Count; i++){
+			if(king.successionWars[i].isGovernor){
+				unwantedGovernors.Add (king.successionWars [i]);
+			}
+		}
+		for(int i = 0; i < king.city.kingdom.cities.Count; i++){
+			if(king.city.kingdom.cities[i].governor.supportedCitizen != null){
+				unwantedGovernors.Add (king.city.kingdom.cities [i].governor);
+			}
+		}
+
+		return unwantedGovernors;
+	}
 }

@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class JoinWar : GameEvent {
 
 	public Citizen candidateForAlliance;
 	public Envoy envoyToSend;
 	public Kingdom kingdomToAttack;
+	public List<Citizen> uncovered;
 
 	public JoinWar(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen candidateForAlliance, Envoy envoyToSend, Kingdom kingdomToAttack) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.JOIN_WAR_REQUEST;
@@ -16,6 +18,7 @@ public class JoinWar : GameEvent {
 		this.candidateForAlliance = candidateForAlliance;
 		this.envoyToSend = envoyToSend;
 		this.kingdomToAttack = kingdomToAttack;
+		this.uncovered = new List<Citizen>();
 
 		if(this.envoyToSend != null){
 			this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.startedBy.name + " sent " + this.envoyToSend.citizen.name

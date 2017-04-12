@@ -6,23 +6,35 @@ public class Espionage : GameEvent {
 	public Kingdom sourceKingdom;
 	public Kingdom targetKingdom;
 	public Citizen spy;
-	public Espionage(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
+	public GameEvent chosenEvent;
+	public List<GameEvent> allEventsAffectingTarget;
+	public bool hasFound;
+	public int successRate;
+
+	public Espionage(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen spy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ESPIONAGE;
 		this.description = startedBy.name + " is having an espionage event.";
 		this.durationInWeeks = 2;
 		this.remainingWeeks = this.durationInWeeks;
 		this.sourceKingdom = startedBy.city.kingdom;
-		this.spy = GetSpy (this.sourceKingdom);
+		this.spy = spy;
+		this.allEventsAffectingTarget = new List<GameEvent> ();
 		this.targetKingdom = GetTargetKingdom ();
+		this.chosenEvent = this.GetEventToExpose(true);
+		this.hasFound = false;
+		this.successRate = 75;
+		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
+			this.successRate += 10;
+		}
 		if (this.targetKingdom != null) {
 			this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
 		}
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 	internal override void PerformAction(){
-		this.durationInWeeks -= 1;
-		if(this.durationInWeeks <= 0){
-			this.durationInWeeks = 0;
+		this.remainingWeeks -= 1;
+		if(this.remainingWeeks <= 0){
+			this.remainingWeeks = 0;
 			ActualEspionage ();
 			DoneEvent ();
 		}
@@ -37,6 +49,9 @@ public class Espionage : GameEvent {
 		this.endMonth = GameManager.Instance.month;
 		this.endWeek = GameManager.Instance.week;
 		this.endYear = GameManager.Instance.year;
+		if(this.chosenEvent != null && this.hasFound){
+			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.spy.name + " discovered a Hidden Event: ";
+		}
 //		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
 	private Citizen GetSpy(Kingdom kingdom){
@@ -82,7 +97,7 @@ public class Espionage : GameEvent {
 			if(adjacentKingdoms.Count > 0){
 				return adjacentKingdoms [UnityEngine.Random.Range (0, adjacentKingdoms.Count)];
 			}else{
-				return null;
+				return this.sourceKingdom;
 			}
 		}
 	}
@@ -96,17 +111,25 @@ public class Espionage : GameEvent {
 			return;
 		}
 
-		GameEvent chosenEvent = GetEventToExpose();
 		if(chosenEvent == null){
 			return;
 		}
 
 		int chance = UnityEngine.Random.Range (0, 100);
-		int value = 75;
-		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
-			value += 10;
-		}
-		if(chance < value){
+
+		if(chance < this.successRate){
+			hasFound = true;
+			if(chosenEvent is Assassination){
+				((Assassination)chosenEvent).uncovered.Add(this.sourceKingdom.king);
+			}else if(chosenEvent is InvasionPlan){
+				((InvasionPlan)chosenEvent).uncovered.Add(this.sourceKingdom.king);
+			}else if(chosenEvent is JoinWar){
+				((JoinWar)chosenEvent).uncovered.Add(this.sourceKingdom.king);
+			}else if(chosenEvent is Militarization){
+				((Militarization)chosenEvent).uncovered.Add(this.sourceKingdom.king);
+			}else if(chosenEvent is PowerGrab){
+				((PowerGrab)chosenEvent).uncovered.Add(this.sourceKingdom.king);
+			}
 			if(this.targetKingdom.king.id == this.sourceKingdom.king.id){
 				this.targetKingdom.king.InformedAboutHiddenEvent (chosenEvent, this.spy);
 			}else{
@@ -255,7 +278,7 @@ public class Espionage : GameEvent {
 			}
 		}
 	}
-	private GameEvent GetEventToExpose(){
+	private GameEvent GetEventToExpose(bool isGetAllEvents = false){
 		if(this.targetKingdom == null){
 			return null;
 		}
@@ -268,30 +291,57 @@ public class Espionage : GameEvent {
 
 		List<GameEvent> allEventsAffectionTarget = new List<GameEvent> ();
 
-		for(int i = 0; i < invasionPlanEvents.Count; i++){
-			if(((InvasionPlan)invasionPlanEvents[i]).targetKingdom.id == this.targetKingdom.id && ((InvasionPlan)invasionPlanEvents[i]).sourceKingdom.id != this.sourceKingdom.id){
-				allEventsAffectionTarget.Add (assassinationEvents [i]);
+		if(invasionPlanEvents != null){
+			for(int i = 0; i < invasionPlanEvents.Count; i++){
+				if(((InvasionPlan)invasionPlanEvents[i]).targetKingdom.id == this.targetKingdom.id && ((InvasionPlan)invasionPlanEvents[i]).startedBy.city.kingdom.id != this.sourceKingdom.id){
+					allEventsAffectionTarget.Add (assassinationEvents [i]);
+				}
 			}
 		}
-		for(int i = 0; i < joinWarEvents.Count; i++){
 
-		}
-		for(int i = 0; i < militarizationEvents.Count; i++){
-
-		}
-		for(int i = 0; i < assassinationEvents.Count; i++){
-			if(((Assassination)assassinationEvents[i]).targetCitizen.city.kingdom.id == this.targetKingdom.id && ((Assassination)assassinationEvents[i]).assassinKingdom.id != this.sourceKingdom.id){
-				allEventsAffectionTarget.Add (assassinationEvents [i]);
+		if(joinWarEvents != null){
+			for(int i = 0; i < joinWarEvents.Count; i++){
+				if(((JoinWar)joinWarEvents[i]).candidateForAlliance.city.kingdom.id == this.targetKingdom.id && ((JoinWar)joinWarEvents[i]).startedBy.city.kingdom.id != this.sourceKingdom.id){
+					allEventsAffectionTarget.Add (joinWarEvents [i]);
+				}
 			}
 		}
-		for(int i = 0; i < rebellionPlotEvents.Count; i++){
 
+		if(militarizationEvents != null){
+			for(int i = 0; i < militarizationEvents.Count; i++){
+				if(((Militarization)militarizationEvents[i]).startedBy.city.kingdom.id == this.targetKingdom.id && ((Militarization)militarizationEvents[i]).startedBy.city.kingdom.id != this.sourceKingdom.id){
+					allEventsAffectionTarget.Add (militarizationEvents [i]);
+				}
+			}
 		}
-		for(int i = 0; i < powerGrabEvents.Count; i++){
+		if(assassinationEvents != null){
+			for(int i = 0; i < assassinationEvents.Count; i++){
+				if(((Assassination)assassinationEvents[i]).targetCitizen.city.kingdom.id == this.targetKingdom.id && ((Assassination)assassinationEvents[i]).assassinKingdom.id != this.sourceKingdom.id){
+					allEventsAffectionTarget.Add (assassinationEvents [i]);
+				}
+			}
+		}
 
+		if(rebellionPlotEvents != null){
+			for(int i = 0; i < rebellionPlotEvents.Count; i++){
+
+			}
 		}
+
+		if(powerGrabEvents != null){
+			for(int i = 0; i < powerGrabEvents.Count; i++){
+				if(((PowerGrab)powerGrabEvents[i]).kingToOverthrow.city.kingdom.id == this.targetKingdom.id){
+					allEventsAffectionTarget.Add (powerGrabEvents [i]);
+				}
+			}
+		}
+
 
 		if(allEventsAffectionTarget.Count > 0){
+			if(isGetAllEvents){
+				this.allEventsAffectingTarget.Clear();
+				this.allEventsAffectingTarget.AddRange(allEventsAffectionTarget);
+			}
 			return allEventsAffectionTarget [UnityEngine.Random.Range (0, allEventsAffectionTarget.Count)];
 		}else{
 			Debug.Log ("NO HIDDEN EVENT TO EXPOSE HERE!");

@@ -7,6 +7,7 @@ public class InvasionPlan : GameEvent {
 
 	public Kingdom sourceKingdom;
 	public Kingdom targetKingdom;
+	public List<Citizen> uncovered;
 
 	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom, INVASION_TRIGGER_REASONS reason = INVASION_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
@@ -16,6 +17,7 @@ public class InvasionPlan : GameEvent {
 		this.remainingWeeks = this.durationInWeeks;
 		this.sourceKingdom = sourceKingdom;
 		this.targetKingdom = targetKingdom;
+		this.uncovered = new List<Citizen>();
 
 		if(reason == INVASION_TRIGGER_REASONS.DISCOVERING_A){
 			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + " after discovering Assassination.", HISTORY_IDENTIFIER.NONE));
