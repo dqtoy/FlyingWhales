@@ -234,19 +234,19 @@ public class Utilities : MonoBehaviour {
 
 	public static Color GetColorForRelationship(RELATIONSHIP_STATUS status){
 		if (status == RELATIONSHIP_STATUS.ALLY) {
-			return new Color (0, 139, 69);
+			return new Color (0f, (139f/255f), (69f/255f), 1f);
 		} else if (status == RELATIONSHIP_STATUS.FRIEND) {
-			return new Color (0, 255, 127);
+			return new Color (0f, 1f, (127f/255f), 1f);
 		} else if (status == RELATIONSHIP_STATUS.WARM) {
-			return new Color (118, 238, 198);
+			return new Color ((118f/255f), (238f/255f), (198f/255f), 1f);
 		} else if (status == RELATIONSHIP_STATUS.NEUTRAL) {
 			return Color.white;
 		} else if (status == RELATIONSHIP_STATUS.COLD) {
-			return new Color (240, 128, 128);
+			return new Color ((240f/255f), (128f/255f), (128f/255f), 1f);
 		} else if (status == RELATIONSHIP_STATUS.ENEMY) {
-			return new Color (255, 64, 64);
+			return new Color (1f, (64f/255f), (64f/255f), 1f);
 		} else if (status == RELATIONSHIP_STATUS.RIVAL) {
-			return new Color (255, 0, 0);
+			return new Color (1f, 0f, 0f, 1f);
 		}
 		return Color.white;
 	}

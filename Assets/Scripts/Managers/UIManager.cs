@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class UIManager : MonoBehaviour {
 
@@ -9,6 +10,7 @@ public class UIManager : MonoBehaviour {
 
 	public Camera uiCamera;
 
+	[Space(10)]//Prefabs
 	public GameObject characterPortraitPrefab;
 	public GameObject successionPortraitPrefab;
 	public GameObject historyPortraitPrefab;
@@ -17,6 +19,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject traitPrefab;
 	public GameObject gameEventPrefab;
 
+	[Space(10)]//Main Objects
 	public GameObject smallInfoGO;
 	public GameObject citizenInfoGO;
 	public GameObject cityInfoGO;
@@ -29,6 +32,18 @@ public class UIManager : MonoBehaviour {
 	public GameObject specificEventGO;
 	public GameObject citizenHistoryGO;
 
+	[Space(10)]//For Testing
+	//Trait Editor
+	public GameObject traitEditorGO;
+	public UIPopupList addTraitPopUpList;
+	public UIPopupList removeTraitPopUpList;
+	public UILabel addTraitChoiceLbl;
+	public UILabel removeTraitChoiceLbl;
+	//Relationship Editor
+	public UILabel sourceKinglikenessLbl;
+	public UILabel targetKinglikenessLbl;
+
+	[Space(10)]//World UI
 	public ButtonToggle pauseBtn;
 	public ButtonToggle x1Btn;
 	public ButtonToggle x2Btn;
@@ -56,6 +71,7 @@ public class UIManager : MonoBehaviour {
 	public ButtonToggle successionBtn;
 	public UIGrid citizenInfoSuccessionGrid;
 	public GameObject citizenInfoSuccessionGO;
+	public GameObject citizenInfoForTestingGO;
 
 	[Space(10)] //City Info UI
 	public UILabel cityNameLbl;
@@ -116,7 +132,8 @@ public class UIManager : MonoBehaviour {
 	public GameObject governorRelationshipsParentGO;
 	public UIGrid kingRelationshipsGrid;
 	public UIGrid governorsRelationshipGrid;
-	public UI2DSprite mainLineSprite;
+	public UI2DSprite kingMainLineSprite;
+	public UI2DSprite governorMainLineSprite;
 	public UI2DSprite relationshipKingSprite;
 	public UILabel relationshipKingName;
 	public UILabel relationshipKingKingdomName;
@@ -127,6 +144,7 @@ public class UIManager : MonoBehaviour {
 	public UI2DSprite relationshipStatusSprite;
 	public UIGrid relationshipHistoryGrid;
 	public GameObject noRelationshipsToShowGO;
+	public GameObject relationshipHistoryForTestingGO;
 
 	[Space(10)]
 	public GameObject familyTreeFatherGO;
@@ -160,6 +178,7 @@ public class UIManager : MonoBehaviour {
 	internal City currentlyShowingCity;
 	private Kingdom currentlyShowingKingdom;
 	private GameEvent currentlyShowingEvent;
+	private RelationshipKings currentlyShowingRelationship;
 	private GameObject lastClickedEventType = null;
 
 	[Space(10)] //FOR TESTING
@@ -275,6 +294,12 @@ public class UIManager : MonoBehaviour {
 		if (familyTreeGO.activeSelf) {
 			HideFamilyTree();
 		}
+		if (traitEditorGO.activeSelf) {
+			HideTraitEditor();
+		}
+
+		//ForTesting
+		citizenInfoForTestingGO.SetActive (true);
 
 		successionBtn.SetClickState(false);
 		citizenInfoSuccessionGO.SetActive(false);
@@ -788,15 +813,22 @@ public class UIManager : MonoBehaviour {
 		thisGrid.Reposition ();
 		yield return null;
 	}
+
+	public void ShowRelationships(){
+		relationshipKingName.text = "King " + currentlyShowingCitizen.name;
+		relationshipKingKingdomName.text = currentlyShowingCitizen.city.kingdom.name;
+		relationshipKingSprite.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
+		relationshipsGO.SetActive (true);
+		ShowKingRelationships ();
+	}
+
 	public void ToggleRelationships(){
 		if (relationshipsGO.activeSelf == true) {
+			governorRelationshipsParentGO.SetActive(false);
+			kingRelationshipsParentGO.SetActive(false);
 			relationshipsGO.SetActive (false);
 		} else {
-			relationshipKingName.text = "King " + currentlyShowingCitizen.name;
-			relationshipKingKingdomName.text = currentlyShowingCitizen.city.kingdom.name;
-			relationshipKingSprite.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
-			relationshipsGO.SetActive (true);
-			ShowKingRelationships ();
+			ShowRelationships();
 		}
 	}
 	public void ShowKingRelationships(){
@@ -821,8 +853,8 @@ public class UIManager : MonoBehaviour {
 
 		}
 		if (currentlyShowingCitizen.relationshipKings.Count > 1) {
-			mainLineSprite.height = 137 * currentlyShowingCitizen.relationshipKings.Count;
-			mainLineSprite.gameObject.SetActive(true);
+			kingMainLineSprite.height = 73 * currentlyShowingCitizen.relationshipKings.Count;
+			kingMainLineSprite.gameObject.SetActive(true);
 		}
 		governorRelationshipsParentGO.SetActive(false);
 		kingRelationshipsParentGO.SetActive(true);
@@ -846,24 +878,29 @@ public class UIManager : MonoBehaviour {
 			governorGO.transform.localScale = new Vector3(1.5f, 1.5f, 0);
 			governorGO.GetComponent<CharacterPortrait>().ShowRelationshipLine();
 //			governorGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
+		}
 
+		if (currentlyShowingCitizen.city.kingdom.cities.Count > 1) {
+			governorMainLineSprite.height = 73 * currentlyShowingCitizen.relationshipKings.Count;
+			governorMainLineSprite.gameObject.SetActive(true);
 		}
-		if (currentlyShowingCitizen.relationshipKings.Count > 1) {
-			mainLineSprite.height = 137 * currentlyShowingCitizen.relationshipKings.Count;
-			mainLineSprite.gameObject.SetActive(true);
-		}
+
 		kingRelationshipsParentGO.SetActive(false);
 		governorRelationshipsParentGO.SetActive(true);
 		governorsRelationshipGrid.enabled = true;
 	}
 
 	public void HideRelationships(){
+		kingRelationshipsParentGO.SetActive (false);
+		governorRelationshipsParentGO.SetActive(false);
 		relationshipsGO.SetActive (false);
 		relationshipsBtn.OnClick();
 	}
 
 	public void ShowRelationshipHistory(Citizen citizenInRelationshipWith){
 		RelationshipKings relationship = currentlyShowingCitizen.GetRelationshipWithCitizen(citizenInRelationshipWith);
+		currentlyShowingRelationship = relationship;
+
 		if (relationship.relationshipHistory.Count <= 0) {
 			noRelationshipsToShowGO.SetActive (true);
 		} else {
@@ -877,8 +914,35 @@ public class UIManager : MonoBehaviour {
 			historyGO.transform.localPosition = Vector3.zero;
 		}
 
+		//For Testing
+		relationshipHistoryForTestingGO.SetActive(true);
+		sourceKinglikenessLbl.text = relationship.like.ToString();
+		targetKinglikenessLbl.text = citizenInRelationshipWith.GetRelationshipWithCitizen(currentlyShowingCitizen).like.ToString();
+
 		relationshipStatusSprite.color = Utilities.GetColorForRelationship(relationship.lordRelationship);
 		relationshipHistoryGO.SetActive(true);
+	}
+
+	public void EditSourceRelationship(){
+		int newLikeRating;
+		if(Int32.TryParse(sourceKinglikenessLbl.text, out newLikeRating)){
+			currentlyShowingRelationship.ChangeSourceKingLikeness(newLikeRating);
+			this.ShowRelationshipHistory(currentlyShowingRelationship.king);
+			kingRelationshipsParentGO.SetActive(false);
+			governorRelationshipsParentGO.SetActive(false);
+			this.ShowRelationships();
+		}
+	}
+
+	public void EditTargetRelationship(){
+		int newLikeRating;
+		if(Int32.TryParse(targetKinglikenessLbl.text, out newLikeRating)){
+			currentlyShowingRelationship.ChangeTargetKingLikeness(newLikeRating);
+			this.ShowRelationshipHistory(currentlyShowingRelationship.king);
+			kingRelationshipsParentGO.SetActive(false);
+			governorRelationshipsParentGO.SetActive(false);
+			this.ShowRelationships();
+		}
 	}
 
 	public void HideRelationshipHistory(){
@@ -1501,5 +1565,177 @@ public class UIManager : MonoBehaviour {
 	}
 	public void HideCreateEventUI(){
 		this.goCreateEventUI.SetActive (false);
+	}
+
+	public void ToggleTraitEditor(){
+		if (traitEditorGO.activeSelf) {
+			traitEditorGO.SetActive (false);
+		} else {
+			addTraitPopUpList.Clear();
+			removeTraitPopUpList.Clear();
+			BEHAVIOR_TRAIT[] allBehaviourTraits = Utilities.GetEnumValues<BEHAVIOR_TRAIT>();
+			SKILL_TRAIT[] allSkillTraits = Utilities.GetEnumValues<SKILL_TRAIT>();
+			MISC_TRAIT[] allMiscTraits = Utilities.GetEnumValues<MISC_TRAIT>();
+
+			for (int i = 0; i < allBehaviourTraits.Length; i++) {
+				if (allBehaviourTraits[i] != BEHAVIOR_TRAIT.NONE) {
+					addTraitPopUpList.AddItem (allBehaviourTraits[i].ToString ());
+				}
+			}
+			for (int i = 0; i < allSkillTraits.Length; i++) {
+				if (allSkillTraits[i] != SKILL_TRAIT.NONE) {
+					addTraitPopUpList.AddItem (allSkillTraits[i].ToString ());
+				}
+			}
+			for (int i = 0; i < allMiscTraits.Length; i++) {
+				if (allMiscTraits[i] != MISC_TRAIT.NONE) {
+					addTraitPopUpList.AddItem (allMiscTraits[i].ToString ());
+				}
+			}
+
+			for (int i = 0; i < currentlyShowingCitizen.behaviorTraits.Count; i++) {
+				removeTraitPopUpList.AddItem (currentlyShowingCitizen.behaviorTraits[i].ToString());
+			}
+			for (int i = 0; i < currentlyShowingCitizen.skillTraits.Count; i++) {
+				removeTraitPopUpList.AddItem (currentlyShowingCitizen.skillTraits[i].ToString());
+			}
+			for (int i = 0; i < currentlyShowingCitizen.miscTraits.Count; i++) {
+				removeTraitPopUpList.AddItem (currentlyShowingCitizen.miscTraits[i].ToString());
+			}
+			if (removeTraitPopUpList.items.Count > 0) {
+				removeTraitPopUpList.value = removeTraitPopUpList.items [0];
+			} else {
+				removeTraitPopUpList.value = "";
+			}
+			addTraitPopUpList.value = addTraitPopUpList.items [0];
+			removeTraitChoiceLbl.text = removeTraitPopUpList.value;
+			addTraitChoiceLbl.text = addTraitPopUpList.value;
+			traitEditorGO.SetActive (true);
+		}
+	}
+
+	public void AddTrait(){
+		BEHAVIOR_TRAIT chosenBehaviourTrait = BEHAVIOR_TRAIT.NONE;
+		SKILL_TRAIT chosenSkillTrait = SKILL_TRAIT.NONE;
+		MISC_TRAIT chosenMiscTrait = MISC_TRAIT.NONE;
+		if (chosenBehaviourTrait.TryParse<BEHAVIOR_TRAIT> (addTraitPopUpList.value, out chosenBehaviourTrait)) {
+			if (chosenBehaviourTrait == BEHAVIOR_TRAIT.NAIVE) {
+				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.SCHEMING);
+					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.SCHEMING.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.SCHEMING) {
+				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.NAIVE);
+					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.NAIVE.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.WARMONGER) {
+				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
+					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.PACIFIST);
+					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.PACIFIST.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.PACIFIST) {
+				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
+					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.WARMONGER);
+					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.WARMONGER.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			}else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.CHARISMATIC) {
+				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.REPULSIVE);
+					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.REPULSIVE.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.REPULSIVE) {
+				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.CHARISMATIC);
+					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.CHARISMATIC.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.AGGRESSIVE) {
+				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.DEFENSIVE)) {
+					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.DEFENSIVE);
+					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.DEFENSIVE.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.DEFENSIVE) {
+				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.AGGRESSIVE)) {
+					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.AGGRESSIVE);
+					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.AGGRESSIVE.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			}
+			if (currentlyShowingCitizen.behaviorTraits.Contains (chosenBehaviourTrait)) {
+				Debug.Log (currentlyShowingCitizen.name + " already has that trait!");
+			} else {
+				currentlyShowingCitizen.behaviorTraits.Add (chosenBehaviourTrait);
+				Debug.Log ("Added behaviour trait : " + chosenBehaviourTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
+			}
+		} else if (chosenSkillTrait.TryParse<SKILL_TRAIT> (addTraitPopUpList.value, out chosenSkillTrait)) {
+			if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
+				if (currentlyShowingCitizen.skillTraits.Contains (SKILL_TRAIT.INEFFICIENT)) {
+					currentlyShowingCitizen.skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
+					Debug.Log ("Removed skill trait : " + SKILL_TRAIT.INEFFICIENT.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
+				if (currentlyShowingCitizen.skillTraits.Contains (SKILL_TRAIT.EFFICIENT)) {
+					currentlyShowingCitizen.skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
+					Debug.Log ("Removed skill trait : " + SKILL_TRAIT.EFFICIENT.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
+				if (currentlyShowingCitizen.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
+					currentlyShowingCitizen.skillTraits.Remove (SKILL_TRAIT.LAVISH);
+					Debug.Log ("Removed skill trait : " + SKILL_TRAIT.LAVISH.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
+				if (currentlyShowingCitizen.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
+					currentlyShowingCitizen.skillTraits.Remove (SKILL_TRAIT.THRIFTY);
+					Debug.Log ("Removed skill trait : " + SKILL_TRAIT.THRIFTY.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
+				}
+			}
+			if (currentlyShowingCitizen.skillTraits.Contains (chosenSkillTrait)) {
+				Debug.Log (currentlyShowingCitizen.name + " already has that trait!");
+			} else {
+				currentlyShowingCitizen.skillTraits.Add (chosenSkillTrait);
+				Debug.Log ("Added skill trait : " + chosenSkillTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
+			}
+		} else if (chosenMiscTrait.TryParse<MISC_TRAIT> (addTraitPopUpList.value, out chosenMiscTrait)) {
+			if (currentlyShowingCitizen.miscTraits.Contains (chosenMiscTrait)) {
+				Debug.Log (currentlyShowingCitizen.name + " already has that trait!");
+			} else {
+				currentlyShowingCitizen.miscTraits.Add (chosenMiscTrait);
+				Debug.Log ("Added misc trait : " + chosenMiscTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
+			}
+		}
+
+		ShowCitizenInfo(currentlyShowingCitizen);
+		ToggleTraitEditor();
+		if (currentlyShowingCitizen.city != null) {
+			currentlyShowingCitizen.city.UpdateResourceProduction();
+		}
+	}
+
+	public void RemoveTrait(){
+		if (string.IsNullOrEmpty (removeTraitPopUpList.value)) {
+			return;
+		}
+		BEHAVIOR_TRAIT chosenBehaviourTrait = BEHAVIOR_TRAIT.NONE;
+		SKILL_TRAIT chosenSkillTrait = SKILL_TRAIT.NONE;
+		MISC_TRAIT chosenMiscTrait = MISC_TRAIT.NONE;
+		if (chosenBehaviourTrait.TryParse<BEHAVIOR_TRAIT> (removeTraitPopUpList.value, out chosenBehaviourTrait)) {
+			currentlyShowingCitizen.behaviorTraits.Remove(chosenBehaviourTrait);
+			Debug.Log ("Removed behaviour trait : " + chosenBehaviourTrait.ToString () + " from " + currentlyShowingCitizen.name);
+		} else if (chosenSkillTrait.TryParse<SKILL_TRAIT> (removeTraitPopUpList.value, out chosenSkillTrait)) {
+			currentlyShowingCitizen.skillTraits.Remove(chosenSkillTrait);
+			Debug.Log ("Removed skill trait : " + chosenSkillTrait.ToString () + " from " + currentlyShowingCitizen.name);
+		} else if (chosenMiscTrait.TryParse<MISC_TRAIT> (removeTraitPopUpList.value, out chosenMiscTrait)) {
+			currentlyShowingCitizen.miscTraits.Remove(chosenMiscTrait);
+			Debug.Log ("Removed misc trait : " + chosenMiscTrait.ToString () + " from " + currentlyShowingCitizen.name);
+		}
+
+		ShowCitizenInfo(currentlyShowingCitizen);
+		ToggleTraitEditor();
+		if (currentlyShowingCitizen.city != null) {
+			currentlyShowingCitizen.city.UpdateResourceProduction();
+		}
+	}
+
+	public void HideTraitEditor(){
+		traitEditorGO.SetActive (false);
 	}
 }

@@ -82,4 +82,15 @@ public class RelationshipKings {
 			sourceKing.ImproveRelationship (this);
 		}
 	}
+
+	internal void ChangeSourceKingLikeness(int newLikeness){
+		this.like = (float)newLikeness;
+		this.UpdateKingRelationshipStatus();
+	}
+
+	internal void ChangeTargetKingLikeness(int newLikeness){
+		RelationshipKings rel = this.king.GetRelationshipWithCitizen(this.sourceKing);
+		rel.like = (float)newLikeness;
+		rel.UpdateKingRelationshipStatus();
+	}
 }

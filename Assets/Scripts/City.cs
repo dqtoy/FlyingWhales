@@ -863,7 +863,7 @@ public class City{
 	}
 
 	#region Resource Production
-	protected void UpdateResourceProduction(){
+	internal void UpdateResourceProduction(){
 		this.allResourceProduction = new int[8];
 		for (int i = 0; i < this.citizens.Count; i++) {
 			if(this.citizens[i].isBusy && this.citizens[i].role != ROLE.UNTRAINED && this.citizens[i].role != ROLE.GOVERNOR && this.citizens[i].role != ROLE.KING){

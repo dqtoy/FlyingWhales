@@ -94,11 +94,11 @@ public class KingdomManager : MonoBehaviour {
 	public void GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false){
 		Kingdom newKingdom = new Kingdom (race, cities);
 		allKingdoms.Add(newKingdom);
-		this.UpdateKingdomAdjacency();
 		EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
 		if (isForInitial) {
 			cities [0].city.CreateInitialFamilies();
 		}
+		this.UpdateKingdomAdjacency();
 	}
 
 	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
