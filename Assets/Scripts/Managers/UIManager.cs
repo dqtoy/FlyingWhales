@@ -69,6 +69,7 @@ public class UIManager : MonoBehaviour {
 	public ButtonToggle relationshipsBtn;
 	public ButtonToggle familyTreeBtn;
 	public ButtonToggle successionBtn;
+	public ButtonToggle citizenHistoryBtn;
 	public UIGrid citizenInfoSuccessionGrid;
 	public GameObject citizenInfoSuccessionGO;
 	public GameObject citizenInfoForTestingGO;
@@ -295,6 +296,9 @@ public class UIManager : MonoBehaviour {
 		if (familyTreeGO.activeSelf) {
 			HideFamilyTree();
 		}
+		if (citizenHistoryGO.activeSelf) {
+			HideCitizenHistory();
+		}
 		if (traitEditorGO.activeSelf) {
 			HideTraitEditor();
 		}
@@ -331,18 +335,21 @@ public class UIManager : MonoBehaviour {
 			GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
 			traitGO.GetComponent<TraitObject>().SetTrait(citizenToShow.behaviorTraits[i], SKILL_TRAIT.NONE, MISC_TRAIT.NONE);
 			traitGO.transform.localScale = Vector3.one;
+			traitGO.transform.localPosition = Vector3.zero;
 		}
 
 		for (int i = 0; i < citizenToShow.skillTraits.Count; i++) {
 			GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
 			traitGO.GetComponent<TraitObject>().SetTrait(BEHAVIOR_TRAIT.NONE, citizenToShow.skillTraits[i], MISC_TRAIT.NONE);
 			traitGO.transform.localScale = Vector3.one;
+			traitGO.transform.localPosition = Vector3.zero;
 		}
 
 		for (int i = 0; i < citizenToShow.miscTraits.Count; i++) {
 			GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
 			traitGO.GetComponent<TraitObject>().SetTrait(BEHAVIOR_TRAIT.NONE, SKILL_TRAIT.NONE, citizenToShow.miscTraits[i]);
 			traitGO.transform.localScale = Vector3.one;
+			traitGO.transform.localPosition = Vector3.zero;
 		}
 		StartCoroutine (RepositionGrid (citizenTraitsGrid));
 
@@ -412,28 +419,33 @@ public class UIManager : MonoBehaviour {
 		relationshipHistoryGO.SetActive(false);
 		citizenInfoSuccessionGO.SetActive(false);
 	}
-	public void ShowCitizenHistory(){
-		if(this.currentlyShowingCitizen == null){
-			return;
-		}
+	public void ToggleCitizenHistory(){
+		if (this.citizenHistoryGO.activeSelf) {
+			this.citizenHistoryGO.SetActive (false);
+		} else {
+			if (this.currentlyShowingCitizen == null) {
+				return;
+			}
 
-		List<Transform> children = this.citizenHistoryGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
-			Destroy (children [i].gameObject);
-		}
+			List<Transform> children = this.citizenHistoryGrid.GetChildList ();
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
 
-		for(int i = 0; i < this.currentlyShowingCitizen.history.Count; i++){
-			GameObject citizenGO = GameObject.Instantiate (this.historyPortraitPrefab, this.citizenHistoryGrid.transform) as GameObject;
-			citizenGO.GetComponent<HistoryPortrait> ().SetHistory (this.currentlyShowingCitizen.history[i]);
-			citizenGO.transform.localScale = Vector3.one;
-			citizenGO.transform.localPosition = Vector3.zero;
-		}
+			for (int i = 0; i < this.currentlyShowingCitizen.history.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (this.historyPortraitPrefab, this.citizenHistoryGrid.transform) as GameObject;
+				citizenGO.GetComponent<HistoryPortrait> ().SetHistory (this.currentlyShowingCitizen.history [i]);
+				citizenGO.transform.localScale = Vector3.one;
+				citizenGO.transform.localPosition = Vector3.zero;
+			}
 
-		StartCoroutine (RepositionGrid (this.citizenHistoryGrid));
-		this.citizenHistoryGO.SetActive (true);
+			StartCoroutine (RepositionGrid (this.citizenHistoryGrid));
+			this.citizenHistoryGO.SetActive (true);
+		}
 	}
 	public void HideCitizenHistory(){
-		this.citizenHistoryGO.SetActive (false);
+		citizenHistoryBtn.SetClickState(false);
+		this.citizenHistoryGO.SetActive(false);
 	}
 
 	public void ShowCityInfo(City cityToShow, bool forceUpdate = false){
@@ -965,12 +977,12 @@ public class UIManager : MonoBehaviour {
 	public void ShowSmallInfo(string info, Transform parent){
 		smallInfoLbl.text = info;
 		smallInfoGO.transform.parent = parent;
-		smallInfoGO.transform.localPosition = new Vector3 (0f, -60f, 0f);
+		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
 		Vector3 newPos = smallInfoGO.transform.localPosition;
 //		if (parent.name == "CharacterPortraitPrefab(Clone)") {
 //			newPos.y -= 85f;
 //		} else {
-			newPos.y -= 50f;
+//			newPos.y -= 50f;
 //		}
 		smallInfoGO.transform.localPosition = newPos;
 		smallInfoGO.transform.parent = this.transform;
