@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour {
 
 	public static UIManager Instance = null;
 
-	public Camera uiCamera;
+	public UICamera uiCamera;
 
 	[Space(10)]//Prefabs
 	public GameObject characterPortraitPrefab;
@@ -72,6 +72,7 @@ public class UIManager : MonoBehaviour {
 	public UIGrid citizenInfoSuccessionGrid;
 	public GameObject citizenInfoSuccessionGO;
 	public GameObject citizenInfoForTestingGO;
+	public GameObject citizenInfoNoSuccessorsGO;
 
 	[Space(10)] //City Info UI
 	public UILabel cityNameLbl;
@@ -391,6 +392,12 @@ public class UIManager : MonoBehaviour {
 
 			}
 			StartCoroutine (RepositionGrid (citizenInfoSuccessionGrid));
+			if (citizenInfoSuccessionGrid.GetChildList ().Count <= 0) {
+				citizenInfoNoSuccessorsGO.SetActive (true);
+			} else {
+				citizenInfoNoSuccessorsGO.SetActive (false);
+			}
+
 			citizenInfoSuccessionGO.SetActive (true);
 		}
 
@@ -1515,12 +1522,7 @@ public class UIManager : MonoBehaviour {
 
 	public bool IsMouseOnUI(){
 		if( uiCamera != null ){
-			// pos is the Vector3 representing the screen position of the input
-			Ray inputRay = uiCamera.ScreenPointToRay(Input.mousePosition);    
-			RaycastHit hit;
-
-			if( Physics.Raycast( inputRay.origin, inputRay.direction, out hit, Mathf.Infinity, LayerMask.NameToLayer( "UI" ) ) ){
-				// UI was hit, so don't allow this input to fall through to the gameplay input handler
+			if (UICamera.hoveredObject != null && UICamera.hoveredObject != this.gameObject) {
 				return true;
 			}
 		}
