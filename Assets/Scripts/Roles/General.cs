@@ -223,6 +223,10 @@ public class General : Role {
 			}
 		}
 
+		this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
+		this.generalAvatar.GetComponent<GeneralObject>().general = this;
+		this.generalAvatar.transform.localScale = Vector3.one;
+
 
 	}
 	internal void SearchForTarget(){
@@ -264,7 +268,7 @@ public class General : Role {
 	internal void Move(){
 		if(this.targetLocation != null){
 			if(this.roads.Count > 0){
-//				this.generalAvatar.GetComponent<CitizenAvatar>().MakeCitizenMove (this.location, this.roads [0].hexTile);
+				this.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.location, this.roads [0]);
 				this.location = this.roads[0];
 				this.roads.RemoveAt (0);
 				this.daysBeforeArrival -= 1;
