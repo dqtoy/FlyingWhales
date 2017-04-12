@@ -14,4 +14,8 @@ public class GeneralObject : MonoBehaviour {
 		}
 
 	}
+
+	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
+		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
+	}
 }
