@@ -42,7 +42,7 @@ public class CityGenerator : MonoBehaviour {
 			}
 
 			HexTile[] adjacentTiles = currentHexTile.AllNeighbours.ToArray();
-			HexTile[] tilesInRange = currentHexTile.GetTilesInRange(14f);
+			HexTile[] tilesInRange = currentHexTile.GetTilesInRange(25f);
 
 			HexTile[] foodTiles = adjacentTiles.Where(x => (x.specialResource == RESOURCE.NONE && Utilities.GetBaseResourceType (x.defaultResource) == BASE_RESOURCE_TYPE.FOOD) || 
 				(x.specialResource != RESOURCE.NONE && Utilities.GetBaseResourceType (x.specialResource) == BASE_RESOURCE_TYPE.FOOD)).ToArray();

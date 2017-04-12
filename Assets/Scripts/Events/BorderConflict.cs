@@ -158,8 +158,8 @@ public class BorderConflict : GameEvent {
 		}
 	}
 	private bool CheckForRelationship(Kingdom otherKingdom, bool isIncrease){
-		RelationshipKings relationship1 = otherKingdom.king.SearchRelationshipByID (this.kingdom1.id);
-		RelationshipKings relationship2 = otherKingdom.king.SearchRelationshipByID (this.kingdom2.id);
+		RelationshipKings relationship1 = otherKingdom.king.SearchRelationshipByID (this.kingdom1.king.id);
+		RelationshipKings relationship2 = otherKingdom.king.SearchRelationshipByID (this.kingdom2.king.id);
 
 		List<RELATIONSHIP_STATUS> statuses = new List<RELATIONSHIP_STATUS> ();
 		statuses.Add (relationship1.lordRelationship);

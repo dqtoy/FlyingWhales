@@ -23,6 +23,8 @@ public class Kingdom{
 	public Color kingdomColor;
 	public List<History> kingdomHistory;
 
+	public float expansionChance = 25f;
+
 	public Kingdom(RACE race, List<HexTile> cities){
 		this.id = Utilities.SetID(this);
 		this.race = race;
@@ -117,11 +119,10 @@ public class Kingdom{
 //		}
 
 		if (citiesThatCanExpand.Count > 0) {
-			float expansionChance = 3f;
+			float expansionChance = this.expansionChance;
 			float chance = Random.Range (1f, 100f);
 			if (chance < expansionChance) {
 				Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
-				citiesThatCanExpand[0].AssignNewGovernor();
 				citiesThatCanExpand[0].AdjustResources(expansionCost);
 				Expansion newExpansionEvent = new Expansion (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, governorToLeadExpansion);
 			}

@@ -926,12 +926,19 @@ public class UIManager : MonoBehaviour {
 			noRelationshipsToShowGO.SetActive (false);
 		}
 
+		List<Transform> children = this.relationshipHistoryGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy(children[i].gameObject);
+		}
+
 		for (int i = 0; i < relationship.relationshipHistory.Count; i++) {
 			GameObject historyGO = GameObject.Instantiate (this.historyPortraitPrefab, this.relationshipHistoryGrid.transform) as GameObject;
 			historyGO.GetComponent<HistoryPortrait> ().SetHistory(relationship.relationshipHistory[i]);
 			historyGO.transform.localScale = Vector3.one;
 			historyGO.transform.localPosition = Vector3.zero;
 		}
+
+		StartCoroutine (RepositionGrid (relationshipHistoryGrid));
 
 		//For Testing
 		relationshipHistoryForTestingGO.SetActive(true);

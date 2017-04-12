@@ -96,11 +96,13 @@ public class MarriageManager : MonoBehaviour {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			List<Citizen> elligibleCitizensInKingdom = KingdomManager.Instance.allKingdoms[i].GetAllCitizensForMarriage(citizenSearchingForLove);
 			for (int j = 0; j < elligibleCitizensInKingdom.Count; j++) {
-				if (elligibleCitizensInKingdom[j].age >= (citizenSearchingForLove.age + 10)) {
+				if (elligibleCitizensInKingdom[j].age > (citizenSearchingForLove.age + 10)) {
 					continue;
 				}
 				if (elligibleCitizensInKingdom [j].city.kingdom != citizenSearchingForLove.city.kingdom) {
-					if (citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY) {
+					RELATIONSHIP_STATUS rel = citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king).lordRelationship;
+					if (rel == RELATIONSHIP_STATUS.ENEMY ||
+						rel == RELATIONSHIP_STATUS.RIVAL) {
 						continue;
 					}
 				}
@@ -113,8 +115,8 @@ public class MarriageManager : MonoBehaviour {
 
 				if ((citizenSearchingForLove.isKing && !elligibleCitizensInKingdom[j].isKing) || (!citizenSearchingForLove.isKing && elligibleCitizensInKingdom[j].isKing) ||
 					(!citizenSearchingForLove.isKing && !elligibleCitizensInKingdom[j].isKing)) {
-					if (elligibleCitizensInKingdom[j].prestige * 1.25f > citizenSearchingForLove.prestige * 0.75f || 
-						elligibleCitizensInKingdom[j].prestige * 0.75f < citizenSearchingForLove.prestige * 1.25f) {
+					if (elligibleCitizensInKingdom[j].prestige <= citizenSearchingForLove.prestige * 1.25f && 
+						elligibleCitizensInKingdom[j].prestige >= citizenSearchingForLove.prestige * 0.75f) {
 						elligibleCitizens.Add (elligibleCitizensInKingdom [j]);
 					}
 				}

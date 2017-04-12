@@ -777,6 +777,7 @@ public class City{
 
 	internal void TriggerStarvation(){
 		if(this.isStarving){
+			this.tradeManager.numberOfTimesStarved += 1;
 			int deathChance = UnityEngine.Random.Range (0, 100);
 			if(deathChance < 5){
 				int youngestAge = this.citizens.Min (x => x.age);
@@ -1195,8 +1196,8 @@ public class City{
 
 	protected bool BuyTileFromList(BASE_RESOURCE_TYPE resourceToProduce, List<HexTile> choices, bool forUnneededResource = false, bool forMilitarization = false){
 		if (this.pendingTask.Count > 0) {
-			if (choices.Contains (this.pendingTask [0])) {
-				choices.Remove (this.pendingTask [0]);
+			if (choices.Contains (this.pendingTask [this.pendingTask.Keys.ElementAt(0)])) {
+				choices.Remove (this.pendingTask [this.pendingTask.Keys.ElementAt(0)]);
 			}
 		}
 
@@ -1546,10 +1547,15 @@ public class City{
 	#endregion
 
 	internal void RemoveCitizenFromCity(Citizen citizenToRemove){
+		if (citizenToRemove.role == ROLE.GOVERNOR) {
+			this.AssignNewGovernor();
+		}
 		this.citizens.Remove (citizenToRemove);
 		citizenToRemove.workLocation = null;
 		citizenToRemove.city = null;
 		citizenToRemove.currentLocation = null;
+		citizenToRemove.role = ROLE.UNTRAINED;
+		citizenToRemove.assignedRole = null;
 	}
 
 	internal void AddCitizenToCity(Citizen citizenToAdd){
@@ -1567,10 +1573,10 @@ public class City{
 	}
 	internal Citizen GetCitizenWithHighestPrestige(){
 		List<Citizen> prestigeCitizens = new List<Citizen> ();
-		int maxPrestige = this.citizens.Where (x => !x.isGovernor && !x.isDead).Max (x => x.prestige);
+		int maxPrestige = this.citizens.Where (x => !x.isGovernor && !x.isDead && !x.isKing).Max (x => x.prestige);
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].prestige == maxPrestige){
-				if(!this.citizens[i].isDead && !this.citizens[i].isGovernor){
+				if(!this.citizens[i].isDead && !this.citizens[i].isGovernor && !this.citizens[i].isKing){
 					prestigeCitizens.Add (this.citizens [i]);
 				}
 			}

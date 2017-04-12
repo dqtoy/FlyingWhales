@@ -291,7 +291,7 @@ public class Citizen {
 		int chanceToMarry = Random.Range (0, 100);
 		this.citizenChances.marriageChance = 100;
 		if (chanceToMarry < this.citizenChances.marriageChance) {
-			Debug.LogError (this.name + " has started a marriage invitation event!");
+			Debug.Log (this.name + " has started a marriage invitation event!");
 
 			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this);
 		}
@@ -705,7 +705,7 @@ public class Citizen {
 	}
 
 	internal bool IsRoyaltyCloseRelative(Citizen otherCitizen){
-		if (this.father == null || this.mother == null) {
+		if (this.id == otherCitizen.id) {
 			return true;
 		}
 
@@ -714,24 +714,34 @@ public class Citizen {
 			return true;
 		}
 
-		if (this.father.father != null && this.father.mother != null && this.mother.father != null && this.mother.mother != null) {
-			if (otherCitizen.id == this.father.father.id || otherCitizen.id == this.father.mother.id ||
-				otherCitizen.id == this.mother.father.id || otherCitizen.id == this.mother.mother.id) {
-				//royalty is grand parent
+		if (this.father.father != null) {
+			if (otherCitizen.id == this.father.father.id) {
 				return true;
 			}
 		}
 
-		for (int i = 0; i < this.father.children.Count; i++) {
-			if(otherCitizen.id == this.father.children[i].id){
-				//royalty is sibling
+		if (this.father.mother != null) {
+			if (otherCitizen.id == this.father.mother.id) {
 				return true;
 			}
 		}
+
+		if (this.mother.father != null) {
+			if (otherCitizen.id == this.mother.father.id) {
+				return true;
+			}
+		}
+
+		if (this.mother.mother != null) {
+			if (otherCitizen.id == this.mother.mother.id) {
+				return true;
+			}
+		}
+
 
 		if (this.father.father != null) {
 			for (int i = 0; i < this.father.father.children.Count; i++) {
-				if (otherCitizen.id == this.father.father.children [i].id) {
+				if (otherCitizen.id == this.father.father.children[i].id) {
 					//royalty is uncle or aunt from fathers side
 					return true;
 				}
@@ -1000,6 +1010,7 @@ public class Citizen {
 			value = 2;
 		}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
 			value = 6;
+//			value = 100;
 			if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
 				value = 12;
 			}

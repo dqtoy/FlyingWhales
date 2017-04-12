@@ -20,8 +20,8 @@ public class KingdomManager : MonoBehaviour {
 		//Get Starting City For Humans
 		List<HexTile> cityForHumans1 = new List<HexTile>();
 		List<HexTile> cityForHumans2 = new List<HexTile>();
-//		List<HexTile> cityForHumans3 = new List<HexTile>();
-//		List<HexTile> cityForHumans4 = new List<HexTile>();
+		List<HexTile> cityForHumans3 = new List<HexTile>();
+		List<HexTile> cityForHumans4 = new List<HexTile>();
 
 		List<HexTile> elligibleTilesForHumans = new List<HexTile>();
 		for (int i = 0; i < habitableTiles.Count; i++) {
@@ -45,44 +45,44 @@ public class KingdomManager : MonoBehaviour {
 		}
 		cityForHumans1.Add (elligibleTilesForHumans [0]);
 		cityForHumans2.Add (elligibleTilesForHumans [1]);
-//		cityForHumans3.Add (elligibleTilesForHumans [2]);
-//		cityForHumans4.Add (elligibleTilesForHumans [3]);
+		cityForHumans3.Add (elligibleTilesForHumans [2]);
+		cityForHumans4.Add (elligibleTilesForHumans [3]);
 
 		GenerateNewKingdom (RACE.HUMANS, cityForHumans1, true);
 		GenerateNewKingdom (RACE.HUMANS, cityForHumans2, true);
-//		GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
-//		GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
+		GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
+		GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
 
 
 		for (int i = 0; i < elligibleTilesForHumans.Count; i++) {
 			habitableTiles.Remove (elligibleTilesForHumans[i]);
 		}
 
-		//Get Statrting City For Elves
-		List<HexTile> cityForElves = new List<HexTile>();
-		List<HexTile> elligibleTilesForElves = new List<HexTile>();
-		for (int i = 0; i < habitableTiles.Count; i++) {
-
-			List<HexTile> neighbours = habitableTiles[i].AllNeighbours.ToList();
-			List<HexTile> tilesContainingBaseResource = new List<HexTile>();
-			for (int j = 0; j < neighbours.Count; j++) {
-				if (neighbours[j].specialResource == RESOURCE.NONE) {
-					if (Utilities.GetBaseResourceType (neighbours[j].defaultResource) == BASE_RESOURCE_TYPE.WOOD) {
-						tilesContainingBaseResource.Add(neighbours[j]);
-					}
-				} else {
-					if (Utilities.GetBaseResourceType (neighbours[j].specialResource) == BASE_RESOURCE_TYPE.WOOD) {
-						tilesContainingBaseResource.Add(neighbours[j]);
-					}
-				}
-			}
-
-			if (tilesContainingBaseResource.Count > 0) {
-				elligibleTilesForElves.Add(habitableTiles[i]);
-			}
-		}
-		cityForElves.Add (elligibleTilesForElves [Random.Range (0, elligibleTilesForElves.Count)]);
-		GenerateNewKingdom (RACE.ELVES, cityForElves, true);
+//		//Get Statrting City For Elves
+//		List<HexTile> cityForElves = new List<HexTile>();
+//		List<HexTile> elligibleTilesForElves = new List<HexTile>();
+//		for (int i = 0; i < habitableTiles.Count; i++) {
+//
+//			List<HexTile> neighbours = habitableTiles[i].AllNeighbours.ToList();
+//			List<HexTile> tilesContainingBaseResource = new List<HexTile>();
+//			for (int j = 0; j < neighbours.Count; j++) {
+//				if (neighbours[j].specialResource == RESOURCE.NONE) {
+//					if (Utilities.GetBaseResourceType (neighbours[j].defaultResource) == BASE_RESOURCE_TYPE.WOOD) {
+//						tilesContainingBaseResource.Add(neighbours[j]);
+//					}
+//				} else {
+//					if (Utilities.GetBaseResourceType (neighbours[j].specialResource) == BASE_RESOURCE_TYPE.WOOD) {
+//						tilesContainingBaseResource.Add(neighbours[j]);
+//					}
+//				}
+//			}
+//
+//			if (tilesContainingBaseResource.Count > 0) {
+//				elligibleTilesForElves.Add(habitableTiles[i]);
+//			}
+//		}
+//		cityForElves.Add (elligibleTilesForElves [Random.Range (0, elligibleTilesForElves.Count)]);
+//		GenerateNewKingdom (RACE.ELVES, cityForElves, true);
 		CreateInitialRelationshipKings ();
 	}
 

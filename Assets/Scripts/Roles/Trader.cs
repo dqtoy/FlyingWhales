@@ -23,7 +23,7 @@ public class Trader : Role {
 	public Trader(Citizen citizen, TradeManager tradeManager): base(citizen){
 		this.homeCity = citizen.city;
 		this.targetCity = null;
-		this.currentLocation = this.citizen.workLocation;
+		this.currentLocation = this.citizen.city.hexTile;
 		this.offeredResources = new List<BASE_RESOURCE_TYPE>();
 		this.tradeManager = tradeManager;
 		EventManager.Instance.onWeekEnd.AddListener(AssignTask);
@@ -76,9 +76,11 @@ public class Trader : Role {
 
 		this.isWorking = true;
 		this.isGoingHome = false;
-		this.traderGameObject = GameObject.Instantiate (Resources.Load ("GameObjects/CitizenAvatar"), this.homeCity.hexTile.transform) as GameObject;
-		this.traderGameObject.transform.localScale = Vector3.one;
-		this.traderGameObject.GetComponent<CitizenAvatar>().AssignCitizen(this.citizen);
+		if (this.traderGameObject == null) {
+			this.traderGameObject = GameObject.Instantiate (Resources.Load ("GameObjects/CitizenAvatar"), this.homeCity.hexTile.transform) as GameObject;
+			this.traderGameObject.transform.localScale = new Vector3 (5f, 5f, 5f);
+			this.traderGameObject.GetComponent<CitizenAvatar>().AssignCitizen(this.citizen);
+		}
 		EventManager.Instance.onWeekEnd.RemoveListener(AssignTask);
 		EventManager.Instance.onWeekEnd.AddListener(DailyActions);
 

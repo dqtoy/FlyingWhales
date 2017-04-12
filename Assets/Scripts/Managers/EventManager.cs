@@ -60,10 +60,11 @@ public class EventManager : MonoBehaviour {
 		}
 	}
 	public List<GameEvent> GetEventsOfType(EVENT_TYPES eventType){
+		List<GameEvent> eventsOfType = new List<GameEvent>();
 		if (this.allEvents.ContainsKey (eventType)) {
-			return this.allEvents[eventType];
+			eventsOfType = this.allEvents[eventType];
 		}
-		return null;
+		return eventsOfType;
 	}
 
 	public List<GameEvent> GetEventsOfTypePerKingdom(Kingdom kingdom, EVENT_TYPES eventType){

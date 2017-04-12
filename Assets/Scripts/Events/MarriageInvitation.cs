@@ -194,7 +194,7 @@ public class MarriageInvitation : GameEvent {
 	}
 
 	internal override void DoneEvent(){
-		Debug.LogError (this.startedBy.name + "'s marriage invitation has ended. " + this.resolution);
+		Debug.Log (this.startedBy.name + "'s marriage invitation has ended. " + this.resolution);
 		this.isActive = false;
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}

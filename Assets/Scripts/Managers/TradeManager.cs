@@ -32,11 +32,12 @@ public class TradeManager {
 			neededResources.Add (BASE_RESOURCE_TYPE.FOOD);
 		}
 
-		if (this.city.IsProducingResource (this.kingdom.rareResource)) {
+//		if (this.city.IsProducingResource (this.kingdom.rareResource)) {
 			neededResources.Add (this.kingdom.basicResource);
-		} else {
+//		} else {
 			neededResources.Add (this.kingdom.rareResource);
-		}
+//		}
+		this.numberOfTimesStarved = 0;
 		this.lastMonthUpdated = GameManager.Instance.month;
 	}
 
