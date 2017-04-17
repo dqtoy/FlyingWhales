@@ -136,7 +136,7 @@ public class PathGenerator : MonoBehaviour {
 	/*
 	 * Get List of tiles (Path) that will connect 2 city tiles
 	 * */
-	public IEnumerable<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode){
+	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
 		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
@@ -148,7 +148,16 @@ public class PathGenerator : MonoBehaviour {
 			startingTile.isRoad = false;
 			destinationTile.isRoad = false;
 		}
-		return path;
+
+		if (path != null) {
+			List<HexTile> newPath = path.Reverse().ToList();
+			if (newPath.Count > 1) {
+				newPath.RemoveAt (0);
+			}
+			return newPath;
+		}
+		return null;
+
 	}
 
 	public bool AreTheseTilesConnected(HexTile tile1, HexTile tile2, PATHFINDING_MODE pathfindingMode){
@@ -164,7 +173,7 @@ public class PathGenerator : MonoBehaviour {
 			}
 		}
 
-		var path = GetPath (tile1, tile2, pathfindingMode);
+		List<HexTile> path = GetPath (tile1, tile2, pathfindingMode);
 
 		if (pathfindingMode == PATHFINDING_MODE.NORMAL) {
 			if (tile1.isHabitable) {
@@ -197,8 +206,8 @@ public class PathGenerator : MonoBehaviour {
 		return allRoadTiles;
 	}
 
-	private void SetTilesAsRoads(IEnumerable<HexTile> path) {
-		List<HexTile> pathList = path.ToList();
+	private void SetTilesAsRoads(List<HexTile> path) {
+		List<HexTile> pathList = path;
 		for (int i = 0; i < pathList.Count; i++) {
 			if (!pathList[i].isHabitable || pathList[i].city == null) {
 				pathList[i].isRoad = true;

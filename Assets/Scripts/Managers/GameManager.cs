@@ -52,8 +52,8 @@ public class GameManager : MonoBehaviour {
 				this.year += 1;
 			}
 		}
-		TriggerBorderConflict ();
-		TriggerRaid();
+//		TriggerBorderConflict ();
+//		TriggerRaid();
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
 		EventManager.Instance.onCitizenMove.Invoke ();

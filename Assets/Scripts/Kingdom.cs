@@ -434,7 +434,11 @@ public class Kingdom{
 	internal void ConquerCity(City city){
 		HexTile hex = city.hexTile;
 		city.kingdom.cities.Remove(city);
+		city.KillCity();
+
 		City newCity = new City(hex, this);
+		hex.city = newCity;
+
 		newCity.CreateInitialFamilies(false);
 		this.AddCityToKingdom(newCity);
 	}

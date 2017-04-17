@@ -56,19 +56,6 @@ public class MarriageInvitation : GameEvent {
 					this.startedBy.city.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, this.goldForEvent);
 				}
 
-				//move chosenCitizen to startedBy city if chosenCitizen is not king, else, move startedBy
-				if (chosenCitizen.isKing) {
-					this.MoveCitizenToCity (this.startedBy, chosenCitizen.city);
-					for (int i = 0; i < this.startedBy.dependentChildren.Count; i++) {
-						this.MoveCitizenToCity (this.startedBy.dependentChildren[i], chosenCitizen.city);
-					}
-				} else {
-					this.MoveCitizenToCity (chosenCitizen, this.startedBy.city);
-					for (int i = 0; i < chosenCitizen.dependentChildren.Count; i++) {
-						this.MoveCitizenToCity (chosenCitizen.dependentChildren[i], this.startedBy.city);
-					}
-				}
-
 				if (this.startedBy.isKing) {
 					//if startedBy is King
 					//check if chosenCitizen has a parent that is a king
@@ -153,9 +140,23 @@ public class MarriageInvitation : GameEvent {
 					}
 				}
 
+				//move chosenCitizen to startedBy city if chosenCitizen is not king, else, move startedBy
+				if (chosenCitizen.isKing) {
+					this.MoveCitizenToCity (this.startedBy, chosenCitizen.city);
+					for (int i = 0; i < this.startedBy.dependentChildren.Count; i++) {
+						this.MoveCitizenToCity (this.startedBy.dependentChildren[i], chosenCitizen.city);
+					}
+				} else {
+					this.MoveCitizenToCity (chosenCitizen, this.startedBy.city);
+					for (int i = 0; i < chosenCitizen.dependentChildren.Count; i++) {
+						this.MoveCitizenToCity (chosenCitizen.dependentChildren[i], this.startedBy.city);
+					}
+				}
+
 				this.endWeek = GameManager.Instance.week;
 				this.endMonth = GameManager.Instance.month;
 				this.endYear = GameManager.Instance.year;
+
 				if (startedBy.gender == GENDER.MALE) {
 					this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " has selected " +
 					chosenCitizen.name + " as his wife. ";

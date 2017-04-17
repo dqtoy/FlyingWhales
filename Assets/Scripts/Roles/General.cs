@@ -80,7 +80,7 @@ public class General : Role {
 		if(this.location != this.citizen.city.hexTile){
 			this.targetLocation = this.citizen.city.hexTile;
 			this.roads.Clear ();
-			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.targetLocation, PATHFINDING_MODE.NORMAL).ToList();
+			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.targetLocation, PATHFINDING_MODE.NORMAL);
 			this.roads = path;
 		}
 	}
@@ -121,9 +121,15 @@ public class General : Role {
 						if (campaign.GetArmyStrength () < campaign.neededArmyStrength) {
 							List<HexTile> path = null;
 							if (campaign.campaignType == CAMPAIGN.OFFENSE) {
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList ();
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
+								if (path != null) {
+									List<HexTile> path2 = PathGenerator.Instance.GetPath (campaign.rallyPoint, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+									if (path2 == null) {
+										path = null;
+									}
+								}
 							} else {
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList ();
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 								if (path.Count > campaign.targetCity.incomingGenerals.Where (x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min (x => x.daysBeforeArrival)) {
 									path = null;
 								}
@@ -142,9 +148,9 @@ public class General : Role {
 						if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
 							List<HexTile> path = null;
 							if(campaign.campaignType == CAMPAIGN.OFFENSE){
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
 							}else{
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 								if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
 									path = null;
 								}
@@ -159,9 +165,9 @@ public class General : Role {
 						if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
 							List<HexTile> path = null;
 							if(campaign.campaignType == CAMPAIGN.OFFENSE){
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
 							}else{
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 								if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
 									path = null;
 								}
@@ -178,9 +184,9 @@ public class General : Role {
 						if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
 							List<HexTile> path = null;
 							if(campaign.campaignType == CAMPAIGN.OFFENSE){
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT).ToList();
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
 							}else{
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 								if(path.Count > campaign.targetCity.incomingGenerals.Where(x => x.assignedCampaign == CAMPAIGN.OFFENSE).Min(x => x.daysBeforeArrival)){
 									path = null;
 								}
@@ -204,6 +210,8 @@ public class General : Role {
 		}else{
 			this.targetLocation = chosenCampaign.targetCity.hexTile;
 		}
+		Debug.Log (this.citizen.name +  " Target Location: " + this.targetLocation.tileName + " Campaign Type: " + chosenCampaign.campaignType.ToString());
+
 		this.warLeader = chosenCampaign.leader;
 		this.campaignID = chosenCampaign.id;
 		this.assignedCampaign = chosenCampaign.campaignType;
@@ -225,7 +233,6 @@ public class General : Role {
 
 		this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
 		this.generalAvatar.GetComponent<GeneralObject>().general = this;
-		this.generalAvatar.transform.localScale = Vector3.one;
 
 
 	}
@@ -268,7 +275,9 @@ public class General : Role {
 	internal void Move(){
 		if(this.targetLocation != null){
 			if(this.roads.Count > 0){
-				this.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.location, this.roads [0]);
+				if (this.generalAvatar != null) {
+					this.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.location, this.roads [0]);
+				}
 				this.location = this.roads[0];
 				this.roads.RemoveAt (0);
 				this.daysBeforeArrival -= 1;

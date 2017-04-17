@@ -106,6 +106,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 
+	[ContextMenu("Increase General HP")]
+	public void IncreaseGeneralHP(){
+		List<Citizen> generals = this.city.GetCitizensWithRole (ROLE.GENERAL);
+		for (int i = 0; i < generals.Count; i++) {
+			((General)generals[i].assignedRole).army.hp += 100;
+			Debug.Log (((General)generals [i].assignedRole).citizen.name + " hp is " + ((General)generals [i].assignedRole).army.hp.ToString ());
+		}
+	}
+
 	void Start(){
 		EventManager.Instance.onGameEventEnded.AddListener(RemoveEvent);
 		EventManager.Instance.onShowEventsOfType.AddListener(ShowEventOnTile);
@@ -496,6 +505,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.structureGO.SetActive(false);
 		this.structureOnTile = STRUCTURE.NONE;
 		this.GetComponent<SpriteRenderer> ().color = Color.clear;
+	}
+
+	public void ResetTile(){
+		this.isOwned = false;
+		this.isOccupied = false;
+		this.occupant = null;
+		this.structureGO.SetActive(false);
+		this.structureOnTile = STRUCTURE.NONE;
+		this.GetComponent<SpriteRenderer> ().color = Color.white;
 	}
 
 	public void AddEventOnTile(GameEvent gameEvent){

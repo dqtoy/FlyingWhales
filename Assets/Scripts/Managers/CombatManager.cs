@@ -77,15 +77,27 @@ public class CombatManager : MonoBehaviour {
 				}
 			}
 		}
+		if (victoriousGeneral != null) {
+			if (victoriousGeneral.warType == WAR_TYPE.INTERNATIONAL) {
+				for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+					KingdomManager.Instance.allKingdoms [i].king.campaignManager.intlWarCities.RemoveAll (x => x.city.id == city.id);
+					KingdomManager.Instance.allKingdoms [i].king.campaignManager.defenseWarCities.RemoveAll (x => x.city.id == city.id);
+				}
+				EventManager.Instance.onRemoveSuccessionWarCity.Invoke (city);
+			}
+		}
+
 		EventManager.Instance.onDeathArmy.Invoke ();
 		city.incomingGenerals.RemoveAll(x => x.army.hp <= 0);
 		for(int i = 0; i < city.incomingGenerals.Count; i++){
 			if(victoriousGeneral != null){
 				if(victoriousGeneral.warType == WAR_TYPE.INTERNATIONAL){
 					if(city.incomingGenerals[i].warType == WAR_TYPE.INTERNATIONAL){
-						Campaign campaign = city.incomingGenerals[i].warLeader.campaignManager.SearchCampaignByID (city.incomingGenerals[i].campaignID);
-						if(campaign != null){
-							campaign.leader.campaignManager.CampaignDone (campaign);
+						if (city.incomingGenerals[i].citizen.id != victoriousGeneral.citizen.id) {
+							Campaign campaign = city.incomingGenerals[i].warLeader.campaignManager.SearchCampaignByID (city.incomingGenerals[i].campaignID);
+							if(campaign != null){
+								campaign.leader.campaignManager.CampaignDone (campaign);
+							}
 						}
 					}
 				}
@@ -105,11 +117,7 @@ public class CombatManager : MonoBehaviour {
 					campaign.leader.campaignManager.CampaignDone (campaign);
 				}
 
-				for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-					KingdomManager.Instance.allKingdoms [i].king.campaignManager.intlWarCities.RemoveAll (x => x.city.id == city.id);
-					KingdomManager.Instance.allKingdoms [i].king.campaignManager.defenseWarCities.RemoveAll (x => x.city.id == city.id);
-				}
-				EventManager.Instance.onRemoveSuccessionWarCity.Invoke (city);
+
 				int countCitizens = city.citizens.Count;
 				for (int i = 0; i < countCitizens; i++) {
 					city.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);

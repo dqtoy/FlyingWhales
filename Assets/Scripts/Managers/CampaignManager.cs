@@ -123,9 +123,18 @@ public class CampaignManager {
 					}
 				}
 				if(newCampaign != null){
+					Debug.Log ("Created Campaign " + newCampaign.campaignType.ToString () + " " + newCampaign.targetCity.name);
 					EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
+
 				}
 			}
+		}
+	}
+	private IEnumerator CheckCampaign(Campaign newCampaign){
+		yield return null;
+		if (newCampaign.registeredGenerals.Count <= 0) {
+			//Destroy campaign without creating new
+//			CampaignDone (newCampaign);
 		}
 	}
 	internal bool SearchForSuccessionWarCities(City city){
@@ -233,6 +242,7 @@ public class CampaignManager {
 	}
 	internal void CampaignDone(Campaign campaign){
 		Campaign doneCampaign = SearchCampaignByID (campaign.id);
+		Debug.Log ("Campaign Done " + doneCampaign.campaignType.ToString () + " " + doneCampaign.targetCity.name);
 		for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
 			UnregisterGenerals (doneCampaign.registeredGenerals [i], doneCampaign);
 		}
@@ -273,8 +283,8 @@ public class CampaignManager {
 		if(eligibleCities.Count > 0){
 			City nearest = eligibleCities[0];
 			for(int i = 0; i < eligibleCities.Count; i++){
-				List<HexTile> path1 = PathGenerator.Instance.GetPath(eligibleCities[i].hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-				List<HexTile> path2 = PathGenerator.Instance.GetPath(nearest.hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+				List<HexTile> path1 = PathGenerator.Instance.GetPath(eligibleCities[i].hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+				List<HexTile> path2 = PathGenerator.Instance.GetPath(nearest.hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 
 				if(path1 == null || path2 == null){
 					if(path1 != null && path2 == null){
@@ -327,7 +337,8 @@ public class CampaignManager {
 			}else{
 				int chance = UnityEngine.Random.Range (0, 100);
 				if(chance < 75){
-					return CAMPAIGN.DEFENSE;
+//					return CAMPAIGN.DEFENSE;
+					return CAMPAIGN.OFFENSE;
 				}else{
 					return CAMPAIGN.OFFENSE;
 				}
@@ -452,15 +463,22 @@ public class CampaignManager {
 	}
 
 	internal void GeneralHasArrived(Citizen general){
+		if (((General)general.assignedRole).generalAvatar != null) {
+			GameObject.Destroy (((General)general.assignedRole).generalAvatar);
+			((General)general.assignedRole).generalAvatar = null;
+		}
 		((General)general.assignedRole).targetLocation = null;
 		Campaign chosenCampaign = SearchCampaignByID (((General)general.assignedRole).campaignID);
 		if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
 			if(((General)general.assignedRole).location == chosenCampaign.rallyPoint){
+				Debug.Log (general.name + " has arrived at rally point " + chosenCampaign.rallyPoint.tileName);
 				if(AreAllGeneralsOnRallyPoint(chosenCampaign)){
+					Debug.Log ("Will attack city now " + chosenCampaign.targetCity.name);
 					AttackCityNow (chosenCampaign);
 				}
 			}else if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){
 				//InitiateBattle
+				Debug.Log (general.name + " has arrived at target city " + chosenCampaign.targetCity.name);
 				CombatManager.Instance.CityBattle(chosenCampaign.targetCity);
 //				((General)general.assignedRole).inAction = false;
 
@@ -473,6 +491,7 @@ public class CampaignManager {
 			if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){
 				//InitiateDefense
 //				((General)general.assignedRole).inAction = false;
+				Debug.Log (general.name + " has arrived at defense target city " + chosenCampaign.targetCity.name);
 			}
 		}
 
@@ -480,6 +499,15 @@ public class CampaignManager {
 	internal void AttackCityNow(Campaign chosenCampaign){
 		for(int i = 0; i < chosenCampaign.registeredGenerals.Count; i++){
 			chosenCampaign.registeredGenerals[i].targetLocation = chosenCampaign.targetCity.hexTile;
+			List<HexTile> path = PathGenerator.Instance.GetPath (chosenCampaign.registeredGenerals[i].location, chosenCampaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+			if (path != null) {
+				chosenCampaign.registeredGenerals [i].roads.Clear ();
+				chosenCampaign.registeredGenerals [i].roads = path;
+				chosenCampaign.registeredGenerals [i].daysBeforeArrival = path.Count;
+
+				chosenCampaign.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), chosenCampaign.registeredGenerals [i].location.transform) as GameObject;
+				chosenCampaign.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject>().general = chosenCampaign.registeredGenerals [i];
+			}
 		}
 
 		//remove from rally point

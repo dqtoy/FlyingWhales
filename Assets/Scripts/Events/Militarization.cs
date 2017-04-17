@@ -45,7 +45,9 @@ public class Militarization : GameEvent {
 	internal override void DoneEvent(){
 		this.isActive = false;
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
-		invasionPlanThatTriggeredEvent.MilitarizationDone();
+		if (invasionPlanThatTriggeredEvent.isActive) {
+			invasionPlanThatTriggeredEvent.MilitarizationDone ();
+		}
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}
 }

@@ -802,7 +802,7 @@ public class City{
 		citizenToOccupy.currentLocation = tileToOccupy;
 		citizenToOccupy.isBusy = true;
 		if (citizenToOccupy.role == ROLE.TRADER) {
-			((Trader)citizenToOccupy.assignedRole).AssignTask();
+//			((Trader)citizenToOccupy.assignedRole).AssignTask();
 		}
 		this.UpdateResourceProduction();
 		EventManager.Instance.onForceUpdateUI.Invoke();
@@ -1218,7 +1218,9 @@ public class City{
 					tileToPurchase.roleIntendedForTile = Utilities.GetRoleThatProducesResource (Utilities.GetBaseResourceType (tileToPurchase.specialResource));
 				}
 			} else {
-				if (forMilitarization) {
+				int generalCount = this.GetCitizensWithRole(ROLE.GENERAL).Count;
+				int generalLimit = this.citizenCreationTable[ROLE.GENERAL];
+				if (forMilitarization && generalCount < generalLimit) {
 					tileToPurchase.roleIntendedForTile = ROLE.GENERAL;
 				} else {
 					//Choose non-producing role
@@ -1566,26 +1568,46 @@ public class City{
 
 	internal void AssignNewGovernor(){
 		Citizen newGovernor = GetCitizenWithHighestPrestige ();
-		this.governor.isGovernor = false;
+		if (newGovernor != null) {
+			this.governor.isGovernor = false;
 
-		newGovernor.AssignRole(ROLE.GOVERNOR);
-		newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+			newGovernor.AssignRole(ROLE.GOVERNOR);
+			this.UpdateCitizenCreationTable();
+			newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+
+		}
 	}
+
 	internal Citizen GetCitizenWithHighestPrestige(){
 		List<Citizen> prestigeCitizens = new List<Citizen> ();
-		int maxPrestige = this.citizens.Where (x => !x.isGovernor && !x.isDead && !x.isKing).Max (x => x.prestige);
-		for(int i = 0; i < this.citizens.Count; i++){
-			if(this.citizens[i].prestige == maxPrestige){
-				if(!this.citizens[i].isDead && !this.citizens[i].isGovernor && !this.citizens[i].isKing){
-					prestigeCitizens.Add (this.citizens [i]);
+		if (this.citizens.Count > 1) {
+			int maxPrestige = this.citizens.Where (x => !x.isGovernor && !x.isDead && !x.isKing).Max (x => x.prestige);
+			for(int i = 0; i < this.citizens.Count; i++){
+				if(this.citizens[i].prestige == maxPrestige){
+					if(!this.citizens[i].isDead && !this.citizens[i].isGovernor && !this.citizens[i].isKing){
+						prestigeCitizens.Add (this.citizens [i]);
+					}
 				}
 			}
+			return prestigeCitizens [UnityEngine.Random.Range (0, prestigeCitizens.Count)];
 		}
+		return null;
 
-		return prestigeCitizens [UnityEngine.Random.Range (0, prestigeCitizens.Count)];
+
 	}
 
 	internal void SearchForTarget(Citizen winner, Citizen target){
 		
+	}
+
+	internal void KillCity(){
+		for (int i = 0; i < this.ownedTiles.Count; i++) {
+			HexTile currentTile = this.ownedTiles[i];
+			currentTile.ResetTile();
+		}
+		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
+		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
+		EventManager.Instance.onRecruitCitizensForExpansion.RemoveListener(DonateCitizensToExpansion);
+		EventManager.Instance.onCitizenDiedEvent.RemoveListener(UpdateHexTileRoles);
 	}
 }

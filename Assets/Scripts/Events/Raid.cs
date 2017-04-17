@@ -30,7 +30,6 @@ public class Raid : GameEvent {
 		}
 		this.description = startedBy.name + " of " + startedBy.city.kingdom.name + " sent " + this.general.citizen.name + " to raid " + this.raidedCity.name + ".";
 
-		EventManager.Instance.GetEventsOfType(EVENT_TYPES.RAID).Remove(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError("RAID");
 	}
@@ -98,7 +97,8 @@ public class Raid : GameEvent {
 			return;
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 25){
+		if(chance < 85){
+//		if(chance < 25){
 			Steal ();
 		}
 	}
@@ -192,7 +192,8 @@ public class Raid : GameEvent {
 			}
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
-		int value = 50;
+//		int value = 50;
+		int value = 100;
 		if(this.general.citizen.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
 			value -= 15;
 		}

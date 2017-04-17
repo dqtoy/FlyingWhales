@@ -244,12 +244,15 @@ public class Citizen {
 	internal void TurnActions(){
 		this.AttemptToAge();
 		this.DeathReasons();
-		this.UpdatePrestige();
-		this.CheckSupportExpiration();
+		this.CheckSupportExpiration ();
+		if (!this.isDead) {
+			this.UpdatePrestige ();
+		}
 	}
 
 	protected void CheckSupportExpiration(){
-		if (GameManager.Instance.year == this.supportExpirationYear && GameManager.Instance.month == this.supportExpirationMonth && GameManager.Instance.week == this.supportExpirationWeek) {
+		if ((GameManager.Instance.year == this.supportExpirationYear && GameManager.Instance.month == this.supportExpirationMonth && GameManager.Instance.week == this.supportExpirationWeek) ||
+			this.isDead) {
 			this.supportedCitizen = null;
 		}
 	}
@@ -260,12 +263,12 @@ public class Citizen {
 			if (this.gender == GENDER.MALE) {
 				if (this.age >= 16 && !this.isMarried) {
 					this.citizenChances.marriageChance += 2;
-					this.AttemptToMarry ();
+//					this.AttemptToMarry ();
 				}
 			} else {
 				if (this.isKing && this.age >= 16 && !this.isMarried) {
 					this.citizenChances.marriageChance += 2;
-					this.AttemptToMarry ();
+//					this.AttemptToMarry ();
 				}
 			}
 
@@ -347,6 +350,9 @@ public class Citizen {
 		}
 		this.city.kingdom.successionLine.Remove (this);
 		this.isDead = true;
+		if (this.workLocation != null) {
+			this.workLocation.UnoccupyTile();
+		}
 		if (this.assignedRole != null) {
 			this.assignedRole.OnDeath ();
 		}
@@ -358,30 +364,32 @@ public class Citizen {
 		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
 
 
-		if(this.role == ROLE.GENERAL){
-			if(isConquered){
-				if(((General)this.assignedRole).generalAvatar != null){
-					GameObject.Destroy(((General)this.assignedRole).generalAvatar);
-					((General)this.assignedRole).generalAvatar = null;
-				}
+		if (this.role == ROLE.GENERAL) {
+			if (isConquered) {
 				EventManager.Instance.onCitizenMove.RemoveListener (((General)this.assignedRole).Move);
 				EventManager.Instance.onRegisterOnCampaign.RemoveListener (((General)this.assignedRole).RegisterOnCampaign);
 				EventManager.Instance.onDeathArmy.RemoveListener (((General)this.assignedRole).DeathArmy);
-				((General)this.assignedRole).UnregisterThisGeneral(null);
 //				((General)this.assignedRole) = null;
+				if (((General)this.assignedRole).generalAvatar != null) {
+					GameObject.Destroy (((General)this.assignedRole).generalAvatar);
+					((General)this.assignedRole).generalAvatar = null;
+				}
+				((General)this.assignedRole).UnregisterThisGeneral (null);
+
 				this.assignedRole = null;
 				this.city.citizens.Remove (this);
-			}else{
-				if(((General)this.assignedRole).army.hp <= 0){
-					if(((General)this.assignedRole).generalAvatar != null){
-						GameObject.Destroy(((General)this.assignedRole).generalAvatar);
-						((General)this.assignedRole).generalAvatar = null;
-					}
+			} else {
+				if (((General)this.assignedRole).army.hp <= 0) {
 					EventManager.Instance.onCitizenMove.RemoveListener (((General)this.assignedRole).Move);
 					EventManager.Instance.onRegisterOnCampaign.RemoveListener (((General)this.assignedRole).RegisterOnCampaign);
 					EventManager.Instance.onDeathArmy.RemoveListener (((General)this.assignedRole).DeathArmy);
-					((General)this.assignedRole).UnregisterThisGeneral(null);
+
 //					((General)this.assignedRole) = null;
+					if (((General)this.assignedRole).generalAvatar != null) {
+						GameObject.Destroy (((General)this.assignedRole).generalAvatar);
+						((General)this.assignedRole).generalAvatar = null;
+					}
+					((General)this.assignedRole).UnregisterThisGeneral (null);
 					this.assignedRole = null;
 					this.city.citizens.Remove (this);
 				}
@@ -397,10 +405,6 @@ public class Citizen {
 		}
 
 		EventManager.Instance.onCitizenDiedEvent.Invoke ();
-
-		if (this.workLocation != null) {
-			this.workLocation.UnoccupyTile();
-		}
 
 		if (this.isMarried) {
 			MarriageManager.Instance.DivorceCouple (this, spouse);
@@ -1009,8 +1013,8 @@ public class Citizen {
 		if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
 			value = 2;
 		}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
-			value = 6;
-//			value = 100;
+//			value = 6;
+			value = 100;
 			if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
 				value = 12;
 			}
@@ -1020,7 +1024,7 @@ public class Citizen {
 			//INVASION PLAN
 			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
 				this, this.city.kingdom, relationship.king.city.kingdom, reason);
-			EventManager.Instance.AddEventToDictionary (invasionPlan);
+			
 		}else{
 			//STATE VISIT
 			int svChance = UnityEngine.Random.Range (0, 100);
