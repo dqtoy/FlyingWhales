@@ -368,7 +368,7 @@ public class Citizen {
 		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
 
 
-		if (this.role == ROLE.GENERAL) {
+		if (this.role == ROLE.GENERAL && this.assignedRole != null) {
 			if (isConquered) {
 				EventManager.Instance.onCitizenMove.RemoveListener (((General)this.assignedRole).Move);
 				EventManager.Instance.onRegisterOnCampaign.RemoveListener (((General)this.assignedRole).RegisterOnCampaign);
@@ -380,6 +380,7 @@ public class Citizen {
 				}
 				((General)this.assignedRole).UnregisterThisGeneral (null);
 
+				this.role = ROLE.UNTRAINED;
 				this.assignedRole = null;
 				this.city.citizens.Remove (this);
 			} else {
@@ -394,6 +395,8 @@ public class Citizen {
 						((General)this.assignedRole).generalAvatar = null;
 					}
 					((General)this.assignedRole).UnregisterThisGeneral (null);
+
+					this.role = ROLE.UNTRAINED;
 					this.assignedRole = null;
 					this.city.citizens.Remove (this);
 				}

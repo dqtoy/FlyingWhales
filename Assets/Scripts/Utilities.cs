@@ -11,7 +11,7 @@ public class Utilities : MonoBehaviour {
 	public static int lastCityID = 0;
 	public static int lastCampaignID = 0;
 	public static int lastEventID = 0;
-
+	public static int defaultCampaignExpiration = 8;
 	public static string[] accidentCauses = new string[]{
 		"because he/she forgot to breath.",
 		"after falling off a cliff.",
