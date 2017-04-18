@@ -25,6 +25,9 @@ public class Expansion : GameEvent {
 
 		Debug.LogError(this.description);
 
+		this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+			"Sent an expedition to look for new habitable lands for his kingdom " + startedBy.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
+
 		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
 			"Sent an expedition to look for new habitable lands." , HISTORY_IDENTIFIER.NONE));
 		
@@ -42,6 +45,9 @@ public class Expansion : GameEvent {
 			if (disappearChance < 15) {
 				//Disappear
 				this.resolution = "Expansion Citizens suddenly disappeared.";
+				for (int i = 0; i < this.citizensJoiningExpansion.Count; i++) {
+					this.citizensJoiningExpansion[i].Death(DEATH_REASONS.DISAPPEARED_EXPANSION);
+				}
 				this.DoneEvent();
 			} else {
 				//Expand

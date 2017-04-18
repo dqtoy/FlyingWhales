@@ -19,7 +19,11 @@ public class CharacterPortrait : MonoBehaviour {
 
 	public void SetCitizen(Citizen citizen, bool showInfo = false){
 		this.citizen = citizen;
-		this.kingdomColorGO.color = this.citizen.city.kingdom.kingdomColor;
+		if (this.citizen.city != null) {
+			this.kingdomColorGO.color = this.citizen.city.kingdom.kingdomColor;
+		} else {
+			this.kingdomColorGO.color = Color.white;
+		}
 		if (citizen.isDead) {
 			isDeadIcon.SetActive (true);
 		} else {
@@ -56,7 +60,12 @@ public class CharacterPortrait : MonoBehaviour {
 			return;
 		}
 		if (isOver) {
-			UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i]" + citizen.city.kingdom.name + "[/i]", this.transform);
+			if (citizen.city != null) {
+				UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i]" + citizen.city.kingdom.name + "[/i]", this.transform);
+			} else {
+				UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i] No Kingdom [/i]", this.transform);
+			}
+
 		} else {
 			UIManager.Instance.HideSmallInfo ();
 		}

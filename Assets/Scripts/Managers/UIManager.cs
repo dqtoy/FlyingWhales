@@ -317,9 +317,17 @@ public class UIManager : MonoBehaviour {
 
 		currentlyShowingCitizen = citizenToShow;
 		citizenNameLbl.text = "[b]" + citizenToShow.name + "[/b]";
-		citizenKingdomNameLbl.text = citizenToShow.city.kingdom.name;
+		if (citizenToShow.city != null) {
+			citizenKingdomNameLbl.text = citizenToShow.city.kingdom.name;
+			citizenCityNameLbl.text = "[b]" + citizenToShow.city.name + "[/b]";
+		} else {
+			citizenKingdomNameLbl.text = "[i]No Kingdom[/i]";
+			citizenCityNameLbl.text = "[i] No City [/i]";
+		}
+
+
 		citizenBdayLbl.text = "[b]" + ((MONTH)citizenToShow.birthMonth).ToString() + " " + citizenToShow.birthWeek.ToString() + ", " + citizenToShow.birthYear.ToString() + "(" + citizenToShow.age.ToString() + ")[/b]";
-		citizenCityNameLbl.text = "[b]" + citizenToShow.city.name + "[/b]";
+
 		citizenRoleLbl.text = "[b]" + citizenToShow.role.ToString() + "[/b]";
 		citizenPrestigeLbl.text = "[b]" + citizenToShow.prestige.ToString() + "[/b]";
 
@@ -363,7 +371,12 @@ public class UIManager : MonoBehaviour {
 			kingSpecificGO.SetActive(false);
 		}
 
-		ctizenPortraitBG.color = citizenToShow.city.kingdom.kingdomColor;
+		if (citizenToShow.city != null) {
+			ctizenPortraitBG.color = citizenToShow.city.kingdom.kingdomColor;
+		} else {
+			ctizenPortraitBG.color = Color.white;
+		}
+
 
 		citizenInfoGO.SetActive (true);
 

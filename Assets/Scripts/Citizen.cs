@@ -533,6 +533,9 @@ public class Citizen {
 		case DEATH_REASONS.STARVATION:
 			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died of starvation.", HISTORY_IDENTIFIER.NONE));
 			break;
+		case DEATH_REASONS.DISAPPEARED_EXPANSION:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " disappeared during an expedition and is assumed to be dead", HISTORY_IDENTIFIER.NONE));
+			break;
 		}
 	}
 	internal void UnsupportCitizen(Citizen citizen){
@@ -716,10 +719,11 @@ public class Citizen {
 		if (this.id == otherCitizen.id) {
 			return true;
 		}
-
-		if (otherCitizen.id == this.father.id || otherCitizen.id == this.mother.id) {
-			//royalty is father or mother
-			return true;
+		if (this.mother != null && this.father != null) {
+			if (otherCitizen.id == this.father.id || otherCitizen.id == this.mother.id) {
+				//royalty is father or mother
+				return true;
+			}
 		}
 
 		if (this.father.father != null) {

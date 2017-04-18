@@ -26,7 +26,7 @@ public class Trader : Role {
 		this.currentLocation = this.citizen.city.hexTile;
 		this.offeredResources = new List<BASE_RESOURCE_TYPE>();
 		this.tradeManager = tradeManager;
-//		EventManager.Instance.onWeekEnd.AddListener(AssignTask);
+		EventManager.Instance.onWeekEnd.AddListener(AssignTask);
 	}
 
 	internal void AssignTask(){
@@ -119,32 +119,32 @@ public class Trader : Role {
 	}
 
 	internal void GoToTargetCity(){
-		int increments = 1;
-		for (int i = 0; i < increments; i++) {
+//		int increments = 1;
+//		for (int i = 0; i < increments; i++) {
 			this.currentPathIndex += 1;
 			HexTile nextTile = this.pathToTargetCity [this.currentPathIndex];
 			this.traderGameObject.GetComponent<CitizenAvatar>().MakeCitizenMove(this.currentLocation, nextTile);
 			this.currentLocation = nextTile;
-			if (this.currentLocation == this.targetCity.hexTile) {
-				break;
-			}
-		}
+//			if (this.currentLocation == this.targetCity.hexTile) {
+//				break;
+//			}
+//		}
 		if (this.currentLocation == this.targetCity.hexTile) {
 			this.isGoingHome = true;
 		}
 	}
 
 	internal void GoBackHome(){
-		int increments = 1;
-		for (int i = 0; i < increments; i++) {
+//		int increments = 1;
+//		for (int i = 0; i < increments; i++) {
 			this.currentPathIndex -= 1;
 			HexTile nextTile = this.pathToTargetCity[this.currentPathIndex];
 			this.traderGameObject.GetComponent<CitizenAvatar>().MakeCitizenMove(this.currentLocation, nextTile);
 			this.currentLocation = nextTile;
-			if (this.currentLocation == this.homeCity.hexTile) {
-				break;
-			}
-		}
+//			if (this.currentLocation == this.homeCity.hexTile) {
+//				break;
+//			}
+//		}
 		if (this.currentLocation == this.homeCity.hexTile) {
 			this.isGoingHome = false;
 			this.isWorking = false;
