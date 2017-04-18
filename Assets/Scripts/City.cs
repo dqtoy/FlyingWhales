@@ -783,7 +783,7 @@ public class City{
 		citizenToOccupy.currentLocation = tileToOccupy;
 		citizenToOccupy.isBusy = true;
 		if (citizenToOccupy.role == ROLE.TRADER) {
-//			((Trader)citizenToOccupy.assignedRole).AssignTask();
+			((Trader)citizenToOccupy.assignedRole).AssignTask();
 		}
 		this.UpdateResourceProduction();
 	}
