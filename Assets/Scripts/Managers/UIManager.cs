@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject kingdomInfoGO;
 	public GameObject eventsGo;
 	public GameObject eventsOfTypeGo;
+	public UIGrid eventCategoriesGrid;
 	public GameObject relationshipsGO;
 	public GameObject relationshipHistoryGO;
 	public GameObject familyTreeGO;
@@ -86,7 +87,6 @@ public class UIManager : MonoBehaviour {
 	public UILabel cityCobaltLbl;
 	public UILabel cityMithrilLbl;
 	public UILabel cityFoodLbl;
-	public GameObject citizensParent;
 	public UIGrid foodProducersGrid;
 	public UIGrid gatherersGrid;
 	public UIGrid minersGrid;
@@ -98,6 +98,12 @@ public class UIManager : MonoBehaviour {
 	public UIGrid untrainedGrid;
 	public UI2DSprite cityInfoCtizenPortraitBG;
 	public GameObject citizensBtn;
+	public GameObject cityInfoCitizensParent;
+	public GameObject cityInfoHistoryParent;
+	public UIGrid cityInfoHistoryGrid;
+	public GameObject cityInfoEventsParent;
+	public UIGrid cityInfoEventsGrid;
+	public GameObject noEventsGO;
 
 	[Space(10)]
 	public GameObject kingdomSuccessionGO;
@@ -173,6 +179,7 @@ public class UIManager : MonoBehaviour {
 	public UILabel lblSpecificPilfered;
 	public UILabel lblSpecificEventCity;
 	public UILabel lblSpecificSuccessRate;
+	public UILabel specificEventsCandidatesLbl;
 
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
@@ -198,10 +205,11 @@ public class UIManager : MonoBehaviour {
 	}
 
 	void Start(){
-		EventManager.Instance.onForceUpdateUI.AddListener(ForceUpdateUI);
+		EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
+		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.week.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
 	}
 
-	void FixedUpdate(){
+	private void UpdateUI(){
 		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.week.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
 		if (cityInfoGO.activeSelf) {
 			if (currentlyShowingCity != null) {
@@ -209,22 +217,18 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 
-//		if (specificEventGO.activeSelf) {
-//			if (currentlyShowingEvent != null) {
-//				this.ShowSpecificEvent (currentlyShowingEvent);
-//			}
-//		}
-
-		//		if (currentlyShowingCitizen != null) {
-		//			this.ShowCitizenInfo(currentlyShowingCitizen);
-		//		}
-//		Debug.Log(IsMouseOnUI());
-	}
-
-	private void ForceUpdateUI(){
-		if (cityInfoGO.activeSelf) {
-			this.ShowCityInfo(currentlyShowingCity, true);
+		if (specificEventGO.activeSelf) {
+			if (currentlyShowingEvent != null) {
+				this.ShowSpecificEvent (currentlyShowingEvent);
+			}
 		}
+
+		if (eventsOfTypeGo.activeSelf) {
+			if (lastClickedEventType != null) {
+				this.UpdateEventsOfType();
+			}
+		}
+
 	}
 
 	public void SetProgressionSpeed1X(){
@@ -448,7 +452,7 @@ public class UIManager : MonoBehaviour {
 		this.citizenHistoryGO.SetActive(false);
 	}
 
-	public void ShowCityInfo(City cityToShow, bool forceUpdate = false){
+	public void ShowCityInfo(City cityToShow, bool showCitizens = false){
 		if(cityToShow == null){
 			return;
 		}
@@ -468,17 +472,31 @@ public class UIManager : MonoBehaviour {
 
 
 
-		CharacterPortrait[] characters = citizensParent.GetComponentsInChildren<CharacterPortrait>();
-		List<Citizen> citizensExcludingKingAndGovernor = cityToShow.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING).ToList();
+		if (cityInfoCitizensParent.activeSelf || showCitizens) {
+			ShowCitizens();
+		}
 
+		if (cityInfoEventsParent.activeSelf) {
+			ShowCityEvents();
+		}
 
-		if (characters.Length != citizensExcludingKingAndGovernor.Count || !cityInfoGO.activeSelf || forceUpdate) {
-			citizensBtn.GetComponent<ButtonToggle> ().OnClick ();
+		if (cityInfoHistoryParent.activeSelf) {
+			ShowCityHistory();
+		}
+
+		cityInfoGO.SetActive (true);
+	}
+
+	public void ShowCitizens(){
+		CharacterPortrait[] characters = cityInfoCitizensParent.GetComponentsInChildren<CharacterPortrait>();
+		List<Citizen> citizensExcludingKingAndGovernor = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING).ToList();
+
+		if (characters.Length != citizensExcludingKingAndGovernor.Count || !cityInfoGO.activeSelf) {
 			for (int i = 0; i < characters.Length; i++) {
 				Destroy (characters [i].gameObject);
 			}
 
-			List<Citizen> citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.FOODIE);
+			List<Citizen> citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.FOODIE);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, foodProducersGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -487,7 +505,7 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (this.foodProducersGrid));
 
 			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GATHERER);
+			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GATHERER);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, gatherersGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -496,7 +514,7 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (this.gatherersGrid));
 
 			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.MINER);
+			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.MINER);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, minersGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -505,7 +523,7 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (this.minersGrid));
 
 			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.TRADER);
+			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.TRADER);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, tradersGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -514,7 +532,7 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (this.tradersGrid));
 
 			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GENERAL);
+			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GENERAL);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, generalsGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -523,7 +541,7 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (this.generalsGrid));
 
 			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.SPY);
+			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.SPY);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, spiesGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -532,7 +550,7 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (this.spiesGrid));
 
 			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.ENVOY);
+			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.ENVOY);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, envoysGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -541,7 +559,7 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (this.envoysGrid));
 
 			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.GUARDIAN);
+			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GUARDIAN);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, guardiansGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -550,7 +568,7 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (this.guardiansGrid));
 
 			citizensConcerned.Clear ();
-			citizensConcerned = cityToShow.GetCitizensWithRole (ROLE.UNTRAINED);
+			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.UNTRAINED);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, untrainedGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -558,12 +576,83 @@ public class UIManager : MonoBehaviour {
 			}
 			StartCoroutine (RepositionGrid (this.untrainedGrid));
 		}
+		cityInfoHistoryParent.SetActive(false);
+		cityInfoEventsParent.SetActive(false);
+		cityInfoCitizensParent.SetActive(true);
+	}
 
-		cityInfoGO.SetActive (true);
+	public void ShowCityHistory(){
+		List<History> cityHistory = currentlyShowingCity.cityHistory;
+		List<History> cityHistoryCurrentlyShowing = cityInfoHistoryGrid.GetChildList().Select(x => x.GetComponent<HistoryPortrait>().history).ToList();
+		int numberOfSameHistoryShowing = cityHistory.Intersect (cityHistoryCurrentlyShowing).Count();
+
+		if (numberOfSameHistoryShowing != cityHistory.Count) {
+			List<Transform> historyShowing = cityInfoHistoryGrid.GetChildList();
+			for (int i = 0; i < historyShowing.Count; i++) {
+				Destroy (historyShowing[i].gameObject);
+			}
+
+			for (int i = 0; i < currentlyShowingCity.cityHistory.Count; i++) {
+				GameObject historyGO = GameObject.Instantiate (historyPortraitPrefab, cityInfoHistoryGrid.transform) as GameObject;
+				historyGO.GetComponent<HistoryPortrait>().SetHistory(currentlyShowingCity.cityHistory[i]);
+				historyGO.transform.localScale = Vector3.one;
+				historyGO.transform.localPosition = Vector3.zero;
+			}
+			StartCoroutine (RepositionGrid (cityInfoHistoryGrid));
+		}
+
+		cityInfoCitizensParent.SetActive(false);
+		cityInfoEventsParent.SetActive(false);
+		cityInfoHistoryParent.SetActive(true);
+	}
+
+	public void ShowCityEvents(){
+		List<GameEvent> eventsInCity = EventManager.Instance.GetAllEventsPerCity(currentlyShowingCity);
+		List<GameEvent> eventsCurrentlyShowing = cityInfoEventsGrid.GetChildList().Select(x => x.GetComponent<EventItem>().gameEvent).ToList();
+		int numberOfSameEventsShowing = eventsInCity.Intersect (eventsCurrentlyShowing).Count();
+
+		if (eventsInCity.Count > 0) {
+			noEventsGO.SetActive (false);
+		} else {
+			noEventsGO.SetActive (true);
+			List<Transform> eventsShowing = cityInfoEventsGrid.GetChildList();
+			for (int i = 0; i < eventsShowing.Count; i++) {
+				Destroy (eventsShowing[i].gameObject);
+			}
+		}
+
+		if (numberOfSameEventsShowing != eventsInCity.Count) {
+			List<Transform> eventsShowing = cityInfoEventsGrid.GetChildList();
+			for (int i = 0; i < eventsShowing.Count; i++) {
+				Destroy (eventsShowing[i].gameObject);
+			}
+
+			for (int i = 0; i < eventsInCity.Count; i++) {
+				GameObject eventGO = GameObject.Instantiate (gameEventPrefab, cityInfoEventsGrid.transform) as GameObject;
+				eventGO.GetComponent<EventItem>().SetEvent (eventsInCity[i]);
+				eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent(eventsInCity[i].eventType));
+				eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
+				eventGO.transform.localScale = Vector3.one;
+			}
+			StartCoroutine(RepositionGrid (cityInfoEventsGrid));
+		}
+
+		if (eventsInCity.Count > 0) {
+			noEventsGO.SetActive (false);
+		} else {
+			noEventsGO.SetActive (true);
+		}
+
+		cityInfoCitizensParent.SetActive(false);
+		cityInfoHistoryParent.SetActive(false);
+		cityInfoEventsParent.SetActive(true);
 	}
 
 	public void HideCityInfo(){
 		currentlyShowingCity = null;
+		cityInfoCitizensParent.SetActive(false);
+		cityInfoEventsParent.SetActive(false);
+		cityInfoHistoryParent.SetActive(false);
 		cityInfoGO.SetActive (false);
 	}
 		
@@ -872,7 +961,7 @@ public class UIManager : MonoBehaviour {
 
 		}
 		if (currentlyShowingCitizen.relationshipKings.Count > 1) {
-			kingMainLineSprite.height = 73 * currentlyShowingCitizen.relationshipKings.Count;
+			kingMainLineSprite.height = 98 * currentlyShowingCitizen.relationshipKings.Count;
 			kingMainLineSprite.gameObject.SetActive(true);
 		}
 		governorRelationshipsParentGO.SetActive(false);
@@ -900,7 +989,7 @@ public class UIManager : MonoBehaviour {
 		}
 
 		if (currentlyShowingCitizen.city.kingdom.cities.Count > 1) {
-			governorMainLineSprite.height = 73 * currentlyShowingCitizen.relationshipKings.Count;
+			governorMainLineSprite.height = 98 * currentlyShowingCitizen.relationshipKings.Count;
 			governorMainLineSprite.gameObject.SetActive(true);
 		}
 
@@ -1119,10 +1208,13 @@ public class UIManager : MonoBehaviour {
 		if (!eventsGo.activeSelf) {
 			eventsOfTypeGo.SetActive(false);
 			EventManager.Instance.onHideEvents.Invoke();
+			List<Transform> events = eventCategoriesGrid.GetChildList();
+			for (int i = 0; i < events.Count; i++) {
+				events [i].GetComponent<ButtonToggle>().SetClickState(false);
+			}
 		}
 
 	}
-
 
 	public void ShowEventsOfType(GameObject GO){
 		if (eventsOfTypeGo.activeSelf) {
@@ -1136,7 +1228,7 @@ public class UIManager : MonoBehaviour {
 				}
 			}
 			EventManager.Instance.onHideEvents.Invoke();
-		} 
+		}
 		lastClickedEventType = GO;
 		if (GO.name == "AllBtn") {
 			bool noEvents = true;
@@ -1158,12 +1250,12 @@ public class UIManager : MonoBehaviour {
 			}
 			if (!noEvents) {
 				EventManager.Instance.onShowEventsOfType.Invoke (EVENT_TYPES.ALL);
-				CameraMove.Instance.ShowWholeMap ();
+				//				CameraMove.Instance.ShowWholeMap ();
 			}
 		} else {
 			EVENT_TYPES eventType = (EVENT_TYPES)(System.Enum.Parse (typeof(EVENT_TYPES), GO.name));
 			if (EventManager.Instance.allEvents.ContainsKey (eventType)) {
-				List<GameEvent> gameEventsOfType = EventManager.Instance.allEvents[eventType].Where(x => x.isActive).ToList();
+				List<GameEvent> gameEventsOfType = EventManager.Instance.allEvents [eventType].Where (x => x.isActive).ToList ();
 				List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
 				for (int i = 0; i < children.Count; i++) {
 					Destroy (children [i].gameObject);
@@ -1177,12 +1269,57 @@ public class UIManager : MonoBehaviour {
 				}
 				if (gameEventsOfType.Count > 0) {
 					EventManager.Instance.onShowEventsOfType.Invoke (eventType);
-					CameraMove.Instance.ShowWholeMap ();
+					//					CameraMove.Instance.ShowWholeMap ();
+				}
+			} else {
+				List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
+				for (int i = 0; i < children.Count; i++) {
+					Destroy (children [i].gameObject);
 				}
 			}
 
 		}
-		gameEventsOfTypeGrid.enabled = true;
+		StartCoroutine (RepositionGrid (gameEventsOfTypeGrid));
+		eventsOfTypeGo.SetActive (true);
+	}
+	public void UpdateEventsOfType(){
+		if (lastClickedEventType.name == "AllBtn") {
+			bool noEvents = true;
+			List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			for (int i = 0; i < EventManager.Instance.allEvents.Keys.Count; i++) {
+				EVENT_TYPES currentKey = EventManager.Instance.allEvents.Keys.ElementAt(i);
+				List<GameEvent> currentGameEventList = EventManager.Instance.allEvents[currentKey].Where(x => x.isActive).ToList();
+				for (int j = 0; j < currentGameEventList.Count; j++) {
+					noEvents = false;
+					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
+					eventGO.GetComponent<EventItem>().SetEvent (currentGameEventList[j]);
+					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (currentKey));
+					eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
+					eventGO.transform.localScale = Vector3.one;
+				}
+			}
+		} else {
+			EVENT_TYPES eventType = (EVENT_TYPES)(System.Enum.Parse (typeof(EVENT_TYPES), lastClickedEventType.name));
+			if (EventManager.Instance.allEvents.ContainsKey (eventType)) {
+				List<GameEvent> gameEventsOfType = EventManager.Instance.allEvents[eventType].Where(x => x.isActive).ToList();
+				List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
+				for (int i = 0; i < children.Count; i++) {
+					Destroy (children [i].gameObject);
+				}
+				for (int i = 0; i < gameEventsOfType.Count; i++) {
+					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
+					eventGO.GetComponent<EventItem> ().SetEvent (gameEventsOfType [i]);
+					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (gameEventsOfType [i].eventType));
+					eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
+					eventGO.transform.localScale = Vector3.one;
+				}
+			}
+
+		}
+		StartCoroutine (RepositionGrid (gameEventsOfTypeGrid));
 		eventsOfTypeGo.SetActive (true);
 	}
 		
@@ -1190,7 +1327,7 @@ public class UIManager : MonoBehaviour {
 		specificEventNameLbl.text = gameEvent.eventType.ToString();
 		specificEventDescriptionLbl.text = gameEvent.description;
 		specificEventStartDateLbl.text = "Started " + ((MONTH)gameEvent.startMonth).ToString() + " " + gameEvent.startWeek.ToString() + ", " + gameEvent.startYear.ToString();
-		this.specificEventBarTitle.text = "Duration";
+
 		this.specificEventMiscTitleLbl.gameObject.SetActive(false);
 		this.lblSpecificEventCity.gameObject.SetActive(false);
 		this.lblSpecificPilfered.gameObject.SetActive(false);
@@ -1201,7 +1338,9 @@ public class UIManager : MonoBehaviour {
 		}else{
 			this.goSpecificEventHidden.SetActive(false);
 		}
+
 		if (gameEvent.eventType != EVENT_TYPES.BORDER_CONFLICT && gameEvent.eventType != EVENT_TYPES.STATE_VISIT) {
+			this.specificEventBarTitle.text = "Duration";
 			specificEventProgBar.value = (float)((float)gameEvent.remainingWeeks / (float)gameEvent.durationInWeeks);
 		}
 
@@ -1223,6 +1362,24 @@ public class UIManager : MonoBehaviour {
 		}else if (gameEvent.eventType == EVENT_TYPES.ESPIONAGE) {
 			Espionage espionage = (Espionage)gameEvent;
 			ShowEspionageEvent (espionage);
+		}else if (gameEvent.eventType == EVENT_TYPES.EXHORTATION) {
+			Exhortation exhortation = (Exhortation)gameEvent;
+			ShowExhortationEvent (exhortation);
+		}else if (gameEvent.eventType == EVENT_TYPES.MILITARIZATION) {
+			Militarization militarization = (Militarization)gameEvent;
+			ShowMilitarizationEvent (militarization);
+		}else if (gameEvent.eventType == EVENT_TYPES.POWER_GRAB) {
+			PowerGrab powerGrab = (PowerGrab)gameEvent;
+			ShowPowerGrabEvent (powerGrab);
+		}else if (gameEvent.eventType == EVENT_TYPES.JOIN_WAR_REQUEST) {
+			JoinWar joinWar = (JoinWar)gameEvent;
+			ShowJoinWarEvent (joinWar);
+		}else if (gameEvent.eventType == EVENT_TYPES.INVASION_PLAN) {
+			InvasionPlan invasionPlan = (InvasionPlan)gameEvent;
+			ShowInvasionPlanEvent (invasionPlan);
+		}else if (gameEvent.eventType == EVENT_TYPES.EXPANSION) {
+			Expansion expansion = (Expansion)gameEvent;
+			ShowExpansionEvent (expansion);
 		}
 
 		specificEventResolutionLbl.text = gameEvent.resolution;
@@ -1464,8 +1621,6 @@ public class UIManager : MonoBehaviour {
 
 	}
 	private void ShowMarriageInvitationEvent(MarriageInvitation marriageEvent){
-		
-
 		List<Transform> children = specificEventStartedByGrid.GetChildList();
 		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != marriageEvent.startedBy.id)) {
 			for (int i = 0; i < children.Count; i++) {
@@ -1479,16 +1634,15 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
 		}
 
+		specificEventCandidatesTitleLbl.text = "CANDIDATES";
 		children = specificEventCandidatesGrid.GetChildList();
-
 		List<Citizen> elligibleCitizensCurrentlyShowed = new List<Citizen>();
 		for (int i = 0; i < children.Count; i++) {
 			elligibleCitizensCurrentlyShowed.Add(children [i].GetComponent<CharacterPortrait> ().citizen);
 		}
-
-		List<Citizen> additionalCitizens = marriageEvent.elligibleCitizens.Except (elligibleCitizensCurrentlyShowed).ToList();
-
-		if (additionalCitizens.Count > 0 || elligibleCitizensCurrentlyShowed.Count <= 0) {
+		List<Citizen> additionalCitizens = marriageEvent.elligibleCitizens.Intersect(elligibleCitizensCurrentlyShowed).ToList();
+		if ((additionalCitizens.Count != marriageEvent.elligibleCitizens.Count && elligibleCitizensCurrentlyShowed.Count != marriageEvent.elligibleCitizens.Count) 
+			|| elligibleCitizensCurrentlyShowed.Count <= 0 || marriageEvent.elligibleCitizens.Count <= 0) {
 			for (int i = 0; i < children.Count; i++) {
 				Destroy (children [i].gameObject);
 			}
@@ -1502,9 +1656,268 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (specificEventCandidatesGrid));
 		}
 	}
+	private void ShowExhortationEvent(Exhortation exhortationEvent){
+		//for started by
+		List<Transform> children = specificEventStartedByGrid.GetChildList();
+		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != exhortationEvent.startedBy.id)) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (exhortationEvent.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid(specificEventStartedByGrid));
+		}
+
+		//for target
+		specificEventCandidatesTitleLbl.text = "Target";
+		children = specificEventCandidatesGrid.GetChildList();
+		if (children.Count > 0) {
+			Citizen currentlyShowingTarget = children[0].GetComponent<CharacterPortrait>().citizen;
+			if (currentlyShowingTarget.id != exhortationEvent.targetCitizen.id) {
+				children [0].GetComponent<CharacterPortrait>().SetCitizen (exhortationEvent.targetCitizen);
+			}
+		} else {
+			GameObject targetGO = GameObject.Instantiate (characterPortraitPrefab, specificEventCandidatesGrid.transform) as GameObject;
+			targetGO.GetComponent<CharacterPortrait> ().SetCitizen (exhortationEvent.targetCitizen);
+			targetGO.transform.localScale = Vector3.one;
+			targetGO.transform.position = Vector3.zero;
+
+		}
+		StartCoroutine (RepositionGrid(specificEventCandidatesGrid));
+
+		specificEventMiscTitleLbl.text = "Sent";
+		children = specificEventMiscGrid.GetChildList();
+		if (children.Count > 0) {
+			Citizen currentlyShowingSent = children[0].GetComponent<CharacterPortrait>().citizen;
+			if (currentlyShowingSent.id != exhortationEvent.citizenSent.id) {
+				children [0].GetComponent<CharacterPortrait>().SetCitizen (exhortationEvent.citizenSent);
+			}
+		} else {
+			GameObject targetGO = GameObject.Instantiate (characterPortraitPrefab, specificEventMiscGrid.transform) as GameObject;
+			targetGO.GetComponent<CharacterPortrait> ().SetCitizen (exhortationEvent.citizenSent);
+			targetGO.transform.localScale = Vector3.one;
+			targetGO.transform.position = Vector3.zero;
+		}
+		StartCoroutine (RepositionGrid(specificEventMiscGrid));
+	}
+	private void ShowMilitarizationEvent(Militarization militarizationEvent){
+		//for started by
+		List<Transform> children = specificEventStartedByGrid.GetChildList();
+		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != militarizationEvent.startedBy.id)) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (militarizationEvent.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid(specificEventStartedByGrid));
+		}
+
+		//for military summary
+		specificEventCandidatesTitleLbl.text = "MILITARY";
+		int totalMilitaryStrength = 0;
+		List<Citizen> generals = militarizationEvent.startedByCity.GetCitizensWithRole(ROLE.GENERAL);
+		for (int i = 0; i < generals.Count; i++) {
+			totalMilitaryStrength += ((General)generals[i].assignedRole).army.hp;
+		}
+		specificEventCandidatesTitleLbl.text = "Generals: " + generals.Count.ToString () + "\nTotal Strength: " + totalMilitaryStrength.ToString();
+		specificEventCandidatesTitleLbl.gameObject.SetActive(true);
+
+		//Uncovered
+		specificEventMiscTitleLbl.text = "UNCOVERED";
+		specificEventMiscTitleLbl.gameObject.SetActive(true);
+		children = this.specificEventMiscGrid.GetChildList ();
+		List<Citizen> currentlyShowingUncoveredCitizens = children.Select (x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		List<Citizen> additionalCitizens = militarizationEvent.uncovered.Except(currentlyShowingUncoveredCitizens).ToList();
+		if (additionalCitizens.Count > 0 || children.Count <= 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+
+			for (int i = 0; i < militarizationEvent.uncovered.Count; i++) {
+				GameObject uncovered = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
+				uncovered.GetComponent<CharacterPortrait> ().SetCitizen (militarizationEvent.uncovered [i]);
+				uncovered.transform.localScale = Vector3.one;
+				uncovered.transform.position = Vector3.zero;
+			}
+			StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+		}
+	}
+	private void ShowPowerGrabEvent(PowerGrab powerGrabEvent){
+		//for started by
+		List<Transform> children = specificEventStartedByGrid.GetChildList();
+		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != powerGrabEvent.startedBy.id)) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (powerGrabEvent.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid(specificEventStartedByGrid));
+		}
+
+		specificEventCandidatesTitleLbl.text = "EXHORTED";
+		children = this.specificEventCandidatesGrid.GetChildList ();
+		List<Citizen> currentlyShowingExhortedCitizens = children.Select (x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		List<Citizen> additionalExhortedCitizens = powerGrabEvent.exhortedCitizens.Except(currentlyShowingExhortedCitizens).ToList();
+		if (additionalExhortedCitizens.Count > 0 || children.Count <= 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+
+			for (int i = 0; i < powerGrabEvent.exhortedCitizens.Count; i++) {
+				GameObject uncovered = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
+				uncovered.GetComponent<CharacterPortrait> ().SetCitizen (powerGrabEvent.exhortedCitizens[i]);
+				uncovered.transform.localScale = Vector3.one;
+				uncovered.transform.position = Vector3.zero;
+			}
+			StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
+		}
+
+		//Uncovered
+		specificEventMiscTitleLbl.text = "UNCOVERED";
+		specificEventMiscTitleLbl.gameObject.SetActive(true);
+		children = this.specificEventMiscGrid.GetChildList ();
+		List<Citizen> currentlyShowingUncoveredCitizens = children.Select (x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		List<Citizen> additionalCitizens = powerGrabEvent.uncovered.Except(currentlyShowingUncoveredCitizens).ToList();
+		if (additionalCitizens.Count > 0 || children.Count <= 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+
+			for (int i = 0; i < powerGrabEvent.uncovered.Count; i++) {
+				GameObject uncovered = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
+				uncovered.GetComponent<CharacterPortrait> ().SetCitizen (powerGrabEvent.uncovered [i]);
+				uncovered.transform.localScale = Vector3.one;
+				uncovered.transform.position = Vector3.zero;
+			}
+			StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+		}
+	}
+	private void ShowJoinWarEvent(JoinWar joinWarEvent){
+		//for started by
+		List<Transform> children = specificEventStartedByGrid.GetChildList();
+		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != joinWarEvent.startedBy.id)) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (joinWarEvent.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid(specificEventStartedByGrid));
+		}
+
+		//for target
+		specificEventCandidatesTitleLbl.text = "Target";
+		children = specificEventCandidatesGrid.GetChildList();
+		if (children.Count > 0) {
+			Citizen currentlyShowingTarget = children[0].GetComponent<CharacterPortrait>().citizen;
+			if (currentlyShowingTarget.id != joinWarEvent.candidateForAlliance.id) {
+				children [0].GetComponent<CharacterPortrait>().SetCitizen (joinWarEvent.candidateForAlliance);
+			}
+		} else {
+			GameObject targetGO = GameObject.Instantiate (characterPortraitPrefab, specificEventCandidatesGrid.transform) as GameObject;
+			targetGO.GetComponent<CharacterPortrait> ().SetCitizen (joinWarEvent.candidateForAlliance);
+			targetGO.transform.localScale = Vector3.one;
+			targetGO.transform.position = Vector3.zero;
+
+		}
+		StartCoroutine (RepositionGrid(specificEventCandidatesGrid));
+
+	}
+	private void ShowInvasionPlanEvent(InvasionPlan invasionPlanEvent){
+		//for started by
+		List<Transform> children = specificEventStartedByGrid.GetChildList();
+		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != invasionPlanEvent.startedBy.id)) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (invasionPlanEvent.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid(specificEventStartedByGrid));
+		}
+
+		//for target
+		specificEventCandidatesTitleLbl.text = "Target";
+		children = specificEventCandidatesGrid.GetChildList();
+		if (children.Count > 0) {
+			Citizen currentlyShowingTarget = children[0].GetComponent<CharacterPortrait>().citizen;
+			if (currentlyShowingTarget.id != invasionPlanEvent.targetKingdom.king.id) {
+				children [0].GetComponent<CharacterPortrait>().SetCitizen (invasionPlanEvent.targetKingdom.king);
+			}
+		} else {
+			GameObject targetGO = GameObject.Instantiate (characterPortraitPrefab, specificEventCandidatesGrid.transform) as GameObject;
+			targetGO.GetComponent<CharacterPortrait> ().SetCitizen (invasionPlanEvent.targetKingdom.king);
+			targetGO.transform.localScale = Vector3.one;
+			targetGO.transform.position = Vector3.zero;
+
+		}
+		StartCoroutine (RepositionGrid(specificEventCandidatesGrid));
+
+		//Uncovered
+		specificEventMiscTitleLbl.text = "UNCOVERED";
+		specificEventMiscTitleLbl.gameObject.SetActive(true);
+		children = this.specificEventMiscGrid.GetChildList ();
+		List<Citizen> currentlyShowingUncoveredCitizens = children.Select (x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		List<Citizen> additionalCitizens = invasionPlanEvent.uncovered.Except(currentlyShowingUncoveredCitizens).ToList();
+		if (additionalCitizens.Count > 0 || children.Count <= 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+
+			for (int i = 0; i < invasionPlanEvent.uncovered.Count; i++) {
+				GameObject uncovered = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
+				uncovered.GetComponent<CharacterPortrait> ().SetCitizen (invasionPlanEvent.uncovered [i]);
+				uncovered.transform.localScale = Vector3.one;
+				uncovered.transform.position = Vector3.zero;
+			}
+			StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+		}
+	}
+	private void ShowExpansionEvent(Expansion expansionEvent){
+		//for started by
+		List<Transform> children = specificEventStartedByGrid.GetChildList();
+		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != expansionEvent.startedBy.id)) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (expansionEvent.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid(specificEventStartedByGrid));
+		}
+	}
+
+	private void ClearSpecificEventUI(){
+		Transform startedByGridItem = specificEventStartedByGrid.GetChild(0);
+		List<Transform> candidatesGridItems = specificEventCandidatesGrid.GetChildList();
+		List<Transform> miscGridItems = specificEventMiscGrid.GetChildList();
+		if (startedByGridItem != null) {
+			Destroy(startedByGridItem.gameObject);
+		}
+
+		for (int i = 0; i < candidatesGridItems.Count; i++) {
+			Destroy(candidatesGridItems[i].gameObject);
+		}
+
+		for (int i = 0; i < miscGridItems.Count; i++) {
+			Destroy(miscGridItems[i].gameObject);
+		}
+		specificEventsCandidatesLbl.gameObject.SetActive(false);
+		specificEventMiscTitleLbl.gameObject.SetActive(false);
+	}
 
 	public void HideSpecificEvent(){
 		specificEventGO.SetActive(false);
+		ClearSpecificEventUI ();
 	}
 
 	public void ToggleResourceIcons(){

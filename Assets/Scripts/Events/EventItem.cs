@@ -27,6 +27,7 @@ public class EventItem : MonoBehaviour {
 	}
 
 	void OnClick(){
+		Debug.Log ("ONCLICK!");
 		if (onClickEvent != null) {
 			onClickEvent(this.gameEvent);
 		}

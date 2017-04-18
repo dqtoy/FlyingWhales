@@ -52,12 +52,13 @@ public class GameManager : MonoBehaviour {
 				this.year += 1;
 			}
 		}
-//		TriggerBorderConflict ();
-//		TriggerRaid();
+		TriggerBorderConflict ();
+		TriggerRaid();
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
 		EventManager.Instance.onCitizenMove.Invoke ();
 		EventManager.Instance.onWeekEnd.Invoke();
+		EventManager.Instance.onUpdateUI.Invoke();
 	}
 	private void TriggerRaid(){
 		int chance = UnityEngine.Random.Range (0, 100);

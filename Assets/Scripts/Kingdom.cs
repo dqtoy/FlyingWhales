@@ -145,6 +145,7 @@ public class Kingdom{
 		tile.city = new City (tile, this);
 		tile.GetComponent<SpriteRenderer> ().color = this.kingdomColor;
 		this.cities.Add (tile.city);
+		tile.ShowNamePlate();
 	}
 
 	internal List<Citizen> GetAllCitizensInKingdom(){

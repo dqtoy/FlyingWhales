@@ -24,6 +24,10 @@ public class Expansion : GameEvent {
 		this.originCity = startedBy.city;
 
 		Debug.LogError(this.description);
+
+		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+			"Sent an expedition to look for new habitable lands." , HISTORY_IDENTIFIER.NONE));
+		
 		this.citizensJoiningExpansion.Add (this.startedBy);
 		this.startedBy.city.RemoveCitizenFromCity(this.startedBy);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -47,6 +51,8 @@ public class Expansion : GameEvent {
 //					this.GenerateCitizensForExpansion(hexTileToExpandTo.city);
 					hexTileToExpandTo.city.ExpandToThisCity(this.citizensJoiningExpansion);
 					this.resolution = "Expansion was successful, new city " + hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
+					this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+						"Successful Expansion to " + hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));
 					this.DoneEvent ();
 				} else {
 					this.resolution = "Expansion Citizens we're killed.";

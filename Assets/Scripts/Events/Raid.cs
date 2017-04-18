@@ -29,7 +29,9 @@ public class Raid : GameEvent {
 			this.raidedCity.hexTile.AddEventOnTile(this);
 		}
 		this.description = startedBy.name + " of " + startedBy.city.kingdom.name + " sent " + this.general.citizen.name + " to raid " + this.raidedCity.name + ".";
-
+		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+			this.startedBy.city + " has started a raid event against " + raidedCity.name , HISTORY_IDENTIFIER.NONE));
+		
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError("RAID");
 	}
@@ -67,13 +69,22 @@ public class Raid : GameEvent {
 			if(this.hasDeflected){
 				this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
 					+ " but their identity were discovered." + deadCitizen + " " + this.kingdomToBlame.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.(DEFLECTED)";
+
+				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+					"Discovered raiders sent from " + this.kingdomToBlame.name + " (DEFLECTED)" , HISTORY_IDENTIFIER.NONE));
 			}else{
 				this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
 					+ " but their identity were discovered." + deadCitizen + " " + this.raidedCity.kingdom.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.";
+
+				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+					"Discovered raiders sent from city " + this.startedByCity.name , HISTORY_IDENTIFIER.NONE));
 			}
 		}else{
 			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
 				+ " but their identity were not discovered." + deadCitizen;
+			
+			this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+				"Raid against " + this.raidedCity.name + " was " + result , HISTORY_IDENTIFIER.NONE));
 		}
 		//		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}

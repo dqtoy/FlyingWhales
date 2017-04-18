@@ -21,6 +21,8 @@ public class MarriageInvitation : GameEvent {
 		this.GetGoldForEvent ();
 
 		this.startedBy.city.hexTile.AddEventOnTile(this);
+		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+			this.startedBy.name + " started a marriage invitation event.", HISTORY_IDENTIFIER.NONE));
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
@@ -49,8 +51,10 @@ public class MarriageInvitation : GameEvent {
 				City cityRecievingGold = null;
 				if (chosenCitizen.city.id != this.startedBy.city.id) {
 					//pay 500 gold to the chosen citizens city
-					chosenCitizen.city.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, this.goldForEvent);
 					cityRecievingGold = chosenCitizen.city;
+					cityRecievingGold.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, this.goldForEvent);
+					cityRecievingGold.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+						"Recieved 500 GOLD from " + this.startedByCity.name + " because of marriage event started by " + this.startedBy.name, HISTORY_IDENTIFIER.NONE));
 				} else {
 					//give back 500 gold to city
 					this.startedBy.city.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, this.goldForEvent);
