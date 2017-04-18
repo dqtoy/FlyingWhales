@@ -12,7 +12,7 @@ public class CombatManager : MonoBehaviour {
 	internal void CityBattle(City city){
 		General victoriousGeneral = null;
 		General friendlyGeneral = null;
-		List<General> attackers = city.incomingGenerals.Where (x => x.assignedCampaign == CAMPAIGN.OFFENSE && x.location == city.hexTile).ToList();
+		List<General> attackers = city.incomingGenerals.Where (x => x.assignedCampaign == CAMPAIGN.OFFENSE && x.location == city.hexTile && x.rallyPoint != city.hexTile).ToList();
 		List<General> defenders = new List<General>();
 
 		for(int i = 0; i < attackers.Count; i++){

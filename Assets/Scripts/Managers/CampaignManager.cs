@@ -167,7 +167,8 @@ public class CampaignManager {
 			}
 		}
 		return false;
-	}internal bool SearchForDefenseWarCities(City city){
+	}
+	internal bool SearchForDefenseWarCities(City city){
 		for(int i = 0; i < this.defenseWarCities.Count; i++){
 			if(this.defenseWarCities[i].city.id == city.id){
 				return true;

@@ -384,8 +384,8 @@ public class Kingdom{
 			}
 		}
 		for(int i = 0; i < this.cities.Count; i++){
-			if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
-				this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
+			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i])){
+				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
 			}
 //			if(this.cities[i].governor.supportedCitizen == null){
 //				if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
