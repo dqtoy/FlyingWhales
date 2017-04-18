@@ -356,6 +356,10 @@ public class Citizen {
 		if (this.assignedRole != null) {
 			this.assignedRole.OnDeath ();
 		}
+
+		for(int i = 0; i < this.campaignManager.activeCampaigns.Count; i++){
+			this.campaignManager.CampaignDone (this.campaignManager.activeCampaigns [i], false);
+		}
 		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
 		EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
 		EventManager.Instance.onUnsupportCitizen.Invoke (this);

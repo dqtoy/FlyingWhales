@@ -170,9 +170,9 @@ public class Kingdom{
 	internal void AssignNewKing(Citizen newKing){
 		if(newKing == null){
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-			this.king.city.CreateInitialRoyalFamily ();
-			this.king.CreateInitialRelationshipsToKings ();
-			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+//			this.king.city.CreateInitialRoyalFamily ();
+//			this.king.CreateInitialRelationshipsToKings ();
+//			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 
 		}else{
 			if(newKing.city.governor.id == newKing.id){
