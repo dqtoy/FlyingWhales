@@ -125,9 +125,14 @@ public class CampaignManager {
 				if(newCampaign != null){
 					Debug.Log ("Created Campaign " + newCampaign.campaignType.ToString () + " " + newCampaign.targetCity.name);
 					EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
-
+				}else{
+					//Create Ghost Campaign
+					newCampaign = new Campaign (this.leader, null, CAMPAIGN.NONE, WAR_TYPE.NONE, 0);
+					this.activeCampaigns.Add (newCampaign);
 				}
 			}
+
+			CreateCampaign ();
 		}
 	}
 	private IEnumerator CheckCampaign(Campaign newCampaign){
@@ -135,6 +140,8 @@ public class CampaignManager {
 		if (newCampaign.registeredGenerals.Count <= 0) {
 			//Destroy campaign without creating new
 //			CampaignDone (newCampaign);
+			CampaignDone(newCampaign, false);
+			//Create Ghost Campaign
 		}
 	}
 	internal bool SearchForSuccessionWarCities(City city){
@@ -160,7 +167,8 @@ public class CampaignManager {
 			}
 		}
 		return false;
-	}internal bool SearchForDefenseWarCities(City city){
+	}
+	internal bool SearchForDefenseWarCities(City city){
 		for(int i = 0; i < this.defenseWarCities.Count; i++){
 			if(this.defenseWarCities[i].city.id == city.id){
 				return true;
@@ -240,8 +248,9 @@ public class CampaignManager {
 			target = null;
 		}
 	}
-	internal void CampaignDone(Campaign campaign){
-		Campaign doneCampaign = SearchCampaignByID (campaign.id);
+	internal void CampaignDone(Campaign doneCampaign, bool canCreate = true){
+//		Campaign doneCampaign = SearchCampaignByID (campaign.id);
+		EventManager.Instance.onWeekEnd.RemoveListener (doneCampaign.CheckExpiration);
 		Debug.Log ("Campaign Done " + doneCampaign.campaignType.ToString () + " " + doneCampaign.targetCity.name);
 		for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
 			UnregisterGenerals (doneCampaign.registeredGenerals [i], doneCampaign);
@@ -249,7 +258,9 @@ public class CampaignManager {
 		this.MakeCityInactive (doneCampaign);
 		this.activeCampaigns.Remove (doneCampaign);
 		doneCampaign = null;
-		CreateCampaign ();
+		if(canCreate){
+			CreateCampaign ();
+		}
 	}
 	internal void UnregisterGenerals(General general, Campaign chosenCampaign){
 		general.targetLocation = null;

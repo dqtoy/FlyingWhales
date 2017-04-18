@@ -170,9 +170,9 @@ public class Kingdom{
 	internal void AssignNewKing(Citizen newKing){
 		if(newKing == null){
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-			this.king.city.CreateInitialRoyalFamily ();
-			this.king.CreateInitialRelationshipsToKings ();
-			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+//			this.king.city.CreateInitialRoyalFamily ();
+//			this.king.CreateInitialRelationshipsToKings ();
+//			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 
 		}else{
 			if(newKing.city.governor.id == newKing.id){
@@ -384,8 +384,8 @@ public class Kingdom{
 			}
 		}
 		for(int i = 0; i < this.cities.Count; i++){
-			if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
-				this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
+			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i])){
+				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
 			}
 //			if(this.cities[i].governor.supportedCitizen == null){
 //				if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
