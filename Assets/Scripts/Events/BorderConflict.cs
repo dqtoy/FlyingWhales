@@ -17,6 +17,8 @@ public class BorderConflict : GameEvent {
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
 		if(startedBy != null){
 			this.description = startedBy.name + " has created a border conflict between " + kingdom1.name + " and " + kingdom2.name + ".";
+			this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+				startedBy.name + " has created a border conflict between " + kingdom1.name + " and " + kingdom2.name + "." , HISTORY_IDENTIFIER.NONE));
 		}else{
 			this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
 		}

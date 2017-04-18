@@ -49,6 +49,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameObject resourceVisualGO;
 	public GameObject structureGO;
 	public Transform eventsParent;
+	public GameObject cityNameGO;
+	public TextMesh cityNameLbl;
 
 	public List<HexTile> connectedTiles = new List<HexTile>();
 
@@ -405,9 +407,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	#endregion
 
 	public void ShowCitySprite(){
-		structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
-		structureGO.SetActive(true);
+		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
+		this.structureGO.SetActive(true);
 		this.structureOnTile = STRUCTURE.CITY;
+//		this.cityNameGO.SetActive(true);
+//		this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
+//		this.cityNameLbl.text = this.city.name;
 	}
 
 	public void OccupyTile(Citizen citizen){
@@ -569,7 +574,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 		if (this.isHabitable && this.isOccupied && this.city != null) {
 			CameraMove.Instance.CenterCameraOn(this.gameObject);
-			UIManager.Instance.ShowCityInfo (this.city);
+			UIManager.Instance.ShowCityInfo (this.city, true);
 		}
 	}
 

@@ -17,6 +17,9 @@ public class Militarization : GameEvent {
 
 		this.startedBy.city.hexTile.AddEventOnTile(this);
 		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started a Militarization for his/her Invasion Plan.", HISTORY_IDENTIFIER.NONE));
+		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+			this.startedByCity.name + " started Militarization." , HISTORY_IDENTIFIER.NONE));
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
@@ -48,6 +51,8 @@ public class Militarization : GameEvent {
 		if (invasionPlanThatTriggeredEvent.isActive) {
 			invasionPlanThatTriggeredEvent.MilitarizationDone ();
 		}
+		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+			this.startedByCity.name + " ended Militarization." , HISTORY_IDENTIFIER.NONE));
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}
 }

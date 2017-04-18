@@ -29,6 +29,7 @@ public class Espionage : GameEvent {
 		if (this.targetKingdom != null) {
 			this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
 		}
+		EventManager.Instance.AddEventToDictionary(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 	internal override void PerformAction(){

@@ -15,7 +15,7 @@ public class City{
 	public List<HexTile> ownedTiles;
 	public List<General> incomingGenerals;
 	public List<Citizen> citizens;
-	public string cityHistory;
+	public List<History> cityHistory;
 	public bool hasKing;
 
 	[Space(10)] //Resources
@@ -33,6 +33,8 @@ public class City{
 	public IsActive isActive;
 	public bool isStarving;
 	public bool isDead;
+
+
 	//generals
 	//incoming generals
 
@@ -80,7 +82,7 @@ public class City{
 		this.ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<General> ();
 		this.citizens = new List<Citizen>();
-		this.cityHistory = string.Empty;
+		this.cityHistory = new List<History>();
 		this.isActive = new IsActive (false);
 		this.hasKing = false;
 		this.isStarving = false;
@@ -106,6 +108,8 @@ public class City{
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
 		EventManager.Instance.onRecruitCitizensForExpansion.AddListener(DonateCitizensToExpansion);
 //		EventManager.Instance.onCitizenDiedEvent.AddListener (UpdateHextileRoles);
+
+		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));
 	}
 
 
@@ -399,6 +403,9 @@ public class City{
 
 			}
 		}
+
+		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, governor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+
 	}
 	private void CreateInitialGeneralFamily(){
 		GENDER gender = GENDER.MALE;
@@ -692,6 +699,8 @@ public class City{
 //		Assign Governor
 		citizensToOccupyCity.Last().city = this;
 		citizensToOccupyCity.Last().AssignRole(ROLE.GOVERNOR);
+		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.governor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+
 
 		BuyInitialTiles ();
 		CreateInitialFoodProducerFamily ();
@@ -705,34 +714,6 @@ public class City{
 		for (int i = 0; i < this.citizens.Count; i++) {
 			this.citizens[i].UpdatePrestige();
 		}
-
-
-//		this.CreateInitialFoodProducerFamily();
-//		this.CreateInitialGathererFamily();
-//		this.CreateInitialUntrainedFamily();
-//		this.GenerateInitialTraitsForInitialCitizens();
-
-//		for (int i = 0; i < citizensToOccupyCity.Count; i++) {
-//			this.AddCitizenToCity (citizensToOccupyCity [i]);
-//		}
-//		this.UpdateUnownedNeighbourTiles();
-//		//Assign Farmer
-//		citizensToOccupyCity[0].AssignRole(ROLE.FOODIE);
-//		HexTile tileForFarmer = this.purchasableFoodTiles[0];
-//		this.PurchaseTile(tileForFarmer);
-//		this.OccupyTile(tileForFarmer, citizensToOccupyCity[0]);
-//
-//		//Assign Gatherer
-//		citizensToOccupyCity[1].AssignRole(ROLE.GATHERER);
-//		if (this.purchasableBasicTiles.Count > 0) {
-//			HexTile tileForGatherer = this.purchasableBasicTiles [0];
-//			this.PurchaseTile(tileForGatherer);
-//			this.OccupyTile(tileForGatherer, citizensToOccupyCity [1]);
-//		} else {
-//			HexTile tileForGatherer = this.purchasabletilesWithUnneededResource[0];
-//			this.PurchaseTile(tileForGatherer);
-//			this.OccupyTile(tileForGatherer, citizensToOccupyCity [1]);
-//		}
 	}
 
 	protected void DonateCitizensToExpansion(Expansion expansionEvent, Kingdom kingdomToExpand){
@@ -805,7 +786,6 @@ public class City{
 //			((Trader)citizenToOccupy.assignedRole).AssignTask();
 		}
 		this.UpdateResourceProduction();
-		EventManager.Instance.onForceUpdateUI.Invoke();
 	}
 
 	protected HexTile FindTileForCitizen(Citizen citizen){
@@ -1574,6 +1554,7 @@ public class City{
 			newGovernor.AssignRole(ROLE.GOVERNOR);
 			this.UpdateCitizenCreationTable();
 			newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+			this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
 		}
 	}

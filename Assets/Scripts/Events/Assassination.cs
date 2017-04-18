@@ -45,7 +45,7 @@ public class Assassination : GameEvent {
 
 		}
 		TriggerGuardian ();
-
+		EventManager.Instance.AddEventToDictionary(this);
 		this.targetCitizen.city.hexTile.AddEventOnTile(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}

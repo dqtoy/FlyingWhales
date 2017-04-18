@@ -263,12 +263,12 @@ public class Citizen {
 			if (this.gender == GENDER.MALE) {
 				if (this.age >= 16 && !this.isMarried) {
 					this.citizenChances.marriageChance += 2;
-//					this.AttemptToMarry ();
+					this.AttemptToMarry ();
 				}
 			} else {
 				if (this.isKing && this.age >= 16 && !this.isMarried) {
 					this.citizenChances.marriageChance += 2;
-//					this.AttemptToMarry ();
+					this.AttemptToMarry ();
 				}
 			}
 
@@ -837,7 +837,7 @@ public class Citizen {
 				}
 			}
 
-			for (int i = 0; i < ((King)this.assignedRole).ownedKingdom.cities.Count; i++) {
+			for (int i = 0; i < this.city.kingdom.cities.Count; i++) {
 				prestige += 15;
 			}
 		}
@@ -845,7 +845,7 @@ public class Citizen {
 			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
 			prestige += 350;
 
-			for (int i = 0; i < ((Governor)this.assignedRole).ownedCity.ownedTiles.Count; i++) {
+			for (int i = 0; i < this.city.ownedTiles.Count; i++) {
 				prestige += 5;
 			}
 		}

@@ -7,6 +7,7 @@ public class PowerGrab : GameEvent {
 
 	public Citizen kingToOverthrow;
 	public List<Citizen> uncovered;
+	public List<Citizen> exhortedCitizens;
 
 	public PowerGrab(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen kingToOverthrow) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.POWER_GRAB;
@@ -16,6 +17,7 @@ public class PowerGrab : GameEvent {
 		this.remainingWeeks = this.durationInWeeks;
 		this.kingToOverthrow = this.startedBy.city.kingdom.king;
 		this.uncovered = new List<Citizen>();
+		this.exhortedCitizens = new List<Citizen>();
 
 		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started gathering influence for his/her claim as next in line to the " + this.kingToOverthrow.city.kingdom.name + " throne.", HISTORY_IDENTIFIER.NONE));
 		this.kingToOverthrow.city.hexTile.AddEventOnTile(this);
@@ -74,7 +76,7 @@ public class PowerGrab : GameEvent {
 			}
 
 			Exhortation newExhortation = new Exhortation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
-				this.startedBy, this.startedBy, citizenToExhort);
+				this.startedBy, this.startedBy, citizenToExhort, this);
 		}
 	}
 

@@ -36,6 +36,8 @@ public class JoinWar : GameEvent {
 		} else {
 			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.candidateForAlliance.city.kingdom, EVENT_TYPES.INVASION_PLAN).Count > 0) {
 				//fail
+				this.resolution = this.candidateForAlliance.city.kingdom.name + " did not join " + this.startedByKingdom.name + " in his war against " + this.kingdomToAttack.name + 
+					" because they already have other invasion plans.";
 			} else {
 				int successRate = 15;
 				RELATIONSHIP_STATUS relationshipWithRequester = candidateForAlliance.GetRelationshipWithCitizen (this.startedBy).lordRelationship;
@@ -76,6 +78,10 @@ public class JoinWar : GameEvent {
 					));
 					InvasionPlan newInvasionPlan = new InvasionPlan(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
 						this.candidateForAlliance, this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
+					this.candidateForAlliance.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+						this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name , HISTORY_IDENTIFIER.NONE));
+
+					this.resolution = this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name;
 					EventManager.Instance.AddEventToDictionary (newInvasionPlan);
 
 				}

@@ -24,6 +24,7 @@ public class GameEvent {
 	public string resolution;
 	public Citizen startedBy;
 	public Kingdom startedByKingdom;
+	public City startedByCity;
 	public bool isActive;
 
 	public GameEvent(int startWeek, int startMonth, int startYear, Citizen startedBy){
@@ -43,6 +44,7 @@ public class GameEvent {
 		this.isActive = true;
 		if(this.startedBy != null){
 			this.startedByKingdom = startedBy.city.kingdom;
+			this.startedByCity = startedBy.city;
 		}
 		Debug.LogError("New Event was created!");
 	}

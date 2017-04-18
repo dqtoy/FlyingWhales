@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class EventManager : MonoBehaviour {
 	public static EventManager Instance;
@@ -22,11 +23,11 @@ public class EventManager : MonoBehaviour {
 	public GameEventAction onGameEventAction = new GameEventAction();
 	public CheckCitizensSupportingMe onCheckCitizensSupportingMe = new CheckCitizensSupportingMe();
 	public RecruitCitizensForExpansion onRecruitCitizensForExpansion = new RecruitCitizensForExpansion();
-	public ForceUpdateUI onForceUpdateUI = new ForceUpdateUI();
 	public GameEventEnded onGameEventEnded = new GameEventEnded();
 	public ShowEventsOfType onShowEventsOfType = new ShowEventsOfType();
 	public HideEvents onHideEvents = new HideEvents();
 	public RemoveSuccessionWarCity onRemoveSuccessionWarCity = new RemoveSuccessionWarCity();
+	public UpdateUI onUpdateUI = new UpdateUI();
 
 	public EVENT_TYPES eventTypeForTesting;
 
@@ -79,6 +80,21 @@ public class EventManager : MonoBehaviour {
 		}
 		return gameEventsOfTypePerKingdom;
 	}
+
+	public List<GameEvent> GetAllEventsPerCity(City city){
+		List<GameEvent> gameEventsOfCity = new List<GameEvent>();
+		for (int i = 0; i < this.allEvents.Keys.Count; i++) {
+			EVENT_TYPES currentKey = this.allEvents.Keys.ElementAt(i);
+			List<GameEvent> gameEventsOfType = this.allEvents [currentKey];
+			for (int j = 0; j < gameEventsOfType.Count; j++) {
+				if (gameEventsOfType[i].startedByCity.id == city.id) {
+					gameEventsOfCity.Add(gameEventsOfType [i]);
+				}
+			}
+		}
+		return gameEventsOfCity;
+	}
+
 	internal Citizen GetSpy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> spies = new List<Citizen> ();
