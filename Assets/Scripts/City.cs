@@ -1363,13 +1363,20 @@ public class City{
 		}
 		return total;
 	}
-	internal int GetTotalAttackerStrength(){
+	internal int GetTotalAttackerStrength(ref int nearestArrival){
 		int total = 0;
-		for(int i = 0; i < this.incomingGenerals.Count; i++){
-			if(this.incomingGenerals[i].assignedCampaign == CAMPAIGN.OFFENSE){
-				total += this.incomingGenerals[i].GetArmyHP ();
+		List<General> hostiles = this.incomingGenerals.Where (x => x.assignedCampaign == CAMPAIGN.OFFENSE && x.targetCity.id == this.id).ToList();
+		if(hostiles.Count > 0){
+			int nearest = hostiles.Min (x => x.daysBeforeArrival);
+			nearestArrival = nearest;
+			List<General> nearestHostiles = hostiles.Where(x => x.daysBeforeArrival == nearest).ToList();
+			for(int i = 0; i < nearestHostiles.Count; i++){
+				if(nearestHostiles[i].assignedCampaign == CAMPAIGN.OFFENSE && nearestHostiles[i].targetCity.id == this.id){
+					total += nearestHostiles[i].GetArmyHP ();
+				}
 			}
 		}
+
 		return total;	
 	}
 	internal List<General> GetAllGenerals(General attacker){

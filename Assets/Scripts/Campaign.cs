@@ -17,7 +17,7 @@ public class Campaign {
 	public int neededArmyStrength;
 	public int expiration;
 
-	public Campaign(Citizen leader, City targetCity, CAMPAIGN campaignType, WAR_TYPE warType, int neededArmyStrength = 0){
+	public Campaign(Citizen leader, City targetCity, CAMPAIGN campaignType, WAR_TYPE warType, int neededArmyStrength = 0, int expiration = 8){
 		this.id = Utilities.SetID (this);
 		this.leader = leader;
 		this.targetCity = targetCity;
@@ -28,7 +28,7 @@ public class Campaign {
 		this.hasStarted = false;
 		this.rallyPoint = null;
 		this.neededArmyStrength = neededArmyStrength;
-		this.expiration = 8;
+		this.expiration = expiration;
 		EventManager.Instance.onWeekEnd.AddListener (this.CheckExpiration);
 	}
 
@@ -44,15 +44,22 @@ public class Campaign {
 	}
 
 	internal void CheckExpiration(){
-		if (this.registeredGenerals.Count <= 0) {
-			AdjustExpiration (-1);
-		} else if (this.targetCity != null) {
-			if (this.targetCity.isDead) {
+		if(this.campaignType == CAMPAIGN.DEFENSE){
+			if(this.expiration >= 0){
 				AdjustExpiration (-1);
 			}
-		} else if (this.targetCity == null) {
-			AdjustExpiration (-1);
+		}else{
+			if (this.registeredGenerals.Count <= 0) {
+				AdjustExpiration (-1);
+			} else if (this.targetCity != null) {
+				if (this.targetCity.isDead) {
+					AdjustExpiration (-1);
+				}
+			} else if (this.targetCity == null) {
+				AdjustExpiration (-1);
+			}	
 		}
+
 	}
 
 	private void AdjustExpiration(int amount){
