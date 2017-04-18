@@ -410,9 +410,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
 		this.structureGO.SetActive(true);
 		this.structureOnTile = STRUCTURE.CITY;
-//		this.cityNameGO.SetActive(true);
-//		this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
-//		this.cityNameLbl.text = this.city.name;
+	}
+
+	public void ShowNamePlate(){
+		this.cityNameGO.SetActive(true);
+		this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
+		this.cityNameLbl.text = this.city.name;
 	}
 
 	public void OccupyTile(Citizen citizen){

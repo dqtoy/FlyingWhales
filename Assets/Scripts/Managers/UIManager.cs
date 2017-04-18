@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject kingdomInfoGO;
 	public GameObject eventsGo;
 	public GameObject eventsOfTypeGo;
+	public UIGrid eventCategoriesGrid;
 	public GameObject relationshipsGO;
 	public GameObject relationshipHistoryGO;
 	public GameObject familyTreeGO;
@@ -224,7 +225,7 @@ public class UIManager : MonoBehaviour {
 
 		if (eventsOfTypeGo.activeSelf) {
 			if (lastClickedEventType != null) {
-				this.ShowEventsOfType(lastClickedEventType);
+				this.UpdateEventsOfType();
 			}
 		}
 
@@ -1207,24 +1208,27 @@ public class UIManager : MonoBehaviour {
 		if (!eventsGo.activeSelf) {
 			eventsOfTypeGo.SetActive(false);
 			EventManager.Instance.onHideEvents.Invoke();
+			List<Transform> events = eventCategoriesGrid.GetChildList();
+			for (int i = 0; i < events.Count; i++) {
+				events [i].GetComponent<ButtonToggle>().SetClickState(false);
+			}
 		}
 
 	}
 
-
 	public void ShowEventsOfType(GameObject GO){
-//		if (eventsOfTypeGo.activeSelf) {
-//			if (lastClickedEventType != null) {
-//				if (lastClickedEventType == GO) {
-//					eventsOfTypeGo.SetActive(false);
-//					EventManager.Instance.onHideEvents.Invoke();
-//					return;
-//				} else {
-//					lastClickedEventType.GetComponent<ButtonToggle> ().OnClick ();
-//				}
-//			}
-//			EventManager.Instance.onHideEvents.Invoke();
-//		} 
+		if (eventsOfTypeGo.activeSelf) {
+			if (lastClickedEventType != null) {
+				if (lastClickedEventType == GO) {
+					eventsOfTypeGo.SetActive(false);
+					EventManager.Instance.onHideEvents.Invoke();
+					return;
+				} else {
+					lastClickedEventType.GetComponent<ButtonToggle> ().OnClick ();
+				}
+			}
+			EventManager.Instance.onHideEvents.Invoke();
+		}
 		lastClickedEventType = GO;
 		if (GO.name == "AllBtn") {
 			bool noEvents = true;
@@ -1245,13 +1249,13 @@ public class UIManager : MonoBehaviour {
 				}
 			}
 			if (!noEvents) {
-//				EventManager.Instance.onShowEventsOfType.Invoke (EVENT_TYPES.ALL);
-//				CameraMove.Instance.ShowWholeMap ();
+				EventManager.Instance.onShowEventsOfType.Invoke (EVENT_TYPES.ALL);
+				//				CameraMove.Instance.ShowWholeMap ();
 			}
 		} else {
 			EVENT_TYPES eventType = (EVENT_TYPES)(System.Enum.Parse (typeof(EVENT_TYPES), GO.name));
 			if (EventManager.Instance.allEvents.ContainsKey (eventType)) {
-				List<GameEvent> gameEventsOfType = EventManager.Instance.allEvents[eventType].Where(x => x.isActive).ToList();
+				List<GameEvent> gameEventsOfType = EventManager.Instance.allEvents [eventType].Where (x => x.isActive).ToList ();
 				List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
 				for (int i = 0; i < children.Count; i++) {
 					Destroy (children [i].gameObject);
@@ -1264,8 +1268,53 @@ public class UIManager : MonoBehaviour {
 					eventGO.transform.localScale = Vector3.one;
 				}
 				if (gameEventsOfType.Count > 0) {
-//					EventManager.Instance.onShowEventsOfType.Invoke (eventType);
-//					CameraMove.Instance.ShowWholeMap ();
+					EventManager.Instance.onShowEventsOfType.Invoke (eventType);
+					//					CameraMove.Instance.ShowWholeMap ();
+				}
+			} else {
+				List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
+				for (int i = 0; i < children.Count; i++) {
+					Destroy (children [i].gameObject);
+				}
+			}
+
+		}
+		StartCoroutine (RepositionGrid (gameEventsOfTypeGrid));
+		eventsOfTypeGo.SetActive (true);
+	}
+	public void UpdateEventsOfType(){
+		if (lastClickedEventType.name == "AllBtn") {
+			bool noEvents = true;
+			List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			for (int i = 0; i < EventManager.Instance.allEvents.Keys.Count; i++) {
+				EVENT_TYPES currentKey = EventManager.Instance.allEvents.Keys.ElementAt(i);
+				List<GameEvent> currentGameEventList = EventManager.Instance.allEvents[currentKey].Where(x => x.isActive).ToList();
+				for (int j = 0; j < currentGameEventList.Count; j++) {
+					noEvents = false;
+					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
+					eventGO.GetComponent<EventItem>().SetEvent (currentGameEventList[j]);
+					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (currentKey));
+					eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
+					eventGO.transform.localScale = Vector3.one;
+				}
+			}
+		} else {
+			EVENT_TYPES eventType = (EVENT_TYPES)(System.Enum.Parse (typeof(EVENT_TYPES), lastClickedEventType.name));
+			if (EventManager.Instance.allEvents.ContainsKey (eventType)) {
+				List<GameEvent> gameEventsOfType = EventManager.Instance.allEvents[eventType].Where(x => x.isActive).ToList();
+				List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
+				for (int i = 0; i < children.Count; i++) {
+					Destroy (children [i].gameObject);
+				}
+				for (int i = 0; i < gameEventsOfType.Count; i++) {
+					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
+					eventGO.GetComponent<EventItem> ().SetEvent (gameEventsOfType [i]);
+					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (gameEventsOfType [i].eventType));
+					eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
+					eventGO.transform.localScale = Vector3.one;
 				}
 			}
 
