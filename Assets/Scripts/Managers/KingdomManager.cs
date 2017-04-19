@@ -44,25 +44,28 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 
-		if (elligibleTilesForHumans.Count > 0) {
+		if (elligibleTilesForHumans.Count > 2) {
 			cityForHumans1.Add (elligibleTilesForHumans [0]);
+			cityForHumans1.Add (elligibleTilesForHumans [1]);
 			GenerateNewKingdom (RACE.HUMANS, cityForHumans1, true);
 		}
 
-		if (elligibleTilesForHumans.Count > 1) {
-			cityForHumans2.Add (elligibleTilesForHumans[1]);
+		if (elligibleTilesForHumans.Count > 4) {
+			cityForHumans2.Add (elligibleTilesForHumans[2]);
+			cityForHumans2.Add (elligibleTilesForHumans[3]);
 			GenerateNewKingdom (RACE.HUMANS, cityForHumans2, true);
 		}
 
-		if (elligibleTilesForHumans.Count > 2) {
-			cityForHumans3.Add (elligibleTilesForHumans [2]);
+		if (elligibleTilesForHumans.Count > 6) {
+			cityForHumans3.Add (elligibleTilesForHumans [4]);
+			cityForHumans3.Add (elligibleTilesForHumans [5]);
 			GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
 		}
 
-		if (elligibleTilesForHumans.Count > 2) {
-			cityForHumans4.Add (elligibleTilesForHumans [3]);
-			GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
-		}
+//		if (elligibleTilesForHumans.Count > 2) {
+//			cityForHumans4.Add (elligibleTilesForHumans [3]);
+//			GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
+//		}
 
 		for (int i = 0; i < elligibleTilesForHumans.Count; i++) {
 			habitableTiles.Remove (elligibleTilesForHumans[i]);
