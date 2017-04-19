@@ -22,16 +22,22 @@ public class CitizenAvatar : MonoBehaviour {
 
 	void OnMouseOver(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			string text = "Trader Buffs ";
 			Trader trader = (Trader)citizen.assignedRole;
+			string text = "Name: [b]" + trader.citizen.name + "[/b]\n Home: [b]" + trader.homeCity.name + "[/b]\n Target: [b]" + trader.targetCity.name + "[/b]\n Trader Buffs: \n";
 			for (int i = 0; i < trader.currentlySelling.Count; i++) {
-				text += trader.currentlySelling [i].ToString ();
+				text += "[i]" + trader.currentlySelling [i].ToString () + "[/i]";
 				if (i != (trader.currentlySelling.Count - 1)) {
 					text += ", ";
 				}
 			}
 			UIManager.Instance.ShowSmallInfo (text, UIManager.Instance.transform);
 			this.HighlightPath();
+		}
+	}
+
+	void OnMouseDown(){
+		if (!UIManager.Instance.IsMouseOnUI()) {
+			UIManager.Instance.ShowCitizenInfo (this.citizen);
 		}
 	}
 
