@@ -479,23 +479,23 @@ public class CampaignManager {
 		return (int)percentage;
 	}
 
-	internal void GeneralHasArrived(Citizen general){
-		if (((General)general.assignedRole).generalAvatar != null) {
-			GameObject.Destroy (((General)general.assignedRole).generalAvatar);
-			((General)general.assignedRole).generalAvatar = null;
+	internal void GeneralHasArrived(General general){
+		if (general.generalAvatar != null) {
+			GameObject.Destroy (general.generalAvatar);
+			general.generalAvatar = null;
 		}
-		((General)general.assignedRole).targetLocation = null;
-		Campaign chosenCampaign = SearchCampaignByID (((General)general.assignedRole).campaignID);
+		general.targetLocation = null;
+		Campaign chosenCampaign = SearchCampaignByID (general.campaignID);
 		if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
-			if(((General)general.assignedRole).location == chosenCampaign.rallyPoint){
-				Debug.Log (general.name + " has arrived at rally point " + chosenCampaign.rallyPoint.tileName);
+			if(general.location == chosenCampaign.rallyPoint){
+				Debug.Log (general.citizen.name + " has arrived at rally point " + chosenCampaign.rallyPoint.tileName);
 				if(AreAllGeneralsOnRallyPoint(chosenCampaign)){
 					Debug.Log ("Will attack city now " + chosenCampaign.targetCity.name);
 					AttackCityNow (chosenCampaign);
 				}
-			}else if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){
+			}else if(general.location == chosenCampaign.targetCity.hexTile){
 				//InitiateBattle
-				Debug.Log (general.name + " has arrived at target city " + chosenCampaign.targetCity.name);
+				Debug.Log (general.citizen.name + " has arrived at target city " + chosenCampaign.targetCity.name);
 				CombatManager.Instance.CityBattle(chosenCampaign.targetCity);
 //				((General)general.assignedRole).inAction = false;
 
@@ -505,10 +505,10 @@ public class CampaignManager {
 //				}
 			}
 		}else{
-			if(((General)general.assignedRole).location == chosenCampaign.targetCity.hexTile){
+			if(general.location == chosenCampaign.targetCity.hexTile){
 				//InitiateDefense
 //				((General)general.assignedRole).inAction = false;
-				Debug.Log (general.name + " has arrived at defense target city " + chosenCampaign.targetCity.name);
+				Debug.Log (general.citizen.name + " has arrived at defense target city " + chosenCampaign.targetCity.name);
 				if (chosenCampaign.expiration == -1) {
 					if (AreAllGeneralsOnDefenseCity (chosenCampaign)) {
 						Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + chosenCampaign.targetCity.name + ". START EXPIRATION.");
@@ -529,6 +529,7 @@ public class CampaignManager {
 				chosenCampaign.registeredGenerals [i].daysBeforeArrival = path.Count;
 
 				chosenCampaign.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), chosenCampaign.registeredGenerals [i].location.transform) as GameObject;
+				chosenCampaign.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
 				chosenCampaign.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject>().general = chosenCampaign.registeredGenerals [i];
 				chosenCampaign.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().Init();
 

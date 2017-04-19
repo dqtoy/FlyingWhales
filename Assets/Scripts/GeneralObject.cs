@@ -6,20 +6,25 @@ public class GeneralObject : MonoBehaviour {
 	public TextMesh textMesh;
 
 	internal void Init(){
+		StartCoroutine (Initialize());
+	}
+	private IEnumerator Initialize(){
+		yield return null;
+		this.GetComponent<BoxCollider2D>().enabled = true;
 		if(this.general != null){
 			this.textMesh.text = this.general.army.hp.ToString ();
 		}
 	}
 	void OnTriggerEnter2D(Collider2D other){
-//		if(this.tag == "General" && other.tag == "General"){
-//			if(this.gameObject != null && other.gameObject != null){
-//				if(!Utilities.AreTwoGeneralsFriendly(other.gameObject.GetComponent<GeneralObject>().general, this.general)){
-//					if(!Utilities.AreTwoGeneralsFriendly(this.general, other.gameObject.GetComponent<GeneralObject>().general)){
-//						CombatManager.Instance.BattleMidway (this.general, other.gameObject.GetComponent<GeneralObject> ().general);
-//					}
-//				}
-//			}
-//		}
+		if(this.tag == "General" && other.tag == "General"){
+			if(this.gameObject != null && other.gameObject != null){
+				if(!Utilities.AreTwoGeneralsFriendly(other.gameObject.GetComponent<GeneralObject>().general, this.general)){
+					if(!Utilities.AreTwoGeneralsFriendly(this.general, other.gameObject.GetComponent<GeneralObject>().general)){
+						CombatManager.Instance.BattleMidway (this.general, other.gameObject.GetComponent<GeneralObject> ().general);
+					}
+				}
+			}
+		}
 
 
 	}

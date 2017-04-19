@@ -214,10 +214,18 @@ public class CombatManager : MonoBehaviour {
 		Battle(ref general1, ref general2);
 
 		if(general1.army.hp <= 0){
+			if (general1.generalAvatar != null) {
+				GameObject.Destroy (general1.generalAvatar);
+				general1.generalAvatar = null;
+			}
 			general1.citizen.Death(DEATH_REASONS.BATTLE);
 		}
 
 		if(general2.army.hp <= 0){
+			if (general2.generalAvatar != null) {
+				GameObject.Destroy (general2.generalAvatar);
+				general2.generalAvatar = null;
+			}
 			general2.citizen.Death(DEATH_REASONS.BATTLE);
 		}
 	}
