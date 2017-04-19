@@ -20,6 +20,7 @@ public class CameraMove : MonoBehaviour {
 
 	public Camera eventIconCamera;
 	public Camera resourceIconCamera;
+	public Camera generalCamera;
 
 	private float MIN_X = 66f;
 	private float MAX_X = 126f;
@@ -43,6 +44,8 @@ public class CameraMove : MonoBehaviour {
 		Camera.main.orthographicSize = fov;
 		eventIconCamera.orthographicSize = fov;
 		resourceIconCamera.orthographicSize = fov;
+		generalCamera.orthographicSize = fov;
+
 //		transform.position = new Vector3(
 //			Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
 //			Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
@@ -65,12 +68,16 @@ public class CameraMove : MonoBehaviour {
 		Camera.main.orthographicSize = maxFov;
 		eventIconCamera.orthographicSize = maxFov;
 		resourceIconCamera.orthographicSize = maxFov;
+		generalCamera.orthographicSize = maxFov;
+
 	}
 
 	public void CenterCameraOn(GameObject GO){
 		Camera.main.orthographicSize = minFov;
 		eventIconCamera.orthographicSize = minFov;
 		resourceIconCamera.orthographicSize = minFov;
+		generalCamera.orthographicSize = minFov;
+
 		target = GO.transform;
 //		Vector3 diff = Camera.main.ScreenToWorldPoint(GO.transform.position);
 //		Camera.main.transform.Translate(new Vector3(diff.x, diff.y, 0.0f));

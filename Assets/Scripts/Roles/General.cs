@@ -283,6 +283,7 @@ public class General : Role {
 		}
 
 		this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
+		this.generalAvatar.transform.localPosition = Vector3.zero;
 		this.generalAvatar.GetComponent<GeneralObject>().general = this;
 		this.generalAvatar.GetComponent<GeneralObject> ().Init();
 
@@ -335,7 +336,7 @@ public class General : Role {
 				this.daysBeforeArrival -= 1;
 				if(this.location == this.targetLocation){
 					if(this.warLeader != null){
-						this.warLeader.campaignManager.GeneralHasArrived (this.citizen);
+						this.warLeader.campaignManager.GeneralHasArrived (this);
 					}
 					return;
 				}else{
