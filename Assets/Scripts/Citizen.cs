@@ -685,6 +685,10 @@ public class Citizen {
 //	}
 
 	internal void AssignRole(ROLE role){
+		if (this.role != ROLE.UNTRAINED) {
+			this.assignedRole.OnDeath();
+		}
+
 		this.role = role;
 		if (role == ROLE.FOODIE) {
 			this.assignedRole = new Foodie (this); 

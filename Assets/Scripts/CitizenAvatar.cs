@@ -11,9 +11,6 @@ public class CitizenAvatar : MonoBehaviour {
 	internal void AssignCitizen(Citizen citizen){
 		this.citizen = citizen;
 		this.path = new List<HexTile>();
-		if (citizen.role == ROLE.TRADER) {
-			this.path = ((Trader)citizen.assignedRole).pathToTargetCity;
-		}
 	}
 
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
@@ -29,6 +26,9 @@ public class CitizenAvatar : MonoBehaviour {
 				if (i != (trader.currentlySelling.Count - 1)) {
 					text += ", ";
 				}
+			}
+			if (citizen.role == ROLE.TRADER) {
+				this.path = ((Trader)citizen.assignedRole).pathToTargetCity;
 			}
 			UIManager.Instance.ShowSmallInfo (text, UIManager.Instance.transform);
 			this.HighlightPath();
