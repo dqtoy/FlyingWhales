@@ -1022,7 +1022,7 @@ public class Citizen {
 			value = 8;
 		}
 		if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
-			value = 2;
+			value = 1;
 		}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
 //			value = 6;
 			value = 100;
@@ -1049,7 +1049,7 @@ public class Citizen {
 					svValue = 12;
 				}
 			}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
-				svValue = 2;
+				svValue = 1;
 			}
 			if(svChance < svValue){
 				STATEVISIT_TRIGGER_REASONS svReason = STATEVISIT_TRIGGER_REASONS.NONE;
