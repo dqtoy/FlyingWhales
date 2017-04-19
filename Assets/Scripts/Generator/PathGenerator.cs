@@ -119,17 +119,17 @@ public class PathGenerator : MonoBehaviour {
 	 * Generate Path From one tile to another
 	 * */
 	public void DeterminePath(HexTile start, HexTile destination){
-//		List<HexTile> roadListByDistance = SortAllRoadsByDistance (start, destination); //Sort all road tiles in regards to how far they are from the start
-//		for (int i = 0; i < roadListByDistance.Count; i++) {
-//			if (AreTheseTilesConnected (roadListByDistance [i], destination, PATHFINDING_MODE.NORMAL)) {
-//				Debug.Log ("Connect to roadTile: " + roadListByDistance [i].name + " instead");
-//				if (roadListByDistance[i].isHabitable && roadListByDistance[i].connectedTiles.Contains(start)) {
-//					return; //use the already created road between the 2 cities.
-//				}
-//				SetTilesAsRoads(GetPath(start, roadListByDistance[i], PATHFINDING_MODE.ROAD_CREATION));
-//				return;
-//			}
-//		}
+		List<HexTile> roadListByDistance = SortAllRoadsByDistance (start, destination); //Sort all road tiles in regards to how far they are from the start
+		for (int i = 0; i < roadListByDistance.Count; i++) {
+			if (AreTheseTilesConnected (roadListByDistance [i], destination, PATHFINDING_MODE.NORMAL)) {
+				Debug.Log ("Connect to roadTile: " + roadListByDistance [i].name + " instead");
+				if (roadListByDistance[i].isHabitable && roadListByDistance[i].connectedTiles.Contains(start)) {
+					return; //use the already created road between the 2 cities.
+				}
+				SetTilesAsRoads(GetPath(start, roadListByDistance[i], PATHFINDING_MODE.ROAD_CREATION));
+				return;
+			}
+		}
 		SetTilesAsRoads(GetPath(start, destination, PATHFINDING_MODE.ROAD_CREATION));
 	}
 
@@ -193,7 +193,7 @@ public class PathGenerator : MonoBehaviour {
 		 * Code if you don't want to use cities included in some paths
 		 * * */
 		for (int i = 0; i < tempRoadTiles.Count; i++) {
-			if (tempRoadTiles [i].city != null) {
+			if (tempRoadTiles [i].isHabitable) {
 				tempRoadTiles.Remove (tempRoadTiles [i]);
 			}
 		}
