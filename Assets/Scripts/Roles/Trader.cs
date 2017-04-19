@@ -13,7 +13,7 @@ public class Trader : Role {
 	public TradeManager tradeManager;
 
 	private GameObject traderGameObject;
-	private List<HexTile> pathToTargetCity;
+	internal List<HexTile> pathToTargetCity;
 	internal List<BASE_RESOURCE_TYPE> currentlySelling;
 	private int goldIncomePerTurn = 0;
 	private int currentPathIndex = 0;
@@ -55,8 +55,8 @@ public class Trader : Role {
 		if (this.homeCity.kingdom.id != this.targetCity.kingdom.id) {
 			RelationshipKings rel1 = this.homeCity.kingdom.king.GetRelationshipWithCitizen(this.targetCity.kingdom.king);
 			RelationshipKings rel2 = this.targetCity.kingdom.king.GetRelationshipWithCitizen(this.homeCity.kingdom.king);
-//			rel1.AdjustLikeness(2, EVENT_TYPES.TRADE);
-//			rel2.AdjustLikeness(2, EVENT_TYPES.TRADE);
+			rel1.AdjustLikeness(2, EVENT_TYPES.TRADE);
+			rel2.AdjustLikeness(2, EVENT_TYPES.TRADE);
 			rel1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
 				GameManager.Instance.week,
@@ -98,6 +98,9 @@ public class Trader : Role {
 		//add resources
 		this.homeCity.AdjustResourceCount(BASE_RESOURCE_TYPE.GOLD, this.goldIncomePerTurn);
 		for (int i = 0; i < this.currentlySelling.Count; i++) {
+			if (this.targetCity == null) {
+				Debug.LogError ("LALALALALA");
+			}
 			switch (this.currentlySelling [i]) {
 			case BASE_RESOURCE_TYPE.WOOD:
 				this.targetCity.AdjustResourceCount (BASE_RESOURCE_TYPE.WOOD, 6);

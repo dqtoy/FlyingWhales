@@ -335,6 +335,7 @@ public class Citizen {
 	}
 	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		GameManager.Instance.StartCoroutine (this.DeathCoroutine (reason, isDethroned, newKing, isConquered));
+//		DeathCoroutine(reason, isDethroned, newKing, isConquered);
 	}
 	internal IEnumerator DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		//		this.kingdom.royaltyList.allRoyalties.Remove (this);
@@ -412,7 +413,7 @@ public class Citizen {
 		if(isConquered){
 			this.city.citizens.Remove (this);
 		}else{
-			if(this.role != ROLE.GENERAL){
+			if(this.role != ROLE.GENERAL && this.city != null){
 				this.city.citizens.Remove (this);
 			}
 		}
@@ -684,6 +685,10 @@ public class Citizen {
 //	}
 
 	internal void AssignRole(ROLE role){
+		if (this.role != ROLE.UNTRAINED) {
+			this.assignedRole.OnDeath();
+		}
+
 		this.role = role;
 		if (role == ROLE.FOODIE) {
 			this.assignedRole = new Foodie (this); 

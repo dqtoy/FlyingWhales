@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour {
 //		InvokeRepeating ("WeekEnded", 0f, 1f);
 		UIManager.Instance.SetProgressionSpeed1X();
 		UIManager.Instance.x1Btn.OnClick();
+		this.WeekEnded();
 		StartCoroutine(WeekProgression());
 	}
 

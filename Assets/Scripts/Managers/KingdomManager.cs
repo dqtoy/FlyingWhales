@@ -21,7 +21,7 @@ public class KingdomManager : MonoBehaviour {
 		List<HexTile> cityForHumans1 = new List<HexTile>();
 		List<HexTile> cityForHumans2 = new List<HexTile>();
 		List<HexTile> cityForHumans3 = new List<HexTile>();
-//		List<HexTile> cityForHumans4 = new List<HexTile>();
+		List<HexTile> cityForHumans4 = new List<HexTile>();
 
 		List<HexTile> elligibleTilesForHumans = new List<HexTile>();
 		for (int i = 0; i < habitableTiles.Count; i++) {
@@ -59,16 +59,10 @@ public class KingdomManager : MonoBehaviour {
 			GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
 		}
 
-
-
-
-//		cityForHumans4.Add (elligibleTilesForHumans [3]);
-
-
-
-
-//		GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
-
+		if (elligibleTilesForHumans.Count > 2) {
+			cityForHumans4.Add (elligibleTilesForHumans [3]);
+			GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
+		}
 
 		for (int i = 0; i < elligibleTilesForHumans.Count; i++) {
 			habitableTiles.Remove (elligibleTilesForHumans[i]);
