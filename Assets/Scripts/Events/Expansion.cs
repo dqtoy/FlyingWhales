@@ -32,7 +32,7 @@ public class Expansion : GameEvent {
 			"Sent an expedition to look for new habitable lands." , HISTORY_IDENTIFIER.NONE));
 		
 		this.citizensJoiningExpansion.Add (this.startedBy);
-		this.startedBy.city.RemoveCitizenFromCity(this.startedBy);
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
@@ -55,7 +55,9 @@ public class Expansion : GameEvent {
 					HexTile hexTileToExpandTo = originCity.adjacentHabitableTiles [Random.Range (0, originCity.adjacentHabitableTiles.Count)];
 					this.startedByKingdom.AddTileToKingdom(hexTileToExpandTo);
 //					this.GenerateCitizensForExpansion(hexTileToExpandTo.city);
+					this.startedBy.city.RemoveCitizenFromCity(this.startedBy);
 					hexTileToExpandTo.city.ExpandToThisCity(this.citizensJoiningExpansion);
+
 					this.resolution = "Expansion was successful, new city " + hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
 					this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
 						"Successful Expansion to " + hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));

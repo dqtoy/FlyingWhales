@@ -119,6 +119,7 @@ public class RandomNameGenerator : MonoBehaviour {
 		} else {
 			return generatedElvenFemaleNames.NextName;
 		}
+//		return "";
 	}
 
 	public string GenerateWholeHumanName(GENDER gender){
@@ -129,6 +130,7 @@ public class RandomNameGenerator : MonoBehaviour {
 
 	public string GetHumanSurname(){
 		return generatedHumanSurnames.NextName;
+//		return "";
 	}
 
 	public string GetHumanFirstName(GENDER gender){
@@ -137,6 +139,7 @@ public class RandomNameGenerator : MonoBehaviour {
 		} else {
 			return humanFemaleFirstNames [Random.Range (0, humanFemaleFirstNames.Length)];
 		}
+//		return "";
 	}
 
 //	public static string GenerateRandomName(){

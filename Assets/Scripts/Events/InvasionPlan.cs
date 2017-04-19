@@ -68,10 +68,6 @@ public class InvasionPlan : GameEvent {
 		}
 	}
 
-	internal override void DoneCitizenAction(Citizen citizen){
-		
-	}
-
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;

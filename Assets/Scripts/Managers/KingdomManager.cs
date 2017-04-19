@@ -21,7 +21,7 @@ public class KingdomManager : MonoBehaviour {
 		List<HexTile> cityForHumans1 = new List<HexTile>();
 		List<HexTile> cityForHumans2 = new List<HexTile>();
 		List<HexTile> cityForHumans3 = new List<HexTile>();
-		List<HexTile> cityForHumans4 = new List<HexTile>();
+//		List<HexTile> cityForHumans4 = new List<HexTile>();
 
 		List<HexTile> elligibleTilesForHumans = new List<HexTile>();
 		for (int i = 0; i < habitableTiles.Count; i++) {
@@ -43,15 +43,31 @@ public class KingdomManager : MonoBehaviour {
 				elligibleTilesForHumans.Add(habitableTiles[i]);
 			}
 		}
-		cityForHumans1.Add (elligibleTilesForHumans [0]);
-		cityForHumans2.Add (elligibleTilesForHumans [1]);
-		cityForHumans3.Add (elligibleTilesForHumans [2]);
-		cityForHumans4.Add (elligibleTilesForHumans [3]);
 
-		GenerateNewKingdom (RACE.HUMANS, cityForHumans1, true);
-		GenerateNewKingdom (RACE.HUMANS, cityForHumans2, true);
-		GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
-		GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
+		if (elligibleTilesForHumans.Count > 0) {
+			cityForHumans1.Add (elligibleTilesForHumans [0]);
+			GenerateNewKingdom (RACE.HUMANS, cityForHumans1, true);
+		}
+
+		if (elligibleTilesForHumans.Count > 1) {
+			cityForHumans2.Add (elligibleTilesForHumans[1]);
+			GenerateNewKingdom (RACE.HUMANS, cityForHumans2, true);
+		}
+
+		if (elligibleTilesForHumans.Count > 2) {
+			cityForHumans3.Add (elligibleTilesForHumans [2]);
+			GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
+		}
+
+
+
+
+//		cityForHumans4.Add (elligibleTilesForHumans [3]);
+
+
+
+
+//		GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
 
 
 		for (int i = 0; i < elligibleTilesForHumans.Count; i++) {
@@ -96,8 +112,15 @@ public class KingdomManager : MonoBehaviour {
 		allKingdoms.Add(newKingdom);
 		EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
 		if (isForInitial) {
-			cities [0].city.CreateInitialFamilies();
+			for (int i = 0; i < cities.Count; i++) {
+				if (i == 0) {
+					cities [i].city.CreateInitialFamilies();
+				} else {
+					cities [i].city.CreateInitialFamilies(false);
+				}
+			}
 		}
+
 		this.UpdateKingdomAdjacency();
 	}
 

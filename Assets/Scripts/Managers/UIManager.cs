@@ -1429,7 +1429,7 @@ public class UIManager : MonoBehaviour {
 		this.specificEventCandidatesTitleLbl.text = "PACIFIERS";
 		for(int i = 0; i < borderConflict.activeEnvoysReduce.Count; i++){
 			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
-			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysReduce[i].city.kingdom.king);
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysReduce[i].citizen.city.kingdom.king);
 			candidates.transform.localScale = Vector3.one;
 			candidates.transform.position = Vector3.zero;
 		}
@@ -1439,7 +1439,7 @@ public class UIManager : MonoBehaviour {
 		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
 		for(int i = 0; i < borderConflict.activeEnvoysIncrease.Count; i++){
 			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
-			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysIncrease[i].city.kingdom.king);
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysIncrease[i].citizen.city.kingdom.king);
 			candidates.transform.localScale = Vector3.one;
 			candidates.transform.position = Vector3.zero;
 		}

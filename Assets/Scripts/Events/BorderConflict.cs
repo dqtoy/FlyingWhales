@@ -7,9 +7,9 @@ public class BorderConflict : GameEvent {
 	public Kingdom kingdom1;
 	public Kingdom kingdom2;
 	public List<Kingdom> otherKingdoms;
-	public List<Citizen> activeEnvoysReduceSelf;
-	public List<Citizen> activeEnvoysReduce;
-	public List<Citizen> activeEnvoysIncrease;
+	public List<Envoy> activeEnvoysReduceSelf;
+	public List<Envoy> activeEnvoysReduce;
+	public List<Envoy> activeEnvoysIncrease;
 
 	public int tension;
 
@@ -27,9 +27,9 @@ public class BorderConflict : GameEvent {
 		this.tension = 20;
 		this.kingdom1 = kingdom1;
 		this.kingdom2 = kingdom2;
-		this.activeEnvoysReduceSelf = new List<Citizen> ();
-		this.activeEnvoysReduce = new List<Citizen> ();
-		this.activeEnvoysIncrease = new List<Citizen> ();
+		this.activeEnvoysReduceSelf = new List<Envoy> ();
+		this.activeEnvoysReduce = new List<Envoy> ();
+		this.activeEnvoysIncrease = new List<Envoy> ();
 		this.otherKingdoms = GetOtherKingdoms ();
 
 		this.kingdom1.cities[0].hexTile.AddEventOnTile(this);
@@ -45,8 +45,8 @@ public class BorderConflict : GameEvent {
 		NotInvolvedKingsTensionAdjustment ();
 		CheckIfAlreadyAtWar ();
 	}
-	internal override void DoneCitizenAction(Citizen envoy){
-		if(!envoy.isDead){
+	internal override void DoneCitizenAction(Envoy envoy){
+		if(!envoy.citizen.isDead){
 			//Search for envoys task first on activeenvoys
 			//Do something here add tension or reduce depending on the envoys task
 			if(!SearchEnvoyWhere(this.activeEnvoysReduceSelf, envoy)){
@@ -55,21 +55,21 @@ public class BorderConflict : GameEvent {
 						Debug.Log ("CAN'T FIND ENVOY!");
 					}else{
 						int tensionAmount = 15;
-						if(envoy.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
+						if(envoy.citizen.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
 							tensionAmount += 4;
 						}
 						AdjustTension (tensionAmount);
 					}
 				}else{
 					int tensionAmount = 15;
-					if(envoy.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
+					if(envoy.citizen.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
 						tensionAmount += 4;
 					}
 					AdjustTension (-tensionAmount);
 				}
 			}else{
 				int tensionAmount = 25;
-				if(envoy.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
+				if(envoy.citizen.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
 					tensionAmount += 5;
 				}
 				AdjustTension (-tensionAmount);
@@ -77,9 +77,9 @@ public class BorderConflict : GameEvent {
 		}
 		this.activeEnvoysReduce.Remove (envoy);
 	}
-	internal bool SearchEnvoyWhere(List<Citizen> whereToSearch, Citizen envoy){
+	internal bool SearchEnvoyWhere(List<Envoy> whereToSearch, Envoy envoy){
 		for(int i = 0; i < whereToSearch.Count; i++){
-			if(envoy.id == whereToSearch[i].id){
+			if(envoy.citizen.id == whereToSearch[i].citizen.id){
 				return true;
 			}
 		}
@@ -189,8 +189,15 @@ public class BorderConflict : GameEvent {
 	}
 	private void SendEnvoy(Kingdom sender, Kingdom receiver, bool isFromOthers = false, bool isIncreaseTension = false){
 		int chance = 20;
-		Citizen chosenEnvoy = GetEnvoy (sender);
-		if(chosenEnvoy == null){
+		Citizen chosenCitizen = GetEnvoy (sender);
+		if(chosenCitizen == null){
+			return;
+		}
+		Envoy chosenEnvoy = null;
+		if (chosenCitizen.assignedRole is Envoy) {
+			chosenEnvoy = chosenCitizen.assignedRole as Envoy;
+		}
+		if (chosenEnvoy == null) {
 			return;
 		}
 		if(!isFromOthers){
@@ -208,10 +215,10 @@ public class BorderConflict : GameEvent {
 
 		int random = UnityEngine.Random.Range (0, 100);
 		if(chance < random){
-			((Envoy)chosenEnvoy.assignedRole).eventDuration = 2;
-			((Envoy)chosenEnvoy.assignedRole).currentEvent = this;
-			((Envoy)chosenEnvoy.assignedRole).inAction = true;
-			EventManager.Instance.onWeekEnd.AddListener (((Envoy)chosenEnvoy.assignedRole).WeeklyAction);
+			chosenEnvoy.eventDuration = 2;
+			chosenEnvoy.currentEvent = this;
+			chosenEnvoy.inAction = true;
+			EventManager.Instance.onWeekEnd.AddListener (chosenEnvoy.WeeklyAction);
 
 			if(!isFromOthers){
 				this.activeEnvoysReduceSelf.Add (chosenEnvoy);
@@ -258,13 +265,13 @@ public class BorderConflict : GameEvent {
 	}
 	internal override void DoneEvent(){
 		for(int i = 0; i < this.activeEnvoysIncrease.Count; i++){
-			((Envoy)this.activeEnvoysIncrease[i].assignedRole).inAction = false;
+			this.activeEnvoysIncrease[i].inAction = false;
 		}
 		for(int i = 0; i < this.activeEnvoysReduce.Count; i++){
-			((Envoy)this.activeEnvoysReduce[i].assignedRole).inAction = false;
+			this.activeEnvoysReduce[i].inAction = false;
 		}
 		for(int i = 0; i < this.activeEnvoysReduceSelf.Count; i++){
-			((Envoy)this.activeEnvoysReduceSelf[i].assignedRole).inAction = false;
+			this.activeEnvoysReduceSelf[i].inAction = false;
 		}
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);

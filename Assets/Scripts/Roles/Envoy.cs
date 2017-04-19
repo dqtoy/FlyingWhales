@@ -23,7 +23,7 @@ public class Envoy : Role {
 			EventManager.Instance.onWeekEnd.RemoveListener (WeeklyAction);
 			this.eventDuration = 0;
 			this.inAction = false;
-			currentEvent.DoneCitizenAction (this.citizen);
+			currentEvent.DoneCitizenAction (this);
 			currentEvent = null;
 		}
 	}
@@ -31,7 +31,7 @@ public class Envoy : Role {
 	internal override void OnDeath(){
 		EventManager.Instance.onWeekEnd.RemoveListener (WeeklyAction);
 		if(currentEvent != null){
-			currentEvent.DoneCitizenAction (this.citizen);
+			currentEvent.DoneCitizenAction (this);
 		}
 	}
 }

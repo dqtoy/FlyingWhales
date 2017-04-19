@@ -51,7 +51,7 @@ public class GameEvent {
 
 	internal virtual void PerformAction(){}
 
-	internal virtual void DoneCitizenAction(Citizen citizen){}
+	internal virtual void DoneCitizenAction(Envoy citizen){}
 
 	internal virtual void DoneEvent(){
 		Debug.LogError ("Game Event Ended!");

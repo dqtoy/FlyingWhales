@@ -103,7 +103,7 @@ public class City{
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(UpdateHexTileRoles);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
-		EventManager.Instance.onRecruitCitizensForExpansion.AddListener(DonateCitizensToExpansion);
+//		EventManager.Instance.onRecruitCitizensForExpansion.AddListener(DonateCitizensToExpansion);
 //		EventManager.Instance.onCitizenDiedEvent.AddListener (UpdateHextileRoles);
 
 		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));

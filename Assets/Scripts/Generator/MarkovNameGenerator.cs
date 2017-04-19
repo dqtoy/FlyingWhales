@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class MarkovNameGenerator{
 	//constructor
@@ -39,12 +40,20 @@ public class MarkovNameGenerator{
 		}
 	}
 
+
 	//Get the next random name
 	public string NextName{
 		get{
-			//get a random token somewhere in middle of sample word                
+			//get a random token somewhere in middle of sample word
+			int counter = 0;
 			string s = "";
 			do{
+				
+				counter += 1;
+				if(counter >= 50){
+					Reset();
+					counter = 0;
+				}
 				int n = _rnd.Next(_samples.Count);
 				int nameLength = _samples[n].Length;
 				s = _samples[n].Substring(_rnd.Next(0, _samples[n].Length - _order), _order);
@@ -84,6 +93,7 @@ public class MarkovNameGenerator{
 	//Reset the used names
 	public void Reset(){
 		_used.Clear();
+		Debug.Log ("CLEAR!");
 	}
 
 	//private members
