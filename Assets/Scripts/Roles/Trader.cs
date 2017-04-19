@@ -13,7 +13,7 @@ public class Trader : Role {
 	public TradeManager tradeManager;
 
 	private GameObject traderGameObject;
-	private List<HexTile> pathToTargetCity;
+	internal List<HexTile> pathToTargetCity;
 	internal List<BASE_RESOURCE_TYPE> currentlySelling;
 	private int goldIncomePerTurn = 0;
 	private int currentPathIndex = 0;
