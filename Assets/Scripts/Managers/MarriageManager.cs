@@ -47,7 +47,29 @@ public class MarriageManager : MonoBehaviour {
 			age = UnityEngine.Random.Range (lowerLimit, (otherSpouse.age + 11));
 		}
 		Citizen spouse = new Citizen(otherSpouse.city, age, gender, otherSpouse.generation);
-		spouse.name = RandomNameGenerator.Instance.GenerateRandomName (spouse.city.kingdom.race, spouse.gender);
+		Citizen father = new Citizen (otherSpouse.city, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
+		Citizen mother = new Citizen (otherSpouse.city, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
+
+		father.name = RandomNameGenerator.Instance.GenerateRandomName (father.race, father.gender);
+		mother.name = RandomNameGenerator.Instance.GenerateRandomName (mother.race, mother.gender);
+
+		father.AddChild(spouse);
+		mother.AddChild(spouse);
+		spouse.AddParents(father, mother);
+
+		father.isDirectDescendant = true;
+		mother.isDirectDescendant = true;
+		father.isDead = true;
+		mother.isDead = true;
+
+		otherSpouse.city.citizens.Remove(father);
+		otherSpouse.city.citizens.Remove(mother);
+
+		father.UnsubscribeListeners();
+		mother.UnsubscribeListeners();
+
+		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
+		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
 
 		Marry (otherSpouse, spouse);
 		return spouse;

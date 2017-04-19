@@ -14,7 +14,7 @@ public class Trader : Role {
 
 	private GameObject traderGameObject;
 	private List<HexTile> pathToTargetCity;
-	private List<BASE_RESOURCE_TYPE> currentlySelling;
+	internal List<BASE_RESOURCE_TYPE> currentlySelling;
 	private int goldIncomePerTurn = 0;
 	private int currentPathIndex = 0;
 

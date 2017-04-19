@@ -1085,17 +1085,19 @@ public class UIManager : MonoBehaviour {
 
 	public void ShowSmallInfo(string info, Transform parent){
 		smallInfoLbl.text = info;
-		smallInfoGO.transform.parent = parent;
-		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
-		Vector3 newPos = smallInfoGO.transform.localPosition;
-//		if (parent.name == "CharacterPortraitPrefab(Clone)") {
-//			newPos.y -= 85f;
-//		} else {
-//			newPos.y -= 50f;
-//		}
-		smallInfoGO.transform.localPosition = newPos;
-		smallInfoGO.transform.parent = this.transform;
-		smallInfoGO.transform.localScale = Vector3.one;
+
+		var v3 = Input.mousePosition;
+		v3.z = 10.0f;
+		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+		v3.y -= 0.13f;
+		smallInfoGO.transform.position = v3;
+//		smallInfoGO.transform.parent = parent;
+//		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
+//		Vector3 newPos = smallInfoGO.transform.localPosition;
+
+//		smallInfoGO.transform.localPosition = newPos;
+//		smallInfoGO.transform.parent = this.transform;
+//		smallInfoGO.transform.localScale = Vector3.one;
 		smallInfoGO.SetActive (true);
 	}
 
@@ -1297,7 +1299,6 @@ public class UIManager : MonoBehaviour {
 	}
 	public void UpdateEventsOfType(){
 		if (lastClickedEventType.name == "AllBtn") {
-			bool noEvents = true;
 			List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
 			for (int i = 0; i < children.Count; i++) {
 				Destroy (children [i].gameObject);
@@ -1306,7 +1307,6 @@ public class UIManager : MonoBehaviour {
 				EVENT_TYPES currentKey = EventManager.Instance.allEvents.Keys.ElementAt(i);
 				List<GameEvent> currentGameEventList = EventManager.Instance.allEvents[currentKey].Where(x => x.isActive).ToList();
 				for (int j = 0; j < currentGameEventList.Count; j++) {
-					noEvents = false;
 					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
 					eventGO.GetComponent<EventItem>().SetEvent (currentGameEventList[j]);
 					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (currentKey));

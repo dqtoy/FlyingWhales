@@ -54,11 +54,11 @@ public class City{
 	}
 
 	public List<Citizen> elligibleBachelorettes{
-		get{ return this.citizens.Where(x => x.age >= 16 && x.gender == GENDER.FEMALE && !x.isMarried).ToList();}
+		get{ return this.citizens.Where(x => x.age >= 16 && x.gender == GENDER.FEMALE && !x.isMarried && !x.isDead).ToList();}
 	}
 
 	public List<Citizen> elligibleBachelors{
-		get{ return this.citizens.Where(x => x.age >= 16 && x.gender == GENDER.MALE && !x.isMarried).ToList();}
+		get{ return this.citizens.Where(x => x.age >= 16 && x.gender == GENDER.MALE && !x.isMarried && !x.isDead).ToList();}
 	}
 
 	public List<HexTile> adjacentHabitableTiles{
@@ -223,6 +223,9 @@ public class City{
 		this.citizens.Remove(father);
 		this.citizens.Remove(mother);
 
+		father.UnsubscribeListeners();
+		mother.UnsubscribeListeners();
+
 		father.AddChild (this.kingdom.king);
 		mother.AddChild (this.kingdom.king);
 		king.AddParents(father, mother);
@@ -252,6 +255,7 @@ public class City{
 		int spouseChance = UnityEngine.Random.Range (0, 100);
 		if (spouseChance < 80) {
 			Citizen spouse = MarriageManager.Instance.CreateSpouse (this.kingdom.king);
+
 			List<int> childAges = Enumerable.Range(0, (spouse.age - 16)).ToList();
 			if(spouse.gender == GENDER.MALE){
 				childAges = Enumerable.Range(0, (this.kingdom.king.age - 16)).ToList();
@@ -328,7 +332,8 @@ public class City{
 		mother.isDead = true;
 		this.citizens.Remove(father);
 		this.citizens.Remove(mother);
-
+		father.UnsubscribeListeners();
+		mother.UnsubscribeListeners();
 
 		MarriageManager.Instance.Marry(father, mother);
 
@@ -432,7 +437,8 @@ public class City{
 		mother.isDead = true;
 		this.citizens.Remove(father);
 		this.citizens.Remove(mother);
-
+		father.UnsubscribeListeners();
+		mother.UnsubscribeListeners();
 
 		MarriageManager.Instance.Marry(father, mother);
 
@@ -487,6 +493,8 @@ public class City{
 			mother.isDead = true;
 			this.citizens.Remove(father);
 			this.citizens.Remove(mother);
+			father.UnsubscribeListeners();
+			mother.UnsubscribeListeners();
 
 			MarriageManager.Instance.Marry(father, mother);
 
@@ -544,7 +552,8 @@ public class City{
 			mother.isDead = true;
 			this.citizens.Remove(father);
 			this.citizens.Remove(mother);
-
+			father.UnsubscribeListeners();
+			mother.UnsubscribeListeners();
 		
 			MarriageManager.Instance.Marry(father, mother);
 
@@ -601,7 +610,8 @@ public class City{
 			mother.isDead = true;
 			this.citizens.Remove(father);
 			this.citizens.Remove(mother);
-
+			father.UnsubscribeListeners();
+			mother.UnsubscribeListeners();
 
 			MarriageManager.Instance.Marry(father, mother);
 

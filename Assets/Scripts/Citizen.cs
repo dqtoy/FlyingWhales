@@ -348,7 +348,9 @@ public class Citizen {
 				this.city.kingdom.AddPretender (possiblePretender);
 			}
 		}
-		this.city.kingdom.successionLine.Remove (this);
+		if (this.city != null) {
+			this.city.kingdom.successionLine.Remove (this);
+		}
 		this.isDead = true;
 		if (this.workLocation != null) {
 			this.workLocation.UnoccupyTile();
@@ -722,11 +724,10 @@ public class Citizen {
 		if (this.id == otherCitizen.id) {
 			return true;
 		}
-		if (this.mother != null && this.father != null) {
-			if (otherCitizen.id == this.father.id || otherCitizen.id == this.mother.id) {
-				//royalty is father or mother
-				return true;
-			}
+
+		if (otherCitizen.id == this.father.id || otherCitizen.id == this.mother.id) {
+			//royalty is father or mother
+			return true;
 		}
 
 		if (this.father.father != null) {
@@ -1365,5 +1366,12 @@ public class Citizen {
 
 	internal void RemoveSuccessionWarCity (City city){
 		this.campaignManager.successionWarCities.RemoveAll (x => x.city.id == city.id);
+	}
+
+	internal void UnsubscribeListeners(){
+		EventManager.Instance.onCitizenTurnActions.RemoveListener(TurnActions);
+		EventManager.Instance.onUnsupportCitizen.RemoveListener(UnsupportCitizen);
+		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
+		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
 	}
 }
