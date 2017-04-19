@@ -36,4 +36,20 @@ public class GeneralObject : MonoBehaviour {
 			this.textMesh.text = this.general.army.hp.ToString ();
 		}
 	}
+
+	void OnMouseEnter(){
+		if (!UIManager.Instance.IsMouseOnUI()) {
+			if(this.general.warLeader != null){
+				Campaign chosenCampaign = this.general.warLeader.campaignManager.SearchCampaignByID (this.general.campaignID);
+				if(chosenCampaign != null){
+					UIManager.Instance.ShowCampaignInfo (chosenCampaign, this.general, UIManager.Instance.transform);
+
+				}
+			}
+		}
+	}
+
+	void OnMouseExit(){
+		UIManager.Instance.HideCampaignInfo();
+	}
 }
