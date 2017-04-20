@@ -62,8 +62,8 @@ public class KingdomManager : MonoBehaviour {
 			GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
 		}
 
-//		if (elligibleTilesForHumans.Count > 2) {
-//			cityForHumans4.Add (elligibleTilesForHumans [3]);
+//		if (elligibleTilesForHumans.Count > 7) {
+//			cityForHumans4.Add (elligibleTilesForHumans [6]);
 //			GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
 //		}
 

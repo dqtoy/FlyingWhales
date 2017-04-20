@@ -11,6 +11,8 @@ public class HistoryPortrait : MonoBehaviour {
 	public Sprite[] icons;
 	public History history;
 
+	private bool isHovering = false;
+
 	public void SetHistory(History history){
 		this.history = history;
 //		this.iconSprite.sprite2D = GetSprite ();
@@ -35,10 +37,16 @@ public class HistoryPortrait : MonoBehaviour {
 	}
 	void OnHover(bool isOver){
 		if (isOver) {
+			this.isHovering = true;
 			UIManager.Instance.ShowSmallInfo ("[b]" + this.history.description + "[/b]", this.transform);
 		} else {
+			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();
 		}
 	}
-
+	void Update(){
+		if (this.isHovering) {
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.history.description + "[/b]", this.transform);
+		}
+	}
 }

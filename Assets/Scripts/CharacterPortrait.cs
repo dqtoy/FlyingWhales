@@ -13,6 +13,7 @@ public class CharacterPortrait : MonoBehaviour {
 	public UILabel characterKingdomNameLbl;
 	public GameObject relationshipLine;
 	public GameObject[] relationshipCircles;
+	public GameObject lineGO;
 
 	public Citizen citizen;
 	private bool isHoverEnabled = true;
