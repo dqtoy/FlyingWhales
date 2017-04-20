@@ -87,8 +87,8 @@ public class EventManager : MonoBehaviour {
 			EVENT_TYPES currentKey = this.allEvents.Keys.ElementAt(i);
 			List<GameEvent> gameEventsOfType = this.allEvents [currentKey];
 			for (int j = 0; j < gameEventsOfType.Count; j++) {
-				if (gameEventsOfType[i].startedByCity.id == city.id) {
-					gameEventsOfCity.Add(gameEventsOfType [i]);
+				if (gameEventsOfType[j].startedByCity.id == city.id) {
+					gameEventsOfCity.Add(gameEventsOfType [j]);
 				}
 			}
 		}

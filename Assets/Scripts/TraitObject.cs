@@ -9,6 +9,7 @@ public class TraitObject : MonoBehaviour {
 	public MISC_TRAIT miscTrait = MISC_TRAIT.NONE;
 
 	public UI2DSprite innerSprite;
+	private bool isHovering = false;
 
 	public void SetTrait(BEHAVIOR_TRAIT bTrait, SKILL_TRAIT sTrait, MISC_TRAIT mTrait){
 		behaviourTrait = bTrait;
@@ -19,6 +20,7 @@ public class TraitObject : MonoBehaviour {
 
 	void OnHover(bool isOver){
 		if (isOver) {
+			this.isHovering = true;
 			if (behaviourTrait != BEHAVIOR_TRAIT.NONE) {
 				UIManager.Instance.ShowSmallInfo ("[b]" + behaviourTrait.ToString() + "[/b]", this.transform);
 			} else if (skillTrait != SKILL_TRAIT.NONE) {
@@ -27,7 +29,20 @@ public class TraitObject : MonoBehaviour {
 				UIManager.Instance.ShowSmallInfo ("[b]" + miscTrait.ToString() + "[/b]", this.transform);
 			}
 		} else {
+			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();
+		}
+	}
+
+	void Update(){
+		if (this.isHovering) {
+			if (behaviourTrait != BEHAVIOR_TRAIT.NONE) {
+				UIManager.Instance.ShowSmallInfo ("[b]" + behaviourTrait.ToString() + "[/b]", this.transform);
+			} else if (skillTrait != SKILL_TRAIT.NONE) {
+				UIManager.Instance.ShowSmallInfo ("[b]" + skillTrait.ToString() + "[/b]", this.transform);
+			} else if (miscTrait != MISC_TRAIT.NONE) {
+				UIManager.Instance.ShowSmallInfo ("[b]" + miscTrait.ToString() + "[/b]", this.transform);
+			}
 		}
 	}
 }

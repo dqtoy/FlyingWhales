@@ -16,6 +16,7 @@ public class CharacterPortrait : MonoBehaviour {
 
 	public Citizen citizen;
 	private bool isHoverEnabled = true;
+	private bool isHovering = false;
 
 	public void SetCitizen(Citizen citizen, bool showInfo = false){
 		this.citizen = citizen;
@@ -60,6 +61,7 @@ public class CharacterPortrait : MonoBehaviour {
 			return;
 		}
 		if (isOver) {
+			this.isHovering = true;
 			if (citizen.city != null) {
 				UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i]" + citizen.city.kingdom.name + "[/i]", this.transform);
 			} else {
@@ -67,6 +69,7 @@ public class CharacterPortrait : MonoBehaviour {
 			}
 
 		} else {
+			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();
 		}
 	}
@@ -80,6 +83,16 @@ public class CharacterPortrait : MonoBehaviour {
 			UIManager.Instance.ShowCitizenInfo (citizen);
 		} else {
 			onClickCharacterPortrait(this.citizen);
+		}
+	}
+
+	void Update(){
+		if (this.isHovering) {
+			if (citizen.city != null) {
+				UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i]" + citizen.city.kingdom.name + "[/i]", this.transform);
+			} else {
+				UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i] No Kingdom [/i]", this.transform);
+			}
 		}
 	}
 }

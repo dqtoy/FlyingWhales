@@ -13,6 +13,8 @@ public class Expansion : GameEvent {
 	protected bool isExpanding = false;
 	protected City originCity;
 
+	internal HexTile hexTileToExpandTo = null;
+
 	public Expansion(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.EXPANSION;
 		this.description = startedBy.city.kingdom.king.name + " is looking looking to expand his kingdom and has funded and expedition led by " + startedBy.name;
@@ -24,6 +26,8 @@ public class Expansion : GameEvent {
 		this.originCity = startedBy.city;
 
 		Debug.LogError(this.description);
+
+		this.startedBy.city.hexTile.AddEventOnTile(this);
 
 		this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
 			"Sent an expedition to look for new habitable lands for his kingdom " + startedBy.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
@@ -52,15 +56,16 @@ public class Expansion : GameEvent {
 			} else {
 				//Expand
 				if (originCity.adjacentHabitableTiles.Count > 0) {
-					HexTile hexTileToExpandTo = originCity.adjacentHabitableTiles [Random.Range (0, originCity.adjacentHabitableTiles.Count)];
-					this.startedByKingdom.AddTileToKingdom(hexTileToExpandTo);
-//					this.GenerateCitizensForExpansion(hexTileToExpandTo.city);
-					this.startedBy.city.RemoveCitizenFromCity(this.startedBy);
-					hexTileToExpandTo.city.ExpandToThisCity(this.citizensJoiningExpansion);
+					if (this.hexTileToExpandTo == null) {
+						this.hexTileToExpandTo = originCity.adjacentHabitableTiles [Random.Range (0, originCity.adjacentHabitableTiles.Count)];
+					}
+					this.startedByKingdom.AddTileToKingdom(this.hexTileToExpandTo);
+//					this.startedBy.city.RemoveCitizenFromCity(this.startedBy);
+					this.hexTileToExpandTo.city.ExpandToThisCity(this.citizensJoiningExpansion);
 
-					this.resolution = "Expansion was successful, new city " + hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
+					this.resolution = "Expansion was successful, new city " + this.hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
 					this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
-						"Successful Expansion to " + hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));
+						"Successful Expansion to " + this.hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));
 					this.DoneEvent ();
 				} else {
 					this.resolution = "Expansion Citizens we're killed.";
@@ -118,18 +123,6 @@ public class Expansion : GameEvent {
 	protected void Recruit(){
 		this.remainingRecruitmentPeriodInWeeks -= 1;
 		EventManager.Instance.onRecruitCitizensForExpansion.Invoke (this, this.startedByKingdom);
-	}
-
-	protected void GenerateCitizensForExpansion(City cityToExpandTo){
-		for (int i = 0; i < 11; i++) {
-			GENDER gender = GENDER.MALE;
-			int randomGender = UnityEngine.Random.Range (0, 100);
-			if(randomGender < 20){
-				gender = GENDER.FEMALE;
-			}
-			Citizen citizen = new Citizen (cityToExpandTo, Random.Range (16, 30), gender, this.startedBy.generation);
-			this.citizensJoiningExpansion.Add (citizen);
-		}
 	}
 
 	internal override void DoneEvent(){

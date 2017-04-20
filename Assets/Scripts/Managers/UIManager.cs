@@ -197,6 +197,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject goStateVisit;
 	public GameObject goMarriageInvitation;
 	public GameObject goPowerGrab;
+	public GameObject goExpansion;
 	public UIPopupList eventDropdownList;
 	public UILabel eventDropdownCurrentSelectionLbl;
 
@@ -257,8 +258,8 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void SetProgressionSpeed4X(){
-//		GameManager.Instance.SetProgressionSpeed(1f);
-		GameManager.Instance.SetProgressionSpeed(0.5f);
+		GameManager.Instance.SetProgressionSpeed(1f);
+//		GameManager.Instance.SetProgressionSpeed(0.5f);
 		if (pauseBtn.isClicked) {
 			this.TogglePause();
 			pauseBtn.OnClick();
@@ -1339,7 +1340,7 @@ public class UIManager : MonoBehaviour {
 	}
 		
 	public void ShowSpecificEvent(GameEvent gameEvent, bool isOnUpdate = false){
-		specificEventNameLbl.text = gameEvent.eventType.ToString();
+		specificEventNameLbl.text = gameEvent.eventType.ToString().Replace("_", " ");
 		specificEventDescriptionLbl.text = gameEvent.description;
 		specificEventStartDateLbl.text = "Started " + ((MONTH)gameEvent.startMonth).ToString() + " " + gameEvent.startWeek.ToString() + ", " + gameEvent.startYear.ToString();
 
@@ -1710,6 +1711,8 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid(specificEventStartedByGrid));
 		}
 
+		lblSpecificSuccessRate.text = exhortationEvent.successRate.ToString();
+		lblSpecificSuccessRate.gameObject.SetActive (true);
 		//for target
 		specificEventCandidatesTitleLbl.text = "Target";
 		children = specificEventCandidatesGrid.GetChildList();
@@ -1757,6 +1760,13 @@ public class UIManager : MonoBehaviour {
 		}
 
 		//for military summary
+		children = specificEventCandidatesGrid.GetChildList();
+		if (children.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children[i].gameObject);
+			}
+		}
+
 		specificEventCandidatesTitleLbl.text = "MILITARY";
 		int totalMilitaryStrength = 0;
 		List<Citizen> generals = militarizationEvent.startedByCity.GetCitizensWithRole(ROLE.GENERAL);
@@ -1934,6 +1944,8 @@ public class UIManager : MonoBehaviour {
 			startedByGO.transform.position = Vector3.zero;
 			StartCoroutine (RepositionGrid(specificEventStartedByGrid));
 		}
+
+		specificEventCandidatesTitleLbl.text = "";
 	}
 
 	private void ClearSpecificEventUI(){
@@ -1951,6 +1963,7 @@ public class UIManager : MonoBehaviour {
 		for (int i = 0; i < miscGridItems.Count; i++) {
 			Destroy(miscGridItems[i].gameObject);
 		}
+		lblSpecificSuccessRate.gameObject.SetActive(false);
 		specificEventsCandidatesLbl.gameObject.SetActive(false);
 		specificEventMiscTitleLbl.gameObject.SetActive(false);
 	}
@@ -2016,21 +2029,31 @@ public class UIManager : MonoBehaviour {
 			goStateVisit.SetActive (false);
 			goMarriageInvitation.SetActive (false);
 			goPowerGrab.SetActive (false);
+			goExpansion.SetActive (false);
 		}else if(this.eventDropdownList.value == "State Visit"){
 			goRaid.SetActive (false);
 			goStateVisit.SetActive (true);
 			goMarriageInvitation.SetActive (false);
 			goPowerGrab.SetActive (false);
+			goExpansion.SetActive (false);
 		}else if(this.eventDropdownList.value == "Marriage Invitation"){
 			goRaid.SetActive (false);
 			goStateVisit.SetActive (false);
 			goMarriageInvitation.SetActive (true);
 			goPowerGrab.SetActive (false);
+			goExpansion.SetActive (false);
 		}else if(this.eventDropdownList.value == "Power Grab"){
 			goRaid.SetActive (false);
 			goStateVisit.SetActive (false);
 			goMarriageInvitation.SetActive (false);
 			goPowerGrab.SetActive (true);
+			goExpansion.SetActive (false);
+		}else if(this.eventDropdownList.value == "Expansion"){
+			goRaid.SetActive (false);
+			goStateVisit.SetActive (false);
+			goMarriageInvitation.SetActive (false);
+			goPowerGrab.SetActive (false);
+			goExpansion.SetActive (true);
 		}
 	}
 
