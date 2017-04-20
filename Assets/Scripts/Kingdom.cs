@@ -64,7 +64,7 @@ public class Kingdom{
 	protected void CreateInitialRelationships(){
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {
-				this.relationshipsWithOtherKingdoms.Add (new Relationship<Kingdom>(KingdomManager.Instance.allKingdoms [i]));
+				this.relationshipsWithOtherKingdoms.Add (new RelationshipKingdom(KingdomManager.Instance.allKingdoms [i]));
 			}
 		}
 	}
@@ -80,7 +80,7 @@ public class Kingdom{
 				return;
 			}
 		}
-		this.relationshipsWithOtherKingdoms.Add(new Relationship<Kingdom>(createdKingdom));
+		this.relationshipsWithOtherKingdoms.Add(new RelationshipKingdom(createdKingdom));
 	}
 
 	protected void AttemptToExpand(){
@@ -287,7 +287,7 @@ public class Kingdom{
 		return siblings;
 	}
 
-	internal Relationship<Kingdom> GetRelationshipWithOtherKingdom(Kingdom kingdomTarget){
+	internal RelationshipKingdom GetRelationshipWithOtherKingdom(Kingdom kingdomTarget){
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
 			if (this.relationshipsWithOtherKingdoms[i].objectInRelationship.id == kingdomTarget.id) {
 				return this.relationshipsWithOtherKingdoms[i];

@@ -1132,7 +1132,6 @@ public class Citizen {
 			Citizen spy = GetSpy(this.city.kingdom);
 			if(spy != null){
 				Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king, spy, reason);
-				EventManager.Instance.AddEventToDictionary(assassination);
 			}
 		}
 	}

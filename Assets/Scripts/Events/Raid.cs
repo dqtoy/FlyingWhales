@@ -284,7 +284,7 @@ public class Raid : GameEvent {
 		}
 		List<Kingdom> otherAdjacentKingdoms = new List<Kingdom> ();
 		for(int i = 0; i < this.otherKingdoms.Count; i++){
-			Relationship<Kingdom> relationship = this.raidedCity.kingdom.GetRelationshipWithOtherKingdom (this.otherKingdoms [i]);
+			RelationshipKingdom relationship = this.raidedCity.kingdom.GetRelationshipWithOtherKingdom (this.otherKingdoms [i]);
 			if(relationship.isAdjacent){
 				otherAdjacentKingdoms.Add (this.otherKingdoms [i]);
 			}

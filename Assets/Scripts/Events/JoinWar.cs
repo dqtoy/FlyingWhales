@@ -95,5 +95,6 @@ public class JoinWar : GameEvent {
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		envoyToSend.inAction = false;
 	}
 }

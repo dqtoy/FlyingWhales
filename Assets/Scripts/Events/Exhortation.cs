@@ -58,6 +58,7 @@ public class Exhortation : GameEvent {
 			}else{
 				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
 			}
+			this.DoneEvent();
 		}
 	}
 
@@ -65,5 +66,8 @@ public class Exhortation : GameEvent {
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		if (citizenSent.role == ROLE.ENVOY) {
+			((Envoy)citizenSent.assignedRole).inAction = false;
+		}
 	}
 }

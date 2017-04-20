@@ -182,6 +182,22 @@ public class UIManager : MonoBehaviour {
 	public UILabel lblSpecificSuccessRate;
 	public UILabel specificEventsCandidatesLbl;
 
+	//For War UI
+	public GameObject specificEventNormalGO;
+	public GameObject specificEventWarGO;
+	public UILabel warKingdom1Lbl;
+	public UILabel warKingdom1BatWonLbl;
+	public UILabel warKingdom1BatLostLbl;
+	public UILabel warKingdom1CitiesWonLbl;
+	public UILabel warKingdom1CitiesLostLbl;
+	public UIProgressBar warKingdom1ExhaustionBar;
+	public UILabel warKingdom2Lbl;
+	public UILabel warKingdom2BatWonLbl;
+	public UILabel warKingdom2BatLostLbl;
+	public UILabel warKingdom2CitiesWonLbl;
+	public UILabel warKingdom2CitiesLostLbl;
+	public UIProgressBar warKingdom2ExhaustionBar;
+
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	private Citizen currentlyShowingCitizen;
@@ -484,7 +500,7 @@ public class UIManager : MonoBehaviour {
 		cityCobaltLbl.text = cityToShow.cobaltCount.ToString();
 		cityMithrilLbl.text = cityToShow.mithrilCount.ToString();
 		cityFoodLbl.text = "CITIZENS: " + cityToShow.citizens.Count + "/" + cityToShow.sustainability.ToString();
-
+		cityInfoCtizenPortraitBG.color = cityToShow.kingdom.kingdomColor;
 
 
 		if (cityInfoCitizensParent.activeSelf || showCitizens) {
@@ -1343,9 +1359,11 @@ public class UIManager : MonoBehaviour {
 			}
 
 		}
+
 		StartCoroutine (RepositionGrid (gameEventsOfTypeGrid));
 		eventsOfTypeGo.SetActive (true);
 	}
+
 	public void UpdateEventsOfType(){
 		if (lastClickedEventType.name == "AllBtn") {
 			List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
@@ -1395,6 +1413,9 @@ public class UIManager : MonoBehaviour {
 		this.lblSpecificPilfered.gameObject.SetActive(false);
 		this.lblSpecificSuccessRate.gameObject.SetActive(false);
 		this.goSpecificHiddenEventItem.SetActive(false);
+		specificEventsCandidatesLbl.gameObject.SetActive(false);
+		specificEventNormalGO.SetActive (true);
+		specificEventWarGO.SetActive (false);
 		if(gameEvent.eventStatus == EVENT_STATUS.HIDDEN){
 			this.goSpecificEventHidden.SetActive(true);
 		}else{
@@ -1442,6 +1463,9 @@ public class UIManager : MonoBehaviour {
 		}else if (gameEvent.eventType == EVENT_TYPES.EXPANSION) {
 			Expansion expansion = (Expansion)gameEvent;
 			ShowExpansionEvent (expansion);
+		}else if (gameEvent.eventType == EVENT_TYPES.KINGDOM_WAR) {
+			War war = (War)gameEvent;
+			ShowWarEvent (war);
 		}
 
 		specificEventResolutionLbl.text = gameEvent.resolution;
@@ -1794,8 +1818,8 @@ public class UIManager : MonoBehaviour {
 		for (int i = 0; i < generals.Count; i++) {
 			totalMilitaryStrength += ((General)generals[i].assignedRole).army.hp;
 		}
-		specificEventCandidatesTitleLbl.text = "Generals: " + generals.Count.ToString () + "\nTotal Strength: " + totalMilitaryStrength.ToString();
-		specificEventCandidatesTitleLbl.gameObject.SetActive(true);
+		specificEventsCandidatesLbl.text = "Generals: " + generals.Count.ToString () + "\nTotal Strength: " + totalMilitaryStrength.ToString();
+		specificEventsCandidatesLbl.gameObject.SetActive(true);
 
 		//Uncovered
 		specificEventMiscTitleLbl.text = "UNCOVERED";
@@ -1968,6 +1992,27 @@ public class UIManager : MonoBehaviour {
 
 		specificEventCandidatesTitleLbl.text = "";
 	}
+	private void ShowWarEvent(War warEvent){
+		warKingdom1Lbl.text = warEvent.kingdom1.name;
+		warKingdom2Lbl.text = warEvent.kingdom2.name;
+
+		warKingdom1ExhaustionBar.value = (float)warEvent.kingdom1Rel.kingdomWar.exhaustion / 100f;
+		warKingdom2ExhaustionBar.value = (float)warEvent.kingdom2Rel.kingdomWar.exhaustion / 100f;
+
+		warKingdom1BatWonLbl.text = warEvent.kingdom1Rel.kingdomWar.battlesWon.ToString();
+		warKingdom1BatLostLbl.text = warEvent.kingdom1Rel.kingdomWar.battlesLost.ToString();
+		warKingdom1CitiesWonLbl.text = warEvent.kingdom1Rel.kingdomWar.citiesWon.ToString();
+		warKingdom1CitiesLostLbl.text = warEvent.kingdom1Rel.kingdomWar.citiesLost.ToString();
+
+		warKingdom2BatWonLbl.text = warEvent.kingdom2Rel.kingdomWar.battlesWon.ToString();
+		warKingdom2BatLostLbl.text = warEvent.kingdom2Rel.kingdomWar.battlesLost.ToString();
+		warKingdom2CitiesWonLbl.text = warEvent.kingdom2Rel.kingdomWar.citiesWon.ToString();
+		warKingdom2CitiesLostLbl.text = warEvent.kingdom2Rel.kingdomWar.citiesLost.ToString();
+
+
+		specificEventNormalGO.SetActive (false);
+		specificEventWarGO.SetActive (true);
+	}
 
 	private void ClearSpecificEventUI(){
 		Transform startedByGridItem = specificEventStartedByGrid.GetChild(0);
@@ -1987,6 +2032,8 @@ public class UIManager : MonoBehaviour {
 		lblSpecificSuccessRate.gameObject.SetActive(false);
 		specificEventsCandidatesLbl.gameObject.SetActive(false);
 		specificEventMiscTitleLbl.gameObject.SetActive(false);
+		specificEventNormalGO.SetActive (true);
+		specificEventWarGO.SetActive (false);
 	}
 
 	public void HideSpecificEvent(){

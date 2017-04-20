@@ -181,7 +181,6 @@ public class StateVisit : GameEvent {
 					Citizen spy = GetSpy(this.otherKingdoms[i]);
 					if(spy != null){
 						Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.otherKingdoms[i].king, this.visitor, spy, ASSASSINATION_TRIGGER_REASONS.STATE_VISITING);
-						EventManager.Instance.AddEventToDictionary(assassination);
 					}
 				}
 			}

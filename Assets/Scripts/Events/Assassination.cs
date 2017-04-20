@@ -352,7 +352,7 @@ public class Assassination : GameEvent {
 	private Kingdom GetRandomKingdomToBlame(){
 		List<Kingdom> otherAdjacentKingdoms = new List<Kingdom> ();
 		for(int i = 0; i < this.otherKingdoms.Count; i++){
-			Relationship<Kingdom> relationship = assassinKingdom.GetRelationshipWithOtherKingdom (this.otherKingdoms [i]);
+			RelationshipKingdom relationship = assassinKingdom.GetRelationshipWithOtherKingdom (this.otherKingdoms [i]);
 			if(relationship.isAdjacent){
 				otherAdjacentKingdoms.Add (this.otherKingdoms [i]);
 			}

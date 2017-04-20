@@ -34,6 +34,7 @@ public class Militarization : GameEvent {
 			if (envoys.Count > 0 && friends.Count > 0) {
 				Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
 				Citizen citizenToPersuade = friends[Random.Range(0, friends.Count)].king;
+				envoyToSend.inAction = true;
 				JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
 					citizenToPersuade, envoyToSend, invasionPlanThatTriggeredEvent.targetKingdom);
 			} else {

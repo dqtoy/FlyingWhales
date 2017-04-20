@@ -60,6 +60,7 @@ public class InvasionPlan : GameEvent {
 			if (envoys.Count > 0 && friends.Count > 0) {
 				Envoy envoyToSend = (Envoy)envoys[Random.Range (0, envoys.Count)].assignedRole;
 				Citizen citizenToPersuade = friends[Random.Range(0, friends.Count)].king;
+				envoyToSend.inAction = true;
 				JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
 					citizenToPersuade, envoyToSend, this.targetKingdom);
 			} else {
@@ -98,7 +99,7 @@ public class InvasionPlan : GameEvent {
 	}
 
 	private bool IsThereMilitarizationActive(ref Militarization currentMilitarization){
-		List<GameEvent> militarizationEvents = EventManager.Instance.GetEventsOfType (EVENT_TYPES.MILITARIZATION);
+		List<GameEvent> militarizationEvents = EventManager.Instance.GetEventsOfType (EVENT_TYPES.MILITARIZATION).Where(x => x.isActive).ToList();
 		if(militarizationEvents != null){
 			for (int i = 0; i < militarizationEvents.Count; i++) {
 				if (((Militarization)militarizationEvents[i]).startedBy.id == sourceKingdom.king.id) {

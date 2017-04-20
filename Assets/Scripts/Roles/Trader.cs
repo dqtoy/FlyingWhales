@@ -99,7 +99,7 @@ public class Trader : Role {
 		this.homeCity.AdjustResourceCount(BASE_RESOURCE_TYPE.GOLD, this.goldIncomePerTurn);
 		for (int i = 0; i < this.currentlySelling.Count; i++) {
 			if (this.targetCity == null) {
-				Debug.LogError ("LALALALALA");
+				Debug.LogError ("LALALALALA" + this.citizen.name);
 			}
 			switch (this.currentlySelling [i]) {
 			case BASE_RESOURCE_TYPE.WOOD:

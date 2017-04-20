@@ -75,8 +75,15 @@ public class PowerGrab : GameEvent {
 				}
 			}
 
-			Exhortation newExhortation = new Exhortation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
-				this.startedBy, this.startedBy, citizenToExhort, this);
+			List<Citizen> envoys = this.startedByCity.GetCitizensWithRole(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
+			if (envoys.Count > 0) {
+				Exhortation newExhortation = new Exhortation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
+					this.startedBy, envoys[0], citizenToExhort, this);
+				((Envoy)envoys [0].assignedRole).inAction = true;
+			} else {
+				Exhortation newExhortation = new Exhortation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
+					this.startedBy, this.startedBy, citizenToExhort, this);
+			}
 		}
 	}
 

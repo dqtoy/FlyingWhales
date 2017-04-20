@@ -122,8 +122,14 @@ public class KingdomManager : MonoBehaviour {
 	}
 
 	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
-		kingdom1.GetRelationshipWithOtherKingdom(kingdom2).isAtWar = true;
-		kingdom2.GetRelationshipWithOtherKingdom(kingdom1).isAtWar = true;
+		RelationshipKingdom kingdom1Rel = kingdom1.GetRelationshipWithOtherKingdom(kingdom2);
+		RelationshipKingdom kingdom2Rel = kingdom2.GetRelationshipWithOtherKingdom(kingdom1);
+
+		kingdom1Rel.isAtWar = true;
+		kingdom2Rel.isAtWar = true;
+
+		kingdom1Rel.kingdomWar.ResetKingdomWar ();
+		kingdom2Rel.kingdomWar.ResetKingdomWar ();
 
 		kingdom1.AdjustExhaustionToAllRelationship (15);
 		kingdom2.AdjustExhaustionToAllRelationship (15);
@@ -134,6 +140,7 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
 		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, kingdom2.king.name + " of " + kingdom2.name + " declares war against " + kingdom1.name + ".", HISTORY_IDENTIFIER.NONE));
 
+		War newWar = new War(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, null, kingdom1, kingdom2);
 	}
 
 	public void DeclarePeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
@@ -146,7 +153,24 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.RemoveInternationalWar(kingdom2);
 		kingdom2.RemoveInternationalWar(kingdom1);
 
+		GetWarBetweenKingdoms(kingdom1, kingdom2).DoneEvent();
+	}
 
+	public War GetWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
+		List<GameEvent> allWars = EventManager.Instance.GetEventsOfType(EVENT_TYPES.KINGDOM_WAR);
+		for (int i = 0; i < allWars.Count; i++) {
+			War currentWar = (War)allWars[i];
+			if (currentWar.kingdom1.id == kingdom1.id) {
+				if (currentWar.kingdom2.id == kingdom2.id) {
+					return currentWar;
+				}
+			} else if (currentWar.kingdom2.id == kingdom1.id) {
+				if (currentWar.kingdom1.id == kingdom2.id) {
+					return currentWar;
+				}
+			}
+		}
+		return null;
 	}
 
 	public void AddRelationshipToOtherKings(Citizen newKing){

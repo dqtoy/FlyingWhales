@@ -16,7 +16,7 @@ public class RelationshipKingdom {
 		this.objectInRelationship = objectInRelationship;
 		this.isAtWar = false;
 		this.isAdjacent = false;
-		this.kingdomWar = new KingdomWar (this, objectInRelationship);
+		this.kingdomWar = new KingdomWar (objectInRelationship);
 	}
 
 	internal void AdjustExhaustion(int amount){
