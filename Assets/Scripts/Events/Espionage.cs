@@ -120,17 +120,7 @@ public class Espionage : GameEvent {
 
 		if(chance < this.successRate){
 			hasFound = true;
-			if(chosenEvent is Assassination){
-				((Assassination)chosenEvent).uncovered.Add(this.sourceKingdom.king);
-			}else if(chosenEvent is InvasionPlan){
-				((InvasionPlan)chosenEvent).uncovered.Add(this.sourceKingdom.king);
-			}else if(chosenEvent is JoinWar){
-				((JoinWar)chosenEvent).uncovered.Add(this.sourceKingdom.king);
-			}else if(chosenEvent is Militarization){
-				((Militarization)chosenEvent).uncovered.Add(this.sourceKingdom.king);
-			}else if(chosenEvent is PowerGrab){
-				((PowerGrab)chosenEvent).uncovered.Add(this.sourceKingdom.king);
-			}
+			UncoverHiddenEvent (this.chosenEvent, this.sourceKingdom.king);
 			if(this.targetKingdom.king.id == this.sourceKingdom.king.id){
 				this.targetKingdom.king.InformedAboutHiddenEvent (chosenEvent, this.spy);
 			}else{
@@ -208,6 +198,7 @@ public class Espionage : GameEvent {
 							true
 						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
+						UncoverHiddenEvent (chosenEvent, target);
 					}
 
 				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
@@ -231,6 +222,7 @@ public class Espionage : GameEvent {
 							true
 						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
+						UncoverHiddenEvent (chosenEvent, target);
 					}
 					relationshipToCreator.AdjustLikeness (-10, EVENT_TYPES.ESPIONAGE);
 					relationshipToCreator.relationshipHistory.Add (new History (
@@ -262,6 +254,7 @@ public class Espionage : GameEvent {
 							true
 						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
+						UncoverHiddenEvent (chosenEvent, target);
 					}
 					relationshipToCreator.AdjustLikeness (-15, EVENT_TYPES.ESPIONAGE);
 					relationshipToCreator.relationshipHistory.Add (new History (
@@ -349,5 +342,19 @@ public class Espionage : GameEvent {
 			return null;
 		}
 
+	}
+
+	internal void UncoverHiddenEvent(GameEvent chosenEvent, Citizen uncoverer){
+		if(chosenEvent is Assassination){
+			((Assassination)chosenEvent).uncovered.Add(uncoverer);
+		}else if(chosenEvent is InvasionPlan){
+			((InvasionPlan)chosenEvent).uncovered.Add(uncoverer);
+		}else if(chosenEvent is JoinWar){
+			((JoinWar)chosenEvent).uncovered.Add(uncoverer);
+		}else if(chosenEvent is Militarization){
+			((Militarization)chosenEvent).uncovered.Add(uncoverer);
+		}else if(chosenEvent is PowerGrab){
+			((PowerGrab)chosenEvent).uncovered.Add(uncoverer);
+		}
 	}
 }
