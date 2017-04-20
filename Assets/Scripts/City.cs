@@ -1595,6 +1595,9 @@ public class City{
 	internal void AssignNewGovernor(){
 		Citizen newGovernor = GetCitizenWithHighestPrestige ();
 		if (newGovernor != null) {
+			if(newGovernor.assignedRole != null && newGovernor.role == ROLE.GENERAL){
+				DetachGeneralFromGovernor (newGovernor);
+			}
 			this.governor.isGovernor = false;
 
 			newGovernor.AssignRole(ROLE.GOVERNOR);
@@ -1604,7 +1607,12 @@ public class City{
 
 		}
 	}
-
+	internal void DetachGeneralFromGovernor(Citizen governor){
+		General general = (General)governor.assignedRole;
+		general.CreateGhostCitizen ();
+		governor.role = ROLE.UNTRAINED;
+		governor.assignedRole = null;
+	}
 	internal Citizen GetCitizenWithHighestPrestige(){
 		List<Citizen> prestigeCitizens = new List<Citizen> ();
 		if (this.citizens.Count > 1) {
@@ -1639,6 +1647,40 @@ public class City{
 	}
 
 	internal void LookForNewGeneral(General general){
-		
+		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
+		for(int i = 0; i < this.citizens.Count; i++){
+			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
+				General chosenGeneral = (General)this.citizens [i].assignedRole;
+				if(chosenGeneral.location == this.hexTile && chosenGeneral.citizen.city.id == this.id){
+					if(!chosenGeneral.citizen.isDead){
+						Debug.Log (chosenGeneral.citizen.name + " IS THE NEW GENERAL FOR " + general.citizen.name + "'s ARMY");
+						chosenGeneral.army.hp += general.army.hp;
+						general.army.hp = 0;
+						general.GeneralDeath ();
+					}
+				}
+			}
+		}
+	}
+
+	internal void LookForLostArmy(General general){
+		Debug.Log (general.citizen.name + " IS LOOKING FOR LOST ARMIES...");
+		List<General> deadGenerals = new List<General> ();
+		for(int i = 0; i < this.citizens.Count; i++){
+			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
+				General chosenGeneral = (General)this.citizens [i].assignedRole;
+				if(chosenGeneral.location == this.hexTile && chosenGeneral.citizen.city.id == this.id){
+					if(chosenGeneral.citizen.isDead){
+						Debug.Log (general.citizen.name + " IS THE NEW GENERAL FOR " + chosenGeneral.citizen.name + "'s ARMY");
+						general.army.hp += chosenGeneral.army.hp;
+						chosenGeneral.army.hp = 0;
+						deadGenerals.Add (chosenGeneral);
+					}
+				}
+			}
+		}
+		for(int i = 0; i < deadGenerals.Count; i++){
+			deadGenerals [i].GeneralDeath ();
+		}
 	}
 }

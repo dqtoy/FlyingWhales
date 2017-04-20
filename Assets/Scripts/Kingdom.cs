@@ -190,6 +190,9 @@ public class Kingdom{
 				Utilities.ChangeDescendantsRecursively (newKing, true);
 				Utilities.ChangeDescendantsRecursively (this.king, false);
 			}
+			if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
+				DetachGeneralFromKing (newKing);
+			}
 			newKing.role = ROLE.UNTRAINED;
 			newKing.assignedRole = null;
 			newKing.isKing = true;
@@ -215,6 +218,9 @@ public class Kingdom{
 		if(!newKing.isDirectDescendant){
 			Utilities.ChangeDescendantsRecursively (newKing, true);
 			Utilities.ChangeDescendantsRecursively (this.king, false);
+		}
+		if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
+			DetachGeneralFromKing (newKing);
 		}
 		newKing.role = ROLE.UNTRAINED;
 		newKing.assignedRole = null;
@@ -259,6 +265,10 @@ public class Kingdom{
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (GetSiblings (newKing));
 		UpdateKingSuccession ();
+	}
+	internal void DetachGeneralFromKing(Citizen king){
+		General general = (General)king.assignedRole;
+		general.CreateGhostCitizen ();
 	}
 	internal void ChangeSuccessionLineRescursively(Citizen royalty){
 		if(this.king.id != royalty.id){

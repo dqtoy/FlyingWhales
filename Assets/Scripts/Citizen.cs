@@ -64,12 +64,20 @@ public class Citizen {
 	}
 
 
-	public Citizen(City city, int age, GENDER gender, int generation){
-		this.id = Utilities.SetID (this);
+	public Citizen(City city, int age, GENDER gender, int generation, bool isGhost = false){
+		if(isGhost){
+			this.id = 0;
+		}else{
+			this.id = Utilities.SetID (this);
+		}
 		this.race = city.kingdom.race;
 		this.gender = gender;
 		this.age = age;
-		this.name = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
+		if(isGhost){
+			this.name = "GHOST";
+		}else{
+			this.name = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
+		}
 		this.generation = generation;
 		this._prestige = 0;
 		this.prestigeFromSupport = 0;
@@ -106,16 +114,18 @@ public class Citizen {
 		this.isBusy = false;
 		this.isDead = false;
 		this.history = new List<History>();
-		this.city.citizens.Add (this);
 
+		if(!isGhost){
+			this.city.citizens.Add (this);
 
-		this.GenerateTraits();
-		this.UpdatePrestige();
+			this.GenerateTraits();
+			this.UpdatePrestige();
 
-		EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
-		EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
-		EventManager.Instance.onCheckCitizensSupportingMe.AddListener(AddPrestigeToOtherCitizen);
-		EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
+			EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
+			EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
+			EventManager.Instance.onCheckCitizensSupportingMe.AddListener(AddPrestigeToOtherCitizen);
+			EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
+		}
 	}
 
 	internal void GenerateTraits(){
@@ -377,37 +387,12 @@ public class Citizen {
 
 		if (this.role == ROLE.GENERAL && this.assignedRole != null) {
 			if (isConquered) {
-				EventManager.Instance.onCitizenMove.RemoveListener (((General)this.assignedRole).Move);
-				EventManager.Instance.onRegisterOnCampaign.RemoveListener (((General)this.assignedRole).RegisterOnCampaign);
-				EventManager.Instance.onDeathArmy.RemoveListener (((General)this.assignedRole).DeathArmy);
-				//				((General)this.assignedRole) = null;
-				if (((General)this.assignedRole).generalAvatar != null) {
-					GameObject.Destroy (((General)this.assignedRole).generalAvatar);
-					((General)this.assignedRole).generalAvatar = null;
-				}
-				((General)this.assignedRole).UnregisterThisGeneral (null);
-
-				this.role = ROLE.UNTRAINED;
-				this.assignedRole = null;
-				this.city.citizens.Remove (this);
+				((General)this.assignedRole).GeneralDeath ();
 			} else {
 				if (((General)this.assignedRole).army.hp <= 0) {
-					EventManager.Instance.onCitizenMove.RemoveListener (((General)this.assignedRole).Move);
-					EventManager.Instance.onRegisterOnCampaign.RemoveListener (((General)this.assignedRole).RegisterOnCampaign);
-					EventManager.Instance.onDeathArmy.RemoveListener (((General)this.assignedRole).DeathArmy);
-
-					//					((General)this.assignedRole) = null;
-					if (((General)this.assignedRole).generalAvatar != null) {
-						GameObject.Destroy (((General)this.assignedRole).generalAvatar);
-						((General)this.assignedRole).generalAvatar = null;
-					}
-					((General)this.assignedRole).UnregisterThisGeneral (null);
-
-					this.role = ROLE.UNTRAINED;
-					this.assignedRole = null;
-					this.city.citizens.Remove (this);
+					((General)this.assignedRole).GeneralDeath ();
 				}else{
-					
+					this.city.LookForNewGeneral((General)this.assignedRole);
 				}
 			}
 

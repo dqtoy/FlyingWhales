@@ -279,6 +279,9 @@ public class CampaignManager {
 		}
 	}
 	internal void UnregisterGenerals(General general, Campaign chosenCampaign){
+		if(general.targetLocation.isOccupied){
+			general.targetLocation.city.incomingGenerals.Remove (this);
+		}
 		general.targetLocation = null;
 		general.warLeader = null;
 		general.campaignID = 0;
@@ -499,39 +502,49 @@ public class CampaignManager {
 			general.generalAvatar = null;
 		}
 		general.targetLocation = null;
-		Campaign chosenCampaign = SearchCampaignByID (general.campaignID);
-		if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
-			if(general.location == chosenCampaign.rallyPoint){
-				Debug.Log (general.citizen.name + " has arrived at rally point " + chosenCampaign.rallyPoint.tileName);
-				if(AreAllGeneralsOnRallyPoint(chosenCampaign)){
-					Debug.Log ("Will attack city now " + chosenCampaign.targetCity.name);
-					AttackCityNow (chosenCampaign);
-				}
-			}else if(general.location == chosenCampaign.targetCity.hexTile){
-				//InitiateBattle
-				Debug.Log (general.citizen.name + " has arrived at target city " + chosenCampaign.targetCity.name);
-				CombatManager.Instance.CityBattle(chosenCampaign.targetCity);
+		if (general.isGoingHome) {
+			if(general.citizen.isDead){
+				general.citizen.city.LookForNewGeneral (general);
+			}else{
+				general.citizen.city.LookForLostArmy (general);
+			}
+		} else {
+			Campaign chosenCampaign = SearchCampaignByID (general.campaignID);
+			if (chosenCampaign != null) {
+				if (chosenCampaign.campaignType == CAMPAIGN.OFFENSE) {
+					if (general.location == chosenCampaign.rallyPoint) {
+						Debug.Log (general.citizen.name + " has arrived at rally point " + chosenCampaign.rallyPoint.tileName);
+						if (AreAllGeneralsOnRallyPoint (chosenCampaign)) {
+							Debug.Log ("Will attack city now " + chosenCampaign.targetCity.name);
+							AttackCityNow (chosenCampaign);
+						}
+					} else if (general.location == chosenCampaign.targetCity.hexTile) {
+						//InitiateBattle
+						Debug.Log (general.citizen.name + " has arrived at target city " + chosenCampaign.targetCity.name);
+						CombatManager.Instance.CityBattle (chosenCampaign.targetCity);
 //				((General)general.assignedRole).inAction = false;
 
-				//If army is alive but no general, after task immediately return home
+						//If army is alive but no general, after task immediately return home
 //				if(general.isDead){
 //					((General)general.assignedRole).UnregisterThisGeneral (chosenCampaign);
 //				}
-			}
-		}else{
-			if(general.location == chosenCampaign.targetCity.hexTile){
-				//InitiateDefense
+					}
+				} else {
+					if (general.location == chosenCampaign.targetCity.hexTile) {
+						//InitiateDefense
 //				((General)general.assignedRole).inAction = false;
-				Debug.Log (general.citizen.name + " has arrived at defense target city " + chosenCampaign.targetCity.name);
-				if (chosenCampaign.expiration == -1) {
-					if (AreAllGeneralsOnDefenseCity (chosenCampaign)) {
-						Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + chosenCampaign.targetCity.name + ". START EXPIRATION.");
-						chosenCampaign.expiration = Utilities.defaultCampaignExpiration;
+						Debug.Log (general.citizen.name + " has arrived at defense target city " + chosenCampaign.targetCity.name);
+						if (chosenCampaign.expiration == -1) {
+							if (AreAllGeneralsOnDefenseCity (chosenCampaign)) {
+								Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + chosenCampaign.targetCity.name + ". START EXPIRATION.");
+								chosenCampaign.expiration = Utilities.defaultCampaignExpiration;
+							}
+						}
 					}
 				}
 			}
 		}
-
+		general.isGoingHome = false;
 	}
 	internal void AttackCityNow(Campaign chosenCampaign){
 		for(int i = 0; i < chosenCampaign.registeredGenerals.Count; i++){

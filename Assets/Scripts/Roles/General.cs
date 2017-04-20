@@ -23,6 +23,7 @@ public class General : Role {
 	public int successfulRaids;
 	public int unsuccessfulRaids;
 	public bool inAction;
+	public bool isGoingHome;
 
 	internal Citizen target;
 	private int weekCounter = 0;
@@ -46,6 +47,7 @@ public class General : Role {
 		this.successfulRaids = 0;
 		this.unsuccessfulRaids = 0;
 		this.inAction = false;
+		this.isGoingHome = false;
 		EventManager.Instance.onCitizenMove.AddListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.AddListener (RegisterOnCampaign);
 		EventManager.Instance.onDeathArmy.AddListener (DeathArmy);
@@ -78,13 +80,25 @@ public class General : Role {
 	}
 	internal void RerouteToHome(){
 		if(this.location != this.citizen.city.hexTile){
-			this.targetLocation = this.citizen.city.hexTile;
-			this.roads.Clear ();
-			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.targetLocation, PATHFINDING_MODE.NORMAL);
-			this.roads = path;
+			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.citizen.city.hexTile, PATHFINDING_MODE.NORMAL);
+
+			if(path != null){
+				this.roads.Clear ();
+				this.roads = path;
+				this.targetLocation = this.citizen.city.hexTile;
+				this.isGoingHome = true;
+				if(this.generalAvatar == null){
+					this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
+					this.generalAvatar.transform.localPosition = Vector3.zero;
+					this.generalAvatar.GetComponent<GeneralObject>().general = this;
+					this.generalAvatar.GetComponent<GeneralObject> ().Init();
+				}
+				Debug.Log (this.citizen.name + " IS GOING HOME!");
+			}
+
 		}
 	}
-	internal void UnregisterThisGeneral(Campaign campaign){
+	internal void UnregisterThisGeneral(Campaign campaign, bool isRerouteToHome = true){
 		if(campaign == null){
 			if(this.warLeader != null){
 				campaign = this.warLeader.campaignManager.SearchCampaignByID (this.campaignID);
@@ -93,6 +107,11 @@ public class General : Role {
 
 		if(campaign != null){
 			campaign.registeredGenerals.Remove (this);
+			if (this.targetLocation != null) {
+				if (this.targetLocation.isOccupied) {
+					this.targetLocation.city.incomingGenerals.Remove (this);
+				}
+			}
 			this.targetLocation = null;
 			this.warLeader = null;
 			this.campaignID = 0;
@@ -101,7 +120,9 @@ public class General : Role {
 			this.rallyPoint = null;
 			this.daysBeforeArrival = 0;
 			this.inAction = false;
-			RerouteToHome ();
+			if(isRerouteToHome){
+				RerouteToHome ();
+			}
 			if(campaign.registeredGenerals.Count <= 0){
 				campaign.leader.campaignManager.CampaignDone (campaign);
 			}
@@ -351,5 +372,28 @@ public class General : Role {
 			}
 
 		}
+	}
+
+	internal void GeneralDeath(){
+		EventManager.Instance.onCitizenMove.RemoveListener (Move);
+		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
+		EventManager.Instance.onDeathArmy.RemoveListener (DeathArmy);
+
+		//					((General)this.assignedRole) = null;
+		if (this.generalAvatar != null) {
+			GameObject.Destroy (this.generalAvatar);
+			this.generalAvatar = null;
+		}
+		this.UnregisterThisGeneral (null, false);
+
+		this.citizen.role = ROLE.UNTRAINED;
+		this.citizen.assignedRole = null;
+		this.citizen.city.citizens.Remove (this.citizen);
+	}
+
+	internal void CreateGhostCitizen(){
+		Citizen newCitizen = new Citizen (this.citizen.city, 0, GENDER.MALE, 0, true);
+		newCitizen.isDead = true;
+		this.citizen = newCitizen;
 	}
 }

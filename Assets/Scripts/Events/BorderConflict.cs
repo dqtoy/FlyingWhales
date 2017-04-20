@@ -195,7 +195,7 @@ public class BorderConflict : GameEvent {
 		}
 		Envoy chosenEnvoy = null;
 		if (chosenCitizen.assignedRole is Envoy) {
-			chosenEnvoy = chosenCitizen.assignedRole as Envoy;
+			chosenEnvoy = (Envoy)chosenCitizen.assignedRole;
 		}
 		if (chosenEnvoy == null) {
 			return;
