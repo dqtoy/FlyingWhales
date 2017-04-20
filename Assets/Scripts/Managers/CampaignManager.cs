@@ -134,6 +134,7 @@ public class CampaignManager {
 				}else{
 					//Create Ghost Campaign
 					newCampaign = new Campaign (this.leader, null, CAMPAIGN.NONE, WAR_TYPE.NONE, 0);
+					newCampaign.isGhost = true;
 					this.activeCampaigns.Add (newCampaign);
 				}
 			}
@@ -257,11 +258,16 @@ public class CampaignManager {
 	internal void CampaignDone(Campaign doneCampaign, bool canCreate = true){
 //		Campaign doneCampaign = SearchCampaignByID (campaign.id);
 		EventManager.Instance.onWeekEnd.RemoveListener (doneCampaign.CheckExpiration);
-		Debug.Log ("Campaign Done " + doneCampaign.campaignType.ToString () + " " + doneCampaign.targetCity.name);
-		for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
-			UnregisterGenerals (doneCampaign.registeredGenerals [i], doneCampaign);
+
+		if(doneCampaign.isGhost){
+			Debug.Log ("Ghost Campaign Done " + doneCampaign.campaignType.ToString ());
+		}else{
+			Debug.Log ("Campaign Done " + doneCampaign.campaignType.ToString () + " " + doneCampaign.targetCity.name);
+			for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
+				UnregisterGenerals (doneCampaign.registeredGenerals [i], doneCampaign);
+			}
+			this.MakeCityInactive (doneCampaign);
 		}
-		this.MakeCityInactive (doneCampaign);
 		this.activeCampaigns.Remove (doneCampaign);
 		doneCampaign = null;
 		if(canCreate){

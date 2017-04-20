@@ -1107,28 +1107,6 @@ public class UIManager : MonoBehaviour {
 		smallInfoGO.SetActive (false);
 		smallInfoGO.transform.parent = this.transform;
 	}
-	public void ShowCampaignInfo(Campaign campaign, General general, Transform parent){
-//		smallInfoLbl.text = info;
-		this.campaignInfoGO.GetComponent<CampaignInfo>().SetCampaignInfo(campaign, general);
-		var v3 = Input.mousePosition;
-		v3.z = 10.0f;
-		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-		v3.y -= 0.13f;
-		this.campaignInfoGO.transform.position = v3;
-		//		smallInfoGO.transform.parent = parent;
-		//		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
-		//		Vector3 newPos = smallInfoGO.transform.localPosition;
-
-		//		smallInfoGO.transform.localPosition = newPos;
-		//		smallInfoGO.transform.parent = this.transform;
-		//		smallInfoGO.transform.localScale = Vector3.one;
-		this.campaignInfoGO.SetActive (true);
-	}
-
-	public void HideCampaignInfo(){
-		this.campaignInfoGO.SetActive (false);
-		this.campaignInfoGO.transform.parent = this.transform;
-	}
 
 	public void ToggleFamilyTree(){
 		if (familyTreeGO.activeSelf) {

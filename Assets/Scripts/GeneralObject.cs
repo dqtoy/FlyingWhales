@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GeneralObject : MonoBehaviour {
 	public General general;
@@ -42,14 +43,76 @@ public class GeneralObject : MonoBehaviour {
 			if(this.general.warLeader != null){
 				Campaign chosenCampaign = this.general.warLeader.campaignManager.SearchCampaignByID (this.general.campaignID);
 				if(chosenCampaign != null){
-					UIManager.Instance.ShowCampaignInfo (chosenCampaign, this.general, UIManager.Instance.transform);
-
+					string info = this.CampaignInfo (chosenCampaign);
+					UIManager.Instance.ShowSmallInfo (info, UIManager.Instance.transform);
+					HighlightPath ();
 				}
 			}
 		}
 	}
 
 	void OnMouseExit(){
-		UIManager.Instance.HideCampaignInfo();
+		UIManager.Instance.HideSmallInfo();
+		UnHighlightPath ();
+	}
+	void HighlightPath(){
+		for (int i = 0; i < this.general.roads.Count; i++) {
+			if (!this.general.roads [i].isHabitable) {
+				this.general.roads [i].SetTileColor (Color.gray);
+			}
+		}
+	}
+
+	void UnHighlightPath(){
+		for (int i = 0; i < this.general.roads.Count; i++) {
+			if (!this.general.roads [i].isHabitable) {
+				this.general.roads [i].SetTileColor (Color.white);
+			}
+		}
+	}
+	private string CampaignInfo(Campaign campaign){
+		string info = string.Empty;
+		info += "id: " + campaign.id;
+		info += "\n";
+
+		info += "campaign type: " + campaign.campaignType.ToString ();
+		info += "\n";
+
+		info += "general: " + this.general.citizen.name;
+		info += "\n";
+
+		info += "target city: " + campaign.targetCity.name;
+		info += "\n";
+		if(campaign.rallyPoint == null){
+			info += "rally point: N/A";
+		}else{
+			info += "rally point: " + campaign.rallyPoint.city.name; 
+		}
+		info += "\n";
+
+		info += "leader: " + campaign.leader.name;
+		info += "\n";
+
+		info += "war type: " + campaign.warType.ToString ();
+		info += "\n";
+
+		info += "needed army: " + campaign.neededArmyStrength.ToString ();
+		info += "\n";
+
+		info += "army: " + campaign.GetArmyStrength ().ToString ();
+		info += "\n";
+
+		if(campaign.campaignType == CAMPAIGN.DEFENSE){
+			if(campaign.expiration == -1){
+				info += "expiration: none";
+			}else{
+				info += "will expire in " + campaign.expiration + " weeks";
+			}
+		}else{
+			info += "expiration: none";
+
+		}
+
+		return info;
 	}
 }
