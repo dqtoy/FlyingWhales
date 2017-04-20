@@ -406,6 +406,8 @@ public class Citizen {
 					this.role = ROLE.UNTRAINED;
 					this.assignedRole = null;
 					this.city.citizens.Remove (this);
+				}else{
+					
 				}
 			}
 
@@ -432,6 +434,7 @@ public class Citizen {
 		this.isHeir = false;
 		if (this.id == this.city.kingdom.king.id) {
 			//ASSIGN NEW LORD, SUCCESSION
+			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
 			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.city.kingdom.king);
 			this.city.kingdom.PassOnInternationalWar();
 			if (isDethroned) {
@@ -928,15 +931,17 @@ public class Citizen {
 
 	}
 	internal void AddSuccessionWar(Citizen enemy){
+		this.city.kingdom.AdjustExhaustionToAllRelationship (15);
 		this.successionWars.Add (enemy);
-//		if(!this.campaignManager.SearchForSuccessionWarCities(enemy.city)){
+		if(!this.campaignManager.SearchForSuccessionWarCities(enemy.city)){
 			this.campaignManager.successionWarCities.Add (new CityWar (enemy.city, false, WAR_TYPE.SUCCESSION));
-//		}
-//		if(!this.campaignManager.SearchForDefenseWarCities(this.city)){
+		}
+		if(!this.campaignManager.SearchForDefenseWarCities(this.city, WAR_TYPE.SUCCESSION)){
 			this.campaignManager.defenseWarCities.Add (new CityWar (this.city, false, WAR_TYPE.SUCCESSION));
-//		}
+		}
 	}
 	internal void RemoveSuccessionWar(Citizen enemy){
+		this.city.kingdom.AdjustExhaustionToAllRelationship (-15);
 		List<Campaign> campaign = this.campaignManager.activeCampaigns.FindAll (x => x.targetCity.id == enemy.city.id);
 		for(int i = 0; i < campaign.Count; i++){
 			for(int j = 0; j < campaign[i].registeredGenerals.Count; j++){

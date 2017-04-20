@@ -125,6 +125,9 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.GetRelationshipWithOtherKingdom(kingdom2).isAtWar = true;
 		kingdom2.GetRelationshipWithOtherKingdom(kingdom1).isAtWar = true;
 
+		kingdom1.AdjustExhaustionToAllRelationship (15);
+		kingdom2.AdjustExhaustionToAllRelationship (15);
+
 		kingdom1.AddInternationalWar(kingdom2);
 		kingdom2.AddInternationalWar(kingdom1);
 
@@ -137,8 +140,13 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.GetRelationshipWithOtherKingdom(kingdom2).isAtWar = false;
 		kingdom2.GetRelationshipWithOtherKingdom(kingdom1).isAtWar = false;
 
+		kingdom1.AdjustExhaustionToAllRelationship (-15);
+		kingdom2.AdjustExhaustionToAllRelationship (-15);
+
 		kingdom1.RemoveInternationalWar(kingdom2);
 		kingdom2.RemoveInternationalWar(kingdom1);
+
+
 	}
 
 	public void AddRelationshipToOtherKings(Citizen newKing){

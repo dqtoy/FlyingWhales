@@ -42,7 +42,7 @@ public class CombatManager : MonoBehaviour {
 							if (!Utilities.AreTwoGeneralsFriendly (attackers [i], friendlyGeneral)) {
 								if (!Utilities.AreTwoGeneralsFriendly (friendlyGeneral, attackers [i])) {
 									Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
-									Battle (ref attackerGeneral, ref friendlyGeneral);
+									Battle (ref friendlyGeneral, ref attackerGeneral);
 									attackers[i] = attackerGeneral;
 									if (attackers[i].army.hp <= 0 && friendlyGeneral.army.hp <= 0) {
 										victoriousGeneral = null;
@@ -59,7 +59,7 @@ public class CombatManager : MonoBehaviour {
 								if(!Utilities.AreTwoGeneralsFriendly(attackers [i], friendlyGeneral)){
 									if(!Utilities.AreTwoGeneralsFriendly(friendlyGeneral, attackers [i])){
 										Debug.Log ("CITY IS FOR TAKING! NO MORE GENERALS! BATTLE FOR OWNERSHIP!");
-										Battle (ref attackerGeneral, ref friendlyGeneral);
+										Battle (ref friendlyGeneral, ref attackerGeneral);
 										attackers [i] = attackerGeneral;
 										if (attackers [i].army.hp <= 0 && friendlyGeneral.army.hp <= 0) {
 											victoriousGeneral = null;
@@ -156,7 +156,7 @@ public class CombatManager : MonoBehaviour {
 
 			friendlyGeneral = friendlyGenerals [j];
 
-			Battle (ref enemyGeneral, ref friendlyGeneral);
+			Battle (ref friendlyGeneral, ref enemyGeneral);
 			if (friendlyGeneral.army.hp <= 0) {
 				friendlyGenerals.Remove (friendlyGeneral);
 				j--;
@@ -179,7 +179,7 @@ public class CombatManager : MonoBehaviour {
 	internal void ConquerCity(Kingdom conqueror, City city){
 		conqueror.ConquerCity(city);
 	}
-	internal void Battle(ref General general1, ref General general2){
+	internal void Battle(ref General general1, ref General general2, bool isMidway = false){
 		Debug.Log ("BATTLE: (" + general1.citizen.city.name + ") " + general1.citizen.name + " and (" + general2.citizen.city.name + ") " + general2.citizen.name);
 		Debug.Log ("enemy general army: " + general1.army.hp);
 		Debug.Log ("friendly general army: " + general2.army.hp);
@@ -204,6 +204,45 @@ public class CombatManager : MonoBehaviour {
 			general2.army.hp -= general1.army.hp;
 			general1.army.hp = 0;
 		}
+
+		RelationshipKingdom kingdomRelationshipToGeneral2 = general1.citizen.city.kingdom.GetRelationshipWithOtherKingdom(general2.citizen.city.kingdom);
+		RelationshipKingdom kingdomRelationshipToGeneral1 = general2.citizen.city.kingdom.GetRelationshipWithOtherKingdom(general1.citizen.city.kingdom);
+
+		if(general1.army.hp <= 0){
+			//BATTLE LOST
+			kingdomRelationshipToGeneral2.kingdomWar.battlesLost += 1;
+			if(isMidway){
+				kingdomRelationshipToGeneral2.AdjustExhaustion (10);
+			}else{
+				kingdomRelationshipToGeneral2.AdjustExhaustion (10);
+			}
+		}else{
+			//BATTLE WON
+			kingdomRelationshipToGeneral2.kingdomWar.battlesWon += 1;
+			if(isMidway){
+				kingdomRelationshipToGeneral2.AdjustExhaustion (-5);
+			}else{
+				kingdomRelationshipToGeneral2.AdjustExhaustion (-5);
+			}
+		}
+
+		if(general2.army.hp <= 0){
+			//BATTLE LOST
+			kingdomRelationshipToGeneral1.kingdomWar.battlesLost += 1;
+			if(isMidway){
+				kingdomRelationshipToGeneral1.AdjustExhaustion (10);
+			}else{
+				kingdomRelationshipToGeneral1.AdjustExhaustion (10);
+			}
+		}else{
+			//BATTLE WON
+			kingdomRelationshipToGeneral1.kingdomWar.battlesWon += 1;
+			if(isMidway){
+				kingdomRelationshipToGeneral1.AdjustExhaustion (-5);
+			}else{
+				kingdomRelationshipToGeneral1.AdjustExhaustion (-10);
+			}
+		}
 		Debug.Log ("RESULTS: " + general1.citizen.name + " army hp left: " + general1.army.hp + "\n" + general2.citizen.name + " army hp left: " + general2.army.hp);
 	}
 
@@ -211,7 +250,7 @@ public class CombatManager : MonoBehaviour {
 		//MID WAY BATTLE IF supported is not the same
 		Debug.Log("BATTLE MIDWAY!");
 
-		Battle(ref general1, ref general2);
+		Battle(ref general1, ref general2, true);
 
 		if(general1.army.hp <= 0){
 			if (general1.generalAvatar != null) {

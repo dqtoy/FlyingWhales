@@ -5,15 +5,22 @@ using System.Collections.Generic;
 public class GeneralObject : MonoBehaviour {
 	public General general;
 	public TextMesh textMesh;
+	public List<HexTile> path;
 
 	internal void Init(){
-		StartCoroutine (Initialize());
+		this.GetComponent<BoxCollider2D>().enabled = true;
+		if(this.general != null){
+			this.textMesh.text = this.general.army.hp.ToString ();
+			this.path = this.general.roads;
+		}
+//		StartCoroutine (Initialize());
 	}
 	private IEnumerator Initialize(){
 		yield return null;
 		this.GetComponent<BoxCollider2D>().enabled = true;
 		if(this.general != null){
 			this.textMesh.text = this.general.army.hp.ToString ();
+			this.path = this.general.roads;
 		}
 	}
 	void OnTriggerEnter2D(Collider2D other){
@@ -64,9 +71,9 @@ public class GeneralObject : MonoBehaviour {
 	}
 
 	void UnHighlightPath(){
-		for (int i = 0; i < this.general.roads.Count; i++) {
-			if (!this.general.roads [i].isHabitable) {
-				this.general.roads [i].SetTileColor (Color.white);
+		for (int i = 0; i < this.path.Count; i++) {
+			if (!this.path [i].isHabitable) {
+				this.path [i].SetTileColor (Color.white);
 			}
 		}
 	}

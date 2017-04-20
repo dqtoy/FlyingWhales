@@ -18,7 +18,7 @@ public class Kingdom{
 	public BASE_RESOURCE_TYPE basicResource;
 	public BASE_RESOURCE_TYPE rareResource;
 
-	public List<Relationship<Kingdom>> relationshipsWithOtherKingdoms;
+	public List<RelationshipKingdom> relationshipsWithOtherKingdoms;
 
 	public Color kingdomColor;
 	public List<History> kingdomHistory;
@@ -54,7 +54,7 @@ public class Kingdom{
 		for (int i = 0; i < cities.Count; i++) {
 			this.AddTileToKingdom(cities[i]);
 		}
-		this.relationshipsWithOtherKingdoms = new List<Relationship<Kingdom>>();
+		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
 		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
@@ -385,7 +385,7 @@ public class Kingdom{
 			}
 		}
 		for(int i = 0; i < this.cities.Count; i++){
-			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i])){
+			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i], WAR_TYPE.INTERNATIONAL)){
 				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
 			}
 //			if(this.cities[i].governor.supportedCitizen == null){
@@ -452,6 +452,12 @@ public class Kingdom{
 					break;
 				}
 			}
+		}
+	}
+
+	internal void AdjustExhaustionToAllRelationship(int amount){
+		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
+			this.relationshipsWithOtherKingdoms [i].AdjustExhaustion (amount);
 		}
 	}
 

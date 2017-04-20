@@ -263,6 +263,7 @@ public class BorderConflict : GameEvent {
 			DoneEvent ();
 		}
 	}
+
 	internal override void DoneEvent(){
 		for(int i = 0; i < this.activeEnvoysIncrease.Count; i++){
 			this.activeEnvoysIncrease[i].inAction = false;

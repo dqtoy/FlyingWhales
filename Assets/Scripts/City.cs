@@ -1637,4 +1637,8 @@ public class City{
 		EventManager.Instance.onRecruitCitizensForExpansion.RemoveListener(DonateCitizensToExpansion);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener(UpdateHexTileRoles);
 	}
+
+	internal void LookForNewGeneral(General general){
+		
+	}
 }

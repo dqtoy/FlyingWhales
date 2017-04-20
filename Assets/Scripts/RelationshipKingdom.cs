@@ -2,20 +2,27 @@
 using System.Collections;
 
 [System.Serializable]
-public class Relationship<T> {
+public class RelationshipKingdom {
 
-	public T objectInRelationship;
+	public Kingdom objectInRelationship;
 //	public DECISION previousDecision;
 //	public LORD_EVENTS previousInteraction = LORD_EVENTS.NONE;
 	public bool isAdjacent;
 	public bool isAtWar;
+	public KingdomWar kingdomWar;
 //	public int daysAtWar;
 
-	public Relationship(T objectInRelationship){
+	public RelationshipKingdom(Kingdom objectInRelationship){
 		this.objectInRelationship = objectInRelationship;
 		this.isAtWar = false;
 		this.isAdjacent = false;
+		this.kingdomWar = new KingdomWar (this, objectInRelationship);
 	}
 
+	internal void AdjustExhaustion(int amount){
+		if(this.isAtWar){
+			this.kingdomWar.AdjustExhaustion (amount);
+		}
+	}
 
 }

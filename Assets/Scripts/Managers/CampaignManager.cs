@@ -61,7 +61,7 @@ public class CampaignManager {
 							this.MakeCityActive (newCampaign);
 						}else{
 							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
-							return;
+//							return;
 						}
 //						
 					} else {
@@ -73,6 +73,7 @@ public class CampaignManager {
 						newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
 						newCampaign.rallyPoint = GetRallyPoint (newCampaign);
 						if(newCampaign.rallyPoint == null){
+							Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
 							newCampaign = null;
 						}else{
 							this.activeCampaigns.Add (newCampaign);
@@ -109,7 +110,7 @@ public class CampaignManager {
 
 						if(civilWarCities.Count <= 0 && successionWarCities.Count <= 0 && intlWarCities.Count <= 0){
 							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
-							return;
+//							return;
 						}else{
 							WAR_TYPE warType = WAR_TYPE.NONE;
 							City target = null;
@@ -119,6 +120,7 @@ public class CampaignManager {
 							newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
 							newCampaign.rallyPoint = GetRallyPoint (newCampaign);
 							if(newCampaign.rallyPoint == null){
+								Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
 								newCampaign = null;
 							}else{
 								this.activeCampaigns.Add (newCampaign);
@@ -135,6 +137,8 @@ public class CampaignManager {
 					//Create Ghost Campaign
 					newCampaign = new Campaign (this.leader, null, CAMPAIGN.NONE, WAR_TYPE.NONE, 0);
 					newCampaign.isGhost = true;
+					Debug.Log ("Created Ghost Campaign " + newCampaign.campaignType.ToString ());
+
 					this.activeCampaigns.Add (newCampaign);
 				}
 			}
@@ -175,9 +179,9 @@ public class CampaignManager {
 		}
 		return false;
 	}
-	internal bool SearchForDefenseWarCities(City city){
+	internal bool SearchForDefenseWarCities(City city, WAR_TYPE warType){
 		for(int i = 0; i < this.defenseWarCities.Count; i++){
-			if(this.defenseWarCities[i].city.id == city.id){
+			if(this.defenseWarCities[i].city.id == city.id && this.defenseWarCities[i].warType == warType){
 				return true;
 			}
 		}
@@ -294,11 +298,15 @@ public class CampaignManager {
 		return null;
 	}
 	internal City GetNearestCity(City targetCity){
+		if(targetCity == null){
+			return null;
+		}
 		List<City> eligibleCities = new List<City>();
 		for(int i = 0 ; i < targetCity.hexTile.connectedTiles.Count; i++){
 			if(targetCity.hexTile.connectedTiles[i].isOccupied){
-				if(this.leader.city.kingdom.SearchForCityById(targetCity.hexTile.connectedTiles[i].city.id) != null){
-					eligibleCities.Add(targetCity.hexTile.connectedTiles[i].city);
+				City chosenCity = this.leader.city.kingdom.SearchForCityById (targetCity.hexTile.connectedTiles [i].city.id);
+				if(chosenCity != null){
+					eligibleCities.Add(chosenCity);
 				}
 			}
 		}
