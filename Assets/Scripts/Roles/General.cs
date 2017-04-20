@@ -327,34 +327,23 @@ public class General : Role {
 	}
 	internal void Move(){
 		if(this.targetLocation != null){
-			if(this.roads.Count > 0){
-				if (this.generalAvatar != null) {
-					this.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.location, this.roads [0]);
-				}
-				this.location = this.roads[0];
-				this.roads.RemoveAt (0);
-				this.daysBeforeArrival -= 1;
-				if(this.location == this.targetLocation){
-					if(this.warLeader != null){
-						this.warLeader.campaignManager.GeneralHasArrived (this);
+			if(this.roads != null){
+				if(this.roads.Count > 0){
+					if (this.generalAvatar != null) {
+						this.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.location, this.roads [0]);
 					}
-					return;
-				}else{
-					//CHECK FOR BATTLE MIDWAY
-//					if(this.location.city != null && this.location.isOccupied){
-//						if(this.location.city.id != this.citizen.city.id){
-//							bool isDead = false;
-//							int armyNumber = this.army.hp;
-//							this.location.city.CheckBattleMidwayCity ();
-//							//							this.location.city.CheckBattleMidwayCity (this, ref armyNumber, ref isDead);
-//							if(!isDead){
-//								this.army.hp = armyNumber;
-//							}
-//						}
-//					}
+					this.location = this.roads[0];
+					this.roads.RemoveAt (0);
+					this.daysBeforeArrival -= 1;
+					if(this.location == this.targetLocation){
+						if(this.warLeader != null){
+							this.warLeader.campaignManager.GeneralHasArrived (this);
+						}
+						return;
+					}
 				}
-
 			}
+
 			if(!this.citizen.isDead){
 				if(this.citizen.miscTraits.Contains(MISC_TRAIT.FAST)){
 					Move ();
