@@ -260,7 +260,6 @@ public class City{
 			if(spouse.gender == GENDER.MALE){
 				childAges = Enumerable.Range(0, (this.kingdom.king.age - 16)).ToList();
 			}
-			spouse.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - spouse.age));
 
 
 			int childChance = UnityEngine.Random.Range (0, 100);
@@ -358,7 +357,6 @@ public class City{
 		int spouseChance = UnityEngine.Random.Range (0, 100);
 		if (spouseChance < 80) {
 			Citizen spouse = MarriageManager.Instance.CreateSpouse (governor);
-			spouse.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - spouse.age));
 			List<int> childAges = Enumerable.Range(0, (spouse.age - 16)).ToList();
 			if(spouse.gender == GENDER.MALE){
 				childAges = Enumerable.Range(0, (governor.age - 16)).ToList();
@@ -445,7 +443,6 @@ public class City{
 		int spouseChance = UnityEngine.Random.Range (0, 2);
 		if (spouseChance == 0) {
 			Citizen spouse = MarriageManager.Instance.CreateSpouse (general);
-			spouse.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - spouse.age));
 
 			int childChance = UnityEngine.Random.Range (0, 100);
 			if (childChance < 25) {
@@ -501,7 +498,6 @@ public class City{
 			int spouseChance = UnityEngine.Random.Range (0, 2);
 			if (spouseChance == 0) {
 				Citizen spouse = MarriageManager.Instance.CreateSpouse (producer);
-				spouse.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - spouse.age));
 
 				int childChance = UnityEngine.Random.Range (0, 100);
 				if (childChance < 25) {
@@ -560,7 +556,6 @@ public class City{
 			int spouseChance = UnityEngine.Random.Range (0, 2);
 			if (spouseChance == 0) {
 				Citizen spouse = MarriageManager.Instance.CreateSpouse (gatherer);
-				spouse.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - spouse.age));
 
 				int childChance = UnityEngine.Random.Range (0, 100);
 				if (childChance < 25) {
@@ -618,7 +613,6 @@ public class City{
 			int spouseChance = UnityEngine.Random.Range (0, 2);
 			if (spouseChance == 0) {
 				Citizen spouse = MarriageManager.Instance.CreateSpouse (normal);
-				spouse.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - spouse.age));
 
 				int childChance = UnityEngine.Random.Range (0, 100);
 				if (childChance < 25) {

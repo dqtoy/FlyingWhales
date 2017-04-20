@@ -100,7 +100,7 @@ public class MarriedCouple {
 			//Give Birth
 			Citizen baby = MarriageManager.Instance.MakeBaby(this.husband, this.wife);
 			this.isPregnant = false;
-			this.wife.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.wife.name + " gave birth to" + baby.name + ".", HISTORY_IDENTIFIER.NONE));
+			this.wife.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.wife.name + " gave birth to " + baby.name + ".", HISTORY_IDENTIFIER.NONE));
 			Debug.Log (this.husband.name + " and " + this.wife.name + " gave birth to " + baby.name);
 		}
 	}
