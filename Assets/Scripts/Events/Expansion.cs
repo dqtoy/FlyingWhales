@@ -44,7 +44,8 @@ public class Expansion : GameEvent {
 	internal override void PerformAction(){
 		if (this.remainingWeeks > 0) {
 			this.remainingWeeks -= 1;
-		} else {
+		} 
+		if(this.remainingWeeks <= 0) {
 			int disappearChance = Random.Range(0,100);
 			if (disappearChance < 15) {
 				//Disappear

@@ -664,7 +664,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void HideCityInfo(){
-		currentlyShowingCity = null;
+//		currentlyShowingCity = null;
 		cityInfoCitizensParent.SetActive(false);
 		cityInfoEventsParent.SetActive(false);
 		cityInfoHistoryParent.SetActive(false);

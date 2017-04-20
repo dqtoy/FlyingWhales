@@ -38,13 +38,14 @@ public class MarriageInvitation : GameEvent {
 				return;
 			}
 			this.elligibleCitizens = MarriageManager.Instance.GetElligibleCitizensForMarriage(this.startedBy);
-		} else {
+		} 
+		if (this.remainingWeeks <= 0) {
 			if (this.startedBy.isMarried && this.startedBy.spouse != null) {
 				this.resolution = this.startedBy.name + " got married to " + this.startedBy.spouse.name + " in some other marriage invitation event.";
 				this.DoneEvent();
 				return;
 			}
-			this.elligibleCitizens = MarriageManager.Instance.GetElligibleCitizensForMarriage(this.startedBy);
+//			this.elligibleCitizens = MarriageManager.Instance.GetElligibleCitizensForMarriage(this.startedBy);
 			//Choose bride
 			if (this.elligibleCitizens.Count > 0) {
 				Citizen chosenCitizen = this.elligibleCitizens[Random.Range(0, this.elligibleCitizens.Count)];
