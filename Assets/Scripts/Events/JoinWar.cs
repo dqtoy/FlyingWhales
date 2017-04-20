@@ -33,7 +33,8 @@ public class JoinWar : GameEvent {
 	internal override void PerformAction(){
 		if (this.remainingWeeks > 0) {
 			this.remainingWeeks -= 1;
-		} else {
+		} 
+		if (this.remainingWeeks <= 0) {
 			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.candidateForAlliance.city.kingdom, EVENT_TYPES.INVASION_PLAN).Count > 0) {
 				//fail
 				this.resolution = this.candidateForAlliance.city.kingdom.name + " did not join " + this.startedByKingdom.name + " in his war against " + this.kingdomToAttack.name + 

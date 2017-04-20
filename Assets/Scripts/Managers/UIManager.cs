@@ -221,7 +221,7 @@ public class UIManager : MonoBehaviour {
 
 		if (specificEventGO.activeSelf) {
 			if (currentlyShowingEvent != null) {
-				this.ShowSpecificEvent (currentlyShowingEvent, true);
+				this.ShowSpecificEvent (currentlyShowingEvent);
 			}
 		}
 
@@ -664,7 +664,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void HideCityInfo(){
-		currentlyShowingCity = null;
+//		currentlyShowingCity = null;
 		cityInfoCitizensParent.SetActive(false);
 		cityInfoEventsParent.SetActive(false);
 		cityInfoHistoryParent.SetActive(false);
@@ -695,7 +695,6 @@ public class UIManager : MonoBehaviour {
 				this.kingdomWarsLbl.text += kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.name + ", ";
 			}
 		}
-		this.kingdomWarsLbl.text.Trim ();
 		this.kingdomWarsLbl.text.TrimEnd (',');
 		this.kingdomWarsLbl.text += "[/b]";
 
@@ -976,13 +975,26 @@ public class UIManager : MonoBehaviour {
 			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
 
 		}
-		if (currentlyShowingCitizen.relationshipKings.Count > 1) {
-			kingMainLineSprite.height = 98 * currentlyShowingCitizen.relationshipKings.Count;
-			kingMainLineSprite.gameObject.SetActive(true);
-		}
+
 		governorRelationshipsParentGO.SetActive(false);
 		kingRelationshipsParentGO.SetActive(true);
-		kingRelationshipsGrid.enabled = true;
+		StartCoroutine(RepositionGrid(kingRelationshipsGrid));
+
+		if (currentlyShowingCitizen.relationshipKings.Count > 1) {
+//			NGUITools.SetActive (kingMainLineSprite.gameObject, true);
+//			kingMainLineSprite.updateAnchors = UIRect.AnchorUpdate.OnEnable;
+//			kingMainLineSprite.topAnchor.target = kingRelationshipsGrid.GetChildList ().First ().GetComponent<CharacterPortrait> ().lineGO.transform;
+//			kingMainLineSprite.topAnchor.absolute = 0;
+//			kingMainLineSprite.bottomAnchor.target = kingRelationshipsGrid.GetChildList ().Last ().GetComponent<CharacterPortrait> ().lineGO.transform;
+//			kingMainLineSprite.bottomAnchor.absolute = 0;
+//			kingMainLineSprite.UpdateAnchors();
+//			NGUITools.SetActive (kingMainLineSprite.gameObject, false);
+//			NGUITools.SetActive (kingMainLineSprite.gameObject, true);
+			kingMainLineSprite.height = 100 * currentlyShowingCitizen.relationshipKings.Count;
+			kingMainLineSprite.gameObject.SetActive(true);
+		} else {
+			kingMainLineSprite.gameObject.SetActive (false);
+		}
 	}
 	public void ShowGovernorRelationships(){
 		if (governorRelationshipsParentGO.activeSelf) {
@@ -1004,14 +1016,26 @@ public class UIManager : MonoBehaviour {
 //			governorGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
 		}
 
-		if (currentlyShowingCitizen.city.kingdom.cities.Count > 1) {
-			governorMainLineSprite.height = 98 * currentlyShowingCitizen.relationshipKings.Count;
-			governorMainLineSprite.gameObject.SetActive(true);
-		}
-
 		kingRelationshipsParentGO.SetActive(false);
 		governorRelationshipsParentGO.SetActive(true);
-		governorsRelationshipGrid.enabled = true;
+		StartCoroutine(RepositionGrid(governorsRelationshipGrid));
+
+		if (currentlyShowingCitizen.city.kingdom.cities.Count > 1) {
+//			NGUITools.SetActive (governorMainLineSprite.gameObject, true);
+//			governorMainLineSprite.updateAnchors = UIRect.AnchorUpdate.OnEnable;
+//			governorMainLineSprite.topAnchor.target = governorsRelationshipGrid.GetChildList ().First ().GetComponent<CharacterPortrait> ().lineGO.transform;
+//			governorMainLineSprite.topAnchor.absolute = 0;
+//			governorMainLineSprite.bottomAnchor.target = governorsRelationshipGrid.GetChildList ().Last ().GetComponent<CharacterPortrait> ().lineGO.transform;
+//			governorMainLineSprite.bottomAnchor.absolute = 0;
+//			governorMainLineSprite.UpdateAnchors();
+//			NGUITools.SetActive (governorMainLineSprite.gameObject, false);
+//			NGUITools.SetActive (governorMainLineSprite.gameObject, true);
+
+			governorMainLineSprite.height = 95 * currentlyShowingCitizen.relationshipKings.Count;
+			governorMainLineSprite.gameObject.SetActive(true);
+		} else {
+			governorMainLineSprite.gameObject.SetActive (false);
+		}
 	}
 
 	public void HideRelationships(){
@@ -1092,7 +1116,7 @@ public class UIManager : MonoBehaviour {
 		var v3 = Input.mousePosition;
 		v3.z = 10.0f;
 		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-		v3.y -= 0.13f;
+		v3.y -= 0.15f;
 		smallInfoGO.transform.position = v3;
 //		smallInfoGO.transform.parent = parent;
 //		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
@@ -1107,6 +1131,28 @@ public class UIManager : MonoBehaviour {
 	public void HideSmallInfo(){
 		smallInfoGO.SetActive (false);
 		smallInfoGO.transform.parent = this.transform;
+	}
+	public void ShowCampaignInfo(Campaign campaign, General general, Transform parent){
+//		smallInfoLbl.text = info;
+		this.campaignInfoGO.GetComponent<CampaignInfo>().SetCampaignInfo(campaign, general);
+		var v3 = Input.mousePosition;
+		v3.z = 10.0f;
+		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+		v3.y -= 0.13f;
+		this.campaignInfoGO.transform.position = v3;
+		//		smallInfoGO.transform.parent = parent;
+		//		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
+		//		Vector3 newPos = smallInfoGO.transform.localPosition;
+
+		//		smallInfoGO.transform.localPosition = newPos;
+		//		smallInfoGO.transform.parent = this.transform;
+		//		smallInfoGO.transform.localScale = Vector3.one;
+		this.campaignInfoGO.SetActive (true);
+	}
+
+	public void HideCampaignInfo(){
+		this.campaignInfoGO.SetActive (false);
+		this.campaignInfoGO.transform.parent = this.transform;
 	}
 
 	public void ToggleFamilyTree(){
@@ -1339,7 +1385,7 @@ public class UIManager : MonoBehaviour {
 		eventsOfTypeGo.SetActive (true);
 	}
 		
-	public void ShowSpecificEvent(GameEvent gameEvent, bool isOnUpdate = false){
+	public void ShowSpecificEvent(GameEvent gameEvent){
 		specificEventNameLbl.text = gameEvent.eventType.ToString().Replace("_", " ");
 		specificEventDescriptionLbl.text = gameEvent.description;
 		specificEventStartDateLbl.text = "Started " + ((MONTH)gameEvent.startMonth).ToString() + " " + gameEvent.startWeek.ToString() + ", " + gameEvent.startYear.ToString();
@@ -1359,24 +1405,6 @@ public class UIManager : MonoBehaviour {
 			this.specificEventBarTitle.text = "Duration";
 			specificEventProgBar.value = (float)((float)gameEvent.remainingWeeks / (float)gameEvent.durationInWeeks);
 		}
-
-		if(!isOnUpdate){
-			List<Transform> children = this.specificEventStartedByGrid.GetChildList();
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-
-			List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
-			for (int i = 0; i < children2.Count; i++) {
-				Destroy (children2 [i].gameObject);
-			}
-
-			List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
-			for (int i = 0; i < children3.Count; i++) {
-				Destroy (children3 [i].gameObject);
-			}
-		}
-
 
 		if (gameEvent.eventType == EVENT_TYPES.MARRIAGE_INVITATION) {
 			MarriageInvitation marriageEvent = (MarriageInvitation)gameEvent;
@@ -1421,20 +1449,20 @@ public class UIManager : MonoBehaviour {
 		specificEventGO.SetActive(true);
 	}
 	private void ShowBorderConflictEvent(BorderConflict borderConflict){
-//		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
-//		for (int i = 0; i < children.Count; i++) {
-//			Destroy (children [i].gameObject);
-//		}
-//
-//		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
-//		for (int i = 0; i < children2.Count; i++) {
-//			Destroy (children2 [i].gameObject);
-//		}
-//
-//		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
-//		for (int i = 0; i < children3.Count; i++) {
-//			Destroy (children3 [i].gameObject);
-//		}
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
 
 		if(borderConflict.startedBy != null){
 			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
@@ -1447,17 +1475,10 @@ public class UIManager : MonoBehaviour {
 
 		this.specificEventBarTitle.text = "Tension";
 		this.specificEventProgBar.value = (float)borderConflict.tension / 100f;
-
 		this.specificEventCandidatesTitleLbl.text = "PACIFIERS";
-		for(int i = 0; i < borderConflict.activeEnvoysReduceSelf.Count; i++){
-			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
-			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysReduceSelf[i].citizen);
-			candidates.transform.localScale = Vector3.one;
-			candidates.transform.position = Vector3.zero;
-		}
 		for(int i = 0; i < borderConflict.activeEnvoysReduce.Count; i++){
 			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
-			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysReduce[i].citizen);
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysReduce[i].citizen.city.kingdom.king);
 			candidates.transform.localScale = Vector3.one;
 			candidates.transform.position = Vector3.zero;
 		}
@@ -1467,27 +1488,27 @@ public class UIManager : MonoBehaviour {
 		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
 		for(int i = 0; i < borderConflict.activeEnvoysIncrease.Count; i++){
 			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
-			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysIncrease[i].citizen);
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysIncrease[i].citizen.city.kingdom.king);
 			candidates.transform.localScale = Vector3.one;
 			candidates.transform.position = Vector3.zero;
 		}
 		StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
 	}
 	private void ShowStateVisitEvent(StateVisit stateVisit){
-//		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
-//		for (int i = 0; i < children.Count; i++) {
-//			Destroy (children [i].gameObject);
-//		}
-//
-//		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
-//		for (int i = 0; i < children2.Count; i++) {
-//			Destroy (children2 [i].gameObject);
-//		}
-//
-//		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
-//		for (int i = 0; i < children3.Count; i++) {
-//			Destroy (children3 [i].gameObject);
-//		}
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
 
 		if(stateVisit.startedBy != null){
 			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
@@ -1520,20 +1541,20 @@ public class UIManager : MonoBehaviour {
 		StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
 	}
 	private void ShowAssassinationEvent(Assassination assassination){
-//		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
-//		for (int i = 0; i < children.Count; i++) {
-//			Destroy (children [i].gameObject);
-//		}
-//
-//		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
-//		for (int i = 0; i < children2.Count; i++) {
-//			Destroy (children2 [i].gameObject);
-//		}
-//
-//		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
-//		for (int i = 0; i < children3.Count; i++) {
-//			Destroy (children3 [i].gameObject);
-//		}
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
 
 		if(assassination.startedBy != null){
 			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
@@ -1568,20 +1589,20 @@ public class UIManager : MonoBehaviour {
 
 	}
 	private void ShowEspionageEvent(Espionage espionage){
-//		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
-//		for (int i = 0; i < children.Count; i++) {
-//			Destroy (children [i].gameObject);
-//		}
-//
-//		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
-//		for (int i = 0; i < children2.Count; i++) {
-//			Destroy (children2 [i].gameObject);
-//		}
-//
-//		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
-//		for (int i = 0; i < children3.Count; i++) {
-//			Destroy (children3 [i].gameObject);
-//		}
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
 
 		if(espionage.startedBy != null){
 			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
@@ -1624,20 +1645,20 @@ public class UIManager : MonoBehaviour {
 
 	}
 	private void ShowRaidEvent(Raid raid){
-//		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
-//		for (int i = 0; i < children.Count; i++) {
-//			Destroy (children [i].gameObject);
-//		}
-//
-//		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
-//		for (int i = 0; i < children2.Count; i++) {
-//			Destroy (children2 [i].gameObject);
-//		}
-//
-//		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
-//		for (int i = 0; i < children3.Count; i++) {
-//			Destroy (children3 [i].gameObject);
-//		}
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
 
 		if(raid.startedBy != null){
 			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
