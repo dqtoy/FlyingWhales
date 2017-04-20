@@ -702,25 +702,26 @@ public class City{
 	}
 
 	internal void ExpandToThisCity(List<Citizen> citizensToOccupyCity){
-		citizensToOccupyCity = citizensToOccupyCity.OrderBy(x => x.prestige).ToList();
-//		Assign Governor
-		citizensToOccupyCity.Last().city = this;
-		citizensToOccupyCity.Last().AssignRole(ROLE.GOVERNOR);
-		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.governor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-
-
-		BuyInitialTiles ();
-		CreateInitialFoodProducerFamily ();
-		CreateInitialGathererFamily ();
-		CreateInitialGeneralFamily ();
-		CreateInitialUntrainedFamily ();
-		GenerateInitialTraitsForInitialCitizens ();
-		UpdateResourceProduction ();
-		UpdateUnownedNeighbourTiles();
-
-		for (int i = 0; i < this.citizens.Count; i++) {
-			this.citizens[i].UpdatePrestige();
-		}
+//		citizensToOccupyCity = citizensToOccupyCity.OrderBy(x => x.prestige).ToList();
+////		Assign Governor
+//		citizensToOccupyCity.Last().city = this;
+//		citizensToOccupyCity.Last().AssignRole(ROLE.GOVERNOR);
+//		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.governor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+//
+//
+//		BuyInitialTiles ();
+//		CreateInitialFoodProducerFamily ();
+//		CreateInitialGathererFamily ();
+//		CreateInitialGeneralFamily ();
+//		CreateInitialUntrainedFamily ();
+//		GenerateInitialTraitsForInitialCitizens ();
+//		UpdateResourceProduction ();
+//		UpdateUnownedNeighbourTiles();
+//
+//		for (int i = 0; i < this.citizens.Count; i++) {
+//			this.citizens[i].UpdatePrestige();
+//		}
+		this.CreateInitialFamilies(false);
 	}
 
 	protected void DonateCitizensToExpansion(Expansion expansionEvent, Kingdom kingdomToExpand){
