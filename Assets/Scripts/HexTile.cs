@@ -376,32 +376,32 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			if (this.biomeType == BIOMES.GRASSLAND) {
 				return;
 			} else if (this.biomeType == BIOMES.WOODLAND || this.biomeType == BIOMES.FOREST || this.biomeType == BIOMES.TUNDRA) {
-				this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite[Random.Range(0, centerSprite.Length)];
-				this.centerPiece.SetActive(true);
-				if (this.biomeType != BIOMES.TUNDRA) {
-					this.centerPiece.transform.localPosition = new Vector3 (0f, 0.37f, 0f);
-				}
+//				this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite[Random.Range(0, centerSprite.Length)];
+//				this.centerPiece.SetActive(true);
+//				if (this.biomeType != BIOMES.TUNDRA) {
+//					this.centerPiece.transform.localPosition = new Vector3 (0f, 0.37f, 0f);
+//				}
 			} else {
-				int chanceForDetail = Random.Range (0, 100);
-				if (chanceForDetail < 25) {
-					this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite[Random.Range(0, centerSprite.Length)];
-					this.centerPiece.SetActive(true);
-					float randomXPosition = Random.Range(-1.30f, 1.30f);
-					float randomYPosition = Random.Range(-0.40f, 0.70f);
-					if (randomXPosition <= 0.45f && randomXPosition >= -0.45f) {
-						int chanceToModify = Random.Range(0, 100);
-						if (chanceToModify < 25) {
-							if (Mathf.Sign (randomYPosition) == 0) {
-								//negative
-								randomYPosition -= Random.Range(0.20f,0.40f);
-							} else {
-								//positive
-								randomYPosition += Random.Range(0.20f,0.40f);
-							}
-						}
-					}
-					this.centerPiece.transform.localPosition = new Vector3(randomXPosition, randomYPosition, 0f);
-				}
+//				int chanceForDetail = Random.Range (0, 100);
+//				if (chanceForDetail < 25) {
+//					this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite[Random.Range(0, centerSprite.Length)];
+//					this.centerPiece.SetActive(true);
+//					float randomXPosition = Random.Range(-1.30f, 1.30f);
+//					float randomYPosition = Random.Range(-0.40f, 0.70f);
+//					if (randomXPosition <= 0.45f && randomXPosition >= -0.45f) {
+//						int chanceToModify = Random.Range(0, 100);
+//						if (chanceToModify < 25) {
+//							if (Mathf.Sign (randomYPosition) == 0) {
+//								//negative
+//								randomYPosition -= Random.Range(0.20f,0.40f);
+//							} else {
+//								//positive
+//								randomYPosition += Random.Range(0.20f,0.40f);
+//							}
+//						}
+//					}
+//					this.centerPiece.transform.localPosition = new Vector3(randomXPosition, randomYPosition, 0f);
+//				}
 			}
 
 		}
@@ -414,6 +414,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
 		this.structureGO.SetActive(true);
 		this.structureOnTile = STRUCTURE.CITY;
+		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.tundraTiles [Random.Range (0, Biomes.Instance.tundraTiles.Length)];
 	}
 
 	public void ShowNamePlate(){
@@ -426,6 +427,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.isOccupied = true;
 		this.occupant = citizen;
 		this.GetComponent<SpriteRenderer> ().color = Color.white;
+		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.tundraTiles [Random.Range (0, Biomes.Instance.tundraTiles.Length)];
 		switch (citizen.role) {
 		case ROLE.FOODIE:
 //			this.GetComponent<SpriteRenderer> ().color = Color.green;
