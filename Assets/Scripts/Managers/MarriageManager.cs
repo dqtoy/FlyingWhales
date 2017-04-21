@@ -68,6 +68,7 @@ public class MarriageManager : MonoBehaviour {
 		father.UnsubscribeListeners();
 		mother.UnsubscribeListeners();
 
+		spouse.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - spouse.age));
 		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
 		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
 
