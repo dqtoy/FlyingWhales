@@ -208,6 +208,7 @@ public class CombatManager : MonoBehaviour {
 		RelationshipKingdom kingdomRelationshipToGeneral2 = general1.citizen.city.kingdom.GetRelationshipWithOtherKingdom(general2.citizen.city.kingdom);
 		RelationshipKingdom kingdomRelationshipToGeneral1 = general2.citizen.city.kingdom.GetRelationshipWithOtherKingdom(general1.citizen.city.kingdom);
 
+
 		if(general1.army.hp <= 0){
 			//BATTLE LOST
 			kingdomRelationshipToGeneral2.kingdomWar.battlesLost += 1;
@@ -216,6 +217,8 @@ public class CombatManager : MonoBehaviour {
 			}else{
 				kingdomRelationshipToGeneral2.AdjustExhaustion (10);
 			}
+
+
 		}else{
 			//BATTLE WON
 			kingdomRelationshipToGeneral2.kingdomWar.battlesWon += 1;
@@ -243,6 +246,85 @@ public class CombatManager : MonoBehaviour {
 				kingdomRelationshipToGeneral1.AdjustExhaustion (-10);
 			}
 		}
+
+		int chanceToTriggerSendSpy = Random.Range (0, 100);
+		if (chanceToTriggerSendSpy < 10) {
+			List<Kingdom> kingdom1Enemies = general1.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ENEMY);
+			kingdom1Enemies.Union (general1.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.RIVAL));
+
+			List<Kingdom> kingdom2Enemies = general2.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ENEMY);
+			kingdom2Enemies.Union (general2.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.RIVAL));
+
+			List<Kingdom> possibleKingdomsToSendSpy = kingdom1Enemies.Except (kingdom2Enemies).Union(kingdom2Enemies.Except (kingdom1Enemies)).ToList();
+
+			for (int i = 0; i < possibleKingdomsToSendSpy.Count; i++) {
+				int chance = Random.Range(0, 100);
+				Kingdom possibleKingdomToTrigger = possibleKingdomsToSendSpy[i];
+				List<Citizen> spies = possibleKingdomToTrigger.GetAllCitizensOfType (ROLE.SPY).Where(x => !((Spy)x.assignedRole).inAction).ToList();
+				if (spies.Count > 0 && chance < 5) {
+					//Send spy to kingdom that is not enemy
+					if (possibleKingdomToTrigger.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
+						possibleKingdomToTrigger.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
+
+						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
+							possibleKingdomToTrigger.name + " sent a spy(" + spies [0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							" against " + general1.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
+						
+						Debug.Log(possibleKingdomToTrigger.name + " sent a spy(" + spies[0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							" against " + general1.citizen.city.kingdom.name);
+					} else {
+						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
+
+						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
+							possibleKingdomToTrigger.name + " sent a spy(" + spies [0].name + ") to " + general1.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							" against " + general2.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
+
+						Debug.Log(possibleKingdomToTrigger.name + " sent a spy(" + spies[0].name + ") to " + general1.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							" against " + general2.citizen.city.kingdom.name);
+					}
+				}
+			}
+		}
+
+		int chanceToTriggerSendEnvoy = Random.Range (0, 100);
+		if (chanceToTriggerSendEnvoy < 10) {
+			List<Kingdom> kingdom1Friends = general1.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.FRIEND);
+			kingdom1Friends.Union (general1.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ALLY));
+
+			List<Kingdom> kingdom2Friends = general2.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.FRIEND);
+			kingdom2Friends.Union (general2.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ALLY));
+
+			List<Kingdom> commonFriends = kingdom1Friends.Intersect(kingdom2Friends).ToList();
+			for (int i = 0; i < commonFriends.Count; i++) {
+				int chance = Random.Range(0, 100);
+				Kingdom possibleKingdomToTrigger = commonFriends[i];
+				List<Citizen> envoys = possibleKingdomToTrigger.GetAllCitizensOfType (ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
+				if (envoys.Count > 0 && chance < 5) {
+					if (Random.Range (0, 2) == 0) {
+						((Envoy)envoys [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
+
+						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
+							possibleKingdomToTrigger.name + " sent an envoy(" + envoys [0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							" against " + general1.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
+
+						Debug.Log(possibleKingdomToTrigger.name + " sent an envoy(" + envoys[0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							" against " + general1.citizen.city.kingdom.name);
+					} else {
+						((Envoy)envoys [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
+
+						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
+							possibleKingdomToTrigger.name + " sent an envoy(" + envoys [0].name + ") to " + general1.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							" against " + general2.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
+
+						Debug.Log(possibleKingdomToTrigger.name + " sent a envoy(" + envoys[0].name + ") to " + general1.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							" against " + general2.citizen.city.kingdom.name);
+					}
+				}
+			}
+
+		}
+
 		Debug.Log ("RESULTS: " + general1.citizen.name + " army hp left: " + general1.army.hp + "\n" + general2.citizen.name + " army hp left: " + general2.army.hp);
 	}
 
@@ -268,4 +350,5 @@ public class CombatManager : MonoBehaviour {
 			general2.citizen.Death(DEATH_REASONS.BATTLE);
 		}
 	}
+
 }

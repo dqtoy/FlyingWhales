@@ -280,7 +280,7 @@ public class CampaignManager {
 	}
 	internal void UnregisterGenerals(General general, Campaign chosenCampaign){
 		if(general.targetLocation.isOccupied){
-			general.targetLocation.city.incomingGenerals.Remove (this);
+//			general.targetLocation.city.incomingGenerals.Remove (this);
 		}
 		general.targetLocation = null;
 		general.warLeader = null;

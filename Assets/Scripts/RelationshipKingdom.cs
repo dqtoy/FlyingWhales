@@ -10,6 +10,7 @@ public class RelationshipKingdom {
 	public bool isAdjacent;
 	public bool isAtWar;
 	public KingdomWar kingdomWar;
+	public MONTH monthToMoveOnAfterRejection;
 //	public int daysAtWar;
 
 	public RelationshipKingdom(Kingdom objectInRelationship){
@@ -17,11 +18,20 @@ public class RelationshipKingdom {
 		this.isAtWar = false;
 		this.isAdjacent = false;
 		this.kingdomWar = new KingdomWar (objectInRelationship);
+		this.monthToMoveOnAfterRejection = MONTH.NONE;
 	}
 
 	internal void AdjustExhaustion(int amount){
 		if(this.isAtWar){
 			this.kingdomWar.AdjustExhaustion (amount);
+		}
+
+	}
+
+	internal void MoveOnAfterRejection(){
+		if ((MONTH)GameManager.Instance.month == monthToMoveOnAfterRejection) {
+			EventManager.Instance.onWeekEnd.RemoveListener(MoveOnAfterRejection);
+			this.monthToMoveOnAfterRejection = MONTH.NONE;
 		}
 	}
 

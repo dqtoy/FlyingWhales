@@ -592,6 +592,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		if (!this.isHabitable && this.isOccupied && this.structureOnTile != STRUCTURE.NONE) {
 			UIManager.Instance.ShowSmallInfo("Occupant: [b]" + this.occupant.name + "[/b] \nStructure: [b]" + this.structureOnTile.ToString().Replace("_", " ") + "[/b]", this.transform);
 		}
+		
 	}
 
 	void OnMouseExit(){

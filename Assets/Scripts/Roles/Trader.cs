@@ -152,9 +152,9 @@ public class Trader : Role {
 			this.isGoingHome = false;
 			this.isWorking = false;
 			targetCity.tradeManager.sustainabilityBuff = 0;
-			this.targetCity = null;
 			EventManager.Instance.onWeekEnd.RemoveListener(DailyActions);
 			EventManager.Instance.onWeekEnd.AddListener(AssignTask);
+			this.targetCity = null;
 			this.AssignTask();
 
 		}

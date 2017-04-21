@@ -9,6 +9,11 @@ public class Envoy : Role {
 	public int eventDuration;
 	public bool inAction;
 
+	protected delegate void DoAction();
+	protected DoAction onDoAction;
+
+	private RelationshipKingdom warExhaustiontarget;
+
 	public Envoy(Citizen citizen): base(citizen){
 		this.successfulMissions = 0;
 		this.unsuccessfulMissions = 0;
@@ -32,6 +37,33 @@ public class Envoy : Role {
 		EventManager.Instance.onWeekEnd.RemoveListener (WeeklyAction);
 		if(currentEvent != null){
 			currentEvent.DoneCitizenAction (this);
+		}
+	}
+
+	internal void StartDecreaseWarExhaustionTask(RelationshipKingdom targetKingdom){
+		this.eventDuration = 2;
+		this.warExhaustiontarget = targetKingdom;
+		this.inAction = true;
+		this.onDoAction += DecreaseWarExhaustion;
+		EventManager.Instance.onWeekEnd.AddListener(WaitForAction);
+	}
+
+	protected void DecreaseWarExhaustion(){
+		if (this.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+			this.warExhaustiontarget.kingdomWar.exhaustion -= 20;
+		} else {
+			this.warExhaustiontarget.kingdomWar.exhaustion -= 15;
+		}
+		this.inAction = false;
+		this.onDoAction -= DecreaseWarExhaustion;
+		EventManager.Instance.onWeekEnd.RemoveListener(WaitForAction);
+	}
+
+	protected void WaitForAction(){
+		if (this.eventDuration > 0) {
+			this.eventDuration -= 1;
+		} else {
+			this.onDoAction();
 		}
 	}
 }
