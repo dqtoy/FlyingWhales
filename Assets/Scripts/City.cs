@@ -66,7 +66,7 @@ public class City{
 	}
 
 	public List<Citizen> citizensWithRoleButNoWorkplace{
-		get{ return this.citizens.Where (x => !x.isBusy && x.role != ROLE.UNTRAINED && x.age >= 16).ToList ();}
+		get{ return this.citizens.Where (x => !x.isBusy && x.role != ROLE.UNTRAINED && x.age >= 16 && x.workLocation == null).ToList ();}
 	}
 
 	public City(HexTile hexTile, Kingdom kingdom){
@@ -1023,7 +1023,16 @@ public class City{
 				} 
 			}
 
-			if (!this.AllSpecialRolesMaxed()) {
+			ROLE nextSpecialRoleToCreate = this.GetNonProducingRoleToCreate();
+			bool isProducingAllResources = true;
+			List<Resource> citizenCreationCost = GetCitizenCreationCostPerType (nextSpecialRoleToCreate);
+			for (int i = 0; i < citizenCreationCost.Count; i++) {
+				if (!this.IsProducingResource(citizenCreationCost[i].resourceType)) {
+					isProducingAllResources = false;
+				}
+			}
+			if (!this.AllSpecialRolesMaxed()){
+//			if (!this.AllSpecialRolesMaxed() && isProducingAllResources) {
 				//buy tile for special roles
 				List<HexTile> tilesWithNoSpecialResource = this.allUnownedNeighbours.Where (x => x.specialResource == RESOURCE.NONE).ToList ();
 				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, tilesWithNoSpecialResource)) {
@@ -1053,6 +1062,7 @@ public class City{
 				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, this.purchasabletilesWithUnneededResource, true)) {
 					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional unneeded resource tile");
 					this.excessStructures = 0;
+					return;
 				}
 			}
 
@@ -1427,7 +1437,11 @@ public class City{
 		case BASE_RESOURCE_TYPE.COBALT:
 			result = this.allResourceProduction[5] > 0 ? true : false;
 			break;
+		case BASE_RESOURCE_TYPE.GOLD:
+			result = this.allResourceProduction[6] > 0 ? true : false;
+			break;
 		default:
+			result = false;
 			break;
 		}
 		return result;
@@ -1529,6 +1543,9 @@ public class City{
 		List<Resource> citizenCreationCosts;
 		BASE_RESOURCE_TYPE creationResource = BASE_RESOURCE_TYPE.NONE;
 
+		int creationResourceCount = 80 + (20 * numOfCitizensOfSameType);
+		int goldCost = 200;
+
 		switch (role) {
 		case ROLE.FOODIE:
 		case ROLE.GATHERER:
@@ -1540,7 +1557,11 @@ public class City{
 		case ROLE.GUARDIAN:
 		case ROLE.ENVOY:
 			creationResource = this.kingdom.rareResource;
-			break;
+			citizenCreationCosts = new List<Resource>(){
+				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
+				new Resource (creationResource, creationResourceCount)
+			};
+			return citizenCreationCosts;
 		case ROLE.GENERAL:
 			citizenCreationCosts = new List<Resource>(){
 				new Resource (BASE_RESOURCE_TYPE.GOLD, 500),
@@ -1549,9 +1570,6 @@ public class City{
 			return citizenCreationCosts;
 		}
 
-
-		int creationResourceCount = 80 + (20 * numOfCitizensOfSameType);
-		int goldCost = 200;
 
 		if(numOfCitizensOfSameType == 0) {
 			citizenCreationCosts = new List<Resource>() {

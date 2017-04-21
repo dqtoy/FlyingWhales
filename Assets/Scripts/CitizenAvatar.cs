@@ -19,6 +19,9 @@ public class CitizenAvatar : MonoBehaviour {
 
 	void OnMouseOver(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
+			if (citizen.assignedRole == null) {
+				return;
+			}
 			Trader trader = (Trader)citizen.assignedRole;
 			string text = "Name: [b]" + trader.citizen.name + "[/b]\n Home: [b]" + trader.homeCity.name + "[/b]\n Target: [b]" + trader.targetCity.name + "[/b]\n Trader Buffs: \n";
 			for (int i = 0; i < trader.currentlySelling.Count; i++) {

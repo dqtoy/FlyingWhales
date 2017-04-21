@@ -57,7 +57,7 @@ public class Kingdom{
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
-		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
+//		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 

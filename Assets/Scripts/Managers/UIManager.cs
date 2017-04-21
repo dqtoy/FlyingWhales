@@ -519,87 +519,166 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void ShowCitizens(){
-		CharacterPortrait[] characters = cityInfoCitizensParent.GetComponentsInChildren<CharacterPortrait>();
-		List<Citizen> citizensExcludingKingAndGovernor = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING).ToList();
+//		CharacterPortrait[] characters = cityInfoCitizensParent.GetComponentsInChildren<CharacterPortrait>();
+//		List<Citizen> citizensExcludingKingAndGovernor = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING).ToList();
 
-		if (characters.Length != citizensExcludingKingAndGovernor.Count || !cityInfoGO.activeSelf) {
-			for (int i = 0; i < characters.Length; i++) {
-				Destroy (characters [i].gameObject);
+
+//		for (int i = 0; i < characters.Length; i++) {
+//			Destroy (characters [i].gameObject);
+//		}
+		//Foodie
+		List<Transform> children = foodProducersGrid.GetChildList();
+		List<Citizen> citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.FOODIE);
+		List<Citizen> citizensOfTypeCurrentlyShowed = foodProducersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		List<Citizen> missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+		if (missedOutCitizens.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children[i].gameObject);
 			}
-
-			List<Citizen> citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.FOODIE);
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, foodProducersGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 				citizenGO.transform.localScale = Vector3.one;
 			}
 			StartCoroutine (RepositionGrid (this.foodProducersGrid));
+		}
 
-			citizensConcerned.Clear ();
-			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GATHERER);
+		//Gatherer
+		citizensConcerned.Clear ();
+		children = gatherersGrid.GetChildList();
+		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GATHERER);
+		citizensOfTypeCurrentlyShowed = gatherersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+		if (missedOutCitizens.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, gatherersGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 				citizenGO.transform.localScale = Vector3.one;
 			}
 			StartCoroutine (RepositionGrid (this.gatherersGrid));
+		}
 
-			citizensConcerned.Clear ();
-			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.MINER);
+		//Miner
+		citizensConcerned.Clear ();
+		children = minersGrid.GetChildList();
+		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.MINER);
+		citizensOfTypeCurrentlyShowed = minersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+		if (missedOutCitizens.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, minersGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 				citizenGO.transform.localScale = Vector3.one;
 			}
 			StartCoroutine (RepositionGrid (this.minersGrid));
+		}
 
-			citizensConcerned.Clear ();
-			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.TRADER);
+		//Trader
+		citizensConcerned.Clear ();
+		children = tradersGrid.GetChildList();
+		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.TRADER);
+		citizensOfTypeCurrentlyShowed = tradersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+		if (missedOutCitizens.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, tradersGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 				citizenGO.transform.localScale = Vector3.one;
 			}
 			StartCoroutine (RepositionGrid (this.tradersGrid));
+		}
 
-			citizensConcerned.Clear ();
-			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GENERAL);
+		//General
+		citizensConcerned.Clear ();
+		children = generalsGrid.GetChildList();
+		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GENERAL);
+		citizensOfTypeCurrentlyShowed = generalsGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+		if (missedOutCitizens.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, generalsGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 				citizenGO.transform.localScale = Vector3.one;
 			}
 			StartCoroutine (RepositionGrid (this.generalsGrid));
+		}
 
-			citizensConcerned.Clear ();
-			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.SPY);
+		//Spy
+		citizensConcerned.Clear ();
+		children = spiesGrid.GetChildList();
+		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.SPY);
+		citizensOfTypeCurrentlyShowed = spiesGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+		if (missedOutCitizens.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, spiesGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 				citizenGO.transform.localScale = Vector3.one;
 			}
 			StartCoroutine (RepositionGrid (this.spiesGrid));
+		}
 
-			citizensConcerned.Clear ();
-			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.ENVOY);
+		//Envoy
+		citizensConcerned.Clear ();
+		children = envoysGrid.GetChildList();
+		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.ENVOY);
+		citizensOfTypeCurrentlyShowed = envoysGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+		if (missedOutCitizens.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, envoysGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 				citizenGO.transform.localScale = Vector3.one;
 			}
 			StartCoroutine (RepositionGrid (this.envoysGrid));
+		}
 
-			citizensConcerned.Clear ();
-			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GUARDIAN);
+		//Guardian
+		citizensConcerned.Clear ();
+		children = guardiansGrid.GetChildList();
+		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GUARDIAN);
+		citizensOfTypeCurrentlyShowed = guardiansGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+		if (missedOutCitizens.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, guardiansGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
 				citizenGO.transform.localScale = Vector3.one;
 			}
 			StartCoroutine (RepositionGrid (this.guardiansGrid));
+		}
 
-			citizensConcerned.Clear ();
-			citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.UNTRAINED);
+		//Untrained
+		citizensConcerned.Clear ();
+		children = untrainedGrid.GetChildList();
+		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.UNTRAINED);
+		citizensOfTypeCurrentlyShowed = untrainedGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+		if (missedOutCitizens.Count > 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
 			for (int i = 0; i < citizensConcerned.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, untrainedGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
@@ -607,6 +686,7 @@ public class UIManager : MonoBehaviour {
 			}
 			StartCoroutine (RepositionGrid (this.untrainedGrid));
 		}
+
 		cityInfoHistoryParent.SetActive(false);
 		cityInfoEventsParent.SetActive(false);
 		cityInfoCitizensParent.SetActive(true);
@@ -1814,7 +1894,7 @@ public class UIManager : MonoBehaviour {
 
 		specificEventCandidatesTitleLbl.text = "MILITARY";
 		int totalMilitaryStrength = 0;
-		List<Citizen> generals = militarizationEvent.startedByCity.GetCitizensWithRole(ROLE.GENERAL);
+		List<Citizen> generals = militarizationEvent.startedByKingdom.GetAllCitizensOfType(ROLE.GENERAL);
 		for (int i = 0; i < generals.Count; i++) {
 			totalMilitaryStrength += ((General)generals[i].assignedRole).army.hp;
 		}
