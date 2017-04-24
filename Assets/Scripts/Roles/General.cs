@@ -390,7 +390,7 @@ public class General : Role {
 			}
 		}
 	}
-	internal void Move(){
+	internal void Move(bool isFast = false){
 		if(this.targetLocation != null){
 			if(this.roads != null){
 				if(this.roads.Count > 0){
@@ -408,12 +408,14 @@ public class General : Role {
 					}
 				}
 			}
-
-			if(!this.citizen.isDead){
-				if(this.citizen.miscTraits.Contains(MISC_TRAIT.FAST)){
-					Move ();
+			if(!isFast){
+				if(!this.citizen.isDead){
+					if(this.citizen.miscTraits.Contains(MISC_TRAIT.FAST)){
+						Move (true);
+					}
 				}
 			}
+
 
 		}
 	}
