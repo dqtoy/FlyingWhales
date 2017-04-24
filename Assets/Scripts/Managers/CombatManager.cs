@@ -94,9 +94,11 @@ public class CombatManager : MonoBehaviour {
 				if(victoriousGeneral.warType == WAR_TYPE.INTERNATIONAL){
 					if(city.incomingGenerals[i].warType == WAR_TYPE.INTERNATIONAL){
 						if (city.incomingGenerals[i].citizen.id != victoriousGeneral.citizen.id) {
-							Campaign campaign = city.incomingGenerals[i].warLeader.campaignManager.SearchCampaignByID (city.incomingGenerals[i].campaignID);
-							if(campaign != null){
-								campaign.leader.campaignManager.CampaignDone (campaign);
+							if (city.incomingGenerals [i].campaignID != victoriousGeneral.campaignID) {
+								Campaign campaign = city.incomingGenerals [i].warLeader.campaignManager.SearchCampaignByID (city.incomingGenerals [i].campaignID);
+								if (campaign != null) {
+									campaign.leader.campaignManager.CampaignDone (campaign);
+								}
 							}
 						}
 					}
