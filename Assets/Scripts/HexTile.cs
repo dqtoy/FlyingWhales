@@ -514,11 +514,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	public void UnoccupyTile(){
-		this.occupant.workLocation = null;
-		this.occupant.currentLocation = null;
-		this.occupant.isBusy = false;
-		this.isOccupied = false;
-		this.occupant = null;
+		if(this.occupant != null){
+			this.occupant.workLocation = null;
+			this.occupant.currentLocation = null;
+			this.occupant.isBusy = false;
+			this.isOccupied = false;
+			this.occupant = null;
+		}
+
 		if (!this.isHabitable) {
 			this.structureGO.SetActive (false);
 			this.structureOnTile = STRUCTURE.NONE;
