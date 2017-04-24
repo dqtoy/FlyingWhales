@@ -28,7 +28,9 @@ public class GeneralObject : MonoBehaviour {
 			if(this.gameObject != null && other.gameObject != null){
 				if(!Utilities.AreTwoGeneralsFriendly(other.gameObject.GetComponent<GeneralObject>().general, this.general)){
 					if(!Utilities.AreTwoGeneralsFriendly(this.general, other.gameObject.GetComponent<GeneralObject>().general)){
-						CombatManager.Instance.BattleMidway (this.general, other.gameObject.GetComponent<GeneralObject> ().general);
+						if(this.general.army.hp > 0 && other.gameObject.GetComponent<GeneralObject> ().general.army.hp > 0){
+							CombatManager.Instance.BattleMidway (this.general, other.gameObject.GetComponent<GeneralObject> ().general);
+						}
 					}
 				}
 			}
