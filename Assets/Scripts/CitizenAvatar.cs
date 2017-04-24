@@ -22,19 +22,22 @@ public class CitizenAvatar : MonoBehaviour {
 //			if (citizen.assignedRole == null) {
 //				return;
 //			}
-			Trader trader = (Trader)citizen.assignedRole;
-			string text = "Name: [b]" + trader.citizen.name + "[/b]\n Home: [b]" + trader.homeCity.name + "[/b]\n Target: [b]" + trader.targetCity.name + "[/b]\n Trader Buffs: \n";
-			for (int i = 0; i < trader.currentlySelling.Count; i++) {
-				text += "[i]" + trader.currentlySelling [i].ToString () + "[/i]";
-				if (i != (trader.currentlySelling.Count - 1)) {
-					text += ", ";
+			if(this.citizen.assignedRole != null && this.citizen.role == ROLE.TRADER){
+				if(this.citizen.assignedRole is Trader){
+					Trader trader = (Trader)citizen.assignedRole;
+					string text = "Name: [b]" + trader.citizen.name + "[/b]\n Home: [b]" + trader.homeCity.name + "[/b]\n Target: [b]" + trader.targetCity.name + "[/b]\n Trader Buffs: \n";
+					for (int i = 0; i < trader.currentlySelling.Count; i++) {
+						text += "[i]" + trader.currentlySelling [i].ToString () + "[/i]";
+						if (i != (trader.currentlySelling.Count - 1)) {
+							text += ", ";
+						}
+					}
+					this.path = trader.pathToTargetCity;
+					UIManager.Instance.ShowSmallInfo (text, UIManager.Instance.transform);
+					this.HighlightPath();
 				}
 			}
-			if (citizen.role == ROLE.TRADER) {
-				this.path = ((Trader)citizen.assignedRole).pathToTargetCity;
-			}
-			UIManager.Instance.ShowSmallInfo (text, UIManager.Instance.transform);
-			this.HighlightPath();
+
 		}
 	}
 

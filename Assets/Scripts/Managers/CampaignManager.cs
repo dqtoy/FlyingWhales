@@ -279,8 +279,10 @@ public class CampaignManager {
 		}
 	}
 	internal void UnregisterGenerals(General general, Campaign chosenCampaign){
-		if(general.targetLocation.isOccupied){
-			general.targetLocation.city.incomingGenerals.Remove (general);
+		if(general.targetLocation != null){
+			if(general.targetLocation.isOccupied){
+				general.targetLocation.city.incomingGenerals.Remove (general);
+			}
 		}
 		general.targetLocation = null;
 		general.warLeader = null;
@@ -555,10 +557,16 @@ public class CampaignManager {
 				chosenCampaign.registeredGenerals [i].roads = path;
 				chosenCampaign.registeredGenerals [i].daysBeforeArrival = path.Count;
 
-				chosenCampaign.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), chosenCampaign.registeredGenerals [i].location.transform) as GameObject;
-				chosenCampaign.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
-				chosenCampaign.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject>().general = chosenCampaign.registeredGenerals [i];
-				chosenCampaign.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().Init();
+				if(chosenCampaign.registeredGenerals[i].generalAvatar == null){
+					chosenCampaign.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), chosenCampaign.registeredGenerals [i].location.transform) as GameObject;
+					chosenCampaign.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
+					chosenCampaign.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject>().general = chosenCampaign.registeredGenerals [i];
+					chosenCampaign.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().Init();
+				}else{
+					chosenCampaign.registeredGenerals [i].generalAvatar.transform.parent = chosenCampaign.registeredGenerals [i].location.transform;
+					chosenCampaign.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
+				}
+			
 
 			}
 		}

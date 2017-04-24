@@ -796,6 +796,9 @@ public class City{
 		if (citizenToOccupy.role == ROLE.TRADER) {
 			((Trader)citizenToOccupy.assignedRole).AssignTask();
 		}
+		if(citizenToOccupy.assignedRole != null && citizenToOccupy.role == ROLE.GENERAL){
+			((General)citizenToOccupy.assignedRole).InitializeGeneral ();
+		}
 		this.UpdateResourceProduction();
 	}
 
@@ -1035,11 +1038,14 @@ public class City{
 			ROLE nextSpecialRoleToCreate = this.GetNonProducingRoleToCreate();
 			bool isProducingAllResources = true;
 			List<Resource> citizenCreationCost = GetCitizenCreationCostPerType (nextSpecialRoleToCreate);
-			for (int i = 0; i < citizenCreationCost.Count; i++) {
-				if (!this.IsProducingResource(citizenCreationCost[i].resourceType)) {
-					isProducingAllResources = false;
+			if(citizenCreationCost != null){
+				for (int i = 0; i < citizenCreationCost.Count; i++) {
+					if (!this.IsProducingResource(citizenCreationCost[i].resourceType)) {
+						isProducingAllResources = false;
+					}
 				}
 			}
+
 			if (!this.AllSpecialRolesMaxed()){
 //			if (!this.AllSpecialRolesMaxed() && isProducingAllResources) {
 				//buy tile for special roles

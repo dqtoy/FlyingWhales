@@ -52,6 +52,14 @@ public class General : Role {
 		EventManager.Instance.onRegisterOnCampaign.AddListener (RegisterOnCampaign);
 		EventManager.Instance.onDeathArmy.AddListener (DeathArmy);
 	}
+	internal void InitializeGeneral(){
+		if(this.generalAvatar == null){
+			this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.citizen.workLocation.transform) as GameObject;
+			this.generalAvatar.transform.localPosition = Vector3.zero;
+			this.generalAvatar.GetComponent<GeneralObject>().general = this;
+			this.generalAvatar.GetComponent<GeneralObject> ().Init();
+		}
+	}
 	internal int GetArmyHP(){
 		float multiplier = 1f;
 		if(this.citizen.miscTraits.Contains(MISC_TRAIT.STRONG)){
@@ -87,11 +95,14 @@ public class General : Role {
 				this.roads = path;
 				this.targetLocation = this.citizen.city.hexTile;
 				this.isGoingHome = true;
-				if(this.generalAvatar == null){
+				if (this.generalAvatar == null) {
 					this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
 					this.generalAvatar.transform.localPosition = Vector3.zero;
-					this.generalAvatar.GetComponent<GeneralObject>().general = this;
-					this.generalAvatar.GetComponent<GeneralObject> ().Init();
+					this.generalAvatar.GetComponent<GeneralObject> ().general = this;
+					this.generalAvatar.GetComponent<GeneralObject> ().Init ();
+				}else{
+					this.generalAvatar.transform.parent = this.location.transform;
+					this.generalAvatar.transform.localPosition = Vector3.zero;
 				}
 				Debug.Log (this.citizen.name + " IS GOING HOME!");
 			}
@@ -136,6 +147,7 @@ public class General : Role {
 			return;
 		}
 		if(campaign.campaignType == CAMPAIGN.OFFENSE){
+			Debug.Log (this.citizen.name + " REGISTERING ON OFFENSE CAMPAIGN W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + "...");
 			if(campaign.warType == WAR_TYPE.INTERNATIONAL){
 				if (this.citizen.city.kingdom.id == campaign.leader.city.kingdom.id) {
 					if (this.citizen.city.governor.supportedCitizen == null) {
@@ -146,14 +158,25 @@ public class General : Role {
 								if (path != null) {
 									List<HexTile> path2 = PathGenerator.Instance.GetPath (campaign.rallyPoint, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 									if (path2 == null) {
+										Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE THERE'S NO PATH FROM RALLY POINT TO TARGET (" + campaign.targetCity.name + ")");
 										path = null;
 									}
+								}else{
+									Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO RALLY POINT (" + campaign.targetCity.name + ")");
 								}
 								if (path != null) {
 									AssignCampaign (campaign, path);
+								}else{
+									Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO RALLY POINT (" + campaign.targetCity.name + ")");
 								}
+							}else{
+								Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE IT'S ALREADY FULL (" + campaign.targetCity.name + ")");
 							}
+						}else{
+							Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE CAMPAIGN LEADER IS NOT KING (" + campaign.targetCity.name + ")");
 						}
+					}else{
+						Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE GOVERNOR IS NOT SUPPORTING THE KING (" + campaign.targetCity.name + ")");
 					}
 				}
 			}else if(campaign.warType == WAR_TYPE.SUCCESSION){
@@ -214,6 +237,7 @@ public class General : Role {
 
 			}
 		}else{
+			Debug.Log (this.citizen.name + " REGISTERING ON DEFENSE CAMPAIGN W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + "...");
 			List<HexTile> path = null;
 			if (this.citizen.city.kingdom.id == campaign.leader.city.kingdom.id) {
 				if (this.citizen.city.governor.supportedCitizen == null) {
@@ -223,13 +247,17 @@ public class General : Role {
 							if (campaign.expiration >= 0) {
 								if(path != null){
 									if (path.Count > (campaign.expiration - 1)) {
+										Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE PATH COUNT EXCEEDS THE EXPIRATION WEEKS (" + campaign.targetCity.name + ")");
 										path = null;
 									}
+								}else{
+									Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 								}
-
 							}
 							if (path != null) {
 								AssignCampaign (campaign, path);
+							}else{
+								Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 							}
 						}
 					}
@@ -240,12 +268,17 @@ public class General : Role {
 							if (campaign.expiration >= 0) {
 								if (path != null) {
 									if (path.Count > (campaign.expiration - 1)) {
+										Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE PATH COUNT EXCEEDS THE EXPIRATION WEEKS (" + campaign.targetCity.name + ")");
 										path = null;
 									}
+								}else{
+									Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 								}
 							}
 							if (path != null) {
 								AssignCampaign (campaign, path);
+							}else{
+								Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 							}
 						}
 					}
@@ -259,12 +292,17 @@ public class General : Role {
 							if (campaign.expiration >= 0) {
 								if (path != null) {
 									if (path.Count > (campaign.expiration - 1)) {
+										Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE PATH COUNT EXCEEDS THE EXPIRATION WEEKS (" + campaign.targetCity.name + ")");
 										path = null;
 									}
+								}else{
+									Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 								}
 							}
 							if (path != null) {
 								AssignCampaign (campaign, path);
+							}else{
+								Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 							}
 						}
 					}
@@ -303,10 +341,16 @@ public class General : Role {
 			}
 		}
 
-		this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
-		this.generalAvatar.transform.localPosition = Vector3.zero;
-		this.generalAvatar.GetComponent<GeneralObject>().general = this;
-		this.generalAvatar.GetComponent<GeneralObject> ().Init();
+		if(this.generalAvatar == null){
+			this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
+			this.generalAvatar.transform.localPosition = Vector3.zero;
+			this.generalAvatar.GetComponent<GeneralObject>().general = this;
+			this.generalAvatar.GetComponent<GeneralObject> ().Init();
+		}else{
+			this.generalAvatar.transform.parent = this.location.transform;
+			this.generalAvatar.transform.localPosition = Vector3.zero;
+		}
+	
 
 
 	}
