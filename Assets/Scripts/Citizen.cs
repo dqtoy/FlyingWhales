@@ -350,7 +350,7 @@ public class Citizen {
 	internal IEnumerator DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		//		this.kingdom.royaltyList.allRoyalties.Remove (this);
 		yield return null;
-		Debug.LogError("DEATH: " + this.name);
+		Debug.LogError("DEATH: " + this.name + " of " + this.city.name);
 		DeathHistory(reason);
 		if(isDethroned){
 			this.isPretender = true;

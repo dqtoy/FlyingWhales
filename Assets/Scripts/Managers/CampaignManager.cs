@@ -318,7 +318,8 @@ public class CampaignManager {
 
 		if(eligibleCities.Count > 0){
 			City nearest = eligibleCities[0];
-			for(int i = 0; i < eligibleCities.Count; i++){
+			Debug.Log (nearest.name + " NEAREST");
+			for(int i = 1; i < eligibleCities.Count; i++){
 				List<HexTile> path1 = PathGenerator.Instance.GetPath(eligibleCities[i].hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 				List<HexTile> path2 = PathGenerator.Instance.GetPath(nearest.hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 
@@ -334,6 +335,7 @@ public class CampaignManager {
 					}
 				}
 			}
+			Debug.Log (nearest.name + " NEAREST");
 			return nearest;
 		}else{
 			return null;
