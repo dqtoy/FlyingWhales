@@ -344,7 +344,9 @@ public class Citizen {
 		Debug.Log(this.name + " DIES OF STARVATION");
 	}
 	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
-		GameManager.Instance.StartCoroutine (this.DeathCoroutine (reason, isDethroned, newKing, isConquered));
+		if(!this.isDead){
+			GameManager.Instance.StartCoroutine (this.DeathCoroutine (reason, isDethroned, newKing, isConquered));
+		}
 //		DeathCoroutine(reason, isDethroned, newKing, isConquered);
 	}
 	internal IEnumerator DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
