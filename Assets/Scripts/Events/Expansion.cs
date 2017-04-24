@@ -130,5 +130,6 @@ public class Expansion : GameEvent {
 		Debug.LogError (this.resolution);
 		this.isActive = false;
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}
 }

@@ -83,6 +83,7 @@ public class RequestPeace : GameEvent {
 		for (int i = 0; i < this.saboteurs.Count; i++) {
 			((Envoy)this.saboteurs[i].assignedRole).inAction = false;
 		}
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 }

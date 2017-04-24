@@ -1447,6 +1447,7 @@ public class UIManager : MonoBehaviour {
 	public void UpdateEventsOfType(){
 		if (lastClickedEventType.name == "AllBtn") {
 			List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
+			bool noEvents = true;
 			for (int i = 0; i < children.Count; i++) {
 				Destroy (children [i].gameObject);
 			}
@@ -1454,12 +1455,16 @@ public class UIManager : MonoBehaviour {
 				EVENT_TYPES currentKey = EventManager.Instance.allEvents.Keys.ElementAt(i);
 				List<GameEvent> currentGameEventList = EventManager.Instance.allEvents[currentKey].Where(x => x.isActive).ToList();
 				for (int j = 0; j < currentGameEventList.Count; j++) {
+					noEvents = false;
 					GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
 					eventGO.GetComponent<EventItem>().SetEvent (currentGameEventList[j]);
 					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (currentKey));
 					eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
 					eventGO.transform.localScale = Vector3.one;
 				}
+			}
+			if (!noEvents) {
+				EventManager.Instance.onShowEventsOfType.Invoke (EVENT_TYPES.ALL);
 			}
 		} else {
 			EVENT_TYPES eventType = (EVENT_TYPES)(System.Enum.Parse (typeof(EVENT_TYPES), lastClickedEventType.name));
@@ -1475,6 +1480,9 @@ public class UIManager : MonoBehaviour {
 					eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (gameEventsOfType [i].eventType));
 					eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
 					eventGO.transform.localScale = Vector3.one;
+				}
+				if (gameEventsOfType.Count > 0) {
+					EventManager.Instance.onShowEventsOfType.Invoke (eventType);
 				}
 			}
 

@@ -203,5 +203,6 @@ public class MarriageInvitation : GameEvent {
 		Debug.Log (this.startedBy.name + "'s marriage invitation has ended. " + this.resolution);
 		this.isActive = false;
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}
 }
