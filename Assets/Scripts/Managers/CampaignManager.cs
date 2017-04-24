@@ -40,9 +40,9 @@ public class CampaignManager {
 			if(campaignType != CAMPAIGN.NONE){
 				if(campaignType == CAMPAIGN.OFFENSE){
 					
-					List<City> civilWarCities = this.civilWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
-					List<City> successionWarCities = this.successionWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
-					List<City> intlWarCities = this.intlWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
+					List<City> civilWarCities = this.civilWarCities.Where(x => !x.isActive && x.city.HasAdjacency(this.leader.city.kingdom.id)).Select (x => x.city).ToList ();
+					List<City> successionWarCities = this.successionWarCities.Where(x => !x.isActive && x.city.HasAdjacency(this.leader.city.kingdom.id)).Select (x => x.city).ToList ();
+					List<City> intlWarCities = this.intlWarCities.Where(x => !x.isActive && x.city.HasAdjacency(this.leader.city.kingdom.id)).Select (x => x.city).ToList ();
 
 					if(civilWarCities.Count <= 0 && successionWarCities.Count <= 0 && intlWarCities.Count <= 0){
 						campaignType = CAMPAIGN.DEFENSE;

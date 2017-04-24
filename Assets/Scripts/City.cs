@@ -1710,4 +1710,15 @@ public class City{
 			deadGenerals [i].GeneralDeath ();
 		}
 	}
+
+	internal bool HasAdjacency(int kingdomID){
+		for(int i = 0; i < this.hexTile.connectedTiles.Count; i++){
+			if(this.hexTile.connectedTiles[i].isOccupied){
+				if(this.hexTile.connectedTiles[i].city.kingdom.id == kingdomID){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

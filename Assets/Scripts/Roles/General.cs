@@ -154,7 +154,7 @@ public class General : Role {
 						if (campaign.leader.isKing) {
 							if (campaign.GetArmyStrength () < campaign.neededArmyStrength) {
 								List<HexTile> path = null;
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
+								path = PathGenerator.Instance.GetPath (this.location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
 								if (path != null) {
 									List<HexTile> path2 = PathGenerator.Instance.GetPath (campaign.rallyPoint, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 									if (path2 == null) {
@@ -185,7 +185,7 @@ public class General : Role {
 						if(campaign.leader.isHeir){
 							if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
 								List<HexTile> path = null;
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
+								path = PathGenerator.Instance.GetPath (this.location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
 								if (path != null) {
 									List<HexTile> path2 = PathGenerator.Instance.GetPath (campaign.rallyPoint, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 									if (path2 == null) {
@@ -201,7 +201,7 @@ public class General : Role {
 						if(this.citizen.city.governor.supportedCitizen.id == campaign.leader.id){
 							if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
 								List<HexTile> path = null;
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
+								path = PathGenerator.Instance.GetPath (this.location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
 								if (path != null) {
 									List<HexTile> path2 = PathGenerator.Instance.GetPath (campaign.rallyPoint, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 									if (path2 == null) {
@@ -219,7 +219,7 @@ public class General : Role {
 						if (this.citizen.city.kingdom.king.supportedCitizen.id == campaign.leader.id) {
 							if(campaign.GetArmyStrength() < campaign.neededArmyStrength){
 								List<HexTile> path = null;
-								path = PathGenerator.Instance.GetPath (((General)this).location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
+								path = PathGenerator.Instance.GetPath (this.location, campaign.rallyPoint, PATHFINDING_MODE.COMBAT);
 								if (path != null) {
 									List<HexTile> path2 = PathGenerator.Instance.GetPath (campaign.rallyPoint, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 									if (path2 == null) {
@@ -243,7 +243,7 @@ public class General : Role {
 				if (this.citizen.city.governor.supportedCitizen == null) {
 					if (campaign.leader.isKing || campaign.leader.isHeir) {
 						if (campaign.GetArmyStrength () < campaign.neededArmyStrength) {
-							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+							path = PathGenerator.Instance.GetPath (this.location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 							if (campaign.expiration >= 0) {
 								if(path != null){
 									if (path.Count > (campaign.expiration - 1)) {
@@ -264,7 +264,7 @@ public class General : Role {
 				} else {
 					if (this.citizen.city.governor.supportedCitizen.id == campaign.leader.id) {
 						if (campaign.GetArmyStrength () < campaign.neededArmyStrength) {
-							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+							path = PathGenerator.Instance.GetPath (this.location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 							if (campaign.expiration >= 0) {
 								if (path != null) {
 									if (path.Count > (campaign.expiration - 1)) {
@@ -288,7 +288,7 @@ public class General : Role {
 				if (this.citizen.city.kingdom.king.supportedCitizen != null) {
 					if (this.citizen.city.kingdom.king.supportedCitizen.id == campaign.leader.id) {
 						if (campaign.GetArmyStrength () < campaign.neededArmyStrength) {
-							path = PathGenerator.Instance.GetPath (((General)this).location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+							path = PathGenerator.Instance.GetPath (this.location, campaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 							if (campaign.expiration >= 0) {
 								if (path != null) {
 									if (path.Count > (campaign.expiration - 1)) {
