@@ -50,11 +50,11 @@ public class KingdomManager : MonoBehaviour {
 			GenerateNewKingdom (RACE.HUMANS, cityForHumans1, true);
 		}
 
-//		if (elligibleTilesForHumans.Count > 4) {
-//			cityForHumans2.Add (elligibleTilesForHumans[2]);
-////			cityForHumans2.Add (elligibleTilesForHumans[3]);
-//			GenerateNewKingdom (RACE.HUMANS, cityForHumans2, true);
-//		}
+		if (elligibleTilesForHumans.Count > 4) {
+			cityForHumans2.Add (elligibleTilesForHumans[2]);
+//			cityForHumans2.Add (elligibleTilesForHumans[3]);
+			GenerateNewKingdom (RACE.HUMANS, cityForHumans2, true);
+		}
 
 //		if (elligibleTilesForHumans.Count > 6) {
 //			cityForHumans3.Add (elligibleTilesForHumans [4]);

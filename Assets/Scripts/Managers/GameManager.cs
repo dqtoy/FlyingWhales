@@ -24,6 +24,11 @@ public class GameManager : MonoBehaviour {
 		UIManager.Instance.SetProgressionSpeed1X();
 		UIManager.Instance.x1Btn.OnClick();
 //		this.WeekEnded();
+		EventManager.Instance.onCitizenTurnActions.Invoke ();
+		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
+		EventManager.Instance.onCitizenMove.Invoke ();
+		EventManager.Instance.onWeekEnd.Invoke();
+		EventManager.Instance.onUpdateUI.Invoke();
 		StartCoroutine(WeekProgression());
 	}
 
