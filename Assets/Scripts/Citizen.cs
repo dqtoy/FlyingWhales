@@ -696,16 +696,8 @@ public class Citizen {
 			this.assignedRole = new Trader (this, this.city.tradeManager);
 		} else if (role == ROLE.GOVERNOR) {
 			this.assignedRole = new Governor (this);
-			this.city.governor = this;
-			this.workLocation = this.city.hexTile;
-			this.isGovernor = true;
-			this.isKing = false;
-			((Governor)this.assignedRole).SetOwnedCity(this.city);
 		} else if (role == ROLE.KING) {
 			this.assignedRole = new King (this);
-			this.isKing = true;
-			this.city.kingdom.king = this;
-			((King)this.assignedRole).SetOwnedKingdom(this.city.kingdom);
 		}
 		this.UpdatePrestige ();
 	}

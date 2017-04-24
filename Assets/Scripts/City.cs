@@ -127,6 +127,15 @@ public class City{
 		UpdateResourceProduction ();
 		UpdateUnownedNeighbourTiles();
 
+		this.sustainability = this.allResourceProduction [0];
+		this.lumberCount = this.allResourceProduction [1];
+		this.stoneCount = this.allResourceProduction [2];
+		this.manaStoneCount = this.allResourceProduction [3];
+		this.mithrilCount = this.allResourceProduction [4];
+		this.cobaltCount = this.allResourceProduction [5];
+		this.goldCount = this.allResourceProduction [6];
+		this.goldCount += this.allResourceProduction [7];
+
 		for (int i = 0; i < this.citizens.Count; i++) {
 			this.citizens[i].UpdatePrestige();
 		}

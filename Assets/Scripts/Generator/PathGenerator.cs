@@ -142,11 +142,17 @@ public class PathGenerator : MonoBehaviour {
 		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
 			startingTile.isRoad = true;
 			destinationTile.isRoad = true;
+			for (int i = 0; i < CityGenerator.Instance.habitableTiles.Count; i++) {
+				CityGenerator.Instance.habitableTiles [i].isRoad = true;
+			}
 		}
 		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathfindingMode);
 		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
 			startingTile.isRoad = false;
 			destinationTile.isRoad = false;
+			for (int i = 0; i < CityGenerator.Instance.habitableTiles.Count; i++) {
+				CityGenerator.Instance.habitableTiles [i].isRoad = false;
+			}
 		}
 
 		if (path != null) {
