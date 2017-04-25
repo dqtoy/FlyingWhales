@@ -448,7 +448,17 @@ public class General : Role {
 		this.citizen.assignedRole = null;
 		this.citizen.city.citizens.Remove (this.citizen);
 	}
+	internal void UntrainGeneral(){
+		EventManager.Instance.onCitizenMove.RemoveListener (Move);
+		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
+		EventManager.Instance.onDeathArmy.RemoveListener (DeathArmy);
 
+		if (this.generalAvatar != null) {
+			GameObject.Destroy (this.generalAvatar);
+			this.generalAvatar = null;
+		}
+		this.UnregisterThisGeneral (null, false);
+	}
 	internal void CreateGhostCitizen(){
 		Citizen newCitizen = new Citizen (this.citizen.city, 0, GENDER.MALE, 0, true);
 		newCitizen.isDead = true;
