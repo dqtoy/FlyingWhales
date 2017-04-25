@@ -1659,7 +1659,9 @@ public class City{
 			((General)citizenToRemove.assignedRole).UntrainGeneral();
 		}
 		this.citizens.Remove (citizenToRemove);
-		citizenToRemove.workLocation.UnoccupyTile();
+		if(citizenToRemove.workLocation != null){
+			citizenToRemove.workLocation.UnoccupyTile();
+		}
 		citizenToRemove.city = null;
 		citizenToRemove.role = ROLE.UNTRAINED;
 		citizenToRemove.assignedRole = null;
