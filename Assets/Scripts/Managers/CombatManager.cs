@@ -157,8 +157,9 @@ public class CombatManager : MonoBehaviour {
 		for(int j = 0; j < friendlyGenerals.Count; j++){
 
 			friendlyGeneral = friendlyGenerals [j];
-
-			Battle (ref friendlyGeneral, ref enemyGeneral);
+			if(friendlyGeneral.army.hp > 0 && enemyGeneral.army.hp > 0){
+				Battle (ref friendlyGeneral, ref enemyGeneral);
+			}
 			if (friendlyGeneral.army.hp <= 0) {
 				friendlyGenerals.Remove (friendlyGeneral);
 				j--;
