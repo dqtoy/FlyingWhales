@@ -270,6 +270,20 @@ public class CampaignManager {
 			for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
 				UnregisterGenerals (doneCampaign.registeredGenerals [i], doneCampaign);
 			}
+			if(doneCampaign.registeredGenerals.Count > 0){
+				if(doneCampaign.campaignType == CAMPAIGN.OFFENSE){
+					if(doneCampaign.AreAllGeneralsOnRallyPoint()){
+						Debug.Log ("Will attack city now " + doneCampaign.targetCity.name);
+						doneCampaign.AttackCityNow ();
+					}
+				}else if(doneCampaign.campaignType == CAMPAIGN.DEFENSE){
+					if(doneCampaign.AreAllGeneralsOnRallyPoint()){
+						Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + doneCampaign.targetCity.name + ". START EXPIRATION.");
+						doneCampaign.expiration = Utilities.defaultCampaignExpiration;
+					}
+				}
+			}
+
 			this.MakeCityInactive (doneCampaign);
 		}
 		this.activeCampaigns.Remove (doneCampaign);
@@ -294,21 +308,6 @@ public class CampaignManager {
 		general.RerouteToHome();
 
 		chosenCampaign.registeredGenerals.Remove (general);
-
-		if(chosenCampaign.registeredGenerals.Count > 0){
-			if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
-				if(chosenCampaign.AreAllGeneralsOnRallyPoint()){
-					Debug.Log ("Will attack city now " + chosenCampaign.targetCity.name);
-					chosenCampaign.AttackCityNow ();
-				}
-			}else if(chosenCampaign.campaignType == CAMPAIGN.DEFENSE){
-				if(chosenCampaign.AreAllGeneralsOnRallyPoint()){
-					Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + chosenCampaign.targetCity.name + ". START EXPIRATION.");
-					chosenCampaign.expiration = Utilities.defaultCampaignExpiration;
-				}
-			}
-		}
-
 	}
 	internal HexTile GetRallyPoint(Campaign campaign){
 		City nearestCity = GetNearestCity(campaign.targetCity);

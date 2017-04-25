@@ -2352,6 +2352,9 @@ public class UIManager : MonoBehaviour {
 				Debug.Log (currentlyShowingCitizen.name + " already has that trait!");
 			} else {
 				currentlyShowingCitizen.miscTraits.Add (chosenMiscTrait);
+				if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
+					currentlyShowingCitizen.campaignManager.campaignLimit = 3;
+				}
 				Debug.Log ("Added misc trait : " + chosenMiscTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
 			}
 		}
@@ -2378,6 +2381,9 @@ public class UIManager : MonoBehaviour {
 			Debug.Log ("Removed skill trait : " + chosenSkillTrait.ToString () + " from " + currentlyShowingCitizen.name);
 		} else if (chosenMiscTrait.TryParse<MISC_TRAIT> (removeTraitPopUpList.value, out chosenMiscTrait)) {
 			currentlyShowingCitizen.miscTraits.Remove(chosenMiscTrait);
+			if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
+				currentlyShowingCitizen.campaignManager.campaignLimit = 2;
+			}
 			Debug.Log ("Removed misc trait : " + chosenMiscTrait.ToString () + " from " + currentlyShowingCitizen.name);
 		}
 
