@@ -178,8 +178,8 @@ public class Citizen {
 		if (father.skillTraits.Count > 0 || mother.skillTraits.Count > 0) {
 			int skillListChance = UnityEngine.Random.Range (0, 100);
 			if (skillListChance < 50) {
-				skillTraits.AddRange(father.skillTraits);
-				skillTraits.AddRange(mother.skillTraits);
+				skillTraits.Union(father.skillTraits);
+				skillTraits.Union(mother.skillTraits);
 			} else {
 				skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
 				skillTraits.Remove (SKILL_TRAIT.NONE);
@@ -220,6 +220,7 @@ public class Citizen {
 		for (int j = 0; j < numOfMiscTraits; j++) {
 			MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
 			this.miscTraits.Add (chosenMiscTrait);
+			miscTraits.Remove (chosenMiscTrait);
 		}
 
 	}
