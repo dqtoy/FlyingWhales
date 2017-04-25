@@ -13,7 +13,7 @@ public class CheckCitizensSupportingMe : UnityEvent<Citizen>{}
 
 //City Events
 public class CityEverydayTurnActions: UnityEvent{}
-public class CitizenMove: UnityEvent{}
+public class CitizenMove: UnityEvent<bool>{}
 
 //Campaign
 public class RegisterOnCampaign: UnityEvent<Campaign>{}
