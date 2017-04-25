@@ -142,8 +142,9 @@ public class City{
 	}
 
 	private void BuyInitialTiles(){
-		Debug.Log ("Buying tiles for kingdom: " + this.kingdom.name + " " + this.kingdom.race.ToString());
-		List<HexTile> allAdjacentTiles = this.hexTile.elligibleNeighbourTilesForPurchase.ToList();
+		Debug.Log ("========Buying tiles for kingdom: " + this.kingdom.name + " " + this.kingdom.race.ToString() + "========");
+		List<HexTile> allAdjacentTiles = this.hexTile.elligibleNeighbourTilesForPurchase.OrderBy(x => x.specialResource == RESOURCE.NONE).ToList();
+
 		//Buy Food Tiles
 		int foodCounter = 0;
 		for (int i = 0; i < allAdjacentTiles.Count; i++) {
@@ -160,36 +161,81 @@ public class City{
 					foodCounter++;
 					Debug.Log ("Bought tile " + currentHexTile.name + " for food"); 
 					this.PurchaseTile(currentHexTile);
+					currentHexTile.roleIntendedForTile = ROLE.FOODIE;
 				}
 			} else {
 				if (Utilities.GetBaseResourceType (currentHexTile.specialResource) == BASE_RESOURCE_TYPE.FOOD) {
 					foodCounter++;
 					Debug.Log ("Bought tile " + currentHexTile.name + " for food"); 
 					this.PurchaseTile(currentHexTile);
+					currentHexTile.roleIntendedForTile = ROLE.FOODIE;
+				}
+			}
+		}
+			
+		//buy base resource tile
+		allAdjacentTiles = this.hexTile.elligibleNeighbourTilesForPurchase.OrderBy(x => x.specialResource == RESOURCE.NONE).ToList();
+		bool hasTileForBasicResource = false;
+
+		for (int i = 0; i < allAdjacentTiles.Count; i++) {
+			HexTile currentHexTile = allAdjacentTiles[i];
+			if (currentHexTile.specialResource == RESOURCE.NONE) {
+				if (Utilities.GetBaseResourceType (currentHexTile.defaultResource) == this.kingdom.basicResource) {
+					hasTileForBasicResource = true;
+				}
+			} else {
+				if (Utilities.GetBaseResourceType (currentHexTile.specialResource) == this.kingdom.basicResource) {
+					hasTileForBasicResource = true;
 				}
 			}
 		}
 
-		//buy base resource tile
 		for (int i = 0; i < allAdjacentTiles.Count; i++) {
 			HexTile currentHexTile = allAdjacentTiles[i];
 			if (this.ownedTiles.Contains (currentHexTile)) {
 				continue;
 			}
-			if (currentHexTile.specialResource == RESOURCE.NONE) {
-				if (Utilities.GetBaseResourceType (currentHexTile.defaultResource) == this.kingdom.basicResource) {
-					Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
-					this.PurchaseTile(currentHexTile);
-					break;
+			if (hasTileForBasicResource) {
+				if (currentHexTile.specialResource == RESOURCE.NONE) {
+					BASE_RESOURCE_TYPE baseResType = Utilities.GetBaseResourceType (currentHexTile.defaultResource);
+					if (baseResType == this.kingdom.basicResource) {
+						Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
+						this.PurchaseTile (currentHexTile);
+						currentHexTile.roleIntendedForTile = ROLE.GATHERER;
+						break;
+					}
+				} else {
+					BASE_RESOURCE_TYPE baseResType = Utilities.GetBaseResourceType (currentHexTile.specialResource);
+					if (baseResType == this.kingdom.basicResource) {
+						Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
+						this.PurchaseTile (currentHexTile);
+						currentHexTile.roleIntendedForTile = ROLE.GATHERER;
+						break;
+					}
 				}
 			} else {
-				if (Utilities.GetBaseResourceType (currentHexTile.specialResource) == this.kingdom.basicResource) {
-					Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
-					this.PurchaseTile(currentHexTile);
-					break;
+				if (currentHexTile.specialResource == RESOURCE.NONE) {
+					BASE_RESOURCE_TYPE baseResType = Utilities.GetBaseResourceType (currentHexTile.defaultResource);
+					if (baseResType == BASE_RESOURCE_TYPE.STONE || baseResType == BASE_RESOURCE_TYPE.WOOD) {
+						Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
+						this.PurchaseTile (currentHexTile);
+						currentHexTile.roleIntendedForTile = ROLE.GATHERER;
+						break;
+					}
+				} else {
+					BASE_RESOURCE_TYPE baseResType = Utilities.GetBaseResourceType (currentHexTile.specialResource);
+					if (baseResType == BASE_RESOURCE_TYPE.STONE || baseResType == BASE_RESOURCE_TYPE.WOOD) {
+						Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
+						this.PurchaseTile (currentHexTile);
+						currentHexTile.roleIntendedForTile = ROLE.GATHERER;
+						break;
+					}
 				}
 			}
 		}
+
+
+		allAdjacentTiles = this.hexTile.elligibleNeighbourTilesForPurchase.ToList();
 
 		//buy normal tile without special resource
 		for (int i = 0; i < allAdjacentTiles.Count; i++) {
@@ -201,9 +247,11 @@ public class City{
 			if (currentHexTile.specialResource == RESOURCE.NONE) {
 				Debug.Log ("Bought tile " + currentHexTile.name + " for nothing"); 
 				this.PurchaseTile(currentHexTile);
+				currentHexTile.roleIntendedForTile = ROLE.GENERAL;
 				break;
 			}
 		}
+
 	}
 	internal void CreateInitialRoyalFamily(){
 		this.kingdom.successionLine.Clear ();
@@ -468,6 +516,8 @@ public class City{
 		HexTile tileForCitizen = this.FindTileForCitizen (general);
 		if (tileForCitizen != null) {
 			this.OccupyTile (tileForCitizen, general);
+		} else {
+			Debug.LogError (this.name + ": NO TILE FOR GENERAL!");
 		}
 	
 	}
@@ -525,6 +575,8 @@ public class City{
 				HexTile tileForCitizen = this.FindTileForCitizen (producer);
 				if (tileForCitizen != null) {
 					this.OccupyTile (tileForCitizen, producer);
+				} else {
+					Debug.LogError (this.name + ": NO TILE FOR FOODIE!");
 				}
 			}
 		}
@@ -584,6 +636,8 @@ public class City{
 				HexTile tileForCitizen = this.FindTileForCitizen (gatherer);
 				if (tileForCitizen != null) {
 					this.OccupyTile (tileForCitizen, gatherer);
+				} else {
+					Debug.LogError (this.name + ": NO TILE FOR GATHERER!");
 				}
 			}
 		}
@@ -805,26 +859,8 @@ public class City{
 	protected HexTile FindTileForCitizen(Citizen citizen){
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			if (!this.ownedTiles [i].isOccupied) {
-				RESOURCE resourceToCheck = RESOURCE.NONE;
-				if (this.ownedTiles [i].specialResource != RESOURCE.NONE) {
-					resourceToCheck = this.ownedTiles[i].specialResource;
-				} else {
-					resourceToCheck = this.ownedTiles[i].defaultResource;
-				}
-
-				if (citizen.role == ROLE.FOODIE) {
-					if (Utilities.GetBaseResourceType (resourceToCheck) == BASE_RESOURCE_TYPE.FOOD) {
-						return this.ownedTiles [i];
-					}
-				} else if (citizen.role == ROLE.GATHERER) {
-					if (Utilities.GetBaseResourceType (resourceToCheck) == BASE_RESOURCE_TYPE.STONE ||
-					    Utilities.GetBaseResourceType (resourceToCheck) == BASE_RESOURCE_TYPE.WOOD) {
-						return this.ownedTiles [i];
-					}
-				} else if (citizen.role == ROLE.GENERAL) {
-					if (this.ownedTiles [i].specialResource == RESOURCE.NONE) {
-						return this.ownedTiles [i];
-					}
+				if (this.ownedTiles [i].roleIntendedForTile == citizen.role) {
+					return this.ownedTiles[i];
 				}
 			}
 		}

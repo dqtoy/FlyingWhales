@@ -103,7 +103,6 @@ public class PathGenerator : MonoBehaviour {
 					}
 				}
 			}
-
 		}
 	}
 
@@ -140,16 +139,16 @@ public class PathGenerator : MonoBehaviour {
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
 		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
-			startingTile.isRoad = true;
-			destinationTile.isRoad = true;
+//			startingTile.isRoad = true;
+//			destinationTile.isRoad = true;
 			for (int i = 0; i < CityGenerator.Instance.habitableTiles.Count; i++) {
 				CityGenerator.Instance.habitableTiles [i].isRoad = true;
 			}
 		}
 		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathfindingMode);
 		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
-			startingTile.isRoad = false;
-			destinationTile.isRoad = false;
+//			startingTile.isRoad = false;
+//			destinationTile.isRoad = false;
 			for (int i = 0; i < CityGenerator.Instance.habitableTiles.Count; i++) {
 				CityGenerator.Instance.habitableTiles [i].isRoad = false;
 			}
@@ -215,7 +214,7 @@ public class PathGenerator : MonoBehaviour {
 	private void SetTilesAsRoads(List<HexTile> path) {
 		List<HexTile> pathList = path;
 		for (int i = 0; i < pathList.Count; i++) {
-			if (!pathList[i].isHabitable || pathList[i].city == null) {
+			if (!pathList[i].isHabitable) {
 				pathList[i].isRoad = true;
 				roadTiles.Add(pathList[i]);
 			}

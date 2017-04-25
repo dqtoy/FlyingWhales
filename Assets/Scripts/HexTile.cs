@@ -20,7 +20,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public BIOMES biomeType;
 	public ELEVATION elevationType;
 
-	public City city;
+	public City city = null;
 	public Citizen occupant = null;
 	public ROLE roleIntendedForTile = ROLE.UNTRAINED;
 	public STRUCTURE structureOnTile = STRUCTURE.NONE;
@@ -84,8 +84,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	[ContextMenu("LALALA")]
 	public void Show(){
-		HexTile[] tiles = this.GetTilesInRange (13.5f);
-		for (int i = 0; i < tiles.Length; i++) {
+		List<HexTile> tiles = this.GetTilesInRange (10f);
+		for (int i = 0; i < tiles.Count; i++) {
 			if (tiles [i] != null) {
 				tiles [i].GetComponent<SpriteRenderer> ().color = Color.magenta;
 			}
@@ -105,6 +105,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public void ShowCityPendingTask(){
 		for (int i = 0; i < this.city.pendingTask.Count; i++) {
 			Debug.Log (this.city.pendingTask.Keys.ElementAt (i).ToString () + " " + this.city.pendingTask [this.city.pendingTask.Keys.ElementAt (i)].tileName);
+		}
+	}
+	[ContextMenu("Show Elligible Tiles For Purchase")]
+	public void ShowElligibleTilesForPurchase(){
+		for (int i = 0; i < this.elligibleNeighbourTilesForPurchase.Count; i++) {
+			this.elligibleNeighbourTilesForPurchase [i].SetTileColor (Color.red);
 		}
 	}
 
@@ -223,12 +229,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	 * 6 - 2 tile radius
 	 * 10 - 3 tile radius
 	 * */
-	public HexTile[] GetTilesInRange(float radius){
+	public List<HexTile> GetTilesInRange(float radius){
 		Collider2D[] nearHexes = Physics2D.OverlapCircleAll (new Vector2(transform.position.x, transform.position.y), radius);
-		HexTile[] nearTiles = new HexTile[nearHexes.Length];
-		for (int i = 0; i < nearTiles.Length; i++) {
+		List<HexTile> nearTiles = new List<HexTile>();
+		for (int i = 0; i < nearHexes.Length; i++) {
 			if (nearHexes[i].name != this.name) {
-				nearTiles[i] = nearHexes[i].gameObject.GetComponent<HexTile>();
+				nearTiles.Add(nearHexes[i].gameObject.GetComponent<HexTile>());
 //				nearHexes[i].gameObject.GetComponent<SpriteRenderer>().color = Color.black;
 //				Debug.Log (nearHexes [i].name);
 			}
