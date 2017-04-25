@@ -1038,16 +1038,17 @@ public class City{
 			ROLE nextSpecialRoleToCreate = this.GetNonProducingRoleToCreate();
 			bool isProducingAllResources = true;
 			List<Resource> citizenCreationCost = GetCitizenCreationCostPerType (nextSpecialRoleToCreate);
-			if(citizenCreationCost != null){
+			if (citizenCreationCost != null) {
 				for (int i = 0; i < citizenCreationCost.Count; i++) {
-					if (!this.IsProducingResource(citizenCreationCost[i].resourceType)) {
+					if (!this.IsProducingResource (citizenCreationCost [i].resourceType)) {
 						isProducingAllResources = false;
 					}
 				}
+			} else {
+				isProducingAllResources = false;
 			}
 
-			if (!this.AllSpecialRolesMaxed()){
-//			if (!this.AllSpecialRolesMaxed() && isProducingAllResources) {
+			if (!this.AllSpecialRolesMaxed() && isProducingAllResources) {
 				//buy tile for special roles
 				List<HexTile> tilesWithNoSpecialResource = this.allUnownedNeighbours.Where (x => x.specialResource == RESOURCE.NONE).ToList ();
 				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, tilesWithNoSpecialResource)) {
@@ -1058,19 +1059,22 @@ public class City{
 
 			if (this.excessStructures < 4) {
 				//buy additional basic or rare
-				if (this.BuyTileFromList (this.kingdom.basicResource, this.purchasableBasicTiles)) {
-					this.excessStructures += 1;
-					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional basic resource tile. Excess structures: " 
-						+ this.excessStructures.ToString());
-					return;
+				if (this.purchasableBasicTiles.Count > 0) {
+					if (this.BuyTileFromList (this.kingdom.basicResource, this.purchasableBasicTiles)) {
+						this.excessStructures += 1;
+						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional basic resource tile. Excess structures: "
+						+ this.excessStructures.ToString ());
+						return;
+					}
 				}
 
-
-				if (this.BuyTileFromList (this.kingdom.rareResource, this.purchasableRareTiles)) {
-					this.excessStructures += 1;
-					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional rare resource tile. Excess structures: " 
-						+ this.excessStructures.ToString());
-					return;
+				if (this.purchasableRareTiles.Count > 0) {
+					if (this.BuyTileFromList (this.kingdom.rareResource, this.purchasableRareTiles)) {
+						this.excessStructures += 1;
+						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional rare resource tile. Excess structures: "
+						+ this.excessStructures.ToString ());
+						return;
+					}
 				}
 			} else {
 				//buy tile with unneeded resource
@@ -1081,13 +1085,22 @@ public class City{
 				}
 			}
 
-			//if can't buy anything, default to food tile
-			if (this.purchasableFoodTiles.Count > 0) {
-				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.FOOD, this.purchasableFoodTiles)) {
-					return;
-				}
-			}
-
+//			//if can't buy anything, default to food tile or unneeded resource
+//			if (this.purchasabletilesWithUnneededResource.Count > 0) {
+//				//buy tile with unneeded resource
+//				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, this.purchasabletilesWithUnneededResource, true)) {
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional unneeded resource tile");
+//					return;
+//				}
+//			} else {
+//				if (this.purchasableFoodTiles.Count > 0) {
+//					if (this.BuyTileFromList (BASE_RESOURCE_TYPE.FOOD, this.purchasableFoodTiles)) {
+//						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional food tile, because no choice");
+//						return;
+//					}
+//				}
+//			}
+			Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Could not buy any tile");
 		} else {
 			//Train citizen
 			List<HexTile> pendingTiles = new List<HexTile> ();
@@ -1285,11 +1298,14 @@ public class City{
 		ROLE roleToCreate = ROLE.UNTRAINED;
 
 		for (int i = 0; i < this.creatableRoles.Count; i++) {
-			int currentRoleCount = this.GetCitizensWithRole(this.creatableRoles[i]).Count;
-			int currentRoleLimit = this.citizenCreationTable[this.creatableRoles[i]];
-			if (currentRoleCount < previousRoleCount && currentRoleCount < currentRoleLimit) {
-				roleToCreate = this.creatableRoles[i];
-				previousRoleCount = currentRoleCount;
+			ROLE currentRole = this.creatableRoles [i];
+			if (this.HasEnoughResourcesForAction (GetCitizenCreationCostPerType (currentRole))) {
+				int currentRoleCount = this.GetCitizensWithRole (currentRole).Count;
+				int currentRoleLimit = this.citizenCreationTable [currentRole];
+				if (currentRoleCount < previousRoleCount && currentRoleCount < currentRoleLimit) {
+					roleToCreate = currentRole;
+					previousRoleCount = currentRoleCount;
+				}
 			}
 		}
 		return roleToCreate;

@@ -89,18 +89,9 @@ public class Trader : Role {
 	}
 
 	internal void DailyActions(){
-		//move trader
-		if (isGoingHome) {
-			this.GoBackHome();
-		} else {
-			this.GoToTargetCity();
-		}
 		//add resources
 		this.homeCity.AdjustResourceCount(BASE_RESOURCE_TYPE.GOLD, this.goldIncomePerTurn);
 		for (int i = 0; i < this.currentlySelling.Count; i++) {
-			if (this.targetCity == null) {
-				Debug.LogError ("LALALALALA" + this.citizen.name);
-			}
 			switch (this.currentlySelling [i]) {
 			case BASE_RESOURCE_TYPE.WOOD:
 				this.targetCity.AdjustResourceCount (BASE_RESOURCE_TYPE.WOOD, 6);
@@ -119,6 +110,14 @@ public class Trader : Role {
 				break;
 			}
 		}
+
+		//move trader
+		if (isGoingHome) {
+			this.GoBackHome();
+		} else {
+			this.GoToTargetCity();
+		}
+
 	}
 
 	internal void GoToTargetCity(){
