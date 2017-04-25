@@ -236,7 +236,6 @@ public class City{
 
 
 		allAdjacentTiles = this.hexTile.elligibleNeighbourTilesForPurchase.ToList();
-
 		//buy normal tile without special resource
 		for (int i = 0; i < allAdjacentTiles.Count; i++) {
 			HexTile currentHexTile = allAdjacentTiles[i];
@@ -1656,11 +1655,12 @@ public class City{
 	internal void RemoveCitizenFromCity(Citizen citizenToRemove){
 		if (citizenToRemove.role == ROLE.GOVERNOR) {
 			this.AssignNewGovernor();
+		}else if (citizenToRemove.role == ROLE.GENERAL) {
+			((General)citizenToRemove.assignedRole).UntrainGeneral();
 		}
 		this.citizens.Remove (citizenToRemove);
-		citizenToRemove.workLocation = null;
+		citizenToRemove.workLocation.UnoccupyTile();
 		citizenToRemove.city = null;
-		citizenToRemove.currentLocation = null;
 		citizenToRemove.role = ROLE.UNTRAINED;
 		citizenToRemove.assignedRole = null;
 	}
