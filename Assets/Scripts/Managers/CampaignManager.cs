@@ -294,6 +294,21 @@ public class CampaignManager {
 		general.RerouteToHome();
 
 		chosenCampaign.registeredGenerals.Remove (general);
+
+		if(chosenCampaign.registeredGenerals.Count > 0){
+			if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
+				if(chosenCampaign.AreAllGeneralsOnRallyPoint()){
+					Debug.Log ("Will attack city now " + chosenCampaign.targetCity.name);
+					chosenCampaign.AttackCityNow ();
+				}
+			}else if(chosenCampaign.campaignType == CAMPAIGN.DEFENSE){
+				if(chosenCampaign.AreAllGeneralsOnRallyPoint()){
+					Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + chosenCampaign.targetCity.name + ". START EXPIRATION.");
+					chosenCampaign.expiration = Utilities.defaultCampaignExpiration;
+				}
+			}
+		}
+
 	}
 	internal HexTile GetRallyPoint(Campaign campaign){
 		City nearestCity = GetNearestCity(campaign.targetCity);
@@ -320,22 +335,38 @@ public class CampaignManager {
 			City nearest = eligibleCities[0];
 			Debug.Log (nearest.name + " NEAREST");
 			for(int i = 1; i < eligibleCities.Count; i++){
+				Debug.Log ("GETTING PATH FOR " + eligibleCities [i].name);
+				if(nearest != null){
+					Debug.Log ("GETTING PATH FOR " + nearest.name);
+				}else{
+					Debug.Log ("GETTING PATH FOR null nearest");
+				}
+
 				List<HexTile> path1 = PathGenerator.Instance.GetPath(eligibleCities[i].hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 				List<HexTile> path2 = PathGenerator.Instance.GetPath(nearest.hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 
 				if(path1 == null || path2 == null){
-					if(path1 != null && path2 == null){
-						nearest = eligibleCities[i];
+					if (path1 != null && path2 == null) {
+						Debug.Log ("NO PATH FOR NEAREST " + nearest.name);
+						nearest = eligibleCities [i];
+					}else if (path1 == null && path2 != null) {
+						Debug.Log ("NO PATH FOR ELIGIBLE CITY " + eligibleCities[i].name);
 					}else if(path1 == null && path2 == null){
+						Debug.Log ("NO PATH FOR BOTH " + eligibleCities[i].name + " and " + nearest.name);
 						nearest = null;
 					}
 				}else{
+					Debug.Log ("HAS PATH FOR BOTH " + eligibleCities[i].name + " and " + nearest.name);
 					if(path1.Count < path2.Count){
 						nearest = eligibleCities[i];
 					}
 				}
 			}
-			Debug.Log (nearest.name + " NEAREST");
+			if(nearest != null){
+				Debug.Log (nearest.name + " NEAREST");
+			}else{
+				Debug.Log ("null NEAREST");
+			}
 			return nearest;
 		}else{
 			return null;
@@ -518,9 +549,9 @@ public class CampaignManager {
 				if (chosenCampaign.campaignType == CAMPAIGN.OFFENSE) {
 					if (general.location == chosenCampaign.rallyPoint) {
 						Debug.Log (general.citizen.name + " has arrived at rally point " + chosenCampaign.rallyPoint.tileName);
-						if (AreAllGeneralsOnRallyPoint (chosenCampaign)) {
+						if (chosenCampaign.AreAllGeneralsOnRallyPoint()) {
 							Debug.Log ("Will attack city now " + chosenCampaign.targetCity.name);
-							AttackCityNow (chosenCampaign);
+							chosenCampaign.AttackCityNow();
 						}
 					} else if (general.location == chosenCampaign.targetCity.hexTile) {
 						//InitiateBattle
@@ -539,7 +570,7 @@ public class CampaignManager {
 //				((General)general.assignedRole).inAction = false;
 						Debug.Log (general.citizen.name + " has arrived at defense target city " + chosenCampaign.targetCity.name);
 						if (chosenCampaign.expiration == -1) {
-							if (AreAllGeneralsOnDefenseCity (chosenCampaign)) {
+							if (chosenCampaign.AreAllGeneralsOnDefenseCity()) {
 								Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + chosenCampaign.targetCity.name + ". START EXPIRATION.");
 								chosenCampaign.expiration = Utilities.defaultCampaignExpiration;
 							}
@@ -549,56 +580,6 @@ public class CampaignManager {
 			}
 		}
 		general.isGoingHome = false;
-	}
-	internal void AttackCityNow(Campaign chosenCampaign){
-		for(int i = 0; i < chosenCampaign.registeredGenerals.Count; i++){
-			chosenCampaign.registeredGenerals[i].targetLocation = chosenCampaign.targetCity.hexTile;
-			List<HexTile> path = PathGenerator.Instance.GetPath (chosenCampaign.registeredGenerals[i].location, chosenCampaign.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
-			if (path != null) {
-				chosenCampaign.registeredGenerals [i].roads.Clear ();
-				chosenCampaign.registeredGenerals [i].roads = path;
-				chosenCampaign.registeredGenerals [i].daysBeforeArrival = path.Count;
-
-				if(chosenCampaign.registeredGenerals[i].generalAvatar == null){
-					chosenCampaign.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), chosenCampaign.registeredGenerals [i].location.transform) as GameObject;
-					chosenCampaign.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
-					chosenCampaign.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject>().general = chosenCampaign.registeredGenerals [i];
-					chosenCampaign.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().Init();
-				}else{
-					chosenCampaign.registeredGenerals [i].generalAvatar.transform.parent = chosenCampaign.registeredGenerals [i].location.transform;
-					chosenCampaign.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
-				}
-			
-
-			}
-		}
-
-		//remove from rally point
-		if(chosenCampaign.rallyPoint != null){
-			if(chosenCampaign.rallyPoint.isOccupied){
-				for(int i = 0; i < chosenCampaign.registeredGenerals.Count; i++){
-					chosenCampaign.targetCity.incomingGenerals.Add (chosenCampaign.registeredGenerals[i]);
-					chosenCampaign.rallyPoint.city.incomingGenerals.Remove(chosenCampaign.registeredGenerals[i]);
-				}
-
-			}
-		}
-	}
-	internal bool AreAllGeneralsOnRallyPoint(Campaign chosenCampaign){
-		for(int i = 0; i < chosenCampaign.registeredGenerals.Count; i++){
-			if(chosenCampaign.registeredGenerals[i].location != chosenCampaign.rallyPoint){
-				return false;
-			}
-		}
-		return true;
-	}
-	internal bool AreAllGeneralsOnDefenseCity(Campaign chosenCampaign){
-		for(int i = 0; i < chosenCampaign.registeredGenerals.Count; i++){
-			if(chosenCampaign.registeredGenerals[i].location != chosenCampaign.targetCity.hexTile){
-				return false;
-			}
-		}
-		return true;
 	}
 	internal Campaign SearchCampaignByID(int id){
 		for(int i = 0; i < this.activeCampaigns.Count; i++){

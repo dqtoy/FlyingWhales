@@ -76,4 +76,56 @@ public class Campaign {
 			this.leader.campaignManager.CampaignDone (this);
 		}
 	}
+
+	internal bool AreAllGeneralsOnRallyPoint(){
+		for(int i = 0; i < this.registeredGenerals.Count; i++){
+			if(this.registeredGenerals[i].location != this.rallyPoint){
+				return false;
+			}
+		}
+		return true;
+	}
+	internal bool AreAllGeneralsOnDefenseCity(){
+		for(int i = 0; i < this.registeredGenerals.Count; i++){
+			if(this.registeredGenerals[i].location != this.targetCity.hexTile){
+				return false;
+			}
+		}
+		return true;
+	}
+	internal void AttackCityNow(){
+		List<HexTile> path = PathGenerator.Instance.GetPath (this.rallyPoint, this.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+
+		for(int i = 0; i < this.registeredGenerals.Count; i++){
+			if (path != null) {
+				this.registeredGenerals[i].targetLocation = this.targetCity.hexTile;
+				this.registeredGenerals [i].roads.Clear ();
+				this.registeredGenerals [i].roads = path;
+				this.registeredGenerals [i].daysBeforeArrival = path.Count;
+
+				if(this.registeredGenerals[i].generalAvatar == null){
+					this.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.registeredGenerals [i].location.transform) as GameObject;
+					this.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
+					this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject>().general = this.registeredGenerals [i];
+					this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().Init();
+				}else{
+					this.registeredGenerals [i].generalAvatar.transform.parent = this.registeredGenerals [i].location.transform;
+					this.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
+				}
+
+
+			}
+		}
+
+		//remove from rally point
+		if(this.rallyPoint != null){
+			if(this.rallyPoint.isOccupied){
+				for(int i = 0; i < this.registeredGenerals.Count; i++){
+					this.targetCity.incomingGenerals.Add (this.registeredGenerals[i]);
+					this.rallyPoint.city.incomingGenerals.Remove(this.registeredGenerals[i]);
+				}
+
+			}
+		}
+	}
 }

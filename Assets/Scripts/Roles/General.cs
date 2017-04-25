@@ -136,6 +136,18 @@ public class General : Role {
 			}
 			if(campaign.registeredGenerals.Count <= 0){
 				campaign.leader.campaignManager.CampaignDone (campaign);
+			}else{
+				if(campaign.campaignType == CAMPAIGN.OFFENSE){
+					if(campaign.AreAllGeneralsOnRallyPoint()){
+						Debug.Log ("Will attack city now " + campaign.targetCity.name);
+						campaign.AttackCityNow ();
+					}
+				}else if(campaign.campaignType == CAMPAIGN.DEFENSE){
+					if(campaign.AreAllGeneralsOnRallyPoint()){
+						Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + campaign.targetCity.name + ". START EXPIRATION.");
+						campaign.expiration = Utilities.defaultCampaignExpiration;
+					}
+				}
 			}
 		}
 	}
@@ -147,7 +159,7 @@ public class General : Role {
 			return;
 		}
 		if(campaign.campaignType == CAMPAIGN.OFFENSE){
-			Debug.Log (this.citizen.name + " REGISTERING ON OFFENSE CAMPAIGN W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + "...");
+			Debug.Log (this.citizen.name + " of " + this.citizen.city.kingdom.name + " REGISTERING ON OFFENSE CAMPAIGN OF " + campaign.leader.name + " of " + campaign.leader.city.kingdom.name + " W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + "...");
 			if(campaign.warType == WAR_TYPE.INTERNATIONAL){
 				if (this.citizen.city.kingdom.id == campaign.leader.city.kingdom.id) {
 					if (this.citizen.city.governor.supportedCitizen == null) {
@@ -237,7 +249,7 @@ public class General : Role {
 
 			}
 		}else{
-			Debug.Log (this.citizen.name + " REGISTERING ON DEFENSE CAMPAIGN W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + "...");
+			Debug.Log (this.citizen.name + " of " + this.citizen.city.kingdom.name + " REGISTERING ON DEFENSE CAMPAIGN OF " + campaign.leader.name + " of " + campaign.leader.city.kingdom.name + " W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + "...");
 			List<HexTile> path = null;
 			if (this.citizen.city.kingdom.id == campaign.leader.city.kingdom.id) {
 				if (this.citizen.city.governor.supportedCitizen == null) {

@@ -155,30 +155,32 @@ public class CombatManager : MonoBehaviour {
 		General friendlyGeneral = null;
 
 		for(int j = 0; j < friendlyGenerals.Count; j++){
-
 			friendlyGeneral = friendlyGenerals [j];
 			if(friendlyGeneral.army.hp > 0 && enemyGeneral.army.hp > 0){
 				Battle (ref friendlyGeneral, ref enemyGeneral);
 			}
 			if (friendlyGeneral.army.hp <= 0) {
-				friendlyGenerals.Remove (friendlyGeneral);
-				j--;
+				deadFriendlies.Add (friendlyGeneral);
 			}
 			if(enemyGeneral.army.hp <= 0){
 				break;
 			}
 		}
-	}
-	internal void DeathByBattle(General general, City city){
-		city.incomingGenerals.Remove (general);
-		Campaign campaign = general.warLeader.campaignManager.SearchCampaignByID (general.campaignID);
-		if(campaign != null){
-			campaign.registeredGenerals.Remove (general);
-			if(campaign.registeredGenerals.Count <= 0){
-				campaign.leader.campaignManager.CampaignDone (campaign);
-			}
+
+		for (int j = 0; j < deadFriendlies.Count; j++) {
+			friendlyGenerals.Remove (deadFriendlies [j]);
 		}
 	}
+//	internal void DeathByBattle(General general, City city){
+//		city.incomingGenerals.Remove (general);
+//		Campaign campaign = general.warLeader.campaignManager.SearchCampaignByID (general.campaignID);
+//		if(campaign != null){
+//			campaign.registeredGenerals.Remove (general);
+//			if(campaign.registeredGenerals.Count <= 0){
+//				campaign.leader.campaignManager.CampaignDone (campaign);
+//			}
+//		}
+//	}
 	internal void ConquerCity(Kingdom conqueror, City city){
 		conqueror.ConquerCity(city);
 	}
