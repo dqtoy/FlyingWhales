@@ -146,15 +146,17 @@ public class MarriageInvitation : GameEvent {
 				}
 
 				//move chosenCitizen to startedBy city if chosenCitizen is not king, else, move startedBy
-				if (chosenCitizen.isKing) {
-					this.MoveCitizenToCity (this.startedBy, chosenCitizen.city);
-					for (int i = 0; i < this.startedBy.dependentChildren.Count; i++) {
-						this.MoveCitizenToCity (this.startedBy.dependentChildren[i], chosenCitizen.city);
-					}
-				} else {
-					this.MoveCitizenToCity (chosenCitizen, this.startedBy.city);
-					for (int i = 0; i < chosenCitizen.dependentChildren.Count; i++) {
-						this.MoveCitizenToCity (chosenCitizen.dependentChildren[i], this.startedBy.city);
+				if (this.startedBy.city.id != chosenCitizen.city.id) {
+					if (chosenCitizen.isKing) {
+						this.MoveCitizenToCity (this.startedBy, chosenCitizen.city);
+						for (int i = 0; i < this.startedBy.dependentChildren.Count; i++) {
+							this.MoveCitizenToCity (this.startedBy.dependentChildren [i], chosenCitizen.city);
+						}
+					} else {
+						this.MoveCitizenToCity (chosenCitizen, this.startedBy.city);
+						for (int i = 0; i < chosenCitizen.dependentChildren.Count; i++) {
+							this.MoveCitizenToCity (chosenCitizen.dependentChildren [i], this.startedBy.city);
+						}
 					}
 				}
 
