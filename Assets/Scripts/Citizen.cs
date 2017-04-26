@@ -1356,8 +1356,7 @@ public class Citizen {
 			Citizen currentGovernor = allGovernorsInThisKingdom[i];
 			if (currentGovernor.id != this.id) {
 				if (currentGovernor.supportedCitizen == null) {
-					if (this.isKing || (this.city.kingdom.successionLine.Count > 0 && this.city.kingdom.successionLine [0].id == this.id)
-					   || (this.city.kingdom.successionLine.Count > 1 && this.city.kingdom.successionLine [1].id == this.id)) {
+					if (this.isKing || (this.city.kingdom.successionLine.Count > 0 && this.city.kingdom.successionLine [0].id == this.id)) {
 						citizensSupportingMe.Add (currentGovernor);
 					}
 				} else {
