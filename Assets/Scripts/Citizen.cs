@@ -221,6 +221,9 @@ public class Citizen {
 			MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
 			this.miscTraits.Add (chosenMiscTrait);
 			miscTraits.Remove (chosenMiscTrait);
+			if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
+				this.citizenChances.accidentChance = 50f;
+			}
 		}
 
 	}

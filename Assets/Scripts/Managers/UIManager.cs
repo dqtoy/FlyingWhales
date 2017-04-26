@@ -2354,6 +2354,8 @@ public class UIManager : MonoBehaviour {
 				currentlyShowingCitizen.miscTraits.Add (chosenMiscTrait);
 				if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
 					currentlyShowingCitizen.campaignManager.campaignLimit = 3;
+				}else if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
+					currentlyShowingCitizen.citizenChances.accidentChance = 50f;
 				}
 				Debug.Log ("Added misc trait : " + chosenMiscTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
 			}
@@ -2383,6 +2385,8 @@ public class UIManager : MonoBehaviour {
 			currentlyShowingCitizen.miscTraits.Remove(chosenMiscTrait);
 			if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
 				currentlyShowingCitizen.campaignManager.campaignLimit = 2;
+			}else if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
+				currentlyShowingCitizen.citizenChances.accidentChance = currentlyShowingCitizen.citizenChances.defaultAccidentChance;
 			}
 			Debug.Log ("Removed misc trait : " + chosenMiscTrait.ToString () + " from " + currentlyShowingCitizen.name);
 		}
