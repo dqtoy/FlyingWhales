@@ -1677,7 +1677,7 @@ public class City{
 		Citizen newGovernor = GetCitizenWithHighestPrestige ();
 		if (newGovernor != null) {
 			if(newGovernor.assignedRole != null && newGovernor.role == ROLE.GENERAL){
-				DetachGeneralFromGovernor (newGovernor);
+				newGovernor.DetachGeneralFromCitizen();
 			}
 			this.governor.isGovernor = false;
 			newGovernor.role = ROLE.GOVERNOR;
@@ -1688,11 +1688,6 @@ public class City{
 			this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
 		}
-	}
-	internal void DetachGeneralFromGovernor(Citizen governor){
-		General general = (General)governor.assignedRole;
-		general.CreateGhostCitizen ();
-
 	}
 	internal Citizen GetCitizenWithHighestPrestige(){
 		List<Citizen> prestigeCitizens = new List<Citizen> ();
@@ -1727,7 +1722,7 @@ public class City{
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener(UpdateHexTileRoles);
 	}
 
-	internal void LookForNewGeneral(General general){
+	internal void LookForNewGeneral(General general, bool hasFound = false){
 		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
@@ -1737,6 +1732,10 @@ public class City{
 						Debug.Log (chosenGeneral.citizen.name + " IS THE NEW GENERAL FOR " + general.citizen.name + "'s ARMY");
 						chosenGeneral.army.hp += general.army.hp;
 						general.army.hp = 0;
+
+						if(chosenGeneral.generalAvatar != null){
+							chosenGeneral.generalAvatar.GetComponent<GeneralObject> ().UpdateUI ();
+						}
 						general.GeneralDeath ();
 					}
 				}
@@ -1746,23 +1745,24 @@ public class City{
 
 	internal void LookForLostArmy(General general){
 		Debug.Log (general.citizen.name + " IS LOOKING FOR LOST ARMIES...");
-		List<General> deadGenerals = new List<General> ();
-		for(int i = 0; i < this.citizens.Count; i++){
-			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
-				General chosenGeneral = (General)this.citizens [i].assignedRole;
-				if(chosenGeneral.location == this.hexTile && chosenGeneral.citizen.city.id == this.id){
-					if(chosenGeneral.citizen.isDead){
-						Debug.Log (general.citizen.name + " IS THE NEW GENERAL FOR " + chosenGeneral.citizen.name + "'s ARMY");
-						general.army.hp += chosenGeneral.army.hp;
-						chosenGeneral.army.hp = 0;
-						deadGenerals.Add (chosenGeneral);
-					}
-				}
-			}
-		}
-		for(int i = 0; i < deadGenerals.Count; i++){
-			deadGenerals [i].GeneralDeath ();
-		}
+		EventManager.Instance.onLookForLostArmies.Invoke (general);
+//		List<General> deadGenerals = new List<General> ();
+//		for(int i = 0; i < this.citizens.Count; i++){
+//			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
+//				General chosenGeneral = (General)this.citizens [i].assignedRole;
+//				if(chosenGeneral.location == this.hexTile && chosenGeneral.citizen.city.id == this.id){
+//					if(chosenGeneral.citizen.isDead){
+//						Debug.Log (general.citizen.name + " IS THE NEW GENERAL FOR " + chosenGeneral.citizen.name + "'s ARMY");
+//						general.army.hp += chosenGeneral.army.hp;
+//						chosenGeneral.army.hp = 0;
+//						deadGenerals.Add (chosenGeneral);
+//					}
+//				}
+//			}
+//		}
+//		for(int i = 0; i < deadGenerals.Count; i++){
+//			deadGenerals [i].GeneralDeath ();
+//		}
 	}
 
 	internal bool HasAdjacency(int kingdomID){

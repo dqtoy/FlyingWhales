@@ -28,6 +28,7 @@ public class EventManager : MonoBehaviour {
 	public HideEvents onHideEvents = new HideEvents();
 	public RemoveSuccessionWarCity onRemoveSuccessionWarCity = new RemoveSuccessionWarCity();
 	public UpdateUI onUpdateUI = new UpdateUI();
+	public LookForLostArmies onLookForLostArmies = new LookForLostArmies ();
 
 	public EVENT_TYPES eventTypeForTesting;
 

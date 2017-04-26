@@ -46,6 +46,7 @@ public class Citizen {
 	public bool isPretender;
 	public bool isHeir;
 	public bool isBusy;
+	public bool isGhost;
 	public bool isDead;
 	[HideInInspector]public List<History> history;
 
@@ -65,6 +66,7 @@ public class Citizen {
 
 
 	public Citizen(City city, int age, GENDER gender, int generation, bool isGhost = false){
+		this.isGhost = isGhost;
 		if(isGhost){
 			this.id = 0;
 		}else{
@@ -358,6 +360,8 @@ public class Citizen {
 		yield return null;
 		Debug.LogError("DEATH: " + this.name + " of " + this.city.name);
 		DeathHistory(reason);
+		this.isDead = true;
+
 		if(isDethroned){
 			this.isPretender = true;
 			this.city.kingdom.AddPretender (this);
@@ -372,7 +376,6 @@ public class Citizen {
 		if (this.city != null) {
 			this.city.kingdom.RemoveFromSuccession(this);
 		}
-		this.isDead = true;
 		if (this.workLocation != null) {
 			this.workLocation.UnoccupyTile();
 		}
@@ -399,17 +402,27 @@ public class Citizen {
 					((General)this.assignedRole).GeneralDeath ();
 				}else{
 					this.city.LookForNewGeneral((General)this.assignedRole);
+					if (this.role == ROLE.GENERAL && this.assignedRole != null) {
+						if (((General)this.assignedRole).generalAvatar != null) {
+							GameObject.Destroy (((General)this.assignedRole).generalAvatar);
+							((General)this.assignedRole).generalAvatar = null;
+						}
+						this.DetachGeneralFromCitizen ();
+					}
 				}
 			}
 
 		}
-		if(isConquered){
+		if (this.city != null) {
 			this.city.citizens.Remove (this);
-		}else{
-			if(this.role != ROLE.GENERAL && this.city != null){
-				this.city.citizens.Remove (this);
-			}
 		}
+//		if(isConquered){
+//			this.city.citizens.Remove (this);
+//		}else{
+//			if(this.role != ROLE.GENERAL && this.city != null){
+//				this.city.citizens.Remove (this);
+//			}
+//		}
 
 		EventManager.Instance.onCitizenDiedEvent.Invoke ();
 
@@ -1369,5 +1382,11 @@ public class Citizen {
 		EventManager.Instance.onUnsupportCitizen.RemoveListener(UnsupportCitizen);
 		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
 		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
+	}
+
+	internal void DetachGeneralFromCitizen(){
+		Debug.Log (this.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");
+		General general = (General)this.assignedRole;
+		general.CreateGhostCitizen ();
 	}
 }
