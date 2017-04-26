@@ -1172,7 +1172,7 @@ public class City{
 					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).ToList ();
 
 					if (unemployedCitizens.Count > 0) {
-						Debug.Log ("Trained citizen :" + pendingTiles [0].tileName + " - " + pendingTiles [0].roleIntendedForTile);
+						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " Trained citizen :" + pendingTiles [0].tileName + " - " + pendingTiles [0].roleIntendedForTile);
 						this.AdjustResources (GetCitizenCreationCostPerType (pendingTiles [0].roleIntendedForTile));
 						unemployedCitizens [0].AssignRole (pendingTiles [0].roleIntendedForTile);
 						this.OccupyTile (pendingTiles [0], unemployedCitizens [0]);

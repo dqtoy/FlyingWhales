@@ -285,12 +285,16 @@ public class Citizen {
 			if (this.gender == GENDER.MALE) {
 				if (this.age >= 16 && !this.isMarried) {
 					this.citizenChances.marriageChance += 2;
-					this.AttemptToMarry ();
+					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.MARRIAGE_INVITATION).Count <= 0) {
+						this.AttemptToMarry ();
+					}
 				}
 			} else {
 				if (this.isKing && this.age >= 16 && !this.isMarried) {
 					this.citizenChances.marriageChance += 2;
-					this.AttemptToMarry ();
+					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.MARRIAGE_INVITATION).Count <= 0) {
+						this.AttemptToMarry ();
+					}
 				}
 			}
 
@@ -298,7 +302,9 @@ public class Citizen {
 				if (this.isPretender ||
 				   (this.city.kingdom.successionLine.Count > 1 && this.city.kingdom.successionLine [1].id == this.id) ||
 				   (this.city.kingdom.successionLine.Count > 2 && this.city.kingdom.successionLine [2].id == this.id)) {
-					AttemptToGrabPower ();
+					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.POWER_GRAB).Count <= 0) {
+						AttemptToGrabPower ();
+					}
 				}
 			}
 

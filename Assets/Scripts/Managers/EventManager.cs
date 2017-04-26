@@ -96,6 +96,33 @@ public class EventManager : MonoBehaviour {
 		return gameEventsOfCity;
 	}
 
+	public List<GameEvent> GetAllEventsStartedByCitizen(Citizen citizen){
+		List<GameEvent> gameEventsOfCitizen = new List<GameEvent>();
+		for (int i = 0; i < this.allEvents.Keys.Count; i++) {
+			EVENT_TYPES currentKey = this.allEvents.Keys.ElementAt (i);
+			List<GameEvent> gameEventsOfType = this.allEvents [currentKey];
+			for (int j = 0; j < gameEventsOfType.Count; j++) {
+				if (gameEventsOfType[j].startedBy.id == citizen.id) {
+					gameEventsOfCitizen.Add(gameEventsOfType [j]);
+				}
+			}
+		}
+		return gameEventsOfCitizen;
+	}
+
+	public List<GameEvent> GetAllEventsStartedByCitizenByType(Citizen citizen, EVENT_TYPES eventType){
+		List<GameEvent> gameEventsOfCitizen = new List<GameEvent>();
+		if (this.allEvents.ContainsKey (eventType)) {
+			List<GameEvent> gameEventsOfType = this.allEvents [eventType];
+			for (int i = 0; i < gameEventsOfType.Count; i++) {
+				if (gameEventsOfType[i].startedBy.id == citizen.id) {
+					gameEventsOfCitizen.Add(gameEventsOfType[i]);
+				}
+			}
+		}
+		return gameEventsOfCitizen;
+	}
+
 	internal Citizen GetSpy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> spies = new List<Citizen> ();
