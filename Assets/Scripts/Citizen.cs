@@ -13,6 +13,8 @@ public class Citizen {
 	public int generation;
 	public int prestige;
 //	public int prestigeFromSupport;
+	public Kingdom homeKingdom;
+	public City homeCity;
 	public City city;
 	public HexTile currentLocation;
 	public ROLE role;
@@ -80,6 +82,8 @@ public class Citizen {
 		}else{
 			this.name = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
 		}
+		this.homeCity = city;
+		this.homeKingdom = city.kingdom;
 		this.generation = generation;
 		this.prestige = 0;
 //		this.prestigeFromSupport = 0;
