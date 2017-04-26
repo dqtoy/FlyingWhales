@@ -38,10 +38,19 @@ public class PowerGrab : GameEvent {
 			Citizen citizenToExhort = null;
 			List<Citizen> citizensSupportingMe = this.startedBy.GetCitizensSupportingThisCitizen();
 			if (citizensSupportingMe.Where (x => x.role == ROLE.GOVERNOR).ToList().Count <= 0) {
-				List<HexTile> tilesInKingdom = this.startedByKingdom.GetAllHexTilesInKingdom();
-				if (tilesInKingdom.Contains (this.startedBy.currentLocation)) {
-					citizenToExhort = this.startedBy.currentLocation.city.governor;
+				if (this.startedBy.homeKingdom.id == this.startedBy.city.kingdom.id) {
+					//if governor is at his home kingdom
+					if (this.startedBy.city.governor.id == this.startedBy.id) {
+						List<Citizen> allGovernorsInKingdom = this.startedBy.city.kingdom.GetAllCitizensOfType (ROLE.GOVERNOR);
+						allGovernorsInKingdom.Remove(this.startedBy);
+						if (allGovernorsInKingdom.Count > 0) {
+							citizenToExhort = allGovernorsInKingdom [Random.Range (0, allGovernorsInKingdom.Count)];
+						}
+					} else {
+						citizenToExhort = this.startedBy.city.governor;
+					}
 				} else {
+					//if governor is at outside his home kingdom
 					List<Citizen> allGovernors = GameManager.Instance.GetAllCitizensOfType (ROLE.GOVERNOR);
 					if (allGovernors.Count > 0) {
 						citizenToExhort = allGovernors[Random.Range(0, allGovernors.Count)];
