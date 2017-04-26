@@ -855,11 +855,12 @@ public class Citizen {
 				prestige += 5;
 			}
 		}
-		if (this.isHeir && this.role != ROLE.GOVERNOR) {
-			prestige += 200;
-			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
+		if (this.city.kingdom.successionLine.Count > 0) {
+			if (this.city.kingdom.successionLine [0].id == this.id && this.role != ROLE.GOVERNOR) {
+				prestige += 200;
+				EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
+			}
 		}
-
 		if (this.isMarried && this.spouse != null) {
 			if (this.spouse.isKing || this.spouse.isGovernor) {
 				prestige += 150;

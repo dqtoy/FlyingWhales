@@ -1680,7 +1680,8 @@ public class City{
 				DetachGeneralFromGovernor (newGovernor);
 			}
 			this.governor.isGovernor = false;
-
+			newGovernor.role = ROLE.GOVERNOR;
+			newGovernor.assignedRole = null;
 			newGovernor.AssignRole(ROLE.GOVERNOR);
 			this.UpdateCitizenCreationTable();
 			newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
@@ -1691,8 +1692,7 @@ public class City{
 	internal void DetachGeneralFromGovernor(Citizen governor){
 		General general = (General)governor.assignedRole;
 		general.CreateGhostCitizen ();
-		governor.role = ROLE.UNTRAINED;
-		governor.assignedRole = null;
+
 	}
 	internal Citizen GetCitizenWithHighestPrestige(){
 		List<Citizen> prestigeCitizens = new List<Citizen> ();

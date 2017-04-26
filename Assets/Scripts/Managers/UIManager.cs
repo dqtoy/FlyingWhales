@@ -308,6 +308,7 @@ public class UIManager : MonoBehaviour {
 			kingGO.GetComponent<CharacterPortrait>().SetCitizen(KingdomManager.Instance.allKingdoms[i].king);
 			kingGO.transform.localScale = Vector3.one;
 		}
+		StartCoroutine (RepositionGrid (kingsGrid));
 		kingsGrid.enabled = true;
 	}
 

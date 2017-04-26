@@ -193,7 +193,7 @@ public class Kingdom{
 			if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
 				DetachGeneralFromKing (newKing);
 			}
-			newKing.role = ROLE.UNTRAINED;
+			newKing.role = ROLE.KING;
 			newKing.assignedRole = null;
 			newKing.isKing = true;
 			newKing.isGovernor = false;
@@ -207,6 +207,7 @@ public class Kingdom{
 			this.successionLine.AddRange (GetSiblings (newKing));
 			UpdateKingSuccession ();
 			this.RetrieveInternationWar();
+			UIManager.Instance.UpdateKingsGrid();
 		}
 	}
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
@@ -222,7 +223,7 @@ public class Kingdom{
 		if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
 			DetachGeneralFromKing (newKing);
 		}
-		newKing.role = ROLE.UNTRAINED;
+		newKing.role = ROLE.KING;
 		newKing.assignedRole = null;
 		newKing.isKing = true;
 		newKing.isGovernor = false;
@@ -237,6 +238,7 @@ public class Kingdom{
 		this.successionLine.AddRange (GetSiblings (newKing));
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
+		UIManager.Instance.UpdateKingsGrid();
 
 		for(int i = 0; i < claimants.Count; i++){
 			newKing.AddSuccessionWar (claimants [i]);
