@@ -9,6 +9,8 @@ public class InvasionPlan : GameEvent {
 	public Kingdom targetKingdom;
 	public List<Citizen> uncovered;
 
+	internal Militarization militarizationEvent = null;
+
 	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom, INVASION_TRIGGER_REASONS reason = INVASION_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
@@ -94,6 +96,7 @@ public class InvasionPlan : GameEvent {
 		}else{
 			//New Militarization
 			Militarization newMilitarization  = new Militarization(this.startWeek, this.startMonth, this.startYear, this.startedBy);
+			this.militarizationEvent = newMilitarization;
 			newMilitarization.invasionPlanThatTriggeredEvent = this;
 		}
 	}

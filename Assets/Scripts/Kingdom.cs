@@ -64,7 +64,7 @@ public class Kingdom{
 	protected void CreateInitialRelationships(){
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {
-				this.relationshipsWithOtherKingdoms.Add (new RelationshipKingdom(KingdomManager.Instance.allKingdoms [i]));
+				this.relationshipsWithOtherKingdoms.Add (new RelationshipKingdom(this, KingdomManager.Instance.allKingdoms [i]));
 			}
 		}
 	}
@@ -80,7 +80,7 @@ public class Kingdom{
 				return;
 			}
 		}
-		this.relationshipsWithOtherKingdoms.Add(new RelationshipKingdom(createdKingdom));
+		this.relationshipsWithOtherKingdoms.Add(new RelationshipKingdom(this, createdKingdom));
 	}
 
 	protected void AttemptToExpand(){
@@ -194,7 +194,7 @@ public class Kingdom{
 				newKing.DetachGeneralFromCitizen ();
 			}
 			newKing.role = ROLE.KING;
-			newKing.assignedRole = null;
+			newKing.assignedRole = new King(newKing);
 			newKing.isKing = true;
 			newKing.isGovernor = false;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);

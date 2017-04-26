@@ -22,6 +22,7 @@ public class Spy : Role {
 	}
 
 	internal void StartDecreaseWarExhaustionTask(RelationshipKingdom targetKingdom){
+		Debug.Log(this.citizen.name + ": Start Decrease War Exhaustion Task");
 		this.actionDurationInWeeks = 2;
 		this.warExhaustiontarget = targetKingdom;
 		this.inAction = true;
@@ -32,8 +33,10 @@ public class Spy : Role {
 	protected void DecreaseWarExhaustion(){
 		if (this.citizen.skillTraits.Contains (SKILL_TRAIT.STEALTHY)) {
 			this.warExhaustiontarget.kingdomWar.exhaustion -= 20;
+			Debug.Log (this.citizen.name + ": Decreased War Exhaustion of " + this.warExhaustiontarget.sourceKingdom.name + " by 20");
 		} else {
 			this.warExhaustiontarget.kingdomWar.exhaustion -= 15;
+			Debug.Log (this.citizen.name + ": Decreased War Exhaustion of " + this.warExhaustiontarget.sourceKingdom.name + " by 15");
 		}
 		this.inAction = false;
 		this.onDoAction -= DecreaseWarExhaustion;

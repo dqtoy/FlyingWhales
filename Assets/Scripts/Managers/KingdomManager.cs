@@ -173,6 +173,17 @@ public class KingdomManager : MonoBehaviour {
 		return null;
 	}
 
+	public RequestPeace GetRequestPeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
+		List<GameEvent> allPeaceRequestsPerKingdom = EventManager.Instance.GetEventsOfTypePerKingdom(kingdom1, EVENT_TYPES.REQUEST_PEACE).Where(x => x.isActive).ToList();
+		for (int i = 0; i < allPeaceRequestsPerKingdom.Count; i++) {
+			RequestPeace currentRequestPeace = (RequestPeace)allPeaceRequestsPerKingdom[i];
+			if (currentRequestPeace.startedByKingdom.id == kingdom1.id && currentRequestPeace.targetKingdom.id == kingdom2.id) {
+				return currentRequestPeace;
+			}
+		}
+		return null;
+	}
+
 	public void AddRelationshipToOtherKings(Citizen newKing){
 		for (int i = 0; i < this.allKingdoms.Count; i++) {
 			if (this.allKingdoms[i].id != newKing.city.kingdom.id) {

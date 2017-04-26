@@ -37,6 +37,12 @@ public class RequestPeace : GameEvent {
 	}
 
 	internal override void PerformAction(){
+		if (this.citizenSent.isDead) {
+			this.resolution = this.citizenSent.name + " died before he could reach " + this.targetKingdom.name;
+			this.DoneEvent();
+			return;
+		}
+
 		if (this.remainingWeeks > 0) {
 			this.remainingWeeks -= 1;
 		}
@@ -64,14 +70,24 @@ public class RequestPeace : GameEvent {
 			}
 
 			int chance = Random.Range(0, 100);
+//			int chance = Random.Range(0, chanceForSuccess);
 			if (chance < chanceForSuccess) {
 				//request accepted
 				KingdomManager.Instance.DeclarePeaceBetweenKingdoms (this.startedByKingdom, this.targetKingdom);
+				this.resolution = this.targetKingdom.king.name + " accepted " + this.startedBy.name + "'s request for peace.";
 			} else {
 				//request rejected
 				RelationshipKingdom relationshipOfRequester = this.startedByKingdom.GetRelationshipWithOtherKingdom(this.targetKingdom);
-				relationshipOfRequester.monthToMoveOnAfterRejection = (MONTH)(GameManager.Instance.month + 3);
+				int moveOnMonth = GameManager.Instance.month;
+				for (int i = 0; i < 3; i++) {
+					moveOnMonth += 1;
+					if (moveOnMonth > 12) {
+						moveOnMonth = 1;
+					}
+				}
+				relationshipOfRequester.monthToMoveOnAfterRejection = (MONTH)(moveOnMonth);
 				EventManager.Instance.onWeekEnd.AddListener(relationshipOfRequester.MoveOnAfterRejection);
+				this.resolution = this.targetKingdom.king.name + " rejected " + this.startedBy.name + "'s request for peace.";
 			}
 			this.DoneEvent();
 		}

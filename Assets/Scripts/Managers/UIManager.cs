@@ -197,6 +197,8 @@ public class UIManager : MonoBehaviour {
 	public UILabel warKingdom2CitiesWonLbl;
 	public UILabel warKingdom2CitiesLostLbl;
 	public UIProgressBar warKingdom2ExhaustionBar;
+	public UILabel newKingdom1WarExhaustion;
+	public UILabel newKingdom2WarExhaustion;
 
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
@@ -206,6 +208,7 @@ public class UIManager : MonoBehaviour {
 	private GameEvent currentlyShowingEvent;
 	private RelationshipKings currentlyShowingRelationship;
 	private GameObject lastClickedEventType = null;
+	private War currentlyShowingWar = null;
 
 	[Space(10)] //FOR TESTING
 	public GameObject goCreateEventUI;
@@ -1536,7 +1539,7 @@ public class UIManager : MonoBehaviour {
 			this.goSpecificEventHidden.SetActive(false);
 		}
 
-		if (gameEvent.eventType != EVENT_TYPES.BORDER_CONFLICT && gameEvent.eventType != EVENT_TYPES.STATE_VISIT) {
+		if (gameEvent.eventType != EVENT_TYPES.BORDER_CONFLICT && gameEvent.eventType != EVENT_TYPES.STATE_VISIT && gameEvent.eventType != EVENT_TYPES.INVASION_PLAN) {
 			this.specificEventBarTitle.text = "Duration";
 			specificEventProgBar.value = (float)((float)gameEvent.remainingWeeks / (float)gameEvent.durationInWeeks);
 		}
@@ -1580,6 +1583,9 @@ public class UIManager : MonoBehaviour {
 		}else if (gameEvent.eventType == EVENT_TYPES.KINGDOM_WAR) {
 			War war = (War)gameEvent;
 			ShowWarEvent (war);
+		}else if (gameEvent.eventType == EVENT_TYPES.REQUEST_PEACE) {
+			RequestPeace requestPeace = (RequestPeace)gameEvent;
+			ShowRequestPeace (requestPeace);
 		}
 
 		specificEventResolutionLbl.text = gameEvent.resolution;
@@ -2040,6 +2046,10 @@ public class UIManager : MonoBehaviour {
 
 	}
 	private void ShowInvasionPlanEvent(InvasionPlan invasionPlanEvent){
+		//for bar
+		this.specificEventBarTitle.text = "Militarization";
+		specificEventProgBar.value = (float)((float)invasionPlanEvent.militarizationEvent.remainingWeeks / (float)invasionPlanEvent.militarizationEvent.durationInWeeks);
+
 		//for started by
 		List<Transform> children = specificEventStartedByGrid.GetChildList();
 		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != invasionPlanEvent.startedBy.id)) {
@@ -2106,7 +2116,9 @@ public class UIManager : MonoBehaviour {
 
 		specificEventCandidatesTitleLbl.text = "";
 	}
+
 	private void ShowWarEvent(War warEvent){
+		currentlyShowingWar = warEvent;
 		warKingdom1Lbl.text = warEvent.kingdom1.name;
 		warKingdom2Lbl.text = warEvent.kingdom2.name;
 
@@ -2128,6 +2140,69 @@ public class UIManager : MonoBehaviour {
 		specificEventWarGO.SetActive (true);
 	}
 
+	public void UpdateKingdom1Exhaustion(){
+		currentlyShowingWar.kingdom1Rel.kingdomWar.exhaustion = Int32.Parse (newKingdom1WarExhaustion.text);
+		ShowWarEvent (currentlyShowingWar);
+	}
+
+	public void UpdateKingdom2Exhaustion(){
+		currentlyShowingWar.kingdom2Rel.kingdomWar.exhaustion = Int32.Parse (newKingdom2WarExhaustion.text);
+		ShowWarEvent (currentlyShowingWar);
+	}
+
+
+
+	private void ShowRequestPeace(RequestPeace requestPeace){
+		//for started by
+		List<Transform> children = specificEventStartedByGrid.GetChildList();
+		if (children.Count <= 0 || (children.Count > 0 && children[0].GetComponent<CharacterPortrait>().citizen.id != requestPeace.startedBy.id)) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (requestPeace.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid(specificEventStartedByGrid));
+		}
+
+		//for citizen sent
+		specificEventCandidatesTitleLbl.text = "Citizen Sent";
+		children = specificEventCandidatesGrid.GetChildList();
+		if (children.Count > 0) {
+			Citizen currentlyShowingTarget = children[0].GetComponent<CharacterPortrait>().citizen;
+			if (currentlyShowingTarget.id != requestPeace.citizenSent.id) {
+				children [0].GetComponent<CharacterPortrait>().SetCitizen (requestPeace.citizenSent);
+			}
+		} else {
+			GameObject targetGO = GameObject.Instantiate (characterPortraitPrefab, specificEventCandidatesGrid.transform) as GameObject;
+			targetGO.GetComponent<CharacterPortrait> ().SetCitizen (requestPeace.citizenSent);
+			targetGO.transform.localScale = Vector3.one;
+			targetGO.transform.position = Vector3.zero;
+
+		}
+		StartCoroutine (RepositionGrid(specificEventCandidatesGrid));
+
+		//Saboteurs
+		specificEventMiscTitleLbl.text = "Saboteurs";
+		specificEventMiscTitleLbl.gameObject.SetActive(true);
+		children = this.specificEventMiscGrid.GetChildList ();
+		List<Citizen> currentlyShowingUncoveredCitizens = children.Select (x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+		List<Citizen> additionalCitizens = requestPeace.saboteurs.Except(currentlyShowingUncoveredCitizens).ToList();
+		if (additionalCitizens.Count > 0 || children.Count <= 0) {
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+
+			for (int i = 0; i < requestPeace.saboteurs.Count; i++) {
+				GameObject uncovered = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
+				uncovered.GetComponent<CharacterPortrait> ().SetCitizen (requestPeace.saboteurs [i]);
+				uncovered.transform.localScale = Vector3.one;
+				uncovered.transform.position = Vector3.zero;
+			}
+			StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+		}
+	}
 	private void ClearSpecificEventUI(){
 		Transform startedByGridItem = specificEventStartedByGrid.GetChild(0);
 		List<Transform> candidatesGridItems = specificEventCandidatesGrid.GetChildList();

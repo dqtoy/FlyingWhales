@@ -22,11 +22,11 @@ public class TraitObject : MonoBehaviour {
 		if (isOver) {
 			this.isHovering = true;
 			if (behaviourTrait != BEHAVIOR_TRAIT.NONE) {
-				UIManager.Instance.ShowSmallInfo ("[b]" + behaviourTrait.ToString() + "[/b]", this.transform);
+				UIManager.Instance.ShowSmallInfo ("[b]" + behaviourTrait.ToString().Replace("_", " ") + "[/b]", this.transform);
 			} else if (skillTrait != SKILL_TRAIT.NONE) {
-				UIManager.Instance.ShowSmallInfo ("[b]" + skillTrait.ToString() + "[/b]", this.transform);
+				UIManager.Instance.ShowSmallInfo ("[b]" + skillTrait.ToString().Replace("_", " ") + "[/b]", this.transform);
 			} else if (miscTrait != MISC_TRAIT.NONE) {
-				UIManager.Instance.ShowSmallInfo ("[b]" + miscTrait.ToString() + "[/b]", this.transform);
+				UIManager.Instance.ShowSmallInfo ("[b]" + miscTrait.ToString().Replace("_", " ") + "[/b]", this.transform);
 			}
 		} else {
 			this.isHovering = false;
@@ -37,11 +37,11 @@ public class TraitObject : MonoBehaviour {
 	void Update(){
 		if (this.isHovering) {
 			if (behaviourTrait != BEHAVIOR_TRAIT.NONE) {
-				UIManager.Instance.ShowSmallInfo ("[b]" + behaviourTrait.ToString() + "[/b]", this.transform);
+				UIManager.Instance.ShowSmallInfo ("[b]" + behaviourTrait.ToString().Replace("_", " ") + "[/b]", this.transform);
 			} else if (skillTrait != SKILL_TRAIT.NONE) {
-				UIManager.Instance.ShowSmallInfo ("[b]" + skillTrait.ToString() + "[/b]", this.transform);
+				UIManager.Instance.ShowSmallInfo ("[b]" + skillTrait.ToString().Replace("_", " ") + "[/b]", this.transform);
 			} else if (miscTrait != MISC_TRAIT.NONE) {
-				UIManager.Instance.ShowSmallInfo ("[b]" + miscTrait.ToString() + "[/b]", this.transform);
+				UIManager.Instance.ShowSmallInfo ("[b]" + miscTrait.ToString().Replace("_", " ") + "[/b]", this.transform);
 			}
 		}
 	}
