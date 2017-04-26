@@ -311,6 +311,7 @@ public class UIManager : MonoBehaviour {
 			kingGO.GetComponent<CharacterPortrait>().SetCitizen(KingdomManager.Instance.allKingdoms[i].king);
 			kingGO.transform.localScale = Vector3.one;
 		}
+		StartCoroutine (RepositionGrid (kingsGrid));
 		kingsGrid.enabled = true;
 	}
 
@@ -412,7 +413,6 @@ public class UIManager : MonoBehaviour {
 		if (citizenInfoSuccessionGO.activeSelf) {
 			citizenInfoSuccessionGO.SetActive(false);
 		} else {
-			//CLEAR SUCCESSION
 			List<Transform> children = citizenInfoSuccessionGrid.GetChildList ();
 			for (int i = 0; i < children.Count; i++) {
 				Destroy (children [i].gameObject);
@@ -447,7 +447,6 @@ public class UIManager : MonoBehaviour {
 		}
 
 	}
-
 	public void HideCitizenInfo(){
 		currentlyShowingCitizen = null;
 		citizenInfoGO.SetActive(false);
@@ -842,6 +841,33 @@ public class UIManager : MonoBehaviour {
 		this.kingdomEventsGO.SetActive (false);
 		this.kingdomGovernorsGO.SetActive (false);
 
+	}
+	public void UpdateKingdomSuccession(){
+		if (this.kingdomSuccessionGO.activeSelf) {
+			List<Transform> children = this.kingdomSuccessionGrid.GetChildList ();
+			for (int i = 0; i < children.Count; i++) {
+				Destroy (children [i].gameObject);
+			}
+			//POPULATE
+			for (int i = 0; i < this.currentlyShowingKingdom.successionLine.Count; i++) {
+				if (i > 2) {
+					break;
+				}
+				GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
+				citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.successionLine [i], this.currentlyShowingKingdom);
+				citizenGO.transform.localScale = Vector3.one;
+				citizenGO.transform.localPosition = Vector3.zero;
+			}
+
+			for (int i = 0; i < this.currentlyShowingKingdom.pretenders.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
+				citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.pretenders [i], this.currentlyShowingKingdom);
+				citizenGO.transform.localScale = Vector3.one;
+				citizenGO.transform.localPosition = Vector3.zero;
+
+			}
+			StartCoroutine (RepositionGrid (this.kingdomSuccessionGrid));
+		}
 	}
 	public void OnClickShowKingdomHistory(){
 		if(this.currentlyShowingKingdom == null){
@@ -2429,6 +2455,8 @@ public class UIManager : MonoBehaviour {
 				currentlyShowingCitizen.miscTraits.Add (chosenMiscTrait);
 				if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
 					currentlyShowingCitizen.campaignManager.campaignLimit = 3;
+				}else if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
+					currentlyShowingCitizen.citizenChances.accidentChance = 50f;
 				}
 				Debug.Log ("Added misc trait : " + chosenMiscTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
 			}
@@ -2458,6 +2486,8 @@ public class UIManager : MonoBehaviour {
 			currentlyShowingCitizen.miscTraits.Remove(chosenMiscTrait);
 			if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
 				currentlyShowingCitizen.campaignManager.campaignLimit = 2;
+			}else if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
+				currentlyShowingCitizen.citizenChances.accidentChance = currentlyShowingCitizen.citizenChances.defaultAccidentChance;
 			}
 			Debug.Log ("Removed misc trait : " + chosenMiscTrait.ToString () + " from " + currentlyShowingCitizen.name);
 		}

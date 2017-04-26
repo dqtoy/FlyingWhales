@@ -51,6 +51,7 @@ public class General : Role {
 		EventManager.Instance.onCitizenMove.AddListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.AddListener (RegisterOnCampaign);
 		EventManager.Instance.onDeathArmy.AddListener (DeathArmy);
+		EventManager.Instance.onLookForLostArmies.AddListener (JoinArmyTo);
 	}
 	internal void InitializeGeneral(){
 		if(this.generalAvatar == null){
@@ -436,6 +437,7 @@ public class General : Role {
 		EventManager.Instance.onCitizenMove.RemoveListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
 		EventManager.Instance.onDeathArmy.RemoveListener (DeathArmy);
+		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
 
 		//					((General)this.assignedRole) = null;
 		if (this.generalAvatar != null) {
@@ -452,12 +454,29 @@ public class General : Role {
 		EventManager.Instance.onCitizenMove.RemoveListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
 		EventManager.Instance.onDeathArmy.RemoveListener (DeathArmy);
+		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
+
 
 		if (this.generalAvatar != null) {
 			GameObject.Destroy (this.generalAvatar);
 			this.generalAvatar = null;
 		}
 		this.UnregisterThisGeneral (null, false);
+	}
+	internal void JoinArmyTo(General general){
+		if(this.citizen.isGhost && this.citizen.isDead){
+			if (this.location == general.location) {
+				Debug.Log (this.citizen.name + " of " + this.citizen.city.name + " IS JOINING ARMY OF " + general.citizen.name + " of " + general.citizen.city.name);
+				general.army.hp += this.army.hp;
+				this.army.hp = 0;
+
+				if(general.generalAvatar != null){
+					general.generalAvatar.GetComponent<GeneralObject> ().UpdateUI ();
+				}
+				this.GeneralDeath ();
+			}
+		}
+
 	}
 	internal void CreateGhostCitizen(){
 		Citizen newCitizen = new Citizen (this.citizen.city, 0, GENDER.MALE, 0, true);

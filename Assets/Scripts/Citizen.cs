@@ -46,6 +46,7 @@ public class Citizen {
 	public bool isPretender;
 	public bool isHeir;
 	public bool isBusy;
+	public bool isGhost;
 	public bool isDead;
 	[HideInInspector]public List<History> history;
 
@@ -65,6 +66,7 @@ public class Citizen {
 
 
 	public Citizen(City city, int age, GENDER gender, int generation, bool isGhost = false){
+		this.isGhost = isGhost;
 		if(isGhost){
 			this.id = 0;
 		}else{
@@ -221,6 +223,9 @@ public class Citizen {
 			MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
 			this.miscTraits.Add (chosenMiscTrait);
 			miscTraits.Remove (chosenMiscTrait);
+			if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
+				this.citizenChances.accidentChance = 50f;
+			}
 		}
 		this.behaviorTraits.Distinct().ToList();
 		this.skillTraits.Distinct().ToList();
@@ -357,6 +362,8 @@ public class Citizen {
 		yield return null;
 		Debug.LogError("DEATH: " + this.name + " of " + this.city.name);
 		DeathHistory(reason);
+		this.isDead = true;
+
 		if(isDethroned){
 			this.isPretender = true;
 			this.city.kingdom.AddPretender (this);
@@ -371,7 +378,6 @@ public class Citizen {
 		if (this.city != null) {
 			this.city.kingdom.RemoveFromSuccession(this);
 		}
-		this.isDead = true;
 		if (this.workLocation != null) {
 			this.workLocation.UnoccupyTile();
 		}
@@ -398,17 +404,27 @@ public class Citizen {
 					((General)this.assignedRole).GeneralDeath ();
 				}else{
 					this.city.LookForNewGeneral((General)this.assignedRole);
+					if (this.role == ROLE.GENERAL && this.assignedRole != null) {
+						if (((General)this.assignedRole).generalAvatar != null) {
+							GameObject.Destroy (((General)this.assignedRole).generalAvatar);
+							((General)this.assignedRole).generalAvatar = null;
+						}
+						this.DetachGeneralFromCitizen ();
+					}
 				}
 			}
 
 		}
-		if(isConquered){
+		if (this.city != null) {
 			this.city.citizens.Remove (this);
-		}else{
-			if(this.role != ROLE.GENERAL && this.city != null){
-				this.city.citizens.Remove (this);
-			}
 		}
+//		if(isConquered){
+//			this.city.citizens.Remove (this);
+//		}else{
+//			if(this.role != ROLE.GENERAL && this.city != null){
+//				this.city.citizens.Remove (this);
+//			}
+//		}
 
 		EventManager.Instance.onCitizenDiedEvent.Invoke ();
 
@@ -858,15 +874,15 @@ public class Citizen {
 			prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count () * 20);
 			prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
 		}
-
-		if (this.isHeir && this.role != ROLE.GOVERNOR) {
-			prestige += 200;
+		if (this.city.kingdom.successionLine.Count > 0) {
+			if (this.city.kingdom.successionLine [0].id == this.id && this.role != ROLE.GOVERNOR) {
+				prestige += 200;
 //			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
 			List<Citizen> supportingCitizens = this.GetCitizensSupportingThisCitizen();
 			prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count () * 20);
 			prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
+			}
 		}
-
 		if (this.isMarried && this.spouse != null) {
 			if (this.spouse.isKing || this.spouse.isGovernor) {
 				prestige += 150;
@@ -1392,5 +1408,11 @@ public class Citizen {
 		EventManager.Instance.onUnsupportCitizen.RemoveListener(UnsupportCitizen);
 //		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
 		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
+	}
+
+	internal void DetachGeneralFromCitizen(){
+		Debug.Log (this.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");
+		General general = (General)this.assignedRole;
+		general.CreateGhostCitizen ();
 	}
 }

@@ -61,6 +61,7 @@ public class SuccessionPortrait : MonoBehaviour {
 			for (int i = 0; i < this.supporters.Count; i++) {
 				GameObject citizenGO = GameObject.Instantiate (this.characterPortraitGO, this.supporterGrid.transform) as GameObject;
 				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (this.supporters [i]);
+				citizenGO.transform.localScale = Vector3.one;
 			}
 			this.supporterGrid.Reposition ();
 			this.supporterGO.SetActive (true);
@@ -71,13 +72,15 @@ public class SuccessionPortrait : MonoBehaviour {
 
 		if (this.kingdom.successionLine [0] != null) {
 			if (this.kingdom.successionLine [0].id == citizen.id) {
-				for(int i = 0; i < this.kingdom.cities.Count; i++){
-					for(int j = 0; j < this.kingdom.cities[i].citizens.Count; j++){
-						if(this.kingdom.cities[i].citizens[j].isGovernor){
-							if (this.kingdom.cities [i].citizens [j].id != citizen.id) {
-								if (this.kingdom.cities [i].citizens [j].supportedCitizen == null) {
-									supporterCitizens.Add (this.kingdom.cities [i].citizens [j]);
-									break;
+				if(!this.kingdom.king.isHeir || citizen.isHeir){
+					for(int i = 0; i < this.kingdom.cities.Count; i++){
+						for(int j = 0; j < this.kingdom.cities[i].citizens.Count; j++){
+							if(this.kingdom.cities[i].citizens[j].isGovernor){
+								if (this.kingdom.cities [i].citizens [j].id != citizen.id) {
+									if (this.kingdom.cities [i].citizens [j].supportedCitizen == null) {
+										supporterCitizens.Add (this.kingdom.cities [i].citizens [j]);
+										break;
+									}
 								}
 							}
 						}

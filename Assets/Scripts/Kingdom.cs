@@ -191,7 +191,7 @@ public class Kingdom{
 				Utilities.ChangeDescendantsRecursively (this.king, false);
 			}
 			if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
-				DetachGeneralFromKing (newKing);
+				newKing.DetachGeneralFromCitizen ();
 			}
 			newKing.role = ROLE.KING;
 			newKing.assignedRole = new King(newKing);
@@ -207,6 +207,8 @@ public class Kingdom{
 			this.successionLine.AddRange (GetSiblings (newKing));
 			UpdateKingSuccession ();
 			this.RetrieveInternationWar();
+			UIManager.Instance.UpdateKingsGrid();
+			UIManager.Instance.UpdateKingdomSuccession ();
 		}
 	}
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
@@ -220,9 +222,9 @@ public class Kingdom{
 			Utilities.ChangeDescendantsRecursively (this.king, false);
 		}
 		if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
-			DetachGeneralFromKing (newKing);
+			newKing.DetachGeneralFromCitizen ();
 		}
-		newKing.role = ROLE.UNTRAINED;
+		newKing.role = ROLE.KING;
 		newKing.assignedRole = null;
 		newKing.isKing = true;
 		newKing.isGovernor = false;
@@ -237,6 +239,8 @@ public class Kingdom{
 		this.successionLine.AddRange (GetSiblings (newKing));
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
+		UIManager.Instance.UpdateKingsGrid();
+		UIManager.Instance.UpdateKingdomSuccession ();
 
 		for(int i = 0; i < claimants.Count; i++){
 			newKing.AddSuccessionWar (claimants [i]);
@@ -265,10 +269,6 @@ public class Kingdom{
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (GetSiblings (newKing));
 		UpdateKingSuccession ();
-	}
-	internal void DetachGeneralFromKing(Citizen king){
-		General general = (General)king.assignedRole;
-		general.CreateGhostCitizen ();
 	}
 	internal void ChangeSuccessionLineRescursively(Citizen royalty){
 		if(this.king.id != royalty.id){

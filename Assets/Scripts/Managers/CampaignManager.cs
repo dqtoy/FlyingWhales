@@ -405,8 +405,8 @@ public class CampaignManager {
 			}else{
 				int chance = UnityEngine.Random.Range (0, 100);
 				if(chance < 75){
-//					return CAMPAIGN.DEFENSE;
-					return CAMPAIGN.OFFENSE;
+					return CAMPAIGN.DEFENSE;
+//					return CAMPAIGN.OFFENSE;
 				}else{
 					return CAMPAIGN.OFFENSE;
 				}

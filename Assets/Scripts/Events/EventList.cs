@@ -20,7 +20,7 @@ public class RegisterOnCampaign: UnityEvent<Campaign>{}
 public class DeathArmy: UnityEvent{}
 public class UnsupportCitizen: UnityEvent<Citizen>{}
 public class RemoveSuccessionWarCity: UnityEvent<City>{}
-
+public class LookForLostArmies: UnityEvent<General>{}
 
 //Game Events
 public class GameEventAction: UnityEvent<GameEvent, int>{}

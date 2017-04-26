@@ -163,6 +163,7 @@ public enum MISC_TRAIT{
 	ROBUST,
 	STRONG,
 	TACTICAL,
+	ACCIDENT_PRONE,
 }
 
 public enum CAMPAIGN{

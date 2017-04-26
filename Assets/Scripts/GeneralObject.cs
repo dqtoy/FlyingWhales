@@ -46,6 +46,11 @@ public class GeneralObject : MonoBehaviour {
 			this.textMesh.text = this.general.army.hp.ToString ();
 		}
 	}
+	internal void UpdateUI(){
+		if(this.general != null){
+			this.textMesh.text = this.general.army.hp.ToString ();
+		}
+	}
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
