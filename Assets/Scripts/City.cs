@@ -1168,7 +1168,9 @@ public class City{
 				}
 
 				if (this.HasEnoughResourcesForAction (GetCitizenCreationCostPerType (pendingTiles [0].roleIntendedForTile))) {
-					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).Where (x => x.age >= 16).ToList ();
+//					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).Where (x => x.age >= 16).ToList ();
+					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).ToList ();
+
 					if (unemployedCitizens.Count > 0) {
 						Debug.Log ("Trained citizen :" + pendingTiles [0].tileName + " - " + pendingTiles [0].roleIntendedForTile);
 						this.AdjustResources (GetCitizenCreationCostPerType (pendingTiles [0].roleIntendedForTile));
@@ -1241,7 +1243,9 @@ public class City{
 				this.OccupyTile (hexTileConcerned, citizenToAssign);
 			} else {
 				if (this.HasEnoughResourcesForAction (GetCitizenCreationCostPerType (hexTileConcerned.roleIntendedForTile))) {
-					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).Where (x => x.age >= 16).ToList ();
+//					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).Where (x => x.age >= 16).ToList ();
+					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).ToList ();
+
 					if (unemployedCitizens.Count > 0) {
 						this.AdjustResources (GetCitizenCreationCostPerType (hexTileConcerned.roleIntendedForTile));
 						unemployedCitizens [0].AssignRole (hexTileConcerned.roleIntendedForTile);
