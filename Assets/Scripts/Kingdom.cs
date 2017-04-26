@@ -459,6 +459,7 @@ public class Kingdom{
 			for(int i = 0; i < this.successionLine.Count; i++){
 				if(this.successionLine[i].id == citizen.id){
 					this.successionLine.RemoveAt (i);
+					UIManager.Instance.UpdateKingdomSuccession ();
 					break;
 				}
 			}

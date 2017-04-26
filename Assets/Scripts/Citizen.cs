@@ -318,7 +318,8 @@ public class Citizen {
 
 	protected void AttemptToGrabPower(){
 		int chanceToGrabPower = Random.Range (0, 100);
-		if (chanceToGrabPower < 10) {
+//		if (chanceToGrabPower < 10) {
+		if (chanceToGrabPower < 100) {
 			PowerGrab newPowerGrab = new PowerGrab(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, this.city.kingdom.king);
 		}
 	}
