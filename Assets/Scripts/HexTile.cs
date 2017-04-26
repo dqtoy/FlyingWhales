@@ -166,6 +166,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		int specialChance = UnityEngine.Random.Range (0, 100);
 
 		if(specialChance < 15){
+//		if(specialChance < 50){
 			//			Utilities.specialResourceCount += 1;
 			if(this.elevationType == ELEVATION.MOUNTAIN){
 				SpecialResourceChance specialResources = new SpecialResourceChance (
@@ -426,7 +427,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public void ShowNamePlate(){
 		this.cityNameGO.SetActive(true);
 		this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
-		this.cityNameLbl.text = this.city.name;
+		this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
 	}
 
 	public void OccupyTile(Citizen citizen){

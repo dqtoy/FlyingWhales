@@ -313,6 +313,7 @@ public class CombatManager : MonoBehaviour {
 
 		int chanceToTriggerSendEnvoy = Random.Range (0, 100);
 		if (chanceToTriggerSendEnvoy < 10) {
+//		if (chanceToTriggerSendEnvoy < 100) {
 			List<Kingdom> kingdom1Friends = new List<Kingdom>();
 			for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
 				Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
@@ -341,23 +342,24 @@ public class CombatManager : MonoBehaviour {
 				Kingdom possibleKingdomToTrigger = commonFriends[i];
 				List<Citizen> envoys = possibleKingdomToTrigger.GetAllCitizensOfType (ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
 				if (envoys.Count > 0 && chance < 5) {
+//				if (envoys.Count > 0 && chance < 100) {
 					if (Random.Range (0, 2) == 0) {
-						((Envoy)envoys [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
+						((Envoy)envoys [0].assignedRole).StartIncreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
 
 						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
-							possibleKingdomToTrigger.name + " sent an envoy(" + envoys [0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							possibleKingdomToTrigger.name + " sent an envoy(" + envoys [0].name + ") to " + general2.citizen.city.kingdom.name + " to increase exhaustion in his war" +
 							" against " + general1.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
 
-						Debug.Log(possibleKingdomToTrigger.name + " sent an envoy(" + envoys[0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+						Debug.Log(possibleKingdomToTrigger.name + " sent an envoy(" + envoys[0].name + ") to " + general2.citizen.city.kingdom.name + " to increase exhaustion in his war" +
 							" against " + general1.citizen.city.kingdom.name);
 					} else {
-						((Envoy)envoys [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
+						((Envoy)envoys [0].assignedRole).StartIncreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
 
 						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
-							possibleKingdomToTrigger.name + " sent an envoy(" + envoys [0].name + ") to " + general1.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+							possibleKingdomToTrigger.name + " sent an envoy(" + envoys [0].name + ") to " + general1.citizen.city.kingdom.name + " to increase exhaustion in his war" +
 							" against " + general2.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
 
-						Debug.Log(possibleKingdomToTrigger.name + " sent a envoy(" + envoys[0].name + ") to " + general1.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
+						Debug.Log(possibleKingdomToTrigger.name + " sent a envoy(" + envoys[0].name + ") to " + general1.citizen.city.kingdom.name + " to increase exhaustion in his war" +
 							" against " + general2.citizen.city.kingdom.name);
 					}
 				}

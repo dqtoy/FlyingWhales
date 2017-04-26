@@ -40,22 +40,22 @@ public class Envoy : Role {
 		}
 	}
 
-	internal void StartDecreaseWarExhaustionTask(RelationshipKingdom targetKingdom){
+	internal void StartIncreaseWarExhaustionTask(RelationshipKingdom targetKingdom){
 		this.eventDuration = 2;
 		this.warExhaustiontarget = targetKingdom;
 		this.inAction = true;
-		this.onDoAction += DecreaseWarExhaustion;
+		this.onDoAction += IncreaseWarExhaustion;
 		EventManager.Instance.onWeekEnd.AddListener(WaitForAction);
 	}
 
-	protected void DecreaseWarExhaustion(){
+	protected void IncreaseWarExhaustion(){
 		if (this.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-			this.warExhaustiontarget.kingdomWar.exhaustion -= 20;
+			this.warExhaustiontarget.kingdomWar.exhaustion += 20;
 		} else {
-			this.warExhaustiontarget.kingdomWar.exhaustion -= 15;
+			this.warExhaustiontarget.kingdomWar.exhaustion += 15;
 		}
 		this.inAction = false;
-		this.onDoAction -= DecreaseWarExhaustion;
+		this.onDoAction -= IncreaseWarExhaustion;
 		EventManager.Instance.onWeekEnd.RemoveListener(WaitForAction);
 	}
 
