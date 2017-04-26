@@ -11,8 +11,8 @@ public class Citizen {
 	public GENDER gender;
 	public int age;
 	public int generation;
-	protected int _prestige;
-	public int prestigeFromSupport;
+	public int prestige;
+//	public int prestigeFromSupport;
 	public City city;
 	public HexTile currentLocation;
 	public ROLE role;
@@ -51,9 +51,9 @@ public class Citizen {
 
 	private List<Citizen> possiblePretenders = new List<Citizen>();
 
-	public int prestige{
-		get{ return _prestige + prestigeFromSupport;}
-	}
+//	public int prestige{
+//		get{ return _prestige + prestigeFromSupport;}
+//	}
 
 	public List<Citizen> dependentChildren{
 		get{ return this.children.Where (x => x.age < 16 && !x.isMarried).ToList ();}
@@ -79,8 +79,8 @@ public class Citizen {
 			this.name = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
 		}
 		this.generation = generation;
-		this._prestige = 0;
-		this.prestigeFromSupport = 0;
+		this.prestige = 0;
+//		this.prestigeFromSupport = 0;
 		this.city = city;
 		this.role = ROLE.UNTRAINED;
 		this.assignedRole = null;
@@ -123,7 +123,7 @@ public class Citizen {
 
 			EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
 			EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
-			EventManager.Instance.onCheckCitizensSupportingMe.AddListener(AddPrestigeToOtherCitizen);
+//			EventManager.Instance.onCheckCitizensSupportingMe.AddListener(AddPrestigeToOtherCitizen);
 			EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
 		}
 	}
@@ -222,7 +222,9 @@ public class Citizen {
 			this.miscTraits.Add (chosenMiscTrait);
 			miscTraits.Remove (chosenMiscTrait);
 		}
-
+		this.behaviorTraits.Distinct().ToList();
+		this.skillTraits.Distinct().ToList();
+		this.miscTraits.Distinct().ToList();
 	}
 
 	internal int GetCampaignLimit(){
@@ -384,7 +386,7 @@ public class Citizen {
 		EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
 		EventManager.Instance.onUnsupportCitizen.Invoke (this);
 		this.UnsupportCitizen (this);
-		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
+//		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
 		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
 
 
@@ -822,11 +824,10 @@ public class Citizen {
 		}
 
 		int prestige = 0;
-		this._prestige = 0;
-		this.prestigeFromSupport = 0;
+		this.prestige = 0;
 		//compute prestige for role
 		if (this.isKing) {
-			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
+//			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
 			prestige += 500;
 			for (int i = 0; i < this.relationshipKings.Count; i++) {
 				if (this.relationshipKings [i].lordRelationship == RELATIONSHIP_STATUS.FRIEND) {
@@ -839,22 +840,31 @@ public class Citizen {
 					prestige -= 30;
 				}
 			}
-
 			for (int i = 0; i < this.city.kingdom.cities.Count; i++) {
 				prestige += 15;
 			}
+			List<Citizen> supportingGovernors = this.GetCitizensSupportingThisCitizen().Where(x => x.role == ROLE.GOVERNOR).ToList ();
+			prestige += (supportingGovernors.Count * 20);
 		}
+
 		if (this.isGovernor) {
-			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
+//			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
 			prestige += 350;
 
 			for (int i = 0; i < this.city.ownedTiles.Count; i++) {
 				prestige += 5;
 			}
+			List<Citizen> supportingCitizens = this.GetCitizensSupportingThisCitizen();
+			prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count () * 20);
+			prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
 		}
+
 		if (this.isHeir && this.role != ROLE.GOVERNOR) {
 			prestige += 200;
-			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
+//			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
+			List<Citizen> supportingCitizens = this.GetCitizensSupportingThisCitizen();
+			prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count () * 20);
+			prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
 		}
 
 		if (this.isMarried && this.spouse != null) {
@@ -907,7 +917,7 @@ public class Citizen {
 		}
 
 		//Add prestige for successors
-		this._prestige = prestige;
+		this.prestige = prestige;
 
 	}
 	internal void AddSuccessionWar(Citizen enemy){
@@ -1027,6 +1037,10 @@ public class Citizen {
 
 		if(chance < value){
 			//INVASION PLAN
+			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0 ||
+				KingdomManager.Instance.GetWarBetweenKingdoms(this.city.kingdom, relationship.king.city.kingdom) != null) {
+				return;
+			}
 			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
 				this, this.city.kingdom, relationship.king.city.kingdom, reason);
 			
@@ -1209,34 +1223,34 @@ public class Citizen {
 		}
 		return null;
 	}
-	protected void AddPrestigeToOtherCitizen(Citizen otherCitizen){
-		if (this.city == null) {
-			return;
-		}
-		if (this.supportedCitizen == null) {
-			if (otherCitizen.city.kingdom.id == this.city.kingdom.id) {
-				if (otherCitizen.isKing) {
-					if (this.isGovernor) {
-						otherCitizen.prestigeFromSupport += 20;
-					}
-				} else if (otherCitizen.isHeir) {
-					if (this.isGovernor) {
-						otherCitizen.prestigeFromSupport += 20;
-					} else if (this.isKing) {
-						otherCitizen.prestigeFromSupport += 60;
-					}
-				}
-			}
-		} else {
-			if (this.supportedCitizen.id == otherCitizen.id) {
-				if (this.isGovernor) {
-					otherCitizen.prestigeFromSupport += 20;
-				} else if (this.isKing) {
-					otherCitizen.prestigeFromSupport += 60;
-				}
-			}
-		}
-	}
+//	protected void AddPrestigeToOtherCitizen(Citizen otherCitizen){
+//		if (this.city == null) {
+//			return;
+//		}
+//		if (this.supportedCitizen == null) {
+//			if (otherCitizen.city.kingdom.id == this.city.kingdom.id) {
+//				if (otherCitizen.isKing) {
+//					if (this.isGovernor) {
+//						otherCitizen.prestigeFromSupport += 20;
+//					}
+//				} else if (otherCitizen.isHeir) {
+//					if (this.isGovernor) {
+//						otherCitizen.prestigeFromSupport += 20;
+//					} else if (this.isKing) {
+//						otherCitizen.prestigeFromSupport += 60;
+//					}
+//				}
+//			}
+//		} else {
+//			if (this.supportedCitizen.id == otherCitizen.id) {
+//				if (this.isGovernor) {
+//					otherCitizen.prestigeFromSupport += 20;
+//				} else if (this.isKing) {
+//					otherCitizen.prestigeFromSupport += 60;
+//				}
+//			}
+//		}
+//	}
 
 	internal void StateVisit(Citizen targetKing, STATEVISIT_TRIGGER_REASONS reason){
 		int acceptChance = UnityEngine.Random.Range (0, 100);
@@ -1318,17 +1332,30 @@ public class Citizen {
 
 	internal List<Citizen> GetCitizensSupportingThisCitizen(){
 		List<Citizen> citizensSupportingMe = new List<Citizen>();
-		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-			List<Citizen> allCitizensInKingdom = KingdomManager.Instance.allKingdoms[i].GetAllCitizensInKingdom();
-			for (int j = 0; j < allCitizensInKingdom.Count; j++) {
-				if (allCitizensInKingdom[i].supportedCitizen == null) {
-					if ((this.isKing || this.isHeir) && this.city.kingdom.id == allCitizensInKingdom [i].city.kingdom.id) {
-						citizensSupportingMe.Add(allCitizensInKingdom[i]);
+
+		//Check governors of this kingdom
+		List<Citizen> allGovernorsInThisKingdom = this.city.kingdom.GetAllCitizensOfType(ROLE.GOVERNOR);
+		for (int i = 0; i < allGovernorsInThisKingdom.Count; i++) {
+			Citizen currentGovernor = allGovernorsInThisKingdom[i];
+			if (currentGovernor.id != this.id) {
+				if (currentGovernor.supportedCitizen == null) {
+					if (this.isKing || (this.city.kingdom.successionLine.Count > 0 && this.city.kingdom.successionLine [0].id == this.id)
+					   || (this.city.kingdom.successionLine.Count > 1 && this.city.kingdom.successionLine [1].id == this.id)) {
+						citizensSupportingMe.Add (currentGovernor);
 					}
 				} else {
-					if (allCitizensInKingdom [i].supportedCitizen.id == this.id) {
-						citizensSupportingMe.Add(allCitizensInKingdom[i]);
+					if (currentGovernor.supportedCitizen.id == this.id) {
+						citizensSupportingMe.Add (currentGovernor);
 					}
+				}
+			}
+		}
+
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[i];
+			if (currentKingdom.id != this.city.kingdom.id) {
+				if (currentKingdom.king.supportedCitizen != null && currentKingdom.king.supportedCitizen.id == this.id) {
+					citizensSupportingMe.Add(currentKingdom.king);
 				}
 			}
 		}
@@ -1363,7 +1390,7 @@ public class Citizen {
 	internal void UnsubscribeListeners(){
 		EventManager.Instance.onCitizenTurnActions.RemoveListener(TurnActions);
 		EventManager.Instance.onUnsupportCitizen.RemoveListener(UnsupportCitizen);
-		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
+//		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
 		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
 	}
 }

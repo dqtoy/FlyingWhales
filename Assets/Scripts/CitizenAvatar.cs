@@ -8,12 +8,19 @@ public class CitizenAvatar : MonoBehaviour {
 
 	private List<HexTile> path;
 
+	private HexTile startTile = null;
+	private HexTile targetTile = null;
+	private float smoothTime = 0.3f;
+	private Vector3 velocity = Vector3.zero;
+
 	internal void AssignCitizen(Citizen citizen){
 		this.citizen = citizen;
 		this.path = new List<HexTile>();
 	}
 
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
+//		this.startTile = startTile;
+//		this.targetTile = targetTile;
 		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
 	}
 
@@ -37,8 +44,15 @@ public class CitizenAvatar : MonoBehaviour {
 					this.HighlightPath();
 				}
 			}
-
 		}
+
+//		if (this.startTile != null && this.targetTile != null) {
+//			transform.position = Vector3.SmoothDamp(this.startTile.transform.position, this.targetTile.transform.position, ref velocity, smoothTime);
+//			if (Mathf.Approximately(transform.position.x, this.targetTile.transform.position.x) && Mathf.Approximately(transform.position.y, this.targetTile.transform.position.y)) {
+//				this.targetTile = null;
+//				this.startTile = null;
+//			}
+//		}
 	}
 
 	void OnMouseDown(){

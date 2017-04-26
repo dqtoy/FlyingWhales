@@ -44,6 +44,11 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 
+//		cityForHumans1.Clear();
+//		for (int i = 0; i < CityGenerator.Instance.habitableTiles.Count; i++) {
+//			cityForHumans1.Add(CityGenerator.Instance.habitableTiles[i]);
+//		}
+
 		if (elligibleTilesForHumans.Count > 2) {
 			cityForHumans1.Add (elligibleTilesForHumans [0]);
 //			cityForHumans1.Add (elligibleTilesForHumans [1]);
@@ -52,11 +57,13 @@ public class KingdomManager : MonoBehaviour {
 
 		if (elligibleTilesForHumans.Count > 4) {
 			cityForHumans2.Add (elligibleTilesForHumans[2]);
+//			cityForHumans2.Add (elligibleTilesForHumans[0].connectedTiles[0]);
 //			cityForHumans2.Add (elligibleTilesForHumans[3]);
 			GenerateNewKingdom (RACE.HUMANS, cityForHumans2, true);
 		}
 
 		if (elligibleTilesForHumans.Count > 6) {
+//			cityForHumans3.Add (elligibleTilesForHumans[0].connectedTiles[1]);
 			cityForHumans3.Add (elligibleTilesForHumans [4]);
 //			cityForHumans3.Add (elligibleTilesForHumans [5]);
 			GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
@@ -168,6 +175,17 @@ public class KingdomManager : MonoBehaviour {
 				if (currentWar.kingdom1.id == kingdom2.id) {
 					return currentWar;
 				}
+			}
+		}
+		return null;
+	}
+
+	public RequestPeace GetRequestPeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
+		List<GameEvent> allPeaceRequestsPerKingdom = EventManager.Instance.GetEventsOfTypePerKingdom(kingdom1, EVENT_TYPES.REQUEST_PEACE).Where(x => x.isActive).ToList();
+		for (int i = 0; i < allPeaceRequestsPerKingdom.Count; i++) {
+			RequestPeace currentRequestPeace = (RequestPeace)allPeaceRequestsPerKingdom[i];
+			if (currentRequestPeace.startedByKingdom.id == kingdom1.id && currentRequestPeace.targetKingdom.id == kingdom2.id) {
+				return currentRequestPeace;
 			}
 		}
 		return null;

@@ -753,7 +753,11 @@ public class City{
 			for (int j = 0; j < numOfMiscTraits; j++) {
 				MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
 				currentCitizen.miscTraits.Add (chosenMiscTrait);
+				miscTraits.Remove (chosenMiscTrait);
 			}
+			currentCitizen.behaviorTraits.Distinct().ToList();
+			currentCitizen.skillTraits.Distinct().ToList();
+			currentCitizen.miscTraits.Distinct().ToList();
 		}
 	}
 
@@ -852,7 +856,7 @@ public class City{
 		if(citizenToOccupy.assignedRole != null && citizenToOccupy.role == ROLE.GENERAL){
 			((General)citizenToOccupy.assignedRole).InitializeGeneral ();
 		}
-		this.UpdateResourceProduction();
+//		this.UpdateResourceProduction();
 	}
 
 	protected HexTile FindTileForCitizen(Citizen citizen){
@@ -881,6 +885,7 @@ public class City{
 	}
 
 	protected void CityEverydayTurnActions(){
+		this.UpdateResourceProduction();
 		this.ProduceResources();
 		this.AttemptToPerformAction();
 		this.UpdateTradeManager();
@@ -1659,7 +1664,9 @@ public class City{
 			((General)citizenToRemove.assignedRole).UntrainGeneral();
 		}
 		this.citizens.Remove (citizenToRemove);
-		citizenToRemove.workLocation.UnoccupyTile();
+		if (citizenToRemove.workLocation != null) {
+			citizenToRemove.workLocation.UnoccupyTile ();
+		}
 		citizenToRemove.city = null;
 		citizenToRemove.role = ROLE.UNTRAINED;
 		citizenToRemove.assignedRole = null;

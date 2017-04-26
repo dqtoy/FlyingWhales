@@ -4,6 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class RelationshipKingdom {
 
+	public Kingdom sourceKingdom;
 	public Kingdom objectInRelationship;
 //	public DECISION previousDecision;
 //	public LORD_EVENTS previousInteraction = LORD_EVENTS.NONE;
@@ -13,7 +14,8 @@ public class RelationshipKingdom {
 	public MONTH monthToMoveOnAfterRejection;
 //	public int daysAtWar;
 
-	public RelationshipKingdom(Kingdom objectInRelationship){
+	public RelationshipKingdom(Kingdom sourceKingdom, Kingdom objectInRelationship){
+		this.sourceKingdom = sourceKingdom;
 		this.objectInRelationship = objectInRelationship;
 		this.isAtWar = false;
 		this.isAdjacent = false;

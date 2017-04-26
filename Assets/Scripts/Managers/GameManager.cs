@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour {
 				this.year += 1;
 			}
 		}
+
 		TriggerBorderConflict ();
 		TriggerRaid();
 		TriggerRequestPeace();
@@ -121,11 +122,12 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void TriggerRequestPeace(){
-		List<GameEvent> allWars = EventManager.Instance.GetEventsOfType(EVENT_TYPES.KINGDOM_WAR);
+		List<GameEvent> allWars = EventManager.Instance.GetEventsOfType(EVENT_TYPES.KINGDOM_WAR).Where(x => x.isActive).ToList();
 		for (int i = 0; i < allWars.Count; i++) {
 			War currentWar = (War)allWars[i];
 			//For Kingdom 1
-			if (currentWar.kingdom1Rel.monthToMoveOnAfterRejection == MONTH.NONE) {
+			if (currentWar.kingdom1Rel.monthToMoveOnAfterRejection == MONTH.NONE 
+				&& KingdomManager.Instance.GetRequestPeaceBetweenKingdoms(currentWar.kingdom1, currentWar.kingdom2) == null) {
 				int kingdom1ChanceToRequestPeace = 0;
 				if (currentWar.kingdom1Rel.kingdomWar.exhaustion >= 100) {
 					kingdom1ChanceToRequestPeace = 6;
@@ -133,6 +135,7 @@ public class GameManager : MonoBehaviour {
 						kingdom1ChanceToRequestPeace = 8;
 					} else if (currentWar.kingdom1.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
 						kingdom1ChanceToRequestPeace = 4;
+//						kingdom1ChanceToRequestPeace = 100;
 					}
 				} else if (currentWar.kingdom1Rel.kingdomWar.exhaustion >= 75) {
 					kingdom1ChanceToRequestPeace = 4;
@@ -141,8 +144,7 @@ public class GameManager : MonoBehaviour {
 					} else if (currentWar.kingdom1.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
 						kingdom1ChanceToRequestPeace = 2;
 					}
-				}
-				if (currentWar.kingdom1Rel.kingdomWar.exhaustion >= 50) {
+				} else if (currentWar.kingdom1Rel.kingdomWar.exhaustion >= 50) {
 					kingdom1ChanceToRequestPeace = 2;
 					if (currentWar.kingdom1.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
 						kingdom1ChanceToRequestPeace = 4;
@@ -153,22 +155,35 @@ public class GameManager : MonoBehaviour {
 				int chance = Random.Range (0, 100);
 				if (chance < kingdom1ChanceToRequestPeace) {
 					List<Citizen> kingdom1Saboteurs = new List<Citizen>();
-					List<Kingdom> kingdom1Enemies = currentWar.kingdom1.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ENEMY);
-					kingdom1Enemies.AddRange(currentWar.kingdom1.GetKingdomsByRelationship (RELATIONSHIP_STATUS.RIVAL));
+					List<Kingdom> kingdom1Enemies = new List<Kingdom>();
+					for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+						Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
+						if (currentKingdom.id != currentWar.kingdom1.id && currentKingdom.id != currentWar.kingdom2.id) {
+							if (currentKingdom.king.GetRelationshipWithCitizen (currentWar.kingdom1.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
+								currentKingdom.king.GetRelationshipWithCitizen (currentWar.kingdom1.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+								kingdom1Enemies.Add(currentKingdom);
+							}
+						}
+					}
 					List<Citizen> envoys = null;
 					for (int j = 0; j < kingdom1Enemies.Count; j++) {
-						RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom1Enemies[j].king.GetRelationshipWithCitizen (currentWar.kingdom2.king);
-						if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
-							relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
-							envoys = kingdom1Enemies [j].GetAllCitizensOfType (ROLE.ENVOY).Where (x => !((Envoy)x.assignedRole).inAction).ToList();
-							if (envoys.Count > 0) {
-								int chanceToSabotage = 5;
-								if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
-									chanceToSabotage += 10;
-								}
-								int chanceForSabotage = Random.Range (0, 100);
-								if (chance < chanceForSabotage) {
-									kingdom1Saboteurs.Add(envoys[0]);
+						if (kingdom1Enemies [j].id != currentWar.kingdom2.id) {
+							RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom1Enemies [j].king.GetRelationshipWithCitizen (currentWar.kingdom2.king);
+							if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
+							   relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
+								envoys = kingdom1Enemies [j].GetAllCitizensOfType (ROLE.ENVOY).Where (x => !((Envoy)x.assignedRole).inAction).ToList ();
+								if (envoys.Count > 0) {
+									int chanceToSabotage = 5;
+									if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+										chanceToSabotage = 10;
+//										chanceToSabotage = 100;
+									} else if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+										chanceToSabotage = 0;
+									}
+									int chanceForSabotage = Random.Range (0, 100);
+									if (chanceForSabotage < chanceToSabotage) {
+										kingdom1Saboteurs.Add (envoys [0]);
+									}
 								}
 							}
 						}
@@ -186,19 +201,24 @@ public class GameManager : MonoBehaviour {
 						citizenToSend, currentWar.kingdom2, kingdom1Saboteurs);
 
 					for (int j = 0; j < kingdom1Enemies.Count; j++) {
-						RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom1Enemies[j].king.GetRelationshipWithCitizen (currentWar.kingdom2.king);
-						if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
-							relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
-							List<Citizen> assassins = kingdom1Enemies [j].GetAllCitizensOfType (ROLE.SPY).Where (x => !((Spy)x.assignedRole).inAction).ToList();
-							if (assassins.Count > 0) {
-								int chanceToAssassinate = 3;
-								if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
-									chanceToAssassinate += 6;
-								}
-								int chanceForAssassination = Random.Range (0, 100);
-								if (chance < chanceToAssassinate) {
-									Assassination newAssassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year,
-										kingdom1Enemies[j].king, citizenToSend, assassins[0]);
+						if (kingdom1Enemies [j].id != currentWar.kingdom2.id) {
+							RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom1Enemies [j].king.GetRelationshipWithCitizen (currentWar.kingdom2.king);
+							if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
+							   relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
+								List<Citizen> assassins = kingdom1Enemies [j].GetAllCitizensOfType (ROLE.SPY).Where (x => !((Spy)x.assignedRole).inAction).ToList ();
+								if (assassins.Count > 0) {
+									int chanceToAssassinate = 3;
+									if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+										chanceToAssassinate = 6;
+//										chanceToAssassinate = 100;
+									} else if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+										chanceToAssassinate = 0;
+									}
+									int chanceForAssassination = Random.Range (0, 100);
+									if (chance < chanceToAssassinate) {
+										Assassination newAssassination = new Assassination (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year,
+											                                kingdom1Enemies [j].king, citizenToSend, assassins [0]);
+									}
 								}
 							}
 						}
@@ -208,48 +228,63 @@ public class GameManager : MonoBehaviour {
 			}
 
 			//For Kingdom 2
-			if (currentWar.kingdom2Rel.monthToMoveOnAfterRejection == MONTH.NONE) {
+			if (currentWar.kingdom2Rel.monthToMoveOnAfterRejection == MONTH.NONE
+				&& KingdomManager.Instance.GetRequestPeaceBetweenKingdoms(currentWar.kingdom2, currentWar.kingdom1) == null) {
 				int kingdom2ChanceToRequestPeace = 0;
 				if (currentWar.kingdom2Rel.kingdomWar.exhaustion >= 100) {
-					kingdom2ChanceToRequestPeace += 6;
+					kingdom2ChanceToRequestPeace = 6;
 					if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
-						kingdom2ChanceToRequestPeace += 8;
+						kingdom2ChanceToRequestPeace = 8;
 					} else if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
-						kingdom2ChanceToRequestPeace += 4;
+						kingdom2ChanceToRequestPeace = 4;
+//						kingdom2ChanceToRequestPeace = 100;
 					}
 				} else if (currentWar.kingdom2Rel.kingdomWar.exhaustion >= 75) {
-					kingdom2ChanceToRequestPeace += 4;
+					kingdom2ChanceToRequestPeace = 4;
 					if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
-						kingdom2ChanceToRequestPeace += 6;
+						kingdom2ChanceToRequestPeace = 6;
 					} else if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
-						kingdom2ChanceToRequestPeace += 2;
+						kingdom2ChanceToRequestPeace = 2;
 					}
-				}
-				if (currentWar.kingdom2Rel.kingdomWar.exhaustion >= 50) {
-					kingdom2ChanceToRequestPeace += 2;
+				} else if (currentWar.kingdom2Rel.kingdomWar.exhaustion >= 50) {
+					kingdom2ChanceToRequestPeace = 2;
 					if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
-						kingdom2ChanceToRequestPeace += 4;
+						kingdom2ChanceToRequestPeace = 4;
 					}
 				}
 				int chance = Random.Range (0, 100);
 				if (chance < kingdom2ChanceToRequestPeace) {
 					List<Citizen> kingdom2Saboteurs = new List<Citizen>();
-					List<Kingdom> kingdom2Enemies = currentWar.kingdom2.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ENEMY);
-					kingdom2Enemies.AddRange(currentWar.kingdom2.GetKingdomsByRelationship (RELATIONSHIP_STATUS.RIVAL));
+					List<Kingdom> kingdom2Enemies = new List<Kingdom>();
+					for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+						Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
+						if (currentKingdom.id != currentWar.kingdom1.id && currentKingdom.id != currentWar.kingdom2.id) {
+							if (currentKingdom.king.GetRelationshipWithCitizen (currentWar.kingdom2.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
+								currentKingdom.king.GetRelationshipWithCitizen (currentWar.kingdom2.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+								kingdom2Enemies.Add(currentKingdom);
+							}
+						}
+					}
+
 					List<Citizen> envoys = null;
 					for (int j = 0; j < kingdom2Enemies.Count; j++) {
-						RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom2Enemies[j].king.GetRelationshipWithCitizen (currentWar.kingdom1.king);
-						if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
-							relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
-							envoys = kingdom2Enemies [j].GetAllCitizensOfType (ROLE.ENVOY).Where (x => !((Envoy)x.assignedRole).inAction).ToList();
-							if (envoys.Count > 0) {
-								int chanceToSabotage = 5;
-								if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
-									chanceToSabotage += 10;
-								}
-								int chanceForSabotage = Random.Range (0, 100);
-								if (chance < chanceForSabotage) {
-									kingdom2Saboteurs.Add(envoys[0]);
+						if (kingdom2Enemies [j].id != currentWar.kingdom1.id) {
+							RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom2Enemies [j].king.GetRelationshipWithCitizen (currentWar.kingdom1.king);
+							if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
+							   relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
+								envoys = kingdom2Enemies [j].GetAllCitizensOfType (ROLE.ENVOY).Where (x => !((Envoy)x.assignedRole).inAction).ToList ();
+								if (envoys.Count > 0) {
+									int chanceToSabotage = 5;
+									if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+										chanceToSabotage = 10;
+//										chanceToSabotage = 100;
+									} else if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+										chanceToSabotage = 0;
+									}
+									int chanceForSabotage = Random.Range (0, 100);
+									if (chanceForSabotage < chanceToSabotage) {
+										kingdom2Saboteurs.Add (envoys [0]);
+									}
 								}
 							}
 						}
@@ -267,19 +302,24 @@ public class GameManager : MonoBehaviour {
 						citizenToSend, currentWar.kingdom1, kingdom2Saboteurs);
 
 					for (int j = 0; j < kingdom2Enemies.Count; j++) {
-						RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom2Enemies[j].king.GetRelationshipWithCitizen (currentWar.kingdom1.king);
-						if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
-							relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
-							List<Citizen> assassins = kingdom2Enemies [j].GetAllCitizensOfType (ROLE.SPY).Where (x => !((Spy)x.assignedRole).inAction).ToList();
-							if (assassins.Count > 0) {
-								int chanceToAssassinate = 3;
-								if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
-									chanceToAssassinate += 6;
-								}
-								int chanceForAssassination = Random.Range (0, 100);
-								if (chance < chanceToAssassinate) {
-									Assassination newAssassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year,
-										kingdom2Enemies[j].king, citizenToSend, assassins[0]);
+						if (kingdom2Enemies [j].id != currentWar.kingdom1.id) {
+							RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom2Enemies [j].king.GetRelationshipWithCitizen (currentWar.kingdom1.king);
+							if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
+							   relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
+								List<Citizen> assassins = kingdom2Enemies [j].GetAllCitizensOfType (ROLE.SPY).Where (x => !((Spy)x.assignedRole).inAction).ToList ();
+								if (assassins.Count > 0) {
+									int chanceToAssassinate = 3;
+									if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+										chanceToAssassinate = 6;
+//										chanceToAssassinate = 100;
+									} else if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+										chanceToAssassinate = 0;
+									}
+									int chanceForAssassination = Random.Range (0, 100);
+									if (chance < chanceToAssassinate) {
+										Assassination newAssassination = new Assassination (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year,
+											                                kingdom2Enemies [j].king, citizenToSend, assassins [0]);
+									}
 								}
 							}
 						}

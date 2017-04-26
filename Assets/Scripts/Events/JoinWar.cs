@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class JoinWar : GameEvent {
 
@@ -35,7 +36,8 @@ public class JoinWar : GameEvent {
 			this.remainingWeeks -= 1;
 		} 
 		if (this.remainingWeeks <= 0) {
-			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.candidateForAlliance.city.kingdom, EVENT_TYPES.INVASION_PLAN).Count > 0) {
+			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.candidateForAlliance.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0 ||
+				KingdomManager.Instance.GetWarBetweenKingdoms(this.candidateForAlliance.city.kingdom, kingdomToAttack) != null) {
 				//fail
 				this.resolution = this.candidateForAlliance.city.kingdom.name + " did not join " + this.startedByKingdom.name + " in his war against " + this.kingdomToAttack.name + 
 					" because they already have other invasion plans.";

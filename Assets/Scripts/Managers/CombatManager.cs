@@ -254,11 +254,28 @@ public class CombatManager : MonoBehaviour {
 
 		int chanceToTriggerSendSpy = Random.Range (0, 100);
 		if (chanceToTriggerSendSpy < 10) {
-			List<Kingdom> kingdom1Enemies = general1.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ENEMY);
-			kingdom1Enemies.Union (general1.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.RIVAL));
+//		if (chanceToTriggerSendSpy < 100) {
+			List<Kingdom> kingdom1Enemies = new List<Kingdom>();
+			for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+				Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
+				if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
+					if (currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
+						currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+						kingdom1Enemies.Add(currentKingdom);
+					}
+				}
+			}
 
-			List<Kingdom> kingdom2Enemies = general2.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ENEMY);
-			kingdom2Enemies.Union (general2.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.RIVAL));
+			List<Kingdom> kingdom2Enemies = new List<Kingdom>();
+			for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+				Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
+				if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
+					if (currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
+						currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+						kingdom2Enemies.Add(currentKingdom);
+					}
+				}
+			}
 
 			List<Kingdom> possibleKingdomsToSendSpy = kingdom1Enemies.Except (kingdom2Enemies).Union(kingdom2Enemies.Except (kingdom1Enemies)).ToList();
 
@@ -267,10 +284,12 @@ public class CombatManager : MonoBehaviour {
 				Kingdom possibleKingdomToTrigger = possibleKingdomsToSendSpy[i];
 				List<Citizen> spies = possibleKingdomToTrigger.GetAllCitizensOfType (ROLE.SPY).Where(x => !((Spy)x.assignedRole).inAction).ToList();
 				if (spies.Count > 0 && chance < 5) {
+//				if (spies.Count > 0 && chance < 100) {
+					Debug.Log ("Send spy to decrease tension!");
 					//Send spy to kingdom that is not enemy
 					if (possibleKingdomToTrigger.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
 						possibleKingdomToTrigger.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
+						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
 
 						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
 							possibleKingdomToTrigger.name + " sent a spy(" + spies [0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
@@ -279,7 +298,7 @@ public class CombatManager : MonoBehaviour {
 						Debug.Log(possibleKingdomToTrigger.name + " sent a spy(" + spies[0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
 							" against " + general1.citizen.city.kingdom.name);
 					} else {
-						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
+						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
 
 						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
 							possibleKingdomToTrigger.name + " sent a spy(" + spies [0].name + ") to " + general1.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
@@ -294,11 +313,27 @@ public class CombatManager : MonoBehaviour {
 
 		int chanceToTriggerSendEnvoy = Random.Range (0, 100);
 		if (chanceToTriggerSendEnvoy < 10) {
-			List<Kingdom> kingdom1Friends = general1.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.FRIEND);
-			kingdom1Friends.Union (general1.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ALLY));
+			List<Kingdom> kingdom1Friends = new List<Kingdom>();
+			for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+				Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
+				if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
+					if (currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.FRIEND ||
+						currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+						kingdom1Friends.Add(currentKingdom);
+					}
+				}
+			}
 
-			List<Kingdom> kingdom2Friends = general2.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.FRIEND);
-			kingdom2Friends.Union (general2.citizen.city.kingdom.GetKingdomsByRelationship (RELATIONSHIP_STATUS.ALLY));
+			List<Kingdom> kingdom2Friends = new List<Kingdom>();
+			for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+				Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
+				if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
+					if (currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.FRIEND ||
+						currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+						kingdom2Friends.Add(currentKingdom);
+					}
+				}
+			}
 
 			List<Kingdom> commonFriends = kingdom1Friends.Intersect(kingdom2Friends).ToList();
 			for (int i = 0; i < commonFriends.Count; i++) {
