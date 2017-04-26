@@ -21,7 +21,7 @@ public class PowerGrab : GameEvent {
 
 		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started gathering influence for his/her claim as next in line to the " + this.kingToOverthrow.city.kingdom.name + " throne.", HISTORY_IDENTIFIER.NONE));
 		this.kingToOverthrow.city.hexTile.AddEventOnTile(this);
-
+		Debug.Log (this.description);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
@@ -83,15 +83,18 @@ public class PowerGrab : GameEvent {
 					}
 				}
 			}
-
-			List<Citizen> envoys = this.startedByCity.GetCitizensWithRole(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
-			if (envoys.Count > 0) {
-				Exhortation newExhortation = new Exhortation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
-					this.startedBy, envoys[0], citizenToExhort, this);
-				((Envoy)envoys [0].assignedRole).inAction = true;
-			} else {
-				Exhortation newExhortation = new Exhortation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
-					this.startedBy, this.startedBy, citizenToExhort, this);
+			if(citizenToExhort != null){
+				List<Citizen> envoys = this.startedByCity.GetCitizensWithRole(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
+				if (envoys.Count > 0) {
+					Exhortation newExhortation = new Exhortation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
+						this.startedBy, envoys[0], citizenToExhort, this);
+					((Envoy)envoys [0].assignedRole).inAction = true;
+				} else {
+					Exhortation newExhortation = new Exhortation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
+						this.startedBy, this.startedBy, citizenToExhort, this);
+				}
+			}else{
+				Debug.Log ("CAN'T EXHORT! THERE IS NO CITIZEN TO EXHORT!");
 			}
 		}
 	}
