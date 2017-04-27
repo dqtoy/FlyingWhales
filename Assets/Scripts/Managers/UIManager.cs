@@ -855,24 +855,26 @@ public class UIManager : MonoBehaviour {
 				Destroy (children [i].gameObject);
 			}
 			//POPULATE
-			for (int i = 0; i < this.currentlyShowingKingdom.successionLine.Count; i++) {
-				if (i > 2) {
-					break;
+			if(this.currentlyShowingKingdom != null){
+				for (int i = 0; i < this.currentlyShowingKingdom.successionLine.Count; i++) {
+					if (i > 2) {
+						break;
+					}
+					GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
+					citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.successionLine [i], this.currentlyShowingKingdom);
+					citizenGO.transform.localScale = Vector3.one;
+					citizenGO.transform.localPosition = Vector3.zero;
 				}
-				GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
-				citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.successionLine [i], this.currentlyShowingKingdom);
-				citizenGO.transform.localScale = Vector3.one;
-				citizenGO.transform.localPosition = Vector3.zero;
-			}
 
-			for (int i = 0; i < this.currentlyShowingKingdom.pretenders.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
-				citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.pretenders [i], this.currentlyShowingKingdom);
-				citizenGO.transform.localScale = Vector3.one;
-				citizenGO.transform.localPosition = Vector3.zero;
+				for (int i = 0; i < this.currentlyShowingKingdom.pretenders.Count; i++) {
+					GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
+					citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.pretenders [i], this.currentlyShowingKingdom);
+					citizenGO.transform.localScale = Vector3.one;
+					citizenGO.transform.localPosition = Vector3.zero;
 
+				}
+				StartCoroutine (RepositionGrid (this.kingdomSuccessionGrid));
 			}
-			StartCoroutine (RepositionGrid (this.kingdomSuccessionGrid));
 		}
 	}
 	public void OnClickShowKingdomHistory(){
@@ -2512,11 +2514,24 @@ public class UIManager : MonoBehaviour {
 			this.relocateGO.SetActive (false);
 		} else {
 			this.citiesForRelocationPopupList.Clear ();
+			if(this.currentlyShowingCitizen != null){
+				for(int i = 0; i < this.currentlyShowingCitizen.city.kingdom.cities.Count; i++){
+					if(this.currentlyShowingCitizen.city.kingdom.cities[i].id != this.currentlyShowingCitizen.city.id){
+						this.citiesForRelocationPopupList.AddItem (this.currentlyShowingCitizen.city.kingdom.cities [i].name, this.currentlyShowingCitizen.city.kingdom.cities [i]);
+					}
+				}
+			}
 			this.relocateGO.SetActive (true);
 		}
 	}
 	public void OnClickOkRelocation(){
-		
+		if(this.citiesForRelocationPopupList.data != null){
+			City newCityForCitizen = (City)this.citiesForRelocationPopupList.data;
+			if(this.currentlyShowingCitizen != null){
+				Debug.LogError (this.currentlyShowingCitizen.name + " HAS MOVED FROM " + this.currentlyShowingCitizen.city.name + " TO " + newCityForCitizen.name);
+				newCityForCitizen.MoveCitizenToThisCity (this.currentlyShowingCitizen);
+			}
+		}
 	}
 	public void HideRelocate(){
 		this.relocateGO.SetActive (false);
