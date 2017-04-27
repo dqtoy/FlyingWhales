@@ -43,6 +43,7 @@ public class City{
 	protected List<HexTile> purchasableBasicTiles;
 	protected List<HexTile> purchasableRareTiles;
 	protected List<HexTile> purchasabletilesWithUnneededResource;
+	protected List<HexTile> tilesWithNoSpecialResource;
 
 
 	protected List<HexTile> unoccupiedOwnedTiles{
@@ -92,6 +93,7 @@ public class City{
 		this.purchasableBasicTiles = new List<HexTile>();
 		this.purchasableRareTiles = new List<HexTile>();
 		this.purchasabletilesWithUnneededResource = new List<HexTile>();
+		this.tilesWithNoSpecialResource = new List<HexTile>();
 		this.creatableRoles = new List<ROLE>();
 
 		this.hexTile.isOccupied = true;
@@ -839,7 +841,7 @@ public class City{
 	protected void PurchaseTile(HexTile tileToBuy){
 		tileToBuy.isOwned = true;
 		this.ownedTiles.Add(tileToBuy);
-		Debug.Log ("Bought Tile: " + tileToBuy.name);
+		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Bought Tile: " + tileToBuy.name);
 		tileToBuy.GetComponent<SpriteRenderer>().color = Color.clear;
 		this.UpdateUnownedNeighbourTiles();
 	}
@@ -1027,11 +1029,11 @@ public class City{
 			EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 			EventManager.Instance.onRecruitCitizensForExpansion.RemoveListener(DonateCitizensToExpansion);
 			EventManager.Instance.onCitizenDiedEvent.RemoveListener(UpdateHexTileRoles);
-//			EventManager.Instance.onCitizenDiedEvent.RemoveListener (UpdateHextileRoles);
 		}
 	}
 
 	int excessStructures = 0;
+	int unneededStructures = 0;
 	protected void AttemptToPerformAction(){
 		if (pendingTask.Count > 0) {
 			//Perform pending task first
@@ -1046,7 +1048,9 @@ public class City{
 			//Pick which of the three resources to produce, based on what tiles are available
 			if (this.isStarving) {
 				if (this.purchasableFoodTiles.Count > 0) {
+					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Attempt to buy food tile because starving");
 					if (this.BuyTileFromList (BASE_RESOURCE_TYPE.FOOD, this.purchasableFoodTiles)) {
+						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Bought food tile because starving");
 						return;
 					}
 				}
@@ -1064,82 +1068,64 @@ public class City{
 			}
 
 			if (!this.IsProducingResource (this.kingdom.basicResource) && this.purchasableBasicTiles.Count > 0) {
+				Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Attempt to buy basic resource tiles because not producing");
 				if (this.BuyTileFromList (this.kingdom.basicResource, this.purchasableBasicTiles)) {
+					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Bought basic resource tile because not producing");
 					return;
 				}
 			} else {
 				if (!this.IsProducingResource (this.kingdom.rareResource) && this.purchasableRareTiles.Count > 0) {
+					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Attempt to buy rare resource tiles because not producing");
 					if (this.BuyTileFromList (this.kingdom.rareResource, this.purchasableRareTiles)) {
+						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Bought rare resource tile because not producing");
 						return;
 					}
 				} 
 			}
 
 			ROLE nextSpecialRoleToCreate = this.GetNonProducingRoleToCreate();
-			bool isProducingAllResources = true;
-			List<Resource> citizenCreationCost = GetCitizenCreationCostPerType (nextSpecialRoleToCreate);
-			if (citizenCreationCost != null) {
-				for (int i = 0; i < citizenCreationCost.Count; i++) {
-					if (!this.IsProducingResource (citizenCreationCost [i].resourceType)) {
-						isProducingAllResources = false;
-					}
-				}
-			} else {
-				isProducingAllResources = false;
-			}
-
-			if (!this.AllSpecialRolesMaxed() && isProducingAllResources) {
+			if (!this.AllSpecialRolesMaxed() && nextSpecialRoleToCreate != ROLE.UNTRAINED) {
 				//buy tile for special roles
-				List<HexTile> tilesWithNoSpecialResource = this.allUnownedNeighbours.Where (x => x.specialResource == RESOURCE.NONE).ToList ();
-				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, tilesWithNoSpecialResource)) {
+				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, this.tilesWithNoSpecialResource)) {
 					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought tile for special role");
 					return;
 				}
 			}
 
-			if (this.excessStructures < 4) {
-				//buy additional basic or rare
-				if (this.purchasableBasicTiles.Count > 0) {
-					if (this.BuyTileFromList (this.kingdom.basicResource, this.purchasableBasicTiles)) {
-						this.excessStructures += 1;
-						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional basic resource tile. Excess structures: "
-						+ this.excessStructures.ToString ());
-						return;
-					}
-				}
+			if (this.kingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
+				this.excessStructures += this.GetNumberOfOwnedStructuresPerType (STRUCTURE.QUARRY) - 1;
+			} else if (this.kingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+				this.excessStructures += this.GetNumberOfOwnedStructuresPerType (STRUCTURE.LUMBERYARD) - 1;
+			}
+			this.excessStructures += this.GetNumberOfOwnedStructuresPerType (STRUCTURE.MINES) - 1;
+			if (this.excessStructures <= 0) {
+				this.excessStructures = 0;
+			}
 
-				if (this.purchasableRareTiles.Count > 0) {
-					if (this.BuyTileFromList (this.kingdom.rareResource, this.purchasableRareTiles)) {
-						this.excessStructures += 1;
-						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional rare resource tile. Excess structures: "
-						+ this.excessStructures.ToString ());
-						return;
-					}
-				}
-			} else {
+			if ((this.excessStructures/3) > this.unneededStructures) {
 				//buy tile with unneeded resource
 				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, this.purchasabletilesWithUnneededResource, true)) {
 					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional unneeded resource tile");
-					this.excessStructures = 0;
+					this.unneededStructures += 1;
+					return;
+				}
+			} 
+			//buy additional basic or rare
+			if (this.purchasableBasicTiles.Count > 0) {
+				if (this.BuyTileFromList (this.kingdom.basicResource, this.purchasableBasicTiles)) {
+					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional basic resource tile. Excess structures: "
+						+ this.excessStructures.ToString ());
 					return;
 				}
 			}
 
-//			//if can't buy anything, default to food tile or unneeded resource
-//			if (this.purchasabletilesWithUnneededResource.Count > 0) {
-//				//buy tile with unneeded resource
-//				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, this.purchasabletilesWithUnneededResource, true)) {
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional unneeded resource tile");
-//					return;
-//				}
-//			} else {
-//				if (this.purchasableFoodTiles.Count > 0) {
-//					if (this.BuyTileFromList (BASE_RESOURCE_TYPE.FOOD, this.purchasableFoodTiles)) {
-//						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional food tile, because no choice");
-//						return;
-//					}
-//				}
-//			}
+			if (this.purchasableRareTiles.Count > 0) {
+				if (this.BuyTileFromList (this.kingdom.rareResource, this.purchasableRareTiles)) {
+					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional rare resource tile. Excess structures: "
+						+ this.excessStructures.ToString ());
+					return;
+				}
+			}
 			Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Could not buy any tile");
 		} else {
 			//Train citizen
@@ -1207,30 +1193,10 @@ public class City{
 				new Resource(BASE_RESOURCE_TYPE.GOLD, 500)
 			};
 			if (this.HasEnoughResourcesForAction (purchaseTileCost.ToList())) {
+				Debug.Log ("PENDING TASK: Purchased tile " + hexTileConcerned.name);
 				this.AdjustResources (purchaseTileCost);
 				this.PurchaseTile(hexTileConcerned);
 				this.pendingTask.Clear();
-				if (hexTileConcerned.specialResource != RESOURCE.NONE) {
-					if (Utilities.GetBaseResourceType(hexTileConcerned.specialResource) == this.kingdom.basicResource) {
-						if (GetNumberOfOwnedStructuresPerType(Utilities.GetStructureThatProducesResource(hexTileConcerned.specialResource)) > 1) {
-							this.excessStructures += 1;
-						}
-					}else if(Utilities.GetBaseResourceType(hexTileConcerned.specialResource) == this.kingdom.rareResource){
-						if (GetNumberOfOwnedStructuresPerType(Utilities.GetStructureThatProducesResource(hexTileConcerned.specialResource)) > 1) {
-							this.excessStructures += 1;
-						}
-					}
-				} else {
-					if (Utilities.GetBaseResourceType(hexTileConcerned.defaultResource) == this.kingdom.basicResource) {
-						if (GetNumberOfOwnedStructuresPerType(Utilities.GetStructureThatProducesResource(hexTileConcerned.defaultResource)) > 1) {
-							this.excessStructures += 1;
-						}
-					}else if(Utilities.GetBaseResourceType(hexTileConcerned.defaultResource) == this.kingdom.rareResource){
-						if (GetNumberOfOwnedStructuresPerType(Utilities.GetStructureThatProducesResource(hexTileConcerned.defaultResource)) > 1) {
-							this.excessStructures += 1;
-						}
-					}
-				}
 				return true;
 			}
 			return false;
@@ -1239,7 +1205,7 @@ public class City{
 			Citizen citizenToAssign = this.GetCitizenForTile(hexTileConcerned);
 
 			if (citizenToAssign != null) {
-				Debug.Log ("Assigned citizen " + citizenToAssign.name + " to tile " + hexTileConcerned.tileName + " instead of training a new citizen");
+				Debug.Log ("PENDING TASK: Assigned citizen " + citizenToAssign.name + " to tile " + hexTileConcerned.tileName + " instead of training a new citizen");
 				this.OccupyTile (hexTileConcerned, citizenToAssign);
 			} else {
 				if (this.HasEnoughResourcesForAction (GetCitizenCreationCostPerType (hexTileConcerned.roleIntendedForTile))) {
@@ -1313,7 +1279,7 @@ public class City{
 			} else {
 				if (tileToPurchase != this.pendingTask [this.pendingTask.Keys.ElementAt (0)]) {
 					tileToPurchase.roleIntendedForTile = ROLE.UNTRAINED;
-					Debug.Log ("Set " + tileToPurchase.name + " role to " + tileToPurchase.roleIntendedForTile.ToString () + " because there is already a pending task");
+//					Debug.Log ("Set " + tileToPurchase.name + " role to " + tileToPurchase.roleIntendedForTile.ToString () + " because there is already a pending task");
 				}
 			}
 		}
@@ -1343,14 +1309,25 @@ public class City{
 
 		for (int i = 0; i < this.creatableRoles.Count; i++) {
 			ROLE currentRole = this.creatableRoles [i];
-			if (this.HasEnoughResourcesForAction (GetCitizenCreationCostPerType (currentRole))) {
-				int currentRoleCount = this.GetCitizensWithRole (currentRole).Count;
-				int currentRoleLimit = this.citizenCreationTable [currentRole];
-				if (currentRoleCount < previousRoleCount && currentRoleCount < currentRoleLimit) {
-					roleToCreate = currentRole;
-					previousRoleCount = currentRoleCount;
+//			if (this.HasEnoughResourcesForAction (GetCitizenCreationCostPerType (currentRole))) {
+			int currentRoleCount = this.GetCitizensWithRole (currentRole).Count;
+			int currentRoleLimit = this.citizenCreationTable [currentRole];
+			bool isProducingAllResources = true;
+			List<Resource> citizenCreationCost = GetCitizenCreationCostPerType (currentRole);
+			if (citizenCreationCost != null) {
+				for (int j = 0; j < citizenCreationCost.Count; j++) {
+					if (!this.IsProducingResource (citizenCreationCost [j].resourceType)) {
+						isProducingAllResources = false;
+					}
 				}
+			} else {
+				isProducingAllResources = false;
 			}
+			if (currentRoleCount < previousRoleCount && currentRoleCount < currentRoleLimit && isProducingAllResources) {
+				roleToCreate = currentRole;
+				previousRoleCount = currentRoleCount;
+			}
+//			}
 		}
 		return roleToCreate;
 
@@ -1388,29 +1365,45 @@ public class City{
 
 	protected void UpdateUnownedNeighbourTiles(){
 		this.allUnownedNeighbours.Clear ();
+		this.tilesWithNoSpecialResource.Clear ();
+		this.purchasableFoodTiles.Clear ();
+		this.purchasableBasicTiles.Clear ();
+		this.purchasableRareTiles.Clear ();
+		this.purchasabletilesWithUnneededResource.Clear ();
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			this.allUnownedNeighbours.AddRange(this.ownedTiles[i].elligibleNeighbourTilesForPurchase);
 		}
 
-		this.purchasableFoodTiles = this.allUnownedNeighbours.Where (x => (x.specialResource == RESOURCE.NONE &&
-			Utilities.GetBaseResourceType(x.defaultResource) == BASE_RESOURCE_TYPE.FOOD) || (x.specialResource != RESOURCE.NONE &&
-				Utilities.GetBaseResourceType(x.specialResource) == BASE_RESOURCE_TYPE.FOOD)).ToList();
+		for (int i = 0; i < this.allUnownedNeighbours.Count; i++) {
+			HexTile currentHexTile = this.allUnownedNeighbours[i];
+			BASE_RESOURCE_TYPE currentHexTileResource = BASE_RESOURCE_TYPE.NONE;
+			if (currentHexTile.specialResource != RESOURCE.NONE) {
+				//with special resource
+				currentHexTileResource = Utilities.GetBaseResourceType(currentHexTile.specialResource);
+			} else {
+				//without special resource
+				if (currentHexTile.elevationType == ELEVATION.PLAIN) {
+					this.tilesWithNoSpecialResource.Add (currentHexTile);
+				}
+				currentHexTileResource = Utilities.GetBaseResourceType(currentHexTile.defaultResource);
+			}
 
-		this.purchasableBasicTiles = this.allUnownedNeighbours.Where (x => (x.specialResource == RESOURCE.NONE &&
-			Utilities.GetBaseResourceType(x.defaultResource) == this.kingdom.basicResource) || (x.specialResource != RESOURCE.NONE &&
-				Utilities.GetBaseResourceType(x.specialResource) == this.kingdom.basicResource)).ToList();
-
-		this.purchasableRareTiles = this.allUnownedNeighbours.Where (x => (x.specialResource == RESOURCE.NONE &&
-			Utilities.GetBaseResourceType(x.defaultResource) == this.kingdom.rareResource) || (x.specialResource != RESOURCE.NONE &&
-				Utilities.GetBaseResourceType(x.specialResource) == this.kingdom.rareResource)).ToList();
-
-		this.purchasabletilesWithUnneededResource = this.allUnownedNeighbours.Where (x => (x.specialResource == RESOURCE.NONE && Utilities.GetBaseResourceType (x.defaultResource) != this.kingdom.basicResource) ||
-			(x.specialResource == RESOURCE.NONE && Utilities.GetBaseResourceType (x.defaultResource) != this.kingdom.rareResource) || (x.specialResource != RESOURCE.NONE && Utilities.GetBaseResourceType (x.specialResource) != this.kingdom.basicResource) || 
-			(x.specialResource != RESOURCE.NONE && Utilities.GetBaseResourceType (x.specialResource) != this.kingdom.rareResource)).ToList();
-
-		this.purchasabletilesWithUnneededResource = this.purchasabletilesWithUnneededResource.Except(this.purchasableFoodTiles).ToList();
-
-
+			if (currentHexTileResource == BASE_RESOURCE_TYPE.FOOD && currentHexTile.elevationType == ELEVATION.PLAIN) {
+				this.purchasableFoodTiles.Add (currentHexTile);
+			} else if (currentHexTileResource == this.kingdom.basicResource) {
+				if (this.kingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+					if (currentHexTile.elevationType == ELEVATION.PLAIN) {
+						this.purchasableBasicTiles.Add (currentHexTile);
+					}
+				} else {
+					this.purchasableBasicTiles.Add (currentHexTile);
+				}
+			} else if (currentHexTileResource == this.kingdom.rareResource) {
+				this.purchasableRareTiles.Add (currentHexTile);
+			} else {
+				this.purchasabletilesWithUnneededResource.Add(currentHexTile);
+			}
+		}
 	}
 
 	#region boolean functions
