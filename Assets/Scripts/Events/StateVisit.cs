@@ -173,8 +173,10 @@ public class StateVisit : GameEvent {
 			if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
 				int chance = UnityEngine.Random.Range (0, 100);
 				int value = 5;
-				if(this.otherKingdoms[i].king.behaviorTraits.Contains(BEHAVIOR_TRAIT.SCHEMING)){
+				if (this.otherKingdoms [i].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
 					value = 10;
+				} else if (this.otherKingdoms [i].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+					value = 0;
 				}
 				if(chance < value){
 					//ASSASSINATION EVENT

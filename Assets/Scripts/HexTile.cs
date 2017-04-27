@@ -123,6 +123,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 
+	[ContextMenu("Show Citizen Creation Table")]
+	public void ShowCitizenCreationTable(){
+		Dictionary<ROLE, int> citizenCreationTable = this.city.citizenCreationTable;
+		for (int i = 0; i < citizenCreationTable.Keys.Count; i++) {
+			ROLE key = citizenCreationTable.Keys.ElementAt(i);
+			Debug.Log (key.ToString () + " - " + citizenCreationTable [key].ToString ());
+		}
+	}
+
 	void Start(){
 		EventManager.Instance.onGameEventEnded.AddListener(RemoveEvent);
 		EventManager.Instance.onShowEventsOfType.AddListener(ShowEventOnTile);

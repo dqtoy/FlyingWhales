@@ -371,11 +371,19 @@ public class UIManager : MonoBehaviour {
 			Destroy (children [i].gameObject);
 		}
 
-		for (int i = 0; i < citizenToShow.behaviorTraits.Count; i++) {
-			GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
-			traitGO.GetComponent<TraitObject>().SetTrait(citizenToShow.behaviorTraits[i], SKILL_TRAIT.NONE, MISC_TRAIT.NONE);
-			traitGO.transform.localScale = Vector3.one;
-			traitGO.transform.localPosition = Vector3.zero;
+		if (citizenToShow.age >= 16) {
+			for (int i = 0; i < citizenToShow.behaviorTraits.Count; i++) {
+				GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
+				traitGO.GetComponent<TraitObject> ().SetTrait (citizenToShow.behaviorTraits [i], SKILL_TRAIT.NONE, MISC_TRAIT.NONE);
+				traitGO.transform.localScale = Vector3.one;
+				traitGO.transform.localPosition = Vector3.zero;
+			}
+			for (int i = 0; i < citizenToShow.miscTraits.Count; i++) {
+				GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
+				traitGO.GetComponent<TraitObject>().SetTrait(BEHAVIOR_TRAIT.NONE, SKILL_TRAIT.NONE, citizenToShow.miscTraits[i]);
+				traitGO.transform.localScale = Vector3.one;
+				traitGO.transform.localPosition = Vector3.zero;
+			}
 		}
 
 		for (int i = 0; i < citizenToShow.skillTraits.Count; i++) {
@@ -385,12 +393,6 @@ public class UIManager : MonoBehaviour {
 			traitGO.transform.localPosition = Vector3.zero;
 		}
 
-		for (int i = 0; i < citizenToShow.miscTraits.Count; i++) {
-			GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
-			traitGO.GetComponent<TraitObject>().SetTrait(BEHAVIOR_TRAIT.NONE, SKILL_TRAIT.NONE, citizenToShow.miscTraits[i]);
-			traitGO.transform.localScale = Vector3.one;
-			traitGO.transform.localPosition = Vector3.zero;
-		}
 		StartCoroutine (RepositionGrid (citizenTraitsGrid));
 
 		if (citizenToShow.isKing) {
@@ -1944,7 +1946,7 @@ public class UIManager : MonoBehaviour {
 		int totalMilitaryStrength = 0;
 		List<Citizen> generals = militarizationEvent.startedByKingdom.GetAllCitizensOfType(ROLE.GENERAL);
 		for (int i = 0; i < generals.Count; i++) {
-			totalMilitaryStrength += ((General)generals[i].assignedRole).army.hp;
+			totalMilitaryStrength += ((General)generals[i].assignedRole).GetArmyHP();
 		}
 		specificEventsCandidatesLbl.text = "Generals: " + generals.Count.ToString () + "\nTotal Strength: " + totalMilitaryStrength.ToString();
 		specificEventsCandidatesLbl.gameObject.SetActive(true);
@@ -2473,6 +2475,7 @@ public class UIManager : MonoBehaviour {
 		ToggleTraitEditor();
 		if (currentlyShowingCitizen.city != null) {
 			currentlyShowingCitizen.city.UpdateResourceProduction();
+			currentlyShowingCitizen.city.UpdateCitizenCreationTable();
 		}
 	}
 
@@ -2503,6 +2506,7 @@ public class UIManager : MonoBehaviour {
 		ToggleTraitEditor();
 		if (currentlyShowingCitizen.city != null) {
 			currentlyShowingCitizen.city.UpdateResourceProduction();
+			currentlyShowingCitizen.city.UpdateCitizenCreationTable();
 		}
 	}
 

@@ -273,7 +273,15 @@ public class Assassination : GameEvent {
 		if(spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
 			value += 10;
 		}
-		int guardianPercent = this.guardians.Count * 15;
+//		int guardianPercent = this.guardians.Count * 15;
+		int guardianPercent = 0;
+		for (int i = 0; i < this.guardians.Count; i++) {
+			if (this.guardians [i].skillTraits.Contains (SKILL_TRAIT.ALERT)) {
+				guardianPercent += 25;
+			} else {
+				guardianPercent += 15;
+			}
+		}
 
 		value -= guardianPercent;
 		return value;

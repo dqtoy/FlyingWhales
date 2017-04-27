@@ -36,7 +36,7 @@ public class City{
 
 	public Dictionary<CITY_TASK, HexTile> pendingTask;
 
-	protected Dictionary<ROLE, int> citizenCreationTable;
+	internal Dictionary<ROLE, int> citizenCreationTable;
 	protected List<ROLE> creatableRoles;
 	protected List<HexTile> allUnownedNeighbours;
 	protected List<HexTile> purchasableFoodTiles;
@@ -761,6 +761,7 @@ public class City{
 			currentCitizen.skillTraits.Distinct().ToList();
 			currentCitizen.miscTraits.Distinct().ToList();
 		}
+		this.UpdateCitizenCreationTable();
 	}
 
 	internal void ExpandToThisCity(List<Citizen> citizensToOccupyCity){
@@ -890,7 +891,81 @@ public class City{
 		this.UpdateResourceProduction();
 		this.ProduceResources();
 		this.AttemptToPerformAction();
+		this.AttemptToIncreaseArmyHP();
 		this.UpdateTradeManager();
+	}
+
+	protected void AttemptToIncreaseArmyHP(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if (chance < 30) {
+			BASE_RESOURCE_TYPE upgradeResource = BASE_RESOURCE_TYPE.NONE;
+			if (this.kingdom.race == RACE.HUMANS || this.kingdom.race == RACE.CROMADS) {
+				upgradeResource = BASE_RESOURCE_TYPE.STONE;
+			} else if (this.kingdom.race == RACE.ELVES || this.kingdom.race == RACE.MINGONS) {
+				upgradeResource = BASE_RESOURCE_TYPE.WOOD;
+			}
+			List<Resource> increaseArmyHPCost = new List<Resource> () {
+				new Resource (BASE_RESOURCE_TYPE.GOLD, 200),
+				new Resource (upgradeResource, 40)
+			};
+			if (HasEnoughResourcesForAction (increaseArmyHPCost)) {
+				List<General> inactiveGenerals = this.GetCitizensWithRole (ROLE.GENERAL).Where (x => !((General)x.assignedRole).inAction)
+					.Select(x => (General)x.assignedRole).ToList();
+				inactiveGenerals.OrderBy(x => x.GetArmyHP());
+				if (inactiveGenerals.Count > 0) {
+					int hpIncrease = 0;
+					if (this.kingdom.race == RACE.HUMANS) {
+						hpIncrease = 30;
+					} else if (this.kingdom.race == RACE.ELVES) {
+						hpIncrease = 25;
+					} else if (this.kingdom.race == RACE.MINGONS) {
+						hpIncrease = 30;
+					} else if (this.kingdom.race == RACE.CROMADS) {
+						hpIncrease = 40;
+					}
+					inactiveGenerals[0].army.hp += hpIncrease;
+					inactiveGenerals[0].UpdateUI();
+					this.AdjustResources(increaseArmyHPCost);
+					Debug.LogError (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
+				}
+			}
+		}
+
+		if (EventManager.Instance.GetEventsOfTypePerKingdom (this.kingdom, EVENT_TYPES.MILITARIZATION).Count > 0) {
+			if (chance < 70) {
+				BASE_RESOURCE_TYPE upgradeResource = BASE_RESOURCE_TYPE.NONE;
+				if (this.kingdom.race == RACE.HUMANS || this.kingdom.race == RACE.CROMADS) {
+					upgradeResource = BASE_RESOURCE_TYPE.STONE;
+				} else if (this.kingdom.race == RACE.ELVES || this.kingdom.race == RACE.MINGONS) {
+					upgradeResource = BASE_RESOURCE_TYPE.WOOD;
+				}
+				List<Resource> increaseArmyHPCost = new List<Resource> () {
+					new Resource (BASE_RESOURCE_TYPE.GOLD, 200),
+					new Resource (upgradeResource, 40)
+				};
+				if (HasEnoughResourcesForAction (increaseArmyHPCost)) {
+					List<General> inactiveGenerals = this.GetCitizensWithRole (ROLE.GENERAL).Where (x => !((General)x.assignedRole).inAction)
+						.Select(x => (General)x.assignedRole).ToList();
+					inactiveGenerals.OrderBy(x => x.GetArmyHP());
+					if (inactiveGenerals.Count > 0) {
+						int hpIncrease = 0;
+						if (this.kingdom.race == RACE.HUMANS) {
+							hpIncrease = 30;
+						} else if (this.kingdom.race == RACE.ELVES) {
+							hpIncrease = 25;
+						} else if (this.kingdom.race == RACE.MINGONS) {
+							hpIncrease = 30;
+						} else if (this.kingdom.race == RACE.CROMADS) {
+							hpIncrease = 40;
+						}
+						inactiveGenerals[0].army.hp += hpIncrease;
+						inactiveGenerals[0].UpdateUI();
+						this.AdjustResources(increaseArmyHPCost);
+						Debug.LogError (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
+					}
+				}
+			}
+		}
 	}
 
 	protected void UpdateTradeManager(){
@@ -1345,8 +1420,8 @@ public class City{
 //		return ROLE.UNTRAINED;
 	}
 
-	protected void UpdateCitizenCreationTable(){
-		this.citizenCreationTable = Utilities.defaultCitizenCreationTable;
+	internal void UpdateCitizenCreationTable(){
+		this.citizenCreationTable = new Dictionary<ROLE, int>(Utilities.defaultCitizenCreationTable);
 		for (int i = 0; i < this.governor.behaviorTraits.Count; i++) {
 			Dictionary<ROLE, int> currentTraitTable = Utilities.citizenCreationTable[this.governor.behaviorTraits[i]];
 			for (int j = 0; j < currentTraitTable.Count; j++) {
