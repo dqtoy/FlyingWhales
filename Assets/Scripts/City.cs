@@ -1804,10 +1804,7 @@ public class City{
 						Debug.Log (chosenGeneral.citizen.name + " IS THE NEW GENERAL FOR " + general.citizen.name + "'s ARMY");
 						chosenGeneral.army.hp += general.army.hp;
 						general.army.hp = 0;
-
-						if(chosenGeneral.generalAvatar != null){
-							chosenGeneral.generalAvatar.GetComponent<GeneralObject> ().UpdateUI ();
-						}
+						chosenGeneral.UpdateUI ();
 						general.GeneralDeath ();
 					}
 				}
