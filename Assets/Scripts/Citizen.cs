@@ -40,6 +40,8 @@ public class Citizen {
 	public int supportExpirationWeek;
 	public int supportExpirationMonth;
 	public int supportExpirationYear;
+	public int monthSupportCanBeChanged;
+	public int yearSupportStarted;
 	public bool isIndependent;
 	public bool isMarried;
 	public bool isDirectDescendant;
@@ -120,6 +122,11 @@ public class Citizen {
 		this.isBusy = false;
 		this.isDead = false;
 		this.history = new List<History>();
+		this.supportExpirationWeek = 0;
+		this.supportExpirationMonth = 0;
+		this.supportExpirationYear = 0;
+		this.monthSupportCanBeChanged = 0;
+		this.yearSupportStarted = 0;
 
 		if(!isGhost){
 			this.city.citizens.Add (this);

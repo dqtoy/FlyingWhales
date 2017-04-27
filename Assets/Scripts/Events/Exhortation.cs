@@ -49,12 +49,20 @@ public class Exhortation : GameEvent {
 		if (this.remainingWeeks > 0) {
 			this.remainingWeeks -= 1;
 		} else {
+			if (GameManager.Instance.month < this.targetCitizen.monthSupportCanBeChanged && GameManager.Instance.year == this.targetCitizen.yearSupportStarted) {
+				//fail
+				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+			}
 			int chance = Random.Range(0, 100);
 			if (chance < this.successRate) {
 				this.targetCitizen.supportedCitizen = this.startedBy;
 				this.targetCitizen.supportExpirationWeek = GameManager.Instance.week;
 				this.targetCitizen.supportExpirationMonth = GameManager.Instance.month;
 				this.targetCitizen.supportExpirationYear = GameManager.Instance.year + 2;
+
+				this.targetCitizen.monthSupportCanBeChanged = GameManager.Instance.month + 1;
+				this.targetCitizen.yearSupportStarted = GameManager.Instance.year;
+
 				powerGrabThatStartedEvent.exhortedCitizens.Add(this.targetCitizen);
 				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was successful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
 				UIManager.Instance.UpdateKingdomSuccession ();
