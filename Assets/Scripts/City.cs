@@ -1784,4 +1784,9 @@ public class City{
 		}
 		return false;
 	}
+
+	internal void MoveCitizenToThisCity(Citizen citizenToMove){
+		citizenToMove.city.RemoveCitizenFromCity(citizenToMove);
+		this.AddCitizenToCity(citizenToMove);
+	}
 }
