@@ -33,10 +33,10 @@ public class Exhortation : GameEvent {
 		if (this.citizenSent.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
 			this.successRate -= 10;
 		}
-		if (this.citizenSent.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+		if (this.targetCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
 			this.successRate += 10;
 		}
-		if (this.citizenSent.miscTraits.Contains (MISC_TRAIT.LOYAL)) {
+		if (this.targetCitizen.miscTraits.Contains (MISC_TRAIT.LOYAL)) {
 			this.successRate -= 55;
 		}
 
