@@ -51,7 +51,7 @@ public class MarriedCouple {
 			return;
 		}
 
-		if (this.wife.miscTraits.Contains(MISC_TRAIT.HORNY)) {
+		if (this.wife.miscTraits.Contains(MISC_TRAIT.BARREN)) {
 			return;
 		}
 

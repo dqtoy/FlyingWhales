@@ -19,6 +19,9 @@ public class PowerGrab : GameEvent {
 		this.uncovered = new List<Citizen>();
 		this.exhortedCitizens = new List<Citizen>();
 
+		this.startedBy.UnsupportCitizen (this.startedBy.supportedCitizen);
+		this.startedBy.supportedCitizen = this.startedBy;
+
 		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started gathering influence for his/her claim as next in line to the " + this.kingToOverthrow.city.kingdom.name + " throne.", HISTORY_IDENTIFIER.NONE));
 		this.kingToOverthrow.city.hexTile.AddEventOnTile(this);
 		Debug.LogError (this.description);
@@ -41,30 +44,51 @@ public class PowerGrab : GameEvent {
 				if (this.startedBy.homeKingdom.id == this.startedBy.city.kingdom.id) {
 					//if governor is at his home kingdom
 					if (this.startedBy.city.governor.id == this.startedBy.id) {
-						List<Citizen> allGovernorsInKingdom = this.startedBy.city.kingdom.GetAllCitizensOfType (ROLE.GOVERNOR).Where(x => x.supportedCitizen.id != this.startedBy.id).ToList();
+						List<Citizen> allGovernorsInKingdom = this.startedBy.city.kingdom.GetAllCitizensOfType (ROLE.GOVERNOR).
+							Where(x => 
+								(x.supportedCitizen != null && x.supportedCitizen.id != this.startedBy.id && x.supportedCitizen.id != x.id)
+								).ToList();
 						allGovernorsInKingdom.Remove(this.startedBy);
 						if (allGovernorsInKingdom.Count > 0) {
 							citizenToExhort = allGovernorsInKingdom [Random.Range (0, allGovernorsInKingdom.Count)];
 						}
 					} else {
-						citizenToExhort = this.startedBy.city.governor;
+						if (this.startedBy.city.governor.supportedCitizen.id != this.startedBy.city.governor.id &&
+							!citizensSupportingMe.Contains(this.startedBy.city.governor)) {
+							citizenToExhort = this.startedBy.city.governor;
+						} else {
+							List<Citizen> allGovernorsInKingdom = this.startedBy.city.kingdom.GetAllCitizensOfType (ROLE.GOVERNOR).
+								Where(x => 
+									(x.supportedCitizen != null && x.supportedCitizen.id != this.startedBy.id && x.supportedCitizen.id != x.id)
+									&& !IsCitizenFirstInLine(x)
+								).ToList();
+							allGovernorsInKingdom.Remove(this.startedBy);
+							if (allGovernorsInKingdom.Count > 0) {
+								citizenToExhort = allGovernorsInKingdom [Random.Range (0, allGovernorsInKingdom.Count)];
+							}
+						}
 					}
-				} else {
-					//if governor is at outside his home kingdom
-					List<Citizen> allGovernors = GameManager.Instance.GetAllCitizensOfType (ROLE.GOVERNOR).Where(x => x.supportedCitizen.id != this.startedBy.id).ToList();;
-					if (allGovernors.Count > 0) {
-						citizenToExhort = allGovernors[Random.Range(0, allGovernors.Count)];
-					}
-				}
+				} 
+//				else {
+//					//if governor is at outside his home kingdom
+//					List<Citizen> allGovernors = GameManager.Instance.GetAllCitizensOfType (ROLE.GOVERNOR).Where(x => 
+//						(x.supportedCitizen != null && x.supportedCitizen.id != this.startedBy.id && x.supportedCitizen.id != x.id)
+//						&& !IsCitizenFirstInLine(x)
+//					).ToList();
+//					if (allGovernors.Count > 0) {
+//						citizenToExhort = allGovernors[Random.Range(0, allGovernors.Count)];
+//					}
+//				}
 			} else {
 				int citizenToExhortChance = Random.Range (0, 100);
 				if (citizenToExhortChance < 80) {
 					List<Citizen> governorsSupportingMe = citizensSupportingMe.Where(x => x.role == ROLE.GOVERNOR).ToList();
 					for (int i = 0; i < governorsSupportingMe.Count; i++) {
 						for (int j = 0; j < governorsSupportingMe[i].city.hexTile.connectedTiles.Count; j++) {
-							if (governorsSupportingMe[i].city.hexTile.connectedTiles[j].isOccupied) {
-								if (!citizensSupportingMe.Contains(governorsSupportingMe[i].city.hexTile.connectedTiles[j].city.governor)) {
-									citizenToExhort = governorsSupportingMe[i].city.hexTile.connectedTiles[j].city.governor;
+							HexTile adjacentTile = governorsSupportingMe [i].city.hexTile.connectedTiles [j];
+							if (adjacentTile.isOccupied && adjacentTile.city.kingdom.id == this.startedBy.city.kingdom.id && !IsCitizenFirstInLine(adjacentTile.city.governor)) {
+								if (!citizensSupportingMe.Contains(adjacentTile.city.governor)) {
+									citizenToExhort = adjacentTile.city.governor;
 									break;
 								}
 							}
@@ -74,7 +98,7 @@ public class PowerGrab : GameEvent {
 						}
 					}
 				} else {
-					List<Kingdom> adjacentKingdoms = this.startedByKingdom.GetAdjacentKingdoms();
+					List<Kingdom> adjacentKingdoms = this.startedBy.city.kingdom.GetAdjacentKingdoms();
 					for (int i = 0; i < adjacentKingdoms.Count; i++) {
 						if (!citizensSupportingMe.Contains (adjacentKingdoms [i].king)) {
 							citizenToExhort = adjacentKingdoms[i].king;
@@ -83,6 +107,7 @@ public class PowerGrab : GameEvent {
 					}
 				}
 			}
+
 			if(citizenToExhort != null){
 				List<Citizen> envoys = this.startedByCity.GetCitizensWithRole(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
 				if (envoys.Count > 0) {
@@ -104,6 +129,18 @@ public class PowerGrab : GameEvent {
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 		Debug.LogError (this.startedBy.name + " has ended power grab.");
+	}
+
+	internal bool IsCitizenFirstInLine(Citizen citizen){
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			Kingdom currKingdom = KingdomManager.Instance.allKingdoms[i];
+			if (currKingdom.successionLine.Count > 0) {
+				if (currKingdom.successionLine[0].id == citizen.id) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

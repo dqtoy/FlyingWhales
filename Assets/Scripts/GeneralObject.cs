@@ -10,16 +10,7 @@ public class GeneralObject : MonoBehaviour {
 	internal void Init(){
 		this.GetComponent<BoxCollider2D>().enabled = true;
 		if(this.general != null){
-			this.textMesh.text = this.general.army.hp.ToString ();
-			this.path = this.general.roads;
-		}
-//		StartCoroutine (Initialize());
-	}
-	private IEnumerator Initialize(){
-		yield return null;
-		this.GetComponent<BoxCollider2D>().enabled = true;
-		if(this.general != null){
-			this.textMesh.text = this.general.army.hp.ToString ();
+			this.textMesh.text = this.general.GetArmyHP().ToString ();
 			this.path = this.general.roads;
 		}
 	}
@@ -42,13 +33,11 @@ public class GeneralObject : MonoBehaviour {
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
 //		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
 		this.transform.position = targetTile.transform.position;
-		if(this.general != null){
-			this.textMesh.text = this.general.army.hp.ToString ();
-		}
+		this.UpdateUI ();
 	}
 	internal void UpdateUI(){
 		if(this.general != null){
-			this.textMesh.text = this.general.army.hp.ToString ();
+			this.textMesh.text = this.general.GetArmyHP().ToString ();
 		}
 	}
 
