@@ -58,27 +58,32 @@ public class PowerGrab : GameEvent {
 					if (this.startedBy.city.governor.id == this.startedBy.id) {
 						List<Citizen> allGovernorsInKingdom = this.startedBy.city.kingdom.GetAllCitizensOfType (ROLE.GOVERNOR).
 							Where(x => 
-								(x.supportedCitizen != null && x.supportedCitizen.id != this.startedBy.id && x.supportedCitizen.id != x.id)
+								(x.supportedCitizen == null || (x.supportedCitizen != null && x.supportedCitizen.id != this.startedBy.id && x.supportedCitizen.id != x.id && !IsCitizenFirstInLine(x)))
 								).ToList();
 						allGovernorsInKingdom.Remove(this.startedBy);
 						if (allGovernorsInKingdom.Count > 0) {
 							citizenToExhort = allGovernorsInKingdom [Random.Range (0, allGovernorsInKingdom.Count)];
 						}
 					} else {
-						if (this.startedBy.city.governor.supportedCitizen.id != this.startedBy.city.governor.id &&
-							!citizensSupportingMe.Contains(this.startedBy.city.governor)) {
+						if(this.startedBy.city.governor.supportedCitizen == null){
 							citizenToExhort = this.startedBy.city.governor;
-						} else {
-							List<Citizen> allGovernorsInKingdom = this.startedBy.city.kingdom.GetAllCitizensOfType (ROLE.GOVERNOR).
-								Where(x => 
-									(x.supportedCitizen != null && x.supportedCitizen.id != this.startedBy.id && x.supportedCitizen.id != x.id)
-									&& !IsCitizenFirstInLine(x)
-								).ToList();
-							allGovernorsInKingdom.Remove(this.startedBy);
-							if (allGovernorsInKingdom.Count > 0) {
-								citizenToExhort = allGovernorsInKingdom [Random.Range (0, allGovernorsInKingdom.Count)];
+						}else{
+							if (this.startedBy.city.governor.supportedCitizen.id != this.startedBy.city.governor.id &&
+								!citizensSupportingMe.Contains(this.startedBy.city.governor)) {
+								citizenToExhort = this.startedBy.city.governor;
+							} else {
+								List<Citizen> allGovernorsInKingdom = this.startedBy.city.kingdom.GetAllCitizensOfType (ROLE.GOVERNOR).
+									Where(x => 
+										(x.supportedCitizen == null || (x.supportedCitizen != null && x.supportedCitizen.id != this.startedBy.id && x.supportedCitizen.id != x.id)
+											&& !IsCitizenFirstInLine(x))
+									).ToList();
+								allGovernorsInKingdom.Remove(this.startedBy);
+								if (allGovernorsInKingdom.Count > 0) {
+									citizenToExhort = allGovernorsInKingdom [Random.Range (0, allGovernorsInKingdom.Count)];
+								}
 							}
 						}
+					
 					}
 				} 
 //				else {

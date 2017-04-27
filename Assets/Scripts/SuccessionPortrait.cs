@@ -77,7 +77,6 @@ public class SuccessionPortrait : MonoBehaviour {
 						if (this.kingdom.cities [i].governor.id != citizen.id) {
 							if (this.kingdom.cities [i].governor.supportedCitizen == null) {
 								supporterCitizens.Add (this.kingdom.cities [i].governor);
-								break;
 							}
 						}
 					}
@@ -88,7 +87,6 @@ public class SuccessionPortrait : MonoBehaviour {
 						if (this.kingdom.cities [i].governor.id != citizen.id) {
 							if (this.kingdom.cities [i].governor.supportedCitizen.id == citizen.id) {
 								supporterCitizens.Add (this.kingdom.cities [i].governor);
-								break;
 							}
 						}
 					}
