@@ -103,6 +103,7 @@ public class PowerGrab : GameEvent {
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		Debug.LogError (this.startedBy.name + " has ended power grab.");
 	}
 
 }

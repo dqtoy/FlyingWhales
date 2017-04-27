@@ -1708,11 +1708,6 @@ public class City{
 
 
 	}
-
-	internal void SearchForTarget(Citizen winner, Citizen target){
-		
-	}
-
 	internal void KillCity(){
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
