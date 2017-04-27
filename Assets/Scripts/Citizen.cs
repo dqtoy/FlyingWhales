@@ -131,7 +131,7 @@ public class Citizen {
 		if(!isGhost){
 			this.city.citizens.Add (this);
 
-			this.GenerateTraits();
+//			this.GenerateTraits();
 			this.UpdatePrestige();
 
 			EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
@@ -145,7 +145,9 @@ public class Citizen {
 		if (this.mother == null || this.father == null) {
 			return;
 		}
-
+		this.behaviorTraits.Clear();
+		this.skillTraits.Clear();
+		this.miscTraits.Clear();
 		//Generate Behaviour trait
 		int firstItem = 1;
 		int secondItem = 2;
@@ -190,9 +192,10 @@ public class Citizen {
 		List<SKILL_TRAIT> skillTraits = new List<SKILL_TRAIT>();
 		if (father.skillTraits.Count > 0 || mother.skillTraits.Count > 0) {
 			int skillListChance = UnityEngine.Random.Range (0, 100);
-			if (skillListChance < 50) {
-				skillTraits.Union(father.skillTraits);
-				skillTraits.Union(mother.skillTraits);
+			if (skillListChance < 100) {
+				skillTraits.AddRange(father.skillTraits);
+				skillTraits.AddRange(mother.skillTraits);
+				skillTraits.Distinct();
 			} else {
 				skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
 				skillTraits.Remove (SKILL_TRAIT.NONE);
@@ -201,20 +204,23 @@ public class Citizen {
 			skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
 			skillTraits.Remove (SKILL_TRAIT.NONE);
 		}
-			
+
+
 		for (int j = 0; j < numOfSkillTraits; j++) {
-			SKILL_TRAIT chosenSkillTrait = skillTraits[UnityEngine.Random.Range(0, skillTraits.Count)];
-			this.skillTraits.Add (chosenSkillTrait);
-			if (numOfSkillTraits > 1) {
-				skillTraits.Remove (chosenSkillTrait);
-				if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
-					skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
-				} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
-					skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
-				} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
-					skillTraits.Remove (SKILL_TRAIT.THRIFTY);
-				} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
-					skillTraits.Remove (SKILL_TRAIT.LAVISH);
+			if (skillTraits.Count > 0) {
+				SKILL_TRAIT chosenSkillTrait = skillTraits [UnityEngine.Random.Range (0, skillTraits.Count)];
+				this.skillTraits.Add (chosenSkillTrait);
+				if (numOfSkillTraits > 1) {
+					skillTraits.Remove (chosenSkillTrait);
+					if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
+						skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
+					} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
+						skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
+					} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
+						skillTraits.Remove (SKILL_TRAIT.THRIFTY);
+					} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
+						skillTraits.Remove (SKILL_TRAIT.LAVISH);
+					}
 				}
 			}
 		}
@@ -224,7 +230,7 @@ public class Citizen {
 		int numOfMiscTraits = 0;
 		if (chanceForMiscTraitLength <= 10) {
 			numOfMiscTraits = 2;
-		} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 21) {
+		} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 20) {
 			numOfMiscTraits = 1;
 		}
 
@@ -258,6 +264,7 @@ public class Citizen {
 		} else {
 			this.name = RandomNameGenerator.Instance.GenerateRandomName (this.race, this.gender);
 		}
+		this.GenerateTraits();
 	}
 
 	internal void AddChild(Citizen child){

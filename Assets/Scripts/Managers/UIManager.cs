@@ -2540,4 +2540,31 @@ public class UIManager : MonoBehaviour {
 	public void HideRelocate(){
 		this.relocateGO.SetActive (false);
 	}
+	public void GenerateChildForCitizen(){
+		if (currentlyShowingCitizen.spouse == null) {
+			Debug.Log ("Could not generate child because no spouse");
+			return;
+		}
+		Citizen child = null;
+		if (currentlyShowingCitizen.gender == GENDER.MALE) {
+			child = MarriageManager.Instance.MakeBaby (currentlyShowingCitizen, currentlyShowingCitizen.spouse);
+		} else {
+			child = MarriageManager.Instance.MakeBaby (currentlyShowingCitizen.spouse, currentlyShowingCitizen);
+		}
+		currentlyShowingCitizen.city.RemoveCitizenFromCity (child);
+		Debug.Log("====== " + child.name + " Behaviour Traits ======");
+		for (int i = 0; i < child.behaviorTraits.Count; i++) {
+			Debug.Log (child.behaviorTraits [i]);
+		}
+		Debug.Log("====== " + child.name + " Skill Traits ======");
+		for (int i = 0; i < child.skillTraits.Count; i++) {
+			Debug.Log (child.skillTraits [i]);
+		}
+		Debug.Log("====== " + child.name + " Misc Traits ======");
+		for (int i = 0; i < child.miscTraits.Count; i++) {
+			Debug.Log (child.miscTraits [i]);
+		}
+		currentlyShowingCitizen.children.Remove(child);
+		currentlyShowingCitizen.spouse.children.Remove(child);
+	}
 }
