@@ -51,7 +51,9 @@ public class Exhortation : GameEvent {
 		} else {
 			if (GameManager.Instance.month < this.targetCitizen.monthSupportCanBeChanged && GameManager.Instance.year == this.targetCitizen.yearSupportStarted) {
 				//fail
+				Debug.LogError(this.targetCitizen.name + " can't changed support to " + this.startedBy.name + " (" + ((MONTH)GameManager.Instance.month) + ", " + GameManager.Instance.week + " " + GameManager.Instance.year + ")");
 				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+				return;
 			}
 			int chance = Random.Range(0, 100);
 			if (chance < this.successRate) {
@@ -62,6 +64,8 @@ public class Exhortation : GameEvent {
 
 				this.targetCitizen.monthSupportCanBeChanged = GameManager.Instance.month + 1;
 				this.targetCitizen.yearSupportStarted = GameManager.Instance.year;
+
+				Debug.LogError(this.targetCitizen.name + " changed support to " + this.startedBy.name + " (" + ((MONTH)GameManager.Instance.month) + ", " + GameManager.Instance.week + " " + GameManager.Instance.year + ")");
 
 				powerGrabThatStartedEvent.exhortedCitizens.Add(this.targetCitizen);
 				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was successful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
