@@ -31,7 +31,19 @@ public class PowerGrab : GameEvent {
 
 	internal override void PerformAction(){
 		this.remainingWeeks -= 1;
-		if (this.startedBy.isDead || this.kingToOverthrow.isDead || this.remainingWeeks <= 0) {
+		if(this.remainingWeeks <= 0){
+			this.resolution = this.startedBy.name + " exhorted a total of " + this.exhortedCitizens.Count.ToString() + " citizens.";
+			this.DoneEvent();
+			return;
+		}
+		if(this.kingToOverthrow.isDead){
+			this.resolution = this.kingToOverthrow.name + " died before the event ended.";
+			this.DoneEvent();
+			return;
+		}
+
+		if (this.startedBy.isDead) {
+			this.resolution = this.startedBy.name + " died before the event ended.";
 			this.DoneEvent();
 			return;
 		}
