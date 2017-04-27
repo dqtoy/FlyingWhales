@@ -469,10 +469,7 @@ public class General : Role {
 				Debug.Log (this.citizen.name + " of " + this.citizen.city.name + " IS JOINING ARMY OF " + general.citizen.name + " of " + general.citizen.city.name);
 				general.army.hp += this.army.hp;
 				this.army.hp = 0;
-
-				if(general.generalAvatar != null){
-					general.generalAvatar.GetComponent<GeneralObject> ().UpdateUI ();
-				}
+				this.UpdateUI ();
 				this.GeneralDeath ();
 			}
 		}
@@ -482,5 +479,10 @@ public class General : Role {
 		Citizen newCitizen = new Citizen (this.citizen.city, 0, GENDER.MALE, 0, true);
 		newCitizen.isDead = true;
 		this.citizen = newCitizen;
+	}
+	internal void UpdateUI(){
+		if(this.generalAvatar != null){
+			this.generalAvatar.GetComponent<GeneralObject> ().UpdateUI ();
+		}
 	}
 }

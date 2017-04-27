@@ -70,48 +70,25 @@ public class SuccessionPortrait : MonoBehaviour {
 	private List<Citizen> GetSupporters(Citizen citizen){
 		List<Citizen> supporterCitizens = new List<Citizen> ();
 
-		if (this.kingdom.successionLine [0] != null) {
+		if (this.kingdom.successionLine.Count > 0) {
 			if (this.kingdom.successionLine [0].id == citizen.id) {
 				if(!this.kingdom.king.isHeir || citizen.isHeir){
 					for(int i = 0; i < this.kingdom.cities.Count; i++){
-						for(int j = 0; j < this.kingdom.cities[i].citizens.Count; j++){
-							if(this.kingdom.cities[i].citizens[j].isGovernor){
-								if (this.kingdom.cities [i].citizens [j].id != citizen.id) {
-									if (this.kingdom.cities [i].citizens [j].supportedCitizen == null) {
-										supporterCitizens.Add (this.kingdom.cities [i].citizens [j]);
-										break;
-									}
-								}
+						if (this.kingdom.cities [i].governor.id != citizen.id) {
+							if (this.kingdom.cities [i].governor.supportedCitizen == null) {
+								supporterCitizens.Add (this.kingdom.cities [i].governor);
+								break;
 							}
 						}
 					}
 				}
 			}else{
 				for(int i = 0; i < this.kingdom.cities.Count; i++){
-					for(int j = 0; j < this.kingdom.cities[i].citizens.Count; j++){
-						if (this.kingdom.cities [i].citizens [j].supportedCitizen != null) {
-							if (this.kingdom.cities [i].citizens [j].isGovernor) {
-								if (this.kingdom.cities [i].citizens [j].id != citizen.id) {
-									if (this.kingdom.cities [i].citizens [j].supportedCitizen.id == citizen.id) {
-										supporterCitizens.Add (this.kingdom.cities [i].citizens [j]);
-										break;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}else{
-			for(int i = 0; i < this.kingdom.cities.Count; i++){
-				for(int j = 0; j < this.kingdom.cities[i].citizens.Count; j++){
-					if (this.kingdom.cities [i].citizens [j].supportedCitizen != null) {
-						if (this.kingdom.cities [i].citizens [j].isGovernor) {
-							if (this.kingdom.cities [i].citizens [j].id != citizen.id) {
-								if (this.kingdom.cities [i].citizens [j].supportedCitizen.id == citizen.id) {
-									supporterCitizens.Add (this.kingdom.cities [i].citizens [j]);
-									break;
-								}
+					if (this.kingdom.cities [i].governor.supportedCitizen != null) {
+						if (this.kingdom.cities [i].governor.id != citizen.id) {
+							if (this.kingdom.cities [i].governor.supportedCitizen.id == citizen.id) {
+								supporterCitizens.Add (this.kingdom.cities [i].governor);
+								break;
 							}
 						}
 					}
