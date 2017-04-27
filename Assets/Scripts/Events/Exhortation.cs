@@ -22,6 +22,7 @@ public class Exhortation : GameEvent {
 		targetCitizen.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
 			this.startedBy.name + " from " + this.startedByCity.name + " has started an Exhoration event to pursuade " + this.targetCitizen.name + "." , HISTORY_IDENTIFIER.NONE));
 
+//		this.successRate = 100;
 		this.successRate = 65;
 		if (this.citizenSent.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
 			this.successRate += 10;
@@ -39,6 +40,7 @@ public class Exhortation : GameEvent {
 			this.successRate -= 55;
 		}
 
+		Debug.LogError (this.description);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
@@ -55,6 +57,7 @@ public class Exhortation : GameEvent {
 				this.targetCitizen.supportExpirationYear = GameManager.Instance.year + 2;
 				powerGrabThatStartedEvent.exhortedCitizens.Add(this.targetCitizen);
 				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was successful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+				UIManager.Instance.UpdateKingdomSuccession ();
 			}else{
 				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
 			}

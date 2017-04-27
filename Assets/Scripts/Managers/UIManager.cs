@@ -44,6 +44,9 @@ public class UIManager : MonoBehaviour {
 	//Relationship Editor
 	public UILabel sourceKinglikenessLbl;
 	public UILabel targetKinglikenessLbl;
+	//Relocate
+	public GameObject relocateGO;
+	public UIPopupList citiesForRelocationPopupList;
 
 	[Space(10)]//World UI
 	public ButtonToggle pauseBtn;
@@ -327,6 +330,9 @@ public class UIManager : MonoBehaviour {
 		}
 		if (traitEditorGO.activeSelf) {
 			HideTraitEditor();
+		}
+		if (relocateGO.activeSelf) {
+			HideRelocate();
 		}
 
 		//ForTesting
@@ -2367,7 +2373,6 @@ public class UIManager : MonoBehaviour {
 			traitEditorGO.SetActive (true);
 		}
 	}
-
 	public void AddTrait(){
 		BEHAVIOR_TRAIT chosenBehaviourTrait = BEHAVIOR_TRAIT.NONE;
 		SKILL_TRAIT chosenSkillTrait = SKILL_TRAIT.NONE;
@@ -2501,5 +2506,19 @@ public class UIManager : MonoBehaviour {
 
 	public void HideTraitEditor(){
 		traitEditorGO.SetActive (false);
+	}
+	public void ToggleRelocate(){
+		if (this.relocateGO.activeSelf) {
+			this.relocateGO.SetActive (false);
+		} else {
+			this.citiesForRelocationPopupList.Clear ();
+			this.relocateGO.SetActive (true);
+		}
+	}
+	public void OnClickOkRelocation(){
+		
+	}
+	public void HideRelocate(){
+		this.relocateGO.SetActive (false);
 	}
 }
