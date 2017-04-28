@@ -44,32 +44,47 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 
-		if (elligibleTilesForHumans.Count > 0) {
-			cityForHumans1.Add (elligibleTilesForHumans [0]);
-//			cityForHumans1.Add (elligibleTilesForHumans [1]);
-			GenerateNewKingdom (RACE.HUMANS, cityForHumans1, true);
+		int numOfKingdoms = 4;
+		if (elligibleTilesForHumans.Count < numOfKingdoms) {
+			numOfKingdoms = elligibleTilesForHumans.Count;
+		}
+		for (int i = 0; i < numOfKingdoms; i++) {
+			List<HexTile> citiesForKingdom = new List<HexTile>();
+			int chosenIndex = Random.Range (0, elligibleTilesForHumans.Count);
+			citiesForKingdom.Add (elligibleTilesForHumans [chosenIndex]);
+			elligibleTilesForHumans.RemoveAt (chosenIndex);
+			GenerateNewKingdom (RACE.HUMANS, citiesForKingdom, true);
+			for (int j = 0; j < citiesForKingdom.Count; j++) {
+				habitableTiles.Remove (citiesForKingdom[j]);
+			}
 		}
 
-//		if (elligibleTilesForHumans.Count > 4) {
-//			cityForHumans2.Add (elligibleTilesForHumans[2]);
+//		if (elligibleTilesForHumans.Count > 0) {
+//			cityForHumans1.Add (elligibleTilesForHumans [0]);
+////			cityForHumans1.Add (elligibleTilesForHumans [1]);
+//			GenerateNewKingdom (RACE.HUMANS, cityForHumans1, true);
+//		}
+//
+//		if (elligibleTilesForHumans.Count > 1) {
+//			cityForHumans2.Add (elligibleTilesForHumans[1]);
 ////			cityForHumans2.Add (elligibleTilesForHumans[3]);
 //			GenerateNewKingdom (RACE.HUMANS, cityForHumans2, true);
 //		}
-
-//		if (elligibleTilesForHumans.Count > 6) {
-//			cityForHumans3.Add (elligibleTilesForHumans [4]);
+//
+//		if (elligibleTilesForHumans.Count > 2) {
+//			cityForHumans3.Add (elligibleTilesForHumans [2]);
 ////			cityForHumans3.Add (elligibleTilesForHumans [5]);
 //			GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
 //		}
-
-//		if (elligibleTilesForHumans.Count > 7) {
-//			cityForHumans4.Add (elligibleTilesForHumans [6]);
+//
+//		if (elligibleTilesForHumans.Count > 3) {
+//			cityForHumans4.Add (elligibleTilesForHumans [3]);
 //			GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
 //		}
 
-		for (int i = 0; i < elligibleTilesForHumans.Count; i++) {
-			habitableTiles.Remove (elligibleTilesForHumans[i]);
-		}
+//		for (int i = 0; i < elligibleTilesForHumans.Count; i++) {
+//			habitableTiles.Remove (elligibleTilesForHumans[i]);
+//		}
 
 //		//Get Statrting City For Elves
 //		List<HexTile> cityForElves = new List<HexTile>();
@@ -218,6 +233,7 @@ public class KingdomManager : MonoBehaviour {
 	public void UpdateKingdomAdjacency(){
 		for (int i = 0; i < this.allKingdoms.Count; i++) {
 			Kingdom currentKingdom = this.allKingdoms[i];
+			currentKingdom.adjacentCitiesFromOtherKigdoms.Clear();
 			currentKingdom.ResetAdjacencyWithOtherKingdoms();
 			for (int j = 0; j < currentKingdom.cities.Count; j++) {
 				City currentCity = currentKingdom.cities[j];
@@ -227,10 +243,13 @@ public class KingdomManager : MonoBehaviour {
 						if (currentConnectedTile.city.kingdom.id != currentKingdom.id) {
 							currentKingdom.GetRelationshipWithOtherKingdom(currentConnectedTile.city.kingdom).isAdjacent = true;
 							currentConnectedTile.city.kingdom.GetRelationshipWithOtherKingdom(currentKingdom).isAdjacent = true;
+							currentKingdom.adjacentCitiesFromOtherKigdoms.Add(currentConnectedTile.city);
 						}
 					}
+
 				}
 			}
+			currentKingdom.adjacentCitiesFromOtherKigdoms.Distinct();
 		}
 	}
 }

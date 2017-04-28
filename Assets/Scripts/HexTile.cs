@@ -558,7 +558,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		GameObject eventGO = GameObject.Instantiate (Resources.Load ("GameObjects/WorldEventItem") as GameObject, this.eventsParent) as GameObject;
 		eventGO.transform.localPosition = Vector3.zero;
 		eventGO.GetComponent<WorldEventItem> ().SetGameEvent(gameEvent);
-		eventGO.SetActive(false);
+//		eventGO.SetActive(false);
 		this.eventsOnTile.Add(eventGO.GetComponent<WorldEventItem>());
 	}
 

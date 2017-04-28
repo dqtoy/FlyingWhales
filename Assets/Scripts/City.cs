@@ -785,6 +785,7 @@ public class City{
 //			this.citizens[i].UpdatePrestige();
 //		}
 		this.CreateInitialFamilies(false);
+		KingdomManager.Instance.UpdateKingdomAdjacency ();
 	}
 
 	protected void DonateCitizensToExpansion(Expansion expansionEvent, Kingdom kingdomToExpand){
@@ -859,7 +860,7 @@ public class City{
 		if(citizenToOccupy.assignedRole != null && citizenToOccupy.role == ROLE.GENERAL){
 			((General)citizenToOccupy.assignedRole).InitializeGeneral ();
 		}
-//		this.UpdateResourceProduction();
+		this.UpdateResourceProduction();
 	}
 
 	protected HexTile FindTileForCitizen(Citizen citizen){
@@ -885,10 +886,11 @@ public class City{
 				this.unoccupiedOwnedTiles[i].roleIntendedForTile = Utilities.GetRoleThatProducesResource (Utilities.GetBaseResourceType (this.unoccupiedOwnedTiles[i].specialResource));
 			}
 		}
+		this.UpdateResourceProduction();
 	}
 
 	protected void CityEverydayTurnActions(){
-		this.UpdateResourceProduction();
+//		this.UpdateResourceProduction();
 		this.ProduceResources();
 		this.AttemptToPerformAction();
 		this.AttemptToIncreaseArmyHP();
@@ -926,7 +928,7 @@ public class City{
 					inactiveGenerals[0].army.hp += hpIncrease;
 					inactiveGenerals[0].UpdateUI();
 					this.AdjustResources(increaseArmyHPCost);
-					Debug.LogError (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
+					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
 				}
 			}
 		}
@@ -1099,11 +1101,16 @@ public class City{
 	internal void CheckCityDeath(){
 		if (this.citizens.Count <= 0) {
 			this.isDead = true;
+			this.kingdom.cities.Remove(this);
+			for (int i = 0; i < this.ownedTiles.Count; i++) {
+				this.ownedTiles [i].ResetTile ();
+			}
 			this.hexTile.city = null;
 			EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 			EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 			EventManager.Instance.onRecruitCitizensForExpansion.RemoveListener(DonateCitizensToExpansion);
 			EventManager.Instance.onCitizenDiedEvent.RemoveListener(UpdateHexTileRoles);
+			KingdomManager.Instance.UpdateKingdomAdjacency();
 		}
 	}
 
@@ -1742,6 +1749,7 @@ public class City{
 		citizenToRemove.city = null;
 		citizenToRemove.role = ROLE.UNTRAINED;
 		citizenToRemove.assignedRole = null;
+		this.UpdateResourceProduction();
 	}
 
 	internal void AddCitizenToCity(Citizen citizenToAdd){
@@ -1761,6 +1769,7 @@ public class City{
 			newGovernor.assignedRole = null;
 			newGovernor.AssignRole(ROLE.GOVERNOR);
 			this.UpdateCitizenCreationTable();
+			this.UpdateResourceProduction();
 			newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 			this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 

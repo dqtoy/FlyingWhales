@@ -23,7 +23,9 @@ public class Kingdom{
 	public Color kingdomColor;
 	public List<History> kingdomHistory;
 
-	public float expansionChance = 25f;
+	public List<City> adjacentCitiesFromOtherKigdoms;
+
+	public float expansionChance = 16f;
 
 	public Kingdom(RACE race, List<HexTile> cities){
 		this.id = Utilities.SetID(this);
@@ -36,6 +38,7 @@ public class Kingdom{
 		this.holderIntlWarCities = new List<CityWar> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+		this.adjacentCitiesFromOtherKigdoms = new List<City>();
 
 		if (race == RACE.HUMANS) {
 			this.basicResource = BASE_RESOURCE_TYPE.STONE;
@@ -57,7 +60,7 @@ public class Kingdom{
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
-//		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
+		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 
@@ -84,7 +87,7 @@ public class Kingdom{
 	}
 
 	protected void AttemptToExpand(){
-		if (EventManager.Instance.GetEventsOfTypePerKingdom (this, EVENT_TYPES.EXPANSION).Count > 0) {
+		if (EventManager.Instance.GetEventsOfTypePerKingdom (this, EVENT_TYPES.EXPANSION).Where(x => x.isActive).Count() > 0) {
 			return;
 		}
 
@@ -92,7 +95,8 @@ public class Kingdom{
 		List<Citizen> allUnassignedAdultCitizens = new List<Citizen>();
 		List<Resource> expansionCost = new List<Resource> () {
 			new Resource (BASE_RESOURCE_TYPE.GOLD, 1000),
-			new Resource (this.basicResource, 200)
+//			new Resource (this.basicResource, 200)
+			new Resource (this.basicResource, 50)
 		};
 //		List<Resource> expansionCost = new List<Resource> () {
 //			new Resource (BASE_RESOURCE_TYPE.GOLD, 50),
@@ -209,6 +213,10 @@ public class Kingdom{
 			this.RetrieveInternationWar();
 			UIManager.Instance.UpdateKingsGrid();
 			UIManager.Instance.UpdateKingdomSuccession ();
+		}
+
+		for (int i = 0; i < this.cities.Count; i++) {
+			this.cities[i].UpdateResourceProduction();
 		}
 	}
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
@@ -452,6 +460,7 @@ public class Kingdom{
 
 		newCity.CreateInitialFamilies(false);
 		this.AddCityToKingdom(newCity);
+		KingdomManager.Instance.UpdateKingdomAdjacency();
 	}
 
 	internal void RemoveFromSuccession(Citizen citizen){

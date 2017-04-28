@@ -123,9 +123,14 @@ public class MarriageManager : MonoBehaviour {
 					continue;
 				}
 				if (elligibleCitizensInKingdom [j].city.kingdom != citizenSearchingForLove.city.kingdom) {
-					RELATIONSHIP_STATUS rel = citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king).lordRelationship;
-					if (rel == RELATIONSHIP_STATUS.ENEMY ||
-						rel == RELATIONSHIP_STATUS.RIVAL) {
+					RelationshipKings relKing = citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king);
+//					RELATIONSHIP_STATUS rel = citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king).lordRelationship;
+					if (relKing == null) {
+						Debug.LogError (citizenSearchingForLove.city.kingdom.king.name + " has null relationship with " + elligibleCitizensInKingdom [j].city.kingdom.king.name);
+						continue;
+					}
+					if (relKing.lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
+						relKing.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
 						continue;
 					}
 				}

@@ -51,19 +51,19 @@ public class RelationshipKings {
 	internal void AdjustLikeness(float adjustment, EVENT_TYPES reason = EVENT_TYPES.ALL, bool isDiscovery = false){
 		if (adjustment < 0) {
 			//Deteriorating
-			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
 				adjustment *= 0.75f;
 			}
-			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
 				adjustment *= 1.25f;
 			}
 
 		} else {
 			//Increasing
-			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
 				adjustment *= 1.25f;
 			}
-			if (this.sourceKing.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
 				adjustment *= 0.75f;
 			}
 

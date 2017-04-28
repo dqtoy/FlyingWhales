@@ -256,7 +256,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void SetProgressionSpeed1X(){
-		GameManager.Instance.SetProgressionSpeed(4f);
+		GameManager.Instance.SetProgressionSpeed(2f);
 		if (pauseBtn.isClicked) {
 			this.TogglePause();
 			pauseBtn.OnClick();
@@ -268,7 +268,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void SetProgressionSpeed2X(){
-		GameManager.Instance.SetProgressionSpeed(2f);
+		GameManager.Instance.SetProgressionSpeed(1f);
 		if (pauseBtn.isClicked) {
 			this.TogglePause();
 			pauseBtn.OnClick();
@@ -280,8 +280,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void SetProgressionSpeed4X(){
-		GameManager.Instance.SetProgressionSpeed(1f);
-//		GameManager.Instance.SetProgressionSpeed(0.5f);
+		GameManager.Instance.SetProgressionSpeed(0.5f);
 		if (pauseBtn.isClicked) {
 			this.TogglePause();
 			pauseBtn.OnClick();
@@ -1327,12 +1326,22 @@ public class UIManager : MonoBehaviour {
 							break;
 						}
 					} else {
-						if (this.marriageHistoryOfCurrentCitizen[i].husband.id == currentlyShowingCitizen.spouse.id) {
+						if (this.marriageHistoryOfCurrentCitizen [i].husband.id == currentlyShowingCitizen.spouse.id) {
 							this.currentMarriageHistoryIndex = i;
 							break;
 						}
 					}
 				}
+			} else if (this.marriageHistoryOfCurrentCitizen.Count > 0) {
+				GameObject spouseGO = GameObject.Instantiate (characterPortraitPrefab, familyTreeSpouseGO.transform) as GameObject;
+				spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
+				spouseGO.transform.localPosition = Vector3.zero;
+				if (currentlyShowingCitizen.gender == GENDER.MALE) {
+					spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (this.marriageHistoryOfCurrentCitizen[0].wife);
+				} else {
+					spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (this.marriageHistoryOfCurrentCitizen[0].husband);
+				}
+				this.currentMarriageHistoryIndex = 0;
 			}
 
 			CharacterPortrait[] children = familyTreeChildGrid.GetComponentsInChildren<CharacterPortrait>();
@@ -1406,7 +1415,8 @@ public class UIManager : MonoBehaviour {
 		eventsGo.SetActive(!eventsGo.activeSelf);
 		if (!eventsGo.activeSelf) {
 			eventsOfTypeGo.SetActive(false);
-			EventManager.Instance.onHideEvents.Invoke();
+//			EventManager.Instance.onHideEvents.Invoke();
+			EventManager.Instance.onShowEventsOfType.Invoke (EVENT_TYPES.ALL);
 			List<Transform> events = eventCategoriesGrid.GetChildList();
 			for (int i = 0; i < events.Count; i++) {
 				events [i].GetComponent<ButtonToggle>().SetClickState(false);
@@ -2465,7 +2475,7 @@ public class UIManager : MonoBehaviour {
 				if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
 					currentlyShowingCitizen.campaignManager.campaignLimit = 3;
 				}else if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
-					currentlyShowingCitizen.citizenChances.accidentChance = 50f;
+//					currentlyShowingCitizen.citizenChances.accidentChance = 50f;
 				}
 				Debug.Log ("Added misc trait : " + chosenMiscTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
 			}
@@ -2497,7 +2507,7 @@ public class UIManager : MonoBehaviour {
 			if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
 				currentlyShowingCitizen.campaignManager.campaignLimit = 2;
 			}else if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
-				currentlyShowingCitizen.citizenChances.accidentChance = currentlyShowingCitizen.citizenChances.defaultAccidentChance;
+//				currentlyShowingCitizen.citizenChances.accidentChance = currentlyShowingCitizen.citizenChances.defaultAccidentChance;
 			}
 			Debug.Log ("Removed misc trait : " + chosenMiscTrait.ToString () + " from " + currentlyShowingCitizen.name);
 		}

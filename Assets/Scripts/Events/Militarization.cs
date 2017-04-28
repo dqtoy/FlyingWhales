@@ -25,6 +25,11 @@ public class Militarization : GameEvent {
 	}
 
 	internal override void PerformAction(){
+		if (this.startedBy.isDead) {
+			this.resolution = this.startedBy.name + " died before the event could finish.";
+			this.DoneEvent();
+			return;
+		}
 		this.remainingWeeks -= 1;
 		int envoyChance = Random.Range (0, 100);
 		if (envoyChance < 20) {

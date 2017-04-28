@@ -32,6 +32,26 @@ public class JoinWar : GameEvent {
 	}
 
 	internal override void PerformAction(){
+		if (this.startedBy.isDead) {
+			this.resolution = this.startedBy.name + " died before the event could finish.";
+			this.DoneEvent();
+			return;
+		}
+		if (this.envoyToSend.citizen.isDead) {
+			this.resolution = this.envoyToSend.citizen.name + " died before the event could finish.";
+			this.DoneEvent();
+			return;
+		}
+		if (this.candidateForAlliance.isDead) {
+			this.resolution = this.candidateForAlliance.name + " died before the event could finish.";
+			this.DoneEvent();
+			return;
+		}
+		if (!candidateForAlliance.isKing) {
+			this.resolution = this.candidateForAlliance.name + " was overthrown before " + this.startedBy.name + " could invite him to join his war against " + this.kingdomToAttack.name;
+			this.DoneEvent();
+			return;
+		}
 		if (this.remainingWeeks > 0) {
 			this.remainingWeeks -= 1;
 		} 

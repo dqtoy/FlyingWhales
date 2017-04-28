@@ -37,6 +37,11 @@ public class Raid : GameEvent {
 	}
 
 	internal override void PerformAction(){
+		if (this.general.citizen.isDead) {
+			this.resolution = this.general.citizen.name + " died before the event could finish.";
+			this.DoneEvent();
+			return;
+		}
 		this.remainingWeeks -= 1;
 		if(this.remainingWeeks <= 0){
 			this.remainingWeeks = 0;
@@ -108,8 +113,8 @@ public class Raid : GameEvent {
 			return;
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 85){
-//		if(chance < 25){
+//		if(chance < 85){
+		if(chance < 40){
 			Steal ();
 		}
 	}
@@ -203,24 +208,28 @@ public class Raid : GameEvent {
 			}
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
-//		int value = 50;
-		int value = 100;
+		int value = 50;
+//		int value = 100;
 		if(this.general.citizen.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
 			value -= 15;
 		}
 		if(chance < value){
 			//DISCOVERY
 			hasBeenDiscovered = true;
-			int amountToAdjust = -5;
+//			int amountToAdjust = -5;
+			int amountToAdjust = -20;
 			if (deadCitizen != null) {
 				if (isGovernor || isKing) {
 					if (isGovernor) {
-						amountToAdjust = -25;
+//						amountToAdjust = -25;
+						amountToAdjust = -40;
 					} else {
-						amountToAdjust = -35;
+//						amountToAdjust = -35;
+						amountToAdjust = -50;
 					}
 				} else {
-					amountToAdjust = -15;
+//					amountToAdjust = -15;
+					amountToAdjust = -30;
 				}
 			}
 			if(this.general.citizen.behaviorTraits.Contains(BEHAVIOR_TRAIT.SCHEMING)){

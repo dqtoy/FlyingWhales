@@ -65,7 +65,7 @@ public class PowerGrab : GameEvent {
 							citizenToExhort = allGovernorsInKingdom [Random.Range (0, allGovernorsInKingdom.Count)];
 						}
 					} else {
-						if (this.startedBy.city.governor.supportedCitizen.id != this.startedBy.city.governor.id &&
+						if (this.startedBy.city.governor.supportedCitizen != null && this.startedBy.city.governor.supportedCitizen.id != this.startedBy.city.governor.id &&
 							!citizensSupportingMe.Contains(this.startedBy.city.governor)) {
 							citizenToExhort = this.startedBy.city.governor;
 						} else {

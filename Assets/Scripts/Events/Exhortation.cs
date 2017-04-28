@@ -46,6 +46,16 @@ public class Exhortation : GameEvent {
 	}
 
 	internal override void PerformAction(){
+		if (this.startedBy.isDead) {
+			this.resolution = this.startedBy.name + " died before the event could finish.";
+			this.DoneEvent();
+			return;
+		}
+		if (this.citizenSent.isDead) {
+			this.resolution = this.citizenSent.name + " died before the event could finish.";
+			this.DoneEvent();
+			return;
+		}
 		if (this.remainingWeeks > 0) {
 			this.remainingWeeks -= 1;
 		} else {

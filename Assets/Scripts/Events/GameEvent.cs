@@ -46,7 +46,7 @@ public class GameEvent {
 			this.startedByKingdom = startedBy.city.kingdom;
 			this.startedByCity = startedBy.city;
 		}
-		Debug.LogError("New Event was created!");
+		Debug.Log("New Event was created!");
 	}
 
 	internal virtual void PerformAction(){}
@@ -54,7 +54,7 @@ public class GameEvent {
 	internal virtual void DoneCitizenAction(Envoy citizen){}
 
 	internal virtual void DoneEvent(){
-		Debug.LogError ("Game Event Ended!");
+		Debug.Log ("Game Event Ended!");
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}
 

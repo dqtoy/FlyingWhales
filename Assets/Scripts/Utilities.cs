@@ -44,7 +44,7 @@ public class Utilities : MonoBehaviour {
 		} else if (obj is Campaign) {
 			lastCampaignID += 1;
 			return lastCampaignID;
-		} else if (obj is Event) {
+		} else if (obj is GameEvent) {
 			lastEventID += 1;
 			return lastEventID;
 		}

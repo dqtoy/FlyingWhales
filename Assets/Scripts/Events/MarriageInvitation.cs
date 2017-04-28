@@ -29,6 +29,11 @@ public class MarriageInvitation : GameEvent {
 	}
 
 	internal override void PerformAction(){
+		if (this.startedBy.isDead) {
+			this.resolution = this.startedBy.name + " died before the event could finish.";
+			this.DoneEvent();
+			return;
+		}
 		if (this.remainingWeeks > 0) {
 			this.remainingWeeks -= 1;
 
@@ -204,7 +209,7 @@ public class MarriageInvitation : GameEvent {
 	internal override void DoneEvent(){
 		Debug.Log (this.startedBy.name + "'s marriage invitation has ended. " + this.resolution);
 		this.isActive = false;
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 }

@@ -67,7 +67,8 @@ public class GameManager : MonoBehaviour {
 	}
 	private void TriggerRaid(){
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 3){
+		if(chance < 15){
+//		if(chance < 3){
 			Raid ();
 		}
 	}
@@ -83,7 +84,8 @@ public class GameManager : MonoBehaviour {
 	}
 	private void TriggerBorderConflict(){
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 1){
+		if(chance < 15){
+//		if(chance < 1){
 			BorderConflict ();
 		}
 	}
@@ -99,14 +101,26 @@ public class GameManager : MonoBehaviour {
 					if(allBorderConflicts != null){
 						if(SearchForEligibility(shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship, allBorderConflicts)){
 							//Add BorderConflict
-							BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
+							Citizen startedBy = null;
+							if (Random.Range (0, 2) == 0) {
+								startedBy = shuffledKingdoms[i].king;
+							} else {
+								startedBy = shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship.king;
+							}
+							BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
 							EventManager.Instance.AddEventToDictionary(borderConflict);
 							isEligible = true;
 							break;
 						}
 					}else{
 						//Add BorderConflict
-						BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
+						Citizen startedBy = null;
+						if (Random.Range (0, 2) == 0) {
+							startedBy = shuffledKingdoms[i].king;
+						} else {
+							startedBy = shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship.king;
+						}
+						BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
 						EventManager.Instance.AddEventToDictionary(borderConflict);
 						isEligible = true;
 						break;
@@ -393,18 +407,17 @@ public class GameManager : MonoBehaviour {
 		if(general == null){
 			return null;
 		}
-		List<City> adjacentCities = new List<City> ();
-		for(int i = 0; i < general.citizen.city.hexTile.connectedTiles.Count; i++){
-			if(general.citizen.city.hexTile.connectedTiles[i].isOccupied){
-				if(general.citizen.city.hexTile.connectedTiles[i].city.kingdom.id != general.citizen.city.kingdom.id){
-					adjacentCities.Add (general.citizen.city.hexTile.connectedTiles[i].city);
-				}
-			}
+//		List<City> adjacentCities = new List<City> ();
+//		for(int i = 0; i < general.citizen.city.hexTile.connectedTiles.Count; i++){
+//			if(general.citizen.city.hexTile.connectedTiles[i].isOccupied){
+//				if(general.citizen.city.hexTile.connectedTiles[i].city.kingdom.id != general.citizen.city.kingdom.id){
+//					adjacentCities.Add (general.citizen.city.hexTile.connectedTiles[i].city);
+//				}
+//			}
+//		}
 
-		}
-
-		if(adjacentCities.Count > 0){
-			return adjacentCities [UnityEngine.Random.Range (0, adjacentCities.Count)];
+		if(general.citizen.city.kingdom.adjacentCitiesFromOtherKigdoms.Count > 0){
+			return general.citizen.city.kingdom.adjacentCitiesFromOtherKigdoms [UnityEngine.Random.Range (0, general.citizen.city.kingdom.adjacentCitiesFromOtherKigdoms.Count)];
 		}else{
 			return null;
 		}

@@ -241,7 +241,7 @@ public class Citizen {
 			this.miscTraits.Add (chosenMiscTrait);
 			miscTraits.Remove (chosenMiscTrait);
 			if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
-				this.citizenChances.accidentChance = 50f;
+//				this.citizenChances.accidentChance = 50f;
 			}
 		}
 		this.behaviorTraits.Distinct().ToList();
@@ -344,8 +344,8 @@ public class Citizen {
 
 	protected void AttemptToGrabPower(){
 		int chanceToGrabPower = Random.Range (0, 100);
-//		if (chanceToGrabPower < 10) {
-		if (chanceToGrabPower < 100) {
+		if (chanceToGrabPower < 10) {
+//		if (chanceToGrabPower < 100) {
 			PowerGrab newPowerGrab = new PowerGrab(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, this.city.kingdom.king);
 		}
 	}
@@ -379,6 +379,7 @@ public class Citizen {
 	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		if(!this.isDead){
 			GameManager.Instance.StartCoroutine (this.DeathCoroutine (reason, isDethroned, newKing, isConquered));
+			EventManager.Instance.onUpdateUI.Invoke();
 		}
 //		DeathCoroutine(reason, isDethroned, newKing, isConquered);
 	}
@@ -454,7 +455,9 @@ public class Citizen {
 		EventManager.Instance.onCitizenDiedEvent.Invoke ();
 
 		if (this.isMarried) {
-			MarriageManager.Instance.DivorceCouple (this, spouse);
+//			MarriageManager.Instance.DivorceCouple (this, spouse);
+			this.spouse.isMarried = false;
+			this.spouse.spouse = null;
 		}
 
 		//		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
@@ -1076,8 +1079,8 @@ public class Citizen {
 		if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
 			value = 1;
 		}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
-//			value = 6;
-			value = 100;
+			value = 6;
+//			value = 100;
 			if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
 				value = 12;
 			}
@@ -1144,7 +1147,13 @@ public class Citizen {
 							if (relationshipToOther.lordRelationship != RELATIONSHIP_STATUS.FRIEND && relationshipToOther.lordRelationship != RELATIONSHIP_STATUS.ALLY) {
 								if (chance < value) {
 									//BorderConflict
-									BorderConflict borderConflict = new BorderConflict (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null, relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship);
+									Citizen startedBy = null;
+									if (Random.Range (0, 2) == 0) {
+										startedBy = relationship.king;
+									} else {
+										startedBy = relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.king;
+									}
+									BorderConflict borderConflict = new BorderConflict (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship);
 									EventManager.Instance.AddEventToDictionary (borderConflict);
 									break;
 								}	

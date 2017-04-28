@@ -54,23 +54,23 @@ public class BorderConflict : GameEvent {
 					if(!SearchEnvoyWhere(this.activeEnvoysIncrease, envoy)){
 						Debug.Log ("CAN'T FIND ENVOY!");
 					}else{
-						int tensionAmount = 15;
+						int tensionAmount = 30;
 						if(envoy.citizen.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
-							tensionAmount += 4;
+							tensionAmount += 7;
 						}
 						AdjustTension (tensionAmount);
 					}
 				}else{
-					int tensionAmount = 15;
+					int tensionAmount = 30;
 					if(envoy.citizen.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
-						tensionAmount += 4;
+						tensionAmount += 7;
 					}
 					AdjustTension (-tensionAmount);
 				}
 			}else{
-				int tensionAmount = 25;
+				int tensionAmount = 35;
 				if(envoy.citizen.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
-					tensionAmount += 5;
+					tensionAmount += 10;
 				}
 				AdjustTension (-tensionAmount);
 			}
@@ -110,8 +110,11 @@ public class BorderConflict : GameEvent {
 			RelationshipKings relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
 			RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
 
-			relationship1.AdjustLikeness (-15, EVENT_TYPES.BORDER_CONFLICT);
-			relationship2.AdjustLikeness (-15, EVENT_TYPES.BORDER_CONFLICT);
+//			relationship1.AdjustLikeness (-15, EVENT_TYPES.BORDER_CONFLICT);
+//			relationship2.AdjustLikeness (-15, EVENT_TYPES.BORDER_CONFLICT);
+
+			relationship1.AdjustLikeness (-25, EVENT_TYPES.BORDER_CONFLICT);
+			relationship2.AdjustLikeness (-25, EVENT_TYPES.BORDER_CONFLICT);
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
@@ -201,20 +204,20 @@ public class BorderConflict : GameEvent {
 			return;
 		}
 		if(!isFromOthers){
-			chance = 30;
+			chance = 10;
 			RelationshipKings relationship = sender.king.SearchRelationshipByID (receiver.king.id);
 			if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
 				chance += 15;
-			}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+			}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
 				chance += 10;
-			}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+			}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM){
 				chance += 5;
 			}
 		}
 
 
 		int random = UnityEngine.Random.Range (0, 100);
-		if(chance < random){
+		if(random < chance){
 			chosenEnvoy.eventDuration = 2;
 			chosenEnvoy.currentEvent = this;
 			chosenEnvoy.inAction = true;
