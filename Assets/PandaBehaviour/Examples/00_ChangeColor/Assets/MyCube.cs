@@ -14,8 +14,6 @@ namespace Panda.Examples.ChangeColor
         {
             this.GetComponent<Renderer>().material.color = new Color(r, g, b);
             Task.current.Succeed(); // <-- Task.current gives access to the run-time task bind to this method.
-
         }
-			
     }
 }
