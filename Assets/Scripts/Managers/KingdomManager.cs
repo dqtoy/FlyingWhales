@@ -233,7 +233,7 @@ public class KingdomManager : MonoBehaviour {
 	public void UpdateKingdomAdjacency(){
 		for (int i = 0; i < this.allKingdoms.Count; i++) {
 			Kingdom currentKingdom = this.allKingdoms[i];
-			currentKingdom.adjacentCitiesFromOtherKigdoms.Clear();
+			currentKingdom.adjacentCitiesFromOtherKingdoms.Clear();
 			currentKingdom.ResetAdjacencyWithOtherKingdoms();
 			for (int j = 0; j < currentKingdom.cities.Count; j++) {
 				City currentCity = currentKingdom.cities[j];
@@ -243,13 +243,26 @@ public class KingdomManager : MonoBehaviour {
 						if (currentConnectedTile.city.kingdom.id != currentKingdom.id) {
 							currentKingdom.GetRelationshipWithOtherKingdom(currentConnectedTile.city.kingdom).isAdjacent = true;
 							currentConnectedTile.city.kingdom.GetRelationshipWithOtherKingdom(currentKingdom).isAdjacent = true;
-							currentKingdom.adjacentCitiesFromOtherKigdoms.Add(currentConnectedTile.city);
+							currentKingdom.adjacentCitiesFromOtherKingdoms.Add(currentConnectedTile.city);
 						}
 					}
 
 				}
 			}
-			currentKingdom.adjacentCitiesFromOtherKigdoms.Distinct();
+			currentKingdom.adjacentCitiesFromOtherKingdoms.Distinct();
 		}
+	}
+
+	public Kingdom GetRandomKingdomExcept(Kingdom kingdom){
+		List<Kingdom> newKingdoms = new List<Kingdom> ();
+		for(int i = 0; i < this.allKingdoms.Count; i++){
+			if(this.allKingdoms[i].id != kingdom.id){
+				newKingdoms.Add (this.allKingdoms [i]);
+			}
+		}
+		if(newKingdoms.Count > 0){
+			return newKingdoms [UnityEngine.Random.Range (0, newKingdoms.Count)];
+		}
+		return null;
 	}
 }

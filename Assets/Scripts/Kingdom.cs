@@ -8,6 +8,7 @@ public class Kingdom{
 	public int id;
 	public string name;
 	public RACE race;
+	public int[] horoscope; 
 	public List<City> cities;
 	public Citizen king;
 	public List<Citizen> successionLine;
@@ -23,7 +24,7 @@ public class Kingdom{
 	public Color kingdomColor;
 	public List<History> kingdomHistory;
 
-	public List<City> adjacentCitiesFromOtherKigdoms;
+	public List<City> adjacentCitiesFromOtherKingdoms;
 
 	public float expansionChance = 16f;
 
@@ -32,13 +33,14 @@ public class Kingdom{
 		this.race = race;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
+		this.horoscope = GetHoroscope ();
 		this.successionLine = new List<Citizen>();
 		this.pretenders = new List<Citizen> ();
 		this.cities = new List<City>();
 		this.holderIntlWarCities = new List<CityWar> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-		this.adjacentCitiesFromOtherKigdoms = new List<City>();
+		this.adjacentCitiesFromOtherKingdoms = new List<City>();
 
 		if (race == RACE.HUMANS) {
 			this.basicResource = BASE_RESOURCE_TYPE.STONE;
@@ -63,7 +65,12 @@ public class Kingdom{
 		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
-
+	internal int[] GetHoroscope(){
+		int[] newHoroscope = new int[2];
+		newHoroscope[0] = UnityEngine.Random.Range(0,2);
+		newHoroscope[1] = UnityEngine.Random.Range(0,2);
+		return newHoroscope;
+	}
 	protected void CreateInitialRelationships(){
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {

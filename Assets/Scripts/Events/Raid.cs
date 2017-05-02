@@ -33,7 +33,7 @@ public class Raid : GameEvent {
 			this.startedBy.city + " has started a raid event against " + raidedCity.name , HISTORY_IDENTIFIER.NONE));
 		
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
-		Debug.LogError("RAID");
+		Debug.LogError("RAID " + this.description);
 	}
 
 	internal override void PerformAction(){

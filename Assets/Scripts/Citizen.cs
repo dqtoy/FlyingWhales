@@ -12,6 +12,7 @@ public class Citizen {
 	public int age;
 	public int generation;
 	public int prestige;
+	public int[] horoscope; 
 //	public int prestigeFromSupport;
 	public Kingdom homeKingdom;
 	public City homeCity;
@@ -112,6 +113,7 @@ public class Citizen {
 		this.birthMonth = (MONTH) GameManager.Instance.month;
 		this.birthWeek = GameManager.Instance.week;
 		this.birthYear = GameManager.Instance.year;
+		this.horoscope = new int[3];
 		this.isIndependent = false;
 		this.isMarried = false;
 		this.isDirectDescendant = false;
@@ -140,7 +142,22 @@ public class Citizen {
 			EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
 		}
 	}
+	internal int[] GetHoroscope(){
+		int[] newHoroscope = new int[3];
+		if((int)this.birthMonth % 2 == 0){
+			newHoroscope[0] = 0;
+		}else{
+			newHoroscope[0] = 1;
+		}
 
+		if(this.birthWeek % 2 == 0){
+			newHoroscope[1] = 0;
+		}else{
+			newHoroscope[1] = 1;
+		}
+		newHoroscope[2] = UnityEngine.Random.Range(0,2);
+		return newHoroscope;
+	}
 	internal void GenerateTraits(){
 		if (this.mother == null || this.father == null) {
 			return;
@@ -274,7 +291,7 @@ public class Citizen {
 		this.birthMonth = month;
 		this.birthWeek = week;
 		this.birthYear = year;
-
+		this.horoscope = GetHoroscope ();
 		this.history.Add(new History((int)month, week, year, this.name + " was born.", HISTORY_IDENTIFIER.NONE));
 	}
 	internal void TurnActions(){
@@ -1020,6 +1037,8 @@ public class Citizen {
 						svReason = STATEVISIT_TRIGGER_REASONS.ASSASSINATION;
 					}else if (reason == EVENT_TYPES.BORDER_CONFLICT) {
 						svReason = STATEVISIT_TRIGGER_REASONS.BORDER_CONFLICT;
+					}else if (reason == EVENT_TYPES.DIPLOMATIC_CRISIS) {
+						svReason = STATEVISIT_TRIGGER_REASONS.DIPLOMATIC_CRISIS;
 					}else if (reason == EVENT_TYPES.ESPIONAGE) {
 						svReason = STATEVISIT_TRIGGER_REASONS.ESPIONAGE;
 					}else if (reason == EVENT_TYPES.RAID) {
@@ -1050,6 +1069,10 @@ public class Citizen {
 				}else if (reason == EVENT_TYPES.BORDER_CONFLICT) {
 					aReason = ASSASSINATION_TRIGGER_REASONS.BORDER_CONFLICT;
 					ipReason = INVASION_TRIGGER_REASONS.BORDER_CONFLICT;
+
+				}else if (reason == EVENT_TYPES.DIPLOMATIC_CRISIS) {
+					aReason = ASSASSINATION_TRIGGER_REASONS.DIPLOMATIC_CRISIS;
+					ipReason = INVASION_TRIGGER_REASONS.DIPLOMATIC_CRISIS;
 
 				}else if (reason == EVENT_TYPES.ESPIONAGE) {
 					aReason = ASSASSINATION_TRIGGER_REASONS.ESPIONAGE;

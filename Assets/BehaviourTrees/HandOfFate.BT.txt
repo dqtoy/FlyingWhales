@@ -1,0 +1,8 @@
+tree("Root")
+	sequence
+		SetFirstRandomKingdom
+		SetSecondRandomKingdom
+		SetCompatibilityValue
+		SetAdjacencyValue
+		SetEventChances
+		StartAnEvent

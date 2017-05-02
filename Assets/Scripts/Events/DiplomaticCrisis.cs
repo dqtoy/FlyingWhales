@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BorderConflict : GameEvent {
+public class DiplomaticCrisis : GameEvent {
 
 	public Kingdom kingdom1;
 	public Kingdom kingdom2;
@@ -13,14 +13,14 @@ public class BorderConflict : GameEvent {
 
 	public bool isResolvedPeacefully;
 
-	public BorderConflict(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
-		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
+	public DiplomaticCrisis(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
+		this.eventType = EVENT_TYPES.DIPLOMATIC_CRISIS;
 		if(startedBy != null){
-			this.description = startedBy.name + " has created a border conflict between " + kingdom1.name + " and " + kingdom2.name + ".";
+			this.description = startedBy.name + " has created a diplomatic crisis between " + kingdom1.name + " and " + kingdom2.name + ".";
 			this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
-				startedBy.name + " has created a border conflict between " + kingdom1.name + " and " + kingdom2.name + "." , HISTORY_IDENTIFIER.NONE));
+				startedBy.name + " has created a diplomatic crisis between " + kingdom1.name + " and " + kingdom2.name + "." , HISTORY_IDENTIFIER.NONE));
 		}else{
-			this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
+			this.description = "A diplomatic crisis has began between " + kingdom1.name + " and " + kingdom2.name + ".";
 		}
 		this.durationInWeeks = 12;
 		this.remainingWeeks = this.durationInWeeks;
@@ -69,7 +69,6 @@ public class BorderConflict : GameEvent {
 		this.activeEnvoyResolve = null;
 		this.activeEnvoyProvoke = null;
 	}
-
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
@@ -228,15 +227,15 @@ public class BorderConflict : GameEvent {
 		RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
 
 		if(this.isResolvedPeacefully){
-			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
+			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
 
-			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Conflict was resolved peacefully.";
+			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Diplomatic Crisis was resolved peacefully.";
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
 				GameManager.Instance.week,
 				GameManager.Instance.year,
-				" A border conflict between " + this.kingdom1.name +  " " + this.kingdom2.name + " was resolved peacefully.",
+				" A diplomatic crisis between " + this.kingdom1.name +  " " + this.kingdom2.name + " was resolved peacefully.",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
@@ -244,23 +243,22 @@ public class BorderConflict : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.week,
 				GameManager.Instance.year,
-				" A border conflict between " + this.kingdom2.name +  " " + this.kingdom1.name + " was resolved peacefully.",
+				" A diplomatic crisis between " + this.kingdom2.name +  " " + this.kingdom1.name + " was resolved peacefully.",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
 		}else{
-			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
+			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
 
-			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Conflict caused deterioration in relationship.";
+			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Diplomatic Crisis caused deterioration in relationship.";
 
-			relationship1.AdjustLikeness (-20, EVENT_TYPES.BORDER_CONFLICT);
-			relationship2.AdjustLikeness (-20, EVENT_TYPES.BORDER_CONFLICT);
+			relationship2.AdjustLikeness (-35, EVENT_TYPES.DIPLOMATIC_CRISIS);
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
 				GameManager.Instance.week,
 				GameManager.Instance.year,
-				" A border conflict between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended horribly.",
+				" A diplomatic crisis between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended horribly.",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
@@ -268,12 +266,12 @@ public class BorderConflict : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.week,
 				GameManager.Instance.year,
-				" A border conflict between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended horribly.",
+				" A diplomatic crisis between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended horribly.",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
 		}
-//		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
+		//		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
 
 		//Remove UI Icon
 	}

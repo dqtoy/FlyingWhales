@@ -1559,7 +1559,7 @@ public class UIManager : MonoBehaviour {
 			this.goSpecificEventHidden.SetActive(false);
 		}
 
-		if (gameEvent.eventType != EVENT_TYPES.BORDER_CONFLICT && gameEvent.eventType != EVENT_TYPES.STATE_VISIT && gameEvent.eventType != EVENT_TYPES.INVASION_PLAN) {
+		if (gameEvent.eventType != EVENT_TYPES.STATE_VISIT && gameEvent.eventType != EVENT_TYPES.INVASION_PLAN) {
 			this.specificEventBarTitle.text = "Duration";
 			specificEventProgBar.value = (float)((float)gameEvent.remainingWeeks / (float)gameEvent.durationInWeeks);
 		}
@@ -1637,26 +1637,26 @@ public class UIManager : MonoBehaviour {
 		}
 
 
-		this.specificEventBarTitle.text = "Tension";
-		this.specificEventProgBar.value = (float)borderConflict.tension / 100f;
-		this.specificEventCandidatesTitleLbl.text = "PACIFIERS";
-		for(int i = 0; i < borderConflict.activeEnvoysReduce.Count; i++){
+		this.specificEventCandidatesTitleLbl.text = "RESOLVER";
+		if(borderConflict.activeEnvoyResolve != null){
 			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
-			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysReduce[i].citizen);
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoyResolve.citizen);
 			candidates.transform.localScale = Vector3.one;
 			candidates.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
 		}
-		StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
 
-		this.specificEventMiscTitleLbl.text = "PROVOKERS";
+		this.specificEventMiscTitleLbl.text = "PROVOKER";
 		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
-		for(int i = 0; i < borderConflict.activeEnvoysIncrease.Count; i++){
+
+		if(borderConflict.activeEnvoyProvoke != null){
 			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
-			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoysIncrease[i].citizen);
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (borderConflict.activeEnvoyProvoke.citizen);
 			candidates.transform.localScale = Vector3.one;
 			candidates.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+
 		}
-		StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
 	}
 	private void ShowStateVisitEvent(StateVisit stateVisit){
 		List<Transform> children = this.specificEventStartedByGrid.GetChildList();

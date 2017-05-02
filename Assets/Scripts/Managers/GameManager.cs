@@ -56,8 +56,8 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
-		TriggerBorderConflict ();
-		TriggerRaid();
+//		TriggerBorderConflict ();
+//		TriggerRaid();
 		TriggerRequestPeace();
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
@@ -132,7 +132,6 @@ public class GameManager : MonoBehaviour {
 				break;
 			}
 		}
-
 	}
 
 	private void TriggerRequestPeace(){
@@ -361,7 +360,10 @@ public class GameManager : MonoBehaviour {
 			counter += 1;
 		}
 		if(counter == 2){
-			return false;
+			if(borderConflict.isActive){
+				return false;
+			}
+			return true;
 		}else{
 			return true;
 		}
@@ -416,8 +418,8 @@ public class GameManager : MonoBehaviour {
 //			}
 //		}
 
-		if(general.citizen.city.kingdom.adjacentCitiesFromOtherKigdoms.Count > 0){
-			return general.citizen.city.kingdom.adjacentCitiesFromOtherKigdoms [UnityEngine.Random.Range (0, general.citizen.city.kingdom.adjacentCitiesFromOtherKigdoms.Count)];
+		if(general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Count > 0){
+			return general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms [UnityEngine.Random.Range (0, general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Count)];
 		}else{
 			return null;
 		}
