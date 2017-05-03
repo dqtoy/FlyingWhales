@@ -26,7 +26,7 @@ public class General : Role {
 	public bool isGoingHome;
 
 	internal Citizen target;
-	private int weekCounter = 0;
+	private int daysCounter = 0;
 
 	public General(Citizen citizen): base(citizen){
 		this.location = citizen.city.hexTile;
@@ -369,10 +369,10 @@ public class General : Role {
 	}
 	internal void SearchForTarget(){
 		Debug.Log (this.citizen.name + " instructed by " + this.warLeader.name + " is searching for " + this.target.name);
-		this.weekCounter += 1;
-		if(this.weekCounter <= 8){
+		this.daysCounter += 1;
+		if(this.daysCounter <= 8){
 			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < (5 * this.weekCounter)){
+			if(chance < (5 * this.daysCounter)){
 				//FOUND TARGET
 				Debug.Log("TARGET FOUND: " + target.name + ". He/She will be killed.");
 				if(target.isHeir){
@@ -382,7 +382,7 @@ public class General : Role {
 				}
 
 			}else{
-				if(this.weekCounter == 8){
+				if(this.daysCounter == 8){
 					//FOUND TARGET
 					Debug.Log("TARGET FOUND: " + target.name + ". He/She will be killed.");
 					if(target.isHeir){
@@ -393,8 +393,8 @@ public class General : Role {
 
 				}
 			}
-			if(this.weekCounter == 8){
-				this.weekCounter = 0;
+			if(this.daysCounter == 8){
+				this.daysCounter = 0;
 				Campaign campaign = this.warLeader.campaignManager.SearchCampaignByID (this.campaignID);
 				if(campaign != null){
 					campaign.leader.campaignManager.CampaignDone (campaign);

@@ -116,7 +116,7 @@ public class City{
 //		EventManager.Instance.onRecruitCitizensForExpansion.AddListener(DonateCitizensToExpansion);
 //		EventManager.Instance.onCitizenDiedEvent.AddListener (UpdateHextileRoles);
 
-		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));
+		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));
 	}
 
 
@@ -296,27 +296,39 @@ public class City{
 		mother.AddChild (this.kingdom.king);
 		king.AddParents(father, mother);
 
-		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
-		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
-		this.kingdom.king.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - this.kingdom.king.age));
+		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthKing = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
+		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
+		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
+		this.kingdom.king.AssignBirthday (monthKing, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - this.kingdom.king.age));
 
 		king.isBusy = true;
 
 
 		MarriageManager.Instance.Marry(father, mother);
 
+		MONTH monthSibling = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
 		int siblingsChance = UnityEngine.Random.Range (0, 100);
 		if(siblingsChance < 25){
 			Citizen sibling = MarriageManager.Instance.MakeBaby (father, mother, UnityEngine.Random.Range(0,this.kingdom.king.age));
 			Citizen sibling2 = MarriageManager.Instance.MakeBaby (father, mother, UnityEngine.Random.Range(0,this.kingdom.king.age));
 
-			sibling.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - sibling.age));
-			sibling2.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - sibling2.age));
+			sibling.AssignBirthday (monthSibling, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+			sibling2.AssignBirthday (monthSibling2, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
 
 		}else if(siblingsChance >= 25 && siblingsChance < 75){
 			Citizen sibling = MarriageManager.Instance.MakeBaby (father, mother, UnityEngine.Random.Range(0,this.kingdom.king.age));
-			sibling.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - sibling.age));
+			sibling.AssignBirthday (monthSibling, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
 		}
+
+
+		MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthChild2 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthChild3 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 
 		int spouseChance = UnityEngine.Random.Range (0, 100);
 		if (spouseChance < 80) {
@@ -342,9 +354,9 @@ public class City{
 				int age3 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child3 = MarriageManager.Instance.MakeBaby (this.kingdom.king, this.kingdom.king.spouse, childAges[age3]);
 
-				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
-				child2.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child2.age));
-				child3.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child3.age));
+				child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
+				child2.AssignBirthday (monthChild2, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild2] + 1), (GameManager.Instance.year - child2.age));
+				child3.AssignBirthday (monthChild3, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild3] + 1), (GameManager.Instance.year - child3.age));
 
 
 			} else if (childChance >= 25 && childChance < 50) {
@@ -356,8 +368,8 @@ public class City{
 				int age2 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child2 = MarriageManager.Instance.MakeBaby (this.kingdom.king, this.kingdom.king.spouse, childAges[age2]);
 
-				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
-				child2.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child2.age));
+				child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
+				child2.AssignBirthday (monthChild2, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild2] + 1), (GameManager.Instance.year - child2.age));
 
 			} else if (childChance >= 50 && childChance < 75) {
 
@@ -365,7 +377,7 @@ public class City{
 
 				Citizen child1 = MarriageManager.Instance.MakeBaby (this.kingdom.king, this.kingdom.king.spouse, childAges[age1]);
 
-				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
+				child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
 
 			}
 		}
@@ -389,9 +401,13 @@ public class City{
 		mother.AddChild (governor);
 		governor.AddParents(father, mother);
 
-		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
-		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
-		governor.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - governor.age));
+		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthGovernor = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
+		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
+		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
+		governor.AssignBirthday (monthGovernor, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthGovernor] + 1), (GameManager.Instance.year - governor.age));
 
 		father.isDead = true;
 		mother.isDead = true;
@@ -407,18 +423,25 @@ public class City{
 		this.governor = governor;
 		this.UpdateCitizenCreationTable();
 
+		MONTH monthSibling = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
 		int siblingsChance = UnityEngine.Random.Range (0, 100);
 		if(siblingsChance < 25){
 			Citizen sibling = MarriageManager.Instance.MakeBaby (father, mother, UnityEngine.Random.Range(0,governor.age));
 			Citizen sibling2 = MarriageManager.Instance.MakeBaby (father, mother, UnityEngine.Random.Range(0,governor.age));
 
-			sibling.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - sibling.age));
-			sibling2.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - sibling2.age));
+			sibling.AssignBirthday (monthSibling, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+			sibling2.AssignBirthday (monthSibling2, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
 
 		}else if(siblingsChance >= 25 && siblingsChance < 75){
 			Citizen sibling = MarriageManager.Instance.MakeBaby (father, mother, UnityEngine.Random.Range(0,governor.age));
-			sibling.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - sibling.age));
+			sibling.AssignBirthday (monthSibling, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
 		}
+
+		MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthChild2 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthChild3 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 
 		int spouseChance = UnityEngine.Random.Range (0, 100);
 		if (spouseChance < 80) {
@@ -442,9 +465,9 @@ public class City{
 				int age3 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child3 = MarriageManager.Instance.MakeBaby (governor, spouse, childAges[age3]);
 
-				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
-				child2.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child2.age));
-				child3.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child3.age));
+				child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
+				child2.AssignBirthday (monthChild2, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild2] + 1), (GameManager.Instance.year - child2.age));
+				child3.AssignBirthday (monthChild3, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild3] + 1), (GameManager.Instance.year - child3.age));
 
 
 			} else if (childChance >= 25 && childChance < 50) {
@@ -456,8 +479,8 @@ public class City{
 				int age2 = UnityEngine.Random.Range (0, childAges.Count);
 				Citizen child2 = MarriageManager.Instance.MakeBaby (governor, spouse, childAges[age2]);
 
-				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
-				child2.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child2.age));
+				child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
+				child2.AssignBirthday (monthChild2, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild2] + 1), (GameManager.Instance.year - child2.age));
 
 			} else if (childChance >= 50 && childChance < 75) {
 
@@ -465,12 +488,12 @@ public class City{
 
 				Citizen child1 = MarriageManager.Instance.MakeBaby (governor, spouse, childAges[age1]);
 
-				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
+				child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
 
 			}
 		}
 
-		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, governor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, governor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
 	}
 	private void CreateInitialGeneralFamily(){
@@ -493,9 +516,13 @@ public class City{
 		mother.AddChild (general);
 		general.AddParents(father, mother);
 
-		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
-		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
-		general.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - general.age));
+		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthGeneral = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
+		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
+		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
+		general.AssignBirthday (monthGeneral, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthGeneral] + 1), (GameManager.Instance.year - general.age));
 
 		father.isDead = true;
 		mother.isDead = true;
@@ -518,8 +545,8 @@ public class City{
 					age = UnityEngine.Random.Range (0, ((general.age - 16) + 1));
 				}
 				Citizen child1 = MarriageManager.Instance.MakeBaby (general, spouse, age);
-
-				child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
+				MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+				child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
 			}
 		}
 //		HexTile tileForCitizen = this.FindTileForCitizen (general);
@@ -550,9 +577,13 @@ public class City{
 			mother.AddChild (producer);
 			producer.AddParents(father, mother);
 
-			father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
-			mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
-			producer.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - producer.age));
+			MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			MONTH monthProducer = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
+			father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
+			mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
+			producer.AssignBirthday (monthProducer, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthProducer] + 1), (GameManager.Instance.year - producer.age));
 
 			father.isDead = true;
 			mother.isDead = true;
@@ -575,8 +606,8 @@ public class City{
 						age = UnityEngine.Random.Range (0, ((producer.age - 16) + 1));
 					}
 					Citizen child1 = MarriageManager.Instance.MakeBaby (producer, spouse, age);
-
-					child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
+					MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+					child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
 				}
 			}
 
@@ -610,9 +641,13 @@ public class City{
 			mother.AddChild (gatherer);
 			gatherer.AddParents(father, mother);
 
-			father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
-			mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
-			gatherer.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - gatherer.age));
+			MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			MONTH monthGatherer = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
+			father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
+			mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
+			gatherer.AssignBirthday (monthGatherer, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthGatherer] + 1), (GameManager.Instance.year - gatherer.age));
 
 			father.isDead = true;
 			mother.isDead = true;
@@ -635,8 +670,8 @@ public class City{
 						age = UnityEngine.Random.Range (0, ((gatherer.age - 16) + 1));
 					}
 					Citizen child1 = MarriageManager.Instance.MakeBaby (gatherer, spouse, age);
-
-					child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
+					MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+					child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
 
 				}
 			}
@@ -669,9 +704,13 @@ public class City{
 			mother.AddChild (normal);
 			normal.AddParents(father, mother);
 
-			father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
-			mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
-			normal.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - normal.age));
+			MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			MONTH monthNormal = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
+			father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
+			mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
+			normal.AssignBirthday (monthNormal, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthNormal] + 1), (GameManager.Instance.year - normal.age));
 
 			father.isDead = true;
 			mother.isDead = true;
@@ -694,8 +733,8 @@ public class City{
 						age = UnityEngine.Random.Range (0, ((normal.age - 16) + 1));
 					}
 					Citizen child1 = MarriageManager.Instance.MakeBaby (normal, spouse, age);
-
-					child1.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - child1.age));
+					MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+					child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
 
 				}
 			}
@@ -777,7 +816,7 @@ public class City{
 ////		Assign Governor
 //		citizensToOccupyCity.Last().city = this;
 //		citizensToOccupyCity.Last().AssignRole(ROLE.GOVERNOR);
-//		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.governor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+//		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.governor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 //
 //
 //		BuyInitialTiles ();
@@ -852,7 +891,7 @@ public class City{
 		tileToBuy.isOwned = true;
 		tileToBuy.isOccupied = true;
 		this.ownedTiles.Add(tileToBuy);
-		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Bought Tile: " + tileToBuy.name);
+		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);
 		tileToBuy.GetComponent<SpriteRenderer>().color = Color.clear;
 //		this.UpdateUnownedNeighbourTiles();
 		tileToBuy.ShowOccupiedSprite();
@@ -937,7 +976,7 @@ public class City{
 //					inactiveGenerals[0].army.hp += hpIncrease;
 //					inactiveGenerals[0].UpdateUI();
 //					this.AdjustResources(increaseArmyHPCost);
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
+					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
 //				}
 //			}
 //		}
@@ -1219,9 +1258,9 @@ public class City{
 //			//Pick which of the three resources to produce, based on what tiles are available
 //			if (this.isStarving) {
 //				if (this.purchasableFoodTiles.Count > 0) {
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Attempt to buy food tile because starving");
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Attempt to buy food tile because starving");
 //					if (this.BuyTileFromList (BASE_RESOURCE_TYPE.FOOD, this.purchasableFoodTiles)) {
-//						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Bought food tile because starving");
+//						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought food tile because starving");
 //						return;
 //					}
 //				}
@@ -1230,7 +1269,7 @@ public class City{
 //			if (isInMilitarization) {
 //				if (!this.IsRoleMaxed(ROLE.GENERAL)) {
 //					//buy tile for special roles
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Attempt to buy tile for special role");
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + " - " + this.kingdom.name + ": Attempt to buy tile for special role");
 //					List<HexTile> tilesWithNoSpecialResource = this.allUnownedNeighbours.Where (x => x.specialResource == RESOURCE.NONE).ToList ();
 //					if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, tilesWithNoSpecialResource, false, true)) {
 //						return;
@@ -1239,16 +1278,16 @@ public class City{
 //			}
 //
 //			if (!this.IsProducingResource (this.kingdom.basicResource) && this.purchasableBasicTiles.Count > 0) {
-//				Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Attempt to buy basic resource tiles because not producing");
+//				Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Attempt to buy basic resource tiles because not producing");
 //				if (this.BuyTileFromList (this.kingdom.basicResource, this.purchasableBasicTiles)) {
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Bought basic resource tile because not producing");
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought basic resource tile because not producing");
 //					return;
 //				}
 //			} else {
 //				if (!this.IsProducingResource (this.kingdom.rareResource) && this.purchasableRareTiles.Count > 0) {
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Attempt to buy rare resource tiles because not producing");
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Attempt to buy rare resource tiles because not producing");
 //					if (this.BuyTileFromList (this.kingdom.rareResource, this.purchasableRareTiles)) {
-//						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Bought rare resource tile because not producing");
+//						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought rare resource tile because not producing");
 //						return;
 //					}
 //				} 
@@ -1258,7 +1297,7 @@ public class City{
 //			if (!this.AllSpecialRolesMaxed() && nextSpecialRoleToCreate != ROLE.UNTRAINED) {
 //				//buy tile for special roles
 //				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, this.tilesWithNoSpecialResource)) {
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought tile for special role");
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + " - " + this.kingdom.name + ": Bought tile for special role");
 //					return;
 //				}
 //			}
@@ -1276,7 +1315,7 @@ public class City{
 //			if ((this.excessStructures/3) > this.unneededStructures) {
 //				//buy tile with unneeded resource
 //				if (this.BuyTileFromList (BASE_RESOURCE_TYPE.NONE, this.purchasabletilesWithUnneededResource, true)) {
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional unneeded resource tile");
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + " - " + this.kingdom.name + ": Bought additional unneeded resource tile");
 //					this.unneededStructures += 1;
 //					return;
 //				}
@@ -1284,7 +1323,7 @@ public class City{
 //			//buy additional basic or rare
 //			if (this.purchasableBasicTiles.Count > 0) {
 //				if (this.BuyTileFromList (this.kingdom.basicResource, this.purchasableBasicTiles)) {
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional basic resource tile. Excess structures: "
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + " - " + this.kingdom.name + ": Bought additional basic resource tile. Excess structures: "
 //						+ this.excessStructures.ToString ());
 //					return;
 //				}
@@ -1292,12 +1331,12 @@ public class City{
 //
 //			if (this.purchasableRareTiles.Count > 0) {
 //				if (this.BuyTileFromList (this.kingdom.rareResource, this.purchasableRareTiles)) {
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Bought additional rare resource tile. Excess structures: "
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + " - " + this.kingdom.name + ": Bought additional rare resource tile. Excess structures: "
 //						+ this.excessStructures.ToString ());
 //					return;
 //				}
 //			}
-//			Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Could not buy any tile");
+//			Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + " - " + this.kingdom.name + ": Could not buy any tile");
 //		} else {
 //			//Train citizen
 //			List<HexTile> pendingTiles = new List<HexTile> ();
@@ -1329,7 +1368,7 @@ public class City{
 //					List<Citizen> unemployedCitizens = this.GetCitizensWithRole (ROLE.UNTRAINED).ToList ();
 //
 //					if (unemployedCitizens.Count > 0) {
-//						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " Trained citizen :" + pendingTiles [0].tileName + " - " + pendingTiles [0].roleIntendedForTile);
+//						Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + " Trained citizen :" + pendingTiles [0].tileName + " - " + pendingTiles [0].roleIntendedForTile);
 //						this.AdjustResources (GetCitizenCreationCostPerType (pendingTiles [0].roleIntendedForTile));
 //						unemployedCitizens [0].AssignRole (pendingTiles [0].roleIntendedForTile);
 //						this.OccupyTile (pendingTiles [0], unemployedCitizens [0]);
@@ -1405,7 +1444,7 @@ public class City{
 //		}
 //
 //		if (choices.Count <= 0) {
-//			Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - " + this.kingdom.name + ": Could not buy tile, because there are no available " + resourceToProduce.ToString () + " tiles.");
+//			Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + " - " + this.kingdom.name + ": Could not buy tile, because there are no available " + resourceToProduce.ToString () + " tiles.");
 //			return false;
 //		}
 //
@@ -1445,7 +1484,7 @@ public class City{
 //			return true;
 //		} else {
 //			if (this.pendingTask.Count <= 0) {
-//				Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.week + " - Not Enough Resources To Buy Tile (500 GOLD)" + this.kingdom.name + ": setting task as pending " + tileToPurchase.tileName.ToString () + " to create a new " + tileToPurchase.roleIntendedForTile.ToString ());
+//				Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + " - Not Enough Resources To Buy Tile (500 GOLD)" + this.kingdom.name + ": setting task as pending " + tileToPurchase.tileName.ToString () + " to create a new " + tileToPurchase.roleIntendedForTile.ToString ());
 //				this.pendingTask.Add (CITY_TASK.PURCHASE_TILE, tileToPurchase);
 //			} else {
 //				if (tileToPurchase != this.pendingTask [this.pendingTask.Keys.ElementAt (0)]) {
@@ -1843,8 +1882,8 @@ public class City{
 			newGovernor.AssignRole(ROLE.GOVERNOR);
 			this.UpdateCitizenCreationTable();
 			this.UpdateResourceProduction();
-			newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-			this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+			newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+			this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
 		}
 	}

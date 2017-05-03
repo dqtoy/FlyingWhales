@@ -35,7 +35,7 @@ public class EventManager : MonoBehaviour {
 	[ContextMenu("Add Event")]
 	public void AddEvent(){
 		if (eventTypeForTesting == EVENT_TYPES.MARRIAGE_INVITATION) {
-			MarriageInvitation eventToCreate = new MarriageInvitation(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, null);
+			MarriageInvitation eventToCreate = new MarriageInvitation(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null);
 			this.AddEventToDictionary(eventToCreate);
 		}
 	}

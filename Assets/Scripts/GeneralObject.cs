@@ -109,7 +109,7 @@ public class GeneralObject : MonoBehaviour {
 			if(campaign.expiration == -1){
 				info += "expiration: none";
 			}else{
-				info += "will expire in " + campaign.expiration + " weeks";
+				info += "will expire in " + campaign.expiration + " dayss";
 			}
 		}else{
 			info += "expiration: none";

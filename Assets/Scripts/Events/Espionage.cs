@@ -48,7 +48,7 @@ public class Espionage : GameEvent {
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
-		this.endWeek = GameManager.Instance.week;
+		this.endWeek = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 		if(this.chosenEvent != null && this.hasFound){
 			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.spy.name + " discovered a Hidden Event: ";
@@ -191,7 +191,7 @@ public class Espionage : GameEvent {
 						relationshipReverse.AdjustLikeness (10);
 						relationshipReverse.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -215,7 +215,7 @@ public class Espionage : GameEvent {
 						relationshipReverse.AdjustLikeness (10);
 						relationshipReverse.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -227,7 +227,7 @@ public class Espionage : GameEvent {
 					relationshipToCreator.AdjustLikeness (-10, EVENT_TYPES.ESPIONAGE);
 					relationshipToCreator.relationshipHistory.Add (new History (
 						GameManager.Instance.month,
-						GameManager.Instance.week,
+						GameManager.Instance.days,
 						GameManager.Instance.year,
 						relationshipToCreator.sourceKing + " found out about a " + chosenEvent.ToString() + " against his friend " + target.name + " launched by " + relationshipToCreator.king,
 						HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -247,7 +247,7 @@ public class Espionage : GameEvent {
 						relationshipReverse.AdjustLikeness (10);
 						relationshipReverse.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -259,7 +259,7 @@ public class Espionage : GameEvent {
 					relationshipToCreator.AdjustLikeness (-15, EVENT_TYPES.ESPIONAGE);
 					relationshipToCreator.relationshipHistory.Add (new History (
 						GameManager.Instance.month,
-						GameManager.Instance.week,
+						GameManager.Instance.days,
 						GameManager.Instance.year,
 						relationshipToCreator.sourceKing + " found out about a " + chosenEvent.ToString() + " against his friend " + target.name + " launched by " + relationshipToCreator.king,
 						HISTORY_IDENTIFIER.KING_RELATIONS,

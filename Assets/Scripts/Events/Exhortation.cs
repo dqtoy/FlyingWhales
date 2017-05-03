@@ -19,7 +19,7 @@ public class Exhortation : GameEvent {
 		this.powerGrabThatStartedEvent = powerGrabThatStartedEvent;
 
 		this.targetCitizen.city.hexTile.AddEventOnTile(this);
-		targetCitizen.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+		targetCitizen.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedBy.name + " from " + this.startedByCity.name + " has started an Exhoration event to pursuade " + this.targetCitizen.name + "." , HISTORY_IDENTIFIER.NONE));
 
 //		this.successRate = 100;
@@ -61,21 +61,21 @@ public class Exhortation : GameEvent {
 		} else {
 			if (GameManager.Instance.month < this.targetCitizen.monthSupportCanBeChanged && GameManager.Instance.year == this.targetCitizen.yearSupportStarted) {
 				//fail
-				Debug.LogError(this.targetCitizen.name + " can't changed support to " + this.startedBy.name + " (" + ((MONTH)GameManager.Instance.month) + ", " + GameManager.Instance.week + " " + GameManager.Instance.year + ")");
+				Debug.LogError(this.targetCitizen.name + " can't changed support to " + this.startedBy.name + " (" + ((MONTH)GameManager.Instance.month) + ", " + GameManager.Instance.days + " " + GameManager.Instance.year + ")");
 				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
 				return;
 			}
 			int chance = Random.Range(0, 100);
 			if (chance < this.successRate) {
 				this.targetCitizen.supportedCitizen = this.startedBy;
-				this.targetCitizen.supportExpirationWeek = GameManager.Instance.week;
+				this.targetCitizen.supportExpirationWeek = GameManager.Instance.days;
 				this.targetCitizen.supportExpirationMonth = GameManager.Instance.month;
 				this.targetCitizen.supportExpirationYear = GameManager.Instance.year + 2;
 
 				this.targetCitizen.monthSupportCanBeChanged = GameManager.Instance.month + 1;
 				this.targetCitizen.yearSupportStarted = GameManager.Instance.year;
 
-				Debug.LogError(this.targetCitizen.name + " changed support to " + this.startedBy.name + " (" + ((MONTH)GameManager.Instance.month) + ", " + GameManager.Instance.week + " " + GameManager.Instance.year + ")");
+				Debug.LogError(this.targetCitizen.name + " changed support to " + this.startedBy.name + " (" + ((MONTH)GameManager.Instance.month) + ", " + GameManager.Instance.days + " " + GameManager.Instance.year + ")");
 
 				powerGrabThatStartedEvent.exhortedCitizens.Add(this.targetCitizen);
 				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was successful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));

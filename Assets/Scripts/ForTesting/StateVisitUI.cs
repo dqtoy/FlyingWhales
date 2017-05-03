@@ -54,7 +54,7 @@ public class StateVisitUI : MonoBehaviour {
 				visitor = targetKing.city.kingdom.successionLine [0];
 			}
 			if(visitor != null){
-				StateVisit stateVisit = new StateVisit(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, UIManager.Instance.currentlyShowingCity.kingdom.king, selectedKingdom, visitor, reason);
+				StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, UIManager.Instance.currentlyShowingCity.kingdom.king, selectedKingdom, visitor, reason);
 				EventManager.Instance.AddEventToDictionary (stateVisit);
 			}else{
 				Debug.Log ("CANNOT DO STATE VISIT. NO VISITOR AVAILABLE");

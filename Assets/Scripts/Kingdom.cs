@@ -63,7 +63,7 @@ public class Kingdom{
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
 		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
-		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
+		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 	internal int[] GetHoroscope(){
 		int[] newHoroscope = new int[2];
@@ -126,7 +126,7 @@ public class Kingdom{
 //		float chance = Random.Range(1f, expansionChance);
 //		if (chance < expansionChance) {
 //			Citizen highestPrestigeCitizen = allUnassignedAdultCitizens.OrderByDescending(x => x.prestige).First();
-//			Expansion newExpansionEvent = new Expansion (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, highestPrestigeCitizen);
+//			Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, highestPrestigeCitizen);
 //		}
 
 		if (citiesThatCanExpand.Count > 0) {
@@ -135,7 +135,7 @@ public class Kingdom{
 			if (chance < expansionChance) {
 				Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
 				citiesThatCanExpand[0].AdjustResources(expansionCost);
-				Expansion newExpansionEvent = new Expansion (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, governorToLeadExpansion);
+				Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, governorToLeadExpansion);
 			}
 		}
 	}
@@ -206,7 +206,7 @@ public class Kingdom{
 			newKing.isKing = true;
 			newKing.isGovernor = false;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-			newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+			newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 			this.king = newKing;
 			this.king.CreateInitialRelationshipsToKings ();
 			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
@@ -241,7 +241,7 @@ public class Kingdom{
 		newKing.isKing = true;
 		newKing.isGovernor = false;
 //		KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
 		this.king = newKing;
 		this.king.CreateInitialRelationshipsToKings ();

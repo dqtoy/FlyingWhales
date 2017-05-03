@@ -15,14 +15,7 @@ public class HandOfFate : MonoBehaviour {
 	public int admirationChance;
 
 	void Awake(){
-		this.firstKingdom = null;
-		this.secondKingdom = null;
-		this.compatibilityValue = 0;
-		this.isAdjacent = false;
-		this.raidChance = 0;
-		this.borderConflictChance = 0;
-		this.diplomaticCrisisChance = 0;
-		this.admirationChance = 0;
+		ResetValues ();
 	}
 	[Task]
 	public void CanCreateEvent(){
@@ -31,6 +24,17 @@ public class HandOfFate : MonoBehaviour {
 	[Task]
 	public void CannotCreateEvent(){
 		Task.current.Fail();
+	}
+	[Task]
+	public void ResetValues(){
+		this.firstKingdom = null;
+		this.secondKingdom = null;
+		this.compatibilityValue = 0;
+		this.isAdjacent = false;
+		this.raidChance = 0;
+		this.borderConflictChance = 0;
+		this.diplomaticCrisisChance = 0;
+		this.admirationChance = 0;
 	}
 	[Task]
 	public void SetFirstRandomKingdom(){
@@ -71,7 +75,6 @@ public class HandOfFate : MonoBehaviour {
 		}
 		Task.current.Succeed ();
 	}
-
 	[Task]
 	public void SetAdjacencyValue(){
 		this.isAdjacent = this.firstKingdom.IsKingdomAdjacentTo (this.secondKingdom);
@@ -190,7 +193,7 @@ public class HandOfFate : MonoBehaviour {
 		General general = GetGeneral(this.firstKingdom);
 		City city = GetRaidedCity(general);
 		if(general != null && city != null){
-			Raid raid = new Raid(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city, general);
+			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city, general);
 			EventManager.Instance.AddEventToDictionary (raid);
 		}
 	}
@@ -266,13 +269,13 @@ public class HandOfFate : MonoBehaviour {
 			if(SearchForEligibility(this.firstKingdom, this.secondKingdom, allBorderConflicts)){
 				//Add BorderConflict
 				Citizen startedBy = this.firstKingdom.king;
-				BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
+				BorderConflict borderConflict = new BorderConflict(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
 				EventManager.Instance.AddEventToDictionary(borderConflict);
 			}
 		}else{
 			//Add BorderConflict
 			Citizen startedBy = this.firstKingdom.king;
-			BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
+			BorderConflict borderConflict = new BorderConflict(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
 			EventManager.Instance.AddEventToDictionary(borderConflict);
 		}
 
@@ -284,12 +287,12 @@ public class HandOfFate : MonoBehaviour {
 		if(allDiplomaticCrisis != null){
 			if(SearchForEligibility(this.firstKingdom, this.secondKingdom, allDiplomaticCrisis)){
 				Citizen startedBy = this.secondKingdom.king;
-				DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
+				DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 				EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
 			}
 		}else{
 			Citizen startedBy = this.secondKingdom.king;
-			DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
+			DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 			EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
 		}
 
@@ -301,12 +304,12 @@ public class HandOfFate : MonoBehaviour {
 		if(allAdmiration != null){
 			if(SearchForEligibility(this.firstKingdom, this.secondKingdom, allAdmiration)){
 				Citizen startedBy = this.secondKingdom.king;
-				Admiration admiration = new Admiration(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
+				Admiration admiration = new Admiration(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 				EventManager.Instance.AddEventToDictionary(admiration);
 			}
 		}else{
 			Citizen startedBy = this.secondKingdom.king;
-			Admiration admiration = new Admiration(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
+			Admiration admiration = new Admiration(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 			EventManager.Instance.AddEventToDictionary(admiration);
 		}
 

@@ -207,7 +207,7 @@ public class UIManager : MonoBehaviour {
 	private int currentMarriageHistoryIndex;
 	private Citizen currentlyShowingCitizen;
 	internal City currentlyShowingCity;
-	private Kingdom currentlyShowingKingdom;
+	public Kingdom currentlyShowingKingdom;
 	private GameEvent currentlyShowingEvent;
 	private RelationshipKings currentlyShowingRelationship;
 	private GameObject lastClickedEventType = null;
@@ -230,11 +230,11 @@ public class UIManager : MonoBehaviour {
 
 	void Start(){
 		EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
-		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.week.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
+		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
 	}
 
 	private void UpdateUI(){
-		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.week.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
+		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
 		if (cityInfoGO.activeSelf) {
 			if (currentlyShowingCity != null) {
 				this.ShowCityInfo (currentlyShowingCity);

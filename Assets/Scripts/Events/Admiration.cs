@@ -13,12 +13,12 @@ public class Admiration : GameEvent {
 		this.eventType = EVENT_TYPES.ADMIRATION;
 		if(startedBy != null){
 			this.description = startedBy.name + " has created admiration between " + kingdom1.name + " and " + kingdom2.name + ".";
-			this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+			this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 				startedBy.name + " has created admiration between " + kingdom1.name + " and " + kingdom2.name + "." , HISTORY_IDENTIFIER.NONE));
 		}else{
 			this.description = "Admiration has began between " + kingdom1.name + " and " + kingdom2.name + ".";
 		}
-		this.durationInWeeks = 4;
+		this.durationInWeeks = 15;
 		this.remainingWeeks = this.durationInWeeks;
 		this.kingdom1 = kingdom1;
 		this.kingdom2 = kingdom2;
@@ -50,7 +50,7 @@ public class Admiration : GameEvent {
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
-		this.endWeek = GameManager.Instance.week;
+		this.endWeek = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
 
@@ -66,7 +66,7 @@ public class Admiration : GameEvent {
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
-				GameManager.Instance.week,
+				GameManager.Instance.days,
 				GameManager.Instance.year,
 				" Admiration between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended great.",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -74,7 +74,7 @@ public class Admiration : GameEvent {
 			));
 			relationship2.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
-				GameManager.Instance.week,
+				GameManager.Instance.days,
 				GameManager.Instance.year,
 				" Admiration between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended great.",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -87,7 +87,7 @@ public class Admiration : GameEvent {
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
-				GameManager.Instance.week,
+				GameManager.Instance.days,
 				GameManager.Instance.year,
 				" Admiration between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended horribly.",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -95,7 +95,7 @@ public class Admiration : GameEvent {
 			));
 			relationship2.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
-				GameManager.Instance.week,
+				GameManager.Instance.days,
 				GameManager.Instance.year,
 				" Admiration between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended horribly.",
 				HISTORY_IDENTIFIER.KING_RELATIONS,

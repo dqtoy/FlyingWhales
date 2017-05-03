@@ -29,10 +29,10 @@ public class Expansion : GameEvent {
 
 		this.startedBy.city.hexTile.AddEventOnTile(this);
 
-		this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+		this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			"Sent an expedition to look for new habitable lands for his kingdom " + startedBy.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
 
-		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			"Sent an expedition to look for new habitable lands." , HISTORY_IDENTIFIER.NONE));
 		
 		this.citizensJoiningExpansion.Add (this.startedBy);
@@ -65,7 +65,7 @@ public class Expansion : GameEvent {
 					this.hexTileToExpandTo.city.ExpandToThisCity(this.citizensJoiningExpansion);
 
 					this.resolution = "Expansion was successful, new city " + this.hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
-					this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+					this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 						"Successful Expansion to " + this.hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));
 					this.DoneEvent ();
 				} else {

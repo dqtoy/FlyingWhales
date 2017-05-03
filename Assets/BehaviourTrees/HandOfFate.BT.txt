@@ -3,6 +3,7 @@ tree("Root")
 		random 30 70
 			CanCreateEvent
 			CannotCreateEvent
+		ResetValues
 		SetFirstRandomKingdom
 		SetSecondRandomKingdom
 		SetCompatibilityValue

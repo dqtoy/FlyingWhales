@@ -17,7 +17,7 @@ public class Militarization : GameEvent {
 
 		this.startedBy.city.hexTile.AddEventOnTile(this);
 		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started a Militarization for his/her Invasion Plan.", HISTORY_IDENTIFIER.NONE));
-		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedByCity.name + " started Militarization." , HISTORY_IDENTIFIER.NONE));
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -40,7 +40,7 @@ public class Militarization : GameEvent {
 				Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
 				Citizen citizenToPersuade = friends[Random.Range(0, friends.Count)].king;
 				envoyToSend.inAction = true;
-				JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
+				JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
 					citizenToPersuade, envoyToSend, invasionPlanThatTriggeredEvent.targetKingdom);
 			} else {
 				Debug.Log ("Cannot send envoy because there are none or all of them are busy or there is no one to send envoy to");
@@ -57,7 +57,7 @@ public class Militarization : GameEvent {
 		if (invasionPlanThatTriggeredEvent.isActive) {
 			invasionPlanThatTriggeredEvent.MilitarizationDone ();
 		}
-		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedByCity.name + " ended Militarization." , HISTORY_IDENTIFIER.NONE));
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}

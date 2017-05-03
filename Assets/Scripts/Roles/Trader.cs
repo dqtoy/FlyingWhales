@@ -60,7 +60,7 @@ public class Trader : Role {
 //			rel2.AdjustLikeness(1, EVENT_TYPES.TRADE);
 //			rel1.relationshipHistory.Add (new History (
 //				GameManager.Instance.month,
-//				GameManager.Instance.week,
+//				GameManager.Instance.days,
 //				GameManager.Instance.year,
 //				"Successful trade with city " + this.targetCity.name,
 //				HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -69,7 +69,7 @@ public class Trader : Role {
 //
 //			rel2.relationshipHistory.Add (new History (
 //				GameManager.Instance.month,
-//				GameManager.Instance.week,
+//				GameManager.Instance.days,
 //				GameManager.Instance.year,
 //				"Successful trade with city " + this.homeCity.name,
 //				HISTORY_IDENTIFIER.KING_RELATIONS,

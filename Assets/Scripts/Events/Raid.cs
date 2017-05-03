@@ -29,7 +29,7 @@ public class Raid : GameEvent {
 			this.raidedCity.hexTile.AddEventOnTile(this);
 		}
 		this.description = startedBy.name + " of " + startedBy.city.kingdom.name + " sent " + this.general.citizen.name + " to raid " + this.raidedCity.name + ".";
-		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedBy.city + " has started a raid event against " + raidedCity.name , HISTORY_IDENTIFIER.NONE));
 		
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -57,7 +57,7 @@ public class Raid : GameEvent {
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
-		this.endWeek = GameManager.Instance.week;
+		this.endWeek = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 
 		string deadCitizen = string.Empty;
@@ -75,20 +75,20 @@ public class Raid : GameEvent {
 				this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
 					+ " but their identity were discovered." + deadCitizen + " " + this.kingdomToBlame.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.(DEFLECTED)";
 
-				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 					"Discovered raiders sent from " + this.kingdomToBlame.name + " (DEFLECTED)" , HISTORY_IDENTIFIER.NONE));
 			}else{
 				this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
 					+ " but their identity were discovered." + deadCitizen + " " + this.raidedCity.kingdom.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.";
 
-				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 					"Discovered raiders sent from city " + this.startedByCity.name , HISTORY_IDENTIFIER.NONE));
 			}
 		}else{
 			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
 				+ " but their identity were not discovered." + deadCitizen;
 			
-			this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+			this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 				"Raid against " + this.raidedCity.name + " was " + result , HISTORY_IDENTIFIER.NONE));
 		}
 		//		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
@@ -174,14 +174,14 @@ public class Raid : GameEvent {
 
 		if(this.hasBeenDiscovered){
 			if(this.hasDeflected){
-				this.general.citizen.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.citizen.name + " raided " + this.raidedCity.name
+				this.general.citizen.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.general.citizen.name + " raided " + this.raidedCity.name
 					+ " with a small group of raiders. The raid was successful. Their presence were discovered and their identities were revealed but " + this.general.citizen.name + " managed to deflect blame to " + kingdomToBlame.name + ".", HISTORY_IDENTIFIER.NONE));
 			}else{
-				this.general.citizen.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.citizen.name + " raided " + this.raidedCity.name
+				this.general.citizen.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.general.citizen.name + " raided " + this.raidedCity.name
 					+ " with a small group of raiders. The raid was successful. Their presence were discovered and their identities were revealed.", HISTORY_IDENTIFIER.NONE));
 			}
 		}else{
-			this.general.citizen.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.general.citizen.name + " raided " + this.raidedCity.name
+			this.general.citizen.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.general.citizen.name + " raided " + this.raidedCity.name
 				+ " with a small group of raiders. The raid was successful. Their presence were not discovered in time.", HISTORY_IDENTIFIER.NONE));
 		}
 
@@ -243,7 +243,7 @@ public class Raid : GameEvent {
 						relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.raidedCity.kingdom.king.name +  " caught a raider, that was from " + kingdomToBlame.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -254,7 +254,7 @@ public class Raid : GameEvent {
 						relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.raidedCity.kingdom.king.name +  " caught a raider, that was from " + this.sourceKingdom.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -266,7 +266,7 @@ public class Raid : GameEvent {
 					relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
 					relationship.relationshipHistory.Add (new History (
 						GameManager.Instance.month,
-						GameManager.Instance.week,
+						GameManager.Instance.days,
 						GameManager.Instance.year,
 						this.raidedCity.kingdom.king.name +  " caught a raider, that was from " + this.sourceKingdom.name,
 						HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -278,7 +278,7 @@ public class Raid : GameEvent {
 				relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
 				relationship.relationshipHistory.Add (new History (
 					GameManager.Instance.month,
-					GameManager.Instance.week,
+					GameManager.Instance.days,
 					GameManager.Instance.year,
 					this.raidedCity.kingdom.king.name +  " caught a raider, that was from " + this.sourceKingdom.name,
 					HISTORY_IDENTIFIER.KING_RELATIONS,

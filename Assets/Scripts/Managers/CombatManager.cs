@@ -291,7 +291,7 @@ public class CombatManager : MonoBehaviour {
 						possibleKingdomToTrigger.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
 						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
 
-						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
+						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 							possibleKingdomToTrigger.name + " sent a spy(" + spies [0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
 							" against " + general1.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
 						
@@ -300,7 +300,7 @@ public class CombatManager : MonoBehaviour {
 					} else {
 						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
 
-						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
+						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 							possibleKingdomToTrigger.name + " sent a spy(" + spies [0].name + ") to " + general1.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
 							" against " + general2.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
 
@@ -346,7 +346,7 @@ public class CombatManager : MonoBehaviour {
 					if (Random.Range (0, 2) == 0) {
 						((Envoy)envoys [0].assignedRole).StartIncreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
 
-						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
+						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 							possibleKingdomToTrigger.name + " sent an envoy(" + envoys [0].name + ") to " + general2.citizen.city.kingdom.name + " to increase exhaustion in his war" +
 							" against " + general1.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
 
@@ -355,7 +355,7 @@ public class CombatManager : MonoBehaviour {
 					} else {
 						((Envoy)envoys [0].assignedRole).StartIncreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
 
-						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year,
+						possibleKingdomToTrigger.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 							possibleKingdomToTrigger.name + " sent an envoy(" + envoys [0].name + ") to " + general1.citizen.city.kingdom.name + " to increase exhaustion in his war" +
 							" against " + general2.citizen.city.kingdom.name, HISTORY_IDENTIFIER.NONE));
 

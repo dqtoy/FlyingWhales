@@ -111,7 +111,7 @@ public class Citizen {
 		this.successionWars = new List<Citizen> ();
 		this.civilWars = new List<Citizen> ();
 		this.birthMonth = (MONTH) GameManager.Instance.month;
-		this.birthWeek = GameManager.Instance.week;
+		this.birthWeek = GameManager.Instance.days;
 		this.birthYear = GameManager.Instance.year;
 		this.horoscope = new int[3];
 		this.isIndependent = false;
@@ -285,12 +285,12 @@ public class Citizen {
 	internal void AddChild(Citizen child){
 		this.children.Add (child);
 	}
-	internal void AssignBirthday(MONTH month, int week, int year){
+	internal void AssignBirthday(MONTH month, int days, int year){
 		this.birthMonth = month;
-		this.birthWeek = week;
+		this.birthWeek = days;
 		this.birthYear = year;
 		this.horoscope = GetHoroscope ();
-		this.history.Add(new History((int)month, week, year, this.name + " was born.", HISTORY_IDENTIFIER.NONE));
+		this.history.Add(new History((int)month, days, year, this.name + " was born.", HISTORY_IDENTIFIER.NONE));
 	}
 	internal void TurnActions(){
 		this.AttemptToAge();
@@ -302,14 +302,14 @@ public class Citizen {
 	}
 
 	protected void CheckSupportExpiration(){
-		if ((GameManager.Instance.year == this.supportExpirationYear && GameManager.Instance.month == this.supportExpirationMonth && GameManager.Instance.week == this.supportExpirationWeek) ||
+		if ((GameManager.Instance.year == this.supportExpirationYear && GameManager.Instance.month == this.supportExpirationMonth && GameManager.Instance.days == this.supportExpirationWeek) ||
 			this.isDead) {
 			this.supportedCitizen = null;
 		}
 	}
 
 	protected void AttemptToAge(){
-		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.week == this.birthWeek && GameManager.Instance.year > this.birthYear){
+		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.days == this.birthWeek && GameManager.Instance.year > this.birthYear){
 			this.age += 1;
 			if (this.gender == GENDER.MALE) {
 				if (this.age >= 16 && !this.isMarried) {
@@ -353,7 +353,7 @@ public class Citizen {
 		if (chanceToMarry < this.citizenChances.marriageChance) {
 			Debug.Log (this.name + " has started a marriage invitation event!");
 
-			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this);
+			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this);
 		}
 	}
 
@@ -361,7 +361,7 @@ public class Citizen {
 		int chanceToGrabPower = Random.Range (0, 100);
 		if (chanceToGrabPower < 10) {
 //		if (chanceToGrabPower < 100) {
-			PowerGrab newPowerGrab = new PowerGrab(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, this.city.kingdom.king);
+			PowerGrab newPowerGrab = new PowerGrab(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, this.city.kingdom.king);
 		}
 	}
 
@@ -372,14 +372,14 @@ public class Citizen {
 		float accidents = UnityEngine.Random.Range (0f, 99f);
 		if(accidents <= this.citizenChances.accidentChance){
 			Death (DEATH_REASONS.ACCIDENT);
-//			Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.week + "/" + PoliticsPrototypeManager.Instance.year + ": " + this.name + " DIED OF ACCIDENT!");
+//			Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.days + "/" + PoliticsPrototypeManager.Instance.year + ": " + this.name + " DIED OF ACCIDENT!");
 		}else{
 			if(this.age >= 60){
 				float oldAge = UnityEngine.Random.Range (0f, 99f);
 				if(oldAge <= this.citizenChances.oldAgeChance){
 					Death (DEATH_REASONS.OLD_AGE);
 					Debug.Log(this.name + " DIES OF OLD AGE");
-//					Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.week + "/" + PoliticsPrototypeManager.Instance.year + ": " + this.name + " DIED OF OLD AGE!");
+//					Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.days + "/" + PoliticsPrototypeManager.Instance.year + ": " + this.name + " DIED OF OLD AGE!");
 				}else{
 					this.citizenChances.oldAgeChance += 0.05f;
 				}
@@ -571,31 +571,31 @@ public class Citizen {
 	internal void DeathHistory(DEATH_REASONS reason){
 		switch (reason){
 		case DEATH_REASONS.OLD_AGE:
-			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died of natural causes.", HISTORY_IDENTIFIER.NONE));
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died of natural causes.", HISTORY_IDENTIFIER.NONE));
 			break;
 		case DEATH_REASONS.ACCIDENT:
-			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died " + Utilities.accidentCauses[UnityEngine.Random.Range(0, Utilities.accidentCauses.Length)], HISTORY_IDENTIFIER.NONE));
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died " + Utilities.accidentCauses[UnityEngine.Random.Range(0, Utilities.accidentCauses.Length)], HISTORY_IDENTIFIER.NONE));
 			break;
 		case DEATH_REASONS.BATTLE:
-			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died in battle.", HISTORY_IDENTIFIER.NONE));
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died in battle.", HISTORY_IDENTIFIER.NONE));
 			break;
 		case DEATH_REASONS.TREACHERY:
-			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " hanged for treason.", HISTORY_IDENTIFIER.NONE));
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " hanged for treason.", HISTORY_IDENTIFIER.NONE));
 			break;
 		case DEATH_REASONS.ASSASSINATION:
-			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died from an assassin's arrow.", HISTORY_IDENTIFIER.NONE));
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died from an assassin's arrow.", HISTORY_IDENTIFIER.NONE));
 			break;
 		case DEATH_REASONS.REBELLION:
-			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " hanged by an usurper.", HISTORY_IDENTIFIER.NONE));
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " hanged by an usurper.", HISTORY_IDENTIFIER.NONE));
 			break;
 		case DEATH_REASONS.INTERNATIONAL_WAR:
-			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died at the hands of a foreign enemy.", HISTORY_IDENTIFIER.NONE));
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died at the hands of a foreign enemy.", HISTORY_IDENTIFIER.NONE));
 			break;
 		case DEATH_REASONS.STARVATION:
-			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " died of starvation.", HISTORY_IDENTIFIER.NONE));
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died of starvation.", HISTORY_IDENTIFIER.NONE));
 			break;
 		case DEATH_REASONS.DISAPPEARED_EXPANSION:
-			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.name + " disappeared during an expedition and is assumed to be dead", HISTORY_IDENTIFIER.NONE));
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " disappeared during an expedition and is assumed to be dead", HISTORY_IDENTIFIER.NONE));
 			break;
 		}
 	}
@@ -1113,7 +1113,7 @@ public class Citizen {
 				KingdomManager.Instance.GetWarBetweenKingdoms(this.city.kingdom, relationship.king.city.kingdom) != null) {
 				return;
 			}
-			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
+			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
 				this, this.city.kingdom, relationship.king.city.kingdom, reason);
 			
 		}else{
@@ -1174,7 +1174,7 @@ public class Citizen {
 									} else {
 										startedBy = relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.king;
 									}
-									BorderConflict borderConflict = new BorderConflict (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship);
+									BorderConflict borderConflict = new BorderConflict (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship);
 									EventManager.Instance.AddEventToDictionary (borderConflict);
 									break;
 								}	
@@ -1203,7 +1203,7 @@ public class Citizen {
 		if(chance < value){
 			Citizen spy = GetSpy(this.city.kingdom);
 			if(spy != null){
-				Assassination assassination = new Assassination(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king, spy, reason);
+				Assassination assassination = new Assassination(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king, spy, reason);
 			}
 		}
 	}
@@ -1355,7 +1355,7 @@ public class Citizen {
 					visitor = targetKing.city.kingdom.successionLine [0];
 				}
 				if(visitor != null){
-					StateVisit stateVisit = new StateVisit(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this, targetKing.city.kingdom, visitor, reason);
+					StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, targetKing.city.kingdom, visitor, reason);
 					EventManager.Instance.AddEventToDictionary (stateVisit);
 				}
 			}else{
@@ -1378,7 +1378,7 @@ public class Citizen {
 			relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION, true);
 			relationship.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
-				GameManager.Instance.week,
+				GameManager.Instance.days,
 				GameManager.Instance.year,
 				targetKingdom.name +  " discovered an assassination plot against it, launched by " + assassinKingdom.name,
 				HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -1395,14 +1395,14 @@ public class Citizen {
 
 			relationship.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
-				GameManager.Instance.week,
+				GameManager.Instance.days,
 				GameManager.Instance.year,
 				targetKingdom.name +  " discovered an invasion plot against it, launched by " + sourceKingdom.name,
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
 		}
-		spy.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, spy.name + " informed " + this.name + " about " + hiddenEvent.eventType.ToString(), HISTORY_IDENTIFIER.NONE));
+		spy.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, spy.name + " informed " + this.name + " about " + hiddenEvent.eventType.ToString(), HISTORY_IDENTIFIER.NONE));
 
 		//Perform Counteraction
 

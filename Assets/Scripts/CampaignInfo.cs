@@ -38,7 +38,7 @@ public class CampaignInfo : MonoBehaviour {
 			if(campaign.expiration == -1){
 				this.lblExpiration.text = "expiration: none";
 			}else{
-				this.lblExpiration.text = "will expire in " + campaign.expiration + " weeks";
+				this.lblExpiration.text = "will expire in " + campaign.expiration + " dayss";
 			}
 		}else{
 			this.lblExpiration.text = "expiration: none";
