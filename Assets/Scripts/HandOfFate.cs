@@ -24,7 +24,14 @@ public class HandOfFate : MonoBehaviour {
 		this.diplomaticCrisisChance = 0;
 		this.admirationChance = 0;
 	}
-
+	[Task]
+	public void CanCreateEvent(){
+		Task.current.Succeed();
+	}
+	[Task]
+	public void CantCreateEvent(){
+		Task.current.Fail();
+	}
 	[Task]
 	public void SetFirstRandomKingdom(){
 		this.firstKingdom = KingdomManager.Instance.allKingdoms [UnityEngine.Random.Range (0, KingdomManager.Instance.allKingdoms.Count)];
@@ -276,13 +283,13 @@ public class HandOfFate : MonoBehaviour {
 
 		if(allDiplomaticCrisis != null){
 			if(SearchForEligibility(this.firstKingdom, this.secondKingdom, allDiplomaticCrisis)){
-				Citizen startedBy = this.firstKingdom.king;
-				DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
+				Citizen startedBy = this.secondKingdom.king;
+				DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 				EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
 			}
 		}else{
-			Citizen startedBy = this.firstKingdom.king;
-			DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
+			Citizen startedBy = this.secondKingdom.king;
+			DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 			EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
 		}
 
@@ -293,13 +300,13 @@ public class HandOfFate : MonoBehaviour {
 
 		if(allAdmiration != null){
 			if(SearchForEligibility(this.firstKingdom, this.secondKingdom, allAdmiration)){
-				Citizen startedBy = this.firstKingdom.king;
-				Admiration admiration = new Admiration(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
+				Citizen startedBy = this.secondKingdom.king;
+				Admiration admiration = new Admiration(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 				EventManager.Instance.AddEventToDictionary(admiration);
 			}
 		}else{
-			Citizen startedBy = this.firstKingdom.king;
-			Admiration admiration = new Admiration(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
+			Citizen startedBy = this.secondKingdom.king;
+			Admiration admiration = new Admiration(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 			EventManager.Instance.AddEventToDictionary(admiration);
 		}
 

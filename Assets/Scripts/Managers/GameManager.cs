@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour {
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
 		EventManager.Instance.onCitizenMove.Invoke (false);
 		EventManager.Instance.onWeekEnd.Invoke();
+		BehaviourTreeManager.Instance.Tick ();
 		EventManager.Instance.onUpdateUI.Invoke();
 	}
 	private void TriggerRaid(){

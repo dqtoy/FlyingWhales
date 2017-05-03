@@ -33,7 +33,7 @@ public class DiplomaticCrisis : GameEvent {
 		this.kingdom2.cities[0].hexTile.AddEventOnTile(this);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
-		Debug.Log (this.description);
+		Debug.LogError (this.description);
 	}
 
 	internal override void PerformAction(){
@@ -252,7 +252,7 @@ public class DiplomaticCrisis : GameEvent {
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Diplomatic Crisis caused deterioration in relationship.";
 
-			relationship2.AdjustLikeness (-35, EVENT_TYPES.DIPLOMATIC_CRISIS);
+			relationship1.AdjustLikeness (-35, EVENT_TYPES.DIPLOMATIC_CRISIS);
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,

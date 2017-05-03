@@ -1570,6 +1570,12 @@ public class UIManager : MonoBehaviour {
 		}else if (gameEvent.eventType == EVENT_TYPES.BORDER_CONFLICT) {
 			BorderConflict borderConflict = (BorderConflict)gameEvent;
 			ShowBorderConflictEvent (borderConflict);
+		}else if (gameEvent.eventType == EVENT_TYPES.DIPLOMATIC_CRISIS) {
+			DiplomaticCrisis diplomaticCrisis = (DiplomaticCrisis)gameEvent;
+			ShowDiplomaticCrisisEvent (diplomaticCrisis);
+		}else if (gameEvent.eventType == EVENT_TYPES.ADMIRATION) {
+			Admiration admiration = (Admiration)gameEvent;
+			ShowAdmirationEvent (admiration);
 		}else if (gameEvent.eventType == EVENT_TYPES.STATE_VISIT) {
 			StateVisit stateVisit = (StateVisit)gameEvent;
 			ShowStateVisitEvent (stateVisit);
@@ -1657,6 +1663,89 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
 
 		}
+	}
+	private void ShowDiplomaticCrisisEvent(DiplomaticCrisis diplomaticCrisis){
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
+
+		if(diplomaticCrisis.startedBy != null){
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (diplomaticCrisis.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
+		}
+
+
+		this.specificEventCandidatesTitleLbl.text = "RESOLVER";
+		if(diplomaticCrisis.activeEnvoyResolve != null){
+			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (diplomaticCrisis.activeEnvoyResolve.citizen);
+			candidates.transform.localScale = Vector3.one;
+			candidates.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
+		}
+
+		this.specificEventMiscTitleLbl.text = "PROVOKER";
+		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
+
+		if(diplomaticCrisis.activeEnvoyProvoke != null){
+			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (diplomaticCrisis.activeEnvoyProvoke.citizen);
+			candidates.transform.localScale = Vector3.one;
+			candidates.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
+
+		}
+	}
+	private void ShowAdmirationEvent(Admiration admiration){
+		List<Transform> children = this.specificEventStartedByGrid.GetChildList();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		List<Transform> children2 = this.specificEventCandidatesGrid.GetChildList();
+		for (int i = 0; i < children2.Count; i++) {
+			Destroy (children2 [i].gameObject);
+		}
+
+		List<Transform> children3 = this.specificEventMiscGrid.GetChildList();
+		for (int i = 0; i < children3.Count; i++) {
+			Destroy (children3 [i].gameObject);
+		}
+
+		if(admiration.startedBy != null){
+			GameObject startedByGO = GameObject.Instantiate (characterPortraitPrefab, specificEventStartedByGrid.transform) as GameObject;
+			startedByGO.GetComponent<CharacterPortrait> ().SetCitizen (admiration.startedBy);
+			startedByGO.transform.localScale = Vector3.one;
+			startedByGO.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (specificEventStartedByGrid));
+		}
+
+
+		this.specificEventCandidatesTitleLbl.text = "TARGET";
+		if(admiration.kingdom2 != null){
+			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (admiration.kingdom2.king);
+			candidates.transform.localScale = Vector3.one;
+			candidates.transform.position = Vector3.zero;
+			StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
+		}
+
+		this.specificEventMiscTitleLbl.gameObject.SetActive(false);
+
 	}
 	private void ShowStateVisitEvent(StateVisit stateVisit){
 		List<Transform> children = this.specificEventStartedByGrid.GetChildList();

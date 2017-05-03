@@ -33,7 +33,7 @@ public class BorderConflict : GameEvent {
 		this.kingdom2.cities[0].hexTile.AddEventOnTile(this);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
-		Debug.Log (this.description);
+		Debug.LogError (this.description);
 	}
 
 	internal override void PerformAction(){
