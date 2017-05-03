@@ -22,7 +22,7 @@ public class JoinWar : GameEvent {
 		this.uncovered = new List<Citizen>();
 
 		if(this.envoyToSend != null){
-			this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.startedBy.name + " sent " + this.envoyToSend.citizen.name
+			this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.startedBy.name + " sent " + this.envoyToSend.citizen.name
 			+ " to " + candidateForAlliance.name + " to persuade him/her to join his/her Invasion Plan against " + this.kingdomToAttack.king.name, HISTORY_IDENTIFIER.NONE));
 		}
 		this.candidateForAlliance.city.hexTile.AddEventOnTile(this);
@@ -93,15 +93,15 @@ public class JoinWar : GameEvent {
 					relationship.AdjustLikeness(5);
 					relationship.relationshipHistory.Add (new History (
 						GameManager.Instance.month,
-						GameManager.Instance.week,
+						GameManager.Instance.days,
 						GameManager.Instance.year,
 						this.candidateForAlliance.name + " accepted a join war request from " + this.startedBy.name + " against " + this.kingdomToAttack.name,
 						HISTORY_IDENTIFIER.KING_RELATIONS,
 						true
 					));
-					InvasionPlan newInvasionPlan = new InvasionPlan(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, 
+					InvasionPlan newInvasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
 						this.candidateForAlliance, this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
-					this.candidateForAlliance.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+					this.candidateForAlliance.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 						this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name , HISTORY_IDENTIFIER.NONE));
 
 					this.resolution = this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name;

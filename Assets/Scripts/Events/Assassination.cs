@@ -70,7 +70,7 @@ public class Assassination : GameEvent {
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
-		this.endWeek = GameManager.Instance.week;
+		this.endWeek = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 //		EventManager.Instance.allEvents [EVENT_TYPES.ASSASSINATION].Remove (this);
 
@@ -201,26 +201,26 @@ public class Assassination : GameEvent {
 			SpyDiscovery (ref hasBeenDiscovered, ref hasDeflected, ref kingToBlame);
 			if (hasAssassinated && hasBeenDiscovered) {
 				if (hasDeflected) {
-					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this.targetCitizen.name + ". "
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this.targetCitizen.name + ". "
 					+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 				} else {
-					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this.targetCitizen.name + ". "
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this.targetCitizen.name + ". "
 					+ this.spy.name + "'s actions were discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 				}
 
 			} else if (!hasAssassinated && hasBeenDiscovered) {
 				if (hasDeflected) {
-					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
 					+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 				} else {
-					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
 					+ this.spy.name + "'s actions were discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 				}
 			} else if (hasAssassinated && !hasBeenDiscovered) {
-				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this.targetCitizen.name + ". "
+				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this.targetCitizen.name + ". "
 				+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 			} else if (!hasAssassinated && !hasBeenDiscovered) {
-				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
 					+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 			}
 		}else{
@@ -232,30 +232,30 @@ public class Assassination : GameEvent {
 
 				if (hasBeenDiscovered) {
 					if (hasDeflected) {
-						this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+						this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
 							+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " died.", HISTORY_IDENTIFIER.NONE));
 					} else {
-						this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+						this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
 							+ this.spy.name + "'s actions were discovered. " + this.spy.name + " died.", HISTORY_IDENTIFIER.NONE));
 					}
 
 				}else{
-					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
 						+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " died.", HISTORY_IDENTIFIER.NONE));
 				}
 			}
 
 			if (hasBeenDiscovered) {
 				if (hasDeflected) {
-					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
 						+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 				} else {
-					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+					this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
 						+ this.spy.name + "'s actions were discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 				}
 
 			}else{
-				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
+				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this.targetCitizen.name + ". "
 					+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
 			}
 		}
@@ -313,7 +313,7 @@ public class Assassination : GameEvent {
 						relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.targetCitizen.city.kingdom.king.name +  " caught an assassin, that was from " + kingdomToBlame.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -324,7 +324,7 @@ public class Assassination : GameEvent {
 						relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.targetCitizen.city.kingdom.king.name +  " caught an assassin, that was from " + assassinKingdom.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -336,7 +336,7 @@ public class Assassination : GameEvent {
 					relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
 					relationship.relationshipHistory.Add (new History (
 						GameManager.Instance.month,
-						GameManager.Instance.week,
+						GameManager.Instance.days,
 						GameManager.Instance.year,
 						this.targetCitizen.city.kingdom.king.name +  " caught an assassin, that was from " + assassinKingdom.name,
 						HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -348,7 +348,7 @@ public class Assassination : GameEvent {
 				relationship.AdjustLikeness (-15, EVENT_TYPES.ASSASSINATION);
 				relationship.relationshipHistory.Add (new History (
 					GameManager.Instance.month,
-					GameManager.Instance.week,
+					GameManager.Instance.days,
 					GameManager.Instance.year,
 					this.targetCitizen.city.kingdom.king.name +  " caught an assassin, that was from " + assassinKingdom.name,
 					HISTORY_IDENTIFIER.KING_RELATIONS,

@@ -190,7 +190,7 @@ public class HandOfFate : MonoBehaviour {
 		General general = GetGeneral(this.firstKingdom);
 		City city = GetRaidedCity(general);
 		if(general != null && city != null){
-			Raid raid = new Raid(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city, general);
+			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city, general);
 			EventManager.Instance.AddEventToDictionary (raid);
 		}
 	}
@@ -266,13 +266,13 @@ public class HandOfFate : MonoBehaviour {
 			if(SearchForEligibility(this.firstKingdom, this.secondKingdom, allBorderConflicts)){
 				//Add BorderConflict
 				Citizen startedBy = this.firstKingdom.king;
-				BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
+				BorderConflict borderConflict = new BorderConflict(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
 				EventManager.Instance.AddEventToDictionary(borderConflict);
 			}
 		}else{
 			//Add BorderConflict
 			Citizen startedBy = this.firstKingdom.king;
-			BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
+			BorderConflict borderConflict = new BorderConflict(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
 			EventManager.Instance.AddEventToDictionary(borderConflict);
 		}
 
@@ -284,12 +284,12 @@ public class HandOfFate : MonoBehaviour {
 		if(allDiplomaticCrisis != null){
 			if(SearchForEligibility(this.firstKingdom, this.secondKingdom, allDiplomaticCrisis)){
 				Citizen startedBy = this.secondKingdom.king;
-				DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
+				DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 				EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
 			}
 		}else{
 			Citizen startedBy = this.secondKingdom.king;
-			DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
+			DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 			EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
 		}
 
@@ -301,12 +301,12 @@ public class HandOfFate : MonoBehaviour {
 		if(allAdmiration != null){
 			if(SearchForEligibility(this.firstKingdom, this.secondKingdom, allAdmiration)){
 				Citizen startedBy = this.secondKingdom.king;
-				Admiration admiration = new Admiration(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
+				Admiration admiration = new Admiration(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 				EventManager.Instance.AddEventToDictionary(admiration);
 			}
 		}else{
 			Citizen startedBy = this.secondKingdom.king;
-			Admiration admiration = new Admiration(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
+			Admiration admiration = new Admiration(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 			EventManager.Instance.AddEventToDictionary(admiration);
 		}
 

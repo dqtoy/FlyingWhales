@@ -29,7 +29,7 @@ public class RequestPeace : GameEvent {
 		}
 
 		this.startedBy.city.hexTile.AddEventOnTile(this);
-		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedBy.name + " started a request peace event.", HISTORY_IDENTIFIER.NONE));
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);

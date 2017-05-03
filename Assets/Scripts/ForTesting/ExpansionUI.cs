@@ -25,7 +25,7 @@ public class ExpansionUI : MonoBehaviour {
 		int yCoordinate = Int32.Parse (coordinates [1]);
 		HexTile hexTileToExpandTo = GridMap.Instance.map[xCoordinate, yCoordinate];
 
-		Expansion newExpansion = new Expansion (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, UIManager.Instance.currentlyShowingCity.governor);
+		Expansion newExpansion = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, UIManager.Instance.currentlyShowingCity.governor);
 		newExpansion.hexTileToExpandTo = hexTileToExpandTo;
 	}
 }

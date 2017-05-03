@@ -7,8 +7,9 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager Instance = null;
 
+	public static int[] daysInMonth = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	public int month;
-	public int week;
+	public int days;
 	public int year;
 
 	public float progressionSpeed = 1f;
@@ -16,6 +17,8 @@ public class GameManager : MonoBehaviour {
 
 	void Awake(){
 		Instance = this;
+		this.days = 1;
+		this.month = 1;
 	}
 
 	[ContextMenu("Start Progression")]
@@ -46,9 +49,9 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void WeekEnded(){
-		this.week += 1;
-		if (week > 4) {
-			this.week = 1;
+		this.days += 1;
+		if (days > daysInMonth[this.month]) {
+			this.days = 1;
 			this.month += 1;
 			if (this.month > 12) {
 				this.month = 1;
@@ -79,7 +82,7 @@ public class GameManager : MonoBehaviour {
 		General general = GetGeneral(raiderOfTheLostArc);
 		City city = GetRaidedCity(general);
 		if(general != null && city != null){
-			Raid raid = new Raid(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, raiderOfTheLostArc.king, city, general);
+			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, raiderOfTheLostArc.king, city, general);
 			EventManager.Instance.AddEventToDictionary (raid);
 		}
 	}
@@ -108,7 +111,7 @@ public class GameManager : MonoBehaviour {
 							} else {
 								startedBy = shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship.king;
 							}
-							BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
+							BorderConflict borderConflict = new BorderConflict(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
 							EventManager.Instance.AddEventToDictionary(borderConflict);
 							isEligible = true;
 							break;
@@ -121,7 +124,7 @@ public class GameManager : MonoBehaviour {
 						} else {
 							startedBy = shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship.king;
 						}
-						BorderConflict borderConflict = new BorderConflict(GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, startedBy, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
+						BorderConflict borderConflict = new BorderConflict(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, shuffledKingdoms[i], shuffledKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship);
 						EventManager.Instance.AddEventToDictionary(borderConflict);
 						isEligible = true;
 						break;
@@ -211,7 +214,7 @@ public class GameManager : MonoBehaviour {
 
 					}
 
-					RequestPeace newRequestPeace = new RequestPeace (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, currentWar.kingdom1.king,
+					RequestPeace newRequestPeace = new RequestPeace (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, currentWar.kingdom1.king,
 						citizenToSend, currentWar.kingdom2, kingdom1Saboteurs);
 
 					for (int j = 0; j < kingdom1Enemies.Count; j++) {
@@ -230,7 +233,7 @@ public class GameManager : MonoBehaviour {
 									}
 									int chanceForAssassination = Random.Range (0, 100);
 									if (chance < chanceToAssassinate) {
-										Assassination newAssassination = new Assassination (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year,
+										Assassination newAssassination = new Assassination (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
 											                                kingdom1Enemies [j].king, citizenToSend, assassins [0]);
 									}
 								}
@@ -312,7 +315,7 @@ public class GameManager : MonoBehaviour {
 
 					}
 
-					RequestPeace newRequestPeace = new RequestPeace (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year, currentWar.kingdom2.king,
+					RequestPeace newRequestPeace = new RequestPeace (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, currentWar.kingdom2.king,
 						citizenToSend, currentWar.kingdom1, kingdom2Saboteurs);
 
 					for (int j = 0; j < kingdom2Enemies.Count; j++) {
@@ -331,7 +334,7 @@ public class GameManager : MonoBehaviour {
 									}
 									int chanceForAssassination = Random.Range (0, 100);
 									if (chance < chanceToAssassinate) {
-										Assassination newAssassination = new Assassination (GameManager.Instance.week, GameManager.Instance.month, GameManager.Instance.year,
+										Assassination newAssassination = new Assassination (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
 											                                kingdom2Enemies [j].king, citizenToSend, assassins [0]);
 									}
 								}

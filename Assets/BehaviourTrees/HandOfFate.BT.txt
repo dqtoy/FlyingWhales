@@ -1,6 +1,6 @@
 tree("Root")
 	sequence
-		random 30 70
+		random 0 1
 			CanCreateEvent
 			CannotCreateEvent
 		SetFirstRandomKingdom

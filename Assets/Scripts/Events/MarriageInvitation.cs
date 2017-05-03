@@ -21,7 +21,7 @@ public class MarriageInvitation : GameEvent {
 		this.GetGoldForEvent ();
 
 		this.startedBy.city.hexTile.AddEventOnTile(this);
-		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedBy.name + " started a marriage invitation event.", HISTORY_IDENTIFIER.NONE));
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -59,7 +59,7 @@ public class MarriageInvitation : GameEvent {
 					//pay 500 gold to the chosen citizens city
 					cityRecievingGold = chosenCitizen.city;
 					cityRecievingGold.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, this.goldForEvent);
-					cityRecievingGold.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, 
+					cityRecievingGold.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 						"Recieved 500 GOLD from " + this.startedByCity.name + " because of marriage event started by " + this.startedBy.name, HISTORY_IDENTIFIER.NONE));
 				} else {
 					//give back 500 gold to city
@@ -75,7 +75,7 @@ public class MarriageInvitation : GameEvent {
 						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -86,7 +86,7 @@ public class MarriageInvitation : GameEvent {
 						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -103,7 +103,7 @@ public class MarriageInvitation : GameEvent {
 						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.startedBy.name + " got married to" + startedByKingParent.name + "'s child " + chosenCitizen.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -114,7 +114,7 @@ public class MarriageInvitation : GameEvent {
 						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							this.startedBy.name + " got married to" + startedByKingParent.name + "'s child " + chosenCitizen.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -130,7 +130,7 @@ public class MarriageInvitation : GameEvent {
 						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							startedByKingParent.name + "'s child " +  this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -141,7 +141,7 @@ public class MarriageInvitation : GameEvent {
 						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
-							GameManager.Instance.week,
+							GameManager.Instance.days,
 							GameManager.Instance.year,
 							startedByKingParent.name + "'s child " +  this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
 							HISTORY_IDENTIFIER.KING_RELATIONS,
@@ -165,7 +165,7 @@ public class MarriageInvitation : GameEvent {
 					}
 				}
 
-				this.endWeek = GameManager.Instance.week;
+				this.endWeek = GameManager.Instance.days;
 				this.endMonth = GameManager.Instance.month;
 				this.endYear = GameManager.Instance.year;
 
@@ -185,7 +185,7 @@ public class MarriageInvitation : GameEvent {
 				return;
 			}
 
-			this.endWeek = GameManager.Instance.week;
+			this.endWeek = GameManager.Instance.days;
 			this.endMonth = GameManager.Instance.month;
 			this.endYear = GameManager.Instance.year;
 			//return gold to city

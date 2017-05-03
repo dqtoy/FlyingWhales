@@ -19,7 +19,7 @@ public class MarriageManager : MonoBehaviour {
 		//		int age = 0;
 
 		Citizen child = new Citizen(father.city, age, gender, father.generation + 1);
-		child.AssignBirthday((MONTH)GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year);
+		child.AssignBirthday((MONTH)GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		if(father.isDirectDescendant || mother.isDirectDescendant){
 			child.isDirectDescendant = true;
 		}
@@ -68,16 +68,20 @@ public class MarriageManager : MonoBehaviour {
 		father.UnsubscribeListeners();
 		mother.UnsubscribeListeners();
 
-		spouse.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - spouse.age));
-		father.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - father.age);
-		mother.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), GameManager.Instance.year - mother.age);
+		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthSpouse = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
+		spouse.AssignBirthday (monthSpouse, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthSpouse] + 1), (GameManager.Instance.year - spouse.age));
+		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
+		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
 
 		Marry (otherSpouse, spouse);
 		return spouse;
 	}
 
 	internal void Marry(Citizen citizen1, Citizen citizen2){
-//		Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.week + "/" + PoliticsPrototypeManager.Instance.year + ": " + husband.name + " got married to " + wife.name);
+//		Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.days + "/" + PoliticsPrototypeManager.Instance.year + ": " + husband.name + " got married to " + wife.name);
 		citizen1.spouse = citizen2;
 		citizen2.spouse = citizen1;
 		citizen1.isMarried = true;
@@ -95,8 +99,8 @@ public class MarriageManager : MonoBehaviour {
 		//		wife.loyalLord = husband.kingdom.assignedLord;
 		//		husband.kingdom.royaltyList.allRoyalties.Add(wife);
 		//		wife.kingdom.royaltyList.allRoyalties.Remove(wife);
-		citizen1.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, citizen1.name + " married " + citizen2.name + ".", HISTORY_IDENTIFIER.NONE));
-		citizen2.history.Add(new History(GameManager.Instance.month, GameManager.Instance.week, GameManager.Instance.year, citizen2.name + " married " + citizen1.name + ".", HISTORY_IDENTIFIER.NONE));
+		citizen1.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, citizen1.name + " married " + citizen2.name + ".", HISTORY_IDENTIFIER.NONE));
+		citizen2.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, citizen2.name + " married " + citizen1.name + ".", HISTORY_IDENTIFIER.NONE));
 
 		if (citizen1.gender == GENDER.MALE) {
 			this.allMarriedCouples.Add (new MarriedCouple (citizen1, citizen2));

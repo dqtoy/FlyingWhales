@@ -81,7 +81,6 @@ public enum MONTH{
 	NOV,
 	DEC,
 }
-
 public enum RESOURCE{
 	NONE,
 	CORN,

@@ -25,7 +25,7 @@ public class HistoryPortrait : MonoBehaviour {
 			}
 		}
 
-		this.dateLbl.text = "[b]" + ((MONTH)history.month).ToString () + " " + history.week.ToString () + ", " + history.year.ToString () + "[/b]";
+		this.dateLbl.text = "[b]" + ((MONTH)history.month).ToString () + " " + history.days.ToString () + ", " + history.year.ToString () + "[/b]";
 
 	}
 	private Sprite GetSprite(){
