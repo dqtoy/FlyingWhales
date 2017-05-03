@@ -133,7 +133,7 @@ public class Citizen {
 		if(!isGhost){
 			this.city.citizens.Add (this);
 
-//			this.GenerateTraits();
+			this.GenerateTraits();
 			this.UpdatePrestige();
 
 			EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
@@ -159,9 +159,6 @@ public class Citizen {
 		return newHoroscope;
 	}
 	internal void GenerateTraits(){
-		if (this.mother == null || this.father == null) {
-			return;
-		}
 		this.behaviorTraits.Clear();
 		this.skillTraits.Clear();
 		this.miscTraits.Clear();
@@ -169,7 +166,7 @@ public class Citizen {
 		int firstItem = 1;
 		int secondItem = 2;
 		for (int j = 0; j < 4; j++) {
-			BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
+//			BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
 			int chanceForTrait = UnityEngine.Random.Range (0, 100);
 			if (chanceForTrait <= 20) {
 				//the behaviour pairs are always contradicting
@@ -177,14 +174,15 @@ public class Citizen {
 				BEHAVIOR_TRAIT behaviourTrait2 = (BEHAVIOR_TRAIT)secondItem;
 				int chanceForTrait1 = 50;
 				int chanceForTrait2 = 50;
+				if (this.father != null && this.mother != null) {
+					if (this.mother.behaviorTraits.Contains (behaviourTrait1)) {chanceForTrait1 += 15;chanceForTrait2 -= 15;}
 
-				if (mother.behaviorTraits.Contains (behaviourTrait1)) { chanceForTrait1 += 15; chanceForTrait2 -= 15;}
+					if (this.father.behaviorTraits.Contains (behaviourTrait1)) {chanceForTrait1 += 15;chanceForTrait2 -= 15;}
 
-				if (father.behaviorTraits.Contains (behaviourTrait1)) { chanceForTrait1 += 15; chanceForTrait2 -= 15;}
+					if (this.mother.behaviorTraits.Contains (behaviourTrait2)) {chanceForTrait2 += 15;chanceForTrait1 -= 15;}
 
-				if (mother.behaviorTraits.Contains (behaviourTrait2)) { chanceForTrait2 += 15; chanceForTrait1 -= 15;}
-
-				if (father.behaviorTraits.Contains (behaviourTrait2)) { chanceForTrait2 += 15; chanceForTrait1 -= 15;}
+					if (this.father.behaviorTraits.Contains (behaviourTrait2)) {chanceForTrait2 += 15;chanceForTrait1 -= 15;}
+				}
 
 				int traitChance = UnityEngine.Random.Range (0, (chanceForTrait1 + chanceForTrait2));
 				if (traitChance <= chanceForTrait1) {
@@ -197,73 +195,73 @@ public class Citizen {
 			secondItem += 2;
 		}
 
-		//Generate Skill Trait
-		int chanceForSkillTraitLength = UnityEngine.Random.Range (0, 100);
-		int numOfSkillTraits = 0;
-		if (chanceForSkillTraitLength <= 20) {
-			numOfSkillTraits = 2;
-		} else if (chanceForSkillTraitLength >= 21 && chanceForSkillTraitLength <= 40) {
-			numOfSkillTraits = 1;
-		}
-
-		List<SKILL_TRAIT> skillTraits = new List<SKILL_TRAIT>();
-		if (father.skillTraits.Count > 0 || mother.skillTraits.Count > 0) {
-			int skillListChance = UnityEngine.Random.Range (0, 100);
-			if (skillListChance < 100) {
-				skillTraits.AddRange(father.skillTraits);
-				skillTraits.AddRange(mother.skillTraits);
-				skillTraits.Distinct();
-			} else {
-				skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
-				skillTraits.Remove (SKILL_TRAIT.NONE);
-			}
-		} else {
-			skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
-			skillTraits.Remove (SKILL_TRAIT.NONE);
-		}
-
-
-		for (int j = 0; j < numOfSkillTraits; j++) {
-			if (skillTraits.Count > 0) {
-				SKILL_TRAIT chosenSkillTrait = skillTraits [UnityEngine.Random.Range (0, skillTraits.Count)];
-				this.skillTraits.Add (chosenSkillTrait);
-				if (numOfSkillTraits > 1) {
-					skillTraits.Remove (chosenSkillTrait);
-					if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
-						skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
-					} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
-						skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
-					} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
-						skillTraits.Remove (SKILL_TRAIT.THRIFTY);
-					} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
-						skillTraits.Remove (SKILL_TRAIT.LAVISH);
-					}
-				}
-			}
-		}
-
-		//misc traits
-		int chanceForMiscTraitLength = UnityEngine.Random.Range (0, 100);
-		int numOfMiscTraits = 0;
-		if (chanceForMiscTraitLength <= 10) {
-			numOfMiscTraits = 2;
-		} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 20) {
-			numOfMiscTraits = 1;
-		}
-
-		List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
-		miscTraits.Remove (MISC_TRAIT.NONE);
-		for (int j = 0; j < numOfMiscTraits; j++) {
-			MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
-			this.miscTraits.Add (chosenMiscTrait);
-			miscTraits.Remove (chosenMiscTrait);
-			if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
-//				this.citizenChances.accidentChance = 50f;
-			}
-		}
+//		//Generate Skill Trait
+//		int chanceForSkillTraitLength = UnityEngine.Random.Range (0, 100);
+//		int numOfSkillTraits = 0;
+//		if (chanceForSkillTraitLength <= 20) {
+//			numOfSkillTraits = 2;
+//		} else if (chanceForSkillTraitLength >= 21 && chanceForSkillTraitLength <= 40) {
+//			numOfSkillTraits = 1;
+//		}
+//
+//		List<SKILL_TRAIT> skillTraits = new List<SKILL_TRAIT>();
+//		if (this.father != null && this.mother != null && (father.skillTraits.Count > 0 || mother.skillTraits.Count > 0)) {
+//			int skillListChance = UnityEngine.Random.Range (0, 100);
+//			if (skillListChance < 100) {
+//				skillTraits.AddRange(father.skillTraits);
+//				skillTraits.AddRange(mother.skillTraits);
+//				skillTraits.Distinct();
+//			} else {
+//				skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+//				skillTraits.Remove (SKILL_TRAIT.NONE);
+//			}
+//		} else {
+//			skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+//			skillTraits.Remove (SKILL_TRAIT.NONE);
+//		}
+//
+//
+//		for (int j = 0; j < numOfSkillTraits; j++) {
+//			if (skillTraits.Count > 0) {
+//				SKILL_TRAIT chosenSkillTrait = skillTraits [UnityEngine.Random.Range (0, skillTraits.Count)];
+//				this.skillTraits.Add (chosenSkillTrait);
+//				if (numOfSkillTraits > 1) {
+//					skillTraits.Remove (chosenSkillTrait);
+//					if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
+//						skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
+//					} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
+//						skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
+//					} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
+//						skillTraits.Remove (SKILL_TRAIT.THRIFTY);
+//					} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
+//						skillTraits.Remove (SKILL_TRAIT.LAVISH);
+//					}
+//				}
+//			}
+//		}
+//
+//		//misc traits
+//		int chanceForMiscTraitLength = UnityEngine.Random.Range (0, 100);
+//		int numOfMiscTraits = 0;
+//		if (chanceForMiscTraitLength <= 10) {
+//			numOfMiscTraits = 2;
+//		} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 20) {
+//			numOfMiscTraits = 1;
+//		}
+//
+//		List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
+//		miscTraits.Remove (MISC_TRAIT.NONE);
+//		for (int j = 0; j < numOfMiscTraits; j++) {
+//			MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
+//			this.miscTraits.Add (chosenMiscTrait);
+//			miscTraits.Remove (chosenMiscTrait);
+//			if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
+////				this.citizenChances.accidentChance = 50f;
+//			}
+//		}
 		this.behaviorTraits.Distinct().ToList();
-		this.skillTraits.Distinct().ToList();
-		this.miscTraits.Distinct().ToList();
+//		this.skillTraits.Distinct().ToList();
+//		this.miscTraits.Distinct().ToList();
 	}
 
 	internal int GetCampaignLimit(){
@@ -761,7 +759,7 @@ public class Citizen {
 		} else if (role == ROLE.SPY) {
 			this.assignedRole = new Spy (this);
 		} else if (role == ROLE.TRADER) {
-			this.assignedRole = new Trader (this, this.city.tradeManager);
+			this.assignedRole = new Trader (this);
 		} else if (role == ROLE.GOVERNOR) {
 			this.assignedRole = new Governor (this);
 		} else if (role == ROLE.KING) {

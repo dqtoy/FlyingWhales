@@ -8,5 +8,6 @@ namespace PathFind{
 		IEnumerable<N> ValidTiles { get; }
 		IEnumerable<N> RoadTiles { get; } 
 //		IEnumerable<N> CombatTiles { get; } 
+		IEnumerable<N> PurchasableTiles { get; } 
 	}
 }

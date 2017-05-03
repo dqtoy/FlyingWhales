@@ -153,10 +153,7 @@ public class Kingdom{
 	}
 
 	internal void AddTileToKingdom(HexTile tile){
-		tile.city = new City (tile, this);
-		tile.GetComponent<SpriteRenderer> ().color = this.kingdomColor;
-		this.cities.Add (tile.city);
-		tile.ShowNamePlate();
+		CityGenerator.Instance.CreateNewCity (tile, this);
 	}
 
 	internal List<Citizen> GetAllCitizensInKingdom(){
