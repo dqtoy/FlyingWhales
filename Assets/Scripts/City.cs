@@ -976,7 +976,7 @@ public class City{
 //					inactiveGenerals[0].army.hp += hpIncrease;
 //					inactiveGenerals[0].UpdateUI();
 //					this.AdjustResources(increaseArmyHPCost);
-					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
+//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
 //				}
 //			}
 //		}
