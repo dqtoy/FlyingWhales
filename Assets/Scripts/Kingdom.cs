@@ -101,9 +101,10 @@ public class Kingdom{
 		List<City> citiesThatCanExpand = new List<City>();
 		List<Citizen> allUnassignedAdultCitizens = new List<Citizen>();
 		List<Resource> expansionCost = new List<Resource> () {
+//			new Resource (BASE_RESOURCE_TYPE.GOLD, 100),
 			new Resource (BASE_RESOURCE_TYPE.GOLD, 1000),
 //			new Resource (this.basicResource, 200)
-			new Resource (this.basicResource, 50)
+//			new Resource (this.basicResource, 50)
 		};
 //		List<Resource> expansionCost = new List<Resource> () {
 //			new Resource (BASE_RESOURCE_TYPE.GOLD, 50),
@@ -351,6 +352,7 @@ public class Kingdom{
 		this.cities.Add (city);
 		city.kingdom = this;
 		city.hexTile.GetComponent<HexTile>().SetTileColor (this.kingdomColor);
+		city.hexTile.GetComponent<HexTile>().ShowNamePlate();
 	}
 
 	internal void ResetAdjacencyWithOtherKingdoms(){
@@ -459,11 +461,8 @@ public class Kingdom{
 		city.kingdom.cities.Remove(city);
 		city.KillCity();
 
-		City newCity = new City(hex, this);
-		hex.city = newCity;
-
+		City newCity = CityGenerator.Instance.CreateNewCity (hex, this);
 		newCity.CreateInitialFamilies(false);
-		this.AddCityToKingdom(newCity);
 		KingdomManager.Instance.UpdateKingdomAdjacency();
 	}
 

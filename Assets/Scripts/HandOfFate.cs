@@ -72,6 +72,7 @@ public class HandOfFate : MonoBehaviour {
 			this.secondKingdom = KingdomManager.Instance.GetRandomKingdomExcept (this.firstKingdom);
 		}
 
+
 		if(this.secondKingdom == null){
 			Task.current.Fail ();
 		}else{

@@ -314,7 +314,6 @@ public class UIManager : MonoBehaviour {
 			kingGO.transform.localScale = Vector3.one;
 		}
 		StartCoroutine (RepositionGrid (kingsGrid));
-		kingsGrid.enabled = true;
 	}
 
 	internal void ShowCitizenInfo(Citizen citizenToShow){

@@ -172,7 +172,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 						RESOURCE.COBALT,
 						RESOURCE.GOLD
 					}, 
-					new int[] { 5, 60, 40, 15, 15, 15, 5 });
+//					new int[] { 5, 60, 40, 15, 15, 15, 5 });
+					new int[] { 0, 0, 0, 0, 0, 0, 0 });
 				this.specialResource = ComputeSpecialResource (specialResources);
 				if (this.specialResource != RESOURCE.NONE) {
 					this.resourceVisualGO.GetComponent<SpriteRenderer> ().sprite = Resources.LoadAll<Sprite> ("Resources Icons")

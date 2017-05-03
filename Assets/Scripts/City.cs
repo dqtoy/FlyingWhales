@@ -1035,27 +1035,27 @@ public class City{
 //				}
 //			}
 //		}
-		this.maxGrowth = 100 + (100 * this.structures.Count);
+		this.maxGrowth = 100 + (150 * this.structures.Count);
 		this.dailyGrowth = 10;
 		this.maxGeneralHP = 0;
 		this.goldProduction = 20;
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
 			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
-				this.dailyGrowth += 3;
+				this.dailyGrowth += 5;
 				this.goldProduction += 2;
 				this.maxGeneralHP += 100;
 			} else if (currentStructure.biomeType == BIOMES.WOODLAND) {
-				this.dailyGrowth += 2;
+				this.dailyGrowth += 4;
 				this.goldProduction += 3;
 				this.maxGeneralHP += 300;
 			} else if (currentStructure.biomeType == BIOMES.FOREST) {
-				this.dailyGrowth += 2;
-				this.goldProduction += 4;
+				this.dailyGrowth += 3;
+				this.goldProduction += 3;
 				this.maxGeneralHP += 200;
 			} else if (currentStructure.biomeType == BIOMES.DESERT) {
 				this.dailyGrowth += 1;
-				this.goldProduction += 6;
+				this.goldProduction += 4;
 				this.maxGeneralHP += 100;
 			} else if (currentStructure.biomeType == BIOMES.TUNDRA) {
 				this.dailyGrowth += 2;
@@ -1087,15 +1087,15 @@ public class City{
 			} else if (currentResource == RESOURCE.CEDAR || currentResource == RESOURCE.OAK || currentResource == RESOURCE.EBONY) {
 				this.lumberCount += 3;
 			} else if (currentResource == RESOURCE.CORN || currentResource == RESOURCE.DEER) {
-				this.dailyGrowth += 3;
+				this.dailyGrowth += 5;
 			} else if (currentResource == RESOURCE.WHEAT || currentResource == RESOURCE.RICE ||
 				currentResource == RESOURCE.PIG || currentResource == RESOURCE.BEHEMOTH ||
 				currentResource == RESOURCE.COBALT) {
-				this.dailyGrowth += 5;
-			} else if (currentResource == RESOURCE.MANA_STONE) {
 				this.dailyGrowth += 10;
-			} else if (currentResource == RESOURCE.MITHRIL) {
+			} else if (currentResource == RESOURCE.MANA_STONE) {
 				this.dailyGrowth += 15;
+			} else if (currentResource == RESOURCE.MITHRIL) {
+				this.dailyGrowth += 25;
 			}
 		}
 	}
@@ -1909,6 +1909,7 @@ public class City{
 			HexTile currentTile = this.ownedTiles[i];
 			currentTile.ResetTile();
 		}
+		GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		EventManager.Instance.onRecruitCitizensForExpansion.RemoveListener(DonateCitizensToExpansion);

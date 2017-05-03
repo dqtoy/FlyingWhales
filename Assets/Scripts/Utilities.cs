@@ -67,38 +67,43 @@ public class Utilities : MonoBehaviour {
 
 		{BIOMES.GRASSLAND, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.RICE, RESOURCE.DEER, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL, RESOURCE.COBALT}, 
-			new int[] {100, 20, 40, 20, 60, 35, 5, 5})
+//			new int[] {100, 20, 40, 20, 60, 35, 5, 5})
+			new int[] {100, 20, 40, 20, 60, 35, 0, 0})
 
 		},
 
 		{BIOMES.WOODLAND, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.COBALT}, 
-			new int[] {40, 12, 65, 25, 90, 22, 60, 12, 5, 5})
+//			new int[] {40, 12, 65, 25, 90, 22, 60, 12, 5, 5})
+			new int[] {40, 12, 65, 25, 90, 22, 60, 12, 0, 0})
 
 		},
 
 
 		{BIOMES.FOREST, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.EBONY, RESOURCE.DEER, RESOURCE.BEHEMOTH, RESOURCE.MANA_STONE, RESOURCE.MITHRIL, RESOURCE.GOLD}, 
-			new int[] {15, 40, 15, 12, 8, 8})
+//			new int[] {15, 40, 15, 12, 8, 8})
+			new int[] {15, 40, 15, 0, 0, 0})
 
 		},
 
 		{BIOMES.DESERT, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.SLATE, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT, RESOURCE.GOLD}, 
-			new int[] {20, 20, 15, 15, 10, 10, 10})
-
+//			new int[] {20, 20, 15, 15, 10, 10, 10})
+			new int[] {20, 20, 15, 15, 0, 0, 0})
 		},
 
 		{BIOMES.TUNDRA, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.GOLD}, 
-			new int[] {50, 15, 10, 25, 10, 5, 5})
+//			new int[] {50, 15, 10, 25, 10, 5, 5})
+			new int[] {50, 15, 10, 25, 10, 0, 0})
 				
 		},
 
 		{BIOMES.SNOW, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT}, 
-			new int[] {15, 5, 15, 5, 5, 3, 3})
+//			new int[] {15, 5, 15, 5, 5, 3, 3})
+			new int[] {15, 5, 15, 5, 5, 0, 0})
 
 		},
 

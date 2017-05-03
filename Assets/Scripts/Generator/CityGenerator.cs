@@ -164,14 +164,22 @@ public class CityGenerator : MonoBehaviour {
 	}
 
 
-	public void CreateNewCity(HexTile hexTile, Kingdom kingdom){
+	public City CreateNewCity(HexTile hexTile, Kingdom kingdom){
 		hexTile.city = new City (hexTile, kingdom);
 		hexTile.GetComponent<SpriteRenderer> ().color = kingdom.kingdomColor;
-		kingdom.cities.Add (hexTile.city);
+		kingdom.AddCityToKingdom(hexTile.city);
 		hexTile.ShowNamePlate();
+		if (hexTile.gameObject.GetComponent<CityTaskManager> () != null) {
+			Destroy (hexTile.gameObject.GetComponent<CityTaskManager> ());
+		}
+		if (hexTile.gameObject.GetComponent<PandaBehaviour> () != null) {
+			Destroy (hexTile.gameObject.GetComponent<PandaBehaviour> ());
+		}
+
 		hexTile.gameObject.AddComponent<CityTaskManager>();
 		hexTile.gameObject.AddComponent<PandaBehaviour>();
 		hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
 		hexTile.gameObject.GetComponent<PandaBehaviour>().Compile (cityBehaviourTree.text);
+		return hexTile.city;
 	}
 }

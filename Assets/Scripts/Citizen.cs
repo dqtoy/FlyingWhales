@@ -311,21 +311,21 @@ public class Citizen {
 	protected void AttemptToAge(){
 		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.days == this.birthWeek && GameManager.Instance.year > this.birthYear){
 			this.age += 1;
-			if (this.gender == GENDER.MALE) {
-				if (this.age >= 16 && !this.isMarried) {
-					this.citizenChances.marriageChance += 2;
-					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.MARRIAGE_INVITATION).Count <= 0) {
-						this.AttemptToMarry ();
-					}
-				}
-			} else {
-				if (this.isKing && this.age >= 16 && !this.isMarried) {
-					this.citizenChances.marriageChance += 2;
-					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.MARRIAGE_INVITATION).Count <= 0) {
-						this.AttemptToMarry ();
-					}
-				}
-			}
+//			if (this.gender == GENDER.MALE) {
+//				if (this.age >= 16 && !this.isMarried) {
+//					this.citizenChances.marriageChance += 2;
+//					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.MARRIAGE_INVITATION).Count <= 0) {
+//						this.AttemptToMarry ();
+//					}
+//				}
+//			} else {
+//				if (this.isKing && this.age >= 16 && !this.isMarried) {
+//					this.citizenChances.marriageChance += 2;
+//					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.MARRIAGE_INVITATION).Count <= 0) {
+//						this.AttemptToMarry ();
+//					}
+//				}
+//			}
 
 			if (this.miscTraits.Contains(MISC_TRAIT.AMBITIOUS)) {
 				if (this.isPretender ||
@@ -393,14 +393,14 @@ public class Citizen {
 	}
 	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		if(!this.isDead){
-			GameManager.Instance.StartCoroutine (this.DeathCoroutine (reason, isDethroned, newKing, isConquered));
+			DeathCoroutine (reason, isDethroned, newKing, isConquered);
 			EventManager.Instance.onUpdateUI.Invoke();
 		}
 //		DeathCoroutine(reason, isDethroned, newKing, isConquered);
 	}
-	internal IEnumerator DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
+	internal void DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		//		this.kingdom.royaltyList.allRoyalties.Remove (this);
-		yield return null;
+//		yield return null;
 		Debug.LogError("DEATH: " + this.name + " of " + this.city.name);
 		DeathHistory(reason);
 		this.isDead = true;

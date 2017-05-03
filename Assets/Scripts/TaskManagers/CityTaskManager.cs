@@ -24,20 +24,8 @@ public class CityTaskManager : MonoBehaviour {
 			Task.current.Succeed ();
 		} else {
 			List<HexTile> elligibleTiles = new List<HexTile> ();
-			List<HexTile> tilesInRange = new List<HexTile> ();
 			for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-				tilesInRange = this.city.ownedTiles [i].GetTilesInRange (6.5f);
-				try{
-					if (tilesInRange.Where (x => x.elevationType != ELEVATION.WATER && !x.isOwned && !x.isHabitable).Count() > 0) {
-						elligibleTiles.AddRange(tilesInRange.Where (x => x.elevationType != ELEVATION.WATER && !x.isOwned && !x.isHabitable));
-					}
-				}catch(System.NullReferenceException e){
-					for (int j = 0; j < tilesInRange.Count; j++) {
-						Debug.Log (tilesInRange [j]);
-					}
-					GameManager.Instance.isPaused = true;
-				}
-
+				elligibleTiles.AddRange(this.city.ownedTiles [i].GetTilesInRange (6.5f).Where (x => x.elevationType != ELEVATION.WATER && !x.isOwned && !x.isHabitable));
 			}
 			elligibleTiles.Distinct ();
 
@@ -111,6 +99,13 @@ public class CityTaskManager : MonoBehaviour {
 
 	[Task]
 	private void BuyNextTile(){
+		if (this.targetHexTileToPurchase.isOwned) {
+			this.targetHexTileToPurchase = null;
+			this.pathToTargetHexTile.Clear();
+			Task.current.Fail();
+			return;
+		}
+
 		HexTile tileToBuy = null;
 		if (this.pathToTargetHexTile.Count > 0) {
 			int tileToBuyIndex = 0;
@@ -121,6 +116,12 @@ public class CityTaskManager : MonoBehaviour {
 					tileToBuyIndex = i;
 					break;
 				}
+			}
+			if (tileToBuy == null) {
+				this.targetHexTileToPurchase = null;
+				this.pathToTargetHexTile.Clear();
+				Task.current.Fail();
+				return;
 			}
 			this.city.PurchaseTile (tileToBuy);
 			this.city.AdjustResources (this.GetActionCost ("EXPANSION"));
