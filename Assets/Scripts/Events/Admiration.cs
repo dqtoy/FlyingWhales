@@ -68,7 +68,7 @@ public class Admiration : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
-				" Admiration between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended great.",
+				this.kingdom1.king.name +  " admired " + this.kingdom2.king.name + ".",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
@@ -76,7 +76,7 @@ public class Admiration : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
-				" Admiration between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended great.",
+				this.kingdom1.king.name +  " admired " + this.kingdom2.king.name + ".",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
@@ -89,7 +89,7 @@ public class Admiration : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
-				" Admiration between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended horribly.",
+				this.kingdom1.king.name +  " did not admire " + this.kingdom2.king.name + ".",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
@@ -97,7 +97,7 @@ public class Admiration : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
-				" Admiration between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended horribly.",
+				this.kingdom1.king.name +  " did not admire " + this.kingdom2.king.name + ".",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));

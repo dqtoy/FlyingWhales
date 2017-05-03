@@ -235,7 +235,7 @@ public class DiplomaticCrisis : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
-				" A diplomatic crisis between " + this.kingdom1.name +  " " + this.kingdom2.name + " was resolved peacefully.",
+				this.kingdom1.king.name +  " did not hate " + this.kingdom2.king.name + ".",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
@@ -243,7 +243,7 @@ public class DiplomaticCrisis : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
-				" A diplomatic crisis between " + this.kingdom2.name +  " " + this.kingdom1.name + " was resolved peacefully.",
+				this.kingdom1.king.name +  " did not hate " + this.kingdom2.king.name + ".",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
@@ -258,7 +258,7 @@ public class DiplomaticCrisis : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
-				" A diplomatic crisis between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended horribly.",
+				this.kingdom1.king.name +  " hated " + this.kingdom2.king.name + ".",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
@@ -266,7 +266,7 @@ public class DiplomaticCrisis : GameEvent {
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
-				" A diplomatic crisis between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended horribly.",
+				this.kingdom1.king.name +  " hated " + this.kingdom2.king.name + ".",
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
