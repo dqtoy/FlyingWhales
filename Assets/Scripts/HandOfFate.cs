@@ -29,7 +29,7 @@ public class HandOfFate : MonoBehaviour {
 		Task.current.Succeed();
 	}
 	[Task]
-	public void CantCreateEvent(){
+	public void CannotCreateEvent(){
 		Task.current.Fail();
 	}
 	[Task]

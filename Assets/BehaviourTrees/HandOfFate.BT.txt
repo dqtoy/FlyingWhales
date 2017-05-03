@@ -2,7 +2,7 @@ tree("Root")
 	sequence
 		random 30 70
 			CanCreateEvent
-			CantCreateEvent
+			CannotCreateEvent
 		SetFirstRandomKingdom
 		SetSecondRandomKingdom
 		SetCompatibilityValue
