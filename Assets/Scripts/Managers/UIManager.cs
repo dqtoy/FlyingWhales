@@ -207,7 +207,7 @@ public class UIManager : MonoBehaviour {
 	private int currentMarriageHistoryIndex;
 	private Citizen currentlyShowingCitizen;
 	internal City currentlyShowingCity;
-	private Kingdom currentlyShowingKingdom;
+	public Kingdom currentlyShowingKingdom;
 	private GameEvent currentlyShowingEvent;
 	private RelationshipKings currentlyShowingRelationship;
 	private GameObject lastClickedEventType = null;
