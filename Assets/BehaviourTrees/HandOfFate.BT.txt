@@ -6,6 +6,7 @@ tree("Root")
 		ResetValues
 		SetFirstRandomKingdom
 		SetSecondRandomKingdom
+		IsEligibleForEvent
 		SetCompatibilityValue
 		SetAdjacencyValue
 		SetEventChances

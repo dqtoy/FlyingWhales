@@ -18,7 +18,7 @@ public class Raid : GameEvent {
 
 	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy, City raidedCity, General general) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.RAID;
-		this.durationInWeeks = 3;
+		this.durationInWeeks = 15;
 		this.remainingWeeks = this.durationInWeeks;
 		this.sourceKingdom = startedBy.city.kingdom;
 		this.general = general;
