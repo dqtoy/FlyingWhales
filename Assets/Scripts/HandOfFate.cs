@@ -15,7 +15,14 @@ public class HandOfFate : MonoBehaviour {
 	public int admirationChance;
 
 	void Awake(){
-		ResetValues ();
+		this.firstKingdom = null;
+		this.secondKingdom = null;
+		this.compatibilityValue = 0;
+		this.isAdjacent = false;
+		this.raidChance = 0;
+		this.borderConflictChance = 0;
+		this.diplomaticCrisisChance = 0;
+		this.admirationChance = 0;
 	}
 	[Task]
 	public void CanCreateEvent(){
@@ -35,6 +42,7 @@ public class HandOfFate : MonoBehaviour {
 		this.borderConflictChance = 0;
 		this.diplomaticCrisisChance = 0;
 		this.admirationChance = 0;
+		Task.current.Succeed ();
 	}
 	[Task]
 	public void SetFirstRandomKingdom(){
