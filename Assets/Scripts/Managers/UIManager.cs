@@ -2367,6 +2367,10 @@ public class UIManager : MonoBehaviour {
 			return requestPeaceIcon;
 		case EVENT_TYPES.STATE_VISIT:
 			return stateVisitIcon;
+		case EVENT_TYPES.DIPLOMATIC_CRISIS:
+			return rebellionPlotIcon;
+		case EVENT_TYPES.ADMIRATION:
+			return requestPeaceIcon;
 		}
 		return assassinationIcon;
 	}
