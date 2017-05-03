@@ -32,13 +32,12 @@ namespace PathFind {
 						newPath = path.AddStep (n, d);
 						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
 					}
-//				} 
-//				else if (pathfindingMode == PATHFINDING_MODE.COMBAT){
-//					foreach (Node n in path.LastStep.CombatTiles) {
-//						d = distance (path.LastStep, n);
-//						newPath = path.AddStep (n, d);
-//						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
-//					}
+				} else if (pathfindingMode == PATHFINDING_MODE.RESOURCE_PRODUCTION) {
+					foreach (Node n in path.LastStep.PurchasableTiles) {
+						d = distance (path.LastStep, n);
+						newPath = path.AddStep (n, d);
+						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
+					}
 				} else {
 					foreach (Node n in path.LastStep.RoadTiles) {
 						d = distance (path.LastStep, n);

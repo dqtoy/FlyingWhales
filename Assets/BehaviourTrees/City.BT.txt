@@ -1,0 +1,27 @@
+tree("Root")
+	fallback
+		tree ("Expand")
+		tree ("HireSpecialCitizen")
+		tree("UpgradeGeneral")
+
+tree("Expand")
+	sequence
+		GetTargetTile
+		AddToDailyGrowthUntilFull
+		sequence
+			HasEnoughResourcesForAction("EXPANSION")
+			BuyNextTile
+			ResetDailyGrowth
+
+tree("HireSpecialCitizen")
+	sequence
+		GetNextCitizenToHire
+		HasEnoughResourcesForAction("RECRUITMENT")
+		HireCitizen
+
+tree("UpgradeGeneral")
+	sequence
+		GetGeneralToUpgrade
+		HasEnoughResourcesForAction("GENERALUP")
+		UpgradeGeneral
+		

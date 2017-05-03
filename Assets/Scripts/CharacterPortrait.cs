@@ -77,10 +77,10 @@ public class CharacterPortrait : MonoBehaviour {
 
 	void OnClick(){
 		if (onClickCharacterPortrait == null) {
-			if (citizen.father == null || citizen.mother == null) {
-				Debug.Log (citizen.name + " doesn't have a father or a mother, not showing info");
-				return;
-			}
+//			if (citizen.father == null || citizen.mother == null) {
+//				Debug.Log (citizen.name + " doesn't have a father or a mother, not showing info");
+//				return;
+//			}
 			UIManager.Instance.ShowCitizenInfo (citizen);
 		} else {
 			onClickCharacterPortrait(this.citizen);
