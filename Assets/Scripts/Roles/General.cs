@@ -58,7 +58,7 @@ public class General : Role {
 	}
 	internal void InitializeGeneral(){
 		if(this.generalAvatar == null){
-			this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.citizen.workLocation.transform) as GameObject;
+			this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
 			this.generalAvatar.transform.localPosition = Vector3.zero;
 			this.generalAvatar.GetComponent<GeneralObject>().general = this;
 			this.generalAvatar.GetComponent<GeneralObject> ().Init();

@@ -358,8 +358,6 @@ public class GeneralObject : MonoBehaviour {
 	public bool IsGeneralInsideHomeCity(){
 		if (this.general.location == this.general.citizen.city.hexTile) {
 			this.general.isGoingHome = false;
-			this.general.generalAvatar.transform.parent = this.general.citizen.workLocation.transform;
-			this.general.generalAvatar.transform.localPosition = Vector3.zero;
 			IsMyGeneralDead ();
 			return true;
 		}else{
