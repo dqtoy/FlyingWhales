@@ -21,6 +21,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public BIOMES biomeType;
 	public ELEVATION elevationType;
 
+	public int movementDays;
+
 	public City city = null;
 //	public Citizen occupant = null;
 //	public ROLE roleIntendedForTile = ROLE.UNTRAINED;
@@ -59,6 +61,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN); } }
 	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
 	public IEnumerable<HexTile> PurchasableTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER);}}
+	public IEnumerable<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER);}}
 
 	public List<HexTile> elligibleNeighbourTilesForPurchase { get { return PurchasableTiles.Where(o => !o.isOwned && !o.isHabitable).ToList(); } } 
 

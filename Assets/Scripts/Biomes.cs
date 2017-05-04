@@ -119,31 +119,37 @@ public class Biomes : MonoBehaviour {
 //			AssignHexTileToList (currentHexTile);
 			switch(currentHexTile.biomeType){
 			case BIOMES.SNOW:
+				currentHexTile.movementDays = 1;
 				Sprite snowSpriteToUse = snowTiles [Random.Range (0, snowTiles.Length)];
 				currentHexTile.SetTileSprites (snowSpriteToUse, snowLeft, snowRight, snowTopLeftCorner, snowTopRightCorner, snowLeftCorner, snowRightCorner, new Sprite[]{snowCenter, snowCenter2});
 //				currentHexTile.SetTileSprites (snowSprite, snowLeft, snowRight, snowTopLeftCorner, snowTopRightCorner, snowLeftCorner, snowRightCorner, new Sprite[]{snowCenter, snowCenter2});
 				break;
 			case BIOMES.TUNDRA:
+				currentHexTile.movementDays = 1;
 				Sprite tundraSpriteToUse = tundraTiles [Random.Range (0, tundraTiles.Length)];
 				currentHexTile.SetTileSprites (tundraSpriteToUse, tundraLeft, tundraRight, tundraTopLeftCorner, tundraTopRightCorner, tundraLeftCorner, tundraRightCorner,  new Sprite[]{tundraCenter, tundraCenter2, tundraCenter3});
 //				currentHexTile.SetTileSprites (tundraSprite, tundraLeft, tundraRight, tundraTopLeftCorner, tundraTopRightCorner, tundraLeftCorner, tundraRightCorner,  new Sprite[]{tundraCenter, tundraCenter2, tundraCenter3});
 				break;
 			case BIOMES.DESERT:
+				currentHexTile.movementDays = 1;
 				Sprite desertSpriteToUse = desertTiles [Random.Range (0, desertTiles.Length)];
 				currentHexTile.SetTileSprites (desertSpriteToUse, desertLeft, desertRight, desertTopLeftCorner, desertTopRightCorner, desertLeftCorner, desertRightCorner,  new Sprite[]{desertCenter, desertCenter2, desertCenter3, desertCenter4});
 //				currentHexTile.SetTileSprites (desertSprite, desertLeft, desertRight, desertTopLeftCorner, desertTopRightCorner, desertLeftCorner, desertRightCorner,  new Sprite[]{desertCenter, desertCenter2, desertCenter3, desertCenter4});
 				break;
 			case BIOMES.GRASSLAND:
+				currentHexTile.movementDays = 1;
 				Sprite grasslandSpriteToUse = grasslandTiles [Random.Range (0, grasslandTiles.Length)];
 				currentHexTile.SetTileSprites (grasslandSpriteToUse, grasslandLeft, grasslandRight, grasslandTopLeftCorner, grasslandTopRightCorner, grasslandLeftCorner, grasslandRightCorner, new Sprite[]{grasslandCenter, grasslandCenter2});
 //				currentHexTile.SetTileSprites (grasslandSprite, grasslandLeft, grasslandRight, grasslandTopLeftCorner, grasslandTopRightCorner, grasslandLeftCorner, grasslandRightCorner, new Sprite[]{grasslandCenter, grasslandCenter2});
 				break;
 			case BIOMES.WOODLAND:
+				currentHexTile.movementDays = 1;
 				Sprite woodlandSpriteToUse = woodlandTiles [Random.Range (0, woodlandTiles.Length)];
 				currentHexTile.SetTileSprites (woodlandSpriteToUse, woodlandLeft, woodlandRight, woodlandTopLeftCorner, woodlandTopRightCorner, woodlandLeftCorner, woodlandRightCorner, new Sprite[]{woodlandCenter, woodlandCenter2, woodlandCenter3});
 //				currentHexTile.SetTileSprites (woodlandSprite, woodlandLeft, woodlandRight, woodlandTopLeftCorner, woodlandTopRightCorner, woodlandLeftCorner, woodlandRightCorner, new Sprite[]{woodlandCenter, woodlandCenter2, woodlandCenter3});
 				break;
 			case BIOMES.FOREST:
+				currentHexTile.movementDays = 1;
 				Sprite forestSpriteToUse = forestTiles [Random.Range (0, forestTiles.Length)];
 				currentHexTile.SetTileSprites (forestSpriteToUse, forestLeft, forestRight, forestTopLeftCorner, forestTopRightCorner, forestLeftCorner, forestRightCorner, new Sprite[]{forestCenter, forestCenter2, forestCenter3});
 //				currentHexTile.SetTileSprites (forestSprite, forestLeft, forestRight, forestTopLeftCorner, forestTopRightCorner, forestLeftCorner, forestRightCorner, new Sprite[]{forestCenter, forestCenter2, forestCenter3});
@@ -272,6 +278,7 @@ public class Biomes : MonoBehaviour {
 
 			if(elevationType == ELEVATION.WATER){
 				if(moisture <= 0.2f){
+					GridMap.Instance.listHexes[i].GetComponent<HexTile>().movementDays = 1;
 					GridMap.Instance.listHexes[i].GetComponent<HexTile>().biomeType = BIOMES.BARE;
 					GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().color = new Color(186f/255f, 154f/255f, 154f/255f);
 				}

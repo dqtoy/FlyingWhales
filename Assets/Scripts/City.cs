@@ -1664,13 +1664,13 @@ public class City{
 	}
 	internal int GetTotalAttackerStrength(ref int nearestArrival){
 		int total = 0;
-		List<General> hostiles = this.incomingGenerals.Where (x => x.assignedCampaign == CAMPAIGN.OFFENSE && x.targetCity.id == this.id).ToList();
+		List<General> hostiles = this.incomingGenerals.Where (x => x.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && x.targetCity.id == this.id).ToList();
 		if(hostiles.Count > 0){
 			int nearest = hostiles.Min (x => x.daysBeforeArrival);
 			nearestArrival = nearest;
 			List<General> nearestHostiles = hostiles.Where(x => x.daysBeforeArrival == nearest).ToList();
 			for(int i = 0; i < nearestHostiles.Count; i++){
-				if(nearestHostiles[i].assignedCampaign == CAMPAIGN.OFFENSE && nearestHostiles[i].targetCity.id == this.id){
+				if(nearestHostiles[i].assignedCampaign.campaignType == CAMPAIGN.OFFENSE && nearestHostiles[i].targetCity.id == this.id){
 					total += nearestHostiles[i].GetArmyHP ();
 				}
 			}
@@ -1916,7 +1916,7 @@ public class City{
 //		EventManager.Instance.onCitizenDiedEvent.RemoveListener(UpdateHexTileRoles);
 	}
 
-	internal void LookForNewGeneral(General general, bool hasFound = false){
+	internal void LookForNewGeneral(General general){
 		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){

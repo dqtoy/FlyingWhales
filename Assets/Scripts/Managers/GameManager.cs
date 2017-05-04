@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour {
 		TriggerRequestPeace();
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
-		EventManager.Instance.onCitizenMove.Invoke (false);
+//		EventManager.Instance.onCitizenMove.Invoke (false);
 		EventManager.Instance.onWeekEnd.Invoke();
 		BehaviourTreeManager.Instance.Tick ();
 		EventManager.Instance.onUpdateUI.Invoke();

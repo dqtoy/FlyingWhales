@@ -48,7 +48,7 @@ public class CampaignManager {
 						campaignType = CAMPAIGN.DEFENSE;
 						List<City> defenseCities = this.defenseWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
 						if(defenseCities.Count > 0){
-							defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign == CAMPAIGN.OFFENSE && y.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+							defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
 
 							int nearestArrival = -2;
 							int neededArmy = defenseCities [0].GetTotalAttackerStrength (ref nearestArrival);
@@ -90,7 +90,7 @@ public class CampaignManager {
 				}else{
 					List<City> defenseCities = this.defenseWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
 					if(defenseCities.Count > 0){
-						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign == CAMPAIGN.OFFENSE && y.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
 
 						int nearestArrival = -2;
 						int neededArmy = defenseCities [0].GetTotalAttackerStrength (ref nearestArrival);
@@ -268,21 +268,21 @@ public class CampaignManager {
 		}else{
 			Debug.Log ("Campaign Done " + doneCampaign.campaignType.ToString () + " " + doneCampaign.targetCity.name);
 			for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
-				UnregisterGenerals (doneCampaign.registeredGenerals [i], doneCampaign);
+				doneCampaign.registeredGenerals[i].UnregisterThisGeneral (null, true, true);
 			}
-			if(doneCampaign.registeredGenerals.Count > 0){
-				if(doneCampaign.campaignType == CAMPAIGN.OFFENSE){
-					if(doneCampaign.AreAllGeneralsOnRallyPoint()){
-						Debug.Log ("Will attack city now " + doneCampaign.targetCity.name);
-						doneCampaign.AttackCityNow ();
-					}
-				}else if(doneCampaign.campaignType == CAMPAIGN.DEFENSE){
-					if(doneCampaign.AreAllGeneralsOnRallyPoint()){
-						Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + doneCampaign.targetCity.name + ". START EXPIRATION.");
-						doneCampaign.expiration = Utilities.defaultCampaignExpiration;
-					}
-				}
-			}
+//			if(doneCampaign.registeredGenerals.Count > 0){
+//				if(doneCampaign.campaignType == CAMPAIGN.OFFENSE){
+//					if(doneCampaign.AreAllGeneralsOnRallyPoint()){
+//						Debug.Log ("Will attack city now " + doneCampaign.targetCity.name);
+//						doneCampaign.AttackCityNow ();
+//					}
+//				}else if(doneCampaign.campaignType == CAMPAIGN.DEFENSE){
+//					if(doneCampaign.AreAllGeneralsOnRallyPoint()){
+//						Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + doneCampaign.targetCity.name + ". START EXPIRATION.");
+//						doneCampaign.expiration = Utilities.defaultCampaignExpiration;
+//					}
+//				}
+//			}
 
 			this.MakeCityInactive (doneCampaign);
 		}
@@ -293,83 +293,90 @@ public class CampaignManager {
 		}
 	}
 	internal void UnregisterGenerals(General general, Campaign chosenCampaign){
-		if(general.targetLocation != null){
-			if(general.targetLocation.isOccupied){
-				general.targetLocation.city.incomingGenerals.Remove (general);
-			}
-		}
-		general.targetLocation = null;
-		general.warLeader = null;
-		general.campaignID = 0;
-		general.assignedCampaign = CAMPAIGN.NONE;
-		general.targetCity = null;
-		general.rallyPoint = null;
-		general.daysBeforeArrival = 0;
-		general.RerouteToHome();
+		general.UnregisterThisGeneral (null, true, true);
+//		if(general.targetLocation != null){
+//			if(general.targetLocation.isOccupied){
+//				general.targetLocation.city.incomingGenerals.Remove (general);
+//			}
+//		}
+//		general.targetLocation = null;
+//		general.warLeader = null;
+//		general.campaignID = 0;
+//		general.assignedCampaign = null;
+//		general.targetCity = null;
+//		general.rallyPoint = null;
+//		general.daysBeforeArrival = 0;
+//		general.RerouteToHome();
 
-		chosenCampaign.registeredGenerals.Remove (general);
+//		chosenCampaign.registeredGenerals.Remove (general);
 	}
 	internal HexTile GetRallyPoint(Campaign campaign){
-		City nearestCity = GetNearestCity(campaign.targetCity);
-		if(nearestCity != null){
-			return nearestCity.hexTile;
+		HexTile nearestHextile = GetHextile(campaign.targetCity);
+		if(nearestHextile != null){
+			return nearestHextile;
 		}
 		return null;
 	}
-	internal City GetNearestCity(City targetCity){
+	internal HexTile GetHextile(City targetCity){
 		if(targetCity == null){
 			return null;
 		}
-		List<City> eligibleCities = new List<City>();
-		for(int i = 0 ; i < targetCity.hexTile.connectedTiles.Count; i++){
-			if(targetCity.hexTile.connectedTiles[i].isOccupied){
-				City chosenCity = this.leader.city.kingdom.SearchForCityById (targetCity.hexTile.connectedTiles [i].city.id);
-				if(chosenCity != null){
-					eligibleCities.Add(chosenCity);
-				}
-			}
-		}
-
-		if(eligibleCities.Count > 0){
-			City nearest = eligibleCities[0];
-			Debug.Log (nearest.name + " NEAREST");
-			for(int i = 1; i < eligibleCities.Count; i++){
-				Debug.Log ("GETTING PATH FOR " + eligibleCities [i].name);
-				if(nearest != null){
-					Debug.Log ("GETTING PATH FOR " + nearest.name);
-				}else{
-					Debug.Log ("GETTING PATH FOR null nearest");
-				}
-
-				List<HexTile> path1 = PathGenerator.Instance.GetPath(eligibleCities[i].hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
-				List<HexTile> path2 = PathGenerator.Instance.GetPath(nearest.hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
-
-				if(path1 == null || path2 == null){
-					if (path1 != null && path2 == null) {
-						Debug.Log ("NO PATH FOR NEAREST " + nearest.name);
-						nearest = eligibleCities [i];
-					}else if (path1 == null && path2 != null) {
-						Debug.Log ("NO PATH FOR ELIGIBLE CITY " + eligibleCities[i].name);
-					}else if(path1 == null && path2 == null){
-						Debug.Log ("NO PATH FOR BOTH " + eligibleCities[i].name + " and " + nearest.name);
-						nearest = null;
-					}
-				}else{
-					Debug.Log ("HAS PATH FOR BOTH " + eligibleCities[i].name + " and " + nearest.name);
-					if(path1.Count < path2.Count){
-						nearest = eligibleCities[i];
-					}
-				}
-			}
-			if(nearest != null){
-				Debug.Log (nearest.name + " NEAREST");
-			}else{
-				Debug.Log ("null NEAREST");
-			}
-			return nearest;
+		List<HexTile> tilesInRange = targetCity.hexTile.GetTilesInRange (7f).Where(x => x.elevationType != ELEVATION.WATER).ToList();
+		if(tilesInRange.Count > 0){
+			return tilesInRange [UnityEngine.Random.Range (0, tilesInRange.Count)];
 		}else{
 			return null;
 		}
+//		List<City> eligibleCities = new List<City>();
+//		for(int i = 0 ; i < targetCity.hexTile.connectedTiles.Count; i++){
+//			if(targetCity.hexTile.connectedTiles[i].isOccupied){
+//				City chosenCity = this.leader.city.kingdom.SearchForCityById (targetCity.hexTile.connectedTiles [i].city.id);
+//				if(chosenCity != null){
+//					eligibleCities.Add(chosenCity);
+//				}
+//			}
+//		}
+//
+//		if(eligibleCities.Count > 0){
+//			City nearest = eligibleCities[0];
+//			Debug.Log (nearest.name + " NEAREST");
+//			for(int i = 1; i < eligibleCities.Count; i++){
+//				Debug.Log ("GETTING PATH FOR " + eligibleCities [i].name);
+//				if(nearest != null){
+//					Debug.Log ("GETTING PATH FOR " + nearest.name);
+//				}else{
+//					Debug.Log ("GETTING PATH FOR null nearest");
+//				}
+//
+//				List<HexTile> path1 = PathGenerator.Instance.GetPath(eligibleCities[i].hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+//				List<HexTile> path2 = PathGenerator.Instance.GetPath(nearest.hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+//
+//				if(path1 == null || path2 == null){
+//					if (path1 != null && path2 == null) {
+//						Debug.Log ("NO PATH FOR NEAREST " + nearest.name);
+//						nearest = eligibleCities [i];
+//					}else if (path1 == null && path2 != null) {
+//						Debug.Log ("NO PATH FOR ELIGIBLE CITY " + eligibleCities[i].name);
+//					}else if(path1 == null && path2 == null){
+//						Debug.Log ("NO PATH FOR BOTH " + eligibleCities[i].name + " and " + nearest.name);
+//						nearest = null;
+//					}
+//				}else{
+//					Debug.Log ("HAS PATH FOR BOTH " + eligibleCities[i].name + " and " + nearest.name);
+//					if(path1.Count < path2.Count){
+//						nearest = eligibleCities[i];
+//					}
+//				}
+//			}
+//			if(nearest != null){
+//				Debug.Log (nearest.name + " NEAREST");
+//			}else{
+//				Debug.Log ("null NEAREST");
+//			}
+//			return nearest;
+//		}else{
+//			return null;
+//		}
 	}
 	internal CAMPAIGN GetTypeOfCampaign(){
 		int noOfOffenseCampaigns = 0;
@@ -530,56 +537,56 @@ public class CampaignManager {
 		return (int)percentage;
 	}
 
-	internal void GeneralHasArrived(General general){
-		if (general.generalAvatar != null) {
-			GameObject.Destroy (general.generalAvatar);
-			general.generalAvatar = null;
-		}
-		general.targetLocation = null;
-		if (general.isGoingHome) {
-			if(general.citizen.isDead){
-				general.citizen.city.LookForNewGeneral (general);
-			}else{
-				general.citizen.city.LookForLostArmy (general);
-			}
-		} else {
-			Campaign chosenCampaign = SearchCampaignByID (general.campaignID);
-			if (chosenCampaign != null) {
-				if (chosenCampaign.campaignType == CAMPAIGN.OFFENSE) {
-					if (general.location == chosenCampaign.rallyPoint) {
-						Debug.Log (general.citizen.name + " has arrived at rally point " + chosenCampaign.rallyPoint.tileName);
-						if (chosenCampaign.AreAllGeneralsOnRallyPoint()) {
-							Debug.Log ("Will attack city now " + chosenCampaign.targetCity.name);
-							chosenCampaign.AttackCityNow();
-						}
-					} else if (general.location == chosenCampaign.targetCity.hexTile) {
-						//InitiateBattle
-						Debug.Log (general.citizen.name + " has arrived at target city " + chosenCampaign.targetCity.name);
-						CombatManager.Instance.CityBattle (chosenCampaign.targetCity);
-//				((General)general.assignedRole).inAction = false;
-
-						//If army is alive but no general, after task immediately return home
-//				if(general.isDead){
-//					((General)general.assignedRole).UnregisterThisGeneral (chosenCampaign);
+//	internal void GeneralHasArrived(General general){
+//		if (general.generalAvatar != null) {
+//			GameObject.Destroy (general.generalAvatar);
+//			general.generalAvatar = null;
+//		}
+//		general.targetLocation = null;
+//		if (general.isGoingHome) {
+//			if(general.citizen.isDead){
+//				general.citizen.city.LookForNewGeneral (general);
+//			}else{
+//				general.citizen.city.LookForLostArmy (general);
+//			}
+//		} else {
+//			Campaign chosenCampaign = general.assignedCampaign.leader.campaignManager.SearchCampaignByID(general.assignedCampaign.id);
+//			if (chosenCampaign != null) {
+//				if (chosenCampaign.campaignType == CAMPAIGN.OFFENSE) {
+//					if (general.location == chosenCampaign.rallyPoint) {
+//						Debug.Log (general.citizen.name + " has arrived at rally point " + chosenCampaign.rallyPoint.tileName);
+//						if (chosenCampaign.AreAllGeneralsOnRallyPoint()) {
+//							Debug.Log ("Will attack city now " + chosenCampaign.targetCity.name);
+//							chosenCampaign.AttackCityNow();
+//						}
+//					} else if (general.location == chosenCampaign.targetCity.hexTile) {
+//						//InitiateBattle
+//						Debug.Log (general.citizen.name + " has arrived at target city " + chosenCampaign.targetCity.name);
+//						CombatManager.Instance.CityBattle (chosenCampaign.targetCity);
+////				((General)general.assignedRole).inAction = false;
+//
+//						//If army is alive but no general, after task immediately return home
+////				if(general.isDead){
+////					((General)general.assignedRole).UnregisterThisGeneral (chosenCampaign);
+////				}
+//					}
+//				} else {
+//					if (general.location == chosenCampaign.targetCity.hexTile) {
+//						//InitiateDefense
+////				((General)general.assignedRole).inAction = false;
+//						Debug.Log (general.citizen.name + " has arrived at defense target city " + chosenCampaign.targetCity.name);
+//						if (chosenCampaign.expiration == -1) {
+//							if (chosenCampaign.AreAllGeneralsOnDefenseCity()) {
+//								Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + chosenCampaign.targetCity.name + ". START EXPIRATION.");
+//								chosenCampaign.expiration = Utilities.defaultCampaignExpiration;
+//							}
+//						}
+//					}
 //				}
-					}
-				} else {
-					if (general.location == chosenCampaign.targetCity.hexTile) {
-						//InitiateDefense
-//				((General)general.assignedRole).inAction = false;
-						Debug.Log (general.citizen.name + " has arrived at defense target city " + chosenCampaign.targetCity.name);
-						if (chosenCampaign.expiration == -1) {
-							if (chosenCampaign.AreAllGeneralsOnDefenseCity()) {
-								Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + chosenCampaign.targetCity.name + ". START EXPIRATION.");
-								chosenCampaign.expiration = Utilities.defaultCampaignExpiration;
-							}
-						}
-					}
-				}
-			}
-		}
-		general.isGoingHome = false;
-	}
+//			}
+//		}
+//		general.isGoingHome = false;
+//	}
 	internal Campaign SearchCampaignByID(int id){
 		for(int i = 0; i < this.activeCampaigns.Count; i++){
 			if(this.activeCampaigns[i].id == id){

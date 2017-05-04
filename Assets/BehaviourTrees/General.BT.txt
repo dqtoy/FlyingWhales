@@ -1,0 +1,40 @@
+tree("Root")
+	fallback
+		not IsThereGeneral
+		tree("Campaign")
+		repeat
+			Idle
+
+tree("Campaign")
+	fallback
+		sequence
+			HasCampaign
+			HasCampaignLeader
+			HasTargetCityOrNotConquered
+			tree("Move")
+			tree("SearchForTarget")
+		tree("SearchForTarget")
+		IsGeneralInHome
+		sequence
+			IsGoingHome
+			tree("Move")
+		ReturnToHome
+
+tree("Move")
+	fallback
+		tree("Arrival")
+		HasCollidedWithHostileGeneral
+		MoveToNextTile
+
+tree("Arrival")
+	fallback
+		HasArrivedHome
+		HasArrivedAttackTargetCity
+		HasArrivedDefenseTargetCity
+		HasArrivedRallyPoint
+
+tree("SearchForTarget")
+	sequence
+		IsSearchingForTarget
+		FindTarget
+		KillTarget

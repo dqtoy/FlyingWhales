@@ -10,10 +10,11 @@ public class General : Role {
 	public HexTile rallyPoint;
 	public List<HexTile> roads;
 	public Army army;
-	public Citizen warLeader;
-	public int campaignID;
-	public CAMPAIGN assignedCampaign;
-	public WAR_TYPE warType;
+//	public Citizen warLeader;
+//	public int campaignID;
+//	public CAMPAIGN assignedCampaign;
+	public Campaign assignedCampaign;
+//	public WAR_TYPE warType;
 	public int daysBeforeArrival;
 	public int daysBeforeReleaseTask;
 	public bool isOnTheWay;
@@ -26,18 +27,20 @@ public class General : Role {
 	public bool isGoingHome;
 
 	internal Citizen target;
-	private int daysCounter = 0;
+	public int daysCounter = 0;
+	public int daysBeforeMoving;
 
 	public General(Citizen citizen): base(citizen){
 		this.location = citizen.city.hexTile;
+		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
 		this.targetLocation = null;
 		this.targetCity = null;
 		this.rallyPoint = null;
-		this.warLeader = null;
+//		this.warLeader = null;
 		this.army = new Army (GetInitialArmyHp());
-		this.campaignID = 0;
-		this.assignedCampaign = CAMPAIGN.NONE;
-		this.warType = WAR_TYPE.NONE;
+//		this.campaignID = 0;
+		this.assignedCampaign = null;
+//		this.warType = WAR_TYPE.NONE;
 		this.isOnTheWay = false;
 		this.daysBeforeArrival = 0;
 		this.daysBeforeReleaseTask = 0;
@@ -48,10 +51,10 @@ public class General : Role {
 		this.unsuccessfulRaids = 0;
 		this.inAction = false;
 		this.isGoingHome = false;
-		EventManager.Instance.onCitizenMove.AddListener (Move);
+//		EventManager.Instance.onCitizenMove.AddListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.AddListener (RegisterOnCampaign);
-		EventManager.Instance.onDeathArmy.AddListener (DeathArmy);
 		EventManager.Instance.onLookForLostArmies.AddListener (JoinArmyTo);
+		InitializeGeneral ();
 	}
 	internal void InitializeGeneral(){
 		if(this.generalAvatar == null){
@@ -89,8 +92,7 @@ public class General : Role {
 	}
 	internal void RerouteToHome(){
 		if(this.location != this.citizen.city.hexTile){
-			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.citizen.city.hexTile, PATHFINDING_MODE.NORMAL);
-
+			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.citizen.city.hexTile, PATHFINDING_MODE.COMBAT);
 			if(path != null){
 				this.roads.Clear ();
 				this.roads = path;
@@ -101,19 +103,18 @@ public class General : Role {
 					this.generalAvatar.transform.localPosition = Vector3.zero;
 					this.generalAvatar.GetComponent<GeneralObject> ().general = this;
 					this.generalAvatar.GetComponent<GeneralObject> ().Init ();
-				}else{
+				} else {
 					this.generalAvatar.transform.parent = this.location.transform;
 					this.generalAvatar.transform.localPosition = Vector3.zero;
 				}
 				Debug.Log (this.citizen.name + " IS GOING HOME!");
 			}
-
 		}
 	}
-	internal void UnregisterThisGeneral(Campaign campaign, bool isRerouteToHome = true){
+	internal void UnregisterThisGeneral(Campaign campaign, bool isRerouteToHome = true, bool isBulk = false){
 		if(campaign == null){
-			if(this.warLeader != null){
-				campaign = this.warLeader.campaignManager.SearchCampaignByID (this.campaignID);
+			if(this.assignedCampaign.leader != null){
+				campaign = this.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.assignedCampaign.id);
 			}
 		}
 
@@ -125,9 +126,7 @@ public class General : Role {
 				}
 			}
 			this.targetLocation = null;
-			this.warLeader = null;
-			this.campaignID = 0;
-			this.assignedCampaign = CAMPAIGN.NONE;
+			this.assignedCampaign = null;
 			this.targetCity = null;
 			this.rallyPoint = null;
 			this.daysBeforeArrival = 0;
@@ -135,21 +134,28 @@ public class General : Role {
 			if(isRerouteToHome){
 				RerouteToHome ();
 			}
-			if(campaign.registeredGenerals.Count <= 0){
-				campaign.leader.campaignManager.CampaignDone (campaign);
-			}else{
-				if(campaign.campaignType == CAMPAIGN.OFFENSE){
-					if(campaign.AreAllGeneralsOnRallyPoint()){
-						Debug.Log ("Will attack city now " + campaign.targetCity.name);
-						campaign.AttackCityNow ();
-					}
-				}else if(campaign.campaignType == CAMPAIGN.DEFENSE){
-					if(campaign.AreAllGeneralsOnRallyPoint()){
-						Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + campaign.targetCity.name + ". START EXPIRATION.");
-						campaign.expiration = Utilities.defaultCampaignExpiration;
+			if(!isBulk){
+				if(campaign.registeredGenerals.Count <= 0){
+					campaign.leader.campaignManager.CampaignDone (campaign);
+				}else{
+					if(campaign.campaignType == CAMPAIGN.OFFENSE){
+						if(campaign.AreAllGeneralsOnRallyPoint()){
+							Debug.Log ("Will attack city now " + campaign.targetCity.name);
+							campaign.AttackCityNow ();
+						}
+					}else if(campaign.campaignType == CAMPAIGN.DEFENSE){
+						if(campaign.AreAllGeneralsOnDefenseCity()){
+							Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + campaign.targetCity.name + ". START EXPIRATION.");
+							campaign.expiration = Utilities.defaultCampaignExpiration;
+						}
 					}
 				}
+			}else{
+				if(campaign.registeredGenerals.Count <= 0){
+					campaign.leader.campaignManager.CampaignDone (campaign);
+				}
 			}
+
 		}
 	}
 	internal void RegisterOnCampaign(Campaign campaign){
@@ -335,13 +341,13 @@ public class General : Role {
 		}
 		Debug.Log (this.citizen.name +  " Target Location: " + this.targetLocation.tileName + " Campaign Type: " + chosenCampaign.campaignType.ToString());
 
-		this.warLeader = chosenCampaign.leader;
-		this.campaignID = chosenCampaign.id;
-		this.assignedCampaign = chosenCampaign.campaignType;
-		this.warType = chosenCampaign.warType;
+//		this.warLeader = chosenCampaign.leader;
+//		this.campaignID = chosenCampaign.id;
+		this.assignedCampaign = chosenCampaign;
+//		this.warType = chosenCampaign.warType;
 		this.targetCity = chosenCampaign.targetCity;
 		this.rallyPoint = chosenCampaign.rallyPoint;
-		this.daysBeforeArrival = path.Count;
+		this.daysBeforeArrival = path.Sum(x => x.movementDays);
 		this.roads.Clear ();
 		this.roads = path;
 		this.inAction = true;
@@ -359,84 +365,85 @@ public class General : Role {
 			this.generalAvatar.transform.localPosition = Vector3.zero;
 			this.generalAvatar.GetComponent<GeneralObject>().general = this;
 			this.generalAvatar.GetComponent<GeneralObject> ().Init();
+			this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
 		}else{
 			this.generalAvatar.transform.parent = this.location.transform;
 			this.generalAvatar.transform.localPosition = Vector3.zero;
+			this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
+
 		}
 	
 
 
 	}
-	internal void SearchForTarget(){
-		Debug.Log (this.citizen.name + " instructed by " + this.warLeader.name + " is searching for " + this.target.name);
-		this.daysCounter += 1;
-		if(this.daysCounter <= 8){
-			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < (5 * this.daysCounter)){
-				//FOUND TARGET
-				Debug.Log("TARGET FOUND: " + target.name + ". He/She will be killed.");
-				if(target.isHeir){
-					target.Death (DEATH_REASONS.REBELLION, false, this.warLeader, false);
-				}else{
-					target.Death (DEATH_REASONS.TREACHERY, false,  this.warLeader, false);
-				}
-
-			}else{
-				if(this.daysCounter == 8){
-					//FOUND TARGET
-					Debug.Log("TARGET FOUND: " + target.name + ". He/She will be killed.");
-					if(target.isHeir){
-						target.Death (DEATH_REASONS.REBELLION, false, this.warLeader, false);
-					}else{
-						target.Death (DEATH_REASONS.TREACHERY, false, this.warLeader, false);
-					}
-
-				}
-			}
-			if(this.daysCounter == 8){
-				this.daysCounter = 0;
-				Campaign campaign = this.warLeader.campaignManager.SearchCampaignByID (this.campaignID);
-				if(campaign != null){
-					campaign.leader.campaignManager.CampaignDone (campaign);
-				}
-				EventManager.Instance.onWeekEnd.RemoveListener (this.SearchForTarget);
-			}
-		}
-	}
-	internal void Move(bool isFast = false){
-		if(this.targetLocation != null){
-			if(this.roads != null){
-				if(this.roads.Count > 0){
-					if (this.generalAvatar != null) {
-						this.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.location, this.roads [0]);
-					}
-					this.location = this.roads[0];
-					this.roads.RemoveAt (0);
-					this.daysBeforeArrival -= 1;
-					if(this.location == this.targetLocation){
-						if(this.warLeader != null){
-							this.warLeader.campaignManager.GeneralHasArrived (this);
-						}
-						return;
-					}
-				}
-			}
-			if(!isFast){
-				if(!this.citizen.isDead){
-					if(this.citizen.miscTraits.Contains(MISC_TRAIT.FAST)){
-						Move (true);
-					}
-				}
-			}
-
-
-		}
-	}
+//	internal void SearchForTarget(){
+//		Debug.Log (this.citizen.name + " instructed by " + this.warLeader.name + " is searching for " + this.target.name);
+//		this.daysCounter += 1;
+//		if(this.daysCounter <= 8){
+//			int chance = UnityEngine.Random.Range (0, 100);
+//			if(chance < (5 * this.daysCounter)){
+//				//FOUND TARGET
+//				Debug.Log("TARGET FOUND: " + target.name + ". He/She will be killed.");
+//				if(target.isHeir){
+//					target.Death (DEATH_REASONS.REBELLION, false, this.warLeader, false);
+//				}else{
+//					target.Death (DEATH_REASONS.TREACHERY, false,  this.warLeader, false);
+//				}
+//
+//			}else{
+//				if(this.daysCounter == 8){
+//					//FOUND TARGET
+//					Debug.Log("TARGET FOUND: " + target.name + ". He/She will be killed.");
+//					if(target.isHeir){
+//						target.Death (DEATH_REASONS.REBELLION, false, this.warLeader, false);
+//					}else{
+//						target.Death (DEATH_REASONS.TREACHERY, false, this.warLeader, false);
+//					}
+//
+//				}
+//			}
+//			if(this.daysCounter == 8){
+//				this.daysCounter = 0;
+//				Campaign campaign = this.warLeader.campaignManager.SearchCampaignByID (this.campaignID);
+//				if(campaign != null){
+//					campaign.leader.campaignManager.CampaignDone (campaign);
+//				}
+//			}
+//		}
+//	}
+//	internal void Move(bool isFast = false){
+//		if(this.targetLocation != null){
+//			if(this.roads != null){
+//				if(this.roads.Count > 0){
+//					if (this.generalAvatar != null) {
+//						this.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.location, this.roads [0]);
+//					}
+//					this.location = this.roads[0];
+//					this.roads.RemoveAt (0);
+//					this.daysBeforeArrival -= 1;
+//					if(this.location == this.targetLocation){
+//						if(this.warLeader != null){
+//							this.warLeader.campaignManager.GeneralHasArrived (this);
+//						}
+//						return;
+//					}
+//				}
+//			}
+//			if(!isFast){
+//				if(!this.citizen.isDead){
+//					if(this.citizen.miscTraits.Contains(MISC_TRAIT.FAST)){
+//						Move (true);
+//					}
+//				}
+//			}
+//
+//
+//		}
+//	}
 
 	internal void GeneralDeath(){
-		EventManager.Instance.onCitizenMove.RemoveListener (Move);
+//		EventManager.Instance.onCitizenMove.RemoveListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
-		EventManager.Instance.onDeathArmy.RemoveListener (DeathArmy);
 		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
 
 		//					((General)this.assignedRole) = null;
@@ -451,9 +458,8 @@ public class General : Role {
 		this.citizen.city.citizens.Remove (this.citizen);
 	}
 	internal void UntrainGeneral(){
-		EventManager.Instance.onCitizenMove.RemoveListener (Move);
+//		EventManager.Instance.onCitizenMove.RemoveListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
-		EventManager.Instance.onDeathArmy.RemoveListener (DeathArmy);
 		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
 
 

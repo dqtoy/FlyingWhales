@@ -101,7 +101,7 @@ public class Campaign {
 				this.registeredGenerals[i].targetLocation = this.targetCity.hexTile;
 				this.registeredGenerals [i].roads.Clear ();
 				this.registeredGenerals [i].roads = path;
-				this.registeredGenerals [i].daysBeforeArrival = path.Count;
+				this.registeredGenerals [i].daysBeforeArrival = path.Sum(x => x.movementDays);
 
 				if(this.registeredGenerals[i].generalAvatar == null){
 					this.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.registeredGenerals [i].location.transform) as GameObject;
