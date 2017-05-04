@@ -82,6 +82,116 @@ public class EventManager : MonoBehaviour {
 		return gameEventsOfTypePerKingdom;
 	}
 
+	public List<GameEvent> GetAllEventsKingdomIsInvolvedIn(Kingdom kingdom){
+		List<GameEvent> allGameEventsInKingdom = new List<GameEvent>();
+		for (int i = 0; i < this.allEvents.Keys.Count; i++) {
+			EVENT_TYPES key = this.allEvents.Keys.ElementAt (i);
+			List<GameEvent> eventsOfType = this.allEvents[key];
+			if (eventsOfType.Count > 0) {
+				if (key == EVENT_TYPES.ADMIRATION) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						Admiration currEvent = (Admiration)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id || currEvent.kingdom1.id == kingdom.id || currEvent.kingdom2.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.ASSASSINATION) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						Assassination currEvent = (Assassination)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id || currEvent.assassinKingdom.id == kingdom.id || currEvent.targetCitizen.city.kingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.BORDER_CONFLICT) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						BorderConflict currEvent = (BorderConflict)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id || currEvent.kingdom1.id == kingdom.id || currEvent.kingdom2.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.DIPLOMATIC_CRISIS) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						DiplomaticCrisis currEvent = (DiplomaticCrisis)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id || currEvent.kingdom1.id == kingdom.id || currEvent.kingdom2.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.ESPIONAGE) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						Espionage currEvent = (Espionage)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id || currEvent.sourceKingdom.id == kingdom.id || currEvent.targetKingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.EXHORTATION) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						Exhortation currEvent = (Exhortation)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id || currEvent.targetCitizen.city.kingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.INVASION_PLAN) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						InvasionPlan currEvent = (InvasionPlan)eventsOfType [j];
+						if (currEvent.sourceKingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.JOIN_WAR_REQUEST) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						JoinWar currEvent = (JoinWar)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.MILITARIZATION) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						Militarization currEvent = (Militarization)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.POWER_GRAB) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						PowerGrab currEvent = (PowerGrab)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.RAID) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						Raid currEvent = (Raid)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id || currEvent.sourceKingdom.id == kingdom.id || currEvent.raidedCity.kingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.REQUEST_PEACE) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						RequestPeace currEvent = (RequestPeace)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.STATE_VISIT) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						StateVisit currEvent = (StateVisit)eventsOfType [j];
+						if (currEvent.startedByKingdom.id == kingdom.id || currEvent.invitedKingdom.id == kingdom.id || currEvent.inviterKingdom.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				} else if (key == EVENT_TYPES.KINGDOM_WAR) {
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						War currEvent = (War)eventsOfType [j];
+						if (currEvent.kingdom1.id == kingdom.id || currEvent.kingdom2.id == kingdom.id) {
+							allGameEventsInKingdom.Add(eventsOfType[j]);
+						}
+					}
+				}
+			}
+		}
+		return allGameEventsInKingdom;
+	}
+
 	public List<GameEvent> GetAllEventsPerCity(City city){
 		List<GameEvent> gameEventsOfCity = new List<GameEvent>();
 		for (int i = 0; i < this.allEvents.Keys.Count; i++) {

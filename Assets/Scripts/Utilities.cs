@@ -421,6 +421,28 @@ public class Utilities : MonoBehaviour {
 		return true;
 	}
 
+	public static T[] GetComponentsInDirectChildren<T>(GameObject gameObject){
+		int indexer = 0;
+
+		foreach (Transform transform in gameObject.transform){
+			if (transform.GetComponent<T>() != null){
+				indexer++;
+			}
+		}
+
+		T[] returnArray = new T[indexer];
+
+		indexer = 0;
+
+		foreach (Transform transform in gameObject.transform){
+			if (transform.GetComponent<T>() != null){
+				returnArray[indexer++] = transform.GetComponent<T>();
+			}
+		}
+
+		return returnArray;
+	}
+
 	public static bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
 		for(int i = 0; i < unwantedGovernors.Count; i++){
 			if(governor.id == unwantedGovernors[i].id){

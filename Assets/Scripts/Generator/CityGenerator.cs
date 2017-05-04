@@ -180,6 +180,7 @@ public class CityGenerator : MonoBehaviour {
 		hexTile.gameObject.AddComponent<PandaBehaviour>();
 		hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
 		hexTile.gameObject.GetComponent<PandaBehaviour>().Compile (cityBehaviourTree.text);
+		BehaviourTreeManager.Instance.allTrees.Add(hexTile.gameObject.GetComponent<PandaBehaviour> ());
 		return hexTile.city;
 	}
 }
