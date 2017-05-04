@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Panda;
 
 [System.Serializable]
 public class City{
@@ -1228,17 +1229,7 @@ public class City{
 
 	internal void CheckCityDeath(){
 		if (this.citizens.Count <= 0) {
-			this.isDead = true;
-			this.kingdom.cities.Remove(this);
-			for (int i = 0; i < this.ownedTiles.Count; i++) {
-				this.ownedTiles [i].ResetTile ();
-			}
-			this.hexTile.city = null;
-			EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
-			EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
-			EventManager.Instance.onRecruitCitizensForExpansion.RemoveListener(DonateCitizensToExpansion);
-//			EventManager.Instance.onCitizenDiedEvent.RemoveListener(UpdateHexTileRoles);
-			KingdomManager.Instance.UpdateKingdomAdjacency();
+			this.KillCity ();
 		}
 	}
 
@@ -1905,15 +1896,19 @@ public class City{
 
 	}
 	internal void KillCity(){
+		this.isDead = true;
+		this.kingdom.cities.Remove(this);
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
 			currentTile.ResetTile();
 		}
+		BehaviourTreeManager.Instance.allTrees.Remove(this.hexTile.GetComponent<PandaBehaviour>());
+		GameObject.Destroy (this.hexTile.GetComponent<PandaBehaviour> ());
 		GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
-		EventManager.Instance.onRecruitCitizensForExpansion.RemoveListener(DonateCitizensToExpansion);
-//		EventManager.Instance.onCitizenDiedEvent.RemoveListener(UpdateHexTileRoles);
+		this.hexTile.city = null;
+		KingdomManager.Instance.UpdateKingdomAdjacency();
 	}
 
 	internal void LookForNewGeneral(General general, bool hasFound = false){
