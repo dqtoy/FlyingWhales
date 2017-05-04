@@ -85,7 +85,7 @@ public class InvasionPlan : GameEvent {
 	internal void MilitarizationDone(){
 		//TODO: position generals appropriately
 		this.resolution = "Invasion plan was successful and war is now declared between " + this.sourceKingdom.name + " and " + this.targetKingdom.name;
-		KingdomManager.Instance.DeclareWarBetweenKingdoms(this.sourceKingdom, this.targetKingdom);
+		KingdomManager.Instance.DeclareWarBetweenKingdoms(this.sourceKingdom, this.targetKingdom, this);
 		this.DoneEvent();
 	}
 

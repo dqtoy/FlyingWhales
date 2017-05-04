@@ -939,7 +939,7 @@ public class City{
 	protected void CityEverydayTurnActions(){
 //		this.UpdateResourceProduction();
 		this.ProduceResources();
-		this.hexTile.GetBehaviourTree().Tick();
+//		this.hexTile.GetBehaviourTree().Tick();
 //		this.AttemptToPerformAction();
 //		this.AttemptToIncreaseArmyHP();
 //		this.UpdateTradeManager();
