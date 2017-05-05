@@ -202,6 +202,7 @@ public class CityTaskManager : MonoBehaviour {
 				General currGeneral = (General)allGenerals[i].assignedRole;
 				if (currGeneral.GetArmyHP () < (this.city.maxGeneralHP + baseGeneralHP)) {
 					this.generalToUpgrade = currGeneral;
+					break;
 				}
 			}
 			if (this.generalToUpgrade == null) {
