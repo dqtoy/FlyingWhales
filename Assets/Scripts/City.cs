@@ -906,7 +906,7 @@ public class City{
 		tileToBuy.isOccupied = true;
 		this.ownedTiles.Add(tileToBuy);
 		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);
-		tileToBuy.GetComponent<SpriteRenderer>().color = Color.clear;
+		tileToBuy.GetComponent<SpriteRenderer>().color = this.kingdom.kingdomColor;
 //		this.UpdateUnownedNeighbourTiles();
 		tileToBuy.ShowOccupiedSprite();
 		this.UpdateResourceProduction();

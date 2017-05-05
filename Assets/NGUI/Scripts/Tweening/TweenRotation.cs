@@ -66,6 +66,14 @@ public class TweenRotation : UITweener
 	[ContextMenu("Set 'To' to current value")]
 	public override void SetEndToCurrentValue () { to = value.eulerAngles; }
 
+	[ContextMenu("Reverse Values")]
+	public void ReverseValues(){
+		Vector3 currentTo = to;
+		Vector3 currentFrom = from;
+		to = currentFrom;
+		from = currentTo;
+	}
+
 	[ContextMenu("Assume value of 'From'")]
 	void SetCurrentValueToStart () { value = Quaternion.Euler(from); }
 
