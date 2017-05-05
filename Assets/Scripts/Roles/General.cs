@@ -449,9 +449,9 @@ public class General : Role {
 		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
 
 		//					((General)this.assignedRole) = null;
-		this.generalAvatar.GetComponent<GeneralObject>().RemoveBehaviourTree();
 
 		if (this.generalAvatar != null) {
+			this.generalAvatar.GetComponent<GeneralObject>().RemoveBehaviourTree();
 			GameObject.Destroy (this.generalAvatar);
 			this.generalAvatar = null;
 		}
