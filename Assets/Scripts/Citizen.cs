@@ -446,10 +446,6 @@ public class Citizen {
 				}else{
 					this.city.LookForNewGeneral((General)this.assignedRole);
 					if (this.role == ROLE.GENERAL && this.assignedRole != null) {
-						if (((General)this.assignedRole).generalAvatar != null) {
-							GameObject.Destroy (((General)this.assignedRole).generalAvatar);
-							((General)this.assignedRole).generalAvatar = null;
-						}
 						this.DetachGeneralFromCitizen ();
 					}
 				}
@@ -1480,8 +1476,16 @@ public class Citizen {
 	}
 
 	internal void DetachGeneralFromCitizen(){
-		Debug.Log (this.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");
-		General general = (General)this.assignedRole;
-		general.CreateGhostCitizen ();
+		Debug.Log (this.name + " of " + this.city.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");
+		if(this.assignedRole is General){
+			General general = (General)this.assignedRole;
+			if (general.generalAvatar != null) {
+				general.generalAvatar.GetComponent<GeneralObject> ().RemoveBehaviourTree ();
+				GameObject.Destroy (general.generalAvatar);
+				general.generalAvatar = null;
+			}
+			general.CreateGhostCitizen ();
+		}
+	
 	}
 }

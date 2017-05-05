@@ -61,8 +61,10 @@ public class HandOfFate : MonoBehaviour {
 	public void SetSecondRandomKingdom(){
 		List<Kingdom> adjacentKingdoms = this.firstKingdom.GetAdjacentKingdoms ();
 		if(adjacentKingdoms.Count > 0){
-			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 60){
+//			int chance = UnityEngine.Random.Range (0, 100);
+			int chance = UnityEngine.Random.Range (0, 2);
+			if(chance == 0){
+//			if(chance < 60){
 				this.secondKingdom = adjacentKingdoms [UnityEngine.Random.Range (0, adjacentKingdoms.Count)];
 			}else{
 				this.secondKingdom = KingdomManager.Instance.GetRandomKingdomExcept (this.firstKingdom);
