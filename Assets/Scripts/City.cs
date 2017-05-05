@@ -263,6 +263,19 @@ public class City{
 		}
 
 	}
+	internal Citizen CreateNewKing(){
+		GENDER gender = GENDER.MALE;
+		int randomGender = UnityEngine.Random.Range (0, 100);
+		if(randomGender < 20){
+			gender = GENDER.FEMALE;
+		}
+		Citizen king = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
+
+		MONTH monthKing = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		king.AssignBirthday (monthKing, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - king.age));
+
+		return king;
+	}
 	internal void CreateInitialRoyalFamily(){
 		this.kingdom.successionLine.Clear ();
 		GENDER gender = GENDER.MALE;
@@ -1814,6 +1827,8 @@ public class City{
 		List<Resource> citizenCreationCosts = new List<Resource>();
 
 		int goldCost = 500;
+//		int goldCost = 1;
+
 
 		switch (role) {
 		case ROLE.TRADER:
@@ -1913,6 +1928,7 @@ public class City{
 
 	internal void LookForNewGeneral(General general){
 		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
+		general.inAction = false;
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
 				General chosenGeneral = (General)this.citizens [i].assignedRole;
@@ -1932,6 +1948,7 @@ public class City{
 	internal void LookForLostArmy(General general){
 		Debug.Log (general.citizen.name + " IS LOOKING FOR LOST ARMIES...");
 		EventManager.Instance.onLookForLostArmies.Invoke (general);
+		general.inAction = false;
 //		List<General> deadGenerals = new List<General> ();
 //		for(int i = 0; i < this.citizens.Count; i++){
 //			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
