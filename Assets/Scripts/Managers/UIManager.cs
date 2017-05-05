@@ -2404,10 +2404,23 @@ public class UIManager : MonoBehaviour {
 		}
 
 		if (espionageParent == null && espionageEvents.Count > 0) {
-			currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
+//			currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
+//			GameObject anchorPoint = null;
+//			if (currentParents.Length > 0) {
+//				anchorPoint = currentParents[currentParents.Length - 1].anchorPoint;
+//			} else {
+//				anchorPoint = firstAnchor;
+//			}
+			Transform[] allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomEventsContentParent.gameObject);
 			GameObject anchorPoint = null;
-			if (currentParents.Length > 0) {
-				anchorPoint = currentParents[currentParents.Length - 1].anchorPoint;
+			if (allCurrentParents.Length > 0) {
+				Transform anchorParent = allCurrentParents[allCurrentParents.Length - 1];
+				if (anchorParent.GetComponent<EventListParent> () != null) {
+					anchorPoint = anchorParent.GetComponent<EventListParent>().anchorPoint;
+				} else {
+					anchorPoint = anchorParent.GetComponent<WarEventListParent>().anchorPoint;
+				}
+
 			} else {
 				anchorPoint = firstAnchor;
 			}
@@ -2420,10 +2433,23 @@ public class UIManager : MonoBehaviour {
 		}
 
 		if (stateVisitParent == null && stateVisitEvents.Count > 0) {
-			currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
+//			currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
+//			GameObject anchorPoint = null;
+//			if (currentParents.Length > 0) {
+//				anchorPoint = currentParents[currentParents.Length - 1].anchorPoint;
+//			} else {
+//				anchorPoint = firstAnchor;
+//			}
+			Transform[] allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomEventsContentParent.gameObject);
 			GameObject anchorPoint = null;
-			if (currentParents.Length > 0) {
-				anchorPoint = currentParents[currentParents.Length - 1].anchorPoint;
+			if (allCurrentParents.Length > 0) {
+				Transform anchorParent = allCurrentParents[allCurrentParents.Length - 1];
+				if (anchorParent.GetComponent<EventListParent> () != null) {
+					anchorPoint = anchorParent.GetComponent<EventListParent>().anchorPoint;
+				} else {
+					anchorPoint = anchorParent.GetComponent<WarEventListParent>().anchorPoint;
+				}
+
 			} else {
 				anchorPoint = firstAnchor;
 			}
@@ -2436,10 +2462,23 @@ public class UIManager : MonoBehaviour {
 		}
 
 		if (skirmishParent == null  && skirmishEvents.Count > 0) {
-			currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
+//			currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
+//			GameObject anchorPoint = null;
+//			if (currentParents.Length > 0) {
+//				anchorPoint = currentParents[currentParents.Length - 1].anchorPoint;
+//			} else {
+//				anchorPoint = firstAnchor;
+//			}
+			Transform[] allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomEventsContentParent.gameObject);
 			GameObject anchorPoint = null;
-			if (currentParents.Length > 0) {
-				anchorPoint = currentParents[currentParents.Length - 1].anchorPoint;
+			if (allCurrentParents.Length > 0) {
+				Transform anchorParent = allCurrentParents[allCurrentParents.Length - 1];
+				if (anchorParent.GetComponent<EventListParent> () != null) {
+					anchorPoint = anchorParent.GetComponent<EventListParent>().anchorPoint;
+				} else {
+					anchorPoint = anchorParent.GetComponent<WarEventListParent>().anchorPoint;
+				}
+
 			} else {
 				anchorPoint = firstAnchor;
 			}
@@ -2621,146 +2660,8 @@ public class UIManager : MonoBehaviour {
 				Destroy (allShowingEvents[i].gameObject);
 			}
 		}
-//		if (espionageEvents.Count > 0) {
-//			List<GameEvent> currentlyShowingEspionageEvents = kingdomEventsEspionageGrid.GetChildList().Select(x => x.GetComponent<EventListItem>().gameEvent).ToList();
-//			if (espionageEvents.Except (currentlyShowingEspionageEvents).Union(currentlyShowingEspionageEvents.Except(espionageEvents)).Count () > 0) {
-//				List<Transform> children = kingdomEventsEspionageGrid.GetChildList ();
-//				if (children.Count > 0) {
-//					for (int i = 0; i < children.Count; i++) {
-//						Destroy (children [i].gameObject);
-//					}
-//				}
-//				for (int i = 0; i < espionageEvents.Count; i++) {
-//					GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, kingdomEventsEspionageGrid.transform) as GameObject;
-//					eventGO.GetComponent<EventListItem> ().SetEvent (espionageEvents [i], currentlyShowingKingdom);
-//					eventGO.GetComponent<EventListItem> ().onClickEvent += ShowSpecificEvent;
-//					eventGO.transform.localScale = Vector3.one;
-//				}
-//				StartCoroutine (RepositionGrid (kingdomEventsEspionageGrid));
-//			}
-//		} else {
-//			List<Transform> children = kingdomEventsEspionageGrid.GetChildList ();
-//			if (children.Count > 0) {
-//				for (int i = 0; i < children.Count; i++) {
-//					Destroy (children [i].gameObject);
-//				}
-//			}
-//		}
-//
-//		if (stateVisitEvents.Count > 0) {
-//			List<GameEvent> currentlyShowingStateVisitEvents = kingdomEventsStateVisitsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem> ().gameEvent).ToList ();
-//			if (stateVisitEvents.Except (currentlyShowingStateVisitEvents).Union(currentlyShowingStateVisitEvents.Except(stateVisitEvents)).Count () > 0) {
-//				List<Transform> children = kingdomEventsStateVisitsGrid.GetChildList ();
-//				if (children.Count > 0) {
-//					for (int i = 0; i < children.Count; i++) {
-//						Destroy (children [i].gameObject);
-//					}
-//				}
-//
-//				for (int i = 0; i < stateVisitEvents.Count; i++) {
-//					GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, kingdomEventsStateVisitsGrid.transform) as GameObject;
-//					eventGO.GetComponent<EventListItem> ().SetEvent (stateVisitEvents [i], currentlyShowingKingdom);
-//					eventGO.GetComponent<EventListItem> ().onClickEvent += ShowSpecificEvent;
-//					eventGO.transform.localScale = Vector3.one;
-//				}
-//				StartCoroutine (RepositionGrid (kingdomEventsStateVisitsGrid));
-//			}
-//		} else {
-//			List<Transform> children = kingdomEventsStateVisitsGrid.GetChildList ();
-//			if (children.Count > 0) {
-//				for (int i = 0; i < children.Count; i++) {
-//					Destroy (children [i].gameObject);
-//				}
-//			}
-//		}
-//
-//		if (skirmishEvents.Count > 0) {
-//			List<GameEvent> currentlyShowingSkirmishEvents = kingdomEventsSkirmishesGrid.GetChildList ().Select (x => x.GetComponent<EventListItem> ().gameEvent).ToList ();
-//			if (skirmishEvents.Except (currentlyShowingSkirmishEvents).Union(currentlyShowingSkirmishEvents.Except(skirmishEvents)).Count () > 0) {
-//				List<Transform> children = kingdomEventsSkirmishesGrid.GetChildList ();
-//				if (children.Count > 0) {
-//					for (int i = 0; i < children.Count; i++) {
-//						Destroy (children [i].gameObject);
-//					}
-//				}
-//				for (int i = 0; i < skirmishEvents.Count; i++) {
-//					GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, kingdomEventsSkirmishesGrid.transform) as GameObject;
-//					eventGO.GetComponent<EventListItem> ().SetEvent (skirmishEvents [i], currentlyShowingKingdom);
-//					eventGO.GetComponent<EventListItem> ().onClickEvent += ShowSpecificEvent;
-//					eventGO.transform.localScale = Vector3.one;
-//				}
-//				StartCoroutine (RepositionGrid (kingdomEventsSkirmishesGrid));
-//			}
-//		} else {
-//			List<Transform> children = kingdomEventsSkirmishesGrid.GetChildList ();
-//			if (children.Count > 0) {
-//				for (int i = 0; i < children.Count; i++) {
-//					Destroy (children [i].gameObject);
-//				}
-//			}
-//		}
-//			
-//		if (warEvents.Count > 0) {
-//			List<GameEvent> currentlyShowingWarEvents = kingdomEventsContentParent.GetComponentsInChildren<EventListItem>().Select(x => x.gameEvent).Where (
-//                            x => x.eventType == EVENT_TYPES.INVASION_PLAN || x.eventType == EVENT_TYPES.JOIN_WAR_REQUEST ||
-//                            x.eventType == EVENT_TYPES.MILITARIZATION || x.eventType == EVENT_TYPES.REQUEST_PEACE ||
-//                            x.eventType == EVENT_TYPES.KINGDOM_WAR).ToList ();
-//			if (warEvents.Except (currentlyShowingWarEvents).Union (currentlyShowingWarEvents.Except (warEvents)).Count() > 0) {
-//				List<WarEventListItem> currentlyShowingKingdomWars = new List<WarEventListItem> ();
-//				for (int i = 0; i < warEvents.Count; i++) {
-//					currentlyShowingKingdomWars = kingdomEventsContentParent.GetComponentsInChildren<WarEventListItem> ().ToList ();
-//					Kingdom targetKingdom = null;
-//					EVENT_TYPES currentEventType = warEvents [i].eventType;
-//					if (currentEventType == EVENT_TYPES.INVASION_PLAN) {
-//						targetKingdom = ((InvasionPlan)warEvents [i]).targetKingdom;
-//					} else if (currentEventType == EVENT_TYPES.JOIN_WAR_REQUEST) {
-//						targetKingdom = ((JoinWar)warEvents [i]).kingdomToAttack;
-//					} else if (currentEventType == EVENT_TYPES.MILITARIZATION) {
-//						targetKingdom = ((Militarization)warEvents [i]).invasionPlanThatTriggeredEvent.targetKingdom;
-//					} else if (currentEventType == EVENT_TYPES.REQUEST_PEACE) {
-//						targetKingdom = ((RequestPeace)warEvents [i]).targetKingdom;
-//					} else if (currentEventType == EVENT_TYPES.KINGDOM_WAR) {
-//						if (((War)warEvents [i]).kingdom1.id == currentlyShowingKingdom.id) {
-//							targetKingdom = ((War)warEvents [i]).kingdom2;
-//						} else {
-//							targetKingdom = ((War)warEvents [i]).kingdom1;
-//						}
-//					}
-//
-//					UIGrid whereToPutEvent = null;
-//
-//					if (currentlyShowingKingdomWars.Select (x => x.targetKingdom.id).Contains (targetKingdom.id)) {
-//						for (int j = 0; j < currentlyShowingKingdomWars.Count; j++) {
-//							if (currentlyShowingKingdomWars [j].targetKingdom.id == targetKingdom.id) {
-//								whereToPutEvent = currentlyShowingKingdomWars [j].warEventsGrid;
-//								break;
-//							}
-//						}
-//					} else {
-//						Transform lastChild = Utilities.GetComponentsInDirectChildren<Transform> (kingdomEventsContentParent.gameObject).First ();
-//						GameObject lastContainer = lastChild.GetComponentInChildren<EnvelopContent> ().gameObject;
-//						GameObject warGO = GameObject.Instantiate (kingdomEventsWarListItemPrefab, kingdomEventsContentParent.transform) as GameObject;
-//						warGO.transform.localScale = Vector3.one;
-//						warGO.GetComponentInChildren<WarEventListItem> ().SetAnchorPoint (lastContainer);
-//						warGO.GetComponentInChildren<WarEventListItem> ().Init (targetKingdom);
-//						whereToPutEvent = warGO.GetComponentInChildren<UIGrid> ();
-//					}
-//
-//					GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, whereToPutEvent.transform) as GameObject;
-//					eventGO.GetComponent<EventListItem> ().SetEvent (warEvents [i], currentlyShowingKingdom);
-//					eventGO.GetComponent<EventListItem> ().onClickEvent += ShowSpecificEvent;
-//					eventGO.transform.localScale = Vector3.one;
-//					StartCoroutine (RepositionGrid (whereToPutEvent));
-//				}
-//			} else {
-//				WarEventListItem[] currentlyShowingKingdomWars = kingdomEventsContentParent.GetComponentsInChildren<WarEventListItem> ();
-//				for (int i = 0; i < currentlyShowingKingdomWars.Length; i++) {
-//					Destroy (currentlyShowingKingdomWars [i].gameObject);
-//				}
-//			}
-//		}
-
 		allKingdomEventsGO.SetActive (true);
+		GameManager.Instance.SetPausedState (true);
 	}
 
 	public void ToggleList(GameObject gridToToggle){
@@ -2769,17 +2670,15 @@ public class UIManager : MonoBehaviour {
 
 	public void HideAllKingdomEvents(){
 		allKingdomEventsGO.SetActive (false);
-		EventListItem[] allEvents = kingdomEventsContentParent.GetComponentsInChildren<EventListItem> ();
-//		WarEventListItem[] allWarEvents = kingdomEventsContentParent.GetComponentsInChildren<WarEventListItem> ();
-		for (int i = 0; i < allEvents.Length; i++) {
-			Destroy (allEvents [i].gameObject);
+		EventListParent[] allEventParents = kingdomEventsContentParent.GetComponentsInChildren<EventListParent> ();
+		WarEventListParent[] allWarEventParents = kingdomEventsContentParent.GetComponentsInChildren<WarEventListParent> ();
+		for (int i = 0; i < allEventParents.Length; i++) {
+			Destroy (allEventParents [i].gameObject);
 		}
-//		for (int i = 0; i < allWarEvents.Length; i++) {
-//			Destroy (allWarEvents [i].gameObject);
-//		}
-//		kingdomEventsEspionageGrid.gameObject.SetActive(false);
-//		kingdomEventsStateVisitsGrid.gameObject.SetActive(false);
-//		kingdomEventsSkirmishesGrid.gameObject.SetActive(false);
+		for (int i = 0; i < allWarEventParents.Length; i++) {
+			Destroy (allWarEventParents [i].gameObject);
+		}
+		GameManager.Instance.SetPausedState (false);
 	}
 
 	public void ToggleResourceIcons(){

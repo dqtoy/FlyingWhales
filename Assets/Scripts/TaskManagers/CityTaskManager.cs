@@ -191,8 +191,24 @@ public class CityTaskManager : MonoBehaviour {
 		List<Citizen> allGenerals = this.city.citizens.Where (x => x.role == ROLE.GENERAL && !((General)x.assignedRole).inAction).ToList ();
 		if (allGenerals.Count > 0) {
 			allGenerals.OrderBy (x => ((General)x.assignedRole).GetArmyHP ());
-			this.generalToUpgrade = (General)allGenerals.First().assignedRole;
-			Task.current.Succeed();
+			int baseGeneralHP = 120;
+			if (this.city.kingdom.race == RACE.ELVES) {
+				baseGeneralHP = 100;
+			} else if (this.city.kingdom.race == RACE.CROMADS) {
+				baseGeneralHP = 160;
+			}
+
+			for (int i = 0; i < allGenerals.Count; i++) {
+				General currGeneral = (General)allGenerals[i].assignedRole;
+				if (currGeneral.GetArmyHP () < (this.city.maxGeneralHP + baseGeneralHP)) {
+					this.generalToUpgrade = currGeneral;
+				}
+			}
+			if (this.generalToUpgrade == null) {
+				Task.current.Fail ();
+			} else {
+				Task.current.Succeed ();
+			}
 		} else {
 			Task.current.Fail();
 		}
@@ -208,7 +224,18 @@ public class CityTaskManager : MonoBehaviour {
 		} else if (this.city.kingdom.race == RACE.CROMADS) {
 			amountToUpgrade = 40;
 		}
+
+		int baseGeneralHP = 120;
+		if (this.city.kingdom.race == RACE.ELVES) {
+			baseGeneralHP = 100;
+		} else if (this.city.kingdom.race == RACE.CROMADS) {
+			baseGeneralHP = 160;
+		}
+
 		this.generalToUpgrade.army.hp += amountToUpgrade;
+		if (this.generalToUpgrade.army.hp > (this.city.maxGeneralHP + baseGeneralHP)) {
+			this.generalToUpgrade.army.hp = (this.city.maxGeneralHP + baseGeneralHP);
+		}
 		this.city.AdjustResources (GetActionCost ("GENERALUP"));
 		Task.current.Succeed ();
 	}
