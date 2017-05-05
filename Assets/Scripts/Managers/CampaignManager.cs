@@ -321,7 +321,7 @@ public class CampaignManager {
 		if(targetCity == null){
 			return null;
 		}
-		List<HexTile> tilesInRange = targetCity.hexTile.GetTilesInRange (7f).Where(x => x.elevationType != ELEVATION.WATER).ToList();
+		List<HexTile> tilesInRange = targetCity.hexTile.GetTilesInRange (10f).Where(x => x.elevationType != ELEVATION.WATER).ToList();
 		if(tilesInRange.Count > 0){
 			return tilesInRange [UnityEngine.Random.Range (0, tilesInRange.Count)];
 		}else{

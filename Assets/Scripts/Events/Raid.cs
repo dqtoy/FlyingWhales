@@ -121,54 +121,54 @@ public class Raid : GameEvent {
 
 	private void Steal(){
 		this.isSuccessful = true;
-		BASE_RESOURCE_TYPE basicResource = BASE_RESOURCE_TYPE.NONE;
-		BASE_RESOURCE_TYPE rareResource = BASE_RESOURCE_TYPE.NONE;
+//		BASE_RESOURCE_TYPE basicResource = BASE_RESOURCE_TYPE.NONE;
+//		BASE_RESOURCE_TYPE rareResource = BASE_RESOURCE_TYPE.NONE;
 
 		int stolenGold = (int)(this.raidedCity.goldCount * 0.10f);
-		int stolenBasicResource = (int)(GetRandomBasicResource(ref basicResource) * 0.15f);
-		int stolenRareResource = (int)(GetRandomRareResource(ref rareResource) * 0.15f);
+//		int stolenBasicResource = (int)(GetRandomBasicResource(ref basicResource) * 0.15f);
+//		int stolenRareResource = (int)(GetRandomRareResource(ref rareResource) * 0.15f);
 
 		this.pilfered = string.Empty;
 		this.pilfered += stolenGold.ToString() + " Gold";
-		if(basicResource != BASE_RESOURCE_TYPE.NONE){
-			this.pilfered += ", " + stolenBasicResource.ToString() + " " + basicResource.ToString();
-		}
-		if(rareResource != BASE_RESOURCE_TYPE.NONE){
-			this.pilfered += ", " + stolenRareResource.ToString() + " " + rareResource.ToString();
-		}
-
-		this.general.citizen.city.goldCount += stolenGold;
-		this.raidedCity.goldCount -= stolenGold;
-		Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenGold + " gold from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
-
-		if(basicResource != BASE_RESOURCE_TYPE.NONE){
-			if(basicResource == BASE_RESOURCE_TYPE.WOOD){
-				this.general.citizen.city.lumberCount += stolenBasicResource;
-				this.raidedCity.lumberCount -= stolenBasicResource;
-				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenBasicResource + " lumber from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
-			}else if(basicResource == BASE_RESOURCE_TYPE.STONE){
-				this.general.citizen.city.stoneCount += stolenBasicResource;
-				this.raidedCity.stoneCount -= stolenBasicResource;
-				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenBasicResource + " stone from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
-			}
-		}
-	
-		if(rareResource != BASE_RESOURCE_TYPE.NONE){
-			if(rareResource == BASE_RESOURCE_TYPE.MANA_STONE){
-				this.general.citizen.city.manaStoneCount += stolenRareResource;
-				this.raidedCity.manaStoneCount -= stolenRareResource;
-				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenRareResource + " mana stone from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
-			}else if(rareResource == BASE_RESOURCE_TYPE.MITHRIL){
-				this.general.citizen.city.mithrilCount += stolenRareResource;
-				this.raidedCity.mithrilCount -= stolenRareResource;
-				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenRareResource + " mithril from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
-			}else if(rareResource == BASE_RESOURCE_TYPE.COBALT){
-				this.general.citizen.city.cobaltCount += stolenRareResource;
-				this.raidedCity.cobaltCount -= stolenRareResource;
-				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenRareResource + " cobalt from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
-			}
-
-		}
+//		if(basicResource != BASE_RESOURCE_TYPE.NONE){
+//			this.pilfered += ", " + stolenBasicResource.ToString() + " " + basicResource.ToString();
+//		}
+//		if(rareResource != BASE_RESOURCE_TYPE.NONE){
+//			this.pilfered += ", " + stolenRareResource.ToString() + " " + rareResource.ToString();
+//		}
+//
+//		this.general.citizen.city.goldCount += stolenGold;
+//		this.raidedCity.goldCount -= stolenGold;
+//		Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenGold + " gold from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+//
+//		if(basicResource != BASE_RESOURCE_TYPE.NONE){
+//			if(basicResource == BASE_RESOURCE_TYPE.WOOD){
+//				this.general.citizen.city.lumberCount += stolenBasicResource;
+//				this.raidedCity.lumberCount -= stolenBasicResource;
+//				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenBasicResource + " lumber from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+//			}else if(basicResource == BASE_RESOURCE_TYPE.STONE){
+//				this.general.citizen.city.stoneCount += stolenBasicResource;
+//				this.raidedCity.stoneCount -= stolenBasicResource;
+//				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenBasicResource + " stone from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+//			}
+//		}
+//	
+//		if(rareResource != BASE_RESOURCE_TYPE.NONE){
+//			if(rareResource == BASE_RESOURCE_TYPE.MANA_STONE){
+//				this.general.citizen.city.manaStoneCount += stolenRareResource;
+//				this.raidedCity.manaStoneCount -= stolenRareResource;
+//				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenRareResource + " mana stone from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+//			}else if(rareResource == BASE_RESOURCE_TYPE.MITHRIL){
+//				this.general.citizen.city.mithrilCount += stolenRareResource;
+//				this.raidedCity.mithrilCount -= stolenRareResource;
+//				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenRareResource + " mithril from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+//			}else if(rareResource == BASE_RESOURCE_TYPE.COBALT){
+//				this.general.citizen.city.cobaltCount += stolenRareResource;
+//				this.raidedCity.cobaltCount -= stolenRareResource;
+//				Debug.Log (this.general.citizen.name + " of " + this.general.citizen.city.name + " has stolen " + stolenRareResource + " cobalt from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+//			}
+//
+//		}
 			
 		GeneralDiscovery (ref this.hasBeenDiscovered, ref this.hasDeflected, ref this.hasDeath, ref this.kingdomToBlame, ref this.citizenDied);
 

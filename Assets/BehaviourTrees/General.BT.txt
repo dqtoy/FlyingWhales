@@ -6,13 +6,13 @@ tree("Root")
 
 tree("Campaign")
 	fallback
+		tree("SearchForTarget")
 		sequence
 			HasCampaign
 			HasCampaignLeader
 			HasTargetCityOrNotConquered
 			tree("Move")
-			tree("SearchForTarget")
-		tree("SearchForTarget")
+		HasCampaign
 		IsGeneralInHome
 		sequence
 			IsGoingHome

@@ -98,7 +98,7 @@ public class GeneralObject : MonoBehaviour {
 		if(campaign.rallyPoint == null){
 			info += "rally point: N/A";
 		}else{
-			info += "rally point: " + campaign.rallyPoint.city.name; 
+			info += "rally point: " + campaign.rallyPoint.name; 
 		}
 		info += "\n";
 
@@ -263,10 +263,14 @@ public class GeneralObject : MonoBehaviour {
 	public void HasArrivedRallyPoint(){
 		if(this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE){
 			if (this.general.location == this.general.rallyPoint) {
-				if(this.general.assignedCampaign.AreAllGeneralsOnRallyPoint()){
-					this.general.assignedCampaign.AttackCityNow ();
+				if(this.general.targetLocation == this.general.rallyPoint){
+					if(this.general.assignedCampaign.AreAllGeneralsOnRallyPoint()){
+						this.general.assignedCampaign.AttackCityNow ();
+					}
+					Task.current.Succeed ();
+				}else{
+					Task.current.Fail ();
 				}
-				Task.current.Succeed ();
 			}else{
 				Task.current.Fail ();
 			}
@@ -337,18 +341,17 @@ public class GeneralObject : MonoBehaviour {
 	}
 	[Task]
 	public void KillTarget(){
+		this.general.daysCounter = 0;
+
 		if(this.general.target.isHeir){
 			this.general.target.Death (DEATH_REASONS.REBELLION, false, this.general.assignedCampaign.leader, false);
 		}else{
 			this.general.target.Death (DEATH_REASONS.TREACHERY, false,  this.general.assignedCampaign.leader, false);
 		}
 
-		if(this.general.daysCounter == 8){
-			this.general.daysCounter = 0;
-			Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID(this.general.assignedCampaign.id);
-			if(campaign != null){
-				campaign.leader.campaignManager.CampaignDone (campaign);
-			}
+		Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID(this.general.assignedCampaign.id);
+		if(campaign != null){
+			campaign.leader.campaignManager.CampaignDone (campaign);
 		}
 
 		this.isSearchingForTarget = false;

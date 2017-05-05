@@ -117,8 +117,10 @@ public class General : Role {
 	}
 	internal void UnregisterThisGeneral(Campaign campaign, bool isRerouteToHome = true, bool isBulk = false){
 		if(campaign == null){
-			if(this.assignedCampaign.leader != null){
-				campaign = this.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.assignedCampaign.id);
+			if (this.assignedCampaign != null) {
+				if (this.assignedCampaign.leader != null) {
+					campaign = this.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.assignedCampaign.id);
+				}
 			}
 		}
 
@@ -154,12 +156,7 @@ public class General : Role {
 						}
 					}
 				}
-			}else{
-				if(campaign.registeredGenerals.Count <= 0){
-					campaign.leader.campaignManager.CampaignDone (campaign);
-				}
 			}
-
 		}
 	}
 	internal void RegisterOnCampaign(Campaign campaign){
@@ -449,9 +446,9 @@ public class General : Role {
 		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
 
 		//					((General)this.assignedRole) = null;
-		this.generalAvatar.GetComponent<GeneralObject>().RemoveBehaviourTree();
 
 		if (this.generalAvatar != null) {
+			this.generalAvatar.GetComponent<GeneralObject>().RemoveBehaviourTree();
 			GameObject.Destroy (this.generalAvatar);
 			this.generalAvatar = null;
 		}
