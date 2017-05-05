@@ -98,7 +98,7 @@ public class GeneralObject : MonoBehaviour {
 		if(campaign.rallyPoint == null){
 			info += "rally point: N/A";
 		}else{
-			info += "rally point: " + campaign.rallyPoint.city.name; 
+			info += "rally point: " + campaign.rallyPoint.name; 
 		}
 		info += "\n";
 
@@ -263,10 +263,14 @@ public class GeneralObject : MonoBehaviour {
 	public void HasArrivedRallyPoint(){
 		if(this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE){
 			if (this.general.location == this.general.rallyPoint) {
-				if(this.general.assignedCampaign.AreAllGeneralsOnRallyPoint()){
-					this.general.assignedCampaign.AttackCityNow ();
+				if(this.general.targetLocation == this.general.rallyPoint){
+					if(this.general.assignedCampaign.AreAllGeneralsOnRallyPoint()){
+						this.general.assignedCampaign.AttackCityNow ();
+					}
+					Task.current.Succeed ();
+				}else{
+					Task.current.Fail ();
 				}
-				Task.current.Succeed ();
 			}else{
 				Task.current.Fail ();
 			}

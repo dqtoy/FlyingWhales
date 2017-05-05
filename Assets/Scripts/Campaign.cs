@@ -105,7 +105,7 @@ public class Campaign {
 				this.registeredGenerals [i].generalAvatar.transform.parent = this.registeredGenerals [i].location.transform;
 				this.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
 				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().path = path;
-
+				this.targetCity.incomingGenerals.Add (this.registeredGenerals[i]);
 //				if(this.registeredGenerals[i].generalAvatar == null){
 //					this.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.registeredGenerals [i].location.transform) as GameObject;
 //					this.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
@@ -123,10 +123,8 @@ public class Campaign {
 		if(this.rallyPoint != null){
 			if(this.rallyPoint.isOccupied){
 				for(int i = 0; i < this.registeredGenerals.Count; i++){
-					this.targetCity.incomingGenerals.Add (this.registeredGenerals[i]);
 					this.rallyPoint.city.incomingGenerals.Remove(this.registeredGenerals[i]);
 				}
-
 			}
 		}
 	}

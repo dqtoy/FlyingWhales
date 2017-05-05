@@ -26,7 +26,7 @@ public class CampaignInfo : MonoBehaviour {
 		if(campaign.rallyPoint == null){
 			this.lblRallyPoint.text = "rally point: N/A"; 
 		}else{
-			this.lblRallyPoint.text = "rally point: " + campaign.rallyPoint.city.name; 
+			this.lblRallyPoint.text = "rally point: " + campaign.rallyPoint.name; 
 		}
 
 		this.lblLeaderName.text = "leader: " + campaign.leader.name;

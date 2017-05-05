@@ -316,11 +316,13 @@ public class CombatManager : MonoBehaviour {
 		int general2TotalHP = (int)(general2.GetArmyHP() * general2HPmultiplier);
 
 		if(general1TotalHP > general2TotalHP){
-			general1.army.hp -= general2.army.hp;
+			general1TotalHP -= general2TotalHP;
+			general1.army.hp = general1TotalHP;
 			general2.army.hp = 0;
 			general2.DeathArmy ();
 		}else{
-			general2.army.hp -= general1.army.hp;
+			general2TotalHP -= general1TotalHP;
+			general2.army.hp = general2TotalHP;
 			general1.army.hp = 0;
 			general1.DeathArmy ();
 
