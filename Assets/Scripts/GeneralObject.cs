@@ -337,18 +337,17 @@ public class GeneralObject : MonoBehaviour {
 	}
 	[Task]
 	public void KillTarget(){
+		this.general.daysCounter = 0;
+
 		if(this.general.target.isHeir){
 			this.general.target.Death (DEATH_REASONS.REBELLION, false, this.general.assignedCampaign.leader, false);
 		}else{
 			this.general.target.Death (DEATH_REASONS.TREACHERY, false,  this.general.assignedCampaign.leader, false);
 		}
 
-		if(this.general.daysCounter == 8){
-			this.general.daysCounter = 0;
-			Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID(this.general.assignedCampaign.id);
-			if(campaign != null){
-				campaign.leader.campaignManager.CampaignDone (campaign);
-			}
+		Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID(this.general.assignedCampaign.id);
+		if(campaign != null){
+			campaign.leader.campaignManager.CampaignDone (campaign);
 		}
 
 		this.isSearchingForTarget = false;
