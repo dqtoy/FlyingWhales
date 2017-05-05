@@ -172,7 +172,7 @@ public class CityTaskManager : MonoBehaviour {
 		newCitizen.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - newCitizen.age));
 		newCitizen.AssignRole(this.roleToCreate);
 		this.city.UpdateCityConsumption ();
-		List<Resource> actionCost = this.GetActionCost("EXPANSION");
+		List<Resource> actionCost = this.GetActionCost("RECRUITMENT");
 		for (int i = 0; i < actionCost.Count; i++) {
 			if (actionCost [i].resourceType == BASE_RESOURCE_TYPE.GOLD) {
 				this.city.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, (actionCost [i].resourceQuantity * -1));
