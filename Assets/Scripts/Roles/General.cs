@@ -156,12 +156,7 @@ public class General : Role {
 						}
 					}
 				}
-			}else{
-				if(campaign.registeredGenerals.Count <= 0){
-					campaign.leader.campaignManager.CampaignDone (campaign);
-				}
 			}
-
 		}
 	}
 	internal void RegisterOnCampaign(Campaign campaign){
