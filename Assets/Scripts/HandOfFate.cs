@@ -81,7 +81,15 @@ public class HandOfFate : MonoBehaviour {
 			Task.current.Succeed ();
 		}
 	}
-
+	[Task]
+	public void AreTheTwoKingdomsNotAtWar(){
+		RelationshipKingdom relationship = this.firstKingdom.GetRelationshipWithOtherKingdom (this.secondKingdom);
+		if(!relationship.isAtWar){
+			Task.current.Succeed ();
+		}else{
+			Task.current.Fail ();
+		}
+	}
 	[Task]
 	public void SetCompatibilityValue(){
 		int[] firstKingdomHoroscope = this.firstKingdom.horoscope.Concat (this.firstKingdom.king.horoscope).ToArray();
