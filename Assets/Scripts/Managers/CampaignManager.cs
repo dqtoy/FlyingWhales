@@ -466,6 +466,12 @@ public class CampaignManager {
 	}
 	internal void MakeCityInactive(Campaign campaign){
 		CityWar cityWar = null;
+
+		this.intlWarCities.RemoveAll (x => x.city == null);
+		this.civilWarCities.RemoveAll (x => x.city == null);
+		this.successionWarCities.RemoveAll (x => x.city == null);
+		this.defenseWarCities.RemoveAll (x => x.city == null);
+
 		if(campaign.warType == WAR_TYPE.INTERNATIONAL){
 			cityWar = this.intlWarCities.Find (x => x.city.id == campaign.targetCity.id);
 		}else if(campaign.warType == WAR_TYPE.CIVIL){

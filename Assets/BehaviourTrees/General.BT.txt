@@ -28,6 +28,7 @@ tree("Move")
 tree("Arrival")
 	fallback
 		HasArrivedHome
+		not HasCampaign
 		HasArrivedAttackTargetCity
 		HasArrivedDefenseTargetCity
 		HasArrivedRallyPoint

@@ -400,14 +400,15 @@ public class GeneralObject : MonoBehaviour {
 		Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.general.assignedCampaign.id);
 		if (campaign != null) {
 			if (campaign.warType == WAR_TYPE.INTERNATIONAL) {
-				campaign.leader.campaignManager.CampaignDone (campaign);
-				int countCitizens = this.general.assignedCampaign.targetCity.citizens.Count;
+				City targetCity = this.general.assignedCampaign.targetCity;
+				int countCitizens = targetCity.citizens.Count;
 				for (int i = 0; i < countCitizens; i++) {
-					this.general.assignedCampaign.targetCity.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
+					targetCity.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
 				}
-				this.general.assignedCampaign.targetCity.incomingGenerals.Clear ();
-				this.general.assignedCampaign.targetCity.isDead = true;
-				CombatManager.Instance.ConquerCity (this.general.citizen.city.kingdom, this.general.assignedCampaign.targetCity);
+				targetCity.incomingGenerals.Clear ();
+				targetCity.isDead = true;
+				CombatManager.Instance.ConquerCity (this.general.citizen.city.kingdom, targetCity);
+				campaign.leader.campaignManager.CampaignDone (campaign);
 			}else if (campaign.warType == WAR_TYPE.SUCCESSION) {
 				this.general.target = this.general.assignedCampaign.leader.GetTargetSuccessionWar (campaign.targetCity);
 				this.isSearchingForTarget = true;
