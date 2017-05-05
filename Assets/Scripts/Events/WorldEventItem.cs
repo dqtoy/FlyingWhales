@@ -15,9 +15,13 @@ public class WorldEventItem : MonoBehaviour {
 		icon.sprite = sprite;
 	}
 
-	void OnMouseDown(){
-		UIManager.Instance.ShowSpecificEvent(gameEvent);
+	public void DestroyObject(){
+		Destroy (this.gameObject);
 	}
+
+//	void OnMouseDown(){
+//		UIManager.Instance.ShowSpecificEvent(gameEvent);
+//	}
 
 
 }

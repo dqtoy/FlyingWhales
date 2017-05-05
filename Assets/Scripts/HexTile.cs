@@ -121,7 +121,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	void Start(){
 		EventManager.Instance.onGameEventEnded.AddListener(RemoveEvent);
-		EventManager.Instance.onShowEventsOfType.AddListener(ShowEventOnTile);
+//		EventManager.Instance.onShowEventsOfType.AddListener(ShowEventOnTile);
 		EventManager.Instance.onHideEvents.AddListener(HideEventsOnTile);
 	}
 
@@ -432,7 +432,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	public void ShowOccupiedSprite(){
-		this.GetComponent<SpriteRenderer> ().color = Color.white;
 		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.tundraTiles [Random.Range (0, Biomes.Instance.tundraTiles.Length)];
 		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfTraderSprite;
 		this.structureGO.SetActive(true);
@@ -559,7 +558,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		eventGO.transform.localPosition = Vector3.zero;
 		eventGO.GetComponent<WorldEventItem> ().SetGameEvent(gameEvent);
 //		eventGO.SetActive(false);
-		this.eventsOnTile.Add(eventGO.GetComponent<WorldEventItem>());
+//		this.eventsOnTile.Add(eventGO.GetComponent<WorldEventItem>());
 	}
 
 	public void ShowEventOnTile(EVENT_TYPES eventType){
