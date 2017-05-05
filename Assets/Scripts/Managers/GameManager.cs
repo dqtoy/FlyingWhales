@@ -35,6 +35,10 @@ public class GameManager : MonoBehaviour {
 		this.isPaused = !this.isPaused;
 	}
 
+	public void SetPausedState(bool isPaused){
+		this.isPaused = isPaused;
+	}
+
 	public void SetProgressionSpeed(float speed){
 		this.progressionSpeed = speed;
 	}
