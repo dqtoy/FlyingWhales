@@ -61,7 +61,7 @@ public class EventListItem : MonoBehaviour {
 			eventTitleLbl.text = "Invite " + currEvent.candidateForAlliance.name + " of " + currEvent.candidateForAlliance.city.kingdom.name + " to join war";
 		} else if (gameEvent.eventType == EVENT_TYPES.MILITARIZATION) {
 			Militarization currEvent = (Militarization)gameEvent;
-			eventTitleLbl.text = "Militarization for war against " + currEvent.invasionPlanThatTriggeredEvent.targetKingdom;
+			eventTitleLbl.text = "Militarization for war against " + currEvent.invasionPlanThatTriggeredEvent.targetKingdom.name;
 		} else if (gameEvent.eventType == EVENT_TYPES.POWER_GRAB) {
 			PowerGrab currEvent = (PowerGrab)gameEvent;
 			eventTitleLbl.text = "Power Grab against  " + currEvent.kingToOverthrow.name;
