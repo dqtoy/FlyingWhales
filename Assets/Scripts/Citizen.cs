@@ -621,8 +621,8 @@ public class Citizen {
 				for(int i = 0; i < this.city.kingdom.cities.Count; i++){
 					for(int j = 0; j < this.city.kingdom.cities[i].citizens.Count; j++){
 						if(this.city.kingdom.cities[i].citizens[j].assignedRole != null && this.city.kingdom.cities[i].citizens[j].role == ROLE.GENERAL){
-							if(this.city.citizens [i].assignedRole is General){
-								if (((General)this.city.citizens [i].assignedRole).assignedCampaign != null) {
+							if(this.city.kingdom.cities [i].citizens [j].assignedRole is General){
+								if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign != null) {
 									if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign.leader != null) {
 										if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign.leader.id == citizen.id) {
 											((General)this.city.kingdom.cities [i].citizens [j].assignedRole).UnregisterThisGeneral (null);
