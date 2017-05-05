@@ -446,10 +446,6 @@ public class Citizen {
 				}else{
 					this.city.LookForNewGeneral((General)this.assignedRole);
 					if (this.role == ROLE.GENERAL && this.assignedRole != null) {
-						if (((General)this.assignedRole).generalAvatar != null) {
-							GameObject.Destroy (((General)this.assignedRole).generalAvatar);
-							((General)this.assignedRole).generalAvatar = null;
-						}
 						this.DetachGeneralFromCitizen ();
 					}
 				}
@@ -609,10 +605,12 @@ public class Citizen {
 			if(this.isGovernor){
 				for(int i = 0; i < this.city.citizens.Count; i++){
 					if(this.city.citizens[i].assignedRole != null && this.city.citizens[i].role == ROLE.GENERAL){
-						if (((General)this.city.citizens [i].assignedRole).assignedCampaign != null) {
-							if (((General)this.city.citizens [i].assignedRole).assignedCampaign.leader != null) {
-								if (((General)this.city.citizens [i].assignedRole).assignedCampaign.leader.id == citizen.id) {
-									((General)this.city.citizens [i].assignedRole).UnregisterThisGeneral (null);
+						if (this.city.citizens [i].assignedRole is General) {
+							if (((General)this.city.citizens [i].assignedRole).assignedCampaign != null) {
+								if (((General)this.city.citizens [i].assignedRole).assignedCampaign.leader != null) {
+									if (((General)this.city.citizens [i].assignedRole).assignedCampaign.leader.id == citizen.id) {
+										((General)this.city.citizens [i].assignedRole).UnregisterThisGeneral (null);
+									}
 								}
 							}
 						}
@@ -623,10 +621,12 @@ public class Citizen {
 				for(int i = 0; i < this.city.kingdom.cities.Count; i++){
 					for(int j = 0; j < this.city.kingdom.cities[i].citizens.Count; j++){
 						if(this.city.kingdom.cities[i].citizens[j].assignedRole != null && this.city.kingdom.cities[i].citizens[j].role == ROLE.GENERAL){
-							if (((General)this.city.citizens [i].assignedRole).assignedCampaign != null) {
-								if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign.leader != null) {
-									if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign.leader.id == citizen.id) {
-										((General)this.city.kingdom.cities [i].citizens [j].assignedRole).UnregisterThisGeneral (null);
+							if(this.city.citizens [i].assignedRole is General){
+								if (((General)this.city.citizens [i].assignedRole).assignedCampaign != null) {
+									if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign.leader != null) {
+										if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign.leader.id == citizen.id) {
+											((General)this.city.kingdom.cities [i].citizens [j].assignedRole).UnregisterThisGeneral (null);
+										}
 									}
 								}
 							}
@@ -1476,8 +1476,16 @@ public class Citizen {
 	}
 
 	internal void DetachGeneralFromCitizen(){
-		Debug.Log (this.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");
-		General general = (General)this.assignedRole;
-		general.CreateGhostCitizen ();
+		Debug.Log (this.name + " of " + this.city.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");
+		if(this.assignedRole is General){
+			General general = (General)this.assignedRole;
+			if (general.generalAvatar != null) {
+				general.generalAvatar.GetComponent<GeneralObject> ().RemoveBehaviourTree ();
+				GameObject.Destroy (general.generalAvatar);
+				general.generalAvatar = null;
+			}
+			general.CreateGhostCitizen ();
+		}
+	
 	}
 }

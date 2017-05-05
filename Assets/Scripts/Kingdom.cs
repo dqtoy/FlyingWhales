@@ -183,42 +183,46 @@ public class Kingdom{
 //			this.king.city.CreateInitialRoyalFamily ();
 //			this.king.CreateInitialRelationshipsToKings ();
 //			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
-
-		}else{
-			if(newKing.city.governor.id == newKing.id){
-				newKing.city.AssignNewGovernor ();
+			Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING IN KINGDOM!" + this.name);
+			newKing = this.king.city.CreateNewKing ();
+			if(newKing == null){
+				return;
 			}
-			if (newKing.isMarried) {
-				if (newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
-					AssimilateKingdom (newKing.spouse.city.kingdom);
-					return;
-				}
-			}
-			if(!newKing.isDirectDescendant){
-				//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
-				Utilities.ChangeDescendantsRecursively (newKing, true);
-				Utilities.ChangeDescendantsRecursively (this.king, false);
-			}
-			if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
-				newKing.DetachGeneralFromCitizen ();
-			}
-			newKing.role = ROLE.KING;
-			newKing.assignedRole = new King(newKing);
-			newKing.isKing = true;
-			newKing.isGovernor = false;
-//			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-			newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-			this.king = newKing;
-			this.king.CreateInitialRelationshipsToKings ();
-			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
-			this.successionLine.Clear();
-			ChangeSuccessionLineRescursively (newKing);
-			this.successionLine.AddRange (GetSiblings (newKing));
-			UpdateKingSuccession ();
-			this.RetrieveInternationWar();
-			UIManager.Instance.UpdateKingsGrid();
-			UIManager.Instance.UpdateKingdomSuccession ();
 		}
+
+		if(newKing.city.governor.id == newKing.id){
+			newKing.city.AssignNewGovernor ();
+		}
+		if (newKing.isMarried) {
+			if (newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
+				AssimilateKingdom (newKing.spouse.city.kingdom);
+				return;
+			}
+		}
+		if(!newKing.isDirectDescendant){
+			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
+			Utilities.ChangeDescendantsRecursively (newKing, true);
+			Utilities.ChangeDescendantsRecursively (this.king, false);
+		}
+		if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
+			newKing.DetachGeneralFromCitizen ();
+		}
+		newKing.role = ROLE.KING;
+		newKing.assignedRole = new King(newKing);
+		newKing.isKing = true;
+		newKing.isGovernor = false;
+//			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+		this.king = newKing;
+		this.king.CreateInitialRelationshipsToKings ();
+		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+		this.successionLine.Clear();
+		ChangeSuccessionLineRescursively (newKing);
+		this.successionLine.AddRange (GetSiblings (newKing));
+		UpdateKingSuccession ();
+		this.RetrieveInternationWar();
+		UIManager.Instance.UpdateKingsGrid();
+		UIManager.Instance.UpdateKingdomSuccession ();
 
 		for (int i = 0; i < this.cities.Count; i++) {
 			this.cities[i].UpdateResourceProduction();
@@ -299,13 +303,18 @@ public class Kingdom{
 
 	internal List<Citizen> GetSiblings(Citizen royalty){
 		List<Citizen> siblings = new List<Citizen> ();
-		for(int i = 0; i < royalty.mother.children.Count; i++){
-			if(royalty.mother.children[i].id != royalty.id){
-				if(!royalty.mother.children[i].isDead){
-					siblings.Add (royalty.mother.children [i]);
+		if(royalty.mother != null){
+			if (royalty.mother.children != null) {
+				for (int i = 0; i < royalty.mother.children.Count; i++) {
+					if (royalty.mother.children [i].id != royalty.id) {
+						if (!royalty.mother.children [i].isDead) {
+							siblings.Add (royalty.mother.children [i]);
+						}
+					}
 				}
 			}
 		}
+
 
 		return siblings;
 	}
@@ -484,6 +493,23 @@ public class Kingdom{
 		}
 	}
 
+	internal Citizen GetCitizenWithHighestPrestigeInKingdom(){
+		Citizen citizenHighest = null;
+		for(int i = 0; i < this.cities.Count; i++){
+			Citizen citizen = this.cities [i].GetCitizenWithHighestPrestige ();
+			if(citizen != null){
+				if(citizenHighest == null){
+					citizenHighest = citizen;
+				}else{
+					if(citizen.prestige > citizenHighest.prestige){
+						citizenHighest = citizen;
+					}
+				}
+
+			}
+		}
+		return citizenHighest;
+	}
 	//Destructor for unsubscribing listeners
 	~Kingdom(){
 		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);

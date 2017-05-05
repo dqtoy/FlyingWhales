@@ -5,6 +5,7 @@ using Panda;
 
 public class GeneralObject : MonoBehaviour {
 	public General general;
+	public PandaBehaviour pandaBehaviour;
 	public TextMesh textMesh;
 	public List<HexTile> path;
 
@@ -19,6 +20,7 @@ public class GeneralObject : MonoBehaviour {
 		if(this.general != null){
 			this.textMesh.text = this.general.GetArmyHP().ToString ();
 			this.path = this.general.roads;
+			this.AddBehaviourTree ();
 		}
 	}
 	void OnTriggerEnter2D(Collider2D other){
@@ -71,17 +73,13 @@ public class GeneralObject : MonoBehaviour {
 	}
 	void HighlightPath(){
 		for (int i = 0; i < this.general.roads.Count; i++) {
-			if (!this.general.roads [i].isHabitable) {
-				this.general.roads [i].SetTileColor (Color.gray);
-			}
+			this.general.roads [i].SetTileColor (Color.gray);
 		}
 	}
 
 	void UnHighlightPath(){
 		for (int i = 0; i < this.path.Count; i++) {
-			if (!this.path [i].isHabitable) {
-				this.path [i].SetTileColor (Color.white);
-			}
+			this.path [i].SetTileColor (Color.white);
 		}
 	}
 	private string CampaignInfo(Campaign campaign){
@@ -132,6 +130,7 @@ public class GeneralObject : MonoBehaviour {
 	[Task]
 	public void Idle(){
 		if(this.isIdle){
+			Roam ();
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
@@ -212,11 +211,16 @@ public class GeneralObject : MonoBehaviour {
 	}
 	[Task]
 	public void HasArrivedHome(){
-		if(IsGeneralInsideHomeCity()){
-			Task.current.Succeed ();
+		if(this.general.isGoingHome){
+			if(IsGeneralInsideHomeCity()){
+				Task.current.Succeed ();
+			}else{
+				Task.current.Fail ();
+			}
 		}else{
 			Task.current.Fail ();
 		}
+
 	}
 	[Task]
 	public void HasArrivedAttackTargetCity(){
@@ -358,8 +362,6 @@ public class GeneralObject : MonoBehaviour {
 	public bool IsGeneralInsideHomeCity(){
 		if (this.general.location == this.general.citizen.city.hexTile) {
 			this.general.isGoingHome = false;
-			this.general.generalAvatar.transform.parent = this.general.citizen.workLocation.transform;
-			this.general.generalAvatar.transform.localPosition = Vector3.zero;
 			IsMyGeneralDead ();
 			return true;
 		}else{
@@ -371,6 +373,7 @@ public class GeneralObject : MonoBehaviour {
 			this.general.citizen.city.LookForNewGeneral (this.general);
 		}else{
 			this.general.citizen.city.LookForLostArmy (this.general);
+			this.isIdle = true;
 		}
 	}
 	private void Move(){
@@ -408,5 +411,19 @@ public class GeneralObject : MonoBehaviour {
 			}
 
 		} 
+	}
+	private void Roam(){
+		if(this.general.citizen.city.ownedTiles.Count > 0){
+			HexTile roamTile = this.general.citizen.city.ownedTiles [UnityEngine.Random.Range (0, this.general.citizen.city.ownedTiles.Count)];
+			this.transform.position = roamTile.transform.position;
+			this.UpdateUI ();
+		}
+	}
+	internal void AddBehaviourTree(){
+		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
+	}
+
+	internal void RemoveBehaviourTree(){
+		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 	}
 }

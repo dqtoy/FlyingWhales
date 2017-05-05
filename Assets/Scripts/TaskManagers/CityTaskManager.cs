@@ -13,7 +13,7 @@ public class CityTaskManager : MonoBehaviour {
 	private General generalToUpgrade = null;
 	public ROLE roleToCreate = ROLE.UNTRAINED;
 
-	void Start(){
+	void Awake(){
 		this.city = this.GetComponent<HexTile> ().city;
 	}
 

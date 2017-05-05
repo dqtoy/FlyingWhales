@@ -1,9 +1,8 @@
 tree("Root")
 	fallback
 		not IsThereGeneral
+		Idle
 		tree("Campaign")
-		repeat
-			Idle
 
 tree("Campaign")
 	fallback

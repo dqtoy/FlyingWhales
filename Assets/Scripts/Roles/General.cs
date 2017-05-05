@@ -58,7 +58,7 @@ public class General : Role {
 	}
 	internal void InitializeGeneral(){
 		if(this.generalAvatar == null){
-			this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.citizen.workLocation.transform) as GameObject;
+			this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
 			this.generalAvatar.transform.localPosition = Vector3.zero;
 			this.generalAvatar.GetComponent<GeneralObject>().general = this;
 			this.generalAvatar.GetComponent<GeneralObject> ().Init();
@@ -98,15 +98,19 @@ public class General : Role {
 				this.roads = path;
 				this.targetLocation = this.citizen.city.hexTile;
 				this.isGoingHome = true;
-				if (this.generalAvatar == null) {
-					this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
-					this.generalAvatar.transform.localPosition = Vector3.zero;
-					this.generalAvatar.GetComponent<GeneralObject> ().general = this;
-					this.generalAvatar.GetComponent<GeneralObject> ().Init ();
-				} else {
-					this.generalAvatar.transform.parent = this.location.transform;
-					this.generalAvatar.transform.localPosition = Vector3.zero;
-				}
+				this.inAction = true;
+//				if (this.generalAvatar == null) {
+//					this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
+//					this.generalAvatar.transform.localPosition = Vector3.zero;
+//					this.generalAvatar.GetComponent<GeneralObject> ().general = this;
+//					this.generalAvatar.GetComponent<GeneralObject> ().Init ();
+//				} else {
+//					
+//				}
+				this.generalAvatar.transform.parent = this.location.transform;
+				this.generalAvatar.transform.localPosition = Vector3.zero;
+				this.generalAvatar.GetComponent<GeneralObject> ().path = path;
+
 				Debug.Log (this.citizen.name + " IS GOING HOME!");
 			}
 		}
@@ -360,21 +364,19 @@ public class General : Role {
 			}
 		}
 
-		if(this.generalAvatar == null){
-			this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
-			this.generalAvatar.transform.localPosition = Vector3.zero;
-			this.generalAvatar.GetComponent<GeneralObject>().general = this;
-			this.generalAvatar.GetComponent<GeneralObject> ().Init();
-			this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
-		}else{
-			this.generalAvatar.transform.parent = this.location.transform;
-			this.generalAvatar.transform.localPosition = Vector3.zero;
-			this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
-
-		}
-	
-
-
+//		if(this.generalAvatar == null){
+//			this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
+//			this.generalAvatar.transform.localPosition = Vector3.zero;
+//			this.generalAvatar.GetComponent<GeneralObject>().general = this;
+//			this.generalAvatar.GetComponent<GeneralObject> ().Init();
+//
+//		}else{
+//			
+//		}
+		this.generalAvatar.transform.parent = this.location.transform;
+		this.generalAvatar.transform.localPosition = Vector3.zero;
+		this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
+		this.generalAvatar.GetComponent<GeneralObject> ().path = path;
 	}
 //	internal void SearchForTarget(){
 //		Debug.Log (this.citizen.name + " instructed by " + this.warLeader.name + " is searching for " + this.target.name);
@@ -447,12 +449,14 @@ public class General : Role {
 		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
 
 		//					((General)this.assignedRole) = null;
+		this.generalAvatar.GetComponent<GeneralObject>().RemoveBehaviourTree();
+
 		if (this.generalAvatar != null) {
 			GameObject.Destroy (this.generalAvatar);
 			this.generalAvatar = null;
 		}
 		this.UnregisterThisGeneral (null, false);
-
+		this.inAction = false;
 		this.citizen.role = ROLE.UNTRAINED;
 		this.citizen.assignedRole = null;
 		this.citizen.city.citizens.Remove (this.citizen);
