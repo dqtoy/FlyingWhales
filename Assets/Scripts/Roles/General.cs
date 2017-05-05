@@ -117,8 +117,10 @@ public class General : Role {
 	}
 	internal void UnregisterThisGeneral(Campaign campaign, bool isRerouteToHome = true, bool isBulk = false){
 		if(campaign == null){
-			if(this.assignedCampaign.leader != null){
-				campaign = this.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.assignedCampaign.id);
+			if (this.assignedCampaign != null) {
+				if (this.assignedCampaign.leader != null) {
+					campaign = this.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.assignedCampaign.id);
+				}
 			}
 		}
 
