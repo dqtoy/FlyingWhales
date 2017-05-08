@@ -26,7 +26,7 @@ public class Kingdom{
 
 	public List<City> adjacentCitiesFromOtherKingdoms;
 
-	public float expansionChance = 16f;
+	public float expansionChance = 3f;
 
 	public Kingdom(RACE race, List<HexTile> cities){
 		this.id = Utilities.SetID(this);
@@ -103,7 +103,8 @@ public class Kingdom{
 		List<Resource> expansionCost = new List<Resource> () {
 //			new Resource (BASE_RESOURCE_TYPE.GOLD, 100),
 //			new Resource (BASE_RESOURCE_TYPE.GOLD, 1000),
-			new Resource (this.basicResource, 250)
+			new Resource (BASE_RESOURCE_TYPE.GOLD, 0),
+//			new Resource (this.basicResource, 250)
 //			new Resource (this.basicResource, 50)
 		};
 //		List<Resource> expansionCost = new List<Resource> () {
@@ -132,7 +133,7 @@ public class Kingdom{
 
 		if (citiesThatCanExpand.Count > 0) {
 			float expansionChance = this.expansionChance;
-			float chance = Random.Range (1f, 100f);
+			float chance = Random.Range (1f, 150f);
 			if (chance < expansionChance) {
 				Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
 				citiesThatCanExpand[0].AdjustResources(expansionCost);

@@ -67,7 +67,7 @@ public class GeneralObject : MonoBehaviour {
 	}
 	private void StopMoving(){
 		this.isMoving = false;
-		this.targetPosition = null;
+//		this.targetPosition = null;
 	}
 	internal void UpdateUI(){
 		if(this.general != null){
@@ -153,12 +153,14 @@ public class GeneralObject : MonoBehaviour {
 	[Task]
 	public void Idle(){
 		if(this.isIdle){
-			if(!this.isMoving){
-				this.isMoving = true;
-				Roam ();
-				RoamTo ();
-			}else{
-				RoamTo ();
+			if(this.general.isHome){
+				if(!this.isMoving){
+					this.isMoving = true;
+					Roam ();
+					RoamTo ();
+				}else{
+					RoamTo ();
+				}
 			}
 			Task.current.Succeed ();
 		}else{
@@ -200,7 +202,7 @@ public class GeneralObject : MonoBehaviour {
 	[Task]
 	public void HasTargetCityOrNotConquered(){
 		if(this.general.targetCity == null || this.general.targetCity.isDead){
-			this.general.UnregisterThisGeneral (null, false);
+			this.general.UnregisterThisGeneral (null, true, false);
 			Task.current.Fail ();
 		}else{
 			Task.current.Succeed ();
@@ -412,6 +414,7 @@ public class GeneralObject : MonoBehaviour {
 	}
 	public bool IsGeneralInsideHomeCity(){
 		if (this.general.location == this.general.citizen.city.hexTile) {
+			this.general.isHome = true;
 			this.general.isGoingHome = false;
 			IsMyGeneralDead ();
 			return true;
@@ -437,8 +440,12 @@ public class GeneralObject : MonoBehaviour {
 						this.general.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.general.location, this.general.roads [0]);
 						this.general.daysBeforeMoving = this.general.roads [0].movementDays;
 						this.general.location = this.general.roads[0];
+						if(this.general.roads[0] != this.general.citizen.city.hexTile){
+							this.general.isHome = false;
+						}
 						this.general.roads.RemoveAt (0);
 						this.general.daysBeforeArrival -= 1;
+
 					}
 				}
 			}

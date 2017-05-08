@@ -1053,6 +1053,7 @@ public class City{
 		this.dailyGrowth = 10;
 		this.maxGeneralHP = 0;
 		this.goldProduction = 20;
+		this.bonusResources.Clear ();
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
 			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
@@ -1088,8 +1089,8 @@ public class City{
 			if (currentStructure.specialResource != RESOURCE.NONE) {
 				currentResource = currentStructure.specialResource;
 			}
-			if (!bonusResources.Contains (currentResource)) {
-				bonusResources.Add (currentResource);
+			if (!this.bonusResources.Contains (currentResource) || currentResource == RESOURCE.GRANITE || currentResource == RESOURCE.CEDAR) {
+				this.bonusResources.Add (currentResource);
 			}
 		}
 		this.stoneCount = 0;
@@ -1687,7 +1688,7 @@ public class City{
 		if(attacker.citizen.city.governor.id != this.governor.id){
 			for(int i = 0; i < this.citizens.Count; i++){
 				if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
-					if(((General)this.citizens[i].assignedRole).location == this.hexTile){
+					if(((General)this.citizens[i].assignedRole).isHome){
 						allGenerals.Add (((General)this.citizens [i].assignedRole));
 					}
 				}
@@ -1939,7 +1940,7 @@ public class City{
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
 				General chosenGeneral = (General)this.citizens [i].assignedRole;
-				if(chosenGeneral.location == this.hexTile && chosenGeneral.citizen.city.id == this.id){
+				if(chosenGeneral.isHome){
 					if(!chosenGeneral.citizen.isDead){
 						Debug.Log (chosenGeneral.citizen.name + " IS THE NEW GENERAL FOR " + general.citizen.name + "'s ARMY");
 						chosenGeneral.army.hp += general.army.hp;

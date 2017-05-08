@@ -104,6 +104,7 @@ public class Campaign {
 				this.registeredGenerals [i].daysBeforeArrival = path.Sum(x => x.movementDays);
 				this.registeredGenerals [i].generalAvatar.transform.parent = this.registeredGenerals [i].location.transform;
 				this.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
+				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
 				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().path = path;
 				this.targetCity.incomingGenerals.Add (this.registeredGenerals[i]);
 //				if(this.registeredGenerals[i].generalAvatar == null){

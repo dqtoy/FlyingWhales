@@ -93,7 +93,7 @@ public class General : Role {
 		}
 	}
 	internal void RerouteToHome(){
-		if(this.location != this.citizen.city.hexTile){
+		if(!this.isHome){
 			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.citizen.city.hexTile, PATHFINDING_MODE.COMBAT);
 			if(path != null){
 				this.roads.Clear ();
@@ -111,6 +111,7 @@ public class General : Role {
 //				}
 				this.generalAvatar.transform.parent = this.location.transform;
 				this.generalAvatar.transform.localPosition = Vector3.zero;
+				this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
 				this.generalAvatar.GetComponent<GeneralObject> ().path = path;
 
 				Debug.Log (this.citizen.name + " IS GOING HOME!");
@@ -373,9 +374,10 @@ public class General : Role {
 //		}else{
 //			
 //		}
-		this.generalAvatar.transform.parent = this.location.transform;
+		this.generalAvatar.transform.parent = this.citizen.currentLocation.transform;
 		this.generalAvatar.transform.localPosition = Vector3.zero;
 		this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
+		this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
 		this.generalAvatar.GetComponent<GeneralObject> ().path = path;
 	}
 //	internal void SearchForTarget(){
@@ -507,12 +509,12 @@ public class General : Role {
 							return true;
 						}
 					}else{
-						if (this.location == this.citizen.city.hexTile) {
+						if (this.isHome) {
 							return true;
 						}
 					}
 				}else{
-					if (this.location == this.citizen.city.hexTile) {
+					if (this.isHome) {
 						return true;
 					}
 				}
@@ -524,12 +526,12 @@ public class General : Role {
 						return true;
 					}
 				}else{
-					if (this.location == this.citizen.city.hexTile) {
+					if (this.isHome) {
 						return true;
 					}
 				}
 			}else{
-				if (this.location == this.citizen.city.hexTile) {
+				if (this.isHome) {
 					return true;
 				}
 			}

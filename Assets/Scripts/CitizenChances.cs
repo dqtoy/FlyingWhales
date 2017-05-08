@@ -3,8 +3,10 @@ using System.Collections;
 
 [System.Serializable]
 public class CitizenChances {
-	internal float defaultAccidentChance = 0.03f;
-	internal float defaultOldAgeChance = 0.1f;
+//	internal float defaultAccidentChance = 0.002f;
+//	internal float defaultOldAgeChance = 0.003f;
+	internal float defaultAccidentChance = 0f;
+	internal float defaultOldAgeChance = 0f;
 	internal int defaultMarriageChance = 8;
 
 	public float accidentChance;
