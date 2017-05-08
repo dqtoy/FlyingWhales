@@ -161,40 +161,61 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	internal void AssignSpecialResource(){
 		int specialChance = UnityEngine.Random.Range (0, 100);
 
-		if(specialChance < 15){
-//		if(specialChance < 50){
-			//			Utilities.specialResourceCount += 1;
-			if(this.elevationType == ELEVATION.MOUNTAIN){
-				SpecialResourceChance specialResources = new SpecialResourceChance (
-					new RESOURCE[] {
-						RESOURCE.BEHEMOTH,
-						RESOURCE.SLATE,
-						RESOURCE.MARBLE,
-						RESOURCE.MANA_STONE,
-						RESOURCE.MITHRIL,
-						RESOURCE.COBALT,
-						RESOURCE.GOLD
-					}, 
-//					new int[] { 5, 60, 40, 15, 15, 15, 5 });
-					new int[] { 0, 0, 0, 0, 0, 0, 0 });
-				this.specialResource = ComputeSpecialResource (specialResources);
-				if (this.specialResource != RESOURCE.NONE) {
-					this.resourceVisualGO.GetComponent<SpriteRenderer> ().sprite = Resources.LoadAll<Sprite> ("Resources Icons")
-					.Where (x => x.name == this.specialResource.ToString ()).ToList () [0];
-					this.resourceVisualGO.SetActive (true);
-				}
-			}else{
-				if (this.elevationType != ELEVATION.WATER) {
-					this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
-					if (this.specialResource != RESOURCE.NONE) {
-						this.resourceVisualGO.GetComponent<SpriteRenderer> ().sprite = Resources.LoadAll<Sprite> ("Resources Icons")
-						.Where (x => x.name == this.specialResource.ToString ()).ToList () [0];
-						this.resourceVisualGO.SetActive (true);
-					}
-				}
-			}
-		}
-	}
+        int specialChanceForBiome = 0;
+
+        if (this.biomeType == BIOMES.GRASSLAND || this.biomeType == BIOMES.WOODLAND || this.biomeType == BIOMES.FOREST) {
+            specialChanceForBiome = 15;
+        } else if (this.biomeType == BIOMES.DESERT) {
+            specialChanceForBiome = 18;
+        } else if (this.biomeType == BIOMES.TUNDRA || this.biomeType == BIOMES.SNOW) {
+            specialChanceForBiome = 12;
+        }
+
+        if(specialChance < specialChanceForBiome) {
+            if (this.elevationType != ELEVATION.WATER && this.elevationType != ELEVATION.MOUNTAIN) {
+                this.specialResource = ComputeSpecialResource(Utilities.specialResourcesLookup[this.biomeType]);
+                if (this.specialResource != RESOURCE.NONE) {
+                    this.resourceVisualGO.GetComponent<SpriteRenderer>().sprite = Resources.LoadAll<Sprite>("Resources Icons")
+                    .Where(x => x.name == this.specialResource.ToString()).ToList()[0];
+                    this.resourceVisualGO.SetActive(true);
+                }
+            }
+            }
+
+        //		if(specialChance < 15){
+        ////		if(specialChance < 50){
+        //			//			Utilities.specialResourceCount += 1;
+        //			if(this.elevationType == ELEVATION.MOUNTAIN){
+        //				SpecialResourceChance specialResources = new SpecialResourceChance (
+        //					new RESOURCE[] {
+        //						RESOURCE.BEHEMOTH,
+        //						RESOURCE.SLATE,
+        //						RESOURCE.MARBLE,
+        //						RESOURCE.MANA_STONE,
+        //						RESOURCE.MITHRIL,
+        //						RESOURCE.COBALT,
+        //						RESOURCE.GOLD
+        //					}, 
+        ////					new int[] { 5, 60, 40, 15, 15, 15, 5 });
+        //					new int[] { 0, 0, 0, 0, 0, 0, 0 });
+        //				this.specialResource = ComputeSpecialResource (specialResources);
+        //				if (this.specialResource != RESOURCE.NONE) {
+        //					this.resourceVisualGO.GetComponent<SpriteRenderer> ().sprite = Resources.LoadAll<Sprite> ("Resources Icons")
+        //					.Where (x => x.name == this.specialResource.ToString ()).ToList () [0];
+        //					this.resourceVisualGO.SetActive (true);
+        //				}
+        //			}else{
+        //				if (this.elevationType != ELEVATION.WATER) {
+        //					this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
+        //					if (this.specialResource != RESOURCE.NONE) {
+        //						this.resourceVisualGO.GetComponent<SpriteRenderer> ().sprite = Resources.LoadAll<Sprite> ("Resources Icons")
+        //						.Where (x => x.name == this.specialResource.ToString ()).ToList () [0];
+        //						this.resourceVisualGO.SetActive (true);
+        //					}
+        //				}
+        //			}
+        //		}
+    }
 	public void SetTileColor(Color color){
 		gameObject.GetComponent<SpriteRenderer> ().color = color;
 	}
