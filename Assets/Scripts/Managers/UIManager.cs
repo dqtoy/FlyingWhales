@@ -2685,6 +2685,15 @@ public class UIManager : MonoBehaviour {
 		CameraMove.Instance.ToggleResourceIcons();
 	}
 
+    public void ToggleGeneralCamera(){
+        CameraMove.Instance.ToggleGeneralCamera();
+    }
+
+    public void ToggleTraderCamera(){
+        CameraMove.Instance.ToggleTraderCamera();
+    }
+
+
 	internal Sprite GetSpriteForEvent(EVENT_TYPES eventType){
 		switch (eventType) {
 		case EVENT_TYPES.ASSASSINATION:

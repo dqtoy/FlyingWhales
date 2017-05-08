@@ -21,8 +21,9 @@ public class CameraMove : MonoBehaviour {
 	public Camera eventIconCamera;
 	public Camera resourceIconCamera;
 	public Camera generalCamera;
+    public Camera traderCamera;
 
-	private float MIN_X = 66f;
+    private float MIN_X = 66f;
 	private float MAX_X = 126f;
 	private float MIN_Y = 36f;
 	private float MAX_Y = 92f;
@@ -85,6 +86,13 @@ public class CameraMove : MonoBehaviour {
 
 	public void ToggleResourceIcons(){
 		resourceIconCamera.gameObject.SetActive(!resourceIconCamera.gameObject.activeSelf);
-		generalCamera.gameObject.SetActive(!generalCamera.gameObject.activeSelf);
 	}
+
+    public void ToggleGeneralCamera(){
+        generalCamera.gameObject.SetActive(!generalCamera.gameObject.activeSelf);
+    }
+
+    public void ToggleTraderCamera() {
+        traderCamera.gameObject.SetActive(!traderCamera.gameObject.activeSelf);
+    }
 }
