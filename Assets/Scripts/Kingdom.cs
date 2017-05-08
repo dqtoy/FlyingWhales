@@ -102,8 +102,8 @@ public class Kingdom{
 		List<Citizen> allUnassignedAdultCitizens = new List<Citizen>();
 		List<Resource> expansionCost = new List<Resource> () {
 //			new Resource (BASE_RESOURCE_TYPE.GOLD, 100),
-			new Resource (BASE_RESOURCE_TYPE.GOLD, 1000),
-//			new Resource (this.basicResource, 200)
+//			new Resource (BASE_RESOURCE_TYPE.GOLD, 1000),
+			new Resource (this.basicResource, 250)
 //			new Resource (this.basicResource, 50)
 		};
 //		List<Resource> expansionCost = new List<Resource> () {
@@ -465,11 +465,11 @@ public class Kingdom{
 		return null;
 	}
 
-	internal void ConquerCity(City city){
+	internal IEnumerator ConquerCity(City city){
 		HexTile hex = city.hexTile;
 		city.kingdom.cities.Remove(city);
 		city.KillCity();
-
+		yield return null;
 		City newCity = CityGenerator.Instance.CreateNewCity (hex, this);
 		newCity.CreateInitialFamilies(false);
 		KingdomManager.Instance.UpdateKingdomAdjacency();

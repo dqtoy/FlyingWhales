@@ -1835,7 +1835,8 @@ public class City{
 		case ROLE.GENERAL:
 			citizenCreationCosts = new List<Resource>(){
 				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
-				new Resource (this.kingdom.basicResource, 2)
+//				new Resource (this.kingdom.basicResource, 2)
+				new Resource (this.kingdom.basicResource, 1)
 			};
 			return citizenCreationCosts;
 		case ROLE.SPY:
@@ -1843,7 +1844,8 @@ public class City{
 		case ROLE.ENVOY:
 			citizenCreationCosts = new List<Resource>(){
 				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
-				new Resource (this.kingdom.basicResource, 3)
+//				new Resource (this.kingdom.basicResource, 3)
+				new Resource (this.kingdom.basicResource, 1)
 			};
 			return citizenCreationCosts;
 		
@@ -1911,15 +1913,20 @@ public class City{
 
 	}
 	internal void KillCity(){
-		this.isDead = true;
 		this.kingdom.cities.Remove(this);
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
 			currentTile.ResetTile();
 		}
-		BehaviourTreeManager.Instance.allTrees.Remove(this.hexTile.GetComponent<PandaBehaviour>());
-		GameObject.Destroy (this.hexTile.GetComponent<PandaBehaviour> ());
-		GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
+		if(!this.isDead){
+			bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.hexTile.GetComponent<PandaBehaviour> ());
+			Debug.Log ("REMOVED BT?: " + this.name + " = " + removed);
+
+			GameObject.Destroy (this.hexTile.GetComponent<PandaBehaviour> ());
+			GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
+		}
+		this.isDead = true;
+
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		this.hexTile.city = null;

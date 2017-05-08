@@ -38,7 +38,6 @@ public class Raid : GameEvent {
 
 	internal override void PerformAction(){
 		if (this.general.citizen.isDead) {
-			this.resolution = this.general.citizen.name + " died before the event could finish.";
 			this.DoneEvent();
 			return;
 		}
@@ -67,29 +66,34 @@ public class Raid : GameEvent {
 				deadCitizen = this.citizenDied.name + " was killed during the raid.";
 			}
 		}
-		if(this.isSuccessful){
+		if (this.isSuccessful) {
 			result = "successful";
 		}
-		if(this.hasBeenDiscovered){
-			if(this.hasDeflected){
-				this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
-					+ " but their identity were discovered." + deadCitizen + " " + this.kingdomToBlame.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.(DEFLECTED)";
+		if (this.hasBeenDiscovered) {
+			if (this.hasDeflected) {
+				this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
+				+ " but their identity were discovered." + deadCitizen + " " + this.kingdomToBlame.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.(DEFLECTED)";
 
 				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-					"Discovered raiders sent from " + this.kingdomToBlame.name + " (DEFLECTED)" , HISTORY_IDENTIFIER.NONE));
-			}else{
-				this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
-					+ " but their identity were discovered." + deadCitizen + " " + this.raidedCity.kingdom.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.";
+					"Discovered raiders sent from " + this.kingdomToBlame.name + " (DEFLECTED)", HISTORY_IDENTIFIER.NONE));
+			} else {
+				this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
+				+ " but their identity were discovered." + deadCitizen + " " + this.raidedCity.kingdom.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.";
 
 				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-					"Discovered raiders sent from city " + this.startedByCity.name , HISTORY_IDENTIFIER.NONE));
+					"Discovered raiders sent from city " + this.startedByCity.name, HISTORY_IDENTIFIER.NONE));
 			}
-		}else{
-			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
-				+ " but their identity were not discovered." + deadCitizen;
-			
+		} else {
+			this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
+			+ " but their identity were not discovered." + deadCitizen;
+		
 			this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-				"Raid against " + this.raidedCity.name + " was " + result , HISTORY_IDENTIFIER.NONE));
+				"Raid against " + this.raidedCity.name + " was " + result, HISTORY_IDENTIFIER.NONE));
+		}
+
+
+		if(this.general.citizen.isDead){
+			this.resolution = this.general.citizen.name + " died before the event could finish.";
 		}
 		//		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
@@ -208,8 +212,8 @@ public class Raid : GameEvent {
 			}
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
-		int value = 50;
-//		int value = 100;
+//		int value = 50;
+		int value = 100;
 		if(this.general.citizen.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
 			value -= 15;
 		}

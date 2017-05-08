@@ -71,7 +71,7 @@ public class CampaignManager {
 
 						int neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
 						newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
-						newCampaign.rallyPoint = GetRallyPoint (newCampaign);
+						newCampaign.rallyPoint = GetRallyPoint (newCampaign, this.leader.city);
 						if(newCampaign.rallyPoint == null){
 							Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
 							newCampaign = null;
@@ -118,7 +118,7 @@ public class CampaignManager {
 
 							int neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
 							newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
-							newCampaign.rallyPoint = GetRallyPoint (newCampaign);
+							newCampaign.rallyPoint = GetRallyPoint (newCampaign, this.leader.city);
 							if(newCampaign.rallyPoint == null){
 								Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
 								newCampaign = null;
@@ -310,20 +310,40 @@ public class CampaignManager {
 
 //		chosenCampaign.registeredGenerals.Remove (general);
 	}
-	internal HexTile GetRallyPoint(Campaign campaign){
-		HexTile nearestHextile = GetHextile(campaign.targetCity);
+	internal HexTile GetRallyPoint(Campaign campaign, City sourceCity){
+		HexTile nearestHextile = GetHextile(campaign.targetCity, sourceCity);
 		if(nearestHextile != null){
 			return nearestHextile;
 		}
 		return null;
 	}
-	internal HexTile GetHextile(City targetCity){
+	internal HexTile GetHextile(City targetCity, City sourceCity){
 		if(targetCity == null){
 			return null;
 		}
 		List<HexTile> tilesInRange = targetCity.hexTile.GetTilesInRange (10f).Where(x => x.elevationType != ELEVATION.WATER).ToList();
 		if(tilesInRange.Count > 0){
-			return tilesInRange [UnityEngine.Random.Range (0, tilesInRange.Count)];
+			HexTile nearestTile = null;
+			int nearestCount = 0;
+			for(int i = 0; i < tilesInRange.Count; i++){
+				List<HexTile> path = PathGenerator.Instance.GetPath (tilesInRange [i], sourceCity.hexTile, PATHFINDING_MODE.COMBAT);
+				if(path != null){
+					if(nearestTile == null){
+						nearestTile = tilesInRange [i];
+						nearestCount = path.Count;
+					}else{
+						if(path.Count < nearestCount){
+							nearestTile = tilesInRange [i];
+							nearestCount = path.Count;
+						}
+					}
+				}
+			}
+			if(nearestTile != null){
+				return nearestTile;
+			}else{
+				return tilesInRange [UnityEngine.Random.Range (0, tilesInRange.Count)];
+			}
 		}else{
 			return null;
 		}

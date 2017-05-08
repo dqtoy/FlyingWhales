@@ -44,7 +44,7 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 
-		int numOfKingdoms = 5;
+		int numOfKingdoms = 2;
 		if (elligibleTilesForHumans.Count < numOfKingdoms) {
 			numOfKingdoms = elligibleTilesForHumans.Count;
 		}

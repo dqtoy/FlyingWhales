@@ -295,7 +295,7 @@ public class CombatManager : MonoBehaviour {
 //		}
 //	}
 	internal void ConquerCity(Kingdom conqueror, City city){
-		conqueror.ConquerCity(city);
+		StartCoroutine(conqueror.ConquerCity(city));
 	}
 	internal void Battle(ref General general1, ref General general2, bool isMidway = false){
 		Debug.Log ("BATTLE: (" + general1.citizen.city.name + ") " + general1.citizen.name + " and (" + general2.citizen.city.name + ") " + general2.citizen.name);
@@ -305,27 +305,44 @@ public class CombatManager : MonoBehaviour {
 		float general1HPmultiplier = 1f;
 		float general2HPmultiplier = 1f;
 
-		if(general1.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
-			general1HPmultiplier = 1.20f; //Utilities.defenseBuff
+		if(!isMidway){
+			if(general1.IsDefense(general2)){
+				general1HPmultiplier = Utilities.defenseBuff;
+			}
+
+			if(general2.IsDefense(general1)){
+				general2HPmultiplier = Utilities.defenseBuff;
+			}
 		}
-		if(general2.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
-			general2HPmultiplier = 1.20f; //Utilities.defenseBuff
-		}
+
+
 
 		int general1TotalHP = (int)(general1.GetArmyHP() * general1HPmultiplier);
 		int general2TotalHP = (int)(general2.GetArmyHP() * general2HPmultiplier);
+
+		Debug.Log ("enemy total general army: " + general1TotalHP);
+		Debug.Log ("friendly total general army: " + general2TotalHP);
+
 
 		if(general1TotalHP > general2TotalHP){
 			general1TotalHP -= general2TotalHP;
 			general1.army.hp = general1TotalHP;
 			general2.army.hp = 0;
-			general2.DeathArmy ();
+//			general2.DeathArmy ();
 		}else{
 			general2TotalHP -= general1TotalHP;
 			general2.army.hp = general2TotalHP;
 			general1.army.hp = 0;
-			general1.DeathArmy ();
+//			general1.DeathArmy ();
+		}
 
+		if(!isMidway){
+			if(general1.army.hp <= 0){
+				general1.DeathArmy ();
+			}
+			if(general2.army.hp <= 0){
+				general2.DeathArmy ();
+			}
 		}
 
 		RelationshipKingdom kingdomRelationshipToGeneral2 = general1.citizen.city.kingdom.GetRelationshipWithOtherKingdom(general2.citizen.city.kingdom);
@@ -516,5 +533,4 @@ public class CombatManager : MonoBehaviour {
 //			general2.citizen.Death(DEATH_REASONS.BATTLE);
 //		}
 	}
-
 }

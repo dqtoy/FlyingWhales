@@ -25,6 +25,7 @@ public class General : Role {
 	public int unsuccessfulRaids;
 	public bool inAction;
 	public bool isGoingHome;
+	public bool isHome;
 
 	internal Citizen target;
 	public int daysCounter = 0;
@@ -51,6 +52,7 @@ public class General : Role {
 		this.unsuccessfulRaids = 0;
 		this.inAction = false;
 		this.isGoingHome = false;
+		this.isHome = true;
 //		EventManager.Instance.onCitizenMove.AddListener (Move);
 		EventManager.Instance.onRegisterOnCampaign.AddListener (RegisterOnCampaign);
 		EventManager.Instance.onLookForLostArmies.AddListener (JoinArmyTo);
@@ -166,6 +168,7 @@ public class General : Role {
 		if(this.citizen.isDead){
 			return;
 		}
+
 		if(campaign.campaignType == CAMPAIGN.OFFENSE){
 			Debug.Log (this.citizen.name + " of " + this.citizen.city.kingdom.name + " REGISTERING ON OFFENSE CAMPAIGN OF " + campaign.leader.name + " of " + campaign.leader.city.kingdom.name + " W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + "...");
 			if(campaign.warType == WAR_TYPE.INTERNATIONAL){
@@ -465,6 +468,7 @@ public class General : Role {
 
 
 		if (this.generalAvatar != null) {
+			this.generalAvatar.GetComponent<GeneralObject>().RemoveBehaviourTree();
 			GameObject.Destroy (this.generalAvatar);
 			this.generalAvatar = null;
 		}
@@ -491,5 +495,46 @@ public class General : Role {
 		if(this.generalAvatar != null){
 			this.generalAvatar.GetComponent<GeneralObject> ().UpdateUI ();
 		}
+	}
+	internal bool IsDefense(General enemy){
+		if(this.assignedCampaign != null){
+			if(this.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
+				return true;
+			}else{
+				if (enemy.assignedCampaign != null) {
+					if (enemy.assignedCampaign.campaignType != CAMPAIGN.DEFENSE) {
+						if (this.location == enemy.targetCity.hexTile) {
+							return true;
+						}
+					}else{
+						if (this.location == this.citizen.city.hexTile) {
+							return true;
+						}
+					}
+				}else{
+					if (this.location == this.citizen.city.hexTile) {
+						return true;
+					}
+				}
+			}
+		}else{
+			if (enemy.assignedCampaign != null) {
+				if (enemy.assignedCampaign.campaignType != CAMPAIGN.DEFENSE) {
+					if (this.location == enemy.targetCity.hexTile) {
+						return true;
+					}
+				}else{
+					if (this.location == this.citizen.city.hexTile) {
+						return true;
+					}
+				}
+			}else{
+				if (this.location == this.citizen.city.hexTile) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

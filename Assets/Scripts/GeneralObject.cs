@@ -14,6 +14,21 @@ public class GeneralObject : MonoBehaviour {
 	public bool collidedWithHostile;
 	public General otherGeneral;
 
+	public float speed;
+	bool isMoving = false;
+	Vector3 targetPosition = Vector3.zero;
+
+//	void Update(){
+//		if(isMoving){
+//			if(this.targetPosition != null){
+//				float step = speed * Time.deltaTime;
+//				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
+//				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
+//					
+//				}
+//			}
+//		}
+//	}
 	internal void Init(){
 		ResetValues ();
 		this.GetComponent<BoxCollider2D>().enabled = true;
@@ -40,11 +55,19 @@ public class GeneralObject : MonoBehaviour {
 
 
 	}
-
+	internal void MoveTo(Vector3 destination){
+		this.targetPosition = destination;
+		this.isMoving = true;
+		this.UpdateUI ();
+	}
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
 //		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
 		this.transform.position = targetTile.transform.position;
 		this.UpdateUI ();
+	}
+	private void StopMoving(){
+		this.isMoving = false;
+		this.targetPosition = null;
 	}
 	internal void UpdateUI(){
 		if(this.general != null){
@@ -130,7 +153,13 @@ public class GeneralObject : MonoBehaviour {
 	[Task]
 	public void Idle(){
 		if(this.isIdle){
-			Roam ();
+			if(!this.isMoving){
+				this.isMoving = true;
+				Roam ();
+				RoamTo ();
+			}else{
+				RoamTo ();
+			}
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
@@ -213,6 +242,7 @@ public class GeneralObject : MonoBehaviour {
 	public void HasArrivedHome(){
 		if(this.general.isGoingHome){
 			if(IsGeneralInsideHomeCity()){
+				this.general.inAction = false;
 				Task.current.Succeed ();
 			}else{
 				Task.current.Fail ();
@@ -224,49 +254,16 @@ public class GeneralObject : MonoBehaviour {
 	}
 	[Task]
 	public void HasArrivedAttackTargetCity(){
-		if(this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE){
-			if (this.general.location == this.general.targetCity.hexTile) {
-				CombatManager.Instance.CityBattle (this.general.targetCity, ref this.general);
-				if(this.general != null){
+		if(this.general.assignedCampaign != null){
+			if(this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE){
+				if (this.general.location == this.general.targetCity.hexTile) {
+					CombatManager.Instance.CityBattle (this.general.targetCity, ref this.general);
 					if(this.general.army.hp > 0){
 						Victory ();
-					}
-				}
+					}else{
 
-				Task.current.Succeed ();
-			}else{
-				Task.current.Fail ();
-			}
-		}else{
-			Task.current.Fail ();
-		}
-	}
-	[Task]
-	public void HasArrivedDefenseTargetCity(){
-		if(this.general.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
-			if (this.general.location == this.general.targetCity.hexTile) {
-				if(this.general.assignedCampaign.AreAllGeneralsOnDefenseCity()){
-					if (this.general.assignedCampaign.expiration == -1) {
-						this.general.assignedCampaign.expiration = Utilities.defaultCampaignExpiration;
 					}
-				}
-				Task.current.Succeed ();
-			}else{
-				Task.current.Fail ();
-			}
-		}else{
-			Task.current.Fail ();
-		}
-	}
 
-	[Task]
-	public void HasArrivedRallyPoint(){
-		if(this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE){
-			if (this.general.location == this.general.rallyPoint) {
-				if(this.general.targetLocation == this.general.rallyPoint){
-					if(this.general.assignedCampaign.AreAllGeneralsOnRallyPoint()){
-						this.general.assignedCampaign.AttackCityNow ();
-					}
 					Task.current.Succeed ();
 				}else{
 					Task.current.Fail ();
@@ -277,23 +274,74 @@ public class GeneralObject : MonoBehaviour {
 		}else{
 			Task.current.Fail ();
 		}
+
+	}
+	[Task]
+	public void HasArrivedDefenseTargetCity(){
+		if (this.general.assignedCampaign != null) {
+			if (this.general.assignedCampaign.campaignType == CAMPAIGN.DEFENSE) {
+				if (this.general.location == this.general.targetCity.hexTile) {
+					if (this.general.assignedCampaign.AreAllGeneralsOnDefenseCity ()) {
+						if (this.general.assignedCampaign.expiration == -1) {
+							this.general.assignedCampaign.expiration = Utilities.defaultCampaignExpiration;
+						}
+					}
+					Task.current.Succeed ();
+				} else {
+					Task.current.Fail ();
+				}
+			} else {
+				Task.current.Fail ();
+			}
+		}else{
+			Task.current.Fail ();
+		}
+	}
+
+	[Task]
+	public void HasArrivedRallyPoint(){
+		if (this.general.assignedCampaign != null) {
+			if (this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE) {
+				if (this.general.location == this.general.rallyPoint) {
+					if (this.general.targetLocation == this.general.rallyPoint) {
+						if (this.general.assignedCampaign.AreAllGeneralsOnRallyPoint ()) {
+							this.general.assignedCampaign.AttackCityNow ();
+						}
+						Task.current.Succeed ();
+					} else {
+						Task.current.Fail ();
+					}
+				} else {
+					Task.current.Fail ();
+				}
+			} else {
+				Task.current.Fail ();
+			}
+		}else {
+			Task.current.Fail ();
+		}
 	}
 	[Task]
 	public void HasCollidedWithHostileGeneral(){
 		if(this.collidedWithHostile){
 			this.collidedWithHostile = false;
-			CombatManager.Instance.BattleMidway (ref this.general, ref this.otherGeneral);
-			if(this.otherGeneral.army.hp <= 0){
-				this.otherGeneral.citizen.Death(DEATH_REASONS.BATTLE);
-			}
-			this.otherGeneral = null;
-			if(this.general.army.hp <= 0){
-				ResetValues ();
-				this.general.citizen.Death(DEATH_REASONS.BATTLE);
-				Task.current.Succeed ();
+			if(this.general.army.hp > 0 && this.otherGeneral.army.hp > 0){
+				CombatManager.Instance.BattleMidway (ref this.general, ref this.otherGeneral);
+				if(this.otherGeneral.army.hp <= 0){
+					this.otherGeneral.citizen.Death(DEATH_REASONS.BATTLE);
+				}
+				this.otherGeneral = null;
+				if(this.general.army.hp <= 0){
+					ResetValues ();
+					this.general.citizen.Death(DEATH_REASONS.BATTLE);
+					Task.current.Succeed ();
+				}else{
+					Task.current.Fail ();
+				}
 			}else{
 				Task.current.Fail ();
 			}
+
 		}else{
 			Task.current.Fail ();
 		}
@@ -377,6 +425,7 @@ public class GeneralObject : MonoBehaviour {
 		}else{
 			this.general.citizen.city.LookForLostArmy (this.general);
 			this.isIdle = true;
+			this.isMoving = false;
 		}
 	}
 	private void Move(){
@@ -419,15 +468,29 @@ public class GeneralObject : MonoBehaviour {
 	private void Roam(){
 		if(this.general.citizen.city.ownedTiles.Count > 0){
 			HexTile roamTile = this.general.citizen.city.ownedTiles [UnityEngine.Random.Range (0, this.general.citizen.city.ownedTiles.Count)];
-			this.transform.position = roamTile.transform.position;
-			this.UpdateUI ();
+			this.path.Clear ();
+			this.path = PathGenerator.Instance.GetPath (this.general.citizen.currentLocation, roamTile, PATHFINDING_MODE.COMBAT);
+//			this.MoveTo (roamTile.transform.position);
+
 		}
+	}
+	private void RoamTo(){
+		if(this.path != null){
+			this.MakeCitizenMove (this.general.citizen.currentLocation, this.path [0]);
+			this.general.citizen.currentLocation = this.path[0];
+			this.path.RemoveAt (0);
+			if(this.path.Count <= 0){
+				Roam ();
+			}
+		}
+		this.UpdateUI ();
 	}
 	internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
 
 	internal void RemoveBehaviourTree(){
-		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
+		bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
+		Debug.Log ("REMOVED?: " + this.general.citizen.name + " BT = " + removed);
 	}
 }

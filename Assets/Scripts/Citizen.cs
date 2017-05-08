@@ -1098,8 +1098,10 @@ public class Citizen {
 	private void InvasionPlan(RelationshipKings relationship, INVASION_TRIGGER_REASONS reason){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 4;
+//		int value = 100;
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
 			value = 8;
+//			value = 100;
 		}
 		if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
 			value = 1;
@@ -1480,10 +1482,13 @@ public class Citizen {
 		if(this.assignedRole is General){
 			General general = (General)this.assignedRole;
 			if (general.generalAvatar != null) {
-				general.generalAvatar.GetComponent<GeneralObject> ().RemoveBehaviourTree ();
-				GameObject.Destroy (general.generalAvatar);
-				general.generalAvatar = null;
+				if(!general.inAction){
+					general.generalAvatar.GetComponent<GeneralObject> ().RemoveBehaviourTree ();
+					GameObject.Destroy (general.generalAvatar);
+					general.generalAvatar = null;
+				}
 			}
+			Debug.Log ("CREATED GHOST CITIZEN FOR " + this.name);
 			general.CreateGhostCitizen ();
 		}
 	
