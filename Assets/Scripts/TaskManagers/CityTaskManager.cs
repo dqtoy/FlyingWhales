@@ -7,7 +7,7 @@ using System.Linq;
 public class CityTaskManager : MonoBehaviour {
 
 	public HexTile targetHexTileToPurchase = null;
-	public List<HexTile> pathToTargetHexTile;
+	public List<HexTile> pathToTargetHexTile = new List<HexTile>();
 
 	private City city = null;
 	private General generalToUpgrade = null;
@@ -107,7 +107,7 @@ public class CityTaskManager : MonoBehaviour {
 		}
 
 		HexTile tileToBuy = null;
-		if (this.pathToTargetHexTile.Count > 0) {
+		if (this.pathToTargetHexTile != null && this.pathToTargetHexTile.Count > 0) {
 			int tileToBuyIndex = 0;
 			for (int i = 0; i < this.pathToTargetHexTile.Count; i++) {
 				HexTile currentHexTile = this.pathToTargetHexTile [i];

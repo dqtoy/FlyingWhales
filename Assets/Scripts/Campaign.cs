@@ -121,12 +121,12 @@ public class Campaign {
 		}
 
 		//remove from rally point
-		if(this.rallyPoint != null){
-			if(this.rallyPoint.isOccupied){
-				for(int i = 0; i < this.registeredGenerals.Count; i++){
-					this.rallyPoint.city.incomingGenerals.Remove(this.registeredGenerals[i]);
-				}
-			}
-		}
+//		if(this.rallyPoint != null){
+//			if(!this.rallyPoint.isOccupied){
+//				for(int i = 0; i < this.registeredGenerals.Count; i++){
+//					this.rallyPoint.city.incomingGenerals.Remove(this.registeredGenerals[i]);
+//				}
+//			}
+//		}
 	}
 }

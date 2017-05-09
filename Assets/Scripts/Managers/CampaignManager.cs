@@ -321,7 +321,7 @@ public class CampaignManager {
 		if(targetCity == null){
 			return null;
 		}
-		List<HexTile> tilesInRange = targetCity.hexTile.GetTilesInRange (10f).Where(x => x.elevationType != ELEVATION.WATER).ToList();
+		List<HexTile> tilesInRange = targetCity.hexTile.GetTilesInRange (10f).Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable && !x.isOwned).ToList();
 		if(tilesInRange.Count > 0){
 			HexTile nearestTile = null;
 			int nearestCount = 0;
