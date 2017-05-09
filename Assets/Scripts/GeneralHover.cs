@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GeneralHover : MonoBehaviour {
+	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
 			if(this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null){
@@ -24,16 +26,18 @@ public class GeneralHover : MonoBehaviour {
 
 	void HighlightPath(){
 		if (this.transform.parent.GetComponent<GeneralObject> ().general.assignedCampaign != null) {
+			this.pathToUnhighlight.Clear ();
 			for (int i = 0; i < this.transform.parent.GetComponent<GeneralObject> ().general.roads.Count; i++) {
 				this.transform.parent.GetComponent<GeneralObject> ().general.roads [i].highlightGO.SetActive (true);
+				this.pathToUnhighlight.Add (this.transform.parent.GetComponent<GeneralObject> ().general.roads [i]);
 			}
 		}
 	}
 
 	void UnHighlightPath(){
 		if (this.transform.parent.GetComponent<GeneralObject> ().general.assignedCampaign != null) {
-			for (int i = 0; i < this.transform.parent.GetComponent<GeneralObject> ().path.Count; i++) {
-				this.transform.parent.GetComponent<GeneralObject> ().path [i].highlightGO.SetActive(false);
+			for (int i = 0; i < this.pathToUnhighlight.Count; i++) {
+				this.pathToUnhighlight[i].highlightGO.SetActive(false);
 			}
 		}
 	}

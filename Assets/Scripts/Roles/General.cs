@@ -93,7 +93,7 @@ public class General : Role {
 		}
 	}
 	internal void RerouteToHome(){
-		if(!this.isHome){
+		if(this.location != this.citizen.city.hexTile){
 			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.citizen.city.hexTile, PATHFINDING_MODE.COMBAT);
 			if(path != null){
 				this.roads.Clear ();
@@ -377,7 +377,7 @@ public class General : Role {
 //		}else{
 //			
 //		}
-		this.generalAvatar.transform.parent = this.citizen.currentLocation.transform;
+		this.generalAvatar.transform.parent = this.location.transform;
 		this.generalAvatar.transform.localPosition = Vector3.zero;
 		this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
 		this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
@@ -512,12 +512,12 @@ public class General : Role {
 							return true;
 						}
 					}else{
-						if (this.isHome) {
+						if (this.location == this.citizen.city.hexTile) {
 							return true;
 						}
 					}
 				}else{
-					if (this.isHome) {
+					if (this.location == this.citizen.city.hexTile) {
 						return true;
 					}
 				}
@@ -529,12 +529,12 @@ public class General : Role {
 						return true;
 					}
 				}else{
-					if (this.isHome) {
+					if (this.location == this.citizen.city.hexTile) {
 						return true;
 					}
 				}
 			}else{
-				if (this.isHome) {
+				if (this.location == this.citizen.city.hexTile) {
 					return true;
 				}
 			}
