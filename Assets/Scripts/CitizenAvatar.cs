@@ -69,7 +69,7 @@ public class CitizenAvatar : MonoBehaviour {
 	void HighlightPath(){
 		for (int i = 0; i < path.Count; i++) {
 			if (!path [i].isHabitable) {
-				path [i].SetTileColor (Color.gray);
+				path [i].GetComponent<SpriteRenderer>().color = Color.gray;
 			}
 		}
 	}
@@ -77,7 +77,7 @@ public class CitizenAvatar : MonoBehaviour {
 	void UnHighlightPath(){
 		for (int i = 0; i < path.Count; i++) {
 			if (!path [i].isHabitable) {
-				path [i].SetTileColor (Color.white);
+				path [i].GetComponent<SpriteRenderer>().color = Color.white;
 			}
 		}
 	}

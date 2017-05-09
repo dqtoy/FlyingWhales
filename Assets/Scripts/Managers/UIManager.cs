@@ -214,9 +214,9 @@ public class UIManager : MonoBehaviour {
 
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
-	private Citizen currentlyShowingCitizen;
-	internal City currentlyShowingCity;
-	public Kingdom currentlyShowingKingdom;
+	private Citizen currentlyShowingCitizen = null;
+	internal City currentlyShowingCity = null;
+	internal Kingdom currentlyShowingKingdom = null;
 	private GameEvent currentlyShowingEvent;
 	private RelationshipKings currentlyShowingRelationship;
 	private GameObject lastClickedEventType = null;
@@ -324,8 +324,11 @@ public class UIManager : MonoBehaviour {
 		}
 
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			Citizen currentKing = KingdomManager.Instance.allKingdoms [i].king;
 			GameObject kingGO = GameObject.Instantiate (characterPortraitPrefab, kingsGrid.transform) as GameObject;
-			kingGO.GetComponent<CharacterPortrait>().SetCitizen(KingdomManager.Instance.allKingdoms[i].king);
+			kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentKing);
+			kingGO.GetComponent<CharacterPortrait> ().onHoverCharacterPortrait += currentKing.city.kingdom.HighlightAllOwnedTilesInKingdom;
+			kingGO.GetComponent<CharacterPortrait> ().onHoverExitCharacterPortrait += currentKing.city.kingdom.UnHighlightAllOwnedTilesInKingdom;
 			kingGO.transform.localScale = Vector3.one;
 		}
 		StartCoroutine (RepositionGrid (kingsGrid));
@@ -783,7 +786,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void HideCityInfo(){
-//		currentlyShowingCity = null;
+		currentlyShowingCity = null;
 		cityInfoCitizensParent.SetActive(false);
 		cityInfoEventsParent.SetActive(false);
 		cityInfoHistoryParent.SetActive(false);
@@ -791,6 +794,7 @@ public class UIManager : MonoBehaviour {
 	}
 		
 	public void ShowKingdomInfo(Kingdom kingdom){
+		kingdom.HighlightAllOwnedTilesInKingdom();
 		this.currentlyShowingKingdom = kingdom;
 		this.kingdomNameBigLbl.text = "[b]" + kingdom.name + "[/b]";
 		this.kingdomNameSmallLbl.text = kingdom.name;
@@ -823,7 +827,8 @@ public class UIManager : MonoBehaviour {
 
 	}
 	public void HideKingdomInfo(){
-//		this.currentlyShowingKingdom = null;
+		this.currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+		this.currentlyShowingKingdom = null;
 		this.kingdomInfoGO.SetActive (false);
 
 	}
@@ -2661,6 +2666,10 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 		allKingdomEventsGO.SetActive (true);
+		this.pauseBtn.SetClickState (true);
+		this.x1Btn.SetClickState (false);
+		this.x2Btn.SetClickState (false);
+		this.x4Btn.SetClickState (false);
 		GameManager.Instance.SetPausedState (true);
 	}
 
@@ -2678,6 +2687,10 @@ public class UIManager : MonoBehaviour {
 		for (int i = 0; i < allWarEventParents.Length; i++) {
 			Destroy (allWarEventParents [i].gameObject);
 		}
+		this.pauseBtn.SetClickState (false);
+		this.x1Btn.SetClickState (true);
+		this.x2Btn.SetClickState (true);
+		this.x4Btn.SetClickState (true);
 		GameManager.Instance.SetPausedState (false);
 	}
 

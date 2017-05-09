@@ -13,14 +13,14 @@ public class PathGenerator : MonoBehaviour {
 	[ContextMenu("Show all road tiles")]
 	public void ShowAllRoadTiles(){
 		foreach (HexTile h in roadTiles) {
-			h.SetTileColor(Color.red);
+			h.GetComponent<SpriteRenderer>().color = Color.red;
 		}
 	}
 
 	[ContextMenu("Hide all road tiles")]
 	public void HideAllRoadTiles(){
 		foreach (HexTile h in roadTiles) {
-			h.SetTileColor(Color.white);
+			h.GetComponent<SpriteRenderer>().color = Color.white;
 		}
 	}
 

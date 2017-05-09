@@ -96,13 +96,13 @@ public class GeneralObject : MonoBehaviour {
 	}
 	void HighlightPath(){
 		for (int i = 0; i < this.general.roads.Count; i++) {
-			this.general.roads [i].SetTileColor (Color.gray);
+			this.general.roads [i].GetComponent<SpriteRenderer>().color = Color.gray;
 		}
 	}
 
 	void UnHighlightPath(){
 		for (int i = 0; i < this.path.Count; i++) {
-			this.path [i].SetTileColor (Color.white);
+			this.general.roads [i].GetComponent<SpriteRenderer>().color = Color.white;
 		}
 	}
 	private string CampaignInfo(Campaign campaign){

@@ -11,6 +11,7 @@ public class Utilities : MonoBehaviour {
 	public static int lastCityID = 0;
 	public static int lastCampaignID = 0;
 	public static int lastEventID = 0;
+	public static int lastKingdomColorIndex = 0;
 	public static int defaultCampaignExpiration = 8;
 	public static float defenseBuff = 1.20f;
 	public static string[] accidentCauses = new string[]{
@@ -50,6 +51,15 @@ public class Utilities : MonoBehaviour {
 			return lastEventID;
 		}
 		return 0;
+	}
+
+	public static Color GetColorForKingdom(){
+		Color chosenColor = kingdomColorCycle[lastKingdomColorIndex];
+		lastKingdomColorIndex += 1;
+		if (lastKingdomColorIndex >= kingdomColorCycle.Length) {
+			lastKingdomColorIndex = 0;
+		}
+		return chosenColor;
 	}
 
 	public static T[] GetEnumValues<T>() where T : struct {
@@ -472,4 +482,17 @@ public class Utilities : MonoBehaviour {
 
 		return unwantedGovernors;
 	}
+
+	public static Color[] kingdomColorCycle = new Color[] {
+		new Color32(0x10, 0x2F, 0xB2, 0xFF),//Dark Blue
+		new Color32(0xF3, 0xFF, 0x2C, 0xFF),//Yellow
+		new Color32(0xAA, 0xFF, 0x88, 0xFF),//Mint Green
+		new Color32(0xFF, 0xB2, 0x2C, 0xFF),//Orange
+		new Color32(0xF2, 0xF2, 0xF2, 0xFF),//White
+		new Color32(0xBB, 0x74, 0x17, 0xFF),//Brown
+		new Color32(0xB2, 0x10, 0x10, 0xFF),//Crimson
+		new Color32(0x37, 0x37, 0x37, 0xFF),//Black
+		new Color32(0x88, 0xFF, 0xE2, 0xFF),//Cyan
+		new Color32(0xFC, 0x9F, 0xFF, 0xFF)//Pink
+	};
 }
