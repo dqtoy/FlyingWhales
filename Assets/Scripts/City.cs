@@ -127,6 +127,7 @@ public class City{
 	internal void CreateInitialFamilies(bool hasRoyalFamily = true){
 //		BuyInitialTiles ();
 		if(hasRoyalFamily){
+			this.hasKing = true;
 			CreateInitialRoyalFamily ();
 		}
 		CreateInitialGovernorFamily ();
@@ -1711,7 +1712,7 @@ public class City{
 		if(attacker.citizen.city.governor.id != this.governor.id){
 			for(int i = 0; i < this.citizens.Count; i++){
 				if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
-					if(((General)this.citizens[i].assignedRole).isHome){
+					if(((General)this.citizens[i].assignedRole).location == this.hexTile){
 						allGenerals.Add (((General)this.citizens [i].assignedRole));
 					}
 				}
@@ -1938,6 +1939,10 @@ public class City{
 	}
 	internal void KillCity(){
 		this.kingdom.cities.Remove(this);
+		if(this.hasKing){
+			this.hasKing = false;
+			this.kingdom.AssignNewKing(null, this.kingdom.cities[0]);
+		}
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
 			currentTile.ResetTile();
@@ -1963,7 +1968,7 @@ public class City{
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
 				General chosenGeneral = (General)this.citizens [i].assignedRole;
-				if(chosenGeneral.isHome){
+				if(chosenGeneral.location == general.location){
 					if(!chosenGeneral.citizen.isDead){
 						Debug.Log (chosenGeneral.citizen.name + " IS THE NEW GENERAL FOR " + general.citizen.name + "'s ARMY");
 						chosenGeneral.army.hp += general.army.hp;
@@ -1979,7 +1984,6 @@ public class City{
 	internal void LookForLostArmy(General general){
 		Debug.Log (general.citizen.name + " IS LOOKING FOR LOST ARMIES...");
 		EventManager.Instance.onLookForLostArmies.Invoke (general);
-		general.inAction = false;
 //		List<General> deadGenerals = new List<General> ();
 //		for(int i = 0; i < this.citizens.Count; i++){
 //			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
