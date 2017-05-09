@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class General : Role {
-	public City targetCity;
+//	public City targetCity;
 	public HexTile location;
 	public HexTile targetLocation;
-	public HexTile rallyPoint;
+//	public HexTile rallyPoint;
 	public List<HexTile> roads;
 	public Army army;
 //	public Citizen warLeader;
@@ -35,8 +35,8 @@ public class General : Role {
 		this.location = citizen.city.hexTile;
 		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
 		this.targetLocation = null;
-		this.targetCity = null;
-		this.rallyPoint = null;
+//		this.targetCity = null;
+//		this.rallyPoint = null;
 //		this.warLeader = null;
 		this.army = new Army (GetInitialArmyHp());
 //		this.campaignID = 0;
@@ -129,17 +129,20 @@ public class General : Role {
 
 		if(campaign != null){
 			campaign.registeredGenerals.Remove (this);
-			if (this.targetLocation != null) {
-				if (this.targetLocation.isOccupied) {
-					this.targetLocation.city.incomingGenerals.Remove (this);
-				}
-			}
+//			if (this.targetLocation != null) {
+//				if (this.targetLocation.isOccupied) {
+//					this.targetLocation.city.incomingGenerals.Remove (this);
+//				}
+//			}
 			this.targetLocation = null;
 			this.assignedCampaign = null;
-			this.targetCity = null;
-			this.rallyPoint = null;
+//			this.targetCity = null;
+//			this.rallyPoint = null;
 			this.daysBeforeArrival = 0;
 			this.inAction = false;
+			if(campaign.targetCity != null){
+				campaign.targetCity.incomingGenerals.Remove (this);
+			}
 			if(isRerouteToHome){
 				RerouteToHome ();
 			}
@@ -350,8 +353,8 @@ public class General : Role {
 //		this.campaignID = chosenCampaign.id;
 		this.assignedCampaign = chosenCampaign;
 //		this.warType = chosenCampaign.warType;
-		this.targetCity = chosenCampaign.targetCity;
-		this.rallyPoint = chosenCampaign.rallyPoint;
+//		this.targetCity = chosenCampaign.targetCity;
+//		this.rallyPoint = chosenCampaign.rallyPoint;
 		this.daysBeforeArrival = path.Sum(x => x.movementDays);
 		this.roads.Clear ();
 		this.roads = path;
@@ -505,7 +508,7 @@ public class General : Role {
 			}else{
 				if (enemy.assignedCampaign != null) {
 					if (enemy.assignedCampaign.campaignType != CAMPAIGN.DEFENSE) {
-						if (this.location == enemy.targetCity.hexTile) {
+						if (this.location == enemy.assignedCampaign.targetCity.hexTile) {
 							return true;
 						}
 					}else{
@@ -522,7 +525,7 @@ public class General : Role {
 		}else{
 			if (enemy.assignedCampaign != null) {
 				if (enemy.assignedCampaign.campaignType != CAMPAIGN.DEFENSE) {
-					if (this.location == enemy.targetCity.hexTile) {
+					if (this.location == enemy.assignedCampaign.targetCity.hexTile) {
 						return true;
 					}
 				}else{

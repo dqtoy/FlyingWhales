@@ -48,7 +48,7 @@ public class CampaignManager {
 						campaignType = CAMPAIGN.DEFENSE;
 						List<City> defenseCities = this.defenseWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
 						if(defenseCities.Count > 0){
-							defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+							defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.assignedCampaign.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
 
 							int nearestArrival = -2;
 							int neededArmy = defenseCities [0].GetTotalAttackerStrength (ref nearestArrival);
@@ -90,7 +90,7 @@ public class CampaignManager {
 				}else{
 					List<City> defenseCities = this.defenseWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
 					if(defenseCities.Count > 0){
-						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.assignedCampaign.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
 
 						int nearestArrival = -2;
 						int neededArmy = defenseCities [0].GetTotalAttackerStrength (ref nearestArrival);

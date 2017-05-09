@@ -54,6 +54,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public Transform eventsParent;
 	public GameObject cityNameGO;
 	public TextMesh cityNameLbl;
+	public GameObject highlightGO;
 
 	public List<HexTile> connectedTiles = new List<HexTile>();
 
