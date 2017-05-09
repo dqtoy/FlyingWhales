@@ -7,6 +7,7 @@ public class GeneralObject : MonoBehaviour {
 	public General general;
 	public PandaBehaviour pandaBehaviour;
 	public TextMesh textMesh;
+	public SpriteRenderer kingdomIndicator;
 	public List<HexTile> path;
 
 	public bool isIdle;
@@ -34,6 +35,7 @@ public class GeneralObject : MonoBehaviour {
 		this.GetComponent<BoxCollider2D>().enabled = true;
 		if(this.general != null){
 			this.textMesh.text = this.general.GetArmyHP().ToString ();
+			this.kingdomIndicator.color = this.general.citizen.city.kingdom.kingdomColor;
 			this.path = this.general.roads;
 			this.AddBehaviourTree ();
 		}
@@ -75,81 +77,81 @@ public class GeneralObject : MonoBehaviour {
 		}
 	}
 
-	void OnMouseEnter(){
-		if (!UIManager.Instance.IsMouseOnUI()) {
-			if(this.general.assignedCampaign != null){
-				if (this.general.assignedCampaign.leader != null) {
-					Campaign chosenCampaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.general.assignedCampaign.id);
-					if (chosenCampaign != null) {
-						string info = this.CampaignInfo (chosenCampaign);
-						UIManager.Instance.ShowSmallInfo (info, UIManager.Instance.transform);
-						HighlightPath ();
-					}
-				}
-			}
-		}
-	}
-
-	void OnMouseExit(){
-		UIManager.Instance.HideSmallInfo();
-		UnHighlightPath ();
-	}
-	void HighlightPath(){
-		for (int i = 0; i < this.general.roads.Count; i++) {
-			this.general.roads [i].GetComponent<SpriteRenderer>().color = Color.gray;
-		}
-	}
-
-	void UnHighlightPath(){
-		for (int i = 0; i < this.path.Count; i++) {
+//	void OnMouseEnter(){
+//		if (!UIManager.Instance.IsMouseOnUI()) {
+//			if(this.general.assignedCampaign != null){
+//				if (this.general.assignedCampaign.leader != null) {
+//					Campaign chosenCampaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.general.assignedCampaign.id);
+//					if (chosenCampaign != null) {
+//						string info = this.CampaignInfo (chosenCampaign);
+//						UIManager.Instance.ShowSmallInfo (info, UIManager.Instance.transform);
+//						HighlightPath ();
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	void OnMouseExit(){
+//		UIManager.Instance.HideSmallInfo();
+//		UnHighlightPath ();
+//	}
+//	void HighlightPath(){
+//		for (int i = 0; i < this.general.roads.Count; i++) {
+			this.general.roads [i].GetComponent<SpriteRenderer>().color = Color.black;
+//		}
+//	}
+//
+//	void UnHighlightPath(){
+//		for (int i = 0; i < this.path.Count; i++) {
 			this.general.roads [i].GetComponent<SpriteRenderer>().color = Color.white;
-		}
-	}
-	private string CampaignInfo(Campaign campaign){
-		string info = string.Empty;
-		info += "id: " + campaign.id;
-		info += "\n";
-
-		info += "campaign type: " + campaign.campaignType.ToString ();
-		info += "\n";
-
-		info += "general: " + this.general.citizen.name;
-		info += "\n";
-
-		info += "target city: " + campaign.targetCity.name;
-		info += "\n";
-		if(campaign.rallyPoint == null){
-			info += "rally point: N/A";
-		}else{
-			info += "rally point: " + campaign.rallyPoint.name; 
-		}
-		info += "\n";
-
-		info += "leader: " + campaign.leader.name;
-		info += "\n";
-
-		info += "war type: " + campaign.warType.ToString ();
-		info += "\n";
-
-		info += "needed army: " + campaign.neededArmyStrength.ToString ();
-		info += "\n";
-
-		info += "army: " + campaign.GetArmyStrength ().ToString ();
-		info += "\n";
-
-		if(campaign.campaignType == CAMPAIGN.DEFENSE){
-			if(campaign.expiration == -1){
-				info += "expiration: none";
-			}else{
-				info += "will expire in " + campaign.expiration + " days";
-			}
-		}else{
-			info += "expiration: none";
-
-		}
-
-		return info;
-	}
+//		}
+//	}
+//	private string CampaignInfo(Campaign campaign){
+//		string info = string.Empty;
+//		info += "id: " + campaign.id;
+//		info += "\n";
+//
+//		info += "campaign type: " + campaign.campaignType.ToString ();
+//		info += "\n";
+//
+//		info += "general: " + this.general.citizen.name;
+//		info += "\n";
+//
+//		info += "target city: " + campaign.targetCity.name;
+//		info += "\n";
+//		if (campaign.rallyPoint == null) {
+//			info += "rally point: N/A";
+//		} else {
+//			info += "rally point: " + campaign.rallyPoint.name; 
+//		}
+//		info += "\n";
+//
+//		info += "leader: " + campaign.leader.name;
+//		info += "\n";
+//
+//		info += "war type: " + campaign.warType.ToString ();
+//		info += "\n";
+//
+//		info += "needed army: " + campaign.neededArmyStrength.ToString ();
+//		info += "\n";
+//
+//		info += "army: " + campaign.GetArmyStrength ().ToString ();
+//		info += "\n";
+//
+//		if (campaign.campaignType == CAMPAIGN.DEFENSE) {
+//			if (campaign.expiration == -1) {
+//				info += "expiration: none";
+//			} else {
+//				info += "will expire in " + campaign.expiration + " days";
+//			}
+//		} else {
+//			info += "expiration: none";
+//
+//		}
+//
+//		return info;
+//	}
 	[Task]
 	public void Idle(){
 		if(this.isIdle){
@@ -201,8 +203,8 @@ public class GeneralObject : MonoBehaviour {
 
 	[Task]
 	public void HasTargetCityOrNotConquered(){
-		if(this.general.targetCity == null || this.general.targetCity.isDead){
-			this.general.UnregisterThisGeneral (null, true, false);
+		if(this.general.assignedCampaign.targetCity == null || this.general.assignedCampaign.targetCity.isDead){
+			this.general.UnregisterThisGeneral (null, false);
 			Task.current.Fail ();
 		}else{
 			Task.current.Succeed ();
@@ -258,14 +260,8 @@ public class GeneralObject : MonoBehaviour {
 	public void HasArrivedAttackTargetCity(){
 		if(this.general.assignedCampaign != null){
 			if(this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE){
-				if (this.general.location == this.general.targetCity.hexTile) {
-					CombatManager.Instance.CityBattle (this.general.targetCity, ref this.general);
-					if(this.general.army.hp > 0){
-						Victory ();
-					}else{
-
-					}
-
+				if (this.general.location == this.general.assignedCampaign.targetCity.hexTile) {
+					CombatManager.Instance.CityBattle (this.general.assignedCampaign.targetCity, this.general);
 					Task.current.Succeed ();
 				}else{
 					Task.current.Fail ();
@@ -282,7 +278,7 @@ public class GeneralObject : MonoBehaviour {
 	public void HasArrivedDefenseTargetCity(){
 		if (this.general.assignedCampaign != null) {
 			if (this.general.assignedCampaign.campaignType == CAMPAIGN.DEFENSE) {
-				if (this.general.location == this.general.targetCity.hexTile) {
+				if (this.general.location == this.general.assignedCampaign.targetCity.hexTile) {
 					if (this.general.assignedCampaign.AreAllGeneralsOnDefenseCity ()) {
 						if (this.general.assignedCampaign.expiration == -1) {
 							this.general.assignedCampaign.expiration = Utilities.defaultCampaignExpiration;
@@ -304,8 +300,8 @@ public class GeneralObject : MonoBehaviour {
 	public void HasArrivedRallyPoint(){
 		if (this.general.assignedCampaign != null) {
 			if (this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE) {
-				if (this.general.location == this.general.rallyPoint) {
-					if (this.general.targetLocation == this.general.rallyPoint) {
+				if (this.general.location == this.general.assignedCampaign.rallyPoint) {
+					if (this.general.targetLocation == this.general.assignedCampaign.rallyPoint) {
 						if (this.general.assignedCampaign.AreAllGeneralsOnRallyPoint ()) {
 							this.general.assignedCampaign.AttackCityNow ();
 						}
