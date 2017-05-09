@@ -39,7 +39,7 @@ public class Kingdom{
 		this.cities = new List<City>();
 		this.holderIntlWarCities = new List<CityWar> ();
 		this.kingdomHistory = new List<History>();
-		this.kingdomColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+		this.kingdomColor = Utilities.GetColorForKingdom();
 		this.adjacentCitiesFromOtherKingdoms = new List<City>();
 
 		if (race == RACE.HUMANS) {
@@ -361,8 +361,6 @@ public class Kingdom{
 	internal void AddCityToKingdom(City city){
 		this.cities.Add (city);
 		city.kingdom = this;
-		city.hexTile.GetComponent<HexTile>().SetTileColor (this.kingdomColor);
-		city.hexTile.GetComponent<HexTile>().ShowNamePlate();
 	}
 
 	internal void ResetAdjacencyWithOtherKingdoms(){
@@ -511,6 +509,19 @@ public class Kingdom{
 		}
 		return citizenHighest;
 	}
+
+	internal void HighlightAllOwnedTilesInKingdom(){
+		for (int i = 0; i < this.cities.Count; i++) {
+			this.cities[i].HighlightAllOwnedTiles(76.5f / 255f);
+		}
+	}
+
+	internal void UnHighlightAllOwnedTilesInKingdom(){
+		for (int i = 0; i < this.cities.Count; i++) {
+			this.cities[i].UnHighlightAllOwnedTiles();
+		}
+	}
+
 	//Destructor for unsubscribing listeners
 	~Kingdom(){
 		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);

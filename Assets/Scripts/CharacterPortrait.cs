@@ -6,6 +6,12 @@ public class CharacterPortrait : MonoBehaviour {
 	public delegate void OnClickCharacterPortrait(Citizen citizenClicked);
 	public OnClickCharacterPortrait onClickCharacterPortrait;
 
+	public delegate void OnHoverCharacterPortrait ();
+	public OnHoverCharacterPortrait onHoverCharacterPortrait;
+
+	public delegate void OnHoverExitCharacterPortrait ();
+	public OnHoverExitCharacterPortrait onHoverExitCharacterPortrait;
+
 	public UI2DSprite kingdomColorGO;
 	public GameObject isDeadIcon;
 	public GameObject characterInfoGO;
@@ -68,10 +74,21 @@ public class CharacterPortrait : MonoBehaviour {
 			} else {
 				UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i] No Kingdom [/i]", this.transform);
 			}
-
+			if (onHoverCharacterPortrait != null) {
+				this.onHoverCharacterPortrait ();
+			}
 		} else {
 			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();
+			if (onHoverExitCharacterPortrait != null) {
+				if (!UIManager.Instance.kingdomInfoGO.activeSelf) {
+					this.onHoverExitCharacterPortrait ();
+				} else {
+					if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.citizen.city.kingdom.id) {
+						this.onHoverExitCharacterPortrait ();
+					}
+				}
+			}
 		}
 	}
 

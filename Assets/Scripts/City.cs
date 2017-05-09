@@ -107,7 +107,7 @@ public class City{
 
 		this.hexTile.isOccupied = true;
 		this.ownedTiles.Add(this.hexTile);
-		this.hexTile.ShowCitySprite();
+//		this.hexTile.ShowCitySprite();
 
 //		this.CreateInitialFamilies();
 
@@ -825,6 +825,23 @@ public class City{
 		this.UpdateCitizenCreationTable();
 	}
 
+	internal void HighlightAllOwnedTiles(float alpha){
+		Color color = this.kingdom.kingdomColor;
+		color.a = alpha;
+		for (int i = 0; i < this.ownedTiles.Count; i++) {
+			HexTile currentTile = this.ownedTiles[i];
+			currentTile.kingdomColorSprite.color = color;
+			currentTile.kingdomColorSprite.gameObject.SetActive(true);
+		}
+	}
+
+	internal void UnHighlightAllOwnedTiles(){
+		for (int i = 0; i < this.ownedTiles.Count; i++) {
+			HexTile currentTile = this.ownedTiles[i];
+			currentTile.kingdomColorSprite.gameObject.SetActive(false);
+		}
+	}
+
 	internal void ExpandToThisCity(List<Citizen> citizensToOccupyCity){
 //		citizensToOccupyCity = citizensToOccupyCity.OrderBy(x => x.prestige).ToList();
 ////		Assign Governor
@@ -847,6 +864,9 @@ public class City{
 //		}
 		this.CreateInitialFamilies(false);
 		KingdomManager.Instance.UpdateKingdomAdjacency ();
+		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+			this.kingdom.HighlightAllOwnedTilesInKingdom();
+		}
 	}
 
 	protected void DonateCitizensToExpansion(Expansion expansionEvent, Kingdom kingdomToExpand){
@@ -906,7 +926,10 @@ public class City{
 		tileToBuy.isOccupied = true;
 		this.ownedTiles.Add(tileToBuy);
 		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);
-		tileToBuy.GetComponent<SpriteRenderer>().color = this.kingdom.kingdomColor;
+		Color color = this.kingdom.kingdomColor;
+		color.a = 76.5f/255f;
+		tileToBuy.kingdomColorSprite.color = color;
+		tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
 //		this.UpdateUnownedNeighbourTiles();
 		tileToBuy.ShowOccupiedSprite();
 		this.UpdateResourceProduction();
@@ -1864,9 +1887,9 @@ public class City{
 			((General)citizenToRemove.assignedRole).UntrainGeneral();
 		}
 		this.citizens.Remove (citizenToRemove);
-		if(citizenToRemove.workLocation != null){
-			citizenToRemove.workLocation.UnoccupyTile();
-		}
+//		if(citizenToRemove.workLocation != null){
+//			citizenToRemove.workLocation.UnoccupyTile();
+//		}
 		citizenToRemove.city = null;
 		citizenToRemove.role = ROLE.UNTRAINED;
 		citizenToRemove.assignedRole = null;

@@ -419,9 +419,9 @@ public class Citizen {
 		if (this.city != null) {
 			this.city.kingdom.RemoveFromSuccession(this);
 		}
-		if (this.workLocation != null) {
-			this.workLocation.UnoccupyTile();
-		}
+//		if (this.workLocation != null) {
+//			this.workLocation.UnoccupyTile();
+//		}
 		if (this.assignedRole != null) {
 			this.assignedRole.OnDeath ();
 		}

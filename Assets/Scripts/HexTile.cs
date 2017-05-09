@@ -32,15 +32,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isRoad = false;
 	public bool isOccupied = false;
 	public bool isOwned = false;
-	public GameObject topLeft, topRight, right, bottomRight, bottomLeft, left;
+//	public GameObject topLeft, topRight, right, bottomRight, bottomLeft, left;
 
-	public GameObject leftGround;
-	public GameObject bottomLeftGround;
-	public GameObject rightGround;
-	public GameObject bottomRightGround;
+//	public GameObject leftGround;
+//	public GameObject bottomLeftGround;
+//	public GameObject rightGround;
+//	public GameObject bottomRightGround;
 	public GameObject centerPiece;
-	public GameObject topLeftGround;
-	public GameObject topRightGround;
+//	public GameObject topLeftGround;
+//	public GameObject topRightGround;
 
 	public GameObject leftBorder;
 	public GameObject rightBorder;
@@ -54,6 +54,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public Transform eventsParent;
 	public GameObject cityNameGO;
 	public TextMesh cityNameLbl;
+	public SpriteRenderer kingdomColorSprite;
 	public GameObject highlightGO;
 
 	public List<HexTile> connectedTiles = new List<HexTile>();
@@ -121,9 +122,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	void Start(){
-		EventManager.Instance.onGameEventEnded.AddListener(RemoveEvent);
+//		EventManager.Instance.onGameEventEnded.AddListener(RemoveEvent);
 //		EventManager.Instance.onShowEventsOfType.AddListener(ShowEventOnTile);
-		EventManager.Instance.onHideEvents.AddListener(HideEventsOnTile);
+//		EventManager.Instance.onHideEvents.AddListener(HideEventsOnTile);
 	}
 
 	#region Resource
@@ -217,9 +218,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //			}
         //		}
     }
-	public void SetTileColor(Color color){
-		gameObject.GetComponent<SpriteRenderer> ().color = color;
-	}
 	public PandaBehaviour GetBehaviourTree(){
 		return this.GetComponent<PandaBehaviour>();
 	}
@@ -291,115 +289,115 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	#endregion
 	
 	#region Tile Visuals
-	public void GenerateTileDetails(){
-		List<HexTile> neighbours = this.AllNeighbours.ToList ();
-		for (int i = 0; i < neighbours.Count; i++) {
-			
-			int neighbourX = neighbours [i].xCoordinate;
-			int neighbourY = neighbours [i].yCoordinate;
-
-			Point difference = new Point((neighbourX - this.xCoordinate), (neighbourY - this.yCoordinate));
-			if (this.yCoordinate % 2 == 0) {
-				if (difference.X == -1 && difference.Y == 1) {
-					//top left
-					if (neighbours[i].elevationType == ELEVATION.WATER) {
-						this.topLeftGround.SetActive (true);
-					}else if (neighbours [i].biomeType != this.biomeType) {
-//						this.topLeftBorder.SetActive (true);
-					}
-				} else if (difference.X == 0 && difference.Y == 1) {
-					//top right
-					if (neighbours[i].elevationType == ELEVATION.WATER) {
-						this.topRightGround.SetActive (true);
-					}else if (neighbours [i].biomeType != this.biomeType) {
-//						this.topRightBorder.SetActive (true);
-					}
-				} else if (difference.X == 1 && difference.Y == 0) {
-					//right
-					if (neighbours [i].elevationType == ELEVATION.WATER) {
-						this.rightGround.SetActive (true);
-					} else if (neighbours [i].biomeType != this.biomeType) {
-//						this.rightBorder.SetActive (true);
-					}
-				} else if (difference.X == 0 && difference.Y == -1){
-					//bottom right
-					if (neighbours [i].elevationType == ELEVATION.WATER) {
-						this.bottomRightGround.SetActive (true);
-					} else if (neighbours [i].biomeType != this.biomeType) {
-//						this.bottomRightBorder.SetActive (true);
-					}
-				} else if (difference.X == -1 && difference.Y == -1){
-					//bottom left
-					if (neighbours [i].elevationType == ELEVATION.WATER) {
-						this.bottomLeftGround.SetActive (true);
-					} else if (neighbours [i].biomeType != this.biomeType) {
-//						this.bottomLeftBorder.SetActive (true);
-					}
-				} else if (difference.X == -1 && difference.Y == 0){
-					//left
-					if (neighbours [i].elevationType == ELEVATION.WATER) {
-						this.leftGround.SetActive (true);
-					} else if (neighbours [i].biomeType != this.biomeType) {
-//						this.leftBorder.SetActive (true);
-					}
-				}
-			} else {
-				if (difference.X == 0 && difference.Y == 1) {
-					//top left
-					if (neighbours[i].elevationType == ELEVATION.WATER) {
-						this.topLeftGround.SetActive (true);
-					}else if (neighbours [i].biomeType != this.biomeType) {
-//						this.topLeftBorder.SetActive (true);
-					}
-				} else if (difference.X == 1 && difference.Y == 1) {
-					//top right
-					if (neighbours[i].elevationType == ELEVATION.WATER) {
-						this.topRightGround.SetActive (true);
-					}else if (neighbours [i].biomeType != this.biomeType) {
-//						this.topRightBorder.SetActive (true);
-					}
-				} else if (difference.X == 1 && difference.Y == 0) {
-					//right
-					if (neighbours [i].elevationType == ELEVATION.WATER) {
-						this.rightGround.SetActive (true);
-					} else if (neighbours [i].biomeType != this.biomeType) {
-//						this.rightBorder.SetActive (true);
-					}
-				} else if (difference.X == 1 && difference.Y == -1){
-					//bottom right
-					if (neighbours [i].elevationType == ELEVATION.WATER) {
-						this.bottomRightGround.SetActive (true);
-					} else if (neighbours [i].biomeType != this.biomeType) {
-//						this.bottomRightBorder.SetActive (true);
-					}
-				} else if (difference.X == 0 && difference.Y == -1){
-					//bottom left
-					if (neighbours [i].elevationType == ELEVATION.WATER) {
-						this.bottomLeftGround.SetActive (true);
-					} else if (neighbours [i].biomeType != this.biomeType) {
-//						this.bottomLeftBorder.SetActive (true);
-					}
-				} else if (difference.X == -1 && difference.Y == 0){
-					//left
-					if (neighbours [i].elevationType == ELEVATION.WATER) {
-						this.leftGround.SetActive (true);
-					} else if (neighbours [i].biomeType != this.biomeType) {
-//						this.leftBorder.SetActive (true);
-					}
-				}
-			}
-		}
-	}
+//	public void GenerateTileDetails(){
+//		List<HexTile> neighbours = this.AllNeighbours.ToList ();
+//		for (int i = 0; i < neighbours.Count; i++) {
+//			
+//			int neighbourX = neighbours [i].xCoordinate;
+//			int neighbourY = neighbours [i].yCoordinate;
+//
+//			Point difference = new Point((neighbourX - this.xCoordinate), (neighbourY - this.yCoordinate));
+//			if (this.yCoordinate % 2 == 0) {
+//				if (difference.X == -1 && difference.Y == 1) {
+//					//top left
+//					if (neighbours[i].elevationType == ELEVATION.WATER) {
+//						this.topLeftGround.SetActive (true);
+//					}else if (neighbours [i].biomeType != this.biomeType) {
+////						this.topLeftBorder.SetActive (true);
+//					}
+//				} else if (difference.X == 0 && difference.Y == 1) {
+//					//top right
+//					if (neighbours[i].elevationType == ELEVATION.WATER) {
+//						this.topRightGround.SetActive (true);
+//					}else if (neighbours [i].biomeType != this.biomeType) {
+////						this.topRightBorder.SetActive (true);
+//					}
+//				} else if (difference.X == 1 && difference.Y == 0) {
+//					//right
+//					if (neighbours [i].elevationType == ELEVATION.WATER) {
+//						this.rightGround.SetActive (true);
+//					} else if (neighbours [i].biomeType != this.biomeType) {
+////						this.rightBorder.SetActive (true);
+//					}
+//				} else if (difference.X == 0 && difference.Y == -1){
+//					//bottom right
+//					if (neighbours [i].elevationType == ELEVATION.WATER) {
+//						this.bottomRightGround.SetActive (true);
+//					} else if (neighbours [i].biomeType != this.biomeType) {
+////						this.bottomRightBorder.SetActive (true);
+//					}
+//				} else if (difference.X == -1 && difference.Y == -1){
+//					//bottom left
+//					if (neighbours [i].elevationType == ELEVATION.WATER) {
+//						this.bottomLeftGround.SetActive (true);
+//					} else if (neighbours [i].biomeType != this.biomeType) {
+////						this.bottomLeftBorder.SetActive (true);
+//					}
+//				} else if (difference.X == -1 && difference.Y == 0){
+//					//left
+//					if (neighbours [i].elevationType == ELEVATION.WATER) {
+//						this.leftGround.SetActive (true);
+//					} else if (neighbours [i].biomeType != this.biomeType) {
+////						this.leftBorder.SetActive (true);
+//					}
+//				}
+//			} else {
+//				if (difference.X == 0 && difference.Y == 1) {
+//					//top left
+//					if (neighbours[i].elevationType == ELEVATION.WATER) {
+//						this.topLeftGround.SetActive (true);
+//					}else if (neighbours [i].biomeType != this.biomeType) {
+////						this.topLeftBorder.SetActive (true);
+//					}
+//				} else if (difference.X == 1 && difference.Y == 1) {
+//					//top right
+//					if (neighbours[i].elevationType == ELEVATION.WATER) {
+//						this.topRightGround.SetActive (true);
+//					}else if (neighbours [i].biomeType != this.biomeType) {
+////						this.topRightBorder.SetActive (true);
+//					}
+//				} else if (difference.X == 1 && difference.Y == 0) {
+//					//right
+//					if (neighbours [i].elevationType == ELEVATION.WATER) {
+//						this.rightGround.SetActive (true);
+//					} else if (neighbours [i].biomeType != this.biomeType) {
+////						this.rightBorder.SetActive (true);
+//					}
+//				} else if (difference.X == 1 && difference.Y == -1){
+//					//bottom right
+//					if (neighbours [i].elevationType == ELEVATION.WATER) {
+//						this.bottomRightGround.SetActive (true);
+//					} else if (neighbours [i].biomeType != this.biomeType) {
+////						this.bottomRightBorder.SetActive (true);
+//					}
+//				} else if (difference.X == 0 && difference.Y == -1){
+//					//bottom left
+//					if (neighbours [i].elevationType == ELEVATION.WATER) {
+//						this.bottomLeftGround.SetActive (true);
+//					} else if (neighbours [i].biomeType != this.biomeType) {
+////						this.bottomLeftBorder.SetActive (true);
+//					}
+//				} else if (difference.X == -1 && difference.Y == 0){
+//					//left
+//					if (neighbours [i].elevationType == ELEVATION.WATER) {
+//						this.leftGround.SetActive (true);
+//					} else if (neighbours [i].biomeType != this.biomeType) {
+////						this.leftBorder.SetActive (true);
+//					}
+//				}
+//			}
+//		}
+//	}
 	public void SetTileSprites(Sprite baseSprite, Sprite leftSprite, Sprite rightSprite, Sprite topLeftCornerSprite, Sprite topRightCornerSprite, Sprite leftCornerSprite, 
 		Sprite rightCornerSprite, Sprite[] centerSprite){
 
 		this.GetComponent<SpriteRenderer>().sprite = baseSprite;
-		this.leftGround.GetComponent<SpriteRenderer>().sprite = leftSprite;
-		this.rightGround.GetComponent<SpriteRenderer>().sprite = rightSprite;
-		this.topLeftGround.GetComponent<SpriteRenderer> ().sprite = topLeftCornerSprite;
-		this.topRightGround.GetComponent<SpriteRenderer> ().sprite = topRightCornerSprite;
-		this.bottomLeftGround.GetComponent<SpriteRenderer>().sprite = leftCornerSprite;
-		this.bottomRightGround.GetComponent<SpriteRenderer>().sprite = rightCornerSprite;
+//		this.leftGround.GetComponent<SpriteRenderer>().sprite = leftSprite;
+//		this.rightGround.GetComponent<SpriteRenderer>().sprite = rightSprite;
+//		this.topLeftGround.GetComponent<SpriteRenderer> ().sprite = topLeftCornerSprite;
+//		this.topRightGround.GetComponent<SpriteRenderer> ().sprite = topRightCornerSprite;
+//		this.bottomLeftGround.GetComponent<SpriteRenderer>().sprite = leftCornerSprite;
+//		this.bottomRightGround.GetComponent<SpriteRenderer>().sprite = rightCornerSprite;
 		if (this.elevationType == ELEVATION.MOUNTAIN) {
 			this.centerPiece.SetActive(true);
 		} else {
@@ -444,7 +442,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
 		this.structureGO.SetActive(true);
 //		this.structureOnTile = STRUCTURE.CITY;
-		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.tundraTiles [Random.Range (0, Biomes.Instance.tundraTiles.Length)];
+		Color color = this.city.kingdom.kingdomColor;
+		color.a = 76.5f/255f;
+		this.kingdomColorSprite.color = color;
+		this.GetComponent<SpriteRenderer>().color = Color.white;
+		this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.tundraTiles [Random.Range (0, Biomes.Instance.tundraTiles.Length)];
 	}
 
 	public void ShowNamePlate(){
@@ -458,113 +460,114 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfTraderSprite;
 		this.structureGO.SetActive(true);
 		this.centerPiece.SetActive(false);
+//		this.kingdomColorSprite.gameObject.SetActive(true);
 	}
 
-	public void OccupyTile(Citizen citizen){
-		this.isOccupied = true;
-//		this.occupant = citizen;
-		this.GetComponent<SpriteRenderer> ().color = Color.white;
-		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.tundraTiles [Random.Range (0, Biomes.Instance.tundraTiles.Length)];
-		switch (citizen.role) {
-		case ROLE.FOODIE:
-//			this.GetComponent<SpriteRenderer> ().color = Color.green;
-			if (this.specialResource == RESOURCE.NONE) {
-				if (this.defaultResource == RESOURCE.DEER || this.defaultResource == RESOURCE.PIG || this.defaultResource == RESOURCE.BEHEMOTH) {
-					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfHuntingLodgeSprite;
-					structureGO.SetActive(true);
-//					this.structureOnTile = STRUCTURE.HUNTING_LODGE;
-				} else {
-					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfFarmSprite;
-					structureGO.SetActive(true);
-//					this.structureOnTile = STRUCTURE.FARM;
-				}
-			} else {
-				if (this.specialResource == RESOURCE.DEER || this.specialResource == RESOURCE.PIG || this.specialResource == RESOURCE.BEHEMOTH) {
-					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfHuntingLodgeSprite;
-					structureGO.SetActive(true);
-//					this.structureOnTile = STRUCTURE.HUNTING_LODGE;
-				} else {
-					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfFarmSprite;
-					structureGO.SetActive(true);
-//					this.structureOnTile = STRUCTURE.FARM;
-				}
-			}
-			break;
-		case ROLE.GATHERER:
-			if (this.specialResource == RESOURCE.NONE) {
-				if (Utilities.GetBaseResourceType(this.defaultResource) == BASE_RESOURCE_TYPE.STONE) {
-					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfQuarrySprite;
-					structureGO.SetActive(true);
-//					this.structureOnTile = STRUCTURE.QUARRY;
-				} else {
-					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfLumberyardSprite;
-					structureGO.SetActive(true);
-//					this.structureOnTile = STRUCTURE.LUMBERYARD;
-				}
-			} else {
-				if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE) {
-					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfQuarrySprite;
-					structureGO.SetActive(true);
-//					this.structureOnTile = STRUCTURE.QUARRY;
-				} else {
-					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfLumberyardSprite;
-					structureGO.SetActive(true);
-//					this.structureOnTile = STRUCTURE.LUMBERYARD;
-				}
-			}
-			break;
-		case ROLE.GENERAL:
-			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfBarracks;
-			structureGO.SetActive (true);
-//			this.structureOnTile = STRUCTURE.BARRACKS;
-			break;
-		case ROLE.MINER:
-//			this.GetComponent<SpriteRenderer> ().color = Color.grey;
-			structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfMiningSprite;
-			structureGO.SetActive(true);
-//			this.structureOnTile = STRUCTURE.MINES;
-			break;
-		case ROLE.TRADER:
-			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfTraderSprite;
-			structureGO.SetActive (true);
-//			this.structureOnTile = STRUCTURE.TRADING_POST;
-			break;
-		case ROLE.SPY:
-			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfSpyGuild;
-			structureGO.SetActive (true);
-//			this.structureOnTile = STRUCTURE.SPY_GUILD;
-			break;
-		case ROLE.GUARDIAN:
-			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfKeep;
-			structureGO.SetActive (true);
-//			this.structureOnTile = STRUCTURE.KEEP;
-			break;
-		case ROLE.ENVOY:
-			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfMinistry;
-			structureGO.SetActive (true);
-//			this.structureOnTile = STRUCTURE.MINISTRY;
-			break;
-//		default:
-//			this.GetComponent<SpriteRenderer> ().color = Color.blue;
+//	public void OccupyTile(Citizen citizen){
+//		this.isOccupied = true;
+////		this.occupant = citizen;
+//		this.GetComponent<SpriteRenderer> ().color = Color.white;
+//		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.tundraTiles [Random.Range (0, Biomes.Instance.tundraTiles.Length)];
+//		switch (citizen.role) {
+//		case ROLE.FOODIE:
+////			this.GetComponent<SpriteRenderer> ().color = Color.green;
+//			if (this.specialResource == RESOURCE.NONE) {
+//				if (this.defaultResource == RESOURCE.DEER || this.defaultResource == RESOURCE.PIG || this.defaultResource == RESOURCE.BEHEMOTH) {
+//					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfHuntingLodgeSprite;
+//					structureGO.SetActive(true);
+////					this.structureOnTile = STRUCTURE.HUNTING_LODGE;
+//				} else {
+//					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfFarmSprite;
+//					structureGO.SetActive(true);
+////					this.structureOnTile = STRUCTURE.FARM;
+//				}
+//			} else {
+//				if (this.specialResource == RESOURCE.DEER || this.specialResource == RESOURCE.PIG || this.specialResource == RESOURCE.BEHEMOTH) {
+//					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfHuntingLodgeSprite;
+//					structureGO.SetActive(true);
+////					this.structureOnTile = STRUCTURE.HUNTING_LODGE;
+//				} else {
+//					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfFarmSprite;
+//					structureGO.SetActive(true);
+////					this.structureOnTile = STRUCTURE.FARM;
+//				}
+//			}
 //			break;
-		}
-	}
-
-	public void UnoccupyTile(){
-//		if(this.occupant != null){
-//			this.occupant.workLocation = null;
-//			this.occupant.currentLocation = null;
-//			this.occupant.isBusy = false;
-//			this.occupant = null;
+//		case ROLE.GATHERER:
+//			if (this.specialResource == RESOURCE.NONE) {
+//				if (Utilities.GetBaseResourceType(this.defaultResource) == BASE_RESOURCE_TYPE.STONE) {
+//					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfQuarrySprite;
+//					structureGO.SetActive(true);
+////					this.structureOnTile = STRUCTURE.QUARRY;
+//				} else {
+//					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfLumberyardSprite;
+//					structureGO.SetActive(true);
+////					this.structureOnTile = STRUCTURE.LUMBERYARD;
+//				}
+//			} else {
+//				if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE) {
+//					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfQuarrySprite;
+//					structureGO.SetActive(true);
+////					this.structureOnTile = STRUCTURE.QUARRY;
+//				} else {
+//					structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfLumberyardSprite;
+//					structureGO.SetActive(true);
+////					this.structureOnTile = STRUCTURE.LUMBERYARD;
+//				}
+//			}
+//			break;
+//		case ROLE.GENERAL:
+//			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfBarracks;
+//			structureGO.SetActive (true);
+////			this.structureOnTile = STRUCTURE.BARRACKS;
+//			break;
+//		case ROLE.MINER:
+////			this.GetComponent<SpriteRenderer> ().color = Color.grey;
+//			structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfMiningSprite;
+//			structureGO.SetActive(true);
+////			this.structureOnTile = STRUCTURE.MINES;
+//			break;
+//		case ROLE.TRADER:
+//			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfTraderSprite;
+//			structureGO.SetActive (true);
+////			this.structureOnTile = STRUCTURE.TRADING_POST;
+//			break;
+//		case ROLE.SPY:
+//			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfSpyGuild;
+//			structureGO.SetActive (true);
+////			this.structureOnTile = STRUCTURE.SPY_GUILD;
+//			break;
+//		case ROLE.GUARDIAN:
+//			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfKeep;
+//			structureGO.SetActive (true);
+////			this.structureOnTile = STRUCTURE.KEEP;
+//			break;
+//		case ROLE.ENVOY:
+//			structureGO.GetComponent<SpriteRenderer> ().sprite = CityGenerator.Instance.elfMinistry;
+//			structureGO.SetActive (true);
+////			this.structureOnTile = STRUCTURE.MINISTRY;
+//			break;
+////		default:
+////			this.GetComponent<SpriteRenderer> ().color = Color.blue;
+////			break;
 //		}
+//	}
 
-		if (!this.isHabitable) {
-			this.isOccupied = false;
-			this.structureGO.SetActive (false);
-//			this.structureOnTile = STRUCTURE.NONE;
-			this.GetComponent<SpriteRenderer> ().color = Color.clear;
-		}
-	}
+//	public void UnoccupyTile(){
+////		if(this.occupant != null){
+////			this.occupant.workLocation = null;
+////			this.occupant.currentLocation = null;
+////			this.occupant.isBusy = false;
+////			this.occupant = null;
+////		}
+//
+//		if (!this.isHabitable) {
+//			this.isOccupied = false;
+//			this.structureGO.SetActive (false);
+////			this.structureOnTile = STRUCTURE.NONE;
+//			this.GetComponent<SpriteRenderer> ().color = Color.clear;
+//		}
+//	}
 
 	public void ResetTile(){
 		this.isOwned = false;
@@ -572,7 +575,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 //		this.occupant = null;
 		this.structureGO.SetActive(false);
 //		this.structureOnTile = STRUCTURE.NONE;
-		this.GetComponent<SpriteRenderer> ().color = Color.white;
+//		this.GetComponent<SpriteRenderer> ().color = Color.white;
+		this.kingdomColorSprite.color = Color.white;
+		this.kingdomColorSprite.gameObject.SetActive(true);
 	}
 
 	public void AddEventOnTile(GameEvent gameEvent){
@@ -583,44 +588,44 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 //		this.eventsOnTile.Add(eventGO.GetComponent<WorldEventItem>());
 	}
 
-	public void ShowEventOnTile(EVENT_TYPES eventType){
-		if (this.eventsOnTile.Count <= 0) {
-			return;
-		}
-		if (eventType == EVENT_TYPES.ALL) {
-			for (int i = 0; i < this.eventsOnTile.Count; i++) {
-				this.eventsOnTile [i].gameObject.SetActive (true);
-			}
-		} else {
-			for (int i = 0; i < this.eventsOnTile.Count; i++) {
-				if (this.eventsOnTile [i].gameEvent.eventType == eventType) {
-					this.eventsOnTile [i].gameObject.SetActive (true);
-				}
-			}
-		}
-	}
+//	public void ShowEventOnTile(EVENT_TYPES eventType){
+//		if (this.eventsOnTile.Count <= 0) {
+//			return;
+//		}
+//		if (eventType == EVENT_TYPES.ALL) {
+//			for (int i = 0; i < this.eventsOnTile.Count; i++) {
+//				this.eventsOnTile [i].gameObject.SetActive (true);
+//			}
+//		} else {
+//			for (int i = 0; i < this.eventsOnTile.Count; i++) {
+//				if (this.eventsOnTile [i].gameEvent.eventType == eventType) {
+//					this.eventsOnTile [i].gameObject.SetActive (true);
+//				}
+//			}
+//		}
+//	}
 
-	public void HideEventsOnTile(){
-		if (this.eventsOnTile.Count <= 0) {
-			return;
-		}
-		for (int i = 0; i < this.eventsOnTile.Count; i++) {
-			this.eventsOnTile [i].gameObject.SetActive(false);
-		}
-	}
+//	public void HideEventsOnTile(){
+//		if (this.eventsOnTile.Count <= 0) {
+//			return;
+//		}
+//		for (int i = 0; i < this.eventsOnTile.Count; i++) {
+//			this.eventsOnTile [i].gameObject.SetActive(false);
+//		}
+//	}
 
-	public void RemoveEvent(GameEvent gameEvent){
-		if (this.eventsOnTile.Count <= 0) {
-			return;
-		}
-		for (int i = 0; i < this.eventsOnTile.Count; i++) {
-			if (this.eventsOnTile[i].gameEvent.eventID == gameEvent.eventID) {
-				Destroy(this.eventsOnTile[i].gameObject);
-				this.eventsOnTile.RemoveAt(i);
-				break;
-			}
-		}
-	}
+//	public void RemoveEvent(GameEvent gameEvent){
+//		if (this.eventsOnTile.Count <= 0) {
+//			return;
+//		}
+//		for (int i = 0; i < this.eventsOnTile.Count; i++) {
+//			if (this.eventsOnTile[i].gameEvent.eventID == gameEvent.eventID) {
+//				Destroy(this.eventsOnTile[i].gameObject);
+//				this.eventsOnTile.RemoveAt(i);
+//				break;
+//			}
+//		}
+//	}
 
 	void OnMouseDown(){
 		if (UIManager.Instance.IsMouseOnUI ()) {
@@ -633,9 +638,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	void OnMouseOver(){
-//		if (UIManager.Instance.IsMouseOnUI ()) {
-//			return;
-//		}
+		if (UIManager.Instance.IsMouseOnUI ()) {
+			return;
+		}
+		if (this.isHabitable && this.isOccupied) {
+			this.city.HighlightAllOwnedTiles(153f/255f);
+		}
 //		if (!this.isHabitable && this.isOccupied && this.structureOnTile != STRUCTURE.NONE) {
 //			UIManager.Instance.ShowSmallInfo("Occupant: [b]" + this.occupant.name + "[/b] \nStructure: [b]" + this.structureOnTile.ToString().Replace("_", " ") + "[/b]", this.transform);
 //		}
@@ -643,6 +651,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	void OnMouseExit(){
-		UIManager.Instance.HideSmallInfo();
+//		UIManager.Instance.HideSmallInfo();
+		if (this.isHabitable && this.isOccupied) {
+			if (!UIManager.Instance.kingdomInfoGO.activeSelf) {
+				this.city.UnHighlightAllOwnedTiles ();
+			} else {
+				if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
+					this.city.UnHighlightAllOwnedTiles ();
+				} else {
+					this.city.kingdom.HighlightAllOwnedTilesInKingdom();
+				}
+			}
+		}
 	}
 }
