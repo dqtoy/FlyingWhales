@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Panda;
 
 public class GeneralObject : MonoBehaviour {
@@ -11,6 +12,8 @@ public class GeneralObject : MonoBehaviour {
 	public List<HexTile> path;
 
 	public bool isIdle;
+	public bool isRoaming = false;
+	public bool isPreviousRoaming = false;
 	public bool isSearchingForTarget;
 	public bool collidedWithHostile;
 	public General otherGeneral;
@@ -155,15 +158,38 @@ public class GeneralObject : MonoBehaviour {
 	[Task]
 	public void Idle(){
 		if(this.isIdle){
-			if(this.general.isHome){
-				if(!this.isMoving){
-					this.isMoving = true;
-					Roam ();
-					RoamTo ();
+			if(this.general.citizen.city.incomingGenerals.Count > 0){
+				if(this.general.citizen.city.incomingGenerals.Where(x => x.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && x.assignedCampaign.targetCity.id == this.general.citizen.city.id).ToList().Count > 0){
+					this.isRoaming = false;
 				}else{
-					RoamTo ();
+					this.isRoaming = true;
 				}
+			}else{
+				this.isRoaming = true;
 			}
+
+			if(this.isRoaming){
+				if(!this.isPreviousRoaming){
+					this.isPreviousRoaming = true;
+					this.path.Clear ();
+				}
+				Roam ();
+			}else{
+				if(this.isPreviousRoaming){
+					this.isPreviousRoaming = false;
+					this.path.Clear ();
+				}
+				GoHome();
+			}
+//			if(this.general.isHome){
+//				if(!this.isMoving){
+//					this.isMoving = true;
+//					Roam ();
+//					RoamTo ();
+//				}else{
+//					RoamTo ();
+//				}
+//			}
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
@@ -423,6 +449,7 @@ public class GeneralObject : MonoBehaviour {
 			this.general.citizen.city.LookForNewGeneral (this.general);
 		}else{
 			this.general.citizen.city.LookForLostArmy (this.general);
+			this.general.inAction = false;
 			this.isIdle = true;
 			this.isMoving = false;
 		}
@@ -436,9 +463,9 @@ public class GeneralObject : MonoBehaviour {
 						this.general.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.general.location, this.general.roads [0]);
 						this.general.daysBeforeMoving = this.general.roads [0].movementDays;
 						this.general.location = this.general.roads[0];
-						if(this.general.roads[0] != this.general.citizen.city.hexTile){
-							this.general.isHome = false;
-						}
+//						if(this.general.roads[0] != this.general.citizen.city.hexTile){
+//							this.general.isHome = false;
+//						}
 						this.general.roads.RemoveAt (0);
 						this.general.daysBeforeArrival -= 1;
 
@@ -468,24 +495,49 @@ public class GeneralObject : MonoBehaviour {
 
 		} 
 	}
-	private void Roam(){
+	private void RoamTo(){
 		if(this.general.citizen.city.ownedTiles.Count > 0){
 			HexTile roamTile = this.general.citizen.city.ownedTiles [UnityEngine.Random.Range (0, this.general.citizen.city.ownedTiles.Count)];
 			this.path.Clear ();
-			this.path = PathGenerator.Instance.GetPath (this.general.citizen.currentLocation, roamTile, PATHFINDING_MODE.COMBAT);
+			this.path = PathGenerator.Instance.GetPath (this.general.location, roamTile, PATHFINDING_MODE.COMBAT);
 //			this.MoveTo (roamTile.transform.position);
 
 		}
 	}
-	private void RoamTo(){
-		if(this.path != null){
-			this.MakeCitizenMove (this.general.citizen.currentLocation, this.path [0]);
-			this.general.citizen.currentLocation = this.path[0];
+	private void Roam(){
+		if(this.path.Count <= 0 || this.path == null){
+			RoamTo ();
+		}
+		if(this.path != null && this.path.Count > 0){
+			this.MakeCitizenMove (this.general.location, this.path [0]);
+			this.general.location = this.path[0];
 			this.path.RemoveAt (0);
-			if(this.path.Count <= 0){
-				Roam ();
+			if(this.general.location.city != null){
+				if(this.general.location.city.id == this.general.citizen.city.id){
+					this.general.citizen.city.LookForLostArmy (this.general);
+				}
 			}
 		}
+		this.UpdateUI ();
+	}
+	private void GoHome(){
+		if(this.general.location != this.general.citizen.city.hexTile){
+			if(this.path.Count <= 0 || this.path == null){
+				this.path.Clear ();
+				this.path = PathGenerator.Instance.GetPath (this.general.location, this.general.citizen.city.hexTile, PATHFINDING_MODE.COMBAT);
+			}
+			if(this.path != null && this.path.Count > 0){
+				this.MakeCitizenMove (this.general.location, this.path [0]);
+				this.general.location = this.path[0];
+				this.path.RemoveAt (0);
+				if(this.general.location.city != null){
+					if(this.general.location.city.id == this.general.citizen.city.id){
+						this.general.citizen.city.LookForLostArmy (this.general);
+					}
+				}
+			}
+		}
+
 		this.UpdateUI ();
 	}
 	internal void AddBehaviourTree(){

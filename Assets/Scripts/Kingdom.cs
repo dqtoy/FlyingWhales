@@ -178,18 +178,31 @@ public class Kingdom{
 		this.successionLine = orderedRoyalties;
 	}
 
-	internal void AssignNewKing(Citizen newKing){
+	internal void AssignNewKing(Citizen newKing, City city = null){
+		if(this.king != null){
+			if(this.king.city != null){
+				this.king.city.hasKing = false;
+			}
+		}
+
 		if(newKing == null){
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 //			this.king.city.CreateInitialRoyalFamily ();
 //			this.king.CreateInitialRelationshipsToKings ();
 //			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
-			Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING IN KINGDOM!" + this.name);
-			newKing = this.king.city.CreateNewKing ();
+
+			if(city == null){
+				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING IN KINGDOM!" + this.name);
+				newKing = this.king.city.CreateNewKing ();
+			}else{
+				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING ON CITY " + city.name + " IN KINGDOM!" + this.name);
+				newKing = city.CreateNewKing ();
+			}
 			if(newKing == null){
 				return;
 			}
 		}
+		newKing.city.hasKing = true;
 
 		if(newKing.city.governor.id == newKing.id){
 			newKing.city.AssignNewGovernor ();
