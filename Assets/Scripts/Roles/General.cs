@@ -362,11 +362,11 @@ public class General : Role {
 
 		chosenCampaign.registeredGenerals.Add (this);
 //		chosenCampaign.targetCity.incomingGenerals.Add (this);
-		if(chosenCampaign.rallyPoint != null){
-			if(chosenCampaign.rallyPoint.isOccupied){
-				chosenCampaign.rallyPoint.city.incomingGenerals.Add(this);
-			}
-		}
+//		if(chosenCampaign.rallyPoint != null){
+//			if(!chosenCampaign.rallyPoint.isOccupied){
+//				chosenCampaign.rallyPoint.city.incomingGenerals.Add(this);
+//			}
+//		}
 
 //		if(this.generalAvatar == null){
 //			this.generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.location.transform) as GameObject;
