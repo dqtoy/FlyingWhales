@@ -229,6 +229,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject goMarriageInvitation;
 	public GameObject goPowerGrab;
 	public GameObject goExpansion;
+	public GameObject goInvasionPlan;
 	public UIPopupList eventDropdownList;
 	public UILabel eventDropdownCurrentSelectionLbl;
 
@@ -2764,30 +2765,42 @@ public class UIManager : MonoBehaviour {
 			goMarriageInvitation.SetActive (false);
 			goPowerGrab.SetActive (false);
 			goExpansion.SetActive (false);
+			goInvasionPlan.SetActive (false);
 		}else if(this.eventDropdownList.value == "State Visit"){
 			goRaid.SetActive (false);
 			goStateVisit.SetActive (true);
 			goMarriageInvitation.SetActive (false);
 			goPowerGrab.SetActive (false);
 			goExpansion.SetActive (false);
+			goInvasionPlan.SetActive (false);
 		}else if(this.eventDropdownList.value == "Marriage Invitation"){
 			goRaid.SetActive (false);
 			goStateVisit.SetActive (false);
 			goMarriageInvitation.SetActive (true);
 			goPowerGrab.SetActive (false);
 			goExpansion.SetActive (false);
+			goInvasionPlan.SetActive (false);
 		}else if(this.eventDropdownList.value == "Power Grab"){
 			goRaid.SetActive (false);
 			goStateVisit.SetActive (false);
 			goMarriageInvitation.SetActive (false);
 			goPowerGrab.SetActive (true);
 			goExpansion.SetActive (false);
+			goInvasionPlan.SetActive (false);
 		}else if(this.eventDropdownList.value == "Expansion"){
 			goRaid.SetActive (false);
 			goStateVisit.SetActive (false);
 			goMarriageInvitation.SetActive (false);
 			goPowerGrab.SetActive (false);
 			goExpansion.SetActive (true);
+			goInvasionPlan.SetActive (false);
+		}else if(this.eventDropdownList.value == "Invasion Plan"){
+			goRaid.SetActive (false);
+			goStateVisit.SetActive (false);
+			goMarriageInvitation.SetActive (false);
+			goPowerGrab.SetActive (false);
+			goExpansion.SetActive (false);
+			goInvasionPlan.SetActive (true);
 		}
 	}
 
