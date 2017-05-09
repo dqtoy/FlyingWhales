@@ -7,7 +7,7 @@ using UnityEngine;
 namespace PathFind {
 	public static class PathFind {
 		public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate, PATHFINDING_MODE pathfindingMode) 
-			where Node : IHasNeighbours<Node> {
+			where Node : HexTile, IHasNeighbours<Node> {
 
 			var closed = new HashSet<Node>();
 			var queue = new PriorityQueue<double, Path<Node>>();
@@ -34,6 +34,11 @@ namespace PathFind {
 					}
 				} else if (pathfindingMode == PATHFINDING_MODE.RESOURCE_PRODUCTION) {
 					foreach (Node n in path.LastStep.PurchasableTiles) {
+						if (n.isOccupied) {
+							if (!start.city.ownedTiles.Contains (n)) {
+								continue;
+							}
+						}
 						d = distance (path.LastStep, n);
 						newPath = path.AddStep (n, d);
 						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);

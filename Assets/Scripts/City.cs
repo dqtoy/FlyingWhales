@@ -863,9 +863,13 @@ public class City{
 //			this.citizens[i].UpdatePrestige();
 //		}
 		this.CreateInitialFamilies(false);
-		KingdomManager.Instance.UpdateKingdomAdjacency ();
+		KingdomManager.Instance.UpdateKingdomAdjacency();
 		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
 			this.kingdom.HighlightAllOwnedTilesInKingdom();
+		} else {
+			if (this.kingdom.cities[0].hexTile.kingdomColorSprite.gameObject.activeSelf) {
+				this.kingdom.HighlightAllOwnedTilesInKingdom();
+			}
 		}
 	}
 
@@ -933,6 +937,7 @@ public class City{
 //		this.UpdateUnownedNeighbourTiles();
 		tileToBuy.ShowOccupiedSprite();
 		this.UpdateResourceProduction();
+
 	}
 
 //	protected void OccupyTile(HexTile tileToOccupy, Citizen citizenToOccupy){

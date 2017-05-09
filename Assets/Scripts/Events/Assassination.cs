@@ -178,8 +178,10 @@ public class Assassination : GameEvent {
 	}
 	private void AssignGuardian(Kingdom otherKingdom){
 		Citizen guardian = GetGuardian (otherKingdom);
-		((Guardian)guardian.assignedRole).inAction = true;
-		this.guardians.Add (guardian);
+		if (guardian != null) {
+			((Guardian)guardian.assignedRole).inAction = true;
+			this.guardians.Add (guardian);
+		}
 	}
 	private void AssassinationMoment(){
 		if(this.spy == null){
