@@ -32,6 +32,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isRoad = false;
 	public bool isOccupied = false;
 	public bool isOwned = false;
+	internal bool isBorder = false;
+	internal int isBorderOfCityID = 0;
 //	public GameObject topLeft, topRight, right, bottomRight, bottomLeft, left;
 
 //	public GameObject leftGround;
@@ -103,6 +105,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 
+	[ContextMenu("Show Border Tiles")]
+	public void ShowBorderTiles(){
+		for (int i = 0; i < this.city.borderTiles.Count; i++) {
+			this.city.borderTiles[i].GetComponent<SpriteRenderer> ().color = Color.magenta;
+		}
+	}
 		
 	[ContextMenu("Increase General HP")]
 	public void IncreaseGeneralHP(){
