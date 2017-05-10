@@ -1923,6 +1923,9 @@ public class City{
 	}
 
 	internal void AssignNewGovernor(){
+		if(this.isDead){
+			return;
+		}
 		Citizen newGovernor = GetCitizenWithHighestPrestige ();
 		if (newGovernor != null) {
 			if(newGovernor.assignedRole != null && newGovernor.role == ROLE.GENERAL){
@@ -1957,7 +1960,7 @@ public class City{
 
 	}
 	internal void KillCity(){
-		this.kingdom.cities.Remove(this);
+		this.incomingGenerals.Clear ();
 		if(this.hasKing){
 			this.hasKing = false;
 			this.kingdom.AssignNewKing(null, this.kingdom.cities[0]);
@@ -1974,11 +1977,16 @@ public class City{
 			GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
 		}
 		this.isDead = true;
-
+		int countCitizens = this.citizens.Count;
+		for (int i = 0; i < countCitizens; i++) {
+			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
+		}
+		this.kingdom.cities.Remove (this);
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		this.hexTile.city = null;
 		KingdomManager.Instance.UpdateKingdomAdjacency();
+
 	}
 
 	internal void LookForNewGeneral(General general){

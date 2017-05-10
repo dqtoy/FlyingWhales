@@ -462,8 +462,10 @@ public class Citizen {
 //				this.city.citizens.Remove (this);
 //			}
 //		}
+		if(!isConquered){
+			EventManager.Instance.onCitizenDiedEvent.Invoke ();
+		}
 
-		EventManager.Instance.onCitizenDiedEvent.Invoke ();
 
 		if (this.isMarried) {
 //			MarriageManager.Instance.DivorceCouple (this, spouse);
@@ -1481,7 +1483,7 @@ public class Citizen {
 		Debug.Log (this.name + " of " + this.city.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");
 		if(this.assignedRole is General){
 			General general = (General)this.assignedRole;
-			general.location = this.city.hexTile;
+
 			if (general.generalAvatar != null) {
 				if(!general.inAction){
 					general.generalAvatar.GetComponent<GeneralObject> ().RemoveBehaviourTree ();
@@ -1489,6 +1491,7 @@ public class Citizen {
 					general.generalAvatar = null;
 				}
 			}
+			general.location = this.city.hexTile;
 			Debug.Log ("CREATED GHOST CITIZEN FOR " + this.name);
 			general.CreateGhostCitizen ();
 		}
