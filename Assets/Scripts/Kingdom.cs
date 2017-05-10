@@ -9,24 +9,23 @@ public class Kingdom{
 	public string name;
 	public RACE race;
 	public int[] horoscope; 
-	public List<City> cities;
-	public Citizen king;
-	public List<Citizen> successionLine;
-	public List<Citizen> pretenders;
+	internal List<City> cities;
+	internal Citizen king;
+	internal List<Citizen> successionLine;
+	internal List<Citizen> pretenders;
 //	public List<Citizen> royaltyList;
-	public List<CityWar> holderIntlWarCities;
+	internal List<CityWar> holderIntlWarCities;
 
-	public BASE_RESOURCE_TYPE basicResource;
-	public BASE_RESOURCE_TYPE rareResource;
+	internal BASE_RESOURCE_TYPE basicResource;
+	internal BASE_RESOURCE_TYPE rareResource;
 
-	public List<RelationshipKingdom> relationshipsWithOtherKingdoms;
+	internal List<RelationshipKingdom> relationshipsWithOtherKingdoms;
 
-	public Color kingdomColor;
-	public List<History> kingdomHistory;
+	internal Color kingdomColor;
+	internal List<History> kingdomHistory;
 
-	public List<City> adjacentCitiesFromOtherKingdoms;
-
-	public List<Kingdom> adjacentKingdoms;
+	internal List<City> adjacentCitiesFromOtherKingdoms;
+	internal List<Kingdom> adjacentKingdoms;
 
 	public float expansionChance = 3f;
 
@@ -43,6 +42,7 @@ public class Kingdom{
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
 		this.adjacentCitiesFromOtherKingdoms = new List<City>();
+		this.adjacentKingdoms = new List<Kingdom>();
 
 		if (race == RACE.HUMANS) {
 			this.basicResource = BASE_RESOURCE_TYPE.STONE;
@@ -565,28 +565,25 @@ public class Kingdom{
 		}
 	}
 
-//	internal void UpdateKingdomAdjacency(){
-//		this.adjacentKingdoms.Clear();
-//		List<int> citiesInKingdomIDs = this.cities.Select (x => x.id).ToList ();
-//		List<int> checkedIDs = new List<int>();
-//		List<HexTile> allBorderTiles = this.GetAllKingdomBorderTiles();
-//		for (int i = 0; i < allBorderTiles.Count; i++) {
-//			HexTile currentHexTile = allBorderTiles[i];
-//			List<HexTile> currHexTileNeighbours = currentHexTile.AllNeighbours.Where (x => x.elevationType != ELEVATION.WATER).ToList();
-//			for (int j = 0; j < currHexTileNeighbours.Count; j++) {
-//				HexTile currNeighbour = currHexTileNeighbours[j];
-//				if (currNeighbour.isOccupied) {
-//					//Check if current neighbour is occupied by a city in this kingdom
-//					if (!citiesInKingdomIDs.Contains (currNeighbour.isOccupiedByCityID)) {
-//						//if not
-//						this.adjacentKingdoms.Add()
-//					}
-//				} else if(currNeighbour.isBorder) {
-//
-//				}
-//			}
-//		}
-//	}
+	internal void UpdateKingdomAdjacency(){
+		this.adjacentKingdoms.Clear();
+		this.adjacentCitiesFromOtherKingdoms.Clear ();
+		for (int i = 0; i < this.cities.Count; i++) {
+			List<City> adjacentCitiesOfCurrentCity = this.cities[i].adjacentCities;
+			for (int j = 0; j < adjacentCitiesOfCurrentCity.Count; j++) {
+				if (adjacentCitiesOfCurrentCity[j].kingdom.id != this.id) {
+					if (!this.adjacentKingdoms.Contains (adjacentCitiesOfCurrentCity [j].kingdom)) {
+						this.adjacentKingdoms.Add (adjacentCitiesOfCurrentCity [j].kingdom);
+					}
+					if (!adjacentCitiesOfCurrentCity[j].kingdom.adjacentKingdoms.Contains(this)) {
+						adjacentCitiesOfCurrentCity[j].kingdom.adjacentKingdoms.Add(this);
+					}
+					this.adjacentCitiesFromOtherKingdoms.Add(adjacentCitiesOfCurrentCity[j]);
+					adjacentCitiesOfCurrentCity[j].kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
+				}
+			}
+		}
+	}
 
 	protected List<HexTile> GetAllKingdomBorderTiles(){
 		List<HexTile> allBorderTiles = new List<HexTile>();

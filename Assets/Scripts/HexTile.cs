@@ -100,6 +100,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 
+	[ContextMenu("Show Adjacent Cities")]
+	public void ShowAdjacentCities(){
+		for (int i = 0; i < this.city.adjacentCities.Count; i++) {
+			Debug.Log ("Adjacent City: " + this.city.adjacentCities [i].name);
+		}
+	}
+
+	[ContextMenu("Show Adjacent Kingdoms")]
+	public void ShowAdjacentKingdoms(){
+		for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
+			Debug.Log ("Adjacent Kingdom: " + this.city.kingdom.adjacentKingdoms[i].name);
+		}
+	}
+
 	#region Resource
 //	internal void AssignDefaultResource(){
 //		if(elevationType == ELEVATION.MOUNTAIN){
@@ -306,6 +320,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			return;
 		}
 		if (this.isHabitable && this.isOccupied) {
+			this.city.kingdom.HighlightAllOwnedTilesInKingdom();
 			this.city.HighlightAllOwnedTiles(204f/255f);
 		}
 	}
@@ -313,10 +328,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	void OnMouseExit(){
 		if (this.isHabitable && this.isOccupied) {
 			if (!UIManager.Instance.kingdomInfoGO.activeSelf) {
-				this.city.UnHighlightAllOwnedTiles ();
+				this.city.kingdom.UnHighlightAllOwnedTilesInKingdom();
 			} else {
 				if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
-					this.city.UnHighlightAllOwnedTiles ();
+					this.city.kingdom.UnHighlightAllOwnedTilesInKingdom();
 				} else {
 					this.city.kingdom.HighlightAllOwnedTilesInKingdom();
 				}
