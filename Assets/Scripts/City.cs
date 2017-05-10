@@ -949,7 +949,11 @@ public class City{
 		this.UpdateBorderTiles();
 		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
 			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
-				this.kingdom.HighlightAllOwnedTilesInKingdom();
+				this.kingdom.HighlightAllOwnedTilesInKingdom ();
+			}
+		} else {
+			if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
+				this.kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
 		}
 
