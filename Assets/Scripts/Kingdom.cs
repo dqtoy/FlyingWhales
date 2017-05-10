@@ -479,7 +479,7 @@ public class Kingdom{
 
 	internal IEnumerator ConquerCity(City city){
 		HexTile hex = city.hexTile;
-		city.kingdom.cities.Remove(city);
+//		city.kingdom.cities.Remove(city);
 		city.KillCity();
 		yield return null;
 		City newCity = CityGenerator.Instance.CreateNewCity (hex, this);

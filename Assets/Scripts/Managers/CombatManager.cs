@@ -80,6 +80,9 @@ public class CombatManager : MonoBehaviour {
 					}
 				}
 			}
+			if(attackers.Count <= 0 || attackers == null){
+				victoriousGeneral = generalAttacker;
+			}
 		}
 
 		if(victoriousGeneral != null){
