@@ -25,7 +25,7 @@ public class CityTaskManager : MonoBehaviour {
 		} else {
 			List<HexTile> elligibleTiles = new List<HexTile> ();
 			for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-				elligibleTiles.AddRange(this.city.ownedTiles [i].GetTilesInRange (6.5f).Where (x => x.elevationType != ELEVATION.WATER && !x.isOwned && !x.isHabitable));
+				elligibleTiles.AddRange(this.city.ownedTiles [i].GetTilesInRange (3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOwned && !x.isHabitable));
 			}
 			elligibleTiles.Distinct ();
 
@@ -38,13 +38,21 @@ public class CityTaskManager : MonoBehaviour {
 			}
 
 			if (purchasableTilesWithSpecialResource.Count > 0) {
-				this.targetHexTileToPurchase = purchasableTilesWithSpecialResource [Random.Range (0, purchasableTilesWithSpecialResource.Count)];
-				this.pathToTargetHexTile = PathGenerator.Instance.GetPath (this.city.hexTile, this.targetHexTileToPurchase, PATHFINDING_MODE.RESOURCE_PRODUCTION);
-				Task.current.Succeed ();
+				purchasableTilesWithSpecialResource = Utilities.Shuffle (purchasableTilesWithSpecialResource);
+				List<HexTile> path = new List<HexTile> ();
+				for (int i = 0; i < purchasableTilesWithSpecialResource.Count; i++) {
+					HexTile possibleTargetHextile = purchasableTilesWithSpecialResource[i];
+					path = PathGenerator.Instance.GetPath (this.city.hexTile, possibleTargetHextile, PATHFINDING_MODE.RESOURCE_PRODUCTION);
+					if (path != null) {
+						this.targetHexTileToPurchase = possibleTargetHextile;
+						this.pathToTargetHexTile = path;
+						break;
+					}
+				}
 			} else {
 				elligibleTiles.Clear ();
 				for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-					elligibleTiles.AddRange (this.city.ownedTiles [i].GetTilesInRange (10.5f).Where (x => x.elevationType != ELEVATION.WATER && !x.isOwned && !x.isHabitable));
+					elligibleTiles.AddRange (this.city.ownedTiles [i].GetTilesInRange (5).Where (x => x.elevationType != ELEVATION.WATER && !x.isOwned && !x.isHabitable));
 				}
 				elligibleTiles.Distinct ();
 
@@ -56,9 +64,17 @@ public class CityTaskManager : MonoBehaviour {
 					}
 				}
 				if (purchasableTilesWithSpecialResource.Count > 0) {
-					this.targetHexTileToPurchase = purchasableTilesWithSpecialResource [Random.Range (0, purchasableTilesWithSpecialResource.Count)];
-					this.pathToTargetHexTile = PathGenerator.Instance.GetPath (this.city.hexTile, this.targetHexTileToPurchase, PATHFINDING_MODE.RESOURCE_PRODUCTION);
-					Task.current.Succeed ();
+					purchasableTilesWithSpecialResource = Utilities.Shuffle (purchasableTilesWithSpecialResource);
+					List<HexTile> path = new List<HexTile> ();
+					for (int i = 0; i < purchasableTilesWithSpecialResource.Count; i++) {
+						HexTile possibleTargetHextile = purchasableTilesWithSpecialResource[i];
+						path = PathGenerator.Instance.GetPath (this.city.hexTile, possibleTargetHextile, PATHFINDING_MODE.RESOURCE_PRODUCTION);
+						if (path != null) {
+							this.targetHexTileToPurchase = possibleTargetHextile;
+							this.pathToTargetHexTile = path;
+							break;
+						}
+					}
 				} else {
 					elligibleTiles.Clear ();
 					for (int i = 0; i < this.city.ownedTiles.Count; i++) {
@@ -66,13 +82,25 @@ public class CityTaskManager : MonoBehaviour {
 					}
 					elligibleTiles.Distinct ();
 					if (elligibleTiles.Count > 0) {
-						this.targetHexTileToPurchase = elligibleTiles [Random.Range (0, elligibleTiles.Count)];
-						this.pathToTargetHexTile = PathGenerator.Instance.GetPath (this.city.hexTile, this.targetHexTileToPurchase, PATHFINDING_MODE.RESOURCE_PRODUCTION);
-						Task.current.Succeed ();
-					} else {
-						Task.current.Fail ();
+						elligibleTiles = Utilities.Shuffle (elligibleTiles);
+						List<HexTile> path = new List<HexTile> ();
+						for (int i = 0; i < elligibleTiles.Count; i++) {
+							HexTile possibleTargetHextile = elligibleTiles[i];
+							path = PathGenerator.Instance.GetPath (this.city.hexTile, possibleTargetHextile, PATHFINDING_MODE.RESOURCE_PRODUCTION);
+							if (path != null) {
+								this.targetHexTileToPurchase = possibleTargetHextile;
+								this.pathToTargetHexTile = path;
+								break;
+							}
+						}
 					}
 				}
+			}
+
+			if (this.targetHexTileToPurchase != null && this.pathToTargetHexTile != null) {
+				Task.current.Succeed();
+			} else {
+				Task.current.Fail();
 			}
 		}
 	}
@@ -111,16 +139,24 @@ public class CityTaskManager : MonoBehaviour {
 			int tileToBuyIndex = 0;
 			for (int i = 0; i < this.pathToTargetHexTile.Count; i++) {
 				HexTile currentHexTile = this.pathToTargetHexTile [i];
-				if (!currentHexTile.isOwned && !currentHexTile.isHabitable && !currentHexTile.isOccupied) {
-					tileToBuy = currentHexTile;
-					tileToBuyIndex = i;
-					break;
+				if (currentHexTile.isOccupied) {
+					if (!this.city.ownedTiles.Contains (currentHexTile)) {
+						Debug.Log (this.city.name + " of " + this.city.kingdom.name + ": Path to target tile has tile already owned by another city. Choose another target tile.");
+						break;
+					}
+				} else {
+					if (!currentHexTile.isOwned && !currentHexTile.isHabitable) {
+						tileToBuy = currentHexTile;
+						tileToBuyIndex = i;
+						break;
+					}
 				}
+
 			}
 			if (tileToBuy == null) {
 				this.targetHexTileToPurchase = null;
-				this.pathToTargetHexTile.Clear();
-				Task.current.Fail();
+				this.pathToTargetHexTile.Clear ();
+				Task.current.Fail ();
 				return;
 			}
 			this.city.PurchaseTile (tileToBuy);
@@ -238,6 +274,7 @@ public class CityTaskManager : MonoBehaviour {
 			this.generalToUpgrade.army.hp = (this.city.maxGeneralHP + baseGeneralHP);
 		}
 		this.city.AdjustResources (GetActionCost ("GENERALUP"));
+		this.generalToUpgrade = null;
 		Task.current.Succeed ();
 	}
 	#endregion

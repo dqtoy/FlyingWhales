@@ -525,7 +525,7 @@ public class Kingdom{
 
 	internal void HighlightAllOwnedTilesInKingdom(){
 		for (int i = 0; i < this.cities.Count; i++) {
-			this.cities[i].HighlightAllOwnedTiles(76.5f / 255f);
+			this.cities[i].HighlightAllOwnedTiles(127.5f / 255f);
 		}
 	}
 

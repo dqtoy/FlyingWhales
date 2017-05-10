@@ -69,7 +69,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
 
-	public float radius = 0;
+	public int range = 0;
 	List<HexTile> tiles = new List<HexTile> ();
 //	public List<HexTile> allFoodNeighbours { get 
 //		{ return 
@@ -91,17 +91,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 //		}
 //	}
 
-	[ContextMenu("Show Tiles In Radius")]
-	public void ShowTilesInRadius(){
+	[ContextMenu("Show Tiles In Range")]
+	public void ShowTilesInRange(){
 		for (int i = 0; i < tiles.Count; i++) {
 			tiles [i].GetComponent<SpriteRenderer> ().color = Color.white;
 		}
 		tiles.Clear ();
-		tiles.AddRange(this.GetTilesInRange (radius));
+		tiles.AddRange(this.GetTilesInRange (range));
 		for (int i = 0; i < tiles.Count; i++) {
 			tiles [i].GetComponent<SpriteRenderer> ().color = Color.magenta;
 		}
 	}
+
 		
 	[ContextMenu("Increase General HP")]
 	public void IncreaseGeneralHP(){
@@ -250,19 +251,60 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	 * 6 - 2 tile radius
 	 * 10 - 3 tile radius
 	 * */
-	public List<HexTile> GetTilesInRange(float radius){
-		var layerMask = 1 << LayerMask.NameToLayer ("Hextiles");
-		Collider2D[] nearHexes = Physics2D.OverlapCircleAll (new Vector2(transform.position.x, transform.position.y), radius, layerMask);
-		List<HexTile> nearTiles = new List<HexTile>();
-		for (int i = 0; i < nearHexes.Length; i++) {
-			if (nearHexes[i].name != this.name) {
-				nearTiles.Add(nearHexes[i].gameObject.GetComponent<HexTile>());
-//				nearHexes[i].gameObject.GetComponent<SpriteRenderer>().color = Color.black;
-//				Debug.Log (nearHexes [i].name);
+	public List<HexTile> GetTilesInRange(int range){
+//		var layerMask = 1 << LayerMask.NameToLayer ("Hextiles");
+//		Collider2D[] nearHexes = Physics2D.OverlapCircleAll (new Vector2(transform.position.x, transform.position.y), radius, layerMask);
+//		List<HexTile> nearTiles = new List<HexTile>();
+//		for (int i = 0; i < nearHexes.Length; i++) {
+//			if (nearHexes[i].name != this.name) {
+//				nearTiles.Add(nearHexes[i].gameObject.GetComponent<HexTile>());
+////				nearHexes[i].gameObject.GetComponent<SpriteRenderer>().color = Color.black;
+////				Debug.Log (nearHexes [i].name);
+//			}
+//		}
+//		return nearTiles;
+		List<HexTile> tilesInRange = new List<HexTile>();
+		List<HexTile> checkedTiles = new List<HexTile> ();
+
+		for (int i = 0; i < range; i++) {
+			if (tilesInRange.Count <= 0) {
+				tilesInRange.AddRange (this.AllNeighbours);
+				checkedTiles.Add (this);
+			}else{
+				List<HexTile> tilesToAdd = new List<HexTile> ();
+				for (int j = 0; j < tilesInRange.Count; j++) {
+					if (!checkedTiles.Contains (tilesInRange [j])) {
+						checkedTiles.Add (tilesInRange [j]);
+						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours);
+					}
+				}
+				tilesInRange.AddRange (tilesToAdd);
 			}
 		}
-		return nearTiles;
+		return tilesInRange.Distinct().ToList();
 	}
+
+//	public List<HexTile> GetTilesWithinRange(int range){
+//		List<HexTile> tilesInRange = new List<HexTile>();
+//		List<HexTile> checkedTiles = new List<HexTile> ();
+//
+//		for (int i = 0; i < range; i++) {
+//			if (tilesInRange.Count <= 0) {
+//				tilesInRange.AddRange (this.AllNeighbours);
+//				checkedTiles.Add (this);
+//			}else{
+//				List<HexTile> tilesToAdd = new List<HexTile> ();
+//				for (int j = 0; j < tilesInRange.Count; j++) {
+//					if (!checkedTiles.Contains (tilesInRange [j])) {
+//						checkedTiles.Add (tilesInRange [j]);
+//						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours);
+//					}
+//				}
+//				tilesInRange.AddRange (tilesToAdd);
+//			}
+//		}
+//		return tilesInRange.Distinct().ToList();
+//	}
 
 	#region Pathfinding
 	public void FindNeighbours(HexTile[,] gameBoard) {
@@ -577,7 +619,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 //		this.structureOnTile = STRUCTURE.NONE;
 //		this.GetComponent<SpriteRenderer> ().color = Color.white;
 		this.kingdomColorSprite.color = Color.white;
-		this.kingdomColorSprite.gameObject.SetActive(true);
+		this.kingdomColorSprite.gameObject.SetActive(false);
 	}
 
 	public void AddEventOnTile(GameEvent gameEvent){
@@ -642,7 +684,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			return;
 		}
 		if (this.isHabitable && this.isOccupied) {
-			this.city.HighlightAllOwnedTiles(153f/255f);
+			this.city.HighlightAllOwnedTiles(204f/255f);
 		}
 //		if (!this.isHabitable && this.isOccupied && this.structureOnTile != STRUCTURE.NONE) {
 //			UIManager.Instance.ShowSmallInfo("Occupant: [b]" + this.occupant.name + "[/b] \nStructure: [b]" + this.structureOnTile.ToString().Replace("_", " ") + "[/b]", this.transform);

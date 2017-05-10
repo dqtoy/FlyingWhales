@@ -28,8 +28,10 @@ public class Envoy : Role {
 			EventManager.Instance.onWeekEnd.RemoveListener (WeeklyAction);
 			this.eventDuration = 0;
 			this.inAction = false;
-			currentEvent.DoneCitizenAction (this);
-			currentEvent = null;
+			if (currentEvent != null) {
+				currentEvent.DoneCitizenAction (this);
+				currentEvent = null;
+			}
 		}
 	}
 

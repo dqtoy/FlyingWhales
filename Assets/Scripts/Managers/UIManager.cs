@@ -795,6 +795,9 @@ public class UIManager : MonoBehaviour {
 	}
 		
 	public void ShowKingdomInfo(Kingdom kingdom){
+		if (currentlyShowingKingdom != null) {
+			currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+		}
 		kingdom.HighlightAllOwnedTilesInKingdom();
 		this.currentlyShowingKingdom = kingdom;
 		this.kingdomNameBigLbl.text = "[b]" + kingdom.name + "[/b]";
