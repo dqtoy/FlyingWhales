@@ -49,6 +49,16 @@ public class Campaign {
 		if(this.campaignType == CAMPAIGN.DEFENSE){
 			if(this.expiration >= 0){
 				AdjustExpiration (-1);
+			}else{
+				if (this.registeredGenerals.Count <= 0) {
+					AdjustExpiration (-1);
+				} else if (this.targetCity != null) {
+					if (this.targetCity.isDead) {
+						AdjustExpiration (-1);
+					}
+				} else if (this.targetCity == null) {
+					AdjustExpiration (-1);
+				}	
 			}
 		}else{
 			if (this.registeredGenerals.Count <= 0) {
