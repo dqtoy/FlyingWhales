@@ -908,6 +908,8 @@ public class City{
 		//Update necessary data
 		this.UpdateResourceProduction();
 		this.UpdateBorderTiles();
+		this.UpdateAdjacentCities();
+		this.kingdom.UpdateKingdomAdjacency();
 
 		//Show Highlight if kingdom or city is currently highlighted
 		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
@@ -1451,6 +1453,11 @@ public class City{
 			HexTile currentTile = this.ownedTiles[i];
 			currentTile.ResetTile();
 		}
+		for (int i = 0; i < this.borderTiles.Count; i++) {
+			HexTile currentTile = this.borderTiles[i];
+			currentTile.ResetTile();
+		}
+
 		if(!this.isDead){
 			bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.hexTile.GetComponent<PandaBehaviour> ());
 			Debug.Log ("REMOVED BT?: " + this.name + " = " + removed);
@@ -1546,6 +1553,9 @@ public class City{
 						if (!this.adjacentCities.Contains(cityToAdd)) {
 							this.adjacentCities.Add(cityToAdd);
 						}
+						if (!cityToAdd.adjacentCities.Contains (this)) {
+							cityToAdd.adjacentCities.Add (this);
+						}
 					}
 				} else if(currNeighbour.isBorder) {
 					//Check if current neighbour is border of a different city
@@ -1553,6 +1563,9 @@ public class City{
 						City cityToAdd = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID);
 						if (!this.adjacentCities.Contains(cityToAdd)) {
 							this.adjacentCities.Add(cityToAdd);
+						}
+						if (!cityToAdd.adjacentCities.Contains (this)) {
+							cityToAdd.adjacentCities.Add (this);
 						}
 					}
 				}
