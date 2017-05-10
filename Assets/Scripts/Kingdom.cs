@@ -401,7 +401,11 @@ public class Kingdom{
 	}
 
 	internal bool IsKingdomAdjacentTo(Kingdom kingdomToCheck){
-		return this.GetRelationshipWithOtherKingdom(kingdomToCheck).isAdjacent;
+		if(this.id != kingdomToCheck.id){
+			return this.GetRelationshipWithOtherKingdom(kingdomToCheck).isAdjacent;
+		}else{
+			return false;
+		}
 	}
 
 	internal List<HexTile> GetAllHexTilesInKingdom(){
