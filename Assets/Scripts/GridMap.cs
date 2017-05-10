@@ -50,8 +50,9 @@ public class GridMap : MonoBehaviour {
 				int sortingOrder = x - y;
 				hex.GetComponent<HexTile>().GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder;
 				hex.GetComponent<HexTile>().centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+				hex.GetComponent<HexTile>().kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
 				hex.GetComponent<HexTile>().structureGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-				hex.GetComponent<HexTile>().cityNameGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
+				hex.GetComponent<HexTile>().cityNameGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 5;
 				listHexes.Add(hex);
 				map[x, y] = hex.GetComponent<HexTile>();
 			}

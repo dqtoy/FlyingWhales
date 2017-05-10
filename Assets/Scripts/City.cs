@@ -952,7 +952,7 @@ public class City{
 				this.kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
 		} else {
-			if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
+			if (UICamera.hoveredObject.GetComponent<CharacterPortrait>() != null && UICamera.hoveredObject.GetComponent<CharacterPortrait>().citizen.city.kingdom.id == this.kingdom.id) {
 				this.kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
 		}

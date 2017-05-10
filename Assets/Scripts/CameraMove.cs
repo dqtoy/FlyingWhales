@@ -52,6 +52,11 @@ public class CameraMove : MonoBehaviour {
 //			Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
 //			Mathf.Clamp(transform.position.z, -10, -10));
 
+		if (Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) || Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow) ||
+		   Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D)) {
+			target = null;
+		}
+
 		if (target) {
 			Vector3 point = Camera.main.WorldToViewportPoint(target.position);
 			Vector3 delta = target.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
