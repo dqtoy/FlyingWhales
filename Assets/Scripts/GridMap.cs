@@ -47,6 +47,11 @@ public class GridMap : MonoBehaviour {
 				hex.GetComponent<HexTile>().tileName = hex.name;
 				hex.GetComponent<HexTile>().xCoordinate = x;
 				hex.GetComponent<HexTile>().yCoordinate = y;
+				int sortingOrder = x - y;
+				hex.GetComponent<HexTile>().GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder;
+				hex.GetComponent<HexTile>().centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+				hex.GetComponent<HexTile>().structureGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+				hex.GetComponent<HexTile>().cityNameGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
 				listHexes.Add(hex);
 				map[x, y] = hex.GetComponent<HexTile>();
 			}
