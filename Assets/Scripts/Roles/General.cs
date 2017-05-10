@@ -97,7 +97,7 @@ public class General : Role {
 			List<HexTile> path = PathGenerator.Instance.GetPath (this.location, this.citizen.city.hexTile, PATHFINDING_MODE.COMBAT);
 			if(path != null){
 				this.roads.Clear ();
-				this.roads = path;
+				this.roads = new List<HexTile>(path);
 				this.targetLocation = this.citizen.city.hexTile;
 				this.isGoingHome = true;
 				this.inAction = true;
@@ -112,7 +112,7 @@ public class General : Role {
 				this.generalAvatar.transform.parent = this.location.transform;
 				this.generalAvatar.transform.localPosition = Vector3.zero;
 				this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
-				this.generalAvatar.GetComponent<GeneralObject> ().path = path;
+				this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
 
 				Debug.Log (this.citizen.name + " IS GOING HOME!");
 			}
@@ -359,7 +359,7 @@ public class General : Role {
 //		this.rallyPoint = chosenCampaign.rallyPoint;
 		this.daysBeforeArrival = path.Sum(x => x.movementDays);
 		this.roads.Clear ();
-		this.roads = path;
+		this.roads = new List<HexTile>(path);
 		this.inAction = true;
 
 		chosenCampaign.registeredGenerals.Add (this);
@@ -383,7 +383,7 @@ public class General : Role {
 		this.generalAvatar.transform.localPosition = Vector3.zero;
 		this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
 		this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
-		this.generalAvatar.GetComponent<GeneralObject> ().path = path;
+		this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
 	}
 //	internal void SearchForTarget(){
 //		Debug.Log (this.citizen.name + " instructed by " + this.warLeader.name + " is searching for " + this.target.name);

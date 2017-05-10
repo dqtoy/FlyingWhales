@@ -48,7 +48,7 @@ public class GeneralObject : MonoBehaviour {
 		if(this.tag == "General" && other.tag == "General"){
 			this.collidedWithHostile = false;
 			if(this.gameObject != null && other.gameObject != null){
-				if (this.general.location == other.gameObject.GetComponent<GeneralObject> ().general.location) {
+//				if (this.general.location == other.gameObject.GetComponent<GeneralObject> ().general.location) {
 					if(!Utilities.AreTwoGeneralsFriendly(other.gameObject.GetComponent<GeneralObject>().general, this.general)){
 						if(!Utilities.AreTwoGeneralsFriendly(this.general, other.gameObject.GetComponent<GeneralObject>().general)){
 							if(this.general.army.hp > 0 && other.gameObject.GetComponent<GeneralObject> ().general.army.hp > 0){
@@ -57,7 +57,7 @@ public class GeneralObject : MonoBehaviour {
 							}
 						}
 					}
-				}
+//				}
 			}
 		}
 
@@ -85,6 +85,7 @@ public class GeneralObject : MonoBehaviour {
 	[Task]
 	public void Idle(){
 		if(this.isIdle){
+			this.general.inAction = false;
 			if(this.general.citizen.city.incomingGenerals.Count > 0){
 				if(this.general.citizen.city.incomingGenerals.Where(x => x.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && x.assignedCampaign.targetCity.id == this.general.citizen.city.id).ToList().Count > 0){
 					this.isRoaming = false;

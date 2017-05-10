@@ -106,16 +106,16 @@ public class Campaign {
 	internal void AttackCityNow(){
 		List<HexTile> path = PathGenerator.Instance.GetPath (this.rallyPoint, this.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 
-		for(int i = 0; i < this.registeredGenerals.Count; i++){
-			if (path != null) {
+		if (path != null) {
+			for(int i = 0; i < this.registeredGenerals.Count; i++){
 				this.registeredGenerals[i].targetLocation = this.targetCity.hexTile;
 				this.registeredGenerals [i].roads.Clear ();
-				this.registeredGenerals [i].roads = path;
+				this.registeredGenerals [i].roads = new List<HexTile>(path);
 				this.registeredGenerals [i].daysBeforeArrival = path.Sum(x => x.movementDays);
 				this.registeredGenerals [i].generalAvatar.transform.parent = this.registeredGenerals [i].location.transform;
 				this.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
 				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
-				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().path = path;
+				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
 				this.targetCity.incomingGenerals.Add (this.registeredGenerals[i]);
 //				if(this.registeredGenerals[i].generalAvatar == null){
 //					this.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.registeredGenerals [i].location.transform) as GameObject;
@@ -125,8 +125,6 @@ public class Campaign {
 //				}else{
 //					
 //				}
-
-
 			}
 		}
 

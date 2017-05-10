@@ -39,17 +39,25 @@ public class CampaignManager {
 						campaignType = CAMPAIGN.DEFENSE;
 						List<City> defenseCities = this.defenseWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
 						if(defenseCities.Count > 0){
-							defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.assignedCampaign.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
-
 							int nearestArrival = -2;
-							int neededArmy = defenseCities [0].GetTotalAttackerStrength (ref nearestArrival);
-							if(neededArmy <= 0){
-								neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
+							City selectedCity = null;
+							List<City> priorityDefense = defenseCities.Where (x => x.GetIncomingAttackers ().Count > 0).OrderBy(x => nearestArrival = x.GetIncomingAttackers().Min(y => y.daysBeforeArrival)).ToList();
+							if(priorityDefense.Count > 0){
+								selectedCity = priorityDefense [0];
+							}else{
+								selectedCity = defenseCities [UnityEngine.Random.Range (0, defenseCities.Count)];
 							}
-							newCampaign = new Campaign (this.leader, defenseCities[0], campaignType, WAR_TYPE.NONE, neededArmy, nearestArrival + 1);
+							//						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.assignedCampaign.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+							if(selectedCity != null){
+								int neededArmy = selectedCity.GetTotalAttackerStrength ();
+								if(neededArmy <= 0){
+									neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
+								}
+								newCampaign = new Campaign (this.leader, selectedCity, campaignType, WAR_TYPE.NONE, neededArmy, nearestArrival + 1);
 
-							this.activeCampaigns.Add (newCampaign);
-							this.MakeCityActive (newCampaign);
+								this.activeCampaigns.Add (newCampaign);
+								this.MakeCityActive (newCampaign);
+							}
 						}else{
 							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
 //							return;
@@ -81,17 +89,26 @@ public class CampaignManager {
 				}else{
 					List<City> defenseCities = this.defenseWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
 					if(defenseCities.Count > 0){
-						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.assignedCampaign.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
-
 						int nearestArrival = -2;
-						int neededArmy = defenseCities [0].GetTotalAttackerStrength (ref nearestArrival);
-						if(neededArmy <= 0){
-							neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
+						City selectedCity = null;
+						List<City> priorityDefense = defenseCities.Where (x => x.GetIncomingAttackers ().Count > 0).OrderBy(x => nearestArrival = x.GetIncomingAttackers().Min(y => y.daysBeforeArrival)).ToList();
+						if(priorityDefense.Count > 0){
+							selectedCity = priorityDefense [0];
+						}else{
+							selectedCity = defenseCities [UnityEngine.Random.Range (0, defenseCities.Count)];
 						}
-						newCampaign = new Campaign (this.leader, defenseCities[0], campaignType, WAR_TYPE.NONE, neededArmy, nearestArrival + 1);
+//						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.assignedCampaign.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
+						if(selectedCity != null){
+							int neededArmy = selectedCity.GetTotalAttackerStrength ();
+							if(neededArmy <= 0){
+								neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
+							}
+							newCampaign = new Campaign (this.leader, selectedCity, campaignType, WAR_TYPE.NONE, neededArmy, nearestArrival + 1);
 
-						this.activeCampaigns.Add (newCampaign);
-						this.MakeCityActive (newCampaign);
+							this.activeCampaigns.Add (newCampaign);
+							this.MakeCityActive (newCampaign);
+						}
+
 					}else{
 						campaignType = CAMPAIGN.OFFENSE;
 
