@@ -25,7 +25,7 @@ public class CityTaskManager : MonoBehaviour {
 		} else {
 			List<HexTile> elligibleTiles = new List<HexTile> ();
 			for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-				elligibleTiles.AddRange(this.city.ownedTiles [i].GetTilesInRange (3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOwned && !x.isHabitable));
+				elligibleTiles.AddRange(this.city.ownedTiles [i].GetTilesInRange (3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable));
 			}
 			elligibleTiles.Distinct ();
 
@@ -52,7 +52,7 @@ public class CityTaskManager : MonoBehaviour {
 			} else {
 				elligibleTiles.Clear ();
 				for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-					elligibleTiles.AddRange (this.city.ownedTiles [i].GetTilesInRange (5).Where (x => x.elevationType != ELEVATION.WATER && !x.isOwned && !x.isHabitable));
+					elligibleTiles.AddRange (this.city.ownedTiles [i].GetTilesInRange (5).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable));
 				}
 				elligibleTiles.Distinct ();
 
@@ -127,7 +127,7 @@ public class CityTaskManager : MonoBehaviour {
 
 	[Task]
 	private void BuyNextTile(){
-		if (this.targetHexTileToPurchase.isOwned) {
+		if (this.targetHexTileToPurchase.isOccupied) {
 			this.targetHexTileToPurchase = null;
 			this.pathToTargetHexTile.Clear();
 			Task.current.Fail();
@@ -145,7 +145,7 @@ public class CityTaskManager : MonoBehaviour {
 						break;
 					}
 				} else {
-					if (!currentHexTile.isOwned && !currentHexTile.isHabitable) {
+					if (!currentHexTile.isHabitable) {
 						tileToBuy = currentHexTile;
 						tileToBuyIndex = i;
 						break;

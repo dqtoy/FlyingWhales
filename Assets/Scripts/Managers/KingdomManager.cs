@@ -29,11 +29,7 @@ public class KingdomManager : MonoBehaviour {
 			List<HexTile> neighbours = habitableTiles[i].AllNeighbours.ToList();
 			List<HexTile> tilesContainingBaseResource = new List<HexTile>();
 			for (int j = 0; j < neighbours.Count; j++) {
-				if (neighbours[j].specialResource == RESOURCE.NONE) {
-					if (Utilities.GetBaseResourceType (neighbours[j].defaultResource) == BASE_RESOURCE_TYPE.STONE) {
-						tilesContainingBaseResource.Add(neighbours[j]);
-					}
-				} else {
+				if (neighbours[j].specialResource != RESOURCE.NONE) {
 					if (Utilities.GetBaseResourceType (neighbours[j].specialResource) == BASE_RESOURCE_TYPE.STONE) {
 						tilesContainingBaseResource.Add(neighbours[j]);
 					}
@@ -44,7 +40,7 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 
-		int numOfKingdoms = 2;
+		int numOfKingdoms = 3;
 		if (elligibleTilesForHumans.Count < numOfKingdoms) {
 			numOfKingdoms = elligibleTilesForHumans.Count;
 		}

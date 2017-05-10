@@ -26,6 +26,8 @@ public class Kingdom{
 
 	public List<City> adjacentCitiesFromOtherKingdoms;
 
+	public List<Kingdom> adjacentKingdoms;
+
 	public float expansionChance = 3f;
 
 	public Kingdom(RACE race, List<HexTile> cities){
@@ -561,6 +563,37 @@ public class Kingdom{
 		for (int i = 0; i < this.cities.Count; i++) {
 			this.cities[i].UnHighlightAllOwnedTiles();
 		}
+	}
+
+//	internal void UpdateKingdomAdjacency(){
+//		this.adjacentKingdoms.Clear();
+//		List<int> citiesInKingdomIDs = this.cities.Select (x => x.id).ToList ();
+//		List<int> checkedIDs = new List<int>();
+//		List<HexTile> allBorderTiles = this.GetAllKingdomBorderTiles();
+//		for (int i = 0; i < allBorderTiles.Count; i++) {
+//			HexTile currentHexTile = allBorderTiles[i];
+//			List<HexTile> currHexTileNeighbours = currentHexTile.AllNeighbours.Where (x => x.elevationType != ELEVATION.WATER).ToList();
+//			for (int j = 0; j < currHexTileNeighbours.Count; j++) {
+//				HexTile currNeighbour = currHexTileNeighbours[j];
+//				if (currNeighbour.isOccupied) {
+//					//Check if current neighbour is occupied by a city in this kingdom
+//					if (!citiesInKingdomIDs.Contains (currNeighbour.isOccupiedByCityID)) {
+//						//if not
+//						this.adjacentKingdoms.Add()
+//					}
+//				} else if(currNeighbour.isBorder) {
+//
+//				}
+//			}
+//		}
+//	}
+
+	protected List<HexTile> GetAllKingdomBorderTiles(){
+		List<HexTile> allBorderTiles = new List<HexTile>();
+		for (int i = 0; i < this.cities.Count; i++) {
+			allBorderTiles.AddRange (this.cities [i].borderTiles);
+		}
+		return allBorderTiles;
 	}
 
 	//Destructor for unsubscribing listeners
