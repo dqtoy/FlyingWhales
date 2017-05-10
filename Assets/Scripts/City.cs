@@ -46,6 +46,7 @@ public class City{
 
 	internal Dictionary<ROLE, int> citizenCreationTable;
 	protected List<ROLE> creatableRoles;
+	internal List<HexTile> borderTiles;
 //	protected List<HexTile> allUnownedNeighbours;
 //	protected List<HexTile> purchasableFoodTiles;
 //	protected List<HexTile> purchasableBasicTiles;
@@ -104,11 +105,13 @@ public class City{
 //		this.purchasabletilesWithUnneededResource = new List<HexTile>();
 //		this.tilesWithNoSpecialResource = new List<HexTile>();
 		this.creatableRoles = new List<ROLE>();
+		this.borderTiles = new List<HexTile>();
+
 
 		this.hexTile.isOccupied = true;
 		this.ownedTiles.Add(this.hexTile);
 //		this.hexTile.ShowCitySprite();
-
+		this.UpdateBorderTiles();
 //		this.CreateInitialFamilies();
 
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
@@ -826,6 +829,34 @@ public class City{
 		this.UpdateCitizenCreationTable();
 	}
 
+	protected void UpdateBorderTiles(){
+		for (int i = 0; i < this.borderTiles.Count; i++) {
+			this.borderTiles[i].isBorder = false;
+			this.borderTiles[i].isBorderOfCityID = 0;
+		}
+		this.borderTiles.Clear();
+
+		List<HexTile> outmostTiles = new List<HexTile>();
+		for (int i = 0; i < this.ownedTiles.Count; i++) {
+			HexTile currHexTile = this.ownedTiles[i];
+			List<HexTile> currHexTileUnoccupiedNeighbours = currHexTile.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable).ToList();
+			if (currHexTileUnoccupiedNeighbours.Count > 0) {
+				outmostTiles.Add (currHexTile);
+			}
+		}
+
+		for (int i = 0; i < outmostTiles.Count; i++) {
+			List<HexTile> possibleBorderTiles = outmostTiles [i].GetTilesInRange(2).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable && !x.isBorder).ToList();
+			this.borderTiles.AddRange (possibleBorderTiles);
+		}
+		this.borderTiles.Distinct();
+		for (int i = 0; i < this.borderTiles.Count; i++) {
+			HexTile currBorderTile = this.borderTiles[i];
+			currBorderTile.isBorder = true;
+			currBorderTile.isBorderOfCityID = this.id;
+		}
+	}
+
 	internal void HighlightAllOwnedTiles(float alpha){
 		Color color = this.kingdom.kingdomColor;
 		color.a = alpha;
@@ -834,11 +865,21 @@ public class City{
 			currentTile.kingdomColorSprite.color = color;
 			currentTile.kingdomColorSprite.gameObject.SetActive(true);
 		}
+
+		for (int i = 0; i < this.borderTiles.Count; i++) {
+			HexTile currentTile = this.borderTiles[i];
+			currentTile.kingdomColorSprite.color = color;
+			currentTile.kingdomColorSprite.gameObject.SetActive(true);
+		}
 	}
 
 	internal void UnHighlightAllOwnedTiles(){
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
+			currentTile.kingdomColorSprite.gameObject.SetActive(false);
+		}
+		for (int i = 0; i < this.borderTiles.Count; i++) {
+			HexTile currentTile = this.borderTiles[i];
 			currentTile.kingdomColorSprite.gameObject.SetActive(false);
 		}
 	}
@@ -865,54 +906,18 @@ public class City{
 //		}
 		this.CreateInitialFamilies(false);
 		KingdomManager.Instance.UpdateKingdomAdjacency();
-		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
-			this.kingdom.HighlightAllOwnedTilesInKingdom();
-		} else {
-			if (this.kingdom.cities[0].hexTile.kingdomColorSprite.gameObject.activeSelf) {
+		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
+			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
 				this.kingdom.HighlightAllOwnedTilesInKingdom();
 			}
 		}
+//		 else {
+//			if (this.kingdom.cities[0].hexTile.kingdomColorSprite.gameObject.activeSelf) {
+//				this.kingdom.HighlightAllOwnedTilesInKingdom();
+//			}
+//		}
 	}
 
-	protected void DonateCitizensToExpansion(Expansion expansionEvent, Kingdom kingdomToExpand){
-		if (this.kingdom.id != kingdomToExpand.id) {
-			return;
-		}
-		int donationLimit = 3;
-		List<Citizen> untrainedCitizens = this.GetCitizensWithRole(ROLE.UNTRAINED).Where(x => x.age >= 16 && (x.spouse != null && x.spouse.role != ROLE.GOVERNOR)).ToList();
-		if (untrainedCitizens.Count > 0) {
-			if (untrainedCitizens.Count < donationLimit) {
-				for (int i = 0; i < untrainedCitizens.Count; i++) {
-					if (untrainedCitizens[i].dependentChildren.Count > 0) {
-						untrainedCitizens.AddRange(untrainedCitizens[i].dependentChildren);
-					}
-					if (untrainedCitizens[i].spouse != null) {
-						untrainedCitizens.Add(untrainedCitizens[i].spouse);
-						untrainedCitizens[i].spouse.Unemploy();
-					}
-				}
-				expansionEvent.AddCitizensToExpansion(untrainedCitizens);
-			} else {
-				List<Citizen> citizensToJoinExpansion = new List<Citizen>(){
-					untrainedCitizens[0],
-					untrainedCitizens[1],
-					untrainedCitizens[2]
-				};
-
-				for (int i = 0; i < citizensToJoinExpansion.Count; i++) {
-					if (citizensToJoinExpansion[i].dependentChildren.Count > 0) {
-						citizensToJoinExpansion.AddRange(citizensToJoinExpansion[i].dependentChildren);
-					}
-					if (citizensToJoinExpansion[i].spouse != null) {
-						citizensToJoinExpansion.Add(citizensToJoinExpansion[i].spouse);
-						citizensToJoinExpansion[i].spouse.Unemploy();
-					}
-				}
-				expansionEvent.AddCitizensToExpansion(citizensToJoinExpansion);
-			}
-		}
-
-	}
 
 //	internal void TriggerStarvation(){
 //		if(this.isStarving){
@@ -935,9 +940,18 @@ public class City{
 		color.a = 76.5f/255f;
 		tileToBuy.kingdomColorSprite.color = color;
 		tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
-//		this.UpdateUnownedNeighbourTiles();
 		tileToBuy.ShowOccupiedSprite();
+		if (tileToBuy.isBorder && tileToBuy.isBorderOfCityID != this.id) {
+			tileToBuy.isBorder = false;
+			CityGenerator.Instance.GetCityByID(tileToBuy.isBorderOfCityID).borderTiles.Remove(tileToBuy);
+		}
 		this.UpdateResourceProduction();
+		this.UpdateBorderTiles();
+		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
+			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+				this.kingdom.HighlightAllOwnedTilesInKingdom();
+			}
+		}
 
 	}
 

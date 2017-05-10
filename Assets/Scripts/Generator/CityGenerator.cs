@@ -183,4 +183,14 @@ public class CityGenerator : MonoBehaviour {
 		BehaviourTreeManager.Instance.allTrees.Add(hexTile.gameObject.GetComponent<PandaBehaviour> ());
 		return hexTile.city;
 	}
+
+	public City GetCityByID(int id){
+		for (int i = 0; i < this.habitableTiles.Count; i++) {
+			HexTile currHabitableTile = this.habitableTiles[i];
+			if (currHabitableTile.isOccupied && currHabitableTile.city.id == id) {
+				return currHabitableTile.city;
+			}
+		}
+		return null;
+	}
 }
