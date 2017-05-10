@@ -167,9 +167,11 @@ public class General : Role {
 	}
 	internal void RegisterOnCampaign(Campaign campaign){
 		if(this.inAction){
+			Debug.Log (this.citizen.name + " of " + this.citizen.city.kingdom.name + " CAN'T REGISTER ON " + campaign.campaignType.ToString() + " CAMPAIGN OF " + campaign.leader.name + " of " + campaign.leader.city.kingdom.name + " W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + " BECAUSE IN ACTION");
 			return;
 		}
 		if(this.citizen.isDead){
+			Debug.Log (this.citizen.name + " of " + this.citizen.city.kingdom.name + " CAN'T REGISTER ON " + campaign.campaignType.ToString() + " CAMPAIGN OF " + campaign.leader.name + " of " + campaign.leader.city.kingdom.name + " W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + " BECAUSE CITIZEN IS DEAD");
 			return;
 		}
 

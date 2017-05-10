@@ -293,7 +293,7 @@ public class City{
 
 		king.AssignRole(ROLE.KING);
 
-		this.kingdom.king.isKing = true;
+//		this.kingdom.king.isKing = true;
 		this.kingdom.king.isDirectDescendant = true;
 
 		father.isDirectDescendant = true;
@@ -1947,10 +1947,6 @@ public class City{
 	}
 	internal void KillCity(){
 		this.incomingGenerals.Clear ();
-		if(this.hasKing){
-			this.hasKing = false;
-			this.kingdom.AssignNewKing(null, this.kingdom.cities[0]);
-		}
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
 			currentTile.ResetTile();
@@ -1968,6 +1964,10 @@ public class City{
 			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
 		}
 		this.kingdom.cities.Remove (this);
+		if(this.hasKing){
+			this.hasKing = false;
+			this.kingdom.AssignNewKing(null, this.kingdom.cities[0]);
+		}
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		this.hexTile.city = null;
