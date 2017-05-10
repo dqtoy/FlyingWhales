@@ -14,19 +14,10 @@ public class CampaignManager {
 	public List<CityWar> successionWarCities;
 	public List<CityWar> defenseWarCities;
 
-	public List<City> targetableAttackCities;
-	public List<City> targetableDefenseCities;
-	public List<City> activeAttackCities;
-	public List<City> activeDefenseCities;
-
 	public CampaignManager(Citizen leader){
 		this.leader = leader;
 		this.campaignLimit = leader.GetCampaignLimit ();
 		this.activeCampaigns = new List<Campaign>();
-		this.targetableAttackCities = new List<City> ();
-		this.targetableDefenseCities = new List<City> ();
-		this.activeAttackCities = new List<City> ();
-		this.activeDefenseCities = new List<City> ();
 		this.intlWarCities = new List<CityWar>();
 		this.civilWarCities = new List<CityWar>();
 		this.successionWarCities = new List<CityWar>();
@@ -187,24 +178,7 @@ public class CampaignManager {
 		}
 		return false;
 	}
-
-	internal bool IsCityActive(City city, CAMPAIGN campaignType){
-		if(campaignType == CAMPAIGN.OFFENSE){
-			for(int i = 0; i < this.activeAttackCities.Count; i++){
-				if(city.id == this.activeAttackCities[i].id){
-					return true;
-				}
-			}
-			return false;
-		}else{
-			for(int i = 0; i < this.activeDefenseCities.Count; i++){
-				if(city.id == this.activeDefenseCities[i].id){
-					return true;
-				}
-			}
-			return false;
-		}
-	}
+		
 	internal void GetWarAndTarget(List<City> intlWarCities, List<City> civilWarCities, List<City> successionWarCities, ref WAR_TYPE warType, ref City target){
 		if(intlWarCities.Count > 0 && civilWarCities.Count > 0 && successionWarCities.Count > 0){
 			int chance = UnityEngine.Random.Range (0, 3);

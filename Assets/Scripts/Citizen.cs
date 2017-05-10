@@ -425,10 +425,7 @@ public class Citizen {
 		if (this.assignedRole != null) {
 			this.assignedRole.OnDeath ();
 		}
-
-		for(int i = 0; i < this.campaignManager.activeCampaigns.Count; i++){
-			this.campaignManager.CampaignDone (this.campaignManager.activeCampaigns [i], false);
-		}
+			
 		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
 		EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
 		EventManager.Instance.onUnsupportCitizen.Invoke (this);
@@ -477,7 +474,9 @@ public class Citizen {
 		//		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
 		//		RoyaltyEventDelegate.onMassChangeLoyalty -= MassChangeLoyalty;
 		//		PoliticsPrototypeManager.Instance.turnEnded -= TurnActions;
-
+		for(int i = 0; i < this.campaignManager.activeCampaigns.Count; i++){
+			this.campaignManager.CampaignDone (this.campaignManager.activeCampaigns [i], false);
+		}
 		this.isHeir = false;
 		if (this.id == this.city.kingdom.king.id) {
 			//ASSIGN NEW LORD, SUCCESSION
@@ -1496,5 +1495,37 @@ public class Citizen {
 			general.CreateGhostCitizen ();
 		}
 	
+	}
+
+	internal void CopyCampaignManager(CampaignManager source){
+		Debug.Log (this.name + " of " + this.city.kingdom.name + " IS COPYING THE CAMPAIGN MANAGER OF " + source.leader.name + " of " + source.leader.city.kingdom.name);
+		for(int i = 0; i < source.intlWarCities.Count; i++){
+			if(!this.campaignManager.SearchForInternationalWarCities(source.intlWarCities[i].city)){
+				this.campaignManager.intlWarCities.Add(source.intlWarCities[i]);
+			}
+		}
+		for(int i = 0; i < source.civilWarCities.Count; i++){
+			if(!this.campaignManager.SearchForCivilWarCities(source.civilWarCities[i].city)){
+				this.campaignManager.civilWarCities.Add(source.civilWarCities[i]);
+			}
+		}
+//		for(int i = 0; i < source.successionWarCities.Count; i++){
+//			if(!this.campaignManager.SearchForSuccessionWarCities(source.successionWarCities[i].city)){
+//				this.campaignManager.successionWarCities.Add(source.successionWarCities[i]);
+//			}
+//		}
+		for(int i = 0; i < source.defenseWarCities.Count; i++){
+			if(source.defenseWarCities[i].warType == WAR_TYPE.INTERNATIONAL){
+				if(!this.campaignManager.SearchForDefenseWarCities(source.defenseWarCities[i].city, source.defenseWarCities[i].warType)){
+					this.campaignManager.defenseWarCities.Add(source.defenseWarCities[i]);
+				}
+			}
+		}
+
+		for (int i = 0; i < source.activeCampaigns.Count; i++) {
+			source.activeCampaigns [i].leader = this;
+		}
+		source.leader = this;
+		this.campaignManager.activeCampaigns.AddRange(source.activeCampaigns);
 	}
 }

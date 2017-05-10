@@ -221,13 +221,13 @@ public class Kingdom{
 		if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
 			newKing.DetachGeneralFromCitizen ();
 		}
-		newKing.role = ROLE.KING;
-		newKing.assignedRole = new King(newKing);
-		newKing.isKing = true;
+//		newKing.role = ROLE.KING;
+		newKing.AssignRole(ROLE.KING);
+//		newKing.isKing = true;
 		newKing.isGovernor = false;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-		this.king = newKing;
+//		this.king = newKing;
 		this.king.CreateInitialRelationshipsToKings ();
 		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 		this.successionLine.Clear();
@@ -255,14 +255,14 @@ public class Kingdom{
 		if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
 			newKing.DetachGeneralFromCitizen ();
 		}
-		newKing.role = ROLE.KING;
-		newKing.assignedRole = null;
-		newKing.isKing = true;
+//		newKing.role = ROLE.KING;
+		newKing.AssignRole(ROLE.KING);
+//		newKing.isKing = true;
 		newKing.isGovernor = false;
 //		KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
-		this.king = newKing;
+//		this.king = newKing;
 		this.king.CreateInitialRelationshipsToKings ();
 		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 		this.successionLine.Clear();
@@ -285,22 +285,22 @@ public class Kingdom{
 		}
 
 	}
-	internal void DethroneKing(Citizen newKing){
-//		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);
-
-		if(!newKing.isDirectDescendant){
-//			RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
-			Utilities.ChangeDescendantsRecursively (newKing, true);
-			Utilities.ChangeDescendantsRecursively (this.king, false);
-		}
-		this.king = newKing;
-		this.king.CreateInitialRelationshipsToKings ();
-		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
-		this.successionLine.Clear();
-		ChangeSuccessionLineRescursively (newKing);
-		this.successionLine.AddRange (GetSiblings (newKing));
-		UpdateKingSuccession ();
-	}
+//	internal void DethroneKing(Citizen newKing){
+////		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);
+//
+//		if(!newKing.isDirectDescendant){
+////			RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
+//			Utilities.ChangeDescendantsRecursively (newKing, true);
+//			Utilities.ChangeDescendantsRecursively (this.king, false);
+//		}
+//		this.king = newKing;
+//		this.king.CreateInitialRelationshipsToKings ();
+//		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+//		this.successionLine.Clear();
+//		ChangeSuccessionLineRescursively (newKing);
+//		this.successionLine.AddRange (GetSiblings (newKing));
+//		UpdateKingSuccession ();
+//	}
 	internal void ChangeSuccessionLineRescursively(Citizen royalty){
 		if(this.king.id != royalty.id){
 			if(!royalty.isDead){
@@ -489,8 +489,32 @@ public class Kingdom{
 		City newCity = CityGenerator.Instance.CreateNewCity (hex, this);
 		newCity.CreateInitialFamilies(false);
 		KingdomManager.Instance.UpdateKingdomAdjacency();
-	}
+		this.AddInternationalWarCity (newCity);
 
+	}
+	internal void AddInternationalWarCity(City newCity){
+		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
+			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+				if(!this.relationshipsWithOtherKingdoms[i].objectInRelationship.king.campaignManager.SearchForInternationalWarCities(newCity)){
+					this.relationshipsWithOtherKingdoms [i].objectInRelationship.king.campaignManager.intlWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
+				}
+			}
+		}
+		if(this.IsKingdomHasWar()){
+			if(!this.king.campaignManager.SearchForDefenseWarCities(newCity, WAR_TYPE.INTERNATIONAL)){
+				this.king.campaignManager.defenseWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
+			}
+		}
+
+	}
+	internal bool IsKingdomHasWar(){
+		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
+			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+				return true;
+			}
+		}
+		return false;
+	}
 	internal void RemoveFromSuccession(Citizen citizen){
 		if(citizen != null){
 			for(int i = 0; i < this.successionLine.Count; i++){
