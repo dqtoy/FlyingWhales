@@ -84,6 +84,12 @@ public class JoinWar : GameEvent {
 					successRate += 20;
 				} else if (relationshipWithTarget == RELATIONSHIP_STATUS.RIVAL) {
 					successRate += 35;
+				} else if (relationshipWithTarget == RELATIONSHIP_STATUS.WARM) {
+					successRate -= 5;
+				} else if (relationshipWithTarget == RELATIONSHIP_STATUS.FRIEND) {
+					successRate -= 20;
+				} else if (relationshipWithTarget == RELATIONSHIP_STATUS.ALLY) {
+					successRate -= 35;
 				} 
 
 				int chanceForSuccess = Random.Range (0, 100);
@@ -105,8 +111,6 @@ public class JoinWar : GameEvent {
 						this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name , HISTORY_IDENTIFIER.NONE));
 
 					this.resolution = this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name;
-					EventManager.Instance.AddEventToDictionary (newInvasionPlan);
-
 				}
 				this.DoneEvent();
 			}

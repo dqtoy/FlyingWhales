@@ -53,10 +53,10 @@ public class UIManager : MonoBehaviour {
 	public UIPopupList citiesForRelocationPopupList;
 
 	[Space(10)]//World UI
-	public ButtonToggle pauseBtn;
-	public ButtonToggle x1Btn;
-	public ButtonToggle x2Btn;
-	public ButtonToggle x4Btn;
+	public ButtonGroupItem pauseBtn;
+	public ButtonGroupItem x1Btn;
+	public ButtonGroupItem x2Btn;
+	public ButtonGroupItem x4Btn;
 
 	[Space(10)]
 	public UILabel dateLbl;
@@ -263,59 +263,47 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 
-		if (kingdomEventsGO.activeSelf) {
-			if (currentlyShowingKingdom != null) {
-				this.ShowKingdomEvents();
-			}
-		}
+//		if (kingdomEventsGO.activeSelf) {
+//			if (currentlyShowingKingdom != null) {
+//				this.ShowKingdomEvents();
+//			}
+//		}
 
 	}
 
 	public void SetProgressionSpeed1X(){
+		GameManager.Instance.SetPausedState(false);
 		GameManager.Instance.SetProgressionSpeed(2f);
-		if (pauseBtn.isClicked) {
-			this.TogglePause();
-			pauseBtn.OnClick();
-		} else if (x2Btn.isClicked) {
-			x2Btn.OnClick();
-		} else if (x4Btn.isClicked) {
-			x4Btn.OnClick();
-		}
+//		pauseBtn.SetClickState (false);
+//		x1Btn.SetClickState (true);
+//		x2Btn.SetClickState (false);
+//		x4Btn.SetClickState (false);
 	}
 
 	public void SetProgressionSpeed2X(){
+		GameManager.Instance.SetPausedState(false);
 		GameManager.Instance.SetProgressionSpeed(1f);
-		if (pauseBtn.isClicked) {
-			this.TogglePause();
-			pauseBtn.OnClick();
-		} else if (x1Btn.isClicked) {
-			x1Btn.OnClick();
-		} else if (x4Btn.isClicked) {
-			x4Btn.OnClick();
-		}
+//		pauseBtn.SetClickState (false);
+//		x1Btn.SetClickState (false);
+//		x2Btn.SetClickState (true);
+//		x4Btn.SetClickState (false);
 	}
 
 	public void SetProgressionSpeed4X(){
+		GameManager.Instance.SetPausedState(false);
 		GameManager.Instance.SetProgressionSpeed(0.3f);
-		if (pauseBtn.isClicked) {
-			this.TogglePause();
-			pauseBtn.OnClick();
-		} else if (x2Btn.isClicked) {
-			x2Btn.OnClick();
-		} else if (x1Btn.isClicked) {
-			x1Btn.OnClick();
-		}
+//		pauseBtn.SetClickState (false);
+//		x1Btn.SetClickState (false);
+//		x2Btn.SetClickState (false);
+//		x4Btn.SetClickState (true);
 	}
 
 	public void TogglePause(){
-		GameManager.Instance.TogglePause();
-		if (x1Btn.isClicked) {
-			x1Btn.OnClick();
-		} else if (x2Btn.isClicked) {
-			x2Btn.OnClick();
-		} else if (x4Btn.isClicked) {
-			x4Btn.OnClick();
-		}
+		GameManager.Instance.SetPausedState(true);
+//		pauseBtn.SetClickState (true);
+//		x1Btn.SetClickState (false);
+//		x2Btn.SetClickState (false);
+//		x4Btn.SetClickState (false);
 	}
 
 	internal void UpdateKingsGrid(){
@@ -476,10 +464,9 @@ public class UIManager : MonoBehaviour {
 		currentlyShowingCitizen = null;
 		citizenInfoGO.SetActive(false);
 		citizenInfoSuccessionGO.SetActive(false);
-		familyTreeGO.SetActive(false);
-		relationshipsGO.SetActive(false);
-		relationshipHistoryGO.SetActive(false);
-		citizenInfoSuccessionGO.SetActive(false);
+		HideFamilyTree();
+		HideRelationships();
+		HideRelationshipHistory();
 	}
 	public void ToggleCitizenHistory(){
 		if (this.citizenHistoryGO.activeSelf) {
@@ -1199,7 +1186,7 @@ public class UIManager : MonoBehaviour {
 		kingRelationshipsParentGO.SetActive (false);
 		governorRelationshipsParentGO.SetActive(false);
 		relationshipsGO.SetActive (false);
-		relationshipsBtn.OnClick();
+		relationshipsBtn.SetClickState(false);
 	}
 
 	public void ShowRelationshipHistory(Citizen citizenInRelationshipWith){
@@ -2390,6 +2377,8 @@ public class UIManager : MonoBehaviour {
 				Destroy (currentParents [i].gameObject);
 			}
 			allKingdomEventsGO.SetActive (true);
+			this.pauseBtn.SetAsClicked ();
+			GameManager.Instance.SetPausedState (true);
 			return;
 		} else {
 			kingdomEventsNoEventsLbl.gameObject.SetActive (false);
@@ -2670,10 +2659,7 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 		allKingdomEventsGO.SetActive (true);
-		this.pauseBtn.SetClickState (true);
-		this.x1Btn.SetClickState (false);
-		this.x2Btn.SetClickState (false);
-		this.x4Btn.SetClickState (false);
+		this.pauseBtn.SetAsClicked ();
 		GameManager.Instance.SetPausedState (true);
 	}
 
@@ -2691,10 +2677,8 @@ public class UIManager : MonoBehaviour {
 		for (int i = 0; i < allWarEventParents.Length; i++) {
 			Destroy (allWarEventParents [i].gameObject);
 		}
-		this.pauseBtn.SetClickState (false);
-		this.x1Btn.SetClickState (true);
-		this.x2Btn.SetClickState (true);
-		this.x4Btn.SetClickState (true);
+		this.x1Btn.SetAsClicked();
+		this.SetProgressionSpeed1X();
 		GameManager.Instance.SetPausedState (false);
 	}
 

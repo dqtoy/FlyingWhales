@@ -193,8 +193,8 @@ public class General : Role {
 								}else{
 									Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO RALLY POINT (" + campaign.targetCity.name + ")");
 								}
-								if (path != null) {
-									AssignCampaign (campaign, path);
+								if (path != null && path.Count > 0) {
+									campaign.AddCandidate (this, path);
 								}else{
 									Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO RALLY POINT (" + campaign.targetCity.name + ")");
 								}
@@ -222,7 +222,7 @@ public class General : Role {
 									}
 								}
 								if(path != null){
-									AssignCampaign (campaign, path);
+									campaign.AddCandidate (this, path);
 								}
 							}
 						}
@@ -238,7 +238,7 @@ public class General : Role {
 									}
 								}
 								if(path != null){
-									AssignCampaign (campaign, path);
+									campaign.AddCandidate (this, path);
 								}
 							}
 						}
@@ -256,7 +256,7 @@ public class General : Role {
 									}
 								}
 								if(path != null){
-									AssignCampaign (campaign, path);
+									campaign.AddCandidate (this, path);
 								}
 							}
 						}
@@ -284,7 +284,7 @@ public class General : Role {
 								}
 							}
 							if (path != null) {
-								AssignCampaign (campaign, path);
+								campaign.AddCandidate (this, path);
 							}else{
 								Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 							}
@@ -305,7 +305,7 @@ public class General : Role {
 								}
 							}
 							if (path != null) {
-								AssignCampaign (campaign, path);
+								campaign.AddCandidate (this, path);
 							}else{
 								Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 							}
@@ -329,7 +329,7 @@ public class General : Role {
 								}
 							}
 							if (path != null) {
-								AssignCampaign (campaign, path);
+								campaign.AddCandidate (this, path);
 							}else{
 								Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 							}
@@ -337,11 +337,7 @@ public class General : Role {
 					}
 				}
 			}
-
 		}
-
-
-
 	}
 	internal void AssignCampaign(Campaign chosenCampaign, List<HexTile> path){
 		if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
@@ -473,7 +469,6 @@ public class General : Role {
 		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
 		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
 
-
 		if (this.generalAvatar != null) {
 			this.generalAvatar.GetComponent<GeneralObject>().RemoveBehaviourTree();
 			GameObject.Destroy (this.generalAvatar);
@@ -497,6 +492,10 @@ public class General : Role {
 		Citizen newCitizen = new Citizen (this.citizen.city, 0, GENDER.MALE, 0, true);
 		newCitizen.isDead = true;
 		this.citizen = newCitizen;
+		newCitizen.assignedRole = this;
+		if(this.generalAvatar != null){
+			this.generalAvatar.GetComponent<GeneralObject> ().GhostGeneral ();
+		}
 	}
 	internal void UpdateUI(){
 		if(this.generalAvatar != null){

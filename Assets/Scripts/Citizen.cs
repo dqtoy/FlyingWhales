@@ -140,6 +140,8 @@ public class Citizen {
 			EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
 //			EventManager.Instance.onCheckCitizensSupportingMe.AddListener(AddPrestigeToOtherCitizen);
 			EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
+		}else{
+			EventManager.Instance.onDeathToGhost.AddListener (DeathToGhost);
 		}
 	}
 	internal int[] GetHoroscope(){
@@ -1490,20 +1492,38 @@ public class Citizen {
 		if(this.assignedRole is General){
 			General general = (General)this.assignedRole;
 
-			if (general.generalAvatar != null) {
-				if(!general.inAction){
-					general.generalAvatar.GetComponent<GeneralObject> ().RemoveBehaviourTree ();
-					GameObject.Destroy (general.generalAvatar);
-					general.generalAvatar = null;
+//			if (general.generalAvatar != null) {
+//				if(!general.inAction){
+//					general.generalAvatar.GetComponent<GeneralObject> ().RemoveBehaviourTree ();
+//					GameObject.Destroy (general.generalAvatar);
+//					general.generalAvatar = null;
+//				}else{
+//					if(general.assignedCampaign != null){
+//						general.UnregisterThisGeneral (null);
+//					}
+//				}
+//			}
+			if(!general.inAction){
+				if(general.generalAvatar != null){
+					general.generalAvatar.GetComponent<GeneralObject> ().MakeCitizenMove (general.location, this.city.hexTile);
+					general.location = this.city.hexTile;
 				}
 			}
-			general.location = this.city.hexTile;
 			Debug.Log ("CREATED GHOST CITIZEN FOR " + this.name);
 			general.CreateGhostCitizen ();
 		}
 	
 	}
 
+	internal void DeathToGhost(City city){
+		if(this.city.id == city.id){
+			EventManager.Instance.onDeathToGhost.RemoveListener (DeathToGhost);
+			if (this.assignedRole is General) {
+				General general = (General)this.assignedRole;
+				general.GeneralDeath ();
+			}
+		}
+	}
 	internal void CopyCampaignManager(CampaignManager source){
 		Debug.Log (this.name + " of " + this.city.kingdom.name + " IS COPYING THE CAMPAIGN MANAGER OF " + source.leader.name + " of " + source.leader.city.kingdom.name);
 		for(int i = 0; i < source.intlWarCities.Count; i++){

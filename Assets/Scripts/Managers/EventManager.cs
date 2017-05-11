@@ -29,6 +29,7 @@ public class EventManager : MonoBehaviour {
 	public RemoveSuccessionWarCity onRemoveSuccessionWarCity = new RemoveSuccessionWarCity();
 	public UpdateUI onUpdateUI = new UpdateUI();
 	public LookForLostArmies onLookForLostArmies = new LookForLostArmies ();
+	public DeathToGhost onDeathToGhost = new DeathToGhost();
 
 	public EVENT_TYPES eventTypeForTesting;
 
@@ -198,8 +199,10 @@ public class EventManager : MonoBehaviour {
 			EVENT_TYPES currentKey = this.allEvents.Keys.ElementAt(i);
 			List<GameEvent> gameEventsOfType = this.allEvents [currentKey];
 			for (int j = 0; j < gameEventsOfType.Count; j++) {
-				if (gameEventsOfType[j].startedByCity.id == city.id) {
-					gameEventsOfCity.Add(gameEventsOfType [j]);
+				if (gameEventsOfType [j].startedByCity != null) {
+					if (gameEventsOfType [j].startedByCity.id == city.id) {
+						gameEventsOfCity.Add (gameEventsOfType [j]);
+					}
 				}
 			}
 		}

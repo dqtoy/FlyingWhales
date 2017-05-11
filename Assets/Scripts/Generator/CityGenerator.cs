@@ -32,7 +32,7 @@ public class CityGenerator : MonoBehaviour {
 		habitableTiles = new List<HexTile>();
 
 		List<GameObject> elligibleTiles = new List<GameObject>(allHexes);
-		Debug.Log ("elligible Tiles: " + elligibleTiles.Count.ToString ());
+//		Debug.Log ("elligible Tiles: " + elligibleTiles.Count.ToString ());
 		for (int i = 0; i < elligibleTiles.Count; i++) {
 
 			HexTile currentHexTile = elligibleTiles [i].GetComponent<HexTile>();
@@ -50,7 +50,7 @@ public class CityGenerator : MonoBehaviour {
 //			}
 
 			List<HexTile> tilesInRange = currentHexTile.GetTilesInRange(4);
-			List<HexTile> checkForHabitableTilesInRange = currentHexTile.GetTilesInRange (5);
+			List<HexTile> checkForHabitableTilesInRange = currentHexTile.GetTilesInRange (6);
 			if (checkForHabitableTilesInRange.Where (x => x.isHabitable).Count () > 0) {
 				continue;
 			}

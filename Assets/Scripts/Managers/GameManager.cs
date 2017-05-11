@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour {
 	public void StartProgression(){
 //		InvokeRepeating ("WeekEnded", 0f, 1f);
 		UIManager.Instance.SetProgressionSpeed1X();
-		UIManager.Instance.x1Btn.OnClick();
+		UIManager.Instance.x1Btn.SetAsClicked();
 //		this.WeekEnded();
 		EventManager.Instance.onUpdateUI.Invoke();
 		StartCoroutine(WeekProgression());
@@ -315,7 +315,7 @@ public class GameManager : MonoBehaviour {
 					if (envoys.Count > 0) {
 						citizenToSend = envoys[0];
 					} else {
-						citizenToSend = currentWar.kingdom1.king;
+						citizenToSend = currentWar.kingdom2.king;
 
 					}
 

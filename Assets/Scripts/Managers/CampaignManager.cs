@@ -135,12 +135,14 @@ public class CampaignManager {
 								this.MakeCityActive (newCampaign);
 							}
 						}
-
 					}
 				}
 				if(newCampaign != null){
 					Debug.Log ("Created Campaign " + newCampaign.campaignType.ToString () + " " + newCampaign.targetCity.name);
+					newCampaign.candidates.Clear ();
 					EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
+					newCampaign.RegisterGenerals ();
+//					GameManager.Instance.StartCoroutine(AssignGeneralsOnCampaign (newCampaign));
 				}else{
 					//Create Ghost Campaign
 					newCampaign = new Campaign (this.leader, null, CAMPAIGN.NONE, WAR_TYPE.NONE, 0);
@@ -154,14 +156,9 @@ public class CampaignManager {
 			CreateCampaign ();
 		}
 	}
-	private IEnumerator CheckCampaign(Campaign newCampaign){
+	private IEnumerator AssignGeneralsOnCampaign(Campaign newCampaign){
 		yield return null;
-		if (newCampaign.registeredGenerals.Count <= 0) {
-			//Destroy campaign without creating new
-//			CampaignDone (newCampaign);
-			CampaignDone(newCampaign, false);
-			//Create Ghost Campaign
-		}
+		newCampaign.RegisterGenerals ();
 	}
 	internal bool SearchForSuccessionWarCities(City city){
 		for(int i = 0; i < this.successionWarCities.Count; i++){
@@ -315,18 +312,16 @@ public class CampaignManager {
 		List<HexTile> tilesInRange = targetCity.hexTile.GetTilesInRange (5).Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable).ToList();
 		if(tilesInRange.Count > 0){
 			HexTile nearestTile = null;
-			int nearestCount = 0;
+			float nearestDistance = 0f;
 			for(int i = 0; i < tilesInRange.Count; i++){
-				List<HexTile> path = PathGenerator.Instance.GetPath (tilesInRange [i], sourceCity.hexTile, PATHFINDING_MODE.COMBAT);
-				if(path != null){
-					if(nearestTile == null){
+				float distance = Vector3.Distance (tilesInRange [i].transform.position, sourceCity.hexTile.transform.position);
+				if(nearestTile == null){
+					nearestTile = tilesInRange [i];
+					nearestDistance = distance;
+				}else{
+					if(distance < nearestDistance){
 						nearestTile = tilesInRange [i];
-						nearestCount = path.Count;
-					}else{
-						if(path.Count < nearestCount){
-							nearestTile = tilesInRange [i];
-							nearestCount = path.Count;
-						}
+						nearestDistance = distance;
 					}
 				}
 			}

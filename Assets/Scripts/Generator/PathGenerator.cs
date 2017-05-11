@@ -68,12 +68,12 @@ public class PathGenerator : MonoBehaviour {
 			}
 
 			if (pendingTiles.Count != habitableTiles.Count) {
-				Debug.Log ("MISSED SOME CITIES!");
-				Debug.Log ("Create Lines for missed out cities");
+//				Debug.Log ("MISSED SOME CITIES!");
+//				Debug.Log ("Create Lines for missed out cities");
 				for (int x = 0; x < habitableTiles.Count; x++) {
 					
 					if (!pendingTiles.Contains (habitableTiles[x])) {
-						Debug.Log ("======Missed out tile: " + habitableTiles [x].name + " ======");
+//						Debug.Log ("======Missed out tile: " + habitableTiles [x].name + " ======");
 						HexTile missedOutTile = habitableTiles[x];
 						HexTile possibleConnectionTile = FindNearestCityWithConnection (missedOutTile);
 
@@ -107,7 +107,7 @@ public class PathGenerator : MonoBehaviour {
 	}
 
 	void ConnectCities(HexTile originTile, HexTile targetTile){
-		Debug.Log (originTile.name + " is now connected to: " + targetTile.name);
+//		Debug.Log (originTile.name + " is now connected to: " + targetTile.name);
 		this.DeterminePath (originTile, targetTile);
 		originTile.connectedTiles.Add(targetTile);
 		targetTile.connectedTiles.Add(originTile);
@@ -121,7 +121,7 @@ public class PathGenerator : MonoBehaviour {
 		List<HexTile> roadListByDistance = SortAllRoadsByDistance (start, destination); //Sort all road tiles in regards to how far they are from the start
 		for (int i = 0; i < roadListByDistance.Count; i++) {
 			if (AreTheseTilesConnected (roadListByDistance [i], destination, PATHFINDING_MODE.NORMAL)) {
-				Debug.Log ("Connect to roadTile: " + roadListByDistance [i].name + " instead");
+//				Debug.Log ("Connect to roadTile: " + roadListByDistance [i].name + " instead");
 				if (roadListByDistance[i].isHabitable && roadListByDistance[i].connectedTiles.Contains(start)) {
 					return; //use the already created road between the 2 cities.
 				}

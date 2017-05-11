@@ -23,19 +23,21 @@ public class GeneralHover : MonoBehaviour {
 		UIManager.Instance.HideSmallInfo();
 		this.UnHighlightPath ();
 	}
-
+	void OnDestroy(){
+		UnHighlightPath ();
+	}
 	void HighlightPath(){
-		if (this.transform.parent.GetComponent<GeneralObject> ().general.assignedCampaign != null) {
+		if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
 			this.pathToUnhighlight.Clear ();
-			for (int i = 0; i < this.transform.parent.GetComponent<GeneralObject> ().general.roads.Count; i++) {
-				this.transform.parent.GetComponent<GeneralObject> ().general.roads [i].highlightGO.SetActive (true);
-				this.pathToUnhighlight.Add (this.transform.parent.GetComponent<GeneralObject> ().general.roads [i]);
+			for (int i = 0; i < this.transform.parent.GetComponent<GeneralObject>().general.roads.Count; i++) {
+				this.transform.parent.GetComponent<GeneralObject>().general.roads [i].highlightGO.SetActive (true);
+				this.pathToUnhighlight.Add (this.transform.parent.GetComponent<GeneralObject>().general.roads [i]);
 			}
 		}
 	}
 
 	void UnHighlightPath(){
-		if (this.transform.parent.GetComponent<GeneralObject> ().general.assignedCampaign != null) {
+		if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
 			for (int i = 0; i < this.pathToUnhighlight.Count; i++) {
 				this.pathToUnhighlight[i].highlightGO.SetActive(false);
 			}
@@ -49,7 +51,7 @@ public class GeneralHover : MonoBehaviour {
 		info += "campaign type: " + campaign.campaignType.ToString ();
 		info += "\n";
 
-		info += "general: " + this.transform.parent.GetComponent<GeneralObject> ().general.citizen.name;
+		info += "general: " + this.transform.parent.GetComponent<GeneralObject>().general.citizen.name;
 		info += "\n";
 
 		info += "target city: " + campaign.targetCity.name;
@@ -86,5 +88,6 @@ public class GeneralHover : MonoBehaviour {
 
 		return info;
 	}
+
 
 }
