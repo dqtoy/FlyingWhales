@@ -52,19 +52,25 @@ public class DiplomaticCrisis : GameEvent {
 		if(!envoy.citizen.isDead){
 			//Search for envoys task first on activeenvoys
 			//Do something here add tension or reduce depending on the envoys task
-			if(envoy.citizen.id == this.activeEnvoyResolve.citizen.id){
-				int chance = UnityEngine.Random.Range (0, 100);
-				int value = 20;
-				if(this.activeEnvoyResolve.citizen.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
-					value += 10;
+			if (this.activeEnvoyResolve != null) {
+				if (envoy.citizen.id == this.activeEnvoyResolve.citizen.id) {
+					int chance = UnityEngine.Random.Range (0, 100);
+					int value = 20;
+					if (this.activeEnvoyResolve.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+						value += 10;
+					}
+					if (chance < value) {
+						this.isResolvedPeacefully = true;
+						DoneEvent ();
+					}
 				}
-				if(chance < value){
-					this.isResolvedPeacefully = true;
-					DoneEvent ();
+			}else{
+				if (this.activeEnvoyProvoke != null) {
+					if (envoy.citizen.id == this.activeEnvoyProvoke.citizen.id) {
+						this.remainingWeeks -= 3;
+					}
 				}
-			}else if(envoy.citizen.id == this.activeEnvoyProvoke.citizen.id){
-				this.remainingWeeks -= 3;
-			}
+			} 
 		}
 		this.activeEnvoyResolve = null;
 		this.activeEnvoyProvoke = null;
