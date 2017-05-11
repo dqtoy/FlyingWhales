@@ -29,6 +29,7 @@ public class EventManager : MonoBehaviour {
 	public RemoveSuccessionWarCity onRemoveSuccessionWarCity = new RemoveSuccessionWarCity();
 	public UpdateUI onUpdateUI = new UpdateUI();
 	public LookForLostArmies onLookForLostArmies = new LookForLostArmies ();
+	public DeathToGhost onDeathToGhost = new DeathToGhost();
 
 	public EVENT_TYPES eventTypeForTesting;
 
