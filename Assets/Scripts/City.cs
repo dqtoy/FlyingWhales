@@ -1279,10 +1279,10 @@ public class City{
 
 	internal void AdjustResources(List<Resource> resource, bool reduce = true){
 		int currentResourceQuantity = 0;
-		Debug.Log ("Cost is: ");
-		for (int i = 0; i < resource.Count; i++) {
-			Debug.Log (resource[i].resourceType.ToString() + " " + resource[i].resourceQuantity.ToString());
-		}
+//		Debug.Log ("Cost is: ");
+//		for (int i = 0; i < resource.Count; i++) {
+//			Debug.Log (resource[i].resourceType.ToString() + " " + resource[i].resourceQuantity.ToString());
+//		}
 
 		for(int i = 0; i < resource.Count; i++){
 			currentResourceQuantity = resource [i].resourceQuantity;

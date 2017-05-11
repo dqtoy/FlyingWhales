@@ -315,7 +315,7 @@ public class GameManager : MonoBehaviour {
 					if (envoys.Count > 0) {
 						citizenToSend = envoys[0];
 					} else {
-						citizenToSend = currentWar.kingdom1.king;
+						citizenToSend = currentWar.kingdom2.king;
 
 					}
 
