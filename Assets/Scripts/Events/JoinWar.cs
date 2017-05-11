@@ -90,7 +90,7 @@ public class JoinWar : GameEvent {
 				if (chanceForSuccess < successRate) {
 					//target king will start invasion plan
 					RelationshipKings relationship = this.startedBy.GetRelationshipWithCitizen(this.candidateForAlliance);
-					relationship.AdjustLikeness(5);
+					relationship.AdjustLikeness(5, this);
 					relationship.relationshipHistory.Add (new History (
 						GameManager.Instance.month,
 						GameManager.Instance.days,
@@ -100,7 +100,7 @@ public class JoinWar : GameEvent {
 						true
 					));
 					InvasionPlan newInvasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
-						this.candidateForAlliance, this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
+						this.candidateForAlliance, this.candidateForAlliance.city.kingdom, this.kingdomToAttack, this);
 					this.candidateForAlliance.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 						this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name , HISTORY_IDENTIFIER.NONE));
 

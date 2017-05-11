@@ -244,7 +244,7 @@ public class Raid : GameEvent {
 						hasDeflected = true;
 						kingdomBlame = kingdomToBlame;
 						RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(kingdomToBlame.king.id);
-						relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
+						relationship.AdjustLikeness (amountToAdjust, this);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
@@ -255,7 +255,7 @@ public class Raid : GameEvent {
 						));
 					}else{
 						RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(this.sourceKingdom.king.id);
-						relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
+						relationship.AdjustLikeness (amountToAdjust, this);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
@@ -267,7 +267,7 @@ public class Raid : GameEvent {
 					}
 				}else{
 					RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(this.sourceKingdom.king.id);
-					relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
+					relationship.AdjustLikeness (amountToAdjust, this);
 					relationship.relationshipHistory.Add (new History (
 						GameManager.Instance.month,
 						GameManager.Instance.days,
@@ -279,7 +279,7 @@ public class Raid : GameEvent {
 				}
 			}else{
 				RelationshipKings relationship = this.raidedCity.kingdom.king.SearchRelationshipByID(this.sourceKingdom.king.id);
-				relationship.AdjustLikeness (amountToAdjust, EVENT_TYPES.RAID);
+				relationship.AdjustLikeness (amountToAdjust, this);
 				relationship.relationshipHistory.Add (new History (
 					GameManager.Instance.month,
 					GameManager.Instance.days,

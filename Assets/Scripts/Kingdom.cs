@@ -27,7 +27,7 @@ public class Kingdom{
 	internal List<City> adjacentCitiesFromOtherKingdoms;
 	internal List<Kingdom> adjacentKingdoms;
 
-	public float expansionChance = 3f;
+	public float expansionChance = 1f;
 
 	public Kingdom(RACE race, List<HexTile> cities){
 		this.id = Utilities.SetID(this);
@@ -120,22 +120,9 @@ public class Kingdom{
 			}
 		}
 
-//		float expansionChance = 0f;
-//		for (int i = 0; i < citiesThatCanExpand.Count; i++) {
-//			List<Citizen> untrainedCitizens = citiesThatCanExpand[i].GetCitizensWithRole(ROLE.UNTRAINED).Where(x => (x.spouse != null && x.spouse.role != ROLE.GOVERNOR) && x.age >= 16).ToList();
-//			allUnassignedAdultCitizens.AddRange(untrainedCitizens);
-//			expansionChance += 0.5f * untrainedCitizens.Count;
-//		}
-
-//		float chance = Random.Range(1f, expansionChance);
-//		if (chance < expansionChance) {
-//			Citizen highestPrestigeCitizen = allUnassignedAdultCitizens.OrderByDescending(x => x.prestige).First();
-//			Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, highestPrestigeCitizen);
-//		}
-
 		if (citiesThatCanExpand.Count > 0) {
 			float expansionChance = this.expansionChance;
-			float chance = Random.Range (1f, 150f);
+			float chance = Random.Range (0.01f, 100f);
 			if (chance < expansionChance) {
 				Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
 				citiesThatCanExpand[0].AdjustResources(expansionCost);

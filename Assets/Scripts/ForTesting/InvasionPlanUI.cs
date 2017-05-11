@@ -24,7 +24,7 @@ public class InvasionPlanUI : MonoBehaviour {
 			Kingdom sourceKingdom = UIManager.Instance.currentlyShowingCity.kingdom;
 
 			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
-				sourceKingdom.king, sourceKingdom, selectedKingdom);
+				sourceKingdom.king, sourceKingdom, selectedKingdom, null);
 		}
 
 	}

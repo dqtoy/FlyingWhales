@@ -72,7 +72,7 @@ public class MarriageInvitation : GameEvent {
 					Citizen chosenCitizenKingParent = chosenCitizen.GetKingParent();
 					if (chosenCitizenKingParent != null) {
 						RelationshipKings relationship = startedBy.city.kingdom.king.GetRelationshipWithCitizen(chosenCitizenKingParent);
-						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.AdjustLikeness(15, this);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
@@ -83,7 +83,7 @@ public class MarriageInvitation : GameEvent {
 						));
 
 						relationship = chosenCitizenKingParent.city.kingdom.king.GetRelationshipWithCitizen(this.startedBy);
-						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.AdjustLikeness(15, this);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
@@ -100,7 +100,7 @@ public class MarriageInvitation : GameEvent {
 					Citizen startedByKingParent = this.startedBy.GetKingParent ();
 					if (startedByKingParent != null) {
 						RelationshipKings relationship = startedBy.city.kingdom.king.GetRelationshipWithCitizen(startedByKingParent);
-						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.AdjustLikeness(15, this);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
@@ -111,7 +111,7 @@ public class MarriageInvitation : GameEvent {
 						));
 
 						relationship = startedByKingParent.city.kingdom.king.GetRelationshipWithCitizen(this.startedBy);
-						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.AdjustLikeness(15, this);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
@@ -127,7 +127,7 @@ public class MarriageInvitation : GameEvent {
 					Citizen chosenCitizenKingParent = chosenCitizen.GetKingParent ();
 					if (startedByKingParent != null && chosenCitizenKingParent != null) {
 						RelationshipKings relationship = startedByKingParent.city.kingdom.king.GetRelationshipWithCitizen(chosenCitizenKingParent);
-						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.AdjustLikeness(15, this);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
@@ -138,7 +138,7 @@ public class MarriageInvitation : GameEvent {
 						));
 
 						relationship = chosenCitizenKingParent.city.kingdom.king.GetRelationshipWithCitizen(startedByKingParent);
-						relationship.AdjustLikeness(15, EVENT_TYPES.MARRIAGE_INVITATION);
+						relationship.AdjustLikeness(15, this);
 						relationship.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,

@@ -3,31 +3,44 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Espionage : GameEvent {
-	public Kingdom sourceKingdom;
-	public Kingdom targetKingdom;
+	
+	private Kingdom _sourceKingdom;
+	private Kingdom _targetKingdom;
 	public Citizen spy;
 	public GameEvent chosenEvent;
 	public List<GameEvent> allEventsAffectingTarget;
 	public bool hasFound;
 	public int successRate;
 
+	public Kingdom sourceKingdom {
+		get { 
+			return this._sourceKingdom; 
+		}
+	}
+
+	public Kingdom targetKingdom {
+		get { 
+			return this._targetKingdom; 
+		}
+	}
+
 	public Espionage(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen spy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ESPIONAGE;
 		this.description = startedBy.name + " is having an espionage event.";
 		this.durationInWeeks = 2;
 		this.remainingWeeks = this.durationInWeeks;
-		this.sourceKingdom = startedBy.city.kingdom;
+		this._sourceKingdom = startedBy.city.kingdom;
 		this.spy = spy;
 		this.allEventsAffectingTarget = new List<GameEvent> ();
-		this.targetKingdom = GetTargetKingdom ();
+		this._targetKingdom = GetTargetKingdom ();
 		this.chosenEvent = this.GetEventToExpose(true);
 		this.hasFound = false;
 		this.successRate = 75;
 		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
 			this.successRate += 10;
 		}
-		if (this.targetKingdom != null) {
-			this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
+		if (this._targetKingdom != null) {
+			this._targetKingdom.cities[0].hexTile.AddEventOnTile(this);
 		}
 		EventManager.Instance.AddEventToDictionary(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -121,8 +134,8 @@ public class Espionage : GameEvent {
 		if(chance < this.successRate){
 			hasFound = true;
 			UncoverHiddenEvent (this.chosenEvent, this.sourceKingdom.king);
-			if(this.targetKingdom.king.id == this.sourceKingdom.king.id){
-				this.targetKingdom.king.InformedAboutHiddenEvent (chosenEvent, this.spy);
+			if(this._targetKingdom.king.id == this.sourceKingdom.king.id){
+				this._targetKingdom.king.InformedAboutHiddenEvent (chosenEvent, this.spy);
 			}else{
 				Kingdom targetKingdomSpecific = null;
 				Kingdom sourceKingdomSpecific = null;
@@ -171,8 +184,8 @@ public class Espionage : GameEvent {
 		Citizen source = sourceKingdomSpecific.king;
 
 		if(target.isKing){
-			RelationshipKings relationship = this.sourceKingdom.king.SearchRelationshipByID (target.id);
-			RelationshipKings relationshipToCreator = this.sourceKingdom.king.SearchRelationshipByID (source.id);
+			RelationshipKings relationship = this._sourceKingdom.king.SearchRelationshipByID (target.id);
+			RelationshipKings relationshipToCreator = this._sourceKingdom.king.SearchRelationshipByID (source.id);
 			if(relationship == null){
 				return;
 			}
@@ -187,13 +200,13 @@ public class Espionage : GameEvent {
 						value -= 40;
 					}
 					if(chance < value){
-						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
-						relationshipReverse.AdjustLikeness (10);
+						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this._sourceKingdom.king.id);
+						relationshipReverse.AdjustLikeness (10, this);
 						relationshipReverse.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
 							GameManager.Instance.year,
-							this.sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
+							this._sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
 							HISTORY_IDENTIFIER.KING_RELATIONS,
 							true
 						));
@@ -211,20 +224,20 @@ public class Espionage : GameEvent {
 						value -= 40;
 					}
 					if(chance < value){
-						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
-						relationshipReverse.AdjustLikeness (10);
+						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this._sourceKingdom.king.id);
+						relationshipReverse.AdjustLikeness (10, this);
 						relationshipReverse.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
 							GameManager.Instance.year,
-							this.sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
+							this._sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
 							HISTORY_IDENTIFIER.KING_RELATIONS,
 							true
 						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 						UncoverHiddenEvent (chosenEvent, target);
 					}
-					relationshipToCreator.AdjustLikeness (-10, EVENT_TYPES.ESPIONAGE);
+					relationshipToCreator.AdjustLikeness (-10, this);
 					relationshipToCreator.relationshipHistory.Add (new History (
 						GameManager.Instance.month,
 						GameManager.Instance.days,
@@ -243,20 +256,20 @@ public class Espionage : GameEvent {
 						value -= 40;
 					}
 					if(chance < value){
-						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this.sourceKingdom.king.id);
-						relationshipReverse.AdjustLikeness (10);
+						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this._sourceKingdom.king.id);
+						relationshipReverse.AdjustLikeness (10, this);
 						relationshipReverse.relationshipHistory.Add (new History (
 							GameManager.Instance.month,
 							GameManager.Instance.days,
 							GameManager.Instance.year,
-							this.sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
+							this._sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
 							HISTORY_IDENTIFIER.KING_RELATIONS,
 							true
 						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 						UncoverHiddenEvent (chosenEvent, target);
 					}
-					relationshipToCreator.AdjustLikeness (-15, EVENT_TYPES.ESPIONAGE);
+					relationshipToCreator.AdjustLikeness (-15, this);
 					relationshipToCreator.relationshipHistory.Add (new History (
 						GameManager.Instance.month,
 						GameManager.Instance.days,
@@ -273,7 +286,7 @@ public class Espionage : GameEvent {
 		}
 	}
 	private GameEvent GetEventToExpose(bool isGetAllEvents = false){
-		if(this.targetKingdom == null){
+		if(this._targetKingdom == null){
 			return null;
 		}
 		List<GameEvent> invasionPlanEvents = EventManager.Instance.GetEventsOfType(EVENT_TYPES.INVASION_PLAN);
@@ -287,7 +300,7 @@ public class Espionage : GameEvent {
 
 		if(invasionPlanEvents != null){
 			for(int i = 0; i < invasionPlanEvents.Count; i++){
-				if(((InvasionPlan)invasionPlanEvents[i]).targetKingdom.id == this.targetKingdom.id && ((InvasionPlan)invasionPlanEvents[i]).startedBy.city.kingdom.id != this.sourceKingdom.id){
+				if(((InvasionPlan)invasionPlanEvents[i]).targetKingdom.id == this.targetKingdom.id && ((InvasionPlan)invasionPlanEvents[i]).startedBy.city.kingdom.id != this._sourceKingdom.id){
 					allEventsAffectionTarget.Add (assassinationEvents [i]);
 				}
 			}
@@ -295,7 +308,7 @@ public class Espionage : GameEvent {
 
 		if(joinWarEvents != null){
 			for(int i = 0; i < joinWarEvents.Count; i++){
-				if(((JoinWar)joinWarEvents[i]).candidateForAlliance.city.kingdom.id == this.targetKingdom.id && ((JoinWar)joinWarEvents[i]).startedBy.city.kingdom.id != this.sourceKingdom.id){
+				if(((JoinWar)joinWarEvents[i]).candidateForAlliance.city.kingdom.id == this.targetKingdom.id && ((JoinWar)joinWarEvents[i]).startedBy.city.kingdom.id != this._sourceKingdom.id){
 					allEventsAffectionTarget.Add (joinWarEvents [i]);
 				}
 			}
@@ -303,14 +316,14 @@ public class Espionage : GameEvent {
 
 		if(militarizationEvents != null){
 			for(int i = 0; i < militarizationEvents.Count; i++){
-				if(((Militarization)militarizationEvents[i]).startedBy.city.kingdom.id == this.targetKingdom.id && ((Militarization)militarizationEvents[i]).startedBy.city.kingdom.id != this.sourceKingdom.id){
+				if(((Militarization)militarizationEvents[i]).startedBy.city.kingdom.id == this.targetKingdom.id && ((Militarization)militarizationEvents[i]).startedBy.city.kingdom.id != this._sourceKingdom.id){
 					allEventsAffectionTarget.Add (militarizationEvents [i]);
 				}
 			}
 		}
 		if(assassinationEvents != null){
 			for(int i = 0; i < assassinationEvents.Count; i++){
-				if(((Assassination)assassinationEvents[i]).targetCitizen.city.kingdom.id == this.targetKingdom.id && ((Assassination)assassinationEvents[i]).assassinKingdom.id != this.sourceKingdom.id){
+				if(((Assassination)assassinationEvents[i]).targetCitizen.city.kingdom.id == this.targetKingdom.id && ((Assassination)assassinationEvents[i]).assassinKingdom.id != this._sourceKingdom.id){
 					allEventsAffectionTarget.Add (assassinationEvents [i]);
 				}
 			}
