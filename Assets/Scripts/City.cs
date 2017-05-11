@@ -925,6 +925,8 @@ public class City{
 			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
 				this.kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
+
+
 		}
 
 		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);
@@ -1029,7 +1031,7 @@ public class City{
 //				}
 //			}
 //		}
-		this.maxGrowth = 100 + (150 * this.structures.Count);
+		this.maxGrowth = 100 + ((100 + (100 * this.structures.Count)) * this.structures.Count);
 		this.dailyGrowth = 10;
 		this.maxGeneralHP = 0;
 		this.goldProduction = 20;
@@ -1039,30 +1041,30 @@ public class City{
 			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
 				this.dailyGrowth += 5;
 				this.goldProduction += 2;
-				this.maxGeneralHP += 100;
+				this.maxGeneralHP += 50;
 			} else if (currentStructure.biomeType == BIOMES.WOODLAND) {
 				this.dailyGrowth += 4;
 				this.goldProduction += 3;
-				this.maxGeneralHP += 300;
+				this.maxGeneralHP += 150;
 			} else if (currentStructure.biomeType == BIOMES.FOREST) {
 				this.dailyGrowth += 3;
 				this.goldProduction += 3;
-				this.maxGeneralHP += 200;
+				this.maxGeneralHP += 100;
 			} else if (currentStructure.biomeType == BIOMES.DESERT) {
 				this.dailyGrowth += 1;
 				this.goldProduction += 4;
-				this.maxGeneralHP += 100;
+				this.maxGeneralHP += 50;
 			} else if (currentStructure.biomeType == BIOMES.TUNDRA) {
 				this.dailyGrowth += 2;
 				this.goldProduction += 2;
-				this.maxGeneralHP += 100;
+				this.maxGeneralHP += 50;
 			} else if (currentStructure.biomeType == BIOMES.SNOW) {
 				this.dailyGrowth += 1;
 				this.goldProduction += 1;
-				this.maxGeneralHP += 200;
+				this.maxGeneralHP += 100;
 			} else if (currentStructure.biomeType == BIOMES.BARE) {
 				this.dailyGrowth += 1;
-				this.maxGeneralHP += 100;
+				this.maxGeneralHP += 50;
 			}
 
 			RESOURCE currentResource = RESOURCE.NONE;
@@ -1468,6 +1470,7 @@ public class City{
 			GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
 		}
 		this.isDead = true;
+		EventManager.Instance.onDeathToGhost.Invoke (this);
 		int countCitizens = this.citizens.Count;
 		for (int i = 0; i < countCitizens; i++) {
 			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);

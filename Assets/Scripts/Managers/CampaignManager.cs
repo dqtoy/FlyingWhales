@@ -135,14 +135,14 @@ public class CampaignManager {
 								this.MakeCityActive (newCampaign);
 							}
 						}
-
 					}
 				}
 				if(newCampaign != null){
 					Debug.Log ("Created Campaign " + newCampaign.campaignType.ToString () + " " + newCampaign.targetCity.name);
 					newCampaign.candidates.Clear ();
 					EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
-					AssignGeneralsOnCampaign (newCampaign);
+					newCampaign.RegisterGenerals ();
+//					GameManager.Instance.StartCoroutine(AssignGeneralsOnCampaign (newCampaign));
 				}else{
 					//Create Ghost Campaign
 					newCampaign = new Campaign (this.leader, null, CAMPAIGN.NONE, WAR_TYPE.NONE, 0);

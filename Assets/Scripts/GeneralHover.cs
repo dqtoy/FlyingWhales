@@ -23,7 +23,9 @@ public class GeneralHover : MonoBehaviour {
 		UIManager.Instance.HideSmallInfo();
 		this.UnHighlightPath ();
 	}
-
+	void OnDestroy(){
+		UnHighlightPath ();
+	}
 	void HighlightPath(){
 		if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
 			this.pathToUnhighlight.Clear ();
