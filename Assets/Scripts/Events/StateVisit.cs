@@ -10,9 +10,9 @@ public class StateVisit : GameEvent {
 	public List<Citizen> helperEnvoys;
 	public List<Citizen> saboteurEnvoys;
 	public int successMeter;
+	protected GameEvent gameEventTrigger;
 
-	private STATEVISIT_TRIGGER_REASONS svReason;
-	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom invitedKingdom, Citizen visitor, STATEVISIT_TRIGGER_REASONS reason = STATEVISIT_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
+	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom invitedKingdom, Citizen visitor, GameEvent gameEventTrigger) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.STATE_VISIT;
 		this.description = startedBy.name + " invited " + visitor.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
 		this.durationInWeeks = 6;
@@ -25,7 +25,7 @@ public class StateVisit : GameEvent {
 		this.saboteurEnvoys = new List<Citizen> ();
 		this.successMeter = 50;
 		this.invitedKingdom.cities[0].hexTile.AddEventOnTile(this);
-		this.svReason = reason;
+		this.gameEventTrigger = gameEventTrigger;
 		TriggerAssassinationEvent ();
 		TriggerSabotage ();
 		TriggerHelp ();
@@ -82,8 +82,8 @@ public class StateVisit : GameEvent {
 		RelationshipKings inviterRelationship = inviterKingdom.king.SearchRelationshipByID (invitedKingdom.king.id);
 		RelationshipKings invitedRelationship = invitedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
 
-		inviterRelationship.AdjustLikeness (inviterPoints, EVENT_TYPES.STATE_VISIT);
-		invitedRelationship.AdjustLikeness (invitedPoints, EVENT_TYPES.STATE_VISIT);
+		inviterRelationship.AdjustLikeness (inviterPoints, this);
+		invitedRelationship.AdjustLikeness (invitedPoints, this);
 
 		if (inviterPoints < 0) {
 			inviterRelationship.relationshipHistory.Add (new History (
@@ -130,29 +130,25 @@ public class StateVisit : GameEvent {
 		if(this.successMeter <= 0){
 			result = "unsuccessful";
 		}
-		if(this.visitor.isDead){
-			if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_A){
+
+		if (this.visitor.isDead) {
+			//if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_A){
+			if (gameEventTrigger is Assassination) {
+				Assassination gameEventAss = (Assassination)gameEventTrigger;
 				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after discovering Assassination. The State Visit was " + result + ". " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
-			}else if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_IP){
+			} else if (gameEventTrigger is InvasionPlan) {
 				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after discovering Invasion Plan. The State Visit was " + result + ". " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
-			}else if(svReason == STATEVISIT_TRIGGER_REASONS.NONE){
+			} else {
 				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit. The State Visit was " + result + ". " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
-			}else{
-				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after relationship deterioration due to " + this.svReason.ToString() + ". The State Visit was " + result + ". " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
-
 			}
-		}else{
-			if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_A){
+		} else {
+			if (gameEventTrigger is Assassination) {
 				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after discovering Assassination. The State Visit was " + result + ". " , HISTORY_IDENTIFIER.NONE));
-			}else if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_IP){
+			} else if (gameEventTrigger is InvasionPlan) {
 				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after discovering Invasion Plan. The State Visit was " + result + ". " , HISTORY_IDENTIFIER.NONE));
-			}else if(svReason == STATEVISIT_TRIGGER_REASONS.NONE){
+			} else {
 				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit. The State Visit was " + result + ". " , HISTORY_IDENTIFIER.NONE));
-			}else{
-				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after relationship deterioration due to " + this.svReason.ToString() + ". The State Visit was " + result + ". " , HISTORY_IDENTIFIER.NONE));
-
 			}
-
 		}
 
 	}
@@ -182,7 +178,7 @@ public class StateVisit : GameEvent {
 					//ASSASSINATION EVENT
 					Citizen spy = GetSpy(this.otherKingdoms[i]);
 					if(spy != null){
-						Assassination assassination = new Assassination(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.otherKingdoms[i].king, this.visitor, spy, ASSASSINATION_TRIGGER_REASONS.STATE_VISITING);
+						Assassination assassination = new Assassination(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.otherKingdoms[i].king, this.visitor, spy, this);
 					}
 				}
 			}
@@ -326,7 +322,7 @@ public class StateVisit : GameEvent {
 			Debug.Log ("VISITOR DIED!");
 			RelationshipKings relationship = this.invitedKingdom.king.SearchRelationshipByID (this.inviterKingdom.king.id);
 			if(relationship.like <= 0){
-				relationship.AdjustLikeness (-50, EVENT_TYPES.STATE_VISIT);
+				relationship.AdjustLikeness (-50, this);
 				relationship.relationshipHistory.Add (new History (
 					GameManager.Instance.month,
 					GameManager.Instance.days,

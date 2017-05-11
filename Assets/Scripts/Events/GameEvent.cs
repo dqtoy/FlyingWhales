@@ -22,10 +22,17 @@ public class GameEvent {
 
 	public string description;
 	public string resolution;
-	public Citizen startedBy;
 	public Kingdom startedByKingdom;
 	public City startedByCity;
 	public bool isActive;
+
+	protected Citizen _startedBy;
+
+	public Citizen startedBy {
+		get {
+			return this._startedBy;
+		}
+	}
 
 	public GameEvent(int startWeek, int startMonth, int startYear, Citizen startedBy){
 		this.eventID = Utilities.SetID(this);
@@ -33,7 +40,7 @@ public class GameEvent {
 		this.startWeek = startWeek;
 		this.startMonth = startMonth;
 		this.startYear = startYear;
-		this.startedBy = startedBy;
+		this._startedBy = startedBy;
 		this.durationInWeeks = 0;
 		this.remainingWeeks = 0;
 		this.endWeek = 0;
@@ -42,9 +49,9 @@ public class GameEvent {
 		this.description = "";
 		this.resolution = "";
 		this.isActive = true;
-		if(this.startedBy != null){
-			this.startedByKingdom = startedBy.city.kingdom;
-			this.startedByCity = startedBy.city;
+		if(this._startedBy != null){
+			this.startedByKingdom = _startedBy.city.kingdom;
+			this.startedByCity = _startedBy.city;
 		}
 		Debug.Log("New Event was created!");
 	}

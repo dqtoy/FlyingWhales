@@ -153,11 +153,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         int specialChanceForBiome = 0;
 
         if (this.biomeType == BIOMES.GRASSLAND || this.biomeType == BIOMES.WOODLAND || this.biomeType == BIOMES.FOREST) {
-            specialChanceForBiome = 15;
+            specialChanceForBiome = 11;
         } else if (this.biomeType == BIOMES.DESERT) {
-            specialChanceForBiome = 18;
+            specialChanceForBiome = 14;
         } else if (this.biomeType == BIOMES.TUNDRA || this.biomeType == BIOMES.SNOW) {
-            specialChanceForBiome = 12;
+            specialChanceForBiome = 7;
         }
 
 		if (specialChance < specialChanceForBiome) {
@@ -327,14 +327,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	void OnMouseExit(){
 		if (this.isHabitable && this.isOccupied) {
-			if (!UIManager.Instance.kingdomInfoGO.activeSelf) {
+			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
 				this.city.kingdom.UnHighlightAllOwnedTilesInKingdom();
 			} else {
-				if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
-					this.city.kingdom.UnHighlightAllOwnedTilesInKingdom();
-				} else {
-					this.city.kingdom.HighlightAllOwnedTilesInKingdom();
-				}
+				this.city.kingdom.HighlightAllOwnedTilesInKingdom();
 			}
 		}
 	}

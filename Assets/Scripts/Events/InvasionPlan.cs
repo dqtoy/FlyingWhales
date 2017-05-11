@@ -5,36 +5,65 @@ using System.Linq;
 
 public class InvasionPlan : GameEvent {
 
-	public Kingdom sourceKingdom;
-	public Kingdom targetKingdom;
+	private Kingdom _sourceKingdom;
+	private Kingdom _targetKingdom;
 	public List<Citizen> uncovered;
 
 	internal Militarization militarizationEvent = null;
 
-	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom, INVASION_TRIGGER_REASONS reason = INVASION_TRIGGER_REASONS.NONE) : base (startWeek, startMonth, startYear, startedBy){
+	public Kingdom sourceKingdom {
+		get { 
+			return this._sourceKingdom; 
+		}
+	}
+
+	public Kingdom targetKingdom {
+		get { 
+			return this._targetKingdom; 
+		}
+	}
+
+	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom, GameEvent gameEventTrigger) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
 		this.durationInWeeks = 0;
 		this.remainingWeeks = this.durationInWeeks;
-		this.sourceKingdom = sourceKingdom;
-		this.targetKingdom = targetKingdom;
+		this._sourceKingdom = sourceKingdom;
+		this._targetKingdom = targetKingdom;
 		this.uncovered = new List<Citizen>();
 
-		if(reason == INVASION_TRIGGER_REASONS.DISCOVERING_A){
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + " after discovering Assassination.", HISTORY_IDENTIFIER.NONE));
+		if (gameEventTrigger is Assassination) {
+			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after discovering that " + gameEventTrigger.startedBy.name
+				+ " sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, description, HISTORY_IDENTIFIER.NONE));
 
-		}else if(reason == INVASION_TRIGGER_REASONS.DISCOVERING_IP){
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + " after discovering Invasion Plan.", HISTORY_IDENTIFIER.NONE));
+		} else if (gameEventTrigger is BorderConflict){
+			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in response to worsening Border Conflict.";
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
-		}else if(reason == INVASION_TRIGGER_REASONS.NONE){
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + ".", HISTORY_IDENTIFIER.NONE));
+		} else if (gameEventTrigger is DiplomaticCrisis){
+			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in the aftermath of a recent Diplomatic Crisis.";
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
-		}else if(reason == INVASION_TRIGGER_REASONS.STATE_VISIT){
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + " after the failure of State Visit.", HISTORY_IDENTIFIER.NONE));
-		}else{
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " of " + this.sourceKingdom.name + " started an Invasion Plan against " + this.targetKingdom.name + " in response to " + reason.ToString() + ".", HISTORY_IDENTIFIER.NONE));
-		}
+		} else if (gameEventTrigger is Espionage){
+			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+
+		} else if (gameEventTrigger is Raid){
+			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after the raid of " + (gameEventTrigger as Raid).raidedCity.name + ".";
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+
+		} else if (gameEventTrigger is JoinWar){
+			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name  + ".";
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+
+		} else {
+			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
+			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+
+		} 
+
 		this.sourceKingdom.cities[0].hexTile.AddEventOnTile(this);
 		this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
 
@@ -84,8 +113,8 @@ public class InvasionPlan : GameEvent {
 
 	internal void MilitarizationDone(){
 		//TODO: position generals appropriately
-		this.resolution = "Invasion plan was successful and war is now declared between " + this.sourceKingdom.name + " and " + this.targetKingdom.name;
-		KingdomManager.Instance.DeclareWarBetweenKingdoms(this.sourceKingdom, this.targetKingdom, this);
+		this.resolution = "Invasion plan was successful and war is now declared between " + this._sourceKingdom.name + " and " + this._targetKingdom.name;
+		KingdomManager.Instance.DeclareWarBetweenKingdoms(this._sourceKingdom, this._targetKingdom, this);
 		this.DoneEvent();
 	}
 
@@ -105,7 +134,7 @@ public class InvasionPlan : GameEvent {
 		List<GameEvent> militarizationEvents = EventManager.Instance.GetEventsOfType (EVENT_TYPES.MILITARIZATION).Where(x => x.isActive).ToList();
 		if(militarizationEvents != null){
 			for (int i = 0; i < militarizationEvents.Count; i++) {
-				if (((Militarization)militarizationEvents[i]).startedBy.id == sourceKingdom.king.id) {
+				if (((Militarization)militarizationEvents[i]).startedBy.id == _sourceKingdom.king.id) {
 					currentMilitarization = (Militarization) militarizationEvents [i];
 					return true;
 				}

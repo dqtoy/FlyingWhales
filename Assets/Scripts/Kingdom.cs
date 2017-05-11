@@ -27,7 +27,7 @@ public class Kingdom{
 	internal List<City> adjacentCitiesFromOtherKingdoms;
 	internal List<Kingdom> adjacentKingdoms;
 
-	public float expansionChance = 3f;
+	public float expansionChance = 1f;
 
 	public Kingdom(RACE race, List<HexTile> cities){
 		this.id = Utilities.SetID(this);
@@ -120,22 +120,9 @@ public class Kingdom{
 			}
 		}
 
-//		float expansionChance = 0f;
-//		for (int i = 0; i < citiesThatCanExpand.Count; i++) {
-//			List<Citizen> untrainedCitizens = citiesThatCanExpand[i].GetCitizensWithRole(ROLE.UNTRAINED).Where(x => (x.spouse != null && x.spouse.role != ROLE.GOVERNOR) && x.age >= 16).ToList();
-//			allUnassignedAdultCitizens.AddRange(untrainedCitizens);
-//			expansionChance += 0.5f * untrainedCitizens.Count;
-//		}
-
-//		float chance = Random.Range(1f, expansionChance);
-//		if (chance < expansionChance) {
-//			Citizen highestPrestigeCitizen = allUnassignedAdultCitizens.OrderByDescending(x => x.prestige).First();
-//			Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, highestPrestigeCitizen);
-//		}
-
 		if (citiesThatCanExpand.Count > 0) {
 			float expansionChance = this.expansionChance;
-			float chance = Random.Range (1f, 150f);
+			float chance = Random.Range (0.01f, 100f);
 			if (chance < expansionChance) {
 				Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
 				citiesThatCanExpand[0].AdjustResources(expansionCost);
@@ -237,7 +224,7 @@ public class Kingdom{
 		this.successionLine.AddRange (GetSiblings (newKing));
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
-		UIManager.Instance.UpdateKingsGrid();
+//		UIManager.Instance.UpdateKingsGrid();
 		UIManager.Instance.UpdateKingdomSuccession ();
 
 		for (int i = 0; i < this.cities.Count; i++) {
@@ -272,7 +259,7 @@ public class Kingdom{
 		this.successionLine.AddRange (GetSiblings (newKing));
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
-		UIManager.Instance.UpdateKingsGrid();
+//		UIManager.Instance.UpdateKingsGrid();
 		UIManager.Instance.UpdateKingdomSuccession ();
 
 		for(int i = 0; i < claimants.Count; i++){
@@ -571,15 +558,21 @@ public class Kingdom{
 		for (int i = 0; i < this.cities.Count; i++) {
 			List<City> adjacentCitiesOfCurrentCity = this.cities[i].adjacentCities;
 			for (int j = 0; j < adjacentCitiesOfCurrentCity.Count; j++) {
+				City currAdjacentCity = adjacentCitiesOfCurrentCity [j];
 				if (adjacentCitiesOfCurrentCity[j].kingdom.id != this.id) {
-					if (!this.adjacentKingdoms.Contains (adjacentCitiesOfCurrentCity [j].kingdom)) {
-						this.adjacentKingdoms.Add (adjacentCitiesOfCurrentCity [j].kingdom);
+					if (!this.adjacentKingdoms.Contains (currAdjacentCity.kingdom)) {
+						this.adjacentKingdoms.Add (currAdjacentCity.kingdom);
 					}
-					if (!adjacentCitiesOfCurrentCity[j].kingdom.adjacentKingdoms.Contains(this)) {
-						adjacentCitiesOfCurrentCity[j].kingdom.adjacentKingdoms.Add(this);
+					if (!currAdjacentCity.kingdom.adjacentKingdoms.Contains(this)) {
+						currAdjacentCity.kingdom.adjacentKingdoms.Add(this);
 					}
-					this.adjacentCitiesFromOtherKingdoms.Add(adjacentCitiesOfCurrentCity[j]);
-					adjacentCitiesOfCurrentCity[j].kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
+					if (!this.adjacentCitiesFromOtherKingdoms.Contains(currAdjacentCity)) {
+						this.adjacentCitiesFromOtherKingdoms.Add(currAdjacentCity);
+					}
+					if (!currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Contains(this.cities[i])) {
+						currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
+					}
+
 				}
 			}
 		}

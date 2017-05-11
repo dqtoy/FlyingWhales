@@ -62,7 +62,7 @@ public class Admiration : GameEvent {
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Admiration ended great.";
 
-			relationship1.AdjustLikeness (35);
+			relationship1.AdjustLikeness (35, this);
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,

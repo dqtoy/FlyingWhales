@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour {
 									int chanceForAssassination = Random.Range (0, 100);
 									if (chance < chanceToAssassinate) {
 										Assassination newAssassination = new Assassination (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-											                                kingdom1Enemies [j].king, citizenToSend, assassins [0]);
+											kingdom1Enemies [j].king, citizenToSend, assassins [0], newRequestPeace);
 									}
 								}
 							}
@@ -339,7 +339,7 @@ public class GameManager : MonoBehaviour {
 									int chanceForAssassination = Random.Range (0, 100);
 									if (chance < chanceToAssassinate) {
 										Assassination newAssassination = new Assassination (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-											                                kingdom2Enemies [j].king, citizenToSend, assassins [0]);
+											kingdom2Enemies [j].king, citizenToSend, assassins [0], newRequestPeace);
 									}
 								}
 							}

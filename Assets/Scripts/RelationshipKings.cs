@@ -48,7 +48,12 @@ public class RelationshipKings {
 		}
 	}
 
-	internal void AdjustLikeness(float adjustment, EVENT_TYPES reason = EVENT_TYPES.ALL, bool isDiscovery = false){
+	// This will change the view of sourceKing towards King
+	// Parameters:
+	//		adjustment - relationship value change
+	//		gameEvent - event that caused the relationship change
+	//		isDiscovery - flag to determine whether the relationship change was because the sourceKing found out the gameEvent
+	internal void AdjustLikeness(float adjustment, GameEvent gameEventTrigger, bool isDiscovery = false){
 		if (adjustment < 0) {
 			//Deteriorating
 			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
@@ -77,7 +82,7 @@ public class RelationshipKings {
 		}
 		this.UpdateKingRelationshipStatus ();
 		if (adjustment < 0) {
-			sourceKing.DeteriorateRelationship (this, reason, isDiscovery);
+			sourceKing.DeteriorateRelationship (this, gameEventTrigger, isDiscovery);
 		}else{
 			sourceKing.ImproveRelationship (this);
 		}
