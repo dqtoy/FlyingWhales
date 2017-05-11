@@ -118,51 +118,53 @@ public class General : Role {
 			}
 		}
 	}
-	internal void UnregisterThisGeneral(Campaign campaign, bool isRerouteToHome = true, bool isBulk = false){
-		if(campaign == null){
-			if (this.assignedCampaign != null) {
-				if (this.assignedCampaign.leader != null) {
-					campaign = this.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.assignedCampaign.id);
-				}
-			}
-		}
+	internal void UnregisterThisGeneral(bool isRerouteToHome = true, bool isBulk = false){
+//		if(campaign == null){
+//			if (this.assignedCampaign != null) {
+//				if (this.assignedCampaign.leader != null) {
+//					campaign = this.assignedCampaign;
+//				}
+//			}
+//		}
 
-		if(campaign != null){
-			campaign.registeredGenerals.Remove (this);
+		if(this.assignedCampaign != null){
+			this.assignedCampaign.registeredGenerals.Remove (this);
 //			if (this.targetLocation != null) {
 //				if (this.targetLocation.isOccupied) {
 //					this.targetLocation.city.incomingGenerals.Remove (this);
 //				}
 //			}
 			this.targetLocation = null;
-			this.assignedCampaign = null;
 //			this.targetCity = null;
 //			this.rallyPoint = null;
 			this.daysBeforeArrival = 0;
 			this.inAction = false;
-			if(campaign.targetCity != null){
-				campaign.targetCity.incomingGenerals.Remove (this);
+			if(this.assignedCampaign.targetCity != null){
+				this.assignedCampaign.targetCity.incomingGenerals.Remove (this);
 			}
 			if(isRerouteToHome){
 				RerouteToHome ();
 			}
 			if(!isBulk){
-				if(campaign.registeredGenerals.Count <= 0){
-					campaign.leader.campaignManager.CampaignDone (campaign);
+				if(this.assignedCampaign.registeredGenerals.Count <= 0){
+					if (this.assignedCampaign.leader != null) {
+						this.assignedCampaign.leader.campaignManager.CampaignDone (this.assignedCampaign);
+					}
 				}else{
-					if(campaign.campaignType == CAMPAIGN.OFFENSE){
-						if(campaign.AreAllGeneralsOnRallyPoint()){
-							Debug.Log ("Will attack city now " + campaign.targetCity.name);
-							campaign.AttackCityNow ();
+					if(this.assignedCampaign.campaignType == CAMPAIGN.OFFENSE){
+						if(this.assignedCampaign.AreAllGeneralsOnRallyPoint()){
+							Debug.Log ("Will attack city now " + this.assignedCampaign.targetCity.name);
+							this.assignedCampaign.AttackCityNow ();
 						}
-					}else if(campaign.campaignType == CAMPAIGN.DEFENSE){
-						if(campaign.AreAllGeneralsOnDefenseCity()){
-							Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + campaign.targetCity.name + ". START EXPIRATION.");
-							campaign.expiration = Utilities.defaultCampaignExpiration;
+					}else if(this.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
+						if(this.assignedCampaign.AreAllGeneralsOnDefenseCity()){
+							Debug.Log ("ALL GENERALS ARE ON DEFENSE CITY " + this.assignedCampaign.targetCity.name + ". START EXPIRATION.");
+							this.assignedCampaign.expiration = Utilities.defaultCampaignExpiration;
 						}
 					}
 				}
 			}
+			this.assignedCampaign = null;
 		}
 	}
 	internal void RegisterOnCampaign(Campaign campaign){
@@ -458,7 +460,7 @@ public class General : Role {
 			GameObject.Destroy (this.generalAvatar);
 			this.generalAvatar = null;
 		}
-		this.UnregisterThisGeneral (null, false);
+		this.UnregisterThisGeneral (false);
 		this.inAction = false;
 		this.citizen.role = ROLE.UNTRAINED;
 		this.citizen.assignedRole = null;
@@ -474,7 +476,7 @@ public class General : Role {
 			GameObject.Destroy (this.generalAvatar);
 			this.generalAvatar = null;
 		}
-		this.UnregisterThisGeneral (null, false);
+		this.UnregisterThisGeneral (false);
 	}
 	internal void JoinArmyTo(General general){
 		if(this.citizen.isGhost && this.citizen.isDead){

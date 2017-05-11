@@ -8,9 +8,8 @@ public class GeneralHover : MonoBehaviour {
 		if (!UIManager.Instance.IsMouseOnUI()) {
 			if(this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null){
 				if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign.leader != null) {
-					Campaign chosenCampaign = this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign.id);
-					if (chosenCampaign != null) {
-						string info = this.CampaignInfo (chosenCampaign);
+					if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
+						string info = this.CampaignInfo (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign);
 						UIManager.Instance.ShowSmallInfo (info, UIManager.Instance.transform);
 						this.HighlightPath ();
 					}

@@ -612,7 +612,7 @@ public class Citizen {
 							if (((General)this.city.citizens [i].assignedRole).assignedCampaign != null) {
 								if (((General)this.city.citizens [i].assignedRole).assignedCampaign.leader != null) {
 									if (((General)this.city.citizens [i].assignedRole).assignedCampaign.leader.id == citizen.id) {
-										((General)this.city.citizens [i].assignedRole).UnregisterThisGeneral (null);
+										((General)this.city.citizens [i].assignedRole).UnregisterThisGeneral ();
 									}
 								}
 							}
@@ -628,7 +628,7 @@ public class Citizen {
 								if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign != null) {
 									if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign.leader != null) {
 										if (((General)this.city.kingdom.cities [i].citizens [j].assignedRole).assignedCampaign.leader.id == citizen.id) {
-											((General)this.city.kingdom.cities [i].citizens [j].assignedRole).UnregisterThisGeneral (null);
+											((General)this.city.kingdom.cities [i].citizens [j].assignedRole).UnregisterThisGeneral ();
 										}
 									}
 								}
@@ -1008,7 +1008,7 @@ public class Citizen {
 		List<Campaign> campaign = this.campaignManager.activeCampaigns.FindAll (x => x.targetCity.id == enemy.city.id);
 		for(int i = 0; i < campaign.Count; i++){
 			for(int j = 0; j < campaign[i].registeredGenerals.Count; j++){
-				campaign[i].registeredGenerals [j].UnregisterThisGeneral (campaign[i]);
+				campaign[i].registeredGenerals [j].UnregisterThisGeneral ();
 			}
 			this.campaignManager.activeCampaigns.Remove (campaign[i]);
 		}

@@ -109,7 +109,7 @@ public class CombatManager : MonoBehaviour {
 				if (victoriousGeneral.assignedCampaign.warType == WAR_TYPE.SUCCESSION) {
 					if (city.incomingGenerals [i].citizen.id != victoriousGeneral.citizen.id) {
 						if (city.incomingGenerals [i].assignedCampaign.id == victoriousGeneral.assignedCampaign.id) {
-							city.incomingGenerals [i].UnregisterThisGeneral (null);
+							city.incomingGenerals [i].UnregisterThisGeneral ();
 						}
 					}
 				}

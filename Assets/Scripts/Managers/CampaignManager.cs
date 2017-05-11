@@ -31,9 +31,9 @@ public class CampaignManager {
 			if(campaignType != CAMPAIGN.NONE){
 				if(campaignType == CAMPAIGN.OFFENSE){
 					
-					List<City> civilWarCities = this.civilWarCities.Where(x => !x.isActive && x.city.HasAdjacency(this.leader.city.kingdom.id)).Select (x => x.city).ToList ();
-					List<City> successionWarCities = this.successionWarCities.Where(x => !x.isActive && x.city.HasAdjacency(this.leader.city.kingdom.id)).Select (x => x.city).ToList ();
-					List<City> intlWarCities = this.intlWarCities.Where(x => !x.isActive && x.city.HasAdjacency(this.leader.city.kingdom.id)).Select (x => x.city).ToList ();
+					List<City> civilWarCities = this.civilWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
+					List<City> successionWarCities = this.successionWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
+					List<City> intlWarCities = this.intlWarCities.Where(x => !x.isActive).Select (x => x.city).ToList ();
 
 					if(civilWarCities.Count <= 0 && successionWarCities.Count <= 0 && intlWarCities.Count <= 0){
 						campaignType = CAMPAIGN.DEFENSE;
@@ -198,65 +198,82 @@ public class CampaignManager {
 			int chance = UnityEngine.Random.Range (0, 3);
 			if(chance == 0){
 				warType = WAR_TYPE.INTERNATIONAL;
-				target = intlWarCities [UnityEngine.Random.Range (0, intlWarCities.Count)];
+				target = GetNearestCityFromLeader(intlWarCities);
 			}else if(chance == 1){
 				warType = WAR_TYPE.CIVIL;
-				target = civilWarCities [UnityEngine.Random.Range (0, civilWarCities.Count)];
+				target = GetNearestCityFromLeader(civilWarCities);
 			}else{
 				warType = WAR_TYPE.SUCCESSION;
-				target = successionWarCities [UnityEngine.Random.Range (0, successionWarCities.Count)];
+				target = GetNearestCityFromLeader(successionWarCities);
 			}
 		}else if(intlWarCities.Count > 0 && civilWarCities.Count > 0 && successionWarCities.Count <= 0){
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				warType = WAR_TYPE.INTERNATIONAL;
-				target = intlWarCities [UnityEngine.Random.Range (0, intlWarCities.Count)];
+				target = GetNearestCityFromLeader(intlWarCities);
 			}else if(chance == 1){
 				warType = WAR_TYPE.CIVIL;
-				target = civilWarCities [UnityEngine.Random.Range (0, civilWarCities.Count)];
+				target = GetNearestCityFromLeader(civilWarCities);
 			}
 		}else if(intlWarCities.Count > 0 && civilWarCities.Count <= 0 && successionWarCities.Count > 0){
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				warType = WAR_TYPE.INTERNATIONAL;
-				target = intlWarCities [UnityEngine.Random.Range (0, intlWarCities.Count)];
+				target = GetNearestCityFromLeader(intlWarCities);
 			}else if(chance == 1){
 				warType = WAR_TYPE.SUCCESSION;
-				target = successionWarCities [UnityEngine.Random.Range (0, successionWarCities.Count)];
+				target = GetNearestCityFromLeader(successionWarCities);
 			}
 		}else if(intlWarCities.Count <= 0 && civilWarCities.Count > 0 && successionWarCities.Count > 0){
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				warType = WAR_TYPE.CIVIL;
-				target = civilWarCities [UnityEngine.Random.Range (0, civilWarCities.Count)];
+				target = GetNearestCityFromLeader(civilWarCities);
 			}else if(chance == 1){
 				warType = WAR_TYPE.SUCCESSION;
-				target = successionWarCities [UnityEngine.Random.Range (0, successionWarCities.Count)];
+				target = GetNearestCityFromLeader(successionWarCities);
 			}
 		}else if(intlWarCities.Count > 0 && civilWarCities.Count <= 0 && successionWarCities.Count <= 0){
 			warType = WAR_TYPE.INTERNATIONAL;
-			target = intlWarCities [UnityEngine.Random.Range (0, intlWarCities.Count)];
+			target = GetNearestCityFromLeader(intlWarCities);
 		}else if(intlWarCities.Count <= 0 && civilWarCities.Count > 0 && successionWarCities.Count <= 0){
 			warType = WAR_TYPE.CIVIL;
-			target = civilWarCities [UnityEngine.Random.Range (0, civilWarCities.Count)];
+			target = GetNearestCityFromLeader(civilWarCities);
 		}else if(intlWarCities.Count <= 0 && civilWarCities.Count <= 0 && successionWarCities.Count > 0){
 			warType = WAR_TYPE.SUCCESSION;
-			target = successionWarCities [UnityEngine.Random.Range (0, successionWarCities.Count)];
+			target = GetNearestCityFromLeader(successionWarCities);
 		}else{
 			warType = WAR_TYPE.NONE;
 			target = null;
 		}
 	}
+	internal City GetNearestCityFromLeader(List<City> cities){
+		City nearestCity = null;
+		float nearestDistance = 0;
+		for(int i = 0; i < cities.Count; i++){
+			float distance = Vector3.Distance (cities [i].hexTile.transform.position, this.leader.city.hexTile.transform.position);
+			if(nearestCity == null){
+				nearestCity = cities [i];
+				nearestDistance = distance;
+			}else{
+				if(distance < nearestDistance){
+					nearestCity = cities [i];
+					nearestDistance = distance;
+				}
+			}
+		}
+		return nearestCity;
+	}
 	internal void CampaignDone(Campaign doneCampaign, bool canCreate = true){
 //		Campaign doneCampaign = SearchCampaignByID (campaign.id);
+		doneCampaign.isDone = true;
 		EventManager.Instance.onWeekEnd.RemoveListener (doneCampaign.CheckExpiration);
-
 		if(doneCampaign.isGhost){
 			Debug.Log ("Ghost Campaign Done " + doneCampaign.campaignType.ToString ());
 		}else{
 			Debug.Log ("Campaign Done " + doneCampaign.campaignType.ToString () + " " + doneCampaign.targetCity.name);
 			for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
-				doneCampaign.registeredGenerals[i].UnregisterThisGeneral (null, true, true);
+				doneCampaign.registeredGenerals[i].UnregisterThisGeneral (true, true);
 			}
 //			if(doneCampaign.registeredGenerals.Count > 0){
 //				if(doneCampaign.campaignType == CAMPAIGN.OFFENSE){
@@ -281,7 +298,7 @@ public class CampaignManager {
 		}
 	}
 	internal void UnregisterGenerals(General general, Campaign chosenCampaign){
-		general.UnregisterThisGeneral (null, true, true);
+		general.UnregisterThisGeneral (true, true);
 //		if(general.targetLocation != null){
 //			if(general.targetLocation.isOccupied){
 //				general.targetLocation.city.incomingGenerals.Remove (general);
@@ -599,12 +616,12 @@ public class CampaignManager {
 //		}
 //		general.isGoingHome = false;
 //	}
-	internal Campaign SearchCampaignByID(int id){
-		for(int i = 0; i < this.activeCampaigns.Count; i++){
-			if(this.activeCampaigns[i].id == id){
-				return this.activeCampaigns [i];
-			}
-		}
-		return null;
-	}
+//	internal Campaign SearchCampaignByID(int id){
+//		for(int i = 0; i < this.activeCampaigns.Count; i++){
+//			if(this.activeCampaigns[i].id == id){
+//				return this.activeCampaigns [i];
+//			}
+//		}
+//		return null;
+//	}
 }

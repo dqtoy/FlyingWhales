@@ -18,6 +18,7 @@ public class Campaign {
 	public int neededArmyStrength;
 	public int expiration;
 	public bool isGhost;
+	public bool isDone;
 	public bool startExpiration;
 
 	public Campaign(Citizen leader, City targetCity, CAMPAIGN campaignType, WAR_TYPE warType, int neededArmyStrength = 0, int expiration = 8){
@@ -34,6 +35,7 @@ public class Campaign {
 		this.neededArmyStrength = neededArmyStrength;
 		this.expiration = expiration;
 		this.isGhost = false;
+		this.isDone = false;
 		this.startExpiration = false;
 		EventManager.Instance.onWeekEnd.AddListener (this.CheckExpiration);
 	}

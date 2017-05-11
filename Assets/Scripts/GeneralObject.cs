@@ -140,15 +140,22 @@ public class GeneralObject : MonoBehaviour {
 			Task.current.Succeed ();
 		}
 	}
-
+	[Task]
+	public void IsCampaignDone(){
+		if(this.general.assignedCampaign.isDone){
+			Task.current.Succeed ();
+		}else{
+			Task.current.Fail ();
+		}
+	}
 	[Task]
 	public void HasCampaignLeader(){
 		if(this.general.assignedCampaign.leader == null){
-			this.general.UnregisterThisGeneral (null, false);
+			this.general.UnregisterThisGeneral ();
 			Task.current.Fail ();
 		}else{
 			if (this.general.assignedCampaign.leader.isDead) {
-				this.general.UnregisterThisGeneral (null, false);
+				this.general.UnregisterThisGeneral ();
 				Task.current.Fail ();
 			}else{
 				Task.current.Succeed ();
@@ -159,7 +166,7 @@ public class GeneralObject : MonoBehaviour {
 	[Task]
 	public void HasTargetCityOrNotConquered(){
 		if(this.general.assignedCampaign.targetCity == null || this.general.assignedCampaign.targetCity.isDead){
-			this.general.UnregisterThisGeneral (null, false);
+			this.general.UnregisterThisGeneral ();
 			Task.current.Fail ();
 		}else{
 			Task.current.Succeed ();
@@ -350,9 +357,11 @@ public class GeneralObject : MonoBehaviour {
 			this.general.target.Death (DEATH_REASONS.TREACHERY, false,  this.general.assignedCampaign.leader, false);
 		}
 
-		Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID(this.general.assignedCampaign.id);
-		if(campaign != null){
-			campaign.leader.campaignManager.CampaignDone (campaign);
+//		Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID(this.general.assignedCampaign.id);
+		if(this.general.assignedCampaign != null){
+			if (this.general.assignedCampaign.leader != null) {
+				this.general.assignedCampaign.leader.campaignManager.CampaignDone (this.general.assignedCampaign);
+			}
 		}
 
 		this.isSearchingForTarget = false;
@@ -405,14 +414,14 @@ public class GeneralObject : MonoBehaviour {
 	}
 
 	internal void Victory(){
-		Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.general.assignedCampaign.id);
-		if (campaign != null) {
-			if (campaign.warType == WAR_TYPE.INTERNATIONAL) {
+//		Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.general.assignedCampaign.id);
+		if (this.general.assignedCampaign != null) {
+			if (this.general.assignedCampaign.warType == WAR_TYPE.INTERNATIONAL) {
 				City targetCity = this.general.assignedCampaign.targetCity;
 				CombatManager.Instance.ConquerCity (this.general.citizen.city.kingdom, targetCity);
-				campaign.leader.campaignManager.CampaignDone (campaign);
-			}else if (campaign.warType == WAR_TYPE.SUCCESSION) {
-				this.general.target = this.general.assignedCampaign.leader.GetTargetSuccessionWar (campaign.targetCity);
+				this.general.assignedCampaign.leader.campaignManager.CampaignDone (this.general.assignedCampaign);
+			}else if (this.general.assignedCampaign.warType == WAR_TYPE.SUCCESSION) {
+				this.general.target = this.general.assignedCampaign.leader.GetTargetSuccessionWar (this.general.assignedCampaign.targetCity);
 				this.isSearchingForTarget = true;
 			}
 
