@@ -263,11 +263,11 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 
-		if (kingdomEventsGO.activeSelf) {
-			if (currentlyShowingKingdom != null) {
-				this.ShowKingdomEvents();
-			}
-		}
+//		if (kingdomEventsGO.activeSelf) {
+//			if (currentlyShowingKingdom != null) {
+//				this.ShowKingdomEvents();
+//			}
+//		}
 
 	}
 
@@ -2377,6 +2377,8 @@ public class UIManager : MonoBehaviour {
 				Destroy (currentParents [i].gameObject);
 			}
 			allKingdomEventsGO.SetActive (true);
+			this.pauseBtn.SetAsClicked ();
+			GameManager.Instance.SetPausedState (true);
 			return;
 		} else {
 			kingdomEventsNoEventsLbl.gameObject.SetActive (false);
@@ -2657,10 +2659,7 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 		allKingdomEventsGO.SetActive (true);
-		this.pauseBtn.SetClickState (true);
-		this.x1Btn.SetClickState (false);
-		this.x2Btn.SetClickState (false);
-		this.x4Btn.SetClickState (false);
+		this.pauseBtn.SetAsClicked ();
 		GameManager.Instance.SetPausedState (true);
 	}
 
@@ -2678,10 +2677,8 @@ public class UIManager : MonoBehaviour {
 		for (int i = 0; i < allWarEventParents.Length; i++) {
 			Destroy (allWarEventParents [i].gameObject);
 		}
-		this.pauseBtn.SetClickState (false);
-		this.x1Btn.SetClickState (true);
-		this.x2Btn.SetClickState (true);
-		this.x4Btn.SetClickState (true);
+		this.x1Btn.SetAsClicked();
+		this.SetProgressionSpeed1X();
 		GameManager.Instance.SetPausedState (false);
 	}
 

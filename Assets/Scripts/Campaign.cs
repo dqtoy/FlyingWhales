@@ -18,6 +18,7 @@ public class Campaign {
 	public int neededArmyStrength;
 	public int expiration;
 	public bool isGhost;
+	public bool startExpiration;
 
 	public Campaign(Citizen leader, City targetCity, CAMPAIGN campaignType, WAR_TYPE warType, int neededArmyStrength = 0, int expiration = 8){
 		this.id = Utilities.SetID (this);
@@ -33,6 +34,7 @@ public class Campaign {
 		this.neededArmyStrength = neededArmyStrength;
 		this.expiration = expiration;
 		this.isGhost = false;
+		this.startExpiration = false;
 		EventManager.Instance.onWeekEnd.AddListener (this.CheckExpiration);
 	}
 
@@ -48,6 +50,9 @@ public class Campaign {
 	}
 
 	internal void CheckExpiration(){
+		if(!this.startExpiration){
+			return;
+		}
 		if(this.campaignType == CAMPAIGN.DEFENSE){
 			if(this.expiration >= 0){
 				AdjustExpiration (-1);
@@ -145,7 +150,7 @@ public class Campaign {
 	}
 	internal void RegisterGenerals(){
 		if(this.candidates.Count > 0){
-			this.candidates.OrderBy (x => x.path.Count).ToList ();
+			this.candidates = this.candidates.OrderBy (x => x.path.Count).ToList ();
 			if(this.campaignType == CAMPAIGN.OFFENSE){
 				for(int i = 0; i < this.candidates.Count; i++){
 					if(this.GetArmyStrength() < this.neededArmyStrength){
@@ -182,5 +187,15 @@ public class Campaign {
 				}
 			}
 		}
+
+		if(this.campaignType == CAMPAIGN.DEFENSE){
+			if(this.expiration == -1){
+				if(this.registeredGenerals.Count <= 0){
+					this.expiration = Utilities.defaultCampaignExpiration;
+				}
+			}
+		}
+
+		this.startExpiration = true;
 	}
 }

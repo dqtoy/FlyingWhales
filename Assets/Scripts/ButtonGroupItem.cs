@@ -43,5 +43,6 @@ public class ButtonGroupItem : MonoBehaviour {
 	public void SetAsClicked(){
 		this.isClicked = true;
 		this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
+		buttonGroup.ClickedItem (this);
 	}
 }

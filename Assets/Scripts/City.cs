@@ -926,9 +926,12 @@ public class City{
 				this.kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
 		} else {
-			if (UICamera.hoveredObject.GetComponent<CharacterPortrait>() != null && UICamera.hoveredObject.GetComponent<CharacterPortrait>().citizen.city.kingdom.id == this.kingdom.id) {
-				this.kingdom.HighlightAllOwnedTilesInKingdom ();
+			if(UICamera.hoveredObject != null){
+				if (UICamera.hoveredObject.GetComponent<CharacterPortrait>() != null && UICamera.hoveredObject.GetComponent<CharacterPortrait>().citizen.city.kingdom.id == this.kingdom.id) {
+					this.kingdom.HighlightAllOwnedTilesInKingdom ();
+				}
 			}
+
 		}
 
 		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);
@@ -1472,6 +1475,7 @@ public class City{
 			GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
 		}
 		this.isDead = true;
+		EventManager.Instance.onDeathToGhost.Invoke (this);
 		int countCitizens = this.citizens.Count;
 		for (int i = 0; i < countCitizens; i++) {
 			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
