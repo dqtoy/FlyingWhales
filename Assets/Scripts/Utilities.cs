@@ -79,7 +79,7 @@ public class Utilities : MonoBehaviour {
             //new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.RICE, RESOURCE.DEER, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL, RESOURCE.COBALT},
             //new int[] {100, 20, 40, 20, 60, 35, 5, 5})
             new RESOURCE[] {RESOURCE.CORN, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.MITHRIL},
-            new int[] {20, 30, 70, 4})
+            new int[] {20, 30, 70, 3})
         },
 
 		{BIOMES.WOODLAND, new SpecialResourceChance(

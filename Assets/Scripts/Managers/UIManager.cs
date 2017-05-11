@@ -21,6 +21,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject kingdomEventsListParentPrefab;
 	public GameObject kingdomWarEventsListParentPrefab;
 	public GameObject kingdomEventsListItemPrefab;
+	public GameObject kingdomFlagPrefab;
 
 	[Space(10)]//Main Objects
 	public GameObject smallInfoGO;
@@ -67,14 +68,11 @@ public class UIManager : MonoBehaviour {
 
 	[Space(10)]//Citizen Info UI
 	public UILabel citizenNameLbl;
-	public UILabel citizenKingdomNameLbl;
-	public UILabel citizenBdayLbl;
+	public UILabel citizenRoleAndKingdomLbl;
+	public UILabel citizenAgeLbl;
 	public UILabel citizenCityNameLbl;
-	public UILabel citizenRoleLbl;
-	public UILabel citizenPrestigeLbl;
 	public UIGrid citizenTraitsGrid;
 	public UIGrid citizenHistoryGrid;
-	public GameObject kingSpecificGO;
 	public ButtonToggle relationshipsBtn;
 	public ButtonToggle familyTreeBtn;
 	public ButtonToggle successionBtn;
@@ -212,9 +210,15 @@ public class UIManager : MonoBehaviour {
 	public GameObject firstAnchor;
 	public UILabel kingdomEventsNoEventsLbl;
 
+	[Space(10)] //For New Kingdom List Menu
+	public CharacterPortrait kingdomListActiveKing;
+	public UI2DSprite kingdomListActiveKingdomFlagSprite;
+	public UIGrid kingdomListOtherKingdomsGrid;
+	public GameObject kingdomListOtherKingdomsParent;
+
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
-	private Citizen currentlyShowingCitizen = null;
+	public Citizen currentlyShowingCitizen = null;
 	internal City currentlyShowingCity = null;
 	internal Kingdom currentlyShowingKingdom = null;
 	private GameEvent currentlyShowingEvent;
@@ -240,26 +244,27 @@ public class UIManager : MonoBehaviour {
 
 	void Start(){
 		EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
-		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
+		UpdateUI ();
 	}
 
 	private void UpdateUI(){
 		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
+		UpdateKingdomList();
 		if (cityInfoGO.activeSelf) {
 			if (currentlyShowingCity != null) {
-				this.ShowCityInfo (currentlyShowingCity);
+				ShowCityInfo (currentlyShowingCity);
 			}
 		}
 
 		if (specificEventGO.activeSelf) {
 			if (currentlyShowingEvent != null) {
-				this.ShowSpecificEvent (currentlyShowingEvent);
+				ShowSpecificEvent (currentlyShowingEvent);
 			}
 		}
 
 		if (eventsOfTypeGo.activeSelf) {
 			if (lastClickedEventType != null) {
-				this.UpdateEventsOfType();
+				UpdateEventsOfType();
 			}
 		}
 
@@ -306,32 +311,90 @@ public class UIManager : MonoBehaviour {
 //		x4Btn.SetClickState (false);
 	}
 
-	internal void UpdateKingsGrid(){
-		List<Transform> children = kingsGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
-			Destroy (children [i].gameObject);
+
+	void UpdateKingdomList(){
+		if (currentlyShowingKingdom == null) {
+			currentlyShowingKingdom = KingdomManager.Instance.allKingdoms.First();
 		}
 
-		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-			Citizen currentKing = KingdomManager.Instance.allKingdoms [i].king;
-			GameObject kingGO = GameObject.Instantiate (characterPortraitPrefab, kingsGrid.transform) as GameObject;
-			kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentKing);
-			kingGO.GetComponent<CharacterPortrait> ().onHoverCharacterPortrait += currentKing.city.kingdom.HighlightAllOwnedTilesInKingdom;
-			kingGO.GetComponent<CharacterPortrait> ().onHoverExitCharacterPortrait += currentKing.city.kingdom.UnHighlightAllOwnedTilesInKingdom;
-			kingGO.transform.localScale = Vector3.one;
+		currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
+		kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king);
+		kingdomListActiveKingdomFlagSprite.color = currentlyShowingKingdom.kingdomColor;
+
+		if (KingdomManager.Instance.allKingdoms.Count <= 1) {
+			kingdomListOtherKingdomsParent.SetActive(false);
+		} else {
+			List<Transform> children = kingdomListOtherKingdomsGrid.GetChildList();
+			List<int> kingdomsInGrid = children.Select(x => x.GetComponent<KingdomFlagItem>().kingdom.id).ToList();
+			List<int> allOtherKingdoms = KingdomManager.Instance.allKingdoms.Select(x => x.id).Where (x => x != currentlyShowingKingdom.id).ToList();
+			if (allOtherKingdoms.Except(kingdomsInGrid).Count() > 0 || kingdomsInGrid.Except(allOtherKingdoms).Count() > 0) {
+				for (int i = 0; i < children.Count; i++) {
+					kingdomListOtherKingdomsGrid.RemoveChild(children[i]);
+					Destroy (children[i].gameObject);
+				}
+				for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+					Kingdom currKingdom = KingdomManager.Instance.allKingdoms [i];
+					if (currKingdom.id != currentlyShowingKingdom.id) {
+						GameObject kingdomGO = GameObject.Instantiate (kingdomFlagPrefab, this.transform) as GameObject;
+						kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
+						kingdomGO.GetComponent<KingdomFlagItem> ().SetKingdom (currKingdom);
+						kingdomGO.transform.localScale = Vector3.one;
+					}
+				}
+			}
+			kingdomListOtherKingdomsParent.SetActive(true);
 		}
-		StartCoroutine (RepositionGrid (kingsGrid));
 	}
 
+	internal void SetKingdomAsActive(Kingdom kingdom){
+		currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+		currentlyShowingKingdom = kingdom;
+		if (kingdomInfoGO.activeSelf) {
+			ShowKingdomInfo(currentlyShowingKingdom);
+		}
+		if (citizenInfoGO.activeSelf) {
+			ShowCitizenInfo(currentlyShowingKingdom.king);
+		}
+		UpdateKingdomList();
+	}
+
+//	internal void UpdateKingsGrid(){
+//		List<Transform> children = kingsGrid.GetChildList();
+//		for (int i = 0; i < children.Count; i++) {
+//			Destroy (children [i].gameObject);
+//		}
+//
+//		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+//			Citizen currentKing = KingdomManager.Instance.allKingdoms [i].king;
+//			GameObject kingGO = GameObject.Instantiate (characterPortraitPrefab, kingsGrid.transform) as GameObject;
+//			kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentKing);
+//			kingGO.GetComponent<CharacterPortrait> ().onHoverCharacterPortrait += currentKing.city.kingdom.HighlightAllOwnedTilesInKingdom;
+//			kingGO.GetComponent<CharacterPortrait> ().onHoverExitCharacterPortrait += currentKing.city.kingdom.UnHighlightAllOwnedTilesInKingdom;
+//			kingGO.transform.localScale = Vector3.one;
+//		}
+//		StartCoroutine (RepositionGrid (kingsGrid));
+//	}
+
 	internal void ShowCitizenInfo(Citizen citizenToShow){
+		currentlyShowingCitizen = citizenToShow;
 		if (relationshipsGO.activeSelf) {
-			HideRelationships();
+			if (currentlyShowingCitizen.isKing) {
+				if (kingRelationshipsParentGO.activeSelf) {
+					ShowRelationships ();
+				} else {
+					ShowRelationships();
+					ShowGovernorRelationships();
+				}
+				HideRelationshipHistory();
+			}else{
+				HideRelationships();
+			}
 		}
 		if (familyTreeGO.activeSelf) {
 			HideFamilyTree();
 		}
 		if (citizenHistoryGO.activeSelf) {
-			HideCitizenHistory();
+			ShowCitizenHistory();
 		}
 		if (traitEditorGO.activeSelf) {
 			HideTraitEditor();
@@ -348,21 +411,22 @@ public class UIManager : MonoBehaviour {
 
 		HideSmallInfo();
 
-		currentlyShowingCitizen = citizenToShow;
-		citizenNameLbl.text = "[b]" + citizenToShow.name + "[/b]";
+		citizenNameLbl.text = citizenToShow.name;
+		string role = "Citizen";
+		if (citizenToShow.role != ROLE.UNTRAINED) {
+			role = citizenToShow.role.ToString();
+		}
 		if (citizenToShow.city != null) {
-			citizenKingdomNameLbl.text = citizenToShow.city.kingdom.name;
-			citizenCityNameLbl.text = "[b]" + citizenToShow.city.name + "[/b]";
+			citizenRoleAndKingdomLbl.text = role + " of " + citizenToShow.city.kingdom.name;
+			citizenCityNameLbl.text = citizenToShow.city.name;
+			ctizenPortraitBG.color = citizenToShow.city.kingdom.kingdomColor;
 		} else {
-			citizenKingdomNameLbl.text = "[i]No Kingdom[/i]";
-			citizenCityNameLbl.text = "[i] No City [/i]";
+			citizenRoleAndKingdomLbl.text = role;
+			citizenCityNameLbl.text = "No City";
+			ctizenPortraitBG.color = Color.white;
 		}
 
-
-		citizenBdayLbl.text = "[b]" + ((MONTH)citizenToShow.birthMonth).ToString() + " " + citizenToShow.birthWeek.ToString() + ", " + citizenToShow.birthYear.ToString() + "(" + citizenToShow.age.ToString() + ")[/b]";
-
-		citizenRoleLbl.text = "[b]" + citizenToShow.role.ToString() + "[/b]";
-		citizenPrestigeLbl.text = "[b]" + citizenToShow.prestige.ToString() + "[/b]";
+		citizenAgeLbl.text = "Age: " + citizenToShow.age.ToString();
 
 		if (citizenToShow.isDead) {
 			citizenInfoIsDeadIcon.SetActive (true);
@@ -373,18 +437,21 @@ public class UIManager : MonoBehaviour {
 
 		List<Transform> children = citizenTraitsGrid.GetChildList();
 		for (int i = 0; i < children.Count; i++) {
+			citizenTraitsGrid.RemoveChild(children[i]);
 			Destroy (children [i].gameObject);
 		}
 
 		if (citizenToShow.age >= 16) {
 			for (int i = 0; i < citizenToShow.behaviorTraits.Count; i++) {
-				GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
+				GameObject traitGO = GameObject.Instantiate (traitPrefab, this.transform) as GameObject;
+				citizenTraitsGrid.AddChild (traitGO.transform);
 				traitGO.GetComponent<TraitObject> ().SetTrait (citizenToShow.behaviorTraits [i], SKILL_TRAIT.NONE, MISC_TRAIT.NONE);
 				traitGO.transform.localScale = Vector3.one;
 				traitGO.transform.localPosition = Vector3.zero;
 			}
 			for (int i = 0; i < citizenToShow.miscTraits.Count; i++) {
-				GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
+				GameObject traitGO = GameObject.Instantiate (traitPrefab, this.transform) as GameObject;
+				citizenTraitsGrid.AddChild (traitGO.transform);
 				traitGO.GetComponent<TraitObject>().SetTrait(BEHAVIOR_TRAIT.NONE, SKILL_TRAIT.NONE, citizenToShow.miscTraits[i]);
 				traitGO.transform.localScale = Vector3.one;
 				traitGO.transform.localPosition = Vector3.zero;
@@ -392,33 +459,24 @@ public class UIManager : MonoBehaviour {
 		}
 
 		for (int i = 0; i < citizenToShow.skillTraits.Count; i++) {
-			GameObject traitGO = GameObject.Instantiate (traitPrefab, citizenTraitsGrid.transform) as GameObject;
+			GameObject traitGO = GameObject.Instantiate (traitPrefab, this.transform) as GameObject;
+			citizenTraitsGrid.AddChild (traitGO.transform);
 			traitGO.GetComponent<TraitObject>().SetTrait(BEHAVIOR_TRAIT.NONE, citizenToShow.skillTraits[i], MISC_TRAIT.NONE);
 			traitGO.transform.localScale = Vector3.one;
 			traitGO.transform.localPosition = Vector3.zero;
 		}
 
-		StartCoroutine (RepositionGrid (citizenTraitsGrid));
+//		StartCoroutine (RepositionGrid (citizenTraitsGrid));
 
 		if (citizenToShow.isKing) {
-			kingSpecificGO.SetActive(true);
+			relationshipsBtn.gameObject.SetActive(true);
+			ShowKingdomInfo (citizenToShow.city.kingdom);
 		} else {
-			kingSpecificGO.SetActive(false);
-		}
-
-		if (citizenToShow.city != null) {
-			ctizenPortraitBG.color = citizenToShow.city.kingdom.kingdomColor;
-		} else {
-			ctizenPortraitBG.color = Color.white;
+			relationshipsBtn.gameObject.SetActive(false);
 		}
 
 
 		citizenInfoGO.SetActive (true);
-
-		if(citizenToShow.isKing){
-			ShowKingdomInfo (citizenToShow.city.kingdom);
-		}
-
 		this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
 	}
 
@@ -472,29 +530,38 @@ public class UIManager : MonoBehaviour {
 		if (this.citizenHistoryGO.activeSelf) {
 			this.citizenHistoryGO.SetActive (false);
 		} else {
-			if (this.currentlyShowingCitizen == null) {
-				return;
-			}
-
-			List<Transform> children = this.citizenHistoryGrid.GetChildList ();
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-
-			for (int i = 0; i < this.currentlyShowingCitizen.history.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (this.historyPortraitPrefab, this.citizenHistoryGrid.transform) as GameObject;
-				citizenGO.GetComponent<HistoryPortrait> ().SetHistory (this.currentlyShowingCitizen.history [i]);
-				citizenGO.transform.localScale = Vector3.one;
-				citizenGO.transform.localPosition = Vector3.zero;
-			}
-
-			StartCoroutine (RepositionGrid (this.citizenHistoryGrid));
-			this.citizenHistoryGO.SetActive (true);
+			ShowCitizenHistory();
 		}
 	}
+
+	public void ShowCitizenHistory(){
+		if (this.currentlyShowingCitizen == null) {
+			return;
+		}
+
+		List<Transform> children = this.citizenHistoryGrid.GetChildList ();
+		for (int i = 0; i < children.Count; i++) {
+			Destroy (children [i].gameObject);
+		}
+
+		for (int i = 0; i < this.currentlyShowingCitizen.history.Count; i++) {
+			GameObject citizenGO = GameObject.Instantiate (this.historyPortraitPrefab, this.citizenHistoryGrid.transform) as GameObject;
+			citizenGO.GetComponent<HistoryPortrait> ().SetHistory (this.currentlyShowingCitizen.history [i]);
+			citizenGO.transform.localScale = Vector3.one;
+			citizenGO.transform.localPosition = Vector3.zero;
+		}
+
+		StartCoroutine (RepositionGrid (this.citizenHistoryGrid));
+		this.citizenHistoryGO.SetActive (true);
+	}
+
 	public void HideCitizenHistory(){
 		citizenHistoryBtn.SetClickState(false);
 		this.citizenHistoryGO.SetActive(false);
+	}
+
+	public void ShowCurrentlyShowingCitizenCityInfo(){
+		ShowCityInfo (currentlyShowingCitizen.city, true);
 	}
 
 	public void ShowCityInfo(City cityToShow, bool showCitizens = false){
@@ -782,11 +849,11 @@ public class UIManager : MonoBehaviour {
 	}
 		
 	public void ShowKingdomInfo(Kingdom kingdom){
-		if (currentlyShowingKingdom != null) {
-			currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
-		}
-		kingdom.HighlightAllOwnedTilesInKingdom();
-		this.currentlyShowingKingdom = kingdom;
+//		if (currentlyShowingKingdom != null) {
+//			currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+//		}
+//		kingdom.HighlightAllOwnedTilesInKingdom();
+//		this.currentlyShowingKingdom = kingdom;
 		this.kingdomNameBigLbl.text = "[b]" + kingdom.name + "[/b]";
 		this.kingdomNameSmallLbl.text = kingdom.name;
 		this.kingdomKingNameLbl.text = "[b]" + kingdom.king.name + "[/b]";
@@ -818,8 +885,8 @@ public class UIManager : MonoBehaviour {
 
 	}
 	public void HideKingdomInfo(){
-		this.currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
-		this.currentlyShowingKingdom = null;
+//		this.currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+//		this.currentlyShowingKingdom = null;
 		this.kingdomInfoGO.SetActive (false);
 
 	}
@@ -1099,9 +1166,6 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 	public void ShowKingRelationships(){
-		if (kingRelationshipsParentGO.activeSelf) {
-			return;
-		}
 		kingRelationshipsBtn.SetClickState(true);
 		governorRelationshipsBtn.SetClickState(false);
 		List<Transform> children = kingRelationshipsGrid.GetChildList();
@@ -1261,6 +1325,12 @@ public class UIManager : MonoBehaviour {
 		v3.z = 10.0f;
 		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
 		v3.y -= 0.15f;
+		if (v3.y <= -1f) {
+			v3 = Input.mousePosition;
+			v3.z = 10.0f;
+			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+			v3.y += 0.1f;
+		}
 		smallInfoGO.transform.position = v3;
 //		smallInfoGO.transform.parent = parent;
 //		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
@@ -1270,6 +1340,10 @@ public class UIManager : MonoBehaviour {
 //		smallInfoGO.transform.parent = this.transform;
 //		smallInfoGO.transform.localScale = Vector3.one;
 		smallInfoGO.SetActive (true);
+
+//		if (smallInfoGO.transform.localPosition.y <= -500f) {
+//			Debug.Log ("OUTSIDE!");
+//		}
 	}
 
 	public void HideSmallInfo(){

@@ -925,10 +925,6 @@ public class City{
 			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
 				this.kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
-		} else {
-			if (UICamera.hoveredObject.GetComponent<CharacterPortrait>() != null && UICamera.hoveredObject.GetComponent<CharacterPortrait>().citizen.city.kingdom.id == this.kingdom.id) {
-				this.kingdom.HighlightAllOwnedTilesInKingdom ();
-			}
 		}
 
 		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);

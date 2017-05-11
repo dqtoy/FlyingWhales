@@ -237,7 +237,7 @@ public class Kingdom{
 		this.successionLine.AddRange (GetSiblings (newKing));
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
-		UIManager.Instance.UpdateKingsGrid();
+//		UIManager.Instance.UpdateKingsGrid();
 		UIManager.Instance.UpdateKingdomSuccession ();
 
 		for (int i = 0; i < this.cities.Count; i++) {
@@ -272,7 +272,7 @@ public class Kingdom{
 		this.successionLine.AddRange (GetSiblings (newKing));
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
-		UIManager.Instance.UpdateKingsGrid();
+//		UIManager.Instance.UpdateKingsGrid();
 		UIManager.Instance.UpdateKingdomSuccession ();
 
 		for(int i = 0; i < claimants.Count; i++){
@@ -571,15 +571,21 @@ public class Kingdom{
 		for (int i = 0; i < this.cities.Count; i++) {
 			List<City> adjacentCitiesOfCurrentCity = this.cities[i].adjacentCities;
 			for (int j = 0; j < adjacentCitiesOfCurrentCity.Count; j++) {
+				City currAdjacentCity = adjacentCitiesOfCurrentCity [j];
 				if (adjacentCitiesOfCurrentCity[j].kingdom.id != this.id) {
-					if (!this.adjacentKingdoms.Contains (adjacentCitiesOfCurrentCity [j].kingdom)) {
-						this.adjacentKingdoms.Add (adjacentCitiesOfCurrentCity [j].kingdom);
+					if (!this.adjacentKingdoms.Contains (currAdjacentCity.kingdom)) {
+						this.adjacentKingdoms.Add (currAdjacentCity.kingdom);
 					}
-					if (!adjacentCitiesOfCurrentCity[j].kingdom.adjacentKingdoms.Contains(this)) {
-						adjacentCitiesOfCurrentCity[j].kingdom.adjacentKingdoms.Add(this);
+					if (!currAdjacentCity.kingdom.adjacentKingdoms.Contains(this)) {
+						currAdjacentCity.kingdom.adjacentKingdoms.Add(this);
 					}
-					this.adjacentCitiesFromOtherKingdoms.Add(adjacentCitiesOfCurrentCity[j]);
-					adjacentCitiesOfCurrentCity[j].kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
+					if (!this.adjacentCitiesFromOtherKingdoms.Contains(currAdjacentCity)) {
+						this.adjacentCitiesFromOtherKingdoms.Add(currAdjacentCity);
+					}
+					if (!currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Contains(this.cities[i])) {
+						currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
+					}
+
 				}
 			}
 		}
