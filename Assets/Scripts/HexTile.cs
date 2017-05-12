@@ -27,8 +27,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isHabitable = false;
 	public bool isRoad = false;
 	public bool isOccupied = false;
-	internal bool isBorder = false;
-	internal int isBorderOfCityID = 0;
+	public bool isBorder = false;
+	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
 
 	public GameObject centerPiece;
@@ -271,7 +271,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		color.a = 76.5f/255f;
 		this.kingdomColorSprite.color = color;
 		this.GetComponent<SpriteRenderer>().color = Color.white;
-		this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.tundraTiles [Random.Range (0, Biomes.Instance.tundraTiles.Length)];
+		this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles [Random.Range (0, Biomes.Instance.bareTiles.Length)];
 	}
 
 	public void ShowNamePlate(){
@@ -281,7 +281,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	public void ShowOccupiedSprite(){
-		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.tundraTiles [Random.Range (0, Biomes.Instance.tundraTiles.Length)];
+		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.bareTiles [Random.Range (0, Biomes.Instance.bareTiles.Length)];
 		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfTraderSprite;
 		this.structureGO.SetActive(true);
 		this.centerPiece.SetActive(false);

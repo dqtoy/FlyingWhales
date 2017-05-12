@@ -917,8 +917,8 @@ public class City{
 		//Update necessary data
 		this.UpdateResourceProduction();
 		this.UpdateBorderTiles();
-		this.UpdateAdjacentCities();
-		this.kingdom.UpdateKingdomAdjacency();
+//		this.UpdateAdjacentCities();
+//		this.kingdom.UpdateKingdomAdjacency();
 
 		//Show Highlight if kingdom or city is currently highlighted
 		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
@@ -1461,7 +1461,8 @@ public class City{
 			HexTile currentTile = this.borderTiles[i];
 			currentTile.ResetTile();
 		}
-
+		this.ownedTiles.Clear ();
+		this.borderTiles.Clear ();
 		if(!this.isDead){
 			bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.hexTile.GetComponent<PandaBehaviour> ());
 			Debug.Log ("REMOVED BT?: " + this.name + " = " + removed);

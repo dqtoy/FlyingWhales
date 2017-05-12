@@ -18,6 +18,8 @@ public class EnvelopContent : MonoBehaviour
 	public int padBottom = 0;
 	public int padTop = 0;
 
+	public bool autoAdjust = true;
+
 	void Start () { Execute(); }
 
 	[ContextMenu("Execute")]
@@ -45,6 +47,8 @@ public class EnvelopContent : MonoBehaviour
 	}
 
 	void FixedUpdate(){
-		Execute ();
+		if (autoAdjust){
+			Execute ();
+		}
 	}
 }

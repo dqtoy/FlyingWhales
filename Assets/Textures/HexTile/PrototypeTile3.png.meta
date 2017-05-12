@@ -1,0 +1,494 @@
+fileFormatVersion: 2
+guid: 2c376fe1fe214564cacc9ff2fff54799
+timeCreated: 1494579083
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: PrototypeTile3_0
+    21300002: PrototypeTile3_1
+    21300004: PrototypeTile3_2
+    21300006: PrototypeTile3_3
+    21300008: PrototypeTile3_4
+    21300010: PrototypeTile3_5
+    21300012: PrototypeTile3_6
+    21300014: PrototypeTile3_7
+    21300016: PrototypeTile3_8
+    21300018: PrototypeTile3_9
+    21300020: PrototypeTile3_10
+    21300022: PrototypeTile3_11
+    21300024: PrototypeTile3_12
+    21300026: PrototypeTile3_13
+    21300028: PrototypeTile3_14
+    21300030: PrototypeTile3_15
+    21300032: PrototypeTile3_16
+    21300034: PrototypeTile3_17
+    21300036: PrototypeTile3_18
+    21300038: PrototypeTile3_19
+    21300040: PrototypeTile3_20
+    21300042: PrototypeTile3_21
+    21300044: PrototypeTile3_22
+    21300046: PrototypeTile3_23
+    21300048: PrototypeTile3_24
+    21300050: PrototypeTile3_25
+    21300052: PrototypeTile3_26
+    21300054: PrototypeTile3_27
+    21300056: PrototypeTile3_28
+    21300058: PrototypeTile3_29
+    21300060: PrototypeTile3_30
+    21300062: PrototypeTile3_31
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 7
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: 0
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PrototypeTile3_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 1780
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_1
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 1781
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_2
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 1781
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_3
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 1781
+        width: 256
+        height: 263
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_4
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 1488
+        width: 256
+        height: 263
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_5
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 1485
+        width: 256
+        height: 285
+      alignment: 9
+      pivot: {x: 0.5, y: 0.451}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_6
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 1487
+        width: 256
+        height: 261
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_7
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 1221
+        width: 256
+        height: 299
+      alignment: 9
+      pivot: {x: 0.5, y: 0.41}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_8
+      rect:
+        serializedVersion: 2
+        x: 1047
+        y: 1221
+        width: 256
+        height: 302
+      alignment: 9
+      pivot: {x: 0.5, y: 0.41}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_9
+      rect:
+        serializedVersion: 2
+        x: 1307
+        y: 1220
+        width: 256
+        height: 302
+      alignment: 9
+      pivot: {x: 0.5, y: 0.41}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_10
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 1220
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_11
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 1220
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_12
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 1220
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_13
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 857
+        width: 256
+        height: 297
+      alignment: 9
+      pivot: {x: 0.5, y: 0.43}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_15
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 857
+        width: 256
+        height: 293
+      alignment: 9
+      pivot: {x: 0.5, y: 0.43}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_16
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 856
+        width: 256
+        height: 306
+      alignment: 9
+      pivot: {x: 0.5, y: 0.41}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_17
+      rect:
+        serializedVersion: 2
+        x: 786
+        y: 857
+        width: 256
+        height: 295
+      alignment: 9
+      pivot: {x: 0.5, y: 0.41}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_18
+      rect:
+        serializedVersion: 2
+        x: 1046
+        y: 857
+        width: 256
+        height: 299
+      alignment: 9
+      pivot: {x: 0.5, y: 0.41}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_19
+      rect:
+        serializedVersion: 2
+        x: 1306
+        y: 856
+        width: 256
+        height: 310
+      alignment: 9
+      pivot: {x: 0.5, y: 0.4}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_20
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 589
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_21
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 589
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_22
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 589
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_23
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 316
+        width: 256
+        height: 257
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_24
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 312
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_25
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 312
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_26
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 44
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_27
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 44
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_28
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 44
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_29
+      rect:
+        serializedVersion: 2
+        x: 794
+        y: 43
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_30
+      rect:
+        serializedVersion: 2
+        x: 1053
+        y: 45
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile3_31
+      rect:
+        serializedVersion: 2
+        x: 1313
+        y: 45
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
