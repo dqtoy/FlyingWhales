@@ -467,11 +467,14 @@ public class GeneralObject : MonoBehaviour {
 				this.MakeCitizenMove (this.general.location, this.path [0]);
 				this.general.location = this.path[0];
 				this.path.RemoveAt (0);
-				if(this.general.location.city != null){
-					if(this.general.location.city.id == this.general.citizen.city.id){
-						this.general.citizen.city.LookForLostArmy (this.general);
+				if(!this.general.citizen.isDead){
+					if(this.general.location.city != null){
+						if(this.general.location.city.id == this.general.citizen.city.id){
+							this.general.citizen.city.LookForLostArmy (this.general);
+						}
 					}
 				}
+
 			}
 		}
 
