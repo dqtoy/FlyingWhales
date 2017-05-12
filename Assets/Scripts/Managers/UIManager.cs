@@ -274,6 +274,12 @@ public class UIManager : MonoBehaviour {
 //			}
 //		}
 
+//		if (citizenInfoGO.activeSelf) {
+//			if (currentlyShowingCitizen != null) {
+//				ShowCitizenInfo(currentlyShowingCitizen);
+//			}
+//		}
+
 	}
 
 	public void SetProgressionSpeed1X(){
@@ -317,7 +323,6 @@ public class UIManager : MonoBehaviour {
 			currentlyShowingKingdom = KingdomManager.Instance.allKingdoms.First();
 		}
 
-		currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
 		kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king);
 		kingdomListActiveKingdomFlagSprite.color = currentlyShowingKingdom.kingdomColor;
 
@@ -337,13 +342,16 @@ public class UIManager : MonoBehaviour {
 					if (currKingdom.id != currentlyShowingKingdom.id) {
 						GameObject kingdomGO = GameObject.Instantiate (kingdomFlagPrefab, this.transform) as GameObject;
 						kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
-						kingdomGO.GetComponent<KingdomFlagItem> ().SetKingdom (currKingdom);
+						kingdomGO.GetComponent<KingdomFlagItem>().SetKingdom (currKingdom);
+						kingdomGO.GetComponent<KingdomFlagItem> ().onHoverOver += currKingdom.HighlightAllOwnedTilesInKingdom;
+						kingdomGO.GetComponent<KingdomFlagItem> ().onHoverExit += currKingdom.UnHighlightAllOwnedTilesInKingdom;
 						kingdomGO.transform.localScale = Vector3.one;
 					}
 				}
 			}
 			kingdomListOtherKingdomsParent.SetActive(true);
 		}
+		currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
 	}
 
 	internal void SetKingdomAsActive(Kingdom kingdom){
@@ -465,8 +473,7 @@ public class UIManager : MonoBehaviour {
 			traitGO.transform.localScale = Vector3.one;
 			traitGO.transform.localPosition = Vector3.zero;
 		}
-
-//		StartCoroutine (RepositionGrid (citizenTraitsGrid));
+		StartCoroutine (RepositionGrid (citizenTraitsGrid));
 
 		if (citizenToShow.isKing) {
 			relationshipsBtn.gameObject.SetActive(true);
@@ -1331,6 +1338,13 @@ public class UIManager : MonoBehaviour {
 			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
 			v3.y += 0.1f;
 		}
+		if (v3.x >= -13.8f) {
+			v3 = Input.mousePosition;
+			v3.z = 10.0f;
+			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+			v3.x -= 0.2f;
+		}
+
 		smallInfoGO.transform.position = v3;
 //		smallInfoGO.transform.parent = parent;
 //		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);

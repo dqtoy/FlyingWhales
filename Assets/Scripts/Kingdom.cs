@@ -479,6 +479,9 @@ public class Kingdom{
 		newCity.CreateInitialFamilies(false);
 		KingdomManager.Instance.UpdateKingdomAdjacency();
 		this.AddInternationalWarCity (newCity);
+		if (UIManager.Instance.currentlyShowingKingdom.id == newCity.kingdom.id) {
+			newCity.kingdom.HighlightAllOwnedTilesInKingdom();
+		}
 
 	}
 	internal void AddInternationalWarCity(City newCity){

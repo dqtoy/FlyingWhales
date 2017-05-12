@@ -13,75 +13,75 @@ public class Biomes : MonoBehaviour {
 	[Space(10)]
 	public int[] hexInterval;
 	public float[] temperatureInterval;
-	[Space(10)]
-	public Sprite forestSprite;
-	public Sprite grasslandSprite;
-	public Sprite woodlandSprite;
-	public Sprite desertSprite;
-	public Sprite tundraSprite;
-	public Sprite snowSprite;
-	public Sprite waterSprite;
-	[Space(10)]
-	public Sprite forestLeft;
-	public Sprite forestRight;
-	public Sprite forestLeftCorner;
-	public Sprite forestRightCorner;
-	public Sprite forestTopLeftCorner;
-	public Sprite forestTopRightCorner;
-	public Sprite forestCenter;
-	public Sprite forestCenter2;
-	public Sprite forestCenter3;
-	[Space(10)]
-	public Sprite grasslandLeft;
-	public Sprite grasslandRight;
-	public Sprite grasslandTopLeftCorner;
-	public Sprite grasslandTopRightCorner;
-	public Sprite grasslandLeftCorner;
-	public Sprite grasslandRightCorner;
-	public Sprite grasslandCenter;
-	public Sprite grasslandCenter2;
-	[Space(10)]
-	public Sprite woodlandLeft;
-	public Sprite woodlandRight;
-	public Sprite woodlandTopLeftCorner;
-	public Sprite woodlandTopRightCorner;
-	public Sprite woodlandLeftCorner;
-	public Sprite woodlandRightCorner;
-	public Sprite woodlandCenter;
-	public Sprite woodlandCenter2;
-	public Sprite woodlandCenter3;
-	[Space(10)]
-	public Sprite desertLeft;
-	public Sprite desertRight;
-	public Sprite desertTopLeftCorner;
-	public Sprite desertTopRightCorner;
-	public Sprite desertLeftCorner;
-	public Sprite desertRightCorner;
-	public Sprite desertCenter;
-	public Sprite desertCenter2;
-	public Sprite desertCenter3;
-	public Sprite desertCenter4;
-	[Space(10)]
-	public Sprite tundraLeft;
-	public Sprite tundraRight;
-	public Sprite tundraTopLeftCorner;
-	public Sprite tundraTopRightCorner;
-	public Sprite tundraLeftCorner;
-	public Sprite tundraRightCorner;
-	public Sprite tundraCenter;
-	public Sprite tundraCenter2;
-	public Sprite tundraCenter3;
-	[Space(10)]
-	public Sprite snowLeft;
-	public Sprite snowRight;
-	public Sprite snowTopLeftCorner;
-	public Sprite snowTopRightCorner;
-	public Sprite snowLeftCorner;
-	public Sprite snowRightCorner;
-	public Sprite snowCenter;
-	public Sprite snowCenter2;
-	[Space(10)]
-	public Sprite mountainCenter;
+//	[Space(10)]
+//	public Sprite forestSprite;
+//	public Sprite grasslandSprite;
+//	public Sprite woodlandSprite;
+//	public Sprite desertSprite;
+//	public Sprite tundraSprite;
+//	public Sprite snowSprite;
+//	public Sprite waterSprite;
+//	[Space(10)]
+//	public Sprite forestLeft;
+//	public Sprite forestRight;
+//	public Sprite forestLeftCorner;
+//	public Sprite forestRightCorner;
+//	public Sprite forestTopLeftCorner;
+//	public Sprite forestTopRightCorner;
+//	public Sprite forestCenter;
+//	public Sprite forestCenter2;
+//	public Sprite forestCenter3;
+//	[Space(10)]
+//	public Sprite grasslandLeft;
+//	public Sprite grasslandRight;
+//	public Sprite grasslandTopLeftCorner;
+//	public Sprite grasslandTopRightCorner;
+//	public Sprite grasslandLeftCorner;
+//	public Sprite grasslandRightCorner;
+//	public Sprite grasslandCenter;
+//	public Sprite grasslandCenter2;
+//	[Space(10)]
+//	public Sprite woodlandLeft;
+//	public Sprite woodlandRight;
+//	public Sprite woodlandTopLeftCorner;
+//	public Sprite woodlandTopRightCorner;
+//	public Sprite woodlandLeftCorner;
+//	public Sprite woodlandRightCorner;
+//	public Sprite woodlandCenter;
+//	public Sprite woodlandCenter2;
+//	public Sprite woodlandCenter3;
+//	[Space(10)]
+//	public Sprite desertLeft;
+//	public Sprite desertRight;
+//	public Sprite desertTopLeftCorner;
+//	public Sprite desertTopRightCorner;
+//	public Sprite desertLeftCorner;
+//	public Sprite desertRightCorner;
+//	public Sprite desertCenter;
+//	public Sprite desertCenter2;
+//	public Sprite desertCenter3;
+//	public Sprite desertCenter4;
+//	[Space(10)]
+//	public Sprite tundraLeft;
+//	public Sprite tundraRight;
+//	public Sprite tundraTopLeftCorner;
+//	public Sprite tundraTopRightCorner;
+//	public Sprite tundraLeftCorner;
+//	public Sprite tundraRightCorner;
+//	public Sprite tundraCenter;
+//	public Sprite tundraCenter2;
+//	public Sprite tundraCenter3;
+//	[Space(10)]
+//	public Sprite snowLeft;
+//	public Sprite snowRight;
+//	public Sprite snowTopLeftCorner;
+//	public Sprite snowTopRightCorner;
+//	public Sprite snowLeftCorner;
+//	public Sprite snowRightCorner;
+//	public Sprite snowCenter;
+//	public Sprite snowCenter2;
+//	[Space(10)]
+//	public Sprite mountainCenter;
 
 	[Space(10)]
 	public Sprite[] grasslandTiles;
@@ -91,7 +91,10 @@ public class Biomes : MonoBehaviour {
 	public Sprite[] tundraTiles;
 	public Sprite[] waterTiles;
 	public Sprite[] snowTiles;
-	public Sprite[] mountainTiles;
+	public Sprite[] bareTiles;
+	public Sprite[] greenMountainTiles;
+	public Sprite[] desertMountainTiles;
+	public Sprite[] snowAndTundraMountainTiles;
 
 	[Space(10)]
 	public List<HexTile> snowHexTiles;
@@ -122,33 +125,59 @@ public class Biomes : MonoBehaviour {
 				currentHexTile.movementDays = 1;
 				Sprite snowSpriteToUse = snowTiles [Random.Range (0, snowTiles.Length)];
 				currentHexTile.SetTileSprites (snowSpriteToUse);
+				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+					Sprite mountainSpriteToUse = snowAndTundraMountainTiles [Random.Range (0, snowAndTundraMountainTiles.Length)];
+					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
+				}
 				break;
 			case BIOMES.TUNDRA:
 				currentHexTile.movementDays = 1;
 				Sprite tundraSpriteToUse = tundraTiles [Random.Range (0, tundraTiles.Length)];
 				currentHexTile.SetTileSprites (tundraSpriteToUse);
+				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+					Sprite mountainSpriteToUse = snowAndTundraMountainTiles [Random.Range (0, snowAndTundraMountainTiles.Length)];
+					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
+				}
 				break;
 			case BIOMES.DESERT:
 				currentHexTile.movementDays = 1;
 				Sprite desertSpriteToUse = desertTiles [Random.Range (0, desertTiles.Length)];
 				currentHexTile.SetTileSprites (desertSpriteToUse);
+				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+					Sprite mountainSpriteToUse = desertMountainTiles [Random.Range (0, desertMountainTiles.Length)];
+					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
+				}
 				break;
 			case BIOMES.GRASSLAND:
 				currentHexTile.movementDays = 1;
 				Sprite grasslandSpriteToUse = grasslandTiles [Random.Range (0, grasslandTiles.Length)];
 				currentHexTile.SetTileSprites (grasslandSpriteToUse);
+				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
+					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
+				}
 				break;
 			case BIOMES.WOODLAND:
 				currentHexTile.movementDays = 1;
 				Sprite woodlandSpriteToUse = woodlandTiles [Random.Range (0, woodlandTiles.Length)];
 				currentHexTile.SetTileSprites (woodlandSpriteToUse);
+				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
+					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
+				}
 				break;
 			case BIOMES.FOREST:
 				currentHexTile.movementDays = 1;
 				Sprite forestSpriteToUse = forestTiles [Random.Range (0, forestTiles.Length)];
 				currentHexTile.SetTileSprites (forestSpriteToUse);
+				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
+					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
+				}
 				break;
 			}
+
+
 		}
 		GenerateBareBiome();
 
@@ -160,9 +189,10 @@ public class Biomes : MonoBehaviour {
 		for(int i = 0; i < GridMap.Instance.listHexes.Count; i++){
 			switch(GridMap.Instance.listHexes[i].GetComponent<HexTile>().elevationType){
 			case ELEVATION.MOUNTAIN:
-				Sprite mountainSpriteToUse = mountainTiles [Random.Range (0, mountainTiles.Length)];
+				
+//				Sprite mountainSpriteToUse = mountainTiles [Random.Range (0, mountainTiles.Length)];
 //				GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().color = new Color(165f/255f,42f/255f,42f/255f);
-				GridMap.Instance.listHexes[i].GetComponent<HexTile>().centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
+//				GridMap.Instance.listHexes[i].GetComponent<HexTile>().centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
 //				GridMap.Instance.listHexes[i].GetComponent<HexTile>().GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
 				break;
 			case ELEVATION.PLAIN:
@@ -267,14 +297,17 @@ public class Biomes : MonoBehaviour {
 
 	internal void GenerateBareBiome(){
 		for(int i = 0; i < GridMap.Instance.listHexes.Count; i++){
-			ELEVATION elevationType = GridMap.Instance.listHexes[i].GetComponent<HexTile>().elevationType;
-			float moisture = GridMap.Instance.listHexes[i].GetComponent<HexTile>().moistureNoise;
+			HexTile currentHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+			ELEVATION elevationType = currentHexTile.elevationType;
+			float moisture = currentHexTile.moistureNoise;
 
 			if(elevationType == ELEVATION.WATER){
 				if(moisture <= 0.2f){
-					GridMap.Instance.listHexes[i].GetComponent<HexTile>().movementDays = 1;
-					GridMap.Instance.listHexes[i].GetComponent<HexTile>().biomeType = BIOMES.BARE;
-					GridMap.Instance.listHexes[i].GetComponent<SpriteRenderer>().color = new Color(186f/255f, 154f/255f, 154f/255f);
+					
+					currentHexTile.movementDays = 1;
+					currentHexTile.biomeType = BIOMES.BARE;
+					Sprite bareSpriteToUse = bareTiles [Random.Range (0, bareTiles.Length)];
+					currentHexTile.SetTileSprites (bareSpriteToUse);
 				}
 			}
 		}
