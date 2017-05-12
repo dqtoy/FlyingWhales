@@ -342,7 +342,9 @@ public class UIManager : MonoBehaviour {
 					if (currKingdom.id != currentlyShowingKingdom.id) {
 						GameObject kingdomGO = GameObject.Instantiate (kingdomFlagPrefab, this.transform) as GameObject;
 						kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
-						kingdomGO.GetComponent<KingdomFlagItem> ().SetKingdom (currKingdom);
+						kingdomGO.GetComponent<KingdomFlagItem>().SetKingdom (currKingdom);
+						kingdomGO.GetComponent<KingdomFlagItem> ().onHoverOver += currKingdom.HighlightAllOwnedTilesInKingdom;
+						kingdomGO.GetComponent<KingdomFlagItem> ().onHoverExit += currKingdom.UnHighlightAllOwnedTilesInKingdom;
 						kingdomGO.transform.localScale = Vector3.one;
 					}
 				}

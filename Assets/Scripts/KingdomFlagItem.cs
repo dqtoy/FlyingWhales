@@ -3,6 +3,12 @@ using System.Collections;
 
 public class KingdomFlagItem : MonoBehaviour {
 
+	public delegate void OnHoverOver();
+	public OnHoverOver onHoverOver;
+
+	public delegate void OnHoverExit ();
+	public OnHoverExit onHoverExit;
+
 	internal Kingdom kingdom;
 
 	public UI2DSprite kingdomColorSprite;
@@ -21,9 +27,15 @@ public class KingdomFlagItem : MonoBehaviour {
 		if (isOver) {
 			this.isHovering = true;
 			UIManager.Instance.ShowSmallInfo ("[b]" + this.kingdom.name + "[/b]", this.transform);
+			if (onHoverOver != null) {
+				this.onHoverOver ();
+			}
 		} else {
 			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();
+			if (onHoverExit != null) {
+				this.onHoverExit ();
+			}
 		}
 	}
 

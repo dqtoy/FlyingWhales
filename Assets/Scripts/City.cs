@@ -921,12 +921,12 @@ public class City{
 //		this.kingdom.UpdateKingdomAdjacency();
 
 		//Show Highlight if kingdom or city is currently highlighted
-		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
-			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+			this.kingdom.HighlightAllOwnedTilesInKingdom ();
+		} else {
+			if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
 				this.kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
-
-
 		}
 
 		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);
