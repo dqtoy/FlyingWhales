@@ -1503,12 +1503,12 @@ public class Citizen {
 //					}
 //				}
 //			}
-			if(!general.inAction){
-				if(general.generalAvatar != null){
-					general.generalAvatar.GetComponent<GeneralObject> ().MakeCitizenMove (general.location, this.city.hexTile);
-					general.location = this.city.hexTile;
-				}
-			}
+//			if(!general.inAction){
+//				if(general.generalAvatar != null){
+//					general.generalAvatar.GetComponent<GeneralObject> ().MakeCitizenMove (general.location, this.city.hexTile);
+//					general.location = this.city.hexTile;
+//				}
+//			}
 			Debug.Log ("CREATED GHOST CITIZEN FOR " + this.name);
 			general.CreateGhostCitizen ();
 		}
