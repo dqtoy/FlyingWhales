@@ -1478,7 +1478,9 @@ public class City{
 		this.kingdom.cities.Remove (this);
 		if(this.hasKing){
 			this.hasKing = false;
-			this.kingdom.AssignNewKing(null, this.kingdom.cities[0]);
+			if(this.kingdom.cities > 0){
+				this.kingdom.AssignNewKing(null, this.kingdom.cities[0]);
+			}
 		}
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);

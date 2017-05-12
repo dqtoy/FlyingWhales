@@ -87,15 +87,20 @@ public class GeneralObject : MonoBehaviour {
 	public void Idle(){
 		if(this.isIdle){
 			this.general.inAction = false;
-			if(this.general.citizen.city.incomingGenerals.Count > 0){
-				if(this.general.citizen.city.incomingGenerals.Where(x => x.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && x.assignedCampaign.targetCity.id == this.general.citizen.city.id).ToList().Count > 0){
-					this.isRoaming = false;
+			if(!this.general.citizen.isDead){
+				if(this.general.citizen.city.incomingGenerals.Count > 0){
+					if(this.general.citizen.city.incomingGenerals.Where(x => x.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && x.assignedCampaign.targetCity.id == this.general.citizen.city.id).ToList().Count > 0){
+						this.isRoaming = false;
+					}else{
+						this.isRoaming = true;
+					}
 				}else{
 					this.isRoaming = true;
 				}
 			}else{
-				this.isRoaming = true;
+				this.isRoaming = false;
 			}
+
 
 			if(this.isRoaming){
 				if(!this.isPreviousRoaming){
