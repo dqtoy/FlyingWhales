@@ -1478,7 +1478,7 @@ public class City{
 		this.kingdom.cities.Remove (this);
 		if(this.hasKing){
 			this.hasKing = false;
-			if(this.kingdom.cities > 0){
+			if(this.kingdom.cities.Count > 0){
 				this.kingdom.AssignNewKing(null, this.kingdom.cities[0]);
 			}
 		}
