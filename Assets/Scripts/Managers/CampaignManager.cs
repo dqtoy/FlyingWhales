@@ -314,16 +314,18 @@ public class CampaignManager {
 	}
 	internal City GetNearestCityFromLeader(List<City> cities){
 		City nearestCity = null;
-		float nearestDistance = 0;
+		int nearestDistance = 0;
 		for(int i = 0; i < cities.Count; i++){
-			float distance = Vector3.Distance (cities [i].hexTile.transform.position, this.leader.city.hexTile.transform.position);
-			if(nearestCity == null){
-				nearestCity = cities [i];
-				nearestDistance = distance;
-			}else{
-				if(distance < nearestDistance){
+			List<HexTile> path = PathGenerator.Instance.GetPath (cities [i].hexTile, this.leader.city.hexTile, PATHFINDING_MODE.COMBAT);
+			if(path != null){
+				if(nearestCity == null){
 					nearestCity = cities [i];
-					nearestDistance = distance;
+					nearestDistance = path.Count;
+				}else{
+					if(path.Count < nearestDistance){
+						nearestCity = cities [i];
+						nearestDistance = path.Count;
+					}
 				}
 			}
 		}
