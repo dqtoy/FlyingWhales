@@ -79,10 +79,10 @@ public class CameraMove : MonoBehaviour {
 	}
 
 	public void CenterCameraOn(GameObject GO){
-		Camera.main.orthographicSize = minFov;
-		eventIconCamera.orthographicSize = minFov;
-		resourceIconCamera.orthographicSize = minFov;
-		generalCamera.orthographicSize = minFov;
+//		Camera.main.orthographicSize = minFov;
+//		eventIconCamera.orthographicSize = minFov;
+//		resourceIconCamera.orthographicSize = minFov;
+//		generalCamera.orthographicSize = minFov;
 
 		target = GO.transform;
 //		Vector3 diff = Camera.main.ScreenToWorldPoint(GO.transform.position);

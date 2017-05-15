@@ -22,7 +22,7 @@ public class GeneralObject : MonoBehaviour {
 	public float speed;
 	bool isMoving = false;
 	Vector3 targetPosition = Vector3.zero;
-	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
+//	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
 
 //	void Update(){
 //		if(isMoving){
@@ -41,7 +41,7 @@ public class GeneralObject : MonoBehaviour {
 		if(this.general != null){
 			this.textMesh.text = this.general.GetArmyHP().ToString ();
 			this.kingdomIndicator.color = this.general.citizen.city.kingdom.kingdomColor;
-			this.path = this.general.roads;
+//			this.path = this.general.roads;
 			this.AddBehaviourTree ();
 		}
 	}
@@ -71,7 +71,8 @@ public class GeneralObject : MonoBehaviour {
 	}
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
 //		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
-		this.transform.position = targetTile.transform.position;
+		this.gameObject.transform.parent = targetTile.transform;
+		this.transform.localPosition = Vector3.zero;
 		this.UpdateUI ();
 	}
 	private void StopMoving(){
@@ -435,7 +436,6 @@ public class GeneralObject : MonoBehaviour {
 	private void RoamTo(){
 		if(this.general.citizen.city.ownedTiles.Count > 0){
 			HexTile roamTile = this.general.citizen.city.ownedTiles [UnityEngine.Random.Range (0, this.general.citizen.city.ownedTiles.Count)];
-			this.path.Clear ();
 			this.path = PathGenerator.Instance.GetPath (this.general.location, roamTile, PATHFINDING_MODE.COMBAT);
 //			this.MoveTo (roamTile.transform.position);
 
@@ -455,12 +455,11 @@ public class GeneralObject : MonoBehaviour {
 				}
 			}
 		}
-		this.UpdateUI ();
+//		this.UpdateUI ();
 	}
 	private void GoHome(){
 		if(this.general.location != this.general.citizen.city.hexTile){
 			if(this.path.Count <= 0 || this.path == null){
-				this.path.Clear ();
 				this.path = PathGenerator.Instance.GetPath (this.general.location, this.general.citizen.city.hexTile, PATHFINDING_MODE.COMBAT);
 			}
 			if(this.path != null && this.path.Count > 0){
@@ -478,7 +477,7 @@ public class GeneralObject : MonoBehaviour {
 			}
 		}
 
-		this.UpdateUI ();
+//		this.UpdateUI ();
 	}
 	internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);

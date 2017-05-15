@@ -42,11 +42,11 @@ public class City{
 	public bool isStarving;
 	public bool isDead;
 
+	protected const int _MAX_GOLD = 1000;
 
 	internal Dictionary<ROLE, int> citizenCreationTable;
 	internal List<HexTile> borderTiles;
 	protected List<ROLE> creatableRoles;
-
 
 
 	protected List<HexTile> unoccupiedOwnedTiles{
@@ -67,6 +67,10 @@ public class City{
 
 	public List<HexTile> adjacentHabitableTiles{
 		get{ return this.hexTile.connectedTiles.Where(x => !x.isOccupied).ToList();}
+	}
+
+	public int MAX_GOLD{
+		get{ return _MAX_GOLD; }
 	}
 
 	public City(HexTile hexTile, Kingdom kingdom){
@@ -921,12 +925,12 @@ public class City{
 //		this.kingdom.UpdateKingdomAdjacency();
 
 		//Show Highlight if kingdom or city is currently highlighted
-		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
-			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+			this.kingdom.HighlightAllOwnedTilesInKingdom ();
+		} else {
+			if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
 				this.kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
-
-
 		}
 
 		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);
@@ -1118,8 +1122,8 @@ public class City{
 
 	protected void ProduceResources(){
 		this.goldCount += this.goldProduction;
-		if (this.goldCount > 1000) {
-			this.goldCount = 1000;
+		if (this.goldCount > this.MAX_GOLD) {
+			this.goldCount = this.MAX_GOLD;
 		}
 	}
 
@@ -1236,17 +1240,18 @@ public class City{
 		}
 		return total;
 	}
-	internal int GetTotalAttackerStrength(){
+	internal int GetTotalAttackerStrength(int nearest){
 		int total = 0;
-		List<General> hostiles = GetIncomingAttackers();
-		if(hostiles.Count > 0){
-			int nearest = hostiles.Min (x => x.daysBeforeArrival);
-			List<General> nearestHostiles = hostiles.Where(x => x.daysBeforeArrival == nearest).ToList();
-			for(int i = 0; i < nearestHostiles.Count; i++){
-				total += nearestHostiles[i].GetArmyHP ();
+		if(nearest != -2){
+			List<General> hostiles = GetIncomingAttackers().Where(x => x.daysBeforeArrival == nearest).ToList();
+			if(hostiles.Count > 0){
+				//			int nearest = hostiles.Min (x => x.daysBeforeArrival);
+				//			List<General> nearestHostiles = hostiles.Where(x => x.daysBeforeArrival == nearest).ToList();
+				for(int i = 0; i < hostiles.Count; i++){
+					total += hostiles[i].GetArmyHP ();
+				}
 			}
 		}
-
 		return total;	
 	}
 	internal List<General> GetAllGenerals(General attacker){

@@ -22,6 +22,8 @@ public class UnsupportCitizen: UnityEvent<Citizen>{}
 public class RemoveSuccessionWarCity: UnityEvent<City>{}
 public class LookForLostArmies: UnityEvent<General>{}
 public class DeathToGhost: UnityEvent<City>{}
+public class CheckGeneralEligibility: UnityEvent<Citizen, HexTile>{}
+
 
 //Game Events
 public class GameEventAction: UnityEvent<GameEvent, int>{}

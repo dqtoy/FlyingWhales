@@ -123,8 +123,8 @@ public class Campaign {
 				this.registeredGenerals [i].daysBeforeArrival = path.Sum(x => x.movementDays);
 				this.registeredGenerals [i].generalAvatar.transform.parent = this.registeredGenerals [i].location.transform;
 				this.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
-				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
-				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
+//				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().highlightPath.Clear ();
+//				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().highlightPath = new List<HexTile>(path);
 				this.targetCity.incomingGenerals.Add (this.registeredGenerals[i]);
 //				if(this.registeredGenerals[i].generalAvatar == null){
 //					this.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.registeredGenerals [i].location.transform) as GameObject;
@@ -146,42 +146,44 @@ public class Campaign {
 //			}
 //		}
 	}
-	internal void AddCandidate(General general, List<HexTile> path){
-		int armyHp = general.GetArmyHP ();
-		this.candidates.Add (new CampaignCandidates (general, path, armyHp));
-	}
-	internal void RegisterGenerals(){
-		if(this.candidates.Count > 0){
-			this.candidates = this.candidates.OrderBy (x => x.path.Count).ToList ();
+//	internal void AddCandidate(General general, List<HexTile> path){
+//		int armyHp = general.GetArmyHP ();
+//		this.candidates.Add (new CampaignCandidates (general, path, armyHp));
+//	}
+	internal void RegisterGenerals(List<CampaignCandidates> candidates){
+		if(candidates.Count > 0){
+			candidates = candidates.OrderBy (x => x.path.Count).ToList ();
 			if(this.campaignType == CAMPAIGN.OFFENSE){
-				for(int i = 0; i < this.candidates.Count; i++){
+				for(int i = 0; i < candidates.Count; i++){
 					if(this.GetArmyStrength() < this.neededArmyStrength){
-						this.candidates [i].general.AssignCampaign (this, this.candidates [i].path);
+						candidates [i].general.AssignCampaign (this, candidates [i].path);
 					}else{
 						break;
 					}
 				}
 			}else{
 				if(this.expiration >= 0){
-					for(int i = 0; i < this.candidates.Count; i++){
-						if(this.candidates[i].path.Count <= (this.expiration - 1)){
+					for(int i = 0; i < candidates.Count; i++){
+						if(candidates[i].path.Count <= (this.expiration - 1)){
 							if(this.GetArmyStrength() < this.neededArmyStrength){
-								this.candidates [i].general.AssignCampaign (this, this.candidates [i].path);
+								candidates [i].general.AssignCampaign (this, candidates [i].path);
 							}else{
 								break;
 							}
 						}else{
-							if(this.candidates[i].general.location == this.targetCity.hexTile){
+							if(candidates[i].general.location == this.targetCity.hexTile){
 								if (this.GetArmyStrength () < this.neededArmyStrength) {
-									this.candidates [i].general.AssignCampaign (this, this.candidates [i].path);
+									candidates [i].general.AssignCampaign (this, candidates [i].path);
+								}else{
+									break;
 								}
 							}
 						}
 					}
 				}else{
-					for(int i = 0; i < this.candidates.Count; i++){
+					for(int i = 0; i < candidates.Count; i++){
 						if(this.GetArmyStrength() < this.neededArmyStrength){
-							this.candidates [i].general.AssignCampaign (this, this.candidates [i].path);
+							candidates [i].general.AssignCampaign (this, candidates [i].path);
 						}else{
 							break;
 						}

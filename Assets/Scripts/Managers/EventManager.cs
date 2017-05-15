@@ -30,6 +30,7 @@ public class EventManager : MonoBehaviour {
 	public UpdateUI onUpdateUI = new UpdateUI();
 	public LookForLostArmies onLookForLostArmies = new LookForLostArmies ();
 	public DeathToGhost onDeathToGhost = new DeathToGhost();
+	public CheckGeneralEligibility onCheckGeneralEligibility = new CheckGeneralEligibility();
 
 	public EVENT_TYPES eventTypeForTesting;
 

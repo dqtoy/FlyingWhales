@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+//[System.Serializable]
 public class General : Role {
 //	public City targetCity;
 	public HexTile location;
@@ -54,7 +55,8 @@ public class General : Role {
 		this.isGoingHome = false;
 		this.isHome = true;
 //		EventManager.Instance.onCitizenMove.AddListener (Move);
-		EventManager.Instance.onRegisterOnCampaign.AddListener (RegisterOnCampaign);
+		EventManager.Instance.onCheckGeneralEligibility.AddListener (CheckEligibility);
+//		EventManager.Instance.onRegisterOnCampaign.AddListener (RegisterOnCampaign);
 		EventManager.Instance.onLookForLostArmies.AddListener (JoinArmyTo);
 		InitializeGeneral ();
 	}
@@ -111,8 +113,8 @@ public class General : Role {
 //				}
 				this.generalAvatar.transform.parent = this.location.transform;
 				this.generalAvatar.transform.localPosition = Vector3.zero;
-				this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
-				this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
+//				this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
+//				this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
 
 				Debug.Log (this.citizen.name + " IS GOING HOME!");
 			}
@@ -167,6 +169,51 @@ public class General : Role {
 			this.assignedCampaign = null;
 		}
 	}
+	internal void CheckEligibility(Citizen leader, HexTile targetLocation){
+		if(this.inAction){
+			Debug.Log (this.citizen.name + " of " + this.citizen.city.kingdom.name + " CAN'T CHECK ELIGIBILITY FOR " + leader.name + " of " + leader.city.kingdom.name + " W/ TARGET " + targetLocation.name + " BECAUSE IN ACTION");
+			return;
+		}
+		if(this.citizen.isDead){
+			Debug.Log (this.citizen.name + " of " + this.citizen.city.kingdom.name + " CAN'T CHECK ELIGIBILITY FOR " + leader.name + " of " + leader.city.kingdom.name + " W/ TARGET " + targetLocation.name + " BECAUSE IS DEAD");
+			return;
+		}
+		Debug.Log (this.citizen.name + " of " + this.citizen.city.kingdom.name + " CHECKING ELIGIBILITY FOR " + leader.name + " of " + leader.city.kingdom.name + " W/ TARGET " + targetLocation.name + " ...");
+		List<HexTile> path = null;
+		if (this.citizen.city.kingdom.id == leader.city.kingdom.id) {
+			if (this.citizen.city.governor.supportedCitizen == null) {
+				if (leader.isKing || leader.isHeir) {
+					path = PathGenerator.Instance.GetPath (this.location, targetLocation, PATHFINDING_MODE.COMBAT);
+					if (path != null) {
+						leader.campaignManager.AddCandidate (this, path);
+					}else{
+						Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + targetLocation.name + ")");
+					}
+				}
+			} else {
+				if (this.citizen.city.governor.supportedCitizen.id == leader.id) {
+					path = PathGenerator.Instance.GetPath (this.location, targetLocation, PATHFINDING_MODE.COMBAT);
+					if (path != null) {
+						leader.campaignManager.AddCandidate (this, path);
+					}else{
+						Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + targetLocation.name + ")");
+					}
+				}
+			}
+
+		} else {
+			if (this.citizen.city.kingdom.king.supportedCitizen != null) {
+				if (this.citizen.city.kingdom.king.supportedCitizen.id == leader.id) {
+					path = PathGenerator.Instance.GetPath (this.location, targetLocation, PATHFINDING_MODE.COMBAT);
+					if (path != null) {
+						leader.campaignManager.AddCandidate (this, path);
+					}else{
+						Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + targetLocation.name + ")");
+					}
+				}
+			}
+		}
+	}
 	internal void RegisterOnCampaign(Campaign campaign){
 		if(this.inAction){
 			Debug.Log (this.citizen.name + " of " + this.citizen.city.kingdom.name + " CAN'T REGISTER ON " + campaign.campaignType.ToString() + " CAMPAIGN OF " + campaign.leader.name + " of " + campaign.leader.city.kingdom.name + " W/ TARGET " + campaign.targetCity.name + " " + campaign.warType.ToString() + " BECAUSE IN ACTION");
@@ -196,7 +243,7 @@ public class General : Role {
 									Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO RALLY POINT (" + campaign.targetCity.name + ")");
 								}
 								if (path != null && path.Count > 0) {
-									campaign.AddCandidate (this, path);
+									campaign.leader.campaignManager.AddCandidate (this, path);
 								}else{
 									Debug.Log (this.citizen.name + " CAN'T REGISTER ON OFFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO RALLY POINT (" + campaign.targetCity.name + ")");
 								}
@@ -224,7 +271,7 @@ public class General : Role {
 									}
 								}
 								if(path != null){
-									campaign.AddCandidate (this, path);
+									campaign.leader.campaignManager.AddCandidate (this, path);
 								}
 							}
 						}
@@ -240,7 +287,7 @@ public class General : Role {
 									}
 								}
 								if(path != null){
-									campaign.AddCandidate (this, path);
+									campaign.leader.campaignManager.AddCandidate (this, path);
 								}
 							}
 						}
@@ -258,7 +305,7 @@ public class General : Role {
 									}
 								}
 								if(path != null){
-									campaign.AddCandidate (this, path);
+									campaign.leader.campaignManager.AddCandidate (this, path);
 								}
 							}
 						}
@@ -286,7 +333,7 @@ public class General : Role {
 								}
 							}
 							if (path != null) {
-								campaign.AddCandidate (this, path);
+								campaign.leader.campaignManager.AddCandidate (this, path);
 							}else{
 								Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 							}
@@ -307,7 +354,7 @@ public class General : Role {
 								}
 							}
 							if (path != null) {
-								campaign.AddCandidate (this, path);
+								campaign.leader.campaignManager.AddCandidate (this, path);
 							}else{
 								Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 							}
@@ -331,7 +378,7 @@ public class General : Role {
 								}
 							}
 							if (path != null) {
-								campaign.AddCandidate (this, path);
+								campaign.leader.campaignManager.AddCandidate (this, path);
 							}else{
 								Debug.Log (this.citizen.name + " CAN'T REGISTER ON DEFENSE CAMPAIGN BECAUSE THERE'S NO PATH TO TARGET (" + campaign.targetCity.name + ")");
 							}
@@ -380,8 +427,10 @@ public class General : Role {
 		this.generalAvatar.transform.parent = this.location.transform;
 		this.generalAvatar.transform.localPosition = Vector3.zero;
 		this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
-		this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
-		this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
+		this.generalAvatar.GetComponent<GeneralObject> ().isRoaming = false;
+		this.generalAvatar.GetComponent<GeneralObject> ().isPreviousRoaming = false;
+//		this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
+//		this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
 	}
 //	internal void SearchForTarget(){
 //		Debug.Log (this.citizen.name + " instructed by " + this.warLeader.name + " is searching for " + this.target.name);
@@ -450,7 +499,8 @@ public class General : Role {
 
 	internal void GeneralDeath(){
 //		EventManager.Instance.onCitizenMove.RemoveListener (Move);
-		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
+		EventManager.Instance.onCheckGeneralEligibility.RemoveListener (CheckEligibility);
+//		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
 		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
 
 		//					((General)this.assignedRole) = null;
@@ -468,7 +518,8 @@ public class General : Role {
 	}
 	internal void UntrainGeneral(){
 //		EventManager.Instance.onCitizenMove.RemoveListener (Move);
-		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
+		EventManager.Instance.onCheckGeneralEligibility.RemoveListener (CheckEligibility);
+//		EventManager.Instance.onRegisterOnCampaign.RemoveListener (RegisterOnCampaign);
 		EventManager.Instance.onLookForLostArmies.RemoveListener (JoinArmyTo);
 
 		if (this.generalAvatar != null) {

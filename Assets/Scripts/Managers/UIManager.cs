@@ -83,33 +83,49 @@ public class UIManager : MonoBehaviour {
 	public GameObject citizenInfoNoSuccessorsGO;
 
 	[Space(10)] //City Info UI
-	public UILabel cityNameLbl;
-	public UILabel cityGovernorLbl;
-	public UILabel cityKingdomLbl;
-	public UILabel cityGoldLbl;
-	public UILabel cityStoneLbl;
-	public UILabel cityLumberLbl;
-	public UILabel cityManaStoneLbl;
-	public UILabel cityCobaltLbl;
-	public UILabel cityMithrilLbl;
-	public UILabel cityFoodLbl;
-	public UIGrid foodProducersGrid;
-	public UIGrid gatherersGrid;
-	public UIGrid minersGrid;
-	public UIGrid tradersGrid;
-	public UIGrid generalsGrid;
-	public UIGrid spiesGrid;
-	public UIGrid envoysGrid;
-	public UIGrid guardiansGrid;
-	public UIGrid untrainedGrid;
-	public UI2DSprite cityInfoCtizenPortraitBG;
-	public GameObject citizensBtn;
-	public GameObject cityInfoCitizensParent;
-	public GameObject cityInfoHistoryParent;
-	public UIGrid cityInfoHistoryGrid;
-	public GameObject cityInfoEventsParent;
-	public UIGrid cityInfoEventsGrid;
-	public GameObject noEventsGO;
+//	public UILabel cityNameLbl;
+//	public UILabel cityGovernorLbl;
+//	public UILabel cityKingdomLbl;
+//	public UILabel cityGoldLbl;
+//	public UILabel cityStoneLbl;
+//	public UILabel cityLumberLbl;
+//	public UILabel cityManaStoneLbl;
+//	public UILabel cityCobaltLbl;
+//	public UILabel cityMithrilLbl;
+//	public UILabel cityFoodLbl;
+//	public UIGrid foodProducersGrid;
+//	public UIGrid gatherersGrid;
+//	public UIGrid minersGrid;
+//	public UIGrid tradersGrid;
+//	public UIGrid generalsGrid;
+//	public UIGrid spiesGrid;
+//	public UIGrid envoysGrid;
+//	public UIGrid guardiansGrid;
+//	public UIGrid untrainedGrid;
+//	public UI2DSprite cityInfoCtizenPortraitBG;
+//	public GameObject citizensBtn;
+//	public GameObject cityInfoCitizensParent;
+//	public GameObject cityInfoHistoryParent;
+//	public UIGrid cityInfoHistoryGrid;
+//	public GameObject cityInfoEventsParent;
+//	public UIGrid cityInfoEventsGrid;
+//	public GameObject noEventsGO;
+
+	public UI2DSprite cityInfoPortrait;
+	public UILabel cityInfoCityNameLbl;
+	public CharacterPortrait cityInfoGovernorPortrait;
+	public UIGrid cityInfoCitizenGrid;
+	public UILabel cityInfoGoldLbl;
+	public UILabel cityInfoBasicLbl;
+	public UI2DSprite cityInfoBasicResource;
+	public GameObject cityInfoManaStoneIcon;
+	public GameObject cityInfoCobaltIcon;
+	public GameObject cityInfoMithrilIcon;
+	public GameObject cityInfoStoneIcon;
+	public GameObject cityInfoLumberIcon;
+	public Sprite stoneSprite;
+	public Sprite lumberSprite;
+
 
 	[Space(10)]
 	public GameObject kingdomSuccessionGO;
@@ -342,7 +358,9 @@ public class UIManager : MonoBehaviour {
 					if (currKingdom.id != currentlyShowingKingdom.id) {
 						GameObject kingdomGO = GameObject.Instantiate (kingdomFlagPrefab, this.transform) as GameObject;
 						kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
-						kingdomGO.GetComponent<KingdomFlagItem> ().SetKingdom (currKingdom);
+						kingdomGO.GetComponent<KingdomFlagItem>().SetKingdom (currKingdom);
+						kingdomGO.GetComponent<KingdomFlagItem> ().onHoverOver += currKingdom.HighlightAllOwnedTilesInKingdom;
+						kingdomGO.GetComponent<KingdomFlagItem> ().onHoverExit += currKingdom.UnHighlightAllOwnedTilesInKingdom;
 						kingdomGO.transform.localScale = Vector3.one;
 					}
 				}
@@ -353,7 +371,10 @@ public class UIManager : MonoBehaviour {
 	}
 
 	internal void SetKingdomAsActive(Kingdom kingdom){
-		currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+		currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom ();
+		if (currentlyShowingCity != null) {
+			currentlyShowingCity.HighlightAllOwnedTiles(204f/255f);
+		}
 		currentlyShowingKingdom = kingdom;
 		if (kingdomInfoGO.activeSelf) {
 			ShowKingdomInfo(currentlyShowingKingdom);
@@ -480,7 +501,7 @@ public class UIManager : MonoBehaviour {
 			relationshipsBtn.gameObject.SetActive(false);
 		}
 
-
+		HideCityInfo();
 		citizenInfoGO.SetActive (true);
 		this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
 	}
@@ -567,44 +588,131 @@ public class UIManager : MonoBehaviour {
 
 	public void ShowCurrentlyShowingCitizenCityInfo(){
 		ShowCityInfo (currentlyShowingCitizen.city, true);
+		CameraMove.Instance.CenterCameraOn (currentlyShowingCity.hexTile.gameObject);
 	}
 
 	public void ShowCityInfo(City cityToShow, bool showCitizens = false){
+		if (currentlyShowingCity != null) {
+			//unhighlight previously selected city
+			currentlyShowingCity.UnHighlightAllOwnedTiles ();
+		}
 		if(cityToShow == null){
 			return;
 		}
 		currentlyShowingCity = cityToShow;
-		cityNameLbl.text = cityToShow.name;
-		if (cityToShow.governor != null) {
-			cityGovernorLbl.text = cityToShow.governor.name;
-		}
-		cityKingdomLbl.text = cityToShow.kingdom.name;
-		cityGoldLbl.text = cityToShow.goldCount.ToString();
-		cityStoneLbl.text = cityToShow.stoneCount.ToString();
-		cityLumberLbl.text = cityToShow.lumberCount.ToString();
-		cityManaStoneLbl.text = cityToShow.manaStoneCount.ToString();
-		cityCobaltLbl.text = cityToShow.cobaltCount.ToString();
-		cityMithrilLbl.text = cityToShow.mithrilCount.ToString();
-		cityFoodLbl.text = "CITIZENS: " + cityToShow.citizens.Count + "/" + cityToShow.sustainability.ToString();
-		cityInfoCtizenPortraitBG.color = cityToShow.kingdom.kingdomColor;
 
-
-		if (cityInfoCitizensParent.activeSelf || showCitizens) {
-			ShowCitizens();
+		if (currentlyShowingKingdom != null) {
+			currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom ();
 		}
 
-		if (cityInfoEventsParent.activeSelf) {
-			ShowCityEvents();
+		//Show Basic City Info
+		cityInfoCityNameLbl.text = currentlyShowingCity.name;
+		cityInfoPortrait.color = currentlyShowingCity.kingdom.kingdomColor;
+
+		//Show Governor
+		cityInfoGovernorPortrait.SetCitizen (currentlyShowingCity.governor);
+
+		//Show Citizens
+		List<Transform> gridChildren = cityInfoCitizenGrid.GetChildList();
+		List<Citizen> citizensInCity = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR || x.role != ROLE.KING).ToList();
+
+		List<int> currentlyShowingCitizens = gridChildren.Select (x => x.GetComponent<CharacterPortrait>().citizen.id).ToList();
+		List<int> citizens = citizensInCity.Select(x => x.id).ToList();
+		if (citizens.Except (currentlyShowingCitizens).Union (currentlyShowingCitizens.Except (citizens)).ToList ().Count > 0) {
+			for (int i = 0; i < gridChildren.Count; i++) {
+				cityInfoCitizenGrid.RemoveChild(gridChildren[i]);
+				Destroy(gridChildren[i].gameObject);
+			}
+			for (int i = 0; i < citizensInCity.Count; i++) {
+				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, this.transform) as GameObject;
+				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensInCity [i]);
+				citizenGO.transform.localScale = Vector3.one;
+				cityInfoCitizenGrid.AddChild (citizenGO.transform);
+			}
+			StartCoroutine(RepositionGrid(cityInfoCitizenGrid));
 		}
 
-		if (cityInfoHistoryParent.activeSelf) {
-			ShowCityHistory();
+		//Show City Resources
+		//Gold
+		cityInfoGoldLbl.text = currentlyShowingCity.goldCount.ToString() + "/" + currentlyShowingCity.MAX_GOLD.ToString();
+
+		//Basic Resource
+		if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
+			cityInfoBasicResource.sprite2D = stoneSprite;
+			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.stoneCount.ToString();
+		} else if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+			cityInfoBasicResource.sprite2D = lumberSprite;
+			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.lumberCount.ToString();
 		}
 
+		//Additional Resources
+		if (currentlyShowingCity.manaStoneCount > 0) {
+			cityInfoManaStoneIcon.SetActive (true);
+		} else {
+			cityInfoManaStoneIcon.SetActive (false);
+		}
+
+		if (currentlyShowingCity.cobaltCount > 0) {
+			cityInfoCobaltIcon.SetActive (true);
+		} else {
+			cityInfoCobaltIcon.SetActive (false);
+		}
+
+		if (currentlyShowingCity.mithrilCount > 0) {
+			cityInfoMithrilIcon.SetActive (true);
+		} else {
+			cityInfoMithrilIcon.SetActive (false);
+		}
+
+		if (currentlyShowingCity.kingdom.basicResource != BASE_RESOURCE_TYPE.WOOD && currentlyShowingCity.lumberCount > 0) {
+			cityInfoLumberIcon.SetActive (true);
+		} else {
+			cityInfoLumberIcon.SetActive (false);
+		}
+
+		if (currentlyShowingCity.kingdom.basicResource != BASE_RESOURCE_TYPE.STONE && currentlyShowingCity.stoneCount > 0) {
+			cityInfoStoneIcon.SetActive (true);
+		} else {
+			cityInfoStoneIcon.SetActive (false);
+		}
+
+		currentlyShowingCity.HighlightAllOwnedTiles(204f / 255f);
+
+		citizenInfoGO.SetActive (false);
 		cityInfoGO.SetActive (true);
+
+
+//		cityNameLbl.text = cityToShow.name;
+//		if (cityToShow.governor != null) {
+//			cityGovernorLbl.text = cityToShow.governor.name;
+//		}
+//		cityKingdomLbl.text = cityToShow.kingdom.name;
+//		cityGoldLbl.text = cityToShow.goldCount.ToString();
+//		cityStoneLbl.text = cityToShow.stoneCount.ToString();
+//		cityLumberLbl.text = cityToShow.lumberCount.ToString();
+//		cityManaStoneLbl.text = cityToShow.manaStoneCount.ToString();
+//		cityCobaltLbl.text = cityToShow.cobaltCount.ToString();
+//		cityMithrilLbl.text = cityToShow.mithrilCount.ToString();
+//		cityFoodLbl.text = "CITIZENS: " + cityToShow.citizens.Count + "/" + cityToShow.sustainability.ToString();
+//		cityInfoCtizenPortraitBG.color = cityToShow.kingdom.kingdomColor;
+//
+//
+//		if (cityInfoCitizensParent.activeSelf || showCitizens) {
+//			ShowCitizens();
+//		}
+//
+//		if (cityInfoEventsParent.activeSelf) {
+//			ShowCityEvents();
+//		}
+//
+//		if (cityInfoHistoryParent.activeSelf) {
+//			ShowCityHistory();
+//		}
+//
+//		cityInfoGO.SetActive (true);
 	}
 
-	public void ShowCitizens(){
+//	public void ShowCitizens(){
 //		CharacterPortrait[] characters = cityInfoCitizensParent.GetComponentsInChildren<CharacterPortrait>();
 //		List<Citizen> citizensExcludingKingAndGovernor = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING).ToList();
 
@@ -613,243 +721,251 @@ public class UIManager : MonoBehaviour {
 //			Destroy (characters [i].gameObject);
 //		}
 		//Foodie
-		List<Transform> children = foodProducersGrid.GetChildList();
-		List<Citizen> citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.FOODIE);
-		List<Citizen> citizensOfTypeCurrentlyShowed = foodProducersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
-		List<Citizen> missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
-		if (missedOutCitizens.Count > 0) {
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children[i].gameObject);
-			}
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, foodProducersGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine (RepositionGrid (this.foodProducersGrid));
-		}
+//		List<Transform> children = foodProducersGrid.GetChildList();
+//		List<Citizen> citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.FOODIE);
+//		List<Citizen> citizensOfTypeCurrentlyShowed = foodProducersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+//		List<Citizen> missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+//		if (missedOutCitizens.Count > 0) {
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children[i].gameObject);
+//			}
+//			for (int i = 0; i < citizensConcerned.Count; i++) {
+//				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, foodProducersGrid.transform) as GameObject;
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine (RepositionGrid (this.foodProducersGrid));
+//		}
+//
+//		//Gatherer
+//		citizensConcerned.Clear ();
+//		children = gatherersGrid.GetChildList();
+//		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GATHERER);
+//		citizensOfTypeCurrentlyShowed = gatherersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+//		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+//		if (missedOutCitizens.Count > 0) {
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children [i].gameObject);
+//			}
+//			for (int i = 0; i < citizensConcerned.Count; i++) {
+//				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, gatherersGrid.transform) as GameObject;
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine (RepositionGrid (this.gatherersGrid));
+//		}
+//
+//		//Miner
+//		citizensConcerned.Clear ();
+//		children = minersGrid.GetChildList();
+//		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.MINER);
+//		citizensOfTypeCurrentlyShowed = minersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+//		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+//		if (missedOutCitizens.Count > 0) {
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children [i].gameObject);
+//			}
+//			for (int i = 0; i < citizensConcerned.Count; i++) {
+//				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, minersGrid.transform) as GameObject;
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine (RepositionGrid (this.minersGrid));
+//		}
+//
+//		//Trader
+//		citizensConcerned.Clear ();
+//		children = tradersGrid.GetChildList();
+//		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.TRADER);
+//		citizensOfTypeCurrentlyShowed = tradersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+//		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+//		if (missedOutCitizens.Count > 0) {
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children [i].gameObject);
+//			}
+//			for (int i = 0; i < citizensConcerned.Count; i++) {
+//				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, tradersGrid.transform) as GameObject;
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine (RepositionGrid (this.tradersGrid));
+//		}
+//
+//		//General
+//		citizensConcerned.Clear ();
+//		children = generalsGrid.GetChildList();
+//		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GENERAL);
+//		citizensOfTypeCurrentlyShowed = generalsGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+//		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+//		if (missedOutCitizens.Count > 0) {
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children [i].gameObject);
+//			}
+//			for (int i = 0; i < citizensConcerned.Count; i++) {
+//				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, generalsGrid.transform) as GameObject;
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine (RepositionGrid (this.generalsGrid));
+//		}
+//
+//		//Spy
+//		citizensConcerned.Clear ();
+//		children = spiesGrid.GetChildList();
+//		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.SPY);
+//		citizensOfTypeCurrentlyShowed = spiesGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+//		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+//		if (missedOutCitizens.Count > 0) {
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children [i].gameObject);
+//			}
+//			for (int i = 0; i < citizensConcerned.Count; i++) {
+//				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, spiesGrid.transform) as GameObject;
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine (RepositionGrid (this.spiesGrid));
+//		}
+//
+//		//Envoy
+//		citizensConcerned.Clear ();
+//		children = envoysGrid.GetChildList();
+//		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.ENVOY);
+//		citizensOfTypeCurrentlyShowed = envoysGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+//		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+//		if (missedOutCitizens.Count > 0) {
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children [i].gameObject);
+//			}
+//			for (int i = 0; i < citizensConcerned.Count; i++) {
+//				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, envoysGrid.transform) as GameObject;
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine (RepositionGrid (this.envoysGrid));
+//		}
+//
+//		//Guardian
+//		citizensConcerned.Clear ();
+//		children = guardiansGrid.GetChildList();
+//		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GUARDIAN);
+//		citizensOfTypeCurrentlyShowed = guardiansGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+//		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+//		if (missedOutCitizens.Count > 0) {
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children [i].gameObject);
+//			}
+//			for (int i = 0; i < citizensConcerned.Count; i++) {
+//				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, guardiansGrid.transform) as GameObject;
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine (RepositionGrid (this.guardiansGrid));
+//		}
+//
+//		//Untrained
+//		citizensConcerned.Clear ();
+//		children = untrainedGrid.GetChildList();
+//		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.UNTRAINED);
+//		citizensOfTypeCurrentlyShowed = untrainedGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
+//		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
+//		if (missedOutCitizens.Count > 0) {
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children [i].gameObject);
+//			}
+//			for (int i = 0; i < citizensConcerned.Count; i++) {
+//				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, untrainedGrid.transform) as GameObject;
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine (RepositionGrid (this.untrainedGrid));
+//		}
+//
+//		cityInfoHistoryParent.SetActive(false);
+//		cityInfoEventsParent.SetActive(false);
+//		cityInfoCitizensParent.SetActive(true);
+//	}
 
-		//Gatherer
-		citizensConcerned.Clear ();
-		children = gatherersGrid.GetChildList();
-		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GATHERER);
-		citizensOfTypeCurrentlyShowed = gatherersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
-		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
-		if (missedOutCitizens.Count > 0) {
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, gatherersGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine (RepositionGrid (this.gatherersGrid));
-		}
+//	public void ShowCityHistory(){
+//		List<History> cityHistory = currentlyShowingCity.cityHistory;
+//		List<History> cityHistoryCurrentlyShowing = cityInfoHistoryGrid.GetChildList().Select(x => x.GetComponent<HistoryPortrait>().history).ToList();
+//		int numberOfSameHistoryShowing = cityHistory.Intersect (cityHistoryCurrentlyShowing).Count();
+//
+//		if (numberOfSameHistoryShowing != cityHistory.Count) {
+//			List<Transform> historyShowing = cityInfoHistoryGrid.GetChildList();
+//			for (int i = 0; i < historyShowing.Count; i++) {
+//				Destroy (historyShowing[i].gameObject);
+//			}
+//
+//			for (int i = 0; i < currentlyShowingCity.cityHistory.Count; i++) {
+//				GameObject historyGO = GameObject.Instantiate (historyPortraitPrefab, cityInfoHistoryGrid.transform) as GameObject;
+//				historyGO.GetComponent<HistoryPortrait>().SetHistory(currentlyShowingCity.cityHistory[i]);
+//				historyGO.transform.localScale = Vector3.one;
+//				historyGO.transform.localPosition = Vector3.zero;
+//			}
+//			StartCoroutine (RepositionGrid (cityInfoHistoryGrid));
+//		}
+//
+//		cityInfoCitizensParent.SetActive(false);
+//		cityInfoEventsParent.SetActive(false);
+//		cityInfoHistoryParent.SetActive(true);
+//	}
 
-		//Miner
-		citizensConcerned.Clear ();
-		children = minersGrid.GetChildList();
-		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.MINER);
-		citizensOfTypeCurrentlyShowed = minersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
-		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
-		if (missedOutCitizens.Count > 0) {
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, minersGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine (RepositionGrid (this.minersGrid));
-		}
-
-		//Trader
-		citizensConcerned.Clear ();
-		children = tradersGrid.GetChildList();
-		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.TRADER);
-		citizensOfTypeCurrentlyShowed = tradersGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
-		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
-		if (missedOutCitizens.Count > 0) {
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, tradersGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine (RepositionGrid (this.tradersGrid));
-		}
-
-		//General
-		citizensConcerned.Clear ();
-		children = generalsGrid.GetChildList();
-		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GENERAL);
-		citizensOfTypeCurrentlyShowed = generalsGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
-		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
-		if (missedOutCitizens.Count > 0) {
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, generalsGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine (RepositionGrid (this.generalsGrid));
-		}
-
-		//Spy
-		citizensConcerned.Clear ();
-		children = spiesGrid.GetChildList();
-		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.SPY);
-		citizensOfTypeCurrentlyShowed = spiesGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
-		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
-		if (missedOutCitizens.Count > 0) {
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, spiesGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine (RepositionGrid (this.spiesGrid));
-		}
-
-		//Envoy
-		citizensConcerned.Clear ();
-		children = envoysGrid.GetChildList();
-		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.ENVOY);
-		citizensOfTypeCurrentlyShowed = envoysGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
-		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
-		if (missedOutCitizens.Count > 0) {
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, envoysGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine (RepositionGrid (this.envoysGrid));
-		}
-
-		//Guardian
-		citizensConcerned.Clear ();
-		children = guardiansGrid.GetChildList();
-		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.GUARDIAN);
-		citizensOfTypeCurrentlyShowed = guardiansGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
-		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
-		if (missedOutCitizens.Count > 0) {
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, guardiansGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine (RepositionGrid (this.guardiansGrid));
-		}
-
-		//Untrained
-		citizensConcerned.Clear ();
-		children = untrainedGrid.GetChildList();
-		citizensConcerned = currentlyShowingCity.GetCitizensWithRole (ROLE.UNTRAINED);
-		citizensOfTypeCurrentlyShowed = untrainedGrid.GetChildList().Select(x => x.GetComponent<CharacterPortrait>().citizen).ToList();
-		missedOutCitizens = citizensOfTypeCurrentlyShowed.Except(citizensConcerned).Union(citizensConcerned.Except(citizensOfTypeCurrentlyShowed)).ToList();
-		if (missedOutCitizens.Count > 0) {
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			for (int i = 0; i < citizensConcerned.Count; i++) {
-				GameObject citizenGO = GameObject.Instantiate (characterPortraitPrefab, untrainedGrid.transform) as GameObject;
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensConcerned [i]);
-				citizenGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine (RepositionGrid (this.untrainedGrid));
-		}
-
-		cityInfoHistoryParent.SetActive(false);
-		cityInfoEventsParent.SetActive(false);
-		cityInfoCitizensParent.SetActive(true);
-	}
-
-	public void ShowCityHistory(){
-		List<History> cityHistory = currentlyShowingCity.cityHistory;
-		List<History> cityHistoryCurrentlyShowing = cityInfoHistoryGrid.GetChildList().Select(x => x.GetComponent<HistoryPortrait>().history).ToList();
-		int numberOfSameHistoryShowing = cityHistory.Intersect (cityHistoryCurrentlyShowing).Count();
-
-		if (numberOfSameHistoryShowing != cityHistory.Count) {
-			List<Transform> historyShowing = cityInfoHistoryGrid.GetChildList();
-			for (int i = 0; i < historyShowing.Count; i++) {
-				Destroy (historyShowing[i].gameObject);
-			}
-
-			for (int i = 0; i < currentlyShowingCity.cityHistory.Count; i++) {
-				GameObject historyGO = GameObject.Instantiate (historyPortraitPrefab, cityInfoHistoryGrid.transform) as GameObject;
-				historyGO.GetComponent<HistoryPortrait>().SetHistory(currentlyShowingCity.cityHistory[i]);
-				historyGO.transform.localScale = Vector3.one;
-				historyGO.transform.localPosition = Vector3.zero;
-			}
-			StartCoroutine (RepositionGrid (cityInfoHistoryGrid));
-		}
-
-		cityInfoCitizensParent.SetActive(false);
-		cityInfoEventsParent.SetActive(false);
-		cityInfoHistoryParent.SetActive(true);
-	}
-
-	public void ShowCityEvents(){
-		List<GameEvent> eventsInCity = EventManager.Instance.GetAllEventsPerCity(currentlyShowingCity);
-		List<GameEvent> eventsCurrentlyShowing = cityInfoEventsGrid.GetChildList().Select(x => x.GetComponent<EventItem>().gameEvent).ToList();
-		int numberOfSameEventsShowing = eventsInCity.Intersect (eventsCurrentlyShowing).Count();
-
-		if (eventsInCity.Count > 0) {
-			noEventsGO.SetActive (false);
-		} else {
-			noEventsGO.SetActive (true);
-			List<Transform> eventsShowing = cityInfoEventsGrid.GetChildList();
-			for (int i = 0; i < eventsShowing.Count; i++) {
-				Destroy (eventsShowing[i].gameObject);
-			}
-		}
-
-		if (numberOfSameEventsShowing != eventsInCity.Count) {
-			List<Transform> eventsShowing = cityInfoEventsGrid.GetChildList();
-			for (int i = 0; i < eventsShowing.Count; i++) {
-				Destroy (eventsShowing[i].gameObject);
-			}
-
-			for (int i = 0; i < eventsInCity.Count; i++) {
-				GameObject eventGO = GameObject.Instantiate (gameEventPrefab, cityInfoEventsGrid.transform) as GameObject;
-				eventGO.GetComponent<EventItem>().SetEvent (eventsInCity[i]);
-				eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent(eventsInCity[i].eventType));
-				eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
-				eventGO.transform.localScale = Vector3.one;
-			}
-			StartCoroutine(RepositionGrid (cityInfoEventsGrid));
-		}
-
-		if (eventsInCity.Count > 0) {
-			noEventsGO.SetActive (false);
-		} else {
-			noEventsGO.SetActive (true);
-		}
-
-		cityInfoCitizensParent.SetActive(false);
-		cityInfoHistoryParent.SetActive(false);
-		cityInfoEventsParent.SetActive(true);
-	}
+//	public void ShowCityEvents(){
+//		List<GameEvent> eventsInCity = EventManager.Instance.GetAllEventsPerCity(currentlyShowingCity);
+//		List<GameEvent> eventsCurrentlyShowing = cityInfoEventsGrid.GetChildList().Select(x => x.GetComponent<EventItem>().gameEvent).ToList();
+//		int numberOfSameEventsShowing = eventsInCity.Intersect (eventsCurrentlyShowing).Count();
+//
+//		if (eventsInCity.Count > 0) {
+//			noEventsGO.SetActive (false);
+//		} else {
+//			noEventsGO.SetActive (true);
+//			List<Transform> eventsShowing = cityInfoEventsGrid.GetChildList();
+//			for (int i = 0; i < eventsShowing.Count; i++) {
+//				Destroy (eventsShowing[i].gameObject);
+//			}
+//		}
+//
+//		if (numberOfSameEventsShowing != eventsInCity.Count) {
+//			List<Transform> eventsShowing = cityInfoEventsGrid.GetChildList();
+//			for (int i = 0; i < eventsShowing.Count; i++) {
+//				Destroy (eventsShowing[i].gameObject);
+//			}
+//
+//			for (int i = 0; i < eventsInCity.Count; i++) {
+//				GameObject eventGO = GameObject.Instantiate (gameEventPrefab, cityInfoEventsGrid.transform) as GameObject;
+//				eventGO.GetComponent<EventItem>().SetEvent (eventsInCity[i]);
+//				eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent(eventsInCity[i].eventType));
+//				eventGO.GetComponent<EventItem> ().onClickEvent += ShowSpecificEvent;
+//				eventGO.transform.localScale = Vector3.one;
+//			}
+//			StartCoroutine(RepositionGrid (cityInfoEventsGrid));
+//		}
+//
+//		if (eventsInCity.Count > 0) {
+//			noEventsGO.SetActive (false);
+//		} else {
+//			noEventsGO.SetActive (true);
+//		}
+//
+//		cityInfoCitizensParent.SetActive(false);
+//		cityInfoHistoryParent.SetActive(false);
+//		cityInfoEventsParent.SetActive(true);
+//	}
 
 	public void HideCityInfo(){
+		//unhighlight previously selected city
+		if (currentlyShowingCity != null) {
+			currentlyShowingCity.UnHighlightAllOwnedTiles ();
+		}
+			
 		currentlyShowingCity = null;
-		cityInfoCitizensParent.SetActive(false);
-		cityInfoEventsParent.SetActive(false);
-		cityInfoHistoryParent.SetActive(false);
+		if (currentlyShowingKingdom != null) {
+			currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom ();
+		}
+//		cityInfoCitizensParent.SetActive(false);
+//		cityInfoEventsParent.SetActive(false);
+//		cityInfoHistoryParent.SetActive(false);
 		cityInfoGO.SetActive (false);
 	}
 		
