@@ -545,13 +545,19 @@ public class Kingdom{
 
 	internal void HighlightAllOwnedTilesInKingdom(){
 		for (int i = 0; i < this.cities.Count; i++) {
-			this.cities[i].HighlightAllOwnedTiles(127.5f / 255f);
+			if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities [i].id) {
+				continue;
+			}
+			this.cities [i].HighlightAllOwnedTiles (127.5f / 255f);
 		}
 	}
 
 	internal void UnHighlightAllOwnedTilesInKingdom(){
 		for (int i = 0; i < this.cities.Count; i++) {
-			this.cities[i].UnHighlightAllOwnedTiles();
+			if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities [i].id) {
+				continue;
+			}
+			this.cities [i].UnHighlightAllOwnedTiles ();
 		}
 	}
 
