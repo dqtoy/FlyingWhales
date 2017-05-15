@@ -42,11 +42,11 @@ public class City{
 	public bool isStarving;
 	public bool isDead;
 
+	protected const int _MAX_GOLD = 1000;
 
 	internal Dictionary<ROLE, int> citizenCreationTable;
 	internal List<HexTile> borderTiles;
 	protected List<ROLE> creatableRoles;
-
 
 
 	protected List<HexTile> unoccupiedOwnedTiles{
@@ -67,6 +67,10 @@ public class City{
 
 	public List<HexTile> adjacentHabitableTiles{
 		get{ return this.hexTile.connectedTiles.Where(x => !x.isOccupied).ToList();}
+	}
+
+	public int MAX_GOLD{
+		get{ return _MAX_GOLD; }
 	}
 
 	public City(HexTile hexTile, Kingdom kingdom){
@@ -1118,8 +1122,8 @@ public class City{
 
 	protected void ProduceResources(){
 		this.goldCount += this.goldProduction;
-		if (this.goldCount > 1000) {
-			this.goldCount = 1000;
+		if (this.goldCount > this.MAX_GOLD) {
+			this.goldCount = this.MAX_GOLD;
 		}
 	}
 

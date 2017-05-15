@@ -327,10 +327,23 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	void OnMouseExit(){
 		if (this.isHabitable && this.isOccupied) {
-			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
-				this.city.kingdom.UnHighlightAllOwnedTilesInKingdom();
-			} else {
-				this.city.kingdom.HighlightAllOwnedTilesInKingdom();
+			if (UIManager.Instance.currentlyShowingKingdom != null) {
+				//if there is currently showing kingdom, if this city is part of that kingdom remain higlighted, but less
+				if (UIManager.Instance.currentlyShowingKingdom.id == this.city.kingdom.id) {
+					this.city.kingdom.HighlightAllOwnedTilesInKingdom();
+					if (UIManager.Instance.currentlyShowingCity != null) {
+						if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
+							this.city.HighlightAllOwnedTiles (204f / 255f);
+						}
+					}
+				} else {
+					this.city.kingdom.UnHighlightAllOwnedTilesInKingdom ();
+					if (UIManager.Instance.currentlyShowingCity != null) {
+						if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
+							this.city.HighlightAllOwnedTiles (204f / 255f);
+						}
+					}
+				}
 			}
 		}
 	}
