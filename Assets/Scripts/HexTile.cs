@@ -153,11 +153,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         int specialChanceForBiome = 0;
 
         if (this.biomeType == BIOMES.GRASSLAND || this.biomeType == BIOMES.WOODLAND || this.biomeType == BIOMES.FOREST) {
-            specialChanceForBiome = 11;
-        } else if (this.biomeType == BIOMES.DESERT) {
-            specialChanceForBiome = 14;
-        } else if (this.biomeType == BIOMES.TUNDRA || this.biomeType == BIOMES.SNOW) {
             specialChanceForBiome = 7;
+        } else if (this.biomeType == BIOMES.DESERT) {
+            specialChanceForBiome = 9;
+        } else if (this.biomeType == BIOMES.TUNDRA || this.biomeType == BIOMES.SNOW) {
+            specialChanceForBiome = 5;
         }
 
 		if (specialChance < specialChanceForBiome) {
