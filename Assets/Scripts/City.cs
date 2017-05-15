@@ -1240,17 +1240,18 @@ public class City{
 		}
 		return total;
 	}
-	internal int GetTotalAttackerStrength(){
+	internal int GetTotalAttackerStrength(int nearest){
 		int total = 0;
-		List<General> hostiles = GetIncomingAttackers();
-		if(hostiles.Count > 0){
-			int nearest = hostiles.Min (x => x.daysBeforeArrival);
-			List<General> nearestHostiles = hostiles.Where(x => x.daysBeforeArrival == nearest).ToList();
-			for(int i = 0; i < nearestHostiles.Count; i++){
-				total += nearestHostiles[i].GetArmyHP ();
+		if(nearest != -2){
+			List<General> hostiles = GetIncomingAttackers().Where(x => x.daysBeforeArrival == nearest).ToList();
+			if(hostiles.Count > 0){
+				//			int nearest = hostiles.Min (x => x.daysBeforeArrival);
+				//			List<General> nearestHostiles = hostiles.Where(x => x.daysBeforeArrival == nearest).ToList();
+				for(int i = 0; i < hostiles.Count; i++){
+					total += hostiles[i].GetArmyHP ();
+				}
 			}
 		}
-
 		return total;	
 	}
 	internal List<General> GetAllGenerals(General attacker){

@@ -7,7 +7,7 @@ public class CampaignManager {
 	public Citizen leader;
 	public int campaignLimit;
 	public List<Campaign> activeCampaigns;
-	public List<Citizen> controlledGovernorsAndKings;
+	public List<CampaignCandidates> candidates;
 
 	public List<CityWar> intlWarCities;
 	public List<CityWar> civilWarCities;
@@ -18,6 +18,7 @@ public class CampaignManager {
 		this.leader = leader;
 		this.campaignLimit = leader.GetCampaignLimit ();
 		this.activeCampaigns = new List<Campaign>();
+		this.candidates = new List<CampaignCandidates> ();
 		this.intlWarCities = new List<CityWar>();
 		this.civilWarCities = new List<CityWar>();
 		this.successionWarCities = new List<CityWar>();
@@ -41,18 +42,20 @@ public class CampaignManager {
 						if(defenseCities.Count > 0){
 							int nearestArrival = -2;
 							City selectedCity = null;
-							List<City> priorityDefense = defenseCities.Where (x => x.GetIncomingAttackers ().Count > 0).OrderBy(x => nearestArrival = x.GetIncomingAttackers().Min(y => y.daysBeforeArrival)).ToList();
+							List<City> priorityDefense = defenseCities.Where (x => x.GetIncomingAttackers ().Count > 0).ToList();
 							if(priorityDefense.Count > 0){
-								selectedCity = priorityDefense [0];
+								priorityDefense = priorityDefense.OrderBy (x => nearestArrival = x.GetIncomingAttackers ().Min (y => y.daysBeforeArrival)).ToList ();
+								selectedCity = GetCityToDefend(priorityDefense, nearestArrival);
 							}else{
 								selectedCity = defenseCities [UnityEngine.Random.Range (0, defenseCities.Count)];
 							}
 							//						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.assignedCampaign.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
 							if(selectedCity != null){
-								int neededArmy = selectedCity.GetTotalAttackerStrength ();
+								int neededArmy = selectedCity.GetTotalAttackerStrength (nearestArrival);
 								if(neededArmy <= 0){
 									neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
 								}
+								UpdateCandidates (selectedCity.hexTile);
 								newCampaign = new Campaign (this.leader, selectedCity, campaignType, WAR_TYPE.NONE, neededArmy, nearestArrival + 1);
 
 								this.activeCampaigns.Add (newCampaign);
@@ -68,16 +71,22 @@ public class CampaignManager {
 						City target = null;
 						GetWarAndTarget (intlWarCities, civilWarCities, successionWarCities, ref warType, ref target);
 
-						int neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
-						newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
-						newCampaign.rallyPoint = GetRallyPoint (newCampaign, this.leader.city);
-						if(newCampaign.rallyPoint == null){
-							Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
-							newCampaign = null;
+						if(target != null){
+							int neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
+							HexTile rallyPoint = GetRallyPoint (target, this.leader.city);
+							if(rallyPoint != null){
+								UpdateCandidates (rallyPoint);
+								newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
+								newCampaign.rallyPoint = rallyPoint;
+								this.activeCampaigns.Add (newCampaign);
+								this.MakeCityActive (newCampaign);
+							}else{
+								Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
+							}
 						}else{
-							this.activeCampaigns.Add (newCampaign);
-							this.MakeCityActive (newCampaign);
+							Debug.Log (this.leader.name + " NO TARGET!");
 						}
+
 
 //						for (int i = 0; i < this.leader.city.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
 //							if(this.leader.city.kingdom.relationshipsWithOtherKingdoms[i].isAtWar && this.leader.city.kingdom.relationshipsWithOtherKingdoms[i].isAdjacent){
@@ -91,18 +100,20 @@ public class CampaignManager {
 					if(defenseCities.Count > 0){
 						int nearestArrival = -2;
 						City selectedCity = null;
-						List<City> priorityDefense = defenseCities.Where (x => x.GetIncomingAttackers ().Count > 0).OrderBy(x => nearestArrival = x.GetIncomingAttackers().Min(y => y.daysBeforeArrival)).ToList();
+						List<City> priorityDefense = defenseCities.Where (x => x.GetIncomingAttackers ().Count > 0).ToList();
 						if(priorityDefense.Count > 0){
-							selectedCity = priorityDefense [0];
+							priorityDefense = priorityDefense.OrderBy (x => nearestArrival = x.GetIncomingAttackers ().Min (y => y.daysBeforeArrival)).ToList ();
+							selectedCity = GetCityToDefend(priorityDefense, nearestArrival);
 						}else{
 							selectedCity = defenseCities [UnityEngine.Random.Range (0, defenseCities.Count)];
 						}
 //						defenseCities = defenseCities.OrderBy(x => x.incomingGenerals.Where(y => y.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && y.assignedCampaign.targetCity.id == x.id).Min(y => (int?) y.daysBeforeArrival) ?? (GridMap.Instance.height*GridMap.Instance.width)).ToList();
 						if(selectedCity != null){
-							int neededArmy = selectedCity.GetTotalAttackerStrength ();
+							int neededArmy = selectedCity.GetTotalAttackerStrength (nearestArrival);
 							if(neededArmy <= 0){
 								neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
 							}
+							UpdateCandidates (selectedCity.hexTile);
 							newCampaign = new Campaign (this.leader, selectedCity, campaignType, WAR_TYPE.NONE, neededArmy, nearestArrival + 1);
 
 							this.activeCampaigns.Add (newCampaign);
@@ -124,24 +135,28 @@ public class CampaignManager {
 							City target = null;
 							GetWarAndTarget (intlWarCities, civilWarCities, successionWarCities, ref warType, ref target);
 
-							int neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
-							newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
-							newCampaign.rallyPoint = GetRallyPoint (newCampaign, this.leader.city);
-							if(newCampaign.rallyPoint == null){
-								Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
-								newCampaign = null;
+							if(target != null){
+								int neededArmy = (int)(this.defenseWarCities.Sum (x => x.city.GetCityArmyStrength ()) * 0.25f);
+								HexTile rallyPoint = GetRallyPoint (target, this.leader.city);
+								if(rallyPoint != null){
+									UpdateCandidates (rallyPoint);
+									newCampaign = new Campaign (this.leader, target, campaignType, warType, neededArmy);
+									newCampaign.rallyPoint = rallyPoint;
+									this.activeCampaigns.Add (newCampaign);
+									this.MakeCityActive (newCampaign);
+								}else{
+									Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
+								}
 							}else{
-								this.activeCampaigns.Add (newCampaign);
-								this.MakeCityActive (newCampaign);
+								Debug.Log (this.leader.name + " NO TARGET!");
 							}
 						}
 					}
 				}
 				if(newCampaign != null){
 					Debug.Log ("Created Campaign " + newCampaign.campaignType.ToString () + " " + newCampaign.targetCity.name);
-					newCampaign.candidates.Clear ();
-					EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
-					newCampaign.RegisterGenerals ();
+//					EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
+					newCampaign.RegisterGenerals (this.candidates);
 //					GameManager.Instance.StartCoroutine(AssignGeneralsOnCampaign (newCampaign));
 				}else{
 					//Create Ghost Campaign
@@ -150,15 +165,65 @@ public class CampaignManager {
 					Debug.Log ("Created Ghost Campaign " + newCampaign.campaignType.ToString ());
 
 					this.activeCampaigns.Add (newCampaign);
+					this.MakeCityActive (newCampaign);
 				}
 			}
 
 			CreateCampaign ();
 		}
 	}
+	private void UpdateCandidates(HexTile targetLocation){
+		this.candidates.Clear ();
+		EventManager.Instance.onCheckGeneralEligibility.Invoke (this.leader, targetLocation);
+	}
+	private City GetCityToDefend(List<City> cityPool, int nearest){
+		List<City> citiesThatCanBeDefended = new List<City> ();
+		int totalStrength = 0;
+		int totalAttackerStrength = 0;
+		for(int i = 0; i < cityPool.Count; i++){
+			this.candidates.Clear ();
+			EventManager.Instance.onCheckGeneralEligibility.Invoke (this.leader, cityPool[i].hexTile);
+			List<General> attackers = cityPool [i].GetIncomingAttackers ();
+			totalAttackerStrength = 0;
+			for (int j = 0; j < attackers.Count; j++) {
+				if(attackers[i].daysBeforeArrival == nearest){
+					totalAttackerStrength += attackers [i].GetArmyHP ();
+				}
+			}
+
+			totalStrength = 0;
+			for (int j = 0; j < this.candidates.Count; j++) {
+				if(this.candidates[i].path.Count <= nearest){
+					if(totalStrength < totalAttackerStrength){
+						totalStrength += this.candidates [i].general.GetArmyHP ();
+					}else{
+						break;
+					}
+				}else{
+					if(this.candidates[i].general.location == cityPool[i].hexTile){
+						if(totalStrength < totalAttackerStrength){
+							totalStrength += this.candidates [i].general.GetArmyHP ();
+						}else{
+							break;
+						}
+					}
+				}
+			}
+
+			if(totalStrength >= totalAttackerStrength){
+				citiesThatCanBeDefended.Add (cityPool [i]);
+			}
+		}
+
+		if(citiesThatCanBeDefended.Count > 0){
+			return citiesThatCanBeDefended [UnityEngine.Random.Range (0, citiesThatCanBeDefended.Count)];
+		}else{
+			return cityPool[UnityEngine.Random.Range(0, cityPool.Count)];
+		}
+	}
 	private IEnumerator AssignGeneralsOnCampaign(Campaign newCampaign){
 		yield return null;
-		newCampaign.RegisterGenerals ();
+		newCampaign.RegisterGenerals (this.candidates);
 	}
 	internal bool SearchForSuccessionWarCities(City city){
 		for(int i = 0; i < this.successionWarCities.Count; i++){
@@ -315,8 +380,8 @@ public class CampaignManager {
 
 //		chosenCampaign.registeredGenerals.Remove (general);
 	}
-	internal HexTile GetRallyPoint(Campaign campaign, City sourceCity){
-		HexTile nearestHextile = GetHextile(campaign.targetCity, sourceCity);
+	internal HexTile GetRallyPoint(City targetCity, City sourceCity){
+		HexTile nearestHextile = GetHextile(targetCity, sourceCity);
 		if(nearestHextile != null){
 			return nearestHextile;
 		}
@@ -326,7 +391,7 @@ public class CampaignManager {
 		if(targetCity == null){
 			return null;
 		}
-		List<HexTile> tilesInRange = targetCity.hexTile.GetTilesInRange (5).Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable).ToList();
+		List<HexTile> tilesInRange = targetCity.hexTile.GetTilesInRange (5).Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable && x.HasCombatPathTo(targetCity.hexTile)).ToList();
 		if(tilesInRange.Count > 0){
 			HexTile nearestTile = null;
 			float nearestDistance = 0f;
@@ -541,30 +606,33 @@ public class CampaignManager {
 			this.defenseWarCities.Remove (cityWar);
 		}
 	}
-	internal int GetGeneralCountByPercentage(float percent){
-		int totalGenerals = 0;
-		for(int i = 0; i < this.controlledGovernorsAndKings.Count; i++){
-			if(this.controlledGovernorsAndKings[i].isGovernor){
-				for(int j = 0; j < this.controlledGovernorsAndKings[i].city.citizens.Count; j++){
-					if(this.controlledGovernorsAndKings[i].city.citizens[j].role == ROLE.GENERAL){
-						totalGenerals += 1;
-					}
-				}
-			}
-			if (this.controlledGovernorsAndKings [i].isKing) {
-				for(int j = 0; j < this.controlledGovernorsAndKings[i].city.kingdom.cities.Count; j++){
-					for(int k = 0; k < this.controlledGovernorsAndKings[i].city.kingdom.cities[j].citizens.Count; k++){
-						if (this.controlledGovernorsAndKings [i].city.kingdom.cities [j].citizens [k].role == ROLE.GENERAL) {
-							totalGenerals += 1;
-						}
-					}
-				}
-			}
-		}
-		float percentage = (percent / 100f) * totalGenerals;
-
-		return (int)percentage;
+	internal void AddCandidate(General general, List<HexTile> path){
+		this.candidates.Add (new CampaignCandidates (general, path));
 	}
+//	internal int GetGeneralCountByPercentage(float percent){
+//		int totalGenerals = 0;
+//		for(int i = 0; i < this.controlledGovernorsAndKings.Count; i++){
+//			if(this.controlledGovernorsAndKings[i].isGovernor){
+//				for(int j = 0; j < this.controlledGovernorsAndKings[i].city.citizens.Count; j++){
+//					if(this.controlledGovernorsAndKings[i].city.citizens[j].role == ROLE.GENERAL){
+//						totalGenerals += 1;
+//					}
+//				}
+//			}
+//			if (this.controlledGovernorsAndKings [i].isKing) {
+//				for(int j = 0; j < this.controlledGovernorsAndKings[i].city.kingdom.cities.Count; j++){
+//					for(int k = 0; k < this.controlledGovernorsAndKings[i].city.kingdom.cities[j].citizens.Count; k++){
+//						if (this.controlledGovernorsAndKings [i].city.kingdom.cities [j].citizens [k].role == ROLE.GENERAL) {
+//							totalGenerals += 1;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		float percentage = (percent / 100f) * totalGenerals;
+//
+//		return (int)percentage;
+//	}
 
 //	internal void GeneralHasArrived(General general){
 //		if (general.generalAvatar != null) {

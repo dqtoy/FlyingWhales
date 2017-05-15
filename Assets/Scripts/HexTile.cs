@@ -347,4 +347,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 	}
+
+	internal bool HasCombatPathTo(HexTile target){
+		List<HexTile> path = PathGenerator.Instance.GetPath (this, target, PATHFINDING_MODE.COMBAT);
+		if(path != null){
+			return true;
+		}
+		return false;
+	}
 }

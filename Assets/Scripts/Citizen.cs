@@ -476,9 +476,7 @@ public class Citizen {
 		//		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
 		//		RoyaltyEventDelegate.onMassChangeLoyalty -= MassChangeLoyalty;
 		//		PoliticsPrototypeManager.Instance.turnEnded -= TurnActions;
-		for(int i = 0; i < this.campaignManager.activeCampaigns.Count; i++){
-			this.campaignManager.CampaignDone (this.campaignManager.activeCampaigns [i], false);
-		}
+
 		this.isHeir = false;
 		if (this.id == this.city.kingdom.king.id) {
 			//ASSIGN NEW LORD, SUCCESSION
@@ -559,6 +557,9 @@ public class Citizen {
 				this.RemoveSuccessionAndCivilWars ();
 			}
 		}else{
+			for(int i = 0; i < this.campaignManager.activeCampaigns.Count; i++){
+				this.campaignManager.CampaignDone (this.campaignManager.activeCampaigns [i], false);
+			}
 			if(this.city.governor.id == this.id){
 				this.city.AssignNewGovernor ();
 			}
