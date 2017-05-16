@@ -166,6 +166,16 @@ public enum MISC_TRAIT{
 	ACCIDENT_PRONE,
 }
 
+public enum TRAIT{
+	NONE,
+	HONEST,
+	SCHEMING,
+	WARMONGER,
+	PACIFIST,
+	SMART,
+	STUPID
+}
+
 public enum CAMPAIGN{
 	NONE,
 	OFFENSE,

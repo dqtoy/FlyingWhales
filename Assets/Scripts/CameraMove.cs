@@ -39,13 +39,15 @@ public class CameraMove : MonoBehaviour {
 			Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
 		}
 
-		float fov = Camera.main.orthographicSize;
-		fov += Input.GetAxis("Mouse ScrollWheel") * (sensitivity * -1f);
-		fov = Mathf.Clamp(fov, minFov, maxFov);
-		Camera.main.orthographicSize = fov;
-		eventIconCamera.orthographicSize = fov;
-		resourceIconCamera.orthographicSize = fov;
-		generalCamera.orthographicSize = fov;
+		if (!UIManager.Instance.IsMouseOnUI ()) {
+			float fov = Camera.main.orthographicSize;
+			fov += Input.GetAxis ("Mouse ScrollWheel") * (sensitivity * -1f);
+			fov = Mathf.Clamp (fov, minFov, maxFov);
+			Camera.main.orthographicSize = fov;
+			eventIconCamera.orthographicSize = fov;
+			resourceIconCamera.orthographicSize = fov;
+			generalCamera.orthographicSize = fov;
+		}
 
 //		transform.position = new Vector3(
 //			Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
