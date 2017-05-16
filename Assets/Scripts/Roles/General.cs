@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+//[System.Serializable]
 public class General : Role {
 //	public City targetCity;
 	public HexTile location;
@@ -112,8 +113,8 @@ public class General : Role {
 //				}
 				this.generalAvatar.transform.parent = this.location.transform;
 				this.generalAvatar.transform.localPosition = Vector3.zero;
-				this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
-				this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
+//				this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
+//				this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
 
 				Debug.Log (this.citizen.name + " IS GOING HOME!");
 			}
@@ -426,8 +427,10 @@ public class General : Role {
 		this.generalAvatar.transform.parent = this.location.transform;
 		this.generalAvatar.transform.localPosition = Vector3.zero;
 		this.generalAvatar.GetComponent<GeneralObject> ().isIdle = false;
-		this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
-		this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
+		this.generalAvatar.GetComponent<GeneralObject> ().isRoaming = false;
+		this.generalAvatar.GetComponent<GeneralObject> ().isPreviousRoaming = false;
+//		this.generalAvatar.GetComponent<GeneralObject> ().path.Clear ();
+//		this.generalAvatar.GetComponent<GeneralObject> ().path = new List<HexTile>(path);
 	}
 //	internal void SearchForTarget(){
 //		Debug.Log (this.citizen.name + " instructed by " + this.warLeader.name + " is searching for " + this.target.name);

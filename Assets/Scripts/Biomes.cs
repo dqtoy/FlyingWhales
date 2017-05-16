@@ -122,7 +122,7 @@ public class Biomes : MonoBehaviour {
 //			AssignHexTileToList (currentHexTile);
 			switch(currentHexTile.biomeType){
 			case BIOMES.SNOW:
-				currentHexTile.movementDays = 1;
+				currentHexTile.movementDays = 3;
 				Sprite snowSpriteToUse = snowTiles [Random.Range (0, snowTiles.Length)];
 				currentHexTile.SetTileSprites (snowSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
@@ -131,7 +131,7 @@ public class Biomes : MonoBehaviour {
 				}
 				break;
 			case BIOMES.TUNDRA:
-				currentHexTile.movementDays = 1;
+				currentHexTile.movementDays = 2;
 				Sprite tundraSpriteToUse = tundraTiles [Random.Range (0, tundraTiles.Length)];
 				currentHexTile.SetTileSprites (tundraSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
@@ -140,7 +140,7 @@ public class Biomes : MonoBehaviour {
 				}
 				break;
 			case BIOMES.DESERT:
-				currentHexTile.movementDays = 1;
+				currentHexTile.movementDays = 4;
 				Sprite desertSpriteToUse = desertTiles [Random.Range (0, desertTiles.Length)];
 				currentHexTile.SetTileSprites (desertSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
@@ -149,7 +149,7 @@ public class Biomes : MonoBehaviour {
 				}
 				break;
 			case BIOMES.GRASSLAND:
-				currentHexTile.movementDays = 1;
+				currentHexTile.movementDays = 2;
 				Sprite grasslandSpriteToUse = grasslandTiles [Random.Range (0, grasslandTiles.Length)];
 				currentHexTile.SetTileSprites (grasslandSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
@@ -158,7 +158,7 @@ public class Biomes : MonoBehaviour {
 				}
 				break;
 			case BIOMES.WOODLAND:
-				currentHexTile.movementDays = 1;
+				currentHexTile.movementDays = 3;
 				Sprite woodlandSpriteToUse = woodlandTiles [Random.Range (0, woodlandTiles.Length)];
 				currentHexTile.SetTileSprites (woodlandSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
@@ -167,7 +167,7 @@ public class Biomes : MonoBehaviour {
 				}
 				break;
 			case BIOMES.FOREST:
-				currentHexTile.movementDays = 1;
+				currentHexTile.movementDays = 4;
 				Sprite forestSpriteToUse = forestTiles [Random.Range (0, forestTiles.Length)];
 				currentHexTile.SetTileSprites (forestSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
@@ -176,7 +176,9 @@ public class Biomes : MonoBehaviour {
 				}
 				break;
 			}
-
+			if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+				currentHexTile.movementDays = 5;
+			}
 
 		}
 		GenerateBareBiome();
@@ -304,7 +306,7 @@ public class Biomes : MonoBehaviour {
 			if(elevationType == ELEVATION.WATER){
 				if(moisture <= 0.2f){
 					
-					currentHexTile.movementDays = 1;
+					currentHexTile.movementDays = 2;
 					currentHexTile.biomeType = BIOMES.BARE;
 					Sprite bareSpriteToUse = bareTiles [Random.Range (0, bareTiles.Length)];
 					currentHexTile.SetTileSprites (bareSpriteToUse);

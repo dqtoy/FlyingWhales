@@ -901,6 +901,7 @@ public class City{
 //	}
 
 	internal void PurchaseTile(HexTile tileToBuy){
+		tileToBuy.movementDays = 2;
 		tileToBuy.isOccupied = true;
 		tileToBuy.isOccupiedByCityID = this.id;
 		this.ownedTiles.Add(tileToBuy);
