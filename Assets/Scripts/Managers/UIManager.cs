@@ -629,7 +629,7 @@ public class UIManager : MonoBehaviour {
 
 		//Show Citizens
 		List<Transform> gridChildren = cityInfoCitizenGrid.GetChildList();
-		List<Citizen> citizensInCity = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING).ToList();
+		List<Citizen> citizensInCity = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING && x.role != ROLE.UNTRAINED).ToList();
 
 		List<int> currentlyShowingCitizens = gridChildren.Select (x => x.GetComponent<CharacterPortrait>().citizen.id).ToList();
 		List<int> citizens = citizensInCity.Select(x => x.id).ToList();
@@ -1327,7 +1327,7 @@ public class UIManager : MonoBehaviour {
 			kingGO.transform.localScale = new Vector3(1.3f, 1.3f, 0);
 			kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (currentlyShowingCitizen.relationshipKings [i], 
 				currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
-			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
+//			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
 		}
 		StartCoroutine(RepositionGrid(kingRelationshipsGrid));
 		StartCoroutine(RepositionScrollView(kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>()));
