@@ -8,6 +8,7 @@ public class GeneralObject : MonoBehaviour {
 	public General general;
 	public PandaBehaviour pandaBehaviour;
 	public TextMesh textMesh;
+	public Animator generalAnimator;
 	public SpriteRenderer kingdomIndicator;
 	public GameObject deathIcon;
 	public List<HexTile> path;
@@ -24,17 +25,17 @@ public class GeneralObject : MonoBehaviour {
 	Vector3 targetPosition = Vector3.zero;
 //	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
 
-//	void Update(){
-//		if(isMoving){
-//			if(this.targetPosition != null){
-//				float step = speed * Time.deltaTime;
-//				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
-//				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
-//					
-//				}
-//			}
-//		}
-//	}
+	void Update(){
+		if(this.isMoving){
+			if(this.targetPosition != null){
+				float step = speed * Time.deltaTime;
+				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
+				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
+					StopMoving ();
+				}
+			}
+		}
+	}
 	internal void Init(){
 		ResetValues ();
 //		this.GetComponent<BoxCollider2D>().enabled = true;
@@ -71,13 +72,29 @@ public class GeneralObject : MonoBehaviour {
 	}
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
 //		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
-		this.gameObject.transform.parent = targetTile.transform;
-		this.transform.localPosition = Vector3.zero;
+		if(startTile.transform.position.x <= targetTile.transform.position.x){
+			if(this.generalAnimator.gameObject.transform.localScale.x > 0){
+				this.generalAnimator.gameObject.transform.localScale = new Vector3(this.generalAnimator.gameObject.transform.localScale.x * -1, this.generalAnimator.gameObject.transform.localScale.y, this.generalAnimator.gameObject.transform.localScale.z);
+			}
+		}else{
+			if(this.generalAnimator.gameObject.transform.localScale.x < 0){
+				this.generalAnimator.gameObject.transform.localScale = new Vector3(this.generalAnimator.gameObject.transform.localScale.x * -1, this.generalAnimator.gameObject.transform.localScale.y, this.generalAnimator.gameObject.transform.localScale.z);
+			}
+		}
+		if(startTile.transform.position.y <= targetTile.transform.position.y){
+			this.generalAnimator.Play("Walk_Up");
+		}else{
+			this.generalAnimator.Play("Walk");
+		}
+
+		this.targetPosition = targetTile.transform.position;
 		this.UpdateUI ();
+		this.isMoving = true;
 	}
 	private void StopMoving(){
+		this.generalAnimator.Play("Idle");
 		this.isMoving = false;
-//		this.targetPosition = null;
+		this.targetPosition = Vector3.zero;
 	}
 	internal void UpdateUI(){
 		if(this.general != null){
@@ -90,7 +107,7 @@ public class GeneralObject : MonoBehaviour {
 			this.general.inAction = false;
 			if(!this.general.citizen.isDead){
 				if(this.general.citizen.city.incomingGenerals.Count > 0){
-					if(this.general.citizen.city.incomingGenerals.Where(x => x.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && x.assignedCampaign.targetCity.id == this.general.citizen.city.id).ToList().Count > 0){
+					if(this.general.citizen.city.incomingGenerals.Where(x => x.assignedCampaign != null && x.assignedCampaign.campaignType == CAMPAIGN.OFFENSE && x.assignedCampaign.targetCity.id == this.general.citizen.city.id).ToList().Count > 0){
 						this.isRoaming = false;
 					}else{
 						this.isRoaming = true;
@@ -108,14 +125,13 @@ public class GeneralObject : MonoBehaviour {
 					this.isPreviousRoaming = true;
 					this.path.Clear ();
 				}
-				Roam ();
 			}else{
 				if(this.isPreviousRoaming){
 					this.isPreviousRoaming = false;
 					this.path.Clear ();
 				}
-				GoHome();
 			}
+			RoamOrGoHome (this.isRoaming);
 //			if(this.general.isHome){
 //				if(!this.isMoving){
 //					this.isMoving = true;
@@ -396,13 +412,15 @@ public class GeneralObject : MonoBehaviour {
 			this.general.inAction = false;
 			this.isIdle = true;
 			this.isMoving = false;
+			if(!this.generalAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")){
+				this.generalAnimator.Play ("Idle");
+			}
 		}
 	}
 	private void Move(){
 		if(this.general.targetLocation != null){
 			if(this.general.roads != null){
 				if(this.general.roads.Count > 0){
-					this.general.daysBeforeMoving -= 1;
 					if(this.general.daysBeforeMoving <= 0){
 						this.general.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.general.location, this.general.roads [0]);
 						this.general.daysBeforeMoving = this.general.roads [0].movementDays;
@@ -414,6 +432,7 @@ public class GeneralObject : MonoBehaviour {
 						this.general.daysBeforeArrival -= 1;
 
 					}
+					this.general.daysBeforeMoving -= 1;
 				}
 			}
 		}
@@ -433,7 +452,7 @@ public class GeneralObject : MonoBehaviour {
 
 		} 
 	}
-	private void RoamTo(){
+	private void Roam(){
 		if(this.general.citizen.city.ownedTiles.Count > 0){
 			HexTile roamTile = this.general.citizen.city.ownedTiles [UnityEngine.Random.Range (0, this.general.citizen.city.ownedTiles.Count)];
 			this.path = PathGenerator.Instance.GetPath (this.general.location, roamTile, PATHFINDING_MODE.COMBAT);
@@ -441,41 +460,52 @@ public class GeneralObject : MonoBehaviour {
 
 		}
 	}
-	private void Roam(){
+	private void RoamOrGoHome(bool isRoam){
 		if(this.path.Count <= 0 || this.path == null){
-			RoamTo ();
+			if(isRoam){
+				Roam ();
+			}else{
+				GoHome ();
+			}
+
 		}
 		if(this.path != null && this.path.Count > 0){
-			this.MakeCitizenMove (this.general.location, this.path [0]);
-			this.general.location = this.path[0];
-			this.path.RemoveAt (0);
-			if(this.general.location.city != null){
-				if(this.general.location.city.id == this.general.citizen.city.id){
-					this.general.citizen.city.LookForLostArmy (this.general);
+			if(this.general.daysBeforeMoving <= 0){
+				this.MakeCitizenMove (this.general.location, this.path [0]);
+				this.general.daysBeforeMoving = this.path [0].movementDays;
+				this.general.location = this.path[0];
+				this.path.RemoveAt (0);
+				if(this.general.location.city != null){
+					if(this.general.location.city.id == this.general.citizen.city.id){
+						this.general.citizen.city.LookForLostArmy (this.general);
+					}
 				}
 			}
+			this.general.daysBeforeMoving -= 1;
 		}
 //		this.UpdateUI ();
 	}
 	private void GoHome(){
-		if(this.general.location != this.general.citizen.city.hexTile){
-			if(this.path.Count <= 0 || this.path == null){
-				this.path = PathGenerator.Instance.GetPath (this.general.location, this.general.citizen.city.hexTile, PATHFINDING_MODE.COMBAT);
-			}
-			if(this.path != null && this.path.Count > 0){
-				this.MakeCitizenMove (this.general.location, this.path [0]);
-				this.general.location = this.path[0];
-				this.path.RemoveAt (0);
-				if(!this.general.citizen.isDead){
-					if(this.general.location.city != null){
-						if(this.general.location.city.id == this.general.citizen.city.id){
-							this.general.citizen.city.LookForLostArmy (this.general);
-						}
-					}
-				}
-
-			}
+		if (this.general.location != this.general.citizen.city.hexTile) {
+			this.path = PathGenerator.Instance.GetPath (this.general.location, this.general.citizen.city.hexTile, PATHFINDING_MODE.COMBAT);
 		}
+//			if (this.path.Count <= 0 || this.path == null) {
+//			}
+		
+//			if(this.path != null && this.path.Count > 0){
+//				this.MakeCitizenMove (this.general.location, this.path [0]);
+//				this.general.location = this.path[0];
+//				this.path.RemoveAt (0);
+//				if(!this.general.citizen.isDead){
+//					if(this.general.location.city != null){
+//						if(this.general.location.city.id == this.general.citizen.city.id){
+//							this.general.citizen.city.LookForLostArmy (this.general);
+//						}
+//					}
+//				}
+//
+//			}
+//		}
 
 //		this.UpdateUI ();
 	}
