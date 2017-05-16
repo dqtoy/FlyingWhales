@@ -31,21 +31,21 @@ public class Militarization : GameEvent {
 			return;
 		}
 		this.remainingWeeks -= 1;
-		int envoyChance = Random.Range (0, 100);
-		if (envoyChance < 20) {
-			//Send envoy for Join War
-			List<Citizen> envoys = this.startedByKingdom.GetAllCitizensOfType(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
-			List<RelationshipKings> friends = this.startedBy.friends.Where(x => x.king.city.kingdom.IsKingdomAdjacentTo(invasionPlanThatTriggeredEvent.targetKingdom)).ToList();
-			if (envoys.Count > 0 && friends.Count > 0) {
-				Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
-				Citizen citizenToPersuade = friends[Random.Range(0, friends.Count)].king;
-				envoyToSend.inAction = true;
-				JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
-					citizenToPersuade, envoyToSend, invasionPlanThatTriggeredEvent.targetKingdom);
-			} else {
-				Debug.Log ("Cannot send envoy because there are none or all of them are busy or there is no one to send envoy to");
-			}
-		}
+//		int envoyChance = Random.Range (0, 100);
+//		if (envoyChance < 20) {
+//			//Send envoy for Join War
+//			List<Citizen> envoys = this.startedByKingdom.GetAllCitizensOfType(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
+//			List<RelationshipKings> friends = this.startedBy.friends.Where(x => x.king.city.kingdom.IsKingdomAdjacentTo(invasionPlanThatTriggeredEvent.targetKingdom)).ToList();
+//			if (envoys.Count > 0 && friends.Count > 0) {
+//				Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
+//				Citizen citizenToPersuade = friends[Random.Range(0, friends.Count)].king;
+//				envoyToSend.inAction = true;
+//				JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
+//					citizenToPersuade, envoyToSend, invasionPlanThatTriggeredEvent.targetKingdom);
+//			} else {
+//				Debug.Log ("Cannot send envoy because there are none or all of them are busy or there is no one to send envoy to");
+//			}
+//		}
 		if (this.remainingWeeks <= 0) {
 			this.DoneEvent();
 		}

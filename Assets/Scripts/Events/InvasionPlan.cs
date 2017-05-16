@@ -83,19 +83,27 @@ public class InvasionPlan : GameEvent {
 			this.DoneEvent();
 			return;
 		}
-		int chanceToSendJoinWarRequest = Random.Range (0, 100);
-		if (chanceToSendJoinWarRequest < 5) {
-			//Send envoy for Join War
-			List<Citizen> envoys = this.startedByKingdom.GetAllCitizensOfType(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
-			List<RelationshipKings> friends = this.startedBy.friends.Where(x => x.king.city.kingdom.IsKingdomAdjacentTo(this.targetKingdom)).ToList();
-			if (envoys.Count > 0 && friends.Count > 0) {
-				Envoy envoyToSend = (Envoy)envoys[Random.Range (0, envoys.Count)].assignedRole;
-				Citizen citizenToPersuade = friends[Random.Range(0, friends.Count)].king;
-				envoyToSend.inAction = true;
-				JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
-					citizenToPersuade, envoyToSend, this.targetKingdom);
-			} else {
-				Debug.Log ("Cannot send envoy because there are none or all of them are busy or there is no one to send envoy to");
+		int chance = Random.Range (0, 100);
+
+
+		List<RelationshipKings> friends = this.startedBy.friends;
+		if (friends.Count > 0) {
+			for (int i = 0; i < friends.Count; i++) {
+				List<Citizen> envoys = this.startedByKingdom.GetAllCitizensOfType(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
+				if (envoys.Count > 0) {
+					int chanceToSendJoinWarRequest = 2;
+					if (friends [i].lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+						chanceToSendJoinWarRequest = 3;
+					}
+					if (chance < chanceToSendJoinWarRequest) {
+						Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
+						Citizen citizenToPersuade = friends[i].king;
+						envoyToSend.inAction = true;
+						JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
+							                           citizenToPersuade, envoyToSend, this.targetKingdom);
+					}
+				}
+
 			}
 		}
 	}
