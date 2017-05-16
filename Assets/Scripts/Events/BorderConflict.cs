@@ -261,8 +261,8 @@ public class BorderConflict : GameEvent {
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Conflict caused deterioration in relationship.";
 
-			relationship1.AdjustLikeness (-20, this);
-			relationship2.AdjustLikeness (-20, this);
+			relationship1.AdjustLikeness (-15, this);
+			relationship2.AdjustLikeness (-15, this);
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,

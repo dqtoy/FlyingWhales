@@ -258,7 +258,7 @@ public class DiplomaticCrisis : GameEvent {
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Diplomatic Crisis caused deterioration in relationship.";
 
-			relationship1.AdjustLikeness (-35, this);
+			relationship1.AdjustLikeness (-25, this);
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,

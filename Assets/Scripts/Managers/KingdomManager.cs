@@ -132,7 +132,7 @@ public class KingdomManager : MonoBehaviour {
 		this.UpdateKingdomAdjacency();
 	}
 
-	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2, InvasionPlan invasionPlanThatStartedWar){
+	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2, War war){
 		RelationshipKingdom kingdom1Rel = kingdom1.GetRelationshipWithOtherKingdom(kingdom2);
 		RelationshipKingdom kingdom2Rel = kingdom2.GetRelationshipWithOtherKingdom(kingdom1);
 
@@ -149,9 +149,10 @@ public class KingdomManager : MonoBehaviour {
 		kingdom2.AddInternationalWar(kingdom1);
 
 		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
-		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom2.king.name + " of " + kingdom2.name + " declares war against " + kingdom1.name + ".", HISTORY_IDENTIFIER.NONE));
+		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
 
-		War newWar = new War(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, null, kingdom1, kingdom2, invasionPlanThatStartedWar);
+
+//		War newWar = new War(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, null, kingdom1, kingdom2, invasionPlanThatStartedWar);
 	}
 
 	public void DeclarePeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){

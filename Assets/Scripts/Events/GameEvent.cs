@@ -25,6 +25,7 @@ public class GameEvent {
 	public Kingdom startedByKingdom;
 	public City startedByCity;
 	public bool isActive;
+	public List<string> logs;
 
 	protected Citizen _startedBy;
 
@@ -49,6 +50,7 @@ public class GameEvent {
 		this.description = "";
 		this.resolution = "";
 		this.isActive = true;
+		this.logs = new List<string>();
 		if(this._startedBy != null){
 			this.startedByKingdom = _startedBy.city.kingdom;
 			this.startedByCity = _startedBy.city;

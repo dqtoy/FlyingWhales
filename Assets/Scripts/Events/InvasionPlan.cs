@@ -8,7 +8,7 @@ public class InvasionPlan : GameEvent {
 	private Kingdom _sourceKingdom;
 	private Kingdom _targetKingdom;
 	public List<Citizen> uncovered;
-
+	internal War war;
 	internal Militarization militarizationEvent = null;
 
 	public Kingdom sourceKingdom {
@@ -23,7 +23,7 @@ public class InvasionPlan : GameEvent {
 		}
 	}
 
-	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom, GameEvent gameEventTrigger) : base (startWeek, startMonth, startYear, startedBy){
+	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom, GameEvent gameEventTrigger, War war) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
@@ -31,6 +31,7 @@ public class InvasionPlan : GameEvent {
 		this.remainingWeeks = this.durationInWeeks;
 		this._sourceKingdom = sourceKingdom;
 		this._targetKingdom = targetKingdom;
+		this.war = war;
 		this.uncovered = new List<Citizen>();
 
 		if (gameEventTrigger is Assassination) {
@@ -114,7 +115,7 @@ public class InvasionPlan : GameEvent {
 	internal void MilitarizationDone(){
 		//TODO: position generals appropriately
 		this.resolution = "Invasion plan was successful and war is now declared between " + this._sourceKingdom.name + " and " + this._targetKingdom.name;
-		KingdomManager.Instance.DeclareWarBetweenKingdoms(this._sourceKingdom, this._targetKingdom, this);
+		this.war.DeclareWar (this._sourceKingdom);
 		this.DoneEvent();
 	}
 

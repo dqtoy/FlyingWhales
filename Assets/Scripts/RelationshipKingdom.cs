@@ -12,6 +12,8 @@ public class RelationshipKingdom {
 	public bool isAtWar;
 	public KingdomWar kingdomWar;
 	public MONTH monthToMoveOnAfterRejection;
+	public War war;
+	public InvasionPlan invasionPlan;
 //	public int daysAtWar;
 
 	public RelationshipKingdom(Kingdom sourceKingdom, Kingdom objectInRelationship){
@@ -37,4 +39,7 @@ public class RelationshipKingdom {
 		}
 	}
 
+	internal void CreateInvasionPlan(){
+		this.invasionPlan = new InvasionPlan (this.sourceKingdom, this.objectInRelationship, this.war);
+	}
 }

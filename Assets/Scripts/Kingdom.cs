@@ -594,7 +594,6 @@ public class Kingdom{
 		}
 		return allBorderTiles;
 	}
-
 	//Destructor for unsubscribing listeners
 	~Kingdom(){
 		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);
