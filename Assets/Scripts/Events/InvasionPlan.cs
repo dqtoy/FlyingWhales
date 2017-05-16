@@ -7,32 +7,48 @@ public class InvasionPlan : GameEvent {
 
 	private Kingdom _sourceKingdom;
 	private Kingdom _targetKingdom;
-	public List<Citizen> uncovered;
-	internal War war;
-	internal Militarization militarizationEvent = null;
+	private List<Citizen> _uncovered;
+	private War _war;
+	private Militarization _militarizationEvent = null;
+	private List<JoinWar> _joinWarEvents;
 
+	#region getters/setters
 	public Kingdom sourceKingdom {
-		get { 
-			return this._sourceKingdom; 
-		}
+		get { return this._sourceKingdom; }
 	}
 
 	public Kingdom targetKingdom {
-		get { 
-			return this._targetKingdom; 
-		}
+		get { return this._targetKingdom; }
 	}
 
-	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom, Kingdom targetKingdom, GameEvent gameEventTrigger, War war) : base (startWeek, startMonth, startYear, startedBy){
+	public List<Citizen> uncovered {
+		get { return this._uncovered; }
+	}
+
+	public War war {
+		get { return this._war; }
+	}
+
+	public Militarization militarizationEvent {
+		get { return this._militarizationEvent; }
+	}
+
+	public List<JoinWar> joinWarEvents{
+		get { return _joinWarEvents; }
+	}
+	#endregion
+
+	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _sourceKingdom, Kingdom _targetKingdom, GameEvent gameEventTrigger, War _war) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
-		this.durationInWeeks = 0;
-		this.remainingWeeks = this.durationInWeeks;
-		this._sourceKingdom = sourceKingdom;
-		this._targetKingdom = targetKingdom;
-		this.war = war;
-		this.uncovered = new List<Citizen>();
+		this.durationInDays = 0;
+		this.remainingDays = this.durationInDays;
+		this._sourceKingdom = _sourceKingdom;
+		this._targetKingdom = _targetKingdom;
+		this._war = _war;
+		this._uncovered = new List<Citizen>();
+		this._joinWarEvents = new List<JoinWar>();
 
 		if (gameEventTrigger is Assassination) {
 			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after discovering that " + gameEventTrigger.startedBy.name
@@ -73,6 +89,7 @@ public class InvasionPlan : GameEvent {
 		this.StartMilitarizationEvent();
 	}
 
+	#region overrides
 	internal override void PerformAction(){
 		if (this.startedBy.isDead) {
 			this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " died.";
@@ -84,24 +101,38 @@ public class InvasionPlan : GameEvent {
 			this.DoneEvent();
 			return;
 		}
-		int chance = Random.Range (0, 100);
 
+		War warBetweenKingdoms = KingdomManager.Instance.GetWarBetweenKingdoms (this._sourceKingdom, this._targetKingdom);
+		if (warBetweenKingdoms != null && warBetweenKingdoms.isAtWar) {
+			this.resolution = "Invasion plan was cancelled because a war has already started between " + this._sourceKingdom.name + " and " + this._targetKingdom.name;
+			this.DoneEvent();
+			return;
+		}
 
 		List<RelationshipKings> friends = this.startedBy.friends;
 		if (friends.Count > 0) {
 			for (int i = 0; i < friends.Count; i++) {
+				if (EventManager.Instance.GetEventsOfTypePerKingdom (friends[i].king.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where (x => x.isActive).Count () > 0 ||
+					KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, friends[i].king.city.kingdom) != null||
+					KingdomManager.Instance.GetWarBetweenKingdoms (friends[i].king.city.kingdom, this._targetKingdom).isAtWar) {
+					//friend already has an active invasion plan or friend already has an active join war request from this startedByKingdom or is already
+					//at war with target kingdom
+					continue;
+				}
 				List<Citizen> envoys = this.startedByKingdom.GetAllCitizensOfType(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
 				if (envoys.Count > 0) {
 					int chanceToSendJoinWarRequest = 2;
 					if (friends [i].lordRelationship == RELATIONSHIP_STATUS.ALLY) {
 						chanceToSendJoinWarRequest = 3;
 					}
+					int chance = Random.Range (0, 100);
 					if (chance < chanceToSendJoinWarRequest) {
 						Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
 						Citizen citizenToPersuade = friends[i].king;
 						envoyToSend.inAction = true;
 						JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
 							                           citizenToPersuade, envoyToSend, this.targetKingdom);
+						this._joinWarEvents.Add(newJoinWarRequest);
 					}
 				}
 
@@ -113,12 +144,17 @@ public class InvasionPlan : GameEvent {
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		this.endDay = GameManager.Instance.days;
+		this.endMonth = GameManager.Instance.month;
+		this.endYear = GameManager.Instance.year;
 	}
 
 	internal override void CancelEvent (){
 		this.resolution = "Event was cancelled.";
 		this.DoneEvent();
 	}
+	#endregion
+
 
 	internal void MilitarizationDone(){
 		//TODO: position generals appropriately
@@ -130,12 +166,11 @@ public class InvasionPlan : GameEvent {
 	private void StartMilitarizationEvent(){
 		Militarization currentMilitarization = null;
 		if(IsThereMilitarizationActive(ref currentMilitarization)){
-			currentMilitarization.remainingWeeks = currentMilitarization.durationInWeeks;
+			currentMilitarization.remainingDays = currentMilitarization.durationInDays;
 		}else{
 			//New Militarization
-			Militarization newMilitarization  = new Militarization(this.startWeek, this.startMonth, this.startYear, this.startedBy);
-			this.militarizationEvent = newMilitarization;
-			newMilitarization.invasionPlanThatTriggeredEvent = this;
+			Militarization newMilitarization  = new Militarization(this.startDay, this.startMonth, this.startYear, this.startedBy, this);
+			this._militarizationEvent = newMilitarization;
 		}
 	}
 
@@ -152,5 +187,9 @@ public class InvasionPlan : GameEvent {
 		}else{
 			return false;
 		}
+	}
+
+	internal void AddCitizenThatUncoveredEvent(Citizen citizen){
+		this._uncovered.Add(citizen);
 	}
 }

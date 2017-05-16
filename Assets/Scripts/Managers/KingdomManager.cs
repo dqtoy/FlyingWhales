@@ -136,8 +136,8 @@ public class KingdomManager : MonoBehaviour {
 		RelationshipKingdom kingdom1Rel = kingdom1.GetRelationshipWithOtherKingdom(kingdom2);
 		RelationshipKingdom kingdom2Rel = kingdom2.GetRelationshipWithOtherKingdom(kingdom1);
 
-		kingdom1Rel.isAtWar = true;
-		kingdom2Rel.isAtWar = true;
+		kingdom1Rel.SetWarStatus(true);
+		kingdom2Rel.SetWarStatus(true);
 
 		kingdom1Rel.kingdomWar.ResetKingdomWar ();
 		kingdom2Rel.kingdomWar.ResetKingdomWar ();
@@ -156,16 +156,17 @@ public class KingdomManager : MonoBehaviour {
 	}
 
 	public void DeclarePeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
-		kingdom1.GetRelationshipWithOtherKingdom(kingdom2).isAtWar = false;
-		kingdom2.GetRelationshipWithOtherKingdom(kingdom1).isAtWar = false;
+//		RelationshipKingdom kingdom1Rel = kingdom1.GetRelationshipWithOtherKingdom(kingdom2);
+//		RelationshipKingdom kingdom2Rel = kingdom2.GetRelationshipWithOtherKingdom(kingdom1);
+//
+//		kingdom1Rel.SetWarStatus(false);
+//		kingdom2Rel.SetWarStatus(false);
 
 		kingdom1.AdjustExhaustionToAllRelationship (-15);
 		kingdom2.AdjustExhaustionToAllRelationship (-15);
 
 		kingdom1.RemoveInternationalWar(kingdom2);
 		kingdom2.RemoveInternationalWar(kingdom1);
-
-		GetWarBetweenKingdoms(kingdom1, kingdom2).DoneEvent();
 	}
 
 	public War GetWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
@@ -179,6 +180,23 @@ public class KingdomManager : MonoBehaviour {
 			} else if (currentWar.kingdom2.id == kingdom1.id) {
 				if (currentWar.kingdom1.id == kingdom2.id) {
 					return currentWar;
+				}
+			}
+		}
+		return null;
+	}
+
+	public JoinWar GetJoinWarRequestBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
+		List<GameEvent> allJoinWarRequests = EventManager.Instance.GetEventsOfType(EVENT_TYPES.JOIN_WAR_REQUEST).Where(x => x.isActive).ToList();
+		for (int i = 0; i < allJoinWarRequests.Count; i++) {
+			JoinWar currentJoinWar = (JoinWar)allJoinWarRequests[i];
+			if (currentJoinWar.startedByKingdom.id == kingdom1.id) {
+				if (currentJoinWar.candidateForAlliance.city.kingdom.id == kingdom2.id) {
+					return currentJoinWar;
+				}
+			} else if (currentJoinWar.startedByKingdom.id == kingdom1.id) {
+				if (currentJoinWar.candidateForAlliance.city.kingdom.id == kingdom2.id) {
+					return currentJoinWar;
 				}
 			}
 		}
@@ -219,7 +237,7 @@ public class KingdomManager : MonoBehaviour {
 	public void RemoveRelationshipToOtherKingdoms(Kingdom kingdomToRemove){
 		for (int i = 0; i < this.allKingdoms.Count; i++) {
 			for (int j = 0; j < this.allKingdoms[i].relationshipsWithOtherKingdoms.Count; j++) {
-				if (this.allKingdoms[i].relationshipsWithOtherKingdoms[j].objectInRelationship.id == kingdomToRemove.id) {
+				if (this.allKingdoms[i].relationshipsWithOtherKingdoms[j].targetKingdom.id == kingdomToRemove.id) {
 					this.allKingdoms[i].relationshipsWithOtherKingdoms.RemoveAt(j);
 					break;
 				}
@@ -238,8 +256,8 @@ public class KingdomManager : MonoBehaviour {
 					HexTile currentConnectedTile = currentCity.hexTile.connectedTiles[k];
 					if (currentConnectedTile.isOccupied && currentConnectedTile.city != null) {
 						if (currentConnectedTile.city.kingdom.id != currentKingdom.id) {
-							currentKingdom.GetRelationshipWithOtherKingdom(currentConnectedTile.city.kingdom).isAdjacent = true;
-							currentConnectedTile.city.kingdom.GetRelationshipWithOtherKingdom(currentKingdom).isAdjacent = true;
+							currentKingdom.GetRelationshipWithOtherKingdom(currentConnectedTile.city.kingdom).SetAdjacency(true);
+							currentConnectedTile.city.kingdom.GetRelationshipWithOtherKingdom(currentKingdom).SetAdjacency(true);
 							currentKingdom.adjacentCitiesFromOtherKingdoms.Add(currentConnectedTile.city);
 						}
 					}

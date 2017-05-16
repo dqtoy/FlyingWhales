@@ -5,15 +5,23 @@ using System.Linq;
 
 public class Militarization : GameEvent {
 
-	internal InvasionPlan invasionPlanThatTriggeredEvent;
-	public List<Citizen> uncovered;
+	private InvasionPlan _invasionPlanThatTriggeredEvent;
+	private List<Citizen> _uncovered;
 
-	public Militarization(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
+	public InvasionPlan invasionPlanThatTriggeredEvent{
+		get { return this._invasionPlanThatTriggeredEvent; }
+	}
+	public List<Citizen> uncovered{
+		get { return this._uncovered; }
+	}
+
+	public Militarization(int startWeek, int startMonth, int startYear, Citizen startedBy, InvasionPlan _invasionPlanThatTriggeredEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.MILITARIZATION;
 		this.description = startedBy.name + " prioritizing the training of his generals and army, in preparation for war.";
-		this.durationInWeeks = 120;
-		this.remainingWeeks = this.durationInWeeks;
-		this.uncovered = new List<Citizen>();
+		this.durationInDays = 120;
+		this.remainingDays = this.durationInDays;
+		this._invasionPlanThatTriggeredEvent = _invasionPlanThatTriggeredEvent;
+		this._uncovered = new List<Citizen>();
 
 		this.startedBy.city.hexTile.AddEventOnTile(this);
 		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started a Militarization for his/her Invasion Plan.", HISTORY_IDENTIFIER.NONE));
@@ -24,13 +32,14 @@ public class Militarization : GameEvent {
 		EventManager.Instance.AddEventToDictionary(this);
 	}
 
+	#region overrides
 	internal override void PerformAction(){
 		if (this.startedBy.isDead) {
 			this.resolution = this.startedBy.name + " died before the event could finish.";
 			this.DoneEvent();
 			return;
 		}
-		this.remainingWeeks -= 1;
+		this.remainingDays -= 1;
 //		int envoyChance = Random.Range (0, 100);
 //		if (envoyChance < 20) {
 //			//Send envoy for Join War
@@ -46,7 +55,7 @@ public class Militarization : GameEvent {
 //				Debug.Log ("Cannot send envoy because there are none or all of them are busy or there is no one to send envoy to");
 //			}
 //		}
-		if (this.remainingWeeks <= 0) {
+		if (this.remainingDays <= 0) {
 			this.DoneEvent();
 		}
 	}
@@ -54,11 +63,19 @@ public class Militarization : GameEvent {
 	internal override void DoneEvent(){
 		this.isActive = false;
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
-		if (invasionPlanThatTriggeredEvent.isActive) {
-			invasionPlanThatTriggeredEvent.MilitarizationDone ();
+		if (_invasionPlanThatTriggeredEvent.isActive) {
+			_invasionPlanThatTriggeredEvent.MilitarizationDone ();
 		}
 		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedByCity.name + " ended Militarization." , HISTORY_IDENTIFIER.NONE));
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+		this.endDay = GameManager.Instance.days;
+		this.endMonth = GameManager.Instance.month;
+		this.endYear = GameManager.Instance.year;
+	}
+	#endregion
+
+	internal void AddCitizenThatUncoveredEvent(Citizen citizen){
+		this._uncovered.Add(citizen);
 	}
 }

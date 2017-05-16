@@ -22,8 +22,8 @@ public class BorderConflict : GameEvent {
 		}else{
 			this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
 		}
-		this.durationInWeeks = 30;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 30;
+		this.remainingDays = this.durationInDays;
 		this.kingdom1 = kingdom1;
 		this.kingdom2 = kingdom2;
 		this.otherKingdoms = GetOtherKingdoms ();
@@ -37,9 +37,9 @@ public class BorderConflict : GameEvent {
 	}
 
 	internal override void PerformAction(){
-		this.remainingWeeks -= 1;
-		if (this.remainingWeeks <= 0) {
-			this.remainingWeeks = 0;
+		this.remainingDays -= 1;
+		if (this.remainingDays <= 0) {
+			this.remainingDays = 0;
 			this.isResolvedPeacefully = false;
 			DoneEvent ();
 		}else{
@@ -67,7 +67,7 @@ public class BorderConflict : GameEvent {
 			} else {
 				if (this.activeEnvoyProvoke != null) {
 					if (envoy.citizen.id == this.activeEnvoyProvoke.citizen.id) {
-						this.remainingWeeks -= 3;
+						this.remainingDays -= 3;
 
 					}
 				}
@@ -228,7 +228,7 @@ public class BorderConflict : GameEvent {
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
-		this.endWeek = GameManager.Instance.days;
+		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
 
@@ -238,7 +238,7 @@ public class BorderConflict : GameEvent {
 		if(this.isResolvedPeacefully){
 			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
 
-			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Conflict was resolved peacefully.";
+			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Conflict was resolved peacefully.";
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
@@ -259,7 +259,7 @@ public class BorderConflict : GameEvent {
 		}else{
 			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
 
-			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Conflict caused deterioration in relationship.";
+			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Conflict caused deterioration in relationship.";
 
 			relationship1.AdjustLikeness (-15, this);
 			relationship2.AdjustLikeness (-15, this);

@@ -15,8 +15,8 @@ public class MarriageInvitation : GameEvent {
 			this.description = startedBy.name + " is looking for a suitable husband.";
 		}
 
-		this.durationInWeeks = 8;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 8;
+		this.remainingDays = this.remainingDays;
 		this.goldForEvent = 0;
 		this.GetGoldForEvent ();
 
@@ -34,8 +34,8 @@ public class MarriageInvitation : GameEvent {
 			this.DoneEvent();
 			return;
 		}
-		if (this.remainingWeeks > 0) {
-			this.remainingWeeks -= 1;
+		if (this.remainingDays > 0) {
+			this.remainingDays -= 1;
 
 			if (this.startedBy.isMarried && this.startedBy.spouse != null) {
 				this.resolution = this.startedBy.name + " got married to " + this.startedBy.spouse.name + " in some other marriage invitation event.";
@@ -44,7 +44,7 @@ public class MarriageInvitation : GameEvent {
 			}
 			this.elligibleCitizens = MarriageManager.Instance.GetElligibleCitizensForMarriage(this.startedBy);
 		} 
-		if (this.remainingWeeks <= 0) {
+		if (this.remainingDays <= 0) {
 			if (this.startedBy.isMarried && this.startedBy.spouse != null) {
 				this.resolution = this.startedBy.name + " got married to " + this.startedBy.spouse.name + " in some other marriage invitation event.";
 				this.DoneEvent();
@@ -165,15 +165,15 @@ public class MarriageInvitation : GameEvent {
 					}
 				}
 
-				this.endWeek = GameManager.Instance.days;
+				this.endDay = GameManager.Instance.days;
 				this.endMonth = GameManager.Instance.month;
 				this.endYear = GameManager.Instance.year;
 
 				if (startedBy.gender == GENDER.MALE) {
-					this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " has selected " +
+					this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endDay.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " has selected " +
 					chosenCitizen.name + " as his wife. ";
 				} else {
-					this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " has selected " +
+					this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endDay.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " has selected " +
 						chosenCitizen.name + " as her husband. ";
 				}
 				if (cityRecievingGold != null) {
@@ -185,12 +185,12 @@ public class MarriageInvitation : GameEvent {
 				return;
 			}
 
-			this.endWeek = GameManager.Instance.days;
+			this.endDay = GameManager.Instance.days;
 			this.endMonth = GameManager.Instance.month;
 			this.endYear = GameManager.Instance.year;
 			//return gold to city
 			this.startedBy.city.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, 500);
-			this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " was unable to marry.";
+			this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endDay.ToString () + ", " + this.endYear.ToString () + ". " + startedBy.name + " was unable to marry.";
 			this.DoneEvent();
 			return;
 		}

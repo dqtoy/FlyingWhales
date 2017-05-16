@@ -87,7 +87,7 @@ public class Kingdom{
 			return;
 		}
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
-			if (this.relationshipsWithOtherKingdoms [i].objectInRelationship.id == createdKingdom.id) {
+			if (this.relationshipsWithOtherKingdoms [i].targetKingdom.id == createdKingdom.id) {
 				//this kingdom already has a relationship with created kingdom!
 				return;
 			}
@@ -324,7 +324,7 @@ public class Kingdom{
 
 	internal RelationshipKingdom GetRelationshipWithOtherKingdom(Kingdom kingdomTarget){
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
-			if (this.relationshipsWithOtherKingdoms[i].objectInRelationship.id == kingdomTarget.id) {
+			if (this.relationshipsWithOtherKingdoms[i].targetKingdom.id == kingdomTarget.id) {
 				return this.relationshipsWithOtherKingdoms[i];
 			}
 		}
@@ -345,7 +345,7 @@ public class Kingdom{
 	}
 	internal bool CheckForSpecificWar(Kingdom kingdom){
 		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
-			if(this.relationshipsWithOtherKingdoms[i].objectInRelationship.id == kingdom.id){
+			if(this.relationshipsWithOtherKingdoms[i].targetKingdom.id == kingdom.id){
 				if(this.relationshipsWithOtherKingdoms[i].isAtWar){
 					return true;
 				}
@@ -367,7 +367,7 @@ public class Kingdom{
 
 	internal void ResetAdjacencyWithOtherKingdoms(){
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
-			this.relationshipsWithOtherKingdoms[i].isAdjacent = false;
+			this.relationshipsWithOtherKingdoms[i].ResetAdjacency();
 		}
 	}
 
@@ -383,7 +383,7 @@ public class Kingdom{
 		List<Kingdom> adjacentKingdoms = new List<Kingdom>();
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
 			if (relationshipsWithOtherKingdoms[i].isAdjacent) {
-				adjacentKingdoms.Add(relationshipsWithOtherKingdoms[i].objectInRelationship);
+				adjacentKingdoms.Add(relationshipsWithOtherKingdoms[i].targetKingdom);
 			}
 		}
 		return adjacentKingdoms;
@@ -487,8 +487,8 @@ public class Kingdom{
 	internal void AddInternationalWarCity(City newCity){
 		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
 			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
-				if(!this.relationshipsWithOtherKingdoms[i].objectInRelationship.king.campaignManager.SearchForInternationalWarCities(newCity)){
-					this.relationshipsWithOtherKingdoms [i].objectInRelationship.king.campaignManager.intlWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
+				if(!this.relationshipsWithOtherKingdoms[i].targetKingdom.king.campaignManager.SearchForInternationalWarCities(newCity)){
+					this.relationshipsWithOtherKingdoms [i].targetKingdom.king.campaignManager.intlWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
 				}
 			}
 		}

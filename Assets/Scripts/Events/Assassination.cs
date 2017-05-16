@@ -20,8 +20,8 @@ public class Assassination : GameEvent {
 	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, Citizen spy, GameEvent gameEventTrigger) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ASSASSINATION;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
-		this.durationInWeeks = 4;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 4;
+		this.remainingDays = this.durationInDays;
 		this.assassinKingdom = startedBy.city.kingdom;
 		this._targetCitizen = targetCitizen;
 		this.otherKingdoms = GetOtherKingdoms ();
@@ -80,9 +80,9 @@ public class Assassination : GameEvent {
 	}
 
 	internal override void PerformAction(){
-		this.remainingWeeks -= 1;
-		if(this.remainingWeeks <= 0){
-			this.remainingWeeks = 0;
+		this.remainingDays -= 1;
+		if(this.remainingDays <= 0){
+			this.remainingDays = 0;
 			AssassinationMoment ();
 			DoneEvent ();
 		}
@@ -99,7 +99,7 @@ public class Assassination : GameEvent {
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
-		this.endWeek = GameManager.Instance.days;
+		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 //		EventManager.Instance.allEvents [EVENT_TYPES.ASSASSINATION].Remove (this);
 

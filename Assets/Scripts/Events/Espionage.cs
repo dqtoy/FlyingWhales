@@ -27,8 +27,8 @@ public class Espionage : GameEvent {
 	public Espionage(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen spy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ESPIONAGE;
 		this.description = startedBy.name + " is having an espionage event.";
-		this.durationInWeeks = 2;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 2;
+		this.remainingDays = this.durationInDays;
 		this._sourceKingdom = startedBy.city.kingdom;
 		this.spy = spy;
 		this.allEventsAffectingTarget = new List<GameEvent> ();
@@ -46,9 +46,9 @@ public class Espionage : GameEvent {
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 	internal override void PerformAction(){
-		this.remainingWeeks -= 1;
-		if(this.remainingWeeks <= 0){
-			this.remainingWeeks = 0;
+		this.remainingDays -= 1;
+		if(this.remainingDays <= 0){
+			this.remainingDays = 0;
 			ActualEspionage ();
 			DoneEvent ();
 		}
@@ -61,10 +61,10 @@ public class Espionage : GameEvent {
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
-		this.endWeek = GameManager.Instance.days;
+		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 		if(this.chosenEvent != null && this.hasFound){
-			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". " + this.spy.name + " discovered a Hidden Event: ";
+			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". " + this.spy.name + " discovered a Hidden Event: ";
 		}
 //		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
@@ -104,7 +104,7 @@ public class Espionage : GameEvent {
 			List<Kingdom> adjacentKingdoms = new List<Kingdom> ();
 			for(int i = 0; i < this.sourceKingdom.relationshipsWithOtherKingdoms.Count; i++){
 				if(this.sourceKingdom.relationshipsWithOtherKingdoms[i].isAdjacent){
-					adjacentKingdoms.Add (this.sourceKingdom.relationshipsWithOtherKingdoms [i].objectInRelationship);
+					adjacentKingdoms.Add (this.sourceKingdom.relationshipsWithOtherKingdoms [i].targetKingdom);
 				}
 			}
 
@@ -361,11 +361,11 @@ public class Espionage : GameEvent {
 		if(chosenEvent is Assassination){
 			((Assassination)chosenEvent).uncovered.Add(uncoverer);
 		}else if(chosenEvent is InvasionPlan){
-			((InvasionPlan)chosenEvent).uncovered.Add(uncoverer);
+			((InvasionPlan)chosenEvent).AddCitizenThatUncoveredEvent(uncoverer);
 		}else if(chosenEvent is JoinWar){
-			((JoinWar)chosenEvent).uncovered.Add(uncoverer);
+			((JoinWar)chosenEvent).AddCitizenThatUncoveredEvent(uncoverer);
 		}else if(chosenEvent is Militarization){
-			((Militarization)chosenEvent).uncovered.Add(uncoverer);
+			((Militarization)chosenEvent).AddCitizenThatUncoveredEvent(uncoverer);
 		}else if(chosenEvent is PowerGrab){
 			((PowerGrab)chosenEvent).uncovered.Add(uncoverer);
 		}

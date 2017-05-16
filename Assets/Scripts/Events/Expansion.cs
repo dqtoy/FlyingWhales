@@ -18,8 +18,8 @@ public class Expansion : GameEvent {
 	public Expansion(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.EXPANSION;
 		this.description = startedBy.city.kingdom.king.name + " is looking looking to expand his kingdom and has funded and expedition led by " + startedBy.name;
-		this.durationInWeeks = 4;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 4;
+		this.remainingDays = this.durationInDays;
 
 		this.recruitmentPeriodInWeeks = 4;
 		this.remainingRecruitmentPeriodInWeeks = this.recruitmentPeriodInWeeks;
@@ -42,10 +42,10 @@ public class Expansion : GameEvent {
 	}
 
 	internal override void PerformAction(){
-		if (this.remainingWeeks > 0) {
-			this.remainingWeeks -= 1;
+		if (this.remainingDays > 0) {
+			this.remainingDays -= 1;
 		} 
-		if(this.remainingWeeks <= 0) {
+		if(this.remainingDays <= 0) {
 			int disappearChance = Random.Range(0,100);
 			if (disappearChance < 15) {
 				//Disappear
