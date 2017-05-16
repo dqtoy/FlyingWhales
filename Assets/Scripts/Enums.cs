@@ -289,3 +289,8 @@ public enum INVASION_TRIGGER_REASONS{
 	DIPLOMATIC_CRISIS,
 
 }
+
+public enum LANGUAGES{
+	NONE,
+	ENGLISH,
+}
