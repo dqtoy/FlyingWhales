@@ -13,8 +13,8 @@ public class PowerGrab : GameEvent {
 		this.eventType = EVENT_TYPES.POWER_GRAB;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " wants to grab power.";
-		this.durationInWeeks = 48;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 48;
+		this.remainingDays = this.durationInDays;
 		this.kingToOverthrow = this.startedBy.city.kingdom.king;
 		this.uncovered = new List<Citizen>();
 		this.exhortedCitizens = new List<Citizen>();
@@ -30,8 +30,8 @@ public class PowerGrab : GameEvent {
 	}
 
 	internal override void PerformAction(){
-		this.remainingWeeks -= 1;
-		if(this.remainingWeeks <= 0){
+		this.remainingDays -= 1;
+		if(this.remainingDays <= 0){
 			this.resolution = this.startedBy.name + " exhorted a total of " + this.exhortedCitizens.Count.ToString() + " citizens.";
 			this.DoneEvent();
 			return;

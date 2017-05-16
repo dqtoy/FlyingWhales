@@ -5,24 +5,38 @@ using System.Linq;
 
 public class JoinWar : GameEvent {
 
-	public Citizen candidateForAlliance;
-	public Envoy envoyToSend;
-	public Kingdom kingdomToAttack;
-	public List<Citizen> uncovered;
+	private Citizen _candidateForAlliance;
+	private Envoy _envoyToSend;
+	private Kingdom _kingdomToAttack;
+	private List<Citizen> _uncovered;
 
-	public JoinWar(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen candidateForAlliance, Envoy envoyToSend, Kingdom kingdomToAttack) : base (startWeek, startMonth, startYear, startedBy){
+	#region getters/setters
+	public Citizen candidateForAlliance{
+		get{ return this._candidateForAlliance; }
+	}
+
+	public List<Citizen> uncovered{
+		get{ return this._uncovered; }
+	}
+
+	public Kingdom kingdomToAttack{
+		get { return this._kingdomToAttack; }
+	}
+	#endregion
+
+	public JoinWar(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen _candidateForAlliance, Envoy _envoyToSend, Kingdom _kingdomToAttack) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.JOIN_WAR_REQUEST;
 		this.description = startedBy.name + " is looking for allies against kingdom " + kingdomToAttack.name;
-		this.durationInWeeks = 4;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 4;
+		this.remainingDays = this.durationInDays;
 
-		this.candidateForAlliance = candidateForAlliance;
-		this.envoyToSend = envoyToSend;
-		this.kingdomToAttack = kingdomToAttack;
-		this.uncovered = new List<Citizen>();
+		this._candidateForAlliance = _candidateForAlliance;
+		this._envoyToSend = _envoyToSend;
+		this._kingdomToAttack = _kingdomToAttack;
+		this._uncovered = new List<Citizen>();
 
-		if(this.envoyToSend != null){
-			this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.startedBy.name + " sent " + this.envoyToSend.citizen.name
+		if(this._envoyToSend != null){
+			this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.startedBy.name + " sent " + this._envoyToSend.citizen.name
 			+ " to " + candidateForAlliance.name + " to persuade him/her to join his/her Invasion Plan against " + this.kingdomToAttack.king.name, HISTORY_IDENTIFIER.NONE));
 		}
 		this.candidateForAlliance.city.hexTile.AddEventOnTile(this);
@@ -31,14 +45,15 @@ public class JoinWar : GameEvent {
 		EventManager.Instance.AddEventToDictionary(this);
 	}
 
+	#region overrides
 	internal override void PerformAction(){
 		if (this.startedBy.isDead) {
 			this.resolution = this.startedBy.name + " died before the event could finish.";
 			this.DoneEvent();
 			return;
 		}
-		if (this.envoyToSend.citizen.isDead) {
-			this.resolution = this.envoyToSend.citizen.name + " died before the event could finish.";
+		if (this._envoyToSend.citizen.isDead) {
+			this.resolution = this._envoyToSend.citizen.name + " died before the event could finish.";
 			this.DoneEvent();
 			return;
 		}
@@ -52,68 +67,84 @@ public class JoinWar : GameEvent {
 			this.DoneEvent();
 			return;
 		}
-		if (this.remainingWeeks > 0) {
-			this.remainingWeeks -= 1;
-		} 
-		if (this.remainingWeeks <= 0) {
-			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.candidateForAlliance.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0 ||
-				KingdomManager.Instance.GetWarBetweenKingdoms(this.candidateForAlliance.city.kingdom, kingdomToAttack) != null) {
-				//fail
-				this.resolution = this.candidateForAlliance.city.kingdom.name + " did not join " + this.startedByKingdom.name + " in his war against " + this.kingdomToAttack.name + 
-					" because they already have other invasion plans.";
-			} else {
-				int successRate = 15;
-				RELATIONSHIP_STATUS relationshipWithRequester = candidateForAlliance.GetRelationshipWithCitizen (this.startedBy).lordRelationship;
-				RELATIONSHIP_STATUS relationshipWithTarget = candidateForAlliance.GetRelationshipWithCitizen (kingdomToAttack.king).lordRelationship;
+		if (EventManager.Instance.GetEventsOfTypePerKingdom (this.candidateForAlliance.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0) {
+			this.resolution = this.candidateForAlliance.city.kingdom.name + " did not join " + this.startedByKingdom.name + " in his war against " + this.kingdomToAttack.name + 
+				" because they already have other invasion plans.";
+			this.DoneEvent ();
+			return;
+		}
+		War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
+		if (warEvent != null && warEvent.isAtWar) {
+			this.resolution = this.candidateForAlliance.city.kingdom.name + " did not join " + this.startedByKingdom.name + " in his war against " + this.kingdomToAttack.name + 
+				" because " + this.candidateForAlliance.city.kingdom.name + " is already at war with " + this.kingdomToAttack.name + ".";
+			this.DoneEvent ();
+			return;
+		}
 
-				if (envoyToSend.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-					successRate += 5;
+		if (this.remainingDays > 0) {
+			this.remainingDays -= 1;
+		} 
+		if (this.remainingDays <= 0) {			
+			int successRate = 15;
+			RELATIONSHIP_STATUS relationshipWithRequester = candidateForAlliance.GetRelationshipWithCitizen (this.startedBy).lordRelationship;
+			RELATIONSHIP_STATUS relationshipWithTarget = candidateForAlliance.GetRelationshipWithCitizen (kingdomToAttack.king).lordRelationship;
+
+			if (this._envoyToSend.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+				successRate += 5;
+			}
+
+			if (relationshipWithRequester == RELATIONSHIP_STATUS.WARM) {
+				successRate += 5;
+			} else if (relationshipWithRequester == RELATIONSHIP_STATUS.FRIEND) {
+				successRate += 20;
+			} else if (relationshipWithRequester == RELATIONSHIP_STATUS.ALLY) {
+				successRate += 35;
+			} 
+
+			if (relationshipWithTarget == RELATIONSHIP_STATUS.COLD) {
+				successRate += 5;
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.ENEMY) {
+				successRate += 20;
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.RIVAL) {
+				successRate += 35;
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.WARM) {
+				successRate -= 5;
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.FRIEND) {
+				successRate -= 20;
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.ALLY) {
+				successRate -= 35;
+			} 
+
+			int chanceForSuccess = Random.Range (0, 100);
+			if (chanceForSuccess < successRate) {
+				//target king will start invasion plan
+				RelationshipKings relationship = this.startedBy.GetRelationshipWithCitizen(this.candidateForAlliance);
+				relationship.AdjustLikeness(5, this);
+				relationship.relationshipHistory.Add (new History (
+					GameManager.Instance.month,
+					GameManager.Instance.days,
+					GameManager.Instance.year,
+					this.candidateForAlliance.name + " accepted a join war request from " + this.startedBy.name + " against " + this.kingdomToAttack.name,
+					HISTORY_IDENTIFIER.KING_RELATIONS,
+					true
+				));
+				if (warEvent == null) {
+					warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.candidateForAlliance, 
+						this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
 				}
 
-				if (relationshipWithRequester == RELATIONSHIP_STATUS.WARM) {
-					successRate += 5;
-				} else if (relationshipWithRequester == RELATIONSHIP_STATUS.FRIEND) {
-					successRate += 20;
-				} else if (relationshipWithRequester == RELATIONSHIP_STATUS.ALLY) {
-					successRate += 35;
-				} 
-
-				if (relationshipWithTarget == RELATIONSHIP_STATUS.COLD) {
-					successRate += 5;
-				} else if (relationshipWithTarget == RELATIONSHIP_STATUS.ENEMY) {
-					successRate += 20;
-				} else if (relationshipWithTarget == RELATIONSHIP_STATUS.RIVAL) {
-					successRate += 35;
-				} else if (relationshipWithTarget == RELATIONSHIP_STATUS.WARM) {
-					successRate -= 5;
-				} else if (relationshipWithTarget == RELATIONSHIP_STATUS.FRIEND) {
-					successRate -= 20;
-				} else if (relationshipWithTarget == RELATIONSHIP_STATUS.ALLY) {
-					successRate -= 35;
-				} 
-
-				int chanceForSuccess = Random.Range (0, 100);
-				if (chanceForSuccess < successRate) {
-					//target king will start invasion plan
-					RelationshipKings relationship = this.startedBy.GetRelationshipWithCitizen(this.candidateForAlliance);
-					relationship.AdjustLikeness(5, this);
-					relationship.relationshipHistory.Add (new History (
-						GameManager.Instance.month,
-						GameManager.Instance.days,
-						GameManager.Instance.year,
-						this.candidateForAlliance.name + " accepted a join war request from " + this.startedBy.name + " against " + this.kingdomToAttack.name,
-						HISTORY_IDENTIFIER.KING_RELATIONS,
-						true
-					));
-					InvasionPlan newInvasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
-						this.candidateForAlliance, this.candidateForAlliance.city.kingdom, this.kingdomToAttack, this);
+				if (!warEvent.isAtWar) {
+					//Create new Invasion Plan against target kingdom
+					warEvent.CreateInvasionPlan (this.candidateForAlliance.city.kingdom, this);
+//						InvasionPlan newInvasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
+//							this.candidateForAlliance, this.candidateForAlliance.city.kingdom, this.kingdomToAttack, this);
 					this.candidateForAlliance.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-						this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name , HISTORY_IDENTIFIER.NONE));
+						this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name, HISTORY_IDENTIFIER.NONE));
 
 					this.resolution = this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name;
 				}
-				this.DoneEvent();
 			}
+			this.DoneEvent();
 		}
 	}
 
@@ -121,6 +152,14 @@ public class JoinWar : GameEvent {
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
-		envoyToSend.inAction = false;
+		this._envoyToSend.inAction = false;
+		this.endDay = GameManager.Instance.days;
+		this.endMonth = GameManager.Instance.month;
+		this.endYear = GameManager.Instance.year;
+	}
+	#endregion
+
+	internal void AddCitizenThatUncoveredEvent(Citizen citizen){
+		this._uncovered.Add(citizen);
 	}
 }

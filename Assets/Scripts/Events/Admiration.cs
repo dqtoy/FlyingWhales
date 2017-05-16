@@ -18,8 +18,8 @@ public class Admiration : GameEvent {
 		}else{
 			this.description = "Admiration has began between " + kingdom1.name + " and " + kingdom2.name + ".";
 		}
-		this.durationInWeeks = 15;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 15;
+		this.remainingDays = this.durationInDays;
 		this.kingdom1 = kingdom1;
 		this.kingdom2 = kingdom2;
 		this.kingdom1.cities[0].hexTile.AddEventOnTile(this);
@@ -30,9 +30,9 @@ public class Admiration : GameEvent {
 	}
 
 	internal override void PerformAction(){
-		this.remainingWeeks -= 1;
-		if (this.remainingWeeks <= 0) {
-			this.remainingWeeks = 0;
+		this.remainingDays -= 1;
+		if (this.remainingDays <= 0) {
+			this.remainingDays = 0;
 			this.isResolvedPeacefully = true;
 			DoneEvent ();
 		}else{
@@ -50,7 +50,7 @@ public class Admiration : GameEvent {
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
-		this.endWeek = GameManager.Instance.days;
+		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
 
@@ -60,7 +60,7 @@ public class Admiration : GameEvent {
 		if(this.isResolvedPeacefully){
 			Debug.Log("ADMIRATION BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
 
-			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Admiration ended great.";
+			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Admiration ended great.";
 
 			relationship1.AdjustLikeness (35, this);
 
@@ -83,7 +83,7 @@ public class Admiration : GameEvent {
 		}else{
 			Debug.Log("ADMIRATION BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
 
-			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Admiration ended horribly.";
+			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Admiration ended horribly.";
 
 			relationship1.relationshipHistory.Add (new History (
 				GameManager.Instance.month,

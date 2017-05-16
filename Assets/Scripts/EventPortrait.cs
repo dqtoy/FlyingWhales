@@ -13,7 +13,7 @@ public class EventPortrait : MonoBehaviour {
 		this.chosenEvent = chosenEvent;
 		this.iconSprite.sprite2D = GetSprite ();
 		this.iconSprite.MakePixelPerfect ();
-		this.dateLbl.text = "[b]" + ((MONTH)chosenEvent.startMonth).ToString () + " " + chosenEvent.startWeek.ToString () + ", " + chosenEvent.startYear.ToString () + "[/b]";
+		this.dateLbl.text = "[b]" + ((MONTH)chosenEvent.startMonth).ToString () + " " + chosenEvent.startDay.ToString () + ", " + chosenEvent.startYear.ToString () + "[/b]";
 
 	}
 	private Sprite GetSprite(){

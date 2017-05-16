@@ -22,9 +22,9 @@ public class InvasionPlanUI : MonoBehaviour {
 		if(this.dropdownKingdoms.data != null && UIManager.Instance.currentlyShowingCity != null){
 			Kingdom selectedKingdom = this.dropdownKingdoms.data as Kingdom;
 			Kingdom sourceKingdom = UIManager.Instance.currentlyShowingCity.kingdom;
-
-			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
-				sourceKingdom.king, sourceKingdom, selectedKingdom, null);
+			sourceKingdom.GetRelationshipWithOtherKingdom (selectedKingdom).CreateInvasionPlan(null);
+//			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
+//				sourceKingdom.king, sourceKingdom, selectedKingdom, null, null);
 		}
 
 	}

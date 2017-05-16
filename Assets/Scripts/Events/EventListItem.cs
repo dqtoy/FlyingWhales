@@ -15,7 +15,7 @@ public class EventListItem : MonoBehaviour {
 	public void SetEvent(GameEvent gameEvent, Kingdom ownerOfThisItem){
 		this.ownerOfThisItem = ownerOfThisItem;
 		this.gameEvent = gameEvent;
-		eventDateLbl.text = ((MONTH)gameEvent.startMonth).ToString () + " " + gameEvent.startWeek.ToString () + ", " + gameEvent.startYear.ToString ();
+		eventDateLbl.text = ((MONTH)gameEvent.startMonth).ToString () + " " + gameEvent.startDay.ToString () + ", " + gameEvent.startYear.ToString ();
 		if (gameEvent.eventType == EVENT_TYPES.ADMIRATION) {
 			Admiration currEvent = (Admiration)gameEvent;
 			if (ownerOfThisItem.id == currEvent.kingdom1.id) {

@@ -18,8 +18,8 @@ public class Raid : GameEvent {
 
 	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy, City raidedCity, General general) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.RAID;
-		this.durationInWeeks = 15;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 15;
+		this.remainingDays = this.durationInDays;
 		this.sourceKingdom = startedBy.city.kingdom;
 		this.general = general;
 		this.raidedCity = raidedCity;
@@ -41,9 +41,9 @@ public class Raid : GameEvent {
 			this.DoneEvent();
 			return;
 		}
-		this.remainingWeeks -= 1;
-		if(this.remainingWeeks <= 0){
-			this.remainingWeeks = 0;
+		this.remainingDays -= 1;
+		if(this.remainingDays <= 0){
+			this.remainingDays = 0;
 			ActualRaid ();
 			DoneEvent ();
 		}
@@ -56,7 +56,7 @@ public class Raid : GameEvent {
 		this.isActive = false;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
-		this.endWeek = GameManager.Instance.days;
+		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 
 		string deadCitizen = string.Empty;
@@ -71,20 +71,20 @@ public class Raid : GameEvent {
 		}
 		if (this.hasBeenDiscovered) {
 			if (this.hasDeflected) {
-				this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
+				this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endDay + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
 				+ " but their identity were discovered." + deadCitizen + " " + this.kingdomToBlame.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.(DEFLECTED)";
 
 				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 					"Discovered raiders sent from " + this.kingdomToBlame.name + " (DEFLECTED)", HISTORY_IDENTIFIER.NONE));
 			} else {
-				this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
+				this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endDay + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
 				+ " but their identity were discovered." + deadCitizen + " " + this.raidedCity.kingdom.king.name + " relationship with " + this.startedBy.name + " significantly deteriorated.";
 
 				raidedCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 					"Discovered raiders sent from city " + this.startedByCity.name, HISTORY_IDENTIFIER.NONE));
 			}
 		} else {
-			this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endWeek + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
+			this.resolution = ((MONTH)this.endMonth).ToString () + " " + this.endDay + ", " + this.endYear + ". " + this.general.citizen.name + " was " + result + " in raiding " + this.raidedCity.name
 			+ " but their identity were not discovered." + deadCitizen;
 		
 			this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 

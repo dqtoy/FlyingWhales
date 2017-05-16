@@ -1010,7 +1010,7 @@ public class UIManager : MonoBehaviour {
 		this.kingdomWarsLbl.text = "[b]";
 		for(int i = 0; i < kingdom.relationshipsWithOtherKingdoms.Count; i++){
 			if(kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
-				this.kingdomWarsLbl.text += kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.name + ", ";
+				this.kingdomWarsLbl.text += kingdom.relationshipsWithOtherKingdoms [i].targetKingdom.name + ", ";
 			}
 		}
 		this.kingdomWarsLbl.text.TrimEnd (',');
@@ -1782,7 +1782,7 @@ public class UIManager : MonoBehaviour {
 	public void ShowSpecificEvent(GameEvent gameEvent){
 		specificEventNameLbl.text = gameEvent.eventType.ToString().Replace("_", " ");
 		specificEventDescriptionLbl.text = gameEvent.description;
-		specificEventStartDateLbl.text = "Started " + ((MONTH)gameEvent.startMonth).ToString() + " " + gameEvent.startWeek.ToString() + ", " + gameEvent.startYear.ToString();
+		specificEventStartDateLbl.text = "Started " + ((MONTH)gameEvent.startMonth).ToString() + " " + gameEvent.startDay.ToString() + ", " + gameEvent.startYear.ToString();
 
 		this.specificEventMiscTitleLbl.gameObject.SetActive(false);
 		this.lblSpecificEventCity.gameObject.SetActive(false);
@@ -1800,7 +1800,7 @@ public class UIManager : MonoBehaviour {
 
 		if (gameEvent.eventType != EVENT_TYPES.STATE_VISIT && gameEvent.eventType != EVENT_TYPES.INVASION_PLAN) {
 			this.specificEventBarTitle.text = "Duration";
-			specificEventProgBar.value = (float)((float)gameEvent.remainingWeeks / (float)gameEvent.durationInWeeks);
+			specificEventProgBar.value = (float)((float)gameEvent.remainingDays / (float)gameEvent.durationInDays);
 		}
 
 		if (gameEvent.eventType == EVENT_TYPES.MARRIAGE_INVITATION) {
@@ -2396,7 +2396,7 @@ public class UIManager : MonoBehaviour {
 	private void ShowInvasionPlanEvent(InvasionPlan invasionPlanEvent){
 		//for bar
 		this.specificEventBarTitle.text = "Militarization";
-		specificEventProgBar.value = (float)((float)invasionPlanEvent.militarizationEvent.remainingWeeks / (float)invasionPlanEvent.militarizationEvent.durationInWeeks);
+		specificEventProgBar.value = (float)((float)invasionPlanEvent.militarizationEvent.remainingDays / (float)invasionPlanEvent.militarizationEvent.durationInDays);
 
 		//for started by
 		List<Transform> children = specificEventStartedByGrid.GetChildList();

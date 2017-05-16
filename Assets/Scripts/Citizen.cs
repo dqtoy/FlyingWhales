@@ -1131,13 +1131,22 @@ public class Citizen {
 
 		if(chance < value){
 			//INVASION PLAN
-			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0 ||
-				KingdomManager.Instance.GetWarBetweenKingdoms(this.city.kingdom, relationship.king.city.kingdom) != null) {
+//			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0 ||
+//				KingdomManager.Instance.GetWarBetweenKingdoms(this.city.kingdom, relationship.king.city.kingdom) != null) {
+			War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, relationship.king.city.kingdom);
+			if (warEvent != null && warEvent.isAtWar) {
 				return;
 			}
-			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
-				this, this.city.kingdom, relationship.king.city.kingdom, gameEventTrigger);
-			
+			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0) {
+				return;
+			}
+			if (warEvent == null) {
+				warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
+					this.city.kingdom, relationship.king.city.kingdom);
+			}
+			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
+//			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
+//				this, this.city.kingdom, relationship.king.city.kingdom, gameEventTrigger);
 		}else{
 			//STATE VISIT
 			int svChance = UnityEngine.Random.Range (0, 100);
@@ -1185,10 +1194,10 @@ public class Citizen {
 
 		if (this.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
 			for (int i = 0; i < relationship.king.city.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
-				if (relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.id != this.city.kingdom.id) {
+				if (relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].targetKingdom.id != this.city.kingdom.id) {
 					if (!relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].isAtWar && relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].isAdjacent) {
-						if (GameManager.Instance.SearchForEligibility (relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship, EventManager.Instance.GetEventsOfType (EVENT_TYPES.BORDER_CONFLICT))) {
-							RelationshipKings relationshipToOther = this.SearchRelationshipByID (relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.king.id);
+						if (GameManager.Instance.SearchForEligibility (relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].targetKingdom, EventManager.Instance.GetEventsOfType (EVENT_TYPES.BORDER_CONFLICT))) {
+							RelationshipKings relationshipToOther = this.SearchRelationshipByID (relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].targetKingdom.king.id);
 							if (relationshipToOther.lordRelationship != RELATIONSHIP_STATUS.FRIEND && relationshipToOther.lordRelationship != RELATIONSHIP_STATUS.ALLY) {
 								if (chance < value) {
 									//BorderConflict
@@ -1196,9 +1205,9 @@ public class Citizen {
 									if (Random.Range (0, 2) == 0) {
 										startedBy = relationship.king;
 									} else {
-										startedBy = relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship.king;
+										startedBy = relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].targetKingdom.king;
 									}
-									BorderConflict borderConflict = new BorderConflict (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].objectInRelationship);
+									BorderConflict borderConflict = new BorderConflict (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, relationship.king.city.kingdom, relationship.king.city.kingdom.relationshipsWithOtherKingdoms [i].targetKingdom);
 									EventManager.Instance.AddEventToDictionary (borderConflict);
 									break;
 								}	

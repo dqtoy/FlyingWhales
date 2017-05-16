@@ -15,8 +15,8 @@ public class StateVisit : GameEvent {
 	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom invitedKingdom, Citizen visitor, GameEvent gameEventTrigger) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.STATE_VISIT;
 		this.description = startedBy.name + " invited " + visitor.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
-		this.durationInWeeks = 6;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 6;
+		this.remainingDays = this.durationInDays;
 		this.inviterKingdom = startedBy.city.kingdom;
 		this.invitedKingdom = invitedKingdom;
 		this.visitor = visitor;
@@ -36,9 +36,9 @@ public class StateVisit : GameEvent {
 	internal override void PerformAction(){
 		CheckVisitor ();
 		if(!this.visitor.isDead){
-			this.remainingWeeks -= 1;
-			if(this.remainingWeeks <= 0){
-				this.remainingWeeks = 0;
+			this.remainingDays -= 1;
+			if(this.remainingDays <= 0){
+				this.remainingDays = 0;
 				CheckEndSuccessMeter ();
 				DoneEvent ();
 			}
@@ -55,14 +55,14 @@ public class StateVisit : GameEvent {
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		this.endMonth = GameManager.Instance.month;
-		this.endWeek = GameManager.Instance.days;
+		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 		EventManager.Instance.onGameEventEnded.Invoke(this);
 		string result = "improvement";
 		if(this.successMeter <= 0){
 			result = "deterioration";
 		}
-		this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endWeek + ", " + this.endYear + ". Success Meter reached "
+		this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Success Meter reached "
 			+ this.successMeter + " and caused " + result + " in relationship.";
 //		EventManager.Instance.allEvents [EVENT_TYPES.STATE_VISIT].Remove (this);
 	}

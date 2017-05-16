@@ -12,8 +12,8 @@ public class Exhortation : GameEvent {
 		this.eventType = EVENT_TYPES.EXHORTATION;
 		this.eventStatus = EVENT_STATUS.EXPOSED;
 		this.description = startedBy.name + " is trying to gather support.";
-		this.durationInWeeks = 2;
-		this.remainingWeeks = this.durationInWeeks;
+		this.durationInDays = 2;
+		this.remainingDays = this.durationInDays;
 		this.citizenSent = citizenSent;
 		this.targetCitizen = targetCitizen;
 		this.powerGrabThatStartedEvent = powerGrabThatStartedEvent;
@@ -56,13 +56,13 @@ public class Exhortation : GameEvent {
 			this.DoneEvent();
 			return;
 		}
-		if (this.remainingWeeks > 0) {
-			this.remainingWeeks -= 1;
+		if (this.remainingDays > 0) {
+			this.remainingDays -= 1;
 		} else {
 			if (GameManager.Instance.month < this.targetCitizen.monthSupportCanBeChanged && GameManager.Instance.year == this.targetCitizen.yearSupportStarted) {
 				//fail
 				Debug.LogError(this.targetCitizen.name + " can't changed support to " + this.startedBy.name + " (" + ((MONTH)GameManager.Instance.month) + ", " + GameManager.Instance.days + " " + GameManager.Instance.year + ")");
-				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+				this.startedBy.history.Add (new History (startMonth, startDay, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
 				return;
 			}
 			int chance = Random.Range(0, 100);
@@ -78,10 +78,10 @@ public class Exhortation : GameEvent {
 				Debug.LogError(this.targetCitizen.name + " changed support to " + this.startedBy.name + " (" + ((MONTH)GameManager.Instance.month) + ", " + GameManager.Instance.days + " " + GameManager.Instance.year + ")");
 
 				powerGrabThatStartedEvent.exhortedCitizens.Add(this.targetCitizen);
-				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was successful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+				this.startedBy.history.Add (new History (startMonth, startDay, startYear, this.startedBy.name + " was successful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
 				UIManager.Instance.UpdateKingdomSuccession ();
 			}else{
-				this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
+				this.startedBy.history.Add (new History (startMonth, startDay, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
 			}
 			this.DoneEvent();
 		}
