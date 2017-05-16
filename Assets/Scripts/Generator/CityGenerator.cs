@@ -50,7 +50,7 @@ public class CityGenerator : MonoBehaviour {
 //			}
 
 			List<HexTile> tilesInRange = currentHexTile.GetTilesInRange(4);
-			List<HexTile> checkForHabitableTilesInRange = currentHexTile.GetTilesInRange (6);
+			List<HexTile> checkForHabitableTilesInRange = currentHexTile.GetTilesInRange (10);
 			if (checkForHabitableTilesInRange.Where (x => x.isHabitable).Count () > 0) {
 				continue;
 			}
