@@ -123,7 +123,7 @@ public class City{
 //		CreateInitialGathererFamily ();
 //		CreateInitialGeneralFamily ();
 //		CreateInitialUntrainedFamily ();
-		GenerateInitialTraitsForInitialCitizens ();
+//		GenerateInitialTraitsForInitialCitizens ();
 		UpdateResourceProduction ();
 
 

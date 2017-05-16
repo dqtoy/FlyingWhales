@@ -20,12 +20,14 @@ public class CharacterPortrait : MonoBehaviour {
 	public GameObject relationshipLine;
 	public GameObject[] relationshipCircles;
 	public GameObject lineGO;
+	public GameObject flagGO;
+	public UI2DSprite flagSprite;
 
 	public Citizen citizen;
 	private bool isHoverEnabled = true;
 	private bool isHovering = false;
 
-	public void SetCitizen(Citizen citizen, bool showInfo = false){
+	public void SetCitizen(Citizen citizen, bool showFlag = false, bool showInfo = false){
 		this.citizen = citizen;
 		if (this.citizen.city != null) {
 			this.kingdomColorGO.color = this.citizen.city.kingdom.kingdomColor;
@@ -33,14 +35,21 @@ public class CharacterPortrait : MonoBehaviour {
 			this.kingdomColorGO.color = Color.white;
 		}
 		if (citizen.isDead) {
-			isDeadIcon.SetActive (true);
+			isDeadIcon.SetActive(true);
 		} else {
-			isDeadIcon.SetActive (false);
+			isDeadIcon.SetActive(false);
+		}
+
+		if (showFlag) {
+			flagSprite.color = this.citizen.city.kingdom.kingdomColor;
+			flagGO.SetActive(true);
 		}
 
 		if (showInfo) {
 			ShowCitizenInfo();
 		}
+
+
 	}
 
 	public void ShowCitizenInfo(){
