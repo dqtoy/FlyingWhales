@@ -11,8 +11,8 @@ public struct Log {
 	public string file;
 	public string key;
 
-	public Log(MONTH month, int day, int year, string category, string file, string key){
-		this.month = month;
+	public Log(int month, int day, int year, string category, string file, string key){
+		this.month = (MONTH)month;
 		this.day = day;
 		this.year = year;
 		this.category = category;
