@@ -23,6 +23,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public int movementDays;
 
 	public City city = null;
+	internal City ownedByCity = null; // this is populated whenever the hex tile is occupied or becomes a border of a particular city
 
 	public bool isHabitable = false;
 	public bool isRoad = false;
@@ -30,6 +31,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isBorder = false;
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
+
+	// only applies to habitable tiles, this counts the number of nearby wood resources
+	public int nearbyWoodCount = 0;
+	// only applies to habitable tiles, this counts the number of nearby stone resources
+	public int nearbyStoneCount = 0;
+	// only applies to habitable tiles, this counts the number of nearby special resources
+	public int nearbySpecialCount = 0;
 
 	public GameObject centerPiece;
 
@@ -291,11 +299,24 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 //		this.isOwned = false;
 		this.isOccupied = false;
 		this.isBorder = false;
+		this.ownedByCity = null;
 		this.isBorderOfCityID = 0;
 		this.isOccupiedByCityID = 0;
 		this.structureGO.SetActive(false);
 		this.kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
+	}
+
+	public void Occupy(City city) {
+		this.isOccupied = true;
+		this.isOccupiedByCityID = city.id;		
+		this.ownedByCity = city;
+	}
+
+	public void Borderize(City city) {
+		this.isBorder = true;
+		this.isBorderOfCityID = city.id;
+		this.ownedByCity = city;
 	}
 
 	public void AddEventOnTile(GameEvent gameEvent){

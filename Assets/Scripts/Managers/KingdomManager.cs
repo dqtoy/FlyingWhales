@@ -280,4 +280,17 @@ public class KingdomManager : MonoBehaviour {
 		}
 		return null;
 	}
+
+	// Counts the number of kingdoms of a specific type
+	public int CountKingdomOfType(KINGDOM_TYPE kingdomType) {
+		int count = 0;
+		// Loop through the list of all kingdoms, filtering out dead kingdoms
+		for(int i = 0; i < this.allKingdoms.Count; i++) {
+			if (this.allKingdoms[i].isAlive() && this.allKingdoms[i].kingdomType == kingdomType) {
+				count++;
+			}
+		}
+
+		return count;
+	}
 }

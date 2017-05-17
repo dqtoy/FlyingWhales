@@ -56,10 +56,10 @@ public class Expansion : GameEvent {
 				this.DoneEvent();
 			} else {
 				//Expand
-				if (originCity.adjacentHabitableTiles.Count > 0) {
-					if (this.hexTileToExpandTo == null) {
-						this.hexTileToExpandTo = originCity.adjacentHabitableTiles [Random.Range (0, originCity.adjacentHabitableTiles.Count)];
-					}
+				if (this.hexTileToExpandTo == null) {
+					this.hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile (originCity);
+				}
+				if (this.hexTileToExpandTo != null) {
 					this.startedByKingdom.AddTileToKingdom(this.hexTileToExpandTo);
 //					this.startedBy.city.RemoveCitizenFromCity(this.startedBy);
 					this.hexTileToExpandTo.city.ExpandToThisCity(this.citizensJoiningExpansion);

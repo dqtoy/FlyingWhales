@@ -149,6 +149,15 @@ public class Citizen {
 			EventManager.Instance.onDeathToGhost.AddListener (DeathToGhost);
 		}
 	}
+
+	// This function checks if the citizen has the specified trait
+	public bool hasTrait(TRAIT trait) {
+		if (this._honestyTrait == trait || this._hostilityTrait == trait || this._intelligenceTrait == trait) {
+			return true;
+		}
+		return false;
+	}
+
 	internal int[] GetHoroscope(){
 		int[] newHoroscope = new int[3];
 		if((int)this.birthMonth % 2 == 0){

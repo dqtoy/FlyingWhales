@@ -41,7 +41,7 @@ public class InvasionPlan : GameEvent {
 	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _sourceKingdom, Kingdom _targetKingdom, GameEvent gameEventTrigger, War _war) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
-		this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
+		this.description = startedBy.name + " created an invasion plan against " + _targetKingdom.king.name + ".";
 		this.durationInDays = 0;
 		this.remainingDays = this.durationInDays;
 		this._sourceKingdom = _sourceKingdom;

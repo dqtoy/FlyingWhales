@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MapGenerator : MonoBehaviour {
 
-	internal void InitializeWorld() {
+	void Start() {
 		GridMap.Instance.GenerateGrid();
 		EquatorGenerator.Instance.GenerateEquator();
 		Biomes.Instance.GenerateElevation();

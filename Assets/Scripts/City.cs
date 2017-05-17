@@ -95,8 +95,8 @@ public class City{
 		this.borderTiles = new List<HexTile>();
 
 
-		this.hexTile.isOccupied = true;
-		this.hexTile.isOccupiedByCityID = this.id;
+
+		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
 //		this.hexTile.ShowCitySprite();
 		this.UpdateBorderTiles();
@@ -836,8 +836,7 @@ public class City{
 		this.borderTiles.Distinct();
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currBorderTile = this.borderTiles[i];
-			currBorderTile.isBorder = true;
-			currBorderTile.isBorderOfCityID = this.id;
+			currBorderTile.Borderize (this);
 		}
 	}
 
@@ -902,8 +901,8 @@ public class City{
 
 	internal void PurchaseTile(HexTile tileToBuy){
 		tileToBuy.movementDays = 2;
-		tileToBuy.isOccupied = true;
-		tileToBuy.isOccupiedByCityID = this.id;
+		tileToBuy.Occupy (this);
+
 		this.ownedTiles.Add(tileToBuy);
 
 		//Set color of tile
@@ -1489,6 +1488,9 @@ public class City{
 				this.kingdom.AssignNewKing(null, this.kingdom.cities[0]);
 			}
 		}
+		// This will update kingdom type whenever the kingdom loses a city.
+		this.kingdom.UpdateKingdomType();
+
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		this.hexTile.city = null;

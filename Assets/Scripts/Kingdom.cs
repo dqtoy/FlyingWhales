@@ -9,6 +9,11 @@ public class Kingdom{
 	public string name;
 	public RACE race;
 	public int[] horoscope; 
+
+	[SerializeField]
+	private KINGDOM_TYPE _kingdomType;
+	private Kingdom _sourceKingdom;
+
 	internal List<City> cities;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
@@ -29,12 +34,27 @@ public class Kingdom{
 
 	public float expansionChance = 1f;
 
-	public Kingdom(RACE race, List<HexTile> cities){
+	public KINGDOM_TYPE kingdomType {
+		get { 
+			return this._kingdomType; 
+		}
+	}
+
+	public Kingdom sourceKingdom {
+		get { 
+			return this._sourceKingdom;
+		}
+	}
+
+	// Kingdom constructor paramters
+	//	race - the race of this kingdom
+	//	cities - the cities that this kingdom will initially own
+	//	sourceKingdom (optional) - the kingdom from which this new kingdom came from
+	public Kingdom(RACE race, List<HexTile> cities, Kingdom sourceKingdom = null) {
 		this.id = Utilities.SetID(this);
 		this.race = race;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
-		this.horoscope = GetHoroscope ();
 		this.successionLine = new List<Citizen>();
 		this.pretenders = new List<Citizen> ();
 		this.cities = new List<City>();
@@ -43,6 +63,11 @@ public class Kingdom{
 		this.kingdomColor = Utilities.GetColorForKingdom();
 		this.adjacentCitiesFromOtherKingdoms = new List<City>();
 		this.adjacentKingdoms = new List<Kingdom>();
+
+		this._sourceKingdom = sourceKingdom;
+		// Determine what type of Kingdom this will be upon initialization.
+		this._kingdomType = KINGDOM_TYPE.NONE;
+		this.UpdateKingdomType();
 
 		if (race == RACE.HUMANS) {
 			this.basicResource = BASE_RESOURCE_TYPE.STONE;
@@ -67,12 +92,58 @@ public class Kingdom{
 		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
+
+	// Updates this kingdom's type and horoscope
+	public void UpdateKingdomType() {
+		// Update Kingdom Type whenever the kingdom expands to a new city
+		KINGDOM_TYPE prevKingdomType = this._kingdomType;
+		this._kingdomType = StoryTellingManager.Instance.InitializeKingdomType (this);
+		if (_kingdomType != prevKingdomType) {
+			this.horoscope = GetHoroscope ();
+		}
+	}
+
 	internal int[] GetHoroscope(){
 		int[] newHoroscope = new int[2];
-		newHoroscope[0] = UnityEngine.Random.Range(0,2);
-		newHoroscope[1] = UnityEngine.Random.Range(0,2);
+
+		if (this._kingdomType == KINGDOM_TYPE.BARBARIC_TRIBE) {
+			newHoroscope[0] = UnityEngine.Random.Range(0,2);
+			newHoroscope[1] = 0;
+		} else if (this._kingdomType == KINGDOM_TYPE.HERMIT_TRIBE) {
+			newHoroscope[0] = UnityEngine.Random.Range(0,2);
+			newHoroscope[1] = 1;
+		} else if (this._kingdomType == KINGDOM_TYPE.RELIGIOUS_TRIBE) {
+			newHoroscope[0] = 0;
+			newHoroscope[1] = UnityEngine.Random.Range(0,2);
+		} else if (this._kingdomType == KINGDOM_TYPE.OPPORTUNISTIC_TRIBE) {
+			newHoroscope[0] = 1;
+			newHoroscope[1] = UnityEngine.Random.Range(0,2);
+		} else if (this._kingdomType == KINGDOM_TYPE.NOBLE_KINGDOM) {
+			newHoroscope[0] = 0;
+			newHoroscope[1] = 0;
+		} else if (this._kingdomType == KINGDOM_TYPE.EVIL_EMPIRE) {
+			newHoroscope[0] = 1;
+			newHoroscope[1] = 0;
+		} else if (this._kingdomType == KINGDOM_TYPE.MERCHANT_NATION) {
+			newHoroscope[0] = 0;
+			newHoroscope[1] = 1;
+		} else if (this._kingdomType == KINGDOM_TYPE.CHAOTIC_STATE) {
+			newHoroscope[0] = 1;
+			newHoroscope[1] = 1;
+		}
+
 		return newHoroscope;
 	}
+
+	// Function to call if you want to determine whether the Kingdom is still alive or dead
+	// At the moment, a Kingdom is considered dead if it doesnt have any cities.
+	public bool isAlive() {
+		if (this.cities.Count > 0) {
+			return true;
+		}
+		return false;
+	}
+
 	protected void CreateInitialRelationships(){
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {
@@ -100,6 +171,10 @@ public class Kingdom{
 			return;
 		}
 
+		float chance = Random.Range (0.01f, 100f);
+		if (chance >= this.expansionChance) {
+			return;
+		}
 		List<City> citiesThatCanExpand = new List<City>();
 		List<Citizen> allUnassignedAdultCitizens = new List<Citizen>();
 		List<Resource> expansionCost = new List<Resource> () {
@@ -114,20 +189,16 @@ public class Kingdom{
 //			new Resource (this.basicResource, 20)
 //		};
 
-		for (int i = 0; i < this.cities.Count; i++) {
-			if (this.cities[i].HasEnoughResourcesForAction(expansionCost) && this.cities[i].adjacentHabitableTiles.Count > 0) {
+		for (int i = 0; i < this.cities.Count; i++) {			
+			if (this.cities[i].HasEnoughResourcesForAction(expansionCost) && CityGenerator.Instance.GetNearestHabitableTile(this.cities[i]) != null) {
 				citiesThatCanExpand.Add(this.cities[i]);
 			}
 		}
 
 		if (citiesThatCanExpand.Count > 0) {
-			float expansionChance = this.expansionChance;
-			float chance = Random.Range (0.01f, 100f);
-			if (chance < expansionChance) {
-				Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
-				citiesThatCanExpand[0].AdjustResources(expansionCost);
-				Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, governorToLeadExpansion);
-			}
+			Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
+			citiesThatCanExpand[0].AdjustResources(expansionCost);
+			Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, governorToLeadExpansion);
 		}
 	}
 
@@ -363,6 +434,7 @@ public class Kingdom{
 	internal void AddCityToKingdom(City city){
 		this.cities.Add (city);
 		city.kingdom = this;
+		this.UpdateKingdomType();
 	}
 
 	internal void ResetAdjacencyWithOtherKingdoms(){

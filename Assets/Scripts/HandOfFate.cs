@@ -26,14 +26,17 @@ public class HandOfFate : MonoBehaviour {
 		this.admirationChance = 0;
 		this.allUnwantedEvents = new List<GameEvent> ();
 	}
+
 	[Task]
 	public void CanCreateEvent(){
 		Task.current.Succeed();
 	}
+
 	[Task]
 	public void CannotCreateEvent(){
 		Task.current.Fail();
 	}
+
 	[Task]
 	public void ResetValues(){
 		this.firstKingdom = null;
@@ -47,6 +50,7 @@ public class HandOfFate : MonoBehaviour {
 		this.allUnwantedEvents.Clear ();
 		Task.current.Succeed ();
 	}
+
 	[Task]
 	public void SetFirstRandomKingdom(){
 		this.firstKingdom = KingdomManager.Instance.allKingdoms [UnityEngine.Random.Range (0, KingdomManager.Instance.allKingdoms.Count)];
@@ -81,6 +85,7 @@ public class HandOfFate : MonoBehaviour {
 			Task.current.Succeed ();
 		}
 	}
+
 	[Task]
 	public void AreTheTwoKingdomsNotAtWar(){
 		RelationshipKingdom relationship = this.firstKingdom.GetRelationshipWithOtherKingdom (this.secondKingdom);
@@ -103,6 +108,7 @@ public class HandOfFate : MonoBehaviour {
 		}
 		Task.current.Succeed ();
 	}
+
 	[Task]
 	public void SetAdjacencyValue(){
 		this.isAdjacent = this.firstKingdom.IsKingdomAdjacentTo (this.secondKingdom);
