@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public struct Log {
 
@@ -11,12 +12,15 @@ public struct Log {
 	public string file;
 	public string key;
 
-	public Log(int month, int day, int year, string category, string file, string key){
+	public List<object> objectsInLog;
+
+	public Log(int month, int day, int year, string category, string file, string key, List<object> objectsInLog){
 		this.month = (MONTH)month;
 		this.day = day;
 		this.year = year;
 		this.category = category;
 		this.file = file;
 		this.key = key;
+		this.objectsInLog = objectsInLog;
 	}
 }

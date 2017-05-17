@@ -58,6 +58,7 @@ public class GameEvent {
 		Debug.Log("New Event was created!");
 	}
 
+	#region virtual methods
 	internal virtual void PerformAction(){}
 
 	internal virtual void DoneCitizenAction(Envoy citizen){}
@@ -65,6 +66,11 @@ public class GameEvent {
 	internal virtual void DoneEvent(){
 		Debug.Log ("Game Event Ended!");
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+	} 
+	#endregion
+
+	internal void CreateNewLogForEvent(int month, int day, int year, string category, string file, string key, List<object> objectsInLog){
+		this.logs.Add (new Log (month, day, year, category, file, key, objectsInLog));
 	}
 
 	internal virtual void CancelEvent(){}

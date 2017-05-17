@@ -268,7 +268,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	private void UpdateUI(){
-		dateLbl.text = "[b]" + ((MONTH)GameManager.Instance.month).ToString () + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString () + "[/b]";
+		dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
 		UpdateKingdomList();
 		if (cityInfoGO.activeSelf) {
 			if (currentlyShowingCity != null) {
