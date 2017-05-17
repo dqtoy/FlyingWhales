@@ -2723,9 +2723,9 @@ public class UIManager : MonoBehaviour {
 			}
 			List<EventListItem> currentlyShowingEspionageEvents = espionageParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem> ()).ToList ();
 			if (espionageEvents.Count > 0) {
-				List<int> currentEspionageEventIDs = espionageEvents.Select (x => x.eventID).ToList ();
-				if (currentEspionageEventIDs.Except (currentlyShowingEspionageEvents.Select (x => x.gameEvent.eventID)).
-					Union (currentlyShowingEspionageEvents.Select (x => x.gameEvent.eventID).Except (currentEspionageEventIDs)).Count () > 0 || 
+				List<int> currentEspionageEventIDs = espionageEvents.Select (x => x.id).ToList ();
+				if (currentEspionageEventIDs.Except (currentlyShowingEspionageEvents.Select (x => x.gameEvent.id)).
+					Union (currentlyShowingEspionageEvents.Select (x => x.gameEvent.id).Except (currentEspionageEventIDs)).Count () > 0 || 
 					currentlyShowingEspionageEvents.Select(x => x.ownerOfThisItem).First().id != currentlyShowingKingdom.id) {
 					for (int i = 0; i < currentlyShowingEspionageEvents.Count; i++) {
 						Destroy (currentlyShowingEspionageEvents [i].gameObject);
@@ -2752,9 +2752,9 @@ public class UIManager : MonoBehaviour {
 			}
 			List<EventListItem> currentlyShowingStateVisitEvents = stateVisitParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem> ()).ToList ();
 			if (stateVisitEvents.Count > 0) {
-				List<int> currentStateVisitEventIDs = espionageEvents.Select (x => x.eventID).ToList ();
-				if (currentStateVisitEventIDs.Except (currentlyShowingStateVisitEvents.Select (x => x.gameEvent.eventID)).
-				Union (currentlyShowingStateVisitEvents.Select (x => x.gameEvent.eventID).Except (currentStateVisitEventIDs)).Count () > 0 || 
+				List<int> currentStateVisitEventIDs = espionageEvents.Select (x => x.id).ToList ();
+				if (currentStateVisitEventIDs.Except (currentlyShowingStateVisitEvents.Select (x => x.gameEvent.id)).
+				Union (currentlyShowingStateVisitEvents.Select (x => x.gameEvent.id).Except (currentStateVisitEventIDs)).Count () > 0 || 
 					currentlyShowingStateVisitEvents.Select(x => x.ownerOfThisItem).First().id != currentlyShowingKingdom.id) {
 					for (int i = 0; i < currentlyShowingStateVisitEvents.Count; i++) {
 						Destroy (currentlyShowingStateVisitEvents [i].gameObject);
@@ -2777,9 +2777,9 @@ public class UIManager : MonoBehaviour {
 			}
 			List<EventListItem> currentlyShowingSkirmishEvents = skirmishParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem> ()).ToList ();
 			if (skirmishEvents.Count > 0) {
-				List<int> currentSkirmishEventIDs = skirmishEvents.Select (x => x.eventID).ToList ();
-				if (currentSkirmishEventIDs.Except (currentlyShowingSkirmishEvents.Select (x => x.gameEvent.eventID)).
-					Union (currentlyShowingSkirmishEvents.Select (x => x.gameEvent.eventID).Except (currentSkirmishEventIDs)).Count () > 0 || 
+				List<int> currentSkirmishEventIDs = skirmishEvents.Select (x => x.id).ToList ();
+				if (currentSkirmishEventIDs.Except (currentlyShowingSkirmishEvents.Select (x => x.gameEvent.id)).
+					Union (currentlyShowingSkirmishEvents.Select (x => x.gameEvent.id).Except (currentSkirmishEventIDs)).Count () > 0 || 
 					currentlyShowingSkirmishEvents.Select(x => x.ownerOfThisItem).First().id != currentlyShowingKingdom.id) {
 					for (int i = 0; i < currentlyShowingSkirmishEvents.Count; i++) {
 						Destroy (currentlyShowingSkirmishEvents [i].gameObject);
@@ -2863,9 +2863,9 @@ public class UIManager : MonoBehaviour {
 					parentForWarEvent = eventParentGO.GetComponent<WarEventListParent>();
 				}
 
-				List<int> currentlyShowingWarEvents = parentForWarEvent.eventsGrid.GetComponentsInChildren<EventListItem>().Select(x => x.gameEvent.eventID).ToList();
+				List<int> currentlyShowingWarEvents = parentForWarEvent.eventsGrid.GetComponentsInChildren<EventListItem>().Select(x => x.gameEvent.id).ToList();
 
-				if (!currentlyShowingWarEvents.Contains (warEvents [i].eventID)) {
+				if (!currentlyShowingWarEvents.Contains (warEvents [i].id)) {
 					GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, parentForWarEvent.eventsGrid.transform) as GameObject;
 					eventGO.GetComponent<EventListItem> ().SetEvent (warEvents [i], currentlyShowingKingdom);
 					eventGO.GetComponent<EventListItem> ().onClickEvent += ShowSpecificEvent;

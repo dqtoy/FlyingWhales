@@ -5,7 +5,7 @@ using System;
 
 public class GameEvent {
 
-	public int eventID;
+	public int id;
 	public EVENT_TYPES eventType;
 	public EVENT_STATUS eventStatus;
 
@@ -36,7 +36,7 @@ public class GameEvent {
 	}
 
 	public GameEvent(int startWeek, int startMonth, int startYear, Citizen startedBy){
-		this.eventID = Utilities.SetID(this);
+		this.id = Utilities.SetID(this);
 		this.eventStatus = EVENT_STATUS.EXPOSED;
 		this.startDay = startWeek;
 		this.startMonth = startMonth;
