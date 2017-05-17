@@ -8,6 +8,7 @@ public class LocalizedTextEditor : EditorWindow{
 	public LocalizationData localizationData;
 
 	LANGUAGES language = LANGUAGES.NONE;
+	Vector2 scrollPos = Vector2.zero;
 
 	[MenuItem ("Window/Localized Text Editor")]
 	static void Init()
@@ -16,8 +17,8 @@ public class LocalizedTextEditor : EditorWindow{
 	}
 
 	private void OnGUI(){
+		this.scrollPos = EditorGUILayout.BeginScrollView (this.scrollPos, GUILayout.Width(this.position.width), GUILayout.Height(this.position.height));
 		this.language = (LANGUAGES)EditorGUILayout.EnumPopup ("Select Language: ", this.language);
-
 		if(this.language != LANGUAGES.NONE){
 			if (localizationData != null) 
 			{
@@ -42,6 +43,7 @@ public class LocalizedTextEditor : EditorWindow{
 				CreateNewData ();
 			}
 		}
+		EditorGUILayout.EndScrollView ();
 	}
 
 
