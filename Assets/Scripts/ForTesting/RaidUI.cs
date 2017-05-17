@@ -36,9 +36,9 @@ public class RaidUI : MonoBehaviour {
 	}
 	public void OnClickCreateEvent(){
 		Kingdom selectedKingdom = this.dropdownRaidKingdoms.data as Kingdom;
-		General selectedGeneral = this.dropdownGenerals.data as General;
+//		General selectedGeneral = this.dropdownGenerals.data as General;
 
-		Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, selectedKingdom.king, UIManager.Instance.currentlyShowingCity, selectedGeneral);
+		Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, selectedKingdom.king, UIManager.Instance.currentlyShowingCity);
 		EventManager.Instance.AddEventToDictionary (raid);
 	}
 	private void PopulateGeneral(Kingdom kingdom){

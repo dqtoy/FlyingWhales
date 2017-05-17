@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public struct Log {
+public class Log {
 
 	public MONTH month;
 	public int day;

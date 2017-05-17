@@ -198,10 +198,10 @@ public class HandOfFate : MonoBehaviour {
 	}
 
 	private void CreateRaidEvent(){
-		General general = GetGeneral(this.firstKingdom);
-		City city = GetRaidedCity(general);
-		if(general != null && city != null){
-			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city, general);
+//		General general = GetGeneral(this.firstKingdom);
+		City city = GetRaidedCity();
+		if(city != null){
+			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city);
 			EventManager.Instance.AddEventToDictionary (raid);
 		}
 	}
@@ -233,28 +233,33 @@ public class HandOfFate : MonoBehaviour {
 			return null;
 		}
 	}
-	private City GetRaidedCity(General general){
-		if(general == null){
+	private City GetRaidedCity(){
+		if(this.secondKingdom.cities.Count > 0){
+			return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
+		}else{
 			return null;
 		}
-		if(this.isAdjacent){
-			List<City> adjacentCities = general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Where (x => x.kingdom.id == this.secondKingdom.id).ToList();
-			if(adjacentCities.Count > 0){
-				return adjacentCities [UnityEngine.Random.Range (0, adjacentCities.Count)];
-			}else{
-				if(this.secondKingdom.cities.Count > 0){
-					return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
-				}else{
-					return null;
-				}
-			}
-		}else{
-			if(this.secondKingdom.cities.Count > 0){
-				return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
-			}else{
-				return null;
-			}
-		}
+//		if(general == null){
+//			return null;
+//		}
+//		if(this.isAdjacent){
+//			List<City> adjacentCities = general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Where (x => x.kingdom.id == this.secondKingdom.id).ToList();
+//			if(adjacentCities.Count > 0){
+//				return adjacentCities [UnityEngine.Random.Range (0, adjacentCities.Count)];
+//			}else{
+//				if(this.secondKingdom.cities.Count > 0){
+//					return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
+//				}else{
+//					return null;
+//				}
+//			}
+//		}else{
+//			if(this.secondKingdom.cities.Count > 0){
+//				return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
+//			}else{
+//				return null;
+//			}
+//		}
 
 	}
 	private void CreateBorderConflictEvent(){

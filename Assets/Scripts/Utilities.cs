@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
-
+using System.Text;
 
 public class Utilities : MonoBehaviour {
 	private static System.Random rng = new System.Random(); 
@@ -496,4 +496,103 @@ public class Utilities : MonoBehaviour {
 		new Color32(0x88, 0xFF, 0xE2, 0xFF),//Cyan
 		new Color32(0xFC, 0x9F, 0xFF, 0xFF)//Pink
 	};
+
+	public static string StringReplacer(string wordToFind, Log log){
+		List<int> specificWordIndexes = new List<int> ();
+		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
+		if (!string.IsNullOrEmpty (newText)) {
+			string[] words = newText.Split (new char[]{ ' ', '.' });
+			for (int i = 0; i < words.Length; i++) {
+				if (words [i].Contains (wordToFind)) {
+					specificWordIndexes.Add (i);
+				}
+			}
+			if(specificWordIndexes.Count == log.fillers.Count){
+				for (int i = 0; i < specificWordIndexes.Count; i++) {
+					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], log.fillers [i], i);
+					if(!string.IsNullOrEmpty(replacedWord)){
+						words [specificWordIndexes [i]] = replacedWord;
+					}
+				}
+			}
+
+			for(int i = 0; i < words.Length; i++){
+				newText = words [i];
+				if(i < (words.Length - 1)){
+					newText += " ";
+				}else if(i == (words.Length - 1)){
+					newText += ".";
+				}
+			}
+
+		}
+
+		return newText;
+	}
+	public static string CustomStringReplacer(string wordToBeReplaced, object objectLog, int index){
+		string wordToReplace = string.Empty;
+		string value = string.Empty;
+		int id = 0;
+		if (objectLog is City) {
+			id = ((City)objectLog).id;
+		} else if (objectLog is Citizen) {
+			id = ((Citizen)objectLog).id;
+		} else if (objectLog is Kingdom) {
+			id = ((Kingdom)objectLog).id;
+		} else if (objectLog is GameEvent) {
+			id = ((GameEvent)objectLog).id;
+		}
+
+
+		if (wordToBeReplaced.Contains ("name")) {
+			if (objectLog is City) {
+				value = ((City)objectLog).name;
+			} else if (objectLog is Citizen) {
+				value = ((Citizen)objectLog).name;
+			} else if (objectLog is Kingdom) {
+				value = ((Kingdom)objectLog).name;
+			} else if (objectLog is GameEvent) {
+				value = ((GameEvent)objectLog).eventType.ToString();
+			}
+		}
+
+		if(wordToBeReplaced.Contains("@")){
+			wordToReplace = "[url=" + index.ToString() + "]" + value + "[/url]";
+		}else{
+			wordToReplace = value;
+		}
+
+		return wordToReplace;
+
+	}
+	public static List<string> GetAllWordsInAString(string wordToFind, string text){
+		List<string> words = new List<string> ();
+		string word = string.Empty;
+		int index = 0;
+		int wordCount = 0;
+		int startingIndex = index;
+		while(index != -1){
+			index = text.IndexOf (wordToFind, startingIndex);
+			if(index != -1){
+				startingIndex = index + 1;
+				if(startingIndex > text.Length - 1){
+					startingIndex = text.Length - 1;
+				}
+
+				wordCount = 0;
+				for(int i = index; i < text.Length; i++){
+					if(text[i] != ' '){
+						wordCount += 1;
+					}else{
+						break;
+					}
+				}
+				word = text.Substring (index, wordCount);
+				words.Add (word);
+			}
+
+		}
+		return words;
+
+	}
 }
