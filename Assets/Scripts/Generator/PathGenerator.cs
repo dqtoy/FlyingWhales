@@ -162,7 +162,20 @@ public class PathGenerator : MonoBehaviour {
 			return newPath;
 		}
 		return null;
+	}
 
+	/*
+	 * Counts the number of hex tiles between two input tiles
+	 * */
+	public int GetDistanceBetweenTwoTiles(HexTile startingTile, HexTile destinationTile){
+		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
+		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
+		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.ROAD_CREATION);
+
+		if (path != null) {			
+			return (path.Count() - 1);
+		}
+		return 99999;
 	}
 
 	public bool AreTheseTilesConnected(HexTile tile1, HexTile tile2, PATHFINDING_MODE pathfindingMode){

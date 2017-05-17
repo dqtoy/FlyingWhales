@@ -49,28 +49,29 @@ public class CityGenerator : MonoBehaviour {
 //				continue;
 //			}
 
-			List<HexTile> tilesInRange = currentHexTile.GetTilesInRange(4);
-			List<HexTile> checkForHabitableTilesInRange = currentHexTile.GetTilesInRange (10);
+
+			List<HexTile> checkForHabitableTilesInRange = currentHexTile.GetTilesInRange (4);
 			if (checkForHabitableTilesInRange.Where (x => x.isHabitable).Count () > 0) {
 				continue;
 			}
-			int basicResourceCount = 0;
+
+			List<HexTile> tilesInRange = currentHexTile.GetTilesInRange(2);
 			for (int j = 0; j < tilesInRange.Count; j++) {
 				if (tilesInRange [j].specialResource != RESOURCE.NONE) {
-					if (Utilities.GetBaseResourceType (tilesInRange[j].specialResource) == BASE_RESOURCE_TYPE.STONE ||
-						Utilities.GetBaseResourceType (tilesInRange[j].specialResource) == BASE_RESOURCE_TYPE.WOOD) {
-						basicResourceCount++;
+					if (Utilities.GetBaseResourceType (tilesInRange [j].specialResource) == BASE_RESOURCE_TYPE.STONE) {
+						currentHexTile.nearbyStoneCount++;
+					} else if (Utilities.GetBaseResourceType (tilesInRange [j].specialResource) == BASE_RESOURCE_TYPE.WOOD) {
+						currentHexTile.nearbyWoodCount++;
+					} else {
+						currentHexTile.nearbySpecialCount++;
 					}
-				} 
-//				else {
-//					if (Utilities.GetBaseResourceType (tilesInRange[j].defaultResource) == BASE_RESOURCE_TYPE.STONE ||
-//						Utilities.GetBaseResourceType (tilesInRange[j].defaultResource) == BASE_RESOURCE_TYPE.WOOD) {
-//						basicResourceCount++;
-//					}
-//				}
+				}
 			}
 
-			if (basicResourceCount >= 3) {
+			if (currentHexTile.nearbyStoneCount >= 2 || currentHexTile.nearbyWoodCount >= 2 
+					|| (currentHexTile.nearbyStoneCount >= 1 && currentHexTile.nearbySpecialCount >= 1) 
+					|| (currentHexTile.nearbyWoodCount >= 1 && currentHexTile.nearbySpecialCount >= 1)) {
+
 				SetTileAsHabitable(currentHexTile);
 				elligibleTiles.Remove(currentHexTile.gameObject);
 				for (int j = 0; j < tilesInRange.Count; j++) {
@@ -79,81 +80,6 @@ public class CityGenerator : MonoBehaviour {
 					}
 				}
 			}
-//			List<HexTile> foodTiles = new List<HexTile>();
-//			for (int j = 0; j < adjacentTiles.Count; j++) {
-//				HexTile possibleFoodTile = adjacentTiles[j];
-//				if (possibleFoodTile.specialResource != RESOURCE.NONE) {
-//					if (Utilities.GetBaseResourceType (possibleFoodTile.specialResource) == BASE_RESOURCE_TYPE.FOOD) {
-//						foodTiles.Add(possibleFoodTile);
-//					}
-//				} else {
-//					if (Utilities.GetBaseResourceType(possibleFoodTile.defaultResource) == BASE_RESOURCE_TYPE.FOOD) {
-//						foodTiles.Add(possibleFoodTile);
-//					}
-//				}
-//				if (foodTiles.Count == 2) {
-//					break;
-//				}
-//			}
-
-//			if (foodTiles.Count >= 2) {
-//				List<HexTile> basicResourceTiles = new List<HexTile>();
-//				for (int j = 0; j < adjacentTiles.Count; j++) {
-//					if (!foodTiles.Contains (adjacentTiles [j])) {
-//						HexTile possibleBasicTile = adjacentTiles [j];
-//						if (possibleBasicTile.specialResource != RESOURCE.NONE) {
-//							if (Utilities.GetBaseResourceType (possibleBasicTile.specialResource) == BASE_RESOURCE_TYPE.STONE ||
-//								Utilities.GetBaseResourceType (possibleBasicTile.specialResource) == BASE_RESOURCE_TYPE.WOOD) {
-//								basicResourceTiles.Add(possibleBasicTile);
-//							}
-//						} else {
-//							if (Utilities.GetBaseResourceType (possibleBasicTile.defaultResource) == BASE_RESOURCE_TYPE.STONE ||
-//								Utilities.GetBaseResourceType (possibleBasicTile.defaultResource) == BASE_RESOURCE_TYPE.WOOD) {
-//								basicResourceTiles.Add(possibleBasicTile);
-//							}
-//						}
-//						if (basicResourceTiles.Count == 1) {
-//							break;
-//						}
-//					}
-//				}
-//				if (basicResourceTiles.Count >= 1) {
-//					List<HexTile> nonSpecialTiles = new List<HexTile>();
-//					for (int j = 0; j < adjacentTiles.Count; j++) {
-//						if (!foodTiles.Contains (adjacentTiles [j]) && !basicResourceTiles.Contains (adjacentTiles [j])) {
-//							HexTile possibleNonSpecialTile = adjacentTiles[j];
-//							if (possibleNonSpecialTile.specialResource == RESOURCE.NONE) {
-//								nonSpecialTiles.Add (possibleNonSpecialTile);
-//							}
-//							if (nonSpecialTiles.Count == 1) {
-//								break;
-//							}
-//						}
-//					}
-//					if (nonSpecialTiles.Count >= 1) {
-//						List<HexTile> specialTiles = new List<HexTile>();
-//						List<HexTile> nearCityTiles = new List<HexTile>();
-//						for (int j = 0; j < tilesInRange.Count; j++) {
-//							if (tilesInRange [j].specialResource != RESOURCE.NONE) {
-//								specialTiles.Add (tilesInRange [j]);
-//							}
-//
-//							if (tilesInRange [j].isHabitable) {
-//								nearCityTiles.Add (tilesInRange [j]);
-//							}
-//						}
-//						if (specialTiles.Count >= 3 && nearCityTiles.Count <= 0) {
-//							SetTileAsHabitable(currentHexTile);
-//							elligibleTiles.Remove(currentHexTile.gameObject);
-//							for (int j = 0; j < tilesInRange.Count; j++) {
-//								if (elligibleTiles.Contains (tilesInRange [j].gameObject)) {
-//									elligibleTiles.Remove (tilesInRange [j].gameObject);
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
 		}
 	}
 
@@ -163,6 +89,49 @@ public class CityGenerator : MonoBehaviour {
 		hexTile.GetComponent<SpriteRenderer>().color = Color.black;
 	}
 
+	// This will return the nearest habitable tile that matches the following criteria
+	//	- unoccupied
+	//	- has a nearby basic resource needed by the expanding race
+	public HexTile GetNearestHabitableTile(City city) {
+		int shortestDistance = 99999, currentDistance = 0;
+		HexTile nearestTile = null;
+
+		if (city.kingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
+			for (int i = 0; i < this.habitableTiles.Count; i++) {
+				
+				if (this.habitableTiles [i].nearbyStoneCount >= 1 && !this.habitableTiles [i].isOccupied && !this.habitableTiles [i].isBorder) {
+					List<HexTile> checkForBorderTilesInRange = this.habitableTiles [i].GetTilesInRange (2);
+					if (checkForBorderTilesInRange.Where (x => (x.ownedByCity != null && x.ownedByCity.kingdom != city.kingdom)).Count () > 1) {
+						continue;
+					} else {						
+						currentDistance = PathGenerator.Instance.GetDistanceBetweenTwoTiles (city.hexTile, this.habitableTiles [i]);
+						if (currentDistance < shortestDistance) {
+							shortestDistance = currentDistance;
+							nearestTile = this.habitableTiles [i];
+						}
+					}
+				}
+			}
+
+		} else {
+			for (int i = 0; i < this.habitableTiles.Count; i++) {
+				if (this.habitableTiles [i].nearbyWoodCount >= 1 && !this.habitableTiles [i].isOccupied && !this.habitableTiles [i].isBorder) {
+					List<HexTile> checkForBorderTilesInRange = this.habitableTiles [i].GetTilesInRange (2);
+					if (checkForBorderTilesInRange.Where (x => (x.ownedByCity != null && x.ownedByCity.kingdom != city.kingdom)).Count () > 1) {
+						continue;
+					} else {
+						currentDistance = PathGenerator.Instance.GetDistanceBetweenTwoTiles (city.hexTile, this.habitableTiles [i]);
+						if (currentDistance < shortestDistance) {
+							shortestDistance = currentDistance;
+							nearestTile = this.habitableTiles [i];
+						}
+					}
+				}
+			}
+
+		}
+		return nearestTile;
+	}
 
 	public City CreateNewCity(HexTile hexTile, Kingdom kingdom){
 		hexTile.city = new City (hexTile, kingdom);

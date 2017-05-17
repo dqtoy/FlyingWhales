@@ -9,6 +9,6 @@ public class StartupManager : MonoBehaviour {
 			yield return null;
 		}
 
-		this.mapGenerator.InitializeWorld ();
+		//this.mapGenerator.InitializeWorld ();
 	}
 }
