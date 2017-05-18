@@ -204,7 +204,7 @@ public class KingdomManager : MonoBehaviour {
 	}
 
 	public RequestPeace GetRequestPeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
-		List<GameEvent> allPeaceRequestsPerKingdom = EventManager.Instance.GetEventsOfTypePerKingdom(kingdom1, EVENT_TYPES.REQUEST_PEACE).Where(x => x.isActive).ToList();
+		List<GameEvent> allPeaceRequestsPerKingdom = EventManager.Instance.GetEventsStartedByKingdom(kingdom1, new EVENT_TYPES[]{EVENT_TYPES.REQUEST_PEACE}).Where(x => x.isActive).ToList();
 		for (int i = 0; i < allPeaceRequestsPerKingdom.Count; i++) {
 			RequestPeace currentRequestPeace = (RequestPeace)allPeaceRequestsPerKingdom[i];
 			if (currentRequestPeace.startedByKingdom.id == kingdom1.id && currentRequestPeace.targetKingdom.id == kingdom2.id) {

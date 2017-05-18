@@ -89,4 +89,13 @@ public class War : GameEvent {
 		KingdomManager.Instance.DeclarePeaceBetweenKingdoms(this._kingdom1, this._kingdom2);
 		this.DoneEvent();
 	}
+
+	internal Kingdom GetKingdomInvolvedInWar(Kingdom kingdom){
+		if (kingdom1.id == kingdom.id) {
+			return kingdom1;
+		} else {
+			return kingdom2;
+		}
+		return null;
+	}
 }

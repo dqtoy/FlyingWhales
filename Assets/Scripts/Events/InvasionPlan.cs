@@ -112,7 +112,7 @@ public class InvasionPlan : GameEvent {
 		List<RelationshipKings> friends = this.startedBy.friends;
 		if (friends.Count > 0) {
 			for (int i = 0; i < friends.Count; i++) {
-				if (EventManager.Instance.GetEventsOfTypePerKingdom (friends[i].king.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where (x => x.isActive).Count () > 0 ||
+				if (EventManager.Instance.GetEventsStartedByKingdom (friends[i].king.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where (x => x.isActive).Count () > 0 ||
 					KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, friends[i].king.city.kingdom) != null||
 					KingdomManager.Instance.GetWarBetweenKingdoms (friends[i].king.city.kingdom, this._targetKingdom).isAtWar) {
 					//friend already has an active invasion plan or friend already has an active join war request from this startedByKingdom or is already
