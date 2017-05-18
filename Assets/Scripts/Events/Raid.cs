@@ -174,7 +174,7 @@ public class Raid : GameEvent {
 		this.raidedCity.goldCount -= stolenGold;
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_success");
-		newLog.AddToFillers (stolenGold, stolenGold.ToString());
+		newLog.AddToFillers (null, stolenGold.ToString());
 //		List<object> raidSuccessLogObjects = new List<object> {
 //			stolenGold
 //		};

@@ -97,7 +97,7 @@ public class StateVisit : GameEvent {
 
 					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "visitor_died");
 					newLog.AddToFillers (this.visitor, this.visitor.name);
-					newLog.AddToFillers (this.visitor, this.visitor.deathReasonText);
+					newLog.AddToFillers (null, this.visitor.deathReasonText);
 					newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
 					newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
 				}
