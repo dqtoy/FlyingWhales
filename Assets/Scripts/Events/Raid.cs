@@ -47,9 +47,14 @@ public class Raid : GameEvent {
 //			this.raidedCity
 //		};
 //		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start", startLogObjects);
+
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "event_title");
+		newLogTitle.AddToFillers (this.raidedCity, this.raidedCity.name);
+
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start");
-		newLog.AddToFillers (this.startedByCity, this.startedByCity.name);
+		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
 		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+		Debug.Log ("LALALALALALALA " + Utilities.LogReplacer (newLog));
 
 		this.relationshipToAdjust = this.raidedCity.kingdom.king.SearchRelationshipByID (startedBy.id);
 		DeflectBlame ();

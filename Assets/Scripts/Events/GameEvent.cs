@@ -72,7 +72,6 @@ public class GameEvent {
 	internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
 		Log newLog = new Log (month, day, year, category, file, key);
 		this.logs.Add (newLog);
-		Debug.Log ("LALALALALALALA " + Utilities.LogReplacer (newLog));
 		return newLog;
 	}
 

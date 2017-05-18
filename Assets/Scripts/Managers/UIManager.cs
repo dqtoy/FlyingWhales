@@ -2013,24 +2013,15 @@ public class UIManager : MonoBehaviour {
 
 		this.specificEventBarTitle.text = "Success";
 		this.specificEventProgBar.value = (float)stateVisit.successMeter / 100f;
-		this.specificEventCandidatesTitleLbl.text = "SUPPORTERS";
-		for(int i = 0; i < stateVisit.helperEnvoys.Count; i++){
+		this.specificEventCandidatesTitleLbl.text = "SABOTEURS";
+		if(stateVisit.saboteurEnvoy != null){
 			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventCandidatesGrid.transform) as GameObject;
-			candidates.GetComponent<CharacterPortrait> ().SetCitizen (stateVisit.helperEnvoys[i].city.kingdom.king);
+			candidates.GetComponent<CharacterPortrait> ().SetCitizen (stateVisit.saboteurEnvoy.citizen);
 			candidates.transform.localScale = Vector3.one;
 			candidates.transform.position = Vector3.zero;
 		}
 		StartCoroutine (RepositionGrid (this.specificEventCandidatesGrid));
 
-		this.specificEventMiscTitleLbl.text = "SABOTEURS";
-		this.specificEventMiscTitleLbl.gameObject.SetActive(true);
-		for(int i = 0; i < stateVisit.saboteurEnvoys.Count; i++){
-			GameObject candidates = GameObject.Instantiate (characterPortraitPrefab, this.specificEventMiscGrid.transform) as GameObject;
-			candidates.GetComponent<CharacterPortrait> ().SetCitizen (stateVisit.saboteurEnvoys[i].city.kingdom.king);
-			candidates.transform.localScale = Vector3.one;
-			candidates.transform.position = Vector3.zero;
-		}
-		StartCoroutine (RepositionGrid (this.specificEventMiscGrid));
 	}
 	private void ShowAssassinationEvent(Assassination assassination){
 		List<Transform> children = this.specificEventStartedByGrid.GetChildList();

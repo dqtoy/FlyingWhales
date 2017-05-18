@@ -292,7 +292,7 @@ public class Kingdom{
 		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 		this.successionLine.Clear();
 		ChangeSuccessionLineRescursively (newKing);
-		this.successionLine.AddRange (GetSiblings (newKing));
+		this.successionLine.AddRange (newKing.GetSiblings());
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
 //		UIManager.Instance.UpdateKingsGrid();
@@ -327,7 +327,7 @@ public class Kingdom{
 		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 		this.successionLine.Clear();
 		ChangeSuccessionLineRescursively (newKing);
-		this.successionLine.AddRange (GetSiblings (newKing));
+		this.successionLine.AddRange (newKing.GetSiblings());
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
 //		UIManager.Instance.UpdateKingsGrid();
@@ -373,24 +373,6 @@ public class Kingdom{
 				this.ChangeSuccessionLineRescursively (royalty.children [i]);
 			}
 		}
-	}
-
-	internal List<Citizen> GetSiblings(Citizen royalty){
-		List<Citizen> siblings = new List<Citizen> ();
-		if(royalty.mother != null){
-			if (royalty.mother.children != null) {
-				for (int i = 0; i < royalty.mother.children.Count; i++) {
-					if (royalty.mother.children [i].id != royalty.id) {
-						if (!royalty.mother.children [i].isDead) {
-							siblings.Add (royalty.mother.children [i]);
-						}
-					}
-				}
-			}
-		}
-
-
-		return siblings;
 	}
 
 	internal RelationshipKingdom GetRelationshipWithOtherKingdom(Kingdom kingdomTarget){
