@@ -71,13 +71,16 @@ public class EventManager : MonoBehaviour {
 		return eventsOfType;
 	}
 
-	public List<GameEvent> GetEventsOfTypePerKingdom(Kingdom kingdom, EVENT_TYPES eventType){
+	public List<GameEvent> GetEventsStartedByKingdom(Kingdom kingdom, EVENT_TYPES[] eventTypes){
 		List<GameEvent> gameEventsOfTypePerKingdom = new List<GameEvent>();
-		if (this.allEvents.ContainsKey (eventType)) {
-			List<GameEvent> eventsOfType = this.allEvents[eventType];
-			for (int i = 0; i < eventsOfType.Count; i++) {
-				if (eventsOfType[i].startedByKingdom.id == kingdom.id) {
-					gameEventsOfTypePerKingdom.Add(eventsOfType[i]);
+		for (int i = 0; i < eventTypes.Length; i++) {
+			EVENT_TYPES currentEvent = eventTypes [i];
+			if (this.allEvents.ContainsKey (currentEvent)) {
+				List<GameEvent> eventsOfType = this.allEvents[currentEvent];
+				for (int j = 0; j < eventsOfType.Count; j++) {
+					if (eventsOfType[i].startedByKingdom.id == kingdom.id) {
+						gameEventsOfTypePerKingdom.Add(eventsOfType[i]);
+					}
 				}
 			}
 		}

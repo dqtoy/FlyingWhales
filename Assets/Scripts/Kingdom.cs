@@ -167,7 +167,7 @@ public class Kingdom{
 	}
 
 	protected void AttemptToExpand(){
-		if (EventManager.Instance.GetEventsOfTypePerKingdom (this, EVENT_TYPES.EXPANSION).Where(x => x.isActive).Count() > 0) {
+		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Where(x => x.isActive).Count() > 0) {
 			return;
 		}
 

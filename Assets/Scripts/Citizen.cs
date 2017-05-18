@@ -1146,7 +1146,7 @@ public class Citizen {
 			if (warEvent != null && warEvent.isAtWar) {
 				return;
 			}
-			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0) {
+			if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
 				return;
 			}
 			if (warEvent == null) {
