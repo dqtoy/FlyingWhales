@@ -27,7 +27,7 @@ public class LocalizationManager : MonoBehaviour {
 		}
 		DontDestroyOnLoad (this.gameObject);
 
-		this.language = language;
+		this.language = Utilities.defaultLanguage;
 		this.filePath = Application.streamingAssetsPath + "/" + this.language.ToString();
 		LoadLocalizedTexts ();
 	}

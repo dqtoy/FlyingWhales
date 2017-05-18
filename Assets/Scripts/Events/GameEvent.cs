@@ -69,8 +69,10 @@ public class GameEvent {
 	} 
 	#endregion
 
-	internal void CreateNewLogForEvent(int month, int day, int year, string category, string file, string key, List<object> objectsInLog){
-		this.logs.Add (new Log (month, day, year, category, file, key, objectsInLog));
+	internal void CreateNewLogForEvent(int month, int day, int year, string category, string file, string key, List<object> fillers){
+		Log newLog = new Log (month, day, year, category, file, key, fillers);
+		this.logs.Add (newLog);
+		Debug.Log ("LALALALALALALA " + Utilities.StringReplacer (newLog));
 	}
 
 	internal virtual void CancelEvent(){}

@@ -497,13 +497,13 @@ public class Utilities : MonoBehaviour {
 		new Color32(0xFC, 0x9F, 0xFF, 0xFF)//Pink
 	};
 
-	public static string StringReplacer(string wordToFind, Log log){
+	public static string StringReplacer(Log log){
 		List<int> specificWordIndexes = new List<int> ();
 		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
 		if (!string.IsNullOrEmpty (newText)) {
 			string[] words = newText.Split (new char[]{ ' ', '.' });
 			for (int i = 0; i < words.Length; i++) {
-				if (words [i].Contains (wordToFind)) {
+				if (words [i].Contains ("(%")) {
 					specificWordIndexes.Add (i);
 				}
 			}
@@ -515,9 +515,9 @@ public class Utilities : MonoBehaviour {
 					}
 				}
 			}
-
+			newText = string.Empty;
 			for(int i = 0; i < words.Length; i++){
-				newText = words [i];
+				newText += words [i];
 				if(i < (words.Length - 1)){
 					newText += " ";
 				}else if(i == (words.Length - 1)){
@@ -541,6 +541,8 @@ public class Utilities : MonoBehaviour {
 			id = ((Kingdom)objectLog).id;
 		} else if (objectLog is GameEvent) {
 			id = ((GameEvent)objectLog).id;
+		} else if (objectLog is int) {
+			id = (int)objectLog;
 		}
 
 
@@ -553,6 +555,8 @@ public class Utilities : MonoBehaviour {
 				value = ((Kingdom)objectLog).name;
 			} else if (objectLog is GameEvent) {
 				value = ((GameEvent)objectLog).eventType.ToString();
+			} else if (objectLog is int) {
+				value = ((int)objectLog).ToString();
 			}
 		}
 
