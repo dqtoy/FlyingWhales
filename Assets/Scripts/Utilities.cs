@@ -497,7 +497,7 @@ public class Utilities : MonoBehaviour {
 		new Color32(0xFC, 0x9F, 0xFF, 0xFF)//Pink
 	};
 
-	public static string StringReplacer(Log log){
+	public static string LogReplacer(Log log){
 		List<int> specificWordIndexes = new List<int> ();
 		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
 		if (!string.IsNullOrEmpty (newText)) {
@@ -508,7 +508,7 @@ public class Utilities : MonoBehaviour {
 				}
 			}
 			if(specificWordIndexes.Count == log.fillers.Count){
-				for (int i = 0; i < specificWordIndexes.Count; i++) {
+				for (int i = 0; i < log.fillers.Count; i++) {
 					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], log.fillers [i], i);
 					if(!string.IsNullOrEmpty(replacedWord)){
 						words [specificWordIndexes [i]] = replacedWord;
@@ -529,41 +529,14 @@ public class Utilities : MonoBehaviour {
 
 		return newText;
 	}
-	public static string CustomStringReplacer(string wordToBeReplaced, object objectLog, int index){
+	public static string CustomStringReplacer(string wordToBeReplaced, LogFiller objectLog, int index){
 		string wordToReplace = string.Empty;
 		string value = string.Empty;
-		int id = 0;
-		if (objectLog is City) {
-			id = ((City)objectLog).id;
-		} else if (objectLog is Citizen) {
-			id = ((Citizen)objectLog).id;
-		} else if (objectLog is Kingdom) {
-			id = ((Kingdom)objectLog).id;
-		} else if (objectLog is GameEvent) {
-			id = ((GameEvent)objectLog).id;
-		} else if (objectLog is int) {
-			id = (int)objectLog;
-		}
-
-
-		if (wordToBeReplaced.Contains ("name")) {
-			if (objectLog is City) {
-				value = ((City)objectLog).name;
-			} else if (objectLog is Citizen) {
-				value = ((Citizen)objectLog).name;
-			} else if (objectLog is Kingdom) {
-				value = ((Kingdom)objectLog).name;
-			} else if (objectLog is GameEvent) {
-				value = ((GameEvent)objectLog).eventType.ToString();
-			} else if (objectLog is int) {
-				value = ((int)objectLog).ToString();
-			}
-		}
 
 		if(wordToBeReplaced.Contains("@")){
-			wordToReplace = "[url=" + index.ToString() + "]" + value + "[/url]";
+			wordToReplace = "[url=" + index.ToString() + "]" + objectLog.value + "[/url]";
 		}else{
-			wordToReplace = value;
+			wordToReplace = objectLog.value;
 		}
 
 		return wordToReplace;

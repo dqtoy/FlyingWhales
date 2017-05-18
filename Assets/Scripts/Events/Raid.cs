@@ -36,20 +36,21 @@ public class Raid : GameEvent {
 			this.raidedCity.hexTile.AddEventOnTile(this);
 		}
 
-//		List<object> fillers = new List<object> (){ this.sourceKingdom, this.raidedCity };
-//		this.logs.Add(new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "EventLogs", "raidlogs", "start", fillers));
-
 		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedBy.city + " has started a raid event against " + raidedCity.name , HISTORY_IDENTIFIER.NONE));
 		
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 //		Debug.LogError("RAID " + this.description);
 
-		List<object> startLogObjects = new List<object> {
-			this.startedByCity,
-			this.raidedCity
-		};
-		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start", startLogObjects);
+//		List<object> startLogObjects = new List<object> {
+//			this.startedByCity,
+//			this.raidedCity
+//		};
+//		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start", startLogObjects);
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start");
+		newLog.AddToFillers (this.startedByCity, this.startedByCity.name);
+		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+
 		this.relationshipToAdjust = this.raidedCity.kingdom.king.SearchRelationshipByID (startedBy.id);
 		DeflectBlame ();
 
@@ -131,11 +132,12 @@ public class Raid : GameEvent {
 
 	//Raid party arrives at city
 	private void Arrival(){
-//		this.logs.Add (new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "EventLogs", "raidlogs", "arrival"));
-		List<object> arrivedLogObjects = new List<object> {
-			this.raidedCity,
-		};
-		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_arrival", arrivedLogObjects);
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_arrival");
+		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+//		List<object> arrivedLogObjects = new List<object> {
+//			this.raidedCity,
+//		};
+//		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_arrival", arrivedLogObjects);
 	}
 
 	//Moment that raid party is going to steal from city
@@ -149,8 +151,9 @@ public class Raid : GameEvent {
 		if(chance < 25){
 			Steal ();
 		} else {
-			this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-				"Events", "Raid", "raid_fail", new List<object>());
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_fail");
+//			this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+//				"Events", "Raid", "raid_fail", new List<object>());
 		}
 	}
 
@@ -165,12 +168,14 @@ public class Raid : GameEvent {
 		this.startedBy.city.goldCount += stolenGold;
 		this.raidedCity.goldCount -= stolenGold;
 
-		List<object> raidSuccessLogObjects = new List<object> {
-			stolenGold
-		};
-		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-			"Events", "Raid", "raid_success", raidSuccessLogObjects);
-		
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_success");
+		newLog.AddToFillers (stolenGold, stolenGold.ToString());
+//		List<object> raidSuccessLogObjects = new List<object> {
+//			stolenGold
+//		};
+//		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+//			"Events", "Raid", "raid_success", raidSuccessLogObjects);
+//		
 		Debug.Log (this.startedBy.name + " of " + this.startedBy.city.name + " has stolen " + stolenGold + " gold from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
 //		int stolenBasicResource = (int)(GetRandomBasicResource(ref basicResource) * 0.15f);
 //		int stolenRareResource = (int)(GetRandomRareResource(ref rareResource) * 0.15f);
@@ -278,12 +283,13 @@ public class Raid : GameEvent {
 			}
 		}
 		if (deadCitizen != null) {
-//			this.logs.Add (new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "EventLogs", "raidlogs", "citizen_died"));
-			List<object> accidentDeathLogObjects = new List<object> {
-				deadCitizen,
-			};
-			this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-				"Events", "Raid", "raid_accident", accidentDeathLogObjects);
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_accident");
+			newLog.AddToFillers (deadCitizen, deadCitizen.name);
+//			List<object> accidentDeathLogObjects = new List<object> {
+//				deadCitizen,
+//			};
+//			this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+//				"Events", "Raid", "raid_accident", accidentDeathLogObjects);
 			
 			int amountToAdjust = -15;
 			if (isGovernor || isKing) {
@@ -298,7 +304,7 @@ public class Raid : GameEvent {
 
 	}
 
-	//Discovery of Raid Party which will cause deterioration
+	//Discovery of Raid Party which will cause relationship deterioration
 	private void RaidPartyDiscovery(){
 		if(this.hasBeenDiscovered){
 			return;
@@ -309,20 +315,23 @@ public class Raid : GameEvent {
 			this.hasBeenDiscovered = true;
 
 			if (this.hasDeflected) {
-//				this.logs.Add (new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "EventLogs", "raidlogs", "discovered_deflect"));
-//				this.logs.Add (new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "EventLogs", "raidlogs", "discovered_nodeflect"));
-				List<object> discoveredLogObjects = new List<object> {
-					this.raidedCity,
-					this.startedByCity
-				};
-				this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-					"Events", "Raid", "raid_discovery_deflect", discoveredLogObjects);
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery_deflect");
+				newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+				newLog.AddToFillers (this.startedByCity, this.startedByCity.name);
+//				List<object> discoveredLogObjects = new List<object> {
+//					this.raidedCity,
+//					this.startedByCity
+//				};
+//				this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+//					"Events", "Raid", "raid_discovery_deflect", discoveredLogObjects);
 			} else {
-				List<object> discoveredLogObjects = new List<object> {
-					this.raidedCity,
-				};
-				this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-					"Events", "Raid", "raid_discovery", discoveredLogObjects);
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery");
+				newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+//				List<object> discoveredLogObjects = new List<object> {
+//					this.raidedCity,
+//				};
+//				this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+//					"Events", "Raid", "raid_discovery", discoveredLogObjects);
 			}
 //				if(deflectChance < 35){
 //					Kingdom kingdomToBlame = GetRandomKingdomToBlame ();

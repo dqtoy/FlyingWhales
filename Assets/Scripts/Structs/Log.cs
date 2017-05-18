@@ -12,15 +12,19 @@ public class Log {
 	public string file;
 	public string key;
 
-	public List<object> fillers;
+	public List<LogFiller> fillers;
 
-	public Log(int month, int day, int year, string category, string file, string key, List<object> fillers){
+	public Log(int month, int day, int year, string category, string file, string key){
 		this.month = (MONTH)month;
 		this.day = day;
 		this.year = year;
 		this.category = category;
 		this.file = file;
 		this.key = key;
-		this.fillers = fillers;
+		this.fillers = new List<LogFiller>();
+	}
+
+	internal void AddToFillers(object obj, string value){
+		this.fillers.Add (new LogFiller (obj, value));
 	}
 }
