@@ -12,7 +12,6 @@ public class DiplomaticCrisis : GameEvent {
 	public Envoy activeEnvoyProvoke;
 
 	public bool isResolvedPeacefully;
-
 	public DiplomaticCrisis(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.DIPLOMATIC_CRISIS;
 		if(startedBy != null){
@@ -34,6 +33,17 @@ public class DiplomaticCrisis : GameEvent {
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError (this.description);
+
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "event_title");
+		newLogTitle.AddToFillers (kingdom1.king, kingdom1.king.name);
+		newLogTitle.AddToFillers (kingdom2.king, kingdom2.king.name);
+		newLogTitle.AddToFillers (null, Utilities.crisis[0]);
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "start");
+		newLog.AddToFillers (kingdom1.king, kingdom1.king.name);
+		newLog.AddToFillers (kingdom2.king, kingdom2.king.name);
+		newLog.AddToFillers (null, Utilities.crisis[0]);
+
 	}
 
 	internal override void PerformAction(){
@@ -60,17 +70,33 @@ public class DiplomaticCrisis : GameEvent {
 						value += 10;
 					}
 					if (chance < value) {
+						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_success");
+						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+
 						this.isResolvedPeacefully = true;
 						DoneEvent ();
+					}else{
+						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail");
+						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
 					}
 				}
 			}else{
 				if (this.activeEnvoyProvoke != null) {
 					if (envoy.citizen.id == this.activeEnvoyProvoke.citizen.id) {
 						this.remainingDays -= 3;
+						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_sabotage_success");
+						newLog.AddToFillers (this.activeEnvoyProvoke.citizen, this.activeEnvoyProvoke.citizen.name);
 					}
 				}
 			} 
+		}else{
+			if (envoy.citizen.id == this.activeEnvoyResolve.citizen.id) {
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
+				newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+			}else if (envoy.citizen.id == this.activeEnvoyProvoke.citizen.id) {
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_sabotage_fail_died");
+				newLog.AddToFillers (this.activeEnvoyProvoke.citizen, this.activeEnvoyProvoke.citizen.name);
+			}
 		}
 		this.activeEnvoyResolve = null;
 		this.activeEnvoyProvoke = null;
@@ -126,22 +152,30 @@ public class DiplomaticCrisis : GameEvent {
 		int chance = UnityEngine.Random.Range (0, 100);
 		if(chance < 1){
 			for(int i = 0; i < this.otherKingdoms.Count; i++){
-				if(CheckForRelationship(this.otherKingdoms[i])){
+				Citizen dislikedKing = null;
+				if(CheckForRelationship(this.otherKingdoms[i], ref dislikedKing)){
 					if (this.activeEnvoyResolve == null && this.activeEnvoyProvoke == null) {
-						SendEnvoy (this.otherKingdoms [i], true);	
+						SendEnvoy (this.otherKingdoms [i], dislikedKing, true);	
 					}
 				}
 			}
 		}
 
 	}
-	private bool CheckForRelationship(Kingdom otherKingdom){
+	private bool CheckForRelationship(Kingdom otherKingdom, ref Citizen dislikedKing){
 		RelationshipKings relationship1 = otherKingdom.king.SearchRelationshipByID (this.kingdom1.king.id);
 		RelationshipKings relationship2 = otherKingdom.king.SearchRelationshipByID (this.kingdom2.king.id);
 
 		List<RELATIONSHIP_STATUS> statuses = new List<RELATIONSHIP_STATUS> ();
 		statuses.Add (relationship1.lordRelationship);
 		statuses.Add (relationship2.lordRelationship);
+
+		if(relationship1.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship1.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+			dislikedKing = relationship1.king;
+		}else if(relationship2.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship2.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+			dislikedKing = relationship2.king;
+		}
+
 
 		if(statuses.Contains(RELATIONSHIP_STATUS.ENEMY) || statuses.Contains(RELATIONSHIP_STATUS.RIVAL)){
 			if(!statuses.Contains(RELATIONSHIP_STATUS.FRIEND) && !statuses.Contains(RELATIONSHIP_STATUS.ALLY)){
@@ -151,7 +185,7 @@ public class DiplomaticCrisis : GameEvent {
 
 		return false;
 	}
-	private void SendEnvoy(Kingdom sender, bool isFromOthers = false){
+	private void SendEnvoy(Kingdom sender, Citizen dislikedKing = null, bool isFromOthers = false){
 		Citizen chosenCitizen = GetEnvoy (sender);
 		if(chosenCitizen == null){
 			return;
@@ -171,8 +205,15 @@ public class DiplomaticCrisis : GameEvent {
 
 		if(isFromOthers){
 			this.activeEnvoyProvoke = chosenEnvoy;
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_sabotage");
+			newLog.AddToFillers (sender.king, sender.king.name);
+			newLog.AddToFillers (dislikedKing, dislikedKing.name);
+			newLog.AddToFillers (chosenEnvoy.citizen, chosenEnvoy.citizen.name);
 		}else{
 			this.activeEnvoyResolve = chosenEnvoy;
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve");
+			newLog.AddToFillers (sender.king, sender.king.name);
+			newLog.AddToFillers (chosenEnvoy.citizen, chosenEnvoy.citizen.name);
 		}
 	}
 	private Citizen GetEnvoy(Kingdom kingdom){
@@ -255,6 +296,10 @@ public class DiplomaticCrisis : GameEvent {
 			));
 		}else{
 			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
+
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "event_end");
+			newLog.AddToFillers (this.kingdom1.king, this.kingdom1.king.name);
+			newLog.AddToFillers (this.kingdom2.king, this.kingdom2.king.name);
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Diplomatic Crisis caused deterioration in relationship.";
 

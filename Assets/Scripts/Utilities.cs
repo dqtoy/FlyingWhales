@@ -28,7 +28,9 @@ public class Utilities : MonoBehaviour {
 		"from drinking too much alcohol.",
 		"from eating poisonous mushrooms."
 	};
-		
+	public static string[] crisis = new string[]{
+		"Food",
+	};
 	public static int specialResourceCount = 0;
 	
 	/*
