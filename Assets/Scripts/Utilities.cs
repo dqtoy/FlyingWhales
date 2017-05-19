@@ -536,13 +536,13 @@ public class Utilities : MonoBehaviour {
 				}
 			}
 			newText = string.Empty;
-			for(int i = 0; i < words.Length; i++){
+			for (int i = 0; i < words.Length; i++) {
 				newText += words [i];
-				if(i < (words.Length - 1)){
+				if (i < (words.Length - 1)) {
 					newText += " ";
 				}
 			}
-
+			
 			newText = newText.Trim (' ');
 			if(hasPeriod){
 				newText += ".";
@@ -555,9 +555,9 @@ public class Utilities : MonoBehaviour {
 		string wordToReplace = string.Empty;
 		string value = string.Empty;
 
-		if (wordToBeReplaced.Contains ("@")) {
-			wordToReplace = "[url=" + index.ToString () + "]" + objectLog.value + "[/url]";
-		} else {
+		if(wordToBeReplaced.Contains("@")){
+			wordToReplace = "[url=" + index.ToString() + "][b]" + objectLog.value + "[/b][/url]";
+		}else{
 			wordToReplace = objectLog.value;
 		}
 
