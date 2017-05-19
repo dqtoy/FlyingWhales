@@ -57,7 +57,7 @@ public class StoryTellingManager : MonoBehaviour {
 			// otherwise, this means the kingdom already has an existing type and will just be changed based on the previous king	
 			switch (kingdom.kingdomType) {
 			case (KINGDOM_TYPE.BARBARIC_TRIBE):
-				if (kingdom.cities.Count >= 5) {
+				if (kingdom.cities.Count > 4) {
 					if (kingdom.king.hasTrait (TRAIT.HONEST)) {
 						return KINGDOM_TYPE.NOBLE_KINGDOM;
 					} else {
@@ -79,7 +79,7 @@ public class StoryTellingManager : MonoBehaviour {
 				break;
 
 			case (KINGDOM_TYPE.RELIGIOUS_TRIBE):
-				if (kingdom.cities.Count >= 5) {
+				if (kingdom.cities.Count > 4) {
 					if (kingdom.king.hasTrait (TRAIT.WARMONGER)) {
 						return KINGDOM_TYPE.NOBLE_KINGDOM;
 					} else {
@@ -90,7 +90,7 @@ public class StoryTellingManager : MonoBehaviour {
 				break;
 
 			case (KINGDOM_TYPE.OPPORTUNISTIC_TRIBE):
-				if (kingdom.cities.Count >= 5) {
+				if (kingdom.cities.Count > 4) {
 					if (kingdom.king.hasTrait (TRAIT.WARMONGER)) {
 						return KINGDOM_TYPE.EVIL_EMPIRE;
 					} else {
@@ -107,6 +107,8 @@ public class StoryTellingManager : MonoBehaviour {
 					} else {
 						return KINGDOM_TYPE.RELIGIOUS_TRIBE;
 					}
+				} else if (kingdom.cities.Count > 8) {
+					return KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER;
 				}
 				return KINGDOM_TYPE.NOBLE_KINGDOM;				
 				break;
@@ -118,6 +120,8 @@ public class StoryTellingManager : MonoBehaviour {
 					} else {
 						return KINGDOM_TYPE.OPPORTUNISTIC_TRIBE;
 					}
+				} else if (kingdom.cities.Count > 8) {
+					return KINGDOM_TYPE.WICKED_SUPERPOWER;
 				}
 				return KINGDOM_TYPE.EVIL_EMPIRE;					
 				break;
@@ -129,6 +133,8 @@ public class StoryTellingManager : MonoBehaviour {
 					} else {
 						return KINGDOM_TYPE.HERMIT_TRIBE;
 					}
+				} else if (kingdom.cities.Count > 8) {
+					return KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER;
 				}
 				return KINGDOM_TYPE.MERCHANT_NATION;					
 				break;
@@ -140,10 +146,48 @@ public class StoryTellingManager : MonoBehaviour {
 					} else {
 						return KINGDOM_TYPE.HERMIT_TRIBE;
 					}
+				} else if (kingdom.cities.Count > 8) {
+					return KINGDOM_TYPE.WICKED_SUPERPOWER;
 				}
 				return KINGDOM_TYPE.CHAOTIC_STATE;	
 				break;
+
+			case (KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER):
+				if (kingdom.cities.Count <= 4) {
+					if (Random.Range (0, 1) == 0) {
+						return KINGDOM_TYPE.RELIGIOUS_TRIBE;
+					} else {
+						return KINGDOM_TYPE.HERMIT_TRIBE;
+					}
+				} else if (kingdom.cities.Count > 4 && kingdom.cities.Count <= 8) {
+					if (Random.Range (0, 1) == 0) {
+						return KINGDOM_TYPE.NOBLE_KINGDOM;
+					} else {
+						return KINGDOM_TYPE.MERCHANT_NATION;
+					}
+				}
+				return KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER;	
+				break;
+
+			case (KINGDOM_TYPE.WICKED_SUPERPOWER):
+				if (kingdom.cities.Count <= 4) {
+					if (Random.Range (0, 1) == 0) {
+						return KINGDOM_TYPE.OPPORTUNISTIC_TRIBE;
+					} else {
+						return KINGDOM_TYPE.BARBARIC_TRIBE;
+					}
+				} else if (kingdom.cities.Count > 4 && kingdom.cities.Count <= 8) {
+					if (Random.Range (0, 1) == 0) {
+						return KINGDOM_TYPE.EVIL_EMPIRE;
+					} else {
+						return KINGDOM_TYPE.CHAOTIC_STATE;
+					}
+				}
+				return KINGDOM_TYPE.WICKED_SUPERPOWER;	
+				break;
 			}
+
+
 		}
 		return KINGDOM_TYPE.NONE;
 	}

@@ -135,22 +135,30 @@ public class PathGenerator : MonoBehaviour {
 	/*
 	 * Get List of tiles (Path) that will connect 2 city tiles
 	 * */
-	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode){
+	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
+		List<HexTile> habitableTiles;
+
+		if (resourceType == BASE_RESOURCE_TYPE.STONE) {
+			habitableTiles = CityGenerator.Instance.stoneHabitableTiles;
+		} else {
+			habitableTiles = CityGenerator.Instance.woodHabitableTiles;
+		}
+
 		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
 //			startingTile.isRoad = true;
 //			destinationTile.isRoad = true;
-			for (int i = 0; i < CityGenerator.Instance.habitableTiles.Count; i++) {
-				CityGenerator.Instance.habitableTiles [i].isRoad = true;
+			for (int i = 0; i < habitableTiles.Count; i++) {
+				habitableTiles [i].isRoad = true;
 			}
 		}
 		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathfindingMode);
 		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
 //			startingTile.isRoad = false;
 //			destinationTile.isRoad = false;
-			for (int i = 0; i < CityGenerator.Instance.habitableTiles.Count; i++) {
-				CityGenerator.Instance.habitableTiles [i].isRoad = false;
+			for (int i = 0; i < habitableTiles.Count; i++) {
+				habitableTiles [i].isRoad = false;
 			}
 		}
 
@@ -247,7 +255,7 @@ public class PathGenerator : MonoBehaviour {
 	}
 
 	public List<HexTile> GetAllHabitableTilesByDistance(HexTile hexTile){
-		List<HexTile> allHabitableTiles = CityGenerator.Instance.habitableTiles.OrderBy(x => Vector2.Distance(hexTile.transform.position, x.transform.position)).ToList();
+		List<HexTile> allHabitableTiles = CityGenerator.Instance.stoneHabitableTiles.OrderBy(x => Vector2.Distance(hexTile.transform.position, x.transform.position)).ToList();
 		allHabitableTiles.Remove(hexTile);
 		return allHabitableTiles;
 	}

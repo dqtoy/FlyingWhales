@@ -32,7 +32,7 @@ public class Kingdom{
 	internal List<City> adjacentCitiesFromOtherKingdoms;
 	internal List<Kingdom> adjacentKingdoms;
 
-	public float expansionChance = 1f;
+	public int expansionChance = 1;
 
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -86,6 +86,25 @@ public class Kingdom{
 		for (int i = 0; i < cities.Count; i++) {
 			this.AddTileToKingdom(cities[i]);
 		}
+
+		// For the kingdom's first city, setup its distance towards other habitable tiles.
+		HexTile habitableTile;
+		if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {			
+			for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {	
+				habitableTile = CityGenerator.Instance.stoneHabitableTiles [i];
+				this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles (this.cities[0].hexTile , habitableTile));
+			}
+
+		} else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+			for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {	
+				habitableTile = CityGenerator.Instance.woodHabitableTiles [i];
+				this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles (this.cities[0].hexTile , habitableTile));
+			}
+
+		}
+		Debug.Log ("Kingdom: " + this.name + " : " + this.cities [0].habitableTileDistance.Count);
+		//this.cities [0].OrderHabitableTileDistanceList ();
+
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
@@ -99,37 +118,53 @@ public class Kingdom{
 		KINGDOM_TYPE prevKingdomType = this._kingdomType;
 		this._kingdomType = StoryTellingManager.Instance.InitializeKingdomType (this);
 		if (_kingdomType != prevKingdomType) {
-			this.horoscope = GetHoroscope ();
+			this.horoscope = GetHoroscope (prevKingdomType);
 		}
 	}
 
-	internal int[] GetHoroscope(){
+	internal int[] GetHoroscope(KINGDOM_TYPE prevKingdomType = KINGDOM_TYPE.NONE){
 		int[] newHoroscope = new int[2];
 
 		if (this._kingdomType == KINGDOM_TYPE.BARBARIC_TRIBE) {
-			newHoroscope[0] = UnityEngine.Random.Range(0,2);
-			newHoroscope[1] = 0;
+			newHoroscope [0] = UnityEngine.Random.Range (0, 2);
+			newHoroscope [1] = 0;
 		} else if (this._kingdomType == KINGDOM_TYPE.HERMIT_TRIBE) {
-			newHoroscope[0] = UnityEngine.Random.Range(0,2);
-			newHoroscope[1] = 1;
+			newHoroscope [0] = UnityEngine.Random.Range (0, 2);
+			newHoroscope [1] = 1;
 		} else if (this._kingdomType == KINGDOM_TYPE.RELIGIOUS_TRIBE) {
-			newHoroscope[0] = 0;
-			newHoroscope[1] = UnityEngine.Random.Range(0,2);
+			newHoroscope [0] = 0;
+			newHoroscope [1] = UnityEngine.Random.Range (0, 2);
 		} else if (this._kingdomType == KINGDOM_TYPE.OPPORTUNISTIC_TRIBE) {
-			newHoroscope[0] = 1;
-			newHoroscope[1] = UnityEngine.Random.Range(0,2);
+			newHoroscope [0] = 1;
+			newHoroscope [1] = UnityEngine.Random.Range (0, 2);
 		} else if (this._kingdomType == KINGDOM_TYPE.NOBLE_KINGDOM) {
-			newHoroscope[0] = 0;
-			newHoroscope[1] = 0;
+			newHoroscope [0] = 0;
+			newHoroscope [1] = 0;
 		} else if (this._kingdomType == KINGDOM_TYPE.EVIL_EMPIRE) {
-			newHoroscope[0] = 1;
-			newHoroscope[1] = 0;
+			newHoroscope [0] = 1;
+			newHoroscope [1] = 0;
 		} else if (this._kingdomType == KINGDOM_TYPE.MERCHANT_NATION) {
-			newHoroscope[0] = 0;
-			newHoroscope[1] = 1;
+			newHoroscope [0] = 0;
+			newHoroscope [1] = 1;
 		} else if (this._kingdomType == KINGDOM_TYPE.CHAOTIC_STATE) {
-			newHoroscope[0] = 1;
-			newHoroscope[1] = 1;
+			newHoroscope [0] = 1;
+			newHoroscope [1] = 1;
+		} else if (this._kingdomType == KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER) {
+			if (prevKingdomType == KINGDOM_TYPE.NOBLE_KINGDOM) {
+				newHoroscope [0] = 0;
+				newHoroscope [1] = UnityEngine.Random.Range (0, 2);
+			} else if (prevKingdomType == KINGDOM_TYPE.MERCHANT_NATION) {
+				newHoroscope [0] = UnityEngine.Random.Range (0, 2);
+				newHoroscope [1] = 1;				
+			}
+		} else if (this._kingdomType == KINGDOM_TYPE.WICKED_SUPERPOWER) {
+			if (prevKingdomType == KINGDOM_TYPE.EVIL_EMPIRE) {
+				newHoroscope [0] = 1;
+				newHoroscope [1] = UnityEngine.Random.Range (0, 2);
+			} else if (prevKingdomType == KINGDOM_TYPE.CHAOTIC_STATE) {
+				newHoroscope [0] = UnityEngine.Random.Range (0, 2);
+				newHoroscope [1] = 0;				
+			}			
 		}
 
 		return newHoroscope;
@@ -171,34 +206,19 @@ public class Kingdom{
 			return;
 		}
 
-		float chance = Random.Range (0.01f, 100f);
-		if (chance >= this.expansionChance) {
-			return;
-		}
-		List<City> citiesThatCanExpand = new List<City>();
-		List<Citizen> allUnassignedAdultCitizens = new List<Citizen>();
-		List<Resource> expansionCost = new List<Resource> () {
-//			new Resource (BASE_RESOURCE_TYPE.GOLD, 100),
-//			new Resource (BASE_RESOURCE_TYPE.GOLD, 1000),
-			new Resource (BASE_RESOURCE_TYPE.GOLD, 0),
-//			new Resource (this.basicResource, 250)
-//			new Resource (this.basicResource, 50)
-		};
-//		List<Resource> expansionCost = new List<Resource> () {
-//			new Resource (BASE_RESOURCE_TYPE.GOLD, 50),
-//			new Resource (this.basicResource, 20)
-//		};
+		int chance = Random.Range (0, 200 + (100 * this.cities.Count));
+		if (chance < this.expansionChance) {
+		
+			List<City> citiesThatCanExpand = new List<City> ();
+			List<Citizen> allUnassignedAdultCitizens = new List<Citizen> ();
+			List<Resource> expansionCost = new List<Resource> () {
+				new Resource (BASE_RESOURCE_TYPE.GOLD, 0)
+			};
 
-		for (int i = 0; i < this.cities.Count; i++) {			
-			if (this.cities[i].HasEnoughResourcesForAction(expansionCost) && CityGenerator.Instance.GetNearestHabitableTile(this.cities[i]) != null) {
-				citiesThatCanExpand.Add(this.cities[i]);
-			}
-		}
-
-		if (citiesThatCanExpand.Count > 0) {
-			Citizen governorToLeadExpansion = citiesThatCanExpand[0].governor;
-			citiesThatCanExpand[0].AdjustResources(expansionCost);
+			Citizen governorToLeadExpansion = this.cities [0].governor;
+			this.cities [0].AdjustResources (expansionCost);
 			Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, governorToLeadExpansion);
+
 		}
 	}
 
