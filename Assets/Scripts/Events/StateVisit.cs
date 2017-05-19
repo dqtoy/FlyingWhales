@@ -108,7 +108,9 @@ public class StateVisit : GameEvent {
 //		for(int i = 0; i < this.saboteurEnvoys.Count; i++){
 //			this.saboteurEnvoys[i].inAction = false;
 //		}
-		this.saboteurEnvoy.inAction = false;
+		if(this.saboteurEnvoy != null){
+			this.saboteurEnvoy.inAction = false;
+		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		this.endMonth = GameManager.Instance.month;
