@@ -81,14 +81,14 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 	private void Raid(){
-		Debug.Log ("Raid");
-		Kingdom raiderOfTheLostArc = KingdomManager.Instance.allKingdoms [UnityEngine.Random.Range (0, KingdomManager.Instance.allKingdoms.Count)];
-		General general = GetGeneral(raiderOfTheLostArc);
-		City city = GetRaidedCity(general);
-		if(general != null && city != null){
-			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, raiderOfTheLostArc.king, city, general);
-			EventManager.Instance.AddEventToDictionary (raid);
-		}
+//		Debug.Log ("Raid");
+//		Kingdom raiderOfTheLostArc = KingdomManager.Instance.allKingdoms [UnityEngine.Random.Range (0, KingdomManager.Instance.allKingdoms.Count)];
+//		General general = GetGeneral(raiderOfTheLostArc);
+//		City city = GetRaidedCity(general);
+//		if(general != null && city != null){
+//			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, raiderOfTheLostArc.king, city);
+//			EventManager.Instance.AddEventToDictionary (raid);
+//		}
 	}
 	private void TriggerBorderConflict(){
 		int chance = UnityEngine.Random.Range (0, 100);

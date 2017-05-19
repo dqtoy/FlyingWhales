@@ -1398,8 +1398,8 @@ public class City{
 		case ROLE.GENERAL:
 			citizenCreationCosts = new List<Resource>(){
 				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
-//				new Resource (this.kingdom.basicResource, 2)
-				new Resource (this.kingdom.basicResource, 1)
+				new Resource (this.kingdom.basicResource, 2)
+//				new Resource (this.kingdom.basicResource, 1)
 			};
 			return citizenCreationCosts;
 		case ROLE.SPY:
@@ -1407,8 +1407,8 @@ public class City{
 		case ROLE.ENVOY:
 			citizenCreationCosts = new List<Resource>(){
 				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
-//				new Resource (this.kingdom.basicResource, 3)
-				new Resource (this.kingdom.basicResource, 1)
+				new Resource (this.kingdom.basicResource, 3)
+//				new Resource (this.kingdom.basicResource, 1)
 			};
 			return citizenCreationCosts;
 		

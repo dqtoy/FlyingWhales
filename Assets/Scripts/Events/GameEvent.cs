@@ -5,7 +5,7 @@ using System;
 
 public class GameEvent {
 
-	public int eventID;
+	public int id;
 	public EVENT_TYPES eventType;
 	public EVENT_STATUS eventStatus;
 
@@ -36,7 +36,7 @@ public class GameEvent {
 	}
 
 	public GameEvent(int startWeek, int startMonth, int startYear, Citizen startedBy){
-		this.eventID = Utilities.SetID(this);
+		this.id = Utilities.SetID(this);
 		this.eventStatus = EVENT_STATUS.EXPOSED;
 		this.startDay = startWeek;
 		this.startMonth = startMonth;
@@ -58,6 +58,7 @@ public class GameEvent {
 		Debug.Log("New Event was created!");
 	}
 
+	#region virtual methods
 	internal virtual void PerformAction(){}
 
 	internal virtual void DoneCitizenAction(Envoy citizen){}
@@ -65,6 +66,18 @@ public class GameEvent {
 	internal virtual void DoneEvent(){
 		Debug.Log ("Game Event Ended!");
 		EventManager.Instance.onGameEventEnded.Invoke(this);
+	} 
+	#endregion
+
+	/*
+	 * Create new log for this Event.
+	 * TODO: Might edit this so that the log fillers are also added here
+	 * rather than outside. Seems cleaner that way.
+	 * */
+	internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
+		Log newLog = new Log (month, day, year, category, file, key);
+		this.logs.Add (newLog);
+		return newLog;
 	}
 
 	internal virtual void CancelEvent(){}

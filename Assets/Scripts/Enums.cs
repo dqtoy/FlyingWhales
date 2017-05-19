@@ -253,6 +253,7 @@ public enum HISTORY_IDENTIFIER{
 }
 
 public enum DEATH_REASONS{
+	NONE,
 	OLD_AGE,
 	ACCIDENT,
 	BATTLE,

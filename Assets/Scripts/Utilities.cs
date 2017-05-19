@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
-
+using System.Text;
 
 public class Utilities : MonoBehaviour {
 	private static System.Random rng = new System.Random(); 
@@ -308,6 +308,18 @@ public class Utilities : MonoBehaviour {
 		}
 	}
 
+	public static void ChangePossiblePretendersRecursively(Citizen parent, Citizen descendant){
+		if(!descendant.isDead){
+			parent.possiblePretenders.Add (descendant);
+		}
+
+		for(int i = 0; i < descendant.children.Count; i++){
+			if(descendant.children[i] != null){
+				ChangePossiblePretendersRecursively (parent, descendant.children [i]);
+			}
+		}
+	}
+
 	public static List<T> Shuffle<T>(List<T> list)  
 	{
 		List<T> newList = new List<T>(list);
@@ -496,4 +508,147 @@ public class Utilities : MonoBehaviour {
 		new Color32(0x88, 0xFF, 0xE2, 0xFF),//Cyan
 		new Color32(0xFC, 0x9F, 0xFF, 0xFF)//Pink
 	};
+
+	public static string LogReplacer(Log log){
+		List<int> specificWordIndexes = new List<int> ();
+		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
+		bool hasPeriod = newText.EndsWith (".");
+		if (!string.IsNullOrEmpty (newText)) {
+			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
+			for (int i = 0; i < words.Length; i++) {
+				if (words [i].Contains ("(%")) {
+					specificWordIndexes.Add (i);
+				}else if(words [i].Contains ("(*")){
+					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
+					int index = 0;
+					bool isIndex = int.TryParse (strIndex, out index);
+					if(isIndex){
+						words [i] = Utilities.PronounReplacer (words [i], log.fillers [index].obj);
+					}
+				}
+			}
+			if(specificWordIndexes.Count == log.fillers.Count){
+				for (int i = 0; i < log.fillers.Count; i++) {
+					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], log.fillers [i], i);
+					if(!string.IsNullOrEmpty(replacedWord)){
+						words [specificWordIndexes [i]] = replacedWord;
+					}
+				}
+			}
+			newText = string.Empty;
+			for (int i = 0; i < words.Length; i++) {
+				newText += words [i];
+			}
+			newText = newText.Trim (' ');
+		}
+
+		return newText;
+	}
+	public static string CustomStringReplacer(string wordToBeReplaced, LogFiller objectLog, int index){
+		string wordToReplace = string.Empty;
+		string value = string.Empty;
+
+		if(wordToBeReplaced.Contains("@")){
+			wordToReplace = "[url=" + index.ToString() + "][b]" + objectLog.value + "[/b][/url]";
+		}else{
+			wordToReplace = objectLog.value;
+		}
+
+		return wordToReplace;
+
+	}
+	public static string PronounReplacer(string word, object genderSubject){
+		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
+		string[] pronouns = pronoun.Split ('/');
+
+		if(genderSubject is Citizen){
+			GENDER gender = ((Citizen)genderSubject).gender;
+			if(gender == GENDER.MALE){
+				if(pronouns.Length > 0){
+					if(!string.IsNullOrEmpty(pronouns[0])){
+						return pronouns [0];
+					}
+				}
+			}else{
+				if (pronouns.Length > 1) {
+					if (!string.IsNullOrEmpty (pronouns [0])) {
+						return pronouns [1];
+					}
+				}
+			}
+
+
+		}
+		return string.Empty;
+	}
+	public static string GetStringBetweenTwoChars (string word, char first, char last){
+		int indexFirst = word.IndexOf (first);
+		int indexLast = word.LastIndexOf (last);
+
+		if(indexFirst == -1 || indexLast == -1){
+			return string.Empty;
+		}
+		indexFirst += 1;
+		if(indexFirst >= word.Length){
+			return string.Empty;
+		}
+
+		return word.Substring (indexFirst, (indexLast - indexFirst));
+	}
+	public static List<string> GetAllWordsInAString(string wordToFind, string text){
+		List<string> words = new List<string> ();
+		string word = string.Empty;
+		int index = 0;
+		int wordCount = 0;
+		int startingIndex = index;
+		while(index != -1){
+			index = text.IndexOf (wordToFind, startingIndex);
+			if(index != -1){
+				startingIndex = index + 1;
+				if(startingIndex > text.Length - 1){
+					startingIndex = text.Length - 1;
+				}
+
+				wordCount = 0;
+				for(int i = index; i < text.Length; i++){
+					if(text[i] != ' '){
+						wordCount += 1;
+					}else{
+						break;
+					}
+				}
+				word = text.Substring (index, wordCount);
+				words.Add (word);
+			}
+
+		}
+		return words;
+
+	}
+	public static string[] SplitAndKeepDelimiters(string s, params char[] delimiters){
+		var parts = new List<string>();
+		if (!string.IsNullOrEmpty(s))
+		{
+			int iFirst = 0;
+			do
+			{
+				int iLast = s.IndexOfAny(delimiters, iFirst);
+				if (iLast >= 0)
+				{
+					if (iLast > iFirst)
+						parts.Add(s.Substring(iFirst, iLast - iFirst)); //part before the delimiter
+					parts.Add(new string(s[iLast], 1));//the delimiter
+					iFirst = iLast + 1;
+					continue;
+				}
+
+				//No delimiters were found, but at least one character remains. Add the rest and stop.
+				parts.Add(s.Substring(iFirst, s.Length - iFirst));
+				break;
+
+			} while (iFirst < s.Length);
+		}
+
+		return parts.ToArray();
+	}
 }

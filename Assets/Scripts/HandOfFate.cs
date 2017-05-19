@@ -12,7 +12,7 @@ public class HandOfFate : MonoBehaviour {
 	public int raidChance;
 	public int borderConflictChance;
 	public int diplomaticCrisisChance;
-	public int admirationChance;
+	public int stateVisitChance;
 	public List<GameEvent> allUnwantedEvents;
 
 	void Awake(){
@@ -23,7 +23,7 @@ public class HandOfFate : MonoBehaviour {
 		this.raidChance = 0;
 		this.borderConflictChance = 0;
 		this.diplomaticCrisisChance = 0;
-		this.admirationChance = 0;
+		this.stateVisitChance = 0;
 		this.allUnwantedEvents = new List<GameEvent> ();
 	}
 
@@ -46,7 +46,7 @@ public class HandOfFate : MonoBehaviour {
 		this.raidChance = 0;
 		this.borderConflictChance = 0;
 		this.diplomaticCrisisChance = 0;
-		this.admirationChance = 0;
+		this.stateVisitChance = 0;
 		this.allUnwantedEvents.Clear ();
 		Task.current.Succeed ();
 	}
@@ -122,34 +122,34 @@ public class HandOfFate : MonoBehaviour {
 				this.raidChance = 50;
 				this.borderConflictChance = 35;
 				this.diplomaticCrisisChance = 15;
-				this.admirationChance = 0;
+				this.stateVisitChance = 0;
 			}else if(this.compatibilityValue == 2 || this.compatibilityValue == 3){
 				this.raidChance = 35;
 				this.borderConflictChance = 25;
 				this.diplomaticCrisisChance = 5;
-				this.admirationChance = 35;
+				this.stateVisitChance = 35;
 			}else if(this.compatibilityValue == 4 || this.compatibilityValue == 5){
 				this.raidChance = 20;
 				this.borderConflictChance = 10;
 				this.diplomaticCrisisChance = 0;
-				this.admirationChance = 70;
+				this.stateVisitChance = 70;
 			}
 		}else{
 			if(this.compatibilityValue == 0 || this.compatibilityValue == 1){
 				this.raidChance = 80;
 				this.borderConflictChance = 0;
 				this.diplomaticCrisisChance = 20;
-				this.admirationChance = 0;
+				this.stateVisitChance = 0;
 			}else if(this.compatibilityValue == 2 || this.compatibilityValue == 3){
 				this.raidChance = 55;
 				this.borderConflictChance = 0;
 				this.diplomaticCrisisChance = 10;
-				this.admirationChance = 35;
+				this.stateVisitChance = 35;
 			}else if(this.compatibilityValue == 4 || this.compatibilityValue == 5){
 				this.raidChance = 25;
 				this.borderConflictChance = 0;
 				this.diplomaticCrisisChance = 5;
-				this.admirationChance = 70;
+				this.stateVisitChance = 70;
 			}
 		}
 		Task.current.Succeed ();
@@ -159,8 +159,8 @@ public class HandOfFate : MonoBehaviour {
 		List<GameEvent> allRaids = EventManager.Instance.GetEventsOfType (EVENT_TYPES.RAID).Where (x => x.isActive).ToList ();
 		List<GameEvent> allBorderConflicts = EventManager.Instance.GetEventsOfType (EVENT_TYPES.BORDER_CONFLICT).Where (x => x.isActive).ToList ();
 		List<GameEvent> allDiplomaticCrisis = EventManager.Instance.GetEventsOfType (EVENT_TYPES.DIPLOMATIC_CRISIS).Where (x => x.isActive).ToList ();
-		List<GameEvent> allAdmiration = EventManager.Instance.GetEventsOfType (EVENT_TYPES.ADMIRATION).Where (x => x.isActive).ToList ();
-		this.allUnwantedEvents = allRaids.Concat (allBorderConflicts).Concat (allDiplomaticCrisis).Concat (allAdmiration).ToList ();
+		List<GameEvent> allStateVisit = EventManager.Instance.GetEventsOfType (EVENT_TYPES.STATE_VISIT).Where (x => x.isActive).ToList ();
+		this.allUnwantedEvents = allRaids.Concat (allBorderConflicts).Concat (allDiplomaticCrisis).Concat (allStateVisit).ToList ();
 
 		if (this.allUnwantedEvents.Count > 0) {
 			if (SearchForEligibility (this.firstKingdom, this.secondKingdom, this.allUnwantedEvents)) {
@@ -179,7 +179,7 @@ public class HandOfFate : MonoBehaviour {
 		int raid = this.raidChance;
 		int borderConflict = this.raidChance + this.borderConflictChance;
 		int diplomaticCrisis = this.raidChance + this.borderConflictChance + this.diplomaticCrisisChance;
-		int admiration = this.raidChance + this.borderConflictChance + this.diplomaticCrisisChance + this.admirationChance;
+		int stateVisit = this.raidChance + this.borderConflictChance + this.diplomaticCrisisChance + this.stateVisitChance;
 
 		if(chance < raid){
 			Debug.Log ("CREATING RAID EVENT...");
@@ -190,18 +190,18 @@ public class HandOfFate : MonoBehaviour {
 		}else if(chance >= borderConflict && chance < diplomaticCrisis){
 			Debug.Log ("CREATING DIPLOMATIC CRISIS EVENT...");
 			CreateDiplomaticCrisisEvent ();
-		}else if(chance >= diplomaticCrisis && chance < admiration){
-			Debug.Log ("CREATING ADMIRATION EVENT...");
-			CreateAdmirationEvent ();
+		}else if(chance >= diplomaticCrisis && chance < stateVisit){
+			Debug.Log ("CREATING STATE VISIT EVENT...");
+			CreateStateVisitEvent ();
 		}
 		Task.current.Succeed ();
 	}
 
 	private void CreateRaidEvent(){
-		General general = GetGeneral(this.firstKingdom);
-		City city = GetRaidedCity(general);
-		if(general != null && city != null){
-			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city, general);
+//		General general = GetGeneral(this.firstKingdom);
+		City city = GetRaidedCity();
+		if(city != null){
+			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city);
 			EventManager.Instance.AddEventToDictionary (raid);
 		}
 	}
@@ -233,28 +233,33 @@ public class HandOfFate : MonoBehaviour {
 			return null;
 		}
 	}
-	private City GetRaidedCity(General general){
-		if(general == null){
+	private City GetRaidedCity(){
+		if(this.secondKingdom.cities.Count > 0){
+			return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
+		}else{
 			return null;
 		}
-		if(this.isAdjacent){
-			List<City> adjacentCities = general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Where (x => x.kingdom.id == this.secondKingdom.id).ToList();
-			if(adjacentCities.Count > 0){
-				return adjacentCities [UnityEngine.Random.Range (0, adjacentCities.Count)];
-			}else{
-				if(this.secondKingdom.cities.Count > 0){
-					return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
-				}else{
-					return null;
-				}
-			}
-		}else{
-			if(this.secondKingdom.cities.Count > 0){
-				return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
-			}else{
-				return null;
-			}
-		}
+//		if(general == null){
+//			return null;
+//		}
+//		if(this.isAdjacent){
+//			List<City> adjacentCities = general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Where (x => x.kingdom.id == this.secondKingdom.id).ToList();
+//			if(adjacentCities.Count > 0){
+//				return adjacentCities [UnityEngine.Random.Range (0, adjacentCities.Count)];
+//			}else{
+//				if(this.secondKingdom.cities.Count > 0){
+//					return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
+//				}else{
+//					return null;
+//				}
+//			}
+//		}else{
+//			if(this.secondKingdom.cities.Count > 0){
+//				return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
+//			}else{
+//				return null;
+//			}
+//		}
 
 	}
 	private void CreateBorderConflictEvent(){
@@ -265,8 +270,8 @@ public class HandOfFate : MonoBehaviour {
 		DiplomaticCrisis ();
 	}
 
-	private void CreateAdmirationEvent(){
-		Admiration ();
+	private void CreateStateVisitEvent(){
+		StateVisit ();
 	}
 
 	private void BorderConflict(){
@@ -281,12 +286,48 @@ public class HandOfFate : MonoBehaviour {
 		DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 		EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
 	}
-	private void Admiration(){
-		Debug.Log ("Admiration FROM HAND OF FATE");
-		Citizen startedBy = this.secondKingdom.king;
-		Admiration admiration = new Admiration(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
-		EventManager.Instance.AddEventToDictionary(admiration);
+//	private void Admiration(){
+//		Debug.Log ("Admiration FROM HAND OF FATE");
+//		Citizen startedBy = this.secondKingdom.king;
+//		Admiration admiration = new Admiration(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
+//		EventManager.Instance.AddEventToDictionary(admiration);
+//	}
+	internal void StateVisit(){
+		Debug.Log ("State Visit FROM HAND OF FATE");
+		Citizen targetKing = this.secondKingdom.king;
+		Citizen visitor = null;
+		if(targetKing.spouse != null && !targetKing.spouse.isDead){
+			visitor = targetKing.spouse;
+		}else{
+			if(targetKing.children != null && targetKing.children.Count > 0){
+				for(int i = 0; i < targetKing.children.Count; i++){
+					if(targetKing.children[i] != null && !targetKing.children[i].isDead && targetKing.children[i].age >= 16){
+						visitor = targetKing.children [i];
+						break;
+					}
+				}
+			}
+		}
+
+		if(visitor == null){
+			List<Citizen> siblings = targetKing.GetSiblings();
+			for (int i = 0; i < siblings.Count; i++) {
+				if(siblings[i] != null && !siblings[i].isDead && siblings[i].age >= 16){
+					visitor = siblings[i];
+					break;
+				}
+			}
+		}
+
+		if(visitor != null){
+			StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, this.secondKingdom, visitor);
+			EventManager.Instance.AddEventToDictionary(stateVisit);
+		}else{
+			Debug.Log ("FAILURE TO START STATE VISIT BECAUSE THERE IS NO AVAIALABLE VISITOR!");
+		}
+
 	}
+
 	private bool SearchForEligibility (Kingdom kingdom1, Kingdom kingdom2, List<GameEvent> gameEvents){
 		for(int i = 0; i < gameEvents.Count; i++){
 			if(!IsEligibleForConflict(kingdom1,kingdom2, gameEvents[i])){
@@ -316,11 +357,11 @@ public class HandOfFate : MonoBehaviour {
 			if(((DiplomaticCrisis)gameEvent).kingdom1.id == kingdom2.id || ((DiplomaticCrisis)gameEvent).kingdom2.id == kingdom2.id){
 				counter += 1;
 			}
-		}else if(gameEvent is Admiration) {
-			if(((Admiration)gameEvent).kingdom1.id == kingdom1.id || ((Admiration)gameEvent).kingdom2.id == kingdom1.id){
+		}else if(gameEvent is StateVisit) {
+			if(((StateVisit)gameEvent).invitedKingdom.id == kingdom1.id || ((StateVisit)gameEvent).inviterKingdom.id == kingdom1.id){
 				counter += 1;
 			}
-			if(((Admiration)gameEvent).kingdom1.id == kingdom2.id || ((Admiration)gameEvent).kingdom2.id == kingdom2.id){
+			if(((StateVisit)gameEvent).invitedKingdom.id == kingdom2.id || ((StateVisit)gameEvent).inviterKingdom.id == kingdom2.id){
 				counter += 1;
 			}
 		}else if(gameEvent is Raid) {

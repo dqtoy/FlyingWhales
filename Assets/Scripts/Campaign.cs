@@ -21,6 +21,18 @@ public class Campaign {
 	public bool isDone;
 	public bool startExpiration;
 
+	private List<Log> _logs;
+
+	#region getters/setters
+	/*
+	 * This is only for accessing the value of this campaigns logs, 
+	 * to add new values please use CreateNewLogForEvent.
+	 * */
+	public List<Log> logs{
+		get	{ return this._logs; } 
+	}
+	#endregion
+
 	public Campaign(Citizen leader, City targetCity, CAMPAIGN campaignType, WAR_TYPE warType, int neededArmyStrength = 0, int expiration = 8){
 		this.id = Utilities.SetID (this);
 		this.leader = leader;
@@ -201,5 +213,16 @@ public class Campaign {
 		}
 
 		this.startExpiration = true;
+	}
+
+	/*
+	 * Create new log for this Campaign.
+	 * TODO: Might edit this so that the log fillers are also added here
+	 * rather than outside. Seems cleaner that way.
+	 * */
+	internal Log CreateNewLogForCampaign(int month, int day, int year, string category, string file, string key){
+		Log newLog = new Log (month, day, year, category, file, key);
+		this.logs.Add (newLog);
+		return newLog;
 	}
 }

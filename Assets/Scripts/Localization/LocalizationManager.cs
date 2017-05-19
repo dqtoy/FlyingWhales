@@ -9,9 +9,15 @@ public class LocalizationManager : MonoBehaviour {
 	public LANGUAGES language;
 	public string filePath;
 
-	private Dictionary<string, Dictionary<string, Dictionary<string, string>>> localizedText = new Dictionary<string, Dictionary<string, Dictionary<string, string>>> ();
+	protected Dictionary<string, Dictionary<string, Dictionary<string, string>>> _localizedText = new Dictionary<string, Dictionary<string, Dictionary<string, string>>> ();
 	private bool isReady = false;
 	private string missingTextString = "Localized text not found";
+
+
+	//getters and setters
+	public Dictionary<string, Dictionary<string, Dictionary<string, string>>> localizedText{
+		get {return this._localizedText;}
+	}
 
 	void Awake(){
 		if(Instance == null){
@@ -33,27 +39,27 @@ public class LocalizationManager : MonoBehaviour {
 	 * e.g. localizedText["Events"]["BorderConflict"]
 	 * */
 	public void LoadLocalizedTexts(){
-		this.localizedText.Clear ();
+		this._localizedText.Clear ();
 		string[] directories = Directory.GetDirectories(this.filePath);
 		for (int i = 0; i < directories.Length; i++) {
 			string categoryName = Path.GetFileName(directories [i]);
-			if (!this.localizedText.ContainsKey(categoryName)) {
-				this.localizedText.Add (categoryName, new Dictionary<string, Dictionary<string, string>> ());
+			if (!this._localizedText.ContainsKey(categoryName)) {
+				this._localizedText.Add (categoryName, new Dictionary<string, Dictionary<string, string>> ());
 			}
 			string[] files = Directory.GetFiles(directories[i], "*.json");
 			for (int j = 0; j < files.Length; j++) {
 				string fileName = Path.GetFileNameWithoutExtension(files[j]);
-				if (!this.localizedText.ContainsKey(fileName)) {
-					this.localizedText [categoryName].Add (fileName, new Dictionary<string, string> ());
+				if (!this._localizedText.ContainsKey(fileName)) {
+					this._localizedText [categoryName].Add (fileName, new Dictionary<string, string> ());
 				}
 				if (File.Exists(files[j])) {
 					string dataAsJson = File.ReadAllText(files[j]);
 					LocalizationData loadedData = JsonUtility.FromJson<LocalizationData> (dataAsJson);
 
 					for (int k = 0; k < loadedData.items.Length; k++) {
-						this.localizedText[categoryName][fileName].Add(loadedData.items [k].key, loadedData.items [k].value);   
+						this._localizedText[categoryName][fileName].Add(loadedData.items [k].key, loadedData.items [k].value);   
 					}
-					Debug.Log ("Data loaded, dictionary contains: " + this.localizedText.Count + " entries");
+					Debug.Log ("Data loaded, dictionary contains: " + this._localizedText.Count + " entries");
 				} else {
 					Debug.LogError ("Cannot find file!");
 				}
@@ -67,9 +73,9 @@ public class LocalizationManager : MonoBehaviour {
 	 * localizedText Dictionary.
 	 * */
 	public string GetLocalizedValue(string category, string file, string key){
-		string result = this.missingTextString;
-		if (this.localizedText[category][file].ContainsKey (key)){
-			result = this.localizedText[category][file][key];
+		string result = string.Empty;
+		if (this._localizedText[category][file].ContainsKey (key)){
+			result = this._localizedText[category][file][key];
 		}
 
 		return result;
