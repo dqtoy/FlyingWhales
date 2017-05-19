@@ -391,8 +391,14 @@ public class General : Role {
 	internal void AssignCampaign(Campaign chosenCampaign, List<HexTile> path){
 		if(chosenCampaign.campaignType == CAMPAIGN.OFFENSE){
 			this.targetLocation = chosenCampaign.rallyPoint;
+
+			Log newLog = chosenCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "register");
+			newLog.AddToFillers (this.citizen, this.citizen.name);
 		}else{
 			this.targetLocation = chosenCampaign.targetCity.hexTile;
+
+			Log newLog = chosenCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "register");
+			newLog.AddToFillers (this.citizen, this.citizen.name);
 		}
 		Debug.Log (this.citizen.name +  " Target Location: " + this.targetLocation.tileName + " Campaign Type: " + chosenCampaign.campaignType.ToString());
 

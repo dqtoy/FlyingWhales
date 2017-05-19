@@ -49,6 +49,7 @@ public class Campaign {
 		this.isGhost = false;
 		this.isDone = false;
 		this.startExpiration = false;
+		this._logs = new List<Log> ();
 		EventManager.Instance.onWeekEnd.AddListener (this.CheckExpiration);
 	}
 
@@ -125,6 +126,9 @@ public class Campaign {
 		return true;
 	}
 	internal void AttackCityNow(){
+		Log newLogArrivalComplete = this.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "rallypoint_complete");
+		newLogArrivalComplete.AddToFillers (this.targetCity, this.targetCity.name);
+
 		List<HexTile> path = PathGenerator.Instance.GetPath (this.rallyPoint, this.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
 
 		if (path != null) {
