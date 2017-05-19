@@ -518,6 +518,13 @@ public class Utilities : MonoBehaviour {
 			for (int i = 0; i < words.Length; i++) {
 				if (words [i].Contains ("(%")) {
 					specificWordIndexes.Add (i);
+				}else if(words [i].Contains ("(*")){
+					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
+					int index = 0;
+					bool isIndex = int.TryParse (strIndex, out index);
+					if(isIndex){
+						words [i] = Utilities.PronounReplacer (words [i], log.fillers [index].obj);
+					}
 				}
 			}
 			if(specificWordIndexes.Count == log.fillers.Count){
@@ -548,14 +555,52 @@ public class Utilities : MonoBehaviour {
 		string wordToReplace = string.Empty;
 		string value = string.Empty;
 
-		if(wordToBeReplaced.Contains("@")){
-			wordToReplace = "[url=" + index.ToString() + "]" + objectLog.value + "[/url]";
-		}else{
+		if (wordToBeReplaced.Contains ("@")) {
+			wordToReplace = "[url=" + index.ToString () + "]" + objectLog.value + "[/url]";
+		} else {
 			wordToReplace = objectLog.value;
 		}
 
 		return wordToReplace;
 
+	}
+	public static string PronounReplacer(string word, object genderSubject){
+		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
+		string[] pronouns = pronoun.Split ('/');
+
+		if(genderSubject is Citizen){
+			GENDER gender = ((Citizen)genderSubject).gender;
+			if(gender == GENDER.MALE){
+				if(pronouns.Length > 0){
+					if(!string.IsNullOrEmpty(pronouns[0])){
+						return pronouns [0];
+					}
+				}
+			}else{
+				if (pronouns.Length > 1) {
+					if (!string.IsNullOrEmpty (pronouns [0])) {
+						return pronouns [1];
+					}
+				}
+			}
+
+
+		}
+		return string.Empty;
+	}
+	public static string GetStringBetweenTwoChars (string word, char first, char last){
+		int indexFirst = word.IndexOf (first);
+		int indexLast = word.LastIndexOf (last);
+
+		if(indexFirst == -1 || indexLast == -1){
+			return string.Empty;
+		}
+		indexFirst += 1;
+		if(indexFirst >= word.Length){
+			return string.Empty;
+		}
+
+		return word.Substring (indexFirst, (indexLast - indexFirst));
 	}
 	public static List<string> GetAllWordsInAString(string wordToFind, string text){
 		List<string> words = new List<string> ();
