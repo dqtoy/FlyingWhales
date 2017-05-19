@@ -69,10 +69,14 @@ public class GameEvent {
 	} 
 	#endregion
 
+	/*
+	 * Create new log for this Event.
+	 * TODO: Might edit this so that the log fillers are also added here
+	 * rather than outside. Seems cleaner that way.
+	 * */
 	internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
 		Log newLog = new Log (month, day, year, category, file, key);
 		this.logs.Add (newLog);
-		Debug.Log ("LALALALALALALA " + Utilities.LogReplacer (newLog));
 		return newLog;
 	}
 

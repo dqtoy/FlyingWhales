@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class WarEventListItem : MonoBehaviour {
 
-	public delegate void OnClickEvent(Campaign gameEvent);
+	public delegate void OnClickEvent(Campaign campaign);
 	public OnClickEvent onClickEvent;
 
 	private Campaign campaign;
-	public UILabel eventTitleLbl;
-	public UILabel eventDateLbl;
+	[SerializeField] private UILabel eventTitleLbl;
+	[SerializeField] private UILabel eventDateLbl;
 
-	public Kingdom ownerOfThisItem;
+	private Kingdom ownerOfThisItem;
 
 	internal void SetCampaign(Campaign campaign, Kingdom ownerOfThisItem){
 		this.campaign = campaign;

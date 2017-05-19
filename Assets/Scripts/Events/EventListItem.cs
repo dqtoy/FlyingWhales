@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EventListItem : MonoBehaviour {
 
-	public delegate void OnClickEvent(GameEvent gameEvent);
+	public delegate void OnClickEvent(GameEvent logs);
 	public OnClickEvent onClickEvent;
 
 	public GameEvent gameEvent;

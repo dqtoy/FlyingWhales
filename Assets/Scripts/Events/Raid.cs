@@ -42,12 +42,15 @@ public class Raid : GameEvent {
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 //		Debug.LogError("RAID " + this.description);
 
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_title");
+		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+
 //		List<object> startLogObjects = new List<object> {
 //			this.startedByCity,
 //			this.raidedCity
 //		};
 //		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start", startLogObjects);
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start");
+		newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start");
 		newLog.AddToFillers (this.startedByCity, this.startedByCity.name);
 		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
 
