@@ -8,7 +8,6 @@ public class EventLabel : MonoBehaviour {
 	void OnClick(){
 		UILabel lbl = GetComponent<UILabel>();
 		string url = lbl.GetUrlAtPosition(UICamera.lastWorldPosition);
-		Debug.Log("Clicked on: " + url);
 
 		if (!string.IsNullOrEmpty (url)) {
 			int indexToUse = int.Parse (url);

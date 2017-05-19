@@ -308,6 +308,12 @@ public class UIManager : MonoBehaviour {
 				ShowEventLogs (currentlyShowingLogObject);
 			}
 		}
+
+		if (allKingdomEventsGO.activeSelf) {
+			if (currentlyShowingKingdom != null) {
+				ShowKingdomEvents ();
+			}
+		}
 	}
 
 	public void SetProgressionSpeed1X(){
@@ -1205,6 +1211,8 @@ public class UIManager : MonoBehaviour {
 		this.kingdomGovernorsGO.SetActive (true);
 
 	}
+
+	#region coroutines
 	public IEnumerator RepositionGrid(UIGrid thisGrid){
 		yield return null;
 		thisGrid.Reposition ();
@@ -1223,6 +1231,17 @@ public class UIManager : MonoBehaviour {
 		thisScrollView.ResetPosition ();
 		thisScrollView.SetDragAmount (0f, 0f, true);
 	}
+
+	IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime){
+		float elapsedTime = 0f;
+		while (elapsedTime < lerpTime) {
+			progBar.value = Mathf.Lerp(progBar.value, targetValue, (elapsedTime/lerpTime));
+			elapsedTime += Time.deltaTime;
+			yield return null;
+		}
+	}
+	#endregion
+
 	public void ShowRelationships(){
 //		relationshipKingName.text = "King " + currentlyShowingCitizen.name;
 //		relationshipKingKingdomName.text = currentlyShowingCitizen.city.kingdom.name;
@@ -2488,7 +2507,7 @@ public class UIManager : MonoBehaviour {
 	#endregion
 
 	/*
-	 * Show Event Logs Menu
+	 * Show Event Logs menu
 	 * */
 	private void ShowEventLogs(object obj){
 		currentlyShowingLogObject = obj;
@@ -2497,7 +2516,9 @@ public class UIManager : MonoBehaviour {
 			GameEvent ge = ((GameEvent)obj);
 			logs = ge.logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer(logs.First());
-			elmEventProgressBar.value = ((float)ge.remainingDays / (float)ge.durationInDays);
+//			elmEventProgressBar.value = ((float)ge.remainingDays / (float)ge.durationInDays);
+			float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
+			StartCoroutine(LerpProgressBar(elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
 		} else if (obj is Campaign) {
 			logs = ((Campaign)obj).logs;
 		}
@@ -2538,7 +2559,7 @@ public class UIManager : MonoBehaviour {
 		if (allKingdomEventsGO.activeSelf) {
 			HideAllKingdomEvents();
 		} else {
-			Pause();
+//			Pause();
 			ShowKingdomEvents();
 		}
 	}
@@ -2553,19 +2574,18 @@ public class UIManager : MonoBehaviour {
 		
 		List<GameEvent> wars = allActiveEventsInKingdom.Where (x => x.eventType == EVENT_TYPES.KINGDOM_WAR).ToList();
 
-		EventListParent[] currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
-		if (currentParents.Length > 0) {
-			for (int i = 0; i < currentParents.Length; i++) {
-				EventListParent currentParent = currentParents[i];
-				Destroy(currentParent.gameObject);
-			}
-		}
-
 		if (politicalEvents.Count <= 0 && wars.Count <= 0) {
 			kingdomEventsNoEventsLbl.gameObject.SetActive (true);
 			allKingdomEventsGO.SetActive (true);
-			this.pauseBtn.SetAsClicked ();
-			GameManager.Instance.SetPausedState (true);
+//			this.pauseBtn.SetAsClicked ();
+//			GameManager.Instance.SetPausedState (true);
+			EventListParent[] currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
+			if (currentParents.Length > 0) {
+				for (int i = 0; i < currentParents.Length; i++) {
+					EventListParent currentParent = currentParents[i];
+					Destroy(currentParent.gameObject);
+				}
+			}
 			return;
 		} else {
 			kingdomEventsNoEventsLbl.gameObject.SetActive (false);
@@ -2573,7 +2593,7 @@ public class UIManager : MonoBehaviour {
 			
 		LoadPoliticalEvents(politicalEvents);
 		LoadWarEvents(wars);
-
+		allKingdomEventsGO.SetActive (true);
 //		List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
 //		List<GameEvent> espionageEvents = allActiveEventsInKingdom.Where (
 //			x => x.eventType == EVENT_TYPES.ASSASSINATION || x.eventType == EVENT_TYPES.ESPIONAGE ||
@@ -2882,7 +2902,6 @@ public class UIManager : MonoBehaviour {
 //				Destroy (allShowingEvents[i].gameObject);
 //			}
 //		}
-		allKingdomEventsGO.SetActive (true);
 	}
 
 	/*
@@ -2905,23 +2924,44 @@ public class UIManager : MonoBehaviour {
 		} else {
 			anchorPoint = firstAnchor;
 		}
+		GameObject politicsParentGO = null;
 
-		//Instantiate Politics Parent
-		GameObject politicsParentGO = GameObject.Instantiate (kingdomEventsListParentPrefab, kingdomEventsContentParent.transform) as GameObject;
-		politicsParentGO.name = "StateVisitParent";
-		politicsParentGO.transform.localScale = Vector3.one;
+		for (int i = 0; i < allCurrentParents.Length; i++) {
+			if (allCurrentParents[i].name.Equals ("PoliticsParent")) {
+				politicsParentGO = allCurrentParents[i].gameObject;
+			}
+		}
+
+		if (politicsParentGO == null) {
+			//Instantiate Politics Parent
+			politicsParentGO = GameObject.Instantiate (kingdomEventsListParentPrefab, kingdomEventsContentParent.transform) as GameObject;
+			politicsParentGO.name = "PoliticsParent";
+			politicsParentGO.transform.localScale = Vector3.one;
+			politicsParentGO.GetComponent<EventListParent>().anchor.container = anchorPoint;
+			politicsParentGO.GetComponent<EventListParent>().eventTitleLbl.text = "Politics";
+		}
+
 		politicsParent = politicsParentGO.GetComponent<EventListParent>();
-		politicsParent.anchor.container = anchorPoint;
-		politicsParent.eventTitleLbl.text = "Politics";
 
 
-		//Instantiate all polical events into the politics parent grid
-		for (int i = 0; i < politicalEvents.Count; i++) {
-			GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, this.transform) as GameObject;
-			politicsParent.eventsGrid.AddChild (eventGO.transform);
-			eventGO.GetComponent<EventListItem> ().SetEvent (politicalEvents [i], currentlyShowingKingdom);
-			eventGO.GetComponent<EventListItem> ().onClickEvent += ShowEventLogs;
-			eventGO.transform.localScale = Vector3.one;
+		List<EventListItem> currentlyShowingGameEvents = politicsParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem>()).ToList ();
+		List<int> currentlyShowingGameEventIDs = currentlyShowingGameEvents.Select (x => x.gameEvent.id).ToList ();
+		List<int> actualPoliticalEventIDs = politicalEvents.Select (x => x.id).ToList ();
+		if (actualPoliticalEventIDs.Except (currentlyShowingGameEventIDs).Union (currentlyShowingGameEventIDs.Except (actualPoliticalEventIDs)).Count () > 0) {
+			for (int i = 0; i < currentlyShowingGameEvents.Count; i++) {
+				politicsParent.eventsGrid.RemoveChild (currentlyShowingGameEvents[i].transform);
+				Destroy (currentlyShowingGameEvents [i].gameObject);
+			}
+
+			//Instantiate all polical events into the politics parent grid
+			for (int i = 0; i < politicalEvents.Count; i++) {
+				GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, this.transform) as GameObject;
+				eventGO.transform.localScale = Vector3.one;
+				politicsParent.eventsGrid.AddChild (eventGO.transform);
+				eventGO.GetComponent<EventListItem> ().SetEvent (politicalEvents [i], currentlyShowingKingdom);
+				eventGO.GetComponent<EventListItem> ().onClickEvent += ShowEventLogs;
+			}
+			StartCoroutine (RepositionGrid (politicsParent.eventsGrid));
 		}
 	}
 
@@ -2950,25 +2990,54 @@ public class UIManager : MonoBehaviour {
 			} else {
 				anchorPoint = firstAnchor;
 			}
+			GameObject warParentGO = null;
 
-			GameObject warParentGO = GameObject.Instantiate (kingdomWarEventsListParentPrefab, kingdomEventsContentParent.transform) as GameObject;
-			warParentGO.name = "WarParent-" + currentWar.id;
-			warParentGO.transform.localScale = Vector3.one;
-			currentWarParent = warParentGO.GetComponent<WarEventListParent>();
-			currentWarParent.SetWarEvent(currentWar, kingdomAtWarWith);
-			currentWarParent.SetAnchor(anchorPoint);
-			currentWarParent.onClickEvent += ShowEventLogs;
+			for (int j = 0; j < allCurrentParents.Length; j++) {
+				if (allCurrentParents[j].name.Equals ("WarParent-" + currentWar.id.ToString())) {
+					warParentGO = allCurrentParents[j].gameObject;
+				}
+			}
+
+			if (warParentGO == null) {
+				warParentGO = GameObject.Instantiate (kingdomWarEventsListParentPrefab, kingdomEventsContentParent.transform) as GameObject;
+				warParentGO.name = "WarParent-" + currentWar.id.ToString();
+				warParentGO.transform.localScale = Vector3.one;
+				warParentGO.GetComponent<WarEventListParent> ().SetWarEvent (currentWar, kingdomAtWarWith);
+				warParentGO.GetComponent<WarEventListParent> ().SetAnchor (anchorPoint);
+				warParentGO.GetComponent<WarEventListParent> ().onClickEvent += ShowEventLogs;
+			}
+
+			currentWarParent = warParentGO.GetComponent<WarEventListParent> ();
+
+			List<WarEventListItem> currentlyShowingCampaigns = currentWarParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<WarEventListItem>()).ToList ();
+			List<int> currentlyShowingCampaignIDs = currentlyShowingCampaigns.Select (x => x.campaign.id).ToList ();
+			List<int> actualCampaignIDs = new List<int>();
+			List<Campaign> campaignsToShow = new List<Campaign>();
 
 			for (int j = 0; j < currentlyShowingKingdom.king.campaignManager.activeCampaigns.Count; j++) {
 				Campaign currentCampaign = currentlyShowingKingdom.king.campaignManager.activeCampaigns[j];
 				City targetCityOfCampaign = currentCampaign.targetCity;
 				if (targetCityOfCampaign.kingdom.id == kingdomAtWarWith.id) {
+					actualCampaignIDs.Add (currentCampaign.id);
+					campaignsToShow.Add (currentCampaign);
+				}
+			}
+
+			if (actualCampaignIDs.Except(currentlyShowingCampaignIDs).Union(currentlyShowingCampaignIDs.Except(actualCampaignIDs)).Count() > 0) {
+				for (int j = 0; j < currentlyShowingCampaigns.Count; j++) {
+					currentWarParent.eventsGrid.RemoveChild(currentlyShowingCampaigns[j].transform);
+					Destroy(currentlyShowingCampaigns [j].gameObject);
+				}
+
+				for (int j = 0; j < campaignsToShow.Count; j++) {
+					Campaign currentCampaign = campaignsToShow[j];
 					GameObject eventGO = GameObject.Instantiate (kingdomWarEventsListItemPrefab, this.transform) as GameObject;
 					currentWarParent.eventsGrid.AddChild (eventGO.transform);
 					eventGO.GetComponent<WarEventListItem>().SetCampaign (currentCampaign, currentlyShowingKingdom);
 					eventGO.GetComponent<WarEventListItem>().onClickEvent += ShowEventLogs;
 					eventGO.transform.localScale = Vector3.one;
 				}
+				StartCoroutine (RepositionGrid (currentWarParent.eventsGrid));
 			}
 		}
 	}

@@ -42,21 +42,12 @@ public class Raid : GameEvent {
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 //		Debug.LogError("RAID " + this.description);
 
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_title");
-		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
-
-//		List<object> startLogObjects = new List<object> {
-//			this.startedByCity,
-//			this.raidedCity
-//		};
-//		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start", startLogObjects);
-
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "event_title");
 		newLogTitle.AddToFillers (this.raidedCity, this.raidedCity.name);
 
-		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
-		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
-		Debug.Log ("LALALALALALALA " + Utilities.LogReplacer (newLog));
+		Log raidStartLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start");
+		raidStartLog.AddToFillers (this.startedByCity, this.startedByCity.name);
+		raidStartLog.AddToFillers (this.raidedCity, this.raidedCity.name);
 
 		this.relationshipToAdjust = this.raidedCity.kingdom.king.SearchRelationshipByID (startedBy.id);
 		DeflectBlame ();
