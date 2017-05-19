@@ -45,9 +45,9 @@ public class City{
 	protected const int _MAX_GOLD = 1000;
 
 	internal Dictionary<ROLE, int> citizenCreationTable;
+	internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
 	internal List<HexTile> borderTiles;
 	protected List<ROLE> creatableRoles;
-
 
 	protected List<HexTile> unoccupiedOwnedTiles{
 		get{ return this.ownedTiles.Where (x => !x.isOccupied).ToList();}
@@ -93,7 +93,7 @@ public class City{
 		this.citizenCreationTable = Utilities.defaultCitizenCreationTable;
 		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
-
+		this.habitableTileDistance = new List<HabitableTileDistance> ();
 
 
 		this.hexTile.Occupy (this);
@@ -108,6 +108,28 @@ public class City{
 		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));
 	}
 
+	// This will add a new habitable hex tile to the habitableTileDistance variable.
+	public void AddHabitableTileDistance(HexTile hexTile, int distance) {
+		if (distance == 0) {
+			return;
+		}
+		if (this.habitableTileDistance.Count == 0) {			
+			this.habitableTileDistance.Add (new HabitableTileDistance (hexTile, distance));
+		} else {
+			for (int i = 0; i < this.habitableTileDistance.Count; i++) {
+				if (this.habitableTileDistance [i].distance >= distance) {
+					this.habitableTileDistance.Insert (i, new HabitableTileDistance (hexTile, distance));
+					break;
+				}
+			}
+		}
+		//this.habitableTileDistance.Add (new HabitableTileDistance (hexTile, distance));
+	}
+
+	// This will rearrange habitableTileDistance by ascending distance.
+	public void OrderHabitableTileDistanceList() {
+		//this.habitableTileDistance = this.habitableTileDistance.OrderBy (x => x.distance);
+	}
 
 	/*
 	 * Initialize City With Initial Citizens aka. Families
