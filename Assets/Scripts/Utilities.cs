@@ -514,7 +514,7 @@ public class Utilities : MonoBehaviour {
 		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
 		bool hasPeriod = newText.EndsWith (".");
 		if (!string.IsNullOrEmpty (newText)) {
-			string[] words = newText.Split (new char[]{ ' ', '.', ',' });
+			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
 			for (int i = 0; i < words.Length; i++) {
 				if (words [i].Contains ("(%")) {
 					specificWordIndexes.Add (i);
@@ -538,15 +538,8 @@ public class Utilities : MonoBehaviour {
 			newText = string.Empty;
 			for (int i = 0; i < words.Length; i++) {
 				newText += words [i];
-				if (i < (words.Length - 1)) {
-					newText += " ";
-				}
 			}
-			
 			newText = newText.Trim (' ');
-			if(hasPeriod){
-				newText += ".";
-			}
 		}
 
 		return newText;
@@ -631,5 +624,31 @@ public class Utilities : MonoBehaviour {
 		}
 		return words;
 
+	}
+	public static string[] SplitAndKeepDelimiters(string s, params char[] delimiters){
+		var parts = new List<string>();
+		if (!string.IsNullOrEmpty(s))
+		{
+			int iFirst = 0;
+			do
+			{
+				int iLast = s.IndexOfAny(delimiters, iFirst);
+				if (iLast >= 0)
+				{
+					if (iLast > iFirst)
+						parts.Add(s.Substring(iFirst, iLast - iFirst)); //part before the delimiter
+					parts.Add(new string(s[iLast], 1));//the delimiter
+					iFirst = iLast + 1;
+					continue;
+				}
+
+				//No delimiters were found, but at least one character remains. Add the rest and stop.
+				parts.Add(s.Substring(iFirst, s.Length - iFirst));
+				break;
+
+			} while (iFirst < s.Length);
+		}
+
+		return parts.ToArray();
 	}
 }
