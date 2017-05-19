@@ -308,6 +308,18 @@ public class Utilities : MonoBehaviour {
 		}
 	}
 
+	public static void ChangePossiblePretendersRecursively(Citizen parent, Citizen descendant){
+		if(!descendant.isDead){
+			parent.possiblePretenders.Add (descendant);
+		}
+
+		for(int i = 0; i < descendant.children.Count; i++){
+			if(descendant.children[i] != null){
+				ChangePossiblePretendersRecursively (parent, descendant.children [i]);
+			}
+		}
+	}
+
 	public static List<T> Shuffle<T>(List<T> list)  
 	{
 		List<T> newList = new List<T>(list);
@@ -500,9 +512,9 @@ public class Utilities : MonoBehaviour {
 	public static string LogReplacer(Log log){
 		List<int> specificWordIndexes = new List<int> ();
 		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
-		bool hasPeriod = newText.EndsWith(".");
+		bool hasPeriod = newText.EndsWith (".");
 		if (!string.IsNullOrEmpty (newText)) {
-			string[] words = newText.Split (new char[]{ ' ', '.' });
+			string[] words = newText.Split (new char[]{ ' ', '.', ',' });
 			for (int i = 0; i < words.Length; i++) {
 				if (words [i].Contains ("(%")) {
 					specificWordIndexes.Add (i);
@@ -523,8 +535,9 @@ public class Utilities : MonoBehaviour {
 					newText += " ";
 				}
 			}
-			newText = newText.Trim(' ');
-			if (hasPeriod) {
+			
+			newText = newText.Trim (' ');
+			if(hasPeriod){
 				newText += ".";
 			}
 		}

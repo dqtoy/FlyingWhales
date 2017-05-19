@@ -50,9 +50,13 @@ public class Raid : GameEvent {
 //			this.raidedCity
 //		};
 //		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start", startLogObjects);
-		newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start");
-		newLog.AddToFillers (this.startedByCity, this.startedByCity.name);
+
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "event_title");
+		newLogTitle.AddToFillers (this.raidedCity, this.raidedCity.name);
+
+		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
 		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+		Debug.Log ("LALALALALALALA " + Utilities.LogReplacer (newLog));
 
 		this.relationshipToAdjust = this.raidedCity.kingdom.king.SearchRelationshipByID (startedBy.id);
 		DeflectBlame ();
@@ -172,7 +176,7 @@ public class Raid : GameEvent {
 		this.raidedCity.goldCount -= stolenGold;
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_success");
-		newLog.AddToFillers (stolenGold, stolenGold.ToString());
+		newLog.AddToFillers (null, stolenGold.ToString());
 //		List<object> raidSuccessLogObjects = new List<object> {
 //			stolenGold
 //		};
