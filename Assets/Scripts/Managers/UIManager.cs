@@ -655,7 +655,7 @@ public class UIManager : MonoBehaviour {
 
 		currentlyShowingCity.HighlightAllOwnedTiles(204f / 255f);
 
-		citizenInfoGO.SetActive (false);
+		HideCitizenInfo();
 		cityInfoGO.SetActive (true);
 
 	}

@@ -273,6 +273,9 @@ public class CityTaskManager : MonoBehaviour {
 		if (this.generalToUpgrade.army.hp > (this.city.maxGeneralHP + baseGeneralHP)) {
 			this.generalToUpgrade.army.hp = (this.city.maxGeneralHP + baseGeneralHP);
 		}
+		if (this.generalToUpgrade.generalAvatar != null) {
+			this.generalToUpgrade.generalAvatar.GetComponent<GeneralObject>().UpdateUI();
+		}
 		this.city.AdjustResources (GetActionCost ("GENERALUP"));
 		this.generalToUpgrade = null;
 		Task.current.Succeed ();

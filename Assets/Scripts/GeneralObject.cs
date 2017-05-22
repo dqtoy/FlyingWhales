@@ -68,11 +68,11 @@ public class GeneralObject : MonoBehaviour {
 
 
 	}
-	internal void MoveTo(Vector3 destination){
-		this.targetPosition = destination;
-		this.isMoving = true;
-		this.UpdateUI ();
-	}
+//	internal void MoveTo(Vector3 destination){
+//		this.targetPosition = destination;
+//		this.isMoving = true;
+//		this.UpdateUI ();
+//	}
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
 //		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
 		if(startTile.transform.position.x <= targetTile.transform.position.x){
@@ -101,7 +101,7 @@ public class GeneralObject : MonoBehaviour {
 	}
 	internal void UpdateUI(){
 		if(this.general != null){
-			this.textMesh.text = this.general.GetArmyHP().ToString ();
+			this.textMesh.text = this.general.army.hp.ToString ();
 		}
 	}
 	[Task]

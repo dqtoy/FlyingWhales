@@ -185,6 +185,8 @@ public class InvasionPlan : GameEvent {
 		invasionPlanCancel.AddToFillers (this.startedBy, this.startedBy.name);
 		invasionPlanCancel.AddToFillers (null, " because relationships with the target kingdom were improved");
 
+		this._war.InvasionPlanCancelled();
+
 		this.DoneEvent();
 	}
 	#endregion

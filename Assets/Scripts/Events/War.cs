@@ -101,6 +101,35 @@ public class War : GameEvent {
 		} else {
 			return kingdom2;
 		}
-		return null;
+	}
+
+	internal void InvasionPlanCancelled(){
+		if (this._kingdom1Rel.invasionPlan == null && this._kingdom2Rel.invasionPlan == null) {
+			this.DeclarePeace();
+			return;
+		}
+
+		if (this._kingdom1Rel.invasionPlan != null) {
+			if (this._kingdom2Rel.invasionPlan != null) {
+				if (!this._kingdom1Rel.invasionPlan.isActive && !this._kingdom2Rel.invasionPlan.isActive) {
+					this.DeclarePeace ();
+					return;
+				}
+			} else {
+				if (!this._kingdom1Rel.invasionPlan.isActive) {
+					this.DeclarePeace ();
+					return;
+				}
+			}
+		} else {
+			if (this._kingdom2Rel.invasionPlan != null) {
+				if (!this._kingdom2Rel.invasionPlan.isActive) {
+					this.DeclarePeace ();
+					return;
+				}
+			}
+		}
+
+
 	}
 }
