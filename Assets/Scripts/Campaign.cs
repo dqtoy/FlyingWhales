@@ -26,7 +26,7 @@ public class Campaign {
 	#region getters/setters
 	/*
 	 * This is only for accessing the value of this campaigns logs, 
-	 * to add new values please use CreateNewLogForEvent.
+	 * to add new values please use CreateNewLogForCampaign.
 	 * */
 	public List<Log> logs{
 		get	{ return this._logs; } 

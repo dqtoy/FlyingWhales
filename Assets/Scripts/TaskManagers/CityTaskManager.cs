@@ -286,7 +286,6 @@ public class CityTaskManager : MonoBehaviour {
 		return this.city.HasEnoughResourcesForAction (actionCost);
 	}
 
-	[Task]
 	private List<Resource> GetActionCost(string action){
 		List<Resource> actionCost = new List<Resource>();
 		if (action == "EXPANSION") {

@@ -14,6 +14,8 @@ public class Utilities : MonoBehaviour {
 	public static int lastKingdomColorIndex = 0;
 	public static int defaultCampaignExpiration = 8;
 	public static float defenseBuff = 1.20f;
+	public const int MILITARIZATION_DURATION = 120;
+
 	public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
 	public static string[] accidentCauses = new string[]{
 		"because he/she forgot to breath.",

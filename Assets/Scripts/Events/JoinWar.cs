@@ -33,7 +33,7 @@ public class JoinWar : GameEvent {
 	public JoinWar(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen _candidateForAlliance, Envoy _envoyToSend, Kingdom _kingdomToAttack, 
 		InvasionPlan _invasionPlanThatStartedEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.JOIN_WAR_REQUEST;
-		this.description = startedBy.name + " is looking for allies against kingdom " + kingdomToAttack.name;
+//		this.description = startedBy.name + " is looking for allies against kingdom " + kingdomToAttack.name;
 		this.durationInDays = 4;
 		this.remainingDays = this.durationInDays;
 

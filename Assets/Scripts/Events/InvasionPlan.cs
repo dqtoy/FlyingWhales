@@ -98,17 +98,17 @@ public class InvasionPlan : GameEvent {
 		this.sourceKingdom.cities[0].hexTile.AddEventOnTile(this);
 		this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
-		EventManager.Instance.AddEventToDictionary(this);
-		this.StartMilitarizationEvent();
-
 		Log invasionPlanStart = this._war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
 		invasionPlanStart.AddToFillers(gameEventTrigger, reason);
 		invasionPlanStart.AddToFillers(this._startedBy, this._startedBy.name);
 		invasionPlanStart.AddToFillers(this._targetKingdom, this._targetKingdom.name);
 
-		System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this._militarizationEvent.durationInDays);
+		System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, Utilities.MILITARIZATION_DURATION);
 		invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
+
+		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		EventManager.Instance.AddEventToDictionary(this);
+		this.StartMilitarizationEvent();
 	}
 
 	#region overrides
@@ -154,6 +154,7 @@ public class InvasionPlan : GameEvent {
 					if (friends [i].lordRelationship == RELATIONSHIP_STATUS.ALLY) {
 						chanceToSendJoinWarRequest = 3;
 					}
+//					chanceToSendJoinWarRequest = 100;
 					int chance = Random.Range (0, 100);
 					if (chance < chanceToSendJoinWarRequest) {
 						Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
