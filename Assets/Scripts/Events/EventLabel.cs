@@ -18,6 +18,8 @@ public class EventLabel : MonoBehaviour {
 				UIManager.Instance.ShowCitizenInfo((Citizen)lf.obj);
 			} else if (lf.obj is Kingdom) {
 				UIManager.Instance.SetKingdomAsActive((Kingdom)lf.obj);
+			} else if (lf.obj is GameEvent) {
+				UIManager.Instance.ShowEventLogs(lf.obj);
 			}
 		}
 	}

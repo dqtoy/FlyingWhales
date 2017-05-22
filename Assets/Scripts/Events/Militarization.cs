@@ -18,7 +18,7 @@ public class Militarization : GameEvent {
 	public Militarization(int startWeek, int startMonth, int startYear, Citizen startedBy, InvasionPlan _invasionPlanThatTriggeredEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.MILITARIZATION;
 		this.description = startedBy.name + " prioritizing the training of his generals and army, in preparation for war.";
-		this.durationInDays = 120;
+		this.durationInDays = Utilities.MILITARIZATION_DURATION;
 		this.remainingDays = this.durationInDays;
 		this._invasionPlanThatTriggeredEvent = _invasionPlanThatTriggeredEvent;
 		this._uncovered = new List<Citizen>();
@@ -27,6 +27,12 @@ public class Militarization : GameEvent {
 		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started a Militarization for his/her Invasion Plan.", HISTORY_IDENTIFIER.NONE));
 		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedByCity.name + " started Militarization." , HISTORY_IDENTIFIER.NONE));
+
+		Log startLog = _invasionPlanThatTriggeredEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
+			               "Events", "War", "militarization_start");
+		startLog.AddToFillers (this.startedBy, this.startedBy.name);
+		startLog.AddToFillers (this.startedByKingdom, this.startedByKingdom.name);
+		startLog.AddToFillers (_invasionPlanThatTriggeredEvent.targetKingdom, _invasionPlanThatTriggeredEvent.targetKingdom.name);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);

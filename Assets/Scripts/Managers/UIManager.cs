@@ -2509,18 +2509,25 @@ public class UIManager : MonoBehaviour {
 	/*
 	 * Show Event Logs menu
 	 * */
-	private void ShowEventLogs(object obj){
+	public void ShowEventLogs(object obj){
 		currentlyShowingLogObject = obj;
 		List<Log> logs = new List<Log> ();
 		if (obj is GameEvent) {
 			GameEvent ge = ((GameEvent)obj);
 			logs = ge.logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer(logs.First());
-//			elmEventProgressBar.value = ((float)ge.remainingDays / (float)ge.durationInDays);
-			float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
-			StartCoroutine(LerpProgressBar(elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+			if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
+				elmEventProgressBar.gameObject.SetActive (false);
+			} else {
+				//			elmEventProgressBar.value = ((float)ge.remainingDays / (float)ge.durationInDays);
+				elmEventProgressBar.gameObject.SetActive (true);
+				float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
+				StartCoroutine(LerpProgressBar(elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+			}
 		} else if (obj is Campaign) {
 			logs = ((Campaign)obj).logs;
+			elmEventTitleLbl.text = Utilities.LogReplacer(logs.First());
+			elmEventProgressBar.gameObject.SetActive (false);
 		}
 		elmProgressBarLbl.text = "Progress:";
 		elmSuccessRateGO.SetActive (false);

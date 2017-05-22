@@ -53,6 +53,16 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void WeekEnded(){
+		//		TriggerBorderConflict ();
+		//		TriggerRaid();
+		TriggerRequestPeace();
+		EventManager.Instance.onCitizenTurnActions.Invoke ();
+		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
+		//		EventManager.Instance.onCitizenMove.Invoke (false);
+		EventManager.Instance.onWeekEnd.Invoke();
+		BehaviourTreeManager.Instance.Tick ();
+		EventManager.Instance.onUpdateUI.Invoke();
+
 		this.days += 1;
 		if (days > daysInMonth[this.month]) {
 			this.days = 1;
@@ -62,16 +72,6 @@ public class GameManager : MonoBehaviour {
 				this.year += 1;
 			}
 		}
-
-//		TriggerBorderConflict ();
-//		TriggerRaid();
-		TriggerRequestPeace();
-		EventManager.Instance.onCitizenTurnActions.Invoke ();
-		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
-//		EventManager.Instance.onCitizenMove.Invoke (false);
-		EventManager.Instance.onWeekEnd.Invoke();
-		BehaviourTreeManager.Instance.Tick ();
-		EventManager.Instance.onUpdateUI.Invoke();
 	}
 	private void TriggerRaid(){
 		int chance = UnityEngine.Random.Range (0, 100);

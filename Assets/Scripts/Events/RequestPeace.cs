@@ -46,6 +46,19 @@ public class RequestPeace : GameEvent {
 		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedBy.name + " started a request peace event.", HISTORY_IDENTIFIER.NONE));
 
+		if (this._citizenSent.role == ROLE.ENVOY) {
+			Log startLog = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
+				               "Events", "War", "request_peace_start_envoy");
+			startLog.AddToFillers (this._startedBy, this._startedBy.name);
+			startLog.AddToFillers (this._citizenSent, this._citizenSent.name);
+			startLog.AddToFillers (this._targetKingdom.king, this._targetKingdom.king.name);
+		}else{
+			Log startLog = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
+				"Events", "War", "request_peace_start_self");
+			startLog.AddToFillers (this._startedBy, this._startedBy.name);
+			startLog.AddToFillers (this._targetKingdom.king, this._targetKingdom.king.name);
+		}
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
@@ -86,11 +99,21 @@ public class RequestPeace : GameEvent {
 			int chance = Random.Range(0, 100);
 //			int chance = Random.Range(0, chanceForSuccess);
 			if (chance < chanceForSuccess) {
+				Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
+					"Events", "War", "request_peace_success");
+				requestPeaceSuccess.AddToFillers (this._targetKingdom.king, this._targetKingdom.king.name);
+				requestPeaceSuccess.AddToFillers (this._startedBy, this._startedBy.name);
+
 				//request accepted
 				KingdomManager.Instance.GetWarBetweenKingdoms(this.startedByKingdom, this._targetKingdom).DeclarePeace();
 //				KingdomManager.Instance.DeclarePeaceBetweenKingdoms (this.startedByKingdom, this._targetKingdom);
 				this.resolution = this._targetKingdom.king.name + " accepted " + this.startedBy.name + "'s request for peace.";
 			} else {
+				Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
+					"Events", "War", "request_peace_fail");
+				requestPeaceSuccess.AddToFillers (this._targetKingdom.king, this._targetKingdom.king.name);
+				requestPeaceSuccess.AddToFillers (this._startedBy, this._startedBy.name);
+
 				//request rejected
 				RelationshipKingdom relationshipOfRequester = this.startedByKingdom.GetRelationshipWithOtherKingdom(this._targetKingdom);
 				int moveOnMonth = GameManager.Instance.month;
