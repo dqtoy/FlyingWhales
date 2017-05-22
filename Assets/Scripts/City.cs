@@ -1511,7 +1511,7 @@ public class City{
 			}
 		}
 		// This will update kingdom type whenever the kingdom loses a city.
-		this.kingdom.UpdateKingdomType();
+		this.kingdom.UpdateKingdomTypeData();
 
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);

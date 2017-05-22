@@ -107,12 +107,23 @@ public class CityGenerator : MonoBehaviour {
 
 		for (int i = 0; i < city.habitableTileDistance.Count; i++) {
 			if (!city.habitableTileDistance[i].hexTile.isOccupied && !city.habitableTileDistance[i].hexTile.isBorder) {
-				List<HexTile> checkForBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (2);
-				if (checkForBorderTilesInRange.Where (x => (x.ownedByCity != null && x.ownedByCity.kingdom != city.kingdom)).Count () > 1) {
+				// Check if the tile is within required distance of the expanding kingdom's current borders
+				if (city.kingdom.kingdomTypeData.expansionDistanceFromBorder > 0) {
+					List<HexTile> checkForExpandingKingdomBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (city.kingdom.kingdomTypeData.expansionDistanceFromBorder);
+					int z = checkForExpandingKingdomBorderTilesInRange.Where (y => (y.ownedByCity != null && y.ownedByCity.kingdom == city.kingdom)).Count ();
+					if (z <= 0) {
+						continue;
+					}
+				}
+					
+				// Check if there are more than 2 nearby hex tiles that are already part of another kingdom
+				List<HexTile> checkForOtherBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (2);
+				if (checkForOtherBorderTilesInRange.Where (x => (x.ownedByCity != null && x.ownedByCity.kingdom != city.kingdom)).Count () > 1) {
 					continue;
 				} else {
-					return city.habitableTileDistance[i].hexTile;
+					return city.habitableTileDistance [i].hexTile;
 				}
+
 			}
 		}
 

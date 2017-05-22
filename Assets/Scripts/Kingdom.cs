@@ -11,7 +11,7 @@ public class Kingdom{
 	public int[] horoscope; 
 
 	[SerializeField]
-	private KINGDOM_TYPE _kingdomType;
+	private KingdomTypeData _kingdomTypeData;
 	private Kingdom _sourceKingdom;
 
 	internal List<City> cities;
@@ -36,7 +36,16 @@ public class Kingdom{
 
 	public KINGDOM_TYPE kingdomType {
 		get { 
-			return this._kingdomType; 
+			if (this._kingdomTypeData == null) {
+				return KINGDOM_TYPE.NONE;
+			}
+			return this._kingdomTypeData.kingdomType; 
+		}
+	}
+
+	public KingdomTypeData kingdomTypeData {
+		get { 
+			return this._kingdomTypeData; 
 		}
 	}
 
@@ -66,8 +75,8 @@ public class Kingdom{
 
 		this._sourceKingdom = sourceKingdom;
 		// Determine what type of Kingdom this will be upon initialization.
-		this._kingdomType = KINGDOM_TYPE.NONE;
-		this.UpdateKingdomType();
+		this._kingdomTypeData = null;
+		this.UpdateKingdomTypeData();
 
 		if (race == RACE.HUMANS) {
 			this.basicResource = BASE_RESOURCE_TYPE.STONE;
@@ -113,43 +122,52 @@ public class Kingdom{
 	}
 
 	// Updates this kingdom's type and horoscope
-	public void UpdateKingdomType() {
+	public void UpdateKingdomTypeData() {
 		// Update Kingdom Type whenever the kingdom expands to a new city
-		KINGDOM_TYPE prevKingdomType = this._kingdomType;
-		this._kingdomType = StoryTellingManager.Instance.InitializeKingdomType (this);
-		if (_kingdomType != prevKingdomType) {
-			this.horoscope = GetHoroscope (prevKingdomType);
+		KingdomTypeData prevKingdomTypeData = this._kingdomTypeData;
+		this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
+
+		// If the Kingdom Type Data changed
+		if (_kingdomTypeData != prevKingdomTypeData) {			
+			// Update horoscope
+			if (prevKingdomTypeData == null) {
+				this.horoscope = GetHoroscope ();
+			} else {				
+				this.horoscope = GetHoroscope (prevKingdomTypeData.kingdomType);
+			}
+			// Update expansion chance
+			this.expansionChance = this.kingdomTypeData.expansionRate;
 		}
 	}
 
 	internal int[] GetHoroscope(KINGDOM_TYPE prevKingdomType = KINGDOM_TYPE.NONE){
 		int[] newHoroscope = new int[2];
 
-		if (this._kingdomType == KINGDOM_TYPE.BARBARIC_TRIBE) {
+		if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.BARBARIC_TRIBE) {
 			newHoroscope [0] = UnityEngine.Random.Range (0, 2);
 			newHoroscope [1] = 0;
-		} else if (this._kingdomType == KINGDOM_TYPE.HERMIT_TRIBE) {
+		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.HERMIT_TRIBE) {
 			newHoroscope [0] = UnityEngine.Random.Range (0, 2);
 			newHoroscope [1] = 1;
-		} else if (this._kingdomType == KINGDOM_TYPE.RELIGIOUS_TRIBE) {
+		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.RELIGIOUS_TRIBE) {
 			newHoroscope [0] = 0;
 			newHoroscope [1] = UnityEngine.Random.Range (0, 2);
-		} else if (this._kingdomType == KINGDOM_TYPE.OPPORTUNISTIC_TRIBE) {
+		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.OPPORTUNISTIC_TRIBE) {
 			newHoroscope [0] = 1;
 			newHoroscope [1] = UnityEngine.Random.Range (0, 2);
-		} else if (this._kingdomType == KINGDOM_TYPE.NOBLE_KINGDOM) {
+		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.NOBLE_KINGDOM) {
 			newHoroscope [0] = 0;
 			newHoroscope [1] = 0;
-		} else if (this._kingdomType == KINGDOM_TYPE.EVIL_EMPIRE) {
+		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.EVIL_EMPIRE) {
 			newHoroscope [0] = 1;
 			newHoroscope [1] = 0;
-		} else if (this._kingdomType == KINGDOM_TYPE.MERCHANT_NATION) {
+		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.MERCHANT_NATION) {
 			newHoroscope [0] = 0;
 			newHoroscope [1] = 1;
-		} else if (this._kingdomType == KINGDOM_TYPE.CHAOTIC_STATE) {
+		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.CHAOTIC_STATE) {
 			newHoroscope [0] = 1;
 			newHoroscope [1] = 1;
-		} else if (this._kingdomType == KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER) {
+		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER) {
 			if (prevKingdomType == KINGDOM_TYPE.NOBLE_KINGDOM) {
 				newHoroscope [0] = 0;
 				newHoroscope [1] = UnityEngine.Random.Range (0, 2);
@@ -157,14 +175,14 @@ public class Kingdom{
 				newHoroscope [0] = UnityEngine.Random.Range (0, 2);
 				newHoroscope [1] = 1;				
 			}
-		} else if (this._kingdomType == KINGDOM_TYPE.WICKED_SUPERPOWER) {
+		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.WICKED_SUPERPOWER) {
 			if (prevKingdomType == KINGDOM_TYPE.EVIL_EMPIRE) {
 				newHoroscope [0] = 1;
 				newHoroscope [1] = UnityEngine.Random.Range (0, 2);
 			} else if (prevKingdomType == KINGDOM_TYPE.CHAOTIC_STATE) {
 				newHoroscope [0] = UnityEngine.Random.Range (0, 2);
 				newHoroscope [1] = 0;				
-			}			
+			}
 		}
 
 		return newHoroscope;
@@ -179,7 +197,7 @@ public class Kingdom{
 		return false;
 	}
 
-	protected void CreateInitialRelationships(){
+	protected void CreateInitialRelationships() {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {
 				this.relationshipsWithOtherKingdoms.Add (new RelationshipKingdom(this, KingdomManager.Instance.allKingdoms [i]));
@@ -206,7 +224,7 @@ public class Kingdom{
 			return;
 		}
 
-		int chance = Random.Range (0, 200 + (100 * this.cities.Count));
+		int chance = Random.Range (0, 300 + (50 * this.cities.Count));
 		if (chance < this.expansionChance) {
 		
 			List<City> citiesThatCanExpand = new List<City> ();
@@ -436,7 +454,7 @@ public class Kingdom{
 	internal void AddCityToKingdom(City city){
 		this.cities.Add (city);
 		city.kingdom = this;
-		this.UpdateKingdomType();
+		this.UpdateKingdomTypeData();
 	}
 
 	internal void ResetAdjacencyWithOtherKingdoms(){
