@@ -22,21 +22,21 @@ public class MarriedCouple {
 
 
 
-		if (this.wife.children.Count < 5 && this.husband.children.Count < 5 && !this.wife.isDead && !this.husband.isDead) {
-			EventManager.Instance.onWeekEnd.AddListener(TurnActions);
-		}
+//		if (this.wife.children.Count < 5 && this.husband.children.Count < 5 && !this.wife.isDead && !this.husband.isDead) {
+//			EventManager.Instance.onWeekEnd.AddListener(TurnActions);
+//		}
 	}
 
 	protected void TurnActions(){
-		if (this.wife.children.Count >= 5 || this.husband.children.Count >= 5 || this.wife.isDead || this.husband.isDead) {
-			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
-			return;
-		}
-		if (this.isPregnant) {
-			this.WaitForBirth();
-		} else {
-			this.CheckForPregnancy();
-		}
+//		if (this.wife.children.Count >= 5 || this.husband.children.Count >= 5 || this.wife.isDead || this.husband.isDead) {
+//			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+//			return;
+//		}
+//		if (this.isPregnant) {
+//			this.WaitForBirth();
+//		} else {
+//			this.CheckForPregnancy();
+//		}
 	}
 
 	protected void CheckForPregnancy(){

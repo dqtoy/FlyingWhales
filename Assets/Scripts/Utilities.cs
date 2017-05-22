@@ -14,6 +14,8 @@ public class Utilities : MonoBehaviour {
 	public static int lastKingdomColorIndex = 0;
 	public static int defaultCampaignExpiration = 8;
 	public static float defenseBuff = 1.20f;
+	public const int MILITARIZATION_DURATION = 120;
+
 	public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
 	public static string[] accidentCauses = new string[]{
 		"because he/she forgot to breath.",
@@ -28,7 +30,9 @@ public class Utilities : MonoBehaviour {
 		"from drinking too much alcohol.",
 		"from eating poisonous mushrooms."
 	};
-		
+	public static string[] crisis = new string[]{
+		"Food",
+	};
 	public static int specialResourceCount = 0;
 	
 	/*
@@ -623,7 +627,12 @@ public class Utilities : MonoBehaviour {
 
 		}
 		return words;
+	}
 
+	public static DateTime GetNewDateAfterNumberOfDays(int month, int day, int year, int numOfDaysElapsed){
+		DateTime inputDate = new DateTime (year, month, day);
+		inputDate = inputDate.AddDays (numOfDaysElapsed);
+		return inputDate;
 	}
 	public static string[] SplitAndKeepDelimiters(string s, params char[] delimiters){
 		var parts = new List<string>();

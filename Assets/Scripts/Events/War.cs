@@ -11,6 +11,7 @@ public class War : GameEvent {
 	private RelationshipKingdom _kingdom2Rel;
 
 	private bool _isAtWar;
+
 //	internal List<InvasionPlan> invasionPlans;
 //	internal Militarization militarizationOfWar;
 
@@ -45,6 +46,10 @@ public class War : GameEvent {
 		this._kingdom2Rel = _kingdom2.GetRelationshipWithOtherKingdom(_kingdom1);
 		this._kingdom1Rel.AssignWarEvent(this);
 		this._kingdom2Rel.AssignWarEvent(this);
+
+		Log titleLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "event_title");
+		titleLog.AddToFillers (_kingdom1, _kingdom1.name);
+		titleLog.AddToFillers (_kingdom2, _kingdom2.name);
 
 		EventManager.Instance.AddEventToDictionary(this);
 	}
@@ -96,6 +101,35 @@ public class War : GameEvent {
 		} else {
 			return kingdom2;
 		}
-		return null;
+	}
+
+	internal void InvasionPlanCancelled(){
+		if (this._kingdom1Rel.invasionPlan == null && this._kingdom2Rel.invasionPlan == null) {
+			this.DeclarePeace();
+			return;
+		}
+
+		if (this._kingdom1Rel.invasionPlan != null) {
+			if (this._kingdom2Rel.invasionPlan != null) {
+				if (!this._kingdom1Rel.invasionPlan.isActive && !this._kingdom2Rel.invasionPlan.isActive) {
+					this.DeclarePeace ();
+					return;
+				}
+			} else {
+				if (!this._kingdom1Rel.invasionPlan.isActive) {
+					this.DeclarePeace ();
+					return;
+				}
+			}
+		} else {
+			if (this._kingdom2Rel.invasionPlan != null) {
+				if (!this._kingdom2Rel.invasionPlan.isActive) {
+					this.DeclarePeace ();
+					return;
+				}
+			}
+		}
+
+
 	}
 }

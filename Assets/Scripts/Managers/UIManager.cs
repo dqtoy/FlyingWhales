@@ -655,7 +655,7 @@ public class UIManager : MonoBehaviour {
 
 		currentlyShowingCity.HighlightAllOwnedTiles(204f / 255f);
 
-		citizenInfoGO.SetActive (false);
+		HideCitizenInfo();
 		cityInfoGO.SetActive (true);
 
 	}
@@ -2509,18 +2509,25 @@ public class UIManager : MonoBehaviour {
 	/*
 	 * Show Event Logs menu
 	 * */
-	private void ShowEventLogs(object obj){
+	public void ShowEventLogs(object obj){
 		currentlyShowingLogObject = obj;
 		List<Log> logs = new List<Log> ();
 		if (obj is GameEvent) {
 			GameEvent ge = ((GameEvent)obj);
 			logs = ge.logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer(logs.First());
-//			elmEventProgressBar.value = ((float)ge.remainingDays / (float)ge.durationInDays);
-			float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
-			StartCoroutine(LerpProgressBar(elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+			if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
+				elmEventProgressBar.gameObject.SetActive (false);
+			} else {
+				//			elmEventProgressBar.value = ((float)ge.remainingDays / (float)ge.durationInDays);
+				elmEventProgressBar.gameObject.SetActive (true);
+				float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
+				StartCoroutine(LerpProgressBar(elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+			}
 		} else if (obj is Campaign) {
 			logs = ((Campaign)obj).logs;
+			elmEventTitleLbl.text = Utilities.LogReplacer(logs.First());
+			elmEventProgressBar.gameObject.SetActive (false);
 		}
 		elmProgressBarLbl.text = "Progress:";
 		elmSuccessRateGO.SetActive (false);
@@ -3017,9 +3024,14 @@ public class UIManager : MonoBehaviour {
 			for (int j = 0; j < currentlyShowingKingdom.king.campaignManager.activeCampaigns.Count; j++) {
 				Campaign currentCampaign = currentlyShowingKingdom.king.campaignManager.activeCampaigns[j];
 				City targetCityOfCampaign = currentCampaign.targetCity;
-				if (targetCityOfCampaign.kingdom.id == kingdomAtWarWith.id) {
+				if (currentCampaign.campaignType == CAMPAIGN.DEFENSE) {
 					actualCampaignIDs.Add (currentCampaign.id);
 					campaignsToShow.Add (currentCampaign);
+				} else {
+					if (!currentCampaign.isGhost && targetCityOfCampaign.kingdom.id == kingdomAtWarWith.id) {
+						actualCampaignIDs.Add (currentCampaign.id);
+						campaignsToShow.Add (currentCampaign);
+					}
 				}
 			}
 

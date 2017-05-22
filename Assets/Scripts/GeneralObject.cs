@@ -25,6 +25,9 @@ public class GeneralObject : MonoBehaviour {
 	Vector3 targetPosition = Vector3.zero;
 //	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
 
+	bool hasArrivedAtRallyPoint = false;
+	bool hasArrivedAtDefenseTargetCity = false;
+
 	void Update(){
 		if(this.isMoving){
 			if(this.targetPosition != null){
@@ -65,11 +68,11 @@ public class GeneralObject : MonoBehaviour {
 
 
 	}
-	internal void MoveTo(Vector3 destination){
-		this.targetPosition = destination;
-		this.isMoving = true;
-		this.UpdateUI ();
-	}
+//	internal void MoveTo(Vector3 destination){
+//		this.targetPosition = destination;
+//		this.isMoving = true;
+//		this.UpdateUI ();
+//	}
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
 //		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
 		if(startTile.transform.position.x <= targetTile.transform.position.x){
@@ -98,7 +101,7 @@ public class GeneralObject : MonoBehaviour {
 	}
 	internal void UpdateUI(){
 		if(this.general != null){
-			this.textMesh.text = this.general.GetArmyHP().ToString ();
+			this.textMesh.text = this.general.army.hp.ToString ();
 		}
 	}
 	[Task]
@@ -263,9 +266,26 @@ public class GeneralObject : MonoBehaviour {
 		if (this.general.assignedCampaign != null) {
 			if (this.general.assignedCampaign.campaignType == CAMPAIGN.DEFENSE) {
 				if (this.general.location == this.general.assignedCampaign.targetCity.hexTile) {
-					if (this.general.assignedCampaign.AreAllGeneralsOnDefenseCity ()) {
-						if (this.general.assignedCampaign.expiration == -1) {
+
+					if (this.general.assignedCampaign.expiration == -1) {
+						if(!this.hasArrivedAtDefenseTargetCity){
+							this.hasArrivedAtDefenseTargetCity = true;
+							Log newLog = this.general.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "arrival_noexpiration");
+							newLog.AddToFillers (this.general.citizen, this.general.citizen.name);
+						}
+							
+						if (this.general.assignedCampaign.AreAllGeneralsOnDefenseCity ()) {
 							this.general.assignedCampaign.expiration = Utilities.defaultCampaignExpiration;
+
+							Log newLogArrivalComplete = this.general.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "arrival_complete");
+							newLogArrivalComplete.AddToFillers (null, this.general.assignedCampaign.expiration.ToString());
+						}
+					}else{
+						if (!this.hasArrivedAtDefenseTargetCity) {
+							this.hasArrivedAtDefenseTargetCity = true;
+							Log newLog = this.general.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "arrival_expiration");
+							newLog.AddToFillers (this.general.citizen, this.general.citizen.name);
+							newLog.AddToFillers (null, this.general.assignedCampaign.expiration.ToString ());
 						}
 					}
 					Task.current.Succeed ();
@@ -285,6 +305,14 @@ public class GeneralObject : MonoBehaviour {
 		if (this.general.assignedCampaign != null) {
 			if (this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE) {
 				if (this.general.location == this.general.assignedCampaign.rallyPoint) {
+
+					if(!this.hasArrivedAtRallyPoint){
+						this.hasArrivedAtRallyPoint = true;
+						Log newLog = this.general.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "arrival_rallypoint");
+						newLog.AddToFillers (this.general.citizen, this.general.citizen.name);
+					}
+
+
 					if (this.general.targetLocation == this.general.assignedCampaign.rallyPoint) {
 						if (this.general.assignedCampaign.AreAllGeneralsOnRallyPoint ()) {
 							this.general.assignedCampaign.AttackCityNow ();
@@ -308,16 +336,63 @@ public class GeneralObject : MonoBehaviour {
 		if(this.collidedWithHostile){
 			this.collidedWithHostile = false;
 			if(this.general.army.hp > 0 && this.otherGeneral.army.hp > 0){
+
 				CombatManager.Instance.BattleMidway (ref this.general, ref this.otherGeneral);
+
 				if(this.otherGeneral.army.hp <= 0){
+					if(this.otherGeneral.assignedCampaign != null){
+						if(this.otherGeneral.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
+							Log newLog = this.otherGeneral.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "battle_midway_loser");
+							newLog.AddToFillers (this.otherGeneral.citizen, this.otherGeneral.citizen.name);
+						}else{
+							Log newLog = this.otherGeneral.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "battle_midway_loser");
+							newLog.AddToFillers (this.otherGeneral.citizen, this.otherGeneral.citizen.name);
+						}
+
+					}
 					this.otherGeneral.citizen.Death(DEATH_REASONS.BATTLE);
+				}else{
+					if(this.otherGeneral.assignedCampaign != null){
+						if(this.otherGeneral.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
+							Log newLog = this.otherGeneral.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "battle_midway_winner");
+							newLog.AddToFillers (this.otherGeneral.citizen, this.otherGeneral.citizen.name);
+							newLog.AddToFillers (null, this.otherGeneral.army.hp.ToString());
+
+						}else{
+							Log newLog = this.otherGeneral.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "battle_midway_winner");
+							newLog.AddToFillers (this.otherGeneral.citizen, this.otherGeneral.citizen.name);
+							newLog.AddToFillers (null, this.otherGeneral.army.hp.ToString());
+						}
+					}
 				}
 				this.otherGeneral = null;
 				if(this.general.army.hp <= 0){
+					if(this.general.assignedCampaign != null){
+						if(this.general.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
+							Log newLog = this.general.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "battle_midway_loser");
+							newLog.AddToFillers (this.general.citizen, this.general.citizen.name);
+						}else{
+							Log newLog = this.general.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "battle_midway_loser");
+							newLog.AddToFillers (this.general.citizen, this.general.citizen.name);
+						}
+
+					}
 					ResetValues ();
 					this.general.citizen.Death(DEATH_REASONS.BATTLE);
 					Task.current.Succeed ();
 				}else{
+					if(this.general.assignedCampaign != null){
+						if(this.general.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
+							Log newLog = this.general.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "battle_midway_winner");
+							newLog.AddToFillers (this.general.citizen, this.general.citizen.name);
+							newLog.AddToFillers (null, this.general.army.hp.ToString());
+
+						}else{
+							Log newLog = this.general.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "battle_midway_winner");
+							newLog.AddToFillers (this.general.citizen, this.general.citizen.name);
+							newLog.AddToFillers (null, this.general.army.hp.ToString());
+						}
+					}
 					Task.current.Fail ();
 				}
 			}else{

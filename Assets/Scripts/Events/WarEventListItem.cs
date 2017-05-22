@@ -21,7 +21,13 @@ public class WarEventListItem : MonoBehaviour {
 
 	internal void SetCampaign(Campaign _campaign, Kingdom ownerOfThisItem){
 		this._campaign = _campaign;
-		this.eventTitleLbl.text = "Campaign against " + _campaign.targetCity.name;
+		if (this._campaign.campaignType == CAMPAIGN.DEFENSE) {
+			this.eventTitleLbl.text = "Campaign to defend " + _campaign.targetCity.name;
+		} else {
+			this.eventTitleLbl.text = "Campaign to invade " + _campaign.targetCity.name;
+		}
+		this.eventDateLbl.gameObject.SetActive(false);
+
 	}
 
 	void OnClick(){

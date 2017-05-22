@@ -78,8 +78,8 @@ public class EventManager : MonoBehaviour {
 			if (this.allEvents.ContainsKey (currentEvent)) {
 				List<GameEvent> eventsOfType = this.allEvents[currentEvent];
 				for (int j = 0; j < eventsOfType.Count; j++) {
-					if (eventsOfType[i].startedByKingdom.id == kingdom.id) {
-						gameEventsOfTypePerKingdom.Add(eventsOfType[i]);
+					if (eventsOfType[j].startedByKingdom.id == kingdom.id) {
+						gameEventsOfTypePerKingdom.Add(eventsOfType[j]);
 					}
 				}
 			}
