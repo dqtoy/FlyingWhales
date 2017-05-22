@@ -764,76 +764,76 @@ public class City{
 //		}
 //	}
 
-	private void GenerateInitialTraitsForInitialCitizens(){
-		for (int i = 0; i < this.citizens.Count; i++) {
-			Citizen currentCitizen = this.citizens[i];
-			currentCitizen.behaviorTraits.Clear();
-//			currentCitizen.skillTraits.Clear();
-//			currentCitizen.miscTraits.Clear();
-
-			//Generate Behaviour trait
-			int firstItem = 1;
-			int secondItem = 2;
-			for (int j = 0; j < 4; j++) {
-				BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
-				int chanceForTrait = UnityEngine.Random.Range (0, 100);
-				if (chanceForTrait <= 20) {
-					currentCitizen.behaviorTraits.Add (behaviourPair [UnityEngine.Random.Range (0, behaviourPair.Length)]);
-				}
-				firstItem += 2;
-				secondItem += 2;
-			}
-
-			int chanceForSkillTraitLength = UnityEngine.Random.Range (0, 100);
-			int numOfSkillTraits = 0;
-			if (chanceForSkillTraitLength <= 20) {
-				numOfSkillTraits = 2;
-			} else if (chanceForSkillTraitLength >= 21 && chanceForSkillTraitLength <= 40) {
-				numOfSkillTraits = 1;
-			}
-
-//			//Generate Skill Traits
-//			List<SKILL_TRAIT> skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
-//			skillTraits.Remove (SKILL_TRAIT.NONE);
-//			for (int j = 0; j < numOfSkillTraits; j++) {
-//				SKILL_TRAIT chosenSkillTrait = skillTraits[UnityEngine.Random.Range(0, skillTraits.Count)];
-//				currentCitizen.skillTraits.Add (chosenSkillTrait);
-//				if (numOfSkillTraits > 1) {
-//					skillTraits.Remove (chosenSkillTrait);
-//					if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
-//						skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
-//					} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
-//						skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
-//					} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
-//						skillTraits.Remove (SKILL_TRAIT.THRIFTY);
-//					} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
-//						skillTraits.Remove (SKILL_TRAIT.LAVISH);
-//					}
+//	private void GenerateInitialTraitsForInitialCitizens(){
+//		for (int i = 0; i < this.citizens.Count; i++) {
+//			Citizen currentCitizen = this.citizens[i];
+//			currentCitizen.behaviorTraits.Clear();
+////			currentCitizen.skillTraits.Clear();
+////			currentCitizen.miscTraits.Clear();
+//
+//			//Generate Behaviour trait
+//			int firstItem = 1;
+//			int secondItem = 2;
+//			for (int j = 0; j < 4; j++) {
+//				BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
+//				int chanceForTrait = UnityEngine.Random.Range (0, 100);
+//				if (chanceForTrait <= 20) {
+//					currentCitizen.behaviorTraits.Add (behaviourPair [UnityEngine.Random.Range (0, behaviourPair.Length)]);
 //				}
+//				firstItem += 2;
+//				secondItem += 2;
 //			}
 //
-//			int chanceForMiscTraitLength = UnityEngine.Random.Range (0, 100);
-//			int numOfMiscTraits = 0;
-//			if (chanceForMiscTraitLength <= 10) {
-//				numOfMiscTraits = 2;
-//			} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 21) {
-//				numOfMiscTraits = 1;
+//			int chanceForSkillTraitLength = UnityEngine.Random.Range (0, 100);
+//			int numOfSkillTraits = 0;
+//			if (chanceForSkillTraitLength <= 20) {
+//				numOfSkillTraits = 2;
+//			} else if (chanceForSkillTraitLength >= 21 && chanceForSkillTraitLength <= 40) {
+//				numOfSkillTraits = 1;
 //			}
 //
-//			//Generate Misc Traits
-//			List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
-//			miscTraits.Remove (MISC_TRAIT.NONE);
-//			for (int j = 0; j < numOfMiscTraits; j++) {
-//				MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
-//				currentCitizen.miscTraits.Add (chosenMiscTrait);
-//				miscTraits.Remove (chosenMiscTrait);
-//			}
-			currentCitizen.behaviorTraits.Distinct().ToList();
-//			currentCitizen.skillTraits.Distinct().ToList();
-//			currentCitizen.miscTraits.Distinct().ToList();
-		}
-		this.UpdateCitizenCreationTable();
-	}
+////			//Generate Skill Traits
+////			List<SKILL_TRAIT> skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
+////			skillTraits.Remove (SKILL_TRAIT.NONE);
+////			for (int j = 0; j < numOfSkillTraits; j++) {
+////				SKILL_TRAIT chosenSkillTrait = skillTraits[UnityEngine.Random.Range(0, skillTraits.Count)];
+////				currentCitizen.skillTraits.Add (chosenSkillTrait);
+////				if (numOfSkillTraits > 1) {
+////					skillTraits.Remove (chosenSkillTrait);
+////					if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
+////						skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
+////					} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
+////						skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
+////					} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
+////						skillTraits.Remove (SKILL_TRAIT.THRIFTY);
+////					} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
+////						skillTraits.Remove (SKILL_TRAIT.LAVISH);
+////					}
+////				}
+////			}
+////
+////			int chanceForMiscTraitLength = UnityEngine.Random.Range (0, 100);
+////			int numOfMiscTraits = 0;
+////			if (chanceForMiscTraitLength <= 10) {
+////				numOfMiscTraits = 2;
+////			} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 21) {
+////				numOfMiscTraits = 1;
+////			}
+////
+////			//Generate Misc Traits
+////			List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
+////			miscTraits.Remove (MISC_TRAIT.NONE);
+////			for (int j = 0; j < numOfMiscTraits; j++) {
+////				MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
+////				currentCitizen.miscTraits.Add (chosenMiscTrait);
+////				miscTraits.Remove (chosenMiscTrait);
+////			}
+//			currentCitizen.behaviorTraits.Distinct().ToList();
+////			currentCitizen.skillTraits.Distinct().ToList();
+////			currentCitizen.miscTraits.Distinct().ToList();
+//		}
+//		this.UpdateCitizenCreationTable();
+//	}
 
 	protected void UpdateBorderTiles(){
 		for (int i = 0; i < this.borderTiles.Count; i++) {
@@ -1202,13 +1202,19 @@ public class City{
 
 	internal void UpdateCitizenCreationTable(){
 		this.citizenCreationTable = new Dictionary<ROLE, int>(Utilities.defaultCitizenCreationTable);
-		for (int i = 0; i < this.governor.behaviorTraits.Count; i++) {
-			Dictionary<ROLE, int> currentTraitTable = Utilities.citizenCreationTable[this.governor.behaviorTraits[i]];
-			for (int j = 0; j < currentTraitTable.Count; j++) {
-				ROLE currentRole = currentTraitTable.Keys.ElementAt(j);
-				this.citizenCreationTable [currentRole] += currentTraitTable [currentRole];
-			}
+//		for (int i = 0; i < this.governor.behaviorTraits.Count; i++) {
+		Dictionary<ROLE, int> currentTraitTable = Utilities.citizenCreationTable[this.governor.honestyTrait];
+		for (int j = 0; j < currentTraitTable.Count; j++) {
+			ROLE currentRole = currentTraitTable.Keys.ElementAt(j);
+			this.citizenCreationTable [currentRole] += currentTraitTable [currentRole];
 		}
+
+		currentTraitTable = Utilities.citizenCreationTable[this.governor.hostilityTrait];
+		for (int j = 0; j < currentTraitTable.Count; j++) {
+			ROLE currentRole = currentTraitTable.Keys.ElementAt(j);
+			this.citizenCreationTable [currentRole] += currentTraitTable [currentRole];
+		}
+//		}
 		this.creatableRoles.Clear();
 		for (int i = 0; i < this.citizenCreationTable.Keys.Count; i++) {
 			ROLE currentKey = this.citizenCreationTable.Keys.ElementAt(i);

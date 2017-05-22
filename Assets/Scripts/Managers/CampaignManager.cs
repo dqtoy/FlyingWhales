@@ -497,19 +497,19 @@ public class CampaignManager {
 				}
 			}
 		}
-		if(this.leader.behaviorTraits.Contains(BEHAVIOR_TRAIT.AGGRESSIVE)){
-			if(noOfOffenseCampaigns >= 2){
-				return CAMPAIGN.DEFENSE;
-			}else{
-				return CAMPAIGN.OFFENSE;
-			}
-		}else if(this.leader.behaviorTraits.Contains(BEHAVIOR_TRAIT.DEFENSIVE)){
-			if(noOfDefenseCampaigns >= 2){
-				return CAMPAIGN.OFFENSE;
-			}else{
-				return CAMPAIGN.DEFENSE;
-			}
-		}else{
+//		if(this.leader.behaviorTraits.Contains(BEHAVIOR_TRAIT.AGGRESSIVE)){
+//			if(noOfOffenseCampaigns >= 2){
+//				return CAMPAIGN.DEFENSE;
+//			}else{
+//				return CAMPAIGN.OFFENSE;
+//			}
+//		}else if(this.leader.behaviorTraits.Contains(BEHAVIOR_TRAIT.DEFENSIVE)){
+//			if(noOfDefenseCampaigns >= 2){
+//				return CAMPAIGN.OFFENSE;
+//			}else{
+//				return CAMPAIGN.DEFENSE;
+//			}
+//		}else{
 			if(noOfDefenseCampaigns > 0 && noOfOffenseCampaigns <= 0){
 				return CAMPAIGN.OFFENSE;
 			}else if(noOfDefenseCampaigns <= 0 && noOfOffenseCampaigns > 0){
@@ -525,7 +525,7 @@ public class CampaignManager {
 					return CAMPAIGN.OFFENSE;
 				}
 			}
-		}
+//		}
 	}
 	internal void MakeCityActive(Campaign campaign){
 		CityWar cityWar = null;

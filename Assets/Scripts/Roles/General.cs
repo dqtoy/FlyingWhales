@@ -70,9 +70,9 @@ public class General : Role {
 	}
 	internal int GetArmyHP(){
 		float multiplier = 1f;
-		if(this.citizen.miscTraits.Contains(MISC_TRAIT.STRONG)){
-			multiplier = 1.10f;
-		}
+//		if(this.citizen.miscTraits.Contains(MISC_TRAIT.STRONG)){
+//			multiplier = 1.10f;
+//		}
 		return (int)(this.army.hp * multiplier);
 	}
 	private int GetInitialArmyHp(){

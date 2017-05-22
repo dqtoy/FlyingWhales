@@ -31,13 +31,13 @@ public class Spy : Role {
 	}
 
 	protected void DecreaseWarExhaustion(){
-		if (this.citizen.skillTraits.Contains (SKILL_TRAIT.STEALTHY)) {
-			this.warExhaustiontarget.kingdomWar.exhaustion -= 20;
-			Debug.Log (this.citizen.name + ": Decreased War Exhaustion of " + this.warExhaustiontarget.sourceKingdom.name + " by 20");
-		} else {
+//		if (this.citizen.skillTraits.Contains (SKILL_TRAIT.STEALTHY)) {
+//			this.warExhaustiontarget.kingdomWar.exhaustion -= 20;
+//			Debug.Log (this.citizen.name + ": Decreased War Exhaustion of " + this.warExhaustiontarget.sourceKingdom.name + " by 20");
+//		} else {
 			this.warExhaustiontarget.kingdomWar.exhaustion -= 15;
 			Debug.Log (this.citizen.name + ": Decreased War Exhaustion of " + this.warExhaustiontarget.sourceKingdom.name + " by 15");
-		}
+//		}
 		this.inAction = false;
 		this.onDoAction -= DecreaseWarExhaustion;
 		EventManager.Instance.onWeekEnd.RemoveListener(WaitForAction);

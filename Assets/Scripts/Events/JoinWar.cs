@@ -103,9 +103,9 @@ public class JoinWar : GameEvent {
 			RELATIONSHIP_STATUS relationshipWithRequester = candidateForAlliance.GetRelationshipWithCitizen (this.startedBy).lordRelationship;
 			RELATIONSHIP_STATUS relationshipWithTarget = candidateForAlliance.GetRelationshipWithCitizen (kingdomToAttack.king).lordRelationship;
 
-			if (this._envoyToSend.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-				successRate += 5;
-			}
+//			if (this._envoyToSend.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+//				successRate += 5;
+//			}
 
 			if (relationshipWithRequester == RELATIONSHIP_STATUS.WARM) {
 				successRate += 5;

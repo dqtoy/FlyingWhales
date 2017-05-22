@@ -406,17 +406,17 @@ public class GeneralObject : MonoBehaviour {
 
 	[Task]
 	public void MoveToNextTile(){
-		if (this.general.citizen.miscTraits.Contains (MISC_TRAIT.FAST)) {
-			if (!this.general.citizen.isDead) {
-				for (int i = 0; i < 2; i++) {
-					Move ();
-				}
-			}else{
-				Move ();
-			}
-		}else{
+//		if (this.general.citizen.miscTraits.Contains (MISC_TRAIT.FAST)) {
+//			if (!this.general.citizen.isDead) {
+//				for (int i = 0; i < 2; i++) {
+//					Move ();
+//				}
+//			}else{
+//				Move ();
+//			}
+//		}else{
 			Move ();
-		}
+//		}
 		Task.current.Succeed ();
 	}
 

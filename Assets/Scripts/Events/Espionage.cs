@@ -36,9 +36,9 @@ public class Espionage : GameEvent {
 		this.chosenEvent = this.GetEventToExpose(true);
 		this.hasFound = false;
 		this.successRate = 75;
-		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
-			this.successRate += 10;
-		}
+//		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
+//			this.successRate += 10;
+//		}
 		if (this._targetKingdom != null) {
 			this._targetKingdom.cities[0].hexTile.AddEventOnTile(this);
 		}

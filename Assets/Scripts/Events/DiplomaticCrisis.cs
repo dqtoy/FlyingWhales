@@ -66,9 +66,9 @@ public class DiplomaticCrisis : GameEvent {
 				if (envoy.citizen.id == this.activeEnvoyResolve.citizen.id) {
 					int chance = UnityEngine.Random.Range (0, 100);
 					int value = 20;
-					if (this.activeEnvoyResolve.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-						value += 10;
-					}
+//					if (this.activeEnvoyResolve.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+//						value += 10;
+//					}
 					if (chance < value) {
 						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_success");
 						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);

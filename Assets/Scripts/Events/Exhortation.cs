@@ -24,21 +24,21 @@ public class Exhortation : GameEvent {
 
 //		this.successRate = 100;
 		this.successRate = 65;
-		if (this.citizenSent.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+//		if (this.citizenSent.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+//			this.successRate += 10;
+//		}
+//		if (this.citizenSent.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+//			this.successRate += 10;
+//		}
+//		if (this.citizenSent.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+//			this.successRate -= 10;
+//		}
+		if (this.targetCitizen.hasTrait(TRAIT.HONEST)) {
 			this.successRate += 10;
 		}
-		if (this.citizenSent.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
-			this.successRate += 10;
-		}
-		if (this.citizenSent.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
-			this.successRate -= 10;
-		}
-		if (this.targetCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
-			this.successRate += 10;
-		}
-		if (this.targetCitizen.miscTraits.Contains (MISC_TRAIT.LOYAL)) {
-			this.successRate -= 55;
-		}
+//		if (this.targetCitizen.miscTraits.Contains (MISC_TRAIT.LOYAL)) {
+//			this.successRate -= 55;
+//		}
 
 		Debug.LogError (this.description);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);

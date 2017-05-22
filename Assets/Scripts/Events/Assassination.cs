@@ -38,15 +38,15 @@ public class Assassination : GameEvent {
 			triggerReason = "after discovering " + gameEventTrigger.startedBy.name + "'s "
 				+ " Invasion Plan against " + (gameEventTrigger as InvasionPlan).targetKingdom.name;
 		} else if (gameEventTrigger is StateVisit){
-			triggerReason = "while on a State Visit to " + targetCitizen.city.kingdom.name + ".";
+			triggerReason = "while on a State Visit to " + targetCitizen.city.kingdom.name;
 		} else if (gameEventTrigger is BorderConflict){
-			triggerReason = "in response to worsening Border Conflict.";
+			triggerReason = "in response to worsening Border Conflict";
 		} else if (gameEventTrigger is DiplomaticCrisis){
-			triggerReason = "in the aftermath of a recent Diplomatic Crisis.";
+			triggerReason = "in the aftermath of a recent Diplomatic Crisis";
 		} else if (gameEventTrigger is Espionage){
-			triggerReason = "after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
+			triggerReason = "after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name;
 		} else if (gameEventTrigger is Raid){
-			triggerReason = "after the raid of " + (gameEventTrigger as Raid).raidedCity.name + ".";
+			triggerReason = "after the raid of " + (gameEventTrigger as Raid).raidedCity.name;
 		} else {
 			string gender = "he";
 			if(startedBy.gender == GENDER.FEMALE){
@@ -109,7 +109,7 @@ public class Assassination : GameEvent {
 		newLog.AddToFillers (this.assassinKingdom, this.assassinKingdom.name);
 		newLog.AddToFillers (spy, spy.name);
 		newLog.AddToFillers (targetCitizen, targetCitizen.name);
-		newLog.AddToFillers (null, triggerReason);
+		newLog.AddToFillers (gameEventTrigger, triggerReason);
 	}
 
 	internal override void PerformAction(){
@@ -210,7 +210,7 @@ public class Assassination : GameEvent {
 		Citizen kingOfTarget = this._targetCitizen.city.kingdom.king;
 		int value = 0;
 		for(int i = 0; i < this.otherKingdoms.Count; i++){
-			if(this.otherKingdoms[i].king.behaviorTraits.Contains(BEHAVIOR_TRAIT.NAIVE)){
+			if(this.otherKingdoms[i].king.hasTrait(TRAIT.HONEST)){
 				int chance = UnityEngine.Random.Range (0, 100);
 				RelationshipKings relationship = this.otherKingdoms [i].king.SearchRelationshipByID (kingOfTarget.id);
 				if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
@@ -368,23 +368,23 @@ public class Assassination : GameEvent {
 		if(!this._targetCitizen.isDead){
 			this._targetCitizen.Death (DEATH_REASONS.ASSASSINATION);
 			hasAssassinated = true;
+			return;
 		}
 		hasAssassinated = false;
 	}
 	private void SpyDiscovery(ref bool hasBeenDiscovered, ref bool hasDeflected, ref Kingdom kingdomToBlame){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 20;
-		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
-			value -= 5;
-		}
-
+//		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
+//			value -= 5;
+//		}
 		if(chance < value){
 			hasBeenDiscovered = true;
-			if(this.assassinKingdom.king.behaviorTraits.Contains(BEHAVIOR_TRAIT.SCHEMING)){
+			if(this.assassinKingdom.king.hasTrait(TRAIT.SCHEMING)){
 				int deflectChance = UnityEngine.Random.Range (0, 100);
 				if(deflectChance < 35){
 					Kingdom kingdomToBlameCopy = GetRandomKingdomToBlame ();
-					if(kingdomToBlame != null){
+					if(kingdomToBlameCopy != null){
 						hasDeflected = true;
 						kingdomToBlame = kingdomToBlameCopy;
 						RelationshipKings relationship = this._targetCitizen.city.kingdom.king.SearchRelationshipByID (kingdomToBlame.king.id);
@@ -436,18 +436,17 @@ public class Assassination : GameEvent {
 		}
 	}
 	private Kingdom GetRandomKingdomToBlame(){
-		List<Kingdom> otherAdjacentKingdoms = new List<Kingdom> ();
-		for(int i = 0; i < this.otherKingdoms.Count; i++){
-			RelationshipKingdom relationship = assassinKingdom.GetRelationshipWithOtherKingdom (this.otherKingdoms [i]);
-			if(relationship.isAdjacent){
-				otherAdjacentKingdoms.Add (this.otherKingdoms [i]);
-			}
-		}
-
-		if(otherAdjacentKingdoms.Count > 0){
-			return otherAdjacentKingdoms [UnityEngine.Random.Range (0, otherAdjacentKingdoms.Count)];
-		}else{
+//		List<Kingdom> otherAdjacentKingdoms = new List<Kingdom> ();
+//		for(int i = 0; i < this.otherKingdoms.Count; i++){
+//			RelationshipKingdom relationship = assassinKingdom.GetRelationshipWithOtherKingdom (this.otherKingdoms [i]);
+////			if(relationship.isAdjacent){
+//				otherAdjacentKingdoms.Add (this.otherKingdoms [i]);
+////			}
+//		}
+		if(this.otherKingdoms == null || this.otherKingdoms.Count <= 0){
 			return null;
 		}
+		return this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
+	
 	}
 }

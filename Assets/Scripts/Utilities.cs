@@ -133,8 +133,8 @@ public class Utilities : MonoBehaviour {
 		{ROLE.GUARDIAN, 1}
 	};
 
-	public static Dictionary<BEHAVIOR_TRAIT, Dictionary<ROLE, int>> citizenCreationTable = new Dictionary<BEHAVIOR_TRAIT, Dictionary<ROLE, int>>(){
-		{BEHAVIOR_TRAIT.SCHEMING, new Dictionary<ROLE, int>(){
+	public static Dictionary<TRAIT, Dictionary<ROLE, int>> citizenCreationTable = new Dictionary<TRAIT, Dictionary<ROLE, int>>(){
+		{TRAIT.SCHEMING, new Dictionary<ROLE, int>(){
 				{ROLE.TRADER, 0},
 				{ROLE.GENERAL, 0},
 				{ROLE.SPY, 1},
@@ -142,7 +142,7 @@ public class Utilities : MonoBehaviour {
 				{ROLE.GUARDIAN, -10}
 			}
 		},
-		{BEHAVIOR_TRAIT.NAIVE, new Dictionary<ROLE, int>(){
+		{TRAIT.HONEST, new Dictionary<ROLE, int>(){
 				{ROLE.TRADER, 0},
 				{ROLE.GENERAL, 0},
 				{ROLE.SPY, -10},
@@ -150,7 +150,7 @@ public class Utilities : MonoBehaviour {
 				{ROLE.GUARDIAN, 0}
 			}
 		},
-		{BEHAVIOR_TRAIT.WARMONGER, new Dictionary<ROLE, int>(){
+		{TRAIT.WARMONGER, new Dictionary<ROLE, int>(){
 				{ROLE.TRADER, -1},
 				{ROLE.GENERAL, 1},
 				{ROLE.SPY, 1},
@@ -158,7 +158,7 @@ public class Utilities : MonoBehaviour {
 				{ROLE.GUARDIAN, 0}
 			}
 		},
-		{BEHAVIOR_TRAIT.PACIFIST, new Dictionary<ROLE, int>(){
+		{TRAIT.PACIFIST, new Dictionary<ROLE, int>(){
 				{ROLE.TRADER, 1},
 				{ROLE.GENERAL, -1},
 				{ROLE.SPY, -10},
@@ -166,38 +166,38 @@ public class Utilities : MonoBehaviour {
 				{ROLE.GUARDIAN, 1}
 			}
 		},
-		{BEHAVIOR_TRAIT.CHARISMATIC, new Dictionary<ROLE, int>(){
-				{ROLE.TRADER, 0},
-				{ROLE.GENERAL, 0},
-				{ROLE.SPY, 0},
-				{ROLE.ENVOY, 0},
-				{ROLE.GUARDIAN, 0}
-			}
-		},
-		{BEHAVIOR_TRAIT.REPULSIVE, new Dictionary<ROLE, int>(){
-				{ROLE.TRADER, 0},
-				{ROLE.GENERAL, 0},
-				{ROLE.SPY, 0},
-				{ROLE.ENVOY, 0},
-				{ROLE.GUARDIAN, 0}
-			}
-		},
-		{BEHAVIOR_TRAIT.AGGRESSIVE, new Dictionary<ROLE, int>(){
-				{ROLE.TRADER, 0},
-				{ROLE.GENERAL, 0},
-				{ROLE.SPY, 0},
-				{ROLE.ENVOY, 0},
-				{ROLE.GUARDIAN, 0}
-			}
-		},
-		{BEHAVIOR_TRAIT.DEFENSIVE, new Dictionary<ROLE, int>(){
-				{ROLE.TRADER, 0},
-				{ROLE.GENERAL, 0},
-				{ROLE.SPY, 0},
-				{ROLE.ENVOY, 0},
-				{ROLE.GUARDIAN, 0}
-			}
-		},
+//		{BEHAVIOR_TRAIT.CHARISMATIC, new Dictionary<ROLE, int>(){
+//				{ROLE.TRADER, 0},
+//				{ROLE.GENERAL, 0},
+//				{ROLE.SPY, 0},
+//				{ROLE.ENVOY, 0},
+//				{ROLE.GUARDIAN, 0}
+//			}
+//		},
+//		{BEHAVIOR_TRAIT.REPULSIVE, new Dictionary<ROLE, int>(){
+//				{ROLE.TRADER, 0},
+//				{ROLE.GENERAL, 0},
+//				{ROLE.SPY, 0},
+//				{ROLE.ENVOY, 0},
+//				{ROLE.GUARDIAN, 0}
+//			}
+//		},
+//		{BEHAVIOR_TRAIT.AGGRESSIVE, new Dictionary<ROLE, int>(){
+//				{ROLE.TRADER, 0},
+//				{ROLE.GENERAL, 0},
+//				{ROLE.SPY, 0},
+//				{ROLE.ENVOY, 0},
+//				{ROLE.GUARDIAN, 0}
+//			}
+//		},
+//		{BEHAVIOR_TRAIT.DEFENSIVE, new Dictionary<ROLE, int>(){
+//				{ROLE.TRADER, 0},
+//				{ROLE.GENERAL, 0},
+//				{ROLE.SPY, 0},
+//				{ROLE.ENVOY, 0},
+//				{ROLE.GUARDIAN, 0}
+//			}
+//		},
 	};
 
 //	public static string CauseOfAccident(){

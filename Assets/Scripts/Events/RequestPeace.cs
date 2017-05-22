@@ -85,16 +85,16 @@ public class RequestPeace : GameEvent {
 				chanceForSuccess += 10;
 			}
 
-			if (this._citizenSent.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-				chanceForSuccess += 15;
-			}
-
-			for (int i = 0; i < this._saboteurs.Count; i++) {
-				chanceForSuccess -= 15;
-				if (this._saboteurs [i].skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-					chanceForSuccess -= 10;
-				}
-			}
+//			if (this._citizenSent.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+//				chanceForSuccess += 15;
+//			}
+//
+//			for (int i = 0; i < this._saboteurs.Count; i++) {
+//				chanceForSuccess -= 15;
+//				if (this._saboteurs [i].skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+//					chanceForSuccess -= 10;
+//				}
+//			}
 
 			int chance = Random.Range(0, 100);
 //			int chance = Random.Range(0, chanceForSuccess);

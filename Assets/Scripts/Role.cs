@@ -10,17 +10,17 @@ public class Role {
 
 	internal virtual int[] GetResourceProduction(){
 		int goldProduction = 40;
-		if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
-			goldProduction -= 5;
-		} else if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
-			goldProduction += 5;
-		}
-
-		if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
-			goldProduction -= 5;
-		} else if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
-			goldProduction += 5;
-		}
+//		if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
+//			goldProduction -= 5;
+//		} else if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
+//			goldProduction += 5;
+//		}
+//
+//		if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
+//			goldProduction -= 5;
+//		} else if (this.citizen.city.kingdom.king.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
+//			goldProduction += 5;
+//		}
 		return new int[]{ 0, 0, 0, 0, 0, 0, goldProduction, 0 };
 	}
 

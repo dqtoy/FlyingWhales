@@ -152,23 +152,23 @@ public class GameManager : MonoBehaviour {
 				int kingdom1ChanceToRequestPeace = 0;
 				if (currentWar.kingdom1Rel.kingdomWar.exhaustion >= 100) {
 					kingdom1ChanceToRequestPeace = 6;
-					if (currentWar.kingdom1.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
+					if (currentWar.kingdom1.king.hasTrait(TRAIT.PACIFIST)) {
 						kingdom1ChanceToRequestPeace = 8;
-					} else if (currentWar.kingdom1.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
+					} else if (currentWar.kingdom1.king.hasTrait(TRAIT.WARMONGER)) {
 						kingdom1ChanceToRequestPeace = 4;
 					}
 				} else if (currentWar.kingdom1Rel.kingdomWar.exhaustion >= 75) {
 					kingdom1ChanceToRequestPeace = 4;
-					if (currentWar.kingdom1.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
+					if (currentWar.kingdom1.king.hasTrait(TRAIT.PACIFIST)) {
 						kingdom1ChanceToRequestPeace = 6;
-					} else if (currentWar.kingdom1.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
+					} else if (currentWar.kingdom1.king.hasTrait(TRAIT.WARMONGER)) {
 						kingdom1ChanceToRequestPeace = 2;
 					}
 				} else if (currentWar.kingdom1Rel.kingdomWar.exhaustion >= 50) {
 					kingdom1ChanceToRequestPeace = 2;
-					if (currentWar.kingdom1.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
+					if (currentWar.kingdom1.king.hasTrait(TRAIT.PACIFIST)) {
 						kingdom1ChanceToRequestPeace = 4;
-					} else if (currentWar.kingdom1.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
+					} else if (currentWar.kingdom1.king.hasTrait(TRAIT.WARMONGER)) {
 						kingdom1ChanceToRequestPeace = 0;
 					}
 				}
@@ -208,9 +208,9 @@ public class GameManager : MonoBehaviour {
 								envoys = kingdom1Enemies [j].GetAllCitizensOfType (ROLE.ENVOY).Where (x => !((Envoy)x.assignedRole).inAction).ToList ();
 								if (envoys.Count > 0) {
 									int chanceToSabotage = 5;
-									if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+									if (kingdom1Enemies [j].king.hasTrait(TRAIT.SCHEMING)) {
 										chanceToSabotage = 10;
-									} else if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+									} else if (kingdom1Enemies [j].king.hasTrait(TRAIT.HONEST)) {
 										chanceToSabotage = 0;
 									}
 									int chanceForSabotage = Random.Range (0, 100);
@@ -242,9 +242,9 @@ public class GameManager : MonoBehaviour {
 								List<Citizen> assassins = kingdom1Enemies [j].GetAllCitizensOfType (ROLE.SPY).Where (x => !((Spy)x.assignedRole).inAction).ToList ();
 								if (assassins.Count > 0) {
 									int chanceToAssassinate = 3;
-									if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+									if (kingdom1Enemies [j].king.hasTrait(TRAIT.SCHEMING)) {
 										chanceToAssassinate = 6;
-									} else if (kingdom1Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+									} else if (kingdom1Enemies [j].king.hasTrait(TRAIT.HONEST)) {
 										chanceToAssassinate = 0;
 									}
 									int chanceForAssassination = Random.Range (0, 100);
@@ -267,21 +267,21 @@ public class GameManager : MonoBehaviour {
 				int kingdom2ChanceToRequestPeace = 0;
 				if (currentWar.kingdom2Rel.kingdomWar.exhaustion >= 100) {
 					kingdom2ChanceToRequestPeace = 6;
-					if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
+					if (currentWar.kingdom2.king.hasTrait(TRAIT.PACIFIST)) {
 						kingdom2ChanceToRequestPeace = 8;
-					} else if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
+					} else if (currentWar.kingdom2.king.hasTrait(TRAIT.WARMONGER)) {
 						kingdom2ChanceToRequestPeace = 4;
 					}
 				} else if (currentWar.kingdom2Rel.kingdomWar.exhaustion >= 75) {
 					kingdom2ChanceToRequestPeace = 4;
-					if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
+					if (currentWar.kingdom2.king.hasTrait(TRAIT.PACIFIST)) {
 						kingdom2ChanceToRequestPeace = 6;
-					} else if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
+					} else if (currentWar.kingdom2.king.hasTrait(TRAIT.WARMONGER)) {
 						kingdom2ChanceToRequestPeace = 2;
 					}
 				} else if (currentWar.kingdom2Rel.kingdomWar.exhaustion >= 50) {
 					kingdom2ChanceToRequestPeace = 2;
-					if (currentWar.kingdom2.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
+					if (currentWar.kingdom2.king.hasTrait(TRAIT.PACIFIST)) {
 						kingdom2ChanceToRequestPeace = 4;
 					}
 				}
@@ -314,9 +314,9 @@ public class GameManager : MonoBehaviour {
 								envoys = kingdom2Enemies [j].GetAllCitizensOfType (ROLE.ENVOY).Where (x => !((Envoy)x.assignedRole).inAction).ToList ();
 								if (envoys.Count > 0) {
 									int chanceToSabotage = 5;
-									if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+									if (kingdom2Enemies [j].king.hasTrait(TRAIT.SCHEMING)) {
 										chanceToSabotage = 10;
-									} else if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+									} else if (kingdom2Enemies [j].king.hasTrait(TRAIT.HONEST)) {
 										chanceToSabotage = 0;
 									}
 									int chanceForSabotage = Random.Range (0, 100);
@@ -349,9 +349,9 @@ public class GameManager : MonoBehaviour {
 								List<Citizen> assassins = kingdom2Enemies [j].GetAllCitizensOfType (ROLE.SPY).Where (x => !((Spy)x.assignedRole).inAction).ToList ();
 								if (assassins.Count > 0) {
 									int chanceToAssassinate = 3;
-									if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+									if (kingdom2Enemies [j].king.hasTrait(TRAIT.SCHEMING)) {
 										chanceToAssassinate = 6;
-									} else if (kingdom2Enemies [j].king.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
+									} else if (kingdom2Enemies [j].king.hasTrait(TRAIT.HONEST)) {
 										chanceToAssassinate = 0;
 									}
 									int chanceForAssassination = Random.Range (0, 100);

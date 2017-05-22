@@ -20,9 +20,9 @@ public class Citizen {
 	public ROLE role;
 	public Role assignedRole;
 	public RACE race;
-	public List<BEHAVIOR_TRAIT> behaviorTraits;
-	public List<SKILL_TRAIT> skillTraits;
-	public List<MISC_TRAIT> miscTraits;
+//	public List<BEHAVIOR_TRAIT> behaviorTraits;
+//	public List<SKILL_TRAIT> skillTraits;
+//	public List<MISC_TRAIT> miscTraits;
 	protected TRAIT _honestyTrait;
 	protected TRAIT _hostilityTrait;
 	protected TRAIT _intelligenceTrait;
@@ -107,9 +107,9 @@ public class Citizen {
 		this.city = city;
 		this.role = ROLE.UNTRAINED;
 		this.assignedRole = null;
-		this.behaviorTraits = new List<BEHAVIOR_TRAIT> ();
-		this.skillTraits = new List<SKILL_TRAIT> ();
-		this.miscTraits = new List<MISC_TRAIT> ();
+//		this.behaviorTraits = new List<BEHAVIOR_TRAIT> ();
+//		this.skillTraits = new List<SKILL_TRAIT> ();
+//		this.miscTraits = new List<MISC_TRAIT> ();
 		this.supportedCitizen = null; //initially to king
 		this.father = null;
 		this.mother = null;
@@ -289,9 +289,9 @@ public class Citizen {
 //	}
 
 	internal int GetCampaignLimit(){
-		if(this.miscTraits.Contains(MISC_TRAIT.TACTICAL)){
-			return 3;
-		}
+//		if(this.miscTraits.Contains(MISC_TRAIT.TACTICAL)){
+//			return 3;
+//		}
 		return 2;
 	}
 	internal void AddParents(Citizen father, Citizen mother){
@@ -354,7 +354,7 @@ public class Citizen {
 //				}
 //			}
 
-			if (this.miscTraits.Contains(MISC_TRAIT.AMBITIOUS)) {
+//			if (this.miscTraits.Contains(MISC_TRAIT.AMBITIOUS)) {
 				if (this.isPretender ||
 				   (this.city.kingdom.successionLine.Count > 1 && this.city.kingdom.successionLine [1].id == this.id) ||
 				   (this.city.kingdom.successionLine.Count > 2 && this.city.kingdom.successionLine [2].id == this.id)) {
@@ -362,7 +362,7 @@ public class Citizen {
 						AttemptToGrabPower ();
 					}
 				}
-			}
+//			}
 
 		}
 	}
@@ -1062,16 +1062,16 @@ public class Citizen {
 	
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
 			value = 4;
-			if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+			if(this.hasTrait(TRAIT.PACIFIST)){
 				value = 0;
-			}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+			}else if(this.hasTrait(TRAIT.WARMONGER)){
 				value = 6;
 			}
 		}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
 			value = 8;
-			if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+			if(this.hasTrait(TRAIT.PACIFIST)){
 				value = 0;
-			}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+			}else if(this.hasTrait(TRAIT.WARMONGER)){
 				value = 12;
 			}
 		}
@@ -1098,7 +1098,7 @@ public class Citizen {
 		}
 	}
 	private void BorderConflict(RelationshipKings relationship, GameEvent gameEvent){
-		if (!this.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+		if (!this.hasTrait(TRAIT.SCHEMING)) {
 			return;
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
@@ -1137,18 +1137,17 @@ public class Citizen {
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 0;
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
-			if (this.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+			if (this.hasTrait(TRAIT.SCHEMING)) {
 				value = 5;
 			}
 		}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
 			value = 10;
-			if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.SCHEMING)){
+			if(this.hasTrait(TRAIT.SCHEMING)){
 				value = 20;
-			}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.NAIVE)){
+			}else if(this.hasTrait(TRAIT.HONEST)){
 				value = 0;
 			}
 		}
-
 
 		if(chance < value){
 			Citizen spy = GetSpy(this.city.kingdom);
@@ -1193,23 +1192,23 @@ public class Citizen {
 		int value = 0;
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
 			value = 15;
-			if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+			if(this.hasTrait(TRAIT.PACIFIST)){
 				value = 20;
-			}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+			}else if(this.hasTrait(TRAIT.WARMONGER)){
 				value = 5;
 			}
 		}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
 			value = 5;
-			if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+			if(this.hasTrait(TRAIT.PACIFIST)){
 				value = 10;
-			}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+			}else if(this.hasTrait(TRAIT.WARMONGER)){
 				value = 0;
 			}
 		}else{
 			value = 25;
-			if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.PACIFIST)){
+			if(this.hasTrait(TRAIT.PACIFIST)){
 				value = 30;
-			}else if(this.behaviorTraits.Contains(BEHAVIOR_TRAIT.WARMONGER)){
+			}else if(this.hasTrait(TRAIT.WARMONGER)){
 				value = 10;
 			}
 		}
@@ -1478,5 +1477,17 @@ public class Citizen {
 		}
 		source.leader = this;
 		this.campaignManager.activeCampaigns.AddRange(source.activeCampaigns);
+	}
+
+	internal void SetHonestyTrait(TRAIT trait){
+		this._honestyTrait = trait;
+	}
+
+	internal void SetHostilityTrait(TRAIT trait){
+		this._hostilityTrait = trait;
+	}
+
+	internal void SetIntelligenceTrait(TRAIT trait){
+		this._intelligenceTrait = trait;
 	}
 }

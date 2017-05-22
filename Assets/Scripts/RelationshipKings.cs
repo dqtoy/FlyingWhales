@@ -54,25 +54,25 @@ public class RelationshipKings {
 	//		gameEvent - event that caused the relationship change
 	//		isDiscovery - flag to determine whether the relationship change was because the sourceKing found out the gameEvent
 	internal void AdjustLikeness(float adjustment, GameEvent gameEventTrigger, bool isDiscovery = false){
-		if (adjustment < 0) {
-			//Deteriorating
-			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
-				adjustment *= 0.75f;
-			}
-			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
-				adjustment *= 1.25f;
-			}
-
-		} else {
-			//Increasing
-			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
-				adjustment *= 1.25f;
-			}
-			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
-				adjustment *= 0.75f;
-			}
-
-		}
+//		if (adjustment < 0) {
+//			//Deteriorating
+//			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+//				adjustment *= 0.75f;
+//			}
+//			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+//				adjustment *= 1.25f;
+//			}
+//
+//		} else {
+//			//Increasing
+//			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+//				adjustment *= 1.25f;
+//			}
+//			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+//				adjustment *= 0.75f;
+//			}
+//
+//		}
 		this.like += adjustment;
 		if(this.like < -100){
 			this.like = -100;

@@ -237,7 +237,7 @@ public class Raid : GameEvent {
 
 	//Whether or not the raid party can deflect the blame to another kingdom upon discovery
 	private void DeflectBlame(){
-		if (this.startedBy.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+		if (this.startedBy.hasTrait(TRAIT.SCHEMING)) {
 			int deflectChance = UnityEngine.Random.Range (0, 100);
 			if (deflectChance < 35) {
 				Kingdom kingdomToBlame = GetRandomKingdomToBlame ();
@@ -388,22 +388,10 @@ public class Raid : GameEvent {
 		}
 	}
 	private Kingdom GetRandomKingdomToBlame(){
-		if(this.otherKingdoms == null){
+		if(this.otherKingdoms == null || this.otherKingdoms.Count <= 0){
 			return null;
 		}
-		List<Kingdom> otherAdjacentKingdoms = new List<Kingdom> ();
-		for(int i = 0; i < this.otherKingdoms.Count; i++){
-			RelationshipKingdom relationship = this.raidedCity.kingdom.GetRelationshipWithOtherKingdom (this.otherKingdoms [i]);
-			if(relationship.isAdjacent){
-				otherAdjacentKingdoms.Add (this.otherKingdoms [i]);
-			}
-		}
-
-		if(otherAdjacentKingdoms.Count > 0){
-			return otherAdjacentKingdoms [UnityEngine.Random.Range (0, otherAdjacentKingdoms.Count)];
-		}else{
-			return null;
-		}
+		return this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
 	}
 	private int GetRandomBasicResource(ref BASE_RESOURCE_TYPE resourceType){
 		if(this.raidedCity.lumberCount > 0 && this.raidedCity.stoneCount > 0){

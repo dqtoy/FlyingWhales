@@ -51,11 +51,11 @@ public class Envoy : Role {
 	}
 
 	protected void IncreaseWarExhaustion(){
-		if (this.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-			this.warExhaustiontarget.kingdomWar.exhaustion += 20;
-		} else {
+//		if (this.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
+//			this.warExhaustiontarget.kingdomWar.exhaustion += 20;
+//		} else {
 			this.warExhaustiontarget.kingdomWar.exhaustion += 15;
-		}
+//		}
 		this.inAction = false;
 		this.onDoAction -= IncreaseWarExhaustion;
 		EventManager.Instance.onWeekEnd.RemoveListener(WaitForAction);

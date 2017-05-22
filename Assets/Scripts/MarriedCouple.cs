@@ -47,21 +47,21 @@ public class MarriedCouple {
 
 		float chanceForPregnancy = 0.2f;
 
-		if (this.husband.miscTraits.Contains(MISC_TRAIT.BARREN)) {
-			return;
-		}
-
-		if (this.wife.miscTraits.Contains(MISC_TRAIT.BARREN)) {
-			return;
-		}
-
-		if (this.husband.miscTraits.Contains(MISC_TRAIT.HORNY)) {
-			chanceForPregnancy += 0.2f;
-		}
-
-		if (this.wife.miscTraits.Contains(MISC_TRAIT.HORNY)) {
-			chanceForPregnancy += 0.2f;
-		}
+//		if (this.husband.miscTraits.Contains(MISC_TRAIT.BARREN)) {
+//			return;
+//		}
+//
+//		if (this.wife.miscTraits.Contains(MISC_TRAIT.BARREN)) {
+//			return;
+//		}
+//
+//		if (this.husband.miscTraits.Contains(MISC_TRAIT.HORNY)) {
+//			chanceForPregnancy += 0.2f;
+//		}
+//
+//		if (this.wife.miscTraits.Contains(MISC_TRAIT.HORNY)) {
+//			chanceForPregnancy += 0.2f;
+//		}
 
 		if (this.wife.age < 20) {
 			chanceForPregnancy += 0.2f;
@@ -69,13 +69,13 @@ public class MarriedCouple {
 			chanceForPregnancy += 0.2f;
 		}
 
-		if (this.husband.miscTraits.Contains(MISC_TRAIT.HOMOSEXUAL)) {
-			chanceForPregnancy /= 2f;
-		}
-
-		if (this.wife.miscTraits.Contains(MISC_TRAIT.HOMOSEXUAL)) {
-			chanceForPregnancy /= 2f;
-		}
+//		if (this.husband.miscTraits.Contains(MISC_TRAIT.HOMOSEXUAL)) {
+//			chanceForPregnancy /= 2f;
+//		}
+//
+//		if (this.wife.miscTraits.Contains(MISC_TRAIT.HOMOSEXUAL)) {
+//			chanceForPregnancy /= 2f;
+//		}
 
 		float pregnancyChance = Random.Range (0f, 100f);
 		if (pregnancyChance < chanceForPregnancy) {

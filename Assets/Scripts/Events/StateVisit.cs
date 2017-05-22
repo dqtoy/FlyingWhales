@@ -224,7 +224,7 @@ public class StateVisit : GameEvent {
 				Kingdom selectedKingdom = this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
 				RelationshipKings relationship = selectedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
 				if (relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-					if (selectedKingdom.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+					if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
 						//ASSASSINATION EVENT
 						Citizen spy = GetSpy (selectedKingdom);
 						if (spy != null) {
@@ -232,7 +232,6 @@ public class StateVisit : GameEvent {
 							Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
 							newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name);
 							newLog.AddToFillers (spy, spy.name);
-							newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
 							newLog.AddToFillers (assassination, "assassinate");
 							newLog.AddToFillers (this.visitor, this.visitor.name);
 							newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
@@ -276,7 +275,7 @@ public class StateVisit : GameEvent {
 			int chance = UnityEngine.Random.Range (0, 100);
 			if (chance < 1) {
 				Kingdom selectedKingdom = this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
-				if (selectedKingdom.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+				if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
 					if (CheckForRelationship (selectedKingdom, false)) {
 						if(this.saboteurEnvoy == null){
 							SendEnvoySabotage (selectedKingdom);
@@ -408,25 +407,18 @@ public class StateVisit : GameEvent {
 		}
 	}
 	internal override void DoneCitizenAction(Envoy envoy){
-		this.saboteurEnvoy = null;
-		if(!envoy.citizen.isDead){
-			if(this.saboteurEnvoy != null){
-				if(envoy.citizen.id == this.saboteurEnvoy.citizen.id){
+		if (!envoy.citizen.isDead) {
+			if (this.saboteurEnvoy != null) {
+				if (envoy.citizen.id == this.saboteurEnvoy.citizen.id) {
 					int chance = UnityEngine.Random.Range (0, 100);
-					if(chance < 20){
+					if (chance < 20) {
 						this.isDoneBySabotage = true;
 						this.isSuccessful = false;
 						DoneEvent ();
 						return;
 					}
 				}
-
-			} else {
-				
 			}
-
-		}else{
-
 		}
 
 		this.saboteurEnvoy = null;

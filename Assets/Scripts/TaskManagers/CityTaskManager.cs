@@ -188,6 +188,7 @@ public class CityTaskManager : MonoBehaviour {
 	private void GetNextCitizenToHire(){
 		if (this.roleToCreate == ROLE.UNTRAINED) {
 			this.roleToCreate = this.city.GetNonProducingRoleToCreate ();
+//			this.roleToCreate = ROLE.SPY;
 		}
 		if (this.roleToCreate == ROLE.UNTRAINED) {
 			Task.current.Fail();
