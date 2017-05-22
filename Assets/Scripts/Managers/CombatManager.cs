@@ -87,6 +87,18 @@ public class CombatManager : MonoBehaviour {
 
 		if(victoriousGeneral != null){
 			Debug.Log (city.name + " IS DEFEATED BY " + victoriousGeneral.citizen.name + " of " + victoriousGeneral.citizen.city.name);
+
+			Campaign campaign = city.kingdom.king.campaignManager.activeCampaigns.Find (x => x.targetCity.id == city.id && x.campaignType == CAMPAIGN.DEFENSE);
+			Log newLogCity = campaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "city_battle_loser");
+			newLogCity.AddToFillers (victoriousGeneral.citizen.city.kingdom, victoriousGeneral.citizen.city.kingdom.name);
+			newLogCity.AddToFillers (victoriousGeneral.citizen, victoriousGeneral.citizen.name);
+
+			Log newLogVictorious = victoriousGeneral.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "city_battle_winner");
+			newLogVictorious.AddToFillers (city, city.name);
+			newLogVictorious.AddToFillers (null, victoriousGeneral.GetArmyHP().ToString());
+			newLogVictorious.AddToFillers (city, city.name);
+			newLogVictorious.AddToFillers (victoriousGeneral.citizen.city.kingdom, victoriousGeneral.citizen.city.kingdom.name);
+
 			if (victoriousGeneral.assignedCampaign.warType == WAR_TYPE.INTERNATIONAL) {
 				for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 					KingdomManager.Instance.allKingdoms [i].king.campaignManager.intlWarCities.RemoveAll (x => x.city.id == city.id);
@@ -115,6 +127,17 @@ public class CombatManager : MonoBehaviour {
 				}
 			}
 			victoriousGeneral.generalAvatar.gameObject.GetComponent<GeneralObject> ().Victory ();
+		}else{
+			int defenseRemainingHP = 0;
+			for(int i = 0; i < defenders.Count; i++){
+				defenseRemainingHP += defenders [i].GetArmyHP ();
+			}
+			Campaign campaign = city.kingdom.king.campaignManager.activeCampaigns.Find (x => x.targetCity.id == city.id && x.campaignType == CAMPAIGN.DEFENSE);
+			Log newLog = campaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "city_battle_winner");
+			newLog.AddToFillers (attackerGeneral.citizen.city.kingdom, attackerGeneral.citizen.city.kingdom.name);
+			newLog.AddToFillers (null, defenseRemainingHP.ToString());
+			newLog.AddToFillers (attackerGeneral.citizen, attackerGeneral.citizen.name);
+
 		}
 //		for(int i = 0; i < attackers.Count; i++){
 //			General attackerGeneral = attackers [i];

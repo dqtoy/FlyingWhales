@@ -156,6 +156,18 @@ public class CampaignManager {
 				if(newCampaign != null){
 					Debug.Log ("Created Campaign " + newCampaign.campaignType.ToString () + " " + newCampaign.targetCity.name);
 //					EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
+					if(newCampaign.campaignType == CAMPAIGN.DEFENSE){
+						Log newLogTitle = newCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "event_title");
+						newLogTitle.AddToFillers (newCampaign.targetCity, newCampaign.targetCity.name);
+
+						Log newLog = newCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "start");
+						newLog.AddToFillers (newCampaign.leader, newCampaign.leader.name);
+						newLog.AddToFillers (newCampaign.leader.city.kingdom, newCampaign.leader.city.kingdom.name);
+						newLog.AddToFillers (newCampaign.targetCity, newCampaign.targetCity.name);
+					}else{
+						
+					}
+
 					newCampaign.RegisterGenerals (this.candidates);
 //					GameManager.Instance.StartCoroutine(AssignGeneralsOnCampaign (newCampaign));
 				}else{

@@ -13,10 +13,8 @@ public class KingdomManager : MonoBehaviour {
 		Instance = this;
 	}
 
-	public void GenerateInitialKingdoms(List<HexTile> elligibleTiles){
-		List<HexTile> habitableTiles = new List<HexTile> (elligibleTiles);
+	public void GenerateInitialKingdoms(List<HexTile> stoneElligibleTiles) {
 
-		Debug.Log ("Generate Initial Kingdoms");
 		//Get Starting City For Humans
 		List<HexTile> cityForHumans1 = new List<HexTile>();
 		List<HexTile> cityForHumans2 = new List<HexTile>();
@@ -24,35 +22,25 @@ public class KingdomManager : MonoBehaviour {
 		List<HexTile> cityForHumans4 = new List<HexTile>();
 
 		List<HexTile> elligibleTilesForHumans = new List<HexTile>();
-		for (int i = 0; i < habitableTiles.Count; i++) {
-			
-			List<HexTile> neighbours = habitableTiles[i].AllNeighbours.ToList();
-			List<HexTile> tilesContainingBaseResource = new List<HexTile>();
-			for (int j = 0; j < neighbours.Count; j++) {
-				if (neighbours[j].specialResource != RESOURCE.NONE) {
-					if (Utilities.GetBaseResourceType (neighbours[j].specialResource) == BASE_RESOURCE_TYPE.STONE) {
-						tilesContainingBaseResource.Add(neighbours[j]);
-					}
-				}
-			}
-			if (tilesContainingBaseResource.Count > 0) {
-				elligibleTilesForHumans.Add(habitableTiles[i]);
+
+		for (int i = 0; i < stoneElligibleTiles.Count; i++) {
+			if (stoneElligibleTiles [i].nearbyResourcesCount > 3) {
+				elligibleTilesForHumans.Add (stoneElligibleTiles [i]);
 			}
 		}
+		Debug.Log ("Valid capital tiles: " + elligibleTilesForHumans.Count);
 
 		int numOfKingdoms = 5;
 		if (elligibleTilesForHumans.Count < numOfKingdoms) {
 			numOfKingdoms = elligibleTilesForHumans.Count;
 		}
+
 		for (int i = 0; i < numOfKingdoms; i++) {
 			List<HexTile> citiesForKingdom = new List<HexTile>();
 			int chosenIndex = Random.Range (0, elligibleTilesForHumans.Count);
 			citiesForKingdom.Add (elligibleTilesForHumans [chosenIndex]);
 			elligibleTilesForHumans.RemoveAt (chosenIndex);
 			GenerateNewKingdom (RACE.HUMANS, citiesForKingdom, true);
-			for (int j = 0; j < citiesForKingdom.Count; j++) {
-				habitableTiles.Remove (citiesForKingdom[j]);
-			}
 		}
 
 //		if (elligibleTilesForHumans.Count > 0) {

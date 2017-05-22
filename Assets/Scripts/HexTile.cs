@@ -16,6 +16,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public float temperature;
 
 	public RESOURCE specialResource;
+	public int nearbyResourcesCount = 0;
 
 	public BIOMES biomeType;
 	public ELEVATION elevationType;
@@ -31,13 +32,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isBorder = false;
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
-
-	// only applies to habitable tiles, this counts the number of nearby wood resources
-	public int nearbyWoodCount = 0;
-	// only applies to habitable tiles, this counts the number of nearby stone resources
-	public int nearbyStoneCount = 0;
-	// only applies to habitable tiles, this counts the number of nearby special resources
-	public int nearbySpecialCount = 0;
 
 	public GameObject centerPiece;
 
