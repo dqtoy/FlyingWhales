@@ -630,6 +630,11 @@ public class Utilities : MonoBehaviour {
 
 		}
 		return words;
+	}
 
+	public static DateTime GetNewDateAfterNumberOfDays(int month, int day, int year, int numOfDaysElapsed){
+		DateTime inputDate = new DateTime (year, month, day);
+		inputDate = inputDate.AddDays (numOfDaysElapsed);
+		return inputDate;
 	}
 }

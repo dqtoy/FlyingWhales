@@ -40,7 +40,7 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 
-		int numOfKingdoms = 3;
+		int numOfKingdoms = 5;
 		if (elligibleTilesForHumans.Count < numOfKingdoms) {
 			numOfKingdoms = elligibleTilesForHumans.Count;
 		}
@@ -151,7 +151,9 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
 		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
 
-
+		Log declareWarLog = war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "declare_war");
+		declareWarLog.AddToFillers (kingdom1.king, kingdom1.king.name);
+		declareWarLog.AddToFillers (kingdom2, kingdom2.name);
 //		War newWar = new War(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, null, kingdom1, kingdom2, invasionPlanThatStartedWar);
 	}
 

@@ -915,12 +915,16 @@ public class City{
 		//Remove tile from any border tile list
 		if (tileToBuy.isBorder && tileToBuy.isBorderOfCityID != this.id) {
 			tileToBuy.isBorder = false;
-			CityGenerator.Instance.GetCityByID(tileToBuy.isBorderOfCityID).borderTiles.Remove(tileToBuy);
+			City otherCity = CityGenerator.Instance.GetCityByID (tileToBuy.isBorderOfCityID);
+			otherCity.borderTiles.Remove (tileToBuy);
+			this.UpdateBorderTiles ();
+			otherCity.UpdateBorderTiles ();
+		} else {
+			this.UpdateBorderTiles();
 		}
 
 		//Update necessary data
 		this.UpdateResourceProduction();
-		this.UpdateBorderTiles();
 //		this.UpdateAdjacentCities();
 //		this.kingdom.UpdateKingdomAdjacency();
 

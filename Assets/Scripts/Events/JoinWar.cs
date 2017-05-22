@@ -10,6 +10,8 @@ public class JoinWar : GameEvent {
 	private Kingdom _kingdomToAttack;
 	private List<Citizen> _uncovered;
 
+	private InvasionPlan _invasionPlanThatStartedEvent;
+
 	#region getters/setters
 	public Citizen candidateForAlliance{
 		get{ return this._candidateForAlliance; }
@@ -22,9 +24,14 @@ public class JoinWar : GameEvent {
 	public Kingdom kingdomToAttack{
 		get { return this._kingdomToAttack; }
 	}
+
+	public InvasionPlan invasionPlanThatStartedEvent{
+		get { return this._invasionPlanThatStartedEvent; }
+	}
 	#endregion
 
-	public JoinWar(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen _candidateForAlliance, Envoy _envoyToSend, Kingdom _kingdomToAttack) : base (startWeek, startMonth, startYear, startedBy){
+	public JoinWar(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen _candidateForAlliance, Envoy _envoyToSend, Kingdom _kingdomToAttack, 
+		InvasionPlan _invasionPlanThatStartedEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.JOIN_WAR_REQUEST;
 		this.description = startedBy.name + " is looking for allies against kingdom " + kingdomToAttack.name;
 		this.durationInDays = 4;
@@ -34,11 +41,18 @@ public class JoinWar : GameEvent {
 		this._envoyToSend = _envoyToSend;
 		this._kingdomToAttack = _kingdomToAttack;
 		this._uncovered = new List<Citizen>();
+		this._invasionPlanThatStartedEvent = _invasionPlanThatStartedEvent;
 
-		if(this._envoyToSend != null){
-			this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.startedBy.name + " sent " + this._envoyToSend.citizen.name
-			+ " to " + candidateForAlliance.name + " to persuade him/her to join his/her Invasion Plan against " + this.kingdomToAttack.king.name, HISTORY_IDENTIFIER.NONE));
-		}
+		this.startedBy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.startedBy.name + " sent " + this._envoyToSend.citizen.name
+		+ " to " + candidateForAlliance.name + " to persuade him/her to join his/her Invasion Plan against " + this.kingdomToAttack.king.name, HISTORY_IDENTIFIER.NONE));
+			
+		Log startLog = _invasionPlanThatStartedEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+			               "Events", "War", "join_war_start");
+		startLog.AddToFillers (this.startedBy, this.startedBy.name);
+		startLog.AddToFillers (this._envoyToSend.citizen, this._envoyToSend.citizen.name);
+		startLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name);
+		startLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name);
+
 		this.candidateForAlliance.city.hexTile.AddEventOnTile(this);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -84,7 +98,7 @@ public class JoinWar : GameEvent {
 		if (this.remainingDays > 0) {
 			this.remainingDays -= 1;
 		} 
-		if (this.remainingDays <= 0) {			
+		if (this.remainingDays <= 0) {
 			int successRate = 15;
 			RELATIONSHIP_STATUS relationshipWithRequester = candidateForAlliance.GetRelationshipWithCitizen (this.startedBy).lordRelationship;
 			RELATIONSHIP_STATUS relationshipWithTarget = candidateForAlliance.GetRelationshipWithCitizen (kingdomToAttack.king).lordRelationship;
@@ -118,8 +132,8 @@ public class JoinWar : GameEvent {
 			int chanceForSuccess = Random.Range (0, 100);
 			if (chanceForSuccess < successRate) {
 				//target king will start invasion plan
-				RelationshipKings relationship = this.startedBy.GetRelationshipWithCitizen(this.candidateForAlliance);
-				relationship.AdjustLikeness(5, this);
+				RelationshipKings relationship = this.startedBy.GetRelationshipWithCitizen (this.candidateForAlliance);
+				relationship.AdjustLikeness (5, this);
 				relationship.relationshipHistory.Add (new History (
 					GameManager.Instance.month,
 					GameManager.Instance.days,
@@ -134,6 +148,12 @@ public class JoinWar : GameEvent {
 				}
 
 				if (!warEvent.isAtWar) {
+					Log joinWarSuccessLog = _invasionPlanThatStartedEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+						"Events", "War", "join_war_success");
+					joinWarSuccessLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name);
+					joinWarSuccessLog.AddToFillers (this.startedBy, this.startedBy.name);
+					joinWarSuccessLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name);
+
 					//Create new Invasion Plan against target kingdom
 					warEvent.CreateInvasionPlan (this.candidateForAlliance.city.kingdom, this);
 //						InvasionPlan newInvasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
@@ -142,8 +162,16 @@ public class JoinWar : GameEvent {
 						this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name, HISTORY_IDENTIFIER.NONE));
 
 					this.resolution = this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name;
+					this.DoneEvent();
+					return;
 				}
 			}
+
+			//fail
+			Log joinWarFailLog = _invasionPlanThatStartedEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+				"Events", "War", "join_war_fail");
+			joinWarFailLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name);
+			joinWarFailLog.AddToFillers (this.startedBy, this.startedBy.name);
 			this.DoneEvent();
 		}
 	}

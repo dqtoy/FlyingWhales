@@ -28,6 +28,12 @@ public class Militarization : GameEvent {
 		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedByCity.name + " started Militarization." , HISTORY_IDENTIFIER.NONE));
 
+		Log startLog = _invasionPlanThatTriggeredEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
+			               "Events", "War", "militarization_start");
+		startLog.AddToFillers (this.startedBy, this.startedBy.name);
+		startLog.AddToFillers (this.startedByKingdom, this.startedByKingdom.name);
+		startLog.AddToFillers (_invasionPlanThatTriggeredEvent.targetKingdom, _invasionPlanThatTriggeredEvent.targetKingdom.name);
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}

@@ -50,36 +50,50 @@ public class InvasionPlan : GameEvent {
 		this._uncovered = new List<Citizen>();
 		this._joinWarEvents = new List<JoinWar>();
 
+		string reason = string.Empty;
 		if (gameEventTrigger is Assassination) {
 			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after discovering that " + gameEventTrigger.startedBy.name
 				+ " sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
 			startedBy.history.Add(new History(startMonth, startWeek, startYear, description, HISTORY_IDENTIFIER.NONE));
 
+			reason = "After discovering that " + gameEventTrigger.startedBy.name + " sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
+
 		} else if (gameEventTrigger is BorderConflict){
 			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in response to worsening Border Conflict.";
 			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+
+			reason = "In response to worsening Border Conflict";
 
 		} else if (gameEventTrigger is DiplomaticCrisis){
 			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in the aftermath of a recent Diplomatic Crisis.";
 			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
+			reason = "In the aftermath of a recent Diplomatic Crisis.";
+
 		} else if (gameEventTrigger is Espionage){
 			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
 			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+
+			reason = "After finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name;
 
 		} else if (gameEventTrigger is Raid){
 			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after the raid of " + (gameEventTrigger as Raid).raidedCity.name + ".";
 			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
+			reason = "After the raid of " + (gameEventTrigger as Raid).raidedCity.name;
+
 		} else if (gameEventTrigger is JoinWar){
 			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name  + ".";
 			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
+			reason = "At the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name;
+
 		} else {
 			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
 			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-
 		} 
+
+
 
 		this.sourceKingdom.cities[0].hexTile.AddEventOnTile(this);
 		this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
@@ -87,17 +101,31 @@ public class InvasionPlan : GameEvent {
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 		this.StartMilitarizationEvent();
+
+		Log invasionPlanStart = this._war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
+		invasionPlanStart.AddToFillers(gameEventTrigger, reason);
+		invasionPlanStart.AddToFillers(this._startedBy, this._startedBy.name);
+		invasionPlanStart.AddToFillers(this._targetKingdom, this._targetKingdom.name);
+
+		System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this._militarizationEvent.durationInDays);
+		invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
 	}
 
 	#region overrides
 	internal override void PerformAction(){
 		if (this.startedBy.isDead) {
 			this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " died.";
+			Log invasionPlanCancelDeath = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_death");
+			invasionPlanCancelDeath.AddToFillers (this.startedBy, this.startedBy.name);
+
 			this.DoneEvent();
 			return;
 		}
 		if (!this.startedBy.isKing) {
 			this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " is no longer king.";
+			Log invasionPlanCancelDethrone = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_dethrone");
+			invasionPlanCancelDethrone.AddToFillers (this.startedBy, this.startedBy.name);
+
 			this.DoneEvent();
 			return;
 		}
@@ -112,9 +140,10 @@ public class InvasionPlan : GameEvent {
 		List<RelationshipKings> friends = this.startedBy.friends;
 		if (friends.Count > 0) {
 			for (int i = 0; i < friends.Count; i++) {
+				War friendWarWithTargetKingdom = KingdomManager.Instance.GetWarBetweenKingdoms (friends [i].king.city.kingdom, this._targetKingdom);
 				if (EventManager.Instance.GetEventsStartedByKingdom (friends[i].king.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where (x => x.isActive).Count () > 0 ||
 					KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, friends[i].king.city.kingdom) != null||
-					KingdomManager.Instance.GetWarBetweenKingdoms (friends[i].king.city.kingdom, this._targetKingdom).isAtWar) {
+					(friendWarWithTargetKingdom != null && friendWarWithTargetKingdom.isAtWar)) {
 					//friend already has an active invasion plan or friend already has an active join war request from this startedByKingdom or is already
 					//at war with target kingdom
 					continue;
@@ -131,7 +160,7 @@ public class InvasionPlan : GameEvent {
 						Citizen citizenToPersuade = friends[i].king;
 						envoyToSend.inAction = true;
 						JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
-							                           citizenToPersuade, envoyToSend, this.targetKingdom);
+							                           citizenToPersuade, envoyToSend, this.targetKingdom, this);
 						this._joinWarEvents.Add(newJoinWarRequest);
 					}
 				}
@@ -157,7 +186,6 @@ public class InvasionPlan : GameEvent {
 
 
 	internal void MilitarizationDone(){
-		//TODO: position generals appropriately
 		this.resolution = "Invasion plan was successful and war is now declared between " + this._sourceKingdom.name + " and " + this._targetKingdom.name;
 		this.war.DeclareWar (this._sourceKingdom);
 		this.DoneEvent();
@@ -166,6 +194,7 @@ public class InvasionPlan : GameEvent {
 	private void StartMilitarizationEvent(){
 		Militarization currentMilitarization = null;
 		if(IsThereMilitarizationActive(ref currentMilitarization)){
+			this._militarizationEvent = currentMilitarization;
 			currentMilitarization.remainingDays = currentMilitarization.durationInDays;
 		}else{
 			//New Militarization
@@ -191,5 +220,10 @@ public class InvasionPlan : GameEvent {
 
 	internal void AddCitizenThatUncoveredEvent(Citizen citizen){
 		this._uncovered.Add(citizen);
+		Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+			"Events", "War", "invasion_plan_discovered");
+		invasionPlanStart.AddToFillers(citizen.city.kingdom.king, citizen.city.kingdom.king.name);
+		invasionPlanStart.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name);
+		invasionPlanStart.AddToFillers(this.startedBy, this.startedBy.name);
 	}
 }
