@@ -218,23 +218,25 @@ public class StateVisit : GameEvent {
 	}
 
 	private void TriggerAssassinationEvent(){
-		int chance = UnityEngine.Random.Range (0, 100);
-		if (chance < 1) {
-			Kingdom selectedKingdom = this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
-			RelationshipKings relationship = selectedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
-			if (relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-				if (selectedKingdom.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
-					//ASSASSINATION EVENT
-					Citizen spy = GetSpy (selectedKingdom);
-					if (spy != null) {
-						Assassination assassination = new Assassination (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, selectedKingdom.king, this.visitor, spy, this);
-						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
-						newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name);
-						newLog.AddToFillers (spy, spy.name);
-						newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
-						newLog.AddToFillers (assassination, "assassinate");
-						newLog.AddToFillers (this.visitor, this.visitor.name);
-						newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
+		if (this.otherKingdoms != null && this.otherKingdoms.Count > 0) {
+			int chance = UnityEngine.Random.Range (0, 100);
+			if (chance < 1) {
+				Kingdom selectedKingdom = this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
+				RelationshipKings relationship = selectedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
+				if (relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+					if (selectedKingdom.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+						//ASSASSINATION EVENT
+						Citizen spy = GetSpy (selectedKingdom);
+						if (spy != null) {
+							Assassination assassination = new Assassination (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, selectedKingdom.king, this.visitor, spy, this);
+							Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
+							newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name);
+							newLog.AddToFillers (spy, spy.name);
+							newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
+							newLog.AddToFillers (assassination, "assassinate");
+							newLog.AddToFillers (this.visitor, this.visitor.name);
+							newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
+						}
 					}
 				}
 			}
@@ -270,13 +272,15 @@ public class StateVisit : GameEvent {
 		}
 	}
 	private void TriggerSabotage(){
-		int chance = UnityEngine.Random.Range (0, 100);
-		if (chance < 1) {
-			Kingdom selectedKingdom = this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
-			if (selectedKingdom.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
-				if (CheckForRelationship (selectedKingdom, false)) {
-					if(this.saboteurEnvoy == null){
-						SendEnvoySabotage (selectedKingdom);
+		if(this.otherKingdoms != null && this.otherKingdoms.Count > 0){
+			int chance = UnityEngine.Random.Range (0, 100);
+			if (chance < 1) {
+				Kingdom selectedKingdom = this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
+				if (selectedKingdom.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
+					if (CheckForRelationship (selectedKingdom, false)) {
+						if(this.saboteurEnvoy == null){
+							SendEnvoySabotage (selectedKingdom);
+						}
 					}
 				}
 			}
