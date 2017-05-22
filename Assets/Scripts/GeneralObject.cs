@@ -278,7 +278,6 @@ public class GeneralObject : MonoBehaviour {
 							this.general.assignedCampaign.expiration = Utilities.defaultCampaignExpiration;
 
 							Log newLogArrivalComplete = this.general.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "arrival_complete");
-							newLogArrivalComplete.AddToFillers (this.general.citizen, this.general.citizen.name);
 							newLogArrivalComplete.AddToFillers (null, this.general.assignedCampaign.expiration.ToString());
 						}
 					}else{

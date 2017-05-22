@@ -157,7 +157,7 @@ public class CampaignManager {
 					Debug.Log ("Created Campaign " + newCampaign.campaignType.ToString () + " " + newCampaign.targetCity.name);
 //					EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
 					if(newCampaign.campaignType == CAMPAIGN.DEFENSE){
-						Log newLogTitle = newCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "event_title");
+						Log newLogTitle = newCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "campaign_title");
 						newLogTitle.AddToFillers (newCampaign.targetCity, newCampaign.targetCity.name);
 
 						Log newLog = newCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "start");
@@ -165,7 +165,12 @@ public class CampaignManager {
 						newLog.AddToFillers (newCampaign.leader.city.kingdom, newCampaign.leader.city.kingdom.name);
 						newLog.AddToFillers (newCampaign.targetCity, newCampaign.targetCity.name);
 					}else{
-						
+						Log newLogTitle = newCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "campaign_title");
+						newLogTitle.AddToFillers (newCampaign.targetCity, newCampaign.targetCity.name);
+
+						Log newLog = newCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "start");
+						newLog.AddToFillers (newCampaign.leader.city.kingdom, newCampaign.leader.city.kingdom.name);
+						newLog.AddToFillers (newCampaign.targetCity, newCampaign.targetCity.name);
 					}
 
 					newCampaign.RegisterGenerals (this.candidates);

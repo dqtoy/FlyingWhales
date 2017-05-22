@@ -3024,9 +3024,14 @@ public class UIManager : MonoBehaviour {
 			for (int j = 0; j < currentlyShowingKingdom.king.campaignManager.activeCampaigns.Count; j++) {
 				Campaign currentCampaign = currentlyShowingKingdom.king.campaignManager.activeCampaigns[j];
 				City targetCityOfCampaign = currentCampaign.targetCity;
-				if (targetCityOfCampaign.kingdom.id == kingdomAtWarWith.id) {
+				if (currentCampaign.campaignType == CAMPAIGN.DEFENSE) {
 					actualCampaignIDs.Add (currentCampaign.id);
 					campaignsToShow.Add (currentCampaign);
+				} else {
+					if (!currentCampaign.isGhost && targetCityOfCampaign.kingdom.id == kingdomAtWarWith.id) {
+						actualCampaignIDs.Add (currentCampaign.id);
+						campaignsToShow.Add (currentCampaign);
+					}
 				}
 			}
 
