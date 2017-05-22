@@ -9,6 +9,19 @@ public class KingdomManager : MonoBehaviour {
 
 	public List<Kingdom> allKingdoms;
 
+	public KingdomTypeData kingdomTypeBarbaric;
+	public KingdomTypeData kingdomTypeHermit;
+	public KingdomTypeData kingdomTypeReligious;
+	public KingdomTypeData kingdomTypeOpportunistic;
+
+	public KingdomTypeData kingdomTypeNoble;
+	public KingdomTypeData kingdomTypeEvil;
+	public KingdomTypeData kingdomTypeMerchant;
+	public KingdomTypeData kingdomTypeChaotic;
+
+	public KingdomTypeData kingdomTypeRighteous;
+	public KingdomTypeData kingdomTypeWicked;
+
 	void Awake(){
 		Instance = this;
 	}
