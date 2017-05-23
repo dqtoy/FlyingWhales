@@ -1229,9 +1229,7 @@ public class UIManager : MonoBehaviour {
 
 	public IEnumerator RepositionScrollView(UIScrollView thisScrollView){
 		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
-		thisScrollView.ResetPosition ();
-		thisScrollView.SetDragAmount (0f, 0f, true);
+		thisScrollView.ResetPosition();
 	}
 
 	IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime){
@@ -1262,47 +1260,28 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 	public void ShowKingRelationships(){
-//		kingRelationshipsBtn.SetClickState(true);
-//		governorRelationshipsBtn.SetClickState(false);
-//		kingRelationshipsParentGO.SetActive(false);
 		List<Transform> children = kingRelationshipsGrid.GetChildList();
 		for (int i = 0; i < children.Count; i++) {
 			kingRelationshipsGrid.RemoveChild(children[i]);
 			Destroy(children[i].gameObject);
 		}
-
+		kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>().ResetPosition();
 		for (int i = 0; i < currentlyShowingCitizen.relationshipKings.Count; i++) {
 			GameObject kingGO = GameObject.Instantiate(characterPortraitPrefab, this.transform) as GameObject;
-			kingRelationshipsGrid.AddChild(kingGO.transform);
 			kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.relationshipKings [i].king, true);
-//			kingGO.GetComponent<CharacterPortrait>().DisableHover();
 			kingGO.transform.localScale = new Vector3(1.3f, 1.3f, 0);
 			kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (currentlyShowingCitizen.relationshipKings [i], 
 				currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
+			kingRelationshipsGrid.AddChild(kingGO.transform);
+			kingRelationshipsGrid.Reposition();
+//			kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>().UpdatePosition();
 //			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
 		}
-		StartCoroutine(RepositionGrid(kingRelationshipsGrid));
+//		StartCoroutine(RepositionGrid(kingRelationshipsGrid));
 		StartCoroutine(RepositionScrollView(kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>()));
 
 		governorRelationshipsParentGO.SetActive(false);
 		kingRelationshipsParentGO.SetActive(true);
-
-
-//		if (currentlyShowingCitizen.relationshipKings.Count > 1) {
-//			NGUITools.SetActive (kingMainLineSprite.gameObject, true);
-//			kingMainLineSprite.updateAnchors = UIRect.AnchorUpdate.OnEnable;
-//			kingMainLineSprite.topAnchor.target = kingRelationshipsGrid.GetChildList ().First ().GetComponent<CharacterPortrait> ().lineGO.transform;
-//			kingMainLineSprite.topAnchor.absolute = 0;
-//			kingMainLineSprite.bottomAnchor.target = kingRelationshipsGrid.GetChildList ().Last ().GetComponent<CharacterPortrait> ().lineGO.transform;
-//			kingMainLineSprite.bottomAnchor.absolute = 0;
-//			kingMainLineSprite.UpdateAnchors();
-//			NGUITools.SetActive (kingMainLineSprite.gameObject, false);
-//			NGUITools.SetActive (kingMainLineSprite.gameObject, true);
-//			kingMainLineSprite.height = 100 * currentlyShowingCitizen.relationshipKings.Count;
-//			kingMainLineSprite.gameObject.SetActive(true);
-//		} else {
-//			kingMainLineSprite.gameObject.SetActive (false);
-//		}
 	}
 	public void ShowGovernorRelationships(){
 		if (governorRelationshipsParentGO.activeSelf) {
