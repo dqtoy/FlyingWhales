@@ -17,4 +17,12 @@ public struct EventRate {
 		this.kingdomTypes = kingdomTypes;
 		this.militaryStrength = militaryStrength;
 	}
+
+	internal void DefaultValues(){
+		this.eventType = EVENT_TYPES.NONE;
+		this.rate = 0;
+		this.relationshipTargets = null;
+		this.kingdomTypes = null;
+		this.militaryStrength = null;
+	}
 }

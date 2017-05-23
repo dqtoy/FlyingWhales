@@ -7,23 +7,24 @@ using Panda;
 public class HandOfFate : MonoBehaviour {
 	public Kingdom firstKingdom;
 	public Kingdom secondKingdom;
-	public int compatibilityValue;
-	public bool isAdjacent;
-	public int raidChance;
-	public int borderConflictChance;
-	public int diplomaticCrisisChance;
-	public int stateVisitChance;
+	public EventRate eventToCreate;
+//	public int compatibilityValue;
+//	public bool isAdjacent;
+//	public int raidChance;
+//	public int borderConflictChance;
+//	public int diplomaticCrisisChance;
+//	public int stateVisitChance;
 	public List<GameEvent> allUnwantedEvents;
 
 	void Awake(){
 		this.firstKingdom = null;
 		this.secondKingdom = null;
-		this.compatibilityValue = 0;
-		this.isAdjacent = false;
-		this.raidChance = 0;
-		this.borderConflictChance = 0;
-		this.diplomaticCrisisChance = 0;
-		this.stateVisitChance = 0;
+//		this.compatibilityValue = 0;
+//		this.isAdjacent = false;
+//		this.raidChance = 0;
+//		this.borderConflictChance = 0;
+//		this.diplomaticCrisisChance = 0;
+//		this.stateVisitChance = 0;
 		this.allUnwantedEvents = new List<GameEvent> ();
 	}
 
@@ -41,20 +42,60 @@ public class HandOfFate : MonoBehaviour {
 	public void ResetValues(){
 		this.firstKingdom = null;
 		this.secondKingdom = null;
-		this.compatibilityValue = 0;
-		this.isAdjacent = false;
-		this.raidChance = 0;
-		this.borderConflictChance = 0;
-		this.diplomaticCrisisChance = 0;
-		this.stateVisitChance = 0;
+//		this.compatibilityValue = 0;
+//		this.isAdjacent = false;
+//		this.raidChance = 0;
+//		this.borderConflictChance = 0;
+//		this.diplomaticCrisisChance = 0;
+//		this.stateVisitChance = 0;
+		this.eventToCreate.DefaultValues();
 		this.allUnwantedEvents.Clear ();
 		Task.current.Succeed ();
 	}
 
 	[Task]
 	public void SetFirstRandomKingdom(){
-		this.firstKingdom = KingdomManager.Instance.allKingdoms [UnityEngine.Random.Range (0, KingdomManager.Instance.allKingdoms.Count)];
+		int total = 0;
+		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
+			total += KingdomManager.Instance.allKingdoms [i].kingdomTypeData.eventStartRate;
+		}
+		int lowerLimit = 0;
+		int upperLimit = 0;
+		int chance = UnityEngine.Random.Range (0, total + 1);
+		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
+			upperLimit += KingdomManager.Instance.allKingdoms [i].kingdomTypeData.eventStartRate;
+			if(chance >= lowerLimit && chance < upperLimit){
+				this.firstKingdom = KingdomManager.Instance.allKingdoms [i];
+				break;
+			}else{
+				lowerLimit = upperLimit;
+			}
+		}
+
 		if(this.firstKingdom == null){
+			Task.current.Fail ();
+		}else{
+			Task.current.Succeed ();
+		}
+	}
+	[Task]
+	public void SetEventToCreate(){
+		int total = this.firstKingdom.kingdomTypeData.eventRates.Sum(x => x.rate);
+		int chance = UnityEngine.Random.Range (0, total + 1);
+		int lowerLimit = 0;
+		int upperLimit = 0;
+
+		for(int i = 0; i < this.firstKingdom.kingdomTypeData.eventRates.Length; i++){
+			upperLimit += this.firstKingdom.kingdomTypeData.eventRates[i].rate;
+			if(chance >= lowerLimit && chance < upperLimit){
+				this.eventToCreate =  this.firstKingdom.kingdomTypeData.eventRates[i];
+				Debug.Log ("CREATING " + this.eventToCreate.eventType.ToString() + " EVENT...");
+				break;
+			}else{
+				lowerLimit = upperLimit;
+			}
+		}
+		if(this.eventToCreate.eventType == EVENT_TYPES.NONE){
 			Task.current.Fail ();
 		}else{
 			Task.current.Succeed ();
@@ -63,21 +104,20 @@ public class HandOfFate : MonoBehaviour {
 
 	[Task]
 	public void SetSecondRandomKingdom(){
-		List<Kingdom> adjacentKingdoms = this.firstKingdom.GetAdjacentKingdoms ();
-		if(adjacentKingdoms.Count > 0){
-//			int chance = UnityEngine.Random.Range (0, 100);
-			int chance = UnityEngine.Random.Range (0, 2);
-			if(chance == 0){
-//			if(chance < 60){
-				this.secondKingdom = adjacentKingdoms [UnityEngine.Random.Range (0, adjacentKingdoms.Count)];
-			}else{
-				this.secondKingdom = KingdomManager.Instance.GetRandomKingdomExcept (this.firstKingdom);
-			}
-			Task.current.Succeed ();
-		}else{
-			this.secondKingdom = KingdomManager.Instance.GetRandomKingdomExcept (this.firstKingdom);
-		}
+		List<Kingdom> allKingdomCandidates = new List<Kingdom> ();
+		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
+			if(KingdomManager.Instance.allKingdoms[i].id != this.firstKingdom.id){
+				if(IsCompatibleRelationship(KingdomManager.Instance.allKingdoms[i]) && IsCompatibleKingdomType(KingdomManager.Instance.allKingdoms[i]) 
+					&& IsCompatibleMilitaryStrength(KingdomManager.Instance.allKingdoms[i])){
 
+					allKingdomCandidates.Add (KingdomManager.Instance.allKingdoms [i]);
+
+				}
+			}
+		}
+		if(allKingdomCandidates.Count > 0){
+			this.secondKingdom = allKingdomCandidates [UnityEngine.Random.Range (0, allKingdomCandidates.Count)];
+		}
 
 		if(this.secondKingdom == null){
 			Task.current.Fail ();
@@ -95,65 +135,65 @@ public class HandOfFate : MonoBehaviour {
 			Task.current.Fail ();
 		}
 	}
-	[Task]
-	public void SetCompatibilityValue(){
-		int[] firstKingdomHoroscope = this.firstKingdom.horoscope.Concat (this.firstKingdom.king.horoscope).ToArray();
-		int[] secondKingdomHoroscope = this.secondKingdom.horoscope.Concat (this.secondKingdom.king.horoscope).ToArray();
-		int count = firstKingdomHoroscope.Length;
-
-		for(int i = 0; i < count; i++){
-			if(firstKingdomHoroscope[i] == secondKingdomHoroscope[i]){
-				this.compatibilityValue += 1;
-			}
-		}
-		Task.current.Succeed ();
-	}
-
-	[Task]
-	public void SetAdjacencyValue(){
-		this.isAdjacent = this.firstKingdom.IsKingdomAdjacentTo (this.secondKingdom);
-		Task.current.Succeed ();
-	}
-
-	[Task]
-	public void SetEventChances(){
-		if(this.isAdjacent){
-			if(this.compatibilityValue == 0 || this.compatibilityValue == 1){
-				this.raidChance = 50;
-				this.borderConflictChance = 35;
-				this.diplomaticCrisisChance = 15;
-				this.stateVisitChance = 0;
-			}else if(this.compatibilityValue == 2 || this.compatibilityValue == 3){
-				this.raidChance = 35;
-				this.borderConflictChance = 25;
-				this.diplomaticCrisisChance = 5;
-				this.stateVisitChance = 35;
-			}else if(this.compatibilityValue == 4 || this.compatibilityValue == 5){
-				this.raidChance = 20;
-				this.borderConflictChance = 10;
-				this.diplomaticCrisisChance = 0;
-				this.stateVisitChance = 70;
-			}
-		}else{
-			if(this.compatibilityValue == 0 || this.compatibilityValue == 1){
-				this.raidChance = 80;
-				this.borderConflictChance = 0;
-				this.diplomaticCrisisChance = 20;
-				this.stateVisitChance = 0;
-			}else if(this.compatibilityValue == 2 || this.compatibilityValue == 3){
-				this.raidChance = 55;
-				this.borderConflictChance = 0;
-				this.diplomaticCrisisChance = 10;
-				this.stateVisitChance = 35;
-			}else if(this.compatibilityValue == 4 || this.compatibilityValue == 5){
-				this.raidChance = 25;
-				this.borderConflictChance = 0;
-				this.diplomaticCrisisChance = 5;
-				this.stateVisitChance = 70;
-			}
-		}
-		Task.current.Succeed ();
-	}
+//	[Task]
+//	public void SetCompatibilityValue(){
+//		int[] firstKingdomHoroscope = this.firstKingdom.horoscope.Concat (this.firstKingdom.king.horoscope).ToArray();
+//		int[] secondKingdomHoroscope = this.secondKingdom.horoscope.Concat (this.secondKingdom.king.horoscope).ToArray();
+//		int count = firstKingdomHoroscope.Length;
+//
+//		for(int i = 0; i < count; i++){
+//			if(firstKingdomHoroscope[i] == secondKingdomHoroscope[i]){
+//				this.compatibilityValue += 1;
+//			}
+//		}
+//		Task.current.Succeed ();
+//	}
+//
+//	[Task]
+//	public void SetAdjacencyValue(){
+//		this.isAdjacent = this.firstKingdom.IsKingdomAdjacentTo (this.secondKingdom);
+//		Task.current.Succeed ();
+//	}
+//
+//	[Task]
+//	public void SetEventChances(){
+//		if(this.isAdjacent){
+//			if(this.compatibilityValue == 0 || this.compatibilityValue == 1){
+//				this.raidChance = 50;
+//				this.borderConflictChance = 35;
+//				this.diplomaticCrisisChance = 15;
+//				this.stateVisitChance = 0;
+//			}else if(this.compatibilityValue == 2 || this.compatibilityValue == 3){
+//				this.raidChance = 35;
+//				this.borderConflictChance = 25;
+//				this.diplomaticCrisisChance = 5;
+//				this.stateVisitChance = 35;
+//			}else if(this.compatibilityValue == 4 || this.compatibilityValue == 5){
+//				this.raidChance = 20;
+//				this.borderConflictChance = 10;
+//				this.diplomaticCrisisChance = 0;
+//				this.stateVisitChance = 70;
+//			}
+//		}else{
+//			if(this.compatibilityValue == 0 || this.compatibilityValue == 1){
+//				this.raidChance = 80;
+//				this.borderConflictChance = 0;
+//				this.diplomaticCrisisChance = 20;
+//				this.stateVisitChance = 0;
+//			}else if(this.compatibilityValue == 2 || this.compatibilityValue == 3){
+//				this.raidChance = 55;
+//				this.borderConflictChance = 0;
+//				this.diplomaticCrisisChance = 10;
+//				this.stateVisitChance = 35;
+//			}else if(this.compatibilityValue == 4 || this.compatibilityValue == 5){
+//				this.raidChance = 25;
+//				this.borderConflictChance = 0;
+//				this.diplomaticCrisisChance = 5;
+//				this.stateVisitChance = 70;
+//			}
+//		}
+//		Task.current.Succeed ();
+//	}
 	[Task]
 	public void IsEligibleForEvent(){
 		List<GameEvent> allRaids = EventManager.Instance.GetEventsOfType (EVENT_TYPES.RAID).Where (x => x.isActive).ToList ();
@@ -175,24 +215,19 @@ public class HandOfFate : MonoBehaviour {
 	}
 	[Task]
 	public void StartAnEvent(){
-		int chance = UnityEngine.Random.Range (0, 100);
-		int raid = this.raidChance;
-		int borderConflict = this.raidChance + this.borderConflictChance;
-		int diplomaticCrisis = this.raidChance + this.borderConflictChance + this.diplomaticCrisisChance;
-		int stateVisit = this.raidChance + this.borderConflictChance + this.diplomaticCrisisChance + this.stateVisitChance;
-
-		if(chance < raid){
-			Debug.Log ("CREATING RAID EVENT...");
+		switch(this.eventToCreate.eventType){
+		case EVENT_TYPES.RAID:
 			CreateRaidEvent ();
-		}else if(chance >= raid && chance < borderConflict){
-			Debug.Log ("CREATING BORDER CONFLICT EVENT...");
+			break;
+		case EVENT_TYPES.BORDER_CONFLICT:
 			CreateBorderConflictEvent ();
-		}else if(chance >= borderConflict && chance < diplomaticCrisis){
-			Debug.Log ("CREATING DIPLOMATIC CRISIS EVENT...");
+			break;
+		case EVENT_TYPES.DIPLOMATIC_CRISIS:
 			CreateDiplomaticCrisisEvent ();
-		}else if(chance >= diplomaticCrisis && chance < stateVisit){
-			Debug.Log ("CREATING STATE VISIT EVENT...");
+			break;
+		case EVENT_TYPES.STATE_VISIT:
 			CreateStateVisitEvent ();
+			break;
 		}
 		Task.current.Succeed ();
 	}
@@ -204,6 +239,18 @@ public class HandOfFate : MonoBehaviour {
 			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city);
 			EventManager.Instance.AddEventToDictionary (raid);
 		}
+	}
+
+	private void CreateBorderConflictEvent(){
+		BorderConflict();
+	}
+
+	private void CreateDiplomaticCrisisEvent(){
+		DiplomaticCrisis ();
+	}
+
+	private void CreateStateVisitEvent(){
+		StateVisit ();
 	}
 	private General GetGeneral(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = Utilities.GetUnwantedGovernors (kingdom.king);
@@ -239,41 +286,29 @@ public class HandOfFate : MonoBehaviour {
 		}else{
 			return null;
 		}
-//		if(general == null){
-//			return null;
-//		}
-//		if(this.isAdjacent){
-//			List<City> adjacentCities = general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Where (x => x.kingdom.id == this.secondKingdom.id).ToList();
-//			if(adjacentCities.Count > 0){
-//				return adjacentCities [UnityEngine.Random.Range (0, adjacentCities.Count)];
-//			}else{
-//				if(this.secondKingdom.cities.Count > 0){
-//					return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
-//				}else{
-//					return null;
-//				}
-//			}
-//		}else{
-//			if(this.secondKingdom.cities.Count > 0){
-//				return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
-//			}else{
-//				return null;
-//			}
-//		}
+		//		if(general == null){
+		//			return null;
+		//		}
+		//		if(this.isAdjacent){
+		//			List<City> adjacentCities = general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Where (x => x.kingdom.id == this.secondKingdom.id).ToList();
+		//			if(adjacentCities.Count > 0){
+		//				return adjacentCities [UnityEngine.Random.Range (0, adjacentCities.Count)];
+		//			}else{
+		//				if(this.secondKingdom.cities.Count > 0){
+		//					return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
+		//				}else{
+		//					return null;
+		//				}
+		//			}
+		//		}else{
+		//			if(this.secondKingdom.cities.Count > 0){
+		//				return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
+		//			}else{
+		//				return null;
+		//			}
+		//		}
 
 	}
-	private void CreateBorderConflictEvent(){
-		BorderConflict();
-	}
-
-	private void CreateDiplomaticCrisisEvent(){
-		DiplomaticCrisis ();
-	}
-
-	private void CreateStateVisitEvent(){
-		StateVisit ();
-	}
-
 	private void BorderConflict(){
 		Debug.Log ("Border Conflict FROM HAND OF FATE");
 		Citizen startedBy = this.firstKingdom.king;
@@ -378,5 +413,42 @@ public class HandOfFate : MonoBehaviour {
 		}else{
 			return true;
 		}
+	}
+
+	private bool IsCompatibleRelationship(Kingdom targetKingdom){
+		if (this.eventToCreate.relationshipTargets.Length > 0) {
+			RelationshipKings relationship = this.firstKingdom.king.GetRelationshipWithCitizen (targetKingdom.king);
+			Debug.Log ("RELATIONSHIP: " + relationship.lordRelationship.ToString());
+			if (this.eventToCreate.relationshipTargets.Contains (relationship.lordRelationship)) {
+				return true;
+			}else{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private bool IsCompatibleKingdomType(Kingdom targetKingdom){
+		if (this.eventToCreate.kingdomTypes.Length > 0) {
+			if (this.eventToCreate.kingdomTypes.Contains (targetKingdom.kingdomType)) {
+				return true;
+			}else{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private bool IsCompatibleMilitaryStrength(Kingdom targetKingdom){
+		if (this.eventToCreate.militaryStrength.Length > 0) {
+			MILITARY_STRENGTH milStrength = targetKingdom.GetMilitaryStrengthAgainst (this.firstKingdom);
+			Debug.Log ("MILITAR STRENGTH: " + milStrength);
+			if (this.eventToCreate.militaryStrength.Contains (milStrength)) {
+				return true;
+			}else{
+				return false;
+			}
+		}
+		return true;
 	}
 }

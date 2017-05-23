@@ -38,4 +38,16 @@ public class KingdomTypeData : MonoBehaviour {
 			return this._expansionDistanceFromBorder; 
 		}
 	}
+
+	public int eventStartRate {
+		get { 
+			return this._eventStartRate; 
+		}
+	}
+
+	public EventRate[] eventRates {
+		get { 
+			return this._eventRates; 
+		}
+	}
 }
