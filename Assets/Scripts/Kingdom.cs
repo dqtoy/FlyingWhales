@@ -693,8 +693,8 @@ public class Kingdom{
 
 		int fiftyPercent = (int)(targetMilStrength * 0.50f);
 		int twentyPercent = (int)(targetMilStrength * 0.20f);
-		Debug.Log ("TARGET MILITARY STRENGTH: " + targetMilStrength);
-		Debug.Log ("SOURCE MILITARY STRENGTH: " + sourceMilStrength);
+//		Debug.Log ("TARGET MILITARY STRENGTH: " + targetMilStrength);
+//		Debug.Log ("SOURCE MILITARY STRENGTH: " + sourceMilStrength);
 		if(sourceMilStrength == 0 && targetMilStrength == 0){
 			return MILITARY_STRENGTH.COMPARABLE;
 		}else{

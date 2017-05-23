@@ -84,7 +84,7 @@ public class GeneralObject : MonoBehaviour {
 				this.generalAnimator.gameObject.transform.localScale = new Vector3(this.generalAnimator.gameObject.transform.localScale.x * -1, this.generalAnimator.gameObject.transform.localScale.y, this.generalAnimator.gameObject.transform.localScale.z);
 			}
 		}
-		if(startTile.transform.position.y <= targetTile.transform.position.y){
+		if(startTile.transform.position.y < targetTile.transform.position.y){
 			this.generalAnimator.Play("Walk_Up");
 		}else{
 			this.generalAnimator.Play("Walk");
