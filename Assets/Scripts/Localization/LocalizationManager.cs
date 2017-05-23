@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
 public class LocalizationManager : MonoBehaviour {
@@ -80,6 +81,15 @@ public class LocalizationManager : MonoBehaviour {
 
 		return result;
 
+	}
+	public string GetRandomLocalizedValue(string category, string file){
+		string result = string.Empty;
+		int count = this._localizedText [category] [file].Keys.Count;
+		KeyValuePair<string, string> selected = this._localizedText [category] [file].ElementAtOrDefault(UnityEngine.Random.Range(0,this._localizedText [category] [file].Count));
+		if(!string.IsNullOrEmpty(selected.Key) && !string.IsNullOrEmpty(selected.Value)){
+			result = selected.Value;
+		}
+		return result;
 	}
 
 	/*
