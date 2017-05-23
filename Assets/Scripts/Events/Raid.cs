@@ -315,7 +315,7 @@ public class Raid : GameEvent {
 			if (this.hasDeflected) {
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery_deflect");
 				newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
-				newLog.AddToFillers (this.startedByCity, this.startedByCity.name);
+				newLog.AddToFillers (this.kingdomToBlame, this.kingdomToBlame.name);
 //				List<object> discoveredLogObjects = new List<object> {
 //					this.raidedCity,
 //					this.startedByCity
