@@ -695,16 +695,20 @@ public class Kingdom{
 		int twentyPercent = (int)(targetMilStrength * 0.20f);
 		Debug.Log ("TARGET MILITARY STRENGTH: " + targetMilStrength);
 		Debug.Log ("SOURCE MILITARY STRENGTH: " + sourceMilStrength);
-		if(sourceMilStrength > (targetMilStrength + fiftyPercent)){
-			return MILITARY_STRENGTH.MUCH_STRONGER;
-		}else if(sourceMilStrength > (targetMilStrength + twentyPercent)){
-			return MILITARY_STRENGTH.SLIGHTLY_STRONGER;
-		}else if(sourceMilStrength > (targetMilStrength - twentyPercent)){
+		if(sourceMilStrength == 0 && targetMilStrength == 0){
 			return MILITARY_STRENGTH.COMPARABLE;
-		}else if(sourceMilStrength > (targetMilStrength - fiftyPercent)){
-			return MILITARY_STRENGTH.SLIGHTLY_WEAKER;
 		}else{
-			return MILITARY_STRENGTH.MUCH_WEAKER;
+			if(sourceMilStrength > (targetMilStrength + fiftyPercent)){
+				return MILITARY_STRENGTH.MUCH_STRONGER;
+			}else if(sourceMilStrength > (targetMilStrength + twentyPercent)){
+				return MILITARY_STRENGTH.SLIGHTLY_STRONGER;
+			}else if(sourceMilStrength > (targetMilStrength - twentyPercent)){
+				return MILITARY_STRENGTH.COMPARABLE;
+			}else if(sourceMilStrength > (targetMilStrength - fiftyPercent)){
+				return MILITARY_STRENGTH.SLIGHTLY_WEAKER;
+			}else{
+				return MILITARY_STRENGTH.MUCH_WEAKER;
+			}
 		}
 	}
 
