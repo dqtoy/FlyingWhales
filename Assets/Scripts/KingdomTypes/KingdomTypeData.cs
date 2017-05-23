@@ -20,6 +20,20 @@ public class KingdomTypeData : MonoBehaviour {
 	[SerializeField]
 	private EventRate[] _eventRates;
 
+	[SerializeField]
+	private WarTrigger[] _warTriggers;
+
+	[SerializeField]
+	private WarRateModifierMilitary[] warRateModifierMilitary;
+
+	[SerializeField]
+	private WarRateModifierRelationship[] warRateModifierRelationship;
+
+	[SerializeField]
+	private int warRateModifierPer15HexDistance;
+
+	[SerializeField]
+	private int warRateModifierPerActiveWar;
 
 	public KINGDOM_TYPE kingdomType {
 		get { 
