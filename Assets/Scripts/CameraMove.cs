@@ -16,7 +16,6 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private Camera resourceIconCamera;
 	[SerializeField] private Camera generalCamera;
 	[SerializeField] private Camera traderCamera;
-
 	private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
 	private Transform target;
@@ -53,6 +52,29 @@ public class CameraMove : MonoBehaviour {
 		Rect screenRect = new Rect(0,0, Screen.width, Screen.height);
 		if (!UIManager.Instance.IsMouseOnUI() && screenRect.Contains(Input.mousePosition)) { //enable scrolling only when mouse is not on UI and is inside game window
 			//camera scrolling code
+//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
+////			Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), ref velocity, dampTime);
+////			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.deltaTime * this.moveSpeed);
+//		}
+//		if (Input.GetKey (KeyCode.DownArrow) || Input.GetKey (KeyCode.S)){
+//			this.direction = DIRECTION.DOWN;
+//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
+//		}
+//		if (Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.A)){
+//			this.direction = DIRECTION.LEFT;
+//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
+//
+//		}
+//		if (Input.GetKey (KeyCode.RightArrow) || Input.GetKey (KeyCode.D)){
+//			this.direction = DIRECTION.RIGHT;
+//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
+//		}
+		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.DownArrow) || Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.RightArrow) ||
+			Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.S) || Input.GetKey (KeyCode.D)) {
+			iTween.MoveUpdate (Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
+//		if(Camera.current != null){
+//			Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
+//		}
 			float fov = Camera.main.orthographicSize;
 			float adjustment = Input.GetAxis ("Mouse ScrollWheel") * (sensitivity * -1f);
 			fov += adjustment;
