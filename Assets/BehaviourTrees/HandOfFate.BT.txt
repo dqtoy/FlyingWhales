@@ -5,10 +5,8 @@ tree("Root")
 			CannotCreateEvent
 		ResetValues
 		SetFirstRandomKingdom
+		SetEventToCreate
 		SetSecondRandomKingdom
 		AreTheTwoKingdomsNotAtWar
 		IsEligibleForEvent
-		SetCompatibilityValue
-		SetAdjacencyValue
-		SetEventChances
 		StartAnEvent

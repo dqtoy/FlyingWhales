@@ -389,9 +389,9 @@ public class UIManager : MonoBehaviour {
 			ShowCitizenInfo(currentlyShowingKingdom.king);
 		}
 		//Hide kingdom Events menu
-		kingdomListEventButton.SetClickState(false);
-		HideAllKingdomEvents();
-
+//		kingdomListEventButton.SetClickState(false);
+//		HideAllKingdomEvents();
+		ShowKingdomEvents();
 
 		UpdateKingdomList();
 	}

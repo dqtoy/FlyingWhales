@@ -42,7 +42,7 @@ public class BorderConflict : GameEvent {
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "start");
 		newLog.AddToFillers (kingdom1, kingdom1.name);
 		newLog.AddToFillers (kingdom2, kingdom2.name);
-		newLog.AddToFillers (null, "because the pain is deep");
+		newLog.AddToFillers (null, LocalizationManager.Instance.GetRandomLocalizedValue("Reasons", "BorderConflictReasons"));
 
 	}
 

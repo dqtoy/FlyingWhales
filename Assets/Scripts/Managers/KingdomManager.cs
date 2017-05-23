@@ -271,17 +271,17 @@ public class KingdomManager : MonoBehaviour {
 		}
 	}
 
-	public Kingdom GetRandomKingdomExcept(Kingdom kingdom){
+	public List<Kingdom> GetOtherKingdomsExcept(Kingdom kingdom){
 		List<Kingdom> newKingdoms = new List<Kingdom> ();
 		for(int i = 0; i < this.allKingdoms.Count; i++){
 			if(this.allKingdoms[i].id != kingdom.id){
 				newKingdoms.Add (this.allKingdoms [i]);
 			}
 		}
-		if(newKingdoms.Count > 0){
-			return newKingdoms [UnityEngine.Random.Range (0, newKingdoms.Count)];
-		}
-		return null;
+//		if(newKingdoms.Count > 0){
+//			return newKingdoms [UnityEngine.Random.Range (0, newKingdoms.Count)];
+//		}
+		return newKingdoms;
 	}
 
 	// Counts the number of kingdoms of a specific type

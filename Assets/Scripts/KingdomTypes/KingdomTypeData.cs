@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class KingdomTypeData : MonoBehaviour {
 
@@ -16,84 +17,9 @@ public class KingdomTypeData : MonoBehaviour {
 	[SerializeField]
 	private int _eventStartRate;
 
-
 	[SerializeField]
-	private int _negativeCompatibilityRaidRate;
+	private EventRate[] _eventRates;
 
-	[SerializeField]
-	private int _negativeCompatibilityConflictRate;
-
-	[SerializeField]
-	private int _negativeCompatibilityCrisisRate;
-
-	[SerializeField]
-	private int _negativeCompatibilityStateVisitRate;
-
-	/*
-	[SerializeField]
-	private int _neutralCompatibilityRaidRate;
-
-	[SerializeField]
-	private int _neutralCompatibilityConflictRate;
-
-	[SerializeField]
-	private int _neutralCompatibilityCrisisRate;
-
-	[SerializeField]
-	private int _neutralCompatibilityStateVisitRate;
-
-
-	[SerializeField]
-	private int _positiveCompatibilityRaidRate;
-
-	[SerializeField]
-	private int _positiveCompatibilityConflictRate;
-
-	[SerializeField]
-	private int _positiveCompatibilityCrisisRate;
-
-	[SerializeField]
-	private int _positiveCompatibilityStateVisitRate;
-	*/
-
-	[SerializeField]
-	private RELATIONSHIP_STATUS[] _raidRelationshipTargets;
-
-	[SerializeField]
-	private KINGDOM_TYPE[] _raidKingdomTypes;
-
-	[SerializeField]
-	private MILITARY_STRENGTH[] _raidMilitaryStrength;
-
-
-	[SerializeField]
-	private RELATIONSHIP_STATUS[] _conflictRelationshipTargets;
-
-	[SerializeField]
-	private KINGDOM_TYPE[] _conflictKingdomTypes;
-
-	[SerializeField]
-	private MILITARY_STRENGTH[] _conflictMilitaryStrength;
-
-
-	[SerializeField]
-	private RELATIONSHIP_STATUS[] _crisisRelationshipTargets;
-
-	[SerializeField]
-	private KINGDOM_TYPE[] _crisisKingdomTypes;
-
-	[SerializeField]
-	private MILITARY_STRENGTH[] _crisisMilitaryStrength;
-
-
-	[SerializeField]
-	private RELATIONSHIP_STATUS[] _stateVisitRelationshipTargets;
-
-	[SerializeField]
-	private KINGDOM_TYPE[] _stateVisitKingdomTypes;
-
-	[SerializeField]
-	private MILITARY_STRENGTH[] _stateVisitMilitaryStrength;
 
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -113,13 +39,15 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
-	// Use this for initialization
-	void Start () {
-	
+	public int eventStartRate {
+		get { 
+			return this._eventStartRate; 
+		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	public EventRate[] eventRates {
+		get { 
+			return this._eventRates; 
+		}
 	}
 }
