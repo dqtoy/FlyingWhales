@@ -13,7 +13,6 @@ public class CameraMove : MonoBehaviour {
 	float maxFov = 54f;
 	float sensitivity = 5f;
 
-
 	public float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
 	public Transform target;
@@ -35,9 +34,32 @@ public class CameraMove : MonoBehaviour {
 	void Update () {
 		float xAxisValue = Input.GetAxis("Horizontal");
 		float zAxisValue = Input.GetAxis("Vertical");
-		if(Camera.current != null){
-			Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
+//		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.W)){
+//			this.direction = DIRECTION.UP;
+//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
+////			Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), ref velocity, dampTime);
+////			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.deltaTime * this.moveSpeed);
+//		}
+//		if (Input.GetKey (KeyCode.DownArrow) || Input.GetKey (KeyCode.S)){
+//			this.direction = DIRECTION.DOWN;
+//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
+//		}
+//		if (Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.A)){
+//			this.direction = DIRECTION.LEFT;
+//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
+//
+//		}
+//		if (Input.GetKey (KeyCode.RightArrow) || Input.GetKey (KeyCode.D)){
+//			this.direction = DIRECTION.RIGHT;
+//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
+//		}
+		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.DownArrow) || Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.RightArrow) ||
+			Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.S) || Input.GetKey (KeyCode.D)) {
+			iTween.MoveUpdate (Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
 		}
+//		if(Camera.current != null){
+//			Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
+//		}
 
 		if (!UIManager.Instance.IsMouseOnUI ()) {
 			float fov = Camera.main.orthographicSize;
