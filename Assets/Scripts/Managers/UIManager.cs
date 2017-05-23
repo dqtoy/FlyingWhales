@@ -1227,6 +1227,7 @@ public class UIManager : MonoBehaviour {
 
 	public IEnumerator RepositionScrollView(UIScrollView thisScrollView){
 		yield return new WaitForEndOfFrame();
+		yield return new WaitForEndOfFrame();
 		thisScrollView.ResetPosition();
 	}
 
@@ -1258,25 +1259,56 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 	public void ShowKingRelationships(){
-		List<Transform> children = kingRelationshipsGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
-			kingRelationshipsGrid.RemoveChild(children[i]);
-			Destroy(children[i].gameObject);
+		List<CharacterPortrait> characterPortraits = kingRelationshipsGrid.gameObject.GetComponentsInChildren<CharacterPortrait>().ToList();
+
+		int nextIndex = 0;
+		for (int i = 0; i < characterPortraits.Count; i++) {
+			CharacterPortrait currPortrait = characterPortraits[i];
+			RelationshipKings currRel = currentlyShowingCitizen.relationshipKings[i];
+			if (currRel == null) {
+				currPortrait.gameObject.SetActive(false);
+			} else {
+				currPortrait.SetCitizen (currRel.king, true);
+				currPortrait.ShowRelationshipLine (currRel, currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
+				currPortrait.gameObject.SetActive(true);
+			}
+			nextIndex = i + 1;
 		}
-		kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>().ResetPosition();
-		for (int i = 0; i < currentlyShowingCitizen.relationshipKings.Count; i++) {
-			GameObject kingGO = GameObject.Instantiate(characterPortraitPrefab, this.transform) as GameObject;
-			kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.relationshipKings [i].king, true);
-			kingGO.transform.localScale = new Vector3(1.3f, 1.3f, 0);
-			kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (currentlyShowingCitizen.relationshipKings [i], 
-				currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
-			kingRelationshipsGrid.AddChild(kingGO.transform);
-			kingRelationshipsGrid.Reposition();
-//			kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>().UpdatePosition();
-//			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
+
+		if (currentlyShowingCitizen.relationshipKings.Count - 1 > nextIndex) {
+			for (int i = nextIndex; i < currentlyShowingCitizen.relationshipKings.Count; i++) {
+				GameObject kingGO = GameObject.Instantiate(characterPortraitPrefab, this.transform) as GameObject;
+				kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.relationshipKings [i].king, true);
+				kingGO.transform.localScale = new Vector3(1.3f, 1.3f, 0);
+				kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (currentlyShowingCitizen.relationshipKings [i], 
+					currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
+				kingRelationshipsGrid.AddChild(kingGO.transform);
+				kingRelationshipsGrid.Reposition ();
+	//			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
+			}
 		}
+
+//		List<Transform> children = kingRelationshipsGrid.GetChildList();
+//		for (int i = 0; i < children.Count; i++) {
+//			kingRelationshipsGrid.RemoveChild(children[i]);
+//			Destroy(children[i].gameObject);
+//			kingRelationshipsGrid.Reposition();
+//		}
+//
+//		for (int i = 0; i < currentlyShowingCitizen.relationshipKings.Count; i++) {
+//			GameObject kingGO = GameObject.Instantiate(characterPortraitPrefab, this.transform) as GameObject;
+//			kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.relationshipKings [i].king, true);
+//			kingGO.transform.localScale = new Vector3(1.3f, 1.3f, 0);
+//			kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (currentlyShowingCitizen.relationshipKings [i], 
+//				currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
+//			kingRelationshipsGrid.AddChild(kingGO.transform);
+////			kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>().UpdatePosition();
+////			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
+//		}
+////		kingRelationshipsGrid.Reposition();
+////		kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>().ResetPosition();
 //		StartCoroutine(RepositionGrid(kingRelationshipsGrid));
-		StartCoroutine(RepositionScrollView(kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>()));
+//		StartCoroutine(RepositionScrollView(kingRelationshipsParentGO.GetComponentInChildren<UIScrollView>()));
 
 		governorRelationshipsParentGO.SetActive(false);
 		kingRelationshipsParentGO.SetActive(true);
@@ -2493,7 +2525,6 @@ public class UIManager : MonoBehaviour {
 			return;
 		}
 
-		currentlyShowingLogObject = obj;
 		List<Log> logs = new List<Log> ();
 		if (obj is GameEvent) {
 			GameEvent ge = ((GameEvent)obj);
@@ -2502,10 +2533,14 @@ public class UIManager : MonoBehaviour {
 			if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
 				elmEventProgressBar.gameObject.SetActive (false);
 			} else {
-				//			elmEventProgressBar.value = ((float)ge.remainingDays / (float)ge.durationInDays);
 				elmEventProgressBar.gameObject.SetActive (true);
 				float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
-				StartCoroutine(LerpProgressBar(elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+				if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
+					StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+				} else {
+					elmEventProgressBar.value = targetValue;
+				}
+
 			}
 		} else if (obj is Campaign) {
 			logs = ((Campaign)obj).logs;
@@ -2514,6 +2549,8 @@ public class UIManager : MonoBehaviour {
 		}
 		elmProgressBarLbl.text = "Progress:";
 		elmSuccessRateGO.SetActive (false);
+
+		currentlyShowingLogObject = obj;
 
 		GameObject nextAnchorPoint = elmFirstAnchor;
 		List<Log> currentlyShowingLogs = elmEventLogsParentGO.GetComponentsInChildren<EventLogItem>().Select(x => x.thisLog).ToList();
