@@ -52,9 +52,6 @@ public class CameraMove : MonoBehaviour {
 	void Update () {
 		float xAxisValue = Input.GetAxis("Horizontal");
 		float zAxisValue = Input.GetAxis("Vertical");
-		// if(Camera.current != null){
-		// 	Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
-		// }
 
 //		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.W)){
 //			this.direction = DIRECTION.UP;
@@ -78,10 +75,6 @@ public class CameraMove : MonoBehaviour {
 		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.DownArrow) || Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.RightArrow) ||
 			Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.S) || Input.GetKey (KeyCode.D)) {
 			iTween.MoveUpdate (Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
-			Camera.main.transform.position = new Vector3(
-				Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
-				Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
-				Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
 		}
 
 		Rect screenRect = new Rect(0,0, Screen.width, Screen.height);
@@ -122,10 +115,7 @@ public class CameraMove : MonoBehaviour {
 				MIN_Y -= .5f;
 				MIN_Y = Mathf.Clamp (MIN_Y, minMIN_Y, maxMIN_Y);
 			}
-			Camera.main.transform.position = new Vector3(
-				Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
-				Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
-				Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
+
 		}
 
 //		float xAxisValue = Input.GetAxis("Horizontal");
@@ -150,10 +140,17 @@ public class CameraMove : MonoBehaviour {
 			Vector3 delta = target.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
 			Vector3 destination = transform.position + delta;
 			transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
-			if (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y)) {
+			if (Mathf.Approximately(transform.position.x, MAX_X) || Mathf.Approximately(transform.position.x, MIN_X) || 
+				Mathf.Approximately(transform.position.y, MAX_Y) || Mathf.Approximately(transform.position.y, MIN_Y) ||
+				(Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
 				target = null;
 			}
 		}
+
+		Camera.main.transform.position = new Vector3(
+			Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
+			Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
+			Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
 
 	}
 
@@ -167,14 +164,7 @@ public class CameraMove : MonoBehaviour {
 	}
 
 	public void CenterCameraOn(GameObject GO){
-		//		Camera.main.orthographicSize = minFov;
-		//		eventIconCamera.orthographicSize = minFov;
-		//		resourceIconCamera.orthographicSize = minFov;
-		//		generalCamera.orthographicSize = minFov;
-
 		target = GO.transform;
-		//		Vector3 diff = Camera.main.ScreenToWorldPoint(GO.transform.position);
-		//		Camera.main.transform.Translate(new Vector3(diff.x, diff.y, 0.0f));
 	}
 
 	public void ToggleResourceIcons(){
