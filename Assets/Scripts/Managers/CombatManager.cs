@@ -89,10 +89,12 @@ public class CombatManager : MonoBehaviour {
 			Debug.Log (city.name + " IS DEFEATED BY " + victoriousGeneral.citizen.name + " of " + victoriousGeneral.citizen.city.name);
 
 			Campaign campaign = city.kingdom.king.campaignManager.activeCampaigns.Find (x => x.targetCity.id == city.id && x.campaignType == CAMPAIGN.DEFENSE);
-			Log newLogCity = campaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "city_battle_loser");
-			newLogCity.AddToFillers (victoriousGeneral.citizen.city.kingdom, victoriousGeneral.citizen.city.kingdom.name);
-			newLogCity.AddToFillers (victoriousGeneral.citizen, victoriousGeneral.citizen.name);
-
+			if(campaign != null){
+				Log newLogCity = campaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "city_battle_loser");
+				newLogCity.AddToFillers (victoriousGeneral.citizen.city.kingdom, victoriousGeneral.citizen.city.kingdom.name);
+				newLogCity.AddToFillers (victoriousGeneral.citizen, victoriousGeneral.citizen.name);
+			}
+		
 			Log newLogVictorious = victoriousGeneral.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "city_battle_winner");
 			newLogVictorious.AddToFillers (city, city.name);
 			newLogVictorious.AddToFillers (null, victoriousGeneral.GetArmyHP().ToString());
@@ -121,7 +123,7 @@ public class CombatManager : MonoBehaviour {
 				if (victoriousGeneral.assignedCampaign.warType == WAR_TYPE.SUCCESSION) {
 					if (city.incomingGenerals [i].citizen.id != victoriousGeneral.citizen.id) {
 						if (city.incomingGenerals [i].assignedCampaign.id == victoriousGeneral.assignedCampaign.id) {
-							city.incomingGenerals [i].UnregisterThisGeneral ();
+							city.incomingGenerals [i].UnregisterThisGeneral (false, true);
 						}
 					}
 				}

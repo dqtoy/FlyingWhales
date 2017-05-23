@@ -357,7 +357,7 @@ public class CampaignManager {
 		}else{
 			Debug.Log ("Campaign Done " + doneCampaign.campaignType.ToString () + " " + doneCampaign.targetCity.name);
 			for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
-				doneCampaign.registeredGenerals[i].UnregisterThisGeneral (true, true);
+				doneCampaign.registeredGenerals[i].UnregisterThisGeneral (false, true);
 			}
 //			if(doneCampaign.registeredGenerals.Count > 0){
 //				if(doneCampaign.campaignType == CAMPAIGN.OFFENSE){

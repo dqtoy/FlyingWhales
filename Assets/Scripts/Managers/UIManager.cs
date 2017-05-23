@@ -391,7 +391,9 @@ public class UIManager : MonoBehaviour {
 		//Hide kingdom Events menu
 //		kingdomListEventButton.SetClickState(false);
 //		HideAllKingdomEvents();
-		ShowKingdomEvents();
+		if (allKingdomEventsGO.activeSelf) {
+			ShowKingdomEvents ();
+		}
 
 		UpdateKingdomList();
 	}
