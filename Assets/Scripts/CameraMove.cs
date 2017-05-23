@@ -5,9 +5,9 @@ public class CameraMove : MonoBehaviour {
 
 	public static CameraMove Instance = null;
 
-//	float minFov = 60f;
-//	float maxFov = 150f;
-//	float sensitivity = 20f;
+	//	float minFov = 60f;
+	//	float maxFov = 150f;
+	//	float sensitivity = 20f;
 
 	[SerializeField] private float minFov;
 	[SerializeField] private float maxFov;
@@ -16,6 +16,7 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private Camera resourceIconCamera;
 	[SerializeField] private Camera generalCamera;
 	[SerializeField] private Camera traderCamera;
+
 	private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
 	private Transform target;
@@ -49,9 +50,14 @@ public class CameraMove : MonoBehaviour {
 	}
 
 	void Update () {
-		Rect screenRect = new Rect(0,0, Screen.width, Screen.height);
-		if (!UIManager.Instance.IsMouseOnUI() && screenRect.Contains(Input.mousePosition)) { //enable scrolling only when mouse is not on UI and is inside game window
-			//camera scrolling code
+		float xAxisValue = Input.GetAxis("Horizontal");
+		float zAxisValue = Input.GetAxis("Vertical");
+		// if(Camera.current != null){
+		// 	Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
+		// }
+
+//		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.W)){
+//			this.direction = DIRECTION.UP;
 //			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
 ////			Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), ref velocity, dampTime);
 ////			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.deltaTime * this.moveSpeed);
@@ -72,9 +78,15 @@ public class CameraMove : MonoBehaviour {
 		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.DownArrow) || Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.RightArrow) ||
 			Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.S) || Input.GetKey (KeyCode.D)) {
 			iTween.MoveUpdate (Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
-//		if(Camera.current != null){
-//			Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
-//		}
+			Camera.main.transform.position = new Vector3(
+				Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
+				Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
+				Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
+		}
+
+		Rect screenRect = new Rect(0,0, Screen.width, Screen.height);
+		if (!UIManager.Instance.IsMouseOnUI () && screenRect.Contains(Input.mousePosition)) {
+			//camera scrolling code
 			float fov = Camera.main.orthographicSize;
 			float adjustment = Input.GetAxis ("Mouse ScrollWheel") * (sensitivity * -1f);
 			fov += adjustment;
@@ -116,23 +128,23 @@ public class CameraMove : MonoBehaviour {
 				Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
 		}
 
-		float xAxisValue = Input.GetAxis("Horizontal");
-		float zAxisValue = Input.GetAxis("Vertical");
-		if(Camera.current != null){
-			//camera movement code
-			Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
-			Camera.main.transform.position = new Vector3(
-				Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
-				Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
-				Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
-		}
-			
+//		float xAxisValue = Input.GetAxis("Horizontal");
+//		float zAxisValue = Input.GetAxis("Vertical");
+//		if(Camera.current != null){
+//			//camera movement code
+//			Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
+//			Camera.main.transform.position = new Vector3(
+//				Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
+//				Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
+//				Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
+//		}
+
 		if (Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) || Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow) ||
-		   Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D)) {
+			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D)) {
 			//reset target when player pushes a button to pan the camera
 			target = null;
 		}
-			
+
 		if (target) { //smooth camera center
 			Vector3 point = Camera.main.WorldToViewportPoint(target.position);
 			Vector3 delta = target.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
@@ -155,25 +167,25 @@ public class CameraMove : MonoBehaviour {
 	}
 
 	public void CenterCameraOn(GameObject GO){
-//		Camera.main.orthographicSize = minFov;
-//		eventIconCamera.orthographicSize = minFov;
-//		resourceIconCamera.orthographicSize = minFov;
-//		generalCamera.orthographicSize = minFov;
+		//		Camera.main.orthographicSize = minFov;
+		//		eventIconCamera.orthographicSize = minFov;
+		//		resourceIconCamera.orthographicSize = minFov;
+		//		generalCamera.orthographicSize = minFov;
 
 		target = GO.transform;
-//		Vector3 diff = Camera.main.ScreenToWorldPoint(GO.transform.position);
-//		Camera.main.transform.Translate(new Vector3(diff.x, diff.y, 0.0f));
+		//		Vector3 diff = Camera.main.ScreenToWorldPoint(GO.transform.position);
+		//		Camera.main.transform.Translate(new Vector3(diff.x, diff.y, 0.0f));
 	}
 
 	public void ToggleResourceIcons(){
 		resourceIconCamera.gameObject.SetActive(!resourceIconCamera.gameObject.activeSelf);
 	}
 
-    public void ToggleGeneralCamera(){
-        generalCamera.gameObject.SetActive(!generalCamera.gameObject.activeSelf);
-    }
+	public void ToggleGeneralCamera(){
+		generalCamera.gameObject.SetActive(!generalCamera.gameObject.activeSelf);
+	}
 
-    public void ToggleTraderCamera() {
-        traderCamera.gameObject.SetActive(!traderCamera.gameObject.activeSelf);
-    }
+	public void ToggleTraderCamera() {
+		traderCamera.gameObject.SetActive(!traderCamera.gameObject.activeSelf);
+	}
 }
