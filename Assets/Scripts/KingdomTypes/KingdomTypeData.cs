@@ -13,7 +13,6 @@ public class KingdomTypeData : MonoBehaviour {
 	[SerializeField]
 	private int _expansionDistanceFromBorder;
 
-
 	[SerializeField]
 	private int _eventStartRate;
 
