@@ -11,10 +11,10 @@ public class GeneralHover : MonoBehaviour {
 					if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
 						string info = this.CampaignInfo (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign);
 						UIManager.Instance.ShowSmallInfo (info, UIManager.Instance.transform);
-						this.HighlightPath ();
 					}
 				}
 			}
+			this.HighlightPath ();
 		}
 	}
 
@@ -26,7 +26,7 @@ public class GeneralHover : MonoBehaviour {
 		UnHighlightPath ();
 	}
 	void HighlightPath(){
-		if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
+		if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null || this.transform.parent.GetComponent<GeneralObject>().general.isGoingHome) {
 			this.pathToUnhighlight.Clear ();
 			for (int i = 0; i < this.transform.parent.GetComponent<GeneralObject>().general.roads.Count; i++) {
 				this.transform.parent.GetComponent<GeneralObject>().general.roads [i].highlightGO.SetActive (true);
@@ -36,11 +36,11 @@ public class GeneralHover : MonoBehaviour {
 	}
 
 	void UnHighlightPath(){
-		if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
+//		if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
 			for (int i = 0; i < this.pathToUnhighlight.Count; i++) {
 				this.pathToUnhighlight[i].highlightGO.SetActive(false);
 			}
-		}
+//		}
 	}
 	private string CampaignInfo(Campaign campaign){
 		string info = string.Empty;

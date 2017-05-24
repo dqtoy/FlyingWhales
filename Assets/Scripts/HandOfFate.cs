@@ -418,7 +418,7 @@ public class HandOfFate : MonoBehaviour {
 	private bool IsCompatibleRelationship(Kingdom targetKingdom){
 		if (this.eventToCreate.relationshipTargets.Length > 0) {
 			RelationshipKings relationship = this.firstKingdom.king.GetRelationshipWithCitizen (targetKingdom.king);
-			Debug.Log ("RELATIONSHIP: " + relationship.lordRelationship.ToString());
+//			Debug.Log ("RELATIONSHIP: " + relationship.lordRelationship.ToString());
 			if (this.eventToCreate.relationshipTargets.Contains (relationship.lordRelationship)) {
 				return true;
 			}else{
@@ -442,7 +442,7 @@ public class HandOfFate : MonoBehaviour {
 	private bool IsCompatibleMilitaryStrength(Kingdom targetKingdom){
 		if (this.eventToCreate.militaryStrength.Length > 0) {
 			MILITARY_STRENGTH milStrength = targetKingdom.GetMilitaryStrengthAgainst (this.firstKingdom);
-			Debug.Log ("MILITAR STRENGTH: " + milStrength);
+//			Debug.Log ("MILITAR STRENGTH: " + milStrength);
 			if (this.eventToCreate.militaryStrength.Contains (milStrength)) {
 				return true;
 			}else{
