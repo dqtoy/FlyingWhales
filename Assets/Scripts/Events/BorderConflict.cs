@@ -31,6 +31,7 @@ public class BorderConflict : GameEvent {
 		this.activeEnvoyProvoke = null;
 		this.kingdom1.cities[0].hexTile.AddEventOnTile(this);
 		this.kingdom2.cities[0].hexTile.AddEventOnTile(this);
+		this._warTrigger = WAR_TRIGGER.BORDER_CONFLICT;
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError (this.description);
@@ -106,7 +107,7 @@ public class BorderConflict : GameEvent {
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.kingdom1.id && KingdomManager.Instance.allKingdoms[i].id != this.kingdom2.id){
+			if(KingdomManager.Instance.allKingdoms[i].id != this.kingdom1.id && KingdomManager.Instance.allKingdoms[i].id != this.kingdom2.id && KingdomManager.Instance.allKingdoms[i].isAlive()){
 				kingdoms.Add (KingdomManager.Instance.allKingdoms [i]);
 			}
 		}
@@ -154,10 +155,12 @@ public class BorderConflict : GameEvent {
 		int chance = UnityEngine.Random.Range (0, 100);
 		if(chance < 1){
 			for(int i = 0; i < this.otherKingdoms.Count; i++){
-				Citizen dislikedKing = null;
-				if(CheckForRelationship(this.otherKingdoms[i], ref dislikedKing)){
-					if (this.activeEnvoyResolve == null && this.activeEnvoyProvoke == null) {
-						SendEnvoy (this.otherKingdoms [i], dislikedKing, true);	
+				if (this.otherKingdoms [i].isAlive ()) {
+					Citizen dislikedKing = null;
+					if (CheckForRelationship (this.otherKingdoms [i], ref dislikedKing)) {
+						if (this.activeEnvoyResolve == null && this.activeEnvoyProvoke == null) {
+							SendEnvoy (this.otherKingdoms [i], dislikedKing, true);	
+						}
 					}
 				}
 			}
@@ -271,8 +274,14 @@ public class BorderConflict : GameEvent {
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
 
-		RelationshipKings relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
-		RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
+		RelationshipKings relationship1 = null;
+		if(this.kingdom1.isAlive()){
+			relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
+		}
+		RelationshipKings relationship2 = null;
+		if (this.kingdom2.isAlive ()) {
+			relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
+		}
 
 		if(this.isResolvedPeacefully){
 
@@ -280,22 +289,22 @@ public class BorderConflict : GameEvent {
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Conflict was resolved peacefully.";
 
-			relationship1.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				" A border conflict between " + this.kingdom1.name +  " " + this.kingdom2.name + " was resolved peacefully.",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
-			relationship2.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				" A border conflict between " + this.kingdom2.name +  " " + this.kingdom1.name + " was resolved peacefully.",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
+//			relationship1.relationshipHistory.Add (new History (
+//				GameManager.Instance.month,
+//				GameManager.Instance.days,
+//				GameManager.Instance.year,
+//				" A border conflict between " + this.kingdom1.name +  " " + this.kingdom2.name + " was resolved peacefully.",
+//				HISTORY_IDENTIFIER.KING_RELATIONS,
+//				false
+//			));
+//			relationship2.relationshipHistory.Add (new History (
+//				GameManager.Instance.month,
+//				GameManager.Instance.days,
+//				GameManager.Instance.year,
+//				" A border conflict between " + this.kingdom2.name +  " " + this.kingdom1.name + " was resolved peacefully.",
+//				HISTORY_IDENTIFIER.KING_RELATIONS,
+//				false
+//			));
 		}else{
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "event_end");
 			newLog.AddToFillers (this.kingdom1, this.kingdom1.name);
@@ -305,25 +314,31 @@ public class BorderConflict : GameEvent {
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Conflict caused deterioration in relationship.";
 
-			relationship1.AdjustLikeness (-15, this);
-			relationship2.AdjustLikeness (-15, this);
+			if(relationship1 != null){
+				relationship1.AdjustLikeness (-15, this);
+				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData);
+			}
+			if (relationship2 != null) {
+				relationship2.AdjustLikeness (-15, this);
+				relationship2.sourceKing.WarTrigger (relationship2, this, this.kingdom2.kingdomTypeData);
+			}
 
-			relationship1.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				" A border conflict between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended horribly.",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
-			relationship2.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				" A border conflict between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended horribly.",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
+//			relationship1.relationshipHistory.Add (new History (
+//				GameManager.Instance.month,
+//				GameManager.Instance.days,
+//				GameManager.Instance.year,
+//				" A border conflict between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended horribly.",
+//				HISTORY_IDENTIFIER.KING_RELATIONS,
+//				false
+//			));
+//			relationship2.relationshipHistory.Add (new History (
+//				GameManager.Instance.month,
+//				GameManager.Instance.days,
+//				GameManager.Instance.year,
+//				" A border conflict between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended horribly.",
+//				HISTORY_IDENTIFIER.KING_RELATIONS,
+//				false
+//			));
 		}
 //		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
 

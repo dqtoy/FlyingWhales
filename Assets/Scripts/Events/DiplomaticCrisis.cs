@@ -30,6 +30,7 @@ public class DiplomaticCrisis : GameEvent {
 		this.activeEnvoyProvoke = null;
 		this.kingdom1.cities[0].hexTile.AddEventOnTile(this);
 		this.kingdom2.cities[0].hexTile.AddEventOnTile(this);
+		this._warTrigger = WAR_TRIGGER.BORDER_CONFLICT;
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError (this.description);
@@ -104,7 +105,7 @@ public class DiplomaticCrisis : GameEvent {
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.kingdom1.id && KingdomManager.Instance.allKingdoms[i].id != this.kingdom2.id){
+			if(KingdomManager.Instance.allKingdoms[i].id != this.kingdom1.id && KingdomManager.Instance.allKingdoms[i].id != this.kingdom2.id && KingdomManager.Instance.allKingdoms[i].isAlive()){
 				kingdoms.Add (KingdomManager.Instance.allKingdoms [i]);
 			}
 		}
@@ -152,10 +153,12 @@ public class DiplomaticCrisis : GameEvent {
 		int chance = UnityEngine.Random.Range (0, 100);
 		if(chance < 1){
 			for(int i = 0; i < this.otherKingdoms.Count; i++){
-				Citizen dislikedKing = null;
-				if(CheckForRelationship(this.otherKingdoms[i], ref dislikedKing)){
-					if (this.activeEnvoyResolve == null && this.activeEnvoyProvoke == null) {
-						SendEnvoy (this.otherKingdoms [i], dislikedKing, true);	
+				if (this.otherKingdoms [i].isAlive ()) {
+					Citizen dislikedKing = null;
+					if (CheckForRelationship (this.otherKingdoms [i], ref dislikedKing)) {
+						if (this.activeEnvoyResolve == null && this.activeEnvoyProvoke == null) {
+							SendEnvoy (this.otherKingdoms [i], dislikedKing, true);	
+						}
 					}
 				}
 			}
@@ -270,30 +273,33 @@ public class DiplomaticCrisis : GameEvent {
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
 
-		RelationshipKings relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
-		RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
+		RelationshipKings relationship1 = null;
+		if(this.kingdom1.isAlive()){
+			relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
+		}
+//		RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
 
 		if(this.isResolvedPeacefully){
 			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Diplomatic Crisis was resolved peacefully.";
 
-			relationship1.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				this.kingdom1.king.name +  " did not hate " + this.kingdom2.king.name + ".",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
-			relationship2.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				this.kingdom1.king.name +  " did not hate " + this.kingdom2.king.name + ".",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
+//			relationship1.relationshipHistory.Add (new History (
+//				GameManager.Instance.month,
+//				GameManager.Instance.days,
+//				GameManager.Instance.year,
+//				this.kingdom1.king.name +  " did not hate " + this.kingdom2.king.name + ".",
+//				HISTORY_IDENTIFIER.KING_RELATIONS,
+//				false
+//			));
+//			relationship2.relationshipHistory.Add (new History (
+//				GameManager.Instance.month,
+//				GameManager.Instance.days,
+//				GameManager.Instance.year,
+//				this.kingdom1.king.name +  " did not hate " + this.kingdom2.king.name + ".",
+//				HISTORY_IDENTIFIER.KING_RELATIONS,
+//				false
+//			));
 		}else{
 			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
 
@@ -303,24 +309,27 @@ public class DiplomaticCrisis : GameEvent {
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Diplomatic Crisis caused deterioration in relationship.";
 
-			relationship1.AdjustLikeness (-25, this);
+			if(relationship1 != null){
+				relationship1.AdjustLikeness (-25, this);
+				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData);
+			}
 
-			relationship1.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				this.kingdom1.king.name +  " hated " + this.kingdom2.king.name + ".",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
-			relationship2.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				this.kingdom1.king.name +  " hated " + this.kingdom2.king.name + ".",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
+//			relationship1.relationshipHistory.Add (new History (
+//				GameManager.Instance.month,
+//				GameManager.Instance.days,
+//				GameManager.Instance.year,
+//				this.kingdom1.king.name +  " hated " + this.kingdom2.king.name + ".",
+//				HISTORY_IDENTIFIER.KING_RELATIONS,
+//				false
+//			));
+//			relationship2.relationshipHistory.Add (new History (
+//				GameManager.Instance.month,
+//				GameManager.Instance.days,
+//				GameManager.Instance.year,
+//				this.kingdom1.king.name +  " hated " + this.kingdom2.king.name + ".",
+//				HISTORY_IDENTIFIER.KING_RELATIONS,
+//				false
+//			));
 		}
 		//		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
 

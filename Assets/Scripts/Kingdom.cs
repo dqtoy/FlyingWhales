@@ -138,6 +138,8 @@ public class Kingdom{
 			// Update expansion chance
 			this.expansionChance = this.kingdomTypeData.expansionRate;
 		}
+
+
 	}
 
 	internal int[] GetHoroscope(KINGDOM_TYPE prevKingdomType = KINGDOM_TYPE.NONE){
@@ -297,6 +299,11 @@ public class Kingdom{
 				newKing = city.CreateNewKing ();
 			}
 			if(newKing == null){
+				if(this.king != null){
+					if(this.king.city != null){
+						this.king.city.hasKing = true;
+					}
+				}
 				return;
 			}
 		}
@@ -574,7 +581,7 @@ public class Kingdom{
 		if (UIManager.Instance.currentlyShowingKingdom.id == newCity.kingdom.id) {
 			newCity.kingdom.HighlightAllOwnedTilesInKingdom();
 		}
-
+		KingdomManager.Instance.CheckWarTriggerMisc (newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 	internal void AddInternationalWarCity(City newCity){
 		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
@@ -718,6 +725,15 @@ public class Kingdom{
 		for(int i = 0; i < allGenerals.Count; i++){
 			if(allGenerals[i] is General){
 				total += ((General)allGenerals [i].assignedRole).GetArmyHP ();
+			}
+		}
+		return total;
+	}
+	internal int GetWarCount(){
+		int total = 0;
+		for (int i = 0; i < relationshipsWithOtherKingdoms.Count; i++) {
+			if(relationshipsWithOtherKingdoms[i].isAtWar){
+				total += 1;
 			}
 		}
 		return total;
