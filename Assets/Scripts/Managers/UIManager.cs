@@ -240,6 +240,8 @@ public class UIManager : MonoBehaviour {
 	public UIGrid kingdomListOtherKingdomsGrid;
 	public GameObject kingdomListOtherKingdomsParent;
 	public ButtonToggle kingdomListEventButton;
+	public ButtonToggle kingdomListHistoryButton;
+	public ButtonToggle kingdomListCityButton;
 
 	[Space(10)] //For Event Logs Menu
 	public GameObject elmEventLogsParentGO;
@@ -2619,6 +2621,7 @@ public class UIManager : MonoBehaviour {
 	 * Show Kingdom Events Menu
 	 * */
 	public void ShowKingdomEvents(){
+		HideKingdomHistory();
 		List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
 		List<GameEvent> politicalEvents = allActiveEventsInKingdom.Where (x => x.eventType == EVENT_TYPES.STATE_VISIT || x.eventType == EVENT_TYPES.RAID ||
 			x.eventType == EVENT_TYPES.ASSASSINATION || x.eventType == EVENT_TYPES.DIPLOMATIC_CRISIS || x.eventType == EVENT_TYPES.BORDER_CONFLICT).ToList();
@@ -2819,8 +2822,10 @@ public class UIManager : MonoBehaviour {
 	 * currentlyShowingKingdom
 	 * */
 	public void ShowKingdomHistory(){
+		HideAllKingdomEvents();
 		List<GameEvent> allDoneEvents = EventManager.Instance.GetEventsStartedByKingdom (currentlyShowingKingdom, new EVENT_TYPES[]{ EVENT_TYPES.ALL }).
 			Where(x => !x.isActive).ToList();
+		allDoneEvents = allDoneEvents.Where(x => x.eventType != EVENT_TYPES.EXPANSION).ToList();
 
 		List<EventListItem> currentItems = kingdomHistoryGrid.GetChildList ().Select(x => x.GetComponent<EventListItem>()).ToList();
 		int nextItem = 0;
@@ -2855,6 +2860,7 @@ public class UIManager : MonoBehaviour {
 
 	public void HideKingdomHistory(){
 		kingdomHistoryGO.SetActive(false);
+		kingdomListHistoryButton.SetClickState(false);
 	}
 
 	/*
