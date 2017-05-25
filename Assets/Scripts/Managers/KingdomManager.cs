@@ -149,12 +149,14 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.AddInternationalWar(kingdom2);
 		kingdom2.AddInternationalWar(kingdom1);
 
-		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
-		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
+//		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
+//		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
 
 		Log declareWarLog = war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "declare_war");
 		declareWarLog.AddToFillers (kingdom1.king, kingdom1.king.name);
 		declareWarLog.AddToFillers (kingdom2, kingdom2.name);
+
+		KingdomManager.Instance.CheckWarTriggerDeclareWar (kingdom1, kingdom2);
 //		War newWar = new War(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, null, kingdom1, kingdom2, invasionPlanThatStartedWar);
 	}
 
@@ -295,5 +297,29 @@ public class KingdomManager : MonoBehaviour {
 		}
 
 		return count;
+	}
+
+	internal void CheckWarTriggerDeclareWar(Kingdom warDeclarer, Kingdom warReceiver){
+		for (int i = 0; i < this.allKingdoms.Count; i++) {
+			if(this.allKingdoms[i].id != warDeclarer.id && this.allKingdoms[i].id != warReceiver.id){
+				RelationshipKings relationshipToAffected = this.allKingdoms [i].king.GetRelationshipWithCitizen (warReceiver.king);
+				RelationshipKings relationshipToTarget = this.allKingdoms [i].king.GetRelationshipWithCitizen (warDeclarer.king);
+
+				if(relationshipToAffected.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+					this.allKingdoms [i].king.WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_ALLY);
+				}else if(relationshipToAffected.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
+					this.allKingdoms [i].king.WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_FRIEND);
+				}
+			}
+		}
+	}
+
+	internal void CheckWarTriggerMisc(Kingdom targetKingdom, WAR_TRIGGER warTrigger){
+		for (int i = 0; i < this.allKingdoms.Count; i++) {
+			if (this.allKingdoms [i].id != targetKingdom.id) {
+				RelationshipKings relationshipToTarget = this.allKingdoms [i].king.GetRelationshipWithCitizen (targetKingdom.king);
+				this.allKingdoms [i].king.WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, warTrigger);
+			}
+		}
 	}
 }

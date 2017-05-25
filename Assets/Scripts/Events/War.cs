@@ -60,11 +60,11 @@ public class War : GameEvent {
 	}
 	#endregion
 
-	internal void CreateInvasionPlan(Kingdom kingdomToDeclare, GameEvent gameEventTrigger){
+	internal void CreateInvasionPlan(Kingdom kingdomToDeclare, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
 		if (kingdomToDeclare.id == this._kingdom1.id) {
-			this._kingdom1Rel.CreateInvasionPlan(gameEventTrigger);
+			this._kingdom1Rel.CreateInvasionPlan(gameEventTrigger, warTrigger);
 		} else {
-			this._kingdom2Rel.CreateInvasionPlan(gameEventTrigger);
+			this._kingdom2Rel.CreateInvasionPlan(gameEventTrigger, warTrigger);
 		}
 	}
 

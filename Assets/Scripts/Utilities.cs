@@ -512,7 +512,41 @@ public class Utilities : MonoBehaviour {
 		new Color32(0x88, 0xFF, 0xE2, 0xFF),//Cyan
 		new Color32(0xFC, 0x9F, 0xFF, 0xFF)//Pink
 	};
+	public static string StringReplacer(string text, LogFiller[] logFillers){
+		List<int> specificWordIndexes = new List<int> ();
+		string newText = text;
+		bool hasPeriod = newText.EndsWith (".");
+		if (!string.IsNullOrEmpty (newText)) {
+			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
+			for (int i = 0; i < words.Length; i++) {
+				if (words [i].Contains ("(%")) {
+					specificWordIndexes.Add (i);
+				}else if(words [i].Contains ("(*")){
+					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
+					int index = 0;
+					bool isIndex = int.TryParse (strIndex, out index);
+					if(isIndex){
+						words [i] = Utilities.PronounReplacer (words [i], logFillers [index].obj);
+					}
+				}
+			}
+			if(specificWordIndexes.Count == logFillers.Length){
+				for (int i = 0; i < logFillers.Length; i++) {
+					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], logFillers [i], i);
+					if(!string.IsNullOrEmpty(replacedWord)){
+						words [specificWordIndexes [i]] = replacedWord;
+					}
+				}
+			}
+			newText = string.Empty;
+			for (int i = 0; i < words.Length; i++) {
+				newText += words [i];
+			}
+			newText = newText.Trim (' ');
+		}
 
+		return newText;
+	}
 	public static string LogReplacer(Log log){
 		List<int> specificWordIndexes = new List<int> ();
 		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Raid : GameEvent {
 	public Kingdom sourceKingdom;
+	public Kingdom targetKingdom;
 	public City raidedCity;
 	public List<Kingdom> otherKingdoms;
 	public string pilfered;
@@ -14,7 +15,6 @@ public class Raid : GameEvent {
 	private bool isSuccessful;
 	private bool hasArrived;
 	private Kingdom kingdomToBlame;
-	private RelationshipKings relationshipToAdjust;
 //	List<Citizen> citizenDied = new List<Citizen>();
 
 	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy, City raidedCity) : base (startWeek, startMonth, startYear, startedBy){
@@ -22,6 +22,7 @@ public class Raid : GameEvent {
 		this.durationInDays = 20;
 		this.remainingDays = this.durationInDays;
 		this.sourceKingdom = startedBy.city.kingdom;
+		this.targetKingdom = raidedCity.kingdom;
 		this.raidedCity = raidedCity;
 		this.hasBeenDiscovered = false;
 		this.hasDeflected = false;
@@ -29,7 +30,6 @@ public class Raid : GameEvent {
 		this.isSuccessful = false;
 		this.hasArrived = false;
 		this.kingdomToBlame = null;
-		this.relationshipToAdjust = null;
 
 		this.otherKingdoms = GetOtherKingdoms ();
 		if(this.raidedCity != null){
@@ -49,7 +49,6 @@ public class Raid : GameEvent {
 		raidStartLog.AddToFillers (this.startedByCity, this.startedByCity.name);
 		raidStartLog.AddToFillers (this.raidedCity, this.raidedCity.name);
 
-		this.relationshipToAdjust = this.raidedCity.kingdom.king.SearchRelationshipByID (startedBy.id);
 		DeflectBlame ();
 
 	}
@@ -78,6 +77,17 @@ public class Raid : GameEvent {
 		this.endMonth = GameManager.Instance.month;
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
+
+		if(this.hasBeenDiscovered){
+			this._warTrigger = WAR_TRIGGER.DISCOVERED_RAID_NO_DEATH;
+			if(this.hasDeath){
+				this._warTrigger = WAR_TRIGGER.DISCOVERED_RAID_WITH_DEATH;
+			}
+			RelationshipKings relationship = this.GetRelationship ();
+			if (relationship != null) {
+				this.targetKingdom.king.WarTrigger (relationship, this, this.targetKingdom.kingdomTypeData);
+			}
+		}
 
 //		string deadCitizen = string.Empty;
 //		string result = "unsuccessful";
@@ -121,7 +131,7 @@ public class Raid : GameEvent {
 		}
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.sourceKingdom.id && KingdomManager.Instance.allKingdoms[i].id != this.raidedCity.kingdom.id){
+			if(KingdomManager.Instance.allKingdoms[i].id != this.sourceKingdom.id && KingdomManager.Instance.allKingdoms[i].id != this.targetKingdom.id && KingdomManager.Instance.allKingdoms[i].isAlive()){
 				kingdoms.Add (KingdomManager.Instance.allKingdoms [i]);
 			}
 		}
@@ -130,6 +140,9 @@ public class Raid : GameEvent {
 
 	//Raid party arrives at city
 	private void Arrival(){
+		if(this.raidedCity == null){
+			return;
+		}
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_arrival");
 		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
 //		List<object> arrivedLogObjects = new List<object> {
@@ -174,7 +187,7 @@ public class Raid : GameEvent {
 //		this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 //			"Events", "Raid", "raid_success", raidSuccessLogObjects);
 //		
-		Debug.Log (this.startedBy.name + " of " + this.startedBy.city.name + " has stolen " + stolenGold + " gold from " + this.raidedCity.name + " of " + this.raidedCity.kingdom.name + ".");
+		Debug.Log (this.startedBy.name + " of " + this.startedBy.city.name + " has stolen " + stolenGold + " gold from " + this.raidedCity.name + " of " + this.targetKingdom.name + ".");
 //		int stolenBasicResource = (int)(GetRandomBasicResource(ref basicResource) * 0.15f);
 //		int stolenRareResource = (int)(GetRandomRareResource(ref rareResource) * 0.15f);
 
@@ -244,7 +257,6 @@ public class Raid : GameEvent {
 				if (kingdomToBlame != null) {
 					this.hasDeflected = true;
 					this.kingdomToBlame = kingdomToBlame;
-					this.relationshipToAdjust = this.raidedCity.kingdom.king.SearchRelationshipByID (kingdomToBlame.king.id);
 //					relationship.AdjustLikeness (amountToAdjust, this);
 //					relationship.relationshipHistory.Add (new History (
 //						GameManager.Instance.month,
@@ -261,6 +273,9 @@ public class Raid : GameEvent {
 
 	//Accident killing of random citizen
 	private void AccidentKilling(){
+		if(this.raidedCity == null){
+			return;
+		}
 		Citizen deadCitizen = null;
 		bool isGovernor = false;
 		bool isKing = false;
@@ -288,22 +303,31 @@ public class Raid : GameEvent {
 //			};
 //			this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 //				"Events", "Raid", "raid_accident", accidentDeathLogObjects);
-			
-			int amountToAdjust = -15;
-			if (isGovernor || isKing) {
-				if (isGovernor) {
-					amountToAdjust = -25;
-				} else {
-					amountToAdjust = -35;
+			if(this.hasBeenDiscovered){
+				int amountToAdjust = -15;
+				if (isGovernor || isKing) {
+					if (isGovernor) {
+						amountToAdjust = -25;
+					} else {
+						amountToAdjust = -35;
+					}
 				}
+				RelationshipKings relationship = this.GetRelationship ();
+				if(relationship != null){
+					relationship.AdjustLikeness(amountToAdjust, this);
+				}
+
 			}
-			this.relationshipToAdjust.AdjustLikeness(amountToAdjust, this);
+
 		}
 
 	}
 
 	//Discovery of Raid Party which will cause relationship deterioration
 	private void RaidPartyDiscovery(){
+		if(this.raidedCity == null){
+			return;
+		}
 		if(this.hasBeenDiscovered){
 			return;
 		}
@@ -311,11 +335,18 @@ public class Raid : GameEvent {
 		if(chance < 4){
 			//DISCOVERY
 			this.hasBeenDiscovered = true;
-
 			if (this.hasDeflected) {
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery_deflect");
-				newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
-				newLog.AddToFillers (this.kingdomToBlame, this.kingdomToBlame.name);
+				if(this.kingdomToBlame == null || !this.kingdomToBlame.isAlive()){
+					this.kingdomToBlame = GetRandomKingdomToBlame ();
+					if(this.kingdomToBlame != null){
+						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery_deflect");
+						newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+						newLog.AddToFillers (this.kingdomToBlame, this.kingdomToBlame.name);
+					}else{
+						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery");
+						newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+					}
+				}
 //				List<object> discoveredLogObjects = new List<object> {
 //					this.raidedCity,
 //					this.startedByCity
@@ -331,6 +362,11 @@ public class Raid : GameEvent {
 //				this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 //					"Events", "Raid", "raid_discovery", discoveredLogObjects);
 			}
+			RelationshipKings relationship = this.GetRelationship ();
+			if(relationship != null){
+				relationship.AdjustLikeness(-10, this);
+			}
+
 //				if(deflectChance < 35){
 //					Kingdom kingdomToBlame = GetRandomKingdomToBlame ();
 //					if(kingdomToBlame != null){
@@ -391,6 +427,7 @@ public class Raid : GameEvent {
 		if(this.otherKingdoms == null || this.otherKingdoms.Count <= 0){
 			return null;
 		}
+		this.otherKingdoms.RemoveAll (x => !x.isAlive ());
 		return this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
 	}
 	private int GetRandomBasicResource(ref BASE_RESOURCE_TYPE resourceType){
@@ -468,5 +505,23 @@ public class Raid : GameEvent {
 			resourceType = BASE_RESOURCE_TYPE.NONE;
 			return 0;
 		}
+	}
+
+	private RelationshipKings GetRelationship(){
+		RelationshipKings relationship = null;
+		if(this.targetKingdom == null || !this.targetKingdom.isAlive()){
+			return relationship;
+		}
+		relationship = this.targetKingdom.king.SearchRelationshipByID (this.sourceKingdom.king.id);
+		if(this.hasDeflected){
+			if(this.kingdomToBlame != null){
+				if(this.kingdomToBlame.isAlive()){
+					relationship = this.targetKingdom.king.SearchRelationshipByID (this.kingdomToBlame.king.id);
+				}else{
+					relationship = null;
+				}
+			}
+		}
+		return relationship;
 	}
 }
