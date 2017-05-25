@@ -44,6 +44,8 @@ public class Espionage : GameEvent {
 		}
 		EventManager.Instance.AddEventToDictionary(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		this.EventIsCreated ();
+
 	}
 	internal override void PerformAction(){
 		this.remainingDays -= 1;
@@ -59,7 +61,7 @@ public class Espionage : GameEvent {
 		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;

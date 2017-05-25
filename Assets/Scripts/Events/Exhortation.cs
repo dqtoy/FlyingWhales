@@ -43,6 +43,9 @@ public class Exhortation : GameEvent {
 		Debug.LogError (this.description);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+
+		this.EventIsCreated ();
+
 	}
 
 	internal override void PerformAction(){
@@ -90,7 +93,7 @@ public class Exhortation : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		if (citizenSent.role == ROLE.ENVOY) {
 			((Envoy)citizenSent.assignedRole).inAction = false;
 		}

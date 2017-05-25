@@ -61,6 +61,9 @@ public class RequestPeace : GameEvent {
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+
+		this.EventIsCreated ();
+
 	}
 
 	internal override void PerformAction(){
@@ -136,7 +139,7 @@ public class RequestPeace : GameEvent {
 		for (int i = 0; i < this._saboteurs.Count; i++) {
 			((Envoy)this._saboteurs[i].assignedRole).inAction = false;
 		}
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;

@@ -27,6 +27,9 @@ public class PowerGrab : GameEvent {
 		Debug.LogError (this.description);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+
+		this.EventIsCreated ();
+
 	}
 
 	internal override void PerformAction(){
@@ -144,7 +147,7 @@ public class PowerGrab : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		Debug.LogError (this.startedBy.name + " has ended power grab.");
 	}
 

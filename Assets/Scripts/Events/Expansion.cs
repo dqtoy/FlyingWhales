@@ -39,6 +39,12 @@ public class Expansion : GameEvent {
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "event_title");
+		newLogTitle.AddToFillers (null, startedBy.city.kingdom.name);
+
+		this.EventIsCreated ();
+
 	}
 
 	internal override void PerformAction(){
@@ -130,6 +136,6 @@ public class Expansion : GameEvent {
 		Debug.LogError (this.resolution);
 		this.isActive = false;
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 	}
 }

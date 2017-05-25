@@ -403,9 +403,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	public void AddEventOnTile(GameEvent gameEvent){
-		GameObject eventGO = GameObject.Instantiate (Resources.Load ("GameObjects/WorldEventItem") as GameObject, this.eventsParent) as GameObject;
-		eventGO.transform.localPosition = Vector3.zero;
-		eventGO.GetComponent<WorldEventItem> ().SetGameEvent(gameEvent);
+//		GameObject eventGO = GameObject.Instantiate (Resources.Load ("GameObjects/WorldEventItem") as GameObject, this.eventsParent) as GameObject;
+//		eventGO.transform.localPosition = Vector3.zero;
+//		eventGO.GetComponent<WorldEventItem> ().SetGameEvent(gameEvent);
 	}
 
 

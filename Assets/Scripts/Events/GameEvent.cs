@@ -76,9 +76,11 @@ public class GameEvent {
 
 	internal virtual void DoneCitizenAction(Envoy citizen){}
 
+	internal virtual void CancelEvent(){}
+
 	internal virtual void DoneEvent(){
 		Debug.Log ("Game Event Ended!");
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 	} 
 	#endregion
 
@@ -93,7 +95,6 @@ public class GameEvent {
 		return newLog;
 	}
 
-	internal virtual void CancelEvent(){}
 
 	internal bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
 		for(int i = 0; i < unwantedGovernors.Count; i++){
@@ -122,5 +123,10 @@ public class GameEvent {
 		}
 
 		return unwantedGovernors;
+	}
+
+	//When an event has been constructed and created
+	internal void EventIsCreated(){
+		UIManager.Instance.ShowEventsOfType (this);
 	}
 }

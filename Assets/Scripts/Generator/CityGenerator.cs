@@ -91,13 +91,13 @@ public class CityGenerator : MonoBehaviour {
 	private void SetTileAsStoneHabitable(HexTile hexTile){
 		hexTile.isHabitable = true;
 		stoneHabitableTiles.Add(hexTile);
-		hexTile.GetComponent<SpriteRenderer>().color = Color.black;
+		//hexTile.GetComponent<SpriteRenderer>().color = Color.black;
 	}
 
 	private void SetTileAsWoodHabitable(HexTile hexTile){
 		hexTile.isHabitable = true;
 		woodHabitableTiles.Add(hexTile);
-		hexTile.GetComponent<SpriteRenderer>().color = Color.black;
+		//hexTile.GetComponent<SpriteRenderer>().color = Color.black;
 	}
 
 	// This will return the nearest habitable tile that matches the following criteria
@@ -107,6 +107,7 @@ public class CityGenerator : MonoBehaviour {
 
 		for (int i = 0; i < city.habitableTileDistance.Count; i++) {
 			if (!city.habitableTileDistance[i].hexTile.isOccupied && !city.habitableTileDistance[i].hexTile.isBorder) {
+				List<HexTile> checkForOtherBorderTilesInRange;
 				// Check if the tile is within required distance of the expanding kingdom's current borders
 				if (city.kingdom.kingdomTypeData.expansionDistanceFromBorder > 0) {
 					List<HexTile> checkForExpandingKingdomBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (city.kingdom.kingdomTypeData.expansionDistanceFromBorder);
@@ -114,16 +115,23 @@ public class CityGenerator : MonoBehaviour {
 					if (z <= 0) {
 						continue;
 					}
-				}
-					
-				// Check if there are more than 2 nearby hex tiles that are already part of another kingdom
-				List<HexTile> checkForOtherBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (2);
-				if (checkForOtherBorderTilesInRange.Where (x => (x.ownedByCity != null && x.ownedByCity.kingdom != city.kingdom)).Count () > 1) {
-					continue;
-				} else {
-					return city.habitableTileDistance [i].hexTile;
-				}
 
+					// Check if there are more than 2 nearby (within 3 hex tiles) hex tiles that are already part of another kingdom
+					checkForOtherBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (4);
+					if (checkForOtherBorderTilesInRange.Where (x => (x.ownedByCity != null && x.ownedByCity.kingdom != city.kingdom)).Count () > 1) {
+						continue;
+					} else {
+						return city.habitableTileDistance [i].hexTile;
+					}
+				} else {
+					// Check if there are more than 2 nearby (within 3 hex tiles) hex tiles that are already part of any kingdom (including own)
+					checkForOtherBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (4);
+					if (checkForOtherBorderTilesInRange.Where (x => (x.ownedByCity != null)).Count () > 1) {
+						continue;
+					} else {
+						return city.habitableTileDistance [i].hexTile;
+					}					
+				}
 			}
 		}
 

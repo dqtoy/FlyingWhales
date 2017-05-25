@@ -296,17 +296,17 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 
-		if (specificEventGO.activeSelf) {
-			if (currentlyShowingEvent != null) {
-				ShowSpecificEvent (currentlyShowingEvent);
-			}
-		}
+//		if (specificEventGO.activeSelf) {
+//			if (currentlyShowingEvent != null) {
+//				ShowSpecificEvent (currentlyShowingEvent);
+//			}
+//		}
 
-		if (eventsOfTypeGo.activeSelf) {
-			if (lastClickedEventType != null) {
-				UpdateEventsOfType();
-			}
-		}
+//		if (eventsOfTypeGo.activeSelf) {
+//			if (lastClickedEventType != null) {
+//				UpdateEventsOfType();
+//			}
+//		}
 
 		if (eventLogsGO.activeSelf) {
 			if (currentlyShowingLogObject != null) {
@@ -676,8 +676,6 @@ public class UIManager : MonoBehaviour {
 //	public void ShowCitizens(){
 //		CharacterPortrait[] characters = cityInfoCitizensParent.GetComponentsInChildren<CharacterPortrait>();
 //		List<Citizen> citizensExcludingKingAndGovernor = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING).ToList();
-
-
 //		for (int i = 0; i < characters.Length; i++) {
 //			Destroy (characters [i].gameObject);
 //		}
@@ -1225,6 +1223,9 @@ public class UIManager : MonoBehaviour {
 //
 //	}
 
+	public void RepositionGridCallback(UIGrid thisGrid){
+		StartCoroutine (RepositionGrid (thisGrid));
+	}
 	#region coroutines
 	public IEnumerator RepositionGrid(UIGrid thisGrid){
 		yield return null;
@@ -1638,7 +1639,7 @@ public class UIManager : MonoBehaviour {
 
 	}
 
-	public void ShowEventsOfType(GameObject GO){
+	/*public void ShowEventsOfType(GameObject GO){
 		if (eventsOfTypeGo.activeSelf) {
 			if (lastClickedEventType != null) {
 				if (lastClickedEventType == GO) {
@@ -1671,7 +1672,7 @@ public class UIManager : MonoBehaviour {
 				}
 			}
 			if (!noEvents) {
-//				EventManager.Instance.onShowEventsOfType.Invoke (EVENT_TYPES.ALL);
+				EventManager.Instance.onShowEventsOfType.Invoke (EVENT_TYPES.ALL);
 				//				CameraMove.Instance.ShowWholeMap ();
 			}
 		} else {
@@ -1690,7 +1691,7 @@ public class UIManager : MonoBehaviour {
 					eventGO.transform.localScale = Vector3.one;
 				}
 				if (gameEventsOfType.Count > 0) {
-//					EventManager.Instance.onShowEventsOfType.Invoke (eventType);
+				EventManager.Instance.onShowEventsOfType.Invoke (eventType);
 					//					CameraMove.Instance.ShowWholeMap ();
 				}
 			} else {
@@ -1704,9 +1705,19 @@ public class UIManager : MonoBehaviour {
 
 		StartCoroutine (RepositionGrid (gameEventsOfTypeGrid));
 		eventsOfTypeGo.SetActive (true);
+	} */
+
+	public void ShowEventsOfType(GameEvent gameEvent){
+		GameObject eventGO = GameObject.Instantiate (gameEventPrefab, gameEventsOfTypeGrid.transform) as GameObject;
+		eventGO.GetComponent<EventItem>().SetEvent (gameEvent);
+		eventGO.GetComponent<EventItem> ().SetSpriteIcon (GetSpriteForEvent (gameEvent.eventType));
+		eventGO.GetComponent<EventItem> ().onClickEvent += ShowEventLogs;
+		eventGO.GetComponent<EventItem> ().StartExpirationTimer();
+		eventGO.transform.localScale = Vector3.one;
+		StartCoroutine (RepositionGrid (gameEventsOfTypeGrid));
 	}
 
-	public void UpdateEventsOfType(){
+	/*public void UpdateEventsOfType(){
 		if (lastClickedEventType.name == "AllBtn") {
 			List<Transform> children = gameEventsOfTypeGrid.GetChildList ();
 			bool noEvents = true;
@@ -1744,16 +1755,16 @@ public class UIManager : MonoBehaviour {
 					eventGO.transform.localScale = Vector3.one;
 				}
 				if (gameEventsOfType.Count > 0) {
-//					EventManager.Instance.onShowEventsOfType.Invoke (eventType);
+					EventManager.Instance.onShowEventsOfType.Invoke (eventType);
 				}
 			}
 
 		}
 		StartCoroutine (RepositionGrid (gameEventsOfTypeGrid));
 		eventsOfTypeGo.SetActive (true);
-	}
+	} */
 
-	#region ShowSpecificEvent OLD
+	/*#region ShowSpecificEvent OLD
 	public void ShowSpecificEvent(GameEvent gameEvent){
 		specificEventNameLbl.text = gameEvent.eventType.ToString().Replace("_", " ");
 		specificEventDescriptionLbl.text = gameEvent.description;
@@ -2528,7 +2539,7 @@ public class UIManager : MonoBehaviour {
 		specificEventGO.SetActive(false);
 		ClearSpecificEventUI ();
 	}
-	#endregion
+	#endregion*/
 
 	/*
 	 * Show Event Logs menu
@@ -2923,12 +2934,12 @@ public class UIManager : MonoBehaviour {
 
 	public void UpdateKingdom1Exhaustion(){
 		currentlyShowingWar.kingdom1Rel.kingdomWar.exhaustion = Int32.Parse (newKingdom1WarExhaustion.text);
-		ShowWarEvent (currentlyShowingWar);
+//		ShowWarEvent (currentlyShowingWar);
 	}
 
 	public void UpdateKingdom2Exhaustion(){
 		currentlyShowingWar.kingdom2Rel.kingdomWar.exhaustion = Int32.Parse (newKingdom2WarExhaustion.text);
-		ShowWarEvent (currentlyShowingWar);
+//		ShowWarEvent (currentlyShowingWar);
 	}
 
 	public void OnValueChangeEventDropdown(){

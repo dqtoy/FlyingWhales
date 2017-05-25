@@ -26,6 +26,8 @@ public class MarriageInvitation : GameEvent {
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+		this.EventIsCreated ();
+
 	}
 
 	internal override void PerformAction(){
@@ -209,7 +211,7 @@ public class MarriageInvitation : GameEvent {
 	internal override void DoneEvent(){
 		Debug.Log (this.startedBy.name + "'s marriage invitation has ended. " + this.resolution);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 }

@@ -147,6 +147,9 @@ public class InvasionPlan : GameEvent {
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 		this.StartMilitarizationEvent();
+
+		this.EventIsCreated ();
+
 	}
 
 	#region overrides
@@ -211,7 +214,7 @@ public class InvasionPlan : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;

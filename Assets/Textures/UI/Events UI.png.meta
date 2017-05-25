@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: fceff61e7f3789b4d86796e7f7724b2f
-timeCreated: 1491378660
+timeCreated: 1495688461
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -22,8 +22,8 @@ TextureImporter:
     21300030: Events UI_17
     21300032: Events UI_18
     21300034: Events UI_19
-    21300036: Events UI_20
-    21300038: Events UI_21
+    21300036: Events UI_21
+    21300038: Events UI_20
     21300040: invasion
   serializedVersion: 2
   mipmaps:
@@ -168,10 +168,10 @@ TextureImporter:
       name: Events UI_9
       rect:
         serializedVersion: 2
-        x: 8
-        y: 388
-        width: 66
-        height: 68
+        x: 6
+        y: 389
+        width: 68
+        height: 67
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -308,26 +308,26 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_20
+      name: Events UI_21
       rect:
         serializedVersion: 2
-        x: 8
-        y: 316
-        width: 66
-        height: 68
+        x: 6
+        y: 317
+        width: 68
+        height: 67
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Events UI_21
+      name: Events UI_20
       rect:
         serializedVersion: 2
-        x: 8
-        y: 236
-        width: 66
-        height: 69
+        x: 6
+        y: 245
+        width: 68
+        height: 67
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

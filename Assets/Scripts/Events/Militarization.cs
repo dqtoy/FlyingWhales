@@ -36,6 +36,9 @@ public class Militarization : GameEvent {
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+
+		this.EventIsCreated ();
+
 	}
 
 	#region overrides
@@ -74,7 +77,7 @@ public class Militarization : GameEvent {
 		}
 		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			this.startedByCity.name + " ended Militarization." , HISTORY_IDENTIFIER.NONE));
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
