@@ -96,13 +96,18 @@ public class Biomes : MonoBehaviour {
 	public Sprite[] desertMountainTiles;
 	public Sprite[] snowAndTundraMountainTiles;
 
-	[Space(10)]
-	public List<HexTile> snowHexTiles;
-	public List<HexTile> tundraHexTiles;
-	public List<HexTile> grasslandHexTiles;
-	public List<HexTile> woodsHexTiles;
-	public List<HexTile> forestHexTiles;
-	public List<HexTile> desertHexTiles;
+//	[Space(10)]
+//	public List<HexTile> snowHexTiles;
+//	public List<HexTile> tundraHexTiles;
+//	public List<HexTile> grasslandHexTiles;
+//	public List<HexTile> woodsHexTiles;
+//	public List<HexTile> forestHexTiles;
+//	public List<HexTile> desertHexTiles;
+
+	public Sprite grasslandTexture;
+	public Sprite snowTexture;
+	public Sprite waterTexture;
+	public Material edgeMaterial;
 
 	void Awake(){
 		Instance = this;
@@ -338,6 +343,15 @@ public class Biomes : MonoBehaviour {
 					Sprite bareSpriteToUse = bareTiles [Random.Range (0, bareTiles.Length)];
 					currentHexTile.SetTileSprites (bareSpriteToUse);
 				}
+			}
+		}
+	}
+
+	internal void GenerateTileDetails(){
+		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+			HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+			if (currHexTile.biomeType == BIOMES.GRASSLAND && currHexTile.elevationType != ELEVATION.WATER) {
+				currHexTile.LoadEdges(grasslandTexture, edgeMaterial);
 			}
 		}
 	}

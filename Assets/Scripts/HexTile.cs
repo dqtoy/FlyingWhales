@@ -50,6 +50,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public SpriteRenderer kingdomColorSprite;
 	public GameObject highlightGO;
 
+	//For Tile Edges
+	[SerializeField] private GameObject topLeftEdge;
+	[SerializeField] private GameObject leftEdge;
+	[SerializeField] private GameObject botLeftEdge;
+	[SerializeField] private GameObject botRightEdge;
+	[SerializeField] private GameObject rightEdge;
+	[SerializeField] private GameObject topRightEdge;
+
 	public List<HexTile> connectedTiles = new List<HexTile>();
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
@@ -62,9 +70,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
 
-	public int range = 0;
+	#region For Testing
+	[SerializeField] private int range = 0;
 	List<HexTile> tiles = new List<HexTile> ();
-
 	[ContextMenu("Show Tiles In Range")]
 	public void ShowTilesInRange(){
 		for (int i = 0; i < tiles.Count; i++) {
@@ -114,6 +122,85 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
 			Debug.Log ("Adjacent Kingdom: " + this.city.kingdom.adjacentKingdoms[i].name);
 		}
+	}
+	#endregion
+
+	internal void LoadEdges(Sprite spriteForTile, Material materialForTile){
+		List<HexTile> neighbours = this.AllNeighbours.ToList ();
+		for (int i = 0; i < neighbours.Count; i++) {
+			HexTile currentNeighbour = neighbours [i];
+			int neighbourX = currentNeighbour.xCoordinate;
+			int neighbourY = currentNeighbour.yCoordinate;
+
+			Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate), 
+				(currentNeighbour.yCoordinate - this.yCoordinate));
+			if (currentNeighbour.biomeType != this.biomeType || currentNeighbour.elevationType == ELEVATION.WATER) {
+				GameObject gameObjectToEdit = null;
+				if (this.yCoordinate % 2 == 0) {
+					if (difference.X == -1 && difference.Y == 1) {
+						//top left
+						gameObjectToEdit = this.topLeftEdge;
+					} else if (difference.X == 0 && difference.Y == 1) {
+						//top right
+						gameObjectToEdit = this.topRightEdge;
+					} else if (difference.X == 1 && difference.Y == 0) {
+						//right
+						gameObjectToEdit = this.rightEdge;
+					} else if (difference.X == 0 && difference.Y == -1) {
+						//bottom right
+						gameObjectToEdit = this.botRightEdge;
+					} else if (difference.X == -1 && difference.Y == -1) {
+						//bottom left
+						gameObjectToEdit = this.botLeftEdge;
+					} else if (difference.X == -1 && difference.Y == 0) {
+						//left
+						gameObjectToEdit = this.leftEdge;
+					}
+				} else {
+					if (difference.X == 0 && difference.Y == 1) {
+						//top left
+						gameObjectToEdit = this.topLeftEdge;
+					} else if (difference.X == 1 && difference.Y == 1) {
+						//top right
+						gameObjectToEdit = this.topRightEdge;
+					} else if (difference.X == 1 && difference.Y == 0) {
+						//right
+						gameObjectToEdit = this.rightEdge;
+					} else if (difference.X == 1 && difference.Y == -1) {
+						//bottom right
+						gameObjectToEdit = this.botRightEdge;
+					} else if (difference.X == 0 && difference.Y == -1) {
+						//bottom left
+						gameObjectToEdit = this.botLeftEdge;
+					} else if (difference.X == -1 && difference.Y == 0) {
+						//left
+						gameObjectToEdit = this.leftEdge;
+					}
+				}
+				if (gameObjectToEdit != null) {
+					gameObjectToEdit.SetActive (true);
+					gameObjectToEdit.GetComponent<SpriteRenderer> ().sprite = spriteForTile;
+					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
+				}
+
+			}
+		}
+	}
+
+	internal void SetSortingOrder(int sortingOrder){
+		this.GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder;
+		this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		this.kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		this.highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		this.structureGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
+		this.cityNameGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 6;
+
+		this.topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		this.leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		this.botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		this.botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		this.rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		this.topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
 	}
 
 	#region Resource
