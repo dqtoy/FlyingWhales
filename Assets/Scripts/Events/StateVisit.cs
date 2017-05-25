@@ -45,6 +45,9 @@ public class StateVisit : GameEvent {
 		newLog.AddToFillers (visitor, visitor.name);
 		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
 		newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
+
+		this.EventIsCreated ();
+
 	}
 
 	internal override void PerformAction(){
@@ -127,7 +130,7 @@ public class StateVisit : GameEvent {
 		this.endMonth = GameManager.Instance.month;
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 
 //		EventManager.Instance.allEvents [EVENT_TYPES.STATE_VISIT].Remove (this);
 	}

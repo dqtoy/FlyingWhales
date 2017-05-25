@@ -51,6 +51,9 @@ public class Raid : GameEvent {
 
 		DeflectBlame ();
 
+		this.EventIsCreated ();
+
+
 	}
 
 	internal override void PerformAction(){
@@ -73,7 +76,7 @@ public class Raid : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;

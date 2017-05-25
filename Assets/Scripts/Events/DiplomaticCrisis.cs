@@ -44,6 +44,7 @@ public class DiplomaticCrisis : GameEvent {
 		newLog.AddToFillers (kingdom1.king, kingdom1.king.name);
 		newLog.AddToFillers (kingdom2.king, kingdom2.king.name);
 		newLog.AddToFillers (null, Utilities.crisis[0]);
+		this.EventIsCreated ();
 
 	}
 
@@ -268,7 +269,7 @@ public class DiplomaticCrisis : GameEvent {
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;

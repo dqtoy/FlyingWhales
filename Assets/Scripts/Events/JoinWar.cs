@@ -57,6 +57,9 @@ public class JoinWar : GameEvent {
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+
+		this.EventIsCreated ();
+
 	}
 
 	#region overrides
@@ -179,7 +182,7 @@ public class JoinWar : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this._envoyToSend.inAction = false;
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;

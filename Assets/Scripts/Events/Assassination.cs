@@ -127,6 +127,9 @@ public class Assassination : GameEvent {
 		newLog.AddToFillers (spy, spy.name);
 		newLog.AddToFillers (targetCitizen, targetCitizen.name);
 		newLog.AddToFillers (gameEventTrigger, triggerReason);
+
+		this.EventIsCreated ();
+
 	}
 
 	internal override void PerformAction(){
@@ -149,7 +152,7 @@ public class Assassination : GameEvent {
 		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;

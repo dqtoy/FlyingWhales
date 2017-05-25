@@ -45,6 +45,8 @@ public class BorderConflict : GameEvent {
 		newLog.AddToFillers (kingdom2, kingdom2.name);
 		newLog.AddToFillers (null, LocalizationManager.Instance.GetRandomLocalizedValue("Reasons", "BorderConflictReasons"));
 
+		this.EventIsCreated ();
+
 	}
 
 	internal override void PerformAction(){
@@ -269,7 +271,7 @@ public class BorderConflict : GameEvent {
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
