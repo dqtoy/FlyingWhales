@@ -38,7 +38,7 @@ public class InvasionPlan : GameEvent {
 	}
 	#endregion
 
-	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _sourceKingdom, Kingdom _targetKingdom, GameEvent gameEventTrigger, War _war) : base (startWeek, startMonth, startYear, startedBy){
+	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _sourceKingdom, Kingdom _targetKingdom, GameEvent gameEventTrigger, War _war, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " created an invasion plan against " + _targetKingdom.king.name + ".";
@@ -51,60 +51,85 @@ public class InvasionPlan : GameEvent {
 		this._joinWarEvents = new List<JoinWar>();
 
 		string reason = string.Empty;
-		if (gameEventTrigger is Assassination) {
-			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after discovering that " + gameEventTrigger.startedBy.name
+		if (gameEventTrigger != null) {
+			if (gameEventTrigger is Assassination) {
+				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after discovering that " + gameEventTrigger.startedBy.name
 				+ " sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, description, HISTORY_IDENTIFIER.NONE));
+				startedBy.history.Add (new History (startMonth, startWeek, startYear, description, HISTORY_IDENTIFIER.NONE));
 
-			reason = "After discovering that " + gameEventTrigger.startedBy.name + " sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
+				reason = "After discovering that " + gameEventTrigger.startedBy.name + " sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
 
-		} else if (gameEventTrigger is BorderConflict){
-			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in response to worsening Border Conflict.";
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+			} else if (gameEventTrigger is BorderConflict) {
+				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in response to worsening Border Conflict.";
+				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
-			reason = "In response to worsening Border Conflict";
+				reason = "In response to worsening Border Conflict";
 
-		} else if (gameEventTrigger is DiplomaticCrisis){
-			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in the aftermath of a recent Diplomatic Crisis.";
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+			} else if (gameEventTrigger is DiplomaticCrisis) {
+				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in the aftermath of a recent Diplomatic Crisis.";
+				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
-			reason = "In the aftermath of a recent Diplomatic Crisis.";
+				reason = "In the aftermath of a recent Diplomatic Crisis.";
 
-		} else if (gameEventTrigger is Espionage){
-			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+			} else if (gameEventTrigger is Espionage) {
+				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
+				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
-			reason = "After finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name;
+				reason = "After finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name;
 
-		} else if (gameEventTrigger is Raid){
-			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after the raid of " + (gameEventTrigger as Raid).raidedCity.name + ".";
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+			} else if (gameEventTrigger is Raid) {
+				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after the raid of " + (gameEventTrigger as Raid).raidedCity.name + ".";
+				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
-			reason = "After the raid of " + (gameEventTrigger as Raid).raidedCity.name;
+				reason = "After the raid of " + (gameEventTrigger as Raid).raidedCity.name;
 
-		} else if (gameEventTrigger is JoinWar){
-			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name  + ".";
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+			} else if (gameEventTrigger is JoinWar) {
+				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name + ".";
+				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 
-			reason = "At the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name;
+				reason = "At the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name;
 
-		} else {
-			this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-		} 
+			} else {
+				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
+				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
+			} 
 
+			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
+			invasionPlanStart.AddToFillers (gameEventTrigger, reason);
+			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
+			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
 
+			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, Utilities.MILITARIZATION_DURATION);
+			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
+		}else{
+			
+			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "WarTriggerReasons", warTrigger.ToString ())
+				, new LogFiller[]{ new LogFiller (this._targetKingdom.king, this._targetKingdom.king.name) });
+//			switch(warTrigger){
+//			case WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_ALLY:
+//				reason = "After " + this._targetKingdom.king.name + " declared war against an ally";
+//				break;
+//			case WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_FRIEND:
+//				reason = "After " + this._targetKingdom.king.name + " declared war against a friend";
+//				break;
+//			case WAR_TRIGGER.TARGET_GAINED_A_CITY:
+//				reason = "After " + this._targetKingdom.king.name + " gained a city";
+//				break;
+//			case WAR_TRIGGER.TARGET_LOST_A_BATTLE:
+//				reason = "After " + this._targetKingdom.king.name + " lost a battle";
+//				break;
+//			}
 
+			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
+			invasionPlanStart.AddToFillers (null, reason);
+			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
+			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
+
+			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, Utilities.MILITARIZATION_DURATION);
+			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
+		}
 		this.sourceKingdom.cities[0].hexTile.AddEventOnTile(this);
 		this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
-
-		Log invasionPlanStart = this._war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
-		invasionPlanStart.AddToFillers(gameEventTrigger, reason);
-		invasionPlanStart.AddToFillers(this._startedBy, this._startedBy.name);
-		invasionPlanStart.AddToFillers(this._targetKingdom, this._targetKingdom.name);
-
-		System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, Utilities.MILITARIZATION_DURATION);
-		invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);

@@ -898,6 +898,8 @@ public class City{
 				this.kingdom.HighlightAllOwnedTilesInKingdom();
 			}
 		}
+
+		KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 	internal List<General> GetIncomingAttackers(){
 		List<General> incomingAttackers = new List<General> ();

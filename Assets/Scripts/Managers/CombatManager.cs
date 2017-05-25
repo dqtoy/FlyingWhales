@@ -347,14 +347,7 @@ public class CombatManager : MonoBehaviour {
 //			general1.DeathArmy ();
 		}
 
-		if(!isMidway){
-			if(general1.army.hp <= 0){
-				general1.DeathArmy ();
-			}
-			if(general2.army.hp <= 0){
-				general2.DeathArmy ();
-			}
-		}
+
 
 		RelationshipKingdom kingdomRelationshipToGeneral2 = general1.citizen.city.kingdom.GetRelationshipWithOtherKingdom(general2.citizen.city.kingdom);
 		RelationshipKingdom kingdomRelationshipToGeneral1 = general2.citizen.city.kingdom.GetRelationshipWithOtherKingdom(general1.citizen.city.kingdom);
@@ -362,6 +355,7 @@ public class CombatManager : MonoBehaviour {
 
 		if(general1.army.hp <= 0){
 			//BATTLE LOST
+			KingdomManager.Instance.CheckWarTriggerMisc(general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 			kingdomRelationshipToGeneral2.kingdomWar.battlesLost += 1;
 			if(isMidway){
 				kingdomRelationshipToGeneral2.AdjustExhaustion (10);
@@ -382,6 +376,7 @@ public class CombatManager : MonoBehaviour {
 
 		if(general2.army.hp <= 0){
 			//BATTLE LOST
+			KingdomManager.Instance.CheckWarTriggerMisc(general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 			kingdomRelationshipToGeneral1.kingdomWar.battlesLost += 1;
 			if(isMidway){
 				kingdomRelationshipToGeneral1.AdjustExhaustion (10);
@@ -512,7 +507,14 @@ public class CombatManager : MonoBehaviour {
 			}
 
 		}
-
+		if(!isMidway){
+			if(general1.army.hp <= 0){
+				general1.DeathArmy ();
+			}
+			if(general2.army.hp <= 0){
+				general2.DeathArmy ();
+			}
+		}
 		Debug.Log ("RESULTS: " + general1.citizen.name + " army hp left: " + general1.army.hp + "\n" + general2.citizen.name + " army hp left: " + general2.army.hp);
 	}
 

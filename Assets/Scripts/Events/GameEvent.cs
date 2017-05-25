@@ -27,11 +27,21 @@ public class GameEvent {
 	public bool isActive;
 	public List<Log> logs;
 
+	internal bool relationshipHasDeteriorated;
+	internal bool relationshipHasImproved;
+
 	protected Citizen _startedBy;
+	protected WAR_TRIGGER _warTrigger;
 
 	public Citizen startedBy {
 		get {
 			return this._startedBy;
+		}
+	}
+
+	public WAR_TRIGGER warTrigger {
+		get {
+			return this._warTrigger;
 		}
 	}
 
@@ -50,6 +60,9 @@ public class GameEvent {
 		this.description = "";
 		this.resolution = "";
 		this.isActive = true;
+		this._warTrigger = WAR_TRIGGER.NONE;
+		this.relationshipHasDeteriorated = false;
+		this.relationshipHasImproved = false;
 		this.logs = new List<Log>();
 		if(this._startedBy != null){
 			this.startedByKingdom = _startedBy.city.kingdom;

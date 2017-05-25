@@ -63,16 +63,23 @@ public class StateVisit : GameEvent {
 	}
 
 	internal override void DoneEvent(){
-		RelationshipKings relationship = this.invitedKingdom.king.SearchRelationshipByID (this.inviterKingdom.king.id);
+		RelationshipKings relationship = null;
+		if(this.invitedKingdom.isAlive()){
+			relationship = this.invitedKingdom.king.SearchRelationshipByID (this.inviterKingdom.king.id);
+		}
 		if(this.isSuccessful){
-			relationship.AdjustLikeness (20, this);
+			if(relationship != null){
+				relationship.AdjustLikeness (20, this);
+			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_end");
 			newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
 			newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
 			newLog.AddToFillers (this.visitor, this.visitor.name);
 		}else{
 			if(this.isDoneBySabotage){
-				relationship.AdjustLikeness (-10, this);
+				if (relationship != null) {
+					relationship.AdjustLikeness (-10, this);
+				}
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_success");
 				newLog.AddToFillers (this.saboteurEnvoy.citizen, this.saboteurEnvoy.citizen.name);
 				newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
@@ -81,7 +88,9 @@ public class StateVisit : GameEvent {
 				if(this.visitorHasDied){
 					Debug.Log ("VISITOR DIED!");
 					if(relationship.like <= 0){
-						relationship.AdjustLikeness (-35, this);
+						if (relationship != null) {
+							relationship.AdjustLikeness (-35, this);
+						}
 //						relationship.relationshipHistory.Add (new History (
 //							GameManager.Instance.month,
 //							GameManager.Instance.days,
@@ -91,8 +100,10 @@ public class StateVisit : GameEvent {
 //							false
 //						));
 					}else{
-						relationship.like = -35;
-						relationship.UpdateKingRelationshipStatus ();
+						if (relationship != null) {
+							relationship.like = -35;
+							relationship.UpdateKingRelationshipStatus ();
+						}
 					}
 
 					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "visitor_died");
@@ -210,18 +221,22 @@ public class StateVisit : GameEvent {
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.inviterKingdom.id && KingdomManager.Instance.allKingdoms[i].id != this.invitedKingdom.id){
+			if(KingdomManager.Instance.allKingdoms[i].id != this.inviterKingdom.id && KingdomManager.Instance.allKingdoms[i].id != this.invitedKingdom.id && KingdomManager.Instance.allKingdoms[i].isAlive()){
 				kingdoms.Add (KingdomManager.Instance.allKingdoms [i]);
 			}
 		}
 		return kingdoms;
 	}
+	private Kingdom GetRandomKingdom(){
+		this.otherKingdoms.RemoveAll (x => !x.isAlive ());
+		return this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
 
+	}
 	private void TriggerAssassinationEvent(){
 		if (this.otherKingdoms != null && this.otherKingdoms.Count > 0) {
 			int chance = UnityEngine.Random.Range (0, 100);
 			if (chance < 1) {
-				Kingdom selectedKingdom = this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
+				Kingdom selectedKingdom = GetRandomKingdom();
 				RelationshipKings relationship = selectedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
 				if (relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
 					if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
@@ -274,7 +289,7 @@ public class StateVisit : GameEvent {
 		if(this.otherKingdoms != null && this.otherKingdoms.Count > 0){
 			int chance = UnityEngine.Random.Range (0, 100);
 			if (chance < 1) {
-				Kingdom selectedKingdom = this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
+				Kingdom selectedKingdom = GetRandomKingdom();
 				if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
 					if (CheckForRelationship (selectedKingdom, false)) {
 						if(this.saboteurEnvoy == null){

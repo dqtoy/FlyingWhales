@@ -1052,14 +1052,14 @@ public class Citizen {
 
 	internal void DeteriorateRelationship(RelationshipKings relationship, GameEvent gameEventTrigger, bool isDiscovery){
 		//TRIGGER OTHER EVENTS
-		InvasionPlan (relationship, gameEventTrigger);
+//		InvasionPlan (relationship, gameEventTrigger, this.city.kingdom.kingdomTypeData);
 		BorderConflict (relationship, gameEventTrigger);
 		Assassination (relationship, gameEventTrigger);
 	}
-	private void InvasionPlan(RelationshipKings relationship, GameEvent gameEventTrigger){
+	internal void InvasionPlan(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 0;
-	
+
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
 			value = 4;
 			if(this.hasTrait(TRAIT.PACIFIST)){
@@ -1079,8 +1079,8 @@ public class Citizen {
 
 		if(chance < value){
 			//INVASION PLAN
-//			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0 ||
-//				KingdomManager.Instance.GetWarBetweenKingdoms(this.city.kingdom, relationship.king.city.kingdom) != null) {
+			//			if (EventManager.Instance.GetEventsOfTypePerKingdom (this.city.kingdom, EVENT_TYPES.INVASION_PLAN).Where(x => x.isActive).Count() > 0 ||
+			//				KingdomManager.Instance.GetWarBetweenKingdoms(this.city.kingdom, relationship.king.city.kingdom) != null) {
 			War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, relationship.king.city.kingdom);
 			if (warEvent != null && warEvent.isAtWar) {
 				return;
@@ -1093,8 +1093,8 @@ public class Citizen {
 					this.city.kingdom, relationship.king.city.kingdom);
 			}
 			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
-//			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
-//				this, this.city.kingdom, relationship.king.city.kingdom, gameEventTrigger);
+			//			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
+			//				this, this.city.kingdom, relationship.king.city.kingdom, gameEventTrigger);
 		}
 	}
 	private void BorderConflict(RelationshipKings relationship, GameEvent gameEvent){
@@ -1185,6 +1185,67 @@ public class Citizen {
 			return null;
 		}
 	}
+
+	internal void WarTrigger(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
+		if(gameEventTrigger != null){
+			Debug.LogError ("TRIGGERING WAR BETWEEN: " + relationship.sourceKing.city.kingdom.name + " and " + relationship.king.city.kingdom.name + ". REASON: " + gameEventTrigger.warTrigger.ToString ());
+		}else{
+			Debug.LogError ("TRIGGERING WAR BETWEEN: " + relationship.sourceKing.city.kingdom.name + " and " + relationship.king.city.kingdom.name + ". REASON: " + warTrigger.ToString ());
+		}
+		if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
+			return;
+		}
+		War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, relationship.king.city.kingdom);
+		if (warEvent != null && warEvent.isAtWar) {
+			return;
+		}
+		int chance = UnityEngine.Random.Range (0, 100);
+		int value = 0;
+		MILITARY_STRENGTH milStrength = relationship.king.city.kingdom.GetMilitaryStrengthAgainst (this.city.kingdom);
+//		Debug.Log ("RANDOM CHANCE: " + chance.ToString ());
+		if(gameEventTrigger != null){
+			if(kingdomData.dictWarTriggers.ContainsKey(gameEventTrigger.warTrigger)){
+				value = kingdomData.dictWarTriggers [gameEventTrigger.warTrigger];
+			}
+		}else{
+			if(kingdomData.dictWarTriggers.ContainsKey(warTrigger)){
+				value = kingdomData.dictWarTriggers [warTrigger];
+			}
+		}
+
+		if(kingdomData.dictWarRateModifierMilitary.ContainsKey(milStrength)){
+			float modifier = (float)value * ((float)kingdomData.dictWarRateModifierMilitary [milStrength] / 100f);
+			value += Mathf.RoundToInt (modifier);
+		}
+		if(kingdomData.dictWarRateModifierRelationship.ContainsKey(relationship.lordRelationship)){
+			float modifier = (float)value * ((float)kingdomData.dictWarRateModifierRelationship [relationship.lordRelationship] / 100f);
+			value += Mathf.RoundToInt (modifier);
+		}
+		if(kingdomData._warRateModifierPer15HexDistance != 0){
+			int distance = PathGenerator.Instance.GetDistanceBetweenTwoTiles (this.city.hexTile, relationship.king.city.hexTile);
+			int multiplier = (int)(distance / kingdomData.hexDistanceModifier);
+			int dividend = kingdomData._warRateModifierPer15HexDistance * multiplier;
+			float modifier = (float)value * ((float)dividend / 100f);
+			value += Mathf.RoundToInt (modifier);
+		}
+		if(kingdomData._warRateModifierPerActiveWar != 0){
+			int dividend = kingdomData._warRateModifierPerActiveWar * this.city.kingdom.GetWarCount();
+			float modifier = (float)value * ((float)dividend / 100f);
+			value += Mathf.RoundToInt (modifier);
+		}
+
+//		Debug.LogError ("CHANCE OF WAR: " + value.ToString());
+
+		if(chance < value){
+			if (warEvent == null) {
+				Debug.LogError ("WAR IS TRIGGERED!");
+				warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
+					this.city.kingdom, relationship.king.city.kingdom);
+			}
+			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger, warTrigger);
+		}
+	}
+
 	internal void ImproveRelationship(RelationshipKings relationship){
 		//Improvement of Relationship
 
