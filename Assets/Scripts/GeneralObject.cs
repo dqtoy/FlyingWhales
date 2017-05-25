@@ -497,7 +497,7 @@ public class GeneralObject : MonoBehaviour {
 			if(this.general.roads != null){
 				if(this.general.roads.Count > 0){
 					if(this.general.daysBeforeMoving <= 0){
-						this.general.generalAvatar.GetComponent<GeneralObject>().MakeCitizenMove (this.general.location, this.general.roads [0]);
+						this.MakeCitizenMove (this.general.location, this.general.roads [0]);
 						this.general.daysBeforeMoving = this.general.roads [0].movementDays;
 						this.general.location = this.general.roads[0];
 //						if(this.general.roads[0] != this.general.citizen.city.hexTile){

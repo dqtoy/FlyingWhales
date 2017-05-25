@@ -279,7 +279,9 @@ public class City{
 
 		return king;
 	}
-
+	internal void CreateNewCitizen(){
+		
+	}
 	internal void CreateInitialRoyalFamily(){
 		this.kingdom.successionLine.Clear ();
 		GENDER gender = GENDER.MALE;
@@ -888,9 +890,14 @@ public class City{
 			currentTile.kingdomColorSprite.gameObject.SetActive(false);
 		}
 	}
-
-	internal void ExpandToThisCity(List<Citizen> citizensToOccupyCity){
-		this.CreateInitialFamilies(false);
+	internal void ExpandToThisCity(Citizen citizenToOccupyCity){
+//		this.CreateInitialFamilies(false);
+		this.AddCitizenToCity(citizenToOccupyCity);
+		citizenToOccupyCity.role = ROLE.GOVERNOR;
+		citizenToOccupyCity.assignedRole = null;
+		citizenToOccupyCity.AssignRole(ROLE.GOVERNOR);
+		this.UpdateCitizenCreationTable();
+		this.UpdateResourceProduction();
 		KingdomManager.Instance.UpdateKingdomAdjacency();
 		this.kingdom.AddInternationalWarCity (this);
 		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
@@ -901,6 +908,18 @@ public class City{
 
 		KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
+//	internal void ExpandToThisCity(List<Citizen> citizensToOccupyCity){
+//		this.CreateInitialFamilies(false);
+//		KingdomManager.Instance.UpdateKingdomAdjacency();
+//		this.kingdom.AddInternationalWarCity (this);
+//		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
+//			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+//				this.kingdom.HighlightAllOwnedTilesInKingdom();
+//			}
+//		}
+//
+//		KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+//	}
 	internal List<General> GetIncomingAttackers(){
 		List<General> incomingAttackers = new List<General> ();
 		for(int i = 0; i < this.incomingGenerals.Count; i++){
@@ -1621,5 +1640,21 @@ public class City{
 				}
 			}
 		}
+	}
+
+	internal Citizen CreateCitizenForExpansion(){
+		GENDER gender = GENDER.MALE;
+		int randomGender = UnityEngine.Random.Range (0, 100);
+		if(randomGender < 20){
+			gender = GENDER.FEMALE;
+		}
+		int maxGeneration = this.citizens.Max (x => x.generation);
+		Citizen expandCitizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
+		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		expandCitizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
+
+		this.citizens.Remove (expandCitizen);
+
+		return expandCitizen;
 	}
 }

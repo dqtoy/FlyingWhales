@@ -8,22 +8,25 @@ public class Expansion : GameEvent {
 	protected int recruitmentPeriodInWeeks;
 	protected int remainingRecruitmentPeriodInWeeks;
 
-	protected List<Citizen> citizensJoiningExpansion = new List<Citizen>();
+//	protected List<Citizen> citizensJoiningExpansion = new List<Citizen>();
 
 	protected bool isExpanding = false;
 	protected City originCity;
 
 	internal HexTile hexTileToExpandTo = null;
+	internal List<HexTile> path = null;
+	internal GameObject expansionAvatar = null;
 
-	public Expansion(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
+	public Expansion(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile targetHextile) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.EXPANSION;
 		this.description = startedBy.city.kingdom.king.name + " is looking looking to expand his kingdom and has funded and expedition led by " + startedBy.name;
-		this.durationInDays = 4;
+//		this.durationInDays = 4;
 		this.remainingDays = this.durationInDays;
 
 		this.recruitmentPeriodInWeeks = 4;
 		this.remainingRecruitmentPeriodInWeeks = this.recruitmentPeriodInWeeks;
 		this.originCity = startedBy.city;
+		this.hexTileToExpandTo = targetHextile;
 
 		Debug.LogError(this.description);
 
@@ -35,19 +38,47 @@ public class Expansion : GameEvent {
 		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			"Sent an expedition to look for new habitable lands." , HISTORY_IDENTIFIER.NONE));
 		
-		this.citizensJoiningExpansion.Add (this.startedBy);
+//		this.citizensJoiningExpansion.Add (this.startedBy);
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+//		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "event_title");
 		newLogTitle.AddToFillers (null, startedBy.city.kingdom.name);
 
+		InitializeExpansion ();
+
 		this.EventIsCreated ();
 
 	}
 
-	internal override void PerformAction(){
+	internal void InitializeExpansion(){
+		this.path = PathGenerator.Instance.GetPath (this.startedBy.city.hexTile, this.hexTileToExpandTo, PATHFINDING_MODE.COMBAT).ToList();
+		this.expansionAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/ExpansionAvatar"), this.startedBy.city.hexTile.transform) as GameObject;
+		this.expansionAvatar.transform.localPosition = Vector3.zero;
+		this.expansionAvatar.GetComponent<ExpansionAvatar>().Init(this);
+	}
+	internal void ExpandToTargetHextile(){
+		this.startedByKingdom.AddTileToKingdom(this.hexTileToExpandTo);
+		this.hexTileToExpandTo.city.ExpandToThisCity(this.startedBy);
+
+		this.resolution = "Expansion was successful, new city " + this.hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
+		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+			"Successful Expansion to " + this.hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));
+		this.DoneEvent ();
+	}
+	internal void Disappearance(){
+		this.startedBy.Death (DEATH_REASONS.DISAPPEARED_EXPANSION);
+		this.DoneEvent();
+	}
+	internal void DeathByOtherReasons(){
+		this.DoneEvent ();
+	}
+	internal void DeathByGeneral(){
+		this.startedBy.Death (DEATH_REASONS.BATTLE);
+		this.DoneEvent ();
+	}
+	/*internal override void PerformAction(){
 		if (this.remainingDays > 0) {
 			this.remainingDays -= 1;
 		} 
@@ -121,11 +152,12 @@ public class Expansion : GameEvent {
 //				}
 //			}
 //		}
-	}
+	}*/
 
-	internal void AddCitizensToExpansion(List<Citizen> citizensToAdd){
-		citizensJoiningExpansion.AddRange(citizensToAdd);
-	}
+
+//	internal void AddCitizensToExpansion(List<Citizen> citizensToAdd){
+//		citizensJoiningExpansion.AddRange(citizensToAdd);
+//	}
 
 	protected void Recruit(){
 		this.remainingRecruitmentPeriodInWeeks -= 1;
@@ -133,6 +165,7 @@ public class Expansion : GameEvent {
 	}
 
 	internal override void DoneEvent(){
+		GameObject.Destroy (this.expansionAvatar);
 		Debug.LogError (this.resolution);
 		this.isActive = false;
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);

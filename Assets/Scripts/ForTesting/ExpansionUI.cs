@@ -20,12 +20,12 @@ public class ExpansionUI : MonoBehaviour {
 	}
 
 	public void StartExpansion(){
-		string[] coordinates = chosenHexTileLbl.text.Split(',');
-		int xCoordinate = Int32.Parse (coordinates [0]);
-		int yCoordinate = Int32.Parse (coordinates [1]);
-		HexTile hexTileToExpandTo = GridMap.Instance.map[xCoordinate, yCoordinate];
-
-		Expansion newExpansion = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, UIManager.Instance.currentlyShowingCity.governor);
-		newExpansion.hexTileToExpandTo = hexTileToExpandTo;
+//		string[] coordinates = chosenHexTileLbl.text.Split(',');
+//		int xCoordinate = Int32.Parse (coordinates [0]);
+//		int yCoordinate = Int32.Parse (coordinates [1]);
+//		HexTile hexTileToExpandTo = GridMap.Instance.map[xCoordinate, yCoordinate];
+//
+//		Expansion newExpansion = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, UIManager.Instance.currentlyShowingCity.governor);
+//		newExpansion.hexTileToExpandTo = hexTileToExpandTo;
 	}
 }
