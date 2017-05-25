@@ -103,7 +103,7 @@ public class InvasionPlan : GameEvent {
 			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
 		}else{
 			
-			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue ["Reasons"] ["WarTriggerReasons"] [warTrigger.ToString ()]
+			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "WarTriggerReasons", warTrigger.ToString ())
 				, new LogFiller[]{ new LogFiller (this._targetKingdom.king, this._targetKingdom.king.name) });
 //			switch(warTrigger){
 //			case WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_ALLY:
