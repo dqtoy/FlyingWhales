@@ -188,19 +188,21 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	internal void SetSortingOrder(int sortingOrder){
-		this.GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder;
-		this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		this.kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		this.highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-		this.structureGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
-		this.cityNameGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 6;
+		this.GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder + 1;
+		this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		this.kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		this.highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
+		this.structureGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
+		this.cityNameGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 7;
+		this.cityNameLbl.GetComponent<MeshRenderer>().sortingLayerName = "CityNames";
+		this.cityNameLbl.GetComponent<MeshRenderer> ().sortingOrder = sortingOrder + 8;
 
-		this.topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-		this.leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-		this.botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-		this.botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-		this.rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-		this.topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		this.topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
+		this.leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
+		this.botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
+		this.botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
+		this.rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
+		this.topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
 	}
 
 	#region Resource

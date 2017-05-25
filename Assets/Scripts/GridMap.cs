@@ -47,8 +47,8 @@ public class GridMap : MonoBehaviour {
 				hex.GetComponent<HexTile>().tileName = hex.name;
 				hex.GetComponent<HexTile>().xCoordinate = x;
 				hex.GetComponent<HexTile>().yCoordinate = y;
-				int sortingOrder = x - y;
-				hex.GetComponent<HexTile>().SetSortingOrder(sortingOrder);
+//				int sortingOrder = x - y;
+//				hex.GetComponent<HexTile>().SetSortingOrder(sortingOrder);
 				listHexes.Add(hex);
 				map[x, y] = hex.GetComponent<HexTile>();
 			}
