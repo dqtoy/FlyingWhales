@@ -180,7 +180,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				if (gameObjectToEdit != null) {
 					gameObjectToEdit.SetActive (true);
 					gameObjectToEdit.GetComponent<SpriteRenderer> ().sprite = spriteForTile;
-					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
+//					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
 				}
 
 			}
