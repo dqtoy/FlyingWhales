@@ -41,6 +41,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject citizenHistoryGO;
 	public GameObject allKingdomEventsGO;
 	public GameObject eventLogsGO;
+	public GameObject kingdomHistoryGO;
 
 	[Space(10)]//For Testing
 	//Trait Editor
@@ -130,21 +131,21 @@ public class UIManager : MonoBehaviour {
 	public Sprite lumberSprite;
 
 
-	[Space(10)]
-	public GameObject kingdomSuccessionGO;
-	public GameObject kingdomHistoryGO;
-	public GameObject kingdomEventsGO;
-	public GameObject kingdomGovernorsGO;
-	public UILabel kingdomNameBigLbl;
-	public UILabel kingdomNameSmallLbl;
-	public UILabel kingdomKingNameLbl;
-	public UILabel kingdomCityCountLbl;
-	public UILabel kingdomGeneralCountLbl;
-	public UILabel kingdomWarsLbl;
-	public UIGrid kingdomSuccessionGrid;
-	public UIGrid kingdomHistoryGrid;
-	public UIGrid kingdomEventsGrid;
-	public UIGrid kingdomGovernorsGrid;
+//	[Space(10)]
+//	public GameObject kingdomSuccessionGO;
+//	public GameObject kingdomHistoryGO;
+//	public GameObject kingdomEventsGO;
+//	public GameObject kingdomGovernorsGO;
+//	public UILabel kingdomNameBigLbl;
+//	public UILabel kingdomNameSmallLbl;
+//	public UILabel kingdomKingNameLbl;
+//	public UILabel kingdomCityCountLbl;
+//	public UILabel kingdomGeneralCountLbl;
+//	public UILabel kingdomWarsLbl;
+//	public UIGrid kingdomSuccessionGrid;
+//	public UIGrid kingdomHistoryGrid;
+//	public UIGrid kingdomEventsGrid;
+//	public UIGrid kingdomGovernorsGrid;
 
 	[Space(10)] //Events UI
 	public UIGrid gameEventsOfTypeGrid;
@@ -239,8 +240,10 @@ public class UIManager : MonoBehaviour {
 	public UIGrid kingdomListOtherKingdomsGrid;
 	public GameObject kingdomListOtherKingdomsParent;
 	public ButtonToggle kingdomListEventButton;
+	public ButtonToggle kingdomListHistoryButton;
+	public ButtonToggle kingdomListCityButton;
 
-	[Space(10)]
+	[Space(10)] //For Event Logs Menu
 	public GameObject elmEventLogsParentGO;
 	public UILabel elmEventTitleLbl;
 	public GameObject elmSuccessRateGO;
@@ -249,6 +252,10 @@ public class UIManager : MonoBehaviour {
 	public UIProgressBar elmEventProgressBar;
 	public GameObject elmFirstAnchor;
 	public UIScrollView elmScrollView;
+
+	[Space(10)] //For Kingdom History
+	public UIGrid kingdomHistoryGrid;
+	public UILabel kingdomHistoryNoEventsLbl;
 
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
@@ -312,6 +319,12 @@ public class UIManager : MonoBehaviour {
 		if (allKingdomEventsGO.activeSelf) {
 			if (currentlyShowingKingdom != null) {
 				ShowKingdomEvents ();
+			}
+		}
+
+		if (kingdomHistoryGO.activeSelf) {
+			if (currentlyShowingKingdom != null) {
+				ShowKingdomHistory ();
 			}
 		}
 	}
@@ -917,300 +930,300 @@ public class UIManager : MonoBehaviour {
 		cityInfoGO.SetActive (false);
 	}
 		
-	public void ShowKingdomInfo(Kingdom kingdom){
-//		if (currentlyShowingKingdom != null) {
-//			currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+//	public void ShowKingdomInfo(Kingdom kingdom){
+////		if (currentlyShowingKingdom != null) {
+////			currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+////		}
+////		kingdom.HighlightAllOwnedTilesInKingdom();
+////		this.currentlyShowingKingdom = kingdom;
+//		this.kingdomNameBigLbl.text = "[b]" + kingdom.name + "[/b]";
+//		this.kingdomNameSmallLbl.text = kingdom.name;
+//		this.kingdomKingNameLbl.text = "[b]" + kingdom.king.name + "[/b]";
+//		this.kingdomCityCountLbl.text = "[b]" + kingdom.cities.Count.ToString() + "[/b]";
+//
+//		int generalCount = 0;
+//		for(int i = 0; i < kingdom.cities.Count; i++){
+//			for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
+//				if(kingdom.cities[i].citizens[j].assignedRole != null && kingdom.cities[i].citizens[j].role == ROLE.GENERAL){
+//					generalCount += 1;
+//				}
+//			}
 //		}
-//		kingdom.HighlightAllOwnedTilesInKingdom();
-//		this.currentlyShowingKingdom = kingdom;
-		this.kingdomNameBigLbl.text = "[b]" + kingdom.name + "[/b]";
-		this.kingdomNameSmallLbl.text = kingdom.name;
-		this.kingdomKingNameLbl.text = "[b]" + kingdom.king.name + "[/b]";
-		this.kingdomCityCountLbl.text = "[b]" + kingdom.cities.Count.ToString() + "[/b]";
+//
+//		this.kingdomGeneralCountLbl.text = "[b]" + generalCount.ToString () + "[/b]";
+//
+//		this.kingdomWarsLbl.text = "[b]";
+//		for(int i = 0; i < kingdom.relationshipsWithOtherKingdoms.Count; i++){
+//			if(kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
+//				this.kingdomWarsLbl.text += kingdom.relationshipsWithOtherKingdoms [i].targetKingdom.name + ", ";
+//			}
+//		}
+//		this.kingdomWarsLbl.text.TrimEnd (',');
+//		this.kingdomWarsLbl.text += "[/b]";
+//
+//		OnClickShowKingdomHistory ();
+//
+//		this.kingdomInfoGO.SetActive (true);
+//
+//	}
+//	public void HideKingdomInfo(){
+////		this.currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+////		this.currentlyShowingKingdom = null;
+//		this.kingdomInfoGO.SetActive (false);
+//
+//	}
 
-		int generalCount = 0;
-		for(int i = 0; i < kingdom.cities.Count; i++){
-			for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
-				if(kingdom.cities[i].citizens[j].assignedRole != null && kingdom.cities[i].citizens[j].role == ROLE.GENERAL){
-					generalCount += 1;
-				}
-			}
-		}
-
-		this.kingdomGeneralCountLbl.text = "[b]" + generalCount.ToString () + "[/b]";
-
-		this.kingdomWarsLbl.text = "[b]";
-		for(int i = 0; i < kingdom.relationshipsWithOtherKingdoms.Count; i++){
-			if(kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
-				this.kingdomWarsLbl.text += kingdom.relationshipsWithOtherKingdoms [i].targetKingdom.name + ", ";
-			}
-		}
-		this.kingdomWarsLbl.text.TrimEnd (',');
-		this.kingdomWarsLbl.text += "[/b]";
-
-		OnClickShowKingdomHistory ();
-
-		this.kingdomInfoGO.SetActive (true);
-
-	}
-	public void HideKingdomInfo(){
-//		this.currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
-//		this.currentlyShowingKingdom = null;
-		this.kingdomInfoGO.SetActive (false);
-
-	}
-
-	public void OnClickShowKingdomSuccession(){
-		if(this.currentlyShowingKingdom == null){
-			return;
-		}
-
-		//CLEAR SUCCESSION
-		List<Transform> children = this.kingdomSuccessionGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
-			Destroy (children [i].gameObject);
-		}
-		//POPULATE
-		for(int i = 0; i < this.currentlyShowingKingdom.successionLine.Count; i++){
-			if(i > 2){
-				break;
-			}
-			GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
-			citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.successionLine[i], this.currentlyShowingKingdom);
-			citizenGO.transform.localScale = Vector3.one;
-			citizenGO.transform.localPosition = Vector3.zero;
-		}
-
-		for(int i = 0; i < this.currentlyShowingKingdom.pretenders.Count; i++){
-			GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
-			citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.pretenders[i], this.currentlyShowingKingdom);
-			citizenGO.transform.localScale = Vector3.one;
-			citizenGO.transform.localPosition = Vector3.zero;
-
-		}
-		StartCoroutine (RepositionGrid (this.kingdomSuccessionGrid));
-		this.kingdomSuccessionGO.SetActive (true);
-		this.kingdomHistoryGO.SetActive (false);
-		this.kingdomEventsGO.SetActive (false);
-		this.kingdomGovernorsGO.SetActive (false);
-
-	}
-	public void UpdateKingdomSuccession(){
-		if (this.kingdomSuccessionGO.activeSelf) {
-			List<Transform> children = this.kingdomSuccessionGrid.GetChildList ();
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			//POPULATE
-			if(this.currentlyShowingKingdom != null){
-				for (int i = 0; i < this.currentlyShowingKingdom.successionLine.Count; i++) {
-					if (i > 2) {
-						break;
-					}
-					GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
-					citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.successionLine [i], this.currentlyShowingKingdom);
-					citizenGO.transform.localScale = Vector3.one;
-					citizenGO.transform.localPosition = Vector3.zero;
-				}
-
-				for (int i = 0; i < this.currentlyShowingKingdom.pretenders.Count; i++) {
-					GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
-					citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.pretenders [i], this.currentlyShowingKingdom);
-					citizenGO.transform.localScale = Vector3.one;
-					citizenGO.transform.localPosition = Vector3.zero;
-
-				}
-				StartCoroutine (RepositionGrid (this.kingdomSuccessionGrid));
-			}
-		}
-	}
-	public void OnClickShowKingdomHistory(){
-		if(this.currentlyShowingKingdom == null){
-			return;
-		}
-		List<Transform> children = this.kingdomHistoryGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
-			Destroy (children [i].gameObject);
-		}
-
-		for(int i = 0; i < this.currentlyShowingKingdom.kingdomHistory.Count; i++){
-			GameObject citizenGO = GameObject.Instantiate (this.historyPortraitPrefab, this.kingdomHistoryGrid.transform) as GameObject;
-			citizenGO.GetComponent<HistoryPortrait> ().SetHistory (this.currentlyShowingKingdom.kingdomHistory[i]);
-			citizenGO.transform.localScale = Vector3.one;
-			citizenGO.transform.localPosition = Vector3.zero;
-		}
-
-		StartCoroutine (RepositionGrid (this.kingdomHistoryGrid));
-		this.kingdomSuccessionGO.SetActive (false);
-		this.kingdomHistoryGO.SetActive (true);
-		this.kingdomEventsGO.SetActive (false);
-		this.kingdomGovernorsGO.SetActive (false);
-
-	}
-	public void OnClickShowKingdomEvents(){
-		if(this.currentlyShowingKingdom == null){
-			return;
-		}
-
-		List<Transform> children = this.kingdomEventsGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
-			Destroy (children [i].gameObject);
-		}
-
-		List<GameEvent> eventsAffected = new List<GameEvent> ();
-		List<EVENT_TYPES> eventKeys = new List<EVENT_TYPES> (EventManager.Instance.allEvents.Keys);
-		for(int i = 0; i < eventKeys.Count; i++){
-			if(eventKeys[i] == EVENT_TYPES.BORDER_CONFLICT){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if(EventManager.Instance.allEvents[eventKeys[i]][j] is BorderConflict){
-							if(((BorderConflict)EventManager.Instance.allEvents[eventKeys[i]][j]).kingdom1.id == this.currentlyShowingKingdom.id || ((BorderConflict)EventManager.Instance.allEvents[eventKeys[i]][j]).kingdom2.id == this.currentlyShowingKingdom.id){
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-
-					}
-
-				}
-			}else if(eventKeys[i] == EVENT_TYPES.STATE_VISIT){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is StateVisit) {
-							if (((StateVisit)EventManager.Instance.allEvents [eventKeys [i]] [j]).inviterKingdom.id == this.currentlyShowingKingdom.id) {
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-					}
-
-				}
-			}else if(eventKeys[i] == EVENT_TYPES.ASSASSINATION){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Assassination) {
-							if (((Assassination)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetCitizen.city.kingdom.id == this.currentlyShowingKingdom.id) {
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-					}
-
-				}
-			}else if(eventKeys[i] == EVENT_TYPES.ESPIONAGE){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Espionage) {
-							if (((Espionage)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetKingdom.id == this.currentlyShowingKingdom.id) {
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-					}
-
-				}
-			}else if(eventKeys[i] == EVENT_TYPES.RAID){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Raid) {
-							if (((Raid)EventManager.Instance.allEvents [eventKeys [i]] [j]).raidedCity.kingdom.id == this.currentlyShowingKingdom.id) {
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-					}
-				}
-			}else if(eventKeys[i] == EVENT_TYPES.INVASION_PLAN){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is InvasionPlan) {
-							if (((InvasionPlan)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetKingdom.id == this.currentlyShowingKingdom.id) {
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-					}
-
-				}
-			}else if(eventKeys[i] == EVENT_TYPES.MILITARIZATION){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Militarization) {
-							if (((Militarization)EventManager.Instance.allEvents [eventKeys [i]] [j]).startedByKingdom.id == this.currentlyShowingKingdom.id) {
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-					}
-
-				}
-			}else if(eventKeys[i] == EVENT_TYPES.JOIN_WAR_REQUEST){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is JoinWar) {
-							if (((JoinWar)EventManager.Instance.allEvents [eventKeys [i]] [j]).candidateForAlliance.city.kingdom.id == this.currentlyShowingKingdom.id) {
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-					}
-
-				}
-			}else if(eventKeys[i] == EVENT_TYPES.POWER_GRAB){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is PowerGrab) {
-							if (((PowerGrab)EventManager.Instance.allEvents [eventKeys [i]] [j]).kingToOverthrow.city.kingdom.id == this.currentlyShowingKingdom.id) {
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-					}
-
-				}
-			}else if(eventKeys[i] == EVENT_TYPES.EXHORTATION){
-				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
-					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
-						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Exhortation) {
-							if (((Exhortation)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetCitizen.city.kingdom.id == this.currentlyShowingKingdom.id) {
-								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
-							}
-						}
-					}
-				}
-			}
-		}
-
-
-		for(int i = 0; i < eventsAffected.Count; i++){
-			GameObject citizenGO = GameObject.Instantiate (this.eventPortraitPrefab, this.kingdomEventsGrid.transform) as GameObject;
-			citizenGO.GetComponent<EventPortrait> ().SetEvent (eventsAffected[i]);
-			citizenGO.transform.localScale = Vector3.one;
-			citizenGO.transform.localPosition = Vector3.zero;
-		}
-
-		StartCoroutine (RepositionGrid (this.kingdomEventsGrid));
-		this.kingdomSuccessionGO.SetActive (false);
-		this.kingdomHistoryGO.SetActive (false);
-		this.kingdomEventsGO.SetActive (true);
-		this.kingdomGovernorsGO.SetActive (false);
-
-	}
-	public void OnClickShowKingdomGovernors(){
-		if(this.currentlyShowingKingdom == null){
-			return;
-		}
-
-		List<Transform> children = this.kingdomGovernorsGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
-			Destroy (children [i].gameObject);
-		}
-
-		for(int i = 0; i < this.currentlyShowingKingdom.cities.Count; i++){
-			GameObject citizenGO = GameObject.Instantiate (this.governorPortraitPrefab, this.kingdomGovernorsGrid.transform) as GameObject;
-			citizenGO.GetComponent<GovernorPortrait> ().SetGovernor (this.currentlyShowingKingdom.cities[i].governor);
-			citizenGO.transform.localScale = Vector3.one;
-			citizenGO.transform.localPosition = Vector3.zero;
-		}
-
-		StartCoroutine (RepositionGrid (this.kingdomGovernorsGrid));
-		this.kingdomSuccessionGO.SetActive (false);
-		this.kingdomHistoryGO.SetActive (false);
-		this.kingdomEventsGO.SetActive (false);
-		this.kingdomGovernorsGO.SetActive (true);
-
-	}
+//	public void OnClickShowKingdomSuccession(){
+//		if(this.currentlyShowingKingdom == null){
+//			return;
+//		}
+//
+//		//CLEAR SUCCESSION
+//		List<Transform> children = this.kingdomSuccessionGrid.GetChildList();
+//		for (int i = 0; i < children.Count; i++) {
+//			Destroy (children [i].gameObject);
+//		}
+//		//POPULATE
+//		for(int i = 0; i < this.currentlyShowingKingdom.successionLine.Count; i++){
+//			if(i > 2){
+//				break;
+//			}
+//			GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
+//			citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.successionLine[i], this.currentlyShowingKingdom);
+//			citizenGO.transform.localScale = Vector3.one;
+//			citizenGO.transform.localPosition = Vector3.zero;
+//		}
+//
+//		for(int i = 0; i < this.currentlyShowingKingdom.pretenders.Count; i++){
+//			GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
+//			citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.pretenders[i], this.currentlyShowingKingdom);
+//			citizenGO.transform.localScale = Vector3.one;
+//			citizenGO.transform.localPosition = Vector3.zero;
+//
+//		}
+//		StartCoroutine (RepositionGrid (this.kingdomSuccessionGrid));
+//		this.kingdomSuccessionGO.SetActive (true);
+//		this.kingdomHistoryGO.SetActive (false);
+//		this.kingdomEventsGO.SetActive (false);
+//		this.kingdomGovernorsGO.SetActive (false);
+//
+//	}
+//	public void UpdateKingdomSuccession(){
+//		if (this.kingdomSuccessionGO.activeSelf) {
+//			List<Transform> children = this.kingdomSuccessionGrid.GetChildList ();
+//			for (int i = 0; i < children.Count; i++) {
+//				Destroy (children [i].gameObject);
+//			}
+//			//POPULATE
+//			if(this.currentlyShowingKingdom != null){
+//				for (int i = 0; i < this.currentlyShowingKingdom.successionLine.Count; i++) {
+//					if (i > 2) {
+//						break;
+//					}
+//					GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
+//					citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.successionLine [i], this.currentlyShowingKingdom);
+//					citizenGO.transform.localScale = Vector3.one;
+//					citizenGO.transform.localPosition = Vector3.zero;
+//				}
+//
+//				for (int i = 0; i < this.currentlyShowingKingdom.pretenders.Count; i++) {
+//					GameObject citizenGO = GameObject.Instantiate (this.successionPortraitPrefab, this.kingdomSuccessionGrid.transform) as GameObject;
+//					citizenGO.GetComponent<SuccessionPortrait> ().SetCitizen (this.currentlyShowingKingdom.pretenders [i], this.currentlyShowingKingdom);
+//					citizenGO.transform.localScale = Vector3.one;
+//					citizenGO.transform.localPosition = Vector3.zero;
+//
+//				}
+//				StartCoroutine (RepositionGrid (this.kingdomSuccessionGrid));
+//			}
+//		}
+//	}
+//	public void OnClickShowKingdomHistory(){
+//		if(this.currentlyShowingKingdom == null){
+//			return;
+//		}
+//		List<Transform> children = this.kingdomHistoryGrid.GetChildList();
+//		for (int i = 0; i < children.Count; i++) {
+//			Destroy (children [i].gameObject);
+//		}
+//
+//		for(int i = 0; i < this.currentlyShowingKingdom.kingdomHistory.Count; i++){
+//			GameObject citizenGO = GameObject.Instantiate (this.historyPortraitPrefab, this.kingdomHistoryGrid.transform) as GameObject;
+//			citizenGO.GetComponent<HistoryPortrait> ().SetHistory (this.currentlyShowingKingdom.kingdomHistory[i]);
+//			citizenGO.transform.localScale = Vector3.one;
+//			citizenGO.transform.localPosition = Vector3.zero;
+//		}
+//
+//		StartCoroutine (RepositionGrid (this.kingdomHistoryGrid));
+//		this.kingdomSuccessionGO.SetActive (false);
+//		this.kingdomHistoryGO.SetActive (true);
+//		this.kingdomEventsGO.SetActive (false);
+//		this.kingdomGovernorsGO.SetActive (false);
+//
+//	}
+//	public void OnClickShowKingdomEvents(){
+//		if(this.currentlyShowingKingdom == null){
+//			return;
+//		}
+//
+//		List<Transform> children = this.kingdomEventsGrid.GetChildList();
+//		for (int i = 0; i < children.Count; i++) {
+//			Destroy (children [i].gameObject);
+//		}
+//
+//		List<GameEvent> eventsAffected = new List<GameEvent> ();
+//		List<EVENT_TYPES> eventKeys = new List<EVENT_TYPES> (EventManager.Instance.allEvents.Keys);
+//		for(int i = 0; i < eventKeys.Count; i++){
+//			if(eventKeys[i] == EVENT_TYPES.BORDER_CONFLICT){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if(EventManager.Instance.allEvents[eventKeys[i]][j] is BorderConflict){
+//							if(((BorderConflict)EventManager.Instance.allEvents[eventKeys[i]][j]).kingdom1.id == this.currentlyShowingKingdom.id || ((BorderConflict)EventManager.Instance.allEvents[eventKeys[i]][j]).kingdom2.id == this.currentlyShowingKingdom.id){
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//
+//					}
+//
+//				}
+//			}else if(eventKeys[i] == EVENT_TYPES.STATE_VISIT){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is StateVisit) {
+//							if (((StateVisit)EventManager.Instance.allEvents [eventKeys [i]] [j]).inviterKingdom.id == this.currentlyShowingKingdom.id) {
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//					}
+//
+//				}
+//			}else if(eventKeys[i] == EVENT_TYPES.ASSASSINATION){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Assassination) {
+//							if (((Assassination)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetCitizen.city.kingdom.id == this.currentlyShowingKingdom.id) {
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//					}
+//
+//				}
+//			}else if(eventKeys[i] == EVENT_TYPES.ESPIONAGE){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Espionage) {
+//							if (((Espionage)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetKingdom.id == this.currentlyShowingKingdom.id) {
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//					}
+//
+//				}
+//			}else if(eventKeys[i] == EVENT_TYPES.RAID){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Raid) {
+//							if (((Raid)EventManager.Instance.allEvents [eventKeys [i]] [j]).raidedCity.kingdom.id == this.currentlyShowingKingdom.id) {
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//					}
+//				}
+//			}else if(eventKeys[i] == EVENT_TYPES.INVASION_PLAN){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is InvasionPlan) {
+//							if (((InvasionPlan)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetKingdom.id == this.currentlyShowingKingdom.id) {
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//					}
+//
+//				}
+//			}else if(eventKeys[i] == EVENT_TYPES.MILITARIZATION){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Militarization) {
+//							if (((Militarization)EventManager.Instance.allEvents [eventKeys [i]] [j]).startedByKingdom.id == this.currentlyShowingKingdom.id) {
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//					}
+//
+//				}
+//			}else if(eventKeys[i] == EVENT_TYPES.JOIN_WAR_REQUEST){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is JoinWar) {
+//							if (((JoinWar)EventManager.Instance.allEvents [eventKeys [i]] [j]).candidateForAlliance.city.kingdom.id == this.currentlyShowingKingdom.id) {
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//					}
+//
+//				}
+//			}else if(eventKeys[i] == EVENT_TYPES.POWER_GRAB){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is PowerGrab) {
+//							if (((PowerGrab)EventManager.Instance.allEvents [eventKeys [i]] [j]).kingToOverthrow.city.kingdom.id == this.currentlyShowingKingdom.id) {
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//					}
+//
+//				}
+//			}else if(eventKeys[i] == EVENT_TYPES.EXHORTATION){
+//				for(int j = 0; j < EventManager.Instance.allEvents[eventKeys[i]].Count; j++){
+//					if(EventManager.Instance.allEvents[eventKeys[i]][j].isActive){
+//						if (EventManager.Instance.allEvents [eventKeys [i]] [j] is Exhortation) {
+//							if (((Exhortation)EventManager.Instance.allEvents [eventKeys [i]] [j]).targetCitizen.city.kingdom.id == this.currentlyShowingKingdom.id) {
+//								eventsAffected.Add (EventManager.Instance.allEvents [eventKeys [i]] [j]);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//
+//
+//		for(int i = 0; i < eventsAffected.Count; i++){
+//			GameObject citizenGO = GameObject.Instantiate (this.eventPortraitPrefab, this.kingdomEventsGrid.transform) as GameObject;
+//			citizenGO.GetComponent<EventPortrait> ().SetEvent (eventsAffected[i]);
+//			citizenGO.transform.localScale = Vector3.one;
+//			citizenGO.transform.localPosition = Vector3.zero;
+//		}
+//
+//		StartCoroutine (RepositionGrid (this.kingdomEventsGrid));
+//		this.kingdomSuccessionGO.SetActive (false);
+//		this.kingdomHistoryGO.SetActive (false);
+//		this.kingdomEventsGO.SetActive (true);
+//		this.kingdomGovernorsGO.SetActive (false);
+//
+//	}
+//	public void OnClickShowKingdomGovernors(){
+//		if(this.currentlyShowingKingdom == null){
+//			return;
+//		}
+//
+//		List<Transform> children = this.kingdomGovernorsGrid.GetChildList();
+//		for (int i = 0; i < children.Count; i++) {
+//			Destroy (children [i].gameObject);
+//		}
+//
+//		for(int i = 0; i < this.currentlyShowingKingdom.cities.Count; i++){
+//			GameObject citizenGO = GameObject.Instantiate (this.governorPortraitPrefab, this.kingdomGovernorsGrid.transform) as GameObject;
+//			citizenGO.GetComponent<GovernorPortrait> ().SetGovernor (this.currentlyShowingKingdom.cities[i].governor);
+//			citizenGO.transform.localScale = Vector3.one;
+//			citizenGO.transform.localPosition = Vector3.zero;
+//		}
+//
+//		StartCoroutine (RepositionGrid (this.kingdomGovernorsGrid));
+//		this.kingdomSuccessionGO.SetActive (false);
+//		this.kingdomHistoryGO.SetActive (false);
+//		this.kingdomEventsGO.SetActive (false);
+//		this.kingdomGovernorsGO.SetActive (true);
+//
+//	}
 
 	public void RepositionGridCallback(UIGrid thisGrid){
 		StartCoroutine (RepositionGrid (thisGrid));
@@ -2610,6 +2623,7 @@ public class UIManager : MonoBehaviour {
 	 * Show Kingdom Events Menu
 	 * */
 	public void ShowKingdomEvents(){
+		HideKingdomHistory();
 		List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
 		List<GameEvent> politicalEvents = allActiveEventsInKingdom.Where (x => x.eventType == EVENT_TYPES.STATE_VISIT || x.eventType == EVENT_TYPES.RAID ||
 			x.eventType == EVENT_TYPES.ASSASSINATION || x.eventType == EVENT_TYPES.DIPLOMATIC_CRISIS || x.eventType == EVENT_TYPES.BORDER_CONFLICT).ToList();
@@ -2636,314 +2650,6 @@ public class UIManager : MonoBehaviour {
 		LoadPoliticalEvents(politicalEvents);
 		LoadWarEvents(wars);
 		allKingdomEventsGO.SetActive (true);
-//		List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
-//		List<GameEvent> espionageEvents = allActiveEventsInKingdom.Where (
-//			x => x.eventType == EVENT_TYPES.ASSASSINATION || x.eventType == EVENT_TYPES.ESPIONAGE ||
-//			x.eventType == EVENT_TYPES.EXHORTATION || x.eventType == EVENT_TYPES.POWER_GRAB
-//		).ToList ();
-//
-//		List<GameEvent> stateVisitEvents = allActiveEventsInKingdom.Where (x => x.eventType == EVENT_TYPES.STATE_VISIT).ToList ();
-//
-//		List<GameEvent> skirmishEvents = allActiveEventsInKingdom.Where (
-//			x => x.eventType == EVENT_TYPES.ADMIRATION || x.eventType == EVENT_TYPES.BORDER_CONFLICT || 
-//			x.eventType == EVENT_TYPES.DIPLOMATIC_CRISIS || x.eventType == EVENT_TYPES.RAID
-//		).ToList ();
-//
-//		List<GameEvent> warEvents = allActiveEventsInKingdom.Where (
-//			x => x.eventType == EVENT_TYPES.INVASION_PLAN || x.eventType == EVENT_TYPES.JOIN_WAR_REQUEST ||
-//			x.eventType == EVENT_TYPES.MILITARIZATION || x.eventType == EVENT_TYPES.REQUEST_PEACE || 
-//			x.eventType == EVENT_TYPES.KINGDOM_WAR
-//		).ToList ();
-//
-//
-//		EventListParent[] currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
-//		if (espionageEvents.Count <= 0 && stateVisitEvents.Count <= 0 && skirmishEvents.Count <= 0 && warEvents.Count <= 0) {
-//			kingdomEventsNoEventsLbl.gameObject.SetActive (true);
-//			for (int i = 0; i < currentParents.Length; i++) {
-//				Destroy (currentParents [i].gameObject);
-//			}
-//			allKingdomEventsGO.SetActive (true);
-//			this.pauseBtn.SetAsClicked ();
-//			GameManager.Instance.SetPausedState (true);
-//			return;
-//		} else {
-//			kingdomEventsNoEventsLbl.gameObject.SetActive (false);
-//		}
-//
-//		EventListParent espionageParent = null;
-//		EventListParent stateVisitParent = null;
-//		EventListParent skirmishParent = null;
-//
-//		if (currentParents.Length > 0) {
-//			for (int i = 0; i < currentParents.Length; i++) {
-//				EventListParent currentParent = currentParents[i];
-//				if (currentParent.gameObject.name == "EspionageParent") {
-//					espionageParent = currentParent;
-//				} else if (currentParent.gameObject.name == "StateVisitParent") {
-//					stateVisitParent = currentParent;
-//				} else if (currentParent.gameObject.name == "SkirmishParent") {
-//					skirmishParent = currentParent;
-//				}
-//			}
-//		}
-//
-//		if (espionageParent == null && espionageEvents.Count > 0) {
-//			currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
-//			GameObject anchorPoint = null;
-//			if (currentParents.Length > 0) {
-//				anchorPoint = currentParents[currentParents.Length - 1].anchorPoint;
-//			} else {
-//				anchorPoint = firstAnchor;
-//			}
-//			Transform[] allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomEventsContentParent.gameObject);
-//			GameObject anchorPoint = null;
-//			if (allCurrentParents.Length > 0) {
-//				Transform anchorParent = allCurrentParents[allCurrentParents.Length - 1];
-//				if (anchorParent.GetComponent<EventListParent> () != null) {
-//					anchorPoint = anchorParent.GetComponent<EventListParent>().anchorPoint;
-//				} else {
-//					anchorPoint = anchorParent.GetComponent<WarEventListParent>().anchorPoint;
-//				}
-//
-//			} else {
-//				anchorPoint = firstAnchor;
-//			}
-//			GameObject eventParentGO = GameObject.Instantiate (kingdomEventsListParentPrefab, kingdomEventsContentParent.transform) as GameObject;
-//			eventParentGO.name = "EspionageParent";
-//			eventParentGO.transform.localScale = Vector3.one;
-//			espionageParent = eventParentGO.GetComponent<EventListParent>();
-//			espionageParent.anchor.container = anchorPoint;
-//			espionageParent.eventTitleLbl.text = "Espionage";
-//		}
-//
-//		if (stateVisitParent == null && stateVisitEvents.Count > 0) {
-//			currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
-//			GameObject anchorPoint = null;
-//			if (currentParents.Length > 0) {
-//				anchorPoint = currentParents[currentParents.Length - 1].anchorPoint;
-//			} else {
-//				anchorPoint = firstAnchor;
-//			}
-//			Transform[] allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomEventsContentParent.gameObject);
-//			GameObject anchorPoint = null;
-//			if (allCurrentParents.Length > 0) {
-//				Transform anchorParent = allCurrentParents[allCurrentParents.Length - 1];
-//				if (anchorParent.GetComponent<EventListParent> () != null) {
-//					anchorPoint = anchorParent.GetComponent<EventListParent>().anchorPoint;
-//				} else {
-//					anchorPoint = anchorParent.GetComponent<WarEventListParent>().anchorPoint;
-//				}
-//
-//			} else {
-//				anchorPoint = firstAnchor;
-//			}
-//			GameObject eventParentGO = GameObject.Instantiate (kingdomEventsListParentPrefab, kingdomEventsContentParent.transform) as GameObject;
-//			eventParentGO.name = "StateVisitParent";
-//			eventParentGO.transform.localScale = Vector3.one;
-//			stateVisitParent = eventParentGO.GetComponent<EventListParent>();
-//			stateVisitParent.anchor.container = anchorPoint;
-//			stateVisitParent.eventTitleLbl.text = "State Visits";
-//		}
-//
-//		if (skirmishParent == null  && skirmishEvents.Count > 0) {
-//			currentParents = Utilities.GetComponentsInDirectChildren<EventListParent>(kingdomEventsContentParent.gameObject);
-//			GameObject anchorPoint = null;
-//			if (currentParents.Length > 0) {
-//				anchorPoint = currentParents[currentParents.Length - 1].anchorPoint;
-//			} else {
-//				anchorPoint = firstAnchor;
-//			}
-//			Transform[] allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomEventsContentParent.gameObject);
-//			GameObject anchorPoint = null;
-//			if (allCurrentParents.Length > 0) {
-//				Transform anchorParent = allCurrentParents[allCurrentParents.Length - 1];
-//				if (anchorParent.GetComponent<EventListParent> () != null) {
-//					anchorPoint = anchorParent.GetComponent<EventListParent>().anchorPoint;
-//				} else {
-//					anchorPoint = anchorParent.GetComponent<WarEventListParent>().anchorPoint;
-//				}
-//
-//			} else {
-//				anchorPoint = firstAnchor;
-//			}
-//			GameObject eventParentGO = GameObject.Instantiate (kingdomEventsListParentPrefab, kingdomEventsContentParent.transform) as GameObject;
-//			eventParentGO.name = "SkirmishParent";
-//			eventParentGO.transform.localScale = Vector3.one;
-//			skirmishParent = eventParentGO.GetComponent<EventListParent>();
-//			skirmishParent.anchor.container = anchorPoint;
-//			skirmishParent.eventTitleLbl.text = "Skirmishes";
-//		}
-//
-//		if (espionageParent != null) {
-//			if (!allKingdomEventsGO.activeSelf) {
-//				espionageParent.Reset ();
-//			}
-//			List<EventListItem> currentlyShowingEspionageEvents = espionageParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem> ()).ToList ();
-//			if (espionageEvents.Count > 0) {
-//				List<int> currentEspionageEventIDs = espionageEvents.Select (x => x.id).ToList ();
-//				if (currentEspionageEventIDs.Except (currentlyShowingEspionageEvents.Select (x => x.gameEvent.id)).
-//					Union (currentlyShowingEspionageEvents.Select (x => x.gameEvent.id).Except (currentEspionageEventIDs)).Count () > 0 || 
-//					currentlyShowingEspionageEvents.Select(x => x.ownerOfThisItem).First().id != currentlyShowingKingdom.id) {
-//					for (int i = 0; i < currentlyShowingEspionageEvents.Count; i++) {
-//						Destroy (currentlyShowingEspionageEvents [i].gameObject);
-//					}
-//
-//					for (int i = 0; i < espionageEvents.Count; i++) {
-//						GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, espionageParent.eventsGrid.transform) as GameObject;
-//						eventGO.GetComponent<EventListItem> ().SetEvent (espionageEvents [i], currentlyShowingKingdom);
-//						eventGO.GetComponent<EventListItem> ().onClickEvent += ShowSpecificEvent;
-//						eventGO.transform.localScale = Vector3.one;
-//					}
-//					StartCoroutine (RepositionGrid (espionageParent.eventsGrid));
-//				}
-//			} else {
-//				for (int i = 0; i < currentlyShowingEspionageEvents.Count; i++) {
-//					Destroy (currentlyShowingEspionageEvents [i].gameObject);
-//				}
-//			}
-//		}
-//
-//		if (stateVisitParent != null) {
-//			if (!allKingdomEventsGO.activeSelf) {
-//				stateVisitParent.Reset ();
-//			}
-//			List<EventListItem> currentlyShowingStateVisitEvents = stateVisitParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem> ()).ToList ();
-//			if (stateVisitEvents.Count > 0) {
-//				List<int> currentStateVisitEventIDs = espionageEvents.Select (x => x.id).ToList ();
-//				if (currentStateVisitEventIDs.Except (currentlyShowingStateVisitEvents.Select (x => x.gameEvent.id)).
-//				Union (currentlyShowingStateVisitEvents.Select (x => x.gameEvent.id).Except (currentStateVisitEventIDs)).Count () > 0 || 
-//					currentlyShowingStateVisitEvents.Select(x => x.ownerOfThisItem).First().id != currentlyShowingKingdom.id) {
-//					for (int i = 0; i < currentlyShowingStateVisitEvents.Count; i++) {
-//						Destroy (currentlyShowingStateVisitEvents [i].gameObject);
-//					}
-//
-//					for (int i = 0; i < stateVisitEvents.Count; i++) {
-//						GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, stateVisitParent.eventsGrid.transform) as GameObject;
-//						eventGO.GetComponent<EventListItem> ().SetEvent (stateVisitEvents [i], currentlyShowingKingdom);
-//						eventGO.GetComponent<EventListItem> ().onClickEvent += ShowSpecificEvent;
-//						eventGO.transform.localScale = Vector3.one;
-//					}
-//					StartCoroutine (RepositionGrid (stateVisitParent.eventsGrid));
-//				}
-//			}
-//		}
-//
-//		if (skirmishParent != null) {
-//			if (!allKingdomEventsGO.activeSelf) {
-//				skirmishParent.Reset ();
-//			}
-//			List<EventListItem> currentlyShowingSkirmishEvents = skirmishParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem> ()).ToList ();
-//			if (skirmishEvents.Count > 0) {
-//				List<int> currentSkirmishEventIDs = skirmishEvents.Select (x => x.id).ToList ();
-//				if (currentSkirmishEventIDs.Except (currentlyShowingSkirmishEvents.Select (x => x.gameEvent.id)).
-//					Union (currentlyShowingSkirmishEvents.Select (x => x.gameEvent.id).Except (currentSkirmishEventIDs)).Count () > 0 || 
-//					currentlyShowingSkirmishEvents.Select(x => x.ownerOfThisItem).First().id != currentlyShowingKingdom.id) {
-//					for (int i = 0; i < currentlyShowingSkirmishEvents.Count; i++) {
-//						Destroy (currentlyShowingSkirmishEvents [i].gameObject);
-//					}
-//
-//					for (int i = 0; i < skirmishEvents.Count; i++) {
-//						GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, skirmishParent.eventsGrid.transform) as GameObject;
-//						eventGO.GetComponent<EventListItem> ().SetEvent (skirmishEvents [i], currentlyShowingKingdom);
-//						eventGO.GetComponent<EventListItem> ().onClickEvent += ShowSpecificEvent;
-//						eventGO.transform.localScale = Vector3.one;
-//					}
-//					StartCoroutine (RepositionGrid (skirmishParent.eventsGrid));
-//				}
-//			} else {
-//				for (int i = 0; i < currentlyShowingSkirmishEvents.Count; i++) {
-//					Destroy (currentlyShowingSkirmishEvents [i].gameObject);
-//				}
-//			}
-//		}
-//
-//		//For war events
-//		if (warEvents.Count > 0) {
-//			WarEventListParent[] currentlyShowingWarParents = Utilities.GetComponentsInDirectChildren<WarEventListParent>(kingdomEventsContentParent.gameObject);
-//			for (int i = 0; i < warEvents.Count; i++) {
-//				Kingdom kingdomAtWarWith = null;
-//				if (warEvents [i].eventType == EVENT_TYPES.INVASION_PLAN) {
-//					InvasionPlan ip = (InvasionPlan)warEvents [i];
-//					kingdomAtWarWith = ip.targetKingdom;
-//				} else if (warEvents [i].eventType == EVENT_TYPES.JOIN_WAR_REQUEST) {
-//					JoinWar jw = (JoinWar)warEvents [i];
-//					kingdomAtWarWith = jw.kingdomToAttack;
-//				} else if (warEvents [i].eventType == EVENT_TYPES.MILITARIZATION) {
-//					Militarization mil = (Militarization)warEvents [i];
-//					kingdomAtWarWith = mil.invasionPlanThatTriggeredEvent.targetKingdom;
-//				} else if (warEvents [i].eventType == EVENT_TYPES.REQUEST_PEACE) {
-//					RequestPeace rp = (RequestPeace)warEvents [i];
-//					if (rp.startedByKingdom.id == currentlyShowingKingdom.id) {
-//						kingdomAtWarWith = rp.targetKingdom;
-//					} else {
-//						kingdomAtWarWith = rp.startedByKingdom;
-//					}
-//				} else if (warEvents [i].eventType == EVENT_TYPES.KINGDOM_WAR) {
-//					War war = (War)warEvents [i];
-//					if (war.kingdom1.id == currentlyShowingKingdom.id) {
-//						kingdomAtWarWith = war.kingdom2;
-//					} else {
-//						kingdomAtWarWith = war.kingdom1;
-//					}
-//				}
-//
-//				currentlyShowingWarParents = Utilities.GetComponentsInDirectChildren<WarEventListParent>(kingdomEventsContentParent.gameObject);
-//				WarEventListParent parentForWarEvent = null;
-//				if (currentlyShowingWarParents.Select (x => x.targetKingdomID).Contains (kingdomAtWarWith.id)) {
-//					for (int j = 0; j < currentlyShowingWarParents.Length; j++) {
-//						if (currentlyShowingWarParents [j].targetKingdomID == kingdomAtWarWith.id) {
-//							parentForWarEvent = currentlyShowingWarParents[j];
-//							break;
-//						}
-//					}
-//				} else {
-//					Transform[] allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomEventsContentParent.gameObject);
-//					GameObject anchorPoint = null;
-//					if (allCurrentParents.Length > 0) {
-//						Transform anchorParent = allCurrentParents[allCurrentParents.Length - 1];
-//						if (anchorParent.GetComponent<EventListParent> () != null) {
-//							anchorPoint = anchorParent.GetComponent<EventListParent>().anchorPoint;
-//						} else {
-//							anchorPoint = anchorParent.GetComponent<WarEventListParent>().anchorPoint;
-//						}
-//
-//					} else {
-//						anchorPoint = firstAnchor;
-//					}
-//
-//					GameObject eventParentGO = GameObject.Instantiate (kingdomWarEventsListParentPrefab, kingdomEventsContentParent.transform) as GameObject;
-//					eventParentGO.name = "WarEventParent-" + kingdomAtWarWith.name;
-//					eventParentGO.transform.localScale = Vector3.one;
-//					eventParentGO.GetComponent<WarEventListParent>().anchor.container = anchorPoint;
-//					eventParentGO.GetComponent<WarEventListParent>().eventTitleLbl.text = "War with " + kingdomAtWarWith.name;
-//					eventParentGO.GetComponent<WarEventListParent> ().targetKingdomID = kingdomAtWarWith.id;
-//					parentForWarEvent = eventParentGO.GetComponent<WarEventListParent>();
-//				}
-//
-//				List<int> currentlyShowingWarEvents = parentForWarEvent.eventsGrid.GetComponentsInChildren<EventListItem>().Select(x => x.gameEvent.id).ToList();
-//
-//				if (!currentlyShowingWarEvents.Contains (warEvents [i].id)) {
-//					GameObject eventGO = GameObject.Instantiate (kingdomEventsListItemPrefab, parentForWarEvent.eventsGrid.transform) as GameObject;
-//					eventGO.GetComponent<EventListItem> ().SetEvent (warEvents [i], currentlyShowingKingdom);
-//					eventGO.GetComponent<EventListItem> ().onClickEvent += ShowSpecificEvent;
-//					eventGO.transform.localScale = Vector3.one;
-//				}
-//			}
-//
-//			for (int i = 0; i < currentlyShowingWarParents.Length; i++) {
-//				List<Transform> children = currentlyShowingWarParents [i].eventsGrid.GetChildList ();
-//				if (children.Count <= 0) {
-//					Destroy(currentlyShowingWarParents[i].gameObject);
-//				}
-//			}
-//		}
-//
-//		EventListItem[] allShowingEvents = kingdomEventsContentParent.GetComponentsInChildren<EventListItem>();
-//		for (int i = 0; i < allShowingEvents.Length; i++) {
-//			if (!allShowingEvents [i].gameEvent.isActive) {
-//				Destroy (allShowingEvents[i].gameObject);
-//			}
-//		}
 	}
 
 	/*
@@ -3088,14 +2794,7 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 	}
-
-	/*
-	 * Generic toggle function, toggles gameobject to on/off state.
-	 * */
-	public void ToggleObject(GameObject objectToToggle){
-		objectToToggle.SetActive(!objectToToggle.activeSelf);
-	}
-
+		
 	/*
 	 * Hide Kingdom Events Menu
 	 * */
@@ -3112,6 +2811,70 @@ public class UIManager : MonoBehaviour {
 		kingdomListEventButton.SetClickState(false);
 	}
 
+	public void ToggleKingdomHistory(){
+		if (kingdomHistoryGO.activeSelf) {
+			HideKingdomHistory();
+		} else {
+			ShowKingdomHistory();
+		}
+	}
+
+	/*
+	 * Show past events started by the
+	 * currentlyShowingKingdom
+	 * */
+	public void ShowKingdomHistory(){
+		HideAllKingdomEvents();
+		List<GameEvent> allDoneEvents = EventManager.Instance.GetEventsStartedByKingdom (currentlyShowingKingdom, new EVENT_TYPES[]{ EVENT_TYPES.ALL }).
+			Where(x => !x.isActive).ToList();
+		allDoneEvents = allDoneEvents.Where(x => x.eventType != EVENT_TYPES.EXPANSION).ToList();
+
+		List<EventListItem> currentItems = kingdomHistoryGrid.GetChildList ().Select(x => x.GetComponent<EventListItem>()).ToList();
+		int nextItem = 0;
+		for (int i = 0; i < currentItems.Count; i++) {
+			GameEvent gameEventToShow = allDoneEvents[i];
+			EventListItem currItem = currentItems[i];
+			if (gameEventToShow != null) {
+				currItem.SetEvent(gameEventToShow, currentlyShowingKingdom);
+				currItem.gameObject.SetActive(true);
+			} else {
+				currItem.gameObject.SetActive(false);
+			}
+			nextItem = i + 1;
+		}
+
+		for (int i = nextItem; i < allDoneEvents.Count; i++) {
+			GameObject eventGO = GameObject.Instantiate(kingdomEventsListItemPrefab, this.transform) as GameObject;
+			eventGO.transform.localScale = Vector3.one;
+			kingdomHistoryGrid.AddChild(eventGO.transform);
+			eventGO.GetComponent<EventListItem>().SetEvent(allDoneEvents[i], currentlyShowingKingdom);
+			eventGO.GetComponent<EventListItem>().onClickEvent += ShowEventLogs;
+			kingdomHistoryGrid.Reposition();
+		}
+
+		if (allDoneEvents.Count <= 0) {
+			kingdomHistoryNoEventsLbl.gameObject.SetActive(true);
+		} else {
+			kingdomHistoryNoEventsLbl.gameObject.SetActive(false);
+		}
+		kingdomHistoryGO.SetActive(true);
+	}
+
+	public void HideKingdomHistory(){
+		kingdomHistoryGO.SetActive(false);
+		kingdomListHistoryButton.SetClickState(false);
+	}
+
+	/*
+	 * Generic toggle function, toggles gameobject to on/off state.
+	 * */
+	public void ToggleObject(GameObject objectToToggle){
+		objectToToggle.SetActive(!objectToToggle.activeSelf);
+	}
+
+	/*
+	 * Get the corresponding icon for each event
+	 * */
 	internal Sprite GetSpriteForEvent(EVENT_TYPES eventType){
 		switch (eventType) {
 		case EVENT_TYPES.ASSASSINATION:
@@ -3144,6 +2907,10 @@ public class UIManager : MonoBehaviour {
 		return assassinationIcon;
 	}
 
+	/*
+	 * Checker for if the mouse is currently
+	 * over a UI Object
+	 * */
 	public bool IsMouseOnUI(){
 		if( uiCamera != null ){
 			if (UICamera.hoveredObject != null && UICamera.hoveredObject != this.gameObject) {

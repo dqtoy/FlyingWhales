@@ -344,7 +344,7 @@ public class Kingdom{
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
 //		UIManager.Instance.UpdateKingsGrid();
-		UIManager.Instance.UpdateKingdomSuccession ();
+//		UIManager.Instance.UpdateKingdomSuccession ();
 
 		for (int i = 0; i < this.cities.Count; i++) {
 			this.cities[i].UpdateResourceProduction();
@@ -379,7 +379,7 @@ public class Kingdom{
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
 //		UIManager.Instance.UpdateKingsGrid();
-		UIManager.Instance.UpdateKingdomSuccession ();
+//		UIManager.Instance.UpdateKingdomSuccession ();
 
 		for(int i = 0; i < claimants.Count; i++){
 			newKing.AddSuccessionWar (claimants [i]);
@@ -614,7 +614,7 @@ public class Kingdom{
 			for(int i = 0; i < this.successionLine.Count; i++){
 				if(this.successionLine[i].id == citizen.id){
 					this.successionLine.RemoveAt (i);
-					UIManager.Instance.UpdateKingdomSuccession ();
+//					UIManager.Instance.UpdateKingdomSuccession ();
 					break;
 				}
 			}

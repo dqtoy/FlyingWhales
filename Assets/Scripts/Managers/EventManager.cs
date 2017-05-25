@@ -56,6 +56,9 @@ public class EventManager : MonoBehaviour {
 		}
 	}
 
+	/*
+	 * Register an event to the allEvents Dictionary.
+	 * */
 	public void AddEventToDictionary(GameEvent gameEvent){
 		if (allEvents.ContainsKey (gameEvent.eventType)) {
 			allEvents [gameEvent.eventType].Add(gameEvent);
@@ -63,6 +66,10 @@ public class EventManager : MonoBehaviour {
 			allEvents.Add (gameEvent.eventType, new List<GameEvent> (){ gameEvent });
 		}
 	}
+
+	/*
+	 * Get a list of all the events of a specific type (including done events).
+	 * */
 	public List<GameEvent> GetEventsOfType(EVENT_TYPES eventType){
 		List<GameEvent> eventsOfType = new List<GameEvent>();
 		if (this.allEvents.ContainsKey (eventType)) {
@@ -71,15 +78,32 @@ public class EventManager : MonoBehaviour {
 		return eventsOfType;
 	}
 
+	/*
+	 * Get a list of all the events started by a kingdom, 
+	 * can pass event types to only get events of that type.
+	 * */
 	public List<GameEvent> GetEventsStartedByKingdom(Kingdom kingdom, EVENT_TYPES[] eventTypes){
 		List<GameEvent> gameEventsOfTypePerKingdom = new List<GameEvent>();
-		for (int i = 0; i < eventTypes.Length; i++) {
-			EVENT_TYPES currentEvent = eventTypes [i];
-			if (this.allEvents.ContainsKey (currentEvent)) {
-				List<GameEvent> eventsOfType = this.allEvents[currentEvent];
+		if (eventTypes.Contains (EVENT_TYPES.ALL)) {
+			for (int i = 0; i < allEvents.Keys.Count; i++) {
+				EVENT_TYPES currKey = allEvents.Keys.ElementAt(i);
+				List<GameEvent> eventsOfType = allEvents[currKey];
 				for (int j = 0; j < eventsOfType.Count; j++) {
-					if (eventsOfType[j].startedByKingdom.id == kingdom.id) {
-						gameEventsOfTypePerKingdom.Add(eventsOfType[j]);
+					GameEvent currEvent = eventsOfType [j];
+					if (currEvent.startedByKingdom != null && currEvent.startedByKingdom.id == kingdom.id) {
+						gameEventsOfTypePerKingdom.Add(currEvent);
+					}
+				}
+			}
+		} else {
+			for (int i = 0; i < eventTypes.Length; i++) {
+				EVENT_TYPES currentEvent = eventTypes [i];
+				if (this.allEvents.ContainsKey (currentEvent)) {
+					List<GameEvent> eventsOfType = this.allEvents [currentEvent];
+					for (int j = 0; j < eventsOfType.Count; j++) {
+						if (eventsOfType[j].startedByKingdom != null && eventsOfType[j].startedByKingdom.id == kingdom.id) {
+							gameEventsOfTypePerKingdom.Add (eventsOfType[j]);
+						}
 					}
 				}
 			}
@@ -87,6 +111,9 @@ public class EventManager : MonoBehaviour {
 		return gameEventsOfTypePerKingdom;
 	}
 
+	/*
+	 * Get a list of all events a kingdom is involved in.
+	 * */
 	public List<GameEvent> GetAllEventsKingdomIsInvolvedIn(Kingdom kingdom){
 		List<GameEvent> allGameEventsInKingdom = new List<GameEvent>();
 		for (int i = 0; i < this.allEvents.Keys.Count; i++) {
@@ -197,6 +224,9 @@ public class EventManager : MonoBehaviour {
 		return allGameEventsInKingdom;
 	}
 
+	/*
+	 * Get a list of events started by a city
+	 * */
 	public List<GameEvent> GetAllEventsPerCity(City city){
 		List<GameEvent> gameEventsOfCity = new List<GameEvent>();
 		for (int i = 0; i < this.allEvents.Keys.Count; i++) {
@@ -213,6 +243,9 @@ public class EventManager : MonoBehaviour {
 		return gameEventsOfCity;
 	}
 
+	/*
+	 * Get a list of events that a citizen started
+	 * */
 	public List<GameEvent> GetAllEventsStartedByCitizen(Citizen citizen){
 		List<GameEvent> gameEventsOfCitizen = new List<GameEvent>();
 		for (int i = 0; i < this.allEvents.Keys.Count; i++) {
@@ -227,6 +260,9 @@ public class EventManager : MonoBehaviour {
 		return gameEventsOfCitizen;
 	}
 
+	/*
+	 * Get a list of events of type that a citizen started
+	 * */
 	public List<GameEvent> GetAllEventsStartedByCitizenByType(Citizen citizen, EVENT_TYPES eventType){
 		List<GameEvent> gameEventsOfCitizen = new List<GameEvent>();
 		if (this.allEvents.ContainsKey (eventType)) {

@@ -82,7 +82,7 @@ public class Exhortation : GameEvent {
 
 				powerGrabThatStartedEvent.exhortedCitizens.Add(this.targetCitizen);
 				this.startedBy.history.Add (new History (startMonth, startDay, startYear, this.startedBy.name + " was successful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
-				UIManager.Instance.UpdateKingdomSuccession ();
+//				UIManager.Instance.UpdateKingdomSuccession ();
 			}else{
 				this.startedBy.history.Add (new History (startMonth, startDay, startYear, this.startedBy.name + " was unsuccessful in influencing " + this.targetCitizen.name + ".", HISTORY_IDENTIFIER.NONE));
 			}
