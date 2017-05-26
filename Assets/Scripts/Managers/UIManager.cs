@@ -279,6 +279,8 @@ public class UIManager : MonoBehaviour {
 	public UIPopupList eventDropdownList;
 	public UILabel eventDropdownCurrentSelectionLbl;
 
+	public delegate void OnPauseEventExpiration(bool state);
+	public OnPauseEventExpiration onPauseEventExpiration;
 
 	void Awake(){
 		Instance = this;
@@ -330,19 +332,19 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void SetProgressionSpeed1X(){
-		GameManager.Instance.SetPausedState(false);
+		Unpause ();
 		GameManager.Instance.SetProgressionSpeed(2f);
 		x1Btn.SetAsClicked();
 	}
 
 	public void SetProgressionSpeed2X(){
-		GameManager.Instance.SetPausedState(false);
+		Unpause ();
 		GameManager.Instance.SetProgressionSpeed(1f);
 		x2Btn.SetAsClicked();
 	}
 
 	public void SetProgressionSpeed4X(){
-		GameManager.Instance.SetPausedState(false);
+		Unpause ();
 		GameManager.Instance.SetProgressionSpeed(0.3f);
 		x4Btn.SetAsClicked();
 	}
@@ -350,6 +352,16 @@ public class UIManager : MonoBehaviour {
 	public void Pause(){
 		GameManager.Instance.SetPausedState(true);
 		pauseBtn.SetAsClicked();
+		if (onPauseEventExpiration != null) {
+			onPauseEventExpiration(true);
+		}
+	}
+
+	private void Unpause(){
+		GameManager.Instance.SetPausedState(false);
+		if (onPauseEventExpiration != null) {
+			onPauseEventExpiration(false);
+		}
 	}
 
 
