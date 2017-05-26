@@ -2559,6 +2559,8 @@ public class UIManager : MonoBehaviour {
 			elmEventTitleLbl.text = Utilities.LogReplacer(logs.First());
 			if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
 				elmEventProgressBar.gameObject.SetActive (false);
+			}else if (ge.eventType == EVENT_TYPES.EXPANSION) {
+				elmEventProgressBar.gameObject.SetActive (false);
 			} else {
 				elmEventProgressBar.gameObject.SetActive (true);
 				float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);

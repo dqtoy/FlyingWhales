@@ -235,9 +235,12 @@ public class Kingdom{
 				new Resource (BASE_RESOURCE_TYPE.GOLD, 0)
 			};
 
-			Citizen governorToLeadExpansion = this.cities [0].governor;
+			Citizen citizenToLeadExpansion = this.cities [0].CreateCitizenForExpansion();
 			this.cities [0].AdjustResources (expansionCost);
-			Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, governorToLeadExpansion);
+			HexTile hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile (this.cities[0]);
+			if(hexTileToExpandTo != null && citizenToLeadExpansion != null){
+				Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, citizenToLeadExpansion, hexTileToExpandTo);
+			}
 
 		}
 	}
