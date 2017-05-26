@@ -135,10 +135,12 @@ public class CombatManager : MonoBehaviour {
 				defenseRemainingHP += defenders [i].GetArmyHP ();
 			}
 			Campaign campaign = city.kingdom.king.campaignManager.activeCampaigns.Find (x => x.targetCity.id == city.id && x.campaignType == CAMPAIGN.DEFENSE);
-			Log newLog = campaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "city_battle_winner");
-			newLog.AddToFillers (attackerGeneral.citizen.city.kingdom, attackerGeneral.citizen.city.kingdom.name);
-			newLog.AddToFillers (null, defenseRemainingHP.ToString());
-			newLog.AddToFillers (attackerGeneral.citizen, attackerGeneral.citizen.name);
+			if (campaign != null) {
+				Log newLog = campaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "city_battle_winner");
+				newLog.AddToFillers (attackerGeneral.citizen.city.kingdom, attackerGeneral.citizen.city.kingdom.name);
+				newLog.AddToFillers (null, defenseRemainingHP.ToString ());
+				newLog.AddToFillers (attackerGeneral.citizen, attackerGeneral.citizen.name);
+			}
 
 		}
 		/*for(int i = 0; i < attackers.Count; i++){

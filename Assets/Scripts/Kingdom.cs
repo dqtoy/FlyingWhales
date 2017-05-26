@@ -338,8 +338,8 @@ public class Kingdom{
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 //		this.king = newKing;
-		this.king.CreateInitialRelationshipsToKings ();
-		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+		newKing.CreateInitialRelationshipsToKings ();
+		KingdomManager.Instance.AddRelationshipToOtherKings (newKing);
 		this.successionLine.Clear();
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (newKing.GetSiblings());
