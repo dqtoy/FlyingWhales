@@ -419,7 +419,7 @@ public class HandOfFate : MonoBehaviour {
 		if (this.eventToCreate.relationshipTargets.Length > 0) {
 			RelationshipKings relationship = this.firstKingdom.king.GetRelationshipWithCitizen (targetKingdom.king);
 //			Debug.Log ("RELATIONSHIP: " + relationship.lordRelationship.ToString());
-			if(relationship.lordRelationship == null){
+			if(relationship == null){
 				return false;
 			}
 			if (this.eventToCreate.relationshipTargets.Contains (relationship.lordRelationship)) {
