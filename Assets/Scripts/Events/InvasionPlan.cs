@@ -148,7 +148,7 @@ public class InvasionPlan : GameEvent {
 		EventManager.Instance.AddEventToDictionary(this);
 		this.StartMilitarizationEvent();
 
-		this.EventIsCreated ();
+//		this.EventIsCreated ();
 
 	}
 

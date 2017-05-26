@@ -143,7 +143,7 @@ public class ExpansionAvatar : MonoBehaviour {
 			this.collidedWithHostile = false;
 			if(this.otherGeneral.army.hp > 0){
 				//Death by general
-				this.expansionEvent.DeathByGeneral ();
+				this.expansionEvent.DeathByGeneral (this.otherGeneral);
 				Task.current.Succeed ();
 			}else{
 				Task.current.Fail ();

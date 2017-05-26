@@ -26,7 +26,11 @@ public class EventLogItem : MonoBehaviour {
 	internal void SetLog(Log _thisLog){
 		this._thisLog = _thisLog;
 		this._dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", _thisLog.month.ToString()) + " " + _thisLog.day.ToString() + ", " + _thisLog.year.ToString();
-		this._logLbl.text = Utilities.LogReplacer(_thisLog);
+		if(_thisLog.fillers.Count > 0){
+			this._logLbl.text = Utilities.LogReplacer(_thisLog);
+		}else{
+			this._logLbl.text = LocalizationManager.Instance.GetLocalizedValue (_thisLog.category, _thisLog.file, _thisLog.key);
+		}
 		UI2DSprite[] bgSprites = this._bgGO.GetComponentsInChildren<UI2DSprite> ();
 		for (int i = 0; i < bgSprites.Length; i++) {
 			bgSprites [i].UpdateAnchors ();
