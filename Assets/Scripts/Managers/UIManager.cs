@@ -3270,4 +3270,11 @@ public class UIManager : MonoBehaviour {
 		currentlyShowingCitizen.children.Remove(child);
 		currentlyShowingCitizen.spouse.children.Remove(child);
 	}
+	public void CenterCameraOnCitizen(){
+		if(this.currentlyShowingCitizen != null){
+			if(!this.currentlyShowingCitizen.isDead){
+				CameraMove.Instance.CenterCameraOn (this.currentlyShowingCitizen.currentLocation.gameObject);
+			}
+		}
+	}
 }
