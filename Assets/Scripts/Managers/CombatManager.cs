@@ -342,142 +342,143 @@ public class CombatManager : MonoBehaviour {
 		RelationshipKingdom kingdomRelationshipToGeneral2 = general1.citizen.city.kingdom.GetRelationshipWithOtherKingdom(general2.citizen.city.kingdom);
 		RelationshipKingdom kingdomRelationshipToGeneral1 = general2.citizen.city.kingdom.GetRelationshipWithOtherKingdom(general1.citizen.city.kingdom);
 
+		if (kingdomRelationshipToGeneral2.isAtWar && kingdomRelationshipToGeneral1.isAtWar) {
+			if (general1.army.hp <= 0) {
+				//BATTLE LOST
+				KingdomManager.Instance.CheckWarTriggerMisc (general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+				kingdomRelationshipToGeneral2.kingdomWar.battlesLost += 1;
+				if (isMidway) {
+					kingdomRelationshipToGeneral2.AdjustExhaustion (10);
+				} else {
+					kingdomRelationshipToGeneral2.AdjustExhaustion (10);
+				}
 
-		if(general1.army.hp <= 0){
-			//BATTLE LOST
-			KingdomManager.Instance.CheckWarTriggerMisc(general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
-			kingdomRelationshipToGeneral2.kingdomWar.battlesLost += 1;
-			if(isMidway){
-				kingdomRelationshipToGeneral2.AdjustExhaustion (10);
-			}else{
-				kingdomRelationshipToGeneral2.AdjustExhaustion (10);
+
+			} else {
+				//BATTLE WON
+				kingdomRelationshipToGeneral2.kingdomWar.battlesWon += 1;
+				if (isMidway) {
+					kingdomRelationshipToGeneral2.AdjustExhaustion (-5);
+				} else {
+					kingdomRelationshipToGeneral2.AdjustExhaustion (-5);
+				}
 			}
 
-
-		}else{
-			//BATTLE WON
-			kingdomRelationshipToGeneral2.kingdomWar.battlesWon += 1;
-			if(isMidway){
-				kingdomRelationshipToGeneral2.AdjustExhaustion (-5);
-			}else{
-				kingdomRelationshipToGeneral2.AdjustExhaustion (-5);
+			if (general2.army.hp <= 0) {
+				//BATTLE LOST
+				KingdomManager.Instance.CheckWarTriggerMisc (general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+				kingdomRelationshipToGeneral1.kingdomWar.battlesLost += 1;
+				if (isMidway) {
+					kingdomRelationshipToGeneral1.AdjustExhaustion (10);
+				} else {
+					kingdomRelationshipToGeneral1.AdjustExhaustion (10);
+				}
+			} else {
+				//BATTLE WON
+				kingdomRelationshipToGeneral1.kingdomWar.battlesWon += 1;
+				if (isMidway) {
+					kingdomRelationshipToGeneral1.AdjustExhaustion (-5);
+				} else {
+					kingdomRelationshipToGeneral1.AdjustExhaustion (-10);
+				}
 			}
-		}
 
-		if(general2.army.hp <= 0){
-			//BATTLE LOST
-			KingdomManager.Instance.CheckWarTriggerMisc(general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
-			kingdomRelationshipToGeneral1.kingdomWar.battlesLost += 1;
-			if(isMidway){
-				kingdomRelationshipToGeneral1.AdjustExhaustion (10);
-			}else{
-				kingdomRelationshipToGeneral1.AdjustExhaustion (10);
-			}
-		}else{
-			//BATTLE WON
-			kingdomRelationshipToGeneral1.kingdomWar.battlesWon += 1;
-			if(isMidway){
-				kingdomRelationshipToGeneral1.AdjustExhaustion (-5);
-			}else{
-				kingdomRelationshipToGeneral1.AdjustExhaustion (-10);
-			}
-		}
-
-		int chanceToTriggerSendSpy = Random.Range (0, 100);
-		if (chanceToTriggerSendSpy < 10) {
+			int chanceToTriggerSendSpy = Random.Range (0, 100);
+			if (chanceToTriggerSendSpy < 10) {
 //		if (chanceToTriggerSendSpy < 100) {
-			List<Kingdom> kingdom1Enemies = new List<Kingdom>();
-			for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
-				Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
-				if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
-					if (currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
-						currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-						kingdom1Enemies.Add(currentKingdom);
+				List<Kingdom> kingdom1Enemies = new List<Kingdom> ();
+				for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+					Kingdom currentKingdom = KingdomManager.Instance.allKingdoms [j];
+					if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
+						if (currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
+						   currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+							kingdom1Enemies.Add (currentKingdom);
+						}
 					}
 				}
-			}
 
-			List<Kingdom> kingdom2Enemies = new List<Kingdom>();
-			for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
-				Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
-				if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
-					if (currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
-						currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-						kingdom2Enemies.Add(currentKingdom);
+				List<Kingdom> kingdom2Enemies = new List<Kingdom> ();
+				for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+					Kingdom currentKingdom = KingdomManager.Instance.allKingdoms [j];
+					if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
+						if (currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
+						   currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+							kingdom2Enemies.Add (currentKingdom);
+						}
 					}
 				}
-			}
 
-			List<Kingdom> possibleKingdomsToSendSpy = kingdom1Enemies.Except (kingdom2Enemies).Union(kingdom2Enemies.Except (kingdom1Enemies)).ToList();
+				List<Kingdom> possibleKingdomsToSendSpy = kingdom1Enemies.Except (kingdom2Enemies).Union (kingdom2Enemies.Except (kingdom1Enemies)).ToList ();
 
-			for (int i = 0; i < possibleKingdomsToSendSpy.Count; i++) {
-				int chance = Random.Range(0, 100);
-				Kingdom possibleKingdomToTrigger = possibleKingdomsToSendSpy[i];
-				List<Citizen> spies = possibleKingdomToTrigger.GetAllCitizensOfType (ROLE.SPY).Where(x => !((Spy)x.assignedRole).inAction).ToList();
-				if (spies.Count > 0 && chance < 5) {
+				for (int i = 0; i < possibleKingdomsToSendSpy.Count; i++) {
+					int chance = Random.Range (0, 100);
+					Kingdom possibleKingdomToTrigger = possibleKingdomsToSendSpy [i];
+					List<Citizen> spies = possibleKingdomToTrigger.GetAllCitizensOfType (ROLE.SPY).Where (x => !((Spy)x.assignedRole).inAction).ToList ();
+					if (spies.Count > 0 && chance < 5) {
 //				if (spies.Count > 0 && chance < 100) {
 //					Debug.Log ("Send spy to decrease tension!");
-					//Send spy to kingdom that is not enemy
-					if (possibleKingdomToTrigger.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
-						possibleKingdomToTrigger.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
+						//Send spy to kingdom that is not enemy
+						if (possibleKingdomToTrigger.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
+						   possibleKingdomToTrigger.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+							((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
 
 //						Debug.Log(possibleKingdomToTrigger.name + " sent a spy(" + spies[0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
 //							" against " + general1.citizen.city.kingdom.name);
-					} else {
-						((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
+						} else {
+							((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
 
 //						Debug.Log(possibleKingdomToTrigger.name + " sent a spy(" + spies[0].name + ") to " + general1.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
 //							" against " + general2.citizen.city.kingdom.name);
+						}
 					}
 				}
 			}
-		}
 
-		int chanceToTriggerSendEnvoy = Random.Range (0, 100);
-		if (chanceToTriggerSendEnvoy < 10) {
+			int chanceToTriggerSendEnvoy = Random.Range (0, 100);
+			if (chanceToTriggerSendEnvoy < 10) {
 //		if (chanceToTriggerSendEnvoy < 100) {
-			List<Kingdom> kingdom1Friends = new List<Kingdom>();
-			for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
-				Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
-				if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
-					if (currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.FRIEND ||
-						currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ALLY) {
-						kingdom1Friends.Add(currentKingdom);
+				List<Kingdom> kingdom1Friends = new List<Kingdom> ();
+				for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+					Kingdom currentKingdom = KingdomManager.Instance.allKingdoms [j];
+					if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
+						if (currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.FRIEND ||
+						   currentKingdom.king.GetRelationshipWithCitizen (general1.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+							kingdom1Friends.Add (currentKingdom);
+						}
 					}
 				}
-			}
 
-			List<Kingdom> kingdom2Friends = new List<Kingdom>();
-			for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
-				Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
-				if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
-					if (currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.FRIEND ||
-						currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ALLY) {
-						kingdom2Friends.Add(currentKingdom);
+				List<Kingdom> kingdom2Friends = new List<Kingdom> ();
+				for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
+					Kingdom currentKingdom = KingdomManager.Instance.allKingdoms [j];
+					if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
+						if (currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.FRIEND ||
+						   currentKingdom.king.GetRelationshipWithCitizen (general2.citizen.city.kingdom.king).lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+							kingdom2Friends.Add (currentKingdom);
+						}
 					}
 				}
-			}
 
-			List<Kingdom> commonFriends = kingdom1Friends.Intersect(kingdom2Friends).ToList();
-			for (int i = 0; i < commonFriends.Count; i++) {
-				int chance = Random.Range(0, 100);
-				Kingdom possibleKingdomToTrigger = commonFriends[i];
-				List<Citizen> envoys = possibleKingdomToTrigger.GetAllCitizensOfType (ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
-				if (envoys.Count > 0 && chance < 5) {
+				List<Kingdom> commonFriends = kingdom1Friends.Intersect (kingdom2Friends).ToList ();
+				for (int i = 0; i < commonFriends.Count; i++) {
+					int chance = Random.Range (0, 100);
+					Kingdom possibleKingdomToTrigger = commonFriends [i];
+					List<Citizen> envoys = possibleKingdomToTrigger.GetAllCitizensOfType (ROLE.ENVOY).Where (x => !((Envoy)x.assignedRole).inAction).ToList ();
+					if (envoys.Count > 0 && chance < 5) {
 //				if (envoys.Count > 0 && chance < 100) {
-					if (Random.Range (0, 2) == 0) {
-						((Envoy)envoys [0].assignedRole).StartIncreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
+						if (Random.Range (0, 2) == 0) {
+							((Envoy)envoys [0].assignedRole).StartIncreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
 //						Debug.Log(possibleKingdomToTrigger.name + " sent an envoy(" + envoys[0].name + ") to " + general2.citizen.city.kingdom.name + " to increase exhaustion in his war" +
 //							" against " + general1.citizen.city.kingdom.name);
-					} else {
-						((Envoy)envoys [0].assignedRole).StartIncreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
+						} else {
+							((Envoy)envoys [0].assignedRole).StartIncreaseWarExhaustionTask (kingdomRelationshipToGeneral2);
 //						Debug.Log(possibleKingdomToTrigger.name + " sent a envoy(" + envoys[0].name + ") to " + general1.citizen.city.kingdom.name + " to increase exhaustion in his war" +
 //							" against " + general2.citizen.city.kingdom.name);
+						}
 					}
 				}
-			}
 
+			}
 		}
 		if(!isMidway){
 			if(general1.army.hp <= 0){
