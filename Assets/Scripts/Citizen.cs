@@ -1053,7 +1053,7 @@ public class Citizen {
 	internal void DeteriorateRelationship(RelationshipKings relationship, GameEvent gameEventTrigger, bool isDiscovery){
 		//TRIGGER OTHER EVENTS
 //		InvasionPlan (relationship, gameEventTrigger, this.city.kingdom.kingdomTypeData);
-		BorderConflict (relationship, gameEventTrigger);
+//		BorderConflict (relationship, gameEventTrigger);
 		Assassination (relationship, gameEventTrigger);
 	}
 	internal void InvasionPlan(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData){

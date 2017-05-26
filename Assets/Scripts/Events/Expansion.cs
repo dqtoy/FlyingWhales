@@ -46,6 +46,11 @@ public class Expansion : GameEvent {
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "event_title");
 		newLogTitle.AddToFillers (null, startedBy.city.kingdom.name);
 
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "start");
+		newLog.AddToFillers (startedBy, startedBy.name);
+		newLog.AddToFillers (startedBy.city, startedBy.city.name);
+
 		InitializeExpansion ();
 
 		this.EventIsCreated ();
@@ -59,22 +64,39 @@ public class Expansion : GameEvent {
 		this.expansionAvatar.GetComponent<ExpansionAvatar>().Init(this);
 	}
 	internal void ExpandToTargetHextile(){
-		this.startedByKingdom.AddTileToKingdom(this.hexTileToExpandTo);
-		this.hexTileToExpandTo.city.ExpandToThisCity(this.startedBy);
+		if(this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0){
+			this.startedByKingdom.AddTileToKingdom(this.hexTileToExpandTo);
+			this.hexTileToExpandTo.city.ExpandToThisCity(this.startedBy);
 
-		this.resolution = "Expansion was successful, new city " + this.hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
-		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-			"Successful Expansion to " + this.hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");
+			newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name);
+
+			this.resolution = "Expansion was successful, new city " + this.hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
+			this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+				"Successful Expansion to " + this.hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));
+		}else{
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "beaten");
+			this.startedBy.Death (DEATH_REASONS.DISAPPEARED_EXPANSION);
+		}
+
 		this.DoneEvent ();
 	}
 	internal void Disappearance(){
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "disappearance");
 		this.startedBy.Death (DEATH_REASONS.DISAPPEARED_EXPANSION);
 		this.DoneEvent();
 	}
 	internal void DeathByOtherReasons(){
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_other");
+		newLog.AddToFillers (this.startedBy, this.startedBy.name);
+		newLog.AddToFillers (null, this.startedBy.deathReasonText);
+
 		this.DoneEvent ();
 	}
-	internal void DeathByGeneral(){
+	internal void DeathByGeneral(General general){
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_general");
+		newLog.AddToFillers (general.citizen, general.citizen.name);
+
 		this.startedBy.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent ();
 	}

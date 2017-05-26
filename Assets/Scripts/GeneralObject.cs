@@ -20,25 +20,25 @@ public class GeneralObject : MonoBehaviour {
 	public bool collidedWithHostile;
 	public General otherGeneral;
 
-	public float speed;
-	bool isMoving = false;
-	Vector3 targetPosition = Vector3.zero;
+//	public float speed;
+//	bool isMoving = false;
+//	Vector3 targetPosition = Vector3.zero;
 //	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
 
 	bool hasArrivedAtRallyPoint = false;
 	bool hasArrivedAtDefenseTargetCity = false;
 
-	void Update(){
-		if(this.isMoving){
-			if(this.targetPosition != null){
-				float step = speed * Time.deltaTime;
-				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
-				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
-					StopMoving ();
-				}
-			}
-		}
-	}
+//	void Update(){
+//		if(this.isMoving){
+//			if(this.targetPosition != null){
+//				float step = speed * Time.deltaTime;
+//				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
+//				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
+//					StopMoving ();
+//				}
+//			}
+//		}
+//	}
 	internal void Init(){
 		ResetValues ();
 //		this.GetComponent<BoxCollider2D>().enabled = true;
@@ -90,14 +90,15 @@ public class GeneralObject : MonoBehaviour {
 			this.generalAnimator.Play("Walk");
 		}
 
-		this.targetPosition = targetTile.transform.position;
+//		this.targetPosition = targetTile.transform.position;
 		this.UpdateUI ();
-		this.isMoving = true;
+//		this.isMoving = true;
+		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
 	}
 	private void StopMoving(){
 		this.generalAnimator.Play("Idle");
-		this.isMoving = false;
-		this.targetPosition = Vector3.zero;
+//		this.isMoving = false;
+//		this.targetPosition = Vector3.zero;
 	}
 	internal void UpdateUI(){
 		if(this.general != null){
@@ -486,7 +487,7 @@ public class GeneralObject : MonoBehaviour {
 			this.general.citizen.city.LookForLostArmy (this.general);
 			this.general.inAction = false;
 			this.isIdle = true;
-			this.isMoving = false;
+			this.GetComponent<SmoothMovement>().isMoving = false;
 			if(!this.generalAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")){
 				this.generalAnimator.Play ("Idle");
 			}

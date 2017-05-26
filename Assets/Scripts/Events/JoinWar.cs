@@ -58,7 +58,7 @@ public class JoinWar : GameEvent {
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 
-		this.EventIsCreated ();
+//		this.EventIsCreated ();
 
 	}
 

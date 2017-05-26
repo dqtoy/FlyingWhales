@@ -52,6 +52,8 @@ public class War : GameEvent {
 		titleLog.AddToFillers (_kingdom2, _kingdom2.name);
 
 		EventManager.Instance.AddEventToDictionary(this);
+
+		this.EventIsCreated ();
 	}
 
 	#region overrides

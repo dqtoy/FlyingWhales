@@ -9,12 +9,27 @@ public class EventItem : MonoBehaviour {
 	public GameEvent gameEvent;
 	public UI2DSprite eventIcon;
 
-	private bool isHovering = false;
-	string toolTip = string.Empty;
+	private bool isHovering;
+	private bool isPaused;
+	private string toolTip;
+	private float timeElapsed;
 
+	void Start(){
+		this.isHovering = false;
+		this.isPaused = false;
+		this.toolTip = string.Empty;
+		this.timeElapsed = 0f;
+		UIManager.Instance.onPauseEventExpiration += this.PauseExpirationTimer;
+	}
 	void Update(){
 		if (this.isHovering) {
 			UIManager.Instance.ShowSmallInfo (this.toolTip, this.transform);
+		}
+		if(!this.isPaused){
+			this.timeElapsed += Time.deltaTime * 1f;
+			if(this.timeElapsed >= 10f){
+				HasExpired ();
+			}
 		}
 	}
 
@@ -26,14 +41,21 @@ public class EventItem : MonoBehaviour {
 		eventIcon.sprite2D = sprite;
 		eventIcon.MakePixelPerfect();
 	}
-	public void StartExpirationTimer(){
-		StartCoroutine (StartExpiration ());
+	internal void StartExpirationTimer(){
+		this.isPaused = false;
+	}
+	private void PauseExpirationTimer(bool state){
+		this.isPaused = state;
+	}
+	private void HasExpired(){
+		this.isPaused = true;
+		UIManager.Instance.HideSmallInfo ();
+		Destroy (this.gameObject);
 	}
 	public IEnumerator StartExpiration(){
 		yield return new WaitForSeconds (10);
 		UIManager.Instance.HideSmallInfo ();
 		Destroy (this.gameObject);
-		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
 	}
 
 	void OnHover(bool isOver){
@@ -50,5 +72,11 @@ public class EventItem : MonoBehaviour {
 		if (onClickEvent != null) {
 			onClickEvent(this.gameEvent);
 		}
+	}
+
+	void OnDestroy(){
+		UIManager.Instance.onPauseEventExpiration -= this.PauseExpirationTimer;
+		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
+
 	}
 }
