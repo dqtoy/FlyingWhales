@@ -64,15 +64,21 @@ public class Expansion : GameEvent {
 		this.expansionAvatar.GetComponent<ExpansionAvatar>().Init(this);
 	}
 	internal void ExpandToTargetHextile(){
-		this.startedByKingdom.AddTileToKingdom(this.hexTileToExpandTo);
-		this.hexTileToExpandTo.city.ExpandToThisCity(this.startedBy);
+		if(this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0){
+			this.startedByKingdom.AddTileToKingdom(this.hexTileToExpandTo);
+			this.hexTileToExpandTo.city.ExpandToThisCity(this.startedBy);
 
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");
-		newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name);
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");
+			newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name);
 
-		this.resolution = "Expansion was successful, new city " + this.hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
-		this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-			"Successful Expansion to " + this.hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));
+			this.resolution = "Expansion was successful, new city " + this.hexTileToExpandTo.city.name + " was added to " + this.startedByKingdom.name + ".";
+			this.startedByCity.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+				"Successful Expansion to " + this.hexTileToExpandTo.city.name, HISTORY_IDENTIFIER.NONE));
+		}else{
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "beaten");
+			this.startedBy.Death (DEATH_REASONS.DISAPPEARED_EXPANSION);
+		}
+
 		this.DoneEvent ();
 	}
 	internal void Disappearance(){
