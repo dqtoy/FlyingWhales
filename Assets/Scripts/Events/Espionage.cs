@@ -36,16 +36,9 @@ public class Espionage : GameEvent {
 		this.chosenEvent = this.GetEventToExpose(true);
 		this.hasFound = false;
 		this.successRate = 75;
-//		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
-//			this.successRate += 10;
-//		}
-		if (this._targetKingdom != null) {
-			this._targetKingdom.cities[0].hexTile.AddEventOnTile(this);
-		}
 		EventManager.Instance.AddEventToDictionary(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		this.EventIsCreated ();
-
 	}
 	internal override void PerformAction(){
 		this.remainingDays -= 1;
@@ -61,14 +54,12 @@ public class Espionage : GameEvent {
 		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 		if(this.chosenEvent != null && this.hasFound){
 			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". " + this.spy.name + " discovered a Hidden Event: ";
 		}
-//		EventManager.Instance.allEvents [EVENT_TYPES.ESPIONAGE].Remove (this);
 	}
 	private Citizen GetSpy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
@@ -94,7 +85,7 @@ public class Espionage : GameEvent {
 			((Spy)spies [random].assignedRole).inAction = true;
 			return spies [random];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}
@@ -119,11 +110,11 @@ public class Espionage : GameEvent {
 	}
 	private void ActualEspionage(){
 		if(this.spy == null){
-			Debug.Log ("CAN'T ESPIONAGE NO SPIES AVAILABLE");
+//			Debug.Log ("CAN'T ESPIONAGE NO SPIES AVAILABLE");
 			return;
 		}
 		if(this.spy.isDead){
-			Debug.Log ("CAN'T ESPIONAGE, SPY IS DEAD!");
+//			Debug.Log ("CAN'T ESPIONAGE, SPY IS DEAD!");
 			return;
 		}
 
@@ -204,14 +195,6 @@ public class Espionage : GameEvent {
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this._sourceKingdom.king.id);
 						relationshipReverse.AdjustLikeness (10, this);
-						relationshipReverse.relationshipHistory.Add (new History (
-							GameManager.Instance.month,
-							GameManager.Instance.days,
-							GameManager.Instance.year,
-							this._sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
-							HISTORY_IDENTIFIER.KING_RELATIONS,
-							true
-						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 						UncoverHiddenEvent (chosenEvent, target);
 					}
@@ -228,26 +211,10 @@ public class Espionage : GameEvent {
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this._sourceKingdom.king.id);
 						relationshipReverse.AdjustLikeness (10, this);
-						relationshipReverse.relationshipHistory.Add (new History (
-							GameManager.Instance.month,
-							GameManager.Instance.days,
-							GameManager.Instance.year,
-							this._sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
-							HISTORY_IDENTIFIER.KING_RELATIONS,
-							true
-						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 						UncoverHiddenEvent (chosenEvent, target);
 					}
 					relationshipToCreator.AdjustLikeness (-10, this);
-					relationshipToCreator.relationshipHistory.Add (new History (
-						GameManager.Instance.month,
-						GameManager.Instance.days,
-						GameManager.Instance.year,
-						relationshipToCreator.sourceKing + " found out about a " + chosenEvent.ToString() + " against his friend " + target.name + " launched by " + relationshipToCreator.king,
-						HISTORY_IDENTIFIER.KING_RELATIONS,
-						false
-					));
 				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
 					int value = 80;
 					if(relationshipToCreator.lordRelationship == RELATIONSHIP_STATUS.WARM){
@@ -260,30 +227,11 @@ public class Espionage : GameEvent {
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this._sourceKingdom.king.id);
 						relationshipReverse.AdjustLikeness (10, this);
-						relationshipReverse.relationshipHistory.Add (new History (
-							GameManager.Instance.month,
-							GameManager.Instance.days,
-							GameManager.Instance.year,
-							this._sourceKingdom.king + " helped reveal a " + chosenEvent.ToString() + " against " + target.name + "'s kingdom.",
-							HISTORY_IDENTIFIER.KING_RELATIONS,
-							true
-						));
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 						UncoverHiddenEvent (chosenEvent, target);
 					}
 					relationshipToCreator.AdjustLikeness (-15, this);
-					relationshipToCreator.relationshipHistory.Add (new History (
-						GameManager.Instance.month,
-						GameManager.Instance.days,
-						GameManager.Instance.year,
-						relationshipToCreator.sourceKing + " found out about a " + chosenEvent.ToString() + " against his friend " + target.name + " launched by " + relationshipToCreator.king,
-						HISTORY_IDENTIFIER.KING_RELATIONS,
-						false
-					));
-
 				}
-
-				
 			}
 		}
 	}
@@ -353,7 +301,7 @@ public class Espionage : GameEvent {
 			}
 			return allEventsAffectionTarget [UnityEngine.Random.Range (0, allEventsAffectionTarget.Count)];
 		}else{
-			Debug.Log ("NO HIDDEN EVENT TO EXPOSE HERE!");
+//			Debug.Log ("NO HIDDEN EVENT TO EXPOSE HERE!");
 			return null;
 		}
 

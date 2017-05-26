@@ -7,10 +7,8 @@ public class StateVisit : GameEvent {
 	public Kingdom invitedKingdom;
 	public Citizen visitor;
 	public List<Kingdom> otherKingdoms;
-//	public List<Envoy> saboteurEnvoys;
 	public Envoy saboteurEnvoy;
 
-	public int successMeter;
 	protected GameEvent gameEventTrigger;
 
 
@@ -26,16 +24,12 @@ public class StateVisit : GameEvent {
 		this.invitedKingdom = invitedKingdom;
 		this.visitor = visitor;
 		this.otherKingdoms = GetOtherKingdoms ();
-//		this.saboteurEnvoys = new List<Envoy> ();
 		this.saboteurEnvoy = null;
-		this.successMeter = 50;
-		this.invitedKingdom.cities[0].hexTile.AddEventOnTile(this);
 		this.gameEventTrigger = gameEventTrigger;
 		this.isDoneBySabotage = false;
 		this.visitorHasDied = false;
 		this.isSuccessful = false;
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
-		Debug.LogError("STATE VISIT");
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
 		newLogTitle.AddToFillers (visitor, visitor.name);
@@ -89,19 +83,10 @@ public class StateVisit : GameEvent {
 				newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
 			}else{
 				if(this.visitorHasDied){
-					Debug.Log ("VISITOR DIED!");
 					if(relationship.like <= 0){
 						if (relationship != null) {
 							relationship.AdjustLikeness (-35, this);
 						}
-//						relationship.relationshipHistory.Add (new History (
-//							GameManager.Instance.month,
-//							GameManager.Instance.days,
-//							GameManager.Instance.year,
-//							"Visitor from " + this.invitedKingdom.name + " died while visiting " + this.inviterKingdom.name,
-//							HISTORY_IDENTIFIER.KING_RELATIONS,
-//							false
-//						));
 					}else{
 						if (relationship != null) {
 							relationship.like = -35;
@@ -118,10 +103,6 @@ public class StateVisit : GameEvent {
 			}
 
 		}
-
-//		for(int i = 0; i < this.saboteurEnvoys.Count; i++){
-//			this.saboteurEnvoys[i].inAction = false;
-//		}
 		if(this.saboteurEnvoy != null){
 			this.saboteurEnvoy.inAction = false;
 		}
@@ -130,95 +111,6 @@ public class StateVisit : GameEvent {
 		this.endMonth = GameManager.Instance.month;
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
-
-//		EventManager.Instance.allEvents [EVENT_TYPES.STATE_VISIT].Remove (this);
-	}
-	private void AdjustSuccessMeter(int amount){
-		this.successMeter += amount;
-		if (this.successMeter >= 100) {
-			this.successMeter = 100;
-		}else if (this.successMeter <= -100) {
-			this.successMeter = -100;
-		}
-	}
-
-	private void CheckEndSuccessMeter(){
-		int invitedPoints = (int)((float)this.successMeter / 5f);
-		int inviterPoints = (int)(invitedPoints / 2);
-
-		RelationshipKings inviterRelationship = inviterKingdom.king.SearchRelationshipByID (invitedKingdom.king.id);
-		RelationshipKings invitedRelationship = invitedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
-
-		inviterRelationship.AdjustLikeness (inviterPoints, this);
-		invitedRelationship.AdjustLikeness (invitedPoints, this);
-
-		if (inviterPoints < 0) {
-			inviterRelationship.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				"State Visit fail",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
-		} else {
-			inviterRelationship.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				"State Visit success",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				true
-			));
-		}
-
-
-		if (invitedPoints < 0) {
-			invitedRelationship.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				"State Visit fail",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				false
-			));
-		} else {
-			invitedRelationship.relationshipHistory.Add (new History (
-				GameManager.Instance.month,
-				GameManager.Instance.days,
-				GameManager.Instance.year,
-				"State Visit success",
-				HISTORY_IDENTIFIER.KING_RELATIONS,
-				true
-			));
-		}
-
-		string result = "successful";
-		if(this.successMeter <= 0){
-			result = "unsuccessful";
-		}
-
-		if (this.visitor.isDead) {
-			//if(svReason == STATEVISIT_TRIGGER_REASONS.DISCOVERING_A){
-			if (gameEventTrigger is Assassination) {
-				Assassination gameEventAss = (Assassination)gameEventTrigger;
-				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after discovering Assassination. The State Visit was " + result + ". " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
-			} else if (gameEventTrigger is InvasionPlan) {
-				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after discovering Invasion Plan. The State Visit was " + result + ". " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
-			} else {
-				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit. The State Visit was " + result + ". " + this.visitor.name + " died during the visit.", HISTORY_IDENTIFIER.NONE));
-			}
-		} else {
-			if (gameEventTrigger is Assassination) {
-				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after discovering Assassination. The State Visit was " + result + ". " , HISTORY_IDENTIFIER.NONE));
-			} else if (gameEventTrigger is InvasionPlan) {
-				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit after discovering Invasion Plan. The State Visit was " + result + ". " , HISTORY_IDENTIFIER.NONE));
-			} else {
-				this.inviterKingdom.king.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.inviterKingdom.king.name + " invited " + this.visitor.name + " for a State Visit. The State Visit was " + result + ". " , HISTORY_IDENTIFIER.NONE));
-			}
-		}
-
 	}
 
 	private List<Kingdom> GetOtherKingdoms(){
@@ -284,7 +176,7 @@ public class StateVisit : GameEvent {
 			((Spy)spies [random].assignedRole).inAction = true;
 			return spies [random];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}
@@ -350,44 +242,7 @@ public class StateVisit : GameEvent {
 		newLog.AddToFillers (sender.king, sender.king.name);
 		newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
 		newLog.AddToFillers (chosenEnvoy.citizen, chosenEnvoy.citizen.name);
-//		this.saboteurEnvoys.Add (chosenEnvoy);
 	}
-//	private void SendEnvoy(Kingdom sender, bool isDecreaseSuccess = false, bool isFromOthers = false){
-//		int chance = 0;
-//		if(isDecreaseSuccess){
-//			chance = 10;
-//			if(sender.king.behaviorTraits.Contains(BEHAVIOR_TRAIT.SCHEMING)){
-//				chance = 20;
-//			}
-//		}else{
-//			chance = 15;
-//			if(isFromOthers){
-//				chance = 10;
-//			}
-//		}
-//
-//		Citizen chosenEnvoy = GetEnvoy (sender);
-//		if(chosenEnvoy == null){
-//			return;
-//		}
-//
-//
-//		int random = UnityEngine.Random.Range (0, 100);
-//		if(chance < random){
-//			int amount = 15;
-//			if(chosenEnvoy.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
-//				amount += 10;
-//			}
-//			if(isDecreaseSuccess){
-//				this.saboteurEnvoys.Add (chosenEnvoy);
-//				AdjustSuccessMeter (-amount);
-//			}else{
-//				this.helperEnvoys.Add (chosenEnvoy);
-//				AdjustSuccessMeter (amount);
-//			}
-//		}
-//
-//	}
 	private Citizen GetEnvoy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> envoys = new List<Citizen> ();
@@ -412,7 +267,7 @@ public class StateVisit : GameEvent {
 			((Envoy)envoys [random].assignedRole).inAction = true;
 			return envoys [random];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}

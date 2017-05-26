@@ -93,7 +93,7 @@ public class MarkovNameGenerator{
 	//Reset the used names
 	public void Reset(){
 		_used.Clear();
-		Debug.Log ("CLEAR!");
+//		Debug.Log ("CLEAR!");
 	}
 
 	//private members

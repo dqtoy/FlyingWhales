@@ -39,7 +39,7 @@ public class StoryTellingManager : MonoBehaviour {
 	public KingdomTypeData InitializeKingdomType(Kingdom kingdom) {
 		// if the kingdom's type is null, this means that this is the first time
 		if (kingdom.kingdomTypeData == null) {
-			Debug.Log ("IKT: " + kingdom.kingdomTypeData + ". " + kingdom.sourceKingdom);
+//			Debug.Log ("IKT: " + kingdom.kingdomTypeData + ". " + kingdom.sourceKingdom);
 			// if the kingdom's sourceKingdom is null, set the kingdom type based on chance
 			if (kingdom.sourceKingdom == null) {
 				int randomizer = Random.Range (0, 100);

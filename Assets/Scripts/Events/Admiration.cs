@@ -11,23 +11,12 @@ public class Admiration : GameEvent {
 
 	public Admiration(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ADMIRATION;
-		if(startedBy != null){
-			this.description = startedBy.name + " has created admiration between " + kingdom1.name + " and " + kingdom2.name + ".";
-			this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-				startedBy.name + " has created admiration between " + kingdom1.name + " and " + kingdom2.name + "." , HISTORY_IDENTIFIER.NONE));
-		}else{
-			this.description = "Admiration has began between " + kingdom1.name + " and " + kingdom2.name + ".";
-		}
 		this.durationInDays = 15;
 		this.remainingDays = this.durationInDays;
 		this.kingdom1 = kingdom1;
 		this.kingdom2 = kingdom2;
-		this.kingdom1.cities[0].hexTile.AddEventOnTile(this);
-		this.kingdom2.cities[0].hexTile.AddEventOnTile(this);
-
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError (this.description);
-		this.EventIsCreated ();
 	}
 
 	internal override void PerformAction(){
@@ -50,7 +39,6 @@ public class Admiration : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
@@ -59,7 +47,7 @@ public class Admiration : GameEvent {
 		RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
 
 		if(this.isResolvedPeacefully){
-			Debug.Log("ADMIRATION BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
+//			Debug.Log("ADMIRATION BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Admiration ended great.";
 
@@ -82,7 +70,7 @@ public class Admiration : GameEvent {
 				false
 			));
 		}else{
-			Debug.Log("ADMIRATION BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
+//			Debug.Log("ADMIRATION BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Admiration ended horribly.";
 
@@ -103,8 +91,5 @@ public class Admiration : GameEvent {
 				false
 			));
 		}
-		//		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
-
-		//Remove UI Icon
 	}
 }

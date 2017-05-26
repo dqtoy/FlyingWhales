@@ -135,17 +135,11 @@ public class City{
 	 * Initialize City With Initial Citizens aka. Families
 	 * */
 	internal void CreateInitialFamilies(bool hasRoyalFamily = true){
-//		BuyInitialTiles ();
 		if(hasRoyalFamily){
 			this.hasKing = true;
 			CreateInitialRoyalFamily ();
 		}
 		CreateInitialGovernorFamily ();
-//		CreateInitialFoodProducerFamily ();
-//		CreateInitialGathererFamily ();
-//		CreateInitialGeneralFamily ();
-//		CreateInitialUntrainedFamily ();
-//		GenerateInitialTraitsForInitialCitizens ();
 		UpdateResourceProduction ();
 
 
@@ -153,119 +147,7 @@ public class City{
 			this.citizens[i].UpdatePrestige();
 		}
 	}
-
-//	private void BuyInitialTiles(){
-//		Debug.Log ("========Buying tiles for kingdom: " + this.kingdom.name + " " + this.kingdom.race.ToString() + "========");
-//		List<HexTile> allAdjacentTiles = this.hexTile.elligibleNeighbourTilesForPurchase.OrderBy(x => x.specialResource == RESOURCE.NONE).ToList();
-//
-//		//Buy Food Tiles
-//		int foodCounter = 0;
-//		for (int i = 0; i < allAdjacentTiles.Count; i++) {
-//			if (foodCounter >= 2) {
-//				break;
-//			}
-//			HexTile currentHexTile = allAdjacentTiles[i];
-//			if (this.ownedTiles.Contains (currentHexTile)) {
-//				continue;
-//			}
-//
-//			if (currentHexTile.specialResource == RESOURCE.NONE) {
-//				if (Utilities.GetBaseResourceType (currentHexTile.defaultResource) == BASE_RESOURCE_TYPE.FOOD) {
-//					foodCounter++;
-//					Debug.Log ("Bought tile " + currentHexTile.name + " for food"); 
-//					this.PurchaseTile(currentHexTile);
-////					currentHexTile.roleIntendedForTile = ROLE.FOODIE;
-//				}
-//			} else {
-//				if (Utilities.GetBaseResourceType (currentHexTile.specialResource) == BASE_RESOURCE_TYPE.FOOD) {
-//					foodCounter++;
-//					Debug.Log ("Bought tile " + currentHexTile.name + " for food"); 
-//					this.PurchaseTile(currentHexTile);
-////					currentHexTile.roleIntendedForTile = ROLE.FOODIE;
-//				}
-//			}
-//		}
-//			
-//		//buy base resource tile
-//		allAdjacentTiles = this.hexTile.elligibleNeighbourTilesForPurchase.OrderBy(x => x.specialResource == RESOURCE.NONE).ToList();
-//		bool hasTileForBasicResource = false;
-//
-//		for (int i = 0; i < allAdjacentTiles.Count; i++) {
-//			HexTile currentHexTile = allAdjacentTiles[i];
-//			if (currentHexTile.specialResource == RESOURCE.NONE) {
-//				if (Utilities.GetBaseResourceType (currentHexTile.defaultResource) == this.kingdom.basicResource) {
-//					hasTileForBasicResource = true;
-//				}
-//			} else {
-//				if (Utilities.GetBaseResourceType (currentHexTile.specialResource) == this.kingdom.basicResource) {
-//					hasTileForBasicResource = true;
-//				}
-//			}
-//		}
-//
-//		for (int i = 0; i < allAdjacentTiles.Count; i++) {
-//			HexTile currentHexTile = allAdjacentTiles[i];
-//			if (this.ownedTiles.Contains (currentHexTile)) {
-//				continue;
-//			}
-//			if (hasTileForBasicResource) {
-//				if (currentHexTile.specialResource == RESOURCE.NONE) {
-//					BASE_RESOURCE_TYPE baseResType = Utilities.GetBaseResourceType (currentHexTile.defaultResource);
-//					if (baseResType == this.kingdom.basicResource) {
-//						Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
-//						this.PurchaseTile (currentHexTile);
-////						currentHexTile.roleIntendedForTile = ROLE.GATHERER;
-//						break;
-//					}
-//				} else {
-//					BASE_RESOURCE_TYPE baseResType = Utilities.GetBaseResourceType (currentHexTile.specialResource);
-//					if (baseResType == this.kingdom.basicResource) {
-//						Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
-//						this.PurchaseTile (currentHexTile);
-////						currentHexTile.roleIntendedForTile = ROLE.GATHERER;
-//						break;
-//					}
-//				}
-//			} else {
-//				if (currentHexTile.specialResource == RESOURCE.NONE) {
-//					BASE_RESOURCE_TYPE baseResType = Utilities.GetBaseResourceType (currentHexTile.defaultResource);
-//					if (baseResType == BASE_RESOURCE_TYPE.STONE || baseResType == BASE_RESOURCE_TYPE.WOOD) {
-//						Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
-//						this.PurchaseTile (currentHexTile);
-////						currentHexTile.roleIntendedForTile = ROLE.GATHERER;
-//						break;
-//					}
-//				} else {
-//					BASE_RESOURCE_TYPE baseResType = Utilities.GetBaseResourceType (currentHexTile.specialResource);
-//					if (baseResType == BASE_RESOURCE_TYPE.STONE || baseResType == BASE_RESOURCE_TYPE.WOOD) {
-//						Debug.Log ("Bought tile " + currentHexTile.name + " for base resource"); 
-//						this.PurchaseTile (currentHexTile);
-////						currentHexTile.roleIntendedForTile = ROLE.GATHERER;
-//						break;
-//					}
-//				}
-//			}
-//		}
-//
-//
-//		allAdjacentTiles = this.hexTile.elligibleNeighbourTilesForPurchase.ToList();
-//		//buy normal tile without special resource
-//		for (int i = 0; i < allAdjacentTiles.Count; i++) {
-//			HexTile currentHexTile = allAdjacentTiles[i];
-//			if (this.ownedTiles.Contains (currentHexTile)) {
-//				continue;
-//			}
-//
-//			if (currentHexTile.specialResource == RESOURCE.NONE) {
-//				Debug.Log ("Bought tile " + currentHexTile.name + " for nothing"); 
-//				this.PurchaseTile(currentHexTile);
-////				currentHexTile.roleIntendedForTile = ROLE.GENERAL;
-//				break;
-//			}
-//		}
-//
-//	}
-
+		
 	internal Citizen CreateNewKing(){
 		GENDER gender = GENDER.MALE;
 		int randomGender = UnityEngine.Random.Range (0, 100);
@@ -518,325 +400,6 @@ public class City{
 
 	}
 
-//	private void CreateInitialGeneralFamily(){
-//		GENDER gender = GENDER.MALE;
-//		int randomGender = UnityEngine.Random.Range (0, 2);
-//		if(randomGender == 0){
-//			gender = GENDER.FEMALE;
-//		}
-//		Citizen general = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
-//		Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
-//		Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
-//
-//		father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
-//		mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
-//
-//		general.role = ROLE.GENERAL;
-//		general.assignedRole = new General (general);
-//
-//		father.AddChild (general);
-//		mother.AddChild (general);
-//		general.AddParents(father, mother);
-//
-//		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//		MONTH monthGeneral = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//
-//		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
-//		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
-//		general.AssignBirthday (monthGeneral, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthGeneral] + 1), (GameManager.Instance.year - general.age));
-//
-//		father.isDead = true;
-//		mother.isDead = true;
-//		this.citizens.Remove(father);
-//		this.citizens.Remove(mother);
-//		father.UnsubscribeListeners();
-//		mother.UnsubscribeListeners();
-//
-//		MarriageManager.Instance.Marry(father, mother);
-//
-//		int spouseChance = UnityEngine.Random.Range (0, 2);
-//		if (spouseChance == 0) {
-//			Citizen spouse = MarriageManager.Instance.CreateSpouse (general);
-//
-//			int childChance = UnityEngine.Random.Range (0, 100);
-//			if (childChance < 25) {
-//
-//				int age = UnityEngine.Random.Range (0, ((spouse.age - 16) + 1));
-//				if(spouse.gender == GENDER.MALE){
-//					age = UnityEngine.Random.Range (0, ((general.age - 16) + 1));
-//				}
-//				Citizen child1 = MarriageManager.Instance.MakeBaby (general, spouse, age);
-//				MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//				child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
-//			}
-//		}
-//		HexTile tileForCitizen = this.FindTileForCitizen (general);
-//		if (tileForCitizen != null) {
-//			this.OccupyTile (tileForCitizen, general);
-//		} else {
-//			Debug.LogError (this.name + ": NO TILE FOR GENERAL!");
-//		}
-//	
-//	}
-
-//	private void CreateInitialFoodProducerFamily(){
-//		for(int i = 0; i < 3; i++){
-//			GENDER gender = GENDER.MALE;
-//			int randomGender = UnityEngine.Random.Range (0, 2);
-//			if(randomGender == 0){
-//				gender = GENDER.FEMALE;
-//			}
-//			Citizen producer = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
-//			Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
-//			Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
-//
-//			father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
-//			mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
-//
-//			producer.AssignRole (ROLE.FOODIE);
-//
-//			father.AddChild (producer);
-//			mother.AddChild (producer);
-//			producer.AddParents(father, mother);
-//
-//			MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//			MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//			MONTH monthProducer = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//
-//			father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
-//			mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
-//			producer.AssignBirthday (monthProducer, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthProducer] + 1), (GameManager.Instance.year - producer.age));
-//
-//			father.isDead = true;
-//			mother.isDead = true;
-//			this.citizens.Remove(father);
-//			this.citizens.Remove(mother);
-//			father.UnsubscribeListeners();
-//			mother.UnsubscribeListeners();
-//
-//			MarriageManager.Instance.Marry(father, mother);
-//
-//			int spouseChance = UnityEngine.Random.Range (0, 2);
-//			if (spouseChance == 0) {
-//				Citizen spouse = MarriageManager.Instance.CreateSpouse (producer);
-//
-//				int childChance = UnityEngine.Random.Range (0, 100);
-//				if (childChance < 25) {
-//
-//					int age = UnityEngine.Random.Range (0, ((spouse.age - 16) + 1));
-//					if(spouse.gender == GENDER.MALE){
-//						age = UnityEngine.Random.Range (0, ((producer.age - 16) + 1));
-//					}
-//					Citizen child1 = MarriageManager.Instance.MakeBaby (producer, spouse, age);
-//					MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//					child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
-//				}
-//			}
-//
-//			if (i == 0 || i == 1) {
-//				HexTile tileForCitizen = this.FindTileForCitizen (producer);
-//				if (tileForCitizen != null) {
-//					this.OccupyTile (tileForCitizen, producer);
-//				} else {
-//					Debug.LogError (this.name + ": NO TILE FOR FOODIE!");
-//				}
-//			}
-//		}
-//	}
-
-//	private void CreateInitialGathererFamily(){
-//		for(int i = 0; i < 2; i++){
-//			GENDER gender = GENDER.MALE;
-//			int randomGender = UnityEngine.Random.Range (0, 2);
-//			if(randomGender == 0){
-//				gender = GENDER.FEMALE;
-//			}
-//			Citizen gatherer = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
-//			Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
-//			Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
-//
-//			father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
-//			mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
-//
-//			gatherer.AssignRole (ROLE.GATHERER);
-//
-//			father.AddChild (gatherer);
-//			mother.AddChild (gatherer);
-//			gatherer.AddParents(father, mother);
-//
-//			MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//			MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//			MONTH monthGatherer = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//
-//			father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
-//			mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
-//			gatherer.AssignBirthday (monthGatherer, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthGatherer] + 1), (GameManager.Instance.year - gatherer.age));
-//
-//			father.isDead = true;
-//			mother.isDead = true;
-//			this.citizens.Remove(father);
-//			this.citizens.Remove(mother);
-//			father.UnsubscribeListeners();
-//			mother.UnsubscribeListeners();
-//		
-//			MarriageManager.Instance.Marry(father, mother);
-//
-//			int spouseChance = UnityEngine.Random.Range (0, 2);
-//			if (spouseChance == 0) {
-//				Citizen spouse = MarriageManager.Instance.CreateSpouse (gatherer);
-//
-//				int childChance = UnityEngine.Random.Range (0, 100);
-//				if (childChance < 25) {
-//
-//					int age = UnityEngine.Random.Range (0, ((spouse.age - 16) + 1));
-//					if(spouse.gender == GENDER.MALE){
-//						age = UnityEngine.Random.Range (0, ((gatherer.age - 16) + 1));
-//					}
-//					Citizen child1 = MarriageManager.Instance.MakeBaby (gatherer, spouse, age);
-//					MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//					child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
-//
-//				}
-//			}
-//
-//			if (i == 0) {
-//				HexTile tileForCitizen = this.FindTileForCitizen (gatherer);
-//				if (tileForCitizen != null) {
-//					this.OccupyTile (tileForCitizen, gatherer);
-//				} else {
-//					Debug.LogError (this.name + ": NO TILE FOR GATHERER!");
-//				}
-//			}
-//		}
-//	}
-
-//	private void CreateInitialUntrainedFamily(){
-//		for(int i = 0; i < 3; i++){
-//			GENDER gender = GENDER.MALE;
-//			int randomGender = UnityEngine.Random.Range (0, 2);
-//			if(randomGender == 0){
-//				gender = GENDER.FEMALE;
-//			}
-//			Citizen normal = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
-//			Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
-//			Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
-//
-//			father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
-//			mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
-//
-//			father.AddChild (normal);
-//			mother.AddChild (normal);
-//			normal.AddParents(father, mother);
-//
-//			MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//			MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//			MONTH monthNormal = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//
-//			father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
-//			mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
-//			normal.AssignBirthday (monthNormal, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthNormal] + 1), (GameManager.Instance.year - normal.age));
-//
-//			father.isDead = true;
-//			mother.isDead = true;
-//			this.citizens.Remove(father);
-//			this.citizens.Remove(mother);
-//			father.UnsubscribeListeners();
-//			mother.UnsubscribeListeners();
-//
-//			MarriageManager.Instance.Marry(father, mother);
-//
-//			int spouseChance = UnityEngine.Random.Range (0, 2);
-//			if (spouseChance == 0) {
-//				Citizen spouse = MarriageManager.Instance.CreateSpouse (normal);
-//
-//				int childChance = UnityEngine.Random.Range (0, 100);
-//				if (childChance < 25) {
-//
-//					int age = UnityEngine.Random.Range (0, ((spouse.age - 16) + 1));
-//					if(spouse.gender == GENDER.MALE){
-//						age = UnityEngine.Random.Range (0, ((normal.age - 16) + 1));
-//					}
-//					Citizen child1 = MarriageManager.Instance.MakeBaby (normal, spouse, age);
-//					MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-//					child1.AssignBirthday (monthChild1, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthChild1] + 1), (GameManager.Instance.year - child1.age));
-//
-//				}
-//			}
-//		}
-//	}
-
-//	private void GenerateInitialTraitsForInitialCitizens(){
-//		for (int i = 0; i < this.citizens.Count; i++) {
-//			Citizen currentCitizen = this.citizens[i];
-//			currentCitizen.behaviorTraits.Clear();
-////			currentCitizen.skillTraits.Clear();
-////			currentCitizen.miscTraits.Clear();
-//
-//			//Generate Behaviour trait
-//			int firstItem = 1;
-//			int secondItem = 2;
-//			for (int j = 0; j < 4; j++) {
-//				BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
-//				int chanceForTrait = UnityEngine.Random.Range (0, 100);
-//				if (chanceForTrait <= 20) {
-//					currentCitizen.behaviorTraits.Add (behaviourPair [UnityEngine.Random.Range (0, behaviourPair.Length)]);
-//				}
-//				firstItem += 2;
-//				secondItem += 2;
-//			}
-//
-//			int chanceForSkillTraitLength = UnityEngine.Random.Range (0, 100);
-//			int numOfSkillTraits = 0;
-//			if (chanceForSkillTraitLength <= 20) {
-//				numOfSkillTraits = 2;
-//			} else if (chanceForSkillTraitLength >= 21 && chanceForSkillTraitLength <= 40) {
-//				numOfSkillTraits = 1;
-//			}
-//
-////			//Generate Skill Traits
-////			List<SKILL_TRAIT> skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
-////			skillTraits.Remove (SKILL_TRAIT.NONE);
-////			for (int j = 0; j < numOfSkillTraits; j++) {
-////				SKILL_TRAIT chosenSkillTrait = skillTraits[UnityEngine.Random.Range(0, skillTraits.Count)];
-////				currentCitizen.skillTraits.Add (chosenSkillTrait);
-////				if (numOfSkillTraits > 1) {
-////					skillTraits.Remove (chosenSkillTrait);
-////					if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
-////						skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
-////					} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
-////						skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
-////					} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
-////						skillTraits.Remove (SKILL_TRAIT.THRIFTY);
-////					} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
-////						skillTraits.Remove (SKILL_TRAIT.LAVISH);
-////					}
-////				}
-////			}
-////
-////			int chanceForMiscTraitLength = UnityEngine.Random.Range (0, 100);
-////			int numOfMiscTraits = 0;
-////			if (chanceForMiscTraitLength <= 10) {
-////				numOfMiscTraits = 2;
-////			} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 21) {
-////				numOfMiscTraits = 1;
-////			}
-////
-////			//Generate Misc Traits
-////			List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
-////			miscTraits.Remove (MISC_TRAIT.NONE);
-////			for (int j = 0; j < numOfMiscTraits; j++) {
-////				MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
-////				currentCitizen.miscTraits.Add (chosenMiscTrait);
-////				miscTraits.Remove (chosenMiscTrait);
-////			}
-//			currentCitizen.behaviorTraits.Distinct().ToList();
-////			currentCitizen.skillTraits.Distinct().ToList();
-////			currentCitizen.miscTraits.Distinct().ToList();
-//		}
-//		this.UpdateCitizenCreationTable();
-//	}
-
 	protected void UpdateBorderTiles(){
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			this.borderTiles[i].isBorder = false;
@@ -908,18 +471,7 @@ public class City{
 
 		KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
-//	internal void ExpandToThisCity(List<Citizen> citizensToOccupyCity){
-//		this.CreateInitialFamilies(false);
-//		KingdomManager.Instance.UpdateKingdomAdjacency();
-//		this.kingdom.AddInternationalWarCity (this);
-//		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
-//			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
-//				this.kingdom.HighlightAllOwnedTilesInKingdom();
-//			}
-//		}
-//
-//		KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
-//	}
+
 	internal List<General> GetIncomingAttackers(){
 		List<General> incomingAttackers = new List<General> ();
 		for(int i = 0; i < this.incomingGenerals.Count; i++){
@@ -930,17 +482,6 @@ public class City{
 		return incomingAttackers;
 	}
 
-//	internal void TriggerStarvation(){
-//		if(this.isStarving){
-//			this.tradeManager.numberOfTimesStarved += 1;
-//			int deathChance = UnityEngine.Random.Range (0, 100);
-//			if(deathChance < 5){
-//				int youngestAge = this.citizens.Min (x => x.age);
-//				List<Citizen> youngestCitizens = this.citizens.Where(x => x.age == youngestAge).ToList();
-//				youngestCitizens [UnityEngine.Random.Range(0, youngestCitizens.Count)].DeathByStarvation ();
-//			}
-//		}
-//	}
 
 	internal void PurchaseTile(HexTile tileToBuy){
 		tileToBuy.movementDays = 2;
@@ -980,108 +521,16 @@ public class City{
 			}
 		}
 
-		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);
+//		Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Bought Tile: " + tileToBuy.name);
 	}
 
 	protected void CityEverydayTurnActions(){
-//		this.UpdateResourceProduction();
 		this.ProduceResources();
-//		this.hexTile.GetBehaviourTree().Tick();
-//		this.AttemptToPerformAction();
-//		this.AttemptToIncreaseArmyHP();
-//		this.UpdateTradeManager();
 	}
-
-//	protected void AttemptToIncreaseArmyHP(){
-//		int chance = UnityEngine.Random.Range (0, 100);
-//		if (chance < 30) {
-//			BASE_RESOURCE_TYPE upgradeResource = BASE_RESOURCE_TYPE.NONE;
-//			if (this.kingdom.race == RACE.HUMANS || this.kingdom.race == RACE.CROMADS) {
-//				upgradeResource = BASE_RESOURCE_TYPE.STONE;
-//			} else if (this.kingdom.race == RACE.ELVES || this.kingdom.race == RACE.MINGONS) {
-//				upgradeResource = BASE_RESOURCE_TYPE.WOOD;
-//			}
-//			List<Resource> increaseArmyHPCost = new List<Resource> () {
-//				new Resource (BASE_RESOURCE_TYPE.GOLD, 200),
-//				new Resource (upgradeResource, 40)
-//			};
-//			if (HasEnoughResourcesForAction (increaseArmyHPCost)) {
-//				List<General> inactiveGenerals = this.GetCitizensWithRole (ROLE.GENERAL).Where (x => !((General)x.assignedRole).inAction)
-//					.Select(x => (General)x.assignedRole).ToList();
-//				inactiveGenerals.OrderBy(x => x.GetArmyHP());
-//				if (inactiveGenerals.Count > 0) {
-//					int hpIncrease = 0;
-//					if (this.kingdom.race == RACE.HUMANS) {
-//						hpIncrease = 30;
-//					} else if (this.kingdom.race == RACE.ELVES) {
-//						hpIncrease = 25;
-//					} else if (this.kingdom.race == RACE.MINGONS) {
-//						hpIncrease = 30;
-//					} else if (this.kingdom.race == RACE.CROMADS) {
-//						hpIncrease = 40;
-//					}
-//					inactiveGenerals[0].army.hp += hpIncrease;
-//					inactiveGenerals[0].UpdateUI();
-//					this.AdjustResources(increaseArmyHPCost);
-//					Debug.Log (GameManager.Instance.month + "/" + GameManager.Instance.days + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
-//				}
-//			}
-//		}
-//
-//		if (EventManager.Instance.GetEventsOfTypePerKingdom (this.kingdom, EVENT_TYPES.MILITARIZATION).Count > 0) {
-//			if (chance < 70) {
-//				BASE_RESOURCE_TYPE upgradeResource = BASE_RESOURCE_TYPE.NONE;
-//				if (this.kingdom.race == RACE.HUMANS || this.kingdom.race == RACE.CROMADS) {
-//					upgradeResource = BASE_RESOURCE_TYPE.STONE;
-//				} else if (this.kingdom.race == RACE.ELVES || this.kingdom.race == RACE.MINGONS) {
-//					upgradeResource = BASE_RESOURCE_TYPE.WOOD;
-//				}
-//				List<Resource> increaseArmyHPCost = new List<Resource> () {
-//					new Resource (BASE_RESOURCE_TYPE.GOLD, 200),
-//					new Resource (upgradeResource, 40)
-//				};
-//				if (HasEnoughResourcesForAction (increaseArmyHPCost)) {
-//					List<General> inactiveGenerals = this.GetCitizensWithRole (ROLE.GENERAL).Where (x => !((General)x.assignedRole).inAction)
-//						.Select(x => (General)x.assignedRole).ToList();
-//					inactiveGenerals.OrderBy(x => x.GetArmyHP());
-//					if (inactiveGenerals.Count > 0) {
-//						int hpIncrease = 0;
-//						if (this.kingdom.race == RACE.HUMANS) {
-//							hpIncrease = 30;
-//						} else if (this.kingdom.race == RACE.ELVES) {
-//							hpIncrease = 25;
-//						} else if (this.kingdom.race == RACE.MINGONS) {
-//							hpIncrease = 30;
-//						} else if (this.kingdom.race == RACE.CROMADS) {
-//							hpIncrease = 40;
-//						}
-//						inactiveGenerals[0].army.hp += hpIncrease;
-//						inactiveGenerals[0].UpdateUI();
-//						this.AdjustResources(increaseArmyHPCost);
-//						Debug.LogError (GameManager.Instance.month + "/" + GameManager.Instance.week + ": Increased army hp of " + inactiveGenerals [0].citizen.name + " by " + hpIncrease.ToString ());
-//					}
-//				}
-//			}
-//		}
-//	}
-
-//	protected void UpdateTradeManager(){
-//		if (this.tradeManager.lastMonthUpdated != GameManager.Instance.month) {
-//			this.tradeManager.UpdateNeededResources();
-//		}
-//	}
+		
 
 	#region Resource Production
 	internal void UpdateResourceProduction(){
-//		this.allResourceProduction = new int[8];
-//		for (int i = 0; i < this.citizens.Count; i++) {
-//			if(this.citizens[i].isBusy && this.citizens[i].role != ROLE.UNTRAINED && this.citizens[i].role != ROLE.GOVERNOR && this.citizens[i].role != ROLE.KING){
-//				int[] citizenProduction = this.citizens[i].assignedRole.GetResourceProduction();
-//				for (int j = 0; j < citizenProduction.Length; j++) {
-//					this.allResourceProduction[j] += citizenProduction[j];
-//				}
-//			}
-//		}
 		this.maxGrowth = 100 + ((100 + (100 * this.structures.Count)) * this.structures.Count);
 		this.dailyGrowth = 10;
 		this.maxGeneralHP = 0;
@@ -1202,17 +651,6 @@ public class City{
 			ROLE currentRole = this.creatableRoles [i];
 			int currentRoleCount = this.GetCitizensWithRole (currentRole).Count;
 			int currentRoleLimit = this.citizenCreationTable [currentRole];
-//			bool isProducingAllResources = true;
-//			List<Resource> citizenCreationCost = GetCitizenCreationCostPerType (currentRole);
-//			if (citizenCreationCost != null) {
-//				for (int j = 0; j < citizenCreationCost.Count; j++) {
-//					if (!this.IsProducingResource (citizenCreationCost [j].resourceType)) {
-//						isProducingAllResources = false;
-//					}
-//				}
-//			} else {
-//				isProducingAllResources = false;
-//			}
 			if (currentRoleCount < previousRoleCount && currentRoleCount < currentRoleLimit) {
 				roleToCreate = currentRole;
 				previousRoleCount = currentRoleCount;
@@ -1223,7 +661,6 @@ public class City{
 
 	internal void UpdateCitizenCreationTable(){
 		this.citizenCreationTable = new Dictionary<ROLE, int>(Utilities.defaultCitizenCreationTable);
-//		for (int i = 0; i < this.governor.behaviorTraits.Count; i++) {
 		Dictionary<ROLE, int> currentTraitTable = Utilities.citizenCreationTable[this.governor.honestyTrait];
 		for (int j = 0; j < currentTraitTable.Count; j++) {
 			ROLE currentRole = currentTraitTable.Keys.ElementAt(j);
@@ -1235,7 +672,6 @@ public class City{
 			ROLE currentRole = currentTraitTable.Keys.ElementAt(j);
 			this.citizenCreationTable [currentRole] += currentTraitTable [currentRole];
 		}
-//		}
 		this.creatableRoles.Clear();
 		for (int i = 0; i < this.citizenCreationTable.Keys.Count; i++) {
 			ROLE currentKey = this.citizenCreationTable.Keys.ElementAt(i);
@@ -1298,8 +734,6 @@ public class City{
 		if(nearest != -2){
 			List<General> hostiles = GetIncomingAttackers().Where(x => x.daysBeforeArrival == nearest).ToList();
 			if(hostiles.Count > 0){
-				//			int nearest = hostiles.Min (x => x.daysBeforeArrival);
-				//			List<General> nearestHostiles = hostiles.Where(x => x.daysBeforeArrival == nearest).ToList();
 				for(int i = 0; i < hostiles.Count; i++){
 					total += hostiles[i].GetArmyHP ();
 				}
@@ -1335,11 +769,6 @@ public class City{
 
 	internal void AdjustResources(List<Resource> resource, bool reduce = true){
 		int currentResourceQuantity = 0;
-//		Debug.Log ("Cost is: ");
-//		for (int i = 0; i < resource.Count; i++) {
-//			Debug.Log (resource[i].resourceType.ToString() + " " + resource[i].resourceQuantity.ToString());
-//		}
-
 		for(int i = 0; i < resource.Count; i++){
 			currentResourceQuantity = resource [i].resourceQuantity;
 			if (reduce) {
@@ -1421,8 +850,6 @@ public class City{
 		List<Resource> citizenCreationCosts = new List<Resource>();
 
 		int goldCost = 500;
-//		int goldCost = 1;
-
 
 		switch (role) {
 		case ROLE.TRADER:
@@ -1430,7 +857,6 @@ public class City{
 			citizenCreationCosts = new List<Resource>(){
 				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
 				new Resource (this.kingdom.basicResource, 2)
-//				new Resource (this.kingdom.basicResource, 1)
 			};
 			return citizenCreationCosts;
 		case ROLE.SPY:
@@ -1439,7 +865,6 @@ public class City{
 			citizenCreationCosts = new List<Resource>(){
 				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
 				new Resource (this.kingdom.basicResource, 3)
-//				new Resource (this.kingdom.basicResource, 1)
 			};
 			return citizenCreationCosts;
 		
@@ -1457,9 +882,6 @@ public class City{
 			((General)citizenToRemove.assignedRole).UntrainGeneral();
 		}
 		this.citizens.Remove (citizenToRemove);
-//		if(citizenToRemove.workLocation != null){
-//			citizenToRemove.workLocation.UnoccupyTile();
-//		}
 		citizenToRemove.city = null;
 		citizenToRemove.role = ROLE.UNTRAINED;
 		citizenToRemove.assignedRole = null;
@@ -1523,7 +945,7 @@ public class City{
 		this.borderTiles.Clear ();
 		if(!this.isDead){
 			bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.hexTile.GetComponent<PandaBehaviour> ());
-			Debug.Log ("REMOVED BT?: " + this.name + " = " + removed);
+//			Debug.Log ("REMOVED BT?: " + this.name + " = " + removed);
 
 			GameObject.Destroy (this.hexTile.GetComponent<PandaBehaviour> ());
 			GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
@@ -1552,14 +974,14 @@ public class City{
 	}
 
 	internal void LookForNewGeneral(General general){
-		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
+//		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
 		general.inAction = false;
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
 				General chosenGeneral = (General)this.citizens [i].assignedRole;
 				if(chosenGeneral.location == general.location){
 					if(!chosenGeneral.citizen.isDead){
-						Debug.Log (chosenGeneral.citizen.name + " IS THE NEW GENERAL FOR " + general.citizen.name + "'s ARMY");
+//						Debug.Log (chosenGeneral.citizen.name + " IS THE NEW GENERAL FOR " + general.citizen.name + "'s ARMY");
 						chosenGeneral.army.hp += general.army.hp;
 						general.army.hp = 0;
 						chosenGeneral.UpdateUI ();
@@ -1571,25 +993,8 @@ public class City{
 	}
 
 	internal void LookForLostArmy(General general){
-		Debug.Log (general.citizen.name + " IS LOOKING FOR LOST ARMIES...");
+//		Debug.Log (general.citizen.name + " IS LOOKING FOR LOST ARMIES...");
 		EventManager.Instance.onLookForLostArmies.Invoke (general);
-//		List<General> deadGenerals = new List<General> ();
-//		for(int i = 0; i < this.citizens.Count; i++){
-//			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
-//				General chosenGeneral = (General)this.citizens [i].assignedRole;
-//				if(chosenGeneral.location == this.hexTile && chosenGeneral.citizen.city.id == this.id){
-//					if(chosenGeneral.citizen.isDead){
-//						Debug.Log (general.citizen.name + " IS THE NEW GENERAL FOR " + chosenGeneral.citizen.name + "'s ARMY");
-//						general.army.hp += chosenGeneral.army.hp;
-//						chosenGeneral.army.hp = 0;
-//						deadGenerals.Add (chosenGeneral);
-//					}
-//				}
-//			}
-//		}
-//		for(int i = 0; i < deadGenerals.Count; i++){
-//			deadGenerals [i].GeneralDeath ();
-//		}
 	}
 
 	internal bool HasAdjacency(int kingdomID){
