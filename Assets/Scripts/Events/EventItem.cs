@@ -23,7 +23,7 @@ public class EventItem : MonoBehaviour {
 	}
 	void Update(){
 		if (this.isHovering) {
-			UIManager.Instance.ShowSmallInfo (this.toolTip, this.transform);
+			UIManager.Instance.ShowSmallInfo (this.toolTip);
 		}
 		if(!this.isPaused){
 			this.timeElapsed += Time.deltaTime * 1f;
@@ -62,7 +62,7 @@ public class EventItem : MonoBehaviour {
 		if (isOver) {
 			this.isHovering = true;
 			this.toolTip = Utilities.LogReplacer (this.gameEvent.logs [0]);
-			UIManager.Instance.ShowSmallInfo (this.toolTip, this.transform);
+			UIManager.Instance.ShowSmallInfo (this.toolTip);
 		}else{
 			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();

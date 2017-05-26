@@ -34,7 +34,7 @@ public class JoinWar : GameEvent {
 		InvasionPlan _invasionPlanThatStartedEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.JOIN_WAR_REQUEST;
 //		this.description = startedBy.name + " is looking for allies against kingdom " + kingdomToAttack.name;
-		this.durationInDays = 4;
+		this.durationInDays = 30;
 		this.remainingDays = this.durationInDays;
 
 		this._candidateForAlliance = _candidateForAlliance;

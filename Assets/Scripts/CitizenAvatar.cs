@@ -40,7 +40,7 @@ public class CitizenAvatar : MonoBehaviour {
 						}
 					}
 					this.path = trader.pathToTargetCity;
-					UIManager.Instance.ShowSmallInfo (text, UIManager.Instance.transform);
+					UIManager.Instance.ShowSmallInfo (text);
 					this.HighlightPath();
 				}
 			}

@@ -44,7 +44,7 @@ public class TraitObject : MonoBehaviour {
 	void OnHover(bool isOver){
 		if (isOver) {
 			this.isHovering = true;
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.trait.ToString().Replace("_", " ") + "[/b]", this.transform);
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.trait.ToString().Replace("_", " ") + "[/b]");
 		} else {
 			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();
@@ -65,7 +65,7 @@ public class TraitObject : MonoBehaviour {
 
 	void Update(){
 		if (this.isHovering) {
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.trait.ToString().Replace("_", " ") + "[/b]", this.transform);
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.trait.ToString().Replace("_", " ") + "[/b]");
 		}
 	}
 }

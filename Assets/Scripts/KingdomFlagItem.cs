@@ -26,7 +26,7 @@ public class KingdomFlagItem : MonoBehaviour {
 	void OnHover(bool isOver){
 		if (isOver) {
 			this.isHovering = true;
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.kingdom.name + "[/b]", this.transform);
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.kingdom.name + "[/b]");
 			if (onHoverOver != null) {
 				this.onHoverOver ();
 			}
@@ -41,7 +41,7 @@ public class KingdomFlagItem : MonoBehaviour {
 
 	void Update(){
 		if (this.isHovering) {
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.kingdom.name + "[/b]", this.transform);
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.kingdom.name + "[/b]");
 		}
 	}
 }
