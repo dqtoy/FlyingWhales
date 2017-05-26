@@ -22,14 +22,9 @@ public class PowerGrab : GameEvent {
 		this.startedBy.UnsupportCitizen (this.startedBy.supportedCitizen);
 		this.startedBy.supportedCitizen = this.startedBy;
 
-		this.startedBy.history.Add (new History (startMonth, startWeek, startYear, this.startedBy.name + " started gathering influence for his/her claim as next in line to the " + this.kingToOverthrow.city.kingdom.name + " throne.", HISTORY_IDENTIFIER.NONE));
-		this.kingToOverthrow.city.hexTile.AddEventOnTile(this);
 		Debug.LogError (this.description);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
-
-		this.EventIsCreated ();
-
 	}
 
 	internal override void PerformAction(){
@@ -89,16 +84,6 @@ public class PowerGrab : GameEvent {
 					
 					}
 				} 
-//				else {
-//					//if governor is at outside his home kingdom
-//					List<Citizen> allGovernors = GameManager.Instance.GetAllCitizensOfType (ROLE.GOVERNOR).Where(x => 
-//						(x.supportedCitizen != null && x.supportedCitizen.id != this.startedBy.id && x.supportedCitizen.id != x.id)
-//						&& !IsCitizenFirstInLine(x)
-//					).ToList();
-//					if (allGovernors.Count > 0) {
-//						citizenToExhort = allGovernors[Random.Range(0, allGovernors.Count)];
-//					}
-//				}
 			} else {
 				int citizenToExhortChance = Random.Range (0, 100);
 				if (citizenToExhortChance < 80) {
@@ -139,7 +124,7 @@ public class PowerGrab : GameEvent {
 						this.startedBy, this.startedBy, citizenToExhort, this);
 				}
 			}else{
-				Debug.Log ("CAN'T EXHORT! THERE IS NO CITIZEN TO EXHORT!");
+//				Debug.Log ("CAN'T EXHORT! THERE IS NO CITIZEN TO EXHORT!");
 			}
 		}
 	}
@@ -147,8 +132,6 @@ public class PowerGrab : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
-		Debug.LogError (this.startedBy.name + " has ended power grab.");
 	}
 
 	internal bool IsCitizenFirstInLine(Citizen citizen){

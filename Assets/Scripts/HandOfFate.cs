@@ -89,7 +89,7 @@ public class HandOfFate : MonoBehaviour {
 			upperLimit += this.firstKingdom.kingdomTypeData.eventRates[i].rate;
 			if(chance >= lowerLimit && chance < upperLimit){
 				this.eventToCreate =  this.firstKingdom.kingdomTypeData.eventRates[i];
-				Debug.Log ("CREATING " + this.eventToCreate.eventType.ToString() + " EVENT...");
+//				Debug.Log ("CREATING " + this.eventToCreate.eventType.ToString() + " EVENT...");
 				break;
 			}else{
 				lowerLimit = upperLimit;
@@ -276,7 +276,7 @@ public class HandOfFate : MonoBehaviour {
 			generals [random].inAction = true;
 			return generals [random];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND GENERAL BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND GENERAL BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}
@@ -310,13 +310,13 @@ public class HandOfFate : MonoBehaviour {
 
 	}
 	private void BorderConflict(){
-		Debug.Log ("Border Conflict FROM HAND OF FATE");
+//		Debug.Log ("Border Conflict FROM HAND OF FATE");
 		Citizen startedBy = this.firstKingdom.king;
 		BorderConflict borderConflict = new BorderConflict(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
 		EventManager.Instance.AddEventToDictionary(borderConflict);
 	}
 	private void DiplomaticCrisis(){
-		Debug.Log ("Diplomatic Crisis FROM HAND OF FATE");
+//		Debug.Log ("Diplomatic Crisis FROM HAND OF FATE");
 		Citizen startedBy = this.secondKingdom.king;
 		DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
 		EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
@@ -328,7 +328,7 @@ public class HandOfFate : MonoBehaviour {
 //		EventManager.Instance.AddEventToDictionary(admiration);
 //	}
 	internal void StateVisit(){
-		Debug.Log ("State Visit FROM HAND OF FATE");
+//		Debug.Log ("State Visit FROM HAND OF FATE");
 		Citizen targetKing = this.secondKingdom.king;
 		Citizen visitor = null;
 		if(targetKing.spouse != null && !targetKing.spouse.isDead){
@@ -358,7 +358,7 @@ public class HandOfFate : MonoBehaviour {
 			StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, this.secondKingdom, visitor);
 			EventManager.Instance.AddEventToDictionary(stateVisit);
 		}else{
-			Debug.Log ("FAILURE TO START STATE VISIT BECAUSE THERE IS NO AVAIALABLE VISITOR!");
+//			Debug.Log ("FAILURE TO START STATE VISIT BECAUSE THERE IS NO AVAIALABLE VISITOR!");
 		}
 
 	}
@@ -419,6 +419,9 @@ public class HandOfFate : MonoBehaviour {
 		if (this.eventToCreate.relationshipTargets.Length > 0) {
 			RelationshipKings relationship = this.firstKingdom.king.GetRelationshipWithCitizen (targetKingdom.king);
 //			Debug.Log ("RELATIONSHIP: " + relationship.lordRelationship.ToString());
+			if(relationship.lordRelationship == null){
+				return false;
+			}
 			if (this.eventToCreate.relationshipTargets.Contains (relationship.lordRelationship)) {
 				return true;
 			}else{

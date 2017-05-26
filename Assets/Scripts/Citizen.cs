@@ -378,7 +378,7 @@ public class Citizen {
 		int chanceToMarry = Random.Range (0, 100);
 		this.citizenChances.marriageChance = 100;
 		if (chanceToMarry < this.citizenChances.marriageChance) {
-			Debug.Log (this.name + " has started a marriage invitation event!");
+//			Debug.Log (this.name + " has started a marriage invitation event!");
 
 			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this);
 		}
@@ -405,18 +405,13 @@ public class Citizen {
 				float oldAge = UnityEngine.Random.Range (0f, 99f);
 				if(oldAge <= this.citizenChances.oldAgeChance){
 					Death (DEATH_REASONS.OLD_AGE);
-					Debug.Log(this.name + " DIES OF OLD AGE");
+//					Debug.Log(this.name + " DIES OF OLD AGE");
 //					Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.days + "/" + PoliticsPrototypeManager.Instance.year + ": " + this.name + " DIED OF OLD AGE!");
 				}else{
 					this.citizenChances.oldAgeChance += 0.05f;
 				}
 			}
 		}
-	}
-	internal void DeathByStarvation(){
-		Death (DEATH_REASONS.STARVATION);
-
-		Debug.Log(this.name + " DIES OF STARVATION");
 	}
 	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		if(!this.isDead){
@@ -1181,17 +1176,12 @@ public class Citizen {
 			((Spy)spies [random].assignedRole).inAction = true;
 			return spies [random];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}
 
 	internal void WarTrigger(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
-		if(gameEventTrigger != null){
-			Debug.LogError ("TRIGGERING WAR BETWEEN: " + relationship.sourceKing.city.kingdom.name + " and " + relationship.king.city.kingdom.name + ". REASON: " + gameEventTrigger.warTrigger.ToString ());
-		}else{
-			Debug.LogError ("TRIGGERING WAR BETWEEN: " + relationship.sourceKing.city.kingdom.name + " and " + relationship.king.city.kingdom.name + ". REASON: " + warTrigger.ToString ());
-		}
 		if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
 			return;
 		}
@@ -1202,7 +1192,6 @@ public class Citizen {
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 0;
 		MILITARY_STRENGTH milStrength = relationship.king.city.kingdom.GetMilitaryStrengthAgainst (this.city.kingdom);
-//		Debug.Log ("RANDOM CHANCE: " + chance.ToString ());
 		if(gameEventTrigger != null){
 			if(kingdomData.dictWarTriggers.ContainsKey(gameEventTrigger.warTrigger)){
 				value = kingdomData.dictWarTriggers [gameEventTrigger.warTrigger];
@@ -1238,7 +1227,6 @@ public class Citizen {
 
 		if(chance < value){
 			if (warEvent == null) {
-				Debug.LogError ("WAR IS TRIGGERED!");
 				warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
 					this.city.kingdom, relationship.king.city.kingdom);
 			}
@@ -1472,28 +1460,10 @@ public class Citizen {
 	}
 
 	internal void DetachGeneralFromCitizen(){
-		Debug.Log (this.name + " of " + this.city.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");
+//		Debug.Log (this.name + " of " + this.city.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");
 		if(this.assignedRole is General){
 			General general = (General)this.assignedRole;
-
-//			if (general.generalAvatar != null) {
-//				if(!general.inAction){
-//					general.generalAvatar.GetComponent<GeneralObject> ().RemoveBehaviourTree ();
-//					GameObject.Destroy (general.generalAvatar);
-//					general.generalAvatar = null;
-//				}else{
-//					if(general.assignedCampaign != null){
-//						general.UnregisterThisGeneral (null);
-//					}
-//				}
-//			}
-//			if(!general.inAction){
-//				if(general.generalAvatar != null){
-//					general.generalAvatar.GetComponent<GeneralObject> ().MakeCitizenMove (general.location, this.city.hexTile);
-//					general.location = this.city.hexTile;
-//				}
-//			}
-			Debug.Log ("CREATED GHOST CITIZEN FOR " + this.name);
+//			Debug.Log ("CREATED GHOST CITIZEN FOR " + this.name);
 			general.CreateGhostCitizen ();
 		}
 	
@@ -1509,7 +1479,7 @@ public class Citizen {
 		}
 	}
 	internal void CopyCampaignManager(CampaignManager source){
-		Debug.Log (this.name + " of " + this.city.kingdom.name + " IS COPYING THE CAMPAIGN MANAGER OF " + source.leader.name + " of " + source.leader.city.kingdom.name);
+//		Debug.Log (this.name + " of " + this.city.kingdom.name + " IS COPYING THE CAMPAIGN MANAGER OF " + source.leader.name + " of " + source.leader.city.kingdom.name);
 		for(int i = 0; i < source.intlWarCities.Count; i++){
 			if(!this.campaignManager.SearchForInternationalWarCities(source.intlWarCities[i].city)){
 				this.campaignManager.intlWarCities.Add(source.intlWarCities[i]);

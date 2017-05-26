@@ -12,9 +12,6 @@ public class EventLogItem : MonoBehaviour {
 	private Log _thisLog;
 
 	#region getters/setters
-//	public GameObject anchorPoint{
-//		get { return this._anchorPoint; }
-//	}
 	public Log thisLog{
 		get{ return this._thisLog; }
 	}
@@ -36,17 +33,6 @@ public class EventLogItem : MonoBehaviour {
 			bgSprites [i].UpdateAnchors ();
 		}
 	}
-
-	/*
-	 * Set anchor point for this object
-	 * */
-//	internal void SetAnchorPoint (GameObject anchorPoint){
-//		this._anchor.container = anchorPoint;
-//	}
-
-//	internal void SetAnchorSide (UIAnchor.Side side){
-//		this._anchor.side = side;
-//	}
 
 	internal void DisableBG(){
 		UI2DSprite[] bgSprites = this._bgGO.GetComponentsInChildren<UI2DSprite> ();

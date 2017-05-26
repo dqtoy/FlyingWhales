@@ -3237,7 +3237,7 @@ public class UIManager : MonoBehaviour {
 		if(this.citiesForRelocationPopupList.data != null){
 			City newCityForCitizen = (City)this.citiesForRelocationPopupList.data;
 			if(this.currentlyShowingCitizen != null){
-				Debug.LogError (this.currentlyShowingCitizen.name + " HAS MOVED FROM " + this.currentlyShowingCitizen.city.name + " TO " + newCityForCitizen.name);
+//				Debug.LogError (this.currentlyShowingCitizen.name + " HAS MOVED FROM " + this.currentlyShowingCitizen.city.name + " TO " + newCityForCitizen.name);
 				newCityForCitizen.MoveCitizenToThisCity (this.currentlyShowingCitizen);
 			}
 		}
@@ -3247,7 +3247,7 @@ public class UIManager : MonoBehaviour {
 	}
 	public void GenerateChildForCitizen(){
 		if (currentlyShowingCitizen.spouse == null) {
-			Debug.Log ("Could not generate child because no spouse");
+//			Debug.Log ("Could not generate child because no spouse");
 			return;
 		}
 		Citizen child = null;

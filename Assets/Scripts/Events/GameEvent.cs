@@ -75,7 +75,7 @@ public class GameEvent {
 			this.startedByKingdom = _startedBy.city.kingdom;
 			this.startedByCity = _startedBy.city;
 		}
-		Debug.Log("New Event was created!");
+//		Debug.Log("New Event was created!");
 	}
 
 	#region virtual methods
@@ -86,8 +86,7 @@ public class GameEvent {
 	internal virtual void CancelEvent(){}
 
 	internal virtual void DoneEvent(){
-		Debug.Log ("Game Event Ended!");
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
+//		Debug.Log ("Game Event Ended!");
 	} 
 	#endregion
 

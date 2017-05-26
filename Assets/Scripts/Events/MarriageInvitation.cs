@@ -20,10 +20,6 @@ public class MarriageInvitation : GameEvent {
 		this.goldForEvent = 0;
 		this.GetGoldForEvent ();
 
-		this.startedBy.city.hexTile.AddEventOnTile(this);
-		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-			this.startedBy.name + " started a marriage invitation event.", HISTORY_IDENTIFIER.NONE));
-
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 		this.EventIsCreated ();
@@ -52,7 +48,6 @@ public class MarriageInvitation : GameEvent {
 				this.DoneEvent();
 				return;
 			}
-//			this.elligibleCitizens = MarriageManager.Instance.GetElligibleCitizensForMarriage(this.startedBy);
 			//Choose bride
 			if (this.elligibleCitizens.Count > 0) {
 				Citizen chosenCitizen = this.elligibleCitizens[Random.Range(0, this.elligibleCitizens.Count)];
@@ -61,8 +56,6 @@ public class MarriageInvitation : GameEvent {
 					//pay 500 gold to the chosen citizens city
 					cityRecievingGold = chosenCitizen.city;
 					cityRecievingGold.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, this.goldForEvent);
-					cityRecievingGold.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-						"Recieved 500 GOLD from " + this.startedByCity.name + " because of marriage event started by " + this.startedBy.name, HISTORY_IDENTIFIER.NONE));
 				} else {
 					//give back 500 gold to city
 					this.startedBy.city.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, this.goldForEvent);
@@ -75,26 +68,9 @@ public class MarriageInvitation : GameEvent {
 					if (chosenCitizenKingParent != null) {
 						RelationshipKings relationship = startedBy.city.kingdom.king.GetRelationshipWithCitizen(chosenCitizenKingParent);
 						relationship.AdjustLikeness(15, this);
-						relationship.relationshipHistory.Add (new History (
-							GameManager.Instance.month,
-							GameManager.Instance.days,
-							GameManager.Instance.year,
-							this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
-							HISTORY_IDENTIFIER.KING_RELATIONS,
-							true
-						));
 
 						relationship = chosenCitizenKingParent.city.kingdom.king.GetRelationshipWithCitizen(this.startedBy);
 						relationship.AdjustLikeness(15, this);
-						relationship.relationshipHistory.Add (new History (
-							GameManager.Instance.month,
-							GameManager.Instance.days,
-							GameManager.Instance.year,
-							this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
-							HISTORY_IDENTIFIER.KING_RELATIONS,
-							true
-						));
-
 					}
 				} else if (chosenCitizen.isKing) {
 					//if chosenCitizen is King
@@ -103,25 +79,10 @@ public class MarriageInvitation : GameEvent {
 					if (startedByKingParent != null) {
 						RelationshipKings relationship = startedBy.city.kingdom.king.GetRelationshipWithCitizen(startedByKingParent);
 						relationship.AdjustLikeness(15, this);
-						relationship.relationshipHistory.Add (new History (
-							GameManager.Instance.month,
-							GameManager.Instance.days,
-							GameManager.Instance.year,
-							this.startedBy.name + " got married to" + startedByKingParent.name + "'s child " + chosenCitizen.name,
-							HISTORY_IDENTIFIER.KING_RELATIONS,
-							true
-						));
 
 						relationship = startedByKingParent.city.kingdom.king.GetRelationshipWithCitizen(this.startedBy);
 						relationship.AdjustLikeness(15, this);
-						relationship.relationshipHistory.Add (new History (
-							GameManager.Instance.month,
-							GameManager.Instance.days,
-							GameManager.Instance.year,
-							this.startedBy.name + " got married to" + startedByKingParent.name + "'s child " + chosenCitizen.name,
-							HISTORY_IDENTIFIER.KING_RELATIONS,
-							true
-						));
+
 					}
 				} else {
 					//both citizens to be married are not kings, check if both citizens have parents that are king
@@ -130,25 +91,9 @@ public class MarriageInvitation : GameEvent {
 					if (startedByKingParent != null && chosenCitizenKingParent != null) {
 						RelationshipKings relationship = startedByKingParent.city.kingdom.king.GetRelationshipWithCitizen(chosenCitizenKingParent);
 						relationship.AdjustLikeness(15, this);
-						relationship.relationshipHistory.Add (new History (
-							GameManager.Instance.month,
-							GameManager.Instance.days,
-							GameManager.Instance.year,
-							startedByKingParent.name + "'s child " +  this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
-							HISTORY_IDENTIFIER.KING_RELATIONS,
-							true
-						));
 
 						relationship = chosenCitizenKingParent.city.kingdom.king.GetRelationshipWithCitizen(startedByKingParent);
 						relationship.AdjustLikeness(15, this);
-						relationship.relationshipHistory.Add (new History (
-							GameManager.Instance.month,
-							GameManager.Instance.days,
-							GameManager.Instance.year,
-							startedByKingParent.name + "'s child " +  this.startedBy.name + " got married to" + chosenCitizenKingParent.name + "'s child " + chosenCitizen.name,
-							HISTORY_IDENTIFIER.KING_RELATIONS,
-							true
-						));
 					}
 				}
 
@@ -209,9 +154,7 @@ public class MarriageInvitation : GameEvent {
 	}
 
 	internal override void DoneEvent(){
-		Debug.Log (this.startedBy.name + "'s marriage invitation has ended. " + this.resolution);
 		this.isActive = false;
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 }

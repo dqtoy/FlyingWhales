@@ -402,13 +402,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.ownedByCity = city;
 	}
 
-	public void AddEventOnTile(GameEvent gameEvent){
-//		GameObject eventGO = GameObject.Instantiate (Resources.Load ("GameObjects/WorldEventItem") as GameObject, this.eventsParent) as GameObject;
-//		eventGO.transform.localPosition = Vector3.zero;
-//		eventGO.GetComponent<WorldEventItem> ().SetGameEvent(gameEvent);
-	}
-
-
 	void OnMouseDown(){
 		if (UIManager.Instance.IsMouseOnUI ()) {
 			return;

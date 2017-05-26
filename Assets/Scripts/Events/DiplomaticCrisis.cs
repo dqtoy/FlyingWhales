@@ -14,13 +14,7 @@ public class DiplomaticCrisis : GameEvent {
 	public bool isResolvedPeacefully;
 	public DiplomaticCrisis(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.DIPLOMATIC_CRISIS;
-		if(startedBy != null){
-			this.description = startedBy.name + " has created a diplomatic crisis between " + kingdom1.name + " and " + kingdom2.name + ".";
-			this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-				startedBy.name + " has created a diplomatic crisis between " + kingdom1.name + " and " + kingdom2.name + "." , HISTORY_IDENTIFIER.NONE));
-		}else{
-			this.description = "A diplomatic crisis has began between " + kingdom1.name + " and " + kingdom2.name + ".";
-		}
+		this.description = "A diplomatic crisis has began between " + kingdom1.name + " and " + kingdom2.name + ".";
 		this.durationInDays = 30;
 		this.remainingDays = this.durationInDays;
 		this.kingdom1 = kingdom1;
@@ -28,8 +22,6 @@ public class DiplomaticCrisis : GameEvent {
 		this.otherKingdoms = GetOtherKingdoms ();
 		this.activeEnvoyResolve = null;
 		this.activeEnvoyProvoke = null;
-		this.kingdom1.cities[0].hexTile.AddEventOnTile(this);
-		this.kingdom2.cities[0].hexTile.AddEventOnTile(this);
 		this._warTrigger = WAR_TRIGGER.BORDER_CONFLICT;
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -68,9 +60,6 @@ public class DiplomaticCrisis : GameEvent {
 				if (envoy.citizen.id == this.activeEnvoyResolve.citizen.id) {
 					int chance = UnityEngine.Random.Range (0, 100);
 					int value = 20;
-//					if (this.activeEnvoyResolve.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-//						value += 10;
-//					}
 					if (chance < value) {
 						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_success");
 						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
@@ -242,7 +231,7 @@ public class DiplomaticCrisis : GameEvent {
 		if(envoys.Count > 0){
 			return envoys [UnityEngine.Random.Range (0, envoys.Count)];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}
@@ -269,7 +258,6 @@ public class DiplomaticCrisis : GameEvent {
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
@@ -278,31 +266,11 @@ public class DiplomaticCrisis : GameEvent {
 		if(this.kingdom1.isAlive()){
 			relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
 		}
-//		RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
-
 		if(this.isResolvedPeacefully){
-			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
-
+//			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Diplomatic Crisis was resolved peacefully.";
-
-//			relationship1.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				this.kingdom1.king.name +  " did not hate " + this.kingdom2.king.name + ".",
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				false
-//			));
-//			relationship2.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				this.kingdom1.king.name +  " did not hate " + this.kingdom2.king.name + ".",
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				false
-//			));
 		}else{
-			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
+//			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
 
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "event_end");
 			newLog.AddToFillers (this.kingdom1.king, this.kingdom1.king.name);
@@ -314,26 +282,6 @@ public class DiplomaticCrisis : GameEvent {
 				relationship1.AdjustLikeness (-25, this);
 				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData);
 			}
-
-//			relationship1.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				this.kingdom1.king.name +  " hated " + this.kingdom2.king.name + ".",
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				false
-//			));
-//			relationship2.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				this.kingdom1.king.name +  " hated " + this.kingdom2.king.name + ".",
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				false
-//			));
 		}
-		//		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
-
-		//Remove UI Icon
 	}
 }

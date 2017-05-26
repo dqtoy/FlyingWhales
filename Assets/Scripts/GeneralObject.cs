@@ -423,18 +423,18 @@ public class GeneralObject : MonoBehaviour {
 
 	[Task]
 	public void FindTarget(){
-		Debug.Log (this.general.citizen.name + " instructed by " + this.general.assignedCampaign.leader.name + " is searching for " + this.general.target.name);
+//		Debug.Log (this.general.citizen.name + " instructed by " + this.general.assignedCampaign.leader.name + " is searching for " + this.general.target.name);
 		this.general.daysCounter += 1;
 		if(this.general.daysCounter <= 8){
 			int chance = UnityEngine.Random.Range (0, 100);
 			if(chance < (5 * this.general.daysCounter)){
 				//FOUND TARGET
-				Debug.Log("TARGET FOUND: " + this.general.target.name + ". He/She will be killed.");
+//				Debug.Log("TARGET FOUND: " + this.general.target.name + ". He/She will be killed.");
 				Task.current.Succeed ();
 			}else{
 				if(this.general.daysCounter == 8){
 					//FOUND TARGET
-					Debug.Log("TARGET FOUND: " + this.general.target.name + ". He/She will be killed.");
+//					Debug.Log("TARGET FOUND: " + this.general.target.name + ". He/She will be killed.");
 					Task.current.Succeed ();
 				}else{
 					Task.current.Fail ();
@@ -515,7 +515,6 @@ public class GeneralObject : MonoBehaviour {
 	}
 
 	internal void Victory(){
-//		Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID (this.general.assignedCampaign.id);
 		if (this.general.assignedCampaign != null) {
 			if (this.general.assignedCampaign.warType == WAR_TYPE.INTERNATIONAL) {
 				City targetCity = this.general.assignedCampaign.targetCity;
@@ -532,8 +531,6 @@ public class GeneralObject : MonoBehaviour {
 		if(this.general.citizen.city.ownedTiles.Count > 0){
 			HexTile roamTile = this.general.citizen.city.ownedTiles [UnityEngine.Random.Range (0, this.general.citizen.city.ownedTiles.Count)];
 			this.path = PathGenerator.Instance.GetPath (this.general.location, roamTile, PATHFINDING_MODE.COMBAT);
-//			this.MoveTo (roamTile.transform.position);
-
 		}
 	}
 	private void RoamOrGoHome(bool isRoam){
@@ -591,7 +588,7 @@ public class GeneralObject : MonoBehaviour {
 
 	internal void RemoveBehaviourTree(){
 		bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
-		Debug.Log ("REMOVED?: " + this.general.citizen.name + " BT = " + removed);
+//		Debug.Log ("REMOVED?: " + this.general.citizen.name + " BT = " + removed);
 	}
 	internal void GhostGeneral(){
 		this.deathIcon.SetActive (true);
