@@ -35,6 +35,9 @@ public class KingdomTypeData : MonoBehaviour {
 	[SerializeField]
 	private int warRateModifierPerActiveWar;
 
+	[SerializeField]
+	private CitizenCap[] _citizenCap;
+
 	private int _hexDistanceModifier = 15;
 
 	private Dictionary<WAR_TRIGGER, int> _dictWarTriggers = new Dictionary<WAR_TRIGGER, int> ();
@@ -42,6 +45,8 @@ public class KingdomTypeData : MonoBehaviour {
 	private Dictionary<MILITARY_STRENGTH, int> _dictWarRateModifierMilitary = new Dictionary<MILITARY_STRENGTH, int> ();
 
 	private Dictionary<RELATIONSHIP_STATUS, int> _dictWarRateModifierRelationship = new Dictionary<RELATIONSHIP_STATUS, int> ();
+
+	private Dictionary<ROLE, int> _dictCitizenCap = new Dictionary<ROLE, int> ();
 
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -89,6 +94,12 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
+	public Dictionary<ROLE, int> dictCitizenCap {
+		get { 
+			return this._dictCitizenCap; 
+		}
+	}
+
 	public int _warRateModifierPer15HexDistance {
 		get { 
 			return this.warRateModifierPer15HexDistance; 
@@ -107,11 +118,18 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
+	public Dictionary<ROLE, int> citizenCap {
+		get { 
+			return this._dictCitizenCap; 
+		}		
+	}
+
 
 	void Awake(){
 		this._dictWarTriggers.Clear ();
 		this._dictWarRateModifierMilitary.Clear ();
 		this._dictWarRateModifierRelationship.Clear ();
+		this._dictCitizenCap.Clear ();
 
 		for (int i = 0; i < this._warTriggers.Length; i++) {
 			this._dictWarTriggers.Add (this._warTriggers [i].warTrigger, this._warTriggers [i].rate);
@@ -121,6 +139,9 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 		for (int i = 0; i < this.warRateModifierRelationship.Length; i++) {
 			this._dictWarRateModifierRelationship.Add (this.warRateModifierRelationship [i].relationshipStatus, this.warRateModifierRelationship [i].rate);
+		}
+		for (int i = 0; i < this._citizenCap.Length; i++) {
+			this._dictCitizenCap.Add (this._citizenCap [i].role, this._citizenCap [i].cap);
 		}
 	}
 }
