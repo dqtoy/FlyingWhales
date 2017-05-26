@@ -1247,6 +1247,7 @@ public class UIManager : MonoBehaviour {
 		thisScrollView.ResetPosition();
 	}
 
+	Coroutine currentLerpRoutine = null;
 	IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime){
 		float elapsedTime = 0f;
 		while (elapsedTime < lerpTime) {
@@ -2564,8 +2565,12 @@ public class UIManager : MonoBehaviour {
 				elmEventProgressBar.gameObject.SetActive (true);
 				float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
 				if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
-					StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+					currentLerpRoutine = StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
 				} else {
+					if (currentLerpRoutine != null) {
+						StopCoroutine (currentLerpRoutine);
+						currentLerpRoutine = null;
+					}
 					elmEventProgressBar.value = targetValue;
 				}
 
@@ -2825,9 +2830,11 @@ public class UIManager : MonoBehaviour {
 	 * */
 	public void ShowKingdomHistory(){
 		HideAllKingdomEvents();
-		List<GameEvent> allDoneEvents = EventManager.Instance.GetEventsStartedByKingdom (currentlyShowingKingdom, new EVENT_TYPES[]{ EVENT_TYPES.ALL }).
-			Where(x => !x.isActive).ToList();
-		allDoneEvents = allDoneEvents.Where(x => x.eventType != EVENT_TYPES.EXPANSION).ToList();
+		List<GameEvent> allDoneEvents = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).
+			Where(x => !x.isActive && (x.eventType == EVENT_TYPES.STATE_VISIT || x.eventType == EVENT_TYPES.RAID ||
+				x.eventType == EVENT_TYPES.ASSASSINATION || x.eventType == EVENT_TYPES.DIPLOMATIC_CRISIS || x.eventType == EVENT_TYPES.BORDER_CONFLICT ||
+				x.eventType == EVENT_TYPES.KINGDOM_WAR)).ToList();
+		allDoneEvents = allDoneEvents.OrderByDescending(x => x.startDate).ToList();
 
 		List<EventListItem> currentItems = kingdomHistoryGrid.GetChildList ().Select(x => x.GetComponent<EventListItem>()).ToList();
 		int nextItem = 0;
