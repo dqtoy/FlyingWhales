@@ -1243,7 +1243,9 @@ public class UIManager : MonoBehaviour {
 	#region coroutines
 	public IEnumerator RepositionGrid(UIGrid thisGrid){
 		yield return null;
-		thisGrid.Reposition ();
+		if(this.gameObject.activeSelf){
+			thisGrid.Reposition ();
+		}
 		yield return null;
 	}
 

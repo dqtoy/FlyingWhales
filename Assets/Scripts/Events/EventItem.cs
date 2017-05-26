@@ -16,10 +16,10 @@ public class EventItem : MonoBehaviour {
 
 	void Start(){
 		this.isHovering = false;
-		this.isPaused = true;
+		this.isPaused = false;
 		this.toolTip = string.Empty;
 		this.timeElapsed = 0f;
-		UIManager.Instance.onPauseEventExpiration += PauseExpirationTimer;
+		UIManager.Instance.onPauseEventExpiration += this.PauseExpirationTimer;
 	}
 	void Update(){
 		if (this.isHovering) {
@@ -75,9 +75,8 @@ public class EventItem : MonoBehaviour {
 	}
 
 	void OnDestroy(){
-		UIManager.Instance.onPauseEventExpiration -= PauseExpirationTimer;
-		if(UIManager.Instance.gameObject.activeSelf){
-			UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
-		}
+		UIManager.Instance.onPauseEventExpiration -= this.PauseExpirationTimer;
+		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
+
 	}
 }
