@@ -15,25 +15,25 @@ public class ExpansionAvatar : MonoBehaviour {
 	public General otherGeneral;
 
 	private bool hasArrived = false;
-	private bool isMoving = false;
-	private Vector3 targetPosition = Vector3.zero;
+//	private bool isMoving = false;
+//	private Vector3 targetPosition = Vector3.zero;
 	private int daysBeforeMoving = 0;
 	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
 	internal Expansion expansionEvent = null;
 
-	public float speed;
+//	public float speed;
 
-	void Update(){
-		if(this.isMoving){
-			if(this.targetPosition != null){
-				float step = speed * Time.deltaTime;
-				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
-				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
-					StopMoving ();
-				}
-			}
-		}
-	}
+//	void Update(){
+//		if(this.isMoving){
+//			if(this.targetPosition != null){
+//				float step = speed * Time.deltaTime;
+//				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
+//				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
+//					StopMoving ();
+//				}
+//			}
+//		}
+//	}
 	internal void Init(Expansion expansionEvent){
 		this.citizen = expansionEvent.startedBy;
 		this.expansionEvent = expansionEvent;
@@ -75,15 +75,15 @@ public class ExpansionAvatar : MonoBehaviour {
 //		}else{
 //			this.generalAnimator.Play("Walk");
 //		}
-
-		this.targetPosition = targetTile.transform.position;
+		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
+//		this.targetPosition = targetTile.transform.position;
 //		this.UpdateUI ();
-		this.isMoving = true;
+//		this.isMoving = true;
 	}
 	private void StopMoving(){
 //		this.generalAnimator.Play("Idle");
-		this.isMoving = false;
-		this.targetPosition = Vector3.zero;
+//		this.isMoving = false;
+//		this.targetPosition = Vector3.zero;
 	}
 //	internal void UpdateUI(){
 //		if(this.general != null){

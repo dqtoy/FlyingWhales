@@ -76,6 +76,8 @@ public class EventItem : MonoBehaviour {
 
 	void OnDestroy(){
 		UIManager.Instance.onPauseEventExpiration -= PauseExpirationTimer;
-		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
+		if(UIManager.Instance.gameObject.activeSelf){
+			UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
+		}
 	}
 }
