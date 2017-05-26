@@ -27,6 +27,8 @@ public class GameEvent {
 	public bool isActive;
 	public List<Log> logs;
 
+	private DateTime _startDate;
+
 	internal bool relationshipHasDeteriorated;
 	internal bool relationshipHasImproved;
 
@@ -43,6 +45,10 @@ public class GameEvent {
 		get {
 			return this._warTrigger;
 		}
+	}
+
+	public DateTime startDate{
+		get { return this._startDate; }
 	}
 
 	public GameEvent(int startWeek, int startMonth, int startYear, Citizen startedBy){
@@ -64,6 +70,7 @@ public class GameEvent {
 		this.relationshipHasDeteriorated = false;
 		this.relationshipHasImproved = false;
 		this.logs = new List<Log>();
+		this._startDate = new DateTime (this.startYear, this.startMonth, this.startDay);
 		if(this._startedBy != null){
 			this.startedByKingdom = _startedBy.city.kingdom;
 			this.startedByCity = _startedBy.city;
