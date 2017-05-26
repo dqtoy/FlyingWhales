@@ -93,7 +93,7 @@ public class InvasionPlan : GameEvent {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
 			} 
 
-			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "InvasionPlanReasons", gameEventTrigger.ToString()), logFillers);
+			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "InvasionPlanReasons", gameEventTrigger.eventType.ToString()), logFillers);
 
 			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
 			invasionPlanStart.AddToFillers (gameEventTrigger, reason);
