@@ -2574,23 +2574,27 @@ public class UIManager : MonoBehaviour {
 			GameEvent ge = ((GameEvent)obj);
 			logs = ge.logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer(logs.First());
-			if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
-				elmEventProgressBar.gameObject.SetActive (false);
-			}else if (ge.eventType == EVENT_TYPES.EXPANSION) {
-				elmEventProgressBar.gameObject.SetActive (false);
-			} else {
-				elmEventProgressBar.gameObject.SetActive (true);
-				float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
-				if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
-					currentLerpRoutine = StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+			if (ge.isActive) {
+				if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
+					elmEventProgressBar.gameObject.SetActive (false);
+				} else if (ge.eventType == EVENT_TYPES.EXPANSION) {
+					elmEventProgressBar.gameObject.SetActive (false);
 				} else {
-					if (currentLerpRoutine != null) {
-						StopCoroutine (currentLerpRoutine);
-						currentLerpRoutine = null;
+					elmEventProgressBar.gameObject.SetActive (true);
+					float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
+					if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
+						currentLerpRoutine = StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+					} else {
+						if (currentLerpRoutine != null) {
+							StopCoroutine (currentLerpRoutine);
+							currentLerpRoutine = null;
+						}
+						elmEventProgressBar.value = targetValue;
 					}
-					elmEventProgressBar.value = targetValue;
-				}
 
+				}
+			} else {
+				elmEventProgressBar.gameObject.SetActive (false);
 			}
 		} else if (obj is Campaign) {
 			logs = ((Campaign)obj).logs;
