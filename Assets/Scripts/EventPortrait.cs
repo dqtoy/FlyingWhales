@@ -43,7 +43,7 @@ public class EventPortrait : MonoBehaviour {
 	}
 	void OnHover(bool isOver){
 		if (isOver) {
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.chosenEvent.description + "[/b]", this.transform);
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.chosenEvent.description + "[/b]");
 		} else {
 			UIManager.Instance.HideSmallInfo ();
 		}

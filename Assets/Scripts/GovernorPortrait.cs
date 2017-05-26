@@ -19,7 +19,7 @@ public class GovernorPortrait : MonoBehaviour {
 
 	void OnHover(bool isOver){
 		if (isOver) {
-			UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i]" + citizen.city.kingdom.name + "[/i]", this.transform);
+			UIManager.Instance.ShowSmallInfo ("[b]" + citizen.name + "[/b]" + "\n" + "[i]" + citizen.city.kingdom.name + "[/i]");
 		} else {
 			UIManager.Instance.HideSmallInfo ();
 		}
