@@ -694,4 +694,8 @@ public class Utilities : MonoBehaviour {
 
 		return parts.ToArray();
 	}
+
+	public static void SetSpriteSortingLayer(SpriteRenderer sprite, string layerName){
+		sprite.sortingLayerName = layerName;
+	}
 }
