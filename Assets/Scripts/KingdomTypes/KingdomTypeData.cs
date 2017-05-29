@@ -36,7 +36,10 @@ public class KingdomTypeData : MonoBehaviour {
 	private int warRateModifierPerActiveWar;
 
 	[SerializeField]
-	private CitizenCap[] _citizenCap;
+	private int warGeneralCreationRate;
+
+	[SerializeField]
+	private AgentCreationRate[] _agentCreationRate;
 
 	private int _hexDistanceModifier = 15;
 
@@ -46,7 +49,7 @@ public class KingdomTypeData : MonoBehaviour {
 
 	private Dictionary<RELATIONSHIP_STATUS, int> _dictWarRateModifierRelationship = new Dictionary<RELATIONSHIP_STATUS, int> ();
 
-	private Dictionary<ROLE, int> _dictCitizenCap = new Dictionary<ROLE, int> ();
+	private Dictionary<EVENT_TYPES, int> _dictAgentCreationRate = new Dictionary<EVENT_TYPES, int> ();
 
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -77,6 +80,7 @@ public class KingdomTypeData : MonoBehaviour {
 			return this._eventRates; 
 		}
 	}
+
 	public Dictionary<WAR_TRIGGER, int> dictWarTriggers {
 		get { 
 			return this._dictWarTriggers; 
@@ -94,9 +98,9 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
-	public Dictionary<ROLE, int> dictCitizenCap {
+	public Dictionary<EVENT_TYPES, int> dictAgentCreationRate {
 		get { 
-			return this._dictCitizenCap; 
+			return this._dictAgentCreationRate; 
 		}
 	}
 
@@ -118,18 +122,12 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
-	public Dictionary<ROLE, int> citizenCap {
-		get { 
-			return this._dictCitizenCap; 
-		}		
-	}
-
 
 	void Awake(){
 		this._dictWarTriggers.Clear ();
 		this._dictWarRateModifierMilitary.Clear ();
 		this._dictWarRateModifierRelationship.Clear ();
-		this._dictCitizenCap.Clear ();
+		this._dictAgentCreationRate.Clear ();
 
 		for (int i = 0; i < this._warTriggers.Length; i++) {
 			this._dictWarTriggers.Add (this._warTriggers [i].warTrigger, this._warTriggers [i].rate);
@@ -140,8 +138,8 @@ public class KingdomTypeData : MonoBehaviour {
 		for (int i = 0; i < this.warRateModifierRelationship.Length; i++) {
 			this._dictWarRateModifierRelationship.Add (this.warRateModifierRelationship [i].relationshipStatus, this.warRateModifierRelationship [i].rate);
 		}
-		for (int i = 0; i < this._citizenCap.Length; i++) {
-			this._dictCitizenCap.Add (this._citizenCap [i].role, this._citizenCap [i].cap);
+		for (int i = 0; i < this._agentCreationRate.Length; i++) {
+			this._dictAgentCreationRate.Add (this._agentCreationRate [i].eventType, this._agentCreationRate [i].rate);
 		}
 	}
 }
