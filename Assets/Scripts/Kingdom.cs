@@ -18,7 +18,7 @@ public class Kingdom{
 	private int _goldCount;
 	private Dictionary<BASE_RESOURCE_TYPE, int> _availableResources;
 
-	internal List<City> cities;
+	private List<City> _cities;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
 	internal List<Citizen> pretenders;
@@ -36,6 +36,7 @@ public class Kingdom{
 	internal List<Kingdom> adjacentKingdoms;
 
 	private int expansionChance = 1;
+	private bool _isDead;
 
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
@@ -62,6 +63,14 @@ public class Kingdom{
 	public Dictionary<BASE_RESOURCE_TYPE, int> availableResources{
 		get{ return this._availableResources; }
 	}
+
+	public bool isDead{
+		get{ return this._isDead; }
+	}
+
+	public List<City> cities{
+		get{ return this._cities; }
+	}
 	#endregion
 	// Kingdom constructor paramters
 	//	race - the race of this kingdom
@@ -74,7 +83,7 @@ public class Kingdom{
 		this.king = null;
 		this.successionLine = new List<Citizen>();
 		this.pretenders = new List<Citizen> ();
-		this.cities = new List<City>();
+		this._cities = new List<City>();
 		this.holderIntlWarCities = new List<CityWar> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
@@ -82,7 +91,8 @@ public class Kingdom{
 		this.adjacentKingdoms = new List<Kingdom>();
 		this._goldCount = 0;
 		this._availableResources = new Dictionary<BASE_RESOURCE_TYPE, int> ();
-
+		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
+		this._isDead = false;
 		this._sourceKingdom = sourceKingdom;
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -124,10 +134,11 @@ public class Kingdom{
 //		Debug.Log ("Kingdom: " + this.name + " : " + this.cities [0].habitableTileDistance.Count);
 		//this.cities [0].OrderHabitableTileDistanceList ();
 
-		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
+
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(CreateNewRelationshipWithKingdom);
 		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
+		EventManager.Instance.onKingdomDiedEvent.AddListener(RemoveRelationshipWithKingdom);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 
@@ -208,6 +219,32 @@ public class Kingdom{
 		}
 		return false;
 	}
+
+	/*
+	 * Every time a city of this kingdom dies, check if
+	 * this kingdom has no more cities, if so, the kingdom is
+	 * considered dead. Remove all ties from other kingdoms.
+	 * */
+	internal void CheckIfKingdomIsDead(){
+		if (this.cities.Count <= 0) {
+			//Kingdom is dead
+			this.DestroyKingdom();
+		}
+	}
+
+	/*
+	 * Kill this kingdom. This removes all ties with other kingdoms.
+	 * Only call this when a kingdom has no more cities.
+	 * */
+	internal void DestroyKingdom(){
+		this._isDead = true;
+		this.RemoveRelationshipsWithOtherKingdoms();
+		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
+		EventManager.Instance.onWeekEnd.RemoveListener(AttemptToExpand);
+		EventManager.Instance.onKingdomDiedEvent.RemoveListener(RemoveRelationshipWithKingdom);
+
+		EventManager.Instance.onKingdomDiedEvent.Invoke(this);
+	}
 		
 	protected void CreateInitialRelationships() {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
@@ -222,7 +259,6 @@ public class Kingdom{
 	 * newly created kingdom. Function is listening to onCreateNewKingdom Event.
 	 * */
 	protected void CreateNewRelationshipWithKingdom(Kingdom createdKingdom){
-		//Add relationship to newly created kingdom
 		if (createdKingdom.id == this.id) {
 			return;
 		}
@@ -233,6 +269,26 @@ public class Kingdom{
 			}
 		}
 		this.relationshipsWithOtherKingdoms.Add(new RelationshipKingdom(this, createdKingdom));
+	}
+
+	protected void RemoveRelationshipsWithOtherKingdoms(){
+		this.relationshipsWithOtherKingdoms.Clear();
+	}
+
+	/*
+	 * Used to remove a relationship between 2 kingdoms.
+	 * Usually done when a kingdom dies.
+	 * */
+	protected void RemoveRelationshipWithKingdom(Kingdom kingdomToRemove){
+		if (kingdomToRemove.id == this.id) {
+			return;
+		}
+		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
+			if (this.relationshipsWithOtherKingdoms[i].targetKingdom.id == kingdomToRemove.id) {
+				this.relationshipsWithOtherKingdoms.RemoveAt(i); //remove relationship with kingdom
+				break;
+			}
+		}
 	}
 
 	/*
@@ -796,6 +852,9 @@ public class Kingdom{
 		this._availableResources[resource] += 1;
 	}
 
+	/*
+	 * Check if the kingdom has enough resources for a given cost.
+	 * */
 	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
 		if(resourceCost != null){
 			for (int i = 0; i < resourceCost.Count; i++) {
@@ -816,6 +875,10 @@ public class Kingdom{
 		return true;
 	}
 
+	/*
+	 * Check if kingdom is producing a resource of type.
+	 * Excluding Gold.
+	 * */
 	internal bool HasResource(BASE_RESOURCE_TYPE resourceType){
 		if (this._availableResources.ContainsKey(resourceType)) {
 			return true;
@@ -848,8 +911,4 @@ public class Kingdom{
 		return true;
 	}
 	#endregion
-	//Destructor for unsubscribing listeners
-	~Kingdom(){
-		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
-	}
 }

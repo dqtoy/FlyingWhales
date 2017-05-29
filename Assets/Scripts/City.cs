@@ -869,12 +869,12 @@ public class City{
 		}
 		// This will update kingdom type whenever the kingdom loses a city.
 		this._kingdom.UpdateKingdomTypeData();
+		this._kingdom.CheckIfKingdomIsDead();
 
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		this.hexTile.city = null;
 		KingdomManager.Instance.UpdateKingdomAdjacency();
-
 	}
 
 	internal void LookForNewGeneral(General general){

@@ -5,11 +5,11 @@ public class WeekEndedEvent : UnityEvent{}
 
 //Kingdom Events
 public class NewKingdomEvent : UnityEvent<Kingdom>{}
+public class KingdomDiedEvent : UnityEvent<Kingdom>{}
 
 //Citizen Events
 public class CitizenTurnActions: UnityEvent{}
 public class CitizenDiedEvent : UnityEvent{}
-public class CheckCitizensSupportingMe : UnityEvent<Citizen>{}
 
 //City Events
 public class CityEverydayTurnActions: UnityEvent{}
@@ -27,10 +27,7 @@ public class CheckGeneralEligibility: UnityEvent<Citizen, HexTile>{}
 
 //Game Events
 public class GameEventAction: UnityEvent<GameEvent, int>{}
-public class RecruitCitizensForExpansion: UnityEvent<Expansion, Kingdom>{}
 public class GameEventEnded: UnityEvent<GameEvent>{}
 
 //UI
 public class UpdateUI: UnityEvent{}
-public class ShowEventsOfType: UnityEvent<EVENT_TYPES>{}
-public class HideEvents: UnityEvent{}

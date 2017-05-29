@@ -18,8 +18,6 @@ public class Expansion : GameEvent {
 		this.originCity = startedBy.city;
 		this.hexTileToExpandTo = targetHextile;
 
-		Debug.LogError(this.description);
-
 		EventManager.Instance.AddEventToDictionary(this);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "event_title");
