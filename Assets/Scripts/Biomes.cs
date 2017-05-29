@@ -84,18 +84,19 @@ public class Biomes : MonoBehaviour {
 //	public Sprite mountainCenter;
 
 	[Space(10)]
-	public Sprite[] grasslandTiles;
-	public Sprite[] forestTiles;
-	public Sprite[] woodlandTiles;
-	public Sprite[] desertTiles;
-	public Sprite[] tundraTiles;
-	public Sprite[] waterTiles;
-	public Sprite[] snowTiles;
-	public Sprite[] bareTiles;
-	public Sprite[] greenMountainTiles;
-	public Sprite[] desertMountainTiles;
-	public Sprite[] snowAndTundraMountainTiles;
-
+	[SerializeField] private Sprite[] grasslandTiles;
+	[SerializeField] private Sprite[] forestTiles;
+	[SerializeField] private Sprite[] woodlandTiles;
+	[SerializeField] private Sprite[] desertTiles;
+	[SerializeField] private Sprite[] tundraTiles;
+	[SerializeField] private Sprite[] waterTiles;
+	[SerializeField] private Sprite[] snowTiles;
+	[SerializeField] private Sprite[] _bareTiles;
+	[SerializeField] private Sprite[] greenMountainTiles;
+	[SerializeField] private Sprite[] desertMountainTiles;
+	[SerializeField] private Sprite[] snowAndTundraMountainTiles;
+	[SerializeField] private Sprite[] woodlandTrees;
+	[SerializeField] private Sprite[] forestTrees;
 //	[Space(10)]
 //	public List<HexTile> snowHexTiles;
 //	public List<HexTile> tundraHexTiles;
@@ -104,13 +105,19 @@ public class Biomes : MonoBehaviour {
 //	public List<HexTile> forestHexTiles;
 //	public List<HexTile> desertHexTiles;
 
-	public Sprite grasslandTexture;
-	public Sprite snowTexture;
-	public Sprite desertTexture;
-	public Sprite forestTexture;
-	public Sprite woodlandTexture;
-	public Sprite tundraTexture;
-	public Material edgeMaterial;
+	[SerializeField] private Sprite grasslandTexture;
+	[SerializeField] private Sprite snowTexture;
+	[SerializeField] private Sprite desertTexture;
+	[SerializeField] private Sprite forestTexture;
+	[SerializeField] private Sprite woodlandTexture;
+	[SerializeField] private Sprite tundraTexture;
+	[SerializeField] private Material edgeMaterial;
+
+	#region getters/setters
+	public Sprite[] bareTiles{
+		get{ return this._bareTiles; }
+	}
+	#endregion
 
 	void Awake(){
 		Instance = this;
@@ -133,11 +140,11 @@ public class Biomes : MonoBehaviour {
 			case BIOMES.SNOW:
 				currentHexTile.movementDays = 3;
 				Sprite snowSpriteToUse = snowTiles [Random.Range (0, snowTiles.Length)];
-				currentHexTile.SetTileSprites (snowSpriteToUse);
+				currentHexTile.SetBaseSprite(snowSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = snowAndTundraMountainTiles [Random.Range (0, snowAndTundraMountainTiles.Length)];
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sortingLayerName = "Mountains";
+					currentHexTile.SetCenterSprite (mountainSpriteToUse);
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
 					sortingOrder += 6;
 				}
@@ -145,11 +152,11 @@ public class Biomes : MonoBehaviour {
 			case BIOMES.TUNDRA:
 				currentHexTile.movementDays = 2;
 				Sprite tundraSpriteToUse = tundraTiles [Random.Range (0, tundraTiles.Length)];
-				currentHexTile.SetTileSprites (tundraSpriteToUse);
+				currentHexTile.SetBaseSprite(tundraSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = snowAndTundraMountainTiles [Random.Range (0, snowAndTundraMountainTiles.Length)];
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer> ().sprite = mountainSpriteToUse;
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer> ().sortingLayerName = "Mountains";
+					currentHexTile.SetCenterSprite (mountainSpriteToUse);
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
 					sortingOrder += 3;
 				}
@@ -157,11 +164,11 @@ public class Biomes : MonoBehaviour {
 			case BIOMES.DESERT:
 				currentHexTile.movementDays = 4;
 				Sprite desertSpriteToUse = desertTiles [Random.Range (0, desertTiles.Length)];
-				currentHexTile.SetTileSprites (desertSpriteToUse);
+				currentHexTile.SetBaseSprite(desertSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = desertMountainTiles [Random.Range (0, desertMountainTiles.Length)];
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer> ().sortingLayerName = "Mountains";
+					currentHexTile.SetCenterSprite (mountainSpriteToUse);
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
 					sortingOrder += 5;
 				}
@@ -169,11 +176,11 @@ public class Biomes : MonoBehaviour {
 			case BIOMES.GRASSLAND:
 				currentHexTile.movementDays = 2;
 				Sprite grasslandSpriteToUse = grasslandTiles [Random.Range (0, grasslandTiles.Length)];
-				currentHexTile.SetTileSprites (grasslandSpriteToUse);
+				currentHexTile.SetBaseSprite(grasslandSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer> ().sortingLayerName = "Mountains";
+					currentHexTile.SetCenterSprite(mountainSpriteToUse);
+					Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
 					sortingOrder += 1;
 				}
@@ -181,24 +188,30 @@ public class Biomes : MonoBehaviour {
 			case BIOMES.WOODLAND:
 				currentHexTile.movementDays = 3;
 				Sprite woodlandSpriteToUse = woodlandTiles [Random.Range (0, woodlandTiles.Length)];
-				currentHexTile.SetTileSprites (woodlandSpriteToUse);
+				currentHexTile.SetBaseSprite(woodlandSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer> ().sortingLayerName = "Mountains";
+					currentHexTile.SetCenterSprite (mountainSpriteToUse);
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
+					Sprite centerSpriteToUse = woodlandTrees [Random.Range (0, woodlandTrees.Length)];
+					currentHexTile.SetCenterSprite(centerSpriteToUse);
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 					sortingOrder += 2;
 				}
 				break;
 			case BIOMES.FOREST:
 				currentHexTile.movementDays = 4;
 				Sprite forestSpriteToUse = forestTiles [Random.Range (0, forestTiles.Length)];
-				currentHexTile.SetTileSprites (forestSpriteToUse);
+				currentHexTile.SetBaseSprite(forestSpriteToUse);
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer>().sprite = mountainSpriteToUse;
-					currentHexTile.centerPiece.GetComponent<SpriteRenderer> ().sortingLayerName = "Mountains";
+					currentHexTile.SetCenterSprite (mountainSpriteToUse);
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
+					Sprite centerSpriteToUse = forestTrees [Random.Range (0, forestTrees.Length)];
+					currentHexTile.SetCenterSprite(centerSpriteToUse);
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 					sortingOrder += 4;
 				}
 				break;
@@ -364,8 +377,8 @@ public class Biomes : MonoBehaviour {
 					
 					currentHexTile.movementDays = 2;
 					currentHexTile.biomeType = BIOMES.BARE;
-					Sprite bareSpriteToUse = bareTiles [Random.Range (0, bareTiles.Length)];
-					currentHexTile.SetTileSprites (bareSpriteToUse);
+					Sprite bareSpriteToUse = _bareTiles [Random.Range (0, _bareTiles.Length)];
+					currentHexTile.SetBaseSprite (bareSpriteToUse);
 				}
 			}
 		}

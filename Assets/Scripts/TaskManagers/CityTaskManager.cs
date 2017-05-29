@@ -115,9 +115,8 @@ public class CityTaskManager : MonoBehaviour {
 
 	[Task]
 	private void AddToDailyGrowthUntilFull(){
-		this.city.currentGrowth += this.city.dailyGrowth;
+		this.city.AddToDailyGrowth();
 		if (this.city.currentGrowth >= this.city.maxGrowth) {
-			this.city.currentGrowth = this.city.maxGrowth;
 			Task.current.Succeed ();
 		} else {
 			Task.current.Fail ();
@@ -151,7 +150,6 @@ public class CityTaskManager : MonoBehaviour {
 						break;
 					}
 				}
-
 			}
 			if (tileToBuy == null) {
 				this.targetHexTileToPurchase = null;
@@ -160,12 +158,12 @@ public class CityTaskManager : MonoBehaviour {
 				return;
 			}
 			this.city.PurchaseTile (tileToBuy);
-			this.city.AdjustResources (this.GetActionCost ("EXPANSION"));
+			this.city.kingdom.AdjustResources (this.GetActionCost ("EXPANSION"));
 			this.pathToTargetHexTile.RemoveRange (0, tileToBuyIndex + 1);
 		} else {
 			tileToBuy = this.targetHexTileToPurchase;
 			this.city.PurchaseTile (tileToBuy);
-			this.city.AdjustResources (this.GetActionCost ("EXPANSION"));
+			this.city.kingdom.AdjustResources (this.GetActionCost ("EXPANSION"));
 		}
 
 		if (tileToBuy.tileName == this.targetHexTileToPurchase.tileName) {
@@ -178,7 +176,7 @@ public class CityTaskManager : MonoBehaviour {
 
 	[Task]
 	private void ResetDailyGrowth(){
-		this.city.currentGrowth = 0;
+		this.city.ResetDailyGrowth();
 		Task.current.Succeed();
 	}
 	#endregion
@@ -186,15 +184,15 @@ public class CityTaskManager : MonoBehaviour {
 	#region Hire Special Citizen Functions
 	[Task]
 	private void GetNextCitizenToHire(){
-		if (this.roleToCreate == ROLE.UNTRAINED) {
-			this.roleToCreate = this.city.GetNonProducingRoleToCreate ();
-//			this.roleToCreate = ROLE.SPY;
-		}
-		if (this.roleToCreate == ROLE.UNTRAINED) {
-			Task.current.Fail();
-		} else {
+//		if (this.roleToCreate == ROLE.UNTRAINED) {
+//			this.roleToCreate = this.city.GetNonProducingRoleToCreate ();
+////			this.roleToCreate = ROLE.SPY;
+//		}
+//		if (this.roleToCreate == ROLE.UNTRAINED) {
+//			Task.current.Fail();
+//		} else {
 			Task.current.Succeed();
-		}
+//		}
 	}
 
 	[Task]
@@ -208,7 +206,6 @@ public class CityTaskManager : MonoBehaviour {
 		Citizen newCitizen = new Citizen (this.city, Random.Range (16, 41), gender, 0);
 		newCitizen.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - newCitizen.age));
 		newCitizen.AssignRole(this.roleToCreate);
-		this.city.UpdateCityConsumption ();
 		List<Resource> actionCost = this.GetActionCost("RECRUITMENT");
 		for (int i = 0; i < actionCost.Count; i++) {
 			if (actionCost [i].resourceType == BASE_RESOURCE_TYPE.GOLD) {
@@ -237,10 +234,10 @@ public class CityTaskManager : MonoBehaviour {
 
 			for (int i = 0; i < allGenerals.Count; i++) {
 				General currGeneral = (General)allGenerals[i].assignedRole;
-				if (currGeneral.GetArmyHP () < (this.city.maxGeneralHP + baseGeneralHP)) {
-					this.generalToUpgrade = currGeneral;
-					break;
-				}
+//				if (currGeneral.GetArmyHP () < (this.city.maxGeneralHP + baseGeneralHP)) {
+//					this.generalToUpgrade = currGeneral;
+//					break;
+//				}
 			}
 			if (this.generalToUpgrade == null) {
 				Task.current.Fail ();
@@ -271,9 +268,9 @@ public class CityTaskManager : MonoBehaviour {
 		}
 
 		this.generalToUpgrade.army.hp += amountToUpgrade;
-		if (this.generalToUpgrade.army.hp > (this.city.maxGeneralHP + baseGeneralHP)) {
-			this.generalToUpgrade.army.hp = (this.city.maxGeneralHP + baseGeneralHP);
-		}
+//		if (this.generalToUpgrade.army.hp > (this.city.maxGeneralHP + baseGeneralHP)) {
+//			this.generalToUpgrade.army.hp = (this.city.maxGeneralHP + baseGeneralHP);
+//		}
 		if (this.generalToUpgrade.generalAvatar != null) {
 			this.generalToUpgrade.generalAvatar.GetComponent<GeneralObject>().UpdateUI();
 		}
@@ -287,7 +284,7 @@ public class CityTaskManager : MonoBehaviour {
 	[Task]
 	private bool HasEnoughResourcesForAction(string action){
 		List<Resource> actionCost = this.GetActionCost(action);
-		return this.city.HasEnoughResourcesForAction (actionCost);
+		return this.city.kingdom.HasEnoughResourcesForAction (actionCost);
 	}
 
 	private List<Resource> GetActionCost(string action){

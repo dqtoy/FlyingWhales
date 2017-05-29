@@ -145,7 +145,6 @@ public class CityGenerator : MonoBehaviour {
 
 	public City CreateNewCity(HexTile hexTile, Kingdom kingdom){
 		hexTile.city = new City (hexTile, kingdom);
-		kingdom.AddCityToKingdom(hexTile.city);
 		hexTile.ShowCitySprite();
 		hexTile.ShowNamePlate();
 		if (hexTile.gameObject.GetComponent<CityTaskManager> () != null) {

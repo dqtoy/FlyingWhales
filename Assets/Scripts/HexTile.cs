@@ -101,15 +101,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}*/
 
-	[ContextMenu("Show Citizen Creation Table")]
-	public void ShowCitizenCreationTable(){
-		Dictionary<ROLE, int> citizenCreationTable = this.city.citizenCreationTable;
-		for (int i = 0; i < citizenCreationTable.Keys.Count; i++) {
-			ROLE key = citizenCreationTable.Keys.ElementAt(i);
-			Debug.Log (key.ToString () + " - " + citizenCreationTable [key].ToString ());
-		}
-	}
-
 	[ContextMenu("Show Adjacent Cities")]
 	public void ShowAdjacentCities(){
 		for (int i = 0; i < this.city.adjacentCities.Count; i++) {
@@ -189,13 +180,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	internal void SetSortingOrder(int sortingOrder){
 		this.GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder + 1;
-		this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-		this.kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
-		this.highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
-		this.structureGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
-		this.cityNameGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 7;
+		if (this.elevationType == ELEVATION.MOUNTAIN) {
+			this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 6;
+		} else {
+			this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
+		}
+
+		this.kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
+		this.highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
+		this.structureGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 5;
+		this.cityNameGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 8;
 		this.cityNameLbl.GetComponent<MeshRenderer>().sortingLayerName = "CityNames";
-		this.cityNameLbl.GetComponent<MeshRenderer> ().sortingOrder = sortingOrder + 8;
+		this.cityNameLbl.GetComponent<MeshRenderer> ().sortingOrder = sortingOrder + 9;
 
 		this.topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
 		this.leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
@@ -345,19 +341,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	#endregion
 	
 	#region Tile Visuals
-	public void SetTileSprites(Sprite baseSprite){
+	public void SetBaseSprite(Sprite baseSprite){
 		this.GetComponent<SpriteRenderer>().sprite = baseSprite;
-		if (this.elevationType == ELEVATION.MOUNTAIN) {
-			this.centerPiece.SetActive(true);
-		}
 	}
 
-
+	public void SetCenterSprite(Sprite centerSprite){
+		this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;
+		this.centerPiece.SetActive(true);
+	}
 	#endregion
 
 	public void ShowCitySprite(){
 		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
 		this.structureGO.SetActive(true);
+		this.centerPiece.SetActive(false);
 		Color color = this.city.kingdom.kingdomColor;
 		color.a = 76.5f/255f;
 		this.kingdomColorSprite.color = color;

@@ -16,8 +16,6 @@ public class Expansion : GameEvent {
 		this.originCity = startedBy.city;
 		this.hexTileToExpandTo = targetHextile;
 
-		Debug.LogError(this.description);
-
 		EventManager.Instance.AddEventToDictionary(this);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "event_title");
@@ -33,7 +31,7 @@ public class Expansion : GameEvent {
 	}
 	internal void ExpandToTargetHextile(){
 		if(this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0){
-			this.startedByKingdom.AddTileToKingdom(this.hexTileToExpandTo);
+			this.startedByKingdom.CreateNewCityOnTileForKingdom(this.hexTileToExpandTo);
 			this.hexTileToExpandTo.city.ExpandToThisCity(this.startedBy);
 
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");

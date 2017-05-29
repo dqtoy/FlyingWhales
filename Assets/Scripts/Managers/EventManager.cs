@@ -11,36 +11,51 @@ public class EventManager : MonoBehaviour {
 
 	public Dictionary<EVENT_TYPES, List<GameEvent>> allEvents;
 
+	/*
+	 * Generic Events
+	 * */
 	public WeekEndedEvent onWeekEnd = new WeekEndedEvent();
+
+	/*
+	 * Kingdom Events
+	 * */
 	public NewKingdomEvent onCreateNewKingdomEvent = new NewKingdomEvent();
+	public KingdomDiedEvent onKingdomDiedEvent = new KingdomDiedEvent();
+
+
+	/*
+	 * Citizen Events
+	 * */
 	public CitizenTurnActions onCitizenTurnActions = new CitizenTurnActions ();
+	public CitizenDiedEvent onCitizenDiedEvent =  new CitizenDiedEvent();
+
+	/*
+	 * City Events
+	 * */
 	public CityEverydayTurnActions onCityEverydayTurnActions = new CityEverydayTurnActions();
 	public CitizenMove onCitizenMove =  new CitizenMove();
-	public CitizenDiedEvent onCitizenDiedEvent =  new CitizenDiedEvent();
+
+	/*
+	 * Campaign Events
+	 * */
 	public RegisterOnCampaign onRegisterOnCampaign = new RegisterOnCampaign();
 	public DeathArmy onDeathArmy = new DeathArmy();
 	public UnsupportCitizen onUnsupportCitizen = new UnsupportCitizen();
-	public GameEventAction onGameEventAction = new GameEventAction();
-	public CheckCitizensSupportingMe onCheckCitizensSupportingMe = new CheckCitizensSupportingMe();
-	public RecruitCitizensForExpansion onRecruitCitizensForExpansion = new RecruitCitizensForExpansion();
-	public GameEventEnded onGameEventEnded = new GameEventEnded();
-	public ShowEventsOfType onShowEventsOfType = new ShowEventsOfType();
-	public HideEvents onHideEvents = new HideEvents();
 	public RemoveSuccessionWarCity onRemoveSuccessionWarCity = new RemoveSuccessionWarCity();
-	public UpdateUI onUpdateUI = new UpdateUI();
 	public LookForLostArmies onLookForLostArmies = new LookForLostArmies ();
 	public DeathToGhost onDeathToGhost = new DeathToGhost();
 	public CheckGeneralEligibility onCheckGeneralEligibility = new CheckGeneralEligibility();
 
-	public EVENT_TYPES eventTypeForTesting;
+	/*
+	 * Game Events
+	 * */
+	public GameEventAction onGameEventAction = new GameEventAction();
+	public GameEventEnded onGameEventEnded = new GameEventEnded();
 
-	[ContextMenu("Add Event")]
-	public void AddEvent(){
-		if (eventTypeForTesting == EVENT_TYPES.MARRIAGE_INVITATION) {
-			MarriageInvitation eventToCreate = new MarriageInvitation(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null);
-			this.AddEventToDictionary(eventToCreate);
-		}
-	}
+	/*
+	 * UI Events
+	 * */
+	public UpdateUI onUpdateUI = new UpdateUI();
 
 	void Awake(){
 		Instance = this;

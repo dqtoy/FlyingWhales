@@ -118,67 +118,6 @@ public class MarriageManager : MonoBehaviour {
 
 	}
 
-	internal List<Citizen> GetElligibleCitizensForMarriage(Citizen citizenSearchingForLove){
-		List<Citizen> elligibleCitizens = new List<Citizen>();
-		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-			List<Citizen> elligibleCitizensInKingdom = KingdomManager.Instance.allKingdoms[i].GetAllCitizensForMarriage(citizenSearchingForLove);
-			for (int j = 0; j < elligibleCitizensInKingdom.Count; j++) {
-				if (elligibleCitizensInKingdom[j].age > (citizenSearchingForLove.age + 10)) {
-					continue;
-				}
-				if (elligibleCitizensInKingdom [j].city.kingdom != citizenSearchingForLove.city.kingdom) {
-					RelationshipKings relKing = citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king);
-//					RELATIONSHIP_STATUS rel = citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king).lordRelationship;
-					if (relKing == null) {
-//						Debug.LogError (citizenSearchingForLove.city.kingdom.king.name + " has null relationship with " + elligibleCitizensInKingdom [j].city.kingdom.king.name);
-						continue;
-					}
-					if (relKing.lordRelationship == RELATIONSHIP_STATUS.ENEMY ||
-						relKing.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-						continue;
-					}
-				}
-				if (citizenSearchingForLove.race != elligibleCitizensInKingdom[j].race) {
-					continue;
-				}
-				if (citizenSearchingForLove.IsRoyaltyCloseRelative (elligibleCitizensInKingdom [j])) {
-					continue;
-				}
-
-				if ((citizenSearchingForLove.isKing && !elligibleCitizensInKingdom[j].isKing) || (!citizenSearchingForLove.isKing && elligibleCitizensInKingdom[j].isKing) ||
-					(!citizenSearchingForLove.isKing && !elligibleCitizensInKingdom[j].isKing)) {
-					if (elligibleCitizensInKingdom[j].prestige <= citizenSearchingForLove.prestige * 1.25f && 
-						elligibleCitizensInKingdom[j].prestige >= citizenSearchingForLove.prestige * 0.75f) {
-						elligibleCitizens.Add (elligibleCitizensInKingdom [j]);
-					}
-				}
-			}
-		}
-		return elligibleCitizens.OrderBy(x => x.age).ThenByDescending(x => x.city.kingdom.cities.Count).ToList(); //younger women are prioritized and women with more cities
-	}
-
-	internal void DivorceCouple(Citizen citizen1, Citizen citizen2){
-		citizen1.isMarried = false;
-		citizen2.isMarried = false;
-
-		citizen1.spouse = null;
-		citizen2.spouse = null;
-
-		for (int i = 0; i < this.allMarriedCouples.Count; i++) {
-			if (citizen1.gender == GENDER.MALE) {
-				if (this.allMarriedCouples [i].husband.id == citizen1.id && this.allMarriedCouples [i].wife.id == citizen2.id) {
-					this.allMarriedCouples.RemoveAt(i);
-					return;
-				}
-			} else {
-				if (this.allMarriedCouples [i].wife.id == citizen1.id && this.allMarriedCouples [i].husband.id == citizen2.id) {
-					this.allMarriedCouples.RemoveAt(i);
-					return;
-				}
-			}
-		}
-	}
-
 	internal List<MarriedCouple> GetCouplesCitizenInvoledIn(Citizen citizen){
 		return allMarriedCouples.Where(x => x.husband.id == citizen.id || x.wife.id == citizen.id).ToList();
 	}
