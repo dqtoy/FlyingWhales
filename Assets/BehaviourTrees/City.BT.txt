@@ -1,8 +1,6 @@
 tree("Root")
 	fallback
 		tree ("Expand")
-		tree ("HireSpecialCitizen")
-		tree("UpgradeGeneral")
 
 tree("Expand")
 	sequence
@@ -13,15 +11,4 @@ tree("Expand")
 			BuyNextTile
 			ResetDailyGrowth
 
-tree("HireSpecialCitizen")
-	sequence
-		GetNextCitizenToHire
-		HasEnoughResourcesForAction("RECRUITMENT")
-		HireCitizen
-
-tree("UpgradeGeneral")
-	sequence
-		GetGeneralToUpgrade
-		HasEnoughResourcesForAction("GENERALUP")
-		UpgradeGeneral
 		

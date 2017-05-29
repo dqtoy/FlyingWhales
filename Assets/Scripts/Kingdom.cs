@@ -14,11 +14,14 @@ public class Kingdom{
 	private KingdomTypeData _kingdomTypeData;
 	private Kingdom _sourceKingdom;
 
+	//Resources
+	private int _goldCount;
+	private Dictionary<BASE_RESOURCE_TYPE, int> _availableResources;
+
 	internal List<City> cities;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
 	internal List<Citizen> pretenders;
-//	public List<Citizen> royaltyList;
 	internal List<CityWar> holderIntlWarCities;
 
 	internal BASE_RESOURCE_TYPE basicResource;
@@ -32,8 +35,9 @@ public class Kingdom{
 	internal List<City> adjacentCitiesFromOtherKingdoms;
 	internal List<Kingdom> adjacentKingdoms;
 
-	public int expansionChance = 1;
+	private int expansionChance = 1;
 
+	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
 		get { 
 			if (this._kingdomTypeData == null) {
@@ -55,6 +59,10 @@ public class Kingdom{
 		}
 	}
 
+	public Dictionary<BASE_RESOURCE_TYPE, int> availableResources{
+		get{ return this._availableResources; }
+	}
+	#endregion
 	// Kingdom constructor paramters
 	//	race - the race of this kingdom
 	//	cities - the cities that this kingdom will initially own
@@ -72,6 +80,8 @@ public class Kingdom{
 		this.kingdomColor = Utilities.GetColorForKingdom();
 		this.adjacentCitiesFromOtherKingdoms = new List<City>();
 		this.adjacentKingdoms = new List<Kingdom>();
+		this._goldCount = 0;
+		this._availableResources = new Dictionary<BASE_RESOURCE_TYPE, int> ();
 
 		this._sourceKingdom = sourceKingdom;
 		// Determine what type of Kingdom this will be upon initialization.
@@ -93,7 +103,7 @@ public class Kingdom{
 		}
 
 		for (int i = 0; i < cities.Count; i++) {
-			this.AddTileToKingdom(cities[i]);
+			this.CreateNewCityOnTileForKingdom(cities[i]);
 		}
 
 		// For the kingdom's first city, setup its distance towards other habitable tiles.
@@ -116,7 +126,7 @@ public class Kingdom{
 
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this.CreateInitialRelationships();
-		EventManager.Instance.onCreateNewKingdomEvent.AddListener(NewKingdomCreated);
+		EventManager.Instance.onCreateNewKingdomEvent.AddListener(CreateNewRelationshipWithKingdom);
 		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
@@ -198,7 +208,7 @@ public class Kingdom{
 		}
 		return false;
 	}
-
+		
 	protected void CreateInitialRelationships() {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			if (KingdomManager.Instance.allKingdoms[i].id != this.id) {
@@ -207,7 +217,11 @@ public class Kingdom{
 		}
 	}
 
-	protected void NewKingdomCreated(Kingdom createdKingdom){
+	/*
+	 * Used to create a new RelationshipKingdom with the
+	 * newly created kingdom. Function is listening to onCreateNewKingdom Event.
+	 * */
+	protected void CreateNewRelationshipWithKingdom(Kingdom createdKingdom){
 		//Add relationship to newly created kingdom
 		if (createdKingdom.id == this.id) {
 			return;
@@ -221,6 +235,10 @@ public class Kingdom{
 		this.relationshipsWithOtherKingdoms.Add(new RelationshipKingdom(this, createdKingdom));
 	}
 
+	/*
+	 * Kingdom will attempt to expand. This function is listening to the onWeekEnd Event.
+	 * chance for expansion can be edited by changing the value of const expansionChance.
+	 * */
 	protected void AttemptToExpand(){
 		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Where(x => x.isActive).Count() > 0) {
 			return;
@@ -247,22 +265,23 @@ public class Kingdom{
 		}
 	}
 
-	internal List<Citizen> GetAllCitizensForMarriage(Citizen citizen){
-		List<Citizen> elligibleCitizens = new List<Citizen>();
-		for (int i = 0; i < this.cities.Count; i++) {
-			if (citizen.gender == GENDER.MALE) {
-				elligibleCitizens.AddRange (this.cities [i].elligibleBachelorettes);
-			} else {
-				elligibleCitizens.AddRange (this.cities [i].elligibleBachelors);
-			}
-		}
-		return elligibleCitizens;
+	/*
+	 * Create a new city obj on the specified hextile.
+	 * Then add it to this kingdoms cities.
+	 * */
+	internal void CreateNewCityOnTileForKingdom(HexTile tile){
+		City createdCity = CityGenerator.Instance.CreateNewCity (tile, this);
+		this.AddCityToKingdom(createdCity);
 	}
 
-	internal void AddTileToKingdom(HexTile tile){
-		CityGenerator.Instance.CreateNewCity (tile, this);
+	internal void AddCityToKingdom(City city){
+		this.cities.Add (city);
+		this.UpdateKingdomTypeData();
 	}
 
+	/*
+	 * Get a list of all the citizens in this kingdom.
+	 * */
 	internal List<Citizen> GetAllCitizensInKingdom(){
 		List<Citizen> allCitizens = new List<Citizen>();
 		for (int i = 0; i < this.cities.Count; i++) {
@@ -348,9 +367,9 @@ public class Kingdom{
 //		UIManager.Instance.UpdateKingsGrid();
 //		UIManager.Instance.UpdateKingdomSuccession ();
 
-		for (int i = 0; i < this.cities.Count; i++) {
-			this.cities[i].UpdateResourceProduction();
-		}
+//		for (int i = 0; i < this.cities.Count; i++) {
+//			this.cities[i].UpdateResourceProduction();
+//		}
 	}
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
 //		Debug.Log ("SUCCESSION WAR");
@@ -424,7 +443,7 @@ public class Kingdom{
 			}
 		}
 	}
-
+		
 	internal RelationshipKingdom GetRelationshipWithOtherKingdom(Kingdom kingdomTarget){
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
 			if (this.relationshipsWithOtherKingdoms[i].targetKingdom.id == kingdomTarget.id) {
@@ -461,12 +480,6 @@ public class Kingdom{
 			newKingdom.AddCityToKingdom (this.cities [i]);
 		}
 		KingdomManager.Instance.MakeKingdomDead(this);
-	}
-
-	internal void AddCityToKingdom(City city){
-		this.cities.Add (city);
-		city.kingdom = this;
-		this.UpdateKingdomTypeData();
 	}
 
 	internal void ResetAdjacencyWithOtherKingdoms(){
@@ -743,8 +756,100 @@ public class Kingdom{
 		}
 		return total;
 	}
+
+	#region Resource Management
+	/*
+	 * Function to adjust the gold count of this kingdom.
+	 * pass a negative value to reduce and a positive value
+	 * to inrease
+	 * */
+	internal void AdjustGold(int goldAmount){
+		this._goldCount += goldAmount;
+	}
+
+	/*
+	 * Adjusts resource count. Only reduces gold for now. edit for other
+	 * resources of necessary
+	 * */
+	internal void AdjustResources(List<Resource> resource, bool reduce = true){
+		int currentResourceQuantity = 0;
+		for(int i = 0; i < resource.Count; i++){
+			Resource currResource = resource[i];
+			if (currResource.resourceType == BASE_RESOURCE_TYPE.GOLD) {
+				currentResourceQuantity = currResource.resourceQuantity;
+				if (reduce) {
+					currentResourceQuantity *= -1;
+				}
+				AdjustGold(currentResourceQuantity);
+			}
+		}
+	}
+
+	/*
+	 * Add resource type to this kingdoms
+	 * available resource (DO NOT ADD GOLD TO THIS!).
+	 * */
+	internal void AddResourceToKingdom(BASE_RESOURCE_TYPE resource){
+		if (!this._availableResources.ContainsKey(resource)) {
+			this._availableResources.Add(resource, 0);
+		}
+		this._availableResources[resource] += 1;
+	}
+
+	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
+		if(resourceCost != null){
+			for (int i = 0; i < resourceCost.Count; i++) {
+				Resource currentResource = resourceCost [i];
+				if (currentResource.resourceType == BASE_RESOURCE_TYPE.GOLD) {
+					if (this._goldCount < currentResource.resourceQuantity) {
+						return false;
+					}
+				} else {
+					if (!this.HasResource(currentResource.resourceType)) {
+						return false;
+					}
+				}
+			}
+		}else{
+			return false;
+		}
+		return true;
+	}
+
+	internal bool HasResource(BASE_RESOURCE_TYPE resourceType){
+		if (this._availableResources.ContainsKey(resourceType)) {
+			return true;
+		}
+		return false;
+	}
+
+	/*
+	 * Check if this kingdom has enough gold to create role.
+	 * */
+	internal bool CanCreateAgent(ROLE roleToCheck){
+		int costToCreate = 0;
+		if (roleToCheck == ROLE.GENERAL) {
+			costToCreate = 300;
+		} else if (roleToCheck == ROLE.TRADER) {
+			costToCreate = 300;
+		} else if (roleToCheck == ROLE.ENVOY) {
+			costToCreate = 200;
+		} else if (roleToCheck == ROLE.SPY) {
+			costToCreate = 200;
+		} else if (roleToCheck == ROLE.TRADER) {
+			costToCreate = 300;
+		} else if (roleToCheck == ROLE.RAIDER) {
+			costToCreate = 100;
+		}
+
+		if (this._goldCount < costToCreate) {
+			return false;
+		}
+		return true;
+	}
+	#endregion
 	//Destructor for unsubscribing listeners
 	~Kingdom(){
-		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(NewKingdomCreated);
+		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
 	}
 }

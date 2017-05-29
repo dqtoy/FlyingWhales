@@ -10,7 +10,6 @@ public class Trader : Role {
 	public HexTile currentLocation;
 	public bool isWorking = false;
 	public List<BASE_RESOURCE_TYPE> offeredResources;
-	public TradeManager tradeManager;
 
 	private GameObject traderGameObject;
 	internal List<HexTile> pathToTargetCity;
@@ -26,7 +25,6 @@ public class Trader : Role {
 		this.targetCity = null;
 		this.currentLocation = this.citizen.city.hexTile;
 		this.offeredResources = new List<BASE_RESOURCE_TYPE>();
-		this.tradeManager = tradeManager;
 //		EventManager.Instance.onWeekEnd.AddListener(AssignTask);
 	}
 

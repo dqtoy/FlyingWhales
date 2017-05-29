@@ -32,16 +32,6 @@ public class EventManager : MonoBehaviour {
 	public DeathToGhost onDeathToGhost = new DeathToGhost();
 	public CheckGeneralEligibility onCheckGeneralEligibility = new CheckGeneralEligibility();
 
-	public EVENT_TYPES eventTypeForTesting;
-
-	[ContextMenu("Add Event")]
-	public void AddEvent(){
-		if (eventTypeForTesting == EVENT_TYPES.MARRIAGE_INVITATION) {
-			MarriageInvitation eventToCreate = new MarriageInvitation(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null);
-			this.AddEventToDictionary(eventToCreate);
-		}
-	}
-
 	void Awake(){
 		Instance = this;
 		this.Init();

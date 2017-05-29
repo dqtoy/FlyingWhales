@@ -542,16 +542,16 @@ public class UIManager : MonoBehaviour {
 
 		//Show City Resources
 		//Gold
-		cityInfoGoldLbl.text = currentlyShowingCity.goldCount.ToString() + "/" + currentlyShowingCity.MAX_GOLD.ToString();
+//		cityInfoGoldLbl.text = currentlyShowingCity.goldCount.ToString() + "/" + currentlyShowingCity.MAX_GOLD.ToString();
 
-		//Basic Resource
-		if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
-			cityInfoBasicResource.sprite2D = stoneSprite;
-			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.stoneCount.ToString();
-		} else if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
-			cityInfoBasicResource.sprite2D = lumberSprite;
-			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.lumberCount.ToString();
-		}
+//		//Basic Resource
+//		if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
+//			cityInfoBasicResource.sprite2D = stoneSprite;
+//			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.stoneCount.ToString();
+//		} else if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+//			cityInfoBasicResource.sprite2D = lumberSprite;
+//			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.lumberCount.ToString();
+//		}
 
 		//Additional Resources
 		if (currentlyShowingCity.manaStoneCount > 0) {
@@ -2384,106 +2384,8 @@ public class UIManager : MonoBehaviour {
 			currentlyShowingCitizen.SetIntelligenceTrait (chosenTrait);
 		}
 
-
-//		BEHAVIOR_TRAIT chosenBehaviourTrait = BEHAVIOR_TRAIT.NONE;
-//		SKILL_TRAIT chosenSkillTrait = SKILL_TRAIT.NONE;
-//		MISC_TRAIT chosenMiscTrait = MISC_TRAIT.NONE;
-//		if (chosenBehaviourTrait.TryParse<BEHAVIOR_TRAIT> (addTraitPopUpList.value, out chosenBehaviourTrait)) {
-//			if (chosenBehaviourTrait == BEHAVIOR_TRAIT.NAIVE) {
-//				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.SCHEMING)) {
-//					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.SCHEMING);
-//					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.SCHEMING.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.SCHEMING) {
-//				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.NAIVE)) {
-//					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.NAIVE);
-//					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.NAIVE.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.WARMONGER) {
-//				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.PACIFIST)) {
-//					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.PACIFIST);
-//					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.PACIFIST.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.PACIFIST) {
-//				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.WARMONGER)) {
-//					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.WARMONGER);
-//					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.WARMONGER.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			}else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.CHARISMATIC) {
-//				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
-//					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.REPULSIVE);
-//					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.REPULSIVE.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.REPULSIVE) {
-//				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
-//					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.CHARISMATIC);
-//					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.CHARISMATIC.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.AGGRESSIVE) {
-//				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.DEFENSIVE)) {
-//					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.DEFENSIVE);
-//					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.DEFENSIVE.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			} else if (chosenBehaviourTrait == BEHAVIOR_TRAIT.DEFENSIVE) {
-//				if (currentlyShowingCitizen.behaviorTraits.Contains (BEHAVIOR_TRAIT.AGGRESSIVE)) {
-//					currentlyShowingCitizen.behaviorTraits.Remove (BEHAVIOR_TRAIT.AGGRESSIVE);
-//					Debug.Log ("Removed behaviour trait : " + BEHAVIOR_TRAIT.AGGRESSIVE.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			}
-//			if (currentlyShowingCitizen.behaviorTraits.Contains (chosenBehaviourTrait)) {
-//				Debug.Log (currentlyShowingCitizen.name + " already has that trait!");
-//			} else {
-//				currentlyShowingCitizen.behaviorTraits.Add (chosenBehaviourTrait);
-//				Debug.Log ("Added behaviour trait : " + chosenBehaviourTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
-//			}
-//		} else if (chosenSkillTrait.TryParse<SKILL_TRAIT> (addTraitPopUpList.value, out chosenSkillTrait)) {
-//			if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
-//				if (currentlyShowingCitizen.skillTraits.Contains (SKILL_TRAIT.INEFFICIENT)) {
-//					currentlyShowingCitizen.skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
-//					Debug.Log ("Removed skill trait : " + SKILL_TRAIT.INEFFICIENT.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
-//				if (currentlyShowingCitizen.skillTraits.Contains (SKILL_TRAIT.EFFICIENT)) {
-//					currentlyShowingCitizen.skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
-//					Debug.Log ("Removed skill trait : " + SKILL_TRAIT.EFFICIENT.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
-//				if (currentlyShowingCitizen.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
-//					currentlyShowingCitizen.skillTraits.Remove (SKILL_TRAIT.LAVISH);
-//					Debug.Log ("Removed skill trait : " + SKILL_TRAIT.LAVISH.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
-//				if (currentlyShowingCitizen.skillTraits.Contains (SKILL_TRAIT.THRIFTY)) {
-//					currentlyShowingCitizen.skillTraits.Remove (SKILL_TRAIT.THRIFTY);
-//					Debug.Log ("Removed skill trait : " + SKILL_TRAIT.THRIFTY.ToString () + " from citizen " + currentlyShowingCitizen.name + " because trait to add is contradicting.");
-//				}
-//			}
-//			if (currentlyShowingCitizen.skillTraits.Contains (chosenSkillTrait)) {
-//				Debug.Log (currentlyShowingCitizen.name + " already has that trait!");
-//			} else {
-//				currentlyShowingCitizen.skillTraits.Add (chosenSkillTrait);
-//				Debug.Log ("Added skill trait : " + chosenSkillTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
-//			}
-//		} else if (chosenMiscTrait.TryParse<MISC_TRAIT> (addTraitPopUpList.value, out chosenMiscTrait)) {
-//			if (currentlyShowingCitizen.miscTraits.Contains (chosenMiscTrait)) {
-//				Debug.Log (currentlyShowingCitizen.name + " already has that trait!");
-//			} else {
-//				currentlyShowingCitizen.miscTraits.Add (chosenMiscTrait);
-//				if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
-//					currentlyShowingCitizen.campaignManager.campaignLimit = 3;
-//				}else if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
-////					currentlyShowingCitizen.citizenChances.accidentChance = 50f;
-//				}
-//				Debug.Log ("Added misc trait : " + chosenMiscTrait.ToString () + " to citizen " + currentlyShowingCitizen.name);
-//			}
-//		}
-
 		ShowCitizenInfo(currentlyShowingCitizen);
 		ToggleTraitEditor();
-		if (currentlyShowingCitizen.city != null) {
-			currentlyShowingCitizen.city.UpdateResourceProduction();
-			currentlyShowingCitizen.city.UpdateCitizenCreationTable();
-		}
 	}
 
 	public void RemoveTrait(){
