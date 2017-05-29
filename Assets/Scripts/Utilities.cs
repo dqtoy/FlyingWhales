@@ -337,8 +337,18 @@ public class Utilities : MonoBehaviour {
 		} 
 		return newList;
 	}
-
 	public static bool AreTwoGeneralsFriendly(General general1, General general2){
+		if (general1.citizen.city.kingdom.id != general2.citizen.city.kingdom.id) {
+			if (general1.citizen.city.kingdom.CheckForSpecificWar (general2.citizen.city.kingdom)) {
+				return false;
+			}else{
+				return true;
+			}
+		}else{
+			return true;
+		}
+	}
+	/*public static bool AreTwoGeneralsFriendly(General general1, General general2){
 		if(general1.citizen.city.kingdom.id != general2.citizen.city.kingdom.id){
 			if(general2.assignedCampaign != null){
 				if(general2.assignedCampaign.leader != null){
@@ -447,7 +457,7 @@ public class Utilities : MonoBehaviour {
 		}
 
 		return true;
-	}
+	}*/
 
 	public static T[] GetComponentsInDirectChildren<T>(GameObject gameObject){
 		int indexer = 0;

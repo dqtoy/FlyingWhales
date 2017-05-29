@@ -6,14 +6,14 @@ public class GeneralHover : MonoBehaviour {
 	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			if(this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null){
+			/*if(this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null){
 				if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign.leader != null) {
 					if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
 						string info = this.CampaignInfo (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign);
 						UIManager.Instance.ShowSmallInfo (info);
 					}
 				}
-			}
+			}*/
 			this.HighlightPath ();
 		}
 	}
@@ -26,12 +26,10 @@ public class GeneralHover : MonoBehaviour {
 		UnHighlightPath ();
 	}
 	void HighlightPath(){
-		if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null || this.transform.parent.GetComponent<GeneralObject>().general.isGoingHome) {
-			this.pathToUnhighlight.Clear ();
-			for (int i = 0; i < this.transform.parent.GetComponent<GeneralObject>().general.roads.Count; i++) {
-				this.transform.parent.GetComponent<GeneralObject>().general.roads [i].highlightGO.SetActive (true);
-				this.pathToUnhighlight.Add (this.transform.parent.GetComponent<GeneralObject>().general.roads [i]);
-			}
+		this.pathToUnhighlight.Clear ();
+		for (int i = 0; i < this.transform.parent.GetComponent<GeneralObject>().general.roads.Count; i++) {
+			this.transform.parent.GetComponent<GeneralObject>().general.roads [i].highlightGO.SetActive (true);
+			this.pathToUnhighlight.Add (this.transform.parent.GetComponent<GeneralObject>().general.roads [i]);
 		}
 	}
 

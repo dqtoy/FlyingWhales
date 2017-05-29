@@ -2,7 +2,6 @@ tree("Root")
 	fallback
 		tree ("Expand")
 		tree ("HireSpecialCitizen")
-		tree("UpgradeGeneral")
 
 tree("Expand")
 	sequence
@@ -18,10 +17,4 @@ tree("HireSpecialCitizen")
 		GetNextCitizenToHire
 		HasEnoughResourcesForAction("RECRUITMENT")
 		HireCitizen
-
-tree("UpgradeGeneral")
-	sequence
-		GetGeneralToUpgrade
-		HasEnoughResourcesForAction("GENERALUP")
-		UpgradeGeneral
 		

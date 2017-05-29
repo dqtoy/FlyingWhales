@@ -40,6 +40,7 @@ public class StateVisit : GameEvent {
 		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
 		newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
 
+		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
 
 	}

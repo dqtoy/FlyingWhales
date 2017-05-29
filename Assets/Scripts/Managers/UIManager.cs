@@ -2785,37 +2785,37 @@ public class UIManager : MonoBehaviour {
 			List<int> actualCampaignIDs = new List<int>();
 			List<Campaign> campaignsToShow = new List<Campaign>();
 
-			for (int j = 0; j < currentlyShowingKingdom.king.campaignManager.activeCampaigns.Count; j++) {
-				Campaign currentCampaign = currentlyShowingKingdom.king.campaignManager.activeCampaigns[j];
-				City targetCityOfCampaign = currentCampaign.targetCity;
-				if (currentCampaign.campaignType == CAMPAIGN.DEFENSE) {
-					actualCampaignIDs.Add (currentCampaign.id);
-					campaignsToShow.Add (currentCampaign);
-				} else {
-					if (!currentCampaign.isGhost && targetCityOfCampaign.kingdom.id == kingdomAtWarWith.id) {
-						actualCampaignIDs.Add (currentCampaign.id);
-						campaignsToShow.Add (currentCampaign);
-					}
-				}
-			}
-
-			if (actualCampaignIDs.Except(currentlyShowingCampaignIDs).Union(currentlyShowingCampaignIDs.Except(actualCampaignIDs)).Count() > 0) {
-				for (int j = 0; j < currentlyShowingCampaigns.Count; j++) {
-					currentWarParent.eventsGrid.RemoveChild(currentlyShowingCampaigns[j].transform);
-					Destroy(currentlyShowingCampaigns [j].gameObject);
-				}
-
-				for (int j = 0; j < campaignsToShow.Count; j++) {
-					Campaign currentCampaign = campaignsToShow[j];
-					GameObject eventGO = GameObject.Instantiate (kingdomWarEventsListItemPrefab, this.transform) as GameObject;
-					currentWarParent.eventsGrid.AddChild (eventGO.transform);
-					currentWarParent.eventsGrid.transform.localPosition = new Vector3 (0f, -68f, 0f);
-					eventGO.GetComponent<WarEventListItem>().SetCampaign (currentCampaign, currentlyShowingKingdom);
-					eventGO.GetComponent<WarEventListItem>().onClickEvent += ShowEventLogs;
-					eventGO.transform.localScale = Vector3.one;
-				}
-				StartCoroutine (RepositionGrid (currentWarParent.eventsGrid));
-			}
+//			for (int j = 0; j < currentlyShowingKingdom.king.campaignManager.activeCampaigns.Count; j++) {
+//				Campaign currentCampaign = currentlyShowingKingdom.king.campaignManager.activeCampaigns[j];
+//				City targetCityOfCampaign = currentCampaign.targetCity;
+//				if (currentCampaign.campaignType == CAMPAIGN.DEFENSE) {
+//					actualCampaignIDs.Add (currentCampaign.id);
+//					campaignsToShow.Add (currentCampaign);
+//				} else {
+//					if (!currentCampaign.isGhost && targetCityOfCampaign.kingdom.id == kingdomAtWarWith.id) {
+//						actualCampaignIDs.Add (currentCampaign.id);
+//						campaignsToShow.Add (currentCampaign);
+//					}
+//				}
+//			}
+//
+//			if (actualCampaignIDs.Except(currentlyShowingCampaignIDs).Union(currentlyShowingCampaignIDs.Except(actualCampaignIDs)).Count() > 0) {
+//				for (int j = 0; j < currentlyShowingCampaigns.Count; j++) {
+//					currentWarParent.eventsGrid.RemoveChild(currentlyShowingCampaigns[j].transform);
+//					Destroy(currentlyShowingCampaigns [j].gameObject);
+//				}
+//
+//				for (int j = 0; j < campaignsToShow.Count; j++) {
+//					Campaign currentCampaign = campaignsToShow[j];
+//					GameObject eventGO = GameObject.Instantiate (kingdomWarEventsListItemPrefab, this.transform) as GameObject;
+//					currentWarParent.eventsGrid.AddChild (eventGO.transform);
+//					currentWarParent.eventsGrid.transform.localPosition = new Vector3 (0f, -68f, 0f);
+//					eventGO.GetComponent<WarEventListItem>().SetCampaign (currentCampaign, currentlyShowingKingdom);
+//					eventGO.GetComponent<WarEventListItem>().onClickEvent += ShowEventLogs;
+//					eventGO.transform.localScale = Vector3.one;
+//				}
+//				StartCoroutine (RepositionGrid (currentWarParent.eventsGrid));
+//			}
 			RepositionKingdomEventsTable();
 		}
 	}

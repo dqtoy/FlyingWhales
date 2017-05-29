@@ -13,14 +13,24 @@ public class GameManager : MonoBehaviour {
 	public int year;
 
 	public float progressionSpeed = 1f;
-	public bool isPaused = false;
+	public bool isPaused = true;
 
+	private float timeElapsed;
 	void Awake(){
 		Instance = this;
 		this.days = 1;
 		this.month = 1;
+		this.timeElapsed = 0f;
 	}
-
+//	void Update(){
+//		if (!isPaused) {
+//			this.timeElapsed += Time.deltaTime * 1f;
+//			if(this.timeElapsed >= this.progressionSpeed){
+//				this.timeElapsed = 0f;
+//				this.WeekEnded ();
+//			}
+//		}
+//	}
 	[ContextMenu("Start Progression")]
 	public void StartProgression(){
 //		InvokeRepeating ("WeekEnded", 0f, 1f);
@@ -29,6 +39,7 @@ public class GameManager : MonoBehaviour {
 //		this.WeekEnded();
 		EventManager.Instance.onUpdateUI.Invoke();
 		StartCoroutine(WeekProgression());
+//		this.isPaused = false;
 	}
 
 	public void TogglePause(){

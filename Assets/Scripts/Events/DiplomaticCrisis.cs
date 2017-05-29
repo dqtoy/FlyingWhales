@@ -36,6 +36,8 @@ public class DiplomaticCrisis : GameEvent {
 		newLog.AddToFillers (kingdom1.king, kingdom1.king.name);
 		newLog.AddToFillers (kingdom2.king, kingdom2.king.name);
 		newLog.AddToFillers (null, Utilities.crisis[0]);
+
+		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
 
 	}

@@ -37,6 +37,7 @@ public class BorderConflict : GameEvent {
 		newLog.AddToFillers (kingdom2, kingdom2.name);
 		newLog.AddToFillers (null, LocalizationManager.Instance.GetRandomLocalizedValue("Reasons", "BorderConflictReasons"));
 
+		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
 
 	}
