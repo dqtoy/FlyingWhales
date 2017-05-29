@@ -10,7 +10,7 @@ public class GeneralHover : MonoBehaviour {
 				if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign.leader != null) {
 					if (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign != null) {
 						string info = this.CampaignInfo (this.transform.parent.GetComponent<GeneralObject>().general.assignedCampaign);
-						UIManager.Instance.ShowSmallInfo (info, UIManager.Instance.transform);
+						UIManager.Instance.ShowSmallInfo (info);
 					}
 				}
 			}

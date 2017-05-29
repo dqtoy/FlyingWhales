@@ -141,7 +141,7 @@ public class CityTaskManager : MonoBehaviour {
 				HexTile currentHexTile = this.pathToTargetHexTile [i];
 				if (currentHexTile.isOccupied) {
 					if (!this.city.ownedTiles.Contains (currentHexTile)) {
-						Debug.Log (this.city.name + " of " + this.city.kingdom.name + ": Path to target tile has tile already owned by another city. Choose another target tile.");
+//						Debug.Log (this.city.name + " of " + this.city.kingdom.name + ": Path to target tile has tile already owned by another city. Choose another target tile.");
 						break;
 					}
 				} else {

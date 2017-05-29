@@ -62,7 +62,7 @@ public class CampaignManager {
 								this.MakeCityActive (newCampaign);
 							}
 						}else{
-							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
+//							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
 //							return;
 						}
 //						
@@ -81,10 +81,10 @@ public class CampaignManager {
 								this.activeCampaigns.Add (newCampaign);
 								this.MakeCityActive (newCampaign);
 							}else{
-								Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
+//								Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
 							}
 						}else{
-							Debug.Log (this.leader.name + " NO TARGET!");
+//							Debug.Log (this.leader.name + " NO TARGET!");
 						}
 
 
@@ -128,7 +128,7 @@ public class CampaignManager {
 						List<City> intlWarCities = this.intlWarCities.Where(x => !x.isActive && x.city.HasAdjacency(this.leader.city.kingdom.id)).Select (x => x.city).ToList ();
 
 						if(civilWarCities.Count <= 0 && successionWarCities.Count <= 0 && intlWarCities.Count <= 0){
-							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
+//							Debug.Log ("CANT CREATE ANYMORE CAMPAIGNS");
 //							return;
 						}else{
 							WAR_TYPE warType = WAR_TYPE.NONE;
@@ -145,16 +145,16 @@ public class CampaignManager {
 									this.activeCampaigns.Add (newCampaign);
 									this.MakeCityActive (newCampaign);
 								}else{
-									Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
+//									Debug.Log (this.leader.name + " NO RALLY POINT for target " + target.name);
 								}
 							}else{
-								Debug.Log (this.leader.name + " NO TARGET!");
+//								Debug.Log (this.leader.name + " NO TARGET!");
 							}
 						}
 					}
 				}
 				if(newCampaign != null){
-					Debug.Log ("Created Campaign " + newCampaign.campaignType.ToString () + " " + newCampaign.targetCity.name);
+//					Debug.Log ("Created Campaign " + newCampaign.campaignType.ToString () + " " + newCampaign.targetCity.name);
 //					EventManager.Instance.onRegisterOnCampaign.Invoke (newCampaign);
 					if(newCampaign.campaignType == CAMPAIGN.DEFENSE){
 						Log newLogTitle = newCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "campaign_title");
@@ -179,7 +179,7 @@ public class CampaignManager {
 					//Create Ghost Campaign
 					newCampaign = new Campaign (this.leader, null, CAMPAIGN.NONE, WAR_TYPE.NONE, 0);
 					newCampaign.isGhost = true;
-					Debug.Log ("Created Ghost Campaign " + newCampaign.campaignType.ToString ());
+//					Debug.Log ("Created Ghost Campaign " + newCampaign.campaignType.ToString ());
 
 					this.activeCampaigns.Add (newCampaign);
 					this.MakeCityActive (newCampaign);
@@ -210,16 +210,16 @@ public class CampaignManager {
 
 			totalStrength = 0;
 			for (int j = 0; j < this.candidates.Count; j++) {
-				if(this.candidates[i].path.Count <= nearest){
+				if(this.candidates[j].path.Count <= nearest){
 					if(totalStrength < totalAttackerStrength){
-						totalStrength += this.candidates [i].general.GetArmyHP ();
+						totalStrength += this.candidates [j].general.GetArmyHP ();
 					}else{
 						break;
 					}
 				}else{
-					if(this.candidates[i].general.location == cityPool[i].hexTile){
+					if(this.candidates[j].general.location == cityPool[i].hexTile){
 						if(totalStrength < totalAttackerStrength){
-							totalStrength += this.candidates [i].general.GetArmyHP ();
+							totalStrength += this.candidates [j].general.GetArmyHP ();
 						}else{
 							break;
 						}
@@ -353,9 +353,9 @@ public class CampaignManager {
 		doneCampaign.isDone = true;
 		EventManager.Instance.onWeekEnd.RemoveListener (doneCampaign.CheckExpiration);
 		if(doneCampaign.isGhost){
-			Debug.Log ("Ghost Campaign Done " + doneCampaign.campaignType.ToString ());
+//			Debug.Log ("Ghost Campaign Done " + doneCampaign.campaignType.ToString ());
 		}else{
-			Debug.Log ("Campaign Done " + doneCampaign.campaignType.ToString () + " " + doneCampaign.targetCity.name);
+//			Debug.Log ("Campaign Done " + doneCampaign.campaignType.ToString () + " " + doneCampaign.targetCity.name);
 			for(int i = 0; i < doneCampaign.registeredGenerals.Count; i++){
 				doneCampaign.registeredGenerals[i].UnregisterThisGeneral (false, true);
 			}

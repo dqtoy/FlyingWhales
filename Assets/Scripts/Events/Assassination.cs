@@ -71,51 +71,7 @@ public class Assassination : GameEvent {
 			triggerReason = "because " + gender + " doesn't like " + targetCitizen.name;
 		} 
 
-//		if (gameEventTrigger is Assassination) {
-//			this.description = startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after discovering that " + gameEventTrigger.startedBy.name
-//							+ " also sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
-//			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-//
-//		} else if (gameEventTrigger is InvasionPlan) {
-//			this.description = startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after discovering " + gameEventTrigger.startedBy.name + "'s "
-//				+ " Invasion Plan against " + (gameEventTrigger as InvasionPlan).targetKingdom.name;
-//			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-//
-//		} else if (gameEventTrigger is StateVisit){
-//			this.description = startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " while on a State Visit to " + targetCitizen.city.kingdom.name + ".";
-//			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-//
-//		} else if (gameEventTrigger is BorderConflict){
-//			this.description = startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " in response to worsening Border Conflict.";
-//			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-//
-//		} else if (gameEventTrigger is DiplomaticCrisis){
-//			this.description = startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " in the aftermath of a recent Diplomatic Crisis.";
-//			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-//
-//		} else if (gameEventTrigger is Espionage){
-//			this.description = startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
-//			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-//
-//		} else if (gameEventTrigger is Raid){
-//			this.description = startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after the raid of " + (gameEventTrigger as Raid).raidedCity.name + ".";
-//			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-//
-//		} else {
-//			this.description = startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + ".";
-//			startedBy.history.Add(new History(startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-//
-//		} 
-		/*
-		else {
-			startedBy.history.Add(new History(startMonth, startWeek, startYear, startedBy.name + " sent " + this.spy.name + " to kill " + targetCitizen.name + " after relationship deterioration due to " + triggerReason.ToString() + ".", HISTORY_IDENTIFIER.NONE));
-			this.description = startedBy.name + " of " + startedBy.city.kingdom.name + " wants to assassinate " + targetCitizen.name + " of " + targetCitizen.city.kingdom.name + " after relationship deterioration due to " + triggerReason.ToString() + ".";
-
-		}
-		*/
-
 		EventManager.Instance.AddEventToDictionary(this);
-		this.targetCitizen.city.hexTile.AddEventOnTile(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "event_title");
@@ -152,11 +108,9 @@ public class Assassination : GameEvent {
 		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endMonth = GameManager.Instance.month;
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
-//		EventManager.Instance.allEvents [EVENT_TYPES.ASSASSINATION].Remove (this);
 	}
 
 	private List<Kingdom> GetOtherKingdoms(){
@@ -193,7 +147,7 @@ public class Assassination : GameEvent {
 			((Spy)spies [random].assignedRole).inAction = true;
 			return spies [random];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}
@@ -220,7 +174,7 @@ public class Assassination : GameEvent {
 		if(guardian.Count > 0){
 			return guardian [UnityEngine.Random.Range (0, guardian.Count)];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND GAURDIAN BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND GAURDIAN BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}
@@ -266,11 +220,11 @@ public class Assassination : GameEvent {
 	}
 	private void AssassinationMoment(){
 		if(this.spy == null){
-			Debug.Log ("CAN'T ASSASSINATE NO SPIES AVAILABLE");
+//			Debug.Log ("CAN'T ASSASSINATE NO SPIES AVAILABLE");
 			return;
 		}
 		if(this.spy.isDead){
-			Debug.Log ("CAN'T ASSASSINATE, SPY IS DEAD!");
+//			Debug.Log ("CAN'T ASSASSINATE, SPY IS DEAD!");
 			return;
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
@@ -332,35 +286,11 @@ public class Assassination : GameEvent {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "spy_died");
 			newLog.AddToFillers (this.spy, this.spy.name);
 			this.spy.Death (DEATH_REASONS.TREACHERY);
-			Debug.Log (this.spy.name + " HAS DIED!");
+//			Debug.Log (this.spy.name + " HAS DIED!");
 		}else{
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "spy_alive");
 			newLog.AddToFillers (this.spy, this.spy.name);
 		}
-//		if (hasAssassinated && hasBeenDiscovered) {
-//			if (hasDeflected) {
-//				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this._targetCitizen.name + ". "
-//					+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
-//			} else {
-//				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this._targetCitizen.name + ". "
-//					+ this.spy.name + "'s actions were discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
-//			}
-//
-//		} else if (!hasAssassinated && hasBeenDiscovered) {
-//			if (hasDeflected) {
-//				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this._targetCitizen.name + ". "
-//					+ this.spy.name + "'s actions were discovered but he/she successfully deflected the blame to " + kingToBlame.name + ". " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
-//			} else {
-//				this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this._targetCitizen.name + ". "
-//					+ this.spy.name + "'s actions were discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
-//			}
-//		} else if (hasAssassinated && !hasBeenDiscovered) {
-//			this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was successful in assassinating " + this._targetCitizen.name + ". "
-//				+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
-//		} else if (!hasAssassinated && !hasBeenDiscovered) {
-//			this.spy.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.spy.name + " was unsuccessful in assassinating " + this._targetCitizen.name + ". "
-//				+ this.spy.name + "'s actions were not discovered. " + this.spy.name + " survived.", HISTORY_IDENTIFIER.NONE));
-//		}
 	}
 
 	private int GetActualChancePercentage(Citizen spy){
@@ -402,9 +332,6 @@ public class Assassination : GameEvent {
 	private void SpyDiscovery(){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 20;
-//		if(this.spy.skillTraits.Contains(SKILL_TRAIT.STEALTHY)){
-//			value -= 5;
-//		}
 		if(chance < value){
 			this.hasBeenDiscovered = true;
 			if(this.targetKingdom.isAlive()){
@@ -420,67 +347,16 @@ public class Assassination : GameEvent {
 						if (this.targetKingdom.isAlive ()) {
 							this.relationshipToAdjust = this.targetKingdom.king.SearchRelationshipByID (this.kingdomToBlame.king.id);
 						}
-//						relationship.relationshipHistory.Add (new History (
-//							GameManager.Instance.month,
-//							GameManager.Instance.days,
-//							GameManager.Instance.year,
-//							this.targetKingdom.king.name +  " caught an assassin, that was from " + this.kingdomToBlame.name,
-//							HISTORY_IDENTIFIER.KING_RELATIONS,
-//							false
-//						));
 					}
-//					else{
-//						RelationshipKings relationship = this.targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-//						relationship.AdjustLikeness (-15, this);
-//						relationship.relationshipHistory.Add (new History (
-//							GameManager.Instance.month,
-//							GameManager.Instance.days,
-//							GameManager.Instance.year,
-//							this.targetKingdom.king.name +  " caught an assassin, that was from " + assassinKingdom.name,
-//							HISTORY_IDENTIFIER.KING_RELATIONS,
-//							false
-//						));
-//					}
 				}
-//				else{
-//					RelationshipKings relationship = this.targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-//					relationship.AdjustLikeness (-15, this);
-//					relationship.relationshipHistory.Add (new History (
-//						GameManager.Instance.month,
-//						GameManager.Instance.days,
-//						GameManager.Instance.year,
-//						this.targetKingdom.king.name +  " caught an assassin, that was from " + assassinKingdom.name,
-//						HISTORY_IDENTIFIER.KING_RELATIONS,
-//						false
-//					));
-//				}
 			}
 			if(this.relationshipToAdjust != null){
 				this.relationshipToAdjust.AdjustLikeness (-15, this);
 				this.relationshipToAdjust.sourceKing.WarTrigger (this.relationshipToAdjust, this, this.relationshipToAdjust.sourceKing.city.kingdom.kingdomTypeData);
 			}
-//			else{
-//				RelationshipKings relationship = this.targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-//				relationship.AdjustLikeness (-15, this);
-//				relationship.relationshipHistory.Add (new History (
-//					GameManager.Instance.month,
-//					GameManager.Instance.days,
-//					GameManager.Instance.year,
-//					this.targetKingdom.king.name +  " caught an assassin, that was from " + assassinKingdom.name,
-//					HISTORY_IDENTIFIER.KING_RELATIONS,
-//					false
-//				));
-//			}
 		}
 	}
 	private Kingdom GetRandomKingdomToBlame(){
-//		List<Kingdom> otherAdjacentKingdoms = new List<Kingdom> ();
-//		for(int i = 0; i < this.otherKingdoms.Count; i++){
-//			RelationshipKingdom relationship = assassinKingdom.GetRelationshipWithOtherKingdom (this.otherKingdoms [i]);
-////			if(relationship.isAdjacent){
-//				otherAdjacentKingdoms.Add (this.otherKingdoms [i]);
-////			}
-//		}
 		if(this.otherKingdoms == null || this.otherKingdoms.Count <= 0){
 			return null;
 		}

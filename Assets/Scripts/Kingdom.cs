@@ -111,7 +111,7 @@ public class Kingdom{
 			}
 
 		}
-		Debug.Log ("Kingdom: " + this.name + " : " + this.cities [0].habitableTileDistance.Count);
+//		Debug.Log ("Kingdom: " + this.name + " : " + this.cities [0].habitableTileDistance.Count);
 		//this.cities [0].OrderHabitableTileDistanceList ();
 
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
@@ -297,10 +297,10 @@ public class Kingdom{
 //			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 
 			if(city == null){
-				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING IN KINGDOM!" + this.name);
+//				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING IN KINGDOM!" + this.name);
 				newKing = this.king.city.CreateNewKing ();
 			}else{
-				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING ON CITY " + city.name + " IN KINGDOM!" + this.name);
+//				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING ON CITY " + city.name + " IN KINGDOM!" + this.name);
 				newKing = city.CreateNewKing ();
 			}
 			if(newKing == null){
@@ -338,8 +338,8 @@ public class Kingdom{
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 //		this.king = newKing;
-		this.king.CreateInitialRelationshipsToKings ();
-		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+		newKing.CreateInitialRelationshipsToKings ();
+		KingdomManager.Instance.AddRelationshipToOtherKings (newKing);
 		this.successionLine.Clear();
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (newKing.GetSiblings());
@@ -353,7 +353,7 @@ public class Kingdom{
 		}
 	}
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
-		Debug.Log ("SUCCESSION WAR");
+//		Debug.Log ("SUCCESSION WAR");
 
 		if(newKing.city.governor.id == newKing.id){
 			newKing.city.AssignNewGovernor ();
@@ -520,7 +520,7 @@ public class Kingdom{
 	}
 
 	internal void AddInternationalWar(Kingdom kingdom){
-		Debug.Log ("INTERNATIONAL WAR");
+//		Debug.Log ("INTERNATIONAL WAR");
 		for(int i = 0; i < kingdom.cities.Count; i++){
 			if(!this.king.campaignManager.SearchForInternationalWarCities(kingdom.cities[i])){
 				this.king.campaignManager.intlWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));

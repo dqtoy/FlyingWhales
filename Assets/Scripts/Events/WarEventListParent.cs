@@ -7,8 +7,6 @@ public class WarEventListParent : MonoBehaviour {
 	public delegate void OnClickEvent(GameEvent gameEvent);
 	public OnClickEvent onClickEvent;
 
-	[SerializeField] private GameObject _anchorPoint;
-	[SerializeField] private UIAnchor anchor;
 	[SerializeField] private UILabel eventTitleLbl;
 	[SerializeField] private UIGrid _eventsGrid;
 
@@ -19,9 +17,6 @@ public class WarEventListParent : MonoBehaviour {
 	private Kingdom targetKingdom;
 
 	#region getters/setters
-	public GameObject anchorPoint{
-		get { return this._anchorPoint; }
-	}
 	public UIGrid eventsGrid{
 		get { return this._eventsGrid; }
 	}
@@ -34,6 +29,7 @@ public class WarEventListParent : MonoBehaviour {
 	}
 
 	public void ToggleList(){
+		UIManager.Instance.RepositionKingdomEventsTable();
 		this._eventsGrid.gameObject.SetActive(!eventsGrid.gameObject.activeSelf);
 	}
 
@@ -42,10 +38,6 @@ public class WarEventListParent : MonoBehaviour {
 		tweenRotation.from = new Vector3 (0f, 0f, -90f);
 		tweenRotation.to = new Vector3 (0f, 0f, -180f);
 		this._eventsGrid.gameObject.SetActive(false);
-	}
-
-	public void SetAnchor(GameObject anchorPoint){
-		this.anchor.container = anchorPoint;
 	}
 
 	void OnClick(){

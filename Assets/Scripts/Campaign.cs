@@ -60,10 +60,6 @@ public class Campaign {
 		}
 		return total;
 	}
-	internal void GoToRallyPoint(){
-		
-	}
-
 	internal void CheckExpiration(){
 		if(!this.startExpiration){
 			return;
@@ -99,11 +95,11 @@ public class Campaign {
 	private void AdjustExpiration(int amount){
 		this.expiration += amount;
 		if(this.expiration <= 0){
-			if(!this.isGhost){
-				Debug.Log (this.leader.name + " " + this.campaignType.ToString () + " campaign for " + this.targetCity.name + " has expired!");
-			}else{
-				Debug.Log (this.leader.name + " " + this.campaignType.ToString () + " campaign has expired!");
-			}
+//			if(!this.isGhost){
+//				Debug.Log (this.leader.name + " " + this.campaignType.ToString () + " campaign for " + this.targetCity.name + " has expired!");
+//			}else{
+//				Debug.Log (this.leader.name + " " + this.campaignType.ToString () + " campaign has expired!");
+//			}
 			this.expiration = 0;
 			this.leader.campaignManager.CampaignDone (this);
 		}

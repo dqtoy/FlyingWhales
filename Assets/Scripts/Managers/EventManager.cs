@@ -298,7 +298,7 @@ public class EventManager : MonoBehaviour {
 			((Spy)spies [random].assignedRole).inAction = true;
 			return spies [random];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}

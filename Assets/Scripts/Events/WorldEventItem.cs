@@ -18,10 +18,4 @@ public class WorldEventItem : MonoBehaviour {
 	public void DestroyObject(){
 		Destroy (this.gameObject);
 	}
-
-//	void OnMouseDown(){
-//		UIManager.Instance.ShowSpecificEvent(gameEvent);
-//	}
-
-
 }

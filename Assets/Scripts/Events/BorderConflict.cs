@@ -15,13 +15,7 @@ public class BorderConflict : GameEvent {
 
 	public BorderConflict(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
-		if(startedBy != null){
-			this.description = startedBy.name + " has created a border conflict between " + kingdom1.name + " and " + kingdom2.name + ".";
-			this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-				startedBy.name + " has created a border conflict between " + kingdom1.name + " and " + kingdom2.name + "." , HISTORY_IDENTIFIER.NONE));
-		}else{
-			this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
-		}
+		this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
 		this.durationInDays = 30;
 		this.remainingDays = this.durationInDays;
 		this.kingdom1 = kingdom1;
@@ -29,8 +23,6 @@ public class BorderConflict : GameEvent {
 		this.otherKingdoms = GetOtherKingdoms ();
 		this.activeEnvoyResolve = null;
 		this.activeEnvoyProvoke = null;
-		this.kingdom1.cities[0].hexTile.AddEventOnTile(this);
-		this.kingdom2.cities[0].hexTile.AddEventOnTile(this);
 		this._warTrigger = WAR_TRIGGER.BORDER_CONFLICT;
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -69,9 +61,6 @@ public class BorderConflict : GameEvent {
 				if(envoy.citizen.id == this.activeEnvoyResolve.citizen.id){
 					int chance = UnityEngine.Random.Range (0, 100);
 					int value = 20;
-//					if(this.activeEnvoyResolve.citizen.skillTraits.Contains(SKILL_TRAIT.PERSUASIVE)){
-//						value += 10;
-//					}
 					if(chance < value){
 						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve_success");
 						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
@@ -244,7 +233,7 @@ public class BorderConflict : GameEvent {
 		if(envoys.Count > 0){
 			return envoys [UnityEngine.Random.Range (0, envoys.Count)];
 		}else{
-			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
+//			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
 			return null;
 		}
 	}
@@ -271,7 +260,6 @@ public class BorderConflict : GameEvent {
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;
@@ -287,32 +275,16 @@ public class BorderConflict : GameEvent {
 
 		if(this.isResolvedPeacefully){
 
-			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
+//			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Conflict was resolved peacefully.";
 
-//			relationship1.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				" A border conflict between " + this.kingdom1.name +  " " + this.kingdom2.name + " was resolved peacefully.",
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				false
-//			));
-//			relationship2.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				" A border conflict between " + this.kingdom2.name +  " " + this.kingdom1.name + " was resolved peacefully.",
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				false
-//			));
 		}else{
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "event_end");
 			newLog.AddToFillers (this.kingdom1, this.kingdom1.name);
 			newLog.AddToFillers (this.kingdom2, this.kingdom2.name);
 
-			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
+//			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Conflict caused deterioration in relationship.";
 
@@ -324,26 +296,6 @@ public class BorderConflict : GameEvent {
 				relationship2.AdjustLikeness (-15, this);
 				relationship2.sourceKing.WarTrigger (relationship2, this, this.kingdom2.kingdomTypeData);
 			}
-
-//			relationship1.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				" A border conflict between " + this.kingdom1.name +  " " + this.kingdom2.name + " ended horribly.",
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				false
-//			));
-//			relationship2.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				" A border conflict between " + this.kingdom2.name +  " " + this.kingdom1.name + " ended horribly.",
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				false
-//			));
 		}
-//		EventManager.Instance.allEvents [EVENT_TYPES.BORDER_CONFLICT].Remove (this);
-
-		//Remove UI Icon
 	}
 }

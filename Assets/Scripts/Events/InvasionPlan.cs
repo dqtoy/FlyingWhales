@@ -56,7 +56,6 @@ public class InvasionPlan : GameEvent {
 			if (gameEventTrigger is Assassination) {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after discovering that " + gameEventTrigger.startedBy.name
 				+ " sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
-				startedBy.history.Add (new History (startMonth, startWeek, startYear, description, HISTORY_IDENTIFIER.NONE));
 
 				logFillers = new LogFiller[] {
 					new LogFiller (gameEventTrigger.startedBy, gameEventTrigger.startedBy.name),
@@ -65,20 +64,14 @@ public class InvasionPlan : GameEvent {
 
 			} else if (gameEventTrigger is BorderConflict) {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in response to worsening Border Conflict.";
-				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-
 				logFillers = new LogFiller[0];
 
 			} else if (gameEventTrigger is DiplomaticCrisis) {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in the aftermath of a recent Diplomatic Crisis.";
-				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-
 				logFillers = new LogFiller[0];
 
 			} else if (gameEventTrigger is Espionage) {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
-				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-
 				logFillers = new LogFiller[] {
 					new LogFiller (gameEventTrigger.startedBy, gameEventTrigger.startedBy.name),
 					new LogFiller ((gameEventTrigger as Espionage).targetKingdom, (gameEventTrigger as Espionage).targetKingdom.name)
@@ -86,23 +79,18 @@ public class InvasionPlan : GameEvent {
 
 			} else if (gameEventTrigger is Raid) {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after the raid of " + (gameEventTrigger as Raid).raidedCity.name + ".";
-				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-
 				logFillers = new LogFiller[] {
 					new LogFiller ((gameEventTrigger as Raid).raidedCity, (gameEventTrigger as Raid).raidedCity.name)
 				};
 
 			} else if (gameEventTrigger is JoinWar) {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name + ".";
-				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
-
 				logFillers = new LogFiller[] {
 					new LogFiller ((gameEventTrigger as JoinWar).startedByKingdom, (gameEventTrigger as JoinWar).startedByKingdom.name)
 				};
 
 			} else {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
-				startedBy.history.Add (new History (startMonth, startWeek, startYear, this.description, HISTORY_IDENTIFIER.NONE));
 			} 
 
 			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "InvasionPlanReasons", gameEventTrigger.eventType.ToString()), logFillers);
@@ -118,20 +106,6 @@ public class InvasionPlan : GameEvent {
 			
 			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "WarTriggerReasons", warTrigger.ToString ())
 				, new LogFiller[]{ new LogFiller (this._targetKingdom.king, this._targetKingdom.king.name) });
-//			switch(warTrigger){
-//			case WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_ALLY:
-//				reason = "After " + this._targetKingdom.king.name + " declared war against an ally";
-//				break;
-//			case WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_FRIEND:
-//				reason = "After " + this._targetKingdom.king.name + " declared war against a friend";
-//				break;
-//			case WAR_TRIGGER.TARGET_GAINED_A_CITY:
-//				reason = "After " + this._targetKingdom.king.name + " gained a city";
-//				break;
-//			case WAR_TRIGGER.TARGET_LOST_A_BATTLE:
-//				reason = "After " + this._targetKingdom.king.name + " lost a battle";
-//				break;
-//			}
 
 			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
 			invasionPlanStart.AddToFillers (null, reason);
@@ -141,15 +115,10 @@ public class InvasionPlan : GameEvent {
 			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, Utilities.MILITARIZATION_DURATION);
 			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
 		}
-		this.sourceKingdom.cities[0].hexTile.AddEventOnTile(this);
-		this.targetKingdom.cities[0].hexTile.AddEventOnTile(this);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 		this.StartMilitarizationEvent();
-
-//		this.EventIsCreated ();
-
 	}
 
 	#region overrides
@@ -195,7 +164,6 @@ public class InvasionPlan : GameEvent {
 					if (friends [i].lordRelationship == RELATIONSHIP_STATUS.ALLY) {
 						chanceToSendJoinWarRequest = 3;
 					}
-//					chanceToSendJoinWarRequest = 100;
 					int chance = Random.Range (0, 100);
 					if (chance < chanceToSendJoinWarRequest) {
 						Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
@@ -214,7 +182,6 @@ public class InvasionPlan : GameEvent {
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.isActive = false;
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;

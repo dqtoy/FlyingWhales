@@ -82,7 +82,7 @@ public class MarriedCouple {
 			this.isPregnant = true;
 			this.remainingWeeksUntilBirth = 36;
 			this.wife.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.wife.name + " is pregnant.", HISTORY_IDENTIFIER.NONE));
-			Debug.Log (this.husband.name + " and " + this.wife.name + " has made a baby and will give birth in 9 months.");
+//			Debug.Log (this.husband.name + " and " + this.wife.name + " has made a baby and will give birth in 9 months.");
 		}
 	}
 
@@ -90,7 +90,7 @@ public class MarriedCouple {
 		if (this.wife.isDead) {
 			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
 			this.isPregnant = false;
-			Debug.LogError (this.husband.name + " and " + this.wife.name + "'s baby died because the mother died");
+//			Debug.LogError (this.husband.name + " and " + this.wife.name + "'s baby died because the mother died");
 			return;
 		}
 
@@ -101,7 +101,7 @@ public class MarriedCouple {
 			Citizen baby = MarriageManager.Instance.MakeBaby(this.husband, this.wife);
 			this.isPregnant = false;
 			this.wife.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.wife.name + " gave birth to " + baby.name + ".", HISTORY_IDENTIFIER.NONE));
-			Debug.Log (this.husband.name + " and " + this.wife.name + " gave birth to " + baby.name);
+//			Debug.Log (this.husband.name + " and " + this.wife.name + " gave birth to " + baby.name);
 		}
 	}
 }

@@ -130,7 +130,7 @@ public class MarriageManager : MonoBehaviour {
 					RelationshipKings relKing = citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king);
 //					RELATIONSHIP_STATUS rel = citizenSearchingForLove.city.kingdom.king.GetRelationshipWithCitizen (elligibleCitizensInKingdom [j].city.kingdom.king).lordRelationship;
 					if (relKing == null) {
-						Debug.LogError (citizenSearchingForLove.city.kingdom.king.name + " has null relationship with " + elligibleCitizensInKingdom [j].city.kingdom.king.name);
+//						Debug.LogError (citizenSearchingForLove.city.kingdom.king.name + " has null relationship with " + elligibleCitizensInKingdom [j].city.kingdom.king.name);
 						continue;
 					}
 					if (relKing.lordRelationship == RELATIONSHIP_STATUS.ENEMY ||

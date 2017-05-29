@@ -7,7 +7,7 @@ public class ShowCompatibility : MonoBehaviour {
 	void OnHover(bool isOver){
 		if (isOver) {
 			if (UIManager.Instance.currentlyShowingKingdom != null) {
-				UIManager.Instance.ShowSmallInfo (this.KingdomCompatibilities (), this.transform);
+				UIManager.Instance.ShowSmallInfo (this.KingdomCompatibilities ());
 			}
 		} else {
 			UIManager.Instance.HideSmallInfo ();

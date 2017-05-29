@@ -41,11 +41,7 @@ public class RequestPeace : GameEvent {
 		for (int i = 0; i < this._saboteurs.Count; i++) {
 			((Envoy)this._saboteurs[i].assignedRole).inAction = true;
 		}
-
-		this.startedBy.city.hexTile.AddEventOnTile(this);
-		this.startedBy.city.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
-			this.startedBy.name + " started a request peace event.", HISTORY_IDENTIFIER.NONE));
-
+			
 		if (this._citizenSent.role == ROLE.ENVOY) {
 			Log startLog = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 				               "Events", "War", "request_peace_start_envoy");
@@ -61,8 +57,6 @@ public class RequestPeace : GameEvent {
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
-
-//		this.EventIsCreated ();
 
 	}
 
@@ -88,19 +82,7 @@ public class RequestPeace : GameEvent {
 				chanceForSuccess += 10;
 			}
 
-//			if (this._citizenSent.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-//				chanceForSuccess += 15;
-//			}
-//
-//			for (int i = 0; i < this._saboteurs.Count; i++) {
-//				chanceForSuccess -= 15;
-//				if (this._saboteurs [i].skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-//					chanceForSuccess -= 10;
-//				}
-//			}
-
 			int chance = Random.Range(0, 100);
-//			int chance = Random.Range(0, chanceForSuccess);
 			if (chance < chanceForSuccess) {
 				Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 					"Events", "War", "request_peace_success");
@@ -109,7 +91,6 @@ public class RequestPeace : GameEvent {
 
 				//request accepted
 				KingdomManager.Instance.GetWarBetweenKingdoms(this.startedByKingdom, this._targetKingdom).DeclarePeace();
-//				KingdomManager.Instance.DeclarePeaceBetweenKingdoms (this.startedByKingdom, this._targetKingdom);
 				this.resolution = this._targetKingdom.king.name + " accepted " + this.startedBy.name + "'s request for peace.";
 			} else {
 				Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
@@ -134,12 +115,10 @@ public class RequestPeace : GameEvent {
 	}
 
 	internal override void DoneEvent(){
-		Debug.Log (this.startedBy.name + "'s request peace event has ended. " + this.resolution);
 		this.isActive = false;
 		for (int i = 0; i < this._saboteurs.Count; i++) {
 			((Envoy)this._saboteurs[i].assignedRole).inAction = false;
 		}
-//		EventManager.Instance.onGameEventEnded.Invoke(this);
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;

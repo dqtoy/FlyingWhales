@@ -12,9 +12,6 @@ public class War : GameEvent {
 
 	private bool _isAtWar;
 
-//	internal List<InvasionPlan> invasionPlans;
-//	internal Militarization militarizationOfWar;
-
 	#region getters/setters
 	public Kingdom kingdom1 {
 		get { return _kingdom1; }
@@ -131,7 +128,5 @@ public class War : GameEvent {
 				}
 			}
 		}
-
-
 	}
 }
