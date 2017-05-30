@@ -92,14 +92,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 		
-	[ContextMenu("Increase General HP")]
+	/*[ContextMenu("Increase General HP")]
 	public void IncreaseGeneralHP(){
 		List<Citizen> generals = this.city.GetCitizensWithRole (ROLE.GENERAL);
 		for (int i = 0; i < generals.Count; i++) {
 			((General)generals[i].assignedRole).army.hp += 100;
 			Debug.Log (((General)generals [i].assignedRole).citizen.name + " hp is " + ((General)generals [i].assignedRole).army.hp.ToString ());
 		}
-	}
+	}*/
 
 	[ContextMenu("Show Adjacent Cities")]
 	public void ShowAdjacentCities(){

@@ -16,9 +16,10 @@ public class Raid : GameEvent {
 	private bool hasArrived;
 	private Kingdom kingdomToBlame;
 
+	internal Raider raider;
 	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy, City raidedCity) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.RAID;
-		this.durationInDays = 20;
+		this.durationInDays = 5;
 		this.remainingDays = this.durationInDays;
 		this.sourceKingdom = startedBy.city.kingdom;
 		this.targetKingdom = raidedCity.kingdom;
@@ -32,7 +33,6 @@ public class Raid : GameEvent {
 
 		this.otherKingdoms = GetOtherKingdoms ();
 		
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "event_title");
 		newLogTitle.AddToFillers (this.raidedCity, this.raidedCity.name);
@@ -43,11 +43,14 @@ public class Raid : GameEvent {
 
 		DeflectBlame ();
 
+		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
 
 
 	}
-
+	internal void StartRaiding(){
+		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+	}
 	internal override void PerformAction(){
 		this.remainingDays -= 1;
 		if(this.remainingDays <= 0){
@@ -64,6 +67,20 @@ public class Raid : GameEvent {
 				AccidentKilling ();
 			}
 		}
+	}
+	internal void DeathByOtherReasons(){
+//		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_other");
+//		newLog.AddToFillers (this.startedBy, this.startedBy.name);
+//		newLog.AddToFillers (null, this.startedBy.deathReasonText);
+//
+		this.DoneEvent ();
+	}
+	internal void DeathByGeneral(General general){
+//		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_general");
+//		newLog.AddToFillers (general.citizen, general.citizen.name);
+
+		this.startedBy.Death (DEATH_REASONS.BATTLE);
+		this.DoneEvent ();
 	}
 	internal override void DoneEvent(){
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
@@ -82,6 +99,7 @@ public class Raid : GameEvent {
 				this.targetKingdom.king.WarTrigger (relationship, this, this.targetKingdom.kingdomTypeData);
 			}
 		}
+		this.raider.DestroyGO ();
 	}
 	private List<Kingdom> GetOtherKingdoms(){
 		if(this.raidedCity == null){
@@ -157,7 +175,7 @@ public class Raid : GameEvent {
 		bool isGovernor = false;
 		bool isKing = false;
 		int deathChance = UnityEngine.Random.Range (0, 100);
-		if(deathChance < 1){
+		if(deathChance < 2){
 			List<Citizen> citizens = new List<Citizen> ();
 			for(int i = 0; i < this.raidedCity.citizens.Count; i++){
 				if(!this.raidedCity.citizens[i].isDead){
@@ -204,7 +222,7 @@ public class Raid : GameEvent {
 			return;
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 4){
+		if(chance < 10){
 			//DISCOVERY
 			this.hasBeenDiscovered = true;
 			if (this.hasDeflected) {

@@ -219,7 +219,7 @@ public class CityTaskManager : MonoBehaviour {
 	}
 	#endregion
 
-	#region General Upgrade Functions
+	/*#region General Upgrade Functions
 	[Task]
 	private void GetGeneralToUpgrade(){
 		List<Citizen> allGenerals = this.city.citizens.Where (x => x.role == ROLE.GENERAL && !((General)x.assignedRole).inAction).ToList ();
@@ -278,7 +278,7 @@ public class CityTaskManager : MonoBehaviour {
 		this.generalToUpgrade = null;
 		Task.current.Succeed ();
 	}
-	#endregion
+	#endregion*/
 
 	#region Common Functions
 	[Task]

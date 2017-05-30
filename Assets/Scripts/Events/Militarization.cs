@@ -49,9 +49,9 @@ public class Militarization : GameEvent {
 	internal override void DoneEvent(){
 		this.isActive = false;
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
-		if (_invasionPlanThatTriggeredEvent.isActive) {
-			_invasionPlanThatTriggeredEvent.MilitarizationDone ();
-		}
+//		if (_invasionPlanThatTriggeredEvent.isActive) {
+//			_invasionPlanThatTriggeredEvent.MilitarizationDone ();
+//		}
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;
 		this.endYear = GameManager.Instance.year;

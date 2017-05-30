@@ -43,7 +43,6 @@ public class GeneralObject : MonoBehaviour {
 		ResetValues ();
 //		this.GetComponent<BoxCollider2D>().enabled = true;
 		if(this.general != null){
-			this.textMesh.text = this.general.GetArmyHP().ToString ();
 			this.kingdomIndicator.color = this.general.citizen.city.kingdom.kingdomColor;
 //			this.path = this.general.roads;
 			this.AddBehaviourTree ();
@@ -56,7 +55,7 @@ public class GeneralObject : MonoBehaviour {
 //				if (this.general.location == other.gameObject.GetComponent<GeneralObject> ().general.location) {
 					if(!Utilities.AreTwoGeneralsFriendly(other.gameObject.GetComponent<GeneralObject>().general, this.general)){
 						if(!Utilities.AreTwoGeneralsFriendly(this.general, other.gameObject.GetComponent<GeneralObject>().general)){
-							if(this.general.army.hp > 0 && other.gameObject.GetComponent<GeneralObject> ().general.army.hp > 0){
+							if(!this.general.citizen.isDead && !other.gameObject.GetComponent<GeneralObject> ().general.citizen.isDead){
 								this.collidedWithHostile = true;
 								this.otherGeneral = other.gameObject.GetComponent<GeneralObject> ().general;
 							}
@@ -91,7 +90,7 @@ public class GeneralObject : MonoBehaviour {
 		}
 
 //		this.targetPosition = targetTile.transform.position;
-		this.UpdateUI ();
+//		this.UpdateUI ();
 //		this.isMoving = true;
 		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
 	}
@@ -100,12 +99,12 @@ public class GeneralObject : MonoBehaviour {
 //		this.isMoving = false;
 //		this.targetPosition = Vector3.zero;
 	}
-	internal void UpdateUI(){
-		if(this.general != null){
-			this.textMesh.text = this.general.army.hp.ToString ();
-		}
-	}
-	[Task]
+//	internal void UpdateUI(){
+//		if(this.general != null){
+//			this.textMesh.text = this.general.army.hp.ToString ();
+//		}
+//	}
+	/*[Task]
 	public void Idle(){
 		if(this.isIdle){
 			this.general.inAction = false;
@@ -149,7 +148,7 @@ public class GeneralObject : MonoBehaviour {
 		}else{
 			Task.current.Fail ();
 		}	
-	}
+	}*/
 	[Task]
 	public void IsThereGeneral(){
 		if(this.general != null){
@@ -158,7 +157,7 @@ public class GeneralObject : MonoBehaviour {
 			Task.current.Fail ();
 		}
 	}
-	[Task]
+	/*[Task]
 	public void HasCampaign(){
 		if(this.general.assignedCampaign == null){
 			Task.current.Fail ();
@@ -187,28 +186,28 @@ public class GeneralObject : MonoBehaviour {
 				Task.current.Succeed ();
 			}
 		}
-	}
+	}*/
 
 	[Task]
 	public void HasTargetCityOrNotConquered(){
-		if(this.general.assignedCampaign.targetCity == null || this.general.assignedCampaign.targetCity.isDead){
-			this.general.UnregisterThisGeneral ();
-			Task.current.Fail ();
-		}else{
-			Task.current.Succeed ();
-		}
+//		if(this.general.assignedCampaign.targetCity == null || this.general.assignedCampaign.targetCity.isDead){
+//			this.general.UnregisterThisGeneral ();
+//			Task.current.Fail ();
+//		}else{
+//			Task.current.Succeed ();
+//		}
 	}
 
-	[Task]
+	/*[Task]
 	public void IsGeneralInHome(){
 		if(IsGeneralInsideHomeCity()){
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
 		}
-	}
+	}*/
 
-	[Task]
+	/*[Task]
 	public void IsGoingHome(){
 		if(this.general.isGoingHome){
 			Task.current.Succeed ();
@@ -220,7 +219,7 @@ public class GeneralObject : MonoBehaviour {
 	public void ReturnToHome(){
 		this.general.RerouteToHome ();
 		Task.current.Succeed ();
-	}
+	}*/
 
 	[Task]
 	public void IsSearchingForTarget(){
@@ -230,7 +229,7 @@ public class GeneralObject : MonoBehaviour {
 			Task.current.Fail ();
 		}
 	}
-	[Task]
+	/*[Task]
 	public void HasArrivedHome(){
 		if(this.general.isGoingHome){
 			if(IsGeneralInsideHomeCity()){
@@ -243,26 +242,17 @@ public class GeneralObject : MonoBehaviour {
 			Task.current.Fail ();
 		}
 
-	}
+	}*/
 	[Task]
 	public void HasArrivedAttackTargetCity(){
-		if(this.general.assignedCampaign != null){
-			if(this.general.assignedCampaign.campaignType == CAMPAIGN.OFFENSE){
-				if (this.general.location == this.general.assignedCampaign.targetCity.hexTile) {
-					CombatManager.Instance.CityBattle (this.general.assignedCampaign.targetCity, this.general);
-					Task.current.Succeed ();
-				}else{
-					Task.current.Fail ();
-				}
-			}else{
-				Task.current.Fail ();
-			}
-		}else{
-			Task.current.Fail ();
-		}
-
+//		if (this.general.location == this.general.assignedCampaign.targetCity.hexTile) {
+//			CombatManager.Instance.CityBattle (this.general.assignedCampaign.targetCity, this.general);
+//			Task.current.Succeed ();
+//		}else{
+//			Task.current.Fail ();
+//		}
 	}
-	[Task]
+	/*[Task]
 	public void HasArrivedDefenseTargetCity(){
 		if (this.general.assignedCampaign != null) {
 			if (this.general.assignedCampaign.campaignType == CAMPAIGN.DEFENSE) {
@@ -331,16 +321,17 @@ public class GeneralObject : MonoBehaviour {
 		}else {
 			Task.current.Fail ();
 		}
-	}
+	}*/
 	[Task]
 	public void HasCollidedWithHostileGeneral(){
 		if(this.collidedWithHostile){
 			this.collidedWithHostile = false;
-			if(this.general.army.hp > 0 && this.otherGeneral.army.hp > 0){
+			if(!this.general.citizen.isDead && !this.otherGeneral.citizen.isDead){
 
 				CombatManager.Instance.BattleMidway (ref this.general, ref this.otherGeneral);
 
-				if(this.otherGeneral.army.hp <= 0){
+				Task.current.Succeed ();
+				/*if(this.otherGeneral.army.hp <= 0){
 					if(this.otherGeneral.assignedCampaign != null){
 						if(this.otherGeneral.assignedCampaign.campaignType == CAMPAIGN.DEFENSE){
 							Log newLog = this.otherGeneral.assignedCampaign.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "DefensiveCampaign", "battle_midway_loser");
@@ -395,7 +386,7 @@ public class GeneralObject : MonoBehaviour {
 						}
 					}
 					Task.current.Fail ();
-				}
+				}*/
 			}else{
 				Task.current.Fail ();
 			}
@@ -449,18 +440,18 @@ public class GeneralObject : MonoBehaviour {
 	public void KillTarget(){
 		this.general.daysCounter = 0;
 
-		if(this.general.target.isHeir){
-			this.general.target.Death (DEATH_REASONS.REBELLION, false, this.general.assignedCampaign.leader, false);
-		}else{
-			this.general.target.Death (DEATH_REASONS.TREACHERY, false,  this.general.assignedCampaign.leader, false);
-		}
+//		if(this.general.target.isHeir){
+//			this.general.target.Death (DEATH_REASONS.REBELLION, false, this.general.assignedCampaign.leader, false);
+//		}else{
+//			this.general.target.Death (DEATH_REASONS.TREACHERY, false,  this.general.assignedCampaign.leader, false);
+//		}
 
 //		Campaign campaign = this.general.assignedCampaign.leader.campaignManager.SearchCampaignByID(this.general.assignedCampaign.id);
-		if(this.general.assignedCampaign != null){
-			if (this.general.assignedCampaign.leader != null) {
-				this.general.assignedCampaign.leader.campaignManager.CampaignDone (this.general.assignedCampaign);
-			}
-		}
+//		if(this.general.assignedCampaign != null){
+//			if (this.general.assignedCampaign.leader != null) {
+//				this.general.assignedCampaign.leader.campaignManager.CampaignDone (this.general.assignedCampaign);
+//			}
+//		}
 
 		this.isSearchingForTarget = false;
 		Task.current.Succeed ();
@@ -470,29 +461,28 @@ public class GeneralObject : MonoBehaviour {
 		this.collidedWithHostile = false;
 		this.otherGeneral = null;
 	}
-	public bool IsGeneralInsideHomeCity(){
-		if (this.general.location == this.general.citizen.city.hexTile) {
-			this.general.isHome = true;
-			this.general.isGoingHome = false;
-			IsMyGeneralDead ();
-			return true;
-		}else{
-			return false;
-		}
-	}
-	private void IsMyGeneralDead(){
-		if(this.general.citizen.isDead){
-			this.general.citizen.city.LookForNewGeneral (this.general);
-		}else{
-			this.general.citizen.city.LookForLostArmy (this.general);
-			this.general.inAction = false;
-			this.isIdle = true;
-			this.GetComponent<SmoothMovement>().isMoving = false;
-			if(!this.generalAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")){
-				this.generalAnimator.Play ("Idle");
-			}
-		}
-	}
+//	public bool IsGeneralInsideHomeCity(){
+//		if (this.general.location == this.general.citizen.city.hexTile) {
+//			this.general.isGoingHome = false;
+//			IsMyGeneralDead ();
+//			return true;
+//		}else{
+//			return false;
+//		}
+//	}
+//	private void IsMyGeneralDead(){
+//		if(this.general.citizen.isDead){
+//			this.general.citizen.city.LookForNewGeneral (this.general);
+//		}else{
+//			this.general.citizen.city.LookForLostArmy (this.general);
+//			this.general.inAction = false;
+//			this.isIdle = true;
+//			this.GetComponent<SmoothMovement>().isMoving = false;
+//			if(!this.generalAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")){
+//				this.generalAnimator.Play ("Idle");
+//			}
+//		}
+//	}
 	private void Move(){
 		if(this.general.targetLocation != null){
 			if(this.general.roads != null){
@@ -514,7 +504,7 @@ public class GeneralObject : MonoBehaviour {
 		}
 	}
 
-	internal void Victory(){
+	/*internal void Victory(){
 		if (this.general.assignedCampaign != null) {
 			if (this.general.assignedCampaign.warType == WAR_TYPE.INTERNATIONAL) {
 				City targetCity = this.general.assignedCampaign.targetCity;
@@ -581,7 +571,7 @@ public class GeneralObject : MonoBehaviour {
 //		}
 
 //		this.UpdateUI ();
-	}
+	}*/
 	internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -590,9 +580,9 @@ public class GeneralObject : MonoBehaviour {
 		bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 //		Debug.Log ("REMOVED?: " + this.general.citizen.name + " BT = " + removed);
 	}
-	internal void GhostGeneral(){
-		this.deathIcon.SetActive (true);
-	}
+//	internal void GhostGeneral(){
+//		this.deathIcon.SetActive (true);
+//	}
 
 //	void OnMouseEnter(){
 //		if (!UIManager.Instance.IsMouseOnUI()) {

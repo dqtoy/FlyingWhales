@@ -72,7 +72,8 @@ public class GameEvent {
 		this.logs = new List<Log>();
 		this._startDate = new DateTime (this.startYear, this.startMonth, this.startDay);
 		if(this._startedBy != null){
-			this.startedByKingdom = _startedBy.city.kingdom;
+			this.
+			startedByKingdom = _startedBy.city.kingdom;
 			this.startedByCity = _startedBy.city;
 		}
 //		Debug.Log("New Event was created!");

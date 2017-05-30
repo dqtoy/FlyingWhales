@@ -21,8 +21,8 @@ tree("Campaign")
 
 tree("Move")
 	fallback
-		tree("Arrival")
 		HasCollidedWithHostileGeneral
+		tree("Arrival")
 		MoveToNextTile
 
 tree("Arrival")

@@ -25,4 +25,9 @@ public class Role {
 	}
 
 	internal virtual void OnDeath(){}
+
+	internal virtual void Initialize(GameEvent gameEvent){}
+
+	internal virtual void DestroyGO(){}
+
 }

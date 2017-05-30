@@ -22,7 +22,11 @@ public class Kingdom{
 	internal Citizen king;
 	internal List<Citizen> successionLine;
 	internal List<Citizen> pretenders;
-	internal List<CityWar> holderIntlWarCities;
+
+//	public List<Citizen> royaltyList;
+	public List<City> intlWarCities;
+	public List<City> activeCitiesToAttack;
+	internal List<City> holderIntlWarCities;
 
 	internal BASE_RESOURCE_TYPE basicResource;
 	internal BASE_RESOURCE_TYPE rareResource;
@@ -83,8 +87,11 @@ public class Kingdom{
 		this.king = null;
 		this.successionLine = new List<Citizen>();
 		this.pretenders = new List<Citizen> ();
+		this.intlWarCities = new List<City>();
+		this.activeCitiesToAttack = new List<City>();
+		this.holderIntlWarCities = new List<City>();
 		this._cities = new List<City>();
-		this.holderIntlWarCities = new List<CityWar> ();
+
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
 		this.adjacentCitiesFromOtherKingdoms = new List<City>();
@@ -310,12 +317,7 @@ public class Kingdom{
 			};
 
 			if (this.cities.Count > 0) {
-				Citizen citizenToLeadExpansion = this.cities [0].CreateCitizenForExpansion ();
-				this.cities [0].AdjustResources (expansionCost);
-				HexTile hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile (this.cities [0]);
-				if (hexTileToExpandTo != null && citizenToLeadExpansion != null) {
-					Expansion newExpansionEvent = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, citizenToLeadExpansion, hexTileToExpandTo);
-				}
+				EventCreator.Instance.CreateExpansionEvent (this);
 			}
 
 		}
@@ -403,9 +405,9 @@ public class Kingdom{
 			Utilities.ChangeDescendantsRecursively (newKing, true);
 			Utilities.ChangeDescendantsRecursively (this.king, false);
 		}
-		if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
+		/*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
 			newKing.DetachGeneralFromCitizen ();
-		}
+		}*/
 //		newKing.role = ROLE.KING;
 		newKing.AssignRole(ROLE.KING);
 //		newKing.isKing = true;
@@ -437,9 +439,9 @@ public class Kingdom{
 			Utilities.ChangeDescendantsRecursively (newKing, true);
 			Utilities.ChangeDescendantsRecursively (this.king, false);
 		}
-		if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
+		/*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
 			newKing.DetachGeneralFromCitizen ();
-		}
+		}*/
 //		newKing.role = ROLE.KING;
 		newKing.AssignRole(ROLE.KING);
 //		newKing.isKing = true;
@@ -460,13 +462,13 @@ public class Kingdom{
 
 		for(int i = 0; i < claimants.Count; i++){
 			newKing.AddSuccessionWar (claimants [i]);
-			newKing.campaignManager.CreateCampaign ();
+//			newKing.campaignManager.CreateCampaign ();
 
 			if(claimants[i].isGovernor){
 				claimants [i].supportedCitizen = claimants [i];
 			}
 			claimants[i].AddSuccessionWar (newKing);
-			claimants[i].campaignManager.CreateCampaign ();
+//			claimants[i].campaignManager.CreateCampaign ();
 		}
 
 	}
@@ -591,14 +593,14 @@ public class Kingdom{
 	internal void AddInternationalWar(Kingdom kingdom){
 //		Debug.Log ("INTERNATIONAL WAR");
 		for(int i = 0; i < kingdom.cities.Count; i++){
-			if(!this.king.campaignManager.SearchForInternationalWarCities(kingdom.cities[i])){
-				this.king.campaignManager.intlWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
+			if(!this.intlWarCities.Contains(kingdom.cities[i])){
+				this.intlWarCities.Add(kingdom.cities[i]);
 			}
 		}
-		for(int i = 0; i < this.cities.Count; i++){
-			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i], WAR_TYPE.INTERNATIONAL)){
-				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
-			}
+//		for(int i = 0; i < this.cities.Count; i++){
+//			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i], WAR_TYPE.INTERNATIONAL)){
+//				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
+//			}
 //			if(this.cities[i].governor.supportedCitizen == null){
 //				if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
 //					this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
@@ -610,27 +612,27 @@ public class Kingdom{
 //					}
 //				}
 //			}
-		}
-		this.king.campaignManager.CreateCampaign ();
+//		}
+//		this.king.campaignManager.CreateCampaign ();
 	}
 
 	internal void RemoveInternationalWar(Kingdom kingdom){
-		this.king.campaignManager.intlWarCities.RemoveAll(x => x.city.kingdom.id == kingdom.id);
-		for(int i = 0; i < this.king.campaignManager.activeCampaigns.Count; i++){
-			if(this.king.campaignManager.activeCampaigns[i].warType == WAR_TYPE.INTERNATIONAL){
-				if(this.king.campaignManager.activeCampaigns[i].targetCity.kingdom.id == kingdom.id){
-					this.king.campaignManager.CampaignDone(this.king.campaignManager.activeCampaigns[i]);
-				}
-			}
-		}
+		this.intlWarCities.RemoveAll(x => x.kingdom.id == kingdom.id);
+//		for(int i = 0; i < this.king.campaignManager.activeCampaigns.Count; i++){
+//			if(this.king.campaignManager.activeCampaigns[i].warType == WAR_TYPE.INTERNATIONAL){
+//				if(this.king.campaignManager.activeCampaigns[i].targetCity.kingdom.id == kingdom.id){
+//					this.king.campaignManager.CampaignDone(this.king.campaignManager.activeCampaigns[i]);
+//				}
+//			}
+//		}
 	}
 
 	internal void PassOnInternationalWar(){
 		this.holderIntlWarCities.Clear();
-		this.holderIntlWarCities.AddRange(this.king.campaignManager.intlWarCities);
+		this.holderIntlWarCities.AddRange(this.intlWarCities);
 	}
 	internal void RetrieveInternationWar(){
-		this.king.campaignManager.intlWarCities.AddRange(this.holderIntlWarCities);
+		this.intlWarCities.AddRange(this.holderIntlWarCities);
 		this.holderIntlWarCities.Clear();
 	}
 
@@ -660,16 +662,16 @@ public class Kingdom{
 	internal void AddInternationalWarCity(City newCity){
 		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
 			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
-				if(!this.relationshipsWithOtherKingdoms[i].targetKingdom.king.campaignManager.SearchForInternationalWarCities(newCity)){
-					this.relationshipsWithOtherKingdoms [i].targetKingdom.king.campaignManager.intlWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
+				if(!this.relationshipsWithOtherKingdoms[i].targetKingdom.intlWarCities.Contains(newCity)){
+					this.relationshipsWithOtherKingdoms [i].targetKingdom.intlWarCities.Add (newCity);
 				}
 			}
 		}
-		if(this.IsKingdomHasWar()){
-			if(!this.king.campaignManager.SearchForDefenseWarCities(newCity, WAR_TYPE.INTERNATIONAL)){
-				this.king.campaignManager.defenseWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
-			}
-		}
+//		if(this.IsKingdomHasWar()){
+//			if(!this.king.campaignManager.SearchForDefenseWarCities(newCity, WAR_TYPE.INTERNATIONAL)){
+//				this.king.campaignManager.defenseWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
+//			}
+//		}
 
 	}
 	internal bool IsKingdomHasWar(){
@@ -769,8 +771,8 @@ public class Kingdom{
 	}
 
 	internal MILITARY_STRENGTH GetMilitaryStrengthAgainst(Kingdom kingdom){
-		int sourceMilStrength = this.GetAllArmyHp ();
-		int targetMilStrength = kingdom.GetAllArmyHp ();
+		int sourceMilStrength = this.GetAllCityHp ();
+		int targetMilStrength = kingdom.GetAllCityHp ();
 
 		int fiftyPercent = (int)(targetMilStrength * 0.50f);
 		int twentyPercent = (int)(targetMilStrength * 0.20f);
@@ -793,13 +795,21 @@ public class Kingdom{
 		}
 	}
 
-	internal int GetAllArmyHp(){
+	/*internal int GetAllArmyHp(){
 		int total = 0;
 		List<Citizen> allGenerals = this.GetAllCitizensOfType (ROLE.GENERAL);
 		for(int i = 0; i < allGenerals.Count; i++){
 			if(allGenerals[i] is General){
 				total += ((General)allGenerals [i].assignedRole).GetArmyHP ();
 			}
+		}
+		return total;
+	}*/
+
+	internal int GetAllCityHp(){
+		int total = 0;
+		for(int i = 0; i < this.cities.Count; i++){
+			total += this.cities[i].hp;
 		}
 		return total;
 	}
@@ -812,7 +822,25 @@ public class Kingdom{
 		}
 		return total;
 	}
-
+	internal City GetNearestCityFromKing(List<City> cities){
+		City nearestCity = null;
+		int nearestDistance = 0;
+		for(int i = 0; i < cities.Count; i++){
+			List<HexTile> path = PathGenerator.Instance.GetPath (cities [i].hexTile, this.king.city.hexTile, PATHFINDING_MODE.COMBAT);
+			if(path != null){
+				if(nearestCity == null){
+					nearestCity = cities [i];
+					nearestDistance = path.Count;
+				}else{
+					if(path.Count < nearestDistance){
+						nearestCity = cities [i];
+						nearestDistance = path.Count;
+					}
+				}
+			}
+		}
+		return nearestCity;
+	}
 	#region Resource Management
 	/*
 	 * Function to adjust the gold count of this kingdom.
@@ -911,4 +939,8 @@ public class Kingdom{
 		return true;
 	}
 	#endregion
+	//Destructor for unsubscribing listeners
+	~Kingdom(){
+		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener (NewKingdomCreated);
+	}
 }

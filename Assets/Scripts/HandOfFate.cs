@@ -234,11 +234,7 @@ public class HandOfFate : MonoBehaviour {
 
 	private void CreateRaidEvent(){
 //		General general = GetGeneral(this.firstKingdom);
-		City city = GetRaidedCity();
-		if(city != null){
-			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city);
-			EventManager.Instance.AddEventToDictionary (raid);
-		}
+		EventCreator.Instance.CreateRaidEvent(this.firstKingdom, this.secondKingdom);
 	}
 
 	private void CreateBorderConflictEvent(){
@@ -313,13 +309,13 @@ public class HandOfFate : MonoBehaviour {
 //		Debug.Log ("Border Conflict FROM HAND OF FATE");
 		Citizen startedBy = this.firstKingdom.king;
 		BorderConflict borderConflict = new BorderConflict(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
-		EventManager.Instance.AddEventToDictionary(borderConflict);
+//		EventManager.Instance.AddEventToDictionary(borderConflict);
 	}
 	private void DiplomaticCrisis(){
 //		Debug.Log ("Diplomatic Crisis FROM HAND OF FATE");
 		Citizen startedBy = this.secondKingdom.king;
 		DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
-		EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
+//		EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
 	}
 //	private void Admiration(){
 //		Debug.Log ("Admiration FROM HAND OF FATE");
@@ -356,7 +352,7 @@ public class HandOfFate : MonoBehaviour {
 
 		if(visitor != null){
 			StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, this.secondKingdom, visitor);
-			EventManager.Instance.AddEventToDictionary(stateVisit);
+//			EventManager.Instance.AddEventToDictionary(stateVisit);
 		}else{
 //			Debug.Log ("FAILURE TO START STATE VISIT BECAUSE THERE IS NO AVAIALABLE VISITOR!");
 		}

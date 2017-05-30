@@ -55,9 +55,9 @@ public class Campaign {
 
 	internal int GetArmyStrength(){
 		int total = 0;
-		for(int i = 0; i < this.registeredGenerals.Count; i++){
-			total += this.registeredGenerals[i].GetArmyHP();
-		}
+//		for(int i = 0; i < this.registeredGenerals.Count; i++){
+//			total += this.registeredGenerals[i].GetArmyHP();
+//		}
 		return total;
 	}
 	internal void CheckExpiration(){
@@ -101,7 +101,7 @@ public class Campaign {
 //				Debug.Log (this.leader.name + " " + this.campaignType.ToString () + " campaign has expired!");
 //			}
 			this.expiration = 0;
-			this.leader.campaignManager.CampaignDone (this);
+//			this.leader.campaignManager.CampaignDone (this);
 		}
 	}
 
@@ -162,7 +162,7 @@ public class Campaign {
 //		int armyHp = general.GetArmyHP ();
 //		this.candidates.Add (new CampaignCandidates (general, path, armyHp));
 //	}
-	internal void RegisterGenerals(List<CampaignCandidates> candidates){
+	/*internal void RegisterGenerals(List<CampaignCandidates> candidates){
 		if(candidates.Count > 0){
 			candidates = candidates.OrderBy (x => x.path.Count).ToList ();
 			if(this.campaignType == CAMPAIGN.OFFENSE){
@@ -213,7 +213,7 @@ public class Campaign {
 		}
 
 		this.startExpiration = true;
-	}
+	}*/
 
 	/*
 	 * Create new log for this Campaign.

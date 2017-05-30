@@ -35,6 +35,7 @@ public class City{
 	public int _goldProduction;
 
 	[Space(5)]
+	public int hp;
 	public IsActive isActive;
 	public bool isStarving;
 	public bool isDead;
@@ -81,7 +82,7 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-
+		this.hp = 100;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
@@ -93,6 +94,7 @@ public class City{
 
 		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));
 	}
+
 
 	/*
 	 * This will add a new habitable hex tile to the habitableTileDistance variable.
@@ -458,7 +460,7 @@ public class City{
 		KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 
-	internal List<General> GetIncomingAttackers(){
+	/*internal List<General> GetIncomingAttackers(){
 		List<General> incomingAttackers = new List<General> ();
 		for(int i = 0; i < this.incomingGenerals.Count; i++){
 			if (this.incomingGenerals [i].assignedCampaign.campaignType == CAMPAIGN.OFFENSE && this.incomingGenerals [i].assignedCampaign.targetCity.id == this.id) {
@@ -466,7 +468,7 @@ public class City{
 			}
 		}
 		return incomingAttackers;
-	}
+	}*/
 
 	/*
 	 * Purchase new tile for city. Called in CityTaskManager.
@@ -641,7 +643,7 @@ public class City{
 //		}
 //	}
 
-	internal int GetCityArmyStrength(){
+	/*internal int GetCityArmyStrength(){
 		int total = 0;
 		for(int i = 0; i < this.citizens.Count; i++){
 			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
@@ -661,7 +663,8 @@ public class City{
 			}
 		}
 		return total;	
-	}
+	}*/
+
 	internal List<General> GetAllGenerals(General attacker){
 		List<General> allGenerals = new List<General> ();
 		if(attacker.citizen.city.governor.id != this.governor.id){
@@ -777,17 +780,16 @@ public class City{
 		
 		}
 		return citizenCreationCosts;
-
-
 	}
 	#endregion
 
 	internal void RemoveCitizenFromCity(Citizen citizenToRemove){
 		if (citizenToRemove.role == ROLE.GOVERNOR) {
 			this.AssignNewGovernor();
-		}else if (citizenToRemove.role == ROLE.GENERAL) {
-			((General)citizenToRemove.assignedRole).UntrainGeneral();
 		}
+		/*else if (citizenToRemove.role == ROLE.GENERAL) {
+			((General)citizenToRemove.assignedRole).UntrainGeneral();
+		}*/
 		this.citizens.Remove (citizenToRemove);
 		citizenToRemove.city = null;
 		citizenToRemove.role = ROLE.UNTRAINED;
@@ -806,9 +808,9 @@ public class City{
 		}
 		Citizen newGovernor = GetCitizenWithHighestPrestige ();
 		if (newGovernor != null) {
-			if(newGovernor.assignedRole != null && newGovernor.role == ROLE.GENERAL){
+			/*if(newGovernor.assignedRole != null && newGovernor.role == ROLE.GENERAL){
 				newGovernor.DetachGeneralFromCitizen();
-			}
+			}*/
 			this.governor.isGovernor = false;
 			newGovernor.role = ROLE.GOVERNOR;
 			newGovernor.assignedRole = null;
@@ -877,7 +879,7 @@ public class City{
 		KingdomManager.Instance.UpdateKingdomAdjacency();
 	}
 
-	internal void LookForNewGeneral(General general){
+	/*internal void LookForNewGeneral(General general){
 //		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
 		general.inAction = false;
 		for(int i = 0; i < this.citizens.Count; i++){
@@ -899,7 +901,7 @@ public class City{
 	internal void LookForLostArmy(General general){
 //		Debug.Log (general.citizen.name + " IS LOOKING FOR LOST ARMIES...");
 		EventManager.Instance.onLookForLostArmies.Invoke (general);
-	}
+	}*/
 
 	internal bool HasAdjacency(int kingdomID){
 		for(int i = 0; i < this.hexTile.connectedTiles.Count; i++){
@@ -951,7 +953,7 @@ public class City{
 		}
 	}
 
-	internal Citizen CreateCitizenForExpansion(){
+	internal Citizen CreateAgent(ROLE role){
 		GENDER gender = GENDER.MALE;
 		int randomGender = UnityEngine.Random.Range (0, 100);
 		if(randomGender < 20){
@@ -961,7 +963,7 @@ public class City{
 		Citizen expandCitizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
 		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		expandCitizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
-
+		expandCitizen.AssignRole (role);
 		this.citizens.Remove (expandCitizen);
 
 		return expandCitizen;
