@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Role {
 	public Citizen citizen;
@@ -26,8 +27,9 @@ public class Role {
 
 	internal virtual void OnDeath(){}
 
-	internal virtual void Initialize(GameEvent gameEvent){}
+	internal virtual void Initialize(GameEvent gameEvent, List<HexTile> path){}
 
 	internal virtual void DestroyGO(){}
 
+	internal virtual void Attack(){}
 }

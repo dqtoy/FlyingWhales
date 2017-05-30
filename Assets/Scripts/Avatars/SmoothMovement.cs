@@ -5,8 +5,9 @@ public class SmoothMovement : MonoBehaviour {
 	public float speed;
 	internal bool isMoving = false;
 	Vector3 targetPosition = Vector3.zero;
+	internal bool isDirectionUp;
 
-	void Update(){
+	void FixedUpdate(){
 		if(this.isMoving){
 			if(this.targetPosition != null){
 				float step = speed * Time.deltaTime;
@@ -19,11 +20,15 @@ public class SmoothMovement : MonoBehaviour {
 	}
 
 	private void StopMoving(){
+		string idleToPlay = "Idle";
+		if(this.isDirectionUp){
+			idleToPlay = "Idle_Up";
+		}
 		if(this.GetComponent<Animator>() != null){
-			this.GetComponent<Animator>().Play("Idle");
+			this.GetComponent<Animator>().Play(idleToPlay);
 		}else{
 			if (this.GetComponentInChildren<Animator> () != null) {
-				this.GetComponentInChildren<Animator>().Play("Idle");
+				this.GetComponentInChildren<Animator>().Play(idleToPlay);
 			}
 		}
 		this.isMoving = false;

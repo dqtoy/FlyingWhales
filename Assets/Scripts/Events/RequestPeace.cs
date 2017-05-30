@@ -38,9 +38,9 @@ public class RequestPeace : GameEvent {
 		this._targetKingdomRel = _targetKingdom.GetRelationshipWithOtherKingdom(this.startedBy.city.kingdom);
 		this._saboteurs = _saboteurs;
 
-		for (int i = 0; i < this._saboteurs.Count; i++) {
-			((Envoy)this._saboteurs[i].assignedRole).inAction = true;
-		}
+//		for (int i = 0; i < this._saboteurs.Count; i++) {
+//			((Envoy)this._saboteurs[i].assignedRole).inAction = true;
+//		}
 			
 		if (this._citizenSent.role == ROLE.ENVOY) {
 			Log startLog = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
@@ -116,9 +116,9 @@ public class RequestPeace : GameEvent {
 
 	internal override void DoneEvent(){
 		this.isActive = false;
-		for (int i = 0; i < this._saboteurs.Count; i++) {
-			((Envoy)this._saboteurs[i].assignedRole).inAction = false;
-		}
+//		for (int i = 0; i < this._saboteurs.Count; i++) {
+//			((Envoy)this._saboteurs[i].assignedRole).inAction = false;
+//		}
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		this.endDay = GameManager.Instance.days;
 		this.endMonth = GameManager.Instance.month;

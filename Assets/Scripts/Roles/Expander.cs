@@ -21,12 +21,12 @@ public class Expander : Role {
 		this.daysBeforeMoving = 0;
 	}
 
-	internal override void Initialize(GameEvent gameEvent){
+	internal override void Initialize(GameEvent gameEvent, List<HexTile> path){
 		if(gameEvent is Expansion){
 			this.expansion = (Expansion)gameEvent;
 			this.expansion.expander = this;
 			this.targetLocation = this.expansion.hexTileToExpandTo;
-			this.path = PathGenerator.Instance.GetPath (this.citizen.city.hexTile, this.expansion.hexTileToExpandTo, PATHFINDING_MODE.COMBAT).ToList();
+			this.path = path;
 			this.daysBeforeMoving = this.path [0].movementDays;
 			this.expansionAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/ExpansionAvatar"), this.citizen.city.hexTile.transform) as GameObject;
 			this.expansionAvatar.transform.localPosition = Vector3.zero;
@@ -35,6 +35,8 @@ public class Expander : Role {
 	}
 
 	internal override void DestroyGO(){
-		GameObject.Destroy (this.expansionAvatar);
+		if(this.expansionAvatar != null){
+			GameObject.Destroy (this.expansionAvatar);
+		}
 	}
 }

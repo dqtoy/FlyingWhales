@@ -954,6 +954,10 @@ public class City{
 	}
 
 	internal Citizen CreateAgent(ROLE role){
+		int cost = 0;
+		if(!this.kingdom.CanCreateAgent(role, ref cost)){
+			return null;
+		}
 		GENDER gender = GENDER.MALE;
 		int randomGender = UnityEngine.Random.Range (0, 100);
 		if(randomGender < 20){
@@ -964,6 +968,7 @@ public class City{
 		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		expandCitizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
 		expandCitizen.AssignRole (role);
+		this._kingdom.AdjustGold (-cost);
 		this.citizens.Remove (expandCitizen);
 
 		return expandCitizen;

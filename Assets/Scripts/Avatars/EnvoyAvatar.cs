@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Panda;
 
-public class RaiderAvatar : MonoBehaviour {
-	public Raider raider;
+public class EnvoyAvatar : MonoBehaviour {
+	public Envoy envoy;
 	public PandaBehaviour pandaBehaviour;
 	public Animator animator;
 	public bool collidedWithHostile;
@@ -15,9 +15,9 @@ public class RaiderAvatar : MonoBehaviour {
 //	private bool isMoving = false;
 //	private Vector3 targetPosition = Vector3.zero;
 	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
-
-//	public float speed;
 	internal bool isDirectionUp;
+//	public float speed;
+
 //	void Update(){
 //		if(this.isMoving){
 //			if(this.targetPosition != null){
@@ -29,8 +29,8 @@ public class RaiderAvatar : MonoBehaviour {
 //			}
 //		}
 //	}
-	internal void Init(Raider raider){
-		this.raider = raider;
+	internal void Init(Envoy envoy){
+		this.envoy = envoy;
 		this.isDirectionUp = false;
 		ResetValues ();
 		this.AddBehaviourTree ();
@@ -39,7 +39,7 @@ public class RaiderAvatar : MonoBehaviour {
 		if(other.tag == "General"){
 			this.collidedWithHostile = false;
 			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<GeneralObject>().general.citizen.city.kingdom.id != this.raider.citizen.city.kingdom.id){
+				if(other.gameObject.GetComponent<GeneralObject>().general.citizen.city.kingdom.id != this.envoy.citizen.city.kingdom.id){
 					if(!other.gameObject.GetComponent<GeneralObject> ().general.citizen.isDead){
 						this.collidedWithHostile = true;
 						this.otherGeneral = other.gameObject.GetComponent<GeneralObject> ().general;
@@ -100,7 +100,7 @@ public class RaiderAvatar : MonoBehaviour {
 //	}
 	[Task]
 	public void IsThereCitizen(){
-		if(this.raider.citizen != null){
+		if(this.envoy.citizen != null){
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
@@ -108,7 +108,7 @@ public class RaiderAvatar : MonoBehaviour {
 	}
 	[Task]
 	public void IsThereEvent(){
-		if(this.raider.raid != null){
+		if(this.envoy.gameEvent != null){
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
@@ -117,11 +117,11 @@ public class RaiderAvatar : MonoBehaviour {
 
 	[Task]
 	public void HasArrivedAtTargetHextile(){
-		if(this.raider.location == this.raider.targetLocation){
+		if(this.envoy.location == this.envoy.targetLocation){
 			if(!this.hasArrived){
 				this.hasArrived = true;
-				this.raider.Attack ();
-				this.raider.raid.StartRaiding();
+				this.envoy.Attack ();
+				this.envoy.gameEvent.DoneCitizenAction(this.envoy);
 			}
 			Task.current.Succeed ();
 		}else{
@@ -136,7 +136,7 @@ public class RaiderAvatar : MonoBehaviour {
 			this.collidedWithHostile = false;
 			if(!this.otherGeneral.citizen.isDead){
 				//Death by general
-				this.raider.raid.DeathByGeneral (this.otherGeneral);
+				this.envoy.gameEvent.DeathByGeneral (this.otherGeneral);
 				Task.current.Succeed ();
 			}else{
 				Task.current.Fail ();
@@ -148,9 +148,9 @@ public class RaiderAvatar : MonoBehaviour {
 	}
 	[Task]
 	public void HasDiedOfOtherReasons(){
-		if (this.raider.citizen.isDead) {
+		if (this.envoy.citizen.isDead) {
 			//Citizen has died
-			this.raider.raid.DeathByOtherReasons ();
+			this.envoy.gameEvent.DeathByOtherReasons ();
 			Task.current.Succeed();
 		}else {
 			Task.current.Fail ();
@@ -168,25 +168,35 @@ public class RaiderAvatar : MonoBehaviour {
 	}
 
 	private void Move(){
-		if(this.raider.targetLocation != null){
-			if(this.raider.path != null){
-				if(this.raider.path.Count > 0){
-					this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
-//					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
-					this.raider.location = this.raider.path[0];
-					this.raider.citizen.currentLocation = this.raider.path [0];
-					this.raider.path.RemoveAt (0);
-//					if(this.raider.daysBeforeMoving <= 0){
-//						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
-//						this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
-//						this.raider.location = this.raider.path[0];
-//						this.raider.citizen.currentLocation = this.raider.path [0];
-//						this.raider.path.RemoveAt (0);
-//					}
-//					this.raider.daysBeforeMoving -= 1;
+		if(this.envoy.gameEvent.eventType == EVENT_TYPES.STATE_VISIT){
+			if(this.envoy.targetLocation != null){
+				if(this.envoy.path != null){
+					if(this.envoy.path.Count > 0){
+						if(this.envoy.daysBeforeMoving <= 0){
+							this.MakeCitizenMove (this.envoy.location, this.envoy.path [0]);
+							this.envoy.daysBeforeMoving = this.envoy.path [0].movementDays;
+							this.envoy.location = this.envoy.path[0];
+							this.envoy.citizen.currentLocation = this.envoy.path [0];
+							this.envoy.path.RemoveAt (0);
+						}
+						this.envoy.daysBeforeMoving -= 1;
+					}
+				}
+			}
+		}else{
+			if(this.envoy.targetLocation != null){
+				if(this.envoy.path != null){
+					if(this.envoy.path.Count > 0){
+						this.MakeCitizenMove (this.envoy.location, this.envoy.path [0]);
+//						this.envoy.daysBeforeMoving = this.envoy.path [0].movementDays;
+						this.envoy.location = this.envoy.path[0];
+						this.envoy.citizen.currentLocation = this.envoy.path [0];
+						this.envoy.path.RemoveAt (0);
+					}
 				}
 			}
 		}
+
 	}
 
 	internal void AddBehaviourTree(){
@@ -210,9 +220,9 @@ public class RaiderAvatar : MonoBehaviour {
 
 	void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
-		for (int i = 0; i < this.raider.path.Count; i++) {
-			this.raider.path [i].highlightGO.SetActive (true);
-			this.pathToUnhighlight.Add (this.raider.path [i]);
+		for (int i = 0; i < this.envoy.path.Count; i++) {
+			this.envoy.path [i].highlightGO.SetActive (true);
+			this.pathToUnhighlight.Add (this.envoy.path [i]);
 		}
 	}
 
@@ -226,9 +236,8 @@ public class RaiderAvatar : MonoBehaviour {
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
 	}
-
 	public void OnEndAttack(){
-		this.raider.DestroyGO ();
+		this.envoy.DestroyGO ();
 	}
 //	private string CampaignInfo(Campaign campaign){
 //		string info = string.Empty;

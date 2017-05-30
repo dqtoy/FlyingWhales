@@ -18,7 +18,9 @@ public class Kingdom{
 	private int _goldCount;
 	private Dictionary<BASE_RESOURCE_TYPE, int> _availableResources;
 
+
 	private List<City> _cities;
+	internal City capitalCity;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
 	internal List<Citizen> pretenders;
@@ -122,7 +124,9 @@ public class Kingdom{
 		for (int i = 0; i < cities.Count; i++) {
 			this.CreateNewCityOnTileForKingdom(cities[i]);
 		}
-
+		if(this._cities.Count > 0 && this._cities[0] != null){
+			this.capitalCity = this._cities [0];
+		}
 		// For the kingdom's first city, setup its distance towards other habitable tiles.
 		HexTile habitableTile;
 		if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {			
@@ -333,7 +337,7 @@ public class Kingdom{
 	}
 
 	internal void AddCityToKingdom(City city){
-		this.cities.Add (city);
+		this._cities.Add (city);
 		this.UpdateKingdomTypeData();
 	}
 
@@ -389,6 +393,7 @@ public class Kingdom{
 				return;
 			}
 		}
+		this.capitalCity = newKing.city;
 		newKing.city.hasKing = true;
 
 		if(newKing.city.governor.id == newKing.id){
@@ -917,8 +922,8 @@ public class Kingdom{
 	/*
 	 * Check if this kingdom has enough gold to create role.
 	 * */
-	internal bool CanCreateAgent(ROLE roleToCheck){
-		int costToCreate = 0;
+	internal bool CanCreateAgent(ROLE roleToCheck, ref int costToCreate){
+//		costToCreate = 0;
 		if (roleToCheck == ROLE.GENERAL) {
 			costToCreate = 300;
 		} else if (roleToCheck == ROLE.TRADER) {
@@ -940,7 +945,7 @@ public class Kingdom{
 	}
 	#endregion
 	//Destructor for unsubscribing listeners
-	~Kingdom(){
-		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener (NewKingdomCreated);
-	}
+//	~Kingdom(){
+//		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener (NewKingdomCreated);
+//	}
 }

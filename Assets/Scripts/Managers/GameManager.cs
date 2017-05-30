@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void WeekEnded(){
-		TriggerRequestPeace();
+//		TriggerRequestPeace();
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
 		EventManager.Instance.onWeekEnd.Invoke();
@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	private void TriggerRequestPeace(){
+	/*private void TriggerRequestPeace(){
 		List<GameEvent> allWars = EventManager.Instance.GetEventsOfType(EVENT_TYPES.KINGDOM_WAR).Where(x => x.isActive).ToList();
 		for (int i = 0; i < allWars.Count; i++) {
 			War currentWar = (War)allWars[i];
@@ -286,7 +286,7 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-	}
+	}*/
 
 	internal bool SearchForEligibility (Kingdom kingdom1, Kingdom kingdom2, List<GameEvent> borderConflicts){
 		for(int i = 0; i < borderConflicts.Count; i++){
