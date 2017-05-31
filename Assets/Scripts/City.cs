@@ -64,7 +64,6 @@ public class City{
 	public int hp{
 		get{ return this._hp; }
 	}
-
 	public int maxHP{
 		get{ return 300 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
 	}
@@ -89,7 +88,7 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-		this.hp = 100;
+		this._hp = 100;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
