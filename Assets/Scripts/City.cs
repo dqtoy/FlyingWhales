@@ -987,8 +987,13 @@ public class City{
 		if(!this.kingdom.CanCreateAgent(role, ref cost)){
 			return null;
 		}
-		List<HexTile> path = PathGenerator.Instance.GetPath (this.hexTile, targetLocation, PATHFINDING_MODE.COMBAT).ToList();
-		if (path == null) {
+        List<HexTile> path = null;
+        if (role == ROLE.TRADER) {
+            path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL).ToList();
+        } else {
+            path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.COMBAT).ToList();
+        }
+        if (path == null) {
 			return null;
 		}
 		if(!Utilities.CanReachInTime(eventType, path, duration)){

@@ -7,6 +7,12 @@ public class Trade : GameEvent {
     private Kingdom _targetKingdom;
     private Citizen _trader;
 
+    #region getters/setters
+    public Kingdom targetKingdom {
+        get { return this._targetKingdom; }
+    }
+    #endregion
+
     public Trade(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _sourceKingdom, Kingdom _targetKingdom, Citizen _trader) 
         : base(startWeek, startMonth, startYear, startedBy) {
         this.eventType = EVENT_TYPES.TRADE;
@@ -29,5 +35,9 @@ public class Trade : GameEvent {
 
     internal override void DoneEvent() {
         
+    }
+
+    internal void KillTrader() {
+
     }
 }
