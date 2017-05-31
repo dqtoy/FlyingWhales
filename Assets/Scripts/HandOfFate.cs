@@ -234,100 +234,21 @@ public class HandOfFate : MonoBehaviour {
 
 	private void CreateRaidEvent(){
 //		General general = GetGeneral(this.firstKingdom);
-		City city = GetRaidedCity();
-		if(city != null){
-			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, city);
-			EventManager.Instance.AddEventToDictionary (raid);
-		}
+		EventCreator.Instance.CreateRaidEvent(this.firstKingdom, this.secondKingdom);
 	}
 
 	private void CreateBorderConflictEvent(){
-		BorderConflict();
+		EventCreator.Instance.CreateBorderConflictEvent(this.firstKingdom, this.secondKingdom);
 	}
 
 	private void CreateDiplomaticCrisisEvent(){
-		DiplomaticCrisis ();
+		EventCreator.Instance.CreateDiplomaticCrisisEvent(this.firstKingdom, this.secondKingdom);
 	}
 
 	private void CreateStateVisitEvent(){
-		StateVisit ();
+		EventCreator.Instance.CreateStateVisitEvent(this.firstKingdom, this.secondKingdom);
 	}
-	private General GetGeneral(Kingdom kingdom){
-		List<Citizen> unwantedGovernors = Utilities.GetUnwantedGovernors (kingdom.king);
-		List<General> generals = new List<General> ();
-		for(int i = 0; i < kingdom.cities.Count; i++){
-			if(!Utilities.IsItThisGovernor(kingdom.cities[i].governor, unwantedGovernors)){
-				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
-					if (!kingdom.cities [i].citizens [j].isDead) {
-						if (kingdom.cities [i].citizens [j].assignedRole != null && kingdom.cities [i].citizens [j].role == ROLE.GENERAL) {
-							if(kingdom.cities [i].citizens [j].assignedRole is General){
-								if (!((General)kingdom.cities [i].citizens [j].assignedRole).inAction) {
-									generals.Add (((General)kingdom.cities [i].citizens [j].assignedRole));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		if(generals.Count > 0){
-			int random = UnityEngine.Random.Range (0, generals.Count);
-			generals [random].inAction = true;
-			return generals [random];
-		}else{
-//			Debug.Log (kingdom.king.name + " CAN'T SEND GENERAL BECAUSE THERE IS NONE!");
-			return null;
-		}
-	}
-	private City GetRaidedCity(){
-		if(this.secondKingdom.cities.Count > 0){
-			return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
-		}else{
-			return null;
-		}
-		//		if(general == null){
-		//			return null;
-		//		}
-		//		if(this.isAdjacent){
-		//			List<City> adjacentCities = general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Where (x => x.kingdom.id == this.secondKingdom.id).ToList();
-		//			if(adjacentCities.Count > 0){
-		//				return adjacentCities [UnityEngine.Random.Range (0, adjacentCities.Count)];
-		//			}else{
-		//				if(this.secondKingdom.cities.Count > 0){
-		//					return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
-		//				}else{
-		//					return null;
-		//				}
-		//			}
-		//		}else{
-		//			if(this.secondKingdom.cities.Count > 0){
-		//				return this.secondKingdom.cities [UnityEngine.Random.Range (0, this.secondKingdom.cities.Count)];
-		//			}else{
-		//				return null;
-		//			}
-		//		}
-
-	}
-	private void BorderConflict(){
-//		Debug.Log ("Border Conflict FROM HAND OF FATE");
-		Citizen startedBy = this.firstKingdom.king;
-		BorderConflict borderConflict = new BorderConflict(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.firstKingdom, this.secondKingdom);
-		EventManager.Instance.AddEventToDictionary(borderConflict);
-	}
-	private void DiplomaticCrisis(){
-//		Debug.Log ("Diplomatic Crisis FROM HAND OF FATE");
-		Citizen startedBy = this.secondKingdom.king;
-		DiplomaticCrisis diplomaticCrisis = new DiplomaticCrisis(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
-		EventManager.Instance.AddEventToDictionary(diplomaticCrisis);
-	}
-//	private void Admiration(){
-//		Debug.Log ("Admiration FROM HAND OF FATE");
-//		Citizen startedBy = this.secondKingdom.king;
-//		Admiration admiration = new Admiration(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, this.secondKingdom, this.firstKingdom);
-//		EventManager.Instance.AddEventToDictionary(admiration);
-//	}
-	internal void StateVisit(){
+	/*internal void StateVisit(){
 //		Debug.Log ("State Visit FROM HAND OF FATE");
 		Citizen targetKing = this.secondKingdom.king;
 		Citizen visitor = null;
@@ -356,12 +277,12 @@ public class HandOfFate : MonoBehaviour {
 
 		if(visitor != null){
 			StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.firstKingdom.king, this.secondKingdom, visitor);
-			EventManager.Instance.AddEventToDictionary(stateVisit);
+//			EventManager.Instance.AddEventToDictionary(stateVisit);
 		}else{
 //			Debug.Log ("FAILURE TO START STATE VISIT BECAUSE THERE IS NO AVAIALABLE VISITOR!");
 		}
 
-	}
+	}*/
 
 	private bool SearchForEligibility (Kingdom kingdom1, Kingdom kingdom2, List<GameEvent> gameEvents){
 		for(int i = 0; i < gameEvents.Count; i++){

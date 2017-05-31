@@ -13,14 +13,24 @@ public class GameManager : MonoBehaviour {
 	public int year;
 
 	public float progressionSpeed = 1f;
-	public bool isPaused = false;
+	public bool isPaused = true;
 
+	private float timeElapsed;
 	void Awake(){
 		Instance = this;
 		this.days = 1;
 		this.month = 1;
+		this.timeElapsed = 0f;
 	}
-
+//	void Update(){
+//		if (!isPaused) {
+//			this.timeElapsed += Time.deltaTime * 1f;
+//			if(this.timeElapsed >= this.progressionSpeed){
+//				this.timeElapsed = 0f;
+//				this.WeekEnded ();
+//			}
+//		}
+//	}
 	[ContextMenu("Start Progression")]
 	public void StartProgression(){
 //		InvokeRepeating ("WeekEnded", 0f, 1f);
@@ -29,6 +39,7 @@ public class GameManager : MonoBehaviour {
 //		this.WeekEnded();
 		EventManager.Instance.onUpdateUI.Invoke();
 		StartCoroutine(WeekProgression());
+//		this.isPaused = false;
 	}
 
 	public void TogglePause(){
@@ -53,7 +64,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void WeekEnded(){
-		TriggerRequestPeace();
+//		TriggerRequestPeace();
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
 		EventManager.Instance.onCityEverydayTurnActions.Invoke ();
 		EventManager.Instance.onWeekEnd.Invoke();
@@ -71,7 +82,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	private void TriggerRequestPeace(){
+	/*private void TriggerRequestPeace(){
 		List<GameEvent> allWars = EventManager.Instance.GetEventsOfType(EVENT_TYPES.KINGDOM_WAR).Where(x => x.isActive).ToList();
 		for (int i = 0; i < allWars.Count; i++) {
 			War currentWar = (War)allWars[i];
@@ -275,7 +286,7 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
-	}
+	}*/
 
 	internal bool SearchForEligibility (Kingdom kingdom1, Kingdom kingdom2, List<GameEvent> borderConflicts){
 		for(int i = 0; i < borderConflicts.Count; i++){

@@ -39,7 +39,7 @@ public class RaidUI : MonoBehaviour {
 //		General selectedGeneral = this.dropdownGenerals.data as General;
 
 		Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, selectedKingdom.king, UIManager.Instance.currentlyShowingCity);
-		EventManager.Instance.AddEventToDictionary (raid);
+//		EventManager.Instance.AddEventToDictionary (raid);
 	}
 	private void PopulateGeneral(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);

@@ -5,58 +5,65 @@ using System.Collections.Generic;
 public class StateVisit : GameEvent {
 	public Kingdom inviterKingdom;
 	public Kingdom invitedKingdom;
-	public Citizen visitor;
+	public Envoy visitor;
 	public List<Kingdom> otherKingdoms;
 	public Envoy saboteurEnvoy;
 
-	protected GameEvent gameEventTrigger;
-
+//	protected GameEvent gameEventTrigger;
 
 	private bool isDoneBySabotage;
 	private bool visitorHasDied;
 	private bool isSuccessful;
-	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom invitedKingdom, Citizen visitor) : base (startWeek, startMonth, startYear, startedBy){
+	private bool visitorHasArrived;
+
+	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom invitedKingdom, Envoy visitor) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.STATE_VISIT;
-		this.description = startedBy.name + " invited " + visitor.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
-		this.durationInDays = 30;
+		this.description = startedBy.name + " invited " + visitor.citizen.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
+		this.durationInDays = 10;
 		this.remainingDays = this.durationInDays;
 		this.inviterKingdom = startedBy.city.kingdom;
 		this.invitedKingdom = invitedKingdom;
 		this.visitor = visitor;
 		this.otherKingdoms = GetOtherKingdoms ();
 		this.saboteurEnvoy = null;
-		this.gameEventTrigger = gameEventTrigger;
+//		this.gameEventTrigger = gameEventTrigger;
 		this.isDoneBySabotage = false;
 		this.visitorHasDied = false;
 		this.isSuccessful = false;
+		this.visitorHasArrived = false;
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
-		newLogTitle.AddToFillers (visitor, visitor.name);
+		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name);
 		newLogTitle.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "start");
-		newLog.AddToFillers (visitor, visitor.name);
+		newLog.AddToFillers (visitor.citizen, visitor.citizen.name);
 		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
 		newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
 
+		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
 
 	}
-
+	internal override void DoneCitizenAction(Envoy envoy){
+		this.visitorHasArrived = true;
+	}
 	internal override void PerformAction(){
 		CheckVisitor ();
-		if(!this.visitor.isDead){
-			this.remainingDays -= 1;
-			if(this.remainingDays <= 0){
-				this.remainingDays = 0;
-				this.isSuccessful = true;
-				DoneEvent ();
-			}else{
-				TriggerAssassinationEvent ();
-				TriggerSabotage ();
+//		TriggerSabotage ();
+//		TriggerAssassinationEvent ();
+		if(this.visitorHasArrived){
+			if(!this.visitor.citizen.isDead){
+				this.remainingDays -= 1;
+				if(this.remainingDays <= 0){
+					this.remainingDays = 0;
+					this.isSuccessful = true;
+					DoneEvent ();
+				}
 			}
 		}
+
 	}
 
 	internal override void DoneEvent(){
@@ -71,7 +78,7 @@ public class StateVisit : GameEvent {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_end");
 			newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
 			newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
-			newLog.AddToFillers (this.visitor, this.visitor.name);
+			newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name);
 		}else{
 			if(this.isDoneBySabotage){
 				if (relationship != null) {
@@ -95,24 +102,33 @@ public class StateVisit : GameEvent {
 					}
 
 					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "visitor_died");
-					newLog.AddToFillers (this.visitor, this.visitor.name);
-					newLog.AddToFillers (null, this.visitor.deathReasonText);
+					newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name);
+					newLog.AddToFillers (null, this.visitor.citizen.deathReasonText);
 					newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
 					newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
 				}
 			}
 
 		}
-		if(this.saboteurEnvoy != null){
-			this.saboteurEnvoy.inAction = false;
-		}
+//		if(this.saboteurEnvoy != null){
+//			this.saboteurEnvoy.inAction = false;
+//		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		this.endMonth = GameManager.Instance.month;
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 	}
-
+	internal override void DeathByOtherReasons(){
+		this.visitorHasDied = true;
+		this.isSuccessful = false;
+		this.DoneEvent();
+	}
+	internal override void DeathByGeneral(General general){
+		this.visitorHasDied = true;
+		this.isSuccessful = false;
+		this.DoneEvent();
+	}
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
@@ -138,12 +154,12 @@ public class StateVisit : GameEvent {
 						//ASSASSINATION EVENT
 						Citizen spy = GetSpy (selectedKingdom);
 						if (spy != null) {
-							Assassination assassination = new Assassination (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, selectedKingdom.king, this.visitor, spy, this);
+							Assassination assassination = new Assassination (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, selectedKingdom.king, this.visitor.citizen, spy, this);
 							Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
 							newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name);
 							newLog.AddToFillers (spy, spy.name);
 							newLog.AddToFillers (assassination, "assassinate");
-							newLog.AddToFillers (this.visitor, this.visitor.name);
+							newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name);
 							newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
 						}
 					}
@@ -219,31 +235,32 @@ public class StateVisit : GameEvent {
 		return false;
 	}
 	private void SendEnvoySabotage(Kingdom sender){
-		Citizen chosenCitizen = GetEnvoy (sender);
-		if(chosenCitizen == null){
-			return;
-		}
-		Envoy chosenEnvoy = null;
-		if (chosenCitizen.assignedRole is Envoy) {
-			chosenEnvoy = (Envoy)chosenCitizen.assignedRole;
-		}
-
-		if(chosenEnvoy == null){
-			return;
-		}
-
-		chosenEnvoy.eventDuration = 5;
-		chosenEnvoy.currentEvent = this;
-		chosenEnvoy.inAction = true;
-		EventManager.Instance.onWeekEnd.AddListener (chosenEnvoy.WeeklyAction);
-		this.saboteurEnvoy = chosenEnvoy;
-
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_start");
-		newLog.AddToFillers (sender.king, sender.king.name);
-		newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
-		newLog.AddToFillers (chosenEnvoy.citizen, chosenEnvoy.citizen.name);
+//		Citizen chosenCitizen = GetEnvoy (sender);
+//		if(chosenCitizen == null){
+//			return;
+//		}
+//		Envoy chosenEnvoy = null;
+//		if (chosenCitizen.assignedRole is Envoy) {
+//			chosenEnvoy = (Envoy)chosenCitizen.assignedRole;
+//		}
+//
+//		if(chosenEnvoy == null){
+//			return;
+//		}
+//
+//		chosenEnvoy.eventDuration = 5;
+//		chosenEnvoy.currentEvent = this;
+//		chosenEnvoy.inAction = true;
+//		EventManager.Instance.onWeekEnd.AddListener (chosenEnvoy.WeeklyAction);
+//		this.saboteurEnvoy = chosenEnvoy;
+//
+//		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_start");
+//		newLog.AddToFillers (sender.king, sender.king.name);
+//		newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
+//		newLog.AddToFillers (chosenEnvoy.citizen, chosenEnvoy.citizen.name);
 	}
-	private Citizen GetEnvoy(Kingdom kingdom){
+
+	/*private Citizen GetEnvoy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> envoys = new List<Citizen> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -270,30 +287,30 @@ public class StateVisit : GameEvent {
 //			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
 			return null;
 		}
-	}
+	}*/
 
 	private void CheckVisitor(){
-		if(this.visitor.isDead){
+		if(this.visitor.citizen.isDead){
 			this.visitorHasDied = true;
 			this.isSuccessful = false;
 			DoneEvent ();
 		}
 	}
-	internal override void DoneCitizenAction(Envoy envoy){
-		if (!envoy.citizen.isDead) {
-			if (this.saboteurEnvoy != null) {
-				if (envoy.citizen.id == this.saboteurEnvoy.citizen.id) {
-					int chance = UnityEngine.Random.Range (0, 100);
-					if (chance < 20) {
-						this.isDoneBySabotage = true;
-						this.isSuccessful = false;
-						DoneEvent ();
-						return;
-					}
-				}
-			}
-		}
-
-		this.saboteurEnvoy = null;
-	}
+//	internal override void DoneCitizenAction(Envoy envoy){
+//		if (!envoy.citizen.isDead) {
+//			if (this.saboteurEnvoy != null) {
+//				if (envoy.citizen.id == this.saboteurEnvoy.citizen.id) {
+//					int chance = UnityEngine.Random.Range (0, 100);
+//					if (chance < 20) {
+//						this.isDoneBySabotage = true;
+//						this.isSuccessful = false;
+//						DoneEvent ();
+//						return;
+//					}
+//				}
+//			}
+//		}
+//		envoy.DestroyGO ();
+//		this.saboteurEnvoy = null;
+//	}
 }

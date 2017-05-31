@@ -42,7 +42,7 @@ public class InvasionPlan : GameEvent {
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " created an invasion plan against " + _targetKingdom.king.name + ".";
-		this.durationInDays = 0;
+		this.durationInDays = 60;
 		this.remainingDays = this.durationInDays;
 		this._sourceKingdom = _sourceKingdom;
 		this._targetKingdom = _targetKingdom;
@@ -118,65 +118,65 @@ public class InvasionPlan : GameEvent {
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
-		this.StartMilitarizationEvent();
+//		this.StartMilitarizationEvent();
 	}
 
 	#region overrides
 	internal override void PerformAction(){
-		if (this.startedBy.isDead) {
-			this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " died.";
-			Log invasionPlanCancelDeath = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_death");
-			invasionPlanCancelDeath.AddToFillers (this.startedBy, this.startedBy.name);
+		if(this.remainingDays > 0){
+			this.remainingDays -= 1;
+			if (this.startedBy.isDead) {
+				this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " died.";
+				Log invasionPlanCancelDeath = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_death");
+				invasionPlanCancelDeath.AddToFillers (this.startedBy, this.startedBy.name);
 
-			this.DoneEvent();
-			return;
-		}
-		if (!this.startedBy.isKing) {
-			this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " is no longer king.";
-			Log invasionPlanCancelDethrone = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_dethrone");
-			invasionPlanCancelDethrone.AddToFillers (this.startedBy, this.startedBy.name);
+				this.DoneEvent();
+				return;
+			}
+			if (!this.startedBy.isKing) {
+				this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " is no longer king.";
+				Log invasionPlanCancelDethrone = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_dethrone");
+				invasionPlanCancelDethrone.AddToFillers (this.startedBy, this.startedBy.name);
 
-			this.DoneEvent();
-			return;
-		}
+				this.DoneEvent();
+				return;
+			}
 
-		War warBetweenKingdoms = KingdomManager.Instance.GetWarBetweenKingdoms (this._sourceKingdom, this._targetKingdom);
-		if (warBetweenKingdoms != null && warBetweenKingdoms.isAtWar) {
-			this.resolution = "Invasion plan was cancelled because a war has already started between " + this._sourceKingdom.name + " and " + this._targetKingdom.name;
-			this.DoneEvent();
-			return;
-		}
+			War warBetweenKingdoms = KingdomManager.Instance.GetWarBetweenKingdoms (this._sourceKingdom, this._targetKingdom);
+			if (warBetweenKingdoms != null && warBetweenKingdoms.isAtWar) {
+				this.resolution = "Invasion plan was cancelled because a war has already started between " + this._sourceKingdom.name + " and " + this._targetKingdom.name;
+				this.DoneEvent();
+				return;
+			}
 
-		List<RelationshipKings> friends = this.startedBy.friends;
-		if (friends.Count > 0) {
-			for (int i = 0; i < friends.Count; i++) {
-				War friendWarWithTargetKingdom = KingdomManager.Instance.GetWarBetweenKingdoms (friends [i].king.city.kingdom, this._targetKingdom);
-				if (EventManager.Instance.GetEventsStartedByKingdom (friends[i].king.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where (x => x.isActive).Count () > 0 ||
-					KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, friends[i].king.city.kingdom) != null||
-					(friendWarWithTargetKingdom != null && friendWarWithTargetKingdom.isAtWar)) {
-					//friend already has an active invasion plan or friend already has an active join war request from this startedByKingdom or is already
-					//at war with target kingdom
-					continue;
-				}
-				List<Citizen> envoys = this.startedByKingdom.GetAllCitizensOfType(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
-				if (envoys.Count > 0) {
+			List<RelationshipKings> friends = this.startedBy.friends;
+			if (friends.Count > 0) {
+				for (int i = 0; i < friends.Count; i++) {
+					War friendWarWithTargetKingdom = KingdomManager.Instance.GetWarBetweenKingdoms (friends [i].king.city.kingdom, this._targetKingdom);
+					if (EventManager.Instance.GetEventsStartedByKingdom (friends[i].king.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where (x => x.isActive).Count () > 0 ||
+						KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, friends[i].king.city.kingdom) != null||
+						(friendWarWithTargetKingdom != null && friendWarWithTargetKingdom.isAtWar)) {
+						//friend already has an active invasion plan or friend already has an active join war request from this startedByKingdom or is already
+						//at war with target kingdom
+						continue;
+					}
 					int chanceToSendJoinWarRequest = 2;
 					if (friends [i].lordRelationship == RELATIONSHIP_STATUS.ALLY) {
 						chanceToSendJoinWarRequest = 3;
 					}
 					int chance = Random.Range (0, 100);
 					if (chance < chanceToSendJoinWarRequest) {
-						Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
-						Citizen citizenToPersuade = friends[i].king;
-						envoyToSend.inAction = true;
-						JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
-							                           citizenToPersuade, envoyToSend, this.targetKingdom, this);
-						this._joinWarEvents.Add(newJoinWarRequest);
+						JoinWar joinWar = EventCreator.Instance.CreateJoinWarEvent (this.startedByKingdom, friends [i].king.city.kingdom, this);
+						if(joinWar != null){
+							this._joinWarEvents.Add(joinWar);
+						}
 					}
 				}
-
 			}
+		}else{
+			InvasionPlanSuccessful ();
 		}
+
 	}
 
 	internal override void DoneEvent(){
@@ -200,7 +200,7 @@ public class InvasionPlan : GameEvent {
 	#endregion
 
 
-	internal void MilitarizationDone(){
+	internal void InvasionPlanSuccessful(){
 		this.resolution = "Invasion plan was successful and war is now declared between " + this._sourceKingdom.name + " and " + this._targetKingdom.name;
 		this.war.DeclareWar (this._sourceKingdom);
 		this.DoneEvent();

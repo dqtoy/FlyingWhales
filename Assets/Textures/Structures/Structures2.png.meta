@@ -1,0 +1,479 @@
+fileFormatVersion: 2
+guid: 301ddda5fde017644bab1ae01392d876
+timeCreated: 1496115724
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: H_Lumberyard_Base
+    21300002: H_Lumberyard_Tint
+    21300004: H_SmallHouse1_Base
+    21300006: H_SmallHouse1_Tint
+    21300008: H_SmallHouse2_Base
+    21300010: H_SmallHouse2_Tint
+    21300012: H_WallHouse1_Base
+    21300014: H_WallHouse1_Tint
+    21300016: H_WallHouse2_Base
+    21300018: H_WallHouse2_Tint
+    21300020: H_WallHouse3_Base
+    21300022: H_WallHouse3_Tint
+    21300024: H_TallTower1_Base
+    21300026: H_TallTower1_Tint
+    21300028: H_TallTower2_Base
+    21300030: H_TallTower2_Tint
+    21300032: H_SmallTower1_Base
+    21300034: H_SmallTower1_Tint
+    21300036: H_SmallTower2_Base
+    21300038: H_SmallTower2_Tint
+    21300040: H_PointedHouse_Base
+    21300042: H_PointedHouse_Tint
+    21300044: H_TradingPost_Base
+    21300046: H_TradingPost_Tint
+    21300048: H_Mine_Base
+    21300050: H_Mine_Tint
+    21300052: H_Quarry_Base
+    21300054: H_Quarry_Tint
+    21300056: H_Farm_Base
+    21300058: H_Farm_Tint
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 7
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: 0
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: H_Lumberyard_Base
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 930
+        width: 117
+        height: 91
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Lumberyard_Tint
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 961
+        width: 101
+        height: 60
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallHouse1_Base
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 984
+        width: 43
+        height: 37
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallHouse1_Tint
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 997
+        width: 40
+        height: 23
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallHouse2_Base
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 987
+        width: 39
+        height: 34
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallHouse2_Tint
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 1000
+        width: 33
+        height: 21
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_WallHouse1_Base
+      rect:
+        serializedVersion: 2
+        x: 392
+        y: 990
+        width: 36
+        height: 31
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_WallHouse1_Tint
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 991
+        width: 31
+        height: 14
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_WallHouse2_Base
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 990
+        width: 35
+        height: 31
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_WallHouse2_Tint
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 991
+        width: 31
+        height: 14
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_WallHouse3_Base
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 980
+        width: 37
+        height: 43
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_WallHouse3_Tint
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 1003
+        width: 33
+        height: 15
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_TallTower1_Base
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 915
+        width: 36
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_TallTower1_Tint
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 917
+        width: 31
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_TallTower2_Base
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 915
+        width: 36
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_TallTower2_Tint
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 917
+        width: 31
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallTower1_Base
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 930
+        width: 36
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallTower1_Tint
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 929
+        width: 31
+        height: 36
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallTower2_Base
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 930
+        width: 35
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallTower2_Tint
+      rect:
+        serializedVersion: 2
+        x: 508
+        y: 933
+        width: 32
+        height: 34
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_PointedHouse_Base
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 933
+        width: 31
+        height: 35
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_PointedHouse_Tint
+      rect:
+        serializedVersion: 2
+        x: 578
+        y: 947
+        width: 26
+        height: 22
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_TradingPost_Base
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 834
+        width: 114
+        height: 91
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_TradingPost_Tint
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 869
+        width: 97
+        height: 55
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mine_Base
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 761
+        width: 88
+        height: 65
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mine_Tint
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 781
+        width: 33
+        height: 29
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Quarry_Base
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 639
+        width: 147
+        height: 114
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Quarry_Tint
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 645
+        width: 140
+        height: 107
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Farm_Base
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 542
+        width: 103
+        height: 85
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Farm_Tint
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 611
+        width: 29
+        height: 17
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

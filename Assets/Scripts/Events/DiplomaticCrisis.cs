@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class DiplomaticCrisis : GameEvent {
 
@@ -11,6 +12,8 @@ public class DiplomaticCrisis : GameEvent {
 	public Envoy activeEnvoyResolve;
 	public Envoy activeEnvoyProvoke;
 
+	internal City targetCity;
+
 	public bool isResolvedPeacefully;
 	public DiplomaticCrisis(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.DIPLOMATIC_CRISIS;
@@ -19,10 +22,11 @@ public class DiplomaticCrisis : GameEvent {
 		this.remainingDays = this.durationInDays;
 		this.kingdom1 = kingdom1;
 		this.kingdom2 = kingdom2;
-		this.otherKingdoms = GetOtherKingdoms ();
+		this.targetCity = null;
+		this.otherKingdoms = null;
 		this.activeEnvoyResolve = null;
 		this.activeEnvoyProvoke = null;
-		this._warTrigger = WAR_TRIGGER.BORDER_CONFLICT;
+		this._warTrigger = WAR_TRIGGER.DIPLOMATIC_CRISIS;
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError (this.description);
@@ -36,6 +40,8 @@ public class DiplomaticCrisis : GameEvent {
 		newLog.AddToFillers (kingdom1.king, kingdom1.king.name);
 		newLog.AddToFillers (kingdom2.king, kingdom2.king.name);
 		newLog.AddToFillers (null, Utilities.crisis[0]);
+
+		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
 
 	}
@@ -49,10 +55,31 @@ public class DiplomaticCrisis : GameEvent {
 		}else{
 			CheckIfAlreadyAtWar ();
 			ResolvePeacefullyConflict ();
-			SpeedUpConflict ();
+//			SpeedUpConflict ();
 		}
 	}
 	internal override void DoneCitizenAction(Envoy envoy){
+		if(this.activeEnvoyResolve != null){
+			if(envoy.citizen.id == this.activeEnvoyResolve.citizen.id){
+				int chance = UnityEngine.Random.Range (0, 100);
+				int value = 20;
+				if(chance < value){
+					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_success");
+					newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+
+					this.isResolvedPeacefully = true;
+					DoneEvent ();
+					return;
+				}else{
+					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail");
+					newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+				}
+			}
+		}
+		this.activeEnvoyResolve = null;
+	}
+
+	/*internal override void DoneCitizenAction(Envoy envoy){
 		if(!envoy.citizen.isDead){
 			//Search for envoys task first on activeenvoys
 			//Do something here add tension or reduce depending on the envoys task
@@ -91,6 +118,15 @@ public class DiplomaticCrisis : GameEvent {
 		}
 		this.activeEnvoyResolve = null;
 		this.activeEnvoyProvoke = null;
+	}*/
+
+	internal override void DeathByOtherReasons(){
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
+		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+	}
+	internal override void DeathByGeneral(General general){
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
+		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
 	}
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
@@ -104,6 +140,7 @@ public class DiplomaticCrisis : GameEvent {
 
 	private void ResolvePeacefullyConflict(){
 		//Send Envoys
+		this.targetCity = this.kingdom1.cities[UnityEngine.Random.Range(0, this.kingdom1.cities.Count)];
 		if(this.activeEnvoyResolve == null && this.activeEnvoyProvoke == null){
 			int chance = UnityEngine.Random.Range (0, 100);
 			int value = 1;
@@ -118,7 +155,7 @@ public class DiplomaticCrisis : GameEvent {
 				}
 			}
 			if(chance < value){
-				SendEnvoy (this.kingdom1);
+				SendEnvoy (this.kingdom1, this.targetCity);
 			}
 		}
 		if (this.activeEnvoyResolve == null && this.activeEnvoyProvoke == null) {
@@ -135,11 +172,11 @@ public class DiplomaticCrisis : GameEvent {
 				}
 			}
 			if(chance < value){
-				SendEnvoy (this.kingdom2);
+				SendEnvoy (this.kingdom2, this.targetCity);
 			}
 		}
 	}
-	private void SpeedUpConflict(){
+	/*private void SpeedUpConflict(){
 		int chance = UnityEngine.Random.Range (0, 100);
 		if(chance < 1){
 			for(int i = 0; i < this.otherKingdoms.Count; i++){
@@ -154,7 +191,7 @@ public class DiplomaticCrisis : GameEvent {
 			}
 		}
 
-	}
+	}*/
 	private bool CheckForRelationship(Kingdom otherKingdom, ref Citizen dislikedKing){
 		RelationshipKings relationship1 = otherKingdom.king.SearchRelationshipByID (this.kingdom1.king.id);
 		RelationshipKings relationship2 = otherKingdom.king.SearchRelationshipByID (this.kingdom2.king.id);
@@ -178,25 +215,23 @@ public class DiplomaticCrisis : GameEvent {
 
 		return false;
 	}
-	private void SendEnvoy(Kingdom sender, Citizen dislikedKing = null, bool isFromOthers = false){
-		Citizen chosenCitizen = GetEnvoy (sender);
+	private void SendEnvoy(Kingdom sender, City targetCity){
+		List<HexTile> path = PathGenerator.Instance.GetPath (sender.capitalCity.hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
+		if (path == null) {
+			return;
+		}
+		if (targetCity == null) {
+			return;
+		}
+		Citizen chosenCitizen = sender.capitalCity.CreateAgent (ROLE.ENVOY);
 		if(chosenCitizen == null){
 			return;
 		}
-		Envoy chosenEnvoy = null;
-		if (chosenCitizen.assignedRole is Envoy) {
-			chosenEnvoy = (Envoy)chosenCitizen.assignedRole;
-		}
-		if (chosenEnvoy == null) {
-			return;
-		}
-
-		chosenEnvoy.eventDuration = 5;
-		chosenEnvoy.currentEvent = this;
-		chosenEnvoy.inAction = true;
-		EventManager.Instance.onWeekEnd.AddListener (chosenEnvoy.WeeklyAction);
-
-		if(isFromOthers){
+		chosenCitizen.assignedRole.Initialize (this, path);
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve");
+		newLog.AddToFillers (sender.king, sender.king.name);
+		newLog.AddToFillers (chosenCitizen, chosenCitizen.name);
+		/*if(isFromOthers){
 			this.activeEnvoyProvoke = chosenEnvoy;
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_sabotage");
 			newLog.AddToFillers (sender.king, sender.king.name);
@@ -207,9 +242,9 @@ public class DiplomaticCrisis : GameEvent {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve");
 			newLog.AddToFillers (sender.king, sender.king.name);
 			newLog.AddToFillers (chosenEnvoy.citizen, chosenEnvoy.citizen.name);
-		}
+		}*/
 	}
-	private Citizen GetEnvoy(Kingdom kingdom){
+	/*private Citizen GetEnvoy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> envoys = new List<Citizen> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -234,7 +269,7 @@ public class DiplomaticCrisis : GameEvent {
 //			Debug.Log (kingdom.king.name + " CAN'T SEND ENVOY BECAUSE THERE IS NONE!");
 			return null;
 		}
-	}
+	}*/
 	private void CheckIfAlreadyAtWar(){
 		if(this.kingdom1.GetRelationshipWithOtherKingdom(this.kingdom2).isAtWar){
 			this.isResolvedPeacefully = false;
@@ -244,16 +279,14 @@ public class DiplomaticCrisis : GameEvent {
 
 	internal override void DoneEvent(){
 		if(this.activeEnvoyResolve != null){
-			this.activeEnvoyResolve.eventDuration = 0;
-			this.activeEnvoyResolve.currentEvent = null;
-			this.activeEnvoyResolve.inAction = false;
+			this.activeEnvoyResolve.DestroyGO ();
 		}
 
-		if(this.activeEnvoyProvoke != null){
-			this.activeEnvoyProvoke.eventDuration = 0;
-			this.activeEnvoyProvoke.currentEvent = null;
-			this.activeEnvoyProvoke.inAction = false;
-		}
+//		if(this.activeEnvoyProvoke != null){
+//			this.activeEnvoyProvoke.eventDuration = 0;
+//			this.activeEnvoyProvoke.currentEvent = null;
+//			this.activeEnvoyProvoke.inAction = false;
+//		}
 
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);

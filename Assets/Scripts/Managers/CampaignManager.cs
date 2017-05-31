@@ -5,26 +5,42 @@ using System.Linq;
 
 public class CampaignManager {
 	public Citizen leader;
-	public int campaignLimit;
-	public List<Campaign> activeCampaigns;
-	public List<CampaignCandidates> candidates;
+//	public int campaignLimit;
+//	public List<Campaign> activeCampaigns;
+//	public List<CampaignCandidates> candidates;
 
-	public List<CityWar> intlWarCities;
-	public List<CityWar> civilWarCities;
-	public List<CityWar> successionWarCities;
-	public List<CityWar> defenseWarCities;
+//	public List<CityWar> intlWarCities;
+//	public List<CityWar> civilWarCities;
+//	public List<CityWar> successionWarCities;
+//	public List<CityWar> defenseWarCities;
 
+	public List<City> intlWarCities;
+	public List<City> activeCitiesToAttack;
 	public CampaignManager(Citizen leader){
 		this.leader = leader;
-		this.campaignLimit = leader.GetCampaignLimit ();
-		this.activeCampaigns = new List<Campaign>();
-		this.candidates = new List<CampaignCandidates> ();
-		this.intlWarCities = new List<CityWar>();
-		this.civilWarCities = new List<CityWar>();
-		this.successionWarCities = new List<CityWar>();
-		this.defenseWarCities = new List<CityWar>();
+		this.intlWarCities = new List<City> ();
+		this.activeCitiesToAttack = new List<City> ();
+//		this.campaignLimit = leader.GetCampaignLimit ();
+//		this.activeCampaigns = new List<Campaign>();
+//		this.candidates = new List<CampaignCandidates> ();
+//		this.intlWarCities = new List<CityWar>();
+//		this.civilWarCities = new List<CityWar>();
+//		this.successionWarCities = new List<CityWar>();
+//		this.defenseWarCities = new List<CityWar>();
 	}
-	internal void CreateCampaign(){
+
+	internal void MakeCityActive(City city){
+		if(!this.activeCitiesToAttack.Contains(city)){
+			this.activeCitiesToAttack.Add(city);
+		}
+	}
+	internal void MakeCityInactive(City city){
+		if(city.isDead){
+			this.intlWarCities.Remove (city);
+		}
+		this.activeCitiesToAttack.Remove (city);
+	}
+	/*internal void CreateCampaign(){
 		if(this.activeCampaigns.Count < this.campaignLimit){
 			int randomWarType = UnityEngine.Random.Range (0, 2);
 			CAMPAIGN campaignType = GetTypeOfCampaign ();
@@ -186,10 +202,11 @@ public class CampaignManager {
 				}
 			}
 
-			CreateCampaign ();
+//			CreateCampaign ();
 		}
-	}
-	private void UpdateCandidates(HexTile targetLocation){
+	}*/
+
+	/*private void UpdateCandidates(HexTile targetLocation){
 		this.candidates.Clear ();
 		EventManager.Instance.onCheckGeneralEligibility.Invoke (this.leader, targetLocation);
 	}
@@ -378,7 +395,7 @@ public class CampaignManager {
 		this.activeCampaigns.Remove (doneCampaign);
 		doneCampaign = null;
 		if(canCreate){
-			CreateCampaign ();
+//			CreateCampaign ();
 		}
 	}
 	internal void UnregisterGenerals(General general, Campaign chosenCampaign){
@@ -541,35 +558,6 @@ public class CampaignManager {
 		if(cityWar != null){
 			cityWar.isActive = true;
 		}
-//		if(campaign.campaignType == CAMPAIGN.OFFENSE){
-//			CityWar cityWar = null;
-//			if(campaign.warType == WAR_TYPE.INTERNATIONAL){
-//				cityWar = this.intlWarCities.Find (x => x.city.id == campaign.targetCity.id);
-//			}else if(campaign.warType == WAR_TYPE.CIVIL){
-//				cityWar = this.civilWarCities.Find (x => x.city.id == campaign.targetCity.id);
-//			}else if(campaign.warType == WAR_TYPE.SUCCESSION){
-//				cityWar = this.successionWarCities.Find (x => x.city.id == campaign.targetCity.id);
-//			}
-//			if(cityWar != null){
-//				cityWar.isActive = true;
-//			}
-//		}else{
-//			CityWar cityWar = this.defenseWarCities.Find (x => x.city.id == campaign.targetCity.id);
-//			if(cityWar != null){
-//				cityWar.isActive = true;
-//			}
-////			CityWar cityWar = null;
-////			if(campaign.warType == WAR_TYPE.INTERNATIONAL){
-////				cityWar = this.intlWarCities.Find (x => x.city.id == campaign.targetCity.id);
-////			}else if(campaign.warType == WAR_TYPE.CIVIL){
-////				cityWar = this.civilWarCities.Find (x => x.city.id == campaign.targetCity.id);
-////			}else if(campaign.warType == WAR_TYPE.SUCCESSION){
-////				cityWar = this.successionWarCities.Find (x => x.city.id == campaign.targetCity.id);
-////			}
-////			if(cityWar != null){
-////				cityWar.isActive = true;
-////			}
-//		}
 	}
 	internal void MakeCityInactive(Campaign campaign){
 		CityWar cityWar = null;
@@ -710,5 +698,5 @@ public class CampaignManager {
 //			}
 //		}
 //		return null;
-//	}
+//	}*/
 }

@@ -7,9 +7,9 @@ public class King : Role {
 
 	public King(Citizen citizen): base(citizen){
 		this.citizen.isKing = true;
-		if(this.citizen.city.kingdom.king != null){
-			this.citizen.CopyCampaignManager (this.citizen.city.kingdom.king.campaignManager);
-		}
+//		if(this.citizen.city.kingdom.king != null){
+//			this.citizen.CopyCampaignManager (this.citizen.city.kingdom.king.campaignManager);
+//		}
 		this.citizen.city.kingdom.king = this.citizen;
 		this.SetOwnedKingdom(this.citizen.city.kingdom);
 	}

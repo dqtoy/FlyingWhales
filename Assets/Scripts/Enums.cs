@@ -115,7 +115,8 @@ public enum ROLE{
 	GENERAL,
 	GOVERNOR,
 	KING,
-	RAIDER
+	EXPANDER,
+	RAIDER,
 }
 
 public enum KINGDOM_TYPE {
