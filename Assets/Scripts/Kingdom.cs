@@ -366,10 +366,7 @@ public class Kingdom{
 				this.AdjustResources(this.increaseCityHPCost);
 				cityToUpgrade.IncreaseHP(INCREASE_CITY_HP_AMOUNT);
 			}
-
 		}
-
-
 	}
 
 	/*

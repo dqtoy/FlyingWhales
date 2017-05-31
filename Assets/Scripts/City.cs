@@ -545,6 +545,9 @@ public class City{
 	 * */
 	public void IncreaseHP(int amountToIncrease){
 		this._hp += amountToIncrease;
+		if (this._hp > this.maxHP) {
+			this._hp = this.maxHP;
+		}
 	}
 
 	#region Resource Production
