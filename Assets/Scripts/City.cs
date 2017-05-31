@@ -953,9 +953,16 @@ public class City{
 		}
 	}
 
-	internal Citizen CreateAgent(ROLE role){
+	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration){
 		int cost = 0;
 		if(!this.kingdom.CanCreateAgent(role, ref cost)){
+			return null;
+		}
+		List<HexTile> path = PathGenerator.Instance.GetPath (this.hexTile, targetLocation, PATHFINDING_MODE.COMBAT).ToList();
+		if (path == null) {
+			return null;
+		}
+		if(!CanReachInTime(eventType, path, duration)){
 			return null;
 		}
 		GENDER gender = GENDER.MALE;
@@ -968,9 +975,43 @@ public class City{
 		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		expandCitizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
 		expandCitizen.AssignRole (role);
+		expandCitizen.assignedRole.targetLocation = targetLocation;
+		expandCitizen.assignedRole.path = path;
+		expandCitizen.assignedRole.daysBeforeMoving = path [0].movementDays;
 		this._kingdom.AdjustGold (-cost);
 		this.citizens.Remove (expandCitizen);
 
 		return expandCitizen;
+	}
+	internal bool CanReachInTime(EVENT_TYPES eventType, List<HexTile> path, int duration){
+		switch (eventType) {
+		case EVENT_TYPES.STATE_VISIT:
+			return true;
+		case EVENT_TYPES.RAID:
+			return true;
+		case EVENT_TYPES.JOIN_WAR_REQUEST:
+			return true;
+		case EVENT_TYPES.ASSASSINATION:
+			return true;
+		case EVENT_TYPES.EXPANSION:
+			return true;
+		case EVENT_TYPES.BORDER_CONFLICT:
+			if (path.Count > duration) {
+				return false;
+			}
+			return true;
+		case EVENT_TYPES.DIPLOMATIC_CRISIS:
+			if (path.Count > duration) {
+				return false;
+			}
+			return true;
+		case EVENT_TYPES.INVASION_PLAN:
+			if (path.Count > duration) {
+				return false;
+			}
+			return true;
+
+		}
+		return false;
 	}
 }

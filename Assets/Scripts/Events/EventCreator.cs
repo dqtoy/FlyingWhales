@@ -17,11 +17,10 @@ public class EventCreator: MonoBehaviour {
 		if(hexTileToExpandTo == null){
 			return null;
 		}
-		Citizen expander = kingdom.capitalCity.CreateAgent (ROLE.EXPANDER);
-		List<HexTile> path = PathGenerator.Instance.GetPath (kingdom.capitalCity.hexTile, hexTileToExpandTo, PATHFINDING_MODE.COMBAT).ToList();
-		if (expander != null && path != null) {
+		Citizen expander = kingdom.capitalCity.CreateAgent (ROLE.EXPANDER, EVENT_TYPES.EXPANSION, hexTileToExpandTo, EventManager.Instance.eventDuration[EVENT_TYPES.EXPANSION]);
+		if (expander != null) {
 			Expansion expansion = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, expander, hexTileToExpandTo);
-			expander.assignedRole.Initialize (expansion, path);
+			expander.assignedRole.Initialize (expansion);
 			return expansion;
 		}
 		return null;
@@ -35,17 +34,12 @@ public class EventCreator: MonoBehaviour {
 		if(city == null){
 			return null;
 		}
-		List<HexTile> path = PathGenerator.Instance.GetPath (firstKingdom.capitalCity.hexTile, city.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-		if(path != null){
-			Citizen raider = firstKingdom.capitalCity.CreateAgent (ROLE.RAIDER);
-			if(raider != null){
-				Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, firstKingdom.king, city);
-				raider.assignedRole.Initialize (raid, path);
-				return raid;
-			}
+		Citizen raider = firstKingdom.capitalCity.CreateAgent (ROLE.RAIDER, EVENT_TYPES.RAID, city.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.RAID]);
+		if(raider != null){
+			Raid raid = new Raid(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, firstKingdom.king, city);
+			raider.assignedRole.Initialize (raid);
+			return raid;
 		}
-
-
 		return null;
 	}
 	internal BorderConflict CreateBorderConflictEvent(Kingdom firstKingdom, Kingdom secondKingdom){
@@ -59,31 +53,23 @@ public class EventCreator: MonoBehaviour {
 		return diplomaticCrisis;
 	}
 	internal JoinWar CreateJoinWarEvent(Kingdom kingdom, Kingdom friend, InvasionPlan invasionPlan){
-		List<HexTile> path = PathGenerator.Instance.GetPath (kingdom.capitalCity.hexTile, friend.capitalCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-		if (path == null) {
-			return null;
-		}
-		Citizen envoy = kingdom.capitalCity.CreateAgent (ROLE.ENVOY);
+		Citizen envoy = kingdom.capitalCity.CreateAgent (ROLE.ENVOY, EVENT_TYPES.JOIN_WAR_REQUEST, friend.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.JOIN_WAR_REQUEST]);
 		Citizen citizenToPersuade = friend.king;
 		if(envoy != null && citizenToPersuade != null){
 			Envoy chosenEnvoy = (Envoy)envoy.assignedRole;
 			JoinWar joinWar = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, invasionPlan.startedBy, 
 				citizenToPersuade, chosenEnvoy, invasionPlan.targetKingdom, invasionPlan);
-			envoy.assignedRole.Initialize (joinWar, path);
+			envoy.assignedRole.Initialize (joinWar);
 			return joinWar;
 		}
 		return null;
 	}
 	internal StateVisit CreateStateVisitEvent(Kingdom firstKingdom, Kingdom secondKingdom){
-		List<HexTile> path = PathGenerator.Instance.GetPath (secondKingdom.capitalCity.hexTile, firstKingdom.capitalCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-		if (path == null) {
-			return null;
-		}
-		Citizen visitor = secondKingdom.capitalCity.CreateAgent (ROLE.ENVOY);
+		Citizen visitor = secondKingdom.capitalCity.CreateAgent (ROLE.ENVOY, EVENT_TYPES.STATE_VISIT, firstKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.STATE_VISIT]);
 		if(visitor != null){
 			Envoy chosenEnvoy = (Envoy)visitor.assignedRole;
 			StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, firstKingdom.king, secondKingdom, chosenEnvoy);
-			visitor.assignedRole.Initialize (stateVisit, path);
+			visitor.assignedRole.Initialize (stateVisit);
 			return stateVisit;
 		}
 		return null;
