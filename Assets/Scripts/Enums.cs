@@ -191,7 +191,8 @@ public enum EVENT_TYPES{
 	DIPLOMATIC_CRISIS, // no agent
 	ADMIRATION,
 	ALL,
-	ATTACK_CITY // general
+	ATTACK_CITY, // general
+	SABOTAGE //envoy
 }
 public enum EVENT_STATUS{
 	EXPOSED,
@@ -299,4 +300,11 @@ public enum WAR_TRIGGER {
 	TARGET_LOST_A_BATTLE,
 	TARGET_GAINED_A_CITY,
 	NONE
+}
+
+public enum DIRECTION{
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN,
 }

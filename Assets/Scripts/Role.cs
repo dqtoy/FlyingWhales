@@ -22,19 +22,12 @@ public class Role {
 	}
 	internal void DestroyGO(){
 		if(this.avatar != null){
+			UIManager.Instance.HideSmallInfo ();
 			GameObject.Destroy (this.avatar);
 		}
 	}
 
-	internal void Attack(){
-		if(this.avatar != null){
-			if(this.avatar.GetComponent<RaiderAvatar> ().isDirectionUp){
-				this.avatar.GetComponent<RaiderAvatar> ().animator.Play ("Attack_Up");
-			}else{
-				this.avatar.GetComponent<RaiderAvatar> ().animator.Play ("Attack");
-			}
-		}
-	}
+
 
 
 	internal virtual int[] GetResourceProduction(){
@@ -52,13 +45,7 @@ public class Role {
 		//		}
 		return new int[]{ 0, 0, 0, 0, 0, 0, goldProduction, 0 };
 	}
-
-
 	internal virtual void OnDeath(){}
-
 	internal virtual void Initialize(GameEvent gameEvent){}
-
-
-
-
+	internal virtual void Attack(){}
 }

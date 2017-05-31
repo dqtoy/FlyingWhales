@@ -15,6 +15,7 @@ public class ExpansionAvatar : MonoBehaviour {
 //	private bool isMoving = false;
 //	private Vector3 targetPosition = Vector3.zero;
 	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
+	internal DIRECTION direction;
 
 //	public float speed;
 
@@ -31,6 +32,7 @@ public class ExpansionAvatar : MonoBehaviour {
 //	}
 	internal void Init(Expander expander){
 		this.expander = expander;
+		this.direction = DIRECTION.LEFT;
 		ResetValues ();
 		this.AddBehaviourTree ();
 	}
@@ -60,10 +62,21 @@ public class ExpansionAvatar : MonoBehaviour {
 			}
 		}
 		if(startTile.transform.position.y < targetTile.transform.position.y){
+			this.direction = DIRECTION.UP;
 			this.animator.Play("Walk_Up");
+		}else if(startTile.transform.position.y > targetTile.transform.position.y){
+			this.direction = DIRECTION.DOWN;
+			this.animator.Play("Walk_Down");
 		}else{
-			this.animator.Play("Walk");
+			if(startTile.transform.position.x < targetTile.transform.position.x){
+				this.direction = DIRECTION.RIGHT;
+				this.animator.Play("Walk_Right");
+			}else{
+				this.direction = DIRECTION.LEFT;
+				this.animator.Play("Walk_Left");
+			}
 		}
+		this.GetComponent<SmoothMovement>().direction = this.direction;
 		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
 //		this.targetPosition = targetTile.transform.position;
 //		this.UpdateUI ();
@@ -192,11 +205,13 @@ public class ExpansionAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
+			UIManager.Instance.ShowSmallInfo (this.expander.expansion.eventType.ToString ());
 			this.HighlightPath ();
 		}
 	}
 
 	void OnMouseExit(){
+		UIManager.Instance.HideSmallInfo ();
 		this.UnHighlightPath ();
 	}
 
