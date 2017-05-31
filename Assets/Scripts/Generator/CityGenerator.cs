@@ -23,8 +23,7 @@ public class CityGenerator : MonoBehaviour {
 	public Sprite elfMinistry;
 	public Sprite elfKeep;
 
-	public GameObject leftStructure;
-	public GameObject rightStructure;
+    public GameObject[] structures;
 
 	public TextAsset cityBehaviourTree;
 

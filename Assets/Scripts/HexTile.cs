@@ -396,20 +396,30 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public void ShowOccupiedSprite(){
 		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.bareTiles [Random.Range (0, Biomes.Instance.bareTiles.Length)];
-//		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfTraderSprite;
-//		this.structureGO.SetActive(true);
-		GameObject leftGO = GameObject.Instantiate(CityGenerator.Instance.leftStructure, structureParentGO.transform) as GameObject;
-		GameObject rightGO = GameObject.Instantiate(CityGenerator.Instance.rightStructure, structureParentGO.transform) as GameObject;
-		leftGO.transform.localPosition = Vector3.zero;
-		rightGO.transform.localPosition = Vector3.zero;
-		SpriteRenderer[] leftColorizers = leftGO.GetComponentsInChildren<SpriteRenderer> ().Where (x => x.gameObject.tag == "StructureColorizers").ToArray ();
-		SpriteRenderer[] rightColorizers = rightGO.GetComponentsInChildren<SpriteRenderer> ().Where (x => x.gameObject.tag == "StructureColorizers").ToArray ();
-		SpriteRenderer[] allColorizers = leftColorizers.Union (rightColorizers).ToArray ();
-		for (int i = 0; i < allColorizers.Length; i++) {
-			allColorizers [i].color = this.ownedByCity.kingdom.kingdomColor;
-		}
+        //		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfTraderSprite;
+        //		this.structureGO.SetActive(true);
+        //GameObject leftGO = GameObject.Instantiate(CityGenerator.Instance.leftStructure, structureParentGO.transform) as GameObject;
+        //GameObject rightGO = GameObject.Instantiate(CityGenerator.Instance.rightStructure, structureParentGO.transform) as GameObject;
+        //leftGO.transform.localPosition = Vector3.zero;
+        //rightGO.transform.localPosition = Vector3.zero;
+        //SpriteRenderer[] leftColorizers = leftGO.GetComponentsInChildren<SpriteRenderer> ().Where (x => x.gameObject.tag == "StructureColorizers").ToArray ();
+        //SpriteRenderer[] rightColorizers = rightGO.GetComponentsInChildren<SpriteRenderer> ().Where (x => x.gameObject.tag == "StructureColorizers").ToArray ();
+        //SpriteRenderer[] allColorizers = leftColorizers.Union (rightColorizers).ToArray ();
+        //for (int i = 0; i < allColorizers.Length; i++) {
+        //	allColorizers [i].color = this.ownedByCity.kingdom.kingdomColor;
+        //}
 
-		this._centerPiece.SetActive(false);
+        GameObject structureGO = GameObject.Instantiate(
+            CityGenerator.Instance.structures[Random.Range(0, CityGenerator.Instance.structures.Length)], 
+            structureParentGO.transform) as GameObject;
+        structureGO.transform.localPosition = Vector3.zero;
+        SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
+            Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
+
+        for (int i = 0; i < allColorizers.Length; i++) {
+            allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
+        }
+        this._centerPiece.SetActive(false);
 	}
 
 	public void ResetTile(){
