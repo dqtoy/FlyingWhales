@@ -16,7 +16,7 @@ public class Kingdom{
 
 	//Resources
 	private int _goldCount;
-	private Dictionary<BASE_RESOURCE_TYPE, int> _availableResources;
+	private Dictionary<RESOURCE, int> _availableResources;
 
 
 	private List<City> _cities;
@@ -72,7 +72,7 @@ public class Kingdom{
 		}
 	}
 
-	public Dictionary<BASE_RESOURCE_TYPE, int> availableResources{
+	public Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
 	}
 
@@ -105,7 +105,7 @@ public class Kingdom{
 		this.adjacentCitiesFromOtherKingdoms = new List<City>();
 		this.adjacentKingdoms = new List<Kingdom>();
 		this._goldCount = 0;
-		this._availableResources = new Dictionary<BASE_RESOURCE_TYPE, int> ();
+		this._availableResources = new Dictionary<RESOURCE, int> ();
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this._isDead = false;
 		this._sourceKingdom = sourceKingdom;
@@ -920,7 +920,7 @@ public class Kingdom{
 	 * Add resource type to this kingdoms
 	 * available resource (DO NOT ADD GOLD TO THIS!).
 	 * */
-	internal void AddResourceToKingdom(BASE_RESOURCE_TYPE resource){
+	internal void AddResourceToKingdom(RESOURCE resource){
 		if (!this._availableResources.ContainsKey(resource)) {
 			this._availableResources.Add(resource, 0);
 		}
@@ -938,11 +938,12 @@ public class Kingdom{
 					if (this._goldCount < currentResource.resourceQuantity) {
 						return false;
 					}
-				} else {
-					if (!this.HasResource(currentResource.resourceType)) {
-						return false;
-					}
-				}
+				} 
+    //            else {
+				//	if (!this.HasResource(currentResource.resourceType)) {
+				//		return false;
+				//	}
+				//}
 			}
 		}else{
 			return false;
@@ -954,7 +955,7 @@ public class Kingdom{
 	 * Check if kingdom is producing a resource of type.
 	 * Excluding Gold.
 	 * */
-	internal bool HasResource(BASE_RESOURCE_TYPE resourceType){
+	internal bool HasResource(RESOURCE resourceType){
 		if (this._availableResources.ContainsKey(resourceType)) {
 			return true;
 		}
@@ -985,9 +986,16 @@ public class Kingdom{
 		}
 		return true;
 	}
+
+    internal List<RESOURCE> GetResourcesOtherKingdomDoesNotHave(Kingdom otherKingdom) {
+        List<RESOURCE> resources = new List<RESOURCE>();
+        for (int i = 0; i < this._availableResources.Keys.Count; i++) {
+            RESOURCE currKey = this._availableResources.Keys.ElementAt(i);
+            if (!otherKingdom.availableResources.ContainsKey(currKey)) {
+                resources.Add(currKey);
+            }
+        }
+        return resources;
+    }
 	#endregion
-	//Destructor for unsubscribing listeners
-//	~Kingdom(){
-//		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener (NewKingdomCreated);
-//	}
 }

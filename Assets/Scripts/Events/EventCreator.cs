@@ -74,4 +74,48 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+
+    internal Trade CreateTradeEvent(Kingdom sourceKingdom) {
+        Kingdom targetKingdom = null;
+        List<Kingdom> friendKingdoms = sourceKingdom.GetKingdomsByRelationship(RELATIONSHIP_STATUS.ALLY);
+        friendKingdoms.AddRange(sourceKingdom.GetKingdomsByRelationship(RELATIONSHIP_STATUS.FRIEND));
+
+        //Check if sourceKingdom is friends or allies with anybody
+        if (friendKingdoms.Count > 0) {
+            for (int i = 0; i < friendKingdoms.Count; i++) {
+                //if present, check if the sourceKingdom has resources that the friend does not
+                Kingdom otherKingdom = friendKingdoms[i];
+                List<RESOURCE> resourcesSourceKingdomCanOffer = sourceKingdom.GetResourcesOtherKingdomDoesNotHave(otherKingdom);
+                if (resourcesSourceKingdomCanOffer.Count > 0) {
+                    targetKingdom = otherKingdom;
+                    break;
+                }
+            }
+        }
+
+        //if no friends can be traded to, check warm, neutral or cold kingdoms
+        if (targetKingdom == null) {
+            List<Kingdom> otherKingdoms = sourceKingdom.GetKingdomsByRelationship(RELATIONSHIP_STATUS.WARM);
+            otherKingdoms.AddRange(sourceKingdom.GetKingdomsByRelationship(RELATIONSHIP_STATUS.NEUTRAL));
+            otherKingdoms.AddRange(sourceKingdom.GetKingdomsByRelationship(RELATIONSHIP_STATUS.COLD));
+            //check if sourceKingdom has resources that the other kingdom does not 
+            for (int i = 0; i < otherKingdoms.Count; i++) {
+                Kingdom otherKingdom = otherKingdoms[i];
+                List<RESOURCE> resourcesSourceKingdomCanOffer = sourceKingdom.GetResourcesOtherKingdomDoesNotHave(otherKingdom);
+                if (resourcesSourceKingdomCanOffer.Count > 0) {
+                    targetKingdom = otherKingdom;
+                    break;
+                }
+            }
+        }
+
+        if (targetKingdom != null) {
+            Citizen trader = sourceKingdom.capitalCity.CreateAgent(ROLE.TRADER, EVENT_TYPES.TRADE, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.TRADE]);
+            if (trader != null) {
+
+            }
+        }
+
+        return null;
+    }
 }

@@ -65,8 +65,9 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.STATE_VISIT, 10},
 		{EVENT_TYPES.ASSASSINATION, 0},
 		{EVENT_TYPES.RAID, 5},
-		{EVENT_TYPES.EXPANSION, 0}
-	};
+		{EVENT_TYPES.EXPANSION, 0},
+        {EVENT_TYPES.TRADE, 0}
+    };
 
 	void Awake(){
 		Instance = this;

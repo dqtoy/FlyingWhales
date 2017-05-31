@@ -505,9 +505,11 @@ public class City{
 			this.UpdateBorderTiles();
 		}
 
-		//Add special resources to kingdoms available resources, if the purchased tile has any
-		this._kingdom.AddResourceToKingdom(Utilities.GetBaseResourceType(tileToBuy.specialResource));
-
+        //Add special resources to kingdoms available resources, if the purchased tile has any
+        if (tileToBuy.specialResource != RESOURCE.NONE) {
+            this._kingdom.AddResourceToKingdom(tileToBuy.specialResource);
+        }
+		
 		//Update necessary data
 		this.UpdateDailyProduction();
 //		this.UpdateAdjacentCities();
