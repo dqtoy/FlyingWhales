@@ -708,4 +708,35 @@ public class Utilities : MonoBehaviour {
 	public static void SetSpriteSortingLayer(SpriteRenderer sprite, string layerName){
 		sprite.sortingLayerName = layerName;
 	}
+	public static bool CanReachInTime(EVENT_TYPES eventType, List<HexTile> path, int duration){
+		switch (eventType) {
+		case EVENT_TYPES.STATE_VISIT:
+			return true;
+		case EVENT_TYPES.RAID:
+			return true;
+		case EVENT_TYPES.JOIN_WAR_REQUEST:
+			return true;
+		case EVENT_TYPES.ASSASSINATION:
+			return true;
+		case EVENT_TYPES.EXPANSION:
+			return true;
+		case EVENT_TYPES.BORDER_CONFLICT:
+			if (path.Count > duration) {
+				return false;
+			}
+			return true;
+		case EVENT_TYPES.DIPLOMATIC_CRISIS:
+			if (path.Count > duration) {
+				return false;
+			}
+			return true;
+		case EVENT_TYPES.INVASION_PLAN:
+			if (path.Count > duration) {
+				return false;
+			}
+			return true;
+
+		}
+		return false;
+	}
 }

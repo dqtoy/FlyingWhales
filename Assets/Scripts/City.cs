@@ -35,7 +35,7 @@ public class City{
 	public int _goldProduction;
 
 	[Space(5)]
-	private int _hp;
+	public int hp;
 	public IsActive isActive;
 	public bool isStarving;
 	public bool isDead;
@@ -44,8 +44,6 @@ public class City{
 	internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
 	internal List<HexTile> borderTiles;
 //	protected List<ROLE> creatableRoles;
-
-	protected const int HP_INCREASE = 5;
 
 	#region getters/setters
 	public Kingdom kingdom{
@@ -62,9 +60,6 @@ public class City{
 	}
 	protected List<HexTile> structures{
 		get{ return this.ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();}
-	}
-	public int hp{
-		get{ return this._hp; }
 	}
 	#endregion
 
@@ -87,7 +82,7 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-		this._hp = 100;
+		this.hp = 100;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
@@ -426,25 +421,25 @@ public class City{
 		color.a = alpha;
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
-			currentTile.SetTileHighlightColor(color);
-			currentTile.ShowTileHighlight();
+			currentTile.kingdomColorSprite.color = color;
+			currentTile.kingdomColorSprite.gameObject.SetActive(true);
 		}
 
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
-			currentTile.SetTileHighlightColor(color);
-			currentTile.ShowTileHighlight();
+			currentTile.kingdomColorSprite.color = color;
+			currentTile.kingdomColorSprite.gameObject.SetActive(true);
 		}
 	}
 
 	internal void UnHighlightAllOwnedTiles(){
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
-			currentTile.HideTileHighlight();
+			currentTile.kingdomColorSprite.gameObject.SetActive(false);
 		}
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
-			currentTile.HideTileHighlight();
+			currentTile.kingdomColorSprite.gameObject.SetActive(false);
 		}
 	}
 	internal void ExpandToThisCity(Citizen citizenToOccupyCity){
@@ -487,13 +482,8 @@ public class City{
 		//Set color of tile
 		Color color = this.kingdom.kingdomColor;
 		color.a = 76.5f/255f;
-		tileToBuy.SetTileHighlightColor(color);
-		if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
-			tileToBuy.ShowTileHighlight();
-		} else {
-			tileToBuy.HideTileHighlight();
-		}
-
+		tileToBuy.kingdomColorSprite.color = color;
+		tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
 		tileToBuy.ShowOccupiedSprite();
 
 		//Remove tile from any border tile list
@@ -526,28 +516,12 @@ public class City{
 	}
 
 	/*
-	 * Function that listens to onWeekEnd. Performed every tick.
+	 * Function that listens to onWeekEnd.
 	 * */
 	protected void CityEverydayTurnActions(){
 		this.ProduceGold();
-		this.AttemptToIncreaseHP();
 	}
-
-	/*
-	 * Increase a city's HP every month.
-	 * */
-	protected void AttemptToIncreaseHP(){
-		if (GameManager.daysInMonth[GameManager.Instance.month] == GameManager.Instance.days) {
-			this.IncreaseHP(HP_INCREASE);
-		}
-	}
-
-	/*
-	 * Function to increase HP.
-	 * */
-	public void IncreaseHP(int amountToIncrease){
-		this._hp += amountToIncrease;
-	}
+		
 
 	#region Resource Production
 	protected void ProduceGold(){
@@ -988,7 +962,7 @@ public class City{
 		if (path == null) {
 			return null;
 		}
-		if(!CanReachInTime(eventType, path, duration)){
+		if(!Utilities.CanReachInTime(eventType, path, duration)){
 			return null;
 		}
 		GENDER gender = GENDER.MALE;
@@ -1008,36 +982,5 @@ public class City{
 		this.citizens.Remove (expandCitizen);
 
 		return expandCitizen;
-	}
-	internal bool CanReachInTime(EVENT_TYPES eventType, List<HexTile> path, int duration){
-		switch (eventType) {
-		case EVENT_TYPES.STATE_VISIT:
-			return true;
-		case EVENT_TYPES.RAID:
-			return true;
-		case EVENT_TYPES.JOIN_WAR_REQUEST:
-			return true;
-		case EVENT_TYPES.ASSASSINATION:
-			return true;
-		case EVENT_TYPES.EXPANSION:
-			return true;
-		case EVENT_TYPES.BORDER_CONFLICT:
-			if (path.Count > duration) {
-				return false;
-			}
-			return true;
-		case EVENT_TYPES.DIPLOMATIC_CRISIS:
-			if (path.Count > duration) {
-				return false;
-			}
-			return true;
-		case EVENT_TYPES.INVASION_PLAN:
-			if (path.Count > duration) {
-				return false;
-			}
-			return true;
-
-		}
-		return false;
 	}
 }
