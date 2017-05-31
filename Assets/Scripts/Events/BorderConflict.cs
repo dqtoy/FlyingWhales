@@ -19,7 +19,7 @@ public class BorderConflict : GameEvent {
 	public BorderConflict(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
 		this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
-		this.durationInDays = 60;
+		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.kingdom1 = kingdom1;
 		this.kingdom2 = kingdom2;
@@ -222,18 +222,14 @@ public class BorderConflict : GameEvent {
 		return false;
 	}
 	private void SendEnvoy(Kingdom sender, City targetCity){
-		List<HexTile> path = PathGenerator.Instance.GetPath (sender.capitalCity.hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT).ToList();
-		if (path == null) {
-			return;
-		}
 		if (targetCity == null) {
 			return;
 		}
-		Citizen chosenCitizen = sender.capitalCity.CreateAgent (ROLE.ENVOY);
+		Citizen chosenCitizen = sender.capitalCity.CreateAgent (ROLE.ENVOY, this.eventType, targetCity.hexTile, this.remainingDays);
 		if(chosenCitizen == null){
 			return;
 		}
-		chosenCitizen.assignedRole.Initialize (this, path);
+		chosenCitizen.assignedRole.Initialize (this);
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve");
 		newLog.AddToFillers (sender.king, sender.king.name);
 		newLog.AddToFillers (chosenCitizen, chosenCitizen.name);

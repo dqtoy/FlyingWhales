@@ -19,7 +19,7 @@ public class Raid : GameEvent {
 	internal Raider raider;
 	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy, City raidedCity) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.RAID;
-		this.durationInDays = 5;
+		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.sourceKingdom = startedBy.city.kingdom;
 		this.targetKingdom = raidedCity.kingdom;

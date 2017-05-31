@@ -42,7 +42,7 @@ public class InvasionPlan : GameEvent {
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " created an invasion plan against " + _targetKingdom.king.name + ".";
-		this.durationInDays = 60;
+		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this._sourceKingdom = _sourceKingdom;
 		this._targetKingdom = _targetKingdom;

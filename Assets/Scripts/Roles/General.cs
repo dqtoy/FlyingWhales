@@ -37,8 +37,4 @@ public class General : Role {
 		this.inAction = false;
 		this.isGoingHome = false;
 	}
-
-	internal override void Attack(){
-
-	}
 }

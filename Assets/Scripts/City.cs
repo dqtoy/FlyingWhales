@@ -45,8 +45,6 @@ public class City{
 	internal List<HexTile> borderTiles;
 //	protected List<ROLE> creatableRoles;
 
-	protected const int HP_INCREASE = 5;
-
 	#region getters/setters
 	public Kingdom kingdom{
 		get{ return this._kingdom; }
@@ -66,6 +64,7 @@ public class City{
 	public int hp{
 		get{ return this._hp; }
 	}
+
 	public int maxHP{
 		get{ return 300 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
 	}
@@ -90,7 +89,7 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-		this._hp = 100;
+		this.hp = 100;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
@@ -429,25 +428,25 @@ public class City{
 		color.a = alpha;
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
-			currentTile.SetTileHighlightColor(color);
-			currentTile.ShowTileHighlight();
+			currentTile.kingdomColorSprite.color = color;
+			currentTile.kingdomColorSprite.gameObject.SetActive(true);
 		}
 
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
-			currentTile.SetTileHighlightColor(color);
-			currentTile.ShowTileHighlight();
+			currentTile.kingdomColorSprite.color = color;
+			currentTile.kingdomColorSprite.gameObject.SetActive(true);
 		}
 	}
 
 	internal void UnHighlightAllOwnedTiles(){
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
-			currentTile.HideTileHighlight();
+			currentTile.kingdomColorSprite.gameObject.SetActive(false);
 		}
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
-			currentTile.HideTileHighlight();
+			currentTile.kingdomColorSprite.gameObject.SetActive(false);
 		}
 	}
 	internal void ExpandToThisCity(Citizen citizenToOccupyCity){
@@ -490,13 +489,8 @@ public class City{
 		//Set color of tile
 		Color color = this.kingdom.kingdomColor;
 		color.a = 76.5f/255f;
-		tileToBuy.SetTileHighlightColor(color);
-		if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
-			tileToBuy.ShowTileHighlight();
-		} else {
-			tileToBuy.HideTileHighlight();
-		}
-
+		tileToBuy.kingdomColorSprite.color = color;
+		tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
 		tileToBuy.ShowOccupiedSprite();
 
 		//Remove tile from any border tile list
@@ -529,28 +523,12 @@ public class City{
 	}
 
 	/*
-	 * Function that listens to onWeekEnd. Performed every tick.
+	 * Function that listens to onWeekEnd.
 	 * */
 	protected void CityEverydayTurnActions(){
 		this.ProduceGold();
-		this.AttemptToIncreaseHP();
 	}
-
-	/*
-	 * Increase a city's HP every month.
-	 * */
-	protected void AttemptToIncreaseHP(){
-		if (GameManager.daysInMonth[GameManager.Instance.month] == GameManager.Instance.days) {
-			this.IncreaseHP(HP_INCREASE);
-		}
-	}
-
-	/*
-	 * Function to increase HP.
-	 * */
-	public void IncreaseHP(int amountToIncrease){
-		this._hp += amountToIncrease;
-	}
+		
 
 	#region Resource Production
 	protected void ProduceGold(){
@@ -982,9 +960,16 @@ public class City{
 		}
 	}
 
-	internal Citizen CreateAgent(ROLE role){
+	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration){
 		int cost = 0;
 		if(!this.kingdom.CanCreateAgent(role, ref cost)){
+			return null;
+		}
+		List<HexTile> path = PathGenerator.Instance.GetPath (this.hexTile, targetLocation, PATHFINDING_MODE.COMBAT).ToList();
+		if (path == null) {
+			return null;
+		}
+		if(!Utilities.CanReachInTime(eventType, path, duration)){
 			return null;
 		}
 		GENDER gender = GENDER.MALE;
@@ -997,6 +982,9 @@ public class City{
 		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		expandCitizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
 		expandCitizen.AssignRole (role);
+		expandCitizen.assignedRole.targetLocation = targetLocation;
+		expandCitizen.assignedRole.path = path;
+		expandCitizen.assignedRole.daysBeforeMoving = path [0].movementDays;
 		this._kingdom.AdjustGold (-cost);
 		this.citizens.Remove (expandCitizen);
 
