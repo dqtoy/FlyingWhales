@@ -30,4 +30,18 @@ public class Envoy : Role {
 		this.avatar.transform.localPosition = Vector3.zero;
 		this.avatar.GetComponent<EnvoyAvatar>().Init(this);
 	}
+
+	internal override void Attack (){
+		if(this.avatar != null){
+			if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.LEFT){
+				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Left");
+			}else if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.RIGHT){
+				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Right");
+			}else if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.UP){
+				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Up");
+			}else{
+				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Down");
+			}
+		}
+	}
 }

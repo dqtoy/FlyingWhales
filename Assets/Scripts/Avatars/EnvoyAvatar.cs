@@ -15,7 +15,7 @@ public class EnvoyAvatar : MonoBehaviour {
 //	private bool isMoving = false;
 //	private Vector3 targetPosition = Vector3.zero;
 	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
-	internal bool isDirectionUp;
+	internal DIRECTION direction;
 //	public float speed;
 
 //	void Update(){
@@ -31,7 +31,7 @@ public class EnvoyAvatar : MonoBehaviour {
 //	}
 	internal void Init(Envoy envoy){
 		this.envoy = envoy;
-		this.isDirectionUp = false;
+		this.direction = DIRECTION.LEFT;
 		ResetValues ();
 		this.AddBehaviourTree ();
 	}
@@ -61,11 +61,19 @@ public class EnvoyAvatar : MonoBehaviour {
 			}
 		}
 		if(startTile.transform.position.y < targetTile.transform.position.y){
-			this.isDirectionUp = true;
+			this.direction = DIRECTION.UP;
 			this.animator.Play("Walk_Up");
+		}else if(startTile.transform.position.y > targetTile.transform.position.y){
+			this.direction = DIRECTION.DOWN;
+			this.animator.Play("Walk_Down");
 		}else{
-			this.isDirectionUp = false;
-			this.animator.Play("Walk");
+			if(startTile.transform.position.x < targetTile.transform.position.x){
+				this.direction = DIRECTION.RIGHT;
+				this.animator.Play("Walk_Right");
+			}else{
+				this.direction = DIRECTION.LEFT;
+				this.animator.Play("Walk_Left");
+			}
 		}
 //		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
 //		if(startTile.transform.position.x <= targetTile.transform.position.x){
@@ -82,7 +90,7 @@ public class EnvoyAvatar : MonoBehaviour {
 //		}else{
 //			this.generalAnimator.Play("Walk");
 //		}
-		this.GetComponent<SmoothMovement>().isDirectionUp = this.isDirectionUp;
+		this.GetComponent<SmoothMovement>().direction = this.direction;
 		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
 //		this.targetPosition = targetTile.transform.position;
 //		this.UpdateUI ();
@@ -210,11 +218,13 @@ public class EnvoyAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
+			UIManager.Instance.ShowSmallInfo (this.envoy.gameEvent.eventType.ToString ());
 			this.HighlightPath ();
 		}
 	}
 
 	void OnMouseExit(){
+		UIManager.Instance.HideSmallInfo ();
 		this.UnHighlightPath ();
 	}
 

@@ -19,5 +19,17 @@ public class Raider : Role {
 			this.avatar.GetComponent<RaiderAvatar>().Init(this);
 		}
 	}
-
+	internal override void Attack (){
+		if(this.avatar != null){
+			if(this.avatar.GetComponent<RaiderAvatar> ().direction == DIRECTION.LEFT){
+				this.avatar.GetComponent<RaiderAvatar> ().animator.Play ("Attack_Left");
+			}else if(this.avatar.GetComponent<RaiderAvatar> ().direction == DIRECTION.RIGHT){
+				this.avatar.GetComponent<RaiderAvatar> ().animator.Play ("Attack_Right");
+			}else if(this.avatar.GetComponent<RaiderAvatar> ().direction == DIRECTION.UP){
+				this.avatar.GetComponent<RaiderAvatar> ().animator.Play ("Attack_Up");
+			}else{
+				this.avatar.GetComponent<RaiderAvatar> ().animator.Play ("Attack_Down");
+			}
+		}
+	}
 }

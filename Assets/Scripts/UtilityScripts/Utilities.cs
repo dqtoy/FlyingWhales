@@ -735,7 +735,11 @@ public class Utilities : MonoBehaviour {
 				return false;
 			}
 			return true;
-
+		case EVENT_TYPES.SABOTAGE:
+			if (path.Count > duration) {
+				return false;
+			}
+			return true;
 		}
 		return false;
 	}
