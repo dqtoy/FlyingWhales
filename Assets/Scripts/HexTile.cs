@@ -402,6 +402,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		GameObject rightGO = GameObject.Instantiate(CityGenerator.Instance.rightStructure, structureParentGO.transform) as GameObject;
 		leftGO.transform.localPosition = Vector3.zero;
 		rightGO.transform.localPosition = Vector3.zero;
+		SpriteRenderer[] leftColorizers = leftGO.GetComponentsInChildren<SpriteRenderer> ().Where (x => x.gameObject.tag == "StructureColorizers").ToArray ();
+		SpriteRenderer[] rightColorizers = rightGO.GetComponentsInChildren<SpriteRenderer> ().Where (x => x.gameObject.tag == "StructureColorizers").ToArray ();
+		SpriteRenderer[] allColorizers = leftColorizers.Union (rightColorizers).ToArray ();
+		for (int i = 0; i < allColorizers.Length; i++) {
+			allColorizers [i].color = this.ownedByCity.kingdom.kingdomColor;
+		}
+
 		this._centerPiece.SetActive(false);
 	}
 
