@@ -402,8 +402,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		GameObject rightGO = GameObject.Instantiate(CityGenerator.Instance.rightStructure, structureParentGO.transform) as GameObject;
 		leftGO.transform.localPosition = Vector3.zero;
 		rightGO.transform.localPosition = Vector3.zero;
-		asdasdasdasd
-		this.centerPiece.SetActive(false);
+		this._centerPiece.SetActive(false);
 	}
 
 	public void ResetTile(){
