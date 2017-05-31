@@ -419,25 +419,25 @@ public class City{
 		color.a = alpha;
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
-			currentTile.kingdomColorSprite.color = color;
-			currentTile.kingdomColorSprite.gameObject.SetActive(true);
+			currentTile.SetTileHighlightColor(color);
+			currentTile.ShowTileHighlight();
 		}
 
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
-			currentTile.kingdomColorSprite.color = color;
-			currentTile.kingdomColorSprite.gameObject.SetActive(true);
+			currentTile.SetTileHighlightColor(color);
+			currentTile.ShowTileHighlight();
 		}
 	}
 
 	internal void UnHighlightAllOwnedTiles(){
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
-			currentTile.kingdomColorSprite.gameObject.SetActive(false);
+			currentTile.HideTileHighlight();
 		}
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
-			currentTile.kingdomColorSprite.gameObject.SetActive(false);
+			currentTile.HideTileHighlight();
 		}
 	}
 	internal void ExpandToThisCity(Citizen citizenToOccupyCity){
@@ -480,8 +480,13 @@ public class City{
 		//Set color of tile
 		Color color = this.kingdom.kingdomColor;
 		color.a = 76.5f/255f;
-		tileToBuy.kingdomColorSprite.color = color;
-		tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
+		tileToBuy.SetTileHighlightColor(color);
+		if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
+			tileToBuy.ShowTileHighlight();
+		} else {
+			tileToBuy.HideTileHighlight();
+		}
+
 		tileToBuy.ShowOccupiedSprite();
 
 		//Remove tile from any border tile list

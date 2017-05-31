@@ -33,22 +33,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
 
-	public GameObject centerPiece;
+	[SerializeField] private GameObject _centerPiece;
 
-	public GameObject leftBorder;
-	public GameObject rightBorder;
-	public GameObject topLeftBorder;
-	public GameObject topRightBorder;
-	public GameObject bottomLeftBorder;
-	public GameObject bottomRightBorder;
+	[SerializeField] private GameObject leftBorder;
+	[SerializeField] private GameObject rightBorder;
+	[SerializeField] private GameObject topLeftBorder;
+	[SerializeField] private GameObject topRightBorder;
+	[SerializeField] private GameObject bottomLeftBorder;
+	[SerializeField] private GameObject bottomRightBorder;
 
-	public GameObject resourceVisualGO;
-	public GameObject structureGO;
-	public Transform eventsParent;
-	public GameObject cityNameGO;
-	public TextMesh cityNameLbl;
-	public SpriteRenderer kingdomColorSprite;
-	public GameObject highlightGO;
+	[SerializeField] private GameObject resourceVisualGO;
+	[SerializeField] private GameObject structureGO;
+	[SerializeField] private Transform eventsParent;
+	[SerializeField] private GameObject cityNameGO;
+	[SerializeField] private TextMesh cityNameLbl;
+	[SerializeField] private SpriteRenderer _kingdomColorSprite;
+	[SerializeField] private GameObject _highlightGO;
 
 	//For Tile Edges
 	[SerializeField] private GameObject topLeftEdge;
@@ -57,6 +57,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	[SerializeField] private GameObject botRightEdge;
 	[SerializeField] private GameObject rightEdge;
 	[SerializeField] private GameObject topRightEdge;
+
+	[SerializeField] private GameObject structureParentGO;
 
 	public List<HexTile> connectedTiles = new List<HexTile>();
 
@@ -69,6 +71,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public List<HexTile> elligibleNeighbourTilesForPurchase { get { return PurchasableTiles.Where(o => !o.isOccupied && !o.isHabitable).ToList(); } } 
 
 	private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
+
+	#region getters/setters
+	public GameObject centerPiece{
+		get { return this._centerPiece; }
+	}
+	public SpriteRenderer kingdomColorSprite{
+		get { return this._kingdomColorSprite; }
+	}
+	public GameObject highlightGO{
+		get { return this._highlightGO; }
+	}
+	#endregion
 
 	#region For Testing
 	[SerializeField] private int range = 0;
@@ -349,6 +363,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;
 		this.centerPiece.SetActive(true);
 	}
+
+	public void SetTileHighlightColor(Color color){
+		this._kingdomColorSprite.color = color;
+	}
+
+	public void ShowTileHighlight(){
+		this._kingdomColorSprite.gameObject.SetActive(true);
+	}
+
+	public void HideTileHighlight(){
+		this.kingdomColorSprite.gameObject.SetActive(false);
+	}
 	#endregion
 
 	public void ShowCitySprite(){
@@ -357,7 +383,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.centerPiece.SetActive(false);
 		Color color = this.city.kingdom.kingdomColor;
 		color.a = 76.5f/255f;
-		this.kingdomColorSprite.color = color;
+		this._kingdomColorSprite.color = color;
 		this.GetComponent<SpriteRenderer>().color = Color.white;
 		this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles [Random.Range (0, Biomes.Instance.bareTiles.Length)];
 	}
@@ -370,8 +396,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public void ShowOccupiedSprite(){
 		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.bareTiles [Random.Range (0, Biomes.Instance.bareTiles.Length)];
-		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfTraderSprite;
-		this.structureGO.SetActive(true);
+//		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfTraderSprite;
+//		this.structureGO.SetActive(true);
+		GameObject leftGO = GameObject.Instantiate(CityGenerator.Instance.leftStructure, structureParentGO.transform) as GameObject;
+		GameObject rightGO = GameObject.Instantiate(CityGenerator.Instance.rightStructure, structureParentGO.transform) as GameObject;
+		leftGO.transform.localPosition = Vector3.zero;
+		rightGO.transform.localPosition = Vector3.zero;
+		asdasdasdasd
 		this.centerPiece.SetActive(false);
 	}
 
@@ -383,7 +414,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.isBorderOfCityID = 0;
 		this.isOccupiedByCityID = 0;
 		this.structureGO.SetActive(false);
-		this.kingdomColorSprite.color = Color.white;
+		this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
 	}
 
