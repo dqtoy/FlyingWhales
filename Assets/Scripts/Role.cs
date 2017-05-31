@@ -13,6 +13,7 @@ public class Role {
 	public int daysBeforeMoving;
 
 	public Role(Citizen citizen){
+		this.citizen = citizen;
 		this.location = citizen.city.hexTile;
 		this.targetLocation = null;
 		this.path = new List<HexTile> ();
