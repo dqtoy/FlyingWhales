@@ -35,7 +35,7 @@ public class City{
 	public int _goldProduction;
 
 	[Space(5)]
-	public int hp;
+	private int _hp;
 	public IsActive isActive;
 	public bool isStarving;
 	public bool isDead;
@@ -44,6 +44,8 @@ public class City{
 	internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
 	internal List<HexTile> borderTiles;
 //	protected List<ROLE> creatableRoles;
+
+	protected const int HP_INCREASE = 5;
 
 	#region getters/setters
 	public Kingdom kingdom{
@@ -60,6 +62,9 @@ public class City{
 	}
 	protected List<HexTile> structures{
 		get{ return this.ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();}
+	}
+	public int hp{
+		get{ return this._hp; }
 	}
 	#endregion
 
@@ -82,7 +87,7 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-		this.hp = 100;
+		this._hp = 100;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
@@ -421,25 +426,25 @@ public class City{
 		color.a = alpha;
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
-			currentTile.kingdomColorSprite.color = color;
-			currentTile.kingdomColorSprite.gameObject.SetActive(true);
+			currentTile.SetTileHighlightColor(color);
+			currentTile.ShowTileHighlight();
 		}
 
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
-			currentTile.kingdomColorSprite.color = color;
-			currentTile.kingdomColorSprite.gameObject.SetActive(true);
+			currentTile.SetTileHighlightColor(color);
+			currentTile.ShowTileHighlight();
 		}
 	}
 
 	internal void UnHighlightAllOwnedTiles(){
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
-			currentTile.kingdomColorSprite.gameObject.SetActive(false);
+			currentTile.HideTileHighlight();
 		}
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
-			currentTile.kingdomColorSprite.gameObject.SetActive(false);
+			currentTile.HideTileHighlight();
 		}
 	}
 	internal void ExpandToThisCity(Citizen citizenToOccupyCity){
@@ -482,8 +487,13 @@ public class City{
 		//Set color of tile
 		Color color = this.kingdom.kingdomColor;
 		color.a = 76.5f/255f;
-		tileToBuy.kingdomColorSprite.color = color;
-		tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
+		tileToBuy.SetTileHighlightColor(color);
+		if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
+			tileToBuy.ShowTileHighlight();
+		} else {
+			tileToBuy.HideTileHighlight();
+		}
+
 		tileToBuy.ShowOccupiedSprite();
 
 		//Remove tile from any border tile list
@@ -516,12 +526,28 @@ public class City{
 	}
 
 	/*
-	 * Function that listens to onWeekEnd.
+	 * Function that listens to onWeekEnd. Performed every tick.
 	 * */
 	protected void CityEverydayTurnActions(){
 		this.ProduceGold();
+		this.AttemptToIncreaseHP();
 	}
-		
+
+	/*
+	 * Increase a city's HP every month.
+	 * */
+	protected void AttemptToIncreaseHP(){
+		if (GameManager.daysInMonth[GameManager.Instance.month] == GameManager.Instance.days) {
+			this.IncreaseHP(HP_INCREASE);
+		}
+	}
+
+	/*
+	 * Function to increase HP.
+	 * */
+	public void IncreaseHP(int amountToIncrease){
+		this._hp += amountToIncrease;
+	}
 
 	#region Resource Production
 	protected void ProduceGold(){
