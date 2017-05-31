@@ -66,6 +66,9 @@ public class City{
 	public int hp{
 		get{ return this._hp; }
 	}
+	public int maxHP{
+		get{ return 300 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
+	}
 	#endregion
 
 	public City(HexTile hexTile, Kingdom kingdom){
