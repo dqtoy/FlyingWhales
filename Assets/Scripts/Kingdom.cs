@@ -42,6 +42,12 @@ public class Kingdom{
 	internal List<Kingdom> adjacentKingdoms;
 
 	private int expansionChance = 1;
+	protected const int INCREASE_CITY_HP_CHANCE = 5;
+	protected const int INCREASE_CITY_HP_AMOUNT = 20;
+	protected List<Resource> increaseCityHPCost = new List<Resource> () {
+		new Resource (BASE_RESOURCE_TYPE.GOLD, 300)
+	};
+
 	private bool _isDead;
 
 	#region getters/setters
@@ -148,7 +154,7 @@ public class Kingdom{
 
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(CreateNewRelationshipWithKingdom);
-		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
+		EventManager.Instance.onWeekEnd.AddListener(KingdomTickActions);
 		EventManager.Instance.onKingdomDiedEvent.AddListener(RemoveRelationshipWithKingdom);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
@@ -303,8 +309,18 @@ public class Kingdom{
 	}
 
 	/*
-	 * Kingdom will attempt to expand. This function is listening to the onWeekEnd Event.
-	 * chance for expansion can be edited by changing the value of const expansionChance.
+	 * This function is listening to the onWeekEnd Event. Put functions that you want to
+	 * happen every tick here.
+	 * */
+	protected void KingdomTickActions(){
+		this.AttemptToExpand();
+		this.AttemptToIncreaseCityHP();
+	}
+
+	/*
+	 * Kingdom will attempt to expand. 
+	 * Chance for expansion can be edited by changing the value of expansionChance.
+	 * NOTE: expansionChance increases on it's own.
 	 * */
 	protected void AttemptToExpand(){
 		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Where(x => x.isActive).Count() > 0) {
@@ -325,6 +341,35 @@ public class Kingdom{
 			}
 
 		}
+	}
+
+	/*
+	 * Attempt to increase 1 city's hp. 
+	 * Chance to occur is stored in INCREASE_CITY_HP_CHANCE.
+	 * */
+	protected void AttemptToIncreaseCityHP(){
+		int chance = Random.Range(0, 100);
+		if (chance < INCREASE_CITY_HP_CHANCE && this.HasEnoughResourcesForAction(this.increaseCityHPCost)) {
+			List<City> citiesElligibleForUpgrade = new List<City>();
+			for (int i = 0; i < this.cities.Count; i++) {
+				City currCity = this.cities[i];
+				if (currCity.hp < currCity.maxHP) {
+					citiesElligibleForUpgrade.Add (currCity);
+				}
+			}
+
+			if (citiesElligibleForUpgrade.Count > 0) {
+				citiesElligibleForUpgrade = citiesElligibleForUpgrade.OrderBy (x => x.hp).ToList ();
+				int lowestHP = citiesElligibleForUpgrade.First ().hp;
+				List<City> citiesWithLowestHP = citiesElligibleForUpgrade.Where (x => x.hp == lowestHP).ToList ();
+				City cityToUpgrade = citiesWithLowestHP[Random.Range(0, citiesWithLowestHP.Count)];
+				this.AdjustResources(this.increaseCityHPCost);
+				cityToUpgrade.IncreaseHP(INCREASE_CITY_HP_AMOUNT);
+			}
+
+		}
+
+
 	}
 
 	/*
