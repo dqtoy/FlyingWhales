@@ -88,4 +88,15 @@ public class EventCreator: MonoBehaviour {
 
         return null;
     }
+
+	internal Sabotage CreateSabotageEvent(Kingdom sourceKingdom, Kingdom targetKingdom, GameEvent eventToSabotage, int remainingDays){
+		Citizen envoy = sourceKingdom.capitalCity.CreateAgent (ROLE.ENVOY, EVENT_TYPES.SABOTAGE, targetKingdom.capitalCity.hexTile, remainingDays);
+		if(envoy != null){
+			Envoy saboteur = (Envoy)envoy.assignedRole;
+			Sabotage sabotage = new Sabotage(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				sourceKingdom.king, saboteur, eventToSabotage);
+			envoy.assignedRole.Initialize (sabotage);
+		}
+		return null;
+	}
 }

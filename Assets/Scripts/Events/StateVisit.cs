@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class StateVisit : GameEvent {
 	public Kingdom inviterKingdom;
@@ -51,7 +52,7 @@ public class StateVisit : GameEvent {
 	}
 	internal override void PerformAction(){
 		CheckVisitor ();
-//		TriggerSabotage ();
+		TriggerSabotage ();
 //		TriggerAssassinationEvent ();
 		if(this.visitorHasArrived){
 			if(!this.visitor.citizen.isDead){
@@ -201,11 +202,9 @@ public class StateVisit : GameEvent {
 			int chance = UnityEngine.Random.Range (0, 100);
 			if (chance < 1) {
 				Kingdom selectedKingdom = GetRandomKingdom();
-				if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
-					if (CheckForRelationship (selectedKingdom, false)) {
-						if(this.saboteurEnvoy == null){
-							SendEnvoySabotage (selectedKingdom);
-						}
+				if (CheckForRelationship (selectedKingdom, false)) {
+					if(this.saboteurEnvoy == null){
+						SendEnvoySabotage (selectedKingdom);
 					}
 				}
 			}
@@ -235,6 +234,23 @@ public class StateVisit : GameEvent {
 		return false;
 	}
 	private void SendEnvoySabotage(Kingdom sender){
+		if (this.inviterKingdom == null) {
+			return;
+		}
+		if (this.inviterKingdom.capitalCity == null) {
+			return;
+		}
+		int remainingDays = this.visitor.path.Sum(x => x.movementDays);
+			
+		Sabotage sabotage = EventCreator.Instance.CreateSabotageEvent(sender, this.inviterKingdom, this, remainingDays);
+		if(sabotage != null){
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_start");
+			newLog.AddToFillers (sender.king, sender.king.name);
+			newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
+			newLog.AddToFillers (sabotage.saboteur.citizen, sabotage.saboteur.citizen.name);
+		}
+
+
 //		Citizen chosenCitizen = GetEnvoy (sender);
 //		if(chosenCitizen == null){
 //			return;
@@ -295,6 +311,11 @@ public class StateVisit : GameEvent {
 			this.isSuccessful = false;
 			DoneEvent ();
 		}
+	}
+	internal void EventIsSabotaged(){
+		this.isDoneBySabotage = true;
+		this.isSuccessful = false;
+		DoneEvent ();
 	}
 //	internal override void DoneCitizenAction(Envoy envoy){
 //		if (!envoy.citizen.isDead) {

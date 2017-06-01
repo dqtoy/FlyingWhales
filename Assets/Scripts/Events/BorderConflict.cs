@@ -158,7 +158,7 @@ public class BorderConflict : GameEvent {
 					}
 				}
 				if(chance < value){
-					SendEnvoy (this.kingdom1, this.targetCity);
+					SendEnvoy (this.kingdom1);
 				}
 			}
 		}
@@ -178,7 +178,7 @@ public class BorderConflict : GameEvent {
 					}
 				}
 				if (chance < value) {
-					SendEnvoy (this.kingdom2, this.targetCity);
+					SendEnvoy (this.kingdom2);
 				}
 			}
 		}
@@ -221,11 +221,11 @@ public class BorderConflict : GameEvent {
 
 		return false;
 	}
-	private void SendEnvoy(Kingdom sender, City targetCity){
-		if (targetCity == null) {
+	private void SendEnvoy(Kingdom sender){
+		if (this.targetCity == null) {
 			return;
 		}
-		Citizen chosenCitizen = sender.capitalCity.CreateAgent (ROLE.ENVOY, this.eventType, targetCity.hexTile, this.remainingDays);
+		Citizen chosenCitizen = sender.capitalCity.CreateAgent (ROLE.ENVOY, this.eventType, this.targetCity.hexTile, this.remainingDays);
 		if(chosenCitizen == null){
 			return;
 		}
