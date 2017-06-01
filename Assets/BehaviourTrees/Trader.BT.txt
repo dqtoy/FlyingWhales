@@ -1,6 +1,6 @@
 tree("Root")
 	fallback
-		IsTraderAlive
+		IsTraderDead
 		IsTradeEventDone
 		tree("Move")
 
