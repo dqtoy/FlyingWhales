@@ -720,6 +720,8 @@ public class Utilities : MonoBehaviour {
 			return true;
 		case EVENT_TYPES.EXPANSION:
 			return true;
+        case EVENT_TYPES.TRADE:
+            return true;
 		case EVENT_TYPES.BORDER_CONFLICT:
 			if (path.Count > duration) {
 				return false;

@@ -30,14 +30,11 @@ public class Trader : Role {
      * Called when citizen dies. See in Citizen.Death() Function.
      * */
     internal override void OnDeath() {
-        if (this.avatar != null) {
-            this.avatar.GetComponent<TraderAvatar>().RemoveBehaviourTree();
-            GameObject.Destroy(this.avatar);
-        }
         if (this._tradeEvent != null) {
             if (this._tradeEvent.isActive) {
                 this._tradeEvent.CancelEvent();
             }
         }
+        this.DestroyGO();
     }
 }

@@ -509,14 +509,14 @@ public class City{
         if (tileToBuy.specialResource != RESOURCE.NONE) {
             this._kingdom.AddResourceToKingdom(tileToBuy.specialResource);
         }
-		
-		//Update necessary data
-		this.UpdateDailyProduction();
-//		this.UpdateAdjacentCities();
-//		this.kingdom.UpdateKingdomAdjacency();
 
-		//Show Highlight if kingdom or city is currently highlighted
-		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+        //Update necessary data
+        this.UpdateDailyProduction();
+        //this.UpdateAdjacentCities();
+        //this.kingdom.UpdateKingdomAdjacency();
+
+        //Show Highlight if kingdom or city is currently highlighted
+        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
 			this._kingdom.HighlightAllOwnedTilesInKingdom ();
 		} else {
 			if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
@@ -572,7 +572,6 @@ public class City{
 		this._maxGrowth = 100 + ((100 + (100 * this.structures.Count)) * this.structures.Count);
 		this._dailyGrowth = 10;
 		this._goldProduction = 20;
-		List<RESOURCE> specialResources = new List<RESOURCE>();
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
 			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
@@ -596,36 +595,16 @@ public class City{
 			} else if (currentStructure.biomeType == BIOMES.BARE) {
 				this._dailyGrowth += 1;
 			}
-			RESOURCE currentSpecialResource = RESOURCE.NONE;
-			if (currentStructure.specialResource != RESOURCE.NONE) {
-				currentSpecialResource = currentStructure.specialResource;
-			}
-			if (!specialResources.Contains(currentSpecialResource)) {
-				specialResources.Add(currentSpecialResource);
-			}
 		}
-
-		for (int i = 0; i < specialResources.Count; i++) {
-			RESOURCE currentResource = specialResources[i];
-//			if (currentResource == RESOURCE.GRANITE || currentResource == RESOURCE.SLATE || currentResource == RESOURCE.MARBLE) {
-//				this.stoneCount += 3;
-//			} else if (currentResource == RESOURCE.CEDAR || currentResource == RESOURCE.OAK || currentResource == RESOURCE.EBONY) {
-//				this.lumberCount += 3;
-//			} else 
-			if (currentResource == RESOURCE.CORN || currentResource == RESOURCE.DEER) {
-				this._dailyGrowth += 5;
-			} else if (currentResource == RESOURCE.WHEAT || currentResource == RESOURCE.RICE ||
-				currentResource == RESOURCE.PIG || currentResource == RESOURCE.BEHEMOTH ||
-				currentResource == RESOURCE.COBALT) {
-				this._dailyGrowth += 10;
-			} else if (currentResource == RESOURCE.MANA_STONE) {
-				this._dailyGrowth += 15;
-			} else if (currentResource == RESOURCE.MITHRIL) {
-				this._dailyGrowth += 25;
-			}
-		}
-
 	}
+
+    /*
+     * Add to this city's daily growth based on the resources it's kingdom has.
+     * Including resources from trade. Increase is computed by kingdom.
+     * */
+    internal void UpdateDailyGrowthBasedOnSpecialResources(int dailyGrowthGained) {
+        this._dailyGrowth += dailyGrowthGained;
+    }
 	#endregion
 
 	internal void CheckCityDeath(){

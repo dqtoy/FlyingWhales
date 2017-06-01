@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Panda;
+using System.Collections.Generic;
 
 public class TraderAvatar : MonoBehaviour {
     private Trader _trader;
@@ -10,6 +11,7 @@ public class TraderAvatar : MonoBehaviour {
     private DIRECTION direction;
     private bool collidedWithHostile = false;
     private General otherGeneral;
+    private List<HexTile> pathToUnhighlight = new List<HexTile>();
 
     internal void Init(Trader trader) {
         this._trader = trader;
@@ -40,6 +42,23 @@ public class TraderAvatar : MonoBehaviour {
 
 
     }
+
+    void OnMouseOver() {
+        if (!UIManager.Instance.IsMouseOnUI()) {
+            UIManager.Instance.ShowSmallInfo(this._trader.tradeEvent.eventType.ToString());
+            this.HighlightPath();
+        }
+    }
+
+    void OnMouseExit() {
+        UIManager.Instance.HideSmallInfo();
+        this.UnHighlightPath();
+    }
+
+    void OnDestroy() {
+        BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
+        this.UnHighlightPath();
+    }
     #endregion
 
     #region Behaviour Tree Functions
@@ -54,8 +73,8 @@ public class TraderAvatar : MonoBehaviour {
 
     #region Behaviour Tree Tasks
     [Task]
-    private bool IsTraderAlive() {
-        return !this._trader.citizen.isDead;
+    private bool IsTraderDead() {
+        return this._trader.citizen.isDead;
     }
 
     [Task]
@@ -66,6 +85,7 @@ public class TraderAvatar : MonoBehaviour {
     [Task]
     private bool HasTraderReachedTarget() {
         if (this._trader.location == this._trader.targetLocation) {
+            this._trader.tradeEvent.CreateTradeRouteBetweenKingdoms();
             return true;
         }
         return false;
@@ -75,7 +95,7 @@ public class TraderAvatar : MonoBehaviour {
     private bool HasTraderCollidedWithHostileGeneral() {
         if (this.collidedWithHostile) {
             this.collidedWithHostile = false;
-            this._trader.citizen.Death(DEATH_REASONS.BATTLE);
+            this._trader.tradeEvent.KillTrader();
             return true;
         }
         return false;
@@ -83,8 +103,65 @@ public class TraderAvatar : MonoBehaviour {
 
     [Task]
     private void MoveToNextTile() {
-        
+        Move();
+        Task.current.Succeed();
     }
     #endregion
+
+    private void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
+        if (startTile.transform.position.x <= targetTile.transform.position.x) {
+            if (this.animator.gameObject.transform.localScale.x > 0) {
+                this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
+            }
+        } else {
+            if (this.animator.gameObject.transform.localScale.x < 0) {
+                this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
+            }
+        }
+        if (startTile.transform.position.y < targetTile.transform.position.y) {
+            this.direction = DIRECTION.UP;
+            this.animator.Play("Walk_Up");
+        } else if (startTile.transform.position.y > targetTile.transform.position.y) {
+            this.direction = DIRECTION.DOWN;
+            this.animator.Play("Walk_Down");
+        } else {
+            if (startTile.transform.position.x < targetTile.transform.position.x) {
+                this.direction = DIRECTION.RIGHT;
+                this.animator.Play("Walk_Right");
+            } else {
+                this.direction = DIRECTION.LEFT;
+                this.animator.Play("Walk_Left");
+            }
+        }
+        this.GetComponent<SmoothMovement>().direction = this.direction;
+        this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
+    }
+
+    private void Move() {
+        if (this._trader.targetLocation != null) {
+            if (this._trader.path != null) {
+                if (this._trader.path.Count > 0) {
+                    this.MakeCitizenMove(this._trader.location, this._trader.path[0]);
+                    this._trader.location = this._trader.path[0];
+                    this._trader.citizen.currentLocation = this._trader.path[0];
+                    this._trader.path.RemoveAt(0);
+                }
+            }
+        }
+    }
+
+    private void HighlightPath() {
+        this.pathToUnhighlight.Clear();
+        for (int i = 0; i < this._trader.path.Count; i++) {
+            this._trader.path[i].highlightGO.SetActive(true);
+            this.pathToUnhighlight.Add(this._trader.path[i]);
+        }
+    }
+
+    private void UnHighlightPath() {
+        for (int i = 0; i < this.pathToUnhighlight.Count; i++) {
+            this.pathToUnhighlight[i].highlightGO.SetActive(false);
+        }
+    }
 
 }
