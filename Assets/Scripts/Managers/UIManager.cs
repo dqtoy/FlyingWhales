@@ -671,7 +671,7 @@ public class UIManager : MonoBehaviour {
 			nextIndex = i + 1;
 		}
 
-		if (currentlyShowingCitizen.relationshipKings.Count - 1 > nextIndex) {
+		if (currentlyShowingCitizen.relationshipKings.Count - 1 >= nextIndex) {
 			for (int i = nextIndex; i < currentlyShowingCitizen.relationshipKings.Count; i++) {
 				GameObject kingGO = InstantiateUIObject(characterPortraitPrefab, this.transform);
 				kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.relationshipKings [i].king, true);

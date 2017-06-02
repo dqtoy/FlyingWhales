@@ -154,15 +154,6 @@ public class CameraMove : MonoBehaviour {
 
 	}
 
-	public void ShowWholeMap(){
-		CenterCameraOn (GridMap.Instance.map [25, 25].gameObject);
-		Camera.main.orthographicSize = maxFov;
-		eventIconCamera.orthographicSize = maxFov;
-		resourceIconCamera.orthographicSize = maxFov;
-		generalCamera.orthographicSize = maxFov;
-
-	}
-
 	public void CenterCameraOn(GameObject GO){
 		target = GO.transform;
 	}

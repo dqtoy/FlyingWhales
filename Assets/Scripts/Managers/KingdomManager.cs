@@ -43,7 +43,7 @@ public class KingdomManager : MonoBehaviour {
 		}
 //		Debug.Log ("Valid capital tiles: " + elligibleTilesForHumans.Count);
 
-		int numOfKingdoms = 5;
+		int numOfKingdoms = 2;
 		if (elligibleTilesForHumans.Count < numOfKingdoms) {
 			numOfKingdoms = elligibleTilesForHumans.Count;
 		}
@@ -149,10 +149,13 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.AddInternationalWar(kingdom2);
 		kingdom2.AddInternationalWar(kingdom1);
 
-//		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
-//		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
+        kingdom1.RemoveAllTradeRoutesWithOtherKingdom(kingdom2);
+        kingdom2.RemoveAllTradeRoutesWithOtherKingdom(kingdom1);
 
-		Log declareWarLog = war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "declare_war");
+        //		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
+        //		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
+
+        Log declareWarLog = war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "declare_war");
 		declareWarLog.AddToFillers (kingdom1.king, kingdom1.king.name);
 		declareWarLog.AddToFillers (kingdom2, kingdom2.name);
 

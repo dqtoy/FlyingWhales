@@ -28,7 +28,7 @@ public class Assassination : GameEvent {
 	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, Citizen spy, GameEvent gameEventTrigger) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ASSASSINATION;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
-		this.durationInDays = 15;
+		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.assassinKingdom = startedBy.city.kingdom;
 		this.targetKingdom = targetCitizen.city.kingdom;

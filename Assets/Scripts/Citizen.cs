@@ -387,7 +387,7 @@ public class Citizen {
 		if (chanceToMarry < this.citizenChances.marriageChance) {
 //			Debug.Log (this.name + " has started a marriage invitation event!");
 
-			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this);
+//			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this);
 		}
 	}
 
@@ -978,49 +978,49 @@ public class Citizen {
 				prestige += 150;
 			}
 		}
-		if (this.role == ROLE.GENERAL) {
-			prestige += 200;
-		} else if (this.role == ROLE.SPY || this.role == ROLE.ENVOY || this.role == ROLE.GUARDIAN) {
-			prestige += 150;
-			if (this.role == ROLE.SPY) {
-				for (int i = 0; i < ((Spy)this.assignedRole).successfulMissions; i++) {
-					prestige += 20;
-				}
-				for (int i = 0; i < ((Spy)this.assignedRole).unsuccessfulMissions; i++) {
-					prestige -= 5;
-				}
-			} else if (this.role == ROLE.ENVOY) {
-				for (int i = 0; i < ((Envoy)this.assignedRole).successfulMissions; i++) {
-					prestige += 20;
-				}
-				for (int i = 0; i < ((Envoy)this.assignedRole).unsuccessfulMissions; i++) {
-					prestige -= 5;
-				}
-			} else if (this.role == ROLE.GUARDIAN) {
-				for (int i = 0; i < ((Guardian)this.assignedRole).successfulMissions; i++) {
-					prestige += 20;
-				}
-				for (int i = 0; i < ((Guardian)this.assignedRole).unsuccessfulMissions; i++) {
-					prestige -= 5;
-				}
-			}
-		}  else {
-			if (this.role != ROLE.UNTRAINED) {
-				prestige += 100;
-			} else {
-				prestige += 50;
-			}
-		} 
-
-		if (this.isPretender) {
-			prestige += 50;
-		}
-
-		if (this.city.kingdom.successionLine.Count > 1) {
-			if (this.city.kingdom.successionLine [1].id == this.id) {
-				prestige += 50;
-			}
-		}
+//		if (this.role == ROLE.GENERAL) {
+//			prestige += 200;
+//		} else if (this.role == ROLE.SPY || this.role == ROLE.ENVOY || this.role == ROLE.GUARDIAN) {
+//			prestige += 150;
+//			if (this.role == ROLE.SPY) {
+//				for (int i = 0; i < ((Spy)this.assignedRole).successfulMissions; i++) {
+//					prestige += 20;
+//				}
+//				for (int i = 0; i < ((Spy)this.assignedRole).unsuccessfulMissions; i++) {
+//					prestige -= 5;
+//				}
+//			} else if (this.role == ROLE.ENVOY) {
+//				for (int i = 0; i < ((Envoy)this.assignedRole).successfulMissions; i++) {
+//					prestige += 20;
+//				}
+//				for (int i = 0; i < ((Envoy)this.assignedRole).unsuccessfulMissions; i++) {
+//					prestige -= 5;
+//				}
+//			} else if (this.role == ROLE.GUARDIAN) {
+//				for (int i = 0; i < ((Guardian)this.assignedRole).successfulMissions; i++) {
+//					prestige += 20;
+//				}
+//				for (int i = 0; i < ((Guardian)this.assignedRole).unsuccessfulMissions; i++) {
+//					prestige -= 5;
+//				}
+//			}
+//		}  else {
+//			if (this.role != ROLE.UNTRAINED) {
+//				prestige += 100;
+//			} else {
+//				prestige += 50;
+//			}
+//		} 
+//
+//		if (this.isPretender) {
+//			prestige += 50;
+//		}
+//
+//		if (this.city.kingdom.successionLine.Count > 1) {
+//			if (this.city.kingdom.successionLine [1].id == this.id) {
+//				prestige += 50;
+//			}
+//		}
 
 		//For Supporting Citizens
 		List<Citizen> supportingCitizens = this.GetCitizensSupportingThisCitizen();

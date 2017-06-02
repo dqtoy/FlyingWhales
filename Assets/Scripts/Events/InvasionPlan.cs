@@ -42,7 +42,7 @@ public class InvasionPlan : GameEvent {
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.description = startedBy.name + " created an invasion plan against " + _targetKingdom.king.name + ".";
-		this.durationInDays = 60;
+		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this._sourceKingdom = _sourceKingdom;
 		this._targetKingdom = _targetKingdom;
@@ -160,23 +160,17 @@ public class InvasionPlan : GameEvent {
 						//at war with target kingdom
 						continue;
 					}
-					List<Citizen> envoys = this.startedByKingdom.GetAllCitizensOfType(ROLE.ENVOY).Where(x => !((Envoy)x.assignedRole).inAction).ToList();
-					if (envoys.Count > 0) {
-						int chanceToSendJoinWarRequest = 2;
-						if (friends [i].lordRelationship == RELATIONSHIP_STATUS.ALLY) {
-							chanceToSendJoinWarRequest = 3;
-						}
-						int chance = Random.Range (0, 100);
-						if (chance < chanceToSendJoinWarRequest) {
-							Envoy envoyToSend = (Envoy)envoys [Random.Range (0, envoys.Count)].assignedRole;
-							Citizen citizenToPersuade = friends[i].king;
-							envoyToSend.inAction = true;
-							JoinWar newJoinWarRequest = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.startedBy, 
-								citizenToPersuade, envoyToSend, this.targetKingdom, this);
-							this._joinWarEvents.Add(newJoinWarRequest);
+					int chanceToSendJoinWarRequest = 2;
+					if (friends [i].lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+						chanceToSendJoinWarRequest = 3;
+					}
+					int chance = Random.Range (0, 100);
+					if (chance < chanceToSendJoinWarRequest) {
+						JoinWar joinWar = EventCreator.Instance.CreateJoinWarEvent (this.startedByKingdom, friends [i].king.city.kingdom, this);
+						if(joinWar != null){
+							this._joinWarEvents.Add(joinWar);
 						}
 					}
-
 				}
 			}
 		}else{

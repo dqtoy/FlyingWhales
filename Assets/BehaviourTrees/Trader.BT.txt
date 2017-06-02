@@ -1,0 +1,11 @@
+tree("Root")
+	fallback
+		IsTraderDead
+		IsTradeEventDone
+		tree("Move")
+
+tree("Move")
+	fallback
+		HasTraderReachedTarget
+		HasTraderCollidedWithHostileGeneral
+		MoveToNextTile

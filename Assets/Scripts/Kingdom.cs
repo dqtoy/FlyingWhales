@@ -14,11 +14,16 @@ public class Kingdom{
 	private KingdomTypeData _kingdomTypeData;
 	private Kingdom _sourceKingdom;
 
-	//Resources
-	private int _goldCount;
-	private Dictionary<BASE_RESOURCE_TYPE, int> _availableResources;
+    //Resources
+    [SerializeField] private int _goldCount;
+    [SerializeField] private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
+
+    //Trading
+    [SerializeField] private List<TradeRoute> _tradeRoutes;
+    [SerializeField] private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
 	private List<City> _cities;
+	internal City capitalCity;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
 	internal List<Citizen> pretenders;
@@ -40,6 +45,13 @@ public class Kingdom{
 	internal List<Kingdom> adjacentKingdoms;
 
 	private int expansionChance = 1;
+	protected const int INCREASE_CITY_HP_CHANCE = 5;
+	protected const int INCREASE_CITY_HP_AMOUNT = 20;
+    protected const int GOLD_GAINED_FROM_TRADE = 10;
+	protected List<Resource> increaseCityHPCost = new List<Resource> () {
+		new Resource (BASE_RESOURCE_TYPE.GOLD, 300)
+	};
+
 	private bool _isDead;
 
 	#region getters/setters
@@ -53,25 +65,23 @@ public class Kingdom{
 	}
 
 	public KingdomTypeData kingdomTypeData {
-		get { 
-			return this._kingdomTypeData; 
-		}
+		get { return this._kingdomTypeData; }
 	}
-
 	public Kingdom sourceKingdom {
-		get { 
-			return this._sourceKingdom;
-		}
+		get { return this._sourceKingdom; }
 	}
-
-	public Dictionary<BASE_RESOURCE_TYPE, int> availableResources{
+	public Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
 	}
-
+    public List<TradeRoute> tradeRoutes {
+        get { return this._tradeRoutes;  }
+    }
+    public Dictionary<Kingdom, EMBARGO_REASON> embargoList {
+        get { return this._embargoList;  }
+    }
 	public bool isDead{
 		get{ return this._isDead; }
 	}
-
 	public List<City> cities{
 		get{ return this._cities; }
 	}
@@ -97,9 +107,11 @@ public class Kingdom{
 		this.adjacentCitiesFromOtherKingdoms = new List<City>();
 		this.adjacentKingdoms = new List<Kingdom>();
 		this._goldCount = 0;
-		this._availableResources = new Dictionary<BASE_RESOURCE_TYPE, int> ();
+		this._availableResources = new Dictionary<RESOURCE, int> ();
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this._isDead = false;
+        this._tradeRoutes = new List<TradeRoute>();
+        this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
 		this._sourceKingdom = sourceKingdom;
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -122,7 +134,9 @@ public class Kingdom{
 		for (int i = 0; i < cities.Count; i++) {
 			this.CreateNewCityOnTileForKingdom(cities[i]);
 		}
-
+		if(this._cities.Count > 0 && this._cities[0] != null){
+			this.capitalCity = this._cities [0];
+		}
 		// For the kingdom's first city, setup its distance towards other habitable tiles.
 		HexTile habitableTile;
 		if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {			
@@ -144,8 +158,8 @@ public class Kingdom{
 
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(CreateNewRelationshipWithKingdom);
-		EventManager.Instance.onWeekEnd.AddListener(AttemptToExpand);
-		EventManager.Instance.onKingdomDiedEvent.AddListener(RemoveRelationshipWithKingdom);
+		EventManager.Instance.onWeekEnd.AddListener(KingdomTickActions);
+		EventManager.Instance.onKingdomDiedEvent.AddListener(OtherKingdomDiedActions);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 
@@ -166,8 +180,6 @@ public class Kingdom{
 			// Update expansion chance
 			this.expansionChance = this.kingdomTypeData.expansionRate;
 		}
-
-
 	}
 
 	internal int[] GetHoroscope(KINGDOM_TYPE prevKingdomType = KINGDOM_TYPE.NONE){
@@ -246,11 +258,11 @@ public class Kingdom{
 	internal void DestroyKingdom(){
 		this._isDead = true;
 		this.RemoveRelationshipsWithOtherKingdoms();
-		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
-		EventManager.Instance.onWeekEnd.RemoveListener(AttemptToExpand);
-		EventManager.Instance.onKingdomDiedEvent.RemoveListener(RemoveRelationshipWithKingdom);
+        EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
+        EventManager.Instance.onWeekEnd.RemoveListener(KingdomTickActions);
+        EventManager.Instance.onKingdomDiedEvent.RemoveListener(OtherKingdomDiedActions);
 
-		EventManager.Instance.onKingdomDiedEvent.Invoke(this);
+        EventManager.Instance.onKingdomDiedEvent.Invoke(this);
 	}
 		
 	protected void CreateInitialRelationships() {
@@ -298,9 +310,28 @@ public class Kingdom{
 		}
 	}
 
+    protected void OtherKingdomDiedActions(Kingdom kingdomThatDied) {
+        if (kingdomThatDied.id != this.id) {
+            RemoveRelationshipWithKingdom(kingdomThatDied);
+            RemoveAllTradeRoutesWithOtherKingdom(kingdomThatDied);
+        }
+    }
+
 	/*
-	 * Kingdom will attempt to expand. This function is listening to the onWeekEnd Event.
-	 * chance for expansion can be edited by changing the value of const expansionChance.
+	 * This function is listening to the onWeekEnd Event. Put functions that you want to
+	 * happen every tick here.
+	 * */
+	protected void KingdomTickActions(){
+        this.ProduceGoldFromTrade();
+        this.AttemptToExpand();
+		this.AttemptToIncreaseCityHP();
+        this.AttemptToTrade();
+    }
+
+	/*
+	 * Kingdom will attempt to expand. 
+	 * Chance for expansion can be edited by changing the value of expansionChance.
+	 * NOTE: expansionChance increases on it's own.
 	 * */
 	protected void AttemptToExpand(){
 		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Where(x => x.isActive).Count() > 0) {
@@ -324,16 +355,131 @@ public class Kingdom{
 	}
 
 	/*
+	 * Attempt to increase 1 city's hp. 
+	 * Chance to occur is stored in INCREASE_CITY_HP_CHANCE.
+	 * */
+	protected void AttemptToIncreaseCityHP(){
+		int chance = Random.Range(0, 100);
+		if (chance < INCREASE_CITY_HP_CHANCE && this.HasEnoughResourcesForAction(this.increaseCityHPCost)) {
+			List<City> citiesElligibleForUpgrade = new List<City>();
+			for (int i = 0; i < this.cities.Count; i++) {
+				City currCity = this.cities[i];
+				if (currCity.hp < currCity.maxHP) {
+					citiesElligibleForUpgrade.Add (currCity);
+				}
+			}
+
+			if (citiesElligibleForUpgrade.Count > 0) {
+				citiesElligibleForUpgrade = citiesElligibleForUpgrade.OrderBy (x => x.hp).ToList ();
+				int lowestHP = citiesElligibleForUpgrade.First ().hp;
+				List<City> citiesWithLowestHP = citiesElligibleForUpgrade.Where (x => x.hp == lowestHP).ToList ();
+				City cityToUpgrade = citiesWithLowestHP[Random.Range(0, citiesWithLowestHP.Count)];
+				this.AdjustResources(this.increaseCityHPCost);
+				cityToUpgrade.IncreaseHP(INCREASE_CITY_HP_AMOUNT);
+			}
+		}
+	}
+
+    #region Trading
+    /*
+     * Make kingdom attempt to trade to another kingdom.
+     * */
+    protected void AttemptToTrade() {
+        Kingdom targetKingdom = null;
+        List<Kingdom> friendKingdoms = this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.ALLY);
+        friendKingdoms.AddRange(this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.FRIEND));
+        List<HexTile> path = null;
+            
+        //Check if sourceKingdom is friends or allies with anybody
+        if (friendKingdoms.Count > 0) {
+            for (int i = 0; i < friendKingdoms.Count; i++) {
+                //if present, check if the sourceKingdom has resources that the friend does not
+                Kingdom otherKingdom = friendKingdoms[i];
+                RelationshipKingdom relWithOtherKingdom = this.GetRelationshipWithOtherKingdom(otherKingdom);
+                Trade activeTradeEvent = EventManager.Instance.GetActiveTradeEventBetweenKingdoms(this, otherKingdom);
+                path = PathGenerator.Instance.GetPath(this.capitalCity.hexTile, otherKingdom.capitalCity.hexTile, PATHFINDING_MODE.NORMAL).ToList();
+                List<RESOURCE> resourcesSourceKingdomCanOffer = this.GetResourcesOtherKingdomDoesNotHave(otherKingdom);
+                /*
+                 * There should be no active trade event between the two kingdoms (started by this kingdom), the 2 kingdoms should not be at war, 
+                 * there should be a path from this kingdom's capital city to the otherKingdom's capital city, the otherKingdom should not be part of this kingdom's embargo list
+                 * and this kingdom should have a resource that the otherKingdom does not.
+                 * */
+                if (activeTradeEvent == null && !relWithOtherKingdom.isAtWar && path != null && !this._embargoList.ContainsKey(otherKingdom) && resourcesSourceKingdomCanOffer.Count > 0) {
+                    targetKingdom = otherKingdom;
+                    break;
+                }
+            }
+        }
+
+        //if no friends can be traded to, check warm, neutral or cold kingdoms
+        if (targetKingdom == null) {
+            List<Kingdom> otherKingdoms = this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.WARM);
+            otherKingdoms.AddRange(this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.NEUTRAL));
+            otherKingdoms.AddRange(this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.COLD));
+            //check if sourceKingdom has resources that the other kingdom does not 
+            for (int i = 0; i < otherKingdoms.Count; i++) {
+                Kingdom otherKingdom = otherKingdoms[i];
+                RelationshipKingdom relWithOtherKingdom = this.GetRelationshipWithOtherKingdom(otherKingdom);
+                Trade activeTradeEvent = EventManager.Instance.GetActiveTradeEventBetweenKingdoms(this, otherKingdom);
+                path = PathGenerator.Instance.GetPath(this.capitalCity.hexTile, otherKingdom.capitalCity.hexTile, PATHFINDING_MODE.NORMAL).ToList();
+                List<RESOURCE> resourcesSourceKingdomCanOffer = this.GetResourcesOtherKingdomDoesNotHave(otherKingdom);
+                /*
+                 * There should be no active trade event between the two kingdoms (started by this kingdom), the 2 kingdoms should not be at war, 
+                 * there should be a path from this kingdom's capital city to the otherKingdom's capital city, the otherKingdom should not be part of this kingdom's embargo list
+                 * and this kingdom should have a resource that the otherKingdom does not.
+                 * */
+                if (activeTradeEvent == null && !relWithOtherKingdom.isAtWar && path != null && !this._embargoList.ContainsKey(otherKingdom) && resourcesSourceKingdomCanOffer.Count > 0) {
+                    targetKingdom = otherKingdom;
+                    break;
+                }
+            }
+        }
+
+        if (targetKingdom != null) {
+            EventCreator.Instance.CreateTradeEvent(this, targetKingdom);
+        }
+    }
+
+    internal void AddTradeRoute(TradeRoute tradeRoute) {
+        this._tradeRoutes.Add(tradeRoute);
+    }
+
+    /*
+     * Remove references of the trade routes in this kingdom where
+     * otherKingdom is involved in.
+     * */
+    internal void RemoveAllTradeRoutesWithOtherKingdom(Kingdom otherKingdom) {
+        List<TradeRoute> tradeRoutesWithOtherKingdom = this._tradeRoutes.Where(x => x.targetKingdom.id == otherKingdom.id || x.sourceKingdom.id == otherKingdom.id).ToList();
+        for (int i = 0; i < tradeRoutesWithOtherKingdom.Count; i++) {
+            TradeRoute tradeRouteToRemove = tradeRoutesWithOtherKingdom[i];
+            this.RemoveTradeRoute(tradeRouteToRemove);
+        }
+        this.UpdateAllCitiesDailyGrowth();
+    }
+
+    internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
+        if (!this._embargoList.ContainsKey(kingdomToAdd)) {
+            this._embargoList.Add(kingdomToAdd, embargoReason);
+        }
+        
+    }
+
+    internal void RemoveKingdomFromEmbargoList(Kingdom kingdomToRemove) {
+        this._embargoList.Remove(kingdomToRemove);
+    }
+    #endregion
+
+    /*
 	 * Create a new city obj on the specified hextile.
 	 * Then add it to this kingdoms cities.
 	 * */
-	internal void CreateNewCityOnTileForKingdom(HexTile tile){
+    internal void CreateNewCityOnTileForKingdom(HexTile tile){
 		City createdCity = CityGenerator.Instance.CreateNewCity (tile, this);
 		this.AddCityToKingdom(createdCity);
 	}
 
 	internal void AddCityToKingdom(City city){
-		this.cities.Add (city);
+		this._cities.Add (city);
 		this.UpdateKingdomTypeData();
 	}
 
@@ -389,6 +535,7 @@ public class Kingdom{
 				return;
 			}
 		}
+		this.capitalCity = newKing.city;
 		newKing.city.hasKing = true;
 
 		if(newKing.city.governor.id == newKing.id){
@@ -873,12 +1020,71 @@ public class Kingdom{
 	 * Add resource type to this kingdoms
 	 * available resource (DO NOT ADD GOLD TO THIS!).
 	 * */
-	internal void AddResourceToKingdom(BASE_RESOURCE_TYPE resource){
+	internal void AddResourceToKingdom(RESOURCE resource){
 		if (!this._availableResources.ContainsKey(resource)) {
 			this._availableResources.Add(resource, 0);
-		}
+            this.RemoveObsoleteTradeRoutes(resource);
+            this.UpdateAllCitiesDailyGrowth();
+        }
 		this._availableResources[resource] += 1;
 	}
+
+    internal void UpdateAllCitiesDailyGrowth() {
+        //get all rasources from tiles and trade routes, only include trade routes where this kingom is the target
+        List<RESOURCE> allAvailableResources = this._availableResources.Keys.Union(this._tradeRoutes.Where(x => x.targetKingdom.id == this.id).Select(x => x.resourceBeingTraded)).ToList();
+        int dailyGrowthGained = this.ComputeDailyGrowthGainedFromResources(allAvailableResources);
+        for (int i = 0; i < this.cities.Count; i++) {
+            City currCity = this.cities[i];
+            currCity.UpdateDailyGrowthBasedOnSpecialResources(dailyGrowthGained);
+        }
+    }
+
+    /*
+     * Function to remove trade routes that are no longer used because this
+     * kingdom already has a resource of that type
+     * */
+    private void RemoveObsoleteTradeRoutes(RESOURCE obsoleteResource) {
+        List<TradeRoute> tradeRoutesToRemove = new List<TradeRoute>();
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.resourceBeingTraded == obsoleteResource) {
+                tradeRoutesToRemove.Add(currTradeRoute);
+            }
+        }
+        for (int i = 0; i < tradeRoutesToRemove.Count; i++) {
+            TradeRoute tradeRouteToRemove = tradeRoutesToRemove[i];
+            tradeRouteToRemove.sourceKingdom.RemoveTradeRoute(tradeRouteToRemove);
+            tradeRouteToRemove.targetKingdom.RemoveTradeRoute(tradeRouteToRemove);
+        }
+    }
+
+    internal void RemoveTradeRoute(TradeRoute tradeRoute) {
+        this._tradeRoutes.Remove(tradeRoute);
+    }
+
+    private int ComputeDailyGrowthGainedFromResources(List<RESOURCE> allAvailableResources) {
+        int dailyGrowthGained = 0;
+        for (int i = 0; i < allAvailableResources.Count; i++) {
+            RESOURCE currentResource = allAvailableResources[i];
+            //			if (currentResource == RESOURCE.GRANITE || currentResource == RESOURCE.SLATE || currentResource == RESOURCE.MARBLE) {
+            //				this.stoneCount += 3;
+            //			} else if (currentResource == RESOURCE.CEDAR || currentResource == RESOURCE.OAK || currentResource == RESOURCE.EBONY) {
+            //				this.lumberCount += 3;
+            //			} else 
+            if (currentResource == RESOURCE.CORN || currentResource == RESOURCE.DEER) {
+                dailyGrowthGained += 5;
+            } else if (currentResource == RESOURCE.WHEAT || currentResource == RESOURCE.RICE ||
+                currentResource == RESOURCE.PIG || currentResource == RESOURCE.BEHEMOTH ||
+                currentResource == RESOURCE.COBALT) {
+                dailyGrowthGained += 10;
+            } else if (currentResource == RESOURCE.MANA_STONE) {
+                dailyGrowthGained += 15;
+            } else if (currentResource == RESOURCE.MITHRIL) {
+                dailyGrowthGained += 25;
+            }
+        }
+        return dailyGrowthGained;
+    }
 
 	/*
 	 * Check if the kingdom has enough resources for a given cost.
@@ -891,11 +1097,12 @@ public class Kingdom{
 					if (this._goldCount < currentResource.resourceQuantity) {
 						return false;
 					}
-				} else {
-					if (!this.HasResource(currentResource.resourceType)) {
-						return false;
-					}
-				}
+				} 
+    //            else {
+				//	if (!this.HasResource(currentResource.resourceType)) {
+				//		return false;
+				//	}
+				//}
 			}
 		}else{
 			return false;
@@ -907,7 +1114,7 @@ public class Kingdom{
 	 * Check if kingdom is producing a resource of type.
 	 * Excluding Gold.
 	 * */
-	internal bool HasResource(BASE_RESOURCE_TYPE resourceType){
+	internal bool HasResource(RESOURCE resourceType){
 		if (this._availableResources.ContainsKey(resourceType)) {
 			return true;
 		}
@@ -917,8 +1124,8 @@ public class Kingdom{
 	/*
 	 * Check if this kingdom has enough gold to create role.
 	 * */
-	internal bool CanCreateAgent(ROLE roleToCheck){
-		int costToCreate = 0;
+	internal bool CanCreateAgent(ROLE roleToCheck, ref int costToCreate){
+//		costToCreate = 0;
 		if (roleToCheck == ROLE.GENERAL) {
 			costToCreate = 300;
 		} else if (roleToCheck == ROLE.TRADER) {
@@ -938,9 +1145,44 @@ public class Kingdom{
 		}
 		return true;
 	}
+
+    /*
+     * Gets a list of resources that otherKingdom does not have access to (By self or by trade).
+     * Will compare to this kingdoms available resources (excl. resources from trade)
+     * */
+    internal List<RESOURCE> GetResourcesOtherKingdomDoesNotHave(Kingdom otherKingdom) {
+        List<RESOURCE> resourcesOtherKingdomDoesNotHave = new List<RESOURCE>();
+        List<RESOURCE> allAvailableResourcesOfOtherKingdom = otherKingdom.availableResources.Keys.Union(otherKingdom.tradeRoutes.Select(x => x.resourceBeingTraded)).ToList();
+        for (int i = 0; i < this._availableResources.Keys.Count; i++) {
+            RESOURCE currKey = this._availableResources.Keys.ElementAt(i);
+            if (!allAvailableResourcesOfOtherKingdom.Contains(currKey)) {
+                //otherKingdom does not have that resource
+                resourcesOtherKingdomDoesNotHave.Add(currKey);
+            }
+        }
+        return resourcesOtherKingdomDoesNotHave;
+    }
+
+    protected void ProduceGoldFromTrade() {
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.sourceKingdom.id == this.id) {
+                this.AdjustGold(GOLD_GAINED_FROM_TRADE);
+            }
+        }
+    }
+
+    internal void UpdateAvailableResources() {
+        this._availableResources.Clear();
+        for (int i = 0; i < this.cities.Count; i++) {
+            City currCity = this.cities[i];
+            for (int j = 0; j < currCity.structures.Count; j++) {
+                HexTile currHexTile = currCity.structures[j];
+                if (currHexTile.specialResource != RESOURCE.NONE) {
+                    this.AddResourceToKingdom(currHexTile.specialResource);
+                }
+            }
+        }
+    }
 	#endregion
-	//Destructor for unsubscribing listeners
-	~Kingdom(){
-		EventManager.Instance.onCreateNewKingdomEvent.RemoveListener (NewKingdomCreated);
-	}
 }

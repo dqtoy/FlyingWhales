@@ -23,6 +23,8 @@ public class CityGenerator : MonoBehaviour {
 	public Sprite elfMinistry;
 	public Sprite elfKeep;
 
+    public GameObject[] structures;
+
 	public TextAsset cityBehaviourTree;
 
 	void Awake(){
@@ -107,10 +109,6 @@ public class CityGenerator : MonoBehaviour {
 	public HexTile GetNearestHabitableTile(City city) {
 
 		for (int i = 0; i < city.habitableTileDistance.Count; i++) {
-			List<HexTile> path = PathGenerator.Instance.GetPath (city.hexTile, city.habitableTileDistance [i].hexTile, PATHFINDING_MODE.COMBAT).ToList();
-			if(path == null){
-				continue;
-			}
 			if (!city.habitableTileDistance[i].hexTile.isOccupied && !city.habitableTileDistance[i].hexTile.isBorder) {
 				List<HexTile> checkForOtherBorderTilesInRange;
 				// Check if the tile is within required distance of the expanding kingdom's current borders

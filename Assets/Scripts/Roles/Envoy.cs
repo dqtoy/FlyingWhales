@@ -1,71 +1,47 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Envoy : Role {
+	public GameEvent gameEvent;
 
-	public int successfulMissions;
-	public int unsuccessfulMissions;
-	public GameEvent currentEvent;
-	public int eventDuration;
-	public bool inAction;
-
-	protected delegate void DoAction();
-	protected DoAction onDoAction;
-
-	private RelationshipKingdom warExhaustiontarget;
 
 	public Envoy(Citizen citizen): base(citizen){
-		this.successfulMissions = 0;
-		this.unsuccessfulMissions = 0;
-		this.currentEvent = null;
-		this.eventDuration = 0;
-		this.inAction = false;
+
 	}
 
-	public void WeeklyAction(){
-		this.eventDuration -= 1;
-		if(this.eventDuration <= 0){
-			EventManager.Instance.onWeekEnd.RemoveListener (WeeklyAction);
-			this.eventDuration = 0;
-			this.inAction = false;
-			if (currentEvent != null) {
-				currentEvent.DoneCitizenAction (this);
-				currentEvent = null;
+	internal override void Initialize(GameEvent gameEvent){
+		this.gameEvent = gameEvent;
+		if(this.gameEvent is BorderConflict){
+			BorderConflict bc = (BorderConflict)this.gameEvent;
+			bc.activeEnvoyResolve = this;
+		}else if(this.gameEvent is DiplomaticCrisis){
+			DiplomaticCrisis crisis = (DiplomaticCrisis)this.gameEvent;
+			crisis.activeEnvoyResolve = this;
+		}else if(this.gameEvent is JoinWar){
+			JoinWar joinWar = (JoinWar)this.gameEvent;
+			joinWar.envoyToSend = this;
+		}else if(this.gameEvent is StateVisit){
+			StateVisit stateVisit = (StateVisit)this.gameEvent;
+			stateVisit.visitor = this;
+		}
+		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Envoy"), this.citizen.city.hexTile.transform) as GameObject;
+		this.avatar.transform.localPosition = Vector3.zero;
+		this.avatar.GetComponent<EnvoyAvatar>().Init(this);
+	}
+
+	internal override void Attack (){
+		if(this.avatar != null){
+			if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.LEFT){
+				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Left");
+			}else if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.RIGHT){
+				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Right");
+			}else if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.UP){
+				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Up");
+			}else{
+				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Down");
 			}
-		}
-	}
-
-	internal override void OnDeath(){
-		EventManager.Instance.onWeekEnd.RemoveListener (WeeklyAction);
-		if(currentEvent != null){
-			currentEvent.DoneCitizenAction (this);
-		}
-	}
-
-	internal void StartIncreaseWarExhaustionTask(RelationshipKingdom targetKingdom){
-		this.eventDuration = 2;
-		this.warExhaustiontarget = targetKingdom;
-		this.inAction = true;
-		this.onDoAction += IncreaseWarExhaustion;
-		EventManager.Instance.onWeekEnd.AddListener(WaitForAction);
-	}
-
-	protected void IncreaseWarExhaustion(){
-//		if (this.citizen.skillTraits.Contains (SKILL_TRAIT.PERSUASIVE)) {
-//			this.warExhaustiontarget.kingdomWar.exhaustion += 20;
-//		} else {
-			this.warExhaustiontarget.kingdomWar.exhaustion += 15;
-//		}
-		this.inAction = false;
-		this.onDoAction -= IncreaseWarExhaustion;
-		EventManager.Instance.onWeekEnd.RemoveListener(WaitForAction);
-	}
-
-	protected void WaitForAction(){
-		if (this.eventDuration > 0) {
-			this.eventDuration -= 1;
-		} else {
-			this.onDoAction();
 		}
 	}
 }

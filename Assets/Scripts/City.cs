@@ -35,7 +35,7 @@ public class City{
 	public int _goldProduction;
 
 	[Space(5)]
-	public int hp;
+	private int _hp;
 	public IsActive isActive;
 	public bool isStarving;
 	public bool isDead;
@@ -44,6 +44,8 @@ public class City{
 	internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
 	internal List<HexTile> borderTiles;
 //	protected List<ROLE> creatableRoles;
+
+	protected const int HP_INCREASE = 5;
 
 	#region getters/setters
 	public Kingdom kingdom{
@@ -58,8 +60,14 @@ public class City{
 	public int maxGrowth{
 		get{ return this._maxGrowth; }
 	}
-	protected List<HexTile> structures{
+	public List<HexTile> structures{
 		get{ return this.ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();}
+	}
+	public int hp{
+		get{ return this._hp; }
+	}
+	public int maxHP{
+		get{ return 300 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
 	}
 	#endregion
 
@@ -82,7 +90,7 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-		this.hp = 100;
+		this._hp = 100;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
@@ -497,16 +505,18 @@ public class City{
 			this.UpdateBorderTiles();
 		}
 
-		//Add special resources to kingdoms available resources, if the purchased tile has any
-		this._kingdom.AddResourceToKingdom(Utilities.GetBaseResourceType(tileToBuy.specialResource));
+        //Add special resources to kingdoms available resources, if the purchased tile has any
+        if (tileToBuy.specialResource != RESOURCE.NONE) {
+            this._kingdom.AddResourceToKingdom(tileToBuy.specialResource);
+        }
 
-		//Update necessary data
-		this.UpdateDailyProduction();
-//		this.UpdateAdjacentCities();
-//		this.kingdom.UpdateKingdomAdjacency();
+        //Update necessary data
+        this.UpdateDailyProduction();
+        //this.UpdateAdjacentCities();
+        //this.kingdom.UpdateKingdomAdjacency();
 
-		//Show Highlight if kingdom or city is currently highlighted
-		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+        //Show Highlight if kingdom or city is currently highlighted
+        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
 			this._kingdom.HighlightAllOwnedTilesInKingdom ();
 		} else {
 			if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
@@ -516,12 +526,31 @@ public class City{
 	}
 
 	/*
-	 * Function that listens to onWeekEnd.
+	 * Function that listens to onWeekEnd. Performed every tick.
 	 * */
 	protected void CityEverydayTurnActions(){
 		this.ProduceGold();
+		this.AttemptToIncreaseHP();
 	}
-		
+
+	/*
+	 * Increase a city's HP every month.
+	 * */
+	protected void AttemptToIncreaseHP(){
+		if (GameManager.daysInMonth[GameManager.Instance.month] == GameManager.Instance.days) {
+			this.IncreaseHP(HP_INCREASE);
+		}
+	}
+
+	/*
+	 * Function to increase HP.
+	 * */
+	public void IncreaseHP(int amountToIncrease){
+		this._hp += amountToIncrease;
+		if (this._hp > this.maxHP) {
+			this._hp = this.maxHP;
+		}
+	}
 
 	#region Resource Production
 	protected void ProduceGold(){
@@ -543,7 +572,6 @@ public class City{
 		this._maxGrowth = 100 + ((100 + (100 * this.structures.Count)) * this.structures.Count);
 		this._dailyGrowth = 10;
 		this._goldProduction = 20;
-		List<RESOURCE> specialResources = new List<RESOURCE>();
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
 			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
@@ -567,36 +595,16 @@ public class City{
 			} else if (currentStructure.biomeType == BIOMES.BARE) {
 				this._dailyGrowth += 1;
 			}
-			RESOURCE currentSpecialResource = RESOURCE.NONE;
-			if (currentStructure.specialResource != RESOURCE.NONE) {
-				currentSpecialResource = currentStructure.specialResource;
-			}
-			if (!specialResources.Contains(currentSpecialResource)) {
-				specialResources.Add(currentSpecialResource);
-			}
 		}
-
-		for (int i = 0; i < specialResources.Count; i++) {
-			RESOURCE currentResource = specialResources[i];
-//			if (currentResource == RESOURCE.GRANITE || currentResource == RESOURCE.SLATE || currentResource == RESOURCE.MARBLE) {
-//				this.stoneCount += 3;
-//			} else if (currentResource == RESOURCE.CEDAR || currentResource == RESOURCE.OAK || currentResource == RESOURCE.EBONY) {
-//				this.lumberCount += 3;
-//			} else 
-			if (currentResource == RESOURCE.CORN || currentResource == RESOURCE.DEER) {
-				this._dailyGrowth += 5;
-			} else if (currentResource == RESOURCE.WHEAT || currentResource == RESOURCE.RICE ||
-				currentResource == RESOURCE.PIG || currentResource == RESOURCE.BEHEMOTH ||
-				currentResource == RESOURCE.COBALT) {
-				this._dailyGrowth += 10;
-			} else if (currentResource == RESOURCE.MANA_STONE) {
-				this._dailyGrowth += 15;
-			} else if (currentResource == RESOURCE.MITHRIL) {
-				this._dailyGrowth += 25;
-			}
-		}
-
 	}
+
+    /*
+     * Add to this city's daily growth based on the resources it's kingdom has.
+     * Including resources from trade. Increase is computed by kingdom.
+     * */
+    internal void UpdateDailyGrowthBasedOnSpecialResources(int dailyGrowthGained) {
+        this._dailyGrowth += dailyGrowthGained;
+    }
 	#endregion
 
 	internal void CheckCityDeath(){
@@ -871,6 +879,7 @@ public class City{
 		}
 		// This will update kingdom type whenever the kingdom loses a city.
 		this._kingdom.UpdateKingdomTypeData();
+        this._kingdom.UpdateAvailableResources();
 		this._kingdom.CheckIfKingdomIsDead();
 
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
@@ -953,7 +962,23 @@ public class City{
 		}
 	}
 
-	internal Citizen CreateAgent(ROLE role){
+	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration){
+		int cost = 0;
+		if(!this.kingdom.CanCreateAgent(role, ref cost)){
+			return null;
+		}
+        List<HexTile> path = null;
+        if (role == ROLE.TRADER) {
+            path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL).ToList();
+        } else {
+            path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.COMBAT).ToList();
+        }
+        if (path == null) {
+			return null;
+		}
+		if(!Utilities.CanReachInTime(eventType, path, duration)){
+			return null;
+		}
 		GENDER gender = GENDER.MALE;
 		int randomGender = UnityEngine.Random.Range (0, 100);
 		if(randomGender < 20){
@@ -964,6 +989,10 @@ public class City{
 		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		expandCitizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
 		expandCitizen.AssignRole (role);
+		expandCitizen.assignedRole.targetLocation = targetLocation;
+		expandCitizen.assignedRole.path = path;
+		expandCitizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+		this._kingdom.AdjustGold (-cost);
 		this.citizens.Remove (expandCitizen);
 
 		return expandCitizen;

@@ -44,7 +44,7 @@ public class PathGenerator : MonoBehaviour {
 
 				if ((j + 1) == habitableTilesOrderedByDistance.Count) {
 					//if j has reached habitableTilesOrderedByDistance's upper bound, connect to nearest city
-					if (AreTheseTilesConnected(currentHexTile, habitableTilesOrderedByDistance[0], PATHFINDING_MODE.ROAD_CREATION)) {
+					if (AreTheseTilesConnected(currentHexTile, habitableTilesOrderedByDistance[0], PATHFINDING_MODE.NORMAL)) {
 						createdRoads++;
 						if (!currentHexTile.connectedTiles.Contains(habitableTilesOrderedByDistance[0])) {
 							ConnectCities (currentHexTile, habitableTilesOrderedByDistance[0]);
@@ -56,7 +56,7 @@ public class PathGenerator : MonoBehaviour {
 					break;
 				} else {
 					if (tileToConnectTo.connectedTiles.Count < 3 && !currentHexTile.connectedTiles.Contains(tileToConnectTo)) {
-						if (AreTheseTilesConnected (currentHexTile, tileToConnectTo, PATHFINDING_MODE.ROAD_CREATION)) {
+						if (AreTheseTilesConnected (currentHexTile, tileToConnectTo, PATHFINDING_MODE.NORMAL)) {
 							createdRoads++;
 							ConnectCities (currentHexTile, tileToConnectTo);
 							if (!pendingTiles.Contains (tileToConnectTo)) {
@@ -79,9 +79,9 @@ public class PathGenerator : MonoBehaviour {
 
 						List<HexTile> habitableTilesOrdered = GetAllHabitableTilesByDistance(missedOutTile);
 
-						if (possibleConnectionTile == null || !AreTheseTilesConnected (missedOutTile, possibleConnectionTile, PATHFINDING_MODE.ROAD_CREATION)) {
+						if (possibleConnectionTile == null || !AreTheseTilesConnected (missedOutTile, possibleConnectionTile, PATHFINDING_MODE.NORMAL)) {
 							for (int j = 0; j < habitableTilesOrdered.Count; j++) {
-								if (AreTheseTilesConnected (missedOutTile, habitableTilesOrdered [j], PATHFINDING_MODE.ROAD_CREATION)) {
+								if (AreTheseTilesConnected (missedOutTile, habitableTilesOrdered [j], PATHFINDING_MODE.NORMAL)) {
 									possibleConnectionTile = habitableTilesOrdered [j];
 									break;
 								}
@@ -89,7 +89,7 @@ public class PathGenerator : MonoBehaviour {
 						}
 
 						if (possibleConnectionTile != null && !missedOutTile.connectedTiles.Contains(possibleConnectionTile)) {
-							if (AreTheseTilesConnected (missedOutTile, possibleConnectionTile, PATHFINDING_MODE.ROAD_CREATION)) {
+							if (AreTheseTilesConnected (missedOutTile, possibleConnectionTile, PATHFINDING_MODE.NORMAL)) {
 								ConnectCities (missedOutTile, possibleConnectionTile);
 								if (!pendingTiles.Contains (missedOutTile)) {
 									pendingTiles.Add (missedOutTile);
@@ -120,16 +120,16 @@ public class PathGenerator : MonoBehaviour {
 	public void DeterminePath(HexTile start, HexTile destination){
 		List<HexTile> roadListByDistance = SortAllRoadsByDistance (start, destination); //Sort all road tiles in regards to how far they are from the start
 		for (int i = 0; i < roadListByDistance.Count; i++) {
-			if (AreTheseTilesConnected (roadListByDistance [i], destination, PATHFINDING_MODE.NORMAL)) {
+			if (AreTheseTilesConnected (roadListByDistance [i], destination, PATHFINDING_MODE.USE_ROADS)) {
 //				Debug.Log ("Connect to roadTile: " + roadListByDistance [i].name + " instead");
 				if (roadListByDistance[i].isHabitable && roadListByDistance[i].connectedTiles.Contains(start)) {
 					return; //use the already created road between the 2 cities.
 				}
-				SetTilesAsRoads(GetPath(start, roadListByDistance[i], PATHFINDING_MODE.ROAD_CREATION));
+				SetTilesAsRoads(GetPath(start, roadListByDistance[i], PATHFINDING_MODE.NORMAL));
 				return;
 			}
 		}
-		SetTilesAsRoads(GetPath(start, destination, PATHFINDING_MODE.ROAD_CREATION));
+		SetTilesAsRoads(GetPath(start, destination, PATHFINDING_MODE.NORMAL));
 	}
 
 	/*
@@ -146,7 +146,7 @@ public class PathGenerator : MonoBehaviour {
 			habitableTiles = CityGenerator.Instance.woodHabitableTiles;
 		}
 
-		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
+		if (pathfindingMode != PATHFINDING_MODE.NORMAL) {
 //			startingTile.isRoad = true;
 //			destinationTile.isRoad = true;
 			for (int i = 0; i < habitableTiles.Count; i++) {
@@ -154,7 +154,7 @@ public class PathGenerator : MonoBehaviour {
 			}
 		}
 		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathfindingMode);
-		if (pathfindingMode != PATHFINDING_MODE.ROAD_CREATION) {
+		if (pathfindingMode != PATHFINDING_MODE.NORMAL) {
 //			startingTile.isRoad = false;
 //			destinationTile.isRoad = false;
 			for (int i = 0; i < habitableTiles.Count; i++) {
@@ -178,7 +178,7 @@ public class PathGenerator : MonoBehaviour {
 	public int GetDistanceBetweenTwoTiles(HexTile startingTile, HexTile destinationTile){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
-		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.ROAD_CREATION);
+		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL);
 
 		if (path != null) {			
 			return (path.Count() - 1);

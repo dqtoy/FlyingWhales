@@ -11,6 +11,7 @@ public class Expansion : GameEvent {
 	internal Expander expander;
 	public Expansion(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile targetHextile) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.EXPANSION;
+		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.description = startedBy.city.kingdom.king.name + " is looking looking to expand his kingdom and has funded and expedition led by " + startedBy.name;
 
 		this.originCity = startedBy.city;
@@ -49,14 +50,14 @@ public class Expansion : GameEvent {
 		this.startedBy.Death (DEATH_REASONS.DISAPPEARED_EXPANSION);
 		this.DoneEvent();
 	}
-	internal void DeathByOtherReasons(){
+	internal override void DeathByOtherReasons(){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_other");
 		newLog.AddToFillers (this.startedBy, this.startedBy.name);
 		newLog.AddToFillers (null, this.startedBy.deathReasonText);
 
 		this.DoneEvent ();
 	}
-	internal void DeathByGeneral(General general){
+	internal override void DeathByGeneral(General general){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_general");
 		newLog.AddToFillers (general.citizen, general.citizen.name);
 

@@ -17,7 +17,7 @@ public class RaiderAvatar : MonoBehaviour {
 	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
 
 //	public float speed;
-
+	internal DIRECTION direction;
 //	void Update(){
 //		if(this.isMoving){
 //			if(this.targetPosition != null){
@@ -31,6 +31,7 @@ public class RaiderAvatar : MonoBehaviour {
 //	}
 	internal void Init(Raider raider){
 		this.raider = raider;
+		this.direction = DIRECTION.LEFT;
 		ResetValues ();
 		this.AddBehaviourTree ();
 	}
@@ -60,9 +61,19 @@ public class RaiderAvatar : MonoBehaviour {
 			}
 		}
 		if(startTile.transform.position.y < targetTile.transform.position.y){
+			this.direction = DIRECTION.UP;
 			this.animator.Play("Walk_Up");
+		}else if(startTile.transform.position.y > targetTile.transform.position.y){
+			this.direction = DIRECTION.DOWN;
+			this.animator.Play("Walk_Down");
 		}else{
-			this.animator.Play("Walk");
+			if(startTile.transform.position.x < targetTile.transform.position.x){
+				this.direction = DIRECTION.RIGHT;
+				this.animator.Play("Walk_Right");
+			}else{
+				this.direction = DIRECTION.LEFT;
+				this.animator.Play("Walk_Left");
+			}
 		}
 //		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
 //		if(startTile.transform.position.x <= targetTile.transform.position.x){
@@ -79,6 +90,7 @@ public class RaiderAvatar : MonoBehaviour {
 //		}else{
 //			this.generalAnimator.Play("Walk");
 //		}
+		this.GetComponent<SmoothMovement>().direction = this.direction;
 		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
 //		this.targetPosition = targetTile.transform.position;
 //		this.UpdateUI ();
@@ -116,6 +128,7 @@ public class RaiderAvatar : MonoBehaviour {
 		if(this.raider.location == this.raider.targetLocation){
 			if(!this.hasArrived){
 				this.hasArrived = true;
+				this.raider.Attack ();
 				this.raider.raid.StartRaiding();
 			}
 			Task.current.Succeed ();
@@ -166,14 +179,19 @@ public class RaiderAvatar : MonoBehaviour {
 		if(this.raider.targetLocation != null){
 			if(this.raider.path != null){
 				if(this.raider.path.Count > 0){
-					if(this.raider.daysBeforeMoving <= 0){
-						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
-						this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
-						this.raider.location = this.raider.path[0];
-						this.raider.citizen.currentLocation = this.raider.path [0];
-						this.raider.path.RemoveAt (0);
-					}
-					this.raider.daysBeforeMoving -= 1;
+					this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
+//					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
+					this.raider.location = this.raider.path[0];
+					this.raider.citizen.currentLocation = this.raider.path [0];
+					this.raider.path.RemoveAt (0);
+//					if(this.raider.daysBeforeMoving <= 0){
+//						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
+//						this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
+//						this.raider.location = this.raider.path[0];
+//						this.raider.citizen.currentLocation = this.raider.path [0];
+//						this.raider.path.RemoveAt (0);
+//					}
+//					this.raider.daysBeforeMoving -= 1;
 				}
 			}
 		}
@@ -190,11 +208,13 @@ public class RaiderAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
+			UIManager.Instance.ShowSmallInfo (this.raider.raid.eventType.ToString ());
 			this.HighlightPath ();
 		}
 	}
 
 	void OnMouseExit(){
+		UIManager.Instance.HideSmallInfo ();
 		this.UnHighlightPath ();
 	}
 
@@ -215,6 +235,10 @@ public class RaiderAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
+	}
+
+	public void OnEndAttack(){
+		this.raider.DestroyGO ();
 	}
 //	private string CampaignInfo(Campaign campaign){
 //		string info = string.Empty;

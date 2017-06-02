@@ -57,10 +57,10 @@ public enum RELATIONSHIP_STATUS{
 }
 
 public enum PATHFINDING_MODE{
+	USE_ROADS,
 	NORMAL,
-	ROAD_CREATION,
 	COMBAT,
-	RESOURCE_PRODUCTION
+	RESOURCE_PRODUCTION,
 }
 
 public enum GENDER{
@@ -191,7 +191,8 @@ public enum EVENT_TYPES{
 	DIPLOMATIC_CRISIS, // no agent
 	ADMIRATION,
 	ALL,
-	ATTACK_CITY // general
+	ATTACK_CITY, // general
+	SABOTAGE //envoy
 }
 public enum EVENT_STATUS{
 	EXPOSED,
@@ -299,4 +300,15 @@ public enum WAR_TRIGGER {
 	TARGET_LOST_A_BATTLE,
 	TARGET_GAINED_A_CITY,
 	NONE
+}
+
+public enum DIRECTION{
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN,
+}
+
+public enum EMBARGO_REASON {
+    NONE
 }

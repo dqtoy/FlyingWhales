@@ -88,7 +88,9 @@ public class GameEvent {
 
 	internal virtual void DoneEvent(){
 //		Debug.Log ("Game Event Ended!");
-	} 
+	}
+	internal virtual void DeathByOtherReasons(){}
+	internal virtual void DeathByGeneral(General general){}
 	#endregion
 
 	/*

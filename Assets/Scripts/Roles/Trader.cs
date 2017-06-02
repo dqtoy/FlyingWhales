@@ -4,157 +4,37 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Trader : Role {
+    private Trade _tradeEvent;
 
-	public City homeCity;
-	public City targetCity;
-	public HexTile currentLocation;
-	public bool isWorking = false;
-	public List<BASE_RESOURCE_TYPE> offeredResources;
+    #region getters/setters
+    public Trade tradeEvent {
+        get { return this._tradeEvent;  }
+    }
+    #endregion
 
-	private GameObject traderGameObject;
-	internal List<HexTile> pathToTargetCity;
-	internal List<BASE_RESOURCE_TYPE> currentlySelling;
-	private int goldIncomePerTurn = 0;
-	private int currentPathIndex = 0;
-
-	private bool isGoingHome = false;
-
-//	public Trader(Citizen citizen, TradeManager tradeManager): base(citizen){
-	public Trader(Citizen citizen): base(citizen){
-		this.homeCity = citizen.city;
-		this.targetCity = null;
-		this.currentLocation = this.citizen.city.hexTile;
-		this.offeredResources = new List<BASE_RESOURCE_TYPE>();
-//		EventManager.Instance.onWeekEnd.AddListener(AssignTask);
+    public Trader(Citizen citizen): base(citizen){
+		
 	}
 
-//	internal void AssignTask(){
-//		this.offeredResources.Clear();
-//		this.offeredResources = tradeManager.DetermineOfferedResources();
-//		this.targetCity = tradeManager.GetTargetCity();
-//		if (this.targetCity == null) {
-//			return;
-//		}
-//		if (this.currentLocation == null) {
-//			return;
-//		}
-//
-//		this.pathToTargetCity = PathGenerator.Instance.GetPath(currentLocation, targetCity.hexTile, PATHFINDING_MODE.NORMAL);
-//		this.pathToTargetCity.Insert (0, this.currentLocation);
-//
-//		this.currentlySelling = this.offeredResources.Intersect(this.targetCity.tradeManager.neededResources).ToList();
-//		this.goldIncomePerTurn = this.pathToTargetCity.Count * 5;
-//
-//
-//			
-//		if (this.currentlySelling.Contains (BASE_RESOURCE_TYPE.FOOD)) {
-//			this.targetCity.tradeManager.sustainabilityBuff = 5;
-//		}
-//
-//		if (this.homeCity.kingdom.id != this.targetCity.kingdom.id) {
-//			RelationshipKings rel1 = this.homeCity.kingdom.king.GetRelationshipWithCitizen(this.targetCity.kingdom.king);
-//			RelationshipKings rel2 = this.targetCity.kingdom.king.GetRelationshipWithCitizen(this.homeCity.kingdom.king);
-//			rel1.AdjustLikeness(1, EVENT_TYPES.TRADE);
-//			rel2.AdjustLikeness(1, EVENT_TYPES.TRADE);
-//			rel1.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				"Successful trade with city " + this.targetCity.name,
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				true
-//			));
-//
-//			rel2.relationshipHistory.Add (new History (
-//				GameManager.Instance.month,
-//				GameManager.Instance.days,
-//				GameManager.Instance.year,
-//				"Successful trade with city " + this.homeCity.name,
-//				HISTORY_IDENTIFIER.KING_RELATIONS,
-//				true
-//			));
-//		}
-//
-//		this.isWorking = true;
-//		this.isGoingHome = false;
-//		if (this.traderGameObject == null) {
-//			this.traderGameObject = GameObject.Instantiate (Resources.Load ("GameObjects/CitizenAvatar"), this.homeCity.hexTile.transform) as GameObject;
-//			this.traderGameObject.transform.localScale = new Vector3 (5f, 5f, 5f);
-//			this.traderGameObject.GetComponent<CitizenAvatar>().AssignCitizen(this.citizen);
-//		}
-//		EventManager.Instance.onWeekEnd.RemoveListener(AssignTask);
-//		EventManager.Instance.onWeekEnd.AddListener(DailyActions);
-//
-//	}
+    internal override void Initialize(GameEvent gameEvent) {
+        if (gameEvent is Trade) {
+            this._tradeEvent = (Trade)gameEvent;
+            this.targetLocation = this._tradeEvent.targetKingdom.capitalCity.hexTile;
+            this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Trader"), this.citizen.city.hexTile.transform) as GameObject;
+            this.avatar.transform.localPosition = Vector3.zero;
+            this.avatar.GetComponent<TraderAvatar>().Init(this);
+        }
+    }
 
-//	internal void DailyActions(){
-//		//add resources
-//		this.homeCity.AdjustResourceCount(BASE_RESOURCE_TYPE.GOLD, this.goldIncomePerTurn);
-//		for (int i = 0; i < this.currentlySelling.Count; i++) {
-//			switch (this.currentlySelling [i]) {
-//			case BASE_RESOURCE_TYPE.WOOD:
-//				this.targetCity.AdjustResourceCount (BASE_RESOURCE_TYPE.WOOD, 6);
-//				break;
-//			case BASE_RESOURCE_TYPE.STONE:
-//				this.targetCity.AdjustResourceCount (BASE_RESOURCE_TYPE.STONE, 6);
-//				break;
-//			case BASE_RESOURCE_TYPE.COBALT:
-//				this.targetCity.AdjustResourceCount (BASE_RESOURCE_TYPE.COBALT, 3);
-//				break;
-//			case BASE_RESOURCE_TYPE.MANA_STONE:
-//				this.targetCity.AdjustResourceCount (BASE_RESOURCE_TYPE.MANA_STONE, 3);
-//				break;
-//			case BASE_RESOURCE_TYPE.MITHRIL:
-//				this.targetCity.AdjustResourceCount (BASE_RESOURCE_TYPE.MITHRIL, 3);
-//				break;
-//			}
-//		}
-//
-//		//move trader
-//		if (isGoingHome) {
-//			this.GoBackHome();
-//		} else {
-//			this.GoToTargetCity();
-//		}
-//
-//	}
-
-//	internal void GoToTargetCity(){
-//		this.currentPathIndex += 1;
-//		HexTile nextTile = this.pathToTargetCity [this.currentPathIndex];
-//		this.traderGameObject.GetComponent<CitizenAvatar>().MakeCitizenMove(this.currentLocation, nextTile);
-//		this.currentLocation = nextTile;
-//		if (this.currentLocation == this.targetCity.hexTile) {
-//			this.isGoingHome = true;
-//		}
-//	}
-
-//	internal void GoBackHome(){
-//		this.currentPathIndex -= 1;
-//		HexTile nextTile = this.pathToTargetCity[this.currentPathIndex];
-//		this.traderGameObject.GetComponent<CitizenAvatar>().MakeCitizenMove(this.currentLocation, nextTile);
-//		this.currentLocation = nextTile;
-//		if (this.currentLocation == this.homeCity.hexTile) {
-//			this.isGoingHome = false;
-//			this.isWorking = false;
-//			targetCity.tradeManager.sustainabilityBuff = 0;
-//			EventManager.Instance.onWeekEnd.RemoveListener(DailyActions);
-//			EventManager.Instance.onWeekEnd.AddListener(AssignTask);
-//			this.targetCity = null;
-//			this.AssignTask();
-//
-//		}
-//	}
-
-//	internal override int[] GetResourceProduction(){
-//		return new int[]{ 0, 0, 0, 0, 0, 0, 40 };
-//	}
-
-//	internal override void OnDeath(){
-//		if (this.traderGameObject != null) {
-//			GameObject.Destroy (this.traderGameObject);
-//		}
-//		EventManager.Instance.onWeekEnd.RemoveListener(AssignTask);
-//		EventManager.Instance.onWeekEnd.RemoveListener(DailyActions);
-//	}
+    /*
+     * Called when citizen dies. See in Citizen.Death() Function.
+     * */
+    internal override void OnDeath() {
+        if (this._tradeEvent != null) {
+            if (this._tradeEvent.isActive) {
+                this._tradeEvent.CancelEvent();
+            }
+        }
+        this.DestroyGO();
+    }
 }
