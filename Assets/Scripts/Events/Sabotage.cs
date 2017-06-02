@@ -22,26 +22,24 @@ public class Sabotage : GameEvent {
 //		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
 //		newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
 
-		EventManager.Instance.AddEventToDictionary (this);
+//		EventManager.Instance.AddEventToDictionary (this);
 //		this.EventIsCreated ();
 
 	}
 	internal override void PerformAction (){
 		CheckGameEvent();
 	}
-	internal override void DoneCitizenAction (Envoy envoy){
+	internal override void DoneCitizenAction (Citizen citizen){
 		if(this.saboteur != null){
-			if(envoy.citizen.id == this.saboteur.citizen.id){
+			if(citizen.id == this.saboteur.citizen.id){
 				AttemptToSabotage();
 			}
 		}
 	}
 	internal override void DeathByOtherReasons(){
-
 		this.DoneEvent();
 	}
 	internal override void DeathByGeneral(General general){
-
 		this.DoneEvent();
 	}
 	internal override void DoneEvent(){

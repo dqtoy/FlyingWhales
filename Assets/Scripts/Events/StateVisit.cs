@@ -47,7 +47,7 @@ public class StateVisit : GameEvent {
 		this.EventIsCreated ();
 
 	}
-	internal override void DoneCitizenAction(Envoy envoy){
+	internal override void DoneCitizenAction(Citizen citizen){
 		this.visitorHasArrived = true;
 	}
 	internal override void PerformAction(){
@@ -111,9 +111,12 @@ public class StateVisit : GameEvent {
 			}
 
 		}
-//		if(this.saboteurEnvoy != null){
-//			this.saboteurEnvoy.inAction = false;
-//		}
+		if(this.visitor != null){
+			this.visitor.DestroyGO ();
+		}
+		if(this.saboteurEnvoy != null){
+			this.saboteurEnvoy.DestroyGO();
+		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
 		this.endMonth = GameManager.Instance.month;
@@ -121,11 +124,13 @@ public class StateVisit : GameEvent {
 		this.endYear = GameManager.Instance.year;
 	}
 	internal override void DeathByOtherReasons(){
+		//Add logs: death_by_other
 		this.visitorHasDied = true;
 		this.isSuccessful = false;
 		this.DoneEvent();
 	}
 	internal override void DeathByGeneral(General general){
+		//Add logs: death_by_general
 		this.visitorHasDied = true;
 		this.isSuccessful = false;
 		this.DoneEvent();
@@ -153,22 +158,23 @@ public class StateVisit : GameEvent {
 				if (relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
 					if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
 						//ASSASSINATION EVENT
-						Citizen spy = GetSpy (selectedKingdom);
-						if (spy != null) {
-							Assassination assassination = new Assassination (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, selectedKingdom.king, this.visitor.citizen, spy, this);
+						int remainingDays = this.visitor.path.Sum(x => x.movementDays);
+						Assassination assassination = EventCreator.Instance.CreateAssassinationEvent (selectedKingdom, this.visitor.citizen, this, remainingDays);
+						if(assassination != null){
 							Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
 							newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name);
-							newLog.AddToFillers (spy, spy.name);
+							newLog.AddToFillers (assassination.spy.citizen, assassination.spy.citizen.name);
 							newLog.AddToFillers (assassination, "assassinate");
 							newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name);
 							newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
 						}
+
 					}
 				}
 			}
 		}
 	}
-	private Citizen GetSpy(Kingdom kingdom){
+	/*private Citizen GetSpy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> spies = new List<Citizen> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -196,7 +202,7 @@ public class StateVisit : GameEvent {
 //			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
 		}
-	}
+	}*/
 	private void TriggerSabotage(){
 		if(this.otherKingdoms != null && this.otherKingdoms.Count > 0){
 			int chance = UnityEngine.Random.Range (0, 100);
@@ -244,10 +250,11 @@ public class StateVisit : GameEvent {
 			
 		Sabotage sabotage = EventCreator.Instance.CreateSabotageEvent(sender, this.inviterKingdom, this, remainingDays);
 		if(sabotage != null){
+			this.saboteurEnvoy = sabotage.saboteur;
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_start");
 			newLog.AddToFillers (sender.king, sender.king.name);
 			newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
-			newLog.AddToFillers (sabotage.saboteur.citizen, sabotage.saboteur.citizen.name);
+			newLog.AddToFillers (this.saboteurEnvoy.citizen, this.saboteurEnvoy.citizen.name);
 		}
 
 

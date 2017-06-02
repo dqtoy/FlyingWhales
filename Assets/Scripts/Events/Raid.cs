@@ -49,6 +49,8 @@ public class Raid : GameEvent {
 
 	}
 	internal void StartRaiding(){
+		//Add logs: start_raiding
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 	internal override void PerformAction(){
@@ -69,6 +71,8 @@ public class Raid : GameEvent {
 		}
 	}
 	internal override void DeathByOtherReasons(){
+		//Add logs: death_by_other
+
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_other");
 //		newLog.AddToFillers (this.startedBy, this.startedBy.name);
 //		newLog.AddToFillers (null, this.startedBy.deathReasonText);
@@ -76,6 +80,8 @@ public class Raid : GameEvent {
 		this.DoneEvent ();
 	}
 	internal override void DeathByGeneral(General general){
+		//Add logs: death_by_general
+
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_general");
 //		newLog.AddToFillers (general.citizen, general.citizen.name);
 

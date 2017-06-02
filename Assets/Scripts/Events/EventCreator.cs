@@ -100,4 +100,21 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+
+	internal Assassination CreateAssassinationEvent(Kingdom sourceKingdom, Citizen targetCitizen, GameEvent gameEventTrigger, int remainingDays){
+		HexTile targetLocation = targetCitizen.currentLocation;
+		if(targetCitizen.assignedRole != null){
+			if(targetCitizen.assignedRole.targetLocation != null){
+				targetLocation = targetCitizen.assignedRole.targetLocation;
+			}
+		}
+		Citizen spy = sourceKingdom.capitalCity.CreateAgent (ROLE.SPY, EVENT_TYPES.SABOTAGE, targetLocation, remainingDays);
+		if(spy != null){
+			Spy assassin = (Spy)spy.assignedRole;
+			Assassination assassination = new Assassination(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				sourceKingdom.king, targetCitizen, assassin, gameEventTrigger);
+			spy.assignedRole.Initialize (assassination);
+		}
+		return null;
+	}
 }

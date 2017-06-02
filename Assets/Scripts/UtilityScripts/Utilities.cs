@@ -716,32 +716,55 @@ public class Utilities : MonoBehaviour {
 			return true;
 		case EVENT_TYPES.JOIN_WAR_REQUEST:
 			return true;
-		case EVENT_TYPES.ASSASSINATION:
-			return true;
 		case EVENT_TYPES.EXPANSION:
 			return true;
         case EVENT_TYPES.TRADE:
             return true;
 		case EVENT_TYPES.BORDER_CONFLICT:
-			if (path.Count > duration) {
-				return false;
+			if(duration == -1){
+				return true;
+			}else{
+				if (path.Count > duration) {
+					return false;
+				}
+				return true;
 			}
-			return true;
 		case EVENT_TYPES.DIPLOMATIC_CRISIS:
-			if (path.Count > duration) {
-				return false;
+			if(duration == -1){
+				return true;
+			}else{
+				if (path.Count > duration) {
+					return false;
+				}
+				return true;
 			}
-			return true;
 		case EVENT_TYPES.INVASION_PLAN:
-			if (path.Count > duration) {
-				return false;
+			if(duration == -1){
+				return true;
+			}else{
+				if (path.Count > duration) {
+					return false;
+				}
+				return true;
 			}
-			return true;
 		case EVENT_TYPES.SABOTAGE:
-			if (path.Count > duration) {
-				return false;
+			if(duration == -1){
+				return true;
+			}else{
+				if (path.Count > duration) {
+					return false;
+				}
+				return true;
 			}
-			return true;
+		case EVENT_TYPES.ASSASSINATION:
+			if(duration == -1){
+				return true;
+			}else{
+				if (path.Count > duration) {
+					return false;
+				}
+				return true;
+			}
 		}
 		return false;
 	}

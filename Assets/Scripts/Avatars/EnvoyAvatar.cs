@@ -129,7 +129,7 @@ public class EnvoyAvatar : MonoBehaviour {
 			if(!this.hasArrived){
 				this.hasArrived = true;
 				this.envoy.Attack ();
-				this.envoy.gameEvent.DoneCitizenAction(this.envoy);
+				this.envoy.gameEvent.DoneCitizenAction(this.envoy.citizen);
 			}
 			Task.current.Succeed ();
 		}else{
@@ -248,6 +248,10 @@ public class EnvoyAvatar : MonoBehaviour {
 	}
 	public void OnEndAttack(){
 		this.envoy.DestroyGO ();
+	}
+
+	internal void HasAttacked(){
+		this.GetComponent<SmoothMovement> ().hasAttacked = true;
 	}
 //	private string CampaignInfo(Campaign campaign){
 //		string info = string.Empty;

@@ -33,6 +33,7 @@ public class Envoy : Role {
 
 	internal override void Attack (){
 		if(this.avatar != null){
+			this.avatar.GetComponent<EnvoyAvatar> ().HasAttacked();
 			if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.LEFT){
 				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Left");
 			}else if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.RIGHT){

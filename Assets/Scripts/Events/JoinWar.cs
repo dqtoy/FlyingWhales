@@ -160,7 +160,7 @@ public class JoinWar : GameEvent {
 			this.DoneEvent();
 		}*/
 	}
-	internal override void DoneCitizenAction(Envoy citizen){
+	internal override void DoneCitizenAction(Citizen citizen){
 		int successRate = 15;
 		RELATIONSHIP_STATUS relationshipWithRequester = candidateForAlliance.GetRelationshipWithCitizen (this.startedBy).lordRelationship;
 		RELATIONSHIP_STATUS relationshipWithTarget = candidateForAlliance.GetRelationshipWithCitizen (kingdomToAttack.king).lordRelationship;
@@ -222,11 +222,15 @@ public class JoinWar : GameEvent {
 		this.DoneEvent();
 	}
 	internal override void DeathByOtherReasons(){
+		//Add logs: death_by_other
+
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
 //		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
 		this.DoneEvent();
 	}
 	internal override void DeathByGeneral(General general){
+		//Add logs: death_by_general
+
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
 //		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
 		this.DoneEvent();

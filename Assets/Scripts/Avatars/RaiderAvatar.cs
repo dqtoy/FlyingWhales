@@ -240,6 +240,10 @@ public class RaiderAvatar : MonoBehaviour {
 	public void OnEndAttack(){
 		this.raider.DestroyGO ();
 	}
+
+	internal void HasAttacked(){
+		this.GetComponent<SmoothMovement> ().hasAttacked = true;
+	}
 //	private string CampaignInfo(Campaign campaign){
 //		string info = string.Empty;
 //		info += "id: " + campaign.id;

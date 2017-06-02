@@ -50,7 +50,7 @@ public class Espionage : GameEvent {
 	}
 	internal override void DoneEvent(){
 		if(this.spy != null){
-			((Spy)this.spy.assignedRole).inAction = false;
+			this.spy.assignedRole.DestroyGO ();
 		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		this.isActive = false;
@@ -61,7 +61,7 @@ public class Espionage : GameEvent {
 			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". " + this.spy.name + " discovered a Hidden Event: ";
 		}
 	}
-	private Citizen GetSpy(Kingdom kingdom){
+	/*private Citizen GetSpy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> spies = new List<Citizen> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -88,7 +88,7 @@ public class Espionage : GameEvent {
 //			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
 		}
-	}
+	}*/
 	private Kingdom GetTargetKingdom(){
 		int chance = UnityEngine.Random.Range (0, 100);
 		if(chance < 65){

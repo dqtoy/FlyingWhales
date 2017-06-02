@@ -82,7 +82,7 @@ public class GameEvent {
 	#region virtual methods
 	internal virtual void PerformAction(){}
 
-	internal virtual void DoneCitizenAction(Envoy citizen){}
+	internal virtual void DoneCitizenAction(Citizen citizen){}
 
 	internal virtual void CancelEvent(){}
 

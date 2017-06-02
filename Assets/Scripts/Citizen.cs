@@ -1140,7 +1140,7 @@ public class Citizen {
 
 	}
 
-	private void Assassination(RelationshipKings relationship, GameEvent gameEvent){
+	private void Assassination(RelationshipKings relationship, GameEvent gameEventTrigger){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 0;
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
@@ -1157,13 +1157,10 @@ public class Citizen {
 		}
 
 		if(chance < value){
-			Citizen spy = GetSpy(this.city.kingdom);
-			if(spy != null){
-				Assassination assassination = new Assassination(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, relationship.king, spy, gameEvent);
-			}
+			EventCreator.Instance.CreateAssassinationEvent(this.city.kingdom, relationship.king, gameEventTrigger, EventManager.Instance.eventDuration[EVENT_TYPES.ASSASSINATION]);
 		}
 	}
-	private Citizen GetSpy(Kingdom kingdom){
+	/*private Citizen GetSpy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = Utilities.GetUnwantedGovernors (kingdom.king);
 		List<Citizen> spies = new List<Citizen> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -1191,9 +1188,10 @@ public class Citizen {
 //			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
 		}
-	}
+	}*/
 
 	internal void WarTrigger(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
+		return;
 		if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
 			return;
 		}

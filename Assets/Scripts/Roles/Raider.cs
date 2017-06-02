@@ -21,6 +21,7 @@ public class Raider : Role {
 	}
 	internal override void Attack (){
 		if(this.avatar != null){
+			this.avatar.GetComponent<RaiderAvatar> ().HasAttacked();
 			if(this.avatar.GetComponent<RaiderAvatar> ().direction == DIRECTION.LEFT){
 				this.avatar.GetComponent<RaiderAvatar> ().animator.Play ("Attack_Left");
 			}else if(this.avatar.GetComponent<RaiderAvatar> ().direction == DIRECTION.RIGHT){
