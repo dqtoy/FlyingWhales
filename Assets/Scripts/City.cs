@@ -60,7 +60,7 @@ public class City{
 	public int maxGrowth{
 		get{ return this._maxGrowth; }
 	}
-	protected List<HexTile> structures{
+	public List<HexTile> structures{
 		get{ return this.ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();}
 	}
 	public int hp{
@@ -879,6 +879,7 @@ public class City{
 		}
 		// This will update kingdom type whenever the kingdom loses a city.
 		this._kingdom.UpdateKingdomTypeData();
+        this._kingdom.UpdateAvailableResources();
 		this._kingdom.CheckIfKingdomIsDead();
 
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);

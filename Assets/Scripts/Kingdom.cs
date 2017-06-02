@@ -314,10 +314,10 @@ public class Kingdom{
 	}
 
     protected void RemoveAllTradeRoutesWithOtherKingdom(Kingdom otherKingdom) {
-        List<TradeRoute> tradeRoutesWithOtherKingdom = this._tradeRoutes.Where(x => x.kingdomInTradeWith.id == otherKingdom.id).ToList();
+        List<TradeRoute> tradeRoutesWithOtherKingdom = this._tradeRoutes.Where(x => x.targetKingdom.id == otherKingdom.id || x.sourceKingdom.id == otherKingdom.id).ToList();
         for (int i = 0; i < tradeRoutesWithOtherKingdom.Count; i++) {
             TradeRoute tradeRouteToRemove = tradeRoutesWithOtherKingdom[i];
-            this._tradeRoutes.Remove(tradeRouteToRemove);
+            this.RemoveTradeRoute(tradeRouteToRemove);
         }
     }
 
@@ -448,7 +448,6 @@ public class Kingdom{
 
     internal void AddTradeRoute(TradeRoute tradeRoute) {
         this._tradeRoutes.Add(tradeRoute);
-        this.UpdateAllCitiesDailyGrowth();
     }
 	/*
 	 * Create a new city obj on the specified hextile.
@@ -1004,18 +1003,43 @@ public class Kingdom{
 	internal void AddResourceToKingdom(RESOURCE resource){
 		if (!this._availableResources.ContainsKey(resource)) {
 			this._availableResources.Add(resource, 0);
+            this.RemoveObsoleteTradeRoutes(resource);
             this.UpdateAllCitiesDailyGrowth();
         }
 		this._availableResources[resource] += 1;
 	}
 
-    private void UpdateAllCitiesDailyGrowth() {
-        List<RESOURCE> allAvailableResources = this._availableResources.Keys.Union(this._tradeRoutes.Select(x => x.resourceGained)).ToList();
+    internal void UpdateAllCitiesDailyGrowth() {
+        //get all rasources from tiles and trade routes, only include trade routes where this kingom is the target
+        List<RESOURCE> allAvailableResources = this._availableResources.Keys.Union(this._tradeRoutes.Where(x => x.targetKingdom.id == this.id).Select(x => x.resourceBeingTraded)).ToList();
         int dailyGrowthGained = this.ComputeDailyGrowthGainedFromResources(allAvailableResources);
         for (int i = 0; i < this.cities.Count; i++) {
             City currCity = this.cities[i];
             currCity.UpdateDailyGrowthBasedOnSpecialResources(dailyGrowthGained);
         }
+    }
+
+    /*
+     * Function to remove trade routes that are no longer used because this
+     * kingdom already has a resource of that type
+     * */
+    private void RemoveObsoleteTradeRoutes(RESOURCE obsoleteResource) {
+        List<TradeRoute> tradeRoutesToRemove = new List<TradeRoute>();
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.resourceBeingTraded == obsoleteResource) {
+                tradeRoutesToRemove.Add(currTradeRoute);
+            }
+        }
+        for (int i = 0; i < tradeRoutesToRemove.Count; i++) {
+            TradeRoute tradeRouteToRemove = tradeRoutesToRemove[i];
+            tradeRouteToRemove.sourceKingdom.RemoveTradeRoute(tradeRouteToRemove);
+            tradeRouteToRemove.targetKingdom.RemoveTradeRoute(tradeRouteToRemove);
+        }
+    }
+
+    internal void RemoveTradeRoute(TradeRoute tradeRoute) {
+        this._tradeRoutes.Remove(tradeRoute);
     }
 
     private int ComputeDailyGrowthGainedFromResources(List<RESOURCE> allAvailableResources) {
@@ -1108,7 +1132,7 @@ public class Kingdom{
      * */
     internal List<RESOURCE> GetResourcesOtherKingdomDoesNotHave(Kingdom otherKingdom) {
         List<RESOURCE> resourcesOtherKingdomDoesNotHave = new List<RESOURCE>();
-        List<RESOURCE> allAvailableResourcesOfOtherKingdom = otherKingdom.availableResources.Keys.Union(otherKingdom.tradeRoutes.Select(x => x.resourceGained)).ToList();
+        List<RESOURCE> allAvailableResourcesOfOtherKingdom = otherKingdom.availableResources.Keys.Union(otherKingdom.tradeRoutes.Select(x => x.resourceBeingTraded)).ToList();
         for (int i = 0; i < this._availableResources.Keys.Count; i++) {
             RESOURCE currKey = this._availableResources.Keys.ElementAt(i);
             if (!allAvailableResourcesOfOtherKingdom.Contains(currKey)) {
@@ -1122,8 +1146,21 @@ public class Kingdom{
     protected void ProduceGoldFromTrade() {
         for (int i = 0; i < this._tradeRoutes.Count; i++) {
             TradeRoute currTradeRoute = this._tradeRoutes[i];
-            if (currTradeRoute.resourceGained == RESOURCE.GOLD) {
+            if (currTradeRoute.sourceKingdom.id == this.id) {
                 this.AdjustGold(GOLD_GAINED_FROM_TRADE);
+            }
+        }
+    }
+
+    internal void UpdateAvailableResources() {
+        this._availableResources.Clear();
+        for (int i = 0; i < this.cities.Count; i++) {
+            City currCity = this.cities[i];
+            for (int j = 0; j < currCity.structures.Count; j++) {
+                HexTile currHexTile = currCity.structures[j];
+                if (currHexTile.specialResource != RESOURCE.NONE) {
+                    this.AddResourceToKingdom(currHexTile.specialResource);
+                }
             }
         }
     }
