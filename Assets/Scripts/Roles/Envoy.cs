@@ -25,7 +25,10 @@ public class Envoy : Role {
 		}else if(this.gameEvent is StateVisit){
 			StateVisit stateVisit = (StateVisit)this.gameEvent;
 			stateVisit.visitor = this;
-		}
+		}else if(this.gameEvent is RequestPeace) {
+            //RequestPeace requestPeace = (RequestPeace)this.gameEvent;
+            //requestPeace.SetEnvoySent(this);
+        }
 		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Envoy"), this.citizen.city.hexTile.transform) as GameObject;
 		this.avatar.transform.localPosition = Vector3.zero;
 		this.avatar.GetComponent<EnvoyAvatar>().Init(this);

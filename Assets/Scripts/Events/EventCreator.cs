@@ -74,10 +74,7 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
-
-    /*
-     * Create a Trade Event
-     * */
+    
     internal Trade CreateTradeEvent(Kingdom sourceKingdom, Kingdom targetKingdom) {
         Citizen trader = sourceKingdom.capitalCity.CreateAgent(ROLE.TRADER, EVENT_TYPES.TRADE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.TRADE]);
         if (trader != null) {
@@ -85,6 +82,7 @@ public class EventCreator: MonoBehaviour {
             Trade tradeEvent = new Trade(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
                 sourceKingdom.king, sourceKingdom, targetKingdom, trader);
             trader.assignedRole.Initialize(tradeEvent);
+            return tradeEvent;
         }
 
         return null;
@@ -117,4 +115,15 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+
+    internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
+        Citizen envoy = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
+        if (envoy != null) {
+            RequestPeace requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+                kingdomToRequest.king, (Envoy)envoy.assignedRole, targetKingdom);
+            envoy.assignedRole.Initialize(requestPeace);
+            return requestPeace;
+        }
+        return null;
+    }
 }
