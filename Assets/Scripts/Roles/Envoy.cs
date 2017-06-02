@@ -8,7 +8,7 @@ public class Envoy : Role {
 
 
 	public Envoy(Citizen citizen): base(citizen){
-
+		this.gameEvent = null;
 	}
 
 	internal override void Initialize(GameEvent gameEvent){
@@ -32,6 +32,7 @@ public class Envoy : Role {
 	}
 
 	internal override void Attack (){
+//		base.Attack ();
 		if(this.avatar != null){
 			this.avatar.GetComponent<EnvoyAvatar> ().HasAttacked();
 			if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.LEFT){

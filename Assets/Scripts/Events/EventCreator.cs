@@ -117,4 +117,15 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+
+	internal AttackCity CreateAttackCityEvent(Kingdom sourceKingdom, City targetCity){
+		Citizen general = sourceKingdom.capitalCity.CreateAgent (ROLE.GENERAL, EVENT_TYPES.ATTACK_CITY, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.ATTACK_CITY]);
+		if(general != null){
+			General attacker = (General)general.assignedRole;
+			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				sourceKingdom.king, attacker, targetCity);
+			general.assignedRole.Initialize (attackCity);
+		}
+		return null;
+	}
 }

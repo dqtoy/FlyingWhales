@@ -39,10 +39,10 @@ public class EnvoyAvatar : MonoBehaviour {
 		if(other.tag == "General"){
 			this.collidedWithHostile = false;
 			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<GeneralObject>().general.citizen.city.kingdom.id != this.envoy.citizen.city.kingdom.id){
-					if(!other.gameObject.GetComponent<GeneralObject> ().general.citizen.isDead){
+				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.envoy.citizen.city.kingdom.id){
+					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
 						this.collidedWithHostile = true;
-						this.otherGeneral = other.gameObject.GetComponent<GeneralObject> ().general;
+						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
 					}
 				}
 			}
@@ -247,7 +247,7 @@ public class EnvoyAvatar : MonoBehaviour {
 		UnHighlightPath ();
 	}
 	public void OnEndAttack(){
-		this.envoy.DestroyGO ();
+		this.envoy.citizen.Death (DEATH_REASONS.ACCIDENT);
 	}
 
 	internal void HasAttacked(){

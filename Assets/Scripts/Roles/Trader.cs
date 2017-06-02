@@ -13,7 +13,7 @@ public class Trader : Role {
     #endregion
 
     public Trader(Citizen citizen): base(citizen){
-		
+		this._tradeEvent = null;
 	}
 
     internal override void Initialize(GameEvent gameEvent) {

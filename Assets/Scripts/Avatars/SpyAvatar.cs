@@ -29,10 +29,10 @@ public class SpyAvatar : MonoBehaviour {
 		if(other.tag == "General"){
 			this.collidedWithHostile = false;
 			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<GeneralObject>().general.citizen.city.kingdom.id != this.spy.citizen.city.kingdom.id){
-					if(!other.gameObject.GetComponent<GeneralObject> ().general.citizen.isDead){
+				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.spy.citizen.city.kingdom.id){
+					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
 						this.collidedWithHostile = true;
-						this.otherGeneral = other.gameObject.GetComponent<GeneralObject> ().general;
+						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
 					}
 				}
 			}
@@ -206,7 +206,7 @@ public class SpyAvatar : MonoBehaviour {
 	}
 
 	public void OnEndAttack(){
-		this.spy.DestroyGO ();
+		this.spy.citizen.Death (DEATH_REASONS.ACCIDENT);
 	}
 
 	internal void HasAttacked(){

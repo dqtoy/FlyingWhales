@@ -555,6 +555,16 @@ public class City{
 		}
 	}
 
+	public void AdjustHP(int amount){
+		this._hp += amount;
+
+		if(this._hp > this.maxHP){
+			this._hp = this.maxHP;
+		}else if(this._hp < 0){
+			this._hp = 0;
+		}
+	}
+
 	#region Resource Production
 	protected void ProduceGold(){
 		this.kingdom.AdjustGold(this._goldProduction);
@@ -889,6 +899,12 @@ public class City{
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		this.hexTile.city = null;
 		KingdomManager.Instance.UpdateKingdomAdjacency();
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			KingdomManager.Instance.allKingdoms [i].intlWarCities.Remove (this);
+			KingdomManager.Instance.allKingdoms [i].activeCitiesToAttack.Remove (this);
+			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
+		}
+
 	}
 
 	/*internal void LookForNewGeneral(General general){

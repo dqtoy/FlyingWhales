@@ -4,34 +4,33 @@ using System.Collections.Generic;
 using System.Linq;
 using Panda;
 
-public class ExpansionAvatar : MonoBehaviour {
-	public Expander expander;
+public class GeneralAvatar : MonoBehaviour {
+	public General general;
 	public PandaBehaviour pandaBehaviour;
 	public Animator animator;
 	public bool collidedWithHostile;
 	public General otherGeneral;
 
 	private bool hasArrived = false;
-//	private bool isMoving = false;
-//	private Vector3 targetPosition = Vector3.zero;
+	//	private bool isMoving = false;
+	//	private Vector3 targetPosition = Vector3.zero;
 	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
+
+	//	public float speed;
 	internal DIRECTION direction;
-
-//	public float speed;
-
-//	void Update(){
-//		if(this.isMoving){
-//			if(this.targetPosition != null){
-//				float step = speed * Time.deltaTime;
-//				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
-//				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
-//					StopMoving ();
-//				}
-//			}
-//		}
-//	}
-	internal void Init(Expander expander){
-		this.expander = expander;
+	//	void Update(){
+	//		if(this.isMoving){
+	//			if(this.targetPosition != null){
+	//				float step = speed * Time.deltaTime;
+	//				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
+	//				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
+	//					StopMoving ();
+	//				}
+	//			}
+	//		}
+	//	}
+	internal void Init(General general){
+		this.general = general;
 		this.direction = DIRECTION.LEFT;
 		ResetValues ();
 		this.AddBehaviourTree ();
@@ -40,7 +39,7 @@ public class ExpansionAvatar : MonoBehaviour {
 		if(other.tag == "General"){
 			this.collidedWithHostile = false;
 			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.expander.citizen.city.kingdom.id){
+				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.general.citizen.city.kingdom.id){
 					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
 						this.collidedWithHostile = true;
 						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
@@ -76,25 +75,40 @@ public class ExpansionAvatar : MonoBehaviour {
 				this.animator.Play("Walk_Left");
 			}
 		}
+		//		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
+		//		if(startTile.transform.position.x <= targetTile.transform.position.x){
+		//			if(this.generalAnimator.gameObject.transform.localScale.x > 0){
+		//				this.generalAnimator.gameObject.transform.localScale = new Vector3(this.generalAnimator.gameObject.transform.localScale.x * -1, this.generalAnimator.gameObject.transform.localScale.y, this.generalAnimator.gameObject.transform.localScale.z);
+		//			}
+		//		}else{
+		//			if(this.generalAnimator.gameObject.transform.localScale.x < 0){
+		//				this.generalAnimator.gameObject.transform.localScale = new Vector3(this.generalAnimator.gameObject.transform.localScale.x * -1, this.generalAnimator.gameObject.transform.localScale.y, this.generalAnimator.gameObject.transform.localScale.z);
+		//			}
+		//		}
+		//		if(startTile.transform.position.y < targetTile.transform.position.y){
+		//			this.generalAnimator.Play("Walk_Up");
+		//		}else{
+		//			this.generalAnimator.Play("Walk");
+		//		}
 		this.GetComponent<SmoothMovement>().direction = this.direction;
 		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
-//		this.targetPosition = targetTile.transform.position;
-//		this.UpdateUI ();
-//		this.isMoving = true;
+		//		this.targetPosition = targetTile.transform.position;
+		//		this.UpdateUI ();
+		//		this.isMoving = true;
 	}
 	private void StopMoving(){
-//		this.generalAnimator.Play("Idle");
-//		this.isMoving = false;
-//		this.targetPosition = Vector3.zero;
+		this.animator.Play("Idle");
+		//		this.isMoving = false;
+		//		this.targetPosition = Vector3.zero;
 	}
-//	internal void UpdateUI(){
-//		if(this.general != null){
-//			this.textMesh.text = this.general.army.hp.ToString ();
-//		}
-//	}
+	//	internal void UpdateUI(){
+	//		if(this.general != null){
+	//			this.textMesh.text = this.general.army.hp.ToString ();
+	//		}
+	//	}
 	[Task]
 	public void IsThereCitizen(){
-		if(this.expander.citizen != null){
+		if(this.general.citizen != null){
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
@@ -102,7 +116,7 @@ public class ExpansionAvatar : MonoBehaviour {
 	}
 	[Task]
 	public void IsThereEvent(){
-		if(this.expander.expansion != null){
+		if(this.general.citizen != null){
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
@@ -111,12 +125,11 @@ public class ExpansionAvatar : MonoBehaviour {
 
 	[Task]
 	public void HasArrivedAtTargetHextile(){
-		if(this.expander.location == this.expander.targetLocation){
+		if(this.general.location == this.general.targetLocation){
 			if(!this.hasArrived){
 				this.hasArrived = true;
-				//Expand to target hextile
-				this.expander.expansion.ExpandToTargetHextile();
-				this.expander.citizen.Death (DEATH_REASONS.ACCIDENT);
+				this.general.Attack ();
+				this.general.attackCity.DoneCitizenAction(this.general.citizen);
 			}
 			Task.current.Succeed ();
 		}else{
@@ -124,29 +137,19 @@ public class ExpansionAvatar : MonoBehaviour {
 		}
 
 	}
-	[Task]
-	public void HasDisappeared(){
-		if (!this.expander.location.isOccupied) {
-			float chance = UnityEngine.Random.Range (0f, 99f);
-			if(chance <= 0.5f){
-				//Disappearance
-				this.expander.expansion.Disappearance ();
-				Task.current.Succeed ();
-			}else{
-				Task.current.Fail ();
-			}
-		}else{
-			Task.current.Fail ();
-		}
-	}
-		
+
 	[Task]
 	public void HasCollidedWithHostileGeneral(){
 		if(this.collidedWithHostile){
 			this.collidedWithHostile = false;
 			if(!this.otherGeneral.citizen.isDead){
-				//Death by general
-				this.expander.expansion.DeathByGeneral (this.otherGeneral);
+				CombatManager.Instance.BattleMidway (ref this.general, ref this.otherGeneral);
+				if(this.general.markAsDead){
+					this.general.citizen.Death (DEATH_REASONS.BATTLE);
+				}
+				if(this.otherGeneral.markAsDead){
+					this.otherGeneral.citizen.Death (DEATH_REASONS.BATTLE);
+				}
 				Task.current.Succeed ();
 			}else{
 				Task.current.Fail ();
@@ -158,9 +161,9 @@ public class ExpansionAvatar : MonoBehaviour {
 	}
 	[Task]
 	public void HasDiedOfOtherReasons(){
-		if (this.expander.citizen.isDead) {
+		if (this.general.citizen.isDead) {
 			//Citizen has died
-			this.expander.expansion.DeathByOtherReasons ();
+			this.general.attackCity.DeathByOtherReasons ();
 			Task.current.Succeed();
 		}else {
 			Task.current.Fail ();
@@ -178,17 +181,22 @@ public class ExpansionAvatar : MonoBehaviour {
 	}
 
 	private void Move(){
-		if(this.expander.targetLocation != null){
-			if(this.expander.path != null){
-				if(this.expander.path.Count > 0){
-					if(this.expander.daysBeforeMoving <= 0){
-						this.MakeCitizenMove (this.expander.location, this.expander.path [0]);
-						this.expander.daysBeforeMoving = this.expander.path [0].movementDays;
-						this.expander.location = this.expander.path[0];
-						this.expander.citizen.currentLocation = this.expander.path [0];
-						this.expander.path.RemoveAt (0);
+		if(this.general.targetLocation != null){
+			if(this.general.path != null){
+				if(this.general.path.Count > 0){
+					if(this.general.daysBeforeMoving <= 0){
+						this.MakeCitizenMove (this.general.location, this.general.path [0]);
+						this.general.daysBeforeMoving = this.general.path [0].movementDays;
+						this.general.location = this.general.path[0];
+						this.general.citizen.currentLocation = this.general.path [0];
+						this.general.path.RemoveAt (0);
 					}
-					this.expander.daysBeforeMoving -= 1;
+					this.general.daysBeforeMoving -= 1;
+//					this.MakeCitizenMove (this.general.location, this.general.path [0]);
+//					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
+//					this.general.location = this.general.path[0];
+//					this.general.citizen.currentLocation = this.general.path [0];
+//					this.general.path.RemoveAt (0);
 				}
 			}
 		}
@@ -205,7 +213,7 @@ public class ExpansionAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.expander.expansion.eventType.ToString ());
+			UIManager.Instance.ShowSmallInfo (this.general.attackCity.eventType.ToString ());
 			this.HighlightPath ();
 		}
 	}
@@ -217,9 +225,9 @@ public class ExpansionAvatar : MonoBehaviour {
 
 	void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
-		for (int i = 0; i < this.expander.path.Count; i++) {
-			this.expander.path [i].highlightGO.SetActive (true);
-			this.pathToUnhighlight.Add (this.expander.path [i]);
+		for (int i = 0; i < this.general.path.Count; i++) {
+			this.general.path [i].highlightGO.SetActive (true);
+			this.pathToUnhighlight.Add (this.general.path [i]);
 		}
 	}
 
@@ -233,51 +241,13 @@ public class ExpansionAvatar : MonoBehaviour {
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
 	}
-//	private string CampaignInfo(Campaign campaign){
-//		string info = string.Empty;
-//		info += "id: " + campaign.id;
-//		info += "\n";
-//
-//		info += "campaign type: " + campaign.campaignType.ToString ();
-//		info += "\n";
-//
-//		info += "general: " + this.general.citizen.name;
-//		info += "\n";
-//
-//		info += "target city: " + campaign.targetCity.name;
-//		info += "\n";
-//		if (campaign.rallyPoint == null) {
-//			info += "rally point: N/A";
-//		} else {
-//			info += "rally point: " + campaign.rallyPoint.name; 
-//		}
-//		info += "\n";
-//
-//		info += "leader: " + campaign.leader.name;
-//		info += "\n";
-//
-//		info += "war type: " + campaign.warType.ToString ();
-//		info += "\n";
-//
-//		info += "needed army: " + campaign.neededArmyStrength.ToString ();
-//		info += "\n";
-//
-//		info += "army: " + campaign.GetArmyStrength ().ToString ();
-//		info += "\n";
-//
-//		if (campaign.campaignType == CAMPAIGN.DEFENSE) {
-//			if (campaign.expiration == -1) {
-//				info += "expiration: none";
-//			} else {
-//				info += "will expire in " + campaign.expiration + " days";
-//			}
-//		} else {
-//			info += "expiration: none";
-//
-//		}
-//
-//		return info;
-//	}
 
+	public void OnEndAttack(){
+		this.general.citizen.Death (DEATH_REASONS.ACCIDENT);
+	}
+
+	internal void HasAttacked(){
+		this.GetComponent<SmoothMovement> ().hasAttacked = true;
+	}
 
 }

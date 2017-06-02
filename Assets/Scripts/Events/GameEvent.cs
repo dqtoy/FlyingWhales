@@ -84,9 +84,12 @@ public class GameEvent {
 
 	internal virtual void DoneCitizenAction(Citizen citizen){}
 
-	internal virtual void CancelEvent(){}
+	internal virtual void CancelEvent(){
+		Debug.Log ("EVENT IS CANCELLED");
+	}
 
 	internal virtual void DoneEvent(){
+		
 //		Debug.Log ("Game Event Ended!");
 	}
 	internal virtual void DeathByOtherReasons(){}

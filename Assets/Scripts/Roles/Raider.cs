@@ -7,7 +7,7 @@ public class Raider : Role {
 	public Raid raid;
 
 	public Raider(Citizen citizen): base(citizen){
-
+		this.raid = null;
 	}
 
 	internal override void Initialize(GameEvent gameEvent){
@@ -20,6 +20,7 @@ public class Raider : Role {
 		}
 	}
 	internal override void Attack (){
+//		base.Attack ();
 		if(this.avatar != null){
 			this.avatar.GetComponent<RaiderAvatar> ().HasAttacked();
 			if(this.avatar.GetComponent<RaiderAvatar> ().direction == DIRECTION.LEFT){

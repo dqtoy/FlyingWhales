@@ -15,6 +15,7 @@ public class Spy : Role {
 //	private RelationshipKingdom warExhaustiontarget;
 
 	public Spy(Citizen citizen): base(citizen){
+		this.assassination = null;
 //		this.successfulMissions = 0;
 //		this.unsuccessfulMissions = 0;
 //		this.inAction = false;
@@ -31,6 +32,7 @@ public class Spy : Role {
 	}
 
 	internal override void Attack (){
+//		base.Attack ();
 		if(this.avatar != null){
 			this.avatar.GetComponent<SpyAvatar> ().HasAttacked();
 			if(this.avatar.GetComponent<SpyAvatar> ().direction == DIRECTION.LEFT){

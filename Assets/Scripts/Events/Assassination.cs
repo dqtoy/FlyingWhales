@@ -131,6 +131,10 @@ public class Assassination : GameEvent {
 		this.endDay = GameManager.Instance.days;
 		this.endYear = GameManager.Instance.year;
 	}
+
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+	}
 	private void WaitForTarget(){
 		//Add logs: wait_for_target
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);

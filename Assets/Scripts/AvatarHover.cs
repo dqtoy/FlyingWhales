@@ -20,10 +20,6 @@ public class AvatarHover : MonoBehaviour {
 	}
 	void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
-		for (int i = 0; i < this.transform.parent.GetComponent<GeneralObject>().general.roads.Count; i++) {
-			this.transform.parent.GetComponent<GeneralObject>().general.roads [i].highlightGO.SetActive (true);
-			this.pathToUnhighlight.Add (this.transform.parent.GetComponent<GeneralObject>().general.roads [i]);
-		}
 	}
 
 	void UnHighlightPath(){

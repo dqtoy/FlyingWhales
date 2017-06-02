@@ -9,15 +9,18 @@ public class CombatManager : MonoBehaviour {
 	void Awake(){
 		Instance = this;
 	}
+
 	internal void CityBattle(City city, General generalAttacker){
 		if(city == null || city.isDead){
 			return;
 		}
-		General attackerGeneral = generalAttacker;
-		General victoriousGeneral = null;
-		General friendlyGeneral = null;
 
+		city.AdjustHP (generalAttacker.damage);
 
+		if(city.hp <= 0){
+			ConquerCity (generalAttacker.citizen.city.kingdom, city);
+		}
+		generalAttacker.markAsDead = true;
 		/*for(int i = 0; i < attackers.Count; i++){
 			General attackerGeneral = attackers [i];
 			defenders.Clear ();
@@ -370,13 +373,25 @@ public class CombatManager : MonoBehaviour {
 		//MID WAY BATTLE IF supported is not the same
 		Debug.Log("BATTLE MIDWAY!");
 
-		General firstGeneral = general1;
-		General secondGeneral = general2;
+		if(general1.damage > general2.damage){
+			//General 1 wins
+			general2.markAsDead = true;
+		}else if(general1.damage < general2.damage){
+			//General 2 wins
+			general1.markAsDead = true;
+		}else{
+			//Both are dead
+			general1.markAsDead = true;
+			general2.markAsDead = true;
+		}
 
-		Battle(ref firstGeneral, ref secondGeneral, true);
-
-		general1 = firstGeneral;
-		general2 = secondGeneral;
+//		General firstGeneral = general1;
+//		General secondGeneral = general2;
+//
+//		Battle(ref firstGeneral, ref secondGeneral, true);
+//
+//		general1 = firstGeneral;
+//		general2 = secondGeneral;
 
 		/*if(general1.army.hp <= 0){
 			if (general1.generalAvatar != null) {
