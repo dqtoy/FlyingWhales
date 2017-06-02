@@ -24,6 +24,7 @@ public class CityGenerator : MonoBehaviour {
 	public Sprite elfKeep;
 
     public GameObject[] structures;
+    public GameObject[] cityStructurePrefabs;
 
 	public TextAsset cityBehaviourTree;
 

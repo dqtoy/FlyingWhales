@@ -43,7 +43,7 @@ public class TraderAvatar : MonoBehaviour {
 
     }
 
-    void OnMouseOver() {
+    void OnMouseEnter() {
         if (!UIManager.Instance.IsMouseOnUI()) {
             UIManager.Instance.ShowSmallInfo(this._trader.tradeEvent.eventType.ToString());
             this.HighlightPath();
@@ -118,6 +118,7 @@ public class TraderAvatar : MonoBehaviour {
                 this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
             }
         }
+
         if (startTile.transform.position.y < targetTile.transform.position.y) {
             this.direction = DIRECTION.UP;
             this.animator.Play("Walk_Up");

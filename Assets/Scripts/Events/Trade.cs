@@ -56,6 +56,7 @@ public class Trade : GameEvent {
             TradeRoute tradeRoute = new TradeRoute(resourceToTrade, this._sourceKingdom, this._targetKingdom);
             this._sourceKingdom.AddTradeRoute(tradeRoute);
             this._targetKingdom.AddTradeRoute(tradeRoute);
+            this._sourceKingdom.UpdateAllCitiesDailyGrowth();
             this._targetKingdom.UpdateAllCitiesDailyGrowth();
             Debug.Log("Trade was successful " + this._sourceKingdom.name + " gained GOLD. " + this._targetKingdom.name + " gained " + resourceToTrade.ToString());
         } else {

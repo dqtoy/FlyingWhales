@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 301ddda5fde017644bab1ae01392d876
-timeCreated: 1496115724
+timeCreated: 1496296494
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -34,6 +34,22 @@ TextureImporter:
     21300054: H_Quarry_Tint
     21300056: H_Farm_Base
     21300058: H_Farm_Tint
+    21300060: H_SmallHouse3_Base
+    21300062: H_SmallHouse3_Tint
+    21300064: H_Wall1_Base
+    21300066: H_Wall1_Tint
+    21300068: H_Wall2_Base
+    21300070: H_Wall2_Tint
+    21300072: H_Wall3_Base
+    21300074: H_Wall3_Tint
+    21300076: H_Wall4_Base
+    21300078: H_Wall4_Tint
+    21300080: H_SmallHouse4_Base
+    21300082: H_SmallHouse4_Tint
+    21300084: H_Capital_Base
+    21300086: H_Capital_Tint
+    21300088: H_HuntingLodge_Base
+    21300090: H_HuntingLodge_Tint
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -398,10 +414,10 @@ TextureImporter:
       name: H_Mine_Base
       rect:
         serializedVersion: 2
-        x: 3
-        y: 761
-        width: 88
-        height: 65
+        x: 227
+        y: 826
+        width: 102
+        height: 75
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -411,10 +427,10 @@ TextureImporter:
       name: H_Mine_Tint
       rect:
         serializedVersion: 2
-        x: 99
-        y: 781
+        x: 342
+        y: 846
         width: 33
-        height: 29
+        height: 32
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -467,6 +483,214 @@ TextureImporter:
         y: 611
         width: 29
         height: 17
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallHouse3_Base
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 983
+        width: 45
+        height: 38
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallHouse3_Tint
+      rect:
+        serializedVersion: 2
+        x: 688
+        y: 997
+        width: 41
+        height: 24
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Wall1_Base
+      rect:
+        serializedVersion: 2
+        x: 739
+        y: 985
+        width: 25
+        height: 30
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Wall1_Tint
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 996
+        width: 21
+        height: 5
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Wall2_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 985
+        width: 25
+        height: 30
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Wall2_Tint
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 997
+        width: 22
+        height: 5
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Wall3_Base
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 979
+        width: 31
+        height: 42
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Wall3_Tint
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 990
+        width: 22
+        height: 5
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Wall4_Base
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 985
+        width: 40
+        height: 30
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Wall4_Tint
+      rect:
+        serializedVersion: 2
+        x: 976
+        y: 996
+        width: 39
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallHouse4_Base
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 929
+        width: 33
+        height: 37
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_SmallHouse4_Tint
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 945
+        width: 32
+        height: 21
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Capital_Base
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 271
+        width: 225
+        height: 270
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Capital_Tint
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 298
+        width: 217
+        height: 204
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_HuntingLodge_Base
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 166
+        width: 153
+        height: 106
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_HuntingLodge_Tint
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 194
+        width: 128
+        height: 71
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
