@@ -15,12 +15,13 @@ public class Kingdom{
 	private Kingdom _sourceKingdom;
 
     //Resources
-    [SerializeField] private int _goldCount;
-    [SerializeField] private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
+    private int _goldCount;
+    private int _maxGold = 5000;
+    private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
 
     //Trading
-    [SerializeField] private List<TradeRoute> _tradeRoutes;
-    [SerializeField] private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
+    private List<TradeRoute> _tradeRoutes;
+    private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
 	private List<City> _cities;
 	internal City capitalCity;
@@ -45,9 +46,11 @@ public class Kingdom{
 	internal List<Kingdom> adjacentKingdoms;
 
 	private int expansionChance = 1;
-	protected const int INCREASE_CITY_HP_CHANCE = 5;
+    
+    protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
     protected const int GOLD_GAINED_FROM_TRADE = 10;
+   
 	protected List<Resource> increaseCityHPCost = new List<Resource> () {
 		new Resource (BASE_RESOURCE_TYPE.GOLD, 300)
 	};
@@ -70,6 +73,12 @@ public class Kingdom{
 	public Kingdom sourceKingdom {
 		get { return this._sourceKingdom; }
 	}
+    public int goldCount {
+        get { return this._goldCount; }
+    }
+    public int maxGold {
+        get { return this._maxGold; }
+    }
 	public Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
 	}
@@ -325,7 +334,10 @@ public class Kingdom{
         this.ProduceGoldFromTrade();
         this.AttemptToExpand();
 		this.AttemptToIncreaseCityHP();
-        this.AttemptToTrade();
+        if(GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+            this.AttemptToTrade();
+        }
+        
     }
 
 	/*
@@ -996,6 +1008,9 @@ public class Kingdom{
 	 * */
 	internal void AdjustGold(int goldAmount){
 		this._goldCount += goldAmount;
+        if (this._goldCount > this._maxGold) {
+            this._goldCount = this._maxGold;
+        }
 	}
 
 	/*

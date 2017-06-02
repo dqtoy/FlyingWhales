@@ -28,9 +28,9 @@ public class City{
 	public int mithrilCount;
 	public int cobaltCount;
 	public int goldCount;
-	public int _currentGrowth;
-	public int _dailyGrowth;
-	public int _maxGrowth;
+	private int _currentGrowth;
+    private int _dailyGrowth;
+    private int _maxGrowth;
 //	public int maxGeneralHP;
 	public int _goldProduction;
 

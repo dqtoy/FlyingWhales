@@ -87,34 +87,62 @@ public class RelationshipKings {
 		this.UpdateKingRelationshipStatus ();
         if (adjustment < 0) { //Relationship deteriorated
             sourceKing.DeteriorateRelationship(this, gameEventTrigger, isDiscovery);
-            if (previousStatus != this.lordRelationship) { // Check if the relationship between the 2 kings changed in status
-                //Check if the source kings relationship with king has change to enemy or rival, if so, put king's kingdom in source king's embargo list
-                if (this.lordRelationship == RELATIONSHIP_STATUS.ENEMY || this.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-                    Embargo(gameEventTrigger);
-                } else {
-                    int chance = Random.Range(0, 100);
-                    if (chance < CHANCE_TO_CANCEL_TRADE_ROUTE) {
-                        RemoveTradeRoutes();
-                    }
-                }
-            }
+            this.CheckForEmbargo(previousStatus, gameEventTrigger);
         } else { //Relationship improved
             sourceKing.ImproveRelationship(this);
-            if (previousStatus != this.lordRelationship) { // Check if the relationship between the 2 kings changed in status
-                //if the relationship changed from enemy to cold, disembargo the targetKing
-                if (previousStatus ==  RELATIONSHIP_STATUS.ENEMY && this.lordRelationship == RELATIONSHIP_STATUS.COLD) {
-                    Disembargo();
-                }
-            }
+            this.CheckForDisembargo(previousStatus);
         }
 	}
 
     /*
-     * Put targetKing's kingdom in sourceKing's kingdom embargo list
+     * This function checks if the targetKing is to be embargoed,
+     * if not, check if the source king will trigger to cancel trade routes
+     * between himself and target king.
+     * */
+    protected void CheckForEmbargo(RELATIONSHIP_STATUS previousRelationshipStatus, GameEvent gameEventTrigger) {
+        if (previousRelationshipStatus != this.lordRelationship) { // Check if the relationship between the 2 kings changed in status
+            //Check if the source kings relationship with king has change to enemy or rival, if so, put king's kingdom in source king's embargo list
+            if (this.lordRelationship == RELATIONSHIP_STATUS.ENEMY || this.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+                Embargo(gameEventTrigger);
+            } else {
+                int chance = Random.Range(0, 100);
+                if (chance < CHANCE_TO_CANCEL_TRADE_ROUTE) {
+                    RemoveTradeRoutes();
+                }
+            }
+        }
+    }
+
+    /*
+     * Put targetKing's kingdom in sourceKing's kingdom embargo list.
+     * TODO: Add embargo reason from gameEventReasonForEmbargo when adding
+     * kingdom to embargo list.
      * */
     protected void Embargo(GameEvent gameEventReasonForEmbargo) {
         this.sourceKing.city.kingdom.AddKingdomToEmbargoList(this.king.city.kingdom);
         Debug.LogError(this.sourceKing.city.kingdom.name + " put " + this.king.city.kingdom.name + " in it's embargo list, beacuase of " + gameEventReasonForEmbargo.eventType.ToString());
+    }
+
+    /*
+     * Remove all trade routes with targetKingdom
+     * */
+    protected void RemoveTradeRoutes() {
+        this.sourceKing.city.kingdom.RemoveAllTradeRoutesWithOtherKingdom(this.king.city.kingdom);
+        this.king.city.kingdom.RemoveAllTradeRoutesWithOtherKingdom(this.sourceKing.city.kingdom);
+    }
+
+    /*
+     * This function checks if the targetKing is to be disembargoed,
+     * requirement/s for disembargo:
+     * - Relationship should go from ENEMY to COLD.
+     * */
+    protected void CheckForDisembargo(RELATIONSHIP_STATUS previousRelationshipStatus) {
+        if (previousRelationshipStatus != this.lordRelationship) { // Check if the relationship between the 2 kings changed in status
+            //if the relationship changed from enemy to cold, disembargo the targetKing
+            if (previousRelationshipStatus == RELATIONSHIP_STATUS.ENEMY && this.lordRelationship == RELATIONSHIP_STATUS.COLD) {
+                Disembargo();
+            }
+        }
     }
 
     /*
@@ -125,23 +153,24 @@ public class RelationshipKings {
         Debug.LogError(this.sourceKing.city.kingdom.name + " removed " + this.king.city.kingdom.name + " from it's embargo list!");
     }
 
+    #region For Testing Functions
     /*
-     * Remove all trade routes with targetKingdom
+     * Instantly change the like rating
+     * of sourceKing towards targetKing.
      * */
-    protected void RemoveTradeRoutes() {
-        this.sourceKing.city.kingdom.RemoveAllTradeRoutesWithOtherKingdom(this.king.city.kingdom);
-        this.king.city.kingdom.RemoveAllTradeRoutesWithOtherKingdom(this.sourceKing.city.kingdom);
-    }
-         
-
-	internal void ChangeSourceKingLikeness(int newLikeness){
+    internal void ChangeSourceKingLikeness(int newLikeness){
 		this.like = (float)newLikeness;
 		this.UpdateKingRelationshipStatus();
 	}
 
-	internal void ChangeTargetKingLikeness(int newLikeness){
+    /*
+    * Instantly change the like rating
+    * of targetKing towards sourceking.
+    * */
+    internal void ChangeTargetKingLikeness(int newLikeness){
 		RelationshipKings rel = this.king.GetRelationshipWithCitizen(this.sourceKing);
 		rel.like = (float)newLikeness;
 		rel.UpdateKingRelationshipStatus();
 	}
+    #endregion
 }

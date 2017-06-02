@@ -237,12 +237,15 @@ public class UIManager : MonoBehaviour {
 		string lblName = lbl.name;
 		if (lblName.Contains ("HEADER")) {
 			lbl.fontSize = HEADER_FONT_SIZE;
-		} else if (lblName.Contains ("BODY")) {
+            lbl.overflowMethod = UILabel.Overflow.ClampContent;
+        } else if (lblName.Contains ("BODY")) {
 			lbl.fontSize = BODY_FONT_SIZE;
-		} else if (lblName.Contains ("TOOLTIP")) {
+            lbl.overflowMethod = UILabel.Overflow.ClampContent;
+        } else if (lblName.Contains ("TOOLTIP")) {
 			lbl.fontSize = TOOLTIP_FONT_SIZE;
-		}
-		lbl.overflowMethod = UILabel.Overflow.ClampContent;
+            lbl.overflowMethod = UILabel.Overflow.ResizeHeight;
+        }
+		
 	}
 
 	private void UpdateUI(){

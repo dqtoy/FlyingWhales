@@ -84,114 +84,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	#endregion
 
-	#region For Testing
-	[SerializeField] private int range = 0;
-	List<HexTile> tiles = new List<HexTile> ();
-	[ContextMenu("Show Tiles In Range")]
-	public void ShowTilesInRange(){
-		for (int i = 0; i < tiles.Count; i++) {
-			tiles [i].GetComponent<SpriteRenderer> ().color = Color.white;
-		}
-		tiles.Clear ();
-		tiles.AddRange(this.GetTilesInRange (range));
-		for (int i = 0; i < tiles.Count; i++) {
-			tiles [i].GetComponent<SpriteRenderer> ().color = Color.magenta;
-		}
-	}
-
-	[ContextMenu("Show Border Tiles")]
-	public void ShowBorderTiles(){
-		for (int i = 0; i < this.city.borderTiles.Count; i++) {
-			this.city.borderTiles[i].GetComponent<SpriteRenderer> ().color = Color.magenta;
-		}
-	}
-		
-	/*[ContextMenu("Increase General HP")]
-	public void IncreaseGeneralHP(){
-		List<Citizen> generals = this.city.GetCitizensWithRole (ROLE.GENERAL);
-		for (int i = 0; i < generals.Count; i++) {
-			((General)generals[i].assignedRole).army.hp += 100;
-			Debug.Log (((General)generals [i].assignedRole).citizen.name + " hp is " + ((General)generals [i].assignedRole).army.hp.ToString ());
-		}
-	}*/
-
-	[ContextMenu("Show Adjacent Cities")]
-	public void ShowAdjacentCities(){
-		for (int i = 0; i < this.city.adjacentCities.Count; i++) {
-			Debug.Log ("Adjacent City: " + this.city.adjacentCities [i].name);
-		}
-	}
-
-	[ContextMenu("Show Adjacent Kingdoms")]
-	public void ShowAdjacentKingdoms(){
-		for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
-			Debug.Log ("Adjacent Kingdom: " + this.city.kingdom.adjacentKingdoms[i].name);
-		}
-	}
-	#endregion
-
-	internal void LoadEdges(Sprite spriteForTile, Material materialForTile){
-		List<HexTile> neighbours = this.AllNeighbours.ToList ();
-		for (int i = 0; i < neighbours.Count; i++) {
-			HexTile currentNeighbour = neighbours [i];
-			int neighbourX = currentNeighbour.xCoordinate;
-			int neighbourY = currentNeighbour.yCoordinate;
-
-			Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate), 
-				(currentNeighbour.yCoordinate - this.yCoordinate));
-			if (currentNeighbour.biomeType != this.biomeType || currentNeighbour.elevationType == ELEVATION.WATER) {
-				GameObject gameObjectToEdit = null;
-				if (this.yCoordinate % 2 == 0) {
-					if (difference.X == -1 && difference.Y == 1) {
-						//top left
-						gameObjectToEdit = this.topLeftEdge;
-					} else if (difference.X == 0 && difference.Y == 1) {
-						//top right
-						gameObjectToEdit = this.topRightEdge;
-					} else if (difference.X == 1 && difference.Y == 0) {
-						//right
-						gameObjectToEdit = this.rightEdge;
-					} else if (difference.X == 0 && difference.Y == -1) {
-						//bottom right
-						gameObjectToEdit = this.botRightEdge;
-					} else if (difference.X == -1 && difference.Y == -1) {
-						//bottom left
-						gameObjectToEdit = this.botLeftEdge;
-					} else if (difference.X == -1 && difference.Y == 0) {
-						//left
-						gameObjectToEdit = this.leftEdge;
-					}
-				} else {
-					if (difference.X == 0 && difference.Y == 1) {
-						//top left
-						gameObjectToEdit = this.topLeftEdge;
-					} else if (difference.X == 1 && difference.Y == 1) {
-						//top right
-						gameObjectToEdit = this.topRightEdge;
-					} else if (difference.X == 1 && difference.Y == 0) {
-						//right
-						gameObjectToEdit = this.rightEdge;
-					} else if (difference.X == 1 && difference.Y == -1) {
-						//bottom right
-						gameObjectToEdit = this.botRightEdge;
-					} else if (difference.X == 0 && difference.Y == -1) {
-						//bottom left
-						gameObjectToEdit = this.botLeftEdge;
-					} else if (difference.X == -1 && difference.Y == 0) {
-						//left
-						gameObjectToEdit = this.leftEdge;
-					}
-				}
-				if (gameObjectToEdit != null) {
-					gameObjectToEdit.SetActive (true);
-					gameObjectToEdit.GetComponent<SpriteRenderer> ().sprite = spriteForTile;
-//					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
-				}
-
-			}
-		}
-	}
-
 	internal void SetSortingOrder(int sortingOrder){
 		this.GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder + 1;
 		if (this.elevationType == ELEVATION.MOUNTAIN) {
@@ -352,10 +244,72 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 		this.AllNeighbours = neighbours;
 	}
-	#endregion
-	
-	#region Tile Visuals
-	public void SetBaseSprite(Sprite baseSprite){
+    #endregion
+
+    #region Tile Visuals
+    internal void LoadEdges(Sprite spriteForTile, Material materialForTile) {
+        List<HexTile> neighbours = this.AllNeighbours.ToList();
+        for (int i = 0; i < neighbours.Count; i++) {
+            HexTile currentNeighbour = neighbours[i];
+            int neighbourX = currentNeighbour.xCoordinate;
+            int neighbourY = currentNeighbour.yCoordinate;
+
+            Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
+                (currentNeighbour.yCoordinate - this.yCoordinate));
+            if (currentNeighbour.biomeType != this.biomeType || currentNeighbour.elevationType == ELEVATION.WATER) {
+                GameObject gameObjectToEdit = null;
+                if (this.yCoordinate % 2 == 0) {
+                    if (difference.X == -1 && difference.Y == 1) {
+                        //top left
+                        gameObjectToEdit = this.topLeftEdge;
+                    } else if (difference.X == 0 && difference.Y == 1) {
+                        //top right
+                        gameObjectToEdit = this.topRightEdge;
+                    } else if (difference.X == 1 && difference.Y == 0) {
+                        //right
+                        gameObjectToEdit = this.rightEdge;
+                    } else if (difference.X == 0 && difference.Y == -1) {
+                        //bottom right
+                        gameObjectToEdit = this.botRightEdge;
+                    } else if (difference.X == -1 && difference.Y == -1) {
+                        //bottom left
+                        gameObjectToEdit = this.botLeftEdge;
+                    } else if (difference.X == -1 && difference.Y == 0) {
+                        //left
+                        gameObjectToEdit = this.leftEdge;
+                    }
+                } else {
+                    if (difference.X == 0 && difference.Y == 1) {
+                        //top left
+                        gameObjectToEdit = this.topLeftEdge;
+                    } else if (difference.X == 1 && difference.Y == 1) {
+                        //top right
+                        gameObjectToEdit = this.topRightEdge;
+                    } else if (difference.X == 1 && difference.Y == 0) {
+                        //right
+                        gameObjectToEdit = this.rightEdge;
+                    } else if (difference.X == 1 && difference.Y == -1) {
+                        //bottom right
+                        gameObjectToEdit = this.botRightEdge;
+                    } else if (difference.X == 0 && difference.Y == -1) {
+                        //bottom left
+                        gameObjectToEdit = this.botLeftEdge;
+                    } else if (difference.X == -1 && difference.Y == 0) {
+                        //left
+                        gameObjectToEdit = this.leftEdge;
+                    }
+                }
+                if (gameObjectToEdit != null) {
+                    gameObjectToEdit.SetActive(true);
+                    gameObjectToEdit.GetComponent<SpriteRenderer>().sprite = spriteForTile;
+                    //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
+                }
+
+            }
+        }
+    }
+
+    public void SetBaseSprite(Sprite baseSprite){
 		this.GetComponent<SpriteRenderer>().sprite = baseSprite;
 	}
 
@@ -375,42 +329,28 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public void HideTileHighlight(){
 		this.kingdomColorSprite.gameObject.SetActive(false);
 	}
-	#endregion
 
-	public void ShowCitySprite(){
-		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
-		this.structureGO.SetActive(true);
-		this.centerPiece.SetActive(false);
-		Color color = this.city.kingdom.kingdomColor;
-		color.a = 76.5f/255f;
-		this._kingdomColorSprite.color = color;
-		this.GetComponent<SpriteRenderer>().color = Color.white;
-		this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles [Random.Range (0, Biomes.Instance.bareTiles.Length)];
-	}
+    public void ShowCitySprite() {
+        this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
+        this.structureGO.SetActive(true);
+        this.centerPiece.SetActive(false);
+        Color color = this.city.kingdom.kingdomColor;
+        color.a = 76.5f / 255f;
+        this._kingdomColorSprite.color = color;
+        this.GetComponent<SpriteRenderer>().color = Color.white;
+        this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
+    }
 
-	public void ShowNamePlate(){
-		this.cityNameGO.SetActive(true);
-		this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
-		this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
-	}
+    public void ShowNamePlate() {
+        this.cityNameGO.SetActive(true);
+        this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
+        this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
+    }
 
-	public void ShowOccupiedSprite(){
-		this.GetComponent<SpriteRenderer> ().sprite = Biomes.Instance.bareTiles [Random.Range (0, Biomes.Instance.bareTiles.Length)];
-        //		this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfTraderSprite;
-        //		this.structureGO.SetActive(true);
-        //GameObject leftGO = GameObject.Instantiate(CityGenerator.Instance.leftStructure, structureParentGO.transform) as GameObject;
-        //GameObject rightGO = GameObject.Instantiate(CityGenerator.Instance.rightStructure, structureParentGO.transform) as GameObject;
-        //leftGO.transform.localPosition = Vector3.zero;
-        //rightGO.transform.localPosition = Vector3.zero;
-        //SpriteRenderer[] leftColorizers = leftGO.GetComponentsInChildren<SpriteRenderer> ().Where (x => x.gameObject.tag == "StructureColorizers").ToArray ();
-        //SpriteRenderer[] rightColorizers = rightGO.GetComponentsInChildren<SpriteRenderer> ().Where (x => x.gameObject.tag == "StructureColorizers").ToArray ();
-        //SpriteRenderer[] allColorizers = leftColorizers.Union (rightColorizers).ToArray ();
-        //for (int i = 0; i < allColorizers.Length; i++) {
-        //	allColorizers [i].color = this.ownedByCity.kingdom.kingdomColor;
-        //}
-
+    public void ShowOccupiedSprite() {
+        this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
         GameObject structureGO = GameObject.Instantiate(
-            CityGenerator.Instance.structures[Random.Range(0, CityGenerator.Instance.structures.Length)], 
+            CityGenerator.Instance.structures[Random.Range(0, CityGenerator.Instance.structures.Length)],
             structureParentGO.transform) as GameObject;
         structureGO.transform.localPosition = Vector3.zero;
         SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
@@ -420,9 +360,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
         }
         this._centerPiece.SetActive(false);
-	}
+    }
+    #endregion
 
-	public void ResetTile(){
+    public void ResetTile(){
 //		this.isOwned = false;
 		this.isOccupied = false;
 		this.isBorder = false;
@@ -446,54 +387,143 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.ownedByCity = city;
 	}
 
-	void OnMouseDown(){
-		if (UIManager.Instance.IsMouseOnUI ()) {
-			return;
-		}
-		if (this.isHabitable && this.isOccupied && this.city != null) {
-			CameraMove.Instance.CenterCameraOn(this.gameObject);
-			UIManager.Instance.ShowCityInfo (this.city, true);
-		}
-	}
+    #region Monobehaviour Functions
+    void OnMouseDown() {
+        if (UIManager.Instance.IsMouseOnUI()) {
+            return;
+        }
+        if (this.isHabitable && this.isOccupied && this.city != null) {
+            CameraMove.Instance.CenterCameraOn(this.gameObject);
+            UIManager.Instance.ShowCityInfo(this.city, true);
+        }
+    }
 
-	void OnMouseOver(){
-		if (UIManager.Instance.IsMouseOnUI ()) {
-			return;
-		}
-		if (this.isHabitable && this.isOccupied) {
-			this.city.kingdom.HighlightAllOwnedTilesInKingdom();
-			this.city.HighlightAllOwnedTiles(204f/255f);
-		}
-	}
+    void OnMouseOver() {
+        if (UIManager.Instance.IsMouseOnUI()) {
+            return;
+        }
+        if (this.isHabitable && this.isOccupied) {
+            this.city.kingdom.HighlightAllOwnedTilesInKingdom();
+            this.city.HighlightAllOwnedTiles(204f / 255f);
+            this.ShowKingdomInfo();
+        }
+    }
 
-	void OnMouseExit(){
-		if (this.isHabitable && this.isOccupied) {
-			if (UIManager.Instance.currentlyShowingKingdom != null) {
-				//if there is currently showing kingdom, if this city is part of that kingdom remain higlighted, but less
-				if (UIManager.Instance.currentlyShowingKingdom.id == this.city.kingdom.id) {
-					this.city.kingdom.HighlightAllOwnedTilesInKingdom();
-					if (UIManager.Instance.currentlyShowingCity != null) {
-						if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
-							this.city.HighlightAllOwnedTiles (204f / 255f);
-						}
-					}
-				} else {
-					this.city.kingdom.UnHighlightAllOwnedTilesInKingdom ();
-					if (UIManager.Instance.currentlyShowingCity != null) {
-						if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
-							this.city.HighlightAllOwnedTiles (204f / 255f);
-						}
-					}
-				}
-			}
-		}
-	}
+    void OnMouseExit() {
+        if (this.isHabitable && this.isOccupied) {
+            this.HideKingdomInfo();
+            if (UIManager.Instance.currentlyShowingKingdom != null) {
+                //if there is currently showing kingdom, if this city is part of that kingdom remain higlighted, but less
+                if (UIManager.Instance.currentlyShowingKingdom.id == this.city.kingdom.id) {
+                    this.city.kingdom.HighlightAllOwnedTilesInKingdom();
+                    if (UIManager.Instance.currentlyShowingCity != null) {
+                        if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
+                            this.city.HighlightAllOwnedTiles(204f / 255f);
+                        }
+                    }
+                } else {
+                    this.city.kingdom.UnHighlightAllOwnedTilesInKingdom();
+                    if (UIManager.Instance.currentlyShowingCity != null) {
+                        if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
+                            this.city.HighlightAllOwnedTiles(204f / 255f);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #endregion
 
-	internal bool HasCombatPathTo(HexTile target){
+    internal bool HasCombatPathTo(HexTile target){
 		List<HexTile> path = PathGenerator.Instance.GetPath (this, target, PATHFINDING_MODE.COMBAT);
 		if(path != null){
 			return true;
 		}
 		return false;
 	}
+
+    #region For Testing
+    [SerializeField] private int range = 0;
+    List<HexTile> tiles = new List<HexTile>();
+    [ContextMenu("Show Tiles In Range")]
+    public void ShowTilesInRange() {
+        for (int i = 0; i < tiles.Count; i++) {
+            tiles[i].GetComponent<SpriteRenderer>().color = Color.white;
+        }
+        tiles.Clear();
+        tiles.AddRange(this.GetTilesInRange(range));
+        for (int i = 0; i < tiles.Count; i++) {
+            tiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
+        }
+    }
+
+    [ContextMenu("Show Border Tiles")]
+    public void ShowBorderTiles() {
+        for (int i = 0; i < this.city.borderTiles.Count; i++) {
+            this.city.borderTiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
+        }
+    }
+
+    /*[ContextMenu("Increase General HP")]
+	public void IncreaseGeneralHP(){
+		List<Citizen> generals = this.city.GetCitizensWithRole (ROLE.GENERAL);
+		for (int i = 0; i < generals.Count; i++) {
+			((General)generals[i].assignedRole).army.hp += 100;
+			Debug.Log (((General)generals [i].assignedRole).citizen.name + " hp is " + ((General)generals [i].assignedRole).army.hp.ToString ());
+		}
+	}*/
+
+    [ContextMenu("Show Adjacent Cities")]
+    public void ShowAdjacentCities() {
+        for (int i = 0; i < this.city.adjacentCities.Count; i++) {
+            Debug.Log("Adjacent City: " + this.city.adjacentCities[i].name);
+        }
+    }
+
+    [ContextMenu("Show Adjacent Kingdoms")]
+    public void ShowAdjacentKingdoms() {
+        for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
+            Debug.Log("Adjacent Kingdom: " + this.city.kingdom.adjacentKingdoms[i].name);
+        }
+    }
+
+    private void ShowKingdomInfo() {
+        string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
+        text += this.city.kingdom.name + "\n [b]GOLD:[/b] " + this.city.kingdom.goldCount.ToString() + "/" + this.city.kingdom.maxGold.ToString() + 
+            "\n [b]Growth Rate: [/b]" + this.city.dailyGrowth.ToString() + 
+            "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() +
+            "\n [b]Available Resources: [/b]\n";
+        if(this.city.kingdom.availableResources.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.availableResources.Keys.Count; i++) {
+                text += this.city.kingdom.availableResources.Keys.ElementAt(i).ToString() + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
+       
+        text += "[b]Embargo List: [/b]\n";
+        if (this.city.kingdom.embargoList.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.embargoList.Keys.Count; i++) {
+                text += this.city.kingdom.embargoList.Keys.ElementAt(i).name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
+
+        text += "[b]Trade Routes: [/b]\n";
+        if (this.city.kingdom.tradeRoutes.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.tradeRoutes.Count; i++) {
+                TradeRoute currTradeRoute = this.city.kingdom.tradeRoutes[i];
+                text += currTradeRoute.sourceKingdom.name + " -> " + currTradeRoute.targetKingdom.name + ": " + currTradeRoute.resourceBeingTraded.ToString() + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
+        UIManager.Instance.ShowSmallInfo(text);
+    }
+
+    private void HideKingdomInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
 }
