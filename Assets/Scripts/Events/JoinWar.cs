@@ -236,15 +236,12 @@ public class JoinWar : GameEvent {
 		this.DoneEvent();
 	}
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 		if(this._envoyToSend != null){
 			this._envoyToSend.DestroyGO ();
 		}
-		this.isActive = false;
 //		this._envoyToSend.inAction = false;
-		this.endDay = GameManager.Instance.days;
-		this.endMonth = GameManager.Instance.month;
-		this.endYear = GameManager.Instance.year;
 	}
 	#endregion
 

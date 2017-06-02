@@ -66,8 +66,8 @@ public class Exhortation : GameEvent {
 	}
 
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
-		this.isActive = false;
 //		if (citizenSent.role == ROLE.ENVOY) {
 //			((Envoy)citizenSent.assignedRole).inAction = false;
 //		}

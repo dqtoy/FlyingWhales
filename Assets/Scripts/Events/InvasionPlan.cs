@@ -180,11 +180,8 @@ public class InvasionPlan : GameEvent {
 	}
 
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
-		this.isActive = false;
-		this.endDay = GameManager.Instance.days;
-		this.endMonth = GameManager.Instance.month;
-		this.endYear = GameManager.Instance.year;
 	}
 
 	internal override void CancelEvent (){

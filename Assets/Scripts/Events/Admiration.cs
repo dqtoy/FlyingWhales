@@ -37,11 +37,8 @@ public class Admiration : GameEvent {
 	}
 
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		this.isActive = false;
-		this.endDay = GameManager.Instance.days;
-		this.endMonth = GameManager.Instance.month;
-		this.endYear = GameManager.Instance.year;
 
 		RelationshipKings relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
 		RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);

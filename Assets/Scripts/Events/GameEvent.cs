@@ -87,8 +87,11 @@ public class GameEvent {
 	internal virtual void CancelEvent(){}
 
 	internal virtual void DoneEvent(){
-//		Debug.Log ("Game Event Ended!");
-	}
+        this.isActive = false;
+        this.endMonth = GameManager.Instance.month;
+        this.endDay = GameManager.Instance.days;
+        this.endYear = GameManager.Instance.year;
+    }
 	internal virtual void DeathByOtherReasons(){}
 	internal virtual void DeathByGeneral(General general){}
 	#endregion

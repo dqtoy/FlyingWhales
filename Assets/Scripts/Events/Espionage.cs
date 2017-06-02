@@ -49,14 +49,11 @@ public class Espionage : GameEvent {
 		}
 	}
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		if(this.spy != null){
 			this.spy.assignedRole.DestroyGO ();
 		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		this.isActive = false;
-		this.endMonth = GameManager.Instance.month;
-		this.endDay = GameManager.Instance.days;
-		this.endYear = GameManager.Instance.year;
 		if(this.chosenEvent != null && this.hasFound){
 			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". " + this.spy.name + " discovered a Hidden Event: ";
 		}

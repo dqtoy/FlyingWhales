@@ -130,9 +130,9 @@ public class PowerGrab : GameEvent {
 	}
 
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
-		this.isActive = false;
-	}
+			}
 
 	internal bool IsCitizenFirstInLine(Citizen citizen){
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {

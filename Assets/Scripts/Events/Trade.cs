@@ -41,8 +41,8 @@ public class Trade : GameEvent {
     }
 
     internal override void DoneEvent() {
+        base.DoneEvent();
         this._trader.assignedRole.DestroyGO();
-        this.isActive = false;
     }
     
     internal void KillTrader() {
