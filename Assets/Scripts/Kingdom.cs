@@ -1009,6 +1009,23 @@ public class Kingdom{
 			this.activeCitiesToAttack.Add (this.intlWarCities [UnityEngine.Random.Range (0, this.intlWarCities.Count)]);
 		}
 	}
+	internal City GetCityNearestFrom(City targetCity){
+		City nearestCity = null;
+		float nearestDistance = 0;
+		for(int i = 0; i < this.cities.Count; i++){
+			if(nearestCity == null){
+				nearestCity = this.cities [i];
+				nearestDistance = Vector3.Distance (this.cities [i].hexTile.transform.position, targetCity.hexTile.transform.position); 
+			}else{
+				float distance = Vector3.Distance (this.cities [i].hexTile.transform.position, targetCity.hexTile.transform.position);
+				if(distance < nearestDistance){
+					nearestCity = this.cities [i];
+					nearestDistance = distance;
+				}
+			}
+		}
+		return nearestCity;
+	}
 	#region Resource Management
 	/*
 	 * Function to adjust the gold count of this kingdom.

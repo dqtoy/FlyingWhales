@@ -1191,7 +1191,7 @@ public class Citizen {
 	}*/
 
 	internal void WarTrigger(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
-		return;
+//		return;
 		if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
 			return;
 		}
