@@ -331,14 +331,26 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
     public void ShowCitySprite() {
-        this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
-        this.structureGO.SetActive(true);
-        this.centerPiece.SetActive(false);
+        GameObject structureGO = GameObject.Instantiate(
+           CityGenerator.Instance.cityStructurePrefabs[Random.Range(0, CityGenerator.Instance.cityStructurePrefabs.Length)],
+           structureParentGO.transform) as GameObject;
+        structureGO.transform.localPosition = Vector3.zero;
+        SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
+            Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
+
+        for (int i = 0; i < allColorizers.Length; i++) {
+            allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
+        }
+        this._centerPiece.SetActive(false);
+
+        //this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
+        //this.structureGO.SetActive(true);
+        //this.centerPiece.SetActive(false);
         Color color = this.city.kingdom.kingdomColor;
         color.a = 76.5f / 255f;
         this._kingdomColorSprite.color = color;
         this.GetComponent<SpriteRenderer>().color = Color.white;
-        this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
+        //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
     }
 
     public void ShowNamePlate() {
@@ -348,7 +360,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void ShowOccupiedSprite() {
-        this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
+        //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
         GameObject structureGO = GameObject.Instantiate(
             CityGenerator.Instance.structures[Random.Range(0, CityGenerator.Instance.structures.Length)],
             structureParentGO.transform) as GameObject;
@@ -490,7 +502,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += this.city.kingdom.name + "\n [b]GOLD:[/b] " + this.city.kingdom.goldCount.ToString() + "/" + this.city.kingdom.maxGold.ToString() + 
-            "\n [b]Growth Rate: [/b]" + this.city.dailyGrowth.ToString() + 
+            "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() + 
             "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() +
             "\n [b]Available Resources: [/b]\n";
         if(this.city.kingdom.availableResources.Count > 0) {

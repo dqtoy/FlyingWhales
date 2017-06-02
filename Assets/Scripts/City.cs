@@ -29,7 +29,9 @@ public class City{
 	public int cobaltCount;
 	public int goldCount;
 	private int _currentGrowth;
-    private int _dailyGrowth;
+    //private int _dailyGrowth;
+    private int _dailyGrowthFromStructures;
+    private int _dailyGrowthFromKingdom;
     private int _maxGrowth;
 //	public int maxGeneralHP;
 	public int _goldProduction;
@@ -54,8 +56,8 @@ public class City{
 	public int currentGrowth{
 		get{ return this._currentGrowth; }
 	}
-	public int dailyGrowth{
-		get{ return this._dailyGrowth; }
+	public int totalDailyGrowth{
+		get{ return this._dailyGrowthFromKingdom + this._dailyGrowthFromStructures; }
 	}
 	public int maxGrowth{
 		get{ return this._maxGrowth; }
@@ -505,15 +507,16 @@ public class City{
 			this.UpdateBorderTiles();
 		}
 
-        //Add special resources to kingdoms available resources, if the purchased tile has any
-        if (tileToBuy.specialResource != RESOURCE.NONE) {
-            this._kingdom.AddResourceToKingdom(tileToBuy.specialResource);
-        }
-
         //Update necessary data
         this.UpdateDailyProduction();
         //this.UpdateAdjacentCities();
         //this.kingdom.UpdateKingdomAdjacency();
+
+        //Add special resources to kingdoms available resources, if the purchased tile has any
+        if (tileToBuy.specialResource != RESOURCE.NONE) {
+            this._kingdom.AddResourceToKingdom(tileToBuy.specialResource);
+        }
+        
 
         //Show Highlight if kingdom or city is currently highlighted
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
@@ -558,7 +561,7 @@ public class City{
 	}
 
 	internal void AddToDailyGrowth(){
-		this._currentGrowth += this._dailyGrowth;
+		this._currentGrowth += this.totalDailyGrowth;
 		if (this._currentGrowth >= this._maxGrowth) {
 			this._currentGrowth = this._maxGrowth;
 		}
@@ -570,30 +573,30 @@ public class City{
 
 	internal void UpdateDailyProduction(){
 		this._maxGrowth = 100 + ((100 + (100 * this.structures.Count)) * this.structures.Count);
-		this._dailyGrowth = 10;
+		this._dailyGrowthFromStructures = 10;
 		this._goldProduction = 20;
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
 			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
-				this._dailyGrowth += 5;
+				this._dailyGrowthFromStructures += 5;
 				this._goldProduction += 2;
 			} else if (currentStructure.biomeType == BIOMES.WOODLAND) {
-				this._dailyGrowth += 4;
+				this._dailyGrowthFromStructures += 4;
 				this._goldProduction += 3;
 			} else if (currentStructure.biomeType == BIOMES.FOREST) {
-				this._dailyGrowth += 3;
+				this._dailyGrowthFromStructures += 3;
 				this._goldProduction += 3;
 			} else if (currentStructure.biomeType == BIOMES.DESERT) {
-				this._dailyGrowth += 1;
+				this._dailyGrowthFromStructures += 1;
 				this._goldProduction += 4;
 			} else if (currentStructure.biomeType == BIOMES.TUNDRA) {
-				this._dailyGrowth += 2;
+				this._dailyGrowthFromStructures += 2;
 				this._goldProduction += 2;
 			} else if (currentStructure.biomeType == BIOMES.SNOW) {
-				this._dailyGrowth += 1;
+				this._dailyGrowthFromStructures += 1;
 				this._goldProduction += 1;
 			} else if (currentStructure.biomeType == BIOMES.BARE) {
-				this._dailyGrowth += 1;
+				this._dailyGrowthFromStructures += 1;
 			}
 		}
 	}
@@ -603,7 +606,7 @@ public class City{
      * Including resources from trade. Increase is computed by kingdom.
      * */
     internal void UpdateDailyGrowthBasedOnSpecialResources(int dailyGrowthGained) {
-        this._dailyGrowth += dailyGrowthGained;
+        this._dailyGrowthFromKingdom = dailyGrowthGained;
     }
 	#endregion
 

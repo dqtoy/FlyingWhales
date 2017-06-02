@@ -472,6 +472,9 @@ public class Kingdom{
     internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
         if (!this._embargoList.ContainsKey(kingdomToAdd)) {
             this._embargoList.Add(kingdomToAdd, embargoReason);
+            //Remove all existing trade routes between kingdomToAdd and this Kingdom
+            this.RemoveAllTradeRoutesWithOtherKingdom(kingdomToAdd);
+            kingdomToAdd.RemoveAllTradeRoutesWithOtherKingdom(this);
         }
         
     }
@@ -1046,7 +1049,15 @@ public class Kingdom{
 
     internal void UpdateAllCitiesDailyGrowth() {
         //get all rasources from tiles and trade routes, only include trade routes where this kingom is the target
-        List<RESOURCE> allAvailableResources = this._availableResources.Keys.Union(this._tradeRoutes.Where(x => x.targetKingdom.id == this.id).Select(x => x.resourceBeingTraded)).ToList();
+        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.targetKingdom.id == this.id) {
+                if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
+                    allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
+                }
+            }
+        }
         int dailyGrowthGained = this.ComputeDailyGrowthGainedFromResources(allAvailableResources);
         for (int i = 0; i < this.cities.Count; i++) {
             City currCity = this.cities[i];
