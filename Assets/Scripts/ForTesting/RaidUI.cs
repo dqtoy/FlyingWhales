@@ -49,9 +49,9 @@ public class RaidUI : MonoBehaviour {
 					if (!kingdom.cities [i].citizens [j].isDead) {
 						if (kingdom.cities [i].citizens [j].assignedRole != null && kingdom.cities [i].citizens [j].role == ROLE.GENERAL) {
 							if(kingdom.cities [i].citizens [j].assignedRole is General){
-								if (!((General)kingdom.cities [i].citizens [j].assignedRole).inAction) {
-									this.dropdownGenerals.AddItem (kingdom.cities [i].citizens [j].name, ((General)kingdom.cities [i].citizens [j].assignedRole));
-								}
+//								if (!((General)kingdom.cities [i].citizens [j].assignedRole).inAction) {
+//									this.dropdownGenerals.AddItem (kingdom.cities [i].citizens [j].name, ((General)kingdom.cities [i].citizens [j].assignedRole));
+//								}
 							}
 						}
 					}

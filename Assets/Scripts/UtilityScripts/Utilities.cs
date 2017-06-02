@@ -720,6 +720,8 @@ public class Utilities : MonoBehaviour {
 			return true;
         case EVENT_TYPES.TRADE:
             return true;
+		case EVENT_TYPES.ATTACK_CITY:
+			return true;
         case EVENT_TYPES.REQUEST_PEACE:
             return true;
         case EVENT_TYPES.BORDER_CONFLICT:

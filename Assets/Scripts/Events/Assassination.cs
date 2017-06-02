@@ -128,6 +128,10 @@ public class Assassination : GameEvent {
         base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 	}
+
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+	}
 	private void WaitForTarget(){
 		//Add logs: wait_for_target
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);

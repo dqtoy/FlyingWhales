@@ -129,14 +129,14 @@ public class Campaign {
 
 		if (path != null) {
 			for(int i = 0; i < this.registeredGenerals.Count; i++){
-				this.registeredGenerals[i].targetLocation = this.targetCity.hexTile;
-				this.registeredGenerals [i].roads.Clear ();
-				this.registeredGenerals [i].roads = new List<HexTile>(path);
-				this.registeredGenerals [i].daysBeforeArrival = path.Sum(x => x.movementDays);
-				this.registeredGenerals [i].generalAvatar.transform.parent = this.registeredGenerals [i].location.transform;
-				this.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
-//				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().highlightPath.Clear ();
-//				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().highlightPath = new List<HexTile>(path);
+//				this.registeredGenerals[i].targetLocation = this.targetCity.hexTile;
+//				this.registeredGenerals [i].roads.Clear ();
+//				this.registeredGenerals [i].roads = new List<HexTile>(path);
+//				this.registeredGenerals [i].daysBeforeArrival = path.Sum(x => x.movementDays);
+//				this.registeredGenerals [i].generalAvatar.transform.parent = this.registeredGenerals [i].location.transform;
+//				this.registeredGenerals [i].generalAvatar.transform.localPosition = Vector3.zero;
+////				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().highlightPath.Clear ();
+////				this.registeredGenerals [i].generalAvatar.GetComponent<GeneralObject> ().highlightPath = new List<HexTile>(path);
 				this.targetCity.incomingGenerals.Add (this.registeredGenerals[i]);
 //				if(this.registeredGenerals[i].generalAvatar == null){
 //					this.registeredGenerals [i].generalAvatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.registeredGenerals [i].location.transform) as GameObject;

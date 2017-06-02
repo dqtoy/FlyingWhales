@@ -116,14 +116,25 @@ public class EventCreator: MonoBehaviour {
 		return null;
 	}
 
-    internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
-        Citizen envoy = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
-        if (envoy != null) {
-            RequestPeace requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-                kingdomToRequest.king, (Envoy)envoy.assignedRole, targetKingdom);
-            envoy.assignedRole.Initialize(requestPeace);
-            return requestPeace;
-        }
-        return null;
-    }
+	internal AttackCity CreateAttackCityEvent(Kingdom sourceKingdom, City targetCity){
+		Citizen general = sourceKingdom.capitalCity.CreateAgent (ROLE.GENERAL, EVENT_TYPES.ATTACK_CITY, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.ATTACK_CITY]);
+		if(general != null){
+			General attacker = (General)general.assignedRole;
+			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				sourceKingdom.king, attacker, targetCity);
+			general.assignedRole.Initialize (attackCity);
+		}
+		return null;
+	}
+	
+    	internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
+        	Citizen envoy = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
+        	if (envoy != null) {
+            	RequestPeace requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+                	kingdomToRequest.king, (Envoy)envoy.assignedRole, targetKingdom);
+            	envoy.assignedRole.Initialize(requestPeace);
+            	return requestPeace;
+        	}
+        	return null;
+    	}
 }

@@ -84,7 +84,9 @@ public class GameEvent {
 
 	internal virtual void DoneCitizenAction(Citizen citizen){}
 
-	internal virtual void CancelEvent(){}
+	internal virtual void CancelEvent(){
+		Debug.Log ("EVENT IS CANCELLED");
+	}
 
 	internal virtual void DoneEvent(){
         this.isActive = false;

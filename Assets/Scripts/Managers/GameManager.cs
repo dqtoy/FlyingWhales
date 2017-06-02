@@ -322,7 +322,7 @@ public class GameManager : MonoBehaviour {
 		return allCitizensOfType;
 	}
 
-	private General GetGeneral(Kingdom kingdom){
+	/*private General GetGeneral(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = Utilities.GetUnwantedGovernors (kingdom.king);
 		List<General> generals = new List<General> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -349,7 +349,7 @@ public class GameManager : MonoBehaviour {
 //			Debug.Log (kingdom.king.name + " CAN'T SEND GENERAL BECAUSE THERE IS NONE!");
 			return null;
 		}
-	}
+	}*/
 	private City GetRaidedCity(General general){
 		if(general == null){
 			return null;

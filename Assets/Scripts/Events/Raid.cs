@@ -46,7 +46,6 @@ public class Raid : GameEvent {
 		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
 
-
 	}
 	internal void StartRaiding(){
 		//Add logs: start_raiding
@@ -351,5 +350,9 @@ public class Raid : GameEvent {
 			}
 		}
 		return relationship;
+	}
+
+	internal override void CancelEvent (){
+
 	}
 }

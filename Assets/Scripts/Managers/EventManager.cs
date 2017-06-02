@@ -66,7 +66,9 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.ASSASSINATION, -1},
 		{EVENT_TYPES.RAID, 5},
 		{EVENT_TYPES.EXPANSION, -1},
-        {EVENT_TYPES.TRADE, -1}
+        {EVENT_TYPES.TRADE, -1},
+		{EVENT_TYPES.ATTACK_CITY, -1},
+		{EVENT_TYPES.SABOTAGE, -1}
     };
 
 	void Awake(){

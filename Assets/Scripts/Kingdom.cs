@@ -759,6 +759,7 @@ public class Kingdom{
 				this.intlWarCities.Add(kingdom.cities[i]);
 			}
 		}
+		this.TargetACityToAttack ();
 //		for(int i = 0; i < this.cities.Count; i++){
 //			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i], WAR_TYPE.INTERNATIONAL)){
 //				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
@@ -1002,6 +1003,11 @@ public class Kingdom{
 			}
 		}
 		return nearestCity;
+	}
+	internal void TargetACityToAttack(){
+		if(this.intlWarCities.Count > 0 && this.activeCitiesToAttack.Count <= 0){
+			this.activeCitiesToAttack.Add (this.intlWarCities [UnityEngine.Random.Range (0, this.intlWarCities.Count)]);
+		}
 	}
 	#region Resource Management
 	/*

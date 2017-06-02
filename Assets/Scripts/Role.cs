@@ -50,7 +50,9 @@ public class Role {
 		//		}
 		return new int[]{ 0, 0, 0, 0, 0, 0, goldProduction, 0 };
 	}
-	internal virtual void OnDeath(){}
+	internal virtual void OnDeath(){
+		this.DestroyGO ();
+	}
 	internal virtual void Initialize(GameEvent gameEvent){}
 	internal virtual void Attack(){}
 }
