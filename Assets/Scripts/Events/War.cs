@@ -53,12 +53,6 @@ public class War : GameEvent {
 		this.EventIsCreated ();
 	}
 
-	#region overrides
-	internal override void DoneEvent(){
-		this.isActive = false;
-	}
-	#endregion
-
 	internal void CreateInvasionPlan(Kingdom kingdomToDeclare, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
 		if (kingdomToDeclare.id == this._kingdom1.id) {
 			this._kingdom1Rel.CreateInvasionPlan(gameEventTrigger, warTrigger);

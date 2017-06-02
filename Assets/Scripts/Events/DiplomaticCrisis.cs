@@ -276,6 +276,7 @@ public class DiplomaticCrisis : GameEvent {
 	}
 
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		if(this.activeEnvoyResolve != null){
 			this.activeEnvoyResolve.DestroyGO ();
 		}
@@ -288,11 +289,7 @@ public class DiplomaticCrisis : GameEvent {
 
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		this.isActive = false;
-		this.endDay = GameManager.Instance.days;
-		this.endMonth = GameManager.Instance.month;
-		this.endYear = GameManager.Instance.year;
-
+		
 		RelationshipKings relationship1 = null;
 		if(this.kingdom1.isAlive()){
 			relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);

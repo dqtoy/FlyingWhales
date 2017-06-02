@@ -119,17 +119,14 @@ public class Assassination : GameEvent {
 		}
 	}
 	internal override void DoneEvent(){
-//		if(this.spy != null){
-//			this.spy.DestroyGO();
-//		}
-//		for(int i = 0; i < this.guardians.Count; i++){
-//			((Guardian)this.guardians[i].assignedRole).inAction = false;
-//		}
+        //		if(this.spy != null){
+        //			this.spy.DestroyGO();
+        //		}
+        //		for(int i = 0; i < this.guardians.Count; i++){
+        //			((Guardian)this.guardians[i].assignedRole).inAction = false;
+        //		}
+        base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		this.isActive = false;
-		this.endMonth = GameManager.Instance.month;
-		this.endDay = GameManager.Instance.days;
-		this.endYear = GameManager.Instance.year;
 	}
 
 	internal override void CancelEvent (){

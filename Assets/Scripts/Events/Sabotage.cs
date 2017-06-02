@@ -43,14 +43,11 @@ public class Sabotage : GameEvent {
 		this.DoneEvent();
 	}
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		if(this.saboteur != null){
 			this.saboteur.DestroyGO();
 		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		this.isActive = false;
-		this.endMonth = GameManager.Instance.month;
-		this.endDay = GameManager.Instance.days;
-		this.endYear = GameManager.Instance.year;
 	}
 
 	private void AttemptToSabotage(){

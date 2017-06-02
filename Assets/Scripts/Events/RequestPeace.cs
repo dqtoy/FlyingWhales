@@ -115,13 +115,10 @@ public class RequestPeace : GameEvent {
 	}
 
 	internal override void DoneEvent(){
-		this.isActive = false;
+        base.DoneEvent();
 //		for (int i = 0; i < this._saboteurs.Count; i++) {
 //			((Envoy)this._saboteurs[i].assignedRole).inAction = false;
 //		}
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
-		this.endDay = GameManager.Instance.days;
-		this.endMonth = GameManager.Instance.month;
-		this.endYear = GameManager.Instance.year;
 	}
 }

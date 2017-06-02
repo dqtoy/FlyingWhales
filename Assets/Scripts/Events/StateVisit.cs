@@ -68,6 +68,7 @@ public class StateVisit : GameEvent {
 	}
 
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		RelationshipKings relationship = null;
 		if(this.invitedKingdom.isAlive()){
 			relationship = this.invitedKingdom.king.SearchRelationshipByID (this.inviterKingdom.king.id);
@@ -118,10 +119,6 @@ public class StateVisit : GameEvent {
 			this.saboteurEnvoy.DestroyGO();
 		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		this.isActive = false;
-		this.endMonth = GameManager.Instance.month;
-		this.endDay = GameManager.Instance.days;
-		this.endYear = GameManager.Instance.year;
 	}
 	internal override void DeathByOtherReasons(){
 		//Add logs: death_by_other

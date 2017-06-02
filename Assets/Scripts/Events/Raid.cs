@@ -88,12 +88,9 @@ public class Raid : GameEvent {
 		this.DoneEvent ();
 	}
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		this.isActive = false;
-		this.endMonth = GameManager.Instance.month;
-		this.endDay = GameManager.Instance.days;
-		this.endYear = GameManager.Instance.year;
-
+		
 		if(this.hasBeenDiscovered){
 			this._warTrigger = WAR_TRIGGER.DISCOVERED_RAID_NO_DEATH;
 			if(this.hasDeath){
