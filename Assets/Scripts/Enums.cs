@@ -308,3 +308,7 @@ public enum DIRECTION{
 	UP,
 	DOWN,
 }
+
+public enum EMBARGO_REASON {
+    NONE
+}

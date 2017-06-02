@@ -17,6 +17,8 @@ public class RelationshipKings {
 	public int daysAtWar;
 	public List<History> relationshipHistory;
 
+    private const int CHANCE_TO_CANCEL_TRADE_ROUTE = 10;
+
 	public RelationshipKings(Citizen sourceKing, Citizen king, int like){
 //		this.id = id;
 		this.sourceKing = sourceKing;
@@ -54,25 +56,27 @@ public class RelationshipKings {
 	//		gameEvent - event that caused the relationship change
 	//		isDiscovery - flag to determine whether the relationship change was because the sourceKing found out the gameEvent
 	internal void AdjustLikeness(float adjustment, GameEvent gameEventTrigger, bool isDiscovery = false){
-//		if (adjustment < 0) {
-//			//Deteriorating
-//			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
-//				adjustment *= 0.75f;
-//			}
-//			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
-//				adjustment *= 1.25f;
-//			}
-//
-//		} else {
-//			//Increasing
-//			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
-//				adjustment *= 1.25f;
-//			}
-//			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
-//				adjustment *= 0.75f;
-//			}
-//
-//		}
+        //		if (adjustment < 0) {
+        //			//Deteriorating
+        //			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+        //				adjustment *= 0.75f;
+        //			}
+        //			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+        //				adjustment *= 1.25f;
+        //			}
+        //
+        //		} else {
+        //			//Increasing
+        //			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
+        //				adjustment *= 1.25f;
+        //			}
+        //			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.REPULSIVE)) {
+        //				adjustment *= 0.75f;
+        //			}
+        //
+        //		}
+
+        RELATIONSHIP_STATUS previousStatus = this.lordRelationship;
 		this.like += adjustment;
 		if(this.like < -100){
 			this.like = -100;
@@ -81,12 +85,54 @@ public class RelationshipKings {
 			this.like = 100;
 		}
 		this.UpdateKingRelationshipStatus ();
-		if (adjustment < 0) {
-			sourceKing.DeteriorateRelationship (this, gameEventTrigger, isDiscovery);
-		}else{
-			sourceKing.ImproveRelationship (this);
-		}
+        if (adjustment < 0) { //Relationship deteriorated
+            sourceKing.DeteriorateRelationship(this, gameEventTrigger, isDiscovery);
+            if (previousStatus != this.lordRelationship) { // Check if the relationship between the 2 kings changed in status
+                //Check if the source kings relationship with king has change to enemy or rival, if so, put king's kingdom in source king's embargo list
+                if (this.lordRelationship == RELATIONSHIP_STATUS.ENEMY || this.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+                    Embargo(gameEventTrigger);
+                } else {
+                    int chance = Random.Range(0, 100);
+                    if (chance < CHANCE_TO_CANCEL_TRADE_ROUTE) {
+                        RemoveTradeRoutes();
+                    }
+                }
+            }
+        } else { //Relationship improved
+            sourceKing.ImproveRelationship(this);
+            if (previousStatus != this.lordRelationship) { // Check if the relationship between the 2 kings changed in status
+                //if the relationship changed from enemy to cold, disembargo the targetKing
+                if (previousStatus ==  RELATIONSHIP_STATUS.ENEMY && this.lordRelationship == RELATIONSHIP_STATUS.COLD) {
+                    Disembargo();
+                }
+            }
+        }
 	}
+
+    /*
+     * Put targetKing's kingdom in sourceKing's kingdom embargo list
+     * */
+    protected void Embargo(GameEvent gameEventReasonForEmbargo) {
+        this.sourceKing.city.kingdom.AddKingdomToEmbargoList(this.king.city.kingdom);
+        Debug.LogError(this.sourceKing.city.kingdom.name + " put " + this.king.city.kingdom.name + " in it's embargo list, beacuase of " + gameEventReasonForEmbargo.eventType.ToString());
+    }
+
+    /*
+     * Put targetKing's kingdom in sourceKing's kingdom embargo list
+     * */
+    protected void Disembargo() {
+        this.sourceKing.city.kingdom.RemoveKingdomFromEmbargoList(this.king.city.kingdom);
+        Debug.LogError(this.sourceKing.city.kingdom.name + " removed " + this.king.city.kingdom.name + " from it's embargo list!");
+    }
+
+    /*
+     * Remove all trade routes with targetKingdom
+     * */
+    protected void RemoveTradeRoutes() {
+        this.sourceKing.city.kingdom.RemoveAllTradeRoutesWithOtherKingdom(this.king.city.kingdom);
+        this.king.city.kingdom.RemoveAllTradeRoutesWithOtherKingdom(this.sourceKing.city.kingdom);
+    }
+         
 
 	internal void ChangeSourceKingLikeness(int newLikeness){
 		this.like = (float)newLikeness;
