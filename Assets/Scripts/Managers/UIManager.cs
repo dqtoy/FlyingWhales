@@ -675,16 +675,20 @@ public class UIManager : MonoBehaviour {
 		int nextIndex = 0;
 		for (int i = 0; i < characterPortraits.Count; i++) {
 			CharacterPortrait currPortrait = characterPortraits[i];
-			RelationshipKings currRel = currentlyShowingCitizen.relationshipKings[i];
-			if (currRel == null) {
-				currPortrait.gameObject.SetActive(false);
-			} else {
-				currPortrait.SetCitizen (currRel.king, true);
-				currPortrait.ShowRelationshipLine (currRel, currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
-				currPortrait.gameObject.SetActive(true);
-			}
-			nextIndex = i + 1;
-		}
+            if(i < currentlyShowingCitizen.relationshipKings.Count) {
+                RelationshipKings currRel = currentlyShowingCitizen.relationshipKings[i];
+                if (currRel != null) {
+                    currPortrait.SetCitizen(currRel.king, true);
+                    currPortrait.ShowRelationshipLine(currRel, currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
+                    currPortrait.gameObject.SetActive(true);
+                } else {
+                    currPortrait.gameObject.SetActive(false);
+                }
+                nextIndex = i + 1;
+            } else {
+                currPortrait.gameObject.SetActive(false);
+            }
+        }
 
 		if (currentlyShowingCitizen.relationshipKings.Count - 1 >= nextIndex) {
 			for (int i = nextIndex; i < currentlyShowingCitizen.relationshipKings.Count; i++) {
@@ -2220,14 +2224,20 @@ public class UIManager : MonoBehaviour {
         int nextIndex = 0;
         for (int i = 0; i < cityItems.Count; i++) {
             CityItem currCityItem = cityItems[i];
-            City currCity = currentlyShowingKingdom.cities[i];
-            if (currCity == null) {
-                currCityItem.gameObject.SetActive(false);
+            if(i < currentlyShowingKingdom.cities.Count) {
+                City currCity = currentlyShowingKingdom.cities.ElementAt(i);
+                if (currCity != null) {
+                    currCityItem.SetCity(currCity);
+                    currCityItem.gameObject.SetActive(true);
+                } else {
+                    currCityItem.gameObject.SetActive(false);
+                }
+                nextIndex = i + 1;
             } else {
-                currCityItem.SetCity(currCity);
-                currCityItem.gameObject.SetActive(true);
+                currCityItem.gameObject.SetActive(false);
             }
-            nextIndex = i + 1;
+
+
         }
 
         if (currentlyShowingKingdom.cities.Count >= nextIndex) {
