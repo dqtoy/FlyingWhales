@@ -116,7 +116,7 @@ public class ExpansionAvatar : MonoBehaviour {
 				this.hasArrived = true;
 				//Expand to target hextile
 				this.expander.expansion.ExpandToTargetHextile();
-				this.expander.citizen.Death (DEATH_REASONS.ACCIDENT);
+				this.expander.DestroyGO();
 			}
 			Task.current.Succeed ();
 		}else{

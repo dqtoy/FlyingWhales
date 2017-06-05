@@ -206,7 +206,7 @@ public class SpyAvatar : MonoBehaviour {
 
 	public void OnEndAttack(){
 		this.spy.assassination.DoneCitizenAction(this.spy.citizen);
-		this.spy.citizen.Death (DEATH_REASONS.ACCIDENT);
+		this.spy.DestroyGO ();
 	}
 
 	internal void HasAttacked(){

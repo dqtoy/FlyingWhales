@@ -238,7 +238,7 @@ public class RaiderAvatar : MonoBehaviour {
 
 	public void OnEndAttack(){
 		this.raider.raid.StartRaiding();
-		this.raider.citizen.Death (DEATH_REASONS.ACCIDENT);
+		this.raider.DestroyGO ();
 	}
 
 	internal void HasAttacked(){
