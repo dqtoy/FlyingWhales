@@ -44,9 +44,9 @@ public class Sabotage : GameEvent {
 	}
 	internal override void DoneEvent(){
         base.DoneEvent();
-		if(this.saboteur != null){
-			this.saboteur.DestroyGO();
-		}
+//		if(this.saboteur != null){
+//			this.saboteur.DestroyGO();
+//		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 	}
 

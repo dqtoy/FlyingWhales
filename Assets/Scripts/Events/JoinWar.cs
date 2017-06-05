@@ -238,9 +238,9 @@ public class JoinWar : GameEvent {
 	internal override void DoneEvent(){
         base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
-		if(this._envoyToSend != null){
-			this._envoyToSend.DestroyGO ();
-		}
+//		if(this._envoyToSend != null){
+//			this._envoyToSend.DestroyGO ();
+//		}
 //		this._envoyToSend.inAction = false;
 	}
 	#endregion
