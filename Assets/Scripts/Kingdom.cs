@@ -335,6 +335,7 @@ public class Kingdom{
 	protected void KingdomTickActions(){
         this.ProduceGoldFromTrade();
         this.AttemptToExpand();
+		this.AttemptToCreateAttackCityEvent ();
 //		this.AttemptToIncreaseCityHP();
         if(GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
             this.AttemptToTrade();
