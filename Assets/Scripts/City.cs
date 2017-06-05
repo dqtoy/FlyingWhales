@@ -149,6 +149,8 @@ public class City{
 		for (int i = 0; i < this.citizens.Count; i++) {
 			this.citizens[i].UpdatePrestige();
 		}
+
+        this.hexTile.ShowNamePlate();
 	}
 		
 	internal Citizen CreateNewKing(){
@@ -467,8 +469,8 @@ public class City{
 				this.kingdom.HighlightAllOwnedTilesInKingdom();
 			}
 		}
-
-		KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+        this.hexTile.ShowNamePlate();
+        KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 
 	/*internal List<General> GetIncomingAttackers(){
