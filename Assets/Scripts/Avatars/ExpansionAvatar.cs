@@ -40,10 +40,10 @@ public class ExpansionAvatar : MonoBehaviour {
 		if(other.tag == "General"){
 			this.collidedWithHostile = false;
 			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<GeneralObject>().general.citizen.city.kingdom.id != this.expander.citizen.city.kingdom.id){
-					if(!other.gameObject.GetComponent<GeneralObject> ().general.citizen.isDead){
+				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.expander.citizen.city.kingdom.id){
+					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
 						this.collidedWithHostile = true;
-						this.otherGeneral = other.gameObject.GetComponent<GeneralObject> ().general;
+						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
 					}
 				}
 			}
@@ -116,7 +116,7 @@ public class ExpansionAvatar : MonoBehaviour {
 				this.hasArrived = true;
 				//Expand to target hextile
 				this.expander.expansion.ExpandToTargetHextile();
-				this.expander.DestroyGO ();
+				this.expander.citizen.Death (DEATH_REASONS.ACCIDENT);
 			}
 			Task.current.Succeed ();
 		}else{

@@ -93,10 +93,14 @@ public class RelationshipKingdom {
 			this._sourceKingdom.king, this._sourceKingdom, this._targetKingdom, gameEventTrigger, this._war, warTrigger);
 	}
 
-	internal void CreateRequestPeaceEvent(Citizen citizenToSend, List<Citizen> saboteurs){
-		this._requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this._sourceKingdom.king,
-			citizenToSend, this._targetKingdom, saboteurs);
-	}
+	//internal void CreateRequestPeaceEvent(Citizen citizenToSend, List<Citizen> saboteurs){
+	//	this._requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this._sourceKingdom.king,
+	//		citizenToSend, this._targetKingdom, saboteurs);
+	//}
+
+    internal void AssignRequestPeaceEvent(RequestPeace rp) {
+        this._requestPeace = rp;
+    }
 
 	internal void DeclarePeace(){
 		this._war = null;

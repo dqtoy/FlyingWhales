@@ -46,9 +46,10 @@ public class Raid : GameEvent {
 		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
 
-
 	}
 	internal void StartRaiding(){
+		//Add logs: start_raiding
+
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 	internal override void PerformAction(){
@@ -69,6 +70,8 @@ public class Raid : GameEvent {
 		}
 	}
 	internal override void DeathByOtherReasons(){
+		//Add logs: death_by_other
+
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_other");
 //		newLog.AddToFillers (this.startedBy, this.startedBy.name);
 //		newLog.AddToFillers (null, this.startedBy.deathReasonText);
@@ -76,6 +79,8 @@ public class Raid : GameEvent {
 		this.DoneEvent ();
 	}
 	internal override void DeathByGeneral(General general){
+		//Add logs: death_by_general
+
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_general");
 //		newLog.AddToFillers (general.citizen, general.citizen.name);
 
@@ -83,12 +88,9 @@ public class Raid : GameEvent {
 		this.DoneEvent ();
 	}
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		this.isActive = false;
-		this.endMonth = GameManager.Instance.month;
-		this.endDay = GameManager.Instance.days;
-		this.endYear = GameManager.Instance.year;
-
+		
 		if(this.hasBeenDiscovered){
 			this._warTrigger = WAR_TRIGGER.DISCOVERED_RAID_NO_DEATH;
 			if(this.hasDeath){
@@ -348,5 +350,9 @@ public class Raid : GameEvent {
 			}
 		}
 		return relationship;
+	}
+
+	internal override void CancelEvent (){
+
 	}
 }

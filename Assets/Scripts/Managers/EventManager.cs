@@ -61,12 +61,14 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.BORDER_CONFLICT, 30},
 		{EVENT_TYPES.DIPLOMATIC_CRISIS, 30},
 		{EVENT_TYPES.INVASION_PLAN, 60},
-		{EVENT_TYPES.JOIN_WAR_REQUEST, 0},
+		{EVENT_TYPES.JOIN_WAR_REQUEST, -1},
 		{EVENT_TYPES.STATE_VISIT, 10},
-		{EVENT_TYPES.ASSASSINATION, 0},
+		{EVENT_TYPES.ASSASSINATION, -1},
 		{EVENT_TYPES.RAID, 5},
-		{EVENT_TYPES.EXPANSION, 0},
-        {EVENT_TYPES.TRADE, 0}
+		{EVENT_TYPES.EXPANSION, -1},
+        {EVENT_TYPES.TRADE, -1},
+		{EVENT_TYPES.ATTACK_CITY, -1},
+		{EVENT_TYPES.SABOTAGE, -1}
     };
 
 	void Awake(){
@@ -317,7 +319,7 @@ public class EventManager : MonoBehaviour {
         }
         return null;
     }
-	internal Citizen GetSpy(Kingdom kingdom){
+	/*internal Citizen GetSpy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> spies = new List<Citizen> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -342,7 +344,7 @@ public class EventManager : MonoBehaviour {
 //			Debug.Log (kingdom.king.name + " CAN'T SEND SPY BECAUSE THERE IS NONE!");
 			return null;
 		}
-	}
+	}*/
 
 	internal bool IsItThisGovernor(Citizen governor, List<Citizen> unwantedGovernors){
 		for(int i = 0; i < unwantedGovernors.Count; i++){

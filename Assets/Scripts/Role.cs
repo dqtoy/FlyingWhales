@@ -11,6 +11,8 @@ public class Role {
 
 	public GameObject avatar;
 	public int daysBeforeMoving;
+	public bool isDestroyed;
+	public bool hasAttacked;
 
 	public Role(Citizen citizen){
 		this.citizen = citizen;
@@ -19,12 +21,15 @@ public class Role {
 		this.path = new List<HexTile> ();
 		this.avatar = null;
 		this.daysBeforeMoving = 0;
+		this.isDestroyed = false;
+		this.hasAttacked = false;
 	}
 	internal void DestroyGO(){
 		if(this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
 			GameObject.Destroy (this.avatar);
 		}
+		this.isDestroyed = true;
 	}
 
 
@@ -45,7 +50,9 @@ public class Role {
 		//		}
 		return new int[]{ 0, 0, 0, 0, 0, 0, goldProduction, 0 };
 	}
-	internal virtual void OnDeath(){}
+	internal virtual void OnDeath(){
+		this.DestroyGO ();
+	}
 	internal virtual void Initialize(GameEvent gameEvent){}
 	internal virtual void Attack(){}
 }

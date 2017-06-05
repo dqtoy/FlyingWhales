@@ -58,25 +58,27 @@ public class DiplomaticCrisis : GameEvent {
 //			SpeedUpConflict ();
 		}
 	}
-	internal override void DoneCitizenAction(Envoy envoy){
-		if(this.activeEnvoyResolve != null){
-			if(envoy.citizen.id == this.activeEnvoyResolve.citizen.id){
-				int chance = UnityEngine.Random.Range (0, 100);
-				int value = 20;
-				if(chance < value){
-					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_success");
-					newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+	internal override void DoneCitizenAction(Citizen citizen){
+		if (citizen.assignedRole is Envoy) {
+			if (this.activeEnvoyResolve != null) {
+				if (citizen.id == this.activeEnvoyResolve.citizen.id) {
+					int chance = UnityEngine.Random.Range (0, 100);
+					int value = 20;
+					if (chance < value) {
+						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_success");
+						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
 
-					this.isResolvedPeacefully = true;
-					DoneEvent ();
-					return;
-				}else{
-					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail");
-					newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+						this.isResolvedPeacefully = true;
+						DoneEvent ();
+						return;
+					} else {
+						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail");
+						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+					}
 				}
 			}
+			this.activeEnvoyResolve = null;
 		}
-		this.activeEnvoyResolve = null;
 	}
 
 	/*internal override void DoneCitizenAction(Envoy envoy){
@@ -274,6 +276,7 @@ public class DiplomaticCrisis : GameEvent {
 	}
 
 	internal override void DoneEvent(){
+        base.DoneEvent();
 		if(this.activeEnvoyResolve != null){
 			this.activeEnvoyResolve.DestroyGO ();
 		}
@@ -286,11 +289,7 @@ public class DiplomaticCrisis : GameEvent {
 
 
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-		this.isActive = false;
-		this.endDay = GameManager.Instance.days;
-		this.endMonth = GameManager.Instance.month;
-		this.endYear = GameManager.Instance.year;
-
+		
 		RelationshipKings relationship1 = null;
 		if(this.kingdom1.isAlive()){
 			relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);

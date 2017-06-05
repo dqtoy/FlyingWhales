@@ -82,13 +82,18 @@ public class GameEvent {
 	#region virtual methods
 	internal virtual void PerformAction(){}
 
-	internal virtual void DoneCitizenAction(Envoy citizen){}
+	internal virtual void DoneCitizenAction(Citizen citizen){}
 
-	internal virtual void CancelEvent(){}
+	internal virtual void CancelEvent(){
+		Debug.Log ("EVENT IS CANCELLED");
+	}
 
 	internal virtual void DoneEvent(){
-//		Debug.Log ("Game Event Ended!");
-	}
+        this.isActive = false;
+        this.endMonth = GameManager.Instance.month;
+        this.endDay = GameManager.Instance.days;
+        this.endYear = GameManager.Instance.year;
+    }
 	internal virtual void DeathByOtherReasons(){}
 	internal virtual void DeathByGeneral(General general){}
 	#endregion

@@ -24,16 +24,16 @@ public class TraderAvatar : MonoBehaviour {
         if (other.tag == "General") {
             this.collidedWithHostile = false;
             if (this.gameObject != null && other.gameObject != null) {
-                Kingdom kingdomOfGeneral = other.gameObject.GetComponent<GeneralObject>().general.citizen.city.kingdom;
+				Kingdom kingdomOfGeneral = other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom;
                 Kingdom kingdomOfTrader = this._trader.citizen.city.kingdom;
                 if (kingdomOfGeneral.id != kingdomOfTrader.id) {
                     RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
                     RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
                     if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
                        relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-                        if (!other.gameObject.GetComponent<GeneralObject>().general.citizen.isDead) {
+						if (!other.gameObject.GetComponent<GeneralAvatar>().general.citizen.isDead) {
                             this.collidedWithHostile = true;
-                            this.otherGeneral = other.gameObject.GetComponent<GeneralObject>().general;
+							this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar>().general;
                         }
                     }  
                 }
@@ -43,7 +43,7 @@ public class TraderAvatar : MonoBehaviour {
 
     }
 
-    void OnMouseOver() {
+    void OnMouseEnter() {
         if (!UIManager.Instance.IsMouseOnUI()) {
             UIManager.Instance.ShowSmallInfo(this._trader.tradeEvent.eventType.ToString());
             this.HighlightPath();
@@ -118,6 +118,7 @@ public class TraderAvatar : MonoBehaviour {
                 this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
             }
         }
+
         if (startTile.transform.position.y < targetTile.transform.position.y) {
             this.direction = DIRECTION.UP;
             this.animator.Play("Walk_Up");

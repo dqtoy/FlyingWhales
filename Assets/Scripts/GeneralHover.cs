@@ -27,10 +27,10 @@ public class GeneralHover : MonoBehaviour {
 	}
 	void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
-		for (int i = 0; i < this.transform.parent.GetComponent<GeneralObject>().general.roads.Count; i++) {
-			this.transform.parent.GetComponent<GeneralObject>().general.roads [i].highlightGO.SetActive (true);
-			this.pathToUnhighlight.Add (this.transform.parent.GetComponent<GeneralObject>().general.roads [i]);
-		}
+//		for (int i = 0; i < this.transform.parent.GetComponent<GeneralAvatar>().general.roads.Count; i++) {
+//			this.transform.parent.GetComponent<GeneralAvatar>().general.path [i].highlightGO.SetActive (true);
+//			this.pathToUnhighlight.Add (this.transform.parent.GetComponent<GeneralAvatar>().general.roads [i]);
+//		}
 	}
 
 	void UnHighlightPath(){
@@ -48,7 +48,7 @@ public class GeneralHover : MonoBehaviour {
 		info += "campaign type: " + campaign.campaignType.ToString ();
 		info += "\n";
 
-		info += "general: " + this.transform.parent.GetComponent<GeneralObject>().general.citizen.name;
+//		info += "general: " + this.transform.parent.GetComponent<GeneralObject>().general.citizen.name;
 		info += "\n";
 
 		info += "target city: " + campaign.targetCity.name;

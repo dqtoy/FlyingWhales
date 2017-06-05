@@ -7,7 +7,7 @@ public class Expander : Role {
 	public Expansion expansion;
 
 	public Expander(Citizen citizen): base(citizen){
-
+		this.expansion = null;
 	}
 
 	internal override void Initialize(GameEvent gameEvent){

@@ -66,8 +66,8 @@ public class Expansion : GameEvent {
 	}
 
 	internal override void DoneEvent(){
-		this.expander.DestroyGO ();
-		this.isActive = false;
+		base.DoneEvent();
+//		this.expander.DestroyGO ();
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 }

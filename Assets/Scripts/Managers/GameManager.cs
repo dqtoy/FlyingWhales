@@ -22,15 +22,15 @@ public class GameManager : MonoBehaviour {
 		this.month = 1;
 		this.timeElapsed = 0f;
 	}
-//	void Update(){
-//		if (!isPaused) {
-//			this.timeElapsed += Time.deltaTime * 1f;
-//			if(this.timeElapsed >= this.progressionSpeed){
-//				this.timeElapsed = 0f;
-//				this.WeekEnded ();
-//			}
-//		}
-//	}
+	void FixedUpdate(){
+		if (!isPaused) {
+			this.timeElapsed += Time.deltaTime * 1f;
+			if(this.timeElapsed >= this.progressionSpeed){
+				this.timeElapsed = 0f;
+				this.WeekEnded ();
+			}
+		}
+	}
 	[ContextMenu("Start Progression")]
 	public void StartProgression(){
 //		InvokeRepeating ("WeekEnded", 0f, 1f);
@@ -38,8 +38,8 @@ public class GameManager : MonoBehaviour {
 		UIManager.Instance.x1Btn.SetAsClicked();
 //		this.WeekEnded();
 		EventManager.Instance.onUpdateUI.Invoke();
-		StartCoroutine(WeekProgression());
-//		this.isPaused = false;
+//		StartCoroutine(WeekProgression());
+		this.isPaused = false;
 	}
 
 	public void TogglePause(){
@@ -322,7 +322,7 @@ public class GameManager : MonoBehaviour {
 		return allCitizensOfType;
 	}
 
-	private General GetGeneral(Kingdom kingdom){
+	/*private General GetGeneral(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = Utilities.GetUnwantedGovernors (kingdom.king);
 		List<General> generals = new List<General> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -349,7 +349,7 @@ public class GameManager : MonoBehaviour {
 //			Debug.Log (kingdom.king.name + " CAN'T SEND GENERAL BECAUSE THERE IS NONE!");
 			return null;
 		}
-	}
+	}*/
 	private City GetRaidedCity(General general){
 		if(general == null){
 			return null;

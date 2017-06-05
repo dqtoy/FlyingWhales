@@ -15,12 +15,13 @@ public class Kingdom{
 	private Kingdom _sourceKingdom;
 
     //Resources
-    [SerializeField] private int _goldCount;
-    [SerializeField] private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
+    private int _goldCount;
+    private int _maxGold = 5000;
+    private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
 
     //Trading
-    [SerializeField] private List<TradeRoute> _tradeRoutes;
-    [SerializeField] private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
+    private List<TradeRoute> _tradeRoutes;
+    private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
 	private List<City> _cities;
 	internal City capitalCity;
@@ -45,9 +46,11 @@ public class Kingdom{
 	internal List<Kingdom> adjacentKingdoms;
 
 	private int expansionChance = 1;
-	protected const int INCREASE_CITY_HP_CHANCE = 5;
+    
+    protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
     protected const int GOLD_GAINED_FROM_TRADE = 10;
+   
 	protected List<Resource> increaseCityHPCost = new List<Resource> () {
 		new Resource (BASE_RESOURCE_TYPE.GOLD, 300)
 	};
@@ -70,6 +73,12 @@ public class Kingdom{
 	public Kingdom sourceKingdom {
 		get { return this._sourceKingdom; }
 	}
+    public int goldCount {
+        get { return this._goldCount; }
+    }
+    public int maxGold {
+        get { return this._maxGold; }
+    }
 	public Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
 	}
@@ -325,7 +334,10 @@ public class Kingdom{
         this.ProduceGoldFromTrade();
         this.AttemptToExpand();
 		this.AttemptToIncreaseCityHP();
-        this.AttemptToTrade();
+        if(GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+            this.AttemptToTrade();
+        }
+        
     }
 
 	/*
@@ -460,6 +472,9 @@ public class Kingdom{
     internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
         if (!this._embargoList.ContainsKey(kingdomToAdd)) {
             this._embargoList.Add(kingdomToAdd, embargoReason);
+            //Remove all existing trade routes between kingdomToAdd and this Kingdom
+            this.RemoveAllTradeRoutesWithOtherKingdom(kingdomToAdd);
+            kingdomToAdd.RemoveAllTradeRoutesWithOtherKingdom(this);
         }
         
     }
@@ -744,6 +759,7 @@ public class Kingdom{
 				this.intlWarCities.Add(kingdom.cities[i]);
 			}
 		}
+		this.TargetACityToAttack ();
 //		for(int i = 0; i < this.cities.Count; i++){
 //			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i], WAR_TYPE.INTERNATIONAL)){
 //				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
@@ -988,6 +1004,28 @@ public class Kingdom{
 		}
 		return nearestCity;
 	}
+	internal void TargetACityToAttack(){
+		if(this.intlWarCities.Count > 0 && this.activeCitiesToAttack.Count <= 0){
+			this.activeCitiesToAttack.Add (this.intlWarCities [UnityEngine.Random.Range (0, this.intlWarCities.Count)]);
+		}
+	}
+	internal City GetCityNearestFrom(City targetCity){
+		City nearestCity = null;
+		float nearestDistance = 0;
+		for(int i = 0; i < this.cities.Count; i++){
+			if(nearestCity == null){
+				nearestCity = this.cities [i];
+				nearestDistance = Vector3.Distance (this.cities [i].hexTile.transform.position, targetCity.hexTile.transform.position); 
+			}else{
+				float distance = Vector3.Distance (this.cities [i].hexTile.transform.position, targetCity.hexTile.transform.position);
+				if(distance < nearestDistance){
+					nearestCity = this.cities [i];
+					nearestDistance = distance;
+				}
+			}
+		}
+		return nearestCity;
+	}
 	#region Resource Management
 	/*
 	 * Function to adjust the gold count of this kingdom.
@@ -996,6 +1034,9 @@ public class Kingdom{
 	 * */
 	internal void AdjustGold(int goldAmount){
 		this._goldCount += goldAmount;
+        if (this._goldCount > this._maxGold) {
+            this._goldCount = this._maxGold;
+        }
 	}
 
 	/*
@@ -1031,7 +1072,15 @@ public class Kingdom{
 
     internal void UpdateAllCitiesDailyGrowth() {
         //get all rasources from tiles and trade routes, only include trade routes where this kingom is the target
-        List<RESOURCE> allAvailableResources = this._availableResources.Keys.Union(this._tradeRoutes.Where(x => x.targetKingdom.id == this.id).Select(x => x.resourceBeingTraded)).ToList();
+        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.targetKingdom.id == this.id) {
+                if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
+                    allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
+                }
+            }
+        }
         int dailyGrowthGained = this.ComputeDailyGrowthGainedFromResources(allAvailableResources);
         for (int i = 0; i < this.cities.Count; i++) {
             City currCity = this.cities[i];

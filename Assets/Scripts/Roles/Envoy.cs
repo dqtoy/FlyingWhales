@@ -8,7 +8,7 @@ public class Envoy : Role {
 
 
 	public Envoy(Citizen citizen): base(citizen){
-
+		this.gameEvent = null;
 	}
 
 	internal override void Initialize(GameEvent gameEvent){
@@ -25,14 +25,19 @@ public class Envoy : Role {
 		}else if(this.gameEvent is StateVisit){
 			StateVisit stateVisit = (StateVisit)this.gameEvent;
 			stateVisit.visitor = this;
-		}
+		}else if(this.gameEvent is RequestPeace) {
+            //RequestPeace requestPeace = (RequestPeace)this.gameEvent;
+            //requestPeace.SetEnvoySent(this);
+        }
 		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Envoy"), this.citizen.city.hexTile.transform) as GameObject;
 		this.avatar.transform.localPosition = Vector3.zero;
 		this.avatar.GetComponent<EnvoyAvatar>().Init(this);
 	}
 
 	internal override void Attack (){
+//		base.Attack ();
 		if(this.avatar != null){
+			this.avatar.GetComponent<EnvoyAvatar> ().HasAttacked();
 			if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.LEFT){
 				this.avatar.GetComponent<EnvoyAvatar> ().animator.Play ("Attack_Left");
 			}else if(this.avatar.GetComponent<EnvoyAvatar> ().direction == DIRECTION.RIGHT){

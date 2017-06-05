@@ -74,10 +74,7 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
-
-    /*
-     * Create a Trade Event
-     * */
+    
     internal Trade CreateTradeEvent(Kingdom sourceKingdom, Kingdom targetKingdom) {
         Citizen trader = sourceKingdom.capitalCity.CreateAgent(ROLE.TRADER, EVENT_TYPES.TRADE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.TRADE]);
         if (trader != null) {
@@ -85,6 +82,7 @@ public class EventCreator: MonoBehaviour {
             Trade tradeEvent = new Trade(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
                 sourceKingdom.king, sourceKingdom, targetKingdom, trader);
             trader.assignedRole.Initialize(tradeEvent);
+            return tradeEvent;
         }
 
         return null;
@@ -100,4 +98,47 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+
+	internal Assassination CreateAssassinationEvent(Kingdom sourceKingdom, Citizen targetCitizen, GameEvent gameEventTrigger, int remainingDays){
+		HexTile targetLocation = targetCitizen.currentLocation;
+		if(targetCitizen.assignedRole != null){
+			if(targetCitizen.assignedRole.targetLocation != null){
+				targetLocation = targetCitizen.assignedRole.targetLocation;
+			}
+		}
+		Citizen spy = sourceKingdom.capitalCity.CreateAgent (ROLE.SPY, EVENT_TYPES.SABOTAGE, targetLocation, remainingDays);
+		if(spy != null){
+			Spy assassin = (Spy)spy.assignedRole;
+			Assassination assassination = new Assassination(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				sourceKingdom.king, targetCitizen, assassin, gameEventTrigger);
+			spy.assignedRole.Initialize (assassination);
+		}
+		return null;
+	}
+
+	internal AttackCity CreateAttackCityEvent(Kingdom sourceKingdom, City targetCity){
+		City nearestCity = sourceKingdom.GetCityNearestFrom (targetCity);
+		if(nearestCity == null){
+			return null;
+		}
+		Citizen general = nearestCity.CreateAgent (ROLE.GENERAL, EVENT_TYPES.ATTACK_CITY, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.ATTACK_CITY]);
+		if(general != null){
+			General attacker = (General)general.assignedRole;
+			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				sourceKingdom.king, attacker, targetCity);
+			general.assignedRole.Initialize (attackCity);
+		}
+		return null;
+	}
+	
+    	internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
+        	Citizen envoy = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
+        	if (envoy != null) {
+            	RequestPeace requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+                	kingdomToRequest.king, (Envoy)envoy.assignedRole, targetKingdom);
+            	envoy.assignedRole.Initialize(requestPeace);
+            	return requestPeace;
+        	}
+        	return null;
+    	}
 }

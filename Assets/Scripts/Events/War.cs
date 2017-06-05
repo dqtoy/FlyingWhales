@@ -53,12 +53,6 @@ public class War : GameEvent {
 		this.EventIsCreated ();
 	}
 
-	#region overrides
-	internal override void DoneEvent(){
-		this.isActive = false;
-	}
-	#endregion
-
 	internal void CreateInvasionPlan(Kingdom kingdomToDeclare, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
 		if (kingdomToDeclare.id == this._kingdom1.id) {
 			this._kingdom1Rel.CreateInvasionPlan(gameEventTrigger, warTrigger);
@@ -67,12 +61,21 @@ public class War : GameEvent {
 		}
 	}
 
-	internal void CreateRequestPeaceEvent(Kingdom kingdomToRequest, Citizen citizenToSend, List<Citizen> saboteurs){
+	internal void CreateRequestPeaceEvent(Kingdom kingdomToRequest){
+        RequestPeace requestPeaceEvent = null;
 		if (kingdomToRequest.id == this._kingdom1.id) {
-			this._kingdom1Rel.CreateRequestPeaceEvent(citizenToSend, saboteurs);
-		} else {
-			this._kingdom2Rel.CreateRequestPeaceEvent(citizenToSend, saboteurs);
-		}
+            //this._kingdom1Rel.CreateRequestPeaceEvent(citizenToSend, saboteurs);
+            requestPeaceEvent = EventCreator.Instance.CreateRequestPeace(kingdomToRequest, this._kingdom2);
+            if (requestPeaceEvent != null) {
+                this._kingdom1Rel.AssignRequestPeaceEvent(requestPeaceEvent);
+            }
+        } else {
+            //this._kingdom2Rel.CreateRequestPeaceEvent(citizenToSend, saboteurs);
+            requestPeaceEvent = EventCreator.Instance.CreateRequestPeace(kingdomToRequest, this._kingdom1);
+            if (requestPeaceEvent != null) {
+                this._kingdom2Rel.AssignRequestPeaceEvent(requestPeaceEvent);
+            }
+        }
 	}
 
 	internal void DeclareWar(Kingdom sourceKingdom){
@@ -83,6 +86,7 @@ public class War : GameEvent {
 			}else{
 				KingdomManager.Instance.DeclareWarBetweenKingdoms(this._kingdom2, this._kingdom1, this);
 			}
+            EventManager.Instance.onWeekEnd.AddListener(AttemptToRequestPeace);
 		}
 	}
 
@@ -129,4 +133,52 @@ public class War : GameEvent {
 			}
 		}
 	}
+
+    protected void AttemptToRequestPeace() {
+        Kingdom[] kingdomsInWar = new Kingdom[] { this._kingdom1, this._kingdom2 };
+        for (int i = 0; i < kingdomsInWar.Length; i++) {
+            Kingdom currKingdom = kingdomsInWar[i];
+            Kingdom otherKingdom = this._kingdom2;
+            RelationshipKingdom rel = this._kingdom1Rel;
+            if (currKingdom.id == this._kingdom2.id) {
+                otherKingdom = this._kingdom1;
+                rel = this._kingdom2Rel;
+            }
+
+            if (rel.monthToMoveOnAfterRejection == MONTH.NONE
+                && KingdomManager.Instance.GetRequestPeaceBetweenKingdoms(currKingdom, otherKingdom) == null) {
+
+                int chanceToTriggerRequestPeace = 0;
+                if (rel.kingdomWar.exhaustion >= 100) {
+                    if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
+                        chanceToTriggerRequestPeace = 4;
+                    } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
+                        chanceToTriggerRequestPeace = 2;
+                    }
+                } else if (rel.kingdomWar.exhaustion >= 75) {
+                    if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
+                        chanceToTriggerRequestPeace = 3;
+                    } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
+                        chanceToTriggerRequestPeace = 1;
+                    }
+                } else if (rel.kingdomWar.exhaustion >= 50) {
+                    if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
+                        chanceToTriggerRequestPeace = 2;
+                    } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
+                        chanceToTriggerRequestPeace = 0;
+                    }
+                }
+
+                int chance = Random.Range(0, 100);
+                if (chance < chanceToTriggerRequestPeace) {
+                    this.CreateRequestPeaceEvent(currKingdom);
+                }
+            }
+        }
+    }
+
+    internal override void DoneEvent() {
+        base.DoneEvent();
+        EventManager.Instance.onWeekEnd.RemoveListener(AttemptToRequestPeace);
+    }
 }
