@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 301ddda5fde017644bab1ae01392d876
-timeCreated: 1496296494
+timeCreated: 1496391322
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -50,6 +50,14 @@ TextureImporter:
     21300086: H_Capital_Tint
     21300088: H_HuntingLodge_Base
     21300090: H_HuntingLodge_Tint
+    21300092: H_Mud_1
+    21300094: H_Mud_2
+    21300096: H_Mud_3
+    21300098: H_Mud_4
+    21300100: H_Mud5
+    21300102: H_Mud6
+    21300104: H_Mud7
+    21300106: H_Mud8
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -691,6 +699,110 @@ TextureImporter:
         y: 194
         width: 128
         height: 71
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mud_1
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 763
+        width: 125
+        height: 120
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mud_2
+      rect:
+        serializedVersion: 2
+        x: 636
+        y: 745
+        width: 195
+        height: 138
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mud_3
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 763
+        width: 151
+        height: 98
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mud_4
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 665
+        width: 88
+        height: 53
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mud5
+      rect:
+        serializedVersion: 2
+        x: 522
+        y: 595
+        width: 109
+        height: 105
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mud6
+      rect:
+        serializedVersion: 2
+        x: 694
+        y: 592
+        width: 71
+        height: 112
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mud7
+      rect:
+        serializedVersion: 2
+        x: 821
+        y: 603
+        width: 151
+        height: 90
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mud8
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 415
+        width: 153
+        height: 125
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

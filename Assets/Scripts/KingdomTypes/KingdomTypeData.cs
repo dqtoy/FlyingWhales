@@ -36,7 +36,10 @@ public class KingdomTypeData : MonoBehaviour {
 	private int warRateModifierPerActiveWar;
 
 	[SerializeField]
-	private int warGeneralCreationRate;
+	private int _warGeneralCreationRate;
+
+	[SerializeField]
+	private int _warReinforcementCreationRate;
 
 	[SerializeField]
 	private AgentCreationRate[] _agentCreationRate;
@@ -122,6 +125,17 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
+	public int warGeneralCreationRate {
+		get { 
+			return this._warGeneralCreationRate; 
+		}
+	}
+
+	public int warReinforcementCreationRate {
+		get { 
+			return this._warReinforcementCreationRate; 
+		}
+	}
 
 	void Awake(){
 		this._dictWarTriggers.Clear ();

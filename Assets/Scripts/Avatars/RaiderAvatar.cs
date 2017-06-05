@@ -129,7 +129,6 @@ public class RaiderAvatar : MonoBehaviour {
 			if(!this.hasArrived){
 				this.hasArrived = true;
 				this.raider.Attack ();
-				this.raider.raid.StartRaiding();
 			}
 			Task.current.Succeed ();
 		}else{
@@ -238,6 +237,7 @@ public class RaiderAvatar : MonoBehaviour {
 	}
 
 	public void OnEndAttack(){
+		this.raider.raid.StartRaiding();
 		this.raider.citizen.Death (DEATH_REASONS.ACCIDENT);
 	}
 

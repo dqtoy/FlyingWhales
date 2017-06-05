@@ -8,8 +8,11 @@ public class GeneralAvatar : MonoBehaviour {
 	public General general;
 	public PandaBehaviour pandaBehaviour;
 	public Animator animator;
+	public SpriteRenderer kingdomIndicator;
+	public TextMesh txtDamage;
 	public bool collidedWithHostile;
 	public General otherGeneral;
+
 
 	private bool hasArrived = false;
 	//	private bool isMoving = false;
@@ -31,6 +34,8 @@ public class GeneralAvatar : MonoBehaviour {
 	//	}
 	internal void Init(General general){
 		this.general = general;
+		this.kingdomIndicator.color = general.citizen.city.kingdom.kingdomColor;
+		this.txtDamage.text = general.damage.ToString ();
 		this.direction = DIRECTION.LEFT;
 		ResetValues ();
 		this.AddBehaviourTree ();
@@ -129,7 +134,6 @@ public class GeneralAvatar : MonoBehaviour {
 			if(!this.hasArrived){
 				this.hasArrived = true;
 				this.general.Attack ();
-				this.general.attackCity.DoneCitizenAction(this.general.citizen);
 			}
 			Task.current.Succeed ();
 		}else{
@@ -243,7 +247,7 @@ public class GeneralAvatar : MonoBehaviour {
 	}
 
 	public void OnEndAttack(){
-		this.general.citizen.Death (DEATH_REASONS.ACCIDENT);
+		this.general.attackCity.DoneCitizenAction(this.general.citizen);
 	}
 
 	internal void HasAttacked(){

@@ -102,7 +102,7 @@ public class Raid : GameEvent {
 			}
 		}
 
-		this.raider.DestroyGO ();
+//		this.raider.DestroyGO ();
 	}
 	private List<Kingdom> GetOtherKingdoms(){
 		if(this.raidedCity == null){
