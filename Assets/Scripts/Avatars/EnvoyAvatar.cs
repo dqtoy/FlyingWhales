@@ -129,7 +129,6 @@ public class EnvoyAvatar : MonoBehaviour {
 			if(!this.hasArrived){
 				this.hasArrived = true;
 				this.envoy.Attack ();
-				this.envoy.gameEvent.DoneCitizenAction(this.envoy.citizen);
 			}
 			Task.current.Succeed ();
 		}else{
@@ -247,6 +246,7 @@ public class EnvoyAvatar : MonoBehaviour {
 		UnHighlightPath ();
 	}
 	public void OnEndAttack(){
+		this.envoy.gameEvent.DoneCitizenAction(this.envoy.citizen);
 		this.envoy.citizen.Death (DEATH_REASONS.ACCIDENT);
 	}
 

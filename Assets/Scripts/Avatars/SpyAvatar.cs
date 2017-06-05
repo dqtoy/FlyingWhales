@@ -97,7 +97,6 @@ public class SpyAvatar : MonoBehaviour {
 			if(!this.hasArrived){
 				this.hasArrived = true;
 				this.spy.Attack ();
-				this.spy.assassination.DoneCitizenAction(this.spy.citizen);
 			}
 			Task.current.Succeed ();
 		}else{
@@ -206,6 +205,7 @@ public class SpyAvatar : MonoBehaviour {
 	}
 
 	public void OnEndAttack(){
+		this.spy.assassination.DoneCitizenAction(this.spy.citizen);
 		this.spy.citizen.Death (DEATH_REASONS.ACCIDENT);
 	}
 

@@ -112,12 +112,12 @@ public class StateVisit : GameEvent {
 			}
 
 		}
-		if(this.visitor != null){
-			this.visitor.DestroyGO ();
-		}
-		if(this.saboteurEnvoy != null){
-			this.saboteurEnvoy.DestroyGO();
-		}
+//		if(this.visitor != null){
+//			this.visitor.DestroyGO ();
+//		}
+//		if(this.saboteurEnvoy != null){
+//			this.saboteurEnvoy.DestroyGO();
+//		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 	}
 	internal override void DeathByOtherReasons(){

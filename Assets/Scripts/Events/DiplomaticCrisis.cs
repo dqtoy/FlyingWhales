@@ -277,9 +277,9 @@ public class DiplomaticCrisis : GameEvent {
 
 	internal override void DoneEvent(){
         base.DoneEvent();
-		if(this.activeEnvoyResolve != null){
-			this.activeEnvoyResolve.DestroyGO ();
-		}
+//		if(this.activeEnvoyResolve != null){
+//			this.activeEnvoyResolve.DestroyGO ();
+//		}
 
 //		if(this.activeEnvoyProvoke != null){
 //			this.activeEnvoyProvoke.eventDuration = 0;
