@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject kingdomWarEventsListItemPrefab;
 	public GameObject kingdomFlagPrefab;
 	public GameObject logItemPrefab;
+    public GameObject cityItemPrefab;
 
 	[Space(10)]//Main Objects
 	public GameObject smallInfoGO;
@@ -39,6 +40,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject allKingdomEventsGO;
 	public GameObject eventLogsGO;
 	public GameObject kingdomHistoryGO;
+    public GameObject kingdomCitiesGO;
 
 	[Space(10)]//For Testing
 	//Trait Editor
@@ -186,6 +188,10 @@ public class UIManager : MonoBehaviour {
 	public UIGrid kingdomHistoryGrid;
 	public UILabel kingdomHistoryNoEventsLbl;
 
+    [Space(10)] //For Kingdom Cities Menu
+    public UIScrollView kingdomCitiesScrollView;
+    public UIGrid kingdomCitiesGrid;
+
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	public Citizen currentlyShowingCitizen = null;
@@ -274,6 +280,12 @@ public class UIManager : MonoBehaviour {
 				ShowKingdomHistory ();
 			}
 		}
+
+        if (kingdomCitiesGO.activeSelf) {
+            if (currentlyShowingKingdom != null) {
+                ShowKingdomCities();
+            }
+        }
 	}
 
 	public void SetProgressionSpeed1X(){
@@ -2192,10 +2204,56 @@ public class UIManager : MonoBehaviour {
 		kingdomListHistoryButton.SetClickState(false);
 	}
 
-	/*
+    public void ToggleKingdomCities() {
+        if (kingdomCitiesGO.activeSelf) {
+            HideKingdomCities();
+        } else {
+            ShowKingdomCities();
+        }
+    }
+
+    /*
+     * Show all cities owned by currentlyShowingKingdom.
+     * */
+    public void ShowKingdomCities() {
+        List<CityItem> cityItems = kingdomCitiesGrid.gameObject.GetComponentsInChildren<CityItem>().ToList();
+        int nextIndex = 0;
+        for (int i = 0; i < cityItems.Count; i++) {
+            CityItem currCityItem = cityItems[i];
+            City currCity = currentlyShowingKingdom.cities[i];
+            if (currCity == null) {
+                currCityItem.gameObject.SetActive(false);
+            } else {
+                currCityItem.SetCity(currCity);
+                currCityItem.gameObject.SetActive(true);
+            }
+            nextIndex = i + 1;
+        }
+
+        if (currentlyShowingKingdom.cities.Count >= nextIndex) {
+            for (int i = nextIndex; i < currentlyShowingKingdom.cities.Count; i++) {
+                City currCity = currentlyShowingKingdom.cities[i];
+                GameObject cityGO = InstantiateUIObject(cityItemPrefab, this.transform);
+                cityGO.GetComponent<CityItem>().SetCity(currCity);
+                cityGO.transform.localScale = Vector3.one;
+                kingdomCitiesGrid.AddChild(cityGO.transform);
+                kingdomCitiesGrid.Reposition();
+            }
+        }
+        StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
+        //kingdomCitiesScrollView.ResetPosition();
+        kingdomCitiesGO.SetActive(true);
+    }
+
+    public void HideKingdomCities() {
+        kingdomCitiesGO.SetActive(false);
+        kingdomListCityButton.SetClickState(false);
+    }
+
+    /*
 	 * Generic toggle function, toggles gameobject to on/off state.
 	 * */
-	public void ToggleObject(GameObject objectToToggle){
+    public void ToggleObject(GameObject objectToToggle){
 		objectToToggle.SetActive(!objectToToggle.activeSelf);
 	}
 
