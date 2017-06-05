@@ -50,8 +50,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	[SerializeField] private SpriteRenderer _kingdomColorSprite;
 	[SerializeField] private GameObject _highlightGO;
 
-	//For Tile Edges
-	[SerializeField] private GameObject topLeftEdge;
+    [SerializeField] private CityItem cityInfo;
+    [SerializeField] private GameObject cityInfoGO;
+
+    //For Tile Edges
+    [SerializeField] private GameObject topLeftEdge;
 	[SerializeField] private GameObject leftEdge;
 	[SerializeField] private GameObject botLeftEdge;
 	[SerializeField] private GameObject botRightEdge;
@@ -354,9 +357,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void ShowNamePlate() {
-        this.cityNameGO.SetActive(true);
-        this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
-        this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
+        //this.cityNameGO.SetActive(true);
+        //this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
+        //this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
+        EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
+        UpdateNamePlate();
+        this.cityInfoGO.SetActive(true);
+    }
+
+    private void UpdateNamePlate() {
+        this.cityInfo.SetCity(this.city);
     }
 
     public void ShowOccupiedSprite() {
@@ -385,7 +395,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.structureGO.SetActive(false);
 		this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
-	}
+        EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);
+    }
 
 	public void Occupy(City city) {
 		this.isOccupied = true;
