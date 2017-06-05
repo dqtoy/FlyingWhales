@@ -59,14 +59,12 @@ public class Raid : GameEvent {
 			ActualRaid ();
 			DoneEvent ();
 		}else{
-			if(this.remainingDays < (this.durationInDays - 7)){
-				if(!this.hasArrived){
-					this.hasArrived = true;
-					Arrival ();
-				}
-				RaidPartyDiscovery ();
-				AccidentKilling ();
+			if(!this.hasArrived){
+				this.hasArrived = true;
+				Arrival ();
 			}
+			RaidPartyDiscovery ();
+			AccidentKilling ();
 		}
 	}
 	internal override void DeathByOtherReasons(){

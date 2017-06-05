@@ -67,9 +67,10 @@ public class City{
 	}
 	public int hp{
 		get{ return this._hp; }
+		set{ this._hp = value; }
 	}
 	public int maxHP{
-		get{ return 300 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
+		get{ return 200 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
 	}
 	#endregion
 
@@ -92,7 +93,7 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-		this._hp = 100;
+		this._hp = 200;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
@@ -540,9 +541,10 @@ public class City{
 	 * Increase a city's HP every month.
 	 * */
 	protected void AttemptToIncreaseHP(){
-		if (GameManager.daysInMonth[GameManager.Instance.month] == GameManager.Instance.days) {
-			this.IncreaseHP(HP_INCREASE);
-		}
+		this.IncreaseHP (1);
+//		if (GameManager.daysInMonth[GameManager.Instance.month] == GameManager.Instance.days) {
+//			this.IncreaseHP(HP_INCREASE);
+//		}
 	}
 
 	/*
@@ -884,6 +886,8 @@ public class City{
 			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
 		}
 		this._kingdom.cities.Remove (this);
+		this._kingdom.activeCitiesPairInWar.RemoveAll (x => x.sourceCity.id == this.id);
+
 		if(this.hasKing){
 			this.hasKing = false;
 			if(this._kingdom.cities.Count > 0){
@@ -900,11 +904,10 @@ public class City{
 		this.hexTile.city = null;
 		KingdomManager.Instance.UpdateKingdomAdjacency();
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-			KingdomManager.Instance.allKingdoms [i].intlWarCities.Remove (this);
-			KingdomManager.Instance.allKingdoms [i].activeCitiesToAttack.Remove (this);
+//			KingdomManager.Instance.allKingdoms [i].intlWarCities.Remove (this);
+			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id);
 			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
 		}
-
 	}
 
 	/*internal void LookForNewGeneral(General general){

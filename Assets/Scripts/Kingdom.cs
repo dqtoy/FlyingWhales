@@ -32,6 +32,7 @@ public class Kingdom{
 //	public List<Citizen> royaltyList;
 	public List<City> intlWarCities;
 	public List<City> activeCitiesToAttack;
+	public List<CityWarPair> activeCitiesPairInWar;
 	internal List<City> holderIntlWarCities;
 
 	internal BASE_RESOURCE_TYPE basicResource;
@@ -108,6 +109,7 @@ public class Kingdom{
 		this.pretenders = new List<Citizen> ();
 		this.intlWarCities = new List<City>();
 		this.activeCitiesToAttack = new List<City>();
+		this.activeCitiesPairInWar = new List<CityWarPair>();
 		this.holderIntlWarCities = new List<City>();
 		this._cities = new List<City>();
 
@@ -333,12 +335,23 @@ public class Kingdom{
 	protected void KingdomTickActions(){
         this.ProduceGoldFromTrade();
         this.AttemptToExpand();
-		this.AttemptToIncreaseCityHP();
+//		this.AttemptToIncreaseCityHP();
         if(GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
             this.AttemptToTrade();
         }
         
     }
+
+	/*
+	 * Attempt to create an attack city event
+	 * This will only happen if there's a war with any other kingdom
+	 * */
+	private void AttemptToCreateAttackCityEvent(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < this.kingdomTypeData.warGeneralCreationRate){
+			EventCreator.Instance.CreateAttackCityEvent (this);
+		}
+	}
 
 	/*
 	 * Kingdom will attempt to expand. 
@@ -814,6 +827,7 @@ public class Kingdom{
 		city.KillCity();
 		yield return null;
 		City newCity = CityGenerator.Instance.CreateNewCity (hex, this);
+		newCity.hp = 100;
 		newCity.CreateInitialFamilies(false);
 		KingdomManager.Instance.UpdateKingdomAdjacency();
 		this.AddInternationalWarCity (newCity);
@@ -1005,10 +1019,46 @@ public class Kingdom{
 		return nearestCity;
 	}
 	internal void TargetACityToAttack(){
-		if(this.intlWarCities.Count > 0 && this.activeCitiesToAttack.Count <= 0){
-			this.activeCitiesToAttack.Add (this.intlWarCities [UnityEngine.Random.Range (0, this.intlWarCities.Count)]);
+		if(this.intlWarCities.Count > 0 && this.activeCitiesPairInWar.Count <= 0){
+			City sourceCity = null;
+			City targetCity = null;
+			GetTargetCityAndSourceCityInWar (ref sourceCity, ref targetCity);
+			if(sourceCity != null && targetCity != null){
+				this.activeCitiesPairInWar.Add (new CityWarPair (sourceCity, targetCity));
+				this.intlWarCities.Remove (targetCity);
+			}
+//			this.activeCitiesToAttack.Add (this.intlWarCities [UnityEngine.Random.Range (0, this.intlWarCities.Count)]);
 		}
 	}
+	private void GetTargetCityAndSourceCityInWar(ref City sourceCity, ref City targetCity){
+		int nearestDistance = 0;
+		City source = null;
+		City target = null;
+		for (int i = 0; i < this.cities.Count; i++) {
+			for (int j = 0; j < this.intlWarCities.Count; j++) {
+				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, this.intlWarCities [j].hexTile, PATHFINDING_MODE.COMBAT).ToList();
+				if(path != null){
+					int distance = path.Count;
+					if(source == null && target == null){
+						source = this.cities [i];
+						target = this.intlWarCities [j];
+						nearestDistance = distance;
+					}else{
+						if(distance < nearestDistance){
+							source = this.cities [i];
+							target = this.intlWarCities [j];
+							nearestDistance = distance;
+						}
+					}
+				}
+
+			}
+		}
+
+		sourceCity = source;
+		targetCity = target;
+	}
+
 	internal City GetCityNearestFrom(City targetCity){
 		City nearestCity = null;
 		float nearestDistance = 0;
@@ -1176,7 +1226,7 @@ public class Kingdom{
 	internal bool CanCreateAgent(ROLE roleToCheck, ref int costToCreate){
 //		costToCreate = 0;
 		if (roleToCheck == ROLE.GENERAL) {
-			costToCreate = 300;
+			costToCreate = 0;
 		} else if (roleToCheck == ROLE.TRADER) {
 			costToCreate = 300;
 		} else if (roleToCheck == ROLE.ENVOY) {

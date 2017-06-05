@@ -247,7 +247,7 @@ public class EnvoyAvatar : MonoBehaviour {
 	}
 	public void OnEndAttack(){
 		this.envoy.gameEvent.DoneCitizenAction(this.envoy.citizen);
-		this.envoy.citizen.Death (DEATH_REASONS.ACCIDENT);
+		this.envoy.DestroyGO ();
 	}
 
 	internal void HasAttacked(){

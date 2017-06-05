@@ -18,17 +18,17 @@ public class Utilities : MonoBehaviour {
 
 	public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
 	public static string[] accidentCauses = new string[]{
-		"because he/she forgot to breath.",
-		"after falling off a cliff.",
-		"due to an infection from an arrow in the knee.",
-		"of heartbreak.",
-		"from an animal attack.",
-		"after a boulder rolled over him.",
-		"after a brick fell on his head.",
-		"after slipping on the floor.",
-		"from a landslide.",
-		"from drinking too much alcohol.",
-		"from eating poisonous mushrooms."
+		"because he/she forgot to breath",
+		"after falling off a cliff",
+		"due to an infection from an arrow in the knee",
+		"of heartbreak",
+		"from an animal attack",
+		"after a boulder rolled over him",
+		"after a brick fell on his head",
+		"after slipping on the floor",
+		"from a landslide",
+		"from drinking too much alcohol",
+		"from eating poisonous mushrooms"
 	};
 	public static string[] crisis = new string[]{
 		"Food",
