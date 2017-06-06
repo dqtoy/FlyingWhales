@@ -30,19 +30,19 @@ public class Expansion : GameEvent {
 		this.EventIsCreated ();
 
 	}
-	internal void ExpandToTargetHextile(){
-		if(this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0){
-			this.startedByKingdom.CreateNewCityOnTileForKingdom(this.hexTileToExpandTo);
-			this.hexTileToExpandTo.city.ExpandToThisCity(this.startedBy);
+	internal override void DoneCitizenAction(Citizen citizen){
+        base.DoneCitizenAction(citizen);
+		if (this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0) {
+			this.startedByKingdom.CreateNewCityOnTileForKingdom (this.hexTileToExpandTo);
+			this.hexTileToExpandTo.city.ExpandToThisCity (this.startedBy);
 
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");
 			newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name);
 
-		}else{
+		} else {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "beaten");
 			this.startedBy.Death (DEATH_REASONS.DISAPPEARED_EXPANSION);
 		}
-
 		this.DoneEvent ();
 	}
 	internal void Disappearance(){

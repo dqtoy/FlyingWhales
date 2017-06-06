@@ -103,6 +103,7 @@ public class Assassination : GameEvent {
 	}
 
 	internal override void DoneCitizenAction (Citizen citizen){
+        base.DoneCitizenAction(citizen);
 		if(citizen.assignedRole is Spy){
 			if(citizen.id == this.spy.citizen.id){
 				if(this.targetCitizen.isDead || (this.targetCitizen.assignedRole != null && this.targetCitizen.assignedRole.isDestroyed)){
@@ -131,6 +132,13 @@ public class Assassination : GameEvent {
 
 	internal override void CancelEvent (){
 		base.CancelEvent ();
+	}
+	internal override void DeathByOtherReasons(){
+		this.DoneEvent();
+	}
+	internal override void DeathByGeneral(General general){
+		this.spy.citizen.Death (DEATH_REASONS.BATTLE);
+		this.DoneEvent();
 	}
 	private void WaitForTarget(){
 		//Add logs: wait_for_target

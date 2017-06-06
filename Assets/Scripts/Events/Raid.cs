@@ -17,6 +17,9 @@ public class Raid : GameEvent {
 	private Kingdom kingdomToBlame;
 
 	internal Raider raider;
+
+    protected const int UNREST_ADJUSTMENT = 10;
+
 	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy, City raidedCity) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.RAID;
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
@@ -47,9 +50,9 @@ public class Raid : GameEvent {
 		this.EventIsCreated ();
 
 	}
-	internal void StartRaiding(){
-		//Add logs: start_raiding
-
+	internal override void DoneCitizenAction(Citizen citizen){
+        //Add logs: start_raiding
+        base.DoneCitizenAction(citizen);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 	internal override void PerformAction(){
@@ -59,14 +62,12 @@ public class Raid : GameEvent {
 			ActualRaid ();
 			DoneEvent ();
 		}else{
-			if(this.remainingDays < (this.durationInDays - 7)){
-				if(!this.hasArrived){
-					this.hasArrived = true;
-					Arrival ();
-				}
-				RaidPartyDiscovery ();
-				AccidentKilling ();
+			if(!this.hasArrived){
+				this.hasArrived = true;
+				Arrival ();
 			}
+			RaidPartyDiscovery ();
+			AccidentKilling ();
 		}
 	}
 	internal override void DeathByOtherReasons(){
@@ -101,6 +102,11 @@ public class Raid : GameEvent {
 				this.targetKingdom.king.WarTrigger (relationship, this, this.targetKingdom.kingdomTypeData);
 			}
 		}
+
+        if (this.isSuccessful) {
+            //Adjust the raided city's unrest because it was successfully raided
+            this.raidedCity.kingdom.AdjustUnrest(UNREST_ADJUSTMENT);
+        }
 
 //		this.raider.DestroyGO ();
 	}
@@ -143,15 +149,17 @@ public class Raid : GameEvent {
 	private void Steal(){
 		this.isSuccessful = true;
 
-		int stolenGold = (int)(this.raidedCity.goldCount * 0.20f);
-		this.startedBy.city.goldCount += stolenGold;
-		this.raidedCity.goldCount -= stolenGold;
+		int stolenGold = (int)((this.targetKingdom.goldCount/this.targetKingdom.cities.Count) * 0.20f);
+		this.sourceKingdom.AdjustGold (stolenGold);
+		this.targetKingdom.AdjustGold (-stolenGold);
+
+		this.raidedCity.HasBeenRaided ();
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_success");
 		newLog.AddToFillers (null, stolenGold.ToString());
 
-		this.pilfered = string.Empty;
-		this.pilfered += stolenGold.ToString() + " Gold";
+//		this.pilfered = string.Empty;
+//		this.pilfered += stolenGold.ToString() + " Gold";
 
 	}
 
@@ -353,6 +361,6 @@ public class Raid : GameEvent {
 	}
 
 	internal override void CancelEvent (){
-
+       
 	}
 }

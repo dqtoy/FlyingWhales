@@ -33,24 +33,26 @@ public class ExpansionAvatar : MonoBehaviour {
 	internal void Init(Expander expander){
 		this.expander = expander;
 		this.direction = DIRECTION.LEFT;
+		this.GetComponent<Avatar> ().kingdom = this.expander.citizen.city.kingdom;
+		this.GetComponent<Avatar> ().gameEvent = this.expander.expansion;
+		this.GetComponent<Avatar> ().citizen = this.expander.citizen;
+
 		ResetValues ();
 		this.AddBehaviourTree ();
 	}
-	void OnTriggerEnter2D(Collider2D other){
-		if(other.tag == "General"){
-			this.collidedWithHostile = false;
-			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.expander.citizen.city.kingdom.id){
-					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
-						this.collidedWithHostile = true;
-						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
-					}
-				}
-			}
-		}
-
-
-	}
+//	void OnTriggerEnter2D(Collider2D other){
+//		if(other.tag == "General"){
+//			this.collidedWithHostile = false;
+//			if(this.gameObject != null && other.gameObject != null){
+//				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.expander.citizen.city.kingdom.id){
+//					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
+//						this.collidedWithHostile = true;
+//						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
+//					}
+//				}
+//			}
+//		}
+//	}
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
 		if(startTile.transform.position.x <= targetTile.transform.position.x){
 			if(this.animator.gameObject.transform.localScale.x > 0){
@@ -115,8 +117,8 @@ public class ExpansionAvatar : MonoBehaviour {
 			if(!this.hasArrived){
 				this.hasArrived = true;
 				//Expand to target hextile
-				this.expander.expansion.ExpandToTargetHextile();
-				this.expander.citizen.Death (DEATH_REASONS.ACCIDENT);
+				this.expander.expansion.DoneCitizenAction(this.expander.citizen);
+				this.expander.DestroyGO();
 			}
 			Task.current.Succeed ();
 		}else{
@@ -140,22 +142,22 @@ public class ExpansionAvatar : MonoBehaviour {
 		}
 	}
 		
-	[Task]
-	public void HasCollidedWithHostileGeneral(){
-		if(this.collidedWithHostile){
-			this.collidedWithHostile = false;
-			if(!this.otherGeneral.citizen.isDead){
-				//Death by general
-				this.expander.expansion.DeathByGeneral (this.otherGeneral);
-				Task.current.Succeed ();
-			}else{
-				Task.current.Fail ();
-			}
-
-		}else{
-			Task.current.Fail ();
-		}
-	}
+//	[Task]
+//	public void HasCollidedWithHostileGeneral(){
+//		if(this.collidedWithHostile){
+//			this.collidedWithHostile = false;
+//			if(!this.otherGeneral.citizen.isDead){
+//				//Death by general
+//				this.expander.expansion.DeathByGeneral (this.otherGeneral);
+//				Task.current.Succeed ();
+//			}else{
+//				Task.current.Fail ();
+//			}
+//
+//		}else{
+//			Task.current.Fail ();
+//		}
+//	}
 	[Task]
 	public void HasDiedOfOtherReasons(){
 		if (this.expander.citizen.isDead) {

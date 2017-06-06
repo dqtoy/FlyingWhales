@@ -27,12 +27,20 @@ public class StoryTellingManager : MonoBehaviour {
 		}
 	}
 
-	public TRAIT GenerateIntelligenceTrait(Citizen citizen){
-		if (citizen.horoscope [2] == 0) {
-			return TRAIT.SMART;
-		} else {
-			return TRAIT.STUPID;
-		}
+	public TRAIT GenerateMiscTrait(Citizen citizen){
+        //if (citizen.horoscope [2] == 0) {
+        //	return TRAIT.SMART;
+        //} else {
+        //	return TRAIT.STUPID;
+        //}
+        int chance = Random.Range(0, 100);
+        if (chance < 40) {
+            return TRAIT.SMART;
+        }else if(chance >= 40 && chance < 80) {
+            return TRAIT.STUPID;
+        } else {
+            return TRAIT.AMBITIOUS;
+        }
 	}
 
 	// Set the new kingdom type of a kingdom

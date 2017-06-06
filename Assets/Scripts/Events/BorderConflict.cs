@@ -16,6 +16,8 @@ public class BorderConflict : GameEvent {
 
 	public bool isResolvedPeacefully;
 
+    protected const int UNREST_ADJUSTMENT = 10;
+
 	public BorderConflict(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
 		this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
@@ -60,6 +62,7 @@ public class BorderConflict : GameEvent {
 		}
 	}
 	internal override void DoneCitizenAction(Citizen citizen){
+        base.DoneCitizenAction(citizen);
 		if (citizen.assignedRole is Envoy) {
 			if (this.activeEnvoyResolve != null) {
 				if (citizen.id == this.activeEnvoyResolve.citizen.id) {
@@ -130,6 +133,7 @@ public class BorderConflict : GameEvent {
 	internal override void DeathByGeneral(General general){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve_fail_died");
 		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+		this.activeEnvoyResolve.citizen.Death (DEATH_REASONS.BATTLE);
 	}
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
@@ -279,8 +283,8 @@ public class BorderConflict : GameEvent {
 			newLog.AddToFillers (sender.king, sender.king.name);
 			newLog.AddToFillers (chosenEnvoy.citizen, chosenEnvoy.citizen.name);
 		}
-	}*/
-	/*private Citizen GetEnvoy(Kingdom kingdom){
+	}
+	private Citizen GetEnvoy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> envoys = new List<Citizen> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -360,6 +364,11 @@ public class BorderConflict : GameEvent {
 				relationship2.AdjustLikeness (-15, this);
 				relationship2.sourceKing.WarTrigger (relationship2, this, this.kingdom2.kingdomTypeData);
 			}
-		}
+
+            this.kingdom1.AdjustUnrest(UNREST_ADJUSTMENT);
+            this.kingdom2.AdjustUnrest(UNREST_ADJUSTMENT);
+			this.kingdom1.HasConflicted ();
+			this.kingdom2.HasConflicted ();
+        }
 	}
 }

@@ -82,10 +82,17 @@ public class GameEvent {
 	#region virtual methods
 	internal virtual void PerformAction(){}
 
-	internal virtual void DoneCitizenAction(Citizen citizen){}
+	internal virtual void DoneCitizenAction(Citizen citizen){
+        //add base.DoneCitizenAction on all events
+        if (citizen.assignedRole.targetCity == null || citizen.assignedRole.targetCity.isDead) {
+            //Cancel Event
+            CancelEvent();
+			return;
+        }
+    }
 
 	internal virtual void CancelEvent(){
-		Debug.Log ("EVENT IS CANCELLED");
+		Debug.LogError ("EVENT IS CANCELLED");
 	}
 
 	internal virtual void DoneEvent(){

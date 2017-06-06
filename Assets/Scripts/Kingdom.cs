@@ -23,6 +23,8 @@ public class Kingdom{
     private List<TradeRoute> _tradeRoutes;
     private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
+    private int _unrest;
+
 	private List<City> _cities;
 	internal City capitalCity;
 	internal Citizen king;
@@ -32,6 +34,7 @@ public class Kingdom{
 //	public List<Citizen> royaltyList;
 	public List<City> intlWarCities;
 	public List<City> activeCitiesToAttack;
+	public List<CityWarPair> activeCitiesPairInWar;
 	internal List<City> holderIntlWarCities;
 
 	internal BASE_RESOURCE_TYPE basicResource;
@@ -50,12 +53,18 @@ public class Kingdom{
     protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
     protected const int GOLD_GAINED_FROM_TRADE = 10;
-   
-	protected List<Resource> increaseCityHPCost = new List<Resource> () {
+    protected const int UNREST_DECREASE_PER_MONTH = -5;
+    protected const int UNREST_INCREASE_CONQUER = 5;
+    protected const int UNREST_INCREASE_EMBARGO = 5;
+
+    protected List<Resource> increaseCityHPCost = new List<Resource> () {
 		new Resource (BASE_RESOURCE_TYPE.GOLD, 300)
 	};
 
 	private bool _isDead;
+	internal bool hasConflicted;
+
+	private int borderConflictLoyaltyExpiration;
 
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
@@ -94,6 +103,9 @@ public class Kingdom{
 	public List<City> cities{
 		get{ return this._cities; }
 	}
+    public int unrest {
+        get { return this._unrest; }
+    }
 	#endregion
 	// Kingdom constructor paramters
 	//	race - the race of this kingdom
@@ -108,6 +120,7 @@ public class Kingdom{
 		this.pretenders = new List<Citizen> ();
 		this.intlWarCities = new List<City>();
 		this.activeCitiesToAttack = new List<City>();
+		this.activeCitiesPairInWar = new List<CityWarPair>();
 		this.holderIntlWarCities = new List<City>();
 		this._cities = new List<City>();
 
@@ -121,7 +134,10 @@ public class Kingdom{
 		this._isDead = false;
         this._tradeRoutes = new List<TradeRoute>();
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
+        this._unrest = 0;
 		this._sourceKingdom = sourceKingdom;
+		this.hasConflicted = false;
+		this.borderConflictLoyaltyExpiration = 0;
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
@@ -267,6 +283,7 @@ public class Kingdom{
 	internal void DestroyKingdom(){
 		this._isDead = true;
 		this.RemoveRelationshipsWithOtherKingdoms();
+        KingdomManager.Instance.allKingdoms.Remove(this);
         EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
         EventManager.Instance.onWeekEnd.RemoveListener(KingdomTickActions);
         EventManager.Instance.onKingdomDiedEvent.RemoveListener(OtherKingdomDiedActions);
@@ -333,12 +350,38 @@ public class Kingdom{
 	protected void KingdomTickActions(){
         this.ProduceGoldFromTrade();
         this.AttemptToExpand();
-		this.AttemptToIncreaseCityHP();
-        if(GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+		this.AttemptToCreateAttackCityEvent ();
+		this.AttemptToCreateReinforcementEvent ();
+        //		this.AttemptToIncreaseCityHP();
+        this.DecreaseUnrestEveryMonth();
+		this.CheckBorderConflictLoyaltyExpiration ();
+        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
             this.AttemptToTrade();
         }
         
     }
+
+	/*
+	 * Attempt to create an attack city event
+	 * This will only happen if there's a war with any other kingdom
+	 * */
+	private void AttemptToCreateAttackCityEvent(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < this.kingdomTypeData.warGeneralCreationRate){
+			EventCreator.Instance.CreateAttackCityEvent (this);
+		}
+	}
+
+	/*
+	 * Attempt to create a reinforcement event to increase a friendly city's hp
+	 * This will only happen if there's a war with any other kingdom
+	 * */
+	private void AttemptToCreateReinforcementEvent(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < this.kingdomTypeData.warReinforcementCreationRate){
+			EventCreator.Instance.CreateReinforcementEvent (this);
+		}
+	}
 
 	/*
 	 * Kingdom will attempt to expand. 
@@ -388,6 +431,20 @@ public class Kingdom{
 				City cityToUpgrade = citiesWithLowestHP[Random.Range(0, citiesWithLowestHP.Count)];
 				this.AdjustResources(this.increaseCityHPCost);
 				cityToUpgrade.IncreaseHP(INCREASE_CITY_HP_AMOUNT);
+			}
+		}
+	}
+
+	/*
+	 * Checks if there has been successful relationship deterioration cause by border conflcit within the past 3 months
+	 * If expiration value has reached zero (0), return all governor loyalty to normal, else, it will remain -10
+	 * */
+	private void CheckBorderConflictLoyaltyExpiration(){
+		if(this.hasConflicted){
+			if(this.borderConflictLoyaltyExpiration > 0){
+				this.borderConflictLoyaltyExpiration -= 1;
+			}else{
+				this.HasNotConflicted ();
 			}
 		}
 	}
@@ -475,6 +532,7 @@ public class Kingdom{
             //Remove all existing trade routes between kingdomToAdd and this Kingdom
             this.RemoveAllTradeRoutesWithOtherKingdom(kingdomToAdd);
             kingdomToAdd.RemoveAllTradeRoutesWithOtherKingdom(this);
+            kingdomToAdd.AdjustUnrest(UNREST_INCREASE_EMBARGO);
         }
         
     }
@@ -485,12 +543,22 @@ public class Kingdom{
     #endregion
 
     /*
+     * Deacrease the kingdom's unrest by UNREST_DECREASE_PER_MONTH amount every month.
+     * */
+    protected void DecreaseUnrestEveryMonth() {
+        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+            this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
+        }
+    }
+
+    /*
 	 * Create a new city obj on the specified hextile.
 	 * Then add it to this kingdoms cities.
 	 * */
-    internal void CreateNewCityOnTileForKingdom(HexTile tile){
+	internal City CreateNewCityOnTileForKingdom(HexTile tile){
 		City createdCity = CityGenerator.Instance.CreateNewCity (tile, this);
 		this.AddCityToKingdom(createdCity);
+		return createdCity;
 	}
 
 	internal void AddCityToKingdom(City city){
@@ -813,7 +881,8 @@ public class Kingdom{
 //		city.kingdom.cities.Remove(city);
 		city.KillCity();
 		yield return null;
-		City newCity = CityGenerator.Instance.CreateNewCity (hex, this);
+		City newCity = CreateNewCityOnTileForKingdom(hex);
+		newCity.hp = 100;
 		newCity.CreateInitialFamilies(false);
 		KingdomManager.Instance.UpdateKingdomAdjacency();
 		this.AddInternationalWarCity (newCity);
@@ -821,6 +890,8 @@ public class Kingdom{
 			newCity.kingdom.HighlightAllOwnedTilesInKingdom();
 		}
 		KingdomManager.Instance.CheckWarTriggerMisc (newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+        //Adjust unrest because a city of this kingdom was conquered.
+        this.AdjustUnrest(UNREST_INCREASE_CONQUER);
 	}
 	internal void AddInternationalWarCity(City newCity){
 		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
@@ -1005,26 +1076,82 @@ public class Kingdom{
 		return nearestCity;
 	}
 	internal void TargetACityToAttack(){
-		if(this.intlWarCities.Count > 0 && this.activeCitiesToAttack.Count <= 0){
-			this.activeCitiesToAttack.Add (this.intlWarCities [UnityEngine.Random.Range (0, this.intlWarCities.Count)]);
+		if(this.intlWarCities.Count > 0 && this.activeCitiesPairInWar.Count <= 0){
+			City sourceCity = null;
+			City targetCity = null;
+			GetTargetCityAndSourceCityInWar (ref sourceCity, ref targetCity);
+			if(sourceCity != null && targetCity != null){
+				this.activeCitiesPairInWar.Add (new CityWarPair (sourceCity, targetCity));
+				this.intlWarCities.Remove (targetCity);
+				targetCity.isUnderAttack = true;
+			}
+//			this.activeCitiesToAttack.Add (this.intlWarCities [UnityEngine.Random.Range (0, this.intlWarCities.Count)]);
 		}
 	}
-	internal City GetCityNearestFrom(City targetCity){
-		City nearestCity = null;
-		float nearestDistance = 0;
-		for(int i = 0; i < this.cities.Count; i++){
-			if(nearestCity == null){
-				nearestCity = this.cities [i];
-				nearestDistance = Vector3.Distance (this.cities [i].hexTile.transform.position, targetCity.hexTile.transform.position); 
-			}else{
-				float distance = Vector3.Distance (this.cities [i].hexTile.transform.position, targetCity.hexTile.transform.position);
-				if(distance < nearestDistance){
-					nearestCity = this.cities [i];
-					nearestDistance = distance;
+	private void GetTargetCityAndSourceCityInWar(ref City sourceCity, ref City targetCity){
+		int nearestDistance = 0;
+		City source = null;
+		City target = null;
+		for (int i = 0; i < this.cities.Count; i++) {
+			for (int j = 0; j < this.intlWarCities.Count; j++) {
+				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, this.intlWarCities [j].hexTile, PATHFINDING_MODE.COMBAT).ToList();
+				if(path != null){
+					int distance = path.Count;
+					if(source == null && target == null){
+						source = this.cities [i];
+						target = this.intlWarCities [j];
+						nearestDistance = distance;
+					}else{
+						if(distance < nearestDistance){
+							source = this.cities [i];
+							target = this.intlWarCities [j];
+							nearestDistance = distance;
+						}
+					}
+				}
+
+			}
+		}
+
+		sourceCity = source;
+		targetCity = target;
+	}
+	internal City GetSenderCityForReinforcement(){
+		List<City> candidatesForReinforcement = this.cities.Where (x => !x.isUnderAttack && x.hp >= 100).ToList ();
+		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
+			candidatesForReinforcement = candidatesForReinforcement.OrderByDescending(x => x.hp).ToList();
+			return candidatesForReinforcement [0];
+		}
+		return null;
+	}
+
+	internal City GetReceiverCityForReinforcement(){
+		List<City> candidatesForReinforcement = this.cities.Where (x => x.isUnderAttack).ToList ();
+		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
+			return candidatesForReinforcement [UnityEngine.Random.Range (0, candidatesForReinforcement.Count)];
+		}
+		return null;
+	}
+	internal void HasConflicted(){
+		if(!this.hasConflicted){
+			this.hasConflicted = true;
+			for(int i = 0; i < this.cities.Count; i++){
+				if(this.cities[i].governor != null){
+					((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty ();
 				}
 			}
 		}
-		return nearestCity;
+		this.borderConflictLoyaltyExpiration = 90;
+
+	}
+	internal void HasNotConflicted(){
+		this.hasConflicted = false;
+		this.borderConflictLoyaltyExpiration = 0;
+		for(int i = 0; i < this.cities.Count; i++){
+			if(this.cities[i].governor != null){
+				((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty ();
+			}
+		}
 	}
 	#region Resource Management
 	/*
@@ -1034,9 +1161,7 @@ public class Kingdom{
 	 * */
 	internal void AdjustGold(int goldAmount){
 		this._goldCount += goldAmount;
-        if (this._goldCount > this._maxGold) {
-            this._goldCount = this._maxGold;
-        }
+		this._goldCount = Mathf.Clamp(this._goldCount, 0, this._maxGold);
 	}
 
 	/*
@@ -1176,7 +1301,7 @@ public class Kingdom{
 	internal bool CanCreateAgent(ROLE roleToCheck, ref int costToCreate){
 //		costToCreate = 0;
 		if (roleToCheck == ROLE.GENERAL) {
-			costToCreate = 300;
+			costToCreate = 0;
 		} else if (roleToCheck == ROLE.TRADER) {
 			costToCreate = 300;
 		} else if (roleToCheck == ROLE.ENVOY) {
@@ -1187,6 +1312,8 @@ public class Kingdom{
 			costToCreate = 300;
 		} else if (roleToCheck == ROLE.RAIDER) {
 			costToCreate = 100;
+		} else if (roleToCheck == ROLE.REINFORCER) {
+			costToCreate = 0;
 		}
 
 		if (this._goldCount < costToCreate) {
@@ -1234,4 +1361,9 @@ public class Kingdom{
         }
     }
 	#endregion
+
+    internal void AdjustUnrest(int amountToAdjust) {
+        this._unrest += amountToAdjust;
+        this._unrest = Mathf.Clamp(this._unrest, 0, 100);
+    }
 }

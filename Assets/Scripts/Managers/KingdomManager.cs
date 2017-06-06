@@ -22,6 +22,8 @@ public class KingdomManager : MonoBehaviour {
 	public KingdomTypeData kingdomTypeRighteous;
 	public KingdomTypeData kingdomTypeWicked;
 
+    protected const int UNREST_INCREASE_WAR = 10;
+
 	void Awake(){
 		Instance = this;
 	}
@@ -151,6 +153,9 @@ public class KingdomManager : MonoBehaviour {
 
         kingdom1.RemoveAllTradeRoutesWithOtherKingdom(kingdom2);
         kingdom2.RemoveAllTradeRoutesWithOtherKingdom(kingdom1);
+
+        kingdom1.AdjustUnrest(UNREST_INCREASE_WAR);
+        kingdom2.AdjustUnrest(UNREST_INCREASE_WAR);
 
         //		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
         //		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));

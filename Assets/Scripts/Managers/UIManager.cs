@@ -55,6 +55,11 @@ public class UIManager : MonoBehaviour {
 	//Relocate
 	public GameObject relocateGO;
 	public UIPopupList citiesForRelocationPopupList;
+	//Force War
+	public GameObject forceWarGO;
+	public UIPopupList kingdomsForWar;
+
+
 
 	[Space(10)]//World UI
 	public ButtonGroupItem pauseBtn;
@@ -227,7 +232,8 @@ public class UIManager : MonoBehaviour {
 
 	void Start(){
 		EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
-		NormalizeFontSizes();
+        EventManager.Instance.onKingdomDiedEvent.AddListener(ForceUpdateKingdomList);
+        NormalizeFontSizes();
 		UpdateUI();
 	}
 
@@ -321,6 +327,15 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 
+
+    private void ForceUpdateKingdomList(Kingdom kingdomThatDied) {
+        if (currentlyShowingKingdom.id == kingdomThatDied.id) {
+            SetKingdomAsActive(KingdomManager.Instance.allKingdoms.First());
+        } else {
+            UpdateKingdomList();
+        }
+        
+    }
 
 	void UpdateKingdomList(){
 		if (currentlyShowingKingdom == null) {
@@ -448,7 +463,7 @@ public class UIManager : MonoBehaviour {
 			} else if (i == 1) {
 				traitToUse = currentlyShowingCitizen.hostilityTrait;
 			} else if (i == 2) {
-				traitToUse = currentlyShowingCitizen.intelligenceTrait;
+				traitToUse = currentlyShowingCitizen.miscTrait;
 			}
 			traits [i].SetTrait (traitToUse);
 		}
@@ -675,16 +690,20 @@ public class UIManager : MonoBehaviour {
 		int nextIndex = 0;
 		for (int i = 0; i < characterPortraits.Count; i++) {
 			CharacterPortrait currPortrait = characterPortraits[i];
-			RelationshipKings currRel = currentlyShowingCitizen.relationshipKings[i];
-			if (currRel == null) {
-				currPortrait.gameObject.SetActive(false);
-			} else {
-				currPortrait.SetCitizen (currRel.king, true);
-				currPortrait.ShowRelationshipLine (currRel, currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
-				currPortrait.gameObject.SetActive(true);
-			}
-			nextIndex = i + 1;
-		}
+            if(i < currentlyShowingCitizen.relationshipKings.Count) {
+                RelationshipKings currRel = currentlyShowingCitizen.relationshipKings[i];
+                if (currRel != null) {
+                    currPortrait.SetCitizen(currRel.king, true);
+                    currPortrait.ShowRelationshipLine(currRel, currentlyShowingCitizen.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingCitizen));
+                    currPortrait.gameObject.SetActive(true);
+                } else {
+                    currPortrait.gameObject.SetActive(false);
+                }
+                nextIndex = i + 1;
+            } else {
+                currPortrait.gameObject.SetActive(false);
+            }
+        }
 
 		if (currentlyShowingCitizen.relationshipKings.Count - 1 >= nextIndex) {
 			for (int i = nextIndex; i < currentlyShowingCitizen.relationshipKings.Count; i++) {
@@ -2216,18 +2235,26 @@ public class UIManager : MonoBehaviour {
      * Show all cities owned by currentlyShowingKingdom.
      * */
     public void ShowKingdomCities() {
-        List<CityItem> cityItems = kingdomCitiesGrid.gameObject.GetComponentsInChildren<CityItem>().ToList();
+        List<CityItem> cityItems = kingdomCitiesGrid.gameObject.GetComponentsInChildren<Transform>(true)
+            .Where(x => x.GetComponent<CityItem>() != null)
+            .Select(x => x.GetComponent<CityItem>()).ToList();
         int nextIndex = 0;
         for (int i = 0; i < cityItems.Count; i++) {
             CityItem currCityItem = cityItems[i];
-            City currCity = currentlyShowingKingdom.cities[i];
-            if (currCity == null) {
-                currCityItem.gameObject.SetActive(false);
+            if(i < currentlyShowingKingdom.cities.Count) {
+                City currCity = currentlyShowingKingdom.cities.ElementAt(i);
+                if (currCity != null) {
+                    currCityItem.SetCity(currCity);
+                    currCityItem.gameObject.SetActive(true);
+                } else {
+                    currCityItem.gameObject.SetActive(false);
+                }
+                nextIndex = i + 1;
             } else {
-                currCityItem.SetCity(currCity);
-                currCityItem.gameObject.SetActive(true);
+                currCityItem.gameObject.SetActive(false);
             }
-            nextIndex = i + 1;
+
+
         }
 
         if (currentlyShowingKingdom.cities.Count >= nextIndex) {
@@ -2238,10 +2265,13 @@ public class UIManager : MonoBehaviour {
                 cityGO.transform.localScale = Vector3.one;
                 kingdomCitiesGrid.AddChild(cityGO.transform);
                 kingdomCitiesGrid.Reposition();
+                kingdomCitiesScrollView.ResetPosition();
             }
         }
-        StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
+        //StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
         //kingdomCitiesScrollView.ResetPosition();
+        kingdomCitiesScrollView.UpdatePosition();
+        kingdomCitiesScrollView.UpdateScrollbars();
         kingdomCitiesGO.SetActive(true);
     }
 
@@ -2511,6 +2541,33 @@ public class UIManager : MonoBehaviour {
 	}
 	public void HideRelocate(){
 		this.relocateGO.SetActive (false);
+	}
+	public void ToggleForceWar(){
+		if (this.forceWarGO.activeSelf) {
+			this.forceWarGO.SetActive (false);
+		} else {
+			this.kingdomsForWar.Clear ();
+			if(this.currentlyShowingCitizen != null){
+				for(int i = 0; i < this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms.Count; i++){
+					if(!this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
+						this.kingdomsForWar.AddItem (this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom.name, this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom);
+					}
+				}
+			}
+			this.forceWarGO.SetActive (true);
+		}
+	}
+	public void OnClickForceWar(){
+		if(this.kingdomsForWar.data != null){
+			Kingdom targetKingdom = (Kingdom)this.kingdomsForWar.data;
+			if(this.currentlyShowingCitizen != null){
+				//				Debug.LogError (this.currentlyShowingCitizen.name + " HAS MOVED FROM " + this.currentlyShowingCitizen.city.name + " TO " + newCityForCitizen.name);
+				this.currentlyShowingCitizen.ForceWar(targetKingdom, null, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+			}
+		}
+	}
+	public void HideForceWar(){
+		this.forceWarGO.SetActive (false);
 	}
 	public void GenerateChildForCitizen(){
 		if (currentlyShowingCitizen.spouse == null) {

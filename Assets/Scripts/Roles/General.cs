@@ -27,7 +27,7 @@ public class General : Role {
 //		this.location = citizen.city.hexTile;
 //		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
 //		this.targetLocation = null;
-		this.damage = UnityEngine.Random.Range(30,51);
+		this.damage = UnityEngine.Random.Range(60,101);
 		this.markAsDead = false;
 		this.attackCity = null;
 //		this.daysBeforeArrival = 0;

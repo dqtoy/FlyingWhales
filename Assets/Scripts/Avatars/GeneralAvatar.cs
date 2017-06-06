@@ -11,7 +11,7 @@ public class GeneralAvatar : MonoBehaviour {
 	public SpriteRenderer kingdomIndicator;
 	public TextMesh txtDamage;
 	public bool collidedWithHostile;
-	public General otherGeneral;
+	public Citizen hostile;
 
 
 	private bool hasArrived = false;
@@ -37,17 +37,48 @@ public class GeneralAvatar : MonoBehaviour {
 		this.kingdomIndicator.color = general.citizen.city.kingdom.kingdomColor;
 		this.txtDamage.text = general.damage.ToString ();
 		this.direction = DIRECTION.LEFT;
+		this.GetComponent<Avatar> ().kingdom = this.general.citizen.city.kingdom;
+		this.GetComponent<Avatar> ().gameEvent = this.general.attackCity;
+		this.GetComponent<Avatar> ().citizen = this.general.citizen;
+
 		ResetValues ();
 		this.AddBehaviourTree ();
 	}
 	void OnTriggerEnter2D(Collider2D other){
-		if(other.tag == "General"){
+		if (other.tag == "General") {
+			this.collidedWithHostile = false;
+			if (this.gameObject != null && other.gameObject != null) {
+				if (other.gameObject.GetComponent<Avatar> ().kingdom.id != this.general.citizen.city.kingdom.id) {
+					if (!other.gameObject.GetComponent<Avatar> ().citizen.isDead) {
+						this.collidedWithHostile = true;
+						this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
+					}
+				}
+			}
+		} else if(other.tag == "Trader"){
 			this.collidedWithHostile = false;
 			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.general.citizen.city.kingdom.id){
-					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
+				Kingdom kingdomOfGeneral = this.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom;
+				Kingdom kingdomOfTrader = other.gameObject.GetComponent<Avatar>().kingdom;
+				if (kingdomOfGeneral.id != kingdomOfTrader.id) {
+					RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
+					RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
+					if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
+						relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+						if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
+							this.collidedWithHostile = true;
+							this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
+						}
+					}  
+				}
+			}
+		} else if(other.tag == "Avatar"){
+			this.collidedWithHostile = false;
+			if(this.gameObject != null && other.gameObject != null){
+				if(other.gameObject.GetComponent<Avatar>().kingdom.id != this.general.citizen.city.kingdom.id){
+					if(!other.gameObject.GetComponent<Avatar> ().citizen.isDead){
 						this.collidedWithHostile = true;
-						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
+						this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
 					}
 				}
 			}
@@ -146,16 +177,25 @@ public class GeneralAvatar : MonoBehaviour {
 	public void HasCollidedWithHostileGeneral(){
 		if(this.collidedWithHostile){
 			this.collidedWithHostile = false;
-			if(!this.otherGeneral.citizen.isDead){
-				CombatManager.Instance.BattleMidway (ref this.general, ref this.otherGeneral);
-				if(this.general.markAsDead){
-					this.general.citizen.Death (DEATH_REASONS.BATTLE);
-				}
-				if(this.otherGeneral.markAsDead){
-					this.otherGeneral.citizen.Death (DEATH_REASONS.BATTLE);
+			if(this.hostile.assignedRole != null){
+				if(this.hostile.assignedRole is General){
+					if(!this.hostile.isDead){
+						General otherGeneral = (General)this.hostile.assignedRole;
+						CombatManager.Instance.BattleMidway (ref this.general, ref otherGeneral);
+						if(this.general.markAsDead){
+							this.general.citizen.Death (DEATH_REASONS.BATTLE);
+						}
+						if(otherGeneral.markAsDead){
+							this.hostile.Death (DEATH_REASONS.BATTLE);
+						}
+					}
+				}else{
+					if (!this.hostile.isDead) {
+						this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByGeneral (this.general);
+					}
 				}
 				Task.current.Succeed ();
-			}else{
+			} else{
 				Task.current.Fail ();
 			}
 
@@ -181,7 +221,7 @@ public class GeneralAvatar : MonoBehaviour {
 
 	private void ResetValues(){
 		this.collidedWithHostile = false;
-		this.otherGeneral = null;
+		this.hostile = null;
 	}
 
 	private void Move(){

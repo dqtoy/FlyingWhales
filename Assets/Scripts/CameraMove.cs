@@ -16,6 +16,7 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private Camera resourceIconCamera;
 	[SerializeField] private Camera generalCamera;
 	[SerializeField] private Camera traderCamera;
+    [SerializeField] private Camera uiCamera;
 
 	private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
@@ -87,7 +88,8 @@ public class CameraMove : MonoBehaviour {
 			Camera.main.orthographicSize = fov;
 			eventIconCamera.orthographicSize = fov;
 			resourceIconCamera.orthographicSize = fov;
-			generalCamera.orthographicSize = fov;
+            generalCamera.orthographicSize = fov;
+            uiCamera.orthographicSize = fov;
 
 			//adjust camera movement clamps
 			if (adjustment > 0f) {

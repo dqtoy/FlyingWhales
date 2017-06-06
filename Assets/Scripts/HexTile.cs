@@ -50,8 +50,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	[SerializeField] private SpriteRenderer _kingdomColorSprite;
 	[SerializeField] private GameObject _highlightGO;
 
-	//For Tile Edges
-	[SerializeField] private GameObject topLeftEdge;
+    [SerializeField] private CityItem cityInfo;
+    [SerializeField] private GameObject cityInfoGO;
+
+    //For Tile Edges
+    [SerializeField] private GameObject topLeftEdge;
 	[SerializeField] private GameObject leftEdge;
 	[SerializeField] private GameObject botLeftEdge;
 	[SerializeField] private GameObject botRightEdge;
@@ -354,9 +357,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void ShowNamePlate() {
-        this.cityNameGO.SetActive(true);
-        this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
-        this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
+        //this.cityNameGO.SetActive(true);
+        //this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
+        //this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
+        EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
+        UpdateNamePlate();
+        this.cityInfoGO.SetActive(true);
+    }
+
+    private void UpdateNamePlate() {
+        this.cityInfo.SetCity(this.city);
     }
 
     public void ShowOccupiedSprite() {
@@ -383,9 +393,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.isBorderOfCityID = 0;
 		this.isOccupiedByCityID = 0;
 		this.structureGO.SetActive(false);
-		this._kingdomColorSprite.color = Color.white;
+        this.cityInfoGO.SetActive(false);
+        this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
-	}
+        EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);
+        Transform[] children = structureParentGO.GetComponentsInChildren<Transform>();
+        for (int i = 0; i < children.Length; i++) {
+            if (children[i].gameObject != null && children[i].gameObject != structureParentGO) {
+                Destroy(children[i].gameObject);
+            }
+        }
+    }
 
 	public void Occupy(City city) {
 		this.isOccupied = true;
@@ -501,7 +519,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
-        text += this.city.kingdom.name + "\n [b]GOLD:[/b] " + this.city.kingdom.goldCount.ToString() + "/" + this.city.kingdom.maxGold.ToString() + 
+        text += "[b]" + this.city.kingdom.name + "[/b]" +
+            "\n [b]Unrest:[/b] " + this.city.kingdom.unrest.ToString() +
+            "\n [b]GOLD:[/b] " + this.city.kingdom.goldCount.ToString() + "/" + this.city.kingdom.maxGold.ToString() + 
             "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() + 
             "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() +
             "\n [b]Available Resources: [/b]\n";

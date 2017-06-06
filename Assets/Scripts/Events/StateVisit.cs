@@ -48,6 +48,7 @@ public class StateVisit : GameEvent {
 
 	}
 	internal override void DoneCitizenAction(Citizen citizen){
+        base.DoneCitizenAction(citizen);
 		this.visitorHasArrived = true;
 	}
 	internal override void PerformAction(){
@@ -130,6 +131,7 @@ public class StateVisit : GameEvent {
 		//Add logs: death_by_general
 		this.visitorHasDied = true;
 		this.isSuccessful = false;
+		this.visitor.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}
 	private List<Kingdom> GetOtherKingdoms(){

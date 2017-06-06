@@ -32,23 +32,11 @@ public class EnvoyAvatar : MonoBehaviour {
 	internal void Init(Envoy envoy){
 		this.envoy = envoy;
 		this.direction = DIRECTION.LEFT;
+		this.GetComponent<Avatar> ().kingdom = this.envoy.citizen.city.kingdom;
+		this.GetComponent<Avatar> ().gameEvent = this.envoy.gameEvent;
+		this.GetComponent<Avatar> ().citizen = this.envoy.citizen;
 		ResetValues ();
 		this.AddBehaviourTree ();
-	}
-	void OnTriggerEnter2D(Collider2D other){
-		if(other.tag == "General"){
-			this.collidedWithHostile = false;
-			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.envoy.citizen.city.kingdom.id){
-					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
-						this.collidedWithHostile = true;
-						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
-					}
-				}
-			}
-		}
-
-
 	}
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
 		if(startTile.transform.position.x <= targetTile.transform.position.x){
@@ -137,22 +125,22 @@ public class EnvoyAvatar : MonoBehaviour {
 
 	}
 		
-	[Task]
-	public void HasCollidedWithHostileGeneral(){
-		if(this.collidedWithHostile){
-			this.collidedWithHostile = false;
-			if(!this.otherGeneral.citizen.isDead){
-				//Death by general
-				this.envoy.gameEvent.DeathByGeneral (this.otherGeneral);
-				Task.current.Succeed ();
-			}else{
-				Task.current.Fail ();
-			}
-
-		}else{
-			Task.current.Fail ();
-		}
-	}
+//	[Task]
+//	public void HasCollidedWithHostileGeneral(){
+//		if(this.collidedWithHostile){
+//			this.collidedWithHostile = false;
+//			if(!this.otherGeneral.citizen.isDead){
+//				//Death by general
+//				this.envoy.gameEvent.DeathByGeneral (this.otherGeneral);
+//				Task.current.Succeed ();
+//			}else{
+//				Task.current.Fail ();
+//			}
+//
+//		}else{
+//			Task.current.Fail ();
+//		}
+//	}
 	[Task]
 	public void HasDiedOfOtherReasons(){
 		if (this.envoy.citizen.isDead) {
@@ -247,7 +235,7 @@ public class EnvoyAvatar : MonoBehaviour {
 	}
 	public void OnEndAttack(){
 		this.envoy.gameEvent.DoneCitizenAction(this.envoy.citizen);
-		this.envoy.citizen.Death (DEATH_REASONS.ACCIDENT);
+		this.envoy.DestroyGO ();
 	}
 
 	internal void HasAttacked(){

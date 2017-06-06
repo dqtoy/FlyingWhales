@@ -95,6 +95,7 @@ public class RequestPeace : GameEvent {
     //}
 
     internal override void DoneCitizenAction(Citizen citizen) {
+        base.DoneCitizenAction(citizen);
         int targetWarExhaustion = this._targetKingdomRel.kingdomWar.exhaustion;
 
         int chanceForSuccess = 0;

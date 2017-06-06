@@ -8,5 +8,4 @@ tree("Root")
 tree("Move")
 	fallback
 		HasArrivedAtTargetHextile
-		HasCollidedWithHostileGeneral
 		MoveToNextTile

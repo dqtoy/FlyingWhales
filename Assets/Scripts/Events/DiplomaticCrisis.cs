@@ -59,6 +59,7 @@ public class DiplomaticCrisis : GameEvent {
 		}
 	}
 	internal override void DoneCitizenAction(Citizen citizen){
+        base.DoneCitizenAction(citizen);
 		if (citizen.assignedRole is Envoy) {
 			if (this.activeEnvoyResolve != null) {
 				if (citizen.id == this.activeEnvoyResolve.citizen.id) {
@@ -129,6 +130,7 @@ public class DiplomaticCrisis : GameEvent {
 	internal override void DeathByGeneral(General general){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
 		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+		this.activeEnvoyResolve.citizen.Death (DEATH_REASONS.BATTLE);
 	}
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();

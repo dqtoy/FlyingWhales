@@ -117,6 +117,7 @@ public enum ROLE{
 	KING,
 	EXPANDER,
 	RAIDER,
+	REINFORCER,
 }
 
 public enum KINGDOM_TYPE {
@@ -151,7 +152,8 @@ public enum TRAIT{
 	WARMONGER,
 	PACIFIST,
 	SMART,
-	STUPID
+	STUPID,
+    AMBITIOUS
 }
 
 public enum CAMPAIGN{
@@ -192,7 +194,8 @@ public enum EVENT_TYPES{
 	ADMIRATION,
 	ALL,
 	ATTACK_CITY, // general
-	SABOTAGE //envoy
+	SABOTAGE, //envoy
+	REINFORCEMENT, //general
 }
 public enum EVENT_STATUS{
 	EXPOSED,

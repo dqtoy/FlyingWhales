@@ -20,16 +20,13 @@ public class Citizen {
 	public ROLE role;
 	public Role assignedRole;
 	public RACE race;
-//	public List<BEHAVIOR_TRAIT> behaviorTraits;
-//	public List<SKILL_TRAIT> skillTraits;
-//	public List<MISC_TRAIT> miscTraits;
 	protected TRAIT _honestyTrait;
 	protected TRAIT _hostilityTrait;
-	protected TRAIT _intelligenceTrait;
+	protected TRAIT _miscTrait;
 	public Citizen supportedCitizen;
 	public Citizen father;
 	public Citizen mother;
-	public Citizen spouse;
+	protected Citizen _spouse;
 	public List<Citizen> children;
 	public HexTile workLocation;
 	public CitizenChances citizenChances;
@@ -73,6 +70,8 @@ public class Citizen {
 		get{ return this.relationshipKings.Where(x => x.lordRelationship == RELATIONSHIP_STATUS.FRIEND || x.lordRelationship == RELATIONSHIP_STATUS.ALLY).ToList();}
 	}
 
+    protected const int MARRIAGE_CHANCE = 100; //8
+
 	#region getters/setters
 	public TRAIT honestyTrait{
 		get{ return this._honestyTrait; }
@@ -80,9 +79,12 @@ public class Citizen {
 	public TRAIT hostilityTrait{
 		get{ return this._hostilityTrait; }
 	}
-	public TRAIT intelligenceTrait{
-		get{ return this._intelligenceTrait; }
+	public TRAIT miscTrait{
+		get{ return this._miscTrait; }
 	}
+    public Citizen spouse {
+        get { return this._spouse; }
+    }
 	#endregion
 
 	public Citizen(City city, int age, GENDER gender, int generation){
@@ -114,7 +116,7 @@ public class Citizen {
 		this.supportedCitizen = null; //initially to king
 		this.father = null;
 		this.mother = null;
-		this.spouse = null;
+		this._spouse = null;
 		this.children = new List<Citizen> ();
 		this.workLocation = null;
 		this.currentLocation = this.city.hexTile;
@@ -167,7 +169,7 @@ public class Citizen {
 
 	// This function checks if the citizen has the specified trait
 	public bool hasTrait(TRAIT trait) {
-		if (this._honestyTrait == trait || this._hostilityTrait == trait || this._intelligenceTrait == trait) {
+		if (this._honestyTrait == trait || this._hostilityTrait == trait || this._miscTrait == trait) {
 			return true;
 		}
 		return false;
@@ -189,116 +191,8 @@ public class Citizen {
 		newHoroscope[2] = UnityEngine.Random.Range(0,2);
 		return newHoroscope;
 	}
-//	internal void GenerateTraits(){
-//		this.behaviorTraits.Clear();
-//		this.skillTraits.Clear();
-//		this.miscTraits.Clear();
-//		//Generate Behaviour trait
-//		int firstItem = 1;
-//		int secondItem = 2;
-//		for (int j = 0; j < 4; j++) {
-////			BEHAVIOR_TRAIT[] behaviourPair = new BEHAVIOR_TRAIT[2]{(BEHAVIOR_TRAIT)firstItem, (BEHAVIOR_TRAIT)secondItem};
-//			int chanceForTrait = UnityEngine.Random.Range (0, 100);
-//			if (chanceForTrait <= 20) {
-//				//the behaviour pairs are always contradicting
-//				BEHAVIOR_TRAIT behaviourTrait1 = (BEHAVIOR_TRAIT)firstItem;
-//				BEHAVIOR_TRAIT behaviourTrait2 = (BEHAVIOR_TRAIT)secondItem;
-//				int chanceForTrait1 = 50;
-//				int chanceForTrait2 = 50;
-//				if (this.father != null && this.mother != null) {
-//					if (this.mother.behaviorTraits.Contains (behaviourTrait1)) {chanceForTrait1 += 15;chanceForTrait2 -= 15;}
-//
-//					if (this.father.behaviorTraits.Contains (behaviourTrait1)) {chanceForTrait1 += 15;chanceForTrait2 -= 15;}
-//
-//					if (this.mother.behaviorTraits.Contains (behaviourTrait2)) {chanceForTrait2 += 15;chanceForTrait1 -= 15;}
-//
-//					if (this.father.behaviorTraits.Contains (behaviourTrait2)) {chanceForTrait2 += 15;chanceForTrait1 -= 15;}
-//				}
-//
-//				int traitChance = UnityEngine.Random.Range (0, (chanceForTrait1 + chanceForTrait2));
-//				if (traitChance <= chanceForTrait1) {
-//					this.behaviorTraits.Add (behaviourTrait1);
-//				} else {
-//					this.behaviorTraits.Add (behaviourTrait2);
-//				}
-//			}
-//			firstItem += 2;
-//			secondItem += 2;
-//		}
-//
-////		//Generate Skill Trait
-////		int chanceForSkillTraitLength = UnityEngine.Random.Range (0, 100);
-////		int numOfSkillTraits = 0;
-////		if (chanceForSkillTraitLength <= 20) {
-////			numOfSkillTraits = 2;
-////		} else if (chanceForSkillTraitLength >= 21 && chanceForSkillTraitLength <= 40) {
-////			numOfSkillTraits = 1;
-////		}
-////
-////		List<SKILL_TRAIT> skillTraits = new List<SKILL_TRAIT>();
-////		if (this.father != null && this.mother != null && (father.skillTraits.Count > 0 || mother.skillTraits.Count > 0)) {
-////			int skillListChance = UnityEngine.Random.Range (0, 100);
-////			if (skillListChance < 100) {
-////				skillTraits.AddRange(father.skillTraits);
-////				skillTraits.AddRange(mother.skillTraits);
-////				skillTraits.Distinct();
-////			} else {
-////				skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
-////				skillTraits.Remove (SKILL_TRAIT.NONE);
-////			}
-////		} else {
-////			skillTraits = Utilities.GetEnumValues<SKILL_TRAIT>().ToList();
-////			skillTraits.Remove (SKILL_TRAIT.NONE);
-////		}
-////
-////
-////		for (int j = 0; j < numOfSkillTraits; j++) {
-////			if (skillTraits.Count > 0) {
-////				SKILL_TRAIT chosenSkillTrait = skillTraits [UnityEngine.Random.Range (0, skillTraits.Count)];
-////				this.skillTraits.Add (chosenSkillTrait);
-////				if (numOfSkillTraits > 1) {
-////					skillTraits.Remove (chosenSkillTrait);
-////					if (chosenSkillTrait == SKILL_TRAIT.EFFICIENT) {
-////						skillTraits.Remove (SKILL_TRAIT.INEFFICIENT);
-////					} else if (chosenSkillTrait == SKILL_TRAIT.INEFFICIENT) {
-////						skillTraits.Remove (SKILL_TRAIT.EFFICIENT);
-////					} else if (chosenSkillTrait == SKILL_TRAIT.LAVISH) {
-////						skillTraits.Remove (SKILL_TRAIT.THRIFTY);
-////					} else if (chosenSkillTrait == SKILL_TRAIT.THRIFTY) {
-////						skillTraits.Remove (SKILL_TRAIT.LAVISH);
-////					}
-////				}
-////			}
-////		}
-////
-////		//misc traits
-////		int chanceForMiscTraitLength = UnityEngine.Random.Range (0, 100);
-////		int numOfMiscTraits = 0;
-////		if (chanceForMiscTraitLength <= 10) {
-////			numOfMiscTraits = 2;
-////		} else if (chanceForMiscTraitLength >= 11 && chanceForMiscTraitLength <= 20) {
-////			numOfMiscTraits = 1;
-////		}
-////
-////		List<MISC_TRAIT> miscTraits = Utilities.GetEnumValues<MISC_TRAIT>().ToList();
-////		miscTraits.Remove (MISC_TRAIT.NONE);
-////		for (int j = 0; j < numOfMiscTraits; j++) {
-////			MISC_TRAIT chosenMiscTrait = miscTraits[UnityEngine.Random.Range(0, miscTraits.Count)];
-////			this.miscTraits.Add (chosenMiscTrait);
-////			miscTraits.Remove (chosenMiscTrait);
-////			if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
-//////				this.citizenChances.accidentChance = 50f;
-////			}
-////		}
-//		this.behaviorTraits.Distinct().ToList();
-////		this.skillTraits.Distinct().ToList();
-////		this.miscTraits.Distinct().ToList();
-//	}
 
 	internal int GetCampaignLimit(){
-//		if(this.miscTraits.Contains(MISC_TRAIT.TACTICAL)){
-//			return 3;
-//		}
 		return 2;
 	}
 	internal void AddParents(Citizen father, Citizen mother){
@@ -310,7 +204,6 @@ public class Citizen {
 		} else {
 			this.name = RandomNameGenerator.Instance.GenerateRandomName (this.race, this.gender);
 		}
-//		this.GenerateTraits();
 	}
 
 	internal void AddChild(Citizen child){
@@ -323,7 +216,7 @@ public class Citizen {
 		this.horoscope = GetHoroscope ();
 		this._honestyTrait = StoryTellingManager.Instance.GenerateHonestyTrait(this);
 		this._hostilityTrait = StoryTellingManager.Instance.GenerateHostilityTrait(this);
-		this._intelligenceTrait = StoryTellingManager.Instance.GenerateIntelligenceTrait(this);
+		this._miscTrait = StoryTellingManager.Instance.GenerateMiscTrait(this);
 		this.history.Add(new History((int)month, days, year, this.name + " was born.", HISTORY_IDENTIFIER.NONE));
 	}
 	internal void TurnActions(){
@@ -345,6 +238,17 @@ public class Citizen {
 	protected void AttemptToAge(){
 		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.days == this.birthWeek && GameManager.Instance.year > this.birthYear){
 			this.age += 1;
+            /*Every birthday starting at 16 up to 50, an unmarried King, 
+             * Queen or Governor has a chance to get married. 
+             * A randomly generated character will be created.
+             * */
+            if (this.role == ROLE.KING || this.role == ROLE.GOVERNOR) {
+                int chance = Random.Range(0, 100);
+                if (this.age >= 16 && this.age <= 50 && !this.isMarried && chance < MARRIAGE_CHANCE) {
+                    Citizen spouse = MarriageManager.Instance.GenerateSpouseForCitizen(this);
+                    MarriageManager.Instance.Marry(this, spouse);
+                }
+            }
 //			if (this.gender == GENDER.MALE) {
 //				if (this.age >= 16 && !this.isMarried) {
 //					this.citizenChances.marriageChance += 2;
@@ -371,7 +275,7 @@ public class Citizen {
 //				}
 //			}
 
-		}
+            }
 	}
 
 	protected void AttemptToMarry(){
@@ -494,11 +398,13 @@ public class Citizen {
 		}
 
 
-		if (this.isMarried) {
-//			MarriageManager.Instance.DivorceCouple (this, spouse);
-			this.spouse.isMarried = false;
-			this.spouse.spouse = null;
-		}
+		if (this.isMarried && this._spouse != null) {
+            //MarriageManager.Instance.DivorceCouple(this, spouse);
+            this.isMarried = false;
+            this._spouse.isMarried = false;
+			this._spouse.AssignSpouse(null);
+            this.AssignSpouse(null);
+        }
 
 		//		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
 		//		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
@@ -753,6 +659,18 @@ public class Citizen {
 					}
 				}
 			}
+		}else{
+			if (this.father != null) {
+				if (this.father.children != null) {
+					for (int i = 0; i < this.father.children.Count; i++) {
+						if (this.father.children [i].id != this.id) {
+							if (!this.father.children [i].isDead) {
+								siblings.Add (this.father.children [i]);
+							}
+						}
+					}
+				}
+			}
 		}
 
 		return siblings;
@@ -809,14 +727,10 @@ public class Citizen {
 			this.assignedRole = new Expander (this);
 		} else if (role == ROLE.RAIDER) {
 			this.assignedRole = new Raider (this);
+		} else if (role == ROLE.REINFORCER) {
+			this.assignedRole = new Reinforcer (this);
 		}
 		this.UpdatePrestige ();
-	}
-
-	internal void Unemploy(){
-		this.spouse.role = ROLE.UNTRAINED;
-		this.spouse.assignedRole = null;
-		this.spouse.workLocation = null;
 	}
 
 	internal bool IsRoyaltyCloseRelative(Citizen otherCitizen){
@@ -973,8 +887,8 @@ public class Citizen {
 //			prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
 			}
 		}
-		if (this.isMarried && this.spouse != null) {
-			if (this.spouse.isKing || this.spouse.isGovernor) {
+		if (this.isMarried && this._spouse != null) {
+			if (this._spouse.isKing || this._spouse.isGovernor) {
 				prestige += 150;
 			}
 		}
@@ -1243,7 +1157,20 @@ public class Citizen {
 			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger, warTrigger);
 		}
 	}
-
+	internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
+		if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
+			return;
+		}
+		War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, targetKingdom);
+		if (warEvent != null && warEvent.isAtWar) {
+			return;
+		}
+		if (warEvent == null) {
+			warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
+				this.city.kingdom, targetKingdom);
+		}
+		warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger, warTrigger);
+	}
 	internal void ImproveRelationship(RelationshipKings relationship){
 		//Improvement of Relationship
 
@@ -1477,9 +1404,8 @@ public class Citizen {
 			general.CreateGhostCitizen ();
 		}
 	
-	}*/
-
-	/*internal void DeathToGhost(City city){
+	}
+	internal void DeathToGhost(City city){
 		if(this.city.id == city.id){
 			EventManager.Instance.onDeathToGhost.RemoveListener (DeathToGhost);
 			if (this.assignedRole is General) {
@@ -1487,8 +1413,8 @@ public class Citizen {
 				general.GeneralDeath ();
 			}
 		}
-	}*/
-	/*internal void CopyCampaignManager(CampaignManager source){
+	}
+	internal void CopyCampaignManager(CampaignManager source){
 		Debug.Log (this.name + " of " + this.city.kingdom.name + " IS COPYING THE CAMPAIGN MANAGER OF " + source.leader.name + " of " + source.leader.city.kingdom.name);
 		for(int i = 0; i < source.intlWarCities.Count; i++){
 			if(!this.campaignManager.SearchForInternationalWarCities(source.intlWarCities[i].city)){
@@ -1529,6 +1455,31 @@ public class Citizen {
 	}
 
 	internal void SetIntelligenceTrait(TRAIT trait){
-		this._intelligenceTrait = trait;
+		this._miscTrait = trait;
+	}
+
+    internal void AssignSpouse(Citizen spouse) {
+        this._spouse = spouse;
+        this.isMarried = true;
+    }
+
+	internal bool IsRelative(Citizen citizen){
+		if(this.mother != null && this.mother.id == citizen.id){
+			return true;
+		}
+		if(this.father != null && this.father.id == citizen.id){
+			return true;
+		}
+		List<Citizen> siblings = this.GetSiblings ();
+		if(siblings.Contains(citizen)){
+			return true;
+		}
+		if(this.children.Contains(citizen)){
+			return true;
+		}
+		if(this.isDirectDescendant && citizen.isDirectDescendant){
+			return true;
+		}
+		return false;
 	}
 }

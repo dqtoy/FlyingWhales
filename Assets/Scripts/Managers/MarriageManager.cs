@@ -82,8 +82,8 @@ public class MarriageManager : MonoBehaviour {
 
 	internal void Marry(Citizen citizen1, Citizen citizen2){
 //		Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.days + "/" + PoliticsPrototypeManager.Instance.year + ": " + husband.name + " got married to " + wife.name);
-		citizen1.spouse = citizen2;
-		citizen2.spouse = citizen1;
+		citizen1.AssignSpouse(citizen2);
+		citizen2.AssignSpouse(citizen1);
 		citizen1.isMarried = true;
 		citizen2.isMarried = true;
 		citizen1.isIndependent = true;
@@ -113,12 +113,22 @@ public class MarriageManager : MonoBehaviour {
 				citizen1.ChangeSurname (citizen2);
 			}
 		}
-
-
-
 	}
 
 	internal List<MarriedCouple> GetCouplesCitizenInvoledIn(Citizen citizen){
 		return allMarriedCouples.Where(x => x.husband.id == citizen.id || x.wife.id == citizen.id).ToList();
 	}
+
+    public Citizen GenerateSpouseForCitizen(Citizen citizenToGetMarried) {
+        int spouseAge = citizenToGetMarried.age - 5;
+        spouseAge = Mathf.Clamp(spouseAge, 16, 50);
+
+        GENDER spouseGender = GENDER.MALE;
+        if (citizenToGetMarried.gender == GENDER.MALE) {
+            spouseGender = GENDER.FEMALE;
+        }
+
+        Spouse newSpouse = new Spouse(citizenToGetMarried, citizenToGetMarried.city, spouseAge, spouseGender, citizenToGetMarried.generation);
+        return newSpouse;
+    }
 }

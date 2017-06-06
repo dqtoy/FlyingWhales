@@ -30,6 +30,7 @@ public class Sabotage : GameEvent {
 		CheckGameEvent();
 	}
 	internal override void DoneCitizenAction (Citizen citizen){
+        base.DoneCitizenAction(citizen);
 		if(this.saboteur != null){
 			if(citizen.id == this.saboteur.citizen.id){
 				AttemptToSabotage();
@@ -40,6 +41,7 @@ public class Sabotage : GameEvent {
 		this.DoneEvent();
 	}
 	internal override void DeathByGeneral(General general){
+		this.saboteur.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}
 	internal override void DoneEvent(){
