@@ -121,7 +121,7 @@ public class MarriageManager : MonoBehaviour {
 
     public Citizen GenerateSpouseForCitizen(Citizen citizenToGetMarried) {
         int spouseAge = citizenToGetMarried.age - 5;
-        Mathf.Clamp(spouseAge, 16, 50);
+        spouseAge = Mathf.Clamp(spouseAge, 16, 50);
 
         GENDER spouseGender = GENDER.MALE;
         if (citizenToGetMarried.gender == GENDER.MALE) {

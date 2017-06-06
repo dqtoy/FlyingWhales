@@ -89,7 +89,7 @@ public class TraderAvatar : MonoBehaviour {
     [Task]
     private bool HasTraderReachedTarget() {
         if (this._trader.location == this._trader.targetLocation) {
-            this._trader.tradeEvent.CreateTradeRouteBetweenKingdoms();
+            this._trader.tradeEvent.DoneCitizenAction(this._trader.citizen);
             return true;
         }
         return false;

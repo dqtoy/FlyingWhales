@@ -35,6 +35,11 @@ public class Trade : GameEvent {
 
     }
 
+    internal override void DoneCitizenAction(Citizen citizen) {
+        base.DoneCitizenAction(citizen);
+        CreateTradeRouteBetweenKingdoms();
+    }
+
     internal override void CancelEvent() {
         Debug.LogError("Trade Event was cancelled!");
         this.isActive = false;

@@ -1318,6 +1318,6 @@ public class Kingdom{
 
     internal void AdjustUnrest(int amountToAdjust) {
         this._unrest += amountToAdjust;
-        Mathf.Clamp(this._unrest, 0, 100);
+        this._unrest = Mathf.Clamp(this._unrest, 0, 100);
     }
 }
