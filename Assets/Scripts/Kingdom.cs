@@ -62,6 +62,9 @@ public class Kingdom{
 	};
 
 	private bool _isDead;
+	internal bool hasConflicted;
+
+	private int borderConflictLoyaltyExpiration;
 
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
@@ -133,6 +136,8 @@ public class Kingdom{
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._unrest = 0;
 		this._sourceKingdom = sourceKingdom;
+		this.hasConflicted = false;
+		this.borderConflictLoyaltyExpiration = 0;
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
@@ -349,6 +354,7 @@ public class Kingdom{
 		this.AttemptToCreateReinforcementEvent ();
         //		this.AttemptToIncreaseCityHP();
         this.DecreaseUnrestEveryMonth();
+		this.CheckBorderConflictLoyaltyExpiration ();
         if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
             this.AttemptToTrade();
         }
@@ -425,6 +431,20 @@ public class Kingdom{
 				City cityToUpgrade = citiesWithLowestHP[Random.Range(0, citiesWithLowestHP.Count)];
 				this.AdjustResources(this.increaseCityHPCost);
 				cityToUpgrade.IncreaseHP(INCREASE_CITY_HP_AMOUNT);
+			}
+		}
+	}
+
+	/*
+	 * Checks if there has been successful relationship deterioration cause by border conflcit within the past 3 months
+	 * If expiration value has reached zero (0), return all governor loyalty to normal, else, it will remain -10
+	 * */
+	private void CheckBorderConflictLoyaltyExpiration(){
+		if(this.hasConflicted){
+			if(this.borderConflictLoyaltyExpiration > 0){
+				this.borderConflictLoyaltyExpiration -= 1;
+			}else{
+				this.HasNotConflicted ();
 			}
 		}
 	}
@@ -1112,7 +1132,27 @@ public class Kingdom{
 		}
 		return null;
 	}
+	internal void HasConflicted(){
+		if(!this.hasConflicted){
+			this.hasConflicted = true;
+			for(int i = 0; i < this.cities.Count; i++){
+				if(this.cities[i].governor != null){
+					((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty ();
+				}
+			}
+		}
+		this.borderConflictLoyaltyExpiration = 90;
 
+	}
+	internal void HasNotConflicted(){
+		this.hasConflicted = false;
+		this.borderConflictLoyaltyExpiration = 0;
+		for(int i = 0; i < this.cities.Count; i++){
+			if(this.cities[i].governor != null){
+				((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty ();
+			}
+		}
+	}
 	#region Resource Management
 	/*
 	 * Function to adjust the gold count of this kingdom.

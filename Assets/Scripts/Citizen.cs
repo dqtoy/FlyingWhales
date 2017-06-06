@@ -657,6 +657,18 @@ public class Citizen {
 					}
 				}
 			}
+		}else{
+			if (this.father != null) {
+				if (this.father.children != null) {
+					for (int i = 0; i < this.father.children.Count; i++) {
+						if (this.father.children [i].id != this.id) {
+							if (!this.father.children [i].isDead) {
+								siblings.Add (this.father.children [i]);
+							}
+						}
+					}
+				}
+			}
 		}
 
 		return siblings;
@@ -1390,9 +1402,8 @@ public class Citizen {
 			general.CreateGhostCitizen ();
 		}
 	
-	}*/
-
-	/*internal void DeathToGhost(City city){
+	}
+	internal void DeathToGhost(City city){
 		if(this.city.id == city.id){
 			EventManager.Instance.onDeathToGhost.RemoveListener (DeathToGhost);
 			if (this.assignedRole is General) {
@@ -1400,8 +1411,8 @@ public class Citizen {
 				general.GeneralDeath ();
 			}
 		}
-	}*/
-	/*internal void CopyCampaignManager(CampaignManager source){
+	}
+	internal void CopyCampaignManager(CampaignManager source){
 		Debug.Log (this.name + " of " + this.city.kingdom.name + " IS COPYING THE CAMPAIGN MANAGER OF " + source.leader.name + " of " + source.leader.city.kingdom.name);
 		for(int i = 0; i < source.intlWarCities.Count; i++){
 			if(!this.campaignManager.SearchForInternationalWarCities(source.intlWarCities[i].city)){
@@ -1449,4 +1460,24 @@ public class Citizen {
         this._spouse = spouse;
         this.isMarried = true;
     }
+
+	internal bool IsRelative(Citizen citizen){
+		if(this.mother != null && this.mother.id == citizen.id){
+			return true;
+		}
+		if(this.father != null && this.father.id == citizen.id){
+			return true;
+		}
+		List<Citizen> siblings = this.GetSiblings ();
+		if(siblings.Contains(citizen)){
+			return true;
+		}
+		if(this.children.Contains(citizen)){
+			return true;
+		}
+		if(this.isDirectDescendant && citizen.isDirectDescendant){
+			return true;
+		}
+		return false;
+	}
 }

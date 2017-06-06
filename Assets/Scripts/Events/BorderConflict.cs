@@ -283,8 +283,8 @@ public class BorderConflict : GameEvent {
 			newLog.AddToFillers (sender.king, sender.king.name);
 			newLog.AddToFillers (chosenEnvoy.citizen, chosenEnvoy.citizen.name);
 		}
-	}*/
-	/*private Citizen GetEnvoy(Kingdom kingdom){
+	}
+	private Citizen GetEnvoy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> envoys = new List<Citizen> ();
 		for(int i = 0; i < kingdom.cities.Count; i++){
@@ -367,6 +367,8 @@ public class BorderConflict : GameEvent {
 
             this.kingdom1.AdjustUnrest(UNREST_ADJUSTMENT);
             this.kingdom2.AdjustUnrest(UNREST_ADJUSTMENT);
+			this.kingdom1.HasConflicted ();
+			this.kingdom2.HasConflicted ();
         }
 	}
 }
