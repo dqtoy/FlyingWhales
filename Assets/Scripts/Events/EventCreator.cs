@@ -145,11 +145,11 @@ public class EventCreator: MonoBehaviour {
 	}
 
 	internal Reinforcement CreateReinforcementEvent(Kingdom sourceKingdom){
-		City targetCity = sourceKingdom.GetCityForReinforcement (true);
+		City targetCity = sourceKingdom.GetReceiverCityForReinforcement ();
 		if(targetCity == null){
 			return null;
 		}
-		City sourceCity = sourceKingdom.GetCityForReinforcement (false);
+		City sourceCity = sourceKingdom.GetSenderCityForReinforcement ();
 		if(sourceCity == null){
 			return null;
 		}

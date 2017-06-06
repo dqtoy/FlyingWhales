@@ -131,6 +131,7 @@ public class StateVisit : GameEvent {
 		//Add logs: death_by_general
 		this.visitorHasDied = true;
 		this.isSuccessful = false;
+		this.visitor.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}
 	private List<Kingdom> GetOtherKingdoms(){

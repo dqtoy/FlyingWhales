@@ -133,6 +133,13 @@ public class Assassination : GameEvent {
 	internal override void CancelEvent (){
 		base.CancelEvent ();
 	}
+	internal override void DeathByOtherReasons(){
+		this.DoneEvent();
+	}
+	internal override void DeathByGeneral(General general){
+		this.spy.citizen.Death (DEATH_REASONS.BATTLE);
+		this.DoneEvent();
+	}
 	private void WaitForTarget(){
 		//Add logs: wait_for_target
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);

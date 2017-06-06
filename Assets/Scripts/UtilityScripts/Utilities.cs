@@ -724,6 +724,8 @@ public class Utilities : MonoBehaviour {
 			return true;
         case EVENT_TYPES.REQUEST_PEACE:
             return true;
+		case EVENT_TYPES.REINFORCEMENT:
+			return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;

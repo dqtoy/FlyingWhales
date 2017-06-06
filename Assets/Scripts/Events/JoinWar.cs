@@ -234,6 +234,9 @@ public class JoinWar : GameEvent {
 
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
 //		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+
+		this._envoyToSend.citizen.Death (DEATH_REASONS.BATTLE);
+
 		this.DoneEvent();
 	}
 	internal override void DoneEvent(){
