@@ -56,7 +56,10 @@ public class Trade : GameEvent {
 
     internal void CreateTradeRouteBetweenKingdoms() {
         List<RESOURCE> resourcesThatTargetKingdomDoesNotHave = this._sourceKingdom.GetResourcesOtherKingdomDoesNotHave(this._targetKingdom);
-        if (resourcesThatTargetKingdomDoesNotHave.Count > 0) {
+        RelationshipKingdom rel1 = this._sourceKingdom.GetRelationshipWithOtherKingdom(this._targetKingdom);
+        RelationshipKingdom rel2 = this._targetKingdom.GetRelationshipWithOtherKingdom(this._sourceKingdom);
+        if (resourcesThatTargetKingdomDoesNotHave.Count > 0 && !rel1.isAtWar && !rel2.isAtWar && 
+            !this._sourceKingdom.embargoList.ContainsKey(this._targetKingdom) && !this._targetKingdom.embargoList.ContainsKey(this._sourceKingdom))  {
             RESOURCE resourceToTrade = resourcesThatTargetKingdomDoesNotHave[Random.Range(0, resourcesThatTargetKingdomDoesNotHave.Count)];
             TradeRoute tradeRoute = new TradeRoute(resourceToTrade, this._sourceKingdom, this._targetKingdom);
             this._sourceKingdom.AddTradeRoute(tradeRoute);
@@ -65,7 +68,7 @@ public class Trade : GameEvent {
             this._targetKingdom.UpdateAllCitiesDailyGrowth();
             Debug.Log("Trade was successful " + this._sourceKingdom.name + " gained GOLD. " + this._targetKingdom.name + " gained " + resourceToTrade.ToString());
         } else {
-            Debug.Log(this._sourceKingdom.name + " no longer has any resources that " + this._targetKingdom.name + " does not have. Trade event was unsuccessful!");
+            Debug.Log(this._sourceKingdom.name + " and " + this._targetKingdom.name + " are no longer elligible for trade!");
         }
         this.DoneEvent();
     }

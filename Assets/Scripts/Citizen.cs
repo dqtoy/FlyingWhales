@@ -398,11 +398,13 @@ public class Citizen {
 		}
 
 
-		if (this.isMarried) {
-//			MarriageManager.Instance.DivorceCouple (this, spouse);
-			this._spouse.isMarried = false;
+		if (this.isMarried && this._spouse != null) {
+            //MarriageManager.Instance.DivorceCouple(this, spouse);
+            this.isMarried = false;
+            this._spouse.isMarried = false;
 			this._spouse.AssignSpouse(null);
-		}
+            this.AssignSpouse(null);
+        }
 
 		//		RoyaltyEventDelegate.onIncreaseIllnessAndAccidentChance -= IncreaseIllnessAndAccidentChance;
 		//		RoyaltyEventDelegate.onChangeIsDirectDescendant -= ChangeIsDirectDescendant;
