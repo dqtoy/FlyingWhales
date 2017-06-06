@@ -45,7 +45,7 @@ public class General : Role {
 		if(gameEvent is AttackCity){
 			this.attackCity = (AttackCity)gameEvent;
 			this.attackCity.general = this;
-			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/GeneralAvatar"), this.citizen.city.hexTile.transform) as GameObject;
+			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/General"), this.citizen.city.hexTile.transform) as GameObject;
 			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<GeneralAvatar>().Init(this);
 		}

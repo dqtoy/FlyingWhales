@@ -32,24 +32,26 @@ public class RaiderAvatar : MonoBehaviour {
 	internal void Init(Raider raider){
 		this.raider = raider;
 		this.direction = DIRECTION.LEFT;
+		this.GetComponent<Avatar> ().kingdom = this.raider.citizen.city.kingdom;
+		this.GetComponent<Avatar> ().gameEvent = this.raider.raid;
+		this.GetComponent<Avatar> ().citizen = this.raider.citizen;
+
 		ResetValues ();
 		this.AddBehaviourTree ();
 	}
-	void OnTriggerEnter2D(Collider2D other){
-		if(other.tag == "General"){
-			this.collidedWithHostile = false;
-			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.raider.citizen.city.kingdom.id){
-					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
-						this.collidedWithHostile = true;
-						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
-					}
-				}
-			}
-		}
-
-
-	}
+//	void OnTriggerEnter2D(Collider2D other){
+//		if(other.tag == "General"){
+//			this.collidedWithHostile = false;
+//			if(this.gameObject != null && other.gameObject != null){
+//				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.raider.citizen.city.kingdom.id){
+//					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
+//						this.collidedWithHostile = true;
+//						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
+//					}
+//				}
+//			}
+//		}
+//	}
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
 		if(startTile.transform.position.x <= targetTile.transform.position.x){
 			if(this.animator.gameObject.transform.localScale.x > 0){
@@ -137,22 +139,22 @@ public class RaiderAvatar : MonoBehaviour {
 
 	}
 		
-	[Task]
-	public void HasCollidedWithHostileGeneral(){
-		if(this.collidedWithHostile){
-			this.collidedWithHostile = false;
-			if(!this.otherGeneral.citizen.isDead){
-				//Death by general
-				this.raider.raid.DeathByGeneral (this.otherGeneral);
-				Task.current.Succeed ();
-			}else{
-				Task.current.Fail ();
-			}
-
-		}else{
-			Task.current.Fail ();
-		}
-	}
+//	[Task]
+//	public void HasCollidedWithHostileGeneral(){
+//		if(this.collidedWithHostile){
+//			this.collidedWithHostile = false;
+//			if(!this.otherGeneral.citizen.isDead){
+//				//Death by general
+//				this.raider.raid.DeathByGeneral (this.otherGeneral);
+//				Task.current.Succeed ();
+//			}else{
+//				Task.current.Fail ();
+//			}
+//
+//		}else{
+//			Task.current.Fail ();
+//		}
+//	}
 	[Task]
 	public void HasDiedOfOtherReasons(){
 		if (this.raider.citizen.isDead) {
@@ -237,7 +239,7 @@ public class RaiderAvatar : MonoBehaviour {
 	}
 
 	public void OnEndAttack(){
-		this.raider.raid.StartRaiding();
+		this.raider.raid.DoneCitizenAction(this.raider.citizen);
 		this.raider.DestroyGO ();
 	}
 

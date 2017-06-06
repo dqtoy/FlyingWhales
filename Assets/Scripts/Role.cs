@@ -8,6 +8,7 @@ public class Role {
 	public List<HexTile> path;
 	public HexTile location;
 	public HexTile targetLocation;
+	public City targetCity;
 
 	public GameObject avatar;
 	public int daysBeforeMoving;
@@ -18,6 +19,7 @@ public class Role {
 		this.citizen = citizen;
 		this.location = citizen.city.hexTile;
 		this.targetLocation = null;
+		this.targetCity = null;
 		this.path = new List<HexTile> ();
 		this.avatar = null;
 		this.daysBeforeMoving = 0;

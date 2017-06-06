@@ -39,6 +39,7 @@ public class City{
 	[Space(5)]
 	private int _hp;
 	public IsActive isActive;
+	public bool isUnderAttack;
 	public bool isStarving;
 	public bool isDead;
 
@@ -88,6 +89,7 @@ public class City{
 		this.cityHistory = new List<History>();
 		this.isActive = new IsActive (false);
 		this.hasKing = false;
+		this.isUnderAttack = false;
 		this.isStarving = false;
 		this.isDead = false;
 //		this.citizenCreationTable = Utilities.defaultCitizenCreationTable;
@@ -871,6 +873,7 @@ public class City{
 	}
 	internal void KillCity(){
 		this.incomingGenerals.Clear ();
+		this.isUnderAttack = false;
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
 			currentTile.ResetTile();
@@ -1016,16 +1019,17 @@ public class City{
 			gender = GENDER.FEMALE;
 		}
 		int maxGeneration = this.citizens.Max (x => x.generation);
-		Citizen expandCitizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
+		Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
 		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-		expandCitizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
-		expandCitizen.AssignRole (role);
-		expandCitizen.assignedRole.targetLocation = targetLocation;
-		expandCitizen.assignedRole.path = path;
-		expandCitizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+		citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
+		citizen.AssignRole (role);
+		citizen.assignedRole.targetLocation = targetLocation;
+		citizen.assignedRole.targetCity = targetLocation.city;
+		citizen.assignedRole.path = path;
+		citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
 		this._kingdom.AdjustGold (-cost);
-		this.citizens.Remove (expandCitizen);
+		this.citizens.Remove (citizen);
 
-		return expandCitizen;
+		return citizen;
 	}
 }

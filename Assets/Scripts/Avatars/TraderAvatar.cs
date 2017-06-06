@@ -16,6 +16,10 @@ public class TraderAvatar : MonoBehaviour {
     internal void Init(Trader trader) {
         this._trader = trader;
         this.direction = DIRECTION.LEFT;
+		this.GetComponent<Avatar> ().kingdom = this._trader.citizen.city.kingdom;
+		this.GetComponent<Avatar> ().gameEvent = this._trader.tradeEvent;
+		this.GetComponent<Avatar> ().citizen = this._trader.citizen;
+
         this.AddBehaviourTree();
     }
 
@@ -91,15 +95,15 @@ public class TraderAvatar : MonoBehaviour {
         return false;
     }
 
-    [Task]
-    private bool HasTraderCollidedWithHostileGeneral() {
-        if (this.collidedWithHostile) {
-            this.collidedWithHostile = false;
-            this._trader.tradeEvent.KillTrader();
-            return true;
-        }
-        return false;
-    }
+//    [Task]
+//    private bool HasTraderCollidedWithHostileGeneral() {
+//        if (this.collidedWithHostile) {
+//            this.collidedWithHostile = false;
+//            this._trader.tradeEvent.KillTrader();
+//            return true;
+//        }
+//        return false;
+//    }
 
     [Task]
     private void MoveToNextTile() {

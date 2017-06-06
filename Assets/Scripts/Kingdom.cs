@@ -336,6 +336,7 @@ public class Kingdom{
         this.ProduceGoldFromTrade();
         this.AttemptToExpand();
 		this.AttemptToCreateAttackCityEvent ();
+		this.AttemptToCreateReinforcementEvent ();
 //		this.AttemptToIncreaseCityHP();
         if(GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
             this.AttemptToTrade();
@@ -351,6 +352,17 @@ public class Kingdom{
 		int chance = UnityEngine.Random.Range (0, 100);
 		if(chance < this.kingdomTypeData.warGeneralCreationRate){
 			EventCreator.Instance.CreateAttackCityEvent (this);
+		}
+	}
+
+	/*
+	 * Attempt to create a reinforcement event to increase a friendly city's hp
+	 * This will only happen if there's a war with any other kingdom
+	 * */
+	private void AttemptToCreateReinforcementEvent(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < this.kingdomTypeData.warReinforcementCreationRate){
+			EventCreator.Instance.CreateReinforcementEvent (this);
 		}
 	}
 
@@ -1027,6 +1039,7 @@ public class Kingdom{
 			if(sourceCity != null && targetCity != null){
 				this.activeCitiesPairInWar.Add (new CityWarPair (sourceCity, targetCity));
 				this.intlWarCities.Remove (targetCity);
+				targetCity.isUnderAttack = true;
 			}
 //			this.activeCitiesToAttack.Add (this.intlWarCities [UnityEngine.Random.Range (0, this.intlWarCities.Count)]);
 		}
@@ -1059,24 +1072,14 @@ public class Kingdom{
 		sourceCity = source;
 		targetCity = target;
 	}
-
-	internal City GetCityNearestFrom(City targetCity){
-		City nearestCity = null;
-		float nearestDistance = 0;
-		for(int i = 0; i < this.cities.Count; i++){
-			if(nearestCity == null){
-				nearestCity = this.cities [i];
-				nearestDistance = Vector3.Distance (this.cities [i].hexTile.transform.position, targetCity.hexTile.transform.position); 
-			}else{
-				float distance = Vector3.Distance (this.cities [i].hexTile.transform.position, targetCity.hexTile.transform.position);
-				if(distance < nearestDistance){
-					nearestCity = this.cities [i];
-					nearestDistance = distance;
-				}
-			}
+	internal City GetCityForReinforcement(bool isReceiver){
+		List<City> candidatesForReinforcement = this.cities.Where (x => x.isUnderAttack == isReceiver).ToList ();
+		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
+			return candidatesForReinforcement [UnityEngine.Random.Range (0, candidatesForReinforcement.Count)];
 		}
-		return nearestCity;
+		return null;
 	}
+
 	#region Resource Management
 	/*
 	 * Function to adjust the gold count of this kingdom.
@@ -1238,6 +1241,8 @@ public class Kingdom{
 			costToCreate = 300;
 		} else if (roleToCheck == ROLE.RAIDER) {
 			costToCreate = 100;
+		} else if (roleToCheck == ROLE.REINFORCER) {
+			costToCreate = 0;
 		}
 
 		if (this._goldCount < costToCreate) {

@@ -28,9 +28,6 @@ public class AttackCity : GameEvent {
 		//		this.EventIsCreated ();
 
 	}
-	internal override void PerformAction (){
-		CheckTargetCity();
-	}
 	internal override void DoneCitizenAction (Citizen citizen){
 		if(this.general != null){
 			if(citizen.id == this.general.citizen.id){

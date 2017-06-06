@@ -809,6 +809,8 @@ public class Citizen {
 			this.assignedRole = new Expander (this);
 		} else if (role == ROLE.RAIDER) {
 			this.assignedRole = new Raider (this);
+		} else if (role == ROLE.REINFORCER) {
+			this.assignedRole = new Reinforcer (this);
 		}
 		this.UpdatePrestige ();
 	}

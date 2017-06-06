@@ -4,27 +4,29 @@ using System.Collections.Generic;
 using System.Linq;
 using Panda;
 
-public class SpyAvatar : MonoBehaviour {
-	public Spy spy	;
+public class ReinforcerAvatar : MonoBehaviour {
+	public Reinforcer reinforcer;
 	public PandaBehaviour pandaBehaviour;
 	public Animator animator;
+	public SpriteRenderer kingdomIndicator;
+	public TextMesh txtDamage;
 	public bool collidedWithHostile;
 	public General otherGeneral;
 
+
 	private bool hasArrived = false;
-	//	private bool isMoving = false;
-	//	private Vector3 targetPosition = Vector3.zero;
 	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
 
-	//	public float speed;
 	internal DIRECTION direction;
 
-	internal void Init(Spy spy){
-		this.spy = spy;
+	internal void Init(Reinforcer reinforcer){
+		this.reinforcer = reinforcer;
+		this.kingdomIndicator.color = reinforcer.citizen.city.kingdom.kingdomColor;
+		this.txtDamage.text = reinforcer.reinforcementValue.ToString ();
 		this.direction = DIRECTION.LEFT;
-		this.GetComponent<Avatar> ().kingdom = this.spy.citizen.city.kingdom;
-		this.GetComponent<Avatar> ().gameEvent = this.spy.assassination;
-		this.GetComponent<Avatar> ().citizen = this.spy.citizen;
+		this.GetComponent<Avatar> ().kingdom = this.reinforcer.citizen.city.kingdom;
+		this.GetComponent<Avatar> ().gameEvent = this.reinforcer.reinforcement;
+		this.GetComponent<Avatar> ().citizen = this.reinforcer.citizen;
 
 		ResetValues ();
 		this.AddBehaviourTree ();
@@ -33,7 +35,7 @@ public class SpyAvatar : MonoBehaviour {
 //		if(other.tag == "General"){
 //			this.collidedWithHostile = false;
 //			if(this.gameObject != null && other.gameObject != null){
-//				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.spy.citizen.city.kingdom.id){
+//				if(other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom.id != this.reinforcer.citizen.city.kingdom.id){
 //					if(!other.gameObject.GetComponent<GeneralAvatar> ().general.citizen.isDead){
 //						this.collidedWithHostile = true;
 //						this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar> ().general;
@@ -69,16 +71,13 @@ public class SpyAvatar : MonoBehaviour {
 		}
 		this.GetComponent<SmoothMovement>().direction = this.direction;
 		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
-		//		this.targetPosition = targetTile.transform.position;
-		//		this.UpdateUI ();
-		//		this.isMoving = true;
 	}
 	private void StopMoving(){
 		this.animator.Play("Idle");
 	}
 	[Task]
 	public void IsThereCitizen(){
-		if(this.spy.citizen != null){
+		if(this.reinforcer.citizen != null){
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
@@ -86,7 +85,7 @@ public class SpyAvatar : MonoBehaviour {
 	}
 	[Task]
 	public void IsThereEvent(){
-		if(this.spy.assassination != null){
+		if(this.reinforcer.citizen != null){
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
@@ -95,10 +94,10 @@ public class SpyAvatar : MonoBehaviour {
 
 	[Task]
 	public void HasArrivedAtTargetHextile(){
-		if(this.spy.location == this.spy.targetLocation){
+		if(this.reinforcer.location == this.reinforcer.targetLocation){
 			if(!this.hasArrived){
 				this.hasArrived = true;
-				this.spy.Attack ();
+				this.reinforcer.Attack ();
 			}
 			Task.current.Succeed ();
 		}else{
@@ -112,8 +111,7 @@ public class SpyAvatar : MonoBehaviour {
 //		if(this.collidedWithHostile){
 //			this.collidedWithHostile = false;
 //			if(!this.otherGeneral.citizen.isDead){
-//				//Death by general
-//				this.spy.assassination.DeathByGeneral (this.otherGeneral);
+//				
 //				Task.current.Succeed ();
 //			}else{
 //				Task.current.Fail ();
@@ -123,12 +121,11 @@ public class SpyAvatar : MonoBehaviour {
 //			Task.current.Fail ();
 //		}
 //	}
-
 	[Task]
 	public void HasDiedOfOtherReasons(){
-		if (this.spy.citizen.isDead) {
+		if (this.reinforcer.citizen.isDead) {
 			//Citizen has died
-			this.spy.assassination.DeathByOtherReasons ();
+			this.reinforcer.reinforcement.DeathByOtherReasons ();
 			Task.current.Succeed();
 		}else {
 			Task.current.Fail ();
@@ -146,22 +143,17 @@ public class SpyAvatar : MonoBehaviour {
 	}
 
 	private void Move(){
-		if(this.spy.targetLocation != null){
-			if(this.spy.path != null){
-				if(this.spy.path.Count > 0){
-					this.MakeCitizenMove (this.spy.location, this.spy.path [0]);
-					//					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
-					this.spy.location = this.spy.path[0];
-					this.spy.citizen.currentLocation = this.spy.path [0];
-					this.spy.path.RemoveAt (0);
-					//					if(this.raider.daysBeforeMoving <= 0){
-					//						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
-					//						this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
-					//						this.raider.location = this.raider.path[0];
-					//						this.raider.citizen.currentLocation = this.raider.path [0];
-					//						this.raider.path.RemoveAt (0);
-					//					}
-					//					this.raider.daysBeforeMoving -= 1;
+		if(this.reinforcer.targetLocation != null){
+			if(this.reinforcer.path != null){
+				if(this.reinforcer.path.Count > 0){
+					if(this.reinforcer.daysBeforeMoving <= 0){
+						this.MakeCitizenMove (this.reinforcer.location, this.reinforcer.path [0]);
+						this.reinforcer.daysBeforeMoving = this.reinforcer.path [0].movementDays;
+						this.reinforcer.location = this.reinforcer.path[0];
+						this.reinforcer.citizen.currentLocation = this.reinforcer.path [0];
+						this.reinforcer.path.RemoveAt (0);
+					}
+					this.reinforcer.daysBeforeMoving -= 1;
 				}
 			}
 		}
@@ -178,7 +170,7 @@ public class SpyAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.spy.assassination.eventType.ToString ());
+			UIManager.Instance.ShowSmallInfo (this.reinforcer.reinforcement.eventType.ToString ());
 			this.HighlightPath ();
 		}
 	}
@@ -190,9 +182,9 @@ public class SpyAvatar : MonoBehaviour {
 
 	void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
-		for (int i = 0; i < this.spy.path.Count; i++) {
-			this.spy.path [i].highlightGO.SetActive (true);
-			this.pathToUnhighlight.Add (this.spy.path [i]);
+		for (int i = 0; i < this.reinforcer.path.Count; i++) {
+			this.reinforcer.path [i].highlightGO.SetActive (true);
+			this.pathToUnhighlight.Add (this.reinforcer.path [i]);
 		}
 	}
 
@@ -208,58 +200,12 @@ public class SpyAvatar : MonoBehaviour {
 	}
 
 	public void OnEndAttack(){
-		this.spy.assassination.DoneCitizenAction(this.spy.citizen);
-		this.spy.DestroyGO ();
+		this.reinforcer.reinforcement.DoneCitizenAction(this.reinforcer.citizen);
+		this.reinforcer.citizen.Death (DEATH_REASONS.ACCIDENT);
 	}
 
 	internal void HasAttacked(){
 		this.GetComponent<SmoothMovement> ().hasAttacked = true;
 	}
-	//	private string CampaignInfo(Campaign campaign){
-	//		string info = string.Empty;
-	//		info += "id: " + campaign.id;
-	//		info += "\n";
-	//
-	//		info += "campaign type: " + campaign.campaignType.ToString ();
-	//		info += "\n";
-	//
-	//		info += "general: " + this.general.citizen.name;
-	//		info += "\n";
-	//
-	//		info += "target city: " + campaign.targetCity.name;
-	//		info += "\n";
-	//		if (campaign.rallyPoint == null) {
-	//			info += "rally point: N/A";
-	//		} else {
-	//			info += "rally point: " + campaign.rallyPoint.name; 
-	//		}
-	//		info += "\n";
-	//
-	//		info += "leader: " + campaign.leader.name;
-	//		info += "\n";
-	//
-	//		info += "war type: " + campaign.warType.ToString ();
-	//		info += "\n";
-	//
-	//		info += "needed army: " + campaign.neededArmyStrength.ToString ();
-	//		info += "\n";
-	//
-	//		info += "army: " + campaign.GetArmyStrength ().ToString ();
-	//		info += "\n";
-	//
-	//		if (campaign.campaignType == CAMPAIGN.DEFENSE) {
-	//			if (campaign.expiration == -1) {
-	//				info += "expiration: none";
-	//			} else {
-	//				info += "will expire in " + campaign.expiration + " days";
-	//			}
-	//		} else {
-	//			info += "expiration: none";
-	//
-	//		}
-	//
-	//		return info;
-	//	}
-
 
 }

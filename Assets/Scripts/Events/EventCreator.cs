@@ -59,7 +59,7 @@ public class EventCreator: MonoBehaviour {
 			Envoy chosenEnvoy = (Envoy)envoy.assignedRole;
 			JoinWar joinWar = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, invasionPlan.startedBy, 
 				citizenToPersuade, chosenEnvoy, invasionPlan.targetKingdom, invasionPlan);
-			envoy.assignedRole.Initialize (joinWar);
+			chosenEnvoy.Initialize (joinWar);
 			return joinWar;
 		}
 		return null;
@@ -69,7 +69,7 @@ public class EventCreator: MonoBehaviour {
 		if(visitor != null){
 			Envoy chosenEnvoy = (Envoy)visitor.assignedRole;
 			StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, firstKingdom.king, secondKingdom, chosenEnvoy);
-			visitor.assignedRole.Initialize (stateVisit);
+			chosenEnvoy.Initialize (stateVisit);
 			return stateVisit;
 		}
 		return null;
@@ -94,7 +94,7 @@ public class EventCreator: MonoBehaviour {
 			Envoy saboteur = (Envoy)envoy.assignedRole;
 			Sabotage sabotage = new Sabotage(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
 				sourceKingdom.king, saboteur, eventToSabotage);
-			envoy.assignedRole.Initialize (sabotage);
+			saboteur.Initialize (sabotage);
 		}
 		return null;
 	}
@@ -111,7 +111,7 @@ public class EventCreator: MonoBehaviour {
 			Spy assassin = (Spy)spy.assignedRole;
 			Assassination assassination = new Assassination(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
 				sourceKingdom.king, targetCitizen, assassin, gameEventTrigger);
-			spy.assignedRole.Initialize (assassination);
+			assassin.Initialize (assassination);
 		}
 		return null;
 	}
@@ -127,20 +127,40 @@ public class EventCreator: MonoBehaviour {
 				General attacker = (General)general.assignedRole;
 				AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
 					sourceKingdom.king, attacker, warPair.targetCity);
-				general.assignedRole.Initialize (attackCity);
+				attacker.Initialize (attackCity);
 			}
 		}
 		return null;
 	}
 	
-    	internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
-        	Citizen envoy = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
-        	if (envoy != null) {
-            	RequestPeace requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-                	kingdomToRequest.king, (Envoy)envoy.assignedRole, targetKingdom);
-            	envoy.assignedRole.Initialize(requestPeace);
-            	return requestPeace;
-        	}
-        	return null;
+	internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
+    	Citizen envoy = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
+    	if (envoy != null) {
+        	RequestPeace requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+            	kingdomToRequest.king, (Envoy)envoy.assignedRole, targetKingdom);
+        	envoy.assignedRole.Initialize(requestPeace);
+        	return requestPeace;
     	}
+    	return null;
+	}
+
+	internal Reinforcement CreateReinforcementEvent(Kingdom sourceKingdom){
+		City targetCity = sourceKingdom.GetCityForReinforcement (true);
+		if(targetCity == null){
+			return null;
+		}
+		City sourceCity = sourceKingdom.GetCityForReinforcement (false);
+		if(sourceCity == null){
+			return null;
+		}
+		Citizen reinforcer = sourceCity.CreateAgent(ROLE.REINFORCER, EVENT_TYPES.REINFORCEMENT, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REINFORCEMENT]);
+		if(reinforcer != null){
+			Reinforcer defender = (Reinforcer)reinforcer.assignedRole;
+			Reinforcement reinforcement = new Reinforcement(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				sourceKingdom.king, defender, targetCity, sourceCity);
+			defender.Initialize(reinforcement);
+			return reinforcement;
+		}
+		return null;
+	}
 }

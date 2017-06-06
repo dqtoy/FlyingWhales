@@ -47,7 +47,7 @@ public class Raid : GameEvent {
 		this.EventIsCreated ();
 
 	}
-	internal void StartRaiding(){
+	internal override void DoneCitizenAction(Citizen citizen){
 		//Add logs: start_raiding
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);

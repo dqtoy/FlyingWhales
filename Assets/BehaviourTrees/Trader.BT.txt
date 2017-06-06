@@ -7,5 +7,4 @@ tree("Root")
 tree("Move")
 	fallback
 		HasTraderReachedTarget
-		HasTraderCollidedWithHostileGeneral
 		MoveToNextTile
