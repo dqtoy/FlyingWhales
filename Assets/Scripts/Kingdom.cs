@@ -23,6 +23,8 @@ public class Kingdom{
     private List<TradeRoute> _tradeRoutes;
     private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
+    private int _unrest;
+
 	private List<City> _cities;
 	internal City capitalCity;
 	internal Citizen king;
@@ -51,8 +53,11 @@ public class Kingdom{
     protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
     protected const int GOLD_GAINED_FROM_TRADE = 10;
-   
-	protected List<Resource> increaseCityHPCost = new List<Resource> () {
+    protected const int UNREST_DECREASE_PER_MONTH = -5;
+    protected const int UNREST_INCREASE_CONQUER = 5;
+    protected const int UNREST_INCREASE_EMBARGO = 5;
+
+    protected List<Resource> increaseCityHPCost = new List<Resource> () {
 		new Resource (BASE_RESOURCE_TYPE.GOLD, 300)
 	};
 
@@ -95,6 +100,9 @@ public class Kingdom{
 	public List<City> cities{
 		get{ return this._cities; }
 	}
+    public int unrest {
+        get { return this._unrest; }
+    }
 	#endregion
 	// Kingdom constructor paramters
 	//	race - the race of this kingdom
@@ -123,6 +131,7 @@ public class Kingdom{
 		this._isDead = false;
         this._tradeRoutes = new List<TradeRoute>();
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
+        this._unrest = 0;
 		this._sourceKingdom = sourceKingdom;
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -337,8 +346,9 @@ public class Kingdom{
         this.AttemptToExpand();
 		this.AttemptToCreateAttackCityEvent ();
 		this.AttemptToCreateReinforcementEvent ();
-//		this.AttemptToIncreaseCityHP();
-        if(GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+        //		this.AttemptToIncreaseCityHP();
+        this.DecreaseUnrestEveryMonth();
+        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
             this.AttemptToTrade();
         }
         
@@ -501,6 +511,7 @@ public class Kingdom{
             //Remove all existing trade routes between kingdomToAdd and this Kingdom
             this.RemoveAllTradeRoutesWithOtherKingdom(kingdomToAdd);
             kingdomToAdd.RemoveAllTradeRoutesWithOtherKingdom(this);
+            kingdomToAdd.AdjustUnrest(UNREST_INCREASE_EMBARGO);
         }
         
     }
@@ -509,6 +520,15 @@ public class Kingdom{
         this._embargoList.Remove(kingdomToRemove);
     }
     #endregion
+
+    /*
+     * Deacrease the kingdom's unrest by UNREST_DECREASE_PER_MONTH amount every month.
+     * */
+    protected void DecreaseUnrestEveryMonth() {
+        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+            this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
+        }
+    }
 
     /*
 	 * Create a new city obj on the specified hextile.
@@ -848,6 +868,8 @@ public class Kingdom{
 			newCity.kingdom.HighlightAllOwnedTilesInKingdom();
 		}
 		KingdomManager.Instance.CheckWarTriggerMisc (newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+        //Adjust unrest because a city of this kingdom was conquered.
+        this.AdjustUnrest(UNREST_INCREASE_CONQUER);
 	}
 	internal void AddInternationalWarCity(City newCity){
 		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
@@ -1292,4 +1314,9 @@ public class Kingdom{
         }
     }
 	#endregion
+
+    internal void AdjustUnrest(int amountToAdjust) {
+        this._unrest += amountToAdjust;
+        Mathf.Clamp(this._unrest, 0, 100);
+    }
 }

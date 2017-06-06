@@ -17,6 +17,9 @@ public class Raid : GameEvent {
 	private Kingdom kingdomToBlame;
 
 	internal Raider raider;
+
+    protected const int UNREST_ADJUSTMENT = 10;
+
 	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy, City raidedCity) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.RAID;
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
@@ -99,6 +102,11 @@ public class Raid : GameEvent {
 				this.targetKingdom.king.WarTrigger (relationship, this, this.targetKingdom.kingdomTypeData);
 			}
 		}
+
+        if (this.isSuccessful) {
+            //Adjust the raided city's unrest because it was successfully raided
+            this.raidedCity.kingdom.AdjustUnrest(UNREST_ADJUSTMENT);
+        }
 
 //		this.raider.DestroyGO ();
 	}
