@@ -142,15 +142,15 @@ public class Raid : GameEvent {
 	private void Steal(){
 		this.isSuccessful = true;
 
-		int stolenGold = (int)(this.raidedCity.goldCount * 0.20f);
-		this.startedBy.city.goldCount += stolenGold;
-		this.raidedCity.goldCount -= stolenGold;
+		int stolenGold = (int)((this.targetKingdom.goldCount/this.targetKingdom.cities.Count) * 0.20f);
+		this.sourceKingdom.AdjustGold (stolenGold);
+		this.targetKingdom.AdjustGold (-stolenGold);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_success");
 		newLog.AddToFillers (null, stolenGold.ToString());
 
-		this.pilfered = string.Empty;
-		this.pilfered += stolenGold.ToString() + " Gold";
+//		this.pilfered = string.Empty;
+//		this.pilfered += stolenGold.ToString() + " Gold";
 
 	}
 
