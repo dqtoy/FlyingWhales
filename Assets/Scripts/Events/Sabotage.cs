@@ -41,6 +41,7 @@ public class Sabotage : GameEvent {
 		this.DoneEvent();
 	}
 	internal override void DeathByGeneral(General general){
+		this.saboteur.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}
 	internal override void DoneEvent(){

@@ -1073,8 +1073,17 @@ public class Kingdom{
 		sourceCity = source;
 		targetCity = target;
 	}
-	internal City GetCityForReinforcement(bool isReceiver){
-		List<City> candidatesForReinforcement = this.cities.Where (x => x.isUnderAttack == isReceiver).ToList ();
+	internal City GetSenderCityForReinforcement(){
+		List<City> candidatesForReinforcement = this.cities.Where (x => !x.isUnderAttack && x.hp >= 100).ToList ();
+		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
+			candidatesForReinforcement = candidatesForReinforcement.OrderByDescending(x => x.hp).ToList();
+			return candidatesForReinforcement [0];
+		}
+		return null;
+	}
+
+	internal City GetReceiverCityForReinforcement(){
+		List<City> candidatesForReinforcement = this.cities.Where (x => x.isUnderAttack).ToList ();
 		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
 			return candidatesForReinforcement [UnityEngine.Random.Range (0, candidatesForReinforcement.Count)];
 		}
