@@ -393,6 +393,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.isBorderOfCityID = 0;
 		this.isOccupiedByCityID = 0;
 		this.structureGO.SetActive(false);
+        this.cityInfoGO.SetActive(false);
         this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
         EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);

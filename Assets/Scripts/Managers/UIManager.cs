@@ -232,7 +232,8 @@ public class UIManager : MonoBehaviour {
 
 	void Start(){
 		EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
-		NormalizeFontSizes();
+        EventManager.Instance.onKingdomDiedEvent.AddListener(ForceUpdateKingdomList);
+        NormalizeFontSizes();
 		UpdateUI();
 	}
 
@@ -326,6 +327,15 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 
+
+    private void ForceUpdateKingdomList(Kingdom kingdomThatDied) {
+        if (currentlyShowingKingdom.id == kingdomThatDied.id) {
+            SetKingdomAsActive(KingdomManager.Instance.allKingdoms.First());
+        } else {
+            UpdateKingdomList();
+        }
+        
+    }
 
 	void UpdateKingdomList(){
 		if (currentlyShowingKingdom == null) {
@@ -2225,7 +2235,9 @@ public class UIManager : MonoBehaviour {
      * Show all cities owned by currentlyShowingKingdom.
      * */
     public void ShowKingdomCities() {
-        List<CityItem> cityItems = kingdomCitiesGrid.gameObject.GetComponentsInChildren<CityItem>().ToList();
+        List<CityItem> cityItems = kingdomCitiesGrid.gameObject.GetComponentsInChildren<Transform>(true)
+            .Where(x => x.GetComponent<CityItem>() != null)
+            .Select(x => x.GetComponent<CityItem>()).ToList();
         int nextIndex = 0;
         for (int i = 0; i < cityItems.Count; i++) {
             CityItem currCityItem = cityItems[i];
@@ -2253,10 +2265,13 @@ public class UIManager : MonoBehaviour {
                 cityGO.transform.localScale = Vector3.one;
                 kingdomCitiesGrid.AddChild(cityGO.transform);
                 kingdomCitiesGrid.Reposition();
+                kingdomCitiesScrollView.ResetPosition();
             }
         }
-        StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
+        //StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
         //kingdomCitiesScrollView.ResetPosition();
+        kingdomCitiesScrollView.UpdatePosition();
+        kingdomCitiesScrollView.UpdateScrollbars();
         kingdomCitiesGO.SetActive(true);
     }
 
