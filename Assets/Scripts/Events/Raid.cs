@@ -48,8 +48,9 @@ public class Raid : GameEvent {
 
 	}
 	internal override void DoneCitizenAction(Citizen citizen){
-		//Add logs: start_raiding
-
+        //Add logs: start_raiding
+        Debug.Log("DONE CITIZEN ACTION RAID!");
+        base.DoneCitizenAction(citizen);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 	internal override void PerformAction(){
@@ -351,6 +352,6 @@ public class Raid : GameEvent {
 	}
 
 	internal override void CancelEvent (){
-
+        Debug.LogError("YEY NATAWAG TO!");
 	}
 }
