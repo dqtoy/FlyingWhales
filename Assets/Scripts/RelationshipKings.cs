@@ -85,7 +85,7 @@ public class RelationshipKings {
 //		}
 //		else if(this.like > 100){
 //			this.like = 100;
-		}
+//		}
 		this.UpdateKingRelationshipStatus ();
         if (adjustment < 0) { //Relationship deteriorated
             sourceKing.DeteriorateRelationship(this, gameEventTrigger, isDiscovery);
