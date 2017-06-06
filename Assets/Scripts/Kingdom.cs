@@ -278,6 +278,7 @@ public class Kingdom{
 	internal void DestroyKingdom(){
 		this._isDead = true;
 		this.RemoveRelationshipsWithOtherKingdoms();
+        KingdomManager.Instance.allKingdoms.Remove(this);
         EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
         EventManager.Instance.onWeekEnd.RemoveListener(KingdomTickActions);
         EventManager.Instance.onKingdomDiedEvent.RemoveListener(OtherKingdomDiedActions);
