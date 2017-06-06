@@ -1161,11 +1161,7 @@ public class Kingdom{
 	 * */
 	internal void AdjustGold(int goldAmount){
 		this._goldCount += goldAmount;
-        if (this._goldCount > this._maxGold) {
-            this._goldCount = this._maxGold;
-		}else if (this._goldCount < 0) {
-			this._goldCount = 0;
-		}
+		this._goldCount = Mathf.Clamp(this._goldCount, 0, this._maxGold);
 	}
 
 	/*

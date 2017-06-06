@@ -78,11 +78,13 @@ public class RelationshipKings {
 
         RELATIONSHIP_STATUS previousStatus = this.lordRelationship;
 		this.like += adjustment;
-		if(this.like < -100){
-			this.like = -100;
-		}
-		else if(this.like > 100){
-			this.like = 100;
+		this.like = Mathf.Clamp(this.like, -100, 100);
+
+//		if(this.like < -100){
+//			this.like = -100;
+//		}
+//		else if(this.like > 100){
+//			this.like = 100;
 		}
 		this.UpdateKingRelationshipStatus ();
         if (adjustment < 0) { //Relationship deteriorated

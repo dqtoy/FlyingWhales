@@ -32,11 +32,13 @@ public class KingdomWar {
 
 	internal void AdjustExhaustion(int amount){
 		this.exhaustion += amount;
-		if(this.exhaustion > 100){
-			this.exhaustion = 100;
-		}
-		if(this.exhaustion < 0){
-			this.exhaustion = 0;
-		}
+		this.exhaustion= Mathf.Clamp(this.exhaustion, 0, 100);
+
+//		if(this.exhaustion > 100){
+//			this.exhaustion = 100;
+//		}
+//		if(this.exhaustion < 0){
+//			this.exhaustion = 0;
+//		}
 	}
 }

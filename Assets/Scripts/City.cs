@@ -575,12 +575,7 @@ public class City{
 
 	public void AdjustHP(int amount){
 		this._hp += amount;
-
-		if(this._hp > this.maxHP){
-			this._hp = this.maxHP;
-		}else if(this._hp < 0){
-			this._hp = 0;
-		}
+		this._hp = Mathf.Clamp(this._hp, 0, this.maxHP);
 	}
 
 	private void CheckRaidExpiration(){
