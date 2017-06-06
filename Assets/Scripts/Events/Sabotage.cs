@@ -30,6 +30,7 @@ public class Sabotage : GameEvent {
 		CheckGameEvent();
 	}
 	internal override void DoneCitizenAction (Citizen citizen){
+        base.DoneCitizenAction(citizen);
 		if(this.saboteur != null){
 			if(citizen.id == this.saboteur.citizen.id){
 				AttemptToSabotage();

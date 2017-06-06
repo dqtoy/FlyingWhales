@@ -19,6 +19,7 @@ public class Reinforcement : GameEvent {
 
 	}
 	internal override void DoneCitizenAction (Citizen citizen){
+        base.DoneCitizenAction(citizen);
 		if(this.reinforcer != null){
 			if(citizen.id == this.reinforcer.citizen.id){
 				//Reinforcement Function

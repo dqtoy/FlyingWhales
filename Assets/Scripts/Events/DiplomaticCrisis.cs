@@ -59,6 +59,7 @@ public class DiplomaticCrisis : GameEvent {
 		}
 	}
 	internal override void DoneCitizenAction(Citizen citizen){
+        base.DoneCitizenAction(citizen);
 		if (citizen.assignedRole is Envoy) {
 			if (this.activeEnvoyResolve != null) {
 				if (citizen.id == this.activeEnvoyResolve.citizen.id) {

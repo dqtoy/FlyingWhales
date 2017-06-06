@@ -28,7 +28,8 @@ public class AttackCity : GameEvent {
 		//		this.EventIsCreated ();
 
 	}
-	internal override void DoneCitizenAction (Citizen citizen){
+	internal override void DoneCitizenAction (Citizen citizen) {
+        base.DoneCitizenAction(citizen);
 		if(this.general != null){
 			if(citizen.id == this.general.citizen.id){
 				CombatManager.Instance.CityBattle (this.targetCity, this.general);

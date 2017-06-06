@@ -48,6 +48,7 @@ public class StateVisit : GameEvent {
 
 	}
 	internal override void DoneCitizenAction(Citizen citizen){
+        base.DoneCitizenAction(citizen);
 		this.visitorHasArrived = true;
 	}
 	internal override void PerformAction(){
