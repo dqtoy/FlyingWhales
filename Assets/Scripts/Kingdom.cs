@@ -1090,7 +1090,9 @@ public class Kingdom{
 		this._goldCount += goldAmount;
         if (this._goldCount > this._maxGold) {
             this._goldCount = this._maxGold;
-        }
+		}else if (this._goldCount < 0) {
+			this._goldCount = 0;
+		}
 	}
 
 	/*
