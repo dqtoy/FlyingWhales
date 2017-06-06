@@ -15,7 +15,7 @@ public class CombatManager : MonoBehaviour {
 			return;
 		}
 
-		city.AdjustHP (generalAttacker.damage);
+		city.AdjustHP (-generalAttacker.damage);
 
 		if(city.hp <= 0){
 			ConquerCity (generalAttacker.citizen.city.kingdom, city);

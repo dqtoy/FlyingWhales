@@ -17,8 +17,9 @@ public class SmoothMovement : MonoBehaviour {
 			if(this.targetPosition != null){
 //				this.timeSinceStarted = Time.time - this.timeStarted;
 				this.step = Time.smoothDeltaTime / GameManager.Instance.progressionSpeed;
+				this.timeSinceStarted += this.step;
 				this.transform.position = Vector3.Lerp (this.transform.position, this.targetPosition, this.step);
-				if(this.step >= 1.0f){
+				if(this.timeSinceStarted >= 1.0f){
 					StopMoving ();
 				}
 			}

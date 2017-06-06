@@ -55,6 +55,11 @@ public class UIManager : MonoBehaviour {
 	//Relocate
 	public GameObject relocateGO;
 	public UIPopupList citiesForRelocationPopupList;
+	//Force War
+	public GameObject forceWarGO;
+	public UIPopupList kingdomsForWar;
+
+
 
 	[Space(10)]//World UI
 	public ButtonGroupItem pauseBtn;
@@ -2521,6 +2526,33 @@ public class UIManager : MonoBehaviour {
 	}
 	public void HideRelocate(){
 		this.relocateGO.SetActive (false);
+	}
+	public void ToggleForceWar(){
+		if (this.forceWarGO.activeSelf) {
+			this.forceWarGO.SetActive (false);
+		} else {
+			this.kingdomsForWar.Clear ();
+			if(this.currentlyShowingCitizen != null){
+				for(int i = 0; i < this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms.Count; i++){
+					if(!this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
+						this.kingdomsForWar.AddItem (this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom.name, this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom);
+					}
+				}
+			}
+			this.forceWarGO.SetActive (true);
+		}
+	}
+	public void OnClickForceWar(){
+		if(this.kingdomsForWar.data != null){
+			Kingdom targetKingdom = (Kingdom)this.kingdomsForWar.data;
+			if(this.currentlyShowingCitizen != null){
+				//				Debug.LogError (this.currentlyShowingCitizen.name + " HAS MOVED FROM " + this.currentlyShowingCitizen.city.name + " TO " + newCityForCitizen.name);
+				this.currentlyShowingCitizen.ForceWar(targetKingdom, null, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+			}
+		}
+	}
+	public void HideForceWar(){
+		this.forceWarGO.SetActive (false);
 	}
 	public void GenerateChildForCitizen(){
 		if (currentlyShowingCitizen.spouse == null) {

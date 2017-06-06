@@ -13,6 +13,7 @@ public class AttackCity : GameEvent {
 		this.remainingDays = this.durationInDays;
 		this.general = general;
 		this.targetCity = targetCity;
+		Debug.LogError (general.citizen.name + " of " + general.citizen.city.kingdom.name + " will attack " + targetCity.name);
 //		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
 		//		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
@@ -33,7 +34,7 @@ public class AttackCity : GameEvent {
 	internal override void DoneCitizenAction (Citizen citizen){
 		if(this.general != null){
 			if(citizen.id == this.general.citizen.id){
-				CombatManager.Instance.CityBattle (targetCity, this.general);
+				CombatManager.Instance.CityBattle (this.targetCity, this.general);
 				this.general.citizen.Death (DEATH_REASONS.BATTLE);
 			}
 		}

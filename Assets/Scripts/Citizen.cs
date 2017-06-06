@@ -1243,7 +1243,20 @@ public class Citizen {
 			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger, warTrigger);
 		}
 	}
-
+	internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
+		if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
+			return;
+		}
+		War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, targetKingdom);
+		if (warEvent != null && warEvent.isAtWar) {
+			return;
+		}
+		if (warEvent == null) {
+			warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
+				this.city.kingdom, targetKingdom);
+		}
+		warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger, warTrigger);
+	}
 	internal void ImproveRelationship(RelationshipKings relationship){
 		//Improvement of Relationship
 
