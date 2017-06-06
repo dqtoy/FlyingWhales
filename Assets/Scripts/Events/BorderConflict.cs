@@ -16,6 +16,8 @@ public class BorderConflict : GameEvent {
 
 	public bool isResolvedPeacefully;
 
+    protected const int UNREST_ADJUSTMENT = 10;
+
 	public BorderConflict(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
 		this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
@@ -362,6 +364,9 @@ public class BorderConflict : GameEvent {
 				relationship2.AdjustLikeness (-15, this);
 				relationship2.sourceKing.WarTrigger (relationship2, this, this.kingdom2.kingdomTypeData);
 			}
-		}
+
+            this.kingdom1.AdjustUnrest(UNREST_ADJUSTMENT);
+            this.kingdom2.AdjustUnrest(UNREST_ADJUSTMENT);
+        }
 	}
 }

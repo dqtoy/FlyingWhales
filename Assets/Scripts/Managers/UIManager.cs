@@ -453,7 +453,7 @@ public class UIManager : MonoBehaviour {
 			} else if (i == 1) {
 				traitToUse = currentlyShowingCitizen.hostilityTrait;
 			} else if (i == 2) {
-				traitToUse = currentlyShowingCitizen.intelligenceTrait;
+				traitToUse = currentlyShowingCitizen.miscTrait;
 			}
 			traits [i].SetTrait (traitToUse);
 		}

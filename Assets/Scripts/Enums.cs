@@ -152,7 +152,8 @@ public enum TRAIT{
 	WARMONGER,
 	PACIFIST,
 	SMART,
-	STUPID
+	STUPID,
+    AMBITIOUS
 }
 
 public enum CAMPAIGN{
