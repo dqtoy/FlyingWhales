@@ -87,6 +87,7 @@ public class GameEvent {
         if (citizen.assignedRole.targetCity == null || citizen.assignedRole.targetCity.isDead) {
             //Cancel Event
             CancelEvent();
+			return;
         }
     }
 

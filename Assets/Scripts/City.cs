@@ -38,7 +38,7 @@ public class City{
 
 	[Space(5)]
 	private int _hp;
-	public IsActive isActive;
+//	public IsActive isActive;
 	public bool isUnderAttack;
 	public bool isStarving;
 	public bool isDead;
@@ -87,7 +87,7 @@ public class City{
 		this.incomingGenerals = new List<General> ();
 		this.citizens = new List<Citizen>();
 		this.cityHistory = new List<History>();
-		this.isActive = new IsActive (false);
+//		this.isActive = new IsActive (false);
 		this.hasKing = false;
 		this.isUnderAttack = false;
 		this.isStarving = false;

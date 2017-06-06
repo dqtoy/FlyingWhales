@@ -534,9 +534,10 @@ public class Kingdom{
 	 * Create a new city obj on the specified hextile.
 	 * Then add it to this kingdoms cities.
 	 * */
-    internal void CreateNewCityOnTileForKingdom(HexTile tile){
+	internal City CreateNewCityOnTileForKingdom(HexTile tile){
 		City createdCity = CityGenerator.Instance.CreateNewCity (tile, this);
 		this.AddCityToKingdom(createdCity);
+		return createdCity;
 	}
 
 	internal void AddCityToKingdom(City city){
@@ -859,7 +860,7 @@ public class Kingdom{
 //		city.kingdom.cities.Remove(city);
 		city.KillCity();
 		yield return null;
-		City newCity = CityGenerator.Instance.CreateNewCity (hex, this);
+		City newCity = CreateNewCityOnTileForKingdom(hex);
 		newCity.hp = 100;
 		newCity.CreateInitialFamilies(false);
 		KingdomManager.Instance.UpdateKingdomAdjacency();
