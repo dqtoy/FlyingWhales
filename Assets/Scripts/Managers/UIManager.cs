@@ -2437,33 +2437,36 @@ public class UIManager : MonoBehaviour {
 					addTraitPopUpList.AddItem (allTraits[i].ToString (), allTraits[i]);
 				}
 			}
-//			for (int i = 0; i < allSkillTraits.Length; i++) {
-//				if (allSkillTraits[i] != SKILL_TRAIT.NONE) {
-//					addTraitPopUpList.AddItem (allSkillTraits[i].ToString ());
-//				}
-//			}
-//			for (int i = 0; i < allMiscTraits.Length; i++) {
-//				if (allMiscTraits[i] != MISC_TRAIT.NONE) {
-//					addTraitPopUpList.AddItem (allMiscTraits[i].ToString ());
-//				}
-//			}
+            //			for (int i = 0; i < allSkillTraits.Length; i++) {
+            //				if (allSkillTraits[i] != SKILL_TRAIT.NONE) {
+            //					addTraitPopUpList.AddItem (allSkillTraits[i].ToString ());
+            //				}
+            //			}
+            //			for (int i = 0; i < allMiscTraits.Length; i++) {
+            //				if (allMiscTraits[i] != MISC_TRAIT.NONE) {
+            //					addTraitPopUpList.AddItem (allMiscTraits[i].ToString ());
+            //				}
+            //			}
 
-//			for (int i = 0; i < currentlyShowingCitizen.behaviorTraits.Count; i++) {
-//				removeTraitPopUpList.AddItem (currentlyShowingCitizen.behaviorTraits[i].ToString());
-//			}
-//			for (int i = 0; i < currentlyShowingCitizen.skillTraits.Count; i++) {
-//				removeTraitPopUpList.AddItem (currentlyShowingCitizen.skillTraits[i].ToString());
-//			}
-//			for (int i = 0; i < currentlyShowingCitizen.miscTraits.Count; i++) {
-//				removeTraitPopUpList.AddItem (currentlyShowingCitizen.miscTraits[i].ToString());
-//			}
-			if (removeTraitPopUpList.items.Count > 0) {
-				removeTraitPopUpList.value = removeTraitPopUpList.items [0];
-			} else {
-				removeTraitPopUpList.value = "";
-			}
+            //			for (int i = 0; i < currentlyShowingCitizen.behaviorTraits.Count; i++) {
+            //				removeTraitPopUpList.AddItem (currentlyShowingCitizen.behaviorTraits[i].ToString());
+            //			}
+            //			for (int i = 0; i < currentlyShowingCitizen.skillTraits.Count; i++) {
+            //				removeTraitPopUpList.AddItem (currentlyShowingCitizen.skillTraits[i].ToString());
+            //			}
+            //			for (int i = 0; i < currentlyShowingCitizen.miscTraits.Count; i++) {
+            //				removeTraitPopUpList.AddItem (currentlyShowingCitizen.miscTraits[i].ToString());
+            //			}
+   //         removeTraitPopUpList.AddItem(currentlyShowingCitizen.honestyTrait.ToString());
+   //         removeTraitPopUpList.AddItem(currentlyShowingCitizen.hos.ToString());
+   //         removeTraitPopUpList.AddItem(currentlyShowingCitizen.honestyTrait.ToString());
+   //         if (removeTraitPopUpList.items.Count > 0) {
+			//	removeTraitPopUpList.value = removeTraitPopUpList.items [0];
+			//} else {
+			//	removeTraitPopUpList.value = "";
+			//}
 			addTraitPopUpList.value = addTraitPopUpList.items [0];
-			removeTraitChoiceLbl.text = removeTraitPopUpList.value;
+			//removeTraitChoiceLbl.text = removeTraitPopUpList.value;
 			addTraitChoiceLbl.text = addTraitPopUpList.value;
 			traitEditorGO.SetActive (true);
 		}
@@ -2474,8 +2477,8 @@ public class UIManager : MonoBehaviour {
 			currentlyShowingCitizen.SetHonestyTrait (chosenTrait);
 		} else if (chosenTrait == TRAIT.WARMONGER || chosenTrait == TRAIT.PACIFIST) {
 			currentlyShowingCitizen.SetHostilityTrait (chosenTrait);
-		}else if (chosenTrait == TRAIT.SMART || chosenTrait == TRAIT.STUPID) {
-			currentlyShowingCitizen.SetIntelligenceTrait (chosenTrait);
+		}else if (chosenTrait == TRAIT.SMART || chosenTrait == TRAIT.STUPID || chosenTrait == TRAIT.AMBITIOUS) {
+			currentlyShowingCitizen.SetMiscTrait (chosenTrait);
 		}
 
 		ShowCitizenInfo(currentlyShowingCitizen);
