@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 301ddda5fde017644bab1ae01392d876
-timeCreated: 1496724022
+timeCreated: 1496818728
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -58,6 +58,9 @@ TextureImporter:
     21300102: H_Mud6
     21300104: H_Mud7
     21300106: H_Mud8
+    21300108: Tree1
+    21300110: Tree2
+    21300112: Tree3
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -803,6 +806,45 @@ TextureImporter:
         y: 415
         width: 153
         height: 125
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Tree1
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 302
+        width: 51
+        height: 48
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Tree2
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 274
+        width: 99
+        height: 95
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Tree3
+      rect:
+        serializedVersion: 2
+        x: 761
+        y: 270
+        width: 89
+        height: 102
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
