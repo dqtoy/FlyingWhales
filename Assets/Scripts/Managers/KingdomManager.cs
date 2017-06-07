@@ -139,7 +139,7 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 		this.UpdateKingdomAdjacency();
-        return newKingdom;
+		return newKingdom;
 	}
 
     public Kingdom SplitKingdom(Kingdom sourceKingdom, List<City> citiesToSplit) {

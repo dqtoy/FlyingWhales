@@ -94,6 +94,7 @@ public class RequestPeace : GameEvent {
     //	}
     //}
 
+	#region Overrides
     internal override void DoneCitizenAction(Citizen citizen) {
         base.DoneCitizenAction(citizen);
         int targetWarExhaustion = this._targetKingdomRel.kingdomWar.exhaustion;
@@ -140,10 +141,15 @@ public class RequestPeace : GameEvent {
 
     internal override void DoneEvent(){
         base.DoneEvent();
-        this._envoySent.DestroyGO();
-        //		for (int i = 0; i < this._saboteurs.Count; i++) {
-        //			((Envoy)this._saboteurs[i].assignedRole).inAction = false;
-        //		}
-        //EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+//      this._envoySent.DestroyGO();
+//		for (int i = 0; i < this._saboteurs.Count; i++) {
+//			((Envoy)this._saboteurs[i].assignedRole).inAction = false;
+//		}
+//		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
     }
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+		this.DoneEvent ();
+	}
+	#endregion
 }

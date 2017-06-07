@@ -26,6 +26,8 @@ public class Sabotage : GameEvent {
 //		this.EventIsCreated ();
 
 	}
+
+	#region Overrides
 	internal override void PerformAction (){
 		CheckGameEvent();
 	}
@@ -51,7 +53,11 @@ public class Sabotage : GameEvent {
 //		}
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 	}
-
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+		this.DoneEvent ();
+	}
+	#endregion
 	private void AttemptToSabotage(){
 		int chance = UnityEngine.Random.Range(0,100);
 		if(chance < 20){

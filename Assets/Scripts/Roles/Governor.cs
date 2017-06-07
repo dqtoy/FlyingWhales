@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Governor : Role {
 
 	public City ownedCity;
-	private int loyalty;
+	internal int loyalty;
 	public Governor(Citizen citizen): base(citizen){
 		this.citizen.city.governor = this.citizen;
 		this.citizen.workLocation = this.citizen.city.hexTile;

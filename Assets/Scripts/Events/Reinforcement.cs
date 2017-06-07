@@ -18,6 +18,8 @@ public class Reinforcement : GameEvent {
 		Debug.LogError (reinforcer.citizen.name + " of " + reinforcer.citizen.city.kingdom.name + " will reinforce " + targetCity.name);
 
 	}
+
+	#region Overrides
 	internal override void DoneCitizenAction (Citizen citizen){
         base.DoneCitizenAction(citizen);
 		if(this.reinforcer != null){
@@ -38,10 +40,11 @@ public class Reinforcement : GameEvent {
 		base.DoneEvent ();
 		//		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 	}
-
-	private void CheckTargetCity(){
-
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+		this.DoneEvent ();
 	}
+	#endregion
 
 	private void SendReinforcement(int amount){
 		this.sourceCity.AdjustHP (-amount);
