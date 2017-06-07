@@ -1456,7 +1456,7 @@ public class Citizen {
 		this._hostilityTrait = trait;
 	}
 
-	internal void SetIntelligenceTrait(TRAIT trait){
+	internal void SetMiscTrait(TRAIT trait){
 		this._miscTrait = trait;
 	}
 
