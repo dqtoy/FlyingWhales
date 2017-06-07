@@ -35,11 +35,13 @@ public class City{
     private int _maxGrowth;
 //	public int maxGeneralHP;
 	public int _goldProduction;
+	private int raidLoyaltyExpiration;
 
 	[Space(5)]
 	private int _hp;
 //	public IsActive isActive;
 	public bool isUnderAttack;
+	public bool isRaided;
 	public bool isStarving;
 	public bool isDead;
 
@@ -90,6 +92,7 @@ public class City{
 //		this.isActive = new IsActive (false);
 		this.hasKing = false;
 		this.isUnderAttack = false;
+		this.isRaided = false;
 		this.isStarving = false;
 		this.isDead = false;
 //		this.citizenCreationTable = Utilities.defaultCitizenCreationTable;
@@ -97,6 +100,7 @@ public class City{
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
 		this._hp = 200;
+		this.raidLoyaltyExpiration = 0;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
@@ -542,7 +546,7 @@ public class City{
 		this.ProduceGold();
 		this.AttemptToIncreaseHP();
 	}
-
+		
 	/*
 	 * Increase a city's HP every month.
 	 * */
@@ -571,11 +575,17 @@ public class City{
 
 	public void AdjustHP(int amount){
 		this._hp += amount;
+		this._hp = Mathf.Clamp(this._hp, 0, this.maxHP);
+	}
 
-		if(this._hp > this.maxHP){
-			this._hp = this.maxHP;
-		}else if(this._hp < 0){
-			this._hp = 0;
+	private void CheckRaidExpiration(){
+		if(this.isRaided){
+			if(this.raidLoyaltyExpiration > 0){
+				this.raidLoyaltyExpiration -= 1;
+			}else{
+				this.HasNotBeenRaided ();
+			}
+
 		}
 	}
 
@@ -1032,5 +1042,18 @@ public class City{
 		this.citizens.Remove (citizen);
 
 		return citizen;
+	}
+
+	internal void HasBeenRaided(){
+		if(!this.isRaided){
+			this.isRaided = true;
+			((Governor)this.governor.assignedRole).UpdateLoyalty ();
+		}
+		this.raidLoyaltyExpiration = 90;
+	}
+	internal void HasNotBeenRaided(){
+		this.isRaided = false;
+		this.raidLoyaltyExpiration = 0;
+		((Governor)this.governor.assignedRole).UpdateLoyalty ();
 	}
 }

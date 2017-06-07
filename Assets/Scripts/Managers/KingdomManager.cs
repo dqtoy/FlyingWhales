@@ -45,7 +45,7 @@ public class KingdomManager : MonoBehaviour {
 		}
 //		Debug.Log ("Valid capital tiles: " + elligibleTilesForHumans.Count);
 
-		int numOfKingdoms = 1;
+		int numOfKingdoms = 2;
 		if (elligibleTilesForHumans.Count < numOfKingdoms) {
 			numOfKingdoms = elligibleTilesForHumans.Count;
 		}

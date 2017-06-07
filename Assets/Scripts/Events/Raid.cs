@@ -153,6 +153,8 @@ public class Raid : GameEvent {
 		this.sourceKingdom.AdjustGold (stolenGold);
 		this.targetKingdom.AdjustGold (-stolenGold);
 
+		this.raidedCity.HasBeenRaided ();
+
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_success");
 		newLog.AddToFillers (null, stolenGold.ToString());
 

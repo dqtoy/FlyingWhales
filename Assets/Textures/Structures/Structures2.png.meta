@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 301ddda5fde017644bab1ae01392d876
-timeCreated: 1496391322
+timeCreated: 1496724022
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -112,7 +112,7 @@ TextureImporter:
         serializedVersion: 2
         x: 3
         y: 930
-        width: 117
+        width: 120
         height: 91
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -136,10 +136,10 @@ TextureImporter:
       name: H_SmallHouse1_Base
       rect:
         serializedVersion: 2
-        x: 226
-        y: 984
-        width: 43
-        height: 37
+        x: 227
+        y: 981
+        width: 53
+        height: 40
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -149,7 +149,7 @@ TextureImporter:
       name: H_SmallHouse1_Tint
       rect:
         serializedVersion: 2
-        x: 271
+        x: 284
         y: 997
         width: 40
         height: 23
@@ -162,10 +162,10 @@ TextureImporter:
       name: H_SmallHouse2_Base
       rect:
         serializedVersion: 2
-        x: 314
-        y: 987
-        width: 39
-        height: 34
+        x: 330
+        y: 984
+        width: 43
+        height: 37
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -175,7 +175,7 @@ TextureImporter:
       name: H_SmallHouse2_Tint
       rect:
         serializedVersion: 2
-        x: 356
+        x: 375
         y: 1000
         width: 33
         height: 21
@@ -188,10 +188,10 @@ TextureImporter:
       name: H_WallHouse1_Base
       rect:
         serializedVersion: 2
-        x: 392
-        y: 990
-        width: 36
-        height: 31
+        x: 411
+        y: 987
+        width: 44
+        height: 34
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -201,9 +201,9 @@ TextureImporter:
       name: H_WallHouse1_Tint
       rect:
         serializedVersion: 2
-        x: 432
+        x: 458
         y: 991
-        width: 31
+        width: 30
         height: 14
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -214,10 +214,10 @@ TextureImporter:
       name: H_WallHouse2_Base
       rect:
         serializedVersion: 2
-        x: 472
-        y: 990
-        width: 35
-        height: 31
+        x: 496
+        y: 988
+        width: 41
+        height: 33
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -227,7 +227,7 @@ TextureImporter:
       name: H_WallHouse2_Tint
       rect:
         serializedVersion: 2
-        x: 512
+        x: 538
         y: 991
         width: 31
         height: 14
@@ -240,9 +240,9 @@ TextureImporter:
       name: H_WallHouse3_Base
       rect:
         serializedVersion: 2
-        x: 555
+        x: 581
         y: 980
-        width: 37
+        width: 36
         height: 43
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -253,9 +253,9 @@ TextureImporter:
       name: H_WallHouse3_Tint
       rect:
         serializedVersion: 2
-        x: 595
+        x: 621
         y: 1003
-        width: 33
+        width: 34
         height: 15
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -267,9 +267,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 227
-        y: 915
-        width: 36
-        height: 65
+        y: 911
+        width: 45
+        height: 69
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -279,9 +279,9 @@ TextureImporter:
       name: H_TallTower1_Tint
       rect:
         serializedVersion: 2
-        x: 265
+        x: 273
         y: 917
-        width: 31
+        width: 32
         height: 49
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -292,10 +292,10 @@ TextureImporter:
       name: H_TallTower2_Base
       rect:
         serializedVersion: 2
-        x: 303
-        y: 915
-        width: 36
-        height: 65
+        x: 310
+        y: 911
+        width: 45
+        height: 69
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -305,9 +305,9 @@ TextureImporter:
       name: H_TallTower2_Tint
       rect:
         serializedVersion: 2
-        x: 349
+        x: 357
         y: 917
-        width: 31
+        width: 32
         height: 49
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -318,10 +318,10 @@ TextureImporter:
       name: H_SmallTower1_Base
       rect:
         serializedVersion: 2
-        x: 394
-        y: 930
-        width: 36
-        height: 50
+        x: 396
+        y: 925
+        width: 44
+        height: 55
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -331,10 +331,10 @@ TextureImporter:
       name: H_SmallTower1_Tint
       rect:
         serializedVersion: 2
-        x: 433
-        y: 929
+        x: 440
+        y: 931
         width: 31
-        height: 36
+        height: 34
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -344,10 +344,10 @@ TextureImporter:
       name: H_SmallTower2_Base
       rect:
         serializedVersion: 2
-        x: 470
-        y: 930
-        width: 35
-        height: 50
+        x: 475
+        y: 926
+        width: 40
+        height: 54
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -357,9 +357,9 @@ TextureImporter:
       name: H_SmallTower2_Tint
       rect:
         serializedVersion: 2
-        x: 508
+        x: 517
         y: 933
-        width: 32
+        width: 31
         height: 34
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -370,9 +370,9 @@ TextureImporter:
       name: H_PointedHouse_Base
       rect:
         serializedVersion: 2
-        x: 544
+        x: 553
         y: 933
-        width: 31
+        width: 30
         height: 35
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -383,7 +383,7 @@ TextureImporter:
       name: H_PointedHouse_Tint
       rect:
         serializedVersion: 2
-        x: 578
+        x: 586
         y: 947
         width: 26
         height: 22
@@ -397,9 +397,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3
-        y: 834
-        width: 114
-        height: 91
+        y: 835
+        width: 121
+        height: 90
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -423,9 +423,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 227
-        y: 826
-        width: 102
-        height: 75
+        y: 824
+        width: 111
+        height: 77
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -449,9 +449,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3
-        y: 639
-        width: 147
-        height: 114
+        y: 636
+        width: 156
+        height: 117
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -476,7 +476,7 @@ TextureImporter:
         serializedVersion: 2
         x: 12
         y: 542
-        width: 103
+        width: 109
         height: 85
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -487,9 +487,9 @@ TextureImporter:
       name: H_Farm_Tint
       rect:
         serializedVersion: 2
-        x: 122
+        x: 131
         y: 611
-        width: 29
+        width: 28
         height: 17
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -500,9 +500,9 @@ TextureImporter:
       name: H_SmallHouse3_Base
       rect:
         serializedVersion: 2
-        x: 639
-        y: 983
-        width: 45
+        x: 714
+        y: 929
+        width: 44
         height: 38
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -513,10 +513,10 @@ TextureImporter:
       name: H_SmallHouse3_Tint
       rect:
         serializedVersion: 2
-        x: 688
-        y: 997
+        x: 762
+        y: 944
         width: 41
-        height: 24
+        height: 23
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -526,10 +526,10 @@ TextureImporter:
       name: H_Wall1_Base
       rect:
         serializedVersion: 2
-        x: 739
-        y: 985
-        width: 25
-        height: 30
+        x: 743
+        y: 982
+        width: 36
+        height: 33
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -539,7 +539,7 @@ TextureImporter:
       name: H_Wall1_Tint
       rect:
         serializedVersion: 2
-        x: 771
+        x: 782
         y: 996
         width: 21
         height: 5
@@ -552,10 +552,10 @@ TextureImporter:
       name: H_Wall2_Base
       rect:
         serializedVersion: 2
-        x: 800
-        y: 985
-        width: 25
-        height: 30
+        x: 808
+        y: 982
+        width: 33
+        height: 34
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -565,9 +565,9 @@ TextureImporter:
       name: H_Wall2_Tint
       rect:
         serializedVersion: 2
-        x: 832
+        x: 845
         y: 997
-        width: 22
+        width: 20
         height: 5
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -578,9 +578,9 @@ TextureImporter:
       name: H_Wall3_Base
       rect:
         serializedVersion: 2
-        x: 864
+        x: 871
         y: 979
-        width: 31
+        width: 35
         height: 42
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -591,9 +591,9 @@ TextureImporter:
       name: H_Wall3_Tint
       rect:
         serializedVersion: 2
-        x: 895
+        x: 910
         y: 990
-        width: 22
+        width: 21
         height: 5
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -604,10 +604,10 @@ TextureImporter:
       name: H_Wall4_Base
       rect:
         serializedVersion: 2
-        x: 930
-        y: 985
-        width: 40
-        height: 30
+        x: 938
+        y: 983
+        width: 50
+        height: 31
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -617,9 +617,9 @@ TextureImporter:
       name: H_Wall4_Tint
       rect:
         serializedVersion: 2
-        x: 976
+        x: 989
         y: 996
-        width: 39
+        width: 36
         height: 5
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -630,10 +630,10 @@ TextureImporter:
       name: H_SmallHouse4_Base
       rect:
         serializedVersion: 2
-        x: 619
-        y: 929
-        width: 33
-        height: 37
+        x: 623
+        y: 927
+        width: 43
+        height: 39
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -643,7 +643,7 @@ TextureImporter:
       name: H_SmallHouse4_Tint
       rect:
         serializedVersion: 2
-        x: 660
+        x: 668
         y: 945
         width: 32
         height: 21
@@ -657,9 +657,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3
-        y: 271
-        width: 225
-        height: 270
+        y: 269
+        width: 237
+        height: 272
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -669,9 +669,9 @@ TextureImporter:
       name: H_Capital_Tint
       rect:
         serializedVersion: 2
-        x: 233
+        x: 246
         y: 298
-        width: 217
+        width: 218
         height: 204
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -683,9 +683,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3
-        y: 166
-        width: 153
-        height: 106
+        y: 161
+        width: 157
+        height: 104
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
