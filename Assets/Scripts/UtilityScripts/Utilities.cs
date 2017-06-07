@@ -726,6 +726,10 @@ public class Utilities : MonoBehaviour {
             return true;
 		case EVENT_TYPES.REINFORCEMENT:
 			return true;
+		case EVENT_TYPES.RIOT:
+			return true;
+		case EVENT_TYPES.REBELLION:
+			return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;
@@ -763,6 +767,15 @@ public class Utilities : MonoBehaviour {
 				return true;
 			}
 		case EVENT_TYPES.ASSASSINATION:
+			if(duration == -1){
+				return true;
+			}else{
+				if (path.Count > duration) {
+					return false;
+				}
+				return true;
+			}
+		case EVENT_TYPES.SECESSION:
 			if(duration == -1){
 				return true;
 			}else{

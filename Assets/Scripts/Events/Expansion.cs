@@ -30,6 +30,8 @@ public class Expansion : GameEvent {
 		this.EventIsCreated ();
 
 	}
+
+	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
         base.DoneCitizenAction(citizen);
 		if (this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0) {
@@ -70,4 +72,9 @@ public class Expansion : GameEvent {
 //		this.expander.DestroyGO ();
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+		this.DoneEvent ();
+	}
+	#endregion
 }

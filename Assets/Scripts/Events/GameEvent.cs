@@ -92,7 +92,7 @@ public class GameEvent {
     }
 
 	internal virtual void CancelEvent(){
-		Debug.LogError ("EVENT IS CANCELLED");
+		Debug.LogError (this.eventType.ToString() + " EVENT IS CANCELLED");
 	}
 
 	internal virtual void DoneEvent(){

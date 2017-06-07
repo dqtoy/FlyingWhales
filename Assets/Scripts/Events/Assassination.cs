@@ -87,6 +87,7 @@ public class Assassination : GameEvent {
 
 	}
 
+	#region Overrides
 	internal override void PerformAction(){
 		if(this.spy.location == this.targetCitizen.currentLocation){
 			AssassinationMoment ();
@@ -132,6 +133,7 @@ public class Assassination : GameEvent {
 
 	internal override void CancelEvent (){
 		base.CancelEvent ();
+		this.DoneEvent();
 	}
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();
@@ -140,6 +142,8 @@ public class Assassination : GameEvent {
 		this.spy.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}
+	#endregion
+
 	private void WaitForTarget(){
 		//Add logs: wait_for_target
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);

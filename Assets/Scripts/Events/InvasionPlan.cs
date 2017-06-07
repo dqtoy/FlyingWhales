@@ -121,7 +121,7 @@ public class InvasionPlan : GameEvent {
 //		this.StartMilitarizationEvent();
 	}
 
-	#region overrides
+	#region Overrides
 	internal override void PerformAction(){
 		if(this.remainingDays > 0){
 			this.remainingDays -= 1;

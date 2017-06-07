@@ -1009,8 +1009,10 @@ public class City{
 
 	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration){
 		int cost = 0;
-		if(!this.kingdom.CanCreateAgent(role, ref cost)){
-			return null;
+		if(eventType != EVENT_TYPES.SECESSION){
+			if(!this.kingdom.CanCreateAgent(role, ref cost)){
+				return null;
+			}
 		}
         List<HexTile> path = null;
         if (role == ROLE.TRADER) {

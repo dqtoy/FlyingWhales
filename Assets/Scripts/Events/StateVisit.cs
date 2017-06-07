@@ -47,6 +47,8 @@ public class StateVisit : GameEvent {
 		this.EventIsCreated ();
 
 	}
+
+	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
         base.DoneCitizenAction(citizen);
 		this.visitorHasArrived = true;
@@ -134,6 +136,15 @@ public class StateVisit : GameEvent {
 		this.visitor.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+		this.isDoneBySabotage = false;
+		this.visitorHasDied = false;
+		this.isSuccessful = false;
+		this.visitorHasArrived = false;
+		this.DoneEvent ();
+	}
+	#endregion
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){

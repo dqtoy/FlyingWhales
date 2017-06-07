@@ -177,8 +177,14 @@ public class War : GameEvent {
         }
     }
 
+	#region Overrides
     internal override void DoneEvent() {
         base.DoneEvent();
         EventManager.Instance.onWeekEnd.RemoveListener(AttemptToRequestPeace);
     }
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+		this.DoneEvent ();
+	}
+	#endregion
 }
