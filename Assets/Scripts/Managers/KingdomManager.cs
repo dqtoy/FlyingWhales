@@ -50,11 +50,18 @@ public class KingdomManager : MonoBehaviour {
 			numOfKingdoms = elligibleTilesForHumans.Count;
 		}
 
+        int numOfCitiesPerKingdom = 1;
 		for (int i = 0; i < numOfKingdoms; i++) {
 			List<HexTile> citiesForKingdom = new List<HexTile>();
-			int chosenIndex = Random.Range (0, elligibleTilesForHumans.Count);
-			citiesForKingdom.Add (elligibleTilesForHumans [chosenIndex]);
-			elligibleTilesForHumans.RemoveAt (chosenIndex);
+            for (int j = 0; j < numOfCitiesPerKingdom; j++) {
+                if (elligibleTilesForHumans.Count <= 0) {
+                    break;
+                }
+                int chosenIndex = Random.Range(0, elligibleTilesForHumans.Count);
+                citiesForKingdom.Add(elligibleTilesForHumans[chosenIndex]);
+                elligibleTilesForHumans.RemoveAt(chosenIndex);
+            }
+			
 			GenerateNewKingdom (RACE.HUMANS, citiesForKingdom, true);
 		}
 
@@ -118,7 +125,7 @@ public class KingdomManager : MonoBehaviour {
 			this.allKingdoms [i].king.CreateInitialRelationshipsToKings ();
 		}
 	}
-	public void GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false){
+	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false){
 		Kingdom newKingdom = new Kingdom (race, cities);
 		allKingdoms.Add(newKingdom);
 		EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
@@ -131,9 +138,31 @@ public class KingdomManager : MonoBehaviour {
 				}
 			}
 		}
-
 		this.UpdateKingdomAdjacency();
+        return newKingdom;
 	}
+
+    public Kingdom SplitKingdom(Kingdom sourceKingdom, List<City> citiesToSplit) {
+        Kingdom newKingdom = GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { });
+        TransferCitiesToOtherKingdom(sourceKingdom, newKingdom, citiesToSplit);
+        return newKingdom;
+    }
+
+    private void TransferCitiesToOtherKingdom(Kingdom sourceKingdom, Kingdom otherKingdom, List<City> citiesToTransfer) {
+        sourceKingdom.UnHighlightAllOwnedTilesInKingdom();
+        for (int i = 0; i < citiesToTransfer.Count; i++) {
+            City currCity = citiesToTransfer[i];
+            sourceKingdom.RemoveCityFromKingdom(currCity);
+            //otherKingdom.AddCityToKingdom(currCity);
+            currCity.ChangeKingdom(otherKingdom);
+            //currCity.hexTile.ShowCitySprite();
+            //currCity.hexTile.ShowNamePlate();
+        }
+        
+        if(UIManager.Instance.currentlyShowingKingdom.id == sourceKingdom.id) {
+            sourceKingdom.HighlightAllOwnedTilesInKingdom();
+        }
+    }
 
 	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2, War war){
 		RelationshipKingdom kingdom1Rel = kingdom1.GetRelationshipWithOtherKingdom(kingdom2);
@@ -330,4 +359,15 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 	}
+
+    #region For Testing
+    
+    [ContextMenu("Test Split Kingdom")]
+    public void TestSplitKingdom() {
+        Kingdom sourceKingdom = this.allKingdoms.First();
+        List<City> citiesToSplit = new List<City>() { sourceKingdom.cities.Last() };
+        SplitKingdom(sourceKingdom, citiesToSplit);
+        EventManager.Instance.onUpdateUI.Invoke();
+    }
+    #endregion
 }

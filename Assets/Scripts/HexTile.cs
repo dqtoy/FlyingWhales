@@ -335,7 +335,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     public void ShowCitySprite() {
         GameObject structureGO = GameObject.Instantiate(
-           CityGenerator.Instance.cityStructurePrefabs[Random.Range(0, CityGenerator.Instance.cityStructurePrefabs.Length)],
+           CityGenerator.Instance.cityStructures[Random.Range(0, CityGenerator.Instance.cityStructures.Length)],
            structureParentGO.transform) as GameObject;
         structureGO.transform.localPosition = Vector3.zero;
         SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
@@ -365,14 +365,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.cityInfoGO.SetActive(true);
     }
 
-    private void UpdateNamePlate() {
+    public void UpdateNamePlate() {
         this.cityInfo.SetCity(this.city);
     }
 
     public void ShowOccupiedSprite() {
         //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
+        GameObject[] structuresToChooseFrom = CityGenerator.Instance.genericStructures;
+        if (this.specialResource != RESOURCE.NONE) {
+            structuresToChooseFrom = CityGenerator.Instance.mineStructures;
+        }
+
         GameObject structureGO = GameObject.Instantiate(
-            CityGenerator.Instance.structures[Random.Range(0, CityGenerator.Instance.structures.Length)],
+            structuresToChooseFrom[Random.Range(0, structuresToChooseFrom.Length)],
             structureParentGO.transform) as GameObject;
         structureGO.transform.localPosition = Vector3.zero;
         SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
@@ -386,8 +391,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     public void ResetTile(){
-//		this.isOwned = false;
-		this.isOccupied = false;
+        //this.city = null;
+        this.isOccupied = false;
 		this.isBorder = false;
 		this.ownedByCity = null;
 		this.isBorderOfCityID = 0;
@@ -401,6 +406,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         for (int i = 0; i < children.Length; i++) {
             if (children[i].gameObject != null && children[i].gameObject != structureParentGO) {
                 Destroy(children[i].gameObject);
+            }
+        }
+    }
+
+    public void ReColorStructure() {
+        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(structureParentGO);
+        for (int i = 0; i < children.Length; i++) {
+            GameObject structureToRecolor = children[i].gameObject;
+
+            SpriteRenderer[] allColorizers = structureToRecolor.GetComponentsInChildren<SpriteRenderer>().
+            Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
+
+            for (int j = 0; j < allColorizers.Length; j++) {
+                allColorizers[j].color = this.ownedByCity.kingdom.kingdomColor;
             }
         }
     }
@@ -515,6 +534,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
             Debug.Log("Adjacent Kingdom: " + this.city.kingdom.adjacentKingdoms[i].name);
         }
+    }
+
+    [ContextMenu("Show Hextile Positions")]
+    public void ShowHextileBounds() {
+        Debug.Log("Local Pos: " + this.transform.localPosition.ToString());
+        Debug.Log("Pos: " + this.transform.position.ToString());
     }
 
     private void ShowKingdomInfo() {

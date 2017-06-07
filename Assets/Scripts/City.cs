@@ -14,7 +14,7 @@ public class City{
 	private Kingdom _kingdom;
 	public Citizen governor;
 	public List<City> adjacentCities;
-	public List<HexTile> ownedTiles;
+	public List<HexTile> _ownedTiles;
 	public List<General> incomingGenerals;
 	public List<Citizen> citizens;
 	public List<History> cityHistory;
@@ -67,7 +67,7 @@ public class City{
 		get{ return this._maxGrowth; }
 	}
 	public List<HexTile> structures{
-		get{ return this.ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();}
+		get{ return this._ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();}
 	}
 	public int hp{
 		get{ return this._hp; }
@@ -76,6 +76,9 @@ public class City{
 	public int maxHP{
 		get{ return 200 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
 	}
+    public List<HexTile> ownedTiles {
+        get { return this._ownedTiles; }
+    }
 	#endregion
 
 	public City(HexTile hexTile, Kingdom kingdom){
@@ -85,7 +88,7 @@ public class City{
 		this.name = RandomNameGenerator.Instance.GenerateCityName(this._kingdom.race);
 		this.governor = null;
 		this.adjacentCities = new List<City>();
-		this.ownedTiles = new List<HexTile>();
+		this._ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<General> ();
 		this.citizens = new List<Citizen>();
 		this.cityHistory = new List<History>();
@@ -908,7 +911,7 @@ public class City{
 		for (int i = 0; i < countCitizens; i++) {
 			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
 		}
-		this._kingdom.cities.Remove (this);
+		this._kingdom.RemoveCityFromKingdom(this);
 		this._kingdom.activeCitiesPairInWar.RemoveAll (x => x.sourceCity.id == this.id);
 
 		if(this.hasKing){
@@ -917,10 +920,6 @@ public class City{
 				this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
 			}
 		}
-		// This will update kingdom type whenever the kingdom loses a city.
-		this._kingdom.UpdateKingdomTypeData();
-        this._kingdom.UpdateAvailableResources();
-		this._kingdom.CheckIfKingdomIsDead();
 
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
@@ -1043,6 +1042,26 @@ public class City{
 
 		return citizen;
 	}
+
+    internal void ChangeKingdom(Kingdom kingdom) {
+        kingdom.AddCityToKingdom(this);
+        this._kingdom = kingdom;
+        for (int i = 0; i < this._ownedTiles.Count; i++) {
+            this._ownedTiles[i].ReColorStructure();
+        }
+        this.hexTile.UpdateNamePlate();
+    }
+
+    internal void RemoveTileFromCity(HexTile tileToRemove) {
+        this._ownedTiles.Remove(tileToRemove);
+        tileToRemove.ResetTile();
+        this.UpdateBorderTiles();
+        this.UpdateDailyProduction();
+        if (tileToRemove.specialResource != RESOURCE.NONE) {
+            this._kingdom.UpdateAvailableResources();
+            this._kingdom.UpdateAllCitiesDailyGrowth();
+        }
+    }
 
 	internal void HasBeenRaided(){
 		if(!this.isRaided){
