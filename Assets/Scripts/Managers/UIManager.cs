@@ -58,7 +58,9 @@ public class UIManager : MonoBehaviour {
 	//Force War
 	public GameObject forceWarGO;
 	public UIPopupList kingdomsForWar;
-
+	//Unrest
+	public GameObject unrestGO;
+	public UIInput unrestInput;
 
 
 	[Space(10)]//World UI
@@ -2571,6 +2573,24 @@ public class UIManager : MonoBehaviour {
 	}
 	public void HideForceWar(){
 		this.forceWarGO.SetActive (false);
+	}
+	public void ToggleUnrest(){
+		if (this.unrestGO.activeSelf) {
+			this.unrestGO.SetActive (false);
+		} else {
+			if(this.currentlyShowingCity != null){
+				this.unrestInput.value = this.currentlyShowingCity.kingdom.unrest.ToString();
+				this.unrestGO.SetActive (true);
+			}
+		}
+	}
+	public void OnChangeUnrest(){
+		if(this.currentlyShowingCity != null){
+			this.currentlyShowingCity.kingdom.ChangeUnrest(int.Parse(this.unrestInput.value));
+		}
+	}
+	public void HideUnrest(){
+		this.unrestGO.SetActive (false);
 	}
 	public void GenerateChildForCitizen(){
 		if (currentlyShowingCitizen.spouse == null) {

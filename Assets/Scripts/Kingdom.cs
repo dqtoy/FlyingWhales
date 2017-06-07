@@ -105,6 +105,7 @@ public class Kingdom{
 	}
     public int unrest {
         get { return this._unrest; }
+		set { this._unrest = value;}
     }
 	#endregion
 	// Kingdom constructor paramters
@@ -1441,7 +1442,17 @@ public class Kingdom{
     internal void AdjustUnrest(int amountToAdjust) {
         this._unrest += amountToAdjust;
         this._unrest = Mathf.Clamp(this._unrest, 0, 100);
+		if(this._unrest == 100){
+			UnrestEvents ();
+		}
     }
+	internal void ChangeUnrest(int newAmount){
+		this._unrest = newAmount;
+		this._unrest = Mathf.Clamp(this._unrest, 0, 100);
+		if(this._unrest == 100){
+			UnrestEvents ();
+		}
+	}
 	internal void UnrestEvents(){
 		this._unrest = 0;
 		Citizen chosenGovernor = null;
