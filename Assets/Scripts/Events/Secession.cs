@@ -106,5 +106,35 @@ public class Secession : GameEvent {
 		}
 	}
 	private void SplitKingdom(){
+		if(this.joiningCities.Contains(this.sourceKingdom.king.city)){
+			//Move King To Another City
+			this.sourceKingdom.king.city.hasKing = false;
+			List<City> cityCandidates = this.sourceKingdom.cities.Where(x => !this.joiningCities.Contains(x)).ToList();
+			if(cityCandidates != null && cityCandidates.Count > 0){
+				City newCityForRoyalties = cityCandidates [0];
+				for (int i = 0; i < this.sourceKingdom.king.city.citizens; i++) {
+					if(this.sourceKingdom.king.city.citizens[i].isDirectDescendant && !this.sourceKingdom.king.city.citizens[i].isGovernor){
+						newCityForRoyalties.MoveCitizenToThisCity (this.sourceKingdom.king.city.citizens [i], true);
+					}
+					if(this.sourceKingdom.king.isMarried){
+						newCityForRoyalties.MoveCitizenToThisCity (this.sourceKingdom.king.spouse, true);
+					}
+				}
+				newCityForRoyalties.hasKing = true;
+
+			}else{
+				int countCitizens = this.sourceKingdom.king.city.citizens;
+				for (int i = 0; i < countCitizens; i++) {
+					if(this.sourceKingdom.king.city.citizens[i].isDirectDescendant && !this.sourceKingdom.king.city.citizens[i].isGovernor){
+						this.sourceKingdom.king.city.citizens[i].Death (DEATH_REASONS.REBELLION, false, null, true);
+					}
+				}
+				if(this.sourceKingdom.king.isMarried){
+					this.sourceKingdom.king.spouse.Death (DEATH_REASONS.REBELLION, false, null, true);
+				}
+			}
+		}
+
+
 	}
 }

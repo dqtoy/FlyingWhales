@@ -40,6 +40,7 @@ public class City{
 	[Space(5)]
 	private int _hp;
 //	public IsActive isActive;
+	public bool isFort;
 	public bool isUnderAttack;
 	public bool isRaided;
 	public bool isStarving;
@@ -828,17 +829,22 @@ public class City{
 	}
 	#endregion
 
-	internal void RemoveCitizenFromCity(Citizen citizenToRemove){
-		if (citizenToRemove.role == ROLE.GOVERNOR) {
-			this.AssignNewGovernor();
+	internal void RemoveCitizenFromCity(Citizen citizenToRemove, bool isFleeing = false){
+		if(!isFleeing){
+			if (citizenToRemove.role == ROLE.GOVERNOR) {
+				this.AssignNewGovernor();
+			}
+			/*else if (citizenToRemove.role == ROLE.GENERAL) {
+				((General)citizenToRemove.assignedRole).UntrainGeneral();
+			}*/
+
+			citizenToRemove.role = ROLE.UNTRAINED;
+			citizenToRemove.assignedRole = null;
 		}
-		/*else if (citizenToRemove.role == ROLE.GENERAL) {
-			((General)citizenToRemove.assignedRole).UntrainGeneral();
-		}*/
+
+
 		this.citizens.Remove (citizenToRemove);
 		citizenToRemove.city = null;
-		citizenToRemove.role = ROLE.UNTRAINED;
-		citizenToRemove.assignedRole = null;
 	}
 
 	internal void AddCitizenToCity(Citizen citizenToAdd){
@@ -968,8 +974,8 @@ public class City{
 		return false;
 	}
 
-	internal void MoveCitizenToThisCity(Citizen citizenToMove){
-		citizenToMove.city.RemoveCitizenFromCity(citizenToMove);
+	internal void MoveCitizenToThisCity(Citizen citizenToMove, bool isFleeing){
+		citizenToMove.city.RemoveCitizenFromCity(citizenToMove, isFleeing);
 		this.AddCitizenToCity(citizenToMove);
 	}
 
