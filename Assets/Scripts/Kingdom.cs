@@ -162,23 +162,23 @@ public class Kingdom{
             }
         }
 		
-		if(this._cities.Count > 0 && this._cities[0] != null){
-			this.capitalCity = this._cities [0];
+		//if(this._cities.Count > 0 && this._cities[0] != null){
+		//	this.capitalCity = this._cities [0];
 
-            // For the kingdom's first city, setup its distance towards other habitable tiles.
-            HexTile habitableTile;
-            if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
-                for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
-                    habitableTile = CityGenerator.Instance.stoneHabitableTiles[i];
-                    this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
-                }
-            } else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
-                for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {
-                    habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
-                    this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
-                }
-            }
-        }
+  //          // For the kingdom's first city, setup its distance towards other habitable tiles.
+  //          HexTile habitableTile;
+  //          if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
+  //              for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
+  //                  habitableTile = CityGenerator.Instance.stoneHabitableTiles[i];
+  //                  this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+  //              }
+  //          } else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+  //              for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {
+  //                  habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
+  //                  this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+  //              }
+  //          }
+  //      }
 		
 //		Debug.Log ("Kingdom: " + this.name + " : " + this.cities [0].habitableTileDistance.Count);
 		//this.cities [0].OrderHabitableTileDistanceList ();
@@ -543,6 +543,53 @@ public class Kingdom{
     internal void RemoveKingdomFromEmbargoList(Kingdom kingdomToRemove) {
         this._embargoList.Remove(kingdomToRemove);
     }
+
+    /*
+     * Function to remove trade routes that are no longer used because this
+     * kingdom already has a resource of that type
+     * */
+    private void RemoveObsoleteTradeRoutes(RESOURCE obsoleteResource) {
+        List<TradeRoute> tradeRoutesToRemove = new List<TradeRoute>();
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.resourceBeingTraded == obsoleteResource) {
+                tradeRoutesToRemove.Add(currTradeRoute);
+            }
+        }
+        for (int i = 0; i < tradeRoutesToRemove.Count; i++) {
+            TradeRoute tradeRouteToRemove = tradeRoutesToRemove[i];
+            tradeRouteToRemove.sourceKingdom.RemoveTradeRoute(tradeRouteToRemove);
+            tradeRouteToRemove.targetKingdom.RemoveTradeRoute(tradeRouteToRemove);
+            tradeRouteToRemove.sourceKingdom.UpdateAllCitiesDailyGrowth();
+            tradeRouteToRemove.sourceKingdom.UpdateAllCitiesDailyGrowth();
+        }
+    }
+
+    internal void RemoveTradeRoute(TradeRoute tradeRoute) {
+        this._tradeRoutes.Remove(tradeRoute);
+    }
+
+    /*
+     * Check the trade routes this kingdom is supplying to,
+     * and whether this kingdom can still supply the trade routes resource
+     * */
+    internal void RemoveInvalidTradeRoutes() {
+        List<TradeRoute> invalidTradeRoutes = new List<TradeRoute>();
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            //Check if the current trade route is being supplied by this kingdom, then check if 
+            //this kingdom still has the resource that is being traded.
+            if (currTradeRoute.sourceKingdom.id == this.id && 
+                !this._availableResources.ContainsKey(currTradeRoute.resourceBeingTraded)) {
+                //remove trade route from both kingdoms trade routes because it is no longer valid
+                this.RemoveTradeRoute(currTradeRoute);
+                currTradeRoute.targetKingdom.RemoveTradeRoute(currTradeRoute);
+                this.UpdateAllCitiesDailyGrowth();
+                currTradeRoute.targetKingdom.UpdateAllCitiesDailyGrowth();
+            }
+        }
+
+    }
     #endregion
 
     /*
@@ -564,13 +611,14 @@ public class Kingdom{
 		return createdCity;
 	}
 
+    /*
+     * Add a city to this kingdom.
+     * Recompute kingdom type data, available resources and
+     * daily growth of all cities. Assign city as capital city
+     * if city is first city in kingdom.
+     * */
 	internal void AddCityToKingdom(City city){
 		this._cities.Add (city);
-        //city.hexTile.ownedByCity = city;
-        //city.hexTile.isOccupied = true;
-        //city.hexTile.isOccupiedByCityID = city.id;
-        //city.hexTile.SetTileHighlightColor(this.kingdomColor);
-
         this.UpdateKingdomTypeData();
         this.UpdateAvailableResources();
         this.UpdateAllCitiesDailyGrowth();
@@ -594,17 +642,25 @@ public class Kingdom{
         }
     }
 
+    /*
+     * Remove city from this kingdom.
+     * Check if kingdom is dead beacuse of city removal.
+     * If not, recompute this kingdom's capital city, kingdom type data, 
+     * available resources, and daily growth of remaining cities.
+     * */
     internal void RemoveCityFromKingdom(City city) {
         this._cities.Remove(city);
-        //city.hexTile.ResetTile();
-        //city.ChangeKingdom(null);
-        this.UpdateKingdomTypeData();
-        this.UpdateAvailableResources();
-        this.UpdateAllCitiesDailyGrowth();
         this.CheckIfKingdomIsDead();
-        if (this._cities.Count > 0 && this._cities[0] != null) {
-            this.capitalCity = this._cities[0];
+        if (!this.isDead) {
+            this.UpdateKingdomTypeData();
+            this.UpdateAvailableResources();
+            this.UpdateAllCitiesDailyGrowth();
+            this.RemoveInvalidTradeRoutes();
+            if (this._cities.Count > 0 && this._cities[0] != null) {
+                this.capitalCity = this._cities[0];
+            }
         }
+        
     }
 
 	/*
@@ -1252,29 +1308,6 @@ public class Kingdom{
             City currCity = this.cities[i];
             currCity.UpdateDailyGrowthBasedOnSpecialResources(dailyGrowthGained);
         }
-    }
-
-    /*
-     * Function to remove trade routes that are no longer used because this
-     * kingdom already has a resource of that type
-     * */
-    private void RemoveObsoleteTradeRoutes(RESOURCE obsoleteResource) {
-        List<TradeRoute> tradeRoutesToRemove = new List<TradeRoute>();
-        for (int i = 0; i < this._tradeRoutes.Count; i++) {
-            TradeRoute currTradeRoute = this._tradeRoutes[i];
-            if (currTradeRoute.resourceBeingTraded == obsoleteResource) {
-                tradeRoutesToRemove.Add(currTradeRoute);
-            }
-        }
-        for (int i = 0; i < tradeRoutesToRemove.Count; i++) {
-            TradeRoute tradeRouteToRemove = tradeRoutesToRemove[i];
-            tradeRouteToRemove.sourceKingdom.RemoveTradeRoute(tradeRouteToRemove);
-            tradeRouteToRemove.targetKingdom.RemoveTradeRoute(tradeRouteToRemove);
-        }
-    }
-
-    internal void RemoveTradeRoute(TradeRoute tradeRoute) {
-        this._tradeRoutes.Remove(tradeRoute);
     }
 
     private int ComputeDailyGrowthGainedFromResources(List<RESOURCE> allAvailableResources) {

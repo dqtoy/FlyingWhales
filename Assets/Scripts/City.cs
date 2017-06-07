@@ -1104,6 +1104,7 @@ public class City{
         if (tileToRemove.specialResource != RESOURCE.NONE) {
             this._kingdom.UpdateAvailableResources();
             this._kingdom.UpdateAllCitiesDailyGrowth();
+            this._kingdom.RemoveInvalidTradeRoutes();
         }
     }
 
