@@ -41,10 +41,10 @@ public class Trade : GameEvent {
         CreateTradeRouteBetweenKingdoms();
     }
 
-    internal override void CancelEvent() {
-        Debug.LogError("Trade Event was cancelled!");
-        this.isActive = false;
-    }
+//    internal override void CancelEvent() {
+//        Debug.LogError("Trade Event was cancelled!");
+//        this.isActive = false;
+//    }
 
     internal override void DoneEvent() {
         base.DoneEvent();
