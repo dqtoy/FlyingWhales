@@ -19,8 +19,11 @@ public class Secession : GameEvent {
 		this.governor = (Governor)startedBy.assignedRole;
 		this.sourceKingdom = startedBy.city.kingdom;
 		this.alreadyVisitedCities = new List<City> ();
+		this.joiningCities = new List<City> ();
 		this.convincer = null;
 		this.targetCity = null;
+
+		this.joiningCities.Add (startedBy.city);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
 		//		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
