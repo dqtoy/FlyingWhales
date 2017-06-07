@@ -75,6 +75,7 @@ public class Riot : GameEvent {
 
 	private void DestroyStructure(City city){
 		//Destroy a structure
+		Debug.Log("DESTROYED A STRUCTURE IN " + city.name);
 		city.RemoveTileFromCity(city.structures[city.structures.Count - 1]);
 	}
 }

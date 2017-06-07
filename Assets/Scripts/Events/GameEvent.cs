@@ -96,6 +96,7 @@ public class GameEvent {
 	}
 
 	internal virtual void DoneEvent(){
+		Debug.LogError (this.eventType.ToString () + " EVENT IS DONE");
         this.isActive = false;
         this.endMonth = GameManager.Instance.month;
         this.endDay = GameManager.Instance.days;
