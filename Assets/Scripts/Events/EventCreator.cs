@@ -116,19 +116,23 @@ public class EventCreator: MonoBehaviour {
 		return null;
 	}
 
-	internal AttackCity CreateAttackCityEvent(Kingdom sourceKingdom){
-		if(sourceKingdom.activeCitiesPairInWar.Count > 0){
-			CityWarPair warPair = sourceKingdom.activeCitiesPairInWar [0];
-			if(warPair.sourceCity == null || warPair.targetCity == null){
-				return null;
-			}
-			Citizen general = warPair.sourceCity.CreateAgent (ROLE.GENERAL, EVENT_TYPES.ATTACK_CITY, warPair.targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.ATTACK_CITY]);
-			if(general != null){
-				General attacker = (General)general.assignedRole;
-				AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-					sourceKingdom.king, attacker, warPair.targetCity);
-				attacker.Initialize (attackCity);
-			}
+	internal AttackCity CreateAttackCityEvent(Kingdom sourceKingdom, City sourceCity, City targetCity){
+		Citizen general = sourceCity.CreateAgent (ROLE.GENERAL, EVENT_TYPES.ATTACK_CITY, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.ATTACK_CITY]);
+		if(general != null){
+			General attacker = (General)general.assignedRole;
+			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				sourceKingdom.king, attacker, targetCity);
+			attacker.Initialize (attackCity);
+		}
+		return null;
+	}
+	internal AttackCity CreateAttackCityEvent(City sourceCity, City targetCity){
+		Citizen general = sourceCity.CreateAgent (ROLE.GENERAL, EVENT_TYPES.ATTACK_CITY, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.ATTACK_CITY]);
+		if(general != null){
+			General attacker = (General)general.assignedRole;
+			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				general, attacker, targetCity);
+			attacker.Initialize (attackCity);
 		}
 		return null;
 	}
