@@ -163,4 +163,19 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+
+	internal Secession CreateSecessionEvent(Citizen governor){
+		Secession secession = new Secession(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, governor);
+		return secession;
+	}
+
+	internal Riot CreateRiotEvent(Kingdom sourceKingdom){
+		Citizen rebel = sourceKingdom.capitalCity.CreateAgent(ROLE.REBEL, EVENT_TYPES.RIOT, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.RIOT]);
+		if(rebel != null){
+			Riot riot = new Riot(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, rebel);
+			rebel.assignedRole.Initialize (riot);
+			return riot;
+		}
+		return null;
+	}
 }

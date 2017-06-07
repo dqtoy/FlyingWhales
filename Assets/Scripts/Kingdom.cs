@@ -1388,6 +1388,8 @@ public class Kingdom{
 			costToCreate = 100;
 		} else if (roleToCheck == ROLE.REINFORCER) {
 			costToCreate = 0;
+		} else if (roleToCheck == ROLE.REBEL) {
+			costToCreate = 0;
 		}
 
 		if (this._goldCount < costToCreate) {
@@ -1449,10 +1451,12 @@ public class Kingdom{
 		}
 		if(chosenGovernor != null){
 			//Secession Event
+			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
 		}else{
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				//Riot Event
+				EventCreator.Instance.CreateRiotEvent(this);
 			}else{
 				//Rebellion Event
 			}

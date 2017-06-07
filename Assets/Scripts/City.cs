@@ -40,6 +40,7 @@ public class City{
 	[Space(5)]
 	private int _hp;
 //	public IsActive isActive;
+	public bool isFort;
 	public bool isUnderAttack;
 	public bool isRaided;
 	public bool isStarving;
@@ -831,17 +832,22 @@ public class City{
 	}
 	#endregion
 
-	internal void RemoveCitizenFromCity(Citizen citizenToRemove){
-		if (citizenToRemove.role == ROLE.GOVERNOR) {
-			this.AssignNewGovernor();
+	internal void RemoveCitizenFromCity(Citizen citizenToRemove, bool isFleeing = false){
+		if(!isFleeing){
+			if (citizenToRemove.role == ROLE.GOVERNOR) {
+				this.AssignNewGovernor();
+			}
+			/*else if (citizenToRemove.role == ROLE.GENERAL) {
+				((General)citizenToRemove.assignedRole).UntrainGeneral();
+			}*/
+
+			citizenToRemove.role = ROLE.UNTRAINED;
+			citizenToRemove.assignedRole = null;
 		}
-		/*else if (citizenToRemove.role == ROLE.GENERAL) {
-			((General)citizenToRemove.assignedRole).UntrainGeneral();
-		}*/
+
+
 		this.citizens.Remove (citizenToRemove);
 		citizenToRemove.city = null;
-		citizenToRemove.role = ROLE.UNTRAINED;
-		citizenToRemove.assignedRole = null;
 	}
 
 	internal void AddCitizenToCity(Citizen citizenToAdd){
@@ -967,8 +973,8 @@ public class City{
 		return false;
 	}
 
-	internal void MoveCitizenToThisCity(Citizen citizenToMove){
-		citizenToMove.city.RemoveCitizenFromCity(citizenToMove);
+	internal void MoveCitizenToThisCity(Citizen citizenToMove, bool isFleeing){
+		citizenToMove.city.RemoveCitizenFromCity(citizenToMove, isFleeing);
 		this.AddCitizenToCity(citizenToMove);
 	}
 
@@ -1013,36 +1019,50 @@ public class City{
 				return null;
 			}
 		}
-        List<HexTile> path = null;
-        if (role == ROLE.TRADER) {
-            path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL).ToList();
-        } else {
-            path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.COMBAT).ToList();
-        }
-        if (path == null) {
-			return null;
+		if(role == ROLE.REBEL){
+			GENDER gender = GENDER.MALE;
+			int randomGender = UnityEngine.Random.Range (0, 100);
+			if(randomGender < 20){
+				gender = GENDER.FEMALE;
+			}
+			int maxGeneration = this.citizens.Max (x => x.generation);
+			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
+			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
+			citizen.AssignRole (role);
+			this.citizens.Remove (citizen);
+			return citizen;
+		}else{
+			List<HexTile> path = null;
+			if (role == ROLE.TRADER) {
+				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL).ToList();
+			} else {
+				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.COMBAT).ToList();
+			}
+			if (path == null) {
+				return null;
+			}
+			if(!Utilities.CanReachInTime(eventType, path, duration)){
+				return null;
+			}
+			GENDER gender = GENDER.MALE;
+			int randomGender = UnityEngine.Random.Range (0, 100);
+			if(randomGender < 20){
+				gender = GENDER.FEMALE;
+			}
+			int maxGeneration = this.citizens.Max (x => x.generation);
+			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
+			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
+			citizen.AssignRole (role);
+			citizen.assignedRole.targetLocation = targetLocation;
+			citizen.assignedRole.targetCity = targetLocation.city;
+			citizen.assignedRole.path = path;
+			citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+			this._kingdom.AdjustGold (-cost);
+			this.citizens.Remove (citizen);
+			return citizen;
 		}
-		if(!Utilities.CanReachInTime(eventType, path, duration)){
-			return null;
-		}
-		GENDER gender = GENDER.MALE;
-		int randomGender = UnityEngine.Random.Range (0, 100);
-		if(randomGender < 20){
-			gender = GENDER.FEMALE;
-		}
-		int maxGeneration = this.citizens.Max (x => x.generation);
-		Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
-		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-		citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
-		citizen.AssignRole (role);
-		citizen.assignedRole.targetLocation = targetLocation;
-		citizen.assignedRole.targetCity = targetLocation.city;
-		citizen.assignedRole.path = path;
-		citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
-		this._kingdom.AdjustGold (-cost);
-		this.citizens.Remove (citizen);
-
-		return citizen;
 	}
 
     internal void ChangeKingdom(Kingdom kingdom) {
