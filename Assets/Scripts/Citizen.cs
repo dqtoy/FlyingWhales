@@ -939,9 +939,9 @@ public class Citizen {
 //		}
 
 		//For Supporting Citizens
-		List<Citizen> supportingCitizens = this.GetCitizensSupportingThisCitizen();
-		prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count () * 20);
-		prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
+		//List<Citizen> supportingCitizens = this.GetCitizensSupportingThisCitizen();
+		//prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count () * 20);
+		//prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
 
 		//Add prestige for successors
 		this.prestige = prestige;

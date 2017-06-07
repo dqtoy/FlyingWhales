@@ -156,27 +156,30 @@ public class Kingdom{
 			this.rareResource = BASE_RESOURCE_TYPE.COBALT;
 		}
 
-		for (int i = 0; i < cities.Count; i++) {
-			this.CreateNewCityOnTileForKingdom(cities[i]);
-		}
+        if(cities.Count > 0) {
+            for (int i = 0; i < cities.Count; i++) {
+                this.CreateNewCityOnTileForKingdom(cities[i]);
+            }
+        }
+		
 		if(this._cities.Count > 0 && this._cities[0] != null){
 			this.capitalCity = this._cities [0];
-		}
-		// For the kingdom's first city, setup its distance towards other habitable tiles.
-		HexTile habitableTile;
-		if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {			
-			for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {	
-				habitableTile = CityGenerator.Instance.stoneHabitableTiles [i];
-				this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles (this.cities[0].hexTile , habitableTile));
-			}
 
-		} else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
-			for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {	
-				habitableTile = CityGenerator.Instance.woodHabitableTiles [i];
-				this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles (this.cities[0].hexTile , habitableTile));
-			}
-
-		}
+            // For the kingdom's first city, setup its distance towards other habitable tiles.
+            HexTile habitableTile;
+            if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
+                for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
+                    habitableTile = CityGenerator.Instance.stoneHabitableTiles[i];
+                    this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+                }
+            } else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+                for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {
+                    habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
+                    this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+                }
+            }
+        }
+		
 //		Debug.Log ("Kingdom: " + this.name + " : " + this.cities [0].habitableTileDistance.Count);
 		//this.cities [0].OrderHabitableTileDistanceList ();
 
@@ -563,8 +566,46 @@ public class Kingdom{
 
 	internal void AddCityToKingdom(City city){
 		this._cities.Add (city);
-		this.UpdateKingdomTypeData();
-	}
+        //city.hexTile.ownedByCity = city;
+        //city.hexTile.isOccupied = true;
+        //city.hexTile.isOccupiedByCityID = city.id;
+        //city.hexTile.SetTileHighlightColor(this.kingdomColor);
+
+        this.UpdateKingdomTypeData();
+        this.UpdateAvailableResources();
+        this.UpdateAllCitiesDailyGrowth();
+        if (this._cities.Count == 1 && this._cities[0] != null) {
+            this.capitalCity = this._cities[0];
+
+            HexTile habitableTile;
+            if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
+                for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
+                    habitableTile = CityGenerator.Instance.stoneHabitableTiles[i];
+                    this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+                }
+
+            } else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+                for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {
+                    habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
+                    this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+                }
+
+            }
+        }
+    }
+
+    internal void RemoveCityFromKingdom(City city) {
+        this._cities.Remove(city);
+        //city.hexTile.ResetTile();
+        //city.ChangeKingdom(null);
+        this.UpdateKingdomTypeData();
+        this.UpdateAvailableResources();
+        this.UpdateAllCitiesDailyGrowth();
+        this.CheckIfKingdomIsDead();
+        if (this._cities.Count > 0 && this._cities[0] != null) {
+            this.capitalCity = this._cities[0];
+        }
+    }
 
 	/*
 	 * Get a list of all the citizens in this kingdom.
