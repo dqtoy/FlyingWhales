@@ -1366,4 +1366,22 @@ public class Kingdom{
         this._unrest += amountToAdjust;
         this._unrest = Mathf.Clamp(this._unrest, 0, 100);
     }
+	internal void UnrestEvents(){
+		this._unrest = 0;
+		Citizen chosenGovernor = null;
+		List<Citizen> ambitiousGovernors = this.cities.Select (x => x.governor).Where (x => x != null && x.hasTrait (TRAIT.AMBITIOUS) && ((Governor)x.assignedRole).loyalty < 0).ToList ();
+		if(ambitiousGovernors != null && ambitiousGovernors.Count > 0){
+			chosenGovernor = ambitiousGovernors [UnityEngine.Random.Range (0, ambitiousGovernors.Count)];
+		}
+		if(chosenGovernor != null){
+			//Secession Event
+		}else{
+			int chance = UnityEngine.Random.Range (0, 2);
+			if(chance == 0){
+				//Riot Event
+			}else{
+				//Rebellion Event
+			}
+		}
+	}
 }

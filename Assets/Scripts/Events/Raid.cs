@@ -50,6 +50,8 @@ public class Raid : GameEvent {
 		this.EventIsCreated ();
 
 	}
+
+	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
         //Add logs: start_raiding
         base.DoneCitizenAction(citizen);
@@ -88,6 +90,7 @@ public class Raid : GameEvent {
 		this.startedBy.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent ();
 	}
+
 	internal override void DoneEvent(){
         base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
@@ -110,6 +113,16 @@ public class Raid : GameEvent {
 
 //		this.raider.DestroyGO ();
 	}
+
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+		this.isSuccessful = false;
+		this.hasBeenDiscovered = false;
+		this.hasDeath = false;
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_fail");
+		this.DoneEvent ();
+	}
+	#endregion
 	private List<Kingdom> GetOtherKingdoms(){
 		if(this.raidedCity == null){
 			return null;
@@ -358,9 +371,5 @@ public class Raid : GameEvent {
 			}
 		}
 		return relationship;
-	}
-
-	internal override void CancelEvent (){
-       
 	}
 }

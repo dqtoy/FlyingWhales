@@ -31,6 +31,7 @@ public class Trade : GameEvent {
         EventManager.Instance.AddEventToDictionary(this);
     }
 
+	#region Overrides
     internal override void PerformAction() {
 
     }
@@ -47,9 +48,13 @@ public class Trade : GameEvent {
 
     internal override void DoneEvent() {
         base.DoneEvent();
-        this._trader.assignedRole.DestroyGO();
+//        this._trader.assignedRole.DestroyGO();
     }
-    
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+		this.DoneEvent ();
+	}
+    #endregion
     internal void KillTrader() {
         this._trader.Death(DEATH_REASONS.BATTLE);
     }

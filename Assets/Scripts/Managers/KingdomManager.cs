@@ -118,7 +118,7 @@ public class KingdomManager : MonoBehaviour {
 			this.allKingdoms [i].king.CreateInitialRelationshipsToKings ();
 		}
 	}
-	public void GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false){
+	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false){
 		Kingdom newKingdom = new Kingdom (race, cities);
 		allKingdoms.Add(newKingdom);
 		EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
@@ -133,6 +133,7 @@ public class KingdomManager : MonoBehaviour {
 		}
 
 		this.UpdateKingdomAdjacency();
+		return newKingdom;
 	}
 
 	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2, War war){

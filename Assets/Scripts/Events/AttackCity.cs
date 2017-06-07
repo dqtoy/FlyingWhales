@@ -28,6 +28,8 @@ public class AttackCity : GameEvent {
 		//		this.EventIsCreated ();
 
 	}
+
+	#region Overrides
 	internal override void DoneCitizenAction (Citizen citizen) {
         base.DoneCitizenAction(citizen);
 		if(this.general != null){
@@ -48,8 +50,9 @@ public class AttackCity : GameEvent {
 		base.DoneEvent ();
 //		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 	}
-
-	private void CheckTargetCity(){
-		
+	internal override void CancelEvent (){
+		base.CancelEvent ();
+		this.DoneEvent ();
 	}
+	#endregion
 }

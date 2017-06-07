@@ -70,6 +70,9 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.ATTACK_CITY, -1},
 		{EVENT_TYPES.SABOTAGE, -1},
 		{EVENT_TYPES.REINFORCEMENT, -1},
+		{EVENT_TYPES.SECESSION, 60},
+		{EVENT_TYPES.RIOT, -1},
+		{EVENT_TYPES.REBELLION, -1},
     };
 
 	void Awake(){

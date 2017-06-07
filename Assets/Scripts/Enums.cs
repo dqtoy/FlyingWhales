@@ -196,6 +196,9 @@ public enum EVENT_TYPES{
 	ATTACK_CITY, // general
 	SABOTAGE, //envoy
 	REINFORCEMENT, //general
+	SECESSION, //governor
+	RIOT, //no agent
+	REBELLION, //general
 }
 public enum EVENT_STATUS{
 	EXPOSED,
