@@ -135,22 +135,27 @@ public class CityTaskManager : MonoBehaviour {
 
 		HexTile tileToBuy = null;
 		if (this.pathToTargetHexTile != null && this.pathToTargetHexTile.Count > 0) {
-			int tileToBuyIndex = 0;
+			//int tileToBuyIndex = 0;
 			for (int i = 0; i < this.pathToTargetHexTile.Count; i++) {
-				HexTile currentHexTile = this.pathToTargetHexTile [i];
-				if (currentHexTile.isOccupied) {
-					if (!this.city.ownedTiles.Contains (currentHexTile)) {
-//						Debug.Log (this.city.name + " of " + this.city.kingdom.name + ": Path to target tile has tile already owned by another city. Choose another target tile.");
-						break;
-					}
-				} else {
-					if (!currentHexTile.isHabitable) {
-						tileToBuy = currentHexTile;
-						tileToBuyIndex = i;
-						break;
-					}
-				}
-			}
+                HexTile currentHexTile = this.pathToTargetHexTile[i];
+                if (!currentHexTile.isOccupied) {
+                    tileToBuy = currentHexTile;
+                    break;
+                }
+                //				HexTile currentHexTile = this.pathToTargetHexTile [i];
+                //				if (currentHexTile.isOccupied) {
+                //					if (!this.city.ownedTiles.Contains (currentHexTile)) {
+                ////						Debug.Log (this.city.name + " of " + this.city.kingdom.name + ": Path to target tile has tile already owned by another city. Choose another target tile.");
+                //						break;
+                //					}
+                //				} else {
+                //					if (!currentHexTile.isHabitable) {
+                //						tileToBuy = currentHexTile;
+                //						tileToBuyIndex = i;
+                //						break;
+                //					}
+                //				}
+            }
 			if (tileToBuy == null) {
 				this.targetHexTileToPurchase = null;
 				this.pathToTargetHexTile.Clear ();
@@ -159,7 +164,7 @@ public class CityTaskManager : MonoBehaviour {
 			}
 			this.city.PurchaseTile (tileToBuy);
 			this.city.kingdom.AdjustResources (this.GetActionCost ("EXPANSION"));
-			this.pathToTargetHexTile.RemoveRange (0, tileToBuyIndex + 1);
+			//this.pathToTargetHexTile.RemoveRange (0, tileToBuyIndex + 1);
 		} else {
 			tileToBuy = this.targetHexTileToPurchase;
 			this.city.PurchaseTile (tileToBuy);
