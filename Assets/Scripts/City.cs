@@ -955,6 +955,7 @@ public class City{
 		KingdomManager.Instance.UpdateKingdomAdjacency();
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 //			KingdomManager.Instance.allKingdoms [i].intlWarCities.Remove (this);
+//			KingdomManager.Instance.allKingdoms [i].activeCitiesToAttack.Remove (this);
 			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id);
 			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
 		}
