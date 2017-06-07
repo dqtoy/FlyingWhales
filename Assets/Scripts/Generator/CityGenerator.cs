@@ -23,10 +23,11 @@ public class CityGenerator : MonoBehaviour {
 	public Sprite elfMinistry;
 	public Sprite elfKeep;
 
-    public GameObject[] structures;
-    public GameObject[] cityStructurePrefabs;
+    public GameObject[] genericStructures;
+    public GameObject[] cityStructures;
+    public GameObject[] mineStructures;
 
-	public TextAsset cityBehaviourTree;
+    public TextAsset cityBehaviourTree;
 
 	void Awake(){
 		Instance = this;
