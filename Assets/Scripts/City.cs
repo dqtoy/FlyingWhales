@@ -860,13 +860,12 @@ public class City{
 		if(this.isDead){
 			return;
 		}
-		Citizen newGovernor = GetCitizenWithHighestPrestige ();
+		Citizen newGovernor = GetGovernorSuccession ();
 		if (newGovernor != null) {
 			/*if(newGovernor.assignedRole != null && newGovernor.role == ROLE.GENERAL){
 				newGovernor.DetachGeneralFromCitizen();
 			}*/
 			this.governor.isGovernor = false;
-			newGovernor.role = ROLE.GOVERNOR;
 			newGovernor.assignedRole = null;
 			newGovernor.AssignRole(ROLE.GOVERNOR);
 			newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
@@ -888,8 +887,31 @@ public class City{
 			return prestigeCitizens [UnityEngine.Random.Range (0, prestigeCitizens.Count)];
 		}
 		return null;
+	}
 
+	internal Citizen GetGovernorSuccession(){
+		List<Citizen> succession = new List<Citizen> ();
+		for(int i = 0; i < this.governor.children.Count; i++){
+			if(!this.governor.children[i].isGovernor){
+				return this.governor.children [i];
+			}
+		}
+		List<Citizen> siblings = this.governor.GetSiblings ();
+		if(siblings != null && siblings.Count > 0){
+			return siblings [0];
+		}
+			
+		GENDER gender = GENDER.MALE;
+		int randomGender = UnityEngine.Random.Range (0, 100);
+		if(randomGender < 20){
+			gender = GENDER.FEMALE;
+		}
+		Citizen governor = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
 
+		MONTH monthGovernor = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		governor.AssignBirthday (monthGovernor, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthGovernor] + 1), (GameManager.Instance.year - governor.age));
+
+		return governor;
 	}
 	internal void KillCity(){
 		this.incomingGenerals.Clear ();
@@ -973,7 +995,7 @@ public class City{
 		return false;
 	}
 
-	internal void MoveCitizenToThisCity(Citizen citizenToMove, bool isFleeing){
+	internal void MoveCitizenToThisCity(Citizen citizenToMove, bool isFleeing = false){
 		citizenToMove.city.RemoveCitizenFromCity(citizenToMove, isFleeing);
 		this.AddCitizenToCity(citizenToMove);
 	}

@@ -12,7 +12,7 @@ public class Riot : GameEvent {
 		this.remainingDays = this.durationInDays;
 		this.sourceKingdom = startedBy.city.kingdom;
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
-
+		Debug.LogError (startedBy.name + " has started a riot in " + this.sourceKingdom.name);
 		//		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
 		//		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name);
 		//		newLogTitle.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
@@ -75,5 +75,6 @@ public class Riot : GameEvent {
 
 	private void DestroyStructure(City city){
 		//Destroy a structure
+		city.RemoveTileFromCity(city.structures[city.structures.Count - 1]);
 	}
 }

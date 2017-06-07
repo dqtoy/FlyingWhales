@@ -25,6 +25,7 @@ public class Secession : GameEvent {
 
 		this.joiningCities.Add (startedBy.city);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Debug.LogError (startedBy.name + " wants to split from " + this.sourceKingdom.name + " because his/her loyalty is " + this.governor.loyalty);
 
 		//		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
 		//		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name);
@@ -112,7 +113,7 @@ public class Secession : GameEvent {
 			List<City> cityCandidates = this.sourceKingdom.cities.Where(x => !this.joiningCities.Contains(x)).ToList();
 			if(cityCandidates != null && cityCandidates.Count > 0){
 				City newCityForRoyalties = cityCandidates [0];
-				for (int i = 0; i < this.sourceKingdom.king.city.citizens; i++) {
+				for (int i = 0; i < this.sourceKingdom.king.city.citizens.Count; i++) {
 					if(this.sourceKingdom.king.city.citizens[i].isDirectDescendant && !this.sourceKingdom.king.city.citizens[i].isGovernor){
 						newCityForRoyalties.MoveCitizenToThisCity (this.sourceKingdom.king.city.citizens [i], true);
 					}
@@ -120,10 +121,11 @@ public class Secession : GameEvent {
 						newCityForRoyalties.MoveCitizenToThisCity (this.sourceKingdom.king.spouse, true);
 					}
 				}
+				this.sourceKingdom.capitalCity = newCityForRoyalties;
 				newCityForRoyalties.hasKing = true;
 
 			}else{
-				int countCitizens = this.sourceKingdom.king.city.citizens;
+				int countCitizens = this.sourceKingdom.king.city.citizens.Count;
 				for (int i = 0; i < countCitizens; i++) {
 					if(this.sourceKingdom.king.city.citizens[i].isDirectDescendant && !this.sourceKingdom.king.city.citizens[i].isGovernor){
 						this.sourceKingdom.king.city.citizens[i].Death (DEATH_REASONS.REBELLION, false, null, true);
@@ -132,9 +134,13 @@ public class Secession : GameEvent {
 				if(this.sourceKingdom.king.isMarried){
 					this.sourceKingdom.king.spouse.Death (DEATH_REASONS.REBELLION, false, null, true);
 				}
+				this.sourceKingdom.capitalCity = null;
 			}
 		}
 
-
+		Kingdom newKingdom = KingdomManager.Instance.SplitKingdom (this.sourceKingdom, this.joiningCities);
+		if(newKingdom != null){
+			newKingdom.AssignNewKing (this.governor.citizen);
+		}
 	}
 }
