@@ -17,6 +17,7 @@ public class Kingdom{
     //Resources
     private int _goldCount;
     private int _maxGold = 5000;
+    private int _basicResourceCount;
     private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
 
     //Trading
@@ -112,6 +113,9 @@ public class Kingdom{
     public int unrest {
         get { return this._unrest; }
 		set { this._unrest = value;}
+    }
+    public int basicResourceCount {
+        get { return this._basicResourceCount; }
     }
 	#endregion
 	// Kingdom constructor paramters
@@ -538,6 +542,7 @@ public class Kingdom{
             this.RemoveTradeRoute(tradeRouteToRemove);
         }
         this.UpdateAllCitiesDailyGrowth();
+        this.UpdateBasicResourceCount();
     }
 
     internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
@@ -1329,8 +1334,9 @@ public class Kingdom{
 			this._availableResources.Add(resource, 0);
             this.RemoveObsoleteTradeRoutes(resource);
             this.UpdateAllCitiesDailyGrowth();
+            this.UpdateBasicResourceCount();
         }
-		this._availableResources[resource] += 1;
+		this._availableResources[resource] += 1;  
 	}
 
     internal void UpdateAllCitiesDailyGrowth() {
@@ -1474,6 +1480,24 @@ public class Kingdom{
                 if (currHexTile.specialResource != RESOURCE.NONE) {
                     this.AddResourceToKingdom(currHexTile.specialResource);
                 }
+            }
+        }
+    }
+
+    internal void UpdateBasicResourceCount() {
+        this._basicResourceCount = 0;
+        for (int i = 0; i < this._availableResources.Keys.Count; i++) {
+            RESOURCE currResource = this._availableResources.Keys.ElementAt(i);
+            if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
+                this._basicResourceCount += 1;
+            }
+        }
+
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.targetKingdom.id == this.id && 
+                Utilities.GetBaseResourceType(currTradeRoute.resourceBeingTraded) == this.basicResource) {
+                this._basicResourceCount += 1;
             }
         }
     }
