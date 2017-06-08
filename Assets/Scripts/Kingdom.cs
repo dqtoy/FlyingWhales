@@ -1002,11 +1002,18 @@ public class Kingdom{
 			//Adjust unrest because a city of this kingdom was conquered.
 			this.AdjustUnrest(UNREST_INCREASE_CONQUER);
 		}else{
-			if(city.rebellion != null){
-				city.ChangeToCity ();
+			if(city is RebelFort){
+				city.rebellion.conqueredCities.Remove (city);
+				HexTile hex = city.hexTile;
+				city.KillCity();
 			}else{
-				city.ChangeToRebelFort (attacker.citizen.city.rebellion);
+				if(city.rebellion != null){
+					city.ChangeToCity ();
+				}else{
+					city.ChangeToRebelFort (attacker.citizen.city.rebellion);
+				}
 			}
+
 		}
 
 	}

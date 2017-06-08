@@ -174,12 +174,12 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
-	internal Rebellion CreateRiotEvent(Kingdom sourceKingdom){
-		Citizen rebel = sourceKingdom.capitalCity.CreateAgent(ROLE.REBEL, EVENT_TYPES.RIOT, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.RIOT]);
+	internal Rebellion CreateRebellionEvent(Kingdom sourceKingdom){
+		Citizen rebel = sourceKingdom.capitalCity.CreateAgent(ROLE.REBEL, EVENT_TYPES.REBELLION, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REBELLION]);
 		if(rebel != null){
-			Riot riot = new Riot(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, rebel);
-			rebel.assignedRole.Initialize (riot);
-			return riot;
+			Rebellion rebellion = new Rebellion(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, rebel);
+			rebel.assignedRole.Initialize (rebellion);
+			return rebellion;
 		}
 		return null;
 	}

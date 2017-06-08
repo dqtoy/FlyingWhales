@@ -923,6 +923,11 @@ public class City{
 	internal void KillCity(){
 		this.incomingGenerals.Clear ();
 		this.isUnderAttack = false;
+		if (this.rebellion != null) {
+			if (this.rebellion.rebelLeader.citizen.city.id == this.id) {
+				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
+			}
+		}
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
 			currentTile.ResetTile();
@@ -1133,12 +1138,12 @@ public class City{
 			EventCreator.Instance.CreateAttackCityEvent (this, targetCity);
 		}
 	}
-	internal void AttackCampEvent(Camp targetCamp){
-		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
-			EventCreator.Instance.CreateAttackCampEvent (this, targetCamp, false);
-		}
-	}
+//	internal void AttackCampEvent(Camp targetCamp){
+//		int chance = UnityEngine.Random.Range (0, 100);
+//		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
+//			EventCreator.Instance.CreateAttackCampEvent (this, targetCamp, false);
+//		}
+//	}
 	internal void KillAllCitizens(){
 		int countCitizens = this.citizens.Count;
 		for (int i = 0; i < countCitizens; i++) {
@@ -1178,6 +1183,9 @@ public class City{
 		KillAllCitizens ();
 		TransferRebellionToCity ();
 		this.AssignNewGovernor ();
+		if(this.rebellion.rebelLeader.citizen.city.id == this.id){
+			this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
+		}
 		this.rebellion = null;
 	}
 

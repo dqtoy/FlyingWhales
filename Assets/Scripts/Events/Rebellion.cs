@@ -57,7 +57,10 @@ public class Rebellion : GameEvent {
 	private void CreateRebelFort(){
 		HexTile hexTile = GetRandomBordreTileForFort ();
 		this.rebelFort = new RebelFort (hexTile, this.targetKingdom, this);
-		this.conqueredCities.Add (this.rebelFort);
+//		this.rebelLeader.citizen.city.citizens.Remove (this.rebelLeader.citizen);
+//		this.rebelFort.citizens.Add (this.rebelLeader.citizen);
+		this.rebelLeader.citizen.city = this.rebelFort;
+//		this.conqueredCities.Add (this.rebelFort);
 	}
 	private HexTile GetRandomBordreTileForFort(){
 		return this.rebelLeader.citizen.city.borderTiles [UnityEngine.Random.Range (0, this.rebelLeader.citizen.city.borderTiles.Count)];
