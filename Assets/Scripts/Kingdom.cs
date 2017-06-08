@@ -26,7 +26,7 @@ public class Kingdom{
     private int _unrest;
 
 	private List<City> _cities;
-	private List<Camp> _camps;
+	private List<Camp> camps;
 	internal City capitalCity;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
@@ -37,6 +37,7 @@ public class Kingdom{
 	public List<City> activeCitiesToAttack;
 	public List<CityWarPair> activeCitiesPairInWar;
 	internal List<City> holderIntlWarCities;
+	internal List<Rebellion> rebellions;
 
 	internal BASE_RESOURCE_TYPE basicResource;
 	internal BASE_RESOURCE_TYPE rareResource;
@@ -103,9 +104,10 @@ public class Kingdom{
 	}
 	public List<City> cities{
 		get{ return this._cities; }
-	}public List<Camp> camps{
-		get{ return this._camps; }
 	}
+//	public List<Camp> camps{
+//		get{ return this._camps; }
+//	}
 
     public int unrest {
         get { return this._unrest; }
@@ -128,7 +130,7 @@ public class Kingdom{
 		this.activeCitiesPairInWar = new List<CityWarPair>();
 		this.holderIntlWarCities = new List<City>();
 		this._cities = new List<City> ();
-		this._camps = new List<Camp> ();
+		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
 		this.adjacentCitiesFromOtherKingdoms = new List<City>();
@@ -143,6 +145,7 @@ public class Kingdom{
 		this._sourceKingdom = sourceKingdom;
 		this.hasConflicted = false;
 		this.borderConflictLoyaltyExpiration = 0;
+		this.rebellions = new List<Rebellion> ();
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
@@ -374,15 +377,12 @@ public class Kingdom{
 	 * This will only happen if there's a war with any other kingdom
 	 * */
 	private void AttemptToCreateAttackCityEvent(){
-		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < this.kingdomTypeData.warGeneralCreationRate){
-			if (this.activeCitiesPairInWar.Count > 0) {
-				CityWarPair warPair = this.activeCitiesPairInWar [0];
-				if (warPair.sourceCity == null || warPair.targetCity == null) {
-					return null;
-				}
-				EventCreator.Instance.CreateAttackCityEvent (this, warPair.sourceCity, warPair.targetCity);
+		if (this.activeCitiesPairInWar.Count > 0) {
+			CityWarPair warPair = this.activeCitiesPairInWar [0];
+			if (warPair.sourceCity == null || warPair.targetCity == null) {
+				return;
 			}
+			warPair.sourceCity.AttackCityEvent (warPair.targetCity);
 		}
 	}
 
@@ -984,22 +984,31 @@ public class Kingdom{
 		return null;
 	}
 
-	internal IEnumerator ConquerCity(City city){
-		HexTile hex = city.hexTile;
-//		city.kingdom.cities.Remove(city);
-		city.KillCity();
-		yield return null;
-		City newCity = CreateNewCityOnTileForKingdom(hex);
-		newCity.hp = 100;
-		newCity.CreateInitialFamilies(false);
-		KingdomManager.Instance.UpdateKingdomAdjacency();
-		this.AddInternationalWarCity (newCity);
-		if (UIManager.Instance.currentlyShowingKingdom.id == newCity.kingdom.id) {
-			newCity.kingdom.HighlightAllOwnedTilesInKingdom();
+	internal IEnumerator ConquerCity(City city, General attacker){
+		if (this.id != city.kingdom.id){
+			HexTile hex = city.hexTile;
+			//		city.kingdom.cities.Remove(city);
+			city.KillCity();
+			yield return null;
+			City newCity = CreateNewCityOnTileForKingdom(hex);
+			newCity.hp = 100;
+			newCity.CreateInitialFamilies(false);
+			KingdomManager.Instance.UpdateKingdomAdjacency();
+			this.AddInternationalWarCity (newCity);
+			if (UIManager.Instance.currentlyShowingKingdom.id == newCity.kingdom.id) {
+				newCity.kingdom.HighlightAllOwnedTilesInKingdom();
+			}
+			KingdomManager.Instance.CheckWarTriggerMisc (newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+			//Adjust unrest because a city of this kingdom was conquered.
+			this.AdjustUnrest(UNREST_INCREASE_CONQUER);
+		}else{
+			if(city.rebellion != null){
+				city.ChangeToCity ();
+			}else{
+				city.ChangeToRebelFort (attacker.citizen.city.rebellion);
+			}
 		}
-		KingdomManager.Instance.CheckWarTriggerMisc (newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
-        //Adjust unrest because a city of this kingdom was conquered.
-        this.AdjustUnrest(UNREST_INCREASE_CONQUER);
+
 	}
 	internal void AddInternationalWarCity(City newCity){
 		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
@@ -1184,10 +1193,15 @@ public class Kingdom{
 		return nearestCity;
 	}
 	internal void TargetACityToAttack(){
-		if(this.intlWarCities.Count > 0 && this.activeCitiesPairInWar.Count <= 0){
+		List<City> allHostileCities = new List<City> ();
+		allHostileCities.AddRange (this.intlWarCities);
+		for(int i = 0; i < this.rebellions.Count; i++){
+			allHostileCities.AddRange (this.rebellions [i].conqueredCities);
+		}
+		if(allHostileCities.Count > 0 && this.activeCitiesPairInWar.Count <= 0){
 			City sourceCity = null;
 			City targetCity = null;
-			GetTargetCityAndSourceCityInWar (ref sourceCity, ref targetCity);
+			GetTargetCityAndSourceCityInWar (ref sourceCity, ref targetCity, allHostileCities);
 			if(sourceCity != null && targetCity != null){
 				this.activeCitiesPairInWar.Add (new CityWarPair (sourceCity, targetCity));
 				this.intlWarCities.Remove (targetCity);
@@ -1204,23 +1218,24 @@ public class Kingdom{
 //		}
 	}
 
-	private void GetTargetCityAndSourceCityInWar(ref City sourceCity, ref City targetCity){
+	private void GetTargetCityAndSourceCityInWar(ref City sourceCity, ref City targetCity, List<City> allHostileCities){
 		int nearestDistance = 0;
 		City source = null;
 		City target = null;
+
 		for (int i = 0; i < this.cities.Count; i++) {
-			for (int j = 0; j < this.intlWarCities.Count; j++) {
-				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, this.intlWarCities [j].hexTile, PATHFINDING_MODE.COMBAT).ToList();
+			for (int j = 0; j < allHostileCities.Count; j++) {
+				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, allHostileCities [j].hexTile, PATHFINDING_MODE.COMBAT).ToList();
 				if(path != null){
 					int distance = path.Count;
 					if(source == null && target == null){
 						source = this.cities [i];
-						target = this.intlWarCities [j];
+						target = allHostileCities [j];
 						nearestDistance = distance;
 					}else{
 						if(distance < nearestDistance){
 							source = this.cities [i];
-							target = this.intlWarCities [j];
+							target = allHostileCities [j];
 							nearestDistance = distance;
 						}
 					}
