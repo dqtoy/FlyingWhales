@@ -50,8 +50,11 @@ public class EventItem : MonoBehaviour {
 	private void HasExpired(){
 		this.isPaused = true;
 		UIManager.Instance.HideSmallInfo ();
+        UIGrid parentGrid = this.transform.parent.GetComponent<UIGrid>();
+        parentGrid.RemoveChild(this.transform);
 		Destroy (this.gameObject);
-	}
+        StartCoroutine(UIManager.Instance.RepositionGrid(parentGrid));
+    }
 	public IEnumerator StartExpiration(){
 		yield return new WaitForSeconds (10);
 		UIManager.Instance.HideSmallInfo ();
