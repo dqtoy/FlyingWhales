@@ -107,4 +107,12 @@ public class TweenPosition : UITweener
 
 	[ContextMenu("Assume value of 'To'")]
 	void SetCurrentValueToEnd () { value = to; }
+
+    [ContextMenu("Reverse Values")]
+    public void ReverseValues() {
+        Vector3 currentTo = to;
+        Vector3 currentFrom = from;
+        to = currentFrom;
+        from = currentTo;
+    }
 }
