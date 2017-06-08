@@ -583,4 +583,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         UIManager.Instance.HideSmallInfo();
     }
     #endregion
+
+	internal float GetDistanceTo(HexTile targetHextile){
+		return Vector3.Distance (this.transform.position, targetHextile.transform.position);
+	}
 }

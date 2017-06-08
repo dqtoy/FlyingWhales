@@ -27,6 +27,7 @@ public class Kingdom{
     private int _unrest;
 
 	private List<City> _cities;
+	private List<Camp> _camps;
 	internal City capitalCity;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
@@ -103,7 +104,10 @@ public class Kingdom{
 	}
 	public List<City> cities{
 		get{ return this._cities; }
+	}public List<Camp> camps{
+		get{ return this._camps; }
 	}
+
     public int unrest {
         get { return this._unrest; }
 		set { this._unrest = value;}
@@ -127,8 +131,8 @@ public class Kingdom{
 		this.activeCitiesToAttack = new List<City>();
 		this.activeCitiesPairInWar = new List<CityWarPair>();
 		this.holderIntlWarCities = new List<City>();
-		this._cities = new List<City>();
-
+		this._cities = new List<City> ();
+		this._camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
 		this.adjacentCitiesFromOtherKingdoms = new List<City>();
@@ -376,7 +380,13 @@ public class Kingdom{
 	private void AttemptToCreateAttackCityEvent(){
 		int chance = UnityEngine.Random.Range (0, 100);
 		if(chance < this.kingdomTypeData.warGeneralCreationRate){
-			EventCreator.Instance.CreateAttackCityEvent (this);
+			if (this.activeCitiesPairInWar.Count > 0) {
+				CityWarPair warPair = this.activeCitiesPairInWar [0];
+				if (warPair.sourceCity == null || warPair.targetCity == null) {
+					return null;
+				}
+				EventCreator.Instance.CreateAttackCityEvent (this, warPair.sourceCity, warPair.targetCity);
+			}
 		}
 	}
 
@@ -1188,9 +1198,17 @@ public class Kingdom{
 				this.intlWarCities.Remove (targetCity);
 				targetCity.isUnderAttack = true;
 			}
-//			this.activeCitiesToAttack.Add (this.intlWarCities [UnityEngine.Random.Range (0, this.intlWarCities.Count)]);
 		}
+//		if(this.intlWarCities.Count > 0 && this.activeCitiesToAttack.Count <= 0){
+//			int nearestDistance = 0f;
+//			City nearestSourceCity = null;
+//			City nearestTargetCity = null;
+//			for(int i = 0; i < this.intlWarCities.Count; i++){
+//				float min = this.cities.Min (x => x.hexTile.GetDistanceTo (this.intlWarCities [i].hexTile));
+//			}
+//		}
 	}
+
 	private void GetTargetCityAndSourceCityInWar(ref City sourceCity, ref City targetCity){
 		int nearestDistance = 0;
 		City source = null;
