@@ -1167,19 +1167,19 @@ public class UIManager : MonoBehaviour {
 	} */
 
 	public void ShowEventsOfType(GameEvent gameEvent){
-        GameObject eventGO = InstantiateUIObject(gameEventPrefab, gameEventsOfTypeGrid.transform);
-        eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
-        eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
-        eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
-        eventGO.GetComponent<EventItem>().StartExpirationTimer();
-        eventGO.transform.localScale = Vector3.one;
-        StartCoroutine(RepositionGrid(gameEventsOfTypeGrid));
+        //GameObject eventGO = InstantiateUIObject(gameEventPrefab, gameEventsOfTypeGrid.transform);
+        //eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
+        //eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
+        //eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
+        //eventGO.GetComponent<EventItem>().StartExpirationTimer();
+        //eventGO.transform.localScale = Vector3.one;
+        //StartCoroutine(RepositionGrid(gameEventsOfTypeGrid));
 
         KingdomFlagItem kingdomOwner = kingdomListOtherKingdomsGrid.GetChildList()
             .Where(x => x.GetComponent<KingdomFlagItem>().kingdom.id == gameEvent.startedByKingdom.id)
             .First().GetComponent<KingdomFlagItem>();
         if (kingdomOwner != null) {
-            eventGO = InstantiateUIObject(gameEventPrefab, this.transform);
+            GameObject eventGO = InstantiateUIObject(gameEventPrefab, this.transform);
             eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
             eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
             eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
@@ -2104,7 +2104,8 @@ public class UIManager : MonoBehaviour {
 	 * */
 	public void ShowKingdomEvents(){
 		HideKingdomHistory();
-		List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
+        HideKingdomCities();
+        List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
 		List<GameEvent> politicalEvents = allActiveEventsInKingdom.Where (x => x.eventType == EVENT_TYPES.STATE_VISIT || x.eventType == EVENT_TYPES.RAID ||
 			x.eventType == EVENT_TYPES.ASSASSINATION || x.eventType == EVENT_TYPES.DIPLOMATIC_CRISIS || x.eventType == EVENT_TYPES.BORDER_CONFLICT).ToList();
 		
@@ -2309,6 +2310,7 @@ public class UIManager : MonoBehaviour {
 	 * */
 	public void ShowKingdomHistory(){
 		HideAllKingdomEvents();
+        HideKingdomCities();
 		List<GameEvent> allDoneEvents = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).
 			Where(x => !x.isActive && (x.eventType == EVENT_TYPES.STATE_VISIT || x.eventType == EVENT_TYPES.RAID ||
 				x.eventType == EVENT_TYPES.ASSASSINATION || x.eventType == EVENT_TYPES.DIPLOMATIC_CRISIS || x.eventType == EVENT_TYPES.BORDER_CONFLICT ||
@@ -2367,6 +2369,8 @@ public class UIManager : MonoBehaviour {
      * Show all cities owned by currentlyShowingKingdom.
      * */
     public void ShowKingdomCities() {
+        HideKingdomHistory();
+        HideAllKingdomEvents();
         List<CityItem> cityItems = kingdomCitiesGrid.gameObject.GetComponentsInChildren<Transform>(true)
             .Where(x => x.GetComponent<CityItem>() != null)
             .Select(x => x.GetComponent<CityItem>()).ToList();
