@@ -140,20 +140,20 @@ public class EventCreator: MonoBehaviour {
     	return null;
 	}
 
-	internal Reinforcement CreateReinforcementEvent(Kingdom sourceKingdom){
-		City targetCity = sourceKingdom.GetReceiverCityForReinforcement ();
-		if(targetCity == null){
-			return null;
-		}
-		City sourceCity = sourceKingdom.GetSenderCityForReinforcement ();
-		if(sourceCity == null){
-			return null;
-		}
+	internal Reinforcement CreateReinforcementEvent(City sourceCity, City targetCity){
+//		City targetCity = sourceKingdom.GetReceiverCityForReinforcement ();
+//		if(targetCity == null){
+//			return null;
+//		}
+//		City sourceCity = sourceKingdom.GetSenderCityForReinforcement ();
+//		if(sourceCity == null){
+//			return null;
+//		}
 		Citizen reinforcer = sourceCity.CreateAgent(ROLE.REINFORCER, EVENT_TYPES.REINFORCEMENT, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REINFORCEMENT]);
 		if(reinforcer != null){
 			Reinforcer defender = (Reinforcer)reinforcer.assignedRole;
 			Reinforcement reinforcement = new Reinforcement(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				sourceKingdom.king, defender, targetCity, sourceCity);
+				reinforcer, defender, targetCity, sourceCity);
 			defender.Initialize(reinforcement);
 			return reinforcement;
 		}

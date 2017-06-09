@@ -125,7 +125,7 @@ public class Campaign {
 		Log newLogArrivalComplete = this.CreateNewLogForCampaign (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Campaign", "OffensiveCampaign", "rallypoint_complete");
 		newLogArrivalComplete.AddToFillers (this.targetCity, this.targetCity.name);
 
-		List<HexTile> path = PathGenerator.Instance.GetPath (this.rallyPoint, this.targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+		List<HexTile> path = PathGenerator.Instance.GetPath (this.rallyPoint, this.targetCity.hexTile, PATHFINDING_MODE.AVATAR);
 
 		if (path != null) {
 			for(int i = 0; i < this.registeredGenerals.Count; i++){

@@ -61,6 +61,7 @@ public enum PATHFINDING_MODE{
 	NORMAL,
 	COMBAT,
 	RESOURCE_PRODUCTION,
+	AVATAR,
 }
 
 public enum GENDER{

@@ -41,6 +41,7 @@ public class City{
 	private int _hp;
 //	public IsActive isActive;
 	public bool isUnderAttack;
+	public bool hasReinforced;
 	public bool isRaided;
 	public bool isStarving;
 	public bool isDead;
@@ -96,6 +97,7 @@ public class City{
 //		this.isActive = new IsActive (false);
 		this.hasKing = false;
 		this.isUnderAttack = false;
+		this.hasReinforced = false;
 		this.isRaided = false;
 		this.isStarving = false;
 		this.isDead = false;
@@ -545,6 +547,7 @@ public class City{
 	 * Function that listens to onWeekEnd. Performed every tick.
 	 * */
 	protected void CityEverydayTurnActions(){
+		this.hasReinforced = false;
 		this.ProduceGold();
 		this.AttemptToIncreaseHP();
 	}
@@ -552,6 +555,7 @@ public class City{
 	 * Function that listens to onWeekEnd. Performed every tick.
 	 * */
 	protected void RebelFortEverydayTurnActions(){
+		this.hasReinforced = false;
 		this.AttemptToIncreaseHP();
 	}
 
@@ -1054,6 +1058,9 @@ public class City{
 	}
 
 	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration){
+		if(role == ROLE.GENERAL){
+			return null;
+		}
 		int cost = 0;
 		if(eventType != EVENT_TYPES.SECESSION){
 			if(!this.kingdom.CanCreateAgent(role, ref cost)){
@@ -1078,7 +1085,7 @@ public class City{
 			if (role == ROLE.TRADER) {
 				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL).ToList();
 			} else {
-				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.COMBAT).ToList();
+				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.AVATAR).ToList();
 			}
 			if (path == null) {
 				return null;
@@ -1105,7 +1112,29 @@ public class City{
 			return citizen;
 		}
 	}
-
+	internal Citizen CreateGeneral(List<HexTile> path, HexTile targetLocation){
+		int cost = 0;
+		if(!this.kingdom.CanCreateAgent(ROLE.GENERAL, ref cost)){
+			return null;
+		}
+		GENDER gender = GENDER.MALE;
+		int randomGender = UnityEngine.Random.Range (0, 100);
+		if(randomGender < 20){
+			gender = GENDER.FEMALE;
+		}
+		int maxGeneration = this.citizens.Max (x => x.generation);
+		Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
+		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age));
+		citizen.AssignRole (ROLE.GENERAL);
+		citizen.assignedRole.targetLocation = targetLocation;
+		citizen.assignedRole.targetCity = targetLocation.city;
+		citizen.assignedRole.path = new List<HexTile>(path);
+		citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+		this._kingdom.AdjustGold (-cost);
+		this.citizens.Remove (citizen);
+		return citizen;
+	}
     internal void ChangeKingdom(Kingdom kingdom) {
         kingdom.AddCityToKingdom(this);
         this._kingdom = kingdom;
@@ -1139,12 +1168,15 @@ public class City{
 		this.raidLoyaltyExpiration = 0;
 		((Governor)this.governor.assignedRole).UpdateLoyalty ();
 	}
-	internal void AttackCityEvent(City targetCity){
+	internal void AttackCity(City targetCity){
 		EventCreator.Instance.CreateAttackCityEvent (this, targetCity);
 //		int chance = UnityEngine.Random.Range (0, 100);
 //		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
 //			
 //		}
+	}
+	internal void ReinforceCity(City targetCity){
+		EventCreator.Instance.CreateReinforcementEvent (this, targetCity);
 	}
 //	internal void AttackCampEvent(Camp targetCamp){
 //		int chance = UnityEngine.Random.Range (0, 100);
