@@ -53,9 +53,14 @@ public class Militarization : GameEvent {
 //			_invasionPlanThatTriggeredEvent.MilitarizationDone ();
 //		}
 	}
-	#endregion
 
-	internal void AddCitizenThatUncoveredEvent(Citizen citizen){
+    internal override void CancelEvent() {
+        base.CancelEvent();
+        this.DoneEvent();
+    }
+    #endregion
+
+    internal void AddCitizenThatUncoveredEvent(Citizen citizen){
 		this._uncovered.Add(citizen);
 	}
 }

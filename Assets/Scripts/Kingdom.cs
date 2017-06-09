@@ -297,7 +297,8 @@ public class Kingdom{
 	 * */
 	internal void DestroyKingdom(){
 		this._isDead = true;
-		this.RemoveRelationshipsWithOtherKingdoms();
+        this.CancelEventKingdomIsInvolvedIn(EVENT_TYPES.KINGDOM_WAR);
+        this.RemoveRelationshipsWithOtherKingdoms();
         KingdomManager.Instance.allKingdoms.Remove(this);
         EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
         EventManager.Instance.onWeekEnd.RemoveListener(KingdomTickActions);
@@ -305,6 +306,15 @@ public class Kingdom{
 
         EventManager.Instance.onKingdomDiedEvent.Invoke(this);
 	}
+
+    private void CancelEventKingdomIsInvolvedIn(EVENT_TYPES eventType) {
+        if (eventType == EVENT_TYPES.KINGDOM_WAR) {
+            List<GameEvent> wars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR });
+            for (int i = 0; i < wars.Count; i++) {
+                wars[i].CancelEvent();
+            }
+        }
+    }
 		
 	protected void CreateInitialRelationships() {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
