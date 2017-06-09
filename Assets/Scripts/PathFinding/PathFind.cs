@@ -55,6 +55,12 @@ namespace PathFind {
 						newPath = path.AddStep (n, d);
 						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
 					}
+                } else if (pathfindingMode == PATHFINDING_MODE.AVATAR) {
+                    foreach (Node n in path.LastStep.AvatarTiles) {
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
                 } else {
                     foreach (Node n in path.LastStep.ValidTiles) {
                         d = distance(path.LastStep, n);
