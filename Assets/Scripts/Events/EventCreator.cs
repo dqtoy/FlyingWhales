@@ -116,16 +116,6 @@ public class EventCreator: MonoBehaviour {
 		return null;
 	}
 
-	internal AttackCity CreateAttackCityEvent(Kingdom sourceKingdom, City sourceCity, City targetCity){
-		Citizen general = sourceCity.CreateAgent (ROLE.GENERAL, EVENT_TYPES.ATTACK_CITY, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.ATTACK_CITY]);
-		if(general != null){
-			General attacker = (General)general.assignedRole;
-			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				sourceKingdom.king, attacker, targetCity);
-			attacker.Initialize (attackCity);
-		}
-		return null;
-	}
 	internal AttackCity CreateAttackCityEvent(City sourceCity, City targetCity){
 		Citizen general = sourceCity.CreateAgent (ROLE.GENERAL, EVENT_TYPES.ATTACK_CITY, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.ATTACK_CITY]);
 		if(general != null){
@@ -133,10 +123,12 @@ public class EventCreator: MonoBehaviour {
 			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
 				general, attacker, targetCity);
 			attacker.Initialize (attackCity);
+//			if (isRebellion){
+//				attacker.isRebel = true;
+//			}
 		}
 		return null;
 	}
-	
 	internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
     	Citizen envoy = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
     	if (envoy != null) {
@@ -179,6 +171,15 @@ public class EventCreator: MonoBehaviour {
 			Riot riot = new Riot(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, rebel);
 			rebel.assignedRole.Initialize (riot);
 			return riot;
+		}
+		return null;
+	}
+	internal Rebellion CreateRebellionEvent(Kingdom sourceKingdom){
+		Citizen rebel = sourceKingdom.capitalCity.CreateAgent(ROLE.REBEL, EVENT_TYPES.REBELLION, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REBELLION]);
+		if(rebel != null){
+			Rebellion rebellion = new Rebellion(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, rebel);
+			rebel.assignedRole.Initialize (rebellion);
+			return rebellion;
 		}
 		return null;
 	}

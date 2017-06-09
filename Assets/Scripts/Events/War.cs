@@ -184,6 +184,7 @@ public class War : GameEvent {
     }
 	internal override void CancelEvent (){
 		base.CancelEvent ();
+        this.DeclarePeace();
 		this.DoneEvent ();
 	}
 	#endregion

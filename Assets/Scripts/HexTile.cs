@@ -373,7 +373,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
         GameObject[] structuresToChooseFrom = CityGenerator.Instance.genericStructures;
         if (this.specialResource != RESOURCE.NONE) {
-            structuresToChooseFrom = CityGenerator.Instance.mineStructures;
+            if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.FOOD) {
+                structuresToChooseFrom = CityGenerator.Instance.farmStructures;
+            } else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD) {
+                structuresToChooseFrom = CityGenerator.Instance.lumberyardStructures;
+            } else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE) {
+                structuresToChooseFrom = CityGenerator.Instance.quarryStructures;
+            } else {
+                structuresToChooseFrom = CityGenerator.Instance.mineStructures;
+            }
         }
 
         GameObject structureGO = GameObject.Instantiate(

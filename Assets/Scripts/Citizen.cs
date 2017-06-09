@@ -50,7 +50,8 @@ public class Citizen {
 	public bool isPretender;
 	public bool isHeir;
 	public bool isBusy;
-	public bool isGhost;
+//	public bool isGhost;
+	public bool isImmortal;
 	public bool isDead;
 	public DEATH_REASONS deathReason;
 	public string deathReasonText;
@@ -137,6 +138,7 @@ public class Citizen {
 		this.isPretender = false;
 		this.isHeir = false;
 		this.isBusy = false;
+		this.isImmortal = false;
 		this.isDead = false;
 		this.history = new List<History>();
 		this.supportExpirationWeek = 0;
@@ -304,6 +306,9 @@ public class Citizen {
 	}
 
 	internal void DeathReasons(){
+		if(this.isImmortal){
+			return;
+		}
 		if(isDead){
 			return;
 		}
@@ -1483,5 +1488,18 @@ public class Citizen {
 			return true;
 		}
 		return false;
+	}
+
+	internal void SetImmortality(bool state){
+		this.isImmortal = state;
+		if(this.assignedRole != null){
+			if(this.assignedRole.avatar != null){
+				if(this.assignedRole.avatar.GetComponent<Collider2D> () != null){
+					this.assignedRole.avatar.GetComponent<Collider2D> ().enabled = !state;
+				}else{
+					this.assignedRole.avatar.GetComponentInChildren<Collider2D> ().enabled = !state;
+				}
+			}
+		}
 	}
 }

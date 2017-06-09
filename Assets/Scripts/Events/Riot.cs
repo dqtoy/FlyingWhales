@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Riot : GameEvent {
 
@@ -68,8 +70,11 @@ public class Riot : GameEvent {
 	private void AttemptToDestroyStructure(){
 		int chance = UnityEngine.Random.Range(0, 100);
 		if(chance < 3){
-			City chosenCity = this.sourceKingdom.cities[UnityEngine.Random.Range(0, this.sourceKingdom.cities.Count)];
-			DestroyStructure (chosenCity);
+			List<City> candidates = this.sourceKingdom.cities.Where (x => x.structures.Count > 0).ToList ();
+			if(candidates != null && candidates.Count > 0){
+				City chosenCity = candidates[UnityEngine.Random.Range(0, candidates.Count)];
+				DestroyStructure (chosenCity);
+			}
 		}
 	}
 

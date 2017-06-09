@@ -26,6 +26,10 @@ public class CityGenerator : MonoBehaviour {
     public GameObject[] genericStructures;
     public GameObject[] cityStructures;
     public GameObject[] mineStructures;
+    public GameObject[] lumberyardStructures;
+    public GameObject[] quarryStructures;
+    public GameObject[] huntingLodgeStructures;
+    public GameObject[] farmStructures;
 
     public TextAsset cityBehaviourTree;
 
