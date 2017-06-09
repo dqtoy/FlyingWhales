@@ -131,11 +131,11 @@ public class City{
 			for (int i = 0; i < this.habitableTileDistance.Count; i++) {
 				if (this.habitableTileDistance [i].distance >= distance) {
 					this.habitableTileDistance.Insert (i, new HabitableTileDistance (hexTile, distance));
-					break;
+					return;
 				}
 			}
+			this.habitableTileDistance.Add (new HabitableTileDistance (hexTile, distance));
 		}
-		//this.habitableTileDistance.Add (new HabitableTileDistance (hexTile, distance));
 	}
 
 	/*
@@ -621,19 +621,19 @@ public class City{
 	}
 
 	internal void UpdateDailyProduction(){
-		this._maxGrowth = 100 + ((100 + (100 * this.structures.Count)) * this.structures.Count);
+		this._maxGrowth = 200 + ((300 + (350 * this.structures.Count)) * this.structures.Count);
 		this._dailyGrowthFromStructures = 10;
 		this._goldProduction = 20;
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
 			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
-				this._dailyGrowthFromStructures += 5;
+				this._dailyGrowthFromStructures += 3;
 				this._goldProduction += 2;
 			} else if (currentStructure.biomeType == BIOMES.WOODLAND) {
-				this._dailyGrowthFromStructures += 4;
+				this._dailyGrowthFromStructures += 3;
 				this._goldProduction += 3;
 			} else if (currentStructure.biomeType == BIOMES.FOREST) {
-				this._dailyGrowthFromStructures += 3;
+				this._dailyGrowthFromStructures += 2;
 				this._goldProduction += 3;
 			} else if (currentStructure.biomeType == BIOMES.DESERT) {
 				this._dailyGrowthFromStructures += 1;

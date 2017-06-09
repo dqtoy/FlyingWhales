@@ -1392,15 +1392,15 @@ public class Kingdom{
             //				this.lumberCount += 3;
             //			} else 
             if (currentResource == RESOURCE.CORN || currentResource == RESOURCE.DEER) {
-                dailyGrowthGained += 5;
+                dailyGrowthGained += 4;
             } else if (currentResource == RESOURCE.WHEAT || currentResource == RESOURCE.RICE ||
                 currentResource == RESOURCE.PIG || currentResource == RESOURCE.BEHEMOTH ||
                 currentResource == RESOURCE.COBALT) {
-                dailyGrowthGained += 10;
+                dailyGrowthGained += 8;
             } else if (currentResource == RESOURCE.MANA_STONE) {
-                dailyGrowthGained += 15;
+                dailyGrowthGained += 12;
             } else if (currentResource == RESOURCE.MITHRIL) {
-                dailyGrowthGained += 25;
+                dailyGrowthGained += 16;
             }
         }
         return dailyGrowthGained;
