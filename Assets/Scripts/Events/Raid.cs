@@ -151,8 +151,8 @@ public class Raid : GameEvent {
 			return;
 		}
 
-		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 25){
+		int chance = UnityEngine.Random.Range (0, 2);
+		if(chance == 0){
 			Steal ();
 		} else {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_fail");
