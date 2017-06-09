@@ -91,7 +91,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	internal void SetSortingOrder(int sortingOrder){
 		this.GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder + 1;
 		if (this.elevationType == ELEVATION.MOUNTAIN) {
-			this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 6;
+			this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 50;
 		} else {
 			this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 2;
 		}

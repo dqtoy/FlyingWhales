@@ -163,7 +163,7 @@ public class PathGenerator : MonoBehaviour {
 		}
 
         if(pathfindingMode == PATHFINDING_MODE.COMBAT) {
-            return path.ToList();
+            return path.Reverse().ToList();
         } else {
             if (path != null) {
                 List<HexTile> newPath = path.Reverse().ToList();
