@@ -40,7 +40,6 @@ public class City{
 	[Space(5)]
 	private int _hp;
 //	public IsActive isActive;
-	public bool isFort;
 	public bool isUnderAttack;
 	public bool isRaided;
 	public bool isStarving;
@@ -49,6 +48,7 @@ public class City{
 //	internal Dictionary<ROLE, int> citizenCreationTable;
 	internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
 	internal List<HexTile> borderTiles;
+	internal Rebellion rebellion;
 //	protected List<ROLE> creatableRoles;
 
 	protected const int HP_INCREASE = 5;
@@ -74,7 +74,7 @@ public class City{
 		get{ return this._hp; }
 		set{ this._hp = value; }
 	}
-	public int maxHP{
+	public virtual int maxHP{
 		get{ return 200 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
 	}
     public List<HexTile> ownedTiles {
@@ -110,11 +110,9 @@ public class City{
 		this.ownedTiles.Add(this.hexTile);
 		this.UpdateBorderTiles();
 //		this.CreateInitialFamilies();
+		this.ChangeToCity();
 
-		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
-		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
-
-		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));
+//		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));
 	}
 
 
@@ -550,7 +548,16 @@ public class City{
 		this.ProduceGold();
 		this.AttemptToIncreaseHP();
 	}
-		
+	/*
+	 * Function that listens to onWeekEnd. Performed every tick.
+	 * */
+	protected void RebelFortEverydayTurnActions(){
+		this.AttemptToIncreaseHP();
+	}
+
+	internal void AttemptToAttackCityForRebellion(){
+		AttackCityEvent (this.rebellion.targetCity);
+	}
 	/*
 	 * Increase a city's HP every month.
 	 * */
@@ -916,6 +923,11 @@ public class City{
 	internal void KillCity(){
 		this.incomingGenerals.Clear ();
 		this.isUnderAttack = false;
+		if (this.rebellion != null) {
+			if (this.rebellion.rebelLeader.citizen.city.id == this.id) {
+				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
+			}
+		}
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
 			currentTile.ResetTile();
@@ -940,7 +952,6 @@ public class City{
 			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
 		}
 		this._kingdom.RemoveCityFromKingdom(this);
-		this._kingdom.activeCitiesPairInWar.RemoveAll (x => x.sourceCity.id == this.id);
 
 		if(this.hasKing){
 			this.hasKing = false;
@@ -956,7 +967,7 @@ public class City{
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 //			KingdomManager.Instance.allKingdoms [i].intlWarCities.Remove (this);
 //			KingdomManager.Instance.allKingdoms [i].activeCitiesToAttack.Remove (this);
-			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id);
+			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id || x.sourceCity.id == this.id);
 			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
 		}
 	}
@@ -1076,7 +1087,7 @@ public class City{
 			int maxGeneration = this.citizens.Max (x => x.generation);
 			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
 			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
+			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age));
 			citizen.AssignRole (role);
 			citizen.assignedRole.targetLocation = targetLocation;
 			citizen.assignedRole.targetCity = targetLocation.city;
@@ -1121,4 +1132,61 @@ public class City{
 		this.raidLoyaltyExpiration = 0;
 		((Governor)this.governor.assignedRole).UpdateLoyalty ();
 	}
+	internal void AttackCityEvent(City targetCity){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
+			EventCreator.Instance.CreateAttackCityEvent (this, targetCity);
+		}
+	}
+//	internal void AttackCampEvent(Camp targetCamp){
+//		int chance = UnityEngine.Random.Range (0, 100);
+//		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
+//			EventCreator.Instance.CreateAttackCampEvent (this, targetCamp, false);
+//		}
+//	}
+	internal void KillAllCitizens(){
+		int countCitizens = this.citizens.Count;
+		for (int i = 0; i < countCitizens; i++) {
+			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
+		}
+
+	}
+	internal void TransferCityToRebellion(){
+		this._kingdom.RemoveCityFromKingdom(this);
+
+		if(this.hasKing){
+			this.hasKing = false;
+			if(this._kingdom.cities.Count > 0){
+				this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
+			}
+		}
+
+		this.rebellion.conqueredCities.Add (this);
+	}
+	internal void TransferRebellionToCity(){
+		this.rebellion.conqueredCities.Remove (this);
+		this._kingdom.AddCityToKingdom (this);
+	}
+	internal void ChangeToRebelFort(Rebellion rebellion){
+		this.rebellion = rebellion;
+		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
+		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
+		EventManager.Instance.onCityEverydayTurnActions.AddListener(RebelFortEverydayTurnActions);
+		KillAllCitizens ();
+		TransferCityToRebellion ();
+		this.AssignNewGovernor ();
+	}
+	internal void ChangeToCity(){
+		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(RebelFortEverydayTurnActions);
+		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
+		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
+		KillAllCitizens ();
+		TransferRebellionToCity ();
+		this.AssignNewGovernor ();
+		if(this.rebellion.rebelLeader.citizen.city.id == this.id){
+			this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
+		}
+		this.rebellion = null;
+	}
+
 }

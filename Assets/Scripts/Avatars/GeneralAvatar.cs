@@ -53,6 +53,14 @@ public class GeneralAvatar : MonoBehaviour {
 						this.collidedWithHostile = true;
 						this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
 					}
+				}else{
+					bool isRebel = ((General)other.gameObject.GetComponent<Avatar> ().citizen.assignedRole).isRebel;
+					if(isRebel && this.general.isRebel == !isRebel){
+						if (!other.gameObject.GetComponent<Avatar> ().citizen.isDead) {
+							this.collidedWithHostile = true;
+							this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
+						}
+					}
 				}
 			}
 		} else if(other.tag == "Trader"){

@@ -23,6 +23,7 @@ public class General : Role {
 	public int damage;
 	public AttackCity attackCity;
 	public bool markAsDead;
+	internal bool isRebel;
 	public General(Citizen citizen): base(citizen){
 //		this.location = citizen.city.hexTile;
 //		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
@@ -30,6 +31,7 @@ public class General : Role {
 		this.damage = UnityEngine.Random.Range(60,101);
 		this.markAsDead = false;
 		this.attackCity = null;
+		this.isRebel = false;
 //		this.daysBeforeArrival = 0;
 //		this.daysBeforeReleaseTask = 0;
 //		this.roads = new List<HexTile> ();

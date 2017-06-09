@@ -18,7 +18,7 @@ public class CombatManager : MonoBehaviour {
 		city.AdjustHP (-generalAttacker.damage);
 
 		if(city.hp <= 0){
-			ConquerCity (generalAttacker.citizen.city.kingdom, city);
+			ConquerCity (generalAttacker.citizen.city.kingdom, city, generalAttacker);
 		}
 		generalAttacker.markAsDead = true;
 		/*for(int i = 0; i < attackers.Count; i++){
@@ -175,8 +175,8 @@ public class CombatManager : MonoBehaviour {
 			friendlyGenerals.Remove (deadFriendlies [j]);
 		}
 	}*/
-	internal void ConquerCity(Kingdom conqueror, City city){
-		StartCoroutine(conqueror.ConquerCity(city));
+	internal void ConquerCity(Kingdom conqueror, City city, General attacker){
+		StartCoroutine(conqueror.ConquerCity(city, attacker));
 	}
 	internal void Battle(ref General general1, ref General general2, bool isMidway = false){
 		Debug.Log ("BATTLE: (" + general1.citizen.city.name + ") " + general1.citizen.name + " and (" + general2.citizen.city.name + ") " + general2.citizen.name);
