@@ -15,6 +15,7 @@ public class War : GameEvent {
 
 	private bool _isAtWar;
 	private int attackRate;
+	private bool kingdom1Attacked;
 
 	#region getters/setters
 	public Kingdom kingdom1 {
@@ -48,6 +49,7 @@ public class War : GameEvent {
 		this._kingdom1Rel.AssignWarEvent(this);
 		this._kingdom2Rel.AssignWarEvent(this);
 		this.warPair.DefaultValues();
+		this.kingdom1Attacked = false;
 		Log titleLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "event_title");
 		titleLog.AddToFillers (_kingdom1, _kingdom1.name);
 		titleLog.AddToFillers (_kingdom2, _kingdom2.name);
@@ -197,18 +199,20 @@ public class War : GameEvent {
 				}
 			}
 			City kingdom2CityToBeAttacked = null;
-			for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
-				if(this.kingdom1.capitalCity.habitableTileDistance[i].hexTile.city != null && this.kingdom1.capitalCity.habitableTileDistance[i].hexTile.city.id != 0 && !this.kingdom1.capitalCity.habitableTileDistance[i].hexTile.city.isDead){
-					if(this.kingdom1.capitalCity.habitableTileDistance[i].hexTile.city.kingdom.id == this.kingdom2.id){
-						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, this.kingdom1.capitalCity.habitableTileDistance [i].hexTile, PATHFINDING_MODE.AVATAR).ToList();
-						if(path != null){
-							kingdom2CityToBeAttacked = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city;
-							break;
+			if (kingdom1CityToBeAttacked != null) {
+				for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
+					if (this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city != null && this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.id != 0 && !this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.isDead) {
+						if (this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.kingdom.id == this.kingdom2.id) {
+							path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, this.kingdom1.capitalCity.habitableTileDistance [i].hexTile, PATHFINDING_MODE.COMBAT).ToList ();
+							if (path != null) {
+								kingdom2CityToBeAttacked = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city;
+								break;
+							}
 						}
-
 					}
 				}
 			}
+
 
 			if(kingdom1CityToBeAttacked != null && kingdom2CityToBeAttacked != null && path != null){
 				kingdom1CityToBeAttacked.isUnderAttack = true;
@@ -223,14 +227,24 @@ public class War : GameEvent {
 	}
 	private void Attack(){
 		this.attackRate += 1;
-		if(this.attackRate >= KingdomManager.Instance.warCreationRate){
+		if((this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead) || (this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead)){
+			UpdateWarPair ();
+		}
+		if(this.warPair.path == null){
+			return;
+		}
+		if(this.attackRate >= this.warPair.spawnRate){
 			this.attackRate = 0;
-			if((this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead) || (this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead)){
-				UpdateWarPair ();
-			}
 			if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
-				this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City);
-				this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City);
+				this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path);
+				this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
+//				if(!this.kingdom1Attacked){
+//					this.kingdom1Attacked = true;
+//					this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path);
+//				}else{
+//					this.kingdom1Attacked = false;
+//					this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
+//				}
 				Reinforcement ();
 			}
 		}

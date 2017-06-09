@@ -131,11 +131,11 @@ public class City{
 			for (int i = 0; i < this.habitableTileDistance.Count; i++) {
 				if (this.habitableTileDistance [i].distance >= distance) {
 					this.habitableTileDistance.Insert (i, new HabitableTileDistance (hexTile, distance));
-					break;
+					return;
 				}
 			}
+			this.habitableTileDistance.Add (new HabitableTileDistance (hexTile, distance));
 		}
-		//this.habitableTileDistance.Add (new HabitableTileDistance (hexTile, distance));
 	}
 
 	/*
@@ -1112,11 +1112,19 @@ public class City{
 			return citizen;
 		}
 	}
-	internal Citizen CreateGeneral(List<HexTile> path, HexTile targetLocation){
+	internal Citizen CreateGeneralForCombat(List<HexTile> path, HexTile targetLocation){
 		int cost = 0;
 		if(!this.kingdom.CanCreateAgent(ROLE.GENERAL, ref cost)){
 			return null;
 		}
+		List<HexTile> newPath = new List<HexTile> (path);
+		if(targetLocation == path[0]){
+			newPath.Reverse ();
+			newPath.RemoveAt (0);
+		}else{
+			newPath.RemoveAt (0);
+		}
+
 		GENDER gender = GENDER.MALE;
 		int randomGender = UnityEngine.Random.Range (0, 100);
 		if(randomGender < 20){
@@ -1129,8 +1137,10 @@ public class City{
 		citizen.AssignRole (ROLE.GENERAL);
 		citizen.assignedRole.targetLocation = targetLocation;
 		citizen.assignedRole.targetCity = targetLocation.city;
-		citizen.assignedRole.path = new List<HexTile>(path);
-		citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+		citizen.assignedRole.path = newPath;
+		citizen.assignedRole.daysBeforeMoving = newPath [0].movementDays;
+		((General)citizen.assignedRole).spawnRate = path.Sum (x => x.movementDays) + 1;
+		((General)citizen.assignedRole).damage = ((General)citizen.assignedRole).GetDamage();
 		this._kingdom.AdjustGold (-cost);
 		this.citizens.Remove (citizen);
 		return citizen;
@@ -1168,8 +1178,8 @@ public class City{
 		this.raidLoyaltyExpiration = 0;
 		((Governor)this.governor.assignedRole).UpdateLoyalty ();
 	}
-	internal void AttackCity(City targetCity){
-		EventCreator.Instance.CreateAttackCityEvent (this, targetCity);
+	internal void AttackCity(City targetCity, List<HexTile> path){
+		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path);
 //		int chance = UnityEngine.Random.Range (0, 100);
 //		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
 //			

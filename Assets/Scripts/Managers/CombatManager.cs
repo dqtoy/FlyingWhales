@@ -393,7 +393,6 @@ public class CombatManager : MonoBehaviour {
 			general2.damage = 0;
 
 		}
-
 //		General firstGeneral = general1;
 //		General secondGeneral = general2;
 //
