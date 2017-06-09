@@ -374,7 +374,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         GameObject[] structuresToChooseFrom = CityGenerator.Instance.genericStructures;
         if (this.specialResource != RESOURCE.NONE) {
             if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.FOOD) {
-                structuresToChooseFrom = CityGenerator.Instance.farmStructures;
+                if(this.specialResource == RESOURCE.BEHEMOTH || this.specialResource == RESOURCE.DEER || 
+                    this.specialResource == RESOURCE.PIG) {
+                    structuresToChooseFrom = CityGenerator.Instance.huntingLodgeStructures;
+                } else {
+                    structuresToChooseFrom = CityGenerator.Instance.farmStructures;
+                }
             } else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD) {
                 structuresToChooseFrom = CityGenerator.Instance.lumberyardStructures;
             } else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE) {
