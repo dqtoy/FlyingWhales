@@ -146,11 +146,23 @@ public class EventManager : MonoBehaviour {
 
 	/*
 	 * Get a list of all events a kingdom is involved in.
+     * Can pass an array of event types to return.
 	 * */
-	public List<GameEvent> GetAllEventsKingdomIsInvolvedIn(Kingdom kingdom){
+	public List<GameEvent> GetAllEventsKingdomIsInvolvedIn(Kingdom kingdom, EVENT_TYPES[] eventTypes = null) {
 		List<GameEvent> allGameEventsInKingdom = new List<GameEvent>();
-		for (int i = 0; i < this.allEvents.Keys.Count; i++) {
-			EVENT_TYPES key = this.allEvents.Keys.ElementAt (i);
+
+        List<EVENT_TYPES> eventTypesToUse = new List<EVENT_TYPES>();
+        if(eventTypes == null) {
+            eventTypesToUse = this.allEvents.Keys.ToList();
+        } else {
+            if (eventTypes.Contains(EVENT_TYPES.ALL)) {
+                eventTypesToUse = this.allEvents.Keys.ToList();
+            } else {
+                eventTypesToUse = eventTypes.ToList();
+            }
+        }
+		for (int i = 0; i < eventTypesToUse.Count; i++) {
+			EVENT_TYPES key = eventTypesToUse[i];
 			List<GameEvent> eventsOfType = this.allEvents[key];
 			if (eventsOfType.Count > 0) {
 				if (key == EVENT_TYPES.ADMIRATION) {

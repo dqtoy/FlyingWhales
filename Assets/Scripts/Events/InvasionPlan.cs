@@ -181,11 +181,19 @@ public class InvasionPlan : GameEvent {
 
 	internal override void DoneEvent(){
         base.DoneEvent();
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+        EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 
 	internal override void CancelEvent (){
 		this.resolution = "Event was cancelled.";
+        for (int i = 0; i < this._joinWarEvents.Count; i++) {
+            if (this._joinWarEvents[i].isActive) {
+                this._joinWarEvents[i].CancelEvent();
+            }
+        }
+        if(this._militarizationEvent != null && this.militarizationEvent.isActive) {
+            this._militarizationEvent.CancelEvent();
+        }
 		Log invasionPlanCancel = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_reason");
 		invasionPlanCancel.AddToFillers (this.startedBy, this.startedBy.name);
 		invasionPlanCancel.AddToFillers (null, " because relationships with the target kingdom were improved");

@@ -229,6 +229,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject goInvasionPlan;
 	public UIPopupList eventDropdownList;
 	public UILabel eventDropdownCurrentSelectionLbl;
+    public UILabel forTestingLoyaltyLbl;
 
 	public delegate void OnPauseEventExpiration(bool state);
 	public OnPauseEventExpiration onPauseEventExpiration;
@@ -646,7 +647,8 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void ShowCityInfo(City cityToShow, bool showCitizens = false){
-		if (currentlyShowingCity != null) {
+        HideCitizenInfo();
+        if (currentlyShowingCity != null) {
 			//unhighlight previously selected city
 			currentlyShowingCity.UnHighlightAllOwnedTiles ();
 		}
@@ -733,11 +735,12 @@ public class UIManager : MonoBehaviour {
 
 		currentlyShowingCity.HighlightAllOwnedTiles(204f / 255f);
 
-		HideCitizenInfo();
+        //ForTesting
+        forTestingLoyaltyLbl.text = ((Governor)currentlyShowingCity.governor.assignedRole).loyalty.ToString();
+
 		cityInfoGO.SetActive (true);
 
 	}
-
 
 	public void HideCityInfo(){
 		//unhighlight previously selected city
@@ -2752,7 +2755,13 @@ public class UIManager : MonoBehaviour {
 		currentlyShowingCitizen.children.Remove(child);
 		currentlyShowingCitizen.spouse.children.Remove(child);
 	}
-	public void CenterCameraOnCitizen(){
+
+    public void ChangeGovernorLoyalty() {
+        ((Governor)currentlyShowingCity.governor.assignedRole).loyalty = Int32.Parse(forTestingLoyaltyLbl.text);
+        Debug.Log("Changed loyalty of: " + currentlyShowingCity.governor.name + " to " + ((Governor)currentlyShowingCity.governor.assignedRole).loyalty.ToString());
+    }
+
+    public void CenterCameraOnCitizen(){
 		if(this.currentlyShowingCitizen != null){
 			if(!this.currentlyShowingCitizen.isDead){
 				CameraMove.Instance.CenterCameraOn (this.currentlyShowingCitizen.currentLocation.gameObject);

@@ -104,8 +104,18 @@ public class RelationshipKingdom {
 
 	internal void DeclarePeace(){
 		this._war = null;
-		this._invasionPlan = null;
-		this._requestPeace = null;
+        if(this._invasionPlan != null) {
+            if (this._invasionPlan.isActive) {
+                this._invasionPlan.CancelEvent();
+            }
+            this._invasionPlan = null;
+        }
+        if (this._requestPeace != null) {
+            if (this._requestPeace.isActive) {
+                this._requestPeace.CancelEvent();
+            }
+            this._requestPeace = null;
+        }
 		this._isAtWar = false;
 	}
 
