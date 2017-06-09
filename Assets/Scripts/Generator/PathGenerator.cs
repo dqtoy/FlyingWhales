@@ -162,13 +162,17 @@ public class PathGenerator : MonoBehaviour {
 			}
 		}
 
-		if (path != null) {
-			List<HexTile> newPath = path.Reverse().ToList();
-			if (newPath.Count > 1) {
-				newPath.RemoveAt (0);
-			}
-			return newPath;
-		}
+        if(pathfindingMode == PATHFINDING_MODE.AVATAR) {
+            return path.ToList();
+        } else {
+            if (path != null) {
+                List<HexTile> newPath = path.Reverse().ToList();
+                if (newPath.Count > 1) {
+                    newPath.RemoveAt(0);
+                }
+                return newPath;
+            }
+        }
 		return null;
 	}
 
