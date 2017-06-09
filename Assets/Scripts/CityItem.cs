@@ -21,7 +21,7 @@ public class CityItem : MonoBehaviour {
         this._city = _city;
         this._governor.SetCitizen(city.governor);
         this._hpLbl.text = city.hp.ToString();
-        this._structuresLbl.text = (city.structures.Count + 1).ToString(); // +1 because the structures list does not contain the main tile
+        this._structuresLbl.text = city.ownedTiles.Count.ToString();
         this._cityLbl.text = city.name;
         this._hpProgBar.value = (float)city.hp / (float)city.maxHP;
     }
