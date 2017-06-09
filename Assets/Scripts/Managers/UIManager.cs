@@ -2401,13 +2401,12 @@ public class UIManager : MonoBehaviour {
                 cityGO.transform.localScale = Vector3.one;
                 kingdomCitiesGrid.AddChild(cityGO.transform);
                 kingdomCitiesGrid.Reposition();
-                kingdomCitiesScrollView.ResetPosition();
             }
+            StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
+            //kingdomCitiesScrollView.ResetPosition();
         }
-        //StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
-        //kingdomCitiesScrollView.ResetPosition();
-        kingdomCitiesScrollView.UpdatePosition();
-        kingdomCitiesScrollView.UpdateScrollbars();
+        //kingdomCitiesScrollView.UpdatePosition();
+        //kingdomCitiesScrollView.UpdateScrollbars();
         kingdomCitiesGO.SetActive(true);
     }
 
