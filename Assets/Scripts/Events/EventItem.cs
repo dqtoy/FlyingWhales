@@ -16,7 +16,7 @@ public class EventItem : MonoBehaviour {
 
 	void Start(){
 		this.isHovering = false;
-		this.isPaused = false;
+//		this.isPaused = false;
 		this.toolTip = string.Empty;
 		this.timeElapsed = 0f;
 		UIManager.Instance.onPauseEventExpiration += this.PauseExpirationTimer;
@@ -42,7 +42,7 @@ public class EventItem : MonoBehaviour {
 		eventIcon.MakePixelPerfect();
 	}
 	internal void StartExpirationTimer(){
-		this.isPaused = false;
+		this.isPaused = GameManager.Instance.isPaused;
 	}
 	private void PauseExpirationTimer(bool state){
 		this.isPaused = state;

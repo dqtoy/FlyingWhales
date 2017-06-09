@@ -137,7 +137,7 @@ public class GeneralAvatar : MonoBehaviour {
 		this.GetComponent<SmoothMovement>().direction = this.direction;
 		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
 		//		this.targetPosition = targetTile.transform.position;
-		//		this.UpdateUI ();
+		this.UpdateUI ();
 		//		this.isMoving = true;
 	}
 	private void StopMoving(){
@@ -145,11 +145,11 @@ public class GeneralAvatar : MonoBehaviour {
 		//		this.isMoving = false;
 		//		this.targetPosition = Vector3.zero;
 	}
-	//	internal void UpdateUI(){
-	//		if(this.general != null){
-	//			this.textMesh.text = this.general.army.hp.ToString ();
-	//		}
-	//	}
+	internal void UpdateUI(){
+		if(this.general != null){
+			this.txtDamage.text = this.general.damage.ToString ();
+		}
+	}
 	[Task]
 	public void IsThereCitizen(){
 		if(this.general.citizen != null){
