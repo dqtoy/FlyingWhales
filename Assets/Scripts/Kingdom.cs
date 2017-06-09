@@ -365,7 +365,7 @@ public class Kingdom{
 	protected void KingdomTickActions(){
         this.ProduceGoldFromTrade();
         this.AttemptToExpand();
-		this.AttemptToCreateAttackCityEvent ();
+//		this.AttemptToCreateAttackCityEvent ();
 		this.AttemptToCreateReinforcementEvent ();
         //		this.AttemptToIncreaseCityHP();
         this.DecreaseUnrestEveryMonth();
@@ -380,15 +380,15 @@ public class Kingdom{
 	 * Attempt to create an attack city event
 	 * This will only happen if there's a war with any other kingdom
 	 * */
-	private void AttemptToCreateAttackCityEvent(){
-		if (this.activeCitiesPairInWar.Count > 0) {
-			CityWarPair warPair = this.activeCitiesPairInWar [0];
-			if (warPair.sourceCity == null || warPair.targetCity == null) {
-				return;
-			}
-			warPair.sourceCity.AttackCityEvent (warPair.targetCity);
-		}
-	}
+//	private void AttemptToCreateAttackCityEvent(){
+//		if (this.activeCitiesPairInWar.Count > 0) {
+//			CityWarPair warPair = this.activeCitiesPairInWar [0];
+//			if (warPair.sourceCity == null || warPair.targetCity == null) {
+//				return;
+//			}
+//			warPair.sourceCity.AttackCityEvent (warPair.targetCity);
+//		}
+//	}
 
 	/*
 	 * Attempt to create a reinforcement event to increase a friendly city's hp
@@ -645,13 +645,13 @@ public class Kingdom{
             if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
                 for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
                     habitableTile = CityGenerator.Instance.stoneHabitableTiles[i];
-                    this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+					this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
                 }
 
             } else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
                 for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {
                     habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
-                    this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+					this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
                 }
 
             }
@@ -672,8 +672,23 @@ public class Kingdom{
             this.UpdateAvailableResources();
             this.UpdateAllCitiesDailyGrowth();
             this.RemoveInvalidTradeRoutes();
-            if (this._cities.Count > 0 && this._cities[0] != null) {
+			if (this._cities[0] != null && this.capitalCity.id == city.id) {
                 this.capitalCity = this._cities[0];
+
+				HexTile habitableTile;
+				if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
+					for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
+						habitableTile = CityGenerator.Instance.stoneHabitableTiles[i];
+						this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+					}
+
+				} else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+					for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {
+						habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
+						this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+					}
+
+				}
             }
         }
         
@@ -731,7 +746,7 @@ public class Kingdom{
 				return;
 			}
 		}
-		this.capitalCity = newKing.city;
+//		this.capitalCity = newKing.city;
 		newKing.city.hasKing = true;
 
 		if(newKing.city.governor.id == newKing.id){
@@ -935,12 +950,12 @@ public class Kingdom{
 
 	internal void AddInternationalWar(Kingdom kingdom){
 //		Debug.Log ("INTERNATIONAL WAR");
-		for(int i = 0; i < kingdom.cities.Count; i++){
-			if(!this.intlWarCities.Contains(kingdom.cities[i])){
-				this.intlWarCities.Add(kingdom.cities[i]);
-			}
-		}
-		this.TargetACityToAttack ();
+//		for(int i = 0; i < kingdom.cities.Count; i++){
+//			if(!this.intlWarCities.Contains(kingdom.cities[i])){
+//				this.intlWarCities.Add(kingdom.cities[i]);
+//			}
+//		}
+//		this.TargetACityToAttack ();
 //		for(int i = 0; i < this.cities.Count; i++){
 //			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i], WAR_TYPE.INTERNATIONAL)){
 //				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
@@ -961,7 +976,7 @@ public class Kingdom{
 	}
 
 	internal void RemoveInternationalWar(Kingdom kingdom){
-		this.intlWarCities.RemoveAll(x => x.kingdom.id == kingdom.id);
+//		this.intlWarCities.RemoveAll(x => x.kingdom.id == kingdom.id);
 //		for(int i = 0; i < this.king.campaignManager.activeCampaigns.Count; i++){
 //			if(this.king.campaignManager.activeCampaigns[i].warType == WAR_TYPE.INTERNATIONAL){
 //				if(this.king.campaignManager.activeCampaigns[i].targetCity.kingdom.id == kingdom.id){
@@ -999,7 +1014,7 @@ public class Kingdom{
 			newCity.hp = 100;
 			newCity.CreateInitialFamilies(false);
 			KingdomManager.Instance.UpdateKingdomAdjacency();
-			this.AddInternationalWarCity (newCity);
+//			this.AddInternationalWarCity (newCity);
 			if (UIManager.Instance.currentlyShowingKingdom.id == newCity.kingdom.id) {
 				newCity.kingdom.HighlightAllOwnedTilesInKingdom();
 			}
@@ -1205,21 +1220,21 @@ public class Kingdom{
 		return nearestCity;
 	}
 	internal void TargetACityToAttack(){
-		List<City> allHostileCities = new List<City> ();
-		allHostileCities.AddRange (this.intlWarCities);
-		for(int i = 0; i < this.rebellions.Count; i++){
-			allHostileCities.AddRange (this.rebellions [i].conqueredCities);
-		}
-		if(allHostileCities.Count > 0 && this.activeCitiesPairInWar.Count <= 0){
-			City sourceCity = null;
-			City targetCity = null;
-			GetTargetCityAndSourceCityInWar (ref sourceCity, ref targetCity, allHostileCities);
-			if(sourceCity != null && targetCity != null){
-				this.activeCitiesPairInWar.Add (new CityWarPair (sourceCity, targetCity));
-				this.intlWarCities.Remove (targetCity);
-				targetCity.isUnderAttack = true;
-			}
-		}
+//		List<City> allHostileCities = new List<City> ();
+//		allHostileCities.AddRange (this.intlWarCities);
+//		for(int i = 0; i < this.rebellions.Count; i++){
+//			allHostileCities.AddRange (this.rebellions [i].conqueredCities);
+//		}
+//		if(allHostileCities.Count > 0 && this.activeCitiesPairInWar.Count <= 0){
+//			City sourceCity = null;
+//			City targetCity = null;
+//			GetTargetCityAndSourceCityInWar (ref sourceCity, ref targetCity, allHostileCities);
+//			if(sourceCity != null && targetCity != null){
+//				this.activeCitiesPairInWar.Add (new CityWarPair (sourceCity, targetCity));
+//				this.intlWarCities.Remove (targetCity);
+//				targetCity.isUnderAttack = true;
+//			}
+//		}
 //		if(this.intlWarCities.Count > 0 && this.activeCitiesToAttack.Count <= 0){
 //			int nearestDistance = 0f;
 //			City nearestSourceCity = null;
@@ -1507,7 +1522,7 @@ public class Kingdom{
         this._unrest += amountToAdjust;
         this._unrest = Mathf.Clamp(this._unrest, 0, 100);
 		if(this._unrest == 100){
-			UnrestEvents ();
+//			UnrestEvents ();
 		}
     }
 	internal void ChangeUnrest(int newAmount){
@@ -1534,6 +1549,7 @@ public class Kingdom{
 				EventCreator.Instance.CreateRiotEvent(this);
 			}else{
 				//Rebellion Event
+				EventCreator.Instance.CreateRebellionEvent(this);
 			}
 		}
 	}
