@@ -162,7 +162,7 @@ public class PathGenerator : MonoBehaviour {
 			}
 		}
 
-        if(pathfindingMode == PATHFINDING_MODE.AVATAR) {
+        if(pathfindingMode == PATHFINDING_MODE.COMBAT) {
             return path.ToList();
         } else {
             if (path != null) {
