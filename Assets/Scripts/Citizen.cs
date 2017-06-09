@@ -420,8 +420,8 @@ public class Citizen {
 		if (this.id == this.city.kingdom.king.id) {
 			//ASSIGN NEW LORD, SUCCESSION
 			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
-			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.city.kingdom.king);
-			this.city.kingdom.PassOnInternationalWar();
+//			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.city.kingdom.king);
+//			this.city.kingdom.PassOnInternationalWar();
 			if (isDethroned) {
 				if (newKing != null) {
 					this.city.kingdom.AssignNewKing (newKing);

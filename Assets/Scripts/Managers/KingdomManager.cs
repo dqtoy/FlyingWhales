@@ -24,6 +24,11 @@ public class KingdomManager : MonoBehaviour {
 
     protected const int UNREST_INCREASE_WAR = 10;
 
+	public int numberOfKingdoms;
+	public int numberOfCitiesPerKingdom;
+	public int warCreationRate;
+
+
 	void Awake(){
 		Instance = this;
 	}
@@ -45,15 +50,15 @@ public class KingdomManager : MonoBehaviour {
 		}
 //		Debug.Log ("Valid capital tiles: " + elligibleTilesForHumans.Count);
 
-		int numOfKingdoms = 2;
-		if (elligibleTilesForHumans.Count < numOfKingdoms) {
-			numOfKingdoms = elligibleTilesForHumans.Count;
+//		int numOfKingdoms = 2;
+		if (elligibleTilesForHumans.Count < this.numberOfKingdoms) {
+			this.numberOfKingdoms = elligibleTilesForHumans.Count;
 		}
 
-        int numOfCitiesPerKingdom = 1;
-		for (int i = 0; i < numOfKingdoms; i++) {
+//        int numOfCitiesPerKingdom = 1;
+		for (int i = 0; i < this.numberOfKingdoms; i++) {
 			List<HexTile> citiesForKingdom = new List<HexTile>();
-            for (int j = 0; j < numOfCitiesPerKingdom; j++) {
+			for (int j = 0; j < this.numberOfCitiesPerKingdom; j++) {
                 if (elligibleTilesForHumans.Count <= 0) {
                     break;
                 }
@@ -186,6 +191,7 @@ public class KingdomManager : MonoBehaviour {
         kingdom1.AdjustUnrest(UNREST_INCREASE_WAR);
         kingdom2.AdjustUnrest(UNREST_INCREASE_WAR);
 
+//		war.UpdateWarPair ();
         //		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
         //		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
 
@@ -207,8 +213,8 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.AdjustExhaustionToAllRelationship (-15);
 		kingdom2.AdjustExhaustionToAllRelationship (-15);
 
-		kingdom1.RemoveInternationalWar(kingdom2);
-		kingdom2.RemoveInternationalWar(kingdom1);
+//		kingdom1.RemoveInternationalWar(kingdom2);
+//		kingdom2.RemoveInternationalWar(kingdom1);
 	}
 
 	public War GetWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){

@@ -28,7 +28,7 @@ public class General : Role {
 //		this.location = citizen.city.hexTile;
 //		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
 //		this.targetLocation = null;
-		this.damage = UnityEngine.Random.Range(60,101);
+		this.damage = GetDamage();
 		this.markAsDead = false;
 		this.attackCity = null;
 		this.isRebel = false;
@@ -67,5 +67,18 @@ public class General : Role {
 				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Down");
 			}
 		}
+	}
+
+	private int GetDamage(){
+		int baseDamage = UnityEngine.Random.Range (30, 51);
+		int cityDamage = 5 * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
+		int otherCityTileCount = 0;
+		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
+			if(this.citizen.city.kingdom.cities[i].id != this.citizen.city.id){
+				otherCityTileCount += this.citizen.city.kingdom.cities [i].ownedTiles.Count;
+			}
+		}
+		int otherCityDamage = 2 * otherCityTileCount;
+		return baseDamage + cityDamage + otherCityDamage;
 	}
 }

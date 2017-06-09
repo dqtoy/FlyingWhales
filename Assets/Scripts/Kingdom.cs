@@ -376,7 +376,7 @@ public class Kingdom{
         this.ProduceGoldFromTrade();
         this.AttemptToExpand();
 //		this.AttemptToCreateAttackCityEvent ();
-		this.AttemptToCreateReinforcementEvent ();
+//		this.AttemptToCreateReinforcementEvent ();
         //		this.AttemptToIncreaseCityHP();
         this.DecreaseUnrestEveryMonth();
 		this.CheckBorderConflictLoyaltyExpiration ();
@@ -404,12 +404,12 @@ public class Kingdom{
 	 * Attempt to create a reinforcement event to increase a friendly city's hp
 	 * This will only happen if there's a war with any other kingdom
 	 * */
-	private void AttemptToCreateReinforcementEvent(){
-		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < this.kingdomTypeData.warReinforcementCreationRate){
-			EventCreator.Instance.CreateReinforcementEvent (this);
-		}
-	}
+//	private void AttemptToCreateReinforcementEvent(){
+//		int chance = UnityEngine.Random.Range (0, 100);
+//		if(chance < this.kingdomTypeData.warReinforcementCreationRate){
+//			EventCreator.Instance.CreateReinforcementEvent (this);
+//		}
+//	}
 
 	/*
 	 * Kingdom will attempt to expand. 
@@ -1214,7 +1214,7 @@ public class Kingdom{
 		City nearestCity = null;
 		int nearestDistance = 0;
 		for(int i = 0; i < cities.Count; i++){
-			List<HexTile> path = PathGenerator.Instance.GetPath (cities [i].hexTile, this.king.city.hexTile, PATHFINDING_MODE.COMBAT);
+			List<HexTile> path = PathGenerator.Instance.GetPath (cities [i].hexTile, this.king.city.hexTile, PATHFINDING_MODE.AVATAR);
 			if(path != null){
 				if(nearestCity == null){
 					nearestCity = cities [i];
@@ -1262,7 +1262,7 @@ public class Kingdom{
 
 		for (int i = 0; i < this.cities.Count; i++) {
 			for (int j = 0; j < allHostileCities.Count; j++) {
-				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, allHostileCities [j].hexTile, PATHFINDING_MODE.COMBAT).ToList();
+				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, allHostileCities [j].hexTile, PATHFINDING_MODE.AVATAR).ToList();
 				if(path != null){
 					int distance = path.Count;
 					if(source == null && target == null){

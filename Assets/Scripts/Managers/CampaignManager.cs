@@ -350,7 +350,7 @@ public class CampaignManager {
 		City nearestCity = null;
 		int nearestDistance = 0;
 		for(int i = 0; i < cities.Count; i++){
-			List<HexTile> path = PathGenerator.Instance.GetPath (cities [i].hexTile, this.leader.city.hexTile, PATHFINDING_MODE.COMBAT);
+			List<HexTile> path = PathGenerator.Instance.GetPath (cities [i].hexTile, this.leader.city.hexTile, PATHFINDING_MODE.AVATAR);
 			if(path != null){
 				if(nearestCity == null){
 					nearestCity = cities [i];
@@ -472,8 +472,8 @@ public class CampaignManager {
 //					Debug.Log ("GETTING PATH FOR null nearest");
 //				}
 //
-//				List<HexTile> path1 = PathGenerator.Instance.GetPath(eligibleCities[i].hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
-//				List<HexTile> path2 = PathGenerator.Instance.GetPath(nearest.hexTile, targetCity.hexTile, PATHFINDING_MODE.COMBAT);
+//				List<HexTile> path1 = PathGenerator.Instance.GetPath(eligibleCities[i].hexTile, targetCity.hexTile, PATHFINDING_MODE.AVATAR);
+//				List<HexTile> path2 = PathGenerator.Instance.GetPath(nearest.hexTile, targetCity.hexTile, PATHFINDING_MODE.AVATAR);
 //
 //				if(path1 == null || path2 == null){
 //					if (path1 != null && path2 == null) {

@@ -497,7 +497,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     internal bool HasCombatPathTo(HexTile target){
-		List<HexTile> path = PathGenerator.Instance.GetPath (this, target, PATHFINDING_MODE.COMBAT);
+		List<HexTile> path = PathGenerator.Instance.GetPath (this, target, PATHFINDING_MODE.AVATAR);
 		if(path != null){
 			return true;
 		}
