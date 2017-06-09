@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 301ddda5fde017644bab1ae01392d876
-timeCreated: 1496818728
+timeCreated: 1496984901
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -245,7 +245,7 @@ TextureImporter:
         serializedVersion: 2
         x: 581
         y: 980
-        width: 36
+        width: 40
         height: 43
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -257,9 +257,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 621
-        y: 1003
+        y: 1001
         width: 34
-        height: 15
+        height: 17
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -375,7 +375,7 @@ TextureImporter:
         serializedVersion: 2
         x: 553
         y: 933
-        width: 30
+        width: 35
         height: 35
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -386,7 +386,7 @@ TextureImporter:
       name: H_PointedHouse_Tint
       rect:
         serializedVersion: 2
-        x: 586
+        x: 590
         y: 947
         width: 26
         height: 22

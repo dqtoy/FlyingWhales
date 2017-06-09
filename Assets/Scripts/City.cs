@@ -110,8 +110,8 @@ public class City{
 		this.ownedTiles.Add(this.hexTile);
 		this.UpdateBorderTiles();
 //		this.CreateInitialFamilies();
-		this.ChangeToCity();
-
+		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
+		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
 //		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));
 	}
 
@@ -473,7 +473,7 @@ public class City{
 		citizenToOccupyCity.AssignRole(ROLE.GOVERNOR);
 		this.UpdateDailyProduction();
 		KingdomManager.Instance.UpdateKingdomAdjacency();
-		this.kingdom.AddInternationalWarCity (this);
+//		this.kingdom.AddInternationalWarCity (this);
 		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
 			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
 				this.kingdom.HighlightAllOwnedTilesInKingdom();
@@ -556,7 +556,7 @@ public class City{
 	}
 
 	internal void AttemptToAttackCityForRebellion(){
-		AttackCityEvent (this.rebellion.targetCity);
+//		AttackCityEvent (this.rebellion.targetCity);
 	}
 	/*
 	 * Increase a city's HP every month.
@@ -964,12 +964,19 @@ public class City{
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		this.hexTile.city = null;
 		KingdomManager.Instance.UpdateKingdomAdjacency();
-		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+//		for (int i = 0; i < this.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
+//			if(this.kingdom.relationshipsWithOtherKingdoms[i].war != null && this.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
+//				if(this.kingdom.relationshipsWithOtherKingdoms[i].war.warPair.kingdom1City.id == this.id || this.kingdom.relationshipsWithOtherKingdoms[i].war.warPair.kingdom2City.id == this.id){
+//					this.kingdom.relationshipsWithOtherKingdoms [i].war.UpdateWarPair ();
+//				}
+//			}
+//		}
+//		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 //			KingdomManager.Instance.allKingdoms [i].intlWarCities.Remove (this);
 //			KingdomManager.Instance.allKingdoms [i].activeCitiesToAttack.Remove (this);
-			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id || x.sourceCity.id == this.id);
-			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
-		}
+//			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id || x.sourceCity.id == this.id);
+//			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
+//		}
 	}
 
 	/*internal void LookForNewGeneral(General general){
@@ -1133,10 +1140,11 @@ public class City{
 		((Governor)this.governor.assignedRole).UpdateLoyalty ();
 	}
 	internal void AttackCityEvent(City targetCity){
-		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
-			EventCreator.Instance.CreateAttackCityEvent (this, targetCity);
-		}
+		EventCreator.Instance.CreateAttackCityEvent (this, targetCity);
+//		int chance = UnityEngine.Random.Range (0, 100);
+//		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
+//			
+//		}
 	}
 //	internal void AttackCampEvent(Camp targetCamp){
 //		int chance = UnityEngine.Random.Range (0, 100);
