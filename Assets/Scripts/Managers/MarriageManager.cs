@@ -46,7 +46,7 @@ public class MarriageManager : MonoBehaviour {
 			}
 			age = UnityEngine.Random.Range (lowerLimit, (otherSpouse.age + 11));
 		}
-		Citizen spouse = new Citizen(otherSpouse.city, age, gender, otherSpouse.generation);
+		Spouse spouse = new Spouse(otherSpouse, otherSpouse.city, age, gender, otherSpouse.generation);
 		Citizen father = new Citizen (otherSpouse.city, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 		Citizen mother = new Citizen (otherSpouse.city, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 

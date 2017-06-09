@@ -90,7 +90,6 @@ public class TraderAvatar : MonoBehaviour {
     private bool HasTraderReachedTarget() {
         if (this._trader.location == this._trader.targetLocation) {
             this._trader.tradeEvent.DoneCitizenAction(this._trader.citizen);
-			this._trader.DestroyGO();
             return true;
         }
         return false;

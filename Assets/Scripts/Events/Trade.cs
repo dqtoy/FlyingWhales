@@ -38,6 +38,7 @@ public class Trade : GameEvent {
 
     internal override void DoneCitizenAction(Citizen citizen) {
         base.DoneCitizenAction(citizen);
+        citizen.assignedRole.DestroyGO();
         CreateTradeRouteBetweenKingdoms();
     }
 
@@ -52,7 +53,8 @@ public class Trade : GameEvent {
     }
 	internal override void CancelEvent (){
 		base.CancelEvent ();
-		this.DoneEvent ();
+        this._trader.assignedRole.DestroyGO();
+        this.DoneEvent ();
 	}
     #endregion
     internal void KillTrader() {

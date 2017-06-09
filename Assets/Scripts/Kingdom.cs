@@ -297,7 +297,7 @@ public class Kingdom{
 	 * */
 	internal void DestroyKingdom(){
 		this._isDead = true;
-        this.CancelEventKingdomIsInvolvedIn(EVENT_TYPES.KINGDOM_WAR);
+        this.CancelEventKingdomIsInvolvedIn(EVENT_TYPES.ALL);
         this.RemoveRelationshipsWithOtherKingdoms();
         KingdomManager.Instance.allKingdoms.Remove(this);
         EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
@@ -312,6 +312,11 @@ public class Kingdom{
             List<GameEvent> wars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR });
             for (int i = 0; i < wars.Count; i++) {
                 wars[i].CancelEvent();
+            }
+        } else {
+            List<GameEvent> allEvents = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.ALL });
+            for (int i = 0; i < allEvents.Count; i++) {
+                allEvents[i].CancelEvent();
             }
         }
     }
@@ -759,27 +764,30 @@ public class Kingdom{
 //		this.capitalCity = newKing.city;
 		newKing.city.hasKing = true;
 
-		if(newKing.city.governor.id == newKing.id){
-			newKing.city.AssignNewGovernor ();
-		}
-		if (newKing.isMarried) {
-			if (newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
-				AssimilateKingdom (newKing.spouse.city.kingdom);
-				return;
-			}
-		}
-		if(!newKing.isDirectDescendant){
+        if (newKing.isMarried) {
+            if (newKing.spouse.city.kingdom.king != null && newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
+                AssimilateKingdom(newKing.spouse.city.kingdom);
+                return;
+            }
+        }
+        if (!newKing.isDirectDescendant){
 			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
 			Utilities.ChangeDescendantsRecursively (newKing, true);
-			Utilities.ChangeDescendantsRecursively (this.king, false);
+            if(this.king != null) {
+                Utilities.ChangeDescendantsRecursively(this.king, false);
+            }
 		}
 		/*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
 			newKing.DetachGeneralFromCitizen ();
 		}*/
 //		newKing.role = ROLE.KING;
 		newKing.AssignRole(ROLE.KING);
-//		newKing.isKing = true;
-		newKing.isGovernor = false;
+        if (newKing.city.governor.id == newKing.id) {
+            newKing.city.AssignNewGovernor();
+        }
+
+        //		newKing.isKing = true;
+        newKing.isGovernor = false;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 //		this.king = newKing;

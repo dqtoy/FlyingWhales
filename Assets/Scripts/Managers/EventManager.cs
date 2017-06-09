@@ -264,6 +264,13 @@ public class EventManager : MonoBehaviour {
                                 allGameEventsInKingdom.Add(eventsOfType[j]);
                             }
                         }
+                    } else if (key == EVENT_TYPES.TRADE) {
+                        for (int j = 0; j < eventsOfType.Count; j++) {
+                            Trade currEvent = (Trade)eventsOfType[j];
+                            if (currEvent.sourceKingdom.id == kingdom.id || currEvent.targetKingdom.id == kingdom.id) {
+                                allGameEventsInKingdom.Add(eventsOfType[j]);
+                            }
+                        }
                     }
                 }
             }

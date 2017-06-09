@@ -19,7 +19,7 @@ public class KingdomFlagItem : MonoBehaviour {
 	internal void SetKingdom(Kingdom kingdom){
 		this.kingdom = kingdom;
 		this._kingdomColorSprite.color = kingdom.kingdomColor;
-	}
+    }
 
 	void OnClick(){
         this.SetAsSelected();

@@ -192,6 +192,7 @@ public class BorderConflict : GameEvent {
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();
+        this.DoneEvent();
 	}
 	#endregion
 

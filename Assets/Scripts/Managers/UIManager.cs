@@ -240,13 +240,15 @@ public class UIManager : MonoBehaviour {
 
 	void Awake(){
 		Instance = this;
-	}
+    }
 
 	void Start(){
-		EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
-        EventManager.Instance.onKingdomDiedEvent.AddListener(ForceUpdateKingdomList);
+        EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
+        EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
+        EventManager.Instance.onKingdomDiedEvent.AddListener(RemoveKingdomFromList);
         NormalizeFontSizes();
-		UpdateUI();
+        LoadKingdomList();
+        UpdateUI();
 	}
 
 	private void NormalizeFontSizes(){
@@ -274,7 +276,11 @@ public class UIManager : MonoBehaviour {
 
 	private void UpdateUI(){
 		dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
-		UpdateKingdomList();
+		
+        if(currentlyShowingKingdom != null) {
+            UpdateKingdomInfo();
+        }
+
 		if (cityInfoGO.activeSelf) {
 			if (currentlyShowingCity != null) {
 				ShowCityInfo (currentlyShowingCity);
@@ -342,46 +348,66 @@ public class UIManager : MonoBehaviour {
 
     private void ForceUpdateKingdomList(Kingdom kingdomThatDied) {
         if (currentlyShowingKingdom.id == kingdomThatDied.id) {
-            SetKingdomAsActive(KingdomManager.Instance.allKingdoms.First());
-        } else {
-            UpdateKingdomList();
+            //SetKingdomAsActive(KingdomManager.Instance.allKingdoms.First());
+            currentlyShowingKingdom = null;
         }
-        
+        LoadKingdomList();
     }
 
-	void UpdateKingdomList(){
-        List<Transform> children = kingdomListOtherKingdomsGrid.GetChildList();
-        List<int> kingdomsInGrid = children.Select(x => x.GetComponent<KingdomFlagItem>().kingdom.id).ToList();
-        List<int> allOtherKingdoms = KingdomManager.Instance.allKingdoms.Select(x => x.id).ToList();
-        if (allOtherKingdoms.Except(kingdomsInGrid).Count() > 0 || kingdomsInGrid.Except(allOtherKingdoms).Count() > 0) {
-            for (int i = 0; i < children.Count; i++) {
-                kingdomListOtherKingdomsGrid.RemoveChild(children[i]);
-                Destroy(children[i].gameObject);
+    private void RemoveKingdomFromList(Kingdom kingdomToRemove) {
+        List<KingdomFlagItem> allKingdomsInGrid = kingdomListOtherKingdomsGrid.GetChildList()
+                .Select(x => x.GetComponent<KingdomFlagItem>()).ToList();
+        for (int i = 0; i < allKingdomsInGrid.Count; i++) {
+            if (allKingdomsInGrid[i].kingdom.id == kingdomToRemove.id) {
+                kingdomListOtherKingdomsGrid.RemoveChild(allKingdomsInGrid[i].transform);
+                Destroy(allKingdomsInGrid[i].gameObject);
+                break;
             }
-            for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-                Kingdom currKingdom = KingdomManager.Instance.allKingdoms[i];
-                GameObject kingdomGO = InstantiateUIObject(kingdomFlagPrefab, this.transform);
-                                kingdomGO.GetComponent<KingdomFlagItem>().SetKingdom(currKingdom);
-                //kingdomGO.GetComponent<KingdomFlagItem>().onHoverOver += currKingdom.HighlightAllOwnedTilesInKingdom;
-                //kingdomGO.GetComponent<KingdomFlagItem>().onHoverExit += currKingdom.UnHighlightAllOwnedTilesInKingdom;
-                kingdomGO.transform.localScale = Vector3.one;
-                kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
-            }
-            kingdomListOtherKingdomsGrid.Reposition();
         }
+        kingdomListOtherKingdomsGrid.Reposition();
+        if (currentlyShowingKingdom.id == kingdomToRemove.id) {
+            kingdomListOtherKingdomsGrid.GetChildList().First().GetComponent<KingdomFlagItem>().SetAsSelected();
+        }
+    }
 
+    private void AddKingdomToList(Kingdom kingdomToAdd) {
+        GameObject kingdomGO = InstantiateUIObject(kingdomFlagPrefab, this.transform);
+        kingdomGO.GetComponent<KingdomFlagItem>().SetKingdom(kingdomToAdd);
+        //kingdomGO.GetComponent<KingdomFlagItem>().onHoverOver += currKingdom.HighlightAllOwnedTilesInKingdom;
+        //kingdomGO.GetComponent<KingdomFlagItem>().onHoverExit += currKingdom.UnHighlightAllOwnedTilesInKingdom;
+        kingdomGO.transform.localScale = Vector3.one;
+        kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
+        kingdomListOtherKingdomsGrid.Reposition();
 
         if (currentlyShowingKingdom == null) {
             kingdomListOtherKingdomsGrid.GetChildList().First().GetComponent<KingdomFlagItem>().SetAsSelected();
             return;
             //currentlyShowingKingdom = KingdomManager.Instance.allKingdoms.First();
+        }
+    }
+
+    private void LoadKingdomList(){
+        for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+            Kingdom currKingdom = KingdomManager.Instance.allKingdoms[i];
+            AddKingdomToList(currKingdom);
+        }
+        kingdomListOtherKingdomsGrid.Reposition();
+ 
+        if (currentlyShowingKingdom == null) {
+            kingdomListOtherKingdomsGrid.GetChildList().First().GetComponent<KingdomFlagItem>().SetAsSelected();
+            return;
+            //currentlyShowingKingdom = KingdomManager.Instance.allKingdoms.First();
 		}
+	}
 
-		kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king);
+    private void UpdateKingdomInfo() {
+        kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king); //King
 
-        kingdomNameLbl.text = currentlyShowingKingdom.name;
-        kingdomUnrestLbl.text = currentlyShowingKingdom.unrest.ToString();
-        kingdomGoldLbl.text = currentlyShowingKingdom.goldCount.ToString() + "/" + currentlyShowingKingdom.maxGold.ToString();
+        kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
+        kingdomUnrestLbl.text = currentlyShowingKingdom.unrest.ToString(); //Unrest
+        kingdomGoldLbl.text = currentlyShowingKingdom.goldCount.ToString() + "/" + currentlyShowingKingdom.maxGold.ToString(); //Gold
+
+        //Basic Resource
         if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
             kingdomBasicResourceSprite.sprite2D = stoneSprite;
         } else if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
@@ -389,14 +415,15 @@ public class UIManager : MonoBehaviour {
         }
         kingdomBasicResourceLbl.text = currentlyShowingKingdom.basicResourceCount.ToString();
 
-        children = kingdomOtherResourcesGrid.GetChildList();
+        //Available Resources
+        List<Transform> children = kingdomOtherResourcesGrid.GetChildList();
         List<RESOURCE> resourcesInGrid = new List<RESOURCE>();
         for (int i = 0; i < children.Count; i++) {
             RESOURCE resource = (RESOURCE)Enum.Parse(typeof(RESOURCE), Utilities.GetComponentsInDirectChildren<UI2DSprite>(children[i].gameObject).First().sprite2D.name);
             resourcesInGrid.Add(resource);
         }
         List<RESOURCE> allOtherResources = currentlyShowingKingdom.availableResources.Keys.ToList();
-        if(resourcesInGrid.Except(allOtherResources).Count() > 0 || allOtherResources.Except(resourcesInGrid).Count() > 0) {
+        if (resourcesInGrid.Except(allOtherResources).Count() > 0 || allOtherResources.Except(resourcesInGrid).Count() > 0) {
             for (int i = 0; i < children.Count; i++) {
                 kingdomOtherResourcesGrid.RemoveChild(children[i]);
                 Destroy(children[i].gameObject);
@@ -413,8 +440,8 @@ public class UIManager : MonoBehaviour {
             }
             StartCoroutine(RepositionGrid(kingdomOtherResourcesGrid));
         }
-        
 
+        //Trade Resources
         children = kingdomTradeResourcesGrid.GetChildList();
         resourcesInGrid = new List<RESOURCE>();
         for (int i = 0; i < children.Count; i++) {
@@ -449,36 +476,8 @@ public class UIManager : MonoBehaviour {
             }
             StartCoroutine(RepositionGrid(kingdomTradeResourcesGrid));
         }
-        
-        //kingdomListActiveKingdomFlagSprite.color = currentlyShowingKingdom.kingdomColor;
-
-        //if (KingdomManager.Instance.allKingdoms.Count <= 1) {
-        //	kingdomListOtherKingdomsParent.SetActive(false);
-        //} else {
-        //         List<Transform> children = kingdomListOtherKingdomsGrid.GetChildList();
-        //List<int> kingdomsInGrid = children.Select(x => x.GetComponent<KingdomFlagItem>().kingdom.id).ToList();
-        //List<int> allOtherKingdoms = KingdomManager.Instance.allKingdoms.Select(x => x.id).Where (x => x != currentlyShowingKingdom.id).ToList();
-        //if (allOtherKingdoms.Except(kingdomsInGrid).Count() > 0 || kingdomsInGrid.Except(allOtherKingdoms).Count() > 0) {
-        //	for (int i = 0; i < children.Count; i++) {
-        //		kingdomListOtherKingdomsGrid.RemoveChild(children[i]);
-        //		Destroy (children[i].gameObject);
-        //	}
-        //	for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-        //		Kingdom currKingdom = KingdomManager.Instance.allKingdoms [i];
-        //		if (currKingdom.id != currentlyShowingKingdom.id) {
-        //			GameObject kingdomGO = InstantiateUIObject (kingdomFlagPrefab, this.transform);
-        //			kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
-        //			kingdomGO.GetComponent<KingdomFlagItem>().SetKingdom (currKingdom);
-        //			kingdomGO.GetComponent<KingdomFlagItem> ().onHoverOver += currKingdom.HighlightAllOwnedTilesInKingdom;
-        //			kingdomGO.GetComponent<KingdomFlagItem> ().onHoverExit += currKingdom.UnHighlightAllOwnedTilesInKingdom;
-        //			kingdomGO.transform.localScale = Vector3.one;
-        //		}
-        //	}
-        //}
-        //kingdomListOtherKingdomsParent.SetActive(true);
-        //}
         currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
-	}
+    }
 
 	internal void SetKingdomAsActive(Kingdom kingdom){
         if(currentlyShowingKingdom != null && currentlyShowingKingdom.id != kingdom.id) {
@@ -513,7 +512,7 @@ public class UIManager : MonoBehaviour {
 			ShowKingdomHistory ();
 		}
 
-		UpdateKingdomList();
+		UpdateKingdomInfo();
 	}
 
 	internal void ShowCitizenInfo(Citizen citizenToShow){

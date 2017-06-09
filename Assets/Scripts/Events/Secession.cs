@@ -24,7 +24,8 @@ public class Secession : GameEvent {
 		this.targetCity = null;
 
 		this.joiningCities.Add (startedBy.city);
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+        this.alreadyVisitedCities.Add(startedBy.city);
+        EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError (startedBy.name + " wants to split from " + this.sourceKingdom.name + " because his/her loyalty is " + this.governor.loyalty);
 
 		//		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
@@ -72,10 +73,9 @@ public class Secession : GameEvent {
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent();
-		this.SplitKingdom ();
-		//Generate new kingdom
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
-	}
+        EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+        this.SplitKingdom (); //Generate new kingdom
+    }
 	internal override void CancelEvent (){
 		base.CancelEvent ();
 		this.targetCity = null;
@@ -127,8 +127,8 @@ public class Secession : GameEvent {
 			}else{
 				int countCitizens = this.sourceKingdom.king.city.citizens.Count;
 				for (int i = 0; i < countCitizens; i++) {
-					if(this.sourceKingdom.king.city.citizens[i].isDirectDescendant && !this.sourceKingdom.king.city.citizens[i].isGovernor){
-						this.sourceKingdom.king.city.citizens[i].Death (DEATH_REASONS.REBELLION, false, null, true);
+					if(this.sourceKingdom.king.city.citizens[0].isDirectDescendant && !this.sourceKingdom.king.city.citizens[0].isGovernor){
+						this.sourceKingdom.king.city.citizens[0].Death (DEATH_REASONS.REBELLION, false, null, true);
 					}
 				}
 				if(this.sourceKingdom.king.isMarried){
