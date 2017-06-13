@@ -72,16 +72,16 @@ public class General : Role {
 	}
 
 	internal int GetDamage(){
-		int baseDamage = UnityEngine.Random.Range (20, 41);
-		int cityDamage = 4 * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
+		int baseDamage = UnityEngine.Random.Range (40, 61);
+		int cityDamage = 8 * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
 		int otherCityTileCount = 0;
 		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
 			if(this.citizen.city.kingdom.cities[i].id != this.citizen.city.id){
 				otherCityTileCount += this.citizen.city.kingdom.cities [i].ownedTiles.Count;
 			}
 		}
-		int otherCityDamage = 1 * otherCityTileCount;
-		int spawnRateDamage = (int)(this.spawnRate / 2);
-		return (baseDamage + cityDamage + otherCityDamage) + spawnRateDamage;
+		int otherCityDamage = 3 * otherCityTileCount;
+		int spawnRateDamage = Mathf.CeilToInt(this.spawnRate / 4);
+		return (baseDamage + cityDamage + otherCityDamage) * spawnRateDamage;
 	}
 }
