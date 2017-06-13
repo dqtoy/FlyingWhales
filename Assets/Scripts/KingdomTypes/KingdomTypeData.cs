@@ -52,7 +52,7 @@ public class KingdomTypeData : MonoBehaviour {
 
 	private Dictionary<RELATIONSHIP_STATUS, int> _dictWarRateModifierRelationship = new Dictionary<RELATIONSHIP_STATUS, int> ();
 
-	private Dictionary<EVENT_TYPES, int> _dictAgentCreationRate = new Dictionary<EVENT_TYPES, int> ();
+//	private Dictionary<EVENT_TYPES, AgentCreationRate> _dictAgentCreationRate = new Dictionary<EVENT_TYPES, AgentCreationRate> ();
 
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -84,6 +84,12 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
+	public AgentCreationRate[] agentCreationRate {
+		get { 
+			return this._agentCreationRate; 
+		}
+	}
+
 	public Dictionary<WAR_TRIGGER, int> dictWarTriggers {
 		get { 
 			return this._dictWarTriggers; 
@@ -101,11 +107,11 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
-	public Dictionary<EVENT_TYPES, int> dictAgentCreationRate {
-		get { 
-			return this._dictAgentCreationRate; 
-		}
-	}
+//	public Dictionary<EVENT_TYPES, int> dictAgentCreationRate {
+//		get { 
+//			return this._dictAgentCreationRate; 
+//		}
+//	}
 
 	public int _warRateModifierPer15HexDistance {
 		get { 
@@ -141,7 +147,7 @@ public class KingdomTypeData : MonoBehaviour {
 		this._dictWarTriggers.Clear ();
 		this._dictWarRateModifierMilitary.Clear ();
 		this._dictWarRateModifierRelationship.Clear ();
-		this._dictAgentCreationRate.Clear ();
+//		this._dictAgentCreationRate.Clear ();
 
 		for (int i = 0; i < this._warTriggers.Length; i++) {
 			this._dictWarTriggers.Add (this._warTriggers [i].warTrigger, this._warTriggers [i].rate);
@@ -152,8 +158,8 @@ public class KingdomTypeData : MonoBehaviour {
 		for (int i = 0; i < this.warRateModifierRelationship.Length; i++) {
 			this._dictWarRateModifierRelationship.Add (this.warRateModifierRelationship [i].relationshipStatus, this.warRateModifierRelationship [i].rate);
 		}
-		for (int i = 0; i < this._agentCreationRate.Length; i++) {
-			this._dictAgentCreationRate.Add (this._agentCreationRate [i].eventType, this._agentCreationRate [i].rate);
-		}
+//		for (int i = 0; i < this._agentCreationRate.Length; i++) {
+//			this._dictAgentCreationRate.Add (this._agentCreationRate [i].eventType, this._agentCreationRate [i]);
+//		}
 	}
 }

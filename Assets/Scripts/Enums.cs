@@ -320,3 +320,7 @@ public enum DIRECTION{
 public enum EMBARGO_REASON {
     NONE
 }
+
+public enum RATE_TYPE{
+	CUMULATIVE,
+}

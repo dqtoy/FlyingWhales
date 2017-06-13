@@ -390,7 +390,27 @@ public class Kingdom{
         }
         
     }
-
+	/*
+	 * Attempt to an event with agent
+	 * This happens everyday
+	 * */
+	private void AttemptToCreateEvent(){
+		for (int i = 0; i < this.kingdomTypeData.agentCreationRate.Length; i++) {
+			
+		}
+	}
+	private void CreatEvent(EVENT_TYPES eventType){
+		switch (eventType){
+		case EVENT_TYPES.TRADE:
+//			this.AttemptToTrade ();
+			break;
+		case EVENT_TYPES.STATE_VISIT:
+//			EventCreator.Instance.CreateStateVisitEvent
+			break;
+		case EVENT_TYPES.RAID:
+			break;
+		}
+	}
 	/*
 	 * Attempt to create an attack city event
 	 * This will only happen if there's a war with any other kingdom
