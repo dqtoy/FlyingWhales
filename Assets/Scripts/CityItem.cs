@@ -10,6 +10,9 @@ public class CityItem : MonoBehaviour {
     [SerializeField] private UILabel _structuresLbl;
     [SerializeField] private UILabel _cityLbl;
     [SerializeField] private UIProgressBar _hpProgBar;
+    [SerializeField] private GameObject _loyaltyGO;
+    [SerializeField] private UILabel _loyaltyLbl;
+    [SerializeField] private UIEventTrigger _loyaltyEventTrigger;
 
     #region getters/setters
     public City city {
@@ -17,13 +20,21 @@ public class CityItem : MonoBehaviour {
     }
     #endregion
 
-    public void SetCity(City _city) {
+    public void SetCity(City _city, bool showLoyalty = false) {
         this._city = _city;
         this._governor.SetCitizen(city.governor);
         this._hpLbl.text = city.hp.ToString();
         this._structuresLbl.text = city.ownedTiles.Count.ToString();
         this._cityLbl.text = city.name;
         this._hpProgBar.value = (float)city.hp / (float)city.maxHP;
+
+        if (showLoyalty) {
+            this._loyaltyGO.SetActive(true);
+            this._loyaltyLbl.text = ((Governor)this._governor.citizen.assignedRole).loyalty.ToString();
+            EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () { UIManager.Instance.ShowLoyaltySummary((Governor)this._governor.citizen.assignedRole); });
+            EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideLoyaltySummary(); });
+
+        }
     }
 
     public void CenterOnCity() {

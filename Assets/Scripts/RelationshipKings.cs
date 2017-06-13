@@ -8,7 +8,7 @@ public class RelationshipKings {
 	public Citizen sourceKing;
 	public Citizen king;
 //	public DECISION previousDecision;
-	public float like;
+	public int like;
 	public RELATIONSHIP_STATUS lordRelationship;
 //	public LORD_EVENTS previousInteraction = LORD_EVENTS.NONE;
 	public bool isFirstEncounter;
@@ -55,7 +55,7 @@ public class RelationshipKings {
 	//		adjustment - relationship value change
 	//		gameEvent - event that caused the relationship change
 	//		isDiscovery - flag to determine whether the relationship change was because the sourceKing found out the gameEvent
-	internal void AdjustLikeness(float adjustment, GameEvent gameEventTrigger, bool isDiscovery = false){
+	internal void AdjustLikeness(int adjustment, GameEvent gameEventTrigger, bool isDiscovery = false){
         //		if (adjustment < 0) {
         //			//Deteriorating
         //			if (this.king.behaviorTraits.Contains (BEHAVIOR_TRAIT.CHARISMATIC)) {
@@ -161,7 +161,7 @@ public class RelationshipKings {
      * of sourceKing towards targetKing.
      * */
     internal void ChangeSourceKingLikeness(int newLikeness){
-		this.like = (float)newLikeness;
+		this.like = newLikeness;
 		this.UpdateKingRelationshipStatus();
 	}
 
@@ -171,7 +171,7 @@ public class RelationshipKings {
     * */
     internal void ChangeTargetKingLikeness(int newLikeness){
 		RelationshipKings rel = this.king.GetRelationshipWithCitizen(this.sourceKing);
-		rel.like = (float)newLikeness;
+		rel.like = newLikeness;
 		rel.UpdateKingRelationshipStatus();
 	}
     #endregion
