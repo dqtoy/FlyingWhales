@@ -273,7 +273,7 @@ public class Kingdom{
 	// Function to call if you want to determine whether the Kingdom is still alive or dead
 	// At the moment, a Kingdom is considered dead if it doesnt have any cities.
 	public bool isAlive() {
-		if (this.cities.Count > 0) {
+		if (this.cities.Where(x => x.rebellion == null).ToList().Count > 0) {
 			return true;
 		}
 		return false;
@@ -761,7 +761,7 @@ public class Kingdom{
 				return;
 			}
 		}
-//		this.capitalCity = newKing.city;
+		this.capitalCity = newKing.city;
 		newKing.city.hasKing = true;
 
         if (newKing.isMarried) {

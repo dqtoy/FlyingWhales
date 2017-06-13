@@ -33,9 +33,11 @@ public class Rebellion : GameEvent {
 	#region Overrides
 	internal override void PerformAction (){
 		if(!this.targetKingdom.isAlive()){
-			if(this.conqueredCities.Count > 0){
+			if(this.conqueredCities.Count > 1){
 				//Victory Rebellion
-
+				KillFort();
+				Kingdom newKingdom = KingdomManager.Instance.SplitKingdom(this.targetKingdom, this.conqueredCities);
+				newKingdom.AssignNewKing (this.rebelLeader.citizen);
 			}
 			this.DoneEvent();
 			return;
@@ -65,11 +67,17 @@ public class Rebellion : GameEvent {
 	#endregion
 	private void CreateRebelFort(){
 		HexTile hexTile = GetRandomBorderTileForFort ();
-		this.rebelFort = new RebelFort (hexTile, this.targetKingdom, this);
+//		this.rebelFort = new RebelFort (hexTile, this.targetKingdom, this);
+		this.rebelFort = (RebelFort)CityGenerator.Instance.CreateNewCity (hexTile, this.targetKingdom, this);
 //		this.rebelLeader.citizen.city.citizens.Remove (this.rebelLeader.citizen);
 //		this.rebelFort.citizens.Add (this.rebelLeader.citizen);
 		this.rebelLeader.citizen.city = this.rebelFort;
 //		this.conqueredCities.Add (this.rebelFort);
+	}
+	private void KillFort(){
+		this.rebelFort.KillCity();
+		this.conqueredCities.RemoveAt(0);
+		this.rebelLeader.citizen.city = this.conqueredCities [0];
 	}
 	private HexTile GetRandomBorderTileForFort(){
 		return this.rebelLeader.citizen.city.borderTiles [UnityEngine.Random.Range (0, this.rebelLeader.citizen.city.borderTiles.Count)];
@@ -80,6 +88,9 @@ public class Rebellion : GameEvent {
 		City target = null;
 		for (int i = 0; i < this.conqueredCities.Count; i++) {
 			for (int j = 0; j < this.targetKingdom.cities.Count; j++) {
+				if(this.targetKingdom.cities[i].rebellion != null){
+					continue;
+				}
 				List<HexTile> path = PathGenerator.Instance.GetPath (this.conqueredCities [i].hexTile, this.targetKingdom.cities [j].hexTile, PATHFINDING_MODE.AVATAR).ToList();
 				if(path != null){
 					int distance = path.Count;
@@ -107,17 +118,23 @@ public class Rebellion : GameEvent {
 		City nearestCity = null;
 		int nearestDistance = 0;
 		int distance = 0;
+//		List<HexTile> newPath = new List<HexTile>();
 		for (int i = 0; i < this.targetKingdom.cities.Count; i++) {
-			path = PathGenerator.Instance.GetPath (hexTile, this.targetKingdom.cities[i].hexTile, PATHFINDING_MODE.COMBAT).ToList();
-			if(path != null){
+			if(this.targetKingdom.cities[i].rebellion != null){
+				continue;
+			}
+			List<HexTile> newPath = PathGenerator.Instance.GetPath (hexTile, this.targetKingdom.cities[i].hexTile, PATHFINDING_MODE.COMBAT).ToList();
+			if(newPath != null){
 				if(nearestCity == null){
 					nearestCity = this.targetKingdom.cities [i];
-					nearestDistance = path.Sum (x => x.movementDays);
+					nearestDistance = newPath.Sum (x => x.movementDays);
+					path = newPath;
 				}else{
-					distance = path.Sum (x => x.movementDays);
+					distance = newPath.Sum (x => x.movementDays);
 					if(distance < nearestDistance){
 						nearestCity = this.targetKingdom.cities [i];
 						nearestDistance = distance;
+						path = newPath;
 					}
 				}
 			}

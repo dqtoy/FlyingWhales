@@ -147,8 +147,12 @@ public class CityGenerator : MonoBehaviour {
 		return null;
 	}
 
-	public City CreateNewCity(HexTile hexTile, Kingdom kingdom){
-		hexTile.city = new City (hexTile, kingdom);
+	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellion rebellion = null){
+		if(rebellion != null){
+			hexTile.city = new RebelFort (hexTile, kingdom, rebellion);
+		}else{
+			hexTile.city = new City (hexTile, kingdom);
+		}
 		hexTile.ShowCitySprite();
 		//hexTile.ShowNamePlate();
 		if (hexTile.gameObject.GetComponent<CityTaskManager> () != null) {

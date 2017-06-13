@@ -184,6 +184,15 @@ public class CityTaskManager : MonoBehaviour {
 		this.city.ResetDailyGrowth();
 		Task.current.Succeed();
 	}
+
+	[Task]
+	private void HasRebellion(){
+		if(this.city.rebellion != null){
+			Task.current.Succeed();
+		}else{
+			Task.current.Fail();
+		}
+	}
 	#endregion
 
 	#region Hire Special Citizen Functions
