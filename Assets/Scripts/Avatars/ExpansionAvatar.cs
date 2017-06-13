@@ -189,14 +189,24 @@ public class ExpansionAvatar : MonoBehaviour {
 						this.expander.location = this.expander.path[0];
 						this.expander.citizen.currentLocation = this.expander.path [0];
 						this.expander.path.RemoveAt (0);
-					}
+                        this.CheckForKingdomDiscovery();
+                    }
 					this.expander.daysBeforeMoving -= 1;
 				}
 			}
 		}
 	}
 
-	internal void AddBehaviourTree(){
+    private void CheckForKingdomDiscovery() {
+        if (this.expander.location.ownedByCity != null &&
+            this.expander.location.ownedByCity.kingdom.id != this.expander.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.expander.citizen.city.kingdom;
+            Kingdom otherKingdom = this.expander.location.ownedByCity.kingdom;
+            thisKingdom.DiscoverKingdom(otherKingdom);
+        }
+    }
+
+    internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
 

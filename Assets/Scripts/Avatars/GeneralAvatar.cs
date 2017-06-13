@@ -248,6 +248,7 @@ public class GeneralAvatar : MonoBehaviour {
 						this.general.location = this.general.path[0];
 						this.general.citizen.currentLocation = this.general.path [0];
 						this.general.path.RemoveAt (0);
+                        this.CheckForKingdomDiscovery();
 					}
 					this.general.daysBeforeMoving -= 1;
 //					this.MakeCitizenMove (this.general.location, this.general.path [0]);
@@ -260,7 +261,16 @@ public class GeneralAvatar : MonoBehaviour {
 		}
 	}
 
-	internal void AddBehaviourTree(){
+    private void CheckForKingdomDiscovery() {
+        if (this.general.location.ownedByCity != null &&
+            this.general.location.ownedByCity.kingdom.id != this.general.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.general.citizen.city.kingdom;
+            Kingdom otherKingdom = this.general.location.ownedByCity.kingdom;
+            thisKingdom.DiscoverKingdom(otherKingdom);
+        }
+    }
+
+    internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
 

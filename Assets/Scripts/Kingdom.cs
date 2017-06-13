@@ -1684,7 +1684,9 @@ public class Kingdom{
     }
 
     internal void DiscoverKingdom(Kingdom discoveredKingdom) {
-        this._discoveredKingdoms.Add(discoveredKingdom);
+        if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
+            this._discoveredKingdoms.Add(discoveredKingdom);
+        }
     }
 
     internal void RemoveKingdomFromDiscoveredKingdoms(Kingdom kingdomToRemove) {

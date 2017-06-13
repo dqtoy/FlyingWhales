@@ -150,8 +150,18 @@ public class TraderAvatar : MonoBehaviour {
                     this._trader.location = this._trader.path[0];
                     this._trader.citizen.currentLocation = this._trader.path[0];
                     this._trader.path.RemoveAt(0);
+                    this.CheckForKingdomDiscovery();
                 }
             }
+        }
+    }
+
+    private void CheckForKingdomDiscovery() {
+        if (this._trader.location.ownedByCity != null &&
+            this._trader.location.ownedByCity.kingdom.id != this._trader.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this._trader.citizen.city.kingdom;
+            Kingdom otherKingdom = this._trader.location.ownedByCity.kingdom;
+            thisKingdom.DiscoverKingdom(otherKingdom);
         }
     }
 
