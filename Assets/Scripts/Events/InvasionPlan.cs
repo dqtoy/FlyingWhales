@@ -100,7 +100,7 @@ public class InvasionPlan : GameEvent {
 			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
 			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
 
-			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, Utilities.MILITARIZATION_DURATION);
+			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.durationInDays);
 			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
 		}else{
 			
