@@ -45,6 +45,7 @@ public class EventManager : MonoBehaviour {
 	public LookForLostArmies onLookForLostArmies = new LookForLostArmies ();
 	public DeathToGhost onDeathToGhost = new DeathToGhost();
 	public CheckGeneralEligibility onCheckGeneralEligibility = new CheckGeneralEligibility();
+	public UpdatePath onUpdatePath = new UpdatePath();
 
 	/*
 	 * Game Events

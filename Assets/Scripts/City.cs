@@ -502,6 +502,8 @@ public class City{
 		tileToBuy.movementDays = 2;
 		tileToBuy.Occupy (this);
 
+		EventManager.Instance.onUpdatePath.Invoke (tileToBuy);
+
 		this.ownedTiles.Add(tileToBuy);
 
 		//Set color of tile

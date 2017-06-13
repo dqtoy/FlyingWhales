@@ -16,6 +16,7 @@ public class War : GameEvent {
 	private bool _isAtWar;
 	private int attackRate;
 	private bool kingdom1Attacked;
+	private bool isInitialAttack;
 
 	#region getters/setters
 	public Kingdom kingdom1 {
@@ -50,10 +51,12 @@ public class War : GameEvent {
 		this._kingdom2Rel.AssignWarEvent(this);
 		this.warPair.DefaultValues();
 		this.kingdom1Attacked = false;
+		this.isInitialAttack = false;
 		Log titleLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "event_title");
 		titleLog.AddToFillers (_kingdom1, _kingdom1.name);
 		titleLog.AddToFillers (_kingdom2, _kingdom2.name);
 
+		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		EventManager.Instance.AddEventToDictionary(this);
 
 		this.EventIsCreated ();
@@ -94,6 +97,7 @@ public class War : GameEvent {
 			}else{
 				KingdomManager.Instance.DeclareWarBetweenKingdoms(this._kingdom2, this._kingdom1, this);
 			}
+			this.isInitialAttack = true;
             EventManager.Instance.onWeekEnd.AddListener(AttemptToRequestPeace);
 			EventManager.Instance.onWeekEnd.AddListener (this.PerformAction);
 		}
@@ -229,15 +233,25 @@ public class War : GameEvent {
 		this.attackRate += 1;
 		if((this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead) || (this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead)){
 			UpdateWarPair ();
+			if(this.warPair.path == null){
+				return;
+			}
 		}
-		if(this.warPair.path == null){
-			return;
+		if(this.isInitialAttack){
+			if(this.attackRate < KingdomManager.Instance.initialSpawnRate){
+				return;
+			}else{
+				this.isInitialAttack = false;
+			}
+		}else{
+			if(this.attackRate < this.warPair.spawnRate){
+				return;
+			}
 		}
-		if(this.attackRate >= this.warPair.spawnRate){
-			this.attackRate = 0;
-			if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
-				this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path);
-				this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
+		this.attackRate = 0;
+		if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
+			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path);
+			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
 //				if(!this.kingdom1Attacked){
 //					this.kingdom1Attacked = true;
 //					this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path);
@@ -245,8 +259,7 @@ public class War : GameEvent {
 //					this.kingdom1Attacked = false;
 //					this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
 //				}
-				Reinforcement ();
-			}
+			Reinforcement ();
 		}
 	}
 	private void Reinforcement(){
@@ -275,11 +288,19 @@ public class War : GameEvent {
 			}
 		}
 	}
+	private void UpdatePath(HexTile hextile){
+		if(this.warPair.path != null && this.warPair.path.Count > 0){
+			if(this.warPair.path.Contains(hextile)){
+				this.warPair.UpdateSpawnRate();
+			}
+		}
+	}
 	#region Overrides
     internal override void DoneEvent() {
         base.DoneEvent();
         EventManager.Instance.onWeekEnd.RemoveListener(AttemptToRequestPeace);
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		EventManager.Instance.onUpdatePath.RemoveListener (UpdatePath);
     }
 	internal override void CancelEvent (){
 		base.CancelEvent ();

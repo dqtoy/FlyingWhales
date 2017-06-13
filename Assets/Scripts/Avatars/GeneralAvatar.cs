@@ -202,14 +202,16 @@ public class GeneralAvatar : MonoBehaviour {
 						this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByGeneral (this.general);
 					}
 				}
-				Task.current.Succeed ();
-			} else{
-				Task.current.Fail ();
+//				Task.current.Succeed ();
 			}
-
-		}else{
-			Task.current.Fail ();
+//			else{
+//				Task.current.Fail ();
+//			}
 		}
+//		else{
+//			Task.current.Fail ();
+//		}
+		Task.current.Fail ();
 	}
 	[Task]
 	public void HasDiedOfOtherReasons(){

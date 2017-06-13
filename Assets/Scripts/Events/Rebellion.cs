@@ -23,6 +23,7 @@ public class Rebellion : GameEvent {
 		this.warPair.DefaultValues ();
 		CreateRebelFort ();
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 
 	}
 	#region Overrides
@@ -52,6 +53,7 @@ public class Rebellion : GameEvent {
 		base.DoneEvent ();
 		this.targetKingdom.rebellions.Remove (this);
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		EventManager.Instance.onUpdatePath.RemoveListener (UpdatePath);
 
 	}
 
@@ -130,5 +132,13 @@ public class Rebellion : GameEvent {
 	internal void UpdateWarPair(){
 		this.warPair.DefaultValues ();
 		CreateCityWarPair ();
+	}
+
+	private void UpdatePath(HexTile hextile){
+		if(this.warPair.path != null && this.warPair.path.Count > 0){
+			if(this.warPair.path.Contains(hextile)){
+				this.warPair.UpdateSpawnRate();
+			}
+		}
 	}
 }
