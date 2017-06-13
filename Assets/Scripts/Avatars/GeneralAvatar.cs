@@ -192,9 +192,13 @@ public class GeneralAvatar : MonoBehaviour {
 						CombatManager.Instance.BattleMidway (ref this.general, ref otherGeneral);
 						if(this.general.markAsDead){
 							this.general.citizen.Death (DEATH_REASONS.BATTLE);
+						}else{
+							this.general.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
 						}
 						if(otherGeneral.markAsDead){
 							this.hostile.Death (DEATH_REASONS.BATTLE);
+						}else{
+							otherGeneral.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
 						}
 					}
 				}else{
@@ -202,14 +206,16 @@ public class GeneralAvatar : MonoBehaviour {
 						this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByGeneral (this.general);
 					}
 				}
-				Task.current.Succeed ();
-			} else{
-				Task.current.Fail ();
+//				Task.current.Succeed ();
 			}
-
-		}else{
-			Task.current.Fail ();
+//			else{
+//				Task.current.Fail ();
+//			}
 		}
+//		else{
+//			Task.current.Fail ();
+//		}
+		Task.current.Fail ();
 	}
 	[Task]
 	public void HasDiedOfOtherReasons(){

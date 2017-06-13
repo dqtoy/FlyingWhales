@@ -465,7 +465,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (UIManager.Instance.IsMouseOnUI()) {
             return;
         }
-        if (this.isHabitable && this.isOccupied) {
+        if (this.isOccupied) {
+			if(!this.isHabitable){
+				if(this.city == null){
+					return;
+				}else{
+					if(this.city.rebellion == null){
+						return;
+					}
+				}
+			}
             this.city.kingdom.HighlightAllOwnedTilesInKingdom();
             this.city.HighlightAllOwnedTiles(204f / 255f);
             this.ShowKingdomInfo();
@@ -473,7 +482,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     void OnMouseExit() {
-        if (this.isHabitable && this.isOccupied) {
+        if (this.isOccupied) {
+			if(!this.isHabitable){
+				if(this.city == null){
+					return;
+				}else{
+					if(this.city.rebellion == null){
+						return;
+					}
+				}
+			}
             this.HideKingdomInfo();
             if (UIManager.Instance.currentlyShowingKingdom != null) {
                 //if there is currently showing kingdom, if this city is part of that kingdom remain higlighted, but less

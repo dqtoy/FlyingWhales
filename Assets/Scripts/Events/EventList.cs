@@ -31,3 +31,6 @@ public class GameEventEnded: UnityEvent<GameEvent>{}
 
 //UI
 public class UpdateUI: UnityEvent{}
+
+//Combat
+public class UpdatePath: UnityEvent<HexTile>{}

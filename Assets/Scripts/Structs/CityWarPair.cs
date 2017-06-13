@@ -13,7 +13,8 @@ public struct CityWarPair {
 		this.kingdom1City = kingdom1City;
 		this.kingdom2City = kingdom2City;
 		this.path = new List<HexTile>(path);
-		this.spawnRate = path.Sum(x => x.movementDays) + 1;
+		this.spawnRate = 0;
+		UpdateSpawnRate ();
 	}
 
 	internal void DefaultValues(){
@@ -21,5 +22,9 @@ public struct CityWarPair {
 		this.kingdom2City = null;
 		this.path = null;
 		this.spawnRate = 0;
+	}
+
+	internal void UpdateSpawnRate(){
+		this.spawnRate = this.path.Sum(x => x.movementDays) + 1;
 	}
 }

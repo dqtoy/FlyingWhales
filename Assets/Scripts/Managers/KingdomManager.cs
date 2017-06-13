@@ -26,8 +26,7 @@ public class KingdomManager : MonoBehaviour {
 
 	public int numberOfKingdoms;
 	public int numberOfCitiesPerKingdom;
-	public int warCreationRate;
-
+	public int initialSpawnRate;
 
 	void Awake(){
 		Instance = this;

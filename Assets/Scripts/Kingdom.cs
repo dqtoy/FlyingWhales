@@ -273,7 +273,7 @@ public class Kingdom{
 	// Function to call if you want to determine whether the Kingdom is still alive or dead
 	// At the moment, a Kingdom is considered dead if it doesnt have any cities.
 	public bool isAlive() {
-		if (this.cities.Count > 0) {
+		if (this.cities.Where(x => x.rebellion == null).ToList().Count > 0) {
 			return true;
 		}
 		return false;
@@ -390,7 +390,27 @@ public class Kingdom{
         }
         
     }
-
+	/*
+	 * Attempt to an event with agent
+	 * This happens everyday
+	 * */
+	private void AttemptToCreateEvent(){
+		for (int i = 0; i < this.kingdomTypeData.agentCreationRate.Length; i++) {
+			
+		}
+	}
+	private void CreatEvent(EVENT_TYPES eventType){
+		switch (eventType){
+		case EVENT_TYPES.TRADE:
+//			this.AttemptToTrade ();
+			break;
+		case EVENT_TYPES.STATE_VISIT:
+//			EventCreator.Instance.CreateStateVisitEvent
+			break;
+		case EVENT_TYPES.RAID:
+			break;
+		}
+	}
 	/*
 	 * Attempt to create an attack city event
 	 * This will only happen if there's a war with any other kingdom
@@ -761,7 +781,7 @@ public class Kingdom{
 				return;
 			}
 		}
-//		this.capitalCity = newKing.city;
+		this.capitalCity = newKing.city;
 		newKing.city.hasKing = true;
 
         if (newKing.isMarried) {
@@ -1540,7 +1560,7 @@ public class Kingdom{
         this._unrest += amountToAdjust;
         this._unrest = Mathf.Clamp(this._unrest, 0, 100);
 		if(this._unrest == 100){
-//			UnrestEvents ();
+			UnrestEvents ();
 		}
     }
 	internal void ChangeUnrest(int newAmount){
@@ -1559,12 +1579,13 @@ public class Kingdom{
 		}
 		if(chosenGovernor != null){
 			//Secession Event
-			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
+//			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
 		}else{
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				//Riot Event
-				EventCreator.Instance.CreateRiotEvent(this);
+//				EventCreator.Instance.CreateRiotEvent(this);
+				EventCreator.Instance.CreateRebellionEvent(this);
 			}else{
 				//Rebellion Event
 				EventCreator.Instance.CreateRebellionEvent(this);
