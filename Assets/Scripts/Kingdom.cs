@@ -1540,7 +1540,7 @@ public class Kingdom{
         this._unrest += amountToAdjust;
         this._unrest = Mathf.Clamp(this._unrest, 0, 100);
 		if(this._unrest == 100){
-//			UnrestEvents ();
+			UnrestEvents ();
 		}
     }
 	internal void ChangeUnrest(int newAmount){
@@ -1559,12 +1559,13 @@ public class Kingdom{
 		}
 		if(chosenGovernor != null){
 			//Secession Event
-			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
+//			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
 		}else{
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				//Riot Event
-				EventCreator.Instance.CreateRiotEvent(this);
+//				EventCreator.Instance.CreateRiotEvent(this);
+				EventCreator.Instance.CreateRebellionEvent(this);
 			}else{
 				//Rebellion Event
 				EventCreator.Instance.CreateRebellionEvent(this);

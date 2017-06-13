@@ -52,6 +52,7 @@ public class War : GameEvent {
 		this.warPair.DefaultValues();
 		this.kingdom1Attacked = false;
 		this.isInitialAttack = false;
+		this.attackRate = 0;
 		Log titleLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "event_title");
 		titleLog.AddToFillers (_kingdom1, _kingdom1.name);
 		titleLog.AddToFillers (_kingdom2, _kingdom2.name);
@@ -288,9 +289,9 @@ public class War : GameEvent {
 			}
 		}
 	}
-	private void UpdatePath(HexTile hextile){
+	private void UpdatePath(HexTile hexTile){
 		if(this.warPair.path != null && this.warPair.path.Count > 0){
-			if(this.warPair.path.Contains(hextile)){
+			if(this.warPair.path.Contains(hexTile)){
 				this.warPair.UpdateSpawnRate();
 			}
 		}

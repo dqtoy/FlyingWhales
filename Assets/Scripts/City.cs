@@ -1180,8 +1180,8 @@ public class City{
 		this.raidLoyaltyExpiration = 0;
 		((Governor)this.governor.assignedRole).UpdateLoyalty ();
 	}
-	internal void AttackCity(City targetCity, List<HexTile> path){
-		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path);
+	internal void AttackCity(City targetCity, List<HexTile> path, bool isRebel = false){
+		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path, isRebel);
 //		int chance = UnityEngine.Random.Range (0, 100);
 //		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
 //			
