@@ -74,7 +74,7 @@ public class Rebellion : GameEvent {
 		this.rebelLeader.citizen.city = this.rebelFort;
 //		this.conqueredCities.Add (this.rebelFort);
 	}
-	private void KillFort(){
+	internal void KillFort(){
 		this.rebelFort.KillCity();
 		this.conqueredCities.RemoveAt(0);
 		this.rebelLeader.citizen.city = this.conqueredCities [0];

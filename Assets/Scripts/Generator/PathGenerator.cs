@@ -137,7 +137,7 @@ public class PathGenerator : MonoBehaviour {
 	 * */
 	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
-		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
+		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
 		List<HexTile> habitableTiles;
 
 		if (resourceType == BASE_RESOURCE_TYPE.STONE) {
@@ -153,7 +153,7 @@ public class PathGenerator : MonoBehaviour {
 				habitableTiles [i].isRoad = true;
 			}
 		}
-		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathfindingMode);
+		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode);
 		if (pathfindingMode != PATHFINDING_MODE.NORMAL) {
 //			startingTile.isRoad = false;
 //			destinationTile.isRoad = false;
@@ -162,17 +162,17 @@ public class PathGenerator : MonoBehaviour {
 			}
 		}
 
-        if(pathfindingMode == PATHFINDING_MODE.COMBAT) {
-            return path.Reverse().ToList();
-        } else {
-            if (path != null) {
-                List<HexTile> newPath = path.Reverse().ToList();
-                if (newPath.Count > 1) {
-                    newPath.RemoveAt(0);
-                }
-                return newPath;
-            }
-        }
+		if (path != null) {
+			if (pathfindingMode == PATHFINDING_MODE.COMBAT) {
+				return path.Reverse ().ToList ();
+			} else {
+				List<HexTile> newPath = path.Reverse ().ToList ();
+				if (newPath.Count > 1) {
+					newPath.RemoveAt (0);
+				}
+				return newPath;
+			}
+		}
 		return null;
 	}
 

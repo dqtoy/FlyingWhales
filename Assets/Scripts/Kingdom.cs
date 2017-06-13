@@ -51,6 +51,11 @@ public class Kingdom{
 	internal List<City> adjacentCitiesFromOtherKingdoms;
 	internal List<Kingdom> adjacentKingdoms;
 
+	//Tech
+	private int techLevel;
+	private int techCapacity;
+	private int techCounter;
+
 	private int expansionChance = 1;
     
     protected const int INCREASE_CITY_HP_CHANCE = 5;
@@ -150,6 +155,9 @@ public class Kingdom{
 		this.hasConflicted = false;
 		this.borderConflictLoyaltyExpiration = 0;
 		this.rebellions = new List<Rebellion> ();
+		this.techLevel = 1;
+		this.techCounter = 0;
+		this.UpdateTechCapacity ();
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
@@ -385,6 +393,7 @@ public class Kingdom{
         //		this.AttemptToIncreaseCityHP();
         this.DecreaseUnrestEveryMonth();
 		this.CheckBorderConflictLoyaltyExpiration ();
+		this.IncreaseTechCounterPerTick();
         if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
             this.AttemptToTrade();
         }
@@ -1061,9 +1070,9 @@ public class Kingdom{
 			this.AdjustUnrest(UNREST_INCREASE_CONQUER);
 		}else{
 			if(city is RebelFort){
-				city.rebellion.conqueredCities.Remove (city);
-				HexTile hex = city.hexTile;
-				city.KillCity();
+				city.rebellion.KillFort();
+//				HexTile hex = city.hexTile;
+//				city.KillCity();
 			}else{
 				if(city.rebellion != null){
 					city.ChangeToCity ();
@@ -1556,6 +1565,7 @@ public class Kingdom{
     }
 	#endregion
 
+	#region Unrest
     internal void AdjustUnrest(int amountToAdjust) {
         this._unrest += amountToAdjust;
         this._unrest = Mathf.Clamp(this._unrest, 0, 100);
@@ -1592,4 +1602,30 @@ public class Kingdom{
 			}
 		}
 	}
+	#endregion
+
+	#region Tech
+	private void IncreaseTechCounterPerTick(){
+		int amount = 1 * this.cities.Count;
+		int bonus = 0;
+		amount += bonus;
+		this.AdjustTechCounter (amount);
+	}
+	private void UpdateTechCapacity(){
+		this.techCapacity = 2000 * this.techLevel;
+	}
+	private void AdjustTechCounter(int amount){
+		this.techCounter += amount;
+		this.techCounter = Mathf.Clamp(this.techCounter, 0, this.techCapacity);
+		if(this.techCounter == this.techCapacity){
+			this.UpgradeTechLevel (1);
+		}
+	}
+	private void UpgradeTechLevel(int amount){
+		this.techLevel += amount;
+		this.techCounter = 0;
+		this.UpdateTechCapacity ();
+	}
+	#endregion
+
 }
