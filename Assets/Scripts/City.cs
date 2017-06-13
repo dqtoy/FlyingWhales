@@ -526,6 +526,7 @@ public class City{
 
         //Update necessary data
         this.UpdateDailyProduction();
+        this.kingdom.CheckForDiscoveredKingdoms(tileToBuy);
         //this.UpdateAdjacentCities();
         //this.kingdom.UpdateKingdomAdjacency();
 
