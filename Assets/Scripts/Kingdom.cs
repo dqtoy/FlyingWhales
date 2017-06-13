@@ -1615,9 +1615,10 @@ public class Kingdom{
 			}
 		}
 	}
-	
-	#region Tech
-	private void IncreaseTechCounterPerTick(){
+    #endregion
+
+    #region Tech
+    private void IncreaseTechCounterPerTick(){
 		int amount = 1 * this.cities.Count;
 		int bonus = 0;
 		amount += bonus;
