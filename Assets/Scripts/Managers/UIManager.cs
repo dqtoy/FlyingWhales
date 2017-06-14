@@ -797,7 +797,8 @@ public class UIManager : MonoBehaviour {
 	#endregion
 
 	public void ShowRelationships(){
-		relationshipsGO.SetActive (true);
+        kingdomListRelationshipButton.SetClickState(true);
+        relationshipsGO.SetActive (true);
         HideKingdomCities();
         HideAllKingdomEvents();
         ShowKingRelationships();
