@@ -551,7 +551,7 @@ public class City{
 	 * */
 	protected void CityEverydayTurnActions(){
 		this.hasReinforced = false;
-		this.ProduceGold();
+		//this.ProduceGold();
 		this.AttemptToIncreaseHP();
 	}
 	/*

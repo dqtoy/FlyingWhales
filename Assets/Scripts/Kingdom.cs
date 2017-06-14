@@ -407,7 +407,7 @@ public class Kingdom{
 	 * happen every tick here.
 	 * */
 	protected void KingdomTickActions(){
-        this.ProduceGoldFromTrade();
+        //this.ProduceGoldFromTrade();
         this.AttemptToExpand();
 //		this.AttemptToCreateAttackCityEvent ();
 //		this.AttemptToCreateReinforcementEvent ();
