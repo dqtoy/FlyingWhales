@@ -297,8 +297,9 @@ public class CityTaskManager : MonoBehaviour {
 	#region Common Functions
 	[Task]
 	private bool HasEnoughResourcesForAction(string action){
-		List<Resource> actionCost = this.GetActionCost(action);
-		return this.city.kingdom.HasEnoughResourcesForAction (actionCost);
+        return true;
+		//List<Resource> actionCost = this.GetActionCost(action);
+		//return this.city.kingdom.HasEnoughResourcesForAction (actionCost);
 	}
 
 	private List<Resource> GetActionCost(string action){

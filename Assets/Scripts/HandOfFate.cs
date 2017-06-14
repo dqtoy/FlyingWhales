@@ -105,13 +105,15 @@ public class HandOfFate : MonoBehaviour {
 	[Task]
 	public void SetSecondRandomKingdom(){
 		List<Kingdom> allKingdomCandidates = new List<Kingdom> ();
-		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.firstKingdom.id){
-				if(IsCompatibleRelationship(KingdomManager.Instance.allKingdoms[i]) && IsCompatibleKingdomType(KingdomManager.Instance.allKingdoms[i]) 
-					&& IsCompatibleMilitaryStrength(KingdomManager.Instance.allKingdoms[i])){
+        List<Kingdom> kingdomsToChooseFrom = this.firstKingdom.discoveredKingdoms;
 
-					allKingdomCandidates.Add (KingdomManager.Instance.allKingdoms [i]);
+		for(int i = 0; i < kingdomsToChooseFrom.Count; i++){
+            Kingdom currKingdom = kingdomsToChooseFrom[i];
+            if (currKingdom.id != this.firstKingdom.id){
+				if(IsCompatibleRelationship(currKingdom) && IsCompatibleKingdomType(currKingdom) 
+                    && IsCompatibleMilitaryStrength(currKingdom)){
 
+					allKingdomCandidates.Add (currKingdom);
 				}
 			}
 		}

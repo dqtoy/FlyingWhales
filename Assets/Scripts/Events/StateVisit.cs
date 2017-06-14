@@ -148,27 +148,41 @@ public class StateVisit : GameEvent {
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.inviterKingdom.id && KingdomManager.Instance.allKingdoms[i].id != this.invitedKingdom.id && KingdomManager.Instance.allKingdoms[i].isAlive()){
+            Kingdom currKingdom = KingdomManager.Instance.allKingdoms[i];
+            if (currKingdom.id != this.inviterKingdom.id && currKingdom.id != this.invitedKingdom.id 
+                && currKingdom.isAlive() 
+                && (currKingdom.discoveredKingdoms.Contains(this.invitedKingdom) || currKingdom.discoveredKingdoms.Contains(this.inviterKingdom))) {
 				kingdoms.Add (KingdomManager.Instance.allKingdoms [i]);
 			}
 		}
 		return kingdoms;
 	}
-	private Kingdom GetRandomKingdom(){
+	private Kingdom GetRandomKingdomForAction(){
 		this.otherKingdoms.RemoveAll (x => !x.isAlive ());
-		return this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
+        //List<Kingdom> kingdomsToChooseFrom = this.otherKingdoms
+        //    .Where(x => x.discoveredKingdoms.Contains(targetKingdom)).ToList();
+
+        return this.otherKingdoms[UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
 
 	}
 	private void TriggerAssassinationEvent(){
 		if (this.otherKingdoms != null && this.otherKingdoms.Count > 0) {
 			int chance = UnityEngine.Random.Range (0, 100);
 			if (chance < 1) {
-				Kingdom selectedKingdom = GetRandomKingdom();
-				RelationshipKings relationship = selectedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
+				Kingdom selectedKingdom = GetRandomKingdomForAction();
+
+                RelationshipKings relationship = selectedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
 				if (relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
 					if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
-						//ASSASSINATION EVENT
-						int remainingDays = this.visitor.path.Sum(x => x.movementDays);
+
+                        selectedKingdom.DiscoverKingdom(this.visitor.citizen.city.kingdom);
+                        this.visitor.citizen.city.kingdom.DiscoverKingdom(selectedKingdom);
+
+                        selectedKingdom.DiscoverKingdom(inviterKingdom);
+                        inviterKingdom.DiscoverKingdom(selectedKingdom);
+
+                        //ASSASSINATION EVENT
+                        int remainingDays = this.visitor.path.Sum(x => x.movementDays);
 						Assassination assassination = EventCreator.Instance.CreateAssassinationEvent (selectedKingdom, this.visitor.citizen, this, remainingDays);
 						if(assassination != null){
 							Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
@@ -217,7 +231,7 @@ public class StateVisit : GameEvent {
 		if(this.otherKingdoms != null && this.otherKingdoms.Count > 0){
 			int chance = UnityEngine.Random.Range (0, 100);
 			if (chance < 1) {
-				Kingdom selectedKingdom = GetRandomKingdom();
+				Kingdom selectedKingdom = GetRandomKingdomForAction();
 				if (CheckForRelationship (selectedKingdom, false)) {
 					if(this.saboteurEnvoy == null){
 						SendEnvoySabotage (selectedKingdom);
@@ -260,6 +274,8 @@ public class StateVisit : GameEvent {
 			
 		Sabotage sabotage = EventCreator.Instance.CreateSabotageEvent(sender, this.inviterKingdom, this, remainingDays);
 		if(sabotage != null){
+            sender.DiscoverKingdom(this.inviterKingdom);
+            this.inviterKingdom.DiscoverKingdom(sender);
 			this.saboteurEnvoy = sabotage.saboteur;
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_start");
 			newLog.AddToFillers (sender.king, sender.king.name);

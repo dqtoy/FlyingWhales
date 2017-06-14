@@ -124,6 +124,10 @@ public class Kingdom{
     public int basicResourceCount {
         get { return this._basicResourceCount; }
     }
+    /*
+     * Will return all discovered kingdoms, otherwise, if useDiscoveredKingdoms
+     * is set to false will return all kingdoms except this one.
+     * */
     public List<Kingdom> discoveredKingdoms {
         get {
             if (KingdomManager.Instance.useDiscoveredKingdoms) {
@@ -531,7 +535,8 @@ public class Kingdom{
         List<Kingdom> friendKingdoms = this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.ALLY);
         friendKingdoms.AddRange(this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.FRIEND));
         List<HexTile> path = null;
-            
+
+        friendKingdoms = friendKingdoms.Where(x => this.discoveredKingdoms.Contains(x)).ToList();
         //Check if sourceKingdom is friends or allies with anybody
         if (friendKingdoms.Count > 0) {
             for (int i = 0; i < friendKingdoms.Count; i++) {
@@ -558,6 +563,8 @@ public class Kingdom{
             List<Kingdom> otherKingdoms = this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.WARM);
             otherKingdoms.AddRange(this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.NEUTRAL));
             otherKingdoms.AddRange(this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.COLD));
+
+            otherKingdoms = otherKingdoms.Where(x => this.discoveredKingdoms.Contains(x)).ToList();
             //check if sourceKingdom has resources that the other kingdom does not 
             for (int i = 0; i < otherKingdoms.Count; i++) {
                 Kingdom otherKingdom = otherKingdoms[i];
@@ -1458,24 +1465,25 @@ public class Kingdom{
 	 * Check if the kingdom has enough resources for a given cost.
 	 * */
 	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
-		if(resourceCost != null){
-			for (int i = 0; i < resourceCost.Count; i++) {
-				Resource currentResource = resourceCost [i];
-				if (currentResource.resourceType == BASE_RESOURCE_TYPE.GOLD) {
-					if (this._goldCount < currentResource.resourceQuantity) {
-						return false;
-					}
-				} 
-    //            else {
-				//	if (!this.HasResource(currentResource.resourceType)) {
-				//		return false;
-				//	}
-				//}
-			}
-		}else{
-			return false;
-		}
-		return true;
+        return true;
+		//if(resourceCost != null){
+		//	for (int i = 0; i < resourceCost.Count; i++) {
+		//		Resource currentResource = resourceCost [i];
+		//		if (currentResource.resourceType == BASE_RESOURCE_TYPE.GOLD) {
+		//			if (this._goldCount < currentResource.resourceQuantity) {
+		//				return false;
+		//			}
+		//		} 
+  //  //            else {
+		//		//	if (!this.HasResource(currentResource.resourceType)) {
+		//		//		return false;
+		//		//	}
+		//		//}
+		//	}
+		//}else{
+		//	return false;
+		//}
+		//return true;
 	}
 
 	/*
@@ -1652,13 +1660,29 @@ public class Kingdom{
             for (int j = 0; j < tilesToCheck.Count; j++) {
                 //Get all neighbour tiles that are owned, but not by this kingdom, 
                 //and that kingdom is not already added to this kingdom's discovered kingdoms.
-                List<HexTile> neighbours = tilesToCheck[i].PurchasableTiles
-                    .Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
-                    .ToList();
+                List<HexTile> neighbours = tilesToCheck[i].PurchasableTiles.ToList();
+                    //.Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
+                    //.ToList();
                 for (int k = 0; k < neighbours.Count; k++) {
-                    Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
-                    this.DiscoverKingdom(otherKingdom);
-                    otherKingdom.DiscoverKingdom(this);
+                    HexTile currNeighbour = neighbours[i];
+                    if (currNeighbour.isOccupied && currNeighbour.ownedByCity != null
+                        && currNeighbour.ownedByCity.kingdom.id != this.id) {
+                        Kingdom otherKingdom = currNeighbour.ownedByCity.kingdom;
+
+                        this.DiscoverKingdom(otherKingdom);
+                        otherKingdom.DiscoverKingdom(this);
+                    } else if (currNeighbour.isBorder) {
+                        Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID).kingdom;
+
+                        if (otherKingdom.id != this.id) {
+                            this.DiscoverKingdom(otherKingdom);
+                            otherKingdom.DiscoverKingdom(this);
+                        }
+                    }
+
+                    //Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
+                    //this.DiscoverKingdom(otherKingdom);
+                    //otherKingdom.DiscoverKingdom(this);
                 }
             }
         }
@@ -1668,22 +1692,40 @@ public class Kingdom{
      * Check all the neighbours of a HexTile and check if any of them are owned by another kingdom, if so,
      * the two kingdoms have now discovered each other.
      * */
-    internal void CheckForDiscoveredKingdoms(HexTile tileToCheck) {
+    internal void CheckForDiscoveredKingdoms(City city) {
         //Get all neighbour tiles that are owned, but not by this kingdom, 
         //and that kingdom is not already added to this kingdom's discovered kingdoms.
-        List<HexTile> neighbours = tileToCheck.PurchasableTiles
-            .Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
-            .ToList();
-        for (int i = 0; i < neighbours.Count; i++) {
-            Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
-            this.DiscoverKingdom(otherKingdom);
-            otherKingdom.DiscoverKingdom(this);
+        List<HexTile> tilesToCheck = city.ownedTiles.Union(city.borderTiles).ToList();
+        for (int i = 0; i < tilesToCheck.Count; i++) {
+            List<HexTile> neighbours = tilesToCheck[i].PurchasableTiles.ToList();
+            for (int j = 0; j < neighbours.Count; j++) {
+                HexTile currNeighbour = neighbours[j];
+                if (currNeighbour.isOccupied && currNeighbour.ownedByCity != null
+                    && currNeighbour.ownedByCity.kingdom.id != this.id) {
+                    Kingdom otherKingdom = currNeighbour.ownedByCity.kingdom;
+
+                    this.DiscoverKingdom(otherKingdom);
+                    otherKingdom.DiscoverKingdom(this);
+                } else if (currNeighbour.isBorder) {
+                    Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID).kingdom;
+
+                    if (otherKingdom.id != this.id) {
+                        this.DiscoverKingdom(otherKingdom);
+                        otherKingdom.DiscoverKingdom(this);
+                    }
+                }
+            }
         }
+            
+            //.Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
+            //.ToList();
+        
     }
 
     internal void DiscoverKingdom(Kingdom discoveredKingdom) {
         if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
             this._discoveredKingdoms.Add(discoveredKingdom);
+            Debug.LogError(this.name + " discovered " + discoveredKingdom.name + "!");
         }
     }
 

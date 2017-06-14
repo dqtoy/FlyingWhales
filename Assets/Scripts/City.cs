@@ -526,7 +526,7 @@ public class City{
 
         //Update necessary data
         this.UpdateDailyProduction();
-        this.kingdom.CheckForDiscoveredKingdoms(tileToBuy);
+        this.kingdom.CheckForDiscoveredKingdoms(this);
         //this.UpdateAdjacentCities();
         //this.kingdom.UpdateKingdomAdjacency();
 
@@ -784,17 +784,18 @@ public class City{
 	}
 
 	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
-		if(resourceCost != null){
-			for (int i = 0; i < resourceCost.Count; i++) {
-				Resource currentResource = resourceCost [i];
-				if (this.GetResourceAmountPerType (currentResource.resourceType) < currentResource.resourceQuantity) {
-					return false;
-				}
-			}
-		}else{
-			return false;
-		}
-		return true;
+        return true;
+		//if(resourceCost != null){
+		//	for (int i = 0; i < resourceCost.Count; i++) {
+		//		Resource currentResource = resourceCost [i];
+		//		if (this.GetResourceAmountPerType (currentResource.resourceType) < currentResource.resourceQuantity) {
+		//			return false;
+		//		}
+		//	}
+		//}else{
+		//	return false;
+		//}
+		//return true;
 	}
 
 	protected int GetResourceAmountPerType(BASE_RESOURCE_TYPE resourceType){

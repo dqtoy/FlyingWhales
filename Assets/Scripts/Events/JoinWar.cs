@@ -47,8 +47,11 @@ public class JoinWar : GameEvent {
 		this._uncovered = new List<Citizen>();
 		this._invasionPlanThatStartedEvent = _invasionPlanThatStartedEvent;
 		this.warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
-			
-		Log startLog = _invasionPlanThatStartedEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
+
+        this._candidateForAlliance.city.kingdom.DiscoverKingdom(kingdomToAttack);
+        kingdomToAttack.DiscoverKingdom(this._candidateForAlliance.city.kingdom);
+
+        Log startLog = _invasionPlanThatStartedEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			               "Events", "War", "join_war_start");
 		startLog.AddToFillers (this.startedBy, this.startedBy.name);
 		startLog.AddToFillers (_envoyToSend.citizen, _envoyToSend.citizen.name);
