@@ -100,7 +100,7 @@ public class InvasionPlan : GameEvent {
 			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
 			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
 
-			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.durationInDays);
+			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days+1, GameManager.Instance.year, this.durationInDays);
 			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
 		}else{
 			
@@ -112,7 +112,7 @@ public class InvasionPlan : GameEvent {
 			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
 			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
 
-			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.durationInDays);
+			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days+1, GameManager.Instance.year, this.durationInDays);
 			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
 		}
 
@@ -149,13 +149,17 @@ public class InvasionPlan : GameEvent {
 				return;
 			}
 
-			List<RelationshipKings> friends = this.startedBy.friends;
+			List<RelationshipKings> friends = this.startedBy.friends
+                .Where(x => this.startedByKingdom.discoveredKingdoms.Contains(x.king.city.kingdom)).ToList();
+
 			if (friends.Count > 0) {
 				for (int i = 0; i < friends.Count; i++) {
 					War friendWarWithTargetKingdom = KingdomManager.Instance.GetWarBetweenKingdoms (friends [i].king.city.kingdom, this._targetKingdom);
-					if (EventManager.Instance.GetEventsStartedByKingdom (friends[i].king.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where (x => x.isActive).Count () > 0 ||
-						KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, friends[i].king.city.kingdom) != null||
-						(friendWarWithTargetKingdom != null && friendWarWithTargetKingdom.isAtWar)) {
+                    List<GameEvent> friendsActiveInvasionPlans = EventManager.Instance.GetEventsStartedByKingdom(friends[i].king.city.kingdom, new EVENT_TYPES[] { EVENT_TYPES.INVASION_PLAN })
+                        .Where(x => x.isActive).ToList();
+                    JoinWar activeJoinWarRequest = KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, friends[i].king.city.kingdom);
+                    if (friendsActiveInvasionPlans.Count > 0 || activeJoinWarRequest != null || 
+                        (friendWarWithTargetKingdom != null && friendWarWithTargetKingdom.isAtWar)) {
 						//friend already has an active invasion plan or friend already has an active join war request from this startedByKingdom or is already
 						//at war with target kingdom
 						continue;

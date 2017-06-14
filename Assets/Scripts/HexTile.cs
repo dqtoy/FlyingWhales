@@ -608,6 +608,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         } else {
             text += "NONE\n";
         }
+
+        text += "[b]Discovered Kingdoms: [/b]\n";
+        if (this.city.kingdom.discoveredKingdoms.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
+                Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
+                text += currKingdom.name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
         UIManager.Instance.ShowSmallInfo(text);
     }
 
