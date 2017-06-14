@@ -85,6 +85,12 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
+	public EventRate[] dailyCumulativeEventRate {
+		get { 
+			return this._dailyCumulativeEventRate; 
+		}
+	}
+
 	public Dictionary<WAR_TRIGGER, int> dictWarTriggers {
 		get { 
 			return this._dictWarTriggers; 
