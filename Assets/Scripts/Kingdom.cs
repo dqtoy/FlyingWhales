@@ -54,7 +54,7 @@ public class Kingdom{
 	private List<Kingdom> _discoveredKingdoms;
 	
 	//Tech
-	private int techLevel;
+	private int _techLevel;
 	private int techCapacity;
 	private int techCounter;
 
@@ -137,6 +137,10 @@ public class Kingdom{
             }
         }
     }
+
+	public int techLevel{
+		get{return this._techLevel;}
+	}
 	#endregion
 	// Kingdom constructor paramters
 	//	race - the race of this kingdom
@@ -171,7 +175,7 @@ public class Kingdom{
 		this.borderConflictLoyaltyExpiration = 0;
 		this.rebellions = new List<Rebellion> ();
 		this._discoveredKingdoms = new List<Kingdom>();
-		this.techLevel = 1;
+		this._techLevel = 1;
 		this.techCounter = 0;
 		this.UpdateTechCapacity ();
 		// Determine what type of Kingdom this will be upon initialization.
@@ -1631,7 +1635,7 @@ public class Kingdom{
 		this.AdjustTechCounter (amount);
 	}
 	private void UpdateTechCapacity(){
-		this.techCapacity = 2000 * this.techLevel;
+		this.techCapacity = 2000 * this._techLevel;
 	}
 	private void AdjustTechCounter(int amount){
 		this.techCounter += amount;
@@ -1641,7 +1645,7 @@ public class Kingdom{
 		}
 	}
 	private void UpgradeTechLevel(int amount){
-		this.techLevel += amount;
+		this._techLevel += amount;
 		this.techCounter = 0;
 		this.UpdateTechCapacity ();
 	}

@@ -73,7 +73,7 @@ public class General : Role {
 
 	internal int GetDamage(){
 		int baseDamage = UnityEngine.Random.Range (40, 61);
-		int cityDamage = 8 * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
+		int cityDamage = (8 + this.citizen.city.kingdom.techLevel) * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
 		int otherCityTileCount = 0;
 		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
 			if(this.citizen.city.kingdom.cities[i].id != this.citizen.city.id){

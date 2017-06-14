@@ -569,12 +569,15 @@ public class City{
 	 * Increase a city's HP every month.
 	 * */
 	protected void AttemptToIncreaseHP(){
-		if(this.increaseHpInterval == 1){
-			this.increaseHpInterval = 0;
-			this.IncreaseHP (1);
-		}else{
-			this.increaseHpInterval += 1;
+		if(GameManager.Instance.days == 1){
+			this.IncreaseHP (30 + this.kingdom.techLevel);
 		}
+//		if(this.increaseHpInterval == 1){
+//			this.increaseHpInterval = 0;
+//			this.IncreaseHP (1);
+//		}else{
+//			this.increaseHpInterval += 1;
+//		}
 
 //		if (GameManager.daysInMonth[GameManager.Instance.month] == GameManager.Instance.days) {
 //			this.IncreaseHP(HP_INCREASE);
