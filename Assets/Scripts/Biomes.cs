@@ -387,26 +387,44 @@ public class Biomes : MonoBehaviour {
 	internal void GenerateTileDetails(){
 		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 			HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
-			if (currHexTile.elevationType != ELEVATION.WATER) {
-				if (currHexTile.biomeType == BIOMES.GRASSLAND) {
-					currHexTile.LoadEdges(grasslandTexture, edgeMaterial);
-				} else if (currHexTile.biomeType == BIOMES.WOODLAND) {
-					currHexTile.LoadEdges(woodlandTexture, edgeMaterial);
-				} 
-//				else if (currHexTile.biomeType == BIOMES.FOREST) {
-//					currHexTile.LoadEdges(forestTexture, edgeMaterial);
+			//if (currHexTile.elevationType != ELEVATION.WATER) {
+                currHexTile.LoadEdges();
+//                if (currHexTile.biomeType == BIOMES.GRASSLAND) {
+//					currHexTile.LoadEdges();
+//				} else if (currHexTile.biomeType == BIOMES.WOODLAND) {
+//					currHexTile.LoadEdges();
 //				} 
-				else if (currHexTile.biomeType == BIOMES.DESERT) {
-					currHexTile.LoadEdges(desertTexture, edgeMaterial);
-				} else if (currHexTile.biomeType == BIOMES.SNOW) {
-					currHexTile.LoadEdges(snowTexture, edgeMaterial);
-				}
-				else if (currHexTile.biomeType == BIOMES.TUNDRA) {
-					currHexTile.LoadEdges(tundraTexture, edgeMaterial);
-				}
-			}
+////				else if (currHexTile.biomeType == BIOMES.FOREST) {
+////					currHexTile.LoadEdges(forestTexture, edgeMaterial);
+////				} 
+//				else if (currHexTile.biomeType == BIOMES.DESERT) {
+//					currHexTile.LoadEdges();
+//				} else if (currHexTile.biomeType == BIOMES.SNOW) {
+//					currHexTile.LoadEdges(snowTexture, edgeMaterial);
+//				}
+//				else if (currHexTile.biomeType == BIOMES.TUNDRA) {
+//					currHexTile.LoadEdges(tundraTexture, edgeMaterial);
+//				}
+			//}
 
 		}
 	}
+
+    internal Sprite GetTextureForBiome(BIOMES biomeType) {
+        if (biomeType == BIOMES.GRASSLAND) {
+            return grasslandTexture;
+        } else if (biomeType == BIOMES.WOODLAND) {
+            return grasslandTexture;
+        } else if (biomeType == BIOMES.TUNDRA) {
+            return tundraTexture;
+        } else if (biomeType == BIOMES.FOREST) {
+            return forestTexture;
+        } else if (biomeType == BIOMES.DESERT) {
+            return desertTexture;
+        } else if (biomeType == BIOMES.SNOW) {
+            return snowTexture;
+        }
+        return null;
+    }
 
 }

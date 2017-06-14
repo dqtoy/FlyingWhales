@@ -73,6 +73,15 @@ public class Utilities : MonoBehaviour {
 		return (T[])Enum.GetValues(typeof(T));
 	}
 
+    public static List<BIOMES> biomeLayering = new List<BIOMES>() {
+        BIOMES.GRASSLAND,
+        BIOMES.WOODLAND,
+        BIOMES.TUNDRA,
+        BIOMES.FOREST,
+        BIOMES.DESERT,
+        BIOMES.SNOW
+    };
+
 	public static Dictionary<BIOMES, SpecialResourceChance> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance> () { 
 		{BIOMES.BARE, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.NONE}, 

@@ -89,7 +89,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	#endregion
 
 	internal void SetSortingOrder(int sortingOrder){
-		this.GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder + 1;
+		this.GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder;
 		if (this.elevationType == ELEVATION.MOUNTAIN) {
 			this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
 		} else {
@@ -103,12 +103,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.cityNameLbl.GetComponent<MeshRenderer>().sortingLayerName = "CityNames";
 		this.cityNameLbl.GetComponent<MeshRenderer> ().sortingOrder = sortingOrder + 9;
 
-		this.topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
-		this.leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
-		this.botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
-		this.botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
-		this.rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
-		this.topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
+		this.topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		this.leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		this.botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		this.botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		this.rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		this.topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
 	}
 
 	#region Resource
@@ -251,65 +251,78 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     #region Tile Visuals
-    internal void LoadEdges(Sprite spriteForTile, Material materialForTile) {
+    internal void LoadEdges() {
+        int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
         List<HexTile> neighbours = this.AllNeighbours.ToList();
+        if (this.elevationType == ELEVATION.WATER) {
+            neighbours = neighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
+        }
         for (int i = 0; i < neighbours.Count; i++) {
-            HexTile currentNeighbour = neighbours[i];
-            int neighbourX = currentNeighbour.xCoordinate;
-            int neighbourY = currentNeighbour.yCoordinate;
+            HexTile currentNeighbour = neighbours[i];            
 
-            Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
-                (currentNeighbour.yCoordinate - this.yCoordinate));
-            if (currentNeighbour.biomeType != this.biomeType || currentNeighbour.elevationType == ELEVATION.WATER) {
-                GameObject gameObjectToEdit = null;
-                if (this.yCoordinate % 2 == 0) {
-                    if (difference.X == -1 && difference.Y == 1) {
-                        //top left
-                        gameObjectToEdit = this.topLeftEdge;
-                    } else if (difference.X == 0 && difference.Y == 1) {
-                        //top right
-                        gameObjectToEdit = this.topRightEdge;
-                    } else if (difference.X == 1 && difference.Y == 0) {
-                        //right
-                        gameObjectToEdit = this.rightEdge;
-                    } else if (difference.X == 0 && difference.Y == -1) {
-                        //bottom right
-                        gameObjectToEdit = this.botRightEdge;
-                    } else if (difference.X == -1 && difference.Y == -1) {
-                        //bottom left
-                        gameObjectToEdit = this.botLeftEdge;
-                    } else if (difference.X == -1 && difference.Y == 0) {
-                        //left
-                        gameObjectToEdit = this.leftEdge;
-                    }
-                } else {
-                    if (difference.X == 0 && difference.Y == 1) {
-                        //top left
-                        gameObjectToEdit = this.topLeftEdge;
-                    } else if (difference.X == 1 && difference.Y == 1) {
-                        //top right
-                        gameObjectToEdit = this.topRightEdge;
-                    } else if (difference.X == 1 && difference.Y == 0) {
-                        //right
-                        gameObjectToEdit = this.rightEdge;
-                    } else if (difference.X == 1 && difference.Y == -1) {
-                        //bottom right
-                        gameObjectToEdit = this.botRightEdge;
-                    } else if (difference.X == 0 && difference.Y == -1) {
-                        //bottom left
-                        gameObjectToEdit = this.botLeftEdge;
-                    } else if (difference.X == -1 && difference.Y == 0) {
-                        //left
-                        gameObjectToEdit = this.leftEdge;
-                    }
-                }
-                if (gameObjectToEdit != null) {
-                    gameObjectToEdit.SetActive(true);
-                    gameObjectToEdit.GetComponent<SpriteRenderer>().sprite = spriteForTile;
-                    //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
-                }
+            int biomeLayerOfNeighbour = Utilities.biomeLayering.IndexOf(currentNeighbour.biomeType);
 
+            if(biomeLayerOfHexTile < biomeLayerOfNeighbour || this.elevationType == ELEVATION.WATER) {
+                int neighbourX = currentNeighbour.xCoordinate;
+                int neighbourY = currentNeighbour.yCoordinate;
+
+                Point difference = new Point((currentNeighbour.xCoordinate - this.xCoordinate),
+                    (currentNeighbour.yCoordinate - this.yCoordinate));
+                if ((currentNeighbour.biomeType != this.biomeType && currentNeighbour.elevationType != ELEVATION.WATER) || 
+                    this.elevationType == ELEVATION.WATER) {
+                    GameObject gameObjectToEdit = null;
+                    if (this.yCoordinate % 2 == 0) {
+                        if (difference.X == -1 && difference.Y == 1) {
+                            //top left
+                            gameObjectToEdit = this.topLeftEdge;
+                        } else if (difference.X == 0 && difference.Y == 1) {
+                            //top right
+                            gameObjectToEdit = this.topRightEdge;
+                        } else if (difference.X == 1 && difference.Y == 0) {
+                            //right
+                            gameObjectToEdit = this.rightEdge;
+                        } else if (difference.X == 0 && difference.Y == -1) {
+                            //bottom right
+                            gameObjectToEdit = this.botRightEdge;
+                        } else if (difference.X == -1 && difference.Y == -1) {
+                            //bottom left
+                            gameObjectToEdit = this.botLeftEdge;
+                        } else if (difference.X == -1 && difference.Y == 0) {
+                            //left
+                            gameObjectToEdit = this.leftEdge;
+                        }
+                    } else {
+                        if (difference.X == 0 && difference.Y == 1) {
+                            //top left
+                            gameObjectToEdit = this.topLeftEdge;
+                        } else if (difference.X == 1 && difference.Y == 1) {
+                            //top right
+                            gameObjectToEdit = this.topRightEdge;
+                        } else if (difference.X == 1 && difference.Y == 0) {
+                            //right
+                            gameObjectToEdit = this.rightEdge;
+                        } else if (difference.X == 1 && difference.Y == -1) {
+                            //bottom right
+                            gameObjectToEdit = this.botRightEdge;
+                        } else if (difference.X == 0 && difference.Y == -1) {
+                            //bottom left
+                            gameObjectToEdit = this.botLeftEdge;
+                        } else if (difference.X == -1 && difference.Y == 0) {
+                            //left
+                            gameObjectToEdit = this.leftEdge;
+                        }
+                    }
+                    if (gameObjectToEdit != null) {
+                        gameObjectToEdit.SetActive(true);
+                        gameObjectToEdit.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
+                        gameObjectToEdit.GetComponent<SpriteRenderer>().sortingOrder += biomeLayerOfNeighbour;
+                        //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
+                    }
+
+                }
             }
+
+            
         }
     }
 
