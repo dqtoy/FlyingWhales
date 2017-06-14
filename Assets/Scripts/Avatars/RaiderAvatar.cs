@@ -200,10 +200,10 @@ public class RaiderAvatar : MonoBehaviour {
 	}
 
     private void CheckForKingdomDiscovery() {
-        if (this.envoy.location.ownedByCity != null &&
-            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
-            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
-            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
+        if (this.raider.location.ownedByCity != null &&
+            this.raider.location.ownedByCity.kingdom.id != this.raider.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.raider.citizen.city.kingdom;
+            Kingdom otherKingdom = this.raider.location.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
             otherKingdom.DiscoverKingdom(thisKingdom);
         }
