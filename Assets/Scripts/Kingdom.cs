@@ -141,6 +141,9 @@ public class Kingdom{
 	public int techLevel{
 		get{return this._techLevel;}
 	}
+    public int expansionRate {
+        get { return this.expansionChance; }
+    }
 	#endregion
 	// Kingdom constructor paramters
 	//	race - the race of this kingdom
@@ -245,10 +248,10 @@ public class Kingdom{
 			} else {				
 				this.horoscope = GetHoroscope (prevKingdomTypeData.kingdomType);
 			}
-			// Update expansion chance
-			this.expansionChance = this.kingdomTypeData.expansionRate;
-		}
-	}
+            // Update expansion chance
+            this.UpdateExpansionRate();
+        }
+    }
 
 	internal int[] GetHoroscope(KINGDOM_TYPE prevKingdomType = KINGDOM_TYPE.NONE){
 		int[] newHoroscope = new int[2];
@@ -704,6 +707,8 @@ public class Kingdom{
         this.UpdateKingdomTypeData();
         this.UpdateAvailableResources();
         this.UpdateAllCitiesDailyGrowth();
+        this.UpdateExpansionRate();
+        this.UpdateTechLevel();
         if (this._cities.Count == 1 && this._cities[0] != null) {
             this.capitalCity = this._cities[0];
 
@@ -734,10 +739,12 @@ public class Kingdom{
         this._cities.Remove(city);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
+            this.RemoveInvalidTradeRoutes();
             this.UpdateKingdomTypeData();
             this.UpdateAvailableResources();
             this.UpdateAllCitiesDailyGrowth();
-            this.RemoveInvalidTradeRoutes();
+            this.UpdateExpansionRate();
+            this.UpdateTechLevel();
 			if (this._cities[0] != null && this.capitalCity.id == city.id) {
                 this.capitalCity = this._cities[0];
 
@@ -1417,14 +1424,67 @@ public class Kingdom{
 		if (!this._availableResources.ContainsKey(resource)) {
 			this._availableResources.Add(resource, 0);
             this.RemoveObsoleteTradeRoutes(resource);
+            this.UpdateExpansionRate();
             this.UpdateAllCitiesDailyGrowth();
             this.UpdateBasicResourceCount();
         }
 		this._availableResources[resource] += 1;  
 	}
 
+    internal void UpdateExpansionRate() {
+        this.expansionChance = this.kingdomTypeData.expansionRate;
+        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
+        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.targetKingdom.id == this.id) {
+                if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
+                    allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
+                }
+            }
+        }
+
+        for (int i = 0; i < allAvailableResources.Count; i++) {
+            RESOURCE currResource = allAvailableResources[i];
+            if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
+                if(currResource == RESOURCE.CEDAR || currResource == RESOURCE.GRANITE) {
+                    this.expansionChance += 1;
+                } else if (currResource == RESOURCE.OAK || currResource == RESOURCE.SLATE) {
+                    this.expansionChance += 2;
+                } else if (currResource == RESOURCE.EBONY || currResource == RESOURCE.MARBLE) {
+                    this.expansionChance += 3;
+                }
+            }
+        }
+    }
+
+    internal void UpdateTechLevel() {
+        this._techLevel = 1;
+        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
+        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.targetKingdom.id == this.id) {
+                if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
+                    allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
+                }
+            }
+        }
+
+        for (int i = 0; i < allAvailableResources.Count; i++) {
+            RESOURCE currResource = allAvailableResources[i];
+            if (currResource == RESOURCE.MANA_STONE) {
+                this._techLevel += 1;
+            } else if (currResource == RESOURCE.COBALT) {
+                this._techLevel += 2;
+            } else if (currResource == RESOURCE.MITHRIL) {
+                this._techLevel += 3;
+            }
+        }
+    }
+
     internal void UpdateAllCitiesDailyGrowth() {
-        //get all rasources from tiles and trade routes, only include trade routes where this kingom is the target
+        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
         List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
         for (int i = 0; i < this._tradeRoutes.Count; i++) {
             TradeRoute currTradeRoute = this._tradeRoutes[i];

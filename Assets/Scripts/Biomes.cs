@@ -111,10 +111,17 @@ public class Biomes : MonoBehaviour {
 	[SerializeField] private Sprite forestTexture;
 	[SerializeField] private Sprite woodlandTexture;
 	[SerializeField] private Sprite tundraTexture;
-	[SerializeField] private Material edgeMaterial;
+	public Material edgeMaterial;
 
-	#region getters/setters
-	public Sprite[] bareTiles{
+    public Texture[] topRightMasks;
+    public Texture[] rightMasks;
+    public Texture[] botRightMasks;
+    public Texture[] topLeftMasks;
+    public Texture[] leftMasks;
+    public Texture[] botLeftMasks;
+
+    #region getters/setters
+    public Sprite[] bareTiles{
 		get{ return this._bareTiles; }
 	}
 	#endregion

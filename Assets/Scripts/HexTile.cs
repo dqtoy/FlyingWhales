@@ -271,51 +271,68 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 if ((currentNeighbour.biomeType != this.biomeType && currentNeighbour.elevationType != ELEVATION.WATER) || 
                     this.elevationType == ELEVATION.WATER) {
                     GameObject gameObjectToEdit = null;
+                    Texture[] spriteMasksToChooseFrom = null;
                     if (this.yCoordinate % 2 == 0) {
                         if (difference.X == -1 && difference.Y == 1) {
                             //top left
                             gameObjectToEdit = this.topLeftEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
                         } else if (difference.X == 0 && difference.Y == 1) {
                             //top right
                             gameObjectToEdit = this.topRightEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
                         } else if (difference.X == 1 && difference.Y == 0) {
                             //right
                             gameObjectToEdit = this.rightEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
                         } else if (difference.X == 0 && difference.Y == -1) {
                             //bottom right
                             gameObjectToEdit = this.botRightEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
                         } else if (difference.X == -1 && difference.Y == -1) {
                             //bottom left
                             gameObjectToEdit = this.botLeftEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
                         } else if (difference.X == -1 && difference.Y == 0) {
                             //left
                             gameObjectToEdit = this.leftEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
                         }
                     } else {
                         if (difference.X == 0 && difference.Y == 1) {
                             //top left
                             gameObjectToEdit = this.topLeftEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.topLeftMasks;
                         } else if (difference.X == 1 && difference.Y == 1) {
                             //top right
                             gameObjectToEdit = this.topRightEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.topRightMasks;
                         } else if (difference.X == 1 && difference.Y == 0) {
                             //right
                             gameObjectToEdit = this.rightEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.rightMasks;
                         } else if (difference.X == 1 && difference.Y == -1) {
                             //bottom right
                             gameObjectToEdit = this.botRightEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.botRightMasks;
                         } else if (difference.X == 0 && difference.Y == -1) {
                             //bottom left
                             gameObjectToEdit = this.botLeftEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.botLeftMasks;
                         } else if (difference.X == -1 && difference.Y == 0) {
                             //left
                             gameObjectToEdit = this.leftEdge;
+                            spriteMasksToChooseFrom = Biomes.Instance.leftMasks;
                         }
                     }
-                    if (gameObjectToEdit != null) {
+                    if (gameObjectToEdit != null && spriteMasksToChooseFrom != null) {
                         gameObjectToEdit.SetActive(true);
                         gameObjectToEdit.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
                         gameObjectToEdit.GetComponent<SpriteRenderer>().sortingOrder += biomeLayerOfNeighbour;
+                        Material mat = new Material(Shader.Find("AlphaMask"));
+                        mat.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
+                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
+                        //gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("Alpha (A)", (Texture)spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
                         //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
                     }
 
@@ -591,7 +608,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
             "\n [b]Unrest:[/b] " + this.city.kingdom.unrest.ToString() +
-            "\n [b]GOLD:[/b] " + this.city.kingdom.goldCount.ToString() + "/" + this.city.kingdom.maxGold.ToString() + 
+            "\n [b]GOLD:[/b] " + this.city.kingdom.goldCount.ToString() + "/" + this.city.kingdom.maxGold.ToString() +
+            "\n [b]Tech Level:[/b] " + this.city.kingdom.techLevel.ToString() +
+            "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
+            "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
             "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() + 
             "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() +
             "\n [b]Available Resources: [/b]\n";
