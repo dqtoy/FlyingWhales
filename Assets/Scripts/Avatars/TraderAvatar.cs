@@ -157,10 +157,10 @@ public class TraderAvatar : MonoBehaviour {
     }
 
     private void CheckForKingdomDiscovery() {
-        if (this.envoy.location.ownedByCity != null &&
-            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
-            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
-            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
+        if (this._trader.location.ownedByCity != null &&
+            this._trader.location.ownedByCity.kingdom.id != this._trader.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this._trader.citizen.city.kingdom;
+            Kingdom otherKingdom = this._trader.location.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
             otherKingdom.DiscoverKingdom(thisKingdom);
         }

@@ -169,10 +169,10 @@ public class SpyAvatar : MonoBehaviour {
 	}
 
     private void CheckForKingdomDiscovery() {
-        if (this.envoy.location.ownedByCity != null &&
-            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
-            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
-            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
+        if (this.spy.location.ownedByCity != null &&
+            this.spy.location.ownedByCity.kingdom.id != this.spy.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.spy.citizen.city.kingdom;
+            Kingdom otherKingdom = this.spy.location.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
             otherKingdom.DiscoverKingdom(thisKingdom);
         }
