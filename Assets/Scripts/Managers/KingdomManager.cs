@@ -26,8 +26,9 @@ public class KingdomManager : MonoBehaviour {
 
 	public int numberOfKingdoms;
 	public int numberOfCitiesPerKingdom;
-	public int warCreationRate;
+	public int initialSpawnRate;
 
+    public bool useDiscoveredKingdoms = true;
 
 	void Awake(){
 		Instance = this;
@@ -144,6 +145,7 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 		this.UpdateKingdomAdjacency();
+        newKingdom.CheckForDiscoveredKingdoms();
 		return newKingdom;
 	}
 
@@ -365,6 +367,12 @@ public class KingdomManager : MonoBehaviour {
 			}
 		}
 	}
+
+    private void UpdateDiscoveredKingdomsForAll() {
+        for (int i = 0; i < this.allKingdoms.Count; i++) {
+            this.allKingdoms[i].CheckForDiscoveredKingdoms();
+        }
+    }
 
     #region For Testing
     

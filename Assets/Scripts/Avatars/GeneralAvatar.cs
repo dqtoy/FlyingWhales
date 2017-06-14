@@ -192,9 +192,13 @@ public class GeneralAvatar : MonoBehaviour {
 						CombatManager.Instance.BattleMidway (ref this.general, ref otherGeneral);
 						if(this.general.markAsDead){
 							this.general.citizen.Death (DEATH_REASONS.BATTLE);
+						}else{
+							this.general.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
 						}
 						if(otherGeneral.markAsDead){
 							this.hostile.Death (DEATH_REASONS.BATTLE);
+						}else{
+							otherGeneral.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
 						}
 					}
 				}else{
@@ -202,14 +206,16 @@ public class GeneralAvatar : MonoBehaviour {
 						this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByGeneral (this.general);
 					}
 				}
-				Task.current.Succeed ();
-			} else{
-				Task.current.Fail ();
+//				Task.current.Succeed ();
 			}
-
-		}else{
-			Task.current.Fail ();
+//			else{
+//				Task.current.Fail ();
+//			}
 		}
+//		else{
+//			Task.current.Fail ();
+//		}
+		Task.current.Fail ();
 	}
 	[Task]
 	public void HasDiedOfOtherReasons(){
@@ -242,6 +248,7 @@ public class GeneralAvatar : MonoBehaviour {
 						this.general.location = this.general.path[0];
 						this.general.citizen.currentLocation = this.general.path [0];
 						this.general.path.RemoveAt (0);
+                        this.CheckForKingdomDiscovery();
 					}
 					this.general.daysBeforeMoving -= 1;
 //					this.MakeCitizenMove (this.general.location, this.general.path [0]);
@@ -254,7 +261,17 @@ public class GeneralAvatar : MonoBehaviour {
 		}
 	}
 
-	internal void AddBehaviourTree(){
+    private void CheckForKingdomDiscovery() {
+        if (this.envoy.location.ownedByCity != null &&
+            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
+            thisKingdom.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(thisKingdom);
+        }
+    }
+
+    internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
 

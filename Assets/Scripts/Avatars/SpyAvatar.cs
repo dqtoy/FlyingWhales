@@ -154,6 +154,7 @@ public class SpyAvatar : MonoBehaviour {
 					this.spy.location = this.spy.path[0];
 					this.spy.citizen.currentLocation = this.spy.path [0];
 					this.spy.path.RemoveAt (0);
+                    this.CheckForKingdomDiscovery();
 					//					if(this.raider.daysBeforeMoving <= 0){
 					//						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
 					//						this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
@@ -167,7 +168,17 @@ public class SpyAvatar : MonoBehaviour {
 		}
 	}
 
-	internal void AddBehaviourTree(){
+    private void CheckForKingdomDiscovery() {
+        if (this.envoy.location.ownedByCity != null &&
+            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
+            thisKingdom.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(thisKingdom);
+        }
+    }
+
+    internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
 

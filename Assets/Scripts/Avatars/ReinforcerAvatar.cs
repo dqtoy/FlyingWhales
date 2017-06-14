@@ -152,6 +152,7 @@ public class ReinforcerAvatar : MonoBehaviour {
 						this.reinforcer.location = this.reinforcer.path[0];
 						this.reinforcer.citizen.currentLocation = this.reinforcer.path [0];
 						this.reinforcer.path.RemoveAt (0);
+                        this.CheckForKingdomDiscovery();
 					}
 					this.reinforcer.daysBeforeMoving -= 1;
 				}
@@ -159,7 +160,17 @@ public class ReinforcerAvatar : MonoBehaviour {
 		}
 	}
 
-	internal void AddBehaviourTree(){
+    private void CheckForKingdomDiscovery() {
+        if (this.envoy.location.ownedByCity != null &&
+            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
+            thisKingdom.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(thisKingdom);
+        }
+    }
+
+    internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
 

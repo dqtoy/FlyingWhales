@@ -116,16 +116,16 @@ public class EventCreator: MonoBehaviour {
 		return null;
 	}
 
-	internal AttackCity CreateAttackCityEvent(City sourceCity, City targetCity, List<HexTile> path){
+	internal AttackCity CreateAttackCityEvent(City sourceCity, City targetCity, List<HexTile> path, bool isRebel = false){
 		Citizen general = sourceCity.CreateGeneralForCombat(path, targetCity.hexTile);
 		if(general != null){
 			General attacker = (General)general.assignedRole;
 			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
 				general, attacker, targetCity);
 			attacker.Initialize (attackCity);
-//			if (isRebellion){
-//				attacker.isRebel = true;
-//			}
+			if (isRebel){
+				attacker.isRebel = true;
+			}
 		}
 		return null;
 	}

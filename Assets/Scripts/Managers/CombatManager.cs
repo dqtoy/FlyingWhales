@@ -376,13 +376,13 @@ public class CombatManager : MonoBehaviour {
 		if(general1.damage > general2.damage){
 			//General 1 wins
 			general2.markAsDead = true;
-			general1.damage -= general2.damage;
+			general1.damage -= (int)(general2.damage / 2);
 			general2.damage = 0;
 
 		}else if(general1.damage < general2.damage){
 			//General 2 wins
 			general1.markAsDead = true;
-			general2.damage -= general1.damage;
+			general2.damage -= (int)(general1.damage / 2);
 			general1.damage = 0;
 
 		}else{

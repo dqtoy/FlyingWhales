@@ -51,6 +51,13 @@ public class Kingdom{
 	internal List<City> adjacentCitiesFromOtherKingdoms;
 	internal List<Kingdom> adjacentKingdoms;
 
+	private List<Kingdom> _discoveredKingdoms;
+	
+	//Tech
+	private int techLevel;
+	private int techCapacity;
+	private int techCounter;
+
 	private int expansionChance = 1;
     
     protected const int INCREASE_CITY_HP_CHANCE = 5;
@@ -117,6 +124,15 @@ public class Kingdom{
     public int basicResourceCount {
         get { return this._basicResourceCount; }
     }
+    public List<Kingdom> discoveredKingdoms {
+        get {
+            if (KingdomManager.Instance.useDiscoveredKingdoms) {
+                return this._discoveredKingdoms;
+            } else {
+                return KingdomManager.Instance.allKingdoms.Where(x => x.id != this.id).ToList();
+            }
+        }
+    }
 	#endregion
 	// Kingdom constructor paramters
 	//	race - the race of this kingdom
@@ -150,6 +166,10 @@ public class Kingdom{
 		this.hasConflicted = false;
 		this.borderConflictLoyaltyExpiration = 0;
 		this.rebellions = new List<Rebellion> ();
+		this._discoveredKingdoms = new List<Kingdom>();
+		this.techLevel = 1;
+		this.techCounter = 0;
+		this.UpdateTechCapacity ();
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
@@ -273,7 +293,7 @@ public class Kingdom{
 	// Function to call if you want to determine whether the Kingdom is still alive or dead
 	// At the moment, a Kingdom is considered dead if it doesnt have any cities.
 	public bool isAlive() {
-		if (this.cities.Count > 0) {
+		if (this.cities.Where(x => x.rebellion == null).ToList().Count > 0) {
 			return true;
 		}
 		return false;
@@ -370,6 +390,7 @@ public class Kingdom{
         if (kingdomThatDied.id != this.id) {
             RemoveRelationshipWithKingdom(kingdomThatDied);
             RemoveAllTradeRoutesWithOtherKingdom(kingdomThatDied);
+            RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
         }
     }
 
@@ -385,12 +406,33 @@ public class Kingdom{
         //		this.AttemptToIncreaseCityHP();
         this.DecreaseUnrestEveryMonth();
 		this.CheckBorderConflictLoyaltyExpiration ();
+		this.IncreaseTechCounterPerTick();
         if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
             this.AttemptToTrade();
         }
         
     }
-
+	/*
+	 * Attempt to an event with agent
+	 * This happens everyday
+	 * */
+	private void AttemptToCreateEvent(){
+		for (int i = 0; i < this.kingdomTypeData.agentCreationRate.Length; i++) {
+			
+		}
+	}
+	private void CreatEvent(EVENT_TYPES eventType){
+		switch (eventType){
+		case EVENT_TYPES.TRADE:
+//			this.AttemptToTrade ();
+			break;
+		case EVENT_TYPES.STATE_VISIT:
+//			EventCreator.Instance.CreateStateVisitEvent
+			break;
+		case EVENT_TYPES.RAID:
+			break;
+		}
+	}
 	/*
 	 * Attempt to create an attack city event
 	 * This will only happen if there's a war with any other kingdom
@@ -761,7 +803,7 @@ public class Kingdom{
 				return;
 			}
 		}
-//		this.capitalCity = newKing.city;
+		this.capitalCity = newKing.city;
 		newKing.city.hasKing = true;
 
         if (newKing.isMarried) {
@@ -1041,9 +1083,9 @@ public class Kingdom{
 			this.AdjustUnrest(UNREST_INCREASE_CONQUER);
 		}else{
 			if(city is RebelFort){
-				city.rebellion.conqueredCities.Remove (city);
-				HexTile hex = city.hexTile;
-				city.KillCity();
+				city.rebellion.KillFort();
+//				HexTile hex = city.hexTile;
+//				city.KillCity();
 			}else{
 				if(city.rebellion != null){
 					city.ChangeToCity ();
@@ -1536,11 +1578,12 @@ public class Kingdom{
     }
 	#endregion
 
+	#region Unrest
     internal void AdjustUnrest(int amountToAdjust) {
         this._unrest += amountToAdjust;
         this._unrest = Mathf.Clamp(this._unrest, 0, 100);
 		if(this._unrest == 100){
-//			UnrestEvents ();
+			UnrestEvents ();
 		}
     }
 	internal void ChangeUnrest(int newAmount){
@@ -1559,16 +1602,94 @@ public class Kingdom{
 		}
 		if(chosenGovernor != null){
 			//Secession Event
-			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
+//			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
 		}else{
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				//Riot Event
-				EventCreator.Instance.CreateRiotEvent(this);
+//				EventCreator.Instance.CreateRiotEvent(this);
+				EventCreator.Instance.CreateRebellionEvent(this);
 			}else{
 				//Rebellion Event
 				EventCreator.Instance.CreateRebellionEvent(this);
 			}
 		}
 	}
+    #endregion
+
+    #region Tech
+    private void IncreaseTechCounterPerTick(){
+		int amount = 1 * this.cities.Count;
+		int bonus = 0;
+		amount += bonus;
+		this.AdjustTechCounter (amount);
+	}
+	private void UpdateTechCapacity(){
+		this.techCapacity = 2000 * this.techLevel;
+	}
+	private void AdjustTechCounter(int amount){
+		this.techCounter += amount;
+		this.techCounter = Mathf.Clamp(this.techCounter, 0, this.techCapacity);
+		if(this.techCounter == this.techCapacity){
+			this.UpgradeTechLevel (1);
+		}
+	}
+	private void UpgradeTechLevel(int amount){
+		this.techLevel += amount;
+		this.techCounter = 0;
+		this.UpdateTechCapacity ();
+	}
+	#endregion
+	
+
+    /*
+     * Check all the neighburs of the border tiles and owned tiles of all this kingdom's
+     * cities, and check if any of them are owned by another kingdom, if so,
+     * the two kingdoms have now discovered each other.
+     * */
+    internal void CheckForDiscoveredKingdoms() {
+        for (int i = 0; i < this.cities.Count; i++) {
+            City currCity = this.cities[i];
+            List<HexTile> tilesToCheck = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
+            for (int j = 0; j < tilesToCheck.Count; j++) {
+                //Get all neighbour tiles that are owned, but not by this kingdom, 
+                //and that kingdom is not already added to this kingdom's discovered kingdoms.
+                List<HexTile> neighbours = tilesToCheck[i].PurchasableTiles
+                    .Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
+                    .ToList();
+                for (int k = 0; k < neighbours.Count; k++) {
+                    Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
+                    this.DiscoverKingdom(otherKingdom);
+                    otherKingdom.DiscoverKingdom(this);
+                }
+            }
+        }
+    }
+
+    /*
+     * Check all the neighbours of a HexTile and check if any of them are owned by another kingdom, if so,
+     * the two kingdoms have now discovered each other.
+     * */
+    internal void CheckForDiscoveredKingdoms(HexTile tileToCheck) {
+        //Get all neighbour tiles that are owned, but not by this kingdom, 
+        //and that kingdom is not already added to this kingdom's discovered kingdoms.
+        List<HexTile> neighbours = tileToCheck.PurchasableTiles
+            .Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
+            .ToList();
+        for (int i = 0; i < neighbours.Count; i++) {
+            Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
+            this.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(this);
+        }
+    }
+
+    internal void DiscoverKingdom(Kingdom discoveredKingdom) {
+        if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
+            this._discoveredKingdoms.Add(discoveredKingdom);
+        }
+    }
+
+    internal void RemoveKingdomFromDiscoveredKingdoms(Kingdom kingdomToRemove) {
+        this._discoveredKingdoms.Remove(kingdomToRemove);
+    }
 }

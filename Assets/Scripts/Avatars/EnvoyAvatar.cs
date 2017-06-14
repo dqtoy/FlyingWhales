@@ -191,8 +191,18 @@ public class EnvoyAvatar : MonoBehaviour {
 				}
 			}
 		}
+        this.CheckForKingdomDiscovery();
+    }
 
-	}
+    private void CheckForKingdomDiscovery() {
+        if(this.envoy.location.ownedByCity != null && 
+            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
+            thisKingdom.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(thisKingdom);
+        }
+    }
 
 	internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);

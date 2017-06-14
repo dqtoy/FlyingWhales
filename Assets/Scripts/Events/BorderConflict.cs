@@ -372,9 +372,13 @@ public class BorderConflict : GameEvent {
 		}
 	}*/
 	private void CheckIfAlreadyAtWar(){
-		if(this.kingdom1.GetRelationshipWithOtherKingdom(this.kingdom2).isAtWar){
-			this.isResolvedPeacefully = false;
-			DoneEvent ();
+		RelationshipKingdom relationship = this.kingdom1.GetRelationshipWithOtherKingdom (this.kingdom2);
+		if(relationship != null){
+			if(relationship.isAtWar){
+				this.isResolvedPeacefully = false;
+				DoneEvent ();
+			}
 		}
+
 	}
 }

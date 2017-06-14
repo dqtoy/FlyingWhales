@@ -185,6 +185,7 @@ public class RaiderAvatar : MonoBehaviour {
 					this.raider.location = this.raider.path[0];
 					this.raider.citizen.currentLocation = this.raider.path [0];
 					this.raider.path.RemoveAt (0);
+                    this.CheckForKingdomDiscovery();
 //					if(this.raider.daysBeforeMoving <= 0){
 //						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
 //						this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
@@ -198,7 +199,17 @@ public class RaiderAvatar : MonoBehaviour {
 		}
 	}
 
-	internal void AddBehaviourTree(){
+    private void CheckForKingdomDiscovery() {
+        if (this.envoy.location.ownedByCity != null &&
+            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
+            thisKingdom.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(thisKingdom);
+        }
+    }
+
+    internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
 

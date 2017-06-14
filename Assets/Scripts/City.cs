@@ -502,6 +502,8 @@ public class City{
 		tileToBuy.movementDays = 2;
 		tileToBuy.Occupy (this);
 
+		EventManager.Instance.onUpdatePath.Invoke (tileToBuy);
+
 		this.ownedTiles.Add(tileToBuy);
 
 		//Set color of tile
@@ -524,6 +526,7 @@ public class City{
 
         //Update necessary data
         this.UpdateDailyProduction();
+        this.kingdom.CheckForDiscoveredKingdoms(tileToBuy);
         //this.UpdateAdjacentCities();
         //this.kingdom.UpdateKingdomAdjacency();
 
@@ -876,7 +879,9 @@ public class City{
 			/*if(newGovernor.assignedRole != null && newGovernor.role == ROLE.GENERAL){
 				newGovernor.DetachGeneralFromCitizen();
 			}*/
-			this.governor.isGovernor = false;
+			if(this.governor != null){
+				this.governor.isGovernor = false;
+			}
 			newGovernor.assignedRole = null;
 			newGovernor.AssignRole(ROLE.GOVERNOR);
 			newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
@@ -902,16 +907,18 @@ public class City{
 
 	internal Citizen GetGovernorSuccession(){
 		List<Citizen> succession = new List<Citizen> ();
-		for(int i = 0; i < this.governor.children.Count; i++){
-			if(!this.governor.children[i].isGovernor){
-				return this.governor.children [i];
+		if (this.governor != null) {
+			for (int i = 0; i < this.governor.children.Count; i++) {
+				if (!this.governor.children [i].isGovernor) {
+					return this.governor.children [i];
+				}
+			}
+			List<Citizen> siblings = this.governor.GetSiblings ();
+			if(siblings != null && siblings.Count > 0){
+				return siblings [0];
 			}
 		}
-		List<Citizen> siblings = this.governor.GetSiblings ();
-		if(siblings != null && siblings.Count > 0){
-			return siblings [0];
-		}
-			
+
 		GENDER gender = GENDER.MALE;
 		int randomGender = UnityEngine.Random.Range (0, 100);
 		if(randomGender < 20){
@@ -1061,12 +1068,12 @@ public class City{
 		if(role == ROLE.GENERAL){
 			return null;
 		}
-		int cost = 0;
-		if(eventType != EVENT_TYPES.SECESSION){
-			if(!this.kingdom.CanCreateAgent(role, ref cost)){
-				return null;
-			}
-		}
+//		int cost = 0;
+//		if(eventType != EVENT_TYPES.SECESSION){
+//			if(!this.kingdom.CanCreateAgent(role, ref cost)){
+//				return null;
+//			}
+//		}
 		if(role == ROLE.REBEL){
 			GENDER gender = GENDER.MALE;
 			int randomGender = UnityEngine.Random.Range (0, 100);
@@ -1107,16 +1114,16 @@ public class City{
 			citizen.assignedRole.targetCity = targetLocation.city;
 			citizen.assignedRole.path = path;
 			citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
-			this._kingdom.AdjustGold (-cost);
+//			this._kingdom.AdjustGold (-cost);
 			this.citizens.Remove (citizen);
 			return citizen;
 		}
 	}
 	internal Citizen CreateGeneralForCombat(List<HexTile> path, HexTile targetLocation){
-		int cost = 0;
-		if(!this.kingdom.CanCreateAgent(ROLE.GENERAL, ref cost)){
-			return null;
-		}
+//		int cost = 0;
+//		if(!this.kingdom.CanCreateAgent(ROLE.GENERAL, ref cost)){
+//			return null;
+//		}
 		List<HexTile> newPath = new List<HexTile> (path);
 		if(targetLocation == path[0]){
 			newPath.Reverse ();
@@ -1141,7 +1148,7 @@ public class City{
 		citizen.assignedRole.daysBeforeMoving = newPath [0].movementDays;
 		((General)citizen.assignedRole).spawnRate = path.Sum (x => x.movementDays) + 1;
 		((General)citizen.assignedRole).damage = ((General)citizen.assignedRole).GetDamage();
-		this._kingdom.AdjustGold (-cost);
+//		this._kingdom.AdjustGold (-cost);
 		this.citizens.Remove (citizen);
 		return citizen;
 	}
@@ -1178,8 +1185,8 @@ public class City{
 		this.raidLoyaltyExpiration = 0;
 		((Governor)this.governor.assignedRole).UpdateLoyalty ();
 	}
-	internal void AttackCity(City targetCity, List<HexTile> path){
-		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path);
+	internal void AttackCity(City targetCity, List<HexTile> path, bool isRebel = false){
+		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path, isRebel);
 //		int chance = UnityEngine.Random.Range (0, 100);
 //		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
 //			
@@ -1202,8 +1209,7 @@ public class City{
 
 	}
 	internal void TransferCityToRebellion(){
-		this._kingdom.RemoveCityFromKingdom(this);
-
+//		this._kingdom.RemoveCityFromKingdom(this);
 		if(this.hasKing){
 			this.hasKing = false;
 			if(this._kingdom.cities.Count > 0){
@@ -1215,10 +1221,11 @@ public class City{
 	}
 	internal void TransferRebellionToCity(){
 		this.rebellion.conqueredCities.Remove (this);
-		this._kingdom.AddCityToKingdom (this);
+//		this._kingdom.AddCityToKingdom (this);
 	}
 	internal void ChangeToRebelFort(Rebellion rebellion){
 		this.rebellion = rebellion;
+		this.hp = 100;
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(RebelFortEverydayTurnActions);
@@ -1227,6 +1234,7 @@ public class City{
 		this.AssignNewGovernor ();
 	}
 	internal void ChangeToCity(){
+		this.hp = 100;
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(RebelFortEverydayTurnActions);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
