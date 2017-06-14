@@ -262,11 +262,12 @@ public class GeneralAvatar : MonoBehaviour {
 	}
 
     private void CheckForKingdomDiscovery() {
-        if (this.general.location.ownedByCity != null &&
-            this.general.location.ownedByCity.kingdom.id != this.general.citizen.city.kingdom.id) {
-            Kingdom thisKingdom = this.general.citizen.city.kingdom;
-            Kingdom otherKingdom = this.general.location.ownedByCity.kingdom;
+        if (this.envoy.location.ownedByCity != null &&
+            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(thisKingdom);
         }
     }
 

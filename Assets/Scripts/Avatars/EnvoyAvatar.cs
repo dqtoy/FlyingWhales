@@ -200,6 +200,7 @@ public class EnvoyAvatar : MonoBehaviour {
             Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
             Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(thisKingdom);
         }
     }
 

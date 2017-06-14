@@ -161,11 +161,12 @@ public class ReinforcerAvatar : MonoBehaviour {
 	}
 
     private void CheckForKingdomDiscovery() {
-        if (this.reinforcer.location.ownedByCity != null &&
-            this.reinforcer.location.ownedByCity.kingdom.id != this.reinforcer.citizen.city.kingdom.id) {
-            Kingdom thisKingdom = this.reinforcer.citizen.city.kingdom;
-            Kingdom otherKingdom = this.reinforcer.location.ownedByCity.kingdom;
+        if (this.envoy.location.ownedByCity != null &&
+            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(thisKingdom);
         }
     }
 

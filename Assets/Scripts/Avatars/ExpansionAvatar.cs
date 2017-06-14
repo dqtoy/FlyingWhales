@@ -198,11 +198,12 @@ public class ExpansionAvatar : MonoBehaviour {
 	}
 
     private void CheckForKingdomDiscovery() {
-        if (this.expander.location.ownedByCity != null &&
-            this.expander.location.ownedByCity.kingdom.id != this.expander.citizen.city.kingdom.id) {
-            Kingdom thisKingdom = this.expander.citizen.city.kingdom;
-            Kingdom otherKingdom = this.expander.location.ownedByCity.kingdom;
+        if (this.envoy.location.ownedByCity != null &&
+            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
+            otherKingdom.DiscoverKingdom(thisKingdom);
         }
     }
 
