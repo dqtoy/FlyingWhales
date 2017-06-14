@@ -15,8 +15,6 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //	public int diplomaticCrisisChance;
 //	public int stateVisitChance;
 	public List<GameEvent> allUnwantedEvents;
-	public bool canCreateEvent;
-	public int currentIndex;
 
 	void Awake(){
 		this.firstKingdom = null;
@@ -28,8 +26,6 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //		this.diplomaticCrisisChance = 0;
 //		this.stateVisitChance = 0;
 		this.allUnwantedEvents = new List<GameEvent> ();
-		this.canCreateEvent = true;
-		this.currentIndex = 0;
 	}
 
 	[Task]
@@ -44,8 +40,6 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //		this.stateVisitChance = 0;
 		this.eventToCreate.DefaultValues();
 		this.allUnwantedEvents.Clear ();
-		this.canCreateEvent = true;
-		this.currentIndex = 0;
 		Task.current.Succeed ();
 	}
 
@@ -75,34 +69,31 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		}
 	}
 	[Task]
-	public void CanCreateEvent(){
-		if(this.canCreateEvent){
-			this.eventToCreate.DefaultValues ();
+	public void HasDiscoveredKingdoms(){
+		if(this.firstKingdom.discoveredKingdoms != null && this.firstKingdom.discoveredKingdoms.Count > 0){
 			Task.current.Succeed ();
 		}else{
 			Task.current.Fail ();
 		}
 	}
 	[Task]
-	public void SetEventToCreate(){
-		if(this.currentIndex < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate.Length){
+	public void SetEventsToCreate(){
+		for(int i = 0; i < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate.Length; i++){
 			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [this.currentIndex].rate){
-				this.eventToCreate = this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [this.currentIndex];
+			if(chance < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].rate){
+				this.eventToCreate = this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i];
+				SetSecondRandomKingdom ();
 			}
-			this.currentIndex += 1;
-		}else{
-			this.canCreateEvent = false;
 		}
-
-		if(this.eventToCreate.eventType == EVENT_TYPES.NONE){
-			Task.current.Fail ();
-		}else{
-			Task.current.Succeed ();
-		}
+		Task.current.Succeed ();
+//		if(this.eventToCreate.eventType == EVENT_TYPES.NONE){
+//			Task.current.Fail ();
+//		}else{
+//			Task.current.Succeed ();
+//		}
 	}
 
-	[Task]
+//	[Task]
 	public void SetSecondRandomKingdom(){
 		List<Kingdom> allKingdomCandidates = new List<Kingdom> ();
 		for(int i = 0; i < this.firstKingdom.discoveredKingdoms.Count; i++){
@@ -117,21 +108,17 @@ public class DailyCumulativeEvent : MonoBehaviour {
 			this.secondKingdom = allKingdomCandidates [UnityEngine.Random.Range (0, allKingdomCandidates.Count)];
 		}
 
-		if(this.secondKingdom == null){
-			Task.current.Fail ();
-		}else{
-			Task.current.Succeed ();
+		if(this.secondKingdom != null){
+			if(!AreTheTwoKingdomsAtWar() && IsEligibleForEvent()){
+				StartAnEvent ();
+			}
 		}
 	}
 
-	[Task]
-	public void AreTheTwoKingdomsNotAtWar(){
+//	[Task]
+	public bool AreTheTwoKingdomsAtWar(){
 		RelationshipKingdom relationship = this.firstKingdom.GetRelationshipWithOtherKingdom (this.secondKingdom);
-		if(!relationship.isAtWar){
-			Task.current.Succeed ();
-		}else{
-			Task.current.Fail ();
-		}
+		return relationship.isAtWar;
 	}
 //	[Task]
 //	public void SetCompatibilityValue(){
@@ -192,8 +179,8 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //		}
 //		Task.current.Succeed ();
 //	}
-	[Task]
-	public void IsEligibleForEvent(){
+//	[Task]
+	public bool IsEligibleForEvent(){
 		List<GameEvent> allEventsOfType = EventManager.Instance.GetEventsOfType (this.eventToCreate.eventType).Where (x => x.isActive).ToList ();
 //		List<GameEvent> allStateVisit = EventManager.Instance.GetEventsOfType (EVENT_TYPES.STATE_VISIT).Where (x => x.isActive).ToList ();
 //		List<GameEvent> allTrade = EventManager.Instance.GetEventsOfType (EVENT_TYPES.TRADE).Where (x => x.isActive).ToList ();
@@ -202,16 +189,16 @@ public class DailyCumulativeEvent : MonoBehaviour {
 
 		if (allEventsOfType.Count > 0) {
 			if (SearchForEligibility (this.firstKingdom, this.secondKingdom, allEventsOfType)) {
-				Task.current.Succeed ();
+				return true;
 			}else{
-				Task.current.Fail ();
+				return false;
 			}
 		}else{
-			Task.current.Succeed ();
+			return true;
 		}
 
 	}
-	[Task]
+//	[Task]
 	public void StartAnEvent(){
 		switch(this.eventToCreate.eventType){
 		case EVENT_TYPES.RAID:
@@ -224,9 +211,12 @@ public class DailyCumulativeEvent : MonoBehaviour {
 			CreateTradeEvent ();
 			break;
 		}
-		Task.current.Succeed ();
+//		Task.current.Succeed ();
 	}
-
+	[Task]
+	public void Control(){
+		Task.current.Succeed();
+	}
 	private void CreateRaidEvent(){
 //		General general = GetGeneral(this.firstKingdom);
 		EventCreator.Instance.CreateRaidEvent(this.firstKingdom, this.secondKingdom);

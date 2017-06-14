@@ -2,10 +2,5 @@ tree("Root")
 	sequence
 		ResetValues
 		SetFirstRandomKingdom
-		while CanCreateEvent
-			sequence
-				SetEventToCreate
-				SetSecondRandomKingdom
-				AreTheTwoKingdomsNotAtWar
-				IsEligibleForEvent
-				StartAnEvent
+		HasDiscoveredKingdoms
+		SetEventsToCreate
