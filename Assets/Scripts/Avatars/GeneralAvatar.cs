@@ -267,12 +267,20 @@ public class GeneralAvatar : MonoBehaviour {
 	}
 
     private void CheckForKingdomDiscovery() {
-        if (this.general.location.ownedByCity != null &&
-            this.general.location.ownedByCity.kingdom.id != this.general.citizen.city.kingdom.id) {
+        HexTile currentLocation = this.general.location;
+        if (currentLocation.isOccupied && currentLocation.ownedByCity != null &&
+            currentLocation.ownedByCity.kingdom.id != this.general.citizen.city.kingdom.id) {
             Kingdom thisKingdom = this.general.citizen.city.kingdom;
-            Kingdom otherKingdom = this.general.location.ownedByCity.kingdom;
+            Kingdom otherKingdom = currentLocation.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
             otherKingdom.DiscoverKingdom(thisKingdom);
+        } else if (currentLocation.isBorder) {
+            Kingdom thisKingdom = this.general.citizen.city.kingdom;
+            Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currentLocation.isBorderOfCityID).kingdom;
+            if (otherKingdom.id != this.general.citizen.city.kingdom.id) {
+                thisKingdom.DiscoverKingdom(otherKingdom);
+                otherKingdom.DiscoverKingdom(thisKingdom);
+            }
         }
     }
 

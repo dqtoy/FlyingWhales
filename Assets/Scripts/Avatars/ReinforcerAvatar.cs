@@ -161,12 +161,20 @@ public class ReinforcerAvatar : MonoBehaviour {
 	}
 
     private void CheckForKingdomDiscovery() {
-        if (this.reinforcer.location.ownedByCity != null &&
-            this.reinforcer.location.ownedByCity.kingdom.id != this.reinforcer.citizen.city.kingdom.id) {
+        HexTile currentLocation = this.reinforcer.location;
+        if (currentLocation.isOccupied && currentLocation.ownedByCity != null &&
+            currentLocation.ownedByCity.kingdom.id != this.reinforcer.citizen.city.kingdom.id) {
             Kingdom thisKingdom = this.reinforcer.citizen.city.kingdom;
-            Kingdom otherKingdom = this.reinforcer.location.ownedByCity.kingdom;
+            Kingdom otherKingdom = currentLocation.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
             otherKingdom.DiscoverKingdom(thisKingdom);
+        } else if (currentLocation.isBorder) {
+            Kingdom thisKingdom = this.reinforcer.citizen.city.kingdom;
+            Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currentLocation.isBorderOfCityID).kingdom;
+            if (otherKingdom.id != this.reinforcer.citizen.city.kingdom.id) {
+                thisKingdom.DiscoverKingdom(otherKingdom);
+                otherKingdom.DiscoverKingdom(thisKingdom);
+            }
         }
     }
 
