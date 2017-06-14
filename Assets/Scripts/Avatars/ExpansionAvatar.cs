@@ -198,12 +198,20 @@ public class ExpansionAvatar : MonoBehaviour {
 	}
 
     private void CheckForKingdomDiscovery() {
-        if (this.expander.location.ownedByCity != null &&
-            this.expander.location.ownedByCity.kingdom.id != this.expander.citizen.city.kingdom.id) {
+        HexTile currentLocation = this.expander.location;
+        if (currentLocation.isOccupied && currentLocation.ownedByCity != null &&
+            currentLocation.ownedByCity.kingdom.id != this.expander.citizen.city.kingdom.id) {
             Kingdom thisKingdom = this.expander.citizen.city.kingdom;
-            Kingdom otherKingdom = this.expander.location.ownedByCity.kingdom;
+            Kingdom otherKingdom = currentLocation.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
             otherKingdom.DiscoverKingdom(thisKingdom);
+        } else if (currentLocation.isBorder) {
+            Kingdom thisKingdom = this.expander.citizen.city.kingdom;
+            Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currentLocation.isBorderOfCityID).kingdom;
+            if (otherKingdom.id != this.expander.citizen.city.kingdom.id) {
+                thisKingdom.DiscoverKingdom(otherKingdom);
+                otherKingdom.DiscoverKingdom(thisKingdom);
+            }
         }
     }
 
