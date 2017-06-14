@@ -1,6 +1,6 @@
 tree("Root")
 	sequence
-		random 30 70
+		random 8 92
 			CanCreateEvent
 			CannotCreateEvent
 		ResetValues

@@ -569,12 +569,15 @@ public class City{
 	 * Increase a city's HP every month.
 	 * */
 	protected void AttemptToIncreaseHP(){
-		if(this.increaseHpInterval == 1){
-			this.increaseHpInterval = 0;
-			this.IncreaseHP (1);
-		}else{
-			this.increaseHpInterval += 1;
+		if(GameManager.Instance.days == 1){
+			this.IncreaseHP (30 + this.kingdom.techLevel);
 		}
+//		if(this.increaseHpInterval == 1){
+//			this.increaseHpInterval = 0;
+//			this.IncreaseHP (1);
+//		}else{
+//			this.increaseHpInterval += 1;
+//		}
 
 //		if (GameManager.daysInMonth[GameManager.Instance.month] == GameManager.Instance.days) {
 //			this.IncreaseHP(HP_INCREASE);
@@ -1147,7 +1150,7 @@ public class City{
 		citizen.assignedRole.targetCity = targetLocation.city;
 		citizen.assignedRole.path = newPath;
 		citizen.assignedRole.daysBeforeMoving = newPath [0].movementDays;
-		((General)citizen.assignedRole).spawnRate = path.Sum (x => x.movementDays) + 1;
+		((General)citizen.assignedRole).spawnRate = path.Sum (x => x.movementDays) + 2;
 		((General)citizen.assignedRole).damage = ((General)citizen.assignedRole).GetDamage();
 //		this._kingdom.AdjustGold (-cost);
 		this.citizens.Remove (citizen);
@@ -1225,6 +1228,7 @@ public class City{
 //		this._kingdom.AddCityToKingdom (this);
 	}
 	internal void ChangeToRebelFort(Rebellion rebellion){
+		rebellion.warPair.isDone = true;
 		this.rebellion = rebellion;
 		this.hp = 100;
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
@@ -1235,6 +1239,7 @@ public class City{
 		this.AssignNewGovernor ();
 	}
 	internal void ChangeToCity(){
+		this.rebellion.warPair.isDone = true;
 		this.hp = 100;
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(RebelFortEverydayTurnActions);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);

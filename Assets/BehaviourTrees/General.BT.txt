@@ -7,6 +7,5 @@ tree("Root")
 
 tree("Move")
 	fallback
-		HasCollidedWithHostileGeneral
 		HasArrivedAtTargetHextile
 		MoveToNextTile

@@ -8,8 +8,4 @@ public class RebelFort: City {
 	public RebelFort(HexTile hexTile, Kingdom kingdom, Rebellion rebellion): base (hexTile, kingdom){
 		this.ChangeToRebelFort (rebellion);
 	}
-
-	internal void KillFort(){
-		
-	}
 }
