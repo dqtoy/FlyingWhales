@@ -81,7 +81,7 @@ public class General : Role {
 			}
 		}
 		int otherCityDamage = 3 * otherCityTileCount;
-		int spawnRateDamage = Mathf.CeilToInt(this.spawnRate / 4);
+		int spawnRateDamage = Mathf.CeilToInt((float)this.spawnRate / 4f);
 		return (baseDamage + cityDamage + otherCityDamage) * spawnRateDamage;
 	}
 }

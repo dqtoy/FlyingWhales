@@ -417,9 +417,7 @@ public class Kingdom{
 	 * This happens everyday
 	 * */
 	private void AttemptToCreateEvent(){
-		for (int i = 0; i < this.kingdomTypeData.agentCreationRate.Length; i++) {
-			
-		}
+		
 	}
 	private void CreatEvent(EVENT_TYPES eventType){
 		switch (eventType){
