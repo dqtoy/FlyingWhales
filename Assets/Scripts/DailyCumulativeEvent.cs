@@ -17,6 +17,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	public List<GameEvent> allUnwantedEvents;
 	public bool canCreateEvent;
 	public int currentIndex;
+
 	void Awake(){
 		this.firstKingdom = null;
 		this.secondKingdom = null;
