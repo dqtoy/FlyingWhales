@@ -235,8 +235,21 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		EventCreator.Instance.CreateStateVisitEvent(this.firstKingdom, this.secondKingdom);
 	}
 	private void CreateTradeEvent(){
-		//Create Trade Event
-	}
+        //Create Trade Event
+        RelationshipKingdom relWithOtherKingdom = this.firstKingdom.GetRelationshipWithOtherKingdom(this.secondKingdom);
+        List<HexTile> path = PathGenerator.Instance.GetPath(this.firstKingdom.capitalCity.hexTile, this.secondKingdom.capitalCity.hexTile, PATHFINDING_MODE.NORMAL).ToList();
+        List<RESOURCE> resourcesSourceKingdomCanOffer = this.firstKingdom.GetResourcesOtherKingdomDoesNotHave(this.secondKingdom);
+        /*
+         * There should be no active trade event between the two kingdoms (started by this kingdom), the 2 kingdoms should not be at war, 
+         * there should be a path from this kingdom's capital city to the otherKingdom's capital city, the otherKingdom should not be part of this kingdom's embargo list
+         * and this kingdom should have a resource that the otherKingdom does not.
+         * */
+        if (!relWithOtherKingdom.isAtWar && path != null && !this.firstKingdom.embargoList.ContainsKey(this.secondKingdom) 
+            && resourcesSourceKingdomCanOffer.Count > 0) {
+            EventCreator.Instance.CreateTradeEvent(this.firstKingdom, this.secondKingdom);
+
+        }
+    }
 
 //	private void CreateBorderConflictEvent(){
 //		EventCreator.Instance.CreateBorderConflictEvent(this.firstKingdom, this.secondKingdom);
