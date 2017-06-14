@@ -415,9 +415,9 @@ public class Kingdom{
         this.DecreaseUnrestEveryMonth();
 		this.CheckBorderConflictLoyaltyExpiration ();
 		this.IncreaseTechCounterPerTick();
-        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
-            this.AttemptToTrade();
-        }
+        //if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+        //    this.AttemptToTrade();
+        //}
         
     }
 	/*
