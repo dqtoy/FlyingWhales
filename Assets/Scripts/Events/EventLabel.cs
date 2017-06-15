@@ -14,11 +14,12 @@ public class EventLabel : MonoBehaviour {
 			LogFiller lf = eventLogItem.thisLog.fillers[indexToUse];
 			if (lf.obj != null) {
 				if (lf.obj is City) {
-					UIManager.Instance.ShowCityInfo ((City)lf.obj);
+                    //UIManager.Instance.ShowCityInfo ((City)lf.obj);
+                    CameraMove.Instance.CenterCameraOn(((City)lf.obj).hexTile.gameObject);
 				} else if (lf.obj is Citizen) {
 					UIManager.Instance.ShowCitizenInfo ((Citizen)lf.obj);
 				} else if (lf.obj is Kingdom) {
-					UIManager.Instance.SetKingdomAsActive ((Kingdom)lf.obj);
+					UIManager.Instance.SetKingdomAsSelected ((Kingdom)lf.obj);
 				} else if (lf.obj is GameEvent) {
 					UIManager.Instance.ShowEventLogs (lf.obj);
 				}

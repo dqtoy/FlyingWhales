@@ -110,7 +110,7 @@ public class City{
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
-		this.UpdateBorderTiles();
+		
 //		this.CreateInitialFamilies();
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
@@ -414,7 +414,7 @@ public class City{
 
 	}
 
-	protected void UpdateBorderTiles(){
+	internal void UpdateBorderTiles(){
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			this.borderTiles[i].isBorder = false;
 			this.borderTiles[i].isBorderOfCityID = 0;
@@ -474,7 +474,7 @@ public class City{
 		citizenToOccupyCity.assignedRole = null;
 		citizenToOccupyCity.AssignRole(ROLE.GOVERNOR);
 		this.UpdateDailyProduction();
-		KingdomManager.Instance.UpdateKingdomAdjacency();
+		//KingdomManager.Instance.UpdateKingdomAdjacency();
 //		this.kingdom.AddInternationalWarCity (this);
 		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
 			if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
@@ -978,7 +978,7 @@ public class City{
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		this.hexTile.city = null;
-		KingdomManager.Instance.UpdateKingdomAdjacency();
+		//KingdomManager.Instance.UpdateKingdomAdjacency();
 //		for (int i = 0; i < this.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
 //			if(this.kingdom.relationshipsWithOtherKingdoms[i].war != null && this.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
 //				if(this.kingdom.relationshipsWithOtherKingdoms[i].war.warPair.kingdom1City.id == this.id || this.kingdom.relationshipsWithOtherKingdoms[i].war.warPair.kingdom2City.id == this.id){

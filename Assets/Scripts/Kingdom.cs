@@ -1089,7 +1089,7 @@ public class Kingdom{
 			City newCity = CreateNewCityOnTileForKingdom(hex);
 			newCity.hp = 100;
 			newCity.CreateInitialFamilies(false);
-			KingdomManager.Instance.UpdateKingdomAdjacency();
+			//KingdomManager.Instance.UpdateKingdomAdjacency();
 //			this.AddInternationalWarCity (newCity);
 			if (UIManager.Instance.currentlyShowingKingdom.id == newCity.kingdom.id) {
 				newCity.kingdom.HighlightAllOwnedTilesInKingdom();
@@ -1424,38 +1424,53 @@ public class Kingdom{
 		if (!this._availableResources.ContainsKey(resource)) {
 			this._availableResources.Add(resource, 0);
             this.RemoveObsoleteTradeRoutes(resource);
-            this.UpdateExpansionRate();
+            this.UpdateTechLevel();
             this.UpdateAllCitiesDailyGrowth();
             this.UpdateBasicResourceCount();
         }
-		this._availableResources[resource] += 1;  
-	}
+		this._availableResources[resource] += 1;
+        this.UpdateExpansionRate();
+    }
 
     internal void UpdateExpansionRate() {
         this.expansionChance = this.kingdomTypeData.expansionRate;
-        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
-        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
-        for (int i = 0; i < this._tradeRoutes.Count; i++) {
-            TradeRoute currTradeRoute = this._tradeRoutes[i];
-            if (currTradeRoute.targetKingdom.id == this.id) {
-                if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
-                    allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
-                }
-            }
-        }
 
-        for (int i = 0; i < allAvailableResources.Count; i++) {
-            RESOURCE currResource = allAvailableResources[i];
-            if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
-                if(currResource == RESOURCE.CEDAR || currResource == RESOURCE.GRANITE) {
-                    this.expansionChance += 1;
-                } else if (currResource == RESOURCE.OAK || currResource == RESOURCE.SLATE) {
-                    this.expansionChance += 2;
-                } else if (currResource == RESOURCE.EBONY || currResource == RESOURCE.MARBLE) {
-                    this.expansionChance += 3;
+        for (int i = 0; i < this.availableResources.Keys.Count; i++) {
+            RESOURCE key = this.availableResources.Keys.ElementAt(i);
+            if (Utilities.GetBaseResourceType(key) == this.basicResource) {
+                int multiplier = this.availableResources[key];
+                if (key == RESOURCE.CEDAR || key == RESOURCE.GRANITE) {
+                    this.expansionChance += (1 * multiplier);
+                } else if (key == RESOURCE.OAK || key == RESOURCE.SLATE) {
+                    this.expansionChance += (2 * multiplier);
+                } else if (key == RESOURCE.EBONY || key == RESOURCE.MARBLE) {
+                    this.expansionChance += (3 * multiplier);
                 }
             }
         }
+        ////get all resources from tiles and trade routes, only include trade routes where this kingom is the target
+        //List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+        //for (int i = 0; i < this._tradeRoutes.Count; i++) {
+        //    TradeRoute currTradeRoute = this._tradeRoutes[i];
+        //    if (currTradeRoute.targetKingdom.id == this.id) {
+        //        if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
+        //            allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
+        //        }
+        //    }
+        //}
+
+        //for (int i = 0; i < allAvailableResources.Count; i++) {
+        //    RESOURCE currResource = allAvailableResources[i];
+        //    if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
+        //        if(currResource == RESOURCE.CEDAR || currResource == RESOURCE.GRANITE) {
+        //            this.expansionChance += 1;
+        //        } else if (currResource == RESOURCE.OAK || currResource == RESOURCE.SLATE) {
+        //            this.expansionChance += 2;
+        //        } else if (currResource == RESOURCE.EBONY || currResource == RESOURCE.MARBLE) {
+        //            this.expansionChance += 3;
+        //        }
+        //    }
+        //}
     }
 
     internal void UpdateTechLevel() {

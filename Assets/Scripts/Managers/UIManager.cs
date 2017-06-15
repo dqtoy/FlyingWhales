@@ -484,6 +484,17 @@ public class UIManager : MonoBehaviour {
         currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
     }
 
+    internal void SetKingdomAsSelected(Kingdom kingdom) {
+        List<KingdomFlagItem> allKingdomsInGrid = kingdomListOtherKingdomsGrid.GetChildList()
+                .Select(x => x.GetComponent<KingdomFlagItem>()).ToList();
+        for (int i = 0; i < allKingdomsInGrid.Count; i++) {
+            if (allKingdomsInGrid[i].kingdom.id == kingdom.id) {
+                allKingdomsInGrid[i].SetAsSelected();
+                break;
+            }
+        }
+    }
+
 	internal void SetKingdomAsActive(Kingdom kingdom){
         if(currentlyShowingKingdom != null && currentlyShowingKingdom.id != kingdom.id) {
 		    currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom ();
