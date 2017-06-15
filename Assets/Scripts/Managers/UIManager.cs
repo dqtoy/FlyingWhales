@@ -2459,7 +2459,7 @@ public class UIManager : MonoBehaviour {
             if(i < currentlyShowingKingdom.cities.Count) {
                 City currCity = currentlyShowingKingdom.cities.ElementAt(i);
                 if (currCity != null) {
-                    currCityItem.SetCity(currCity);
+                    currCityItem.SetCity(currCity, true);
                     currCityItem.gameObject.SetActive(true);
                 } else {
                     currCityItem.gameObject.SetActive(false);
