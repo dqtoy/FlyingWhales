@@ -50,7 +50,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	[SerializeField] private SpriteRenderer _kingdomColorSprite;
 	[SerializeField] private GameObject _highlightGO;
 
-    [SerializeField] private CityItem cityInfo;
+    [SerializeField] private CityItem _cityInfo;
     [SerializeField] private GameObject cityInfoGO;
 
     //For Tile Edges
@@ -85,6 +85,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	public GameObject highlightGO{
 		get { return this._highlightGO; }
+	}
+	public CityItem cityInfo{
+		get { return this._cityInfo; }
 	}
 	#endregion
 
@@ -380,7 +383,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void UpdateNamePlate() {
-        this.cityInfo.SetCity(this.city);
+        this._cityInfo.SetCity(this.city);
     }
 
     public void ShowOccupiedSprite() {

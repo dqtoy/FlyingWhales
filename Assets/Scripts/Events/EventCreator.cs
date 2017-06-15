@@ -116,16 +116,14 @@ public class EventCreator: MonoBehaviour {
 		return null;
 	}
 
-	internal AttackCity CreateAttackCityEvent(City sourceCity, City targetCity, List<HexTile> path, bool isRebel = false){
+	internal AttackCity CreateAttackCityEvent(City sourceCity, City targetCity, List<HexTile> path, GameEvent gameEvent, bool isRebel = false){
 		Citizen general = sourceCity.CreateGeneralForCombat(path, targetCity.hexTile);
 		if(general != null){
 			General attacker = (General)general.assignedRole;
 			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				general, attacker, targetCity);
+				general, attacker, targetCity, gameEvent);
 			attacker.Initialize (attackCity);
-			if (isRebel){
-				attacker.isRebel = true;
-			}
+			attacker.isRebel = isRebel;
 		}
 		return null;
 	}
@@ -140,7 +138,7 @@ public class EventCreator: MonoBehaviour {
     	return null;
 	}
 
-	internal Reinforcement CreateReinforcementEvent(City sourceCity, City targetCity){
+	internal Reinforcement CreateReinforcementEvent(City sourceCity, City targetCity, bool isRebel = false){
 //		City targetCity = sourceKingdom.GetReceiverCityForReinforcement ();
 //		if(targetCity == null){
 //			return null;
@@ -155,6 +153,7 @@ public class EventCreator: MonoBehaviour {
 			Reinforcement reinforcement = new Reinforcement(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
 				reinforcer, defender, targetCity, sourceCity);
 			defender.Initialize(reinforcement);
+			defender.isRebel = isRebel;
 			return reinforcement;
 		}
 		return null;

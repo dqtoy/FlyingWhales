@@ -57,6 +57,16 @@ public class General : Role {
 
 	internal override void Attack (){
 		//		base.Attack ();
+
+//		if(this.attackCity != null){
+//			if(this.damage >= this.attackCity.targetCity.hp){
+//				if(this.attackCity.gameEvent is Rebellion){
+//					((Rebellion)this.attackCity.gameEvent).warPair.isDone = true;
+//				}else if(this.attackCity.gameEvent is War){
+//					((War)this.attackCity.gameEvent).warPair.isDone = true;
+//				}
+//			}
+//		}
 		if(this.avatar != null){
 			this.avatar.GetComponent<GeneralAvatar> ().HasAttacked();
 			if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.LEFT){
