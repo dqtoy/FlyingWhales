@@ -5,14 +5,16 @@ public class AttackCity : GameEvent {
 
 	internal General general;
 	internal City targetCity;
+	internal GameEvent gameEvent;
 
-	public AttackCity(int startWeek, int startMonth, int startYear, Citizen startedBy, General general, City targetCity) : base (startWeek, startMonth, startYear, startedBy){
+	public AttackCity(int startWeek, int startMonth, int startYear, Citizen startedBy, General general, City targetCity, GameEvent gameEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ATTACK_CITY;
 		//		this.description = startedBy.name + " invited " + visitor.citizen.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.general = general;
 		this.targetCity = targetCity;
+		this.gameEvent = gameEvent;
 		Debug.LogError (general.citizen.name + " of " + general.citizen.city.kingdom.name + " will attack " + targetCity.name);
 //		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 

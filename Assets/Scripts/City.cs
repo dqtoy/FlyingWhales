@@ -1191,15 +1191,15 @@ public class City{
 		this.raidLoyaltyExpiration = 0;
 		((Governor)this.governor.assignedRole).UpdateLoyalty ();
 	}
-	internal void AttackCity(City targetCity, List<HexTile> path, bool isRebel = false){
-		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path, isRebel);
+	internal void AttackCity(City targetCity, List<HexTile> path, GameEvent gameEvent, bool isRebel = false){
+		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path, gameEvent, isRebel);
 //		int chance = UnityEngine.Random.Range (0, 100);
 //		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
 //			
 //		}
 	}
-	internal void ReinforceCity(City targetCity){
-		EventCreator.Instance.CreateReinforcementEvent (this, targetCity);
+	internal void ReinforceCity(City targetCity, bool isRebel = false){
+		EventCreator.Instance.CreateReinforcementEvent (this, targetCity, isRebel);
 	}
 //	internal void AttackCampEvent(Camp targetCamp){
 //		int chance = UnityEngine.Random.Range (0, 100);
@@ -1210,7 +1210,7 @@ public class City{
 	internal void KillAllCitizens(){
 		int countCitizens = this.citizens.Count;
 		for (int i = 0; i < countCitizens; i++) {
-			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
+			this.citizens [0].Death (DEATH_REASONS.REBELLION, false, null, true);
 		}
 
 	}
@@ -1230,6 +1230,9 @@ public class City{
 //		this._kingdom.AddCityToKingdom (this);
 	}
 	internal void ChangeToRebelFort(Rebellion rebellion){
+		if (this.hexTile.cityInfo.city != null){
+			this.hexTile.cityInfo.rebelIcon.SetActive (true);
+		}
 		rebellion.warPair.isDone = true;
 		this.rebellion = rebellion;
 		this.hp = 100;
@@ -1241,6 +1244,9 @@ public class City{
 		this.AssignNewGovernor ();
 	}
 	internal void ChangeToCity(){
+		if (this.hexTile.cityInfo.city != null){
+			this.hexTile.cityInfo.rebelIcon.SetActive (false);
+		}
 		this.rebellion.warPair.isDone = true;
 		this.hp = 100;
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(RebelFortEverydayTurnActions);
@@ -1249,9 +1255,12 @@ public class City{
 		KillAllCitizens ();
 		TransferRebellionToCity ();
 		this.AssignNewGovernor ();
-		if(this.rebellion.rebelLeader.citizen.city.id == this.id){
-			this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
+		if(!this.rebellion.rebelLeader.citizen.isKing){
+			if(this.rebellion.rebelLeader.citizen.city.id == this.id){
+				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
+			}
 		}
+
 		this.rebellion = null;
 	}
 

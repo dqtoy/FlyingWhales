@@ -37,10 +37,9 @@ public class Rebellion : GameEvent {
 			if(this.conqueredCities.Count > 1){
 				//Victory Rebellion
 				KillFort();
-				ResetConqueredCitiesToCityFunctionality ();
 				Kingdom newKingdom = KingdomManager.Instance.SplitKingdom(this.targetKingdom, this.conqueredCities);
 				newKingdom.AssignNewKing (this.rebelLeader.citizen);
-
+				ResetConqueredCitiesToCityFunctionality (newKingdom);
 			}
 			this.DoneEvent();
 			return;
@@ -84,7 +83,8 @@ public class Rebellion : GameEvent {
 		this.rebelLeader.citizen.city = this.conqueredCities [0];
 	}
 	private HexTile GetRandomBorderTileForFort(){
-		List<HexTile> filteredBorderTiles = this.rebelLeader.citizen.city.hexTile.GetTilesInRange (2).Where (x => this.rebelLeader.citizen.city.borderTiles.Contains(x)).ToList ();
+		List<HexTile> adjacentBorderTiles = this.rebelLeader.citizen.city.hexTile.GetTilesInRange (1);
+		List<HexTile> filteredBorderTiles = this.rebelLeader.citizen.city.borderTiles.Where (x => !adjacentBorderTiles.Contains (x)).ToList();
 		return filteredBorderTiles [UnityEngine.Random.Range (0, filteredBorderTiles.Count)];
 	}
 	private void GetSourceAndTargetCity(){
@@ -186,8 +186,8 @@ public class Rebellion : GameEvent {
 		}
 		this.attackRate = 0;
 		if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
-			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, true);
-			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
+			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, this, true);
+			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path, this);
 			Reinforcement ();
 		}
 	}
@@ -202,7 +202,7 @@ public class Rebellion : GameEvent {
 				value = 1 * safeCitiesKingdom1 [i].ownedTiles.Count;
 				if(chance < value){
 					safeCitiesKingdom1 [i].hasReinforced = true;
-					safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City);
+					safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City, true);
 				}
 			}
 		}
@@ -224,9 +224,9 @@ public class Rebellion : GameEvent {
 			}
 		}
 	}
-	private void ResetConqueredCitiesToCityFunctionality(){
-		for (int i = 0; i < this.conqueredCities.Count; i++) {
-			this.conqueredCities [i].ChangeToCity ();
+	private void ResetConqueredCitiesToCityFunctionality(Kingdom newKingdom){
+		for (int i = 0; i < newKingdom.cities.Count; i++) {
+			newKingdom.cities[i].ChangeToCity ();
 		}
 	}
 }

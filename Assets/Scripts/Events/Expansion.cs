@@ -70,7 +70,7 @@ public class Expansion : GameEvent {
 	internal override void DoneEvent(){
 		base.DoneEvent();
 //		this.expander.DestroyGO ();
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+//		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();

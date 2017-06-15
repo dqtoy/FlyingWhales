@@ -26,6 +26,7 @@ public class Reinforcement : GameEvent {
 			if(citizen.id == this.reinforcer.citizen.id){
 				//Reinforcement Function
 				this.ArrivedReinforcement();
+				this.DoneEvent ();
 			}
 		}
 	}
@@ -52,6 +53,12 @@ public class Reinforcement : GameEvent {
 	}
 
 	private void ArrivedReinforcement(){
+		if((this.reinforcer.isRebel && this.targetCity.rebellion == null) || (!this.reinforcer.isRebel && this.targetCity.rebellion != null)){
+			return;
+		}
+		if(this.targetCity.isDead || this.targetCity == null){
+			return;
+		}
 		this.targetCity.AdjustHP (this.reinforcer.reinforcementValue);
 		this.reinforcer.reinforcementValue = 0;
 	}

@@ -13,11 +13,15 @@ public class CityItem : MonoBehaviour {
     [SerializeField] private GameObject _loyaltyGO;
     [SerializeField] private UILabel _loyaltyLbl;
     [SerializeField] private UIEventTrigger _loyaltyEventTrigger;
+	[SerializeField] private GameObject _rebelIcon;
 
     #region getters/setters
     public City city {
         get { return this._city; }
     }
+	public GameObject rebelIcon {
+		get { return this._rebelIcon; }
+	}
     #endregion
 
     public void SetCity(City _city, bool showLoyalty = false) {
