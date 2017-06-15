@@ -1171,9 +1171,11 @@ public class City{
         this.UpdateBorderTiles();
         this.UpdateDailyProduction();
         if (tileToRemove.specialResource != RESOURCE.NONE) {
+            this._kingdom.RemoveInvalidTradeRoutes();
             this._kingdom.UpdateAvailableResources();
             this._kingdom.UpdateAllCitiesDailyGrowth();
-            this._kingdom.RemoveInvalidTradeRoutes();
+            this._kingdom.UpdateExpansionRate();
+            this._kingdom.UpdateTechLevel();
         }
     }
 
