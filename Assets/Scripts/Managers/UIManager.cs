@@ -2227,7 +2227,6 @@ public class UIManager : MonoBehaviour {
     private void LoadPoliticalEvents(List<GameEvent> politicalEvents){
 		EventListParent politicsParent = null;
 		List<Transform> allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomCurrentEventsContentParent.gameObject).ToList();
-		GameObject anchorPoint = null;
 
 		GameObject politicsParentGO = null;
 		for (int i = 0; i < allCurrentParents.Count; i++) {
@@ -2284,6 +2283,7 @@ public class UIManager : MonoBehaviour {
 	 * */
 	private void LoadWarEvents(List<GameEvent> wars){
 		WarEventListParent currentWarParent = null;
+        List<int> allWarIDs = wars.Select(x => x.id).ToList();
 		for (int i = 0; i < wars.Count; i++) {
 			War currentWar = (War)wars [i];
 			Kingdom kingdomAtWarWith = currentWar.kingdom1;
@@ -2292,15 +2292,24 @@ public class UIManager : MonoBehaviour {
 			}
 
 			List<Transform> allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomCurrentEventsContentParent.gameObject).ToList();
-			GameObject anchorPoint = null;
 
 			GameObject warParentGO = null;
 			for (int j = 0; j < allCurrentParents.Count; j++) {
-				if (allCurrentParents[j].name.Equals("WarParent-" + currentWar.id.ToString())) {
-					warParentGO = allCurrentParents[j].gameObject;
-					allCurrentParents.RemoveAt(j);
-					break;
-				}
+                WarEventListParent currWarParent = allCurrentParents[j].GetComponent<WarEventListParent>();
+                if (currWarParent != null) {
+                    War warOfCurrentObject = currWarParent.war;
+                    if (allWarIDs.Contains(warOfCurrentObject.id)) {
+                        if (allCurrentParents[j].name.Equals("WarParent-" + currentWar.id.ToString())) {
+                            warParentGO = allCurrentParents[j].gameObject;
+                            allCurrentParents.RemoveAt(j);
+                            break;
+                        }
+                    } else {
+                        Destroy(currWarParent.gameObject);
+                    }
+                    
+                }
+				
 			}
 
 			if (wars.Count <= 0) {
