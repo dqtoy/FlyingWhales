@@ -79,7 +79,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	[Task]
 	public void SetEventsToCreate(){
 		for(int i = 0; i < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate.Length; i++){
-			int chance = UnityEngine.Random.Range (0, 100);
+			int chance = UnityEngine.Random.Range (0, 200);
 			if(chance < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].rate){
 				this.eventToCreate = this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i];
 				SetSecondRandomKingdom ();
