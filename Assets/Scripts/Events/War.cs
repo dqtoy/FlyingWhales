@@ -299,6 +299,15 @@ public class War : GameEvent {
 	#region Overrides
     internal override void DoneEvent() {
         base.DoneEvent();
+        if (this._kingdom1.isDead) {
+            Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
+            titleLog.AddToFillers(_kingdom1, _kingdom1.name);
+            titleLog.AddToFillers(_kingdom2, _kingdom2.name);
+        } else if (this._kingdom2.isDead) {
+            Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
+            titleLog.AddToFillers(_kingdom2, _kingdom2.name);
+            titleLog.AddToFillers(_kingdom1, _kingdom1.name);
+        }
         EventManager.Instance.onWeekEnd.RemoveListener(AttemptToRequestPeace);
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		EventManager.Instance.onUpdatePath.RemoveListener (UpdatePath);
