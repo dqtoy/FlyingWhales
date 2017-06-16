@@ -368,8 +368,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
     public void ShowCitySprite() {
+        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.city.kingdom.race, STRUCTURE_TYPE.CITY);
         GameObject structureGO = GameObject.Instantiate(
-           CityGenerator.Instance.cityStructures[Random.Range(0, CityGenerator.Instance.cityStructures.Length)],
+           gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)],
            structureParentGO.transform) as GameObject;
         structureGO.transform.localPosition = Vector3.zero;
         SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
@@ -405,21 +406,21 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     public void ShowOccupiedSprite() {
         //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
-        GameObject[] structuresToChooseFrom = CityGenerator.Instance.genericStructures;
+        GameObject[] structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.GENERIC);
         if (this.specialResource != RESOURCE.NONE) {
             if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.FOOD) {
                 if(this.specialResource == RESOURCE.BEHEMOTH || this.specialResource == RESOURCE.DEER || 
                     this.specialResource == RESOURCE.PIG) {
-                    structuresToChooseFrom = CityGenerator.Instance.huntingLodgeStructures;
+                    structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.HUNTING_LODGE);
                 } else {
-                    structuresToChooseFrom = CityGenerator.Instance.farmStructures;
+                    structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
                 }
             } else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD) {
-                structuresToChooseFrom = CityGenerator.Instance.lumberyardStructures;
+                structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.LUMBERYARD);
             } else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE) {
-                structuresToChooseFrom = CityGenerator.Instance.quarryStructures;
+                structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.QUARRY);
             } else {
-                structuresToChooseFrom = CityGenerator.Instance.mineStructures;
+                structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
             }
         }
 
