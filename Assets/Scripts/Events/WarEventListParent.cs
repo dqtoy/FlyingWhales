@@ -13,17 +13,20 @@ public class WarEventListParent : MonoBehaviour {
 	[SerializeField] private GameObject arrow;
 	[SerializeField] private TweenRotation tweenRotation;
 
-	private War war;
+	private War _war;
 	private Kingdom targetKingdom;
 
 	#region getters/setters
 	public UIGrid eventsGrid{
 		get { return this._eventsGrid; }
 	}
+    public War war {
+        get { return this._war; }
+    }
 	#endregion
 
 	public void SetWarEvent(War war, Kingdom targetKingdom){
-		this.war = war;
+		this._war = war;
 		this.targetKingdom = targetKingdom;
 		this.eventTitleLbl.text = "War with " + targetKingdom.name;
 	}
