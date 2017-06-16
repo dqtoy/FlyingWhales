@@ -232,7 +232,7 @@ public class War : GameEvent {
 	}
 	private void Attack(){
 		this.attackRate += 1;
-		if((this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead) || (this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead)){
+		if((this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead) || (this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead) || this.warPair.isDone){
 			UpdateWarPair ();
 			if(this.warPair.path == null){
 				return;
@@ -251,8 +251,8 @@ public class War : GameEvent {
 		}
 		this.attackRate = 0;
 		if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
-			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path);
-			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
+			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, this);
+			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path, this);
 //				if(!this.kingdom1Attacked){
 //					this.kingdom1Attacked = true;
 //					this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path);

@@ -57,6 +57,16 @@ public class General : Role {
 
 	internal override void Attack (){
 		//		base.Attack ();
+
+//		if(this.attackCity != null){
+//			if(this.damage >= this.attackCity.targetCity.hp){
+//				if(this.attackCity.gameEvent is Rebellion){
+//					((Rebellion)this.attackCity.gameEvent).warPair.isDone = true;
+//				}else if(this.attackCity.gameEvent is War){
+//					((War)this.attackCity.gameEvent).warPair.isDone = true;
+//				}
+//			}
+//		}
 		if(this.avatar != null){
 			this.avatar.GetComponent<GeneralAvatar> ().HasAttacked();
 			if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.LEFT){
@@ -73,7 +83,7 @@ public class General : Role {
 
 	internal int GetDamage(){
 		int baseDamage = UnityEngine.Random.Range (40, 61);
-		int cityDamage = 8 * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
+		int cityDamage = (8 + this.citizen.city.kingdom.techLevel) * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
 		int otherCityTileCount = 0;
 		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
 			if(this.citizen.city.kingdom.cities[i].id != this.citizen.city.id){
@@ -81,7 +91,7 @@ public class General : Role {
 			}
 		}
 		int otherCityDamage = 3 * otherCityTileCount;
-		int spawnRateDamage = Mathf.CeilToInt(this.spawnRate / 4);
+		int spawnRateDamage = Mathf.CeilToInt((float)this.spawnRate / 4f);
 		return (baseDamage + cityDamage + otherCityDamage) * spawnRateDamage;
 	}
 }

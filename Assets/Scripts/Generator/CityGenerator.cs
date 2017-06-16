@@ -152,6 +152,7 @@ public class CityGenerator : MonoBehaviour {
 			hexTile.city = new RebelFort (hexTile, kingdom, rebellion);
 		}else{
 			hexTile.city = new City (hexTile, kingdom);
+            hexTile.city.UpdateBorderTiles();
 		}
 		hexTile.ShowCitySprite();
 		//hexTile.ShowNamePlate();

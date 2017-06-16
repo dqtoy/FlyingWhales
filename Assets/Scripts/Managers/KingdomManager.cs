@@ -144,7 +144,7 @@ public class KingdomManager : MonoBehaviour {
 				}
 			}
 		}
-		this.UpdateKingdomAdjacency();
+		//this.UpdateKingdomAdjacency();
         newKingdom.CheckForDiscoveredKingdoms();
 		return newKingdom;
 	}
@@ -175,7 +175,13 @@ public class KingdomManager : MonoBehaviour {
 		RelationshipKingdom kingdom1Rel = kingdom1.GetRelationshipWithOtherKingdom(kingdom2);
 		RelationshipKingdom kingdom2Rel = kingdom2.GetRelationshipWithOtherKingdom(kingdom1);
 
-		kingdom1Rel.SetWarStatus(true);
+        RelationshipKings king1Rel = kingdom1.king.GetRelationshipWithCitizen(kingdom2.king);
+        RelationshipKings king2Rel = kingdom2.king.GetRelationshipWithCitizen(kingdom1.king);
+
+        king1Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, war);
+        king2Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, war);
+
+        kingdom1Rel.SetWarStatus(true);
 		kingdom2Rel.SetWarStatus(true);
 
 		kingdom1Rel.kingdomWar.ResetKingdomWar ();

@@ -50,6 +50,28 @@ public class RelationshipKings {
 		}
 	}
 
+    internal void ChangeRelationshipStatus(RELATIONSHIP_STATUS newStatus, GameEvent gameEventTrigger = null) {
+        if(newStatus == RELATIONSHIP_STATUS.ALLY) {
+            this.like = 81;
+        } else if (newStatus == RELATIONSHIP_STATUS.FRIEND) {
+            this.like = 41;
+        } else if (newStatus == RELATIONSHIP_STATUS.WARM) {
+            this.like = 21;
+        } else if (newStatus == RELATIONSHIP_STATUS.NEUTRAL) {
+            this.like = 0;
+        } else if (newStatus == RELATIONSHIP_STATUS.COLD) {
+            this.like = -21;
+        } else if (newStatus == RELATIONSHIP_STATUS.ENEMY) {
+            this.like = -41;
+        } else if (newStatus == RELATIONSHIP_STATUS.RIVAL) {
+            this.like = -81;
+        }
+        UpdateKingRelationshipStatus();
+        if(this.lordRelationship == RELATIONSHIP_STATUS.ENEMY || this.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+            Embargo(gameEventTrigger);
+        }
+    }
+
 	// This will change the view of sourceKing towards King
 	// Parameters:
 	//		adjustment - relationship value change

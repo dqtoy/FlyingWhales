@@ -84,6 +84,9 @@ public class GameEvent {
 
 	internal virtual void DoneCitizenAction(Citizen citizen){
         //add base.DoneCitizenAction on all events
+//		if(citizen.assignedRole.targetLocation != citizen.assignedRole.targetCity.hexTile){
+//			return;
+//		}
         if (citizen.assignedRole.targetCity == null || citizen.assignedRole.targetCity.isDead) {
             //Cancel Event
             CancelEvent();

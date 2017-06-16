@@ -157,12 +157,20 @@ public class TraderAvatar : MonoBehaviour {
     }
 
     private void CheckForKingdomDiscovery() {
-        if (this._trader.location.ownedByCity != null &&
-            this._trader.location.ownedByCity.kingdom.id != this._trader.citizen.city.kingdom.id) {
+        HexTile currentLocation = this._trader.location;
+        if (currentLocation.isOccupied && currentLocation.ownedByCity != null &&
+            currentLocation.ownedByCity.kingdom.id != this._trader.citizen.city.kingdom.id) {
             Kingdom thisKingdom = this._trader.citizen.city.kingdom;
-            Kingdom otherKingdom = this._trader.location.ownedByCity.kingdom;
+            Kingdom otherKingdom = currentLocation.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
             otherKingdom.DiscoverKingdom(thisKingdom);
+        } else if (currentLocation.isBorder) {
+            Kingdom thisKingdom = this._trader.citizen.city.kingdom;
+            Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currentLocation.isBorderOfCityID).kingdom;
+            if (otherKingdom.id != this._trader.citizen.city.kingdom.id) {
+                thisKingdom.DiscoverKingdom(otherKingdom);
+                otherKingdom.DiscoverKingdom(thisKingdom);
+            }
         }
     }
 

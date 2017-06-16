@@ -1,7 +1,7 @@
-﻿Shader "Separate Alpha Mask" {
+﻿Shader "AlphaMask" {
     Properties {
-        _MainTex ("Base (RGB)", 2D) = "white" {}
-        _Alpha ("Alpha (A)", 2D) = "white" {}
+        _MainTex ("_MainTex", 2D) = "white" {}
+        _Alpha ("_Alpha", 2D) = "white" {}
     }
     SubShader {
         Tags { "RenderType" = "Transparent" "Queue" = "Transparent"}

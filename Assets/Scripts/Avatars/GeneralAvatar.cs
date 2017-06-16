@@ -52,6 +52,7 @@ public class GeneralAvatar : MonoBehaviour {
 					if (!other.gameObject.GetComponent<Avatar> ().citizen.isDead) {
 						this.collidedWithHostile = true;
 						this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
+						HasCollidedWithHostile ();
 					}
 				}else{
 					bool isRebel = ((General)other.gameObject.GetComponent<Avatar> ().citizen.assignedRole).isRebel;
@@ -59,6 +60,7 @@ public class GeneralAvatar : MonoBehaviour {
 						if (!other.gameObject.GetComponent<Avatar> ().citizen.isDead) {
 							this.collidedWithHostile = true;
 							this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
+							HasCollidedWithHostile ();
 						}
 					}
 				}
@@ -76,6 +78,7 @@ public class GeneralAvatar : MonoBehaviour {
 						if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
 							this.collidedWithHostile = true;
 							this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
+							HasCollidedWithHostile ();
 						}
 					}  
 				}
@@ -87,6 +90,7 @@ public class GeneralAvatar : MonoBehaviour {
 					if(!other.gameObject.GetComponent<Avatar> ().citizen.isDead){
 						this.collidedWithHostile = true;
 						this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
+						HasCollidedWithHostile ();
 					}
 				}
 			}
@@ -172,6 +176,7 @@ public class GeneralAvatar : MonoBehaviour {
 		if(this.general.location == this.general.targetLocation){
 			if(!this.hasArrived){
 				this.hasArrived = true;
+				this.GetComponent<BoxCollider2D> ().enabled = false;
 				this.general.Attack ();
 			}
 			Task.current.Succeed ();
@@ -181,8 +186,8 @@ public class GeneralAvatar : MonoBehaviour {
 
 	}
 
-	[Task]
-	public void HasCollidedWithHostileGeneral(){
+//	[Task]
+	public void HasCollidedWithHostile(){
 		if(this.collidedWithHostile){
 			this.collidedWithHostile = false;
 			if(this.hostile.assignedRole != null){
@@ -215,7 +220,7 @@ public class GeneralAvatar : MonoBehaviour {
 //		else{
 //			Task.current.Fail ();
 //		}
-		Task.current.Fail ();
+//		Task.current.Fail ();
 	}
 	[Task]
 	public void HasDiedOfOtherReasons(){
@@ -262,12 +267,20 @@ public class GeneralAvatar : MonoBehaviour {
 	}
 
     private void CheckForKingdomDiscovery() {
-        if (this.general.location.ownedByCity != null &&
-            this.general.location.ownedByCity.kingdom.id != this.general.citizen.city.kingdom.id) {
+        HexTile currentLocation = this.general.location;
+        if (currentLocation.isOccupied && currentLocation.ownedByCity != null &&
+            currentLocation.ownedByCity.kingdom.id != this.general.citizen.city.kingdom.id) {
             Kingdom thisKingdom = this.general.citizen.city.kingdom;
-            Kingdom otherKingdom = this.general.location.ownedByCity.kingdom;
+            Kingdom otherKingdom = currentLocation.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
             otherKingdom.DiscoverKingdom(thisKingdom);
+        } else if (currentLocation.isBorder) {
+            Kingdom thisKingdom = this.general.citizen.city.kingdom;
+            Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currentLocation.isBorderOfCityID).kingdom;
+            if (otherKingdom.id != this.general.citizen.city.kingdom.id) {
+                thisKingdom.DiscoverKingdom(otherKingdom);
+                otherKingdom.DiscoverKingdom(thisKingdom);
+            }
         }
     }
 

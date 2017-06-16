@@ -195,12 +195,20 @@ public class EnvoyAvatar : MonoBehaviour {
     }
 
     private void CheckForKingdomDiscovery() {
-        if(this.envoy.location.ownedByCity != null && 
-            this.envoy.location.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+        HexTile currentLocation = this.envoy.location;
+        if (currentLocation.isOccupied && currentLocation.ownedByCity != null &&
+            currentLocation.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
             Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
-            Kingdom otherKingdom = this.envoy.location.ownedByCity.kingdom;
+            Kingdom otherKingdom = currentLocation.ownedByCity.kingdom;
             thisKingdom.DiscoverKingdom(otherKingdom);
             otherKingdom.DiscoverKingdom(thisKingdom);
+        }else if (currentLocation.isBorder) {
+            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+            Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currentLocation.isBorderOfCityID).kingdom;
+            if(otherKingdom.id != this.envoy.citizen.city.kingdom.id) {
+                thisKingdom.DiscoverKingdom(otherKingdom);
+                otherKingdom.DiscoverKingdom(thisKingdom);
+            }
         }
     }
 

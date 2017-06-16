@@ -420,9 +420,9 @@ public class Citizen {
 		if (this.id == this.city.kingdom.king.id) {
 			//ASSIGN NEW LORD, SUCCESSION
 			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
-//			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.city.kingdom.king);
-//			this.city.kingdom.PassOnInternationalWar();
-			if (isDethroned) {
+            KingdomManager.Instance.RemoveRelationshipToOtherKings(this.city.kingdom.king);
+            //			this.city.kingdom.PassOnInternationalWar();
+            if (isDethroned) {
 				if (newKing != null) {
 					this.city.kingdom.AssignNewKing (newKing);
 				}
@@ -1113,6 +1113,12 @@ public class Citizen {
 
 	internal void WarTrigger(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
 //		return;
+        if(!relationship.sourceKing.city.kingdom.discoveredKingdoms.Contains(relationship.king.city.kingdom) ||
+            !relationship.king.city.kingdom.discoveredKingdoms.Contains(relationship.sourceKing.city.kingdom)) {
+            //At least one of the kingdoms have not discovered each other yet
+            return;
+        }
+
 		if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
 			return;
 		}

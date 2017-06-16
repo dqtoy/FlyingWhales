@@ -16,6 +16,7 @@ public class Rebellion : GameEvent {
 	private bool isInitialAttack;
 
 	public Rebellion(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
+		this.eventType = EVENT_TYPES.REBELLION;
 		this.rebelLeader = (Rebel)startedBy.assignedRole;
 		this.targetKingdom = startedBy.city.kingdom;
 //		this.targetCity = null;
@@ -38,6 +39,7 @@ public class Rebellion : GameEvent {
 				KillFort();
 				Kingdom newKingdom = KingdomManager.Instance.SplitKingdom(this.targetKingdom, this.conqueredCities);
 				newKingdom.AssignNewKing (this.rebelLeader.citizen);
+				ResetConqueredCitiesToCityFunctionality (newKingdom);
 			}
 			this.DoneEvent();
 			return;
@@ -75,12 +77,15 @@ public class Rebellion : GameEvent {
 //		this.conqueredCities.Add (this.rebelFort);
 	}
 	internal void KillFort(){
+		this.warPair.isDone = true;
 		this.rebelFort.KillCity();
 		this.conqueredCities.RemoveAt(0);
 		this.rebelLeader.citizen.city = this.conqueredCities [0];
 	}
 	private HexTile GetRandomBorderTileForFort(){
-		return this.rebelLeader.citizen.city.borderTiles [UnityEngine.Random.Range (0, this.rebelLeader.citizen.city.borderTiles.Count)];
+		List<HexTile> adjacentBorderTiles = this.rebelLeader.citizen.city.hexTile.GetTilesInRange (1);
+		List<HexTile> filteredBorderTiles = this.rebelLeader.citizen.city.borderTiles.Where (x => !adjacentBorderTiles.Contains (x)).ToList();
+		return filteredBorderTiles [UnityEngine.Random.Range (0, filteredBorderTiles.Count)];
 	}
 	private void GetSourceAndTargetCity(){
 		int nearestDistance = 0;
@@ -120,42 +125,40 @@ public class Rebellion : GameEvent {
 		int distance = 0;
 //		List<HexTile> newPath = new List<HexTile>();
 		for (int i = 0; i < this.targetKingdom.cities.Count; i++) {
-			if(this.targetKingdom.cities[i].rebellion != null){
-				continue;
-			}
-			List<HexTile> newPath = PathGenerator.Instance.GetPath (hexTile, this.targetKingdom.cities[i].hexTile, PATHFINDING_MODE.COMBAT).ToList();
-			if(newPath != null){
-				if(nearestCity == null){
-					nearestCity = this.targetKingdom.cities [i];
-					nearestDistance = newPath.Sum (x => x.movementDays);
-					path = newPath;
-				}else{
-					distance = newPath.Sum (x => x.movementDays);
-					if(distance < nearestDistance){
+			if(this.targetKingdom.cities[i].rebellion == null){
+				List<HexTile> newPath = PathGenerator.Instance.GetPath (hexTile, this.targetKingdom.cities[i].hexTile, PATHFINDING_MODE.COMBAT).ToList();
+				if(newPath != null){
+					if(nearestCity == null){
 						nearestCity = this.targetKingdom.cities [i];
-						nearestDistance = distance;
+						nearestDistance = newPath.Sum (x => x.movementDays);
 						path = newPath;
+					}else{
+						distance = newPath.Sum (x => x.movementDays);
+						if(distance < nearestDistance){
+							nearestCity = this.targetKingdom.cities [i];
+							nearestDistance = distance;
+							path = newPath;
+						}
 					}
 				}
 			}
+
 		}
 		return nearestCity;
 	}
 	internal void CreateCityWarPair(){
-		if(this.warPair.kingdom1City == null || this.warPair.kingdom2City == null){
-			List<HexTile> path = null;
-			City kingdom1CityToBeAttacked = null;
-			if(this.conqueredCities.Count > 0){
-				kingdom1CityToBeAttacked = this.conqueredCities [this.conqueredCities.Count - 1];
-			}
-			if(kingdom1CityToBeAttacked == null){
-				return;
-			}
-			City kingdom2CityToBeAttacked = GetNearestCityFrom(kingdom1CityToBeAttacked.hexTile, ref path);
+		List<HexTile> path = null;
+		City kingdom1CityToBeAttacked = null;
+		if(this.conqueredCities.Count > 0){
+			kingdom1CityToBeAttacked = this.conqueredCities [this.conqueredCities.Count - 1];
+		}
+		if(kingdom1CityToBeAttacked == null){
+			return;
+		}
+		City kingdom2CityToBeAttacked = GetNearestCityFrom(kingdom1CityToBeAttacked.hexTile, ref path);
 
-			if(kingdom1CityToBeAttacked != null && kingdom2CityToBeAttacked != null && path != null){
-				this.warPair = new CityWarPair (kingdom1CityToBeAttacked, kingdom2CityToBeAttacked, path);
-			}
+		if(kingdom1CityToBeAttacked != null && kingdom2CityToBeAttacked != null && path != null){
+			this.warPair = new CityWarPair (kingdom1CityToBeAttacked, kingdom2CityToBeAttacked, path);
 		}
 	}
 	internal void UpdateWarPair(){
@@ -164,7 +167,7 @@ public class Rebellion : GameEvent {
 	}
 	private void Attack(){
 		this.attackRate += 1;
-		if((this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead) || (this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead)){
+		if(this.warPair.isDone){
 			UpdateWarPair ();
 			if(this.warPair.path == null){
 				return;
@@ -183,14 +186,14 @@ public class Rebellion : GameEvent {
 		}
 		this.attackRate = 0;
 		if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
-			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, true);
-			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
+			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, this, true);
+			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path, this);
 			Reinforcement ();
 		}
 	}
 	private void Reinforcement(){
 		List<City> safeCitiesKingdom1 = this.conqueredCities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList (); 
-		List<City> safeCitiesKingdom2 = this.targetKingdom.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+		List<City> safeCitiesKingdom2 = this.targetKingdom.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100 && x.rebellion == null).ToList ();
 		int chance = 0;
 		int value = 0;
 		if(safeCitiesKingdom1 != null){
@@ -199,7 +202,7 @@ public class Rebellion : GameEvent {
 				value = 1 * safeCitiesKingdom1 [i].ownedTiles.Count;
 				if(chance < value){
 					safeCitiesKingdom1 [i].hasReinforced = true;
-					safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City);
+					safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City, true);
 				}
 			}
 		}
@@ -219,6 +222,11 @@ public class Rebellion : GameEvent {
 			if(this.warPair.path.Contains(hexTile)){
 				this.warPair.UpdateSpawnRate();
 			}
+		}
+	}
+	private void ResetConqueredCitiesToCityFunctionality(Kingdom newKingdom){
+		for (int i = 0; i < newKingdom.cities.Count; i++) {
+			newKingdom.cities[i].ChangeToCity ();
 		}
 	}
 }

@@ -54,7 +54,7 @@ public class Kingdom{
 	private List<Kingdom> _discoveredKingdoms;
 	
 	//Tech
-	private int techLevel;
+	private int _techLevel;
 	private int techCapacity;
 	private int techCounter;
 
@@ -124,6 +124,10 @@ public class Kingdom{
     public int basicResourceCount {
         get { return this._basicResourceCount; }
     }
+    /*
+     * Will return all discovered kingdoms, otherwise, if useDiscoveredKingdoms
+     * is set to false will return all kingdoms except this one.
+     * */
     public List<Kingdom> discoveredKingdoms {
         get {
             if (KingdomManager.Instance.useDiscoveredKingdoms) {
@@ -132,6 +136,13 @@ public class Kingdom{
                 return KingdomManager.Instance.allKingdoms.Where(x => x.id != this.id).ToList();
             }
         }
+    }
+
+	public int techLevel{
+		get{return this._techLevel;}
+	}
+    public int expansionRate {
+        get { return this.expansionChance; }
     }
 	#endregion
 	// Kingdom constructor paramters
@@ -167,7 +178,7 @@ public class Kingdom{
 		this.borderConflictLoyaltyExpiration = 0;
 		this.rebellions = new List<Rebellion> ();
 		this._discoveredKingdoms = new List<Kingdom>();
-		this.techLevel = 1;
+		this._techLevel = 1;
 		this.techCounter = 0;
 		this.UpdateTechCapacity ();
 		// Determine what type of Kingdom this will be upon initialization.
@@ -237,10 +248,10 @@ public class Kingdom{
 			} else {				
 				this.horoscope = GetHoroscope (prevKingdomTypeData.kingdomType);
 			}
-			// Update expansion chance
-			this.expansionChance = this.kingdomTypeData.expansionRate;
-		}
-	}
+            // Update expansion chance
+            this.UpdateExpansionRate();
+        }
+    }
 
 	internal int[] GetHoroscope(KINGDOM_TYPE prevKingdomType = KINGDOM_TYPE.NONE){
 		int[] newHoroscope = new int[2];
@@ -399,7 +410,7 @@ public class Kingdom{
 	 * happen every tick here.
 	 * */
 	protected void KingdomTickActions(){
-        this.ProduceGoldFromTrade();
+        //this.ProduceGoldFromTrade();
         this.AttemptToExpand();
 //		this.AttemptToCreateAttackCityEvent ();
 //		this.AttemptToCreateReinforcementEvent ();
@@ -407,9 +418,9 @@ public class Kingdom{
         this.DecreaseUnrestEveryMonth();
 		this.CheckBorderConflictLoyaltyExpiration ();
 		this.IncreaseTechCounterPerTick();
-        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
-            this.AttemptToTrade();
-        }
+        //if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+        //    this.AttemptToTrade();
+        //}
         
     }
 	/*
@@ -417,9 +428,7 @@ public class Kingdom{
 	 * This happens everyday
 	 * */
 	private void AttemptToCreateEvent(){
-		for (int i = 0; i < this.kingdomTypeData.agentCreationRate.Length; i++) {
-			
-		}
+		
 	}
 	private void CreatEvent(EVENT_TYPES eventType){
 		switch (eventType){
@@ -533,7 +542,8 @@ public class Kingdom{
         List<Kingdom> friendKingdoms = this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.ALLY);
         friendKingdoms.AddRange(this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.FRIEND));
         List<HexTile> path = null;
-            
+
+        friendKingdoms = friendKingdoms.Where(x => this.discoveredKingdoms.Contains(x)).ToList();
         //Check if sourceKingdom is friends or allies with anybody
         if (friendKingdoms.Count > 0) {
             for (int i = 0; i < friendKingdoms.Count; i++) {
@@ -560,6 +570,8 @@ public class Kingdom{
             List<Kingdom> otherKingdoms = this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.WARM);
             otherKingdoms.AddRange(this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.NEUTRAL));
             otherKingdoms.AddRange(this.GetKingdomsByRelationship(RELATIONSHIP_STATUS.COLD));
+
+            otherKingdoms = otherKingdoms.Where(x => this.discoveredKingdoms.Contains(x)).ToList();
             //check if sourceKingdom has resources that the other kingdom does not 
             for (int i = 0; i < otherKingdoms.Count; i++) {
                 Kingdom otherKingdom = otherKingdoms[i];
@@ -695,6 +707,8 @@ public class Kingdom{
         this.UpdateKingdomTypeData();
         this.UpdateAvailableResources();
         this.UpdateAllCitiesDailyGrowth();
+        this.UpdateExpansionRate();
+        this.UpdateTechLevel();
         if (this._cities.Count == 1 && this._cities[0] != null) {
             this.capitalCity = this._cities[0];
 
@@ -725,10 +739,12 @@ public class Kingdom{
         this._cities.Remove(city);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
+            this.RemoveInvalidTradeRoutes();
             this.UpdateKingdomTypeData();
             this.UpdateAvailableResources();
             this.UpdateAllCitiesDailyGrowth();
-            this.RemoveInvalidTradeRoutes();
+            this.UpdateExpansionRate();
+            this.UpdateTechLevel();
 			if (this._cities[0] != null && this.capitalCity.id == city.id) {
                 this.capitalCity = this._cities[0];
 
@@ -1073,7 +1089,7 @@ public class Kingdom{
 			City newCity = CreateNewCityOnTileForKingdom(hex);
 			newCity.hp = 100;
 			newCity.CreateInitialFamilies(false);
-			KingdomManager.Instance.UpdateKingdomAdjacency();
+			//KingdomManager.Instance.UpdateKingdomAdjacency();
 //			this.AddInternationalWarCity (newCity);
 			if (UIManager.Instance.currentlyShowingKingdom.id == newCity.kingdom.id) {
 				newCity.kingdom.HighlightAllOwnedTilesInKingdom();
@@ -1408,14 +1424,82 @@ public class Kingdom{
 		if (!this._availableResources.ContainsKey(resource)) {
 			this._availableResources.Add(resource, 0);
             this.RemoveObsoleteTradeRoutes(resource);
+            this.UpdateTechLevel();
             this.UpdateAllCitiesDailyGrowth();
             this.UpdateBasicResourceCount();
         }
-		this._availableResources[resource] += 1;  
-	}
+		this._availableResources[resource] += 1;
+        this.UpdateExpansionRate();
+    }
+
+    internal void UpdateExpansionRate() {
+        this.expansionChance = this.kingdomTypeData.expansionRate;
+
+        for (int i = 0; i < this.availableResources.Keys.Count; i++) {
+            RESOURCE key = this.availableResources.Keys.ElementAt(i);
+            if (Utilities.GetBaseResourceType(key) == this.basicResource) {
+                int multiplier = this.availableResources[key];
+                if (key == RESOURCE.CEDAR || key == RESOURCE.GRANITE) {
+                    this.expansionChance += (1 * multiplier);
+                } else if (key == RESOURCE.OAK || key == RESOURCE.SLATE) {
+                    this.expansionChance += (2 * multiplier);
+                } else if (key == RESOURCE.EBONY || key == RESOURCE.MARBLE) {
+                    this.expansionChance += (3 * multiplier);
+                }
+            }
+        }
+        ////get all resources from tiles and trade routes, only include trade routes where this kingom is the target
+        //List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+        //for (int i = 0; i < this._tradeRoutes.Count; i++) {
+        //    TradeRoute currTradeRoute = this._tradeRoutes[i];
+        //    if (currTradeRoute.targetKingdom.id == this.id) {
+        //        if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
+        //            allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
+        //        }
+        //    }
+        //}
+
+        //for (int i = 0; i < allAvailableResources.Count; i++) {
+        //    RESOURCE currResource = allAvailableResources[i];
+        //    if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
+        //        if(currResource == RESOURCE.CEDAR || currResource == RESOURCE.GRANITE) {
+        //            this.expansionChance += 1;
+        //        } else if (currResource == RESOURCE.OAK || currResource == RESOURCE.SLATE) {
+        //            this.expansionChance += 2;
+        //        } else if (currResource == RESOURCE.EBONY || currResource == RESOURCE.MARBLE) {
+        //            this.expansionChance += 3;
+        //        }
+        //    }
+        //}
+    }
+
+    internal void UpdateTechLevel() {
+        this._techLevel = 1;
+        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
+        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+        for (int i = 0; i < this._tradeRoutes.Count; i++) {
+            TradeRoute currTradeRoute = this._tradeRoutes[i];
+            if (currTradeRoute.targetKingdom.id == this.id) {
+                if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
+                    allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
+                }
+            }
+        }
+
+        for (int i = 0; i < allAvailableResources.Count; i++) {
+            RESOURCE currResource = allAvailableResources[i];
+            if (currResource == RESOURCE.MANA_STONE) {
+                this._techLevel += 1;
+            } else if (currResource == RESOURCE.COBALT) {
+                this._techLevel += 2;
+            } else if (currResource == RESOURCE.MITHRIL) {
+                this._techLevel += 3;
+            }
+        }
+    }
 
     internal void UpdateAllCitiesDailyGrowth() {
-        //get all rasources from tiles and trade routes, only include trade routes where this kingom is the target
+        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
         List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
         for (int i = 0; i < this._tradeRoutes.Count; i++) {
             TradeRoute currTradeRoute = this._tradeRoutes[i];
@@ -1460,24 +1544,25 @@ public class Kingdom{
 	 * Check if the kingdom has enough resources for a given cost.
 	 * */
 	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
-		if(resourceCost != null){
-			for (int i = 0; i < resourceCost.Count; i++) {
-				Resource currentResource = resourceCost [i];
-				if (currentResource.resourceType == BASE_RESOURCE_TYPE.GOLD) {
-					if (this._goldCount < currentResource.resourceQuantity) {
-						return false;
-					}
-				} 
-    //            else {
-				//	if (!this.HasResource(currentResource.resourceType)) {
-				//		return false;
-				//	}
-				//}
-			}
-		}else{
-			return false;
-		}
-		return true;
+        return true;
+		//if(resourceCost != null){
+		//	for (int i = 0; i < resourceCost.Count; i++) {
+		//		Resource currentResource = resourceCost [i];
+		//		if (currentResource.resourceType == BASE_RESOURCE_TYPE.GOLD) {
+		//			if (this._goldCount < currentResource.resourceQuantity) {
+		//				return false;
+		//			}
+		//		} 
+  //  //            else {
+		//		//	if (!this.HasResource(currentResource.resourceType)) {
+		//		//		return false;
+		//		//	}
+		//		//}
+		//	}
+		//}else{
+		//	return false;
+		//}
+		//return true;
 	}
 
 	/*
@@ -1625,7 +1710,7 @@ public class Kingdom{
 		this.AdjustTechCounter (amount);
 	}
 	private void UpdateTechCapacity(){
-		this.techCapacity = 2000 * this.techLevel;
+		this.techCapacity = 2000 * this._techLevel;
 	}
 	private void AdjustTechCounter(int amount){
 		this.techCounter += amount;
@@ -1635,7 +1720,7 @@ public class Kingdom{
 		}
 	}
 	private void UpgradeTechLevel(int amount){
-		this.techLevel += amount;
+		this._techLevel += amount;
 		this.techCounter = 0;
 		this.UpdateTechCapacity ();
 	}
@@ -1654,13 +1739,29 @@ public class Kingdom{
             for (int j = 0; j < tilesToCheck.Count; j++) {
                 //Get all neighbour tiles that are owned, but not by this kingdom, 
                 //and that kingdom is not already added to this kingdom's discovered kingdoms.
-                List<HexTile> neighbours = tilesToCheck[i].PurchasableTiles
-                    .Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
-                    .ToList();
+                List<HexTile> neighbours = tilesToCheck[i].PurchasableTiles.ToList();
+                    //.Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
+                    //.ToList();
                 for (int k = 0; k < neighbours.Count; k++) {
-                    Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
-                    this.DiscoverKingdom(otherKingdom);
-                    otherKingdom.DiscoverKingdom(this);
+                    HexTile currNeighbour = neighbours[i];
+                    if (currNeighbour.isOccupied && currNeighbour.ownedByCity != null
+                        && currNeighbour.ownedByCity.kingdom.id != this.id) {
+                        Kingdom otherKingdom = currNeighbour.ownedByCity.kingdom;
+
+                        this.DiscoverKingdom(otherKingdom);
+                        otherKingdom.DiscoverKingdom(this);
+                    } else if (currNeighbour.isBorder) {
+                        Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID).kingdom;
+
+                        if (otherKingdom.id != this.id) {
+                            this.DiscoverKingdom(otherKingdom);
+                            otherKingdom.DiscoverKingdom(this);
+                        }
+                    }
+
+                    //Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
+                    //this.DiscoverKingdom(otherKingdom);
+                    //otherKingdom.DiscoverKingdom(this);
                 }
             }
         }
@@ -1670,22 +1771,40 @@ public class Kingdom{
      * Check all the neighbours of a HexTile and check if any of them are owned by another kingdom, if so,
      * the two kingdoms have now discovered each other.
      * */
-    internal void CheckForDiscoveredKingdoms(HexTile tileToCheck) {
+    internal void CheckForDiscoveredKingdoms(City city) {
         //Get all neighbour tiles that are owned, but not by this kingdom, 
         //and that kingdom is not already added to this kingdom's discovered kingdoms.
-        List<HexTile> neighbours = tileToCheck.PurchasableTiles
-            .Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
-            .ToList();
-        for (int i = 0; i < neighbours.Count; i++) {
-            Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
-            this.DiscoverKingdom(otherKingdom);
-            otherKingdom.DiscoverKingdom(this);
+        List<HexTile> tilesToCheck = city.ownedTiles.Union(city.borderTiles).ToList();
+        for (int i = 0; i < tilesToCheck.Count; i++) {
+            List<HexTile> neighbours = tilesToCheck[i].PurchasableTiles.ToList();
+            for (int j = 0; j < neighbours.Count; j++) {
+                HexTile currNeighbour = neighbours[j];
+                if (currNeighbour.isOccupied && currNeighbour.ownedByCity != null
+                    && currNeighbour.ownedByCity.kingdom.id != this.id) {
+                    Kingdom otherKingdom = currNeighbour.ownedByCity.kingdom;
+
+                    this.DiscoverKingdom(otherKingdom);
+                    otherKingdom.DiscoverKingdom(this);
+                } else if (currNeighbour.isBorder) {
+                    Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID).kingdom;
+
+                    if (otherKingdom.id != this.id) {
+                        this.DiscoverKingdom(otherKingdom);
+                        otherKingdom.DiscoverKingdom(this);
+                    }
+                }
+            }
         }
+            
+            //.Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
+            //.ToList();
+        
     }
 
     internal void DiscoverKingdom(Kingdom discoveredKingdom) {
         if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
             this._discoveredKingdoms.Add(discoveredKingdom);
+            Debug.LogError(this.name + " discovered " + discoveredKingdom.name + "!");
         }
     }
 
