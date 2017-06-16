@@ -74,6 +74,7 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.SECESSION, 60},
 		{EVENT_TYPES.RIOT, 30},
 		{EVENT_TYPES.REBELLION, -1},
+        {EVENT_TYPES.REQUEST_PEACE, -1}
     };
 
 	void Awake(){

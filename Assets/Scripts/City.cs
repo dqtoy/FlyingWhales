@@ -5,6 +5,10 @@ using System.Linq;
 using System;
 using Panda;
 
+#pragma warning disable 0168 // variable declared but not used.
+#pragma warning disable 0219 // variable assigned but not used.
+#pragma warning disable 0414 // private field assigned but not used.
+
 [System.Serializable]
 public class City{
 
@@ -431,7 +435,7 @@ public class City{
 		}
 
 		for (int i = 0; i < outmostTiles.Count; i++) {
-			List<HexTile> possibleBorderTiles = outmostTiles [i].GetTilesInRange(2).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable && !x.isBorder).ToList();
+			List<HexTile> possibleBorderTiles = outmostTiles [i].GetTilesInRange(3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable && !x.isBorder).ToList();
 			this.borderTiles.AddRange (possibleBorderTiles);
 		}
 		this.borderTiles.Distinct();

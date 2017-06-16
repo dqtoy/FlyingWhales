@@ -177,6 +177,15 @@ public class RelationshipKings {
         Debug.LogError(this.sourceKing.city.kingdom.name + " removed " + this.king.city.kingdom.name + " from it's embargo list!");
     }
 
+    internal void ChangeSourceKing(Citizen newSourceKing) {
+        this.sourceKing = newSourceKing;
+    }
+
+    internal void ChangeTargetKing(Citizen newTargetKing) {
+        this.king = newTargetKing;
+    }
+
+
     #region For Testing Functions
     /*
      * Instantly change the like rating
