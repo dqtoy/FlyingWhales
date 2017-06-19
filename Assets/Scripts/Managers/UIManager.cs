@@ -1204,20 +1204,25 @@ public class UIManager : MonoBehaviour {
         //eventGO.transform.localScale = Vector3.one;
         //StartCoroutine(RepositionGrid(gameEventsOfTypeGrid));
 
-        KingdomFlagItem kingdomOwner = kingdomListOtherKingdomsGrid.GetChildList()
-            .Where(x => x.GetComponent<KingdomFlagItem>().kingdom.id == gameEvent.startedByKingdom.id)
-            .First().GetComponent<KingdomFlagItem>();
-        if (kingdomOwner != null) {
-            GameObject eventGO = InstantiateUIObject(gameEventPrefab, this.transform);
-            eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
-            eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
-            eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
-            eventGO.GetComponent<EventItem>().StartExpirationTimer();
-            eventGO.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
-            kingdomOwner.AddGameObjectToGrid(eventGO);
-			gameEvent.goEventItem = eventGO;
-            //StartCoroutine(RepositionGrid(gameEventsOfTypeGrid));
-        }
+		if(gameEvent.startedBy != null){ //Kingdom Event
+			KingdomFlagItem kingdomOwner = kingdomListOtherKingdomsGrid.GetChildList()
+				.Where(x => x.GetComponent<KingdomFlagItem>().kingdom.id == gameEvent.startedByKingdom.id)
+				.First().GetComponent<KingdomFlagItem>();
+			if (kingdomOwner != null) {
+				GameObject eventGO = InstantiateUIObject(gameEventPrefab, this.transform);
+				eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
+				eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
+				eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
+				eventGO.GetComponent<EventItem>().StartExpirationTimer();
+				eventGO.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+				kingdomOwner.AddGameObjectToGrid(eventGO);
+				gameEvent.goEventItem = eventGO;
+				//StartCoroutine(RepositionGrid(gameEventsOfTypeGrid));
+			}
+		}else{ //World Event
+			
+		}
+      
         
 	}
 

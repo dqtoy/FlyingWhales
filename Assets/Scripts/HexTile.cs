@@ -30,6 +30,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isRoad = false;
 	public bool isOccupied = false;
 	public bool isBorder = false;
+	public bool isPlagued = false;
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
 
@@ -665,5 +666,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	internal float GetDistanceTo(HexTile targetHextile){
 		return Vector3.Distance (this.transform.position, targetHextile.transform.position);
+	}
+
+	internal void SetPlague(bool state){
+		this.isPlagued = state;
 	}
 }
