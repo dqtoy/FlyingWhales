@@ -227,7 +227,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	private void CreateTradeEvent(){
         //Create Trade Event
         RelationshipKingdom relWithOtherKingdom = this.firstKingdom.GetRelationshipWithOtherKingdom(this.secondKingdom);
-        List<HexTile> path = PathGenerator.Instance.GetPath(this.firstKingdom.capitalCity.hexTile, this.secondKingdom.capitalCity.hexTile, PATHFINDING_MODE.NORMAL).ToList();
+        City randomSourceCity = this.firstKingdom.cities[Random.Range(0, this.firstKingdom.cities.Count)];
+        City randomTargetCity = this.secondKingdom.cities[Random.Range(0, this.secondKingdom.cities.Count)];
+        List<HexTile> path = PathGenerator.Instance.GetPath(randomSourceCity.hexTile, randomTargetCity.hexTile, PATHFINDING_MODE.NORMAL).ToList();
         List<RESOURCE> resourcesSourceKingdomCanOffer = this.firstKingdom.GetResourcesOtherKingdomDoesNotHave(this.secondKingdom);
         /*
          * There should be no active trade event between the two kingdoms (started by this kingdom), the 2 kingdoms should not be at war, 
@@ -236,7 +238,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
          * */
         if (!relWithOtherKingdom.isAtWar && path != null && !this.firstKingdom.embargoList.ContainsKey(this.secondKingdom) 
             && resourcesSourceKingdomCanOffer.Count > 0) {
-            EventCreator.Instance.CreateTradeEvent(this.firstKingdom, this.secondKingdom);
+            EventCreator.Instance.CreateTradeEvent(randomSourceCity, randomTargetCity);
 
         }
     }
@@ -331,10 +333,10 @@ public class DailyCumulativeEvent : MonoBehaviour {
 				counter += 1;
 			}
 		}else if(gameEvent is Trade) {
-			if(((Trade)gameEvent).sourceKingdom.id == kingdom1.id || ((Trade)gameEvent).targetKingdom.id == kingdom1.id){
+			if(((Trade)gameEvent).sourceCity.kingdom.id == kingdom1.id || ((Trade)gameEvent).targetCity.kingdom.id == kingdom1.id){
 				counter += 1;
 			}
-			if(((Trade)gameEvent).sourceKingdom.id == kingdom2.id || ((Trade)gameEvent).targetKingdom.id == kingdom2.id){
+			if(((Trade)gameEvent).sourceCity.kingdom.id == kingdom2.id || ((Trade)gameEvent).targetCity.kingdom.id == kingdom2.id){
 				counter += 1;
 			}
 		}

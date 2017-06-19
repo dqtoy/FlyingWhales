@@ -624,15 +624,17 @@ public class City{
 	//}
 
 	internal void AddToDailyGrowth(){
-		this._currentGrowth += this.totalDailyGrowth;
-		if (this._currentGrowth >= this._maxGrowth) {
-			this._currentGrowth = this._maxGrowth;
-		}
-	}
+        AdjustDailyGrowth(this.totalDailyGrowth);
+    }
 
 	internal void ResetDailyGrowth(){
 		this._currentGrowth = 0;
 	}
+
+    internal void AdjustDailyGrowth(int amount) {
+        this._currentGrowth += amount;
+        this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
+    }
 
 	internal void UpdateDailyProduction(){
 		this._maxGrowth = 200 + ((300 + (350 * this.structures.Count)) * this.structures.Count);
@@ -1110,11 +1112,10 @@ public class City{
         this.UpdateBorderTiles();
         this.UpdateDailyProduction();
         if (tileToRemove.specialResource != RESOURCE.NONE) {
-            this._kingdom.RemoveInvalidTradeRoutes();
+            //this._kingdom.RemoveInvalidTradeRoutes();
             this._kingdom.UpdateAvailableResources();
             this._kingdom.UpdateAllCitiesDailyGrowth();
             this._kingdom.UpdateExpansionRate();
-            this._kingdom.UpdateTechLevel();
         }
     }
 

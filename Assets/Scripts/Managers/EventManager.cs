@@ -269,7 +269,7 @@ public class EventManager : MonoBehaviour {
                     } else if (key == EVENT_TYPES.TRADE) {
                         for (int j = 0; j < eventsOfType.Count; j++) {
                             Trade currEvent = (Trade)eventsOfType[j];
-                            if (currEvent.sourceKingdom.id == kingdom.id || currEvent.targetKingdom.id == kingdom.id) {
+                            if (currEvent.sourceCity.kingdom.id == kingdom.id || currEvent.targetCity.kingdom.id == kingdom.id) {
                                 allGameEventsInKingdom.Add(eventsOfType[j]);
                             }
                         }
@@ -333,20 +333,6 @@ public class EventManager : MonoBehaviour {
 		return gameEventsOfCitizen;
 	}
 
-    /*
-     * Get an active Trade event between 2 kingdoms.
-     * NOTE: make sure that kingdom 1 is the one that started the trade event!
-     * */
-    public Trade GetActiveTradeEventBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2) {
-        List<GameEvent> allActiveTrades = GetEventsStartedByKingdom(kingdom1, new EVENT_TYPES[] { EVENT_TYPES.TRADE }).Where(x => x.isActive).ToList();
-        for (int i = 0; i < allActiveTrades.Count; i++) {
-            Trade currTrade = (Trade)allActiveTrades[i];
-            if(currTrade.sourceKingdom.id == kingdom1.id && currTrade.targetKingdom.id == kingdom2.id) {
-                return currTrade;
-            }
-        }
-        return null;
-    }
 	/*internal Citizen GetSpy(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
 		List<Citizen> spies = new List<Citizen> ();

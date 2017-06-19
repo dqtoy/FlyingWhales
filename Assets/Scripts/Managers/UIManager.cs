@@ -452,40 +452,40 @@ public class UIManager : MonoBehaviour {
         }
 
         //Trade Resources
-        children = kingdomTradeResourcesGrid.GetChildList();
-        resourcesInGrid = new List<RESOURCE>();
-        for (int i = 0; i < children.Count; i++) {
-            RESOURCE resource = (RESOURCE)Enum.Parse(typeof(RESOURCE), Utilities.GetComponentsInDirectChildren<UI2DSprite>(children[i].gameObject).First().sprite2D.name);
-            resourcesInGrid.Add(resource);
-        }
+        //children = kingdomTradeResourcesGrid.GetChildList();
+        //resourcesInGrid = new List<RESOURCE>();
+        //for (int i = 0; i < children.Count; i++) {
+        //    RESOURCE resource = (RESOURCE)Enum.Parse(typeof(RESOURCE), Utilities.GetComponentsInDirectChildren<UI2DSprite>(children[i].gameObject).First().sprite2D.name);
+        //    resourcesInGrid.Add(resource);
+        //}
 
-        allOtherResources = new List<RESOURCE>();
-        for (int i = 0; i < currentlyShowingKingdom.tradeRoutes.Count; i++) {
-            TradeRoute currTradeRoute = currentlyShowingKingdom.tradeRoutes[i];
-            if (currTradeRoute.targetKingdom.id == currentlyShowingKingdom.id) {
-                allOtherResources.Add(currTradeRoute.resourceBeingTraded);
-            }
-        }
+        //allOtherResources = new List<RESOURCE>();
+        //for (int i = 0; i < currentlyShowingKingdom.tradeRoutes.Count; i++) {
+        //    TradeRoute currTradeRoute = currentlyShowingKingdom.tradeRoutes[i];
+        //    if (currTradeRoute.targetKingdom.id == currentlyShowingKingdom.id) {
+        //        allOtherResources.Add(currTradeRoute.resourceBeingTraded);
+        //    }
+        //}
 
-        if (resourcesInGrid.Except(allOtherResources).Count() > 0 || allOtherResources.Except(resourcesInGrid).Count() > 0) {
-            for (int i = 0; i < children.Count; i++) {
-                kingdomTradeResourcesGrid.RemoveChild(children[i]);
-                Destroy(children[i].gameObject);
-            }
-            for (int i = 0; i < currentlyShowingKingdom.tradeRoutes.Count; i++) {
-                TradeRoute currTradeRoute = currentlyShowingKingdom.tradeRoutes[i];
-                if (currTradeRoute.targetKingdom.id == currentlyShowingKingdom.id) {
-                    GameObject resourceGO = InstantiateUIObject(resourceIconPrefab, this.transform);
-                    Utilities.GetComponentsInDirectChildren<UI2DSprite>(resourceGO).First().sprite2D = Resources
-                        .LoadAll<Sprite>("Resources Icons")
-                        .Where(x => x.name == currTradeRoute.resourceBeingTraded.ToString()).ToList()[0];
-                    resourceGO.transform.localScale = Vector3.one;
-                    kingdomTradeResourcesGrid.AddChild(resourceGO.transform);
-                    kingdomTradeResourcesGrid.Reposition();
-                }
-            }
-            StartCoroutine(RepositionGrid(kingdomTradeResourcesGrid));
-        }
+        //if (resourcesInGrid.Except(allOtherResources).Count() > 0 || allOtherResources.Except(resourcesInGrid).Count() > 0) {
+        //    for (int i = 0; i < children.Count; i++) {
+        //        kingdomTradeResourcesGrid.RemoveChild(children[i]);
+        //        Destroy(children[i].gameObject);
+        //    }
+        //    for (int i = 0; i < currentlyShowingKingdom.tradeRoutes.Count; i++) {
+        //        TradeRoute currTradeRoute = currentlyShowingKingdom.tradeRoutes[i];
+        //        if (currTradeRoute.targetKingdom.id == currentlyShowingKingdom.id) {
+        //            GameObject resourceGO = InstantiateUIObject(resourceIconPrefab, this.transform);
+        //            Utilities.GetComponentsInDirectChildren<UI2DSprite>(resourceGO).First().sprite2D = Resources
+        //                .LoadAll<Sprite>("Resources Icons")
+        //                .Where(x => x.name == currTradeRoute.resourceBeingTraded.ToString()).ToList()[0];
+        //            resourceGO.transform.localScale = Vector3.one;
+        //            kingdomTradeResourcesGrid.AddChild(resourceGO.transform);
+        //            kingdomTradeResourcesGrid.Reposition();
+        //        }
+        //    }
+        //    StartCoroutine(RepositionGrid(kingdomTradeResourcesGrid));
+        //}
         currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
     }
 
