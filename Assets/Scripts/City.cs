@@ -31,14 +31,14 @@ public class City{
 	public int manaStoneCount;
 	public int mithrilCount;
 	public int cobaltCount;
-	public int goldCount;
+	//public int goldCount;
 	private int _currentGrowth;
     //private int _dailyGrowth;
     private int _dailyGrowthFromStructures;
     private int _dailyGrowthFromKingdom;
     private int _maxGrowth;
 //	public int maxGeneralHP;
-	public int _goldProduction;
+	//public int _goldProduction;
 	private int raidLoyaltyExpiration;
 
 	[Space(5)]
@@ -619,9 +619,9 @@ public class City{
 	}
 
 	#region Resource Production
-	protected void ProduceGold(){
-		this.kingdom.AdjustGold(this._goldProduction);
-	}
+	//protected void ProduceGold(){
+	//	this.kingdom.AdjustGold(this._goldProduction);
+	//}
 
 	internal void AddToDailyGrowth(){
 		this._currentGrowth += this.totalDailyGrowth;
@@ -637,27 +637,20 @@ public class City{
 	internal void UpdateDailyProduction(){
 		this._maxGrowth = 200 + ((300 + (350 * this.structures.Count)) * this.structures.Count);
 		this._dailyGrowthFromStructures = 10;
-		this._goldProduction = 20;
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
 			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
 				this._dailyGrowthFromStructures += 3;
-				this._goldProduction += 2;
 			} else if (currentStructure.biomeType == BIOMES.WOODLAND) {
 				this._dailyGrowthFromStructures += 3;
-				this._goldProduction += 3;
 			} else if (currentStructure.biomeType == BIOMES.FOREST) {
 				this._dailyGrowthFromStructures += 2;
-				this._goldProduction += 3;
 			} else if (currentStructure.biomeType == BIOMES.DESERT) {
 				this._dailyGrowthFromStructures += 1;
-				this._goldProduction += 4;
 			} else if (currentStructure.biomeType == BIOMES.TUNDRA) {
 				this._dailyGrowthFromStructures += 2;
-				this._goldProduction += 2;
 			} else if (currentStructure.biomeType == BIOMES.SNOW) {
 				this._dailyGrowthFromStructures += 1;
-				this._goldProduction += 1;
 			} else if (currentStructure.biomeType == BIOMES.BARE) {
 				this._dailyGrowthFromStructures += 1;
 			}
@@ -762,99 +755,6 @@ public class City{
 			}
 		}
 		return citizensWithRole;
-	}
-
-	internal void AdjustResources(List<Resource> resource, bool reduce = true){
-		int currentResourceQuantity = 0;
-		for(int i = 0; i < resource.Count; i++){
-			currentResourceQuantity = resource [i].resourceQuantity;
-			if (reduce) {
-				currentResourceQuantity *= -1;
-			}
-			AdjustResourceCount (resource [i].resourceType, currentResourceQuantity);
-		}
-	}
-
-	internal void AdjustResourceCount(BASE_RESOURCE_TYPE resourceType, int amount){
-		switch (resourceType) {
-		case BASE_RESOURCE_TYPE.FOOD:
-			break;
-		case BASE_RESOURCE_TYPE.GOLD:
-			break;
-		case BASE_RESOURCE_TYPE.WOOD:
-			break;
-		case BASE_RESOURCE_TYPE.STONE:
-			break;
-		case BASE_RESOURCE_TYPE.MANA_STONE:
-			break;
-		case BASE_RESOURCE_TYPE.MITHRIL:
-			break;
-		case BASE_RESOURCE_TYPE.COBALT:
-			break;
-		}
-	}
-
-	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
-        return true;
-		//if(resourceCost != null){
-		//	for (int i = 0; i < resourceCost.Count; i++) {
-		//		Resource currentResource = resourceCost [i];
-		//		if (this.GetResourceAmountPerType (currentResource.resourceType) < currentResource.resourceQuantity) {
-		//			return false;
-		//		}
-		//	}
-		//}else{
-		//	return false;
-		//}
-		//return true;
-	}
-
-	protected int GetResourceAmountPerType(BASE_RESOURCE_TYPE resourceType){
-		if (resourceType == BASE_RESOURCE_TYPE.FOOD) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.WOOD) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.STONE) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.MITHRIL) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.MANA_STONE) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.COBALT) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.GOLD) {
-			return 0;
-		}
-		return -1;
-	}
-
-	internal List<Resource> GetCitizenCreationCostPerType(ROLE role){
-		if(role == ROLE.UNTRAINED){
-			return null;
-		}
-		List<Resource> citizenCreationCosts = new List<Resource>();
-
-		int goldCost = 500;
-
-		switch (role) {
-		case ROLE.TRADER:
-		case ROLE.GENERAL:
-			citizenCreationCosts = new List<Resource>(){
-				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
-				new Resource (this.kingdom.basicResource, 2)
-			};
-			return citizenCreationCosts;
-		case ROLE.SPY:
-		case ROLE.GUARDIAN:
-		case ROLE.ENVOY:
-			citizenCreationCosts = new List<Resource>(){
-				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
-				new Resource (this._kingdom.basicResource, 3)
-			};
-			return citizenCreationCosts;
-		
-		}
-		return citizenCreationCosts;
 	}
 	#endregion
 

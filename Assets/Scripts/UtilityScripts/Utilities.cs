@@ -87,6 +87,84 @@ public class Utilities : MonoBehaviour {
         BIOMES.SNOW
     };
 
+    public static Dictionary<RESOURCE, Dictionary<RESOURCE_BENEFITS, int>> resourceBenefits = new Dictionary<RESOURCE, Dictionary<RESOURCE_BENEFITS, int>>() {
+        {RESOURCE.CORN,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 4 }
+            }
+        },
+        {RESOURCE.WHEAT,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 8 }
+            }
+        },
+        {RESOURCE.RICE,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 8 }
+            }
+        },
+        {RESOURCE.DEER,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 4 }
+            }
+        },
+        {RESOURCE.PIG,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 8 }
+            }
+        },
+        {RESOURCE.BEHEMOTH,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 8 }
+            }
+        },
+        {RESOURCE.CEDAR,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 1 }
+            }
+        },
+        {RESOURCE.EBONY,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 2 }
+            }
+        },
+        {RESOURCE.OAK,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 3 }
+            }
+        },
+        {RESOURCE.SLATE,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 1 }
+            }
+        },
+        {RESOURCE.GRANITE,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 2 }
+            }
+        },
+        {RESOURCE.MARBLE,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 3 }
+            }
+        },
+        {RESOURCE.MANA_STONE,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 1 }
+            }
+        },
+        {RESOURCE.MITHRIL,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 2 }
+            }
+        },
+        {RESOURCE.COBALT,
+            new Dictionary<RESOURCE_BENEFITS, int>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 3 }
+            }
+        },
+    };
+
 	public static Dictionary<BIOMES, SpecialResourceChance> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance> () { 
 		{BIOMES.BARE, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.NONE}, 
