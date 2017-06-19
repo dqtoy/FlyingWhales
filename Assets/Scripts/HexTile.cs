@@ -637,15 +637,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             text += "NONE\n";
         }
 
-        text += "[b]Trade Routes: [/b]\n";
-        if (this.city.kingdom.tradeRoutes.Count > 0) {
-            for (int i = 0; i < this.city.kingdom.tradeRoutes.Count; i++) {
-                TradeRoute currTradeRoute = this.city.kingdom.tradeRoutes[i];
-                text += currTradeRoute.sourceKingdom.name + " -> " + currTradeRoute.targetKingdom.name + ": " + currTradeRoute.resourceBeingTraded.ToString() + "\n";
-            }
-        } else {
-            text += "NONE\n";
-        }
+        //text += "[b]Trade Routes: [/b]\n";
+        //if (this.city.kingdom.tradeRoutes.Count > 0) {
+        //    for (int i = 0; i < this.city.kingdom.tradeRoutes.Count; i++) {
+        //        TradeRoute currTradeRoute = this.city.kingdom.tradeRoutes[i];
+        //        text += currTradeRoute.sourceKingdom.name + " -> " + currTradeRoute.targetKingdom.name + ": " + currTradeRoute.resourceBeingTraded.ToString() + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
 
         text += "[b]Discovered Kingdoms: [/b]\n";
         if (this.city.kingdom.discoveredKingdoms.Count > 0) {

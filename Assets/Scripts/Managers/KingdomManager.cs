@@ -197,8 +197,8 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.AddInternationalWar(kingdom2);
 		kingdom2.AddInternationalWar(kingdom1);
 
-        kingdom1.RemoveAllTradeRoutesWithOtherKingdom(kingdom2);
-        kingdom2.RemoveAllTradeRoutesWithOtherKingdom(kingdom1);
+        //kingdom1.RemoveAllTradeRoutesWithOtherKingdom(kingdom2);
+        //kingdom2.RemoveAllTradeRoutesWithOtherKingdom(kingdom1);
 
         kingdom1.AdjustUnrest(UNREST_INCREASE_WAR);
         kingdom2.AdjustUnrest(UNREST_INCREASE_WAR);

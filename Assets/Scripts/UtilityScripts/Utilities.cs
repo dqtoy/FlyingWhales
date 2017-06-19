@@ -147,17 +147,17 @@ public class Utilities : MonoBehaviour {
         //Special
         {RESOURCE.MANA_STONE,
             new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.GROWTH_RATE, 3f }
+                { RESOURCE_BENEFITS.TECH_LEVEL, 3f }
             }
         },
         {RESOURCE.MITHRIL,
             new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.GROWTH_RATE, 3f }
+                { RESOURCE_BENEFITS.TECH_LEVEL, 3f }
             }
         },
         {RESOURCE.COBALT,
             new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.GROWTH_RATE, 3f }
+                { RESOURCE_BENEFITS.TECH_LEVEL, 3f }
             }
         },
     };

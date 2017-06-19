@@ -75,12 +75,12 @@ public class EventCreator: MonoBehaviour {
 		return null;
 	}
     
-    internal Trade CreateTradeEvent(Kingdom sourceKingdom, Kingdom targetKingdom) {
-        Citizen trader = sourceKingdom.capitalCity.CreateAgent(ROLE.TRADER, EVENT_TYPES.TRADE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.TRADE]);
+    internal Trade CreateTradeEvent(City sourceCity, City targetCity) {
+        Citizen trader = sourceCity.CreateAgent(ROLE.TRADER, EVENT_TYPES.TRADE, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.TRADE]);
         if (trader != null) {
-            Debug.Log("CREATED NEW TRADE EVENT: " + sourceKingdom.name + " towards " + targetKingdom.name);
+            Debug.Log("CREATED NEW TRADE EVENT: " + sourceCity.name + " towards " + targetCity.name);
             Trade tradeEvent = new Trade(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-                sourceKingdom.king, sourceKingdom, targetKingdom, trader);
+                sourceCity.kingdom.king, sourceCity, targetCity, trader);
             trader.assignedRole.Initialize(tradeEvent);
             return tradeEvent;
         }

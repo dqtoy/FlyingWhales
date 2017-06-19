@@ -128,11 +128,6 @@ public class RelationshipKings {
             //Check if the source kings relationship with king has change to enemy or rival, if so, put king's kingdom in source king's embargo list
             if (this.lordRelationship == RELATIONSHIP_STATUS.ENEMY || this.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
                 Embargo(gameEventTrigger);
-            } else {
-                int chance = Random.Range(0, 100);
-                if (chance < CHANCE_TO_CANCEL_TRADE_ROUTE) {
-                    RemoveTradeRoutes();
-                }
             }
         }
     }
@@ -145,14 +140,6 @@ public class RelationshipKings {
     protected void Embargo(GameEvent gameEventReasonForEmbargo) {
         this.sourceKing.city.kingdom.AddKingdomToEmbargoList(this.king.city.kingdom);
         Debug.LogError(this.sourceKing.city.kingdom.name + " put " + this.king.city.kingdom.name + " in it's embargo list, beacuase of " + gameEventReasonForEmbargo.eventType.ToString());
-    }
-
-    /*
-     * Remove all trade routes with targetKingdom
-     * */
-    protected void RemoveTradeRoutes() {
-        this.sourceKing.city.kingdom.RemoveAllTradeRoutesWithOtherKingdom(this.king.city.kingdom);
-        this.king.city.kingdom.RemoveAllTradeRoutesWithOtherKingdom(this.sourceKing.city.kingdom);
     }
 
     /*
