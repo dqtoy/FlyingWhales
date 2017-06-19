@@ -1484,19 +1484,17 @@ public class Citizen {
 	private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value){
 		if(this._dictCharacterValues.ContainsKey(key)){
 			this._dictCharacterValues [key] += value;
-			GetCharacterValueByKey (key).value += value;
+			UpdateCharacterValueByKey(key, value);
 		}
 	}
 
-	private CharacterValue GetCharacterValueByKey(CHARACTER_VALUE key){
-		CharacterValue charVal;
+	private void UpdateCharacterValueByKey(CHARACTER_VALUE key, int value){
 		for(int i = 0; this._characterValues.Length; i++){
 			if(this._characterValues[i].character == key){
-				charVal = this._characterValues [i];
+				this._characterValues [i].value += value;
 				break;
 			}
 		}
-		return charVal;
 	}
 
 }
