@@ -131,8 +131,8 @@ public class KingdomManager : MonoBehaviour {
 			this.allKingdoms [i].king.CreateInitialRelationshipsToKings ();
 		}
 	}
-	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false){
-		Kingdom newKingdom = new Kingdom (race, cities);
+	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false, Kingdom sourceKingdom = null){
+		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom);
 		allKingdoms.Add(newKingdom);
 		EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
 		if (isForInitial) {
@@ -150,7 +150,7 @@ public class KingdomManager : MonoBehaviour {
 	}
 
     public Kingdom SplitKingdom(Kingdom sourceKingdom, List<City> citiesToSplit) {
-        Kingdom newKingdom = GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { });
+        Kingdom newKingdom = GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { }, false, sourceKingdom);
         TransferCitiesToOtherKingdom(sourceKingdom, newKingdom, citiesToSplit);
         return newKingdom;
     }

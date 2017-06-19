@@ -1087,7 +1087,7 @@ public class Kingdom{
 			city.KillCity();
 			yield return null;
 			City newCity = CreateNewCityOnTileForKingdom(hex);
-			newCity.hp = 100;
+			newCity.hp = 300;
 			newCity.CreateInitialFamilies(false);
 			//KingdomManager.Instance.UpdateKingdomAdjacency();
 //			this.AddInternationalWarCity (newCity);
@@ -1233,19 +1233,26 @@ public class Kingdom{
 //		Debug.Log ("TARGET MILITARY STRENGTH: " + targetMilStrength);
 //		Debug.Log ("SOURCE MILITARY STRENGTH: " + sourceMilStrength);
 		if(sourceMilStrength == 0 && targetMilStrength == 0){
+			Debug.Log (this.name + "'s military is COMPARABLE to " + kingdom.name);
 			return MILITARY_STRENGTH.COMPARABLE;
 		}else{
 			if(sourceMilStrength > (targetMilStrength + fiftyPercent)){
+				Debug.Log (this.name + "'s military is MUCH STRONGER than " + kingdom.name);
 				return MILITARY_STRENGTH.MUCH_STRONGER;
 			}else if(sourceMilStrength > (targetMilStrength + twentyPercent)){
+				Debug.Log (this.name + "'s military is SLIGHTLY STRONGER than " + kingdom.name);
 				return MILITARY_STRENGTH.SLIGHTLY_STRONGER;
 			}else if(sourceMilStrength > (targetMilStrength - twentyPercent)){
+				Debug.Log (this.name + "'s military is COMPARABLE to " + kingdom.name);
 				return MILITARY_STRENGTH.COMPARABLE;
 			}else if(sourceMilStrength > (targetMilStrength - fiftyPercent)){
+				Debug.Log (this.name + "'s military is SLIGHTLY WEAKER than " + kingdom.name);
 				return MILITARY_STRENGTH.SLIGHTLY_WEAKER;
 			}else{
+				Debug.Log (this.name + "'s military is MUCH WEAKER than " + kingdom.name);
 				return MILITARY_STRENGTH.MUCH_WEAKER;
 			}
+
 		}
 	}
 
@@ -1687,13 +1694,13 @@ public class Kingdom{
 		}
 		if(chosenGovernor != null){
 			//Secession Event
-//			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
+			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
 		}else{
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				//Riot Event
-//				EventCreator.Instance.CreateRiotEvent(this);
-				EventCreator.Instance.CreateRebellionEvent(this);
+				EventCreator.Instance.CreateRiotEvent(this);
+//				EventCreator.Instance.CreateRebellionEvent(this);
 			}else{
 				//Rebellion Event
 				EventCreator.Instance.CreateRebellionEvent(this);

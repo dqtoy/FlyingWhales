@@ -268,26 +268,35 @@ public class War : GameEvent {
 		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
 		int chance = 0;
 		int value = 0;
-		if(safeCitiesKingdom1 != null){
-			for(int i = 0; i < safeCitiesKingdom1.Count; i++){
-				chance = UnityEngine.Random.Range (0, 100);
-				value = 1 * safeCitiesKingdom1 [i].ownedTiles.Count;
-				if(chance < value){
-					safeCitiesKingdom1 [i].hasReinforced = true;
-					safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City);
+		int maxChanceKingdom1 = 100 + ((safeCitiesKingdom1.Count - 1) * 10);
+		int maxChanceKingdom2 = 100 + ((safeCitiesKingdom2.Count - 1) * 10);
+		if(this.warPair.kingdom1City.hp != this.warPair.kingdom1City.maxHP){
+			if(safeCitiesKingdom1 != null){
+				for(int i = 0; i < safeCitiesKingdom1.Count; i++){
+					chance = UnityEngine.Random.Range (0, maxChanceKingdom1);
+					value = 1 * safeCitiesKingdom1 [i].ownedTiles.Count;
+					if(chance < value){
+						safeCitiesKingdom1 [i].hasReinforced = true;
+						safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City);
+					}
 				}
 			}
 		}
-		if(safeCitiesKingdom2 != null){
-			for(int i = 0; i < safeCitiesKingdom2.Count; i++){
-				chance = UnityEngine.Random.Range (0, 100);
-				value = 1 * safeCitiesKingdom2 [i].ownedTiles.Count;
-				if(chance < value){
-					safeCitiesKingdom2 [i].hasReinforced = true;
-					safeCitiesKingdom2 [i].ReinforceCity (this.warPair.kingdom2City);
+
+
+		if(this.warPair.kingdom2City.hp != this.warPair.kingdom2City.maxHP){
+			if(safeCitiesKingdom2 != null){
+				for(int i = 0; i < safeCitiesKingdom2.Count; i++){
+					chance = UnityEngine.Random.Range (0, maxChanceKingdom2);
+					value = 1 * safeCitiesKingdom2 [i].ownedTiles.Count;
+					if(chance < value){
+						safeCitiesKingdom2 [i].hasReinforced = true;
+						safeCitiesKingdom2 [i].ReinforceCity (this.warPair.kingdom2City);
+					}
 				}
 			}
 		}
+
 	}
 	private void UpdatePath(HexTile hexTile){
 		if(this.warPair.path != null && this.warPair.path.Count > 0){
