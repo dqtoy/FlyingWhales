@@ -26,16 +26,18 @@ public class Rebellion : GameEvent {
 		this.isInitialAttack = false;
 		this.targetKingdom.rebellions.Add (this);
 		this.warPair.DefaultValues ();
+		startedBy.SetImmortality (true);
 		CreateRebelFort ();
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
-
+		Debug.LogError (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);
 	}
 	#region Overrides
 	internal override void PerformAction (){
 		if(!this.targetKingdom.isAlive()){
 			if(this.conqueredCities.Count > 1){
 				//Victory Rebellion
+				this.rebelLeader.citizen.SetImmortality(false);
 				KillFort();
 				Kingdom newKingdom = KingdomManager.Instance.SplitKingdom(this.targetKingdom, this.conqueredCities);
 				newKingdom.AssignNewKing (this.rebelLeader.citizen);
@@ -46,6 +48,7 @@ public class Rebellion : GameEvent {
 		}else{
 			if(this.conqueredCities.Count <= 0){
 				//Victory Kingdom
+				this.rebelLeader.citizen.SetImmortality(false);
 				this.DoneEvent();
 				return;
 			}

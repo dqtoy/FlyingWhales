@@ -18,6 +18,7 @@ public class Utilities : MonoBehaviour {
 	public static int lastKingdomColorIndex = 0;
 	public static int defaultCampaignExpiration = 8;
 	public static float defenseBuff = 1.20f;
+	public static int defaultCityHP = 300;
 
 	public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
 	public static string[] accidentCauses = new string[]{
@@ -86,6 +87,81 @@ public class Utilities : MonoBehaviour {
         BIOMES.SNOW
     };
 
+    public static Dictionary<RESOURCE, Dictionary<RESOURCE_BENEFITS, float>> resourceBenefits = new Dictionary<RESOURCE, Dictionary<RESOURCE_BENEFITS, float>>() {
+        //Food
+        { RESOURCE.CORN,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 4f }
+            }
+        },
+        {RESOURCE.WHEAT,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 8f }
+            }
+        },
+        {RESOURCE.RICE,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 8f }
+            }
+        },
+        {RESOURCE.DEER,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 4f }
+            }
+        },
+        {RESOURCE.PIG,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 8f }
+            }
+        },
+        {RESOURCE.BEHEMOTH,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 8f }
+            }
+        },
+
+        //Lumber
+        {RESOURCE.OAK,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 1f }
+            }
+        },
+        {RESOURCE.EBONY,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 1.5f }
+            }
+        },
+
+        //Stone
+        {RESOURCE.GRANITE,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 1f }
+            }
+        },
+        {RESOURCE.SLATE,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.EXPANSION_RATE, 1.5f }
+            }
+        },
+
+        //Special
+        {RESOURCE.MANA_STONE,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 3f }
+            }
+        },
+        {RESOURCE.MITHRIL,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 3f }
+            }
+        },
+        {RESOURCE.COBALT,
+            new Dictionary<RESOURCE_BENEFITS, float>() {
+                { RESOURCE_BENEFITS.GROWTH_RATE, 3f }
+            }
+        },
+    };
+
 	public static Dictionary<BIOMES, SpecialResourceChance> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance> () { 
 		{BIOMES.BARE, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.NONE}, 
@@ -95,14 +171,14 @@ public class Utilities : MonoBehaviour {
 		{BIOMES.GRASSLAND, new SpecialResourceChance(
             //new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.RICE, RESOURCE.DEER, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL, RESOURCE.COBALT},
             //new int[] {100, 20, 40, 20, 60, 35, 5, 5})
-            new RESOURCE[] {RESOURCE.CORN, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.MITHRIL},
+            new RESOURCE[] {RESOURCE.CORN, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.MITHRIL},
             new int[] {20, 30, 70, 3})
         },
 
 		{BIOMES.WOODLAND, new SpecialResourceChance(
 			//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.COBALT},
    //         new int[] {40, 12, 65, 25, 90, 22, 60, 12, 5, 5})
-            new RESOURCE[] {RESOURCE.RICE, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.COBALT},
+            new RESOURCE[] {RESOURCE.RICE, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.COBALT},
             new int[] {20, 70, 30, 4})
         },
 
@@ -110,7 +186,7 @@ public class Utilities : MonoBehaviour {
 		{BIOMES.FOREST, new SpecialResourceChance(
 			//new RESOURCE[] {RESOURCE.EBONY, RESOURCE.DEER, RESOURCE.BEHEMOTH, RESOURCE.MANA_STONE, RESOURCE.MITHRIL, RESOURCE.GOLD}, 
 			//new int[] {15, 40, 15, 0, 0, 0})
-            new RESOURCE[] {RESOURCE.DEER, RESOURCE.CEDAR, RESOURCE.MANA_STONE},
+            new RESOURCE[] {RESOURCE.DEER, RESOURCE.OAK, RESOURCE.MANA_STONE},
             new int[] {20, 100, 4})
         },
 
@@ -124,7 +200,7 @@ public class Utilities : MonoBehaviour {
 		{BIOMES.TUNDRA, new SpecialResourceChance(
 			//new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.GOLD}, 
 			//new int[] {50, 15, 10, 25, 10, 0, 0})
-            new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.MANA_STONE},
+            new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.MANA_STONE},
             new int[] {20, 50, 50, 4})
         },
 

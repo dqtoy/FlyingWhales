@@ -17,7 +17,6 @@ public class Kingdom{
     //Resources
     private int _goldCount;
     private int _maxGold = 5000;
-    private int _basicResourceCount;
     private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
 
     //Trading
@@ -58,7 +57,7 @@ public class Kingdom{
 	private int techCapacity;
 	private int techCounter;
 
-	private int expansionChance = 1;
+	private float expansionChance = 1f;
     
     protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
@@ -66,10 +65,6 @@ public class Kingdom{
     protected const int UNREST_DECREASE_PER_MONTH = -5;
     protected const int UNREST_INCREASE_CONQUER = 5;
     protected const int UNREST_INCREASE_EMBARGO = 5;
-
-    protected List<Resource> increaseCityHPCost = new List<Resource> () {
-		new Resource (BASE_RESOURCE_TYPE.GOLD, 300)
-	};
 
 	private bool _isDead;
 	internal bool hasConflicted;
@@ -122,7 +117,7 @@ public class Kingdom{
 		set { this._unrest = value;}
     }
     public int basicResourceCount {
-        get { return this._basicResourceCount; }
+        get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
     }
     /*
      * Will return all discovered kingdoms, otherwise, if useDiscoveredKingdoms
@@ -141,7 +136,7 @@ public class Kingdom{
 	public int techLevel{
 		get{return this._techLevel;}
 	}
-    public int expansionRate {
+    public float expansionRate {
         get { return this.expansionChance; }
     }
 	#endregion
@@ -241,7 +236,7 @@ public class Kingdom{
 		this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
 
 		// If the Kingdom Type Data changed
-		if (_kingdomTypeData != prevKingdomTypeData) {			
+		if (this._kingdomTypeData != prevKingdomTypeData) {			
 			// Update horoscope
 			if (prevKingdomTypeData == null) {
 				this.horoscope = GetHoroscope ();
@@ -250,6 +245,9 @@ public class Kingdom{
 			}
             // Update expansion chance
             this.UpdateExpansionRate();
+
+			//Update Character Values of King and Governors
+			this.UpdateCharacterValuesOfKingsAndGovernors();
         }
     }
 
@@ -477,8 +475,8 @@ public class Kingdom{
 		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Where(x => x.isActive).Count() > 0) {
 			return;
 		}
-
-		int chance = Random.Range (0, 300 + (50 * this.cities.Count));
+        float upperBound = 300f + (50f * (float)this.cities.Count);
+        float chance = Random.Range (0, upperBound);
 		if (chance < this.expansionChance) {
 		
 			List<City> citiesThatCanExpand = new List<City> ();
@@ -491,32 +489,6 @@ public class Kingdom{
 				EventCreator.Instance.CreateExpansionEvent (this);
 			}
 
-		}
-	}
-
-	/*
-	 * Attempt to increase 1 city's hp. 
-	 * Chance to occur is stored in INCREASE_CITY_HP_CHANCE.
-	 * */
-	protected void AttemptToIncreaseCityHP(){
-		int chance = Random.Range(0, 100);
-		if (chance < INCREASE_CITY_HP_CHANCE && this.HasEnoughResourcesForAction(this.increaseCityHPCost)) {
-			List<City> citiesElligibleForUpgrade = new List<City>();
-			for (int i = 0; i < this.cities.Count; i++) {
-				City currCity = this.cities[i];
-				if (currCity.hp < currCity.maxHP) {
-					citiesElligibleForUpgrade.Add (currCity);
-				}
-			}
-
-			if (citiesElligibleForUpgrade.Count > 0) {
-				citiesElligibleForUpgrade = citiesElligibleForUpgrade.OrderBy (x => x.hp).ToList ();
-				int lowestHP = citiesElligibleForUpgrade.First ().hp;
-				List<City> citiesWithLowestHP = citiesElligibleForUpgrade.Where (x => x.hp == lowestHP).ToList ();
-				City cityToUpgrade = citiesWithLowestHP[Random.Range(0, citiesWithLowestHP.Count)];
-				this.AdjustResources(this.increaseCityHPCost);
-				cityToUpgrade.IncreaseHP(INCREASE_CITY_HP_AMOUNT);
-			}
 		}
 	}
 
@@ -612,7 +584,6 @@ public class Kingdom{
             this.RemoveTradeRoute(tradeRouteToRemove);
         }
         this.UpdateAllCitiesDailyGrowth();
-        this.UpdateBasicResourceCount();
     }
 
     internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
@@ -1097,18 +1068,17 @@ public class Kingdom{
 	internal IEnumerator ConquerCity(City city, General attacker){
 		if (this.id != city.kingdom.id){
 			HexTile hex = city.hexTile;
-			//		city.kingdom.cities.Remove(city);
-			city.KillCity();
+            //city.KillCity();
+            city.ConquerCity(this);
 			yield return null;
-			City newCity = CreateNewCityOnTileForKingdom(hex);
-			newCity.hp = 100;
-			newCity.CreateInitialFamilies(false);
-			//KingdomManager.Instance.UpdateKingdomAdjacency();
+			//City newCity = CreateNewCityOnTileForKingdom(hex);
+			//newCity.hp = 100;
+			//newCity.CreateInitialFamilies(false);
 //			this.AddInternationalWarCity (newCity);
-			if (UIManager.Instance.currentlyShowingKingdom.id == newCity.kingdom.id) {
-				newCity.kingdom.HighlightAllOwnedTilesInKingdom();
+			if (UIManager.Instance.currentlyShowingKingdom.id == city.kingdom.id) {
+                city.kingdom.HighlightAllOwnedTilesInKingdom();
 			}
-			KingdomManager.Instance.CheckWarTriggerMisc (newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+			KingdomManager.Instance.CheckWarTriggerMisc (city.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 			//Adjust unrest because a city of this kingdom was conquered.
 			this.AdjustUnrest(UNREST_INCREASE_CONQUER);
 		}else{
@@ -1247,19 +1217,26 @@ public class Kingdom{
 //		Debug.Log ("TARGET MILITARY STRENGTH: " + targetMilStrength);
 //		Debug.Log ("SOURCE MILITARY STRENGTH: " + sourceMilStrength);
 		if(sourceMilStrength == 0 && targetMilStrength == 0){
+			Debug.Log (this.name + "'s military is COMPARABLE to " + kingdom.name);
 			return MILITARY_STRENGTH.COMPARABLE;
 		}else{
 			if(sourceMilStrength > (targetMilStrength + fiftyPercent)){
+				Debug.Log (this.name + "'s military is MUCH STRONGER than " + kingdom.name);
 				return MILITARY_STRENGTH.MUCH_STRONGER;
 			}else if(sourceMilStrength > (targetMilStrength + twentyPercent)){
+				Debug.Log (this.name + "'s military is SLIGHTLY STRONGER than " + kingdom.name);
 				return MILITARY_STRENGTH.SLIGHTLY_STRONGER;
 			}else if(sourceMilStrength > (targetMilStrength - twentyPercent)){
+				Debug.Log (this.name + "'s military is COMPARABLE to " + kingdom.name);
 				return MILITARY_STRENGTH.COMPARABLE;
 			}else if(sourceMilStrength > (targetMilStrength - fiftyPercent)){
+				Debug.Log (this.name + "'s military is SLIGHTLY WEAKER than " + kingdom.name);
 				return MILITARY_STRENGTH.SLIGHTLY_WEAKER;
 			}else{
+				Debug.Log (this.name + "'s military is MUCH WEAKER than " + kingdom.name);
 				return MILITARY_STRENGTH.MUCH_WEAKER;
 			}
+
 		}
 	}
 
@@ -1435,79 +1412,48 @@ public class Kingdom{
 	 * available resource (DO NOT ADD GOLD TO THIS!).
 	 * */
 	internal void AddResourceToKingdom(RESOURCE resource){
-		if (!this._availableResources.ContainsKey(resource)) {
+        RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[resource].Keys.First();
+
+        if (!this._availableResources.ContainsKey(resource)) {
 			this._availableResources.Add(resource, 0);
             this.RemoveObsoleteTradeRoutes(resource);
-            this.UpdateTechLevel();
-            this.UpdateAllCitiesDailyGrowth();
-            this.UpdateBasicResourceCount();
+            if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
+                this.UpdateAllCitiesDailyGrowth();
+            } else if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
+                this.UpdateTechLevel();
+            }
         }
 		this._availableResources[resource] += 1;
-        this.UpdateExpansionRate();
+        if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
+            this.UpdateExpansionRate();
+        }
     }
 
     internal void UpdateExpansionRate() {
         this.expansionChance = this.kingdomTypeData.expansionRate;
 
         for (int i = 0; i < this.availableResources.Keys.Count; i++) {
-            RESOURCE key = this.availableResources.Keys.ElementAt(i);
-            if (Utilities.GetBaseResourceType(key) == this.basicResource) {
-                int multiplier = this.availableResources[key];
-                if (key == RESOURCE.CEDAR || key == RESOURCE.GRANITE) {
-                    this.expansionChance += (1 * multiplier);
-                } else if (key == RESOURCE.OAK || key == RESOURCE.SLATE) {
-                    this.expansionChance += (2 * multiplier);
-                } else if (key == RESOURCE.EBONY || key == RESOURCE.MARBLE) {
-                    this.expansionChance += (3 * multiplier);
+            RESOURCE currResource = this.availableResources.Keys.ElementAt(i);
+            if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
+                int multiplier = this.availableResources[currResource];
+                RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.First();
+                float expansionRateGained = Utilities.resourceBenefits[currResource][resourceBenefit];
+                if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
+                    this.expansionChance += expansionRateGained * multiplier;
                 }
             }
         }
-        ////get all resources from tiles and trade routes, only include trade routes where this kingom is the target
-        //List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
-        //for (int i = 0; i < this._tradeRoutes.Count; i++) {
-        //    TradeRoute currTradeRoute = this._tradeRoutes[i];
-        //    if (currTradeRoute.targetKingdom.id == this.id) {
-        //        if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
-        //            allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
-        //        }
-        //    }
-        //}
-
-        //for (int i = 0; i < allAvailableResources.Count; i++) {
-        //    RESOURCE currResource = allAvailableResources[i];
-        //    if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
-        //        if(currResource == RESOURCE.CEDAR || currResource == RESOURCE.GRANITE) {
-        //            this.expansionChance += 1;
-        //        } else if (currResource == RESOURCE.OAK || currResource == RESOURCE.SLATE) {
-        //            this.expansionChance += 2;
-        //        } else if (currResource == RESOURCE.EBONY || currResource == RESOURCE.MARBLE) {
-        //            this.expansionChance += 3;
-        //        }
-        //    }
-        //}
     }
 
     internal void UpdateTechLevel() {
         this._techLevel = 1;
-        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
         List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
-        for (int i = 0; i < this._tradeRoutes.Count; i++) {
-            TradeRoute currTradeRoute = this._tradeRoutes[i];
-            if (currTradeRoute.targetKingdom.id == this.id) {
-                if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
-                    allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
-                }
-            }
-        }
 
         for (int i = 0; i < allAvailableResources.Count; i++) {
             RESOURCE currResource = allAvailableResources[i];
-            if (currResource == RESOURCE.MANA_STONE) {
-                this._techLevel += 1;
-            } else if (currResource == RESOURCE.COBALT) {
-                this._techLevel += 2;
-            } else if (currResource == RESOURCE.MITHRIL) {
-                this._techLevel += 3;
+            RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.First();
+            if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
+                this._techLevel += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
             }
         }
     }
@@ -1515,14 +1461,6 @@ public class Kingdom{
     internal void UpdateAllCitiesDailyGrowth() {
         //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
         List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
-        for (int i = 0; i < this._tradeRoutes.Count; i++) {
-            TradeRoute currTradeRoute = this._tradeRoutes[i];
-            if (currTradeRoute.targetKingdom.id == this.id) {
-                if (!allAvailableResources.Contains(currTradeRoute.resourceBeingTraded)) {
-                    allAvailableResources.Add(currTradeRoute.resourceBeingTraded);
-                }
-            }
-        }
         int dailyGrowthGained = this.ComputeDailyGrowthGainedFromResources(allAvailableResources);
         for (int i = 0; i < this.cities.Count; i++) {
             City currCity = this.cities[i];
@@ -1534,21 +1472,9 @@ public class Kingdom{
         int dailyGrowthGained = 0;
         for (int i = 0; i < allAvailableResources.Count; i++) {
             RESOURCE currentResource = allAvailableResources[i];
-            //			if (currentResource == RESOURCE.GRANITE || currentResource == RESOURCE.SLATE || currentResource == RESOURCE.MARBLE) {
-            //				this.stoneCount += 3;
-            //			} else if (currentResource == RESOURCE.CEDAR || currentResource == RESOURCE.OAK || currentResource == RESOURCE.EBONY) {
-            //				this.lumberCount += 3;
-            //			} else 
-            if (currentResource == RESOURCE.CORN || currentResource == RESOURCE.DEER) {
-                dailyGrowthGained += 4;
-            } else if (currentResource == RESOURCE.WHEAT || currentResource == RESOURCE.RICE ||
-                currentResource == RESOURCE.PIG || currentResource == RESOURCE.BEHEMOTH ||
-                currentResource == RESOURCE.COBALT) {
-                dailyGrowthGained += 8;
-            } else if (currentResource == RESOURCE.MANA_STONE) {
-                dailyGrowthGained += 12;
-            } else if (currentResource == RESOURCE.MITHRIL) {
-                dailyGrowthGained += 16;
+            RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currentResource].Keys.First();
+            if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
+                dailyGrowthGained += (int)Utilities.resourceBenefits[currentResource][resourceBenefit];
             }
         }
         return dailyGrowthGained;
@@ -1657,24 +1583,6 @@ public class Kingdom{
             }
         }
     }
-
-    internal void UpdateBasicResourceCount() {
-        this._basicResourceCount = 0;
-        for (int i = 0; i < this._availableResources.Keys.Count; i++) {
-            RESOURCE currResource = this._availableResources.Keys.ElementAt(i);
-            if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
-                this._basicResourceCount += 1;
-            }
-        }
-
-        for (int i = 0; i < this._tradeRoutes.Count; i++) {
-            TradeRoute currTradeRoute = this._tradeRoutes[i];
-            if (currTradeRoute.targetKingdom.id == this.id && 
-                Utilities.GetBaseResourceType(currTradeRoute.resourceBeingTraded) == this.basicResource) {
-                this._basicResourceCount += 1;
-            }
-        }
-    }
 	#endregion
 
 	#region Unrest
@@ -1701,13 +1609,13 @@ public class Kingdom{
 		}
 		if(chosenGovernor != null){
 			//Secession Event
-//			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
+			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
 		}else{
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				//Riot Event
-//				EventCreator.Instance.CreateRiotEvent(this);
-				EventCreator.Instance.CreateRebellionEvent(this);
+				EventCreator.Instance.CreateRiotEvent(this);
+//				EventCreator.Instance.CreateRebellionEvent(this);
 			}else{
 				//Rebellion Event
 				EventCreator.Instance.CreateRebellionEvent(this);
@@ -1740,7 +1648,7 @@ public class Kingdom{
 	}
 	#endregion
 	
-
+	#region Discovery
     /*
      * Check all the neighburs of the border tiles and owned tiles of all this kingdom's
      * cities, and check if any of them are owned by another kingdom, if so,
@@ -1825,4 +1733,18 @@ public class Kingdom{
     internal void RemoveKingdomFromDiscoveredKingdoms(Kingdom kingdomToRemove) {
         this._discoveredKingdoms.Remove(kingdomToRemove);
     }
+	#endregion
+
+	#region Character Values
+	private void UpdateCharacterValuesOfKingsAndGovernors(){
+		if(this.king != null){
+			this.king.UpdateCharacterValues ();
+		}
+		for(int i = 0; i < this.cities.Count; i++){
+			if(this.cities[i].governor != null){
+				this.cities [i].governor.UpdateCharacterValues ();
+			}
+		}
+	}
+	#endregion
 }

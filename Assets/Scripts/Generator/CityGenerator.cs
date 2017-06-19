@@ -139,7 +139,13 @@ public class CityGenerator : MonoBehaviour {
 	}
 
 	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellion rebellion = null){
-		if(rebellion != null){
+        if (hexTile.isBorder) {
+            hexTile.ownedByCity.borderTiles.Remove(hexTile);
+            hexTile.isBorderOfCityID = 0;
+            hexTile.isBorder = false;
+            hexTile.ownedByCity = null;
+        }
+        if (rebellion != null){
 			hexTile.city = new RebelFort (hexTile, kingdom, rebellion);
 		}else{
 			hexTile.city = new City (hexTile, kingdom);

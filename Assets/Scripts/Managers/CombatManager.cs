@@ -372,17 +372,19 @@ public class CombatManager : MonoBehaviour {
 	internal void BattleMidway(ref General general1, ref General general2){
 		//MID WAY BATTLE IF supported is not the same
 		Debug.Log("BATTLE MIDWAY!");
-
+		int lostHP = 0;
 		if(general1.damage > general2.damage){
 			//General 1 wins
+			lostHP = (int)((float)general2.damage * 0.7f);
 			general2.markAsDead = true;
-			general1.damage -= (int)(general2.damage / 2);
+			general1.damage -= lostHP;
 			general2.damage = 0;
 
 		}else if(general1.damage < general2.damage){
 			//General 2 wins
+			lostHP = (int)((float)general1.damage * 0.7f);
 			general1.markAsDead = true;
-			general2.damage -= (int)(general1.damage / 2);
+			general2.damage -= lostHP;
 			general1.damage = 0;
 
 		}else{

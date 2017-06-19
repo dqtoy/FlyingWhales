@@ -31,14 +31,14 @@ public class City{
 	public int manaStoneCount;
 	public int mithrilCount;
 	public int cobaltCount;
-	public int goldCount;
+	//public int goldCount;
 	private int _currentGrowth;
     //private int _dailyGrowth;
     private int _dailyGrowthFromStructures;
     private int _dailyGrowthFromKingdom;
     private int _maxGrowth;
 //	public int maxGeneralHP;
-	public int _goldProduction;
+	//public int _goldProduction;
 	private int raidLoyaltyExpiration;
 
 	[Space(5)]
@@ -73,14 +73,14 @@ public class City{
 		get{ return this._maxGrowth; }
 	}
 	public List<HexTile> structures{
-		get{ return this._ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();}
+		get{ return this._ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();} //Contains all structures, except capital city
 	}
 	public int hp{
 		get{ return this._hp; }
 		set{ this._hp = value; }
 	}
-	public virtual int maxHP{
-		get{ return 200 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
+	public int maxHP{
+		get{ return Utilities.defaultCityHP +  (50 * this.structures.Count); } //+1 since the structures list does not contain the main hex tile
 	}
     public List<HexTile> ownedTiles {
         get { return this._ownedTiles; }
@@ -109,12 +109,12 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-		this._hp = 200;
 		this.raidLoyaltyExpiration = 0;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
-		
+
+		ResetToDefaultHP ();
 //		this.CreateInitialFamilies();
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
@@ -428,14 +428,14 @@ public class City{
 		List<HexTile> outmostTiles = new List<HexTile>();
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currHexTile = this.ownedTiles[i];
-			List<HexTile> currHexTileUnoccupiedNeighbours = currHexTile.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable).ToList();
+			List<HexTile> currHexTileUnoccupiedNeighbours = currHexTile.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied).ToList();
 			if (currHexTileUnoccupiedNeighbours.Count > 0) {
 				outmostTiles.Add (currHexTile);
 			}
 		}
 
 		for (int i = 0; i < outmostTiles.Count; i++) {
-			List<HexTile> possibleBorderTiles = outmostTiles [i].GetTilesInRange(3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable && !x.isBorder).ToList();
+			List<HexTile> possibleBorderTiles = outmostTiles [i].GetTilesInRange(3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isBorder).ToList();
 			this.borderTiles.AddRange (possibleBorderTiles);
 		}
 		this.borderTiles.Distinct();
@@ -503,6 +503,7 @@ public class City{
 	 * Purchase new tile for city. Called in CityTaskManager.
 	 * */
 	internal void PurchaseTile(HexTile tileToBuy){
+		float percentageHP = (float)this._hp / (float)this.maxHP;
 		tileToBuy.movementDays = 2;
 		tileToBuy.Occupy (this);
 
@@ -548,6 +549,7 @@ public class City{
 				this._kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
 		}
+		this.UpdateHP (percentageHP);
 	}
 
 	/*
@@ -565,16 +567,13 @@ public class City{
 		this.hasReinforced = false;
 		this.AttemptToIncreaseHP();
 	}
-
-	internal void AttemptToAttackCityForRebellion(){
-//		AttackCityEvent (this.rebellion.targetCity);
-	}
 	/*
 	 * Increase a city's HP every month.
 	 * */
 	protected void AttemptToIncreaseHP(){
 		if(GameManager.Instance.days == 1){
-			this.IncreaseHP (30 + this.kingdom.techLevel);
+			int hpIncrease = 60 + (5 * this.kingdom.techLevel);
+			this.IncreaseHP (hpIncrease);
 		}
 //		if(this.increaseHpInterval == 1){
 //			this.increaseHpInterval = 0;
@@ -600,9 +599,14 @@ public class City{
 
 	public void AdjustHP(int amount){
 		this._hp += amount;
-		this._hp = Mathf.Clamp(this._hp, 0, this.maxHP);
+		if(this._hp < 0){
+			this._hp = 0;
+		}
 	}
 
+	private void UpdateHP(float percentageHP){
+		this._hp = (int)((float)this.maxHP * percentageHP);
+	}
 	private void CheckRaidExpiration(){
 		if(this.isRaided){
 			if(this.raidLoyaltyExpiration > 0){
@@ -615,9 +619,9 @@ public class City{
 	}
 
 	#region Resource Production
-	protected void ProduceGold(){
-		this.kingdom.AdjustGold(this._goldProduction);
-	}
+	//protected void ProduceGold(){
+	//	this.kingdom.AdjustGold(this._goldProduction);
+	//}
 
 	internal void AddToDailyGrowth(){
 		this._currentGrowth += this.totalDailyGrowth;
@@ -633,27 +637,20 @@ public class City{
 	internal void UpdateDailyProduction(){
 		this._maxGrowth = 200 + ((300 + (350 * this.structures.Count)) * this.structures.Count);
 		this._dailyGrowthFromStructures = 10;
-		this._goldProduction = 20;
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
 			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
 				this._dailyGrowthFromStructures += 3;
-				this._goldProduction += 2;
 			} else if (currentStructure.biomeType == BIOMES.WOODLAND) {
 				this._dailyGrowthFromStructures += 3;
-				this._goldProduction += 3;
 			} else if (currentStructure.biomeType == BIOMES.FOREST) {
 				this._dailyGrowthFromStructures += 2;
-				this._goldProduction += 3;
 			} else if (currentStructure.biomeType == BIOMES.DESERT) {
 				this._dailyGrowthFromStructures += 1;
-				this._goldProduction += 4;
 			} else if (currentStructure.biomeType == BIOMES.TUNDRA) {
 				this._dailyGrowthFromStructures += 2;
-				this._goldProduction += 2;
 			} else if (currentStructure.biomeType == BIOMES.SNOW) {
 				this._dailyGrowthFromStructures += 1;
-				this._goldProduction += 1;
 			} else if (currentStructure.biomeType == BIOMES.BARE) {
 				this._dailyGrowthFromStructures += 1;
 			}
@@ -758,99 +755,6 @@ public class City{
 			}
 		}
 		return citizensWithRole;
-	}
-
-	internal void AdjustResources(List<Resource> resource, bool reduce = true){
-		int currentResourceQuantity = 0;
-		for(int i = 0; i < resource.Count; i++){
-			currentResourceQuantity = resource [i].resourceQuantity;
-			if (reduce) {
-				currentResourceQuantity *= -1;
-			}
-			AdjustResourceCount (resource [i].resourceType, currentResourceQuantity);
-		}
-	}
-
-	internal void AdjustResourceCount(BASE_RESOURCE_TYPE resourceType, int amount){
-		switch (resourceType) {
-		case BASE_RESOURCE_TYPE.FOOD:
-			break;
-		case BASE_RESOURCE_TYPE.GOLD:
-			break;
-		case BASE_RESOURCE_TYPE.WOOD:
-			break;
-		case BASE_RESOURCE_TYPE.STONE:
-			break;
-		case BASE_RESOURCE_TYPE.MANA_STONE:
-			break;
-		case BASE_RESOURCE_TYPE.MITHRIL:
-			break;
-		case BASE_RESOURCE_TYPE.COBALT:
-			break;
-		}
-	}
-
-	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
-        return true;
-		//if(resourceCost != null){
-		//	for (int i = 0; i < resourceCost.Count; i++) {
-		//		Resource currentResource = resourceCost [i];
-		//		if (this.GetResourceAmountPerType (currentResource.resourceType) < currentResource.resourceQuantity) {
-		//			return false;
-		//		}
-		//	}
-		//}else{
-		//	return false;
-		//}
-		//return true;
-	}
-
-	protected int GetResourceAmountPerType(BASE_RESOURCE_TYPE resourceType){
-		if (resourceType == BASE_RESOURCE_TYPE.FOOD) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.WOOD) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.STONE) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.MITHRIL) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.MANA_STONE) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.COBALT) {
-			return 0;
-		} else if (resourceType == BASE_RESOURCE_TYPE.GOLD) {
-			return 0;
-		}
-		return -1;
-	}
-
-	internal List<Resource> GetCitizenCreationCostPerType(ROLE role){
-		if(role == ROLE.UNTRAINED){
-			return null;
-		}
-		List<Resource> citizenCreationCosts = new List<Resource>();
-
-		int goldCost = 500;
-
-		switch (role) {
-		case ROLE.TRADER:
-		case ROLE.GENERAL:
-			citizenCreationCosts = new List<Resource>(){
-				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
-				new Resource (this.kingdom.basicResource, 2)
-			};
-			return citizenCreationCosts;
-		case ROLE.SPY:
-		case ROLE.GUARDIAN:
-		case ROLE.ENVOY:
-			citizenCreationCosts = new List<Resource>(){
-				new Resource (BASE_RESOURCE_TYPE.GOLD, goldCost),
-				new Resource (this._kingdom.basicResource, 3)
-			};
-			return citizenCreationCosts;
-		
-		}
-		return citizenCreationCosts;
 	}
 	#endregion
 
@@ -998,6 +902,37 @@ public class City{
 //		}
 	}
 
+    /*
+     * Conquer this city and transfer ownership to the conqueror
+     * */
+    internal void ConquerCity(Kingdom conqueror) {
+        //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
+        //its initial defense will only be 300HP 
+		ResetToDefaultHP();
+
+        //and a random number of settlements (excluding capital) will be destroyed
+        int structuresDestroyed = UnityEngine.Random.Range(0, this.structures.Count);
+        for (int i = 0; i < structuresDestroyed; i++) {
+            this.RemoveTileFromCity(this.structures[UnityEngine.Random.Range(0, this.structures.Count)]);
+        }
+
+        //Kill all current citizens
+        this.KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
+
+        this.kingdom.RemoveCityFromKingdom(this);
+
+        //Assign new king to conquered kingdom if, conquered city was the home of the current king
+        if (this.hasKing) {
+            this.hasKing = false;
+            if (this._kingdom.cities.Count > 0) {
+                this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
+            }
+        }
+
+        conqueror.AddCityToKingdom(this);
+        this.CreateInitialFamilies(false);
+    }
+
 	/*internal void LookForNewGeneral(General general){
 //		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
 		general.inAction = false;
@@ -1022,7 +957,7 @@ public class City{
 		EventManager.Instance.onLookForLostArmies.Invoke (general);
 	}*/
 
-	internal bool HasAdjacency(int kingdomID){
+        internal bool HasAdjacency(int kingdomID){
 		for(int i = 0; i < this.hexTile.connectedTiles.Count; i++){
 			if(this.hexTile.connectedTiles[i].isOccupied){
 				if(this.hexTile.connectedTiles[i].city.kingdom.id == kingdomID){
@@ -1211,10 +1146,10 @@ public class City{
 //			EventCreator.Instance.CreateAttackCampEvent (this, targetCamp, false);
 //		}
 //	}
-	internal void KillAllCitizens(){
+	internal void KillAllCitizens(DEATH_REASONS deathReason){
 		int countCitizens = this.citizens.Count;
 		for (int i = 0; i < countCitizens; i++) {
-			this.citizens [0].Death (DEATH_REASONS.REBELLION, false, null, true);
+			this.citizens [0].Death (deathReason, false, null, true);
 		}
 
 	}
@@ -1239,11 +1174,11 @@ public class City{
 		}
 		rebellion.warPair.isDone = true;
 		this.rebellion = rebellion;
-		this.hp = 100;
+		ResetToDefaultHP();
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(RebelFortEverydayTurnActions);
-		KillAllCitizens ();
+		KillAllCitizens (DEATH_REASONS.REBELLION);
 		TransferCityToRebellion ();
 		this.AssignNewGovernor ();
 	}
@@ -1252,11 +1187,11 @@ public class City{
 			this.hexTile.cityInfo.rebelIcon.SetActive (false);
 		}
 		this.rebellion.warPair.isDone = true;
-		this.hp = 100;
+		ResetToDefaultHP();
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(RebelFortEverydayTurnActions);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
-		KillAllCitizens ();
+		KillAllCitizens (DEATH_REASONS.REBELLION);
 		TransferRebellionToCity ();
 		this.AssignNewGovernor ();
 		if(!this.rebellion.rebelLeader.citizen.isKing){
@@ -1268,4 +1203,7 @@ public class City{
 		this.rebellion = null;
 	}
 
+	internal void ResetToDefaultHP(){
+		this._hp = Utilities.defaultCityHP;
+	}
 }
