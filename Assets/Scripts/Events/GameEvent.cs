@@ -31,6 +31,7 @@ public class GameEvent {
 
 	internal bool relationshipHasDeteriorated;
 	internal bool relationshipHasImproved;
+	internal GameObject goEventItem;
 
 	protected Citizen _startedBy;
 	protected WAR_TRIGGER _warTrigger;
@@ -69,6 +70,7 @@ public class GameEvent {
 		this._warTrigger = WAR_TRIGGER.NONE;
 		this.relationshipHasDeteriorated = false;
 		this.relationshipHasImproved = false;
+		this.goEventItem = null;
 		this.logs = new List<Log>();
 		this._startDate = new DateTime (this.startYear, this.startMonth, this.startDay);
 		if(this._startedBy != null){
@@ -104,6 +106,9 @@ public class GameEvent {
         this.endMonth = GameManager.Instance.month;
         this.endDay = GameManager.Instance.days;
         this.endYear = GameManager.Instance.year;
+		if(this.goEventItem != null){
+			this.goEventItem.GetComponent<EventItem> ().HasExpired ();
+		}
     }
 	internal virtual void DeathByOtherReasons(){}
 	internal virtual void DeathByGeneral(General general){}
