@@ -59,14 +59,18 @@ public class Citizen {
 	[HideInInspector]public List<History> history;
 
 	protected List<Citizen> _possiblePretenders = new List<Citizen>();
-	protected Dictionary<CHARACTER_VALUE, int> _characterValues;
+	protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
+	protected CharacterValue[] _characterValues;
 	protected const int MARRIAGE_CHANCE = 100; //8
 
 	#region getters/setters
 	public List<Citizen> possiblePretenders{
 		get{ return this._possiblePretenders;}
 	}
-	public Dictionary<CHARACTER_VALUE, int> characterValues{
+	public Dictionary<CHARACTER_VALUE, int> dictCharacterValues{
+		get{ return this._dictCharacterValues;}
+	}
+	public CharacterValue[] characterValues{
 		get{ return this._characterValues;}
 	}
 	public List<Citizen> dependentChildren{
@@ -151,7 +155,7 @@ public class Citizen {
 		this.yearSupportStarted = 0;
 		this.deathReason = DEATH_REASONS.NONE;
 		this.deathReasonText = string.Empty;
-		this._characterValues = new Dictionary<CHARACTER_VALUE, int>();
+		this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
 		this.city.citizens.Add (this);
 //			this.GenerateTraits();
 		this.UpdatePrestige();
@@ -1462,8 +1466,15 @@ public class Citizen {
 	}
 
 	internal void GenerateCharacterValues(){
-		this._characterValues.Clear ();
-		this._characterValues = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToDictionary (x => x, x => UnityEngine.Random.Range (1, 101));
+		this._dictCharacterValues.Clear ();
+//		this._dictCharacterValues = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToDictionary (x => x, x => UnityEngine.Random.Range (1, 101));
+		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
+		this._characterValues = new CharacterValue[character.Length];
+		for(int i = 0; this._characterValues.Length; i++){
+			this._characterValues [i].character = character [i];
+			this._characterValues [i].value = UnityEngine.Random.Range (1, 101);
+			this._dictCharacterValues.Add(this._characterValues [i].character, this._characterValues [i].value);
+		}
 	}
 	internal void UpdateCharacterValues(){
 		for(int i = 0; i < this.city.kingdom.kingdomTypeData.characterValues.Length; i++){
@@ -1471,9 +1482,21 @@ public class Citizen {
 		}
 	}
 	private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value){
-		if(this._characterValues.ContainsKey(key)){
-			this._characterValues [key] += value;
+		if(this._dictCharacterValues.ContainsKey(key)){
+			this._dictCharacterValues [key] += value;
+			GetCharacterValueByKey (key).value += value;
 		}
+	}
+
+	private CharacterValue GetCharacterValueByKey(CHARACTER_VALUE key){
+		CharacterValue charVal;
+		for(int i = 0; this._characterValues.Length; i++){
+			if(this._characterValues[i].character == key){
+				charVal = this._characterValues [i];
+				break;
+			}
+		}
+		return charVal;
 	}
 
 }
