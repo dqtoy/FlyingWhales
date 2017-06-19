@@ -251,58 +251,7 @@ public class Citizen {
                     MarriageManager.Instance.Marry(this, spouse);
                 }
             }
-//			if (this.gender == GENDER.MALE) {
-//				if (this.age >= 16 && !this.isMarried) {
-//					this.citizenChances.marriageChance += 2;
-//					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.MARRIAGE_INVITATION).Count <= 0) {
-//						this.AttemptToMarry ();
-//					}
-//				}
-//			} else {
-//				if (this.isKing && this.age >= 16 && !this.isMarried) {
-//					this.citizenChances.marriageChance += 2;
-//					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.MARRIAGE_INVITATION).Count <= 0) {
-//						this.AttemptToMarry ();
-//					}
-//				}
-//			}
-
-//			if (this.miscTraits.Contains(MISC_TRAIT.AMBITIOUS)) {
-//				if (this.isPretender ||
-//				   (this.city.kingdom.successionLine.Count > 1 && this.city.kingdom.successionLine [1].id == this.id) ||
-//				   (this.city.kingdom.successionLine.Count > 2 && this.city.kingdom.successionLine [2].id == this.id)) {
-//					if (EventManager.Instance.GetAllEventsStartedByCitizenByType (this, EVENT_TYPES.POWER_GRAB).Count <= 0) {
-//						AttemptToGrabPower ();
-//					}
-//				}
-//			}
-
-            }
-	}
-
-	protected void AttemptToMarry(){
-		List<Resource> marriageInvitationCost = new List<Resource> () {
-			new Resource (BASE_RESOURCE_TYPE.GOLD, 500)
-		};
-		if (!this.city.HasEnoughResourcesForAction (marriageInvitationCost)) {
-			return;
-		}
-
-		int chanceToMarry = Random.Range (0, 100);
-		this.citizenChances.marriageChance = 100;
-		if (chanceToMarry < this.citizenChances.marriageChance) {
-//			Debug.Log (this.name + " has started a marriage invitation event!");
-
-//			MarriageInvitation marriageInvitation = new MarriageInvitation (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this);
-		}
-	}
-
-	protected void AttemptToGrabPower(){
-		int chanceToGrabPower = Random.Range (0, 100);
-		if (chanceToGrabPower < 10) {
-//		if (chanceToGrabPower < 100) {
-			PowerGrab newPowerGrab = new PowerGrab(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, this.city.kingdom.king);
-		}
+        }
 	}
 
 	internal void DeathReasons(){

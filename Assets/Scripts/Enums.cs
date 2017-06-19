@@ -325,3 +325,9 @@ public enum EMBARGO_REASON {
 public enum RATE_TYPE{
 	CUMULATIVE,
 }
+
+public enum RESOURCE_BENEFITS {
+    GROWTH_RATE,
+    EXPANSION_RATE,
+    TECH_LEVEL
+}

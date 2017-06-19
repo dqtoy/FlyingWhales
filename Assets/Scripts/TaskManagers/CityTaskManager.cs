@@ -163,12 +163,10 @@ public class CityTaskManager : MonoBehaviour {
 				return;
 			}
 			this.city.PurchaseTile (tileToBuy);
-			this.city.kingdom.AdjustResources (this.GetActionCost ("EXPANSION"));
 			//this.pathToTargetHexTile.RemoveRange (0, tileToBuyIndex + 1);
 		} else {
 			tileToBuy = this.targetHexTileToPurchase;
 			this.city.PurchaseTile (tileToBuy);
-			this.city.kingdom.AdjustResources (this.GetActionCost ("EXPANSION"));
 		}
 
 		if (tileToBuy.tileName == this.targetHexTileToPurchase.tileName) {
@@ -195,43 +193,36 @@ public class CityTaskManager : MonoBehaviour {
 	}
 	#endregion
 
-	#region Hire Special Citizen Functions
-	[Task]
-	private void GetNextCitizenToHire(){
-//		if (this.roleToCreate == ROLE.UNTRAINED) {
-//			this.roleToCreate = this.city.GetNonProducingRoleToCreate ();
-////			this.roleToCreate = ROLE.SPY;
+//	#region Hire Special Citizen Functions
+//	[Task]
+//	private void GetNextCitizenToHire(){
+////		if (this.roleToCreate == ROLE.UNTRAINED) {
+////			this.roleToCreate = this.city.GetNonProducingRoleToCreate ();
+//////			this.roleToCreate = ROLE.SPY;
+////		}
+////		if (this.roleToCreate == ROLE.UNTRAINED) {
+////			Task.current.Fail();
+////		} else {
+//			Task.current.Succeed();
+////		}
+//	}
+
+//	[Task]
+//	private void HireCitizen(){
+//		GENDER gender = GENDER.MALE;
+//		int randomGender = UnityEngine.Random.Range (0, 100);
+//		if(randomGender < 20){
+//			gender = GENDER.FEMALE;
 //		}
-//		if (this.roleToCreate == ROLE.UNTRAINED) {
-//			Task.current.Fail();
-//		} else {
-			Task.current.Succeed();
-//		}
-	}
 
-	[Task]
-	private void HireCitizen(){
-		GENDER gender = GENDER.MALE;
-		int randomGender = UnityEngine.Random.Range (0, 100);
-		if(randomGender < 20){
-			gender = GENDER.FEMALE;
-		}
+//		Citizen newCitizen = new Citizen (this.city, Random.Range (16, 41), gender, 0);
+//		newCitizen.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - newCitizen.age));
+//		newCitizen.AssignRole(this.roleToCreate);
+//		this.roleToCreate = ROLE.UNTRAINED;
+//		Task.current.Succeed ();
 
-		Citizen newCitizen = new Citizen (this.city, Random.Range (16, 41), gender, 0);
-		newCitizen.AssignBirthday ((MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length)), UnityEngine.Random.Range (1, 5), (GameManager.Instance.year - newCitizen.age));
-		newCitizen.AssignRole(this.roleToCreate);
-		List<Resource> actionCost = this.GetActionCost("RECRUITMENT");
-		for (int i = 0; i < actionCost.Count; i++) {
-			if (actionCost [i].resourceType == BASE_RESOURCE_TYPE.GOLD) {
-				this.city.AdjustResourceCount (BASE_RESOURCE_TYPE.GOLD, (actionCost [i].resourceQuantity * -1));
-				break;
-			}
-		}
-		this.roleToCreate = ROLE.UNTRAINED;
-		Task.current.Succeed ();
-
-	}
-	#endregion
+//	}
+//	#endregion
 
 	/*#region General Upgrade Functions
 	[Task]
@@ -294,25 +285,25 @@ public class CityTaskManager : MonoBehaviour {
 	}
 	#endregion*/
 
-	#region Common Functions
-	[Task]
-	private bool HasEnoughResourcesForAction(string action){
-        return true;
-		//List<Resource> actionCost = this.GetActionCost(action);
-		//return this.city.kingdom.HasEnoughResourcesForAction (actionCost);
-	}
+	//#region Common Functions
+	//[Task]
+	//private bool HasEnoughResourcesForAction(string action){
+ //       return true;
+	//	//List<Resource> actionCost = this.GetActionCost(action);
+	//	//return this.city.kingdom.HasEnoughResourcesForAction (actionCost);
+	//}
 
-	private List<Resource> GetActionCost(string action){
-		List<Resource> actionCost = new List<Resource>();
-		if (action == "EXPANSION") {
-			actionCost.Add (new Resource (BASE_RESOURCE_TYPE.GOLD, 400));
-		} else if (action == "RECRUITMENT") {
-			actionCost = this.city.GetCitizenCreationCostPerType (this.roleToCreate);
-		} else if (action == "GENERALUP") {
-			actionCost.Add (new Resource (BASE_RESOURCE_TYPE.GOLD, 200));
-		}
-		return actionCost;
-	}
-	#endregion
+	//private List<Resource> GetActionCost(string action){
+	//	List<Resource> actionCost = new List<Resource>();
+	//	if (action == "EXPANSION") {
+	//		actionCost.Add (new Resource (BASE_RESOURCE_TYPE.GOLD, 400));
+	//	} else if (action == "RECRUITMENT") {
+	//		actionCost = this.city.GetCitizenCreationCostPerType (this.roleToCreate);
+	//	} else if (action == "GENERALUP") {
+	//		actionCost.Add (new Resource (BASE_RESOURCE_TYPE.GOLD, 200));
+	//	}
+	//	return actionCost;
+	//}
+	//#endregion
 
 }

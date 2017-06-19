@@ -73,8 +73,6 @@ public class Trade : GameEvent {
             this._targetKingdom.AddTradeRoute(tradeRoute);
             this._sourceKingdom.UpdateAllCitiesDailyGrowth();
             this._targetKingdom.UpdateAllCitiesDailyGrowth();
-            this._sourceKingdom.UpdateBasicResourceCount();
-            this._targetKingdom.UpdateBasicResourceCount();
             Debug.Log("Trade was successful " + this._sourceKingdom.name + " gained GOLD. " + this._targetKingdom.name + " gained " + resourceToTrade.ToString());
         } else {
             Debug.Log(this._sourceKingdom.name + " and " + this._targetKingdom.name + " are no longer elligible for trade!");
