@@ -29,7 +29,7 @@ public class Rebellion : GameEvent {
 		CreateRebelFort ();
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
-
+		Debug.LogError (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);
 	}
 	#region Overrides
 	internal override void PerformAction (){
