@@ -19,18 +19,18 @@ public class EventItem : MonoBehaviour {
 //		this.isPaused = false;
 		this.toolTip = string.Empty;
 		this.timeElapsed = 0f;
-		UIManager.Instance.onPauseEventExpiration += this.PauseExpirationTimer;
+//		UIManager.Instance.onPauseEventExpiration += this.PauseExpirationTimer;
 	}
 	void Update(){
 		if (this.isHovering) {
 			UIManager.Instance.ShowSmallInfo (this.toolTip);
 		}
-		if(!this.isPaused){
-			this.timeElapsed += Time.deltaTime * 1f;
-			if(this.timeElapsed >= 10f){
-				HasExpired ();
-			}
-		}
+//		if(!this.isPaused){
+//			this.timeElapsed += Time.deltaTime * 1f;
+//			if(this.timeElapsed >= 10f){
+//				HasExpired ();
+//			}
+//		}
 	}
 
 	public void SetEvent(GameEvent gameEvent){
@@ -47,13 +47,13 @@ public class EventItem : MonoBehaviour {
 	private void PauseExpirationTimer(bool state){
 		this.isPaused = state;
 	}
-	private void HasExpired(){
+	internal void HasExpired(){
 		this.isPaused = true;
 		UIManager.Instance.HideSmallInfo ();
         UIGrid parentGrid = this.transform.parent.GetComponent<UIGrid>();
         parentGrid.RemoveChild(this.transform);
+		StartCoroutine(UIManager.Instance.RepositionGrid(parentGrid));
 		Destroy (this.gameObject);
-        StartCoroutine(UIManager.Instance.RepositionGrid(parentGrid));
     }
 	public IEnumerator StartExpiration(){
 		yield return new WaitForSeconds (10);
@@ -77,9 +77,8 @@ public class EventItem : MonoBehaviour {
 		}
 	}
 
-	void OnDestroy(){
-		UIManager.Instance.onPauseEventExpiration -= this.PauseExpirationTimer;
-		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
-
-	}
+//	void OnDestroy(){
+//		UIManager.Instance.onPauseEventExpiration -= this.PauseExpirationTimer;
+//		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
+//	}
 }

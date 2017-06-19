@@ -1215,6 +1215,7 @@ public class UIManager : MonoBehaviour {
             eventGO.GetComponent<EventItem>().StartExpirationTimer();
             eventGO.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
             kingdomOwner.AddGameObjectToGrid(eventGO);
+			gameEvent.goEventItem = eventGO;
             //StartCoroutine(RepositionGrid(gameEventsOfTypeGrid));
         }
         
