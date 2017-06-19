@@ -57,7 +57,7 @@ public class Kingdom{
 	private int techCapacity;
 	private int techCounter;
 
-	private int expansionChance = 1;
+	private float expansionChance = 1f;
     
     protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
@@ -136,7 +136,7 @@ public class Kingdom{
 	public int techLevel{
 		get{return this._techLevel;}
 	}
-    public int expansionRate {
+    public float expansionRate {
         get { return this.expansionChance; }
     }
 	#endregion
@@ -475,8 +475,8 @@ public class Kingdom{
 		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Where(x => x.isActive).Count() > 0) {
 			return;
 		}
-
-		int chance = Random.Range (0, 300 + (50 * this.cities.Count));
+        float upperBound = 300f + (50f * (float)this.cities.Count);
+        float chance = Random.Range (0, upperBound);
 		if (chance < this.expansionChance) {
 		
 			List<City> citiesThatCanExpand = new List<City> ();
@@ -1437,7 +1437,7 @@ public class Kingdom{
             if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
                 int multiplier = this.availableResources[currResource];
                 RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.First();
-                int expansionRateGained = Utilities.resourceBenefits[currResource][resourceBenefit];
+                float expansionRateGained = Utilities.resourceBenefits[currResource][resourceBenefit];
                 if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
                     this.expansionChance += expansionRateGained * multiplier;
                 }
@@ -1453,7 +1453,7 @@ public class Kingdom{
             RESOURCE currResource = allAvailableResources[i];
             RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.First();
             if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
-                this._techLevel += Utilities.resourceBenefits[currResource][resourceBenefit];
+                this._techLevel += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
             }
         }
     }
@@ -1474,7 +1474,7 @@ public class Kingdom{
             RESOURCE currentResource = allAvailableResources[i];
             RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currentResource].Keys.First();
             if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
-                dailyGrowthGained += Utilities.resourceBenefits[currentResource][resourceBenefit];
+                dailyGrowthGained += (int)Utilities.resourceBenefits[currentResource][resourceBenefit];
             }
         }
         return dailyGrowthGained;
