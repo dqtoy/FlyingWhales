@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+#pragma warning disable 0168 // variable declared but not used.
+#pragma warning disable 0219 // variable assigned but not used.
+#pragma warning disable 0414 // private field assigned but not used.
+
 public class KingdomManager : MonoBehaviour {
 
 	public static KingdomManager Instance = null;
@@ -380,8 +384,18 @@ public class KingdomManager : MonoBehaviour {
         }
     }
 
+    public void InheritRelationshipFromCitizen(Citizen citizenInheritedFrom, Citizen citizenToInherit) {
+        citizenToInherit.relationshipKings = new List<RelationshipKings>(citizenInheritedFrom.relationshipKings);
+        for (int i = 0; i < citizenToInherit.relationshipKings.Count; i++) {
+            RelationshipKings currRel = citizenToInherit.relationshipKings[i];
+            RelationshipKings relOfTargetKing = currRel.king.GetRelationshipWithCitizen(citizenInheritedFrom);
+            currRel.ChangeSourceKing(citizenToInherit);
+            relOfTargetKing.ChangeTargetKing(citizenToInherit);
+        }
+    }
+
     #region For Testing
-    
+
     [ContextMenu("Test Split Kingdom")]
     public void TestSplitKingdom() {
         Kingdom sourceKingdom = this.allKingdoms.First();

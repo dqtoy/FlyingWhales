@@ -329,6 +329,7 @@ public class Kingdom{
 	internal void DestroyKingdom(){
 		this._isDead = true;
         this.CancelEventKingdomIsInvolvedIn(EVENT_TYPES.ALL);
+        KingdomManager.Instance.RemoveRelationshipToOtherKings(this.king);
         this.RemoveRelationshipsWithOtherKingdoms();
         KingdomManager.Instance.allKingdoms.Remove(this);
         EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
@@ -822,12 +823,12 @@ public class Kingdom{
 		this.capitalCity = newKing.city;
 		newKing.city.hasKing = true;
 
-        if (newKing.isMarried) {
-            if (newKing.spouse.city.kingdom.king != null && newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
-                AssimilateKingdom(newKing.spouse.city.kingdom);
-                return;
-            }
-        }
+        //if (newKing.isMarried) {
+        //    if (newKing.spouse.city.kingdom.king != null && newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
+        //        AssimilateKingdom(newKing.spouse.city.kingdom);
+        //        return;
+        //    }
+        //}
         if (!newKing.isDirectDescendant){
 			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
 			Utilities.ChangeDescendantsRecursively (newKing, true);
@@ -835,11 +836,13 @@ public class Kingdom{
                 Utilities.ChangeDescendantsRecursively(this.king, false);
             }
 		}
-		/*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
+        /*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
 			newKing.DetachGeneralFromCitizen ();
 		}*/
-//		newKing.role = ROLE.KING;
-		newKing.AssignRole(ROLE.KING);
+        //		newKing.role = ROLE.KING;
+        Citizen previousKing = this.king;
+        newKing.AssignRole(ROLE.KING);
+		
         if (newKing.city.governor.id == newKing.id) {
             newKing.city.AssignNewGovernor();
         }
@@ -848,10 +851,18 @@ public class Kingdom{
         newKing.isGovernor = false;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-//		this.king = newKing;
-		newKing.CreateInitialRelationshipsToKings ();
-		KingdomManager.Instance.AddRelationshipToOtherKings (newKing);
-		this.successionLine.Clear();
+        //		this.king = newKing;
+
+        //Inherit relationships of previous king, otherwise, create new relationships
+        if (previousKing != null) {
+            KingdomManager.Instance.InheritRelationshipFromCitizen(previousKing, newKing);
+        } else {
+            KingdomManager.Instance.RemoveRelationshipToOtherKings(previousKing);
+            newKing.CreateInitialRelationshipsToKings();
+            KingdomManager.Instance.AddRelationshipToOtherKings(newKing);
+        }
+
+        this.successionLine.Clear();
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (newKing.GetSiblings());
 		UpdateKingSuccession ();
@@ -863,6 +874,9 @@ public class Kingdom{
 //			this.cities[i].UpdateResourceProduction();
 //		}
 	}
+
+    
+
 	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
 //		Debug.Log ("SUCCESSION WAR");
 

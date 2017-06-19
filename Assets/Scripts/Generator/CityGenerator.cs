@@ -11,25 +11,16 @@ public class CityGenerator : MonoBehaviour {
 	public List<HexTile> woodHabitableTiles;
 	public List<HexTile> stoneHabitableTiles;
 
-	public Sprite elfCitySprite;
-	public Sprite elfFarmSprite;
-	public Sprite elfQuarrySprite;
-	public Sprite elfLumberyardSprite;
-	public Sprite elfTraderSprite;
-	public Sprite elfHuntingLodgeSprite;
-	public Sprite elfMiningSprite;
-	public Sprite elfBarracks;
-	public Sprite elfSpyGuild;
-	public Sprite elfMinistry;
-	public Sprite elfKeep;
+    [SerializeField] private RaceStructures humanStructures;
+    [SerializeField] private RaceStructures elvenStructures;
 
-    public GameObject[] genericStructures;
-    public GameObject[] cityStructures;
-    public GameObject[] mineStructures;
-    public GameObject[] lumberyardStructures;
-    public GameObject[] quarryStructures;
-    public GameObject[] huntingLodgeStructures;
-    public GameObject[] farmStructures;
+    //public GameObject[] genericStructures;
+    //public GameObject[] cityStructures;
+    //public GameObject[] mineStructures;
+    //public GameObject[] lumberyardStructures;
+    //public GameObject[] quarryStructures;
+    //public GameObject[] huntingLodgeStructures;
+    //public GameObject[] farmStructures;
 
     public TextAsset cityBehaviourTree;
 
@@ -148,7 +139,13 @@ public class CityGenerator : MonoBehaviour {
 	}
 
 	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellion rebellion = null){
-		if(rebellion != null){
+        if (hexTile.isBorder) {
+            hexTile.ownedByCity.borderTiles.Remove(hexTile);
+            hexTile.isBorderOfCityID = 0;
+            hexTile.isBorder = false;
+            hexTile.ownedByCity = null;
+        }
+        if (rebellion != null){
 			hexTile.city = new RebelFort (hexTile, kingdom, rebellion);
 		}else{
 			hexTile.city = new City (hexTile, kingdom);
@@ -187,4 +184,22 @@ public class CityGenerator : MonoBehaviour {
 		}
 		return null;
 	}
+
+    public GameObject[] GetStructurePrefabsForRace(RACE race, STRUCTURE_TYPE structureType) {
+        RaceStructures raceStructuresToUse = humanStructures;
+        if(race == RACE.ELVES) {
+            raceStructuresToUse = elvenStructures;
+        } else {
+            raceStructuresToUse = humanStructures;
+        }
+
+        Structures[] structuresToChooseFrom = raceStructuresToUse.structures;
+        for (int i = 0; i < structuresToChooseFrom.Length; i++) {
+            Structures currStructure = structuresToChooseFrom[i];
+            if (currStructure.structureType == structureType) {
+                return currStructure.structureGameObjects;
+            }
+        }
+        return null;
+    }
 }

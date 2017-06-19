@@ -207,7 +207,7 @@ public enum EVENT_STATUS{
 	HIDDEN,
 }
 
-public enum STRUCTURE{
+public enum STRUCTURE_TYPE{
 	NONE,
 	CITY,
 	FARM,
@@ -216,10 +216,11 @@ public enum STRUCTURE{
 	LUMBERYARD,
 	MINES,
 	TRADING_POST,
-	BARRACKS,
-	SPY_GUILD,
-	MINISTRY,
-	KEEP
+    GENERIC
+	//BARRACKS,
+	//SPY_GUILD,
+	//MINISTRY,
+	//KEEP
 }
 
 public enum HISTORY_IDENTIFIER{

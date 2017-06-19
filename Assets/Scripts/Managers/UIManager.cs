@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
+#pragma warning disable 0168 // variable declared but not used.
+#pragma warning disable 0219 // variable assigned but not used.
+#pragma warning disable 0414 // private field assigned but not used.
+
 public class UIManager : MonoBehaviour {
 
 	public static UIManager Instance = null;
@@ -376,7 +380,8 @@ public class UIManager : MonoBehaviour {
                 break;
             }
         }
-        kingdomListOtherKingdomsGrid.Reposition();
+        StartCoroutine(RepositionGrid(kingdomListOtherKingdomsGrid));
+        kingdomListOtherKingdomsGrid.GetChildList().First().GetComponent<KingdomFlagItem>().SetAsSelected();
     }
 
     private void AddKingdomToList(Kingdom kingdomToAdd) {
