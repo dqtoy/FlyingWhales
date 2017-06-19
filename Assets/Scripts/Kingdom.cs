@@ -236,7 +236,7 @@ public class Kingdom{
 		this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
 
 		// If the Kingdom Type Data changed
-		if (_kingdomTypeData != prevKingdomTypeData) {			
+		if (this._kingdomTypeData != prevKingdomTypeData) {			
 			// Update horoscope
 			if (prevKingdomTypeData == null) {
 				this.horoscope = GetHoroscope ();
@@ -245,6 +245,9 @@ public class Kingdom{
 			}
             // Update expansion chance
             this.UpdateExpansionRate();
+
+			//Update Character Values of King and Governors
+			this.UpdateCharacterValuesOfKingsAndGovernors();
         }
     }
 
@@ -1645,7 +1648,7 @@ public class Kingdom{
 	}
 	#endregion
 	
-
+	#region Discovery
     /*
      * Check all the neighburs of the border tiles and owned tiles of all this kingdom's
      * cities, and check if any of them are owned by another kingdom, if so,
@@ -1730,4 +1733,18 @@ public class Kingdom{
     internal void RemoveKingdomFromDiscoveredKingdoms(Kingdom kingdomToRemove) {
         this._discoveredKingdoms.Remove(kingdomToRemove);
     }
+	#endregion
+
+	#region Character Values
+	private void UpdateCharacterValuesOfKingsAndGovernors(){
+		if(this.king != null){
+			this.king.UpdateCharacterValues ();
+		}
+		for(int i = 0; i < this.cities.Count; i++){
+			if(this.cities[i].governor != null){
+				this.cities [i].governor.UpdateCharacterValues ();
+			}
+		}
+	}
+	#endregion
 }

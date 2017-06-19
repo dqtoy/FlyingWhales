@@ -55,14 +55,20 @@ public class Citizen {
 	public bool isDead;
 	public DEATH_REASONS deathReason;
 	public string deathReasonText;
+
 	[HideInInspector]public List<History> history;
 
 	protected List<Citizen> _possiblePretenders = new List<Citizen>();
+	protected Dictionary<CHARACTER_VALUE, int> _characterValues;
+	protected const int MARRIAGE_CHANCE = 100; //8
 
+	#region getters/setters
 	public List<Citizen> possiblePretenders{
 		get{ return this._possiblePretenders;}
 	}
-
+	public Dictionary<CHARACTER_VALUE, int> characterValues{
+		get{ return this._characterValues;}
+	}
 	public List<Citizen> dependentChildren{
 		get{ return this.children.Where (x => x.age < 16 && !x.isMarried).ToList ();}
 	}
@@ -71,9 +77,6 @@ public class Citizen {
 		get{ return this.relationshipKings.Where(x => x.lordRelationship == RELATIONSHIP_STATUS.FRIEND || x.lordRelationship == RELATIONSHIP_STATUS.ALLY).ToList();}
 	}
 
-    protected const int MARRIAGE_CHANCE = 100; //8
-
-	#region getters/setters
 	public TRAIT honestyTrait{
 		get{ return this._honestyTrait; }
 	}
@@ -148,7 +151,7 @@ public class Citizen {
 		this.yearSupportStarted = 0;
 		this.deathReason = DEATH_REASONS.NONE;
 		this.deathReasonText = string.Empty;
-
+		this._characterValues = new Dictionary<CHARACTER_VALUE, int>();
 		this.city.citizens.Add (this);
 //			this.GenerateTraits();
 		this.UpdatePrestige();
@@ -1457,4 +1460,20 @@ public class Citizen {
 			}
 		}
 	}
+
+	internal void GenerateCharacterValues(){
+		this._characterValues.Clear ();
+		this._characterValues = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToDictionary (x => x, x => UnityEngine.Random.Range (1, 101));
+	}
+	internal void UpdateCharacterValues(){
+		for(int i = 0; i < this.city.kingdom.kingdomTypeData.characterValues.Length; i++){
+			this.UpdateSpecificCharacterValue (this.city.kingdom.kingdomTypeData.characterValues [i].character, this.city.kingdom.kingdomTypeData.characterValues [i].value);
+		}
+	}
+	private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value){
+		if(this._characterValues.ContainsKey(key)){
+			this._characterValues [key] += value;
+		}
+	}
+
 }
