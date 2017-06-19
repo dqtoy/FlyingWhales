@@ -1470,7 +1470,7 @@ public class Citizen {
 //		this._dictCharacterValues = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToDictionary (x => x, x => UnityEngine.Random.Range (1, 101));
 		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
 		this._characterValues = new CharacterValue[character.Length];
-		for(int i = 0; this._characterValues.Length; i++){
+		for(int i = 0; i < this._characterValues.Length; i++){
 			this._characterValues [i].character = character [i];
 			this._characterValues [i].value = UnityEngine.Random.Range (1, 101);
 			this._dictCharacterValues.Add(this._characterValues [i].character, this._characterValues [i].value);
