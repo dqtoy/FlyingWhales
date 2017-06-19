@@ -79,8 +79,8 @@ public class City{
 		get{ return this._hp; }
 		set{ this._hp = value; }
 	}
-	public virtual int maxHP{
-		get{ return 200 * (this.structures.Count + 1); } //+1 since the structures list does not contain the main hex tile
+	public int maxHP{
+		get{ return 300 +  (50 * this.structures.Count); } //+1 since the structures list does not contain the main hex tile
 	}
     public List<HexTile> ownedTiles {
         get { return this._ownedTiles; }
@@ -109,7 +109,7 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-		this._hp = 200;
+		this._hp = this.maxHP;
 		this.raidLoyaltyExpiration = 0;
 
 		this.hexTile.Occupy (this);
@@ -503,6 +503,7 @@ public class City{
 	 * Purchase new tile for city. Called in CityTaskManager.
 	 * */
 	internal void PurchaseTile(HexTile tileToBuy){
+		float percentageHP = (float)this._hp / (float)this.maxHP;
 		tileToBuy.movementDays = 2;
 		tileToBuy.Occupy (this);
 
@@ -548,6 +549,7 @@ public class City{
 				this._kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
 		}
+		this.UpdateHP (percentageHP);
 	}
 
 	/*
@@ -565,16 +567,13 @@ public class City{
 		this.hasReinforced = false;
 		this.AttemptToIncreaseHP();
 	}
-
-	internal void AttemptToAttackCityForRebellion(){
-//		AttackCityEvent (this.rebellion.targetCity);
-	}
 	/*
 	 * Increase a city's HP every month.
 	 * */
 	protected void AttemptToIncreaseHP(){
 		if(GameManager.Instance.days == 1){
-			this.IncreaseHP (30 + this.kingdom.techLevel);
+			int hpIncrease = 60 + (5 * this.kingdom.techLevel);
+			this.IncreaseHP (hpIncrease);
 		}
 //		if(this.increaseHpInterval == 1){
 //			this.increaseHpInterval = 0;
@@ -600,9 +599,14 @@ public class City{
 
 	public void AdjustHP(int amount){
 		this._hp += amount;
-		this._hp = Mathf.Clamp(this._hp, 0, this.maxHP);
+		if(this._hp < 0){
+			this._hp = 0;
+		}
 	}
 
+	private void UpdateHP(float percentageHP){
+		this._hp = (int)((float)this.maxHP * percentageHP);
+	}
 	private void CheckRaidExpiration(){
 		if(this.isRaided){
 			if(this.raidLoyaltyExpiration > 0){
@@ -1280,7 +1284,7 @@ public class City{
 		}
 		rebellion.warPair.isDone = true;
 		this.rebellion = rebellion;
-		this.hp = 100;
+		this.hp = 300;
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(RebelFortEverydayTurnActions);
@@ -1293,7 +1297,7 @@ public class City{
 			this.hexTile.cityInfo.rebelIcon.SetActive (false);
 		}
 		this.rebellion.warPair.isDone = true;
-		this.hp = 100;
+		this.hp = 300;
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(RebelFortEverydayTurnActions);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);

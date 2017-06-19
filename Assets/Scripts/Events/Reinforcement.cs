@@ -14,7 +14,7 @@ public class Reinforcement : GameEvent {
 		this.reinforcer = reinforcer;
 		this.targetCity = targetCity;
 		this.sourceCity = sourceCity;
-		this.SendReinforcement (30);
+		this.SendReinforcement ();
 		Debug.LogError (reinforcer.citizen.name + " of " + reinforcer.citizen.city.kingdom.name + " will reinforce " + targetCity.name);
 
 	}
@@ -47,7 +47,12 @@ public class Reinforcement : GameEvent {
 	}
 	#endregion
 
-	private void SendReinforcement(int amount){
+	private void SendReinforcement(){
+		int amount = Mathf.CeilToInt((float)this.reinforcer.citizen.city.hp * 0.3f);
+		int missingHP = this.targetCity.maxHP - this.targetCity.hp;
+		if(amount > missingHP){
+			amount = missingHP;
+		}
 		this.sourceCity.AdjustHP (-amount);
 		this.reinforcer.reinforcementValue += amount;
 	}
