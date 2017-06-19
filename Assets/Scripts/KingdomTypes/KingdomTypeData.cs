@@ -45,6 +45,9 @@ public class KingdomTypeData : MonoBehaviour {
 	private EventRate[] _dailyCumulativeEventRate;
 
 	[SerializeField]
+	private CharacterValue[] _characterValues;
+
+	[SerializeField]
 	private int _tradeRouteCap; // number of active trade routes that this kingdom is involved with
 
 	private int _hexDistanceModifier = 15;
@@ -54,6 +57,9 @@ public class KingdomTypeData : MonoBehaviour {
 	private Dictionary<MILITARY_STRENGTH, int> _dictWarRateModifierMilitary = new Dictionary<MILITARY_STRENGTH, int> ();
 
 	private Dictionary<RELATIONSHIP_STATUS, int> _dictWarRateModifierRelationship = new Dictionary<RELATIONSHIP_STATUS, int> ();
+
+	private Dictionary<CHARACTER_VALUE, int> _dictCharacterValues = new Dictionary<CHARACTER_VALUE, int> ();
+
 
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -91,6 +97,12 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
+	public CharacterValue[] characterValues {
+		get { 
+			return this._characterValues; 
+		}
+	}
+
 	public Dictionary<WAR_TRIGGER, int> dictWarTriggers {
 		get { 
 			return this._dictWarTriggers; 
@@ -105,6 +117,12 @@ public class KingdomTypeData : MonoBehaviour {
 	public Dictionary<RELATIONSHIP_STATUS, int> dictWarRateModifierRelationship {
 		get { 
 			return this._dictWarRateModifierRelationship; 
+		}
+	}
+
+	public Dictionary<CHARACTER_VALUE, int> dictCharacterValues {
+		get { 
+			return this._dictCharacterValues; 
 		}
 	}
 
@@ -142,6 +160,7 @@ public class KingdomTypeData : MonoBehaviour {
 		this._dictWarTriggers.Clear ();
 		this._dictWarRateModifierMilitary.Clear ();
 		this._dictWarRateModifierRelationship.Clear ();
+		this._dictCharacterValues.Clear ();
 
 		for (int i = 0; i < this._warTriggers.Length; i++) {
 			this._dictWarTriggers.Add (this._warTriggers [i].warTrigger, this._warTriggers [i].rate);
@@ -151,6 +170,9 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 		for (int i = 0; i < this.warRateModifierRelationship.Length; i++) {
 			this._dictWarRateModifierRelationship.Add (this.warRateModifierRelationship [i].relationshipStatus, this.warRateModifierRelationship [i].rate);
+		}
+		for (int i = 0; i < this._characterValues.Length; i++) {
+			this._dictCharacterValues.Add (this._characterValues [i].character, this._characterValues [i].value);
 		}
 	}
 }

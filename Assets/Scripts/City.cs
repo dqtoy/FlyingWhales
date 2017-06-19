@@ -1008,7 +1008,7 @@ public class City{
     internal void ConquerCity(Kingdom conqueror) {
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP 
-        this._hp = 300;
+		ResetToDefaultHP();
 
         //and a random number of settlements (excluding capital) will be destroyed
         int structuresDestroyed = UnityEngine.Random.Range(0, this.structures.Count);
@@ -1017,7 +1017,7 @@ public class City{
         }
 
         //Kill all current citizens
-        this.KillCitizens();
+        this.KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
 
         this.kingdom.RemoveCityFromKingdom(this);
 
@@ -1031,16 +1031,6 @@ public class City{
 
         conqueror.AddCityToKingdom(this);
         this.CreateInitialFamilies(false);
-    }
-
-    /*
-     * Kill all the citizens in this city
-     * */
-    private void KillCitizens() {
-        int countCitizens = this.citizens.Count;
-        for (int i = 0; i < countCitizens; i++) {
-            this.citizens[0].Death(DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
-        }
     }
 
 	/*internal void LookForNewGeneral(General general){
@@ -1256,10 +1246,10 @@ public class City{
 //			EventCreator.Instance.CreateAttackCampEvent (this, targetCamp, false);
 //		}
 //	}
-	internal void KillAllCitizens(){
+	internal void KillAllCitizens(DEATH_REASONS deathReason){
 		int countCitizens = this.citizens.Count;
 		for (int i = 0; i < countCitizens; i++) {
-			this.citizens [0].Death (DEATH_REASONS.REBELLION, false, null, true);
+			this.citizens [0].Death (deathReason, false, null, true);
 		}
 
 	}
@@ -1288,7 +1278,7 @@ public class City{
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(RebelFortEverydayTurnActions);
-		KillAllCitizens ();
+		KillAllCitizens (DEATH_REASONS.REBELLION);
 		TransferCityToRebellion ();
 		this.AssignNewGovernor ();
 	}
@@ -1301,7 +1291,7 @@ public class City{
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(RebelFortEverydayTurnActions);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
-		KillAllCitizens ();
+		KillAllCitizens (DEATH_REASONS.REBELLION);
 		TransferRebellionToCity ();
 		this.AssignNewGovernor ();
 		if(!this.rebellion.rebelLeader.citizen.isKing){

@@ -25,6 +25,7 @@ public class Governor : Role {
         this._loyaltySummary = string.Empty;
 		this.UpdateLoyalty ();
 		this.SetOwnedCity(this.citizen.city);
+		this.citizen.GenerateCharacterValues ();
 	}
 
 	internal void SetOwnedCity(City ownedCity){
