@@ -11,6 +11,8 @@ public class Governor : Role {
 
     private const int defaultLoyalty = 30;
 
+	internal List<int> plagueHandling;
+
     #region getters/setters
     public string loyaltySummary {
         get { return this._loyaltySummary; }
@@ -23,6 +25,7 @@ public class Governor : Role {
 		this.citizen.isGovernor = true;
 		this.citizen.isKing = false;
         this._loyaltySummary = string.Empty;
+		this.plagueHandling = new List<int> ();
 		this.UpdateLoyalty ();
 		this.SetOwnedCity(this.citizen.city);
 		this.citizen.GenerateCharacterValues ();
@@ -38,6 +41,9 @@ public class Governor : Role {
 		}else if(this.loyalty < -100){
 			this.loyalty = -100;
 		}
+	}
+	internal void AdjustPlagueHandling(int amount){
+		this.plagueHandling.Add (amount);
 	}
 	internal void UpdateLoyalty(){
         this._loyaltySummary = string.Empty;
@@ -131,6 +137,11 @@ public class Governor : Role {
             this._loyaltySummary += "-" + adjustment.ToString() + " King is husband of a relative and their compatibility is negative.\n";
         }
 
+		/*NEUTRAL ADJUSTMENT OF LOYALTY
+		 * */
+		for (int i = 0; i < this.plagueHandling.Count; i++) {
+			baseLoyalty += this.plagueHandling [i];
+		}
 
 		this.loyalty = 0;
 		this.AdjustLoyalty (baseLoyalty);
