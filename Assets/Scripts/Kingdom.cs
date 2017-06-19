@@ -1097,18 +1097,17 @@ public class Kingdom{
 	internal IEnumerator ConquerCity(City city, General attacker){
 		if (this.id != city.kingdom.id){
 			HexTile hex = city.hexTile;
-			//		city.kingdom.cities.Remove(city);
-			city.KillCity();
+            //city.KillCity();
+            city.ConquerCity(this);
 			yield return null;
-			City newCity = CreateNewCityOnTileForKingdom(hex);
-//			newCity.hp = 300;
-			newCity.CreateInitialFamilies(false);
-			//KingdomManager.Instance.UpdateKingdomAdjacency();
+			//City newCity = CreateNewCityOnTileForKingdom(hex);
+			//newCity.hp = 100;
+			//newCity.CreateInitialFamilies(false);
 //			this.AddInternationalWarCity (newCity);
-			if (UIManager.Instance.currentlyShowingKingdom.id == newCity.kingdom.id) {
-				newCity.kingdom.HighlightAllOwnedTilesInKingdom();
+			if (UIManager.Instance.currentlyShowingKingdom.id == city.kingdom.id) {
+                city.kingdom.HighlightAllOwnedTilesInKingdom();
 			}
-			KingdomManager.Instance.CheckWarTriggerMisc (newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+			KingdomManager.Instance.CheckWarTriggerMisc (city.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 			//Adjust unrest because a city of this kingdom was conquered.
 			this.AdjustUnrest(UNREST_INCREASE_CONQUER);
 		}else{
