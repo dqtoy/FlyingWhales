@@ -73,7 +73,7 @@ public class City{
 		get{ return this._maxGrowth; }
 	}
 	public List<HexTile> structures{
-		get{ return this._ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();}
+		get{ return this._ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();} //Contains all structures, except capital city
 	}
 	public int hp{
 		get{ return this._hp; }
@@ -998,6 +998,47 @@ public class City{
 //		}
 	}
 
+    /*
+     * Conquer this city and transfer ownership to the conqueror
+     * */
+    internal void ConquerCity(Kingdom conqueror) {
+        //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
+        //its initial defense will only be 300HP 
+        this._hp = 300;
+
+        //and a random number of settlements (excluding capital) will be destroyed
+        int structuresDestroyed = UnityEngine.Random.Range(0, this.structures.Count);
+        for (int i = 0; i < structuresDestroyed; i++) {
+            this.RemoveTileFromCity(this.structures[UnityEngine.Random.Range(0, this.structures.Count)]);
+        }
+
+        //Kill all current citizens
+        this.KillCitizens();
+
+        this.kingdom.RemoveCityFromKingdom(this);
+
+        //Assign new king to conquered kingdom if, conquered city was the home of the current king
+        if (this.hasKing) {
+            this.hasKing = false;
+            if (this._kingdom.cities.Count > 0) {
+                this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
+            }
+        }
+
+        conqueror.AddCityToKingdom(this);
+        this.CreateInitialFamilies(false);
+    }
+
+    /*
+     * Kill all the citizens in this city
+     * */
+    private void KillCitizens() {
+        int countCitizens = this.citizens.Count;
+        for (int i = 0; i < countCitizens; i++) {
+            this.citizens[0].Death(DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
+        }
+    }
+
 	/*internal void LookForNewGeneral(General general){
 //		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
 		general.inAction = false;
@@ -1022,7 +1063,7 @@ public class City{
 		EventManager.Instance.onLookForLostArmies.Invoke (general);
 	}*/
 
-	internal bool HasAdjacency(int kingdomID){
+        internal bool HasAdjacency(int kingdomID){
 		for(int i = 0; i < this.hexTile.connectedTiles.Count; i++){
 			if(this.hexTile.connectedTiles[i].isOccupied){
 				if(this.hexTile.connectedTiles[i].city.kingdom.id == kingdomID){
