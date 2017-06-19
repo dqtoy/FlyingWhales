@@ -1101,7 +1101,7 @@ public class Kingdom{
 			city.KillCity();
 			yield return null;
 			City newCity = CreateNewCityOnTileForKingdom(hex);
-			newCity.hp = 300;
+//			newCity.hp = 300;
 			newCity.CreateInitialFamilies(false);
 			//KingdomManager.Instance.UpdateKingdomAdjacency();
 //			this.AddInternationalWarCity (newCity);

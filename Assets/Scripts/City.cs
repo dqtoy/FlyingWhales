@@ -80,7 +80,7 @@ public class City{
 		set{ this._hp = value; }
 	}
 	public int maxHP{
-		get{ return 300 +  (50 * this.structures.Count); } //+1 since the structures list does not contain the main hex tile
+		get{ return Utilities.defaultCityHP +  (50 * this.structures.Count); } //+1 since the structures list does not contain the main hex tile
 	}
     public List<HexTile> ownedTiles {
         get { return this._ownedTiles; }
@@ -109,12 +109,12 @@ public class City{
 //		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
-		this._hp = this.maxHP;
 		this.raidLoyaltyExpiration = 0;
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
-		
+
+		ResetToDefaultHP ();
 //		this.CreateInitialFamilies();
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
@@ -1243,7 +1243,7 @@ public class City{
 		}
 		rebellion.warPair.isDone = true;
 		this.rebellion = rebellion;
-		this.hp = 300;
+		ResetToDefaultHP();
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(RebelFortEverydayTurnActions);
@@ -1256,7 +1256,7 @@ public class City{
 			this.hexTile.cityInfo.rebelIcon.SetActive (false);
 		}
 		this.rebellion.warPair.isDone = true;
-		this.hp = 300;
+		ResetToDefaultHP();
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(RebelFortEverydayTurnActions);
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
@@ -1272,4 +1272,7 @@ public class City{
 		this.rebellion = null;
 	}
 
+	internal void ResetToDefaultHP(){
+		this._hp = Utilities.defaultCityHP;
+	}
 }
