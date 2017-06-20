@@ -74,7 +74,7 @@ public class Citizen {
 		get{ return this._characterValues;}
 	}
     public Dictionary<CHARACTER_VALUE, int> importantCharcterValues {
-        get { return this._characterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value); }
+        get { return this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value); }
     }
 	public List<Citizen> dependentChildren{
 		get{ return this.children.Where (x => x.age < 16 && !x.isMarried).ToList ();}
@@ -1492,7 +1492,7 @@ public class Citizen {
 	}
 
 	private void UpdateCharacterValueByKey(CHARACTER_VALUE key, int value){
-		for(int i = 0; this._characterValues.Length; i++){
+		for(int i = 0; this._characterValues.Length > 0; i++){
 			if(this._characterValues[i].character == key){
 				this._characterValues [i].value += value;
 				break;
