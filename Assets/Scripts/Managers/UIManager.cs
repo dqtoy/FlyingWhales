@@ -2568,6 +2568,14 @@ public class UIManager : MonoBehaviour {
 			return rebellionPlotIcon;
 		case EVENT_TYPES.ADMIRATION:
 			return requestPeaceIcon;
+		case EVENT_TYPES.RIOT:
+			return rebellionPlotIcon;
+		case EVENT_TYPES.SECESSION:
+			return rebellionPlotIcon;
+		case EVENT_TYPES.REBELLION:
+			return rebellionPlotIcon;
+		case EVENT_TYPES.PLAGUE:
+			return militarizationIcon;
 		}
 		return assassinationIcon;
 	}
