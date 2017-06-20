@@ -19,6 +19,10 @@ public class Plague : GameEvent {
 	internal int vaccineMeterMax;
 	internal int daysCount;
 
+    protected List<Kingdom> pragmaticKingdoms;
+    protected List<Kingdom> opportunisticKingdoms;
+    protected List<Kingdom> humanisticKingdoms;
+
     private string[] plagueAdjectives = new string[] {
         "Red", "Green", "Yellow", "Black", "Rotting", "Silent", "Screaming", "Trembling", "Sleeping",
         "Cat", "Dog", "Pig", "Lamb", "Lizard", "Bog", "Death", "Stomach", "Eye", "Finger", "Rabid",
@@ -54,13 +58,20 @@ public class Plague : GameEvent {
 		this.vaccineMeter = 0;
 		this.daysCount = 0;
 
-		int maxMeter = 200 * NumberOfCitiesInWorld ();
+        this.pragmaticKingdoms = new List<Kingdom>();
+        this.opportunisticKingdoms = new List<Kingdom>();
+        this.humanisticKingdoms = new List<Kingdom>();
+
+        int maxMeter = 200 * NumberOfCitiesInWorld ();
 		this.bioWeaponMeterMax = maxMeter;
 		this.vaccineMeterMax = maxMeter;
-        this.ChooseApproach();
+       
+		this.ChooseApproach();
 		this.InitializePlague ();
+
         EventManager.Instance.AddEventToDictionary(this);
         EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+        EventManager.Instance.onKingdomDiedEvent.AddListener(CureAKingdom);
 	}
 
     private string GeneratePlagueName() {
@@ -120,22 +131,48 @@ public class Plague : GameEvent {
      * to handle this event. This function will then 
      * assign the chosen approach to onPerformAction.
      * */
-    private void ChooseApproach() {
-        Dictionary<CHARACTER_VALUE, int> importantCharVals = this.startedBy.importantCharcterValues;
-
+    private void ChooseApproach(Citizen king) {
+        Dictionary<CHARACTER_VALUE, int> importantCharVals = king.importantCharcterValues;
+        EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
         if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.FAIRNESS) ||
             importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD) || importantCharVals.ContainsKey(CHARACTER_VALUE.CHAUVINISM)) {
             KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals.First();
             if (priotiyValue.Key == CHARACTER_VALUE.CHAUVINISM) {
-                onPerformAction += OpportunisticApproach;
+                chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
             } else if (priotiyValue.Key == CHARACTER_VALUE.GREATER_GOOD) {
-                onPerformAction += PragmaticApproach;
+                chosenApproach = EVENT_APPROACH.PRAGMATIC;
             } else {
-                onPerformAction += HumanisticApproach;
+                chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
             }
         } else {
             //a king who does not value any of the these four ethics will choose OPPORTUNISTIC APPROACH in dealing with a plague.
-            onPerformAction += OpportunisticApproach;
+            chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
+        }
+        this.AddKingdomToApproach(chosenApproach, king.city.kingdom);
+    }
+
+    private void AddKingdomToApproach(EVENT_APPROACH approach, Kingdom kingdomToAdd) {
+        if (approach == EVENT_APPROACH.HUMANISTIC) {
+            if(humanisticKingdoms.Count <= 0) {
+                onPerformAction += HumanisticApproach;
+            }
+            if (!humanisticKingdoms.Contains(kingdomToAdd)) {
+                humanisticKingdoms.Add(kingdomToAdd);
+            }
+        } else if(approach == EVENT_APPROACH.PRAGMATIC) {
+            if (pragmaticKingdoms.Count <= 0) {
+                onPerformAction += PragmaticApproach;
+            }
+            if (!pragmaticKingdoms.Contains(kingdomToAdd)) {
+                pragmaticKingdoms.Add(kingdomToAdd);
+            }
+        } else if (approach == EVENT_APPROACH.OPPORTUNISTIC) {
+            if (opportunisticKingdoms.Count <= 0) {
+                onPerformAction += OpportunisticApproach;
+            }
+            if (!opportunisticKingdoms.Contains(kingdomToAdd)) {
+                opportunisticKingdoms.Add(kingdomToAdd);
+            }
         }
     }
 
@@ -144,7 +181,9 @@ public class Plague : GameEvent {
     }
 
     private void PragmaticApproach() {
+        if (this.IsDaysMultipleOf(5)) {
 
+        }
     }
     private void OpportunisticApproach() {
 
@@ -168,6 +207,7 @@ public class Plague : GameEvent {
 	}
 	private void PlagueAKingdom(Kingdom kingdom){
 		this.affectedKingdoms.Add (kingdom);
+        this.ChooseApproach(kingdom.king);
 	}
 	private void CureASettlement(HexTile hexTile){
 		hexTile.isPlagued = false;
