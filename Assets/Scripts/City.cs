@@ -1013,7 +1013,7 @@ public class City{
 		}
 	}
 
-	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration){
+	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration, List<HexTile> newPath = null){
 		if(role == ROLE.GENERAL){
 			return null;
 		}
@@ -1037,16 +1037,21 @@ public class City{
 			this.citizens.Remove (citizen);
 			return citizen;
 		}else{
-			List<HexTile> path = null;
-			if (role == ROLE.TRADER) {
-				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL).ToList();
-			} else {
-				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.AVATAR).ToList();
-			}
-			if (path == null) {
-				return null;
-			}
-			if(!Utilities.CanReachInTime(eventType, path, duration)){
+            List<HexTile> path = null;
+            if (newPath == null) {
+                if (role == ROLE.TRADER) {
+                    path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL).ToList();
+                } else {
+                    path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.AVATAR).ToList();
+                }
+                if (path == null) {
+                    return null;
+                }
+            } else {
+                path = newPath;
+            }
+
+            if (!Utilities.CanReachInTime(eventType, path, duration)){
 				return null;
 			}
 			GENDER gender = GENDER.MALE;

@@ -102,7 +102,7 @@ public class StateVisit : GameEvent {
 						}
 					}else{
 						if (relationship != null) {
-							relationship.like = -35;
+							relationship.SetLikeness(-35);
 							relationship.UpdateKingRelationshipStatus ();
 						}
 					}

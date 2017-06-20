@@ -700,8 +700,14 @@ public class Citizen {
 			this.assignedRole = new Reinforcer (this);
 		} else if (role == ROLE.REBEL) {
 			this.assignedRole = new Rebel (this);
-		}
-		this.UpdatePrestige ();
+        } else if (role == ROLE.EXTERMINATOR) {
+            this.assignedRole = new Exterminator(this);
+        } else if (role == ROLE.SCOURGE) {
+            this.assignedRole = new Scourge(this);
+        } else if (role == ROLE.HEALER) {
+            this.assignedRole = new Healer(this);
+        }
+        this.UpdatePrestige ();
 	}
 
 	internal bool IsRoyaltyCloseRelative(Citizen otherCitizen){

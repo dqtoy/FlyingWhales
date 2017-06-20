@@ -120,6 +120,9 @@ public enum ROLE{
 	RAIDER,
 	REINFORCER,
 	REBEL,
+    EXTERMINATOR,
+    SCOURGE,
+    HEALER
 }
 
 public enum KINGDOM_TYPE {

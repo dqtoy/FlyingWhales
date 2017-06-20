@@ -8,7 +8,7 @@ public class RelationshipKings {
 	public Citizen sourceKing;
 	public Citizen king;
 //	public DECISION previousDecision;
-	public int like;
+	private int _like;
 	public RELATIONSHIP_STATUS lordRelationship;
 //	public LORD_EVENTS previousInteraction = LORD_EVENTS.NONE;
 	public bool isFirstEncounter;
@@ -16,21 +16,31 @@ public class RelationshipKings {
 //	public bool isAtWar;
 	public int daysAtWar;
 	public List<History> relationshipHistory;
+    private int _eventLikenessModifier;
+    private string _eventLikenessSummary;
 
     private const int CHANCE_TO_CANCEL_TRADE_ROUTE = 10;
 
-	public RelationshipKings(Citizen sourceKing, Citizen king, int like){
+    #region getters/setters
+    public int like {
+        get { return this._like + this._eventLikenessModifier; }
+    }
+    #endregion
+
+    public RelationshipKings(Citizen sourceKing, Citizen king, int like){
 //		this.id = id;
 		this.sourceKing = sourceKing;
 		this.king = king;
 //		this.previousDecision = previousDecision;
-		this.like = like;
+		this._like = like;
 		this.isFirstEncounter = true;
 		this.lordRelationship = RELATIONSHIP_STATUS.NEUTRAL;
 		this.relationshipHistory = new List<History>();
+        this._eventLikenessModifier = 0;
+        this._eventLikenessSummary = string.Empty;
 //		this.isAdjacent = false;
 //		this.isAtWar = false;
-	}
+    }
 
 	internal void UpdateKingRelationshipStatus(){
 		if(this.like <= -81){
@@ -52,24 +62,29 @@ public class RelationshipKings {
 
     internal void ChangeRelationshipStatus(RELATIONSHIP_STATUS newStatus, GameEvent gameEventTrigger = null) {
         if(newStatus == RELATIONSHIP_STATUS.ALLY) {
-            this.like = 81;
+            this._like = 81;
         } else if (newStatus == RELATIONSHIP_STATUS.FRIEND) {
-            this.like = 41;
+            this._like = 41;
         } else if (newStatus == RELATIONSHIP_STATUS.WARM) {
-            this.like = 21;
+            this._like = 21;
         } else if (newStatus == RELATIONSHIP_STATUS.NEUTRAL) {
-            this.like = 0;
+            this._like = 0;
         } else if (newStatus == RELATIONSHIP_STATUS.COLD) {
-            this.like = -21;
+            this._like = -21;
         } else if (newStatus == RELATIONSHIP_STATUS.ENEMY) {
-            this.like = -41;
+            this._like = -41;
         } else if (newStatus == RELATIONSHIP_STATUS.RIVAL) {
-            this.like = -81;
+            this._like = -81;
         }
         UpdateKingRelationshipStatus();
         if(this.lordRelationship == RELATIONSHIP_STATUS.ENEMY || this.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
             Embargo(gameEventTrigger);
         }
+    }
+
+    internal void SetLikeness(int likeness) {
+        this._like = likeness;
+        UpdateKingRelationshipStatus();
     }
 
 	// This will change the view of sourceKing towards King
@@ -99,8 +114,8 @@ public class RelationshipKings {
         //		}
 
         RELATIONSHIP_STATUS previousStatus = this.lordRelationship;
-		this.like += adjustment;
-		this.like = Mathf.Clamp(this.like, -100, 100);
+		this._like += adjustment;
+		this._like = Mathf.Clamp(this.like, -100, 100);
 
 //		if(this.like < -100){
 //			this.like = -100;
@@ -170,16 +185,27 @@ public class RelationshipKings {
 
     internal void ChangeTargetKing(Citizen newTargetKing) {
         this.king = newTargetKing;
+        ResetEventModifiers();
     }
 
+    internal void AddEventModifier(int modification, string summary) {
+        this._eventLikenessModifier += modification;
+        this._eventLikenessSummary += summary + "\n";
+        UpdateKingRelationshipStatus();
+    }
 
+    private void ResetEventModifiers() {
+        this._eventLikenessModifier = 0;
+        this._eventLikenessSummary = string.Empty;
+        UpdateKingRelationshipStatus();
+    }
     #region For Testing Functions
     /*
      * Instantly change the like rating
      * of sourceKing towards targetKing.
      * */
     internal void ChangeSourceKingLikeness(int newLikeness){
-		this.like = newLikeness;
+		this._like = newLikeness;
 		this.UpdateKingRelationshipStatus();
 	}
 
@@ -189,7 +215,7 @@ public class RelationshipKings {
     * */
     internal void ChangeTargetKingLikeness(int newLikeness){
 		RelationshipKings rel = this.king.GetRelationshipWithCitizen(this.sourceKing);
-		rel.like = newLikeness;
+		rel._like = newLikeness;
 		rel.UpdateKingRelationshipStatus();
 	}
     #endregion

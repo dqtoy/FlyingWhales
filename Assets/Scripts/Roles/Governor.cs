@@ -5,17 +5,23 @@ using System.Collections.Generic;
 public class Governor : Role {
 
 	public City ownedCity;
-	internal int loyalty;
+	private int _loyalty;
 
     private string _loyaltySummary; //For UI, to display the factors that affected this governor's loyalty
 
     private const int defaultLoyalty = 30;
 
+    private int _eventLoyaltyModifier;
+    private string _eventLoyaltySummary;
+
 	internal List<int> plagueHandling;
 
     #region getters/setters
+    public int loyalty {
+        get { return _loyalty + _eventLoyaltyModifier; }
+    }
     public string loyaltySummary {
-        get { return this._loyaltySummary; }
+        get { return this._loyaltySummary + "\n" + _eventLoyaltySummary; }
     }
     #endregion
 
@@ -26,6 +32,9 @@ public class Governor : Role {
 		this.citizen.isKing = false;
         this._loyaltySummary = string.Empty;
 		this.plagueHandling = new List<int> ();
+        this._eventLoyaltyModifier = 0;
+        this._eventLoyaltySummary = string.Empty;
+
 		this.UpdateLoyalty ();
 		this.SetOwnedCity(this.citizen.city);
 		this.citizen.GenerateCharacterValues ();
@@ -35,12 +44,8 @@ public class Governor : Role {
 		this.ownedCity = ownedCity;
 	}
 	internal void AdjustLoyalty(int amount){
-		this.loyalty += amount;
-		if(this.loyalty > 100){
-			this.loyalty = 100;
-		}else if(this.loyalty < -100){
-			this.loyalty = -100;
-		}
+		this._loyalty += amount;
+        this._loyalty = Mathf.Clamp(this._loyalty, -100, 100);
 	}
 	internal void AdjustPlagueHandling(int amount){
 		this.plagueHandling.Add (amount);
@@ -143,7 +148,20 @@ public class Governor : Role {
 			baseLoyalty += this.plagueHandling [i];
 		}
 
-		this.loyalty = 0;
+		this._loyalty = 0;
 		this.AdjustLoyalty (baseLoyalty);
 	}
+
+    internal void AddEventModifier(int modification, string summary) {
+        this._eventLoyaltyModifier += modification;
+        this._eventLoyaltySummary += summary + "\n";
+    }
+    internal void SetLoyalty(int newLoyalty) {
+        this._loyalty = newLoyalty;
+    }
+
+    private void ResetEventModifiers() {
+        this._eventLoyaltyModifier = 0;
+        this._eventLoyaltySummary = string.Empty;
+    }
 }

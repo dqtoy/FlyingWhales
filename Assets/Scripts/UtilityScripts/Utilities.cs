@@ -824,6 +824,8 @@ public class Utilities : MonoBehaviour {
 			return true;
 		case EVENT_TYPES.REBELLION:
 			return true;
+        case EVENT_TYPES.PLAGUE:
+            return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;

@@ -2877,7 +2877,7 @@ public class UIManager : MonoBehaviour {
 	}
 
     public void ChangeGovernorLoyalty() {
-        ((Governor)currentlyShowingCity.governor.assignedRole).loyalty = Int32.Parse(forTestingLoyaltyLbl.text);
+        ((Governor)currentlyShowingCity.governor.assignedRole).SetLoyalty(Int32.Parse(forTestingLoyaltyLbl.text));
         Debug.Log("Changed loyalty of: " + currentlyShowingCity.governor.name + " to " + ((Governor)currentlyShowingCity.governor.assignedRole).loyalty.ToString());
     }
 
