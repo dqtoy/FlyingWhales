@@ -19,8 +19,30 @@ public class Plague : GameEvent {
 	internal int vaccineMeterMax;
 	internal int daysCount;
 
-	public Plague(int startWeek, int startMonth, int startYear, Citizen startedBy, City sourceCity) : base (startWeek, startMonth, startYear, startedBy){
-		this.sourceCity = sourceCity;
+    private string[] plagueAdjectives = new string[] {
+        "Red", "Green", "Yellow", "Black", "Rotting", "Silent", "Screaming", "Trembling", "Sleeping",
+        "Cat", "Dog", "Pig", "Lamb", "Lizard", "Bog", "Death", "Stomach", "Eye", "Finger", "Rabid",
+        "Fatal", "Blistering", "Icy", "Scaly", "Sexy", "Violent", "Necrotic", "Foul", "Vile", "Nasty",
+        "Ghastly", "Malodorous", "Cave", "Phantom", "Wicked", "Strange"
+    };
+
+    private string[] plagueDieseases = new string[] {
+        "Sores", "Ebola", "Anthrax", "Pox", "Face", "Sneeze", "Gangrene", "Throat", "Rash", "Warts",
+        "Cholera", "Colds", "Ache", "Syndrome", "Tumor", "Chills", "Blisters", "Mouth", "Fever", "Delirium",
+        "Measles", "Mutata", "Disease"
+    };
+
+    private string _plagueName;
+
+    #region getters/setters
+    public string plagueName {
+        get { return this._plagueName; }
+    }
+    #endregion
+
+    public Plague(int startWeek, int startMonth, int startYear, Citizen startedBy, City sourceCity) : base (startWeek, startMonth, startYear, startedBy){
+        this._plagueName = GeneratePlagueName();
+        this.sourceCity = sourceCity;
 		this.sourceKingdom = sourceCity.kingdom;
 		this.affectedKingdoms = new List<Kingdom>();
 		this.affectedCities = new List<City> ();
@@ -39,13 +61,22 @@ public class Plague : GameEvent {
         EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 
+    private string GeneratePlagueName() {
+        return plagueAdjectives[Random.Range(0, plagueAdjectives.Length)] + " " + plagueDieseases[Random.Range(0, plagueDieseases.Length)];
+    }
+
     #region overrides
     internal override void PerformAction() {
 		this.daysCount += 1;
         onPerformAction();
     }
+    internal override void DoneEvent() {
+        base.DoneEvent();
+        EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+        onPerformAction = null;
+    }
     #endregion
-	private void InitializePlague(){
+    private void InitializePlague(){
 		this.PlagueACity (this.sourceCity);
 		this.PlagueASettlement (this.sourceCity.structures [0]);
         onPerformAction += SpreadPlagueWithinCity;
