@@ -73,7 +73,6 @@ public class Plague : GameEvent {
 		this.bioWeaponMeterMax = maxMeter;
 		this.vaccineMeterMax = maxMeter;
        
-		this.ChooseApproach();
 		this.InitializePlague ();
 
         EventManager.Instance.AddEventToDictionary(this);
