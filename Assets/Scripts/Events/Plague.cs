@@ -50,7 +50,13 @@ public class Plague : GameEvent {
 	private void InitializePlague(){
 		this.PlagueACity (this.sourceCity);
 		this.PlagueASettlement (this.sourceCity.structures [0]);
-	}
+        onPerformAction += SpreadPlagueWithinCity;
+        onPerformAction += SpreadPlagueWithinKingdom;
+        onPerformAction += CureAPlagueSettlementEveryday;
+        onPerformAction += DestroyASettlementEveryday;
+        onPerformAction += IncreaseUnrestEveryMonth;
+
+    }
     private List<Kingdom> GetOtherKingdoms(){
 		if(this.sourceCity == null){
 			return null;
@@ -106,12 +112,19 @@ public class Plague : GameEvent {
 
     }
 
-	private void PlagueASettlement(HexTile hexTile){
+    internal void InfectRandomSettlement(List<HexTile> hexTilesToChooseFrom) {
+        HexTile targetSettlement = hexTilesToChooseFrom.First(x => !x.isPlagued);
+        if (targetSettlement != null) {
+            this.PlagueASettlement(targetSettlement);
+        }
+    }
+
+    private void PlagueASettlement(HexTile hexTile){
 		hexTile.isPlagued = true;
 
 		//TODO: add poison icon on tile
 	}
-	private void PlagueACity(City city){
+	internal void PlagueACity(City city){
 		city.plague = this;
 		this.affectedCities.Add (city);
 	}
@@ -138,7 +151,11 @@ public class Plague : GameEvent {
 		List<HexTile> plaguedSettlements = city.plaguedSettlements;
 		HexTile targetSettlement = plaguedSettlements [plaguedSettlements.Count - 1];
 		if(targetSettlement != null){
-			//TODO: destroy settlement
+            /*
+             * Reset tile for now.
+             * TODO: When ruined settlement sprites are provided, use those instead.
+             * */
+            city.RemoveTileFromCity(targetSettlement);
 		}
 
 	}
@@ -148,20 +165,28 @@ public class Plague : GameEvent {
 		}
 		return false;
 	}
+
+    /*
+     * Every multiple of 4 day, per city, there is a 2% chance for every 
+     * plagued settlement that the plague will spread to another settlement 
+     * within the city.
+     * */
 	private void SpreadPlagueWithinCity(){
 		if(this.IsDaysMultipleOf(4)){
 			for (int i = 0; i < this.affectedCities.Count; i++) {
 				int chance = UnityEngine.Random.Range (0, 100);
 				int value = 2 * this.affectedCities [i].plaguedSettlements.Count;
 				if(chance < value){
-					HexTile targetSettlement = this.affectedCities [i].structures.First (x => !x.isPlagued);
-					if(targetSettlement != null){
-						this.PlagueASettlement (targetSettlement);
-					}
+                    InfectRandomSettlement(this.affectedCities[i].structures);
 				}
 			}
 		}
 	}
+
+    /*
+     * Every multiple of 4 day, per kingdom, there is a 1% chance for every plagued settlement
+     * within the kingdom that the plague will spread to another clean city within the kingdom.
+     * */
 	private void SpreadPlagueWithinKingdom(){
 		if (this.IsDaysMultipleOf (4)) {
 			for (int i = 0; i < this.affectedKingdoms.Count; i++) {
@@ -176,6 +201,11 @@ public class Plague : GameEvent {
 			}
 		}
 	}
+
+    /*
+     * Every multiple of 5 day, per kingdom, there is a 1.5% chance for every 
+     * plagued settlement that one of them will be cured.
+     * */
 	private void CureAPlagueSettlementEveryday(){
 		if (this.IsDaysMultipleOf (5)) {
 			for (int i = 0; i < this.affectedKingdoms.Count; i++) {
@@ -193,6 +223,11 @@ public class Plague : GameEvent {
 			}
 		}
 	}
+
+    /*
+     * Every multiple of 6 day, per kingdom, there is a 1% chance for 
+     * every plagued settlement that one of them will be ruined.
+     * */
 	private void DestroyASettlementEveryday(){
 		if (this.IsDaysMultipleOf (6)) {
 			for (int i = 0; i < this.affectedKingdoms.Count; i++) {
@@ -207,4 +242,19 @@ public class Plague : GameEvent {
 			}
 		}
 	}
+
+    /*
+     * At the start of each month, unrest in the kingdom 
+     * increases by 1 for every plagued settlement.
+     * */
+    private void IncreaseUnrestEveryMonth() {
+        if (GameManager.Instance.days == 1) {
+            for (int i = 0; i < this.affectedKingdoms.Count; i++) {
+                Kingdom currKingdom = this.affectedKingdoms[i];
+                int unrestIncrease = 1 * currKingdom.cities.Sum(x => x.plaguedSettlements.Count);
+                currKingdom.AdjustUnrest(unrestIncrease);
+            }
+        }
+    }
+        
 }
