@@ -380,7 +380,7 @@ public class UIManager : MonoBehaviour {
                 break;
             }
         }
-        StartCoroutine(RepositionGrid(kingdomListOtherKingdomsGrid));
+        RepositionGridCallback(kingdomListOtherKingdomsGrid);
         kingdomListOtherKingdomsGrid.GetChildList().First().GetComponent<KingdomFlagItem>().SetAsSelected();
     }
 
@@ -448,7 +448,7 @@ public class UIManager : MonoBehaviour {
                 kingdomOtherResourcesGrid.AddChild(resourceGO.transform);
                 kingdomOtherResourcesGrid.Reposition();
             }
-            StartCoroutine(RepositionGrid(kingdomOtherResourcesGrid));
+            RepositionGridCallback(kingdomOtherResourcesGrid);
         }
 
         //Trade Resources
@@ -886,7 +886,7 @@ public class UIManager : MonoBehaviour {
 
 		kingRelationshipsParentGO.SetActive(false);
 		governorRelationshipsParentGO.SetActive(true);
-		StartCoroutine(RepositionGrid(governorsRelationshipGrid));
+		RepositionGridCallback(governorsRelationshipGrid);
 	}
 
 	public void HideRelationships(){
@@ -1217,10 +1217,17 @@ public class UIManager : MonoBehaviour {
 				eventGO.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
 				kingdomOwner.AddGameObjectToGrid(eventGO);
 				gameEvent.goEventItem = eventGO;
-				//StartCoroutine(RepositionGrid(gameEventsOfTypeGrid));
+
 			}
 		}else{ //World Event
-			
+			GameObject eventGO = InstantiateUIObject(this.gameEventPrefab, this.gameEventsOfTypeGrid.transform);
+			eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
+			eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
+			eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
+			eventGO.GetComponent<EventItem>().StartExpirationTimer();
+			eventGO.transform.localPosition = Vector3.zero;
+			RepositionGridCallback(this.gameEventsOfTypeGrid);
+			gameEvent.goEventItem = eventGO;
 		}
       
         
