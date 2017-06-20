@@ -8,6 +8,7 @@ public class GameEvent {
 	public int id;
 	public EVENT_TYPES eventType;
 	public EVENT_STATUS eventStatus;
+	public string name;
 
 	public int startDay;
 	public int startMonth;
@@ -19,6 +20,7 @@ public class GameEvent {
 	public int endDay;
 	public int endMonth;
 	public int endYear;
+
 
 	public string description;
 	public string resolution;
@@ -55,6 +57,7 @@ public class GameEvent {
 	public GameEvent(int startWeek, int startMonth, int startYear, Citizen startedBy){
 		this.id = Utilities.SetID(this);
 		this.eventStatus = EVENT_STATUS.EXPOSED;
+		this.name = "Game Event";
 		this.startDay = startWeek;
 		this.startMonth = startMonth;
 		this.startYear = startYear;

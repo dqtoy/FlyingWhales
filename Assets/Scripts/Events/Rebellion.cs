@@ -17,6 +17,7 @@ public class Rebellion : GameEvent {
 
 	public Rebellion(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.REBELLION;
+		this.name = "Rebellion";
 		this.rebelLeader = (Rebel)startedBy.assignedRole;
 		this.targetKingdom = startedBy.city.kingdom;
 //		this.targetCity = null;

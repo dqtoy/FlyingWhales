@@ -38,9 +38,10 @@ public class InvasionPlan : GameEvent {
 	}
 	#endregion
 
-	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _sourceKingdom, Kingdom _targetKingdom, GameEvent gameEventTrigger, War _war, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE) : base (startWeek, startMonth, startYear, startedBy){
+	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _sourceKingdom, Kingdom _targetKingdom, GameEvent gameEventTrigger, War _war, WAR_TRIGGER warTrigger) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
+		this.name = "Invasion Plan";
 		this.description = startedBy.name + " created an invasion plan against " + _targetKingdom.king.name + ".";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
@@ -64,11 +65,15 @@ public class InvasionPlan : GameEvent {
 
 			} else if (gameEventTrigger is BorderConflict) {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in response to worsening Border Conflict.";
-				logFillers = new LogFiller[0];
+				logFillers = new LogFiller[] {
+					new LogFiller (gameEventTrigger, gameEventTrigger.name),
+				};
 
 			} else if (gameEventTrigger is DiplomaticCrisis) {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in the aftermath of a recent Diplomatic Crisis.";
-				logFillers = new LogFiller[0];
+				logFillers = new LogFiller[] {
+					new LogFiller (gameEventTrigger, gameEventTrigger.name),
+				};
 
 			} else if (gameEventTrigger is Espionage) {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
@@ -89,6 +94,12 @@ public class InvasionPlan : GameEvent {
 					new LogFiller ((gameEventTrigger as JoinWar).startedByKingdom, (gameEventTrigger as JoinWar).startedByKingdom.name)
 				};
 
+			} else if (gameEventTrigger is Plague) {
+//				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as Plague).startedByKingdom.name + ".";
+				logFillers = new LogFiller[] {
+					new LogFiller (this._targetKingdom.king, this._targetKingdom.king.name),
+					new LogFiller (gameEventTrigger, gameEventTrigger.name),
+				};
 			} else {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
 			} 
@@ -102,8 +113,8 @@ public class InvasionPlan : GameEvent {
 
 			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days+1, GameManager.Instance.year, this.durationInDays);
 			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
+
 		}else{
-			
 			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "WarTriggerReasons", warTrigger.ToString ())
 				, new LogFiller[]{ new LogFiller (this._targetKingdom.king, this._targetKingdom.king.name) });
 

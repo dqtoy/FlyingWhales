@@ -39,6 +39,7 @@ public class JoinWar : GameEvent {
 	public JoinWar(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen _candidateForAlliance, Envoy _envoyToSend, Kingdom _kingdomToAttack, 
 		InvasionPlan _invasionPlanThatStartedEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.JOIN_WAR_REQUEST;
+		this.name = "Join War";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this._candidateForAlliance = _candidateForAlliance;
@@ -46,8 +47,8 @@ public class JoinWar : GameEvent {
 		this._kingdomToAttack = _kingdomToAttack;
 		this._uncovered = new List<Citizen>();
 		this._invasionPlanThatStartedEvent = _invasionPlanThatStartedEvent;
+		this._warTrigger = WAR_TRIGGER.JOIN_WAR;
 		this.warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
-
         this._candidateForAlliance.city.kingdom.DiscoverKingdom(kingdomToAttack);
         kingdomToAttack.DiscoverKingdom(this._candidateForAlliance.city.kingdom);
 
@@ -211,7 +212,7 @@ public class JoinWar : GameEvent {
 				joinWarSuccessLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name);
 
 				//Create new Invasion Plan against target kingdom
-				warEvent.CreateInvasionPlan (this.candidateForAlliance.city.kingdom, this);
+				warEvent.CreateInvasionPlan (this.candidateForAlliance.city.kingdom, this, this._warTrigger);
 
 				this.resolution = this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name;
 				this.DoneEvent();

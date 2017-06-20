@@ -17,6 +17,7 @@ public class Militarization : GameEvent {
 
 	public Militarization(int startWeek, int startMonth, int startYear, Citizen startedBy, InvasionPlan _invasionPlanThatTriggeredEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.MILITARIZATION;
+		this.name = "Militarization";
 		this.description = startedBy.name + " prioritizing the training of his generals and army, in preparation for war.";
 		this.durationInDays = 120;
 		this.remainingDays = this.durationInDays;

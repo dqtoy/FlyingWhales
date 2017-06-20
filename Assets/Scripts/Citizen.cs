@@ -984,7 +984,7 @@ public class Citizen {
 				warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
 					this.city.kingdom, relationship.king.city.kingdom);
 			}
-			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
+//			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
 			//			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
 			//				this, this.city.kingdom, relationship.king.city.kingdom, gameEventTrigger);
 		}
@@ -1075,7 +1075,7 @@ public class Citizen {
 		}
 	}*/
 
-	internal void WarTrigger(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
+	internal void WarTrigger(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData, WAR_TRIGGER warTrigger){
 //		return;
         if(!relationship.sourceKing.city.kingdom.discoveredKingdoms.Contains(relationship.king.city.kingdom) ||
             !relationship.king.city.kingdom.discoveredKingdoms.Contains(relationship.sourceKing.city.kingdom)) {
@@ -1093,15 +1093,19 @@ public class Citizen {
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 0;
 		MILITARY_STRENGTH milStrength = relationship.king.city.kingdom.GetMilitaryStrengthAgainst (this.city.kingdom);
-		if(gameEventTrigger != null){
-			if(kingdomData.dictWarTriggers.ContainsKey(gameEventTrigger.warTrigger)){
-				value = kingdomData.dictWarTriggers [gameEventTrigger.warTrigger];
-			}
-		}else{
-			if(kingdomData.dictWarTriggers.ContainsKey(warTrigger)){
-				value = kingdomData.dictWarTriggers [warTrigger];
-			}
+
+		if(kingdomData.dictWarTriggers.ContainsKey(warTrigger)){
+			value = kingdomData.dictWarTriggers [warTrigger];
 		}
+//		if(gameEventTrigger != null){
+//			if(kingdomData.dictWarTriggers.ContainsKey(gameEventTrigger.warTrigger)){
+//				value = kingdomData.dictWarTriggers [gameEventTrigger.warTrigger];
+//			}
+//		}else{
+//			if(kingdomData.dictWarTriggers.ContainsKey(warTrigger)){
+//				value = kingdomData.dictWarTriggers [warTrigger];
+//			}
+//		}
 
 		if(kingdomData.dictWarRateModifierMilitary.ContainsKey(milStrength)){
 			float modifier = (float)value * ((float)kingdomData.dictWarRateModifierMilitary [milStrength] / 100f);

@@ -182,4 +182,18 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+
+	internal Plague CreatePlagueEvent(){
+		List<Kingdom> targetKingdoms = KingdomManager.Instance.allKingdoms.Where (x => x.unrest >= 75 && x.cities.First (y => y.ownedTiles.Count >= 5) != null).ToList();
+		if(targetKingdoms != null && targetKingdoms.Count > 0){
+			Kingdom plaguedKingdom = targetKingdoms [UnityEngine.Random.Range (0, targetKingdoms.Count)];
+			List<City> targetCities = plaguedKingdom.cities.Where (x => x.ownedTiles.Count >= 5).ToList();
+			City plaguedCity = targetCities [UnityEngine.Random.Range (0, targetCities.Count)];
+			if(plaguedCity != null){
+				Plague plague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, plaguedCity);
+				return plague;
+			}
+		}
+		return null;
+	}
 }

@@ -20,6 +20,8 @@ public class Plague : GameEvent {
 	internal int daysCount;
 
 	public Plague(int startWeek, int startMonth, int startYear, Citizen startedBy, City sourceCity) : base (startWeek, startMonth, startYear, startedBy){
+		this.eventType = EVENT_TYPES.PLAGUE;
+		this.name = "Plague";
 		this.sourceCity = sourceCity;
 		this.sourceKingdom = sourceCity.kingdom;
 		this.affectedKingdoms = new List<Kingdom>();
@@ -32,7 +34,7 @@ public class Plague : GameEvent {
 		int maxMeter = 200 * NumberOfCitiesInWorld ();
 		this.bioWeaponMeterMax = maxMeter;
 		this.vaccineMeterMax = maxMeter;
-
+		this._warTrigger = WAR_TRIGGER.OPPOSING_APPROACH;
         this.ChooseApproach();
 		this.InitializePlague ();
         EventManager.Instance.AddEventToDictionary(this);

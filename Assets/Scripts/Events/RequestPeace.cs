@@ -21,6 +21,7 @@ public class RequestPeace : GameEvent {
 
 	public RequestPeace(int startWeek, int startMonth, int startYear, Citizen startedBy, Envoy _envoySent, Kingdom _targetKingdom) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.REQUEST_PEACE;
+		this.name = "Request Peace";
 		this.description = startedBy.name + " has sent " + _envoySent.citizen.name + " to " + _targetKingdom.name + " to request peace.";
 		this.durationInDays = 4;
 		this.remainingDays = this.durationInDays;

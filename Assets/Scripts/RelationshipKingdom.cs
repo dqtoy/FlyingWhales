@@ -88,7 +88,7 @@ public class RelationshipKingdom {
 		this._isAtWar = warStatus;
 	}
 
-	internal void CreateInvasionPlan(GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
+	internal void CreateInvasionPlan(GameEvent gameEventTrigger, WAR_TRIGGER warTrigger){
 		this._invasionPlan = new InvasionPlan (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
 			this._sourceKingdom.king, this._sourceKingdom, this._targetKingdom, gameEventTrigger, this._war, warTrigger);
 	}

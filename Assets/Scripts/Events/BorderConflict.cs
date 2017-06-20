@@ -20,6 +20,7 @@ public class BorderConflict : GameEvent {
 
 	public BorderConflict(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
+		this.name = "Border Conflict";
 		this.description = "A border conflict has began between " + kingdom1.name + " and " + kingdom2.name + ".";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
@@ -177,11 +178,11 @@ public class BorderConflict : GameEvent {
 
 			if(relationship1 != null){
 				relationship1.AdjustLikeness (-15, this);
-				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData);
+				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData, this._warTrigger);
 			}
 			if (relationship2 != null) {
 				relationship2.AdjustLikeness (-15, this);
-				relationship2.sourceKing.WarTrigger (relationship2, this, this.kingdom2.kingdomTypeData);
+				relationship2.sourceKing.WarTrigger (relationship2, this, this.kingdom2.kingdomTypeData, this._warTrigger);
 			}
 
 			this.kingdom1.AdjustUnrest(UNREST_ADJUSTMENT);

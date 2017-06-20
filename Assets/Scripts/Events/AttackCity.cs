@@ -9,6 +9,7 @@ public class AttackCity : GameEvent {
 
 	public AttackCity(int startWeek, int startMonth, int startYear, Citizen startedBy, General general, City targetCity, GameEvent gameEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ATTACK_CITY;
+		this.name = "Attack City";
 		//		this.description = startedBy.name + " invited " + visitor.citizen.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
