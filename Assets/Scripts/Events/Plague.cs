@@ -125,6 +125,11 @@ public class Plague : GameEvent {
         base.DoneEvent();
         EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
         onPerformAction = null;
+        /*
+         * TODO: Add Removal Of Embargos when the plague ends. Remember to check if
+         * the kingdom to disembargo is indeed no longer plagued and part of this
+         * plague event.
+         * */
     }
     #endregion
     private void InitializePlague(){
@@ -166,16 +171,16 @@ public class Plague : GameEvent {
 
     /*
      * Choose what approach this king will use
-     * to handle this event. This function will then 
-     * assign the chosen approach to onPerformAction.
+     * to handle this event.
      * */
-    private void ChooseApproach(Citizen citizen) {
+    private EVENT_APPROACH ChooseApproach(Citizen citizen) {
         Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharcterValues;
         EVENT_APPROACH chosenApproach = DetermineApproach(citizen);
         this.AddKingdomToApproach(chosenApproach, citizen.city.kingdom);
 
         this.ChangeKingRelationshipsAfterApproach(citizen, chosenApproach);
         this.ChangeLoyaltyAfterApproach(citizen, chosenApproach);
+        return chosenApproach;
     }
 
     private void ChangeKingRelationshipsAfterApproach(Citizen citizen, EVENT_APPROACH chosenApproach) {
@@ -257,9 +262,7 @@ public class Plague : GameEvent {
     }
 
     private void PragmaticApproach() {
-        
         for (int i = 0; i < this.pragmaticKingdoms.Count; i++) {
-
             Kingdom currKingdom = this.pragmaticKingdoms[i];
             if (this.IsDaysMultipleOf(5)) {
                 if (exterminators.First(x => x.citizen.city.kingdom.id == currKingdom.id) != null) {
@@ -284,8 +287,6 @@ public class Plague : GameEvent {
                 }
             }
             ContributeToVaccine(currKingdom);
-
-
         }
     }
     private void OpportunisticApproach() {
@@ -317,8 +318,36 @@ public class Plague : GameEvent {
             DEFAULT_CURE_CHANCE,
             DEFAULT_SETTLEMENT_SPREAD_CHANCE
         });
-        this.ChooseApproach(kingdom.king);
+        EVENT_APPROACH chosenApproach = this.ChooseApproach(kingdom.king);
+        UpdateKingdomEmbargos();
+
 	}
+
+    /*
+     * Put all other plagued kingdoms in a kigndoms
+     * embargo list.
+     * */
+    private void EmbargoOtherKingdoms(Kingdom kingdom) {
+        for (int i = 0; i < affectedKingdoms.Count; i++) {
+            Kingdom otherKingdom = affectedKingdoms[i];
+            if(otherKingdom.id != kingdom.id) {
+                kingdom.AddKingdomToEmbargoList(otherKingdom, EMBARGO_REASON.PLAGUE);
+                otherKingdom.AddKingdomToEmbargoList(kingdom, EMBARGO_REASON.PLAGUE);
+            }
+        }
+    }
+
+    /*
+     * Update the embargo lists of the pragmatic
+     * kingdoms to include all plagued kingdoms.
+     * */
+    private void UpdateKingdomEmbargos() {
+        for (int i = 0; i < pragmaticKingdoms.Count; i++) {
+            Kingdom currKingdom = pragmaticKingdoms[i];
+            EmbargoOtherKingdoms(currKingdom);
+        }
+    }
+
 	private void CureASettlement(HexTile hexTile){
 		hexTile.SetPlague(false);
 	}

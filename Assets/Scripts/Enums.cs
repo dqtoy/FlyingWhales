@@ -326,7 +326,8 @@ public enum DIRECTION{
 }
 
 public enum EMBARGO_REASON {
-    NONE
+    NONE,
+    PLAGUE
 }
 
 public enum RATE_TYPE{
