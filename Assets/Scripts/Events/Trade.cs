@@ -39,7 +39,20 @@ public class Trade : GameEvent {
 
     internal override void DoneCitizenAction(Citizen citizen) {
         base.DoneCitizenAction(citizen);
-        citizen.assignedRole.DestroyGO();
+        Trader trader = (Trader)citizen.assignedRole;
+
+        /*
+         * A plague carrying Trader will spread the plague to its 
+         * destination city (if it is not yet plagued) and infect a random settlement.
+         * */
+        if (trader.plague != null) {
+            if(this._targetCity.plague == null) {
+                trader.plague.PlagueACity(this._targetCity);
+                trader.plague.InfectRandomSettlement(this._targetCity.structures);
+            }
+        }
+
+        trader.DestroyGO();
         TradeResources();
         //CreateTradeRouteBetweenKingdoms();
     }
@@ -91,8 +104,8 @@ public class Trade : GameEvent {
                     }
                 }
 
-                dailyGrowthGained = (dailyGrowthGained * 15) * sourceCity.structures.Count;
-                techGrowthGained = (techGrowthGained * 15) * sourceCity.structures.Count;
+                dailyGrowthGained = (dailyGrowthGained * 15) * sourceCity.ownedTiles.Count;
+                techGrowthGained = (techGrowthGained * 15) * sourceCity.ownedTiles.Count;
 
                 this._sourceCity.AdjustDailyGrowth(dailyGrowthGained);
                 sourceKingdom.AdjustTechCounter(techGrowthGained);

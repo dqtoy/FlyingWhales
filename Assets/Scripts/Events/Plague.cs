@@ -104,12 +104,19 @@ public class Plague : GameEvent {
 
     }
 
-	private void PlagueASettlement(HexTile hexTile){
+    internal void InfectRandomSettlement(List<HexTile> hexTilesToChooseFrom) {
+        HexTile targetSettlement = hexTilesToChooseFrom.First(x => !x.isPlagued);
+        if (targetSettlement != null) {
+            this.PlagueASettlement(targetSettlement);
+        }
+    }
+
+    private void PlagueASettlement(HexTile hexTile){
 		hexTile.isPlagued = true;
 
 		//TODO: add poison icon on tile
 	}
-	private void PlagueACity(City city){
+	internal void PlagueACity(City city){
 		city.plague = this;
 		this.affectedCities.Add (city);
 	}
@@ -136,7 +143,11 @@ public class Plague : GameEvent {
 		List<HexTile> plaguedSettlements = city.plaguedSettlements;
 		HexTile targetSettlement = plaguedSettlements [plaguedSettlements.Count - 1];
 		if(targetSettlement != null){
-			//TODO: destroy settlement
+            /*
+             * Reset tile for now.
+             * TODO: When ruined settlement sprites are provided, use those instead.
+             * */
+            city.RemoveTileFromCity(targetSettlement);
 		}
 
 	}
@@ -152,14 +163,12 @@ public class Plague : GameEvent {
 				int chance = UnityEngine.Random.Range (0, 100);
 				int value = 2 * this.affectedCities [i].plaguedSettlements.Count;
 				if(chance < value){
-					HexTile targetSettlement = this.affectedCities [i].structures.First (x => !x.isPlagued);
-					if(targetSettlement != null){
-						this.PlagueASettlement (targetSettlement);
-					}
+                    InfectRandomSettlement(this.affectedCities[i].structures);
 				}
 			}
 		}
 	}
+
 	private void SpreadPlagueWithinKingdom(){
 		if (this.IsDaysMultipleOf (4)) {
 			for (int i = 0; i < this.affectedKingdoms.Count; i++) {
