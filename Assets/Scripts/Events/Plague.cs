@@ -237,6 +237,8 @@ public class Plague : GameEvent {
             }
             if (!pragmaticKingdoms.Contains(kingdomToAdd)) {
                 pragmaticKingdoms.Add(kingdomToAdd);
+				//The plague spread for Pragmatic Kingdoms is reduced from 2% to 1.5%
+				this.kingdomChances[kingdomToAdd.id][1] = 1.5f;
             }
         } else if (approach == EVENT_APPROACH.OPPORTUNISTIC) {
             if (opportunisticKingdoms.Count <= 0) {
@@ -244,6 +246,8 @@ public class Plague : GameEvent {
             }
             if (!opportunisticKingdoms.Contains(kingdomToAdd)) {
                 opportunisticKingdoms.Add(kingdomToAdd);
+				//The plague spread for Pragmatic Kingdoms is reduced from 2% to 1.5%
+				this.kingdomChances[kingdomToAdd.id][0] = 0.5f;
             }
         }
     }
@@ -279,16 +283,18 @@ public class Plague : GameEvent {
                     }
                 }
             }
-
-            //The plague spread for Pragmatic Kingdoms is reduced from 2% to 1.5%
-            this.kingdomChances[currKingdom.id][1] = 1.5f;
             ContributeToVaccine(currKingdom);
 
 
         }
     }
     private void OpportunisticApproach() {
-
+		if(!this.isBioWeaponDeveloped){
+			for (int i = 0; i < this.opportunisticKingdoms.Count; i++) {
+				Kingdom currKingdom = this.opportunisticKingdoms [i];
+				ContributeToBioWeapon (currKingdom);
+			}
+		}
     }
 
     internal void InfectRandomSettlement(List<HexTile> hexTilesToChooseFrom) {
@@ -473,7 +479,17 @@ public class Plague : GameEvent {
         }
     }
 
-    private void DevelopBioWeapon() {
+	private void ContributeToBioWeapon(Kingdom kingdom) {
+		this.bioWeaponMeter += 3 * kingdom.cities.Count;
+		this.bioWeaponMeter = Mathf.Clamp(this.bioWeaponMeter, 0, this.bioWeaponMeterMax);
+		if(this.bioWeaponMeter == this.bioWeaponMeterMax && !this.isBioWeaponDeveloped) {
+			SelectKingdomForBioWeaponDevelopment ();
+			this.isBioWeaponDeveloped = true;
+		}
+	}
 
-    }
+	private void SelectKingdomForBioWeaponDevelopment(){
+		Kingdom selectedKingdom = this.opportunisticKingdoms[UnityEngine.Random.Range(0, this.opportunisticKingdoms.Count)];
+		selectedKingdom.SetBioWeapon (true);
+	}
 }

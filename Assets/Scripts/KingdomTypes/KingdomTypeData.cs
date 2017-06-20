@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class KingdomTypeData : MonoBehaviour {
 
@@ -50,6 +51,9 @@ public class KingdomTypeData : MonoBehaviour {
 	[SerializeField]
 	private int _tradeRouteCap; // number of active trade routes that this kingdom is involved with
 
+	[SerializeField]
+	private KingdomTypeData generalKingdomTypeData;
+
 	private int _hexDistanceModifier = 15;
 
 	private Dictionary<WAR_TRIGGER, int> _dictWarTriggers = new Dictionary<WAR_TRIGGER, int> ();
@@ -87,19 +91,37 @@ public class KingdomTypeData : MonoBehaviour {
 
 	public EventRate[] eventRates {
 		get { 
-			return this._eventRates; 
+			return this._eventRates.Concat(this.generalKingdomTypeData.eventRates).ToArray();
 		}
 	}
 
 	public EventRate[] dailyCumulativeEventRate {
 		get { 
-			return this._dailyCumulativeEventRate; 
+			return this._dailyCumulativeEventRate.Concat(this.generalKingdomTypeData.dailyCumulativeEventRate).ToArray(); 
 		}
 	}
 
 	public CharacterValue[] characterValues {
 		get { 
-			return this._characterValues; 
+			return this._characterValues.Concat(this.generalKingdomTypeData.characterValues).ToArray(); 
+		}
+	}
+
+	public WarTrigger[] warTriggers {
+		get { 
+			return this._warTriggers.Concat(this.generalKingdomTypeData.warTriggers).ToArray(); 
+		}
+	}
+
+	public WarRateModifierMilitary[] _warRateModifierMilitary {
+		get { 
+			return this.warRateModifierMilitary.Concat(this.generalKingdomTypeData._warRateModifierMilitary).ToArray(); 
+		}
+	}
+
+	public WarRateModifierRelationship[] _warRateModifierRelationship {
+		get { 
+			return this.warRateModifierRelationship.Concat(this.generalKingdomTypeData.warRateModifierRelationship).ToArray(); 
 		}
 	}
 
@@ -162,17 +184,17 @@ public class KingdomTypeData : MonoBehaviour {
 		this._dictWarRateModifierRelationship.Clear ();
 		this._dictCharacterValues.Clear ();
 
-		for (int i = 0; i < this._warTriggers.Length; i++) {
-			this._dictWarTriggers.Add (this._warTriggers [i].warTrigger, this._warTriggers [i].rate);
+		for (int i = 0; i < this.warTriggers.Length; i++) {
+			this._dictWarTriggers.Add (this.warTriggers [i].warTrigger, this.warTriggers [i].rate);
 		}
-		for (int i = 0; i < this.warRateModifierMilitary.Length; i++) {
-			this._dictWarRateModifierMilitary.Add (this.warRateModifierMilitary [i].militaryStrength, this.warRateModifierMilitary [i].rate);
+		for (int i = 0; i < this._warRateModifierMilitary.Length; i++) {
+			this._dictWarRateModifierMilitary.Add (this._warRateModifierMilitary [i].militaryStrength, this._warRateModifierMilitary [i].rate);
 		}
-		for (int i = 0; i < this.warRateModifierRelationship.Length; i++) {
-			this._dictWarRateModifierRelationship.Add (this.warRateModifierRelationship [i].relationshipStatus, this.warRateModifierRelationship [i].rate);
+		for (int i = 0; i < this._warRateModifierRelationship.Length; i++) {
+			this._dictWarRateModifierRelationship.Add (this._warRateModifierRelationship [i].relationshipStatus, this._warRateModifierRelationship [i].rate);
 		}
-		for (int i = 0; i < this._characterValues.Length; i++) {
-			this._dictCharacterValues.Add (this._characterValues [i].character, this._characterValues [i].value);
+		for (int i = 0; i < this.characterValues.Length; i++) {
+			this._dictCharacterValues.Add (this.characterValues [i].character, this.characterValues [i].value);
 		}
 	}
 }

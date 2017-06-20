@@ -67,6 +67,7 @@ public class Kingdom{
     protected const int UNREST_INCREASE_EMBARGO = 5;
 
 	private bool _isDead;
+	private bool _hasBioWeapon;
 	internal bool hasConflicted;
 
 	private int borderConflictLoyaltyExpiration;
@@ -139,6 +140,9 @@ public class Kingdom{
     public float expansionRate {
         get { return this.expansionChance; }
     }
+	public bool hasBioWeapon {
+		get { return this._hasBioWeapon; }
+	}
 	#endregion
 	// Kingdom constructor paramters
 	//	race - the race of this kingdom
@@ -175,6 +179,7 @@ public class Kingdom{
 		this._discoveredKingdoms = new List<Kingdom>();
 		this._techLevel = 1;
 		this.techCounter = 0;
+		this._hasBioWeapon = false;
 		this.UpdateTechCapacity ();
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -1744,4 +1749,8 @@ public class Kingdom{
 		}
 	}
 	#endregion
+
+	internal void SetBioWeapon(bool state){
+		this._hasBioWeapon = state;
+	}
 }

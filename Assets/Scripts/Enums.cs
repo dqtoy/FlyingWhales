@@ -205,6 +205,7 @@ public enum EVENT_TYPES{
 	RIOT, //no agent
 	REBELLION, //general
 	PLAGUE,
+	SCOURGE_CITY,
 }
 public enum EVENT_STATUS{
 	EXPOSED,
