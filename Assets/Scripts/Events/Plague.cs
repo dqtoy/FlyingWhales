@@ -22,6 +22,7 @@ public class Plague : GameEvent {
 	public Plague(int startWeek, int startMonth, int startYear, Citizen startedBy, City sourceCity) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.PLAGUE;
 		this.name = "Plague";
+		this._warTrigger = WAR_TRIGGER.OPPOSING_APPROACH;
 		this.sourceCity = sourceCity;
 		this.sourceKingdom = sourceCity.kingdom;
 		this.affectedKingdoms = new List<Kingdom>();
@@ -34,7 +35,6 @@ public class Plague : GameEvent {
 		int maxMeter = 200 * NumberOfCitiesInWorld ();
 		this.bioWeaponMeterMax = maxMeter;
 		this.vaccineMeterMax = maxMeter;
-		this._warTrigger = WAR_TRIGGER.OPPOSING_APPROACH;
         this.ChooseApproach();
 		this.InitializePlague ();
         EventManager.Instance.AddEventToDictionary(this);
@@ -46,10 +46,16 @@ public class Plague : GameEvent {
 		this.daysCount += 1;
         onPerformAction();
     }
+	internal override void DoneEvent (){
+		base.DoneEvent ();
+
+	}
     #endregion
 	private void InitializePlague(){
 		this.PlagueACity (this.sourceCity);
 		this.PlagueASettlement (this.sourceCity.structures [0]);
+		this.PlagueAKingdom (this.sourceKingdom);
+		onPerformAction += CheckEndPlague;
         onPerformAction += SpreadPlagueWithinCity;
         onPerformAction += SpreadPlagueWithinKingdom;
         onPerformAction += CureAPlagueSettlementEveryday;
@@ -57,6 +63,11 @@ public class Plague : GameEvent {
         onPerformAction += IncreaseUnrestEveryMonth;
 
     }
+	private void CheckEndPlague(){
+		if(this.affectedCities.Count <= 0 && this.affectedKingdoms.Count <= 0){
+			this.DoneEvent ();
+		}
+	}
     private List<Kingdom> GetOtherKingdoms(){
 		if(this.sourceCity == null){
 			return null;
