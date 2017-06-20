@@ -69,6 +69,9 @@ public class Citizen {
 	public Dictionary<CHARACTER_VALUE, int> characterValues{
 		get{ return this._characterValues;}
 	}
+    public Dictionary<CHARACTER_VALUE, int> importantCharcterValues {
+        get { return this._characterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value); }
+    }
 	public List<Citizen> dependentChildren{
 		get{ return this.children.Where (x => x.age < 16 && !x.isMarried).ToList ();}
 	}

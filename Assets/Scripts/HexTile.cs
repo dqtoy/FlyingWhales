@@ -656,6 +656,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         } else {
             text += "NONE\n";
         }
+
+        text += "[b]King Values: [/b]\n";
+        Dictionary<CHARACTER_VALUE, int> charVals = this.city.kingdom.king.importantCharcterValues;
+        if (charVals.Count > 0) {
+            for (int i = 0; i < charVals.Count(); i++) {
+                KeyValuePair<CHARACTER_VALUE, int> kvp = charVals.ElementAt(i);
+                text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
         UIManager.Instance.ShowSmallInfo(text);
     }
 
