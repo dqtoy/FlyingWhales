@@ -19,6 +19,11 @@ public class Plague : GameEvent {
 	internal int vaccineMeterMax;
 	internal int daysCount;
 
+    private const float DEFAULT_CURE_CHANCE = 1.5f;
+    private const float DEFAULT_SETTLEMENT_SPREAD_CHANCE = 2f;
+
+    protected Dictionary<int, float[]> kingdomChances; //0 - cure chance, 1 - settlement spread chance
+
     protected List<Kingdom> pragmaticKingdoms;
     protected List<Kingdom> opportunisticKingdoms;
     protected List<Kingdom> humanisticKingdoms;
@@ -58,6 +63,8 @@ public class Plague : GameEvent {
         this.pragmaticKingdoms = new List<Kingdom>();
         this.opportunisticKingdoms = new List<Kingdom>();
         this.humanisticKingdoms = new List<Kingdom>();
+
+        this.kingdomChances = new Dictionary<int, float[]>();
 
         int maxMeter = 200 * NumberOfCitiesInWorld ();
 		this.bioWeaponMeterMax = maxMeter;
@@ -172,7 +179,14 @@ public class Plague : GameEvent {
 
     private void PragmaticApproach() {
         if (this.IsDaysMultipleOf(5)) {
-
+            for (int i = 0; i < this.pragmaticKingdoms.Count; i++) {
+                Kingdom currKingdom = this.pragmaticKingdoms[i];
+                int chanceForExterminator = 3 * currKingdom.cities.Count;
+                int chance = Random.Range(0, 100);
+                if(chance < chanceForExterminator) {
+                    //Create Exterminator
+                }
+            }
         }
     }
     private void OpportunisticApproach() {
@@ -197,6 +211,10 @@ public class Plague : GameEvent {
 	}
 	private void PlagueAKingdom(Kingdom kingdom){
 		this.affectedKingdoms.Add (kingdom);
+        kingdomChances.Add(kingdom.id, new float[] {
+            DEFAULT_CURE_CHANCE,
+            DEFAULT_SETTLEMENT_SPREAD_CHANCE
+        });
         this.ChooseApproach(kingdom.king);
 	}
 	private void CureASettlement(HexTile hexTile){
@@ -235,15 +253,16 @@ public class Plague : GameEvent {
 	}
 
     /*
-     * Every multiple of 4 day, per city, there is a 2% chance for every 
+     * Every multiple of 4 day, per city, there is a base 2% chance for every 
      * plagued settlement that the plague will spread to another settlement 
      * within the city.
      * */
 	private void SpreadPlagueWithinCity(){
 		if(this.IsDaysMultipleOf(4)){
 			for (int i = 0; i < this.affectedCities.Count; i++) {
-				int chance = UnityEngine.Random.Range (0, 100);
-				int value = 2 * this.affectedCities [i].plaguedSettlements.Count;
+				float chance = UnityEngine.Random.Range (1f, 100);
+                Kingdom kingdomOfCity = this.affectedCities[i].kingdom;
+                float value = this.kingdomChances[kingdomOfCity.id][1] * this.affectedCities [i].plaguedSettlements.Count;
 				if(chance < value){
                     InfectRandomSettlement(this.affectedCities[i].structures);
 				}
