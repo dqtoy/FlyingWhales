@@ -26,6 +26,7 @@ public class Espionage : GameEvent {
 
 	public Espionage(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen spy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ESPIONAGE;
+		this.name = "Espionage";
 		this.description = startedBy.name + " is having an espionage event.";
 		this.durationInDays = 2;
 		this.remainingDays = this.durationInDays;

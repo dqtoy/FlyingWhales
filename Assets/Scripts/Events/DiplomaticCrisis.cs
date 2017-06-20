@@ -17,6 +17,7 @@ public class DiplomaticCrisis : GameEvent {
 	public bool isResolvedPeacefully;
 	public DiplomaticCrisis(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.DIPLOMATIC_CRISIS;
+		this.name = "Diplomatic Crisis";
 		this.description = "A diplomatic crisis has began between " + kingdom1.name + " and " + kingdom2.name + ".";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
@@ -156,7 +157,7 @@ public class DiplomaticCrisis : GameEvent {
 
 			if(relationship1 != null){
 				relationship1.AdjustLikeness (-25, this);
-				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData);
+				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData, this._warTrigger);
 			}
 		}
 	}

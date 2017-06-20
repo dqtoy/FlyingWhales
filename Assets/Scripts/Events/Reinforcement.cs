@@ -9,6 +9,7 @@ public class Reinforcement : GameEvent {
 
 	public Reinforcement(int startWeek, int startMonth, int startYear, Citizen startedBy, Reinforcer reinforcer, City targetCity, City sourceCity) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.REINFORCEMENT;
+		this.name = "Reinforcement";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.reinforcer = reinforcer;

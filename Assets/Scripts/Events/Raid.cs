@@ -22,6 +22,7 @@ public class Raid : GameEvent {
 
 	public Raid(int startWeek, int startMonth, int startYear, Citizen startedBy, City raidedCity) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.RAID;
+		this.name = "Raid";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.sourceKingdom = startedBy.city.kingdom;
@@ -102,7 +103,7 @@ public class Raid : GameEvent {
 			}
 			RelationshipKings relationship = this.GetRelationship ();
 			if (relationship != null) {
-				this.targetKingdom.king.WarTrigger (relationship, this, this.targetKingdom.kingdomTypeData);
+				this.targetKingdom.king.WarTrigger (relationship, this, this.targetKingdom.kingdomTypeData, this._warTrigger);
 			}
 		}
 

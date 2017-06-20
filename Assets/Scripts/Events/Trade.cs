@@ -21,6 +21,7 @@ public class Trade : GameEvent {
     public Trade(int startWeek, int startMonth, int startYear, Citizen startedBy, City _sourceCity, City _targetCity, Citizen _trader) 
         : base(startWeek, startMonth, startYear, startedBy) {
         this.eventType = EVENT_TYPES.TRADE;
+		this.name = "Trade";
         this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
         this.remainingDays = this.durationInDays;
 

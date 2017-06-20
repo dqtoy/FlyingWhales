@@ -42,6 +42,7 @@ public class War : GameEvent {
 
 	public War(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _kingdom1, Kingdom _kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.KINGDOM_WAR;
+		this.name = "War";
 		this.description = "War between " + _kingdom1.name + " and " + _kingdom2.name + ".";
 		this._kingdom1 = _kingdom1;
 		this._kingdom2 = _kingdom2;
@@ -65,7 +66,7 @@ public class War : GameEvent {
 	internal override void PerformAction (){
 		Attack ();
 	}
-	internal void CreateInvasionPlan(Kingdom kingdomToDeclare, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
+	internal void CreateInvasionPlan(Kingdom kingdomToDeclare, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger){
 		if (kingdomToDeclare.id == this._kingdom1.id) {
 			this._kingdom1Rel.CreateInvasionPlan(gameEventTrigger, warTrigger);
 		} else {

@@ -11,6 +11,7 @@ public class Admiration : GameEvent {
 
 	public Admiration(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ADMIRATION;
+		this.name = "Admiration";
 		this.durationInDays = 15;
 		this.remainingDays = this.durationInDays;
 		this.kingdom1 = kingdom1;

@@ -11,6 +11,7 @@ public class Expansion : GameEvent {
 	internal Expander expander;
 	public Expansion(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile targetHextile) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.EXPANSION;
+		this.name = "Expansion";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.description = startedBy.city.kingdom.king.name + " is looking looking to expand his kingdom and has funded and expedition led by " + startedBy.name;
 

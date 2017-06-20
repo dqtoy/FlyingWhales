@@ -28,6 +28,7 @@ public class Assassination : GameEvent {
 	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, Spy spy, GameEvent gameEventTrigger) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ASSASSINATION;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
+		this.name = "Assassination";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.assassinKingdom = startedBy.city.kingdom;
@@ -391,7 +392,7 @@ public class Assassination : GameEvent {
 			}
 			if(this.relationshipToAdjust != null){
 				this.relationshipToAdjust.AdjustLikeness (-15, this);
-				this.relationshipToAdjust.sourceKing.WarTrigger (this.relationshipToAdjust, this, this.relationshipToAdjust.sourceKing.city.kingdom.kingdomTypeData);
+				this.relationshipToAdjust.sourceKing.WarTrigger (this.relationshipToAdjust, this, this.relationshipToAdjust.sourceKing.city.kingdom.kingdomTypeData, this._warTrigger);
 			}
 		}
 	}

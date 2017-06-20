@@ -7,6 +7,7 @@ public class Sabotage : GameEvent {
 	internal Envoy saboteur;
 	public Sabotage(int startWeek, int startMonth, int startYear, Citizen startedBy, Envoy saboteur, GameEvent eventToSabotage) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.SABOTAGE;
+		this.name = "Sabotage";
 //		this.description = startedBy.name + " invited " + visitor.citizen.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;

@@ -12,6 +12,7 @@ public class PowerGrab : GameEvent {
 	public PowerGrab(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen kingToOverthrow) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.POWER_GRAB;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
+		this.name = "Power Grab";
 		this.description = startedBy.name + " wants to grab power.";
 		this.durationInDays = 48;
 		this.remainingDays = this.durationInDays;

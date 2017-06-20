@@ -11,6 +11,7 @@ public class Exhortation : GameEvent {
 	public Exhortation(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen citizenSent, Citizen targetCitizen, PowerGrab powerGrabThatStartedEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.EXHORTATION;
 		this.eventStatus = EVENT_STATUS.EXPOSED;
+		this.name = "Exhortation";
 		this.description = startedBy.name + " is trying to gather support.";
 		this.durationInDays = 2;
 		this.remainingDays = this.durationInDays;

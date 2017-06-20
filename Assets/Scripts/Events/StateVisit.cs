@@ -19,6 +19,7 @@ public class StateVisit : GameEvent {
 
 	public StateVisit(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom invitedKingdom, Envoy visitor) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.STATE_VISIT;
+		this.name = "State Visit";
 		this.description = startedBy.name + " invited " + visitor.citizen.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
