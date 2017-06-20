@@ -60,7 +60,9 @@ public class Citizen {
 
 	protected List<Citizen> _possiblePretenders = new List<Citizen>();
 	protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
-	protected CharacterValue[] _characterValues;
+    protected Dictionary<CHARACTER_VALUE, int> _importantCharcterValues;
+
+    protected CharacterValue[] _characterValues;
 	protected const int MARRIAGE_CHANCE = 100; //8
 
 	#region getters/setters
@@ -74,9 +76,12 @@ public class Citizen {
 		get{ return this._characterValues;}
 	}
     public Dictionary<CHARACTER_VALUE, int> importantCharcterValues {
-        get { return this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value); }
+        get { return this._importantCharcterValues; }
     }
-	public List<Citizen> dependentChildren{
+    //public Dictionary<CHARACTER_VALUE, int> importantCharcterValues {
+    //    get { return this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value); }
+    //}
+    public List<Citizen> dependentChildren{
 		get{ return this.children.Where (x => x.age < 16 && !x.isMarried).ToList ();}
 	}
 
@@ -1483,7 +1488,9 @@ public class Citizen {
 		for(int i = 0; i < this.city.kingdom.kingdomTypeData.characterValues.Length; i++){
 			this.UpdateSpecificCharacterValue (this.city.kingdom.kingdomTypeData.characterValues [i].character, this.city.kingdom.kingdomTypeData.characterValues [i].value);
 		}
-	}
+        this._importantCharcterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+    }
 	private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value){
 		if(this._dictCharacterValues.ContainsKey(key)){
 			this._dictCharacterValues [key] += value;

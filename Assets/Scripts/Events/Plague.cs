@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Plague : GameEvent {
+
+    private delegate void OnPerformAction();
+    private OnPerformAction onPerformAction;
+
 	internal City sourceCity;
 	internal Kingdom sourceKingdom;
 	internal List<Kingdom> affectedKingdoms;
@@ -25,9 +29,19 @@ public class Plague : GameEvent {
 		this.bioWeaponMeterMax = maxMeter;
 		this.vaccineMeterMax = maxMeter;
 
+        this.ChooseApproach();
+
+        EventManager.Instance.AddEventToDictionary(this);
+        EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 	}
 
-	private List<Kingdom> GetOtherKingdoms(){
+    #region overrides
+    internal override void PerformAction() {
+        onPerformAction();
+    }
+    #endregion
+
+    private List<Kingdom> GetOtherKingdoms(){
 		if(this.sourceCity == null){
 			return null;
 		}
@@ -47,6 +61,11 @@ public class Plague : GameEvent {
 		return count;
 	}
 
+    /*
+     * Choose what approach this king will use
+     * to handle this event. This function will then 
+     * assign the chosen approach to onPerformAction.
+     * */
     private void ChooseApproach() {
         Dictionary<CHARACTER_VALUE, int> importantCharVals = this.startedBy.importantCharcterValues;
 
@@ -54,19 +73,16 @@ public class Plague : GameEvent {
             importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD) || importantCharVals.ContainsKey(CHARACTER_VALUE.CHAUVINISM)) {
             KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals.First();
             if (priotiyValue.Key == CHARACTER_VALUE.CHAUVINISM) {
-                OpportunisticApproach();
+                onPerformAction += OpportunisticApproach;
             } else if (priotiyValue.Key == CHARACTER_VALUE.GREATER_GOOD) {
-                PragmaticApproach();
+                onPerformAction += PragmaticApproach;
             } else {
-                HumanisticApproach();
+                onPerformAction += HumanisticApproach;
             }
         } else {
             //a king who does not value any of the these four ethics will choose OPPORTUNISTIC APPROACH in dealing with a plague.
-            OpportunisticApproach();
+            onPerformAction += OpportunisticApproach;
         }
-
-        
-        //this.startedBy.characterValues.OrderBy(x => x.Value).ToList();
     }
 
     private void HumanisticApproach() {
