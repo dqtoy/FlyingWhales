@@ -64,6 +64,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	[SerializeField] private GameObject structureParentGO;
 
+	[SerializeField] private GameObject plagueIconGO;
+
 	public List<HexTile> connectedTiles = new List<HexTile>();
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
@@ -681,5 +683,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	internal void SetPlague(bool state){
 		this.isPlagued = state;
+		//TODO: add/remove poison icon on tile
+		this.plagueIconGO.SetActive(state);
 	}
 }

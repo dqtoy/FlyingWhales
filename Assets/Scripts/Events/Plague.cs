@@ -66,7 +66,6 @@ public class Plague : GameEvent {
 		this.bioWeaponMeterMax = maxMeter;
 		this.vaccineMeterMax = maxMeter;
        
-		this.ChooseApproach();
 		this.InitializePlague ();
 
         EventManager.Instance.AddEventToDictionary(this);
@@ -197,9 +196,7 @@ public class Plague : GameEvent {
     }
 
     private void PlagueASettlement(HexTile hexTile){
-		hexTile.isPlagued = true;
-
-		//TODO: add poison icon on tile
+		hexTile.SetPlague(true);
 	}
 	internal void PlagueACity(City city){
 		city.plague = this;
@@ -210,9 +207,7 @@ public class Plague : GameEvent {
         this.ChooseApproach(kingdom.king);
 	}
 	private void CureASettlement(HexTile hexTile){
-		hexTile.isPlagued = false;
-
-		//TODO: remove poison icon on tile
+		hexTile.SetPlague(false);
 	}
 	private void CureACity(City city){
 		city.plague = null;
@@ -224,6 +219,9 @@ public class Plague : GameEvent {
 	}
 	private void CureAKingdom(Kingdom kingdom){
 		this.affectedKingdoms.Remove (kingdom);
+		for (int i = 0; i < kingdom.cities.Count; i++) {
+			this.CureACity (kingdom.cities [i]);
+		}
 	}
 	private void DestroyASettlementInCity(City city){
 		List<HexTile> plaguedSettlements = city.plaguedSettlements;
