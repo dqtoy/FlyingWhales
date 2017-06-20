@@ -54,6 +54,7 @@ public class City{
 	internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
 	internal List<HexTile> borderTiles;
 	internal Rebellion rebellion;
+	internal Plague plague;
 //	protected List<ROLE> creatableRoles;
 
 	protected const int HP_INCREASE = 5;
@@ -116,7 +117,7 @@ public class City{
 
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
-
+		this.plague = null;
 		ResetToDefaultHP ();
 //		this.CreateInitialFamilies();
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
