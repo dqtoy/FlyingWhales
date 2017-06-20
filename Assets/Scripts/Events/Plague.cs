@@ -48,7 +48,13 @@ public class Plague : GameEvent {
 	private void InitializePlague(){
 		this.PlagueACity (this.sourceCity);
 		this.PlagueASettlement (this.sourceCity.structures [0]);
-	}
+        onPerformAction += SpreadPlagueWithinCity;
+        onPerformAction += SpreadPlagueWithinKingdom;
+        onPerformAction += CureAPlagueSettlementEveryday;
+        onPerformAction += DestroyASettlementEveryday;
+        onPerformAction += IncreaseUnrestEveryMonth;
+
+    }
     private List<Kingdom> GetOtherKingdoms(){
 		if(this.sourceCity == null){
 			return null;
@@ -157,6 +163,12 @@ public class Plague : GameEvent {
 		}
 		return false;
 	}
+
+    /*
+     * Every multiple of 4 day, per city, there is a 2% chance for every 
+     * plagued settlement that the plague will spread to another settlement 
+     * within the city.
+     * */
 	private void SpreadPlagueWithinCity(){
 		if(this.IsDaysMultipleOf(4)){
 			for (int i = 0; i < this.affectedCities.Count; i++) {
@@ -169,6 +181,10 @@ public class Plague : GameEvent {
 		}
 	}
 
+    /*
+     * Every multiple of 4 day, per kingdom, there is a 1% chance for every plagued settlement
+     * within the kingdom that the plague will spread to another clean city within the kingdom.
+     * */
 	private void SpreadPlagueWithinKingdom(){
 		if (this.IsDaysMultipleOf (4)) {
 			for (int i = 0; i < this.affectedKingdoms.Count; i++) {
@@ -183,6 +199,11 @@ public class Plague : GameEvent {
 			}
 		}
 	}
+
+    /*
+     * Every multiple of 5 day, per kingdom, there is a 1.5% chance for every 
+     * plagued settlement that one of them will be cured.
+     * */
 	private void CureAPlagueSettlementEveryday(){
 		if (this.IsDaysMultipleOf (5)) {
 			for (int i = 0; i < this.affectedKingdoms.Count; i++) {
@@ -200,6 +221,11 @@ public class Plague : GameEvent {
 			}
 		}
 	}
+
+    /*
+     * Every multiple of 6 day, per kingdom, there is a 1% chance for 
+     * every plagued settlement that one of them will be ruined.
+     * */
 	private void DestroyASettlementEveryday(){
 		if (this.IsDaysMultipleOf (6)) {
 			for (int i = 0; i < this.affectedKingdoms.Count; i++) {
@@ -214,4 +240,19 @@ public class Plague : GameEvent {
 			}
 		}
 	}
+
+    /*
+     * At the start of each month, unrest in the kingdom 
+     * increases by 1 for every plagued settlement.
+     * */
+    private void IncreaseUnrestEveryMonth() {
+        if (GameManager.Instance.days == 1) {
+            for (int i = 0; i < this.affectedKingdoms.Count; i++) {
+                Kingdom currKingdom = this.affectedKingdoms[i];
+                int unrestIncrease = 1 * currKingdom.cities.Sum(x => x.plaguedSettlements.Count);
+                currKingdom.AdjustUnrest(unrestIncrease);
+            }
+        }
+    }
+        
 }
