@@ -75,6 +75,9 @@ public class City{
 	public List<HexTile> structures{
 		get{ return this._ownedTiles.Where (x => x.isOccupied && !x.isHabitable).ToList();} //Contains all structures, except capital city
 	}
+	public List<HexTile> plaguedSettlements{
+		get{ return this.structures.Where (x => x.isPlagued).ToList();} //Get plagued settlements
+	}
 	public int hp{
 		get{ return this._hp; }
 		set{ this._hp = value; }
