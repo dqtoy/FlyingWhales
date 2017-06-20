@@ -1467,14 +1467,14 @@ public class Citizen {
 
 	internal void GenerateCharacterValues(){
 		this._dictCharacterValues.Clear ();
-//		this._dictCharacterValues = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToDictionary (x => x, x => UnityEngine.Random.Range (1, 101));
-		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
-		this._characterValues = new CharacterValue[character.Length];
-		for(int i = 0; i < this._characterValues.Length; i++){
-			this._characterValues [i].character = character [i];
-			this._characterValues [i].value = UnityEngine.Random.Range (1, 101);
-			this._dictCharacterValues.Add(this._characterValues [i].character, this._characterValues [i].value);
-		}
+		this._dictCharacterValues = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToDictionary (x => x, x => UnityEngine.Random.Range (1, 101));
+//		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
+//		this._characterValues = new CharacterValue[character.Length];
+//		for(int i = 0; i < this._characterValues.Length; i++){
+//			this._characterValues [i].character = character [i];
+//			this._characterValues [i].value = UnityEngine.Random.Range (1, 101);
+//			this._dictCharacterValues.Add(this._characterValues [i].character, this._characterValues [i].value);
+//		}
 	}
 	internal void UpdateCharacterValues(){
 		for(int i = 0; i < this.city.kingdom.kingdomTypeData.characterValues.Length; i++){
@@ -1484,12 +1484,12 @@ public class Citizen {
 	private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value){
 		if(this._dictCharacterValues.ContainsKey(key)){
 			this._dictCharacterValues [key] += value;
-			UpdateCharacterValueByKey(key, value);
+//			UpdateCharacterValueByKey(key, value);
 		}
 	}
 
 	private void UpdateCharacterValueByKey(CHARACTER_VALUE key, int value){
-		for(int i = 0; this._characterValues.Length; i++){
+		for(int i = 0; i < this._characterValues.Length; i++){
 			if(this._characterValues[i].character == key){
 				this._characterValues [i].value += value;
 				break;
