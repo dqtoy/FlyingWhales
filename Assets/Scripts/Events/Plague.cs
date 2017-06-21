@@ -119,7 +119,7 @@ public class Plague : GameEvent {
             DestroyASettlementInCity(citizen.assignedRole.targetCity);
             citizen.city.kingdom.AdjustUnrest(5);
             this.exterminators.Remove((Exterminator)citizen.assignedRole);
-        }
+		}
     }
     internal override void DoneEvent() {
         base.DoneEvent();

@@ -83,9 +83,11 @@ public class DailyCumulativeEvent : MonoBehaviour {
 				continue;
 			}
 			int chance = UnityEngine.Random.Range (0, 200);
-			if(chance < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].rate){
+			if(chance < (this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].rate * this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].multiplier)){
 				this.eventToCreate = this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i];
-				SetSecondRandomKingdom ();
+				SetSecondRandomKingdom (ref this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i]);
+			}else{
+				this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].multiplier += 1;
 			}
 		}
 		Task.current.Succeed ();
@@ -97,7 +99,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	}
 
 //	[Task]
-	public void SetSecondRandomKingdom(){
+	public void SetSecondRandomKingdom(ref EventRate eventRate){
 		List<Kingdom> allKingdomCandidates = new List<Kingdom> ();
 		for(int i = 0; i < this.firstKingdom.discoveredKingdoms.Count; i++){
 			if(IsCompatibleRelationship(this.firstKingdom.discoveredKingdoms[i]) && IsCompatibleKingdomType(this.firstKingdom.discoveredKingdoms[i]) 
@@ -113,7 +115,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 
 		if(this.secondKingdom != null){
 			if(!AreTheTwoKingdomsAtWar() && IsEligibleForEvent()){
-				StartAnEvent ();
+				StartAnEvent (ref eventRate);
 			}
 		}
 	}
@@ -202,7 +204,8 @@ public class DailyCumulativeEvent : MonoBehaviour {
 
 	}
 //	[Task]
-	public void StartAnEvent(){
+	public void StartAnEvent(ref EventRate eventRate){
+		eventRate.ResetRateAndMultiplier ();
 		switch(this.eventToCreate.eventType){
 		case EVENT_TYPES.RAID:
 			CreateRaidEvent ();
@@ -212,6 +215,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 			break;
 		case EVENT_TYPES.TRADE:
 			CreateTradeEvent ();
+			break;
+		case EVENT_TYPES.SCOURGE_CITY:
+			CreateScourgeCityEvent ();
 			break;
 		}
 //		Task.current.Succeed ();
@@ -245,7 +251,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 
         }
     }
-
+	private void CreateScourgeCityEvent(){
+		EventCreator.Instance.CreateScourgeCityEvent (this.firstKingdom, this.secondKingdom);
+	}
 //	private void CreateBorderConflictEvent(){
 //		EventCreator.Instance.CreateBorderConflictEvent(this.firstKingdom, this.secondKingdom);
 //	}
