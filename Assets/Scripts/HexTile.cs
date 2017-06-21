@@ -677,7 +677,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
 
         text += "[b]King Values: [/b]\n";
-        Dictionary<CHARACTER_VALUE, int> charVals = this.city.kingdom.king.importantCharcterValues;
+        Dictionary<CHARACTER_VALUE, int> charVals = this.city.kingdom.king.importantCharacterValues;
         if (charVals.Count > 0) {
             for (int i = 0; i < charVals.Count(); i++) {
                 KeyValuePair<CHARACTER_VALUE, int> kvp = charVals.ElementAt(i);
