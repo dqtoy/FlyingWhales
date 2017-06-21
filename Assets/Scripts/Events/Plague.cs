@@ -397,8 +397,10 @@ public class Plague : GameEvent {
      * kingdoms to include all plagued kingdoms.
      * */
     private void UpdateKingdomEmbargos() {
-        for (int i = 0; i < pragmaticKingdoms.Count; i++) {
-            Kingdom currKingdom = pragmaticKingdoms[i];
+        List<Kingdom> kingdoms = new List<Kingdom>(pragmaticKingdoms);
+        kingdoms.AddRange(opportunisticKingdoms);
+        for (int i = 0; i < kingdoms.Count; i++) {
+            Kingdom currKingdom = kingdoms[i];
             EmbargoOtherKingdoms(currKingdom);
         }
     }
@@ -445,6 +447,13 @@ public class Plague : GameEvent {
 
     private void DisinfectAKingdom(Kingdom kingdom) {
         this.affectedKingdoms.Remove(kingdom);
+        if (this.pragmaticKingdoms.Contains(kingdom)) {
+            this.pragmaticKingdoms.Remove(kingdom);
+        } else if (this.humanisticKingdoms.Contains(kingdom)) {
+            this.humanisticKingdoms.Remove(kingdom);
+        } else if (this.opportunisticKingdoms.Contains(kingdom)) {
+            this.opportunisticKingdoms.Remove(kingdom);
+        }
         CheckIfPlagueIsCured();
     }
 
