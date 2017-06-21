@@ -100,6 +100,8 @@ public class Plague : GameEvent {
 		newLog.AddToFillers (this.sourceCity, this.sourceCity.name);
 		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
 		newLog.AddToFillers (null, this._plagueName);
+
+		base.EventIsCreated();
 	}
 
     private string GeneratePlagueName() {
@@ -289,9 +291,9 @@ public class Plague : GameEvent {
             RelationshipKings rel = otherKingdom.king.GetRelationshipWithCitizen(citizen);
             EVENT_APPROACH otherKingApproach = this.DetermineApproach(otherKingdom.king);
             if (otherKingApproach == chosenApproach) {
-                rel.AddEventModifier(20, "+20 plague handling", this);
+                rel.AddEventModifier(20, "plague handling", this);
             } else {
-                rel.AddEventModifier(-20, "-20 plague handling", this);
+                rel.AddEventModifier(-20, "plague handling", this);
             }
         }
     }
@@ -470,6 +472,9 @@ public class Plague : GameEvent {
             this.humanisticKingdoms.Remove(kingdom);
         } else if (this.opportunisticKingdoms.Contains(kingdom)) {
             this.opportunisticKingdoms.Remove(kingdom);
+        }
+        if (this.kingdomChances.ContainsKey(kingdom.id)) {
+            this.kingdomChances.Remove(kingdom.id);
         }
         CheckIfPlagueIsCured();
     }

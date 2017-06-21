@@ -109,7 +109,14 @@ public class War : GameEvent {
 		this._isAtWar = false;
 		this._kingdom1Rel.DeclarePeace();
 		this._kingdom2Rel.DeclarePeace();
-		KingdomManager.Instance.DeclarePeaceBetweenKingdoms(this._kingdom1, this._kingdom2);
+
+        RelationshipKings rel1 = kingdom1.king.GetRelationshipWithCitizen(kingdom2.king);
+        RelationshipKings rel2 = kingdom2.king.GetRelationshipWithCitizen(kingdom1.king);
+
+        rel1.AddEventModifier(-30, "recent war with " + kingdom2.name, this);
+        rel2.AddEventModifier(-30, "recent war with " + kingdom1.name, this);
+
+        KingdomManager.Instance.DeclarePeaceBetweenKingdoms(this._kingdom1, this._kingdom2);
 		this.DoneEvent();
 	}
 
