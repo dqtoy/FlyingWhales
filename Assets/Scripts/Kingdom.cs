@@ -841,17 +841,18 @@ public class Kingdom{
 		this.successionLine.AddRange (newKing.GetSiblings());
 		UpdateKingSuccession ();
 		this.RetrieveInternationWar();
-//		UIManager.Instance.UpdateKingsGrid();
-//		UIManager.Instance.UpdateKingdomSuccession ();
+        //		UIManager.Instance.UpdateKingsGrid();
+        //		UIManager.Instance.UpdateKingdomSuccession ();
 
-//		for (int i = 0; i < this.cities.Count; i++) {
-//			this.cities[i].UpdateResourceProduction();
-//		}
-	}
+        for (int i = 0; i < this.cities.Count; i++) {
+            ((Governor)this.cities[i].governor.assignedRole).ResetEventModifiers();
+            ((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty();
+        }
+    }
 
-    
 
-	internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
+
+    internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
 //		Debug.Log ("SUCCESSION WAR");
 
 		if(newKing.city.governor.id == newKing.id){
@@ -1002,10 +1003,10 @@ public class Kingdom{
 		return tilesOwnedByKingdom;
 	}
 
-	internal List<Kingdom> GetKingdomsByRelationship(RELATIONSHIP_STATUS relationshipStatus){
+	internal List<Kingdom> GetKingdomsByRelationship(RELATIONSHIP_STATUS[] relationshipStatuses){
 		List<Kingdom> kingdomsByRelationship = new List<Kingdom>();
 		for (int i = 0; i < this.king.relationshipKings.Count; i++) {
-			if (this.king.relationshipKings[i].lordRelationship == relationshipStatus) {
+			if (relationshipStatuses.Contains(this.king.relationshipKings[i].lordRelationship)) {
 				kingdomsByRelationship.Add(this.king.relationshipKings [i].king.city.kingdom);
 			}
 		}

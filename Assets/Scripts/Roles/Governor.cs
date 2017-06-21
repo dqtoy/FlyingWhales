@@ -160,7 +160,7 @@ public class Governor : Role {
         this._loyalty = newLoyalty;
     }
 
-    private void ResetEventModifiers() {
+    internal void ResetEventModifiers() {
         this._eventLoyaltyModifier = 0;
         this._eventLoyaltySummary = string.Empty;
     }
