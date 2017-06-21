@@ -51,8 +51,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	[SerializeField] private SpriteRenderer _kingdomColorSprite;
 	[SerializeField] private GameObject _highlightGO;
 
-    [SerializeField] private CityItem _cityInfo;
-    [SerializeField] private GameObject cityInfoGO;
+    
+    [SerializeField] private Transform UIParent;    
 
     //For Tile Edges
     [SerializeField] private GameObject topLeftEdge;
@@ -66,7 +66,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	[SerializeField] private GameObject plagueIconGO;
 
-	public List<HexTile> connectedTiles = new List<HexTile>();
+    private Transform _cityInfoParent;
+    private CityItem _cityInfo;
+
+    public List<HexTile> connectedTiles = new List<HexTile>();
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
 	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN); } }
@@ -398,9 +401,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.cityNameGO.SetActive(true);
         //this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
         //this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
+        GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
+        parentPanel.layer = LayerMask.NameToLayer("UI");
+        parentPanel.transform.SetParent(UIParent);
+        parentPanel.transform.localPosition = Vector3.zero;
+        parentPanel.transform.localScale = Vector3.one;
+        this._cityInfoParent = parentPanel.transform;
+
+        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
+        this._cityInfo = namePlateGO.GetComponent<CityItem>();
+        namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
+        namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
         EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
         UpdateNamePlate();
-        this.cityInfoGO.SetActive(true);
+        //this.cityInfoGO.SetActive(true);
     }
 
     public void UpdateNamePlate() {
@@ -449,7 +463,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.isBorderOfCityID = 0;
 		this.isOccupiedByCityID = 0;
 		this.structureGO.SetActive(false);
-        this.cityInfoGO.SetActive(false);
         this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
         EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);
@@ -458,6 +471,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             if (children[i].gameObject != null && children[i].gameObject != structureParentGO) {
                 Destroy(children[i].gameObject);
             }
+        }
+        children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
+        for (int i = 0; i < children.Length; i++) {
+            Destroy(children[i].gameObject);
         }
     }
 
