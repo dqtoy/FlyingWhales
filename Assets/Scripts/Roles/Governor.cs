@@ -152,7 +152,7 @@ public class Governor : Role {
 		this.AdjustLoyalty (baseLoyalty);
 	}
 
-    internal void AddEventModifier(int modification, string summary) {
+	internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger) {
         this._eventLoyaltyModifier += modification;
         this._eventLoyaltySummary += summary + "\n";
     }

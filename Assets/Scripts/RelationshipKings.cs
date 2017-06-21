@@ -188,9 +188,12 @@ public class RelationshipKings {
         ResetEventModifiers();
     }
 
-    internal void AddEventModifier(int modification, string summary) {
+    internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger) {
         this._eventLikenessModifier += modification;
         this._eventLikenessSummary += summary + "\n";
+		if(modification < 0){
+			this.sourceKing.WarTrigger (this, gameEventTrigger, this.sourceKing.city.kingdom.kingdomTypeData, gameEventTrigger.warTrigger);
+		}
         UpdateKingRelationshipStatus();
     }
 

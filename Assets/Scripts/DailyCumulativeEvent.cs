@@ -79,6 +79,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	[Task]
 	public void SetEventsToCreate(){
 		for(int i = 0; i < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate.Length; i++){
+			if(!CanCreateEvent(this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate[i].eventType)){
+				continue;
+			}
 			int chance = UnityEngine.Random.Range (0, 200);
 			if(chance < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].rate){
 				this.eventToCreate = this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i];
@@ -386,5 +389,15 @@ public class DailyCumulativeEvent : MonoBehaviour {
 			}
 		}
 		return true;
+	}
+	private bool CanCreateEvent(EVENT_TYPES eventType){
+		if(eventType == EVENT_TYPES.SCOURGE_CITY){
+			if(this.firstKingdom.hasBioWeapon){
+				return true;
+			}
+			return false;
+		}else{
+			return true;
+		}
 	}
 }
