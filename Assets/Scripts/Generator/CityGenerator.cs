@@ -149,7 +149,6 @@ public class CityGenerator : MonoBehaviour {
 			hexTile.city = new RebelFort (hexTile, kingdom, rebellion);
 		}else{
 			hexTile.city = new City (hexTile, kingdom);
-            hexTile.city.UpdateBorderTiles();
 		}
 		hexTile.ShowCitySprite();
 		//hexTile.ShowNamePlate();
@@ -165,7 +164,8 @@ public class CityGenerator : MonoBehaviour {
 		hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
 		hexTile.gameObject.GetComponent<PandaBehaviour>().Compile (cityBehaviourTree.text);
 		BehaviourTreeManager.Instance.allTrees.Add(hexTile.gameObject.GetComponent<PandaBehaviour> ());
-		return hexTile.city;
+        hexTile.city.UpdateBorderTiles();
+        return hexTile.city;
 	}
 
 	public City GetCityByID(int id){

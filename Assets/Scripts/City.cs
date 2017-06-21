@@ -934,8 +934,7 @@ public class City{
                 this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
             }
         }
-
-        conqueror.AddCityToKingdom(this);
+        this.ChangeKingdom(conqueror);
         this.CreateInitialFamilies(false);
     }
 

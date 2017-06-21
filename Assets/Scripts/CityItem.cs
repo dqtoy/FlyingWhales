@@ -44,4 +44,8 @@ public class CityItem : MonoBehaviour {
     public void CenterOnCity() {
         CameraMove.Instance.CenterCameraOn(this._city.hexTile.gameObject);
     }
+
+    public void SetKingdomAsSelected() {
+        UIManager.Instance.SetKingdomAsSelected(this._city.kingdom);
+    }
 }

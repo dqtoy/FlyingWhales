@@ -16,6 +16,7 @@ public class EventLabel : MonoBehaviour {
 				if (lf.obj is City) {
                     //UIManager.Instance.ShowCityInfo ((City)lf.obj);
                     CameraMove.Instance.CenterCameraOn(((City)lf.obj).hexTile.gameObject);
+                    UIManager.Instance.SetKingdomAsSelected(((City)lf.obj).kingdom);
 				} else if (lf.obj is Citizen) {
 					UIManager.Instance.ShowCitizenInfo ((Citizen)lf.obj);
 				} else if (lf.obj is Kingdom) {
