@@ -259,7 +259,7 @@ public class Plague : GameEvent {
      * to the appropriate list.
      * */
     private EVENT_APPROACH ChooseApproach(Citizen citizen) {
-        Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharcterValues;
+        Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharacterValues;
         EVENT_APPROACH chosenApproach = DetermineApproach(citizen);
         this.AddKingdomToApproach(chosenApproach, citizen.city.kingdom);
 
@@ -299,7 +299,7 @@ public class Plague : GameEvent {
      * kingdom to the appropriate list.
      * */
     private EVENT_APPROACH DetermineApproach(Citizen citizen) {
-        Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharcterValues;
+        Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharacterValues;
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
         if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.FAIRNESS) ||
             importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD) || importantCharVals.ContainsKey(CHARACTER_VALUE.CHAUVINISM)) {
