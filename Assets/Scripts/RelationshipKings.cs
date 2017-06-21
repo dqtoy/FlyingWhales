@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 [System.Serializable]
 public class RelationshipKings {
@@ -16,14 +18,17 @@ public class RelationshipKings {
 //	public bool isAtWar;
 	public int daysAtWar;
 	public List<History> relationshipHistory;
+    private Dictionary<EVENT_TYPES, List<ExpirableModifier>> _eventModifiers;
     private int _eventLikenessModifier;
-    private string _eventLikenessSummary;
 
-    private const int CHANCE_TO_CANCEL_TRADE_ROUTE = 10;
-
+    List<ExpirableModifier> exm;
+    
     #region getters/setters
     public int like {
         get { return this._like + this._eventLikenessModifier; }
+    }
+    public Dictionary<EVENT_TYPES, List<ExpirableModifier>> eventModifiers {
+        get { return this._eventModifiers; }
     }
     #endregion
 
@@ -36,10 +41,11 @@ public class RelationshipKings {
 		this.isFirstEncounter = true;
 		this.lordRelationship = RELATIONSHIP_STATUS.NEUTRAL;
 		this.relationshipHistory = new List<History>();
+        this._eventModifiers = new Dictionary<EVENT_TYPES, List<ExpirableModifier>>();
         this._eventLikenessModifier = 0;
-        this._eventLikenessSummary = string.Empty;
-//		this.isAdjacent = false;
-//		this.isAtWar = false;
+        //		this.isAdjacent = false;
+        //		this.isAtWar = false;
+        EventManager.Instance.onWeekEnd.AddListener(CheckEventModifiers);
     }
 
 	internal void UpdateKingRelationshipStatus(){
@@ -162,17 +168,66 @@ public class RelationshipKings {
     }
 
     internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger) {
+        DateTime dateTimeToUse = new DateTime(GameManager.Instance.year, GameManager.Instance.month, GameManager.Instance.days);
+        if(gameEventTrigger.eventType == EVENT_TYPES.KINGDOM_WAR) {
+            dateTimeToUse.AddYears(1);
+        }
+        if (this._eventModifiers.ContainsKey(gameEventTrigger.eventType)) {
+            this._eventModifiers[gameEventTrigger.eventType].Add(new ExpirableModifier(summary, dateTimeToUse, modification));
+        } else {
+            this._eventModifiers.Add(gameEventTrigger.eventType, new List<ExpirableModifier>() {
+                { new ExpirableModifier(summary, dateTimeToUse, modification) }
+            });
+        }
+        
         this._eventLikenessModifier += modification;
-        this._eventLikenessSummary += summary + "\n";
-		if(modification < 0){
+		if(modification < 0 && gameEventTrigger.eventType != EVENT_TYPES.KINGDOM_WAR){
 			this.sourceKing.WarTrigger (this, gameEventTrigger, this.sourceKing.city.kingdom.kingdomTypeData, gameEventTrigger.warTrigger);
 		}
         UpdateKingRelationshipStatus();
     }
 
+    internal void CheckEventModifiers() {
+        if (this._eventModifiers.ContainsKey(EVENT_TYPES.KINGDOM_WAR)) {
+            List<ExpirableModifier> expirableModifiers = this._eventModifiers[EVENT_TYPES.KINGDOM_WAR];
+            List<ExpirableModifier> modifiersToRemove = new List<ExpirableModifier>();
+            for (int i = 0; i < expirableModifiers.Count; i++) {
+                ExpirableModifier currModifier = expirableModifiers[i];
+                DateTime dueDate = currModifier.dueDate;
+                int modification = currModifier.modifier;
+                if (dueDate.Day == GameManager.Instance.days && dueDate.Month == GameManager.Instance.month
+                    && dueDate.Year == GameManager.Instance.year) {
+                    modification += 5;
+                    dueDate.AddYears(1);
+                    if (modification >= 0) {
+                        modifiersToRemove.Add(currModifier);
+                    } else {
+                        currModifier.SetModifier(modification);
+                        currModifier.SetDueDate(dueDate);
+                    }
+                }
+            }
+            for (int i = 0; i < modifiersToRemove.Count; i++) {
+                expirableModifiers.Remove(modifiersToRemove[i]);
+            }
+            UpdateEventModifiers();
+        }
+    }
+
+    private void UpdateEventModifiers() {
+        this._eventLikenessModifier = 0;
+        for (int i = 0; i < this._eventModifiers.Count; i++) {
+            EVENT_TYPES key = this._eventModifiers.Keys.ElementAt(i);
+            List<ExpirableModifier> modifiers = this._eventModifiers[key];
+            for (int j = 0; j < modifiers.Count; j++) {
+                this._eventLikenessModifier += modifiers[i].modifier;
+            }
+        }
+    }
+
     private void ResetEventModifiers() {
         this._eventLikenessModifier = 0;
-        this._eventLikenessSummary = string.Empty;
+        this._eventModifiers.Clear();
         UpdateKingRelationshipStatus();
     }
     #region For Testing Functions
