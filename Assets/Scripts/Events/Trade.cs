@@ -48,8 +48,12 @@ public class Trade : GameEvent {
          * */
         if (trader.plague != null) {
             if(this._targetCity.plague == null) {
-                trader.plague.PlagueACity(this._targetCity);
-                trader.plague.InfectRandomSettlement(this._targetCity.structures);
+				if(this._targetCity.plague.affectedKingdoms.Contains(this._targetCity.kingdom)){
+					trader.plague.PlagueACity(this._targetCity);
+				}else{
+					trader.plague.PlagueAKingdom(this._targetCity.kingdom, this._targetCity);
+				}
+				trader.plague.InfectRandomSettlement(this._targetCity.structures);
             }
         }
 

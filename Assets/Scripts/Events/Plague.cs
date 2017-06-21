@@ -92,6 +92,14 @@ public class Plague : GameEvent {
         EventManager.Instance.AddEventToDictionary(this);
         EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
         EventManager.Instance.onKingdomDiedEvent.AddListener(CureAKingdom);
+
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_title");
+		newLogTitle.AddToFillers (null, this._plagueName);
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "start");
+		newLog.AddToFillers (this.sourceCity, this.sourceCity.name);
+		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
+		newLog.AddToFillers (null, this._plagueName);
 	}
 
     private string GeneratePlagueName() {
@@ -99,12 +107,17 @@ public class Plague : GameEvent {
     }
 
     internal void AddAgentToList(Citizen citizen) {
+//		string logName = string.Empty;
         if(citizen.assignedRole is Exterminator) {
             this.exterminators.Add((Exterminator)citizen.assignedRole);
-        } else if (citizen.assignedRole is Scourge) {
-            this.scourgers.Add((Scourge)citizen.assignedRole);
-        } else if (citizen.assignedRole is Healer) {
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "exterminator_send");
+			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name);
+			newLog.AddToFillers (citizen, citizen.name);
+        }else if (citizen.assignedRole is Healer) {
             this.healers.Add((Healer)citizen.assignedRole);
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "healer_send");
+			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name);
+			newLog.AddToFillers (citizen, citizen.name);
         }
     }
 
@@ -129,13 +142,14 @@ public class Plague : GameEvent {
         EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
         onPerformAction = null;
         DisembargoKingdoms();
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_end");
+		newLog.AddToFillers (null, this._plagueName);
     }
     #endregion
 
     private void InitializePlague(){
-		this.PlagueACity (this.sourceCity);
 		this.PlagueASettlement (this.sourceCity.structures [0]);
-		this.PlagueAKingdom (this.sourceKingdom);
+		this.PlagueAKingdom (this.sourceKingdom, this.sourceCity);
         onPerformAction += SpreadPlagueWithinCity;
         onPerformAction += SpreadPlagueWithinKingdom;
         onPerformAction += CureAPlagueSettlementEveryday;
@@ -265,6 +279,7 @@ public class Plague : GameEvent {
 
         this.ChangeKingRelationshipsAfterApproach(citizen, chosenApproach);
         this.ChangeLoyaltyAfterApproach(citizen, chosenApproach);
+
         return chosenApproach;
     }
 
@@ -362,7 +377,7 @@ public class Plague : GameEvent {
 		city.plague = this;
 		this.affectedCities.Add (city);
 	}
-	private void PlagueAKingdom(Kingdom kingdom){
+	internal void PlagueAKingdom(Kingdom kingdom, City city){
 		this.affectedKingdoms.Add (kingdom);
         float cureChance = DEFAULT_CURE_CHANCE;
         if (this.isVaccineDeveloped) {
@@ -374,7 +389,9 @@ public class Plague : GameEvent {
         });
         EVENT_APPROACH chosenApproach = this.ChooseApproach(kingdom.king);
         UpdateKingdomEmbargos();
+		this.PlagueACity (city);
 
+		DifferentApproachesLogs (kingdom.king, chosenApproach, city);
 	}
 
     #region Trading
@@ -649,6 +666,9 @@ public class Plague : GameEvent {
 	private void SelectKingdomForBioWeaponDevelopment(){
 		Kingdom selectedKingdom = this.opportunisticKingdoms[UnityEngine.Random.Range(0, this.opportunisticKingdoms.Count)];
 		selectedKingdom.SetBioWeapon (true);
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "bioweapon_developed");
+		newLog.AddToFillers (selectedKingdom, selectedKingdom.name);
+		newLog.AddToFillers (null, this._plagueName);
 	}
 
     private void DevelopVaccine() {
@@ -657,5 +677,46 @@ public class Plague : GameEvent {
             Kingdom currKingdom = this.affectedKingdoms[i];
             this.kingdomChances[currKingdom.id][0] = 5f;
         }
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "vaccine_developed");
+		newLog.AddToFillers (null, this._plagueName);
     }
+
+	private void DifferentApproachesLogs(Citizen citizen, EVENT_APPROACH approach, City city){
+		if(citizen.city.kingdom.id == this.sourceKingdom.id){
+			//This is the kingdom where the plague started
+			string logName = string.Empty;
+			switch(approach){
+			case EVENT_APPROACH.HUMANISTIC:
+				logName = "start_humanistic";
+				break;
+			case EVENT_APPROACH.PRAGMATIC:
+				logName = "start_pragmatic";
+				break;
+			case EVENT_APPROACH.OPPORTUNISTIC:
+				logName = "start_opportunistic";
+				break;
+			}
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", logName);
+			newLog.AddToFillers (citizen, citizen.name);
+		}else{
+			//This is the kingdom where the plague has spread
+			string logName = string.Empty;
+			switch(approach){
+			case EVENT_APPROACH.HUMANISTIC:
+				logName = "spread_humanistic";
+				break;
+			case EVENT_APPROACH.PRAGMATIC:
+				logName = "spread_pragmatic";
+				break;
+			case EVENT_APPROACH.OPPORTUNISTIC:
+				logName = "spread_opportunistic";
+				break;
+			}
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", logName);
+			newLog.AddToFillers (null, this._plagueName);
+			newLog.AddToFillers (city, city.name);
+			newLog.AddToFillers (citizen.city.kingdom, citizen.city.kingdom.name);
+			newLog.AddToFillers (citizen, citizen.name);
+		}
+	}
 }
