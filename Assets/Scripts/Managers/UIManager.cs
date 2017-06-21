@@ -237,6 +237,9 @@ public class UIManager : MonoBehaviour {
 	public UILabel eventDropdownCurrentSelectionLbl;
     public UILabel forTestingLoyaltyLbl;
 
+//	[Space(10)] //Settlement Related UI
+//	public GameObject plagueIconGO;
+
 	public delegate void OnPauseEventExpiration(bool state);
 	public OnPauseEventExpiration onPauseEventExpiration;
 

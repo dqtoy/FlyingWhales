@@ -379,13 +379,14 @@ public class CombatManager : MonoBehaviour {
 			general2.markAsDead = true;
 			general1.damage -= lostHP;
 			general2.damage = 0;
-
+			KingdomManager.Instance.CheckWarTriggerMisc (general2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 		}else if(general1.damage < general2.damage){
 			//General 2 wins
 			lostHP = (int)((float)general1.damage * 0.7f);
 			general1.markAsDead = true;
 			general2.damage -= lostHP;
 			general1.damage = 0;
+			KingdomManager.Instance.CheckWarTriggerMisc (general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 
 		}else{
 			//Both are dead
@@ -393,6 +394,8 @@ public class CombatManager : MonoBehaviour {
 			general2.markAsDead = true;
 			general1.damage = 0;
 			general2.damage = 0;
+			KingdomManager.Instance.CheckWarTriggerMisc (general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+			KingdomManager.Instance.CheckWarTriggerMisc (general2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 
 		}
 //		General firstGeneral = general1;

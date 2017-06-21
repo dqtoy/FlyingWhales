@@ -60,7 +60,7 @@ public class Citizen {
 
 	protected List<Citizen> _possiblePretenders = new List<Citizen>();
 	protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
-    protected Dictionary<CHARACTER_VALUE, int> _importantCharcterValues;
+    protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
 
     protected CharacterValue[] _characterValues;
 	protected const int MARRIAGE_CHANCE = 100; //8
@@ -75,8 +75,8 @@ public class Citizen {
 	public CharacterValue[] characterValues{
 		get{ return this._characterValues;}
 	}
-    public Dictionary<CHARACTER_VALUE, int> importantCharcterValues {
-        get { return this._importantCharcterValues; }
+    public Dictionary<CHARACTER_VALUE, int> importantCharacterValues {
+        get { return this._importantCharacterValues; }
     }
     //public Dictionary<CHARACTER_VALUE, int> importantCharcterValues {
     //    get { return this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value); }
@@ -164,7 +164,7 @@ public class Citizen {
 		this.deathReason = DEATH_REASONS.NONE;
 		this.deathReasonText = string.Empty;
 		this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
-        this._importantCharcterValues = new Dictionary<CHARACTER_VALUE, int>();
+        this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
 
         this.city.citizens.Add (this);
 //			this.GenerateTraits();
@@ -1488,7 +1488,7 @@ public class Citizen {
 	internal void GenerateCharacterValues(){
 		this._dictCharacterValues.Clear ();
 		this._dictCharacterValues = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToDictionary (x => x, x => UnityEngine.Random.Range (1, 101));
-        this._importantCharcterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+        this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
         //		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
         //		this._characterValues = new CharacterValue[character.Length];
@@ -1502,7 +1502,7 @@ public class Citizen {
 		for(int i = 0; i < this.city.kingdom.kingdomTypeData.characterValues.Length; i++){
 			this.UpdateSpecificCharacterValue (this.city.kingdom.kingdomTypeData.characterValues [i].character, this.city.kingdom.kingdomTypeData.characterValues [i].value);
 		}
-        this._importantCharcterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+        this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
     }
 	private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value){
