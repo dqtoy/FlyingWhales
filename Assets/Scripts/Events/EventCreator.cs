@@ -53,13 +53,13 @@ public class EventCreator: MonoBehaviour {
 		return diplomaticCrisis;
 	}
 	internal JoinWar CreateJoinWarEvent(Kingdom kingdom, Kingdom friend, InvasionPlan invasionPlan){
-		Citizen envoy = kingdom.capitalCity.CreateAgent (ROLE.ENVOY, EVENT_TYPES.JOIN_WAR_REQUEST, friend.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.JOIN_WAR_REQUEST]);
+		Citizen citizen = kingdom.capitalCity.CreateAgent (ROLE.ENVOY, EVENT_TYPES.JOIN_WAR_REQUEST, friend.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.JOIN_WAR_REQUEST]);
 		Citizen citizenToPersuade = friend.king;
-		if(envoy != null && citizenToPersuade != null){
-			Envoy chosenEnvoy = (Envoy)envoy.assignedRole;
+		if(citizen != null && citizenToPersuade != null){
+			Envoy envoy = (Envoy)citizen.assignedRole;
 			JoinWar joinWar = new JoinWar (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, invasionPlan.startedBy, 
-				citizenToPersuade, chosenEnvoy, invasionPlan.targetKingdom, invasionPlan);
-			chosenEnvoy.Initialize (joinWar);
+				citizenToPersuade, envoy, invasionPlan.targetKingdom, invasionPlan);
+			envoy.Initialize (joinWar);
 			return joinWar;
 		}
 		return null;
@@ -67,9 +67,9 @@ public class EventCreator: MonoBehaviour {
 	internal StateVisit CreateStateVisitEvent(Kingdom firstKingdom, Kingdom secondKingdom){
 		Citizen visitor = secondKingdom.capitalCity.CreateAgent (ROLE.ENVOY, EVENT_TYPES.STATE_VISIT, firstKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.STATE_VISIT]);
 		if(visitor != null){
-			Envoy chosenEnvoy = (Envoy)visitor.assignedRole;
-			StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, firstKingdom.king, secondKingdom, chosenEnvoy);
-			chosenEnvoy.Initialize (stateVisit);
+			Envoy envoy = (Envoy)visitor.assignedRole;
+			StateVisit stateVisit = new StateVisit(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, firstKingdom.king, secondKingdom, envoy);
+			envoy.Initialize (stateVisit);
 			return stateVisit;
 		}
 		return null;
@@ -89,12 +89,12 @@ public class EventCreator: MonoBehaviour {
     }
 
 	internal Sabotage CreateSabotageEvent(Kingdom sourceKingdom, Kingdom targetKingdom, GameEvent eventToSabotage, int remainingDays){
-		Citizen envoy = sourceKingdom.capitalCity.CreateAgent (ROLE.ENVOY, EVENT_TYPES.SABOTAGE, targetKingdom.capitalCity.hexTile, remainingDays);
-		if(envoy != null){
-			Envoy saboteur = (Envoy)envoy.assignedRole;
+		Citizen citizen = sourceKingdom.capitalCity.CreateAgent (ROLE.ENVOY, EVENT_TYPES.SABOTAGE, targetKingdom.capitalCity.hexTile, remainingDays);
+		if(citizen != null){
+			Envoy envoy = (Envoy)citizen.assignedRole;
 			Sabotage sabotage = new Sabotage(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				sourceKingdom.king, saboteur, eventToSabotage);
-			saboteur.Initialize (sabotage);
+				sourceKingdom.king, envoy, eventToSabotage);
+			envoy.Initialize (sabotage);
 		}
 		return null;
 	}
@@ -106,33 +106,33 @@ public class EventCreator: MonoBehaviour {
 				targetLocation = targetCitizen.assignedRole.targetLocation;
 			}
 		}
-		Citizen spy = sourceKingdom.capitalCity.CreateAgent (ROLE.SPY, EVENT_TYPES.SABOTAGE, targetLocation, remainingDays);
-		if(spy != null){
-			Spy assassin = (Spy)spy.assignedRole;
+		Citizen citizen = sourceKingdom.capitalCity.CreateAgent (ROLE.SPY, EVENT_TYPES.SABOTAGE, targetLocation, remainingDays);
+		if(citizen != null){
+			Spy spy = (Spy)citizen.assignedRole;
 			Assassination assassination = new Assassination(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				sourceKingdom.king, targetCitizen, assassin, gameEventTrigger);
-			assassin.Initialize (assassination);
+				sourceKingdom.king, targetCitizen, spy, gameEventTrigger);
+			spy.Initialize (assassination);
 		}
 		return null;
 	}
 
 	internal AttackCity CreateAttackCityEvent(City sourceCity, City targetCity, List<HexTile> path, GameEvent gameEvent, bool isRebel = false){
-		Citizen general = sourceCity.CreateGeneralForCombat(path, targetCity.hexTile);
-		if(general != null){
-			General attacker = (General)general.assignedRole;
+		Citizen citizen = sourceCity.CreateGeneralForCombat(path, targetCity.hexTile);
+		if(citizen != null){
+			General general = (General)citizen.assignedRole;
 			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				general, attacker, targetCity, gameEvent);
-			attacker.Initialize (attackCity);
-			attacker.isRebel = isRebel;
+				citizen, general, targetCity, gameEvent);
+			general.Initialize (attackCity);
+			general.isRebel = isRebel;
 		}
 		return null;
 	}
 	internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
-    	Citizen envoy = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
-    	if (envoy != null) {
+    	Citizen citizen = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
+		if (citizen != null) {
         	RequestPeace requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-            	kingdomToRequest.king, (Envoy)envoy.assignedRole, targetKingdom);
-        	envoy.assignedRole.Initialize(requestPeace);
+				kingdomToRequest.king, (Envoy)citizen.assignedRole, targetKingdom);
+			citizen.assignedRole.Initialize(requestPeace);
         	return requestPeace;
     	}
     	return null;
@@ -147,13 +147,13 @@ public class EventCreator: MonoBehaviour {
 //		if(sourceCity == null){
 //			return null;
 //		}
-		Citizen reinforcer = sourceCity.CreateAgent(ROLE.REINFORCER, EVENT_TYPES.REINFORCEMENT, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REINFORCEMENT]);
-		if(reinforcer != null){
-			Reinforcer defender = (Reinforcer)reinforcer.assignedRole;
+		Citizen citizen = sourceCity.CreateAgent(ROLE.REINFORCER, EVENT_TYPES.REINFORCEMENT, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REINFORCEMENT]);
+		if(citizen != null){
+			Reinforcer reinforcer = (Reinforcer)citizen.assignedRole;
 			Reinforcement reinforcement = new Reinforcement(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				reinforcer, defender, targetCity, sourceCity);
-			defender.Initialize(reinforcement);
-			defender.isRebel = isRebel;
+				citizen, reinforcer, targetCity, sourceCity);
+			reinforcer.Initialize(reinforcement);
+			reinforcer.isRebel = isRebel;
 			return reinforcement;
 		}
 		return null;
@@ -193,6 +193,19 @@ public class EventCreator: MonoBehaviour {
 				Plague plague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, plaguedCity);
 				return plague;
 			}
+		}
+		return null;
+	}
+
+	internal ScourgeCity CreateScourgeCityEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
+		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.SCOURGE, EVENT_TYPES.SCOURGE_CITY, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.SCOURGE_CITY]);
+		City targetCity = targetKingdom.cities [UnityEngine.Random.Range (0, targetKingdom.cities.Count)];
+
+		if(citizen != null && targetCity != null){
+			Scourge scourge = (Scourge)citizen.assignedRole;
+			ScourgeCity scourgeCity = new ScourgeCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, scourge, targetCity);
+			scourge.Initialize (scourgeCity);
+			return scourgeCity;
 		}
 		return null;
 	}
