@@ -1178,7 +1178,7 @@ public class City{
 		this.rebellion.conqueredCities.Remove (this);
 //		this._kingdom.AddCityToKingdom (this);
 	}
-	internal void ChangeToRebelFort(Rebellion rebellion){
+	internal void ChangeToRebelFort(Rebellion rebellion, bool isStart = false){
 		if (this.hexTile.cityInfo.city != null){
 			this.hexTile.cityInfo.rebelIcon.SetActive (true);
 		}
@@ -1191,6 +1191,11 @@ public class City{
 		KillAllCitizens (DEATH_REASONS.REBELLION);
 		TransferCityToRebellion ();
 		this.AssignNewGovernor ();
+		if(!isStart){
+			Log newLog = rebellion.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "rebel_conquer_city");
+			newLog.AddToFillers (this, this.name);
+		}
+
 	}
 	internal void ChangeToCity(){
 		if (this.hexTile.cityInfo.city != null){
@@ -1209,7 +1214,8 @@ public class City{
 				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
 			}
 		}
-
+		Log newLog = this.rebellion.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "kingdom_conquer_city");
+		newLog.AddToFillers (this, this.name);
 		this.rebellion = null;
 	}
 

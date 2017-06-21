@@ -16,14 +16,12 @@ public class Riot : GameEvent {
 		this.sourceKingdom = startedBy.city.kingdom;
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError (startedBy.name + " has started a riot in " + this.sourceKingdom.name);
-		//		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
-		//		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name);
-		//		newLogTitle.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
-		//
-		//		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "start");
-		//		newLog.AddToFillers (visitor.citizen, visitor.citizen.name);
-		//		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
-		//		newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
+
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "event_title");
+		newLogTitle.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "start");
+		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
 
 		//		EventManager.Instance.AddEventToDictionary (this);
 		//		this.EventIsCreated ();
@@ -62,6 +60,8 @@ public class Riot : GameEvent {
 	internal override void DoneEvent(){
 		base.DoneEvent();
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "event_end");
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();
@@ -83,5 +83,8 @@ public class Riot : GameEvent {
 		//Destroy a structure
 		Debug.Log("DESTROYED A STRUCTURE IN " + city.name);
 		city.RemoveTileFromCity(city.structures[city.structures.Count - 1]);
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "destroy_settlement");
+		newLog.AddToFillers (city, city.name);
 	}
 }

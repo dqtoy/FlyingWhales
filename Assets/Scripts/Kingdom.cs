@@ -480,10 +480,10 @@ public class Kingdom{
 		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Where(x => x.isActive).Count() > 0) {
 			return;
 		}
-        float upperBound = 300f + (50f * (float)this.cities.Count);
+        float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = Random.Range (0, upperBound);
 		if (chance < this.expansionChance) {
-		
+			Debug.Log ("Expansion Rate: " + this.expansionChance);		
 			List<City> citiesThatCanExpand = new List<City> ();
 			List<Citizen> allUnassignedAdultCitizens = new List<Citizen> ();
 			List<Resource> expansionCost = new List<Resource> () {
