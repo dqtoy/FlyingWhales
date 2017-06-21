@@ -2,9 +2,40 @@
 using System.Collections;
 
 public class Scourge : Role {
-    private Plague _plague;
+	private ScourgeCity _scourgeCity;
 
-    public Scourge(Citizen citizen): base(citizen){
+	#region getters/setters
+	public ScourgeCity scourgeCity {
+		get { return this._scourgeCity; }
+	}
+	#endregion
+	public Scourge(Citizen citizen): base(citizen){
 
-    }
+	}
+
+	internal override void Initialize(GameEvent gameEvent) {
+		if (gameEvent is ScourgeCity) {
+			this._scourgeCity = (ScourgeCity)gameEvent;
+			this._scourgeCity.scourge = this;
+			this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Scourge"), this.citizen.city.hexTile.transform) as GameObject;
+			this.avatar.transform.localPosition = Vector3.zero;
+			this.avatar.GetComponent<ScourgeAvatar>().Init(this);
+		}
+	}
+
+	internal override void Attack() {
+		//		base.Attack ();
+		if (this.avatar != null) {
+			this.avatar.GetComponent<ScourgeAvatar>().HasAttacked();
+			if (this.avatar.GetComponent<ScourgeAvatar>().direction == DIRECTION.LEFT) {
+				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Left");
+			} else if (this.avatar.GetComponent<ScourgeAvatar>().direction == DIRECTION.RIGHT) {
+				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Right");
+			} else if (this.avatar.GetComponent<ScourgeAvatar>().direction == DIRECTION.UP) {
+				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Up");
+			} else {
+				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Down");
+			}
+		}
+	}
 }

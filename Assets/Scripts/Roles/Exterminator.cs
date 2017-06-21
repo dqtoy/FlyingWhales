@@ -26,15 +26,15 @@ public class Exterminator : Role {
     internal override void Attack() {
         //		base.Attack ();
         if (this.avatar != null) {
-            this.avatar.GetComponent<ExterminatorAvatar>().HasAttacked();
-            if (this.avatar.GetComponent<ExterminatorAvatar>().direction == DIRECTION.LEFT) {
-                this.avatar.GetComponent<ExterminatorAvatar>().animator.Play("Attack_Left");
-            } else if (this.avatar.GetComponent<ExterminatorAvatar>().direction == DIRECTION.RIGHT) {
-                this.avatar.GetComponent<ExterminatorAvatar>().animator.Play("Attack_Right");
-            } else if (this.avatar.GetComponent<ExterminatorAvatar>().direction == DIRECTION.UP) {
-                this.avatar.GetComponent<ExterminatorAvatar>().animator.Play("Attack_Up");
+			this.avatar.GetComponent<ExterminatorAvatar>().HasAttacked();
+			if (this.avatar.GetComponent<ExterminatorAvatar>().direction == DIRECTION.LEFT) {
+				this.avatar.GetComponent<ExterminatorAvatar>().animator.Play("Attack_Left");
+			} else if (this.avatar.GetComponent<ExterminatorAvatar>().direction == DIRECTION.RIGHT) {
+				this.avatar.GetComponent<ExterminatorAvatar>().animator.Play("Attack_Right");
+			} else if (this.avatar.GetComponent<ExterminatorAvatar>().direction == DIRECTION.UP) {
+				this.avatar.GetComponent<ExterminatorAvatar>().animator.Play("Attack_Up");
             } else {
-                this.avatar.GetComponent<ExterminatorAvatar>().animator.Play("Attack_Down");
+				this.avatar.GetComponent<ExterminatorAvatar>().animator.Play("Attack_Down");
             }
         }
     }

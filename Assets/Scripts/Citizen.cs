@@ -164,7 +164,9 @@ public class Citizen {
 		this.deathReason = DEATH_REASONS.NONE;
 		this.deathReasonText = string.Empty;
 		this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
-		this.city.citizens.Add (this);
+        this._importantCharcterValues = new Dictionary<CHARACTER_VALUE, int>();
+
+        this.city.citizens.Add (this);
 //			this.GenerateTraits();
 		this.UpdatePrestige();
 
@@ -1486,15 +1488,17 @@ public class Citizen {
 	internal void GenerateCharacterValues(){
 		this._dictCharacterValues.Clear ();
 		this._dictCharacterValues = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToDictionary (x => x, x => UnityEngine.Random.Range (1, 101));
-//		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
-//		this._characterValues = new CharacterValue[character.Length];
-//		for(int i = 0; i < this._characterValues.Length; i++){
-//			this._characterValues [i].character = character [i];
-//			this._characterValues [i].value = UnityEngine.Random.Range (1, 101);
-//			this._dictCharacterValues.Add(this._characterValues [i].character, this._characterValues [i].value);
-//		}
-	}
-	internal void UpdateCharacterValues(){
+        this._importantCharcterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+        //		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
+        //		this._characterValues = new CharacterValue[character.Length];
+        //		for(int i = 0; i < this._characterValues.Length; i++){
+        //			this._characterValues [i].character = character [i];
+        //			this._characterValues [i].value = UnityEngine.Random.Range (1, 101);
+        //			this._dictCharacterValues.Add(this._characterValues [i].character, this._characterValues [i].value);
+        //		}
+    }
+    internal void UpdateCharacterValues(){
 		for(int i = 0; i < this.city.kingdom.kingdomTypeData.characterValues.Length; i++){
 			this.UpdateSpecificCharacterValue (this.city.kingdom.kingdomTypeData.characterValues [i].character, this.city.kingdom.kingdomTypeData.characterValues [i].value);
 		}

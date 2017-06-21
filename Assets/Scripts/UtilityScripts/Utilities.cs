@@ -207,7 +207,7 @@ public class Utilities : MonoBehaviour {
 		{BIOMES.SNOW, new SpecialResourceChance(
 			//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT}, 
 			//new int[] {15, 5, 15, 5, 5, 0, 0})
-            new RESOURCE[] {RESOURCE.BEHEMOTH, RESOURCE.GRANITE, RESOURCE.CEDAR, RESOURCE.COBALT},
+            new RESOURCE[] {RESOURCE.BEHEMOTH, RESOURCE.GRANITE, RESOURCE.OAK, RESOURCE.COBALT},
             new int[] {20, 50, 50, 4})
         },
 
@@ -826,6 +826,8 @@ public class Utilities : MonoBehaviour {
 			return true;
         case EVENT_TYPES.PLAGUE:
             return true;
+		case EVENT_TYPES.SCOURGE_CITY:
+			return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;

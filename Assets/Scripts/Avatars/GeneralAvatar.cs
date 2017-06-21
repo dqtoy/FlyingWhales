@@ -196,12 +196,12 @@ public class GeneralAvatar : MonoBehaviour {
 						General otherGeneral = (General)this.hostile.assignedRole;
 						CombatManager.Instance.BattleMidway (ref this.general, ref otherGeneral);
 						if(this.general.markAsDead){
-							this.general.citizen.Death (DEATH_REASONS.BATTLE);
+							this.general.attackCity.DeathByGeneral (otherGeneral);
 						}else{
 							this.general.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
 						}
 						if(otherGeneral.markAsDead){
-							this.hostile.Death (DEATH_REASONS.BATTLE);
+							this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByGeneral (this.general);
 						}else{
 							otherGeneral.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
 						}
