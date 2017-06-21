@@ -189,9 +189,9 @@ public class Plague : GameEvent {
             RelationshipKings rel = otherKingdom.king.GetRelationshipWithCitizen(citizen);
             EVENT_APPROACH otherKingApproach = this.DetermineApproach(otherKingdom.king);
             if (otherKingApproach == chosenApproach) {
-                rel.AddEventModifier(20, "+20 plague handling");
+				rel.AddEventModifier(20, "+20 plague handling", this);
             } else {
-                rel.AddEventModifier(-20, "-20 plague handling");
+				rel.AddEventModifier(-20, "-20 plague handling", this);
             }
         }
     }
@@ -201,9 +201,9 @@ public class Plague : GameEvent {
             Governor gov = (Governor)citizen.city.kingdom.cities[i].governor.assignedRole;
             EVENT_APPROACH govApproach = this.DetermineApproach(gov.citizen);
             if (govApproach == chosenApproach) {
-                gov.AddEventModifier(20, "+20 plague handling");
+				gov.AddEventModifier(20, "+20 plague handling", this);
             } else {
-                gov.AddEventModifier(-20, "-20 plague handling");
+				gov.AddEventModifier(-20, "-20 plague handling", this);
             }
         }
     }
