@@ -28,10 +28,18 @@ public class Rebellion : GameEvent {
 		this.targetKingdom.rebellions.Add (this);
 		this.warPair.DefaultValues ();
 		startedBy.SetImmortality (true);
+		City cityWhereRebelFortIsCreated = startedBy.city;
 		CreateRebelFort ();
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		Debug.LogError (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);
+
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "event_title");
+		newLogTitle.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name);
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "start");
+		newLog.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name);
+		newLog.AddToFillers (cityWhereRebelFortIsCreated, cityWhereRebelFortIsCreated.name);
 	}
 	#region Overrides
 	internal override void PerformAction (){
@@ -43,12 +51,19 @@ public class Rebellion : GameEvent {
 				Kingdom newKingdom = KingdomManager.Instance.SplitKingdom(this.targetKingdom, this.conqueredCities);
 				newKingdom.AssignNewKing (this.rebelLeader.citizen);
 				ResetConqueredCitiesToCityFunctionality (newKingdom);
+
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "rebel_win");
+				newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name);
+				newLog.AddToFillers (newKingdom, newKingdom.name);
+				newLog.AddToFillers (newKingdom.king, newKingdom.king.name);
 			}
 			this.DoneEvent();
 			return;
 		}else{
 			if(this.conqueredCities.Count <= 0){
 				//Victory Kingdom
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "kingdom_win");
+				newLog.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name);
 				this.rebelLeader.citizen.SetImmortality(false);
 				this.DoneEvent();
 				return;
