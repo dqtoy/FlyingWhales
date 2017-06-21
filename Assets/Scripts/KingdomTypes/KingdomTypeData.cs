@@ -91,37 +91,43 @@ public class KingdomTypeData : MonoBehaviour {
 
 	public EventRate[] eventRates {
 		get { 
-			return this._eventRates.Concat(this.generalKingdomTypeData.eventRates).ToArray();
+//			return this._eventRates.Concat(this.generalKingdomTypeData.eventRates).ToArray();
+			return this._eventRates;
 		}
 	}
 
 	public EventRate[] dailyCumulativeEventRate {
 		get { 
-			return this._dailyCumulativeEventRate.Concat(this.generalKingdomTypeData.dailyCumulativeEventRate).ToArray(); 
+//			return this._dailyCumulativeEventRate.Concat(this.generalKingdomTypeData.dailyCumulativeEventRate).ToArray();
+			return this._dailyCumulativeEventRate;
 		}
 	}
 
 	public CharacterValue[] characterValues {
 		get { 
-			return this._characterValues.Concat(this.generalKingdomTypeData.characterValues).ToArray(); 
+//			return this._characterValues.Concat(this.generalKingdomTypeData.characterValues).ToArray();
+			return this._characterValues;
 		}
 	}
 
 	public WarTrigger[] warTriggers {
 		get { 
-			return this._warTriggers.Concat(this.generalKingdomTypeData.warTriggers).ToArray(); 
+//			return this._warTriggers.Concat(this.generalKingdomTypeData.warTriggers).ToArray();
+			return this._warTriggers;
 		}
 	}
 
 	public WarRateModifierMilitary[] _warRateModifierMilitary {
 		get { 
-			return this.warRateModifierMilitary.Concat(this.generalKingdomTypeData._warRateModifierMilitary).ToArray(); 
+//			return this.warRateModifierMilitary.Concat(this.generalKingdomTypeData._warRateModifierMilitary).ToArray();
+			return this.warRateModifierMilitary;
 		}
 	}
 
 	public WarRateModifierRelationship[] _warRateModifierRelationship {
 		get { 
-			return this.warRateModifierRelationship.Concat(this.generalKingdomTypeData.warRateModifierRelationship).ToArray(); 
+//			return this.warRateModifierRelationship.Concat(this.generalKingdomTypeData.warRateModifierRelationship).ToArray(); 
+			return this.warRateModifierRelationship;
 		}
 	}
 
@@ -179,6 +185,13 @@ public class KingdomTypeData : MonoBehaviour {
 	}
 
 	void Awake(){
+		this._eventRates = this._eventRates.Concat (this.generalKingdomTypeData.eventRates).ToArray ();
+		this._warTriggers = this._warTriggers.Concat (this.generalKingdomTypeData.warTriggers).ToArray ();
+		this.warRateModifierMilitary = this.warRateModifierMilitary.Concat (this.generalKingdomTypeData._warRateModifierMilitary).ToArray ();
+		this.warRateModifierRelationship = this.warRateModifierRelationship.Concat (this.generalKingdomTypeData._warRateModifierRelationship).ToArray ();
+		this._dailyCumulativeEventRate = this._dailyCumulativeEventRate.Concat (this.generalKingdomTypeData._dailyCumulativeEventRate).ToArray ();
+		this._characterValues = this._characterValues.Concat (this.generalKingdomTypeData._characterValues).ToArray ();
+
 		this._dictWarTriggers.Clear ();
 		this._dictWarRateModifierMilitary.Clear ();
 		this._dictWarRateModifierRelationship.Clear ();
