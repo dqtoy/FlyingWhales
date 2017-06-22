@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Text;
+using System.Linq;
 
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used.
@@ -885,4 +886,10 @@ public class Utilities : MonoBehaviour {
 		}
 		return false;
 	}
+
+    public static string FirstCharToUpper(string input) {
+        if (String.IsNullOrEmpty(input))
+            throw new ArgumentException("ARGH!");
+        return input.First().ToString().ToUpper() + input.Substring(1);
+    }
 }

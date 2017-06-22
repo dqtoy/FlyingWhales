@@ -87,9 +87,11 @@ public class UIManager : MonoBehaviour {
 	public UILabel citizenCityNameLbl;
 	public UIGrid citizenTraitsGrid;
 	public UIGrid citizenHistoryGrid;
-	public ButtonToggle relationshipsBtn;
+	public ButtonToggle characterValuesBtn;
 	public ButtonToggle familyTreeBtn;
 	public ButtonToggle citizenHistoryBtn;
+    public GameObject characterValuesGO;
+    public UILabel characterValuesLbl;
 	public GameObject citizenInfoForTestingGO;
 
 	[Space(10)] //City Info UI
@@ -618,9 +620,9 @@ public class UIManager : MonoBehaviour {
 		StartCoroutine (RepositionGrid (citizenTraitsGrid));
 
 		if (citizenToShow.isKing) {
-			relationshipsBtn.gameObject.SetActive(true);
+			characterValuesBtn.gameObject.SetActive(true);
 		} else {
-			relationshipsBtn.gameObject.SetActive(false);
+            characterValuesBtn.gameObject.SetActive(false);
 		}
 
 		HideCityInfo();
@@ -632,9 +634,34 @@ public class UIManager : MonoBehaviour {
 		currentlyShowingCitizen = null;
 		citizenInfoGO.SetActive(false);
 		HideFamilyTree();
-	}
+        HideCitizenCharacterValues();
+    }
 
-	public void ToggleCitizenHistory(){
+    public void ToggleCharacterValues() {
+        if (this.characterValuesGO.activeSelf) {
+            HideCitizenCharacterValues();
+        } else {
+            ShowCitizenCharacterValues();
+        }
+    }
+
+    public void ShowCitizenCharacterValues() {
+        characterValuesLbl.text = string.Empty;
+        for (int i = 0; i < currentlyShowingCitizen.importantCharacterValues.Keys.Count; i++) {
+            CHARACTER_VALUE currValue = currentlyShowingCitizen.importantCharacterValues.Keys.ElementAt(i);
+            characterValuesLbl.text += Utilities.FirstCharToUpper(currValue.ToString().Replace('_', ' ')) + "\n";
+        }
+
+        this.characterValuesGO.SetActive(true);
+    }
+
+    public void HideCitizenCharacterValues() {
+        this.characterValuesBtn.SetClickState(false);
+        this.characterValuesGO.SetActive(false);
+    }
+
+
+    public void ToggleCitizenHistory(){
 		if (this.citizenHistoryGO.activeSelf) {
 			this.citizenHistoryGO.SetActive (false);
 		} else {
