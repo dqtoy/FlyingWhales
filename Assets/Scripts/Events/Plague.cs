@@ -87,7 +87,7 @@ public class Plague : GameEvent {
 		this.bioWeaponMeterMax = maxMeter;
 		this.vaccineMeterMax = maxMeter;
        
-		this.InitializePlague ();
+		WorldEventManager.Instance.currentPlague = this;
 
         EventManager.Instance.AddEventToDictionary(this);
         EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -101,6 +101,7 @@ public class Plague : GameEvent {
 		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
 		newLog.AddToFillers (null, this._plagueName);
 
+		this.InitializePlague ();
 		base.EventIsCreated();
 	}
 
@@ -146,6 +147,8 @@ public class Plague : GameEvent {
         DisembargoKingdoms();
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_end");
 		newLog.AddToFillers (null, this._plagueName);
+
+		WorldEventManager.Instance.currentPlague = null;
     }
     #endregion
 
@@ -320,7 +323,7 @@ public class Plague : GameEvent {
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
         if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.FAIRNESS) ||
             importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD) || importantCharVals.ContainsKey(CHARACTER_VALUE.CHAUVINISM)) {
-            KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals.First();
+			KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals.First();
             if (priotiyValue.Key == CHARACTER_VALUE.CHAUVINISM) {
                 chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
             } else if (priotiyValue.Key == CHARACTER_VALUE.GREATER_GOOD) {

@@ -1064,6 +1064,11 @@ public class Kingdom{
 
 	internal IEnumerator ConquerCity(City city, General attacker){
 		if (this.id != city.kingdom.id){
+			RelationshipKingdom rel = this.GetRelationshipWithOtherKingdom (city.kingdom);
+			if(rel != null && rel.war != null){
+				rel.war.warPair.isDone = true;
+			}
+
 			HexTile hex = city.hexTile;
             //city.KillCity();
             city.ConquerCity(this);
