@@ -574,6 +574,9 @@ public class UIManager : MonoBehaviour {
 		if (relocateGO.activeSelf) {
 			HideRelocate();
 		}
+        if (characterValuesGO.activeSelf) {
+            ShowCitizenCharacterValues();
+        }
 
 		//ForTesting
 		citizenInfoForTestingGO.SetActive (true);
@@ -619,11 +622,11 @@ public class UIManager : MonoBehaviour {
 
 		StartCoroutine (RepositionGrid (citizenTraitsGrid));
 
-		if (citizenToShow.isKing) {
-			characterValuesBtn.gameObject.SetActive(true);
-		} else {
-            characterValuesBtn.gameObject.SetActive(false);
-		}
+		//if (citizenToShow.isKing) {
+		//	characterValuesBtn.gameObject.SetActive(true);
+		//} else {
+  //          characterValuesBtn.gameObject.SetActive(false);
+		//}
 
 		HideCityInfo();
 		citizenInfoGO.SetActive (true);
@@ -2881,15 +2884,15 @@ public class UIManager : MonoBehaviour {
 		if (this.unrestGO.activeSelf) {
 			this.unrestGO.SetActive (false);
 		} else {
-			if(this.currentlyShowingCity != null){
-				this.unrestInput.value = this.currentlyShowingCity.kingdom.unrest.ToString();
+			if(this.currentlyShowingKingdom != null){
+				this.unrestInput.value = this.currentlyShowingKingdom.unrest.ToString();
 				this.unrestGO.SetActive (true);
 			}
 		}
 	}
 	public void OnChangeUnrest(){
-		if(this.currentlyShowingCity != null){
-			this.currentlyShowingCity.kingdom.ChangeUnrest(int.Parse(this.unrestInput.value));
+		if(this.currentlyShowingKingdom != null){
+			this.currentlyShowingKingdom.ChangeUnrest(int.Parse(this.unrestInput.value));
 		}
 	}
 	public void HideUnrest(){
