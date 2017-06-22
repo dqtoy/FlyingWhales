@@ -323,13 +323,17 @@ public class Plague : GameEvent {
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
         if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.FAIRNESS) ||
             importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD) || importantCharVals.ContainsKey(CHARACTER_VALUE.CHAUVINISM)) {
-			KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals.First();
+
+            KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
+                .First(x => x.Key == CHARACTER_VALUE.CHAUVINISM || x.Key == CHARACTER_VALUE.GREATER_GOOD 
+                || x.Key == CHARACTER_VALUE.LIFE || x.Key == CHARACTER_VALUE.FAIRNESS);
+
             if (priotiyValue.Key == CHARACTER_VALUE.CHAUVINISM) {
                 chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
             } else if (priotiyValue.Key == CHARACTER_VALUE.GREATER_GOOD) {
                 chosenApproach = EVENT_APPROACH.PRAGMATIC;
             } else {
-                chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
+                chosenApproach = EVENT_APPROACH.HUMANISTIC;
             }
         } else {
             //a king who does not value any of the these four ethics will choose OPPORTUNISTIC APPROACH in dealing with a plague.

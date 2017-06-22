@@ -20,16 +20,23 @@ public class RelationshipKings {
 	public List<History> relationshipHistory;
     private Dictionary<EVENT_TYPES, List<ExpirableModifier>> _eventModifiers;
     private int _eventLikenessModifier;
-    private int likeFromMutualRelationships;
-
-    List<ExpirableModifier> exm;
+    private int _likeFromMutualRelationships;
     
     #region getters/setters
-    public int like {
+    public int totalLike {
         get { return this._like + this._eventLikenessModifier + this.likeFromMutualRelationships; }
+    }
+    public int baseLike {
+        get { return this._like; }
     }
     public Dictionary<EVENT_TYPES, List<ExpirableModifier>> eventModifiers {
         get { return this._eventModifiers; }
+    }
+    public int eventLikenessModifier {
+        get { return this._eventLikenessModifier; }
+    }
+    public int likeFromMutualRelationships {
+        get { return this._likeFromMutualRelationships; }
     }
     #endregion
 
@@ -44,7 +51,7 @@ public class RelationshipKings {
 		this.relationshipHistory = new List<History>();
         this._eventModifiers = new Dictionary<EVENT_TYPES, List<ExpirableModifier>>();
         this._eventLikenessModifier = 0;
-        this.likeFromMutualRelationships = 0;
+        this._likeFromMutualRelationships = 0;
         //		this.isAdjacent = false;
         //		this.isAtWar = false;
         EventManager.Instance.onWeekEnd.AddListener(CheckEventModifiers);
@@ -52,17 +59,17 @@ public class RelationshipKings {
 
 	internal void UpdateKingRelationshipStatus(){
         RELATIONSHIP_STATUS previousStatus = this.lordRelationship;
-        if (this.like <= -81){
+        if (this.totalLike <= -81){
 			this.lordRelationship = RELATIONSHIP_STATUS.RIVAL;
-		}else if(this.like >= -80 && this.like <= -41){
+		}else if(this.totalLike >= -80 && this.totalLike <= -41){
 			this.lordRelationship = RELATIONSHIP_STATUS.ENEMY;
-		}else if(this.like >= -40 && this.like <= -21){
+		}else if(this.totalLike >= -40 && this.totalLike <= -21){
 			this.lordRelationship = RELATIONSHIP_STATUS.COLD;
-		}else if(this.like >= -20 && this.like <= 20){
+		}else if(this.totalLike >= -20 && this.totalLike <= 20){
 			this.lordRelationship = RELATIONSHIP_STATUS.NEUTRAL;
-		}else if(this.like >= 21 && this.like <= 40){
+		}else if(this.totalLike >= 21 && this.totalLike <= 40){
 			this.lordRelationship = RELATIONSHIP_STATUS.WARM;
-		}else if(this.like >= 41 && this.like <= 80){
+		}else if(this.totalLike >= 41 && this.totalLike <= 80){
 			this.lordRelationship = RELATIONSHIP_STATUS.FRIEND;
 		}else{
 			this.lordRelationship = RELATIONSHIP_STATUS.ALLY;
@@ -73,12 +80,23 @@ public class RelationshipKings {
         }
 	}
 
+    internal int GetLikenessModifiersFromEvent(EVENT_TYPES eventType) {
+        int likeModifierFromEvent = 0;
+        if (this._eventModifiers.ContainsKey(eventType)) {
+            List<ExpirableModifier> modifiers = this._eventModifiers[eventType];
+            for (int i = 0; i < modifiers.Count; i++) {
+                likeModifierFromEvent += modifiers[i].modifier;
+            }
+        }
+        return likeModifierFromEvent;
+    }
+
     internal void ResetMutualRelationshipModifier() {
-        this.likeFromMutualRelationships = 0;
+        this._likeFromMutualRelationships = 0;
     }
 
     internal void AddMutualRelationshipModifier(int amount) {
-        this.likeFromMutualRelationships += amount;
+        this._likeFromMutualRelationships += amount;
     }
 
     internal void ChangeRelationshipStatus(RELATIONSHIP_STATUS newStatus, GameEvent gameEventTrigger = null) {
@@ -116,7 +134,7 @@ public class RelationshipKings {
 	internal void AdjustLikeness(int adjustment, GameEvent gameEventTrigger, bool isDiscovery = false){
         RELATIONSHIP_STATUS previousStatus = this.lordRelationship;
 		this._like += adjustment;
-		this._like = Mathf.Clamp(this.like, -100, 100);
+		this._like = Mathf.Clamp(this.totalLike, -100, 100);
 		this.UpdateKingRelationshipStatus ();
         if (adjustment < 0) { //Relationship deteriorated
             sourceKing.DeteriorateRelationship(this, gameEventTrigger, isDiscovery);

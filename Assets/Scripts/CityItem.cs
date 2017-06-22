@@ -34,9 +34,12 @@ public class CityItem : MonoBehaviour {
 
         if (showLoyalty) {
             this._loyaltyGO.SetActive(true);
-            this._loyaltyLbl.text = ((Governor)this._governor.citizen.assignedRole).loyalty.ToString();
-            EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () { UIManager.Instance.ShowLoyaltySummary((Governor)this._governor.citizen.assignedRole); });
-            EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideLoyaltySummary(); });
+            Governor thisGovernor = (Governor)this._governor.citizen.assignedRole;
+            this._loyaltyLbl.text = thisGovernor.loyalty.ToString();
+            EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
+                UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, thisGovernor.loyaltySummary);
+            });
+            EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideRelationshipSummary(); });
 
         }
     }
