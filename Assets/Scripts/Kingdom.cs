@@ -1681,7 +1681,6 @@ public class Kingdom{
                             otherKingdom.DiscoverKingdom(this);
                         }
                     }
-
                     //Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
                     //this.DiscoverKingdom(otherKingdom);
                     //otherKingdom.DiscoverKingdom(this);
@@ -1773,4 +1772,13 @@ public class Kingdom{
 		this._boonOfPowers.Clear ();
 	}
 	#endregion
+
+	internal bool HasWar(){
+		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
+			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+				return true;
+			}
+		}
+		return false;
+	}
 }
