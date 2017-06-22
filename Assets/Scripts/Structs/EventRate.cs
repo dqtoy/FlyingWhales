@@ -17,6 +17,7 @@ public struct EventRate {
 		this.relationshipTargets = relationshipTargets;
 		this.kingdomTypes = kingdomTypes;
 		this.militaryStrength = militaryStrength;
+		this.interval = this.rate;
 //		this.interval = this.rate;
 	}
 
