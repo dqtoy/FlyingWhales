@@ -206,6 +206,7 @@ public enum EVENT_TYPES{
 	REBELLION, //general
 	PLAGUE,
 	SCOURGE_CITY,
+	BOON_OF_POWER,
 }
 public enum EVENT_STATUS{
 	EXPOSED,

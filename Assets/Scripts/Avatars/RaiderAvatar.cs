@@ -228,7 +228,7 @@ public class RaiderAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.raider.raid.eventType.ToString ());
+			UIManager.Instance.ShowSmallInfo (this.raider.raid.name);
 			this.HighlightPath ();
 		}
 	}

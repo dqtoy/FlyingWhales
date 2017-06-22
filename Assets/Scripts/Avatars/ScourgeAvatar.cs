@@ -219,7 +219,7 @@ public class ScourgeAvatar : MonoBehaviour {
 
     void OnMouseEnter() {
         if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo(this.scourge.scourgeCity.eventType.ToString());
+			UIManager.Instance.ShowSmallInfo(this.scourge.scourgeCity.name);
             this.HighlightPath();
         }
     }

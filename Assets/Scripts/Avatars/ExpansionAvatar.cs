@@ -226,7 +226,7 @@ public class ExpansionAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.expander.expansion.eventType.ToString ());
+			UIManager.Instance.ShowSmallInfo (this.expander.expansion.name);
 			this.HighlightPath ();
 		}
 	}

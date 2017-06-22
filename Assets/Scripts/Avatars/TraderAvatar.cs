@@ -49,7 +49,7 @@ public class TraderAvatar : MonoBehaviour {
 
     void OnMouseEnter() {
         if (!UIManager.Instance.IsMouseOnUI()) {
-            UIManager.Instance.ShowSmallInfo(this._trader.tradeEvent.eventType.ToString());
+            UIManager.Instance.ShowSmallInfo(this._trader.tradeEvent.name);
             this.HighlightPath();
         }
     }

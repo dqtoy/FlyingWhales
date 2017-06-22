@@ -295,7 +295,7 @@ public class GeneralAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.general.attackCity.eventType.ToString ());
+			UIManager.Instance.ShowSmallInfo (this.general.attackCity.name);
 			this.HighlightPath ();
 		}
 	}

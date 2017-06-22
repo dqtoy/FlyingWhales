@@ -189,7 +189,7 @@ public class ReinforcerAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.reinforcer.reinforcement.eventType.ToString ());
+			UIManager.Instance.ShowSmallInfo (this.reinforcer.reinforcement.name);
 			this.HighlightPath ();
 		}
 	}
