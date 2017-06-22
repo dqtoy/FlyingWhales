@@ -215,8 +215,9 @@ public class UIManager : MonoBehaviour {
     [Space(10)] //For Kingdom Cities Menu
     public UIScrollView kingdomCitiesScrollView;
     public UIGrid kingdomCitiesGrid;
-    public GameObject loyaltySummaryGO;
-    public UILabel loyaltySummaryLbl;
+    public GameObject relationshipSummaryGO;
+    public UILabel relationshipSummaryLbl;
+    public UILabel relationshipSummaryTitleLbl;
 
 	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
@@ -589,7 +590,11 @@ public class UIManager : MonoBehaviour {
 			role = currentlyShowingCitizen.role.ToString();
 		}
 		if (currentlyShowingCitizen.city != null) {
-			citizenRoleAndKingdomLbl.text = role + " of " + currentlyShowingCitizen.city.kingdom.name;
+            if(currentlyShowingCitizen.role == ROLE.GOVERNOR) {
+                citizenRoleAndKingdomLbl.text = role + " of " + currentlyShowingCitizen.city.name;
+            } else {
+                citizenRoleAndKingdomLbl.text = role + " of " + currentlyShowingCitizen.city.kingdom.name;
+            }
 			citizenCityNameLbl.text = currentlyShowingCitizen.city.name;
 			ctizenPortraitBG.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
 		} else {
@@ -973,8 +978,8 @@ public class UIManager : MonoBehaviour {
 
 		//For Testing
 		relationshipHistoryForTestingGO.SetActive(true);
-		sourceKinglikenessLbl.text = relationship.like.ToString();
-		targetKinglikenessLbl.text = citizenInRelationshipWith.GetRelationshipWithCitizen(currentlyShowingCitizen).like.ToString();
+		sourceKinglikenessLbl.text = relationship.totalLike.ToString();
+		targetKinglikenessLbl.text = citizenInRelationshipWith.GetRelationshipWithCitizen(currentlyShowingCitizen).totalLike.ToString();
 
 		relationshipStatusSprite.color = Utilities.GetColorForRelationship(relationship.lordRelationship);
 		relationshipHistoryGO.SetActive(true);
@@ -2571,13 +2576,18 @@ public class UIManager : MonoBehaviour {
         kingdomListCityButton.SetClickState(false);
     }
 
-    public void ShowLoyaltySummary(Governor governor) {
-        loyaltySummaryLbl.text = governor.loyaltySummary;
-        loyaltySummaryGO.SetActive(true);
+    public void ShowRelationshipSummary(Citizen citizen, string summary) {
+        if(citizen.assignedRole is Governor) {
+            relationshipSummaryTitleLbl.text = "Loyalty";
+        } else if (citizen.assignedRole is King) {
+            relationshipSummaryTitleLbl.text = "Affinity";
+        }
+        relationshipSummaryLbl.text = summary;
+        relationshipSummaryGO.SetActive(true);
     }
 
-    public void HideLoyaltySummary() {
-        loyaltySummaryGO.SetActive(false);
+    public void HideRelationshipSummary() {
+        relationshipSummaryGO.SetActive(false);
     }
 
     /*
