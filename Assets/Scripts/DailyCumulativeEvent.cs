@@ -83,11 +83,11 @@ public class DailyCumulativeEvent : MonoBehaviour {
 				continue;
 			}
 			int chance = UnityEngine.Random.Range (0, 200);
-			if(chance < (this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].rate * this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].multiplier)){
+			if(chance < this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].rate){
 				this.eventToCreate = this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i];
 				SetSecondRandomKingdom (ref this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i]);
 			}else{
-				this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].multiplier += 1;
+				this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].rate += this.firstKingdom.kingdomTypeData.dailyCumulativeEventRate [i].interval;
 			}
 		}
 		Task.current.Succeed ();
