@@ -20,12 +20,13 @@ public class RelationshipKings {
 	public List<History> relationshipHistory;
     private Dictionary<EVENT_TYPES, List<ExpirableModifier>> _eventModifiers;
     private int _eventLikenessModifier;
+    private int likeFromMutualRelationships;
 
     List<ExpirableModifier> exm;
     
     #region getters/setters
     public int like {
-        get { return this._like + this._eventLikenessModifier; }
+        get { return this._like + this._eventLikenessModifier + this.likeFromMutualRelationships; }
     }
     public Dictionary<EVENT_TYPES, List<ExpirableModifier>> eventModifiers {
         get { return this._eventModifiers; }
@@ -43,13 +44,15 @@ public class RelationshipKings {
 		this.relationshipHistory = new List<History>();
         this._eventModifiers = new Dictionary<EVENT_TYPES, List<ExpirableModifier>>();
         this._eventLikenessModifier = 0;
+        this.likeFromMutualRelationships = 0;
         //		this.isAdjacent = false;
         //		this.isAtWar = false;
         EventManager.Instance.onWeekEnd.AddListener(CheckEventModifiers);
     }
 
 	internal void UpdateKingRelationshipStatus(){
-		if(this.like <= -81){
+        RELATIONSHIP_STATUS previousStatus = this.lordRelationship;
+        if (this.like <= -81){
 			this.lordRelationship = RELATIONSHIP_STATUS.RIVAL;
 		}else if(this.like >= -80 && this.like <= -41){
 			this.lordRelationship = RELATIONSHIP_STATUS.ENEMY;
@@ -64,7 +67,19 @@ public class RelationshipKings {
 		}else{
 			this.lordRelationship = RELATIONSHIP_STATUS.ALLY;
 		}
+        if(previousStatus != this.lordRelationship) {
+            //relationship status changed
+            this.sourceKing.UpdateMutualRelationships();
+        }
 	}
+
+    internal void ResetMutualRelationshipModifier() {
+        this.likeFromMutualRelationships = 0;
+    }
+
+    internal void AddMutualRelationshipModifier(int amount) {
+        this.likeFromMutualRelationships += amount;
+    }
 
     internal void ChangeRelationshipStatus(RELATIONSHIP_STATUS newStatus, GameEvent gameEventTrigger = null) {
         if(newStatus == RELATIONSHIP_STATUS.ALLY) {

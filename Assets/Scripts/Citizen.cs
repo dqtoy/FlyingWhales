@@ -655,18 +655,85 @@ public class Citizen {
 			}
 		}
 	}
-//	internal bool CheckForSpecificWar(Citizen citizen){
-//		for(int i = 0; i < this.relationshipKings.Count; i++){
-//			if(this.relationshipKings[i].king.id == citizen.id){
-//				if(this.relationshipKings[i].isAtWar){
-//					return true;
-//				}
-//			}
-//		}
-//		return false;
-//	}
 
-	internal void AssignRole(ROLE role){
+    internal List<Citizen> GetCitizensByRelationship(RELATIONSHIP_STATUS[] relationshipStatuses) {
+        List<Citizen> citizensWithRelationshipStatus = new List<Citizen>();
+        for (int i = 0; i < this.relationshipKings.Count; i++) {
+            RelationshipKings currRel = this.relationshipKings[i];
+            if (relationshipStatuses.Contains(currRel.lordRelationship)) {
+                citizensWithRelationshipStatus.Add(currRel.king);
+            }
+        }
+        return citizensWithRelationshipStatus;
+    }
+
+    internal void UpdateMutualRelationships() {
+        for (int i = 0; i < this.relationshipKings.Count; i++) {
+            RelationshipKings currRel = this.relationshipKings[i];
+            Citizen targetKing = currRel.king;
+            RelationshipKings targetKingRel = targetKing.GetRelationshipWithCitizen(this); 
+
+            currRel.ResetMutualRelationshipModifier();
+            targetKingRel.ResetMutualRelationshipModifier();
+
+            List<Citizen> sourceKingRelationships = this.GetCitizensByRelationship(new
+            [] { RELATIONSHIP_STATUS.ENEMY, RELATIONSHIP_STATUS.RIVAL,
+            RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY }).Where(x => x.id != targetKing.id).ToList();
+
+            List<Citizen> targetKingRelationships = targetKing.GetCitizensByRelationship(new
+                [] { RELATIONSHIP_STATUS.ENEMY, RELATIONSHIP_STATUS.RIVAL,
+            RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY }).Where(x => x.id != this.id).ToList();
+
+            List<Citizen> citizensInCommon = sourceKingRelationships.Intersect(targetKingRelationships).ToList();
+            for (int j = 0; j < citizensInCommon.Count; j++) {
+                Citizen currCitizen = citizensInCommon[j];
+                RelationshipKings relSourceKing = this.GetRelationshipWithCitizen(currCitizen);
+                RelationshipKings relTargetKing = targetKing.GetRelationshipWithCitizen(currCitizen);
+                
+                if (relSourceKing.lordRelationship == RELATIONSHIP_STATUS.ENEMY) {
+                    if(relTargetKing.lordRelationship == RELATIONSHIP_STATUS.ENEMY || 
+                        relTargetKing.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+                        currRel.AddMutualRelationshipModifier(5);
+                        targetKingRel.AddMutualRelationshipModifier(5);
+                    }
+                } else if (relSourceKing.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+                    if (relTargetKing.lordRelationship == RELATIONSHIP_STATUS.ENEMY) {
+                        currRel.AddMutualRelationshipModifier(5);
+                    }else if(relTargetKing.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+                        targetKingRel.AddMutualRelationshipModifier(10);
+                    }
+                } else if (relSourceKing.lordRelationship == RELATIONSHIP_STATUS.FRIEND) {
+                    if (relTargetKing.lordRelationship == RELATIONSHIP_STATUS.FRIEND ||
+                        relTargetKing.lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+                        currRel.AddMutualRelationshipModifier(5);
+                        targetKingRel.AddMutualRelationshipModifier(5);
+                    }
+                } else if (relSourceKing.lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+                    if (relTargetKing.lordRelationship == RELATIONSHIP_STATUS.FRIEND) {
+                        currRel.AddMutualRelationshipModifier(5);
+                        targetKingRel.AddMutualRelationshipModifier(5);
+                    } else if (relTargetKing.lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+                        currRel.AddMutualRelationshipModifier(10);
+                        targetKingRel.AddMutualRelationshipModifier(10);
+                    }
+                }
+            }
+        }
+
+        
+    }
+    //	internal bool CheckForSpecificWar(Citizen citizen){
+    //		for(int i = 0; i < this.relationshipKings.Count; i++){
+    //			if(this.relationshipKings[i].king.id == citizen.id){
+    //				if(this.relationshipKings[i].isAtWar){
+    //					return true;
+    //				}
+    //			}
+    //		}
+    //		return false;
+    //	}
+
+    internal void AssignRole(ROLE role){
 		if (this.role != ROLE.UNTRAINED) {
 			if(this.assignedRole != null){
 				this.assignedRole.OnDeath();
@@ -710,87 +777,6 @@ public class Citizen {
             this.assignedRole = new Healer(this);
         }
         this.UpdatePrestige ();
-	}
-
-	internal bool IsRoyaltyCloseRelative(Citizen otherCitizen){
-		if (this.id == otherCitizen.id) {
-			return true;
-		}
-
-		if (otherCitizen.id == this.father.id || otherCitizen.id == this.mother.id) {
-			//royalty is father or mother
-			return true;
-		}
-
-		if (this.father.father != null) {
-			if (otherCitizen.id == this.father.father.id) {
-				return true;
-			}
-		}
-
-		if (this.father.mother != null) {
-			if (otherCitizen.id == this.father.mother.id) {
-				return true;
-			}
-		}
-
-		if (this.mother.father != null) {
-			if (otherCitizen.id == this.mother.father.id) {
-				return true;
-			}
-		}
-
-		if (this.mother.mother != null) {
-			if (otherCitizen.id == this.mother.mother.id) {
-				return true;
-			}
-		}
-
-
-		if (this.father.father != null) {
-			for (int i = 0; i < this.father.father.children.Count; i++) {
-				if (otherCitizen.id == this.father.father.children[i].id) {
-					//royalty is uncle or aunt from fathers side
-					return true;
-				}
-				for (int j = 0; j < this.father.father.children[i].children.Count; j++) {
-					if (otherCitizen.id == this.father.father.children[i].children[j].id) {
-						//citizen is cousin from father's side
-						return true;
-					}
-				}
-			}
-		}
-
-		if (this.mother.father != null) {
-			for (int i = 0; i < this.mother.father.children.Count; i++) {
-				if (otherCitizen.id == this.mother.father.children [i].id) {
-					//royalty is uncle or aunt from mothers side
-					return true;
-				}
-				for (int j = 0; j < this.mother.father.children[i].children.Count; j++) {
-					if (otherCitizen.id == this.mother.father.children[i].children[j].id) {
-						//citizen is cousin from mother's side
-						return true;
-					}
-				}
-			}
-		}
-
-		for (int i = 0; i < this.children.Count; i++) {
-			if (this.children[i].id == otherCitizen.id){
-				//citizen is child
-				return true;
-			}
-			for (int j = 0; j < this.children[i].children.Count; j++) {
-				if (this.children[i].children[j].id == otherCitizen.id){
-					//citizen is grand child
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	internal RelationshipKings GetRelationshipWithCitizen(Citizen citizen){
