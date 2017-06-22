@@ -12,7 +12,7 @@ public class RelationshipItem : MonoBehaviour {
 	public void SetRelationship(RelationshipKings rk){
 		this.rk = rk;
 		this.relationshipSprite.color = Utilities.GetColorForRelationship (rk.lordRelationship);
-        likenessLbl.text = this.rk.like.ToString();
+        likenessLbl.text = Mathf.Clamp(this.rk.like, -100, 100).ToString();
 	}
 
 	//void OnHover(bool isOver){

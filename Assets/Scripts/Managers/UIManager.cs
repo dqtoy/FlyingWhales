@@ -876,10 +876,11 @@ public class UIManager : MonoBehaviour {
 				kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (rel, 
                     rel.king.GetRelationshipWithCitizen(currentlyShowingKingdom.king));
 				kingRelationshipsGrid.AddChild(kingGO.transform);
-				kingRelationshipsGrid.Reposition ();
+				//kingRelationshipsGrid.Reposition ();
 	//			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
 			}
-            StartCoroutine(RepositionScrollView(kingRelationshipsGrid.GetComponentInParent<UIScrollView>()));
+            StartCoroutine(RepositionGrid(kingRelationshipsGrid));
+            StartCoroutine(RepositionScrollView(kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>()));
 		}
 
 		governorRelationshipsParentGO.SetActive(false);
