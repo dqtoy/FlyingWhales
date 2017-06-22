@@ -185,12 +185,15 @@ public class KingdomTypeData : MonoBehaviour {
 	}
 
 	void Awake(){
-		this._eventRates = this._eventRates.Concat (this.generalKingdomTypeData.eventRates).ToArray ();
-		this._warTriggers = this._warTriggers.Concat (this.generalKingdomTypeData.warTriggers).ToArray ();
-		this.warRateModifierMilitary = this.warRateModifierMilitary.Concat (this.generalKingdomTypeData._warRateModifierMilitary).ToArray ();
-		this.warRateModifierRelationship = this.warRateModifierRelationship.Concat (this.generalKingdomTypeData._warRateModifierRelationship).ToArray ();
-		this._dailyCumulativeEventRate = this._dailyCumulativeEventRate.Concat (this.generalKingdomTypeData._dailyCumulativeEventRate).ToArray ();
-		this._characterValues = this._characterValues.Concat (this.generalKingdomTypeData._characterValues).ToArray ();
+		if(this.generalKingdomTypeData != null){
+			this._eventRates = this._eventRates.Concat (this.generalKingdomTypeData.eventRates).ToArray ();
+			this._warTriggers = this._warTriggers.Concat (this.generalKingdomTypeData.warTriggers).ToArray ();
+			this.warRateModifierMilitary = this.warRateModifierMilitary.Concat (this.generalKingdomTypeData._warRateModifierMilitary).ToArray ();
+			this.warRateModifierRelationship = this.warRateModifierRelationship.Concat (this.generalKingdomTypeData._warRateModifierRelationship).ToArray ();
+			this._dailyCumulativeEventRate = this._dailyCumulativeEventRate.Concat (this.generalKingdomTypeData._dailyCumulativeEventRate).ToArray ();
+			this._characterValues = this._characterValues.Concat (this.generalKingdomTypeData._characterValues).ToArray ();
+		}
+
 
 		this._dictWarTriggers.Clear ();
 		this._dictWarRateModifierMilitary.Clear ();

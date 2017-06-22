@@ -51,8 +51,13 @@ public class Kingdom{
 	internal List<Kingdom> adjacentKingdoms;
 
 	private List<Kingdom> _discoveredKingdoms;
+
+	//Boon of Power
 	private List<BoonOfPower> _boonOfPowers;
 	private List<BoonOfPower> _activatedBoonOfPowers;
+
+	//Daily Cumulative
+	private EventRate[] _dailyCumulativeEventRate;
 	
 	//Tech
 	private int _techLevel;
@@ -144,6 +149,9 @@ public class Kingdom{
     }
 	public bool hasBioWeapon {
 		get { return this._hasBioWeapon; }
+	}
+	public EventRate[] dailyCumulativeEventRate {
+		get { return this._dailyCumulativeEventRate; }
 	}
 	#endregion
 	// Kingdom constructor paramters
@@ -243,7 +251,7 @@ public class Kingdom{
 		// Update Kingdom Type whenever the kingdom expands to a new city
 		KingdomTypeData prevKingdomTypeData = this._kingdomTypeData;
 		this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
-
+		this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
 		// If the Kingdom Type Data changed
 		if (this._kingdomTypeData != prevKingdomTypeData) {			
 			// Update horoscope
@@ -1056,6 +1064,11 @@ public class Kingdom{
 
 	internal IEnumerator ConquerCity(City city, General attacker){
 		if (this.id != city.kingdom.id){
+			RelationshipKingdom rel = this.GetRelationshipWithOtherKingdom (city.kingdom);
+			if(rel != null && rel.war != null){
+				rel.war.warPair.isDone = true;
+			}
+
 			HexTile hex = city.hexTile;
             //city.KillCity();
             city.ConquerCity(this);
@@ -1668,7 +1681,6 @@ public class Kingdom{
                             otherKingdom.DiscoverKingdom(this);
                         }
                     }
-
                     //Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
                     //this.DiscoverKingdom(otherKingdom);
                     //otherKingdom.DiscoverKingdom(this);
@@ -1760,4 +1772,13 @@ public class Kingdom{
 		this._boonOfPowers.Clear ();
 	}
 	#endregion
+
+	internal bool HasWar(){
+		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
+			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+				return true;
+			}
+		}
+		return false;
+	}
 }

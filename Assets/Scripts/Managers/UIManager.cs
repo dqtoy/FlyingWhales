@@ -1281,6 +1281,7 @@ public class UIManager : MonoBehaviour {
 			eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
 			eventGO.GetComponent<EventItem>().StartExpirationTimer();
 			eventGO.transform.localPosition = Vector3.zero;
+			eventGO.transform.localScale = Vector3.one;
 			RepositionGridCallback(this.gameEventsOfTypeGrid);
 			gameEvent.goEventItem = eventGO;
 		}

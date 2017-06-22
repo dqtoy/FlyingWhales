@@ -577,6 +577,9 @@ public class City{
 	protected void AttemptToIncreaseHP(){
 		if(GameManager.Instance.days == 1){
 			int hpIncrease = 60 + (5 * this.kingdom.techLevel);
+			if(this.kingdom.HasWar()){
+				hpIncrease = (int)(hpIncrease / 2);
+			}
 			this.IncreaseHP (hpIncrease);
 		}
 //		if(this.increaseHpInterval == 1){
