@@ -38,7 +38,7 @@ public class Secession : GameEvent {
 
 		//		EventManager.Instance.AddEventToDictionary (this);
 		//		this.EventIsCreated ();
-
+		this.EventIsCreated ();
 	}
 
 	#region Overrides

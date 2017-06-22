@@ -40,6 +40,8 @@ public class Rebellion : GameEvent {
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "start");
 		newLog.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name);
 		newLog.AddToFillers (cityWhereRebelFortIsCreated, cityWhereRebelFortIsCreated.name);
+
+		this.EventIsCreated ();
 	}
 	#region Overrides
 	internal override void PerformAction (){
