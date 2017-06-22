@@ -2884,14 +2884,14 @@ public class UIManager : MonoBehaviour {
 		if (this.unrestGO.activeSelf) {
 			this.unrestGO.SetActive (false);
 		} else {
-			if(this.currentlyShowingCity != null){
+			if(this.currentlyShowingKingdom != null){
 				this.unrestInput.value = this.currentlyShowingKingdom.unrest.ToString();
 				this.unrestGO.SetActive (true);
 			}
 		}
 	}
 	public void OnChangeUnrest(){
-		if(this.currentlyShowingCity != null){
+		if(this.currentlyShowingKingdom != null){
 			this.currentlyShowingKingdom.ChangeUnrest(int.Parse(this.unrestInput.value));
 		}
 	}
