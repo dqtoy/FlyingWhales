@@ -2739,6 +2739,7 @@ public class UIManager : MonoBehaviour {
 		this.goCreateEventUI.SetActive (false);
 	}
 
+	#region For Testing
 	public void ToggleTraitEditor(){
 		if (traitEditorGO.activeSelf) {
 			traitEditorGO.SetActive (false);
@@ -2909,6 +2910,10 @@ public class UIManager : MonoBehaviour {
 	public void HideUnrest(){
 		this.unrestGO.SetActive (false);
 	}
+	public void OnClickBoonOfPower(){
+		ShowInterveneEvent (EVENT_TYPES.BOON_OF_POWER);
+	}
+	#endregion
 	public void GenerateChildForCitizen(){
 		if (currentlyShowingCitizen.spouse == null) {
 //			Debug.Log ("Could not generate child because no spouse");
@@ -2949,4 +2954,16 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 	}
+
+	#region Intervene Events
+	internal void ShowInterveneEvent(EVENT_TYPES eventType){
+		WorldEventManager.Instance.currentInterveneEvent = eventType;
+		switch(eventType){
+		case EVENT_TYPES.PLAGUE:
+			break;
+		case EVENT_TYPES.BOON_OF_POWER:
+			break;
+		}
+	}
+	#endregion
 }

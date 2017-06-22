@@ -34,6 +34,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
 
+	private GameEvent _gameEventInTile;
+
 	[SerializeField] private GameObject _centerPiece;
 
 	[SerializeField] private GameObject leftBorder;
@@ -95,6 +97,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	public CityItem cityInfo{
 		get { return this._cityInfo; }
+	}
+	public GameEvent gameEventInTile{
+		get { return this._gameEventInTile; }
 	}
 	#endregion
 
@@ -513,7 +518,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (this.isHabitable && this.isOccupied && this.city != null) {
             CameraMove.Instance.CenterCameraOn(this.gameObject);
             UIManager.Instance.SetKingdomAsSelected(this.city.kingdom);
-        }
+		}
+		InterveneEventOnTile (WorldEventManager.Instance.currentInterveneEvent);
     }
 
     void OnMouseOver() {
@@ -715,5 +721,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				Destroy(this.plagueIcon);
 			}
 		}
+	}
+
+	private void InterveneEventOnTile(EVENT_TYPES eventType){
+		switch(eventType){
+		case EVENT_TYPES.BOON_OF_POWER:
+			EventCreator.Instance.CreateBoonOfPowerEvent (this);
+			break;
+		}
+	}
+	internal void PutEventOnTile(GameEvent gameEvent){
+		this._gameEventInTile = gameEvent;
+	}
+	internal void RemoveEventOnTile(){
+		this._gameEventInTile = null;
 	}
 }

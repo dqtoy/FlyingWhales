@@ -4,6 +4,7 @@ using System.Collections;
 public class BoonOfPower : GameEvent {
 	internal Kingdom ownerKingdom;
 	internal GameObject avatar;
+	internal HexTile hexTileSpawnPoint;
 
 	private bool _isActivated;
 	private bool _isDestroyed;
@@ -17,13 +18,15 @@ public class BoonOfPower : GameEvent {
 		get { return this._isActivated; }
 	}
 	#endregion
-	public BoonOfPower(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
+	public BoonOfPower(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile hexTile) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BOON_OF_POWER;
 		this.name = "Boon Of Power";
 		this.ownerKingdom = null;
 		this._isActivated = false;
 		this._isDestroyed = false;
 		this.avatar = null;
+		this.hexTileSpawnPoint = hexTile;
+		Initialize ();
 	}
 
 	#region Overrides
@@ -36,13 +39,15 @@ public class BoonOfPower : GameEvent {
 		}
 	}
 	#endregion
-	internal void Initialize(HexTile hexTile){
-		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/BoonOfPower"), hexTile.transform) as GameObject;
+	private void Initialize(){
+		this.hexTileSpawnPoint.PutEventOnTile (this);
+		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/BoonOfPower"), this.hexTileSpawnPoint.transform) as GameObject;
 		this.avatar.transform.localPosition = Vector3.zero;
 		this.avatar.GetComponent<BoonOfPowerAvatar>().Init(this);
 	}
 	internal void AddOwnership(Kingdom kingdom){
 		this.ownerKingdom = kingdom;
+		this.hexTileSpawnPoint.RemoveEventOnTile ();
 	}
 	internal void Activate(){
 		this._isActivated = true;
@@ -51,7 +56,10 @@ public class BoonOfPower : GameEvent {
 		this.activatedYear = GameManager.Instance.year;
 		EventManager.Instance.onWeekEnd.AddListener (this.PerformAction);
 	}
-
+	internal void TransferBoonOfPower(Kingdom kingdom){
+		kingdom.CollectBoonOfPower (this);
+		GameObject.Destroy (this.avatar);
+	}
 	private void DestroyThis(){
 		this.DoneEvent ();
 		this._isDestroyed = true;
