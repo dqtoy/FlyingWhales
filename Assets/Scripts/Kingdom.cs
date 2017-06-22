@@ -51,6 +51,8 @@ public class Kingdom{
 	internal List<Kingdom> adjacentKingdoms;
 
 	private List<Kingdom> _discoveredKingdoms;
+	private List<BoonOfPower> _boonOfPowers;
+	private List<BoonOfPower> _activatedBoonOfPowers;
 	
 	//Tech
 	private int _techLevel;
@@ -135,7 +137,7 @@ public class Kingdom{
     }
 
 	public int techLevel{
-		get{return this._techLevel;}
+		get{return this._techLevel + (3 * this._activatedBoonOfPowers.Count);}
 	}
     public float expansionRate {
         get { return this.expansionChance; }
@@ -180,6 +182,8 @@ public class Kingdom{
 		this._techLevel = 1;
 		this.techCounter = 0;
 		this._hasBioWeapon = false;
+		this._boonOfPowers = new List<BoonOfPower> ();
+		this._activatedBoonOfPowers = new List<BoonOfPower> ();
 		this.UpdateTechCapacity ();
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -427,25 +431,6 @@ public class Kingdom{
         //}
         
     }
-	/*
-	 * Attempt to an event with agent
-	 * This happens everyday
-	 * */
-	private void AttemptToCreateEvent(){
-		
-	}
-	private void CreatEvent(EVENT_TYPES eventType){
-		switch (eventType){
-		case EVENT_TYPES.TRADE:
-//			this.AttemptToTrade ();
-			break;
-		case EVENT_TYPES.STATE_VISIT:
-//			EventCreator.Instance.CreateStateVisitEvent
-			break;
-		case EVENT_TYPES.RAID:
-			break;
-		}
-	}
 	/*
 	 * Attempt to create an attack city event
 	 * This will only happen if there's a war with any other kingdom
@@ -1751,7 +1736,28 @@ public class Kingdom{
 	}
 	#endregion
 
+	#region Bioweapon
 	internal void SetBioWeapon(bool state){
 		this._hasBioWeapon = state;
 	}
+	#endregion
+
+	#region Boon Of Power
+	internal void CollectBoonOfPower(BoonOfPower boonOfPower){
+		Debug.Log (this.name + " HAS COLLECTED A BOON OF POWER!");
+		this._boonOfPowers.Add (boonOfPower);
+		boonOfPower.AddOwnership (this);
+	}
+	internal void DestroyBoonOfPower(BoonOfPower boonOfPower){
+		this._activatedBoonOfPowers.Remove (boonOfPower);
+		boonOfPower.ownerKingdom = null;
+	}
+	internal void ActivateBoonOfPowers(){
+		for (int i = 0; i < this._boonOfPowers.Count; i++) {
+			this._boonOfPowers [i].Activate ();
+			this._activatedBoonOfPowers.Add (this._boonOfPowers [i]);
+		}
+		this._boonOfPowers.Clear ();
+	}
+	#endregion
 }

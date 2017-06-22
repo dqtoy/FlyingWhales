@@ -153,7 +153,7 @@ public class HealerAvatar : MonoBehaviour {
 
     void OnMouseEnter() {
         if (!UIManager.Instance.IsMouseOnUI()) {
-            UIManager.Instance.ShowSmallInfo(this.healer.plague.eventType.ToString());
+            UIManager.Instance.ShowSmallInfo(this.healer.plague.name);
             this.HighlightPath();
         }
     }

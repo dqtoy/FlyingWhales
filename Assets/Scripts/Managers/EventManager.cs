@@ -76,7 +76,8 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.REBELLION, -1},
         {EVENT_TYPES.REQUEST_PEACE, -1},
         {EVENT_TYPES.PLAGUE, -1},
-		{EVENT_TYPES.SCOURGE_CITY, -1}
+		{EVENT_TYPES.SCOURGE_CITY, -1},
+		{EVENT_TYPES.BOON_OF_POWER, -1}
     };
 
 	void Awake(){

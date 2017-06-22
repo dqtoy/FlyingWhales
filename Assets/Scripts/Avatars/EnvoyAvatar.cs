@@ -223,7 +223,7 @@ public class EnvoyAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.envoy.gameEvent.eventType.ToString ());
+			UIManager.Instance.ShowSmallInfo (this.envoy.gameEvent.name);
 			this.HighlightPath ();
 		}
 	}

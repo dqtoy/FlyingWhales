@@ -197,7 +197,7 @@ public class SpyAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.spy.assassination.eventType.ToString ());
+			UIManager.Instance.ShowSmallInfo (this.spy.assassination.name);
 			this.HighlightPath ();
 		}
 	}

@@ -219,7 +219,7 @@ public class ExterminatorAvatar : MonoBehaviour {
 
     void OnMouseEnter() {
         if (!UIManager.Instance.IsMouseOnUI()) {
-            UIManager.Instance.ShowSmallInfo(this.exterminator.plague.eventType.ToString());
+            UIManager.Instance.ShowSmallInfo(this.exterminator.plague.name);
             this.HighlightPath();
         }
     }
