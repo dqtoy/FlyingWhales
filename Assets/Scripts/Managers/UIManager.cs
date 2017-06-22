@@ -153,7 +153,9 @@ public class UIManager : MonoBehaviour {
 	[Space(10)] //Relationship UI
 	public GameObject kingRelationshipsParentGO;
 	public GameObject governorRelationshipsParentGO;
-	public UIGrid kingRelationshipsGrid;
+    public GameObject kingRelationshipLine;
+    public GameObject kingNoRelationshipsGO;
+    public UIGrid kingRelationshipsGrid;
 	public UIGrid governorsRelationshipGrid;
 
 	[Space(10)] //Relationship History UI
@@ -836,13 +838,24 @@ public class UIManager : MonoBehaviour {
 		List<CharacterPortrait> characterPortraits = kingRelationshipsGrid.gameObject.GetComponentsInChildren<CharacterPortrait>().ToList();
 
 		int nextIndex = 0;
-		for (int i = 0; i < characterPortraits.Count; i++) {
+        List<RelationshipKings> relationshipsToShow = currentlyShowingKingdom.king.relationshipKings
+            .Where(x => currentlyShowingKingdom.discoveredKingdoms.Contains(x.king.city.kingdom)).ToList();
+
+        if(relationshipsToShow.Count > 0) {
+            kingRelationshipLine.SetActive(true);
+            kingNoRelationshipsGO.SetActive(false);
+        } else {
+            kingRelationshipLine.SetActive(false);
+            kingNoRelationshipsGO.SetActive(true);
+        }
+
+        for (int i = 0; i < characterPortraits.Count; i++) {
 			CharacterPortrait currPortrait = characterPortraits[i];
-            if(i < currentlyShowingKingdom.king.relationshipKings.Count) {
-                RelationshipKings currRel = currentlyShowingKingdom.king.relationshipKings[i];
+            if(i < relationshipsToShow.Count) {
+                RelationshipKings currRel = relationshipsToShow[i];
                 if (currRel != null) {
                     currPortrait.SetCitizen(currRel.king, true);
-                    currPortrait.ShowRelationshipLine(currRel, currentlyShowingKingdom.king.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingKingdom.king));
+                    currPortrait.ShowRelationshipLine(currRel, currRel.king.GetRelationshipWithCitizen(currentlyShowingKingdom.king));
                     currPortrait.gameObject.SetActive(true);
                 } else {
                     currPortrait.gameObject.SetActive(false);
@@ -853,17 +866,21 @@ public class UIManager : MonoBehaviour {
             }
         }
 
-		if (currentlyShowingKingdom.king.relationshipKings.Count - 1 >= nextIndex) {
-			for (int i = nextIndex; i < currentlyShowingKingdom.king.relationshipKings.Count; i++) {
-				GameObject kingGO = InstantiateUIObject(characterPortraitPrefab, this.transform);
-				kingGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingKingdom.king.relationshipKings [i].king, true);
+		if (relationshipsToShow.Count - 1 >= nextIndex) {
+			for (int i = nextIndex; i < relationshipsToShow.Count; i++) {
+                RelationshipKings rel = relationshipsToShow[i];
+
+                GameObject kingGO = InstantiateUIObject(characterPortraitPrefab, this.transform);
+				kingGO.GetComponent<CharacterPortrait>().SetCitizen(rel.king, true);
 				kingGO.transform.localScale = Vector3.one;
-				kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (currentlyShowingKingdom.king.relationshipKings [i],
-                    currentlyShowingKingdom.king.relationshipKings[i].king.GetRelationshipWithCitizen(currentlyShowingKingdom.king));
+				kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (rel, 
+                    rel.king.GetRelationshipWithCitizen(currentlyShowingKingdom.king));
 				kingRelationshipsGrid.AddChild(kingGO.transform);
-				kingRelationshipsGrid.Reposition ();
+				//kingRelationshipsGrid.Reposition ();
 	//			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
 			}
+            StartCoroutine(RepositionGrid(kingRelationshipsGrid));
+            StartCoroutine(RepositionScrollView(kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>()));
 		}
 
 		governorRelationshipsParentGO.SetActive(false);
@@ -878,7 +895,7 @@ public class UIManager : MonoBehaviour {
 			Destroy (children [i].gameObject);
 		}
 
-		for (int i = 0; i < currentlyShowingCitizen.city.kingdom.cities.Count; i++) {
+        for (int i = 0; i < currentlyShowingCitizen.city.kingdom.cities.Count; i++) {
 			GameObject governorGO = InstantiateUIObject(characterPortraitPrefab, governorsRelationshipGrid.transform);
 			governorGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.city.kingdom.cities[i].governor, true);
 			governorGO.GetComponent<CharacterPortrait>().DisableHover();

@@ -512,7 +512,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
         if (this.isHabitable && this.isOccupied && this.city != null) {
             CameraMove.Instance.CenterCameraOn(this.gameObject);
-            UIManager.Instance.ShowCityInfo(this.city, true);
+            UIManager.Instance.SetKingdomAsSelected(this.city.kingdom);
         }
     }
 

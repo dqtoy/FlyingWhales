@@ -1649,11 +1649,11 @@ public class Kingdom{
             for (int j = 0; j < tilesToCheck.Count; j++) {
                 //Get all neighbour tiles that are owned, but not by this kingdom, 
                 //and that kingdom is not already added to this kingdom's discovered kingdoms.
-                List<HexTile> neighbours = tilesToCheck[i].PurchasableTiles.ToList();
+                List<HexTile> neighbours = tilesToCheck[j].PurchasableTiles.ToList();
                     //.Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
                     //.ToList();
                 for (int k = 0; k < neighbours.Count; k++) {
-                    HexTile currNeighbour = neighbours[i];
+                    HexTile currNeighbour = neighbours[k];
                     if (currNeighbour.isOccupied && currNeighbour.ownedByCity != null
                         && currNeighbour.ownedByCity.kingdom.id != this.id) {
                         Kingdom otherKingdom = currNeighbour.ownedByCity.kingdom;
