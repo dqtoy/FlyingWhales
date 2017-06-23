@@ -51,9 +51,12 @@ public class EventItem : MonoBehaviour {
 		this.isPaused = true;
 		UIManager.Instance.HideSmallInfo ();
         UIGrid parentGrid = this.transform.parent.GetComponent<UIGrid>();
+        UIScrollView parentScrollView = parentGrid.transform.parent.GetComponent<UIScrollView>();
         parentGrid.RemoveChild(this.transform);
-		StartCoroutine(UIManager.Instance.RepositionGrid(parentGrid));
+		
 		Destroy (this.gameObject);
+        StartCoroutine(UIManager.Instance.RepositionGrid(parentGrid));
+        StartCoroutine(UIManager.Instance.RepositionScrollView(parentScrollView));
     }
 	public IEnumerator StartExpiration(){
 		yield return new WaitForSeconds (10);

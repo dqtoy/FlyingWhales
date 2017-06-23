@@ -24,6 +24,9 @@ public class RelationshipItem : MonoBehaviour {
             int modifierFromWar = rk.GetLikenessModifiersFromEvent(EVENT_TYPES.KINGDOM_WAR);
             int modifierFromOtherEvents = rk.eventLikenessModifier - modifierFromWar;
             string relationshipSummary = string.Empty;
+            if(rk.baseLike >= 0) {
+                relationshipSummary += "+";
+            }
             relationshipSummary += rk.baseLike.ToString() + "   Base Value";
             if(modifierFromWar != 0) {
                 relationshipSummary += "\n";
@@ -34,14 +37,14 @@ public class RelationshipItem : MonoBehaviour {
             }
             if(rk.likeFromMutualRelationships != 0) {
                 relationshipSummary += "\n";
-                if (modifierFromWar > 0) {
+                if (rk.likeFromMutualRelationships > 0) {
                     relationshipSummary += "+";
                 }
                 relationshipSummary += rk.likeFromMutualRelationships.ToString() + "    Circle of Friends";
             }
             if (modifierFromOtherEvents != 0) {
                 relationshipSummary += "\n";
-                if (modifierFromWar > 0) {
+                if (modifierFromOtherEvents > 0) {
                     relationshipSummary += "+";
                 }
                 relationshipSummary += modifierFromOtherEvents.ToString() + "   Ideologies";

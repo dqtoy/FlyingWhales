@@ -424,8 +424,7 @@ public class City{
 
 	internal void UpdateBorderTiles(){
 		for (int i = 0; i < this.borderTiles.Count; i++) {
-			this.borderTiles[i].isBorder = false;
-			this.borderTiles[i].isBorderOfCityID = 0;
+            this.borderTiles[i].ResetTile();
 		}
 		this.borderTiles.Clear();
 
@@ -926,6 +925,7 @@ public class City{
         for (int i = 0; i < structuresDestroyed; i++) {
             this.RemoveTileFromCity(this.structures[UnityEngine.Random.Range(0, this.structures.Count)]);
         }
+        
 
         //Kill all current citizens
         this.KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
@@ -1129,6 +1129,11 @@ public class City{
             this._kingdom.UpdateAvailableResources();
             this._kingdom.UpdateAllCitiesDailyGrowth();
             this._kingdom.UpdateExpansionRate();
+        }
+        if (UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+            this.kingdom.HighlightAllOwnedTilesInKingdom();
+        } else {
+            this.kingdom.UnHighlightAllOwnedTilesInKingdom();
         }
     }
 
