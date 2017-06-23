@@ -17,7 +17,7 @@ public class Expansion : GameEvent {
 
 		this.originCity = startedBy.city;
 		this.hexTileToExpandTo = targetHextile;
-
+		this.hexTileToExpandTo.isTargeted = true;
 		EventManager.Instance.AddEventToDictionary(this);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "event_title");
@@ -70,6 +70,7 @@ public class Expansion : GameEvent {
 
 	internal override void DoneEvent(){
 		base.DoneEvent();
+		this.hexTileToExpandTo.isTargeted = false;
 //		this.expander.DestroyGO ();
 //		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
