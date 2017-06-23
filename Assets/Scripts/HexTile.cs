@@ -709,6 +709,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.isPlagued = state;
 		//TODO: add/remove poison icon on tile
 		this.SetActivePlagueIcon(state);
+        this.ownedByCity.UpdateDailyProduction();
 	}
 
 	private void SetActivePlagueIcon(bool state){
