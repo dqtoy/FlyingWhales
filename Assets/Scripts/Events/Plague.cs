@@ -27,7 +27,7 @@ public class Plague : GameEvent {
 
 
     private const float DEFAULT_CURE_CHANCE = 1.5f;
-    private const float DEFAULT_SETTLEMENT_SPREAD_CHANCE = 2f;
+    private const float DEFAULT_SETTLEMENT_SPREAD_CHANCE = 10f;
 
     protected Dictionary<int, float[]> kingdomChances; //0 - cure chance, 1 - settlement spread chance
 
@@ -161,7 +161,7 @@ public class Plague : GameEvent {
     #endregion
 
     private void InitializePlague(){
-		this.PlagueASettlement (this.sourceCity.structures [0]);
+//		this.PlagueASettlement (this.sourceCity.structures [0]);
 		this.PlagueAKingdom (this.sourceKingdom, this.sourceCity);
         onPerformAction += SpreadPlagueWithinCity;
         onPerformAction += SpreadPlagueWithinKingdom;
@@ -454,6 +454,7 @@ public class Plague : GameEvent {
 	internal void PlagueACity(City city){
 		city.plague = this;
 		this.affectedCities.Add (city);
+		InfectRandomSettlement (city.structures);
 	}
 	internal void PlagueAKingdom(Kingdom kingdom, City city){
 		kingdom.plague = this;
@@ -623,7 +624,7 @@ public class Plague : GameEvent {
 		if (this.IsDaysMultipleOf (4)) {
 			for (int i = 0; i < this.affectedKingdoms.Count; i++) {
 				int chance = UnityEngine.Random.Range (0, 100);
-				int value = 1 * this.affectedKingdoms [i].cities.Sum (x => x.plaguedSettlements.Count);
+				int value = 3 * this.affectedKingdoms [i].cities.Sum (x => x.plaguedSettlements.Count);
 				if (chance < value) {
 					City targetCity = this.affectedKingdoms [i].cities.FirstOrDefault (x => x.plague == null);
 					if (targetCity != null) {
