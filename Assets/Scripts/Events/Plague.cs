@@ -147,6 +147,7 @@ public class Plague : GameEvent {
             CureASettlementInCity(citizen.assignedRole.targetCity);
             this.healers.Remove((Healer)citizen.assignedRole);
         }
+        citizen.assignedRole.DestroyGO();
     }
     internal override void DoneEvent() {
         base.DoneEvent();

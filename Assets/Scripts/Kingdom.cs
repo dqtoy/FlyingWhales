@@ -426,6 +426,7 @@ public class Kingdom{
             RemoveRelationshipWithKingdom(kingdomThatDied);
             //RemoveAllTradeRoutesWithOtherKingdom(kingdomThatDied);
             RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
+            RemoveKingdomFromEmbargoList(kingdomThatDied);
         }
     }
 
