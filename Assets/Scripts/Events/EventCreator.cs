@@ -209,8 +209,8 @@ public class EventCreator: MonoBehaviour {
 	}
 
 	internal ScourgeCity CreateScourgeCityEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
-		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.SCOURGE, EVENT_TYPES.SCOURGE_CITY, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.SCOURGE_CITY]);
 		City targetCity = targetKingdom.cities [UnityEngine.Random.Range (0, targetKingdom.cities.Count)];
+		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.SCOURGE, EVENT_TYPES.SCOURGE_CITY, targetCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.SCOURGE_CITY]);
 
 		if(citizen != null && targetCity != null){
 			Scourge scourge = (Scourge)citizen.assignedRole;

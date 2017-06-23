@@ -96,13 +96,11 @@ public class StateVisit : GameEvent {
 				newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
 			}else{
 				if(this.visitorHasDied){
-					if(relationship.totalLike <= 0){
-						if (relationship != null) {
+					if (relationship != null) {
+						if (relationship.totalLike <= 0) {
 							relationship.AdjustLikeness (-35, this);
-						}
-					}else{
-						if (relationship != null) {
-							relationship.SetLikeness(-35);
+						} else {
+							relationship.SetLikeness (-35);
 							relationship.UpdateKingRelationshipStatus ();
 						}
 					}

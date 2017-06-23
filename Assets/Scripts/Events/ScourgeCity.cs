@@ -32,6 +32,7 @@ public class ScourgeCity : GameEvent {
 		this.DestroyASettlementInTargetCity ();
 		RelationshipKings relationship = this.targetKingdom.king.GetRelationshipWithCitizen (this.sourceKingdom.king);
 		relationship.AdjustLikeness (-5, this);
+		this.DoneEvent ();
 	}
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();
