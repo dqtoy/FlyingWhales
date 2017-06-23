@@ -282,7 +282,7 @@ public class Plague : GameEvent {
 	 * */
 	internal void UpdateApproach(Kingdom kingdom){
 		if(!IsApproachTheSame(kingdom) && this.affectedKingdoms.Contains(kingdom)){
-			RemoveKingdomFromApproaches ();
+			RemoveKingdomFromApproaches (kingdom);
 			EVENT_APPROACH chosenApproach = this.ChooseApproach(kingdom.king);
 			UpdateKingdomEmbargos();
 			DifferentApproachesLogs (kingdom.king, chosenApproach, null);
