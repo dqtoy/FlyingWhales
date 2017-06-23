@@ -52,6 +52,9 @@ public class Kingdom{
 
 	private List<Kingdom> _discoveredKingdoms;
 
+	//Plague
+	internal Plague plague;
+
 	//Boon of Power
 	private List<BoonOfPower> _boonOfPowers;
 	private List<BoonOfPower> _activatedBoonOfPowers;
@@ -192,6 +195,7 @@ public class Kingdom{
 		this._hasBioWeapon = false;
 		this._boonOfPowers = new List<BoonOfPower> ();
 		this._activatedBoonOfPowers = new List<BoonOfPower> ();
+		this.plague = null;
 		this.UpdateTechCapacity ();
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
