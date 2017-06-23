@@ -153,6 +153,10 @@ public class Kingdom{
 	public EventRate[] dailyCumulativeEventRate {
 		get { return this._dailyCumulativeEventRate; }
 	}
+
+    public List<City> plaguedCities {
+        get { return this.cities.Where(x => x.plague != null).ToList(); }
+    }
 	#endregion
 	// Kingdom constructor paramters
 	//	race - the race of this kingdom
@@ -1727,6 +1731,9 @@ public class Kingdom{
         if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
             this._discoveredKingdoms.Add(discoveredKingdom);
             Debug.LogError(this.name + " discovered " + discoveredKingdom.name + "!");
+            if(discoveredKingdom.plaguedCities.Count > 0) {
+
+            }
         }
     }
 
