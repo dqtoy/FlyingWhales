@@ -648,21 +648,23 @@ public class City{
 		this._dailyGrowthFromStructures = 10;
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
-			if (currentStructure.biomeType == BIOMES.GRASSLAND) {
-				this._dailyGrowthFromStructures += 3;
-			} else if (currentStructure.biomeType == BIOMES.WOODLAND) {
-				this._dailyGrowthFromStructures += 3;
-			} else if (currentStructure.biomeType == BIOMES.FOREST) {
-				this._dailyGrowthFromStructures += 2;
-			} else if (currentStructure.biomeType == BIOMES.DESERT) {
-				this._dailyGrowthFromStructures += 1;
-			} else if (currentStructure.biomeType == BIOMES.TUNDRA) {
-				this._dailyGrowthFromStructures += 2;
-			} else if (currentStructure.biomeType == BIOMES.SNOW) {
-				this._dailyGrowthFromStructures += 1;
-			} else if (currentStructure.biomeType == BIOMES.BARE) {
-				this._dailyGrowthFromStructures += 1;
-			}
+            if (!currentStructure.isPlagued) {
+                if (currentStructure.biomeType == BIOMES.GRASSLAND) {
+                    this._dailyGrowthFromStructures += 3;
+                } else if (currentStructure.biomeType == BIOMES.WOODLAND) {
+                    this._dailyGrowthFromStructures += 3;
+                } else if (currentStructure.biomeType == BIOMES.FOREST) {
+                    this._dailyGrowthFromStructures += 2;
+                } else if (currentStructure.biomeType == BIOMES.DESERT) {
+                    this._dailyGrowthFromStructures += 1;
+                } else if (currentStructure.biomeType == BIOMES.TUNDRA) {
+                    this._dailyGrowthFromStructures += 2;
+                } else if (currentStructure.biomeType == BIOMES.SNOW) {
+                    this._dailyGrowthFromStructures += 1;
+                } else if (currentStructure.biomeType == BIOMES.BARE) {
+                    this._dailyGrowthFromStructures += 1;
+                }
+            }
 		}
 	}
 

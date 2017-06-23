@@ -333,6 +333,10 @@ public class Plague : GameEvent {
 		}
 	}
 
+    internal void ForceUpdateKingRelationships(Citizen king) {
+        EVENT_APPROACH chosenApproach = DetermineApproach(king);
+        this.ChangeKingRelationshipsAfterApproach(king, chosenApproach);
+    }
     /*
      * Choose what approach this king will use
      * to handle this event. Then add his kingdom
