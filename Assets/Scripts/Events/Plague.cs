@@ -21,6 +21,10 @@ public class Plague : GameEvent {
 
     private bool isVaccineDeveloped;
     private bool isBioWeaponDeveloped;
+	private bool hasHumanisticKingdom;
+	private bool hasPragmaticKingdom;
+	private bool hasOpportunisticKingdom;
+
 
     private const float DEFAULT_CURE_CHANCE = 1.5f;
     private const float DEFAULT_SETTLEMENT_SPREAD_CHANCE = 2f;
@@ -34,6 +38,7 @@ public class Plague : GameEvent {
     protected List<Exterminator> exterminators;
     protected List<Scourge> scourgers;
     protected List<Healer> healers;
+
 
     private string[] plagueAdjectives = new string[] {
         "Red", "Green", "Yellow", "Black", "Rotting", "Silent", "Screaming", "Trembling", "Sleeping",
@@ -72,6 +77,9 @@ public class Plague : GameEvent {
 		this.daysCount = 0;
         this.isVaccineDeveloped = false;
         this.isBioWeaponDeveloped = false;
+		this.hasHumanisticKingdom = false;
+		this.hasPragmaticKingdom = false;
+		this.hasOpportunisticKingdom = false;
 
         this.pragmaticKingdoms = new List<Kingdom>();
         this.opportunisticKingdoms = new List<Kingdom>();
@@ -231,37 +239,34 @@ public class Plague : GameEvent {
         }
     }
     private void PragmaticApproach() {
-        if (!this.isVaccineDeveloped) {
-            for (int i = 0; i < this.pragmaticKingdoms.Count; i++) {
-                Kingdom currKingdom = this.pragmaticKingdoms[i];
-                if (this.IsDaysMultipleOf(5)) {
-                    if (this.exterminators.FirstOrDefault(x => x.citizen.city.kingdom.id == currKingdom.id) != null) {
-                        //There is currently an active exterminator for currKingdom.
-                        return;
-                    }
-                    //Every multiple of 5 day, Pragmatic Kingdoms have 3% chance for each city it has to produce an Exterminator Agent.
-                    int chanceForExterminator = 3 * currKingdom.cities.Count;
-                    int chance = Random.Range(0, 100);
-                    if (chance < chanceForExterminator) {
-                        //Create Exterminator
-                        List<HexTile> path = null;
-                        City randCity = currKingdom.cities[Random.Range(0, currKingdom.cities.Count)];
-                        List<City> plaguedCitiesInKingdom = currKingdom.cities.Where(x => x.plague != null).ToList();
-                        if (plaguedCitiesInKingdom.Count > 0) {
-                            City targetCity = GetNearestCityFrom(randCity.hexTile, plaguedCitiesInKingdom, ref path);
-                            if (targetCity != null && path != null) {
-                                Citizen exterminator = randCity.CreateAgent(ROLE.EXTERMINATOR, this.eventType, targetCity.hexTile, this.durationInDays, path);
-                                if (exterminator != null) {
-                                    exterminator.assignedRole.Initialize(this);
-                                }
+        for (int i = 0; i < this.pragmaticKingdoms.Count; i++) {
+            Kingdom currKingdom = this.pragmaticKingdoms[i];
+            if (this.IsDaysMultipleOf(5)) {
+                if (this.exterminators.FirstOrDefault(x => x.citizen.city.kingdom.id == currKingdom.id) != null) {
+                    //There is currently an active exterminator for currKingdom.
+                    return;
+                }
+                //Every multiple of 5 day, Pragmatic Kingdoms have 3% chance for each city it has to produce an Exterminator Agent.
+                int chanceForExterminator = 3 * currKingdom.cities.Count;
+                int chance = Random.Range(0, 100);
+                if (chance < chanceForExterminator) {
+                    //Create Exterminator
+                    List<HexTile> path = null;
+                    City randCity = currKingdom.cities[Random.Range(0, currKingdom.cities.Count)];
+                    List<City> plaguedCitiesInKingdom = currKingdom.cities.Where(x => x.plague != null).ToList();
+                    if (plaguedCitiesInKingdom.Count > 0) {
+                        City targetCity = GetNearestCityFrom(randCity.hexTile, plaguedCitiesInKingdom, ref path);
+                        if (targetCity != null && path != null) {
+                            Citizen exterminator = randCity.CreateAgent(ROLE.EXTERMINATOR, this.eventType, targetCity.hexTile, this.durationInDays, path);
+                            if (exterminator != null) {
+                                exterminator.assignedRole.Initialize(this);
                             }
                         }
                     }
                 }
-                ContributeToVaccine(currKingdom);
             }
+            ContributeToVaccine(currKingdom);
         }
-
     }
     private void OpportunisticApproach() {
         if (!this.isBioWeaponDeveloped) {
@@ -271,6 +276,62 @@ public class Plague : GameEvent {
             }
         }
     }
+
+	/*
+	 * Update Approach of new king when old king dies
+	 * */
+	internal void UpdateApproach(Kingdom kingdom){
+		if(!IsApproachTheSame(kingdom)){
+			RemoveKingdomFromApproaches ();
+			EVENT_APPROACH chosenApproach = this.ChooseApproach(kingdom.king);
+			UpdateKingdomEmbargos();
+			DifferentApproachesLogs (kingdom.king, chosenApproach, null);
+		}
+	}
+	/*
+	 * Remove kingdom from previous approach
+	 * */
+	private void RemoveKingdomFromApproaches(Kingdom kingdom){
+		if(this.humanisticKingdoms.Contains(kingdom)){
+			this.humanisticKingdoms.Remove (kingdom);
+		}else if(this.pragmaticKingdoms.Contains(kingdom)){
+			this.pragmaticKingdoms.Remove (kingdom);
+		}else if(this.opportunisticKingdoms.Contains(kingdom)){
+			this.opportunisticKingdoms.Remove (kingdom);
+		}
+		CheckCurrentKingdoms ();
+	}
+
+	/*
+	 * Check if the new king and old king has the same approach
+	 * */
+	private bool IsApproachTheSame(Kingdom kingdom){
+		EVENT_APPROACH approach = this.DetermineApproach (kingdom.king);
+		if(approach == EVENT_APPROACH.HUMANISTIC && this.humanisticKingdoms.Contains(kingdom)){
+			return true;
+		}else if(approach == EVENT_APPROACH.PRAGMATIC && this.pragmaticKingdoms.Contains(kingdom)){
+			return true;
+		}else if(approach == EVENT_APPROACH.OPPORTUNISTIC && this.opportunisticKingdoms.Contains(kingdom)){
+			return true;
+		}
+		return false;
+	}
+
+	/*
+	 * Check if current kingdoms 
+	 * */
+	private void CheckCurrentKingdoms(){
+		if(this.humanisticKingdoms.Count <= 0 && this.hasHumanisticKingdom){
+			this.hasHumanisticKingdom = false;
+			onPerformAction -= HumanisticApproach;
+		}else if(this.pragmaticKingdoms.Count <= 0 && this.hasPragmaticKingdom){
+			this.hasPragmaticKingdom = false;
+			onPerformAction -= PragmaticApproach;
+		}else if(this.opportunisticKingdoms.Count <= 0 && this.hasOpportunisticKingdom){
+			this.hasOpportunisticKingdom = false;
+			onPerformAction -= OpportunisticApproach;
+		}
+	}
 
     /*
      * Choose what approach this king will use
@@ -343,15 +404,18 @@ public class Plague : GameEvent {
     }
 
     private void AddKingdomToApproach(EVENT_APPROACH approach, Kingdom kingdomToAdd) {
+		
         if (approach == EVENT_APPROACH.HUMANISTIC) {
-            if (humanisticKingdoms.Count <= 0) {
+			if (humanisticKingdoms.Count <= 0 && !this.hasHumanisticKingdom) {
+				this.hasHumanisticKingdom = true;
                 onPerformAction += HumanisticApproach;
             }
             if (!humanisticKingdoms.Contains(kingdomToAdd)) {
                 humanisticKingdoms.Add(kingdomToAdd);
             }
         } else if (approach == EVENT_APPROACH.PRAGMATIC) {
-            if (pragmaticKingdoms.Count <= 0) {
+			if (pragmaticKingdoms.Count <= 0 && !this.hasPragmaticKingdom) {
+				this.hasPragmaticKingdom = true;
                 onPerformAction += PragmaticApproach;
             }
             if (!pragmaticKingdoms.Contains(kingdomToAdd)) {
@@ -360,12 +424,13 @@ public class Plague : GameEvent {
                 this.kingdomChances[kingdomToAdd.id][1] = 1.5f;
             }
         } else if (approach == EVENT_APPROACH.OPPORTUNISTIC) {
-            if (opportunisticKingdoms.Count <= 0) {
+			if (opportunisticKingdoms.Count <= 0 && !this.hasOpportunisticKingdom) {
+				this.hasOpportunisticKingdom = true;
                 onPerformAction += OpportunisticApproach;
             }
             if (!opportunisticKingdoms.Contains(kingdomToAdd)) {
                 opportunisticKingdoms.Add(kingdomToAdd);
-                //The plague spread for Pragmatic Kingdoms is reduced from 2% to 1.5%
+				//The cure chance for Opportunistic Kingdoms is reduced from 1.5% to 0.5%
                 this.kingdomChances[kingdomToAdd.id][0] = 0.5f;
             }
         }
@@ -387,6 +452,7 @@ public class Plague : GameEvent {
 		this.affectedCities.Add (city);
 	}
 	internal void PlagueAKingdom(Kingdom kingdom, City city){
+		kingdom.plague = this;
 		this.affectedKingdoms.Add (kingdom);
         float cureChance = DEFAULT_CURE_CHANCE;
         if (this.isVaccineDeveloped) {
@@ -472,14 +538,9 @@ public class Plague : GameEvent {
     }
 
     private void DisinfectAKingdom(Kingdom kingdom) {
+		kingdom.plague = null;
         this.affectedKingdoms.Remove(kingdom);
-        if (this.pragmaticKingdoms.Contains(kingdom)) {
-            this.pragmaticKingdoms.Remove(kingdom);
-        } else if (this.humanisticKingdoms.Contains(kingdom)) {
-            this.humanisticKingdoms.Remove(kingdom);
-        } else if (this.opportunisticKingdoms.Contains(kingdom)) {
-            this.opportunisticKingdoms.Remove(kingdom);
-        }
+		RemoveKingdomFromApproaches (kingdom);
         if (this.kingdomChances.ContainsKey(kingdom.id)) {
             this.kingdomChances.Remove(kingdom.id);
         }
@@ -652,27 +713,30 @@ public class Plague : GameEvent {
     }
 
     private void ContributeToVaccine(Kingdom kingdom) {
-        int multiplier = 0;
-        if (this.pragmaticKingdoms.Contains(kingdom)) {
-            multiplier = 1;
-        } else if (this.humanisticKingdoms.Contains(kingdom)) {
-            multiplier = 2;
-        }
+		if(!this.isVaccineDeveloped){
+			int multiplier = 0;
+			if (this.pragmaticKingdoms.Contains(kingdom)) {
+				multiplier = 1;
+			} else if (this.humanisticKingdoms.Contains(kingdom)) {
+				multiplier = 2;
+			}
 
-        this.vaccineMeter += (multiplier * kingdom.cities.Count);
-        this.vaccineMeter = Mathf.Clamp(this.vaccineMeter, 0, this.vaccineMeterMax);
-        if (this.vaccineMeter == this.vaccineMeterMax && !this.isVaccineDeveloped) {
-            DevelopVaccine();
-        }
-
+			this.vaccineMeter += (multiplier * kingdom.cities.Count);
+			this.vaccineMeter = Mathf.Clamp(this.vaccineMeter, 0, this.vaccineMeterMax);
+			if (this.vaccineMeter == this.vaccineMeterMax) {
+				DevelopVaccine();
+			}
+		}
     }
 
 	private void ContributeToBioWeapon(Kingdom kingdom) {
-		this.bioWeaponMeter += 3 * kingdom.cities.Count;
-		this.bioWeaponMeter = Mathf.Clamp(this.bioWeaponMeter, 0, this.bioWeaponMeterMax);
-		if(this.bioWeaponMeter == this.bioWeaponMeterMax && !this.isBioWeaponDeveloped) {
-			SelectKingdomForBioWeaponDevelopment ();
-			this.isBioWeaponDeveloped = true;
+		if(!this.isBioWeaponDeveloped){
+			this.bioWeaponMeter += 3 * kingdom.cities.Count;
+			this.bioWeaponMeter = Mathf.Clamp(this.bioWeaponMeter, 0, this.bioWeaponMeterMax);
+			if(this.bioWeaponMeter == this.bioWeaponMeterMax) {
+				SelectKingdomForBioWeaponDevelopment ();
+				this.isBioWeaponDeveloped = true;
+			}
 		}
 	}
 
@@ -695,7 +759,7 @@ public class Plague : GameEvent {
     }
 
 	private void DifferentApproachesLogs(Citizen citizen, EVENT_APPROACH approach, City city){
-		if(citizen.city.kingdom.id == this.sourceKingdom.id){
+		if(citizen.city.kingdom.id == this.sourceKingdom.id || city == null){
 			//This is the kingdom where the plague started
 			string logName = string.Empty;
 			switch(approach){
