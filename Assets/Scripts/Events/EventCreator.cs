@@ -197,6 +197,16 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+	internal Plague CreatePlagueEvent(Kingdom kingdom){
+		Debug.Log ("CREATING FORCE PLAGUE EVENT");
+		List<City> targetCities = kingdom.cities.Where (x => x.structures.Count > 0).ToList();
+		City plaguedCity = targetCities [UnityEngine.Random.Range (0, targetCities.Count)];
+		if(plaguedCity != null){
+			Plague plague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, plaguedCity);
+			return plague;
+		}
+		return null;
+	}
 
 	internal ScourgeCity CreateScourgeCityEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
 		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.SCOURGE, EVENT_TYPES.SCOURGE_CITY, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.SCOURGE_CITY]);

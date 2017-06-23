@@ -67,7 +67,9 @@ public class UIManager : MonoBehaviour {
 	//Unrest
 	public GameObject unrestGO;
 	public UIInput unrestInput;
-
+	//Force Plague
+	public GameObject forcePlagueGO;
+	public UIPopupList kingdomsForPlague;
 
 	[Space(10)]//World UI
 	public ButtonGroupItem pauseBtn;
@@ -2971,9 +2973,49 @@ public class UIManager : MonoBehaviour {
 		WorldEventManager.Instance.currentInterveneEvent = eventType;
 		switch(eventType){
 		case EVENT_TYPES.PLAGUE:
+			ShowIntervenePlagueEvent ();
 			break;
 		case EVENT_TYPES.BOON_OF_POWER:
 			break;
+		}
+	}
+	private void ShowIntervenePlagueEvent(){
+		ToggleForcePlague ();
+	}
+	public void ToggleForcePlague(){
+		if (this.forcePlagueGO.activeSelf) {
+			this.forcePlagueGO.SetActive (false);
+		} else {
+			if(WorldEventManager.Instance.currentPlague == null){
+				this.kingdomsForPlague.Clear ();
+				this.kingdomsForPlague.AddItem ("RANDOM", null);
+				for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
+					if(KingdomManager.Instance.allKingdoms[i].cities.FirstOrDefault(x => x.structures.Count > 0) != null){
+						this.kingdomsForPlague.AddItem (KingdomManager.Instance.allKingdoms[i].name, KingdomManager.Instance.allKingdoms[i]);
+					}
+				}
+				this.forcePlagueGO.SetActive (true);
+			}
+
+		}
+	}
+	public void OnClickForcePlague(){
+		Kingdom targetKingdom = null;
+		if(this.kingdomsForPlague.data != null){
+			targetKingdom = (Kingdom)this.kingdomsForPlague.data;
+		}else{
+			List<Kingdom> filteredKingdoms = new List<Kingdom> ();
+			for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
+				if(KingdomManager.Instance.allKingdoms[i].cities.FirstOrDefault(x => x.structures.Count > 0) != null){
+					filteredKingdoms.Add (KingdomManager.Instance.allKingdoms[i]);
+				}
+			}
+			if(filteredKingdoms != null && filteredKingdoms.Count > 0){
+				targetKingdom = filteredKingdoms [UnityEngine.Random.Range (0, filteredKingdoms.Count)];
+			}
+		}
+		if(targetKingdom != null){
+			EventCreator.Instance.CreatePlagueEvent (targetKingdom);
 		}
 	}
 	#endregion
