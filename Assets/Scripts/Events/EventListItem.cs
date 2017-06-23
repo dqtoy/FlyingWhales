@@ -18,7 +18,7 @@ public class EventListItem : MonoBehaviour {
 		this.ownerOfThisItem = ownerOfThisItem;
 		this.gameEvent = gameEvent;
 		eventDateLbl.text = ((MONTH)gameEvent.startMonth).ToString () + " " + gameEvent.startDay.ToString () + ", " + gameEvent.startYear.ToString ();
-		eventTitleLbl.text = Utilities.LogReplacer(gameEvent.logs.First());
+		eventTitleLbl.text = Utilities.LogReplacer(gameEvent.logs.FirstOrDefault());
 //		if (gameEvent.eventType == EVENT_TYPES.ADMIRATION) {
 //			Admiration currEvent = (Admiration)gameEvent;
 //			if (ownerOfThisItem.id == currEvent.kingdom1.id) {

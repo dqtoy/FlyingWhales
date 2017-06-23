@@ -101,7 +101,7 @@ public class Trade : GameEvent {
 
                 for (int i = 0; i < resourcesToTrade.Count; i++) {
                     RESOURCE currResource = resourcesToTrade[i];
-                    RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.First();
+					RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
                     if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
                         techGrowthGained += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
                     } else if (resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {

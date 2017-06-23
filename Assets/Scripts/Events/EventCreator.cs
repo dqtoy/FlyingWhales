@@ -210,4 +210,13 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+
+	internal BoonOfPower CreateBoonOfPowerEvent(HexTile targetHextile){
+		if(targetHextile.isOccupied || targetHextile.isBorder || targetHextile.gameEventInTile != null){
+			return null;
+		}
+		BoonOfPower boonOfPower = new BoonOfPower (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, targetHextile);
+		WorldEventManager.Instance.ResetCurrentInterveneEvent();
+		return boonOfPower;
+	}
 }

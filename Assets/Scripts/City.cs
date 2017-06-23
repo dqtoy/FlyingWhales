@@ -510,7 +510,7 @@ public class City{
 		float percentageHP = (float)this._hp / (float)this.maxHP;
 		tileToBuy.movementDays = 2;
 		tileToBuy.Occupy (this);
-
+		CollectEventInTile (tileToBuy);
 		EventManager.Instance.onUpdatePath.Invoke (tileToBuy);
 
 		this.ownedTiles.Add(tileToBuy);
@@ -1223,5 +1223,14 @@ public class City{
 
 	internal void ResetToDefaultHP(){
 		this._hp = Utilities.defaultCityHP;
+	}
+
+	private void CollectEventInTile(HexTile hexTile){
+		if(hexTile.gameEventInTile != null){
+			if(hexTile.gameEventInTile is BoonOfPower){
+				BoonOfPower boonOfPower = (BoonOfPower)hexTile.gameEventInTile;
+				boonOfPower.TransferBoonOfPower (this.kingdom);
+			}
+		}
 	}
 }

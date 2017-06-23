@@ -240,8 +240,8 @@ public class DailyCumulativeEvent : MonoBehaviour {
         City randomTargetCity = this.secondKingdom.cities[Random.Range(0, this.secondKingdom.cities.Count)];
         List<HexTile> path = PathGenerator.Instance.GetPath(randomSourceCity.hexTile, randomTargetCity.hexTile, PATHFINDING_MODE.NORMAL).ToList();
         List<RESOURCE> resourcesSourceKingdomCanOffer = this.firstKingdom.GetResourcesOtherKingdomDoesNotHave(this.secondKingdom)
-            .Where(x => Utilities.resourceBenefits[x].First().Key == RESOURCE_BENEFITS.GROWTH_RATE ||
-            Utilities.resourceBenefits[x].First().Key == RESOURCE_BENEFITS.TECH_LEVEL).ToList();
+			.Where(x => Utilities.resourceBenefits[x].FirstOrDefault().Key == RESOURCE_BENEFITS.GROWTH_RATE ||
+				Utilities.resourceBenefits[x].FirstOrDefault().Key == RESOURCE_BENEFITS.TECH_LEVEL).ToList();
         /*
          * There should be no active trade event between the two kingdoms (started by this kingdom), the 2 kingdoms should not be at war, 
          * there should be a path from this kingdom's capital city to the otherKingdom's capital city, the otherKingdom should not be part of this kingdom's embargo list

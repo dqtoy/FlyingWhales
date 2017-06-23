@@ -4,6 +4,8 @@ using System.Collections;
 public class WorldEventManager : MonoBehaviour {
 	public static WorldEventManager Instance;
 
+	internal EVENT_TYPES currentInterveneEvent;
+
 	internal Plague currentPlague;
 
 	void Awake(){
@@ -12,6 +14,7 @@ public class WorldEventManager : MonoBehaviour {
 
 	void Start () {
 		this.currentPlague = null;
+		ResetCurrentInterveneEvent ();
 		EventManager.Instance.onWeekEnd.AddListener (this.TickActions);
 	}
 	
@@ -26,5 +29,8 @@ public class WorldEventManager : MonoBehaviour {
 				EventCreator.Instance.CreatePlagueEvent ();
 			}
 		}
+	}
+	internal void ResetCurrentInterveneEvent(){
+		this.currentInterveneEvent = EVENT_TYPES.NONE;
 	}
 }

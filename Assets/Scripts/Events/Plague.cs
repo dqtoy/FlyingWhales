@@ -189,7 +189,7 @@ public class Plague : GameEvent {
         for (int i = 0; i < this.humanisticKingdoms.Count; i++) {
             Kingdom currKingdom = this.humanisticKingdoms[i];
             if (this.IsDaysMultipleOf(5)) {
-                if (healers.First(x => x.citizen.city.kingdom.id == currKingdom.id) != null) {
+                if (this.healers.FirstOrDefault(x => x.citizen.city.kingdom.id == currKingdom.id) != null) {
                     //There is currently an active healer for currKingdom.
                     return;
                 }
@@ -235,7 +235,7 @@ public class Plague : GameEvent {
             for (int i = 0; i < this.pragmaticKingdoms.Count; i++) {
                 Kingdom currKingdom = this.pragmaticKingdoms[i];
                 if (this.IsDaysMultipleOf(5)) {
-                    if (exterminators.First(x => x.citizen.city.kingdom.id == currKingdom.id) != null) {
+                    if (this.exterminators.FirstOrDefault(x => x.citizen.city.kingdom.id == currKingdom.id) != null) {
                         //There is currently an active exterminator for currKingdom.
                         return;
                     }
@@ -325,7 +325,7 @@ public class Plague : GameEvent {
             importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD) || importantCharVals.ContainsKey(CHARACTER_VALUE.CHAUVINISM)) {
 
             KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
-                .First(x => x.Key == CHARACTER_VALUE.CHAUVINISM || x.Key == CHARACTER_VALUE.GREATER_GOOD 
+				.FirstOrDefault(x => x.Key == CHARACTER_VALUE.CHAUVINISM || x.Key == CHARACTER_VALUE.GREATER_GOOD 
                 || x.Key == CHARACTER_VALUE.LIFE || x.Key == CHARACTER_VALUE.FAIRNESS);
 
             if (priotiyValue.Key == CHARACTER_VALUE.CHAUVINISM) {
@@ -373,7 +373,7 @@ public class Plague : GameEvent {
     #endregion
 
     internal void InfectRandomSettlement(List<HexTile> hexTilesToChooseFrom) {
-        HexTile targetSettlement = hexTilesToChooseFrom.First(x => !x.isPlagued);
+		HexTile targetSettlement = hexTilesToChooseFrom.FirstOrDefault(x => !x.isPlagued);
         if (targetSettlement != null) {
             this.PlagueASettlement(targetSettlement);
         }
@@ -559,7 +559,7 @@ public class Plague : GameEvent {
 				int chance = UnityEngine.Random.Range (0, 100);
 				int value = 1 * this.affectedKingdoms [i].cities.Sum (x => x.plaguedSettlements.Count);
 				if (chance < value) {
-					City targetCity = this.affectedKingdoms [i].cities.First (x => x.plague == null);
+					City targetCity = this.affectedKingdoms [i].cities.FirstOrDefault (x => x.plague == null);
 					if (targetCity != null) {
 						this.PlagueACity (targetCity);
 					}
@@ -579,9 +579,9 @@ public class Plague : GameEvent {
                 Kingdom kingdomOfCity = this.affectedCities[i].kingdom;
                 float value = this.kingdomChances[kingdomOfCity.id][0] * (float)this.affectedKingdoms [i].cities.Sum (x => x.plaguedSettlements.Count);
 				if (chance < value) {
-					City targetCity = this.affectedKingdoms [i].cities.First (x => x.plague != null);
+					City targetCity = this.affectedKingdoms [i].cities.FirstOrDefault (x => x.plague != null);
 					if (targetCity != null) {
-						HexTile targetSettlement = targetCity.structures.First (x => x.isPlagued);
+						HexTile targetSettlement = targetCity.structures.FirstOrDefault (x => x.isPlagued);
 						if(targetSettlement != null){
 							this.CureASettlement (targetSettlement);
 						}
@@ -601,7 +601,7 @@ public class Plague : GameEvent {
 				int chance = UnityEngine.Random.Range (0, 100);
 				int value = 1 * this.affectedKingdoms [i].cities.Sum (x => x.plaguedSettlements.Count);
 				if (chance < value) {
-					City targetCity = this.affectedKingdoms [i].cities.First (x => x.plague != null);
+					City targetCity = this.affectedKingdoms [i].cities.FirstOrDefault (x => x.plague != null);
 					if (targetCity != null) {
 						this.DestroyASettlementInCity (targetCity);
 					}

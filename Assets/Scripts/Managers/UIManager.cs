@@ -396,7 +396,7 @@ public class UIManager : MonoBehaviour {
             }
         }
         RepositionGridCallback(kingdomListOtherKingdomsGrid);
-        kingdomListOtherKingdomsGrid.GetChildList().First().GetComponent<KingdomFlagItem>().SetAsSelected();
+		kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
     }
 
     private void AddKingdomToList(Kingdom kingdomToAdd) {
@@ -408,7 +408,7 @@ public class UIManager : MonoBehaviour {
         kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
         kingdomListOtherKingdomsGrid.Reposition();
 
-        kingdomListOtherKingdomsGrid.GetChildList().First().GetComponent<KingdomFlagItem>().SetAsSelected();
+		kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
     }
 
     private void LoadKingdomList(){
@@ -419,7 +419,7 @@ public class UIManager : MonoBehaviour {
         kingdomListOtherKingdomsGrid.Reposition();
  
         if (currentlyShowingKingdom == null) {
-            kingdomListOtherKingdomsGrid.GetChildList().First().GetComponent<KingdomFlagItem>().SetAsSelected();
+			kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
             return;
             //currentlyShowingKingdom = KingdomManager.Instance.allKingdoms.First();
 		}
@@ -444,7 +444,7 @@ public class UIManager : MonoBehaviour {
         List<Transform> children = kingdomOtherResourcesGrid.GetChildList();
         List<RESOURCE> resourcesInGrid = new List<RESOURCE>();
         for (int i = 0; i < children.Count; i++) {
-            RESOURCE resource = (RESOURCE)Enum.Parse(typeof(RESOURCE), Utilities.GetComponentsInDirectChildren<UI2DSprite>(children[i].gameObject).First().sprite2D.name);
+			RESOURCE resource = (RESOURCE)Enum.Parse(typeof(RESOURCE), Utilities.GetComponentsInDirectChildren<UI2DSprite>(children[i].gameObject).FirstOrDefault().sprite2D.name);
             resourcesInGrid.Add(resource);
         }
         List<RESOURCE> allOtherResources = currentlyShowingKingdom.availableResources.Keys.ToList();
@@ -456,7 +456,7 @@ public class UIManager : MonoBehaviour {
             for (int i = 0; i < currentlyShowingKingdom.availableResources.Keys.Count; i++) {
                 RESOURCE currResource = currentlyShowingKingdom.availableResources.Keys.ElementAt(i);
                 GameObject resourceGO = InstantiateUIObject(resourceIconPrefab, this.transform);
-                Utilities.GetComponentsInDirectChildren<UI2DSprite>(resourceGO).First().sprite2D = Resources
+				Utilities.GetComponentsInDirectChildren<UI2DSprite>(resourceGO).FirstOrDefault().sprite2D = Resources
                     .LoadAll<Sprite>("Resources Icons")
                     .Where(x => x.name == currResource.ToString()).ToList()[0];
                 resourceGO.transform.localScale = Vector3.one;
@@ -1269,7 +1269,7 @@ public class UIManager : MonoBehaviour {
 		if(gameEvent.startedBy != null){ //Kingdom Event
 			KingdomFlagItem kingdomOwner = kingdomListOtherKingdomsGrid.GetChildList()
 				.Where(x => x.GetComponent<KingdomFlagItem>().kingdom.id == gameEvent.startedByKingdom.id)
-				.First().GetComponent<KingdomFlagItem>();
+				.FirstOrDefault().GetComponent<KingdomFlagItem>();
 			if (kingdomOwner != null) {
 				GameObject eventGO = InstantiateUIObject(gameEventPrefab, this.transform);
 				eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
@@ -2132,7 +2132,7 @@ public class UIManager : MonoBehaviour {
 		if (obj is GameEvent) {
 			GameEvent ge = ((GameEvent)obj);
 			logs = ge.logs;
-			elmEventTitleLbl.text = Utilities.LogReplacer(logs.First());
+			elmEventTitleLbl.text = Utilities.LogReplacer(logs.FirstOrDefault());
 			if (ge.isActive) {
 				if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
 					elmEventProgressBar.gameObject.SetActive (false);
@@ -2157,7 +2157,7 @@ public class UIManager : MonoBehaviour {
 			}
 		} else if (obj is Campaign) {
 			logs = ((Campaign)obj).logs;
-			elmEventTitleLbl.text = Utilities.LogReplacer(logs.First());
+			elmEventTitleLbl.text = Utilities.LogReplacer(logs.FirstOrDefault());
 			elmEventProgressBar.gameObject.SetActive (false);
 		}
 		elmProgressBarLbl.text = "Progress:";
@@ -2747,6 +2747,7 @@ public class UIManager : MonoBehaviour {
 		this.goCreateEventUI.SetActive (false);
 	}
 
+	#region For Testing
 	public void ToggleTraitEditor(){
 		if (traitEditorGO.activeSelf) {
 			traitEditorGO.SetActive (false);
@@ -2917,6 +2918,10 @@ public class UIManager : MonoBehaviour {
 	public void HideUnrest(){
 		this.unrestGO.SetActive (false);
 	}
+	public void OnClickBoonOfPower(){
+		ShowInterveneEvent (EVENT_TYPES.BOON_OF_POWER);
+	}
+	#endregion
 	public void GenerateChildForCitizen(){
 		if (currentlyShowingCitizen.spouse == null) {
 //			Debug.Log ("Could not generate child because no spouse");
@@ -2957,4 +2962,16 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 	}
+
+	#region Intervene Events
+	internal void ShowInterveneEvent(EVENT_TYPES eventType){
+		WorldEventManager.Instance.currentInterveneEvent = eventType;
+		switch(eventType){
+		case EVENT_TYPES.PLAGUE:
+			break;
+		case EVENT_TYPES.BOON_OF_POWER:
+			break;
+		}
+	}
+	#endregion
 }
