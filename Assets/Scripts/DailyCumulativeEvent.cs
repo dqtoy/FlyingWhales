@@ -238,7 +238,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
         RelationshipKingdom relWithOtherKingdom = this.firstKingdom.GetRelationshipWithOtherKingdom(this.secondKingdom);
         City randomSourceCity = this.firstKingdom.cities[Random.Range(0, this.firstKingdom.cities.Count)];
         City randomTargetCity = this.secondKingdom.cities[Random.Range(0, this.secondKingdom.cities.Count)];
-        List<HexTile> path = PathGenerator.Instance.GetPath(randomSourceCity.hexTile, randomTargetCity.hexTile, PATHFINDING_MODE.NORMAL).ToList();
+        List<HexTile> path = PathGenerator.Instance.GetPath(randomSourceCity.hexTile, randomTargetCity.hexTile, PATHFINDING_MODE.NORMAL);
         List<RESOURCE> resourcesSourceKingdomCanOffer = this.firstKingdom.GetResourcesOtherKingdomDoesNotHave(this.secondKingdom)
 			.Where(x => Utilities.resourceBenefits[x].FirstOrDefault().Key == RESOURCE_BENEFITS.GROWTH_RATE ||
 				Utilities.resourceBenefits[x].FirstOrDefault().Key == RESOURCE_BENEFITS.TECH_LEVEL).ToList();

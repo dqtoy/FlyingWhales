@@ -216,7 +216,7 @@ public class War : GameEvent {
 				for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
 					if (this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city != null && this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.id != 0 && !this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.isDead) {
 						if (this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.kingdom.id == this.kingdom2.id) {
-							path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, this.kingdom1.capitalCity.habitableTileDistance [i].hexTile, PATHFINDING_MODE.COMBAT).ToList ();
+							path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, this.kingdom1.capitalCity.habitableTileDistance [i].hexTile, PATHFINDING_MODE.COMBAT);
 							if (path != null) {
 								kingdom2CityToBeAttacked = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city;
 								break;

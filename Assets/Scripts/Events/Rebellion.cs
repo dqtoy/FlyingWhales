@@ -117,7 +117,7 @@ public class Rebellion : GameEvent {
 				if(this.targetKingdom.cities[i].rebellion != null){
 					continue;
 				}
-				List<HexTile> path = PathGenerator.Instance.GetPath (this.conqueredCities [i].hexTile, this.targetKingdom.cities [j].hexTile, PATHFINDING_MODE.AVATAR).ToList();
+				List<HexTile> path = PathGenerator.Instance.GetPath (this.conqueredCities [i].hexTile, this.targetKingdom.cities [j].hexTile, PATHFINDING_MODE.AVATAR);
 				if(path != null){
 					int distance = path.Count;
 					if(source == null && target == null){
@@ -147,7 +147,7 @@ public class Rebellion : GameEvent {
 //		List<HexTile> newPath = new List<HexTile>();
 		for (int i = 0; i < this.targetKingdom.cities.Count; i++) {
 			if(this.targetKingdom.cities[i].rebellion == null){
-				List<HexTile> newPath = PathGenerator.Instance.GetPath (hexTile, this.targetKingdom.cities[i].hexTile, PATHFINDING_MODE.COMBAT).ToList();
+				List<HexTile> newPath = PathGenerator.Instance.GetPath (hexTile, this.targetKingdom.cities[i].hexTile, PATHFINDING_MODE.COMBAT);
 				if(newPath != null){
 					if(nearestCity == null){
 						nearestCity = this.targetKingdom.cities [i];
