@@ -2661,12 +2661,12 @@ public class UIManager : MonoBehaviour {
 	 * over a UI Object
 	 * */
 	public bool IsMouseOnUI(){
-		//if( uiCamera != null ){
-		//	if (UICamera.hoveredObject != null && UICamera.hoveredObject != this.gameObject) {
-		//		return true;
-		//	}
-		//}
-		return false;
+        if (uiCamera != null) {
+            if (UICamera.hoveredObject != null && UICamera.hoveredObject.layer == LayerMask.NameToLayer("UI")) {
+                return true;
+            }
+        }
+        return false;
 	}
 
 	/*
