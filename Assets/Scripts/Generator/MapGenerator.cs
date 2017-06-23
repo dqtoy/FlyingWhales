@@ -13,6 +13,7 @@ public class MapGenerator : MonoBehaviour {
 		PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
 		KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.stoneHabitableTiles);
 //		UIManager.Instance.UpdateKingsGrid();
+		WorldEventManager.Instance.BoonOfPowerTrigger();
 		GameManager.Instance.StartProgression();
 		CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms[0].cities[0].hexTile.gameObject);
 	}
