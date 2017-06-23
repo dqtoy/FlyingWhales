@@ -17,6 +17,6 @@ public class PlayerEventItem : MonoBehaviour {
     }
 
     public void OnClickEventItem() {
-        //TODO: Put Action to perform on click event item.
+        UIManager.Instance.ShowInterveneEvent(this.eventType);
     }
 }
