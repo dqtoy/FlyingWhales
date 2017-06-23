@@ -1044,9 +1044,9 @@ public class City{
             List<HexTile> path = null;
             if (newPath == null) {
                 if (role == ROLE.TRADER) {
-                    path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL).ToList();
+                    path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL);
                 } else {
-                    path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.AVATAR).ToList();
+                    path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.AVATAR);
                 }
                 if (path == null) {
                     return null;

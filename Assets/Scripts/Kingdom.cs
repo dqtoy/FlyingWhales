@@ -1330,7 +1330,7 @@ public class Kingdom{
 
 		for (int i = 0; i < this.cities.Count; i++) {
 			for (int j = 0; j < allHostileCities.Count; j++) {
-				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, allHostileCities [j].hexTile, PATHFINDING_MODE.AVATAR).ToList();
+				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, allHostileCities [j].hexTile, PATHFINDING_MODE.AVATAR);
 				if(path != null){
 					int distance = path.Count;
 					if(source == null && target == null){
