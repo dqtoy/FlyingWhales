@@ -424,8 +424,10 @@ public class City{
 
 	internal void UpdateBorderTiles(){
 		for (int i = 0; i < this.borderTiles.Count; i++) {
-            this.borderTiles[i].ResetTile();
-		}
+            this.borderTiles[i].isBorder = false;
+            this.borderTiles[i].isBorderOfCityID = 0;
+            //this.borderTiles[i].ResetTile();
+        }
 		this.borderTiles.Clear();
 
 		List<HexTile> outmostTiles = new List<HexTile>();
