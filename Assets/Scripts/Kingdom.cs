@@ -1773,7 +1773,6 @@ public class Kingdom{
 	}
 	internal void DestroyBoonOfPower(BoonOfPower boonOfPower){
 		this._activatedBoonOfPowers.Remove (boonOfPower);
-		boonOfPower.ownerKingdom = null;
 	}
 	internal void ActivateBoonOfPowers(){
 		for (int i = 0; i < this._boonOfPowers.Count; i++) {

@@ -1231,7 +1231,7 @@ public class City{
 		if(hexTile.gameEventInTile != null){
 			if(hexTile.gameEventInTile is BoonOfPower){
 				BoonOfPower boonOfPower = (BoonOfPower)hexTile.gameEventInTile;
-				boonOfPower.TransferBoonOfPower (this.kingdom);
+				boonOfPower.TransferBoonOfPower (this.kingdom, null);
 			}
 		}
 	}

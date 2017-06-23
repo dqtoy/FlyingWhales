@@ -27,6 +27,10 @@ public class BoonOfPower : GameEvent {
 		this.avatar = null;
 		this.hexTileSpawnPoint = hexTile;
 		Initialize ();
+
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "event_title");
+
+
 	}
 
 	#region Overrides
@@ -55,19 +59,36 @@ public class BoonOfPower : GameEvent {
 		this.activatedDay = GameManager.Instance.days;
 		this.activatedYear = GameManager.Instance.year;
 		EventManager.Instance.onWeekEnd.AddListener (this.PerformAction);
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "power_activated");
 	}
-	internal void TransferBoonOfPower(Kingdom kingdom){
+	internal void TransferBoonOfPower(Kingdom kingdom, Citizen citizen){
+		this.EventIsCreated ();
 		kingdom.CollectBoonOfPower (this);
 		GameObject.Destroy (this.avatar);
+		if(citizen == null){
+			//Discovered by structure/tile
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "discovery_structure");
+			newLog.AddToFillers (kingdom, kingdom.name);
+		}else{
+			//Discovered by an agent
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "discovery_agent");
+			newLog.AddToFillers (citizen, citizen.name);
+			newLog.AddToFillers (kingdom, kingdom.name);
+		}
 	}
 	private void DestroyThis(){
 		this.DoneEvent ();
 		this._isDestroyed = true;
 		this._isActivated = false;
+		this.ownerKingdom = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 
 		if(this.ownerKingdom.isAlive()){
 			this.ownerKingdom.DestroyBoonOfPower (this);
 		}
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "power_stop");
+
 	}
 }
