@@ -31,6 +31,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isOccupied = false;
 	public bool isBorder = false;
 	public bool isPlagued = false;
+	public bool isTargeted = false;
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
 

@@ -106,7 +106,7 @@ public class CityGenerator : MonoBehaviour {
 	public HexTile GetNearestHabitableTile(City city) {
 
 		for (int i = 0; i < city.habitableTileDistance.Count; i++) {
-			if (!city.habitableTileDistance[i].hexTile.isOccupied && !city.habitableTileDistance[i].hexTile.isBorder) {
+			if (!city.habitableTileDistance[i].hexTile.isOccupied && !city.habitableTileDistance[i].hexTile.isBorder && !city.habitableTileDistance[i].hexTile.isTargeted) {
 				List<HexTile> checkForOtherBorderTilesInRange;
 				// Check if the tile is within required distance of the expanding kingdom's current borders
 				if (city.kingdom.kingdomTypeData.expansionDistanceFromBorder > 0) {
