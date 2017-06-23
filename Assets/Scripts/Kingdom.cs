@@ -1414,7 +1414,7 @@ public class Kingdom{
 	 * available resource (DO NOT ADD GOLD TO THIS!).
 	 * */
 	internal void AddResourceToKingdom(RESOURCE resource){
-        RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[resource].Keys.First();
+		RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[resource].Keys.FirstOrDefault();
 
         if (!this._availableResources.ContainsKey(resource)) {
 			this._availableResources.Add(resource, 0);
@@ -1438,7 +1438,7 @@ public class Kingdom{
             RESOURCE currResource = this.availableResources.Keys.ElementAt(i);
             if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
                 int multiplier = this.availableResources[currResource];
-                RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.First();
+				RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
                 float expansionRateGained = Utilities.resourceBenefits[currResource][resourceBenefit];
                 if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
                     this.expansionChance += expansionRateGained * multiplier;
@@ -1453,7 +1453,7 @@ public class Kingdom{
 
         for (int i = 0; i < allAvailableResources.Count; i++) {
             RESOURCE currResource = allAvailableResources[i];
-            RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.First();
+			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
             if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
                 this._techLevel += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
             }
@@ -1474,7 +1474,7 @@ public class Kingdom{
         int dailyGrowthGained = 0;
         for (int i = 0; i < allAvailableResources.Count; i++) {
             RESOURCE currentResource = allAvailableResources[i];
-            RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currentResource].Keys.First();
+			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currentResource].Keys.FirstOrDefault();
             if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
                 dailyGrowthGained += (int)Utilities.resourceBenefits[currentResource][resourceBenefit];
             }
@@ -1623,7 +1623,7 @@ public class Kingdom{
 		int bonus = 0;
         for (int i = 0; i < this._availableResources.Count; i++) {
             RESOURCE currResource = this._availableResources.Keys.ElementAt(i);
-            RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.First();
+			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
             if(resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
                 bonus += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
             }

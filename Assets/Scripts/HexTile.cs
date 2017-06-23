@@ -715,6 +715,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		if(state){
 			if(this.plagueIcon == null){
 				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO, this.UIParent);
+				this.plagueIcon.transform.localPosition = Vector3.zero;
 			}
 		}else{
 			if(this.plagueIcon != null){

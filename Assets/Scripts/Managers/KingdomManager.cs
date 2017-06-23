@@ -400,7 +400,7 @@ public class KingdomManager : MonoBehaviour {
 
     [ContextMenu("Test Split Kingdom")]
     public void TestSplitKingdom() {
-        Kingdom sourceKingdom = this.allKingdoms.First();
+		Kingdom sourceKingdom = this.allKingdoms.FirstOrDefault();
         List<City> citiesToSplit = new List<City>() { sourceKingdom.cities.Last() };
         SplitKingdom(sourceKingdom, citiesToSplit);
         EventManager.Instance.onUpdateUI.Invoke();
