@@ -203,7 +203,8 @@ public class Plague : GameEvent {
                     return;
                 }
                 //Every multiple of 5 day, Humanistic Kingdoms have 3% chance for each city it has to produce a Healer Agent.
-                int chanceForHealer = 3 * currKingdom.cities.Count;
+//                int chanceForHealer = 3 * currKingdom.cities.Count;
+				int chanceForHealer = 50;
                 int chance = Random.Range(0, 100);
                 if (chance < chanceForHealer) {
                     //Create Healer
@@ -574,22 +575,27 @@ public class Plague : GameEvent {
 
 	private void DestroyASettlementInCity(City city){
 		List<HexTile> plaguedSettlements = city.plaguedSettlements;
-		HexTile targetSettlement = plaguedSettlements [plaguedSettlements.Count - 1];
-		if(targetSettlement != null){
-            /*
+		if(plaguedSettlements != null && plaguedSettlements.Count > 0){
+			HexTile targetSettlement = plaguedSettlements [plaguedSettlements.Count - 1];
+			if(targetSettlement != null){
+				/*
              * Reset tile for now.
              * TODO: When ruined settlement sprites are provided, use those instead.
              * */
-            city.RemoveTileFromCity(targetSettlement);
-			this.CheckIfCityIsCured (city);
+				city.RemoveTileFromCity(targetSettlement);
+				this.CheckIfCityIsCured (city);
+			}
 		}
+
 	}
     private void CureASettlementInCity(City city) {
         List<HexTile> plaguedSettlements = city.plaguedSettlements;
-        HexTile targetSettlement = plaguedSettlements[plaguedSettlements.Count - 1];
-        if (targetSettlement != null) {
-            this.CureASettlement(targetSettlement);
-        }
+		if (plaguedSettlements != null && plaguedSettlements.Count > 0) {
+			HexTile targetSettlement = plaguedSettlements [plaguedSettlements.Count - 1];
+			if (targetSettlement != null) {
+				this.CureASettlement (targetSettlement);
+			}
+		}
 
     }
     private bool IsDaysMultipleOf (int multiple){
