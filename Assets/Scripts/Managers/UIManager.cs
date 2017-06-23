@@ -664,7 +664,10 @@ public class UIManager : MonoBehaviour {
         characterValuesLbl.text = string.Empty;
         for (int i = 0; i < currentlyShowingCitizen.importantCharacterValues.Keys.Count; i++) {
             CHARACTER_VALUE currValue = currentlyShowingCitizen.importantCharacterValues.Keys.ElementAt(i);
-            characterValuesLbl.text += Utilities.FirstLetterToUpperCase(currValue.ToString().Replace('_', ' ')) + "\n";
+            characterValuesLbl.text += Utilities.FirstLetterToUpperCase(currValue.ToString().Replace('_', ' '));
+            if(currentlyShowingCitizen.importantCharacterValues.Keys.Last() != currValue) {
+                characterValuesLbl.text += "\n";
+            }
         }
 
         this.characterValuesGO.SetActive(true);
@@ -711,8 +714,8 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void ShowCurrentlyShowingCitizenCityInfo(){
-		ShowCityInfo (currentlyShowingCitizen.city, true);
-		CameraMove.Instance.CenterCameraOn (currentlyShowingCity.hexTile.gameObject);
+		//ShowCityInfo (currentlyShowingCitizen.city, true);
+		CameraMove.Instance.CenterCameraOn (currentlyShowingCitizen.city.hexTile.gameObject);
 	}
 
 	public void ShowCityInfo(City cityToShow, bool showCitizens = false){
