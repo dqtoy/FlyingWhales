@@ -28,6 +28,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject logItemPrefab;
     public GameObject cityItemPrefab;
     public GameObject resourceIconPrefab;
+    public GameObject playerEventItemPrefab;
 
 	[Space(10)]//Main Objects
 	public GameObject smallInfoGO;
@@ -45,6 +46,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject allKingdomEventsGO;
 	public GameObject eventLogsGO;
     public GameObject kingdomCitiesGO;
+    public GameObject interveneMenuGO;
 
 	[Space(10)]//For Testing
 	//Trait Editor
@@ -219,7 +221,12 @@ public class UIManager : MonoBehaviour {
     public UILabel relationshipSummaryLbl;
     public UILabel relationshipSummaryTitleLbl;
 
-	private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
+    [Space(10)] //For Intervene Menu
+    [SerializeField] private UIGrid interveneMenuGrid;
+    [SerializeField] private UIScrollView interveneMenuScrollView;
+    [SerializeField] private ButtonToggle interveneMenuBtn;
+
+    private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	public Citizen currentlyShowingCitizen = null;
 	internal City currentlyShowingCity = null;
@@ -657,7 +664,7 @@ public class UIManager : MonoBehaviour {
         characterValuesLbl.text = string.Empty;
         for (int i = 0; i < currentlyShowingCitizen.importantCharacterValues.Keys.Count; i++) {
             CHARACTER_VALUE currValue = currentlyShowingCitizen.importantCharacterValues.Keys.ElementAt(i);
-            characterValuesLbl.text += Utilities.FirstCharToUpper(currValue.ToString().Replace('_', ' ')) + "\n";
+            characterValuesLbl.text += Utilities.FirstLetterToUpperCase(currValue.ToString().Replace('_', ' ')) + "\n";
         }
 
         this.characterValuesGO.SetActive(true);
@@ -2408,39 +2415,6 @@ public class UIManager : MonoBehaviour {
 			List<int> currentlyShowingCampaignIDs = currentlyShowingCampaigns.Select (x => x.campaign.id).ToList ();
 			List<int> actualCampaignIDs = new List<int>();
 			List<Campaign> campaignsToShow = new List<Campaign>();
-
-//			for (int j = 0; j < currentlyShowingKingdom.king.campaignManager.activeCampaigns.Count; j++) {
-//				Campaign currentCampaign = currentlyShowingKingdom.king.campaignManager.activeCampaigns[j];
-//				City targetCityOfCampaign = currentCampaign.targetCity;
-//				if (currentCampaign.campaignType == CAMPAIGN.DEFENSE) {
-//					actualCampaignIDs.Add (currentCampaign.id);
-//					campaignsToShow.Add (currentCampaign);
-//				} else {
-//					if (!currentCampaign.isGhost && targetCityOfCampaign.kingdom.id == kingdomAtWarWith.id) {
-//						actualCampaignIDs.Add (currentCampaign.id);
-//						campaignsToShow.Add (currentCampaign);
-//					}
-//				}
-//			}
-//
-//			if (actualCampaignIDs.Except(currentlyShowingCampaignIDs).Union(currentlyShowingCampaignIDs.Except(actualCampaignIDs)).Count() > 0) {
-//				for (int j = 0; j < currentlyShowingCampaigns.Count; j++) {
-//					currentWarParent.eventsGrid.RemoveChild(currentlyShowingCampaigns[j].transform);
-//					Destroy(currentlyShowingCampaigns [j].gameObject);
-//				}
-//
-//				for (int j = 0; j < campaignsToShow.Count; j++) {
-//					Campaign currentCampaign = campaignsToShow[j];
-//					GameObject eventGO = GameObject.Instantiate (kingdomWarEventsListItemPrefab, this.transform) as GameObject;
-//					currentWarParent.eventsGrid.AddChild (eventGO.transform);
-//					currentWarParent.eventsGrid.transform.localPosition = new Vector3 (0f, -68f, 0f);
-//					eventGO.GetComponent<WarEventListItem>().SetCampaign (currentCampaign, currentlyShowingKingdom);
-//					eventGO.GetComponent<WarEventListItem>().onClickEvent += ShowEventLogs;
-//					eventGO.transform.localScale = Vector3.one;
-//				}
-//				StartCoroutine (RepositionGrid (currentWarParent.eventsGrid));
-//			}
-
 			RepositionKingdomEventsTable();
 		}
 	}
@@ -2589,6 +2563,40 @@ public class UIManager : MonoBehaviour {
 
     public void HideRelationshipSummary() {
         relationshipSummaryGO.SetActive(false);
+    }
+
+    public void ToggleInterveneMenu() {
+        if (interveneMenuGO.activeSelf) {
+            HideInterveneMenu();
+        } else {
+            ShowInterveneMenu();
+        }
+    }
+
+    private void ShowInterveneMenu() {
+        if(interveneMenuGrid.GetChildList().Count <= 0) {
+            LoadInterveneEvents();
+        }
+        interveneMenuBtn.SetClickState(true);
+        interveneMenuGO.SetActive(true);
+    }
+
+    private void LoadInterveneEvents() {
+        for (int i = 0; i < Utilities.playerPlacableEvents.Length; i++) {
+            EVENT_TYPES currEvent = Utilities.playerPlacableEvents[i];
+            GameObject playerEventItemGO = InstantiateUIObject(playerEventItemPrefab, this.transform);
+            interveneMenuGrid.AddChild(playerEventItemGO.transform);
+            playerEventItemGO.transform.localPosition = Vector3.zero;
+            playerEventItemGO.transform.localScale = Vector3.one;
+            playerEventItemGO.GetComponent<PlayerEventItem>().SetEvent(currEvent);
+        }
+        StartCoroutine(RepositionGrid(interveneMenuGrid));
+        StartCoroutine(RepositionScrollView(interveneMenuScrollView));
+    }
+
+    private void HideInterveneMenu() {
+        interveneMenuBtn.SetClickState(false);
+        interveneMenuGO.SetActive(false);
     }
 
     /*

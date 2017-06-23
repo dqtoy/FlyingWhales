@@ -22,6 +22,11 @@ public class Utilities : MonoBehaviour {
 	public static int defaultCityHP = 300;
 
 	public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
+
+    public static EVENT_TYPES[] playerPlacableEvents = new EVENT_TYPES[] {
+        EVENT_TYPES.PLAGUE
+    };
+
 	public static string[] accidentCauses = new string[]{
 		"because he/she forgot to breath",
 		"after falling off a cliff",
@@ -889,9 +894,12 @@ public class Utilities : MonoBehaviour {
 		return false;
 	}
 
-    public static string FirstCharToUpper(string input) {
-        if (String.IsNullOrEmpty(input))
-            throw new ArgumentException("ARGH!");
-        return input.First().ToString().ToUpper() + input.Substring(1);
+    public static string FirstLetterToUpperCase(string s) {
+        if (string.IsNullOrEmpty(s))
+            throw new ArgumentException("There is no first letter");
+
+        char[] a = s.ToCharArray();
+        a[0] = char.ToUpper(a[0]);
+        return new string(a);
     }
 }
