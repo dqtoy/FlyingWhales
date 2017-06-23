@@ -161,7 +161,7 @@ public class Plague : GameEvent {
     #endregion
 
     private void InitializePlague(){
-		this.PlagueASettlement (this.sourceCity.structures [0]);
+//		this.PlagueASettlement (this.sourceCity.structures [0]);
 		this.PlagueAKingdom (this.sourceKingdom, this.sourceCity);
         onPerformAction += SpreadPlagueWithinCity;
         onPerformAction += SpreadPlagueWithinKingdom;
@@ -450,6 +450,7 @@ public class Plague : GameEvent {
 	internal void PlagueACity(City city){
 		city.plague = this;
 		this.affectedCities.Add (city);
+		InfectRandomSettlement (city.structures);
 	}
 	internal void PlagueAKingdom(Kingdom kingdom, City city){
 		kingdom.plague = this;

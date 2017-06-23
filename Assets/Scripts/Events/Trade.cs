@@ -53,7 +53,6 @@ public class Trade : GameEvent {
 				}else{
 					trader.plague.PlagueAKingdom(this._targetCity.kingdom, this._targetCity);
 				}
-				trader.plague.InfectRandomSettlement(this._targetCity.structures);
             }
         }
 
