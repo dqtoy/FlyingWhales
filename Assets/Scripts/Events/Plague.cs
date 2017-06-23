@@ -452,14 +452,14 @@ public class Plague : GameEvent {
         CheckIfCityIsCured(hexTile.ownedByCity);
 	}
 	private void CureACity(City city){
-        DisinfectACity(city);
 		List<HexTile> plaguedSettlements = city.plaguedSettlements;
 		for (int i = 0; i < plaguedSettlements.Count; i++) {
 			this.CureASettlement (plaguedSettlements [i]);
 		}
+//		DisinfectACity(city);
 	}
 	private void CureAKingdom(Kingdom kingdom){
-        DisinfectAKingdom(kingdom);
+//      DisinfectAKingdom(kingdom);
 		for (int i = 0; i < kingdom.cities.Count; i++) {
 			this.CureACity (kingdom.cities [i]);
 		}
@@ -487,7 +487,7 @@ public class Plague : GameEvent {
     }
 
     private void CheckIfCityIsCured(City city) {
-        if (city.plaguedSettlements.Count <= 0) {
+		if (city.plaguedSettlements.Count <= 0 || city.plaguedSettlements == null) {
             DisinfectACity(city);
         }
     }
@@ -514,6 +514,7 @@ public class Plague : GameEvent {
              * TODO: When ruined settlement sprites are provided, use those instead.
              * */
             city.RemoveTileFromCity(targetSettlement);
+			this.CheckIfCityIsCured (city);
 		}
 	}
     private void CureASettlementInCity(City city) {

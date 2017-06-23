@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class WorldEventManager : MonoBehaviour {
 	public static WorldEventManager Instance;
@@ -33,4 +34,19 @@ public class WorldEventManager : MonoBehaviour {
 	internal void ResetCurrentInterveneEvent(){
 		this.currentInterveneEvent = EVENT_TYPES.NONE;
 	}
-}
+
+	internal void BoonOfPowerTrigger(){
+		int chance = UnityEngine.Random.Range (0, 2);
+		if(chance == 0){
+			List<HexTile> filteredHextile = new List<HexTile> ();
+			for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+				HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
+				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER){
+					filteredHextile.Add (hexTile);
+				}
+			}
+			HexTile targetHextile = filteredHextile [UnityEngine.Random.Range (0, filteredHextile.Count)];
+			EventCreator.Instance.CreateBoonOfPowerEvent (targetHextile);
+		}
+	}
+ }
