@@ -14,7 +14,7 @@ public class King : Role {
 		this.SetOwnedKingdom(this.citizen.city.kingdom);
 		this.citizen.GenerateCharacterValues ();
 		if(this.citizen.city.kingdom.plague != null){
-			this.citizen.city.kingdom.plague.UpdateApproach ();
+			this.citizen.city.kingdom.plague.UpdateApproach (this.citizen.city.kingdom);
 		}
 	}
 
