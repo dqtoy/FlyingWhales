@@ -2138,34 +2138,36 @@ public class UIManager : MonoBehaviour {
 			GameEvent ge = ((GameEvent)obj);
 			logs = ge.logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer(logs.FirstOrDefault());
-			if (ge.isActive) {
-				if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
-					elmEventProgressBar.gameObject.SetActive (false);
-				} else if (ge.eventType == EVENT_TYPES.EXPANSION) {
-					elmEventProgressBar.gameObject.SetActive (false);
-				} else {
-					elmEventProgressBar.gameObject.SetActive (true);
-					float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
-					if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
-						currentLerpRoutine = StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
-					} else {
-						if (currentLerpRoutine != null) {
-							StopCoroutine (currentLerpRoutine);
-							currentLerpRoutine = null;
-						}
-						elmEventProgressBar.value = targetValue;
-					}
+            elmEventProgressBar.gameObject.SetActive(false);
+            elmProgressBarLbl.gameObject.SetActive(false);
+            //         if (ge.isActive) {
+            //	if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
+            //		elmEventProgressBar.gameObject.SetActive (false);
+            //	} else if (ge.eventType == EVENT_TYPES.EXPANSION) {
+            //		elmEventProgressBar.gameObject.SetActive (false);
+            //	} else {
+            //		elmEventProgressBar.gameObject.SetActive (true);
+            //		float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
+            //		if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
+            //			currentLerpRoutine = StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+            //		} else {
+            //			if (currentLerpRoutine != null) {
+            //				StopCoroutine (currentLerpRoutine);
+            //				currentLerpRoutine = null;
+            //			}
+            //			elmEventProgressBar.value = targetValue;
+            //		}
 
-				}
-			} else {
-				elmEventProgressBar.gameObject.SetActive (false);
-			}
-		} else if (obj is Campaign) {
+            //	}
+            //} else {
+            //	elmEventProgressBar.gameObject.SetActive (false);
+            //}
+        } else if (obj is Campaign) {
 			logs = ((Campaign)obj).logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer(logs.FirstOrDefault());
 			elmEventProgressBar.gameObject.SetActive (false);
 		}
-		elmProgressBarLbl.text = "Progress:";
+		//elmProgressBarLbl.text = "Progress:";
 		elmSuccessRateGO.SetActive (false);
 
 		currentlyShowingLogObject = obj;
