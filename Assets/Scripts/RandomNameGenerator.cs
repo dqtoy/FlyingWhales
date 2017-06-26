@@ -15,11 +15,11 @@ public class RandomNameGenerator : MonoBehaviour {
 	};
 
 	private string[] baseHumanKingdomNames = new string[]{
-		"Atlantis", "Albane", "Alamid", "Andreland", "Aurelia", "Ashanti", "Bactria", "Benin", "Burgundy", "Calabon", "Chyland", "Croatia", "Ceres", "Darmid", "Dirkland",
-		"Duscany", "Elarus", "Esmeris", "Erebor", "Fernica", "Fuschia", "Friedland", "Garwinia", "Grazil", "Gundrak", "Hacatid", "Hermani", "Howland", "Ianland", "Iridia",
-		"Israel", "Jamalaya", "Jinni", "Justinia", "Karamba", "Kaedwen", "Korolus", "Lindria", "Lunestra", "Lustland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland",
-		"Muskovich", "Nestori", "Norsica", "Numbland", "Obelin", "Ovid", "Opera", "Patani", "Petersen", "Prissia", "Qualia", "Quenden", "Rastafar", "Remedi", "Rustland", 
-		"Scythra", "Shetland", "Sundria", "Silveria", "Thenid", "Tilbany", "Tulisia", "Umbra", "Ulbany", "Uruk", "Virindor", "Vanad", "Zulu", "Zakrand"
+		"Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Burgundy", "Calabon", "Chyland", "Croatia", "Ceres", "Darmid", "Dirland",
+		"Duscany", "Elarus", "Esmeris", "Erebor", "Fernica", "Fuchia", "Friedland", "Garwinia", "Grazil", "Gunark", "Hacatid", "Hermani", "Howland", "Ianland", "Iridia",
+		"Israel", "Jamalaya", "Jinni", "Justinia", "Karamba", "Kaedwen", "Korolus", "Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland",
+		"Muskovich", "Nestori", "Norsica", "Nubland", "Obelin", "Ovid", "Opera", "Patani", "Petersen", "Prissia", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo", 
+		"Scythra", "Shetland", "Sundira", "Silveria", "Thenid", "Tilain", "Tulisia", "Umbra", "Ulbany", "Uruk", "Virindor", "Vanad", "Zulu", "Zakrand"
 	};
 
 	private string[] humanMaleFirstNames = new string[]{
