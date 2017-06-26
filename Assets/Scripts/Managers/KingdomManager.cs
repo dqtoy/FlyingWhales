@@ -11,6 +11,8 @@ public class KingdomManager : MonoBehaviour {
 
 	public static KingdomManager Instance = null;
 
+    [SerializeField] private List<InitialKingdom> initialKingdomSetup;
+
 	public List<Kingdom> allKingdoms;
 
 	public KingdomTypeData kingdomTypeBarbaric;
@@ -28,52 +30,99 @@ public class KingdomManager : MonoBehaviour {
 
     protected const int UNREST_INCREASE_WAR = 10;
 
-	public int numberOfKingdoms;
-	public int numberOfCitiesPerKingdom;
 	public int initialSpawnRate;
 
-    public bool useDiscoveredKingdoms = true;
+    [SerializeField] private int minimumInitialKingdomDistance;
 
-	void Awake(){
+    [SerializeField] private bool _useDiscoveredKingdoms;
+
+    #region getters/setters
+    public bool useDiscoveredKingdoms {
+        get { return this._useDiscoveredKingdoms; }
+    }
+    #endregion
+
+    void Awake(){
 		Instance = this;
 	}
 
-	public void GenerateInitialKingdoms(List<HexTile> stoneElligibleTiles) {
+	public void GenerateInitialKingdoms(List<HexTile> stoneHabitableTiles, List<HexTile> woodHabitableTiles) {
 
-		//Get Starting City For Humans
-		List<HexTile> cityForHumans1 = new List<HexTile>();
-		List<HexTile> cityForHumans2 = new List<HexTile>();
-		List<HexTile> cityForHumans3 = new List<HexTile>();
-		List<HexTile> cityForHumans4 = new List<HexTile>();
+        List<HexTile> stoneElligibleTiles = new List<HexTile>(stoneHabitableTiles);
+        stoneElligibleTiles = stoneElligibleTiles.Where(x => x.nearbyResourcesCount > 3).ToList();
 
-		List<HexTile> elligibleTilesForHumans = new List<HexTile>();
+        List<HexTile> woodElligibleTiles = new List<HexTile>(woodHabitableTiles);
+        woodElligibleTiles = woodElligibleTiles.Where(x => x.nearbyResourcesCount > 3).ToList();
 
-		for (int i = 0; i < stoneElligibleTiles.Count; i++) {
-			if (stoneElligibleTiles [i].nearbyResourcesCount > 3) {
-				elligibleTilesForHumans.Add (stoneElligibleTiles [i]);
-			}
-		}
-//		Debug.Log ("Valid capital tiles: " + elligibleTilesForHumans.Count);
+        for (int i = 0; i < initialKingdomSetup.Count; i++) {
+            InitialKingdom initialKingdom = initialKingdomSetup[i];
+            List<HexTile> tilesToChooseFrom = stoneElligibleTiles;
+            if (Utilities.GetBasicResourceForRace(initialKingdom.race) == BASE_RESOURCE_TYPE.WOOD) {
+                tilesToChooseFrom = woodElligibleTiles;
+            }
 
-//		int numOfKingdoms = 2;
-		if (elligibleTilesForHumans.Count < this.numberOfKingdoms) {
-			this.numberOfKingdoms = elligibleTilesForHumans.Count;
-		}
+            if (tilesToChooseFrom.Count <= 0) {
+                continue;
+            }
 
-//        int numOfCitiesPerKingdom = 1;
-		for (int i = 0; i < this.numberOfKingdoms; i++) {
-			List<HexTile> citiesForKingdom = new List<HexTile>();
-			for (int j = 0; j < this.numberOfCitiesPerKingdom; j++) {
-                if (elligibleTilesForHumans.Count <= 0) {
+            List<HexTile> citiesForKingdom = new List<HexTile>();
+            for (int j = 0; j < initialKingdom.numOfCities; j++) {
+                if (tilesToChooseFrom.Count <= 0) {
                     break;
                 }
-                int chosenIndex = Random.Range(0, elligibleTilesForHumans.Count);
-                citiesForKingdom.Add(elligibleTilesForHumans[chosenIndex]);
-                elligibleTilesForHumans.RemoveAt(chosenIndex);
+                int chosenIndex = Random.Range(0, tilesToChooseFrom.Count);
+                HexTile chosenHexTile = tilesToChooseFrom[chosenIndex];
+                List<HexTile> nearHabitableTiles = chosenHexTile.GetTilesInRange(minimumInitialKingdomDistance).Where(x => x.isHabitable).ToList();
+                citiesForKingdom.Add(chosenHexTile);
+                tilesToChooseFrom.Remove(chosenHexTile);
+                for (int k = 0; k < nearHabitableTiles.Count; k++) {
+                    HexTile nearTile = nearHabitableTiles[k];
+                    if (stoneElligibleTiles.Contains(nearTile)) {
+                        stoneElligibleTiles.Remove(nearTile);
+                    } else if (woodElligibleTiles.Contains(nearTile)) {
+                        woodElligibleTiles.Remove(nearTile);
+                    }
+                }
             }
+            if(citiesForKingdom.Count > 0) {
+                GenerateNewKingdom(initialKingdom.race, citiesForKingdom, true);
+            }
+        }
+
+//		List<HexTile> elligibleTilesForHumans = new List<HexTile>();
+
+//		for (int i = 0; i < stoneElligibleTiles.Count; i++) {
+//			if (stoneElligibleTiles [i].nearbyResourcesCount > 3) {
+//				elligibleTilesForHumans.Add (stoneElligibleTiles [i]);
+//			}
+//		}
+////		Debug.Log ("Valid capital tiles: " + elligibleTilesForHumans.Count);
+
+//		if (elligibleTilesForHumans.Count < this.numberOfKingdoms) {
+//			this.numberOfKingdoms = elligibleTilesForHumans.Count;
+//		}
+
+//		for (int i = 0; i < this.numberOfKingdoms; i++) {
+//			List<HexTile> citiesForKingdom = new List<HexTile>();
+//			for (int j = 0; j < this.numberOfCitiesPerKingdom; j++) {
+//                if (elligibleTilesForHumans.Count <= 0) {
+//                    break;
+//                }
+//                int chosenIndex = Random.Range(0, elligibleTilesForHumans.Count);
+//                HexTile chosenHexTile = elligibleTilesForHumans[chosenIndex];
+//                List<HexTile> nearHabitableTiles = chosenHexTile.GetTilesInRange(minimumInitialKingdomDistance).Where(x => x.isHabitable).ToList();
+//                citiesForKingdom.Add(elligibleTilesForHumans[chosenIndex]);
+//                elligibleTilesForHumans.RemoveAt(chosenIndex);
+//                for (int k = 0; k < nearHabitableTiles.Count; k++) {
+//                    HexTile nearTile = nearHabitableTiles[k];
+//                    if (elligibleTilesForHumans.Contains(nearTile)) {
+//                        elligibleTilesForHumans.Remove(nearTile);
+//                    }
+//                }
+//            }
 			
-			GenerateNewKingdom (RACE.HUMANS, citiesForKingdom, true);
-		}
+//			GenerateNewKingdom (RACE.HUMANS, citiesForKingdom, true);
+//		}
 
 //		if (elligibleTilesForHumans.Count > 0) {
 //			cityForHumans1.Add (elligibleTilesForHumans [0]);

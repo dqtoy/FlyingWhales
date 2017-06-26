@@ -10,8 +10,8 @@ public class MapGenerator : MonoBehaviour {
 		Biomes.Instance.GenerateBiome();
 		Biomes.Instance.GenerateTileDetails();
 		CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
-		PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
-		KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.stoneHabitableTiles);
+		//PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
+		KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.stoneHabitableTiles, CityGenerator.Instance.woodHabitableTiles);
 //		UIManager.Instance.UpdateKingsGrid();
 		WorldEventManager.Instance.BoonOfPowerTrigger();
 		GameManager.Instance.StartProgression();

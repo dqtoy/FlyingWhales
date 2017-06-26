@@ -40,7 +40,7 @@ public class Kingdom{
 	internal List<Rebellion> rebellions;
 
 	internal BASE_RESOURCE_TYPE basicResource;
-	internal BASE_RESOURCE_TYPE rareResource;
+	//internal BASE_RESOURCE_TYPE rareResource;
 
 	internal List<RelationshipKingdom> relationshipsWithOtherKingdoms;
 
@@ -205,19 +205,22 @@ public class Kingdom{
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
 
-		if (race == RACE.HUMANS) {
-			this.basicResource = BASE_RESOURCE_TYPE.STONE;
-			this.rareResource = BASE_RESOURCE_TYPE.MITHRIL;
-		} else if (race == RACE.ELVES) {
-			this.basicResource = BASE_RESOURCE_TYPE.WOOD;
-			this.rareResource = BASE_RESOURCE_TYPE.MANA_STONE;
-		} else if (race == RACE.MINGONS) {
-			this.basicResource = BASE_RESOURCE_TYPE.WOOD;
-			this.rareResource = BASE_RESOURCE_TYPE.NONE;
-		} else {
-			this.basicResource = BASE_RESOURCE_TYPE.STONE;
-			this.rareResource = BASE_RESOURCE_TYPE.COBALT;
-		}
+        this.basicResource = Utilities.GetBasicResourceForRace(race);
+
+
+  //      if (race == RACE.HUMANS) {
+		//	this.basicResource = BASE_RESOURCE_TYPE.STONE;
+		//	this.rareResource = BASE_RESOURCE_TYPE.MITHRIL;
+		//} else if (race == RACE.ELVES) {
+		//	this.basicResource = BASE_RESOURCE_TYPE.WOOD;
+		//	this.rareResource = BASE_RESOURCE_TYPE.MANA_STONE;
+		//} else if (race == RACE.MINGONS) {
+		//	this.basicResource = BASE_RESOURCE_TYPE.WOOD;
+		//	this.rareResource = BASE_RESOURCE_TYPE.NONE;
+		//} else {
+		//	this.basicResource = BASE_RESOURCE_TYPE.STONE;
+		//	this.rareResource = BASE_RESOURCE_TYPE.COBALT;
+		//}
 
         if(cities.Count > 0) {
             for (int i = 0; i < cities.Count; i++) {

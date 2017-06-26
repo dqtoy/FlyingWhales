@@ -170,7 +170,6 @@ public class Raid : GameEvent {
 		this.raidedCity.HasBeenRaided ();
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_success");
-		newLog.AddToFillers (null, stolenGold.ToString());
 
 //		this.pilfered = string.Empty;
 //		this.pilfered += stolenGold.ToString() + " Gold";
@@ -247,7 +246,7 @@ public class Raid : GameEvent {
 			return;
 		}
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 10){
+		if(chance < 40){
 			//DISCOVERY
 			this.hasBeenDiscovered = true;
 			if (this.hasDeflected) {
