@@ -388,12 +388,12 @@ public class Plague : GameEvent {
     private EVENT_APPROACH DetermineApproach(Citizen citizen) {
         Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharacterValues;
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
-        if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.FAIRNESS) ||
+        if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.EQUALITY) ||
             importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD) || importantCharVals.ContainsKey(CHARACTER_VALUE.CHAUVINISM)) {
 
             KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
 				.FirstOrDefault(x => x.Key == CHARACTER_VALUE.CHAUVINISM || x.Key == CHARACTER_VALUE.GREATER_GOOD 
-                || x.Key == CHARACTER_VALUE.LIFE || x.Key == CHARACTER_VALUE.FAIRNESS);
+                || x.Key == CHARACTER_VALUE.LIFE || x.Key == CHARACTER_VALUE.EQUALITY);
 
             if (priotiyValue.Key == CHARACTER_VALUE.CHAUVINISM) {
                 chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
