@@ -318,7 +318,9 @@ public enum WAR_TRIGGER {
 	OPPOSING_APPROACH,
 	NONE
 }
-
+public enum ASSASSINATION_TRIGGER{
+	NONE,
+}
 public enum DIRECTION{
 	LEFT,
 	RIGHT,
