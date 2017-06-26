@@ -847,6 +847,10 @@ public class Utilities : MonoBehaviour {
 			return true;
 		case EVENT_TYPES.BOON_OF_POWER:
 			return true;
+		case EVENT_TYPES.PROVOCATION:
+			return true;
+		case EVENT_TYPES.EVANGELISM:
+			return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;

@@ -2654,6 +2654,10 @@ public class UIManager : MonoBehaviour {
 			return militarizationIcon;
 		case EVENT_TYPES.BOON_OF_POWER:
 			return marriageInvitationIcon;
+		case EVENT_TYPES.PROVOCATION:
+			return rebellionPlotIcon;
+		case EVENT_TYPES.EVANGELISM:
+			return requestPeaceIcon;
 		}
 		return assassinationIcon;
 	}

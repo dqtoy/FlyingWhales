@@ -775,7 +775,11 @@ public class Citizen {
             this.assignedRole = new Scourge(this);
         } else if (role == ROLE.HEALER) {
             this.assignedRole = new Healer(this);
-        }
+		} else if (role == ROLE.PROVOKER) {
+			this.assignedRole = new Provoker(this);
+		} else if (role == ROLE.MISSIONARY) {
+			this.assignedRole = new Missionary(this);
+		}
         this.UpdatePrestige ();
 	}
 

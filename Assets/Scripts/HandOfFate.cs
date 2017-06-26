@@ -328,6 +328,27 @@ public class HandOfFate : MonoBehaviour {
 			if(((Raid)gameEvent).startedBy.city.kingdom.id == kingdom2.id || ((Raid)gameEvent).raidedCity.kingdom.id == kingdom2.id){
 				counter += 1;
 			}
+		}else if(gameEvent is ScourgeCity) {
+			if(((ScourgeCity)gameEvent).sourceKingdom.id == kingdom1.id || ((ScourgeCity)gameEvent).targetKingdom.id == kingdom1.id){
+				counter += 1;
+			}
+			if(((ScourgeCity)gameEvent).sourceKingdom.id == kingdom2.id || ((ScourgeCity)gameEvent).targetKingdom.id == kingdom2.id){
+				counter += 1;
+			}
+		}else if(gameEvent is Provocation) {
+			if(((Provocation)gameEvent).sourceKingdom.id == kingdom1.id || ((Provocation)gameEvent).targetKingdom.id == kingdom1.id){
+				counter += 1;
+			}
+			if(((Provocation)gameEvent).sourceKingdom.id == kingdom2.id || ((Provocation)gameEvent).targetKingdom.id == kingdom2.id){
+				counter += 1;
+			}
+		}else if(gameEvent is Evangelism) {
+			if(((Evangelism)gameEvent).sourceKingdom.id == kingdom1.id || ((Evangelism)gameEvent).targetKingdom.id == kingdom1.id){
+				counter += 1;
+			}
+			if(((Evangelism)gameEvent).sourceKingdom.id == kingdom2.id || ((Evangelism)gameEvent).targetKingdom.id == kingdom2.id){
+				counter += 1;
+			}
 		}
 
 		if(counter == 2){
