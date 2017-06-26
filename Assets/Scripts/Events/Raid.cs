@@ -153,8 +153,9 @@ public class Raid : GameEvent {
 		}
 
 		int chance = UnityEngine.Random.Range (0, 2);
-		if(chance == 0){
-			Steal ();
+        if (chance == 0) {
+        //if (chance <= 1) {
+            Steal ();
 		} else {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_fail");
 		}
@@ -163,11 +164,18 @@ public class Raid : GameEvent {
 	private void Steal(){
 		this.isSuccessful = true;
 
-		int stolenGold = (int)((this.targetKingdom.goldCount/this.targetKingdom.cities.Count) * 0.20f);
-		this.sourceKingdom.AdjustGold (stolenGold);
-		this.targetKingdom.AdjustGold (-stolenGold);
+        //int stolenGold = (int)((this.targetKingdom.goldCount/this.targetKingdom.cities.Count) * 0.20f);
+        //this.sourceKingdom.AdjustGold (stolenGold);
+        //this.targetKingdom.AdjustGold (-stolenGold);
 
-		this.raidedCity.HasBeenRaided ();
+        int stolenGrowth = (int)(this.raidedCity.maxGrowth * 0.10f);
+        this.raidedCity.AdjustDailyGrowth(-stolenGrowth);
+
+        int gainedGrowth = (int)(this.raider.citizen.city.maxGrowth * 0.10f);
+        this.raider.citizen.city.AdjustDailyGrowth(gainedGrowth);
+
+        Debug.LogError(this.raidedCity.name + " lost " + stolenGrowth.ToString() + " growth and " + this.raider.citizen.city.name + " gained " + gainedGrowth.ToString());
+        this.raidedCity.HasBeenRaided ();
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_success");
 
