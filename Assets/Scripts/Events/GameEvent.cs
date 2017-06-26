@@ -125,6 +125,17 @@ public class GameEvent {
 	internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
 		Log newLog = new Log (month, day, year, category, file, key);
 		this.logs.Add (newLog);
+
+		if(this.goEventItem != null){
+			if(UIManager.Instance.currentlyShowingLogObject == null){
+				this.goEventItem.GetComponent<EventItem> ().ActivateNewLogIndicator ();
+			}else{
+				GameEvent gameEvent = (GameEvent)UIManager.Instance.currentlyShowingLogObject;
+				if(gameEvent.id != this.id){
+					this.goEventItem.GetComponent<EventItem> ().ActivateNewLogIndicator ();
+				}
+			}
+		}
 		return newLog;
 	}
 

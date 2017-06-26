@@ -8,6 +8,7 @@ public class EventItem : MonoBehaviour {
 
 	public GameEvent gameEvent;
 	public UI2DSprite eventIcon;
+	public GameObject goExclaimation;
 
 	private bool isHovering;
 	private bool isPaused;
@@ -19,6 +20,7 @@ public class EventItem : MonoBehaviour {
 //		this.isPaused = false;
 		this.toolTip = string.Empty;
 		this.timeElapsed = 0f;
+		this.ActivateNewLogIndicator ();
 //		UIManager.Instance.onPauseEventExpiration += this.PauseExpirationTimer;
 	}
 	void Update(){
@@ -58,6 +60,12 @@ public class EventItem : MonoBehaviour {
         UIManager.Instance.RepositionGridCallback(parentGrid);
         StartCoroutine(UIManager.Instance.RepositionScrollView(parentScrollView));
     }
+	internal void ActivateNewLogIndicator(){
+		this.goExclaimation.SetActive (true);
+	}
+	internal void DeactivateNewLogIndicator(){
+		this.goExclaimation.SetActive (false);
+	}
 	public IEnumerator StartExpiration(){
 		yield return new WaitForSeconds (10);
 		UIManager.Instance.HideSmallInfo ();
@@ -77,11 +85,15 @@ public class EventItem : MonoBehaviour {
 	void OnClick(){
 		if (onClickEvent != null) {
 			onClickEvent(this.gameEvent);
+			this.DeactivateNewLogIndicator ();
 		}
 	}
 
-//	void OnDestroy(){
+	void OnDestroy(){
+		if (onClickEvent != null) {
+			onClickEvent -= UIManager.Instance.ShowEventLogs;
+		}
 //		UIManager.Instance.onPauseEventExpiration -= this.PauseExpirationTimer;
 //		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
-//	}
+	}
 }

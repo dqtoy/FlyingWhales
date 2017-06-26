@@ -237,7 +237,7 @@ public class UIManager : MonoBehaviour {
 	private RelationshipKings currentlyShowingRelationship;
 	private GameObject lastClickedEventType = null;
 	private War currentlyShowingWar = null;
-	private object currentlyShowingLogObject = null;
+	internal object currentlyShowingLogObject = null;
 
 	[Space(10)] //FOR TESTING
 	public GameObject goCreateEventUI;
