@@ -2654,7 +2654,9 @@ public class UIManager : MonoBehaviour {
 			return militarizationIcon;
 		case EVENT_TYPES.BOON_OF_POWER:
 			return marriageInvitationIcon;
-		}
+        case EVENT_TYPES.TRADE:
+            return marriageInvitationIcon;
+        }
 		return assassinationIcon;
 	}
 
