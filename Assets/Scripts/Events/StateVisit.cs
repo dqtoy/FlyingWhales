@@ -23,8 +23,10 @@ public class StateVisit : GameEvent {
 		this.description = startedBy.name + " invited " + visitor.citizen.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
-		this.inviterKingdom = startedBy.city.kingdom;
-		this.invitedKingdom = invitedKingdom;
+//		this.inviterKingdom = startedBy.city.kingdom;
+//		this.invitedKingdom = invitedKingdom;
+		this.inviterKingdom = invitedKingdom;
+		this.invitedKingdom = startedBy.city.kingdom;
 		this.visitor = visitor;
 		this.otherKingdoms = GetOtherKingdoms ();
 		this.saboteurEnvoy = null;
@@ -53,6 +55,9 @@ public class StateVisit : GameEvent {
 	internal override void DoneCitizenAction(Citizen citizen){
         base.DoneCitizenAction(citizen);
 		this.visitorHasArrived = true;
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "visitor_arrival");
+		newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name);
+		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
 	}
 	internal override void PerformAction(){
 		CheckVisitor ();
@@ -112,7 +117,6 @@ public class StateVisit : GameEvent {
 					newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
 				}
 			}
-
 		}
 //		if(this.visitor != null){
 //			this.visitor.DestroyGO ();
