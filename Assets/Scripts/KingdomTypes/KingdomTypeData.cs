@@ -22,6 +22,15 @@ public class KingdomTypeData : MonoBehaviour {
 	private EventRate[] _eventRates;
 
 	[SerializeField]
+	private AssassinationTrigger[] _assassinationTriggers;
+
+	[SerializeField]
+	private WarRateModifierMilitary[] _assassinationRateModifierMilitary;
+
+	[SerializeField]
+	private WarRateModifierRelationship[] _assassinationRateModifierRelationship;
+
+	[SerializeField]
 	private WarTrigger[] _warTriggers;
 
 	[SerializeField]
@@ -46,6 +55,9 @@ public class KingdomTypeData : MonoBehaviour {
 	private EventRate[] _dailyCumulativeEventRate;
 
 	[SerializeField]
+	private EventRate[] _reactionEventRate;
+
+	[SerializeField]
 	private CharacterValue[] _characterValues;
 
 	[SerializeField]
@@ -61,6 +73,13 @@ public class KingdomTypeData : MonoBehaviour {
 	private Dictionary<MILITARY_STRENGTH, int> _dictWarRateModifierMilitary = new Dictionary<MILITARY_STRENGTH, int> ();
 
 	private Dictionary<RELATIONSHIP_STATUS, int> _dictWarRateModifierRelationship = new Dictionary<RELATIONSHIP_STATUS, int> ();
+
+	private Dictionary<ASSASSINATION_TRIGGER, int> _dictAssassinationTriggers = new Dictionary<ASSASSINATION_TRIGGER, int> ();
+
+	private Dictionary<MILITARY_STRENGTH, int> _dictAssassinationRateModifierMilitary = new Dictionary<MILITARY_STRENGTH, int> ();
+
+	private Dictionary<RELATIONSHIP_STATUS, int> _dictAssassinationRateModifierRelationship = new Dictionary<RELATIONSHIP_STATUS, int> ();
+
 
 	private Dictionary<CHARACTER_VALUE, int> _dictCharacterValues = new Dictionary<CHARACTER_VALUE, int> ();
 
@@ -91,43 +110,61 @@ public class KingdomTypeData : MonoBehaviour {
 
 	public EventRate[] eventRates {
 		get { 
-//			return this._eventRates.Concat(this.generalKingdomTypeData.eventRates).ToArray();
 			return this._eventRates;
 		}
 	}
 
 	public EventRate[] dailyCumulativeEventRate {
 		get { 
-//			return this._dailyCumulativeEventRate.Concat(this.generalKingdomTypeData.dailyCumulativeEventRate).ToArray();
 			return this._dailyCumulativeEventRate;
+		}
+	}
+
+	public EventRate[] reactionEventRate {
+		get { 
+			return this._reactionEventRate;
 		}
 	}
 
 	public CharacterValue[] characterValues {
 		get { 
-//			return this._characterValues.Concat(this.generalKingdomTypeData.characterValues).ToArray();
 			return this._characterValues;
 		}
 	}
 
 	public WarTrigger[] warTriggers {
 		get { 
-//			return this._warTriggers.Concat(this.generalKingdomTypeData.warTriggers).ToArray();
 			return this._warTriggers;
 		}
 	}
 
 	public WarRateModifierMilitary[] _warRateModifierMilitary {
 		get { 
-//			return this.warRateModifierMilitary.Concat(this.generalKingdomTypeData._warRateModifierMilitary).ToArray();
 			return this.warRateModifierMilitary;
 		}
 	}
 
 	public WarRateModifierRelationship[] _warRateModifierRelationship {
 		get { 
-//			return this.warRateModifierRelationship.Concat(this.generalKingdomTypeData.warRateModifierRelationship).ToArray(); 
 			return this.warRateModifierRelationship;
+		}
+	}
+
+	public AssassinationTrigger[] assassinationTriggers {
+		get { 
+			return this._assassinationTriggers;
+		}
+	}
+
+	public WarRateModifierMilitary[] assassinationRateModifierMilitary {
+		get { 
+			return this._assassinationRateModifierMilitary;
+		}
+	}
+
+	public WarRateModifierRelationship[] assassinationRateModifierRelationship {
+		get { 
+			return this._assassinationRateModifierRelationship;
 		}
 	}
 
@@ -190,7 +227,11 @@ public class KingdomTypeData : MonoBehaviour {
 			this._warTriggers = this._warTriggers.Concat (this.generalKingdomTypeData.warTriggers).ToArray ();
 			this.warRateModifierMilitary = this.warRateModifierMilitary.Concat (this.generalKingdomTypeData._warRateModifierMilitary).ToArray ();
 			this.warRateModifierRelationship = this.warRateModifierRelationship.Concat (this.generalKingdomTypeData._warRateModifierRelationship).ToArray ();
+			this._assassinationTriggers = this._assassinationTriggers.Concat (this.generalKingdomTypeData.assassinationTriggers).ToArray ();
+			this._assassinationRateModifierMilitary = this._assassinationRateModifierMilitary.Concat (this.generalKingdomTypeData.assassinationRateModifierMilitary).ToArray ();
+			this._assassinationRateModifierRelationship = this._assassinationRateModifierRelationship.Concat (this.generalKingdomTypeData.assassinationRateModifierRelationship).ToArray ();
 			this._dailyCumulativeEventRate = this._dailyCumulativeEventRate.Concat (this.generalKingdomTypeData._dailyCumulativeEventRate).ToArray ();
+			this._reactionEventRate = this._reactionEventRate.Concat (this.generalKingdomTypeData.reactionEventRate).ToArray ();
 			this._characterValues = this._characterValues.Concat (this.generalKingdomTypeData._characterValues).ToArray ();
 		}
 
@@ -198,6 +239,9 @@ public class KingdomTypeData : MonoBehaviour {
 		this._dictWarTriggers.Clear ();
 		this._dictWarRateModifierMilitary.Clear ();
 		this._dictWarRateModifierRelationship.Clear ();
+		this._dictAssassinationTriggers.Clear ();
+		this._dictAssassinationRateModifierMilitary.Clear ();
+		this._dictAssassinationRateModifierRelationship.Clear ();
 		this._dictCharacterValues.Clear ();
 
 		for (int i = 0; i < this.warTriggers.Length; i++) {
@@ -208,6 +252,16 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 		for (int i = 0; i < this._warRateModifierRelationship.Length; i++) {
 			this._dictWarRateModifierRelationship.Add (this._warRateModifierRelationship [i].relationshipStatus, this._warRateModifierRelationship [i].rate);
+		}
+
+		for (int i = 0; i < this.assassinationTriggers.Length; i++) {
+			this._dictAssassinationTriggers.Add (this.assassinationTriggers [i].assassinationTrigger, this.assassinationTriggers [i].rate);
+		}
+		for (int i = 0; i < this.assassinationRateModifierMilitary.Length; i++) {
+			this._dictAssassinationRateModifierMilitary.Add (this.assassinationRateModifierMilitary [i].militaryStrength, this.assassinationRateModifierMilitary [i].rate);
+		}
+		for (int i = 0; i < this.assassinationRateModifierRelationship.Length; i++) {
+			this._dictAssassinationRateModifierRelationship.Add (this.assassinationRateModifierRelationship [i].relationshipStatus, this.assassinationRateModifierRelationship [i].rate);
 		}
 		for (int i = 0; i < this.characterValues.Length; i++) {
 			this._dictCharacterValues.Add (this.characterValues [i].character, this.characterValues [i].value);
