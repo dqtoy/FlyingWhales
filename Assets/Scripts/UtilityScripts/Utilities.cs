@@ -298,6 +298,17 @@ public class Utilities : MonoBehaviour {
 //		
 //	}
 
+    public static BASE_RESOURCE_TYPE GetBasicResourceForRace(RACE race) {
+        if (race == RACE.HUMANS) {
+            return BASE_RESOURCE_TYPE.STONE;
+        } else if (race == RACE.ELVES) {
+            return BASE_RESOURCE_TYPE.WOOD;
+        } else if (race == RACE.MINGONS) {
+            return BASE_RESOURCE_TYPE.WOOD;
+        } else {
+            return BASE_RESOURCE_TYPE.STONE;
+        }
+    }
 	public static BASE_RESOURCE_TYPE GetBaseResourceType(RESOURCE resourceType){
 		if (resourceType == RESOURCE.CORN || resourceType == RESOURCE.WHEAT || resourceType == RESOURCE.RICE ||
 		    resourceType == RESOURCE.DEER || resourceType == RESOURCE.PIG || resourceType == RESOURCE.BEHEMOTH) {
