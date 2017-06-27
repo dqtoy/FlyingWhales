@@ -56,8 +56,9 @@ public class Evangelism : GameEvent {
 				relationship.AdjustLikeness (10, this);
 			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Evangelism", "evangelize");
-			newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (this.targetCity, this.targetCity.name, LOG_IDENTIFIER.CITY_1);
+			newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+			newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
 		}
 	}
 }
