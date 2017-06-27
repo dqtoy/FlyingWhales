@@ -37,13 +37,18 @@ public class BorderConflict : GameEvent {
 		Debug.LogError (this.description);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "event_title");
-		newLogTitle.AddToFillers (kingdom1, kingdom1.name);
-		newLogTitle.AddToFillers (kingdom2, kingdom2.name);
+		newLogTitle.AddToFillers (null, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLogTitle.AddToFillers (null, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "start");
-		newLog.AddToFillers (kingdom1, kingdom1.name);
-		newLog.AddToFillers (kingdom2, kingdom2.name);
-		newLog.AddToFillers (null, LocalizationManager.Instance.GetRandomLocalizedValue("Reasons", "BorderConflictReasons"));
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "BorderConflictReasons", "reason1");
+//		newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+//		newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+//		newLog.AddToFillers (null, LocalizationManager.Instance.GetRandomLocalizedValue("Reasons", "BorderConflictReasons"), LOG_IDENTIFIER.TRIGGER_REASON);
+
+//		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "start");
+//		newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+//		newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+//		newLog.AddToFillers (null, LocalizationManager.Instance.GetRandomLocalizedValue("Reasons", "BorderConflictReasons"), LOG_IDENTIFIER.TRIGGER_REASON);
 
 		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
@@ -72,14 +77,14 @@ public class BorderConflict : GameEvent {
 					int value = 20;
 					if (chance < value) {
 						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve_success");
-						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
 						this.isResolvedPeacefully = true;
 						DoneEvent ();
 						return;
 					} else {
 						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve_fail");
-						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+						newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 					}
 				}
 			}
@@ -130,11 +135,11 @@ public class BorderConflict : GameEvent {
 
 	internal override void DeathByOtherReasons(){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve_fail_died");
-		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 	}
 	internal override void DeathByGeneral(General general){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve_fail_died");
-		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
+		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		this.activeEnvoyResolve.citizen.Death (DEATH_REASONS.BATTLE);
 	}
 	internal override void DoneEvent(){
@@ -169,8 +174,8 @@ public class BorderConflict : GameEvent {
 
 		}else{
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "event_end");
-			newLog.AddToFillers (this.kingdom1, this.kingdom1.name);
-			newLog.AddToFillers (this.kingdom2, this.kingdom2.name);
+			newLog.AddToFillers (this.kingdom1, this.kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (this.kingdom2, this.kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 
 			//			Debug.Log("BORDER CONFLICT BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED HORRIBLY! RELATIONSHIP DETERIORATED!");
 
@@ -298,10 +303,8 @@ public class BorderConflict : GameEvent {
 		}
 		chosenCitizen.assignedRole.Initialize (this);
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve");
-		newLog.AddToFillers (sender.king, sender.king.name);
-		newLog.AddToFillers (chosenCitizen, chosenCitizen.name);
-
-
+		newLog.AddToFillers (sender.king, sender.king.name, LOG_IDENTIFIER.KING_1);
+		newLog.AddToFillers (chosenCitizen, chosenCitizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 //		if(isFromOthers){
 //			this.activeEnvoyProvoke = chosenEnvoy;
 //			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_sabotage");

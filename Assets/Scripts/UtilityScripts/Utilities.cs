@@ -633,65 +633,93 @@ public class Utilities : MonoBehaviour {
 		new Color32(0x8A, 0x80, 0xFD, 0x94), // Light Violet 8A80FD91
 		new Color32(0xBC, 0xFF, 0x00, 0xA6) // Yellow Green BCFF00A6
 	};
-	public static string StringReplacer(string text, LogFiller[] logFillers){
-		List<int> specificWordIndexes = new List<int> ();
-		string newText = text;
-		bool hasPeriod = newText.EndsWith (".");
-		if (!string.IsNullOrEmpty (newText)) {
-			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
-			for (int i = 0; i < words.Length; i++) {
-				if (words [i].Contains ("(%")) {
-					specificWordIndexes.Add (i);
-				}else if(words [i].Contains ("(*")){
-					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
-					int index = 0;
-					bool isIndex = int.TryParse (strIndex, out index);
-					if(isIndex){
-						words [i] = Utilities.PronounReplacer (words [i], logFillers [index].obj);
-					}
-				}
-			}
-			if(specificWordIndexes.Count == logFillers.Length){
-				for (int i = 0; i < logFillers.Length; i++) {
-					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], logFillers [i], i);
-					if(!string.IsNullOrEmpty(replacedWord)){
-						words [specificWordIndexes [i]] = replacedWord;
-					}
-				}
-			}
-			newText = string.Empty;
-			for (int i = 0; i < words.Length; i++) {
-				newText += words [i];
-			}
-			newText = newText.Trim (' ');
-		}
-
-		return newText;
-	}
+//	public static string StringReplacer(string text, LogFiller[] logFillers){
+//		List<int> specificWordIndexes = new List<int> ();
+//		string newText = text;
+//		bool hasPeriod = newText.EndsWith (".");
+//		if (!string.IsNullOrEmpty (newText)) {
+//			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
+//			for (int i = 0; i < words.Length; i++) {
+//				if (words [i].Contains ("(%")) {
+//					specificWordIndexes.Add (i);
+//				}else if(words [i].Contains ("(*")){
+//					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
+//					int index = 0;
+//					bool isIndex = int.TryParse (strIndex, out index);
+//					if(isIndex){
+//						words [i] = Utilities.PronounReplacer (words [i], logFillers [index].obj);
+//					}
+//				}
+//			}
+//			if(specificWordIndexes.Count == logFillers.Length){
+//				for (int i = 0; i < logFillers.Length; i++) {
+//					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], logFillers [i], i);
+//					if(!string.IsNullOrEmpty(replacedWord)){
+//						words [specificWordIndexes [i]] = replacedWord;
+//					}
+//				}
+//			}
+//			newText = string.Empty;
+//			for (int i = 0; i < words.Length; i++) {
+//				newText += words [i];
+//			}
+//			newText = newText.Trim (' ');
+//		}
+//
+//		return newText;
+//	}
+//	public static string LogReplacer(Log log){
+//		List<int> specificWordIndexes = new List<int> ();
+//		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
+//		bool hasPeriod = newText.EndsWith (".");
+//		if (!string.IsNullOrEmpty (newText)) {
+//			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
+//			for (int i = 0; i < words.Length; i++) {
+//				if (words [i].Contains ("(%")) {
+//					specificWordIndexes.Add (i);
+//				}else if(words [i].Contains ("(*")){
+//					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
+//					int index = 0;
+//					bool isIndex = int.TryParse (strIndex, out index);
+//					if(isIndex){
+//						words [i] = Utilities.PronounReplacer (words [i], log.fillers [index].obj);
+//					}
+//				}
+//			}
+//			if(specificWordIndexes.Count == log.fillers.Count){
+//				for (int i = 0; i < log.fillers.Count; i++) {
+//					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], log.fillers [i], i);
+//					if(!string.IsNullOrEmpty(replacedWord)){
+//						words [specificWordIndexes [i]] = replacedWord;
+//					}
+//				}
+//			}
+//			newText = string.Empty;
+//			for (int i = 0; i < words.Length; i++) {
+//				newText += words [i];
+//			}
+//			newText = newText.Trim (' ');
+//		}
+//
+//		return newText;
+//	}
 	public static string LogReplacer(Log log){
+		string replacedWord = string.Empty;
 		List<int> specificWordIndexes = new List<int> ();
 		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
 		bool hasPeriod = newText.EndsWith (".");
+
 		if (!string.IsNullOrEmpty (newText)) {
 			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
 			for (int i = 0; i < words.Length; i++) {
-				if (words [i].Contains ("(%")) {
-					specificWordIndexes.Add (i);
-				}else if(words [i].Contains ("(*")){
-					string strIndex = Utilities.GetStringBetweenTwoChars (words [i], '-', '-');
-					int index = 0;
-					bool isIndex = int.TryParse (strIndex, out index);
-					if(isIndex){
-						words [i] = Utilities.PronounReplacer (words [i], log.fillers [index].obj);
-					}
+				replacedWord = string.Empty;
+				if (words [i].StartsWith ("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT
+					replacedWord = Utilities.CustomStringReplacer (words[i], log.fillers);
+				}else if(words [i].StartsWith ("%") && (words[i].EndsWith("a") || words[i].EndsWith("b"))){ //PRONOUN
+					replacedWord = Utilities.CustomPronounReplacer (words[i], log.fillers);
 				}
-			}
-			if(specificWordIndexes.Count == log.fillers.Count){
-				for (int i = 0; i < log.fillers.Count; i++) {
-					string replacedWord = Utilities.CustomStringReplacer (words [specificWordIndexes [i]], log.fillers [i], i);
-					if(!string.IsNullOrEmpty(replacedWord)){
-						words [specificWordIndexes [i]] = replacedWord;
-					}
+				if(!string.IsNullOrEmpty(replacedWord)){
+					words [i] = replacedWord;
 				}
 			}
 			newText = string.Empty;
@@ -703,22 +731,162 @@ public class Utilities : MonoBehaviour {
 
 		return newText;
 	}
-	public static string CustomStringReplacer(string wordToBeReplaced, LogFiller objectLog, int index){
+	public static string CustomPronounReplacer(string wordToBeReplaced, List<LogFiller> objectLog){
+		LOG_IDENTIFIER identifier = Utilities.GetLogIdentifier (wordToBeReplaced.Substring(1, 2));
 		string wordToReplace = string.Empty;
-		string value = string.Empty;
+//		string value = wordToBeReplaced.Substring(1, 2);
+		string strIdentifier = identifier.ToString ();
+		string pronouns = Utilities.GetPronoun(strIdentifier.Last (), wordToBeReplaced.Last());
 
-		if(wordToBeReplaced.Contains("@")){
-			wordToReplace = "[url=" + index.ToString() + "][b]" + objectLog.value + "[/b][/url]";
-		}else{
-			wordToReplace = objectLog.value;
+		LOG_IDENTIFIER logIdentifier = LOG_IDENTIFIER.ACTIVE_CHARACTER;
+		if(strIdentifier.Contains("KING_1")){
+			logIdentifier = LOG_IDENTIFIER.KING_1;
+		}else if(strIdentifier.Contains("KING_2")){
+			logIdentifier = LOG_IDENTIFIER.KING_2;
+		}else if(strIdentifier.Contains("TARGET_CHARACTER")){
+			logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
+		}
+		for(int i = 0; i < objectLog.Count; i++){
+			if(objectLog[i].identifier == logIdentifier){
+				wordToReplace = Utilities.PronounReplacer (pronouns, objectLog [i].obj);
+				break;
+			}
 		}
 
 		return wordToReplace;
 
 	}
+	public static string CustomStringReplacer(string wordToBeReplaced, List<LogFiller> objectLog){
+		string wordToReplace = string.Empty;
+		string value = wordToBeReplaced.Substring(1, 2);
+		LOG_IDENTIFIER identifier = Utilities.GetLogIdentifier (value);
+		if(wordToBeReplaced.EndsWith("@")){
+			for(int i = 0; i < objectLog.Count; i++){
+				if(objectLog[i].identifier == identifier){
+					wordToReplace = "[url=" + i.ToString() + "][b]" + objectLog[i].value + "[/b][/url]";
+					break;
+				}
+			}
+		}else if(wordToBeReplaced.EndsWith("%")){
+			for(int i = 0; i < objectLog.Count; i++){
+				if(objectLog[i].identifier == identifier){
+					wordToReplace = objectLog[i].value;
+					break;
+				}
+			}
+		}
+
+		return wordToReplace;
+
+	}
+//	public static string CustomStringReplacer(string wordToBeReplaced, LogFiller objectLog, int index){
+//		string wordToReplace = string.Empty;
+//		string value = string.Empty;
+//
+//		if(wordToBeReplaced.Contains("@")){
+//			wordToReplace = "[url=" + index.ToString() + "][b]" + objectLog.value + "[/b][/url]";
+//		}else{
+//			wordToReplace = objectLog.value;
+//		}
+//
+//		return wordToReplace;
+//
+//	}
+
+
+	public static string GetPronoun(string type, string caseIdentifier){
+		if(type == "S"){
+			if(caseIdentifier == "a"){
+				return "He/She";
+			}
+			return "he/she";
+		}else if(type == "O"){
+			if(caseIdentifier == "a"){
+				return "Him/Her";
+			}
+			return "him/her";
+		}else if(type == "P"){
+			if(caseIdentifier == "a"){
+				return "His/Her";
+			}
+			return "his/her";
+		}else if(type == "R"){
+			if(caseIdentifier == "a"){
+				return "Himself/Herself";
+			}
+			return "himself/herself";
+		}
+		return string.Empty;
+	}
+	public static string GetPronoun(char type, char caseIdentifier){
+		if(type == 'S'){
+			if(caseIdentifier == 'a'){
+				return "He/She";
+			}
+			return "he/she";
+		}else if(type == 'O'){
+			if(caseIdentifier == 'a'){
+				return "Him/Her";
+			}
+			return "him/her";
+		}else if(type == 'P'){
+			if(caseIdentifier == 'a'){
+				return "His/Her";
+			}
+			return "his/her";
+		}else if(type == 'R'){
+			if(caseIdentifier == 'a'){
+				return "Himself/Herself";
+			}
+			return "himself/herself";
+		}
+		return string.Empty;
+	}
+	public static LOG_IDENTIFIER GetLogIdentifier(string key){
+		switch(key){
+		case "00": return LOG_IDENTIFIER.ACTIVE_CHARACTER;
+		case "01": return LOG_IDENTIFIER.KINGDOM_1;
+		case "02": return LOG_IDENTIFIER.KING_1;
+		case "03": return LOG_IDENTIFIER.KING_1_SPOUSE;
+		case "04": return LOG_IDENTIFIER.CITY_1;
+		case "05": return LOG_IDENTIFIER.GOVERNOR_1;
+		case "06": return LOG_IDENTIFIER.RANDOM_CITY_1;
+		case "07": return LOG_IDENTIFIER.RANDOM_GOVERNOR_1;
+		case "10": return LOG_IDENTIFIER.TARGET_CHARACTER;
+		case "11": return LOG_IDENTIFIER.KINGDOM_2;
+		case "12": return LOG_IDENTIFIER.KING_2;
+		case "13": return LOG_IDENTIFIER.KING_2_SPOUSE;
+		case "14": return LOG_IDENTIFIER.CITY_2;
+		case "15": return LOG_IDENTIFIER.GOVERNOR_2;
+		case "16": return LOG_IDENTIFIER.RANDOM_CITY_2;
+		case "17": return LOG_IDENTIFIER.RANDOM_GOVERNOR_2;
+		case "81": return LOG_IDENTIFIER.TRIGGER_REASON;
+		case "82": return LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME;
+		case "83": return LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_S;
+		case "84": return LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_O;
+		case "85": return LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_P;
+		case "86": return LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_R;
+		case "87": return LOG_IDENTIFIER.KING_1_PRONOUN_S;
+		case "88": return LOG_IDENTIFIER.KING_1_PRONOUN_O;
+		case "89": return LOG_IDENTIFIER.KING_1_PRONOUN_P;
+		case "90": return LOG_IDENTIFIER.KING_1_PRONOUN_R;
+		case "91": return LOG_IDENTIFIER.KING_2_PRONOUN_S;
+		case "92": return LOG_IDENTIFIER.KING_2_PRONOUN_O;
+		case "93": return LOG_IDENTIFIER.KING_2_PRONOUN_P;
+		case "94": return LOG_IDENTIFIER.KING_2_PRONOUN_R;
+		case "95": return LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_S;
+		case "96": return LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_O;
+		case "97": return LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_P;
+		case "98": return LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_R;
+		case "99": return LOG_IDENTIFIER.SECESSION_CITIES;
+		case "100": return LOG_IDENTIFIER.GAME_EVENT;
+		case "101": return LOG_IDENTIFIER.DATE;
+		}
+		return LOG_IDENTIFIER.NONE; 
+	}
 	public static string PronounReplacer(string word, object genderSubject){
-		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
-		string[] pronouns = pronoun.Split ('/');
+//		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
+		string[] pronouns = word.Split ('/');
 
 		if(genderSubject is Citizen){
 			GENDER gender = ((Citizen)genderSubject).gender;
@@ -740,6 +908,30 @@ public class Utilities : MonoBehaviour {
 		}
 		return string.Empty;
 	}
+//	public static string PronounReplacer(string word, object genderSubject){
+//		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
+//		string[] pronouns = pronoun.Split ('/');
+//
+//		if(genderSubject is Citizen){
+//			GENDER gender = ((Citizen)genderSubject).gender;
+//			if(gender == GENDER.MALE){
+//				if(pronouns.Length > 0){
+//					if(!string.IsNullOrEmpty(pronouns[0])){
+//						return pronouns [0];
+//					}
+//				}
+//			}else{
+//				if (pronouns.Length > 1) {
+//					if (!string.IsNullOrEmpty (pronouns [0])) {
+//						return pronouns [1];
+//					}
+//				}
+//			}
+//
+//
+//		}
+//		return string.Empty;
+//	}
 	public static string GetStringBetweenTwoChars (string word, char first, char last){
 		int indexFirst = word.IndexOf (first);
 		int indexLast = word.LastIndexOf (last);

@@ -69,12 +69,12 @@ public class BoonOfPower : GameEvent {
 		if(citizen == null){
 			//Discovered by structure/tile
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "discovery_structure");
-			newLog.AddToFillers (kingdom, kingdom.name);
+			newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		}else{
 			//Discovered by an agent
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "discovery_agent");
-			newLog.AddToFillers (citizen, citizen.name);
-			newLog.AddToFillers (kingdom, kingdom.name);
+			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+			newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		}
 	}
 	private void DestroyThis(){

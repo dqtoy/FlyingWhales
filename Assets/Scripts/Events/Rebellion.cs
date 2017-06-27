@@ -35,11 +35,11 @@ public class Rebellion : GameEvent {
 		Debug.LogError (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "event_title");
-		newLogTitle.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name);
+		newLogTitle.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "start");
-		newLog.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name);
-		newLog.AddToFillers (cityWhereRebelFortIsCreated, cityWhereRebelFortIsCreated.name);
+		newLog.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		newLog.AddToFillers (cityWhereRebelFortIsCreated, cityWhereRebelFortIsCreated.name, LOG_IDENTIFIER.CITY_1);
 
 		this.EventIsCreated ();
 	}
@@ -55,9 +55,9 @@ public class Rebellion : GameEvent {
 				ResetConqueredCitiesToCityFunctionality (newKingdom);
 
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "rebel_win");
-				newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name);
-				newLog.AddToFillers (newKingdom, newKingdom.name);
-				newLog.AddToFillers (newKingdom.king, newKingdom.king.name);
+				newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+				newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+				newLog.AddToFillers (newKingdom.king, newKingdom.king.name, LOG_IDENTIFIER.KING_2);
 			}
 			this.DoneEvent();
 			return;
@@ -65,7 +65,7 @@ public class Rebellion : GameEvent {
 			if(this.conqueredCities.Count <= 0){
 				//Victory Kingdom
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "kingdom_win");
-				newLog.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name);
+				newLog.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 				this.rebelLeader.citizen.SetImmortality(false);
 				this.DoneEvent();
 				return;
