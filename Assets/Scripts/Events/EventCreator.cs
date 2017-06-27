@@ -229,4 +229,26 @@ public class EventCreator: MonoBehaviour {
 		WorldEventManager.Instance.ResetCurrentInterveneEvent();
 		return boonOfPower;
 	}
+
+	internal Provocation CreateProvocationEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
+		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.PROVOKER, EVENT_TYPES.PROVOCATION, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.PROVOCATION]);
+		if(citizen != null){
+			Provoker provoker = (Provoker)citizen.assignedRole;
+			Provocation provocation = new Provocation(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom, provoker);
+			provoker.Initialize (provocation);
+			return provocation;
+		}
+		return null;
+	}
+
+	internal Evangelism CreateEvangelismEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
+		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.MISSIONARY, EVENT_TYPES.EVANGELISM, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.EVANGELISM]);
+		if(citizen != null){
+			Missionary missionary = (Missionary)citizen.assignedRole;
+			Evangelism evangelism = new Evangelism(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom, missionary);
+			missionary.Initialize (evangelism);
+			return evangelism;
+		}
+		return null;
+	}
 }

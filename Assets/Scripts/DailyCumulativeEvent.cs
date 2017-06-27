@@ -219,6 +219,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		case EVENT_TYPES.SCOURGE_CITY:
 			CreateScourgeCityEvent ();
 			break;
+		case EVENT_TYPES.PROVOCATION:
+			CreateProvocationEvent ();
+			break;
 		}
 //		Task.current.Succeed ();
 	}
@@ -255,6 +258,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
     }
 	private void CreateScourgeCityEvent(){
 		EventCreator.Instance.CreateScourgeCityEvent (this.firstKingdom, this.secondKingdom);
+	}
+	private void CreateProvocationEvent(){
+		EventCreator.Instance.CreateProvocationEvent (this.firstKingdom, this.secondKingdom);
 	}
 //	private void CreateBorderConflictEvent(){
 //		EventCreator.Instance.CreateBorderConflictEvent(this.firstKingdom, this.secondKingdom);
@@ -350,6 +356,27 @@ public class DailyCumulativeEvent : MonoBehaviour {
 				counter += 1;
 			}
 			if(((Trade)gameEvent).sourceCity.kingdom.id == kingdom2.id || ((Trade)gameEvent).targetCity.kingdom.id == kingdom2.id){
+				counter += 1;
+			}
+		}else if(gameEvent is ScourgeCity) {
+			if(((ScourgeCity)gameEvent).sourceKingdom.id == kingdom1.id || ((ScourgeCity)gameEvent).targetKingdom.id == kingdom1.id){
+				counter += 1;
+			}
+			if(((ScourgeCity)gameEvent).sourceKingdom.id == kingdom2.id || ((ScourgeCity)gameEvent).targetKingdom.id == kingdom2.id){
+				counter += 1;
+			}
+		}else if(gameEvent is Provocation) {
+			if(((Provocation)gameEvent).sourceKingdom.id == kingdom1.id || ((Provocation)gameEvent).targetKingdom.id == kingdom1.id){
+				counter += 1;
+			}
+			if(((Provocation)gameEvent).sourceKingdom.id == kingdom2.id || ((Provocation)gameEvent).targetKingdom.id == kingdom2.id){
+				counter += 1;
+			}
+		}else if(gameEvent is Evangelism) {
+			if(((Evangelism)gameEvent).sourceKingdom.id == kingdom1.id || ((Evangelism)gameEvent).targetKingdom.id == kingdom1.id){
+				counter += 1;
+			}
+			if(((Evangelism)gameEvent).sourceKingdom.id == kingdom2.id || ((Evangelism)gameEvent).targetKingdom.id == kingdom2.id){
 				counter += 1;
 			}
 		}
