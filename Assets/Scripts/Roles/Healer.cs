@@ -16,6 +16,7 @@ public class Healer : Role {
 
     internal override void Initialize(GameEvent gameEvent) {
         if (gameEvent is Plague) {
+            base.Initialize(gameEvent);
             this._plague = (Plague)gameEvent;
             this._plague.AddAgentToList(this.citizen);
             this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Healer"), this.citizen.city.hexTile.transform) as GameObject;

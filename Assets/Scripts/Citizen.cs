@@ -513,7 +513,11 @@ public class Citizen {
 			this.history.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " disappeared during an expedition and is assumed to be dead", HISTORY_IDENTIFIER.NONE));
 			this.deathReasonText = "disappeared during an expedition and is assumed to be dead";
 			break;
-		}
+        case DEATH_REASONS.PLAGUE:
+            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " succumbed to the plague", HISTORY_IDENTIFIER.NONE));
+            this.deathReasonText = "succumbed to the plague";
+            break;
+        }
 	}
 	internal void UnsupportCitizen(Citizen citizen){
 		if(this.isGovernor || this.isKing){
@@ -1440,6 +1444,57 @@ public class Citizen {
     internal void AssignSpouse(Citizen spouse) {
         this._spouse = spouse;
         this.isMarried = true;
+    }
+
+    /*
+     * Get relativesof this citizen.
+     * If depth is set to:
+     * 0 - immediate family
+     * -1 - all possible relatives
+     * */
+    internal List<Citizen> GetRelatives(int depth = 0) {
+        List<Citizen> relatives = new List<Citizen>();
+        List<Citizen> immediateFamily = new List<Citizen>();
+        if(this.father != null) {
+            immediateFamily.Add(this.father);
+        }
+        if (this.mother != null) {
+            immediateFamily.Add(this.mother);
+        }
+        if (this.spouse != null) {
+            immediateFamily.Add(this.spouse);
+        }
+        List<Citizen> siblings = this.GetSiblings();
+        immediateFamily.AddRange(siblings);
+        immediateFamily.AddRange(this.children);
+
+        relatives.AddRange(immediateFamily);
+
+        List<Citizen> pendingCitizens = new List<Citizen>();
+        pendingCitizens.AddRange(siblings);
+        pendingCitizens.AddRange(this.children);
+        if(depth == -1) {
+            for (int i = 0; i < pendingCitizens.Count; i++) {
+                Citizen currCitizen = pendingCitizens[i];
+                List<Citizen> relativesOfCurrCitizen = currCitizen.GetRelatives(0).Where(x => x.id != this.id).ToList();
+                relatives = relatives.Union(relativesOfCurrCitizen).ToList();
+                pendingCitizens = pendingCitizens.Union(relativesOfCurrCitizen).ToList();
+            }
+        } else {
+            for (int i = 0; i < depth; i++) {
+                Citizen currCitizen = null;
+                try {
+                    currCitizen = pendingCitizens[i];
+                } catch(System.Exception e) {
+                    break;
+                }
+                List<Citizen> relativesOfCurrCitizen = currCitizen.GetRelatives(0).Where(x => x.id != this.id).ToList();
+                relatives = relatives.Union(relativesOfCurrCitizen).ToList();
+                pendingCitizens = pendingCitizens.Union(relativesOfCurrCitizen).ToList();
+            }
+        }
+        
+        return relatives;
     }
 
 	internal bool IsRelative(Citizen citizen){

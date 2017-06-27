@@ -12,6 +12,7 @@ public class Expander : Role {
 
 	internal override void Initialize(GameEvent gameEvent){
 		if(gameEvent is Expansion){
+            base.Initialize(gameEvent);
 			this.expansion = (Expansion)gameEvent;
 			this.expansion.expander = this;
 			this.targetLocation = this.expansion.hexTileToExpandTo;
