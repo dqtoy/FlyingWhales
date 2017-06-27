@@ -54,17 +54,19 @@ public class RandomNameGenerator : MonoBehaviour {
 	};
 
 	private string[] baseElvenFemaleNames = new string[]{
-		"Arwen", "Alassea", "Arasinya", "Authiel", "Amirala", "Bainwen", "Berissa", "Beriana", "Berondiel" , "Calathiel", "Caladwen", "Castiel", "Ciristel", "Dayanara", "Darxaniel", "Darla", 
-		"Ellethwen", "Elarinya", "Eleniel", "Erudessa", "Eruraina", "Firinea", "Fyrwen", "Froilwen", "Faralana", "Frindea", "Findemaxa", "Galadriel", "Gwaerindis", "Galhadya", "Gerliana", 
-		"Harwel", "Hera", "Hanaxa", "Irwindis", "Irsandwen", "Ishmila", "Livindel", "Larthindra", "Luthien", "Medea", "Maerwen", "Medlinya", "Meltoriel", "Nathanya", "Nithiel", "Nessima", 
-		"Nostariel", "Ruanda", "Ruthlien", "Saerwen", "Sandara", "Sirissi", "Santiel", "Sidheil", "Silima", "Thoriel", "Thandiel", "Vanya", "Vanafindiel", "Vanessea"
+		"Arwen", "Amarie", "Alassea", "Arasinya", "Aredhel", "Authiel", "Amirala", "Bainwen", "Berissa", "Beriana", "Berondiel" , "Calathiel", "Caladwen", "Celebrian", "Castiel", "Ciristel", "Dayanara", 
+		"Darxaniel", "Derenie", "Darla", "Ellenwe", "Ellethwen", "Elarinya", "Eleniel", "Erudessa", "Eldalothe", "Enelye", "Eruraina", "Firinea", "Fyrwen", "Froilwen", "Faralana", "Frindea", "Findemaxa", "Galadriel", 
+		"Gwaerindis", "Galhadya", "Gerliana", "Harwel", "Hera", "Hanaxa", "Heloise", "Indis", "Irwindis", "Irsandwen", "Ishmila", "Livindel", "Larthindra", "Levana", "Luthien", "Medea", "Meliantha", "Maerwen", "Medlinya", 
+		"Meltoriel", "Miriel", "Nathanya", "Nithiel", "Nimrodel", "Nerdanel", "Nessima", "Nostariel", "Ruanda", "Ruthlien", "Saerwen", "Sandara", "Sirissi", "Santiel", "Sidheil", "Silima", "Thoriel", "Thandiel", 
+		"Vanya", "Vanafindiel", "Vanessea"
 	};
 
 	private string[] baseElvenMaleNames = new string[]{
-		"Adan", "Alyameldir", "Amonost", "Arandur", "Beren", "Baradhamon", "Beriadan", "Beleg", "Bercalion", "Cadgon", "Canardur", "Ceberlandon", "Calanon", "Caranion", "Castien", "Celebrimbor",
-		"Daeron", "Dramorion", "Durion", "Dirnost", "Eclesteron", "Eruadan", "Eglerion", "Eleyond", "Emerion", "Erunestian", "Faeron", "Faelon", "Feredir", "Fandur", "Fistilion", "Glandur", "Gimrinost",
-		"Herion", "Hirgon", "Horthien", "Imrathon", "Ionwe", "Landion", "Limdur", "Lithaldoren", "Maeron", "Maeglad", "Morcion", "Mornefindon", "Megildur", "Nendir", "Nedhudir", "Nibencarden",
-		"Nimtolien", "Orthorien", "Ovorion", "Rainion", "Rhovanion", "Sadron", "Saeldur", "Tangadion", "Taurion", "Thalion", "Turin", "Thorontur", "Voronwe", "Vaessen", "Valanyonnen"
+		"Adan", "Alyameldir", "Amonost", "Aegnor", "Arandur", "Angrod", "Beren", "Baradhamon", "Beriadan", "Beleg", "Bercalion", "Cadgon", "Curufin", "Canardur", "Ceberlandon", "Calanon", "Caranion", "Castien", 
+		"Celebrimbor", "Daeron", "Denethor", "Dramorion", "Durion", "Dirnost", "Eclesteron", "Ecthelion", "Eruadan", "Eglerion", "Eleyond", "Emerion", "Erunestian", "Elrond", "Faeron", "Faelon", "Feredir", "Fandur", "Fistilion", 
+		"Fingolfin", "Galion", "Galathil", "Glorfindel", "Glandur", "Gimrinost", "Herion", "Hirgon", "Horthien", "Imrathon", "Ionwe", "Landion", "Legolas", "Limdur", "Lithaldoren", "Maeron", "Maeglad", "Mablung", 
+		"Morcion", "Mithrellas", "Mornefindon", "Megildur", "Nendir", "Nedhudir", "Nibencarden", "Nimtolien", "Orodreth", "Orthorien", "Ovorion", "Rainion", "Rhovanion", "Sadron", "Saeldur", "Tangadion", "Taurion", 
+		"Thalion", "Turin", "Thorontur", "Voronwe", "Vaessen", "Valanyonnen"
 	};
 
 	private MarkovNameGenerator generatedHumanSurnames;
