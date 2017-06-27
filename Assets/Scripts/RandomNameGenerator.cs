@@ -15,11 +15,12 @@ public class RandomNameGenerator : MonoBehaviour {
 	};
 
 	private string[] baseHumanKingdomNames = new string[]{
-		"Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Burgundy", "Calabon", "Chyland", "Croatia", "Ceres", "Darmid", "Dirland",
-		"Duscany", "Elarus", "Esmeris", "Erebor", "Fernica", "Fuchia", "Friedland", "Garwinia", "Grazil", "Gunark", "Hacatid", "Hermani", "Howland", "Ianland", "Iridia",
-		"Israel", "Jamalaya", "Jinni", "Justinia", "Karamba", "Kaedwen", "Korolus", "Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland",
-		"Muskovich", "Nestori", "Norsica", "Nubland", "Obelin", "Ovid", "Opera", "Patani", "Petersen", "Prissia", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo", 
-		"Scythra", "Shetland", "Sundira", "Silveria", "Thenid", "Tilain", "Tulisia", "Umbra", "Ulbany", "Uruk", "Virindor", "Vanad", "Zulu", "Zakrand"
+		"Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Bismuth", "Boron", "Burgundy", "Calabon", "Canton", "Chyland", "Croatia", "Ceres", 
+		"Darmid", "Dirland", "Dohati", "Duscany", "Elarus", "Esmeris", "Erebor", "Emusil", "Fernica", "Fuchia", "Friedland", "Farrah", "Garwinia", "Grazil", "Gunark", "Gehenna", 
+		"Hacatid", "Hermani", "Hisoka", "Howland", "Ianland", "Iridia", "Israel", "Imisil", "Jamalaya", "Jinni", "Jorara", "Justinia", "Karamba", "Kaedwen", "Korolus", "Kumael",
+		"Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland", "Muskovich", "Nestori", "Norsica", "Nubland", "Naralan", "Obelin", "Ovid", "Opera", 
+		"Oosmud", "Patani", "Petersen", "Polaris", "Prissia", "Quatar", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo", "Roveri", "Scythra", "Shetland", "Sundira", "Silveria", 
+		"Thenid", "Tilain", "Tesoro", "Tulisia", "Umbra", "Ulbany", "Uruk", "Virindor", "Visaya", "Vanad", "Zulu", "Zakrand", "Zerena"
 	};
 
 	private string[] humanMaleFirstNames = new string[]{
@@ -39,36 +40,37 @@ public class RandomNameGenerator : MonoBehaviour {
 	};
 
 	private string[] baseElvenKingdomNames = new string[]{
-		"Astalen", "Aerwyn", "Brussia", "Delimar", "Dullahan", "Eroahar", "Etheria", "Fernia", "Finlabad", "Frolien", "Faerwyn",
-		"Fyrwen", "Gilinia", "Galawad", "Iberia", "Keswen", "Kirith", "Lustria", "Marowen", "Meniha", "Miraella", "Nargahar",
-		"Nurbad", "Oswyth", "Orifia", "Pruwyn", "Pithrilen", "Sardinia", "Solwyn", "Thauniel", "Thalessa", "Uralen", "Urdwyn",
-		"Wylia"
+		"Aglarond", "Alqualonde", "Avallone", "Astalen", "Aerwyn", "Arfinal", "Arundel", "Beleriand", "Brithombar", "Berefin", "Bataryn", "Brindelwa", "Curamar", "Celirith", "Cendralien",
+		"Casimin", "Carmindel", "Damriel", "Delimar", "Doriath", "Dullahan", "Edhellond", "Eglarest", "Eroahar", "Etheria", "Esinia", "Enlibad", "Fernia", "Finlabad", "Frolien", "Faerwyn", 
+		"Fyrwen", "Feanan", "Forlond", "Formenos", "Filarmar", "Gilinia", "Galawad", "Galavaliel", "Galadhon", "Gondolin", "Hamlindras", "Helmongard", "Harlond", "Imladris", "Iberia", "Irluwan", 
+		"Kortirion", "Keswen", "Kirith", "Kilawen", "Kalrinien", "Lindon", "Lorien", "Lothlorien", "Lustria", "Legrandos", "Menegroth", "Mithlond", "Marowen", "Meniha", "Miraella", "Nargothrond", 
+		"Nargahar", "Nurbad", "Oswyth", "Orifia", "Orfindel", "Pindolwyn", "Pruwyn", "Pithrilen", "Rivendell", "Rilmeroth", "Randilros", "Rilfindor", "Sardinia", "Sherbarad", "Solwyn", "Thauniel", 
+		"Thalessa", "Tavrovel", "Thranduil", "Uralen", "Urdwyn", "Valinor", "Vinyamar", "Vasmundin", "Wylia"
 	};
 
 	private string[] baseElvenCityNames = new string[]{
-		"Aglarond", "Alqualonde", "Avallone", "Beleriand", "Brithombar", "Doriath", "Edhellond", "Eglarest", "Feanan", "Forlond", "Formenos", "Galavaliel",
-		"Galadhon", "Gondolin", "Harlond", "Imladris", "Kortirion", "Lindon", "Lorien", "Lothlorien", "Menegroth", "Mithlond", "Nargothrond", "Rivendell",
-		"Sherbarad", "Tavrovel", "Thranduil", "Valinor", "Vinyamar"
+		"Aglarond", "Alqualonde", "Avallone", "Beleriand", "Brithombar", "Doriath",
+		"Galadhon", "Gondolin", "Harlond", "Imladris", "Lindon", "Lorien", "Lothlorien", "Menegroth", "Mithlond"
 	};
 
 	private string[] baseElvenFemaleNames = new string[]{
-		"Arwen", "Alassea", "Arasinya", "Authiel", "Bainwen", "Beriana", "Calathiel", "Caladwen", "Castiel", "Galadriel", "Gwaerindis", "Ellethwen", "Elarinya",
-		"Eleniel", "Erudessa", "Eruraina", "Findemaxa", "Harwel", "Hera", "Luthien", "Medea", "Maerwen", "Medlinya", "Meltoriel", "Nithiel", "Nessima", "Nostariel",
-		"Saerwen", "Santiel", "Sidheil", "Silima", "Thoriel", "Thandiel", "Vanya", "Vanafindiel", "Vanessea"
+		"Arwen", "Alassea", "Arasinya", "Authiel", "Amirala", "Bainwen", "Berissa", "Beriana", "Berondiel" , "Calathiel", "Caladwen", "Castiel", "Ciristel", "Dayanara", "Darxaniel", "Darla", 
+		"Ellethwen", "Elarinya", "Eleniel", "Erudessa", "Eruraina", "Firinea", "Fyrwen", "Froilwen", "Faralana", "Frindea", "Findemaxa", "Galadriel", "Gwaerindis", "Galhadya", "Gerliana", 
+		"Harwel", "Hera", "Hanaxa", "Irwindis", "Irsandwen", "Ishmila", "Livindel", "Larthindra", "Luthien", "Medea", "Maerwen", "Medlinya", "Meltoriel", "Nathanya", "Nithiel", "Nessima", 
+		"Nostariel", "Ruanda", "Ruthlien", "Saerwen", "Sandara", "Sirissi", "Santiel", "Sidheil", "Silima", "Thoriel", "Thandiel", "Vanya", "Vanafindiel", "Vanessea"
 	};
 
 	private string[] baseElvenMaleNames = new string[]{
-		"Adan", "Alyameldir", "Amonost", "Arandur", "Baradhamon", "Beriadan", "Beleg", "Bercalion", "Ceberlandon", "Calanon", "Caranion", "Castien", "Celebrimbor",
-		"Daeron", "Dramorion", "Durion", "Eruadan", "Eglerion", "Eleyond", "Emerion", "Erunestian", "Faeron", "Faelon", "Feredir", "Glandur", "Herion", "Hirgon", "Horthien", 
-		"Imrathon", "Ionwe", "Landion", "Limdur", "Lithaldoren", "Maeron", "Maeglad", "Morcion", "Mornefindon", "Megildur", "Nendir", "Nedhudir", "Nibencarden",
-		"Nimtolien", "Orthorien", "Ovorion", "Rainion", "Rhovanion", "Sadron", "Saeldur", "Tangadion", "Taurion", "Thalion", "Turin", "Thorontur", "Voronwe",
-		"Vaessen", "Valanyonnen"
+		"Adan", "Alyameldir", "Amonost", "Arandur", "Beren", "Baradhamon", "Beriadan", "Beleg", "Bercalion", "Cadgon", "Canardur", "Ceberlandon", "Calanon", "Caranion", "Castien", "Celebrimbor",
+		"Daeron", "Dramorion", "Durion", "Dirnost", "Eclesteron", "Eruadan", "Eglerion", "Eleyond", "Emerion", "Erunestian", "Faeron", "Faelon", "Feredir", "Fandur", "Fistilion", "Glandur", "Gimrinost",
+		"Herion", "Hirgon", "Horthien", "Imrathon", "Ionwe", "Landion", "Limdur", "Lithaldoren", "Maeron", "Maeglad", "Morcion", "Mornefindon", "Megildur", "Nendir", "Nedhudir", "Nibencarden",
+		"Nimtolien", "Orthorien", "Ovorion", "Rainion", "Rhovanion", "Sadron", "Saeldur", "Tangadion", "Taurion", "Thalion", "Turin", "Thorontur", "Voronwe", "Vaessen", "Valanyonnen"
 	};
 
 	private MarkovNameGenerator generatedHumanSurnames;
 	private MarkovNameGenerator generatedHumanKingdomNames;
 	private MarkovNameGenerator generatedElvenKingdomNames;
-	private MarkovNameGenerator generatedElvenCityNames;
+	//private MarkovNameGenerator generatedElvenCityNames;
 	private MarkovNameGenerator generatedElvenFemaleNames;
 	private MarkovNameGenerator generatedElvenMaleNames;
 
@@ -76,8 +78,8 @@ public class RandomNameGenerator : MonoBehaviour {
 		Instance = this;
 		generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
 		generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
-		generatedElvenKingdomNames = new MarkovNameGenerator(baseElvenKingdomNames, 2, 5);
-		generatedElvenCityNames = new MarkovNameGenerator(baseElvenCityNames, 2, 5);
+		generatedElvenKingdomNames = new MarkovNameGenerator(baseElvenKingdomNames, 3, 6);
+		//generatedElvenCityNames = new MarkovNameGenerator(baseElvenKingdomNames, 2, 5);
 		generatedElvenFemaleNames = new MarkovNameGenerator(baseElvenFemaleNames, 3, 4);
 		generatedElvenMaleNames = new MarkovNameGenerator(baseElvenMaleNames, 3, 4);
 	}
@@ -108,7 +110,7 @@ public class RandomNameGenerator : MonoBehaviour {
 		if (race == RACE.HUMANS) {
 			return generatedHumanKingdomNames.NextName;
 		} else if(race == RACE.ELVES) {
-			return generatedElvenCityNames.NextName;
+			return generatedElvenKingdomNames.NextName;
 		}
 		return "";
 	}
