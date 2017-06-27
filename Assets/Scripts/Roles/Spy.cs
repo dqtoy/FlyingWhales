@@ -23,6 +23,7 @@ public class Spy : Role {
 	}
 	internal override void Initialize(GameEvent gameEvent){
 		if(gameEvent is Assassination){
+            base.Initialize(gameEvent);
 			this.assassination = (Assassination)gameEvent;
 			this.assassination.spy = this;
 			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Spy"), this.citizen.city.hexTile.transform) as GameObject;

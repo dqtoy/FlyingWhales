@@ -2936,39 +2936,48 @@ public class UIManager : MonoBehaviour {
 	public void OnClickBoonOfPower(){
 		ShowInterveneEvent (EVENT_TYPES.BOON_OF_POWER);
 	}
-	#endregion
-	public void GenerateChildForCitizen(){
-		if (currentlyShowingCitizen.spouse == null) {
-//			Debug.Log ("Could not generate child because no spouse");
-			return;
-		}
-		Citizen child = null;
-		if (currentlyShowingCitizen.gender == GENDER.MALE) {
-			child = MarriageManager.Instance.MakeBaby (currentlyShowingCitizen, currentlyShowingCitizen.spouse);
-		} else {
-			child = MarriageManager.Instance.MakeBaby (currentlyShowingCitizen.spouse, currentlyShowingCitizen);
-		}
-		currentlyShowingCitizen.city.RemoveCitizenFromCity (child);
-//		Debug.Log("====== " + child.name + " Behaviour Traits ======");
-//		for (int i = 0; i < child.behaviorTraits.Count; i++) {
-//			Debug.Log (child.behaviorTraits [i]);
-//		}
-//		Debug.Log("====== " + child.name + " Skill Traits ======");
-//		for (int i = 0; i < child.skillTraits.Count; i++) {
-//			Debug.Log (child.skillTraits [i]);
-//		}
-//		Debug.Log("====== " + child.name + " Misc Traits ======");
-//		for (int i = 0; i < child.miscTraits.Count; i++) {
-//			Debug.Log (child.miscTraits [i]);
-//		}
-		currentlyShowingCitizen.children.Remove(child);
-		currentlyShowingCitizen.spouse.children.Remove(child);
-	}
+    public void GenerateChildForCitizen() {
+        if (currentlyShowingCitizen.spouse == null) {
+            //			Debug.Log ("Could not generate child because no spouse");
+            return;
+        }
+        Citizen child = null;
+        if (currentlyShowingCitizen.gender == GENDER.MALE) {
+            child = MarriageManager.Instance.MakeBaby(currentlyShowingCitizen, currentlyShowingCitizen.spouse);
+        } else {
+            child = MarriageManager.Instance.MakeBaby(currentlyShowingCitizen.spouse, currentlyShowingCitizen);
+        }
+        currentlyShowingCitizen.city.RemoveCitizenFromCity(child);
+        //		Debug.Log("====== " + child.name + " Behaviour Traits ======");
+        //		for (int i = 0; i < child.behaviorTraits.Count; i++) {
+        //			Debug.Log (child.behaviorTraits [i]);
+        //		}
+        //		Debug.Log("====== " + child.name + " Skill Traits ======");
+        //		for (int i = 0; i < child.skillTraits.Count; i++) {
+        //			Debug.Log (child.skillTraits [i]);
+        //		}
+        //		Debug.Log("====== " + child.name + " Misc Traits ======");
+        //		for (int i = 0; i < child.miscTraits.Count; i++) {
+        //			Debug.Log (child.miscTraits [i]);
+        //		}
+        currentlyShowingCitizen.children.Remove(child);
+        currentlyShowingCitizen.spouse.children.Remove(child);
+    }
 
     public void ChangeGovernorLoyalty() {
         ((Governor)currentlyShowingCity.governor.assignedRole).SetLoyalty(Int32.Parse(forTestingLoyaltyLbl.text));
         Debug.Log("Changed loyalty of: " + currentlyShowingCity.governor.name + " to " + ((Governor)currentlyShowingCity.governor.assignedRole).loyalty.ToString());
     }
+
+    public void LogRelatives() {
+        List<Citizen> allRelatives = currentlyShowingCitizen.GetRelatives(-1);
+        Debug.Log("========== " + currentlyShowingCitizen.name + " Relatives ==========");
+        for (int i = 0; i < allRelatives.Count; i++) {
+            Debug.Log("Relative: " + allRelatives[i].name);
+        }
+    }
+    #endregion
+
 
     public void CenterCameraOnCitizen(){
 		if(this.currentlyShowingCitizen != null){

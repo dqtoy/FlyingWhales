@@ -12,6 +12,7 @@ public class Envoy : Role {
 	}
 
 	internal override void Initialize(GameEvent gameEvent){
+        base.Initialize(gameEvent);
 		this.gameEvent = gameEvent;
 		if(this.gameEvent is BorderConflict){
 			BorderConflict bc = (BorderConflict)this.gameEvent;

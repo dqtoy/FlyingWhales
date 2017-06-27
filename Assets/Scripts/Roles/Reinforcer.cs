@@ -13,6 +13,7 @@ public class Reinforcer : Role {
 	}
 	internal override void Initialize(GameEvent gameEvent){
 		if(gameEvent is Reinforcement){
+            base.Initialize(gameEvent);
 			this.reinforcement = (Reinforcement)gameEvent;
 			this.reinforcement.reinforcer = this;
 			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Reinforcer"), this.citizen.city.hexTile.transform) as GameObject;
