@@ -783,8 +783,10 @@ public class Citizen {
 			this.assignedRole = new Provoker(this);
 		} else if (role == ROLE.MISSIONARY) {
 			this.assignedRole = new Missionary(this);
-		}
-        this.UpdatePrestige ();
+        } else if (role == ROLE.MISSIONARY) {
+            this.assignedRole = new Lycanthrope(this);
+        }
+        //this.UpdatePrestige ();
 	}
 
 	internal RelationshipKings GetRelationshipWithCitizen(Citizen citizen){

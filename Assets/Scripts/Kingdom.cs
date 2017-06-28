@@ -961,12 +961,12 @@ public class Kingdom{
 		}
 		return false;
 	}
-	internal void AssimilateKingdom(Kingdom newKingdom){
-		for(int i = 0; i < this.cities.Count; i++){
-			newKingdom.AddCityToKingdom (this.cities [i]);
-		}
-		KingdomManager.Instance.MakeKingdomDead(this);
-	}
+	//internal void AssimilateKingdom(Kingdom newKingdom){
+	//	for(int i = 0; i < this.cities.Count; i++){
+	//		newKingdom.AddCityToKingdom (this.cities [i]);
+	//	}
+	//	KingdomManager.Instance.MakeKingdomDead(this);
+	//}
 
 	internal void ResetAdjacencyWithOtherKingdoms(){
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {

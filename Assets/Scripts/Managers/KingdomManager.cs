@@ -340,10 +340,10 @@ public class KingdomManager : MonoBehaviour {
 		}
 	}
 
-	public void MakeKingdomDead(Kingdom kingdomToDie){
-		this.allKingdoms.Remove(kingdomToDie);
-		RemoveRelationshipToOtherKingdoms (kingdomToDie);
-	}
+	//public void MakeKingdomDead(Kingdom kingdomToDie){
+	//	this.allKingdoms.Remove(kingdomToDie);
+	//	RemoveRelationshipToOtherKingdoms (kingdomToDie);
+	//}
 
 	public void RemoveRelationshipToOtherKingdoms(Kingdom kingdomToRemove){
 		for (int i = 0; i < this.allKingdoms.Count; i++) {
@@ -443,6 +443,14 @@ public class KingdomManager : MonoBehaviour {
             currRel.ChangeSourceKing(citizenToInherit);
             relOfTargetKing.ChangeTargetKing(citizenToInherit);
         }
+    }
+
+    public List<Citizen> GetAllCitizensOfType(ROLE role) {
+        List<Citizen> citizensOfType = new List<Citizen>();
+        for (int i = 0; i < allKingdoms.Count; i++) {
+            citizensOfType.AddRange(allKingdoms[i].GetAllCitizensOfType(role));
+        }
+        return citizensOfType;
     }
 
     #region For Testing
