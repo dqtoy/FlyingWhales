@@ -56,6 +56,7 @@ public class CharacterPortrait : MonoBehaviour {
 		characterNameLbl.text = this.citizen.name;
 		characterKingdomNameLbl.text = this.citizen.city.kingdom.name;
 		characterInfoGO.SetActive(true);
+        this.DisableHover();
 	}
 
 	public void DisableHover(){

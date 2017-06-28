@@ -260,8 +260,9 @@ public class UIManager : MonoBehaviour {
 	private const int HEADER_FONT_SIZE = 25;
 	private const int BODY_FONT_SIZE = 20;
 	private const int TOOLTIP_FONT_SIZE = 18;
+    private const int SMALLEST_FONT_SIZE = 12;
 
-	void Awake(){
+    void Awake(){
 		Instance = this;
     }
 
@@ -293,9 +294,12 @@ public class UIManager : MonoBehaviour {
         } else if (lblName.Contains ("TOOLTIP")) {
 			lbl.fontSize = TOOLTIP_FONT_SIZE;
             lbl.overflowMethod = UILabel.Overflow.ResizeHeight;
+        } else if (lblName.Contains("SMALLEST")) {
+            lbl.fontSize = SMALLEST_FONT_SIZE;
+            lbl.overflowMethod = UILabel.Overflow.ClampContent;
         }
-		
-	}
+
+    }
 
 	private void UpdateUI(){
 		dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
@@ -2996,9 +3000,14 @@ public class UIManager : MonoBehaviour {
 			break;
 		case EVENT_TYPES.BOON_OF_POWER:
 			break;
+        case EVENT_TYPES.LYCANTHROPY:
+            ToggleLycanthropyMenu();
+            break;
 		}
 	}
-	private void ShowIntervenePlagueEvent(){
+
+    #region Plague
+    private void ShowIntervenePlagueEvent(){
 		ToggleForcePlague ();
 	}
 	public void ToggleForcePlague(){
@@ -3037,5 +3046,99 @@ public class UIManager : MonoBehaviour {
 			EventCreator.Instance.CreatePlagueEvent (targetKingdom);
 		}
 	}
-	#endregion
+    #endregion
+
+    #region Lycanthropy
+    [Space(10)]
+    [Header("Lycanthropy Objects")]
+    [SerializeField] private GameObject lycanthropyMenuGO;
+    [SerializeField] private UIGrid lycanthropyMenuGrid;
+    [SerializeField] private GameObject lycanthropySelectedGO;
+    private Citizen lycanthropySelectedCitizen;
+
+    private void ToggleLycanthropyMenu() {
+        if (lycanthropyMenuGO.activeSelf) {
+            HideLycanthropyMenu();
+        } else {
+            ShowInterveneLycanthropyEvent();
+        }
+    }
+
+    private void ShowInterveneLycanthropyEvent() {
+        int numOfCitizensToChooseFrom = 5;
+        List<Citizen> allGovernors = KingdomManager.Instance.GetAllCitizensOfType(ROLE.GOVERNOR);
+        List<Citizen> allGovernorRelatives = new List<Citizen>();
+        //Get relatives of all the governors
+        for (int i = 0; i < allGovernors.Count; i++) {
+            allGovernorRelatives = allGovernorRelatives.Union(allGovernors[i].GetRelatives().Where(x => !x.isDead && x.role == ROLE.UNTRAINED)).ToList();
+        }
+
+        //Randomly choose a number of relatives
+        List<Citizen> citizensToChooseFrom = new List<Citizen>();
+        if (allGovernorRelatives.Count > 0) {
+            for (int i = 0; i < numOfCitizensToChooseFrom; i++) {
+                if(allGovernorRelatives.Count <= 0) {
+                    break;
+                }
+                Citizen chosenCitizen = allGovernorRelatives[UnityEngine.Random.Range(0, allGovernorRelatives.Count)];
+                citizensToChooseFrom.Add(chosenCitizen);
+                allGovernorRelatives.Remove(chosenCitizen);
+            }
+        } else {
+            Debug.LogError("No elligible citizens!");
+            return;
+        }
+        List<CharacterPortrait> portraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(lycanthropyMenuGrid.gameObject).ToList();
+
+        List<CharacterPortrait> activePortraits = new List<CharacterPortrait>();
+        //Display chosen citizens to player
+        for (int i = 0; i < portraits.Count; i++) {
+            CharacterPortrait currPortrait = portraits[i];
+            Citizen currCitizen = null;
+            try {
+                currCitizen = citizensToChooseFrom[i];
+            } catch(Exception e) {
+                currPortrait.gameObject.SetActive(false);
+                continue;
+            }
+            currPortrait.SetCitizen(currCitizen, false, true);
+            currPortrait.onClickCharacterPortrait += SelectCitizenForLycanthropy;
+            currPortrait.gameObject.SetActive(true);
+            activePortraits.Add(currPortrait);
+        }
+
+        if (activePortraits.Count > 0) {
+            SelectCitizenForLycanthropy(activePortraits.FirstOrDefault().citizen);
+        }
+        lycanthropyMenuGO.SetActive(true);
+    }
+
+    private void SelectCitizenForLycanthropy(Citizen citizen) {
+        lycanthropySelectedCitizen = citizen;
+        ShowCitizenInfo(citizen);
+        CharacterPortrait charPortraitOfCitizen = null;
+        List<CharacterPortrait> portraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(lycanthropyMenuGrid.gameObject).ToList();
+        for (int i = 0; i < portraits.Count; i++) {
+            CharacterPortrait currPortrait = portraits[i];
+            if(currPortrait.citizen.id == citizen.id) {
+                charPortraitOfCitizen = currPortrait;
+                break;
+            }
+        }
+
+        lycanthropySelectedGO.transform.SetParent(charPortraitOfCitizen.transform);
+        lycanthropySelectedGO.transform.localPosition = Vector3.zero;
+        lycanthropySelectedGO.SetActive(true);
+    }
+
+    public void StartLycanthropyEvent() {
+        Lycanthropy newLycanthropy = new Lycanthropy(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, lycanthropySelectedCitizen);
+    }
+
+    public void HideLycanthropyMenu() {
+        lycanthropyMenuGO.SetActive(false);
+    }
+    #endregion
+
+    #endregion
 }

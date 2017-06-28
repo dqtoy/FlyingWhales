@@ -125,6 +125,7 @@ public enum ROLE{
     HEALER,
 	PROVOKER,
 	MISSIONARY,
+    LYCANTHROPE
 }
 
 public enum KINGDOM_TYPE {
@@ -211,6 +212,7 @@ public enum EVENT_TYPES{
 	BOON_OF_POWER,
 	PROVOCATION,
 	EVANGELISM,
+    LYCANTHROPY
 }
 public enum EVENT_STATUS{
 	EXPOSED,
