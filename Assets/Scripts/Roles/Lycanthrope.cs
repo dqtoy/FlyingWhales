@@ -11,12 +11,12 @@ public class Lycanthrope : Role {
     }
     #endregion
     public Lycanthrope(Citizen citizen): base(citizen){
-        
+        this.citizen.city.citizens.Remove(this.citizen);
     }
 
     internal override void Initialize(GameEvent gameEvent) {
         if (gameEvent is Lycanthropy) {
-            base.Initialize(gameEvent);
+            //base.Initialize(gameEvent);
             this._lycanthropyEvent = (Lycanthropy)gameEvent;
             this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Lycanthrope"), this.citizen.city.hexTile.transform) as GameObject;
             this.avatar.transform.localPosition = Vector3.zero;

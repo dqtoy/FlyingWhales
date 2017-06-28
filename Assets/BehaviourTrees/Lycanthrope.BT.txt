@@ -1,2 +1,23 @@
 tree("Root")
-	Succeed
+	fallback
+		not IsThereCitizen
+		HasDiedOfOtherReasons
+		not IsThereEvent
+		fallback
+			while 
+				IsWaitingForFullMoon
+				tree("FullMoonActions")
+			while 
+				not HasTargetCity
+				GetTargetCity
+			tree("Move")
+
+tree("FullMoonActions")
+	sequence
+		IsFullMoon
+		Attack
+
+tree("Move")
+	fallback
+		HasArrivedAtTargetHextile
+		MoveToNextTile

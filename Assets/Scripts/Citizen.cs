@@ -783,7 +783,7 @@ public class Citizen {
 			this.assignedRole = new Provoker(this);
 		} else if (role == ROLE.MISSIONARY) {
 			this.assignedRole = new Missionary(this);
-        } else if (role == ROLE.MISSIONARY) {
+        } else if (role == ROLE.LYCANTHROPE) {
             this.assignedRole = new Lycanthrope(this);
         }
         //this.UpdatePrestige ();
