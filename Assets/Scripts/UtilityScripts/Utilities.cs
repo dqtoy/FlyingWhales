@@ -23,10 +23,6 @@ public class Utilities : MonoBehaviour {
 
 	public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
 
-    public static EVENT_TYPES[] playerPlacableEvents = new EVENT_TYPES[] {
-        EVENT_TYPES.PLAGUE
-    };
-
 	public static string[] accidentCauses = new string[]{
 		"because he/she forgot to breath",
 		"after falling off a cliff",
