@@ -47,37 +47,70 @@ public class Assassination : GameEvent {
 		this._warTrigger = GetWarTrigger ();
 		this.relationshipToAdjust = null;
 
-		string triggerReason = string.Empty;
-		if (gameEventTrigger is Assassination) {
-			triggerReason = "after discovering that " + gameEventTrigger.startedBy.name
-				+ " also sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
-		} else if (gameEventTrigger is InvasionPlan) {
-			triggerReason = "after discovering " + gameEventTrigger.startedBy.name + "'s "
-				+ " Invasion Plan against " + (gameEventTrigger as InvasionPlan).targetKingdom.name;
-		} else if (gameEventTrigger is StateVisit){
-			triggerReason = "while on a State Visit to " + targetCitizen.city.kingdom.name;
-		} else if (gameEventTrigger is BorderConflict){
-			triggerReason = "in response to worsening Border Conflict";
-		} else if (gameEventTrigger is DiplomaticCrisis){
-			triggerReason = "in the aftermath of a recent Diplomatic Crisis";
-		} else if (gameEventTrigger is Espionage){
-			triggerReason = "after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name;
-		} else if (gameEventTrigger is Raid){
-			triggerReason = "after the raid of " + (gameEventTrigger as Raid).raidedCity.name;
-		} else {
-			string gender = "he";
-			if(startedBy.gender == GENDER.FEMALE){
-				gender = "she";
-			}
-			triggerReason = "because " + gender + " doesn't like " + targetCitizen.name;
-		} 
-
 		EventManager.Instance.AddEventToDictionary(this);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "event_title");
 		newLogTitle.AddToFillers (null, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", "reason1");
+//		string triggerReason = string.Empty;
+		if (gameEventTrigger is Assassination) {
+			Assassination assassination = (Assassination)gameEventTrigger;
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", assassination.warTrigger.ToString());
+
+			if(assassination.warTrigger == WAR_TRIGGER.ASSASSINATION_KING){
+				newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+				newLogTitle.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+				newLogTitle.AddToFillers (this.spy, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+				newLogTitle.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+
+			}else if(assassination.warTrigger == WAR_TRIGGER.ASSASSINATION_ROYALTY){
+
+			}else if(assassination.warTrigger == WAR_TRIGGER.ASSASSINATION_GOVERNOR){
+
+			}
+		}else if (gameEventTrigger is BorderConflict){
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", gameEventTrigger.warTrigger.ToString());
+			newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+			newLogTitle.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLogTitle.AddToFillers (this.spy, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+			newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+			newLogTitle.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		} else if (gameEventTrigger is DiplomaticCrisis){
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", gameEventTrigger.warTrigger.ToString());
+			newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+			newLogTitle.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLogTitle.AddToFillers (this.spy, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+			newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+			newLogTitle.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		}
+
+
+//		string triggerReason = string.Empty;
+//		if (gameEventTrigger is Assassination) {
+//			triggerReason = "after discovering that " + gameEventTrigger.startedBy.name
+//				+ " also sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
+//		} else if (gameEventTrigger is InvasionPlan) {
+//			triggerReason = "after discovering " + gameEventTrigger.startedBy.name + "'s "
+//				+ " Invasion Plan against " + (gameEventTrigger as InvasionPlan).targetKingdom.name;
+//		} else if (gameEventTrigger is StateVisit){
+//			triggerReason = "while on a State Visit to " + targetCitizen.city.kingdom.name;
+//		} else if (gameEventTrigger is BorderConflict){
+//			triggerReason = "in response to worsening Border Conflict";
+//		} else if (gameEventTrigger is DiplomaticCrisis){
+//			triggerReason = "in the aftermath of a recent Diplomatic Crisis";
+//		} else if (gameEventTrigger is Espionage){
+//			triggerReason = "after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name;
+//		} else if (gameEventTrigger is Raid){
+//			triggerReason = "after the raid of " + (gameEventTrigger as Raid).raidedCity.name;
+//		} else {
+//			string gender = "he";
+//			if(startedBy.gender == GENDER.FEMALE){
+//				gender = "she";
+//			}
+//			triggerReason = "because " + gender + " doesn't like " + targetCitizen.name;
+//		} 
+
 //		newLog.AddToFillers (startedBy, startedBy.name, LOG_IDENTIFIER.KING_1);
 //		newLog.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 //		newLog.AddToFillers (spy.citizen, spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
