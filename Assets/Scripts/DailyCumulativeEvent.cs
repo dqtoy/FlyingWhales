@@ -222,6 +222,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		case EVENT_TYPES.PROVOCATION:
 			CreateProvocationEvent ();
 			break;
+		case EVENT_TYPES.EVANGELISM:
+			CreateEvangelismEvent ();
+			break;
 		}
 //		Task.current.Succeed ();
 	}
@@ -261,6 +264,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	}
 	private void CreateProvocationEvent(){
 		EventCreator.Instance.CreateProvocationEvent (this.firstKingdom, this.secondKingdom);
+	}
+	private void CreateEvangelismEvent(){
+		EventCreator.Instance.CreateEvangelismEvent (this.firstKingdom, this.secondKingdom);
 	}
 //	private void CreateBorderConflictEvent(){
 //		EventCreator.Instance.CreateBorderConflictEvent(this.firstKingdom, this.secondKingdom);
