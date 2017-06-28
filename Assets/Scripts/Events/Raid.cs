@@ -39,11 +39,11 @@ public class Raid : GameEvent {
 		
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "event_title");
-		newLogTitle.AddToFillers (this.raidedCity, this.raidedCity.name);
+		newLogTitle.AddToFillers (this.raidedCity, this.raidedCity.name, LOG_IDENTIFIER.CITY_2);
 
 		Log raidStartLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "start");
-		raidStartLog.AddToFillers (this.startedByCity, this.startedByCity.name);
-		raidStartLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+		raidStartLog.AddToFillers (this.startedByCity, this.startedByCity.name, LOG_IDENTIFIER.CITY_1);
+		raidStartLog.AddToFillers (this.raidedCity, this.raidedCity.name, LOG_IDENTIFIER.CITY_2);
 
 		DeflectBlame ();
 
@@ -143,7 +143,7 @@ public class Raid : GameEvent {
 			return;
 		}
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_arrival");
-		newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+		newLog.AddToFillers (this.raidedCity, this.raidedCity.name, LOG_IDENTIFIER.CITY_2);
 	}
 
 	//Moment that raid party is going to steal from city
@@ -224,7 +224,7 @@ public class Raid : GameEvent {
 		}
 		if (deadCitizen != null) {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_accident");
-			newLog.AddToFillers (deadCitizen, deadCitizen.name);
+			newLog.AddToFillers (deadCitizen, deadCitizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 			if(this.hasBeenDiscovered){
 				int amountToAdjust = -15;
 				if (isGovernor || isKing) {
@@ -262,16 +262,16 @@ public class Raid : GameEvent {
 					this.kingdomToBlame = GetRandomKingdomToBlame ();
 					if(this.kingdomToBlame != null){
 						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery_deflect");
-						newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
-						newLog.AddToFillers (this.kingdomToBlame, this.kingdomToBlame.name);
+						newLog.AddToFillers (this.raidedCity, this.raidedCity.name, LOG_IDENTIFIER.CITY_2);
+						newLog.AddToFillers (this.kingdomToBlame, this.kingdomToBlame.name, LOG_IDENTIFIER.KINGDOM_1);
 					}else{
 						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery");
-						newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+						newLog.AddToFillers (this.raidedCity, this.raidedCity.name, LOG_IDENTIFIER.CITY_2);
 					}
 				}
 			}else {
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery");
-				newLog.AddToFillers (this.raidedCity, this.raidedCity.name);
+				newLog.AddToFillers (this.raidedCity, this.raidedCity.name, LOG_IDENTIFIER.CITY_2);
 			}
 			RelationshipKings relationship = this.GetRelationship ();
 			if(relationship != null){

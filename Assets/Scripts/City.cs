@@ -1207,7 +1207,7 @@ public class City{
 		this.AssignNewGovernor ();
 		if(!isStart){
 			Log newLog = rebellion.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "rebel_conquer_city");
-			newLog.AddToFillers (this, this.name);
+			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.CITY_2);
 		}
 
 	}
@@ -1229,7 +1229,7 @@ public class City{
 			}
 		}
 		Log newLog = this.rebellion.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "kingdom_conquer_city");
-		newLog.AddToFillers (this, this.name);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.CITY_2);
 		this.rebellion = null;
 	}
 

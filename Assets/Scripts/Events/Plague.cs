@@ -102,14 +102,14 @@ public class Plague : GameEvent {
         EventManager.Instance.onKingdomDiedEvent.AddListener(CureAKingdom);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_title");
-		newLogTitle.AddToFillers (null, this._plagueName);
+		newLogTitle.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "start");
-		newLog.AddToFillers (this.sourceCity, this.sourceCity.name);
-		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
-		newLog.AddToFillers (null, this._plagueName);
+		newLog.AddToFillers (this.sourceCity, this.sourceCity.name, LOG_IDENTIFIER.CITY_1);
+		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
-		this.InitializePlague ();
+		this.InitializePlague();
 		base.EventIsCreated();
 	}
 
@@ -122,13 +122,13 @@ public class Plague : GameEvent {
         if(citizen.assignedRole is Exterminator) {
             this.exterminators.Add((Exterminator)citizen.assignedRole);
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "exterminator_send");
-			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name);
-			newLog.AddToFillers (citizen, citizen.name);
+			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name, LOG_IDENTIFIER.KING_1);
+			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         }else if (citizen.assignedRole is Healer) {
             this.healers.Add((Healer)citizen.assignedRole);
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "healer_send");
-			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name);
-			newLog.AddToFillers (citizen, citizen.name);
+			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name, LOG_IDENTIFIER.KING_1);
+			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         }
     }
 
@@ -155,7 +155,7 @@ public class Plague : GameEvent {
         onPerformAction = null;
         DisembargoKingdoms();
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_end");
-		newLog.AddToFillers (null, this._plagueName);
+		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
 		WorldEventManager.Instance.currentPlague = null;
     }
@@ -169,6 +169,8 @@ public class Plague : GameEvent {
         onPerformAction += CureAPlagueSettlementEveryday;
         onPerformAction += DestroyASettlementEveryday;
         onPerformAction += IncreaseUnrestEveryMonth;
+        onPerformAction += CheckForGovernorOrRelativeDeath;
+        onPerformAction += CheckForKingOrRelativeDeath;
 
     }
 
@@ -443,22 +445,25 @@ public class Plague : GameEvent {
     }
     #endregion
 
-    internal void InfectRandomSettlement(List<HexTile> hexTilesToChooseFrom) {
+    internal HexTile InfectRandomSettlement(List<HexTile> hexTilesToChooseFrom) {
 		HexTile targetSettlement = hexTilesToChooseFrom.FirstOrDefault(x => !x.isPlagued);
         if (targetSettlement != null) {
             this.PlagueASettlement(targetSettlement);
+            return targetSettlement;
         }
+        return null;
     }
 
     private void PlagueASettlement(HexTile hexTile){
 		hexTile.SetPlague(true);
 	}
-	internal void PlagueACity(City city){
+	internal HexTile PlagueACity(City city){
 		city.plague = this;
 		this.affectedCities.Add (city);
-		InfectRandomSettlement (city.structures);
+		HexTile infectedTile = InfectRandomSettlement (city.structures);
+        return infectedTile;
 	}
-	internal void PlagueAKingdom(Kingdom kingdom, City city){
+	internal HexTile PlagueAKingdom(Kingdom kingdom, City city){
 		kingdom.plague = this;
 		this.affectedKingdoms.Add (kingdom);
         float cureChance = DEFAULT_CURE_CHANCE;
@@ -471,9 +476,10 @@ public class Plague : GameEvent {
         });
         EVENT_APPROACH chosenApproach = this.ChooseApproach(kingdom.king);
         UpdateKingdomEmbargos();
-		this.PlagueACity (city);
+        DifferentApproachesLogs(kingdom.king, chosenApproach, city);
 
-		DifferentApproachesLogs (kingdom.king, chosenApproach, city);
+        HexTile infectedTile = this.PlagueACity (city);
+        return infectedTile;
 	}
 
     #region Trading
@@ -605,12 +611,13 @@ public class Plague : GameEvent {
 		return false;
 	}
 
+    #region Plague Default Actions
     /*
      * Every multiple of 4 day, per city, there is a base 2% chance for every 
      * plagued settlement that the plague will spread to another settlement 
      * within the city.
      * */
-	private void SpreadPlagueWithinCity(){
+    private void SpreadPlagueWithinCity(){
 		if(this.IsDaysMultipleOf(4)){
 			for (int i = 0; i < this.affectedCities.Count; i++) {
 				float chance = UnityEngine.Random.Range (0f, 99f);
@@ -700,7 +707,50 @@ public class Plague : GameEvent {
             }
         }
     }
-        
+    
+    /*
+     * Every mult 4 day, 3% chance for every plagued settlement, 
+     * for a city governor or a random relative to die of the plague.
+     * */
+    private void CheckForGovernorOrRelativeDeath() {
+        if (this.IsDaysMultipleOf(4)) {
+            for (int i = 0; i < this.affectedCities.Count; i++) {
+                City currCity = this.affectedCities[i];
+                int chance = UnityEngine.Random.Range(0, 100);
+                int value = 3 * currCity.plaguedSettlements.Count;
+                if(chance < value) {
+                    List<Citizen> citizensToChooseFrom = new List<Citizen>() { currCity.governor };
+                    citizensToChooseFrom.AddRange(currCity.governor.GetRelatives(-1));
+                    Citizen citizenToDie = citizensToChooseFrom[Random.Range(0, citizensToChooseFrom.Count)];
+                    citizenToDie.Death(DEATH_REASONS.PLAGUE);
+                    Log plagueDeath = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_citizen_death");
+                }
+            }
+        }
+    }
+
+    /*
+     * Every mult 5 day, 3% chance for every plagued settlement in the capital, 
+     * for a king or a random relative to die of the plague.
+     * */
+    private void CheckForKingOrRelativeDeath() {
+        if (this.IsDaysMultipleOf(5)) {
+            for (int i = 0; i < this.affectedKingdoms.Count; i++) {
+                Kingdom currKingdom = this.affectedKingdoms[i];
+                int chance = UnityEngine.Random.Range(0, 100);
+                int value = 3 * currKingdom.capitalCity.plaguedSettlements.Count;
+                if (chance < value) {
+                    List<Citizen> citizensToChooseFrom = new List<Citizen>() { currKingdom.king };
+                    citizensToChooseFrom.AddRange(currKingdom.king.GetRelatives(-1));
+                    Citizen citizenToDie = citizensToChooseFrom[Random.Range(0, citizensToChooseFrom.Count)];
+                    citizenToDie.Death(DEATH_REASONS.PLAGUE);
+                    Log plagueDeath = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_citizen_death");
+                }
+            }
+        }
+    }
+    #endregion
+
     private City GetNearestCityFrom(HexTile hexTile, List<City> citiesToChooseFrom, ref List<HexTile> path) {
         City nearestCity = null;
         int nearestDistance = 0;
@@ -756,8 +806,8 @@ public class Plague : GameEvent {
 		Kingdom selectedKingdom = this.opportunisticKingdoms[UnityEngine.Random.Range(0, this.opportunisticKingdoms.Count)];
 		selectedKingdom.SetBioWeapon (true);
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "bioweapon_developed");
-		newLog.AddToFillers (selectedKingdom, selectedKingdom.name);
-		newLog.AddToFillers (null, this._plagueName);
+		newLog.AddToFillers (selectedKingdom, selectedKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 	}
 
     private void DevelopVaccine() {
@@ -767,7 +817,7 @@ public class Plague : GameEvent {
             this.kingdomChances[currKingdom.id][0] = 5f;
         }
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "vaccine_developed");
-		newLog.AddToFillers (null, this._plagueName);
+		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
     }
 
 	private void DifferentApproachesLogs(Citizen citizen, EVENT_APPROACH approach, City city){
@@ -786,7 +836,7 @@ public class Plague : GameEvent {
 				break;
 			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", logName);
-			newLog.AddToFillers (citizen, citizen.name);
+			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.KING_1);
 		}else{
 			//This is the kingdom where the plague has spread
 			string logName = string.Empty;
@@ -802,10 +852,10 @@ public class Plague : GameEvent {
 				break;
 			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", logName);
-			newLog.AddToFillers (null, this._plagueName);
-			newLog.AddToFillers (city, city.name);
-			newLog.AddToFillers (citizen.city.kingdom, citizen.city.kingdom.name);
-			newLog.AddToFillers (citizen, citizen.name);
+			newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
+			newLog.AddToFillers (city, city.name, LOG_IDENTIFIER.CITY_1);
+			newLog.AddToFillers (citizen.city.kingdom, citizen.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.KING_1);
 		}
 	}
 }

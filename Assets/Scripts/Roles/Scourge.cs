@@ -15,6 +15,7 @@ public class Scourge : Role {
 
 	internal override void Initialize(GameEvent gameEvent) {
 		if (gameEvent is ScourgeCity) {
+            base.Initialize(gameEvent);
 			this._scourgeCity = (ScourgeCity)gameEvent;
 			this._scourgeCity.scourge = this;
 			this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Scourge"), this.citizen.city.hexTile.transform) as GameObject;

@@ -259,8 +259,8 @@ public class KingdomManager : MonoBehaviour {
         //		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
 
         Log declareWarLog = war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "declare_war");
-		declareWarLog.AddToFillers (kingdom1.king, kingdom1.king.name);
-		declareWarLog.AddToFillers (kingdom2, kingdom2.name);
+		declareWarLog.AddToFillers (kingdom1.king, kingdom1.king.name, LOG_IDENTIFIER.KING_1);
+		declareWarLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 
 		KingdomManager.Instance.CheckWarTriggerDeclareWar (kingdom1, kingdom2);
 //		War newWar = new War(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, null, kingdom1, kingdom2, invasionPlanThatStartedWar);

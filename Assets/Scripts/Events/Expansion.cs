@@ -13,20 +13,20 @@ public class Expansion : GameEvent {
 		this.eventType = EVENT_TYPES.EXPANSION;
 		this.name = "Expansion";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
-		this.description = startedBy.city.kingdom.king.name + " is looking looking to expand his kingdom and has funded and expedition led by " + startedBy.name;
-
+		this.description = startedBy.city.kingdom.king.name + " is looking to expand his kingdom and has funded and expedition led by " + startedBy.name;
+		this.expander = (Expander)startedBy.assignedRole;
 		this.originCity = startedBy.city;
 		this.hexTileToExpandTo = targetHextile;
 		this.hexTileToExpandTo.isTargeted = true;
 		EventManager.Instance.AddEventToDictionary(this);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "event_title");
-		newLogTitle.AddToFillers (null, startedBy.city.kingdom.name);
+		newLogTitle.AddToFillers (null, startedBy.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "start");
-		newLog.AddToFillers (startedBy, startedBy.name);
-		newLog.AddToFillers (startedBy.city, startedBy.city.name);
+		newLog.AddToFillers (startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		newLog.AddToFillers (startedBy.city, startedBy.city.name, LOG_IDENTIFIER.CITY_1);
 
 		this.EventIsCreated ();
 
@@ -40,7 +40,7 @@ public class Expansion : GameEvent {
 			this.hexTileToExpandTo.city.ExpandToThisCity (this.startedBy);
 
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");
-			newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name);
+			newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name, LOG_IDENTIFIER.CITY_2);
 
 		} else {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "beaten");
@@ -55,14 +55,12 @@ public class Expansion : GameEvent {
 	}
 	internal override void DeathByOtherReasons(){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_other");
-		newLog.AddToFillers (this.startedBy, this.startedBy.name);
-		newLog.AddToFillers (null, this.startedBy.deathReasonText);
-
+		newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		this.DoneEvent ();
 	}
 	internal override void DeathByGeneral(General general){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_general");
-		newLog.AddToFillers (general.citizen, general.citizen.name);
+		newLog.AddToFillers (general.citizen, general.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
 		this.startedBy.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent ();

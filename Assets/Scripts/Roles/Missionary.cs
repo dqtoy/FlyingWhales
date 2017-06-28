@@ -12,6 +12,7 @@ public class Missionary : Role {
 
 	internal override void Initialize(GameEvent gameEvent){
 		if(gameEvent is Evangelism){
+            base.Initialize(gameEvent);
 			this.evangelism = (Evangelism)gameEvent;
 			this.evangelism.missionary = this;
 			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Missionary"), this.citizen.city.hexTile.transform) as GameObject;

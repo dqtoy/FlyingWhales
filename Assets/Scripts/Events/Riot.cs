@@ -18,10 +18,10 @@ public class Riot : GameEvent {
 		Debug.LogError (startedBy.name + " has started a riot in " + this.sourceKingdom.name);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "event_title");
-		newLogTitle.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
+		newLogTitle.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "start");
-		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
+		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
 		//		EventManager.Instance.AddEventToDictionary (this);
 		//		this.EventIsCreated ();
@@ -86,6 +86,6 @@ public class Riot : GameEvent {
 		city.RemoveTileFromCity(city.structures[city.structures.Count - 1]);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "destroy_settlement");
-		newLog.AddToFillers (city, city.name);
+		newLog.AddToFillers (city, city.name, LOG_IDENTIFIER.CITY_1);
 	}
 }

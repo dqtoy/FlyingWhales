@@ -55,8 +55,8 @@ public class War : GameEvent {
 		this.isInitialAttack = false;
 		this.attackRate = 0;
 		Log titleLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "event_title");
-		titleLog.AddToFillers (_kingdom1, _kingdom1.name);
-		titleLog.AddToFillers (_kingdom2, _kingdom2.name);
+		titleLog.AddToFillers (_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+		titleLog.AddToFillers (_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		EventManager.Instance.AddEventToDictionary(this);
@@ -318,12 +318,12 @@ public class War : GameEvent {
         base.DoneEvent();
         if (this._kingdom1.isDead) {
             Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
-            titleLog.AddToFillers(_kingdom1, _kingdom1.name);
-            titleLog.AddToFillers(_kingdom2, _kingdom2.name);
+			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
         } else if (this._kingdom2.isDead) {
             Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
-            titleLog.AddToFillers(_kingdom2, _kingdom2.name);
-            titleLog.AddToFillers(_kingdom1, _kingdom1.name);
+			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
         }
         EventManager.Instance.onWeekEnd.RemoveListener(AttemptToRequestPeace);
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);

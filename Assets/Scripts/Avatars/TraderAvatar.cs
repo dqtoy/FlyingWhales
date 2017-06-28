@@ -62,7 +62,6 @@ public class TraderAvatar : MonoBehaviour {
     void OnDestroy() {
         BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
         this.UnHighlightPath();
-        this._trader.DisinfectPlague();
     }
     #endregion
 

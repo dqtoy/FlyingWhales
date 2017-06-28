@@ -12,6 +12,7 @@ public class Provoker : Role {
 
 	internal override void Initialize(GameEvent gameEvent){
 		if(gameEvent is Provocation){
+            base.Initialize(gameEvent);
 			this.provocation = (Provocation)gameEvent;
 			this.provocation.provoker = this;
 			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Provoker"), this.citizen.city.hexTile.transform) as GameObject;

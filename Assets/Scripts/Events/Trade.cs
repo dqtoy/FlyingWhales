@@ -31,11 +31,11 @@ public class Trade : GameEvent {
         this._trader = _trader;
 
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Trade", "event_title");
-        newLogTitle.AddToFillers(this._sourceCity, this._sourceCity.name);
+        newLogTitle.AddToFillers(this._sourceCity, this._sourceCity.name, LOG_IDENTIFIER.CITY_1);
 
         Log tradeStartLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Trade", "start");
-        tradeStartLog.AddToFillers(this._sourceCity, this._sourceCity.name);
-        tradeStartLog.AddToFillers(this._targetCity, this._targetCity.name);
+		tradeStartLog.AddToFillers(this._sourceCity, this._sourceCity.name, LOG_IDENTIFIER.CITY_1);
+		tradeStartLog.AddToFillers(this._targetCity, this._targetCity.name, LOG_IDENTIFIER.CITY_2);
 
         EventManager.Instance.AddEventToDictionary(this);
         this.EventIsCreated();
@@ -77,8 +77,8 @@ public class Trade : GameEvent {
 	internal override void CancelEvent (){
 		base.CancelEvent ();
         Log traderDeathLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Trade", "trader_died");
-        traderDeathLog.AddToFillers(this._trader, this._trader.name);
-        traderDeathLog.AddToFillers(this._targetCity, this._targetCity.name);
+		traderDeathLog.AddToFillers(this._trader, this._trader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		traderDeathLog.AddToFillers(this._targetCity, this._targetCity.name, LOG_IDENTIFIER.CITY_2);
         this.DoneEvent ();
 	}
     #endregion
@@ -124,13 +124,13 @@ public class Trade : GameEvent {
                 targetKingdom.AdjustTechCounter(techGrowthGained / 2);
 
                 Log tradeSuccessLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Trade", "trade_success");
-                tradeSuccessLog.AddToFillers(this._targetCity, this._targetCity.name);
+				tradeSuccessLog.AddToFillers(this._targetCity, this._targetCity.name, LOG_IDENTIFIER.CITY_2);
 
             } else {
                 Debug.Log(this.sourceCity.name + " and " + this.targetCity.name + " are no longer elligible for trade!");
                 Log tradeFailLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Trade", "trade_fail");
-                tradeFailLog.AddToFillers(this._sourceCity, this._sourceCity.name);
-                tradeFailLog.AddToFillers(this._targetCity, this._targetCity.name);
+				tradeFailLog.AddToFillers(this._sourceCity, this._sourceCity.name, LOG_IDENTIFIER.CITY_1);
+				tradeFailLog.AddToFillers(this._targetCity, this._targetCity.name, LOG_IDENTIFIER.CITY_2);
 
             }
         }

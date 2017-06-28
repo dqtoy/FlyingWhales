@@ -47,6 +47,7 @@ public class General : Role {
 
 	internal override void Initialize(GameEvent gameEvent){
 		if(gameEvent is AttackCity){
+            base.Initialize(gameEvent);
 			this.attackCity = (AttackCity)gameEvent;
 			this.attackCity.general = this;
 			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/General"), this.citizen.city.hexTile.transform) as GameObject;
