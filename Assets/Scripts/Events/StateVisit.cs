@@ -38,13 +38,13 @@ public class StateVisit : GameEvent {
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
-		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name);
-		newLogTitle.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
+		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		newLogTitle.AddToFillers (this.inviterKingdom, this.inviterKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "start");
-		newLog.AddToFillers (visitor.citizen, visitor.citizen.name);
-		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
-		newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
+		newLog.AddToFillers (visitor.citizen, visitor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name, LOG_IDENTIFIER.KING_1);
 
 		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
@@ -56,8 +56,8 @@ public class StateVisit : GameEvent {
         base.DoneCitizenAction(citizen);
 		this.visitorHasArrived = true;
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "visitor_arrival");
-		newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name);
-		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
+		newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 	}
 	internal override void PerformAction(){
 		CheckVisitor ();
@@ -87,18 +87,18 @@ public class StateVisit : GameEvent {
 				relationship.AdjustLikeness (20, this);
 			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_end");
-			newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
-			newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
-			newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name);
+			newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name, LOG_IDENTIFIER.KING_1);
+			newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name, LOG_IDENTIFIER.KING_2);
+			newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		}else{
 			if(this.isDoneBySabotage){
 				if (relationship != null) {
 					relationship.AdjustLikeness (-10, this);
 				}
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_success");
-				newLog.AddToFillers (this.saboteurEnvoy.citizen, this.saboteurEnvoy.citizen.name);
-				newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
-				newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
+				newLog.AddToFillers (this.saboteurEnvoy.citizen, this.saboteurEnvoy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name, LOG_IDENTIFIER.KING_1);
+				newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name, LOG_IDENTIFIER.KING_2);
 			}else{
 				if(this.visitorHasDied){
 					if (relationship != null) {
@@ -111,10 +111,9 @@ public class StateVisit : GameEvent {
 					}
 
 					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "visitor_died");
-					newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name);
-					newLog.AddToFillers (null, this.visitor.citizen.deathReasonText);
-					newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name);
-					newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
+					newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+					newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name, LOG_IDENTIFIER.KING_1);
+					newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name, LOG_IDENTIFIER.KING_2);
 				}
 			}
 		}
@@ -189,11 +188,11 @@ public class StateVisit : GameEvent {
 						Assassination assassination = EventCreator.Instance.CreateAssassinationEvent (selectedKingdom, this.visitor.citizen, this, remainingDays);
 						if(assassination != null){
 							Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
-							newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name);
-							newLog.AddToFillers (assassination.spy.citizen, assassination.spy.citizen.name);
-							newLog.AddToFillers (assassination, "assassinate");
-							newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name);
-							newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);
+							newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name, LOG_IDENTIFIER.KING_1);
+							newLog.AddToFillers (assassination.spy.citizen, assassination.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+							newLog.AddToFillers (assassination, "assassinate", LOG_IDENTIFIER.GAME_EVENT);
+							newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+							newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 						}
 
 					}
@@ -281,9 +280,9 @@ public class StateVisit : GameEvent {
             this.inviterKingdom.DiscoverKingdom(sender);
 			this.saboteurEnvoy = sabotage.saboteur;
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_start");
-			newLog.AddToFillers (sender.king, sender.king.name);
-			newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name);
-			newLog.AddToFillers (this.saboteurEnvoy.citizen, this.saboteurEnvoy.citizen.name);
+			newLog.AddToFillers (sender.king, sender.king.name, LOG_IDENTIFIER.KING_1);
+			newLog.AddToFillers (this.inviterKingdom.king, this.inviterKingdom.king.name, LOG_IDENTIFIER.KING_2);
+			newLog.AddToFillers (this.saboteurEnvoy.citizen, this.saboteurEnvoy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		}
 
 

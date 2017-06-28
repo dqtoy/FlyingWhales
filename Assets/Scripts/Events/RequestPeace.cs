@@ -31,9 +31,9 @@ public class RequestPeace : GameEvent {
 			
 		Log startLog = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 				            "Events", "War", "request_peace_start_envoy");
-		startLog.AddToFillers (this._startedBy, this._startedBy.name);
-		startLog.AddToFillers (this._envoySent.citizen, this._envoySent.citizen.name);
-		startLog.AddToFillers (this._targetKingdom.king, this._targetKingdom.king.name);
+		startLog.AddToFillers (this._startedBy, this._startedBy.name, LOG_IDENTIFIER.KING_1);
+		startLog.AddToFillers (this._envoySent.citizen, this._envoySent.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		startLog.AddToFillers (this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
 		
 
 		//EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -113,8 +113,8 @@ public class RequestPeace : GameEvent {
         if (chance < chanceForSuccess) {
             Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
                     "Events", "War", "request_peace_success");
-            requestPeaceSuccess.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name);
-            requestPeaceSuccess.AddToFillers(this._startedBy, this._startedBy.name);
+			requestPeaceSuccess.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+			requestPeaceSuccess.AddToFillers(this._startedBy, this._startedBy.name, LOG_IDENTIFIER.KING_1);
 
             //request accepted
             KingdomManager.Instance.GetWarBetweenKingdoms(this.startedByKingdom, this._targetKingdom).DeclarePeace();
@@ -122,8 +122,8 @@ public class RequestPeace : GameEvent {
         } else {
             Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
                     "Events", "War", "request_peace_fail");
-            requestPeaceSuccess.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name);
-            requestPeaceSuccess.AddToFillers(this._startedBy, this._startedBy.name);
+			requestPeaceSuccess.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+			requestPeaceSuccess.AddToFillers(this._startedBy, this._startedBy.name, LOG_IDENTIFIER.KING_1);
 
             //request rejected
             RelationshipKingdom relationshipOfRequester = this.startedByKingdom.GetRelationshipWithOtherKingdom(this._targetKingdom);

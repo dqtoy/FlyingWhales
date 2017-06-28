@@ -26,9 +26,9 @@ public class Militarization : GameEvent {
 
 		Log startLog = _invasionPlanThatTriggeredEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 			               "Events", "War", "militarization_start");
-		startLog.AddToFillers (this.startedBy, this.startedBy.name);
-		startLog.AddToFillers (this.startedByKingdom, this.startedByKingdom.name);
-		startLog.AddToFillers (_invasionPlanThatTriggeredEvent.targetKingdom, _invasionPlanThatTriggeredEvent.targetKingdom.name);
+		startLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+		startLog.AddToFillers (this.startedByKingdom, this.startedByKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		startLog.AddToFillers (_invasionPlanThatTriggeredEvent.targetKingdom, _invasionPlanThatTriggeredEvent.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);

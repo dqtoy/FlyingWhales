@@ -75,14 +75,14 @@ public class Assassination : GameEvent {
 		EventManager.Instance.AddEventToDictionary(this);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "event_title");
-		newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name);
+		newLogTitle.AddToFillers (null, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "start");
-		newLog.AddToFillers (startedBy, startedBy.name);
-		newLog.AddToFillers (this.assassinKingdom, this.assassinKingdom.name);
-		newLog.AddToFillers (spy.citizen, spy.citizen.name);
-		newLog.AddToFillers (targetCitizen, targetCitizen.name);
-		newLog.AddToFillers (gameEventTrigger, triggerReason);
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", "reason1");
+//		newLog.AddToFillers (startedBy, startedBy.name, LOG_IDENTIFIER.KING_1);
+//		newLog.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+//		newLog.AddToFillers (spy.citizen, spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+//		newLog.AddToFillers (targetCitizen, targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+//		newLog.AddToFillers (gameEventTrigger, triggerReason, LOG_IDENTIFIER.TRIGGER_REASON);
 
 		this.EventIsCreated ();
 
@@ -241,15 +241,15 @@ public class Assassination : GameEvent {
 
 			if(otherKingdom.king.id == this._targetCitizen.id){
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "guardian_same");
-				newLog.AddToFillers (otherKingdom.king, otherKingdom.king.name);
-				newLog.AddToFillers (otherKingdom, otherKingdom.name);
-				newLog.AddToFillers (guardian, guardian.name);
+				newLog.AddToFillers (otherKingdom.king, otherKingdom.king.name, LOG_IDENTIFIER.KING_1);
+				newLog.AddToFillers (otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+				newLog.AddToFillers (guardian, guardian.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 			}else{
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "guardian_different");
-				newLog.AddToFillers (otherKingdom.king, otherKingdom.king.name);
-				newLog.AddToFillers (otherKingdom, otherKingdom.name);
-				newLog.AddToFillers (guardian, guardian.name);
-				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name);
+				newLog.AddToFillers (otherKingdom.king, otherKingdom.king.name, LOG_IDENTIFIER.KING_1);
+				newLog.AddToFillers (otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+				newLog.AddToFillers (guardian, guardian.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 			}
 
 		}
@@ -274,42 +274,42 @@ public class Assassination : GameEvent {
 		if (this.hasAssassinated && this.hasBeenDiscovered) {
 			if (this.hasDeflected) { //success_discovery_deflect
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "success_discovery_deflect");
-				newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name);
-				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name);
-				newLog.AddToFillers (this.kingdomToBlame, this.kingdomToBlame.name);
-				newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name);
-				newLog.AddToFillers (this.kingdomToBlame.king, this.kingdomToBlame.king.name);
+				newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+				newLog.AddToFillers (this.kingdomToBlame, this.kingdomToBlame.name, LOG_IDENTIFIER.KINGDOM_1);
+				newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+				newLog.AddToFillers (this.kingdomToBlame.king, this.kingdomToBlame.king.name, LOG_IDENTIFIER.KING_1);
 			} else { //success_discovery
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "success_discovery");
-				newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name);
-				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name);
-				newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name);
-				newLog.AddToFillers (this.assassinKingdom.king, this.assassinKingdom.king.name);
+				newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+				newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+				newLog.AddToFillers (this.assassinKingdom.king, this.assassinKingdom.king.name, LOG_IDENTIFIER.KING_1);
 			}
 
 		} else if (!this.hasAssassinated && this.hasBeenDiscovered) {
 			if (this.hasDeflected) { //fail_discovery_deflect
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "fail_discovery_deflect");
-				newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name);
-				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name);
-				newLog.AddToFillers (this.kingdomToBlame, this.kingdomToBlame.name);
-				newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name);
-				newLog.AddToFillers (this.kingdomToBlame.king, this.kingdomToBlame.king.name);
+				newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+				newLog.AddToFillers (this.kingdomToBlame, this.kingdomToBlame.name, LOG_IDENTIFIER.KINGDOM_1);
+				newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+				newLog.AddToFillers (this.kingdomToBlame.king, this.kingdomToBlame.king.name, LOG_IDENTIFIER.KING_1);
 			} else { //fail_discovery
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "fail_discovery");
-				newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name);
-				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name);
-				newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name);
-				newLog.AddToFillers (this.assassinKingdom.king, this.assassinKingdom.king.name);
+				newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+				newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+				newLog.AddToFillers (this.assassinKingdom.king, this.assassinKingdom.king.name, LOG_IDENTIFIER.KING_1);
 			}
 		} else if (this.hasAssassinated && !this.hasBeenDiscovered) { //success
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "success");
-			newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name);
-			newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name);
+			newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+			newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 		} else if (!this.hasAssassinated && !this.hasBeenDiscovered) { //fail
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "fail");
-			newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name);
-			newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name);
+			newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+			newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 		}
 
 		if(!this.hasAssassinated){
@@ -320,12 +320,12 @@ public class Assassination : GameEvent {
 		}
 		if(this.hasSpyDied){
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "spy_died");
-			newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name);
+			newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 			this.spy.citizen.Death (DEATH_REASONS.TREACHERY);
 //			Debug.Log (this.spy.name + " HAS DIED!");
 		}else{
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "spy_alive");
-			newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name);
+			newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		}
 	}
 	private void AssassinationFail (){

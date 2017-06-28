@@ -30,11 +30,11 @@ public class Secession : GameEvent {
 		Debug.LogError (startedBy.name + " wants to split from " + this.sourceKingdom.name + " because his/her loyalty is " + this.governor.loyalty);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "event_title");
-		newLogTitle.AddToFillers (this.governor.citizen, this.governor.citizen.name);
+		newLogTitle.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "start");
-		newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name);
-		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
+		newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
+		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
 		//		EventManager.Instance.AddEventToDictionary (this);
 		//		this.EventIsCreated ();
@@ -99,10 +99,10 @@ public class Secession : GameEvent {
 		chosenCitizen.assignedRole.Initialize (this);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "envoy_send");
-		newLog.AddToFillers (chosenCitizen, chosenCitizen.name);
-		newLog.AddToFillers (this.targetCity, this.targetCity.name);
-		newLog.AddToFillers (this.targetCity.governor, this.targetCity.governor.name);
-		newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name);
+		newLog.AddToFillers (chosenCitizen, chosenCitizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		newLog.AddToFillers (this.targetCity, this.targetCity.name, LOG_IDENTIFIER.CITY_2);
+		newLog.AddToFillers (this.targetCity.governor, this.targetCity.governor.name, LOG_IDENTIFIER.GOVERNOR_2);
+		newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
 
 	}
 	private void ConvinceGovernor(){
@@ -111,9 +111,9 @@ public class Secession : GameEvent {
 				this.joiningCities.Add (this.targetCity);
 
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "convince_success");
-				newLog.AddToFillers (this.convincer.citizen, this.convincer.citizen.name);
-				newLog.AddToFillers (this.targetCity.governor, this.targetCity.governor.name);
-				newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
+				newLog.AddToFillers (this.convincer.citizen, this.convincer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				newLog.AddToFillers (this.targetCity.governor, this.targetCity.governor.name, LOG_IDENTIFIER.GOVERNOR_2);
+				newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			}
 		}
 	}
@@ -161,9 +161,9 @@ public class Secession : GameEvent {
 				}
 			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "secession_success");
-			newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name);
-			newLog.AddToFillers (newKingdom, newKingdom.name);
-			newLog.AddToFillers (null, newCitiesText);
+			newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
+			newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+			newLog.AddToFillers (null, newCitiesText, LOG_IDENTIFIER.SECESSION_CITIES);
 		
 		}
 

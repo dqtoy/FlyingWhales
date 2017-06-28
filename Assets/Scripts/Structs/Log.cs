@@ -24,7 +24,7 @@ public class Log {
 		this.fillers = new List<LogFiller>();
 	}
 
-	internal void AddToFillers(object obj, string value){
-		this.fillers.Add (new LogFiller (obj, value));
+	internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier){
+		this.fillers.Add (new LogFiller (obj, value, identifier));
 	}
 }

@@ -54,10 +54,10 @@ public class JoinWar : GameEvent {
 
         Log startLog = _invasionPlanThatStartedEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			               "Events", "War", "join_war_start");
-		startLog.AddToFillers (this.startedBy, this.startedBy.name);
-		startLog.AddToFillers (_envoyToSend.citizen, _envoyToSend.citizen.name);
-		startLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name);
-		startLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name);
+		startLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+		startLog.AddToFillers (_envoyToSend.citizen, _envoyToSend.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		startLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name, LOG_IDENTIFIER.KING_2);
+		startLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name, LOG_IDENTIFIER.KINGDOM_1);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
@@ -207,9 +207,9 @@ public class JoinWar : GameEvent {
 			if (!this.warEvent.isAtWar) {
 				Log joinWarSuccessLog = _invasionPlanThatStartedEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 					"Events", "War", "join_war_success");
-				joinWarSuccessLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name);
-				joinWarSuccessLog.AddToFillers (this.startedBy, this.startedBy.name);
-				joinWarSuccessLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name);
+				joinWarSuccessLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name, LOG_IDENTIFIER.KING_2);
+				joinWarSuccessLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+				joinWarSuccessLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name, LOG_IDENTIFIER.KINGDOM_1);
 
 				//Create new Invasion Plan against target kingdom
 				warEvent.CreateInvasionPlan (this.candidateForAlliance.city.kingdom, this, this._warTrigger);
@@ -223,8 +223,8 @@ public class JoinWar : GameEvent {
 		//fail
 		Log joinWarFailLog = _invasionPlanThatStartedEvent.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			"Events", "War", "join_war_fail");
-		joinWarFailLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name);
-		joinWarFailLog.AddToFillers (this.startedBy, this.startedBy.name);
+		joinWarFailLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name, LOG_IDENTIFIER.KING_2);
+		joinWarFailLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
 		this.DoneEvent();
 	}
 	internal override void DeathByOtherReasons(){

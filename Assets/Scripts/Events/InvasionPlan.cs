@@ -54,77 +54,105 @@ public class InvasionPlan : GameEvent {
 		string reason = string.Empty;
 		if (gameEventTrigger != null) {
 			LogFiller[] logFillers = null;
-			if (gameEventTrigger is Assassination) {
-				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after discovering that " + gameEventTrigger.startedBy.name
-				+ " sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
 
-				logFillers = new LogFiller[] {
-					new LogFiller (gameEventTrigger.startedBy, gameEventTrigger.startedBy.name),
-					new LogFiller ((gameEventTrigger as Assassination).targetCitizen, (gameEventTrigger as Assassination).targetCitizen.name)
-				};
+			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "InvasionPlanReasons", gameEventTrigger.eventType.ToString());
+
+//			invasionPlanStart.AddToFillers (gameEventTrigger, reason);
+//			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
+//			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
+			if (gameEventTrigger is Assassination) {
 
 			} else if (gameEventTrigger is BorderConflict) {
-				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in response to worsening Border Conflict.";
-				logFillers = new LogFiller[] {
-					new LogFiller (gameEventTrigger, gameEventTrigger.name),
-				};
+
 
 			} else if (gameEventTrigger is DiplomaticCrisis) {
-				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in the aftermath of a recent Diplomatic Crisis.";
-				logFillers = new LogFiller[] {
-					new LogFiller (gameEventTrigger, gameEventTrigger.name),
-				};
 
 			} else if (gameEventTrigger is Espionage) {
-				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
-				logFillers = new LogFiller[] {
-					new LogFiller (gameEventTrigger.startedBy, gameEventTrigger.startedBy.name),
-					new LogFiller ((gameEventTrigger as Espionage).targetKingdom, (gameEventTrigger as Espionage).targetKingdom.name)
-				};
 
 			} else if (gameEventTrigger is Raid) {
-				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after the raid of " + (gameEventTrigger as Raid).raidedCity.name + ".";
-				logFillers = new LogFiller[] {
-					new LogFiller ((gameEventTrigger as Raid).raidedCity, (gameEventTrigger as Raid).raidedCity.name)
-				};
 
 			} else if (gameEventTrigger is JoinWar) {
-				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name + ".";
-				logFillers = new LogFiller[] {
-					new LogFiller ((gameEventTrigger as JoinWar).startedByKingdom, (gameEventTrigger as JoinWar).startedByKingdom.name)
-				};
 
 			} else if (gameEventTrigger is Plague) {
-//				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as Plague).startedByKingdom.name + ".";
-				logFillers = new LogFiller[] {
-					new LogFiller (this._targetKingdom.king, this._targetKingdom.king.name),
-					new LogFiller (gameEventTrigger, gameEventTrigger.name),
-				};
+				
 			} else {
 				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
-			} 
-
-			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "InvasionPlanReasons", gameEventTrigger.eventType.ToString()), logFillers);
-
-			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
-			invasionPlanStart.AddToFillers (gameEventTrigger, reason);
-			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
-			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
+			}
+//			if (gameEventTrigger is Assassination) {
+//				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after discovering that " + gameEventTrigger.startedBy.name
+//				+ " sent an assassin to kill " + (gameEventTrigger as Assassination).targetCitizen.name;
+//
+//				logFillers = new LogFiller[] {
+//					new LogFiller (gameEventTrigger.startedBy, gameEventTrigger.startedBy.name),
+//					new LogFiller ((gameEventTrigger as Assassination).targetCitizen, (gameEventTrigger as Assassination).targetCitizen.name)
+//				};
+//
+//			} else if (gameEventTrigger is BorderConflict) {
+//				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in response to worsening Border Conflict.";
+//				logFillers = new LogFiller[] {
+//					new LogFiller (gameEventTrigger, gameEventTrigger.name),
+//				};
+//
+//			} else if (gameEventTrigger is DiplomaticCrisis) {
+//				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " in the aftermath of a recent Diplomatic Crisis.";
+//				logFillers = new LogFiller[] {
+//					new LogFiller (gameEventTrigger, gameEventTrigger.name),
+//				};
+//
+//			} else if (gameEventTrigger is Espionage) {
+//				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after finding out that " + gameEventTrigger.startedBy.name + " spied on " + (gameEventTrigger as Espionage).targetKingdom.name + ".";
+//				logFillers = new LogFiller[] {
+//					new LogFiller (gameEventTrigger.startedBy, gameEventTrigger.startedBy.name),
+//					new LogFiller ((gameEventTrigger as Espionage).targetKingdom, (gameEventTrigger as Espionage).targetKingdom.name)
+//				};
+//
+//			} else if (gameEventTrigger is Raid) {
+//				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " after the raid of " + (gameEventTrigger as Raid).raidedCity.name + ".";
+//				logFillers = new LogFiller[] {
+//					new LogFiller ((gameEventTrigger as Raid).raidedCity, (gameEventTrigger as Raid).raidedCity.name)
+//				};
+//
+//			} else if (gameEventTrigger is JoinWar) {
+//				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as JoinWar).startedByKingdom.name + ".";
+//				logFillers = new LogFiller[] {
+//					new LogFiller ((gameEventTrigger as JoinWar).startedByKingdom, (gameEventTrigger as JoinWar).startedByKingdom.name)
+//				};
+//
+//			} else if (gameEventTrigger is Plague) {
+////				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + " at the request of " + (gameEventTrigger as Plague).startedByKingdom.name + ".";
+//				logFillers = new LogFiller[] {
+//					new LogFiller (this._targetKingdom.king, this._targetKingdom.king.name),
+//					new LogFiller (gameEventTrigger, gameEventTrigger.name),
+//				};
+//			} else {
+//				this.description = startedBy.name + " created an invasion plan against " + targetKingdom.king.name + ".";
+//			} 
+//			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "InvasionPlanReasons", gameEventTrigger.eventType.ToString()), logFillers);
+//
+//			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
+//			invasionPlanStart.AddToFillers (gameEventTrigger, reason);
+//			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
+//			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
 
 			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days+1, GameManager.Instance.year, this.durationInDays);
-			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
+			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString(), LOG_IDENTIFIER.DATE);
 
 		}else{
-			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "WarTriggerReasons", warTrigger.ToString ())
-				, new LogFiller[]{ new LogFiller (this._targetKingdom.king, this._targetKingdom.king.name) });
+//			reason = Utilities.StringReplacer (LocalizationManager.Instance.GetLocalizedValue("Reasons", "WarTriggerReasons", warTrigger.ToString ())
+//				, new LogFiller[]{ new LogFiller (this._targetKingdom.king, this._targetKingdom.king.name) });
+//
+//			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
+//			invasionPlanStart.AddToFillers (null, reason);
+//			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
+//			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
 
-			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_start");
-			invasionPlanStart.AddToFillers (null, reason);
-			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
-			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
+			Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "InvasionPlanReasons", warTrigger.ToString ());
+//			invasionPlanStart.AddToFillers (null, reason);
+//			invasionPlanStart.AddToFillers (this._startedBy, this._startedBy.name);
+//			invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name);
 
 			System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days+1, GameManager.Instance.year, this.durationInDays);
-			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString());
+			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString(), LOG_IDENTIFIER.DATE);
 		}
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -139,7 +167,7 @@ public class InvasionPlan : GameEvent {
 			if (this.startedBy.isDead) {
 				this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " died.";
 				Log invasionPlanCancelDeath = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_death");
-				invasionPlanCancelDeath.AddToFillers (this.startedBy, this.startedBy.name);
+				invasionPlanCancelDeath.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
 
 				this.DoneEvent();
 				return;
@@ -147,7 +175,7 @@ public class InvasionPlan : GameEvent {
 			if (!this.startedBy.isKing) {
 				this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " is no longer king.";
 				Log invasionPlanCancelDethrone = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_dethrone");
-				invasionPlanCancelDethrone.AddToFillers (this.startedBy, this.startedBy.name);
+				invasionPlanCancelDethrone.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
 
 				this.DoneEvent();
 				return;
@@ -209,9 +237,9 @@ public class InvasionPlan : GameEvent {
         if(this._militarizationEvent != null && this.militarizationEvent.isActive) {
             this._militarizationEvent.CancelEvent();
         }
-		Log invasionPlanCancel = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_reason");
-		invasionPlanCancel.AddToFillers (this.startedBy, this.startedBy.name);
-		invasionPlanCancel.AddToFillers (null, " because relationships with the target kingdom were improved");
+		Log invasionPlanCancel = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "InvasionPlanCancelReasons", "reason1");
+//		invasionPlanCancel.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+//		invasionPlanCancel.AddToFillers (null, " because relationships with the target kingdom were improved");
 
 		this._war.InvasionPlanCancelled();
 
@@ -257,8 +285,8 @@ public class InvasionPlan : GameEvent {
 		this._uncovered.Add(citizen);
 		Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			"Events", "War", "invasion_plan_discovered");
-		invasionPlanStart.AddToFillers(citizen.city.kingdom.king, citizen.city.kingdom.king.name);
-		invasionPlanStart.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name);
-		invasionPlanStart.AddToFillers(this.startedBy, this.startedBy.name);
+		invasionPlanStart.AddToFillers(citizen.city.kingdom.king, citizen.city.kingdom.king.name, LOG_IDENTIFIER.KING_1);
+		invasionPlanStart.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+		invasionPlanStart.AddToFillers(this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
 	}
 }

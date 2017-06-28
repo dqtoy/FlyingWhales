@@ -102,12 +102,12 @@ public class Plague : GameEvent {
         EventManager.Instance.onKingdomDiedEvent.AddListener(CureAKingdom);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_title");
-		newLogTitle.AddToFillers (null, this._plagueName);
+		newLogTitle.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "start");
-		newLog.AddToFillers (this.sourceCity, this.sourceCity.name);
-		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name);
-		newLog.AddToFillers (null, this._plagueName);
+		newLog.AddToFillers (this.sourceCity, this.sourceCity.name, LOG_IDENTIFIER.CITY_1);
+		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
 		this.InitializePlague();
 		base.EventIsCreated();
@@ -122,13 +122,13 @@ public class Plague : GameEvent {
         if(citizen.assignedRole is Exterminator) {
             this.exterminators.Add((Exterminator)citizen.assignedRole);
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "exterminator_send");
-			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name);
-			newLog.AddToFillers (citizen, citizen.name);
+			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name, LOG_IDENTIFIER.KING_1);
+			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         }else if (citizen.assignedRole is Healer) {
             this.healers.Add((Healer)citizen.assignedRole);
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "healer_send");
-			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name);
-			newLog.AddToFillers (citizen, citizen.name);
+			newLog.AddToFillers (citizen.city.kingdom.king, citizen.city.kingdom.king.name, LOG_IDENTIFIER.KING_1);
+			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         }
     }
 
@@ -155,7 +155,7 @@ public class Plague : GameEvent {
         onPerformAction = null;
         DisembargoKingdoms();
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_end");
-		newLog.AddToFillers (null, this._plagueName);
+		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
 		WorldEventManager.Instance.currentPlague = null;
     }
@@ -806,8 +806,8 @@ public class Plague : GameEvent {
 		Kingdom selectedKingdom = this.opportunisticKingdoms[UnityEngine.Random.Range(0, this.opportunisticKingdoms.Count)];
 		selectedKingdom.SetBioWeapon (true);
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "bioweapon_developed");
-		newLog.AddToFillers (selectedKingdom, selectedKingdom.name);
-		newLog.AddToFillers (null, this._plagueName);
+		newLog.AddToFillers (selectedKingdom, selectedKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 	}
 
     private void DevelopVaccine() {
@@ -817,7 +817,7 @@ public class Plague : GameEvent {
             this.kingdomChances[currKingdom.id][0] = 5f;
         }
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "vaccine_developed");
-		newLog.AddToFillers (null, this._plagueName);
+		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
     }
 
 	private void DifferentApproachesLogs(Citizen citizen, EVENT_APPROACH approach, City city){
@@ -836,7 +836,7 @@ public class Plague : GameEvent {
 				break;
 			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", logName);
-			newLog.AddToFillers (citizen, citizen.name);
+			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.KING_1);
 		}else{
 			//This is the kingdom where the plague has spread
 			string logName = string.Empty;
@@ -852,10 +852,10 @@ public class Plague : GameEvent {
 				break;
 			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", logName);
-			newLog.AddToFillers (null, this._plagueName);
-			newLog.AddToFillers (city, city.name);
-			newLog.AddToFillers (citizen.city.kingdom, citizen.city.kingdom.name);
-			newLog.AddToFillers (citizen, citizen.name);
+			newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
+			newLog.AddToFillers (city, city.name, LOG_IDENTIFIER.CITY_1);
+			newLog.AddToFillers (citizen.city.kingdom, citizen.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.KING_1);
 		}
 	}
 }
