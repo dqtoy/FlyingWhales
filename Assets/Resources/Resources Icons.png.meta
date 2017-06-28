@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: be352ea3d46036640bb6df35b7b4dc2b
-timeCreated: 1490269469
+timeCreated: 1498639207
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -42,10 +42,10 @@ TextureImporter:
   cubemapConvolutionSteps: 7
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
-  textureFormat: -1
-  maxTextureSize: 2048
+  textureFormat: -3
+  maxTextureSize: 1024
   textureSettings:
-    filterMode: -1
+    filterMode: 1
     aniso: -1
     mipBias: -1
     wrapMode: 1
@@ -72,10 +72,10 @@ TextureImporter:
       name: WHEAT
       rect:
         serializedVersion: 2
-        x: 5
-        y: 805
-        width: 217
-        height: 215
+        x: 6
+        y: 619
+        width: 127
+        height: 126
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -85,10 +85,10 @@ TextureImporter:
       name: RICE
       rect:
         serializedVersion: 2
-        x: 260
-        y: 804
-        width: 178
-        height: 200
+        x: 272
+        y: 890
+        width: 126
+        height: 127
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -98,23 +98,10 @@ TextureImporter:
       name: CORN
       rect:
         serializedVersion: 2
-        x: 476
-        y: 781
-        width: 238
-        height: 239
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: GOLD
-      rect:
-        serializedVersion: 2
-        x: 752
-        y: 826
-        width: 209
-        height: 151
+        x: 6
+        y: 755
+        width: 127
+        height: 127
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,10 +111,10 @@ TextureImporter:
       name: GRANITE
       rect:
         serializedVersion: 2
-        x: 0
-        y: 569
-        width: 250
-        height: 203
+        x: 404
+        y: 754
+        width: 127
+        height: 127
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,23 +124,10 @@ TextureImporter:
       name: SLATE
       rect:
         serializedVersion: 2
-        x: 260
-        y: 587
-        width: 220
-        height: 167
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: MARBLE
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 566
-        width: 294
-        height: 214
+        x: 403
+        y: 890
+        width: 128
+        height: 127
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -163,23 +137,10 @@ TextureImporter:
       name: DEER
       rect:
         serializedVersion: 2
-        x: 856
-        y: 568
-        width: 140
-        height: 236
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: CEDAR
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 327
-        width: 268
-        height: 223
+        x: 139
+        y: 755
+        width: 128
+        height: 126
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -189,10 +150,10 @@ TextureImporter:
       name: OAK
       rect:
         serializedVersion: 2
-        x: 264
-        y: 312
-        width: 288
-        height: 213
+        x: 7
+        y: 890
+        width: 128
+        height: 127
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -202,10 +163,10 @@ TextureImporter:
       name: EBONY
       rect:
         serializedVersion: 2
-        x: 557
-        y: 319
-        width: 240
-        height: 226
+        x: 271
+        y: 754
+        width: 128
+        height: 127
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,10 +176,10 @@ TextureImporter:
       name: PIG
       rect:
         serializedVersion: 2
-        x: 803
-        y: 340
-        width: 217
-        height: 193
+        x: 139
+        y: 891
+        width: 127
+        height: 126
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -228,10 +189,10 @@ TextureImporter:
       name: MITHRIL
       rect:
         serializedVersion: 2
-        x: 7
-        y: 83
-        width: 209
-        height: 233
+        x: 138
+        y: 482
+        width: 128
+        height: 127
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -241,10 +202,10 @@ TextureImporter:
       name: MANA_STONE
       rect:
         serializedVersion: 2
-        x: 229
-        y: 45
-        width: 244
-        height: 240
+        x: 6
+        y: 483
+        width: 126
+        height: 126
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -254,10 +215,10 @@ TextureImporter:
       name: BEHEMOTH
       rect:
         serializedVersion: 2
-        x: 759
-        y: 54
-        width: 253
-        height: 224
+        x: 138
+        y: 619
+        width: 126
+        height: 126
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -267,10 +228,10 @@ TextureImporter:
       name: COBALT
       rect:
         serializedVersion: 2
-        x: 478
-        y: 61
-        width: 273
-        height: 200
+        x: 273
+        y: 618
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
