@@ -732,7 +732,7 @@ public class Utilities : MonoBehaviour {
 		return newText;
 	}
 	public static string CustomPronounReplacer(string wordToBeReplaced, List<LogFiller> objectLog){
-		LOG_IDENTIFIER identifier = Utilities.GetLogIdentifier (wordToBeReplaced.Substring(1, 2));
+		LOG_IDENTIFIER identifier = Utilities.logIdentifiers [wordToBeReplaced.Substring(1, 2)];
 		string wordToReplace = string.Empty;
 //		string value = wordToBeReplaced.Substring(1, 2);
 		string strIdentifier = identifier.ToString ();
@@ -758,8 +758,7 @@ public class Utilities : MonoBehaviour {
 	}
 	public static string CustomStringReplacer(string wordToBeReplaced, List<LogFiller> objectLog){
 		string wordToReplace = string.Empty;
-		string value = wordToBeReplaced.Substring(1, 2);
-		LOG_IDENTIFIER identifier = Utilities.GetLogIdentifier (value);
+		LOG_IDENTIFIER identifier = Utilities.logIdentifiers[wordToBeReplaced.Substring(1, 2)];
 		if(wordToBeReplaced.EndsWith("@")){
 			for(int i = 0; i < objectLog.Count; i++){
 				if(objectLog[i].identifier == identifier){
@@ -842,48 +841,45 @@ public class Utilities : MonoBehaviour {
 		}
 		return string.Empty;
 	}
-	public static LOG_IDENTIFIER GetLogIdentifier(string key){
-		switch(key){
-		case "00": return LOG_IDENTIFIER.ACTIVE_CHARACTER;
-		case "01": return LOG_IDENTIFIER.KINGDOM_1;
-		case "02": return LOG_IDENTIFIER.KING_1;
-		case "03": return LOG_IDENTIFIER.KING_1_SPOUSE;
-		case "04": return LOG_IDENTIFIER.CITY_1;
-		case "05": return LOG_IDENTIFIER.GOVERNOR_1;
-		case "06": return LOG_IDENTIFIER.RANDOM_CITY_1;
-		case "07": return LOG_IDENTIFIER.RANDOM_GOVERNOR_1;
-		case "10": return LOG_IDENTIFIER.TARGET_CHARACTER;
-		case "11": return LOG_IDENTIFIER.KINGDOM_2;
-		case "12": return LOG_IDENTIFIER.KING_2;
-		case "13": return LOG_IDENTIFIER.KING_2_SPOUSE;
-		case "14": return LOG_IDENTIFIER.CITY_2;
-		case "15": return LOG_IDENTIFIER.GOVERNOR_2;
-		case "16": return LOG_IDENTIFIER.RANDOM_CITY_2;
-		case "17": return LOG_IDENTIFIER.RANDOM_GOVERNOR_2;
-		case "81": return LOG_IDENTIFIER.TRIGGER_REASON;
-		case "82": return LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME;
-		case "83": return LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_S;
-		case "84": return LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_O;
-		case "85": return LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_P;
-		case "86": return LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_R;
-		case "87": return LOG_IDENTIFIER.KING_1_PRONOUN_S;
-		case "88": return LOG_IDENTIFIER.KING_1_PRONOUN_O;
-		case "89": return LOG_IDENTIFIER.KING_1_PRONOUN_P;
-		case "90": return LOG_IDENTIFIER.KING_1_PRONOUN_R;
-		case "91": return LOG_IDENTIFIER.KING_2_PRONOUN_S;
-		case "92": return LOG_IDENTIFIER.KING_2_PRONOUN_O;
-		case "93": return LOG_IDENTIFIER.KING_2_PRONOUN_P;
-		case "94": return LOG_IDENTIFIER.KING_2_PRONOUN_R;
-		case "95": return LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_S;
-		case "96": return LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_O;
-		case "97": return LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_P;
-		case "98": return LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_R;
-		case "99": return LOG_IDENTIFIER.SECESSION_CITIES;
-		case "100": return LOG_IDENTIFIER.GAME_EVENT;
-		case "101": return LOG_IDENTIFIER.DATE;
-		}
-		return LOG_IDENTIFIER.NONE; 
-	}
+	public static Dictionary<string, LOG_IDENTIFIER> logIdentifiers = new Dictionary<string, LOG_IDENTIFIER> () {
+		{"00", LOG_IDENTIFIER.ACTIVE_CHARACTER},
+		{"01", LOG_IDENTIFIER.KINGDOM_1},
+		{"02", LOG_IDENTIFIER.KING_1},
+		{"03", LOG_IDENTIFIER.KING_1_SPOUSE},
+		{"04", LOG_IDENTIFIER.CITY_1},
+		{"05", LOG_IDENTIFIER.GOVERNOR_1},
+		{"06", LOG_IDENTIFIER.RANDOM_CITY_1},
+		{"07", LOG_IDENTIFIER.RANDOM_GOVERNOR_1},
+		{"10", LOG_IDENTIFIER.TARGET_CHARACTER},
+		{"11", LOG_IDENTIFIER.KINGDOM_2},
+		{"12", LOG_IDENTIFIER.KING_2},
+		{"13", LOG_IDENTIFIER.KING_2_SPOUSE},
+		{"14", LOG_IDENTIFIER.CITY_2},
+		{"15", LOG_IDENTIFIER.GOVERNOR_2},
+		{"16", LOG_IDENTIFIER.RANDOM_CITY_2},
+		{"17", LOG_IDENTIFIER.RANDOM_GOVERNOR_2},
+		{"81", LOG_IDENTIFIER.TRIGGER_REASON},
+		{"82", LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME},
+		{"83", LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_S},
+		{"84", LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_O},
+		{"85", LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_P},
+		{"86", LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_R},
+		{"87", LOG_IDENTIFIER.KING_1_PRONOUN_S},
+		{"88", LOG_IDENTIFIER.KING_1_PRONOUN_O},
+		{"89", LOG_IDENTIFIER.KING_1_PRONOUN_P},
+		{"90", LOG_IDENTIFIER.KING_1_PRONOUN_R},
+		{"91", LOG_IDENTIFIER.KING_2_PRONOUN_S},
+		{"92", LOG_IDENTIFIER.KING_2_PRONOUN_O},
+		{"93", LOG_IDENTIFIER.KING_2_PRONOUN_P},
+		{"94", LOG_IDENTIFIER.KING_2_PRONOUN_R},
+		{"95", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_S},
+		{"96", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_O},
+		{"97", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_P},
+		{"98", LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_R},
+		{"99", LOG_IDENTIFIER.SECESSION_CITIES},
+		{"100", LOG_IDENTIFIER.GAME_EVENT},
+		{"101", LOG_IDENTIFIER.DATE},
+	};
 	public static string PronounReplacer(string word, object genderSubject){
 //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
 		string[] pronouns = word.Split ('/');
