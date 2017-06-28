@@ -80,6 +80,7 @@ public class GameManager : MonoBehaviour {
 				this.year += 1;
 			}
 		}
+        //Debug.Log("MOON PHASE : " + Utilities.GetMoonPhase(this.year, this.month, this.days).ToString());
 	}
 
 	/*private void TriggerRequestPeace(){

@@ -13,6 +13,8 @@ public class LycanthropeAvatar : MonoBehaviour {
 
     private bool hasArrived = false;
 
+    private bool isWaitingForFullMoon = false;
+
     private List<HexTile> pathToUnhighlight = new List<HexTile>();
 
     internal DIRECTION direction;
@@ -74,6 +76,7 @@ public class LycanthropeAvatar : MonoBehaviour {
 
     }
 
+    #region Behaviour Tree Tasks
     [Task]
     public void IsThereCitizen() {
         if (this.lycanthrope.citizen != null) {
@@ -96,7 +99,9 @@ public class LycanthropeAvatar : MonoBehaviour {
         if (this.lycanthrope.location == this.lycanthrope.targetLocation) {
             if (!this.hasArrived) {
                 this.hasArrived = true;
-                this.lycanthrope.Attack();
+                this.isWaitingForFullMoon = true;
+                this.lycanthrope.avatar.SetActive(false);
+                //this.lycanthrope.Attack();
             }
             Task.current.Succeed();
         } else {
@@ -105,22 +110,6 @@ public class LycanthropeAvatar : MonoBehaviour {
 
     }
 
-    //	[Task]
-    //	public void HasCollidedWithHostileGeneral(){
-    //		if(this.collidedWithHostile){
-    //			this.collidedWithHostile = false;
-    //			if(!this.otherGeneral.citizen.isDead){
-    //				//Death by general
-    //				this.raider.raid.DeathByGeneral (this.otherGeneral);
-    //				Task.current.Succeed ();
-    //			}else{
-    //				Task.current.Fail ();
-    //			}
-    //
-    //		}else{
-    //			Task.current.Fail ();
-    //		}
-    //	}
     [Task]
     public void HasDiedOfOtherReasons() {
         if (this.lycanthrope.citizen.isDead) {
@@ -131,11 +120,55 @@ public class LycanthropeAvatar : MonoBehaviour {
             Task.current.Fail();
         }
     }
+
     [Task]
     public void MoveToNextTile() {
         Move();
         Task.current.Succeed();
     }
+
+    [Task]
+    protected bool HasTargetCity() {
+        if(this.lycanthrope.targetCity == null) {
+            return false;
+        }
+        return true;
+    }
+
+    [Task]
+    protected void GetTargetCity() {
+        this.lycanthrope.lycanthropyEvent.GetTargetCity();
+        if(this.lycanthrope.targetCity != null) {
+            this.hasArrived = false;
+            this.lycanthrope.avatar.SetActive(true);
+            Task.current.Succeed();
+        } else {
+            Task.current.Fail();
+        }
+    }
+
+    [Task]
+    protected bool IsWaitingForFullMoon() {
+        return isWaitingForFullMoon;
+    }
+
+    [Task]
+    protected bool IsFullMoon() {
+        if(Utilities.GetMoonPhase(GameManager.Instance.year, GameManager.Instance.month, GameManager.Instance.days) == 4) {
+            return true;
+        }
+        return false;
+    }
+
+    [Task]
+    protected void Attack() {
+        this.lycanthrope.avatar.SetActive(true);
+        this.lycanthrope.Attack();
+        this.isWaitingForFullMoon = false;
+        Task.current.Succeed();
+    }
+    #endregion
+
 
     private void ResetValues() {
         this.collidedWithHostile = false;
@@ -216,7 +249,8 @@ public class LycanthropeAvatar : MonoBehaviour {
 
     public void OnEndAttack() {
         this.lycanthrope.lycanthropyEvent.DoneCitizenAction(this.lycanthrope.citizen);
-        this.lycanthrope.DestroyGO();
+        //this.lycanthrope.DestroyGO();
+        this.lycanthrope.avatar.SetActive(false);
     }
 
     internal void HasAttacked() {
