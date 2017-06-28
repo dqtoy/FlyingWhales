@@ -7,7 +7,9 @@ using System.Linq;
 public class EventManager : MonoBehaviour {
 	public static EventManager Instance;
 
-	private Dictionary <string, UnityEvent> eventDictionary;
+    public EVENT_TYPES[] playerPlacableEvents;
+
+    private Dictionary <string, UnityEvent> eventDictionary;
 
 	public Dictionary<EVENT_TYPES, List<GameEvent>> allEvents;
 

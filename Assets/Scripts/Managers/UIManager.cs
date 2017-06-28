@@ -2589,8 +2589,8 @@ public class UIManager : MonoBehaviour {
     }
 
     private void LoadInterveneEvents() {
-        for (int i = 0; i < Utilities.playerPlacableEvents.Length; i++) {
-            EVENT_TYPES currEvent = Utilities.playerPlacableEvents[i];
+        for (int i = 0; i < EventManager.Instance.playerPlacableEvents.Length; i++) {
+            EVENT_TYPES currEvent = EventManager.Instance.playerPlacableEvents[i];
             GameObject playerEventItemGO = InstantiateUIObject(playerEventItemPrefab, this.transform);
             interveneMenuGrid.AddChild(playerEventItemGO.transform);
             playerEventItemGO.transform.localPosition = Vector3.zero;
