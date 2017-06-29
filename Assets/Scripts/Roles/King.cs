@@ -33,7 +33,7 @@ public class King : Role {
 				int chance = UnityEngine.Random.Range (0, 100);
 				if(chance < 3 * this.abductionCounter){
 					Citizen targetKing = null;
-					if(IsReadyForAbduction(ref targetKing)){
+					if(IsReadyForAbduction(ref targetKing) && IsEligibleForAbduction()){
 						EventCreator.Instance.CreateSpouseAbductionEvent (this.citizen, targetKing);
 					}
 				}
@@ -41,6 +41,25 @@ public class King : Role {
 		}else{
 			EventManager.Instance.onWeekEnd.RemoveListener (TriggerSpouseAbduction);
 		}
+	}
+	private bool IsEligibleForAbduction(Kingdom kingdom1, Kingdom kingdom2){
+		List<GameEvent> allSpouseAbduction = EventManager.Instance.GetEventsOfType (EVENT_TYPES.SPOUSE_ABDUCTION).Where (x => x.isActive).ToList ();
+		int counter = 0;
+		if(allSpouseAbduction != null && allSpouseAbduction.Count > 0){
+			for (int i = 0; i < allSpouseAbduction.Count; i++) {
+				counter = 0;
+				if(((SpouseAbduction)allSpouseAbduction[i]).abductorKingdom.id == kingdom1.id || ((SpouseAbduction)allSpouseAbduction[i]).targetKingdom.id == kingdom1.id){
+					counter += 1;
+				}
+				if(((SpouseAbduction)allSpouseAbduction[i]).abductorKingdom.id == kingdom2.id || ((SpouseAbduction)allSpouseAbduction[i]).targetKingdom.id == kingdom2.id){
+					counter += 1;
+				}
+				if(counter == 2){
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	private bool IsReadyForAbduction(ref Citizen targetKing){
 		if(this.citizen.spouse == null && !this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)){
