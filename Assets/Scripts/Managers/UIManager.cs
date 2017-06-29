@@ -353,11 +353,11 @@ public class UIManager : MonoBehaviour {
             }
         }
 
-        if (citizenInfoGO.activeSelf) {
-            if (currentlyShowingCitizen != null) {
-                ShowCitizenInfo(currentlyShowingCitizen);
-            }
-        }
+        //if (citizenInfoGO.activeSelf) {
+        //    if (currentlyShowingCitizen != null) {
+        //        ShowCitizenInfo(currentlyShowingCitizen);
+        //    }
+        //}
 	}
 
 	public void SetProgressionSpeed1X(){
@@ -3150,6 +3150,10 @@ public class UIManager : MonoBehaviour {
         Lycanthropy newLycanthropy = new Lycanthropy(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, lycanthropySelectedCitizen);
         HideLycanthropyMenu();
         HideInterveneMenu();
+        if(currentlyShowingCitizen != null) {
+            ShowCitizenInfo(currentlyShowingCitizen);
+        }
+        
     }
 
     public void HideLycanthropyMenu() {
