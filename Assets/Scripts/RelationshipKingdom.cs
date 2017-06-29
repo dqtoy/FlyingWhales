@@ -103,7 +103,6 @@ public class RelationshipKingdom {
     }
 
 	internal void DeclarePeace(){
-		this._war = null;
         if(this._invasionPlan != null) {
             if (this._invasionPlan.isActive) {
                 this._invasionPlan.CancelEvent();
@@ -112,10 +111,12 @@ public class RelationshipKingdom {
         }
         if (this._requestPeace != null) {
             if (this._requestPeace.isActive) {
+				this._war.GameEventWarWinner (this._targetKingdom);
                 this._requestPeace.CancelEvent();
             }
             this._requestPeace = null;
         }
+		this._war = null;
 		this._isAtWar = false;
 	}
 

@@ -9,7 +9,7 @@ public class Spouse : Citizen {
         this._marriageCompatibility = GenerateMarriageCompatibility();
     }
 
-    private int GenerateMarriageCompatibility() {
+    internal int GenerateMarriageCompatibility() {
         return Random.Range(-100, 101);
     }
 }

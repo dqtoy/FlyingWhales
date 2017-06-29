@@ -463,4 +463,14 @@ public class KingdomManager : MonoBehaviour {
         EventManager.Instance.onUpdateUI.Invoke();
     }
     #endregion
+
+	internal void InstantWarBetweenKingdoms(Kingdom sourceKingdom, Kingdom targetKingdom, GameEvent gameEventTrigger = null){
+		RelationshipKingdom relationship = sourceKingdom.GetRelationshipWithOtherKingdom (targetKingdom);
+		if (relationship.war == null) {
+			War newWar = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, 
+				sourceKingdom, targetKingdom);
+			newWar.DeclareWar (newWar.kingdom1);
+			newWar.gameEventTrigger = gameEventTrigger;
+		}
+	}
 }
