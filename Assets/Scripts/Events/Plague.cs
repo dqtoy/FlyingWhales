@@ -560,7 +560,7 @@ public class Plague : GameEvent {
         CheckIfPlagueIsCured();
     }
 
-    private void CheckIfCityIsCured(City city) {
+    internal void CheckIfCityIsCured(City city) {
 		if (city.plaguedSettlements.Count <= 0 || city.plaguedSettlements == null) {
             DisinfectACity(city);
         }
@@ -589,7 +589,7 @@ public class Plague : GameEvent {
              * TODO: When ruined settlement sprites are provided, use those instead.
              * */
 				city.RemoveTileFromCity(targetSettlement);
-				this.CheckIfCityIsCured (city);
+				
 			}
 		}
 
@@ -622,10 +622,12 @@ public class Plague : GameEvent {
 			for (int i = 0; i < this.affectedCities.Count; i++) {
 				float chance = UnityEngine.Random.Range (0f, 99f);
                 Kingdom kingdomOfCity = this.affectedCities[i].kingdom;
-                float value = this.kingdomChances[kingdomOfCity.id][1] * this.affectedCities [i].plaguedSettlements.Count;
-				if(chance < value){
-                    InfectRandomSettlement(this.affectedCities[i].structures);
-				}
+                if (this.kingdomChances.ContainsKey(kingdomOfCity.id)) {
+                    float value = this.kingdomChances[kingdomOfCity.id][1] * this.affectedCities[i].plaguedSettlements.Count;
+                    if (chance < value) {
+                        InfectRandomSettlement(this.affectedCities[i].structures);
+                    }
+                }
 			}
 		}
 	}
