@@ -31,9 +31,9 @@ public class King : Role {
 			if((MONTH)GameManager.Instance.month == this.citizen.birthMonth && GameManager.Instance.days == this.citizen.birthWeek && GameManager.Instance.year > this.citizen.birthYear){
 				this.abductionCounter += 1;
 				int chance = UnityEngine.Random.Range (0, 100);
-				if(chance < 3 * this.abductionCounter){
+				if(chance < 100 * this.abductionCounter){
 					Citizen targetKing = null;
-					if(IsReadyForAbduction(ref targetKing) && IsEligibleForAbduction()){
+					if(IsReadyForAbduction(ref targetKing) && IsEligibleForAbduction(this.citizen.city.kingdom, targetKing.city.kingdom)){
 						EventCreator.Instance.CreateSpouseAbductionEvent (this.citizen, targetKing);
 					}
 				}
@@ -68,10 +68,12 @@ public class King : Role {
 				for (int i = 0; i < targetKings.Count; i++) {
 					RelationshipKings relationship = this.citizen.GetRelationshipWithCitizen (targetKings [i]);
 					if(relationship != null){
-						if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY || relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
-							targetKing = targetKings [i];
-							return true;
-						}
+						targetKing = targetKings [i];
+						return true;
+//						if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY || relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
+//							targetKing = targetKings [i];
+//							return true;
+//						}
 					}
 				}
 			}
