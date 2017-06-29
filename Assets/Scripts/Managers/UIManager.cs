@@ -2660,6 +2660,8 @@ public class UIManager : MonoBehaviour {
 			return rebellionPlotIcon;
 		case EVENT_TYPES.EVANGELISM:
 			return requestPeaceIcon;
+		case EVENT_TYPES.SPOUSE_ABDUCTION:
+			return militarizationIcon;
 		}
 		return assassinationIcon;
 	}

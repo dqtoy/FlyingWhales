@@ -200,6 +200,14 @@ public class City{
 		father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
 		mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
+		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		MONTH monthKing = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+
+		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
+		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
+		king.AssignBirthday (monthKing, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - king.age));
+
 		king.AssignRole(ROLE.KING);
 
 //		this.kingdom.king.isKing = true;
@@ -220,13 +228,6 @@ public class City{
 		mother.AddChild (this.kingdom.king);
 		king.AddParents(father, mother);
 
-		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-		MONTH monthKing = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-
-		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
-		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
-		this.kingdom.king.AssignBirthday (monthKing, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - this.kingdom.king.age));
 
 		king.isBusy = true;
 
