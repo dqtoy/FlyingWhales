@@ -347,6 +347,12 @@ public class UIManager : MonoBehaviour {
                 ShowKingdomCities();
             }
         }
+
+        if (citizenInfoGO.activeSelf) {
+            if (currentlyShowingCitizen != null) {
+                ShowCitizenInfo(currentlyShowingCitizen);
+            }
+        }
 	}
 
 	public void SetProgressionSpeed1X(){
@@ -2193,8 +2199,8 @@ public class UIManager : MonoBehaviour {
 				}
 			}
 			StartCoroutine(RepositionTable(elmEventLogsParentGO.GetComponent<UITable>()));
-			StartCoroutine(RepositionScrollView(elmScrollView));
-		}
+            StartCoroutine(RepositionScrollView(elmScrollView));
+        }
 		eventLogsGO.SetActive(true);
 	}
 
@@ -3070,7 +3076,9 @@ public class UIManager : MonoBehaviour {
         List<Citizen> allGovernorRelatives = new List<Citizen>();
         //Get relatives of all the governors
         for (int i = 0; i < allGovernors.Count; i++) {
-            allGovernorRelatives = allGovernorRelatives.Union(allGovernors[i].GetRelatives().Where(x => !x.isDead && x.role == ROLE.UNTRAINED)).ToList();
+            Governor currGovernor = (Governor)allGovernors[i].assignedRole;
+            List<Citizen> currGovernorRelatives = allGovernors[i].GetRelatives().Where(x => !x.isDead && x.role == ROLE.UNTRAINED).ToList();
+            allGovernorRelatives = allGovernorRelatives.Union(currGovernorRelatives).ToList();
         }
 
         //Randomly choose a number of relatives
@@ -3133,6 +3141,8 @@ public class UIManager : MonoBehaviour {
 
     public void StartLycanthropyEvent() {
         Lycanthropy newLycanthropy = new Lycanthropy(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, lycanthropySelectedCitizen);
+        HideLycanthropyMenu();
+        HideInterveneMenu();
     }
 
     public void HideLycanthropyMenu() {

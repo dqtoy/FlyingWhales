@@ -1140,6 +1140,10 @@ public class City{
         } else {
             this.kingdom.UnHighlightAllOwnedTilesInKingdom();
         }
+
+        if(this.plague != null) {
+            this.plague.CheckIfCityIsCured(this);
+        }
     }
 
 	internal void HasBeenRaided(){
