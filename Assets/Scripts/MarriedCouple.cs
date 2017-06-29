@@ -47,39 +47,52 @@ public class MarriedCouple {
 			return;
 		}
 
-		//float chanceForPregnancy = 0.2f;
+        if ((this.wife.spouse != null && this.wife.spouse.id != this.husband.id) || 
+            (this.husband.spouse != null && this.husband.spouse.id != this.wife.id)) {
+            //the couple is already divorced
+            EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+            return;
+        }
 
-//		if (this.husband.miscTraits.Contains(MISC_TRAIT.BARREN)) {
-//			return;
-//		}
-//
-//		if (this.wife.miscTraits.Contains(MISC_TRAIT.BARREN)) {
-//			return;
-//		}
-//
-//		if (this.husband.miscTraits.Contains(MISC_TRAIT.HORNY)) {
-//			chanceForPregnancy += 0.2f;
-//		}
-//
-//		if (this.wife.miscTraits.Contains(MISC_TRAIT.HORNY)) {
-//			chanceForPregnancy += 0.2f;
-//		}
+        if (!this.wife.isMarried || !this.husband.isMarried) {
+            //the couple is already divorced
+            EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+            return;
+        }
 
-		//if (this.wife.age < 20) {
-		//	chanceForPregnancy += 0.2f;
-		//} else if (this.wife.age < 30) {
-		//	chanceForPregnancy += 0.2f;
-		//}
+        //float chanceForPregnancy = 0.2f;
 
-//		if (this.husband.miscTraits.Contains(MISC_TRAIT.HOMOSEXUAL)) {
-//			chanceForPregnancy /= 2f;
-//		}
-//
-//		if (this.wife.miscTraits.Contains(MISC_TRAIT.HOMOSEXUAL)) {
-//			chanceForPregnancy /= 2f;
-//		}
+        //		if (this.husband.miscTraits.Contains(MISC_TRAIT.BARREN)) {
+        //			return;
+        //		}
+        //
+        //		if (this.wife.miscTraits.Contains(MISC_TRAIT.BARREN)) {
+        //			return;
+        //		}
+        //
+        //		if (this.husband.miscTraits.Contains(MISC_TRAIT.HORNY)) {
+        //			chanceForPregnancy += 0.2f;
+        //		}
+        //
+        //		if (this.wife.miscTraits.Contains(MISC_TRAIT.HORNY)) {
+        //			chanceForPregnancy += 0.2f;
+        //		}
 
-		float pregnancyChance = Random.Range (0f, 100f);
+        //if (this.wife.age < 20) {
+        //	chanceForPregnancy += 0.2f;
+        //} else if (this.wife.age < 30) {
+        //	chanceForPregnancy += 0.2f;
+        //}
+
+        //		if (this.husband.miscTraits.Contains(MISC_TRAIT.HOMOSEXUAL)) {
+        //			chanceForPregnancy /= 2f;
+        //		}
+        //
+        //		if (this.wife.miscTraits.Contains(MISC_TRAIT.HOMOSEXUAL)) {
+        //			chanceForPregnancy /= 2f;
+        //		}
+
+        float pregnancyChance = Random.Range (0f, 100f);
 		if (pregnancyChance < PREGNANCY_CHANCE) {
             Citizen baby = MarriageManager.Instance.MakeBaby(this.husband, this.wife);
             //Debug.Log(this.husband.name + " and " + this.wife.name + " has made a baby named: " + baby.name);

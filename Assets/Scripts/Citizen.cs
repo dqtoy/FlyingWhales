@@ -789,8 +789,10 @@ public class Citizen {
 			this.assignedRole = new Missionary(this);
 		}else if (role == ROLE.ABDUCTOR) {
 			this.assignedRole = new Abductor(this);
-		}
-        this.UpdatePrestige ();
+		}else if (role == ROLE.LYCANTHROPE) {
+            this.assignedRole = new Lycanthrope(this);
+        }
+        //this.UpdatePrestige ();
 	}
 
 	internal RelationshipKings GetRelationshipWithCitizen(Citizen citizen){

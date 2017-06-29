@@ -83,6 +83,7 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.PROVOCATION, -1},
 		{EVENT_TYPES.EVANGELISM, -1},
 		{EVENT_TYPES.SPOUSE_ABDUCTION, -1},
+        {EVENT_TYPES.LYCANTHROPY, -1},
     };
 
 	void Awake(){

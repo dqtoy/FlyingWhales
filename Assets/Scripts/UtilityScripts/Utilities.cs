@@ -173,44 +173,44 @@ public class Utilities : MonoBehaviour {
 		{BIOMES.GRASSLAND, new SpecialResourceChance(
             //new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.RICE, RESOURCE.DEER, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL, RESOURCE.COBALT},
             //new int[] {100, 20, 40, 20, 60, 35, 5, 5})
-            new RESOURCE[] {RESOURCE.CORN, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.MITHRIL},
-            new int[] {20, 30, 70, 3})
+			new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.CORN, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MITHRIL},
+            new int[] {10, 60, 20, 10, 5})
         },
 
 		{BIOMES.WOODLAND, new SpecialResourceChance(
 			//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.COBALT},
    //         new int[] {40, 12, 65, 25, 90, 22, 60, 12, 5, 5})
-            new RESOURCE[] {RESOURCE.RICE, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.COBALT},
-            new int[] {20, 70, 30, 4})
+			new RESOURCE[] {RESOURCE.PIG, RESOURCE.RICE, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.COBALT},
+            new int[] {10, 40, 30, 30, 5})
         },
 
 
 		{BIOMES.FOREST, new SpecialResourceChance(
 			//new RESOURCE[] {RESOURCE.EBONY, RESOURCE.DEER, RESOURCE.BEHEMOTH, RESOURCE.MANA_STONE, RESOURCE.MITHRIL, RESOURCE.GOLD}, 
 			//new int[] {15, 40, 15, 0, 0, 0})
-            new RESOURCE[] {RESOURCE.DEER, RESOURCE.OAK, RESOURCE.MANA_STONE},
-            new int[] {20, 100, 4})
+			new RESOURCE[] {RESOURCE.BEHEMOTH, RESOURCE.DEER, RESOURCE.OAK, RESOURCE.EBONY, RESOURCE.MANA_STONE},
+            new int[] {10, 60, 20, 10, 5})
         },
 
 		{BIOMES.DESERT, new SpecialResourceChance(
 			//new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.SLATE, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT, RESOURCE.GOLD}, 
 			//new int[] {20, 20, 15, 15, 0, 0, 0})
-            new RESOURCE[] {RESOURCE.PIG, RESOURCE.GRANITE, RESOURCE.COBALT, RESOURCE.MITHRIL},
-            new int[] {20, 100, 4, 4})
+			new RESOURCE[] {RESOURCE.PIG, RESOURCE.GRANITE, RESOURCE.MITHRIL, RESOURCE.BEHEMOTH},
+            new int[] {40, 60, 5, 5})
         },
 
 		{BIOMES.TUNDRA, new SpecialResourceChance(
 			//new RESOURCE[] {RESOURCE.DEER, RESOURCE.PIG, RESOURCE.CEDAR, RESOURCE.GRANITE, RESOURCE.SLATE, RESOURCE.MANA_STONE, RESOURCE.GOLD}, 
 			//new int[] {50, 15, 10, 25, 10, 0, 0})
-            new RESOURCE[] {RESOURCE.WHEAT, RESOURCE.OAK, RESOURCE.GRANITE, RESOURCE.MANA_STONE},
-            new int[] {20, 50, 50, 4})
+			new RESOURCE[] {RESOURCE.RICE, RESOURCE.OAK, RESOURCE.MANA_STONE, RESOURCE.BEHEMOTH},
+            new int[] {40, 60, 5, 5})
         },
 
 		{BIOMES.SNOW, new SpecialResourceChance(
 			//new RESOURCE[] {RESOURCE.CORN, RESOURCE.WHEAT, RESOURCE.DEER, RESOURCE.PIG, RESOURCE.MARBLE, RESOURCE.MITHRIL, RESOURCE.COBALT}, 
 			//new int[] {15, 5, 15, 5, 5, 0, 0})
-            new RESOURCE[] {RESOURCE.BEHEMOTH, RESOURCE.GRANITE, RESOURCE.OAK, RESOURCE.COBALT},
-            new int[] {20, 50, 50, 4})
+            new RESOURCE[] {RESOURCE.GRANITE, RESOURCE.OAK, RESOURCE.COBALT},
+            new int[] {50, 50, 5})
         },
 
 	};
@@ -1103,4 +1103,32 @@ public class Utilities : MonoBehaviour {
         a[0] = char.ToUpper(a[0]);
         return new string(a);
     }
+
+    #region Lycanthropy
+    public static int GetMoonPhase(int year, int month, int day) {
+        /*k
+          Calculates the moon phase (0-7), accurate to 1 segment.
+          0 = > new moon.
+          4 => Full moon.
+        */
+
+        int g, e;
+
+        if (month == 1) --day;
+        else if (month == 2) day += 30;
+        else // m >= 3
+        {
+            day += 28 + (month - 2) * 3059 / 100;
+
+            //// adjust for leap years
+            //if (!(year & 3)) ++day;
+            //if ((year % 100) == 0) --day;
+        }
+
+        g = (year - 1900) % 19 + 1;
+        e = (11 * g + 18) % 30;
+        if ((e == 25 && g > 11) || e == 24) e++;
+        return ((((e + day) * 6 + 11) % 177) / 22 & 7);
+    }
+    #endregion
 }
