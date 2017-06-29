@@ -104,8 +104,9 @@ public class SpouseAbduction : GameEvent {
 	private void SendAbductor(){
 		//Add log - Send abductor*
 		onPerformAction -= AdmireSpouse;
-		this.abductor.citizen = this.abductorKingdom.capitalCity.CreateAgent (ROLE.ABDUCTOR, this.eventType, this.targetKingdom.capitalCity.hexTile, this.durationInDays);
-		if(this.abductor.citizen != null){
+		Citizen citizen = this.abductorKingdom.capitalCity.CreateAgent (ROLE.ABDUCTOR, this.eventType, this.targetKingdom.capitalCity.hexTile, this.durationInDays);
+		if(citizen != null){
+			this.abductor = (Abductor)citizen.assignedRole;
 			this.abductor.Initialize (this);
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "send_abductor");
 			newLog.AddToFillers (this.abductorKing, this.abductorKing.name, LOG_IDENTIFIER.KING_1);
@@ -183,7 +184,7 @@ public class SpouseAbduction : GameEvent {
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				AttemptAssassinateKingBySpouse (this.abductorKing);
-				return;
+//				return;
 			}
 		}
 
