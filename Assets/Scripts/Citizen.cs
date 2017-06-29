@@ -517,6 +517,10 @@ public class Citizen {
             this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " succumbed to the plague", HISTORY_IDENTIFIER.NONE));
             this.deathReasonText = "succumbed to the plague";
             break;
+		case DEATH_REASONS.SUICIDE:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " drank poison", HISTORY_IDENTIFIER.NONE));
+			this.deathReasonText = "drank poison";
+			break;
         }
 	}
 	internal void UnsupportCitizen(Citizen citizen){
@@ -783,7 +787,9 @@ public class Citizen {
 			this.assignedRole = new Provoker(this);
 		} else if (role == ROLE.MISSIONARY) {
 			this.assignedRole = new Missionary(this);
-        } else if (role == ROLE.LYCANTHROPE) {
+		}else if (role == ROLE.ABDUCTOR) {
+			this.assignedRole = new Abductor(this);
+		}else if (role == ROLE.LYCANTHROPE) {
             this.assignedRole = new Lycanthrope(this);
         }
         //this.UpdatePrestige ();
@@ -1447,7 +1453,10 @@ public class Citizen {
         this._spouse = spouse;
         this.isMarried = true;
     }
-
+	internal void DivorceSpouse(){
+		this._spouse = null;
+		this.isMarried = false;
+	}
     /*
      * Get relativesof this citizen.
      * If depth is set to:
@@ -1565,6 +1574,13 @@ public class Citizen {
 				break;
 			}
 		}
+	}
+
+	internal int GetCharacterValueOfType(CHARACTER_VALUE characterValue){
+		if(this._dictCharacterValues.ContainsKey(characterValue)){
+			return this._dictCharacterValues [characterValue];
+		}
+		return 0;
 	}
 
 }

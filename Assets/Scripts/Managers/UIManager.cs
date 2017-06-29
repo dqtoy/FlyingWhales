@@ -285,18 +285,23 @@ public class UIManager : MonoBehaviour {
 
 	private void NormalizeFontSizeOfLabel(UILabel lbl){
 		string lblName = lbl.name;
+        UILabel.Overflow overflowMethod = UILabel.Overflow.ClampContent;
 		if (lblName.Contains ("HEADER")) {
 			lbl.fontSize = HEADER_FONT_SIZE;
-            lbl.overflowMethod = UILabel.Overflow.ClampContent;
+            overflowMethod = UILabel.Overflow.ClampContent;
         } else if (lblName.Contains ("BODY")) {
 			lbl.fontSize = BODY_FONT_SIZE;
-            lbl.overflowMethod = UILabel.Overflow.ClampContent;
+            overflowMethod = UILabel.Overflow.ClampContent;
         } else if (lblName.Contains ("TOOLTIP")) {
 			lbl.fontSize = TOOLTIP_FONT_SIZE;
-            lbl.overflowMethod = UILabel.Overflow.ResizeHeight;
+            overflowMethod = UILabel.Overflow.ResizeHeight;
         } else if (lblName.Contains("SMALLEST")) {
             lbl.fontSize = SMALLEST_FONT_SIZE;
-            lbl.overflowMethod = UILabel.Overflow.ClampContent;
+            overflowMethod = UILabel.Overflow.ClampContent;
+        }
+
+        if (!lblName.Contains("NO")) {
+            lbl.overflowMethod = overflowMethod;
         }
 
     }
@@ -345,6 +350,12 @@ public class UIManager : MonoBehaviour {
         if (kingdomCitiesGO.activeSelf) {
             if (currentlyShowingKingdom != null) {
                 ShowKingdomCities();
+            }
+        }
+
+        if (citizenInfoGO.activeSelf) {
+            if (currentlyShowingCitizen != null) {
+                ShowCitizenInfo(currentlyShowingCitizen);
             }
         }
 	}
@@ -2193,8 +2204,8 @@ public class UIManager : MonoBehaviour {
 				}
 			}
 			StartCoroutine(RepositionTable(elmEventLogsParentGO.GetComponent<UITable>()));
-			StartCoroutine(RepositionScrollView(elmScrollView));
-		}
+            StartCoroutine(RepositionScrollView(elmScrollView));
+        }
 		eventLogsGO.SetActive(true);
 	}
 
@@ -2664,6 +2675,8 @@ public class UIManager : MonoBehaviour {
 			return rebellionPlotIcon;
 		case EVENT_TYPES.EVANGELISM:
 			return requestPeaceIcon;
+		case EVENT_TYPES.SPOUSE_ABDUCTION:
+			return militarizationIcon;
 		}
 		return assassinationIcon;
 	}
@@ -3070,7 +3083,9 @@ public class UIManager : MonoBehaviour {
         List<Citizen> allGovernorRelatives = new List<Citizen>();
         //Get relatives of all the governors
         for (int i = 0; i < allGovernors.Count; i++) {
-            allGovernorRelatives = allGovernorRelatives.Union(allGovernors[i].GetRelatives().Where(x => !x.isDead && x.role == ROLE.UNTRAINED)).ToList();
+            Governor currGovernor = (Governor)allGovernors[i].assignedRole;
+            List<Citizen> currGovernorRelatives = allGovernors[i].GetRelatives().Where(x => !x.isDead && x.role == ROLE.UNTRAINED).ToList();
+            allGovernorRelatives = allGovernorRelatives.Union(currGovernorRelatives).ToList();
         }
 
         //Randomly choose a number of relatives
@@ -3133,6 +3148,8 @@ public class UIManager : MonoBehaviour {
 
     public void StartLycanthropyEvent() {
         Lycanthropy newLycanthropy = new Lycanthropy(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, lycanthropySelectedCitizen);
+        HideLycanthropyMenu();
+        HideInterveneMenu();
     }
 
     public void HideLycanthropyMenu() {

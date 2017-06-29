@@ -18,6 +18,8 @@ public class War : GameEvent {
 	private bool kingdom1Attacked;
 	private bool isInitialAttack;
 
+	internal GameEvent gameEventTrigger;
+
 	#region getters/setters
 	public Kingdom kingdom1 {
 		get { return _kingdom1; }
@@ -54,6 +56,7 @@ public class War : GameEvent {
 		this.kingdom1Attacked = false;
 		this.isInitialAttack = false;
 		this.attackRate = 0;
+		this.gameEventTrigger = null;
 		Log titleLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "event_title");
 		titleLog.AddToFillers (_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 		titleLog.AddToFillers (_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
@@ -107,6 +110,7 @@ public class War : GameEvent {
 
 	internal void DeclarePeace(){
 		this._isAtWar = false;
+
 		this._kingdom1Rel.DeclarePeace();
 		this._kingdom2Rel.DeclarePeace();
 
@@ -317,10 +321,12 @@ public class War : GameEvent {
     internal override void DoneEvent() {
         base.DoneEvent();
         if (this._kingdom1.isDead) {
+			GameEventWarWinner (this._kingdom2);
             Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
 			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
         } else if (this._kingdom2.isDead) {
+			GameEventWarWinner (this._kingdom1);
             Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
 			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
@@ -335,4 +341,18 @@ public class War : GameEvent {
 		this.DoneEvent ();
 	}
 	#endregion
+	internal void GameEventWarWinner(Kingdom winnerKingdom){
+		if (this.gameEventTrigger != null && this.gameEventTrigger.isActive) {
+			if (this.gameEventTrigger is SpouseAbduction) {
+				((SpouseAbduction)this.gameEventTrigger).WarWinner (winnerKingdom);
+			}
+			GameEventTriggerWarResults ();
+		}else{
+			GameEventTriggerWarResults ();
+		}
+	}
+
+	internal void GameEventTriggerWarResults(){
+		this.gameEventTrigger = null;
+	}
 }

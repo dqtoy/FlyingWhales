@@ -466,6 +466,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.city = null;
         this.isOccupied = false;
 		this.isBorder = false;
+        this.isPlagued = false;
 		this.ownedByCity = null;
 		this.isBorderOfCityID = 0;
 		this.isOccupiedByCityID = 0;

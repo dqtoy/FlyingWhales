@@ -84,8 +84,8 @@ public class MarriageManager : MonoBehaviour {
 //		Debug.Log (PoliticsPrototypeManager.Instance.month + "/" + PoliticsPrototypeManager.Instance.days + "/" + PoliticsPrototypeManager.Instance.year + ": " + husband.name + " got married to " + wife.name);
 		citizen1.AssignSpouse(citizen2);
 		citizen2.AssignSpouse(citizen1);
-		citizen1.isMarried = true;
-		citizen2.isMarried = true;
+//		citizen1.isMarried = true;
+//		citizen2.isMarried = true;
 		citizen1.isIndependent = true;
 		citizen2.isIndependent = true;
 
