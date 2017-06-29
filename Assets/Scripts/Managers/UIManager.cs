@@ -285,18 +285,23 @@ public class UIManager : MonoBehaviour {
 
 	private void NormalizeFontSizeOfLabel(UILabel lbl){
 		string lblName = lbl.name;
+        UILabel.Overflow overflowMethod = UILabel.Overflow.ClampContent;
 		if (lblName.Contains ("HEADER")) {
 			lbl.fontSize = HEADER_FONT_SIZE;
-            lbl.overflowMethod = UILabel.Overflow.ClampContent;
+            overflowMethod = UILabel.Overflow.ClampContent;
         } else if (lblName.Contains ("BODY")) {
 			lbl.fontSize = BODY_FONT_SIZE;
-            lbl.overflowMethod = UILabel.Overflow.ClampContent;
+            overflowMethod = UILabel.Overflow.ClampContent;
         } else if (lblName.Contains ("TOOLTIP")) {
 			lbl.fontSize = TOOLTIP_FONT_SIZE;
-            lbl.overflowMethod = UILabel.Overflow.ResizeHeight;
+            overflowMethod = UILabel.Overflow.ResizeHeight;
         } else if (lblName.Contains("SMALLEST")) {
             lbl.fontSize = SMALLEST_FONT_SIZE;
-            lbl.overflowMethod = UILabel.Overflow.ClampContent;
+            overflowMethod = UILabel.Overflow.ClampContent;
+        }
+
+        if (!lblName.Contains("NO")) {
+            lbl.overflowMethod = overflowMethod;
         }
 
     }
