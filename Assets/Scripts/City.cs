@@ -5,40 +5,27 @@ using System.Linq;
 using System;
 using Panda;
 
-#pragma warning disable 0168 // variable declared but not used.
-#pragma warning disable 0219 // variable assigned but not used.
-#pragma warning disable 0414 // private field assigned but not used.
-
 [System.Serializable]
 public class City{
 
 	public int id;
 	public string name;
-	public HexTile hexTile;
-	private Kingdom _kingdom;
-	public Citizen governor;
-	public List<City> adjacentCities;
-	public List<HexTile> _ownedTiles;
-	public List<General> incomingGenerals;
-	public List<Citizen> citizens;
-	public List<History> cityHistory;
+	[NonSerialized] public HexTile hexTile;
+	[NonSerialized] private Kingdom _kingdom;
+    [NonSerialized] public Citizen governor;
+    [NonSerialized] public List<City> adjacentCities;
+    [NonSerialized] public List<HexTile> _ownedTiles;
+    [NonSerialized] public List<General> incomingGenerals;
+    [NonSerialized] public List<Citizen> citizens;
+    [NonSerialized] public List<History> cityHistory;
 	public bool hasKing;
 
 	[Space(10)] //Resources
-	public int sustainability;
-	public int lumberCount;
-	public int stoneCount;
-	public int manaStoneCount;
-	public int mithrilCount;
-	public int cobaltCount;
-	//public int goldCount;
 	private int _currentGrowth;
-    //private int _dailyGrowth;
     private int _dailyGrowthFromStructures;
     private int _dailyGrowthFromKingdom;
     private int _maxGrowth;
-//	public int maxGeneralHP;
-	//public int _goldProduction;
+
 	private int raidLoyaltyExpiration;
 
 	[Space(5)]
@@ -50,11 +37,11 @@ public class City{
 	public bool isStarving;
 	public bool isDead;
 
-//	internal Dictionary<ROLE, int> citizenCreationTable;
-	internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
-	internal List<HexTile> borderTiles;
-	internal Rebellion rebellion;
-	internal Plague plague;
+    //	internal Dictionary<ROLE, int> citizenCreationTable;
+    [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
+    [NonSerialized] internal List<HexTile> borderTiles;
+    [NonSerialized] internal Rebellion rebellion;
+    [NonSerialized] internal Plague plague;
 //	protected List<ROLE> creatableRoles;
 
 	protected const int HP_INCREASE = 5;

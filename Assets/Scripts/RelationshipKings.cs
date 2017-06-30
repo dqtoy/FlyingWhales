@@ -253,7 +253,7 @@ public class RelationshipKings {
             EVENT_TYPES key = this._eventModifiers.Keys.ElementAt(i);
             List<ExpirableModifier> modifiers = this._eventModifiers[key];
             for (int j = 0; j < modifiers.Count; j++) {
-                this._eventLikenessModifier += modifiers[i].modifier;
+                this._eventLikenessModifier += modifiers[j].modifier;
             }
         }
     }

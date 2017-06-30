@@ -23,7 +23,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public int movementDays;
 
-	public City city = null;
+    [System.NonSerialized] public City city = null;
 	internal City ownedByCity = null; // this is populated whenever the hex tile is occupied or becomes a border of a particular city
 
 	public bool isHabitable = false;
@@ -73,7 +73,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private CityItem _cityInfo;
 	private GameObject plagueIcon;
 
-    public List<HexTile> connectedTiles = new List<HexTile>();
+    [System.NonSerialized] public List<HexTile> connectedTiles = new List<HexTile>();
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
 	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN); } }
@@ -84,7 +84,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     public List<HexTile> elligibleNeighbourTilesForPurchase { get { return PurchasableTiles.Where(o => !o.isOccupied && !o.isHabitable).ToList(); } } 
 
-	private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
+	//private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
 
 	#region getters/setters
 	public GameObject centerPiece{

@@ -40,6 +40,10 @@ public class Lycanthropy : GameEvent {
         Debug.LogError("LYCANTHROPY DONE CITIZEN ACTION!");
         //chance for capture
         int captureChance = 10;
+        if(this._lycanthrope.targetKingdom != null) {
+            //werewolf cannot be captured if it already has a captor
+            captureChance = 0;
+        }
         int chance = Random.Range(0, 100);
         if(chance < captureChance) {
             CapturedActions();
@@ -125,12 +129,12 @@ public class Lycanthropy : GameEvent {
 
         if (chosenApproach == EVENT_APPROACH.HUMANISTIC) {
             KingHumanisticApproach();
-        }else if(chosenApproach == EVENT_APPROACH.PRAGMATIC) {
+        } else if (chosenApproach == EVENT_APPROACH.PRAGMATIC) {
             KingPragmaticApproach();
-        }else if(chosenApproach == EVENT_APPROACH.OPPORTUNISTIC) {
+        } else if (chosenApproach == EVENT_APPROACH.OPPORTUNISTIC) {
             KingOpportunisticApproach();
         }
-        
+
     }
 
     private void WreakHavoc() {
@@ -311,7 +315,8 @@ public class Lycanthropy : GameEvent {
             Kingdom otherKingdom = citizen.city.kingdom.discoveredKingdoms[i];
             RelationshipKings rel = otherKingdom.king.GetRelationshipWithCitizen(citizen);
 
-            if(_lycanthrope.captor.id == citizen.city.kingdom.id && _lycanthrope.targetKingdom.id == otherKingdom.id) {
+            if(_lycanthrope.captor.id == citizen.city.kingdom.id && 
+                (_lycanthrope.targetKingdom != null &&_lycanthrope.targetKingdom.id == otherKingdom.id)) {
                 rel.AddEventModifier(-20, "Lycanthrope handling", this);
             } else {
                 EVENT_APPROACH otherKingApproach = this.DetermineApproach(otherKingdom.king);

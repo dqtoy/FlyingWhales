@@ -16,7 +16,7 @@ public class Expander : Role {
 			this.expansion = (Expansion)gameEvent;
 			this.expansion.expander = this;
 			this.targetLocation = this.expansion.hexTileToExpandTo;
-			this.path = path;
+			//this.path = path;
 			this.daysBeforeMoving = this.path [0].movementDays;
 			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Expander"), this.citizen.city.hexTile.transform) as GameObject;
 			this.avatar.transform.localPosition = Vector3.zero;

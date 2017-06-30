@@ -2,14 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[System.Serializable]
+//[System.Serializable]
 public class RelationshipKingdom {
 
 	private Kingdom _sourceKingdom;
 	private Kingdom _targetKingdom;
 	private bool _isAdjacent;
-	private bool _isAtWar;
-	private KingdomWar _kingdomWar;
+    private bool _isAtWar;
+    private KingdomWar _kingdomWar;
 	private MONTH _monthToMoveOnAfterRejection;
 	private War _war;
 	private InvasionPlan _invasionPlan;

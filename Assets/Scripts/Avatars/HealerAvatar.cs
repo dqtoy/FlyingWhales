@@ -20,7 +20,7 @@ public class HealerAvatar : MonoBehaviour {
         this.healer = healer;
         this.direction = DIRECTION.LEFT;
         this.GetComponent<Avatar>().kingdom = this.healer.citizen.city.kingdom;
-        this.GetComponent<Avatar>().gameEvent = this.healer.plague;
+        this.GetComponent<Avatar>().gameEvent = this.healer.plagueEvent;
         this.GetComponent<Avatar>().citizen = this.healer.citizen;
 
         ResetValues();
@@ -69,7 +69,7 @@ public class HealerAvatar : MonoBehaviour {
     }
     [Task]
     public void IsThereEvent() {
-        if (this.healer.plague != null) {
+        if (this.healer.plagueEvent != null) {
             Task.current.Succeed();
         } else {
             Task.current.Fail();
@@ -93,7 +93,7 @@ public class HealerAvatar : MonoBehaviour {
     public void HasDiedOfOtherReasons() {
         if (this.healer.citizen.isDead) {
             //Citizen has died
-            this.healer.plague.DeathByOtherReasons();
+            this.healer.plagueEvent.DeathByOtherReasons();
             Task.current.Succeed();
         } else {
             Task.current.Fail();
@@ -153,7 +153,7 @@ public class HealerAvatar : MonoBehaviour {
 
     void OnMouseEnter() {
         if (!UIManager.Instance.IsMouseOnUI()) {
-            UIManager.Instance.ShowSmallInfo(this.healer.plague.name);
+            UIManager.Instance.ShowSmallInfo(this.healer.plagueEvent.name);
             this.HighlightPath();
         }
     }
@@ -183,7 +183,7 @@ public class HealerAvatar : MonoBehaviour {
     }
 
     public void OnEndAttack() {
-        this.healer.plague.DoneCitizenAction(this.healer.citizen);
+        this.healer.plagueEvent.DoneCitizenAction(this.healer.citizen);
         this.healer.DestroyGO();
     }
 

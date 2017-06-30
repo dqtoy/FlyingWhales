@@ -286,82 +286,82 @@ public class Raid : GameEvent {
 		this.otherKingdoms.RemoveAll (x => !x.isAlive ());
 		return this.otherKingdoms [UnityEngine.Random.Range (0, this.otherKingdoms.Count)];
 	}
-	private int GetRandomBasicResource(ref BASE_RESOURCE_TYPE resourceType){
-		if(this.raidedCity.lumberCount > 0 && this.raidedCity.stoneCount > 0){
-			int chance = UnityEngine.Random.Range (0, 2);
-			if(chance == 0){
-				resourceType = BASE_RESOURCE_TYPE.WOOD;
-				return this.raidedCity.lumberCount;
-			}else{
-				resourceType = BASE_RESOURCE_TYPE.STONE;
-				return this.raidedCity.stoneCount;
-			}
-		}else if(this.raidedCity.lumberCount <= 0 && this.raidedCity.stoneCount > 0){
-			resourceType = BASE_RESOURCE_TYPE.STONE;
-			return this.raidedCity.stoneCount;
-		}else if(this.raidedCity.lumberCount > 0 && this.raidedCity.stoneCount <= 0){
-			resourceType = BASE_RESOURCE_TYPE.WOOD;
-			return this.raidedCity.lumberCount;
-		}else{
-			resourceType = BASE_RESOURCE_TYPE.NONE;
-			return 0;
-		}
-	}
+	//private int GetRandomBasicResource(ref BASE_RESOURCE_TYPE resourceType){
+	//	if(this.raidedCity.lumberCount > 0 && this.raidedCity.stoneCount > 0){
+	//		int chance = UnityEngine.Random.Range (0, 2);
+	//		if(chance == 0){
+	//			resourceType = BASE_RESOURCE_TYPE.WOOD;
+	//			return this.raidedCity.lumberCount;
+	//		}else{
+	//			resourceType = BASE_RESOURCE_TYPE.STONE;
+	//			return this.raidedCity.stoneCount;
+	//		}
+	//	}else if(this.raidedCity.lumberCount <= 0 && this.raidedCity.stoneCount > 0){
+	//		resourceType = BASE_RESOURCE_TYPE.STONE;
+	//		return this.raidedCity.stoneCount;
+	//	}else if(this.raidedCity.lumberCount > 0 && this.raidedCity.stoneCount <= 0){
+	//		resourceType = BASE_RESOURCE_TYPE.WOOD;
+	//		return this.raidedCity.lumberCount;
+	//	}else{
+	//		resourceType = BASE_RESOURCE_TYPE.NONE;
+	//		return 0;
+	//	}
+	//}
 
-	private int GetRandomRareResource(ref BASE_RESOURCE_TYPE resourceType){
-		if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount > 0){
-			int chance = UnityEngine.Random.Range (0, 3);
-			if(chance == 0){
-				resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
-				return this.raidedCity.manaStoneCount;
-			}else if(chance == 1){
-				resourceType = BASE_RESOURCE_TYPE.MITHRIL;
-				return this.raidedCity.mithrilCount;
-			}else {
-				resourceType = BASE_RESOURCE_TYPE.COBALT;
-				return this.raidedCity.cobaltCount;
-			}
-		}else if(this.raidedCity.manaStoneCount <= 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount > 0){
-			int chance = UnityEngine.Random.Range (0, 2);
-			if(chance == 0){
-				resourceType = BASE_RESOURCE_TYPE.MITHRIL;
-				return this.raidedCity.mithrilCount;
-			}else {
-				resourceType = BASE_RESOURCE_TYPE.COBALT;
-				return this.raidedCity.cobaltCount;
-			}
-		}else if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount <= 0 && this.raidedCity.cobaltCount > 0){
-			int chance = UnityEngine.Random.Range (0, 2);
-			if(chance == 0){
-				resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
-				return this.raidedCity.manaStoneCount;
-			}else {
-				resourceType = BASE_RESOURCE_TYPE.COBALT;
-				return this.raidedCity.cobaltCount;
-			}
-		}else if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount <= 0){
-			int chance = UnityEngine.Random.Range (0, 2);
-			if(chance == 0){
-				resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
-				return this.raidedCity.manaStoneCount;
-			}else {
-				resourceType = BASE_RESOURCE_TYPE.MITHRIL;
-				return this.raidedCity.mithrilCount;
-			}
-		}else if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount <= 0 && this.raidedCity.cobaltCount <= 0){
-			resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
-			return this.raidedCity.manaStoneCount;
-		}else if(this.raidedCity.manaStoneCount <= 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount <= 0){
-			resourceType = BASE_RESOURCE_TYPE.MITHRIL;
-			return this.raidedCity.mithrilCount;
-		}else if(this.raidedCity.manaStoneCount <= 0 && this.raidedCity.mithrilCount <= 0 && this.raidedCity.cobaltCount > 0){
-			resourceType = BASE_RESOURCE_TYPE.COBALT;
-			return this.raidedCity.cobaltCount;
-		}else{
-			resourceType = BASE_RESOURCE_TYPE.NONE;
-			return 0;
-		}
-	}
+	//private int GetRandomRareResource(ref BASE_RESOURCE_TYPE resourceType){
+	//	if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount > 0){
+	//		int chance = UnityEngine.Random.Range (0, 3);
+	//		if(chance == 0){
+	//			resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
+	//			return this.raidedCity.manaStoneCount;
+	//		}else if(chance == 1){
+	//			resourceType = BASE_RESOURCE_TYPE.MITHRIL;
+	//			return this.raidedCity.mithrilCount;
+	//		}else {
+	//			resourceType = BASE_RESOURCE_TYPE.COBALT;
+	//			return this.raidedCity.cobaltCount;
+	//		}
+	//	}else if(this.raidedCity.manaStoneCount <= 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount > 0){
+	//		int chance = UnityEngine.Random.Range (0, 2);
+	//		if(chance == 0){
+	//			resourceType = BASE_RESOURCE_TYPE.MITHRIL;
+	//			return this.raidedCity.mithrilCount;
+	//		}else {
+	//			resourceType = BASE_RESOURCE_TYPE.COBALT;
+	//			return this.raidedCity.cobaltCount;
+	//		}
+	//	}else if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount <= 0 && this.raidedCity.cobaltCount > 0){
+	//		int chance = UnityEngine.Random.Range (0, 2);
+	//		if(chance == 0){
+	//			resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
+	//			return this.raidedCity.manaStoneCount;
+	//		}else {
+	//			resourceType = BASE_RESOURCE_TYPE.COBALT;
+	//			return this.raidedCity.cobaltCount;
+	//		}
+	//	}else if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount <= 0){
+	//		int chance = UnityEngine.Random.Range (0, 2);
+	//		if(chance == 0){
+	//			resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
+	//			return this.raidedCity.manaStoneCount;
+	//		}else {
+	//			resourceType = BASE_RESOURCE_TYPE.MITHRIL;
+	//			return this.raidedCity.mithrilCount;
+	//		}
+	//	}else if(this.raidedCity.manaStoneCount > 0 && this.raidedCity.mithrilCount <= 0 && this.raidedCity.cobaltCount <= 0){
+	//		resourceType = BASE_RESOURCE_TYPE.MANA_STONE;
+	//		return this.raidedCity.manaStoneCount;
+	//	}else if(this.raidedCity.manaStoneCount <= 0 && this.raidedCity.mithrilCount > 0 && this.raidedCity.cobaltCount <= 0){
+	//		resourceType = BASE_RESOURCE_TYPE.MITHRIL;
+	//		return this.raidedCity.mithrilCount;
+	//	}else if(this.raidedCity.manaStoneCount <= 0 && this.raidedCity.mithrilCount <= 0 && this.raidedCity.cobaltCount > 0){
+	//		resourceType = BASE_RESOURCE_TYPE.COBALT;
+	//		return this.raidedCity.cobaltCount;
+	//	}else{
+	//		resourceType = BASE_RESOURCE_TYPE.NONE;
+	//		return 0;
+	//	}
+	//}
 
 	private RelationshipKings GetRelationship(){
 		RelationshipKings relationship = null;
