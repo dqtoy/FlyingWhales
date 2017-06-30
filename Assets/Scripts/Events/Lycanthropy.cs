@@ -144,12 +144,20 @@ public class Lycanthropy : GameEvent {
         } else {
             //Kill Citizen
             Citizen citizenToKill = this._lycanthrope.targetCity.citizens[Random.Range(0, this._lycanthrope.targetCity.citizens.Count)];
-            citizenToKill.Death(DEATH_REASONS.LYCANTHROPE);
             Log killCitizenLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "kill_citizen");
             killCitizenLog.AddToFillers(_lycanthrope.citizen, _lycanthrope.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             killCitizenLog.AddToFillers(citizenToKill, citizenToKill.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            citizenToKill.Death(DEATH_REASONS.LYCANTHROPE);
         }
         this._lycanthrope.targetCity.kingdom.AdjustUnrest(10);
+
+        //Chance for lycanthrope to die
+        if(Random.Range(0,100) < 15) {
+            Log lycanthropeAccident = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "lycanthrope_accident_death");
+            lycanthropeAccident.AddToFillers(_lycanthrope.citizen, _lycanthrope.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            lycanthropeAccident.AddToFillers(this._lycanthrope.targetCity, this._lycanthrope.targetCity.name, LOG_IDENTIFIER.CITY_1);
+            KillLycanthrope(DEATH_REASONS.ACCIDENT);
+        }
     }
 
     #region Approaches
@@ -169,7 +177,7 @@ public class Lycanthropy : GameEvent {
         kingPragmaticLog.AddToFillers(_lycanthrope.captor.king, _lycanthrope.captor.king.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         kingPragmaticLog.AddToFillers(_lycanthrope.citizen, _lycanthrope.citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        KillLycanthrope();
+        KillLycanthrope(DEATH_REASONS.MURDER);
 
     }
 
@@ -210,10 +218,10 @@ public class Lycanthropy : GameEvent {
 
         if (Random.Range(0, 100) < 70) {
             //lycanthrope dies
-            _lycanthrope.citizen.Death(DEATH_REASONS.TRIED_TO_CURE_LYCANTHROPY);
             Log govHumanisticFailLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "cure_fail");
             govHumanisticFailLog.AddToFillers(_lycanthrope.citizen.city.governor, _lycanthrope.citizen.city.governor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             govHumanisticFailLog.AddToFillers(_lycanthrope.citizen, _lycanthrope.citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            KillLycanthrope(DEATH_REASONS.TRIED_TO_CURE_LYCANTHROPY);
         } else {
             //cured
             _lycanthrope.citizen.AssignRole(ROLE.UNTRAINED);
@@ -234,39 +242,41 @@ public class Lycanthropy : GameEvent {
             govPragmaticFailLog.AddToFillers(_lycanthrope.citizen.city.governor, _lycanthrope.citizen.city.governor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             govPragmaticFailLog.AddToFillers(_lycanthrope.citizen, _lycanthrope.citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             _lycanthrope.citizen.city.governor.Death(DEATH_REASONS.LYCANTHROPE);
-            _lycanthrope.citizen.Death(DEATH_REASONS.MURDER);
+            KillLycanthrope(DEATH_REASONS.MURDER);
             return;
         }
         Log govPragmaticSuccessLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "gov_pragmatic_success");
         govPragmaticSuccessLog.AddToFillers(_lycanthrope.citizen.city.governor, _lycanthrope.citizen.city.governor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         govPragmaticSuccessLog.AddToFillers(_lycanthrope.citizen, _lycanthrope.citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        _lycanthrope.citizen.Death(DEATH_REASONS.MURDER);
+        KillLycanthrope(DEATH_REASONS.MURDER);
     }
 
     private void GovOpportunisticApproach() {
         Log govOpportunisticLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "gov_opportunistic");
         if (Random.Range(0, 100) < 30) {
-            //governor also dies
-            _lycanthrope.citizen.city.kingdom.AdjustUnrest(10);
-            _lycanthrope.citizen.city.kingdom.king.Death(DEATH_REASONS.LYCANTHROPE);
-            _lycanthrope.citizen.Death(DEATH_REASONS.MURDER);
+            //king also dies
             Log govOpportunisticSuccessLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "gov_opportunistic_success");
             govOpportunisticSuccessLog.AddToFillers(_lycanthrope.citizen, _lycanthrope.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             govOpportunisticSuccessLog.AddToFillers(_lycanthrope.citizen.city.kingdom.king, _lycanthrope.citizen.city.kingdom.king.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             govOpportunisticSuccessLog.AddToFillers(_lycanthrope.citizen.city.governor, _lycanthrope.citizen.city.governor.name, LOG_IDENTIFIER.GOVERNOR_1);
+
+            _lycanthrope.citizen.city.kingdom.AdjustUnrest(10);
+            _lycanthrope.citizen.city.kingdom.king.Death(DEATH_REASONS.LYCANTHROPE);
+            KillLycanthrope(DEATH_REASONS.MURDER);
+
             return;
         }
-        _lycanthrope.citizen.Death(DEATH_REASONS.MURDER);
         Log govOpportunisticFailLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "gov_opportunistic_fail");
         govOpportunisticFailLog.AddToFillers(_lycanthrope.citizen.city.kingdom.king, _lycanthrope.citizen.city.kingdom.king.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         govOpportunisticFailLog.AddToFillers(_lycanthrope.citizen, _lycanthrope.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        KillLycanthrope(DEATH_REASONS.MURDER);
     }
     #endregion
 
     #endregion
 
-    private void KillLycanthrope() {
-        _lycanthrope.citizen.Death(DEATH_REASONS.MURDER);
+    private void KillLycanthrope(DEATH_REASONS deathReason) {
+        _lycanthrope.citizen.Death(deathReason);
         DoneEvent();
     }
 

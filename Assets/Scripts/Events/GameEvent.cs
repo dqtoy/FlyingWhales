@@ -113,13 +113,16 @@ public class GameEvent {
                     }
                 } else {
                     //Kingdom that city belongs to is not yet affected by this plague
-                    if(citizenTargetCity.kingdom.plague == null) {
-                        //Kingdom has no plague yet, infect that kingdom and destroy settlement
-                        HexTile infectedTile = plaguedCarriedByCitizen.PlagueAKingdom(citizenTargetCity.kingdom, citizenTargetCity);
-                        if (infectedTile != null) {
-                            Log plagueSpreadByAgent = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_agent_spread");
+                    if(citizenTargetCity.kingdom != null) {
+                        if (citizenTargetCity.kingdom.plague == null) {
+                            //Kingdom has no plague yet, infect that kingdom and destroy settlement
+                            HexTile infectedTile = plaguedCarriedByCitizen.PlagueAKingdom(citizenTargetCity.kingdom, citizenTargetCity);
+                            if (infectedTile != null) {
+                                Log plagueSpreadByAgent = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_agent_spread");
+                            }
                         }
                     }
+                    
                 }
             } else {
                 //City is already plagued, just infect a settlement

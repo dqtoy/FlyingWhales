@@ -38,6 +38,8 @@ public class Expansion : GameEvent {
 		if (this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0) {
 			this.startedByKingdom.CreateNewCityOnTileForKingdom (this.hexTileToExpandTo);
 			this.hexTileToExpandTo.city.ExpandToThisCity (this.startedBy);
+            this.CheckIfCitizenIsCarryingPlague(citizen);
+
 
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");
 			newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name, LOG_IDENTIFIER.CITY_2);
