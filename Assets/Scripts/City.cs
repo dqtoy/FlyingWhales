@@ -1185,6 +1185,9 @@ public class City{
 //		this._kingdom.AddCityToKingdom (this);
 	}
 	internal void ChangeToRebelFort(Rebellion rebellion, bool isStart = false){
+		if(rebellion == null){
+			return;
+		}
 		if (this.hexTile.cityInfo.city != null){
 			this.hexTile.cityInfo.rebelIcon.SetActive (true);
 		}
