@@ -192,6 +192,7 @@ public class UIManager : MonoBehaviour {
     public UILabel kingdomNameLbl;
     public UILabel kingdomUnrestLbl;
     public UILabel kingdomGoldLbl;
+	public UILabel kingdomTechLbl;
     public UI2DSprite kingdomBasicResourceSprite;
     public UILabel kingdomBasicResourceLbl;
     public UIGrid kingdomOtherResourcesGrid;
@@ -448,6 +449,7 @@ public class UIManager : MonoBehaviour {
         kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
         kingdomUnrestLbl.text = currentlyShowingKingdom.unrest.ToString(); //Unrest
         kingdomGoldLbl.text = currentlyShowingKingdom.goldCount.ToString() + "/" + currentlyShowingKingdom.maxGold.ToString(); //Gold
+		kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
 
         //Basic Resource
         if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
