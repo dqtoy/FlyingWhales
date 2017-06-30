@@ -717,6 +717,7 @@ public class Kingdom{
      * available resources, and daily growth of remaining cities.
      * */
     internal void RemoveCityFromKingdom(City city) {
+		city.rebellion = null;
         this._cities.Remove(city);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {

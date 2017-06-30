@@ -179,19 +179,24 @@ public class SpouseAbduction : GameEvent {
 
 	private void SuccessAbduction(){
 		TransferSpouse ();
+		if(this.isSecretlyAllowed){
+			SecretlyAllowedSuccessAbduction ();
+		}else{
+			NotSecretlyAllowedSuccessAbduction ();
+		}
+
+	}
+	private void AssassinateKingBySpouse(bool isDoneEvent = false){
 		this.isCompatibleWithAbductorKing = IsMarriageCompatible (this.abductorKing);
 		if(!isCompatibleWithAbductorKing){
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
 				AttemptAssassinateKingBySpouse (this.abductorKing);
-//				return;
+				//return;
 			}
 		}
-
-		if(this.isSecretlyAllowed){
-			SecretlyAllowedSuccessAbduction ();
-		}else{
-			NotSecretlyAllowedSuccessAbduction ();
+		if(isDoneEvent){
+			this.DoneEvent ();
 		}
 	}
 	private void SecretlyAllowedSuccessAbduction(){
@@ -201,10 +206,18 @@ public class SpouseAbduction : GameEvent {
 		newLog.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		newLog.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
 
-
 		HonorableOtherKingsAdjustRelationshipToBothKings();
 
-		this.DoneEvent ();
+		this.daysCounter = 0;
+		onPerformAction += SecretlyAllowedAttemptAssassination;
+	}
+	private void SecretlyAllowedAttemptAssassination(){
+		this.daysCounter += 1;
+		if(this.daysCounter >= 5){
+			this.daysCounter = 0;
+			onPerformAction -= SecretlyAllowedAttemptAssassination;
+			AssassinateKingBySpouse (true);
+		}
 	}
 	private void NotSecretlyAllowedSuccessAbduction(){
 		//Add log - target king starts searching for spouse*
@@ -222,6 +235,9 @@ public class SpouseAbduction : GameEvent {
 	}
 	private void BeginSearchForSpouse(){
 		this.daysCounter += 1;
+		if(this.daysCounter == 5){
+			AssassinateKingBySpouse ();
+		}
 		if(this.daysCounter >= 15){
 			this.daysCounter = 0;
 			FoundOutAboutAbduction ();
