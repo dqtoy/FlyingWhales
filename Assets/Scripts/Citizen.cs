@@ -312,17 +312,17 @@ public class Citizen {
 		if(this is Spouse){
 			((Spouse)this).isAbducted = false;
 		}
-		if(isDethroned){
-			this.isPretender = true;
-			this.city.kingdom.AddPretender (this);
-		}
-		if(this.isPretender){
-			Citizen possiblePretender = GetPossiblePretender ();
-			if(possiblePretender != null){
-				possiblePretender.isPretender = true;
-				this.city.kingdom.AddPretender (possiblePretender);
-			}
-		}
+//		if(isDethroned){
+//			this.isPretender = true;
+//			this.city.kingdom.AddPretender (this);
+//		}
+//		if(this.isPretender){
+//			Citizen possiblePretender = GetPossiblePretender ();
+//			if(possiblePretender != null){
+//				possiblePretender.isPretender = true;
+//				this.city.kingdom.AddPretender (possiblePretender);
+//			}
+//		}
 		if (this.city != null) {
 			this.city.kingdom.RemoveFromSuccession(this);
 		}
