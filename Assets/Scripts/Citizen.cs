@@ -309,7 +309,9 @@ public class Citizen {
 		DeathHistory(reason);
 		this.deathReason = reason;
 		this.isDead = true;
-
+		if(this is Spouse){
+			((Spouse)this).isAbducted = false;
+		}
 		if(isDethroned){
 			this.isPretender = true;
 			this.city.kingdom.AddPretender (this);
