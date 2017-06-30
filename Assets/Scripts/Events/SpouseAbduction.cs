@@ -375,7 +375,7 @@ public class SpouseAbduction : GameEvent {
 	private void ReturnSpouse(){
 		//Add log - spouse will return because the target kingdom wins the war*
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "return_spouse");
-		newLog.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
+		newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
 		this.abductorKing.DivorceSpouse ();
@@ -481,7 +481,7 @@ public class SpouseAbduction : GameEvent {
 
 	private void AbductorKingdomWins(){
 		//Add log - abductor wins, the spouse will not be returned*
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "spouse_suicide");
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "abductor_wins");
 		newLog.AddToFillers (this.abductorKingdom, this.abductorKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 		newLog.AddToFillers (this.abductorKing, this.abductorKing.name, LOG_IDENTIFIER.KING_1);
