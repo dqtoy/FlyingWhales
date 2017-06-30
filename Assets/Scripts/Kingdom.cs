@@ -820,7 +820,6 @@ public class Kingdom{
 		}*/
         //		newKing.role = ROLE.KING;
         Citizen previousKing = this.king;
-        newKing.AssignRole(ROLE.KING);
 		
         if (newKing.city.governor.id == newKing.id) {
             newKing.city.AssignNewGovernor();
@@ -841,6 +840,7 @@ public class Kingdom{
             KingdomManager.Instance.AddRelationshipToOtherKings(newKing);
         }
 
+        newKing.AssignRole(ROLE.KING);
         this.successionLine.Clear();
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (newKing.GetSiblings());
