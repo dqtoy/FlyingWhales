@@ -763,8 +763,17 @@ public class Kingdom{
 	internal void UpdateKingSuccession(){
 		List<Citizen> orderedMaleRoyalties = this.successionLine.Where (x => x.gender == GENDER.MALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
 		List<Citizen> orderedFemaleRoyalties = this.successionLine.Where (x => x.gender == GENDER.FEMALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
-		List<Citizen> orderedBrotherRoyalties = this.successionLine.Where (x => x.gender == GENDER.MALE && x.father.id == this.king.father.id && x.id != this.king.id).OrderByDescending(x => x.age).ToList();
-		List<Citizen> orderedSisterRoyalties = this.successionLine.Where (x => x.gender == GENDER.FEMALE && x.father.id == this.king.father.id && x.id != this.king.id).OrderByDescending(x => x.age).ToList();
+		List<Citizen> orderedBrotherRoyalties = this.successionLine
+            .Where (x => x.gender == GENDER.MALE 
+            && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
+            && x.id != this.king.id)
+            .OrderByDescending(x => x.age).ToList();
+
+        List<Citizen> orderedSisterRoyalties = this.successionLine
+            .Where (x => x.gender == GENDER.FEMALE 
+            && (x.father != null && this.king.father != null && x.father.id == this.king.father.id) 
+            && x.id != this.king.id)
+            .OrderByDescending(x => x.age).ToList();
 
 		List<Citizen> orderedRoyalties = orderedMaleRoyalties.Concat (orderedFemaleRoyalties).Concat(orderedBrotherRoyalties).Concat(orderedSisterRoyalties).ToList();
 

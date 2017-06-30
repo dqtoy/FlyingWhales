@@ -6,27 +6,31 @@ using System.Linq;
 using Panda;
 
 public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
-	public int xCoordinate;
+    [Header("General Tile Details")]
+    public int xCoordinate;
 	public int yCoordinate;
-
 	public string tileName;
 
-	public float elevationNoise;
+    [Space(10)]
+    [Header("Biome Settings")]
+    public float elevationNoise;
 	public float moistureNoise;
 	public float temperature;
-
-	public RESOURCE specialResource;
-	public int nearbyResourcesCount = 0;
-
 	public BIOMES biomeType;
 	public ELEVATION elevationType;
-
 	public int movementDays;
+
+    [Space(10)]
+    [Header("Resources")]
+    public RESOURCE specialResource;
+    public int nearbyResourcesCount = 0;
 
     [System.NonSerialized] public City city = null;
 	internal City ownedByCity = null; // this is populated whenever the hex tile is occupied or becomes a border of a particular city
 
-	public bool isHabitable = false;
+    [Space(10)]
+    [Header("Booleans")]
+    public bool isHabitable = false;
 	public bool isRoad = false;
 	public bool isOccupied = false;
 	public bool isBorder = false;
@@ -35,29 +39,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
 
-	private GameEvent _gameEventInTile;
-
-	[SerializeField] private GameObject _centerPiece;
-
-	[SerializeField] private GameObject leftBorder;
-	[SerializeField] private GameObject rightBorder;
-	[SerializeField] private GameObject topLeftBorder;
-	[SerializeField] private GameObject topRightBorder;
-	[SerializeField] private GameObject bottomLeftBorder;
-	[SerializeField] private GameObject bottomRightBorder;
-
+    [Space(10)]
+    [Header("Tile Visuals")]
+    [SerializeField] private GameObject _centerPiece;
 	[SerializeField] private GameObject resourceVisualGO;
-	[SerializeField] private GameObject structureGO;
-	[SerializeField] private Transform eventsParent;
-	[SerializeField] private GameObject cityNameGO;
-	[SerializeField] private TextMesh cityNameLbl;
 	[SerializeField] private SpriteRenderer _kingdomColorSprite;
 	[SerializeField] private GameObject _highlightGO;
+    [SerializeField] private Transform UIParent;
+    [SerializeField] private Transform resourceParent;
 
-    
-    [SerializeField] private Transform UIParent;    
-
-    //For Tile Edges
+    [Space(10)]
+    [Header("Tile Edges")]
     [SerializeField] private GameObject topLeftEdge;
 	[SerializeField] private GameObject leftEdge;
 	[SerializeField] private GameObject botLeftEdge;
@@ -65,10 +57,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	[SerializeField] private GameObject rightEdge;
 	[SerializeField] private GameObject topRightEdge;
 
-	[SerializeField] private GameObject structureParentGO;
+    [Space(10)]
+    [Header("Structure Objects")]
+    [SerializeField] private GameObject structureParentGO;
 
 	[SerializeField] private GameObject plagueIconGO;
 
+    private GameEvent _gameEventInTile;
     private Transform _cityInfoParent;
     private CityItem _cityInfo;
 	private GameObject plagueIcon;
@@ -114,10 +109,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 		this.kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
 		this.highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
-		this.structureGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 5;
-		this.cityNameGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 8;
-		this.cityNameLbl.GetComponent<MeshRenderer>().sortingLayerName = "CityNames";
-		this.cityNameLbl.GetComponent<MeshRenderer> ().sortingOrder = sortingOrder + 9;
 
 		this.topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
 		this.leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
@@ -181,6 +172,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     .Where (x => x.name == this.specialResource.ToString ()).ToList () [0];
 					this.resourceVisualGO.SetActive (true);
 				}
+                GameObject resource = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
+                resource.transform.localPosition = Vector3.zero;
+                resource.transform.localScale = Vector3.one;
+                //if(this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD) {
+                //    centerPiece.SetActive(false);
+                //}
 			}
 		} else {
 			this.specialResource = RESOURCE.NONE;
@@ -470,7 +467,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.ownedByCity = null;
 		this.isBorderOfCityID = 0;
 		this.isOccupiedByCityID = 0;
-		this.structureGO.SetActive(false);
         this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
         EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);
