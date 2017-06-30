@@ -110,6 +110,10 @@ public class GameEvent {
                     HexTile infectedTile = plaguedCarriedByCitizen.PlagueACity(citizenTargetCity);
                     if(infectedTile != null) {
                         Log plagueSpreadByAgent = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_agent_spread");
+						plagueSpreadByAgent.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+						plagueSpreadByAgent.AddToFillers (null, plaguedCarriedByCitizen.plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
+						plagueSpreadByAgent.AddToFillers (citizenTargetCity, citizenTargetCity.name, LOG_IDENTIFIER.CITY_1);
+
                     }
                 } else {
                     //Kingdom that city belongs to is not yet affected by this plague
@@ -119,6 +123,9 @@ public class GameEvent {
                             HexTile infectedTile = plaguedCarriedByCitizen.PlagueAKingdom(citizenTargetCity.kingdom, citizenTargetCity);
                             if (infectedTile != null) {
                                 Log plagueSpreadByAgent = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_agent_spread");
+								plagueSpreadByAgent.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+								plagueSpreadByAgent.AddToFillers (null, plaguedCarriedByCitizen.plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
+								plagueSpreadByAgent.AddToFillers (citizenTargetCity, citizenTargetCity.name, LOG_IDENTIFIER.CITY_1);
                             }
                         }
                     }
@@ -129,6 +136,9 @@ public class GameEvent {
                 HexTile infectedTile = plaguedCarriedByCitizen.InfectRandomSettlement(citizenTargetCity.structures);
                 if (infectedTile != null) {
                     Log plagueSpreadByAgent = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_agent_spread");
+					plagueSpreadByAgent.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+					plagueSpreadByAgent.AddToFillers (null, plaguedCarriedByCitizen.plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
+					plagueSpreadByAgent.AddToFillers (citizenTargetCity, citizenTargetCity.name, LOG_IDENTIFIER.CITY_1);
                 }
             }
         }
