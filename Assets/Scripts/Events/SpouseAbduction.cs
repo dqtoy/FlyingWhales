@@ -8,7 +8,7 @@ public class SpouseAbduction : GameEvent {
 
 	internal Citizen abductorKing;
 	internal Citizen targetKing;
-	internal Citizen abductee;
+	internal Spouse abductee;
 	internal Abductor abductor;
 	internal Kingdom abductorKingdom;
 	internal Kingdom targetKingdom;
@@ -31,7 +31,7 @@ public class SpouseAbduction : GameEvent {
 		this.durationInDays = EventManager.Instance.eventDuration [this.eventType];
 		this.abductorKing = startedBy;
 		this.targetKing = targetKing;
-		this.abductee = targetKing.spouse;
+		this.abductee = (Spouse)targetKing.spouse;
 		this.abductor = null;
 		this.abductorKingdom = startedBy.city.kingdom;
 		this.targetKingdom = targetKing.city.kingdom;
@@ -123,8 +123,17 @@ public class SpouseAbduction : GameEvent {
 		newLog.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
-		this.daysCounter = 0;
-		onPerformAction += BeginAbduction;
+		if(this.abductee.isAbducted){
+			Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "already_abducted");
+			newLog2.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+			newLog2.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+			this.DoneEvent ();
+		}else{
+			this.daysCounter = 0;
+			onPerformAction += BeginAbduction;
+		}
+
 	}
 
 	private void BeginAbduction(){
@@ -178,6 +187,11 @@ public class SpouseAbduction : GameEvent {
 	}
 
 	private void SuccessAbduction(){
+		//Add log - success abduction*
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "success_abduction");
+		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+		newLog.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
 		TransferSpouse ();
 		if(this.isSecretlyAllowed){
 			SecretlyAllowedSuccessAbduction ();
@@ -200,12 +214,6 @@ public class SpouseAbduction : GameEvent {
 		}
 	}
 	private void SecretlyAllowedSuccessAbduction(){
-		//Add log - target king will do nothing because he secretly allowed the abduction*
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "success_secretly_allowed");
-		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-		newLog.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-		newLog.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
-
 		HonorableOtherKingsAdjustRelationshipToBothKings();
 
 		this.daysCounter = 0;
@@ -222,14 +230,19 @@ public class SpouseAbduction : GameEvent {
 	private void NotSecretlyAllowedSuccessAbduction(){
 		//Add log - target king starts searching for spouse*
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "success_not_secretly_allowed");
-		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-		newLog.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		newLog.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
+		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
 		this.daysCounter = 0;
 		onPerformAction += BeginSearchForSpouse;
 	}
 	private void HonorableOtherKingsAdjustRelationshipToBothKings(){
+		//Add log - target king will do nothing*
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "do_nothing");
+		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+		newLog.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		newLog.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
+		 
 		AdjustRelationshipFromOtherKingdoms(this.targetKing, -10, CHARACTER_VALUE.HONOR);
 		AdjustRelationshipFromOtherKingdoms(this.abductorKing, -10, CHARACTER_VALUE.HONOR);
 	}
@@ -259,11 +272,24 @@ public class SpouseAbduction : GameEvent {
 					this.relationshipKing.AdjustLikeness (-60, this);
 				}
 				AdjustRelationshipFromOtherKingdoms (this.abductorKing, -20, CHARACTER_VALUE.LIFE);
+
+				//Add log - instant war because of abduction and death
+				Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "compatible_instant_war_dead");
+				newLog2.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
+				newLog2.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+				newLog2.AddToFillers (this.abductorKingdom, this.abductorKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+
+				this.DoneEvent ();
 			}else{
 				if(this.relationshipKing != null){
 					this.relationshipKing.AdjustLikeness (-30, this);
 				}
 				AdjustRelationshipFromOtherKingdoms (this.abductorKing, -20, CHARACTER_VALUE.HONOR);
+
+				Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "compatible_instant_war_alive");
+				newLog2.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
+				newLog2.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+				newLog2.AddToFillers (this.abductorKingdom, this.abductorKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			}
 		}else{
 			if(this.isSpouseDead){
@@ -272,6 +298,10 @@ public class SpouseAbduction : GameEvent {
 					if(this.relationshipKing != null){
 						this.relationshipKing.AdjustLikeness (-25, this);
 					}
+					Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "instant_war_life");
+					newLog2.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
+					newLog2.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+					newLog2.AddToFillers (this.abductorKingdom, this.abductorKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 				}else{
 					HonorableOtherKingsAdjustRelationshipToBothKings();
 				}
@@ -279,16 +309,22 @@ public class SpouseAbduction : GameEvent {
 			}else{
 				HonorableOtherKingsAdjustRelationshipToBothKings();
 			}
+			this.DoneEvent ();
 		}
 	}
 	private void FailAbduction(){
 		//Add log - fail abduction*
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "found_out");
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "fail_abduction");
 		newLog.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
 		if(this.isCompatibleWithTargetKing){
 			AbductorDies ();
+		}else{
+			Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "abductor_live");
+			newLog2.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+			this.DoneEvent ();
 		}
 	}
 	private void AbductorDies(){
@@ -332,8 +368,9 @@ public class SpouseAbduction : GameEvent {
 		this.abductee.DivorceSpouse ();
 
 		MarriageManager.Instance.Marry (this.abductorKing, this.abductee);
-		((Spouse)this.abductee).GenerateMarriageCompatibility ();
-		this.marriageCompatibilityWithAbductorKing = ((Spouse)this.abductee)._marriageCompatibility;
+		this.abductee.GenerateMarriageCompatibility ();
+		this.marriageCompatibilityWithAbductorKing = this.abductee._marriageCompatibility;
+		this.abductee.isAbducted = true;
 	}
 	private void ReturnSpouse(){
 		//Add log - spouse will return because the target kingdom wins the war*
@@ -345,7 +382,8 @@ public class SpouseAbduction : GameEvent {
 		this.abductee.DivorceSpouse ();
 
 		MarriageManager.Instance.Marry (this.targetKing, this.abductee);
-		((Spouse)this.abductee)._marriageCompatibility = this.marriageCompatibilityWithTargetKing;
+		this.abductee._marriageCompatibility = this.marriageCompatibilityWithTargetKing;
+		this.abductee.isAbducted = false;
 	}
 	private void AttemptAssassinateKingBySpouse(Citizen king){
 		int chance = UnityEngine.Random.Range (0, 100);
