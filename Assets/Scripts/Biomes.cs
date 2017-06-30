@@ -5,86 +5,17 @@ using System.Collections.Generic;
 public class Biomes : MonoBehaviour {
 	public static Biomes Instance;
 
+    [Header("Biome Generation Settings")]
 	public float initialTemperature;
 	public float initialTemperature2;
 	public float intervalTemperature;
-	[Space(10)]
 	public float temperature;
-	[Space(10)]
 	public int[] hexInterval;
 	public float[] temperatureInterval;
-//	[Space(10)]
-//	public Sprite forestSprite;
-//	public Sprite grasslandSprite;
-//	public Sprite woodlandSprite;
-//	public Sprite desertSprite;
-//	public Sprite tundraSprite;
-//	public Sprite snowSprite;
-//	public Sprite waterSprite;
-//	[Space(10)]
-//	public Sprite forestLeft;
-//	public Sprite forestRight;
-//	public Sprite forestLeftCorner;
-//	public Sprite forestRightCorner;
-//	public Sprite forestTopLeftCorner;
-//	public Sprite forestTopRightCorner;
-//	public Sprite forestCenter;
-//	public Sprite forestCenter2;
-//	public Sprite forestCenter3;
-//	[Space(10)]
-//	public Sprite grasslandLeft;
-//	public Sprite grasslandRight;
-//	public Sprite grasslandTopLeftCorner;
-//	public Sprite grasslandTopRightCorner;
-//	public Sprite grasslandLeftCorner;
-//	public Sprite grasslandRightCorner;
-//	public Sprite grasslandCenter;
-//	public Sprite grasslandCenter2;
-//	[Space(10)]
-//	public Sprite woodlandLeft;
-//	public Sprite woodlandRight;
-//	public Sprite woodlandTopLeftCorner;
-//	public Sprite woodlandTopRightCorner;
-//	public Sprite woodlandLeftCorner;
-//	public Sprite woodlandRightCorner;
-//	public Sprite woodlandCenter;
-//	public Sprite woodlandCenter2;
-//	public Sprite woodlandCenter3;
-//	[Space(10)]
-//	public Sprite desertLeft;
-//	public Sprite desertRight;
-//	public Sprite desertTopLeftCorner;
-//	public Sprite desertTopRightCorner;
-//	public Sprite desertLeftCorner;
-//	public Sprite desertRightCorner;
-//	public Sprite desertCenter;
-//	public Sprite desertCenter2;
-//	public Sprite desertCenter3;
-//	public Sprite desertCenter4;
-//	[Space(10)]
-//	public Sprite tundraLeft;
-//	public Sprite tundraRight;
-//	public Sprite tundraTopLeftCorner;
-//	public Sprite tundraTopRightCorner;
-//	public Sprite tundraLeftCorner;
-//	public Sprite tundraRightCorner;
-//	public Sprite tundraCenter;
-//	public Sprite tundraCenter2;
-//	public Sprite tundraCenter3;
-//	[Space(10)]
-//	public Sprite snowLeft;
-//	public Sprite snowRight;
-//	public Sprite snowTopLeftCorner;
-//	public Sprite snowTopRightCorner;
-//	public Sprite snowLeftCorner;
-//	public Sprite snowRightCorner;
-//	public Sprite snowCenter;
-//	public Sprite snowCenter2;
-//	[Space(10)]
-//	public Sprite mountainCenter;
 
 	[Space(10)]
-	[SerializeField] private Sprite[] grasslandTiles;
+    [Header("Biome Sprites")]
+    [SerializeField] private Sprite[] grasslandTiles;
 	[SerializeField] private Sprite[] forestTiles;
 	[SerializeField] private Sprite[] woodlandTiles;
 	[SerializeField] private Sprite[] desertTiles;
@@ -92,33 +23,51 @@ public class Biomes : MonoBehaviour {
 	[SerializeField] private Sprite[] waterTiles;
 	[SerializeField] private Sprite[] snowTiles;
 	[SerializeField] private Sprite[] _bareTiles;
-	[SerializeField] private Sprite[] greenMountainTiles;
+
+    [Space(10)]
+    [Header("Mountain Sprites")]
+    [SerializeField] private Sprite[] greenMountainTiles;
 	[SerializeField] private Sprite[] desertMountainTiles;
 	[SerializeField] private Sprite[] snowAndTundraMountainTiles;
-	[SerializeField] private Sprite[] woodlandTrees;
-	[SerializeField] private Sprite[] forestTrees;
-//	[Space(10)]
-//	public List<HexTile> snowHexTiles;
-//	public List<HexTile> tundraHexTiles;
-//	public List<HexTile> grasslandHexTiles;
-//	public List<HexTile> woodsHexTiles;
-//	public List<HexTile> forestHexTiles;
-//	public List<HexTile> desertHexTiles;
 
-	[SerializeField] private Sprite grasslandTexture;
+    [Space(10)]
+    [Header("Tree Sprites")]
+    [SerializeField] private Sprite[] woodlandTrees;
+	[SerializeField] private Sprite[] forestTrees;
+
+    [Space(10)]
+    [Header("Biome Textures")]
+    [SerializeField] private Sprite grasslandTexture;
 	[SerializeField] private Sprite snowTexture;
 	[SerializeField] private Sprite desertTexture;
 	[SerializeField] private Sprite forestTexture;
 	[SerializeField] private Sprite woodlandTexture;
 	[SerializeField] private Sprite tundraTexture;
-	public Material edgeMaterial;
 
+    [Space(10)]
+    [Header("Hextile Masks")]
     public Texture[] topRightMasks;
     public Texture[] rightMasks;
     public Texture[] botRightMasks;
     public Texture[] topLeftMasks;
     public Texture[] leftMasks;
     public Texture[] botLeftMasks;
+
+    [Space(10)]
+    [Header("Resource Prefabs")]
+    public GameObject behemothPrefab;
+    public GameObject cobaltPrefab;
+    public GameObject cornPrefab;
+    public GameObject deerPrefab;
+    public GameObject ebonyPrefab;
+    public GameObject granitePrefab;
+    public GameObject manaStonesPrefab;
+    public GameObject mithrilPrefab;
+    public GameObject oakPrefab;
+    public GameObject pigPrefab;
+    public GameObject ricePrefab;
+    public GameObject slatePrefab;
+    public GameObject wheatPrefab;
 
     #region getters/setters
     public Sprite[] bareTiles{
@@ -433,5 +382,37 @@ public class Biomes : MonoBehaviour {
         }
         return null;
     }
-
+       
+    internal GameObject GetPrefabForResource(RESOURCE resource) {
+        switch (resource) {
+            case RESOURCE.CORN:
+                return cornPrefab;
+            case RESOURCE.WHEAT:
+                return wheatPrefab;
+            case RESOURCE.RICE:
+                return ricePrefab;
+            case RESOURCE.DEER:
+                return deerPrefab;
+            case RESOURCE.PIG:
+                return pigPrefab;
+            case RESOURCE.BEHEMOTH:
+                return behemothPrefab;
+            case RESOURCE.OAK:
+                return oakPrefab;
+            case RESOURCE.EBONY:
+                return ebonyPrefab;
+            case RESOURCE.GRANITE:
+                return granitePrefab;
+            case RESOURCE.SLATE:
+                return slatePrefab;
+            case RESOURCE.MANA_STONE:
+                return manaStonesPrefab;
+            case RESOURCE.MITHRIL:
+                return mithrilPrefab;
+            case RESOURCE.COBALT:
+                return cobaltPrefab;
+            default:
+                return null;
+        }
+    }
 }

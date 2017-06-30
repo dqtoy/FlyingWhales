@@ -4,18 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-#pragma warning disable 0168 // variable declared but not used.
-#pragma warning disable 0219 // variable assigned but not used.
-#pragma warning disable 0414 // private field assigned but not used.
-
 public class UIManager : MonoBehaviour {
 
 	public static UIManager Instance = null;
 
 	public UICamera uiCamera;
 
-	[Space(10)]//Prefabs
-	public GameObject characterPortraitPrefab;
+	[Space(10)]
+    [Header("Prefabs")]
+    public GameObject characterPortraitPrefab;
 	public GameObject historyPortraitPrefab;
 	public GameObject eventPortraitPrefab;
 	public GameObject traitPrefab;
@@ -30,8 +27,9 @@ public class UIManager : MonoBehaviour {
     public GameObject resourceIconPrefab;
     public GameObject playerEventItemPrefab;
 
-	[Space(10)]//Main Objects
-	public GameObject smallInfoGO;
+	[Space(10)]
+    [Header("Main UI Objects")]
+    public GameObject smallInfoGO;
 	public GameObject campaignInfoGO;
 	public GameObject citizenInfoGO;
 	public GameObject cityInfoGO;
@@ -48,9 +46,10 @@ public class UIManager : MonoBehaviour {
     public GameObject kingdomCitiesGO;
     public GameObject interveneMenuGO;
 
-	[Space(10)]//For Testing
-	//Trait Editor
-	public GameObject traitEditorGO;
+	[Space(10)]
+    [Header("For Testing Objects")]
+    //Trait Editor
+    public GameObject traitEditorGO;
 	public UIPopupList addTraitPopUpList;
 	public UIPopupList removeTraitPopUpList;
 	public UILabel addTraitChoiceLbl;
@@ -71,21 +70,24 @@ public class UIManager : MonoBehaviour {
 	public GameObject forcePlagueGO;
 	public UIPopupList kingdomsForPlague;
 
-	[Space(10)]//World UI
-	public ButtonGroupItem pauseBtn;
+	[Space(10)]
+    [Header("Date Objects")]
+    public ButtonGroupItem pauseBtn;
 	public ButtonGroupItem x1Btn;
 	public ButtonGroupItem x2Btn;
 	public ButtonGroupItem x4Btn;
+    public UILabel dateLbl;
+
+    [Space(10)]
+    [Header("Miscellaneous")]
+    public UILabel smallInfoLbl;
+	
 
 	[Space(10)]
-	public UILabel dateLbl;
-	public UILabel smallInfoLbl;
-	public UI2DSprite ctizenPortraitBG;
-	public UIGrid kingsGrid;
-	public GameObject citizenInfoIsDeadIcon;
-
-	[Space(10)]//Citizen Info UI
-	public UILabel citizenNameLbl;
+    [Header("Citizen UI Objects")]
+    public UI2DSprite ctizenPortraitBG;
+    public GameObject citizenInfoIsDeadIcon;
+    public UILabel citizenNameLbl;
 	public UILabel citizenRoleAndKingdomLbl;
 	public UILabel citizenAgeLbl;
 	public UILabel citizenCityNameLbl;
@@ -126,24 +128,24 @@ public class UIManager : MonoBehaviour {
 //	public GameObject cityInfoEventsParent;
 //	public UIGrid cityInfoEventsGrid;
 //	public GameObject noEventsGO;
-
-	public UI2DSprite cityInfoPortrait;
-	public UILabel cityInfoCityNameLbl;
-	public CharacterPortrait cityInfoGovernorPortrait;
-	public UIGrid cityInfoCitizenGrid;
-	public UILabel cityInfoGoldLbl;
-	public UILabel cityInfoBasicLbl;
-	public UI2DSprite cityInfoBasicResource;
-	public GameObject cityInfoManaStoneIcon;
-	public GameObject cityInfoCobaltIcon;
-	public GameObject cityInfoMithrilIcon;
-	public GameObject cityInfoStoneIcon;
-	public GameObject cityInfoLumberIcon;
+	//public UI2DSprite cityInfoPortrait;
+	//public UILabel cityInfoCityNameLbl;
+	//public CharacterPortrait cityInfoGovernorPortrait;
+	//public UIGrid cityInfoCitizenGrid;
+	//public UILabel cityInfoGoldLbl;
+	//public UILabel cityInfoBasicLbl;
+	//public UI2DSprite cityInfoBasicResource;
+	//public GameObject cityInfoManaStoneIcon;
+	//public GameObject cityInfoCobaltIcon;
+	//public GameObject cityInfoMithrilIcon;
+	//public GameObject cityInfoStoneIcon;
+	//public GameObject cityInfoLumberIcon;
 	
 
 
-	[Space(10)] //Events UI
-	public UIGrid gameEventsOfTypeGrid;
+	[Space(10)]
+    [Header("Events UI Objects")]
+    public UIGrid gameEventsOfTypeGrid;
 	public Sprite assassinationIcon;
 	public Sprite rebellionPlotIcon;
 	public Sprite stateVisitIcon;
@@ -156,29 +158,33 @@ public class UIManager : MonoBehaviour {
 	public Sprite expansionIcon;
 	public Sprite marriageInvitationIcon;
 
-	[Space(10)] //Relationship UI
-	public GameObject kingRelationshipsParentGO;
+	[Space(10)]
+    [Header("Relationships UI Objects")]
+    public GameObject kingRelationshipsParentGO;
 	public GameObject governorRelationshipsParentGO;
     public GameObject kingRelationshipLine;
     public GameObject kingNoRelationshipsGO;
     public UIGrid kingRelationshipsGrid;
 	public UIGrid governorsRelationshipGrid;
 
-	[Space(10)] //Relationship History UI
-	public UI2DSprite relationshipStatusSprite;
+	[Space(10)]
+    [Header("Relationship History UI Objects")]
+    public UI2DSprite relationshipStatusSprite;
 	public UIGrid relationshipHistoryGrid;
 	public GameObject noRelationshipsToShowGO;
 	public GameObject relationshipHistoryForTestingGO;
 
-	[Space(10)] //Family Tree UI
-	public GameObject familyTreeFatherGO;
+	[Space(10)]
+    [Header("Family Tree UI Objects")]
+    public GameObject familyTreeFatherGO;
 	public GameObject familyTreeMotherGO;
 	public GameObject familyTreeSpouseGO;
 	public UIGrid familyTreeChildGrid;
 	public UI2DSprite familyTreeInnerSprite;
 	public GameObject nextMarriageBtn;
 
-    [Space(10)] //For Kingdom Events
+    [Space(10)]
+    [Header("Kingdom Events UI Objects")]
     public ButtonToggle kingdomCurrentEventsBtn;
     public GameObject kingdomCurrentEventsGO;
     public UITable kingdomCurrentEventsContentParent;
@@ -188,7 +194,8 @@ public class UIManager : MonoBehaviour {
     public UIGrid kingdomHistoryGrid;
     public UILabel kingdomHistoryNoEventsLbl;
 
-    [Space(10)] //For New Kingdom List Menu
+    [Space(10)]
+    [Header("Kingdoms UI Objects")]
     public UILabel kingdomNameLbl;
     public UILabel kingdomUnrestLbl;
     public UILabel kingdomGoldLbl;
@@ -198,17 +205,16 @@ public class UIManager : MonoBehaviour {
     public UIGrid kingdomOtherResourcesGrid;
     public UIGrid kingdomTradeResourcesGrid;
 	public CharacterPortrait kingdomListActiveKing;
-	//public UI2DSprite kingdomListActiveKingdomFlagSprite;
 	public UIGrid kingdomListOtherKingdomsGrid;
-	//public GameObject kingdomListOtherKingdomsParent;
 	public ButtonToggle kingdomListEventButton;
 	public ButtonToggle kingdomListRelationshipButton;
 	public ButtonToggle kingdomListCityButton;
     public Sprite stoneSprite;
     public Sprite lumberSprite;
 
-    [Space(10)] //For Event Logs Menu
-	public GameObject elmEventLogsParentGO;
+    [Space(10)]
+    [Header("Event Logs UI Objects")]
+    public GameObject elmEventLogsParentGO;
 	public UILabel elmEventTitleLbl;
 	public GameObject elmSuccessRateGO;
 	public UILabel elmSuccessRateLbl;
@@ -217,21 +223,23 @@ public class UIManager : MonoBehaviour {
 	public GameObject elmFirstAnchor;
 	public UIScrollView elmScrollView;
 
-    [Space(10)] //For Kingdom Cities Menu
+    [Space(10)]
+    [Header("Cities UI Objects")]
     public UIScrollView kingdomCitiesScrollView;
     public UIGrid kingdomCitiesGrid;
     public GameObject relationshipSummaryGO;
     public UILabel relationshipSummaryLbl;
     public UILabel relationshipSummaryTitleLbl;
 
-    [Space(10)] //For Intervene Menu
+    [Space(10)]
+    [Header("Intervene UI Objects")]
     [SerializeField] private UIGrid interveneMenuGrid;
     [SerializeField] private UIScrollView interveneMenuScrollView;
     [SerializeField] private ButtonToggle interveneMenuBtn;
 
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
-	public Citizen currentlyShowingCitizen = null;
+	internal Citizen currentlyShowingCitizen = null;
 	internal City currentlyShowingCity = null;
 	internal Kingdom currentlyShowingKingdom = null;
 	private GameEvent currentlyShowingEvent;
@@ -258,10 +266,12 @@ public class UIManager : MonoBehaviour {
 	public delegate void OnPauseEventExpiration(bool state);
 	public OnPauseEventExpiration onPauseEventExpiration;
 
-	private const int HEADER_FONT_SIZE = 25;
-	private const int BODY_FONT_SIZE = 20;
-	private const int TOOLTIP_FONT_SIZE = 18;
-    private const int SMALLEST_FONT_SIZE = 12;
+    [Space(10)]
+    [Header("Font Sizes")]
+    [SerializeField] private int HEADER_FONT_SIZE = 25;
+    [SerializeField] private int BODY_FONT_SIZE = 20;
+    [SerializeField] private int TOOLTIP_FONT_SIZE = 18;
+    [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
     void Awake(){
 		Instance = this;
