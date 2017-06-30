@@ -659,8 +659,8 @@ public class Plague : GameEvent {
 		if (this.IsDaysMultipleOf (5)) {
 			for (int i = 0; i < this.affectedKingdoms.Count; i++) {
 				float chance = UnityEngine.Random.Range (0f, 99f);
-                Kingdom kingdomOfCity = this.affectedCities[i].kingdom;
-                float value = this.kingdomChances[kingdomOfCity.id][0] * (float)this.affectedKingdoms [i].cities.Sum (x => x.plaguedSettlements.Count);
+//                Kingdom kingdomOfCity = this.affectedCities[i].kingdom;
+				float value = this.kingdomChances[this.affectedKingdoms[i].id][0] * (float)this.affectedKingdoms [i].cities.Sum (x => x.plaguedSettlements.Count);
 				if (chance < value) {
 					City targetCity = this.affectedKingdoms [i].cities.FirstOrDefault (x => x.plague != null);
 					if (targetCity != null) {

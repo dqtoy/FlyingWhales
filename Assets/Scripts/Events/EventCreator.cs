@@ -253,7 +253,7 @@ public class EventCreator: MonoBehaviour {
 	}
 
 	internal SpouseAbduction CreateSpouseAbductionEvent(Citizen abductorKing, Citizen targetKing){
-		Debug.Log ("Creating SPOUSE ABDUCTION: " + abductorKing.name + " wants to abduct the spouse of " + targetKing.name);
+		Debug.LogError ("Creating SPOUSE ABDUCTION: " + abductorKing.name + " wants to abduct the spouse of " + targetKing.name);
 		SpouseAbduction spouseAbduction = new SpouseAbduction(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, abductorKing, targetKing);
 		return spouseAbduction;
 	}
