@@ -40,10 +40,16 @@ public class BorderConflict : GameEvent {
 		newLogTitle.AddToFillers (null, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLogTitle.AddToFillers (null, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "BorderConflictReasons", "reason1");
-//		newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
-//		newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-//		newLog.AddToFillers (null, LocalizationManager.Instance.GetRandomLocalizedValue("Reasons", "BorderConflictReasons"), LOG_IDENTIFIER.TRIGGER_REASON);
+		string randomReason = LocalizationManager.Instance.GetRandomLocalizedKey ("Reasons", "BorderConflictReasons");
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "BorderConflictReasons", randomReason);
+		if(randomReason == "border_altercation"){
+			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+		}else if(randomReason == "insulted_governor"){
+			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+		}
+
 
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "start");
 //		newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
@@ -383,6 +389,5 @@ public class BorderConflict : GameEvent {
 				DoneEvent ();
 			}
 		}
-
 	}
 }

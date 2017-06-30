@@ -706,7 +706,7 @@ public class Utilities : MonoBehaviour {
 		bool hasPeriod = newText.EndsWith (".");
 
 		if (!string.IsNullOrEmpty (newText)) {
-			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ','});
+			string[] words = Utilities.SplitAndKeepDelimiters(newText, new char[]{' ', '.', ',', '\''});
 			for (int i = 0; i < words.Length; i++) {
 				replacedWord = string.Empty;
 				if (words [i].StartsWith ("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT
@@ -758,6 +758,14 @@ public class Utilities : MonoBehaviour {
 		if(wordToBeReplaced.EndsWith("@")){
 			for(int i = 0; i < objectLog.Count; i++){
 				if(objectLog[i].identifier == identifier){
+					if (objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_1 || objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_2){
+						if(objectLog [i].obj is Kingdom){
+							Kingdom kingdom = (Kingdom)objectLog [i].obj;
+							Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
+							objectLog [i].obj = randomGovernor;
+							objectLog [i].value = randomGovernor.name;
+						}
+					}
 					wordToReplace = "[url=" + i.ToString() + "][b]" + objectLog[i].value + "[/b][/url]";
 					break;
 				}
@@ -765,6 +773,14 @@ public class Utilities : MonoBehaviour {
 		}else if(wordToBeReplaced.EndsWith("%")){
 			for(int i = 0; i < objectLog.Count; i++){
 				if(objectLog[i].identifier == identifier){
+					if (objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_1 || objectLog[i].identifier == LOG_IDENTIFIER.RANDOM_GOVERNOR_2){
+						if(objectLog [i].obj is Kingdom){
+							Kingdom kingdom = (Kingdom)objectLog [i].obj;
+							Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
+							objectLog [i].obj = randomGovernor;
+							objectLog [i].value = randomGovernor.name;
+						}
+					}
 					wordToReplace = objectLog[i].value;
 					break;
 				}

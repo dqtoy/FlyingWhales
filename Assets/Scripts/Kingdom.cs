@@ -1797,4 +1797,9 @@ public class Kingdom{
 		}
 		return false;
 	}
+
+	internal Citizen GetRandomGovernorFromKingdom(){
+		City randomCity = this.cities [UnityEngine.Random.Range (0, this.cities.Count)];
+		return randomCity.governor;
+	}
 }
