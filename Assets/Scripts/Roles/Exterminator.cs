@@ -2,11 +2,11 @@
 using System.Collections;
 
 public class Exterminator : Role {
-    private Plague _plague;
+    private Plague _plagueEvent;
 
     #region getters/setters
-    public Plague plague {
-        get { return this._plague; }
+    public Plague plagueEvent {
+        get { return this._plagueEvent; }
     }
     #endregion
     public Exterminator(Citizen citizen): base(citizen){
@@ -16,8 +16,8 @@ public class Exterminator : Role {
     internal override void Initialize(GameEvent gameEvent) {
         if (gameEvent is Plague) {
             base.Initialize(gameEvent);
-            this._plague = (Plague)gameEvent;
-            this._plague.AddAgentToList(this.citizen);
+            this._plagueEvent = (Plague)gameEvent;
+            this._plagueEvent.AddAgentToList(this.citizen);
             this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Exterminator"), this.citizen.city.hexTile.transform) as GameObject;
             this.avatar.transform.localPosition = Vector3.zero;
             this.avatar.GetComponent<ExterminatorAvatar>().Init(this);

@@ -10,8 +10,8 @@ public class StoryTellingManager : MonoBehaviour {
 	}
 
 	public TRAIT GenerateHonestyTrait(Citizen citizen){
-		switch (citizen.city.kingdom.kingdomType) {
-		}
+		//switch (citizen.city.kingdom.kingdomType) {
+		//}
 		if (citizen.city.kingdom.horoscope [0] == 0) {
 			return TRAIT.HONEST;
 		} else {
@@ -76,7 +76,6 @@ public class StoryTellingManager : MonoBehaviour {
 					}
 				}
 				return KingdomManager.Instance.kingdomTypeBarbaric;
-				break;
 
 			case (KINGDOM_TYPE.HERMIT_TRIBE):
 				if (kingdom.cities.Count >= 5) {
@@ -87,7 +86,6 @@ public class StoryTellingManager : MonoBehaviour {
 					}
 				}
 				return KingdomManager.Instance.kingdomTypeHermit;
-				break;
 
 			case (KINGDOM_TYPE.RELIGIOUS_TRIBE):
 				if (kingdom.cities.Count > 4) {
@@ -98,7 +96,6 @@ public class StoryTellingManager : MonoBehaviour {
 					}
 				}
 				return KingdomManager.Instance.kingdomTypeReligious;
-				break;
 
 			case (KINGDOM_TYPE.OPPORTUNISTIC_TRIBE):
 				if (kingdom.cities.Count > 4) {
@@ -109,7 +106,6 @@ public class StoryTellingManager : MonoBehaviour {
 					}
 				}
 				return KingdomManager.Instance.kingdomTypeOpportunistic;
-				break;
 
 			case (KINGDOM_TYPE.NOBLE_KINGDOM):
 				if (kingdom.cities.Count <= 4) {
@@ -122,7 +118,6 @@ public class StoryTellingManager : MonoBehaviour {
 					return KingdomManager.Instance.kingdomTypeRighteous;
 				}
 				return KingdomManager.Instance.kingdomTypeNoble;
-				break;
 
 			case (KINGDOM_TYPE.EVIL_EMPIRE):
 				if (kingdom.cities.Count <= 4) {
@@ -135,7 +130,6 @@ public class StoryTellingManager : MonoBehaviour {
 					return KingdomManager.Instance.kingdomTypeWicked;
 				}
 				return KingdomManager.Instance.kingdomTypeEvil;
-				break;
 
 			case (KINGDOM_TYPE.MERCHANT_NATION):
 				if (kingdom.cities.Count <= 4) {
@@ -148,7 +142,6 @@ public class StoryTellingManager : MonoBehaviour {
 					return KingdomManager.Instance.kingdomTypeRighteous;
 				}
 				return KingdomManager.Instance.kingdomTypeMerchant;
-				break;
 
 			case (KINGDOM_TYPE.CHAOTIC_STATE):
 				if (kingdom.cities.Count <= 4) {
@@ -161,7 +154,6 @@ public class StoryTellingManager : MonoBehaviour {
 					return KingdomManager.Instance.kingdomTypeWicked;
 				}
 				return KingdomManager.Instance.kingdomTypeChaotic;
-				break;
 
 			case (KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER):
 				if (kingdom.cities.Count <= 4) {
@@ -178,7 +170,6 @@ public class StoryTellingManager : MonoBehaviour {
 					}
 				}
 				return KingdomManager.Instance.kingdomTypeRighteous;
-				break;
 
 			case (KINGDOM_TYPE.WICKED_SUPERPOWER):
 				if (kingdom.cities.Count <= 4) {
@@ -195,7 +186,6 @@ public class StoryTellingManager : MonoBehaviour {
 					}
 				}
 				return KingdomManager.Instance.kingdomTypeWicked;
-				break;
 			}
 
 

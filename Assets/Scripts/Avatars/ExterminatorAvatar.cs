@@ -33,7 +33,7 @@ public class ExterminatorAvatar : MonoBehaviour {
         this.exterminator = exterminator;
         this.direction = DIRECTION.LEFT;
         this.GetComponent<Avatar>().kingdom = this.exterminator.citizen.city.kingdom;
-        this.GetComponent<Avatar>().gameEvent = this.exterminator.plague;
+        this.GetComponent<Avatar>().gameEvent = this.exterminator.plagueEvent;
         this.GetComponent<Avatar>().citizen = this.exterminator.citizen;
 
         ResetValues();
@@ -118,7 +118,7 @@ public class ExterminatorAvatar : MonoBehaviour {
     }
     [Task]
     public void IsThereEvent() {
-        if (this.exterminator.plague != null) {
+        if (this.exterminator.plagueEvent != null) {
             Task.current.Succeed();
         } else {
             Task.current.Fail();
@@ -159,7 +159,7 @@ public class ExterminatorAvatar : MonoBehaviour {
     public void HasDiedOfOtherReasons() {
         if (this.exterminator.citizen.isDead) {
             //Citizen has died
-            this.exterminator.plague.DeathByOtherReasons();
+            this.exterminator.plagueEvent.DeathByOtherReasons();
             Task.current.Succeed();
         } else {
             Task.current.Fail();
@@ -219,7 +219,7 @@ public class ExterminatorAvatar : MonoBehaviour {
 
     void OnMouseEnter() {
         if (!UIManager.Instance.IsMouseOnUI()) {
-            UIManager.Instance.ShowSmallInfo(this.exterminator.plague.name);
+            UIManager.Instance.ShowSmallInfo(this.exterminator.plagueEvent.name);
             this.HighlightPath();
         }
     }
@@ -249,7 +249,7 @@ public class ExterminatorAvatar : MonoBehaviour {
     }
 
     public void OnEndAttack() {
-        this.exterminator.plague.DoneCitizenAction(this.exterminator.citizen);
+        this.exterminator.plagueEvent.DoneCitizenAction(this.exterminator.citizen);
         this.exterminator.DestroyGO();
     }
 

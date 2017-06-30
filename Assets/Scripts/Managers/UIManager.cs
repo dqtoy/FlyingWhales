@@ -313,11 +313,11 @@ public class UIManager : MonoBehaviour {
             UpdateKingdomInfo();
         }
 
-		if (cityInfoGO.activeSelf) {
-			if (currentlyShowingCity != null) {
-				ShowCityInfo (currentlyShowingCity);
-			}
-		}
+		//if (cityInfoGO.activeSelf) {
+		//	if (currentlyShowingCity != null) {
+		//		ShowCityInfo (currentlyShowingCity);
+		//	}
+		//}
 
 		if (eventLogsGO.activeSelf) {
 			if (currentlyShowingLogObject != null) {
@@ -735,101 +735,101 @@ public class UIManager : MonoBehaviour {
 		CameraMove.Instance.CenterCameraOn (currentlyShowingCitizen.city.hexTile.gameObject);
 	}
 
-	public void ShowCityInfo(City cityToShow, bool showCitizens = false){
-        HideCitizenInfo();
-        if (currentlyShowingCity != null) {
-			//unhighlight previously selected city
-			currentlyShowingCity.UnHighlightAllOwnedTiles ();
-		}
-		if(cityToShow == null){
-			return;
-		}
-		currentlyShowingCity = cityToShow;
+//	public void ShowCityInfo(City cityToShow, bool showCitizens = false){
+//        HideCitizenInfo();
+//        if (currentlyShowingCity != null) {
+//			//unhighlight previously selected city
+//			currentlyShowingCity.UnHighlightAllOwnedTiles ();
+//		}
+//		if(cityToShow == null){
+//			return;
+//		}
+//		currentlyShowingCity = cityToShow;
 
-		if (currentlyShowingKingdom != null) {
-			currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom ();
-		}
-
-		//Show Basic City Info
-		cityInfoCityNameLbl.text = currentlyShowingCity.name;
-		cityInfoPortrait.color = currentlyShowingCity.kingdom.kingdomColor;
-
-		//Show Governor
-		cityInfoGovernorPortrait.SetCitizen (currentlyShowingCity.governor);
-
-		//Show Citizens
-		List<Transform> gridChildren = cityInfoCitizenGrid.GetChildList();
-		List<Citizen> citizensInCity = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING && x.role != ROLE.UNTRAINED).ToList();
-
-		List<int> currentlyShowingCitizens = gridChildren.Select (x => x.GetComponent<CharacterPortrait>().citizen.id).ToList();
-		List<int> citizens = citizensInCity.Select(x => x.id).ToList();
-		if (citizens.Except(currentlyShowingCitizens).Union(currentlyShowingCitizens.Except(citizens)).ToList().Count > 0) {
-			for (int i = 0; i < gridChildren.Count; i++) {
-				cityInfoCitizenGrid.RemoveChild(gridChildren[i]);
-				Destroy(gridChildren[i].gameObject);
-			}
-			for (int i = 0; i < citizensInCity.Count; i++) {
-				GameObject citizenGO = InstantiateUIObject(characterPortraitPrefab, this.transform);
-				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensInCity[i]);
-				citizenGO.transform.localScale = Vector3.one;
-				cityInfoCitizenGrid.AddChild (citizenGO.transform);
-			}
-		}
-		cityInfoCitizenGrid.transform.parent.GetComponent<UIScrollView>().ResetPosition();
-//		StartCoroutine(RepositionGrid(cityInfoCitizenGrid));
-
-		//Show City Resources
-		//Gold
-//		cityInfoGoldLbl.text = currentlyShowingCity.goldCount.ToString() + "/" + currentlyShowingCity.MAX_GOLD.ToString();
-
-//		//Basic Resource
-//		if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
-//			cityInfoBasicResource.sprite2D = stoneSprite;
-//			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.stoneCount.ToString();
-//		} else if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
-//			cityInfoBasicResource.sprite2D = lumberSprite;
-//			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.lumberCount.ToString();
+//		if (currentlyShowingKingdom != null) {
+//			currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom ();
 //		}
 
-		//Additional Resources
-		if (currentlyShowingCity.manaStoneCount > 0) {
-			cityInfoManaStoneIcon.SetActive (true);
-		} else {
-			cityInfoManaStoneIcon.SetActive (false);
-		}
+//		//Show Basic City Info
+//		cityInfoCityNameLbl.text = currentlyShowingCity.name;
+//		cityInfoPortrait.color = currentlyShowingCity.kingdom.kingdomColor;
 
-		if (currentlyShowingCity.cobaltCount > 0) {
-			cityInfoCobaltIcon.SetActive (true);
-		} else {
-			cityInfoCobaltIcon.SetActive (false);
-		}
+//		//Show Governor
+//		cityInfoGovernorPortrait.SetCitizen (currentlyShowingCity.governor);
 
-		if (currentlyShowingCity.mithrilCount > 0) {
-			cityInfoMithrilIcon.SetActive (true);
-		} else {
-			cityInfoMithrilIcon.SetActive (false);
-		}
+//		//Show Citizens
+//		List<Transform> gridChildren = cityInfoCitizenGrid.GetChildList();
+//		List<Citizen> citizensInCity = currentlyShowingCity.citizens.Where(x => x.role != ROLE.GOVERNOR && x.role != ROLE.KING && x.role != ROLE.UNTRAINED).ToList();
 
-		if (currentlyShowingCity.kingdom.basicResource != BASE_RESOURCE_TYPE.WOOD && currentlyShowingCity.lumberCount > 0) {
-			cityInfoLumberIcon.SetActive (true);
-		} else {
-			cityInfoLumberIcon.SetActive (false);
-		}
+//		List<int> currentlyShowingCitizens = gridChildren.Select (x => x.GetComponent<CharacterPortrait>().citizen.id).ToList();
+//		List<int> citizens = citizensInCity.Select(x => x.id).ToList();
+//		if (citizens.Except(currentlyShowingCitizens).Union(currentlyShowingCitizens.Except(citizens)).ToList().Count > 0) {
+//			for (int i = 0; i < gridChildren.Count; i++) {
+//				cityInfoCitizenGrid.RemoveChild(gridChildren[i]);
+//				Destroy(gridChildren[i].gameObject);
+//			}
+//			for (int i = 0; i < citizensInCity.Count; i++) {
+//				GameObject citizenGO = InstantiateUIObject(characterPortraitPrefab, this.transform);
+//				citizenGO.GetComponent<CharacterPortrait> ().SetCitizen (citizensInCity[i]);
+//				citizenGO.transform.localScale = Vector3.one;
+//				cityInfoCitizenGrid.AddChild (citizenGO.transform);
+//			}
+//		}
+//		cityInfoCitizenGrid.transform.parent.GetComponent<UIScrollView>().ResetPosition();
+////		StartCoroutine(RepositionGrid(cityInfoCitizenGrid));
 
-		if (currentlyShowingCity.kingdom.basicResource != BASE_RESOURCE_TYPE.STONE && currentlyShowingCity.stoneCount > 0) {
-			cityInfoStoneIcon.SetActive (true);
-		} else {
-			cityInfoStoneIcon.SetActive (false);
-		}
+//		//Show City Resources
+//		//Gold
+////		cityInfoGoldLbl.text = currentlyShowingCity.goldCount.ToString() + "/" + currentlyShowingCity.MAX_GOLD.ToString();
 
-		currentlyShowingCity.HighlightAllOwnedTiles(204f / 255f);
+////		//Basic Resource
+////		if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
+////			cityInfoBasicResource.sprite2D = stoneSprite;
+////			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.stoneCount.ToString();
+////		} else if (currentlyShowingCity.kingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
+////			cityInfoBasicResource.sprite2D = lumberSprite;
+////			cityInfoBasicLbl.text = currentlyShowingCity.totalCitizenConsumption.ToString() + "/" + currentlyShowingCity.lumberCount.ToString();
+////		}
 
-        //ForTesting
-        forTestingLoyaltyLbl.text = ((Governor)currentlyShowingCity.governor.assignedRole).loyalty.ToString();
+//		//Additional Resources
+//		if (currentlyShowingCity.manaStoneCount > 0) {
+//			cityInfoManaStoneIcon.SetActive (true);
+//		} else {
+//			cityInfoManaStoneIcon.SetActive (false);
+//		}
 
-		cityInfoGO.SetActive (true);
+//		if (currentlyShowingCity.cobaltCount > 0) {
+//			cityInfoCobaltIcon.SetActive (true);
+//		} else {
+//			cityInfoCobaltIcon.SetActive (false);
+//		}
 
-	}
+//		if (currentlyShowingCity.mithrilCount > 0) {
+//			cityInfoMithrilIcon.SetActive (true);
+//		} else {
+//			cityInfoMithrilIcon.SetActive (false);
+//		}
+
+//		if (currentlyShowingCity.kingdom.basicResource != BASE_RESOURCE_TYPE.WOOD && currentlyShowingCity.lumberCount > 0) {
+//			cityInfoLumberIcon.SetActive (true);
+//		} else {
+//			cityInfoLumberIcon.SetActive (false);
+//		}
+
+//		if (currentlyShowingCity.kingdom.basicResource != BASE_RESOURCE_TYPE.STONE && currentlyShowingCity.stoneCount > 0) {
+//			cityInfoStoneIcon.SetActive (true);
+//		} else {
+//			cityInfoStoneIcon.SetActive (false);
+//		}
+
+//		currentlyShowingCity.HighlightAllOwnedTiles(204f / 255f);
+
+//        //ForTesting
+//        forTestingLoyaltyLbl.text = ((Governor)currentlyShowingCity.governor.assignedRole).loyalty.ToString();
+
+//		cityInfoGO.SetActive (true);
+
+//	}
 
 	public void HideCityInfo(){
 		//unhighlight previously selected city
@@ -850,7 +850,7 @@ public class UIManager : MonoBehaviour {
 	#region coroutines
 	public IEnumerator RepositionGrid(UIGrid thisGrid){
 		yield return null;
-		if(this.gameObject.activeSelf){
+		if(thisGrid != null && this.gameObject.activeSelf){
 			thisGrid.Reposition ();
 		}
 		yield return null;

@@ -67,39 +67,34 @@ public class JoinWar : GameEvent {
 	internal override void PerformAction(){
 		if(!this.invasionPlanThatStartedEvent.isActive){
 			//Join War Request is cancelled since the Invasion Plan is cancelled
-			this.DoneEvent();
+			this.CancelEvent();
 			return;
 		}
 		if (this.startedBy.isDead) {
 			this.resolution = this.startedBy.name + " died before the event could finish.";
-			this.DoneEvent();
+			this.CancelEvent();
 			return;
 		}
-//		if (this._envoyToSend.citizen.isDead) {
-//			this.resolution = this._envoyToSend.citizen.name + " died before the event could finish.";
-//			this.DoneEvent();
-//			return;
-//		}
 		if (this.candidateForAlliance.isDead) {
 			this.resolution = this.candidateForAlliance.name + " died before the event could finish.";
-			this.DoneEvent();
+			this.CancelEvent();
 			return;
 		}
 		if (!candidateForAlliance.isKing) {
 			this.resolution = this.candidateForAlliance.name + " was overthrown before " + this.startedBy.name + " could invite him to join his war against " + this.kingdomToAttack.name;
-			this.DoneEvent();
+			this.CancelEvent();
 			return;
 		}
 		if (EventManager.Instance.GetEventsStartedByKingdom (this.candidateForAlliance.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
 			this.resolution = this.candidateForAlliance.city.kingdom.name + " did not join " + this.startedByKingdom.name + " in his war against " + this.kingdomToAttack.name + 
 				" because they already have other invasion plans.";
-			this.DoneEvent ();
+			this.CancelEvent();
 			return;
 		}
 		if (this.warEvent != null && this.warEvent.isAtWar) {
 			this.resolution = this.candidateForAlliance.city.kingdom.name + " did not join " + this.startedByKingdom.name + " in his war against " + this.kingdomToAttack.name + 
 				" because " + this.candidateForAlliance.city.kingdom.name + " is already at war with " + this.kingdomToAttack.name + ".";
-			this.DoneEvent ();
+			this.CancelEvent ();
 			return;
 		}
 		/*if (this.remainingDays <= 0) {
@@ -167,7 +162,9 @@ public class JoinWar : GameEvent {
 	internal override void DoneCitizenAction(Citizen citizen){
         base.DoneCitizenAction(citizen);
 
-		int successRate = 15;
+        this.PerformAction();
+
+        int successRate = 15;
 		RELATIONSHIP_STATUS relationshipWithRequester = candidateForAlliance.GetRelationshipWithCitizen (this.startedBy).lordRelationship;
 		RELATIONSHIP_STATUS relationshipWithTarget = candidateForAlliance.GetRelationshipWithCitizen (kingdomToAttack.king).lordRelationship;
 

@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 [System.Serializable]
 public class Kingdom{
 	public int id;
 	public string name;
 	public RACE race;
-	public int[] horoscope; 
+    [NonSerialized] public int[] horoscope; 
 
 	[SerializeField]
 	private KingdomTypeData _kingdomTypeData;
@@ -25,16 +26,16 @@ public class Kingdom{
 
     private int _unrest;
 
-	private List<City> _cities;
+    private List<City> _cities;
 	private List<Camp> camps;
 	internal City capitalCity;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
 	internal List<Citizen> pretenders;
 
-//	public List<Citizen> royaltyList;
-	public List<City> intlWarCities;
-	public List<City> activeCitiesToAttack;
+    //	public List<Citizen> royaltyList;
+    [NonSerialized] public List<City> intlWarCities;
+    [NonSerialized] public List<City> activeCitiesToAttack;
 	public List<CityWarPair> activeCitiesPairInWar;
 	internal List<City> holderIntlWarCities;
 	internal List<Rebellion> rebellions;
@@ -486,7 +487,7 @@ public class Kingdom{
 			return;
 		}
         float upperBound = 300f + (150f * (float)this.cities.Count);
-        float chance = Random.Range (0, upperBound);
+        float chance = UnityEngine.Random.Range (0, upperBound);
 		if (chance < this.expansionChance) {
 			Debug.Log ("Expansion Rate: " + this.expansionChance);		
 			List<City> citiesThatCanExpand = new List<City> ();
