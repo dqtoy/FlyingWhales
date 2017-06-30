@@ -68,12 +68,12 @@ public class King : Role {
 				for (int i = 0; i < targetKings.Count; i++) {
 					RelationshipKings relationship = this.citizen.GetRelationshipWithCitizen (targetKings [i]);
 					if(relationship != null){
-						targetKing = targetKings [i];
-						return true;
-//						if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY || relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
-//							targetKing = targetKings [i];
-//							return true;
-//						}
+//						targetKing = targetKings [i];
+//						return true;
+						if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY || relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
+							targetKing = targetKings [i];
+							return true;
+						}
 					}
 				}
 			}
