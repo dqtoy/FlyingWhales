@@ -39,7 +39,7 @@ public class Lycanthropy : GameEvent {
         
         Debug.LogError("LYCANTHROPY DONE CITIZEN ACTION!");
         //chance for capture
-        int captureChance = 10;
+        int captureChance = 30;
         if(this._lycanthrope.targetKingdom != null) {
             //werewolf cannot be captured if it already has a captor
             captureChance = 0;

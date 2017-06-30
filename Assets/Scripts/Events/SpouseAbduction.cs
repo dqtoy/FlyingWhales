@@ -278,6 +278,8 @@ public class SpouseAbduction : GameEvent {
 				newLog2.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
 				newLog2.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 				newLog2.AddToFillers (this.abductorKingdom, this.abductorKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+
+				this.DoneEvent ();
 			}else{
 				if(this.relationshipKing != null){
 					this.relationshipKing.AdjustLikeness (-30, this);
@@ -307,6 +309,7 @@ public class SpouseAbduction : GameEvent {
 			}else{
 				HonorableOtherKingsAdjustRelationshipToBothKings();
 			}
+			this.DoneEvent ();
 		}
 	}
 	private void FailAbduction(){
@@ -317,6 +320,11 @@ public class SpouseAbduction : GameEvent {
 
 		if(this.isCompatibleWithTargetKing){
 			AbductorDies ();
+		}else{
+			Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "abductor_live");
+			newLog2.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+			this.DoneEvent ();
 		}
 	}
 	private void AbductorDies(){
@@ -367,7 +375,7 @@ public class SpouseAbduction : GameEvent {
 	private void ReturnSpouse(){
 		//Add log - spouse will return because the target kingdom wins the war*
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "return_spouse");
-		newLog.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
+		newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
 		this.abductorKing.DivorceSpouse ();
@@ -473,7 +481,7 @@ public class SpouseAbduction : GameEvent {
 
 	private void AbductorKingdomWins(){
 		//Add log - abductor wins, the spouse will not be returned*
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "spouse_suicide");
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "abductor_wins");
 		newLog.AddToFillers (this.abductorKingdom, this.abductorKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 		newLog.AddToFillers (this.abductorKing, this.abductorKing.name, LOG_IDENTIFIER.KING_1);
