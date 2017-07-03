@@ -58,9 +58,9 @@ public class KingdomManager : MonoBehaviour {
             InitialKingdom initialKingdom = initialKingdomSetup[i];
             List<HexTile> tilesToChooseFrom = stoneElligibleTiles;
             if (Utilities.GetBasicResourceForRace(initialKingdom.race) == BASE_RESOURCE_TYPE.WOOD) {
-                tilesToChooseFrom = woodElligibleTiles;
+				tilesToChooseFrom = woodElligibleTiles;
             }
-
+			tilesToChooseFrom = tilesToChooseFrom.Where(x => x.biomeType == initialKingdom.startingBiome).ToList();
             if (tilesToChooseFrom.Count <= 0) {
                 continue;
             }
