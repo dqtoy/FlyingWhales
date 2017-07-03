@@ -710,7 +710,7 @@ public class Utilities : MonoBehaviour {
 			for (int i = 0; i < words.Length; i++) {
 				replacedWord = string.Empty;
 				if (words [i].StartsWith ("%") && (words[i].EndsWith("%") || words[i].EndsWith("@"))) { //OBJECT
-					replacedWord = Utilities.CustomStringReplacer (words[i], log.fillers);
+					replacedWord = Utilities.CustomStringReplacer (words[i], ref log.fillers);
 				}else if(words [i].StartsWith ("%") && (words[i].EndsWith("a") || words[i].EndsWith("b"))){ //PRONOUN
 					replacedWord = Utilities.CustomPronounReplacer (words[i], log.fillers);
 				}
@@ -752,7 +752,7 @@ public class Utilities : MonoBehaviour {
 		return wordToReplace;
 
 	}
-	public static string CustomStringReplacer(string wordToBeReplaced, List<LogFiller> objectLog){
+	public static string CustomStringReplacer(string wordToBeReplaced, ref List<LogFiller> objectLog){
 		string wordToReplace = string.Empty;
 		LOG_IDENTIFIER identifier = Utilities.logIdentifiers[wordToBeReplaced.Substring(1, 2)];
 		if(wordToBeReplaced.EndsWith("@")){
@@ -762,8 +762,7 @@ public class Utilities : MonoBehaviour {
 						if(objectLog [i].obj is Kingdom){
 							Kingdom kingdom = (Kingdom)objectLog [i].obj;
 							Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
-							objectLog [i].obj = randomGovernor;
-							objectLog [i].value = randomGovernor.name;
+							objectLog [i] = new LogFiller(randomGovernor, randomGovernor.name, objectLog[i].identifier);
 						}
 					}
 					wordToReplace = "[url=" + i.ToString() + "][b]" + objectLog[i].value + "[/b][/url]";
@@ -777,8 +776,7 @@ public class Utilities : MonoBehaviour {
 						if(objectLog [i].obj is Kingdom){
 							Kingdom kingdom = (Kingdom)objectLog [i].obj;
 							Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
-							objectLog [i].obj = randomGovernor;
-							objectLog [i].value = randomGovernor.name;
+							objectLog [i] = new LogFiller(randomGovernor, randomGovernor.name, objectLog[i].identifier);
 						}
 					}
 					wordToReplace = objectLog[i].value;

@@ -65,8 +65,8 @@ public class Kingdom{
 	
 	//Tech
 	private int _techLevel;
-	private int techCapacity;
-	private int techCounter;
+	private int _techCapacity;
+	private int _techCounter;
 
 	private float expansionChance = 1f;
     
@@ -148,6 +148,12 @@ public class Kingdom{
 	public int techLevel{
 		get{return this._techLevel + (3 * this._activatedBoonOfPowers.Count);}
 	}
+	public int techCapacity{
+		get{return this._techCapacity;}
+	}
+	public int techCounter{
+		get{return this._techCounter;}
+	}
     public float expansionRate {
         get { return this.expansionChance; }
     }
@@ -196,7 +202,7 @@ public class Kingdom{
 		this.rebellions = new List<Rebellion> ();
 		this._discoveredKingdoms = new List<Kingdom>();
 		this._techLevel = 1;
-		this.techCounter = 0;
+		this._techCounter = 0;
 		this._hasBioWeapon = false;
 		this._boonOfPowers = new List<BoonOfPower> ();
 		this._activatedBoonOfPowers = new List<BoonOfPower> ();
@@ -1655,19 +1661,19 @@ public class Kingdom{
 		this.AdjustTechCounter (amount);
 	}
 	private void UpdateTechCapacity(){
-		this.techCapacity = 2000 * this._techLevel;
+		this._techCapacity = 2000 * this._techLevel;
 	}
 
 	internal void AdjustTechCounter(int amount){
-		this.techCounter += amount;
-		this.techCounter = Mathf.Clamp(this.techCounter, 0, this.techCapacity);
-		if(this.techCounter == this.techCapacity){
+		this._techCounter += amount;
+		this._techCounter = Mathf.Clamp(this._techCounter, 0, this._techCapacity);
+		if(this._techCounter == this._techCapacity){
 			this.UpgradeTechLevel (1);
 		}
 	}
 	private void UpgradeTechLevel(int amount){
 		this._techLevel += amount;
-		this.techCounter = 0;
+		this._techCounter = 0;
 		this.UpdateTechCapacity ();
 	}
 	#endregion

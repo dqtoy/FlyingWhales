@@ -200,6 +200,7 @@ public class UIManager : MonoBehaviour {
     public UILabel kingdomUnrestLbl;
     public UILabel kingdomGoldLbl;
 	public UILabel kingdomTechLbl;
+	public UIProgressBar kingdomTechMeter;
     public UI2DSprite kingdomBasicResourceSprite;
     public UILabel kingdomBasicResourceLbl;
     public UIGrid kingdomOtherResourcesGrid;
@@ -432,8 +433,9 @@ public class UIManager : MonoBehaviour {
         kingdomGO.GetComponent<KingdomFlagItem>().SetKingdom(kingdomToAdd);
         //kingdomGO.GetComponent<KingdomFlagItem>().onHoverOver += currKingdom.HighlightAllOwnedTilesInKingdom;
         //kingdomGO.GetComponent<KingdomFlagItem>().onHoverExit += currKingdom.UnHighlightAllOwnedTilesInKingdom;
-        kingdomGO.transform.localScale = Vector3.one;
+        
         kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
+		kingdomGO.transform.localScale = Vector3.one;
         kingdomListOtherKingdomsGrid.Reposition();
 
 		kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
@@ -460,7 +462,10 @@ public class UIManager : MonoBehaviour {
         kingdomUnrestLbl.text = currentlyShowingKingdom.unrest.ToString(); //Unrest
         kingdomGoldLbl.text = currentlyShowingKingdom.goldCount.ToString() + "/" + currentlyShowingKingdom.maxGold.ToString(); //Gold
 		kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
-
+		kingdomTechMeter.value = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
+//		float newValue = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
+//		float oldValue = kingdomTechMeter.value;
+//		kingdomTechMeter.value = iTween.FloatUpdate(oldValue, newValue, GameManager.Instance.progressionSpeed);
         //Basic Resource
         if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
             kingdomBasicResourceSprite.sprite2D = stoneSprite;
