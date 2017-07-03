@@ -189,9 +189,10 @@ public class CityGenerator : MonoBehaviour {
         RaceStructures raceStructuresToUse = humanStructures;
         if(race == RACE.ELVES) {
             raceStructuresToUse = elvenStructures;
-        } else {
-            raceStructuresToUse = humanStructures;
-        }
+        } 
+//		else {
+//            raceStructuresToUse = humanStructures;
+//        }
 
         Structures[] structuresToChooseFrom = raceStructuresToUse.structures;
         for (int i = 0; i < structuresToChooseFrom.Length; i++) {

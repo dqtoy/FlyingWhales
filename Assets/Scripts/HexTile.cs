@@ -441,9 +441,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 } else {
                     structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
                 }
-            } else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD) {
+			} else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.ownedByCity.kingdom.race == RACE.ELVES) {
                 structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.LUMBERYARD);
-            } else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE) {
+			} else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE && this.ownedByCity.kingdom.race == RACE.HUMANS) {
                 structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.QUARRY);
             } else {
                 structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
