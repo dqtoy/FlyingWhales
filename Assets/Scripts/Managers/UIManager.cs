@@ -506,11 +506,8 @@ public class UIManager : MonoBehaviour {
 
         //Available Resources
         List<Transform> children = kingdomOtherResourcesGrid.GetChildList();
-        List<RESOURCE> resourcesInGrid = new List<RESOURCE>();
-        for (int i = 0; i < children.Count; i++) {
-			RESOURCE resource = (RESOURCE)Enum.Parse(typeof(RESOURCE), Utilities.GetComponentsInDirectChildren<UI2DSprite>(children[i].gameObject).FirstOrDefault().sprite2D.name);
-            resourcesInGrid.Add(resource);
-        }
+        List<RESOURCE> resourcesInGrid = children.Where(x => x.GetComponent<ResourceIcon>() != null).Select(x => x.GetComponent<ResourceIcon>().resource).ToList();
+        
         List<RESOURCE> allOtherResources = currentlyShowingKingdom.availableResources.Keys.ToList();
         if (resourcesInGrid.Except(allOtherResources).Count() > 0 || allOtherResources.Except(resourcesInGrid).Count() > 0) {
             for (int i = 0; i < children.Count; i++) {
@@ -520,9 +517,7 @@ public class UIManager : MonoBehaviour {
             for (int i = 0; i < currentlyShowingKingdom.availableResources.Keys.Count; i++) {
                 RESOURCE currResource = currentlyShowingKingdom.availableResources.Keys.ElementAt(i);
                 GameObject resourceGO = InstantiateUIObject(resourceIconPrefab, this.transform);
-				Utilities.GetComponentsInDirectChildren<UI2DSprite>(resourceGO).FirstOrDefault().sprite2D = Resources
-                    .LoadAll<Sprite>("Resources Icons")
-                    .Where(x => x.name == currResource.ToString()).ToList()[0];
+                resourceGO.GetComponent<ResourceIcon>().SetResource(currResource);
                 resourceGO.transform.localScale = Vector3.one;
                 kingdomOtherResourcesGrid.AddChild(resourceGO.transform);
                 kingdomOtherResourcesGrid.Reposition();
