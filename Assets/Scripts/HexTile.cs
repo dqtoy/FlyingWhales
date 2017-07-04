@@ -61,6 +61,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Header("Structure Objects")]
     [SerializeField] private GameObject structureParentGO;
 
+    [Space(10)]
+    [Header("Minimap Objects")]
+    [SerializeField] private SpriteRenderer minimapHexSprite;
+    private Color biomeColor;
+
 	[SerializeField] private GameObject plagueIconGO;
 
     private GameEvent _gameEventInTile;
@@ -98,6 +103,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		get { return this._gameEventInTile; }
 	}
 	#endregion
+
+    internal void SetBiome(BIOMES biome) {
+        biomeType = biome;
+        if(elevationType == ELEVATION.WATER) {
+            SetMinimapTileColor(new Color(64f/255f, 164f/255f, 223f/255f));
+        } else {
+            SetMinimapTileColor(Utilities.biomeColor[biome]);
+        }
+        biomeColor = minimapHexSprite.color;
+        
+    }
 
 	internal void SetSortingOrder(int sortingOrder){
 		GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder;
@@ -374,6 +390,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._kingdomColorSprite.color = color;
 	}
 
+    private void SetMinimapTileColor(Color color) {
+        minimapHexSprite.color = color;
+    }
+
 	public void ShowTileHighlight(){
 		this._kingdomColorSprite.gameObject.SetActive(true);
 	}
@@ -399,6 +419,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
         //this.structureGO.SetActive(true);
         //this.centerPiece.SetActive(false);
+        SetMinimapTileColor(city.kingdom.kingdomColor);
         Color color = this.city.kingdom.kingdomColor;
         color.a = 76.5f / 255f;
         this._kingdomColorSprite.color = color;
@@ -457,6 +478,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
             Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
 
+        SetMinimapTileColor(ownedByCity.kingdom.kingdomColor);
+
         for (int i = 0; i < allColorizers.Length; i++) {
             allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
         }
@@ -472,6 +495,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.ownedByCity = null;
 		this.isBorderOfCityID = 0;
 		this.isOccupiedByCityID = 0;
+        SetMinimapTileColor(biomeColor);
         this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
         EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);

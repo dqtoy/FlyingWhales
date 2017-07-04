@@ -629,6 +629,16 @@ public class Utilities : MonoBehaviour {
 		new Color32(0x8A, 0x80, 0xFD, 0x94), // Light Violet 8A80FD91
 		new Color32(0xBC, 0xFF, 0x00, 0xA6) // Yellow Green BCFF00A6
 	};
+
+    public static Dictionary<BIOMES, Color> biomeColor = new Dictionary<BIOMES, Color>() {
+        {BIOMES.GRASSLAND, new Color(34f/255f, 139f/255f, 34f/255f)},
+        {BIOMES.BARE, new Color(106f/255f, 108f/255f, 59f/255f)},
+        {BIOMES.DESERT, new Color(93f/255f, 79f/255f, 69f/255f)},
+        {BIOMES.FOREST, new Color(34f/255f, 139f/255f, 34f/255f)},
+        {BIOMES.SNOW, new Color(255f/255f, 255f/255f, 255f/255f)},
+        {BIOMES.TUNDRA, new Color(106f/255f, 108f/255f, 59f/255f)},
+        {BIOMES.WOODLAND, new Color(34f/255f, 139f/255f, 34f/255f)}
+    };
 //	public static string StringReplacer(string text, LogFiller[] logFillers){
 //		List<int> specificWordIndexes = new List<int> ();
 //		string newText = text;
@@ -762,8 +772,8 @@ public class Utilities : MonoBehaviour {
 						if(objectLog [i].obj is Kingdom){
 							Kingdom kingdom = (Kingdom)objectLog [i].obj;
 							Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
-							objectLog [i].obj = randomGovernor;
-							objectLog [i].value = randomGovernor.name;
+							//objectLog [i].obj = randomGovernor;
+							//objectLog [i].value = randomGovernor.name;
 						}
 					}
 					wordToReplace = "[url=" + i.ToString() + "][b]" + objectLog[i].value + "[/b][/url]";
@@ -777,8 +787,8 @@ public class Utilities : MonoBehaviour {
 						if(objectLog [i].obj is Kingdom){
 							Kingdom kingdom = (Kingdom)objectLog [i].obj;
 							Citizen randomGovernor = kingdom.GetRandomGovernorFromKingdom ();
-							objectLog [i].obj = randomGovernor;
-							objectLog [i].value = randomGovernor.name;
+							//objectLog [i].obj = randomGovernor;
+							//objectLog [i].value = randomGovernor.name;
 						}
 					}
 					wordToReplace = objectLog[i].value;

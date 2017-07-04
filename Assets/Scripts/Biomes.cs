@@ -84,7 +84,7 @@ public class Biomes : MonoBehaviour {
 		for(int i = 0; i < GridMap.Instance.listHexes.Count; i++){
 			GameObject currentHexTileGO = GridMap.Instance.listHexes[i];
 			HexTile currentHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
-			currentHexTile.biomeType = GetBiomeSimple(currentHexTileGO);
+			currentHexTile.SetBiome(GetBiomeSimple(currentHexTileGO));
 //			currentHexTile.AssignDefaultResource ();
 			//currentHexTile.AssignSpecialResource ();
 			if(currentHexTile.elevationType == ELEVATION.WATER){

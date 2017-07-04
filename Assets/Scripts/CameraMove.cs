@@ -51,8 +51,9 @@ public class CameraMove : MonoBehaviour {
 		MAX_Y = minMAX_Y;
 	}
 
-    public void ResizeMinimapCam() {
-        minimapCamera.orthographicSize = 80 * Screen.height / Screen.width * 0.5f;
+    public void SetMinimapCamValues() {
+        HexTile centerTile = GridMap.Instance.map[(int)(GridMap.Instance.width / 2), (int)(GridMap.Instance.height / 2)];
+        minimapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, centerTile.transform.localPosition.y, -10);
     }
 
 	void Update () {

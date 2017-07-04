@@ -5,7 +5,8 @@ public class MapGenerator : MonoBehaviour {
 
 	void Start() {
 		GridMap.Instance.GenerateGrid();
-		EquatorGenerator.Instance.GenerateEquator();
+        CameraMove.Instance.SetMinimapCamValues();
+        EquatorGenerator.Instance.GenerateEquator();
 		Biomes.Instance.GenerateElevation();
 		Biomes.Instance.GenerateBiome();
 		Biomes.Instance.GenerateTileDetails();
@@ -16,8 +17,6 @@ public class MapGenerator : MonoBehaviour {
 		WorldEventManager.Instance.BoonOfPowerTrigger();
 		GameManager.Instance.StartProgression();
 		CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms[0].cities[0].hexTile.gameObject);
-        CameraMove.Instance.ResizeMinimapCam();
-
     }
 
 }

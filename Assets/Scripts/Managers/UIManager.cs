@@ -237,6 +237,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UIScrollView interveneMenuScrollView;
     [SerializeField] private ButtonToggle interveneMenuBtn;
 
+    [Space(10)]
+    [Header("Minimap")]
+    [SerializeField] private GameObject minimapGO;
+
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	internal Citizen currentlyShowingCitizen = null;
@@ -317,7 +321,33 @@ public class UIManager : MonoBehaviour {
 
     }
 
-	private void UpdateUI(){
+    public void MinimapClick() {
+        BoxCollider bc = minimapGO.GetComponent<BoxCollider>();
+        Vector3 pt = bc.transform.TransformPoint(bc.center);
+        float width = minimapGO.transform.localScale.x;
+        float height = minimapGO.transform.localScale.y;
+
+        pt = UICamera.currentCamera.WorldToScreenPoint(pt);
+
+        Rect miniMapRect = new Rect(pt.x - width / 2, pt.y - height / 2, width, height);
+        //var miniMapRect = minimapGO.GetComponent<RectTransform>().rect;
+        var screenRect = new Rect(
+            minimapGO.transform.position.x,
+            minimapGO.transform.position.y,
+            miniMapRect.width, miniMapRect.height);
+
+        var mousePos = Input.mousePosition;
+        mousePos.y -= screenRect.y;
+        mousePos.x -= screenRect.x;
+
+        var camPos = new Vector3(
+            mousePos.x * (GridMap.Instance.width / screenRect.width),
+            mousePos.y * (GridMap.Instance.height / screenRect.height),
+            Camera.main.transform.position.z);
+        Camera.main.transform.position = camPos;
+    }
+
+    private void UpdateUI(){
 		dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
 		
         if(currentlyShowingKingdom != null) {
