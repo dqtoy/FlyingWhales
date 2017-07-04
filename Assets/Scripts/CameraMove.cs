@@ -17,6 +17,7 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private Camera generalCamera;
 	[SerializeField] private Camera traderCamera;
     [SerializeField] private Camera uiCamera;
+    [SerializeField] private Camera minimapCamera;
 
 	private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
@@ -49,6 +50,10 @@ public class CameraMove : MonoBehaviour {
 		MIN_Y = minMIN_Y;
 		MAX_Y = minMAX_Y;
 	}
+
+    public void ResizeMinimapCam() {
+        minimapCamera.orthographicSize = 80 * Screen.height / Screen.width * 0.5f;
+    }
 
 	void Update () {
 		float xAxisValue = Input.GetAxis("Horizontal");

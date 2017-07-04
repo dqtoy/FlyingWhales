@@ -16,6 +16,8 @@ public class MapGenerator : MonoBehaviour {
 		WorldEventManager.Instance.BoonOfPowerTrigger();
 		GameManager.Instance.StartProgression();
 		CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms[0].cities[0].hexTile.gameObject);
-	}
+        CameraMove.Instance.ResizeMinimapCam();
+
+    }
 
 }
