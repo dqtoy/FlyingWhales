@@ -48,6 +48,20 @@ public class BorderConflict : GameEvent {
 		}else if(randomReason == "insulted_governor"){
 			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+			Citizen randomGovernor1 = kingdom1.cities[UnityEngine.Random.Range(0,kingdom1.cities.Count)].governor;
+			Citizen randomGovernor2 = kingdom2.cities[UnityEngine.Random.Range(0,kingdom2.cities.Count)].governor;
+			newLog.AddToFillers (randomGovernor1, randomGovernor1.name, LOG_IDENTIFIER.GOVERNOR_1);
+			newLog.AddToFillers (randomGovernor1.city, randomGovernor1.city.name, LOG_IDENTIFIER.CITY_1);
+			newLog.AddToFillers (randomGovernor2, randomGovernor2.name, LOG_IDENTIFIER.GOVERNOR_2);
+			newLog.AddToFillers (randomGovernor2.city, randomGovernor2.city.name, LOG_IDENTIFIER.CITY_2);
+		}else if(randomReason == "cultural_misunderstanding"){
+			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+		}else if(randomReason == "pig"){
+			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+			City randomCity = kingdom2.cities[UnityEngine.Random.Range(0,kingdom2.cities.Count)];
+			newLog.AddToFillers (randomCity, randomCity.name, LOG_IDENTIFIER.CITY_2);
 		}
 
 
