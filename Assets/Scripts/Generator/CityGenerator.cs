@@ -104,9 +104,11 @@ public class CityGenerator : MonoBehaviour {
 	//	- has a nearby basic resource needed by the expanding race
 	//	- has path from capital city
 	public HexTile GetNearestHabitableTile(City city) {
-
+		BIOMES forbiddenBiome = GetForbiddenBiomeOfRace(city.kingdom.race);
 		for (int i = 0; i < city.habitableTileDistance.Count; i++) {
-			if (!city.habitableTileDistance[i].hexTile.isOccupied && !city.habitableTileDistance[i].hexTile.isBorder && !city.habitableTileDistance[i].hexTile.isTargeted) {
+			if (!city.habitableTileDistance[i].hexTile.isOccupied && !city.habitableTileDistance[i].hexTile.isBorder && !city.habitableTileDistance[i].hexTile.isTargeted 
+				&& city.habitableTileDistance[i].hexTile.biomeType != forbiddenBiome) {
+
 				List<HexTile> checkForOtherBorderTilesInRange;
 				// Check if the tile is within required distance of the expanding kingdom's current borders
 				if (city.kingdom.kingdomTypeData.expansionDistanceFromBorder > 0) {
@@ -137,7 +139,18 @@ public class CityGenerator : MonoBehaviour {
 
 		return null;
 	}
-
+	private BIOMES GetForbiddenBiomeOfRace(RACE race){
+		if(race == RACE.HUMANS){
+			return BIOMES.FOREST;
+		}else if(race == RACE.ELVES){
+			return BIOMES.DESERT;
+		}else if(race == RACE.CROMADS){
+			return BIOMES.NONE;
+		}else if(race == RACE.MINGONS){
+			return BIOMES.NONE;
+		}
+		return BIOMES.NONE;
+	}
 	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellion rebellion = null){
         if (hexTile.isBorder) {
             hexTile.ownedByCity.borderTiles.Remove(hexTile);
@@ -189,9 +202,10 @@ public class CityGenerator : MonoBehaviour {
         RaceStructures raceStructuresToUse = humanStructures;
         if(race == RACE.ELVES) {
             raceStructuresToUse = elvenStructures;
-        } else {
-            raceStructuresToUse = humanStructures;
-        }
+        } 
+//		else {
+//            raceStructuresToUse = humanStructures;
+//        }
 
         Structures[] structuresToChooseFrom = raceStructuresToUse.structures;
         for (int i = 0; i < structuresToChooseFrom.Length; i++) {

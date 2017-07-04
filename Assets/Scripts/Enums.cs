@@ -6,6 +6,7 @@
 	WOODLAND,
 	FOREST,
 	BARE,
+	NONE,
 }
 public enum EQUATOR_LINE{
 	HORIZONTAL,
