@@ -127,7 +127,7 @@ public class RelationshipKingdom {
 
 	internal void TriggerRequestPeace(){
 		this._kingdomWar.citiesLost += 1;
-		if(this._sourceKingdom.cities.Count > 1){
+		if(this._sourceKingdom.cities.Count > 1 && _monthToMoveOnAfterRejection == MONTH.NONE){
 			int peaceValue = 20;
 			int chance = UnityEngine.Random.Range(0, 100);
 			if(chance < peaceValue * this._kingdomWar.citiesLost){
