@@ -909,6 +909,11 @@ public class City{
      * Conquer this city and transfer ownership to the conqueror
      * */
     internal void ConquerCity(Kingdom conqueror) {
+		RelationshipKingdom relationship = this.kingdom.GetRelationshipWithOtherKingdom(conqueror);
+
+		//Trigger Request Peace before changing kingdoms, The losing side has a 20% chance for every city he has lost since the start of the war to send a Request for Peace
+		relationship.TriggerRequestPeace();
+
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP 
 		ResetToDefaultHP();
@@ -934,7 +939,9 @@ public class City{
         }
         this.ChangeKingdom(conqueror);
         this.CreateInitialFamilies(false);
+
     }
+
 
 	/*internal void LookForNewGeneral(General general){
 //		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");

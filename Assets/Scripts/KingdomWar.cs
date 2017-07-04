@@ -11,6 +11,7 @@ public class KingdomWar {
 	public int battlesLost;
 	public int citiesWon;
 	public int citiesLost;
+	public int peaceRejected;
 
 	public KingdomWar(Kingdom targetKingdom){
 //		this.sourceKingdom = sourceKingdom;
@@ -20,6 +21,7 @@ public class KingdomWar {
 		this.battlesLost = 0;
 		this.citiesWon = 0;
 		this.citiesLost = 0;
+		this.peaceRejected = 0;
 	}
 
 	internal void ResetKingdomWar(){
@@ -28,6 +30,7 @@ public class KingdomWar {
 		this.battlesLost = 0;
 		this.citiesWon = 0;
 		this.citiesLost = 0;
+		this.peaceRejected = 0;
 	}
 
 	internal void AdjustExhaustion(int amount){

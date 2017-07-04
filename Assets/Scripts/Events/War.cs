@@ -103,7 +103,7 @@ public class War : GameEvent {
 				KingdomManager.Instance.DeclareWarBetweenKingdoms(this._kingdom2, this._kingdom1, this);
 			}
 			this.isInitialAttack = true;
-            EventManager.Instance.onWeekEnd.AddListener(AttemptToRequestPeace);
+//            EventManager.Instance.onWeekEnd.AddListener(AttemptToRequestPeace);
 			EventManager.Instance.onWeekEnd.AddListener (this.PerformAction);
 		}
 	}
@@ -203,6 +203,9 @@ public class War : GameEvent {
         }
     }
 
+	internal void RequestPeace(Kingdom kingdomToRequest){
+		this.CreateRequestPeaceEvent(kingdomToRequest);
+	}
 	internal void CreateCityWarPair(){
 		if(this.warPair.kingdom1City == null || this.warPair.kingdom2City == null){
 			List<HexTile> path = null;
@@ -331,7 +334,7 @@ public class War : GameEvent {
 			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
         }
-        EventManager.Instance.onWeekEnd.RemoveListener(AttemptToRequestPeace);
+//        EventManager.Instance.onWeekEnd.RemoveListener(AttemptToRequestPeace);
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 		EventManager.Instance.onUpdatePath.RemoveListener (UpdatePath);
     }
