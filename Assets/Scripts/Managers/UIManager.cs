@@ -880,8 +880,7 @@ public class UIManager : MonoBehaviour {
 		thisScrollView.ResetPosition();
 	}
 
-	Coroutine currentLerpRoutine = null;
-	IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime){
+	public IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime){
 		float elapsedTime = 0f;
 		while (elapsedTime < lerpTime) {
 			progBar.value = Mathf.Lerp(progBar.value, targetValue, (elapsedTime/lerpTime));

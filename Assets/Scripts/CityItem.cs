@@ -14,6 +14,7 @@ public class CityItem : MonoBehaviour {
     [SerializeField] private UILabel _loyaltyLbl;
     [SerializeField] private UIEventTrigger _loyaltyEventTrigger;
 	[SerializeField] private GameObject _rebelIcon;
+    [SerializeField] private UIProgressBar _growthProgBar;
 
     #region getters/setters
     public City city {
@@ -26,16 +27,17 @@ public class CityItem : MonoBehaviour {
 
     public void SetCity(City _city, bool showLoyalty = false) {
         this._city = _city;
-        this._governor.SetCitizen(city.governor);
-        this._hpLbl.text = city.hp.ToString();
-        this._structuresLbl.text = city.ownedTiles.Count.ToString();
-        this._cityLbl.text = city.name;
-        this._hpProgBar.value = (float)city.hp / (float)city.maxHP;
+        _governor.SetCitizen(city.governor);
+        _hpLbl.text = city.hp.ToString();
+        _structuresLbl.text = city.ownedTiles.Count.ToString();
+        _cityLbl.text = city.name;
+        _hpProgBar.value = (float)city.hp / (float)city.maxHP;
+        _growthProgBar.value = (float)city.currentGrowth / (float)city.maxGrowth;
 
         if (showLoyalty) {
-            this._loyaltyGO.SetActive(true);
-            Governor thisGovernor = (Governor)this._governor.citizen.assignedRole;
-            this._loyaltyLbl.text = thisGovernor.loyalty.ToString();
+            _loyaltyGO.SetActive(true);
+            Governor thisGovernor = (Governor)_governor.citizen.assignedRole;
+            _loyaltyLbl.text = thisGovernor.loyalty.ToString();
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
                 UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, thisGovernor.loyaltySummary);
             });
@@ -45,10 +47,10 @@ public class CityItem : MonoBehaviour {
     }
 
     public void CenterOnCity() {
-        CameraMove.Instance.CenterCameraOn(this._city.hexTile.gameObject);
+        CameraMove.Instance.CenterCameraOn(_city.hexTile.gameObject);
     }
 
     public void SetKingdomAsSelected() {
-        UIManager.Instance.SetKingdomAsSelected(this._city.kingdom);
+        UIManager.Instance.SetKingdomAsSelected(_city.kingdom);
     }
 }
