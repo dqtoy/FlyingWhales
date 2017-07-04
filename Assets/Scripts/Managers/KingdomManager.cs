@@ -3,10 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-#pragma warning disable 0168 // variable declared but not used.
-#pragma warning disable 0219 // variable assigned but not used.
-#pragma warning disable 0414 // private field assigned but not used.
-
 public class KingdomManager : MonoBehaviour {
 
 	public static KingdomManager Instance = null;
@@ -49,10 +45,10 @@ public class KingdomManager : MonoBehaviour {
 	public void GenerateInitialKingdoms(List<HexTile> stoneHabitableTiles, List<HexTile> woodHabitableTiles) {
 
         List<HexTile> stoneElligibleTiles = new List<HexTile>(stoneHabitableTiles);
-        stoneElligibleTiles = stoneElligibleTiles.Where(x => x.nearbyResourcesCount > 3).ToList();
+        stoneElligibleTiles = stoneElligibleTiles.Where(x => x.nearbyResourcesCount >= 3).ToList();
 
         List<HexTile> woodElligibleTiles = new List<HexTile>(woodHabitableTiles);
-        woodElligibleTiles = woodElligibleTiles.Where(x => x.nearbyResourcesCount > 3).ToList();
+        woodElligibleTiles = woodElligibleTiles.Where(x => x.nearbyResourcesCount >= 3).ToList();
 
         for (int i = 0; i < initialKingdomSetup.Count; i++) {
             InitialKingdom initialKingdom = initialKingdomSetup[i];

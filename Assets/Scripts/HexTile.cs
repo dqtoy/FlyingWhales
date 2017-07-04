@@ -42,7 +42,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
-	[SerializeField] private GameObject resourceVisualGO;
+    //[SerializeField] private GameObject resourceVisualGO;
+    [SerializeField] private ResourceIcon resourceIcon;
 	[SerializeField] private SpriteRenderer _kingdomColorSprite;
 	[SerializeField] private GameObject _highlightGO;
     [SerializeField] private Transform UIParent;
@@ -189,15 +190,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			if (this.elevationType != ELEVATION.WATER && this.elevationType != ELEVATION.MOUNTAIN) {
 				this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
 				if (this.specialResource != RESOURCE.NONE) {
-					this.resourceVisualGO.GetComponent<SpriteRenderer> ().sprite = Resources.LoadAll<Sprite> ("Resources Icons")
-                    .Where (x => x.name == this.specialResource.ToString ()).ToList () [0];
-					this.resourceVisualGO.SetActive (true);
-				}
-                GameObject resource = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
-                resource.transform.localPosition = Vector3.zero;
-                resource.transform.localScale = Vector3.one;
-                if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
-                    centerPiece.SetActive(false);
+                    resourceIcon.SetResource(specialResource);
+                    GameObject resource = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
+                    resource.transform.localPosition = Vector3.zero;
+                    resource.transform.localScale = Vector3.one;
+                    if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
+                        centerPiece.SetActive(false);
+                    }
                 }
             }
 		} else {

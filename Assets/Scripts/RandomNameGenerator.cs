@@ -69,21 +69,34 @@ public class RandomNameGenerator : MonoBehaviour {
 		"Thalion", "Turin", "Thorontur", "Voronwe", "Vaessen", "Valanyonnen"
 	};
 
-	private MarkovNameGenerator generatedHumanSurnames;
-	private MarkovNameGenerator generatedHumanKingdomNames;
-	private MarkovNameGenerator generatedElvenKingdomNames;
-	//private MarkovNameGenerator generatedElvenCityNames;
-	private MarkovNameGenerator generatedElvenFemaleNames;
-	private MarkovNameGenerator generatedElvenMaleNames;
+    //private MarkovNameGenerator generatedHumanSurnames;
+    //private MarkovNameGenerator generatedHumanKingdomNames;
+    //private MarkovNameGenerator generatedElvenKingdomNames;
+    ////private MarkovNameGenerator generatedElvenCityNames;
+    //private MarkovNameGenerator generatedElvenFemaleNames;
+    //private MarkovNameGenerator generatedElvenMaleNames;
 
-	void Awake(){
+    Sobriquet.Generator generatedHumanSurnames;
+    Sobriquet.Generator generatedHumanKingdomNames;
+    Sobriquet.Generator generatedElvenKingdomNames;
+    Sobriquet.Generator generatedElvenFemaleNames;
+    Sobriquet.Generator generatedElvenMaleNames;
+
+
+    void Awake(){
 		Instance = this;
-		generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
-		generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
-		generatedElvenKingdomNames = new MarkovNameGenerator(baseElvenKingdomNames, 3, 6);
+        generatedHumanSurnames = new Sobriquet.Generator(2, baseHumanSurnames);
+        generatedHumanKingdomNames = new Sobriquet.Generator(2, baseHumanKingdomNames);
+        generatedElvenKingdomNames = new Sobriquet.Generator(2, baseElvenKingdomNames);
+        generatedElvenFemaleNames = new Sobriquet.Generator(2, baseElvenFemaleNames);
+        generatedElvenMaleNames = new Sobriquet.Generator(2, baseElvenMaleNames);
+
+        //generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
+  //      generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
+		//generatedElvenKingdomNames = new MarkovNameGenerator(baseElvenKingdomNames, 3, 6);
 		//generatedElvenCityNames = new MarkovNameGenerator(baseElvenKingdomNames, 2, 5);
-		generatedElvenFemaleNames = new MarkovNameGenerator(baseElvenFemaleNames, 3, 4);
-		generatedElvenMaleNames = new MarkovNameGenerator(baseElvenMaleNames, 3, 4);
+		//generatedElvenFemaleNames = new MarkovNameGenerator(baseElvenFemaleNames, 3, 4);
+		//generatedElvenMaleNames = new MarkovNameGenerator(baseElvenMaleNames, 3, 4);
 	}
 
 	void Start(){
@@ -101,27 +114,27 @@ public class RandomNameGenerator : MonoBehaviour {
 
 	public string GenerateKingdomName(RACE race){
 		if (race == RACE.HUMANS) {
-			return generatedHumanKingdomNames.NextName;
+			return generatedHumanKingdomNames.Next();
 		} else if(race == RACE.ELVES) {
-			return generatedElvenKingdomNames.NextName;
+			return generatedElvenKingdomNames.Next();
 		}
 		return "";
 	}
 
 	public string GenerateCityName(RACE race){
 		if (race == RACE.HUMANS) {
-			return generatedHumanKingdomNames.NextName;
+			return generatedHumanKingdomNames.Next();
 		} else if(race == RACE.ELVES) {
-			return generatedElvenKingdomNames.NextName;
+			return generatedElvenKingdomNames.Next();
 		}
 		return "";
 	}
 
 	public string GenerateElvenName(GENDER gender){
 		if (gender == GENDER.MALE) {
-			return generatedElvenMaleNames.NextName;
+			return generatedElvenMaleNames.Next();
 		} else {
-			return generatedElvenFemaleNames.NextName;
+			return generatedElvenFemaleNames.Next();
 		}
 //		return "";
 	}
@@ -133,7 +146,7 @@ public class RandomNameGenerator : MonoBehaviour {
 	}
 
 	public string GetHumanSurname(){
-		return generatedHumanSurnames.NextName;
+		return generatedHumanSurnames.Next();
 //		return "";
 	}
 
