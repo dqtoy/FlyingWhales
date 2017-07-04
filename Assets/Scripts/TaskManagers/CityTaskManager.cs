@@ -23,11 +23,12 @@ public class CityTaskManager : MonoBehaviour {
 		if (this.targetHexTileToPurchase != null) {
 			Task.current.Succeed ();
 		} else {
+            //Check for tiles 3 tiles away
 			List<HexTile> elligibleTiles = new List<HexTile> ();
 			for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-				elligibleTiles.AddRange(this.city.ownedTiles [i].GetTilesInRange (3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable));
+                elligibleTiles = elligibleTiles.Union(this.city.ownedTiles [i].GetTilesInRange (3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable)).ToList();
 			}
-			elligibleTiles.Distinct ();
+			//elligibleTiles.Distinct ();
 
 			List<HexTile> purchasableTilesWithSpecialResource = new List<HexTile> ();
 			for (int i = 0; i < elligibleTiles.Count; i++) {
@@ -50,11 +51,12 @@ public class CityTaskManager : MonoBehaviour {
 					}
 				}
 			} else {
-				elligibleTiles.Clear ();
+                //Check for tiles 5 tiles away
+                elligibleTiles.Clear ();
 				for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-					elligibleTiles.AddRange (this.city.ownedTiles [i].GetTilesInRange (5).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable));
+                    elligibleTiles = elligibleTiles.Union (this.city.ownedTiles [i].GetTilesInRange (5).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable)).ToList();
 				}
-				elligibleTiles.Distinct ();
+				//elligibleTiles.Distinct ();
 
 				purchasableTilesWithSpecialResource.Clear ();
 				for (int i = 0; i < elligibleTiles.Count; i++) {
@@ -76,7 +78,8 @@ public class CityTaskManager : MonoBehaviour {
 						}
 					}
 				} else {
-					elligibleTiles.Clear ();
+                    //Just buy a tile without special resource
+                    elligibleTiles.Clear ();
 					for (int i = 0; i < this.city.ownedTiles.Count; i++) {
 						elligibleTiles.AddRange (this.city.ownedTiles [i].elligibleNeighbourTilesForPurchase);
 					}
