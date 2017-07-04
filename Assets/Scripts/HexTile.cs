@@ -100,22 +100,27 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	#endregion
 
 	internal void SetSortingOrder(int sortingOrder){
-		this.GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder;
-		if (this.elevationType == ELEVATION.MOUNTAIN) {
-			this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
+		GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder;
+		if (elevationType == ELEVATION.MOUNTAIN) {
+			centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
 		} else {
-			this.centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 52;
+			centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 52;
 		}
 
-		this.kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
-		this.highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
+        SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();
+        for (int i = 0; i < resourcesSprites.Length; i++) {
+            resourcesSprites[i].sortingOrder = sortingOrder + 57;
+        }
 
-		this.topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		this.leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		this.botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		this.botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		this.rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		this.topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
+		highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
+
+		topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+		topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
 	}
 
 	#region Resource
@@ -175,10 +180,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 GameObject resource = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
                 resource.transform.localPosition = Vector3.zero;
                 resource.transform.localScale = Vector3.one;
-                //if(this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD) {
-                //    centerPiece.SetActive(false);
-                //}
-			}
+                if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
+                    centerPiece.SetActive(false);
+                }
+            }
 		} else {
 			this.specialResource = RESOURCE.NONE;
 		}

@@ -86,7 +86,7 @@ public class Biomes : MonoBehaviour {
 			HexTile currentHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
 			currentHexTile.biomeType = GetBiomeSimple(currentHexTileGO);
 //			currentHexTile.AssignDefaultResource ();
-			currentHexTile.AssignSpecialResource ();
+			//currentHexTile.AssignSpecialResource ();
 			if(currentHexTile.elevationType == ELEVATION.WATER){
 				continue;
 			}
@@ -172,8 +172,9 @@ public class Biomes : MonoBehaviour {
 				}
 				break;
 			}
-			currentHexTile.SetSortingOrder (sortingOrder);
-			if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+            currentHexTile.AssignSpecialResource();
+            currentHexTile.SetSortingOrder (sortingOrder);
+            if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 				currentHexTile.movementDays = 3;
 			}
 
