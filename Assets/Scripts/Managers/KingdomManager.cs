@@ -45,10 +45,10 @@ public class KingdomManager : MonoBehaviour {
 	public void GenerateInitialKingdoms(List<HexTile> stoneHabitableTiles, List<HexTile> woodHabitableTiles) {
 
         List<HexTile> stoneElligibleTiles = new List<HexTile>(stoneHabitableTiles);
-        stoneElligibleTiles = stoneElligibleTiles.Where(x => x.nearbyResourcesCount > 3).ToList();
+        stoneElligibleTiles = stoneElligibleTiles.Where(x => x.nearbyResourcesCount >= 3).ToList();
 
         List<HexTile> woodElligibleTiles = new List<HexTile>(woodHabitableTiles);
-        woodElligibleTiles = woodElligibleTiles.Where(x => x.nearbyResourcesCount > 3).ToList();
+        woodElligibleTiles = woodElligibleTiles.Where(x => x.nearbyResourcesCount >= 3).ToList();
 
         for (int i = 0; i < initialKingdomSetup.Count; i++) {
             InitialKingdom initialKingdom = initialKingdomSetup[i];

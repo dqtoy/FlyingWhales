@@ -70,11 +70,11 @@ public class CityGenerator : MonoBehaviour {
 				}
 			}
 
-			if (nearbyStoneCount + nearbySpecialCount >= 3) {
+			if (nearbyStoneCount + nearbySpecialCount >= 2) {
 				SetTileAsStoneHabitable(currentHexTile);
 			}
 
-			if (nearbyWoodCount + nearbySpecialCount >= 3) {
+			if (nearbyWoodCount + nearbySpecialCount >= 2) {
 				SetTileAsWoodHabitable(currentHexTile);
 			}
 
