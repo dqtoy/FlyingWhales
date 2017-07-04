@@ -393,18 +393,18 @@ public class Plague : GameEvent {
         Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharacterValues;
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
         if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.EQUALITY) ||
-            importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD) || importantCharVals.ContainsKey(CHARACTER_VALUE.CHAUVINISM)) {
+            importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD)) {
 
             KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
-				.FirstOrDefault(x => x.Key == CHARACTER_VALUE.CHAUVINISM || x.Key == CHARACTER_VALUE.GREATER_GOOD 
+				.FirstOrDefault(x => x.Key == CHARACTER_VALUE.GREATER_GOOD 
                 || x.Key == CHARACTER_VALUE.LIFE || x.Key == CHARACTER_VALUE.EQUALITY);
 
-            if (priotiyValue.Key == CHARACTER_VALUE.CHAUVINISM) {
-                chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
+            if (priotiyValue.Key == CHARACTER_VALUE.LIFE || priotiyValue.Key == CHARACTER_VALUE.EQUALITY) {
+                chosenApproach = EVENT_APPROACH.HUMANISTIC;
             } else if (priotiyValue.Key == CHARACTER_VALUE.GREATER_GOOD) {
                 chosenApproach = EVENT_APPROACH.PRAGMATIC;
             } else {
-                chosenApproach = EVENT_APPROACH.HUMANISTIC;
+                chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
             }
         } else {
             //a king who does not value any of the these four ethics will choose OPPORTUNISTIC APPROACH in dealing with a plague.
