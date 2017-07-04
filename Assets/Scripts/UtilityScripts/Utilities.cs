@@ -1061,6 +1061,8 @@ public class Utilities : MonoBehaviour {
 			return true;
 		case EVENT_TYPES.SPOUSE_ABDUCTION:
 			return true;
+		case EVENT_TYPES.FIRST_AND_KEYSTONE:
+			return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;
