@@ -3068,7 +3068,7 @@ public class UIManager : MonoBehaviour {
 		if (this.forcePlagueGO.activeSelf) {
 			this.forcePlagueGO.SetActive (false);
 		} else {
-			if(WorldEventManager.Instance.currentPlague == null){
+			if(WorldEventManager.Instance.HasEventOfType(EVENT_TYPES.PLAGUE) == null){
 				this.kingdomsForPlague.Clear ();
 				this.kingdomsForPlague.AddItem ("RANDOM", null);
 				for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){

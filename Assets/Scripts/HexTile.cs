@@ -36,6 +36,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isBorder = false;
 	public bool isPlagued = false;
 	public bool isTargeted = false;
+	public bool hasKeystone = false;
+	public bool hasFirst = false;
+
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
 
@@ -763,5 +766,45 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	internal void RemoveEventOnTile(){
 		this._gameEventInTile = null;
+	}
+	internal GameEvent GetEventFromTile(){
+		return this._gameEventInTile;
+	}
+	internal void SetKeystone(bool state){
+		this.hasKeystone = state;
+		//TODO: add/remove keystone icon on tile
+		this.SetActiveKeystoneIcon(state);
+	}
+
+	private void SetActiveKeystoneIcon(bool state){
+		if(state){
+			if(this.plagueIcon == null){
+				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO, this.UIParent);
+				this.plagueIcon.transform.localPosition = Vector3.zero;
+			}
+		}else{
+			if(this.plagueIcon != null){
+				Destroy(this.plagueIcon);
+			}
+		}
+	}
+
+	internal void SetFirst(bool state){
+		this.hasFirst = state;
+		//TODO: add/remove first icon on tile
+		this.SetActiveFirstIcon(state);
+	}
+
+	private void SetActiveFirstIcon(bool state){
+		if(state){
+			if(this.plagueIcon == null){
+				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO, this.UIParent);
+				this.plagueIcon.transform.localPosition = Vector3.zero;
+			}
+		}else{
+			if(this.plagueIcon != null){
+				Destroy(this.plagueIcon);
+			}
+		}
 	}
 }

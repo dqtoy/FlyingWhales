@@ -222,9 +222,9 @@ public class EventCreator: MonoBehaviour {
 	}
 
 	internal BoonOfPower CreateBoonOfPowerEvent(HexTile targetHextile){
-		if(targetHextile.isOccupied || targetHextile.isBorder || targetHextile.gameEventInTile != null){
-			return null;
-		}
+//		if(targetHextile.isOccupied || targetHextile.isBorder || targetHextile.gameEventInTile != null){
+//			return null;
+//		}
 		BoonOfPower boonOfPower = new BoonOfPower (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, targetHextile);
 		WorldEventManager.Instance.ResetCurrentInterveneEvent();
 		return boonOfPower;
@@ -256,5 +256,13 @@ public class EventCreator: MonoBehaviour {
 		Debug.LogError ("Creating SPOUSE ABDUCTION: " + abductorKing.name + " wants to abduct the spouse of " + targetKing.name);
 		SpouseAbduction spouseAbduction = new SpouseAbduction(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, abductorKing, targetKing);
 		return spouseAbduction;
+	}
+
+	internal FirstAndKeystone CreateFirstAndKeystoneEvent(HexTile targetHextile){
+//		if(targetHextile.isOccupied || targetHextile.isBorder || targetHextile.gameEventInTile != null){
+//			return null;
+//		}
+		FirstAndKeystone firstAndKeystone = new FirstAndKeystone (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, targetHextile);
+		return firstAndKeystone;
 	}
 }

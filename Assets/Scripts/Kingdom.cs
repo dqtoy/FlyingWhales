@@ -68,6 +68,9 @@ public class Kingdom{
 	private int _techCapacity;
 	private int _techCounter;
 
+	//The First and The Keystone
+	internal FirstAndKeystoneOwnership firstAndKeystoneOwnership;
+
 	private float expansionChance = 1f;
     
     protected const int INCREASE_CITY_HP_CHANCE = 5;
@@ -1801,6 +1804,23 @@ public class Kingdom{
 			this._activatedBoonOfPowers.Add (this._boonOfPowers [i]);
 		}
 		this._boonOfPowers.Clear ();
+	}
+	#endregion
+
+	#region First And Keystone
+	internal void CollectKeystone(){
+		Debug.Log (this.name + " HAS COLLECTED A KEYSTONE!");
+		GameEvent gameEvent = WorldEventManager.Instance.SearchEventOfType(EVENT_TYPES.FIRST_AND_KEYSTONE);
+		if(gameEvent != null){
+			((FirstAndKeystone)gameEvent).ChangeKeystoneOwnership (this);
+		}
+	}
+	internal void CollectFirst(){
+		Debug.Log (this.name + " HAS COLLECTED THE FIRST!");
+		GameEvent gameEvent = WorldEventManager.Instance.SearchEventOfType(EVENT_TYPES.FIRST_AND_KEYSTONE);
+		if(gameEvent != null){
+			((FirstAndKeystone)gameEvent).ChangeFirstOwnership (this);
+		}
 	}
 	#endregion
 

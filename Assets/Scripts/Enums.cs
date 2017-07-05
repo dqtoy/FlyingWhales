@@ -128,6 +128,8 @@ public enum ROLE{
 	MISSIONARY,
 	ABDUCTOR,
     LYCANTHROPE,
+	INVESTIGATOR,
+	THIEF,
 }
 
 public enum KINGDOM_TYPE {
