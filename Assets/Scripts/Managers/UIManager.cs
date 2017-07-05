@@ -2728,6 +2728,9 @@ public class UIManager : MonoBehaviour {
 	 * */
 	public bool IsMouseOnUI(){
         if (uiCamera != null) {
+            if (CameraMove.Instance.minimap.isDragging) {
+                return true;
+            }
             if (UICamera.hoveredObject != null && UICamera.hoveredObject.layer == LayerMask.NameToLayer("UI")) {
                 return true;
             }
