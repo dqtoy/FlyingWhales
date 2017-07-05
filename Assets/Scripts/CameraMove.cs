@@ -53,7 +53,7 @@ public class CameraMove : MonoBehaviour {
 
     public void SetMinimapCamValues() {
         HexTile centerTile = GridMap.Instance.map[(int)(GridMap.Instance.width / 2), (int)(GridMap.Instance.height / 2)];
-        minimapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, centerTile.transform.localPosition.y, -10);
+        minimapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, minimapCamera.transform.localPosition.y, -10);
     }
 
 	void Update () {
