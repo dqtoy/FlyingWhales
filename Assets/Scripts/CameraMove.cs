@@ -18,6 +18,7 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private Camera traderCamera;
     [SerializeField] private Camera uiCamera;
     [SerializeField] private Camera minimapCamera;
+    [SerializeField] private MinimapCamera _minimap;
 
 	private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
@@ -43,7 +44,13 @@ public class CameraMove : MonoBehaviour {
 	private float MIN_Y;
 	private float MAX_Y;
 
-	void Awake(){
+    #region getters/setters
+    public MinimapCamera minimap {
+        get { return _minimap; }
+    }
+    #endregion
+
+    void Awake(){
 		Instance = this;
 		MIN_X = minMIN_X;
 		MAX_X = minMAX_X;
@@ -53,7 +60,7 @@ public class CameraMove : MonoBehaviour {
 
     public void SetMinimapCamValues() {
         HexTile centerTile = GridMap.Instance.map[(int)(GridMap.Instance.width / 2), (int)(GridMap.Instance.height / 2)];
-        minimapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, centerTile.transform.localPosition.y, -10);
+        minimapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, minimapCamera.transform.localPosition.y, -10);
     }
 
 	void Update () {
@@ -138,7 +145,7 @@ public class CameraMove : MonoBehaviour {
 //		}
 
 		if (Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) || Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow) ||
-			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D)) {
+			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D) || minimap.isDragging) {
 			//reset target when player pushes a button to pan the camera
 			target = null;
 		}
@@ -155,12 +162,15 @@ public class CameraMove : MonoBehaviour {
 			}
 		}
 
-		Camera.main.transform.position = new Vector3(
-			Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
-			Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
-			Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
+        ConstrainCameraBounds();
+    }
 
-	}
+    public void ConstrainCameraBounds() {
+        Camera.main.transform.position = new Vector3(
+            Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
+            Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
+            Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
+    }
 
 	public void CenterCameraOn(GameObject GO){
 		target = GO.transform;
