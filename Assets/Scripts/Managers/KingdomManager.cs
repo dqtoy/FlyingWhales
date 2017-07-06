@@ -449,6 +449,17 @@ public class KingdomManager : MonoBehaviour {
         return citizensOfType;
     }
 
+    public List<Kingdom> GetAllKingdomsByRace(RACE race) {
+        List<Kingdom> kingdomsOfRace = new List<Kingdom>();
+        for (int i = 0; i < allKingdoms.Count; i++) {
+            Kingdom currKingdom = allKingdoms[i];
+            if(currKingdom.race == race) {
+                kingdomsOfRace.Add(currKingdom);
+            }
+        }
+        return kingdomsOfRace;
+    }
+
     #region For Testing
 
     [ContextMenu("Test Split Kingdom")]

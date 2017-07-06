@@ -21,7 +21,15 @@ public class FirstAndKeystone : GameEvent {
 	private Kingdom decidingKingdom;
 	private Citizen thief;
 
-	public FirstAndKeystone(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile hexTile) : base (startWeek, startMonth, startYear, startedBy){
+    private RACE _purgedRace;
+
+    #region getters/setters
+    public RACE purgedRace {
+        get { return _purgedRace; }
+    }
+    #endregion
+
+    public FirstAndKeystone(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile hexTile) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.FIRST_AND_KEYSTONE;
 		this.name = "The First and The Keystone";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
@@ -29,7 +37,8 @@ public class FirstAndKeystone : GameEvent {
 		this.firstOwner = null;
 		this.keystoneOwner = null;
 		this.daysCounter = 0;
-		WorldEventManager.Instance.AddWorlEvent(this);
+        _purgedRace = RACE.NONE;
+		WorldEventManager.Instance.AddWorldEvent(this);
 		Initialize();
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
@@ -195,7 +204,22 @@ public class FirstAndKeystone : GameEvent {
 		onPerformAction += StealProcess;
 	}
 	private void StartInvasionPlanPhase(){
-		//Invasion plan of keystoneOwner to firstOwner, must not have existing invasion plan, include this event in war so that we can know that this is the reason they went to war
+        //Invasion plan of keystoneOwner to firstOwner, must not have existing invasion plan, include this event in war so that we can know that this is the reason they went to war
+        if (EventManager.Instance.GetEventsStartedByKingdom(this.keystoneOwner, new EVENT_TYPES[]{ EVENT_TYPES.INVASION_PLAN }).Count <= 0) {
+            //Check if there is a current war event between the keystoneOwner and the firstOwner.
+            War warEvent = null;
+            warEvent = KingdomManager.Instance.GetWarBetweenKingdoms(this.keystoneOwner, this.firstOwner);
+            if (warEvent == null) {
+                //if none, create a new War Event
+                warEvent = new War(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.keystoneOwner.king, this.keystoneOwner, this.firstOwner);
+            }
+
+            //Check if the 2 kingdoms are not already at war
+            if (!warEvent.isAtWar) {
+                //Create invasion plan
+                warEvent.CreateInvasionPlan(this.keystoneOwner, this, WAR_TRIGGER.THE_FIRST_AND_THE_KEYSTONE);
+            }
+        }
 	}
 	private void DecisionMakingProcess(){
 		if(this.daysCounter >= (this.startDayOfDecision + 30)){
@@ -282,6 +306,21 @@ public class FirstAndKeystone : GameEvent {
 		this.firstPlacement.SetFirst(false);
 		this.DoneEvent();
 	}
+
+    /*
+     * This will cause the slow extinction of the other race.
+     * Prevents birth and growth.
+     * */
+    internal void UseFirstAndKeystone() {
+        if(this.keystoneOwner.race == RACE.ELVES) {
+            _purgedRace = RACE.HUMANS;
+        } else {
+            _purgedRace = RACE.ELVES;
+        }
+        
+    }
+
+
 	private void ResetFirstAndKeystoneOwnershipValues(){
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
 			KingdomManager.Instance.allKingdoms[i].firstAndKeystoneOwnership.DefaultValues();
@@ -293,8 +332,11 @@ public class FirstAndKeystone : GameEvent {
 			if(this.keystoneOwner.firstAndKeystoneOwnership.approach == EVENT_APPROACH.HUMANISTIC){
 				DestroyKeystone();
 			}
-			//Opporunistic - destroy other race
-		}
+            //Opporunistic - destroy other race
+            if (this.keystoneOwner.firstAndKeystoneOwnership.approach == EVENT_APPROACH.OPPORTUNISTIC) {
+                UseFirstAndKeystone();
+            }
+        }
 	}
 
 	private bool CanBeRetrieved(Kingdom retriever, Kingdom giver){
@@ -318,8 +360,12 @@ public class FirstAndKeystone : GameEvent {
 			if(retrieverApproach == giverApproach){
 				if(retrieverApproach == EVENT_APPROACH.HUMANISTIC){
 					return true;
-				}
-			}else{
+                } else {
+                    //Opportunistic
+                    //Even if the other king is also Opportunistic, he will not give the Keystone
+                    return false;
+                }
+            } else{
 				if(!giver.firstAndKeystoneOwnership.knowEffects){
 					RelationshipKings relationship = giver.king.GetRelationshipWithCitizen(retriever.king);
 					if(relationship != null){
@@ -333,24 +379,7 @@ public class FirstAndKeystone : GameEvent {
 		return false;
 	}
 	private EVENT_APPROACH GetApproach(Kingdom kingdom){
-		//Compute approach and return it if humanistic or opportunistic
-		return EVENT_APPROACH.HUMANISTIC;
-	}
-	private Kingdom GetOwner(Kingdom kingdom){
-		if(kingdom.id == this.firstOwner.id){
-			return this.firstOwner;
-		}else if(kingdom.id == this.keystoneOwner.id){
-			return this.keystoneOwner;
-		}
-		return null;
-	}
-	/*
-     * Determine what approach a citizen
-     * will choose. This will not add that citizen's
-     * kingdom to the appropriate list.
-     * */
-    private EVENT_APPROACH DetermineApproach(Citizen citizen) {
-        Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharacterValues;
+        Dictionary<CHARACTER_VALUE, int> importantCharVals = kingdom.king.importantCharacterValues;
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
         if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.EQUALITY) ||
             importantCharVals.ContainsKey(CHARACTER_VALUE.DOMINATION)) {
@@ -365,11 +394,16 @@ public class FirstAndKeystone : GameEvent {
                 chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
             }
         } else {
-            //a king who does not value any of the these four ethics will choose OPPORTUNISTIC APPROACH in dealing with a plague.
             chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
         }
         return chosenApproach;
     }
-
-
+	private Kingdom GetOwner(Kingdom kingdom){
+		if(kingdom.id == this.firstOwner.id){
+			return this.firstOwner;
+		}else if(kingdom.id == this.keystoneOwner.id){
+			return this.keystoneOwner;
+		}
+		return null;
+	}
 }

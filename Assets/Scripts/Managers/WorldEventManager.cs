@@ -64,7 +64,7 @@ public class WorldEventManager : MonoBehaviour {
 			EventCreator.Instance.CreateFirstAndKeystoneEvent (targetHextile);
 		}
 	}
-	internal void AddWorlEvent(GameEvent gameEvent){
+	internal void AddWorldEvent(GameEvent gameEvent){
 		this.currentWorldEvents.Add(gameEvent);
 	}
 	internal void RemoveWorldEvent(GameEvent gameEvent){

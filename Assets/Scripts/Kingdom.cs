@@ -70,8 +70,9 @@ public class Kingdom{
 
 	//The First and The Keystone
 	internal FirstAndKeystoneOwnership firstAndKeystoneOwnership;
+    private bool _isGrowthEnabled;
 
-	private float expansionChance = 1f;
+    private float expansionChance = 1f;
     
     protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
@@ -83,6 +84,8 @@ public class Kingdom{
 	private bool _isDead;
 	private bool _hasBioWeapon;
 	internal bool hasConflicted;
+
+    
 
 	private int borderConflictLoyaltyExpiration;
 
@@ -170,17 +173,21 @@ public class Kingdom{
     public List<City> plaguedCities {
         get { return this.cities.Where(x => x.plague != null).ToList(); }
     }
-	#endregion
-	// Kingdom constructor paramters
-	//	race - the race of this kingdom
-	//	cities - the cities that this kingdom will initially own
-	//	sourceKingdom (optional) - the kingdom from which this new kingdom came from
-	public Kingdom(RACE race, List<HexTile> cities, Kingdom sourceKingdom = null) {
+    public bool isGrowthEnabled {
+        get { return _isGrowthEnabled; }
+    }
+    #endregion
+    // Kingdom constructor paramters
+    //	race - the race of this kingdom
+    //	cities - the cities that this kingdom will initially own
+    //	sourceKingdom (optional) - the kingdom from which this new kingdom came from
+    public Kingdom(RACE race, List<HexTile> cities, Kingdom sourceKingdom = null) {
 		this.id = Utilities.SetID(this);
 		this.race = race;
+        SetGrowthState(true);
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
-		this.successionLine = new List<Citizen>();
+        this.successionLine = new List<Citizen>();
 		this.pretenders = new List<Citizen> ();
 		this.intlWarCities = new List<City>();
 		this.activeCitiesToAttack = new List<City>();
@@ -266,6 +273,10 @@ public class Kingdom{
 		EventManager.Instance.onKingdomDiedEvent.AddListener(OtherKingdomDiedActions);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
+
+    internal void SetGrowthState(bool state) {
+        _isGrowthEnabled = state;
+    }
 
 	// Updates this kingdom's type and horoscope
 	public void UpdateKingdomTypeData() {
@@ -449,7 +460,9 @@ public class Kingdom{
 	 * */
 	protected void KingdomTickActions(){
         //this.ProduceGoldFromTrade();
-        this.AttemptToExpand();
+        if (_isGrowthEnabled) {
+            this.AttemptToExpand();
+        }
 //		this.AttemptToCreateAttackCityEvent ();
 //		this.AttemptToCreateReinforcementEvent ();
         //		this.AttemptToIncreaseCityHP();

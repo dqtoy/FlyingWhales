@@ -632,8 +632,10 @@ public class City{
 	}
 
     internal void AdjustDailyGrowth(int amount) {
-        this._currentGrowth += amount;
-        this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
+        if (kingdom.isGrowthEnabled) {
+            this._currentGrowth += amount;
+            this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
+        }
     }
 
 	internal void UpdateDailyProduction(){

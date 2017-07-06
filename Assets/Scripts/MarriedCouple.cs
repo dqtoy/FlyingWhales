@@ -60,6 +60,12 @@ public class MarriedCouple {
             return;
         }
 
+        if(!this.wife.city.kingdom.isGrowthEnabled || !this.husband.city.kingdom.isGrowthEnabled) {
+            //growth for their kingdom is turned off
+            EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+            return;
+        }
+
         //float chanceForPregnancy = 0.2f;
 
         //		if (this.husband.miscTraits.Contains(MISC_TRAIT.BARREN)) {
