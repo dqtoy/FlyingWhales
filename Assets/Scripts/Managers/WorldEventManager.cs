@@ -11,10 +11,10 @@ public class WorldEventManager : MonoBehaviour {
 
 	void Awake(){
 		Instance = this;
-	}
+        this.currentWorldEvents = new List<GameEvent>();
+    }
 
 	void Start () {
-		this.currentWorldEvents = new List<GameEvent>();
 		ResetCurrentInterveneEvent ();
 		EventManager.Instance.onWeekEnd.AddListener (this.TickActions);
 	}
@@ -64,7 +64,7 @@ public class WorldEventManager : MonoBehaviour {
 			EventCreator.Instance.CreateFirstAndKeystoneEvent (targetHextile);
 		}
 	}
-	internal void AddWorlEvent(GameEvent gameEvent){
+	internal void AddWorldEvent(GameEvent gameEvent){
 		this.currentWorldEvents.Add(gameEvent);
 	}
 	internal void RemoveWorldEvent(GameEvent gameEvent){

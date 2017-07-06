@@ -99,10 +99,6 @@ public class RandomNameGenerator : MonoBehaviour {
 		//generatedElvenMaleNames = new MarkovNameGenerator(baseElvenMaleNames, 3, 4);
 	}
 
-	void Start(){
-		
-	}
-
 	public string GenerateRandomName(RACE race, GENDER gender){
 		if (race == RACE.HUMANS) {
 			return GenerateWholeHumanName(gender);

@@ -95,7 +95,7 @@ public class Plague : GameEvent {
 		this.bioWeaponMeterMax = maxMeter;
 		this.vaccineMeterMax = maxMeter;
        
-		WorldEventManager.Instance.AddWorlEvent(this);
+		WorldEventManager.Instance.AddWorldEvent(this);
 
         EventManager.Instance.AddEventToDictionary(this);
         EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);

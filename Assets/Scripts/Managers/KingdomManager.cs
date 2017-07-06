@@ -56,7 +56,7 @@ public class KingdomManager : MonoBehaviour {
             if (Utilities.GetBasicResourceForRace(initialKingdom.race) == BASE_RESOURCE_TYPE.WOOD) {
 				tilesToChooseFrom = woodElligibleTiles;
             }
-			tilesToChooseFrom = tilesToChooseFrom.Where(x => x.biomeType == initialKingdom.startingBiome).ToList();
+			tilesToChooseFrom = tilesToChooseFrom.Where(x => x.biomeType == initialKingdom.startingBiome && !x.isOccupied).ToList();
             if (tilesToChooseFrom.Count <= 0) {
                 continue;
             }
@@ -447,6 +447,17 @@ public class KingdomManager : MonoBehaviour {
             citizensOfType.AddRange(allKingdoms[i].GetAllCitizensOfType(role));
         }
         return citizensOfType;
+    }
+
+    public List<Kingdom> GetAllKingdomsByRace(RACE race) {
+        List<Kingdom> kingdomsOfRace = new List<Kingdom>();
+        for (int i = 0; i < allKingdoms.Count; i++) {
+            Kingdom currKingdom = allKingdoms[i];
+            if(currKingdom.race == race) {
+                kingdomsOfRace.Add(currKingdom);
+            }
+        }
+        return kingdomsOfRace;
     }
 
     #region For Testing

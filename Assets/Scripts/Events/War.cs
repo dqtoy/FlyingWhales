@@ -70,6 +70,7 @@ public class War : GameEvent {
 		Attack ();
 	}
 	internal void CreateInvasionPlan(Kingdom kingdomToDeclare, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger){
+        this.gameEventTrigger = gameEventTrigger;
 		if (kingdomToDeclare.id == this._kingdom1.id) {
 			this._kingdom1Rel.CreateInvasionPlan(gameEventTrigger, warTrigger);
 		} else {

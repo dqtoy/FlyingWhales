@@ -59,18 +59,23 @@ public class Lycanthrope : Role {
     }
 
     private void CheckForFreedom() {
-        if (_targetKingdom != null) {
-            if (_targetKingdom.isDead) {
-                Log freeKingdomLog = _lycanthropyEvent.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "free_lycanthrope_kingdom");
-                FreeLycanthrope();
-            }
-        }
         if (_captor != null) {
             if (_captor.isDead) {
-                Log freeKingLog = _lycanthropyEvent.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "free_lycanthrope_king");
+                Log freeKingdomLog = _lycanthropyEvent.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "free_lycanthrope_kingdom");
+                freeKingdomLog.AddToFillers(this.citizen, this.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                freeKingdomLog.AddToFillers(_captor, _captor.name, LOG_IDENTIFIER.KINGDOM_2);
                 FreeLycanthrope();
             }
         }
+        //if (_captor.king != null) {
+        //    if (_captor.king.isDead) {
+        //        Log freeKingLog = _lycanthropyEvent.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Lycanthropy", "free_lycanthrope_king");
+        //        freeKingLog.AddToFillers(this.citizen, this.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        freeKingLog.AddToFillers(_captor, _captor.name, LOG_IDENTIFIER.KINGDOM_2);
+        //        freeKingLog.AddToFillers(_captor, _captor.name, LOG_IDENTIFIER.KINGDOM_2);
+        //        FreeLycanthrope();
+        //    }
+        //}
     }
     internal void SetTargetKingdom(Kingdom kingdom) {
         _targetKingdom = kingdom;
