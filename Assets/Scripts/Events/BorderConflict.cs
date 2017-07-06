@@ -225,7 +225,8 @@ public class BorderConflict : GameEvent {
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.kingdom1.id && KingdomManager.Instance.allKingdoms[i].id != this.kingdom2.id && KingdomManager.Instance.allKingdoms[i].isAlive()){
+			if(KingdomManager.Instance.allKingdoms[i].id != this.kingdom1.id && KingdomManager.Instance.allKingdoms[i].id != this.kingdom2.id && KingdomManager.Instance.allKingdoms[i].isAlive()
+				&& (KingdomManager.Instance.allKingdoms[i].discoveredKingdoms.Contains(this.kingdom1) || KingdomManager.Instance.allKingdoms[i].discoveredKingdoms.Contains(this.kingdom2))){
 				kingdoms.Add (KingdomManager.Instance.allKingdoms [i]);
 			}
 		}

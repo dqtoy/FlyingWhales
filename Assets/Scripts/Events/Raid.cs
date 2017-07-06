@@ -129,9 +129,9 @@ public class Raid : GameEvent {
 			return null;
 		}
 		List<Kingdom> kingdoms = new List<Kingdom> ();
-		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.sourceKingdom.id && KingdomManager.Instance.allKingdoms[i].id != this.targetKingdom.id && KingdomManager.Instance.allKingdoms[i].isAlive()){
-				kingdoms.Add (KingdomManager.Instance.allKingdoms [i]);
+		for(int i = 0; i < this.sourceKingdom.discoveredKingdoms.Count; i++){
+			if(this.sourceKingdom.discoveredKingdoms[i].id != this.targetKingdom.id && this.sourceKingdom.discoveredKingdoms[i].isAlive()){
+				kingdoms.Add (this.sourceKingdom.discoveredKingdoms[i]);
 			}
 		}
 		return kingdoms;

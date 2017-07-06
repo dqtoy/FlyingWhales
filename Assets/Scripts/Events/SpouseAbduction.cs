@@ -87,9 +87,9 @@ public class SpouseAbduction : GameEvent {
 	}
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
-		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.abductorKingdom.id && KingdomManager.Instance.allKingdoms[i].id != this.targetKingdom.id && KingdomManager.Instance.allKingdoms[i].isAlive()){
-				kingdoms.Add (KingdomManager.Instance.allKingdoms [i]);
+		for(int i = 0; i < this.abductorKingdom.discoveredKingdoms.Count; i++){
+			if(this.abductorKingdom.discoveredKingdoms[i].id != this.targetKingdom.id && this.abductorKingdom.discoveredKingdoms[i].isAlive()){
+				kingdoms.Add (this.abductorKingdom.discoveredKingdoms[i]);
 			}
 		}
 		return kingdoms;

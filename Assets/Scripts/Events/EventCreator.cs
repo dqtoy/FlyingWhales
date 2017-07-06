@@ -265,4 +265,6 @@ public class EventCreator: MonoBehaviour {
 		FirstAndKeystone firstAndKeystone = new FirstAndKeystone (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, targetHextile);
 		return firstAndKeystone;
 	}
+
+//	internal 
 }

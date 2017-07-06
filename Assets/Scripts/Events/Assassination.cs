@@ -184,9 +184,9 @@ public class Assassination : GameEvent {
 	}
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();
-		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
-			if(KingdomManager.Instance.allKingdoms[i].id != this.assassinKingdom.id && KingdomManager.Instance.allKingdoms[i].id != this.targetKingdom.id && KingdomManager.Instance.allKingdoms[i].isAlive()){
-				kingdoms.Add (KingdomManager.Instance.allKingdoms [i]);
+		for(int i = 0; i < this.assassinKingdom.discoveredKingdoms.Count; i++){
+			if(this.assassinKingdom.discoveredKingdoms[i].id != this.targetKingdom.id && this.assassinKingdom.discoveredKingdoms[i].isAlive()){
+				kingdoms.Add (this.assassinKingdom.discoveredKingdoms[i]);
 			}
 		}
 		return kingdoms;
