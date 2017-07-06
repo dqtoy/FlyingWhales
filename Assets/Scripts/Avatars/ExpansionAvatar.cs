@@ -189,6 +189,7 @@ public class ExpansionAvatar : MonoBehaviour {
 						this.expander.location = this.expander.path[0];
 						this.expander.citizen.currentLocation = this.expander.path [0];
 						this.expander.path.RemoveAt (0);
+                        this.expander.location.CollectEventOnTile(this.expander.citizen.city.kingdom, this.expander.citizen);
                         this.CheckForKingdomDiscovery();
                     }
 					this.expander.daysBeforeMoving -= 1;

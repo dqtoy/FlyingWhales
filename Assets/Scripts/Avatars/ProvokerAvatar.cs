@@ -185,6 +185,7 @@ public class ProvokerAvatar : MonoBehaviour {
 					this.provoker.location = this.provoker.path[0];
 					this.provoker.citizen.currentLocation = this.provoker.path [0];
 					this.provoker.path.RemoveAt (0);
+                    this.provoker.location.CollectEventOnTile(this.provoker.citizen.city.kingdom, this.provoker.citizen);
                     this.CheckForKingdomDiscovery();
 //					if(this.raider.daysBeforeMoving <= 0){
 //						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);

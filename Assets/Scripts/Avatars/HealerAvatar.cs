@@ -118,6 +118,7 @@ public class HealerAvatar : MonoBehaviour {
                     this.healer.location = this.healer.path[0];
                     this.healer.citizen.currentLocation = this.healer.path[0];
                     this.healer.path.RemoveAt(0);
+                    this.healer.location.CollectEventOnTile(this.healer.citizen.city.kingdom, this.healer.citizen);
                     this.CheckForKingdomDiscovery();
                 }
             }

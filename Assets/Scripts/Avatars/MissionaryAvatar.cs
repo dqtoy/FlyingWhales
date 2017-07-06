@@ -185,6 +185,7 @@ public class MissionaryAvatar : MonoBehaviour {
 					this.missionary.location = this.missionary.path[0];
 					this.missionary.citizen.currentLocation = this.missionary.path [0];
 					this.missionary.path.RemoveAt (0);
+                    this.missionary.location.CollectEventOnTile(this.missionary.citizen.city.kingdom, this.missionary.citizen);
                     this.CheckForKingdomDiscovery();
 //					if(this.raider.daysBeforeMoving <= 0){
 //						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);

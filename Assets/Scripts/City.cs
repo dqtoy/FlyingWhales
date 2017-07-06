@@ -438,7 +438,9 @@ public class City{
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currBorderTile = this.borderTiles[i];
 			currBorderTile.Borderize (this);
-			CollectEventInTile(this.borderTiles[i]);
+            this.borderTiles[i].CollectEventOnTile(kingdom);
+
+            //CollectEventInTile(this.borderTiles[i]);
 		}
 	}
 
@@ -503,8 +505,9 @@ public class City{
 		float percentageHP = (float)this._hp / (float)this.maxHP;
 		tileToBuy.movementDays = 2;
 		tileToBuy.Occupy (this);
-		CollectEventInTile (tileToBuy);
-		EventManager.Instance.onUpdatePath.Invoke (tileToBuy);
+        tileToBuy.CollectEventOnTile(kingdom);
+        //CollectEventInTile (tileToBuy);
+        EventManager.Instance.onUpdatePath.Invoke (tileToBuy);
 
 		this.ownedTiles.Add(tileToBuy);
 
@@ -1254,15 +1257,15 @@ public class City{
 		this._hp = Utilities.defaultCityHP;
 	}
 
-	private void CollectEventInTile(HexTile hexTile){
-		if(hexTile.gameEventInTile != null){
-			if(hexTile.gameEventInTile is BoonOfPower){
-				BoonOfPower boonOfPower = (BoonOfPower)hexTile.gameEventInTile;
-				boonOfPower.TransferBoonOfPower (this.kingdom, null);
-			}else if(hexTile.gameEventInTile is FirstAndKeystone){
-				FirstAndKeystone firstAndKeystone = (FirstAndKeystone)hexTile.gameEventInTile;
-				firstAndKeystone.TransferKeystone (this.kingdom, null);
-			}
-		}
-	}
+	//private void CollectEventInTile(HexTile hexTile, Citizen citizen = null){
+	//	if(hexTile.gameEventInTile != null){
+	//		if(hexTile.gameEventInTile is BoonOfPower){
+	//			BoonOfPower boonOfPower = (BoonOfPower)hexTile.gameEventInTile;
+	//			boonOfPower.TransferBoonOfPower (this.kingdom, citizen);
+	//		}else if(hexTile.gameEventInTile is FirstAndKeystone){
+	//			FirstAndKeystone firstAndKeystone = (FirstAndKeystone)hexTile.gameEventInTile;
+	//			firstAndKeystone.TransferKeystone (this.kingdom, citizen);
+	//		}
+	//	}
+	//}
 }

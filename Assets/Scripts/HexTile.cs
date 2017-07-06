@@ -810,4 +810,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 	}
+
+    internal void CollectEventOnTile(Kingdom claimant, Citizen citizen = null) {
+        if (gameEventInTile != null) {
+            if (gameEventInTile is BoonOfPower) {
+                BoonOfPower boonOfPower = (BoonOfPower)gameEventInTile;
+                boonOfPower.TransferBoonOfPower(claimant, citizen);
+            } else if (gameEventInTile is FirstAndKeystone) {
+                FirstAndKeystone firstAndKeystone = (FirstAndKeystone)gameEventInTile;
+                firstAndKeystone.TransferKeystone(claimant, citizen);
+            }
+        }
+    }
 }

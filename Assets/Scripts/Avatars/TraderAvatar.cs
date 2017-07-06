@@ -150,6 +150,7 @@ public class TraderAvatar : MonoBehaviour {
                     this._trader.location = this._trader.path[0];
                     this._trader.citizen.currentLocation = this._trader.path[0];
                     this._trader.path.RemoveAt(0);
+                    this._trader.location.CollectEventOnTile(this._trader.citizen.city.kingdom, this._trader.citizen);
                     this.CheckForKingdomDiscovery();
                 }
             }

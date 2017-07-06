@@ -154,6 +154,7 @@ public class SpyAvatar : MonoBehaviour {
 					this.spy.location = this.spy.path[0];
 					this.spy.citizen.currentLocation = this.spy.path [0];
 					this.spy.path.RemoveAt (0);
+                    this.spy.location.CollectEventOnTile(this.spy.citizen.city.kingdom, this.spy.citizen);
                     this.CheckForKingdomDiscovery();
 					//					if(this.raider.daysBeforeMoving <= 0){
 					//						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
