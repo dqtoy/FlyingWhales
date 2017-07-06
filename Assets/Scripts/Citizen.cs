@@ -793,7 +793,11 @@ public class Citizen {
 			this.assignedRole = new Abductor(this);
 		}else if (role == ROLE.LYCANTHROPE) {
             this.assignedRole = new Lycanthrope(this);
-        }
+		}else if (role == ROLE.INVESTIGATOR) {
+			this.assignedRole = new Investigator(this);
+		}else if (role == ROLE.THIEF) {
+			this.assignedRole = new Thief(this);
+		}
         //this.UpdatePrestige ();
 	}
 

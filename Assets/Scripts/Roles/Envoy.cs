@@ -33,6 +33,10 @@ public class Envoy : Role {
 			Secession secession = (Secession)this.gameEvent;
 			secession.convincer = this;
 		}
+//		else if(this.gameEvent is FirstAndKeystone){
+//			FirstAndKeystone firstAndKeystone = (FirstAndKeystone)this.gameEvent;
+//			firstAndKeystone.convincer = this;
+//		}
 		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Envoy"), this.citizen.city.hexTile.transform) as GameObject;
 		this.avatar.transform.localPosition = Vector3.zero;
 		this.avatar.GetComponent<EnvoyAvatar>().Init(this);

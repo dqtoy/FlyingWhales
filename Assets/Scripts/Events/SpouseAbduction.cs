@@ -75,6 +75,7 @@ public class SpouseAbduction : GameEvent {
 	}
 	internal override void DoneEvent (){
 		base.DoneEvent ();
+		onPerformAction = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 	}
 	#endregion

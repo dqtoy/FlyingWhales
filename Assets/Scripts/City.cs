@@ -438,6 +438,7 @@ public class City{
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currBorderTile = this.borderTiles[i];
 			currBorderTile.Borderize (this);
+			CollectEventInTile(this.borderTiles[i]);
 		}
 	}
 
@@ -909,6 +910,9 @@ public class City{
      * Conquer this city and transfer ownership to the conqueror
      * */
     internal void ConquerCity(Kingdom conqueror) {
+		//Transfer items to conqueror
+		TransferItemsToConqueror(conqueror);
+
 		RelationshipKingdom relationship = this.kingdom.GetRelationshipWithOtherKingdom(conqueror);
 
 		//Trigger Request Peace before changing kingdoms, The losing side has a 20% chance for every city he has lost since the start of the war to send a Request for Peace
@@ -941,7 +945,16 @@ public class City{
         this.CreateInitialFamilies(false);
 
     }
-
+	private void TransferItemsToConqueror(Kingdom conqueror){
+		for(int i = 0; i < this.ownedTiles.Count; i++){
+			if(this.ownedTiles[i].hasFirst){
+				conqueror.CollectFirst();
+			}
+			if(this.ownedTiles[i].hasKeystone){
+				conqueror.CollectKeystone();
+			}
+		}
+	}
 
 	/*internal void LookForNewGeneral(General general){
 //		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
@@ -1244,6 +1257,9 @@ public class City{
 			if(hexTile.gameEventInTile is BoonOfPower){
 				BoonOfPower boonOfPower = (BoonOfPower)hexTile.gameEventInTile;
 				boonOfPower.TransferBoonOfPower (this.kingdom, null);
+			}else if(hexTile.gameEventInTile is FirstAndKeystone){
+				FirstAndKeystone firstAndKeystone = (FirstAndKeystone)hexTile.gameEventInTile;
+				firstAndKeystone.TransferKeystone (this.kingdom, null);
 			}
 		}
 	}

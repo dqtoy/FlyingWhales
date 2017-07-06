@@ -95,7 +95,7 @@ public class Plague : GameEvent {
 		this.bioWeaponMeterMax = maxMeter;
 		this.vaccineMeterMax = maxMeter;
        
-		WorldEventManager.Instance.currentPlague = this;
+		WorldEventManager.Instance.AddWorlEvent(this);
 
         EventManager.Instance.AddEventToDictionary(this);
         EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -159,7 +159,7 @@ public class Plague : GameEvent {
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_end");
 		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
-		WorldEventManager.Instance.currentPlague = null;
+		WorldEventManager.Instance.RemoveWorldEvent(null);
     }
     #endregion
 
