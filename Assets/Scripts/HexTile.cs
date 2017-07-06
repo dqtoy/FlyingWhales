@@ -421,8 +421,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
         //this.structureGO.SetActive(true);
         //this.centerPiece.SetActive(false);
-        SetMinimapTileColor(city.kingdom.kingdomColor);
         Color color = this.city.kingdom.kingdomColor;
+        color.a = 255f / 255f;
+        SetMinimapTileColor(color);
         color.a = 76.5f / 255f;
         this._kingdomColorSprite.color = color;
         this.GetComponent<SpriteRenderer>().color = Color.white;
@@ -480,7 +481,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
             Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
 
-        SetMinimapTileColor(ownedByCity.kingdom.kingdomColor);
+        Color color = ownedByCity.kingdom.kingdomColor;
+        color.a = 255f / 255f;
+        SetMinimapTileColor(color);
 
         for (int i = 0; i < allColorizers.Length; i++) {
             allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;

@@ -11,10 +11,10 @@ public class WorldEventManager : MonoBehaviour {
 
 	void Awake(){
 		Instance = this;
-	}
+        this.currentWorldEvents = new List<GameEvent>();
+    }
 
 	void Start () {
-		this.currentWorldEvents = new List<GameEvent>();
 		ResetCurrentInterveneEvent ();
 		EventManager.Instance.onWeekEnd.AddListener (this.TickActions);
 	}

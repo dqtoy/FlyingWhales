@@ -42,7 +42,9 @@ public class FirstAndKeystone : GameEvent {
 		Initialize();
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
-	}
+        Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "TheFirstAndTheKeystone", "event_title");
+
+    }
 
     #region Overrides
 	internal override void PerformAction (){
