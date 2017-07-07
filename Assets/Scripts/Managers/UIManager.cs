@@ -2718,6 +2718,10 @@ public class UIManager : MonoBehaviour {
 			return requestPeaceIcon;
 		case EVENT_TYPES.SPOUSE_ABDUCTION:
 			return militarizationIcon;
+		case EVENT_TYPES.FIRST_AND_KEYSTONE:
+			return marriageInvitationIcon;
+		case EVENT_TYPES.RUMOR:
+			return militarizationIcon;
 		}
 		return assassinationIcon;
 	}

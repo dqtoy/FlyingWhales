@@ -85,6 +85,7 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.SPOUSE_ABDUCTION, -1},
         {EVENT_TYPES.LYCANTHROPY, -1},
 		{EVENT_TYPES.FIRST_AND_KEYSTONE, -1},
+		{EVENT_TYPES.RUMOR, -1},
     };
 
 	void Awake(){

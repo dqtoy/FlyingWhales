@@ -40,6 +40,7 @@ public class FirstAndKeystone : GameEvent {
         _purgedRace = RACE.NONE;
 		WorldEventManager.Instance.AddWorldEvent(this);
 		Initialize();
+		EventManager.Instance.AddEventToDictionary(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "TheFirstAndTheKeystone", "event_title");

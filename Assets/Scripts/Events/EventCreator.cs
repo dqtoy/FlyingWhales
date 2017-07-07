@@ -266,5 +266,8 @@ public class EventCreator: MonoBehaviour {
 		return firstAndKeystone;
 	}
 
-//	internal 
+	internal Rumor CreateRumorEvent(Citizen startedBy, Kingdom rumorKingdom, Kingdom targetKingdom){
+		Rumor rumor = new Rumor (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, rumorKingdom, targetKingdom);
+		return rumor;
+	}
 }

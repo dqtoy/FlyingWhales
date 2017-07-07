@@ -878,6 +878,13 @@ public class Utilities : MonoBehaviour {
 		{"15", LOG_IDENTIFIER.GOVERNOR_2},
 		{"16", LOG_IDENTIFIER.RANDOM_CITY_2},
 		{"17", LOG_IDENTIFIER.RANDOM_GOVERNOR_2},
+		{"21", LOG_IDENTIFIER.KINGDOM_3},
+		{"22", LOG_IDENTIFIER.KING_3},
+		{"23", LOG_IDENTIFIER.KING_3_SPOUSE},
+		{"24", LOG_IDENTIFIER.CITY_3},
+		{"25", LOG_IDENTIFIER.GOVERNOR_3},
+		{"26", LOG_IDENTIFIER.RANDOM_CITY_3},
+		{"27", LOG_IDENTIFIER.RANDOM_GOVERNOR_3},
 		{"81", LOG_IDENTIFIER.TRIGGER_REASON},
 		{"82", LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME},
 		{"83", LOG_IDENTIFIER.ACTIVE_CHARACTER_PRONOUN_S},
@@ -899,6 +906,10 @@ public class Utilities : MonoBehaviour {
 		{"99", LOG_IDENTIFIER.SECESSION_CITIES},
 		{"100", LOG_IDENTIFIER.GAME_EVENT},
 		{"101", LOG_IDENTIFIER.DATE},
+		{"102", LOG_IDENTIFIER.KING_3_PRONOUN_S},
+		{"103", LOG_IDENTIFIER.KING_3_PRONOUN_O},
+		{"104", LOG_IDENTIFIER.KING_3_PRONOUN_P},
+		{"105", LOG_IDENTIFIER.KING_3_PRONOUN_R},
 	};
 	public static string PronounReplacer(string word, object genderSubject){
 //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
@@ -1062,6 +1073,8 @@ public class Utilities : MonoBehaviour {
 		case EVENT_TYPES.SPOUSE_ABDUCTION:
 			return true;
 		case EVENT_TYPES.FIRST_AND_KEYSTONE:
+			return true;
+		case EVENT_TYPES.RUMOR:
 			return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){

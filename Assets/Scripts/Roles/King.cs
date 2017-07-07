@@ -19,13 +19,47 @@ public class King : Role {
 		if(this.citizen.city.kingdom.plague != null){
 			this.citizen.city.kingdom.plague.UpdateApproach (this.citizen.city.kingdom);
 		}
-		EventManager.Instance.onWeekEnd.AddListener (TriggerSpouseAbduction);
+		EventManager.Instance.onWeekEnd.AddListener (EverydayActions);
 	}
 
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){
 		this.ownedKingdom = ownedKingdom;
 	}
+	private void EverydayActions(){
+		if(this.citizen.isDead){
+			EventManager.Instance.onWeekEnd.RemoveListener (EverydayActions);
+			return;
+		}
+		TriggerSpouseAbduction();
 
+	}
+	private void TriggerRumor(){
+		if(GameManager.Instance.days % 10 == 0){
+			int chance = UnityEngine.Random.Range(0, 100);
+			if(chance < 20){
+				if(this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE) && this.citizen.city.kingdom.discoveredKingdoms.Count >= 2){
+					List<Kingdom> targetKingdoms = new List<Kingdom>();
+					List<Kingdom> rumorKingdoms = new List<Kingdom>();
+					for (int i = 0; i < this.citizen.city.kingdom.discoveredKingdoms.Count; i++) {
+						if(this.citizen.city.kingdom.discoveredKingdoms[i].isAlive()){
+							RelationshipKings relationship = this.citizen.city.kingdom.king.GetRelationshipWithCitizen(this.citizen.city.kingdom.discoveredKingdoms[i].king);
+							if(relationship != null && relationship.lordRelationship != RELATIONSHIP_STATUS.NEUTRAL){
+								targetKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
+							}
+							if(relationship != null && (relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY)){
+								rumorKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
+							}
+						}
+					}
+					if(targetKingdoms.Count > 0 && rumorKingdoms.Count > 0){
+						Kingdom targetKingdom = targetKingdoms[UnityEngine.Random.Range(0,targetKingdoms.Count)];
+						Kingdom rumorKingdom = rumorKingdoms[UnityEngine.Random.Range(0,rumorKingdoms.Count)];
+						EventCreator.Instance.CreateRumorEvent(this.citizen, rumorKingdom, targetKingdom);
+					}
+				}
+			}
+		}
+	}
 	internal void TriggerSpouseAbduction(){
 		if(!this.citizen.isDead){
 			if((MONTH)GameManager.Instance.month == this.citizen.birthMonth && GameManager.Instance.days == this.citizen.birthWeek && GameManager.Instance.year > this.citizen.birthYear){
@@ -38,8 +72,6 @@ public class King : Role {
 					}
 				}
 			}
-		}else{
-			EventManager.Instance.onWeekEnd.RemoveListener (TriggerSpouseAbduction);
 		}
 	}
 	private bool IsEligibleForAbduction(Kingdom kingdom1, Kingdom kingdom2){
@@ -63,7 +95,7 @@ public class King : Role {
 	}
 	private bool IsReadyForAbduction(ref Citizen targetKing){
 		if(this.citizen.spouse == null && !this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)){
-			List<Citizen> targetKings = KingdomManager.Instance.allKingdoms.Select (x => x.king).Where (x => x.isMarried && x.spouse != null && x.gender == this.citizen.gender).ToList();
+			List<Citizen> targetKings = this.citizen.city.kingdom.discoveredKingdoms.Select (x => x.king).Where (x => x.isMarried && x.spouse != null && x.gender == this.citizen.gender).ToList();
 			if(targetKings != null && targetKings.Count > 0){
 				for (int i = 0; i < targetKings.Count; i++) {
 					RelationshipKings relationship = this.citizen.GetRelationshipWithCitizen (targetKings [i]);
