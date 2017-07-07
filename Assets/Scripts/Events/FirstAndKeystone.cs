@@ -314,15 +314,27 @@ public class FirstAndKeystone : GameEvent {
      * This will cause the slow extinction of the other race.
      * Prevents birth and growth.
      * */
-    internal void UseFirstAndKeystone() {
+    private void UseFirstAndKeystone() {
         if(this.keystoneOwner.race == RACE.ELVES) {
             _purgedRace = RACE.HUMANS;
         } else {
             _purgedRace = RACE.ELVES;
         }
-        
+        List<Kingdom> allKingdomsOfRace = KingdomManager.Instance.GetAllKingdomsByRace(_purgedRace);
+        for (int i = 0; i < allKingdomsOfRace.Count; i++) {
+            Kingdom currKingdom = allKingdomsOfRace[i];
+            currKingdom.SetGrowthState(false);
+        }
+        onPerformAction = null;
+        onPerformAction += CheckForOtherRaceExtinction;
     }
-
+    private void CheckForOtherRaceExtinction() {
+        List<Kingdom> allKingdomsOfRace = KingdomManager.Instance.GetAllKingdomsByRace(_purgedRace);
+        if(allKingdomsOfRace.Count <= 0) {
+            //Race successfully extinct
+            this.DoneEvent();
+        }
+    }
 
 	private void ResetFirstAndKeystoneOwnershipValues(){
 		for(int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++){
@@ -331,12 +343,13 @@ public class FirstAndKeystone : GameEvent {
 	}
 	private void CheckFirstAndKeystoneOwnership(){
 		if(this.keystoneOwner == this.firstOwner){
+            EVENT_APPROACH chosenApproach = GetApproach(this.keystoneOwner);
 			//Humanistic - destroy keystone
-			if(this.keystoneOwner.firstAndKeystoneOwnership.approach == EVENT_APPROACH.HUMANISTIC){
+			if(chosenApproach == EVENT_APPROACH.HUMANISTIC){
 				DestroyKeystone();
 			}
             //Opporunistic - destroy other race
-            if (this.keystoneOwner.firstAndKeystoneOwnership.approach == EVENT_APPROACH.OPPORTUNISTIC) {
+            if (chosenApproach == EVENT_APPROACH.OPPORTUNISTIC) {
                 UseFirstAndKeystone();
             }
         }

@@ -184,6 +184,7 @@ public class ExterminatorAvatar : MonoBehaviour {
                     this.exterminator.location = this.exterminator.path[0];
                     this.exterminator.citizen.currentLocation = this.exterminator.path[0];
                     this.exterminator.path.RemoveAt(0);
+                    this.exterminator.location.CollectEventOnTile(this.exterminator.citizen.city.kingdom, this.exterminator.citizen);
                     this.CheckForKingdomDiscovery();
                 }
             }

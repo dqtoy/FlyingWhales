@@ -185,6 +185,7 @@ public class InvestigatorAvatar : MonoBehaviour {
 					this.investigator.location = this.investigator.path[0];
 					this.investigator.citizen.currentLocation = this.investigator.path [0];
 					this.investigator.path.RemoveAt (0);
+                    this.investigator.location.CollectEventOnTile(this.investigator.citizen.city.kingdom, this.investigator.citizen);
                     this.CheckForKingdomDiscovery();
 //					if(this.raider.daysBeforeMoving <= 0){
 //						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);

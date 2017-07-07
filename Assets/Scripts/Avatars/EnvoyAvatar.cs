@@ -173,7 +173,8 @@ public class EnvoyAvatar : MonoBehaviour {
 							this.envoy.location = this.envoy.path[0];
 							this.envoy.citizen.currentLocation = this.envoy.path [0];
 							this.envoy.path.RemoveAt (0);
-						}
+                            this.envoy.location.CollectEventOnTile(this.envoy.citizen.city.kingdom, this.envoy.citizen);
+                        }
 						this.envoy.daysBeforeMoving -= 1;
 					}
 				}
@@ -187,7 +188,8 @@ public class EnvoyAvatar : MonoBehaviour {
 						this.envoy.location = this.envoy.path[0];
 						this.envoy.citizen.currentLocation = this.envoy.path [0];
 						this.envoy.path.RemoveAt (0);
-					}
+                        this.envoy.location.CollectEventOnTile(this.envoy.citizen.city.kingdom, this.envoy.citizen);
+                    }
 				}
 			}
 		}

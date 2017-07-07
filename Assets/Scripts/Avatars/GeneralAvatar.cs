@@ -253,6 +253,7 @@ public class GeneralAvatar : MonoBehaviour {
 						this.general.location = this.general.path[0];
 						this.general.citizen.currentLocation = this.general.path [0];
 						this.general.path.RemoveAt (0);
+                        this.general.location.CollectEventOnTile(this.general.citizen.city.kingdom, this.general.citizen);
                         this.CheckForKingdomDiscovery();
 					}
 					this.general.daysBeforeMoving -= 1;

@@ -185,6 +185,7 @@ public class ThiefAvatar : MonoBehaviour {
 					this.thief.location = this.thief.path[0];
 					this.thief.citizen.currentLocation = this.thief.path [0];
 					this.thief.path.RemoveAt (0);
+                    this.thief.location.CollectEventOnTile(this.thief.citizen.city.kingdom, this.thief.citizen);
                     this.CheckForKingdomDiscovery();
 //					if(this.raider.daysBeforeMoving <= 0){
 //						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);

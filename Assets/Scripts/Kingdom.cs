@@ -445,10 +445,24 @@ public class Kingdom{
 		}
 	}
 
+    protected void RemoveRelationshipWithKing(Kingdom kingdomToRemove) {
+        if (kingdomToRemove.id == this.id) {
+            return;
+        }
+        for (int i = 0; i < king.relationshipKings.Count; i++) {
+            RelationshipKings currRel = king.relationshipKings[i];
+            if(currRel.king.city.kingdom.id == kingdomToRemove.id) {
+                king.relationshipKings.Remove(currRel);
+                break;
+            }
+        }
+    }
+
     protected void OtherKingdomDiedActions(Kingdom kingdomThatDied) {
         if (kingdomThatDied.id != this.id) {
             RemoveRelationshipWithKingdom(kingdomThatDied);
             //RemoveAllTradeRoutesWithOtherKingdom(kingdomThatDied);
+            RemoveRelationshipWithKing(kingdomThatDied);
             RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
             RemoveKingdomFromEmbargoList(kingdomThatDied);
         }

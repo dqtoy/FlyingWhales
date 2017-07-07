@@ -184,6 +184,7 @@ public class ScourgeAvatar : MonoBehaviour {
                     this.scourge.location = this.scourge.path[0];
                     this.scourge.citizen.currentLocation = this.scourge.path[0];
                     this.scourge.path.RemoveAt(0);
+                    this.scourge.location.CollectEventOnTile(this.scourge.citizen.city.kingdom, this.scourge.citizen);
                     this.CheckForKingdomDiscovery();
                 }
             }

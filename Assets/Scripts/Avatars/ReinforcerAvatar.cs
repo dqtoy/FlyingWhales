@@ -152,6 +152,7 @@ public class ReinforcerAvatar : MonoBehaviour {
 						this.reinforcer.location = this.reinforcer.path[0];
 						this.reinforcer.citizen.currentLocation = this.reinforcer.path [0];
 						this.reinforcer.path.RemoveAt (0);
+                        this.reinforcer.location.CollectEventOnTile(this.reinforcer.citizen.city.kingdom, this.reinforcer.citizen);
                         this.CheckForKingdomDiscovery();
 					}
 					this.reinforcer.daysBeforeMoving -= 1;

@@ -185,6 +185,7 @@ public class RaiderAvatar : MonoBehaviour {
 					this.raider.location = this.raider.path[0];
 					this.raider.citizen.currentLocation = this.raider.path [0];
 					this.raider.path.RemoveAt (0);
+                    this.raider.location.CollectEventOnTile(this.raider.citizen.city.kingdom, this.raider.citizen);
                     this.CheckForKingdomDiscovery();
 //					if(this.raider.daysBeforeMoving <= 0){
 //						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);

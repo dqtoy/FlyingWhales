@@ -185,6 +185,7 @@ public class AbductorAvatar : MonoBehaviour {
 					this.abductor.location = this.abductor.path[0];
 					this.abductor.citizen.currentLocation = this.abductor.path [0];
 					this.abductor.path.RemoveAt (0);
+                    this.abductor.location.CollectEventOnTile(this.abductor.citizen.city.kingdom, this.abductor.citizen);
                     this.CheckForKingdomDiscovery();
 //					if(this.raider.daysBeforeMoving <= 0){
 //						this.MakeCitizenMove (this.raider.location, this.raider.path [0]);
