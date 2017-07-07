@@ -1076,6 +1076,8 @@ public class Utilities : MonoBehaviour {
 			return true;
 		case EVENT_TYPES.RUMOR:
 			return true;
+		case EVENT_TYPES.SLAVES_MERCHANT:
+			return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;

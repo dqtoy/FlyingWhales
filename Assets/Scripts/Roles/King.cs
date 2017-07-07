@@ -31,6 +31,7 @@ public class King : Role {
 			return;
 		}
 		TriggerSpouseAbduction();
+		TriggerRumor();
 
 	}
 	private void TriggerRumor(){

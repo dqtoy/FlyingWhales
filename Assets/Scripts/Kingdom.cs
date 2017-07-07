@@ -176,6 +176,9 @@ public class Kingdom{
     public bool isGrowthEnabled {
         get { return _isGrowthEnabled; }
     }
+	public List<City> nonRebellingCities {
+		get { return this.cities.Where(x => x.rebellion == null).ToList(); }
+	}
     #endregion
     // Kingdom constructor paramters
     //	race - the race of this kingdom
@@ -351,7 +354,7 @@ public class Kingdom{
 	// Function to call if you want to determine whether the Kingdom is still alive or dead
 	// At the moment, a Kingdom is considered dead if it doesnt have any cities.
 	public bool isAlive() {
-		if (this.cities.Where(x => x.rebellion == null).ToList().Count > 0) {
+		if (this.nonRebellingCities.Count > 0) {
 			return true;
 		}
 		return false;
@@ -483,6 +486,7 @@ public class Kingdom{
         this.DecreaseUnrestEveryMonth();
 		this.CheckBorderConflictLoyaltyExpiration ();
 		this.IncreaseTechCounterPerTick();
+		this.TriggerSlavesMerchant();
         //if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
         //    this.AttemptToTrade();
         //}
@@ -1864,4 +1868,17 @@ public class Kingdom{
 		City randomCity = this.cities [UnityEngine.Random.Range (0, this.cities.Count)];
 		return randomCity.governor;
 	}
+
+	#region Slaves Merchant
+	private void TriggerSlavesMerchant(){
+		if(GameManager.Instance.days == 20){
+			int chance = UnityEngine.Random.Range(0,100);
+			if(chance < 8){
+				if(!this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY)){
+					EventCreator.Instance.CreateSlavesMerchantEvent(this.king);
+				}
+			}
+		}
+	}
+	#endregion
 }

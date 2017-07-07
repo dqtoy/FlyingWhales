@@ -2722,6 +2722,8 @@ public class UIManager : MonoBehaviour {
 			return marriageInvitationIcon;
 		case EVENT_TYPES.RUMOR:
 			return militarizationIcon;
+		case EVENT_TYPES.SLAVES_MERCHANT:
+			return rebellionPlotIcon;
 		}
 		return assassinationIcon;
 	}

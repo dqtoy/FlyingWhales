@@ -270,4 +270,8 @@ public class EventCreator: MonoBehaviour {
 		Rumor rumor = new Rumor (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy, rumorKingdom, targetKingdom);
 		return rumor;
 	}
+	internal SlavesMerchant CreateSlavesMerchantEvent(Citizen startedBy){
+		SlavesMerchant slavesMerchant = new SlavesMerchant (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy);
+		return slavesMerchant;
+	}
 }
