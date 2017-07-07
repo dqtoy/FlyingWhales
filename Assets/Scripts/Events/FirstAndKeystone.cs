@@ -342,12 +342,13 @@ public class FirstAndKeystone : GameEvent {
 	}
 	private void CheckFirstAndKeystoneOwnership(){
 		if(this.keystoneOwner == this.firstOwner){
+            EVENT_APPROACH chosenApproach = GetApproach(this.keystoneOwner);
 			//Humanistic - destroy keystone
-			if(this.keystoneOwner.firstAndKeystoneOwnership.approach == EVENT_APPROACH.HUMANISTIC){
+			if(chosenApproach == EVENT_APPROACH.HUMANISTIC){
 				DestroyKeystone();
 			}
             //Opporunistic - destroy other race
-            if (this.keystoneOwner.firstAndKeystoneOwnership.approach == EVENT_APPROACH.OPPORTUNISTIC) {
+            if (chosenApproach == EVENT_APPROACH.OPPORTUNISTIC) {
                 UseFirstAndKeystone();
             }
         }

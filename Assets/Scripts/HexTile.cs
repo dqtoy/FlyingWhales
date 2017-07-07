@@ -777,7 +777,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.hasKeystone = state;
 		//TODO: add/remove keystone icon on tile
 		this.SetActiveKeystoneIcon(state);
-	}
+        this.RemoveEventOnTile();
+    }
 
 	private void SetActiveKeystoneIcon(bool state){
 		if(state){
@@ -819,6 +820,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             } else if (gameEventInTile is FirstAndKeystone) {
                 FirstAndKeystone firstAndKeystone = (FirstAndKeystone)gameEventInTile;
                 firstAndKeystone.TransferKeystone(claimant, citizen);
+                RemoveEventOnTile();
             }
         }
     }

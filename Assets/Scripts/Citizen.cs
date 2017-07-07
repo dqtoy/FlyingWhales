@@ -7,7 +7,9 @@ using System.Linq;
 //[System.Serializable]
 public class Citizen {
 	public int id;
-	public string name;
+	private string _name;
+    public string firstName;
+    public string surName;
 	public GENDER gender;
 	public int age;
 	public int generation;
@@ -66,6 +68,9 @@ public class Citizen {
 	protected const int MARRIAGE_CHANCE = 100; //8
 
 	#region getters/setters
+    public string name {
+        get { return firstName + " " + surName; }
+    }
 	public List<Citizen> possiblePretenders{
 		get{ return this._possiblePretenders;}
 	}
@@ -113,7 +118,15 @@ public class Citizen {
 		this.race = city.kingdom.race;
 		this.gender = gender;
 		this.age = age;
-		this.name = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
+        
+        if(this.race == RACE.HUMANS) {
+            this.firstName = RandomNameGenerator.Instance.GetHumanFirstName(gender);
+            this.surName = RandomNameGenerator.Instance.GetHumanSurname();
+        } else {
+            this.firstName = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
+        }
+        
+		//this.name = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
 		/*if(isGhost){
 			this.name = "GHOST";
 		}else{
@@ -219,9 +232,10 @@ public class Citizen {
 		this.mother = mother;
 
 		if (this.race == RACE.HUMANS) {
-			this.name = RandomNameGenerator.Instance.GetHumanFirstName (this.gender) + " " + this.father.name.Split (' ').ElementAt (1);
-		} else {
-			this.name = RandomNameGenerator.Instance.GenerateRandomName (this.race, this.gender);
+			this.firstName = RandomNameGenerator.Instance.GetHumanFirstName (this.gender);
+            this.surName = this.father.surName;
+        } else {
+			this.firstName = RandomNameGenerator.Instance.GenerateRandomName (this.race, this.gender);
 		}
 	}
 
@@ -1378,8 +1392,7 @@ public class Citizen {
 		return null;
 	}
 	internal void ChangeSurname(Citizen citizenToGetSurnameFrom){
-		string newSurname = citizenToGetSurnameFrom.name.Split(' ').ElementAt(1);
-		this.name = this.name.Split (' ').ElementAt (0) + " " + newSurname;
+        this.surName = citizenToGetSurnameFrom.surName;
 	}
 
 	internal void RemoveSuccessionWarCity (City city){

@@ -50,8 +50,8 @@ public class MarriageManager : MonoBehaviour {
 		Citizen father = new Citizen (otherSpouse.city, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 		Citizen mother = new Citizen (otherSpouse.city, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
-		father.name = RandomNameGenerator.Instance.GenerateRandomName (father.race, father.gender);
-		mother.name = RandomNameGenerator.Instance.GenerateRandomName (mother.race, mother.gender);
+		//father.name = RandomNameGenerator.Instance.GenerateRandomName (father.race, father.gender);
+		//mother.name = RandomNameGenerator.Instance.GenerateRandomName (mother.race, mother.gender);
 
 		father.AddChild(spouse);
 		mother.AddChild(spouse);

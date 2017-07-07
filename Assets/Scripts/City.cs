@@ -184,8 +184,8 @@ public class City{
 		Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 		Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
-		father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
-		mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
+		//father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
+		//mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
 		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
@@ -305,8 +305,8 @@ public class City{
 		Citizen father = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.MALE, 1);
 		Citizen mother = new Citizen (this, UnityEngine.Random.Range (60, 81), GENDER.FEMALE, 1);
 
-		father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
-		mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
+		//father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
+		//mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
 
 		governor.AssignRole(ROLE.GOVERNOR);
 
