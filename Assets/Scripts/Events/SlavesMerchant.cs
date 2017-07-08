@@ -21,6 +21,10 @@ public class SlavesMerchant : GameEvent {
 		this.slavesQuantity = 0;
 		//TODO: Add log - event title
 		//TODO: Add log - start
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "event_title");
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "start");
+		newLog.AddToFillers (this.buyerKingdom, this.buyerKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		this.EventIsCreated();
@@ -47,6 +51,9 @@ public class SlavesMerchant : GameEvent {
 		}else{
 			//No buy
 			//TODO: Add log - king doesn't buy the slaves
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "no_buy");
+			newLog.AddToFillers (this.buyerKingdom.king, this.buyerKingdom.king.name, LOG_IDENTIFIER.KING_1);
+			newLog.AddToFillers (this.buyerKingdom, this.buyerKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		}
 	}
 
@@ -55,6 +62,11 @@ public class SlavesMerchant : GameEvent {
 		this.hasBoughtSlaves = true;
 
 		//TODO: Add log - king buys the slaves
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "buy");
+		newLog.AddToFillers (this.buyerKingdom.king, this.buyerKingdom.king.name, LOG_IDENTIFIER.KING_1);
+		newLog.AddToFillers (this.buyerKingdom, this.buyerKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, this.slavesQuantity.ToString(), LOG_IDENTIFIER.OTHER);
+
 	}
 
 	private void SlavesDistribution(){
@@ -69,6 +81,11 @@ public class SlavesMerchant : GameEvent {
 				hasFreedSlaves = true;
 				((Governor)allCities[i].governor.assignedRole).AddEventModifier(-10, "Anti-slavery", this);
 				unrestCount += 5;
+
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "slaves_free");
+				newLog.AddToFillers (allCities[i].governor, allCities[i].governor.name, LOG_IDENTIFIER.GOVERNOR_1);
+				newLog.AddToFillers (allCities[i], allCities[i].name, LOG_IDENTIFIER.CITY_1);
+
 			}else{
 				//Add production rate by slavesPerCity
 			}
@@ -92,7 +109,12 @@ public class SlavesMerchant : GameEvent {
 				Citizen chosenGovernor = governorsForExecution[UnityEngine.Random.Range(0, governorsForExecution.Count)];
 				chosenGovernor.Death(DEATH_REASONS.TREACHERY);
 				this.buyerKingdom.AdjustUnrest(20);
+
 				//TODO: Add log - king has executed a governor
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "governor_execution");
+				newLog.AddToFillers (this.buyerKingdom.king, this.buyerKingdom.king.name, LOG_IDENTIFIER.KING_1);
+				newLog.AddToFillers (chosenGovernor, chosenGovernor.name, LOG_IDENTIFIER.GOVERNOR_1);
+				newLog.AddToFillers (chosenGovernor.city, chosenGovernor.city.name, LOG_IDENTIFIER.CITY_1);
 			}
 		}
 	}

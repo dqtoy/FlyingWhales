@@ -910,6 +910,7 @@ public class Utilities : MonoBehaviour {
 		{"103", LOG_IDENTIFIER.KING_3_PRONOUN_O},
 		{"104", LOG_IDENTIFIER.KING_3_PRONOUN_P},
 		{"105", LOG_IDENTIFIER.KING_3_PRONOUN_R},
+		{"106", LOG_IDENTIFIER.OTHER},
 	};
 	public static string PronounReplacer(string word, object genderSubject){
 //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');

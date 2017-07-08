@@ -30,13 +30,13 @@ public class Rumor : GameEvent {
 		//TODO: Add log - plotting to create rumor
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rumor", "event_title");
 
-		Log raidStartLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rumor", "start");
-		raidStartLog.AddToFillers (this.sourceKingdom.king, this.sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
-		raidStartLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		raidStartLog.AddToFillers (this.rumorKingdom.king, this.rumorKingdom.king.name, LOG_IDENTIFIER.KING_2);
-		raidStartLog.AddToFillers (this.rumorKingdom, this.rumorKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		raidStartLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name, LOG_IDENTIFIER.KING_3);
-		raidStartLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rumor", "start");
+		newLog.AddToFillers (this.sourceKingdom.king, this.sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
+		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (this.rumorKingdom.king, this.rumorKingdom.king.name, LOG_IDENTIFIER.KING_2);
+		newLog.AddToFillers (this.rumorKingdom, this.rumorKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name, LOG_IDENTIFIER.KING_3);
+		newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
 		this.EventIsCreated();
 
 	}
