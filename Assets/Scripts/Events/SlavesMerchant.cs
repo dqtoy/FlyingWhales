@@ -49,8 +49,7 @@ public class SlavesMerchant : GameEvent {
 	#endregion
 
 	private void KingDecision(){
-		int chance = UnityEngine.Random.Range(0,2);
-		if(chance == 0 && this.buyerKingdom.nonRebellingCities.Count > 0){
+		if(!this.buyerKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) && this.buyerKingdom.nonRebellingCities.Count > 0){
 			//Buy
 			BuySlaves();
 		}else{
