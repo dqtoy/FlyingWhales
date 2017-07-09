@@ -54,6 +54,13 @@ public class Rumor : GameEvent {
 	}
 	internal override void DoneEvent (){
 		base.DoneEvent ();
+		if (this.startedBy.assignedRole != null){
+			if (this.startedBy.assignedRole is King){
+				((King)this.startedBy.assignedRole).isRumoring = false;
+			}
+		}
+		((King)this.sourceKingdom.king.assignedRole).isRumoring = false;
+
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 	#endregion

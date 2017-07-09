@@ -41,6 +41,11 @@ public class SlavesMerchant : GameEvent {
 			}
 		}
 	}
+
+	internal override void DoneEvent (){
+		base.DoneEvent ();
+		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+	}
 	#endregion
 
 	private void KingDecision(){
@@ -54,6 +59,8 @@ public class SlavesMerchant : GameEvent {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "no_buy");
 			newLog.AddToFillers (this.buyerKingdom.king, this.buyerKingdom.king.name, LOG_IDENTIFIER.KING_1);
 			newLog.AddToFillers (this.buyerKingdom, this.buyerKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+
+			this.DoneEvent();
 		}
 	}
 
@@ -98,6 +105,7 @@ public class SlavesMerchant : GameEvent {
 			RandomGovernorExecution(chanceModifier, allCities);
 		}
 
+		this.DoneEvent();
 	}
 	private void RandomGovernorExecution(int chanceModifier, List<City> allCities){
 		int chance = UnityEngine.Random.Range(0,100);

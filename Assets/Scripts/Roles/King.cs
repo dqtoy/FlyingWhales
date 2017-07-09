@@ -7,6 +7,10 @@ public class King : Role {
 
 	public Kingdom ownedKingdom;
 	internal int abductionCounter;
+
+	internal bool isRumoring;
+	internal bool isHiddenHistoryBooking;
+
 	public King(Citizen citizen): base(citizen){
 		this.citizen.isKing = true;
 //		if(this.citizen.city.kingdom.king != null){
@@ -19,6 +23,8 @@ public class King : Role {
 		if(this.citizen.city.kingdom.plague != null){
 			this.citizen.city.kingdom.plague.UpdateApproach (this.citizen.city.kingdom);
 		}
+		this.isRumoring = false;
+		this.isHiddenHistoryBooking = false;
 		EventManager.Instance.onWeekEnd.AddListener (EverydayActions);
 	}
 
@@ -32,10 +38,10 @@ public class King : Role {
 		}
 		TriggerSpouseAbduction();
 		TriggerRumor();
-
+		TriggerHiddenHistoryBook();
 	}
 	private void TriggerRumor(){
-		if(GameManager.Instance.days % 10 == 0){
+		if(GameManager.Instance.days % 10 == 0 && !this.isRumoring){
 			int chance = UnityEngine.Random.Range(0, 100);
 			if(chance < 20){
 				if(this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE) && this.citizen.city.kingdom.discoveredKingdoms.Count >= 2){
@@ -55,6 +61,8 @@ public class King : Role {
 					if(targetKingdoms.Count > 0 && rumorKingdoms.Count > 0){
 						Kingdom targetKingdom = targetKingdoms[UnityEngine.Random.Range(0,targetKingdoms.Count)];
 						Kingdom rumorKingdom = rumorKingdoms[UnityEngine.Random.Range(0,rumorKingdoms.Count)];
+
+						this.isRumoring = true;
 						EventCreator.Instance.CreateRumorEvent(this.citizen, rumorKingdom, targetKingdom);
 					}
 				}
@@ -71,6 +79,17 @@ public class King : Role {
 					if(IsReadyForAbduction(ref targetKing) && IsEligibleForAbduction(this.citizen.city.kingdom, targetKing.city.kingdom)){
 						EventCreator.Instance.CreateSpouseAbductionEvent (this.citizen, targetKing);
 					}
+				}
+			}
+		}
+	}
+	internal void TriggerHiddenHistoryBook(){
+		if(this.ownedKingdom.race == RACE.HUMANS){
+			if(GameManager.Instance.days == 3 && !this.isHiddenHistoryBooking){
+				int chance = UnityEngine.Random.Range(0,100);
+				if(chance < 3){
+					this.isHiddenHistoryBooking = true;
+					EventCreator.Instance.CreateHiddenHistoryBookEvent(this.citizen);
 				}
 			}
 		}

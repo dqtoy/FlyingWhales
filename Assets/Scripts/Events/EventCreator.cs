@@ -274,4 +274,8 @@ public class EventCreator: MonoBehaviour {
 		SlavesMerchant slavesMerchant = new SlavesMerchant (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy);
 		return slavesMerchant;
 	}
+	internal HiddenHistoryBook CreateHiddenHistoryBookEvent(Citizen startedBy){
+		HiddenHistoryBook hiddenHistoryBook = new HiddenHistoryBook (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy);
+		return hiddenHistoryBook;
+	}
 }

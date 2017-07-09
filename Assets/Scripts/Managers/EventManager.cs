@@ -87,6 +87,8 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.FIRST_AND_KEYSTONE, -1},
 		{EVENT_TYPES.RUMOR, -1},
 		{EVENT_TYPES.SLAVES_MERCHANT, -1},
+		{EVENT_TYPES.HIDDEN_HISTORY_BOOK, -1},
+
     };
 
 	void Awake(){

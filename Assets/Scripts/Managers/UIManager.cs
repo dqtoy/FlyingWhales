@@ -2724,6 +2724,8 @@ public class UIManager : MonoBehaviour {
 			return militarizationIcon;
 		case EVENT_TYPES.SLAVES_MERCHANT:
 			return rebellionPlotIcon;
+		case EVENT_TYPES.HIDDEN_HISTORY_BOOK:
+			return requestPeaceIcon;
 		}
 		return assassinationIcon;
 	}
