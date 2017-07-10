@@ -811,9 +811,11 @@ public class Citizen {
 			this.assignedRole = new Investigator(this);
 		}else if (role == ROLE.THIEF) {
 			this.assignedRole = new Thief(this);
-		}
+		} else if (role == ROLE.WITCH) {
+            this.assignedRole = new Witch(this);
+        }
         //this.UpdatePrestige ();
-	}
+    }
 
 	internal RelationshipKings GetRelationshipWithCitizen(Citizen citizen){
 		for (int i = 0; i < this.relationshipKings.Count; i++) {

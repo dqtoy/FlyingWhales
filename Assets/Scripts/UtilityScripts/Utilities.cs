@@ -1081,6 +1081,8 @@ public class Utilities : MonoBehaviour {
 			return true;
 		case EVENT_TYPES.HIDDEN_HISTORY_BOOK:
 			return true;
+        case EVENT_TYPES.HYPNOTISM:
+            return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;

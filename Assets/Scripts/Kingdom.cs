@@ -486,11 +486,16 @@ public class Kingdom{
         this.DecreaseUnrestEveryMonth();
 		this.CheckBorderConflictLoyaltyExpiration ();
 		this.IncreaseTechCounterPerTick();
-		this.TriggerSlavesMerchant();
+        this.TriggerEvents();
         //if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
         //    this.AttemptToTrade();
         //}
         
+    }
+
+    private void TriggerEvents() {
+        this.TriggerSlavesMerchant();
+        this.TriggerHypnotism();
     }
 	/*
 	 * Attempt to create an attack city event
@@ -1880,5 +1885,27 @@ public class Kingdom{
 			}
 		}
 	}
-	#endregion
+    #endregion
+
+    #region Hypnotism
+    private void TriggerHypnotism() {
+        if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
+            if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+                if(EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.HYPNOTISM}).Count <= 0) {
+                    List<Kingdom> notFriends = new List<Kingdom>();
+                    for (int i = 0; i < discoveredKingdoms.Count; i++) {
+                        Kingdom currKingdom = discoveredKingdoms[i];
+                        RelationshipKings rel = currKingdom.king.GetRelationshipWithCitizen(this.king);
+                        if (rel.lordRelationship != RELATIONSHIP_STATUS.FRIEND && rel.lordRelationship != RELATIONSHIP_STATUS.ALLY) {
+                            notFriends.Add(currKingdom);
+                        }
+                    }
+                    if (UnityEngine.Random.Range(0, 100) < 30 && notFriends.Count > 0) {
+                        EventCreator.Instance.CreateHypnotismEvent(this, notFriends[UnityEngine.Random.Range(0, notFriends.Count)]);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
 }

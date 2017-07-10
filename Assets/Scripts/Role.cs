@@ -15,11 +15,16 @@ public class Role {
 	public bool isDestroyed;
 	public bool hasAttacked;
 
+    private GameEvent _gameEventInvolvedIn;
+
     private Plague _plague;
 
     #region getters/setters
     public Plague plague {
         get { return this._plague; }
+    }
+    public GameEvent gameEventInvolvedIn {
+        get { return this._gameEventInvolvedIn; }
     }
     #endregion
 
@@ -65,6 +70,7 @@ public class Role {
 		this.DestroyGO ();
 	}
 	internal virtual void Initialize(GameEvent gameEvent){
+        SetGameEventInvolvedIn(gameEvent);
         CheckForPlagueInfection();
     }
 	internal virtual void Attack(){}
@@ -89,5 +95,9 @@ public class Role {
 
     internal void DisinfectPlague() {
         this._plague = null;
+    }
+
+    internal void SetGameEventInvolvedIn(GameEvent _gameEventInvolvedIn) {
+        this._gameEventInvolvedIn = _gameEventInvolvedIn;
     }
 }
