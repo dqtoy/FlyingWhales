@@ -1083,6 +1083,8 @@ public class Utilities : MonoBehaviour {
 			return true;
         case EVENT_TYPES.HYPNOTISM:
             return true;
+        case EVENT_TYPES.KINGDOM_HOLIDAY:
+            return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;
@@ -1148,6 +1150,13 @@ public class Utilities : MonoBehaviour {
         char[] a = s.ToCharArray();
         a[0] = char.ToUpper(a[0]);
         return new string(a);
+    }
+
+    public static bool IsCurrentDayMultipleOf(int multiple) {
+        if ((GameManager.Instance.days % multiple) == 0) {
+            return true;
+        }
+        return false;
     }
 
     #region Lycanthropy

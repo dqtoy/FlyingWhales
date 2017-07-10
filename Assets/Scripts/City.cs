@@ -24,6 +24,7 @@ public class City{
 	private int _currentGrowth;
     private int _dailyGrowthFromStructures;
     private int _dailyGrowthFromKingdom;
+    private int _dailyGrowthBuffs;
     private int _maxGrowth;
 
 	private int raidLoyaltyExpiration;
@@ -55,7 +56,7 @@ public class City{
 		get{ return this._currentGrowth; }
 	}
 	public int totalDailyGrowth{
-		get{ return this._dailyGrowthFromKingdom + this._dailyGrowthFromStructures; }
+		get{ return _dailyGrowthFromKingdom + _dailyGrowthFromStructures + _dailyGrowthBuffs; }
 	}
 	public int maxGrowth{
 		get{ return this._maxGrowth; }
@@ -639,6 +640,10 @@ public class City{
             this._currentGrowth += amount;
             this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
         }
+    }
+
+    internal void AdjustDailyGrowthBuffs(int adjustment) {
+        _dailyGrowthBuffs += adjustment;
     }
 
 	internal void UpdateDailyProduction(){

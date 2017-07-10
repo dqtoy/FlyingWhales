@@ -289,4 +289,9 @@ public class EventCreator: MonoBehaviour {
         }
         return null;
     }
+
+    internal KingdomHoliday CreateKingdomHolidayEvent(Kingdom sourceKingdom) {
+        KingdomHoliday kingdomHoliday = new KingdomHoliday(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom);
+        return kingdomHoliday;
+    }
 }

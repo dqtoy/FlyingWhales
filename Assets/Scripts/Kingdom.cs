@@ -495,7 +495,8 @@ public class Kingdom{
 
     private void TriggerEvents() {
         this.TriggerSlavesMerchant();
-        this.TriggerHypnotism();
+        //this.TriggerHypnotism();
+        this.TriggerKingdomHoliday();
     }
 	/*
 	 * Attempt to create an attack city event
@@ -1902,6 +1903,31 @@ public class Kingdom{
                     }
                     if (UnityEngine.Random.Range(0, 100) < 30 && notFriends.Count > 0) {
                         EventCreator.Instance.CreateHypnotismEvent(this, notFriends[UnityEngine.Random.Range(0, notFriends.Count)]);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Kingdom Holiday
+    private void TriggerKingdomHoliday() {
+        if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+            if (Utilities.IsCurrentDayMultipleOf(15)) {
+                List<GameEvent> activeHolidays = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_HOLIDAY }).Where(x => x.isActive).ToList();
+                List<GameEvent> activeWars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR }).Where(x => x.isActive).ToList();
+                if(activeHolidays.Count <= 0 && activeWars.Count <= 0) { //There can only be 1 active holiday per kingdom at a time. && Kingdoms that are at war, cannot celebrate holidays.
+                    if (UnityEngine.Random.Range(0, 100) < 50) {
+                        //Celebrate Holiday
+                        EventCreator.Instance.CreateKingdomHolidayEvent(this);
+                    } else {
+                        //If a king chooses not to celebrate the holiday, his governors that value TRADITION will decrease loyalty by 20.
+                        for (int i = 0; i < cities.Count; i++) {
+                            Governor currGovernor = (Governor)cities[i].governor.assignedRole;
+                            if (currGovernor.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+                                currGovernor.AddEventModifier(-20, "Did not celebrate holiday", null);
+                            }
+                        }
                     }
                 }
             }
