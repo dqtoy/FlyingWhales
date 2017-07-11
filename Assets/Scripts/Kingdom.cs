@@ -1874,9 +1874,7 @@ public class Kingdom{
 		if(GameManager.Instance.days == 20){
 			int chance = UnityEngine.Random.Range(0,100);
 			if(chance < 8){
-				if(!this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY)){
-					EventCreator.Instance.CreateSlavesMerchantEvent(this.king);
-				}
+				EventCreator.Instance.CreateSlavesMerchantEvent(this.king);
 			}
 		}
 	}
