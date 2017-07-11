@@ -486,11 +486,17 @@ public class Kingdom{
         this.DecreaseUnrestEveryMonth();
 		this.CheckBorderConflictLoyaltyExpiration ();
 		this.IncreaseTechCounterPerTick();
-		this.TriggerSlavesMerchant();
+        this.TriggerEvents();
         //if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
         //    this.AttemptToTrade();
         //}
         
+    }
+
+    private void TriggerEvents() {
+        this.TriggerSlavesMerchant();
+        //this.TriggerHypnotism();
+        this.TriggerKingdomHoliday();
     }
 	/*
 	 * Attempt to create an attack city event
@@ -1878,5 +1884,52 @@ public class Kingdom{
 			}
 		}
 	}
-	#endregion
+    #endregion
+
+    #region Hypnotism
+    private void TriggerHypnotism() {
+        if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
+            if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+                if(EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.HYPNOTISM}).Count <= 0) {
+                    List<Kingdom> notFriends = new List<Kingdom>();
+                    for (int i = 0; i < discoveredKingdoms.Count; i++) {
+                        Kingdom currKingdom = discoveredKingdoms[i];
+                        RelationshipKings rel = currKingdom.king.GetRelationshipWithCitizen(this.king);
+                        if (rel.lordRelationship != RELATIONSHIP_STATUS.FRIEND && rel.lordRelationship != RELATIONSHIP_STATUS.ALLY) {
+                            notFriends.Add(currKingdom);
+                        }
+                    }
+                    if (UnityEngine.Random.Range(0, 100) < 30 && notFriends.Count > 0) {
+                        EventCreator.Instance.CreateHypnotismEvent(this, notFriends[UnityEngine.Random.Range(0, notFriends.Count)]);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Kingdom Holiday
+    private void TriggerKingdomHoliday() {
+        if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+            if (Utilities.IsCurrentDayMultipleOf(15)) {
+                List<GameEvent> activeHolidays = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_HOLIDAY }).Where(x => x.isActive).ToList();
+                List<GameEvent> activeWars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR }).Where(x => x.isActive).ToList();
+                if(activeHolidays.Count <= 0 && activeWars.Count <= 0) { //There can only be 1 active holiday per kingdom at a time. && Kingdoms that are at war, cannot celebrate holidays.
+                    if (UnityEngine.Random.Range(0, 100) < 50) {
+                        //Celebrate Holiday
+                        EventCreator.Instance.CreateKingdomHolidayEvent(this);
+                    } else {
+                        //If a king chooses not to celebrate the holiday, his governors that value TRADITION will decrease loyalty by 20.
+                        for (int i = 0; i < cities.Count; i++) {
+                            Governor currGovernor = (Governor)cities[i].governor.assignedRole;
+                            if (currGovernor.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+                                currGovernor.AddEventModifier(-20, "Did not celebrate holiday", null);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #endregion
 }

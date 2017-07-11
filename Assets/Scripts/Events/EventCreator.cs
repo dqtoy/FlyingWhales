@@ -278,4 +278,20 @@ public class EventCreator: MonoBehaviour {
 		HiddenHistoryBook hiddenHistoryBook = new HiddenHistoryBook (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy);
 		return hiddenHistoryBook;
 	}
+
+    internal Hypnotism CreateHypnotismEvent(Kingdom sourceKingdom, Kingdom targetKingdom) {
+        Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.WITCH, EVENT_TYPES.HYPNOTISM, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.HYPNOTISM]);
+        if (citizen != null) {
+            Witch witch = (Witch)citizen.assignedRole;
+            Hypnotism hypnotism = new Hypnotism(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, witch, sourceKingdom, targetKingdom);
+            witch.Initialize(hypnotism);
+            return hypnotism;
+        }
+        return null;
+    }
+
+    internal KingdomHoliday CreateKingdomHolidayEvent(Kingdom sourceKingdom) {
+        KingdomHoliday kingdomHoliday = new KingdomHoliday(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom);
+        return kingdomHoliday;
+    }
 }

@@ -11,11 +11,11 @@ public class MinimapCamera : MonoBehaviour {
 
     void Update () {
         if (Input.GetMouseButton(0)) {
-            isDragging = true;
             viewportPosition = GetComponent<Camera>().ScreenToViewportPoint(Input.mousePosition);
             Ray ray = GetComponent<Camera>().ViewportPointToRay(viewportPosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit)) {
+                isDragging = true;
                 //Debug.Log(hit.transform.name);
                 newCameraPosition = hit.point;
                 mainCameraHeight = Camera.main.transform.position.z;
