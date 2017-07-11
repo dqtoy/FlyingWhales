@@ -4,6 +4,7 @@ using System;
 
 public class ExpirableModifier {
 
+    private GameEvent _modifierGameEvent;
     private string _modifierReason;
     private DateTime _dueDate;
     private int _modifier;
@@ -19,7 +20,8 @@ public class ExpirableModifier {
         get { return this._modifier; }
     }
     #endregion
-    public ExpirableModifier(string _modifierReason, DateTime _dueDate, int _modifier) {
+    public ExpirableModifier(GameEvent _modifierGameEvent, string _modifierReason, DateTime _dueDate, int _modifier) {
+        this._modifierGameEvent = _modifierGameEvent;
         this._modifierReason = _modifierReason;
         this._dueDate = _dueDate;
         this._modifier = _modifier;

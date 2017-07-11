@@ -529,7 +529,7 @@ public class Kingdom{
 	 * NOTE: expansionChance increases on it's own.
 	 * */
 	protected void AttemptToExpand(){
-		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Where(x => x.isActive).Count() > 0) {
+		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Count() > 0) {
 			return;
 		}
         float upperBound = 300f + (150f * (float)this.cities.Count);
@@ -1914,8 +1914,8 @@ public class Kingdom{
     private void TriggerKingdomHoliday() {
         if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
             if (Utilities.IsCurrentDayMultipleOf(15)) {
-                List<GameEvent> activeHolidays = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_HOLIDAY }).Where(x => x.isActive).ToList();
-                List<GameEvent> activeWars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR }).Where(x => x.isActive).ToList();
+                List<GameEvent> activeHolidays = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_HOLIDAY });
+                List<GameEvent> activeWars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR });
                 if(activeHolidays.Count <= 0 && activeWars.Count <= 0) { //There can only be 1 active holiday per kingdom at a time. && Kingdoms that are at war, cannot celebrate holidays.
                     if (UnityEngine.Random.Range(0, 100) < 50) {
                         //Celebrate Holiday

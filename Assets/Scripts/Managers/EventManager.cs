@@ -132,7 +132,7 @@ public class EventManager : MonoBehaviour {
 	 * Get a list of all the events started by a kingdom, 
 	 * can pass event types to only get events of that type.
 	 * */
-	public List<GameEvent> GetEventsStartedByKingdom(Kingdom kingdom, EVENT_TYPES[] eventTypes){
+	public List<GameEvent> GetEventsStartedByKingdom(Kingdom kingdom, EVENT_TYPES[] eventTypes, bool isActiveOnly = true){
 		List<GameEvent> gameEventsOfTypePerKingdom = new List<GameEvent>();
 		if (eventTypes.Contains (EVENT_TYPES.ALL)) {
 			for (int i = 0; i < allEvents.Keys.Count; i++) {
@@ -141,7 +141,13 @@ public class EventManager : MonoBehaviour {
 				for (int j = 0; j < eventsOfType.Count; j++) {
 					GameEvent currEvent = eventsOfType [j];
 					if (currEvent.startedByKingdom != null && currEvent.startedByKingdom.id == kingdom.id) {
-						gameEventsOfTypePerKingdom.Add(currEvent);
+                        if (isActiveOnly) {
+                            if (currEvent.isActive) {
+                                gameEventsOfTypePerKingdom.Add(currEvent);
+                            }
+                        } else {
+                            gameEventsOfTypePerKingdom.Add(currEvent);
+                        }
 					}
 				}
 			}
@@ -151,9 +157,16 @@ public class EventManager : MonoBehaviour {
 				if (this.allEvents.ContainsKey (currentEvent)) {
 					List<GameEvent> eventsOfType = this.allEvents [currentEvent];
 					for (int j = 0; j < eventsOfType.Count; j++) {
-						if (eventsOfType[j].startedByKingdom != null && eventsOfType[j].startedByKingdom.id == kingdom.id) {
-							gameEventsOfTypePerKingdom.Add (eventsOfType[j]);
-						}
+                        GameEvent currEvent = eventsOfType[j];
+                        if (currEvent.startedByKingdom != null && currEvent.startedByKingdom.id == kingdom.id) {
+                            if (isActiveOnly) {
+                                if (currEvent.isActive) {
+                                    gameEventsOfTypePerKingdom.Add(currEvent);
+                                }
+                            } else {
+                                gameEventsOfTypePerKingdom.Add(currEvent);
+                            }
+                        }
 					}
 				}
 			}
