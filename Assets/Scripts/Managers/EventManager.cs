@@ -301,6 +301,14 @@ public class EventManager : MonoBehaviour {
                                 allGameEventsInKingdom.Add(eventsOfType[j]);
                             }
                         }
+                    } else {
+                        for (int j = 0; j < eventsOfType.Count; j++) {
+                            GameEvent currEvent = eventsOfType[j];
+                            if ((currEvent.startedByKingdom != null && currEvent.startedByKingdom.id == kingdom.id) || 
+                                (currEvent.startedBy != null && currEvent.startedBy.role == ROLE.KING && ((King)currEvent.startedBy.assignedRole).ownedKingdom.id == kingdom.id)) {
+                                allGameEventsInKingdom.Add(currEvent);
+                            }
+                        }
                     }
                 }
             }
