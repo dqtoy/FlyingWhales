@@ -491,6 +491,7 @@ public class Kingdom{
         this.TriggerHypnotism();
         this.TriggerKingdomHoliday();
         this.TriggerDevelopWeapons();
+        this.TriggerKingsCouncil();
     }
 	/*
 	 * Attempt to create an attack city event
@@ -1942,9 +1943,23 @@ public class Kingdom{
     protected void TriggerDevelopWeapons() {
         if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
             if (Utilities.IsCurrentDayMultipleOf(5)) {
-                if(EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.DEVELOP_WEAPONS }).Count <= 0) {
-                    if(UnityEngine.Random.Range(0, 100) < 10) {
+                if (UnityEngine.Random.Range(0, 100) < 10) {
+                    if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.DEVELOP_WEAPONS }).Count <= 0) {
                         EventCreator.Instance.CreateDevelopWeaponsEvent(this);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Kings Council
+    protected void TriggerKingsCouncil() {
+        if(this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) || this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.PEACE)) {
+            if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+                if (UnityEngine.Random.Range(0, 100) < 2) {
+                    if (discoveredKingdoms.Count > 0 && EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR, EVENT_TYPES.KINGS_COUNCIL }).Count <= 0) {
+                        EventCreator.Instance.CreateKingsCouncilEvent(this);
                     }
                 }
             }

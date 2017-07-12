@@ -1087,15 +1087,17 @@ public class Utilities : MonoBehaviour {
             return true;
         case EVENT_TYPES.DEVELOP_WEAPONS:
             return true;
+        case EVENT_TYPES.KINGS_COUNCIL:
+            return true;
         case EVENT_TYPES.BORDER_CONFLICT:
-		if(duration == -1){
-			return true;
-		}else{
-			if (path.Count > duration) {
-				return false;
-			}
-			return true;
-		}
+		    if(duration == -1){
+			    return true;
+		    }else{
+			    if (path.Count > duration) {
+				    return false;
+			    }
+			    return true;
+		    }
 		case EVENT_TYPES.DIPLOMATIC_CRISIS:
 			if(duration == -1){
 				return true;

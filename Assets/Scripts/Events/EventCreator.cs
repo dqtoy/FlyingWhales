@@ -299,4 +299,9 @@ public class EventCreator: MonoBehaviour {
         DevelopWeapons developWeapons = new DevelopWeapons(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom);
         return developWeapons;
     }
+
+    internal KingsCouncil CreateKingsCouncilEvent(Kingdom sourceKingdom) {
+        KingsCouncil kingsCouncil = new KingsCouncil(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom);
+        return kingsCouncil;
+    }
 }
