@@ -97,32 +97,36 @@ public class RequestPeace : GameEvent {
 
 	#region Overrides
     internal override void DoneCitizenAction(Citizen citizen) {
-        base.DoneCitizenAction(citizen);
-		int chance = UnityEngine.Random.Range(0, 100);
-		if(chance < 20 * (this._targetKingdomRel.kingdomWar.peaceRejected + 1)){
-			//request accepted
-			Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
-				"Events", "War", "request_peace_success");
-			requestPeaceSuccess.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
-			requestPeaceSuccess.AddToFillers(this._startedBy, this._startedBy.name, LOG_IDENTIFIER.KING_1);
+        if (isActive) {
+            base.DoneCitizenAction(citizen);
+            int chance = UnityEngine.Random.Range(0, 100);
+            if (chance < 20 * (this._targetKingdomRel.kingdomWar.peaceRejected + 1)) {
+                //request accepted
+                Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
+                    "Events", "War", "request_peace_success");
+                requestPeaceSuccess.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+                requestPeaceSuccess.AddToFillers(this._startedBy, this._startedBy.name, LOG_IDENTIFIER.KING_1);
 
-			KingdomManager.Instance.GetWarBetweenKingdoms(this.startedByKingdom, this._targetKingdom).DeclarePeace();
-			this.resolution = this._targetKingdom.king.name + " accepted " + this.startedBy.name + "'s request for peace.";
-		}else{
-			//request rejected
-			this._targetKingdomRel.kingdomWar.peaceRejected += 1;
+                KingdomManager.Instance.GetWarBetweenKingdoms(this.startedByKingdom, this._targetKingdom).DeclarePeace();
+                this.resolution = this._targetKingdom.king.name + " accepted " + this.startedBy.name + "'s request for peace.";
+            } else {
+                //request rejected
+                this._targetKingdomRel.kingdomWar.peaceRejected += 1;
 
-            //Set when startedByKingdom can request for peace again
-            RelationshipKingdom relationshipOfRequester = this.startedByKingdom.GetRelationshipWithOtherKingdom(this._targetKingdom);
-            int moveOnMonth = GameManager.Instance.month;
-            for (int i = 0; i < 3; i++) {
-                moveOnMonth += 1;
-                if (moveOnMonth > 12) {
-                    moveOnMonth = 1;
+                //Set when startedByKingdom can request for peace again
+                RelationshipKingdom relationshipOfRequester = this.startedByKingdom.GetRelationshipWithOtherKingdom(this._targetKingdom);
+                int moveOnMonth = GameManager.Instance.month;
+                for (int i = 0; i < 3; i++) {
+                    moveOnMonth += 1;
+                    if (moveOnMonth > 12) {
+                        moveOnMonth = 1;
+                    }
                 }
+                relationshipOfRequester.SetMoveOnPeriodAfterRequestPeaceRejection(moveOnMonth);
             }
-            relationshipOfRequester.SetMoveOnPeriodAfterRequestPeaceRejection(moveOnMonth);
+            this.DoneEvent();
         }
+        
         //        int targetWarExhaustion = this._targetKingdomRel.kingdomWar.exhaustion;
         //
         //        int chanceForSuccess = 0;
@@ -162,7 +166,6 @@ public class RequestPeace : GameEvent {
         //            relationshipOfRequester.SetMoveOnPeriodAfterRequestPeaceRejection(moveOnMonth);
         //            this.resolution = this._targetKingdom.king.name + " rejected " + this.startedBy.name + "'s request for peace.";
         //        }
-        this.DoneEvent();
     }
 
     internal override void DoneEvent(){

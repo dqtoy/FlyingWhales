@@ -25,6 +25,15 @@ public class KingsCouncil : GameEvent {
         EventManager.Instance.AddEventToDictionary(this);
         EventIsCreated();
 
+        Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "event_title");
+        newLogTitle.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+        string councilReason = LocalizationManager.Instance.GetLocalizedValue("Reasons", "KingsCouncilReasons", _councilReason.ToString());
+
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "start");
+        newLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        newLog.AddToFillers(null, councilReason, LOG_IDENTIFIER.OTHER);
+
         InviteKingdoms();
     }
 
@@ -45,12 +54,17 @@ public class KingsCouncil : GameEvent {
     internal override void DoneCitizenAction(Citizen citizen) {
         base.DoneCitizenAction(citizen);
         _presentKingdoms.Add(citizen.city.kingdom);
+        Log envoyArrivedLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "envoy_arrived");
+        envoyArrivedLog.AddToFillers(citizen.city.kingdom, citizen.city.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+
         CheckIfAllKingdomsHaveArrived();
     }
     internal override void CancelEvent() {
         base.CancelEvent();
         EventManager.Instance.onWeekEnd.RemoveListener(PerformAction);
         EventManager.Instance.onKingdomDiedEvent.RemoveListener(RemoveKingdomFromGuestList);
+
+        Log councilCancelLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "council_cancel");
     }
     internal override void DoneEvent() {
         base.DoneEvent();
@@ -78,13 +92,19 @@ public class KingsCouncil : GameEvent {
         return councilReasons;
     }
     protected void InviteKingdoms() {
+        Log invitationLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "invitation");
+        invitationLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
         _attendingKingdoms = new List<Kingdom>();
+        _presentKingdoms = new List<Kingdom>();
         for (int i = 0; i < _sourceKingdom.discoveredKingdoms.Count; i++) {
             Kingdom currKingdom = _sourceKingdom.discoveredKingdoms[i];
             RelationshipKings currRel = currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king);
             if(UnityEngine.Random.Range(0, 100) < (50 + currRel.totalLike)) {
                 //accept invitation
                 _attendingKingdoms.Add(currKingdom);
+                Log invitationAcceptLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "invitation_accept");
+                invitationAcceptLog.AddToFillers(currKingdom.king, currKingdom.king.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             }
         }
 
@@ -119,6 +139,8 @@ public class KingsCouncil : GameEvent {
     protected void CheckIfAllKingdomsHaveArrived() {
         if(_presentKingdoms.Count == _attendingKingdoms.Count) {
             //all kingdoms have arrived
+            Log allArrivedLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "all_arrived");
+
             StartCouncil();
         }
     }
@@ -142,11 +164,16 @@ public class KingsCouncil : GameEvent {
             if (UnityEngine.Random.Range(0, 100) < baseChance) {
                 //approve
                 currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king).AddEventModifier(20, "Council Approval", this);
+                Log councilEndApproveLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "end_approve");
+                councilEndApproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
             } else {
                 //disapprove
                 currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king).AddEventModifier(-20, "Council Disapproval", this);
+                Log councilEndDisapproveLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "end_disapprove");
+                councilEndDisapproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
             }
         }
+        Log councilEndLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "council_end");
         DoneEvent();
     }
 
@@ -154,6 +181,9 @@ public class KingsCouncil : GameEvent {
         if(_presentKingdoms.Contains(kingdom) || _attendingKingdoms.Contains(kingdom)) {
             _presentKingdoms.Remove(kingdom);
             _attendingKingdoms.Remove(kingdom);
+            Log kingdomCancelLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "kingdom_cancel");
+            kingdomCancelLog.AddToFillers(kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+
             if (_presentKingdoms.Count <= 0 && _attendingKingdoms.Count <= 0) {
                 CancelEvent();
             }

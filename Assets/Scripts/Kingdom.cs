@@ -1135,7 +1135,12 @@ public class Kingdom{
 
 			HexTile hex = city.hexTile;
             //city.KillCity();
-            city.ConquerCity(this);
+            if(this.race != city.kingdom.race) {
+                city.KillCity();
+            } else {
+                city.ConquerCity(this);
+            }
+            
 			yield return null;
 			//City newCity = CreateNewCityOnTileForKingdom(hex);
 			//newCity.hp = 100;
