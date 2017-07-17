@@ -2726,6 +2726,8 @@ public class UIManager : MonoBehaviour {
 			return rebellionPlotIcon;
 		case EVENT_TYPES.HIDDEN_HISTORY_BOOK:
 			return requestPeaceIcon;
+		case EVENT_TYPES.SERUM_OF_ALACRITY:
+			return assassinationIcon;
 		}
 		return assassinationIcon;
 	}

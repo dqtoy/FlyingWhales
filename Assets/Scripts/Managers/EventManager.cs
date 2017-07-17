@@ -90,6 +90,8 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.HIDDEN_HISTORY_BOOK, -1},
         {EVENT_TYPES.HYPNOTISM, -1},
         {EVENT_TYPES.KINGDOM_HOLIDAY, -1},
+		{EVENT_TYPES.SERUM_OF_ALACRITY, -1},
+
     };
 
 	void Awake(){

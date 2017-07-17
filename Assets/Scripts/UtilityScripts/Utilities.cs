@@ -1085,6 +1085,8 @@ public class Utilities : MonoBehaviour {
             return true;
         case EVENT_TYPES.KINGDOM_HOLIDAY:
             return true;
+		case EVENT_TYPES.SERUM_OF_ALACRITY:
+			return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		if(duration == -1){
 			return true;
