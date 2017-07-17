@@ -8,9 +8,11 @@ using Panda;
 [System.Serializable]
 public class City{
 
+    [Header("City Info")]
 	public int id;
 	public string name;
-	[NonSerialized] public HexTile hexTile;
+    private int _hp;
+    [NonSerialized] public HexTile hexTile;
 	[NonSerialized] private Kingdom _kingdom;
     [NonSerialized] public Citizen governor;
     [NonSerialized] public List<City> adjacentCities;
@@ -18,7 +20,7 @@ public class City{
     [NonSerialized] public List<General> incomingGenerals;
     [NonSerialized] public List<Citizen> citizens;
     [NonSerialized] public List<History> cityHistory;
-	public bool hasKing;
+	
 
 	[Space(10)] //Resources
 	private int _currentGrowth;
@@ -30,20 +32,19 @@ public class City{
 	private int raidLoyaltyExpiration;
 
 	[Space(5)]
-	private int _hp;
-//	public IsActive isActive;
-	public bool isUnderAttack;
+    [Header("Booleans")]
+    public bool hasKing;
+    //	public IsActive isActive;
+    public bool isUnderAttack;
 	public bool hasReinforced;
 	public bool isRaided;
 	public bool isStarving;
 	public bool isDead;
 
-    //	internal Dictionary<ROLE, int> citizenCreationTable;
     [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
     [NonSerialized] internal List<HexTile> borderTiles;
     [NonSerialized] internal Rebellion rebellion;
     [NonSerialized] internal Plague plague;
-//	protected List<ROLE> creatableRoles;
 
 	protected const int HP_INCREASE = 5;
 	private int increaseHpInterval = 0;
@@ -97,8 +98,6 @@ public class City{
 		this.isRaided = false;
 		this.isStarving = false;
 		this.isDead = false;
-//		this.citizenCreationTable = Utilities.defaultCitizenCreationTable;
-//		this.creatableRoles = new List<ROLE>();
 		this.borderTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
 		this.raidLoyaltyExpiration = 0;
@@ -107,10 +106,11 @@ public class City{
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
 		ResetToDefaultHP ();
+        kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
+
 //		this.CreateInitialFamilies();
 		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
-//		this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "City " + this.name + " was founded.", HISTORY_IDENTIFIER.NONE));
 	}
 
 
@@ -413,8 +413,10 @@ public class City{
 
 	internal void UpdateBorderTiles(){
 		for (int i = 0; i < this.borderTiles.Count; i++) {
-            if (!this.borderTiles[i].isOccupied) {
-                this.borderTiles[i].ResetTile();
+            HexTile currBorderTile = borderTiles[i];
+            if (!currBorderTile.isOccupied) {
+                currBorderTile.ResetTile();
+                kingdom.SetFogOfWarStateForTile(currBorderTile, FOG_OF_WAR_STATE.HIDDEN);
             }
             //this.borderTiles[i].isBorder = false;
             //this.borderTiles[i].isBorderOfCityID = 0;
@@ -439,7 +441,8 @@ public class City{
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currBorderTile = this.borderTiles[i];
 			currBorderTile.Borderize (this);
-            this.borderTiles[i].CollectEventOnTile(kingdom);
+            kingdom.SetFogOfWarStateForTile(currBorderTile, FOG_OF_WAR_STATE.VISIBLE);
+            currBorderTile.CollectEventOnTile(kingdom);
 
             //CollectEventInTile(this.borderTiles[i]);
 		}
@@ -507,6 +510,7 @@ public class City{
 		tileToBuy.movementDays = 2;
 		tileToBuy.Occupy (this);
         tileToBuy.CollectEventOnTile(kingdom);
+        kingdom.SetFogOfWarStateForTile(tileToBuy, FOG_OF_WAR_STATE.VISIBLE);
         //CollectEventInTile (tileToBuy);
         EventManager.Instance.onUpdatePath.Invoke (tileToBuy);
 
@@ -623,10 +627,6 @@ public class City{
 	}
 
 	#region Resource Production
-	//protected void ProduceGold(){
-	//	this.kingdom.AdjustGold(this._goldProduction);
-	//}
-
 	internal void AddToDailyGrowth(){
         AdjustDailyGrowth(this.totalDailyGrowth);
     }
@@ -685,44 +685,6 @@ public class City{
 			this.KillCity ();
 		}
 	}
-
-//	internal ROLE GetNonProducingRoleToCreate(){
-//		int previousRoleCount = 10;
-//		ROLE roleToCreate = ROLE.UNTRAINED;
-//
-//		for (int i = 0; i < this.creatableRoles.Count; i++) {
-//			ROLE currentRole = this.creatableRoles [i];
-//			int currentRoleCount = this.GetCitizensWithRole (currentRole).Count;
-//			int currentRoleLimit = this.citizenCreationTable [currentRole];
-//			if (currentRoleCount < previousRoleCount && currentRoleCount < currentRoleLimit) {
-//				roleToCreate = currentRole;
-//				previousRoleCount = currentRoleCount;
-//			}
-//		}
-//		return roleToCreate;
-//	}
-
-//	internal void UpdateCitizenCreationTable(){
-//		this.citizenCreationTable = new Dictionary<ROLE, int>(Utilities.defaultCitizenCreationTable);
-//		Dictionary<ROLE, int> currentTraitTable = Utilities.citizenCreationTable[this.governor.honestyTrait];
-//		for (int j = 0; j < currentTraitTable.Count; j++) {
-//			ROLE currentRole = currentTraitTable.Keys.ElementAt(j);
-//			this.citizenCreationTable [currentRole] += currentTraitTable [currentRole];
-//		}
-//
-//		currentTraitTable = Utilities.citizenCreationTable[this.governor.hostilityTrait];
-//		for (int j = 0; j < currentTraitTable.Count; j++) {
-//			ROLE currentRole = currentTraitTable.Keys.ElementAt(j);
-//			this.citizenCreationTable [currentRole] += currentTraitTable [currentRole];
-//		}
-//		this.creatableRoles.Clear();
-//		for (int i = 0; i < this.citizenCreationTable.Keys.Count; i++) {
-//			ROLE currentKey = this.citizenCreationTable.Keys.ElementAt(i);
-//			if (this.citizenCreationTable [currentKey] > 0) {
-//				this.creatableRoles.Add (currentKey);
-//			}
-//		}
-//	}
 
 	/*internal int GetCityArmyStrength(){
 		int total = 0;
@@ -990,7 +952,7 @@ public class City{
 		EventManager.Instance.onLookForLostArmies.Invoke (general);
 	}*/
 
-        internal bool HasAdjacency(int kingdomID){
+    internal bool HasAdjacency(int kingdomID){
 		for(int i = 0; i < this.hexTile.connectedTiles.Count; i++){
 			if(this.hexTile.connectedTiles[i].isOccupied){
 				if(this.hexTile.connectedTiles[i].city.kingdom.id == kingdomID){

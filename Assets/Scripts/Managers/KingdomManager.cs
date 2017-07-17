@@ -31,10 +31,14 @@ public class KingdomManager : MonoBehaviour {
     [SerializeField] private int minimumInitialKingdomDistance;
 
     [SerializeField] private bool _useDiscoveredKingdoms;
+    [SerializeField] private bool _useFogOfWar;
 
     #region getters/setters
     public bool useDiscoveredKingdoms {
         get { return this._useDiscoveredKingdoms; }
+    }
+    public bool useFogOfWar {
+        get { return this._useFogOfWar; }
     }
     #endregion
 

@@ -442,3 +442,9 @@ public enum LOG_IDENTIFIER{
 	KING_3_PRONOUN_R,
 	OTHER,
 }
+
+public enum FOG_OF_WAR_STATE {
+    HIDDEN,
+    VISIBLE,
+    SEEN
+}

@@ -486,6 +486,7 @@ public class UIManager : MonoBehaviour {
 	}
 
     private void UpdateKingdomInfo() {
+        currentlyShowingKingdom.UpdateFogOfWarVisual();
         kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king); //King
 
         kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
