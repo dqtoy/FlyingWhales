@@ -27,6 +27,15 @@ public class General : Role {
 	internal int spawnRate;
     private int _weaponCount;
 
+	private bool _hasSerumOfAlacrity;
+
+
+	#region Getters and Setters
+	public bool hasSerumOfAlacrity{
+		get{return this._hasSerumOfAlacrity;}
+	}
+
+	#endregion
     public General(Citizen citizen): base(citizen){
 //		this.location = citizen.city.hexTile;
 //		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
@@ -36,6 +45,7 @@ public class General : Role {
 		this.markAsDead = false;
 		this.attackCity = null;
 		this.isRebel = false;
+		this._hasSerumOfAlacrity = false;
 //		this.daysBeforeArrival = 0;
 //		this.daysBeforeReleaseTask = 0;
 //		this.roads = new List<HexTile> ();
@@ -103,4 +113,18 @@ public class General : Role {
         _weaponCount += adjustment;
     }
     #endregion
+
+	#region Serum of Alacrity
+	internal void InjectSerumOfAlacrity(){
+		this._hasSerumOfAlacrity = true;
+	}
+	internal void CheckSerumOfAlacrity(){
+		if(this._hasSerumOfAlacrity){
+			int chance = UnityEngine.Random.Range(0,100);
+			if(chance < 5){
+				this.citizen.Death (DEATH_REASONS.SERUM_OF_ALACRITY);
+			}
+		}
+	}
+	#endregion
 }

@@ -14,8 +14,11 @@ public class CombatManager : MonoBehaviour {
 		if(city == null || city.isDead){
 			return;
 		}
-
-		city.AdjustHP (-generalAttacker.damage);
+		int damage = generalAttacker.damage;
+		if(generalAttacker.hasSerumOfAlacrity){
+			damage = damage * 2;
+		}
+		city.AdjustHP (-damage);
 
 		if(city.hp <= 0){
 			ConquerCity (generalAttacker.citizen.city.kingdom, city, generalAttacker);
@@ -185,6 +188,7 @@ public class CombatManager : MonoBehaviour {
 
 		float general1HPmultiplier = 1f;
 		float general2HPmultiplier = 1f;
+
 
 //		if(!isMidway){
 //			if(general1.IsDefense(general2)){
@@ -373,19 +377,37 @@ public class CombatManager : MonoBehaviour {
 		//MID WAY BATTLE IF supported is not the same
 		Debug.Log("BATTLE MIDWAY!");
 		int lostHP = 0;
-		if(general1.damage > general2.damage){
+		int general1Damage = general1.damage;
+		int general2Damage = general2.damage;
+		if(general1.hasSerumOfAlacrity){
+			general1Damage = general1Damage * 2;
+		}
+		if(general2.hasSerumOfAlacrity){
+			general2Damage = general2Damage * 2;
+		}
+		if(general1Damage > general2Damage){
 			//General 1 wins
-			lostHP = (int)((float)general2.damage * 0.7f);
+			lostHP = (int)((float)general2Damage * 0.7f);
 			general2.markAsDead = true;
-			general1.damage -= lostHP;
 			general2.damage = 0;
+			general1.damage -= lostHP;
+			if(general1.damage < 0){
+				general1.damage = 0;
+				general1.markAsDead = true;
+				KingdomManager.Instance.CheckWarTriggerMisc (general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+			}
 			KingdomManager.Instance.CheckWarTriggerMisc (general2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
-		}else if(general1.damage < general2.damage){
+		}else if(general1Damage < general2Damage){
 			//General 2 wins
-			lostHP = (int)((float)general1.damage * 0.7f);
+			lostHP = (int)((float)general1Damage * 0.7f);
 			general1.markAsDead = true;
-			general2.damage -= lostHP;
 			general1.damage = 0;
+			general2.damage -= lostHP;
+			if(general2.damage < 0){
+				general2.damage = 0;
+				general2.markAsDead = true;
+				KingdomManager.Instance.CheckWarTriggerMisc (general2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+			}
 			KingdomManager.Instance.CheckWarTriggerMisc (general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 
 		}else{

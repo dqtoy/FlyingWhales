@@ -304,4 +304,8 @@ public class EventCreator: MonoBehaviour {
         KingsCouncil kingsCouncil = new KingsCouncil(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom);
         return kingsCouncil;
     }
+	internal SerumOfAlacrity CreateSerumOfAlacrityEvent(Citizen startedBy) {
+		SerumOfAlacrity serumOfAlacrity = new SerumOfAlacrity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy);
+		return serumOfAlacrity;
+	}
 }

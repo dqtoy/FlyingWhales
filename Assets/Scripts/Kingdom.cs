@@ -71,6 +71,10 @@ public class Kingdom{
 	internal FirstAndKeystoneOwnership firstAndKeystoneOwnership;
     private bool _isGrowthEnabled;
 
+	//Serum of Alacrity
+	private int _serumsOfAlacrity;
+
+
     private float expansionChance = 1f;
     
     protected const int INCREASE_CITY_HP_CHANCE = 5;
@@ -171,6 +175,9 @@ public class Kingdom{
     }
 	public List<City> nonRebellingCities {
 		get { return this.cities.Where(x => x.rebellion == null).ToList(); }
+	}
+	public int serumsOfAlacrity {
+		get { return this._serumsOfAlacrity; }
 	}
     #endregion
     // Kingdom constructor paramters
@@ -1969,4 +1976,13 @@ public class Kingdom{
         }
     }
     #endregion
+
+	#region Serum of Alacrity
+	internal void AdjustSerumOfAlacrity(int amount){
+		this._serumsOfAlacrity += amount;
+		if(this._serumsOfAlacrity < 0){
+			this._serumsOfAlacrity = 0;
+		}
+	}
+	#endregion
 }
