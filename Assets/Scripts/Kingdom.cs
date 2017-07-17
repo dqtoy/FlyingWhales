@@ -6,7 +6,9 @@ using System;
 
 [System.Serializable]
 public class Kingdom{
-	public int id;
+    [Space(10)]
+    [Header("General Info")]
+    public int id;
 	public string name;
 	public RACE race;
     [NonSerialized] public int[] horoscope; 
@@ -21,7 +23,6 @@ public class Kingdom{
     private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
 
     //Trading
-    //private List<TradeRoute> _tradeRoutes;
     private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
     private int _unrest;
@@ -33,7 +34,6 @@ public class Kingdom{
 	internal List<Citizen> successionLine;
 	internal List<Citizen> pretenders;
 
-    //	public List<Citizen> royaltyList;
     [NonSerialized] public List<City> intlWarCities;
     [NonSerialized] public List<City> activeCitiesToAttack;
 	public List<CityWarPair> activeCitiesPairInWar;
@@ -41,7 +41,6 @@ public class Kingdom{
 	internal List<Rebellion> rebellions;
 
 	internal BASE_RESOURCE_TYPE basicResource;
-	//internal BASE_RESOURCE_TYPE rareResource;
 
 	internal List<RelationshipKingdom> relationshipsWithOtherKingdoms;
 
@@ -114,9 +113,6 @@ public class Kingdom{
 	public Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
 	}
-    //public List<TradeRoute> tradeRoutes {
-    //    get { return this._tradeRoutes;  }
-    //}
     public Dictionary<Kingdom, EMBARGO_REASON> embargoList {
         get { return this._embargoList;  }
     }
@@ -129,7 +125,6 @@ public class Kingdom{
 //	public List<Camp> camps{
 //		get{ return this._camps; }
 //	}
-
     public int unrest {
         get { return this._unrest; }
 		set { this._unrest = value;}
@@ -150,7 +145,6 @@ public class Kingdom{
             }
         }
     }
-
 	public int techLevel{
 		get{return this._techLevel + (3 * this._activatedBoonOfPowers.Count);}
 	}
@@ -169,7 +163,6 @@ public class Kingdom{
 	public EventRate[] dailyCumulativeEventRate {
 		get { return this._dailyCumulativeEventRate; }
 	}
-
     public List<City> plaguedCities {
         get { return this.cities.Where(x => x.plague != null).ToList(); }
     }
@@ -495,8 +488,10 @@ public class Kingdom{
 
     private void TriggerEvents() {
         this.TriggerSlavesMerchant();
-        //this.TriggerHypnotism();
+        this.TriggerHypnotism();
         this.TriggerKingdomHoliday();
+        this.TriggerDevelopWeapons();
+        this.TriggerKingsCouncil();
     }
 	/*
 	 * Attempt to create an attack city event
@@ -529,7 +524,7 @@ public class Kingdom{
 	 * NOTE: expansionChance increases on it's own.
 	 * */
 	protected void AttemptToExpand(){
-		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Where(x => x.isActive).Count() > 0) {
+		if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[]{EVENT_TYPES.EXPANSION}).Count() > 0) {
 			return;
 		}
         float upperBound = 300f + (150f * (float)this.cities.Count);
@@ -1140,7 +1135,12 @@ public class Kingdom{
 
 			HexTile hex = city.hexTile;
             //city.KillCity();
-            city.ConquerCity(this);
+            if(this.race != city.kingdom.race) {
+                city.KillCity();
+            } else {
+                city.ConquerCity(this);
+            }
+            
 			yield return null;
 			//City newCity = CreateNewCityOnTileForKingdom(hex);
 			//newCity.hp = 100;
@@ -1912,20 +1912,57 @@ public class Kingdom{
     private void TriggerKingdomHoliday() {
         if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
             if (Utilities.IsCurrentDayMultipleOf(15)) {
-                List<GameEvent> activeHolidays = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_HOLIDAY }).Where(x => x.isActive).ToList();
-                List<GameEvent> activeWars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR }).Where(x => x.isActive).ToList();
+                List<GameEvent> activeHolidays = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_HOLIDAY });
+                List<GameEvent> activeWars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR });
                 if(activeHolidays.Count <= 0 && activeWars.Count <= 0) { //There can only be 1 active holiday per kingdom at a time. && Kingdoms that are at war, cannot celebrate holidays.
-                    if (UnityEngine.Random.Range(0, 100) < 50) {
-                        //Celebrate Holiday
-                        EventCreator.Instance.CreateKingdomHolidayEvent(this);
-                    } else {
-                        //If a king chooses not to celebrate the holiday, his governors that value TRADITION will decrease loyalty by 20.
-                        for (int i = 0; i < cities.Count; i++) {
-                            Governor currGovernor = (Governor)cities[i].governor.assignedRole;
-                            if (currGovernor.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-                                currGovernor.AddEventModifier(-20, "Did not celebrate holiday", null);
+                    if (UnityEngine.Random.Range(0, 100) < 10) {
+                        if(UnityEngine.Random.Range(0, 100) < 50) {
+                            //Celebrate Holiday
+                            EventCreator.Instance.CreateKingdomHolidayEvent(this);
+                        } else {
+                            //If a king chooses not to celebrate the holiday, his governors that value TRADITION will decrease loyalty by 20.
+                            for (int i = 0; i < cities.Count; i++) {
+                                Governor currGovernor = (Governor)cities[i].governor.assignedRole;
+                                if (currGovernor.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+                                    currGovernor.AddEventModifier(-20, "Did not celebrate holiday", null);
+                                }
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Develop Weapons
+    private int _weaponsCount;
+    public int weaponsCount {
+        get { return _weaponsCount; }
+    }
+    internal void AdjustWeaponsCount(int adjustment) {
+        _weaponsCount += adjustment;
+    }
+    protected void TriggerDevelopWeapons() {
+        if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
+            if (Utilities.IsCurrentDayMultipleOf(5)) {
+                if (UnityEngine.Random.Range(0, 100) < 10) {
+                    if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.DEVELOP_WEAPONS }).Count <= 0) {
+                        EventCreator.Instance.CreateDevelopWeaponsEvent(this);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Kings Council
+    protected void TriggerKingsCouncil() {
+        if(this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) || this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.PEACE)) {
+            if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+                if (UnityEngine.Random.Range(0, 100) < 2) {
+                    if (discoveredKingdoms.Count > 0 && EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR, EVENT_TYPES.KINGS_COUNCIL }).Count <= 0) {
+                        EventCreator.Instance.CreateKingsCouncilEvent(this);
                     }
                 }
             }

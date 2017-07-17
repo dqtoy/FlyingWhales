@@ -91,7 +91,8 @@ public class EventManager : MonoBehaviour {
         {EVENT_TYPES.HYPNOTISM, -1},
         {EVENT_TYPES.KINGDOM_HOLIDAY, -1},
 		{EVENT_TYPES.SERUM_OF_ALACRITY, -1},
-
+        {EVENT_TYPES.DEVELOP_WEAPONS, -1},
+        {EVENT_TYPES.KINGS_COUNCIL, -1},
     };
 
 	void Awake(){
@@ -134,7 +135,7 @@ public class EventManager : MonoBehaviour {
 	 * Get a list of all the events started by a kingdom, 
 	 * can pass event types to only get events of that type.
 	 * */
-	public List<GameEvent> GetEventsStartedByKingdom(Kingdom kingdom, EVENT_TYPES[] eventTypes){
+	public List<GameEvent> GetEventsStartedByKingdom(Kingdom kingdom, EVENT_TYPES[] eventTypes, bool isActiveOnly = true){
 		List<GameEvent> gameEventsOfTypePerKingdom = new List<GameEvent>();
 		if (eventTypes.Contains (EVENT_TYPES.ALL)) {
 			for (int i = 0; i < allEvents.Keys.Count; i++) {
@@ -143,7 +144,13 @@ public class EventManager : MonoBehaviour {
 				for (int j = 0; j < eventsOfType.Count; j++) {
 					GameEvent currEvent = eventsOfType [j];
 					if (currEvent.startedByKingdom != null && currEvent.startedByKingdom.id == kingdom.id) {
-						gameEventsOfTypePerKingdom.Add(currEvent);
+                        if (isActiveOnly) {
+                            if (currEvent.isActive) {
+                                gameEventsOfTypePerKingdom.Add(currEvent);
+                            }
+                        } else {
+                            gameEventsOfTypePerKingdom.Add(currEvent);
+                        }
 					}
 				}
 			}
@@ -153,9 +160,16 @@ public class EventManager : MonoBehaviour {
 				if (this.allEvents.ContainsKey (currentEvent)) {
 					List<GameEvent> eventsOfType = this.allEvents [currentEvent];
 					for (int j = 0; j < eventsOfType.Count; j++) {
-						if (eventsOfType[j].startedByKingdom != null && eventsOfType[j].startedByKingdom.id == kingdom.id) {
-							gameEventsOfTypePerKingdom.Add (eventsOfType[j]);
-						}
+                        GameEvent currEvent = eventsOfType[j];
+                        if (currEvent.startedByKingdom != null && currEvent.startedByKingdom.id == kingdom.id) {
+                            if (isActiveOnly) {
+                                if (currEvent.isActive) {
+                                    gameEventsOfTypePerKingdom.Add(currEvent);
+                                }
+                            } else {
+                                gameEventsOfTypePerKingdom.Add(currEvent);
+                            }
+                        }
 					}
 				}
 			}
@@ -288,6 +302,14 @@ public class EventManager : MonoBehaviour {
                             Trade currEvent = (Trade)eventsOfType[j];
                             if (currEvent.sourceCity.kingdom.id == kingdom.id || currEvent.targetCity.kingdom.id == kingdom.id) {
                                 allGameEventsInKingdom.Add(eventsOfType[j]);
+                            }
+                        }
+                    } else {
+                        for (int j = 0; j < eventsOfType.Count; j++) {
+                            GameEvent currEvent = eventsOfType[j];
+                            if ((currEvent.startedByKingdom != null && currEvent.startedByKingdom.id == kingdom.id) || 
+                                (currEvent.startedBy != null && currEvent.startedBy.role == ROLE.KING && ((King)currEvent.startedBy.assignedRole).ownedKingdom.id == kingdom.id)) {
+                                allGameEventsInKingdom.Add(currEvent);
                             }
                         }
                     }

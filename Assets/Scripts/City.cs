@@ -1127,8 +1127,14 @@ public class City{
 		citizen.assignedRole.targetCity = targetLocation.city;
 		citizen.assignedRole.path = newPath;
 		citizen.assignedRole.daysBeforeMoving = newPath [0].movementDays;
-		((General)citizen.assignedRole).spawnRate = path.Sum (x => x.movementDays) + 2;
-		((General)citizen.assignedRole).damage = ((General)citizen.assignedRole).GetDamage();
+
+        General general = (General)citizen.assignedRole;
+        if(kingdom.weaponsCount > 0) {
+            general.AdjustWeaponCount(1);
+            kingdom.AdjustWeaponsCount(-1);
+        }
+        general.spawnRate = path.Sum (x => x.movementDays) + 2;
+        general.damage = ((General)citizen.assignedRole).GetDamage();
 //		this._kingdom.AdjustGold (-cost);
 		this.citizens.Remove (citizen);
 		return citizen;

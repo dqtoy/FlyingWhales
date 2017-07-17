@@ -146,7 +146,14 @@ public class GameEvent {
 
 	internal virtual void CancelEvent(){
 		Debug.LogError (this.eventType.ToString() + " EVENT IS CANCELLED");
-	}
+        this.isActive = false;
+        this.endMonth = GameManager.Instance.month;
+        this.endDay = GameManager.Instance.days;
+        this.endYear = GameManager.Instance.year;
+        if (this.goEventItem != null) {
+            this.goEventItem.GetComponent<EventItem>().HasExpired();
+        }
+    }
 
 	internal virtual void DoneEvent(){
 		Debug.LogError (this.eventType.ToString () + " EVENT IS DONE");

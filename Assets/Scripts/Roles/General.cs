@@ -25,7 +25,9 @@ public class General : Role {
 	public bool markAsDead;
 	internal bool isRebel;
 	internal int spawnRate;
-	public General(Citizen citizen): base(citizen){
+    private int _weaponCount;
+
+    public General(Citizen citizen): base(citizen){
 //		this.location = citizen.city.hexTile;
 //		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
 //		this.targetLocation = null;
@@ -83,7 +85,7 @@ public class General : Role {
 	}
 
 	internal int GetDamage(){
-		int baseDamage = UnityEngine.Random.Range (50, 81);
+		int baseDamage = UnityEngine.Random.Range (50, 81) + (_weaponCount * 100);
 		int cityDamage = (6 + this.citizen.city.kingdom.techLevel) * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
 		int otherCityTileCount = 0;
 		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
@@ -95,4 +97,10 @@ public class General : Role {
 		int spawnRateDamage = Mathf.CeilToInt((float)this.spawnRate / 6f);
 		return (baseDamage + cityDamage + otherCityDamage) * spawnRateDamage;
 	}
+
+    #region Weapons
+    internal void AdjustWeaponCount(int adjustment) {
+        _weaponCount += adjustment;
+    }
+    #endregion
 }

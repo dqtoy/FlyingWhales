@@ -206,10 +206,10 @@ public class RelationshipKings {
             dateTimeToUse.AddYears(1);
         }
         if (this._eventModifiers.ContainsKey(gameEventTrigger.eventType)) {
-            this._eventModifiers[gameEventTrigger.eventType].Add(new ExpirableModifier(summary, dateTimeToUse, modification));
+            this._eventModifiers[gameEventTrigger.eventType].Add(new ExpirableModifier(gameEventTrigger, summary, dateTimeToUse, modification));
         } else {
             this._eventModifiers.Add(gameEventTrigger.eventType, new List<ExpirableModifier>() {
-                { new ExpirableModifier(summary, dateTimeToUse, modification) }
+                { new ExpirableModifier(gameEventTrigger, summary, dateTimeToUse, modification) }
             });
         }
         

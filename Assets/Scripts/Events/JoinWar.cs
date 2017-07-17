@@ -85,7 +85,7 @@ public class JoinWar : GameEvent {
 			this.CancelEvent();
 			return;
 		}
-		if (EventManager.Instance.GetEventsStartedByKingdom (this.candidateForAlliance.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Where(x => x.isActive).Count() > 0) {
+		if (EventManager.Instance.GetEventsStartedByKingdom (this.candidateForAlliance.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Count() > 0) {
 			this.resolution = this.candidateForAlliance.city.kingdom.name + " did not join " + this.startedByKingdom.name + " in his war against " + this.kingdomToAttack.name + 
 				" because they already have other invasion plans.";
 			this.CancelEvent();
