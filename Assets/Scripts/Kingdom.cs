@@ -71,6 +71,9 @@ public class Kingdom{
 	internal FirstAndKeystoneOwnership firstAndKeystoneOwnership;
     private bool _isGrowthEnabled;
 
+    //FogOfWar
+    private FOG_OF_WAR_STATE[,] _fogOfWar;
+
     private float expansionChance = 1f;
     
     protected const int INCREASE_CITY_HP_CHANCE = 5;
@@ -83,8 +86,6 @@ public class Kingdom{
 	private bool _isDead;
 	private bool _hasBioWeapon;
 	internal bool hasConflicted;
-
-    
 
 	private int borderConflictLoyaltyExpiration;
 
@@ -172,7 +173,11 @@ public class Kingdom{
 	public List<City> nonRebellingCities {
 		get { return this.cities.Where(x => x.rebellion == null).ToList(); }
 	}
+    public FOG_OF_WAR_STATE[,] fogOfWar {
+        get { return _fogOfWar; }
+    }
     #endregion
+
     // Kingdom constructor paramters
     //	race - the race of this kingdom
     //	cities - the cities that this kingdom will initially own
@@ -220,20 +225,7 @@ public class Kingdom{
 
         this.basicResource = Utilities.GetBasicResourceForRace(race);
 
-
-  //      if (race == RACE.HUMANS) {
-		//	this.basicResource = BASE_RESOURCE_TYPE.STONE;
-		//	this.rareResource = BASE_RESOURCE_TYPE.MITHRIL;
-		//} else if (race == RACE.ELVES) {
-		//	this.basicResource = BASE_RESOURCE_TYPE.WOOD;
-		//	this.rareResource = BASE_RESOURCE_TYPE.MANA_STONE;
-		//} else if (race == RACE.MINGONS) {
-		//	this.basicResource = BASE_RESOURCE_TYPE.WOOD;
-		//	this.rareResource = BASE_RESOURCE_TYPE.NONE;
-		//} else {
-		//	this.basicResource = BASE_RESOURCE_TYPE.STONE;
-		//	this.rareResource = BASE_RESOURCE_TYPE.COBALT;
-		//}
+        this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
 
         if(cities.Count > 0) {
             for (int i = 0; i < cities.Count; i++) {
@@ -1964,6 +1956,28 @@ public class Kingdom{
                     if (discoveredKingdoms.Count > 0 && EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR, EVENT_TYPES.KINGS_COUNCIL }).Count <= 0) {
                         EventCreator.Instance.CreateKingsCouncilEvent(this);
                     }
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Fog Of War
+    internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
+        if(_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
+            _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+        }
+    }
+    internal void UpdateFogOfWarVisual() {
+        for (int x = 0; x < fogOfWar.GetLength(0); x++) {
+            for (int y = 0; y < fogOfWar.GetLength(1); y++) {
+                FOG_OF_WAR_STATE fowStateToUse = fogOfWar[x, y];
+                HexTile currHexTile = GridMap.Instance.map[x, y];
+                currHexTile.SetFogOfWarState(fowStateToUse);
+                if (KingdomManager.Instance.useFogOfWar) {
+                    currHexTile.ShowFogOfWarObjects();
+                } else {
+                    currHexTile.HideFogOfWarObjects();
                 }
             }
         }

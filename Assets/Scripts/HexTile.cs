@@ -70,7 +70,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private SpriteRenderer minimapHexSprite;
     private Color biomeColor;
 
-	[SerializeField] private GameObject plagueIconGO;
+    [Space(10)]
+    [Header("Fog Of War Objects")]
+    [SerializeField] private SpriteRenderer FOWSprite;
+    [SerializeField] private SpriteRenderer minimapFOWSprite;
+
+    [Space(10)]
+    [Header("Fog Of War Objects")]
+    [SerializeField] private GameObject plagueIconGO;
 
     private GameEvent _gameEventInTile;
     private Transform _cityInfoParent;
@@ -236,9 +243,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		
 	/*
 	 * Returns all Hex tiles gameobjects within a radius
-	 * 3 - 1 tile radius
-	 * 6 - 2 tile radius
-	 * 10 - 3 tile radius
 	 * */
 	public List<HexTile> GetTilesInRange(int range){
 		List<HexTile> tilesInRange = new List<HexTile>();
@@ -434,24 +438,30 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.cityNameGO.SetActive(true);
         //this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
         //this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
-        GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
-        parentPanel.layer = LayerMask.NameToLayer("UI");
-        parentPanel.transform.SetParent(UIParent);
-        parentPanel.transform.localPosition = Vector3.zero;
-        parentPanel.transform.localScale = Vector3.one;
-        this._cityInfoParent = parentPanel.transform;
+        if(_cityInfo == null) {
+            GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
+            parentPanel.layer = LayerMask.NameToLayer("UI");
+            parentPanel.transform.SetParent(UIParent);
+            parentPanel.transform.localPosition = Vector3.zero;
+            parentPanel.transform.localScale = Vector3.one;
+            this._cityInfoParent = parentPanel.transform;
 
-        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
-        this._cityInfo = namePlateGO.GetComponent<CityItem>();
-        namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
-        namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-        EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
+            GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
+            this._cityInfo = namePlateGO.GetComponent<CityItem>();
+            namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
+            namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
+            EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
+        }
         UpdateNamePlate();
-        //this.cityInfoGO.SetActive(true);
+        this.cityInfo.gameObject.SetActive(true);
     }
 
     public void UpdateNamePlate() {
         this._cityInfo.SetCity(this.city);
+    }
+
+    public void HideNamePlate() {
+        this._cityInfo.gameObject.SetActive(false);
     }
 
     public void ShowOccupiedSprite() {
@@ -489,6 +499,60 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
         }
         this._centerPiece.SetActive(false);
+    }
+
+    public void HideStructures() {
+        structureParentGO.SetActive(false);
+    }
+
+    public void ShowStructures() {
+        structureParentGO.SetActive(true);
+    }
+
+    public void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
+        Color newColor = FOWSprite.color;
+        switch (fowState) {
+            case FOG_OF_WAR_STATE.VISIBLE:
+                newColor.a = 0f / 255f;
+                if (isHabitable && isOccupied) {
+                    ShowNamePlate();
+                }
+                if (isOccupied) {
+                    ShowStructures();
+                }
+                break;
+            case FOG_OF_WAR_STATE.SEEN:
+                newColor.a = 128f / 255f;
+                if (isHabitable && isOccupied) {
+                    HideNamePlate();
+                }
+                if (isOccupied) {
+                    HideStructures();
+                }
+                break;
+            case FOG_OF_WAR_STATE.HIDDEN:
+                newColor.a = 230f / 255f;
+                if (isHabitable && isOccupied) {
+                    HideNamePlate();
+                }
+                if (isOccupied) {
+                    HideStructures();
+                }
+                break;
+            default:
+                break;
+        }
+        FOWSprite.color = newColor;
+        minimapFOWSprite.color = newColor;
+    }
+
+    public void HideFogOfWarObjects() {
+        FOWSprite.gameObject.SetActive(false);
+        minimapFOWSprite.gameObject.SetActive(false);
+    }
+    public void ShowFogOfWarObjects() {
+        FOWSprite.gameObject.SetActive(true);
+        minimapFOWSprite.gameObject.SetActive(true);
     }
     #endregion
 
