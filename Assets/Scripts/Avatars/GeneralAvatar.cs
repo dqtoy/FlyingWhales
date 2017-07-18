@@ -257,6 +257,7 @@ public class GeneralAvatar : MonoBehaviour {
 						this.general.path.RemoveAt (0);
                         this.general.location.CollectEventOnTile(this.general.citizen.city.kingdom, this.general.citizen);
                         this.CheckForKingdomDiscovery();
+						this.general.CheckSerumOfAlacrity();
 					}
 					this.general.daysBeforeMoving -= 1;
 //					this.MakeCitizenMove (this.general.location, this.general.path [0]);

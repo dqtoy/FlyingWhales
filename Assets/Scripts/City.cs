@@ -1115,6 +1115,13 @@ public class City{
             general.AdjustWeaponCount(1);
             kingdom.AdjustWeaponsCount(-1);
         }
+		if(citizen.city.kingdom.serumsOfAlacrity > 0){
+			int chance = UnityEngine.Random.Range(0,100);
+			if(chance < 35){
+				citizen.city.kingdom.AdjustSerumOfAlacrity(-1);
+				general.InjectSerumOfAlacrity();
+			}
+		}
         general.spawnRate = path.Sum (x => x.movementDays) + 2;
         general.damage = ((General)citizen.assignedRole).GetDamage();
 //		this._kingdom.AdjustGold (-cost);

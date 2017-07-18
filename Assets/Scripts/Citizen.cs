@@ -537,6 +537,10 @@ public class Citizen {
 			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " drank poison", HISTORY_IDENTIFIER.NONE));
 			this.deathReasonText = "drank poison";
 			break;
+		case DEATH_REASONS.SERUM_OF_ALACRITY:
+			this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died due to the serum of alacrity injection", HISTORY_IDENTIFIER.NONE));
+			this.deathReasonText = " died due to the serum of alacrity injection";
+			break;
         }
 	}
 	internal void UnsupportCitizen(Citizen citizen){

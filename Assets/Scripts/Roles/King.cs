@@ -11,6 +11,10 @@ public class King : Role {
 	internal bool isRumoring;
 	internal bool isHiddenHistoryBooking;
 
+	private int _triggerMonthOfSerum;
+	private int _triggerDayOfSerum;
+	private int _triggerYearOfSerum;
+
 	public King(Citizen citizen): base(citizen){
 		this.citizen.isKing = true;
 //		if(this.citizen.city.kingdom.king != null){
@@ -25,6 +29,7 @@ public class King : Role {
 		}
 		this.isRumoring = false;
 		this.isHiddenHistoryBooking = false;
+		RandomTriggerDateOfSerum(true);
 		EventManager.Instance.onWeekEnd.AddListener (EverydayActions);
 	}
 
@@ -39,6 +44,7 @@ public class King : Role {
 		TriggerSpouseAbduction();
 		TriggerRumor();
 		TriggerHiddenHistoryBook();
+		TriggerSerumOfAlacrity();
 	}
 	private void TriggerRumor(){
 		if(GameManager.Instance.days % 10 == 0 && !this.isRumoring){
@@ -92,6 +98,29 @@ public class King : Role {
 					EventCreator.Instance.CreateHiddenHistoryBookEvent(this.citizen);
 				}
 			}
+		}
+	}
+	private void TriggerSerumOfAlacrity(){
+		if(this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
+			if(GameManager.Instance.month == this._triggerMonthOfSerum && GameManager.Instance.days == this._triggerDayOfSerum && GameManager.Instance.year == this._triggerYearOfSerum){
+				int chance = UnityEngine.Random.Range(0,100);
+				if(chance < 10){
+					EventCreator.Instance.CreateSerumOfAlacrityEvent(this.citizen);
+				}else{
+					RandomTriggerDateOfSerum();
+				}
+			}
+		}
+	}
+
+	private void RandomTriggerDateOfSerum(bool isFirst = false){
+		this._triggerMonthOfSerum = UnityEngine.Random.Range(1,13);
+		this._triggerDayOfSerum = UnityEngine.Random.Range(1, GameManager.daysInMonth[this._triggerMonthOfSerum]);
+
+		if(isFirst){
+			this._triggerYearOfSerum = GameManager.Instance.year;
+		}else{
+			this._triggerYearOfSerum = GameManager.Instance.year + 1;
 		}
 	}
 	private bool IsEligibleForAbduction(Kingdom kingdom1, Kingdom kingdom2){

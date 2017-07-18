@@ -71,6 +71,9 @@ public class Kingdom{
 	internal FirstAndKeystoneOwnership firstAndKeystoneOwnership;
     private bool _isGrowthEnabled;
 
+	//Serum of Alacrity
+	private int _serumsOfAlacrity;
+
     //FogOfWar
     private FOG_OF_WAR_STATE[,] _fogOfWar;
 
@@ -172,6 +175,9 @@ public class Kingdom{
     }
 	public List<City> nonRebellingCities {
 		get { return this.cities.Where(x => x.rebellion == null).ToList(); }
+	}
+	public int serumsOfAlacrity {
+		get { return this._serumsOfAlacrity; }
 	}
     public FOG_OF_WAR_STATE[,] fogOfWar {
         get { return _fogOfWar; }
@@ -1961,6 +1967,15 @@ public class Kingdom{
         }
     }
     #endregion
+
+	#region Serum of Alacrity
+	internal void AdjustSerumOfAlacrity(int amount){
+		this._serumsOfAlacrity += amount;
+		if(this._serumsOfAlacrity < 0){
+			this._serumsOfAlacrity = 0;
+		}
+	}
+	#endregion
 
     #region Fog Of War
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
