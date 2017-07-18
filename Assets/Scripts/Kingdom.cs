@@ -1968,7 +1968,6 @@ public class Kingdom{
     }
     #endregion
 
-<<<<<<< HEAD
 	#region Serum of Alacrity
 	internal void AdjustSerumOfAlacrity(int amount){
 		this._serumsOfAlacrity += amount;
@@ -1977,7 +1976,7 @@ public class Kingdom{
 		}
 	}
 	#endregion
-=======
+
     #region Fog Of War
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
         if(_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
@@ -1999,5 +1998,4 @@ public class Kingdom{
         }
     }
     #endregion
->>>>>>> 695602ec12073b08fe66b3c78f22f66f82a53454
 }
