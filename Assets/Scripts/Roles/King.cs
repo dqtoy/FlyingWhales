@@ -105,7 +105,7 @@ public class King : Role {
 			if(GameManager.Instance.month == this._triggerMonthOfSerum && GameManager.Instance.days == this._triggerDayOfSerum && GameManager.Instance.year == this._triggerYearOfSerum){
 				int chance = UnityEngine.Random.Range(0,100);
 				if(chance < 10){
-					EventCreator.Instance.CreateSerumOfAlacrityEvent();
+					EventCreator.Instance.CreateSerumOfAlacrityEvent(this.citizen);
 				}else{
 					RandomTriggerDateOfSerum();
 				}
