@@ -22,6 +22,7 @@ public class HealerAvatar : MonoBehaviour {
         this.GetComponent<Avatar>().kingdom = this.healer.citizen.city.kingdom;
         this.GetComponent<Avatar>().gameEvent = this.healer.plagueEvent;
         this.GetComponent<Avatar>().citizen = this.healer.citizen;
+        visibleTiles = new List<HexTile>();
 
         ResetValues();
         this.AddBehaviourTree();
@@ -117,6 +118,7 @@ public class HealerAvatar : MonoBehaviour {
                     this.MakeCitizenMove(this.healer.location, this.healer.path[0]);
                     this.healer.location = this.healer.path[0];
                     this.healer.citizen.currentLocation = this.healer.path[0];
+                    this.UpdateFogOfWar();
                     this.healer.path.RemoveAt(0);
                     this.healer.location.CollectEventOnTile(this.healer.citizen.city.kingdom, this.healer.citizen);
                     this.CheckForKingdomDiscovery();
@@ -143,6 +145,24 @@ public class HealerAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.healer.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.healer.location);
+            visibleTiles.AddRange(this.healer.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.healer.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+        
+    }
+
     internal void AddBehaviourTree() {
         BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
     }
@@ -164,6 +184,14 @@ public class HealerAvatar : MonoBehaviour {
         this.UnHighlightPath();
     }
 
+    private void FixedUpdate() {
+        if (this.healer.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
     void HighlightPath() {
         this.pathToUnhighlight.Clear();
         for (int i = 0; i < this.healer.path.Count; i++) {
@@ -181,6 +209,7 @@ public class HealerAvatar : MonoBehaviour {
     void OnDestroy() {
         BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
         UnHighlightPath();
+        UpdateFogOfWar(true);
     }
 
     public void OnEndAttack() {

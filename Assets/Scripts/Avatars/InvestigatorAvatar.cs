@@ -35,8 +35,9 @@ public class InvestigatorAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.investigator.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.investigator.firstAndKeystone;
 		this.GetComponent<Avatar> ().citizen = this.investigator.citizen;
+        visibleTiles = new List<HexTile>();
 
-		ResetValues ();
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 //	void OnTriggerEnter2D(Collider2D other){
@@ -184,6 +185,7 @@ public class InvestigatorAvatar : MonoBehaviour {
 //					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
 					this.investigator.location = this.investigator.path[0];
 					this.investigator.citizen.currentLocation = this.investigator.path [0];
+                    this.UpdateFogOfWar();
 					this.investigator.path.RemoveAt (0);
                     this.investigator.location.CollectEventOnTile(this.investigator.citizen.city.kingdom, this.investigator.citizen);
                     this.CheckForKingdomDiscovery();
@@ -218,6 +220,24 @@ public class InvestigatorAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.investigator.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.investigator.location);
+            visibleTiles.AddRange(this.investigator.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.investigator.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -239,7 +259,15 @@ public class InvestigatorAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if (this.investigator.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.investigator.path.Count; i++) {
 			this.investigator.path [i].highlightGO.SetActive (true);
@@ -256,7 +284,8 @@ public class InvestigatorAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
-	}
+        UpdateFogOfWar(true);
+    }
 
 	public void OnEndAttack(){
 		this.investigator.firstAndKeystone.DoneCitizenAction(this.investigator.citizen);

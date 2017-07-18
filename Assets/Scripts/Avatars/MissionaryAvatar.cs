@@ -35,8 +35,9 @@ public class MissionaryAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.missionary.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.missionary.evangelism;
 		this.GetComponent<Avatar> ().citizen = this.missionary.citizen;
+        visibleTiles = new List<HexTile>();
 
-		ResetValues ();
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 //	void OnTriggerEnter2D(Collider2D other){
@@ -184,6 +185,7 @@ public class MissionaryAvatar : MonoBehaviour {
 //					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
 					this.missionary.location = this.missionary.path[0];
 					this.missionary.citizen.currentLocation = this.missionary.path [0];
+                    this.UpdateFogOfWar();
 					this.missionary.path.RemoveAt (0);
                     this.missionary.location.CollectEventOnTile(this.missionary.citizen.city.kingdom, this.missionary.citizen);
                     this.CheckForKingdomDiscovery();
@@ -218,6 +220,24 @@ public class MissionaryAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.missionary.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.missionary.location);
+            visibleTiles.AddRange(this.missionary.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.missionary.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -239,7 +259,15 @@ public class MissionaryAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if (this.missionary.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.missionary.path.Count; i++) {
 			this.missionary.path [i].highlightGO.SetActive (true);
@@ -256,7 +284,8 @@ public class MissionaryAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
-	}
+        UpdateFogOfWar(true);
+    }
 
 	public void OnEndAttack(){
 		this.missionary.evangelism.DoneCitizenAction(this.missionary.citizen);

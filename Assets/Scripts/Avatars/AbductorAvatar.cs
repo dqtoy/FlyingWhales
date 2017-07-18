@@ -35,8 +35,9 @@ public class AbductorAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.abductor.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.abductor.spouseAbduction;
 		this.GetComponent<Avatar> ().citizen = this.abductor.citizen;
+        visibleTiles = new List<HexTile>();
 
-		ResetValues ();
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 //	void OnTriggerEnter2D(Collider2D other){
@@ -184,6 +185,7 @@ public class AbductorAvatar : MonoBehaviour {
 //					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
 					this.abductor.location = this.abductor.path[0];
 					this.abductor.citizen.currentLocation = this.abductor.path [0];
+                    this.UpdateFogOfWar();
 					this.abductor.path.RemoveAt (0);
                     this.abductor.location.CollectEventOnTile(this.abductor.citizen.city.kingdom, this.abductor.citizen);
                     this.CheckForKingdomDiscovery();
@@ -218,6 +220,24 @@ public class AbductorAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.abductor.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.abductor.location);
+            visibleTiles.AddRange(this.abductor.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.abductor.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -239,7 +259,15 @@ public class AbductorAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if(this.abductor.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.abductor.path.Count; i++) {
 			this.abductor.path [i].highlightGO.SetActive (true);
@@ -256,6 +284,7 @@ public class AbductorAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
+        UpdateFogOfWar(true);
 	}
 
 	public void OnEndAttack(){

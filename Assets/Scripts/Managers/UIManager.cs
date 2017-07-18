@@ -2729,7 +2729,15 @@ public class UIManager : MonoBehaviour {
 			return requestPeaceIcon;
 		case EVENT_TYPES.SERUM_OF_ALACRITY:
 			return assassinationIcon;
-		}
+        case EVENT_TYPES.DEVELOP_WEAPONS:
+            return assassinationIcon;
+        case EVENT_TYPES.HYPNOTISM:
+            return militarizationIcon;
+        case EVENT_TYPES.KINGS_COUNCIL:
+            return stateVisitIcon;
+        case EVENT_TYPES.KINGDOM_HOLIDAY:
+            return requestPeaceIcon;
+        }
 		return assassinationIcon;
 	}
 

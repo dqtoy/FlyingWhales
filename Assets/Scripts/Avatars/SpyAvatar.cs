@@ -25,8 +25,9 @@ public class SpyAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.spy.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.spy.assassination;
 		this.GetComponent<Avatar> ().citizen = this.spy.citizen;
+        visibleTiles = new List<HexTile>();
 
-		ResetValues ();
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 //	void OnTriggerEnter2D(Collider2D other){
@@ -187,6 +188,24 @@ public class SpyAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.spy.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.spy.location);
+            visibleTiles.AddRange(this.spy.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.spy.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -208,7 +227,15 @@ public class SpyAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if (this.spy.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.spy.path.Count; i++) {
 			this.spy.path [i].highlightGO.SetActive (true);
@@ -225,7 +252,8 @@ public class SpyAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
-	}
+        UpdateFogOfWar(true);
+    }
 
 	public void OnEndAttack(){
 		this.spy.assassination.DoneCitizenAction(this.spy.citizen);

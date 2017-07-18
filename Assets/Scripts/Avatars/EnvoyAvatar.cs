@@ -35,7 +35,9 @@ public class EnvoyAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.envoy.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.envoy.gameEvent;
 		this.GetComponent<Avatar> ().citizen = this.envoy.citizen;
-		ResetValues ();
+        visibleTiles = new List<HexTile>();
+
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
@@ -172,7 +174,8 @@ public class EnvoyAvatar : MonoBehaviour {
 							this.envoy.daysBeforeMoving = this.envoy.path [0].movementDays;
 							this.envoy.location = this.envoy.path[0];
 							this.envoy.citizen.currentLocation = this.envoy.path [0];
-							this.envoy.path.RemoveAt (0);
+                            this.UpdateFogOfWar();
+                            this.envoy.path.RemoveAt (0);
                             this.envoy.location.CollectEventOnTile(this.envoy.citizen.city.kingdom, this.envoy.citizen);
                         }
 						this.envoy.daysBeforeMoving -= 1;
@@ -187,6 +190,7 @@ public class EnvoyAvatar : MonoBehaviour {
 //						this.envoy.daysBeforeMoving = this.envoy.path [0].movementDays;
 						this.envoy.location = this.envoy.path[0];
 						this.envoy.citizen.currentLocation = this.envoy.path [0];
+                        this.UpdateFogOfWar();
 						this.envoy.path.RemoveAt (0);
                         this.envoy.location.CollectEventOnTile(this.envoy.citizen.city.kingdom, this.envoy.citizen);
                     }
@@ -214,7 +218,25 @@ public class EnvoyAvatar : MonoBehaviour {
         }
     }
 
-	internal void AddBehaviourTree(){
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.envoy.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.envoy.location);
+            visibleTiles.AddRange(this.envoy.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.envoy.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
+    internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
 
@@ -235,7 +257,15 @@ public class EnvoyAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if (this.envoy.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.envoy.path.Count; i++) {
 			this.envoy.path [i].highlightGO.SetActive (true);
@@ -252,7 +282,8 @@ public class EnvoyAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
-	}
+        UpdateFogOfWar(true);
+    }
 	public void OnEndAttack(){
 		this.envoy.gameEvent.DoneCitizenAction(this.envoy.citizen);
 		this.envoy.DestroyGO ();

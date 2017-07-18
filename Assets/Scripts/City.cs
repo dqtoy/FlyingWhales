@@ -43,6 +43,7 @@ public class City{
 
     [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
     [NonSerialized] internal List<HexTile> borderTiles;
+    [NonSerialized] internal List<HexTile> outerTiles;
     [NonSerialized] internal Rebellion rebellion;
     [NonSerialized] internal Plague plague;
 
@@ -99,6 +100,7 @@ public class City{
 		this.isStarving = false;
 		this.isDead = false;
 		this.borderTiles = new List<HexTile>();
+        this.outerTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
 		this.raidLoyaltyExpiration = 0;
 
@@ -415,8 +417,9 @@ public class City{
 		for (int i = 0; i < this.borderTiles.Count; i++) {
             HexTile currBorderTile = borderTiles[i];
             if (!currBorderTile.isOccupied) {
+                currBorderTile.isVisibleByCities.Remove(this);
                 currBorderTile.ResetTile();
-                kingdom.SetFogOfWarStateForTile(currBorderTile, FOG_OF_WAR_STATE.HIDDEN);
+                kingdom.SetFogOfWarStateForTile(currBorderTile, FOG_OF_WAR_STATE.SEEN);
             }
             //this.borderTiles[i].isBorder = false;
             //this.borderTiles[i].isBorderOfCityID = 0;
@@ -438,14 +441,29 @@ public class City{
 			this.borderTiles.AddRange (possibleBorderTiles);
 		}
 		this.borderTiles.Distinct();
+
+        for (int i = 0; i < outerTiles.Count; i++) {
+            HexTile currOuterTile = outerTiles[i];
+            kingdom.SetFogOfWarStateForTile(currOuterTile, FOG_OF_WAR_STATE.SEEN);
+        }
+
+        outerTiles.Clear();
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currBorderTile = this.borderTiles[i];
 			currBorderTile.Borderize (this);
             kingdom.SetFogOfWarStateForTile(currBorderTile, FOG_OF_WAR_STATE.VISIBLE);
             currBorderTile.CollectEventOnTile(kingdom);
-
+            List<HexTile> currHexTileUnoccupiedNeighbours = currBorderTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).ToList();
+            for (int j = 0; j < currHexTileUnoccupiedNeighbours.Count; j++) {
+                HexTile currNeighbour = currHexTileUnoccupiedNeighbours[j];
+                outerTiles.Add(currNeighbour);
+                if (!currNeighbour.isVisibleByCities.Contains(this)) {
+                    currNeighbour.isVisibleByCities.Add(this);
+                }
+                kingdom.SetFogOfWarStateForTile(currNeighbour, FOG_OF_WAR_STATE.VISIBLE);
+            }
             //CollectEventInTile(this.borderTiles[i]);
-		}
+        }
 	}
 
 	internal void HighlightAllOwnedTiles(float alpha){
@@ -829,11 +847,13 @@ public class City{
 		}
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
+            currentTile.isVisibleByCities.Remove(this);
 			currentTile.ResetTile();
 		}
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
-			currentTile.ResetTile();
+            currentTile.isVisibleByCities.Remove(this);
+            currentTile.ResetTile();
 		}
 		this.ownedTiles.Clear ();
 		this.borderTiles.Clear ();
@@ -1112,6 +1132,7 @@ public class City{
 
     internal void RemoveTileFromCity(HexTile tileToRemove) {
         this._ownedTiles.Remove(tileToRemove);
+        tileToRemove.isVisibleByCities.Remove(this);
         tileToRemove.ResetTile();
         this.UpdateBorderTiles();
         this.UpdateDailyProduction();

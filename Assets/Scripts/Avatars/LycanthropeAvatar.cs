@@ -207,6 +207,21 @@ public class LycanthropeAvatar : MonoBehaviour {
     //    }
     //}
 
+    //private List<HexTile> visibleTiles;
+    //private void UpdateFogOfWar() {
+    //    for (int i = 0; i < visibleTiles.Count; i++) {
+    //        HexTile currTile = visibleTiles[i];
+    //        this.lycanthrope.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+    //    }
+    //    visibleTiles.Clear();
+    //    visibleTiles.Add(this.lycanthrope.location);
+    //    visibleTiles.AddRange(this.lycanthrope.location.AllNeighbours);
+    //    for (int i = 0; i < visibleTiles.Count; i++) {
+    //        HexTile currTile = visibleTiles[i];
+    //        this.lycanthrope.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+    //    }
+    //}
+
     internal void AddBehaviourTree() {
         BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
     }
@@ -226,6 +241,14 @@ public class LycanthropeAvatar : MonoBehaviour {
     void OnMouseExit() {
         UIManager.Instance.HideSmallInfo();
         this.UnHighlightPath();
+    }
+
+    private void FixedUpdate() {
+        if (this.lycanthrope.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
     }
 
     void HighlightPath() {

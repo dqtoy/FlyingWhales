@@ -28,6 +28,7 @@ public class CitizenAvatar : MonoBehaviour {
         this.GetComponent<Avatar>().kingdom = this.citizenRole.citizen.city.kingdom;
         this.GetComponent<Avatar>().gameEvent = this.citizenRole.gameEventInvolvedIn;
         this.GetComponent<Avatar>().citizen = this.citizenRole.citizen;
+        visibleTiles = new List<HexTile>();
 
         ResetValues();
         AddBehaviourTree();
@@ -51,6 +52,7 @@ public class CitizenAvatar : MonoBehaviour {
                     this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
                     this.citizenRole.location = this.citizenRole.path[0];
                     this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
+                    this.UpdateFogOfWar();
                     this.citizenRole.path.RemoveAt(0);
                     this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
                     this.CheckForKingdomDiscovery();
@@ -74,6 +76,24 @@ public class CitizenAvatar : MonoBehaviour {
                 otherKingdom.DiscoverKingdom(thisKingdom);
             }
         }
+    }
+
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.citizenRole.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.citizenRole.location);
+            visibleTiles.AddRange(this.citizenRole.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.citizenRole.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
     }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
@@ -153,9 +173,18 @@ public class CitizenAvatar : MonoBehaviour {
         this.UnHighlightPath();
     }
 
+    private void FixedUpdate() {
+        if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
     private void OnDestroy() {
         RemoveBehaviourTree();
         UnHighlightPath();
+        UpdateFogOfWar(true);
     }
     #endregion
 }

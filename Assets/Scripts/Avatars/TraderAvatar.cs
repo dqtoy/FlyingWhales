@@ -19,33 +19,32 @@ public class TraderAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this._trader.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this._trader.tradeEvent;
 		this.GetComponent<Avatar> ().citizen = this._trader.citizen;
+        visibleTiles = new List<HexTile>();
 
         this.AddBehaviourTree();
     }
 
     #region Monobehaviour Functions
-    void OnTriggerEnter2D(Collider2D other) {
-        if (other.tag == "General") {
-            this.collidedWithHostile = false;
-            if (this.gameObject != null && other.gameObject != null) {
-				Kingdom kingdomOfGeneral = other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom;
-                Kingdom kingdomOfTrader = this._trader.citizen.city.kingdom;
-                if (kingdomOfGeneral.id != kingdomOfTrader.id) {
-                    RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
-                    RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
-                    if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
-                       relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-						if (!other.gameObject.GetComponent<GeneralAvatar>().general.citizen.isDead) {
-                            this.collidedWithHostile = true;
-							this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar>().general;
-                        }
-                    }  
-                }
-            }
-        }
-
-
-    }
+    //void OnTriggerEnter2D(Collider2D other) {
+    //    if (other.tag == "General") {
+    //        this.collidedWithHostile = false;
+    //        if (this.gameObject != null && other.gameObject != null) {
+				//Kingdom kingdomOfGeneral = other.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom;
+    //            Kingdom kingdomOfTrader = this._trader.citizen.city.kingdom;
+    //            if (kingdomOfGeneral.id != kingdomOfTrader.id) {
+    //                RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
+    //                RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
+    //                if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
+    //                   relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+				//		if (!other.gameObject.GetComponent<GeneralAvatar>().general.citizen.isDead) {
+    //                        this.collidedWithHostile = true;
+				//			this.otherGeneral = other.gameObject.GetComponent<GeneralAvatar>().general;
+    //                    }
+    //                }  
+    //            }
+    //        }
+    //    }
+    //}
 
     void OnMouseEnter() {
         if (!UIManager.Instance.IsMouseOnUI()) {
@@ -59,9 +58,18 @@ public class TraderAvatar : MonoBehaviour {
         this.UnHighlightPath();
     }
 
+    private void FixedUpdate() {
+        if (this._trader.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
     void OnDestroy() {
         BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
         this.UnHighlightPath();
+        UpdateFogOfWar(true);
     }
     #endregion
 
@@ -149,6 +157,7 @@ public class TraderAvatar : MonoBehaviour {
                     this.MakeCitizenMove(this._trader.location, this._trader.path[0]);
                     this._trader.location = this._trader.path[0];
                     this._trader.citizen.currentLocation = this._trader.path[0];
+                    this.UpdateFogOfWar();
                     this._trader.path.RemoveAt(0);
                     this._trader.location.CollectEventOnTile(this._trader.citizen.city.kingdom, this._trader.citizen);
                     this.CheckForKingdomDiscovery();
@@ -173,6 +182,24 @@ public class TraderAvatar : MonoBehaviour {
                 otherKingdom.DiscoverKingdom(thisKingdom);
             }
         }
+    }
+
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this._trader.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this._trader.location);
+            visibleTiles.AddRange(this._trader.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this._trader.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
     }
 
     private void HighlightPath() {

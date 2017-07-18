@@ -1964,8 +1964,14 @@ public class Kingdom{
 
     #region Fog Of War
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
-        if(_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
+        if(fowState == FOG_OF_WAR_STATE.VISIBLE) {
             _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+        } else {
+            if(!(tile.isVisibleByCities != null && cities.Intersect(tile.isVisibleByCities).Count() > 0)) {
+                if (_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
+                    _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+                }
+            }
         }
     }
     internal void UpdateFogOfWarVisual() {

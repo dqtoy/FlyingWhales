@@ -36,8 +36,9 @@ public class ExpansionAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.expander.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.expander.expansion;
 		this.GetComponent<Avatar> ().citizen = this.expander.citizen;
+        visibleTiles = new List<HexTile>();
 
-		ResetValues ();
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 //	void OnTriggerEnter2D(Collider2D other){
@@ -188,6 +189,7 @@ public class ExpansionAvatar : MonoBehaviour {
 						this.expander.daysBeforeMoving = this.expander.path [0].movementDays;
 						this.expander.location = this.expander.path[0];
 						this.expander.citizen.currentLocation = this.expander.path [0];
+                        this.UpdateFogOfWar();
 						this.expander.path.RemoveAt (0);
                         this.expander.location.CollectEventOnTile(this.expander.citizen.city.kingdom, this.expander.citizen);
                         this.CheckForKingdomDiscovery();
@@ -216,6 +218,24 @@ public class ExpansionAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.expander.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.expander.location);
+            visibleTiles.AddRange(this.expander.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.expander.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -237,7 +257,15 @@ public class ExpansionAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if (this.expander.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.expander.path.Count; i++) {
 			this.expander.path [i].highlightGO.SetActive (true);
@@ -254,7 +282,8 @@ public class ExpansionAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
-	}
+        UpdateFogOfWar(true);
+    }
 //	private string CampaignInfo(Campaign campaign){
 //		string info = string.Empty;
 //		info += "id: " + campaign.id;

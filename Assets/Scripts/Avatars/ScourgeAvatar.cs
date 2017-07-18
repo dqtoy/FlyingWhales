@@ -35,6 +35,7 @@ public class ScourgeAvatar : MonoBehaviour {
 		this.GetComponent<Avatar>().kingdom = this.scourge.citizen.city.kingdom;
 		this.GetComponent<Avatar>().gameEvent = this.scourge.scourgeCity;
 		this.GetComponent<Avatar>().citizen = this.scourge.citizen;
+        visibleTiles = new List<HexTile>();
 
         ResetValues();
         this.AddBehaviourTree();
@@ -183,6 +184,7 @@ public class ScourgeAvatar : MonoBehaviour {
                     this.MakeCitizenMove(this.scourge.location, this.scourge.path[0]);
                     this.scourge.location = this.scourge.path[0];
                     this.scourge.citizen.currentLocation = this.scourge.path[0];
+                    this.UpdateFogOfWar();
                     this.scourge.path.RemoveAt(0);
                     this.scourge.location.CollectEventOnTile(this.scourge.citizen.city.kingdom, this.scourge.citizen);
                     this.CheckForKingdomDiscovery();
@@ -209,6 +211,24 @@ public class ScourgeAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.scourge.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.scourge.location);
+            visibleTiles.AddRange(this.scourge.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.scourge.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree() {
         BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
     }
@@ -230,6 +250,14 @@ public class ScourgeAvatar : MonoBehaviour {
         this.UnHighlightPath();
     }
 
+    private void FixedUpdate() {
+        if (this.scourge.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
     void HighlightPath() {
         this.pathToUnhighlight.Clear();
         for (int i = 0; i < this.scourge.path.Count; i++) {
@@ -247,6 +275,7 @@ public class ScourgeAvatar : MonoBehaviour {
     void OnDestroy() {
         BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
         UnHighlightPath();
+        UpdateFogOfWar(true);
     }
 
     public void OnEndAttack() {
