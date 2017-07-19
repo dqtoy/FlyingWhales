@@ -41,6 +41,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
+    internal List<City> isVisibleByCities = new List<City>();
 
     [Space(10)]
     [Header("Tile Visuals")]
@@ -78,6 +79,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Space(10)]
     [Header("Fog Of War Objects")]
     [SerializeField] private GameObject plagueIconGO;
+    [SerializeField] private FOG_OF_WAR_STATE _currFogOfWarState;
 
     private GameEvent _gameEventInTile;
     private Transform _cityInfoParent;
@@ -113,7 +115,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameEvent gameEventInTile{
 		get { return this._gameEventInTile; }
 	}
-	#endregion
+    public FOG_OF_WAR_STATE currFogOfWarState {
+        get { return _currFogOfWarState; }
+    }
+    #endregion
 
     internal void SetBiome(BIOMES biome) {
         biomeType = biome;
@@ -510,6 +515,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
+        _currFogOfWarState = fowState;
         Color newColor = FOWSprite.color;
         switch (fowState) {
             case FOG_OF_WAR_STATE.VISIBLE:
@@ -596,19 +602,21 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public void Occupy(City city) {
 		this.isOccupied = true;
+        this.isVisibleByCities.Add(city);
 		this.isOccupiedByCityID = city.id;		
 		this.ownedByCity = city;
 	}
 
 	public void Borderize(City city) {
 		this.isBorder = true;
-		this.isBorderOfCityID = city.id;
+        this.isVisibleByCities.Add(city);
+        this.isBorderOfCityID = city.id;
 		this.ownedByCity = city;
 	}
 
     #region Monobehaviour Functions
     void OnMouseDown() {
-        if (UIManager.Instance.IsMouseOnUI()) {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
         if (this.isHabitable && this.isOccupied && this.city != null) {
@@ -619,7 +627,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     void OnMouseOver() {
-        if (UIManager.Instance.IsMouseOnUI()) {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
         if (this.isOccupied) {

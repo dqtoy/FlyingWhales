@@ -35,8 +35,9 @@ public class ProvokerAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.provoker.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.provoker.provocation;
 		this.GetComponent<Avatar> ().citizen = this.provoker.citizen;
+        visibleTiles = new List<HexTile>();
 
-		ResetValues ();
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 //	void OnTriggerEnter2D(Collider2D other){
@@ -184,6 +185,7 @@ public class ProvokerAvatar : MonoBehaviour {
 //					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
 					this.provoker.location = this.provoker.path[0];
 					this.provoker.citizen.currentLocation = this.provoker.path [0];
+                    this.UpdateFogOfWar();
 					this.provoker.path.RemoveAt (0);
                     this.provoker.location.CollectEventOnTile(this.provoker.citizen.city.kingdom, this.provoker.citizen);
                     this.CheckForKingdomDiscovery();
@@ -218,6 +220,24 @@ public class ProvokerAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.provoker.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.provoker.location);
+            visibleTiles.AddRange(this.provoker.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.provoker.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -239,7 +259,15 @@ public class ProvokerAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if (this.provoker.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.provoker.path.Count; i++) {
 			this.provoker.path [i].highlightGO.SetActive (true);
@@ -256,7 +284,8 @@ public class ProvokerAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
-	}
+        UpdateFogOfWar(true);
+    }
 
 	public void OnEndAttack(){
 		this.provoker.provocation.DoneCitizenAction(this.provoker.citizen);

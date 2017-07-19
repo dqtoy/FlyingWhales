@@ -2731,7 +2731,15 @@ public class UIManager : MonoBehaviour {
 			return assassinationIcon;
 		case EVENT_TYPES.ALTAR_OF_BLESSING:
 			return requestPeaceIcon;
-		}
+        case EVENT_TYPES.DEVELOP_WEAPONS:
+            return assassinationIcon;
+        case EVENT_TYPES.HYPNOTISM:
+            return militarizationIcon;
+        case EVENT_TYPES.KINGS_COUNCIL:
+            return stateVisitIcon;
+        case EVENT_TYPES.KINGDOM_HOLIDAY:
+            return requestPeaceIcon;
+        }
 		return assassinationIcon;
 	}
 

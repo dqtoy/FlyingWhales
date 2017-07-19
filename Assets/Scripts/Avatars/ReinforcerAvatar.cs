@@ -27,8 +27,9 @@ public class ReinforcerAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.reinforcer.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.reinforcer.reinforcement;
 		this.GetComponent<Avatar> ().citizen = this.reinforcer.citizen;
+        visibleTiles = new List<HexTile>();
 
-		ResetValues ();
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 //	void OnTriggerEnter2D(Collider2D other){
@@ -151,6 +152,7 @@ public class ReinforcerAvatar : MonoBehaviour {
 						this.reinforcer.daysBeforeMoving = this.reinforcer.path [0].movementDays;
 						this.reinforcer.location = this.reinforcer.path[0];
 						this.reinforcer.citizen.currentLocation = this.reinforcer.path [0];
+                        this.UpdateFogOfWar();
 						this.reinforcer.path.RemoveAt (0);
                         this.reinforcer.location.CollectEventOnTile(this.reinforcer.citizen.city.kingdom, this.reinforcer.citizen);
                         this.CheckForKingdomDiscovery();
@@ -179,6 +181,24 @@ public class ReinforcerAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.reinforcer.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.reinforcer.location);
+            visibleTiles.AddRange(this.reinforcer.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.reinforcer.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -200,7 +220,15 @@ public class ReinforcerAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if (this.reinforcer.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.reinforcer.path.Count; i++) {
 			this.reinforcer.path [i].highlightGO.SetActive (true);
@@ -217,7 +245,8 @@ public class ReinforcerAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
-	}
+        UpdateFogOfWar(true);
+    }
 
 	public void OnEndAttack(){
 		this.reinforcer.reinforcement.DoneCitizenAction(this.reinforcer.citizen);

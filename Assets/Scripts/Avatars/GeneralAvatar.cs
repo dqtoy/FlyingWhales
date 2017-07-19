@@ -40,8 +40,9 @@ public class GeneralAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.general.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.general.attackCity;
 		this.GetComponent<Avatar> ().citizen = this.general.citizen;
+        visibleTiles = new List<HexTile>();
 
-		ResetValues ();
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 	void OnTriggerEnter2D(Collider2D other){
@@ -252,6 +253,7 @@ public class GeneralAvatar : MonoBehaviour {
 						this.general.daysBeforeMoving = this.general.path [0].movementDays;
 						this.general.location = this.general.path[0];
 						this.general.citizen.currentLocation = this.general.path [0];
+                        this.UpdateFogOfWar();
 						this.general.path.RemoveAt (0);
                         this.general.location.CollectEventOnTile(this.general.citizen.city.kingdom, this.general.citizen);
                         this.CheckForKingdomDiscovery();
@@ -286,6 +288,24 @@ public class GeneralAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.general.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.general.location);
+            visibleTiles.AddRange(this.general.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.general.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -307,7 +327,23 @@ public class GeneralAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if (this.general.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            SpriteRenderer[] sprites = gameObject.GetComponentsInChildren<SpriteRenderer>();
+            for (int i = 0; i < sprites.Length; i++) {
+                sprites[i].enabled = true;
+            }
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            SpriteRenderer[] sprites = gameObject.GetComponentsInChildren<SpriteRenderer>();
+            for (int i = 0; i < sprites.Length; i++) {
+                sprites[i].enabled = false;
+            }
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.general.path.Count; i++) {
 			this.general.path [i].highlightGO.SetActive (true);
@@ -324,7 +360,8 @@ public class GeneralAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
-	}
+        UpdateFogOfWar(true);
+    }
 
 	public void OnEndAttack(){
 		this.general.attackCity.DoneCitizenAction(this.general.citizen);

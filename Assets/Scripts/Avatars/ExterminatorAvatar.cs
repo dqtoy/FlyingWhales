@@ -35,6 +35,7 @@ public class ExterminatorAvatar : MonoBehaviour {
         this.GetComponent<Avatar>().kingdom = this.exterminator.citizen.city.kingdom;
         this.GetComponent<Avatar>().gameEvent = this.exterminator.plagueEvent;
         this.GetComponent<Avatar>().citizen = this.exterminator.citizen;
+        visibleTiles = new List<HexTile>();
 
         ResetValues();
         this.AddBehaviourTree();
@@ -183,6 +184,7 @@ public class ExterminatorAvatar : MonoBehaviour {
                     this.MakeCitizenMove(this.exterminator.location, this.exterminator.path[0]);
                     this.exterminator.location = this.exterminator.path[0];
                     this.exterminator.citizen.currentLocation = this.exterminator.path[0];
+                    this.UpdateFogOfWar();
                     this.exterminator.path.RemoveAt(0);
                     this.exterminator.location.CollectEventOnTile(this.exterminator.citizen.city.kingdom, this.exterminator.citizen);
                     this.CheckForKingdomDiscovery();
@@ -209,6 +211,24 @@ public class ExterminatorAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.exterminator.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.exterminator.location);
+            visibleTiles.AddRange(this.exterminator.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.exterminator.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree() {
         BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
     }
@@ -230,6 +250,14 @@ public class ExterminatorAvatar : MonoBehaviour {
         this.UnHighlightPath();
     }
 
+    private void FixedUpdate() {
+        if (this.exterminator.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
     void HighlightPath() {
         this.pathToUnhighlight.Clear();
         for (int i = 0; i < this.exterminator.path.Count; i++) {
@@ -247,6 +275,7 @@ public class ExterminatorAvatar : MonoBehaviour {
     void OnDestroy() {
         BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
         UnHighlightPath();
+        UpdateFogOfWar(true);
     }
 
     public void OnEndAttack() {

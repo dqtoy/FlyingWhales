@@ -35,8 +35,9 @@ public class RaiderAvatar : MonoBehaviour {
 		this.GetComponent<Avatar> ().kingdom = this.raider.citizen.city.kingdom;
 		this.GetComponent<Avatar> ().gameEvent = this.raider.raid;
 		this.GetComponent<Avatar> ().citizen = this.raider.citizen;
+        visibleTiles = new List<HexTile>();
 
-		ResetValues ();
+        ResetValues ();
 		this.AddBehaviourTree ();
 	}
 //	void OnTriggerEnter2D(Collider2D other){
@@ -184,6 +185,7 @@ public class RaiderAvatar : MonoBehaviour {
 //					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
 					this.raider.location = this.raider.path[0];
 					this.raider.citizen.currentLocation = this.raider.path [0];
+                    this.UpdateFogOfWar();
 					this.raider.path.RemoveAt (0);
                     this.raider.location.CollectEventOnTile(this.raider.citizen.city.kingdom, this.raider.citizen);
                     this.CheckForKingdomDiscovery();
@@ -218,6 +220,24 @@ public class RaiderAvatar : MonoBehaviour {
         }
     }
 
+    private List<HexTile> visibleTiles;
+    private void UpdateFogOfWar(bool forDeath = false) {
+        for (int i = 0; i < visibleTiles.Count; i++) {
+            HexTile currTile = visibleTiles[i];
+            this.raider.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        visibleTiles.Clear();
+        if (!forDeath) {
+            visibleTiles.Add(this.raider.location);
+            visibleTiles.AddRange(this.raider.location.AllNeighbours);
+            for (int i = 0; i < visibleTiles.Count; i++) {
+                HexTile currTile = visibleTiles[i];
+                this.raider.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            }
+        }
+
+    }
+
     internal void AddBehaviourTree(){
 		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
 	}
@@ -239,7 +259,15 @@ public class RaiderAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void FixedUpdate() {
+        if (this.raider.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        } else {
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.raider.path.Count; i++) {
 			this.raider.path [i].highlightGO.SetActive (true);
@@ -256,7 +284,8 @@ public class RaiderAvatar : MonoBehaviour {
 	void OnDestroy(){
 		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
 		UnHighlightPath ();
-	}
+        UpdateFogOfWar(true);
+    }
 
 	public void OnEndAttack(){
 		this.raider.raid.DoneCitizenAction(this.raider.citizen);
