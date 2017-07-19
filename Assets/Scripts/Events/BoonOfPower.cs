@@ -42,6 +42,9 @@ public class BoonOfPower : GameEvent {
 			}
 		}
 	}
+	internal override void DoneEvent (){
+		base.DoneEvent ();
+	}
 	#endregion
 	private void Initialize(){
 		this.hexTileSpawnPoint.PutEventOnTile (this);

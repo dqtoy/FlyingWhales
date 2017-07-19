@@ -829,7 +829,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 	}
 	internal void PutEventOnTile(GameEvent gameEvent){
-		this._gameEventInTile = gameEvent;
+		if(this._gameEventInTile == null){
+			this._gameEventInTile = gameEvent;
+		}
 	}
 	internal void RemoveEventOnTile(){
 		this._gameEventInTile = null;
@@ -885,7 +887,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 FirstAndKeystone firstAndKeystone = (FirstAndKeystone)gameEventInTile;
                 firstAndKeystone.TransferKeystone(claimant, citizen);
                 RemoveEventOnTile();
-            }
+			} else if (gameEventInTile is AltarOfBlessing) {
+				AltarOfBlessing altarOfBlessing = (AltarOfBlessing)gameEventInTile;
+				altarOfBlessing.TransferAltarOfBlessing(claimant, citizen);
+			}
         }
     }
 }

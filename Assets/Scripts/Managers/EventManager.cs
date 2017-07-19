@@ -93,6 +93,7 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.SERUM_OF_ALACRITY, UnityEngine.Random.Range(20,31)},
         {EVENT_TYPES.DEVELOP_WEAPONS, -1},
         {EVENT_TYPES.KINGS_COUNCIL, -1},
+		{EVENT_TYPES.ALTAR_OF_BLESSING, -1},
     };
 
 	void Awake(){

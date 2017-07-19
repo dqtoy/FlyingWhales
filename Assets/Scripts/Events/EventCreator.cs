@@ -308,4 +308,9 @@ public class EventCreator: MonoBehaviour {
 		SerumOfAlacrity serumOfAlacrity = new SerumOfAlacrity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, startedBy);
 		return serumOfAlacrity;
 	}
+	internal AltarOfBlessing CreateAltarOfBlessingEvent(HexTile targetHextile){
+		AltarOfBlessing altarOfBlessing = new AltarOfBlessing (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, targetHextile);
+		WorldEventManager.Instance.ResetCurrentInterveneEvent();
+		return altarOfBlessing;
+	}
 }

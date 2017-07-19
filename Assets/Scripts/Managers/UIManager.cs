@@ -2729,6 +2729,8 @@ public class UIManager : MonoBehaviour {
 			return requestPeaceIcon;
 		case EVENT_TYPES.SERUM_OF_ALACRITY:
 			return assassinationIcon;
+		case EVENT_TYPES.ALTAR_OF_BLESSING:
+			return requestPeaceIcon;
 		}
 		return assassinationIcon;
 	}

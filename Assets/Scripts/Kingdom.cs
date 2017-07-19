@@ -1709,7 +1709,7 @@ public class Kingdom{
 			this.UpgradeTechLevel (1);
 		}
 	}
-	private void UpgradeTechLevel(int amount){
+	internal void UpgradeTechLevel(int amount){
 		this._techLevel += amount;
 		this._techCounter = 0;
 		this.UpdateTechCapacity ();
@@ -1998,4 +1998,12 @@ public class Kingdom{
         }
     }
     #endregion
+
+	#region Altar of Blessing
+	internal void CollectAltarOfBlessing(BoonOfPower boonOfPower){
+		Debug.Log (this.name + " HAS COLLECTED A BOON OF POWER!");
+		this._boonOfPowers.Add (boonOfPower);
+		boonOfPower.AddOwnership (this);
+	}
+	#endregion
 }
