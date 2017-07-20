@@ -19,7 +19,7 @@ public class CityTaskManager : MonoBehaviour {
 
 	#region Expansion Functions
 	[Task]
-	private void GetTargetTile(){
+	public void GetTargetTile(){
 		if (this.targetHexTileToPurchase != null) {
 			Task.current.Succeed ();
 		} else {
@@ -128,7 +128,7 @@ public class CityTaskManager : MonoBehaviour {
 	}
 
 	[Task]
-	private void BuyNextTile(){
+	public void BuyNextTile(){
 		if (this.targetHexTileToPurchase.isOccupied) {
 			this.targetHexTileToPurchase = null;
 			this.pathToTargetHexTile.Clear();

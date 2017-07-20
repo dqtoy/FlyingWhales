@@ -52,7 +52,8 @@ public class AltarOfBlessing : GameEvent {
 		List<City> cities = kingdom.nonRebellingCities;
 		if(cities != null && cities.Count > 0){
 			City chosenCity = cities[UnityEngine.Random.Range(0, cities.Count)];
-			//Instantly purchase tile
+            //Instantly purchase tile
+            chosenCity.ForcePurchaseTile();
 		}
 	}
 }

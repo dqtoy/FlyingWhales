@@ -575,6 +575,14 @@ public class City{
 		this.UpdateHP (percentageHP);
 	}
 
+    internal void ForcePurchaseTile() {
+        CityTaskManager ctm = hexTile.GetComponent<CityTaskManager>();
+        if (ctm.targetHexTileToPurchase == null || ctm.targetHexTileToPurchase.isOccupied) {
+            ctm.GetTargetTile();
+        }
+        ctm.BuyNextTile();
+    }
+
 	/*
 	 * Function that listens to onWeekEnd. Performed every tick.
 	 * */
