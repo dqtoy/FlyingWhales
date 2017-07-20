@@ -161,6 +161,13 @@ public class Plague : GameEvent {
 
 		WorldEventManager.Instance.RemoveWorldEvent(null);
     }
+	internal override void DeathByOtherReasons(){
+		this.DoneEvent();
+	}
+	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
+		deadCitizen.Death (DEATH_REASONS.BATTLE);
+		this.DoneEvent();
+	}
     #endregion
 
     private void InitializePlague(){

@@ -36,7 +36,7 @@ public class Provocation : GameEvent {
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();
 	}
-	internal override void DeathByGeneral(General general){
+	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
 		this.provoker.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}

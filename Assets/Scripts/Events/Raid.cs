@@ -82,7 +82,7 @@ public class Raid : GameEvent {
 //
 		this.DoneEvent ();
 	}
-	internal override void DeathByGeneral(General general){
+	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
 		//Add logs: death_by_general
 
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_general");

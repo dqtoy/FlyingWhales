@@ -231,7 +231,7 @@ public class JoinWar : GameEvent {
 //		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
 		this.DoneEvent();
 	}
-	internal override void DeathByGeneral(General general){
+	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
 		//Add logs: death_by_general
 
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");

@@ -40,6 +40,32 @@ public class InvestigatorAvatar : MonoBehaviour {
         ResetValues ();
 		this.AddBehaviourTree ();
 	}
+	void OnTriggerEnter2D(Collider2D other){
+		if(other.tag == "Avatar"){
+			if(this.gameObject != null && other.gameObject != null){
+				if(other.gameObject.GetComponent<Avatar>().kingdom.id != this.investigator.citizen.city.kingdom.id){
+					if(!other.gameObject.GetComponent<Avatar> ().citizen.isDead){
+						CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<Avatar> (), other.gameObject.GetComponent<Avatar>());
+					}
+				}
+			}
+		}else if(other.tag == "Trader"){
+			if(this.gameObject != null && other.gameObject != null){
+				Kingdom kingdomOfGeneral = this.investigator.citizen.city.kingdom;
+				Kingdom kingdomOfTrader = other.gameObject.GetComponent<Avatar>().kingdom;
+				if (kingdomOfGeneral.id != kingdomOfTrader.id) {
+					RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
+					RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
+					if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
+						relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+						if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
+							CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<Avatar> (), other.gameObject.GetComponent<Avatar>());
+						}
+					}  
+				}
+			}
+		}
+	}
 //	void OnTriggerEnter2D(Collider2D other){
 //		if(other.tag == "General"){
 //			this.collidedWithHostile = false;

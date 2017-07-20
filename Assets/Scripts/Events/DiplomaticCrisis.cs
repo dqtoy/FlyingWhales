@@ -129,7 +129,7 @@ public class DiplomaticCrisis : GameEvent {
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
 		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 	}
-	internal override void DeathByGeneral(General general){
+	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
 		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		this.activeEnvoyResolve.citizen.Death (DEATH_REASONS.BATTLE);

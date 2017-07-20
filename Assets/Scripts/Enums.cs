@@ -449,3 +449,7 @@ public enum FOG_OF_WAR_STATE {
     VISIBLE,
     SEEN
 }
+
+public enum LAIR {
+	LYCAN,
+}

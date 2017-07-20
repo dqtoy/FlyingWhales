@@ -15,6 +15,10 @@ public class Role {
 	public bool isDestroyed;
 	public bool hasAttacked;
 
+	public int damage;
+	public bool markAsDead;
+
+
     private GameEvent _gameEventInvolvedIn;
 
     private Plague _plague;
@@ -38,6 +42,8 @@ public class Role {
 		this.daysBeforeMoving = 0;
 		this.isDestroyed = false;
 		this.hasAttacked = false;
+		this.damage = 1;
+		this.markAsDead = false;
 	}
 	internal void DestroyGO(){
 		if(this.avatar != null){
@@ -100,4 +106,12 @@ public class Role {
     internal void SetGameEventInvolvedIn(GameEvent _gameEventInvolvedIn) {
         this._gameEventInvolvedIn = _gameEventInvolvedIn;
     }
+
+	internal void UpdateUI(){
+		if(this.avatar != null){
+			if(this is General){
+				this.avatar.GetComponent<GeneralAvatar>().UpdateUI();
+			}
+		}
+	}
 }

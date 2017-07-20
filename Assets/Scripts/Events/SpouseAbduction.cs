@@ -78,6 +78,13 @@ public class SpouseAbduction : GameEvent {
 		onPerformAction = null;
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 	}
+	internal override void DeathByOtherReasons(){
+		this.DoneEvent();
+	}
+	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
+		deadCitizen.Death (DEATH_REASONS.BATTLE);
+		this.DoneEvent();
+	}
 	#endregion
 	private bool IsMarriageCompatible(Citizen targetCitizen){
 		if(((Spouse)targetCitizen.spouse)._marriageCompatibility >= 0){

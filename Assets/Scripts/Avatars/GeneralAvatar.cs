@@ -46,7 +46,35 @@ public class GeneralAvatar : MonoBehaviour {
 		this.AddBehaviourTree ();
 	}
 	void OnTriggerEnter2D(Collider2D other){
-		if (other.tag == "General") {
+		if(other.tag == "Avatar"){
+			if(this.gameObject != null && other.gameObject != null){
+				if(other.gameObject.GetComponent<Avatar>().kingdom.id != this.general.citizen.city.kingdom.id){
+					if(!other.gameObject.GetComponent<Avatar> ().citizen.isDead){
+						this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
+						CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<Avatar> (), other.gameObject.GetComponent<Avatar>());
+					}
+				}
+			}
+		}else if(other.tag == "Trader"){
+			this.collidedWithHostile = false;
+			if(this.gameObject != null && other.gameObject != null){
+				Kingdom kingdomOfGeneral = this.general.citizen.city.kingdom;
+				Kingdom kingdomOfTrader = other.gameObject.GetComponent<Avatar>().kingdom;
+				if (kingdomOfGeneral.id != kingdomOfTrader.id) {
+					RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
+					RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
+					if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
+						relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+						if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
+							this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
+							CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<Avatar> (), other.gameObject.GetComponent<Avatar>());
+						}
+					}  
+				}
+			}
+		}
+
+		/*if (other.tag == "General") {
 			this.collidedWithHostile = false;
 			if (this.gameObject != null && other.gameObject != null) {
 				if (other.gameObject.GetComponent<Avatar> ().kingdom.id != this.general.citizen.city.kingdom.id) {
@@ -95,7 +123,7 @@ public class GeneralAvatar : MonoBehaviour {
 					}
 				}
 			}
-		}
+		}*/
 
 
 	}
@@ -188,28 +216,29 @@ public class GeneralAvatar : MonoBehaviour {
 	}
 
 //	[Task]
-	public void HasCollidedWithHostile(){
+
+	/*public void HasCollidedWithHostile(Citizen hostile){
 		if(this.collidedWithHostile){
 			this.collidedWithHostile = false;
-			if(this.hostile.assignedRole != null){
+			if(hostile.assignedRole != null){
 				if(this.hostile.assignedRole is General){
 					if(!this.hostile.isDead){
 						General otherGeneral = (General)this.hostile.assignedRole;
 						CombatManager.Instance.BattleMidway (ref this.general, ref otherGeneral);
 						if(this.general.markAsDead){
-							this.general.attackCity.DeathByGeneral (otherGeneral);
+							this.general.attackCity.DeathByAgent (otherGeneral.citizen);
 						}else{
 							this.general.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
 						}
 						if(otherGeneral.markAsDead){
-							this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByGeneral (this.general);
+							this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByAgent (this.general.citizen);
 						}else{
 							otherGeneral.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
 						}
 					}
 				}else{
 					if (!this.hostile.isDead) {
-						this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByGeneral (this.general);
+						this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByAgent (this.general.citizen);
 					}
 				}
 //				Task.current.Succeed ();
@@ -222,7 +251,8 @@ public class GeneralAvatar : MonoBehaviour {
 //			Task.current.Fail ();
 //		}
 //		Task.current.Fail ();
-	}
+	}*/
+
 	[Task]
 	public void HasDiedOfOtherReasons(){
 		if (this.general.citizen.isDead) {

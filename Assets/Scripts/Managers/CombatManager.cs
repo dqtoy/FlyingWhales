@@ -373,51 +373,56 @@ public class CombatManager : MonoBehaviour {
 //		Debug.Log ("RESULTS: " + general1.citizen.name + " army hp left: " + general1.army.hp + "\n" + general2.citizen.name + " army hp left: " + general2.army.hp);
 	}
 
-	internal void BattleMidway(ref General general1, ref General general2){
+	internal void BattleMidway(ref Role agent1, ref Role agent2){
 		//MID WAY BATTLE IF supported is not the same
 		Debug.Log("BATTLE MIDWAY!");
 		int lostHP = 0;
-		int general1Damage = general1.damage;
-		int general2Damage = general2.damage;
-		if(general1.hasSerumOfAlacrity){
-			general1Damage = general1Damage * 2;
+		int agent1Damage = agent1.damage;
+		int agent2Damage = agent2.damage;
+
+		if(agent1 is General){
+			if(((General)agent1).hasSerumOfAlacrity){
+				agent1Damage = agent1Damage * 2;
+			}
 		}
-		if(general2.hasSerumOfAlacrity){
-			general2Damage = general2Damage * 2;
+		if(agent2 is General){
+			if(((General)agent2).hasSerumOfAlacrity){
+				agent2Damage = agent2Damage * 2;
+			}
 		}
-		if(general1Damage > general2Damage){
+		if(agent1Damage > agent2Damage){
 			//General 1 wins
-			lostHP = (int)((float)general2Damage * 0.7f);
-			general2.markAsDead = true;
-			general2.damage = 0;
-			general1.damage -= lostHP;
-			if(general1.damage < 0){
-				general1.damage = 0;
-				general1.markAsDead = true;
-				KingdomManager.Instance.CheckWarTriggerMisc (general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+			lostHP = (int)((float)agent2Damage * 0.7f);
+			agent2.markAsDead = true;
+			agent2.damage = 0;
+			agent1.damage -= lostHP;
+			if(agent1.damage < 0){
+				agent1.damage = 0;
+				agent1.markAsDead = true;
+				KingdomManager.Instance.CheckWarTriggerMisc (agent1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 			}
-			KingdomManager.Instance.CheckWarTriggerMisc (general2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
-		}else if(general1Damage < general2Damage){
+			KingdomManager.Instance.CheckWarTriggerMisc (agent2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+		}else if(agent1Damage < agent2Damage){
 			//General 2 wins
-			lostHP = (int)((float)general1Damage * 0.7f);
-			general1.markAsDead = true;
-			general1.damage = 0;
-			general2.damage -= lostHP;
-			if(general2.damage < 0){
-				general2.damage = 0;
-				general2.markAsDead = true;
-				KingdomManager.Instance.CheckWarTriggerMisc (general2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+			lostHP = (int)((float)agent1Damage * 0.7f);
+			agent1.markAsDead = true;
+			agent1.damage = 0;
+			agent2.damage -= lostHP;
+			if(agent2.damage < 0){
+				agent2.damage = 0;
+				agent2.markAsDead = true;
+				KingdomManager.Instance.CheckWarTriggerMisc (agent2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 			}
-			KingdomManager.Instance.CheckWarTriggerMisc (general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+			KingdomManager.Instance.CheckWarTriggerMisc (agent1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 
 		}else{
 			//Both are dead
-			general1.markAsDead = true;
-			general2.markAsDead = true;
-			general1.damage = 0;
-			general2.damage = 0;
-			KingdomManager.Instance.CheckWarTriggerMisc (general1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
-			KingdomManager.Instance.CheckWarTriggerMisc (general2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+			agent1.markAsDead = true;
+			agent2.markAsDead = true;
+			agent1.damage = 0;
+			agent2.damage = 0;
+			KingdomManager.Instance.CheckWarTriggerMisc (agent1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
+			KingdomManager.Instance.CheckWarTriggerMisc (agent2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 
 		}
 //		General firstGeneral = general1;
@@ -443,5 +448,23 @@ public class CombatManager : MonoBehaviour {
 			}
 			general2.citizen.Death(DEATH_REASONS.BATTLE);
 		}*/
+	}
+
+	public void HasCollidedWithHostile(Avatar avatar1, Avatar avatar2){
+		if(avatar2.citizen.assignedRole != null){
+			if(!avatar2.citizen.isDead){
+				BattleMidway (ref avatar1.citizen.assignedRole, ref avatar2.citizen.assignedRole);
+				if(avatar1.citizen.assignedRole.markAsDead){
+					avatar1.citizen.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByAgent (avatar2.citizen, avatar1.citizen);
+				}else{
+					avatar1.citizen.assignedRole.UpdateUI ();
+				}
+				if(avatar2.citizen.assignedRole.markAsDead){
+					avatar2.citizen.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByAgent (avatar1.citizen, avatar2.citizen);
+				}else{
+					avatar2.citizen.assignedRole.UpdateUI ();
+				}
+			}
+		}
 	}
 }

@@ -20,9 +20,7 @@ public class General : Role {
 //	internal Citizen target;
 //	public int daysCounter = 0;
 //	public int daysBeforeMoving;
-	public int damage;
 	public AttackCity attackCity;
-	public bool markAsDead;
 	internal bool isRebel;
 	internal int spawnRate;
     private int _weaponCount;
@@ -40,9 +38,7 @@ public class General : Role {
 //		this.location = citizen.city.hexTile;
 //		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
 //		this.targetLocation = null;
-		this.damage = 0;
 		this.spawnRate = 0;
-		this.markAsDead = false;
 		this.attackCity = null;
 		this.isRebel = false;
 		this._hasSerumOfAlacrity = false;

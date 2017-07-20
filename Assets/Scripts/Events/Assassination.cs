@@ -172,7 +172,7 @@ public class Assassination : GameEvent {
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();
 	}
-	internal override void DeathByGeneral(General general){
+	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
 		this.spy.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}

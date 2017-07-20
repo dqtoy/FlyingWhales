@@ -60,9 +60,9 @@ public class Expansion : GameEvent {
 		newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		this.DoneEvent ();
 	}
-	internal override void DeathByGeneral(General general){
+	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_general");
-		newLog.AddToFillers (general.citizen, general.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
 		this.startedBy.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent ();

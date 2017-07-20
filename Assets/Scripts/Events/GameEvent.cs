@@ -166,7 +166,7 @@ public class GameEvent {
 		}
     }
 	internal virtual void DeathByOtherReasons(){}
-	internal virtual void DeathByGeneral(General general){}
+	internal virtual void DeathByAgent(Citizen citizen, Citizen deadCitizen){}
 	#endregion
 
 	/*
