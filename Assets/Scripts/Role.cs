@@ -27,12 +27,6 @@ public class Role {
     private Plague _plague;
 
     #region getters/setters
-    public int hp {
-        get { return _hp; }
-    }
-    public int maxHP {
-        get { return _maxHP; }
-    }
     public Plague plague {
         get { return this._plague; }
     }
@@ -112,17 +106,6 @@ public class Role {
     internal void SetGameEventInvolvedIn(GameEvent _gameEventInvolvedIn) {
         this._gameEventInvolvedIn = _gameEventInvolvedIn;
     }
-
-    #region HP
-    internal void SetHP(int hp, int maxHP) {
-        _hp = hp;
-        _maxHP = maxHP;
-    }
-
-    internal void AdjustHP(int adjustment) {
-        _hp += adjustment;
-    }
-    #endregion
     
     internal void UpdateUI(){
 		if(this.avatar != null){

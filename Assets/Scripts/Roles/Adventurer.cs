@@ -3,8 +3,17 @@ using System.Collections;
 
 public class Adventurer : Role {
 
+    private object _latestDiscovery;
+
+    #region getters/setters
+    public object latestDiscovery {
+        get { return _latestDiscovery; }
+    }
+
+    #endregion
+
     public Adventurer(Citizen citizen) : base(citizen) {
-        SetHP(50, 50);
+        this.damage = 50;
     }
 
     internal override void Initialize(GameEvent gameEvent) {
@@ -30,5 +39,9 @@ public class Adventurer : Role {
                 this.avatar.GetComponent<AdventurerAvatar>().animator.Play("Attack_Down");
             }
         }
+    }
+
+    internal void SetLatestDiscovery(object discovery) {
+        _latestDiscovery = discovery;
     }
 }

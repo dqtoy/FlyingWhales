@@ -131,7 +131,8 @@ public enum ROLE{
     LYCANTHROPE,
 	INVESTIGATOR,
 	THIEF,
-    WITCH
+    WITCH,
+    ADVENTURER
 }
 
 public enum KINGDOM_TYPE {
@@ -230,6 +231,7 @@ public enum EVENT_TYPES{
     DEVELOP_WEAPONS,
     KINGS_COUNCIL,
 	ALTAR_OF_BLESSING,
+    ADVENTURE
 }
 public enum EVENT_STATUS{
 	EXPOSED,

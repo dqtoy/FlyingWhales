@@ -888,6 +888,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     internal void CollectEventOnTile(Kingdom claimant, Citizen citizen = null) {
         if (gameEventInTile != null) {
+            if(citizen != null) {
+                if(citizen.assignedRole is Adventurer) {
+                    ((Adventurer)citizen.assignedRole).SetLatestDiscovery(gameEventInTile);
+                }
+            }
+
             if (gameEventInTile is BoonOfPower) {
                 BoonOfPower boonOfPower = (BoonOfPower)gameEventInTile;
                 boonOfPower.TransferBoonOfPower(claimant, citizen);
