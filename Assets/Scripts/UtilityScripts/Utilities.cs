@@ -764,7 +764,9 @@ public class Utilities : MonoBehaviour {
 	}
 	public static string CustomStringReplacer(string wordToBeReplaced, ref List<LogFiller> objectLog){
 		string wordToReplace = string.Empty;
-		LOG_IDENTIFIER identifier = Utilities.logIdentifiers[wordToBeReplaced.Substring(1, 2)];
+		string strLogIdentifier = wordToBeReplaced.Remove(0,1);
+		strLogIdentifier = strLogIdentifier.Remove((strLogIdentifier.Length - 1), 1);
+		LOG_IDENTIFIER identifier = Utilities.logIdentifiers[strLogIdentifier];
 		if(wordToBeReplaced.EndsWith("@")){
 			for(int i = 0; i < objectLog.Count; i++){
 				if(objectLog[i].identifier == identifier){
