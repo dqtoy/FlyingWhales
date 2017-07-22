@@ -11,7 +11,8 @@ public class SerumOfAlacrity : GameEvent {
 	public SerumOfAlacrity(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.SERUM_OF_ALACRITY;
 		this.name = "Serum of Alacrity";
-		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
+		this.durationInDays = UnityEngine.Random.Range(20,31);
+		this.kingdom = startedBy.city.kingdom;
 		this.daysCounter = 0;
 		//TODO: Add log - event title
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SerumOfAlacrity", "event_title");
