@@ -28,6 +28,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [System.NonSerialized] public City city = null;
 	internal City ownedByCity = null; // this is populated whenever the hex tile is occupied or becomes a border of a particular city
 
+	public Lair lair;
+
     [Space(10)]
     [Header("Booleans")]
     public bool isHabitable = false;
@@ -38,6 +40,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool isTargeted = false;
 	public bool hasKeystone = false;
 	public bool hasFirst = false;
+	public bool isLair = false;
 
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;

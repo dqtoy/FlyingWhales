@@ -453,3 +453,7 @@ public enum FOG_OF_WAR_STATE {
 public enum LAIR {
 	LYCAN,
 }
+
+public enum MONSTER{
+	LYCAN,
+}
