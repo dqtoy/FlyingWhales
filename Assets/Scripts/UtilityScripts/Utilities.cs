@@ -1093,6 +1093,8 @@ public class Utilities : MonoBehaviour {
             return true;
         case EVENT_TYPES.KINGS_COUNCIL:
             return true;
+        case EVENT_TYPES.ADVENTURE:
+            return true;
 		case EVENT_TYPES.ALTAR_OF_BLESSING:
 			return true;
         case EVENT_TYPES.BORDER_CONFLICT:

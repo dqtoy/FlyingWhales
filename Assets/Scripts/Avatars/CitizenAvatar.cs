@@ -2,6 +2,7 @@
 using System.Collections;
 using Panda;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CitizenAvatar : MonoBehaviour {
     public Role citizenRole;
@@ -52,8 +53,11 @@ public class CitizenAvatar : MonoBehaviour {
                     this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
                     this.citizenRole.location = this.citizenRole.path[0];
                     this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
-                    this.UpdateFogOfWar();
                     this.citizenRole.path.RemoveAt(0);
+                    if (this.citizenRole is Adventurer) {
+                        GetNextTargetTile();
+                    }
+                    this.UpdateFogOfWar();
                     this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
                     this.CheckForKingdomDiscovery();
                 }
@@ -93,7 +97,6 @@ public class CitizenAvatar : MonoBehaviour {
                 this.citizenRole.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
             }
         }
-
     }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
@@ -185,6 +188,58 @@ public class CitizenAvatar : MonoBehaviour {
         RemoveBehaviourTree();
         UnHighlightPath();
         UpdateFogOfWar(true);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.tag == "Avatar") {
+            if (this.gameObject != null && other.gameObject != null) {
+                if (other.gameObject.GetComponent<Avatar>().kingdom.id != this.citizenRole.citizen.city.kingdom.id) {
+                    if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
+                        CombatManager.Instance.HasCollidedWithHostile(this.GetComponent<Avatar>(), other.gameObject.GetComponent<Avatar>());
+                    }
+                }
+            }
+        } else if (other.tag == "Trader") {
+            if (this.gameObject != null && other.gameObject != null) {
+                Kingdom kingdomOfGeneral = this.citizenRole.citizen.city.kingdom;
+                Kingdom kingdomOfTrader = other.gameObject.GetComponent<Avatar>().kingdom;
+                if (kingdomOfGeneral.id != kingdomOfTrader.id) {
+                    RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
+                    RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
+                    if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
+                        relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+                        if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
+                            CombatManager.Instance.HasCollidedWithHostile(this.GetComponent<Avatar>(), other.gameObject.GetComponent<Avatar>());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Unique Functions
+    //Adventurer
+    private void GetNextTargetTile() {
+        Kingdom kingdomOfAdventurer = this.citizenRole.citizen.city.kingdom;
+        List<HexTile> tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.VISIBLE).ToList();
+        if (tilesToChooseFrom.Count <= 0) {
+            tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
+        }
+        List<HexTile> hexTilesWithEvents = tilesToChooseFrom.Where(x => x.gameEventInTile != null).ToList();
+        if (hexTilesWithEvents.Count > 0) {
+            tilesToChooseFrom = hexTilesWithEvents;
+        }
+
+        HexTile newTargetTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
+        if(newTargetTile != null) {
+            this.citizenRole.targetLocation = newTargetTile;
+            this.citizenRole.path = PathGenerator.Instance.GetPath(this.citizenRole.location, this.citizenRole.targetLocation, PATHFINDING_MODE.AVATAR);
+            this.citizenRole.daysBeforeMoving = this.citizenRole.path[0].movementDays;
+        } else {
+            Debug.LogError("Adventurer from " + this.citizenRole.citizen.city.kingdom.name + " could not find a new target tile! Current location is " + this.citizenRole.location.name);
+            this.citizenRole.gameEventInvolvedIn.DoneEvent();
+        }
     }
     #endregion
 }

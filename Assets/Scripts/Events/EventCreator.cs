@@ -313,4 +313,18 @@ public class EventCreator: MonoBehaviour {
 		WorldEventManager.Instance.ResetCurrentInterveneEvent();
 		return altarOfBlessing;
 	}
+    
+    internal Adventure CreateAdventureEvent(Kingdom sourceKingdom) {
+        List<HexTile> tilesToChooseFrom = sourceKingdom.capitalCity.hexTile.AvatarTiles.ToList();
+        HexTile targetTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
+        if(targetTile != null) {
+            Citizen adventurer = sourceKingdom.capitalCity.CreateAgent(ROLE.ADVENTURER, EVENT_TYPES.ADVENTURE, targetTile, EventManager.Instance.eventDuration[EVENT_TYPES.ADVENTURE]);
+            if(adventurer != null) {
+                Adventure adventureEvent = new Adventure(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, (Adventurer)adventurer.assignedRole);
+                adventurer.assignedRole.Initialize(adventureEvent);
+                return adventureEvent;
+            }
+        }
+        return null;
+    }
 }

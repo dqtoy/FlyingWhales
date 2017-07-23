@@ -1,0 +1,11 @@
+tree("Root")
+	fallback
+		not IsThereCitizen
+		HasDiedOfOtherReasons
+		not IsThereEvent
+		tree("Move")
+
+tree("Move")
+	fallback
+		HasArrivedAtTargetHextile
+		MoveToNextTile

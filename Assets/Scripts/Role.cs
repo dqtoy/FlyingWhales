@@ -5,6 +5,9 @@ using System.Collections.Generic;
 public class Role {
 	public Citizen citizen;
 
+    private int _hp;
+    private int _maxHP;
+
 	public List<HexTile> path;
 	public HexTile location;
 	public HexTile targetLocation;
@@ -52,9 +55,6 @@ public class Role {
 		}
 		this.isDestroyed = true;
 	}
-
-
-
 
 	internal virtual int[] GetResourceProduction(){
 		int goldProduction = 40;
@@ -106,8 +106,8 @@ public class Role {
     internal void SetGameEventInvolvedIn(GameEvent _gameEventInvolvedIn) {
         this._gameEventInvolvedIn = _gameEventInvolvedIn;
     }
-
-	internal void UpdateUI(){
+    
+    internal void UpdateUI(){
 		if(this.avatar != null){
 			if(this is General){
 				this.avatar.GetComponent<GeneralAvatar>().UpdateUI();

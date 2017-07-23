@@ -2739,6 +2739,8 @@ public class UIManager : MonoBehaviour {
             return stateVisitIcon;
         case EVENT_TYPES.KINGDOM_HOLIDAY:
             return requestPeaceIcon;
+        case EVENT_TYPES.ADVENTURE:
+            return raidIcon;
         }
 		return assassinationIcon;
 	}
