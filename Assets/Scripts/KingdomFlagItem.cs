@@ -25,6 +25,11 @@ public class KingdomFlagItem : MonoBehaviour {
         this.SetAsSelected();
     }
 
+    void OnDoubleClick() {
+        //Debug.Log("DOUBLE CLICK!: " + kingdom.name);
+        CameraMove.Instance.CenterCameraOn(kingdom.capitalCity.hexTile.gameObject);
+    }
+
     internal void SetAsSelected() {
         if (UIManager.Instance.currentlyShowingKingdom != null && 
             UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
