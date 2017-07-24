@@ -526,40 +526,42 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     public void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
         _currFogOfWarState = fowState;
-        Color newColor = FOWSprite.color;
-        switch (fowState) {
-            case FOG_OF_WAR_STATE.VISIBLE:
-                newColor.a = 0f / 255f;
-                if (isHabitable && isOccupied) {
-                    ShowNamePlate();
-                }
-                if (isOccupied) {
-                    ShowStructures();
-                }
-                break;
-            case FOG_OF_WAR_STATE.SEEN:
-                newColor.a = 128f / 255f;
-                if (isHabitable && isOccupied) {
-                    HideNamePlate();
-                }
-                if (isOccupied) {
-                    HideStructures();
-                }
-                break;
-            case FOG_OF_WAR_STATE.HIDDEN:
-                newColor.a = 230f / 255f;
-                if (isHabitable && isOccupied) {
-                    HideNamePlate();
-                }
-                if (isOccupied) {
-                    HideStructures();
-                }
-                break;
-            default:
-                break;
+        if (KingdomManager.Instance.useFogOfWar) {
+            Color newColor = FOWSprite.color;
+            switch (fowState) {
+                case FOG_OF_WAR_STATE.VISIBLE:
+                    newColor.a = 0f / 255f;
+                    if (isHabitable && isOccupied) {
+                        ShowNamePlate();
+                    }
+                    if (isOccupied) {
+                        ShowStructures();
+                    }
+                    break;
+                case FOG_OF_WAR_STATE.SEEN:
+                    newColor.a = 128f / 255f;
+                    if (isHabitable && isOccupied) {
+                        HideNamePlate();
+                    }
+                    if (isOccupied) {
+                        HideStructures();
+                    }
+                    break;
+                case FOG_OF_WAR_STATE.HIDDEN:
+                    newColor.a = 230f / 255f;
+                    if (isHabitable && isOccupied) {
+                        HideNamePlate();
+                    }
+                    if (isOccupied) {
+                        HideStructures();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            FOWSprite.color = newColor;
+            minimapFOWSprite.color = newColor;
         }
-        FOWSprite.color = newColor;
-        minimapFOWSprite.color = newColor;
     }
 
     public void HideFogOfWarObjects() {
@@ -626,7 +628,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     #region Monobehaviour Functions
     void OnMouseDown() {
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+        if (UIManager.Instance.IsMouseOnUI() || (KingdomManager.Instance.useFogOfWar && currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE)) {
             return;
         }
         if (this.isHabitable && this.isOccupied && this.city != null) {
@@ -637,7 +639,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     void OnMouseOver() {
-        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
+        if (UIManager.Instance.IsMouseOnUI() || (KingdomManager.Instance.useFogOfWar && currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE)) {
             return;
         }
         if (this.isOccupied) {
