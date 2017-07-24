@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Governor : Role {
 
@@ -14,7 +15,6 @@ public class Governor : Role {
     private int _eventLoyaltyModifier;
     private string _eventLoyaltySummary;
 
-	internal List<int> plagueHandling;
 
     #region getters/setters
     public int loyalty {
@@ -31,13 +31,12 @@ public class Governor : Role {
 		this.citizen.isGovernor = true;
 		this.citizen.isKing = false;
         this._loyaltySummary = string.Empty;
-		this.plagueHandling = new List<int> ();
         this._eventLoyaltyModifier = 0;
         this._eventLoyaltySummary = string.Empty;
 
-		this.UpdateLoyalty ();
-		this.SetOwnedCity(this.citizen.city);
-		this.citizen.GenerateCharacterValues ();
+        this.SetOwnedCity(this.citizen.city);
+        this.citizen.GenerateCharacterValues();
+        this.UpdateLoyalty ();
 	}
 
 	internal void SetOwnedCity(City ownedCity){
@@ -47,9 +46,7 @@ public class Governor : Role {
 		this._loyalty += amount;
         this._loyalty = Mathf.Clamp(this._loyalty, -100, 100);
 	}
-	internal void AdjustPlagueHandling(int amount){
-		this.plagueHandling.Add (amount);
-	}
+
 	internal void UpdateLoyalty(){
         this._loyaltySummary = string.Empty;
 		int baseLoyalty = defaultLoyalty;
@@ -58,64 +55,60 @@ public class Governor : Role {
         Citizen king = this.citizen.city.kingdom.king;
 		Kingdom kingdom = this.citizen.city.kingdom;
 
-		/*POSITIVE ADJUSTMENT OF LOYALTY
+        List<CHARACTER_VALUE> governorValues = this.citizen.importantCharacterValues.Select(x => x.Key).ToList();
+        List<CHARACTER_VALUE> kingValues = king.importantCharacterValues.Select(x => x.Key).ToList();
+
+        List<CHARACTER_VALUE> valuesInCommon = governorValues.Intersect(kingValues).ToList();
+
+        /*POSITIVE ADJUSTMENT OF LOYALTY
 		 * */
-		if(this.citizen.hasTrait(TRAIT.HONEST) && king.hasTrait(TRAIT.HONEST)){
-            int adjustment = 15;
-			baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   King is also honest.\n";
-        }
-		if(this.citizen.hasTrait(TRAIT.WARMONGER) && king.hasTrait(TRAIT.WARMONGER)){
+        if (valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() == 1) {
             int adjustment = 15;
             baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   King is also a warmonger.\n";
-        } else if(this.citizen.hasTrait(TRAIT.PACIFIST) && king.hasTrait(TRAIT.PACIFIST)){
+            this._loyaltySummary += "+" + adjustment.ToString() + "   1 shared value except influence.\n";
+        } else if (valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() == 2) {
+            int adjustment = 30;
+            baseLoyalty += adjustment;
+            this._loyaltySummary += "+" + adjustment.ToString() + "   2 shared values except influence.\n";
+        } else if(valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() >= 3) {
+            int adjustment = 50;
+            baseLoyalty += adjustment;
+            this._loyaltySummary += "+" + adjustment.ToString() + "   3 shared values except influence.\n";
+        }
+
+        if (governorValues.Contains(CHARACTER_VALUE.HONOR)) {
             int adjustment = 15;
             baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   King is also a pacifist.\n";
+            this._loyaltySummary += "+" + adjustment.ToString() + "   values honor.\n";
         }
-		if(this.citizen.isDirectDescendant){
+
+        if (king.IsRelative(this.citizen)) {
             int adjustment = 25;
             baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   King is a relative.\n";
+            this._loyaltySummary += "+" + adjustment.ToString() + "   Governor is Relative of King.\n";
         }
-		if(king.spouse != null && this.citizen.IsRelative(king.spouse) && ((Spouse)king.spouse)._marriageCompatibility >= 0){
+
+        if(king.spouse != null && this.citizen.IsRelative(king.spouse) && ((Spouse)king.spouse)._marriageCompatibility >= 0){
             int adjustment = 15;
             baseLoyalty += adjustment;
             this._loyaltySummary += "+" + adjustment.ToString() + "   King is husband of a relative and their compatibility is positive.\n";
         }
 
-		/*NEGATIVE ADJUSTMENT OF LOYALTY
+        /*NEGATIVE ADJUSTMENT OF LOYALTY
 		 * */
-		if(this.citizen.hasTrait(TRAIT.SCHEMING) && king.hasTrait(TRAIT.HONEST)){
-            int adjustment = 15;
-            baseLoyalty -= adjustment;
-            this._loyaltySummary += "-" + adjustment.ToString() + "   King has opposing trait.\n";
-        } else if(this.citizen.hasTrait(TRAIT.HONEST) && king.hasTrait(TRAIT.SCHEMING)){
-            int adjustment = 15;
-            baseLoyalty -= adjustment;
-            this._loyaltySummary += "-" + adjustment.ToString() + "   King has opposing trait.\n";
+        if (!governorValues.Contains(CHARACTER_VALUE.HONOR)) {
+            int adjustment = -15;
+            baseLoyalty += adjustment;
+            this._loyaltySummary += adjustment.ToString() + "   does not value honor.\n";
         }
-		if(this.citizen.hasTrait(TRAIT.WARMONGER) && king.hasTrait(TRAIT.PACIFIST)){
-            int adjustment = 15;
-            baseLoyalty -= adjustment;
-            this._loyaltySummary += "-" + adjustment.ToString() + "   King has opposing trait.\n";
-        } else if(this.citizen.hasTrait(TRAIT.PACIFIST) && king.hasTrait(TRAIT.WARMONGER)){
-            int adjustment = 15;
-            baseLoyalty -= adjustment;
-            this._loyaltySummary += "-" + adjustment.ToString() + "   King has opposing trait.\n";
+
+        if (!governorValues.Contains(CHARACTER_VALUE.INFLUENCE)) {
+            int adjustment = -15;
+            baseLoyalty += adjustment;
+            this._loyaltySummary += adjustment.ToString() + "   does not value influence.\n";
         }
-		if(this.citizen.hasTrait(TRAIT.SCHEMING)){
-            int adjustment = 15;
-            baseLoyalty -= adjustment;
-            this._loyaltySummary += "-" + adjustment.ToString() + "   Governor is scheming.\n";
-        }
-		if(this.citizen.hasTrait(TRAIT.AMBITIOUS)){
-            int adjustment = 20;
-            baseLoyalty -= adjustment;
-            this._loyaltySummary += "-" + adjustment.ToString() + "   Governor is ambitious.\n";
-        }
-		for(int i = 0; i < kingdom.relationshipsWithOtherKingdoms.Count; i++){
+
+        for (int i = 0; i < kingdom.relationshipsWithOtherKingdoms.Count; i++){
 			if(kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
                 int adjustment = 10;
                 baseLoyalty -= adjustment;
@@ -141,12 +134,6 @@ public class Governor : Role {
             baseLoyalty -= adjustment;
             this._loyaltySummary += "-" + adjustment.ToString() + "   King is husband of a relative and their compatibility is negative.\n";
         }
-
-		/*NEUTRAL ADJUSTMENT OF LOYALTY
-		 * */
-		for (int i = 0; i < this.plagueHandling.Count; i++) {
-			baseLoyalty += this.plagueHandling [i];
-		}
 
 		this._loyalty = 0;
 		this.AdjustLoyalty (baseLoyalty);
