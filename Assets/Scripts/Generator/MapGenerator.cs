@@ -11,8 +11,12 @@ public class MapGenerator : MonoBehaviour {
 		Biomes.Instance.GenerateBiome();
 		Biomes.Instance.GenerateTileDetails();
 		CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
+
 		//PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
 		KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.stoneHabitableTiles, CityGenerator.Instance.woodHabitableTiles);
+
+		CityGenerator.Instance.GenerateLairHabitableTiles(GridMap.Instance.listHexes);
+		MonsterManager.Instance.GenerateLairs();
 //		UIManager.Instance.UpdateKingsGrid();
 		WorldEventManager.Instance.BoonOfPowerTrigger();
 		WorldEventManager.Instance.AltarOfBlessingTrigger();

@@ -167,6 +167,10 @@ public class GameEvent {
     }
 	internal virtual void DeathByOtherReasons(){}
 	internal virtual void DeathByAgent(Citizen citizen, Citizen deadCitizen){}
+	internal virtual void DeathByMonster(Monster monster, Citizen deadCitizen){
+		deadCitizen.Death(DEATH_REASONS.BATTLE);
+		this.DoneEvent();
+	}
 	#endregion
 
 	/*

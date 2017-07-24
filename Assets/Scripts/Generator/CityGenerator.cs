@@ -10,6 +10,7 @@ public class CityGenerator : MonoBehaviour {
 
 	public List<HexTile> woodHabitableTiles;
 	public List<HexTile> stoneHabitableTiles;
+	public List<HexTile> lairHabitableTiles;
 
     [SerializeField] private RaceStructures humanStructures;
     [SerializeField] private RaceStructures elvenStructures;
@@ -86,6 +87,16 @@ public class CityGenerator : MonoBehaviour {
 			}
 		}
 	}
+	public void GenerateLairHabitableTiles(List<GameObject> allHexes){
+		this.lairHabitableTiles = new List<HexTile>();
+		for (int i = 0; i < allHexes.Count; i++) {
+			HexTile currentHexTile = allHexes [i].GetComponent<HexTile>();
+			if(currentHexTile.isOccupied || currentHexTile.isHabitable || currentHexTile.elevationType == ELEVATION.WATER || currentHexTile.elevationType == ELEVATION.MOUNTAIN){
+				continue;
+			}
+			SetTileAsLairHabitable(currentHexTile);
+		}
+	}
 
 	private void SetTileAsStoneHabitable(HexTile hexTile){
 		hexTile.isHabitable = true;
@@ -97,6 +108,9 @@ public class CityGenerator : MonoBehaviour {
 		hexTile.isHabitable = true;
 		woodHabitableTiles.Add(hexTile);
 		//hexTile.GetComponent<SpriteRenderer>().color = Color.black;
+	}
+	private void SetTileAsLairHabitable(HexTile hexTile){
+		this.lairHabitableTiles.Add(hexTile);
 	}
 
 	// This will return the nearest habitable tile that matches the following criteria

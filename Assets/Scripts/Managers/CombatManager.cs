@@ -156,6 +156,18 @@ public class CombatManager : MonoBehaviour {
 			ConquerCity (victoriousGeneral.city.kingdomTile, this.visitingGenerals);
 		}*/
 	}
+	internal void CityBattleMonster(City city, Monster monster){
+		if(city == null || city.isDead){
+			return;
+		}
+		int damage = monster.hp;
+		city.AdjustHP (-damage);
+
+		if(city.hp <= 0){
+			//Reset Hextile
+		}
+		monster.markAsDead = true;
+	}
 	/*internal void GoToBattle(ref List<General> friendlyGenerals, ref General enemyGeneral){
 		List<General> deadFriendlies = new List<General> ();
 
@@ -425,6 +437,7 @@ public class CombatManager : MonoBehaviour {
 			KingdomManager.Instance.CheckWarTriggerMisc (agent2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
 
 		}
+
 //		General firstGeneral = general1;
 //		General secondGeneral = general2;
 //
@@ -449,7 +462,51 @@ public class CombatManager : MonoBehaviour {
 			general2.citizen.Death(DEATH_REASONS.BATTLE);
 		}*/
 	}
+	internal void BattleMidwayMonster(ref Monster monster, ref Role agent){
+		//MID WAY BATTLE IF supported is not the same
+		Debug.Log("BATTLE MIDWAY!");
+		int lostHP = 0;
+		int monsterDamage = monster.hp;
+		int agent2Damage = agent.damage;
 
+//		if(agent1 is General){
+//			if(((General)agent1).hasSerumOfAlacrity){
+//				agent1Damage = agent1Damage * 2;
+//			}
+//		}
+		if(agent is General){
+			if(((General)agent).hasSerumOfAlacrity){
+				agent2Damage = agent2Damage * 2;
+			}
+		}
+		if(monsterDamage > agent2Damage){
+			//General 1 wins
+			lostHP = (int)((float)agent2Damage * 0.7f);
+			agent.markAsDead = true;
+			agent.damage = 0;
+			monster.hp -= lostHP;
+			if(monster.hp < 0){
+				monster.hp = 0;
+				monster.markAsDead = true;
+			}
+		}else if(monsterDamage < agent2Damage){
+			//General 2 wins
+			lostHP = (int)((float)monsterDamage * 0.7f);
+			monster.markAsDead = true;
+			monster.hp = 0;
+			agent.damage -= lostHP;
+			if(agent.damage < 0){
+				agent.damage = 0;
+				agent.markAsDead = true;
+			}
+		}else{
+			//Both are dead
+			monster.markAsDead = true;
+			agent.markAsDead = true;
+			monster.hp = 0;
+			agent.damage = 0;
+		}
+	}
 	public void HasCollidedWithHostile(Avatar avatar1, Avatar avatar2){
 		if(avatar2.citizen.assignedRole != null){
 			if(!avatar2.citizen.isDead){
@@ -463,6 +520,23 @@ public class CombatManager : MonoBehaviour {
 					avatar2.citizen.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByAgent (avatar1.citizen, avatar2.citizen);
 				}else{
 					avatar2.citizen.assignedRole.UpdateUI ();
+				}
+			}
+		}
+	}
+	public void HasCollidedWithMonster(Monster monster, Avatar avatar){
+		if(avatar.citizen.assignedRole != null){
+			if(!avatar.citizen.isDead){
+				BattleMidwayMonster (ref monster, ref avatar.citizen.assignedRole);
+				if(monster.markAsDead){
+					monster.Death();
+				}else{
+					monster.UpdateUI ();
+				}
+				if(avatar.citizen.assignedRole.markAsDead){
+					avatar.citizen.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByMonster (monster, avatar.citizen);
+				}else{
+					avatar.citizen.assignedRole.UpdateUI ();
 				}
 			}
 		}
