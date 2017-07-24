@@ -442,6 +442,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
     }
 
+    public GameObject CreateSpecialStructureOnTile(LAIR lairType) {
+        GameObject structureGO = GameObject.Instantiate(
+            CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType), structureParentGO.transform) as GameObject;
+        structureGO.transform.localPosition = Vector3.zero;
+        return structureGO;
+    }
+
     public void ShowNamePlate() {
         //this.cityNameGO.SetActive(true);
         //this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";

@@ -272,7 +272,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		EventCreator.Instance.CreateEvangelismEvent (this.firstKingdom, this.secondKingdom);
 	}
 	private void CreateAdventureEvent(){
-		EventCreator.Instance.CreateAdventureEvent (this.firstKingdom);
+        EventCreator.Instance.CreateAdventureEvent(this.firstKingdom);
 	}
 //	private void CreateBorderConflictEvent(){
 //		EventCreator.Instance.CreateBorderConflictEvent(this.firstKingdom, this.secondKingdom);
@@ -440,13 +440,18 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		return true;
 	}
 	private bool CanCreateEvent(EVENT_TYPES eventType){
-		if(eventType == EVENT_TYPES.SCOURGE_CITY){
-			if(this.firstKingdom.hasBioWeapon){
-				return true;
-			}
-			return false;
-		}else{
-			return true;
-		}
+        if (eventType == EVENT_TYPES.SCOURGE_CITY) {
+            if (this.firstKingdom.hasBioWeapon) {
+                return true;
+            }
+            return false;
+        } else if (eventType == EVENT_TYPES.ADVENTURE) {
+            if (EventManager.Instance.GetEventsStartedByKingdom(this.firstKingdom, new EVENT_TYPES[] { EVENT_TYPES.ADVENTURE }).Count <= 0) {
+                return true;
+            }
+            return false;
+        } else {
+            return true;
+        }
 	}
 }

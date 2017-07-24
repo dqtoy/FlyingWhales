@@ -108,7 +108,7 @@ public class KingsCouncil : GameEvent {
             }
         }
 
-        if(_attendingKingdoms.Count <= 0) {
+        if (_attendingKingdoms.Count <= 0) {
             //If none of the invited kings accepted the invitation, the source king will decrease his relationship with all of them by 10.
             for (int i = 0; i < _sourceKingdom.discoveredKingdoms.Count; i++) {
                 Kingdom currKingdom = _sourceKingdom.discoveredKingdoms[i];
@@ -117,13 +117,16 @@ public class KingsCouncil : GameEvent {
             }
             //Event is done
             DoneEvent();
+        } else if (_attendingKingdoms.Count <= 1) {
+            //Council must have at least 2 attendees
+            CancelEvent();
         } else {
             List<Kingdom> kingdomsThatCannotAttend = new List<Kingdom>();
             //After all the invitations have been received and answered, all the invited kings will now send an envoy to the capital city of the king that invited them.
             for (int i = 0; i < _attendingKingdoms.Count; i++) {
                 Kingdom currKingdom = _attendingKingdoms[i];
-                Citizen envoy = currKingdom.capitalCity.CreateAgent(ROLE.ENVOY, eventType,_sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[eventType]);
-                if(envoy != null) {
+                Citizen envoy = currKingdom.capitalCity.CreateAgent(ROLE.ENVOY, eventType, _sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[eventType]);
+                if (envoy != null) {
                     ((Envoy)envoy.assignedRole).Initialize(this);
                 } else {
                     kingdomsThatCannotAttend.Add(currKingdom);

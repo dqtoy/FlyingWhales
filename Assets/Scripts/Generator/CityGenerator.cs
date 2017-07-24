@@ -12,8 +12,17 @@ public class CityGenerator : MonoBehaviour {
 	public List<HexTile> stoneHabitableTiles;
 	public List<HexTile> lairHabitableTiles;
 
+    [Space(10)]
+    [Header("Human Structures")]
     [SerializeField] private RaceStructures humanStructures;
+
+    [Space(10)]
+    [Header("Elven Structures")]
     [SerializeField] private RaceStructures elvenStructures;
+
+    [Space(10)]
+    [Header("Special Structures")]
+    [SerializeField] private GameObject lycanLair;
 
     //public GameObject[] genericStructures;
     //public GameObject[] cityStructures;
@@ -227,6 +236,14 @@ public class CityGenerator : MonoBehaviour {
             if (currStructure.structureType == structureType) {
                 return currStructure.structureGameObjects;
             }
+        }
+        return null;
+    }
+
+    public GameObject GetStructurePrefabForSpecialStructures(LAIR lairType) {
+        switch (lairType) {
+            case LAIR.LYCAN:
+                return lycanLair;
         }
         return null;
     }

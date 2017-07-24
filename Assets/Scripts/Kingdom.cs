@@ -1959,7 +1959,7 @@ public class Kingdom{
         if(this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) || this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.PEACE)) {
             if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
                 if (UnityEngine.Random.Range(0, 100) < 2) {
-                    if (discoveredKingdoms.Count > 0 && EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR, EVENT_TYPES.KINGS_COUNCIL }).Count <= 0) {
+                    if (discoveredKingdoms.Count > 2 && EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR, EVENT_TYPES.KINGS_COUNCIL }).Count <= 0) {
                         EventCreator.Instance.CreateKingsCouncilEvent(this);
                     }
                 }

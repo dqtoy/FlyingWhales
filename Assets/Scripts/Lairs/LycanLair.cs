@@ -18,9 +18,9 @@ public class LycanLair : Lair {
 	#region Overrides
 	public override void Initialize(){
 		base.Initialize();
-		//Create structure
-
-	}
+        //Create structure
+        this.goStructure = this.hexTile.CreateSpecialStructureOnTile(LAIR.LYCAN);
+    }
 	public override void EverydayAction (){
 		base.EverydayAction ();
 		if(this.daysCounter >= this.spawnRate){
