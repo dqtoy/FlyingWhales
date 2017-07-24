@@ -49,5 +49,6 @@ public class MonsterManager : MonoBehaviour {
 			LycanLair lycanLair = new LycanLair(type, hexTile);
 			return lycanLair;
 		}
+		return null;
 	}
 }
