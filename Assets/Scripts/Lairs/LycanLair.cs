@@ -33,6 +33,7 @@ public class LycanLair : Lair {
 	private void SummonLycan(){
 		AcquireTarget();
 
+		Lycan newLycan = new Lycan(MONSTER.LYCAN, this.hexTile);
 	}
 	private void AcquireTarget(){
 		this.availableTargets.Clear();
