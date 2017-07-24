@@ -92,7 +92,7 @@ public class TraderAvatar : MonoBehaviour {
     }
 
     void OnDestroy() {
-        BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
+		RemoveBehaviourTree();
         this.UnHighlightPath();
         UpdateFogOfWar(true);
     }

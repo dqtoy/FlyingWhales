@@ -232,7 +232,7 @@ public class HealerAvatar : MonoBehaviour {
     }
 
     void OnDestroy() {
-        BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
+		RemoveBehaviourTree();
         UnHighlightPath();
         UpdateFogOfWar(true);
     }
