@@ -358,17 +358,19 @@ public class GeneralAvatar : MonoBehaviour {
 	}
 
     private void FixedUpdate() {
-        if (this.general.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-            gameObject.GetComponent<SpriteRenderer>().enabled = true;
-            SpriteRenderer[] sprites = gameObject.GetComponentsInChildren<SpriteRenderer>();
-            for (int i = 0; i < sprites.Length; i++) {
-                sprites[i].enabled = true;
-            }
-        } else {
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            SpriteRenderer[] sprites = gameObject.GetComponentsInChildren<SpriteRenderer>();
-            for (int i = 0; i < sprites.Length; i++) {
-                sprites[i].enabled = false;
+        if (KingdomManager.Instance.useFogOfWar) {
+            if (this.general.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+                SpriteRenderer[] sprites = gameObject.GetComponentsInChildren<SpriteRenderer>();
+                for (int i = 0; i < sprites.Length; i++) {
+                    sprites[i].enabled = true;
+                }
+            } else {
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                SpriteRenderer[] sprites = gameObject.GetComponentsInChildren<SpriteRenderer>();
+                for (int i = 0; i < sprites.Length; i++) {
+                    sprites[i].enabled = false;
+                }
             }
         }
     }

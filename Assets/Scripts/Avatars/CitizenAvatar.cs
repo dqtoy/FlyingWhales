@@ -177,10 +177,12 @@ public class CitizenAvatar : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-            gameObject.GetComponent<SpriteRenderer>().enabled = true;
-        } else {
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        if (KingdomManager.Instance.useFogOfWar) {
+            if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            } else {
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            }
         }
     }
 

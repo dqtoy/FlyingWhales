@@ -285,10 +285,12 @@ public class ThiefAvatar : MonoBehaviour {
 	}
 
     private void FixedUpdate() {
-        if (this.thief.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-            gameObject.GetComponent<SpriteRenderer>().enabled = true;
-        } else {
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        if (KingdomManager.Instance.useFogOfWar) {
+            if (this.thief.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            } else {
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            }
         }
     }
 

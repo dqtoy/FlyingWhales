@@ -286,10 +286,12 @@ public class ProvokerAvatar : MonoBehaviour {
 	}
 
     private void FixedUpdate() {
-        if (this.provoker.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-            gameObject.GetComponent<SpriteRenderer>().enabled = true;
-        } else {
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        if (KingdomManager.Instance.useFogOfWar) {
+            if (this.provoker.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            } else {
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            }
         }
     }
 
