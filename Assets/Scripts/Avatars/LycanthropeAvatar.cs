@@ -244,10 +244,12 @@ public class LycanthropeAvatar : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        if (this.lycanthrope.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-            gameObject.GetComponent<SpriteRenderer>().enabled = true;
-        } else {
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        if (KingdomManager.Instance.useFogOfWar) {
+            if (this.lycanthrope.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            } else {
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            }
         }
     }
 

@@ -84,10 +84,12 @@ public class TraderAvatar : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        if (this._trader.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-            gameObject.GetComponent<SpriteRenderer>().enabled = true;
-        } else {
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        if (KingdomManager.Instance.useFogOfWar) {
+            if (this._trader.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            } else {
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            }
         }
     }
 
