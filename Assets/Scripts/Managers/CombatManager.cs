@@ -164,8 +164,8 @@ public class CombatManager : MonoBehaviour {
 		city.AdjustHP (-damage);
 
 		if(city.hp <= 0){
-            		//Reset Hextile
-            		city.KillCity();
+            //Reset Hextile
+            city.KillCity();
 		}else{
 			city.RetaliateToMonster(monster.originHextile);
 		}
