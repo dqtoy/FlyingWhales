@@ -165,8 +165,24 @@ public class CombatManager : MonoBehaviour {
 
 		if(city.hp <= 0){
 			//Reset Hextile
+		}else{
+			city.RetaliateToMonster(monster.originHextile);
 		}
 		monster.markAsDead = true;
+	}
+	internal void LairBattle(Lair lair, Role attacker){
+		if(lair == null || lair.isDead){
+			return;
+		}
+		int damage = attacker.damage;
+		if(attacker is General){
+			if(((General)attacker).hasSerumOfAlacrity){
+				damage = damage * 2;
+			}
+		}
+		lair.AdjustHP (-damage);
+
+		attacker.markAsDead = true;
 	}
 	/*internal void GoToBattle(ref List<General> friendlyGenerals, ref General enemyGeneral){
 		List<General> deadFriendlies = new List<General> ();
@@ -464,7 +480,7 @@ public class CombatManager : MonoBehaviour {
 	}
 	internal void BattleMidwayMonster(ref Monster monster, ref Role agent){
 		//MID WAY BATTLE IF supported is not the same
-		Debug.Log("BATTLE MIDWAY!");
+		Debug.Log("BATTLE MIDWAY MONSTER!");
 		int lostHP = 0;
 		int monsterDamage = monster.hp;
 		int agent2Damage = agent.damage;

@@ -127,6 +127,18 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+	internal AttackLair CreateAttackLairEvent(City sourceCity, HexTile targetHextile, List<HexTile> path, GameEvent gameEvent, bool isRebel = false){
+		Citizen citizen = sourceCity.CreateGeneralForLair(path, targetHextile);
+		if(citizen != null){
+			General general = (General)citizen.assignedRole;
+			AttackLair attackLair = new AttackLair(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				citizen, general, targetHextile);
+			general.Initialize (attackLair);
+			general.isRebel = isRebel;
+		}
+		return null;
+	}
+
 	internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
     	Citizen citizen = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
 		if (citizen != null) {
