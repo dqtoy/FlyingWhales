@@ -88,10 +88,17 @@ public class GameEvent {
 	internal virtual void PerformAction(){}
 
 	internal virtual void DoneCitizenAction(Citizen citizen){
-        if (citizen.assignedRole.targetCity == null || citizen.assignedRole.targetCity.isDead) {
-            CancelEvent();
-			return;
-        }
+		if(citizen.assignedRole.targetCity == null){
+			if(citizen.assignedRole.targetLocation.lair == null){
+				CancelEvent();
+				return;
+			}
+		}else{
+			if (citizen.assignedRole.targetCity.isDead) {
+				CancelEvent();
+				return;
+			}
+		}
         CheckIfCitizenIsCarryingPlague(citizen);
     }
 

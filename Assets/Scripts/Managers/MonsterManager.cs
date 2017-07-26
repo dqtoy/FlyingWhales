@@ -9,6 +9,7 @@ public class MonsterManager : MonoBehaviour {
 	public int tileRadiusDetection;
 	public int numberOfLairs;
 	public int minimumLairDistance;
+	public bool activateLairImmediately;
 
 	public List<Lair> allLairs = new List<Lair>();
 
@@ -50,5 +51,22 @@ public class MonsterManager : MonoBehaviour {
 			return lycanLair;
 		}
 		return null;
+	}
+	internal void SummonNewMonster(MONSTER type, HexTile originHextile, HexTile targetHextile){
+		Monster newMonster = null;
+		switch(type){
+		case MONSTER.LYCAN:
+			Lycan newLycan = new Lycan(type, originHextile);
+			newMonster = newLycan;
+			break;
+		}
+
+		if(newMonster != null){
+			newMonster.targetLocation = targetHextile;
+			List<HexTile> path = PathGenerator.Instance.GetPath(originHextile, targetHextile, PATHFINDING_MODE.AVATAR);
+			if(path != null){
+				newMonster.path = path;
+			}
+		}
 	}
 }

@@ -12,6 +12,8 @@ public class Lair {
 	public GameObject goStructure;
 	public List<HexTile> tilesInRadius;
 
+	public bool isDead;
+
 	public Lair(LAIR type, HexTile hexTile){
 		this.type = type;
 		this.hexTile = hexTile;
@@ -19,6 +21,11 @@ public class Lair {
 		this.spawnRate = GetSpawnRate();
 		this.goStructure = null;
 		this.tilesInRadius = this.hexTile.GetTilesInRange(MonsterManager.Instance.tileRadiusDetection);
+		this.isDead = false;
+		AttachLairToHextile();
+		if(MonsterManager.Instance.activateLairImmediately){
+			ActivateLair();
+		}
 	}
 
 	private int GetLairHP(){
@@ -38,13 +45,35 @@ public class Lair {
 	private void ActivateLair(){
 		EventManager.Instance.onWeekEnd.AddListener(EverydayAction);
 	}
-
+	private void AttachLairToHextile(){
+		this.hexTile.isLair = true;
+		this.hexTile.isOccupied = true;
+		this.hexTile.lair = this;
+	}
+	private void DetachLairFromHextile(){
+		this.hexTile.isLair = false;
+		this.hexTile.isOccupied = false;
+		this.hexTile.lair = null;
+	}
 	private void DestroyLair(){
 		if(this.goStructure != null){
 			GameObject.Destroy(this.goStructure);
 			this.goStructure = null;
 		}
+		this.isDead = true;
+		DetachLairFromHextile();
+
+		//Reset Hextile
+
 		EventManager.Instance.onWeekEnd.RemoveListener(EverydayAction);
+	}
+
+	public void AdjustHP(int amount){
+		this.hp += amount;
+		if(this.hp < 0){
+			this.hp = 0;
+			DestroyLair();
+		}
 	}
 
 	#region Virtual

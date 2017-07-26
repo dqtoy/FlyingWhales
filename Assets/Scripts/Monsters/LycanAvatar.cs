@@ -20,21 +20,12 @@ public class LycanAvatar : MonoBehaviour {
 
 	//	public float speed;
 	internal DIRECTION direction;
-	//	void Update(){
-	//		if(this.isMoving){
-	//			if(this.targetPosition != null){
-	//				float step = speed * Time.deltaTime;
-	//				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
-	//				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
-	//					StopMoving ();
-	//				}
-	//			}
-	//		}
-	//	}
+
 	internal void Init(Monster monster){
 		this.monster = monster;
 		this.txtDamage.text = monster.hp.ToString ();
 		this.direction = DIRECTION.LEFT;
+		this.GetComponent<MonsterAvatar> ().monster = this.monster;
 		ResetValues ();
 		this.AddBehaviourTree ();
 	}

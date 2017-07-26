@@ -1136,6 +1136,39 @@ public class City{
 		this.citizens.Remove (citizen);
 		return citizen;
 	}
+	internal Citizen CreateGeneralForLair(List<HexTile> path, HexTile targetLocation){
+		GENDER gender = GENDER.MALE;
+		int randomGender = UnityEngine.Random.Range (0, 100);
+		if(randomGender < 20){
+			gender = GENDER.FEMALE;
+		}
+		int maxGeneration = this.citizens.Max (x => x.generation);
+		Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
+		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+		citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age));
+		citizen.AssignRole (ROLE.GENERAL);
+		citizen.assignedRole.targetLocation = targetLocation;
+		citizen.assignedRole.path = path;
+		citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+
+		General general = (General)citizen.assignedRole;
+		if(kingdom.weaponsCount > 0) {
+			general.AdjustWeaponCount(1);
+			kingdom.AdjustWeaponsCount(-1);
+		}
+		if(citizen.city.kingdom.serumsOfAlacrity > 0){
+			int chance = UnityEngine.Random.Range(0,100);
+			if(chance < 35){
+				citizen.city.kingdom.AdjustSerumOfAlacrity(-1);
+				general.InjectSerumOfAlacrity();
+			}
+		}
+		general.spawnRate = path.Sum (x => x.movementDays) + 2;
+		general.damage = ((General)citizen.assignedRole).GetDamage();
+		//		this._kingdom.AdjustGold (-cost);
+		this.citizens.Remove (citizen);
+		return citizen;
+	}
     internal void ChangeKingdom(Kingdom kingdom) {
         kingdom.AddCityToKingdom(this);
         this._kingdom = kingdom;
@@ -1266,6 +1299,12 @@ public class City{
 		this._hp = Utilities.defaultCityHP;
 	}
 
+	internal void RetaliateToMonster(HexTile targetHextile){
+		List<HexTile> path = PathGenerator.Instance.GetPath(this.hexTile, targetHextile, PATHFINDING_MODE.AVATAR);
+		if(path != null){
+			EventCreator.Instance.CreateAttackLairEvent(this, targetHextile, path, null);
+		}
+	}
 	//private void CollectEventInTile(HexTile hexTile, Citizen citizen = null){
 	//	if(hexTile.gameEventInTile != null){
 	//		if(hexTile.gameEventInTile is BoonOfPower){

@@ -32,8 +32,9 @@ public class LycanLair : Lair {
 
 	private void SummonLycan(){
 		AcquireTarget();
-
-		Lycan newLycan = new Lycan(MONSTER.LYCAN, this.hexTile);
+		if(this._targetHextile != null){
+			MonsterManager.Instance.SummonNewMonster(MONSTER.LYCAN, this.hexTile, this._targetHextile);
+		}
 	}
 	private void AcquireTarget(){
 		this.availableTargets.Clear();
