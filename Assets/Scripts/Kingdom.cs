@@ -34,10 +34,6 @@ public class Kingdom{
 	internal List<Citizen> successionLine;
 	internal List<Citizen> pretenders;
 
-    [NonSerialized] public List<City> intlWarCities;
-    [NonSerialized] public List<City> activeCitiesToAttack;
-	public List<CityWarPair> activeCitiesPairInWar;
-	internal List<City> holderIntlWarCities;
 	internal List<Rebellion> rebellions;
 
 	internal BASE_RESOURCE_TYPE basicResource;
@@ -51,6 +47,8 @@ public class Kingdom{
 	internal List<Kingdom> adjacentKingdoms;
 
 	private List<Kingdom> _discoveredKingdoms;
+
+	private CombatStats _combatStats;
 
 	//Plague
 	internal Plague plague;
@@ -182,6 +180,13 @@ public class Kingdom{
     public FOG_OF_WAR_STATE[,] fogOfWar {
         get { return _fogOfWar; }
     }
+
+	public CombatStats combatStats {
+		get { return this._combatStats; }
+	}
+	public int waves{
+		get { return this._combatStats.waves - GetNumberOfWars();}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -196,10 +201,6 @@ public class Kingdom{
 		this.king = null;
         this.successionLine = new List<Citizen>();
 		this.pretenders = new List<Citizen> ();
-		this.intlWarCities = new List<City>();
-		this.activeCitiesToAttack = new List<City>();
-		this.activeCitiesPairInWar = new List<CityWarPair>();
-		this.holderIntlWarCities = new List<City>();
 		this._cities = new List<City> ();
 		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
@@ -292,8 +293,9 @@ public class Kingdom{
 			//Update Character Values of King and Governors
 			this.UpdateCharacterValuesOfKingsAndGovernors();
         }
-    }
 
+		UpdateCombatStats();
+    }
 	internal int[] GetHoroscope(KINGDOM_TYPE prevKingdomType = KINGDOM_TYPE.NONE){
 		int[] newHoroscope = new int[2];
 
@@ -895,7 +897,7 @@ public class Kingdom{
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (newKing.GetSiblings());
 		UpdateKingSuccession ();
-		this.RetrieveInternationWar();
+//		this.RetrieveInternationWar();
         //		UIManager.Instance.UpdateKingsGrid();
         //		UIManager.Instance.UpdateKingdomSuccession ();
 
@@ -934,7 +936,7 @@ public class Kingdom{
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (newKing.GetSiblings());
 		UpdateKingSuccession ();
-		this.RetrieveInternationWar();
+//		this.RetrieveInternationWar();
 //		UIManager.Instance.UpdateKingsGrid();
 //		UIManager.Instance.UpdateKingdomSuccession ();
 
@@ -1106,15 +1108,15 @@ public class Kingdom{
 //		}
 	}
 
-	internal void PassOnInternationalWar(){
-		this.holderIntlWarCities.Clear();
-		this.holderIntlWarCities.AddRange(this.intlWarCities);
-	}
-	internal void RetrieveInternationWar(){
-		this.intlWarCities.AddRange(this.holderIntlWarCities);
-		this.holderIntlWarCities.Clear();
-	}
-
+//	internal void PassOnInternationalWar(){
+//		this.holderIntlWarCities.Clear();
+//		this.holderIntlWarCities.AddRange(this.intlWarCities);
+//	}
+//	internal void RetrieveInternationWar(){
+//		this.intlWarCities.AddRange(this.holderIntlWarCities);
+//		this.holderIntlWarCities.Clear();
+//	}
+//
 	internal City SearchForCityById(int id){
 		for(int i = 0; i < this.cities.Count; i++){
 			if(this.cities[i].id == id){
@@ -1166,21 +1168,21 @@ public class Kingdom{
 		}
 
 	}
-	internal void AddInternationalWarCity(City newCity){
-		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
-			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
-				if(!this.relationshipsWithOtherKingdoms[i].targetKingdom.intlWarCities.Contains(newCity)){
-					this.relationshipsWithOtherKingdoms [i].targetKingdom.intlWarCities.Add (newCity);
-				}
-			}
-		}
+//	internal void AddInternationalWarCity(City newCity){
+//		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
+//			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+//				if(!this.relationshipsWithOtherKingdoms[i].targetKingdom.intlWarCities.Contains(newCity)){
+//					this.relationshipsWithOtherKingdoms [i].targetKingdom.intlWarCities.Add (newCity);
+//				}
+//			}
+//		}
 //		if(this.IsKingdomHasWar()){
 //			if(!this.king.campaignManager.SearchForDefenseWarCities(newCity, WAR_TYPE.INTERNATIONAL)){
 //				this.king.campaignManager.defenseWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
 //			}
 //		}
 
-	}
+//	}
 	internal bool IsKingdomHasWar(){
 		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
 			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
@@ -2012,4 +2014,20 @@ public class Kingdom{
 		boonOfPower.AddOwnership (this);
 	}
 	#endregion
+
+	private int GetNumberOfWars(){
+		int numOfWars = 0;
+		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
+			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+				numOfWars += 1;
+			}
+		}
+		return numOfWars;
+	}
+
+	private void UpdateCombatStats(){
+		this._combatStats = this._kingdomTypeData.combatStats;
+		this._combatStats.waves = this._kingdomTypeData.combatStats.waves - GetNumberOfWars();
+
+	}
 }

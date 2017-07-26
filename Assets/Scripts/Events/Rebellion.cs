@@ -15,6 +15,12 @@ public class Rebellion : GameEvent {
 	internal int attackRate;
 	private bool isInitialAttack;
 
+	private int kingdom1Waves;
+	private int kingdom2Waves;
+
+	public int rebelWaves{
+		get {return 3 + this.conqueredCities.Count;}
+	}
 	public Rebellion(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.REBELLION;
 		this.name = "Rebellion";
@@ -30,6 +36,8 @@ public class Rebellion : GameEvent {
 		startedBy.SetImmortality (true);
 		City cityWhereRebelFortIsCreated = startedBy.city;
 		CreateRebelFort ();
+		this.ReplenishWavesKingdom1();
+		this.ReplenishWavesKingdom2();
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		Debug.LogError (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);
@@ -207,14 +215,22 @@ public class Rebellion : GameEvent {
 		}
 		this.attackRate = 0;
 		if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
-			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, this, true);
-			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path, this);
-			Reinforcement ();
+			if(this.kingdom1Waves > 0){
+				this.kingdom1Waves -= 1;
+				this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, this, true);
+				ReinforcementKingdom2();
+			}else if (this.kingdom2Waves > 0){
+				this.kingdom2Waves -= 1;
+				this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path, this);
+				ReinforcementKingdom1();
+			}else{
+				this.ReplenishWavesKingdom1();
+				this.ReplenishWavesKingdom2();
+			}
 		}
 	}
-	private void Reinforcement(){
+	private void ReinforcementKingdom1(){
 		List<City> safeCitiesKingdom1 = this.conqueredCities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList (); 
-		List<City> safeCitiesKingdom2 = this.targetKingdom.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100 && x.rebellion == null).ToList ();
 		int chance = 0;
 		int value = 0;
 		if(safeCitiesKingdom1 != null){
@@ -227,6 +243,11 @@ public class Rebellion : GameEvent {
 				}
 			}
 		}
+	}
+	private void ReinforcementKingdom2(){
+		List<City> safeCitiesKingdom2 = this.targetKingdom.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100 && x.rebellion == null).ToList ();
+		int chance = 0;
+		int value = 0;
 		if(safeCitiesKingdom2 != null){
 			for(int i = 0; i < safeCitiesKingdom2.Count; i++){
 				chance = UnityEngine.Random.Range (0, 100);
@@ -249,5 +270,11 @@ public class Rebellion : GameEvent {
 		for (int i = 0; i < newKingdom.cities.Count; i++) {
 			newKingdom.cities[i].ChangeToCity ();
 		}
+	}
+	private void ReplenishWavesKingdom1(){
+		this.kingdom1Waves = this.rebelWaves;
+	}
+	private void ReplenishWavesKingdom2(){
+		this.kingdom2Waves = this.targetKingdom.combatStats.waves;
 	}
 }

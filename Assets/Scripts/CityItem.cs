@@ -31,7 +31,11 @@ public class CityItem : MonoBehaviour {
         _hpLbl.text = city.hp.ToString();
         _structuresLbl.text = city.ownedTiles.Count.ToString();
         _cityLbl.text = city.name;
-        _hpProgBar.value = (float)city.hp / (float)city.maxHP;
+		float hpValue = (float)city.hp / (float)city.maxHP;
+		if(hpValue > 1f){
+			hpValue = 1f;
+		}
+        _hpProgBar.value = hpValue;
         _growthProgBar.value = (float)city.currentGrowth / (float)city.maxGrowth;
 
         if (showLoyalty) {

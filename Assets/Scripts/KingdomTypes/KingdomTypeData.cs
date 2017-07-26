@@ -61,6 +61,9 @@ public class KingdomTypeData : MonoBehaviour {
 	private CharacterValue[] _characterValues;
 
 	[SerializeField]
+	private CombatStats _combatStats;
+
+	[SerializeField]
 	private int _tradeRouteCap; // number of active trade routes that this kingdom is involved with
 
 	[SerializeField]
@@ -129,6 +132,12 @@ public class KingdomTypeData : MonoBehaviour {
 	public CharacterValue[] characterValues {
 		get { 
 			return this._characterValues;
+		}
+	}
+
+	public CombatStats combatStats {
+		get { 
+			return this._combatStats;
 		}
 	}
 

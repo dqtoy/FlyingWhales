@@ -93,17 +93,25 @@ public class General : Role {
 	}
 
 	internal int GetDamage(){
-		int baseDamage = UnityEngine.Random.Range (50, 81) + (_weaponCount * 100);
-		int cityDamage = (6 + this.citizen.city.kingdom.techLevel) * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
-		int otherCityTileCount = 0;
-		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
-			if(this.citizen.city.kingdom.cities[i].id != this.citizen.city.id){
-				otherCityTileCount += this.citizen.city.kingdom.cities [i].ownedTiles.Count;
-			}
-		}
-		int otherCityDamage = 1 * otherCityTileCount;
-		int spawnRateDamage = Mathf.CeilToInt((float)this.spawnRate / 6f);
-		return (baseDamage + cityDamage + otherCityDamage) * spawnRateDamage;
+//		int baseDamage = UnityEngine.Random.Range (50, 81) + (_weaponCount * 100);
+//		int cityDamage = (6 + this.citizen.city.kingdom.techLevel) * (UnityEngine.Random.Range (0, this.citizen.city.ownedTiles.Count));
+//		int otherCityTileCount = 0;
+//		for (int i = 0; i < this.citizen.city.kingdom.cities.Count; i++) {
+//			if(this.citizen.city.kingdom.cities[i].id != this.citizen.city.id){
+//				otherCityTileCount += this.citizen.city.kingdom.cities [i].ownedTiles.Count;
+//			}
+//		}
+//		int otherCityDamage = 1 * otherCityTileCount;
+//		int spawnRateDamage = Mathf.CeilToInt((float)this.spawnRate / 6f);
+//		return (baseDamage + cityDamage + otherCityDamage) * spawnRateDamage;
+
+		int baseDamage = UnityEngine.Random.Range (80, 131) + (_weaponCount * 100);
+		int damageBuffer1 = 20 * this.citizen.city.kingdom.techLevel;
+		int damageBuffer2 = 5 + this.citizen.city.kingdom.techLevel;
+
+		int cityDamage = UnityEngine.Random.Range(0, this.citizen.city.kingdom.nonRebellingCities.Count);
+
+		return (baseDamage + damageBuffer1 + damageBuffer2) * cityDamage;
 	}
 
     #region Weapons

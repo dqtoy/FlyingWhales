@@ -20,6 +20,9 @@ public class War : GameEvent {
 
 	internal GameEvent gameEventTrigger;
 
+	private int kingdom1Waves;
+	private int kingdom2Waves;
+
 	#region getters/setters
 	public Kingdom kingdom1 {
 		get { return _kingdom1; }
@@ -105,7 +108,10 @@ public class War : GameEvent {
 			}
 			this.isInitialAttack = true;
 //            EventManager.Instance.onWeekEnd.AddListener(AttemptToRequestPeace);
+			this.ReplenishWavesKingdom1();
+			this.ReplenishWavesKingdom2();
 			EventManager.Instance.onWeekEnd.AddListener (this.PerformAction);
+
 		}
 	}
 
@@ -267,8 +273,22 @@ public class War : GameEvent {
 		}
 		this.attackRate = 0;
 		if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
-			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, this);
-			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path, this);
+			if(this.kingdom1Waves > 0){
+				this.kingdom1Waves -= 1;
+				this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, this);
+				ReinforcementKingdom2();
+			}else if(this.kingdom2Waves > 0){
+				this.kingdom2Waves -= 1;
+				this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path, this);
+				ReinforcementKingdom1();
+			}else{
+				this.ReplenishWavesKingdom1();
+				this.ReplenishWavesKingdom2();
+				if(this.kingdom1Waves <= 0 && this.kingdom2Waves <= 0){
+					//Peace 100% - kingdom1 will request peace while kingdom2 will accept peace 100%
+
+				}
+			}
 //				if(!this.kingdom1Attacked){
 //					this.kingdom1Attacked = true;
 //					this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path);
@@ -276,16 +296,15 @@ public class War : GameEvent {
 //					this.kingdom1Attacked = false;
 //					this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
 //				}
-			Reinforcement ();
+//			Reinforcement ();
 		}
 	}
-	private void Reinforcement(){
+	private void ReinforcementKingdom1(){
 		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList (); 
-		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
 		int chance = 0;
 		int value = 0;
 		int maxChanceKingdom1 = 100 + ((safeCitiesKingdom1.Count - 1) * 10);
-		int maxChanceKingdom2 = 100 + ((safeCitiesKingdom2.Count - 1) * 10);
+
 		if(this.warPair.kingdom1City.hp != this.warPair.kingdom1City.maxHP){
 			if(safeCitiesKingdom1 != null){
 				for(int i = 0; i < safeCitiesKingdom1.Count; i++){
@@ -298,7 +317,12 @@ public class War : GameEvent {
 				}
 			}
 		}
-
+	}
+	private void ReinforcementKingdom2(){
+		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+		int chance = 0;
+		int value = 0;
+		int maxChanceKingdom2 = 100 + ((safeCitiesKingdom2.Count - 1) * 10);
 
 		if(this.warPair.kingdom2City.hp != this.warPair.kingdom2City.maxHP){
 			if(safeCitiesKingdom2 != null){
@@ -358,5 +382,12 @@ public class War : GameEvent {
 
 	internal void GameEventTriggerWarResults(){
 		this.gameEventTrigger = null;
+	}
+
+	private void ReplenishWavesKingdom1(){
+		this.kingdom1Waves = this.kingdom1.combatStats.waves;
+	}
+	private void ReplenishWavesKingdom2(){
+		this.kingdom2Waves = this.kingdom2.combatStats.waves;
 	}
 }
