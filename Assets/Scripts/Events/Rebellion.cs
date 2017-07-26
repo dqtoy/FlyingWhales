@@ -198,6 +198,8 @@ public class Rebellion : GameEvent {
 		this.attackRate += 1;
 		if(this.warPair.isDone){
 			UpdateWarPair ();
+			this.ReplenishWavesKingdom1();
+			this.ReplenishWavesKingdom2();
 			if(this.warPair.path == null){
 				return;
 			}

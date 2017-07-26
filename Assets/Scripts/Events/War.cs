@@ -256,6 +256,8 @@ public class War : GameEvent {
 		this.attackRate += 1;
 		if((this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead) || (this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead) || this.warPair.isDone){
 			UpdateWarPair ();
+			this.ReplenishWavesKingdom1();
+			this.ReplenishWavesKingdom2();
 			if(this.warPair.path == null){
 				return;
 			}
