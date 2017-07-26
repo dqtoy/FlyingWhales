@@ -63,7 +63,8 @@ public class Lair {
 		this.isDead = true;
 		DetachLairFromHextile();
 
-		//Reset Hextile
+        //Reset Hextile
+        this.hexTile.ResetTile();
 
 		EventManager.Instance.onWeekEnd.RemoveListener(EverydayAction);
 		MonsterManager.Instance.RemoveFromLairList(this);
