@@ -38,7 +38,7 @@ public class GeneralAvatar : MonoBehaviour {
 		this.txtDamage.text = general.damage.ToString ();
 		this.direction = DIRECTION.LEFT;
 		this.GetComponent<Avatar> ().kingdom = this.general.citizen.city.kingdom;
-		this.GetComponent<Avatar> ().gameEvent = this.general.attackCity;
+		this.GetComponent<Avatar> ().gameEvent = this.general.gameEvent;
 		this.GetComponent<Avatar> ().citizen = this.general.citizen;
         visibleTiles = new List<HexTile>();
 
@@ -226,7 +226,7 @@ public class GeneralAvatar : MonoBehaviour {
 						General otherGeneral = (General)this.hostile.assignedRole;
 						CombatManager.Instance.BattleMidway (ref this.general, ref otherGeneral);
 						if(this.general.markAsDead){
-							this.general.attackCity.DeathByAgent (otherGeneral.citizen);
+							this.general.gameEvent.DeathByAgent (otherGeneral.citizen);
 						}else{
 							this.general.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
 						}
@@ -257,7 +257,7 @@ public class GeneralAvatar : MonoBehaviour {
 	public void HasDiedOfOtherReasons(){
 		if (this.general.citizen.isDead) {
 			//Citizen has died
-			this.general.attackCity.DeathByOtherReasons ();
+			this.general.gameEvent.DeathByOtherReasons ();
 			Task.current.Succeed();
 		}else {
 			Task.current.Fail ();
@@ -347,7 +347,7 @@ public class GeneralAvatar : MonoBehaviour {
 
 	void OnMouseEnter(){
 		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.general.attackCity.name);
+			UIManager.Instance.ShowSmallInfo (this.general.gameEvent.name);
 			this.HighlightPath ();
 		}
 	}
@@ -394,7 +394,7 @@ public class GeneralAvatar : MonoBehaviour {
     }
 
 	public void OnEndAttack(){
-		this.general.attackCity.DoneCitizenAction(this.general.citizen);
+		this.general.gameEvent.DoneCitizenAction(this.general.citizen);
 	}
 
 	internal void HasAttacked(){
