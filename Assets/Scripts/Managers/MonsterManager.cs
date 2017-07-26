@@ -41,6 +41,9 @@ public class MonsterManager : MonoBehaviour {
 	internal void AddToLairList(Lair lair){
 		this.allLairs.Add(lair);
 	}
+	internal void RemoveFromLairList(Lair lair){
+		this.allLairs.Remove(lair);
+	}
 	internal LAIR GetRandomLairType(){
 		return (LAIR)(UnityEngine.Random.Range (0, System.Enum.GetNames (typeof(LAIR)).Length));
 	}

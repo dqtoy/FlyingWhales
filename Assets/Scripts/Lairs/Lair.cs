@@ -66,6 +66,7 @@ public class Lair {
 		//Reset Hextile
 
 		EventManager.Instance.onWeekEnd.RemoveListener(EverydayAction);
+		MonsterManager.Instance.RemoveFromLairList(this);
 	}
 
 	public void AdjustHP(int amount){
