@@ -164,7 +164,8 @@ public class CombatManager : MonoBehaviour {
 		city.AdjustHP (-damage);
 
 		if(city.hp <= 0){
-			//Reset Hextile
+            //Reset Hextile
+            city.KillCity();
 		}
 		monster.markAsDead = true;
 	}
