@@ -41,7 +41,7 @@ public class WorldEventManager : MonoBehaviour {
 			List<HexTile> filteredHextile = new List<HexTile> ();
 			for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 				HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
-				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER){
+				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE){
 					filteredHextile.Add (hexTile);
 				}
 			}
@@ -70,7 +70,7 @@ public class WorldEventManager : MonoBehaviour {
 			List<HexTile> filteredHextile = new List<HexTile> ();
 			for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 				HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
-				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER){
+				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE){
 					filteredHextile.Add (hexTile);
 				}
 			}
