@@ -100,7 +100,7 @@ public class CityGenerator : MonoBehaviour {
 		this.lairHabitableTiles = new List<HexTile>();
 		for (int i = 0; i < allHexes.Count; i++) {
 			HexTile currentHexTile = allHexes [i].GetComponent<HexTile>();
-			if(currentHexTile.isOccupied || currentHexTile.isHabitable || currentHexTile.elevationType == ELEVATION.WATER || currentHexTile.elevationType == ELEVATION.MOUNTAIN || currentHexTile.specialResource == RESOURCE.NONE || currentHexTile.gameEventInTile != null){
+			if(currentHexTile.isOccupied || currentHexTile.isHabitable || currentHexTile.elevationType == ELEVATION.WATER || currentHexTile.elevationType == ELEVATION.MOUNTAIN || currentHexTile.specialResource != RESOURCE.NONE || currentHexTile.gameEventInTile != null){
 				continue;
 			}
 			SetTileAsLairHabitable(currentHexTile);
