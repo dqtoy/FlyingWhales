@@ -109,7 +109,7 @@ public class General : Role {
 		int damageBuffer1 = 20 * this.citizen.city.kingdom.techLevel;
 		int damageBuffer2 = 5 + this.citizen.city.kingdom.techLevel;
 
-		int cityDamage = UnityEngine.Random.Range(0, this.citizen.city.kingdom.nonRebellingCities.Count);
+		int cityDamage = UnityEngine.Random.Range(0, this.citizen.city.kingdom.nonRebellingCities.Count + 1);
 
 		return (baseDamage + damageBuffer1 + damageBuffer2) * cityDamage;
 	}

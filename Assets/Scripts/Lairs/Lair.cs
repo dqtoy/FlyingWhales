@@ -38,7 +38,7 @@ public class Lair {
 	private int GetSpawnRate(){
 		switch (this.type){
 		case LAIR.LYCAN:
-			return 15;
+			return 30;
 		}
 		return 0;
 	}
