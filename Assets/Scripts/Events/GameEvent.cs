@@ -168,9 +168,9 @@ public class GameEvent {
         this.endMonth = GameManager.Instance.month;
         this.endDay = GameManager.Instance.days;
         this.endYear = GameManager.Instance.year;
-		if(this.goEventItem != null){
-			this.goEventItem.GetComponent<EventItem> ().HasExpired ();
-		}
+//		if(this.goEventItem != null){
+//			this.goEventItem.GetComponent<EventItem> ().HasExpired ();
+//		}
     }
 	internal virtual void DeathByOtherReasons(){}
 	internal virtual void DeathByAgent(Citizen citizen, Citizen deadCitizen){}
