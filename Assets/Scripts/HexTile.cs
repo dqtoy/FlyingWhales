@@ -548,7 +548,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     }
                     break;
                 case FOG_OF_WAR_STATE.HIDDEN:
-                    newColor.a = 230f / 255f;
+                    newColor.a = 255f / 255f;
                     if (isHabitable && isOccupied) {
                         HideNamePlate();
                     }
