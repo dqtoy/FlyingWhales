@@ -17,7 +17,7 @@ public class Adventurer : Role {
     }
 
     internal override void Initialize(GameEvent gameEvent) {
-        if (gameEvent is Raid) {
+        if (gameEvent is Adventure) {
             base.Initialize(gameEvent);
             this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Adventurer"), this.citizen.city.hexTile.transform) as GameObject;
             this.avatar.transform.localPosition = Vector3.zero;

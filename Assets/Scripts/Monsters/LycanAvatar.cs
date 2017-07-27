@@ -137,7 +137,17 @@ public class LycanAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-	void HighlightPath(){
+    private void Update() {
+        if (KingdomManager.Instance.useFogOfWar) {
+            if (monster.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+                gameObject.SetActive(true);
+            } else {
+                gameObject.SetActive(false);
+            }
+        }
+    }
+
+    void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
 		for (int i = 0; i < this.monster.path.Count; i++) {
 			this.monster.path [i].highlightGO.SetActive (true);

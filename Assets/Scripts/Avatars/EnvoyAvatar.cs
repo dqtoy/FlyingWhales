@@ -227,19 +227,24 @@ public class EnvoyAvatar : MonoBehaviour {
     }
 
     private void CheckForKingdomDiscovery() {
-        HexTile currentLocation = this.envoy.location;
-        if (currentLocation.isOccupied && currentLocation.ownedByCity != null &&
-            currentLocation.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
-            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
-            Kingdom otherKingdom = currentLocation.ownedByCity.kingdom;
-            thisKingdom.DiscoverKingdom(otherKingdom);
-            otherKingdom.DiscoverKingdom(thisKingdom);
-        }else if (currentLocation.isBorder) {
-            Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
-            Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currentLocation.isBorderOfCityID).kingdom;
-            if(otherKingdom.id != this.envoy.citizen.city.kingdom.id) {
+        List<HexTile> tilesToCheck = new List<HexTile>();
+        tilesToCheck.Add(this.envoy.location);
+        tilesToCheck.AddRange(visibleTiles);
+        for (int i = 0; i < tilesToCheck.Count; i++) {
+            HexTile currTile = tilesToCheck[i];
+            if (currTile.isOccupied && currTile.ownedByCity != null &&
+                currTile.ownedByCity.kingdom.id != this.envoy.citizen.city.kingdom.id) {
+                Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+                Kingdom otherKingdom = currTile.ownedByCity.kingdom;
                 thisKingdom.DiscoverKingdom(otherKingdom);
                 otherKingdom.DiscoverKingdom(thisKingdom);
+            } else if (currTile.isBorder) {
+                Kingdom thisKingdom = this.envoy.citizen.city.kingdom;
+                Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currTile.isBorderOfCityID).kingdom;
+                if (otherKingdom.id != this.envoy.citizen.city.kingdom.id) {
+                    thisKingdom.DiscoverKingdom(otherKingdom);
+                    otherKingdom.DiscoverKingdom(thisKingdom);
+                }
             }
         }
     }
@@ -283,7 +288,7 @@ public class EnvoyAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-    private void FixedUpdate() {
+    private void Update() {
         if (KingdomManager.Instance.useFogOfWar) {
             if (this.envoy.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
                 gameObject.GetComponent<SpriteRenderer>().enabled = true;

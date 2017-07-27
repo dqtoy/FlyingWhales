@@ -14,6 +14,7 @@ public class KingdomFlagItem : MonoBehaviour {
 	[SerializeField] private UI2DSprite _kingdomColorSprite;
     [SerializeField] private TweenPosition _tweenPos;
     [SerializeField] private UIGrid eventsGrid;
+    [SerializeField] private GameObject deathIcon;
 	private bool isHovering = false;
 
 	internal void SetKingdom(Kingdom kingdom){
@@ -81,6 +82,13 @@ public class KingdomFlagItem : MonoBehaviour {
     void Update() {
         if (this.isHovering) {
             UIManager.Instance.ShowSmallInfo("[b]" + this.kingdom.name + "[/b]");
+        }
+        if(kingdom != null) {
+            if (kingdom.isDead) {
+                deathIcon.SetActive(true);
+            } else {
+                deathIcon.SetActive(false);
+            }
         }
     }
     #endregion

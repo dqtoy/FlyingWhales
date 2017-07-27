@@ -15,11 +15,13 @@ public class AdventurerAvatar : CitizenAvatar {
                     this.citizenRole.location = this.citizenRole.path[0];
                     this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
                     this.citizenRole.path.RemoveAt(0);
-                    if (this.citizenRole is Adventurer) {
-                        GetNextTargetTile();
-                    }
-                    this.UpdateFogOfWar();
                     this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
+                    for (int i = 0; i < this.citizenRole.location.AllNeighbours.Count(); i++) {
+                        HexTile currNeighbour = this.citizenRole.location.AllNeighbours.ElementAt(i);
+                        currNeighbour.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
+                    }
+                    this.GetNextTargetTile();
+                    this.UpdateFogOfWar();
                     this.CheckForKingdomDiscovery();
                 }
             }

@@ -81,8 +81,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [Space(10)]
     [Header("Fog Of War Objects")]
-    [SerializeField] private GameObject plagueIconGO;
+    
     [SerializeField] private FOG_OF_WAR_STATE _currFogOfWarState;
+
+    [Space(10)]
+    [Header("Game Event Objects")]
+    [SerializeField] private GameObject plagueIconGO;
+    [SerializeField] private GameObject gameEventObjectsParentGO;
+
 
     private GameEvent _gameEventInTile;
     private Transform _cityInfoParent;
@@ -537,6 +543,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     if (isOccupied) {
                         ShowStructures();
                     }
+                    gameEventObjectsParentGO.SetActive(true);
+                    UIParent.gameObject.SetActive(true);
                     break;
                 case FOG_OF_WAR_STATE.SEEN:
                     newColor.a = 128f / 255f;
@@ -546,6 +554,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     if (isOccupied) {
                         HideStructures();
                     }
+                    gameEventObjectsParentGO.SetActive(false);
+                    UIParent.gameObject.SetActive(false);
                     break;
                 case FOG_OF_WAR_STATE.HIDDEN:
                     newColor.a = 255f / 255f;
@@ -555,6 +565,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     if (isOccupied) {
                         HideStructures();
                     }
+                    gameEventObjectsParentGO.SetActive(false);
+                    UIParent.gameObject.SetActive(false);
                     break;
                 default:
                     break;
@@ -851,7 +863,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	internal void PutEventOnTile(GameEvent gameEvent){
 		if(this._gameEventInTile == null){
 			this._gameEventInTile = gameEvent;
-		}
+            if(gameEvent is FirstAndKeystone) {
+                ((FirstAndKeystone)gameEvent).avatar = GameObject.Instantiate(Resources.Load("GameObjects/Keystone"), gameEventObjectsParentGO.transform) as GameObject;
+                ((FirstAndKeystone)gameEvent).avatar.transform.localPosition = Vector3.zero;
+            } else if(gameEvent is BoonOfPower) {
+                ((BoonOfPower)gameEvent).avatar = GameObject.Instantiate(Resources.Load("GameObjects/BoonOfPower"), gameEventObjectsParentGO.transform) as GameObject;
+                ((BoonOfPower)gameEvent).avatar.transform.localPosition = Vector3.zero;
+                ((BoonOfPower)gameEvent).avatar.GetComponent<BoonOfPowerAvatar>().Init((BoonOfPower)gameEvent);
+            } else if (gameEvent is AltarOfBlessing) {
+                ((AltarOfBlessing)gameEvent).avatar = GameObject.Instantiate(Resources.Load("GameObjects/AltarOfBlessing"), gameEventObjectsParentGO.transform) as GameObject;
+                ((AltarOfBlessing)gameEvent).avatar.transform.localPosition = Vector3.zero;
+                ((AltarOfBlessing)gameEvent).avatar.GetComponent<AltarOfBlessingAvatar>().Init((AltarOfBlessing)gameEvent);
+            }
+        }
 	}
 	internal void RemoveEventOnTile(){
 		this._gameEventInTile = null;

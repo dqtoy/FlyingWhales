@@ -86,8 +86,8 @@ public class FirstAndKeystone : GameEvent {
     #endregion
 	private void Initialize(){
 		this.hexTileSpawnPoint.PutEventOnTile (this);
-		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Keystone"), this.hexTileSpawnPoint.transform) as GameObject;
-		this.avatar.transform.localPosition = Vector3.zero;
+		//this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Keystone"), this.hexTileSpawnPoint.transform) as GameObject;
+		//this.avatar.transform.localPosition = Vector3.zero;
 //		this.avatar.GetComponent<BoonOfPowerAvatar>().Init(this);
 	}
 	internal void ChangeKeystoneOwnership(Kingdom kingdom){
