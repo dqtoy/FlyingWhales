@@ -2015,7 +2015,7 @@ public class Kingdom{
 	}
 	#endregion
 
-	private int GetNumberOfWars(){
+	internal int GetNumberOfWars(){
 		int numOfWars = 0;
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
 			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
