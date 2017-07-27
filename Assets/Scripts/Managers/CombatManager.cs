@@ -18,6 +18,10 @@ public class CombatManager : MonoBehaviour {
 		if(generalAttacker.hasSerumOfAlacrity){
 			damage = damage * 2;
 		}
+		int chance = UnityEngine.Random.Range(0,100);
+		if(chance < generalAttacker.citizen.city.kingdom.combatStats.criticalChance){
+			damage = damage * 2;
+		}
 		city.AdjustHP (-damage);
 
 		if(city.hp <= 0){
@@ -413,9 +417,17 @@ public class CombatManager : MonoBehaviour {
 			if(((General)agent1).hasSerumOfAlacrity){
 				agent1Damage = agent1Damage * 2;
 			}
+			int chance = UnityEngine.Random.Range(0,100);
+			if(chance < agent1.citizen.city.kingdom.combatStats.criticalChance){
+				agent1Damage = agent1Damage * 2;
+			}
 		}
 		if(agent2 is General){
 			if(((General)agent2).hasSerumOfAlacrity){
+				agent2Damage = agent2Damage * 2;
+			}
+			int chance = UnityEngine.Random.Range(0,100);
+			if(chance < agent2.citizen.city.kingdom.combatStats.criticalChance){
 				agent2Damage = agent2Damage * 2;
 			}
 		}
@@ -493,6 +505,10 @@ public class CombatManager : MonoBehaviour {
 //		}
 		if(agent is General){
 			if(((General)agent).hasSerumOfAlacrity){
+				agent2Damage = agent2Damage * 2;
+			}
+			int chance = UnityEngine.Random.Range(0,100);
+			if(chance < agent.citizen.city.kingdom.combatStats.criticalChance){
 				agent2Damage = agent2Damage * 2;
 			}
 		}

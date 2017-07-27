@@ -2027,7 +2027,6 @@ public class Kingdom{
 
 	private void UpdateCombatStats(){
 		this._combatStats = this._kingdomTypeData.combatStats;
-		this._combatStats.waves = this._kingdomTypeData.combatStats.waves - GetNumberOfWars();
-
+		this._combatStats.waves = this._kingdomTypeData.combatStats.waves - ((GetNumberOfWars() + 1) + this.rebellions.Count);
 	}
 }
