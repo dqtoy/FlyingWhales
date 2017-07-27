@@ -153,19 +153,24 @@ public class HealerAvatar : MonoBehaviour {
     }
 
     private void CheckForKingdomDiscovery() {
-        HexTile currentLocation = this.healer.location;
-        if (currentLocation.isOccupied && currentLocation.ownedByCity != null &&
-            currentLocation.ownedByCity.kingdom.id != this.healer.citizen.city.kingdom.id) {
-            Kingdom thisKingdom = this.healer.citizen.city.kingdom;
-            Kingdom otherKingdom = currentLocation.ownedByCity.kingdom;
-            thisKingdom.DiscoverKingdom(otherKingdom);
-            otherKingdom.DiscoverKingdom(thisKingdom);
-        } else if (currentLocation.isBorder) {
-            Kingdom thisKingdom = this.healer.citizen.city.kingdom;
-            Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currentLocation.isBorderOfCityID).kingdom;
-            if (otherKingdom.id != this.healer.citizen.city.kingdom.id) {
+        List<HexTile> tilesToCheck = new List<HexTile>();
+        tilesToCheck.Add(this.healer.location);
+        tilesToCheck.AddRange(visibleTiles);
+        for (int i = 0; i < tilesToCheck.Count; i++) {
+            HexTile currTile = tilesToCheck[i];
+            if (currTile.isOccupied && currTile.ownedByCity != null &&
+                currTile.ownedByCity.kingdom.id != this.healer.citizen.city.kingdom.id) {
+                Kingdom thisKingdom = this.healer.citizen.city.kingdom;
+                Kingdom otherKingdom = currTile.ownedByCity.kingdom;
                 thisKingdom.DiscoverKingdom(otherKingdom);
                 otherKingdom.DiscoverKingdom(thisKingdom);
+            } else if (currTile.isBorder) {
+                Kingdom thisKingdom = this.healer.citizen.city.kingdom;
+                Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currTile.isBorderOfCityID).kingdom;
+                if (otherKingdom.id != this.healer.citizen.city.kingdom.id) {
+                    thisKingdom.DiscoverKingdom(otherKingdom);
+                    otherKingdom.DiscoverKingdom(thisKingdom);
+                }
             }
         }
     }

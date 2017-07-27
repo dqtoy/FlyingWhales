@@ -278,14 +278,19 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private int TOOLTIP_FONT_SIZE = 18;
     [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
+    private const int KINGDOM_EXPIRY_DAYS = 30;
+
+    private Dictionary<DateTime, Kingdom> kingdomDisplayExpiry;
+
     void Awake(){
 		Instance = this;
     }
 
 	void Start(){
+        EventManager.Instance.onWeekEnd.AddListener(CheckForKingdomExpire);
         EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
         EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
-        EventManager.Instance.onKingdomDiedEvent.AddListener(RemoveKingdomFromList);
+        EventManager.Instance.onKingdomDiedEvent.AddListener(QueueKingdomForRemoval);
         NormalizeFontSizes();
         LoadKingdomList();
         UpdateUI();
@@ -442,6 +447,25 @@ public class UIManager : MonoBehaviour {
             currentlyShowingKingdom = null;
         }
         LoadKingdomList();
+    }
+
+    private void QueueKingdomForRemoval(Kingdom kingdomToQueue) {
+        if(kingdomDisplayExpiry == null) {
+            kingdomDisplayExpiry = new Dictionary<DateTime, Kingdom>();
+        }
+        kingdomDisplayExpiry.Add(Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, KINGDOM_EXPIRY_DAYS), kingdomToQueue);
+    }
+
+    private void CheckForKingdomExpire() {
+        if(kingdomDisplayExpiry != null) {
+            for (int i = 0; i < kingdomDisplayExpiry.Count; i++) {
+                KeyValuePair<DateTime, Kingdom> currPair = kingdomDisplayExpiry.ElementAt(i);
+                DateTime currExpiryDate = currPair.Key;
+                if (currExpiryDate.Year == GameManager.Instance.year && currExpiryDate.Month == GameManager.Instance.month && currExpiryDate.Day == GameManager.Instance.days) {
+                    RemoveKingdomFromList(currPair.Value);
+                }
+            }
+        }
     }
 
     private void RemoveKingdomFromList(Kingdom kingdomToRemove) {

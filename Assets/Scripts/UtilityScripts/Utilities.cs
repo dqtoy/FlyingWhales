@@ -1007,9 +1007,24 @@ public class Utilities : MonoBehaviour {
 	}
 
 	public static DateTime GetNewDateAfterNumberOfDays(int month, int day, int year, int numOfDaysElapsed){
-		DateTime inputDate = new DateTime (year, month, day);
-		inputDate = inputDate.AddDays (numOfDaysElapsed);
-		return inputDate;
+        int newDay = day;
+        int newMonth = month;
+        int newYear = year;
+
+        for (int i = 0; i < numOfDaysElapsed; i++) {
+            newDay += 1;
+            if (newDay > GameManager.daysInMonth[newMonth]) {
+                newDay = 1;
+                newMonth += 1;
+                if (newMonth > 12) {
+                    newMonth = 1;
+                    newYear += 1;
+                }
+            }
+        }
+		DateTime newDate = new DateTime (newYear, newMonth, newDay);
+		//inputDate = inputDate.AddDays (numOfDaysElapsed);
+		return newDate;
 	}
 	public static string[] SplitAndKeepDelimiters(string s, params char[] delimiters){
 		var parts = new List<string>();

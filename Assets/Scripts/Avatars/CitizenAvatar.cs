@@ -64,19 +64,24 @@ public class CitizenAvatar : MonoBehaviour {
 
     
     internal void CheckForKingdomDiscovery() {
-        HexTile currentLocation = this.citizenRole.location;
-        if (currentLocation.isOccupied && currentLocation.ownedByCity != null &&
-            currentLocation.ownedByCity.kingdom.id != this.citizenRole.citizen.city.kingdom.id) {
-            Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
-            Kingdom otherKingdom = currentLocation.ownedByCity.kingdom;
-            thisKingdom.DiscoverKingdom(otherKingdom);
-            otherKingdom.DiscoverKingdom(thisKingdom);
-        } else if (currentLocation.isBorder) {
-            Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
-            Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currentLocation.isBorderOfCityID).kingdom;
-            if (otherKingdom.id != this.citizenRole.citizen.city.kingdom.id) {
+        List<HexTile> tilesToCheck = new List<HexTile>();
+        tilesToCheck.Add(this.citizenRole.location);
+        tilesToCheck.AddRange(visibleTiles);
+        for (int i = 0; i < tilesToCheck.Count; i++) {
+            HexTile currTile = tilesToCheck[i];
+            if (currTile.isOccupied && currTile.ownedByCity != null &&
+                currTile.ownedByCity.kingdom.id != this.citizenRole.citizen.city.kingdom.id) {
+                Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
+                Kingdom otherKingdom = currTile.ownedByCity.kingdom;
                 thisKingdom.DiscoverKingdom(otherKingdom);
                 otherKingdom.DiscoverKingdom(thisKingdom);
+            } else if (currTile.isBorder) {
+                Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
+                Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currTile.isBorderOfCityID).kingdom;
+                if (otherKingdom.id != this.citizenRole.citizen.city.kingdom.id) {
+                    thisKingdom.DiscoverKingdom(otherKingdom);
+                    otherKingdom.DiscoverKingdom(thisKingdom);
+                }
             }
         }
     }
