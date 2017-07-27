@@ -2253,6 +2253,14 @@ public class UIManager : MonoBehaviour {
 
 	public void HideEventLogs(){
 		eventLogsGO.SetActive(false);
+		if(this.currentlyShowingLogObject is GameEvent){
+			GameEvent gameEvent = (GameEvent)this.currentlyShowingLogObject;
+			if(!gameEvent.isActive){
+				if (gameEvent.goEventItem != null) {
+					gameEvent.goEventItem.GetComponent<EventItem>().HasExpired();
+				}
+			}
+		}
 		currentlyShowingLogObject = null;
 	}
 
