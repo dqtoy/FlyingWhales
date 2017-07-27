@@ -17,9 +17,9 @@ public class AltarOfBlessing : GameEvent {
 
 	private void Initialize(){
 		this.hexTileSpawnPoint.PutEventOnTile (this);
-		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/AltarOfBlessing"), this.hexTileSpawnPoint.transform) as GameObject;
-		this.avatar.transform.localPosition = Vector3.zero;
-		this.avatar.GetComponent<AltarOfBlessingAvatar>().Init(this);
+		//this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/AltarOfBlessing"), this.hexTileSpawnPoint.transform) as GameObject;
+		//this.avatar.transform.localPosition = Vector3.zero;
+		//this.avatar.GetComponent<AltarOfBlessingAvatar>().Init(this);
 	}
 
 	internal void TransferAltarOfBlessing(Kingdom kingdom, Citizen citizen){

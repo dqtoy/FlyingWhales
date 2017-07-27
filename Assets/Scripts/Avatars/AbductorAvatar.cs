@@ -285,7 +285,7 @@ public class AbductorAvatar : MonoBehaviour {
 		this.UnHighlightPath ();
 	}
 
-    private void FixedUpdate() {
+    private void Update() {
         if (KingdomManager.Instance.useFogOfWar) {
             if (this.abductor.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
                 gameObject.GetComponent<SpriteRenderer>().enabled = true;
