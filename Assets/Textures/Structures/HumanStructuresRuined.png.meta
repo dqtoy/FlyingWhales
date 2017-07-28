@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 56a2c57009ed96c41b97b19cc3d6b340
-timeCreated: 1501138350
+timeCreated: 1501202836
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -30,6 +30,7 @@ TextureImporter:
     21300046: H_Quarry_Ruined
     21300048: H_Farm_Ruined
     21300050: H_HuntingLodge_R
+    21300052: H_Mines_R
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -411,6 +412,19 @@ TextureImporter:
         y: 161
         width: 166
         height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: H_Mines_R
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 748
+        width: 112
+        height: 76
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
