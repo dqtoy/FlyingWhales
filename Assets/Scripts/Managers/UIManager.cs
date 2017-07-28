@@ -2773,6 +2773,8 @@ public class UIManager : MonoBehaviour {
             return requestPeaceIcon;
         case EVENT_TYPES.ADVENTURE:
             return raidIcon;
+        case EVENT_TYPES.EVIL_INTENT:
+            return assassinationIcon;
         }
 		return assassinationIcon;
 	}

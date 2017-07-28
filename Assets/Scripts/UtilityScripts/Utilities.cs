@@ -1110,7 +1110,9 @@ public class Utilities : MonoBehaviour {
             return true;
         case EVENT_TYPES.ADVENTURE:
             return true;
-		case EVENT_TYPES.ALTAR_OF_BLESSING:
+        case EVENT_TYPES.EVIL_INTENT:
+            return true;
+        case EVENT_TYPES.ALTAR_OF_BLESSING:
 			return true;
         case EVENT_TYPES.BORDER_CONFLICT:
 		    if(duration == -1){

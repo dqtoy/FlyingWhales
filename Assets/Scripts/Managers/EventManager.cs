@@ -95,7 +95,8 @@ public class EventManager : MonoBehaviour {
         {EVENT_TYPES.KINGS_COUNCIL, -1},
 		{EVENT_TYPES.ALTAR_OF_BLESSING, -1},
         {EVENT_TYPES.ADVENTURE, -1},
-		{EVENT_TYPES.ATTACK_LAIR, -1}
+        {EVENT_TYPES.EVIL_INTENT, -1},
+        {EVENT_TYPES.ATTACK_LAIR, -1}
 
     };
 
