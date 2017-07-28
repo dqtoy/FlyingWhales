@@ -89,8 +89,12 @@ public class RelationshipKingdom {
 	}
 
 	internal void CreateInvasionPlan(GameEvent gameEventTrigger, WAR_TRIGGER warTrigger){
-		this._invasionPlan = new InvasionPlan (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
-			this._sourceKingdom.king, this._sourceKingdom, this._targetKingdom, gameEventTrigger, this._war, warTrigger);
+        if(this._invasionPlan != null) {
+            this._invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+            this._sourceKingdom.king, this._sourceKingdom, this._targetKingdom, gameEventTrigger, this._war, warTrigger);
+        } else {
+            Debug.LogError(_sourceKingdom.name + " already has an invasion plan towards " + _targetKingdom.name);
+        }
 	}
 
 	//internal void CreateRequestPeaceEvent(Citizen citizenToSend, List<Citizen> saboteurs){

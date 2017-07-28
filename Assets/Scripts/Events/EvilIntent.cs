@@ -69,6 +69,19 @@ public class EvilIntent : GameEvent {
     }
 
     private void ChooseToFeed() {
+        int chance = Random.Range(0, 2);
+        if(chance == 0) {
+            StartRansomPlot();
+        } else {
+            War warEventBetweenKingdoms = KingdomManager.Instance.GetWarBetweenKingdoms(_sourceKing.city.kingdom, _targetKing.city.kingdom);
+            if(warEventBetweenKingdoms == null) {
+                warEventBetweenKingdoms = new War(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, _sourceKing, _sourceKing.city.kingdom, _targetKing.city.kingdom);
+            }
+            warEventBetweenKingdoms.CreateInvasionPlan(_sourceKing.city.kingdom, this, WAR_TRIGGER.EVIL_INTENT);
+        }
+    }
+
+    private void StartRansomPlot() {
 
     }
 }
