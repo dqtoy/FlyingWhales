@@ -10,7 +10,11 @@ public class PlayerEventItem : MonoBehaviour {
 
     public void SetEvent(EVENT_TYPES eventType) {
         this.eventType = eventType;
-        string fileName = Utilities.FirstLetterToUpperCase(eventType.ToString().Replace("_", string.Empty).ToLower());
+        string[] words = eventType.ToString().Split('_');
+        string fileName = string.Empty;
+        for (int i = 0; i < words.Length; i++) {
+            fileName += Utilities.FirstLetterToUpperCase(words[i].ToLower());
+        }
         this.eventBtnLbl.text = Utilities.FirstLetterToUpperCase(eventType.ToString().Replace('_', ' ').ToLower());
         this.eventDescriptionLbl.text = LocalizationManager.Instance
             .GetLocalizedValue("Events", fileName, "player_event_description");

@@ -3117,6 +3117,9 @@ public class UIManager : MonoBehaviour {
         case EVENT_TYPES.LYCANTHROPY:
             ToggleLycanthropyMenu();
             break;
+        case EVENT_TYPES.EVIL_INTENT:
+            ToggleEvilIntentMenu();
+            break;
 		}
 	}
 
@@ -3259,6 +3262,112 @@ public class UIManager : MonoBehaviour {
 
     public void HideLycanthropyMenu() {
         lycanthropyMenuGO.SetActive(false);
+    }
+    #endregion
+
+    #region Evil Intent
+    [Space(10)]
+    [Header("Evil Intent Objects")]
+    [SerializeField] private GameObject evilIntentMenuGO;
+    [SerializeField] private UIGrid evilIntentMenuSourceKingGrid;
+    [SerializeField] private UIGrid evilIntentMenuTargetKingGrid;
+    [SerializeField] private GameObject evilIntentSelectedSourceKingGO;
+    [SerializeField] private GameObject evilIntentSelectedTargetKingGO;
+
+    private Citizen evilIntentSelectedSourceKing;
+    private Citizen evilIntentSelectedTargetKing;
+
+    private void ToggleEvilIntentMenu() {
+        if (evilIntentMenuGO.activeSelf) {
+            HideEvilIntentMenu();
+        } else {
+            ShowInterveneEvilIntentEvent();
+        }
+    }
+
+    private void ShowInterveneEvilIntentEvent() {
+        List<Citizen> allKings = KingdomManager.Instance.allKingdoms.Select(x => x.king).ToList();
+        List<CharacterPortrait> portraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(evilIntentMenuSourceKingGrid.gameObject).ToList();
+
+        if (allKings.Count > portraits.Count) {
+            int numOfMissingPortraits = allKings.Count - portraits.Count;
+            for (int i = 0; i < numOfMissingPortraits; i++) {
+                GameObject newPortrait = InstantiateUIObject(characterPortraitPrefab, evilIntentMenuSourceKingGrid.transform) as GameObject;
+                newPortrait.transform.localScale = Vector3.one;
+                evilIntentMenuSourceKingGrid.AddChild(newPortrait.transform);
+                StartCoroutine(RepositionGrid(evilIntentMenuSourceKingGrid));
+                portraits.Add(newPortrait.GetComponent<CharacterPortrait>());
+            }
+        }
+
+        for (int i = 0; i < portraits.Count; i++) {
+            CharacterPortrait currPortrait = portraits[i];
+            Citizen currKing;
+            try {
+                currKing = allKings[i];
+                currPortrait.SetCitizen(currKing, false, true);
+                currPortrait.onClickCharacterPortrait = null;
+                currPortrait.onClickCharacterPortrait += SelectSourceKingForEvilIntent;
+                currPortrait.gameObject.SetActive(true);
+            } catch {
+                currPortrait.gameObject.SetActive(false);
+            }
+        }
+
+        evilIntentMenuGO.SetActive(true);
+    }
+
+    private void LoadEvilIntentTargetChoices() {
+
+    }
+
+    private void SelectSourceKingForEvilIntent(Citizen citizen) {
+        evilIntentSelectedSourceKing = citizen;
+        ShowCitizenInfo(citizen);
+        CharacterPortrait charPortraitOfCitizen = null;
+        List<CharacterPortrait> portraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(evilIntentMenuSourceKingGrid.gameObject).ToList();
+        for (int i = 0; i < portraits.Count; i++) {
+            CharacterPortrait currPortrait = portraits[i];
+            if (currPortrait.citizen.id == citizen.id) {
+                charPortraitOfCitizen = currPortrait;
+                break;
+            }
+        }
+
+        evilIntentSelectedSourceKingGO.transform.SetParent(charPortraitOfCitizen.transform);
+        evilIntentSelectedSourceKingGO.transform.localPosition = Vector3.zero;
+        evilIntentSelectedSourceKingGO.SetActive(true);
+    }
+
+    private void SelectTargetKingForEvilIntent(Citizen citizen) {
+        evilIntentSelectedTargetKing = citizen;
+        ShowCitizenInfo(citizen);
+        CharacterPortrait charPortraitOfCitizen = null;
+        List<CharacterPortrait> portraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(evilIntentMenuTargetKingGrid.gameObject).ToList();
+        for (int i = 0; i < portraits.Count; i++) {
+            CharacterPortrait currPortrait = portraits[i];
+            if (currPortrait.citizen.id == citizen.id) {
+                charPortraitOfCitizen = currPortrait;
+                break;
+            }
+        }
+
+        evilIntentSelectedTargetKingGO.transform.SetParent(charPortraitOfCitizen.transform);
+        evilIntentSelectedSourceKingGO.transform.localPosition = Vector3.zero;
+        evilIntentSelectedSourceKingGO.SetActive(true);
+    }
+
+    public void StartEvilIntentEvent() {
+        EvilIntent newEvilIntent = new EvilIntent(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, evilIntentSelectedSourceKing, evilIntentSelectedTargetKing);
+        HideEvilIntentMenu();
+        HideInterveneMenu();
+        if (currentlyShowingCitizen != null) {
+            ShowCitizenInfo(currentlyShowingCitizen);
+        }
+    }
+
+    public void HideEvilIntentMenu() {
+        evilIntentMenuGO.SetActive(false);
     }
     #endregion
 
