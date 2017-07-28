@@ -15,12 +15,14 @@ public class EventItem : MonoBehaviour {
 	private string toolTip;
 	private float timeElapsed;
 
+	void Awake(){
+		this.ActivateNewLogIndicator ();
+	}
 	void Start(){
 		this.isHovering = false;
 //		this.isPaused = false;
 		this.toolTip = string.Empty;
 		this.timeElapsed = 0f;
-		this.ActivateNewLogIndicator ();
 //		UIManager.Instance.onPauseEventExpiration += this.PauseExpirationTimer;
 	}
 	void Update(){
@@ -85,7 +87,6 @@ public class EventItem : MonoBehaviour {
 	void OnClick(){
 		if (onClickEvent != null) {
 			onClickEvent(this.gameEvent);
-			this.DeactivateNewLogIndicator ();
 		}
 	}
 

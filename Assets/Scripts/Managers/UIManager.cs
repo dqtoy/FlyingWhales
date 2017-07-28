@@ -1365,7 +1365,10 @@ public class UIManager : MonoBehaviour {
 				eventGO.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
 				kingdomOwner.AddGameObjectToGrid(eventGO);
 				gameEvent.goEventItem = eventGO;
-
+				if(kingdomOwner.kingdom.id == this.currentlyShowingKingdom.id){
+					Pause();
+					ShowEventLogs(gameEvent);
+				}
 			}
 		}else{ //World Event
 			GameObject eventGO = InstantiateUIObject(this.gameEventPrefab, this.gameEventsOfTypeGrid.transform);
@@ -2272,6 +2275,11 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine(RepositionTable(elmEventLogsParentGO.GetComponent<UITable>()));
             StartCoroutine(RepositionScrollView(elmScrollView));
         }
+		if(this.currentlyShowingLogObject is GameEvent){
+			if(((GameEvent)this.currentlyShowingLogObject).goEventItem != null){
+				((GameEvent)this.currentlyShowingLogObject).goEventItem.GetComponent<EventItem>().DeactivateNewLogIndicator ();
+			}
+		}
 		eventLogsGO.SetActive(true);
 	}
 
@@ -2284,6 +2292,9 @@ public class UIManager : MonoBehaviour {
 					gameEvent.goEventItem.GetComponent<EventItem>().HasExpired();
 				}
 			}
+		}
+		if(GameManager.Instance.isPaused){
+			SetProgressionSpeed1X();
 		}
 		currentlyShowingLogObject = null;
 	}
