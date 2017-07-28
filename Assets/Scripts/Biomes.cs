@@ -25,6 +25,10 @@ public class Biomes : MonoBehaviour {
 	[SerializeField] private Sprite[] _bareTiles;
 
     [Space(10)]
+    [Header("Biome Detail Prefabs")]
+    [SerializeField] private GameObject[] grasslandDetails;
+
+    [Space(10)]
     [Header("Mountain Sprites")]
     [SerializeField] private Sprite[] greenMountainTiles;
 	[SerializeField] private Sprite[] desertMountainTiles;
@@ -138,7 +142,9 @@ public class Biomes : MonoBehaviour {
 					currentHexTile.SetCenterSprite(mountainSpriteToUse);
 					Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
 				} else {
-					sortingOrder += 1;
+                    GameObject biomeDetailToUse = grasslandDetails[Random.Range(0, grasslandDetails.Length)];
+                    currentHexTile.AddBiomeDetailToTile(biomeDetailToUse);
+                    sortingOrder += 1;
 				}
 				break;
 			case BIOMES.WOODLAND:
@@ -149,7 +155,7 @@ public class Biomes : MonoBehaviour {
 					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
 					currentHexTile.SetCenterSprite (mountainSpriteToUse);
 					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
-				} else {
+				} else {                    
 					Sprite centerSpriteToUse = woodlandTrees [Random.Range (0, woodlandTrees.Length)];
 					currentHexTile.SetCenterSprite(centerSpriteToUse);
 					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");

@@ -55,6 +55,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	[SerializeField] private GameObject _highlightGO;
     [SerializeField] private Transform UIParent;
     [SerializeField] private Transform resourceParent;
+    [SerializeField] private GameObject biomeDetailParentGO;
 
     [Space(10)]
     [Header("Tile Edges")]
@@ -584,6 +585,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         FOWSprite.gameObject.SetActive(true);
         minimapFOWSprite.gameObject.SetActive(true);
     }
+
+    public void AddBiomeDetailToTile(GameObject detailPrefab) {
+        GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
+        detailGO.transform.localScale = Vector3.one;
+        detailGO.transform.localPosition = Vector3.zero;
+    }
     #endregion
 
     public void ResetTile(){
@@ -698,6 +705,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                             this.city.HighlightAllOwnedTiles(204f / 255f);
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private void FixedUpdate() {
+        if (!KingdomManager.Instance.useFogOfWar || (KingdomManager.Instance.useFogOfWar && _currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE)) {
+            if (!isOccupied) {
+                if (CameraMove.Instance.currentFOV < (CameraMove.Instance.maxFOV / 2f)) {
+                    biomeDetailParentGO.SetActive(true);
+                } else {
+                    biomeDetailParentGO.SetActive(false);
                 }
             }
         }

@@ -9,8 +9,8 @@ public class CameraMove : MonoBehaviour {
 	//	float maxFov = 150f;
 	//	float sensitivity = 20f;
 
-	[SerializeField] private float minFov;
-	[SerializeField] private float maxFov;
+	[SerializeField] private float _minFov;
+	[SerializeField] private float _maxFov;
 	[SerializeField] private float sensitivity;
 	[SerializeField] private Camera eventIconCamera;
 	[SerializeField] private Camera resourceIconCamera;
@@ -47,6 +47,12 @@ public class CameraMove : MonoBehaviour {
     #region getters/setters
     public MinimapCamera minimap {
         get { return _minimap; }
+    }
+    public float currentFOV {
+        get { return Camera.main.orthographicSize; }
+    }
+    public float maxFOV {
+        get { return _maxFov; }
     }
     #endregion
 
@@ -97,7 +103,7 @@ public class CameraMove : MonoBehaviour {
 			float fov = Camera.main.orthographicSize;
 			float adjustment = Input.GetAxis ("Mouse ScrollWheel") * (sensitivity * -1f);
 			fov += adjustment;
-			fov = Mathf.Clamp (fov, minFov, maxFov);
+			fov = Mathf.Clamp (fov, _minFov, _maxFov);
 			Camera.main.orthographicSize = fov;
 			eventIconCamera.orthographicSize = fov;
 			resourceIconCamera.orthographicSize = fov;
