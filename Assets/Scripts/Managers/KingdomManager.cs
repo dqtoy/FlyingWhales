@@ -208,7 +208,7 @@ public class KingdomManager : MonoBehaviour {
         return newKingdom;
     }
 
-    private void TransferCitiesToOtherKingdom(Kingdom sourceKingdom, Kingdom otherKingdom, List<City> citiesToTransfer) {
+    public void TransferCitiesToOtherKingdom(Kingdom sourceKingdom, Kingdom otherKingdom, List<City> citiesToTransfer) {
         sourceKingdom.UnHighlightAllOwnedTilesInKingdom();
         for (int i = 0; i < citiesToTransfer.Count; i++) {
             City currCity = citiesToTransfer[i];
