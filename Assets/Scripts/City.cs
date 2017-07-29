@@ -1314,6 +1314,9 @@ public class City{
 	}
 	internal void AdjustSlavesCount(int amount){
 		this._slavesCount += amount;
+		if(this._slavesCount < 0){
+			this._slavesCount = 0;
+		}
 	}
 	//private void CollectEventInTile(HexTile hexTile, Citizen citizen = null){
 	//	if(hexTile.gameEventInTile != null){
