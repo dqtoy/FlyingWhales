@@ -64,7 +64,7 @@ public class SlavesMerchant : GameEvent {
 	}
 
 	private void BuySlaves(){
-		this.slavesQuantity = UnityEngine.Random.Range(100,201);
+		this.slavesQuantity = UnityEngine.Random.Range(50,101);
 		this.hasBoughtSlaves = true;
 
 		//TODO: Add log - king buys the slaves
@@ -94,6 +94,7 @@ public class SlavesMerchant : GameEvent {
 
 			}else{
 				//Add production rate by slavesPerCity
+				allCities[i].AdjustSlavesCount(slavesPerCity);
 			}
 		}
 
