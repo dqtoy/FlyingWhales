@@ -16,15 +16,39 @@ public class EvilIntent : GameEvent {
         _sourceKing = sourceKing;
         _targetKing = targetKing;
 
+        Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "event_title");
+        newLogTitle.AddToFillers(targetKing, targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+        Log newLogStart = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "start");
+        newLogStart.AddToFillers(sourceKing, sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        newLogStart.AddToFillers(targetKing, targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
         EventManager.Instance.AddEventToDictionary(this);
         EventIsCreated();
+
+        EventManager.Instance.onWeekEnd.AddListener(CheckEventValidity);
+
+        DetermineFirstAction();
     }
 
-    #region Overrides
-    internal override void PerformAction() {
-        base.PerformAction();
+    /*
+     * Check if the event is still valid, if not,
+     * cancel the event.
+     * */
+    private void CheckEventValidity() {
+        //Either of the kings are dead
+        if(_sourceKing.isDead || _targetKing.isDead) {
+            CancelEvent();
+        }
+        //source king is no longer king
+        if(_sourceKing.city.kingdom.king.id != _sourceKing.id) {
+            CancelEvent();
+        }
+        //target king is no longer king
+        if (_targetKing.city.kingdom.king.id != _targetKing.id) {
+            CancelEvent();
+        }
     }
-    #endregion
 
     /*
      * Determine action of first king when he/she is chosen
@@ -49,6 +73,9 @@ public class EvilIntent : GameEvent {
     }
 
     private void ChooseToResist() {
+        Log resistLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "first_action_decision_resist");
+        resistLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
         durationInDays = 5;
         remainingDays = durationInDays;
         EventManager.Instance.onWeekEnd.AddListener(Resist);
@@ -60,6 +87,9 @@ public class EvilIntent : GameEvent {
             EventManager.Instance.onWeekEnd.RemoveListener(Resist);
             if(Random.Range(0, 100) < 60) {
                 //Success
+                Log resistSuccessLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "resist_success");
+                resistSuccessLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                resistSuccessLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 for (int i = 0; i < _sourceKing.relationshipKings.Count; i++) {
                     Citizen otherKing = _sourceKing.relationshipKings[i].king;
                     RelationshipKings otherKingRel = otherKing.GetRelationshipWithCitizen(_sourceKing);
@@ -68,6 +98,9 @@ public class EvilIntent : GameEvent {
                 DoneEvent();
             } else {
                 //Fail
+                Log resistFailLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "resist_fail");
+                resistFailLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                resistFailLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 _sourceKing.Death(DEATH_REASONS.EVIL_INTENT);
                 DoneEvent();
             }
@@ -75,15 +108,25 @@ public class EvilIntent : GameEvent {
     }
 
     private void ChooseToFeed() {
+        Log feedLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "first_action_decision_feed");
+        feedLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
         int chance = Random.Range(0, 2);
         if(chance == 0) {
+            Log kidnapLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "feed_action_kidnap");
+            kidnapLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            kidnapLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             StartRansomPlot();
         } else {
+            Log invasionLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "feed_action_invasion");
+            invasionLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            invasionLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             War warEventBetweenKingdoms = KingdomManager.Instance.GetWarBetweenKingdoms(_sourceKing.city.kingdom, _targetKing.city.kingdom);
             if(warEventBetweenKingdoms == null) {
                 warEventBetweenKingdoms = new War(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, _sourceKing, _sourceKing.city.kingdom, _targetKing.city.kingdom);
             }
             warEventBetweenKingdoms.CreateInvasionPlan(_sourceKing.city.kingdom, this, WAR_TRIGGER.EVIL_INTENT);
+            DoneEvent();
         }
     }
 
@@ -97,12 +140,20 @@ public class EvilIntent : GameEvent {
         remainingDays -= 1;
         if(remainingDays <= 0) {
             //Successful Kidnapping
+            Log successKidnapLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "kidnap_plot_success");
+            successKidnapLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            successKidnapLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
             EventManager.Instance.onWeekEnd.RemoveListener(ProcessRansomPlot);
             Kidnap();
         } else {
             //Chance To Find out
             if(Random.Range(0,100) < 2) {
                 //Target King finds out about the ransom plot
+                Log failKidnapLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "kidnap_plot_fail");
+                failKidnapLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                failKidnapLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
                 for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
                     if(KingdomManager.Instance.allKingdoms[i].id != _sourceKing.city.kingdom.id) {
                         Citizen otherKing = KingdomManager.Instance.allKingdoms[i].king;
@@ -131,6 +182,10 @@ public class EvilIntent : GameEvent {
     }
 
     private void AskForRansom() {
+        Log ransomLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom");
+        ransomLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        ransomLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
         durationInDays = 5;
         remainingDays = durationInDays;
         EventManager.Instance.onWeekEnd.AddListener(ProcessRansomDecision);
@@ -145,14 +200,18 @@ public class EvilIntent : GameEvent {
                 .FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH || x.Key == CHARACTER_VALUE.LIFE);
 
                 if(priotiyValue.Key == CHARACTER_VALUE.STRENGTH) {
+                    Log ransomKillLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_decision_kill");
+                    ransomKillLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    ransomKillLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     KillHostage();
                     DoneEvent();
                 } else {
-
+                    PayRansom();
                 }
                 AdjustGovernorsLoyalty(_targetKing, priotiyValue.Key);
                 AdjustOtherKingsRel(_targetKing, priotiyValue.Key);
             } else {
+                PayRansom();
                 AdjustGovernorsLoyalty(_targetKing, CHARACTER_VALUE.LIFE);
                 AdjustOtherKingsRel(_targetKing, CHARACTER_VALUE.LIFE);
             }
@@ -165,6 +224,9 @@ public class EvilIntent : GameEvent {
     }
 
     private void PayRansom() {
+        Log ransomPayLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_decision_pay");
+        ransomPayLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
         List<City> citiesToChooseFrom = _targetKing.city.kingdom.cities.Where(x => x.id != _targetKing.city.id).ToList();
         if(citiesToChooseFrom.Count > 0) {
             City cityToGive = citiesToChooseFrom[Random.Range(0, citiesToChooseFrom.Count)];
@@ -175,6 +237,8 @@ public class EvilIntent : GameEvent {
                 if(priotiyValue.Key == CHARACTER_VALUE.HONOR) {
                     ReturnHostage();
                 } else {
+                    Log ransomKillLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_accepted_decision_kill");
+                    ransomKillLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     KillHostage();
                 }
                 AdjustGovernorsLoyalty(_sourceKing, priotiyValue.Key);
@@ -195,12 +259,18 @@ public class EvilIntent : GameEvent {
             }
         } else {
             //Cannot give any city, kill hostage
+            Log ransomUnableLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_decision_unable");
+            ransomUnableLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
             KillHostage();
         }
         DoneEvent();
     }
 
     private void ReturnHostage() {
+        Log ransomHonorLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_accepted_decision_honor");
+        ransomHonorLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
         _targetKing.city.AddCitizenToCity(_kidnappedCitizen);
     }
 

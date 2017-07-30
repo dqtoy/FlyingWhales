@@ -13,6 +13,8 @@ public class Adventure : GameEvent {
         EventIsCreated();
 
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "event_title");
+        Log startLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "start");
+        startLog.AddToFillers(_adventurer.citizen, _adventurer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     }
 
     #region Overrides
