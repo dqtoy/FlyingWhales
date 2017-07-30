@@ -880,6 +880,7 @@ public class Utilities : MonoBehaviour {
 		{"15", LOG_IDENTIFIER.GOVERNOR_2},
 		{"16", LOG_IDENTIFIER.RANDOM_CITY_2},
 		{"17", LOG_IDENTIFIER.RANDOM_GOVERNOR_2},
+		{"20", LOG_IDENTIFIER.CHARACTER_3},
 		{"21", LOG_IDENTIFIER.KINGDOM_3},
 		{"22", LOG_IDENTIFIER.KING_3},
 		{"23", LOG_IDENTIFIER.KING_3_SPOUSE},
@@ -1114,6 +1115,17 @@ public class Utilities : MonoBehaviour {
             return true;
         case EVENT_TYPES.ALTAR_OF_BLESSING:
 			return true;
+		case EVENT_TYPES.GREAT_STORM:
+			return true;
+		case EVENT_TYPES.SEND_RELIEF_GOODS:
+			if(duration == -1){
+				return true;
+			}else{
+				if (path.Count > duration) {
+					return false;
+				}
+				return true;
+			}
         case EVENT_TYPES.BORDER_CONFLICT:
 		    if(duration == -1){
 			    return true;

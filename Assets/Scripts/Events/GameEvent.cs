@@ -99,6 +99,9 @@ public class GameEvent {
 				return;
 			}
 		}
+		if(!this.isActive){
+			return;
+		}
         CheckIfCitizenIsCarryingPlague(citizen);
     }
 

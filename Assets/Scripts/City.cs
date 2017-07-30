@@ -59,7 +59,7 @@ public class City{
 		get{ return this._currentGrowth; }
 	}
 	public int totalDailyGrowth{
-		get{ return _dailyGrowthFromKingdom + _dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount; }
+		get{ return (int)((_dailyGrowthFromKingdom + _dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount) * this.kingdom.productionGrowthPercentage); }
 	}
 	public int maxGrowth{
 		get{ return this._maxGrowth; }

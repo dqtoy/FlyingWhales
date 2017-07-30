@@ -819,7 +819,11 @@ public class Citizen {
             this.assignedRole = new Witch(this);
         }else if (role == ROLE.ADVENTURER) {
             this.assignedRole = new Adventurer(this);
-        }
+		}else if (role == ROLE.RELIEVER) {
+			this.assignedRole = new Reliever(this);
+		}else if (role == ROLE.INTERCEPTER) {
+			this.assignedRole = new Intercepter(this);
+		}
         //this.UpdatePrestige ();
     }
 
