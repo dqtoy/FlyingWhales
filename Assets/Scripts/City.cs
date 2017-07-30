@@ -29,6 +29,7 @@ public class City{
     private int _dailyGrowthBuffs;
     private int _maxGrowth;
 
+	private int _slavesCount;
 	private int raidLoyaltyExpiration;
 
 	[Space(5)]
@@ -58,7 +59,7 @@ public class City{
 		get{ return this._currentGrowth; }
 	}
 	public int totalDailyGrowth{
-		get{ return _dailyGrowthFromKingdom + _dailyGrowthFromStructures + _dailyGrowthBuffs; }
+		get{ return _dailyGrowthFromKingdom + _dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount; }
 	}
 	public int maxGrowth{
 		get{ return this._maxGrowth; }
@@ -590,6 +591,9 @@ public class City{
 		this.hasReinforced = false;
 		//this.ProduceGold();
 		this.AttemptToIncreaseHP();
+		if(this._slavesCount > 0){
+			this.AdjustSlavesCount(-1);
+		}
 	}
 	/*
 	 * Function that listens to onWeekEnd. Performed every tick.
@@ -597,6 +601,9 @@ public class City{
 	protected void RebelFortEverydayTurnActions(){
 		this.hasReinforced = false;
 		this.AttemptToIncreaseHP();
+		if(this._slavesCount > 0){
+			this.AdjustSlavesCount(-1);
+		}
 	}
 	/*
 	 * Increase a city's HP every month.
@@ -1303,6 +1310,12 @@ public class City{
 		List<HexTile> path = PathGenerator.Instance.GetPath(this.hexTile, targetHextile, PATHFINDING_MODE.AVATAR);
 		if(path != null){
 			EventCreator.Instance.CreateAttackLairEvent(this, targetHextile, path, null);
+		}
+	}
+	internal void AdjustSlavesCount(int amount){
+		this._slavesCount += amount;
+		if(this._slavesCount < 0){
+			this._slavesCount = 0;
 		}
 	}
 	//private void CollectEventInTile(HexTile hexTile, Citizen citizen = null){
