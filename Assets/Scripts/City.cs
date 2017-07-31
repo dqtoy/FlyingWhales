@@ -643,6 +643,7 @@ public class City{
 		if(this._hp < 0){
 			this._hp = 0;
 		}
+        hexTile.UpdateNamePlate();
 	}
 
 	private void UpdateHP(float percentageHP){

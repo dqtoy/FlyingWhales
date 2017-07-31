@@ -7,14 +7,17 @@ public class Adventure : GameEvent {
 
     public Adventure(int startWeek, int startMonth, int startYear, Citizen startedBy, Adventurer adventurer) : base(startWeek, startMonth, startYear, startedBy) {
         this.eventType = EVENT_TYPES.ADVENTURE;
+		this.name = "Adventure";
         _adventurer = adventurer;
+
+		Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "event_title");
+		Log startLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "start");
+		startLog.AddToFillers(_adventurer.citizen, _adventurer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
         EventManager.Instance.AddEventToDictionary(this);
         EventIsCreated();
 
-        Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "event_title");
-        Log startLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "start");
-        startLog.AddToFillers(_adventurer.citizen, _adventurer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
     }
 
     #region Overrides

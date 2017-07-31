@@ -49,7 +49,7 @@ public class SlavesMerchant : GameEvent {
 	#endregion
 
 	private void KingDecision(){
-		if(!this.buyerKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) && this.buyerKingdom.nonRebellingCities.Count > 0){
+		if((!this.buyerKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) && !this.buyerKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY)) && this.buyerKingdom.nonRebellingCities.Count > 0){
 			//Buy
 			BuySlaves();
 		}else{
@@ -80,22 +80,86 @@ public class SlavesMerchant : GameEvent {
 		int slavesPerCity = this.slavesQuantity / allCities.Count;
 		int unrestCount = 0;
 		bool hasFreedSlaves = false;
+		bool hasObeyedButDecreaseLoyalty = false;
 
 		for (int i = 0; i < allCities.Count; i++) {
-			if(allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY)){
-				//TODO: Add log - set slaves free by this governor
-				hasFreedSlaves = true;
+			hasFreedSlaves = false;
+			hasObeyedButDecreaseLoyalty = false;
+
+			if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LAW_AND_ORDER) && (allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) 
+				|| allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY))) {
+
+				if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LIBERTY)
+				   && allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.EQUALITY)) {
+					if (allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LIBERTY]
+						&& allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.EQUALITY]){
+						//Obey but negative
+						hasObeyedButDecreaseLoyalty = true;
+					}else{
+						//Free
+						hasFreedSlaves = true;
+					}
+				}else if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LIBERTY)) {
+					if (allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LIBERTY]){
+						//Obey but negative
+						hasObeyedButDecreaseLoyalty = true;
+					}else{
+						//Free
+						hasFreedSlaves = true;
+					}
+				}else if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.EQUALITY)) {
+					if (allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.EQUALITY]){
+						//Obey but negative
+						hasObeyedButDecreaseLoyalty = true;
+					}else{
+						//Free
+						hasFreedSlaves = true;
+					}
+				}
+
+			}else{
+				if(!allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LAW_AND_ORDER) && (allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) 
+					|| allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY))){
+					//Free
+					hasFreedSlaves = true;
+				}
+//				else if(allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LAW_AND_ORDER) && (!allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) 
+//					&& !allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY))){
+//					//Obey
+//				}else{
+//					//Obey
+//				}
+			}
+			if(hasFreedSlaves){
 				((Governor)allCities[i].governor.assignedRole).AddEventModifier(-10, "Anti-slavery", this);
 				unrestCount += 5;
 
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "slaves_free");
 				newLog.AddToFillers (allCities[i].governor, allCities[i].governor.name, LOG_IDENTIFIER.GOVERNOR_1);
 				newLog.AddToFillers (allCities[i], allCities[i].name, LOG_IDENTIFIER.CITY_1);
-
 			}else{
-				//Add production rate by slavesPerCity
-				allCities[i].AdjustSlavesCount(slavesPerCity);
+				if(hasObeyedButDecreaseLoyalty){
+					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-10, "Anti-slavery", this);
+					unrestCount += 5;
+					allCities[i].AdjustSlavesCount(slavesPerCity);
+				}else{
+					allCities[i].AdjustSlavesCount(slavesPerCity);
+				}
 			}
+//			if(allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY)){
+//				//TODO: Add log - set slaves free by this governor
+//				hasFreedSlaves = true;
+//				((Governor)allCities[i].governor.assignedRole).AddEventModifier(-10, "Anti-slavery", this);
+//				unrestCount += 5;
+//
+//				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "slaves_free");
+//				newLog.AddToFillers (allCities[i].governor, allCities[i].governor.name, LOG_IDENTIFIER.GOVERNOR_1);
+//				newLog.AddToFillers (allCities[i], allCities[i].name, LOG_IDENTIFIER.CITY_1);
+//
+//			}else{
+//				//Add production rate by slavesPerCity
+//				allCities[i].AdjustSlavesCount(slavesPerCity);
+//			}
 		}
 
 		this.buyerKingdom.AdjustUnrest(unrestCount);

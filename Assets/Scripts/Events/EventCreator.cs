@@ -414,6 +414,9 @@ public class EventCreator: MonoBehaviour {
 		if(sourceKingdom.isLockedDown){
 			return null;
 		}
+        if (EventManager.Instance.GetEventsStartedByKingdom(sourceKingdom, new EVENT_TYPES[] { EVENT_TYPES.ADVENTURE }).Count > 0) {
+            return null;
+        }
         List<HexTile> tilesToChooseFrom = sourceKingdom.capitalCity.hexTile.AvatarTiles.ToList();
         HexTile targetTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
         if(targetTile != null) {
@@ -439,5 +442,13 @@ public class EventCreator: MonoBehaviour {
 			return sendReliefGoods;
 		}
 		return null;
+	}
+
+	internal GreatStorm CreateGreatStormEvent(Kingdom sourceKingdom){
+		if(sourceKingdom.isLockedDown){
+			return null;
+		}
+		GreatStorm greatStorm = new GreatStorm (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, sourceKingdom);
+		return greatStorm;
 	}
 }

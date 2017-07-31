@@ -12,15 +12,16 @@ public class DevelopWeapons : GameEvent {
 
         this._sourceKingdom = _sourceKingdom;
 
-        EventManager.Instance.onWeekEnd.AddListener(PerformAction);
+		this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "event_title");
 
+		Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "start");
+		newLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+        EventManager.Instance.onWeekEnd.AddListener(PerformAction);
         EventManager.Instance.AddEventToDictionary(this);
         EventIsCreated();
 
-        this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "event_title");
 
-        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "start");
-        newLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     }
 
     #region Overrides
