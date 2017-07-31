@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class LycanLair : Lair {
+public class StormWitchLair : Lair {
 
 	private HexTile _targetHextile;
 	private List<HexTile> availableTargets;
 
-	public LycanLair(LAIR type, HexTile hexTile): base (type, hexTile){
+	public StormWitchLair(LAIR type, HexTile hexTile): base (type, hexTile){
 		this._targetHextile = null;
 		this.availableTargets = new List<HexTile>();
 		Initialize();
@@ -17,21 +17,21 @@ public class LycanLair : Lair {
 	public override void Initialize(){
 		base.Initialize();
         //Create structure
-        this.goStructure = this.hexTile.CreateSpecialStructureOnTile(LAIR.LYCAN);
+		this.goStructure = this.hexTile.CreateSpecialStructureOnTile(LAIR.STORM_WITCH);
     }
 	public override void EverydayAction (){
 		base.EverydayAction ();
 		if(this.daysCounter >= this.spawnRate){
 			this.daysCounter = 0;
-			SummonLycan();
+			SummonWitch();
 		}
 	}
 	#endregion
 
-	private void SummonLycan(){
+	private void SummonWitch(){
 		AcquireTarget();
 		if(this._targetHextile != null){
-			MonsterManager.Instance.SummonNewMonster(MONSTER.LYCAN, this.hexTile, this._targetHextile);
+			MonsterManager.Instance.SummonNewMonster(MONSTER.STORM_WITCH, this.hexTile, this._targetHextile);
 		}
 	}
 	private void AcquireTarget(){

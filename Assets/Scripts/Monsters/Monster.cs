@@ -31,13 +31,17 @@ public class Monster {
 		switch (this.type){
 		case MONSTER.LYCAN:
 			return 50;
+		case MONSTER.STORM_WITCH:
+			return 1;
 		}
-		return 0;
+		return 1;
 	}
 	internal void UpdateUI(){
 		if(this.avatar != null){
 			if(this is Lycan){
 				this.avatar.GetComponent<LycanAvatar>().UpdateUI();
+			}else if(this is StormWitch){
+				this.avatar.GetComponent<StormWitchAvatar>().UpdateUI();
 			}
 		}
 	}

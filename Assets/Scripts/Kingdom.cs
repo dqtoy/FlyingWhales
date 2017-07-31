@@ -516,7 +516,6 @@ public class Kingdom{
         this.TriggerKingdomHoliday();
         this.TriggerDevelopWeapons();
         this.TriggerKingsCouncil();
-		this.TriggerGreatStorm ();
     }
 	/*
 	 * Attempt to create an attack city event
@@ -2053,17 +2052,6 @@ public class Kingdom{
 		Debug.Log (this.name + " HAS COLLECTED A BOON OF POWER!");
 		this._boonOfPowers.Add (boonOfPower);
 		boonOfPower.AddOwnership (this);
-	}
-	#endregion
-
-	#region Great Storm
-	internal void TriggerGreatStorm(){
-		if(GameManager.Instance.month == 7 && GameManager.Instance.days == 28){
-			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 30){
-				EventCreator.Instance.CreateGreatStormEvent (this);
-			}
-		}
 	}
 	#endregion
 	internal int GetNumberOfWars(){
