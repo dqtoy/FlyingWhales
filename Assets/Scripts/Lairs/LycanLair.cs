@@ -40,8 +40,10 @@ public class LycanLair : Lair {
 		this.availableTargets.Clear();
 		this._targetHextile = null;
 		for (int i = 0; i < this.tilesInRadius.Count; i++) {
-			if(this.tilesInRadius[i].isOccupied && this.tilesInRadius[i].isHabitable && this.tilesInRadius[i].city.id != 0){
-				this.availableTargets.Add(this.tilesInRadius[i]);
+			if(this.tilesInRadius[i] != null){
+				if(this.tilesInRadius[i].isOccupied && this.tilesInRadius[i].isHabitable && this.tilesInRadius[i].city.id != 0){
+					this.availableTargets.Add(this.tilesInRadius[i]);
+				}
 			}
 		}
 
