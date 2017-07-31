@@ -94,6 +94,8 @@ public class Kingdom{
 	private float _techProductionPercentage;
 	private float _productionGrowthPercentage;
 
+	private bool _hasUpheldHiddenHistoryBook;
+
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -197,8 +199,11 @@ public class Kingdom{
 	public bool isTechProducing{
 		get { return this._isTechProducing;}
 	}
-	public float productionGrowthPercentage{
-		get { return this._productionGrowthPercentage;}
+	public float productionGrowthPercentage {
+		get { return this._productionGrowthPercentage; }
+	}
+	public bool hasUpheldHiddenHistoryBook{
+		get { return this._hasUpheldHiddenHistoryBook;}
 	}
     #endregion
 
@@ -225,6 +230,7 @@ public class Kingdom{
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this._isDead = false;
 		this._isLockedDown = false;
+		this._hasUpheldHiddenHistoryBook = false;
         //this._tradeRoutes = new List<TradeRoute>();
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._unrest = 0;
@@ -1736,6 +1742,9 @@ public class Kingdom{
 	}
 	internal void UpgradeTechLevel(int amount){
 		this._techLevel += amount;
+		if(this._techLevel < 1){
+			this._techLevel = 1;
+		}
 		this._techCounter = 0;
 		this.UpdateTechCapacity ();
 	}
@@ -2002,6 +2011,12 @@ public class Kingdom{
 	}
 	#endregion
 
+	#region Hidden History Book
+	internal void SetUpheldHiddenHistoryBook(bool state){
+		this._hasUpheldHiddenHistoryBook = state;
+	}
+	#endregion
+
     #region Fog Of War
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
         if(fowState == FOG_OF_WAR_STATE.VISIBLE) {
@@ -2079,4 +2094,6 @@ public class Kingdom{
 	internal void SetProductionGrowthPercentage(float amount){
 		this._productionGrowthPercentage = amount;
 	}
+
+
 }
