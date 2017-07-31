@@ -27,6 +27,10 @@ public class Biomes : MonoBehaviour {
     [Space(10)]
     [Header("Biome Detail Prefabs")]
     [SerializeField] private GameObject[] grasslandDetails;
+    [SerializeField] private GameObject[] tundraDetails;
+    [SerializeField] private GameObject[] snowDetails;
+    [SerializeField] private GameObject[] desertDetails;
+
 
     [Space(10)]
     [Header("Mountain Sprites")]
@@ -106,7 +110,12 @@ public class Biomes : MonoBehaviour {
 					currentHexTile.SetCenterSprite (mountainSpriteToUse);
 					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
 				} else {
-					sortingOrder += 6;
+                    if(snowDetails.Length > 0) {
+                        GameObject biomeDetailToUse = snowDetails[Random.Range(0, snowDetails.Length)];
+                        currentHexTile.AddBiomeDetailToTile(biomeDetailToUse);
+                    }
+                    
+                    sortingOrder += 6;
 				}
 				break;
 			case BIOMES.TUNDRA:
@@ -118,7 +127,12 @@ public class Biomes : MonoBehaviour {
 					currentHexTile.SetCenterSprite (mountainSpriteToUse);
 					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
 				} else {
-					sortingOrder += 3;
+                    if (tundraDetails.Length > 0) {
+                        GameObject biomeDetailToUse = tundraDetails[Random.Range(0, tundraDetails.Length)];
+                        currentHexTile.AddBiomeDetailToTile(biomeDetailToUse);
+                    }
+                    
+                    sortingOrder += 3;
 				}
 				break;
 			case BIOMES.DESERT:
@@ -130,7 +144,11 @@ public class Biomes : MonoBehaviour {
 					currentHexTile.SetCenterSprite (mountainSpriteToUse);
 					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
 				} else {
-					sortingOrder += 5;
+                    if (tundraDetails.Length > 0) {
+                        GameObject biomeDetailToUse = desertDetails[Random.Range(0, desertDetails.Length)];
+                        currentHexTile.AddBiomeDetailToTile(biomeDetailToUse);
+                    }
+                    sortingOrder += 5;
 				}
 				break;
 			case BIOMES.GRASSLAND:
@@ -142,8 +160,10 @@ public class Biomes : MonoBehaviour {
 					currentHexTile.SetCenterSprite(mountainSpriteToUse);
 					Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
 				} else {
-                    GameObject biomeDetailToUse = grasslandDetails[Random.Range(0, grasslandDetails.Length)];
-                    currentHexTile.AddBiomeDetailToTile(biomeDetailToUse);
+                    if (tundraDetails.Length > 0) {
+                        GameObject biomeDetailToUse = grasslandDetails[Random.Range(0, grasslandDetails.Length)];
+                        currentHexTile.AddBiomeDetailToTile(biomeDetailToUse);
+                    }
                     sortingOrder += 1;
 				}
 				break;
