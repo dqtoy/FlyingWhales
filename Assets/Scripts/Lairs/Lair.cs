@@ -13,7 +13,7 @@ public class Lair {
 	public List<HexTile> tilesInRadius;
 
 	public bool isDead;
-
+	public bool isActivated;
 	public Lair(LAIR type, HexTile hexTile){
 		this.type = type;
 		this.hexTile = hexTile;
@@ -22,6 +22,7 @@ public class Lair {
 		this.goStructure = null;
 		this.tilesInRadius = this.hexTile.GetTilesInRange(MonsterManager.Instance.tileRadiusDetection);
 		this.isDead = false;
+		this.isActivated = false;
 		AttachLairToHextile();
 		if(MonsterManager.Instance.activateLairImmediately){
 			ActivateLair();
@@ -42,8 +43,11 @@ public class Lair {
 		}
 		return 0;
 	}
-	private void ActivateLair(){
-		EventManager.Instance.onWeekEnd.AddListener(EverydayAction);
+	internal void ActivateLair(){
+		if(!this.isActivated){
+			this.isActivated = true;
+			EventManager.Instance.onWeekEnd.AddListener(EverydayAction);
+		}
 	}
 	private void AttachLairToHextile(){
 		this.hexTile.isLair = true;

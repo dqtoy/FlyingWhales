@@ -440,4 +440,12 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
+
+	internal GreatStorm CreateGreatStormEvent(Kingdom sourceKingdom){
+		if(sourceKingdom.isLockedDown){
+			return null;
+		}
+		GreatStorm greatStorm = new GreatStorm (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, sourceKingdom);
+		return greatStorm;
+	}
 }

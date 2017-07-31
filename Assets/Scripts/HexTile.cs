@@ -711,15 +711,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     private void FixedUpdate() {
-        if (!KingdomManager.Instance.useFogOfWar || (KingdomManager.Instance.useFogOfWar && _currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE)) {
-            if (!isOccupied) {
-                if (CameraMove.Instance.currentFOV < (CameraMove.Instance.maxFOV / 2f)) {
-                    biomeDetailParentGO.SetActive(true);
-                } else {
-                    biomeDetailParentGO.SetActive(false);
-                }
-            }
-        }
+//        if (!KingdomManager.Instance.useFogOfWar || (KingdomManager.Instance.useFogOfWar && _currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE)) {
+//            if (!isOccupied) {
+//                if (CameraMove.Instance.currentFOV < (CameraMove.Instance.maxFOV / 2f)) {
+//                    biomeDetailParentGO.SetActive(true);
+//                } else {
+//                    biomeDetailParentGO.SetActive(false);
+//                }
+//            }
+//        }
     }
     #endregion
 

@@ -60,5 +60,6 @@ public class Evangelism : GameEvent {
 			newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 			newLog.AddToFillers (this.targetKingdom.king, this.targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
 		}
+		this.DoneEvent ();
 	}
 }
