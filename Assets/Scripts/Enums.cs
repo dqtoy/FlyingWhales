@@ -471,3 +471,8 @@ public enum MONSTER{
 	LYCAN,
 	STORM_WITCH,
 }
+
+public enum STRUCTURE_STATE {
+    NORMAL,
+    RUINED,
+}

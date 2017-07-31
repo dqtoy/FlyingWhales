@@ -1824,11 +1824,13 @@ public class Kingdom{
     }
 
     internal void DiscoverKingdom(Kingdom discoveredKingdom) {
-        if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
-            this._discoveredKingdoms.Add(discoveredKingdom);
-            Debug.LogError(this.name + " discovered " + discoveredKingdom.name + "!");
-            if(discoveredKingdom.plague != null) {
-                discoveredKingdom.plague.ForceUpdateKingRelationships(discoveredKingdom.king);
+        if(discoveredKingdom.id != this.id) {
+            if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
+                this._discoveredKingdoms.Add(discoveredKingdom);
+                Debug.LogError(this.name + " discovered " + discoveredKingdom.name + "!");
+                if (discoveredKingdom.plague != null) {
+                    discoveredKingdom.plague.ForceUpdateKingRelationships(discoveredKingdom.king);
+                }
             }
         }
     }
