@@ -209,7 +209,6 @@ public class CameraMove : MonoBehaviour {
         for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
             HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
             currHexTile.SetBiomeDetailState(state);
-
         }
     }
 }
