@@ -131,13 +131,13 @@ public class RelationshipKings {
 	//		adjustment - relationship value change
 	//		gameEvent - event that caused the relationship change
 	//		isDiscovery - flag to determine whether the relationship change was because the sourceKing found out the gameEvent
-	internal void AdjustLikeness(int adjustment, GameEvent gameEventTrigger, bool isDiscovery = false){
+	internal void AdjustLikeness(int adjustment, GameEvent gameEventTrigger,  bool isDiscovery = false, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
         RELATIONSHIP_STATUS previousStatus = this.lordRelationship;
 		this._like += adjustment;
 		this._like = Mathf.Clamp(this.totalLike, -100, 100);
 		this.UpdateKingRelationshipStatus ();
         if (adjustment < 0) { //Relationship deteriorated
-            sourceKing.DeteriorateRelationship(this, gameEventTrigger, isDiscovery);
+			sourceKing.DeteriorateRelationship(this, gameEventTrigger, isDiscovery, warTrigger);
             this.CheckForEmbargo(previousStatus, gameEventTrigger);
         } else { //Relationship improved
             sourceKing.ImproveRelationship(this);

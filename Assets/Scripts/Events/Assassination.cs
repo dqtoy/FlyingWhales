@@ -25,7 +25,7 @@ public class Assassination : GameEvent {
 		}
 	}
 
-	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, Spy spy, GameEvent gameEventTrigger) : base (startWeek, startMonth, startYear, startedBy){
+	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, Spy spy, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ASSASSINATION;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.name = "Assassination";
@@ -52,38 +52,45 @@ public class Assassination : GameEvent {
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "event_title");
 		newLogTitle.AddToFillers (null, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", warTrigger.ToString());
+		newLog.AddToFillers (this.assassinKingdom.king, this.assassinKingdom.king.name, LOG_IDENTIFIER.KING_1);
+		newLog.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		newLog.AddToFillers (this.targetCitizen, this.targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+		newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+
 //		string triggerReason = string.Empty;
-		if (gameEventTrigger is Assassination) {
-			Assassination assassination = (Assassination)gameEventTrigger;
-			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", assassination.warTrigger.ToString());
-
-			if(assassination.warTrigger == WAR_TRIGGER.ASSASSINATION_KING){
-				newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
-				newLogTitle.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-				newLogTitle.AddToFillers (this.spy, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-				newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-				newLogTitle.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-
-			}else if(assassination.warTrigger == WAR_TRIGGER.ASSASSINATION_ROYALTY){
-
-			}else if(assassination.warTrigger == WAR_TRIGGER.ASSASSINATION_GOVERNOR){
-
-			}
-		}else if (gameEventTrigger is BorderConflict){
-			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", gameEventTrigger.warTrigger.ToString());
-			newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
-			newLogTitle.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLogTitle.AddToFillers (this.spy, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-			newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-			newLogTitle.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		} else if (gameEventTrigger is DiplomaticCrisis){
-			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", gameEventTrigger.warTrigger.ToString());
-			newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
-			newLogTitle.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLogTitle.AddToFillers (this.spy, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-			newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-			newLogTitle.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		}
+//		if (gameEventTrigger is Assassination) {
+//			Assassination assassination = (Assassination)gameEventTrigger;
+//			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", assassination.warTrigger.ToString());
+//
+//			if(assassination.warTrigger == WAR_TRIGGER.ASSASSINATION_KING){
+//				newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+//				newLogTitle.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+//				newLogTitle.AddToFillers (this.spy, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+//				newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+//				newLogTitle.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+//
+//			}else if(assassination.warTrigger == WAR_TRIGGER.ASSASSINATION_ROYALTY){
+//
+//			}else if(assassination.warTrigger == WAR_TRIGGER.ASSASSINATION_GOVERNOR){
+//
+//			}
+//		}else if (gameEventTrigger is BorderConflict){
+//			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", gameEventTrigger.warTrigger.ToString());
+//			newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+//			newLogTitle.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+//			newLogTitle.AddToFillers (this.spy, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+//			newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+//			newLogTitle.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+//		} else if (gameEventTrigger is DiplomaticCrisis){
+//			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", gameEventTrigger.warTrigger.ToString());
+//			newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
+//			newLogTitle.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+//			newLogTitle.AddToFillers (this.spy, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+//			newLogTitle.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+//			newLogTitle.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+//		}
 
 
 //		string triggerReason = string.Empty;

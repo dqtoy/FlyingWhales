@@ -984,11 +984,11 @@ public class Citizen {
 		this.successionWars.Remove (enemy);
 	}
 
-	internal void DeteriorateRelationship(RelationshipKings relationship, GameEvent gameEventTrigger, bool isDiscovery){
+	internal void DeteriorateRelationship(RelationshipKings relationship, GameEvent gameEventTrigger, bool isDiscovery, WAR_TRIGGER warTrigger){
 		//TRIGGER OTHER EVENTS
 //		InvasionPlan (relationship, gameEventTrigger, this.city.kingdom.kingdomTypeData);
 //		BorderConflict (relationship, gameEventTrigger);
-		Assassination (relationship, gameEventTrigger);
+		Assassination (relationship, gameEventTrigger, warTrigger);
 	}
 	internal void InvasionPlan(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData){
 		int chance = UnityEngine.Random.Range (0, 100);
@@ -1067,7 +1067,7 @@ public class Citizen {
 
 	}
 
-	private void Assassination(RelationshipKings relationship, GameEvent gameEventTrigger){
+	private void Assassination(RelationshipKings relationship, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 0;
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
@@ -1084,7 +1084,7 @@ public class Citizen {
 		}
 
 		if(chance < value){
-			EventCreator.Instance.CreateAssassinationEvent(this.city.kingdom, relationship.king, gameEventTrigger, EventManager.Instance.eventDuration[EVENT_TYPES.ASSASSINATION]);
+			EventCreator.Instance.CreateAssassinationEvent(this.city.kingdom, relationship.king, gameEventTrigger, EventManager.Instance.eventDuration[EVENT_TYPES.ASSASSINATION], warTrigger);
 		}
 	}
 	/*private Citizen GetSpy(Kingdom kingdom){
