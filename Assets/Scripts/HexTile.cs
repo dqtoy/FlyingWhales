@@ -591,6 +591,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         detailGO.transform.localScale = Vector3.one;
         detailGO.transform.localPosition = Vector3.zero;
     }
+
+    public void SetBiomeDetailState(bool state) {
+        biomeDetailParentGO.SetActive(state);
+    }
     #endregion
 
     public void ResetTile(){
@@ -710,17 +714,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-    private void FixedUpdate() {
-        if (!KingdomManager.Instance.useFogOfWar || (KingdomManager.Instance.useFogOfWar && _currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE)) {
-            if (!isOccupied) {
-                if (CameraMove.Instance.currentFOV < (CameraMove.Instance.maxFOV / 2f)) {
-                    biomeDetailParentGO.SetActive(true);
-                } else {
-                    biomeDetailParentGO.SetActive(false);
-                }
-            }
-        }
-    }
+    //private void FixedUpdate() {
+        //if (!KingdomManager.Instance.useFogOfWar || (KingdomManager.Instance.useFogOfWar && _currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE)) {
+        //    if (!isOccupied) {
+        //        if (CameraMove.Instance.currentFOV < (CameraMove.Instance.maxFOV / 2f)) {
+        //            biomeDetailParentGO.SetActive(true);
+        //        } else {
+        //            biomeDetailParentGO.SetActive(false);
+        //        }
+        //    }
+        //}
+    //}
     #endregion
 
     internal bool HasCombatPathTo(HexTile target){

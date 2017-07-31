@@ -44,6 +44,8 @@ public class CameraMove : MonoBehaviour {
 	private float MIN_Y;
 	private float MAX_Y;
 
+    private float previousCameraFOV;
+
     #region getters/setters
     public MinimapCamera minimap {
         get { return _minimap; }
@@ -104,11 +106,20 @@ public class CameraMove : MonoBehaviour {
 			float adjustment = Input.GetAxis ("Mouse ScrollWheel") * (sensitivity * -1f);
 			fov += adjustment;
 			fov = Mathf.Clamp (fov, _minFov, _maxFov);
-			Camera.main.orthographicSize = fov;
-			eventIconCamera.orthographicSize = fov;
-			resourceIconCamera.orthographicSize = fov;
-            generalCamera.orthographicSize = fov;
-            uiCamera.orthographicSize = fov;
+
+            if(!Mathf.Approximately(previousCameraFOV, fov)) {
+                if(fov < (_maxFov / 2f)) {
+                    SetBiomeDetailsState(true);
+                } else {
+                    SetBiomeDetailsState(false);
+                }
+                previousCameraFOV = fov;
+                Camera.main.orthographicSize = fov;
+                eventIconCamera.orthographicSize = fov;
+                resourceIconCamera.orthographicSize = fov;
+                generalCamera.orthographicSize = fov;
+                uiCamera.orthographicSize = fov;
+            }
 
 			//adjust camera movement clamps
 			if (adjustment > 0f) {
@@ -193,4 +204,12 @@ public class CameraMove : MonoBehaviour {
 	public void ToggleTraderCamera() {
 		traderCamera.gameObject.SetActive(!traderCamera.gameObject.activeSelf);
 	}
+
+    private void SetBiomeDetailsState(bool state) {
+        for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+            HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+            currHexTile.SetBiomeDetailState(state);
+
+        }
+    }
 }
