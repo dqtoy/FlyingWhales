@@ -2786,6 +2786,8 @@ public class UIManager : MonoBehaviour {
             return raidIcon;
         case EVENT_TYPES.EVIL_INTENT:
             return assassinationIcon;
+		case EVENT_TYPES.GREAT_STORM:
+			return assassinationIcon;
         }
 		return assassinationIcon;
 	}

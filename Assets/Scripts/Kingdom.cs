@@ -241,8 +241,8 @@ public class Kingdom{
 		this.plague = null;
 		this.SetLockDown(false);
 		this.SetTechProduction(true);
-		this.SetTechProductionPercentage(100);
-		this.SetProductionGrowthPercentage(100);
+		this.SetTechProductionPercentage(1);
+		this.SetProductionGrowthPercentage(1);
 		this.UpdateTechCapacity ();
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -510,6 +510,7 @@ public class Kingdom{
         this.TriggerKingdomHoliday();
         this.TriggerDevelopWeapons();
         this.TriggerKingsCouncil();
+		this.TriggerGreatStorm ();
     }
 	/*
 	 * Attempt to create an attack city event
@@ -2005,6 +2006,9 @@ public class Kingdom{
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
         if(fowState == FOG_OF_WAR_STATE.VISIBLE) {
             _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+			if(tile.lair != null){
+				tile.lair.ActivateLair ();
+			}
         } else {
             if(!(tile.isVisibleByCities != null && cities.Intersect(tile.isVisibleByCities).Count() > 0)) {
                 if (_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
@@ -2037,6 +2041,16 @@ public class Kingdom{
 	}
 	#endregion
 
+	#region Great Storm
+	internal void TriggerGreatStorm(){
+		if(GameManager.Instance.month == 7 && GameManager.Instance.days == 28){
+			int chance = UnityEngine.Random.Range (0, 100);
+			if(chance < 30){
+				EventCreator.Instance.CreateGreatStormEvent (this);
+			}
+		}
+	}
+	#endregion
 	internal int GetNumberOfWars(){
 		int numOfWars = 0;
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
