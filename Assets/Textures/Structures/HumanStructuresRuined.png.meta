@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 56a2c57009ed96c41b97b19cc3d6b340
-timeCreated: 1501202836
+timeCreated: 1501487950
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -31,6 +31,33 @@ TextureImporter:
     21300048: H_Farm_Ruined
     21300050: H_HuntingLodge_R
     21300052: H_Mines_R
+    21300054: HumanStructuresRuined_0
+    21300056: HumanStructuresRuined_1
+    21300058: HumanStructuresRuined_2
+    21300060: HumanStructuresRuined_3
+    21300062: HumanStructuresRuined_4
+    21300064: HumanStructuresRuined_5
+    21300066: HumanStructuresRuined_6
+    21300068: HumanStructuresRuined_7
+    21300070: HumanStructuresRuined_8
+    21300072: HumanStructuresRuined_9
+    21300074: HumanStructuresRuined_10
+    21300076: HumanStructuresRuined_11
+    21300078: HumanStructuresRuined_12
+    21300080: HumanStructuresRuined_13
+    21300082: HumanStructuresRuined_14
+    21300084: HumanStructuresRuined_15
+    21300086: HumanStructuresRuined_16
+    21300088: HumanStructuresRuined_17
+    21300090: HumanStructuresRuined_18
+    21300092: HumanStructuresRuined_19
+    21300094: HumanStructuresRuined_20
+    21300096: HumanStructuresRuined_21
+    21300098: HumanStructuresRuined_22
+    21300100: HumanStructuresRuined_23
+    21300102: HumanStructuresRuined_24
+    21300104: HumanStructuresRuined_25
+    21300106: HumanStructuresRuined_26
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -427,6 +454,357 @@ TextureImporter:
         height: 76
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_0
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 648
+        width: 166
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_1
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 646
+        width: 119
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_2
+      rect:
+        serializedVersion: 2
+        x: 483
+        y: 641
+        width: 136
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_3
+      rect:
+        serializedVersion: 2
+        x: 630
+        y: 641
+        width: 126
+        height: 98
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_4
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 540
+        width: 111
+        height: 90
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_5
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 277
+        width: 252
+        height: 309
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_6
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 541
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_7
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 520
+        width: 40
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_8
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 517
+        width: 39
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_9
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 506
+        width: 78
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_10
+      rect:
+        serializedVersion: 2
+        x: 822
+        y: 510
+        width: 45
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_11
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 508
+        width: 80
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_12
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 306
+        width: 248
+        height: 223
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_13
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 432
+        width: 57
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_14
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 464
+        width: 44
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_15
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 426
+        width: 72
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_16
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 426
+        width: 55
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_17
+      rect:
+        serializedVersion: 2
+        x: 892
+        y: 422
+        width: 69
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_18
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 334
+        width: 69
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_19
+      rect:
+        serializedVersion: 2
+        x: 677
+        y: 337
+        width: 70
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_20
+      rect:
+        serializedVersion: 2
+        x: 755
+        y: 342
+        width: 70
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_21
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 341
+        width: 61
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_22
+      rect:
+        serializedVersion: 2
+        x: 597
+        y: 262
+        width: 55
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_23
+      rect:
+        serializedVersion: 2
+        x: 673
+        y: 261
+        width: 59
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_24
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 266
+        width: 60
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_25
+      rect:
+        serializedVersion: 2
+        x: 804
+        y: 270
+        width: 59
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: HumanStructuresRuined_26
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 271
+        width: 50
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
