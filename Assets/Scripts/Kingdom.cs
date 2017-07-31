@@ -86,9 +86,13 @@ public class Kingdom{
 
 	private bool _isDead;
 	private bool _hasBioWeapon;
+	private bool _isLockedDown;
+	private bool _isTechProducing;
 	internal bool hasConflicted;
 
 	private int borderConflictLoyaltyExpiration;
+	private float _techProductionPercentage;
+	private float _productionGrowthPercentage;
 
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
@@ -187,6 +191,15 @@ public class Kingdom{
 	public int waves{
 		get { return this._combatStats.waves - GetNumberOfWars();}
 	}
+	public bool isLockedDown{
+		get { return this._isLockedDown;}
+	}
+	public bool isTechProducing{
+		get { return this._isTechProducing;}
+	}
+	public float productionGrowthPercentage{
+		get { return this._productionGrowthPercentage;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -211,6 +224,7 @@ public class Kingdom{
 		this._availableResources = new Dictionary<RESOURCE, int> ();
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this._isDead = false;
+		this._isLockedDown = false;
         //this._tradeRoutes = new List<TradeRoute>();
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._unrest = 0;
@@ -225,6 +239,10 @@ public class Kingdom{
 		this._boonOfPowers = new List<BoonOfPower> ();
 		this._activatedBoonOfPowers = new List<BoonOfPower> ();
 		this.plague = null;
+		this.SetLockDown(false);
+		this.SetTechProduction(true);
+		this.SetTechProductionPercentage(100);
+		this.SetProductionGrowthPercentage(100);
 		this.UpdateTechCapacity ();
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -1688,6 +1706,9 @@ public class Kingdom{
 
     #region Tech
     private void IncreaseTechCounterPerTick(){
+		if(!this._isTechProducing){
+			return;
+		}
 		int amount = 1 * this.cities.Count;
 		int bonus = 0;
         for (int i = 0; i < this._availableResources.Count; i++) {
@@ -1698,6 +1719,7 @@ public class Kingdom{
             }
         }
 		amount += bonus;
+		amount = (int)(amount * this._techProductionPercentage);
 		this.AdjustTechCounter (amount);
 	}
 	private void UpdateTechCapacity(){
@@ -2028,5 +2050,19 @@ public class Kingdom{
 	private void UpdateCombatStats(){
 		this._combatStats = this._kingdomTypeData.combatStats;
 		this._combatStats.waves = this._kingdomTypeData.combatStats.waves - ((GetNumberOfWars() + 1) + this.rebellions.Count);
+	}
+
+	internal void SetLockDown(bool state){
+		this._isLockedDown = state;
+	}
+
+	internal void SetTechProduction(bool state){
+		this._isTechProducing = state;
+	}
+	internal void SetTechProductionPercentage(float amount){
+		this._techProductionPercentage = amount;
+	}
+	internal void SetProductionGrowthPercentage(float amount){
+		this._productionGrowthPercentage = amount;
 	}
 }
