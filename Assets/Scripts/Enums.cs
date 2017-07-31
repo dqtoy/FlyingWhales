@@ -469,3 +469,8 @@ public enum LAIR {
 public enum MONSTER{
 	LYCAN,
 }
+
+public enum STRUCTURE_STATE {
+    NORMAL,
+    RUINED
+}
