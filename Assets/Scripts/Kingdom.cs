@@ -97,6 +97,7 @@ public class Kingdom{
 	private bool _hasUpheldHiddenHistoryBook;
 
 	private bool _hasSecession;
+	private bool _hasRiot;
 
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
@@ -210,6 +211,9 @@ public class Kingdom{
 	public bool hasSecession{
 		get { return this._hasSecession;}
 	}
+	public bool hasRiot{
+		get { return this._hasRiot;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -255,6 +259,9 @@ public class Kingdom{
 		this.SetTechProductionPercentage(1);
 		this.SetProductionGrowthPercentage(1);
 		this.UpdateTechCapacity ();
+		this.SetSecession (false);
+		this.SetRiot (false);
+
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
@@ -1696,7 +1703,20 @@ public class Kingdom{
 		int chance = UnityEngine.Random.Range (0, 2);
 		if(chance == 0){
 			//Riot Event
-			EventCreator.Instance.CreateRiotEvent(this);
+			if(!this._hasRiot){
+				EventCreator.Instance.CreateRiotEvent(this);
+			}else{
+				List<GameEvent> riots = EventManager.Instance.GetEventsOfType (EVENT_TYPES.RIOT);
+				if(riots != null && riots.Count > 0){
+					for (int i = 0; i < riots.Count; i++) {
+						Riot riot = (Riot)riots [i];
+						if(riot.sourceKingdom.id == this.id && riot.isActive){
+							riot.remainingDays += riot.durationInDays;
+							break;
+						}
+					}
+				}
+			}
 		}else{
 			//Rebellion Event
 			EventCreator.Instance.CreateRebellionEvent(this);
@@ -2100,5 +2120,7 @@ public class Kingdom{
 	internal void SetSecession(bool state){
 		this._hasSecession = state;
 	}
-
+	internal void SetRiot(bool state){
+		this._hasRiot = state;
+	}
 }
