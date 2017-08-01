@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -22,7 +23,8 @@ public class MapGenerator : MonoBehaviour {
 		WorldEventManager.Instance.AltarOfBlessingTrigger();
         WorldEventManager.Instance.FirstAndKeystoneTrigger();
         GameManager.Instance.StartProgression();
-		CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms[0].cities[0].hexTile.gameObject);
+        //UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms.FirstOrDefault());
+        CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
     }
 
 }

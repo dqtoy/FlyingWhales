@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour {
     public GameObject cityItemPrefab;
     public GameObject resourceIconPrefab;
     public GameObject playerEventItemPrefab;
+    [SerializeField] private GameObject kingdomIntervenePrefab;
 
 	[Space(10)]
     [Header("Main UI Objects")]
@@ -237,6 +238,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UIGrid interveneMenuGrid;
     [SerializeField] private UIScrollView interveneMenuScrollView;
     [SerializeField] private ButtonToggle interveneMenuBtn;
+    [SerializeField] private GameObject interveneActonsGO;
+    [SerializeField] private GameObject switchKingdomGO;
+    [SerializeField] private UIGrid switchKingdomGrid;
+    [SerializeField] private ButtonToggle switchKingdomsBtn;
 
     [Space(10)]
     [Header("Minimap")]
@@ -440,13 +445,12 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 
-
     private void ForceUpdateKingdomList(Kingdom kingdomThatDied) {
         if (currentlyShowingKingdom.id == kingdomThatDied.id) {
             //SetKingdomAsActive(KingdomManager.Instance.allKingdoms.First());
             currentlyShowingKingdom = null;
         }
-        LoadKingdomList();
+        //LoadKingdomList();
     }
 
     private void QueueKingdomForRemoval(Kingdom kingdomToQueue) {
@@ -2704,6 +2708,68 @@ public class UIManager : MonoBehaviour {
     private void HideInterveneMenu() {
         interveneMenuBtn.SetClickState(false);
         interveneMenuGO.SetActive(false);
+    }
+
+    public void ToggleInterveneActionsMenu() {
+        if (interveneActonsGO.activeSelf) {
+            HideInterveneActionsMenu();
+        } else {
+            ShowInterveneActionsMenu();
+        }
+    }
+
+    private void ShowInterveneActionsMenu() {
+        interveneActonsGO.SetActive(true);
+    }
+
+    public void HideInterveneActionsMenu() {
+        HideSwitchKingdomsMenu();
+        interveneMenuBtn.SetClickState(false);
+        interveneActonsGO.SetActive(false);
+    }
+
+    public void ToggleSwitchKingdomsMenu() {
+        if (switchKingdomGO.activeSelf) {
+            HideSwitchKingdomsMenu();
+        } else {
+            ShowSwitchKingdomsMenu();
+        }
+    }
+
+    private void ShowSwitchKingdomsMenu() {
+        //Load Kingdoms
+        List<Kingdom> kingdomsToList = KingdomManager.Instance.allKingdoms;
+        kingdomsToList.Remove(currentlyShowingKingdom);
+
+        List<KingdomInterveneItem> presentKingdomItems = switchKingdomGrid.GetChildList().Select(x => x.GetComponent<KingdomInterveneItem>()).ToList();
+        if(kingdomsToList.Count > presentKingdomItems.Count) {
+            int numOfItemsToCreate = kingdomsToList.Count - presentKingdomItems.Count;
+            for (int i = 0; i < numOfItemsToCreate; i++) {
+                GameObject kingdomItemGO = InstantiateUIObject(kingdomIntervenePrefab, switchKingdomGrid.transform);
+                switchKingdomGrid.AddChild(kingdomItemGO.transform);
+                kingdomItemGO.transform.localScale = Vector3.one;
+                presentKingdomItems.Add(kingdomItemGO.GetComponent<KingdomInterveneItem>());
+            }
+            StartCoroutine(RepositionGrid(switchKingdomGrid));
+        }
+
+        for (int i = 0; i < presentKingdomItems.Count; i++) {
+            KingdomInterveneItem currItem = presentKingdomItems[i];
+            Kingdom currKingdom = kingdomsToList.ElementAtOrDefault(i);
+            if (currKingdom != null) {
+                currItem.SetKingdom(currKingdom);
+                currItem.gameObject.SetActive(true);
+            } else {
+                currItem.gameObject.SetActive(false);
+            }
+        }
+        switchKingdomsBtn.SetClickState(true);
+        switchKingdomGO.SetActive(true);
+    }
+
+    public void HideSwitchKingdomsMenu() {
+        switchKingdomsBtn.SetClickState(false);
+        switchKingdomGO.SetActive(false);
     }
 
     /*

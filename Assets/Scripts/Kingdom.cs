@@ -11,6 +11,11 @@ public class Kingdom{
     public int id;
 	public string name;
 	public RACE race;
+    public int age;
+    private int foundationYear;
+    private int foundationMonth;
+    private int foundationDay;
+
     [NonSerialized] public int[] horoscope; 
 
 	[SerializeField]
@@ -250,7 +255,12 @@ public class Kingdom{
 		this._boonOfPowers = new List<BoonOfPower> ();
 		this._activatedBoonOfPowers = new List<BoonOfPower> ();
 		this.plague = null;
-		this.SetLockDown(false);
+        this.age = 0;
+        this.foundationYear = GameManager.Instance.year;
+        this.foundationDay = GameManager.Instance.days;
+        this.foundationMonth = GameManager.Instance.month;
+
+        this.SetLockDown(false);
 		this.SetTechProduction(true);
 		this.SetTechProductionPercentage(1);
 		this.SetProductionGrowthPercentage(1);
@@ -499,6 +509,7 @@ public class Kingdom{
 	 * */
 	protected void KingdomTickActions(){
         //this.ProduceGoldFromTrade();
+        this.AttemptToAge();
         if (_isGrowthEnabled) {
             this.AttemptToExpand();
         }
@@ -513,6 +524,12 @@ public class Kingdom{
         //    this.AttemptToTrade();
         //}
         
+    }
+
+    private void AttemptToAge() {
+        if(GameManager.Instance.year > foundationYear && GameManager.Instance.month == foundationMonth && GameManager.Instance.days == foundationDay) {
+            age += 1;
+        }
     }
 
     private void TriggerEvents() {
