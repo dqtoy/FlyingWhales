@@ -86,7 +86,7 @@ public class Hypnotism : GameEvent {
 		this.DoneEvent();
 	}
 	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
-		deadCitizen.Death (DEATH_REASONS.BATTLE);
+		base.DeathByAgent(citizen, deadCitizen);
 		this.DoneEvent();
 	}
     #endregion

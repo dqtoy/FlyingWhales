@@ -21,7 +21,7 @@ public class MonsterManager : MonoBehaviour {
 		List<HexTile> lairEligibleTiles = new List<HexTile>(CityGenerator.Instance.lairHabitableTiles);
 		bool noMoreTiles = false;
 		for (int i = 0; i < lairSpawn.Length; i++) {
-			for (int j = 0; j < lairSpawn[i].numberOfLairs; i++) {
+			for (int j = 0; j < lairSpawn[i].numberOfLairs; j++) {
 				if(lairEligibleTiles != null && lairEligibleTiles.Count > 0){
 					HexTile chosenLairTile = lairEligibleTiles[UnityEngine.Random.Range(0, lairEligibleTiles.Count)];
 					LAIR type = lairSpawn[i].lairType;

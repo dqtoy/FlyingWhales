@@ -13,6 +13,7 @@ public class DiplomaticCrisis : GameEvent {
 	public Envoy activeEnvoyProvoke;
 
 	internal City targetCity;
+	internal string crisis;
 
 	public bool isResolvedPeacefully;
 	public DiplomaticCrisis(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
@@ -32,15 +33,19 @@ public class DiplomaticCrisis : GameEvent {
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		Debug.LogError (this.description);
 
-		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "event_title");
-		newLogTitle.AddToFillers (null, kingdom1.king.name, LOG_IDENTIFIER.KING_1);
-		newLogTitle.AddToFillers (null, kingdom2.king.name, LOG_IDENTIFIER.KING_2);
-		newLogTitle.AddToFillers (null, Utilities.crisis[0], LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
+		this.crisis = Utilities.crisis [UnityEngine.Random.Range (0, Utilities.crisis.Length)];
 
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "reason1");
+		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "event_title");
+		newLogTitle.AddToFillers (null, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLogTitle.AddToFillers (null, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLogTitle.AddToFillers (null, crisis, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "start");
 		newLog.AddToFillers (kingdom1.king, kingdom1.king.name, LOG_IDENTIFIER.KING_1);
+		newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (kingdom2.king, kingdom2.king.name, LOG_IDENTIFIER.KING_2);
-		newLog.AddToFillers (null, Utilities.crisis[0], LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
+		newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (null, crisis, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
 		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
@@ -130,9 +135,9 @@ public class DiplomaticCrisis : GameEvent {
 		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 	}
 	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
+		base.DeathByAgent(citizen, deadCitizen);
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
 		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-		this.activeEnvoyResolve.citizen.Death (DEATH_REASONS.BATTLE);
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent();

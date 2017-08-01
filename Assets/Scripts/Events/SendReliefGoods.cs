@@ -47,7 +47,7 @@ public class SendReliefGoods : GameEvent {
 		this.DoneEvent();
 	}
 	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
-		citizen.Death (DEATH_REASONS.BATTLE);
+		base.DeathByAgent(citizen, deadCitizen);
 		this.DoneEvent();
 	}
 	internal override void DoneEvent(){

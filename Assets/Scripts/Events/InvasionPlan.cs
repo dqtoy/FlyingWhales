@@ -296,7 +296,7 @@ public class InvasionPlan : GameEvent {
 		this._uncovered.Add(citizen);
 		Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 
 			"Events", "War", "invasion_plan_discovered");
-		invasionPlanStart.AddToFillers(citizen.city.kingdom.king, citizen.city.kingdom.king.name, LOG_IDENTIFIER.KING_1);
+		invasionPlanStart.AddToFillers(citizen.city.kingdom.king, citizen.city.kingdom.king.name, LOG_IDENTIFIER.KING_3);
 		invasionPlanStart.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
 		invasionPlanStart.AddToFillers(this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
 	}

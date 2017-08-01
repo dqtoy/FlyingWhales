@@ -180,7 +180,7 @@ public class Assassination : GameEvent {
 		this.DoneEvent();
 	}
 	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
-		this.spy.citizen.Death (DEATH_REASONS.BATTLE);
+		base.DeathByAgent(citizen, deadCitizen);
 		this.DoneEvent();
 	}
 	#endregion

@@ -67,7 +67,7 @@ public class Secession : GameEvent {
 		this.DoneEvent();
 	}
 	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
-		this.convincer.citizen.Death (DEATH_REASONS.BATTLE);
+		base.DeathByAgent(citizen, deadCitizen);
 		this.DoneEvent();
 	}
 	internal override void DoneEvent(){
@@ -113,6 +113,7 @@ public class Secession : GameEvent {
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "convince_success");
 				newLog.AddToFillers (this.convincer.citizen, this.convincer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 				newLog.AddToFillers (this.targetCity.governor, this.targetCity.governor.name, LOG_IDENTIFIER.GOVERNOR_2);
+				newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
 				newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			}
 		}

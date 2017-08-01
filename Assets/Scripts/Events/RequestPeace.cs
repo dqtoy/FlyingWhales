@@ -123,6 +123,11 @@ public class RequestPeace : GameEvent {
                     }
                 }
                 relationshipOfRequester.SetMoveOnPeriodAfterRequestPeaceRejection(moveOnMonth);
+
+				Log requestPeaceFail = this._targetKingdomRel.war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
+					"Events", "War", "request_peace_fail");
+				requestPeaceFail.AddToFillers(this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+				requestPeaceFail.AddToFillers(this._startedBy, this._startedBy.name, LOG_IDENTIFIER.KING_1);
             }
             this.DoneEvent();
         }

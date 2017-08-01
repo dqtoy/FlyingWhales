@@ -133,9 +133,9 @@ public class StateVisit : GameEvent {
 	}
 	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
 		//Add logs: death_by_general
+		base.DeathByAgent(citizen, deadCitizen);
 		this.visitorHasDied = true;
 		this.isSuccessful = false;
-		this.visitor.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}
 	internal override void CancelEvent (){
