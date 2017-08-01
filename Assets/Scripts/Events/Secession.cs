@@ -137,15 +137,23 @@ public class Secession : GameEvent {
 			int chance = UnityEngine.Random.Range (0, 100);
 			int value = chosenGovernor.loyalty * -1;
 			if(chance < value){
-				JoinSecession (chosenGovernor.citizen.city);
+				JoinSecession (chosenGovernor.citizen);
 			}
 		}
 	}
-	private void JoinSecession(City cityToJoin){
-		this.joiningCities.Add (cityToJoin);
+	private void JoinSecession(Citizen governorToJoin){
+		this.joiningCities.Add (governorToJoin.city);
+
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "governor_joined");
+		newLog.AddToFillers (governorToJoin, governorToJoin.name, LOG_IDENTIFIER.GOVERNOR_2);
+		newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
 	}
 	private void SplitKingdom(){
+		bool kingFled = false;
 		if(this.joiningCities.Count == this.sourceKingdom.cities.Count){
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "entire_kingdom_secedes");
+			newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
+			newLog.AddToFillers (this.sourceKingdom.king, this.sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
 			this.sourceKingdom.king.Death (DEATH_REASONS.ASSASSINATION, true, this.governor.citizen);
 		}else{
 			if (this.joiningCities.Contains (this.sourceKingdom.king.city)) {
@@ -164,7 +172,7 @@ public class Secession : GameEvent {
 					}
 					this.sourceKingdom.capitalCity = newCityForRoyalties;
 					newCityForRoyalties.hasKing = true;
-
+					kingFled = true;
 				} else {
 					int countCitizens = this.sourceKingdom.king.city.citizens.Count;
 					for (int i = 0; i < countCitizens; i++) {
@@ -181,7 +189,6 @@ public class Secession : GameEvent {
 
 			Kingdom newKingdom = KingdomManager.Instance.SplitKingdom (this.sourceKingdom, this.joiningCities);
 			if (newKingdom != null) {
-				newKingdom.AssignNewKing (this.governor.citizen);
 				string newCitiesText = string.Empty;
 				for (int i = 0; i < this.joiningCities.Count; i++) {
 					if (i != this.joiningCities.Count - 1) {
@@ -190,10 +197,25 @@ public class Secession : GameEvent {
 						newCitiesText += "and" + this.joiningCities [i].name;
 					}
 				}
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "secession_success");
-				newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
-				newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-				newLog.AddToFillers (null, newCitiesText, LOG_IDENTIFIER.SECESSION_CITIES);
+
+				if(kingFled){
+					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "king_flees");
+					newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
+					newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+					newLog.AddToFillers (null, newCitiesText, LOG_IDENTIFIER.SECESSION_CITIES);
+					newLog.AddToFillers (this.sourceKingdom.king, this.sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
+					newLog.AddToFillers (this.sourceKingdom.capitalCity, this.sourceKingdom.capitalCity.name, LOG_IDENTIFIER.CITY_1);
+
+				}else{
+					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "secession_success");
+					newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
+					newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+					newLog.AddToFillers (null, newCitiesText, LOG_IDENTIFIER.SECESSION_CITIES);
+				}
+
+				newKingdom.AssignNewKing (this.governor.citizen);
+
+
 
 			}
 		}
