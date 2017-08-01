@@ -10,18 +10,22 @@ public class GreatStorm : GameEvent {
 	private bool isStorming;
 
 	private int daysCounter;
-
+	private int destroyedStructures;
+	private int totalStructures;
 	public GreatStorm(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom affectedKingdom) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.GREAT_STORM;
 		this.name = "Great Storm";
 		this.durationInDays = UnityEngine.Random.Range(15,31);
-		SetDamagePercentageAndAfterEffectsDuration();
+		this.afterEffectsDuration = this.durationInDays;
 		this._affectedKingdom = affectedKingdom;
 		this._affectedKingdom.SetLockDown(true);
 		this._affectedKingdom.SetTechProduction(false);
 		this._affectedKingdom.SetGrowthState(false);
 		this.isStorming = true;
+		this.totalStructures = GetTotalStructuresOfKingdom ();
+		this.damagePercentage = 0;
 		this.daysCounter = 0;
+		this.destroyedStructures = 0;
 		EventManager.Instance.AddEventToDictionary(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
@@ -57,8 +61,8 @@ public class GreatStorm : GameEvent {
 	}
 	internal override void DoneEvent (){
 		base.DoneEvent ();
-		this._affectedKingdom.SetTechProductionPercentage(100);
-		this._affectedKingdom.SetProductionGrowthPercentage(100);
+		this._affectedKingdom.SetTechProductionPercentage(1);
+		this._affectedKingdom.SetProductionGrowthPercentage(1);
 		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
 	}
 	internal override void DeathByOtherReasons(){
@@ -73,7 +77,13 @@ public class GreatStorm : GameEvent {
 		this.DoneEvent ();
 	}
 	#endregion
-
+	private int GetTotalStructuresOfKingdom(){
+		int count = 0;
+		for (int i = 0; i < this._affectedKingdom.cities.Count; i++) {
+			count += this._affectedKingdom.cities [i].structures.Count;
+		}
+		return count;
+	}
 	private void SetDamagePercentageAndAfterEffectsDuration(){
 		if(this.durationInDays >= 15 && this.durationInDays < 18){
 			this.damagePercentage = UnityEngine.Random.Range(1,20);
@@ -94,29 +104,24 @@ public class GreatStorm : GameEvent {
 	}
 	private void StormEffects(){
 		int chance = UnityEngine.Random.Range(0, 100);
-		if(chance < 10){
+		if(chance < 15){
 			City chosenCity = this._affectedKingdom.cities[UnityEngine.Random.Range(0,this._affectedKingdom.cities.Count)];
 			//Destroy Random Structure in City
+			this.destroyedStructures += 1;
 		}
 	}
 	private void StartStormAfterEffects(){
 		//TODO: Add log - after effects
+		this.damagePercentage = (int)(this.destroyedStructures / this.totalStructures);
+
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "GreatStorm", "after_effects");
 		newLog.AddToFillers (this._affectedKingdom, this._affectedKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (null, this.damagePercentage.ToString(), LOG_IDENTIFIER.OTHER);
-
 
 		this.isStorming = false;
 		this._affectedKingdom.SetLockDown(false);
 		this._affectedKingdom.SetTechProduction(true);
 		this._affectedKingdom.SetGrowthState(true);
-
-		//Production and Tech growth will reduce by the damage percentage taken by the kingdom
-		int growthValue = 100 - this.damagePercentage;
-		float growthPercentage = (float)growthValue / 100f;
-		this._affectedKingdom.SetTechProductionPercentage(growthPercentage);
-		this._affectedKingdom.SetProductionGrowthPercentage(growthPercentage);
-
 	}
 	private void StormAfterEffects(){
 		//Send relief goods
