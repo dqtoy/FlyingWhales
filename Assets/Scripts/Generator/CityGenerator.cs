@@ -23,6 +23,7 @@ public class CityGenerator : MonoBehaviour {
     [Space(10)]
     [Header("Special Structures")]
     [SerializeField] private GameObject lycanLair;
+	[SerializeField] private GameObject stormWitchLair;
 
     //public GameObject[] genericStructures;
     //public GameObject[] cityStructures;
@@ -242,8 +243,10 @@ public class CityGenerator : MonoBehaviour {
 
     public GameObject GetStructurePrefabForSpecialStructures(LAIR lairType) {
         switch (lairType) {
-            case LAIR.LYCAN:
-                return lycanLair;
+        case LAIR.LYCAN:
+            return lycanLair;
+		case LAIR.STORM_WITCH:
+			return stormWitchLair;
         }
         return null;
     }
