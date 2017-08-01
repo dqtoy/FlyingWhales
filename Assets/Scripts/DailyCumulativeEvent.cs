@@ -136,6 +136,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //	[Task]
 	public bool AreTheTwoKingdomsAtWar(){
 		RelationshipKingdom relationship = this.firstKingdom.GetRelationshipWithOtherKingdom (this.secondKingdom);
+		if (relationship == null) {
+			return false;
+		}
 		return relationship.isAtWar;
 	}
 //	[Task]
