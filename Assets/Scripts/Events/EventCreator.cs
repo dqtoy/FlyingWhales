@@ -172,14 +172,14 @@ public class EventCreator: MonoBehaviour {
 		return null;
 	}
 
-	internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom) {
+	internal RequestPeace CreateRequestPeace(Kingdom kingdomToRequest, Kingdom targetKingdom, bool isSureAccept = false) {
 		if(kingdomToRequest.isLockedDown || targetKingdom.isLockedDown){
 			return null;
 		}
     	Citizen citizen = kingdomToRequest.capitalCity.CreateAgent(ROLE.ENVOY, EVENT_TYPES.REQUEST_PEACE, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REQUEST_PEACE]);
 		if (citizen != null) {
         	RequestPeace requestPeace = new RequestPeace(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				kingdomToRequest.king, (Envoy)citizen.assignedRole, targetKingdom);
+				kingdomToRequest.king, (Envoy)citizen.assignedRole, targetKingdom, isSureAccept);
 			citizen.assignedRole.Initialize(requestPeace);
         	return requestPeace;
     	}

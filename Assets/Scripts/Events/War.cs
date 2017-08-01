@@ -287,8 +287,8 @@ public class War : GameEvent {
 				this.ReplenishWavesKingdom1();
 				this.ReplenishWavesKingdom2();
 				if(this.kingdom1Waves <= 0 && this.kingdom2Waves <= 0){
-					//Peace 100% - kingdom1 will request peace while kingdom2 will accept peace 100%
-
+                    //Peace 100% - kingdom1 will request peace while kingdom2 will accept peace 100%
+                    EventCreator.Instance.CreateRequestPeace(kingdom1, kingdom2, true);
 				}
 			}
 //				if(!this.kingdom1Attacked){

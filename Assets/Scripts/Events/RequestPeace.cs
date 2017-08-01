@@ -9,6 +9,8 @@ public class RequestPeace : GameEvent {
 
     private Envoy _envoySent;
 
+    private bool isSureAccept;
+
 	#region getters/setters
 	public Kingdom targetKingdom {
 		get { return this._targetKingdom; }
@@ -19,12 +21,13 @@ public class RequestPeace : GameEvent {
 	}
 	#endregion
 
-	public RequestPeace(int startWeek, int startMonth, int startYear, Citizen startedBy, Envoy _envoySent, Kingdom _targetKingdom) : base (startWeek, startMonth, startYear, startedBy){
+	public RequestPeace(int startWeek, int startMonth, int startYear, Citizen startedBy, Envoy _envoySent, Kingdom _targetKingdom, bool isSureAccept) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.REQUEST_PEACE;
 		this.name = "Request Peace";
 		this.description = startedBy.name + " has sent " + _envoySent.citizen.name + " to " + _targetKingdom.name + " to request peace.";
 		this.durationInDays = 4;
 		this.remainingDays = this.durationInDays;
+        this.isSureAccept = isSureAccept;
 		this._envoySent = _envoySent;
 		this._targetKingdom = _targetKingdom;
 		this._targetKingdomRel = _targetKingdom.GetRelationshipWithOtherKingdom(this.startedBy.city.kingdom);
@@ -100,7 +103,7 @@ public class RequestPeace : GameEvent {
         if (isActive) {
             base.DoneCitizenAction(citizen);
             int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 20 * (this._targetKingdomRel.kingdomWar.peaceRejected + 1)) {
+            if (chance < 20 * (this._targetKingdomRel.kingdomWar.peaceRejected + 1) || isSureAccept) {
                 //request accepted
                 Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
                     "Events", "War", "request_peace_success");
