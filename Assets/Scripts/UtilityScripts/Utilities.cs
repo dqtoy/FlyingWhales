@@ -342,7 +342,26 @@ public class Utilities : MonoBehaviour {
 	//	return STRUCTURE.NONE;
 	//}
 
-
+    public static STRUCTURE_TYPE GetStructureTypeForResource(RESOURCE resourceType) {
+        if (resourceType != RESOURCE.NONE) {
+            if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.FOOD) {
+                if (resourceType == RESOURCE.BEHEMOTH || resourceType == RESOURCE.DEER ||
+                    resourceType == RESOURCE.PIG) {
+                    return STRUCTURE_TYPE.HUNTING_LODGE;
+                } else {
+                    return STRUCTURE_TYPE.MINES; //TODO: Change to Farm when farm is available
+                }
+            } else if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.WOOD) {
+                return STRUCTURE_TYPE.LUMBERYARD;
+            } else if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.STONE) {
+                return STRUCTURE_TYPE.QUARRY;
+            } else {
+                return STRUCTURE_TYPE.MINES;
+            }
+        }
+        return STRUCTURE_TYPE.GENERIC;
+    }
+            
 	public static ROLE GetRoleThatProducesResource(BASE_RESOURCE_TYPE resourceType){
 		if (resourceType == BASE_RESOURCE_TYPE.FOOD) {
 			return ROLE.FOODIE;

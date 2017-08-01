@@ -535,18 +535,19 @@ public class City{
 
 		this.ownedTiles.Add(tileToBuy);
 
-		//Set color of tile
-		Color color = this.kingdom.kingdomColor;
-		color.a = 76.5f/255f;
-		tileToBuy.kingdomColorSprite.color = color;
-		tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
-		tileToBuy.ShowOccupiedSprite();
+        //Set color of tile
+        //Color color = this.kingdom.kingdomColor;
+        //color.a = 76.5f/255f;
+        //tileToBuy.kingdomColorSprite.color = color;
+        //tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
+        //tileToBuy.ShowOccupiedSprite();
+        tileToBuy.CreateStructureOnTile(Utilities.GetStructureTypeForResource(tileToBuy.specialResource));
 
-		//Remove tile from any border tile list
-		if (tileToBuy.isBorder && tileToBuy.isBorderOfCityID != this.id) {
-			tileToBuy.isBorder = false;
-			City otherCity = CityGenerator.Instance.GetCityByID (tileToBuy.isBorderOfCityID);
-			otherCity.borderTiles.Remove (tileToBuy);
+        //Remove tile from any border tile list
+        if (tileToBuy.isBorder && tileToBuy.isBorderOfCityID != this.id) {
+            tileToBuy.isBorder = false;
+            City otherCity = CityGenerator.Instance.GetCityByID (tileToBuy.isBorderOfCityID);
+            otherCity.borderTiles.Remove(tileToBuy);
 			this.UpdateBorderTiles ();
 			otherCity.UpdateBorderTiles ();
 		} else {
@@ -563,7 +564,6 @@ public class City{
         if (tileToBuy.specialResource != RESOURCE.NONE) {
             this._kingdom.AddResourceToKingdom(tileToBuy.specialResource);
         }
-        
 
         //Show Highlight if kingdom or city is currently highlighted
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {

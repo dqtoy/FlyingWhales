@@ -2,7 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
-public struct RaceStructures {
+public class RaceStructures {
     public RACE race;
     public Structures[] structures;
 	
