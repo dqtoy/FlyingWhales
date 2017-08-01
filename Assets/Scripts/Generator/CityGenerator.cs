@@ -187,7 +187,8 @@ public class CityGenerator : MonoBehaviour {
 		}else{
 			hexTile.city = new City (hexTile, kingdom);
 		}
-		hexTile.ShowCitySprite();
+        //hexTile.ShowCitySprite();
+        hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
 		//hexTile.ShowNamePlate();
 		if (hexTile.gameObject.GetComponent<CityTaskManager> () != null) {
 			Destroy (hexTile.gameObject.GetComponent<CityTaskManager> ());

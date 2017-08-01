@@ -69,6 +69,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Space(10)]
     [Header("Structure Objects")]
     [SerializeField] private GameObject structureParentGO;
+    private StructureObject structureObjOnTile;
 
     [Space(10)]
     [Header("Minimap Objects")]
@@ -423,31 +424,66 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.kingdomColorSprite.gameObject.SetActive(false);
 	}
 
-    public void ShowCitySprite() {
-        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.city.kingdom.race, STRUCTURE_TYPE.CITY);
+    public void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
+        //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
+        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
         GameObject structureGO = GameObject.Instantiate(
-           gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)],
-           structureParentGO.transform) as GameObject;
-        structureGO.transform.localPosition = Vector3.zero;
-        SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
-            Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
+        gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)],
+        structureParentGO.transform) as GameObject;
+        AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
+        structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState);
 
-        for (int i = 0; i < allColorizers.Length; i++) {
-            allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
-        }
         this._centerPiece.SetActive(false);
 
-        //this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
-        //this.structureGO.SetActive(true);
-        //this.centerPiece.SetActive(false);
-        Color color = this.city.kingdom.kingdomColor;
+        Color color = this.ownedByCity.kingdom.kingdomColor;
         color.a = 255f / 255f;
         SetMinimapTileColor(color);
+
         color.a = 76.5f / 255f;
         this._kingdomColorSprite.color = color;
-        this.GetComponent<SpriteRenderer>().color = Color.white;
-        //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
+        
     }
+
+    /*
+     * Assign a structure object to this tile.
+     * NOTE: This will destroy any current structures on this tile
+     * and replace it with the new assigned one.
+     * */
+    public void AssignStructureObjectToTile(StructureObject structureObj) {
+        if(structureObjOnTile != null) {
+            //Destroy Current Structure
+            structureObjOnTile.DestroyStructure();
+        }
+        structureObjOnTile = structureObj;
+        structureObj.transform.SetParent(this.structureParentGO.transform);
+        structureObj.transform.localPosition = Vector3.zero;
+    }
+
+    //public void ShowCitySprite() {
+    //    GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.city.kingdom.race, STRUCTURE_TYPE.CITY);
+    //    GameObject structureGO = GameObject.Instantiate(
+    //       gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)],
+    //       structureParentGO.transform) as GameObject;
+    //    structureGO.transform.localPosition = Vector3.zero;
+    //    SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
+    //        Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
+
+    //    for (int i = 0; i < allColorizers.Length; i++) {
+    //        allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
+    //    }
+    //    this._centerPiece.SetActive(false);
+
+    //    //this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
+    //    //this.structureGO.SetActive(true);
+    //    //this.centerPiece.SetActive(false);
+    //    Color color = this.city.kingdom.kingdomColor;
+    //    color.a = 255f / 255f;
+    //    SetMinimapTileColor(color);
+    //    color.a = 76.5f / 255f;
+    //    this._kingdomColorSprite.color = color;
+    //    this.GetComponent<SpriteRenderer>().color = Color.white;
+    //    //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
+    //}
 
     public GameObject CreateSpecialStructureOnTile(LAIR lairType) {
         GameObject structureGO = GameObject.Instantiate(
@@ -486,42 +522,42 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this._cityInfo.gameObject.SetActive(false);
     }
 
-    public void ShowOccupiedSprite() {
-        //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
-        GameObject[] structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.GENERIC);
-        if (this.specialResource != RESOURCE.NONE) {
-            if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.FOOD) {
-                if(this.specialResource == RESOURCE.BEHEMOTH || this.specialResource == RESOURCE.DEER || 
-                    this.specialResource == RESOURCE.PIG) {
-                    structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.HUNTING_LODGE);
-                } else {
-                    structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
-                }
-			} else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.ownedByCity.kingdom.race == RACE.ELVES) {
-                structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.LUMBERYARD);
-			} else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE && this.ownedByCity.kingdom.race == RACE.HUMANS) {
-                structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.QUARRY);
-            } else {
-                structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
-            }
-        }
+   // public void ShowOccupiedSprite() {
+   //     //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
+   //     GameObject[] structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.GENERIC);
+   //     if (this.specialResource != RESOURCE.NONE) {
+   //         if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.FOOD) {
+   //             if(this.specialResource == RESOURCE.BEHEMOTH || this.specialResource == RESOURCE.DEER || 
+   //                 this.specialResource == RESOURCE.PIG) {
+   //                 structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.HUNTING_LODGE);
+   //             } else {
+   //                 structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
+   //             }
+			//} else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.ownedByCity.kingdom.race == RACE.ELVES) {
+   //             structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.LUMBERYARD);
+			//} else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE && this.ownedByCity.kingdom.race == RACE.HUMANS) {
+   //             structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.QUARRY);
+   //         } else {
+   //             structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
+   //         }
+   //     }
 
-        GameObject structureGO = GameObject.Instantiate(
-            structuresToChooseFrom[Random.Range(0, structuresToChooseFrom.Length)],
-            structureParentGO.transform) as GameObject;
-        structureGO.transform.localPosition = Vector3.zero;
-        SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
-            Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
+   //     GameObject structureGO = GameObject.Instantiate(
+   //         structuresToChooseFrom[Random.Range(0, structuresToChooseFrom.Length)],
+   //         structureParentGO.transform) as GameObject;
+   //     structureGO.transform.localPosition = Vector3.zero;
+   //     SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
+   //         Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
 
-        Color color = ownedByCity.kingdom.kingdomColor;
-        color.a = 255f / 255f;
-        SetMinimapTileColor(color);
+   //     Color color = ownedByCity.kingdom.kingdomColor;
+   //     color.a = 255f / 255f;
+   //     SetMinimapTileColor(color);
 
-        for (int i = 0; i < allColorizers.Length; i++) {
-            allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
-        }
-        this._centerPiece.SetActive(false);
-    }
+   //     for (int i = 0; i < allColorizers.Length; i++) {
+   //         allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
+   //     }
+   //     this._centerPiece.SetActive(false);
+   // }
 
     public void HideStructures() {
         structureParentGO.SetActive(false);
@@ -597,6 +633,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     #endregion
 
+    /*
+     * Reset all values for this tile.
+     * NOTE: This will set the structure to ruined.
+     * To force destroy structure, call DestroyStructure
+     * in StructureObject instead.
+     * */
     public void ResetTile(){
         //this.city = null;
         this.isOccupied = false;
@@ -609,13 +651,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
         EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);
-        Transform[] children = structureParentGO.GetComponentsInChildren<Transform>();
-        for (int i = 0; i < children.Length; i++) {
-            if (children[i].gameObject != null && children[i].gameObject != structureParentGO) {
-                Destroy(children[i].gameObject);
-            }
+        if(structureObjOnTile != null) {
+            Debug.Log("RUIN STRUCTURE ON: " + this.name);
+            structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
         }
-        children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
+        //Transform[] children = structureParentGO.GetComponentsInChildren<Transform>();
+        //for (int i = 0; i < children.Length; i++) {
+        //    if (children[i].gameObject != null && children[i].gameObject != structureParentGO) {
+        //        Destroy(children[i].gameObject);
+        //    }
+        //}
+        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             Destroy(children[i].gameObject);
         }
@@ -954,4 +1000,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
         }
     }
+
+    #region For Testing
+    [ContextMenu("Force Reset Tile")]
+    public void ForceResetTile() {
+        ResetTile();
+    }
+    #endregion
 }

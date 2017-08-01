@@ -3340,7 +3340,7 @@ public class UIManager : MonoBehaviour {
     }
 
     private void LoadEvilIntentTargetChoices() {
-        List<Citizen> allOtherKings = KingdomManager.Instance.allKingdoms.Select(x => x.king).Where(x => x.id != evilIntentSelectedSourceKing.id).ToList();
+        List<Citizen> allOtherKings = evilIntentSelectedSourceKing.city.kingdom.discoveredKingdoms.Select(x => x.king).Where(x => x.id != evilIntentSelectedSourceKing.id).ToList();
         List<CharacterPortrait> portraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(evilIntentMenuTargetKingGrid.gameObject).ToList();
 
         if (allOtherKings.Count > portraits.Count) {
