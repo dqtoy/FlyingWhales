@@ -43,7 +43,7 @@ public class Lair {
 		case LAIR.LYCAN:
 			return 30;
 		case LAIR.STORM_WITCH:
-			return 10;
+			return 365;
 		}
 		return 0;
 	}
