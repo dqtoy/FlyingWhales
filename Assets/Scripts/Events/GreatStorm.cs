@@ -138,32 +138,101 @@ public class GreatStorm : GameEvent {
 			List<Kingdom> otherFriendlyKingdoms = new List<Kingdom>();
 			for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 				int chance = UnityEngine.Random.Range(0,100);
-				if(chance < 40){
+				if(chance < 80){
 					if(KingdomManager.Instance.allKingdoms[i].id != this._affectedKingdom.id){
 						RelationshipKings relationship = KingdomManager.Instance.allKingdoms[i].king.GetRelationshipWithCitizen(this._affectedKingdom.king);
 						if(relationship != null){
-							int percentToGive = 0;
-							if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM){
-								percentToGive = 10;
-							}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
-								percentToGive = 20;
-							}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
-								percentToGive = 30;
-							}
-							if(percentToGive != 0){
-								//Send Reliever
-								City chosenCity = KingdomManager.Instance.allKingdoms[i].cities.FirstOrDefault(x => x.currentGrowth == KingdomManager.Instance.allKingdoms[i].cities.Max(y => y.currentGrowth));
-								int reliefGoods = (int)(chosenCity.currentGrowth * (percentToGive / 100f));
-								chosenCity.AdjustDailyGrowth(-reliefGoods);
-								EventCreator.Instance.CreateSendReliefGoodsEvent(KingdomManager.Instance.allKingdoms[i], this._affectedKingdom, this, reliefGoods);
-							}
+							//Send Reliever
+							City chosenCity = KingdomManager.Instance.allKingdoms[i].cities.FirstOrDefault(x => x.currentGrowth == KingdomManager.Instance.allKingdoms[i].cities.Max(y => y.currentGrowth));
+							int reliefGoods = chosenCity.currentGrowth;
+							chosenCity.AdjustDailyGrowth(-reliefGoods);
+							ReliefGoods (reliefGoods, KingdomManager.Instance.allKingdoms [i]);
+//							EventCreator.Instance.CreateSendReliefGoodsEvent(KingdomManager.Instance.allKingdoms[i], this._affectedKingdom, this, reliefGoods);
 						}
 					}
 				}
 			}
 		}
 	}
+	private void ReliefGoods(int reliefGoods, Kingdom senderKingdom){
+		int chance = UnityEngine.Random.Range(0,100);
+		if(chance < 40){
+			Intercept (reliefGoods, senderKingdom);
+		}else{
+			ReceiveReliefGoods (reliefGoods, senderKingdom);
+		}
+	}
+	private void Intercept(int reliefGoods, Kingdom senderKingdom){
+		List<Kingdom> otherKingdoms = new List<Kingdom>();
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[i];
+			if(currentKingdom.id != senderKingdom.id && currentKingdom.id != this._affectedKingdom.id){
+				RelationshipKingdom relationshipKingdomToReceiver = currentKingdom.GetRelationshipWithOtherKingdom(this._affectedKingdom);
+				if(relationshipKingdomToReceiver != null && !relationshipKingdomToReceiver.isAtWar){
+					RelationshipKings relationshipToReceiver = currentKingdom.king.GetRelationshipWithCitizen(this._affectedKingdom.king);
+					RelationshipKings relationshipToSender = currentKingdom.king.GetRelationshipWithCitizen(senderKingdom.king);
+					if(relationshipToReceiver != null && relationshipToSender != null){
+						if((relationshipToReceiver.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationshipToReceiver.lordRelationship == RELATIONSHIP_STATUS.RIVAL)
+							&& (relationshipToSender.lordRelationship != RELATIONSHIP_STATUS.FRIEND && relationshipToSender.lordRelationship != RELATIONSHIP_STATUS.ALLY)){
+							otherKingdoms.Add(currentKingdom);
+						}
+					}
+				}
+			}
+		}
+		if (otherKingdoms.Count > 0) {
+			Kingdom intercepterKingdom = otherKingdoms [UnityEngine.Random.Range (0, otherKingdoms.Count)];
+			int chance = UnityEngine.Random.Range(0,100);
+			if(chance < 60){
+				InterceptReliefGoods(reliefGoods, senderKingdom, intercepterKingdom);
+			}else{
+				ReceiveReliefGoods(reliefGoods, senderKingdom);
+				DiscoveredIntercepter(reliefGoods, senderKingdom, intercepterKingdom);
+			}
+		}else{
+			ReceiveReliefGoods(reliefGoods, senderKingdom);
+		}
+	}
+	private void InterceptReliefGoods(int reliefGoods, Kingdom senderKingdom, Kingdom intercepterKingdom){
+		City chosenCity = intercepterKingdom.cities.FirstOrDefault(x => x.currentGrowth == this._affectedKingdom.cities.Min(y => y.currentGrowth));
+		chosenCity.AdjustDailyGrowth(reliefGoods);
 
+		//TODO: Add log - intercept relief goods
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "GreatStorm", "intercept_relief");
+		newLog.AddToFillers (intercepterKingdom, intercepterKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
+	}
+	private void ReceiveReliefGoods(int reliefGoods, Kingdom senderKingdom){
+		if(!this._affectedKingdom.isDead){
+			City chosenCity = this._affectedKingdom.cities.FirstOrDefault(x => x.currentGrowth == this._affectedKingdom.cities.Min(y => y.currentGrowth));
+			chosenCity.AdjustDailyGrowth(reliefGoods);
+
+			RelationshipKings relationship = this._affectedKingdom.king.GetRelationshipWithCitizen(senderKingdom.king);
+			if(relationship != null){
+				relationship.AdjustLikeness(20, this);
+			}
+			//TODO: Add log - received relief goods
+			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "GreatStorm", "receive_relief");
+			newLog.AddToFillers (this._affectedKingdom.king, this._affectedKingdom.king.name, LOG_IDENTIFIER.KING_1);
+			newLog.AddToFillers (this._affectedKingdom, this._affectedKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (senderKingdom.king, senderKingdom.king.name, LOG_IDENTIFIER.KING_2);
+			newLog.AddToFillers (senderKingdom, senderKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+
+		}
+	}
+	private void DiscoveredIntercepter(int reliefGoods, Kingdom senderKingdom, Kingdom intercepterKingdom){
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "GreatStorm", "discovered_intercepter");
+		newLog.AddToFillers (senderKingdom.king, senderKingdom.king.name, LOG_IDENTIFIER.KING_2);
+		newLog.AddToFillers (this._affectedKingdom.king, this._affectedKingdom.king.name, LOG_IDENTIFIER.KING_1);
+
+		RelationshipKings relationshipFromSender = senderKingdom.king.GetRelationshipWithCitizen(intercepterKingdom.king);
+		RelationshipKings relationshipFromReceiver = this._affectedKingdom.king.GetRelationshipWithCitizen(intercepterKingdom.king);
+		if(relationshipFromSender != null){
+			relationshipFromSender.AdjustLikeness(-20, this);
+		}
+		if(relationshipFromReceiver != null){
+			relationshipFromReceiver.AdjustLikeness(-20, this);
+		}
+	}
 	private void WageWar(){
 		if(this.daysCounter % 7 == 0){
 			for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {

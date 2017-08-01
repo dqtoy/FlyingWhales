@@ -101,7 +101,7 @@ public class HiddenHistoryBook : GameEvent {
 		if(chance < 75){
 			//TODO: Add log - found book
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "HiddenHistoryBook", "book_found");
-
+			((King)this.kingdom.king.assignedRole).hasFoundHiddenHistoryBook = true;
 			KingDecision();
 		}else{
 			//TODO: Add log - book not found
@@ -133,6 +133,8 @@ public class HiddenHistoryBook : GameEvent {
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "HiddenHistoryBook", "uphold_old_ways");
 		newLog.AddToFillers (this.kingdom.king, this.kingdom.king.name, LOG_IDENTIFIER.KING_1);
 
+		this.kingdom.UpgradeTechLevel (-1);
+		this.kingdom.SetUpheldHiddenHistoryBook (true);
 		GovernorReactions();
 		OtherKingsReactions();
 

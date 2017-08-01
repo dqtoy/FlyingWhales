@@ -33,6 +33,8 @@ public class Lair {
 		switch (this.type){
 		case LAIR.LYCAN:
 			return 200;
+		case LAIR.STORM_WITCH:
+			return 200;
 		}
 		return 0;
 	}
@@ -40,6 +42,8 @@ public class Lair {
 		switch (this.type){
 		case LAIR.LYCAN:
 			return 30;
+		case LAIR.STORM_WITCH:
+			return 1095;
 		}
 		return 0;
 	}

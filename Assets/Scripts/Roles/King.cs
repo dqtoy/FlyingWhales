@@ -10,6 +10,7 @@ public class King : Role {
 
 	internal bool isRumoring;
 	internal bool isHiddenHistoryBooking;
+	internal bool hasFoundHiddenHistoryBook;
 
 	private int _triggerMonthOfSerum;
 	private int _triggerDayOfSerum;
@@ -91,7 +92,7 @@ public class King : Role {
 	}
 	internal void TriggerHiddenHistoryBook(){
 		if(this.ownedKingdom.race == RACE.HUMANS){
-			if(GameManager.Instance.days == 3 && !this.isHiddenHistoryBooking){
+			if(GameManager.Instance.days == 3 && !this.isHiddenHistoryBooking && !this.hasFoundHiddenHistoryBook && !this.ownedKingdom.hasUpheldHiddenHistoryBook){
 				int chance = UnityEngine.Random.Range(0,100);
 				if(chance < 3){
 					this.isHiddenHistoryBooking = true;

@@ -94,6 +94,8 @@ public class Kingdom{
 	private float _techProductionPercentage;
 	private float _productionGrowthPercentage;
 
+	private bool _hasUpheldHiddenHistoryBook;
+
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -197,8 +199,11 @@ public class Kingdom{
 	public bool isTechProducing{
 		get { return this._isTechProducing;}
 	}
-	public float productionGrowthPercentage{
-		get { return this._productionGrowthPercentage;}
+	public float productionGrowthPercentage {
+		get { return this._productionGrowthPercentage; }
+	}
+	public bool hasUpheldHiddenHistoryBook{
+		get { return this._hasUpheldHiddenHistoryBook;}
 	}
     #endregion
 
@@ -225,6 +230,7 @@ public class Kingdom{
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
 		this._isDead = false;
 		this._isLockedDown = false;
+		this._hasUpheldHiddenHistoryBook = false;
         //this._tradeRoutes = new List<TradeRoute>();
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._unrest = 0;
@@ -510,7 +516,6 @@ public class Kingdom{
         this.TriggerKingdomHoliday();
         this.TriggerDevelopWeapons();
         this.TriggerKingsCouncil();
-		this.TriggerGreatStorm ();
     }
 	/*
 	 * Attempt to create an attack city event
@@ -1736,6 +1741,9 @@ public class Kingdom{
 	}
 	internal void UpgradeTechLevel(int amount){
 		this._techLevel += amount;
+		if(this._techLevel < 1){
+			this._techLevel = 1;
+		}
 		this._techCounter = 0;
 		this.UpdateTechCapacity ();
 	}
@@ -1816,11 +1824,13 @@ public class Kingdom{
     }
 
     internal void DiscoverKingdom(Kingdom discoveredKingdom) {
-        if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
-            this._discoveredKingdoms.Add(discoveredKingdom);
-            Debug.LogError(this.name + " discovered " + discoveredKingdom.name + "!");
-            if(discoveredKingdom.plague != null) {
-                discoveredKingdom.plague.ForceUpdateKingRelationships(discoveredKingdom.king);
+        if(discoveredKingdom.id != this.id) {
+            if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
+                this._discoveredKingdoms.Add(discoveredKingdom);
+                Debug.LogError(this.name + " discovered " + discoveredKingdom.name + "!");
+                if (discoveredKingdom.plague != null) {
+                    discoveredKingdom.plague.ForceUpdateKingRelationships(discoveredKingdom.king);
+                }
             }
         }
     }
@@ -2002,6 +2012,12 @@ public class Kingdom{
 	}
 	#endregion
 
+	#region Hidden History Book
+	internal void SetUpheldHiddenHistoryBook(bool state){
+		this._hasUpheldHiddenHistoryBook = state;
+	}
+	#endregion
+
     #region Fog Of War
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
         if(fowState == FOG_OF_WAR_STATE.VISIBLE) {
@@ -2040,17 +2056,6 @@ public class Kingdom{
 		boonOfPower.AddOwnership (this);
 	}
 	#endregion
-
-	#region Great Storm
-	internal void TriggerGreatStorm(){
-		if(GameManager.Instance.month == 7 && GameManager.Instance.days == 28){
-			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 30){
-				EventCreator.Instance.CreateGreatStormEvent (this);
-			}
-		}
-	}
-	#endregion
 	internal int GetNumberOfWars(){
 		int numOfWars = 0;
 		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
@@ -2079,4 +2084,6 @@ public class Kingdom{
 	internal void SetProductionGrowthPercentage(float amount){
 		this._productionGrowthPercentage = amount;
 	}
+
+
 }
