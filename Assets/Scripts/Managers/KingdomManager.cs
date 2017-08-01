@@ -223,6 +223,18 @@ public class KingdomManager : MonoBehaviour {
             sourceKingdom.HighlightAllOwnedTilesInKingdom();
         }
     }
+	public void TransferCitiesToOtherKingdom(Kingdom sourceKingdom, Kingdom otherKingdom, City city) {
+		sourceKingdom.UnHighlightAllOwnedTilesInKingdom();
+		sourceKingdom.RemoveCityFromKingdom(city);
+		//otherKingdom.AddCityToKingdom(currCity);
+		city.ChangeKingdom(otherKingdom);
+		//currCity.hexTile.ShowCitySprite();
+		//currCity.hexTile.ShowNamePlate();
+
+		if(UIManager.Instance.currentlyShowingKingdom.id == sourceKingdom.id) {
+			sourceKingdom.HighlightAllOwnedTilesInKingdom();
+		}
+	}
 
 	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2, War war){
 		RelationshipKingdom kingdom1Rel = kingdom1.GetRelationshipWithOtherKingdom(kingdom2);
@@ -261,6 +273,8 @@ public class KingdomManager : MonoBehaviour {
         Log declareWarLog = war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "declare_war");
 		declareWarLog.AddToFillers (kingdom1.king, kingdom1.king.name, LOG_IDENTIFIER.KING_1);
 		declareWarLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+
+		WarEvents (kingdom1, kingdom2);
 
 		KingdomManager.Instance.CheckWarTriggerDeclareWar (kingdom1, kingdom2);
 //		War newWar = new War(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, null, kingdom1, kingdom2, invasionPlanThatStartedWar);
@@ -482,6 +496,32 @@ public class KingdomManager : MonoBehaviour {
 				sourceKingdom, targetKingdom);
 			newWar.DeclareWar (newWar.kingdom1);
 			newWar.gameEventTrigger = gameEventTrigger;
+		}
+	}
+
+	private void WarEvents(Kingdom declarerKingdom, Kingdom targetKingdom){
+		TriggerBackstabberEvent (declarerKingdom, targetKingdom);
+	}
+	private void TriggerBackstabberEvent(Kingdom declarerKingdom, Kingdom targetKingdom){
+		bool hasSameValues = false;
+		if(targetKingdom.cities.Count >= 3){
+			for (int i = 0; i < targetKingdom.cities.Count; i++) {
+				Governor governor = (Governor)targetKingdom.cities [i].governor.assignedRole;
+				if(governor.loyalty <= -25 && !governor.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)){
+					List<CHARACTER_VALUE> values = new List<CHARACTER_VALUE>(declarerKingdom.king.importantCharacterValues.Keys);
+					for (int j = 0; j < values.Count; j++) {
+						if(governor.citizen.importantCharacterValues.ContainsKey(values[j])){
+							hasSameValues = true;
+							break;
+						}
+					}
+
+					if(hasSameValues){
+						TransferCitiesToOtherKingdom (targetKingdom, declarerKingdom, targetKingdom.cities [i]);
+						break;
+					}
+				}
+			}
 		}
 	}
 }

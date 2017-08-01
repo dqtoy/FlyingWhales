@@ -37,10 +37,12 @@ public class StormWitch : Monster {
 	}
 	internal override void DoneAction (){
 		base.DoneAction ();
+		this.Death();
 		if(this.targetLocation.isOccupied && this.targetLocation.isHabitable && this.targetLocation.city.id != 0 && (this.targetLocation.city != null && !this.targetLocation.city.isDead)){
 			EventCreator.Instance.CreateGreatStormEvent (this.targetLocation.city.kingdom);
+			this.targetLocation.city.RetaliateToMonster (this.originHextile);
 		}
-		this.Death();
+
 	}
 	#endregion
 }
