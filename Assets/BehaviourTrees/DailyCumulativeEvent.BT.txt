@@ -1,6 +1,4 @@
 tree("Root")
 	sequence
 		ResetValues
-		SetFirstRandomKingdom
-		HasDiscoveredKingdoms
-		SetEventsToCreate
+		CreateDailyCumulativeEvents

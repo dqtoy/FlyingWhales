@@ -96,6 +96,8 @@ public class Kingdom{
 
 	private bool _hasUpheldHiddenHistoryBook;
 
+	private bool _hasSecession;
+
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -204,6 +206,9 @@ public class Kingdom{
 	}
 	public bool hasUpheldHiddenHistoryBook{
 		get { return this._hasUpheldHiddenHistoryBook;}
+	}
+	public bool hasSecession{
+		get { return this._hasSecession;}
 	}
     #endregion
 
@@ -1688,25 +1693,33 @@ public class Kingdom{
 	}
 	internal void UnrestEvents(){
 		this._unrest = 0;
-		Citizen chosenGovernor = null;
-		List<Citizen> ambitiousGovernors = this.cities.Select (x => x.governor).Where (x => x != null && x.hasTrait (TRAIT.AMBITIOUS) && ((Governor)x.assignedRole).loyalty < 0).ToList ();
-		if(ambitiousGovernors != null && ambitiousGovernors.Count > 0){
-			chosenGovernor = ambitiousGovernors [UnityEngine.Random.Range (0, ambitiousGovernors.Count)];
-		}
-		if(chosenGovernor != null){
-			//Secession Event
-			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
+		int chance = UnityEngine.Random.Range (0, 2);
+		if(chance == 0){
+			//Riot Event
+			EventCreator.Instance.CreateRiotEvent(this);
 		}else{
-			int chance = UnityEngine.Random.Range (0, 2);
-			if(chance == 0){
-				//Riot Event
-				EventCreator.Instance.CreateRiotEvent(this);
-//				EventCreator.Instance.CreateRebellionEvent(this);
-			}else{
-				//Rebellion Event
-				EventCreator.Instance.CreateRebellionEvent(this);
-			}
+			//Rebellion Event
+			EventCreator.Instance.CreateRebellionEvent(this);
 		}
+
+//		Citizen chosenGovernor = null;
+//		List<Citizen> ambitiousGovernors = this.cities.Select (x => x.governor).Where (x => x != null && x.hasTrait (TRAIT.AMBITIOUS) && ((Governor)x.assignedRole).loyalty < 0).ToList ();
+//		if(ambitiousGovernors != null && ambitiousGovernors.Count > 0){
+//			chosenGovernor = ambitiousGovernors [UnityEngine.Random.Range (0, ambitiousGovernors.Count)];
+//		}
+//		if(chosenGovernor != null){
+//			//Secession Event
+//			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
+//		}else{
+//			int chance = UnityEngine.Random.Range (0, 2);
+//			if(chance == 0){
+//				//Riot Event
+//				EventCreator.Instance.CreateRiotEvent(this);
+//			}else{
+//				//Rebellion Event
+//				EventCreator.Instance.CreateRebellionEvent(this);
+//			}
+//		}
 	}
     #endregion
 
@@ -2084,6 +2097,8 @@ public class Kingdom{
 	internal void SetProductionGrowthPercentage(float amount){
 		this._productionGrowthPercentage = amount;
 	}
-
+	internal void SetSecession(bool state){
+		this._hasSecession = state;
+	}
 
 }

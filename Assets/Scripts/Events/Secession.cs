@@ -9,6 +9,7 @@ public class Secession : GameEvent {
 	internal Kingdom sourceKingdom;
 	internal List<City> alreadyVisitedCities;
 	internal List<City> joiningCities;
+	internal List<Governor> candidateGovernors;
 	internal Envoy convincer;
 	internal City targetCity;
 	public Secession(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
@@ -21,9 +22,9 @@ public class Secession : GameEvent {
 		this.sourceKingdom = startedBy.city.kingdom;
 		this.alreadyVisitedCities = new List<City> ();
 		this.joiningCities = new List<City> ();
+		this.candidateGovernors = new List<Governor> ();
 		this.convincer = null;
 		this.targetCity = null;
-
 		this.joiningCities.Add (startedBy.city);
         this.alreadyVisitedCities.Add(startedBy.city);
         EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
@@ -48,8 +49,9 @@ public class Secession : GameEvent {
 			this.remainingDays = 0;
 			DoneEvent ();
 		}else{
-			if(this.targetCity == null){
-				SendEnvoy ();
+			if(this.remainingDays % 5 == 0 ){
+//				SendEnvoy ();
+				AskToJoinSecession();
 			}
 		}
 	}
@@ -118,55 +120,82 @@ public class Secession : GameEvent {
 			}
 		}
 	}
+	private void AskToJoinSecession(){
+		this.candidateGovernors.Clear ();
+		for (int i = 0; i < this.sourceKingdom.cities.Count; i++) {
+			if(!this.joiningCities.Contains(this.sourceKingdom.cities[i])){
+				Governor governor = (Governor)this.sourceKingdom.cities [i].governor.assignedRole;
+				if(governor.loyalty < 0){
+					this.candidateGovernors.Add (governor);
+				}
+			}
+		}
+
+		if(this.candidateGovernors.Count > 0){
+			Governor chosenGovernor = this.candidateGovernors [UnityEngine.Random.Range (0, this.candidateGovernors.Count)];
+
+			int chance = UnityEngine.Random.Range (0, 100);
+			int value = chosenGovernor.loyalty * -1;
+			if(chance < value){
+				JoinSecession (chosenGovernor.citizen.city);
+			}
+		}
+	}
+	private void JoinSecession(City cityToJoin){
+		this.joiningCities.Add (cityToJoin);
+	}
 	private void SplitKingdom(){
-		if (this.joiningCities.Contains (this.sourceKingdom.king.city)) {
-			//Move King To Another City
-			this.sourceKingdom.king.city.hasKing = false;
-			List<City> cityCandidates = this.sourceKingdom.cities.Where (x => !this.joiningCities.Contains (x)).ToList ();
-			if (cityCandidates != null && cityCandidates.Count > 0) {
-				City newCityForRoyalties = cityCandidates [0];
-				for (int i = 0; i < this.sourceKingdom.king.city.citizens.Count; i++) {
-					if (this.sourceKingdom.king.city.citizens [i].isDirectDescendant && !this.sourceKingdom.king.city.citizens [i].isGovernor) {
-						newCityForRoyalties.MoveCitizenToThisCity (this.sourceKingdom.king.city.citizens [i], true);
+		if(this.joiningCities.Count == this.sourceKingdom.cities.Count){
+			this.sourceKingdom.king.Death (DEATH_REASONS.ASSASSINATION, true, this.governor.citizen);
+		}else{
+			if (this.joiningCities.Contains (this.sourceKingdom.king.city)) {
+				//Move King To Another City
+				this.sourceKingdom.king.city.hasKing = false;
+				List<City> cityCandidates = this.sourceKingdom.cities.Where (x => !this.joiningCities.Contains (x)).ToList ();
+				if (cityCandidates != null && cityCandidates.Count > 0) {
+					City newCityForRoyalties = cityCandidates [0];
+					for (int i = 0; i < this.sourceKingdom.king.city.citizens.Count; i++) {
+						if (this.sourceKingdom.king.city.citizens [i].isDirectDescendant && !this.sourceKingdom.king.city.citizens [i].isGovernor) {
+							newCityForRoyalties.MoveCitizenToThisCity (this.sourceKingdom.king.city.citizens [i], true);
+						}
+						if (this.sourceKingdom.king.isMarried) {
+							newCityForRoyalties.MoveCitizenToThisCity (this.sourceKingdom.king.spouse, true);
+						}
+					}
+					this.sourceKingdom.capitalCity = newCityForRoyalties;
+					newCityForRoyalties.hasKing = true;
+
+				} else {
+					int countCitizens = this.sourceKingdom.king.city.citizens.Count;
+					for (int i = 0; i < countCitizens; i++) {
+						if (this.sourceKingdom.king.city.citizens [0].isDirectDescendant && !this.sourceKingdom.king.city.citizens [0].isGovernor) {
+							this.sourceKingdom.king.city.citizens [0].Death (DEATH_REASONS.ASSASSINATION, false, null, true);
+						}
 					}
 					if (this.sourceKingdom.king.isMarried) {
-						newCityForRoyalties.MoveCitizenToThisCity (this.sourceKingdom.king.spouse, true);
+						this.sourceKingdom.king.spouse.Death (DEATH_REASONS.ASSASSINATION, false, null, true);
 					}
-				}
-				this.sourceKingdom.capitalCity = newCityForRoyalties;
-				newCityForRoyalties.hasKing = true;
-
-			} else {
-				int countCitizens = this.sourceKingdom.king.city.citizens.Count;
-				for (int i = 0; i < countCitizens; i++) {
-					if (this.sourceKingdom.king.city.citizens [0].isDirectDescendant && !this.sourceKingdom.king.city.citizens [0].isGovernor) {
-						this.sourceKingdom.king.city.citizens [0].Death (DEATH_REASONS.REBELLION, false, null, true);
-					}
-				}
-				if (this.sourceKingdom.king.isMarried) {
-					this.sourceKingdom.king.spouse.Death (DEATH_REASONS.REBELLION, false, null, true);
-				}
-				this.sourceKingdom.capitalCity = null;
-			}
-		}
-
-		Kingdom newKingdom = KingdomManager.Instance.SplitKingdom (this.sourceKingdom, this.joiningCities);
-		if (newKingdom != null) {
-			newKingdom.AssignNewKing (this.governor.citizen);
-			string newCitiesText = string.Empty;
-			for (int i = 0; i < this.joiningCities.Count; i++) {
-				if (i != this.joiningCities.Count - 1) {
-					newCitiesText += this.joiningCities [i].name + ", ";
-				} else {
-					newCitiesText += "and" + this.joiningCities [i].name;
+					this.sourceKingdom.capitalCity = null;
 				}
 			}
-			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "secession_success");
-			newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
-			newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-			newLog.AddToFillers (null, newCitiesText, LOG_IDENTIFIER.SECESSION_CITIES);
-		
-		}
 
+			Kingdom newKingdom = KingdomManager.Instance.SplitKingdom (this.sourceKingdom, this.joiningCities);
+			if (newKingdom != null) {
+				newKingdom.AssignNewKing (this.governor.citizen);
+				string newCitiesText = string.Empty;
+				for (int i = 0; i < this.joiningCities.Count; i++) {
+					if (i != this.joiningCities.Count - 1) {
+						newCitiesText += this.joiningCities [i].name + ", ";
+					} else {
+						newCitiesText += "and" + this.joiningCities [i].name;
+					}
+				}
+				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "secession_success");
+				newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
+				newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+				newLog.AddToFillers (null, newCitiesText, LOG_IDENTIFIER.SECESSION_CITIES);
+
+			}
+		}
 	}
 }

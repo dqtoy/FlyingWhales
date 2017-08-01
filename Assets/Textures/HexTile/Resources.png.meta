@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 284cea3d898449141a1253dc77a72eea
-timeCreated: 1498710498
+timeCreated: 1501573196
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -87,6 +87,10 @@ TextureImporter:
     21300160: Wheat_5
     21300162: Wheat_6
     21300164: Wheat_7
+    21300166: Mithril
+    21300168: Rice
+    21300170: Corn
+    21300172: Wheat
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -906,10 +910,10 @@ TextureImporter:
       name: Deer
       rect:
         serializedVersion: 2
-        x: 270
-        y: 458
-        width: 181
-        height: 154
+        x: 778
+        y: 593
+        width: 237
+        height: 179
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -919,10 +923,10 @@ TextureImporter:
       name: Pig
       rect:
         serializedVersion: 2
-        x: 526
-        y: 464
-        width: 184
-        height: 155
+        x: 776
+        y: 378
+        width: 234
+        height: 193
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1041,7 +1045,7 @@ TextureImporter:
         width: 11
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -1144,6 +1148,58 @@ TextureImporter:
         y: 647
         width: 14
         height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Mithril
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 440
+        width: 221
+        height: 164
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Rice
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 315
+        width: 229
+        height: 196
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Corn
+      rect:
+        serializedVersion: 2
+        x: 797
+        y: 148
+        width: 217
+        height: 198
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Wheat
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 812
+        width: 213
+        height: 206
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
