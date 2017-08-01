@@ -37,8 +37,8 @@ public class BorderConflict : GameEvent {
 		Debug.LogError (this.description);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "event_title");
-		newLogTitle.AddToFillers (null, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLogTitle.AddToFillers (null, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLogTitle.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLogTitle.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 
 		string randomReason = LocalizationManager.Instance.GetRandomLocalizedKey ("Reasons", "BorderConflictReasons");
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "BorderConflictReasons", randomReason);
@@ -158,9 +158,9 @@ public class BorderConflict : GameEvent {
 		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 	}
 	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
+		base.DeathByAgent(citizen, deadCitizen);
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve_fail_died");
 		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-		this.activeEnvoyResolve.citizen.Death (DEATH_REASONS.BATTLE);
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent();
@@ -325,6 +325,7 @@ public class BorderConflict : GameEvent {
 		chosenCitizen.assignedRole.Initialize (this);
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "envoy_resolve");
 		newLog.AddToFillers (sender.king, sender.king.name, LOG_IDENTIFIER.KING_1);
+		newLog.AddToFillers (sender, sender.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (chosenCitizen, chosenCitizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 //		if(isFromOthers){
 //			this.activeEnvoyProvoke = chosenEnvoy;

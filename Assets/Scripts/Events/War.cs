@@ -358,8 +358,8 @@ public class War : GameEvent {
         } else if (this._kingdom2.isDead) {
 			GameEventWarWinner (this._kingdom1);
             Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
-			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_1);
+			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_2);
         }
 //        EventManager.Instance.onWeekEnd.RemoveListener(AttemptToRequestPeace);
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);

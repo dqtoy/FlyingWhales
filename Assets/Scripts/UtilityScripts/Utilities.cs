@@ -751,6 +751,8 @@ public class Utilities : MonoBehaviour {
 			logIdentifier = LOG_IDENTIFIER.KING_2;
 		}else if(strIdentifier.Contains("TARGET_CHARACTER")){
 			logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
+		}else if(strIdentifier.Contains("KING_3")){
+			logIdentifier = LOG_IDENTIFIER.KING_3;
 		}
 		for(int i = 0; i < objectLog.Count; i++){
 			if(objectLog[i].identifier == logIdentifier){

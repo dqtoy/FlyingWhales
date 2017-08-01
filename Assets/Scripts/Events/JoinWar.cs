@@ -57,7 +57,7 @@ public class JoinWar : GameEvent {
 		startLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
 		startLog.AddToFillers (_envoyToSend.citizen, _envoyToSend.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		startLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name, LOG_IDENTIFIER.KING_2);
-		startLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name, LOG_IDENTIFIER.KINGDOM_1);
+		startLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name, LOG_IDENTIFIER.KINGDOM_3);
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
@@ -206,7 +206,7 @@ public class JoinWar : GameEvent {
 					"Events", "War", "join_war_success");
 				joinWarSuccessLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name, LOG_IDENTIFIER.KING_2);
 				joinWarSuccessLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
-				joinWarSuccessLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name, LOG_IDENTIFIER.KINGDOM_1);
+				joinWarSuccessLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name, LOG_IDENTIFIER.KINGDOM_3);
 
 				//Create new Invasion Plan against target kingdom
 				warEvent.CreateInvasionPlan (this.candidateForAlliance.city.kingdom, this, this._warTrigger);
@@ -237,7 +237,7 @@ public class JoinWar : GameEvent {
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DiplomaticCrisis", "envoy_resolve_fail_died");
 //		newLog.AddToFillers (this.activeEnvoyResolve.citizen, this.activeEnvoyResolve.citizen.name);
 
-		this._envoyToSend.citizen.Death (DEATH_REASONS.BATTLE);
+		base.DeathByAgent(citizen, deadCitizen);
 
 		this.DoneEvent();
 	}

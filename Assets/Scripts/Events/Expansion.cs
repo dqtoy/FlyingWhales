@@ -42,7 +42,7 @@ public class Expansion : GameEvent {
 
 
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");
-			newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name, LOG_IDENTIFIER.CITY_2);
+			newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name, LOG_IDENTIFIER.CITY_1);
 
 		} else {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "beaten");
@@ -61,10 +61,10 @@ public class Expansion : GameEvent {
 		this.DoneEvent ();
 	}
 	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_general");
-		newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+		base.DeathByAgent(citizen, deadCitizen);
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_agent");
+		newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-		this.startedBy.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent ();
 	}
 
