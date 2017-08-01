@@ -71,6 +71,10 @@ public class MonsterManager : MonoBehaviour {
 			Lycan newLycan = new Lycan(type, originHextile);
 			newMonster = newLycan;
 			break;
+		case MONSTER.STORM_WITCH:
+			StormWitch newStormWitch = new StormWitch(type, originHextile);
+			newMonster = newStormWitch;
+			break;
 		}
 
 		if(newMonster != null){

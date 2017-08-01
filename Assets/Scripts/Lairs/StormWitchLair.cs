@@ -23,7 +23,10 @@ public class StormWitchLair : Lair {
 		base.EverydayAction ();
 		if(this.daysCounter >= this.spawnRate){
 			this.daysCounter = 0;
-			SummonWitch();
+			int chance = UnityEngine.Random.Range (0, 100);
+			if(chance < 10){
+				SummonWitch();
+			}
 		}
 	}
 	#endregion
