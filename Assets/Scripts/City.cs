@@ -77,6 +77,9 @@ public class City{
 	public int maxHP{
 		get{ return Utilities.defaultCityHP +  (50 * this.structures.Count); } //+1 since the structures list does not contain the main hex tile
 	}
+	public int maxHPRebel {
+		get{ return 600;}
+	}
     public List<HexTile> ownedTiles {
         get { return this._ownedTiles; }
     }
@@ -610,9 +613,14 @@ public class City{
 	 * */
 	protected void AttemptToIncreaseHP(){
 		if(GameManager.Instance.days == 1){
-			int hpIncrease = 60 + (5 * this.kingdom.techLevel);
-			if(this.kingdom.HasWar()){
-				hpIncrease = (int)(hpIncrease / 2);
+			int hpIncrease = 0;
+			if(this.rebellion == null){
+				hpIncrease = 60 + (5 * this.kingdom.techLevel);
+				if(this.kingdom.HasWar()){
+					hpIncrease = (int)(hpIncrease / 2);
+				}
+			}else{
+				hpIncrease = 100;
 			}
 			this.IncreaseHP (hpIncrease);
 		}
@@ -627,7 +635,6 @@ public class City{
 //			this.IncreaseHP(HP_INCREASE);
 //		}
 	}
-
 	/*
 	 * Function to increase HP.
 	 * */
@@ -635,6 +642,9 @@ public class City{
 		this._hp += amountToIncrease;
 		if (this._hp > this.maxHP) {
 			this._hp = this.maxHP;
+			if(this.rebellion != null){
+				this._hp = this.maxHPRebel;
+			}
 		}
 	}
 

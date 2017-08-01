@@ -49,6 +49,7 @@ public class Rebellion : GameEvent {
 		newLog.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		newLog.AddToFillers (cityWhereRebelFortIsCreated, cityWhereRebelFortIsCreated.name, LOG_IDENTIFIER.CITY_1);
 
+		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated ();
 	}
 	#region Overrides
