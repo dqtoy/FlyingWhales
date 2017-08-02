@@ -651,7 +651,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.kingdomColorSprite.gameObject.SetActive(false);
         EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);
         if(structureObjOnTile != null) {
-            Debug.Log("RUIN STRUCTURE ON: " + this.name);
+            Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year +  " - RUIN STRUCTURE ON: " + this.name);
             structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
         }
         //Transform[] children = structureParentGO.GetComponentsInChildren<Transform>();

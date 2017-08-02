@@ -236,11 +236,12 @@ public class UIManager : MonoBehaviour {
 	public UILabel eventDropdownCurrentSelectionLbl;
     public UILabel forTestingLoyaltyLbl;
 	public GameObject goLoyalty;
+    public ButtonToggle toggleBordersBtn;
 
-//	[Space(10)] //Settlement Related UI
-//	public GameObject plagueIconGO;
+    //	[Space(10)] //Settlement Related UI
+    //	public GameObject plagueIconGO;
 
-	public delegate void OnPauseEventExpiration(bool state);
+    public delegate void OnPauseEventExpiration(bool state);
 	public OnPauseEventExpiration onPauseEventExpiration;
 
     [Space(10)]
@@ -264,6 +265,8 @@ public class UIManager : MonoBehaviour {
         //EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
         //EventManager.Instance.onKingdomDiedEvent.AddListener(QueueKingdomForRemoval);
         NormalizeFontSizes();
+        ToggleBorders();
+        toggleBordersBtn.SetClickState(true);
         //LoadKingdomList();
         UpdateUI();
 	}
@@ -2940,6 +2943,10 @@ public class UIManager : MonoBehaviour {
 
 
 //------------------------------------------------------------------------------------------- FOR TESTING ---------------------------------------------------------------------
+
+    public void ToggleBorders() {
+        CameraMove.Instance.ToggleMainCameraLayer("Borders");
+    }
 
 	public void ToggleResourceIcons(){
 		CameraMove.Instance.ToggleResourceIcons();
