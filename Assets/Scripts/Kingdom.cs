@@ -2113,12 +2113,15 @@ public class Kingdom{
 				numOfWars += 1;
 			}
 		}
+		if(numOfWars > 0){
+			numOfWars -= 1;
+		}
 		return numOfWars;
 	}
 
 	private void UpdateCombatStats(){
 		this._combatStats = this._kingdomTypeData.combatStats;
-		this._combatStats.waves = this._kingdomTypeData.combatStats.waves - ((GetNumberOfWars() + 1) + this.rebellions.Count);
+		this._combatStats.waves = this._kingdomTypeData.combatStats.waves - (GetNumberOfWars() + this.rebellions.Count);
 	}
 
 	internal void SetLockDown(bool state){
