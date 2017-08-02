@@ -66,7 +66,6 @@ public class BoonOfPower : GameEvent {
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "power_activated");
 	}
 	internal void TransferBoonOfPower(Kingdom kingdom, Citizen citizen){
-		this.EventIsCreated ();
 		kingdom.CollectBoonOfPower (this);
 		GameObject.Destroy (this.avatar);
 		if(citizen == null){
@@ -79,6 +78,7 @@ public class BoonOfPower : GameEvent {
 			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 			newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		}
+		this.EventIsCreated ();
 	}
 	private void DestroyThis(){
 		this.DoneEvent ();
