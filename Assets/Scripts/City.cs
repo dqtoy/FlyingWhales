@@ -111,7 +111,7 @@ public class City{
 		this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
-		ResetToDefaultHP ();
+		this._hp = this.maxHP;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 
 //		this.CreateInitialFamilies();
