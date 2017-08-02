@@ -269,6 +269,7 @@ public class UIManager : MonoBehaviour {
 	public UIPopupList eventDropdownList;
 	public UILabel eventDropdownCurrentSelectionLbl;
     public UILabel forTestingLoyaltyLbl;
+	public GameObject goLoyalty;
 
 //	[Space(10)] //Settlement Related UI
 //	public GameObject plagueIconGO;
@@ -731,6 +732,14 @@ public class UIManager : MonoBehaviour {
 		HideCityInfo();
 		citizenInfoGO.SetActive (true);
 		this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
+
+		HideGovernorLoyalty ();
+
+		if(citizenToShow.assignedRole != null){
+			if(citizenToShow.assignedRole is Governor){
+				ShowGovernorLoyalty ();
+			}
+		}
 	}
 
 	public void HideCitizenInfo(){
@@ -738,6 +747,7 @@ public class UIManager : MonoBehaviour {
 		citizenInfoGO.SetActive(false);
 		HideFamilyTree();
         HideCitizenCharacterValues();
+		HideGovernorLoyalty ();
     }
 
     public void ToggleCharacterValues() {
@@ -3161,9 +3171,18 @@ public class UIManager : MonoBehaviour {
         currentlyShowingCitizen.spouse.children.Remove(child);
     }
 
+	private void ShowGovernorLoyalty(){
+		if(!this.goLoyalty.activeSelf){
+			this.goLoyalty.SetActive (true);
+		}
+	}
+	public void HideGovernorLoyalty(){
+		this.goLoyalty.SetActive (false);
+	}
+
     public void ChangeGovernorLoyalty() {
-        ((Governor)currentlyShowingCity.governor.assignedRole).SetLoyalty(Int32.Parse(forTestingLoyaltyLbl.text));
-        Debug.Log("Changed loyalty of: " + currentlyShowingCity.governor.name + " to " + ((Governor)currentlyShowingCity.governor.assignedRole).loyalty.ToString());
+		((Governor)this.currentlyShowingCitizen.assignedRole).SetLoyalty(Int32.Parse(forTestingLoyaltyLbl.text));
+		Debug.Log("Changed loyalty of: " + this.currentlyShowingCitizen.name + " to " + ((Governor)this.currentlyShowingCitizen.assignedRole).loyalty.ToString());
     }
 
     public void LogRelatives() {
