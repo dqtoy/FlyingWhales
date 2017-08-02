@@ -51,23 +51,22 @@ public class Hypnotism : GameEvent {
             }
         } else {
             //Failed to Hypnotize
-            rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.COLD, this);
+            rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, this);
             Log negative = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Hypnotism", "witch_failed");
             negative.AddToFillers(_targetKingdom.king, _targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
             negative.AddToFillers(_sourceKingdom.king, _sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
 
-            rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, this);
             for (int i = 0; i < _sourceKingdom.discoveredKingdoms.Count; i++) {
                 //If the witch fails, Kings that are aware of the source kings kingdom will react to his/her choice. +20 if also values INFLUENCE, otherwise, -20.
                 Kingdom currKingdom = _sourceKingdom.discoveredKingdoms[i];
                 if(currKingdom.id != _targetKingdom.id) {
-                    if (currKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-                        RelationshipKings otherRel = currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king);
-                        otherRel.AddEventModifier(20, "Hypnotism of " + _targetKingdom.king + " reaction", this);
-                    } else {
+                    //if (currKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
+                    //    RelationshipKings otherRel = currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king);
+                    //    otherRel.AddEventModifier(20, "Hypnotism of " + _targetKingdom.king + " reaction", this);
+                    //} else {
                         RelationshipKings otherRel = currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king);
                         otherRel.AddEventModifier(-20, "Hypnotism of " + _targetKingdom.king + " reaction", this);
-                    }
+                    //}
                 }
             }
 
