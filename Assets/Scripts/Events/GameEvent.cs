@@ -109,7 +109,7 @@ public class GameEvent {
     * A plague carrying citizen will spread the plague to its 
     * destination city (if it is not yet plagued) and infect a random settlement.
     * */
-    protected void CheckIfCitizenIsCarryingPlague(Citizen citizen) {
+    internal void CheckIfCitizenIsCarryingPlague(Citizen citizen) {
         Plague plaguedCarriedByCitizen = citizen.assignedRole.plague;
         if (plaguedCarriedByCitizen != null) {
             City citizenTargetCity = citizen.assignedRole.targetCity;

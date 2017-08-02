@@ -550,7 +550,7 @@ public class City{
         //tileToBuy.kingdomColorSprite.color = color;
         //tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
         //tileToBuy.ShowOccupiedSprite();
-        tileToBuy.CreateStructureOnTile(Utilities.GetStructureTypeForResource(tileToBuy.specialResource));
+        tileToBuy.CreateStructureOnTile(Utilities.GetStructureTypeForResource(kingdom.race, tileToBuy.specialResource));
 
         //Remove tile from any border tile list
         if (tileToBuy.isBorder && tileToBuy.isBorderOfCityID != this.id) {

@@ -20,7 +20,8 @@ public class KingdomInterveneItem : MonoBehaviour {
             kingdomType += Utilities.FirstLetterToUpperCase(kingdomTypeWords[i].ToLower()) + " ";
         }
         kingdomInfoLbl.text = kingdomType + "\n";
-        if(kingdom.age > 1) {
+        kingdomInfoLbl.text += kingdom.race.ToString() + "\n";
+        if (kingdom.age > 1) {
             kingdomInfoLbl.text += kingdom.age.ToString() + " years old\n";
         } else if (kingdom.age == 1){
             kingdomInfoLbl.text += kingdom.age.ToString() + " year old\n";

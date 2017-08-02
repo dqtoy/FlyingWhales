@@ -187,7 +187,6 @@ public class KingdomManager : MonoBehaviour {
 	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false, Kingdom sourceKingdom = null){
 		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom);
 		allKingdoms.Add(newKingdom);
-		EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
 		if (isForInitial) {
 			for (int i = 0; i < cities.Count; i++) {
 				if (i == 0) {
@@ -197,7 +196,8 @@ public class KingdomManager : MonoBehaviour {
 				}
 			}
 		}
-		//this.UpdateKingdomAdjacency();
+        EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
+        //this.UpdateKingdomAdjacency();
         newKingdom.CheckForDiscoveredKingdoms();
 		return newKingdom;
 	}

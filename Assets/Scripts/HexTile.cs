@@ -441,7 +441,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         color.a = 76.5f / 255f;
         this._kingdomColorSprite.color = color;
-        
     }
 
     /*
