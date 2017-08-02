@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class KingdomFlagItem : MonoBehaviour {
 
@@ -13,53 +15,72 @@ public class KingdomFlagItem : MonoBehaviour {
 
 	[SerializeField] private UI2DSprite _kingdomColorSprite;
     [SerializeField] private TweenPosition _tweenPos;
-    [SerializeField] private UIGrid eventsGrid;
+    [SerializeField] private UIGrid _eventsGrid;
     [SerializeField] private GameObject deathIcon;
 	private bool isHovering = false;
 
-	internal void SetKingdom(Kingdom kingdom){
+    #region getters/setters
+    public UIGrid eventsGrid {
+        get { return _eventsGrid; }
+    }
+    #endregion
+
+    internal void SetKingdom(Kingdom kingdom){
 		this.kingdom = kingdom;
 		this._kingdomColorSprite.color = kingdom.kingdomColor;
     }
 
-	void OnClick(){
-        this.SetAsSelected();
-    }
+	//void OnClick(){
+ //       this.SetAsSelected();
+ //   }
 
     void OnDoubleClick() {
         //Debug.Log("DOUBLE CLICK!: " + kingdom.name);
         CameraMove.Instance.CenterCameraOn(kingdom.capitalCity.hexTile.gameObject);
     }
 
-    internal void SetAsSelected() {
-        if (UIManager.Instance.currentlyShowingKingdom != null && 
-            UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
-            return;
-        }
-        this.PlayAnimation();
-        SetKingdomAsActive();
-    }
+    //internal void SetAsSelected() {
+    //    if (UIManager.Instance.currentlyShowingKingdom != null && 
+    //        UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+    //        return;
+    //    }
+    //    this.PlayAnimation();
+    //    SetKingdomAsActive();
+    //}
 
-    private void PlayAnimation() {
-        _tweenPos.enabled = true;
-        _tweenPos.PlayForward();
-    }
+    //private void PlayAnimation() {
+    //    _tweenPos.enabled = true;
+    //    _tweenPos.PlayForward();
+    //}
 
-    public void PlayAnimationReverse() {
-        _tweenPos.ResetToBeginning();
-        _tweenPos.enabled = true;
-        _tweenPos.PlayForward();
-        //_tweenPos.ReverseValues();
-    }
+    //public void PlayAnimationReverse() {
+    //    _tweenPos.ResetToBeginning();
+    //    _tweenPos.enabled = true;
+    //    _tweenPos.PlayForward();
+    //    //_tweenPos.ReverseValues();
+    //}
 
-    public void SetKingdomAsActive() {
-        UIManager.Instance.SetKingdomAsActive(this.kingdom);
-    }
+    //public void SetKingdomAsActive() {
+    //    UIManager.Instance.SetKingdomAsActive(this.kingdom);
+    //}
 
     public void AddGameObjectToGrid(GameObject GO) {
-        this.eventsGrid.AddChild(GO.transform);
+        _eventsGrid.AddChild(GO.transform);
         GO.transform.localPosition = Vector3.zero;
-        this.eventsGrid.Reposition();
+        _eventsGrid.Reposition();
+    }
+
+    public void AddEventToGrid(GameEvent gameEventToAdd) {
+        List<EventItem> inactiveEventItems = _eventsGrid.GetChildList().Where(x => !x.gameObject.activeSelf).Select(x => x.GetComponent<EventItem>()).ToList();
+        if(inactiveEventItems.Count > 0) {
+            EventItem eventItemToUse = inactiveEventItems.First();
+            eventItemToUse.SetEvent(gameEventToAdd);
+            eventItemToUse.gameObject.SetActive(true);
+        } else {
+            GameObject eventGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.gameEventPrefab, _eventsGrid.transform);
+            AddGameObjectToGrid(eventGO);
+            eventGO.GetComponent<EventItem>().SetEvent(gameEventToAdd);
+        }
     }
 
     #region Monobehaviour Functions

@@ -39,7 +39,12 @@ public class EventItem : MonoBehaviour {
 
 	public void SetEvent(GameEvent gameEvent){
 		this.gameEvent = gameEvent;
-	}
+        SetSpriteIcon(UIManager.Instance.GetSpriteForEvent(gameEvent.eventType));
+        onClickEvent += UIManager.Instance.ShowEventLogs;
+        StartExpirationTimer();
+        this.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+        gameEvent.goEventItem = this.gameObject;
+    }
 
 	public void SetSpriteIcon(Sprite sprite){
 		eventIcon.sprite2D = sprite;
