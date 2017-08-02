@@ -76,7 +76,7 @@ public class Riot : GameEvent {
 	#endregion
 	private void AttemptToDestroyStructure(){
 		int chance = UnityEngine.Random.Range(0, 100);
-		if(chance < 5){
+		if(chance < 15){
 			List<City> candidates = this.sourceKingdom.cities.Where (x => x.structures.Count > 0).ToList ();
 			if(candidates != null && candidates.Count > 0){
 				City chosenCity = candidates[UnityEngine.Random.Range(0, candidates.Count)];

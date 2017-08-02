@@ -75,11 +75,17 @@ public class City{
 		set{ this._hp = value; }
 	}
 	public int maxHP{
-		get{ return Utilities.defaultCityHP +  (40 * this.structures.Count) + (20 * this.kingdom.techLevel); } //+1 since the structures list does not contain the main hex tile
+		get{
+			if(this.rebellion == null){
+				return Utilities.defaultCityHP +  (40 * this.structures.Count) + (20 * this.kingdom.techLevel);
+			}else{
+				return 600;
+			}
+		} //+1 since the structures list does not contain the main hex tile
 	}
-	public int maxHPRebel {
-		get{ return 600;}
-	}
+//	public int maxHPRebel {
+//		get{ return 600;}
+//	}
     public List<HexTile> ownedTiles {
         get { return this._ownedTiles; }
     }
@@ -642,9 +648,9 @@ public class City{
 		this._hp += amountToIncrease;
 		if (this._hp > this.maxHP) {
 			this._hp = this.maxHP;
-			if(this.rebellion != null){
-				this._hp = this.maxHPRebel;
-			}
+//			if(this.rebellion != null){
+//				this._hp = this.maxHPRebel;
+//			}
 		}
 	}
 
@@ -1273,8 +1279,10 @@ public class City{
 		if(rebellion == null){
 			return;
 		}
-		if (this.hexTile.cityInfo.city != null){
-			this.hexTile.cityInfo.rebelIcon.SetActive (true);
+		if(!isStart){
+			if (this.hexTile.cityInfo.city != null){
+				this.hexTile.cityInfo.rebelIcon.SetActive (true);
+			}
 		}
 		rebellion.warPair.isDone = true;
 		this.rebellion = rebellion;

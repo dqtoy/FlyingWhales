@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Lair {
+	private delegate void OnPerformAction();
+	private OnPerformAction onPerformAction;
 
 	public int hp;
 	public LAIR type;
@@ -24,6 +27,9 @@ public class Lair {
 		this.isDead = false;
 		this.isActivated = false;
 		AttachLairToHextile();
+		EventManager.Instance.onWeekEnd.AddListener (PerformAction);
+		onPerformAction += CheckForActivation;
+
 		if(MonsterManager.Instance.activateLairImmediately){
 			ActivateLair();
 		}
@@ -48,9 +54,10 @@ public class Lair {
 		return 0;
 	}
 	internal void ActivateLair(){
+		onPerformAction -= CheckForActivation;
 		if(!this.isActivated){
 			this.isActivated = true;
-			EventManager.Instance.onWeekEnd.AddListener(EverydayAction);
+			onPerformAction += EverydayAction;
 		}
 	}
 	private void AttachLairToHextile(){
@@ -74,7 +81,7 @@ public class Lair {
         //Reset Hextile
         this.hexTile.ResetTile();
 
-		EventManager.Instance.onWeekEnd.RemoveListener(EverydayAction);
+		onPerformAction -= EverydayAction;
 		MonsterManager.Instance.RemoveFromLairList(this);
 	}
 
@@ -86,6 +93,26 @@ public class Lair {
 		}
 	}
 
+	private void PerformAction(){
+		if(onPerformAction != null){
+			onPerformAction ();
+		}
+	}
+	private void CheckForActivation(){
+		if(!this.isActivated){
+			if(this.hexTile.isBorder){
+				ActivateLair ();
+			}else{
+				List<HexTile> neighbors = this.hexTile.AllNeighbours.ToList ();
+				for (int i = 0; i < neighbors.Count; i++) {
+					if(neighbors[i].isBorder){
+						ActivateLair ();
+						break;
+					}
+				}
+			}
+		}
+	}
 	#region Virtual
 	public virtual void Initialize(){}
 	public virtual void EverydayAction(){
