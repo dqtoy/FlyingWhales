@@ -26,6 +26,8 @@ public class GreatStorm : GameEvent {
 		this.damagePercentage = 0;
 		this.daysCounter = 0;
 		this.destroyedStructures = 0;
+		this._warTrigger = WAR_TRIGGER.GREAT_STORM;
+
 		EventManager.Instance.AddEventToDictionary(this);
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 
@@ -249,9 +251,8 @@ public class GreatStorm : GameEvent {
 							int percentToGive = 0;
 							if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
 								//TODO: Add log - wage war
-								this._warTrigger = WAR_TRIGGER.GREAT_STORM;
-								War war = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, KingdomManager.Instance.allKingdoms[i].king, KingdomManager.Instance.allKingdoms[i], this._affectedKingdom);
-								war.CreateInvasionPlan (KingdomManager.Instance.allKingdoms[i], this, this.warTrigger);
+								War war = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, KingdomManager.Instance.allKingdoms[i].king, KingdomManager.Instance.allKingdoms[i], this._affectedKingdom, this.warTrigger);
+								war.CreateInvasionPlan (KingdomManager.Instance.allKingdoms[i], this);
 							}
 						}
 					}

@@ -38,7 +38,7 @@ public class InvasionPlan : GameEvent {
 	}
 	#endregion
 
-	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _sourceKingdom, Kingdom _targetKingdom, GameEvent gameEventTrigger, War _war, WAR_TRIGGER warTrigger) : base (startWeek, startMonth, startYear, startedBy){
+	public InvasionPlan(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _sourceKingdom, Kingdom _targetKingdom, GameEvent gameEventTrigger, War _war) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.INVASION_PLAN;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.name = "Invasion Plan";
@@ -51,7 +51,7 @@ public class InvasionPlan : GameEvent {
 		this._uncovered = new List<Citizen>();
 		this._joinWarEvents = new List<JoinWar>();
 
-		Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "InvasionPlanReasons", warTrigger.ToString());
+		Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "InvasionPlanReasons", this._war.warTrigger.ToString());
 		System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.durationInDays);
 
 		invasionPlanStart.AddToFillers (this._sourceKingdom.king, this._sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
@@ -169,6 +169,7 @@ public class InvasionPlan : GameEvent {
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+		this._war.EventIsCreated ();
 //		this.StartMilitarizationEvent();
 	}
 

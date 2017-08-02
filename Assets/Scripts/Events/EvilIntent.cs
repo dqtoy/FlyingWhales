@@ -16,6 +16,8 @@ public class EvilIntent : GameEvent {
         _sourceKing = sourceKing;
         _targetKing = targetKing;
 
+		this._warTrigger = WAR_TRIGGER.EVIL_INTENT;
+
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "event_title");
         newLogTitle.AddToFillers(targetKing, targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
@@ -123,9 +125,9 @@ public class EvilIntent : GameEvent {
             invasionLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             War warEventBetweenKingdoms = KingdomManager.Instance.GetWarBetweenKingdoms(_sourceKing.city.kingdom, _targetKing.city.kingdom);
             if(warEventBetweenKingdoms == null) {
-                warEventBetweenKingdoms = new War(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, _sourceKing, _sourceKing.city.kingdom, _targetKing.city.kingdom);
+				warEventBetweenKingdoms = new War(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, _sourceKing, _sourceKing.city.kingdom, _targetKing.city.kingdom, this._warTrigger);
             }
-            warEventBetweenKingdoms.CreateInvasionPlan(_sourceKing.city.kingdom, this, WAR_TRIGGER.EVIL_INTENT);
+            warEventBetweenKingdoms.CreateInvasionPlan(_sourceKing.city.kingdom, this);
             DoneEvent();
         }
     }

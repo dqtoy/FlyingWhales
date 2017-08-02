@@ -198,7 +198,7 @@ public class JoinWar : GameEvent {
 
 			if (this.warEvent == null) {
 				this.warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.candidateForAlliance, 
-					this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
+					this.candidateForAlliance.city.kingdom, this.kingdomToAttack, this._warTrigger);
 			}
 
 			if (!this.warEvent.isAtWar) {
@@ -209,7 +209,7 @@ public class JoinWar : GameEvent {
 				joinWarSuccessLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name, LOG_IDENTIFIER.KINGDOM_3);
 
 				//Create new Invasion Plan against target kingdom
-				warEvent.CreateInvasionPlan (this.candidateForAlliance.city.kingdom, this, this._warTrigger);
+				warEvent.CreateInvasionPlan (this.candidateForAlliance.city.kingdom, this);
 
 				this.resolution = this.candidateForAlliance.city.name + " has joined " + this.startedByCity.name + " in it's war against kingdom " + this.kingdomToAttack.name;
 				this.DoneEvent();
