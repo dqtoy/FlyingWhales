@@ -15,6 +15,8 @@ public class AvatarAnimationEvents : MonoBehaviour {
 			Monster monster = this.avatarGO.GetComponent<MonsterAvatar> ().monster;
 			if(monster is Lycan){
 				this.avatarGO.GetComponent<LycanAvatar> ().OnEndAttack ();
+			}if(monster is StormWitch){
+				this.avatarGO.GetComponent<StormWitchAvatar> ().OnEndAttack ();
 			}
 		}
 

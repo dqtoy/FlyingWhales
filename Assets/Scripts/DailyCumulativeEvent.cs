@@ -14,7 +14,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //	public int borderConflictChance;
 //	public int diplomaticCrisisChance;
 //	public int stateVisitChance;
-	public List<GameEvent> allUnwantedEvents;
+//	public List<GameEvent> allUnwantedEvents;
 
 	void Awake(){
 		this.firstKingdom = null;
@@ -25,7 +25,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //		this.borderConflictChance = 0;
 //		this.diplomaticCrisisChance = 0;
 //		this.stateVisitChance = 0;
-		this.allUnwantedEvents = new List<GameEvent> ();
+//		this.allUnwantedEvents = new List<GameEvent> ();
 	}
 
 	[Task]
@@ -39,10 +39,15 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //		this.diplomaticCrisisChance = 0;
 //		this.stateVisitChance = 0;
 		this.eventToCreate.DefaultValues();
-		this.allUnwantedEvents.Clear ();
+//		this.allUnwantedEvents.Clear ();
 		Task.current.Succeed ();
 	}
+	private void Reset(){
+		this.firstKingdom = null;
+		this.secondKingdom = null;
+		this.eventToCreate.DefaultValues();
 
+	}
 	[Task]
 	public void SetFirstRandomKingdom(){
 		int total = 0;
@@ -69,6 +74,17 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		}
 	}
 	[Task]
+	public void CreateDailyCumulativeEvents(){
+		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			Reset ();
+			this.firstKingdom = KingdomManager.Instance.allKingdoms [i];
+			if(this.firstKingdom.discoveredKingdoms != null && this.firstKingdom.discoveredKingdoms.Count > 0){
+				SetEventsToCreate ();
+			}
+		}
+		Task.current.Succeed ();
+	}
+	[Task]
 	public void HasDiscoveredKingdoms(){
 		if(this.firstKingdom.discoveredKingdoms != null && this.firstKingdom.discoveredKingdoms.Count > 0){
 			Task.current.Succeed ();
@@ -76,7 +92,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 			Task.current.Fail ();
 		}
 	}
-	[Task]
+//	[Task]
 	public void SetEventsToCreate(){
 		for(int i = 0; i < this.firstKingdom.dailyCumulativeEventRate.Length; i++){
 			if(!CanCreateEvent(this.firstKingdom.dailyCumulativeEventRate[i].eventType)){
@@ -90,7 +106,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 				this.firstKingdom.dailyCumulativeEventRate [i].rate += this.firstKingdom.dailyCumulativeEventRate [i].interval;
 			}
 		}
-		Task.current.Succeed ();
+//		Task.current.Succeed ();
 //		if(this.eventToCreate.eventType == EVENT_TYPES.NONE){
 //			Task.current.Fail ();
 //		}else{
@@ -123,6 +139,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //	[Task]
 	public bool AreTheTwoKingdomsAtWar(){
 		RelationshipKingdom relationship = this.firstKingdom.GetRelationshipWithOtherKingdom (this.secondKingdom);
+		if (relationship == null) {
+			return false;
+		}
 		return relationship.isAtWar;
 	}
 //	[Task]

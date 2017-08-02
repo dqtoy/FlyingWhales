@@ -45,6 +45,7 @@ public class Governor : Role {
 	internal void AdjustLoyalty(int amount){
 		this._loyalty += amount;
         this._loyalty = Mathf.Clamp(this._loyalty, -100, 100);
+		GovernorEvents ();
 	}
 
 	internal void UpdateLoyalty(){
@@ -151,4 +152,16 @@ public class Governor : Role {
         this._eventLoyaltyModifier = 0;
         this._eventLoyaltySummary = string.Empty;
     }
+
+	private void GovernorEvents(){
+		TriggerSecession ();
+	}
+	private void TriggerSecession(){
+		if(this._loyalty <= -50 && !this.citizen.city.kingdom.hasSecession){
+			int chance = UnityEngine.Random.Range (0, 100);
+			if(chance < 25){
+				EventCreator.Instance.CreateSecessionEvent(this.citizen);
+			}
+		}
+	}
 }

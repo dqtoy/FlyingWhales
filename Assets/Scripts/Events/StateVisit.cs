@@ -71,6 +71,9 @@ public class StateVisit : GameEvent {
 					this.isSuccessful = true;
 					DoneEvent ();
 				}
+			}else{
+				this.isSuccessful = false;
+				DoneEvent ();
 			}
 		}
 

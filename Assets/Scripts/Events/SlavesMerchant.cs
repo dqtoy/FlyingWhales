@@ -33,7 +33,7 @@ public class SlavesMerchant : GameEvent {
 	#region Overrides
 	internal override void PerformAction (){
 		this.daysCounter += 1;
-		if(this.daysCounter == 3){
+		if(this.daysCounter == 7){
 			KingDecision();
 		}else if(this.daysCounter == 10){
 			if(this.hasBoughtSlaves){
@@ -76,6 +76,9 @@ public class SlavesMerchant : GameEvent {
 	}
 
 	private void SlavesDistribution(){
+		Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "slaves_distribution");
+		newLog2.AddToFillers (this.buyerKingdom.king, this.buyerKingdom.king.name, LOG_IDENTIFIER.KING_1);
+
 		List<City> allCities = this.buyerKingdom.nonRebellingCities;
 		int slavesPerCity = this.slavesQuantity / allCities.Count;
 		int unrestCount = 0;

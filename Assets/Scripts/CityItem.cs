@@ -55,6 +55,6 @@ public class CityItem : MonoBehaviour {
     }
 
     public void SetKingdomAsSelected() {
-        UIManager.Instance.SetKingdomAsSelected(_city.kingdom);
+        //UIManager.Instance.SetKingdomAsSelected(_city.kingdom);
     }
 }

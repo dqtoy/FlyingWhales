@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour {
     public GameObject cityItemPrefab;
     public GameObject resourceIconPrefab;
     public GameObject playerEventItemPrefab;
+    [SerializeField] private GameObject kingdomIntervenePrefab;
 
 	[Space(10)]
     [Header("Main UI Objects")]
@@ -100,49 +101,6 @@ public class UIManager : MonoBehaviour {
     public UILabel characterValuesLbl;
 	public GameObject citizenInfoForTestingGO;
 
-	[Space(10)] //City Info UI
-//	public UILabel cityNameLbl;
-//	public UILabel cityGovernorLbl;
-//	public UILabel cityKingdomLbl;
-//	public UILabel cityGoldLbl;
-//	public UILabel cityStoneLbl;
-//	public UILabel cityLumberLbl;
-//	public UILabel cityManaStoneLbl;
-//	public UILabel cityCobaltLbl;
-//	public UILabel cityMithrilLbl;
-//	public UILabel cityFoodLbl;
-//	public UIGrid foodProducersGrid;
-//	public UIGrid gatherersGrid;
-//	public UIGrid minersGrid;
-//	public UIGrid tradersGrid;
-//	public UIGrid generalsGrid;
-//	public UIGrid spiesGrid;
-//	public UIGrid envoysGrid;
-//	public UIGrid guardiansGrid;
-//	public UIGrid untrainedGrid;
-//	public UI2DSprite cityInfoCtizenPortraitBG;
-//	public GameObject citizensBtn;
-//	public GameObject cityInfoCitizensParent;
-//	public GameObject cityInfoHistoryParent;
-//	public UIGrid cityInfoHistoryGrid;
-//	public GameObject cityInfoEventsParent;
-//	public UIGrid cityInfoEventsGrid;
-//	public GameObject noEventsGO;
-	//public UI2DSprite cityInfoPortrait;
-	//public UILabel cityInfoCityNameLbl;
-	//public CharacterPortrait cityInfoGovernorPortrait;
-	//public UIGrid cityInfoCitizenGrid;
-	//public UILabel cityInfoGoldLbl;
-	//public UILabel cityInfoBasicLbl;
-	//public UI2DSprite cityInfoBasicResource;
-	//public GameObject cityInfoManaStoneIcon;
-	//public GameObject cityInfoCobaltIcon;
-	//public GameObject cityInfoMithrilIcon;
-	//public GameObject cityInfoStoneIcon;
-	//public GameObject cityInfoLumberIcon;
-	
-
-
 	[Space(10)]
     [Header("Events UI Objects")]
     public UIGrid gameEventsOfTypeGrid;
@@ -206,7 +164,8 @@ public class UIManager : MonoBehaviour {
     public UIGrid kingdomOtherResourcesGrid;
     public UIGrid kingdomTradeResourcesGrid;
 	public CharacterPortrait kingdomListActiveKing;
-	public UIGrid kingdomListOtherKingdomsGrid;
+    public KingdomFlagItem activeKingdomFlag;
+	//public UIGrid kingdomListOtherKingdomsGrid;
 	public ButtonToggle kingdomListEventButton;
 	public ButtonToggle kingdomListRelationshipButton;
 	public ButtonToggle kingdomListCityButton;
@@ -237,6 +196,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UIGrid interveneMenuGrid;
     [SerializeField] private UIScrollView interveneMenuScrollView;
     [SerializeField] private ButtonToggle interveneMenuBtn;
+    [SerializeField] private GameObject interveneActonsGO;
+    [SerializeField] private GameObject switchKingdomGO;
+    [SerializeField] private UIGrid switchKingdomGrid;
+    [SerializeField] private ButtonToggle switchKingdomsBtn;
 
     [Space(10)]
     [Header("Minimap")]
@@ -264,6 +227,7 @@ public class UIManager : MonoBehaviour {
 	public UIPopupList eventDropdownList;
 	public UILabel eventDropdownCurrentSelectionLbl;
     public UILabel forTestingLoyaltyLbl;
+	public GameObject goLoyalty;
 
 //	[Space(10)] //Settlement Related UI
 //	public GameObject plagueIconGO;
@@ -287,12 +251,12 @@ public class UIManager : MonoBehaviour {
     }
 
 	void Start(){
-        EventManager.Instance.onWeekEnd.AddListener(CheckForKingdomExpire);
+        //EventManager.Instance.onWeekEnd.AddListener(CheckForKingdomExpire);
         EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
-        EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
-        EventManager.Instance.onKingdomDiedEvent.AddListener(QueueKingdomForRemoval);
+        //EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
+        //EventManager.Instance.onKingdomDiedEvent.AddListener(QueueKingdomForRemoval);
         NormalizeFontSizes();
-        LoadKingdomList();
+        //LoadKingdomList();
         UpdateUI();
 	}
 
@@ -440,74 +404,73 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 
+ //   private void ForceUpdateKingdomList(Kingdom kingdomThatDied) {
+ //       if (currentlyShowingKingdom.id == kingdomThatDied.id) {
+ //           //SetKingdomAsActive(KingdomManager.Instance.allKingdoms.First());
+ //           currentlyShowingKingdom = null;
+ //       }
+ //       //LoadKingdomList();
+ //   }
 
-    private void ForceUpdateKingdomList(Kingdom kingdomThatDied) {
-        if (currentlyShowingKingdom.id == kingdomThatDied.id) {
-            //SetKingdomAsActive(KingdomManager.Instance.allKingdoms.First());
-            currentlyShowingKingdom = null;
-        }
-        LoadKingdomList();
-    }
+ //   private void QueueKingdomForRemoval(Kingdom kingdomToQueue) {
+ //       if(kingdomDisplayExpiry == null) {
+ //           kingdomDisplayExpiry = new Dictionary<DateTime, Kingdom>();
+ //       }
+ //       kingdomDisplayExpiry.Add(Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, KINGDOM_EXPIRY_DAYS), kingdomToQueue);
+ //   }
 
-    private void QueueKingdomForRemoval(Kingdom kingdomToQueue) {
-        if(kingdomDisplayExpiry == null) {
-            kingdomDisplayExpiry = new Dictionary<DateTime, Kingdom>();
-        }
-        kingdomDisplayExpiry.Add(Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, KINGDOM_EXPIRY_DAYS), kingdomToQueue);
-    }
+ //   private void CheckForKingdomExpire() {
+ //       if(kingdomDisplayExpiry != null) {
+ //           for (int i = 0; i < kingdomDisplayExpiry.Count; i++) {
+ //               KeyValuePair<DateTime, Kingdom> currPair = kingdomDisplayExpiry.ElementAt(i);
+ //               DateTime currExpiryDate = currPair.Key;
+ //               if (currExpiryDate.Year == GameManager.Instance.year && currExpiryDate.Month == GameManager.Instance.month && currExpiryDate.Day == GameManager.Instance.days) {
+ //                   RemoveKingdomFromList(currPair.Value);
+ //               }
+ //           }
+ //       }
+ //   }
 
-    private void CheckForKingdomExpire() {
-        if(kingdomDisplayExpiry != null) {
-            for (int i = 0; i < kingdomDisplayExpiry.Count; i++) {
-                KeyValuePair<DateTime, Kingdom> currPair = kingdomDisplayExpiry.ElementAt(i);
-                DateTime currExpiryDate = currPair.Key;
-                if (currExpiryDate.Year == GameManager.Instance.year && currExpiryDate.Month == GameManager.Instance.month && currExpiryDate.Day == GameManager.Instance.days) {
-                    RemoveKingdomFromList(currPair.Value);
-                }
-            }
-        }
-    }
+ //   private void RemoveKingdomFromList(Kingdom kingdomToRemove) {
+ //       List<KingdomFlagItem> allKingdomsInGrid = kingdomListOtherKingdomsGrid.GetChildList()
+ //               .Select(x => x.GetComponent<KingdomFlagItem>()).ToList();
+ //       for (int i = 0; i < allKingdomsInGrid.Count; i++) {
+ //           if (allKingdomsInGrid[i].kingdom.id == kingdomToRemove.id) {
+ //               kingdomListOtherKingdomsGrid.RemoveChild(allKingdomsInGrid[i].transform);
+ //               Destroy(allKingdomsInGrid[i].gameObject);
+ //               break;
+ //           }
+ //       }
+ //       RepositionGridCallback(kingdomListOtherKingdomsGrid);
+	//	kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
+ //   }
 
-    private void RemoveKingdomFromList(Kingdom kingdomToRemove) {
-        List<KingdomFlagItem> allKingdomsInGrid = kingdomListOtherKingdomsGrid.GetChildList()
-                .Select(x => x.GetComponent<KingdomFlagItem>()).ToList();
-        for (int i = 0; i < allKingdomsInGrid.Count; i++) {
-            if (allKingdomsInGrid[i].kingdom.id == kingdomToRemove.id) {
-                kingdomListOtherKingdomsGrid.RemoveChild(allKingdomsInGrid[i].transform);
-                Destroy(allKingdomsInGrid[i].gameObject);
-                break;
-            }
-        }
-        RepositionGridCallback(kingdomListOtherKingdomsGrid);
-		kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
-    }
-
-    private void AddKingdomToList(Kingdom kingdomToAdd) {
-        GameObject kingdomGO = InstantiateUIObject(kingdomFlagPrefab, this.transform);
-        kingdomGO.GetComponent<KingdomFlagItem>().SetKingdom(kingdomToAdd);
-        //kingdomGO.GetComponent<KingdomFlagItem>().onHoverOver += currKingdom.HighlightAllOwnedTilesInKingdom;
-        //kingdomGO.GetComponent<KingdomFlagItem>().onHoverExit += currKingdom.UnHighlightAllOwnedTilesInKingdom;
+ //   private void AddKingdomToList(Kingdom kingdomToAdd) {
+ //       GameObject kingdomGO = InstantiateUIObject(kingdomFlagPrefab, this.transform);
+ //       kingdomGO.GetComponent<KingdomFlagItem>().SetKingdom(kingdomToAdd);
+ //       //kingdomGO.GetComponent<KingdomFlagItem>().onHoverOver += currKingdom.HighlightAllOwnedTilesInKingdom;
+ //       //kingdomGO.GetComponent<KingdomFlagItem>().onHoverExit += currKingdom.UnHighlightAllOwnedTilesInKingdom;
         
-        kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
-		kingdomGO.transform.localScale = Vector3.one;
-        kingdomListOtherKingdomsGrid.Reposition();
+ //       kingdomListOtherKingdomsGrid.AddChild(kingdomGO.transform);
+	//	kingdomGO.transform.localScale = Vector3.one;
+ //       kingdomListOtherKingdomsGrid.Reposition();
 
-		kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
-    }
+	//	kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
+ //   }
 
-    private void LoadKingdomList(){
-        for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-            Kingdom currKingdom = KingdomManager.Instance.allKingdoms[i];
-            AddKingdomToList(currKingdom);
-        }
-        kingdomListOtherKingdomsGrid.Reposition();
+ //   private void LoadKingdomList(){
+ //       for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+ //           Kingdom currKingdom = KingdomManager.Instance.allKingdoms[i];
+ //           AddKingdomToList(currKingdom);
+ //       }
+ //       kingdomListOtherKingdomsGrid.Reposition();
  
-        if (currentlyShowingKingdom == null) {
-			kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
-            return;
-            //currentlyShowingKingdom = KingdomManager.Instance.allKingdoms.First();
-		}
-	}
+ //       if (currentlyShowingKingdom == null) {
+	//		kingdomListOtherKingdomsGrid.GetChildList().FirstOrDefault().GetComponent<KingdomFlagItem>().SetAsSelected();
+ //           return;
+ //           //currentlyShowingKingdom = KingdomManager.Instance.allKingdoms.First();
+	//	}
+	//}
 
     private void UpdateKingdomInfo() {
         currentlyShowingKingdom.UpdateFogOfWarVisual();
@@ -550,72 +513,70 @@ public class UIManager : MonoBehaviour {
             RepositionGridCallback(kingdomOtherResourcesGrid);
         }
 
-        //Trade Resources
-        //children = kingdomTradeResourcesGrid.GetChildList();
-        //resourcesInGrid = new List<RESOURCE>();
-        //for (int i = 0; i < children.Count; i++) {
-        //    RESOURCE resource = (RESOURCE)Enum.Parse(typeof(RESOURCE), Utilities.GetComponentsInDirectChildren<UI2DSprite>(children[i].gameObject).First().sprite2D.name);
-        //    resourcesInGrid.Add(resource);
-        //}
-
-        //allOtherResources = new List<RESOURCE>();
-        //for (int i = 0; i < currentlyShowingKingdom.tradeRoutes.Count; i++) {
-        //    TradeRoute currTradeRoute = currentlyShowingKingdom.tradeRoutes[i];
-        //    if (currTradeRoute.targetKingdom.id == currentlyShowingKingdom.id) {
-        //        allOtherResources.Add(currTradeRoute.resourceBeingTraded);
-        //    }
-        //}
-
-        //if (resourcesInGrid.Except(allOtherResources).Count() > 0 || allOtherResources.Except(resourcesInGrid).Count() > 0) {
-        //    for (int i = 0; i < children.Count; i++) {
-        //        kingdomTradeResourcesGrid.RemoveChild(children[i]);
-        //        Destroy(children[i].gameObject);
-        //    }
-        //    for (int i = 0; i < currentlyShowingKingdom.tradeRoutes.Count; i++) {
-        //        TradeRoute currTradeRoute = currentlyShowingKingdom.tradeRoutes[i];
-        //        if (currTradeRoute.targetKingdom.id == currentlyShowingKingdom.id) {
-        //            GameObject resourceGO = InstantiateUIObject(resourceIconPrefab, this.transform);
-        //            Utilities.GetComponentsInDirectChildren<UI2DSprite>(resourceGO).First().sprite2D = Resources
-        //                .LoadAll<Sprite>("Resources Icons")
-        //                .Where(x => x.name == currTradeRoute.resourceBeingTraded.ToString()).ToList()[0];
-        //            resourceGO.transform.localScale = Vector3.one;
-        //            kingdomTradeResourcesGrid.AddChild(resourceGO.transform);
-        //            kingdomTradeResourcesGrid.Reposition();
-        //        }
-        //    }
-        //    StartCoroutine(RepositionGrid(kingdomTradeResourcesGrid));
-        //}
         currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
     }
 
-    internal void SetKingdomAsSelected(Kingdom kingdom) {
-        List<KingdomFlagItem> allKingdomsInGrid = kingdomListOtherKingdomsGrid.GetChildList()
-                .Select(x => x.GetComponent<KingdomFlagItem>()).ToList();
-        for (int i = 0; i < allKingdomsInGrid.Count; i++) {
-            if (allKingdomsInGrid[i].kingdom.id == kingdom.id) {
-                allKingdomsInGrid[i].SetAsSelected();
-                break;
-            }
-        }
-    }
+    //internal void SetKingdomAsSelected(Kingdom kingdom) {
+    //    List<KingdomFlagItem> allKingdomsInGrid = kingdomListOtherKingdomsGrid.GetChildList()
+    //            .Select(x => x.GetComponent<KingdomFlagItem>()).ToList();
+    //    for (int i = 0; i < allKingdomsInGrid.Count; i++) {
+    //        if (allKingdomsInGrid[i].kingdom.id == kingdom.id) {
+    //            allKingdomsInGrid[i].SetAsSelected();
+    //            break;
+    //        }
+    //    }
+    //}
 
 	internal void SetKingdomAsActive(Kingdom kingdom){
-        if(currentlyShowingKingdom != null && currentlyShowingKingdom.id != kingdom.id) {
-		    currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom ();
-            List<KingdomFlagItem> children = kingdomListOtherKingdomsGrid.GetChildList()
-                .Select(x => x.GetComponent<KingdomFlagItem>()).ToList();
-            for (int i = 0; i < children.Count; i++) {
-                KingdomFlagItem kfi = children[i];
-                if(kfi.kingdom.id == currentlyShowingKingdom.id) {
-                    kfi.PlayAnimationReverse();
-                    break;
-                }
+      //  if(currentlyShowingKingdom != null && currentlyShowingKingdom.id != kingdom.id) {
+		    //currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom ();
+      //      List<KingdomFlagItem> children = kingdomListOtherKingdomsGrid.GetChildList()
+      //          .Select(x => x.GetComponent<KingdomFlagItem>()).ToList();
+      //      for (int i = 0; i < children.Count; i++) {
+      //          KingdomFlagItem kfi = children[i];
+      //          if(kfi.kingdom.id == currentlyShowingKingdom.id) {
+      //              kfi.PlayAnimationReverse();
+      //              break;
+      //          }
+      //      }
+      //  }
+        if(currentlyShowingKingdom != null) {
+            currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+        }
+		//if (currentlyShowingCity != null) {
+		//	currentlyShowingCity.HighlightAllOwnedTiles(204f/255f);
+		//}
+		currentlyShowingKingdom = kingdom;
+
+        currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
+        CameraMove.Instance.CenterCameraOn(currentlyShowingKingdom.capitalCity.hexTile.gameObject);
+
+        activeKingdomFlag.SetKingdom(currentlyShowingKingdom);
+        //Load all current active events of kingdom
+        List<GameEvent> activeGameEventsStartedByKingdom = EventManager.Instance.GetEventsStartedByKingdom(currentlyShowingKingdom, new EVENT_TYPES[] { EVENT_TYPES.ALL });
+        List<EventItem> presentEventItems = activeKingdomFlag.eventsGrid.GetChildList().Select(x => x.GetComponent<EventItem>()).ToList();
+
+        if(activeGameEventsStartedByKingdom.Count > presentEventItems.Count) {
+            int missingItems = activeGameEventsStartedByKingdom.Count - presentEventItems.Count;
+            for (int i = 0; i < missingItems; i++) {
+                GameObject eventGO = InstantiateUIObject(gameEventPrefab, activeKingdomFlag.eventsGrid.transform);
+                activeKingdomFlag.AddGameObjectToGrid(eventGO);
+                presentEventItems.Add(eventGO.GetComponent<EventItem>());
             }
         }
-		if (currentlyShowingCity != null) {
-			currentlyShowingCity.HighlightAllOwnedTiles(204f/255f);
-		}
-		currentlyShowingKingdom = kingdom;
+
+        for (int i = 0; i < presentEventItems.Count; i++) {
+            EventItem currItem = presentEventItems[i];
+            GameEvent currGameEvent = activeGameEventsStartedByKingdom.ElementAtOrDefault(i);
+            if(currGameEvent != null) {
+                currItem.SetEvent(currGameEvent);
+                currItem.gameObject.SetActive(true);
+            } else {
+                currItem.gameObject.SetActive(false);
+            }
+        }
+
+
 //		if (kingdomInfoGO.activeSelf) {
 //			ShowKingdomInfo(currentlyShowingKingdom);
 //		}
@@ -727,6 +688,14 @@ public class UIManager : MonoBehaviour {
 		HideCityInfo();
 		citizenInfoGO.SetActive (true);
 		this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
+
+		HideGovernorLoyalty ();
+
+		if(citizenToShow.assignedRole != null){
+			if(citizenToShow.assignedRole is Governor){
+				ShowGovernorLoyalty ();
+			}
+		}
 	}
 
 	public void HideCitizenInfo(){
@@ -734,6 +703,7 @@ public class UIManager : MonoBehaviour {
 		citizenInfoGO.SetActive(false);
 		HideFamilyTree();
         HideCitizenCharacterValues();
+		HideGovernorLoyalty ();
     }
 
     public void ToggleCharacterValues() {
@@ -1344,42 +1314,40 @@ public class UIManager : MonoBehaviour {
 	} */
 
 	public void ShowEventsOfType(GameEvent gameEvent){
-        //GameObject eventGO = InstantiateUIObject(gameEventPrefab, gameEventsOfTypeGrid.transform);
-        //eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
-        //eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
-        //eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
-        //eventGO.GetComponent<EventItem>().StartExpirationTimer();
-        //eventGO.transform.localScale = Vector3.one;
-        //StartCoroutine(RepositionGrid(gameEventsOfTypeGrid));
-
 		if(gameEvent.startedBy != null){ //Kingdom Event
-			KingdomFlagItem kingdomOwner = kingdomListOtherKingdomsGrid.GetChildList()
-				.Where(x => x.GetComponent<KingdomFlagItem>().kingdom.id == gameEvent.startedByKingdom.id)
-				.FirstOrDefault().GetComponent<KingdomFlagItem>();
-			if (kingdomOwner != null) {
-				GameObject eventGO = InstantiateUIObject(gameEventPrefab, this.transform);
-				eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
-				eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
-				eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
-				eventGO.GetComponent<EventItem>().StartExpirationTimer();
-				eventGO.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
-				kingdomOwner.AddGameObjectToGrid(eventGO);
-				gameEvent.goEventItem = eventGO;
-				if(kingdomOwner.kingdom.id == this.currentlyShowingKingdom.id){
-					Pause();
-					ShowEventLogs(gameEvent);
-				}
-			}
+            if(gameEvent.startedByKingdom.id == currentlyShowingKingdom.id) {
+                activeKingdomFlag.AddEventToGrid(gameEvent);
+                Pause();
+                ShowEventLogs(gameEvent);
+            }
+
+			//KingdomFlagItem kingdomOwner = kingdomListOtherKingdomsGrid.GetChildList()
+			//	.Where(x => x.GetComponent<KingdomFlagItem>().kingdom.id == gameEvent.startedByKingdom.id)
+			//	.FirstOrDefault().GetComponent<KingdomFlagItem>();
+			//if (kingdomOwner != null) {
+			//	GameObject eventGO = InstantiateUIObject(gameEventPrefab, this.transform);
+			//	eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
+			//	eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
+			//	eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
+			//	eventGO.GetComponent<EventItem>().StartExpirationTimer();
+			//	eventGO.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+			//	kingdomOwner.AddGameObjectToGrid(eventGO);
+			//	gameEvent.goEventItem = eventGO;
+			//	if(kingdomOwner.kingdom.id == this.currentlyShowingKingdom.id){
+			//		Pause();
+			//		ShowEventLogs(gameEvent);
+			//	}
+			//}
 		}else{ //World Event
 			GameObject eventGO = InstantiateUIObject(this.gameEventPrefab, this.gameEventsOfTypeGrid.transform);
 			eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
-			eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
-			eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
-			eventGO.GetComponent<EventItem>().StartExpirationTimer();
+			//eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
+			//eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
+			//eventGO.GetComponent<EventItem>().StartExpirationTimer();
 			eventGO.transform.localPosition = Vector3.zero;
 			eventGO.transform.localScale = Vector3.one;
 			RepositionGridCallback(this.gameEventsOfTypeGrid);
-			gameEvent.goEventItem = eventGO;
+			//gameEvent.goEventItem = eventGO;
 		}
       
         
@@ -2706,6 +2674,67 @@ public class UIManager : MonoBehaviour {
         interveneMenuGO.SetActive(false);
     }
 
+    public void ToggleInterveneActionsMenu() {
+        if (interveneActonsGO.activeSelf) {
+            HideInterveneActionsMenu();
+        } else {
+            ShowInterveneActionsMenu();
+        }
+    }
+
+    private void ShowInterveneActionsMenu() {
+        interveneActonsGO.SetActive(true);
+    }
+
+    public void HideInterveneActionsMenu() {
+        HideSwitchKingdomsMenu();
+        interveneMenuBtn.SetClickState(false);
+        interveneActonsGO.SetActive(false);
+    }
+
+    public void ToggleSwitchKingdomsMenu() {
+        if (switchKingdomGO.activeSelf) {
+            HideSwitchKingdomsMenu();
+        } else {
+            ShowSwitchKingdomsMenu();
+        }
+    }
+
+    private void ShowSwitchKingdomsMenu() {
+        //Load Kingdoms
+        List<Kingdom> kingdomsToList = KingdomManager.Instance.allKingdoms.Where(x => x.id != currentlyShowingKingdom.id).ToList();
+
+        List<KingdomInterveneItem> presentKingdomItems = switchKingdomGrid.GetChildList().Select(x => x.GetComponent<KingdomInterveneItem>()).ToList();
+        if(kingdomsToList.Count > presentKingdomItems.Count) {
+            int numOfItemsToCreate = kingdomsToList.Count - presentKingdomItems.Count;
+            for (int i = 0; i < numOfItemsToCreate; i++) {
+                GameObject kingdomItemGO = InstantiateUIObject(kingdomIntervenePrefab, switchKingdomGrid.transform);
+                switchKingdomGrid.AddChild(kingdomItemGO.transform);
+                kingdomItemGO.transform.localScale = Vector3.one;
+                presentKingdomItems.Add(kingdomItemGO.GetComponent<KingdomInterveneItem>());
+            }
+            StartCoroutine(RepositionGrid(switchKingdomGrid));
+        }
+
+        for (int i = 0; i < presentKingdomItems.Count; i++) {
+            KingdomInterveneItem currItem = presentKingdomItems[i];
+            Kingdom currKingdom = kingdomsToList.ElementAtOrDefault(i);
+            if (currKingdom != null) {
+                currItem.SetKingdom(currKingdom);
+                currItem.gameObject.SetActive(true);
+            } else {
+                currItem.gameObject.SetActive(false);
+            }
+        }
+        switchKingdomsBtn.SetClickState(true);
+        switchKingdomGO.SetActive(true);
+    }
+
+    public void HideSwitchKingdomsMenu() {
+        switchKingdomsBtn.SetClickState(false);
+        switchKingdomGO.SetActive(false);
+    }
+
     /*
 	 * Generic toggle function, toggles gameobject to on/off state.
 	 * */
@@ -3095,9 +3124,18 @@ public class UIManager : MonoBehaviour {
         currentlyShowingCitizen.spouse.children.Remove(child);
     }
 
+	private void ShowGovernorLoyalty(){
+		if(!this.goLoyalty.activeSelf){
+			this.goLoyalty.SetActive (true);
+		}
+	}
+	public void HideGovernorLoyalty(){
+		this.goLoyalty.SetActive (false);
+	}
+
     public void ChangeGovernorLoyalty() {
-        ((Governor)currentlyShowingCity.governor.assignedRole).SetLoyalty(Int32.Parse(forTestingLoyaltyLbl.text));
-        Debug.Log("Changed loyalty of: " + currentlyShowingCity.governor.name + " to " + ((Governor)currentlyShowingCity.governor.assignedRole).loyalty.ToString());
+		((Governor)this.currentlyShowingCitizen.assignedRole).SetLoyalty(Int32.Parse(forTestingLoyaltyLbl.text));
+		Debug.Log("Changed loyalty of: " + this.currentlyShowingCitizen.name + " to " + ((Governor)this.currentlyShowingCitizen.assignedRole).loyalty.ToString());
     }
 
     public void LogRelatives() {

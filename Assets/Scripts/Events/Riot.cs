@@ -14,7 +14,7 @@ public class Riot : GameEvent {
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.sourceKingdom = startedBy.city.kingdom;
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		this.sourceKingdom.SetRiot (true);
 		Debug.LogError (startedBy.name + " has started a riot in " + this.sourceKingdom.name);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "event_title");
@@ -23,7 +23,8 @@ public class Riot : GameEvent {
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "start");
 		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
-		//		EventManager.Instance.AddEventToDictionary (this);
+		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		EventManager.Instance.AddEventToDictionary (this);
 		//		this.EventIsCreated ();
 
 		this.EventIsCreated ();
@@ -40,7 +41,9 @@ public class Riot : GameEvent {
 				CancelEvent ();
 				return;
 			}
-			AttemptToDestroyStructure ();
+			if(this.remainingDays % 5 == 0){
+				AttemptToDestroyStructure ();
+			}
 		}
 	}
 //	internal override void DoneCitizenAction (Citizen citizen){
@@ -60,6 +63,8 @@ public class Riot : GameEvent {
 //	}
 	internal override void DoneEvent(){
 		base.DoneEvent();
+		this.sourceKingdom.SetRiot (false);
+
 		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "event_end");
@@ -71,7 +76,7 @@ public class Riot : GameEvent {
 	#endregion
 	private void AttemptToDestroyStructure(){
 		int chance = UnityEngine.Random.Range(0, 100);
-		if(chance < 3){
+		if(chance < 5){
 			List<City> candidates = this.sourceKingdom.cities.Where (x => x.structures.Count > 0).ToList ();
 			if(candidates != null && candidates.Count > 0){
 				City chosenCity = candidates[UnityEngine.Random.Range(0, candidates.Count)];

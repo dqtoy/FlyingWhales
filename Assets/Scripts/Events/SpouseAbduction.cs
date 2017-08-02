@@ -44,6 +44,8 @@ public class SpouseAbduction : GameEvent {
 
 		this.marriageCompatibilityWithTargetKing = ((Spouse)targetKing.spouse)._marriageCompatibility;
 
+		this._warTrigger = WAR_TRIGGER.SPOUSE_ABDUCTION;
+
 		relationshipKing = this.targetKing.GetRelationshipWithCitizen (this.abductorKing);
 		this.daysCounter = 0;
 
@@ -274,7 +276,7 @@ public class SpouseAbduction : GameEvent {
 		newLog.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
 
 		if(this.isCompatibleWithTargetKing){
-			KingdomManager.Instance.InstantWarBetweenKingdoms (this.targetKingdom, this.abductorKingdom, this);
+			InstantWar();
 			if(this.isSpouseDead){
 				if(this.relationshipKing != null){
 					this.relationshipKing.AdjustLikeness (-60, this);
@@ -302,7 +304,7 @@ public class SpouseAbduction : GameEvent {
 		}else{
 			if(this.isSpouseDead){
 				if(this.targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIFE)){
-					KingdomManager.Instance.InstantWarBetweenKingdoms (this.targetKingdom, this.abductorKingdom, this);
+					InstantWar();
 					if(this.relationshipKing != null){
 						this.relationshipKing.AdjustLikeness (-25, this);
 					}
@@ -348,7 +350,7 @@ public class SpouseAbduction : GameEvent {
 				this.relationshipKing.AdjustLikeness (-20, this);
 			}
 		}else if(this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.HONOR) > this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.PEACE)){
-			KingdomManager.Instance.InstantWarBetweenKingdoms (this.targetKingdom, this.abductorKingdom, this);
+			InstantWar();
 			if (this.relationshipKing != null) {
 				this.relationshipKing.AdjustLikeness (-15, this);
 			}
@@ -359,7 +361,7 @@ public class SpouseAbduction : GameEvent {
 					this.relationshipKing.AdjustLikeness (-20, this);
 				}
 			}else{
-				KingdomManager.Instance.InstantWarBetweenKingdoms (this.targetKingdom, this.abductorKingdom, this);
+				InstantWar();
 				if (this.relationshipKing != null) {
 					this.relationshipKing.AdjustLikeness (-15, this);
 				}
@@ -432,7 +434,7 @@ public class SpouseAbduction : GameEvent {
 				newLog.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 				newLog.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
 
-				KingdomManager.Instance.InstantWarBetweenKingdoms(this.abductorKingdom, this.targetKingdom);
+				KingdomManager.Instance.InstantWarBetweenKingdoms(this.abductorKingdom, this.targetKingdom, WAR_TRIGGER.MARRIAGE_INCOMPATIBILITY);
 			}else{
 				//Assimilate Kingdom?
 			}
@@ -440,7 +442,7 @@ public class SpouseAbduction : GameEvent {
 			if (!this.isCompatibleWithAbductorKing) {
 				//Declare war against abductor kingdom
 				//Add log - declared war against abductor kingdom because of marriage incompatibility
-				KingdomManager.Instance.InstantWarBetweenKingdoms(this.targetKingdom, this.abductorKingdom);
+				KingdomManager.Instance.InstantWarBetweenKingdoms(this.targetKingdom, this.abductorKingdom, WAR_TRIGGER.MARRIAGE_INCOMPATIBILITY);
 			}else{
 				//Assimilate Kingdom?
 			}
@@ -502,5 +504,9 @@ public class SpouseAbduction : GameEvent {
 			ReturnSpouseToOriginal ();
 		}
 		this.DoneEvent ();
+	}
+
+	private void InstantWar(){
+		KingdomManager.Instance.InstantWarBetweenKingdoms (this.targetKingdom, this.abductorKingdom, this._warTrigger, this);
 	}
 }

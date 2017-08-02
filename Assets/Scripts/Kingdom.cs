@@ -11,6 +11,11 @@ public class Kingdom{
     public int id;
 	public string name;
 	public RACE race;
+    public int age;
+    private int foundationYear;
+    private int foundationMonth;
+    private int foundationDay;
+
     [NonSerialized] public int[] horoscope; 
 
 	[SerializeField]
@@ -95,6 +100,9 @@ public class Kingdom{
 	private float _productionGrowthPercentage;
 
 	private bool _hasUpheldHiddenHistoryBook;
+
+	private bool _hasSecession;
+	private bool _hasRiot;
 
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
@@ -205,6 +213,12 @@ public class Kingdom{
 	public bool hasUpheldHiddenHistoryBook{
 		get { return this._hasUpheldHiddenHistoryBook;}
 	}
+	public bool hasSecession{
+		get { return this._hasSecession;}
+	}
+	public bool hasRiot{
+		get { return this._hasRiot;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -245,11 +259,19 @@ public class Kingdom{
 		this._boonOfPowers = new List<BoonOfPower> ();
 		this._activatedBoonOfPowers = new List<BoonOfPower> ();
 		this.plague = null;
-		this.SetLockDown(false);
+        this.age = 0;
+        this.foundationYear = GameManager.Instance.year;
+        this.foundationDay = GameManager.Instance.days;
+        this.foundationMonth = GameManager.Instance.month;
+
+        this.SetLockDown(false);
 		this.SetTechProduction(true);
 		this.SetTechProductionPercentage(1);
 		this.SetProductionGrowthPercentage(1);
 		this.UpdateTechCapacity ();
+		this.SetSecession (false);
+		this.SetRiot (false);
+
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
@@ -494,6 +516,7 @@ public class Kingdom{
 	 * */
 	protected void KingdomTickActions(){
         //this.ProduceGoldFromTrade();
+        this.AttemptToAge();
         if (_isGrowthEnabled) {
             this.AttemptToExpand();
         }
@@ -508,6 +531,12 @@ public class Kingdom{
         //    this.AttemptToTrade();
         //}
         
+    }
+
+    private void AttemptToAge() {
+        if(GameManager.Instance.year > foundationYear && GameManager.Instance.month == foundationMonth && GameManager.Instance.days == foundationDay) {
+            age += 1;
+        }
     }
 
     private void TriggerEvents() {
@@ -1688,25 +1717,46 @@ public class Kingdom{
 	}
 	internal void UnrestEvents(){
 		this._unrest = 0;
-		Citizen chosenGovernor = null;
-		List<Citizen> ambitiousGovernors = this.cities.Select (x => x.governor).Where (x => x != null && x.hasTrait (TRAIT.AMBITIOUS) && ((Governor)x.assignedRole).loyalty < 0).ToList ();
-		if(ambitiousGovernors != null && ambitiousGovernors.Count > 0){
-			chosenGovernor = ambitiousGovernors [UnityEngine.Random.Range (0, ambitiousGovernors.Count)];
-		}
-		if(chosenGovernor != null){
-			//Secession Event
-			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
-		}else{
-			int chance = UnityEngine.Random.Range (0, 2);
-			if(chance == 0){
-				//Riot Event
+		int chance = UnityEngine.Random.Range (0, 2);
+		if(chance == 0){
+			//Riot Event
+			if(!this._hasRiot){
 				EventCreator.Instance.CreateRiotEvent(this);
-//				EventCreator.Instance.CreateRebellionEvent(this);
 			}else{
-				//Rebellion Event
-				EventCreator.Instance.CreateRebellionEvent(this);
+				List<GameEvent> riots = EventManager.Instance.GetEventsOfType (EVENT_TYPES.RIOT);
+				if(riots != null && riots.Count > 0){
+					for (int i = 0; i < riots.Count; i++) {
+						Riot riot = (Riot)riots [i];
+						if(riot.sourceKingdom.id == this.id && riot.isActive){
+							riot.remainingDays += riot.durationInDays;
+							break;
+						}
+					}
+				}
 			}
+		}else{
+			//Rebellion Event
+			EventCreator.Instance.CreateRebellionEvent(this);
 		}
+
+//		Citizen chosenGovernor = null;
+//		List<Citizen> ambitiousGovernors = this.cities.Select (x => x.governor).Where (x => x != null && x.hasTrait (TRAIT.AMBITIOUS) && ((Governor)x.assignedRole).loyalty < 0).ToList ();
+//		if(ambitiousGovernors != null && ambitiousGovernors.Count > 0){
+//			chosenGovernor = ambitiousGovernors [UnityEngine.Random.Range (0, ambitiousGovernors.Count)];
+//		}
+//		if(chosenGovernor != null){
+//			//Secession Event
+//			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
+//		}else{
+//			int chance = UnityEngine.Random.Range (0, 2);
+//			if(chance == 0){
+//				//Riot Event
+//				EventCreator.Instance.CreateRiotEvent(this);
+//			}else{
+//				//Rebellion Event
+//				EventCreator.Instance.CreateRebellionEvent(this);
+//			}
+//		}
 	}
     #endregion
 
@@ -2084,6 +2134,10 @@ public class Kingdom{
 	internal void SetProductionGrowthPercentage(float amount){
 		this._productionGrowthPercentage = amount;
 	}
-
-
+	internal void SetSecession(bool state){
+		this._hasSecession = state;
+	}
+	internal void SetRiot(bool state){
+		this._hasRiot = state;
+	}
 }

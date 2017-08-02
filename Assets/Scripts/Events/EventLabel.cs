@@ -15,12 +15,19 @@ public class EventLabel : MonoBehaviour {
 			if (lf.obj != null) {
 				if (lf.obj is City) {
                     //UIManager.Instance.ShowCityInfo ((City)lf.obj);
-                    CameraMove.Instance.CenterCameraOn(((City)lf.obj).hexTile.gameObject);
-                    UIManager.Instance.SetKingdomAsSelected(((City)lf.obj).kingdom);
+                    City currCity = (City)lf.obj;
+                    if(currCity.kingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
+                        CameraMove.Instance.CenterCameraOn(currCity.hexTile.gameObject);
+                    }
+                    //UIManager.Instance.SetKingdomAsSelected(((City)lf.obj).kingdom);
 				} else if (lf.obj is Citizen) {
 					UIManager.Instance.ShowCitizenInfo ((Citizen)lf.obj);
 				} else if (lf.obj is Kingdom) {
-					UIManager.Instance.SetKingdomAsSelected ((Kingdom)lf.obj);
+                    Kingdom currKingdom = (Kingdom)lf.obj;
+                    if(currKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
+                        CameraMove.Instance.CenterCameraOn(currKingdom.capitalCity.hexTile.gameObject);
+                    }
+                    //UIManager.Instance.SetKingdomAsSelected ();
 				} else if (lf.obj is GameEvent) {
 					UIManager.Instance.ShowEventLogs (lf.obj);
 				}

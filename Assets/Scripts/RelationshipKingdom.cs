@@ -56,6 +56,7 @@ public class RelationshipKingdom {
 		this._isAdjacent = false;
 		this._kingdomWar = new KingdomWar (_targetKingdom);
 		this._monthToMoveOnAfterRejection = MONTH.NONE;
+		this._invasionPlan = null;
 	}
 
 	internal void AdjustExhaustion(int amount){
@@ -88,10 +89,10 @@ public class RelationshipKingdom {
 		this._isAtWar = warStatus;
 	}
 
-	internal void CreateInvasionPlan(GameEvent gameEventTrigger, WAR_TRIGGER warTrigger){
-        if(this._invasionPlan != null) {
+	internal void CreateInvasionPlan(GameEvent gameEventTrigger){
+        if(this._invasionPlan == null) {
             this._invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-            this._sourceKingdom.king, this._sourceKingdom, this._targetKingdom, gameEventTrigger, this._war, warTrigger);
+            this._sourceKingdom.king, this._sourceKingdom, this._targetKingdom, gameEventTrigger, this._war);
         } else {
             Debug.LogError(_sourceKingdom.name + " already has an invasion plan towards " + _targetKingdom.name);
         }
