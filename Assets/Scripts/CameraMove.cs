@@ -205,6 +205,10 @@ public class CameraMove : MonoBehaviour {
 		traderCamera.gameObject.SetActive(!traderCamera.gameObject.activeSelf);
 	}
 
+    public void ToggleMainCameraLayer(string layerName) {
+        Camera.main.cullingMask ^= 1 << LayerMask.NameToLayer(layerName);
+    }
+
     private void SetBiomeDetailsState(bool state) {
         for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
             HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
