@@ -109,6 +109,7 @@ public class GreatStorm : GameEvent {
 		if(chance < 15){
 			City chosenCity = this._affectedKingdom.cities[UnityEngine.Random.Range(0,this._affectedKingdom.cities.Count)];
 			//Destroy Random Structure in City
+			chosenCity.RemoveTileFromCity(chosenCity.structures[chosenCity.structures.Count - 1]);
 			this.destroyedStructures += 1;
 		}
 	}
