@@ -19,6 +19,7 @@ public class War : GameEvent {
 	private bool isInitialAttack;
 
 	internal GameEvent gameEventTrigger;
+	internal WAR_TRIGGER warTrigger;
 
 	private int kingdom1Waves;
 	private int kingdom2Waves;
@@ -45,7 +46,7 @@ public class War : GameEvent {
 	}
 	#endregion
 
-	public War(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _kingdom1, Kingdom _kingdom2) : base (startWeek, startMonth, startYear, startedBy){
+	public War(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom _kingdom1, Kingdom _kingdom2, WAR_TRIGGER warTrigger) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.KINGDOM_WAR;
 		this.name = "War";
 		this.description = "War between " + _kingdom1.name + " and " + _kingdom2.name + ".";
@@ -60,24 +61,25 @@ public class War : GameEvent {
 		this.isInitialAttack = false;
 		this.attackRate = 0;
 		this.gameEventTrigger = null;
+		this.warTrigger = warTrigger;
+
 		Log titleLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "event_title");
 		titleLog.AddToFillers (_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 		titleLog.AddToFillers (_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		EventManager.Instance.AddEventToDictionary(this);
-
-		this.EventIsCreated ();
+	
 	}
 	internal override void PerformAction (){
 		Attack ();
 	}
-	internal void CreateInvasionPlan(Kingdom kingdomToDeclare, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger){
+	internal void CreateInvasionPlan(Kingdom kingdomToDeclare, GameEvent gameEventTrigger){
         this.gameEventTrigger = gameEventTrigger;
 		if (kingdomToDeclare.id == this._kingdom1.id) {
-			this._kingdom1Rel.CreateInvasionPlan(gameEventTrigger, warTrigger);
+			this._kingdom1Rel.CreateInvasionPlan(gameEventTrigger);
 		} else {
-			this._kingdom2Rel.CreateInvasionPlan(gameEventTrigger, warTrigger);
+			this._kingdom2Rel.CreateInvasionPlan(gameEventTrigger);
 		}
 	}
 

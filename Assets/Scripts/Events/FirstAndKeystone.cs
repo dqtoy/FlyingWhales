@@ -38,6 +38,7 @@ public class FirstAndKeystone : GameEvent {
 		this.keystoneOwner = null;
 		this.daysCounter = 0;
         _purgedRace = RACE.NONE;
+		this._warTrigger = WAR_TRIGGER.THE_FIRST_AND_THE_KEYSTONE;
 		WorldEventManager.Instance.AddWorldEvent(this);
 		Initialize();
 		EventManager.Instance.AddEventToDictionary(this);
@@ -221,13 +222,13 @@ public class FirstAndKeystone : GameEvent {
             warEvent = KingdomManager.Instance.GetWarBetweenKingdoms(this.keystoneOwner, this.firstOwner);
             if (warEvent == null) {
                 //if none, create a new War Event
-                warEvent = new War(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.keystoneOwner.king, this.keystoneOwner, this.firstOwner);
+				warEvent = new War(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.keystoneOwner.king, this.keystoneOwner, this.firstOwner, this._warTrigger);
             }
 
             //Check if the 2 kingdoms are not already at war
             if (!warEvent.isAtWar) {
                 //Create invasion plan
-                warEvent.CreateInvasionPlan(this.keystoneOwner, this, WAR_TRIGGER.THE_FIRST_AND_THE_KEYSTONE);
+                warEvent.CreateInvasionPlan(this.keystoneOwner, this);
             }
         }
 	}

@@ -1023,8 +1023,8 @@ public class Citizen {
 				return;
 			}
 			if (warEvent == null) {
-				warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
-					this.city.kingdom, relationship.king.city.kingdom);
+//				warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
+//					this.city.kingdom, relationship.king.city.kingdom);
 			}
 //			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
 			//			InvasionPlan invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, 
@@ -1175,9 +1175,9 @@ public class Citizen {
 		if(chance < value){
 			if (warEvent == null) {
 				warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
-					this.city.kingdom, relationship.king.city.kingdom);
+					this.city.kingdom, relationship.king.city.kingdom, warTrigger);
 			}
-			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger, warTrigger);
+			warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
 		}
 	}
 	internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
@@ -1190,9 +1190,9 @@ public class Citizen {
 		}
 		if (warEvent == null) {
 			warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
-				this.city.kingdom, targetKingdom);
+				this.city.kingdom, targetKingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 		}
-		warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger, warTrigger);
+		warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
 	}
 	internal void ImproveRelationship(RelationshipKings relationship){
 		//Improvement of Relationship

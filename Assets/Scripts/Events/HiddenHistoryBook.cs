@@ -20,10 +20,9 @@ public class HiddenHistoryBook : GameEvent {
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "HiddenHistoryBook", "event_title");
 
 		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		KnowsExistence();
 
 		this.EventIsCreated();
-
-		KnowsExistence();
 	}
 
 	#region Overrides
