@@ -342,7 +342,7 @@ public class Utilities : MonoBehaviour {
 	//	return STRUCTURE.NONE;
 	//}
 
-    public static STRUCTURE_TYPE GetStructureTypeForResource(RESOURCE resourceType) {
+    public static STRUCTURE_TYPE GetStructureTypeForResource(RACE race, RESOURCE resourceType) {
         if (resourceType != RESOURCE.NONE) {
             if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.FOOD) {
                 if (resourceType == RESOURCE.BEHEMOTH || resourceType == RESOURCE.DEER ||
@@ -352,9 +352,17 @@ public class Utilities : MonoBehaviour {
                     return STRUCTURE_TYPE.MINES; //TODO: Change to Farm when farm is available
                 }
             } else if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.WOOD) {
-                return STRUCTURE_TYPE.LUMBERYARD;
+                if(race == RACE.HUMANS) {
+                    return STRUCTURE_TYPE.GENERIC;
+                } else {
+                    return STRUCTURE_TYPE.LUMBERYARD;
+                }
             } else if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.STONE) {
-                return STRUCTURE_TYPE.QUARRY;
+                if (race == RACE.ELVES) {
+                    return STRUCTURE_TYPE.GENERIC;
+                } else {
+                    return STRUCTURE_TYPE.QUARRY;
+                }
             } else {
                 return STRUCTURE_TYPE.MINES;
             }

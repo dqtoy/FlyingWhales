@@ -197,9 +197,17 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UIScrollView interveneMenuScrollView;
     [SerializeField] private ButtonToggle interveneMenuBtn;
     [SerializeField] private GameObject interveneActonsGO;
+    //Switch Kingdom Objects
     [SerializeField] private GameObject switchKingdomGO;
     [SerializeField] private UIGrid switchKingdomGrid;
     [SerializeField] private ButtonToggle switchKingdomsBtn;
+    //Create Kingdom Objects
+    [SerializeField] private GameObject createKingdomGO;
+    [SerializeField] private ButtonToggle createKingdomBtn;
+    [SerializeField] private UILabel createKingdomRaceSelectedLbl;
+    [SerializeField] private UILabel createKingdomErrorLbl;
+    [SerializeField] private UIPopupList createKingdomPopupList;
+    [SerializeField] private UIButton createKingdomExecuteBtn;
 
     [Space(10)]
     [Header("Minimap")]
@@ -363,6 +371,9 @@ public class UIManager : MonoBehaviour {
             }
         }
 
+        if (createKingdomGO.activeSelf) {
+            UpdateCreateKingdomErrorMessage();
+        }
         //if (citizenInfoGO.activeSelf) {
         //    if (currentlyShowingCitizen != null) {
         //        ShowCitizenInfo(currentlyShowingCitizen);
@@ -926,10 +937,11 @@ public class UIManager : MonoBehaviour {
 		List<CharacterPortrait> characterPortraits = kingRelationshipsGrid.gameObject.GetComponentsInChildren<CharacterPortrait>().ToList();
 
 		int nextIndex = 0;
+        //List<RelationshipKings> relationshipsToShow = currentlyShowingKingdom.king.relationshipKings.ToList();
         List<RelationshipKings> relationshipsToShow = currentlyShowingKingdom.king.relationshipKings
             .Where(x => currentlyShowingKingdom.discoveredKingdoms.Contains(x.king.city.kingdom)).ToList();
 
-        if(relationshipsToShow.Count > 0) {
+        if (relationshipsToShow.Count > 0) {
             kingRelationshipLine.SetActive(true);
             kingNoRelationshipsGO.SetActive(false);
         } else {
@@ -2249,7 +2261,11 @@ public class UIManager : MonoBehaviour {
 				if (gameEvent.goEventItem != null) {
 					gameEvent.goEventItem.GetComponent<EventItem>().HasExpired();
 				}
-			}
+            } else {
+                if (gameEvent.goEventItem != null) {
+                    gameEvent.goEventItem.GetComponent<ButtonToggle>().SetClickState(false);
+                }
+            }
 		}
 		if(GameManager.Instance.isPaused){
 			SetProgressionSpeed1X();
@@ -2678,6 +2694,7 @@ public class UIManager : MonoBehaviour {
 
     public void HideInterveneActionsMenu() {
         HideSwitchKingdomsMenu();
+        HideCreateKingdomMenu();
         interveneMenuBtn.SetClickState(false);
         interveneActonsGO.SetActive(false);
     }
@@ -2691,6 +2708,7 @@ public class UIManager : MonoBehaviour {
     }
 
     private void ShowSwitchKingdomsMenu() {
+        HideCreateKingdomMenu();
         //Load Kingdoms
         List<Kingdom> kingdomsToList = KingdomManager.Instance.allKingdoms.Where(x => x.id != currentlyShowingKingdom.id).ToList();
 
@@ -2723,6 +2741,73 @@ public class UIManager : MonoBehaviour {
     public void HideSwitchKingdomsMenu() {
         switchKingdomsBtn.SetClickState(false);
         switchKingdomGO.SetActive(false);
+    }
+
+    public void ToggleCreateKingdomMenu() {
+        if (createKingdomGO.activeSelf) {
+            HideCreateKingdomMenu();
+        } else {
+            ShowCreateKingdomMenu();
+        }
+    }
+
+    private void ShowCreateKingdomMenu() {
+        HideSwitchKingdomsMenu();
+        createKingdomPopupList.Clear();
+        RACE[] allRaces = Utilities.GetEnumValues<RACE>().Where(x => x != RACE.NONE).ToArray();
+        for (int i = 0; i < allRaces.Length; i++) {
+            createKingdomPopupList.AddItem(allRaces[i].ToString(), allRaces[i]);
+        }
+        createKingdomPopupList.value = createKingdomPopupList.items.First();
+        createKingdomRaceSelectedLbl.text = createKingdomPopupList.value;
+        UpdateCreateKingdomErrorMessage();
+
+        createKingdomBtn.SetClickState(true);
+        createKingdomGO.SetActive(true);
+    }
+
+    List<HexTile> tilesToChooseForNewKingdom;
+
+    public void UpdateCreateKingdomErrorMessage() {
+        List<HexTile> elligibleTilesForNewKingdom = CityGenerator.Instance.GetHabitableTilesForRace((RACE)createKingdomPopupList.data);
+        BIOMES forbiddenBiomeForRace = CityGenerator.Instance.GetForbiddenBiomeOfRace((RACE)createKingdomPopupList.data);
+        elligibleTilesForNewKingdom = elligibleTilesForNewKingdom.Where(x => x.biomeType != forbiddenBiomeForRace && !x.isBorder && !x.isOccupied).ToList();
+
+        tilesToChooseForNewKingdom = new List<HexTile>();
+
+        for (int i = 0; i < elligibleTilesForNewKingdom.Count; i++) {
+            HexTile currTile = elligibleTilesForNewKingdom[i];
+            List<HexTile> invalidNeighbours = currTile.GetTilesInRange(3).Where(x => x.isBorder || x.isOccupied).ToList();
+            if (invalidNeighbours.Count <= 0) {
+                tilesToChooseForNewKingdom.Add(currTile);
+            }
+        }
+
+        if (tilesToChooseForNewKingdom.Count <= 0) {
+            createKingdomErrorLbl.text = "Cannot create kingdom for that race!";
+            createKingdomErrorLbl.gameObject.SetActive(true);
+            createKingdomExecuteBtn.GetComponent<BoxCollider>().enabled = false;
+            createKingdomExecuteBtn.SetState(UIButtonColor.State.Disabled, true);
+        } else {
+            createKingdomErrorLbl.gameObject.SetActive(false);
+            createKingdomExecuteBtn.GetComponent<BoxCollider>().enabled = true;
+            createKingdomExecuteBtn.SetState(UIButtonColor.State.Normal, true);
+        }
+    }
+
+    public void CreateNewKingdom() {
+        List<HexTile> citiesForNewKingdom = new List<HexTile>() { tilesToChooseForNewKingdom[UnityEngine.Random.Range(0, tilesToChooseForNewKingdom.Count)] };
+        Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom((RACE)createKingdomPopupList.data, citiesForNewKingdom, true);
+
+        newKingdom.king.CreateInitialRelationshipsToKings();
+        KingdomManager.Instance.AddRelationshipToOtherKings(newKingdom.king);
+
+        HideInterveneActionsMenu();
+    }
+
+    private void HideCreateKingdomMenu() {
+        createKingdomBtn.SetClickState(false);
+        createKingdomGO.SetActive(false);
     }
 
     /*

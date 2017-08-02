@@ -163,7 +163,7 @@ public class CityGenerator : MonoBehaviour {
 
 		return null;
 	}
-	private BIOMES GetForbiddenBiomeOfRace(RACE race){
+	public BIOMES GetForbiddenBiomeOfRace(RACE race){
 		if(race == RACE.HUMANS){
 			return BIOMES.FOREST;
 		}else if(race == RACE.ELVES){
@@ -250,5 +250,20 @@ public class CityGenerator : MonoBehaviour {
 			return stormWitchLair;
         }
         return null;
+    }
+
+    public List<HexTile> GetHabitableTilesForRace(RACE race, bool unoccupiedOnly = true) {
+        List<HexTile> habitableTilesForRace = new List<HexTile>();
+        if(race == RACE.HUMANS) {
+            habitableTilesForRace.AddRange(stoneHabitableTiles);
+        } else if (race == RACE.ELVES){
+            habitableTilesForRace.AddRange(woodHabitableTiles);
+        }
+
+        if (unoccupiedOnly) {
+            habitableTilesForRace = habitableTilesForRace.Where(x => !x.isOccupied).ToList();
+        }
+
+        return habitableTilesForRace;
     }
 }
