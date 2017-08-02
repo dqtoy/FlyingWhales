@@ -1973,7 +1973,8 @@ public class Kingdom{
     private void TriggerHypnotism() {
         if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
             if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
-                if(EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.HYPNOTISM}).Count <= 0) {
+                List<GameEvent> previousHypnotismEvents = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.HYPNOTISM }, false);
+                if (previousHypnotismEvents.Where(x => x.startYear == GameManager.Instance.year).Count() <= 0) {
                     List<Kingdom> notFriends = new List<Kingdom>();
                     for (int i = 0; i < discoveredKingdoms.Count; i++) {
                         Kingdom currKingdom = discoveredKingdoms[i];
@@ -1982,7 +1983,7 @@ public class Kingdom{
                             notFriends.Add(currKingdom);
                         }
                     }
-                    if (UnityEngine.Random.Range(0, 100) < 30 && notFriends.Count > 0) {
+                    if (UnityEngine.Random.Range(0, 100) < 10 && notFriends.Count > 0) {
                         EventCreator.Instance.CreateHypnotismEvent(this, notFriends[UnityEngine.Random.Range(0, notFriends.Count)]);
                     }
                 }

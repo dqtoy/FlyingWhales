@@ -15,7 +15,7 @@ public class Adventure : GameEvent {
 		startLog.AddToFillers(_adventurer.citizen, _adventurer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
         EventManager.Instance.AddEventToDictionary(this);
-        EventIsCreated();
+        //EventIsCreated();
 
 
     }
