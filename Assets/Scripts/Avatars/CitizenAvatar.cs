@@ -50,6 +50,7 @@ public class CitizenAvatar : MonoBehaviour {
             }
         }
     }
+	internal virtual void UpdateUI(){}
     #endregion
 
 
@@ -130,6 +131,7 @@ public class CitizenAvatar : MonoBehaviour {
         }
         this.GetComponent<SmoothMovement>().direction = this.direction;
         this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
+		this.UpdateUI ();
     }
 
 
@@ -199,10 +201,17 @@ public class CitizenAvatar : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.tag == "Avatar") {
             if (this.gameObject != null && other.gameObject != null) {
-                if (other.gameObject.GetComponent<Avatar>().kingdom.id != this.citizenRole.citizen.city.kingdom.id) {
-                    if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
-                        CombatManager.Instance.HasCollidedWithHostile(this.GetComponent<Avatar>(), other.gameObject.GetComponent<Avatar>());
-                    }
+				Kingdom kingdomOfThis = this.citizenRole.citizen.city.kingdom;
+				Kingdom kingdomOfOther = other.gameObject.GetComponent<Avatar>().kingdom;
+				if(kingdomOfThis.id != kingdomOfOther.id){
+					RelationshipKingdom relationship = kingdomOfThis.GetRelationshipWithOtherKingdom (kingdomOfOther);
+					if (relationship != null) {
+						if (relationship.isAtWar) {
+							if (!other.gameObject.GetComponent<Avatar> ().citizen.isDead) {
+								CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<Avatar> (), other.gameObject.GetComponent<Avatar> ());
+							}
+						}
+					}
                 }
             }
         } else if (other.tag == "Trader") {
@@ -223,4 +232,5 @@ public class CitizenAvatar : MonoBehaviour {
         }
     }
     #endregion
+
 }
