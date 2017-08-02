@@ -16,8 +16,6 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //	public int stateVisitChance;
 //	public List<GameEvent> allUnwantedEvents;
 
-	public int kingdomIndex;
-
 	void Awake(){
 		this.firstKingdom = null;
 		this.secondKingdom = null;
@@ -42,10 +40,14 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //		this.stateVisitChance = 0;
 		this.eventToCreate.DefaultValues();
 //		this.allUnwantedEvents.Clear ();
-		this.kingdomIndex = 0;
 		Task.current.Succeed ();
 	}
+	private void Reset(){
+		this.firstKingdom = null;
+		this.secondKingdom = null;
+		this.eventToCreate.DefaultValues();
 
+	}
 	[Task]
 	public void SetFirstRandomKingdom(){
 		int total = 0;
@@ -74,6 +76,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	[Task]
 	public void CreateDailyCumulativeEvents(){
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+			Reset ();
 			this.firstKingdom = KingdomManager.Instance.allKingdoms [i];
 			if(this.firstKingdom.discoveredKingdoms != null && this.firstKingdom.discoveredKingdoms.Count > 0){
 				SetEventsToCreate ();

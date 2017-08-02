@@ -111,7 +111,7 @@ public class General : Role {
 
 		int cityDamage = UnityEngine.Random.Range(0, this.citizen.city.kingdom.nonRebellingCities.Count + 1);
 
-		return (baseDamage + damageBuffer1 + damageBuffer2) * cityDamage;
+		return baseDamage + damageBuffer1 + (damageBuffer2 * cityDamage);
 	}
 
     #region Weapons
