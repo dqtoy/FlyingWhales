@@ -75,7 +75,7 @@ public class City{
 		set{ this._hp = value; }
 	}
 	public int maxHP{
-		get{ return Utilities.defaultCityHP +  (50 * this.structures.Count); } //+1 since the structures list does not contain the main hex tile
+		get{ return Utilities.defaultCityHP +  (40 * this.structures.Count) + (20 * this.kingdom.techLevel); } //+1 since the structures list does not contain the main hex tile
 	}
 	public int maxHPRebel {
 		get{ return 600;}
@@ -936,10 +936,6 @@ public class City{
 		//Trigger Request Peace before changing kingdoms, The losing side has a 20% chance for every city he has lost since the start of the war to send a Request for Peace
 		relationship.TriggerRequestPeace();
 
-        //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
-        //its initial defense will only be 300HP 
-		ResetToDefaultHP();
-
         //and a random number of settlements (excluding capital) will be destroyed
         int structuresDestroyed = UnityEngine.Random.Range(0, this.structures.Count);
         for (int i = 0; i < structuresDestroyed; i++) {
@@ -961,6 +957,10 @@ public class City{
         }
         this.ChangeKingdom(conqueror);
         this.CreateInitialFamilies(false);
+
+		//when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
+		//its initial defense will only be 300HP + (20HP x tech level)
+		WarDefeatedHP();
 
     }
 	private void TransferItemsToConqueror(Kingdom conqueror){
@@ -1315,6 +1315,9 @@ public class City{
 
 	internal void ResetToDefaultHP(){
 		this._hp = Utilities.defaultCityHP;
+	}
+	internal void WarDefeatedHP(){
+		this._hp = Utilities.defaultCityHP + (20 * this.kingdom.techLevel);
 	}
 
 	internal void RetaliateToMonster(HexTile targetHextile){
