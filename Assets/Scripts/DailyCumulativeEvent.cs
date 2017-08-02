@@ -78,9 +78,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			Reset ();
 			this.firstKingdom = KingdomManager.Instance.allKingdoms [i];
-			if(this.firstKingdom.discoveredKingdoms != null && this.firstKingdom.discoveredKingdoms.Count > 0){
-				SetEventsToCreate ();
-			}
+			SetEventsToCreate ();
 		}
 		Task.current.Succeed ();
 	}
@@ -101,7 +99,11 @@ public class DailyCumulativeEvent : MonoBehaviour {
 			int chance = UnityEngine.Random.Range (0, 400);
 			if(chance < this.firstKingdom.dailyCumulativeEventRate [i].rate){
 				this.eventToCreate = this.firstKingdom.dailyCumulativeEventRate [i];
-				SetSecondRandomKingdom (ref this.firstKingdom.dailyCumulativeEventRate [i]);
+				if(!IsSecondKingdomNeeded()){
+					StartAnEvent (ref this.eventToCreate);
+				}else{
+					SetSecondRandomKingdom (ref this.firstKingdom.dailyCumulativeEventRate [i]);
+				}
 			}else{
 				this.firstKingdom.dailyCumulativeEventRate [i].rate += this.firstKingdom.dailyCumulativeEventRate [i].interval;
 			}
@@ -472,5 +474,11 @@ public class DailyCumulativeEvent : MonoBehaviour {
         } else {
             return true;
         }
+	}
+	private bool IsSecondKingdomNeeded(){
+		if(this.eventToCreate.eventType == EVENT_TYPES.ADVENTURE){
+			return false;
+		}
+		return true;
 	}
 }
