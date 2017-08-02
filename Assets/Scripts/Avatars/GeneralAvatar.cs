@@ -4,408 +4,82 @@ using System.Collections.Generic;
 using System.Linq;
 using Panda;
 
-public class GeneralAvatar : MonoBehaviour {
-	public General general;
-	public PandaBehaviour pandaBehaviour;
-	public Animator animator;
-	public SpriteRenderer kingdomIndicator;
+public class GeneralAvatar : CitizenAvatar {
 	public TextMesh txtDamage;
-	public bool collidedWithHostile;
-	public Citizen hostile;
 
-
-	private bool hasArrived = false;
-	//	private bool isMoving = false;
-	//	private Vector3 targetPosition = Vector3.zero;
-	private List<HexTile> pathToUnhighlight = new List<HexTile> ();
-
-	//	public float speed;
-	internal DIRECTION direction;
-	//	void Update(){
-	//		if(this.isMoving){
-	//			if(this.targetPosition != null){
-	//				float step = speed * Time.deltaTime;
-	//				this.transform.position = Vector3.MoveTowards (this.transform.position, this.targetPosition, step);
-	//				if(Vector3.Distance(this.transform.position, this.targetPosition) < 0.1f){
-	//					StopMoving ();
-	//				}
-	//			}
-	//		}
-	//	}
-	internal void Init(General general){
-		this.general = general;
-		this.kingdomIndicator.color = general.citizen.city.kingdom.kingdomColor;
-		this.txtDamage.text = general.damage.ToString ();
-		this.direction = DIRECTION.LEFT;
-		this.GetComponent<Avatar> ().kingdom = this.general.citizen.city.kingdom;
-		this.GetComponent<Avatar> ().gameEvent = this.general.gameEvent;
-		this.GetComponent<Avatar> ().citizen = this.general.citizen;
-        visibleTiles = new List<HexTile>();
-
-        ResetValues ();
-		this.AddBehaviourTree ();
-	}
-	void OnTriggerEnter2D(Collider2D other){
-		if(other.tag == "Avatar"){
-			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<Avatar>().kingdom.id != this.general.citizen.city.kingdom.id){
-					if(!other.gameObject.GetComponent<Avatar> ().citizen.isDead){
-						this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
-						CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<Avatar> (), other.gameObject.GetComponent<Avatar>());
-					}
-				}
-			}
-		}else if(other.tag == "Trader"){
-			this.collidedWithHostile = false;
-			if(this.gameObject != null && other.gameObject != null){
-				Kingdom kingdomOfGeneral = this.general.citizen.city.kingdom;
-				Kingdom kingdomOfTrader = other.gameObject.GetComponent<Avatar>().kingdom;
-				if (kingdomOfGeneral.id != kingdomOfTrader.id) {
-					RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
-					RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
-					if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
-						relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-						if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
-							this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
-							CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<Avatar> (), other.gameObject.GetComponent<Avatar>());
-						}
-					}  
-				}
-			}
-		}
-
-		/*if (other.tag == "General") {
-			this.collidedWithHostile = false;
-			if (this.gameObject != null && other.gameObject != null) {
-				if (other.gameObject.GetComponent<Avatar> ().kingdom.id != this.general.citizen.city.kingdom.id) {
-					if (!other.gameObject.GetComponent<Avatar> ().citizen.isDead) {
-						this.collidedWithHostile = true;
-						this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
-						HasCollidedWithHostile ();
-					}
-				}else{
-					bool isRebel = ((General)other.gameObject.GetComponent<Avatar> ().citizen.assignedRole).isRebel;
-					if(isRebel && this.general.isRebel == !isRebel){
-						if (!other.gameObject.GetComponent<Avatar> ().citizen.isDead) {
-							this.collidedWithHostile = true;
-							this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
-							HasCollidedWithHostile ();
-						}
-					}
-				}
-			}
-		} else if(other.tag == "Trader"){
-			this.collidedWithHostile = false;
-			if(this.gameObject != null && other.gameObject != null){
-				Kingdom kingdomOfGeneral = this.gameObject.GetComponent<GeneralAvatar>().general.citizen.city.kingdom;
-				Kingdom kingdomOfTrader = other.gameObject.GetComponent<Avatar>().kingdom;
-				if (kingdomOfGeneral.id != kingdomOfTrader.id) {
-					RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
-					RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
-					if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
-						relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-						if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
-							this.collidedWithHostile = true;
-							this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
-							HasCollidedWithHostile ();
-						}
-					}  
-				}
-			}
-		} else if(other.tag == "Avatar"){
-			this.collidedWithHostile = false;
-			if(this.gameObject != null && other.gameObject != null){
-				if(other.gameObject.GetComponent<Avatar>().kingdom.id != this.general.citizen.city.kingdom.id){
-					if(!other.gameObject.GetComponent<Avatar> ().citizen.isDead){
-						this.collidedWithHostile = true;
-						this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
-						HasCollidedWithHostile ();
-					}
-				}
-			}
-		}*/
-
-
-	}
-	internal void MakeCitizenMove(HexTile startTile, HexTile targetTile){
-		if(startTile.transform.position.x <= targetTile.transform.position.x){
-			if(this.animator.gameObject.transform.localScale.x > 0){
-				this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
-			}
-		}else{
-			if(this.animator.gameObject.transform.localScale.x < 0){
-				this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
-			}
-		}
-		if(startTile.transform.position.y < targetTile.transform.position.y){
-			this.direction = DIRECTION.UP;
-			this.animator.Play("Walk_Up");
-		}else if(startTile.transform.position.y > targetTile.transform.position.y){
-			this.direction = DIRECTION.DOWN;
-			this.animator.Play("Walk_Down");
-		}else{
-			if(startTile.transform.position.x < targetTile.transform.position.x){
-				this.direction = DIRECTION.RIGHT;
-				this.animator.Play("Walk_Right");
-			}else{
-				this.direction = DIRECTION.LEFT;
-				this.animator.Play("Walk_Left");
-			}
-		}
-		//		this.transform.position = Vector3.MoveTowards (startTile.transform.position, targetTile.transform.position, 0.5f);
-		//		if(startTile.transform.position.x <= targetTile.transform.position.x){
-		//			if(this.generalAnimator.gameObject.transform.localScale.x > 0){
-		//				this.generalAnimator.gameObject.transform.localScale = new Vector3(this.generalAnimator.gameObject.transform.localScale.x * -1, this.generalAnimator.gameObject.transform.localScale.y, this.generalAnimator.gameObject.transform.localScale.z);
-		//			}
-		//		}else{
-		//			if(this.generalAnimator.gameObject.transform.localScale.x < 0){
-		//				this.generalAnimator.gameObject.transform.localScale = new Vector3(this.generalAnimator.gameObject.transform.localScale.x * -1, this.generalAnimator.gameObject.transform.localScale.y, this.generalAnimator.gameObject.transform.localScale.z);
-		//			}
-		//		}
-		//		if(startTile.transform.position.y < targetTile.transform.position.y){
-		//			this.generalAnimator.Play("Walk_Up");
-		//		}else{
-		//			this.generalAnimator.Play("Walk");
-		//		}
-		this.GetComponent<SmoothMovement>().direction = this.direction;
-		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
-		//		this.targetPosition = targetTile.transform.position;
-		this.UpdateUI ();
-		//		this.isMoving = true;
-	}
-	private void StopMoving(){
-		this.animator.Play("Idle");
-		//		this.isMoving = false;
-		//		this.targetPosition = Vector3.zero;
-	}
-	internal void UpdateUI(){
-		if(this.general != null){
-			this.txtDamage.text = this.general.damage.ToString ();
-		}
-	}
+	#region BehaviourTree Tasks
 	[Task]
-	public void IsThereCitizen(){
-		if(this.general.citizen != null){
-			Task.current.Succeed ();
-		}else{
-			Task.current.Fail ();
-		}
-	}
-	[Task]
-	public void IsThereEvent(){
-		if(this.general.citizen != null){
-			Task.current.Succeed ();
-		}else{
-			Task.current.Fail ();
-		}
-	}
-
-	[Task]
-	public void HasArrivedAtTargetHextile(){
-		if(this.general.location == this.general.targetLocation){
-			if(!this.hasArrived){
-				this.hasArrived = true;
-				this.GetComponent<BoxCollider2D> ().enabled = false;
-				this.general.Attack ();
-			}
-			Task.current.Succeed ();
-		}else{
-			Task.current.Fail ();
-		}
-
-	}
-
-//	[Task]
-
-	/*public void HasCollidedWithHostile(Citizen hostile){
-		if(this.collidedWithHostile){
-			this.collidedWithHostile = false;
-			if(hostile.assignedRole != null){
-				if(this.hostile.assignedRole is General){
-					if(!this.hostile.isDead){
-						General otherGeneral = (General)this.hostile.assignedRole;
-						CombatManager.Instance.BattleMidway (ref this.general, ref otherGeneral);
-						if(this.general.markAsDead){
-							this.general.gameEvent.DeathByAgent (otherGeneral.citizen);
-						}else{
-							this.general.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
-						}
-						if(otherGeneral.markAsDead){
-							this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByAgent (this.general.citizen);
-						}else{
-							otherGeneral.avatar.GetComponent<GeneralAvatar> ().UpdateUI ();
-						}
-					}
-				}else{
-					if (!this.hostile.isDead) {
-						this.hostile.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByAgent (this.general.citizen);
-					}
-				}
-//				Task.current.Succeed ();
-			}
-//			else{
-//				Task.current.Fail ();
-//			}
-		}
-//		else{
-//			Task.current.Fail ();
-//		}
-//		Task.current.Fail ();
-	}*/
-
-	[Task]
-	public void HasDiedOfOtherReasons(){
-		if (this.general.citizen.isDead) {
-			//Citizen has died
-			this.general.gameEvent.DeathByOtherReasons ();
+	public void IsThereCitizen() {
+		if (this.citizenRole.citizen != null) {
 			Task.current.Succeed();
-		}else {
-			Task.current.Fail ();
+		} else {
+			Task.current.Fail();
 		}
 	}
 	[Task]
-	public void MoveToNextTile(){
-		Move ();
-		Task.current.Succeed ();
+	public void IsThereEvent() {
+		if (this.citizenRole.gameEventInvolvedIn != null) {
+			Task.current.Succeed();
+		} else {
+			Task.current.Fail();
+		}
 	}
 
-	private void ResetValues(){
-		this.collidedWithHostile = false;
-		this.hostile = null;
-	}
+	[Task]
+	public void HasArrivedAtTargetHextile() {
+		if (this.citizenRole.location == this.citizenRole.targetLocation) {
+			if (!this.hasArrived) {
+				SetHasArrivedState(true);
+				this.GetComponent<BoxCollider2D> ().enabled = false;
+				this.citizenRole.Attack ();
+			}
+			Task.current.Succeed();
+		} else {
+			Task.current.Fail();
+		}
 
-	private void Move(){
-		if(this.general.targetLocation != null){
-			if(this.general.path != null){
-				if(this.general.path.Count > 0){
-					if(this.general.daysBeforeMoving <= 0){
-						this.MakeCitizenMove (this.general.location, this.general.path [0]);
-						this.general.daysBeforeMoving = this.general.path [0].movementDays;
-						this.general.location = this.general.path[0];
-						this.general.citizen.currentLocation = this.general.path [0];
+	}
+	[Task]
+	public void HasDiedOfOtherReasons() {
+		if (this.citizenRole.citizen.isDead) {
+			//Citizen has died
+			this.citizenRole.gameEventInvolvedIn.DeathByOtherReasons();
+			Task.current.Succeed();
+		} else {
+			Task.current.Fail();
+		}
+	}
+	[Task]
+	public void MoveToNextTile() {
+		Move();
+		Task.current.Succeed();
+	}
+	#endregion
+
+	internal override void Move(){
+		if(this.citizenRole.targetLocation != null){
+			if(this.citizenRole.path != null){
+				if(this.citizenRole.path.Count > 0){
+					if(this.citizenRole.daysBeforeMoving <= 0){
+						this.MakeCitizenMove (this.citizenRole.location, this.citizenRole.path [0]);
+						this.citizenRole.daysBeforeMoving = this.citizenRole.path [0].movementDays;
+						this.citizenRole.location = this.citizenRole.path[0];
+						this.citizenRole.citizen.currentLocation = this.citizenRole.path [0];
                         this.UpdateFogOfWar();
-						this.general.path.RemoveAt (0);
-                        this.general.location.CollectEventOnTile(this.general.citizen.city.kingdom, this.general.citizen);
+						this.citizenRole.path.RemoveAt (0);
+						this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
                         this.CheckForKingdomDiscovery();
-						this.general.CheckSerumOfAlacrity();
+						((General)this.citizenRole).CheckSerumOfAlacrity();
 					}
-					this.general.daysBeforeMoving -= 1;
-//					this.MakeCitizenMove (this.general.location, this.general.path [0]);
-//					this.raider.daysBeforeMoving = this.raider.path [0].movementDays;
-//					this.general.location = this.general.path[0];
-//					this.general.citizen.currentLocation = this.general.path [0];
-//					this.general.path.RemoveAt (0);
+					this.citizenRole.daysBeforeMoving -= 1;
 				}
 			}
 		}
 	}
 
-    private void CheckForKingdomDiscovery() {
-        List<HexTile> tilesToCheck = new List<HexTile>();
-        tilesToCheck.Add(this.general.location);
-        tilesToCheck.AddRange(visibleTiles);
-        for (int i = 0; i < tilesToCheck.Count; i++) {
-            HexTile currTile = tilesToCheck[i];
-            if (currTile.isOccupied && currTile.ownedByCity != null &&
-                currTile.ownedByCity.kingdom.id != this.general.citizen.city.kingdom.id) {
-                Kingdom thisKingdom = this.general.citizen.city.kingdom;
-                Kingdom otherKingdom = currTile.ownedByCity.kingdom;
-                thisKingdom.DiscoverKingdom(otherKingdom);
-                otherKingdom.DiscoverKingdom(thisKingdom);
-            } else if (currTile.isBorder) {
-                Kingdom thisKingdom = this.general.citizen.city.kingdom;
-                Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currTile.isBorderOfCityID).kingdom;
-                if (otherKingdom.id != this.general.citizen.city.kingdom.id) {
-                    thisKingdom.DiscoverKingdom(otherKingdom);
-                    otherKingdom.DiscoverKingdom(thisKingdom);
-                }
-            }
-        }
-    }
-
-    private List<HexTile> visibleTiles;
-    private void UpdateFogOfWar(bool forDeath = false) {
-        for (int i = 0; i < visibleTiles.Count; i++) {
-            HexTile currTile = visibleTiles[i];
-            this.general.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-        }
-        visibleTiles.Clear();
-        if (!forDeath) {
-            visibleTiles.Add(this.general.location);
-            visibleTiles.AddRange(this.general.location.AllNeighbours);
-            for (int i = 0; i < visibleTiles.Count; i++) {
-                HexTile currTile = visibleTiles[i];
-                this.general.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
-            }
-        }
-
-    }
-
-    internal void AddBehaviourTree(){
-		BehaviourTreeManager.Instance.allTrees.Add (this.pandaBehaviour);
-	}
-
-	internal void RemoveBehaviourTree(){
-		BehaviourTreeManager.Instance.allTrees.Remove (this.pandaBehaviour);
-	}
-
-
-	void OnMouseEnter(){
-		if (!UIManager.Instance.IsMouseOnUI()) {
-			UIManager.Instance.ShowSmallInfo (this.general.gameEvent.name);
-			this.HighlightPath ();
+	internal override void UpdateUI (){
+		if(this.txtDamage.gameObject != null){
+			this.txtDamage.text = this.citizenRole.damage.ToString ();
 		}
 	}
-
-	void OnMouseExit(){
-		UIManager.Instance.HideSmallInfo ();
-		this.UnHighlightPath ();
-	}
-
-    private void Update() {
-        if (KingdomManager.Instance.useFogOfWar) {
-            if (this.general.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-                gameObject.GetComponent<SpriteRenderer>().enabled = true;
-                SpriteRenderer[] sprites = gameObject.GetComponentsInChildren<SpriteRenderer>();
-                for (int i = 0; i < sprites.Length; i++) {
-                    sprites[i].enabled = true;
-                }
-            } else {
-                gameObject.GetComponent<SpriteRenderer>().enabled = false;
-                SpriteRenderer[] sprites = gameObject.GetComponentsInChildren<SpriteRenderer>();
-                for (int i = 0; i < sprites.Length; i++) {
-                    sprites[i].enabled = false;
-                }
-            }
-        }
-    }
-
-    void HighlightPath(){
-		this.pathToUnhighlight.Clear ();
-		for (int i = 0; i < this.general.path.Count; i++) {
-			this.general.path [i].highlightGO.SetActive (true);
-			this.pathToUnhighlight.Add (this.general.path [i]);
-		}
-	}
-
-	void UnHighlightPath(){
-		for (int i = 0; i < this.pathToUnhighlight.Count; i++) {
-			this.pathToUnhighlight[i].highlightGO.SetActive(false);
-		}
-	}
-
-	void OnDestroy(){
-		RemoveBehaviourTree();
-		UnHighlightPath ();
-        UpdateFogOfWar(true);
-    }
-
-	public void OnEndAttack(){
-		this.general.gameEvent.DoneCitizenAction(this.general.citizen);
-	}
-
-	internal void HasAttacked(){
-		this.GetComponent<SmoothMovement> ().hasAttacked = true;
-	}
-
 }

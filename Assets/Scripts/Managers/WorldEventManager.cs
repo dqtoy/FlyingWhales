@@ -26,7 +26,7 @@ public class WorldEventManager : MonoBehaviour {
 	private void PlagueEventTrigger(){
 		if((GameManager.Instance.days == 13 || GameManager.Instance.days == 23) && !HasEventOfType(EVENT_TYPES.PLAGUE)){
 			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 15){
+			if(chance < 3){
 				EventCreator.Instance.CreatePlagueEvent ();
 			}
 		}

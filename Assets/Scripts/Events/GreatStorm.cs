@@ -109,6 +109,7 @@ public class GreatStorm : GameEvent {
 		if(chance < 15){
 			City chosenCity = this._affectedKingdom.cities[UnityEngine.Random.Range(0,this._affectedKingdom.cities.Count)];
 			//Destroy Random Structure in City
+			chosenCity.RemoveTileFromCity(chosenCity.structures[chosenCity.structures.Count - 1]);
 			this.destroyedStructures += 1;
 		}
 	}
@@ -145,7 +146,7 @@ public class GreatStorm : GameEvent {
 			List<Kingdom> otherFriendlyKingdoms = new List<Kingdom>();
 			for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 				int chance = UnityEngine.Random.Range(0,100);
-				if(chance < 80){
+				if(chance < 50){
 					if(KingdomManager.Instance.allKingdoms[i].id != this._affectedKingdom.id){
 						RelationshipKings relationship = KingdomManager.Instance.allKingdoms[i].king.GetRelationshipWithCitizen(this._affectedKingdom.king);
 						if(relationship != null){
