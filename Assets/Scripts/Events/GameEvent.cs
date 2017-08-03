@@ -178,8 +178,12 @@ public class GameEvent {
 
 		if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null) { //Kingdom Event
 			if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
-				UIManager.Instance.Pause ();
-				UIManager.Instance.ShowEventLogs (this);
+				if(UIManager.Instance.currentlyShowingLogObject != null){
+					UIManager.Instance.eventLogsQueue.Add (this);
+				}else{
+					UIManager.Instance.Pause ();
+					UIManager.Instance.ShowEventLogs (this);
+				}
 			}
 		}
 //		if(this.goEventItem != null){

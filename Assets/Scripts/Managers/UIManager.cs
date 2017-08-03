@@ -255,6 +255,8 @@ public class UIManager : MonoBehaviour {
 
     private Dictionary<DateTime, Kingdom> kingdomDisplayExpiry;
 
+	internal List<object> eventLogsQueue = new List<object> ();
+
     void Awake(){
 		Instance = this;
     }
@@ -1332,8 +1334,12 @@ public class UIManager : MonoBehaviour {
 		if(gameEvent.startedBy != null){ //Kingdom Event
             if(gameEvent.startedByKingdom.id == currentlyShowingKingdom.id) {
                 activeKingdomFlag.AddEventToGrid(gameEvent);
-                Pause();
-                ShowEventLogs(gameEvent);
+				if(this.currentlyShowingLogObject != null){
+					this.eventLogsQueue.Add (gameEvent);
+				}else{
+					Pause();
+					ShowEventLogs(gameEvent);
+				}
             }
 
 			//KingdomFlagItem kingdomOwner = kingdomListOtherKingdomsGrid.GetChildList()
@@ -2199,7 +2205,6 @@ public class UIManager : MonoBehaviour {
 		if (obj == null) {
 			return;
 		}
-
 		List<Log> logs = new List<Log> ();
 		if (obj is GameEvent) {
 			GameEvent ge = ((GameEvent)obj);
@@ -2286,6 +2291,12 @@ public class UIManager : MonoBehaviour {
 			SetProgressionSpeed1X();
 		}
 		currentlyShowingLogObject = null;
+		if(this.eventLogsQueue.Count > 0){
+			Pause();
+			object obj = this.eventLogsQueue [0];
+			this.eventLogsQueue.RemoveAt (0);
+			ShowEventLogs (obj);
+		}
 	}
 
 	/*
