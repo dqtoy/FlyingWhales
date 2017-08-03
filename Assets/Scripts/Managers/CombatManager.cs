@@ -437,7 +437,7 @@ public class CombatManager : MonoBehaviour {
 			agent2.markAsDead = true;
 			agent2.damage = 0;
 			agent1.damage -= lostHP;
-			if(agent1.damage < 0){
+			if(agent1.damage <= 0){
 				agent1.damage = 0;
 				agent1.markAsDead = true;
 				KingdomManager.Instance.CheckWarTriggerMisc (agent1.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);
@@ -449,7 +449,7 @@ public class CombatManager : MonoBehaviour {
 			agent1.markAsDead = true;
 			agent1.damage = 0;
 			agent2.damage -= lostHP;
-			if(agent2.damage < 0){
+			if(agent2.damage <= 0){
 				agent2.damage = 0;
 				agent2.markAsDead = true;
 				KingdomManager.Instance.CheckWarTriggerMisc (agent2.citizen.city.kingdom, WAR_TRIGGER.TARGET_LOST_A_BATTLE);

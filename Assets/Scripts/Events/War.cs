@@ -389,9 +389,9 @@ public class War : GameEvent {
 	}
 
 	private void ReplenishWavesKingdom1(){
-		this.kingdom1Waves = this.kingdom1.kingdomTypeData.combatStats.waves - ((this.kingdom1.GetNumberOfWars() + 1) + this.kingdom1.rebellions.Count);
+		this.kingdom1Waves = this.kingdom1.kingdomTypeData.combatStats.waves - (this.kingdom1.GetNumberOfWars() + this.kingdom1.rebellions.Count);
 	}
 	private void ReplenishWavesKingdom2(){
-		this.kingdom2Waves = this.kingdom2.kingdomTypeData.combatStats.waves - ((this.kingdom2.GetNumberOfWars() + 1) + this.kingdom2.rebellions.Count);
+		this.kingdom2Waves = this.kingdom2.kingdomTypeData.combatStats.waves - (this.kingdom2.GetNumberOfWars() + this.kingdom2.rebellions.Count);
 	}
 }

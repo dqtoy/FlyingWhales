@@ -278,6 +278,6 @@ public class Rebellion : GameEvent {
 		this.kingdom1Waves = this.rebelWaves;
 	}
 	private void ReplenishWavesKingdom2(){
-		this.kingdom2Waves = this.targetKingdom.kingdomTypeData.combatStats.waves - ((this.targetKingdom.GetNumberOfWars() + 1) + this.targetKingdom.rebellions.Count);
+		this.kingdom2Waves = this.targetKingdom.kingdomTypeData.combatStats.waves - (this.targetKingdom.GetNumberOfWars() + this.targetKingdom.rebellions.Count);
 	}
 }

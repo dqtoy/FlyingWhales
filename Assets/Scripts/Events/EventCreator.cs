@@ -451,4 +451,11 @@ public class EventCreator: MonoBehaviour {
 		GreatStorm greatStorm = new GreatStorm (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, sourceKingdom);
 		return greatStorm;
 	}
+
+	//-------------------------------------------- PLAYER EVENTS ----------------------------------------------------//
+
+	internal KingdomDiscovery CreateKingdomDiscoveryEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
+		KingdomDiscovery kingdomDiscovery = new KingdomDiscovery (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);
+		return kingdomDiscovery;
+	}
 }

@@ -77,8 +77,7 @@ public class GameEvent {
 		this.logs = new List<Log>();
 		this._startDate = new DateTime (this.startYear, this.startMonth, this.startDay);
 		if(this._startedBy != null){
-			this.
-			startedByKingdom = _startedBy.city.kingdom;
+			this.startedByKingdom = _startedBy.city.kingdom;
 			this.startedByCity = _startedBy.city;
 		}
 //		Debug.Log("New Event was created!");
@@ -176,6 +175,17 @@ public class GameEvent {
         this.endMonth = GameManager.Instance.month;
         this.endDay = GameManager.Instance.days;
         this.endYear = GameManager.Instance.year;
+
+		if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null) { //Kingdom Event
+			if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
+				if(UIManager.Instance.currentlyShowingLogObject != null){
+					UIManager.Instance.eventLogsQueue.Add (this);
+				}else{
+					UIManager.Instance.Pause ();
+					UIManager.Instance.ShowEventLogs (this);
+				}
+			}
+		}
 //		if(this.goEventItem != null){
 //			this.goEventItem.GetComponent<EventItem> ().HasExpired ();
 //		}
