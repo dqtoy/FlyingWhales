@@ -8,6 +8,7 @@ public class StormWitchLair : Lair {
 	private List<HexTile> availableTargets;
 
 	public StormWitchLair(LAIR type, HexTile hexTile): base (type, hexTile){
+		this.name = "Storm Witch Lair";
 		this._targetHextile = null;
 		this.availableTargets = new List<HexTile>();
 		Initialize();

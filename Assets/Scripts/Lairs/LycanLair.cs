@@ -8,6 +8,7 @@ public class LycanLair : Lair {
 	private List<HexTile> availableTargets;
 
 	public LycanLair(LAIR type, HexTile hexTile): base (type, hexTile){
+		this.name = "Lycan Lair";
 		this._targetHextile = null;
 		this.availableTargets = new List<HexTile>();
 		Initialize();

@@ -530,7 +530,11 @@ public class KingdomManager : MonoBehaviour {
 
 	internal void DiscoverKingdom(Kingdom discovererKingdom, Kingdom discoveredKingdom){
 		if(!discovererKingdom.discoveredKingdoms.Contains(discoveredKingdom)){
-			EventCreator.Instance.CreateKingdomDiscoveryEvent (discovererKingdom, discoveredKingdom);
+			if(UIManager.Instance.currentlyShowingKingdom != null){
+				if(UIManager.Instance.currentlyShowingKingdom.id == discovererKingdom.id || UIManager.Instance.currentlyShowingKingdom.id == discoveredKingdom.id){
+					EventCreator.Instance.CreateKingdomDiscoveryEvent (discovererKingdom, discoveredKingdom);
+				}
+			}
 		}
 		discovererKingdom.DiscoverKingdom(discoveredKingdom);
 		discoveredKingdom.DiscoverKingdom(discovererKingdom);
