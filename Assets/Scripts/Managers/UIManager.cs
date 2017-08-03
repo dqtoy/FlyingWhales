@@ -2960,6 +2960,10 @@ public class UIManager : MonoBehaviour {
 		CameraMove.Instance.ToggleTraderCamera();
 	}
 	
+    public void ForceAdventurer() {
+        EventCreator.Instance.CreateAdventureEvent(currentlyShowingKingdom);
+    }
+
 	public void OnValueChangeEventDropdown(){
 		eventDropdownCurrentSelectionLbl.text = this.eventDropdownList.value;
 		if(this.eventDropdownList.value == "Raid"){

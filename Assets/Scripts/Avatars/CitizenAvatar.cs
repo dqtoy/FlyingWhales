@@ -43,10 +43,10 @@ public class CitizenAvatar : MonoBehaviour {
                     this.citizenRole.location = this.citizenRole.path[0];
                     this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
                     this.citizenRole.path.RemoveAt(0);
-                    this.UpdateFogOfWar();
                     this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
                     this.CheckForKingdomDiscovery();
                 }
+                this.UpdateFogOfWar();
             }
         }
     }
@@ -88,7 +88,7 @@ public class CitizenAvatar : MonoBehaviour {
     }
 
     private List<HexTile> visibleTiles;
-    internal void UpdateFogOfWar(bool forDeath = false) {
+    public void UpdateFogOfWar(bool forDeath = false) {
         for (int i = 0; i < visibleTiles.Count; i++) {
             HexTile currTile = visibleTiles[i];
             this.citizenRole.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
@@ -102,6 +102,11 @@ public class CitizenAvatar : MonoBehaviour {
                 this.citizenRole.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
             }
         }
+        //if (this.citizenRole.citizen.city != null) {
+        //    if (UIManager.Instance.currentlyShowingKingdom.id == this.citizenRole.citizen.city.kingdom.id) {
+        //        UIManager.Instance.currentlyShowingKingdom.UpdateFogOfWarVisual();
+        //    }
+        //}
     }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
