@@ -28,7 +28,7 @@ public class ExpansionAvatar : CitizenAvatar {
 		if (this.citizenRole.location == this.citizenRole.targetLocation) {
 			if (!this.hasArrived) {
 				SetHasArrivedState(true);
-				OnEndAttack ();
+				EndAttack ();
 			}
 			Task.current.Succeed();
 		} else {
