@@ -99,10 +99,12 @@ public class DailyCumulativeEvent : MonoBehaviour {
 				}
 			}else{
 				if (this.counter >= this.interval) {
-					this.counter = 0;
 					this.firstKingdom.dailyCumulativeEventRate [i].rate += this.firstKingdom.dailyCumulativeEventRate [i].interval;
 				}
 			}
+		}
+		if (this.counter >= this.interval) {
+			this.counter = 0;
 		}
 //		Task.current.Succeed ();
 //		if(this.eventToCreate.eventType == EVENT_TYPES.NONE){
