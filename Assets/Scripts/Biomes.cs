@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Biomes : MonoBehaviour {
 	public static Biomes Instance;
@@ -393,6 +394,56 @@ public class Biomes : MonoBehaviour {
 
 		}
 	}
+    [ContextMenu("Generate Tags")]
+    public void GenerateTileTags() {
+        List<HexTile> tilesToTag = new List<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>()));
+        int currTag = 0;
+        Queue<HexTile> tagQueue = new Queue<HexTile>();
+        HexTile firstTile = null;
+        //tagQueue.Enqueue(firstTile);
+
+        ELEVATION currElevation = ELEVATION.PLAIN;
+
+        while (tilesToTag.Count != 0) {
+            if(tagQueue.Count <= 0) {
+                //move on to other tag
+                currTag++;
+                firstTile = tilesToTag.FirstOrDefault();
+                firstTile.SetTag(currTag);
+                tilesToTag.Remove(firstTile);
+                tagQueue.Enqueue(firstTile);
+                currElevation = firstTile.elevationType;
+            }
+
+            HexTile parentTile = tagQueue.Dequeue();
+            
+            List<HexTile> parentTileNeighbours = parentTile.AllNeighbours.ToList();
+            for (int i = 0; i < parentTileNeighbours.Count; i++) {
+                HexTile currNeighbour = parentTileNeighbours[i];
+                if(tilesToTag.Contains(currNeighbour) && currNeighbour.elevationType == currElevation) {
+                    currNeighbour.SetTag(currTag);
+                    tilesToTag.Remove(currNeighbour);
+                    tagQueue.Enqueue(currNeighbour);
+                }
+            }
+        }
+    }
+
+    [ContextMenu("DisableAllFogOfWarSprites")]
+    public void DisableAllFogOfWarSprites() {
+        for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+            HexTile currTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+            currTile.HideFogOfWarObjects();
+        }
+    }
+
+    [ContextMenu("EnableAllFogOfWarSprites")]
+    public void EnableAllFogOfWarSprites() {
+        for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+            HexTile currTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+            currTile.ShowFogOfWarObjects();
+        }
+    }
 
     internal Sprite GetTextureForBiome(BIOMES biomeType) {
         if (biomeType == BIOMES.GRASSLAND) {

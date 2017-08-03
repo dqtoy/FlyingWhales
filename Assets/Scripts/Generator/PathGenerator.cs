@@ -136,6 +136,9 @@ public class PathGenerator : MonoBehaviour {
 	 * Get List of tiles (Path) that will connect 2 city tiles
 	 * */
 	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE){
+        if(startingTile.tag != destinationTile.tag) {
+            return null;
+        }
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
 		List<HexTile> habitableTiles;
