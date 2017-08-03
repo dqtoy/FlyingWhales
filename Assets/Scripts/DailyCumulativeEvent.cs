@@ -5,6 +5,7 @@ using System.Linq;
 using Panda;
 
 public class DailyCumulativeEvent : MonoBehaviour {
+	public int interval;
 	public Kingdom firstKingdom;
 	public Kingdom secondKingdom;
 	public EventRate eventToCreate;
@@ -15,31 +16,18 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //	public int diplomaticCrisisChance;
 //	public int stateVisitChance;
 //	public List<GameEvent> allUnwantedEvents;
+	private int counter;
 
 	void Awake(){
 		this.firstKingdom = null;
 		this.secondKingdom = null;
-//		this.compatibilityValue = 0;
-//		this.isAdjacent = false;
-//		this.raidChance = 0;
-//		this.borderConflictChance = 0;
-//		this.diplomaticCrisisChance = 0;
-//		this.stateVisitChance = 0;
-//		this.allUnwantedEvents = new List<GameEvent> ();
+		this.counter = 0;
 	}
-
 	[Task]
 	public void ResetValues(){
 		this.firstKingdom = null;
 		this.secondKingdom = null;
-//		this.compatibilityValue = 0;
-//		this.isAdjacent = false;
-//		this.raidChance = 0;
-//		this.borderConflictChance = 0;
-//		this.diplomaticCrisisChance = 0;
-//		this.stateVisitChance = 0;
 		this.eventToCreate.DefaultValues();
-//		this.allUnwantedEvents.Clear ();
 		Task.current.Succeed ();
 	}
 	private void Reset(){
@@ -71,6 +59,16 @@ public class DailyCumulativeEvent : MonoBehaviour {
 			Task.current.Fail ();
 		}else{
 			Task.current.Succeed ();
+		}
+	}
+	[Task]
+	public void DailyInterval(){
+		this.counter += 1;
+		if (this.counter == this.interval) {
+			this.counter = 0;
+			Task.current.Succeed ();
+		} else {
+			Task.current.Fail ();
 		}
 	}
 	[Task]

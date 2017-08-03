@@ -1,3 +1,4 @@
 tree("Root")
 	sequence
+		DailyInterval
 		CreateDailyCumulativeEvents
