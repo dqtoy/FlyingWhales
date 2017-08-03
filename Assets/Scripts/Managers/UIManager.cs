@@ -1370,8 +1370,14 @@ public class UIManager : MonoBehaviour {
 			RepositionGridCallback(this.gameEventsOfTypeGrid);
 			//gameEvent.goEventItem = eventGO;
 		}
-      
-        
+	}
+	public void ShowPlayerEventsOfType(PlayerEvent playerEvent){
+		if(this.currentlyShowingLogObject != null){
+			this.eventLogsQueue.Add (playerEvent);
+		}else{
+			Pause();
+			ShowEventLogs(playerEvent);
+		}
 	}
 
 	/*public void UpdateEventsOfType(){
@@ -2205,39 +2211,48 @@ public class UIManager : MonoBehaviour {
 		if (obj == null) {
 			return;
 		}
+		if(this.eventLogsQueue.Contains(obj)){
+			this.eventLogsQueue.Remove (obj);
+		}
 		List<Log> logs = new List<Log> ();
 		if (obj is GameEvent) {
 			GameEvent ge = ((GameEvent)obj);
 			logs = ge.logs;
-			elmEventTitleLbl.text = Utilities.LogReplacer(logs.FirstOrDefault());
-            elmEventProgressBar.gameObject.SetActive(false);
-            elmProgressBarLbl.gameObject.SetActive(false);
-            //         if (ge.isActive) {
-            //	if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
-            //		elmEventProgressBar.gameObject.SetActive (false);
-            //	} else if (ge.eventType == EVENT_TYPES.EXPANSION) {
-            //		elmEventProgressBar.gameObject.SetActive (false);
-            //	} else {
-            //		elmEventProgressBar.gameObject.SetActive (true);
-            //		float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
-            //		if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
-            //			currentLerpRoutine = StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
-            //		} else {
-            //			if (currentLerpRoutine != null) {
-            //				StopCoroutine (currentLerpRoutine);
-            //				currentLerpRoutine = null;
-            //			}
-            //			elmEventProgressBar.value = targetValue;
-            //		}
-
-            //	}
-            //} else {
-            //	elmEventProgressBar.gameObject.SetActive (false);
-            //}
-        } else if (obj is Campaign) {
-			logs = ((Campaign)obj).logs;
-			elmEventTitleLbl.text = Utilities.LogReplacer(logs.FirstOrDefault());
+			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
 			elmEventProgressBar.gameObject.SetActive (false);
+			elmProgressBarLbl.gameObject.SetActive (false);
+			//         if (ge.isActive) {
+			//	if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
+			//		elmEventProgressBar.gameObject.SetActive (false);
+			//	} else if (ge.eventType == EVENT_TYPES.EXPANSION) {
+			//		elmEventProgressBar.gameObject.SetActive (false);
+			//	} else {
+			//		elmEventProgressBar.gameObject.SetActive (true);
+			//		float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
+			//		if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
+			//			currentLerpRoutine = StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
+			//		} else {
+			//			if (currentLerpRoutine != null) {
+			//				StopCoroutine (currentLerpRoutine);
+			//				currentLerpRoutine = null;
+			//			}
+			//			elmEventProgressBar.value = targetValue;
+			//		}
+
+			//	}
+			//} else {
+			//	elmEventProgressBar.gameObject.SetActive (false);
+			//}
+		} else if (obj is Campaign) {
+			logs = ((Campaign)obj).logs;
+			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
+			elmEventProgressBar.gameObject.SetActive (false);
+		} else if (obj is PlayerEvent) {
+			PlayerEvent pe = ((PlayerEvent)obj);
+			logs = pe.logs;
+			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
+			elmEventProgressBar.gameObject.SetActive (false);
+			elmProgressBarLbl.gameObject.SetActive (false);
 		}
 		//elmProgressBarLbl.text = "Progress:";
 		elmSuccessRateGO.SetActive (false);
@@ -2294,11 +2309,9 @@ public class UIManager : MonoBehaviour {
 		if(this.eventLogsQueue.Count > 0){
 			Pause();
 			object obj = this.eventLogsQueue [0];
-			this.eventLogsQueue.RemoveAt (0);
 			ShowEventLogs (obj);
 		}
 	}
-
 	/*
 	 * Toggle Kingdom Events Menu
 	 * */
@@ -2973,6 +2986,10 @@ public class UIManager : MonoBehaviour {
 		CameraMove.Instance.ToggleTraderCamera();
 	}
 	
+    public void ForceAdventurer() {
+        EventCreator.Instance.CreateAdventureEvent(currentlyShowingKingdom);
+    }
+
 	public void OnValueChangeEventDropdown(){
 		eventDropdownCurrentSelectionLbl.text = this.eventDropdownList.value;
 		if(this.eventDropdownList.value == "Raid"){

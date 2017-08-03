@@ -77,7 +77,7 @@ public class ReinforcerAvatar : CitizenAvatar {
 
 	internal override void UpdateUI (){
 		if(this.txtDamage.gameObject != null){
-			this.txtDamage.text = this.citizenRole.damage.ToString ();
+			this.txtDamage.text = ((Reinforcer)this.citizenRole).reinforcementValue.ToString ();
 		}
 	}
 }

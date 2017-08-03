@@ -499,6 +499,8 @@ public class KingdomManager : MonoBehaviour {
 		}
 	}
 
+
+	#region War Events
 	private void WarEvents(Kingdom declarerKingdom, Kingdom targetKingdom){
 		TriggerBackstabberEvent (declarerKingdom, targetKingdom);
 	}
@@ -523,5 +525,14 @@ public class KingdomManager : MonoBehaviour {
 				}
 			}
 		}
+	}
+	#endregion
+
+	internal void DiscoverKingdom(Kingdom discovererKingdom, Kingdom discoveredKingdom){
+		if(!discovererKingdom.discoveredKingdoms.Contains(discoveredKingdom)){
+			EventCreator.Instance.CreateKingdomDiscoveryEvent (discovererKingdom, discoveredKingdom);
+		}
+		discovererKingdom.DiscoverKingdom(discoveredKingdom);
+		discoveredKingdom.DiscoverKingdom(discovererKingdom);
 	}
 }
