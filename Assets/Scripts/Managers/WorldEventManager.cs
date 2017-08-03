@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class WorldEventManager : MonoBehaviour {
 	public static WorldEventManager Instance;
@@ -26,7 +27,7 @@ public class WorldEventManager : MonoBehaviour {
 	private void PlagueEventTrigger(){
 		if((GameManager.Instance.days == 13 || GameManager.Instance.days == 23) && !HasEventOfType(EVENT_TYPES.PLAGUE)){
 			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 3){
+			if(chance < 1){
 				EventCreator.Instance.CreatePlagueEvent ();
 			}
 		}
@@ -42,7 +43,10 @@ public class WorldEventManager : MonoBehaviour {
 			for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 				HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
 				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE){
-					filteredHextile.Add (hexTile);
+					List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
+					if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
+						filteredHextile.Add (hexTile);
+					}
 				}
 			}
 			HexTile targetHextile = filteredHextile [UnityEngine.Random.Range (0, filteredHextile.Count)];
@@ -57,7 +61,10 @@ public class WorldEventManager : MonoBehaviour {
 			for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 				HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
 				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null){
-					filteredHextile.Add (hexTile);
+					List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
+					if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
+						filteredHextile.Add (hexTile);
+					}
 				}
 			}
 			HexTile targetHextile = filteredHextile [UnityEngine.Random.Range (0, filteredHextile.Count)];
@@ -71,7 +78,10 @@ public class WorldEventManager : MonoBehaviour {
 			for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 				HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
 				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE){
-					filteredHextile.Add (hexTile);
+					List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
+					if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
+						filteredHextile.Add (hexTile);
+					}
 				}
 			}
 			HexTile targetHextile = filteredHextile [UnityEngine.Random.Range (0, filteredHextile.Count)];
