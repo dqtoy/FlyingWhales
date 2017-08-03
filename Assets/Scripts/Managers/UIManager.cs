@@ -569,7 +569,8 @@ public class UIManager : MonoBehaviour {
 
         activeKingdomFlag.SetKingdom(currentlyShowingKingdom);
         //Load all current active events of kingdom
-        List<GameEvent> activeGameEventsStartedByKingdom = EventManager.Instance.GetEventsStartedByKingdom(currentlyShowingKingdom, new EVENT_TYPES[] { EVENT_TYPES.ALL });
+        List<GameEvent> activeGameEventsStartedByKingdom = EventManager.Instance.GetEventsStartedByKingdom(currentlyShowingKingdom, new EVENT_TYPES[] { EVENT_TYPES.ALL })
+            .Where(x => !Utilities.eventsNotToShow.Contains(x.eventType)).ToList(); ;
         List<EventItem> presentEventItems = activeKingdomFlag.eventsGrid.GetChildList().Select(x => x.GetComponent<EventItem>()).ToList();
 
         if(activeGameEventsStartedByKingdom.Count > presentEventItems.Count) {
@@ -915,10 +916,14 @@ public class UIManager : MonoBehaviour {
 		thisTable.Reposition ();
 	}
 
-	public IEnumerator RepositionScrollView(UIScrollView thisScrollView){
+	public IEnumerator RepositionScrollView(UIScrollView thisScrollView, bool keepScrollPosition = false){
 		yield return new WaitForEndOfFrame();
 		yield return new WaitForEndOfFrame();
-		thisScrollView.ResetPosition();
+        if (keepScrollPosition) {
+            thisScrollView.UpdatePosition();
+        } else {
+            thisScrollView.ResetPosition();
+        }
 	}
 
 	public IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime){
@@ -995,8 +1000,8 @@ public class UIManager : MonoBehaviour {
 	//			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
 			}
             StartCoroutine(RepositionGrid(kingRelationshipsGrid));
-            StartCoroutine(RepositionScrollView(kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>()));
-		}
+            StartCoroutine(RepositionScrollView(kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>(), true));
+        }
 
 		governorRelationshipsParentGO.SetActive(false);
 		kingRelationshipsParentGO.SetActive(true);

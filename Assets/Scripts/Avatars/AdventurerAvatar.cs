@@ -57,9 +57,22 @@ public class AdventurerAvatar : CitizenAvatar {
 
             allHiddenTiles = allHiddenTiles.OrderBy(x => Vector2.Distance(this.citizenRole.location.transform.position, x.transform.position)).ToList();
             if(allHiddenTiles.Count > 0) {
-                HexTile nearestHiddenTile = allHiddenTiles.FirstOrDefault();
-                newTargetTile = nearestHiddenTile.AllNeighbours.Where(x => kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN)
-                    .OrderBy(x => Vector2.Distance(this.citizenRole.location.transform.position, x.transform.position)).FirstOrDefault();
+                HexTile nearestHiddenTile = null;
+                List<HexTile> elligibleNeighbours = new List<HexTile>();
+                for (int i = 0; i < allHiddenTiles.Count; i++) {
+                    HexTile currTile = allHiddenTiles[i];
+                    elligibleNeighbours = currTile.AllNeighbours
+                        .Where(x => x.elevationType != ELEVATION.WATER && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN).ToList();
+
+                    if (PathGenerator.Instance.GetPath(this.citizenRole.location, currTile, PATHFINDING_MODE.AVATAR) != null) {
+                        nearestHiddenTile = currTile;
+                        break;
+                    }
+                }
+                if(nearestHiddenTile != null) {
+                    newTargetTile = elligibleNeighbours
+                        .OrderBy(x => Vector2.Distance(this.citizenRole.location.transform.position, x.transform.position)).FirstOrDefault();
+                }
             } else {
                 //if no more hidden tiles choose from seen or visible neighbours
                 List<HexTile> tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER

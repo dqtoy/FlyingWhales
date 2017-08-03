@@ -881,14 +881,23 @@ public class City{
 			HexTile currentTile = this.ownedTiles[i];
             currentTile.isVisibleByCities.Remove(this);
 			currentTile.ResetTile();
-		}
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+        }
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
-		}
-		this.ownedTiles.Clear ();
-		this.borderTiles.Clear ();
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        for (int i = 0; i < outerTiles.Count; i++) {
+            HexTile currentTile = this.borderTiles[i];
+            currentTile.isVisibleByCities.Remove(this);
+            currentTile.ResetTile();
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+        }
+		this.ownedTiles.Clear();
+		this.borderTiles.Clear();
+        this.outerTiles.Clear();
 		if(!this.isDead){
 			bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.hexTile.GetComponent<PandaBehaviour> ());
 //			Debug.Log ("REMOVED BT?: " + this.name + " = " + removed);

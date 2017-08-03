@@ -66,15 +66,15 @@ public class Governor : Role {
         if (valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() == 1) {
             int adjustment = 15;
             baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   1 shared value except influence.\n";
+            this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
         } else if (valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() == 2) {
             int adjustment = 30;
             baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   2 shared values except influence.\n";
+            this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
         } else if(valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() >= 3) {
             int adjustment = 50;
             baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   3 shared values except influence.\n";
+            this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
         }
 
         if (governorValues.Contains(CHARACTER_VALUE.HONOR)) {
@@ -103,10 +103,10 @@ public class Governor : Role {
             this._loyaltySummary += adjustment.ToString() + "   does not value honor.\n";
         }
 
-        if (!governorValues.Contains(CHARACTER_VALUE.INFLUENCE)) {
+        if (governorValues.Contains(CHARACTER_VALUE.INFLUENCE)) {
             int adjustment = -15;
             baseLoyalty += adjustment;
-            this._loyaltySummary += adjustment.ToString() + "   does not value influence.\n";
+            this._loyaltySummary += adjustment.ToString() + "   values influence.\n";
         }
 
         for (int i = 0; i < kingdom.relationshipsWithOtherKingdoms.Count; i++){
@@ -142,7 +142,13 @@ public class Governor : Role {
 
 	internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger) {
         this._eventLoyaltyModifier += modification;
-        this._eventLoyaltySummary += summary + "\n";
+        if(_eventLoyaltyModifier < 0) {
+            this._eventLoyaltySummary = "-" + _eventLoyaltyModifier.ToString() + "   Approval";
+        } else if (_eventLoyaltyModifier > 0) {
+            this._eventLoyaltySummary = "+" + _eventLoyaltyModifier.ToString() + "   Approval";
+        } else {
+            this._eventLoyaltySummary = _eventLoyaltyModifier.ToString() + "   Approval";
+        }
     }
     internal void SetLoyalty(int newLoyalty) {
         this._loyalty = newLoyalty;

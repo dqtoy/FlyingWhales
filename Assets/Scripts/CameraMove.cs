@@ -16,7 +16,8 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private Camera resourceIconCamera;
 	[SerializeField] private Camera generalCamera;
 	[SerializeField] private Camera traderCamera;
-    [SerializeField] private Camera uiCamera;
+    [SerializeField] private Camera nameplateCamera;
+    [SerializeField] private Camera fogOfWarCamera;
     [SerializeField] private Camera minimapCamera;
     [SerializeField] private MinimapCamera _minimap;
 
@@ -118,7 +119,8 @@ public class CameraMove : MonoBehaviour {
                 eventIconCamera.orthographicSize = fov;
                 resourceIconCamera.orthographicSize = fov;
                 generalCamera.orthographicSize = fov;
-                uiCamera.orthographicSize = fov;
+                nameplateCamera.orthographicSize = fov;
+                fogOfWarCamera.orthographicSize = fov;
             }
 
 			//adjust camera movement clamps
