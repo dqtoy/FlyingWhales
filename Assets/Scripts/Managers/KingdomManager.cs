@@ -85,7 +85,10 @@ public class KingdomManager : MonoBehaviour {
                 }
             }
             if(citiesForKingdom.Count > 0) {
-                GenerateNewKingdom(initialKingdom.race, citiesForKingdom, true);
+                Kingdom kingdom = GenerateNewKingdom(initialKingdom.race, citiesForKingdom, true);
+				if(i == 0){
+					UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
+				}
             }
         }
 

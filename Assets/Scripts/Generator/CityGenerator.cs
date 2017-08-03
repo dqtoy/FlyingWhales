@@ -104,6 +104,10 @@ public class CityGenerator : MonoBehaviour {
 			if(currentHexTile.isOccupied || currentHexTile.isHabitable || currentHexTile.elevationType == ELEVATION.WATER || currentHexTile.elevationType == ELEVATION.MOUNTAIN || currentHexTile.specialResource != RESOURCE.NONE || currentHexTile.gameEventInTile != null){
 				continue;
 			}
+			List<HexTile> checkForHabitableTilesInRange = currentHexTile.GetTilesInRange (3);
+			if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) != null) {
+				continue;
+			}
 			SetTileAsLairHabitable(currentHexTile);
 		}
 	}

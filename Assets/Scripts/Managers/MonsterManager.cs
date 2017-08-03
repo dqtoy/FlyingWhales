@@ -28,7 +28,7 @@ public class MonsterManager : MonoBehaviour {
 					Lair newLair = CreateLair(type, chosenLairTile);
 					AddToLairList(newLair);
 
-					List<HexTile> nearHabitableTiles = chosenLairTile.GetTilesInRange(this.minimumLairDistance).Where(x => lairEligibleTiles.Contains(x) == true).ToList();
+					List<HexTile> nearHabitableTiles = chosenLairTile.GetTilesInRange(this.minimumLairDistance).Where(x => lairEligibleTiles.Contains(x)).ToList();
 					for (int k = 0; k < nearHabitableTiles.Count; k++) {
 						lairEligibleTiles.Remove(nearHabitableTiles[k]);
 					}

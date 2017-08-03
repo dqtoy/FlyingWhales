@@ -23,7 +23,6 @@ public class MapGenerator : MonoBehaviour {
 		WorldEventManager.Instance.AltarOfBlessingTrigger();
         WorldEventManager.Instance.FirstAndKeystoneTrigger();
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms.FirstOrDefault());
         CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
     }
 
