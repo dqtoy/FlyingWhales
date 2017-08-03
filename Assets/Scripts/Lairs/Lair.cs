@@ -8,7 +8,9 @@ public class Lair {
 	private OnPerformAction onPerformAction;
 
 	public int hp;
+	public int maxHP;
 	public LAIR type;
+	public string name;
 	public int spawnRate;
 	public HexTile hexTile;
 	public int daysCounter;
@@ -17,10 +19,15 @@ public class Lair {
 
 	public bool isDead;
 	public bool isActivated;
+
+	private LairItem _lairItem;
+
 	public Lair(LAIR type, HexTile hexTile){
 		this.type = type;
+		this.name = "Lair";
 		this.hexTile = hexTile;
 		this.hp = GetLairHP();
+		this.maxHP = this.hp;
 		this.spawnRate = GetSpawnRate();
 		this.goStructure = null;
 		this.tilesInRadius = this.hexTile.GetTilesInRange(MonsterManager.Instance.tileRadiusDetection);
@@ -49,6 +56,7 @@ public class Lair {
 		case LAIR.LYCAN:
 			return 30;
 		case LAIR.STORM_WITCH:
+//			return 30;
 			return 365;
 		}
 		return 0;
@@ -64,6 +72,7 @@ public class Lair {
 		this.hexTile.isLair = true;
 		this.hexTile.isOccupied = true;
 		this.hexTile.lair = this;
+		this.hexTile.ShowLairNamePlate ();
 	}
 	private void DetachLairFromHextile(){
 		this.hexTile.isLair = false;
@@ -86,10 +95,14 @@ public class Lair {
 	}
 
 	public void AdjustHP(int amount){
+		this.hexTile.UpdateLairNamePlate();
+
 		this.hp += amount;
 		if(this.hp < 0){
 			this.hp = 0;
 			DestroyLair();
+		}else if(this.hp > this.maxHP){
+			this.hp = this.maxHP;
 		}
 	}
 
