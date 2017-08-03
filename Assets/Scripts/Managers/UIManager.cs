@@ -2263,7 +2263,9 @@ public class UIManager : MonoBehaviour {
 				((GameEvent)this.currentlyShowingLogObject).goEventItem.GetComponent<EventItem>().DeactivateNewLogIndicator ();
 			}
 		}
-		eventLogsGO.SetActive(true);
+		if(!this.eventLogsGO.activeSelf){
+			this.eventLogsGO.SetActive(true);
+		}
 	}
 
 	public void HideEventLogs(){
