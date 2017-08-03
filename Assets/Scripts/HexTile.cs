@@ -9,6 +9,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Header("General Tile Details")]
     public int xCoordinate;
 	public int yCoordinate;
+    public int tag;
 	public string tileName;
 
     [Space(10)]
@@ -56,6 +57,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private Transform UIParent;
     [SerializeField] private Transform resourceParent;
     [SerializeField] private GameObject biomeDetailParentGO;
+    [SerializeField] private TextMesh tagVisual;
 
     [Space(10)]
     [Header("Tile Edges")]
@@ -1004,6 +1006,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				altarOfBlessing.TransferAltarOfBlessing(claimant, citizen);
 			}
         }
+    }
+
+    public void SetTag(int tag) {
+        this.tag = tag;
+        tagVisual.text = tag.ToString();
+        //tagVisual.gameObject.SetActive(true);
     }
 
     #region For Testing
