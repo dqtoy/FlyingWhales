@@ -1119,6 +1119,9 @@ public class Citizen {
 
 	internal void WarTrigger(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData, WAR_TRIGGER warTrigger){
 //		return;
+		if(relationship == null){
+			return;
+		}
         if(!relationship.sourceKing.city.kingdom.discoveredKingdoms.Contains(relationship.king.city.kingdom) ||
             !relationship.king.city.kingdom.discoveredKingdoms.Contains(relationship.sourceKing.city.kingdom)) {
             //At least one of the kingdoms have not discovered each other yet

@@ -2211,6 +2211,9 @@ public class UIManager : MonoBehaviour {
 		if (obj == null) {
 			return;
 		}
+		if(this.eventLogsQueue.Contains(obj)){
+			this.eventLogsQueue.Remove (obj);
+		}
 		List<Log> logs = new List<Log> ();
 		if (obj is GameEvent) {
 			GameEvent ge = ((GameEvent)obj);
@@ -2306,7 +2309,6 @@ public class UIManager : MonoBehaviour {
 		if(this.eventLogsQueue.Count > 0){
 			Pause();
 			object obj = this.eventLogsQueue [0];
-			this.eventLogsQueue.RemoveAt (0);
 			ShowEventLogs (obj);
 		}
 	}
