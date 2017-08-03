@@ -153,7 +153,7 @@ public class CitizenAvatar : MonoBehaviour {
         }
     }
 
-    public void OnEndAttack() {
+    public void EndAttack() {
         this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
         this.citizenRole.DestroyGO();
     }
