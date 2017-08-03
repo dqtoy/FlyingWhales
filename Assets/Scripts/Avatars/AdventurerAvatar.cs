@@ -34,58 +34,6 @@ public class AdventurerAvatar : CitizenAvatar {
 
     #region Unique Functions
     [Task]
-    private void GetNearestHiddenTile() {
-        Kingdom kingdomOfAdventurer = this.citizenRole.citizen.city.kingdom;
-
-        List<HexTile> allHiddenTiles = GridMap.Instance.listHexes
-                .Where(x => x.GetComponent<HexTile>().elevationType != ELEVATION.WATER
-                && kingdomOfAdventurer.fogOfWar[x.GetComponent<HexTile>().xCoordinate, x.GetComponent<HexTile>().yCoordinate] == FOG_OF_WAR_STATE.HIDDEN)
-                .Select(x => x.GetComponent<HexTile>()).ToList();
-
-        allHiddenTiles = allHiddenTiles.OrderBy(x => Vector2.Distance(this.citizenRole.location.transform.position, x.transform.position)).ToList();
-        if (allHiddenTiles.Count > 0) {
-            HexTile nearestHiddenTile = allHiddenTiles.FirstOrDefault();
-            newTargetTile = nearestHiddenTile.AllNeighbours.Where(x => kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN)
-                .OrderBy(x => Vector2.Distance(this.citizenRole.location.transform.position, x.transform.position)).FirstOrDefault();
-            Task.current.Succeed();
-            if (newTargetTile != null) {
-                this.citizenRole.targetLocation = newTargetTile;
-                this.citizenRole.path = PathGenerator.Instance.GetPath(this.citizenRole.location, this.citizenRole.targetLocation, PATHFINDING_MODE.AVATAR);
-                this.citizenRole.daysBeforeMoving = this.citizenRole.path[0].movementDays;
-                Task.current.Succeed();
-            } else {
-                Task.current.Fail();
-                Debug.LogError("Adventurer from " + this.citizenRole.citizen.city.kingdom.name + " could not find a new target tile! Current location is " + this.citizenRole.location.name);
-                this.citizenRole.gameEventInvolvedIn.DoneEvent();
-            }
-        } else {
-            Task.current.Fail();
-        }
-    }
-    [Task]
-    private void GetTargetTileFromNeighbours() {
-        Kingdom kingdomOfAdventurer = this.citizenRole.citizen.city.kingdom;
-        List<HexTile> hiddenNeighbours = this.citizenRole.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER
-            && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
-
-        if (hiddenNeighbours.Count > 0) {
-            //choose from hidden neighbours
-            newTargetTile = hiddenNeighbours.ElementAtOrDefault(Random.Range(0, hiddenNeighbours.Count));
-            if (newTargetTile != null) {
-                this.citizenRole.targetLocation = newTargetTile;
-                this.citizenRole.path = PathGenerator.Instance.GetPath(this.citizenRole.location, this.citizenRole.targetLocation, PATHFINDING_MODE.AVATAR);
-                this.citizenRole.daysBeforeMoving = this.citizenRole.path[0].movementDays;
-                Task.current.Succeed();
-            } else {
-                Task.current.Fail();
-                Debug.LogError("Adventurer from " + this.citizenRole.citizen.city.kingdom.name + " could not find a new target tile! Current location is " + this.citizenRole.location.name);
-                this.citizenRole.gameEventInvolvedIn.DoneEvent();
-            }
-        } else {
-            Task.current.Fail();
-        }
-    }
-    [Task]
     private void GetNextTargetTile() {
         if(newTargetTile != null) {
             Task.current.Succeed();

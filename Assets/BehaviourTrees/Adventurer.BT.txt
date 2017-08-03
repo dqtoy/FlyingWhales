@@ -14,11 +14,3 @@ tree("Move")
 		MoveToNextTile
 		HasArrivedAtTargetHextile
 		GetNextTargetTile
-
-tree("DetermineAction")
-	fallback
-		not HasArrivedAtTargetHextile
-		while IsNextToHiddenTile 
-			GetTargetTileFromNeighbours //if next to hidden tile, choose from hidden tiles
-		while not IsNextToHiddenTile
-			GetNearestHiddenTile //if not next to hidden tile get nearest hidden tile
