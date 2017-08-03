@@ -74,14 +74,12 @@ public class CitizenAvatar : MonoBehaviour {
                 currTile.ownedByCity.kingdom.id != this.citizenRole.citizen.city.kingdom.id) {
                 Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
                 Kingdom otherKingdom = currTile.ownedByCity.kingdom;
-                thisKingdom.DiscoverKingdom(otherKingdom);
-                otherKingdom.DiscoverKingdom(thisKingdom);
+				KingdomManager.Instance.DiscoverKingdom (thisKingdom, otherKingdom);
             } else if (currTile.isBorder) {
                 Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
                 Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currTile.isBorderOfCityID).kingdom;
                 if (otherKingdom.id != this.citizenRole.citizen.city.kingdom.id) {
-                    thisKingdom.DiscoverKingdom(otherKingdom);
-                    otherKingdom.DiscoverKingdom(thisKingdom);
+					KingdomManager.Instance.DiscoverKingdom (thisKingdom, otherKingdom);
                 }
             }
         }

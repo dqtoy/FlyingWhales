@@ -180,11 +180,14 @@ public class StateVisit : GameEvent {
 				if (relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
 					if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
 
-                        selectedKingdom.DiscoverKingdom(this.visitor.citizen.city.kingdom);
-                        this.visitor.citizen.city.kingdom.DiscoverKingdom(selectedKingdom);
+						KingdomManager.Instance.DiscoverKingdom (selectedKingdom, this.visitor.citizen.city.kingdom);
+//                        selectedKingdom.DiscoverKingdom(this.visitor.citizen.city.kingdom);
+//                        this.visitor.citizen.city.kingdom.DiscoverKingdom(selectedKingdom);
 
-                        selectedKingdom.DiscoverKingdom(inviterKingdom);
-                        inviterKingdom.DiscoverKingdom(selectedKingdom);
+						KingdomManager.Instance.DiscoverKingdom (selectedKingdom, inviterKingdom);
+
+//                        selectedKingdom.DiscoverKingdom(inviterKingdom);
+//                        inviterKingdom.DiscoverKingdom(selectedKingdom);
 
                         //ASSASSINATION EVENT
                         int remainingDays = this.visitor.path.Sum(x => x.movementDays);
@@ -279,8 +282,9 @@ public class StateVisit : GameEvent {
 			
 		Sabotage sabotage = EventCreator.Instance.CreateSabotageEvent(sender, this.inviterKingdom, this, remainingDays);
 		if(sabotage != null){
-            sender.DiscoverKingdom(this.inviterKingdom);
-            this.inviterKingdom.DiscoverKingdom(sender);
+			KingdomManager.Instance.DiscoverKingdom (sender, this.inviterKingdom);
+//            sender.DiscoverKingdom(this.inviterKingdom);
+//            this.inviterKingdom.DiscoverKingdom(sender);
 			this.saboteurEnvoy = sabotage.saboteur;
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_start");
 			newLog.AddToFillers (sender.king, sender.king.name, LOG_IDENTIFIER.KING_1);

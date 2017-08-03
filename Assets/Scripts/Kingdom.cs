@@ -1820,15 +1820,17 @@ public class Kingdom{
                     if (currNeighbour.isOccupied && currNeighbour.ownedByCity != null
                         && currNeighbour.ownedByCity.kingdom.id != this.id) {
                         Kingdom otherKingdom = currNeighbour.ownedByCity.kingdom;
+						KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
 
-                        this.DiscoverKingdom(otherKingdom);
-                        otherKingdom.DiscoverKingdom(this);
+//                        this.DiscoverKingdom(otherKingdom);
+//                        otherKingdom.DiscoverKingdom(this);
                     } else if (currNeighbour.isBorder) {
                         Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID).kingdom;
 
                         if (otherKingdom.id != this.id) {
-                            this.DiscoverKingdom(otherKingdom);
-                            otherKingdom.DiscoverKingdom(this);
+							KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
+//                            this.DiscoverKingdom(otherKingdom);
+//                            otherKingdom.DiscoverKingdom(this);
                         }
                     }
                     //Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
@@ -1855,14 +1857,17 @@ public class Kingdom{
                     && currNeighbour.ownedByCity.kingdom.id != this.id) {
                     Kingdom otherKingdom = currNeighbour.ownedByCity.kingdom;
 
-                    this.DiscoverKingdom(otherKingdom);
-                    otherKingdom.DiscoverKingdom(this);
+					KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
+
+//                    this.DiscoverKingdom(otherKingdom);
+//                    otherKingdom.DiscoverKingdom(this);
                 } else if (currNeighbour.isBorder) {
                     Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID).kingdom;
 
                     if (otherKingdom.id != this.id) {
-                        this.DiscoverKingdom(otherKingdom);
-                        otherKingdom.DiscoverKingdom(this);
+						KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
+//                        this.DiscoverKingdom(otherKingdom);
+//                        otherKingdom.DiscoverKingdom(this);
                     }
                 }
             }
