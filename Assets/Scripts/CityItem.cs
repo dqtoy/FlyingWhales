@@ -5,6 +5,12 @@ public class CityItem : MonoBehaviour {
 
     private City _city;
 
+    [SerializeField] private GameObject governorParentGO;
+    [SerializeField] private GameObject hpParentGO;
+    [SerializeField] private GameObject cityNameParentGO;
+    [SerializeField] private GameObject structuresParentGO;
+    [SerializeField] private GameObject growthMeterParentGO;
+
     [SerializeField] private CharacterPortrait _governor;
     [SerializeField] private UILabel _hpLbl;
     [SerializeField] private UILabel _structuresLbl;
@@ -25,7 +31,7 @@ public class CityItem : MonoBehaviour {
 	}
     #endregion
 
-    public void SetCity(City _city, bool showLoyalty = false) {
+    public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false) {
         this._city = _city;
         _governor.SetCitizen(city.governor);
         _hpLbl.text = city.hp.ToString();
@@ -46,7 +52,20 @@ public class CityItem : MonoBehaviour {
                 UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, thisGovernor.loyaltySummary);
             });
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideRelationshipSummary(); });
+        }
 
+        if (showNameOnly) {
+            governorParentGO.SetActive(false);
+            hpParentGO.SetActive(false);
+            cityNameParentGO.SetActive(true);
+            structuresParentGO.SetActive(false);
+            growthMeterParentGO.SetActive(false);
+        } else {
+            governorParentGO.SetActive(true);
+            hpParentGO.SetActive(true);
+            cityNameParentGO.SetActive(true);
+            structuresParentGO.SetActive(true);
+            growthMeterParentGO.SetActive(true);
         }
     }
 

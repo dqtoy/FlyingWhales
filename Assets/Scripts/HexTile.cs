@@ -501,7 +501,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
         if(_cityInfo == null) {
             GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
-            parentPanel.layer = LayerMask.NameToLayer("UI");
+            parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
             parentPanel.transform.SetParent(UIParent);
             parentPanel.transform.localPosition = Vector3.zero;
             parentPanel.transform.localScale = Vector3.one;
@@ -518,7 +518,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void UpdateNamePlate() {
-        this._cityInfo.SetCity(this.city);
+        if(UIManager.Instance.currentlyShowingKingdom != null) {
+            if (UIManager.Instance.currentlyShowingKingdom.fogOfWar[xCoordinate, yCoordinate] == FOG_OF_WAR_STATE.VISIBLE) {
+                this._cityInfo.SetCity(this.city);
+            } else if (UIManager.Instance.currentlyShowingKingdom.fogOfWar[xCoordinate, yCoordinate] == FOG_OF_WAR_STATE.SEEN) {
+                this._cityInfo.SetCity(this.city, false, true);
+            }
+        }
     }
 
     public void HideNamePlate() {
@@ -616,13 +622,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 case FOG_OF_WAR_STATE.SEEN:
                     newColor.a = 128f / 255f;
                     if (isHabitable && isOccupied) {
-                        HideNamePlate();
+                        ShowNamePlate();
                     }
                     if (isOccupied) {
-                        HideStructures();
+                        ShowStructures();
                     }
                     gameEventObjectsParentGO.SetActive(false);
-                    UIParent.gameObject.SetActive(false);
+                    UIParent.gameObject.SetActive(true);
                     break;
                 case FOG_OF_WAR_STATE.HIDDEN:
                     newColor.a = 255f / 255f;

@@ -944,6 +944,11 @@ public class Utilities : MonoBehaviour {
 		{"105", LOG_IDENTIFIER.KING_3_PRONOUN_R},
 		{"106", LOG_IDENTIFIER.OTHER},
 	};
+
+    public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {
+        EVENT_TYPES.ADVENTURE
+    };
+
 	public static string PronounReplacer(string word, object genderSubject){
 //		string pronoun = Utilities.GetStringBetweenTwoChars (word, '_', '_');
 		string[] pronouns = word.Split ('/');

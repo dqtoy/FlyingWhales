@@ -199,6 +199,9 @@ public class CitizenAvatar : MonoBehaviour {
         RemoveBehaviourTree();
         UnHighlightPath();
         UpdateFogOfWar(true);
+        if (UIManager.Instance.currentlyShowingKingdom.id == this.citizenRole.citizen.city.kingdom.id) {
+            UIManager.Instance.currentlyShowingKingdom.UpdateFogOfWarVisual();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

@@ -175,8 +175,8 @@ public class InvasionPlan : GameEvent {
 
 	#region Overrides
 	internal override void PerformAction(){
-		if(this.remainingDays > 0){
-			this.remainingDays -= 1;
+        this.remainingDays -= 1;
+        if (this.remainingDays > 0){
 			if (this.startedBy.isDead) {
 				this.resolution = "Invasion plan was cancelled because " + this.startedBy.name + " died.";
 				Log invasionPlanCancelDeath = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "invasion_plan_cancel_death");
