@@ -64,12 +64,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	[Task]
 	public void DailyInterval(){
 		this.counter += 1;
-		if (this.counter == this.interval) {
-			this.counter = 0;
-			Task.current.Succeed ();
-		} else {
-			Task.current.Fail ();
-		}
+		Task.current.Succeed ();
 	}
 	[Task]
 	public void CreateDailyCumulativeEvents(){
@@ -103,7 +98,10 @@ public class DailyCumulativeEvent : MonoBehaviour {
 					SetSecondRandomKingdom (ref this.firstKingdom.dailyCumulativeEventRate [i]);
 				}
 			}else{
-				this.firstKingdom.dailyCumulativeEventRate [i].rate += this.firstKingdom.dailyCumulativeEventRate [i].interval;
+				if (this.counter >= this.interval) {
+					this.counter = 0;
+					this.firstKingdom.dailyCumulativeEventRate [i].rate += this.firstKingdom.dailyCumulativeEventRate [i].interval;
+				}
 			}
 		}
 //		Task.current.Succeed ();
