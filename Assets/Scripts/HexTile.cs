@@ -504,6 +504,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if(_cityInfo == null) {
             GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
             parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
+            //foreach (Transform child in parentPanel.transform) {
+            //    //child is your child transform
+            //    child.gameObject.layer = LayerMask.NameToLayer("HextileNamePlates");
+            //}
             parentPanel.transform.SetParent(UIParent);
             parentPanel.transform.localPosition = Vector3.zero;
             parentPanel.transform.localScale = Vector3.one;
@@ -537,7 +541,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		if(this._lairItem == null) {
 			GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
 			parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
-			parentPanel.transform.SetParent(UIParent);
+            //foreach (Transform child in parentPanel.transform) {
+            //    //child is your child transform
+            //    child.gameObject.layer = LayerMask.NameToLayer("HextileNamePlates");
+            //}
+            parentPanel.transform.SetParent(UIParent);
 			parentPanel.transform.localPosition = Vector3.zero;
 			parentPanel.transform.localScale = Vector3.one;
 			this._cityInfoParent = parentPanel.transform;
@@ -1027,11 +1035,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     internal void CollectEventOnTile(Kingdom claimant, Citizen citizen = null) {
         if (gameEventInTile != null) {
-            if(citizen != null) {
-                if(citizen.assignedRole is Adventurer) {
-                    ((Adventurer)citizen.assignedRole).SetLatestDiscovery(gameEventInTile);
-                }
-            }
+            //if(citizen != null) {
+            //    if(citizen.assignedRole is Adventurer) {
+            //        ((Adventurer)citizen.assignedRole).SetLatestDiscovery(gameEventInTile);
+            //    }
+            //}
 
             if (gameEventInTile is BoonOfPower) {
                 BoonOfPower boonOfPower = (BoonOfPower)gameEventInTile;
