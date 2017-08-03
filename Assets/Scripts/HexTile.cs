@@ -534,7 +534,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public void ShowLairNamePlate() {
 		if(this._lairItem == null) {
 			GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
-			parentPanel.layer = LayerMask.NameToLayer("UI");
+			parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
 			parentPanel.transform.SetParent(UIParent);
 			parentPanel.transform.localPosition = Vector3.zero;
 			parentPanel.transform.localScale = Vector3.one;
@@ -612,7 +612,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     newColor.a = 0f / 255f;
                     if (isHabitable && isOccupied) {
                         ShowNamePlate();
-                    }
+					}else if (isLair) {
+						ShowLairNamePlate();
+					}
                     if (isOccupied) {
                         ShowStructures();
                     }
@@ -623,7 +625,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     newColor.a = 128f / 255f;
                     if (isHabitable && isOccupied) {
                         ShowNamePlate();
-                    }
+					}else if (isLair) {
+						ShowLairNamePlate();
+					}
                     if (isOccupied) {
                         ShowStructures();
                     }
