@@ -82,8 +82,8 @@ public class StateVisit : GameEvent {
 	internal override void DoneEvent(){
         base.DoneEvent();
 		RelationshipKings relationship = null;
-		if(this.invitedKingdom.isAlive()){
-			relationship = this.invitedKingdom.king.SearchRelationshipByID (this.inviterKingdom.king.id);
+		if(this.inviterKingdom.isAlive()){
+			relationship = this.inviterKingdom.king.SearchRelationshipByID (this.invitedKingdom.king.id);
 		}
 		if(this.isSuccessful){
 			if(relationship != null){
