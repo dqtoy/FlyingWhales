@@ -738,7 +738,7 @@ public class Utilities : MonoBehaviour {
 //	}
 	public static string LogReplacer(Log log){
 		if(log == null){
-			return;
+			return string.Empty;
 		}
 		string replacedWord = string.Empty;
 		List<int> specificWordIndexes = new List<int> ();
@@ -951,7 +951,8 @@ public class Utilities : MonoBehaviour {
 	};
 
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {
-        EVENT_TYPES.ADVENTURE
+        EVENT_TYPES.ADVENTURE,
+        EVENT_TYPES.INVASION_PLAN
     };
 
 	public static string PronounReplacer(string word, object genderSubject){
