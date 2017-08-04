@@ -25,6 +25,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject logItemPrefab;
     public GameObject cityItemPrefab;
 	public GameObject lairItemPrefab;
+	public GameObject hextileEventItemPrefab;
     public GameObject resourceIconPrefab;
     public GameObject playerEventItemPrefab;
     [SerializeField] private GameObject kingdomIntervenePrefab;
