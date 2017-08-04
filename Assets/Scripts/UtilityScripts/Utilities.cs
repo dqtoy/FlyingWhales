@@ -943,6 +943,8 @@ public class Utilities : MonoBehaviour {
 		{"104", LOG_IDENTIFIER.KING_3_PRONOUN_P},
 		{"105", LOG_IDENTIFIER.KING_3_PRONOUN_R},
 		{"106", LOG_IDENTIFIER.OTHER},
+		{"107", LOG_IDENTIFIER.CRIME_DETAILS},
+		{"108", LOG_IDENTIFIER.CRIME_PUNISHMENT},
 	};
 
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {

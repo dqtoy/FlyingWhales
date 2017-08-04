@@ -458,4 +458,10 @@ public class EventCreator: MonoBehaviour {
 		KingdomDiscovery kingdomDiscovery = new KingdomDiscovery (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);
 		return kingdomDiscovery;
 	}
+
+	internal Crime CreateCrimeEvent(Kingdom sourceKingdom, CrimeData crimeData){
+		Crime crime = new Crime (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, crimeData);
+		return crime;
+	}
+
 }

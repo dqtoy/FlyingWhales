@@ -80,6 +80,10 @@ public class Kingdom{
     //FogOfWar
     private FOG_OF_WAR_STATE[,] _fogOfWar;
 
+	//Crimes
+	private CrimeData _crimeData;
+	private CrimeDate _crimeDate;
+
     private float expansionChance = 1f;
     
     protected const int INCREASE_CITY_HP_CHANCE = 5;
@@ -271,7 +275,7 @@ public class Kingdom{
 		this.UpdateTechCapacity ();
 		this.SetSecession (false);
 		this.SetRiot (false);
-
+		this.NewRandomCrimeDate (true);
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
@@ -545,6 +549,7 @@ public class Kingdom{
         this.TriggerKingdomHoliday();
         this.TriggerDevelopWeapons();
         this.TriggerKingsCouncil();
+		this.TriggerCrime ();
     }
 	/*
 	 * Attempt to create an attack city event
@@ -2149,4 +2154,38 @@ public class Kingdom{
 	internal void SetRiot(bool state){
 		this._hasRiot = state;
 	}
+
+	#region Crimes
+	private void NewRandomCrimeDate(bool isFirst = false){
+		int month = 0;
+		int day = 0;
+		if(isFirst){
+			month = UnityEngine.Random.Range (1, 5);
+			day = UnityEngine.Random.Range (1, GameManager.daysInMonth [month] + 1);
+		}else{
+			int lowerBoundMonth = this._crimeDate.month + 3;
+			int upperBoundMonth = lowerBoundMonth + 1;
+
+			month = UnityEngine.Random.Range (lowerBoundMonth, upperBoundMonth + 1);
+			if(month > 12){
+				month -= 12;
+			}
+			day = UnityEngine.Random.Range (1, GameManager.daysInMonth [month] + 1);
+		}
+		this._crimeDate.month = month;
+		this._crimeDate.day = day;
+	} 
+
+	private void TriggerCrime(){
+		if(GameManager.Instance.month == this._crimeDate.month && GameManager.Instance.days == this._crimeDate.day){
+			NewRandomCrimeDate ();
+			CreateCrime ();
+		}
+	}
+
+	private void CreateCrime(){
+		CrimeData crimeData = CrimeEvents.Instance.GetRandomCrime ();
+		EventCreator.Instance.CreateCrimeEvent (this, crimeData);
+	}
+	#endregion
 }
