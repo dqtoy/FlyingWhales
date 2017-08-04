@@ -307,7 +307,7 @@ public class FirstAndKeystone : GameEvent {
 		}else{
 			RelationshipKings relationship = this.firstOwner.king.GetRelationshipWithCitizen(this.keystoneOwner.king);
 			if(relationship != null){
-				relationship.AdjustLikeness(-20, this);
+				relationship.AdjustLikeness(-20, this, ASSASSINATION_TRIGGER_REASONS.FIRST_AND_KEYSTONE_STEAL);
 			}
 		}
 

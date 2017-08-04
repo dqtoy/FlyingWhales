@@ -235,10 +235,10 @@ public class GreatStorm : GameEvent {
 		RelationshipKings relationshipFromSender = senderKingdom.king.GetRelationshipWithCitizen(intercepterKingdom.king);
 		RelationshipKings relationshipFromReceiver = this._affectedKingdom.king.GetRelationshipWithCitizen(intercepterKingdom.king);
 		if(relationshipFromSender != null){
-			relationshipFromSender.AdjustLikeness(-20, this);
+			relationshipFromSender.AdjustLikeness(-20, this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_INTERCEPTER);
 		}
 		if(relationshipFromReceiver != null){
-			relationshipFromReceiver.AdjustLikeness(-20, this);
+			relationshipFromReceiver.AdjustLikeness(-20, this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_INTERCEPTER);
 		}
 	}
 	private void WageWar(){

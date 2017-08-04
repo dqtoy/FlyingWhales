@@ -275,7 +275,7 @@ public class Raid : GameEvent {
 			}
 			RelationshipKings relationship = this.GetRelationship ();
 			if(relationship != null){
-				relationship.AdjustLikeness(-10, this);
+				relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_RAID_NO_DEATH);
 			}
 		}
 	}

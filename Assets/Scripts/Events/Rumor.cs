@@ -119,11 +119,11 @@ public class Rumor : GameEvent {
 			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.WARM){
 				relationshipRumorToTarget.AdjustLikeness(10, this);
 			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.COLD){
-				relationshipRumorToTarget.AdjustLikeness(-10, this);
+				relationshipRumorToTarget.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
-				relationshipRumorToTarget.AdjustLikeness(-15, this);
+				relationshipRumorToTarget.AdjustLikeness(-15, this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
-				relationshipRumorToTarget.AdjustLikeness(-20, this);
+				relationshipRumorToTarget.AdjustLikeness(-20, this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}
 			if(rumorType == RUMOR_TYPE.NEGATIVE){
 				//TODO: Add log - successful negative rumor
@@ -154,7 +154,7 @@ public class Rumor : GameEvent {
 
 					RelationshipKings relationshipRumorToSource = this.rumorKingdom.king.GetRelationshipWithCitizen(this.sourceKingdom.king);
 					if(relationshipRumorToSource != null){
-						relationshipRumorToSource.AdjustLikeness(-20, this);
+						relationshipRumorToSource.AdjustLikeness(-20, this, ASSASSINATION_TRIGGER_REASONS.CAUGHT_RUMOR);
 					}
 				}
 			}
