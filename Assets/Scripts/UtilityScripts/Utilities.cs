@@ -737,6 +737,9 @@ public class Utilities : MonoBehaviour {
 //		return newText;
 //	}
 	public static string LogReplacer(Log log){
+		if(log == null){
+			return;
+		}
 		string replacedWord = string.Empty;
 		List<int> specificWordIndexes = new List<int> ();
 		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
