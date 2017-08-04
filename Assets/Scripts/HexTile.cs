@@ -589,7 +589,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			this._hextileEventItem = namePlateGO.GetComponent<HextileEventItem>();
 			namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.5f, 0f);
 			namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-			EventManager.Instance.onUpdateUI.AddListener(UpdateHextileEventNamePlate);
+//			EventManager.Instance.onUpdateUI.AddListener(UpdateHextileEventNamePlate);
 		}
 		UpdateHextileEventNamePlate();
 		this._hextileEventItem.gameObject.SetActive(true);
@@ -751,7 +751,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._hextileEventItem = null;
         EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);
 		EventManager.Instance.onUpdateUI.RemoveListener(UpdateLairNamePlate);
-		EventManager.Instance.onUpdateUI.RemoveListener(UpdateHextileEventNamePlate);
+//		EventManager.Instance.onUpdateUI.RemoveListener(UpdateHextileEventNamePlate);
 
         if(structureObjOnTile != null) {
             Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year +  " - RUIN STRUCTURE ON: " + this.name);
