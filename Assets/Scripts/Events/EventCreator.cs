@@ -123,7 +123,7 @@ public class EventCreator: MonoBehaviour {
 		return null;
 	}
 
-	internal Assassination CreateAssassinationEvent(Kingdom sourceKingdom, Citizen targetCitizen, GameEvent gameEventTrigger, int remainingDays, WAR_TRIGGER warTrigger){
+	internal Assassination CreateAssassinationEvent(Kingdom sourceKingdom, Citizen targetCitizen, GameEvent gameEventTrigger, int remainingDays, ASSASSINATION_TRIGGER_REASONS assassinationReasons){
 		if(sourceKingdom.isLockedDown || targetCitizen.city.kingdom.isLockedDown){
 			return null;
 		}
@@ -137,7 +137,7 @@ public class EventCreator: MonoBehaviour {
 		if(citizen != null){
 			Spy spy = (Spy)citizen.assignedRole;
 			Assassination assassination = new Assassination(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				sourceKingdom.king, targetCitizen, spy, gameEventTrigger, warTrigger);
+				sourceKingdom.king, targetCitizen, spy, gameEventTrigger, assassinationReasons);
 			spy.Initialize (assassination);
 		}
 		return null;

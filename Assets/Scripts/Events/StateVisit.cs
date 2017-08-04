@@ -191,7 +191,7 @@ public class StateVisit : GameEvent {
 
                         //ASSASSINATION EVENT
                         int remainingDays = this.visitor.path.Sum(x => x.movementDays);
-						Assassination assassination = EventCreator.Instance.CreateAssassinationEvent (selectedKingdom, this.visitor.citizen, this, remainingDays, this.warTrigger);
+						Assassination assassination = EventCreator.Instance.CreateAssassinationEvent (selectedKingdom, this.visitor.citizen, this, remainingDays, ASSASSINATION_TRIGGER_REASONS.STATE_VISIT);
 						if(assassination != null){
 							Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
 							newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name, LOG_IDENTIFIER.KING_1);

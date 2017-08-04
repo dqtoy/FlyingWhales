@@ -984,11 +984,13 @@ public class Citizen {
 		this.successionWars.Remove (enemy);
 	}
 
-	internal void DeteriorateRelationship(RelationshipKings relationship, GameEvent gameEventTrigger, bool isDiscovery, WAR_TRIGGER warTrigger){
+	internal void DeteriorateRelationship(RelationshipKings relationship, GameEvent gameEventTrigger, bool isDiscovery, ASSASSINATION_TRIGGER_REASONS assassinationReasons){
 		//TRIGGER OTHER EVENTS
 //		InvasionPlan (relationship, gameEventTrigger, this.city.kingdom.kingdomTypeData);
 //		BorderConflict (relationship, gameEventTrigger);
-		Assassination (relationship, gameEventTrigger, warTrigger);
+		if(assassinationReasons != ASSASSINATION_TRIGGER_REASONS.NONE){
+			Assassination (relationship, gameEventTrigger, assassinationReasons);
+		}
 	}
 	internal void InvasionPlan(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData){
 		int chance = UnityEngine.Random.Range (0, 100);
@@ -1067,7 +1069,7 @@ public class Citizen {
 
 	}
 
-	private void Assassination(RelationshipKings relationship, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger){
+	private void Assassination(RelationshipKings relationship, GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons){
 		int chance = UnityEngine.Random.Range (0, 100);
 		int value = 0;
 		if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
@@ -1084,7 +1086,7 @@ public class Citizen {
 		}
 
 		if(chance < value){
-			EventCreator.Instance.CreateAssassinationEvent(this.city.kingdom, relationship.king, gameEventTrigger, EventManager.Instance.eventDuration[EVENT_TYPES.ASSASSINATION], warTrigger);
+			EventCreator.Instance.CreateAssassinationEvent(this.city.kingdom, relationship.king, gameEventTrigger, EventManager.Instance.eventDuration[EVENT_TYPES.ASSASSINATION], assassinationReasons);
 		}
 	}
 	/*private Citizen GetSpy(Kingdom kingdom){
@@ -1326,7 +1328,7 @@ public class Citizen {
 			Kingdom targetKingdom = ((Assassination)hiddenEvent).targetCitizen.city.kingdom;
 
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-			relationship.AdjustLikeness (-15, hiddenEvent, true);
+			relationship.AdjustLikeness (-15, hiddenEvent, ASSASSINATION_TRIGGER_REASONS.NONE, true);
 			relationship.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
 				GameManager.Instance.days,
@@ -1342,7 +1344,7 @@ public class Citizen {
 			Kingdom targetKingdom = ((InvasionPlan)hiddenEvent).targetKingdom;
 
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (sourceKingdom.king.id);
-			relationship.AdjustLikeness (-35, hiddenEvent, true);
+			relationship.AdjustLikeness (-35, hiddenEvent, ASSASSINATION_TRIGGER_REASONS.NONE, true);
 
 			relationship.relationshipHistory.Add (new History (
 				GameManager.Instance.month,

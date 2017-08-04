@@ -25,7 +25,7 @@ public class Assassination : GameEvent {
 		}
 	}
 
-	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, Spy spy, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger) : base (startWeek, startMonth, startYear, startedBy){
+	public Assassination(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetCitizen, Spy spy, GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ASSASSINATION;
 		this.eventStatus = EVENT_STATUS.HIDDEN;
 		this.name = "Assassination";
@@ -52,7 +52,7 @@ public class Assassination : GameEvent {
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "event_title");
 		newLogTitle.AddToFillers (null, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", warTrigger.ToString());
+		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "AssassinationReasons", assassinationReasons.ToString());
 		newLog.AddToFillers (this.assassinKingdom.king, this.assassinKingdom.king.name, LOG_IDENTIFIER.KING_1);
 		newLog.AddToFillers (this.assassinKingdom, this.assassinKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (this.spy.citizen, this.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

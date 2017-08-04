@@ -79,7 +79,7 @@ public class SerumOfAlacrity : GameEvent {
 					if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
 						relationship.AdjustLikeness(10, this);
 					}else{
-						relationship.AdjustLikeness(-10, this);
+						relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 					}
 				}
 			}

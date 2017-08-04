@@ -278,9 +278,9 @@ public class SpouseAbduction : GameEvent {
 		if(this.isCompatibleWithTargetKing){
 			InstantWar();
 			if(this.isSpouseDead){
-				if(this.relationshipKing != null){
-					this.relationshipKing.AdjustLikeness (-60, this);
-				}
+//				if(this.relationshipKing != null){
+//					this.relationshipKing.AdjustLikeness (-60, this);
+//				}
 				AdjustRelationshipFromOtherKingdoms (this.abductorKing, -20, CHARACTER_VALUE.LIFE);
 
 				//Add log - instant war because of abduction and death
@@ -291,9 +291,9 @@ public class SpouseAbduction : GameEvent {
 
 				this.DoneEvent ();
 			}else{
-				if(this.relationshipKing != null){
-					this.relationshipKing.AdjustLikeness (-30, this);
-				}
+//				if(this.relationshipKing != null){
+//					this.relationshipKing.AdjustLikeness (-30, this);
+//				}
 				AdjustRelationshipFromOtherKingdoms (this.abductorKing, -20, CHARACTER_VALUE.HONOR);
 
 				Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "compatible_instant_war_alive");
@@ -305,9 +305,9 @@ public class SpouseAbduction : GameEvent {
 			if(this.isSpouseDead){
 				if(this.targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIFE)){
 					InstantWar();
-					if(this.relationshipKing != null){
-						this.relationshipKing.AdjustLikeness (-25, this);
-					}
+//					if(this.relationshipKing != null){
+//						this.relationshipKing.AdjustLikeness (-25, this);
+//					}
 					Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "instant_war_life");
 					newLog2.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
 					newLog2.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -351,9 +351,9 @@ public class SpouseAbduction : GameEvent {
 			}
 		}else if(this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.HONOR) > this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.PEACE)){
 			InstantWar();
-			if (this.relationshipKing != null) {
-				this.relationshipKing.AdjustLikeness (-15, this);
-			}
+//			if (this.relationshipKing != null) {
+//				this.relationshipKing.AdjustLikeness (-15, this);
+//			}
 		}else{
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
@@ -362,9 +362,9 @@ public class SpouseAbduction : GameEvent {
 				}
 			}else{
 				InstantWar();
-				if (this.relationshipKing != null) {
-					this.relationshipKing.AdjustLikeness (-15, this);
-				}
+//				if (this.relationshipKing != null) {
+//					this.relationshipKing.AdjustLikeness (-15, this);
+//				}
 			}
 		}
 		AdjustRelationshipFromOtherKingdoms (this.abductorKing, -20, CHARACTER_VALUE.HONOR);
@@ -455,7 +455,7 @@ public class SpouseAbduction : GameEvent {
 			if(this.otherKingdoms[i].king.importantCharacterValues.ContainsKey(requiredValue)){
 				RelationshipKings relationship = this.otherKingdoms [i].king.GetRelationshipWithCitizen (targetKing);
 				if(relationship != null){
-					relationship.AdjustLikeness (amount, this);
+					relationship.AdjustLikeness (amount, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 				}
 			}
 		}
