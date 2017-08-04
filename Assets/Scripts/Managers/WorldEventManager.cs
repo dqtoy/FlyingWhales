@@ -6,9 +6,12 @@ using System.Linq;
 public class WorldEventManager : MonoBehaviour {
 	public static WorldEventManager Instance;
 
+	public int altarOfBlessingQuantity;
+
 	internal EVENT_TYPES currentInterveneEvent;
 
 	private List<GameEvent> currentWorldEvents;
+
 
 	void Awake(){
 		Instance = this;
@@ -72,21 +75,26 @@ public class WorldEventManager : MonoBehaviour {
 		}
 	}
 	internal void AltarOfBlessingTrigger(){
-		int chance = UnityEngine.Random.Range (0, 2);
-		if(chance == 0){
-			List<HexTile> filteredHextile = new List<HexTile> ();
-			for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
-				HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
-				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE){
-					List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
-					if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
-						filteredHextile.Add (hexTile);
-					}
+		List<HexTile> filteredHextile = new List<HexTile> ();
+		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+			HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
+			if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE){
+				List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
+				if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
+					filteredHextile.Add (hexTile);
 				}
 			}
-			HexTile targetHextile = filteredHextile [UnityEngine.Random.Range (0, filteredHextile.Count)];
-			EventCreator.Instance.CreateAltarOfBlessingEvent (targetHextile);
 		}
+		if(filteredHextile.Count > 0){
+			for (int i = 0; i < this.altarOfBlessingQuantity; i++) {
+				int index = UnityEngine.Random.Range (0, filteredHextile.Count);
+				HexTile targetHextile = filteredHextile [index];
+				filteredHextile.RemoveAt (index);
+				EventCreator.Instance.CreateAltarOfBlessingEvent (targetHextile);
+			}
+		}
+
+
 	}
 	internal void AddWorldEvent(GameEvent gameEvent){
 		this.currentWorldEvents.Add(gameEvent);
