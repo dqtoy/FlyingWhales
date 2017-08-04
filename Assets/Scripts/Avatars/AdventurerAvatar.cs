@@ -6,7 +6,7 @@ using System.Linq;
 
 public class AdventurerAvatar : CitizenAvatar {
 
-    public HexTile newTargetTile;
+    [SerializeField] private HexTile newTargetTile = null;
 
     #region Overrides
     internal override void Move() {
@@ -39,44 +39,30 @@ public class AdventurerAvatar : CitizenAvatar {
             Task.current.Succeed();
             return;
         }
-
         Kingdom kingdomOfAdventurer = this.citizenRole.citizen.city.kingdom;
 
-        List<HexTile> hiddenNeighbours = this.citizenRole.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER
+        List<HexTile> hiddenNeighbours = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag
             && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
 
         if (hiddenNeighbours.Count > 0) {
             //choose from hidden neighbours
             newTargetTile = hiddenNeighbours[Random.Range(0, hiddenNeighbours.Count)];
         } else {
-            //get nearest hidden tile as target
-            List<HexTile> allHiddenTiles = GridMap.Instance.listHexes
-                .Where(x => x.GetComponent<HexTile>().elevationType != ELEVATION.WATER 
-                && kingdomOfAdventurer.fogOfWar[x.GetComponent<HexTile>().xCoordinate, x.GetComponent<HexTile>().yCoordinate] == FOG_OF_WAR_STATE.HIDDEN)
-                .Select(x => x.GetComponent<HexTile>()).ToList();
+            //get nearest elligible hidden tile as target
+            List<HexTile> elligibleHiddenTiles = GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())
+                .Where(x => x.tag == this.citizenRole.location.tag 
+                && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
 
-            allHiddenTiles = allHiddenTiles.OrderBy(x => Vector2.Distance(this.citizenRole.location.transform.position, x.transform.position)).ToList();
-            if(allHiddenTiles.Count > 0) {
-                HexTile nearestHiddenTile = null;
-                List<HexTile> elligibleNeighbours = new List<HexTile>();
-                for (int i = 0; i < allHiddenTiles.Count; i++) {
-                    HexTile currTile = allHiddenTiles[i];
-                    elligibleNeighbours = currTile.AllNeighbours
-                        .Where(x => x.elevationType != ELEVATION.WATER && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN).ToList();
-
-                    if (PathGenerator.Instance.GetPath(this.citizenRole.location, currTile, PATHFINDING_MODE.AVATAR) != null) {
-                        nearestHiddenTile = currTile;
-                        break;
-                    }
-                }
-                if(nearestHiddenTile != null) {
-                    newTargetTile = elligibleNeighbours
-                        .OrderBy(x => Vector2.Distance(this.citizenRole.location.transform.position, x.transform.position)).FirstOrDefault();
-                }
+            if(elligibleHiddenTiles.Count > 0) {
+                //if there is an elligible hidden tile, get the nearest
+                //order tiles by nearest from the citizens location
+                elligibleHiddenTiles = elligibleHiddenTiles.OrderBy(x => this.citizenRole.location.GetDistanceTo(x)).ToList();
+                newTargetTile = elligibleHiddenTiles.FirstOrDefault();
             } else {
                 //if no more hidden tiles choose from seen or visible neighbours
-                List<HexTile> tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER
+                List<HexTile> tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag
                     && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN).ToList();
+
                 List<HexTile> hexTilesWithEvents = tilesToChooseFrom.Where(x => x.gameEventInTile != null).ToList();
                 if (hexTilesWithEvents.Count > 0) {
                     tilesToChooseFrom = hexTilesWithEvents;
@@ -85,20 +71,9 @@ public class AdventurerAvatar : CitizenAvatar {
             }
         }
 
-        //List<HexTile> tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER 
-        //    && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.VISIBLE).ToList();
-
-        //if (tilesToChooseFrom.Count <= 0) {
-        //    tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
-        //}
-        //List<HexTile> hexTilesWithEvents = tilesToChooseFrom.Where(x => x.gameEventInTile != null).ToList();
-        //if (hexTilesWithEvents.Count > 0) {
-        //    tilesToChooseFrom = hexTilesWithEvents;
-        //}
-
         if (newTargetTile != null) {
             this.citizenRole.targetLocation = newTargetTile;
-            this.citizenRole.path = PathGenerator.Instance.GetPath(this.citizenRole.location, this.citizenRole.targetLocation, PATHFINDING_MODE.AVATAR);
+            this.citizenRole.path = PathGenerator.Instance.GetPath(this.citizenRole.citizen.currentLocation, newTargetTile, PATHFINDING_MODE.AVATAR);
             this.citizenRole.daysBeforeMoving = this.citizenRole.path[0].movementDays;
             Task.current.Succeed();
         } else {
@@ -130,13 +105,12 @@ public class AdventurerAvatar : CitizenAvatar {
     [Task]
     public void HasArrivedAtTargetHextile() {
         if (this.citizenRole.location == this.citizenRole.targetLocation) {
-            if (!hasArrived) {
+                this.citizenRole.targetLocation = null;
                 newTargetTile = null;
                 //this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
                 //GetNextTargetTile();
                 //SetHasArrivedState(true);
                 //this.citizenRole.Attack();
-            }
             Task.current.Succeed();
         } else {
             Task.current.Fail();

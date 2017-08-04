@@ -1091,7 +1091,14 @@ public class Utilities : MonoBehaviour {
 	public static void SetSpriteSortingLayer(SpriteRenderer sprite, string layerName){
 		sprite.sortingLayerName = layerName;
 	}
-	public static bool CanReachInTime(EVENT_TYPES eventType, List<HexTile> path, int duration){
+
+    public static void SetLayerRecursively(GameObject go, int layerNumber) {
+        foreach (Transform trans in go.GetComponentsInChildren<Transform>(true)) {
+            trans.gameObject.layer = layerNumber;
+        }
+    }
+
+    public static bool CanReachInTime(EVENT_TYPES eventType, List<HexTile> path, int duration){
 		switch (eventType) {
 		case EVENT_TYPES.STATE_VISIT:
 			return true;
