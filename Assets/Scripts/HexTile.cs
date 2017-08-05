@@ -1033,6 +1033,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 ((AltarOfBlessing)gameEvent).avatar = GameObject.Instantiate(Resources.Load("GameObjects/AltarOfBlessing"), gameEventObjectsParentGO.transform) as GameObject;
                 ((AltarOfBlessing)gameEvent).avatar.transform.localPosition = Vector3.zero;
                 ((AltarOfBlessing)gameEvent).avatar.GetComponent<AltarOfBlessingAvatar>().Init((AltarOfBlessing)gameEvent);
+            } else if(gameEvent is DevelopWeapons) {
+                DevelopWeapons currEvent = (DevelopWeapons)gameEvent;
+                currEvent.avatar = GameObject.Instantiate(Resources.Load("GameObjects/SacredWeapon"), gameEventObjectsParentGO.transform) as GameObject;
+                currEvent.avatar.transform.localPosition = Vector3.zero;
+                currEvent.avatar.GetComponent<DevelopWeaponsAvatar>().Init(currEvent);
             }
 			ShowHextileEventNamePlate();
         }
@@ -1105,7 +1110,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			} else if (gameEventInTile is AltarOfBlessing) {
 				AltarOfBlessing altarOfBlessing = (AltarOfBlessing)gameEventInTile;
 				altarOfBlessing.TransferAltarOfBlessing(claimant, citizen);
-			}
+			}else if(gameEventInTile is DevelopWeapons) {
+                if(claimant.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) 
+                    || claimant.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+                    DevelopWeapons developWeapons = (DevelopWeapons)gameEventInTile;
+                    developWeapons.ClaimWeapon(claimant);
+                }
+            }
         }
     }
 

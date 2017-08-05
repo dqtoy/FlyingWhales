@@ -382,11 +382,9 @@ public class EventCreator: MonoBehaviour {
         return kingdomHoliday;
     }
 
-    internal DevelopWeapons CreateDevelopWeaponsEvent(Kingdom sourceKingdom) {
-		if(sourceKingdom.isLockedDown){
-			return null;
-		}
-        DevelopWeapons developWeapons = new DevelopWeapons(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom);
+    internal DevelopWeapons CreateDevelopWeaponsEvent(HexTile hexTile) {
+        DevelopWeapons developWeapons = new DevelopWeapons(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, hexTile);
+        WorldEventManager.Instance.ResetCurrentInterveneEvent();
         return developWeapons;
     }
 
@@ -409,7 +407,7 @@ public class EventCreator: MonoBehaviour {
 		WorldEventManager.Instance.ResetCurrentInterveneEvent();
 		return altarOfBlessing;
 	}
-    
+
     internal Adventure CreateAdventureEvent(Kingdom sourceKingdom) {
 		if(sourceKingdom.isLockedDown){
 			return null;

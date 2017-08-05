@@ -547,7 +547,7 @@ public class Kingdom{
         this.TriggerSlavesMerchant();
         this.TriggerHypnotism();
         this.TriggerKingdomHoliday();
-        this.TriggerDevelopWeapons();
+        //this.TriggerDevelopWeapons();
         this.TriggerKingsCouncil();
 		this.TriggerCrime ();
     }
@@ -2037,17 +2037,17 @@ public class Kingdom{
     internal void AdjustWeaponsCount(int adjustment) {
         _weaponsCount += adjustment;
     }
-    protected void TriggerDevelopWeapons() {
-        if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
-            if (Utilities.IsCurrentDayMultipleOf(5)) {
-                if (UnityEngine.Random.Range(0, 100) < 10) {
-                    if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.DEVELOP_WEAPONS }).Count <= 0) {
-                        EventCreator.Instance.CreateDevelopWeaponsEvent(this);
-                    }
-                }
-            }
-        }
-    }
+    //protected void TriggerDevelopWeapons() {
+    //    if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
+    //        if (Utilities.IsCurrentDayMultipleOf(5)) {
+    //            if (UnityEngine.Random.Range(0, 100) < 10) {
+    //                if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.DEVELOP_WEAPONS }).Count <= 0) {
+    //                    //EventCreator.Instance.CreateDevelopWeaponsEvent(this);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Kings Council
