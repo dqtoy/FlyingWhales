@@ -33,6 +33,8 @@ public class PlayerEvent {
 	internal bool relationshipHasDeteriorated;
 	internal bool relationshipHasImproved;
 
+	internal List<Kingdom> affectedKingdoms;
+
 	protected Citizen _startedBy;
 	protected WAR_TRIGGER _warTrigger;
 
@@ -71,6 +73,7 @@ public class PlayerEvent {
 		this.relationshipHasDeteriorated = false;
 		this.relationshipHasImproved = false;
 		this.logs = new List<Log>();
+		this.affectedKingdoms = new List<Kingdom> ();
 		this._startDate = new DateTime (this.startYear, this.startMonth, this.startDay);
 		if(this._startedBy != null){
 			this.startedByKingdom = _startedBy.city.kingdom;

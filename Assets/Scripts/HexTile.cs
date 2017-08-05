@@ -98,6 +98,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private Transform _cityInfoParent;
     private CityItem _cityInfo;
 	private LairItem _lairItem;
+	private HextileEventItem _hextileEventItem;
 	private GameObject plagueIcon;
 
     [System.NonSerialized] public List<HexTile> connectedTiles = new List<HexTile>();
@@ -128,6 +129,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	public LairItem lairItem{
 		get { return this._lairItem; }
+	}
+	public HextileEventItem hextileEventItem{
+		get { return this._hextileEventItem; }
 	}
 	public GameEvent gameEventInTile{
 		get { return this._gameEventInTile; }
@@ -568,6 +572,37 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._lairItem.gameObject.SetActive(false);
 	}
 
+	public void ShowHextileEventNamePlate() {
+		if(this._hextileEventItem == null) {
+			GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
+			parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
+			//foreach (Transform child in parentPanel.transform) {
+			//    //child is your child transform
+			//    child.gameObject.layer = LayerMask.NameToLayer("HextileNamePlates");
+			//}
+			parentPanel.transform.SetParent(UIParent);
+			parentPanel.transform.localPosition = Vector3.zero;
+			parentPanel.transform.localScale = Vector3.one;
+			this._cityInfoParent = parentPanel.transform;
+
+			GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.hextileEventItemPrefab, parentPanel.transform);
+			this._hextileEventItem = namePlateGO.GetComponent<HextileEventItem>();
+			namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.5f, 0f);
+			namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
+//			EventManager.Instance.onUpdateUI.AddListener(UpdateHextileEventNamePlate);
+		}
+		UpdateHextileEventNamePlate();
+		this._hextileEventItem.gameObject.SetActive(true);
+	}
+
+	public void UpdateHextileEventNamePlate() {
+		this._hextileEventItem.SetHextileEvent(this._gameEventInTile);
+	}
+
+	public void HideHextileEventNamePlate() {
+		this._hextileEventItem.gameObject.SetActive(false);
+	}
+
    // public void ShowOccupiedSprite() {
    //     //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
    //     GameObject[] structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.GENERIC);
@@ -625,6 +660,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 					}else if (isLair) {
 						ShowLairNamePlate();
 					}
+					if(gameEventInTile != null){
+						ShowHextileEventNamePlate ();
+					}
                     if (isOccupied) {
                         ShowStructures();
                     }
@@ -638,6 +676,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 					}else if (isLair) {
 						ShowLairNamePlate();
 					}
+					if(gameEventInTile != null){
+						ShowHextileEventNamePlate ();
+					}
                     if (isOccupied) {
                         ShowStructures();
                     }
@@ -648,7 +689,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     newColor.a = 255f / 255f;
                     if (isHabitable && isOccupied) {
                         HideNamePlate();
-                    }
+					}else if (isLair) {
+						HideLairNamePlate();
+					}
+					if(gameEventInTile != null){
+						HideHextileEventNamePlate ();
+					}
                     if (isOccupied) {
                         HideStructures();
                     }
@@ -702,8 +748,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.kingdomColorSprite.gameObject.SetActive(false);
 		this._cityInfo = null;
 		this._lairItem = null;
+		this._hextileEventItem = null;
         EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);
 		EventManager.Instance.onUpdateUI.RemoveListener(UpdateLairNamePlate);
+//		EventManager.Instance.onUpdateUI.RemoveListener(UpdateHextileEventNamePlate);
 
         if(structureObjOnTile != null) {
             Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year +  " - RUIN STRUCTURE ON: " + this.name);
@@ -986,10 +1034,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 ((AltarOfBlessing)gameEvent).avatar.transform.localPosition = Vector3.zero;
                 ((AltarOfBlessing)gameEvent).avatar.GetComponent<AltarOfBlessingAvatar>().Init((AltarOfBlessing)gameEvent);
             }
+			ShowHextileEventNamePlate();
         }
 	}
 	internal void RemoveEventOnTile(){
 		this._gameEventInTile = null;
+		Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
+		for (int i = 0; i < children.Length; i++) {
+			if(children[i].gameObject.tag == "EventTileNameplate"){
+				Destroy(children[i].gameObject);
+			}
+		}
 	}
 	internal GameEvent GetEventFromTile(){
 		return this._gameEventInTile;
@@ -1047,7 +1102,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             } else if (gameEventInTile is FirstAndKeystone) {
                 FirstAndKeystone firstAndKeystone = (FirstAndKeystone)gameEventInTile;
                 firstAndKeystone.TransferKeystone(claimant, citizen);
-                RemoveEventOnTile();
 			} else if (gameEventInTile is AltarOfBlessing) {
 				AltarOfBlessing altarOfBlessing = (AltarOfBlessing)gameEventInTile;
 				altarOfBlessing.TransferAltarOfBlessing(claimant, citizen);

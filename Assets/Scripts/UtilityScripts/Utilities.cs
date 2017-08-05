@@ -737,6 +737,9 @@ public class Utilities : MonoBehaviour {
 //		return newText;
 //	}
 	public static string LogReplacer(Log log){
+		if(log == null){
+			return string.Empty;
+		}
 		string replacedWord = string.Empty;
 		List<int> specificWordIndexes = new List<int> ();
 		string newText = LocalizationManager.Instance.GetLocalizedValue (log.category, log.file, log.key);
@@ -943,10 +946,13 @@ public class Utilities : MonoBehaviour {
 		{"104", LOG_IDENTIFIER.KING_3_PRONOUN_P},
 		{"105", LOG_IDENTIFIER.KING_3_PRONOUN_R},
 		{"106", LOG_IDENTIFIER.OTHER},
+		{"107", LOG_IDENTIFIER.CRIME_DETAILS},
+		{"108", LOG_IDENTIFIER.CRIME_PUNISHMENT},
 	};
 
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {
-        EVENT_TYPES.ADVENTURE
+        EVENT_TYPES.ADVENTURE,
+        EVENT_TYPES.INVASION_PLAN
     };
 
 	public static string PronounReplacer(string word, object genderSubject){

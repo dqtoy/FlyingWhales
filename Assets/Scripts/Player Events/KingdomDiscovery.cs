@@ -11,6 +11,8 @@ public class KingdomDiscovery : PlayerEvent {
 		this.name = "Kingdom Discovery";
 		this.discovererKingdom = this.startedByKingdom;
 		this.discoveredKingdom = discoveredKingdom;
+		this.affectedKingdoms.Add (this.discovererKingdom);
+		this.affectedKingdoms.Add (this.discoveredKingdom);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "KingdomDiscovery", "event_title");
 		newLogTitle.AddToFillers (this.discovererKingdom, this.discovererKingdom.name, LOG_IDENTIFIER.KINGDOM_1);

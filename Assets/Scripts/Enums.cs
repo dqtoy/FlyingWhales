@@ -241,6 +241,7 @@ public enum EVENT_TYPES{
 }
 public enum PLAYER_EVENT{
 	KINGDOM_DISCOVERY,
+	CRIME,
 }
 public enum EVENT_STATUS{
 	EXPOSED,
@@ -467,6 +468,8 @@ public enum LOG_IDENTIFIER{
 	KING_3_PRONOUN_O,
 	KING_3_PRONOUN_P,
 	KING_3_PRONOUN_R,
+	CRIME_DETAILS,
+	CRIME_PUNISHMENT,
 	OTHER,
 }
 
@@ -489,4 +492,10 @@ public enum MONSTER{
 public enum STRUCTURE_STATE {
     NORMAL,
     RUINED,
+}
+
+public enum PUNISHMENT{
+	NO,
+	LIGHT,
+	HARSH,
 }

@@ -133,7 +133,7 @@ public class FirstAndKeystone : GameEvent {
 		this.keystoneOwner = kingdom;
 		ChangeKeystonePlacement();
 		GameObject.Destroy (this.avatar);
-
+		this.hexTileSpawnPoint.RemoveEventOnTile();
 		onPerformAction += AttemptVisit;
 //		if(citizen == null){
 //			//Discovered by structure/tile

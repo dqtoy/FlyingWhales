@@ -25,6 +25,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject logItemPrefab;
     public GameObject cityItemPrefab;
 	public GameObject lairItemPrefab;
+	public GameObject hextileEventItemPrefab;
     public GameObject resourceIconPrefab;
     public GameObject playerEventItemPrefab;
     [SerializeField] private GameObject kingdomIntervenePrefab;
@@ -1378,11 +1379,13 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 	public void ShowPlayerEventsOfType(PlayerEvent playerEvent){
-		if(this.currentlyShowingLogObject != null){
-			this.eventLogsQueue.Add (playerEvent);
-		}else{
-			Pause();
-			ShowEventLogs(playerEvent);
+		if (playerEvent.affectedKingdoms.Contains(this.currentlyShowingKingdom)) {
+			if (this.currentlyShowingLogObject != null) {
+				this.eventLogsQueue.Add (playerEvent);
+			} else {
+				Pause ();
+				ShowEventLogs (playerEvent);
+			}
 		}
 	}
 
