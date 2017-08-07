@@ -16,8 +16,15 @@ public class EventCreator: MonoBehaviour {
 		if(kingdom.capitalCity == null){
 			return null;
 		}
-		HexTile hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile (kingdom.cities [0]);
-		if(hexTileToExpandTo == null){
+        HexTile hexTileToExpandTo = null;
+        if (KingdomManager.Instance.useFogOfWar) {
+            hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(kingdom);
+        } else {
+            hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile(kingdom.cities[0]);
+        }
+        //HexTile hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile (kingdom.cities [0]);
+        
+        if (hexTileToExpandTo == null){
 			return null;
 		}
 		Citizen expander = kingdom.capitalCity.CreateAgent (ROLE.EXPANDER, EVENT_TYPES.EXPANSION, hexTileToExpandTo, EventManager.Instance.eventDuration[EVENT_TYPES.EXPANSION]);

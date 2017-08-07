@@ -84,8 +84,9 @@ public class Kingdom{
 	private CrimeData _crimeData;
 	private CrimeDate _crimeDate;
 
+    //Expansion
     private float expansionChance = 1f;
-    
+
     protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
     protected const int GOLD_GAINED_FROM_TRADE = 10;
@@ -588,12 +589,12 @@ public class Kingdom{
         float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = UnityEngine.Random.Range (0, upperBound);
 		if (chance < this.expansionChance) {
-			Debug.Log ("Expansion Rate: " + this.expansionChance);		
-			List<City> citiesThatCanExpand = new List<City> ();
-			List<Citizen> allUnassignedAdultCitizens = new List<Citizen> ();
-			List<Resource> expansionCost = new List<Resource> () {
-				new Resource (BASE_RESOURCE_TYPE.GOLD, 0)
-			};
+			//Debug.Log ("Expansion Rate: " + this.expansionChance);		
+			//List<City> citiesThatCanExpand = new List<City> ();
+			//List<Citizen> allUnassignedAdultCitizens = new List<Citizen> ();
+			//List<Resource> expansionCost = new List<Resource> () {
+			//	new Resource (BASE_RESOURCE_TYPE.GOLD, 0)
+			//};
 
 			if (this.cities.Count > 0) {
 				EventCreator.Instance.CreateExpansionEvent (this);
