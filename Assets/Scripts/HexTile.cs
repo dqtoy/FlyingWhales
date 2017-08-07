@@ -501,40 +501,67 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         return structureGO;
     }
 
-    public void ShowNamePlate() {
-        //this.cityNameGO.SetActive(true);
-        //this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
-        //this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
-        if(_cityInfo == null) {
-            GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
-            parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
-            //foreach (Transform child in parentPanel.transform) {
-            //    //child is your child transform
-            //    child.gameObject.layer = LayerMask.NameToLayer("HextileNamePlates");
-            //}
-            parentPanel.transform.SetParent(UIParent);
-            parentPanel.transform.localPosition = Vector3.zero;
-            parentPanel.transform.localScale = Vector3.one;
-            this._cityInfoParent = parentPanel.transform;
-
-            GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
-            this._cityInfo = namePlateGO.GetComponent<CityItem>();
-            namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
-            namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-            EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
+    public void CreateCityNamePlate(City city) {
+        Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
+        if(_cityInfo != null) {
+            _cityInfo.SetCity(city);
+            UIPanel namePlatePanel = UIParent.GetComponentsInChildren<UIPanel>().Where(x => x.name.Equals("NamePlatePanel")).FirstOrDefault();
+            Destroy(namePlatePanel);
         }
+
+        GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
+        parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
+        parentPanel.transform.SetParent(UIParent);
+        parentPanel.transform.localPosition = Vector3.zero;
+        parentPanel.transform.localScale = Vector3.one;
+        this._cityInfoParent = parentPanel.transform;
+
+        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
+        this._cityInfo = namePlateGO.GetComponent<CityItem>();
+        namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
+        namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
+        EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
+
+        UpdateNamePlate();
+    }
+
+    public void ShowNamePlate() {
+        ////this.cityNameGO.SetActive(true);
+        ////this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
+        ////this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
+        //if(_cityInfo == null) {
+        //    GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
+        //    parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
+        //    //foreach (Transform child in parentPanel.transform) {
+        //    //    //child is your child transform
+        //    //    child.gameObject.layer = LayerMask.NameToLayer("HextileNamePlates");
+        //    //}
+        //    parentPanel.transform.SetParent(UIParent);
+        //    parentPanel.transform.localPosition = Vector3.zero;
+        //    parentPanel.transform.localScale = Vector3.one;
+        //    this._cityInfoParent = parentPanel.transform;
+
+        //    GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
+        //    this._cityInfo = namePlateGO.GetComponent<CityItem>();
+        //    namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
+        //    namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
+        //    EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
+        //}
 		UpdateNamePlate();
         this.cityInfo.gameObject.SetActive(true);
     }
 
     public void UpdateNamePlate() {
-        if(UIManager.Instance.currentlyShowingKingdom != null) {
-            if (UIManager.Instance.currentlyShowingKingdom.fogOfWar[xCoordinate, yCoordinate] == FOG_OF_WAR_STATE.VISIBLE) {
+        if (KingdomManager.Instance.useFogOfWar) {
+            if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
                 this._cityInfo.SetCity(this.city);
-            } else if (UIManager.Instance.currentlyShowingKingdom.fogOfWar[xCoordinate, yCoordinate] == FOG_OF_WAR_STATE.SEEN) {
+            } else if (_currFogOfWarState == FOG_OF_WAR_STATE.SEEN) {
                 this._cityInfo.SetCity(this.city, false, true);
             }
+        } else {
+            this._cityInfo.SetCity(this.city);
         }
+        
     }
 
     public void HideNamePlate() {
