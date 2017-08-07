@@ -502,7 +502,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void CreateCityNamePlate(City city) {
-        Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
+        //Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
         if(_cityInfo != null) {
             _cityInfo.SetCity(city);
             UIPanel namePlatePanel = UIParent.GetComponentsInChildren<UIPanel>().Where(x => x.name.Equals("NamePlatePanel")).FirstOrDefault();
