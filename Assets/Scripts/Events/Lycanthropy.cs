@@ -71,8 +71,13 @@ public class Lycanthropy : GameEvent {
      * will choose. This will not add that citizen's
      * kingdom to the appropriate list.
      * */
-    private EVENT_APPROACH DetermineApproach(Citizen citizen, bool forGovernorDecision = false) {
-        Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharacterValues;
+    private EVENT_APPROACH DetermineApproach(object obj, bool forGovernorDecision = false) {
+        Dictionary<CHARACTER_VALUE, int> importantCharVals = null;
+        if (obj is Citizen) {
+            importantCharVals = ((Citizen)obj).importantCharacterValues;
+        } else if (obj is Kingdom){
+            importantCharVals = ((Kingdom)obj).importantCharacterValues;
+        }
 
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
 
@@ -101,7 +106,7 @@ public class Lycanthropy : GameEvent {
 
                 if (priotiyValue.Key == CHARACTER_VALUE.LIBERTY) {
                     chosenApproach = EVENT_APPROACH.HUMANISTIC;
-                } else if (priotiyValue.Key == CHARACTER_VALUE.DOMINATION && ((Governor)citizen.assignedRole).loyalty < 0) {
+                } else if (priotiyValue.Key == CHARACTER_VALUE.DOMINATION && ((Governor)((Citizen)obj).assignedRole).loyalty <= 0) {
                     chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
                 } else {
                     chosenApproach = EVENT_APPROACH.PRAGMATIC;
@@ -346,6 +351,15 @@ public class Lycanthropy : GameEvent {
             } else {
                 gov.AddEventModifier((int)(-20 * multiplier), "Lycanthrope handling", this);
             }
+        }
+    }
+
+    private void ChangeUnrestAfterApproach(Kingdom kingdom, EVENT_APPROACH chosenApproach) {
+        EVENT_APPROACH approachOfKingdom = DetermineApproach(kingdom);
+        if(approachOfKingdom == chosenApproach) {
+            kingdom.AdjustUnrest(-10);
+        } else {
+            kingdom.AdjustUnrest(10);
         }
     }
     #endregion

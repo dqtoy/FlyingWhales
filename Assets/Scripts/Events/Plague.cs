@@ -362,6 +362,7 @@ public class Plague : GameEvent {
 
         this.ChangeKingRelationshipsAfterApproach(citizen, chosenApproach);
         this.ChangeLoyaltyAfterApproach(citizen, chosenApproach);
+        this.ChangeUnrestAfterApproach(citizen.city.kingdom, chosenApproach);
 
         return chosenApproach;
     }
@@ -391,13 +392,26 @@ public class Plague : GameEvent {
         }
     }
 
+    private void ChangeUnrestAfterApproach(Kingdom kingdom, EVENT_APPROACH chosenApproach) {
+        if(DetermineApproach(kingdom) == chosenApproach) {
+            kingdom.AdjustUnrest(-10);
+        } else {
+            kingdom.AdjustUnrest(10);
+        }
+    }
+
     /*
      * Determine what approach a citizen
      * will choose. This will not add that citizen's
      * kingdom to the appropriate list.
      * */
-    private EVENT_APPROACH DetermineApproach(Citizen citizen) {
-        Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharacterValues;
+    private EVENT_APPROACH DetermineApproach(object obj) {
+        Dictionary<CHARACTER_VALUE, int> importantCharVals = null;
+        if(obj is Citizen) {
+            importantCharVals = ((Citizen)obj).importantCharacterValues;
+        } else if(obj is Kingdom) {
+            importantCharVals = ((Kingdom)obj).importantCharacterValues;
+        }
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
         if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.EQUALITY) ||
             importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD)) {

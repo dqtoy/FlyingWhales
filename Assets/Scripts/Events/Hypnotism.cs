@@ -78,6 +78,12 @@ public class Hypnotism : GameEvent {
                     ((Governor)currGovernor.assignedRole).AddEventModifier(-20, "Hypnotism of " + _targetKingdom.king + " reaction", this);
                 }
             }
+
+            if (_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
+                _sourceKingdom.AdjustUnrest(-10);
+            } else {
+                _sourceKingdom.AdjustUnrest(10);
+            }
         }
         DoneEvent();
     }

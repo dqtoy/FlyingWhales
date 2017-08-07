@@ -130,5 +130,18 @@ public class DevelopWeapons : GameEvent {
                 }
             }
         }
+
+        //Kingdom
+        if(_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) ||
+            _sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+            KeyValuePair<CHARACTER_VALUE, int> priorityValue = _sourceKingdom.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
+                || x.Key == CHARACTER_VALUE.TRADITION);
+
+            if (priorityValue.Key == chosenValue) {
+                _sourceKingdom.AdjustUnrest(-10);
+            } else {
+                _sourceKingdom.AdjustUnrest(10);
+            }
+        }
     }
 }

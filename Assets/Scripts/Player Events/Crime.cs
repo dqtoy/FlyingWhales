@@ -37,6 +37,7 @@ public class Crime : PlayerEvent {
 			punishmentDetails = LocalizationManager.Instance.GetLocalizedValue ("Crimes", this.crimeData.fileName, "harsh_punishment");
 		}
 
+        KingdomReaction();
 		GovernorReactions ();
 		OtherKingsReactions ();
 
@@ -49,8 +50,8 @@ public class Crime : PlayerEvent {
 
 	}
 
-	private PUNISHMENT GetPunishment(Citizen citizen){
-		int value = GetPunishmentValue (citizen);
+	private PUNISHMENT GetPunishment(object obj){
+		int value = GetPunishmentValue (obj);
 		if(value > 0){
 			return PUNISHMENT.NO;
 		}else if(value < 0){
@@ -59,9 +60,14 @@ public class Crime : PlayerEvent {
 			return PUNISHMENT.LIGHT;
 		}
 	}
-	private int GetPunishmentValue(Citizen citizen){
+	private int GetPunishmentValue(object obj){
 		int value = 0;
-		List<CHARACTER_VALUE> charValues = new List<CHARACTER_VALUE>(citizen.importantCharacterValues.Keys); 
+		List<CHARACTER_VALUE> charValues = null; 
+        if(obj is Citizen) {
+            charValues = new List<CHARACTER_VALUE>(((Citizen)obj).importantCharacterValues.Keys);
+        } else if(obj is Kingdom) {
+            charValues = new List<CHARACTER_VALUE>(((Kingdom)obj).importantCharacterValues.Keys);
+        }
 		for (int i = 0; i < charValues.Count; i++) {
 			if(this.crimeData.positiveValues.Contains(charValues[i])){
 				value += 1;
@@ -105,7 +111,24 @@ public class Crime : PlayerEvent {
 		}
 	}
 
-	private void OtherKingsReactions(){
+    private void KingdomReaction() {
+        PUNISHMENT kingdomPunishment = GetPunishment(kingdom);
+        if (kingdomPunishment == this.kingPunishment) {
+            kingdom.AdjustUnrest(-10);
+        } else {
+            if (this.kingPunishment == PUNISHMENT.NO) {
+                if (kingdomPunishment == PUNISHMENT.HARSH) {
+                    kingdom.AdjustUnrest(10);
+                }
+            } else {
+                if (kingdomPunishment == PUNISHMENT.NO) {
+                    kingdom.AdjustUnrest(10);
+                }
+            }
+        }
+    }
+
+    private void OtherKingsReactions(){
 		List<Kingdom> otherKingdoms = this.kingdom.discoveredKingdoms;
 		if(otherKingdoms != null && otherKingdoms.Count > 0){
 			for (int i = 0; i < otherKingdoms.Count; i++) {

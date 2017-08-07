@@ -47,6 +47,7 @@ public class SerumOfAlacrity : GameEvent {
 		int numberOfSerum = UnityEngine.Random.Range(5,11);
 		this.kingdom.AdjustSerumOfAlacrity(numberOfSerum);
 
+        KingdomReaction();
 		GovernorReactions();
 		OtherKingsReactions();
 
@@ -70,6 +71,14 @@ public class SerumOfAlacrity : GameEvent {
 		}
 	}
 
+    private void KingdomReaction() {
+        if (this.kingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
+            this.kingdom.AdjustUnrest(-10);
+        } else {
+            this.kingdom.AdjustUnrest(10);
+        }
+    }
+
 	private void OtherKingsReactions(){
 		List<Kingdom> otherKingdoms = this.kingdom.discoveredKingdoms;
 		if(otherKingdoms != null && otherKingdoms.Count > 0){
@@ -77,10 +86,12 @@ public class SerumOfAlacrity : GameEvent {
 				RelationshipKings relationship = otherKingdoms[i].king.GetRelationshipWithCitizen(this.kingdom.king);
 				if(relationship != null){
 					if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
-						relationship.AdjustLikeness(10, this);
-					}else{
-						relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-					}
+                        //relationship.AdjustLikeness(10, this);
+                        relationship.AddEventModifier(10, "Opposing strength values", this);
+                    } else {
+                        //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+                        relationship.AddEventModifier(-10, "Opposing strength values", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+                    }
 				}
 			}
 		}

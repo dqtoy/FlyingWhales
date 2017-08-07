@@ -957,16 +957,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             "\n [b]Tech Level:[/b] " + this.city.kingdom.techLevel.ToString() +
             "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
             "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
-            "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() + 
-            "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() +
-            "\n [b]Available Resources: [/b]\n";
-        if(this.city.kingdom.availableResources.Count > 0) {
-            for (int i = 0; i < this.city.kingdom.availableResources.Keys.Count; i++) {
-                text += this.city.kingdom.availableResources.Keys.ElementAt(i).ToString() + "\n";
-            }
-        } else {
-            text += "NONE\n";
-        }
+            "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
+            "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
+        //if(this.city.kingdom.availableResources.Count > 0) {
+        //    for (int i = 0; i < this.city.kingdom.availableResources.Keys.Count; i++) {
+        //        text += this.city.kingdom.availableResources.Keys.ElementAt(i).ToString() + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
        
         text += "[b]Embargo List: [/b]\n";
         if (this.city.kingdom.embargoList.Count > 0) {
@@ -997,11 +996,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             text += "NONE\n";
         }
 
-        text += "[b]King Values: [/b]\n";
-        Dictionary<CHARACTER_VALUE, int> charVals = this.city.kingdom.king.importantCharacterValues;
-        if (charVals.Count > 0) {
-            for (int i = 0; i < charVals.Count(); i++) {
-                KeyValuePair<CHARACTER_VALUE, int> kvp = charVals.ElementAt(i);
+        //text += "[b]King Values: [/b]\n";
+        //Dictionary<CHARACTER_VALUE, int> charVals = this.city.kingdom.king.importantCharacterValues;
+        //if (charVals.Count > 0) {
+        //    for (int i = 0; i < charVals.Count(); i++) {
+        //        KeyValuePair<CHARACTER_VALUE, int> kvp = charVals.ElementAt(i);
+        //        text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
+
+        text += "[b]Kingdom values: [/b]\n";
+        Dictionary<CHARACTER_VALUE, int> kingdomVals = this.city.kingdom.importantCharacterValues;
+        if (kingdomVals.Count > 0) {
+            for (int i = 0; i < kingdomVals.Count(); i++) {
+                KeyValuePair<CHARACTER_VALUE, int> kvp = kingdomVals.ElementAt(i);
                 text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
             }
         } else {

@@ -155,6 +155,10 @@ public class KingsCouncil : GameEvent {
                 currGov.AddEventModifier(20, "King Council Approval", this);
             }
         }
+        //Adjust Kingdom Unrest
+        if (_sourceKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
+            _sourceKingdom.AdjustUnrest(-10);
+        }
         EventManager.Instance.onWeekEnd.AddListener(PerformAction);
     }
     protected void OnCouncilFinish() {
@@ -169,11 +173,21 @@ public class KingsCouncil : GameEvent {
                 currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king).AddEventModifier(20, "Council Approval", this);
                 Log councilEndApproveLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "end_approve");
                 councilEndApproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+
+                //Adjust kingdom unrest
+                if (currKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
+                    currKingdom.AdjustUnrest(-10);
+                }
             } else {
                 //disapprove
                 currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king).AddEventModifier(-20, "Council Disapproval", this);
                 Log councilEndDisapproveLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "end_disapprove");
                 councilEndDisapproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+
+                //Adjust kingdom unrest
+                if (currKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
+                    currKingdom.AdjustUnrest(10);
+                }
             }
         }
         Log councilEndLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "council_end");
