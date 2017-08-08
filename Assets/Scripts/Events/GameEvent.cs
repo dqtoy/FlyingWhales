@@ -261,7 +261,9 @@ public class GameEvent {
 	internal void EventIsCreated(){
 		UIManager.Instance.ShowEventsOfType (this);
 	}
-
+	internal void EventIsCreated(Kingdom kingdom){
+		UIManager.Instance.ShowEventsOfType (this, kingdom);
+	}
     internal void SetStartedBy(Citizen startedBy) {
         _startedBy = startedBy;
         startedByCity = startedBy.city;

@@ -595,7 +595,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	public void HideLairNamePlate() {
-		this._lairItem.gameObject.SetActive(false);
+		if(this._lairItem != null){
+			this._lairItem.gameObject.SetActive(false);
+		}
 	}
 
 	public void ShowHextileEventNamePlate() {
