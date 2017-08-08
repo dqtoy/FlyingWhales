@@ -126,7 +126,7 @@ public class GameEvent {
 				if(UIManager.Instance.currentlyShowingLogObject != null){
 					UIManager.Instance.eventLogsQueue.Add (this);
 				}else{
-					UIManager.Instance.Pause ();
+//					UIManager.Instance.Pause ();
 					UIManager.Instance.ShowEventLogs (this);
 				}
 			}

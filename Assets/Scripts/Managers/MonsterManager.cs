@@ -60,6 +60,12 @@ public class MonsterManager : MonoBehaviour {
 		case LAIR.STORM_WITCH:
 			StormWitchLair stormWitchLair = new StormWitchLair(type, hexTile);
 			return stormWitchLair;
+		case LAIR.PERE:
+			PereLair pereLair = new PereLair(type, hexTile);
+			return pereLair;
+		case LAIR.GHOUL:
+			GhoulLair ghoulLair = new GhoulLair(type, hexTile);
+			return ghoulLair;
 		}
 		return null;
 	}
@@ -73,6 +79,14 @@ public class MonsterManager : MonoBehaviour {
 		case MONSTER.STORM_WITCH:
 			StormWitch newStormWitch = new StormWitch(type, originHextile);
 			newMonster = newStormWitch;
+			break;
+		case MONSTER.PERE:
+			Pere newPere = new Pere (type, originHextile);
+			newMonster = newPere;
+			break;
+		case MONSTER.GHOUL:
+			Ghoul newGhoul = new Ghoul(type, originHextile);
+			newMonster = newGhoul;
 			break;
 		}
 

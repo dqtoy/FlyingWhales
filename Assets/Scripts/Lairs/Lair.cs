@@ -52,9 +52,13 @@ public class Lair {
 	private int GetLairHP(){
 		switch (this.type){
 		case LAIR.LYCAN:
-			return 200;
+			return 400;
 		case LAIR.STORM_WITCH:
 			return 200;
+		case LAIR.PERE:
+			return 1200;
+		case LAIR.GHOUL:
+			return 600;
 		}
 		return 0;
 	}
@@ -65,6 +69,10 @@ public class Lair {
 		case LAIR.STORM_WITCH:
 //			return 30;
 			return 365;
+		case LAIR.PERE:
+			return 20;
+		case LAIR.GHOUL:
+			return 30;
 		}
 		return 0;
 	}

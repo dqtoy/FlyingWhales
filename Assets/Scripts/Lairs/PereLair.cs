@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class StormWitchLair : Lair {
+public class PereLair : Lair {
 
-	public StormWitchLair(LAIR type, HexTile hexTile): base (type, hexTile){
-		this.name = "Storm Witch Lair";
+	public PereLair(LAIR type, HexTile hexTile): base (type, hexTile){
+		this.name = "Pere Lair";
 		Initialize();
 	}
 
@@ -19,18 +19,16 @@ public class StormWitchLair : Lair {
 		base.EverydayAction ();
 		if(this.daysCounter >= this.spawnRate){
 			this.daysCounter = 0;
-			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 10){
-				SummonWitch();
-			}
+			SummonPere();
 		}
 	}
 	#endregion
 
-	private void SummonWitch(){
+	private void SummonPere(){
 		AcquireTarget();
 		if(this._targetHextile != null){
-			MonsterManager.Instance.SummonNewMonster(MONSTER.STORM_WITCH, this.hexTile, this._targetHextile);
+			MonsterManager.Instance.SummonNewMonster(MONSTER.PERE, this.hexTile, this._targetHextile);
 		}
 	}
+
 }

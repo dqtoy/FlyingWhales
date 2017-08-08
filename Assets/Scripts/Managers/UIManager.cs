@@ -1351,7 +1351,7 @@ public class UIManager : MonoBehaviour {
 				if(this.currentlyShowingLogObject != null){
 					this.eventLogsQueue.Add (gameEvent);
 				}else{
-					Pause();
+//					Pause();
 					ShowEventLogs(gameEvent);
 				}
 			}
@@ -1390,7 +1390,7 @@ public class UIManager : MonoBehaviour {
 			if (this.currentlyShowingLogObject != null) {
 				this.eventLogsQueue.Add (playerEvent);
 			} else {
-				Pause ();
+//				Pause ();
 				ShowEventLogs (playerEvent);
 			}
 		}
@@ -2323,7 +2323,7 @@ public class UIManager : MonoBehaviour {
 		}
 		currentlyShowingLogObject = null;
 		if(this.eventLogsQueue.Count > 0){
-			Pause();
+//			Pause();
 			object obj = this.eventLogsQueue [0];
 			ShowEventLogs (obj);
 		}

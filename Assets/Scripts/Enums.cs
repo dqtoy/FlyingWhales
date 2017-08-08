@@ -483,11 +483,15 @@ public enum FOG_OF_WAR_STATE {
 public enum LAIR {
 	LYCAN,
 	STORM_WITCH,
+	PERE,
+	GHOUL,
 }
 
 public enum MONSTER{
 	LYCAN,
 	STORM_WITCH,
+	PERE,
+	GHOUL,
 }
 
 public enum STRUCTURE_STATE {
