@@ -120,7 +120,7 @@ public class Crime : PlayerEvent {
                 if (kingdomPunishment == PUNISHMENT.HARSH) {
                     kingdom.AdjustUnrest(10);
                 }
-            } else {
+			} else if (this.kingPunishment == PUNISHMENT.HARSH) {
                 if (kingdomPunishment == PUNISHMENT.NO) {
                     kingdom.AdjustUnrest(10);
                 }
