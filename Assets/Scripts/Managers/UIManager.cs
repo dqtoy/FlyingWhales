@@ -1344,17 +1344,30 @@ public class UIManager : MonoBehaviour {
 		eventsOfTypeGo.SetActive (true);
 	} */
 
-	public void ShowEventsOfType(GameEvent gameEvent){
+	public void ShowEventsOfType(GameEvent gameEvent, Kingdom kingdom = null){
 		if(gameEvent.startedBy != null){ //Kingdom Event
-			if(gameEvent.startedByKingdom.id == currentlyShowingKingdom.id) {
-				activeKingdomFlag.AddEventToGrid(gameEvent);
-				if(this.currentlyShowingLogObject != null){
-					this.eventLogsQueue.Add (gameEvent);
-				}else{
-//					Pause();
-					ShowEventLogs(gameEvent);
+			if(kingdom == null){
+				if(gameEvent.startedByKingdom.id == currentlyShowingKingdom.id) {
+					activeKingdomFlag.AddEventToGrid(gameEvent);
+					if(this.currentlyShowingLogObject != null){
+						this.eventLogsQueue.Add (gameEvent);
+					}else{
+						//					Pause();
+						ShowEventLogs(gameEvent);
+					}
+				}
+			}else{
+				if(kingdom.id == currentlyShowingKingdom.id) {
+					activeKingdomFlag.AddEventToGrid(gameEvent);
+					if(this.currentlyShowingLogObject != null){
+						this.eventLogsQueue.Add (gameEvent);
+					}else{
+						//					Pause();
+						ShowEventLogs(gameEvent);
+					}
 				}
 			}
+
 
 			//KingdomFlagItem kingdomOwner = kingdomListOtherKingdomsGrid.GetChildList()
 			//	.Where(x => x.GetComponent<KingdomFlagItem>().kingdom.id == gameEvent.startedByKingdom.id)
