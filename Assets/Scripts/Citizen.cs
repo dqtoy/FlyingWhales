@@ -409,7 +409,7 @@ public class Citizen {
 					this.city.kingdom.AssignNewKing (newKing);
 				}
 				//END CIVIL WAR
-			} else{ 
+			} else { 
 				if (this.city.kingdom.successionLine.Count <= 0) {
 					if (!isConquered) {
 						this.city.kingdom.AssignNewKing (null);

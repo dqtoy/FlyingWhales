@@ -869,7 +869,7 @@ public class City{
 
 		return governor;
 	}
-	internal void KillCity(){
+	public void KillCity(){
 		this.incomingGenerals.Clear ();
 		this.isUnderAttack = false;
 		if (this.rebellion != null) {
@@ -890,7 +890,7 @@ public class City{
             kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
         }
         for (int i = 0; i < outerTiles.Count; i++) {
-            HexTile currentTile = this.borderTiles[i];
+            HexTile currentTile = this.outerTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
             kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
@@ -959,7 +959,7 @@ public class City{
             kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
         }
         for (int i = 0; i < outerTiles.Count; i++) {
-            HexTile currentTile = this.borderTiles[i];
+            HexTile currentTile = this.outerTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
             kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);

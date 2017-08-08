@@ -8,7 +8,6 @@ public class AncientRuin : GameEvent {
     private HexTile _ruinLocation;
 
     private Kingdom _discoveredByKingdom;
-    private Citizen _claimant;
 
     private enum RUIN_DISCOVERIES {
         NONE,
@@ -36,11 +35,10 @@ public class AncientRuin : GameEvent {
     }
 
     #region Overrides
-    internal override void OnCollectAvatarAction(Citizen claimant) {
+    internal override void OnCollectAvatarAction(Kingdom claimant) {
         base.OnCollectAvatarAction(claimant);
-        SetStartedBy(claimant.city.kingdom.king);
-        _claimant = claimant;
-        _discoveredByKingdom = claimant.city.kingdom;
+        SetStartedBy(claimant.king);
+        _discoveredByKingdom = claimant;
         DiscoverAncientRuin();
     }
     #endregion
@@ -76,7 +74,7 @@ public class AncientRuin : GameEvent {
                 break;
         }
         Log newDiscoveryLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AncientRuin", newDiscovery.ToString());
-        newDiscoveryLog.AddToFillers(_claimant, _claimant.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        newDiscoveryLog.AddToFillers(_discoveredByKingdom, _discoveredByKingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         EventManager.Instance.AddEventToDictionary(this);
         EventIsCreated();
         DoneEvent();

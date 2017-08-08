@@ -948,6 +948,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         Debug.Log("Pos: " + this.transform.position.ToString());
     }
 
+    [ContextMenu("Force Kill City")]
+    public void ForceKillCity() {
+        city.KillCity();
+    }
+
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
@@ -1159,7 +1164,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     developWeapons.ClaimWeapon(claimant);
                 }
             } else {
-                gameEventInTile.OnCollectAvatarAction(citizen);
+                gameEventInTile.OnCollectAvatarAction(claimant);
             }
         }
     }

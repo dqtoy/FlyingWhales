@@ -143,7 +143,7 @@ public class GameEvent {
 		deadCitizen.Death(DEATH_REASONS.BATTLE);
 		this.DoneEvent();
 	}
-    internal virtual void OnCollectAvatarAction(Citizen claimant) {
+    internal virtual void OnCollectAvatarAction(Kingdom claimant) {
         gameEventAvatar.eventLocation.RemoveEventOnTile();
     }
     #endregion
