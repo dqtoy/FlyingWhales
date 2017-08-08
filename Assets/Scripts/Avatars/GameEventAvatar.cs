@@ -3,10 +3,14 @@ using System.Collections;
 
 public class GameEventAvatar : MonoBehaviour {
 
+    [SerializeField] private SpriteRenderer eventSprite;
     internal GameEvent gameEvent;
+    internal HexTile eventLocation;
 
-    internal void Init(GameEvent gameEvent) {
+    internal void Init(GameEvent gameEvent, HexTile eventLocation) {
         this.gameEvent = gameEvent;
+        this.eventLocation = eventLocation;
+        eventSprite.sprite = EventManager.Instance.GetEventAvatarSprite(gameEvent.eventType);
     }
 
     #region Monobehaviours

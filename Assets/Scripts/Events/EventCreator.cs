@@ -457,6 +457,11 @@ public class EventCreator: MonoBehaviour {
 		return greatStorm;
 	}
 
+    internal AncientRuin CreateAncientRuinEvent(HexTile targetHextile) {
+        AncientRuin ancientRuin = new AncientRuin(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, targetHextile);
+        WorldEventManager.Instance.ResetCurrentInterveneEvent();
+        return ancientRuin;
+    }
 	//-------------------------------------------- PLAYER EVENTS ----------------------------------------------------//
 
 	internal KingdomDiscovery CreateKingdomDiscoveryEvent(Kingdom sourceKingdom, Kingdom targetKingdom){

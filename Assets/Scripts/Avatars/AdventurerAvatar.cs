@@ -7,6 +7,13 @@ using System.Linq;
 public class AdventurerAvatar : CitizenAvatar {
 
     [SerializeField] private HexTile newTargetTile = null;
+    
+    [ContextMenu("Force Change Target Tile")]
+    public void ForceChangeTargetTile() {
+        this.citizenRole.targetLocation = newTargetTile;
+        this.citizenRole.path = PathGenerator.Instance.GetPath(this.citizenRole.citizen.currentLocation, newTargetTile, PATHFINDING_MODE.AVATAR);
+        this.citizenRole.daysBeforeMoving = this.citizenRole.path[0].movementDays;
+    }
 
     #region Overrides
     internal override void Move() {
@@ -18,15 +25,11 @@ public class AdventurerAvatar : CitizenAvatar {
                     this.citizenRole.location = this.citizenRole.path[0];
                     this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
                     this.citizenRole.path.RemoveAt(0);
-                    this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
-                    for (int i = 0; i < this.citizenRole.location.AllNeighbours.Count(); i++) {
-                        HexTile currNeighbour = this.citizenRole.location.AllNeighbours.ElementAt(i);
-                        currNeighbour.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
-                    }
+                    this.CheckForKingdomDiscovery();
                     //this.GetNextTargetTile();
                 }
                 //this.UpdateFogOfWar();
-                this.CheckForKingdomDiscovery();
+                
             }
         }
     }
@@ -155,6 +158,7 @@ public class AdventurerAvatar : CitizenAvatar {
     [Task]
     private void ForceUpdateFogOfWar() {
         this.UpdateFogOfWar();
+        CollectEvents();
         Task.current.Succeed();
     }
     #endregion
