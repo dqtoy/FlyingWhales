@@ -389,9 +389,9 @@ public class EventCreator: MonoBehaviour {
         return kingdomHoliday;
     }
 
-    internal DevelopWeapons CreateDevelopWeaponsEvent(HexTile hexTile) {
-        DevelopWeapons developWeapons = new DevelopWeapons(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, hexTile);
-        WorldEventManager.Instance.ResetCurrentInterveneEvent();
+    internal DevelopWeapons CreateDevelopWeaponsEvent(Kingdom sourceKingdom) {
+        DevelopWeapons developWeapons = new DevelopWeapons(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom);
+        //WorldEventManager.Instance.ResetCurrentInterveneEvent();
         return developWeapons;
     }
 

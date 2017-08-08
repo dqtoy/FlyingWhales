@@ -443,6 +443,9 @@ public class Kingdom{
         EventManager.Instance.onKingdomDiedEvent.RemoveListener(OtherKingdomDiedActions);
 
         EventManager.Instance.onKingdomDiedEvent.Invoke(this);
+
+        Debug.Log(this.name + " has died!");
+        Debug.Log("Stack Trace: " + System.Environment.StackTrace);
 	}
 
     private void CancelEventKingdomIsInvolvedIn(EVENT_TYPES eventType) {

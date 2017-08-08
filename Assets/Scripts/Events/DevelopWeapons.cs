@@ -7,22 +7,22 @@ public class DevelopWeapons : GameEvent {
 
     internal GameObject avatar;
 
-    private HexTile _weaponLocation;
+    //private HexTile _weaponLocation;
     private Kingdom _sourceKingdom;
 
     private CHARACTER_VALUE chosenValue;
 
-    public DevelopWeapons(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile weaponLocation) : base(startWeek, startMonth, startYear, startedBy) {
+    public DevelopWeapons(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom) : base(startWeek, startMonth, startYear, startedBy) {
         eventType = EVENT_TYPES.DEVELOP_WEAPONS;
         durationInDays = Random.Range(5, 11);
         remainingDays = durationInDays;
-        name = "Sacred Weapon";
-
-        _weaponLocation = weaponLocation;
+        //name = "Sacred Weapon"
+        _sourceKingdom = sourceKingdom;
+        //_weaponLocation = weaponLocation;
         //WorldEventManager.Instance.AddWorldEvent(this);
 		this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "event_title");
-
-        Initialize();
+        ClaimWeapon(_sourceKingdom);
+        //Initialize();
     }
 
     #region Overrides
@@ -51,15 +51,15 @@ public class DevelopWeapons : GameEvent {
     }
     #endregion
 
-    protected void Initialize() {
-        _weaponLocation.PutEventOnTile(this);
-    }
+    //protected void Initialize() {
+    //    _weaponLocation.PutEventOnTile(this);
+    //}
 
     internal void ClaimWeapon(Kingdom claimant) {
-        SetStartedBy(claimant.king);
-        _sourceKingdom = claimant;
-        GameObject.Destroy(this.avatar);
-        _weaponLocation.RemoveEventOnTile();
+        //SetStartedBy(claimant.king);
+        //_sourceKingdom = claimant;
+        //GameObject.Destroy(this.avatar);
+        //_weaponLocation.RemoveEventOnTile();
 
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "start");
         newLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
