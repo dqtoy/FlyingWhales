@@ -430,6 +430,10 @@ public class City{
                 currBorderTile.isVisibleByCities.Remove(this);
                 currBorderTile.ResetTile();
                 kingdom.SetFogOfWarStateForTile(currBorderTile, FOG_OF_WAR_STATE.SEEN);
+            } else {
+                //current tile is already occupied
+                currBorderTile.isBorder = false;
+                currBorderTile.isBorderOfCityID = 0;
             }
             //this.borderTiles[i].isBorder = false;
             //this.borderTiles[i].isBorderOfCityID = 0;
@@ -437,6 +441,7 @@ public class City{
         }
 		this.borderTiles.Clear();
 
+        //Get outmost owned tiles
 		List<HexTile> outmostTiles = new List<HexTile>();
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currHexTile = this.ownedTiles[i];
@@ -870,34 +875,43 @@ public class City{
 		return governor;
 	}
 	public void KillCity(){
-		this.incomingGenerals.Clear ();
+        EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
+        EventManager.Instance.onCitizenDiedEvent.RemoveListener(CheckCityDeath);
+        this.incomingGenerals.Clear ();
 		this.isUnderAttack = false;
+
 		if (this.rebellion != null) {
 			if (this.rebellion.rebelLeader.citizen.city.id == this.id) {
 				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
 			}
 		}
+        /*
+         * Reset all owned, border and outer tiles!
+         * */
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
             currentTile.isVisibleByCities.Remove(this);
 			currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
         }
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
         }
         for (int i = 0; i < outerTiles.Count; i++) {
             HexTile currentTile = this.outerTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
         }
 		this.ownedTiles.Clear();
 		this.borderTiles.Clear();
         this.outerTiles.Clear();
+        /*
+         * Remove irrelevant scripts on hextile
+         * */
 		if(!this.isDead){
 			bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.hexTile.GetComponent<PandaBehaviour> ());
 //			Debug.Log ("REMOVED BT?: " + this.name + " = " + removed);
@@ -906,23 +920,27 @@ public class City{
 			GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
 		}
 		this.isDead = true;
-		EventManager.Instance.onDeathToGhost.Invoke (this);
-		int countCitizens = this.citizens.Count;
-		for (int i = 0; i < countCitizens; i++) {
-			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
-		}
-		this._kingdom.RemoveCityFromKingdom(this);
+        //EventManager.Instance.onDeathToGhost.Invoke (this);
+        KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
+        this.hexTile.city = null;
 
-		if(this.hasKing){
-			this.hasKing = false;
-			if(this._kingdom.cities.Count > 0){
-				this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
-			}
-		}
+        this._kingdom.RemoveCityFromKingdom(this);
+        
+        Debug.Log(this.id + " - City " + this.name + " of " + this._kingdom.name + " has been killed!");
+        Debug.Log("Stack Trace: " + System.Environment.StackTrace);
 
-		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
-		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
-		this.hexTile.city = null;
+        if (!this._kingdom.isDead) {
+            if (this.hasKing) {
+                this.hasKing = false;
+                if (this._kingdom.cities.Count > 0) {
+                    this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
+                }
+            }
+        }
+        
+
+		
+		
         //KingdomManager.Instance.UpdateKingdomAdjacency();
         //		for (int i = 0; i < this.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
         //			if(this.kingdom.relationshipsWithOtherKingdoms[i].war != null && this.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
@@ -937,8 +955,7 @@ public class City{
         //			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id || x.sourceCity.id == this.id);
         //			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
         //		}
-        Debug.Log(this.name + " has been killed!");
-        Debug.Log("Stack Trace: " + System.Environment.StackTrace);
+        
     }
 
     /*
@@ -950,19 +967,19 @@ public class City{
             HexTile currentTile = this.ownedTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
         }
         for (int i = 0; i < this.borderTiles.Count; i++) {
             HexTile currentTile = this.borderTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
         }
         for (int i = 0; i < outerTiles.Count; i++) {
             HexTile currentTile = this.outerTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
         }
 
         //Transfer items to conqueror

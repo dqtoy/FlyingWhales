@@ -814,6 +814,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.isVisibleByCities.Add(city);
 		this.isOccupiedByCityID = city.id;		
 		this.ownedByCity = city;
+        this.isBorder = false;
+        this.isBorderOfCityID = 0;
 	}
 
 	public void Borderize(City city) {
