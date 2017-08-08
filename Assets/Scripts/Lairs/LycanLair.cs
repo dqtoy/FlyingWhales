@@ -13,7 +13,7 @@ public class LycanLair : Lair {
 	public override void Initialize(){
 		base.Initialize();
         //Create structure
-        this.goStructure = this.hexTile.CreateSpecialStructureOnTile(LAIR.LYCAN);
+		this.goStructure = this.hexTile.CreateSpecialStructureOnTile(this.type);
     }
 	public override void EverydayAction (){
 		base.EverydayAction ();

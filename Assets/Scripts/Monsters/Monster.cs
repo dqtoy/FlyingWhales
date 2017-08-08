@@ -33,6 +33,10 @@ public class Monster {
 			return 120;
 		case MONSTER.STORM_WITCH:
 			return 1;
+		case MONSTER.PERE:
+			return 50;
+		case MONSTER.GHOUL:
+			return 80;
 		}
 		return 1;
 	}
@@ -42,6 +46,10 @@ public class Monster {
 				this.avatar.GetComponent<LycanAvatar>().UpdateUI();
 			}else if(this is StormWitch){
 				this.avatar.GetComponent<StormWitchAvatar>().UpdateUI();
+			}else if(this is Pere){
+				this.avatar.GetComponent<PereAvatar>().UpdateUI();
+			}else if(this is Ghoul){
+				this.avatar.GetComponent<GhoulAvatar>().UpdateUI();
 			}
 		}
 	}

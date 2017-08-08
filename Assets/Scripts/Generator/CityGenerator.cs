@@ -24,6 +24,9 @@ public class CityGenerator : MonoBehaviour {
     [Header("Special Structures")]
     [SerializeField] private GameObject lycanLair;
 	[SerializeField] private GameObject stormWitchLair;
+	[SerializeField] private GameObject pereLair;
+	[SerializeField] private GameObject ghoulLair;
+
 
     //public GameObject[] genericStructures;
     //public GameObject[] cityStructures;
@@ -265,6 +268,10 @@ public class CityGenerator : MonoBehaviour {
             return lycanLair;
 		case LAIR.STORM_WITCH:
 			return stormWitchLair;
+		case LAIR.PERE:
+			return pereLair;
+		case LAIR.GHOUL:
+			return ghoulLair;
         }
         return null;
     }
