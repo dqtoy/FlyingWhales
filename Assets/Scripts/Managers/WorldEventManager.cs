@@ -43,6 +43,9 @@ public class WorldEventManager : MonoBehaviour {
                 case EVENT_TYPES.DEVELOP_WEAPONS:
                     DevelopWeaponsTrigger(numOfTimesToCreate);
                     break;
+                case EVENT_TYPES.ANCIENT_RUIN:
+                    CreateAncientRuins(numOfTimesToCreate);
+                    break;
                 default:
                     break;
             }
@@ -72,11 +75,15 @@ public class WorldEventManager : MonoBehaviour {
 			for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 				HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
 				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE){
-					List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
-					if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
-						filteredHextile.Add (hexTile);
-					}
-				}
+                    //List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
+                    //if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
+                    //	filteredHextile.Add (hexTile);
+                    //}
+                    List<HexTile> tilesInRange = hexTile.GetTilesInRange(3);
+                    if (tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Count() <= 0) {
+                        filteredHextile.Add(hexTile);
+                    }
+                }
 			}
 
             if (filteredHextile.Count > 0) {
@@ -97,11 +104,15 @@ public class WorldEventManager : MonoBehaviour {
 			for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 				HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
 				if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null){
-					List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
-					if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
-						filteredHextile.Add (hexTile);
-					}
-				}
+                    //List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
+                    //if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
+                    //	filteredHextile.Add (hexTile);
+                    //}
+                    List<HexTile> tilesInRange = hexTile.GetTilesInRange(3);
+                    if (tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Count() <= 0) {
+                        filteredHextile.Add(hexTile);
+                    }
+                }
 			}
 
             if(filteredHextile.Count > 0) {
@@ -120,11 +131,11 @@ public class WorldEventManager : MonoBehaviour {
 		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 			HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
 			if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE){
-				List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange (3);
-				if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
-					filteredHextile.Add (hexTile);
-				}
-			}
+                List<HexTile> tilesInRange = hexTile.GetTilesInRange(3);
+                if (tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Count() <= 0) {
+                    filteredHextile.Add(hexTile);
+                }
+            }
 		}
 		if(filteredHextile.Count > 0){
 			for (int i = 0; i < quantity; i++) {
@@ -158,6 +169,27 @@ public class WorldEventManager : MonoBehaviour {
                 HexTile targetHextile = filteredHextile[index];
                 filteredHextile.RemoveAt(index);
                 EventCreator.Instance.CreateDevelopWeaponsEvent(targetHextile);
+            }
+        }
+    }
+
+    internal void CreateAncientRuins(int quantity = 1) {
+        List<HexTile> filteredHextile = new List<HexTile>();
+        for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+            HexTile hexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+            if (!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE) {
+                List<HexTile> tilesInRange = hexTile.GetTilesInRange(3);
+                if (tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Count() <= 0) {
+                    filteredHextile.Add(hexTile);
+                }
+            }
+        }
+        if (filteredHextile.Count > 0) {
+            for (int i = 0; i < quantity; i++) {
+                int index = UnityEngine.Random.Range(0, filteredHextile.Count);
+                HexTile targetHextile = filteredHextile[index];
+                filteredHextile.RemoveAt(index);
+                EventCreator.Instance.CreateAncientRuinEvent(targetHextile);
             }
         }
     }

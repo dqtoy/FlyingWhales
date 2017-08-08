@@ -9,6 +9,7 @@ public class GameEvent {
 	public EVENT_TYPES eventType;
 	public EVENT_STATUS eventStatus;
 	public string name;
+    public GameEventAvatar gameEventAvatar;
 
 	public int startDay;
 	public int startMonth;
@@ -85,7 +86,6 @@ public class GameEvent {
 
 	#region virtual methods
 	internal virtual void PerformAction(){}
-
 	internal virtual void DoneCitizenAction(Citizen citizen){
 		if(citizen.assignedRole.targetCity == null){
 			if(citizen.assignedRole.targetLocation.lair == null){
@@ -103,8 +103,52 @@ public class GameEvent {
 		}
         CheckIfCitizenIsCarryingPlague(citizen);
     }
+	internal virtual void CancelEvent(){
+		Debug.LogError (this.eventType.ToString() + " EVENT IS CANCELLED");
+        this.isActive = false;
+        this.endMonth = GameManager.Instance.month;
+        this.endDay = GameManager.Instance.days;
+        this.endYear = GameManager.Instance.year;
+        if (this.goEventItem != null) {
+            this.goEventItem.GetComponent<EventItem>().HasExpired();
+        }
+    }
 
-   /*
+	internal virtual void DoneEvent(){
+		Debug.LogError (this.eventType.ToString () + " EVENT IS DONE");
+        this.isActive = false;
+        this.endMonth = GameManager.Instance.month;
+        this.endDay = GameManager.Instance.days;
+        this.endYear = GameManager.Instance.year;
+
+		if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null) { //Kingdom Event
+			if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
+				if(UIManager.Instance.currentlyShowingLogObject != null){
+					UIManager.Instance.eventLogsQueue.Add (this);
+				}else{
+					UIManager.Instance.Pause ();
+					UIManager.Instance.ShowEventLogs (this);
+				}
+			}
+		}
+//		if(this.goEventItem != null){
+//			this.goEventItem.GetComponent<EventItem> ().HasExpired ();
+//		}
+    }
+	internal virtual void DeathByOtherReasons(){}
+	internal virtual void DeathByAgent(Citizen citizen, Citizen deadCitizen){
+		deadCitizen.Death(DEATH_REASONS.BATTLE);
+	}
+	internal virtual void DeathByMonster(Monster monster, Citizen deadCitizen){
+		deadCitizen.Death(DEATH_REASONS.BATTLE);
+		this.DoneEvent();
+	}
+    internal virtual void OnCollectAvatarAction(Citizen claimant) {
+        gameEventAvatar.eventLocation.RemoveEventOnTile();
+    }
+    #endregion
+
+    /*
     * A plague carrying citizen will spread the plague to its 
     * destination city (if it is not yet plagued) and infect a random settlement.
     * */
@@ -112,10 +156,10 @@ public class GameEvent {
         Plague plaguedCarriedByCitizen = citizen.assignedRole.plague;
         if (plaguedCarriedByCitizen != null) {
             City citizenTargetCity = citizen.assignedRole.targetCity;
-            if(citizenTargetCity == null) {
+            if (citizenTargetCity == null) {
                 citizenTargetCity = citizen.currentLocation.city;
             }
-            if(citizenTargetCity != null) {
+            if (citizenTargetCity != null) {
                 if (citizenTargetCity.plague == null) {
                     //City is not plagued yet
                     if (plaguedCarriedByCitizen.affectedKingdoms.Contains(citizenTargetCity.kingdom)) {
@@ -158,54 +202,12 @@ public class GameEvent {
         }
     }
 
-	internal virtual void CancelEvent(){
-		Debug.LogError (this.eventType.ToString() + " EVENT IS CANCELLED");
-        this.isActive = false;
-        this.endMonth = GameManager.Instance.month;
-        this.endDay = GameManager.Instance.days;
-        this.endYear = GameManager.Instance.year;
-        if (this.goEventItem != null) {
-            this.goEventItem.GetComponent<EventItem>().HasExpired();
-        }
-    }
-
-	internal virtual void DoneEvent(){
-		Debug.LogError (this.eventType.ToString () + " EVENT IS DONE");
-        this.isActive = false;
-        this.endMonth = GameManager.Instance.month;
-        this.endDay = GameManager.Instance.days;
-        this.endYear = GameManager.Instance.year;
-
-		if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null) { //Kingdom Event
-			if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
-				if(UIManager.Instance.currentlyShowingLogObject != null){
-					UIManager.Instance.eventLogsQueue.Add (this);
-				}else{
-					UIManager.Instance.Pause ();
-					UIManager.Instance.ShowEventLogs (this);
-				}
-			}
-		}
-//		if(this.goEventItem != null){
-//			this.goEventItem.GetComponent<EventItem> ().HasExpired ();
-//		}
-    }
-	internal virtual void DeathByOtherReasons(){}
-	internal virtual void DeathByAgent(Citizen citizen, Citizen deadCitizen){
-		deadCitizen.Death(DEATH_REASONS.BATTLE);
-	}
-	internal virtual void DeathByMonster(Monster monster, Citizen deadCitizen){
-		deadCitizen.Death(DEATH_REASONS.BATTLE);
-		this.DoneEvent();
-	}
-	#endregion
-
-	/*
+    /*
 	 * Create new log for this Event.
 	 * TODO: Might edit this so that the log fillers are also added here
 	 * rather than outside. Seems cleaner that way.
 	 * */
-	internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
+    internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
 		Log newLog = new Log (month, day, year, category, file, key);
 		this.logs.Add (newLog);
 

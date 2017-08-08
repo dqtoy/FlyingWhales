@@ -44,7 +44,7 @@ public class CitizenAvatar : MonoBehaviour {
                     this.citizenRole.location = this.citizenRole.path[0];
                     this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
                     this.citizenRole.path.RemoveAt(0);
-                    this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
+                    this.CollectEvents();
                     this.CheckForKingdomDiscovery();
                 }
                 this.UpdateFogOfWar();
@@ -54,6 +54,14 @@ public class CitizenAvatar : MonoBehaviour {
 	internal virtual void UpdateUI(){}
     #endregion
 
+
+    internal void CollectEvents() {
+        this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
+        for (int i = 0; i < this.citizenRole.location.AllNeighbours.Count(); i++) {
+            HexTile currNeighbour = this.citizenRole.location.AllNeighbours.ElementAt(i);
+            currNeighbour.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
+        }
+    }
 
     private void ResetValues() {
         this.collidedWithHostile = false;

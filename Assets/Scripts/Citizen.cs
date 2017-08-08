@@ -828,11 +828,23 @@ public class Citizen {
     }
 
 	internal RelationshipKings GetRelationshipWithCitizen(Citizen citizen){
-		for (int i = 0; i < this.relationshipKings.Count; i++) {
-			if (relationshipKings [i].king.id == citizen.id) {
-				return relationshipKings[i];
-			}
-		}
+        if(this.role != ROLE.KING) {
+            Debug.LogError(this.name + " is no longer king! But Get relationship is being called by it, to get relationship with " + citizen.name);
+            Debug.LogError("StackTrace: " + System.Environment.StackTrace);
+
+            for (int i = 0; i < this.city.kingdom.king.relationshipKings.Count; i++) {
+                if (this.city.kingdom.king.relationshipKings[i].king.id == citizen.id) {
+                    return this.city.kingdom.king.relationshipKings[i];
+                }
+            }
+        } else {
+            for (int i = 0; i < this.relationshipKings.Count; i++) {
+                if (relationshipKings[i].king.id == citizen.id) {
+                    return relationshipKings[i];
+                }
+            }
+        }
+		
 		return null;
 	}
 

@@ -503,13 +503,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     public void CreateCityNamePlate(City city) {
         //Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
-        if(_cityInfo != null) {
-            _cityInfo.SetCity(city);
-            UIPanel namePlatePanel = UIParent.GetComponentsInChildren<UIPanel>().Where(x => x.name.Equals("NamePlatePanel")).FirstOrDefault();
+        UIPanel namePlatePanel = UIParent.GetComponentsInChildren<UIPanel>().Where(x => x.name.Equals("CityNamePlatePanel")).FirstOrDefault();
+        if (namePlatePanel != null) {
             Destroy(namePlatePanel);
         }
 
-        GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
+        GameObject parentPanel = new GameObject("CityNamePlatePanel", typeof(UIPanel));
         parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
         parentPanel.transform.SetParent(UIParent);
         parentPanel.transform.localPosition = Vector3.zero;
@@ -1070,12 +1069,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 ((AltarOfBlessing)gameEvent).avatar = GameObject.Instantiate(Resources.Load("GameObjects/AltarOfBlessing"), gameEventObjectsParentGO.transform) as GameObject;
                 ((AltarOfBlessing)gameEvent).avatar.transform.localPosition = Vector3.zero;
                 ((AltarOfBlessing)gameEvent).avatar.GetComponent<AltarOfBlessingAvatar>().Init((AltarOfBlessing)gameEvent);
-            } else if(gameEvent is DevelopWeapons) {
-                DevelopWeapons currEvent = (DevelopWeapons)gameEvent;
-                currEvent.avatar = GameObject.Instantiate(Resources.Load("GameObjects/SacredWeapon"), gameEventObjectsParentGO.transform) as GameObject;
-                currEvent.avatar.transform.localPosition = Vector3.zero;
-                currEvent.avatar.GetComponent<DevelopWeaponsAvatar>().Init(currEvent);
-            }
+            } else {
+                GameObject eventAvatar = GameObject.Instantiate(Resources.Load("GameObjects/GameEventAvatar"), gameEventObjectsParentGO.transform) as GameObject;
+                gameEvent.gameEventAvatar = eventAvatar.GetComponent<GameEventAvatar>();
+                gameEvent.gameEventAvatar.Init(gameEvent, this);
+                gameEvent.gameEventAvatar.transform.localPosition = Vector3.zero;
+            } 
+            //else if (gameEvent is DevelopWeapons) {
+            //    DevelopWeapons currEvent = (DevelopWeapons)gameEvent;
+            //    currEvent.avatar = GameObject.Instantiate(Resources.Load("GameObjects/SacredWeapon"), gameEventObjectsParentGO.transform) as GameObject;
+            //    currEvent.avatar.transform.localPosition = Vector3.zero;
+            //    currEvent.avatar.GetComponent<DevelopWeaponsAvatar>().Init(currEvent, this);
+            //} 
 			ShowHextileEventNamePlate();
         }
 	}
@@ -1153,6 +1158,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     DevelopWeapons developWeapons = (DevelopWeapons)gameEventInTile;
                     developWeapons.ClaimWeapon(claimant);
                 }
+            } else {
+                gameEventInTile.OnCollectAvatarAction(citizen);
             }
         }
     }

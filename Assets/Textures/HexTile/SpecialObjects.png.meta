@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 26b3c1fa9ccb0524e8491e7e19f98ce7
-timeCreated: 1501826675
+timeCreated: 1502174757
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -9,12 +9,12 @@ TextureImporter:
     21300004: SpecialObjects_2
     21300006: SpecialObjects_Shrine
     21300008: SpecialObjects_Lantern
-    21300010: SpecialObjects_Altar
+    21300010: ALTAR_OF_BLESSING
     21300012: SpecialObjects_Book
-    21300014: SpecialObjects_Artifact
-    21300016: SpecialObjects_MagicStone
+    21300014: BOON_OF_POWER
+    21300016: KEYSTONE
     21300018: SpecialObjects_Chest
-    21300020: SpecialObjects_Coffin
+    21300020: ANCIENT_RUIN
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -98,7 +98,7 @@ TextureImporter:
         width: 5
         height: 4
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -129,7 +129,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: SpecialObjects_Altar
+      name: ALTAR_OF_BLESSING
       rect:
         serializedVersion: 2
         x: 278
@@ -155,7 +155,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: SpecialObjects_Artifact
+      name: BOON_OF_POWER
       rect:
         serializedVersion: 2
         x: 40
@@ -168,7 +168,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: SpecialObjects_MagicStone
+      name: KEYSTONE
       rect:
         serializedVersion: 2
         x: 306
@@ -194,7 +194,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: SpecialObjects_Coffin
+      name: ANCIENT_RUIN
       rect:
         serializedVersion: 2
         x: 476

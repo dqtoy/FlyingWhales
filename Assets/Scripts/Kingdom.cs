@@ -447,12 +447,12 @@ public class Kingdom{
 
     private void CancelEventKingdomIsInvolvedIn(EVENT_TYPES eventType) {
         if (eventType == EVENT_TYPES.KINGDOM_WAR) {
-            List<GameEvent> wars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR });
+            List<GameEvent> wars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR }).Where(x => x.isActive).ToList();
             for (int i = 0; i < wars.Count; i++) {
                 wars[i].CancelEvent();
             }
         } else {
-            List<GameEvent> allEvents = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.ALL });
+            List<GameEvent> allEvents = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.ALL }).Where(x => x.isActive).ToList();
             for (int i = 0; i < allEvents.Count; i++) {
                 allEvents[i].CancelEvent();
             }

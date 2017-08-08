@@ -943,8 +943,28 @@ public class City{
      * Conquer this city and transfer ownership to the conqueror
      * */
     internal void ConquerCity(Kingdom conqueror) {
-		//Transfer items to conqueror
-		TransferItemsToConqueror(conqueror);
+        //Reset Tiles
+        for (int i = 0; i < this.ownedTiles.Count; i++) {
+            HexTile currentTile = this.ownedTiles[i];
+            currentTile.isVisibleByCities.Remove(this);
+            currentTile.ResetTile();
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        for (int i = 0; i < this.borderTiles.Count; i++) {
+            HexTile currentTile = this.borderTiles[i];
+            currentTile.isVisibleByCities.Remove(this);
+            currentTile.ResetTile();
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        for (int i = 0; i < outerTiles.Count; i++) {
+            HexTile currentTile = this.borderTiles[i];
+            currentTile.isVisibleByCities.Remove(this);
+            currentTile.ResetTile();
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+        }
+
+        //Transfer items to conqueror
+        TransferItemsToConqueror(conqueror);
 
 		RelationshipKingdom relationship = this.kingdom.GetRelationshipWithOtherKingdom(conqueror);
 

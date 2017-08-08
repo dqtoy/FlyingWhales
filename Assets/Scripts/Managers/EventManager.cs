@@ -9,6 +9,8 @@ public class EventManager : MonoBehaviour {
 
     public EVENT_TYPES[] playerPlacableEvents;
 
+    [SerializeField] private Sprite[] eventAvatarSprites;
+
     private Dictionary <string, UnityEvent> eventDictionary;
 
 	public Dictionary<EVENT_TYPES, List<GameEvent>> allEvents;
@@ -429,6 +431,10 @@ public class EventManager : MonoBehaviour {
 
 		return unwantedGovernors;
 	}
+
+    internal Sprite GetEventAvatarSprite(EVENT_TYPES eventType) {
+        return eventAvatarSprites.Where(x => x.name == eventType.ToString()).FirstOrDefault();
+    }
 //	public static void StartListening (string eventName, UnityAction listener){
 //		UnityEvent thisEvent = null;
 //		if (Instance.eventDictionary.TryGetValue (eventName, out thisEvent)){
