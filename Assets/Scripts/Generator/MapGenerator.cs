@@ -19,10 +19,11 @@ public class MapGenerator : MonoBehaviour {
 
 		CityGenerator.Instance.GenerateLairHabitableTiles(GridMap.Instance.listHexes);
 		MonsterManager.Instance.GenerateLairs();
-//		UIManager.Instance.UpdateKingsGrid();
-		WorldEventManager.Instance.BoonOfPowerTrigger();
-		WorldEventManager.Instance.AltarOfBlessingTrigger();
-        WorldEventManager.Instance.FirstAndKeystoneTrigger();
+        //		UIManager.Instance.UpdateKingsGrid();
+        WorldEventManager.Instance.TriggerInitialWorldEvents();
+		//WorldEventManager.Instance.BoonOfPowerTrigger();
+		//WorldEventManager.Instance.AltarOfBlessingTrigger();
+  //      WorldEventManager.Instance.FirstAndKeystoneTrigger();
         GameManager.Instance.StartProgression();
         CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
     }

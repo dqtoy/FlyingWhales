@@ -6,24 +6,50 @@ using System.Linq;
 public class WorldEventManager : MonoBehaviour {
 	public static WorldEventManager Instance;
 
-	public int altarOfBlessingQuantity;
+    [SerializeField] private List<InitialWorldEvent> initialWorldEventSetup;
+
+	//public int altarOfBlessingQuantity;
 
 	internal EVENT_TYPES currentInterveneEvent;
 
 	private List<GameEvent> currentWorldEvents;
 
-
-	void Awake(){
-		Instance = this;
+    #region Monobehaviours
+    void Awake() {
+        Instance = this;
         this.currentWorldEvents = new List<GameEvent>();
     }
 
-	void Start () {
-		ResetCurrentInterveneEvent ();
-		EventManager.Instance.onWeekEnd.AddListener (this.TickActions);
-	}
-	
-	private void TickActions(){
+    void Start() {
+        ResetCurrentInterveneEvent();
+        EventManager.Instance.onWeekEnd.AddListener(this.TickActions);
+    }
+    #endregion
+
+    internal void TriggerInitialWorldEvents() {
+        for (int i = 0; i < initialWorldEventSetup.Count; i++) {
+            EVENT_TYPES eventToCreate = initialWorldEventSetup[i].eventType;
+            int numOfTimesToCreate = initialWorldEventSetup[i].quantity;
+            switch (eventToCreate) {
+                case EVENT_TYPES.BOON_OF_POWER:
+                    BoonOfPowerTrigger(numOfTimesToCreate);
+                    break;
+                case EVENT_TYPES.ALTAR_OF_BLESSING:
+                    AltarOfBlessingTrigger(numOfTimesToCreate);
+                    break;
+                case EVENT_TYPES.FIRST_AND_KEYSTONE:
+                    FirstAndKeystoneTrigger(numOfTimesToCreate);
+                    break;
+                case EVENT_TYPES.DEVELOP_WEAPONS:
+                    DevelopWeaponsTrigger(numOfTimesToCreate);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void TickActions(){
 		PlagueEventTrigger ();
 	}
 
@@ -39,7 +65,7 @@ public class WorldEventManager : MonoBehaviour {
 		this.currentInterveneEvent = EVENT_TYPES.NONE;
 	}
 
-	internal void BoonOfPowerTrigger(){
+	internal void BoonOfPowerTrigger(int quantity = 1){
 		int chance = UnityEngine.Random.Range (0, 2);
 		if(chance == 0){
 			List<HexTile> filteredHextile = new List<HexTile> ();
@@ -52,12 +78,19 @@ public class WorldEventManager : MonoBehaviour {
 					}
 				}
 			}
-			HexTile targetHextile = filteredHextile [UnityEngine.Random.Range (0, filteredHextile.Count)];
-			EventCreator.Instance.CreateBoonOfPowerEvent (targetHextile);
+
+            if (filteredHextile.Count > 0) {
+                for (int i = 0; i < quantity; i++) {
+                    int index = UnityEngine.Random.Range(0, filteredHextile.Count);
+                    HexTile targetHextile = filteredHextile[index];
+                    filteredHextile.RemoveAt(index);
+                    EventCreator.Instance.CreateBoonOfPowerEvent(targetHextile);
+                }
+            }			
 		}
 	}
 
-	internal void FirstAndKeystoneTrigger(){
+	internal void FirstAndKeystoneTrigger(int quantity = 1) {
 		int chance = UnityEngine.Random.Range (0, 2);
 		if(chance == 0){
 			List<HexTile> filteredHextile = new List<HexTile> ();
@@ -70,11 +103,19 @@ public class WorldEventManager : MonoBehaviour {
 					}
 				}
 			}
-			HexTile targetHextile = filteredHextile [UnityEngine.Random.Range (0, filteredHextile.Count)];
-			EventCreator.Instance.CreateFirstAndKeystoneEvent (targetHextile);
+
+            if(filteredHextile.Count > 0) {
+                for (int i = 0; i < quantity; i++) {
+                    int index = UnityEngine.Random.Range(0, filteredHextile.Count);
+                    HexTile targetHextile = filteredHextile[index];
+                    filteredHextile.RemoveAt(index);
+                    EventCreator.Instance.CreateFirstAndKeystoneEvent(targetHextile);
+                }
+            }
 		}
 	}
-	internal void AltarOfBlessingTrigger(){
+
+	internal void AltarOfBlessingTrigger(int quantity = 1) {
 		List<HexTile> filteredHextile = new List<HexTile> ();
 		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 			HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
@@ -86,16 +127,41 @@ public class WorldEventManager : MonoBehaviour {
 			}
 		}
 		if(filteredHextile.Count > 0){
-			for (int i = 0; i < this.altarOfBlessingQuantity; i++) {
+			for (int i = 0; i < quantity; i++) {
 				int index = UnityEngine.Random.Range (0, filteredHextile.Count);
 				HexTile targetHextile = filteredHextile [index];
 				filteredHextile.RemoveAt (index);
 				EventCreator.Instance.CreateAltarOfBlessingEvent (targetHextile);
 			}
 		}
-
-
 	}
+
+    internal void DevelopWeaponsTrigger(int quantity = 1, HexTile[] overrideLocations = null) {
+        List<HexTile> filteredHextile = new List<HexTile>();
+        if (overrideLocations != null) {
+            filteredHextile = overrideLocations.ToList();
+        } else {
+            for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+                HexTile hexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+                if (!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE) {
+                    List<HexTile> checkForHabitableTilesInRange = hexTile.GetTilesInRange(3);
+                    if (checkForHabitableTilesInRange.FirstOrDefault(x => x.isHabitable) == null) {
+                        filteredHextile.Add(hexTile);
+                    }
+                }
+            }
+        }
+        
+        if (filteredHextile.Count > 0) {
+            for (int i = 0; i < quantity; i++) {
+                int index = UnityEngine.Random.Range(0, filteredHextile.Count);
+                HexTile targetHextile = filteredHextile[index];
+                filteredHextile.RemoveAt(index);
+                EventCreator.Instance.CreateDevelopWeaponsEvent(targetHextile);
+            }
+        }
+    }
+
 	internal void AddWorldEvent(GameEvent gameEvent){
 		this.currentWorldEvents.Add(gameEvent);
 	}

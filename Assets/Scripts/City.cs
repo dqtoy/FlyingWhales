@@ -165,11 +165,11 @@ public class City{
 		this.UpdateDailyProduction();
 
 
-		for (int i = 0; i < this.citizens.Count; i++) {
-			this.citizens[i].UpdatePrestige();
-		}
+		//for (int i = 0; i < this.citizens.Count; i++) {
+		//	this.citizens[i].UpdatePrestige();
+		//}
 
-        this.hexTile.ShowNamePlate();
+        this.hexTile.CreateCityNamePlate(this);
 	}
 		
 	internal Citizen CreateNewKing(){
@@ -516,7 +516,7 @@ public class City{
 				this.kingdom.HighlightAllOwnedTilesInKingdom();
 			}
 		}
-        this.hexTile.ShowNamePlate();
+        this.hexTile.CreateCityNamePlate(this);
         KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 

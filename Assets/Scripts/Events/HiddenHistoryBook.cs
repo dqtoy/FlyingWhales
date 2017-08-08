@@ -134,6 +134,8 @@ public class HiddenHistoryBook : GameEvent {
 
 		this.kingdom.UpgradeTechLevel (-1);
 		this.kingdom.SetUpheldHiddenHistoryBook (true);
+
+        KingdomReaction();
 		GovernorReactions();
 		OtherKingsReactions();
 
@@ -153,17 +155,27 @@ public class HiddenHistoryBook : GameEvent {
 		}
 	}
 
-	private void OtherKingsReactions(){
+    private void KingdomReaction() {
+        if (this.kingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+            this.kingdom.AdjustUnrest(-10);
+        } else {
+            this.kingdom.AdjustUnrest(10);
+        }
+    }
+
+    private void OtherKingsReactions(){
 		List<Kingdom> otherKingdoms = this.kingdom.discoveredKingdoms;
 		if(otherKingdoms != null && otherKingdoms.Count > 0){
 			for (int i = 0; i < otherKingdoms.Count; i++) {
 				RelationshipKings relationship = otherKingdoms[i].king.GetRelationshipWithCitizen(this.kingdom.king);
 				if(relationship != null){
 					if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
-						relationship.AdjustLikeness(10, this);
-					}else{
-						relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-					}
+                        //relationship.AdjustLikeness(10, this);
+                        relationship.AddEventModifier(10, "Same tradition values", this);
+                    } else{
+                        //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+                        relationship.AddEventModifier(-10, "Opposing tradition values", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+                    }
 				}
 			}
 		}

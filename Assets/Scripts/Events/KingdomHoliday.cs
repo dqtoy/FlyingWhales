@@ -44,6 +44,9 @@ public class KingdomHoliday : GameEvent {
                 ((Governor)currGovernor.assignedRole).AddEventModifier(20, "Kingdom Holiday Celebration", this);
             }
         }
+        if (_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+            _sourceKingdom.AdjustUnrest(-10);
+        }
 
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingdomHoliday", "start");
         newLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

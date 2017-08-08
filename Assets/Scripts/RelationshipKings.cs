@@ -166,7 +166,7 @@ public class RelationshipKings {
      * */
     protected void Embargo(GameEvent gameEventReasonForEmbargo) {
         this.sourceKing.city.kingdom.AddKingdomToEmbargoList(this.king.city.kingdom);
-        Debug.LogError(this.sourceKing.city.kingdom.name + " put " + this.king.city.kingdom.name + " in it's embargo list, beacuase of " + gameEventReasonForEmbargo.eventType.ToString());
+        //Debug.LogError(this.sourceKing.city.kingdom.name + " put " + this.king.city.kingdom.name + " in it's embargo list, beacuase of " + gameEventReasonForEmbargo.eventType.ToString());
     }
 
     /*
@@ -200,7 +200,7 @@ public class RelationshipKings {
         ResetEventModifiers();
     }
 
-    internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger) {
+    internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons = ASSASSINATION_TRIGGER_REASONS.NONE, bool isDiscovery = false) {
         DateTime dateTimeToUse = new DateTime(GameManager.Instance.year, GameManager.Instance.month, GameManager.Instance.days);
         if(gameEventTrigger.eventType == EVENT_TYPES.KINGDOM_WAR) {
             dateTimeToUse.AddYears(1);
@@ -214,8 +214,11 @@ public class RelationshipKings {
         }
         
         this._eventLikenessModifier += modification;
-		if(modification < 0 && gameEventTrigger.eventType != EVENT_TYPES.KINGDOM_WAR){
-			this.sourceKing.WarTrigger (this, gameEventTrigger, this.sourceKing.city.kingdom.kingdomTypeData, gameEventTrigger.warTrigger);
+		if(modification < 0){
+            sourceKing.DeteriorateRelationship(this, gameEventTrigger, isDiscovery, assassinationReasons);
+            if(gameEventTrigger.eventType != EVENT_TYPES.KINGDOM_WAR) {
+                this.sourceKing.WarTrigger(this, gameEventTrigger, this.sourceKing.city.kingdom.kingdomTypeData, gameEventTrigger.warTrigger);
+            }
 		}
         UpdateKingRelationshipStatus();
     }

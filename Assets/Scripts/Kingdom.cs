@@ -84,8 +84,12 @@ public class Kingdom{
 	private CrimeData _crimeData;
 	private CrimeDate _crimeDate;
 
+    //Expansion
     private float expansionChance = 1f;
-    
+
+    protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
+    protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
+
     protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
     protected const int GOLD_GAINED_FROM_TRADE = 10;
@@ -177,7 +181,14 @@ public class Kingdom{
     public float expansionRate {
         get { return this.expansionChance; }
     }
-	public bool hasBioWeapon {
+    public Dictionary<CHARACTER_VALUE, int> dictCharacterValues {
+        get { return this._dictCharacterValues; }
+    }
+    public Dictionary<CHARACTER_VALUE, int> importantCharacterValues {
+        get { return this._importantCharacterValues; }
+    }
+
+    public bool hasBioWeapon {
 		get { return this._hasBioWeapon; }
 	}
 	public EventRate[] dailyCumulativeEventRate {
@@ -249,7 +260,6 @@ public class Kingdom{
 		this._isDead = false;
 		this._isLockedDown = false;
 		this._hasUpheldHiddenHistoryBook = false;
-        //this._tradeRoutes = new List<TradeRoute>();
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._unrest = 0;
 		this._sourceKingdom = sourceKingdom;
@@ -267,7 +277,10 @@ public class Kingdom{
         this.foundationYear = GameManager.Instance.year;
         this.foundationDay = GameManager.Instance.days;
         this.foundationMonth = GameManager.Instance.month;
+        this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
+        this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
 
+        this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
 		this.SetTechProduction(true);
 		this.SetTechProductionPercentage(1);
@@ -521,6 +534,7 @@ public class Kingdom{
 	protected void KingdomTickActions(){
         //this.ProduceGoldFromTrade();
         this.AttemptToAge();
+        this.AdaptToKingValues();
         if (_isGrowthEnabled) {
             this.AttemptToExpand();
         }
@@ -534,7 +548,20 @@ public class Kingdom{
         //if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
         //    this.AttemptToTrade();
         //}
-        
+    }
+
+    private void AdaptToKingValues() {
+        if(GameManager.Instance.days == 1 && GameManager.Instance.month == 1) {
+            for (int i = 0; i < _dictCharacterValues.Count; i++) {
+                CHARACTER_VALUE currValue = _dictCharacterValues.ElementAt(i).Key;
+                if (king.importantCharacterValues.ContainsKey(currValue)) {
+                    UpdateSpecificCharacterValue(currValue, 1);
+                } else {
+                    UpdateSpecificCharacterValue(currValue, -1);
+                }
+            }
+            UpdateKingdomCharacterValues();
+        }
     }
 
     private void AttemptToAge() {
@@ -547,7 +574,7 @@ public class Kingdom{
         this.TriggerSlavesMerchant();
         this.TriggerHypnotism();
         this.TriggerKingdomHoliday();
-        this.TriggerDevelopWeapons();
+        //this.TriggerDevelopWeapons();
         this.TriggerKingsCouncil();
 		this.TriggerCrime ();
     }
@@ -588,12 +615,12 @@ public class Kingdom{
         float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = UnityEngine.Random.Range (0, upperBound);
 		if (chance < this.expansionChance) {
-			Debug.Log ("Expansion Rate: " + this.expansionChance);		
-			List<City> citiesThatCanExpand = new List<City> ();
-			List<Citizen> allUnassignedAdultCitizens = new List<Citizen> ();
-			List<Resource> expansionCost = new List<Resource> () {
-				new Resource (BASE_RESOURCE_TYPE.GOLD, 0)
-			};
+			//Debug.Log ("Expansion Rate: " + this.expansionChance);		
+			//List<City> citiesThatCanExpand = new List<City> ();
+			//List<Citizen> allUnassignedAdultCitizens = new List<Citizen> ();
+			//List<Resource> expansionCost = new List<Resource> () {
+			//	new Resource (BASE_RESOURCE_TYPE.GOLD, 0)
+			//};
 
 			if (this.cities.Count > 0) {
 				EventCreator.Instance.CreateExpansionEvent (this);
@@ -1911,10 +1938,27 @@ public class Kingdom{
 			}
 		}
 	}
-	#endregion
 
-	#region Bioweapon
-	internal void SetBioWeapon(bool state){
+    internal void GenerateKingdomCharacterValues() {
+        this._dictCharacterValues.Clear();
+        this._dictCharacterValues = System.Enum.GetValues(typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE>().ToDictionary(x => x, x => UnityEngine.Random.Range(1, 101));
+        UpdateKingdomCharacterValues();
+    }
+
+    internal void UpdateKingdomCharacterValues() {
+        this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
+    }
+
+    private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value) {
+        if (this._dictCharacterValues.ContainsKey(key)) {
+            this._dictCharacterValues[key] += value;
+            //			UpdateCharacterValueByKey(key, value);
+        }
+    }
+    #endregion
+
+    #region Bioweapon
+    internal void SetBioWeapon(bool state){
 		this._hasBioWeapon = state;
 	}
 	#endregion
@@ -2021,6 +2065,9 @@ public class Kingdom{
                                     currGovernor.AddEventModifier(-20, "Did not celebrate holiday", null);
                                 }
                             }
+                            if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+                                AdjustUnrest(10);
+                            }
                         }
                     }
                 }
@@ -2037,17 +2084,17 @@ public class Kingdom{
     internal void AdjustWeaponsCount(int adjustment) {
         _weaponsCount += adjustment;
     }
-    protected void TriggerDevelopWeapons() {
-        if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
-            if (Utilities.IsCurrentDayMultipleOf(5)) {
-                if (UnityEngine.Random.Range(0, 100) < 10) {
-                    if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.DEVELOP_WEAPONS }).Count <= 0) {
-                        EventCreator.Instance.CreateDevelopWeaponsEvent(this);
-                    }
-                }
-            }
-        }
-    }
+    //protected void TriggerDevelopWeapons() {
+    //    if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
+    //        if (Utilities.IsCurrentDayMultipleOf(5)) {
+    //            if (UnityEngine.Random.Range(0, 100) < 10) {
+    //                if (EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.DEVELOP_WEAPONS }).Count <= 0) {
+    //                    //EventCreator.Instance.CreateDevelopWeaponsEvent(this);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Kings Council

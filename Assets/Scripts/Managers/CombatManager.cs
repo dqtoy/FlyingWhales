@@ -22,6 +22,19 @@ public class CombatManager : MonoBehaviour {
 		if(chance < generalAttacker.citizen.city.kingdom.combatStats.criticalChance){
 			damage = damage * 2;
 		}
+        if(generalAttacker.citizen.city.kingdom.weaponsCount > 0) {
+            //For Develop Weapons Event
+            if(generalAttacker.citizen.city.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) 
+                || generalAttacker.citizen.city.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+                KeyValuePair<CHARACTER_VALUE, int> priorityValue = generalAttacker.citizen.city.kingdom.king.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
+                || x.Key == CHARACTER_VALUE.TRADITION);
+                if(priorityValue.Key == CHARACTER_VALUE.STRENGTH) {
+                    damage += 100;
+                    generalAttacker.citizen.city.kingdom.AdjustWeaponsCount(-1);
+                }
+            }
+        }
+
 		city.AdjustHP (-damage);
 
 		if(city.hp <= 0){

@@ -1603,14 +1603,14 @@ public class Citizen {
 		}
 	}
 
-	private void UpdateCharacterValueByKey(CHARACTER_VALUE key, int value){
-		for(int i = 0; i < this._characterValues.Length; i++){
-			if(this._characterValues[i].character == key){
-				this._characterValues [i].value += value;
-				break;
-			}
-		}
-	}
+	//private void UpdateCharacterValueByKey(CHARACTER_VALUE key, int value){
+	//	for(int i = 0; i < this._characterValues.Length; i++){
+	//		if(this._characterValues[i].character == key){
+	//			this._characterValues [i].value += value;
+	//			break;
+	//		}
+	//	}
+	//}
 
 	internal int GetCharacterValueOfType(CHARACTER_VALUE characterValue){
 		if(this._dictCharacterValues.ContainsKey(characterValue)){

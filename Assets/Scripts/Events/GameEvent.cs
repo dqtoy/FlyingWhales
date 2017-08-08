@@ -259,4 +259,10 @@ public class GameEvent {
 	internal void EventIsCreated(){
 		UIManager.Instance.ShowEventsOfType (this);
 	}
+
+    internal void SetStartedBy(Citizen startedBy) {
+        _startedBy = startedBy;
+        startedByCity = startedBy.city;
+        startedByKingdom = startedBy.city.kingdom;
+    } 
 }

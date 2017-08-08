@@ -16,8 +16,15 @@ public class EventCreator: MonoBehaviour {
 		if(kingdom.capitalCity == null){
 			return null;
 		}
-		HexTile hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile (kingdom.cities [0]);
-		if(hexTileToExpandTo == null){
+        HexTile hexTileToExpandTo = null;
+        if (KingdomManager.Instance.useFogOfWar) {
+            hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(kingdom);
+        } else {
+            hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile(kingdom.cities[0]);
+        }
+        //HexTile hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile (kingdom.cities [0]);
+        
+        if (hexTileToExpandTo == null){
 			return null;
 		}
 		Citizen expander = kingdom.capitalCity.CreateAgent (ROLE.EXPANDER, EVENT_TYPES.EXPANSION, hexTileToExpandTo, EventManager.Instance.eventDuration[EVENT_TYPES.EXPANSION]);
@@ -382,11 +389,9 @@ public class EventCreator: MonoBehaviour {
         return kingdomHoliday;
     }
 
-    internal DevelopWeapons CreateDevelopWeaponsEvent(Kingdom sourceKingdom) {
-		if(sourceKingdom.isLockedDown){
-			return null;
-		}
-        DevelopWeapons developWeapons = new DevelopWeapons(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom);
+    internal DevelopWeapons CreateDevelopWeaponsEvent(HexTile hexTile) {
+        DevelopWeapons developWeapons = new DevelopWeapons(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, hexTile);
+        WorldEventManager.Instance.ResetCurrentInterveneEvent();
         return developWeapons;
     }
 
@@ -409,7 +414,7 @@ public class EventCreator: MonoBehaviour {
 		WorldEventManager.Instance.ResetCurrentInterveneEvent();
 		return altarOfBlessing;
 	}
-    
+
     internal Adventure CreateAdventureEvent(Kingdom sourceKingdom) {
 		if(sourceKingdom.isLockedDown){
 			return null;

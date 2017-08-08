@@ -167,6 +167,19 @@ public class CityGenerator : MonoBehaviour {
 
 		return null;
 	}
+
+    public HexTile GetExpandableTileForKingdom(Kingdom kingdom) {
+        BIOMES forbiddenBiomeForKingdom = GetForbiddenBiomeOfRace(kingdom.race);
+        List<HexTile> elligibleTiles = GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())
+            .Where(x => x.isHabitable && !x.isOccupied && x.biomeType != forbiddenBiomeForKingdom && x.tag == kingdom.capitalCity.hexTile.tag 
+            && kingdom.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN).ToList();
+        if(elligibleTiles.Count > 0) {
+            elligibleTiles = elligibleTiles.OrderBy(x => kingdom.capitalCity.hexTile.GetDistanceTo(x)).ToList();
+            return elligibleTiles.FirstOrDefault();
+        }
+        return null;
+    }
+
 	public BIOMES GetForbiddenBiomeOfRace(RACE race){
 		if(race == RACE.HUMANS){
 			return BIOMES.FOREST;

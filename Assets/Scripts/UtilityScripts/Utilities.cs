@@ -951,7 +951,8 @@ public class Utilities : MonoBehaviour {
 	};
 
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {
-        EVENT_TYPES.ADVENTURE
+        EVENT_TYPES.ADVENTURE,
+        EVENT_TYPES.INVASION_PLAN
     };
 
 	public static string PronounReplacer(string word, object genderSubject){
