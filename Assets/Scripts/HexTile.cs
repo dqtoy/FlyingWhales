@@ -631,6 +631,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._hextileEventItem.gameObject.SetActive(false);
 	}
 
+    public void RemoveHextileEventNamePlate() {
+        Destroy(this._hextileEventItem.gameObject);
+    }
+
    // public void ShowOccupiedSprite() {
    //     //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
    //     GameObject[] structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.GENERIC);
@@ -642,31 +646,31 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
    //             } else {
    //                 structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
    //             }
-			//} else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.ownedByCity.kingdom.race == RACE.ELVES) {
+   //} else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.ownedByCity.kingdom.race == RACE.ELVES) {
    //             structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.LUMBERYARD);
-			//} else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE && this.ownedByCity.kingdom.race == RACE.HUMANS) {
+   //} else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE && this.ownedByCity.kingdom.race == RACE.HUMANS) {
    //             structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.QUARRY);
    //         } else {
    //             structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
    //         }
    //     }
 
-   //     GameObject structureGO = GameObject.Instantiate(
-   //         structuresToChooseFrom[Random.Range(0, structuresToChooseFrom.Length)],
-   //         structureParentGO.transform) as GameObject;
-   //     structureGO.transform.localPosition = Vector3.zero;
-   //     SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
-   //         Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
+    //     GameObject structureGO = GameObject.Instantiate(
+    //         structuresToChooseFrom[Random.Range(0, structuresToChooseFrom.Length)],
+    //         structureParentGO.transform) as GameObject;
+    //     structureGO.transform.localPosition = Vector3.zero;
+    //     SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
+    //         Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
 
-   //     Color color = ownedByCity.kingdom.kingdomColor;
-   //     color.a = 255f / 255f;
-   //     SetMinimapTileColor(color);
+    //     Color color = ownedByCity.kingdom.kingdomColor;
+    //     color.a = 255f / 255f;
+    //     SetMinimapTileColor(color);
 
-   //     for (int i = 0; i < allColorizers.Length; i++) {
-   //         allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
-   //     }
-   //     this._centerPiece.SetActive(false);
-   // }
+    //     for (int i = 0; i < allColorizers.Length; i++) {
+    //         allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
+    //     }
+    //     this._centerPiece.SetActive(false);
+    // }
 
     public void HideStructures() {
         structureParentGO.SetActive(false);
@@ -1095,12 +1099,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	internal void RemoveEventOnTile(){
 		this._gameEventInTile = null;
-		Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
-		for (int i = 0; i < children.Length; i++) {
-			if(children[i].gameObject.tag == "EventTileNameplate"){
-				Destroy(children[i].gameObject);
-			}
-		}
+        RemoveHextileEventNamePlate();
+  //      Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
+		//for (int i = 0; i < children.Length; i++) {
+		//	if(children[i].gameObject.tag == "EventTileNameplate"){
+		//		Destroy(children[i].gameObject);
+		//	}
+		//}
 	}
 	internal GameEvent GetEventFromTile(){
 		return this._gameEventInTile;
