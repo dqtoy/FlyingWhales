@@ -12,17 +12,7 @@ public class AvatarAnimationEvents : MonoBehaviour {
 //				this.avatarGO.GetComponent<GeneralAvatar> ().OnEndAttack ();
 //			}
 		}else if(this.avatarGO.GetComponent<MonsterAvatar> () != null){
-			Monster monster = this.avatarGO.GetComponent<MonsterAvatar> ().monster;
-			if(monster is Lycan){
-				this.avatarGO.GetComponent<LycanAvatar> ().OnEndAttack ();
-			}if(monster is StormWitch){
-				this.avatarGO.GetComponent<StormWitchAvatar> ().OnEndAttack ();
-			}if(monster is Pere){
-				this.avatarGO.GetComponent<PereAvatar> ().OnEndAttack ();
-			}if(monster is Ghoul){
-				this.avatarGO.GetComponent<GhoulAvatar> ().OnEndAttack ();
-			}
+			this.avatarGO.GetComponent<MonsterAvatar> ().OnEndAttack();
 		}
-
 	}
 }
