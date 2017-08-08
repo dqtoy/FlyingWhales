@@ -1359,7 +1359,7 @@ public class City{
 
 	internal void RetaliateToMonster(HexTile targetHextile){
 		FOG_OF_WAR_STATE fogOfWarState = this.kingdom.GetFogOfWarStateOfTile (targetHextile);
-		if(fogOfWarState != FOG_OF_WAR_STATE.HIDDEN){
+		if(fogOfWarState != FOG_OF_WAR_STATE.HIDDEN && targetHextile.lair != null){
 			List<HexTile> path = PathGenerator.Instance.GetPath(this.hexTile, targetHextile, PATHFINDING_MODE.AVATAR);
 			if(path != null){
 				EventCreator.Instance.CreateAttackLairEvent(this, targetHextile, path, null);
