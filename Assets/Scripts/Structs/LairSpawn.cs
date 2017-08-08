@@ -5,4 +5,5 @@ using System.Collections;
 public struct LairSpawn {
 	public LAIR lairType;
 	public int numberOfLairs;
+	public int tileRadiusDetection;
 }

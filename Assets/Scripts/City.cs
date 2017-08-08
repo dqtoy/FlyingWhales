@@ -1338,9 +1338,12 @@ public class City{
 	}
 
 	internal void RetaliateToMonster(HexTile targetHextile){
-		List<HexTile> path = PathGenerator.Instance.GetPath(this.hexTile, targetHextile, PATHFINDING_MODE.AVATAR);
-		if(path != null){
-			EventCreator.Instance.CreateAttackLairEvent(this, targetHextile, path, null);
+		FOG_OF_WAR_STATE fogOfWarState = this.kingdom.GetFogOfWarStateOfTile (targetHextile);
+		if(fogOfWarState != FOG_OF_WAR_STATE.HIDDEN){
+			List<HexTile> path = PathGenerator.Instance.GetPath(this.hexTile, targetHextile, PATHFINDING_MODE.AVATAR);
+			if(path != null){
+				EventCreator.Instance.CreateAttackLairEvent(this, targetHextile, path, null);
+			}
 		}
 	}
 	internal void AdjustSlavesCount(int amount){

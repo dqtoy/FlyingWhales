@@ -6,7 +6,6 @@ using System.Linq;
 public class MonsterManager : MonoBehaviour {
 	public static MonsterManager Instance;
 
-	public int tileRadiusDetection;
 	public int minimumLairDistance;
 	public bool activateLairImmediately;
 	public LairSpawn[] lairSpawn;
@@ -84,5 +83,15 @@ public class MonsterManager : MonoBehaviour {
 				newMonster.path = path;
 			}
 		}
+	}
+
+	internal LairSpawn GetLairSpawnData(LAIR type){
+		for (int i = 0; i < this.lairSpawn.Length; i++) {
+			if(this.lairSpawn[i].lairType == type){
+				return this.lairSpawn [i];
+			}
+		}
+		LairSpawn newLairSpawn = new LairSpawn();
+		return newLairSpawn;
 	}
 }

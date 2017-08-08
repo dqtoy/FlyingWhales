@@ -53,7 +53,7 @@ public class Kingdom{
 
 	private List<Kingdom> _discoveredKingdoms;
 
-	private CombatStats _combatStats;
+//	private CombatStats _combatStats;
 
 	//Plague
 	internal Plague plague;
@@ -210,12 +210,12 @@ public class Kingdom{
         get { return _fogOfWar; }
     }
 
-	public CombatStats combatStats {
-		get { return this._combatStats; }
-	}
-	public int waves{
-		get { return this._combatStats.waves - GetNumberOfWars();}
-	}
+//	public CombatStats combatStats {
+//		get { return this._combatStats; }
+//	}
+//	public int waves{
+//		get { return this._combatStats.waves - GetNumberOfWars();}
+//	}
 	public bool isLockedDown{
 		get { return this._isLockedDown;}
 	}
@@ -357,7 +357,7 @@ public class Kingdom{
 			this.UpdateCharacterValuesOfKingsAndGovernors();
         }
 
-		UpdateCombatStats();
+//		UpdateCombatStats();
     }
 	internal int[] GetHoroscope(KINGDOM_TYPE prevKingdomType = KINGDOM_TYPE.NONE){
 		int[] newHoroscope = new int[2];
@@ -2130,9 +2130,9 @@ public class Kingdom{
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
         if(fowState == FOG_OF_WAR_STATE.VISIBLE) {
             _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
-			if(tile.lair != null){
-				tile.lair.ActivateLair ();
-			}
+//			if(tile.lair != null){
+//				tile.lair.ActivateLair ();
+//			}
         } else {
             if(!(tile.isVisibleByCities != null && cities.Intersect(tile.isVisibleByCities).Count() > 0)) {
                 if (_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
@@ -2155,6 +2155,9 @@ public class Kingdom{
             }
         }
     }
+	internal FOG_OF_WAR_STATE GetFogOfWarStateOfTile(HexTile hexTile){
+		return this._fogOfWar [hexTile.xCoordinate, hexTile.yCoordinate];
+	}
     #endregion
 
 	#region Altar of Blessing
@@ -2177,10 +2180,10 @@ public class Kingdom{
 		return numOfWars;
 	}
 
-	private void UpdateCombatStats(){
-		this._combatStats = this._kingdomTypeData.combatStats;
-		this._combatStats.waves = this._kingdomTypeData.combatStats.waves - (GetNumberOfWars() + this.rebellions.Count);
-	}
+//	private void UpdateCombatStats(){
+//		this._combatStats = this._kingdomTypeData.combatStats;
+//		this._combatStats.waves = this._kingdomTypeData.combatStats.waves - (GetNumberOfWars() + this.rebellions.Count);
+//	}
 
 	internal void SetLockDown(bool state){
 		this._isLockedDown = state;

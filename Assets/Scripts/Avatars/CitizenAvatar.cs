@@ -33,6 +33,7 @@ public class CitizenAvatar : MonoBehaviour {
 
         ResetValues();
         AddBehaviourTree();
+		UpdateUI ();
     }
 
     internal virtual void Move() {

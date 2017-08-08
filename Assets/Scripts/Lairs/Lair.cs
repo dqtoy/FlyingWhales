@@ -21,6 +21,10 @@ public class Lair {
 	public bool isActivated;
 
 	private LairItem _lairItem;
+	private LairSpawn _lairSpawn;
+
+	internal HexTile _targetHextile;
+	internal List<HexTile> availableTargets;
 
 	public Lair(LAIR type, HexTile hexTile){
 		this.type = type;
@@ -29,10 +33,13 @@ public class Lair {
 		this.hp = GetLairHP();
 		this.maxHP = this.hp;
 		this.spawnRate = GetSpawnRate();
+		this._lairSpawn = MonsterManager.Instance.GetLairSpawnData (this.type);
 		this.goStructure = null;
-		this.tilesInRadius = this.hexTile.GetTilesInRange(MonsterManager.Instance.tileRadiusDetection);
+		this.tilesInRadius = this.hexTile.GetTilesInRange(this._lairSpawn.tileRadiusDetection);
 		this.isDead = false;
 		this.isActivated = false;
+		this._targetHextile = null;
+		this.availableTargets = new List<HexTile>();
 		AttachLairToHextile();
 		EventManager.Instance.onWeekEnd.AddListener (PerformAction);
 		onPerformAction += CheckForActivation;
@@ -113,19 +120,43 @@ public class Lair {
 	}
 	private void CheckForActivation(){
 		if(!this.isActivated){
-			if(this.hexTile.isBorder){
-				ActivateLair ();
-			}else{
-				List<HexTile> neighbors = this.hexTile.AllNeighbours.ToList ();
-				for (int i = 0; i < neighbors.Count; i++) {
-					if(neighbors[i].isBorder){
-						ActivateLair ();
-						break;
+			for (int i = 0; i < this.tilesInRadius.Count; i++) {
+				if (this.tilesInRadius [i].isHabitable && this.tilesInRadius [i].isOccupied && this.tilesInRadius [i].city.id != 0) {
+					ActivateLair ();
+					break;
+				}
+			}
+//			if(this.hexTile.isBorder){
+//				ActivateLair ();
+//			}else{
+//				List<HexTile> neighbors = this.hexTile.AllNeighbours.ToList ();
+//				for (int i = 0; i < neighbors.Count; i++) {
+//					if(neighbors[i].isBorder){
+//						ActivateLair ();
+//						break;
+//					}
+//				}
+//			}
+		}
+	}
+
+	public void AcquireTarget(){
+		this.availableTargets.Clear();
+		this._targetHextile = null;
+		for (int i = 0; i < this.tilesInRadius.Count; i++) {
+			if(this.tilesInRadius[i] != null){
+				if(this.tilesInRadius[i].isOccupied && this.tilesInRadius[i].isHabitable && this.tilesInRadius[i].city.id != 0){
+					if(this.hexTile.tag == this.tilesInRadius[i].tag){
+						this.availableTargets.Add(this.tilesInRadius[i]);
 					}
 				}
 			}
 		}
+		if(this.availableTargets.Count > 0){
+			this._targetHextile = this.availableTargets[UnityEngine.Random.Range(0, this.availableTargets.Count)];
+		}
 	}
+
 	#region Virtual
 	public virtual void Initialize(){}
 	public virtual void EverydayAction(){

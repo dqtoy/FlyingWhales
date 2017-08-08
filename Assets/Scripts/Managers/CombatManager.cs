@@ -19,7 +19,7 @@ public class CombatManager : MonoBehaviour {
 			damage = damage * 2;
 		}
 		int chance = UnityEngine.Random.Range(0,100);
-		if(chance < generalAttacker.citizen.city.kingdom.combatStats.criticalChance){
+		if(chance < generalAttacker.citizen.city.kingdom.kingdomTypeData.combatStats.criticalChance){
 			damage = damage * 2;
 		}
         if(generalAttacker.citizen.city.kingdom.weaponsCount > 0) {
@@ -431,7 +431,7 @@ public class CombatManager : MonoBehaviour {
 				agent1Damage = agent1Damage * 2;
 			}
 			int chance = UnityEngine.Random.Range(0,100);
-			if(chance < agent1.citizen.city.kingdom.combatStats.criticalChance){
+			if(chance < agent1.citizen.city.kingdom.kingdomTypeData.combatStats.criticalChance){
 				agent1Damage = agent1Damage * 2;
 			}
 		}
@@ -440,7 +440,7 @@ public class CombatManager : MonoBehaviour {
 				agent2Damage = agent2Damage * 2;
 			}
 			int chance = UnityEngine.Random.Range(0,100);
-			if(chance < agent2.citizen.city.kingdom.combatStats.criticalChance){
+			if(chance < agent2.citizen.city.kingdom.kingdomTypeData.combatStats.criticalChance){
 				agent2Damage = agent2Damage * 2;
 			}
 		}
@@ -521,7 +521,7 @@ public class CombatManager : MonoBehaviour {
 				agent2Damage = agent2Damage * 2;
 			}
 			int chance = UnityEngine.Random.Range(0,100);
-			if(chance < agent.citizen.city.kingdom.combatStats.criticalChance){
+			if(chance < agent.citizen.city.kingdom.kingdomTypeData.combatStats.criticalChance){
 				agent2Damage = agent2Damage * 2;
 			}
 		}

@@ -113,7 +113,7 @@ public class War : GameEvent {
 			this.ReplenishWavesKingdom1();
 			this.ReplenishWavesKingdom2();
 			EventManager.Instance.onWeekEnd.AddListener (this.PerformAction);
-
+//			this.EventIsCreated (this.kingdom2);
 		}
 	}
 
@@ -392,8 +392,10 @@ public class War : GameEvent {
 
 	private void ReplenishWavesKingdom1(){
 		this.kingdom1Waves = this.kingdom1.kingdomTypeData.combatStats.waves - (this.kingdom1.GetNumberOfWars() + this.kingdom1.rebellions.Count);
+		Debug.Log ("KINGDOM 1 WAVES: " + this.kingdom1Waves);
 	}
 	private void ReplenishWavesKingdom2(){
 		this.kingdom2Waves = this.kingdom2.kingdomTypeData.combatStats.waves - (this.kingdom2.GetNumberOfWars() + this.kingdom2.rebellions.Count);
+		Debug.Log ("KINGDOM 2 WAVES: " + this.kingdom2Waves);
 	}
 }

@@ -30,7 +30,7 @@ public class Monster {
 	private int GetMonsterHP(){
 		switch (this.type){
 		case MONSTER.LYCAN:
-			return 50;
+			return 120;
 		case MONSTER.STORM_WITCH:
 			return 1;
 		}

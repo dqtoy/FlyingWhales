@@ -140,9 +140,9 @@ public class LycanAvatar : MonoBehaviour {
     private void Update() {
         if (KingdomManager.Instance.useFogOfWar) {
             if (monster.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-                gameObject.SetActive(true);
+				gameObject.GetComponent<SpriteRenderer>().enabled = true;
             } else {
-                gameObject.SetActive(false);
+				gameObject.GetComponent<SpriteRenderer>().enabled = false;
             }
         }
     }
