@@ -738,7 +738,7 @@ public class Utilities : MonoBehaviour {
 //	}
 	public static string LogReplacer(Log log){
 		if(log == null){
-			return;
+			return string.Empty;
 		}
 		string replacedWord = string.Empty;
 		List<int> specificWordIndexes = new List<int> ();
