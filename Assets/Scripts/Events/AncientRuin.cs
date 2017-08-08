@@ -8,6 +8,7 @@ public class AncientRuin : GameEvent {
     private HexTile _ruinLocation;
 
     private Kingdom _discoveredByKingdom;
+    private Citizen _claimant;
 
     private enum RUIN_DISCOVERIES {
         NONE,
@@ -38,16 +39,47 @@ public class AncientRuin : GameEvent {
     internal override void OnCollectAvatarAction(Citizen claimant) {
         base.OnCollectAvatarAction(claimant);
         SetStartedBy(claimant.city.kingdom.king);
+        _claimant = claimant;
         _discoveredByKingdom = claimant.city.kingdom;
         DiscoverAncientRuin();
-        EventManager.Instance.AddEventToDictionary(this);
-        EventIsCreated();
     }
     #endregion
 
     internal void DiscoverAncientRuin() {
-        Debug.Log("Discover Ancient Ruin");
-
+        //Debug.Log("Discover Ancient Ruin");
+        RUIN_DISCOVERIES newDiscovery = GetRuinDiscovery();
+        switch (newDiscovery) {
+            case RUIN_DISCOVERIES.ANCIENT_WEAPONS:
+                EventCreator.Instance.CreateDevelopWeaponsEvent(_discoveredByKingdom);
+                break;
+            case RUIN_DISCOVERIES.PLAGUE:
+                EventCreator.Instance.CreatePlagueEvent(_discoveredByKingdom);
+                break;
+            case RUIN_DISCOVERIES.CONSTRUCTION_MATERIAL:
+                int totalGrowthGained = 500;
+                int growthPerCity = totalGrowthGained / _discoveredByKingdom.cities.Count;
+                for (int i = 0; i < _discoveredByKingdom.cities.Count; i++) {
+                    _discoveredByKingdom.cities[i].AdjustDailyGrowth(growthPerCity);
+                }
+                break;
+            case RUIN_DISCOVERIES.ANCIENT_TECH:
+                _discoveredByKingdom.AdjustTechCounter(1000);
+                break;
+            case RUIN_DISCOVERIES.MAP:
+                List<HexTile> tilesToExpose = _ruinLocation.GetTilesInRange(12);
+                for (int i = 0; i < tilesToExpose.Count; i++) {
+                    HexTile currTile = tilesToExpose[i];
+                    _discoveredByKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+                }
+                break;
+            default:
+                break;
+        }
+        Log newDiscoveryLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AncientRuin", newDiscovery.ToString());
+        newDiscoveryLog.AddToFillers(_claimant, _claimant.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        EventManager.Instance.AddEventToDictionary(this);
+        EventIsCreated();
+        DoneEvent();
     }
 
     private RUIN_DISCOVERIES GetRuinDiscovery() {

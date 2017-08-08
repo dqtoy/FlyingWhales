@@ -57,10 +57,10 @@ public class CitizenAvatar : MonoBehaviour {
 
     internal void CollectEvents() {
         this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
-        for (int i = 0; i < this.citizenRole.location.AllNeighbours.Count(); i++) {
-            HexTile currNeighbour = this.citizenRole.location.AllNeighbours.ElementAt(i);
-            currNeighbour.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
-        }
+        //for (int i = 0; i < this.citizenRole.location.AllNeighbours.Count(); i++) {
+        //    HexTile currNeighbour = this.citizenRole.location.AllNeighbours.ElementAt(i);
+        //    currNeighbour.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
+        //}
     }
 
     private void ResetValues() {

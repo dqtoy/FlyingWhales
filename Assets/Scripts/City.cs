@@ -923,21 +923,23 @@ public class City{
 		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
 		this.hexTile.city = null;
-		//KingdomManager.Instance.UpdateKingdomAdjacency();
-//		for (int i = 0; i < this.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
-//			if(this.kingdom.relationshipsWithOtherKingdoms[i].war != null && this.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
-//				if(this.kingdom.relationshipsWithOtherKingdoms[i].war.warPair.kingdom1City.id == this.id || this.kingdom.relationshipsWithOtherKingdoms[i].war.warPair.kingdom2City.id == this.id){
-//					this.kingdom.relationshipsWithOtherKingdoms [i].war.UpdateWarPair ();
-//				}
-//			}
-//		}
-//		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-//			KingdomManager.Instance.allKingdoms [i].intlWarCities.Remove (this);
-//			KingdomManager.Instance.allKingdoms [i].activeCitiesToAttack.Remove (this);
-//			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id || x.sourceCity.id == this.id);
-//			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
-//		}
-	}
+        //KingdomManager.Instance.UpdateKingdomAdjacency();
+        //		for (int i = 0; i < this.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
+        //			if(this.kingdom.relationshipsWithOtherKingdoms[i].war != null && this.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
+        //				if(this.kingdom.relationshipsWithOtherKingdoms[i].war.warPair.kingdom1City.id == this.id || this.kingdom.relationshipsWithOtherKingdoms[i].war.warPair.kingdom2City.id == this.id){
+        //					this.kingdom.relationshipsWithOtherKingdoms [i].war.UpdateWarPair ();
+        //				}
+        //			}
+        //		}
+        //		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+        //			KingdomManager.Instance.allKingdoms [i].intlWarCities.Remove (this);
+        //			KingdomManager.Instance.allKingdoms [i].activeCitiesToAttack.Remove (this);
+        //			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id || x.sourceCity.id == this.id);
+        //			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
+        //		}
+        Debug.Log(this.name + " has been killed!");
+        Debug.Log("Stack Trace: " + System.Environment.StackTrace);
+    }
 
     /*
      * Conquer this city and transfer ownership to the conqueror
