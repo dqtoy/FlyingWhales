@@ -1903,13 +1903,21 @@ public class Kingdom{
 //                    this.DiscoverKingdom(otherKingdom);
 //                    otherKingdom.DiscoverKingdom(this);
                 } else if (currNeighbour.isBorder) {
-                    Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID).kingdom;
+                    City otherCity = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID);
+                    if(otherCity == null) {
+                        Debug.Log("Other City is null!");
+                        currNeighbour.isBorderOfCityID = 0;
+                        currNeighbour.isBorder = false;
+                    } else {
+                        Kingdom otherKingdom = otherCity.kingdom;
 
-                    if (otherKingdom.id != this.id) {
-						KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
-//                        this.DiscoverKingdom(otherKingdom);
-//                        otherKingdom.DiscoverKingdom(this);
+                        if (otherKingdom.id != this.id) {
+					        KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
+        //                        this.DiscoverKingdom(otherKingdom);
+        //                        otherKingdom.DiscoverKingdom(this);
+                        }
                     }
+                    
                 }
             }
         }

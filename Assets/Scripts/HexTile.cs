@@ -45,7 +45,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public int isBorderOfCityID = 0;
 	internal int isOccupiedByCityID = 0;
-    internal List<City> isVisibleByCities = new List<City>();
+    [SerializeField] internal List<City> isVisibleByCities = new List<City>();
 
     [Space(10)]
     [Header("Tile Visuals")]
@@ -632,7 +632,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
     public void RemoveHextileEventNamePlate() {
-        Destroy(this._hextileEventItem.gameObject);
+        if(this._hextileEventItem != null) {
+            Destroy(this._hextileEventItem.gameObject);
+        }
     }
 
    // public void ShowOccupiedSprite() {
@@ -959,6 +961,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [ContextMenu("Force Kill City")]
     public void ForceKillCity() {
         city.KillCity();
+    }
+
+    [ContextMenu("Select All Relevant Tiles")]
+    public void SelectAllRelevantTiles() {
+        List<GameObject> allTiles = new List<GameObject>();
+        allTiles.AddRange(city.borderTiles.Select(x => x.gameObject));
+        allTiles.AddRange(city.ownedTiles.Select(x => x.gameObject));
+        allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
+        UnityEditor.Selection.objects = allTiles.ToArray();
+    }
+
+    [ContextMenu("Select All Border Tiles")]
+    public void SelectAllBorderTiles() {
+        List<GameObject> allTiles = new List<GameObject>();
+        allTiles.AddRange(city.borderTiles.Select(x => x.gameObject));
+        UnityEditor.Selection.objects = allTiles.ToArray();
     }
 
     private void ShowKingdomInfo() {

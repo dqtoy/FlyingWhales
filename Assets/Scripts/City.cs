@@ -1068,39 +1068,39 @@ public class City{
 		this.AddCitizenToCity(citizenToMove);
 	}
 
-	protected void UpdateAdjacentCities(){
-		this.adjacentCities.Clear();
-		for (int i = 0; i < this.borderTiles.Count; i++) {
-			HexTile currentHexTile = this.borderTiles[i];
-			List<HexTile> currHexTileNeighbours = currentHexTile.AllNeighbours.Where (x => x.elevationType != ELEVATION.WATER).ToList();
-			for (int j = 0; j < currHexTileNeighbours.Count; j++) {
-				HexTile currNeighbour = currHexTileNeighbours[j];
-				if (currNeighbour.isOccupied) {
-					//Check if current neighbour is occupied by a different city
-					if (currNeighbour.isOccupiedByCityID != this.id) {
-						City cityToAdd = CityGenerator.Instance.GetCityByID(currNeighbour.isOccupiedByCityID);
-						if (!this.adjacentCities.Contains(cityToAdd)) {
-							this.adjacentCities.Add(cityToAdd);
-						}
-						if (!cityToAdd.adjacentCities.Contains (this)) {
-							cityToAdd.adjacentCities.Add (this);
-						}
-					}
-				} else if(currNeighbour.isBorder) {
-					//Check if current neighbour is border of a different city
-					if (currNeighbour.isBorderOfCityID != this.id) {
-						City cityToAdd = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID);
-						if (!this.adjacentCities.Contains(cityToAdd)) {
-							this.adjacentCities.Add(cityToAdd);
-						}
-						if (!cityToAdd.adjacentCities.Contains (this)) {
-							cityToAdd.adjacentCities.Add (this);
-						}
-					}
-				}
-			}
-		}
-	}
+	//protected void UpdateAdjacentCities(){
+	//	this.adjacentCities.Clear();
+	//	for (int i = 0; i < this.borderTiles.Count; i++) {
+	//		HexTile currentHexTile = this.borderTiles[i];
+	//		List<HexTile> currHexTileNeighbours = currentHexTile.AllNeighbours.Where (x => x.elevationType != ELEVATION.WATER).ToList();
+	//		for (int j = 0; j < currHexTileNeighbours.Count; j++) {
+	//			HexTile currNeighbour = currHexTileNeighbours[j];
+	//			if (currNeighbour.isOccupied) {
+	//				//Check if current neighbour is occupied by a different city
+	//				if (currNeighbour.isOccupiedByCityID != this.id) {
+	//					City cityToAdd = CityGenerator.Instance.GetCityByID(currNeighbour.isOccupiedByCityID);
+	//					if (!this.adjacentCities.Contains(cityToAdd)) {
+	//						this.adjacentCities.Add(cityToAdd);
+	//					}
+	//					if (!cityToAdd.adjacentCities.Contains (this)) {
+	//						cityToAdd.adjacentCities.Add (this);
+	//					}
+	//				}
+	//			} else if(currNeighbour.isBorder) {
+	//				//Check if current neighbour is border of a different city
+	//				if (currNeighbour.isBorderOfCityID != this.id) {
+	//					City cityToAdd = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID);
+	//					if (!this.adjacentCities.Contains(cityToAdd)) {
+	//						this.adjacentCities.Add(cityToAdd);
+	//					}
+	//					if (!cityToAdd.adjacentCities.Contains (this)) {
+	//						cityToAdd.adjacentCities.Add (this);
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
 	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration, List<HexTile> newPath = null){
 		if(role == ROLE.GENERAL){
