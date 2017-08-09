@@ -445,6 +445,8 @@ public class Kingdom{
         this.RemoveRelationshipsWithOtherKingdoms();
         KingdomManager.Instance.allKingdoms.Remove(this);
 
+        UIManager.Instance.CheckIfShowingKingdomIsAlive(this);
+
         Debug.Log(this.id + " - Kingdom: " + this.name + " has died!");
         Debug.Log("Stack Trace: " + System.Environment.StackTrace);
 	}
@@ -2156,6 +2158,9 @@ public class Kingdom{
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState, bool isForced = false) {
         if (isForced) {
             _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+            if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+                UpdateFogOfWarVisualForTile(tile, fowState);
+            }
         } else {
             if (fowState == FOG_OF_WAR_STATE.VISIBLE) {
                 _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
@@ -2176,15 +2181,20 @@ public class Kingdom{
             for (int y = 0; y < fogOfWar.GetLength(1); y++) {
                 FOG_OF_WAR_STATE fowStateToUse = fogOfWar[x, y];
                 HexTile currHexTile = GridMap.Instance.map[x, y];
-                currHexTile.SetFogOfWarState(fowStateToUse);
-                if (KingdomManager.Instance.useFogOfWar) {
-                    currHexTile.ShowFogOfWarObjects();
-                } else {
-                    currHexTile.HideFogOfWarObjects();
-                }
+                UpdateFogOfWarVisualForTile(currHexTile, fowStateToUse);
             }
         }
     }
+
+    private void UpdateFogOfWarVisualForTile(HexTile hexTile, FOG_OF_WAR_STATE fowState) {
+        hexTile.SetFogOfWarState(fowState);
+        if (KingdomManager.Instance.useFogOfWar) {
+            hexTile.ShowFogOfWarObjects();
+        } else {
+            hexTile.HideFogOfWarObjects();
+        }
+    }
+
 	internal FOG_OF_WAR_STATE GetFogOfWarStateOfTile(HexTile hexTile){
 		return this._fogOfWar [hexTile.xCoordinate, hexTile.yCoordinate];
 	}

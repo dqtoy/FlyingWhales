@@ -551,6 +551,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void UpdateNamePlate() {
+        if (_cityInfo == null) {
+            return;
+        }
         if (KingdomManager.Instance.useFogOfWar) {
             if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
                 this._cityInfo.SetCity(this.city);

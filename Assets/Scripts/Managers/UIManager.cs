@@ -266,7 +266,7 @@ public class UIManager : MonoBehaviour {
 	void Start(){
         //EventManager.Instance.onWeekEnd.AddListener(CheckForKingdomExpire);
         EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
-        EventManager.Instance.onKingdomDiedEvent.AddListener(CheckIfShowingKingdomIsAlive);
+        //EventManager.Instance.onKingdomDiedEvent.AddListener(CheckIfShowingKingdomIsAlive);
         //EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
         //EventManager.Instance.onKingdomDiedEvent.AddListener(QueueKingdomForRemoval);
         NormalizeFontSizes();
@@ -546,7 +546,7 @@ public class UIManager : MonoBehaviour {
     //    }
     //}
 
-    private void CheckIfShowingKingdomIsAlive(Kingdom kingdom) {
+    internal void CheckIfShowingKingdomIsAlive(Kingdom kingdom) {
         if(currentlyShowingKingdom.id == kingdom.id) {
             SetKingdomAsActive(KingdomManager.Instance.allKingdoms.FirstOrDefault());
         }
