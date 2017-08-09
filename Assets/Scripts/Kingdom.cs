@@ -435,14 +435,15 @@ public class Kingdom{
 	internal void DestroyKingdom(){
 		this._isDead = true;
         this.CancelEventKingdomIsInvolvedIn(EVENT_TYPES.ALL);
-        KingdomManager.Instance.RemoveRelationshipToOtherKings(this.king);
-        this.RemoveRelationshipsWithOtherKingdoms();
-        KingdomManager.Instance.allKingdoms.Remove(this);
         EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
         EventManager.Instance.onWeekEnd.RemoveListener(KingdomTickActions);
         EventManager.Instance.onKingdomDiedEvent.RemoveListener(OtherKingdomDiedActions);
 
         EventManager.Instance.onKingdomDiedEvent.Invoke(this);
+
+        KingdomManager.Instance.RemoveRelationshipToOtherKings(this.king);
+        this.RemoveRelationshipsWithOtherKingdoms();
+        KingdomManager.Instance.allKingdoms.Remove(this);
 
         Debug.Log(this.id + " - Kingdom: " + this.name + " has died!");
         Debug.Log("Stack Trace: " + System.Environment.StackTrace);
@@ -979,6 +980,7 @@ public class Kingdom{
         //Inherit relationships of previous king, otherwise, create new relationships
         if (previousKing != null) {
             KingdomManager.Instance.InheritRelationshipFromCitizen(previousKing, newKing);
+            previousKing.relationshipKings.Clear();
         } else {
             KingdomManager.Instance.RemoveRelationshipToOtherKings(previousKing);
             newKing.CreateInitialRelationshipsToKings();

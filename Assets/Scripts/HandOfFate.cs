@@ -130,12 +130,18 @@ public class HandOfFate : MonoBehaviour {
 
 	[Task]
 	public void AreTheTwoKingdomsNotAtWar(){
-		RelationshipKingdom relationship = this.firstKingdom.GetRelationshipWithOtherKingdom (this.secondKingdom);
-		if(!relationship.isAtWar){
-			Task.current.Succeed ();
-		}else{
-			Task.current.Fail ();
-		}
+        War warBetweenKingdoms = KingdomManager.Instance.GetWarBetweenKingdoms(this.firstKingdom, this.secondKingdom);
+        if(warBetweenKingdoms == null) {
+            Task.current.Succeed();
+        } else {
+            Task.current.Fail();
+        }
+		//RelationshipKingdom relationship = this.firstKingdom.GetRelationshipWithOtherKingdom (this.secondKingdom);
+		//if(!relationship.isAtWar){
+		//	Task.current.Succeed ();
+		//}else{
+		//	Task.current.Fail ();
+		//}
 	}
 //	[Task]
 //	public void SetCompatibilityValue(){

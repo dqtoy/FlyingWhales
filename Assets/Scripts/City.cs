@@ -924,19 +924,21 @@ public class City{
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
         this.hexTile.city = null;
 
-        this._kingdom.RemoveCityFromKingdom(this);
-        
         Debug.Log(this.id + " - City " + this.name + " of " + this._kingdom.name + " has been killed!");
         Debug.Log("Stack Trace: " + System.Environment.StackTrace);
 
-        if (!this._kingdom.isDead) {
-            if (this.hasKing) {
-                this.hasKing = false;
-                if (this._kingdom.cities.Count > 0) {
-                    this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
-                }
-            }
-        }
+        this._kingdom.RemoveCityFromKingdom(this);
+        
+        
+
+        //if (!this._kingdom.isDead) {
+        //    if (this.hasKing) {
+        //        this.hasKing = false;
+        //        if (this._kingdom.cities.Count > 0) {
+        //            this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
+        //        }
+        //    }
+        //}
         
 
 		

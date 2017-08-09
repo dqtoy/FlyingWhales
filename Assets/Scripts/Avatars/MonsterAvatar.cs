@@ -21,13 +21,16 @@ public class MonsterAvatar : MonoBehaviour {
 	//	public float speed;
 	internal DIRECTION direction;
 
-	internal void Init(Monster monster){
+    private Transform[] childObjects;
+
+    internal void Init(Monster monster){
 		this.monster = monster;
 		this.txtDamage.text = monster.hp.ToString ();
 		this.direction = DIRECTION.LEFT;
 		ResetValues ();
 		this.AddBehaviourTree ();
-	}
+        childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
+    }
 	void OnTriggerEnter2D(Collider2D other){
 		if(other.tag == "Avatar"){
 			if(this.gameObject != null && other.gameObject != null){
@@ -144,14 +147,19 @@ public class MonsterAvatar : MonoBehaviour {
 	}
 
 	private void Update() {
-		if (KingdomManager.Instance.useFogOfWar) {
-			if (monster.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-				gameObject.GetComponent<SpriteRenderer>().enabled = true;
-			} else {
-				gameObject.GetComponent<SpriteRenderer>().enabled = false;
-			}
-		}
-	}
+        if (KingdomManager.Instance.useFogOfWar) {
+            bool state = true;
+            if (monster.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+                state = true;
+            } else {
+                state = false;
+            }
+            this.gameObject.GetComponent<SpriteRenderer>().enabled = state;
+            for (int i = 0; i < childObjects.Length; i++) {
+                childObjects[i].gameObject.SetActive(state);
+            }
+        }
+    }
 
 	void HighlightPath(){
 		this.pathToUnhighlight.Clear ();

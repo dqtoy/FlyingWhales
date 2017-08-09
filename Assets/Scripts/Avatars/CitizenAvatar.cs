@@ -14,6 +14,8 @@ public class CitizenAvatar : MonoBehaviour {
     private bool _hasArrived = false;
     private List<HexTile> pathToUnhighlight = new List<HexTile>();
 
+    private Transform[] childObjects;
+
     internal DIRECTION direction;
 
     #region getters/setters
@@ -30,6 +32,7 @@ public class CitizenAvatar : MonoBehaviour {
         this.GetComponent<Avatar>().gameEvent = this.citizenRole.gameEventInvolvedIn;
         this.GetComponent<Avatar>().citizen = this.citizenRole.citizen;
         visibleTiles = new List<HexTile>();
+        childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
 
         ResetValues();
         AddBehaviourTree();
@@ -196,11 +199,16 @@ public class CitizenAvatar : MonoBehaviour {
 
     private void Update() {
         if (KingdomManager.Instance.useFogOfWar) {
+            bool state = true;
             if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+                state = true;
             } else {
-                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                state = false;
             }
+            this.gameObject.GetComponent<SpriteRenderer>().enabled = state;
+            for (int i = 0; i < childObjects.Length; i++) {
+                childObjects[i].gameObject.SetActive(state);
+            } 
         }
     }
 
