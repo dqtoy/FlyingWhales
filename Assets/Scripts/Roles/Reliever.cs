@@ -20,19 +20,19 @@ public class Reliever : Role {
 			this.avatar.GetComponent<RelieverAvatar>().Init(this);
 		}
 	}
-	internal override void Attack (){
-//		base.Attack ();
-		if(this.avatar != null){
-			this.avatar.GetComponent<RelieverAvatar> ().HasAttacked();
-			if(this.avatar.GetComponent<RelieverAvatar> ().direction == DIRECTION.LEFT){
-				this.avatar.GetComponent<RelieverAvatar> ().animator.Play ("Attack_Left");
-			}else if(this.avatar.GetComponent<RelieverAvatar> ().direction == DIRECTION.RIGHT){
-				this.avatar.GetComponent<RelieverAvatar> ().animator.Play ("Attack_Right");
-			}else if(this.avatar.GetComponent<RelieverAvatar> ().direction == DIRECTION.UP){
-				this.avatar.GetComponent<RelieverAvatar> ().animator.Play ("Attack_Up");
-			}else{
-				this.avatar.GetComponent<RelieverAvatar> ().animator.Play ("Attack_Down");
-			}
-		}
-	}
+//	internal override void Attack (){
+////		base.Attack ();
+//		if(this.avatar != null){
+//			this.avatar.GetComponent<RelieverAvatar> ().HasAttacked();
+//			if(this.avatar.GetComponent<RelieverAvatar> ().direction == DIRECTION.LEFT){
+//				this.avatar.GetComponent<RelieverAvatar> ().animator.Play ("Attack_Left");
+//			}else if(this.avatar.GetComponent<RelieverAvatar> ().direction == DIRECTION.RIGHT){
+//				this.avatar.GetComponent<RelieverAvatar> ().animator.Play ("Attack_Right");
+//			}else if(this.avatar.GetComponent<RelieverAvatar> ().direction == DIRECTION.UP){
+//				this.avatar.GetComponent<RelieverAvatar> ().animator.Play ("Attack_Up");
+//			}else{
+//				this.avatar.GetComponent<RelieverAvatar> ().animator.Play ("Attack_Down");
+//			}
+//		}
+//	}
 }

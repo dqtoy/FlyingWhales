@@ -25,6 +25,7 @@ public class AttackLair : GameEvent {
 				}
 				this.general.citizen.Death (DEATH_REASONS.BATTLE);
 			}
+
 		}
 	}
 	internal override void DeathByOtherReasons(){

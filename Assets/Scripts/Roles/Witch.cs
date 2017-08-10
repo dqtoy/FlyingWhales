@@ -17,20 +17,20 @@ public class Witch : Role {
         }
     }
 
-    internal override void Attack() {
-        //		base.Attack ();
-        if (this.avatar != null) {
-            this.avatar.GetComponent<WitchAvatar>().HasAttacked();
-            if (this.avatar.GetComponent<WitchAvatar>().direction == DIRECTION.LEFT) {
-                this.avatar.GetComponent<WitchAvatar>().animator.Play("Attack_Left");
-            } else if (this.avatar.GetComponent<WitchAvatar>().direction == DIRECTION.RIGHT) {
-                this.avatar.GetComponent<WitchAvatar>().animator.Play("Attack_Right");
-            } else if (this.avatar.GetComponent<WitchAvatar>().direction == DIRECTION.UP) {
-                this.avatar.GetComponent<WitchAvatar>().animator.Play("Attack_Up");
-            } else {
-                this.avatar.GetComponent<WitchAvatar>().animator.Play("Attack_Down");
-            }
-        }
-    }
+//    internal override void Attack() {
+//        //		base.Attack ();
+//        if (this.avatar != null) {
+//            this.avatar.GetComponent<WitchAvatar>().HasAttacked();
+//            if (this.avatar.GetComponent<WitchAvatar>().direction == DIRECTION.LEFT) {
+//                this.avatar.GetComponent<WitchAvatar>().animator.Play("Attack_Left");
+//            } else if (this.avatar.GetComponent<WitchAvatar>().direction == DIRECTION.RIGHT) {
+//                this.avatar.GetComponent<WitchAvatar>().animator.Play("Attack_Right");
+//            } else if (this.avatar.GetComponent<WitchAvatar>().direction == DIRECTION.UP) {
+//                this.avatar.GetComponent<WitchAvatar>().animator.Play("Attack_Up");
+//            } else {
+//                this.avatar.GetComponent<WitchAvatar>().animator.Play("Attack_Down");
+//            }
+//        }
+//    }
     #endregion
 }

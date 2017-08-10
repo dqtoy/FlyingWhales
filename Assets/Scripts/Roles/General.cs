@@ -20,7 +20,7 @@ public class General : Role {
 //	internal Citizen target;
 //	public int daysCounter = 0;
 //	public int daysBeforeMoving;
-	public GameEvent gameEvent;
+//	public GameEvent gameEvent;
 	internal bool isRebel;
 	internal int spawnRate;
     private int _weaponCount;
@@ -39,7 +39,7 @@ public class General : Role {
 //		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
 //		this.targetLocation = null;
 		this.spawnRate = 0;
-		this.gameEvent = null;
+//		this.gameEvent = null;
 		this.isRebel = false;
 		this._hasSerumOfAlacrity = false;
 //		this.daysBeforeArrival = 0;
@@ -55,42 +55,33 @@ public class General : Role {
 
 	internal override void Initialize(GameEvent gameEvent){
 		base.Initialize(gameEvent);
-		this.gameEvent = gameEvent;
-		if(gameEvent is AttackCity){
-			((AttackCity)this.gameEvent).general = this;
-		}else if(gameEvent is AttackLair){
-			((AttackLair)this.gameEvent).general = this;
-		}
+//		this.gameEvent = gameEvent;
+//		if(gameEvent is AttackCity){
+//			((AttackCity)this.gameEvent).general = this;
+//		}else if(gameEvent is AttackLair){
+//			((AttackLair)this.gameEvent).general = this;
+//		}
 		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/General"), this.citizen.city.hexTile.transform) as GameObject;
 		this.avatar.transform.localPosition = Vector3.zero;
 		this.avatar.GetComponent<GeneralAvatar>().Init(this);
 	}
 
-	internal override void Attack (){
-		//		base.Attack ();
-
-//		if(this.attackCity != null){
-//			if(this.damage >= this.attackCity.targetCity.hp){
-//				if(this.attackCity.gameEvent is Rebellion){
-//					((Rebellion)this.attackCity.gameEvent).warPair.isDone = true;
-//				}else if(this.attackCity.gameEvent is War){
-//					((War)this.attackCity.gameEvent).warPair.isDone = true;
-//				}
+//	internal override void Attack (){
+//		//		base.Attack ();
+//
+//		if(this.avatar != null){
+//			this.avatar.GetComponent<GeneralAvatar> ().HasAttacked();
+//			if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.LEFT){
+//				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Left");
+//			}else if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.RIGHT){
+//				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Right");
+//			}else if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.UP){
+//				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Up");
+//			}else{
+//				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Down");
 //			}
 //		}
-		if(this.avatar != null){
-			this.avatar.GetComponent<GeneralAvatar> ().HasAttacked();
-			if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.LEFT){
-				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Left");
-			}else if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.RIGHT){
-				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Right");
-			}else if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.UP){
-				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Up");
-			}else{
-				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Down");
-			}
-		}
-	}
+//	}
 
 	internal int GetDamage(){
 //		int baseDamage = UnityEngine.Random.Range (50, 81) + (_weaponCount * 100);

@@ -32,21 +32,21 @@ public class Spy : Role {
 		}
 	}
 
-	internal override void Attack (){
-//		base.Attack ();
-		if(this.avatar != null){
-			this.avatar.GetComponent<SpyAvatar> ().HasAttacked();
-			if(this.avatar.GetComponent<SpyAvatar> ().direction == DIRECTION.LEFT){
-				this.avatar.GetComponent<SpyAvatar> ().animator.Play ("Attack_Left");
-			}else if(this.avatar.GetComponent<SpyAvatar> ().direction == DIRECTION.RIGHT){
-				this.avatar.GetComponent<SpyAvatar> ().animator.Play ("Attack_Right");
-			}else if(this.avatar.GetComponent<SpyAvatar> ().direction == DIRECTION.UP){
-				this.avatar.GetComponent<SpyAvatar> ().animator.Play ("Attack_Up");
-			}else{
-				this.avatar.GetComponent<SpyAvatar> ().animator.Play ("Attack_Down");
-			}
-		}
-	}
+//	internal override void Attack (){
+////		base.Attack ();
+//		if(this.avatar != null){
+//			this.avatar.GetComponent<SpyAvatar> ().HasAttacked();
+//			if(this.avatar.GetComponent<SpyAvatar> ().direction == DIRECTION.LEFT){
+//				this.avatar.GetComponent<SpyAvatar> ().animator.Play ("Attack_Left");
+//			}else if(this.avatar.GetComponent<SpyAvatar> ().direction == DIRECTION.RIGHT){
+//				this.avatar.GetComponent<SpyAvatar> ().animator.Play ("Attack_Right");
+//			}else if(this.avatar.GetComponent<SpyAvatar> ().direction == DIRECTION.UP){
+//				this.avatar.GetComponent<SpyAvatar> ().animator.Play ("Attack_Up");
+//			}else{
+//				this.avatar.GetComponent<SpyAvatar> ().animator.Play ("Attack_Down");
+//			}
+//		}
+//	}
 	/*internal void StartDecreaseWarExhaustionTask(RelationshipKingdom targetKingdom){
 //		Debug.Log(this.citizen.name + ": Start Decrease War Exhaustion Task");
 		this.actionDurationInWeeks = 2;

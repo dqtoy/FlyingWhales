@@ -20,19 +20,19 @@ public class Missionary : Role {
 			this.avatar.GetComponent<MissionaryAvatar>().Init(this);
 		}
 	}
-	internal override void Attack (){
-//		base.Attack ();
-		if(this.avatar != null){
-			this.avatar.GetComponent<MissionaryAvatar> ().HasAttacked();
-			if(this.avatar.GetComponent<MissionaryAvatar> ().direction == DIRECTION.LEFT){
-				this.avatar.GetComponent<MissionaryAvatar> ().animator.Play ("Attack_Left");
-			}else if(this.avatar.GetComponent<MissionaryAvatar> ().direction == DIRECTION.RIGHT){
-				this.avatar.GetComponent<MissionaryAvatar> ().animator.Play ("Attack_Right");
-			}else if(this.avatar.GetComponent<MissionaryAvatar> ().direction == DIRECTION.UP){
-				this.avatar.GetComponent<MissionaryAvatar> ().animator.Play ("Attack_Up");
-			}else{
-				this.avatar.GetComponent<MissionaryAvatar> ().animator.Play ("Attack_Down");
-			}
-		}
-	}
+//	internal override void Attack (){
+////		base.Attack ();
+//		if(this.avatar != null){
+//			this.avatar.GetComponent<MissionaryAvatar> ().HasAttacked();
+//			if(this.avatar.GetComponent<MissionaryAvatar> ().direction == DIRECTION.LEFT){
+//				this.avatar.GetComponent<MissionaryAvatar> ().animator.Play ("Attack_Left");
+//			}else if(this.avatar.GetComponent<MissionaryAvatar> ().direction == DIRECTION.RIGHT){
+//				this.avatar.GetComponent<MissionaryAvatar> ().animator.Play ("Attack_Right");
+//			}else if(this.avatar.GetComponent<MissionaryAvatar> ().direction == DIRECTION.UP){
+//				this.avatar.GetComponent<MissionaryAvatar> ().animator.Play ("Attack_Up");
+//			}else{
+//				this.avatar.GetComponent<MissionaryAvatar> ().animator.Play ("Attack_Down");
+//			}
+//		}
+//	}
 }

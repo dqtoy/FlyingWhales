@@ -25,21 +25,21 @@ public class Adventurer : Role {
         }
     }
 
-    internal override void Attack() {
-        //		base.Attack ();
-        if (this.avatar != null) {
-            this.avatar.GetComponent<AdventurerAvatar>().HasAttacked();
-            if (this.avatar.GetComponent<AdventurerAvatar>().direction == DIRECTION.LEFT) {
-                this.avatar.GetComponent<AdventurerAvatar>().animator.Play("Attack_Left");
-            } else if (this.avatar.GetComponent<AdventurerAvatar>().direction == DIRECTION.RIGHT) {
-                this.avatar.GetComponent<AdventurerAvatar>().animator.Play("Attack_Right");
-            } else if (this.avatar.GetComponent<AdventurerAvatar>().direction == DIRECTION.UP) {
-                this.avatar.GetComponent<AdventurerAvatar>().animator.Play("Attack_Up");
-            } else {
-                this.avatar.GetComponent<AdventurerAvatar>().animator.Play("Attack_Down");
-            }
-        }
-    }
+//    internal override void Attack() {
+//        //		base.Attack ();
+//        if (this.avatar != null) {
+//            this.avatar.GetComponent<AdventurerAvatar>().HasAttacked();
+//            if (this.avatar.GetComponent<AdventurerAvatar>().direction == DIRECTION.LEFT) {
+//                this.avatar.GetComponent<AdventurerAvatar>().animator.Play("Attack_Left");
+//            } else if (this.avatar.GetComponent<AdventurerAvatar>().direction == DIRECTION.RIGHT) {
+//                this.avatar.GetComponent<AdventurerAvatar>().animator.Play("Attack_Right");
+//            } else if (this.avatar.GetComponent<AdventurerAvatar>().direction == DIRECTION.UP) {
+//                this.avatar.GetComponent<AdventurerAvatar>().animator.Play("Attack_Up");
+//            } else {
+//                this.avatar.GetComponent<AdventurerAvatar>().animator.Play("Attack_Down");
+//            }
+//        }
+//    }
 
     internal void SetLatestDiscovery(object discovery) {
         _latestDiscovery = discovery;

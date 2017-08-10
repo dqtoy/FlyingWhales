@@ -57,6 +57,7 @@ public class Role {
 		this.isDestroyed = true;
 	}
 
+	#region Virtuals
 	internal virtual int[] GetResourceProduction(){
 		int goldProduction = 40;
 		//		if (this.citizen.city.governor.skillTraits.Contains (SKILL_TRAIT.LAVISH)) {
@@ -81,7 +82,26 @@ public class Role {
         SetGameEventInvolvedIn(gameEvent);
         CheckForPlagueInfection();
     }
-	internal virtual void Attack(){}
+	internal virtual void Attack(){
+		if (this.avatar != null) {
+			this.avatar.GetComponent<CitizenAvatar>().HasAttacked();
+			if(this.avatar.GetComponent<CitizenAvatar>().animator.gameObject.activeSelf){
+				if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.LEFT) {
+					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Left");
+				} else if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.RIGHT) {
+					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Right");
+				} else if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.UP) {
+					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Up");
+				} else {
+					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Down");
+				}
+			}else{
+				this.avatar.GetComponent<CitizenAvatar> ().EndAttack ();
+			}
+		}
+	}
+
+	#endregion
 
    /*
     * Whenever an agent comes out of a plagued city, 

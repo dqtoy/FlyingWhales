@@ -22,19 +22,19 @@ public class Reinforcer : Role {
 		}
 	}
 
-	internal override void Attack (){
-		//		base.Attack ();
-		if(this.avatar != null){
-			this.avatar.GetComponent<ReinforcerAvatar> ().HasAttacked();
-			if(this.avatar.GetComponent<ReinforcerAvatar> ().direction == DIRECTION.LEFT){
-				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Left");
-			}else if(this.avatar.GetComponent<ReinforcerAvatar> ().direction == DIRECTION.RIGHT){
-				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Right");
-			}else if(this.avatar.GetComponent<ReinforcerAvatar> ().direction == DIRECTION.UP){
-				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Up");
-			}else{
-				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Down");
-			}
-		}
-	}
+//	internal override void Attack (){
+//		//		base.Attack ();
+//		if(this.avatar != null){
+//			this.avatar.GetComponent<ReinforcerAvatar> ().HasAttacked();
+//			if(this.avatar.GetComponent<ReinforcerAvatar> ().direction == DIRECTION.LEFT){
+//				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Left");
+//			}else if(this.avatar.GetComponent<ReinforcerAvatar> ().direction == DIRECTION.RIGHT){
+//				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Right");
+//			}else if(this.avatar.GetComponent<ReinforcerAvatar> ().direction == DIRECTION.UP){
+//				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Up");
+//			}else{
+//				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Down");
+//			}
+//		}
+//	}
 }
