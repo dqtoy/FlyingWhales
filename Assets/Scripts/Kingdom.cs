@@ -283,6 +283,12 @@ public class Kingdom{
         this.foundationMonth = GameManager.Instance.month;
         this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
         this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
+        this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
+        this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, List<HexTile>>();
+        _fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new List<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())));
+        _fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new List<HexTile>());
+        _fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new List<HexTile>());
+
 
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
@@ -299,11 +305,7 @@ public class Kingdom{
 
         this.basicResource = Utilities.GetBasicResourceForRace(race);
 
-        this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
-        this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, List<HexTile>>();
-        _fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new List<HexTile>());
-        _fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new List<HexTile>());
-        _fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new List<HexTile>());
+        
 
         if (cities.Count > 0) {
             for (int i = 0; i < cities.Count; i++) {
