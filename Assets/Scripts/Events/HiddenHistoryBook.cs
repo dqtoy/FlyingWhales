@@ -19,7 +19,8 @@ public class HiddenHistoryBook : GameEvent {
 		//TODO: Add log - event_title
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "HiddenHistoryBook", "event_title");
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+        EventManager.Instance.AddEventToDictionary(this);
+        EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
 		KnowsExistence();
 
 		this.EventIsCreated();
