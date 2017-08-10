@@ -20,7 +20,7 @@ public class General : Role {
 //	internal Citizen target;
 //	public int daysCounter = 0;
 //	public int daysBeforeMoving;
-	public GameEvent gameEvent;
+//	public GameEvent gameEvent;
 	internal bool isRebel;
 	internal int spawnRate;
     private int _weaponCount;
@@ -39,7 +39,7 @@ public class General : Role {
 //		this.daysBeforeMoving = citizen.city.hexTile.movementDays;
 //		this.targetLocation = null;
 		this.spawnRate = 0;
-		this.gameEvent = null;
+//		this.gameEvent = null;
 		this.isRebel = false;
 		this._hasSerumOfAlacrity = false;
 //		this.daysBeforeArrival = 0;
@@ -55,12 +55,12 @@ public class General : Role {
 
 	internal override void Initialize(GameEvent gameEvent){
 		base.Initialize(gameEvent);
-		this.gameEvent = gameEvent;
-		if(gameEvent is AttackCity){
-			((AttackCity)this.gameEvent).general = this;
-		}else if(gameEvent is AttackLair){
-			((AttackLair)this.gameEvent).general = this;
-		}
+//		this.gameEvent = gameEvent;
+//		if(gameEvent is AttackCity){
+//			((AttackCity)this.gameEvent).general = this;
+//		}else if(gameEvent is AttackLair){
+//			((AttackLair)this.gameEvent).general = this;
+//		}
 		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/General"), this.citizen.city.hexTile.transform) as GameObject;
 		this.avatar.transform.localPosition = Vector3.zero;
 		this.avatar.GetComponent<GeneralAvatar>().Init(this);
