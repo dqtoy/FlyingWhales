@@ -12,17 +12,25 @@ public class GameManager : MonoBehaviour {
 	public int days;
 	public int year;
 
-	public float progressionSpeed = 1f;
+    public PROGRESSION_SPEED currProgressionSpeed;
+
+	public float progressionSpeed;
 	public bool isPaused = true;
 
-	private float timeElapsed;
-	void Awake(){
+    private const float X1_SPEED = 2f;
+    private const float X2_SPEED = 1f;
+    private const float X4_SPEED = 0.3f;
+
+    private float timeElapsed;
+
+    private void Awake(){
 		Instance = this;
 		this.days = 1;
 		this.month = 1;
 		this.timeElapsed = 0f;
 	}
-	void FixedUpdate(){
+
+	private void FixedUpdate(){
 		if (!isPaused) {
 			this.timeElapsed += Time.deltaTime * 1f;
 			if(this.timeElapsed >= this.progressionSpeed){
@@ -31,15 +39,13 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 	}
+
 	[ContextMenu("Start Progression")]
 	public void StartProgression(){
-//		InvokeRepeating ("WeekEnded", 0f, 1f);
 		UIManager.Instance.SetProgressionSpeed1X();
 		UIManager.Instance.x1Btn.SetAsClicked();
-//		this.WeekEnded();
 		EventManager.Instance.onUpdateUI.Invoke();
-//		StartCoroutine(WeekProgression());
-		this.isPaused = false;
+        SetPausedState(false);
 	}
 
 	public void TogglePause(){
@@ -50,19 +56,23 @@ public class GameManager : MonoBehaviour {
 		this.isPaused = isPaused;
 	}
 
-	public void SetProgressionSpeed(float speed){
+    /*
+     * Set day progression speed to 1x, 2x of 4x
+     * */
+	public void SetProgressionSpeed(PROGRESSION_SPEED progSpeed){
+        currProgressionSpeed = progSpeed;
+        float speed = X1_SPEED;
+        if (progSpeed == PROGRESSION_SPEED.X2) {
+            speed = X2_SPEED;
+        } else if(progSpeed == PROGRESSION_SPEED.X4){
+            speed = X4_SPEED;
+        }
 		this.progressionSpeed = speed;
 	}
 
-	IEnumerator WeekProgression(){
-		while (true) {
-			yield return new WaitForSeconds (progressionSpeed);
-			if (!isPaused) {
-				this.WeekEnded ();
-			}
-		}
-	}
-
+    /*
+     * Function that triggers daily actions
+     * */
 	public void WeekEnded(){
 //		TriggerRequestPeace();
 		EventManager.Instance.onCitizenTurnActions.Invoke ();
@@ -80,7 +90,6 @@ public class GameManager : MonoBehaviour {
 				this.year += 1;
 			}
 		}
-        //Debug.Log("MOON PHASE : " + Utilities.GetMoonPhase(this.year, this.month, this.days).ToString());
 	}
 
 	/*private void TriggerRequestPeace(){
