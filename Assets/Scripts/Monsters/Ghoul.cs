@@ -9,20 +9,20 @@ public class Ghoul : Monster {
 
 
 	#region Overrides
-	internal override void Attack (){
-		if(this.avatar != null){
-			this.avatar.GetComponent<GhoulAvatar> ().HasAttacked();
-			if(this.avatar.GetComponent<GhoulAvatar> ().direction == DIRECTION.LEFT){
-				this.avatar.GetComponent<GhoulAvatar> ().animator.Play ("Attack_Left");
-			}else if(this.avatar.GetComponent<GhoulAvatar> ().direction == DIRECTION.RIGHT){
-				this.avatar.GetComponent<GhoulAvatar> ().animator.Play ("Attack_Right");
-			}else if(this.avatar.GetComponent<GhoulAvatar> ().direction == DIRECTION.UP){
-				this.avatar.GetComponent<GhoulAvatar> ().animator.Play ("Attack_Up");
-			}else{
-				this.avatar.GetComponent<GhoulAvatar> ().animator.Play ("Attack_Down");
-			}
-		}
-	}
+//	internal override void Attack (){
+//		if(this.avatar != null){
+//			this.avatar.GetComponent<GhoulAvatar> ().HasAttacked();
+//			if(this.avatar.GetComponent<GhoulAvatar> ().direction == DIRECTION.LEFT){
+//				this.avatar.GetComponent<GhoulAvatar> ().animator.Play ("Attack_Left");
+//			}else if(this.avatar.GetComponent<GhoulAvatar> ().direction == DIRECTION.RIGHT){
+//				this.avatar.GetComponent<GhoulAvatar> ().animator.Play ("Attack_Right");
+//			}else if(this.avatar.GetComponent<GhoulAvatar> ().direction == DIRECTION.UP){
+//				this.avatar.GetComponent<GhoulAvatar> ().animator.Play ("Attack_Up");
+//			}else{
+//				this.avatar.GetComponent<GhoulAvatar> ().animator.Play ("Attack_Down");
+//			}
+//		}
+//	}
 	internal override void Initialize(){
 		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Ghoul"), this.originHextile.transform) as GameObject;
 		this.avatar.transform.localPosition = Vector3.zero;

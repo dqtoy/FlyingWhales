@@ -24,19 +24,19 @@ public class Scourge : Role {
 		}
 	}
 
-	internal override void Attack() {
-		//		base.Attack ();
-		if (this.avatar != null) {
-			this.avatar.GetComponent<ScourgeAvatar>().HasAttacked();
-			if (this.avatar.GetComponent<ScourgeAvatar>().direction == DIRECTION.LEFT) {
-				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Left");
-			} else if (this.avatar.GetComponent<ScourgeAvatar>().direction == DIRECTION.RIGHT) {
-				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Right");
-			} else if (this.avatar.GetComponent<ScourgeAvatar>().direction == DIRECTION.UP) {
-				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Up");
-			} else {
-				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Down");
-			}
-		}
-	}
+//	internal override void Attack() {
+//		//		base.Attack ();
+//		if (this.avatar != null) {
+//			this.avatar.GetComponent<ScourgeAvatar>().HasAttacked();
+//			if (this.avatar.GetComponent<ScourgeAvatar>().direction == DIRECTION.LEFT) {
+//				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Left");
+//			} else if (this.avatar.GetComponent<ScourgeAvatar>().direction == DIRECTION.RIGHT) {
+//				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Right");
+//			} else if (this.avatar.GetComponent<ScourgeAvatar>().direction == DIRECTION.UP) {
+//				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Up");
+//			} else {
+//				this.avatar.GetComponent<ScourgeAvatar>().animator.Play("Attack_Down");
+//			}
+//		}
+//	}
 }

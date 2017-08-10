@@ -211,7 +211,24 @@ public class Monster {
 	}
 	#region Virtual
 	internal virtual void Initialize(){}
-	internal virtual void Attack(){}
+	internal virtual void Attack(){
+		if(this.avatar != null){
+			this.avatar.GetComponent<MonsterAvatar> ().HasAttacked();
+			if (this.avatar.GetComponent<MonsterAvatar> ().animator.gameObject.activeSelf) {
+				if (this.avatar.GetComponent<MonsterAvatar> ().direction == DIRECTION.LEFT) {
+					this.avatar.GetComponent<MonsterAvatar> ().animator.Play ("Attack_Left");
+				} else if (this.avatar.GetComponent<MonsterAvatar> ().direction == DIRECTION.RIGHT) {
+					this.avatar.GetComponent<MonsterAvatar> ().animator.Play ("Attack_Right");
+				} else if (this.avatar.GetComponent<MonsterAvatar> ().direction == DIRECTION.UP) {
+					this.avatar.GetComponent<MonsterAvatar> ().animator.Play ("Attack_Up");
+				} else {
+					this.avatar.GetComponent<MonsterAvatar> ().animator.Play ("Attack_Down");
+				}
+			}else{
+				this.avatar.GetComponent<MonsterAvatar> ().OnEndAttack ();
+			}
+		}
+	}
 	internal virtual void Death(){}
 
 	internal virtual void DoneAction(){}

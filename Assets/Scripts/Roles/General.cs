@@ -66,31 +66,22 @@ public class General : Role {
 		this.avatar.GetComponent<GeneralAvatar>().Init(this);
 	}
 
-	internal override void Attack (){
-		//		base.Attack ();
-
-//		if(this.attackCity != null){
-//			if(this.damage >= this.attackCity.targetCity.hp){
-//				if(this.attackCity.gameEvent is Rebellion){
-//					((Rebellion)this.attackCity.gameEvent).warPair.isDone = true;
-//				}else if(this.attackCity.gameEvent is War){
-//					((War)this.attackCity.gameEvent).warPair.isDone = true;
-//				}
+//	internal override void Attack (){
+//		//		base.Attack ();
+//
+//		if(this.avatar != null){
+//			this.avatar.GetComponent<GeneralAvatar> ().HasAttacked();
+//			if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.LEFT){
+//				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Left");
+//			}else if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.RIGHT){
+//				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Right");
+//			}else if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.UP){
+//				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Up");
+//			}else{
+//				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Down");
 //			}
 //		}
-		if(this.avatar != null){
-			this.avatar.GetComponent<GeneralAvatar> ().HasAttacked();
-			if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.LEFT){
-				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Left");
-			}else if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.RIGHT){
-				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Right");
-			}else if(this.avatar.GetComponent<GeneralAvatar> ().direction == DIRECTION.UP){
-				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Up");
-			}else{
-				this.avatar.GetComponent<GeneralAvatar> ().animator.Play ("Attack_Down");
-			}
-		}
-	}
+//	}
 
 	internal int GetDamage(){
 //		int baseDamage = UnityEngine.Random.Range (50, 81) + (_weaponCount * 100);

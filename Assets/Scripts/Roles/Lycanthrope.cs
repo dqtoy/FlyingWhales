@@ -42,21 +42,21 @@ public class Lycanthrope : Role {
             this.avatar.GetComponent<LycanthropeAvatar>().Init(this);
         }
     }
-    internal override void Attack() {
-        //		base.Attack ();
-        if (this.avatar != null) {
-            this.avatar.GetComponent<LycanthropeAvatar>().HasAttacked();
-            if (this.avatar.GetComponent<LycanthropeAvatar>().direction == DIRECTION.LEFT) {
-                this.avatar.GetComponent<LycanthropeAvatar>().animator.Play("Attack_Left");
-            } else if (this.avatar.GetComponent<LycanthropeAvatar>().direction == DIRECTION.RIGHT) {
-                this.avatar.GetComponent<LycanthropeAvatar>().animator.Play("Attack_Right");
-            } else if (this.avatar.GetComponent<LycanthropeAvatar>().direction == DIRECTION.UP) {
-                this.avatar.GetComponent<LycanthropeAvatar>().animator.Play("Attack_Up");
-            } else {
-                this.avatar.GetComponent<LycanthropeAvatar>().animator.Play("Attack_Down");
-            }
-        }
-    }
+//    internal override void Attack() {
+//        //		base.Attack ();
+//        if (this.avatar != null) {
+//            this.avatar.GetComponent<LycanthropeAvatar>().HasAttacked();
+//            if (this.avatar.GetComponent<LycanthropeAvatar>().direction == DIRECTION.LEFT) {
+//                this.avatar.GetComponent<LycanthropeAvatar>().animator.Play("Attack_Left");
+//            } else if (this.avatar.GetComponent<LycanthropeAvatar>().direction == DIRECTION.RIGHT) {
+//                this.avatar.GetComponent<LycanthropeAvatar>().animator.Play("Attack_Right");
+//            } else if (this.avatar.GetComponent<LycanthropeAvatar>().direction == DIRECTION.UP) {
+//                this.avatar.GetComponent<LycanthropeAvatar>().animator.Play("Attack_Up");
+//            } else {
+//                this.avatar.GetComponent<LycanthropeAvatar>().animator.Play("Attack_Down");
+//            }
+//        }
+//    }
 
     private void CheckForFreedom() {
         if (_captor != null) {
