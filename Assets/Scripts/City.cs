@@ -1151,8 +1151,8 @@ public class City{
 			if(randomGender < 20){
 				gender = GENDER.FEMALE;
 			}
-			int maxGeneration = this.citizens.Max (x => x.generation);
-			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
+//			int maxGeneration = this.citizens.Max (x => x.generation);
+			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 1);
 			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
 			citizen.AssignRole (role);
@@ -1247,8 +1247,8 @@ public class City{
 		if(randomGender < 20){
 			gender = GENDER.FEMALE;
 		}
-		int maxGeneration = this.citizens.Max (x => x.generation);
-		Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, maxGeneration + 1);
+//		int maxGeneration = this.citizens.Max (x => x.generation);
+		Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 1);
 		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age));
 		citizen.AssignRole (ROLE.GENERAL);
