@@ -36,8 +36,10 @@ public class AttackCity : GameEvent {
 	internal override void DoneCitizenAction (Citizen citizen) {
         base.DoneCitizenAction(citizen);
 		if(this.general != null){
-			CombatManager.Instance.CityBattle (this.targetCity, this.general);
-			this.general.citizen.Death (DEATH_REASONS.BATTLE);
+			if(citizen.id == this.general.citizen.id){
+				CombatManager.Instance.CityBattle (this.targetCity, this.general);
+				this.general.citizen.Death (DEATH_REASONS.BATTLE);
+			}
 		}
 	}
 	internal override void DeathByOtherReasons(){

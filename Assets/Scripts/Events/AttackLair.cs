@@ -19,10 +19,13 @@ public class AttackLair : GameEvent {
 	internal override void DoneCitizenAction (Citizen citizen) {
         base.DoneCitizenAction(citizen);
 		if(this.general != null){
-			if(this.targetHextile.lair != null){
-				CombatManager.Instance.LairBattle (this.targetHextile.lair, this.general);
+			if(citizen.id == this.general.citizen.id){
+				if(this.targetHextile.lair != null){
+					CombatManager.Instance.LairBattle (this.targetHextile.lair, this.general);
+				}
+				this.general.citizen.Death (DEATH_REASONS.BATTLE);
 			}
-			this.general.citizen.Death (DEATH_REASONS.BATTLE);
+
 		}
 	}
 	internal override void DeathByOtherReasons(){
