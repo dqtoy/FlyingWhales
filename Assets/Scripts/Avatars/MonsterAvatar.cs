@@ -5,6 +5,9 @@ using System.Linq;
 using Panda;
 
 public class MonsterAvatar : MonoBehaviour {
+	public delegate void onBehavior ();
+	public static event onBehavior onBehaviorAction;
+
 	public Monster monster;
 	public PandaBehaviour pandaBehaviour;
 	public Animator animator;
@@ -43,17 +46,38 @@ public class MonsterAvatar : MonoBehaviour {
 	#region Behaviour Tree
 	[Task]
 	public void HasArrivedAtTargetHextile(){
-		if(this.monster.location == this.monster.targetLocation){
-			if(!this.hasArrived){
-				this.hasArrived = true;
-				this.GetComponent<BoxCollider2D> ().enabled = false;
-				this.monster.Attack ();
+//		if(onBehaviorAction != null){
+//			onBehaviorAction ();
+//		}
+		if(this.monster.lair.lairSpawn.behavior == BEHAVIOR.HOMING){
+			if(this.monster.location == this.monster.targetLocation){
+				if(!this.hasArrived){
+					this.hasArrived = true;
+					this.GetComponent<BoxCollider2D> ().enabled = false;
+					this.monster.Attack ();
+				}
+				Task.current.Succeed ();
+			}else{
+				Task.current.Fail ();
 			}
-			Task.current.Succeed ();
-		}else{
-			Task.current.Fail ();
-		}
+		}else if(this.monster.lair.lairSpawn.behavior == BEHAVIOR.ROAMING){
+			if(this.monster.location == this.monster.targetLocation){
+				if(this.monster.location.isOccupied && this.monster.location.isHabitable && this.monster.location.city.id != 0){
+					if(!this.hasArrived){
+						this.hasArrived = true;
+						this.GetComponent<BoxCollider2D> ().enabled = false;
+						this.monster.Attack ();
+					}
+					Task.current.Succeed ();
+				}else{
+					this.monster.AcquireTarget ();
+					Task.current.Fail ();
+				}
 
+			}else{
+				Task.current.Fail ();
+			}
+		}
 	}
 
 	[Task]
@@ -115,10 +139,44 @@ public class MonsterAvatar : MonoBehaviour {
 			if(this.monster.path != null){
 				if (this.monster.path.Count > 0) {
 					this.MakeCitizenMove(this.monster.location, this.monster.path[0]);
+					this.monster.prevLocation = this.monster.location;
 					this.monster.location = this.monster.path[0];
 					this.monster.path.RemoveAt(0);
+					this.monster.AcquireTarget ();
 				}
 			}
+		}
+	}
+
+	private void HomingBehavior(){
+		if(this.monster.location == this.monster.targetLocation){
+			if(!this.hasArrived){
+				this.hasArrived = true;
+				this.GetComponent<BoxCollider2D> ().enabled = false;
+				this.monster.Attack ();
+			}
+			Task.current.Succeed ();
+		}else{
+			Task.current.Fail ();
+		}
+	}
+
+	private void RoamingBehavior(){
+		if(this.monster.location == this.monster.targetLocation){
+			if(this.monster.location.isOccupied && this.monster.location.isHabitable && this.monster.location.city.id != 0){
+				if(!this.hasArrived){
+					this.hasArrived = true;
+					this.GetComponent<BoxCollider2D> ().enabled = false;
+					this.monster.Attack ();
+				}
+				Task.current.Succeed ();
+			}else{
+				this.monster.AcquireTarget ();
+				Task.current.Fail ();
+			}
+
+		}else{
+			Task.current.Fail ();
 		}
 	}
 
@@ -155,9 +213,11 @@ public class MonsterAvatar : MonoBehaviour {
 
 	void HighlightPath(){
 		this.pathToUnhighlight.Clear ();
-		for (int i = 0; i < this.monster.path.Count; i++) {
-			this.monster.path [i].highlightGO.SetActive (true);
-			this.pathToUnhighlight.Add (this.monster.path [i]);
+		if(this.monster.path != null){
+			for (int i = 0; i < this.monster.path.Count; i++) {
+				this.monster.path [i].highlightGO.SetActive (true);
+				this.pathToUnhighlight.Add (this.monster.path [i]);
+			}
 		}
 	}
 

@@ -19,15 +19,15 @@ public class GhoulLair : Lair {
 		base.EverydayAction ();
 		if(this.daysCounter >= this.spawnRate){
 			this.daysCounter = 0;
-			SummonGhoul();
+			SummonMonster(MONSTER.GHOUL);
 		}
 	}
 	#endregion
 
 	private void SummonGhoul(){
-		AcquireTarget();
+//		AcquireTarget();
 		if(this._targetHextile != null){
-			MonsterManager.Instance.SummonNewMonster(MONSTER.GHOUL, this.hexTile, this._targetHextile);
+			MonsterManager.Instance.SummonNewMonster(MONSTER.GHOUL, this.hexTile);
 		}
 	}
 

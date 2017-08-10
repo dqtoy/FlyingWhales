@@ -153,6 +153,9 @@ public class PathGenerator : MonoBehaviour {
 	 * Get List of tiles (Path) that will connect 2 city tiles
 	 * */
 	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE){
+		if(startingTile == null || destinationTile == null){
+			return null;
+		}
         if(startingTile.tag != destinationTile.tag) {
             return null;
         }

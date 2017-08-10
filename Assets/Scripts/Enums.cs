@@ -504,3 +504,7 @@ public enum PUNISHMENT{
 	LIGHT,
 	HARSH,
 }
+public enum BEHAVIOR{
+	HOMING,
+	ROAMING,
+}
