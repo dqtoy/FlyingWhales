@@ -21,16 +21,16 @@ public class StormWitchLair : Lair {
 			this.daysCounter = 0;
 			int chance = UnityEngine.Random.Range (0, 100);
 			if(chance < 10){
-				SummonWitch();
+				SummonMonster(MONSTER.STORM_WITCH);
 			}
 		}
 	}
 	#endregion
 
 	private void SummonWitch(){
-		AcquireTarget();
+//		AcquireTarget();
 		if(this._targetHextile != null){
-			MonsterManager.Instance.SummonNewMonster(MONSTER.STORM_WITCH, this.hexTile, this._targetHextile);
+			MonsterManager.Instance.SummonNewMonster(MONSTER.STORM_WITCH, this.hexTile);
 		}
 	}
 }

@@ -19,15 +19,16 @@ public class PereLair : Lair {
 		base.EverydayAction ();
 		if(this.daysCounter >= this.spawnRate){
 			this.daysCounter = 0;
-			SummonPere();
+			SummonMonster(MONSTER.PERE);
+
 		}
 	}
 	#endregion
 
 	private void SummonPere(){
-		AcquireTarget();
+//		AcquireTarget();
 		if(this._targetHextile != null){
-			MonsterManager.Instance.SummonNewMonster(MONSTER.PERE, this.hexTile, this._targetHextile);
+			MonsterManager.Instance.SummonNewMonster(MONSTER.PERE, this.hexTile);
 		}
 	}
 

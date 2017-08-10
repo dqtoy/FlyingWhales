@@ -52,6 +52,7 @@ public class Role {
 		if(this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
 			GameObject.Destroy (this.avatar);
+			this.location.ExitCitizen (this.citizen);
 		}
 		this.isDestroyed = true;
 	}
@@ -72,6 +73,7 @@ public class Role {
 		return new int[]{ 0, 0, 0, 0, 0, 0, goldProduction, 0 };
 	}
 	internal virtual void OnDeath(){
+		this.location.ExitCitizen (this.citizen);
         this.DisinfectPlague();
 		this.DestroyGO ();
 	}

@@ -55,6 +55,7 @@ public class AttackCity : GameEvent {
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();
+		this.general.citizen.Death (DEATH_REASONS.BATTLE);
 		this.DoneEvent ();
 	}
 	#endregion

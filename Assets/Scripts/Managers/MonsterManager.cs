@@ -69,7 +69,7 @@ public class MonsterManager : MonoBehaviour {
 		}
 		return null;
 	}
-	internal void SummonNewMonster(MONSTER type, HexTile originHextile, HexTile targetHextile){
+	internal void SummonNewMonster(MONSTER type, HexTile originHextile){
 		Monster newMonster = null;
 		switch(type){
 		case MONSTER.LYCAN:
@@ -90,13 +90,13 @@ public class MonsterManager : MonoBehaviour {
 			break;
 		}
 
-		if(newMonster != null){
-			newMonster.targetLocation = targetHextile;
-			List<HexTile> path = PathGenerator.Instance.GetPath(originHextile, targetHextile, PATHFINDING_MODE.AVATAR);
-			if(path != null){
-				newMonster.path = path;
-			}
-		}
+//		if(newMonster != null){
+//			newMonster.targetLocation = targetHextile;
+//			List<HexTile> path = PathGenerator.Instance.GetPath(originHextile, targetHextile, PATHFINDING_MODE.AVATAR);
+//			if(path != null){
+//				newMonster.path = path;
+//			}
+//		}
 	}
 
 	internal LairSpawn GetLairSpawnData(LAIR type){

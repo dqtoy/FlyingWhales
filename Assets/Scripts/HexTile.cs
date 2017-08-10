@@ -101,6 +101,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private HextileEventItem _hextileEventItem;
 	private GameObject plagueIcon;
 
+	private List<Citizen> _citizensOnTile = new List<Citizen> ();
+
     [System.NonSerialized] public List<HexTile> connectedTiles = new List<HexTile>();
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
@@ -139,6 +141,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public FOG_OF_WAR_STATE currFogOfWarState {
         get { return _currFogOfWarState; }
     }
+	public List<Citizen> citizensOnTile {
+		get { return this._citizensOnTile; }
+	}
     #endregion
 
     internal void SetBiome(BIOMES biome) {
@@ -1237,6 +1242,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //tagVisual.gameObject.SetActive(true);
     }
 
+	internal void EnterCitizen(Citizen citizen){
+		this._citizensOnTile.Add (citizen);
+	}
+	internal void ExitCitizen(Citizen citizen){
+		this._citizensOnTile.Remove (citizen);
+	}
     #region For Testing
     [ContextMenu("Force Reset Tile")]
     public void ForceResetTile() {

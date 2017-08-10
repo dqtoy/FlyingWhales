@@ -75,6 +75,7 @@ public class Rumor : GameEvent {
 			//TODO: Add log - cancel
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rumor", "cancel");
 			newLog.AddToFillers (this.sourceKingdom.king, this.sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
+			this.DoneEvent();
 			return;
 		}
 		RUMOR_TYPE rumorType = GetRumorType(relationshipSourceToTarget);

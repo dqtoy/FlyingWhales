@@ -19,16 +19,8 @@ public class LycanLair : Lair {
 		base.EverydayAction ();
 		if(this.daysCounter >= this.spawnRate){
 			this.daysCounter = 0;
-			SummonLycan();
+			SummonMonster(MONSTER.LYCAN);
 		}
 	}
 	#endregion
-
-	private void SummonLycan(){
-		AcquireTarget();
-		if(this._targetHextile != null){
-			MonsterManager.Instance.SummonNewMonster(MONSTER.LYCAN, this.hexTile, this._targetHextile);
-		}
-	}
-
 }

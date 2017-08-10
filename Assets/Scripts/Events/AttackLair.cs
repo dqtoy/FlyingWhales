@@ -22,8 +22,8 @@ public class AttackLair : GameEvent {
 			if(citizen.id == this.general.citizen.id){
 				if(this.targetHextile.lair != null){
 					CombatManager.Instance.LairBattle (this.targetHextile.lair, this.general);
-					this.general.citizen.Death (DEATH_REASONS.BATTLE);
 				}
+				this.general.citizen.Death (DEATH_REASONS.BATTLE);
 			}
 		}
 	}

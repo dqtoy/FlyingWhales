@@ -57,7 +57,7 @@ public class King : Role {
 					for (int i = 0; i < this.citizen.city.kingdom.discoveredKingdoms.Count; i++) {
 						if(this.citizen.city.kingdom.discoveredKingdoms[i].isAlive()){
 							RelationshipKings relationship = this.citizen.city.kingdom.king.GetRelationshipWithCitizen(this.citizen.city.kingdom.discoveredKingdoms[i].king);
-							if(relationship != null && relationship.lordRelationship != RELATIONSHIP_STATUS.NEUTRAL){
+							if(relationship != null && (relationship.lordRelationship == RELATIONSHIP_STATUS.COLD || relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL)){
 								targetKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
 							}
 							if(relationship != null && (relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY)){

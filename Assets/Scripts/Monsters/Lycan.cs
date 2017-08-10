@@ -24,9 +24,13 @@ public class Lycan : Monster {
 		}
 	}
 	internal override void Initialize(){
-		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Lycan"), this.originHextile.transform) as GameObject;
-		this.avatar.transform.localPosition = Vector3.zero;
-		this.avatar.GetComponent<LycanAvatar>().Init(this);
+		if(this.targetLocation != null){
+			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Lycan"), this.originHextile.transform) as GameObject;
+			this.avatar.transform.localPosition = Vector3.zero;
+			this.avatar.GetComponent<LycanAvatar>().Init(this);
+		}else{
+			ClearAcquireTargetSubscriptions ();
+		}
 	}
 	internal override void Death (){
 		base.Death ();
