@@ -826,22 +826,7 @@ public class Kingdom{
         this.UpdateAllCitiesDailyGrowth();
         this.UpdateExpansionRate();
         if (this._cities.Count == 1 && this._cities[0] != null) {
-            this.capitalCity = this._cities[0];
-
-            HexTile habitableTile;
-            if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
-                for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
-                    habitableTile = CityGenerator.Instance.stoneHabitableTiles[i];
-					this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
-                }
-
-            } else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
-                for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {
-                    habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
-					this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
-                }
-
-            }
+            SetCapitalCity(this._cities[0]);
         }
     }
 
@@ -869,6 +854,7 @@ public class Kingdom{
     }
 
     internal void SetCapitalCity(City city) {
+        this.capitalCity = city;
         HexTile habitableTile;
         if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
             for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
@@ -1224,7 +1210,7 @@ public class Kingdom{
 		return null;
 	}
 
-	internal IEnumerator ConquerCity(City city, General attacker){
+	internal void ConquerCity(City city, General attacker){
 		if (this.id != city.kingdom.id){
 			RelationshipKingdom rel = this.GetRelationshipWithOtherKingdom (city.kingdom);
 			if(rel != null && rel.war != null){
@@ -1239,7 +1225,7 @@ public class Kingdom{
                 city.ConquerCity(this);
             }
             
-			yield return null;
+			//yield return null;
 			//City newCity = CreateNewCityOnTileForKingdom(hex);
 			//newCity.hp = 100;
 			//newCity.CreateInitialFamilies(false);

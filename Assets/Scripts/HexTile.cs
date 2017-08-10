@@ -422,7 +422,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._kingdomColorSprite.color = color;
 	}
 
-    private void SetMinimapTileColor(Color color) {
+    internal void SetMinimapTileColor(Color color) {
         minimapHexSprite.color = color;
     }
 
@@ -502,24 +502,25 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void CreateCityNamePlate(City city) {
-        //Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
-        UIPanel namePlatePanel = UIParent.GetComponentsInChildren<UIPanel>().Where(x => x.name.Equals("CityNamePlatePanel")).FirstOrDefault();
+        Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
+        Transform namePlatePanel = UIParent.GetComponentsInChildren<Transform>().Where(x => x.name.Equals("CityNamePlatePanel")).FirstOrDefault();
         if (namePlatePanel != null) {
-            Destroy(namePlatePanel);
+            //Destroy(namePlatePanel);
+            this._cityInfo = namePlatePanel.GetComponentInChildren<CityItem>();
+        } else {
+            GameObject parentPanel = new GameObject("CityNamePlatePanel", typeof(UIPanel));
+            parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
+            parentPanel.transform.SetParent(UIParent);
+            parentPanel.transform.localPosition = Vector3.zero;
+            parentPanel.transform.localScale = Vector3.one;
+            this._cityInfoParent = parentPanel.transform;
+
+            GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
+            this._cityInfo = namePlateGO.GetComponent<CityItem>();
+            namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
+            namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
+            EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
         }
-
-        GameObject parentPanel = new GameObject("CityNamePlatePanel", typeof(UIPanel));
-        parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
-        parentPanel.transform.SetParent(UIParent);
-        parentPanel.transform.localPosition = Vector3.zero;
-        parentPanel.transform.localScale = Vector3.one;
-        this._cityInfoParent = parentPanel.transform;
-
-        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
-        this._cityInfo = namePlateGO.GetComponent<CityItem>();
-        namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
-        namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-        EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
 
         UpdateNamePlate();
     }
@@ -822,19 +823,43 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public void Occupy(City city) {
 		this.isOccupied = true;
-        this.isVisibleByCities.Add(city);
+        if (!isVisibleByCities.Contains(city)) {
+            this.isVisibleByCities.Add(city);
+        }
 		this.isOccupiedByCityID = city.id;		
 		this.ownedByCity = city;
         this.isBorder = false;
         this.isBorderOfCityID = 0;
-	}
+        for (int i = 0; i < isVisibleByCities.Count; i++) {
+            City currCity = isVisibleByCities[i];
+            if (currCity.id != ownedByCity.id) {
+                currCity.UpdateBorderTiles();
+            }
+        }
+    }
 
 	public void Borderize(City city) {
 		this.isBorder = true;
-        this.isVisibleByCities.Add(city);
+        if (!isVisibleByCities.Contains(city)) {
+            this.isVisibleByCities.Add(city);
+        }
         this.isBorderOfCityID = city.id;
 		this.ownedByCity = city;
+        for (int i = 0; i < isVisibleByCities.Count; i++) {
+            City currCity = isVisibleByCities[i];
+            if(currCity.id != ownedByCity.id) {
+                currCity.UpdateBorderTiles();
+            }
+        }
 	}
+
+    public void UnBorderize(City city) {
+        this.isBorder = false;
+        this.isBorderOfCityID = 0;
+        this.ownedByCity = null;
+        this.isVisibleByCities.Remove(city);
+        
+    }
 
     #region Monobehaviour Functions
     void OnMouseDown() {
@@ -979,6 +1004,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public void SelectAllBorderTiles() {
         List<GameObject> allTiles = new List<GameObject>();
         allTiles.AddRange(city.borderTiles.Select(x => x.gameObject));
+        UnityEditor.Selection.objects = allTiles.ToArray();
+    }
+
+    [ContextMenu("Select All Outer Tiles")]
+    public void SelectAllOuterTiles() {
+        List<GameObject> allTiles = new List<GameObject>();
+        allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
         UnityEditor.Selection.objects = allTiles.ToArray();
     }
 
@@ -1209,6 +1241,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [ContextMenu("Force Reset Tile")]
     public void ForceResetTile() {
         ResetTile();
+    }
+
+    [Space(10)]
+    [Header("For Testing")]
+    [SerializeField] private int kingdomToConquerIndex = 0;
+    [ContextMenu("Force Conquer Tile")]
+    public void ForceTileToBeConqueredByKingdom() {
+        Kingdom conqueror = KingdomManager.Instance.allKingdoms[kingdomToConquerIndex];
+        if(conqueror.id == this.city.kingdom.id) {
+            Debug.LogWarning("City is already part of " + conqueror.name);
+        } else {
+            conqueror.ConquerCity(city, null);
+        }
     }
     #endregion
 }

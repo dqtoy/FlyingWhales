@@ -105,7 +105,15 @@ public class Lair {
         //Reset Hextile
         this.hexTile.ResetTile();
 
-		onPerformAction -= EverydayAction;
+        for (int i = 0; i < this.hexTile.isVisibleByCities.Count; i++) {
+            City currCity = this.hexTile.isVisibleByCities[i];
+            currCity.UpdateBorderTiles();
+            if (this.hexTile.isBorder) {
+                break;
+            }
+        }
+
+        onPerformAction -= EverydayAction;
 		MonsterManager.Instance.RemoveFromLairList(this);
 	}
 

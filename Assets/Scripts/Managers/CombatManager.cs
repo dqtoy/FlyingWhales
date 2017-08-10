@@ -225,7 +225,7 @@ public class CombatManager : MonoBehaviour {
 		}
 	}*/
 	internal void ConquerCity(Kingdom conqueror, City city, General attacker){
-		StartCoroutine(conqueror.ConquerCity(city, attacker));
+		conqueror.ConquerCity(city, attacker);
 	}
 	internal void Battle(ref General general1, ref General general2, bool isMidway = false){
 		Debug.Log ("BATTLE: (" + general1.citizen.city.name + ") " + general1.citizen.name + " and (" + general2.citizen.city.name + ") " + general2.citizen.name);
