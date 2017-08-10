@@ -10,7 +10,7 @@ public class Governor : Role {
 
     private string _loyaltySummary; //For UI, to display the factors that affected this governor's loyalty
 
-    private const int defaultLoyalty = 30;
+    private const int defaultLoyalty = 0;
 
     private int _eventLoyaltyModifier;
     private string _eventLoyaltySummary;
@@ -51,7 +51,7 @@ public class Governor : Role {
 	internal void UpdateLoyalty(){
         this._loyaltySummary = string.Empty;
 		int baseLoyalty = defaultLoyalty;
-        this._loyaltySummary += "+" + defaultLoyalty.ToString() + "   Base value\n";
+        //this._loyaltySummary += "+" + defaultLoyalty.ToString() + "   Base value\n";
 
         Citizen king = this.citizen.city.kingdom.king;
 		Kingdom kingdom = this.citizen.city.kingdom;

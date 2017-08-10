@@ -699,7 +699,11 @@ public class Citizen {
         for (int i = 0; i < this.relationshipKings.Count; i++) {
             RelationshipKings currRel = this.relationshipKings[i];
             Citizen targetKing = currRel.king;
-            RelationshipKings targetKingRel = targetKing.GetRelationshipWithCitizen(this); 
+            RelationshipKings targetKingRel = targetKing.GetRelationshipWithCitizen(this);
+
+            if (targetKingRel == null || currRel == null) {
+                return;
+            }
 
             currRel.ResetMutualRelationshipModifier();
             targetKingRel.ResetMutualRelationshipModifier();

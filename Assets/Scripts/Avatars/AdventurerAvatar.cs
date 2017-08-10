@@ -7,7 +7,9 @@ using System.Linq;
 public class AdventurerAvatar : CitizenAvatar {
 
     [SerializeField] private HexTile newTargetTile = null;
-    
+
+    [SerializeField] private List<EVENT_TYPES> priorityEvents;
+
     [ContextMenu("Force Change Target Tile")]
     public void ForceChangeTargetTile() {
         this.citizenRole.targetLocation = newTargetTile;
@@ -44,35 +46,44 @@ public class AdventurerAvatar : CitizenAvatar {
         }
         Kingdom kingdomOfAdventurer = this.citizenRole.citizen.city.kingdom;
 
-        List<HexTile> hiddenNeighbours = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag
-            && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
-
-        if (hiddenNeighbours.Count > 0) {
-            //choose from hidden neighbours
-            newTargetTile = hiddenNeighbours[Random.Range(0, hiddenNeighbours.Count)];
+        List<HexTile> neighboursWithEvents = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag && 
+            x.gameEventInTile != null && priorityEvents.Contains(x.gameEventInTile.eventType)).ToList();
+        //Prioritize tiles with events in accordance to priorityEvents list
+        if (neighboursWithEvents.Count > 0) {
+            newTargetTile = neighboursWithEvents[Random.Range(0, neighboursWithEvents.Count)];
         } else {
-            //get nearest elligible hidden tile as target
-            List<HexTile> elligibleHiddenTiles = GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())
-                .Where(x => x.tag == this.citizenRole.location.tag 
-                && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
+            List<HexTile> hiddenNeighbours = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag
+                        && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
 
-            if(elligibleHiddenTiles.Count > 0) {
-                //if there is an elligible hidden tile, get the nearest
-                //order tiles by nearest from the citizens location
-                elligibleHiddenTiles = elligibleHiddenTiles.OrderBy(x => this.citizenRole.location.GetDistanceTo(x)).ToList();
-                newTargetTile = elligibleHiddenTiles.FirstOrDefault();
+            if (hiddenNeighbours.Count > 0) {
+                //choose from hidden neighbours
+                newTargetTile = hiddenNeighbours[Random.Range(0, hiddenNeighbours.Count)];
             } else {
-                //if no more hidden tiles choose from seen or visible neighbours
-                List<HexTile> tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag
-                    && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN).ToList();
+                //get nearest elligible hidden tile as target
+                List<HexTile> elligibleHiddenTiles = GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())
+                    .Where(x => x.tag == this.citizenRole.location.tag
+                    && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
 
-                List<HexTile> hexTilesWithEvents = tilesToChooseFrom.Where(x => x.gameEventInTile != null).ToList();
-                if (hexTilesWithEvents.Count > 0) {
-                    tilesToChooseFrom = hexTilesWithEvents;
+                if (elligibleHiddenTiles.Count > 0) {
+                    //if there is an elligible hidden tile, get the nearest
+                    //order tiles by nearest from the citizens location
+                    elligibleHiddenTiles = elligibleHiddenTiles.OrderBy(x => this.citizenRole.location.GetDistanceTo(x)).ToList();
+                    newTargetTile = elligibleHiddenTiles.FirstOrDefault();
+                } else {
+                    //if no more hidden tiles choose from seen or visible neighbours
+                    List<HexTile> tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag
+                        && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN).ToList();
+
+                    List<HexTile> hexTilesWithEvents = tilesToChooseFrom.Where(x => x.gameEventInTile != null).ToList();
+                    if (hexTilesWithEvents.Count > 0) {
+                        tilesToChooseFrom = hexTilesWithEvents;
+                    }
+                    newTargetTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
                 }
-                newTargetTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
             }
         }
+
+        
 
         if (newTargetTile != null) {
             this.citizenRole.targetLocation = newTargetTile;

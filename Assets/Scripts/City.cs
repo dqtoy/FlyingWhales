@@ -426,17 +426,16 @@ public class City{
 	internal void UpdateBorderTiles(){
 		for (int i = 0; i < this.borderTiles.Count; i++) {
             HexTile currBorderTile = borderTiles[i];
-            if (!currBorderTile.isOccupied) {
-                currBorderTile.isVisibleByCities.Remove(this);
+            currBorderTile.isVisibleByCities.Remove(this);
+            kingdom.SetFogOfWarStateForTile(currBorderTile, FOG_OF_WAR_STATE.SEEN);
+            if(currBorderTile.ownedByCity == null || currBorderTile.ownedByCity.id == this.id) {
+                //Border Tile is not owned by another city
                 currBorderTile.ResetTile();
-                kingdom.SetFogOfWarStateForTile(currBorderTile, FOG_OF_WAR_STATE.SEEN);
             }
-            //this.borderTiles[i].isBorder = false;
-            //this.borderTiles[i].isBorderOfCityID = 0;
-            //this.borderTiles[i].ResetTile();
         }
 		this.borderTiles.Clear();
 
+        //Get outmost owned tiles
 		List<HexTile> outmostTiles = new List<HexTile>();
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currHexTile = this.ownedTiles[i];
@@ -505,7 +504,7 @@ public class City{
 	internal void ExpandToThisCity(Citizen citizenToOccupyCity){
 //		this.CreateInitialFamilies(false);
 		this.AddCitizenToCity(citizenToOccupyCity);
-		citizenToOccupyCity.role = ROLE.GOVERNOR;
+		citizenToOccupyCity.role = ROLE.UNTRAINED;
 		citizenToOccupyCity.assignedRole = null;
 		citizenToOccupyCity.AssignRole(ROLE.GOVERNOR);
 		this.UpdateDailyProduction();
@@ -534,40 +533,36 @@ public class City{
 	 * Purchase new tile for city. Called in CityTaskManager.
 	 * */
 	internal void PurchaseTile(HexTile tileToBuy){
-		float percentageHP = (float)this._hp / (float)this.maxHP;
+        City otherCity = null;
+        //Remove tile to purchase from previous owner
+        if (tileToBuy.ownedByCity != null && tileToBuy.ownedByCity.id != this.id) {
+            otherCity = tileToBuy.ownedByCity;
+            otherCity.borderTiles.Remove(tileToBuy);
+            otherCity.ownedTiles.Remove(tileToBuy);
+            otherCity.outerTiles.Remove(tileToBuy);
+            tileToBuy.ResetTile();
+        } 
+
+        float percentageHP = (float)this._hp / (float)this.maxHP;
 		tileToBuy.movementDays = 2;
-		tileToBuy.Occupy (this);
+
+        tileToBuy.Occupy (this);
         tileToBuy.CollectEventOnTile(kingdom);
         kingdom.SetFogOfWarStateForTile(tileToBuy, FOG_OF_WAR_STATE.VISIBLE);
-        //CollectEventInTile (tileToBuy);
+
         EventManager.Instance.onUpdatePath.Invoke (tileToBuy);
 
 		this.ownedTiles.Add(tileToBuy);
 
-        //Set color of tile
-        //Color color = this.kingdom.kingdomColor;
-        //color.a = 76.5f/255f;
-        //tileToBuy.kingdomColorSprite.color = color;
-        //tileToBuy.kingdomColorSprite.gameObject.SetActive (this.hexTile.kingdomColorSprite.gameObject.activeSelf);
-        //tileToBuy.ShowOccupiedSprite();
         tileToBuy.CreateStructureOnTile(Utilities.GetStructureTypeForResource(kingdom.race, tileToBuy.specialResource));
-
-        //Remove tile from any border tile list
-        if (tileToBuy.isBorder && tileToBuy.isBorderOfCityID != this.id) {
-            tileToBuy.isBorder = false;
-            City otherCity = CityGenerator.Instance.GetCityByID (tileToBuy.isBorderOfCityID);
-            otherCity.borderTiles.Remove(tileToBuy);
-			this.UpdateBorderTiles ();
-			otherCity.UpdateBorderTiles ();
-		} else {
-			this.UpdateBorderTiles();
-		}
 
         //Update necessary data
         this.UpdateDailyProduction();
         this.kingdom.CheckForDiscoveredKingdoms(this);
-        //this.UpdateAdjacentCities();
-        //this.kingdom.UpdateKingdomAdjacency();
+        this.UpdateBorderTiles();
+        if(otherCity != null) {
+            otherCity.UpdateBorderTiles();
+        }
 
         //Add special resources to kingdoms available resources, if the purchased tile has any
         if (tileToBuy.specialResource != RESOURCE.NONE) {
@@ -870,34 +865,43 @@ public class City{
 		return governor;
 	}
 	public void KillCity(){
-		this.incomingGenerals.Clear ();
+        EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
+        EventManager.Instance.onCitizenDiedEvent.RemoveListener(CheckCityDeath);
+        this.incomingGenerals.Clear ();
 		this.isUnderAttack = false;
+
 		if (this.rebellion != null) {
 			if (this.rebellion.rebelLeader.citizen.city.id == this.id) {
 				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
 			}
 		}
+        /*
+         * Reset all owned, border and outer tiles!
+         * */
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
             currentTile.isVisibleByCities.Remove(this);
 			currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
         }
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
         }
         for (int i = 0; i < outerTiles.Count; i++) {
             HexTile currentTile = this.outerTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
+            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
         }
 		this.ownedTiles.Clear();
 		this.borderTiles.Clear();
         this.outerTiles.Clear();
+        /*
+         * Remove irrelevant scripts on hextile
+         * */
 		if(!this.isDead){
 			bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.hexTile.GetComponent<PandaBehaviour> ());
 //			Debug.Log ("REMOVED BT?: " + this.name + " = " + removed);
@@ -906,23 +910,29 @@ public class City{
 			GameObject.Destroy (this.hexTile.GetComponent<CityTaskManager> ());
 		}
 		this.isDead = true;
-		EventManager.Instance.onDeathToGhost.Invoke (this);
-		int countCitizens = this.citizens.Count;
-		for (int i = 0; i < countCitizens; i++) {
-			this.citizens [0].Death (DEATH_REASONS.INTERNATIONAL_WAR, false, null, true);
-		}
-		this._kingdom.RemoveCityFromKingdom(this);
+        //EventManager.Instance.onDeathToGhost.Invoke (this);
+        KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
+        this.hexTile.city = null;
 
-		if(this.hasKing){
-			this.hasKing = false;
-			if(this._kingdom.cities.Count > 0){
-				this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
-			}
-		}
+        Debug.Log(this.id + " - City " + this.name + " of " + this._kingdom.name + " has been killed!");
+        Debug.Log("Stack Trace: " + System.Environment.StackTrace);
 
-		EventManager.Instance.onCityEverydayTurnActions.RemoveListener (CityEverydayTurnActions);
-		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
-		this.hexTile.city = null;
+        this._kingdom.RemoveCityFromKingdom(this);
+
+
+
+        if (!this._kingdom.isDead) {
+            if (this.hasKing) {
+                this.hasKing = false;
+                if (this._kingdom.cities.Count > 0) {
+                    this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
+                }
+            }
+        }
+
+
+
+
         //KingdomManager.Instance.UpdateKingdomAdjacency();
         //		for (int i = 0; i < this.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
         //			if(this.kingdom.relationshipsWithOtherKingdoms[i].war != null && this.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
@@ -937,34 +947,13 @@ public class City{
         //			KingdomManager.Instance.allKingdoms [i].activeCitiesPairInWar.RemoveAll (x => x.targetCity.id == this.id || x.sourceCity.id == this.id);
         //			KingdomManager.Instance.allKingdoms [i].TargetACityToAttack();
         //		}
-        Debug.Log(this.name + " has been killed!");
-        Debug.Log("Stack Trace: " + System.Environment.StackTrace);
+
     }
 
     /*
      * Conquer this city and transfer ownership to the conqueror
      * */
     internal void ConquerCity(Kingdom conqueror) {
-        //Reset Tiles
-        for (int i = 0; i < this.ownedTiles.Count; i++) {
-            HexTile currentTile = this.ownedTiles[i];
-            currentTile.isVisibleByCities.Remove(this);
-            currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-        }
-        for (int i = 0; i < this.borderTiles.Count; i++) {
-            HexTile currentTile = this.borderTiles[i];
-            currentTile.isVisibleByCities.Remove(this);
-            currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-        }
-        for (int i = 0; i < outerTiles.Count; i++) {
-            HexTile currentTile = this.outerTiles[i];
-            currentTile.isVisibleByCities.Remove(this);
-            currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-        }
-
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
 
@@ -978,7 +967,19 @@ public class City{
         for (int i = 0; i < structuresDestroyed; i++) {
             this.RemoveTileFromCity(this.structures[UnityEngine.Random.Range(0, this.structures.Count)]);
         }
-        
+
+        //Reset Tiles
+        //List<HexTile> tilesToReset = new List<HexTile>();
+        //tilesToReset.AddRange(ownedTiles);
+        //tilesToReset.AddRange(borderTiles);
+        //tilesToReset.AddRange(outerTiles);
+
+        //for (int i = 0; i < tilesToReset.Count; i++) {
+        //    HexTile currentTile = tilesToReset[i];
+        //    currentTile.isVisibleByCities.Remove(this);
+        //    currentTile.ResetTile();
+        //    kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
+        //}
 
         //Kill all current citizens
         this.KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
@@ -1051,39 +1052,39 @@ public class City{
 		this.AddCitizenToCity(citizenToMove);
 	}
 
-	protected void UpdateAdjacentCities(){
-		this.adjacentCities.Clear();
-		for (int i = 0; i < this.borderTiles.Count; i++) {
-			HexTile currentHexTile = this.borderTiles[i];
-			List<HexTile> currHexTileNeighbours = currentHexTile.AllNeighbours.Where (x => x.elevationType != ELEVATION.WATER).ToList();
-			for (int j = 0; j < currHexTileNeighbours.Count; j++) {
-				HexTile currNeighbour = currHexTileNeighbours[j];
-				if (currNeighbour.isOccupied) {
-					//Check if current neighbour is occupied by a different city
-					if (currNeighbour.isOccupiedByCityID != this.id) {
-						City cityToAdd = CityGenerator.Instance.GetCityByID(currNeighbour.isOccupiedByCityID);
-						if (!this.adjacentCities.Contains(cityToAdd)) {
-							this.adjacentCities.Add(cityToAdd);
-						}
-						if (!cityToAdd.adjacentCities.Contains (this)) {
-							cityToAdd.adjacentCities.Add (this);
-						}
-					}
-				} else if(currNeighbour.isBorder) {
-					//Check if current neighbour is border of a different city
-					if (currNeighbour.isBorderOfCityID != this.id) {
-						City cityToAdd = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID);
-						if (!this.adjacentCities.Contains(cityToAdd)) {
-							this.adjacentCities.Add(cityToAdd);
-						}
-						if (!cityToAdd.adjacentCities.Contains (this)) {
-							cityToAdd.adjacentCities.Add (this);
-						}
-					}
-				}
-			}
-		}
-	}
+	//protected void UpdateAdjacentCities(){
+	//	this.adjacentCities.Clear();
+	//	for (int i = 0; i < this.borderTiles.Count; i++) {
+	//		HexTile currentHexTile = this.borderTiles[i];
+	//		List<HexTile> currHexTileNeighbours = currentHexTile.AllNeighbours.Where (x => x.elevationType != ELEVATION.WATER).ToList();
+	//		for (int j = 0; j < currHexTileNeighbours.Count; j++) {
+	//			HexTile currNeighbour = currHexTileNeighbours[j];
+	//			if (currNeighbour.isOccupied) {
+	//				//Check if current neighbour is occupied by a different city
+	//				if (currNeighbour.isOccupiedByCityID != this.id) {
+	//					City cityToAdd = CityGenerator.Instance.GetCityByID(currNeighbour.isOccupiedByCityID);
+	//					if (!this.adjacentCities.Contains(cityToAdd)) {
+	//						this.adjacentCities.Add(cityToAdd);
+	//					}
+	//					if (!cityToAdd.adjacentCities.Contains (this)) {
+	//						cityToAdd.adjacentCities.Add (this);
+	//					}
+	//				}
+	//			} else if(currNeighbour.isBorder) {
+	//				//Check if current neighbour is border of a different city
+	//				if (currNeighbour.isBorderOfCityID != this.id) {
+	//					City cityToAdd = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID);
+	//					if (!this.adjacentCities.Contains(cityToAdd)) {
+	//						this.adjacentCities.Add(cityToAdd);
+	//					}
+	//					if (!cityToAdd.adjacentCities.Contains (this)) {
+	//						cityToAdd.adjacentCities.Add (this);
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
 	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration, List<HexTile> newPath = null){
 		if(role == ROLE.GENERAL){

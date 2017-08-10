@@ -266,7 +266,7 @@ public class UIManager : MonoBehaviour {
 	void Start(){
         //EventManager.Instance.onWeekEnd.AddListener(CheckForKingdomExpire);
         EventManager.Instance.onUpdateUI.AddListener(UpdateUI);
-        EventManager.Instance.onKingdomDiedEvent.AddListener(CheckIfShowingKingdomIsAlive);
+        //EventManager.Instance.onKingdomDiedEvent.AddListener(CheckIfShowingKingdomIsAlive);
         //EventManager.Instance.onCreateNewKingdomEvent.AddListener(AddKingdomToList);
         //EventManager.Instance.onKingdomDiedEvent.AddListener(QueueKingdomForRemoval);
         NormalizeFontSizes();
@@ -276,7 +276,24 @@ public class UIManager : MonoBehaviour {
         UpdateUI();
 	}
 
-	private void NormalizeFontSizes(){
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            if (GameManager.Instance.isPaused) {
+                Unpause();
+                if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
+                    SetProgressionSpeed1X();
+                } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+                    SetProgressionSpeed2X();
+                } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+                    SetProgressionSpeed4X();
+                }
+            } else {
+                Pause();
+            }
+        }
+    }
+
+    private void NormalizeFontSizes(){
 		UILabel[] allLabels = this.GetComponentsInChildren<UILabel>(true);
 		Debug.Log ("ALL LABELS COUNT: " + allLabels.Length.ToString());
 		for (int i = 0; i < allLabels.Length; i++) {
@@ -392,19 +409,19 @@ public class UIManager : MonoBehaviour {
 
 	public void SetProgressionSpeed1X(){
 		Unpause ();
-		GameManager.Instance.SetProgressionSpeed(2f);
+		GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
 		x1Btn.SetAsClicked();
 	}
 
 	public void SetProgressionSpeed2X(){
 		Unpause ();
-		GameManager.Instance.SetProgressionSpeed(1f);
+		GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
 		x2Btn.SetAsClicked();
 	}
 
 	public void SetProgressionSpeed4X(){
 		Unpause ();
-		GameManager.Instance.SetProgressionSpeed(0.3f);
+		GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
 		x4Btn.SetAsClicked();
 	}
 
@@ -546,7 +563,7 @@ public class UIManager : MonoBehaviour {
     //    }
     //}
 
-    private void CheckIfShowingKingdomIsAlive(Kingdom kingdom) {
+    internal void CheckIfShowingKingdomIsAlive(Kingdom kingdom) {
         if(currentlyShowingKingdom.id == kingdom.id) {
             SetKingdomAsActive(KingdomManager.Instance.allKingdoms.FirstOrDefault());
         }
@@ -2331,9 +2348,9 @@ public class UIManager : MonoBehaviour {
                 }
             }
 		}
-		if(GameManager.Instance.isPaused){
-			SetProgressionSpeed1X();
-		}
+		//if(GameManager.Instance.isPaused){
+		//	SetProgressionSpeed1X();
+		//}
 		currentlyShowingLogObject = null;
 		if(this.eventLogsQueue.Count > 0){
 //			Pause();

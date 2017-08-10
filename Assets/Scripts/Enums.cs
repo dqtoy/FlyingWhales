@@ -1,4 +1,9 @@
-﻿public enum BIOMES{
+﻿public enum PROGRESSION_SPEED {
+    X1,
+    X2,
+    X4
+}
+public enum BIOMES{
 	SNOW,
 	TUNDRA,
 	DESERT,

@@ -12,6 +12,8 @@ public class CityGenerator : MonoBehaviour {
 	public List<HexTile> stoneHabitableTiles;
 	public List<HexTile> lairHabitableTiles;
 
+    public List<City> allCities;
+
     [Space(10)]
     [Header("Human Structures")]
     [SerializeField] private RaceStructures humanStructures;
@@ -206,6 +208,7 @@ public class CityGenerator : MonoBehaviour {
 			hexTile.city = new RebelFort (hexTile, kingdom, rebellion);
 		}else{
 			hexTile.city = new City (hexTile, kingdom);
+            allCities.Add(hexTile.city);
 		}
         //hexTile.ShowCitySprite();
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
@@ -227,20 +230,27 @@ public class CityGenerator : MonoBehaviour {
 	}
 
 	public City GetCityByID(int id){
-		for (int i = 0; i < this.woodHabitableTiles.Count; i++) {
-			HexTile currHabitableTile = this.woodHabitableTiles[i];
-			if (currHabitableTile.isOccupied && currHabitableTile.city.id == id) {
-				return currHabitableTile.city;
-			}
-		}
+        for (int i = 0; i < allCities.Count; i++) {
+            City currCity = allCities[i];
+            if (currCity.id == id) {
+                return currCity;
+            }
+        }
 
-		for (int i = 0; i < this.stoneHabitableTiles.Count; i++) {
-			HexTile currHabitableTile = this.stoneHabitableTiles[i];
-			if (currHabitableTile.isOccupied && currHabitableTile.city.id == id) {
-				return currHabitableTile.city;
-			}
-		}
-		return null;
+        //for (int i = 0; i < this.woodHabitableTiles.Count; i++) {
+        //    HexTile currHabitableTile = this.woodHabitableTiles[i];
+        //    if (currHabitableTile.isOccupied && currHabitableTile.city.id == id) {
+        //        return currHabitableTile.city;
+        //    }
+        //}
+
+        //for (int i = 0; i < this.stoneHabitableTiles.Count; i++) {
+        //    HexTile currHabitableTile = this.stoneHabitableTiles[i];
+        //    if (currHabitableTile.isOccupied && currHabitableTile.city.id == id) {
+        //        return currHabitableTile.city;
+        //    }
+        //}
+        return null;
 	}
 
     public GameObject[] GetStructurePrefabsForRace(RACE race, STRUCTURE_TYPE structureType) {
