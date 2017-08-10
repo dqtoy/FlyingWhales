@@ -835,12 +835,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.ownedByCity = city;
         this.isBorder = false;
         this.isBorderOfCityID = 0;
-        for (int i = 0; i < isVisibleByCities.Count; i++) {
-            City currCity = isVisibleByCities[i];
-            if (currCity.id != ownedByCity.id) {
-                currCity.UpdateBorderTiles();
-            }
-        }
     }
 
 	public void Borderize(City city) {
@@ -850,12 +844,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
         this.isBorderOfCityID = city.id;
 		this.ownedByCity = city;
-        for (int i = 0; i < isVisibleByCities.Count; i++) {
-            City currCity = isVisibleByCities[i];
-            if(currCity.id != ownedByCity.id) {
-                currCity.UpdateBorderTiles();
-            }
-        }
 	}
 
     public void UnBorderize(City city) {

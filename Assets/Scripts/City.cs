@@ -424,6 +424,7 @@ public class City{
 	}
 
 	internal void UpdateBorderTiles(){
+        //Unborderize current border tiles first
 		for (int i = 0; i < this.borderTiles.Count; i++) {
             HexTile currBorderTile = borderTiles[i];
             if(currBorderTile.ownedByCity == null || currBorderTile.ownedByCity.id == this.id) {
@@ -434,36 +435,69 @@ public class City{
         }
 		this.borderTiles.Clear();
 
+        //Reset outer tiles, set them as seen
+        for (int i = 0; i < this.outerTiles.Count; i++) {
+            HexTile currOuterTile = this.outerTiles[i];
+            currOuterTile.isVisibleByCities.Remove(this);
+            kingdom.SetFogOfWarStateForTile(currOuterTile, FOG_OF_WAR_STATE.SEEN);
+        }
+        this.outerTiles.Clear();
+
         //Get outmost owned tiles
         //To get outmost owned tiles, get tiles that still have unoccupied neighbours
-		List<HexTile> outmostTiles = new List<HexTile>();
+        List<HexTile> outmostOwnedTiles = new List<HexTile>();
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currHexTile = this.ownedTiles[i];
 			List<HexTile> currHexTileUnoccupiedNeighbours = currHexTile.AllNeighbours
                 .Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !ownedTiles.Contains(x)).ToList();
 			if (currHexTileUnoccupiedNeighbours.Count > 0) {
-				outmostTiles.Add (currHexTile);
+                outmostOwnedTiles.Add (currHexTile);
 			}
 		}
 
-		for (int i = 0; i < outmostTiles.Count; i++) {
-			List<HexTile> possibleBorderTiles = outmostTiles [i].GetTilesInRange(3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isBorder && !ownedTiles.Contains(x)).ToList();
+        //Get border tiles from outmost owned tiles, get x tiles in range that are not already borders, owned or water
+		for (int i = 0; i < outmostOwnedTiles.Count; i++) {
+			List<HexTile> possibleBorderTiles = outmostOwnedTiles[i].GetTilesInRange(3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isBorder && !ownedTiles.Contains(x)).ToList();
 			this.borderTiles = this.borderTiles.Union(possibleBorderTiles).ToList();
 		}
 		//this.borderTiles.Distinct();
 
-        for (int i = 0; i < outerTiles.Count; i++) {
-            HexTile currOuterTile = outerTiles[i];
-            kingdom.SetFogOfWarStateForTile(currOuterTile, FOG_OF_WAR_STATE.SEEN);
-        }
+        //for (int i = 0; i < outerTiles.Count; i++) {
+        //    HexTile currOuterTile = outerTiles[i];
+        //    kingdom.SetFogOfWarStateForTile(currOuterTile, FOG_OF_WAR_STATE.SEEN);
+        //}
 
-        outerTiles.Clear();
+        //outerTiles.Clear();
+
+        //Borderize border tiles
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currBorderTile = this.borderTiles[i];
 			currBorderTile.Borderize (this);
             kingdom.SetFogOfWarStateForTile(currBorderTile, FOG_OF_WAR_STATE.VISIBLE);
             currBorderTile.CollectEventOnTile(kingdom);
-            List<HexTile> currHexTileUnoccupiedNeighbours = currBorderTile.AllNeighbours.Where(x => !x.isBorder && !x.isOccupied && !borderTiles.Contains(x) && !ownedTiles.Contains(x)).ToList();
+        }
+
+        //Get outer tiles based on ownedtiles and border tiles
+        List<HexTile> outmostTiles = new List<HexTile>();
+        for (int i = 0; i < this.ownedTiles.Count; i++) {
+            HexTile currOwnedTile = this.ownedTiles[i];
+            if(currOwnedTile.AllNeighbours.Where(x => !x.isOccupied && !x.isBorder).Count() > 0) {
+                outmostTiles.Add(currOwnedTile);
+            }
+        }
+        for (int i = 0; i < this.borderTiles.Count; i++) {
+            HexTile currBorderTile = this.borderTiles[i];
+            if (currBorderTile.AllNeighbours.Where(x => !x.isOccupied && !x.isBorder).Count() > 0) {
+                outmostTiles.Add(currBorderTile);
+            }
+        }
+
+        //Set outer tiles as visible
+        for (int i = 0; i < outmostTiles.Count; i++) {
+            HexTile currOutmostTile = outmostTiles[i];
+            List<HexTile> currHexTileUnoccupiedNeighbours = currOutmostTile.AllNeighbours
+                .Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).ToList();
+
             for (int j = 0; j < currHexTileUnoccupiedNeighbours.Count; j++) {
                 HexTile currNeighbour = currHexTileUnoccupiedNeighbours[j];
                 outerTiles.Add(currNeighbour);
@@ -471,10 +505,9 @@ public class City{
                     currNeighbour.isVisibleByCities.Add(this);
                 }
                 kingdom.SetFogOfWarStateForTile(currNeighbour, FOG_OF_WAR_STATE.VISIBLE);
-            }
-            //CollectEventInTile(this.borderTiles[i]);
+            } 
         }
-	}
+    }
 
 	internal void HighlightAllOwnedTiles(float alpha){
 		Color color = this.kingdom.kingdomColor;
@@ -882,34 +915,35 @@ public class City{
 				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
 			}
 		}
-        List<City> nearByCities = new List<City>();
-
+        //List<City> citiesToUpdateBorders = new List<City>();
         /*
          * Reset all owned, border and outer tiles!
          * */
-		for (int i = 0; i < this.ownedTiles.Count; i++) {
+        for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
             currentTile.isVisibleByCities.Remove(this);
+            //citiesToUpdateBorders = citiesToUpdateBorders.Union(currentTile.isVisibleByCities).ToList();
             currentTile.ResetTile();
             kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
-            List<City> neighbouringCities = currentTile.AllNeighbours.Where(x => x.ownedByCity != null && x.ownedByCity.id != this.id).Select(x => x.ownedByCity).ToList();
-            nearByCities.AddRange(neighbouringCities);
+
         }
+
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
             currentTile.isVisibleByCities.Remove(this);
+            //citiesToUpdateBorders = citiesToUpdateBorders.Union(currentTile.isVisibleByCities).ToList();
             currentTile.ResetTile();
             kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
-            List<City> neighbouringCities = currentTile.AllNeighbours.Where(x => x.ownedByCity != null && x.ownedByCity.id != this.id).Select(x => x.ownedByCity).ToList();
-            nearByCities.AddRange(neighbouringCities);
+
         }
         for (int i = 0; i < this.outerTiles.Count; i++) {
             HexTile currentTile = this.outerTiles[i];
             currentTile.isVisibleByCities.Remove(this);
-            currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
-            List<City> neighbouringCities = currentTile.AllNeighbours.Where(x => x.ownedByCity != null && x.ownedByCity.id != this.id).Select(x => x.ownedByCity).ToList();
-            nearByCities.AddRange(neighbouringCities);
+            //currentTile.ResetTile();
+            //citiesToUpdateBorders = citiesToUpdateBorders.Union(currentTile.isVisibleByCities).ToList();
+            if (!currentTile.isBorder && !currentTile.isOccupied) {
+                kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
+            }
         }
 		this.ownedTiles.Clear();
 		this.borderTiles.Clear();
@@ -942,12 +976,10 @@ public class City{
                 }
             }
         }
-        nearByCities.Distinct();
-        for (int i = 0; i < nearByCities.Count; i++) {
-            nearByCities[i].UpdateBorderTiles();
-        }
 
-
+        //for (int i = 0; i < citiesToUpdateBorders.Count; i++) {
+        //    citiesToUpdateBorders[i].UpdateBorderTiles();
+        //}
 
         //KingdomManager.Instance.UpdateKingdomAdjacency();
         //		for (int i = 0; i < this.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
