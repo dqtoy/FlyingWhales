@@ -46,11 +46,15 @@ public class AdventurerAvatar : CitizenAvatar {
         }
         Kingdom kingdomOfAdventurer = this.citizenRole.citizen.city.kingdom;
 
-        List<HexTile> neighboursWithEvents = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag && 
-            x.gameEventInTile != null && priorityEvents.Contains(x.gameEventInTile.eventType)).ToList();
+        List<HexTile> seenTilesWithEvents = kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE]
+            .Union(kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.SEEN])
+            .Where(x => x.gameEventInTile != null && priorityEvents.Contains(x.gameEventInTile.eventType)).ToList();
+
+        //List<HexTile> neighboursWithEvents = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag && 
+        //    x.gameEventInTile != null && priorityEvents.Contains(x.gameEventInTile.eventType)).ToList();
         //Prioritize tiles with events in accordance to priorityEvents list
-        if (neighboursWithEvents.Count > 0) {
-            newTargetTile = neighboursWithEvents[Random.Range(0, neighboursWithEvents.Count)];
+        if (seenTilesWithEvents.Count > 0) {
+            newTargetTile = seenTilesWithEvents[Random.Range(0, seenTilesWithEvents.Count)];
         } else {
             List<HexTile> hiddenNeighbours = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag
                         && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();

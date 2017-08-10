@@ -1049,6 +1049,7 @@ public class City{
         }
         this.ChangeKingdom(conqueror);
         this.CreateInitialFamilies(false);
+        this.UpdateBorderTiles();
 
 		//when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
 		//its initial defense will only be 300HP + (20HP x tech level)

@@ -39,5 +39,15 @@ public class Adventure : GameEvent {
         discoveredLog.AddToFillers(citizen, citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         this.DoneEvent();
     }
+
+    internal override void CancelEvent() {
+        base.CancelEvent();
+        DestroyCitizenAvatar();
+    }
+
+    internal override void DoneEvent() {
+        base.DoneEvent();
+        DestroyCitizenAvatar();
+    }
     #endregion
 }

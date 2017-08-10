@@ -148,9 +148,15 @@ public class GameEvent {
 	}
     internal virtual void OnCollectAvatarAction(Kingdom claimant) {
         gameEventAvatar.eventLocation.RemoveEventOnTile();
-        GameObject.Destroy(gameEventAvatar.gameObject);
+        DestroyCitizenAvatar();
     }
     #endregion
+
+    internal void DestroyCitizenAvatar() {
+        if (gameEventAvatar != null) {
+            GameObject.Destroy(gameEventAvatar.gameObject);
+        }
+    }
 
     /*
     * A plague carrying citizen will spread the plague to its 
