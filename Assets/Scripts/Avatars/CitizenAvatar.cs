@@ -120,6 +120,9 @@ public class CitizenAvatar : MonoBehaviour {
     }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
+		startTile.ExitCitizen (this.citizenRole.citizen);
+		targetTile.EnterCitizen (this.citizenRole.citizen);
+
         if (startTile.transform.position.x <= targetTile.transform.position.x) {
             if (this.animator.gameObject.transform.localScale.x > 0) {
                 this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);

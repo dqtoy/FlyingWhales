@@ -131,9 +131,9 @@ public class FirstAndKeystone : GameEvent {
 	internal void TransferKeystone(Kingdom kingdom, Citizen citizen){
 		this.EventIsCreated ();
 		this.keystoneOwner = kingdom;
+		this.hexTileSpawnPoint.RemoveEventOnTile();
 		ChangeKeystonePlacement();
 		GameObject.Destroy (this.avatar);
-		this.hexTileSpawnPoint.RemoveEventOnTile();
 		onPerformAction += AttemptVisit;
 //		if(citizen == null){
 //			//Discovered by structure/tile
