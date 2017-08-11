@@ -1166,9 +1166,12 @@ public class City{
                 } else {
                     path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.AVATAR);
                 }
-                if (path == null) {
-                    return null;
-                }
+				if(role != ROLE.RANGER){
+					if (path == null) {
+						return null;
+					}
+				}
+                
             } else {
                 path = newPath;
             }
@@ -1189,7 +1192,9 @@ public class City{
 			citizen.assignedRole.targetLocation = targetLocation;
 			citizen.assignedRole.targetCity = targetLocation.city;
 			citizen.assignedRole.path = path;
-			citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+			if(path != null){
+				citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+			}
 //			this._kingdom.AdjustGold (-cost);
 			this.citizens.Remove (citizen);
 			return citizen;
