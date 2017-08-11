@@ -109,7 +109,7 @@ public class Monster {
 			this.targetLocation = this.occupiedTiles [UnityEngine.Random.Range (0, this.occupiedTiles.Count)];
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
-				if(this.targetLocation.isOccupied && this.targetLocation.city.id != 0){
+				if(this.targetLocation.isHabitable && this.targetLocation.isOccupied && this.targetLocation.city.id != 0){
 					this._targetObject = this.targetLocation.city;
 				}else{
 					this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
@@ -229,7 +229,9 @@ public class Monster {
 			}
 		}
 	}
-	internal virtual void Death(){}
+	internal virtual void Death(){
+		this.isDead = true;
+	}
 
 	internal virtual void DoneAction(){}
 	#endregion

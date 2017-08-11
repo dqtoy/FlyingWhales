@@ -827,6 +827,8 @@ public class Citizen {
 			this.assignedRole = new Reliever(this);
 		}else if (role == ROLE.INTERCEPTER) {
 			this.assignedRole = new Intercepter(this);
+		}else if (role == ROLE.RANGER) {
+			this.assignedRole = new Ranger(this);
 		}
         //this.UpdatePrestige ();
     }

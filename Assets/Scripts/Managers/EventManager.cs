@@ -101,7 +101,7 @@ public class EventManager : MonoBehaviour {
         {EVENT_TYPES.ATTACK_LAIR, -1},
 		{EVENT_TYPES.GREAT_STORM, -1},
 		{EVENT_TYPES.SEND_RELIEF_GOODS, -1},
-
+		{EVENT_TYPES.HUNT_LAIR, -1},
     };
 
 	void Awake(){

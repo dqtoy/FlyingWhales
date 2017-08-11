@@ -41,6 +41,7 @@ public class AttackCity : GameEvent {
 				this.general.citizen.Death (DEATH_REASONS.BATTLE);
 			}
 		}
+		this.DoneEvent ();
 	}
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();

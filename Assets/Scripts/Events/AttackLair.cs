@@ -27,6 +27,8 @@ public class AttackLair : GameEvent {
 			}
 
 		}
+		this.DoneEvent();
+
 	}
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();
