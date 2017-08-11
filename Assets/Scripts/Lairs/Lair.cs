@@ -117,7 +117,7 @@ public class Lair {
 	private void CheckForActivation(){
 		if(!this.isActivated){
 			for (int i = 0; i < this.tilesInRadius.Count; i++) {
-				if (this.tilesInRadius [i].isHabitable && this.tilesInRadius [i].isOccupied && this.tilesInRadius [i].city.id != 0) {
+				if (this.tilesInRadius [i].isHabitable && this.tilesInRadius [i].isOccupied && (this.tilesInRadius[i].city != null && this.tilesInRadius [i].city.id != 0)) {
 					ActivateLair ();
 					break;
 				}

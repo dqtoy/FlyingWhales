@@ -62,7 +62,7 @@ public class MonsterAvatar : MonoBehaviour {
 			}
 		}else if(this.monster.lair.lairSpawn.behavior == BEHAVIOR.ROAMING){
 			if(this.monster.location == this.monster.targetLocation){
-				if(this.monster.location.isOccupied && this.monster.location.isHabitable && this.monster.location.city.id != 0){
+				if(this.monster.location.isOccupied && this.monster.location.isHabitable && (this.monster.location.city != null && this.monster.location.city.id != 0)){
 					if(!this.hasArrived){
 						this.hasArrived = true;
 						this.GetComponent<BoxCollider2D> ().enabled = false;
@@ -163,7 +163,7 @@ public class MonsterAvatar : MonoBehaviour {
 
 	private void RoamingBehavior(){
 		if(this.monster.location == this.monster.targetLocation){
-			if(this.monster.location.isOccupied && this.monster.location.isHabitable && this.monster.location.city.id != 0){
+			if(this.monster.location.isOccupied && this.monster.location.isHabitable && (this.monster.location.city != null && this.monster.location.city.id != 0)){
 				if(!this.hasArrived){
 					this.hasArrived = true;
 					this.GetComponent<BoxCollider2D> ().enabled = false;
