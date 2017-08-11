@@ -183,9 +183,10 @@ public class Citizen {
 //			this.GenerateTraits();
 		this.UpdatePrestige();
 
-		EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
-		EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
-		EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
+        //EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
+        Messenger.AddListener("CitizenTurnActions", TurnActions);
+        //EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
+		//EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
 		/*if(!isGhost){
 			this.city.citizens.Add (this);
 //			this.GenerateTraits();
@@ -312,8 +313,8 @@ public class Citizen {
 	internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		if(!this.isDead){
 			DeathCoroutine (reason, isDethroned, newKing, isConquered);
-			EventManager.Instance.onUpdateUI.Invoke();
-		}
+            Messenger.Broadcast("UpdateUI");
+        }
 //		DeathCoroutine(reason, isDethroned, newKing, isConquered);
 	}
 	internal void DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
@@ -347,12 +348,12 @@ public class Citizen {
 			this.assignedRole.OnDeath ();
 		}
 			
-		EventManager.Instance.onCitizenTurnActions.RemoveListener (TurnActions);
-		EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
-		EventManager.Instance.onUnsupportCitizen.Invoke (this);
-		this.UnsupportCitizen (this);
+		Messenger.RemoveListener("CitizenTurnActions", TurnActions);
+		//EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
+		//EventManager.Instance.onUnsupportCitizen.Invoke (this);
+		//this.UnsupportCitizen (this);
 //		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
-		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
+		//EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
 
 
 //		if (this.role == ROLE.GENERAL && this.assignedRole != null) {
@@ -1436,11 +1437,12 @@ public class Citizen {
 	}
 
 	internal void UnsubscribeListeners(){
-		EventManager.Instance.onCitizenTurnActions.RemoveListener(TurnActions);
-		EventManager.Instance.onUnsupportCitizen.RemoveListener(UnsupportCitizen);
-//		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
-		EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
-	}
+        Messenger.RemoveListener("CitizenTurnActions", TurnActions);
+        //EventManager.Instance.onCitizenTurnActions.RemoveListener(TurnActions);
+        //EventManager.Instance.onUnsupportCitizen.RemoveListener(UnsupportCitizen);
+        //		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
+        //EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
+    }
 
 	/*internal void DetachGeneralFromCitizen(){
 //		Debug.Log (this.name + " of " + this.city.name + " HAS DETACHED HIS ARMY AND ABANDONED BEING A GENERAL");

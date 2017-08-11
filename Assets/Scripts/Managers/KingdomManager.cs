@@ -488,7 +488,7 @@ public class KingdomManager : MonoBehaviour {
 		Kingdom sourceKingdom = this.allKingdoms.FirstOrDefault();
         List<City> citiesToSplit = new List<City>() { sourceKingdom.cities.Last() };
         SplitKingdom(sourceKingdom, citiesToSplit);
-        EventManager.Instance.onUpdateUI.Invoke();
+        Messenger.Broadcast("UpdateUI");
     }
     #endregion
 
