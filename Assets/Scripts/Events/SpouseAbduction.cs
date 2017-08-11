@@ -63,7 +63,9 @@ public class SpouseAbduction : GameEvent {
 		EventManager.Instance.AddEventToDictionary (this);
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		onPerformAction += AdmireSpouse;
-		this.EventIsCreated ();
+		this.EventIsCreated (this.abductorKingdom, true);
+		this.EventIsCreated (this.targetKingdom, false);
+
 	}
 	#region Overrides
 	internal override void PerformAction (){

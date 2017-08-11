@@ -28,7 +28,7 @@ public class Expansion : GameEvent {
 		newLog.AddToFillers (startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		newLog.AddToFillers (startedBy.city, startedBy.city.name, LOG_IDENTIFIER.CITY_1);
 
-		this.EventIsCreated ();
+		this.EventIsCreated (this.startedByKingdom, true);
 
 	}
 

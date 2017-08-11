@@ -23,7 +23,7 @@ public class HiddenHistoryBook : GameEvent {
         Messenger.AddListener("OnDayEnd", this.PerformAction);
 		KnowsExistence();
 
-		this.EventIsCreated();
+		this.EventIsCreated(this.kingdom, true);
 	}
 
 	#region Overrides

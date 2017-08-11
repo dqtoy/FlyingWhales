@@ -23,7 +23,7 @@ public class SerumOfAlacrity : GameEvent {
 		newLog.AddToFillers (this.kingdom, this.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
-		this.EventIsCreated();
+		this.EventIsCreated(this.kingdom, true);
 	}
 	#region Overrides
 	internal override void PerformAction (){

@@ -69,7 +69,9 @@ public class War : GameEvent {
 
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		EventManager.Instance.AddEventToDictionary(this);
-	
+		EventIsCreated (this.kingdom1, false);
+		EventIsCreated (this.kingdom2, false);
+
 	}
 	internal override void PerformAction (){
 		Attack ();

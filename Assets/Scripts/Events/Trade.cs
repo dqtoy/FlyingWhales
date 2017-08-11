@@ -38,7 +38,9 @@ public class Trade : GameEvent {
 		tradeStartLog.AddToFillers(this._targetCity, this._targetCity.name, LOG_IDENTIFIER.CITY_2);
 
         EventManager.Instance.AddEventToDictionary(this);
-        this.EventIsCreated();
+		this.EventIsCreated(this.startedByKingdom, true);
+		this.EventIsCreated(this._targetCity.kingdom, false);
+
     }
 
 	#region Overrides

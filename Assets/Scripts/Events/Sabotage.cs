@@ -14,6 +14,7 @@ public class Sabotage : GameEvent {
 		this.saboteur = saboteur;
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
+		EventIsCreated (this.startedByKingdom, false);
 //		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
 //		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name);
 //		newLogTitle.AddToFillers (this.inviterKingdom, this.inviterKingdom.name);

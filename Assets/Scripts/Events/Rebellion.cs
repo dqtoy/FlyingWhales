@@ -50,7 +50,7 @@ public class Rebellion : GameEvent {
 		newLog.AddToFillers (cityWhereRebelFortIsCreated, cityWhereRebelFortIsCreated.name, LOG_IDENTIFIER.CITY_1);
 
 		EventManager.Instance.AddEventToDictionary (this);
-		this.EventIsCreated ();
+		this.EventIsCreated (this.targetKingdom, true);
 	}
 	#region Overrides
 	internal override void PerformAction (){

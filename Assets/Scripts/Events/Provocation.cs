@@ -25,7 +25,9 @@ public class Provocation : GameEvent {
 		newLog.AddToFillers (this.provoker.citizen, this.provoker.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		newLog.AddToFillers (this.targetCity, this.targetCity.name, LOG_IDENTIFIER.CITY_1);
 
-		this.EventIsCreated ();
+		this.EventIsCreated (this.sourceKingdom, true);
+		this.EventIsCreated (this.targetKingdom, false);
+
 	}
 
 	#region Overrides

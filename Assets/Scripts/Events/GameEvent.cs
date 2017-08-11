@@ -40,6 +40,8 @@ public class GameEvent {
 	protected Citizen _startedBy;
 	protected WAR_TRIGGER _warTrigger;
 
+	private List<Kingdom> _eventKingdoms;
+
 	public Citizen startedBy {
 		get {
 			return this._startedBy;
@@ -54,6 +56,10 @@ public class GameEvent {
 
 	public DateTime startDate{
 		get { return this._startDate; }
+	}
+
+	public List<Kingdom> eventKingdoms{
+		get { return this._eventKingdoms; }
 	}
 
 	public GameEvent(int startWeek, int startMonth, int startYear, Citizen startedBy){
@@ -77,6 +83,7 @@ public class GameEvent {
 		this.relationshipHasImproved = false;
 		this.goEventItem = null;
 		this.logs = new List<Log>();
+		this._eventKingdoms = new List<Kingdom> ();
 		this._startDate = new DateTime (this.startYear, this.startMonth, this.startDay);
 		if(this._startedBy != null){
 			this.startedByKingdom = _startedBy.city.kingdom;
@@ -121,6 +128,10 @@ public class GameEvent {
         this.endMonth = GameManager.Instance.month;
         this.endDay = GameManager.Instance.days;
         this.endYear = GameManager.Instance.year;
+
+		for (int i = 0; i < this._eventKingdoms.Count; i++) {
+			this._eventKingdoms [i].RemoveActiveEvent (this);
+		}
 
 		if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null && this.logs.Count > 0) { //Kingdom Event
 			if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
@@ -268,15 +279,24 @@ public class GameEvent {
 	}
 
 	//When an event has been constructed and created
-	internal void EventIsCreated(){
-		UIManager.Instance.ShowEventsOfType (this);
-	}
-	internal void EventIsCreated(Kingdom kingdom){
-		UIManager.Instance.ShowEventsOfType (this, kingdom);
+//	internal void EventIsCreated(){
+//		UIManager.Instance.ShowEventsOfType (this);
+//	}
+	internal void EventIsCreated(Kingdom kingdom, bool isShow){
+		if(isShow){
+			UIManager.Instance.ShowEventsOfType (this, kingdom);
+		}
+		if(kingdom != null){
+			AddEventInKingdom (kingdom);
+		}
 	}
     internal void SetStartedBy(Citizen startedBy) {
         _startedBy = startedBy;
         startedByCity = startedBy.city;
         startedByKingdom = startedBy.city.kingdom;
-    } 
+    }
+	private void AddEventInKingdom(Kingdom kingdom){
+		this._eventKingdoms.Add (kingdom);
+		kingdom.AddActiveEvent (this);
+	}
 }

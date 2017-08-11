@@ -66,7 +66,7 @@ public class DevelopWeapons : GameEvent {
 
         Messenger.AddListener("OnDayEnd", PerformAction);
         EventManager.Instance.AddEventToDictionary(this);
-        EventIsCreated();
+		EventIsCreated(claimant, true);
     }
 
     protected void ProduceWeapons() {

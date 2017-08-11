@@ -25,7 +25,7 @@ public class KingdomHoliday : GameEvent {
 
         Messenger.AddListener("OnDayEnd", PerformAction);
         EventManager.Instance.AddEventToDictionary(this);
-        EventIsCreated();
+		EventIsCreated(this._sourceKingdom, true);
     }
 
     protected string GenerateHolidayName() {

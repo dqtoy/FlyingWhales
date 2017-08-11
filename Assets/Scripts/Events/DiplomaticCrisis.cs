@@ -48,7 +48,8 @@ public class DiplomaticCrisis : GameEvent {
 		newLog.AddToFillers (null, crisis, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
 		EventManager.Instance.AddEventToDictionary (this);
-		this.EventIsCreated ();
+		this.EventIsCreated (this.kingdom1, true);
+		this.EventIsCreated (this.kingdom2, false);
 
 	}
 

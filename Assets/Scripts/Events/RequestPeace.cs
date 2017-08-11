@@ -41,6 +41,8 @@ public class RequestPeace : GameEvent {
 
 		//Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+		EventIsCreated (this.startedByKingdom, false);
+		EventIsCreated (this._targetKingdom, false);
 
 	}
 

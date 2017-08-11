@@ -169,7 +169,10 @@ public class InvasionPlan : GameEvent {
 
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
-		this._war.EventIsCreated ();
+		this._war.EventIsCreated (this._sourceKingdom, true);
+		EventIsCreated (this._sourceKingdom, false);
+		EventIsCreated (this._targetKingdom, false);
+
 //		this.StartMilitarizationEvent();
 	}
 

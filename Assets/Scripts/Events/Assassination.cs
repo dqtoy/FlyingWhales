@@ -124,7 +124,8 @@ public class Assassination : GameEvent {
 //		newLog.AddToFillers (targetCitizen, targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 //		newLog.AddToFillers (gameEventTrigger, triggerReason, LOG_IDENTIFIER.TRIGGER_REASON);
 
-		this.EventIsCreated ();
+		this.EventIsCreated (this.assassinKingdom, true);
+		this.EventIsCreated (this.targetKingdom, false);
 
 	}
 

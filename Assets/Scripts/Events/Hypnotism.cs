@@ -23,7 +23,9 @@ public class Hypnotism : GameEvent {
         newLog.AddToFillers(_targetKingdom, _targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
         EventManager.Instance.AddEventToDictionary(this);
-        EventIsCreated();
+		EventIsCreated(this._sourceKingdom, true);
+		EventIsCreated(this._targetKingdom, false);
+
     }
 
 

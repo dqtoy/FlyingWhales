@@ -40,7 +40,7 @@ public class Secession : GameEvent {
 		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
 		EventManager.Instance.AddEventToDictionary (this);
-		this.EventIsCreated ();
+		this.EventIsCreated (this.sourceKingdom, true);
 	}
 
 	#region Overrides
