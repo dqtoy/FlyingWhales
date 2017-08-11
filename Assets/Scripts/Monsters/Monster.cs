@@ -231,6 +231,7 @@ public class Monster {
 	}
 	internal virtual void Death(){
 		this.isDead = true;
+		this.lair.AdjustActiveMonsterCount (-1);
 	}
 
 	internal virtual void DoneAction(){}

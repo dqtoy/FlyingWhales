@@ -29,8 +29,8 @@ public class StormWitchLair : Lair {
 
 	private void SummonWitch(){
 //		AcquireTarget();
-		if(this._targetHextile != null){
-			MonsterManager.Instance.SummonNewMonster(MONSTER.STORM_WITCH, this.hexTile);
-		}
+//		if(this._targetHextile != null){
+//			MonsterManager.Instance.SummonNewMonster(MONSTER.STORM_WITCH, this.hexTile);
+//		}
 	}
 }

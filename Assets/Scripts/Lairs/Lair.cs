@@ -22,8 +22,9 @@ public class Lair {
 
 	private LairItem _lairItem;
 	private LairSpawn _lairSpawn;
+	private int _activeMonstersCount;
 
-	internal HexTile _targetHextile;
+
 	internal List<HexTile> availableTargets;
 
 	#region getters/setters
@@ -44,8 +45,8 @@ public class Lair {
 		this.tilesInRadius = this.hexTile.GetTilesInRange(this._lairSpawn.tileRadiusDetection);
 		this.isDead = false;
 		this.isActivated = false;
-		this._targetHextile = null;
 		this.availableTargets = new List<HexTile>();
+		this._activeMonstersCount = 0;
 		AttachLairToHextile();
 		EventManager.Instance.onWeekEnd.AddListener (PerformAction);
 		onPerformAction += CheckForActivation;
@@ -136,7 +137,15 @@ public class Lair {
 	}
 
 	internal void SummonMonster(MONSTER monster){
-		MonsterManager.Instance.SummonNewMonster(monster, this.hexTile);
+		if(this._lairSpawn.behavior == BEHAVIOR.ROAMING){
+			if (this._activeMonstersCount < this._lairSpawn.maxActiveMonster) {
+				AdjustActiveMonsterCount (1);
+				MonsterManager.Instance.SummonNewMonster (monster, this.hexTile);
+			}
+		}else{
+			AdjustActiveMonsterCount (1);
+			MonsterManager.Instance.SummonNewMonster (monster, this.hexTile);
+		}
 
 //		HexTile target = AcquireTarget(null, this.hexTile);
 //		if(target != null){
@@ -197,6 +206,14 @@ public class Lair {
 		}
 		return 0;
 	}
+
+	internal void AdjustActiveMonsterCount(int amount){
+		this._activeMonstersCount += amount;
+		if(this._activeMonstersCount < 0){
+			this._activeMonstersCount = 0;
+		}
+	}
+
 	#region Virtual
 	public virtual void Initialize(){}
 	public virtual void EverydayAction(){

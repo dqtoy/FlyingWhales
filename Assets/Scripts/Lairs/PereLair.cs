@@ -27,9 +27,9 @@ public class PereLair : Lair {
 
 	private void SummonPere(){
 //		AcquireTarget();
-		if(this._targetHextile != null){
-			MonsterManager.Instance.SummonNewMonster(MONSTER.PERE, this.hexTile);
-		}
+//		if(this._targetHextile != null){
+//			MonsterManager.Instance.SummonNewMonster(MONSTER.PERE, this.hexTile);
+//		}
 	}
 
 }

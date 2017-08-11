@@ -26,9 +26,9 @@ public class GhoulLair : Lair {
 
 	private void SummonGhoul(){
 //		AcquireTarget();
-		if(this._targetHextile != null){
-			MonsterManager.Instance.SummonNewMonster(MONSTER.GHOUL, this.hexTile);
-		}
+//		if(this._targetHextile != null){
+//			MonsterManager.Instance.SummonNewMonster(MONSTER.GHOUL, this.hexTile);
+//		}
 	}
 
 }
