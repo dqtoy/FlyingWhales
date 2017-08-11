@@ -99,7 +99,8 @@ public class Plague : GameEvent {
 
         EventManager.Instance.AddEventToDictionary(this);
         Messenger.AddListener("OnDayEnd", this.PerformAction);
-        EventManager.Instance.onKingdomDiedEvent.AddListener(CureAKingdom);
+        Messenger.AddListener<Kingdom>("OnKingdomDied", CureAKingdom);
+        //EventManager.Instance.onKingdomDiedEvent.AddListener(CureAKingdom);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_title");
 		newLogTitle.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);

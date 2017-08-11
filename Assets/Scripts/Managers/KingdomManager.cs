@@ -199,7 +199,8 @@ public class KingdomManager : MonoBehaviour {
 				}
 			}
 		}
-        EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
+        //EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
+        Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
         //this.UpdateKingdomAdjacency();
         newKingdom.CheckForDiscoveredKingdoms();
 		return newKingdom;
