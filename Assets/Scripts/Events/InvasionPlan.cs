@@ -167,7 +167,7 @@ public class InvasionPlan : GameEvent {
 			invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString(), LOG_IDENTIFIER.DATE);
 		}*/
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 		this._war.EventIsCreated ();
 //		this.StartMilitarizationEvent();
@@ -236,7 +236,7 @@ public class InvasionPlan : GameEvent {
 
 	internal override void DoneEvent(){
         base.DoneEvent();
-        EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+        Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 
 	internal override void CancelEvent (){

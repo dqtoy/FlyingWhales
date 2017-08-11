@@ -101,27 +101,28 @@ public class Monster {
 		this.occupiedTiles.Clear ();
 		List<HexTile> tileRadius = this.location.GetTilesInRange(2);
 		for (int i = 0; i < tileRadius.Count; i++) {
-			if(tileRadius[i].isHabitable && tileRadius[i].isOccupied && (tileRadius[i].city != null && tileRadius[i].city.id != 0) || tileRadius[i].citizensOnTile.Count > 0){
-				this.occupiedTiles.Add (tileRadius [i]);
+			if(tileRadius[i].isHabitable && tileRadius[i].isOccupied && (tileRadius[i].city != null && tileRadius[i].city.id != 0) || tileRadius[i].citizensOnTile.Count > 0) {
+                this.occupiedTiles.Add (tileRadius [i]);
 			}
 		}
 		if(this.occupiedTiles.Count > 0){
 			this.targetLocation = this.occupiedTiles [UnityEngine.Random.Range (0, this.occupiedTiles.Count)];
-			int chance = UnityEngine.Random.Range (0, 2);
-			if(chance == 0){
-				if(this.targetLocation.isHabitable && this.targetLocation.isOccupied &&  (this.targetLocation.city != null && this.targetLocation.city.id != 0)){
-					this._targetObject = this.targetLocation.city;
-				}else{
-					this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
-				}
-			}else{
-				if(this.targetLocation.citizensOnTile.Count > 0){
-					this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
-				}else{
-					this._targetObject = this.targetLocation.city;
-				}
-			}
-		}else{
+            //this._targetObject = this.targetLocation.city;
+
+            int chance = UnityEngine.Random.Range(0, 2);
+            if (chance == 0) {
+                if (this.targetLocation.isHabitable && this.targetLocation.isOccupied && (this.targetLocation.city != null && this.targetLocation.city.id != 0)) {
+                } else {
+                    this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
+                }
+            } else {
+                if (this.targetLocation.citizensOnTile.Count > 0) {
+                    this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
+                } else {
+                    this._targetObject = this.targetLocation.city;
+                }
+            }
+        } else{
 			HexTile[] neighbors = this.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER).ToArray ();
 			int numOfNeighbors = neighbors.Length;
 			if(this.prevLocation != null){

@@ -12,7 +12,7 @@ public class Sabotage : GameEvent {
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.saboteur = saboteur;
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
 //		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
 //		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name);
@@ -52,7 +52,7 @@ public class Sabotage : GameEvent {
 //		if(this.saboteur != null){
 //			this.saboteur.DestroyGO();
 //		}
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();

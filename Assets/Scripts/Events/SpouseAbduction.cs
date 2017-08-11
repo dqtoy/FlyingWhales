@@ -61,7 +61,7 @@ public class SpouseAbduction : GameEvent {
 		newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
 		EventManager.Instance.AddEventToDictionary (this);
-		EventManager.Instance.onWeekEnd.AddListener (this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		onPerformAction += AdmireSpouse;
 		this.EventIsCreated ();
 	}
@@ -78,7 +78,7 @@ public class SpouseAbduction : GameEvent {
 	internal override void DoneEvent (){
 		base.DoneEvent ();
 		onPerformAction = null;
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();

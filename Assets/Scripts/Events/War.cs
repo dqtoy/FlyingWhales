@@ -109,10 +109,10 @@ public class War : GameEvent {
 				KingdomManager.Instance.DeclareWarBetweenKingdoms(this._kingdom2, this._kingdom1, this);
 			}
 			this.isInitialAttack = true;
-//            EventManager.Instance.onWeekEnd.AddListener(AttemptToRequestPeace);
+//            Messenger.AddListener("OnDayEnd", AttemptToRequestPeace);
 			this.ReplenishWavesKingdom1();
 			this.ReplenishWavesKingdom2();
-			EventManager.Instance.onWeekEnd.AddListener (this.PerformAction);
+			Messenger.AddListener("OnDayEnd", this.PerformAction);
 //			this.EventIsCreated (this.kingdom2);
 		}
 	}
@@ -366,8 +366,8 @@ public class War : GameEvent {
 			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_1);
 			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_2);
         }
-//        EventManager.Instance.onWeekEnd.RemoveListener(AttemptToRequestPeace);
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+//        Messenger.RemoveListener("OnDayEnd", AttemptToRequestPeace);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.onUpdatePath.RemoveListener (UpdatePath);
     }
 	internal override void CancelEvent (){

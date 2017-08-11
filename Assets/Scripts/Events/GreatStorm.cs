@@ -29,7 +29,7 @@ public class GreatStorm : GameEvent {
 		this._warTrigger = WAR_TRIGGER.GREAT_STORM;
 
 		EventManager.Instance.AddEventToDictionary(this);
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
 		//TODO: Add log - event title
 		//TODO: Add log - start
@@ -65,7 +65,7 @@ public class GreatStorm : GameEvent {
 		base.DoneEvent ();
 		this._affectedKingdom.SetTechProductionPercentage(1);
 		this._affectedKingdom.SetProductionGrowthPercentage(1);
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();

@@ -38,7 +38,7 @@ public class Espionage : GameEvent {
 		this.hasFound = false;
 		this.successRate = 75;
 		EventManager.Instance.AddEventToDictionary(this);
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		this.EventIsCreated ();
 	}
 	internal override void PerformAction(){
@@ -54,7 +54,7 @@ public class Espionage : GameEvent {
 		if(this.spy != null){
 			this.spy.assignedRole.DestroyGO ();
 		}
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		if(this.chosenEvent != null && this.hasFound){
 			this.resolution = ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". " + this.spy.name + " discovered a Hidden Event: ";
 		}

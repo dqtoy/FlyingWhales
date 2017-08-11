@@ -169,7 +169,7 @@ public class Assassination : GameEvent {
         //			((Guardian)this.guardians[i].assignedRole).inAction = false;
         //		}
         base.DoneEvent();
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 
 	internal override void CancelEvent (){
@@ -187,7 +187,7 @@ public class Assassination : GameEvent {
 
 	private void WaitForTarget(){
 		//Add logs: wait_for_target
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 	}
 	private List<Kingdom> GetOtherKingdoms(){
 		List<Kingdom> kingdoms = new List<Kingdom> ();

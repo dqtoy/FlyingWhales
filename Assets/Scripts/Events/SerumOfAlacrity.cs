@@ -22,7 +22,7 @@ public class SerumOfAlacrity : GameEvent {
 		newLog.AddToFillers (this.kingdom.king, this.kingdom.king.name, LOG_IDENTIFIER.KING_1);
 		newLog.AddToFillers (this.kingdom, this.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		this.EventIsCreated();
 	}
 	#region Overrides
@@ -38,7 +38,7 @@ public class SerumOfAlacrity : GameEvent {
 	internal override void DoneEvent (){
 		base.DoneEvent ();
 
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 
 	}
 	#endregion

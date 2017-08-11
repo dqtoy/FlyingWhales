@@ -23,7 +23,12 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		this.secondKingdom = null;
 		this.counter = 0;
 	}
-	[Task]
+
+    private void Start() {
+        Messenger.AddListener("OnDayEnd", this.GetComponent<PandaBehaviour>().Tick);
+    }
+
+    [Task]
 	public void ResetValues(){
 		this.firstKingdom = null;
 		this.secondKingdom = null;

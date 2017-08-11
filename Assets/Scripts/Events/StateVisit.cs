@@ -35,7 +35,7 @@ public class StateVisit : GameEvent {
 		this.visitorHasDied = false;
 		this.isSuccessful = false;
 		this.visitorHasArrived = false;
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
 		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -126,7 +126,7 @@ public class StateVisit : GameEvent {
 //		if(this.saboteurEnvoy != null){
 //			this.saboteurEnvoy.DestroyGO();
 //		}
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 	internal override void DeathByOtherReasons(){
 		//Add logs: death_by_other
@@ -309,7 +309,7 @@ public class StateVisit : GameEvent {
 //		chosenEnvoy.eventDuration = 5;
 //		chosenEnvoy.currentEvent = this;
 //		chosenEnvoy.inAction = true;
-//		EventManager.Instance.onWeekEnd.AddListener (chosenEnvoy.WeeklyAction);
+//		Messenger.AddListener("OnDayEnd", chosenEnvoy.WeeklyAction);
 //		this.saboteurEnvoy = chosenEnvoy;
 //
 //		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_start");

@@ -43,7 +43,7 @@ public class ScourgeCity : GameEvent {
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent ();
-		//		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		//		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();

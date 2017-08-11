@@ -30,7 +30,7 @@ public class Militarization : GameEvent {
 		startLog.AddToFillers (this.startedByKingdom, this.startedByKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		startLog.AddToFillers (_invasionPlanThatTriggeredEvent.targetKingdom, _invasionPlanThatTriggeredEvent.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
 
@@ -49,7 +49,7 @@ public class Militarization : GameEvent {
 
 	internal override void DoneEvent(){
         base.DoneEvent();
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 //		if (_invasionPlanThatTriggeredEvent.isActive) {
 //			_invasionPlanThatTriggeredEvent.MilitarizationDone ();
 //		}

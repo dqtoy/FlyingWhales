@@ -30,7 +30,7 @@ public class Lycanthrope : Role {
         _captor = null;
         _targetKingdom = null;
         _isReturningHome = false;
-        EventManager.Instance.onWeekEnd.AddListener(CheckForFreedom);
+        Messenger.AddListener("OnDayEnd", CheckForFreedom);
     }
 
     internal override void Initialize(GameEvent gameEvent) {
@@ -90,6 +90,6 @@ public class Lycanthrope : Role {
 
     internal override void OnDeath() {
         base.OnDeath();
-        EventManager.Instance.onWeekEnd.RemoveListener(CheckForFreedom);
+        Messenger.RemoveListener("OnDayEnd", CheckForFreedom);
     }
 }

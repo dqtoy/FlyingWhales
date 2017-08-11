@@ -27,7 +27,7 @@ public class SlavesMerchant : GameEvent {
 		newLog.AddToFillers (this.buyerKingdom, this.buyerKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
         EventManager.Instance.AddEventToDictionary(this);
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		this.EventIsCreated();
 	}
 
@@ -45,7 +45,7 @@ public class SlavesMerchant : GameEvent {
 
 	internal override void DoneEvent (){
 		base.DoneEvent ();
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 	#endregion
 

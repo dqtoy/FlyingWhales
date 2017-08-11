@@ -62,7 +62,7 @@ public class JoinWar : GameEvent {
 		startLog.AddToFillers (this._candidateForAlliance, this._candidateForAlliance.name, LOG_IDENTIFIER.KING_2);
 		startLog.AddToFillers (this._kingdomToAttack, this._kingdomToAttack.name, LOG_IDENTIFIER.KINGDOM_3);
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}
 
@@ -246,7 +246,7 @@ public class JoinWar : GameEvent {
 	}
 	internal override void DoneEvent(){
         base.DoneEvent();
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 //		if(this._envoyToSend != null){
 //			this._envoyToSend.DestroyGO ();
 //		}

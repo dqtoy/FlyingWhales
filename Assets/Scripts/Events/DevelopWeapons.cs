@@ -47,7 +47,7 @@ public class DevelopWeapons : GameEvent {
     }
     internal override void DoneEvent() {
         base.DoneEvent();
-        EventManager.Instance.onWeekEnd.RemoveListener(PerformAction);
+        Messenger.RemoveListener("OnDayEnd", PerformAction);
     }
     #endregion
 
@@ -64,7 +64,7 @@ public class DevelopWeapons : GameEvent {
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "start");
         newLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
-        EventManager.Instance.onWeekEnd.AddListener(PerformAction);
+        Messenger.AddListener("OnDayEnd", PerformAction);
         EventManager.Instance.AddEventToDictionary(this);
         EventIsCreated();
     }

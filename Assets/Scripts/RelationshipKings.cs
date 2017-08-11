@@ -54,7 +54,7 @@ public class RelationshipKings {
         this._likeFromMutualRelationships = 0;
         //		this.isAdjacent = false;
         //		this.isAtWar = false;
-        EventManager.Instance.onWeekEnd.AddListener(CheckEventModifiers);
+        Messenger.AddListener("OnDayEnd", CheckEventModifiers);
     }
 
 	internal void UpdateKingRelationshipStatus(){

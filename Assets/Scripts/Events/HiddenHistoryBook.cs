@@ -20,7 +20,7 @@ public class HiddenHistoryBook : GameEvent {
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "HiddenHistoryBook", "event_title");
 
         EventManager.Instance.AddEventToDictionary(this);
-        EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+        Messenger.AddListener("OnDayEnd", this.PerformAction);
 		KnowsExistence();
 
 		this.EventIsCreated();
@@ -43,7 +43,7 @@ public class HiddenHistoryBook : GameEvent {
 		}
 		((King)this.kingdom.king.assignedRole).isHiddenHistoryBooking = false;
 
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 
 	}
 	#endregion

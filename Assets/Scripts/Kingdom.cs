@@ -337,7 +337,7 @@ public class Kingdom{
 
 		this.CreateInitialRelationships();
 		EventManager.Instance.onCreateNewKingdomEvent.AddListener(CreateNewRelationshipWithKingdom);
-		EventManager.Instance.onWeekEnd.AddListener(KingdomTickActions);
+		Messenger.AddListener("OnDayEnd", KingdomTickActions);
 		EventManager.Instance.onKingdomDiedEvent.AddListener(OtherKingdomDiedActions);
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
@@ -446,7 +446,7 @@ public class Kingdom{
 		this._isDead = true;
         this.CancelEventKingdomIsInvolvedIn(EVENT_TYPES.ALL);
         EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
-        EventManager.Instance.onWeekEnd.RemoveListener(KingdomTickActions);
+        Messenger.RemoveListener("OnDayEnd", KingdomTickActions);
         EventManager.Instance.onKingdomDiedEvent.RemoveListener(OtherKingdomDiedActions);
 
         EventManager.Instance.onKingdomDiedEvent.Invoke(this);

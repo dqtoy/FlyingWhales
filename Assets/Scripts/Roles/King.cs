@@ -31,7 +31,7 @@ public class King : Role {
 		this.isRumoring = false;
 		this.isHiddenHistoryBooking = false;
 		RandomTriggerDateOfSerum(true);
-		EventManager.Instance.onWeekEnd.AddListener (EverydayActions);
+		Messenger.AddListener("OnDayEnd", EverydayActions);
 	}
 
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){
@@ -39,7 +39,7 @@ public class King : Role {
 	}
 	private void EverydayActions(){
 		if(this.citizen.isDead){
-			EventManager.Instance.onWeekEnd.RemoveListener (EverydayActions);
+			Messenger.RemoveListener("OnDayEnd", EverydayActions);
 			return;
 		}
 		TriggerSpouseAbduction();

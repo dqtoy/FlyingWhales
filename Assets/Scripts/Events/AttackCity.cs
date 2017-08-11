@@ -17,7 +17,7 @@ public class AttackCity : GameEvent {
 		this.targetCity = targetCity;
 		this.gameEvent = gameEvent;
 		Debug.LogError (general.citizen.name + " of " + general.citizen.city.kingdom.name + " will attack " + targetCity.name);
-//		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+//		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
 		//		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
 		//		newLogTitle.AddToFillers (visitor.citizen, visitor.citizen.name);
@@ -52,7 +52,7 @@ public class AttackCity : GameEvent {
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent ();
-//		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+//		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();

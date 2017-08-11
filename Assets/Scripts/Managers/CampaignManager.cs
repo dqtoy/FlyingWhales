@@ -368,7 +368,7 @@ public class CampaignManager {
 	internal void CampaignDone(Campaign doneCampaign, bool canCreate = true){
 //		Campaign doneCampaign = SearchCampaignByID (campaign.id);
 		doneCampaign.isDone = true;
-		EventManager.Instance.onWeekEnd.RemoveListener (doneCampaign.CheckExpiration);
+		Messenger.RemoveListener("OnDayEnd", doneCampaign.CheckExpiration);
 		if(doneCampaign.isGhost){
 //			Debug.Log ("Ghost Campaign Done " + doneCampaign.campaignType.ToString ());
 		}else{

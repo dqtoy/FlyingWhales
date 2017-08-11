@@ -48,7 +48,7 @@ public class Lair {
 		this.availableTargets = new List<HexTile>();
 		this._activeMonstersCount = 0;
 		AttachLairToHextile();
-		EventManager.Instance.onWeekEnd.AddListener (PerformAction);
+		Messenger.AddListener("OnDayEnd", PerformAction);
 		onPerformAction += CheckForActivation;
 
 		if(MonsterManager.Instance.activateLairImmediately){

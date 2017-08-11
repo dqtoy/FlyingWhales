@@ -101,7 +101,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private HextileEventItem _hextileEventItem;
 	private GameObject plagueIcon;
 
-	private List<Citizen> _citizensOnTile = new List<Citizen> ();
+    private List<Citizen> _citizensOnTile = new List<Citizen>();
 
     [System.NonSerialized] public List<HexTile> connectedTiles = new List<HexTile>();
 
@@ -141,9 +141,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public FOG_OF_WAR_STATE currFogOfWarState {
         get { return _currFogOfWarState; }
     }
-	public List<Citizen> citizensOnTile {
-		get { return this._citizensOnTile; }
-	}
+    public List<Citizen> citizensOnTile {
+        get { return this._citizensOnTile; }
+    }
     #endregion
 
     internal void SetBiome(BIOMES biome) {
@@ -522,7 +522,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             this._cityInfo = namePlateGO.GetComponent<CityItem>();
             namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
             namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-            EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
+            Messenger.AddListener("UpdateUI", UpdateNamePlate);
         }
 
         UpdateNamePlate();
@@ -548,7 +548,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //    this._cityInfo = namePlateGO.GetComponent<CityItem>();
         //    namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
         //    namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-        //    EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
+        //    Messenger.AddListener("UpdateUI", UpdateNamePlate);
         //}
         if(this.cityInfo != null) {
             UpdateNamePlate();
@@ -593,7 +593,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			this._lairItem = namePlateGO.GetComponent<LairItem>();
 			namePlateGO.transform.localPosition = new Vector3(-2.3f, -0.6f, 0f);
 			namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-			EventManager.Instance.onUpdateUI.AddListener(UpdateLairNamePlate);
+			Messenger.AddListener("UpdateUI", UpdateLairNamePlate);
 		}
 		UpdateLairNamePlate();
 		this._lairItem.gameObject.SetActive(true);
@@ -626,7 +626,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			this._hextileEventItem = namePlateGO.GetComponent<HextileEventItem>();
 			namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.5f, 0f);
 			namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-//			EventManager.Instance.onUpdateUI.AddListener(UpdateHextileEventNamePlate);
+//			Messenger.AddListener("UpdateUI", UpdateHextileEventNamePlate);
 		}
 		UpdateHextileEventNamePlate();
 		this._hextileEventItem.gameObject.SetActive(true);
@@ -792,9 +792,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._cityInfo = null;
 		this._lairItem = null;
 		this._hextileEventItem = null;
-        EventManager.Instance.onUpdateUI.RemoveListener(UpdateNamePlate);
-		EventManager.Instance.onUpdateUI.RemoveListener(UpdateLairNamePlate);
-//		EventManager.Instance.onUpdateUI.RemoveListener(UpdateHextileEventNamePlate);
+        Messenger.RemoveListener("UpdateUI", UpdateNamePlate);
+		Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
+//		Messenger.RemoveListener("UpdateUI", UpdateHextileEventNamePlate);
 
         if(structureObjOnTile != null) {
             Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year +  " - RUIN STRUCTURE ON: " + this.name);
@@ -1230,12 +1230,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //tagVisual.gameObject.SetActive(true);
     }
 
-	internal void EnterCitizen(Citizen citizen){
-		this._citizensOnTile.Add (citizen);
-	}
-	internal void ExitCitizen(Citizen citizen){
-		this._citizensOnTile.Remove (citizen);
-	}
+    internal void EnterCitizen(Citizen citizen) {
+        this._citizensOnTile.Add(citizen);
+    }
+    internal void ExitCitizen(Citizen citizen) {
+        this._citizensOnTile.Remove(citizen);
+    }
     #region For Testing
     [ContextMenu("Force Reset Tile")]
     public void ForceResetTile() {

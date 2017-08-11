@@ -98,7 +98,7 @@ public class Plague : GameEvent {
 		WorldEventManager.Instance.AddWorldEvent(this);
 
         EventManager.Instance.AddEventToDictionary(this);
-        EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+        Messenger.AddListener("OnDayEnd", this.PerformAction);
         EventManager.Instance.onKingdomDiedEvent.AddListener(CureAKingdom);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_title");
@@ -153,7 +153,7 @@ public class Plague : GameEvent {
     }
     internal override void DoneEvent() {
         base.DoneEvent();
-        EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+        Messenger.RemoveListener("OnDayEnd", this.PerformAction);
         onPerformAction = null;
         DisembargoKingdoms();
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "event_end");

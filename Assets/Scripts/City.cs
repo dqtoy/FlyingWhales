@@ -121,7 +121,7 @@ public class City{
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 
 //		this.CreateInitialFamilies();
-		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
+		Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
 	}
 
@@ -905,7 +905,7 @@ public class City{
 		return governor;
 	}
 	public void KillCity(){
-        EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
+        Messenger.RemoveListener("CityEverydayActions", CityEverydayTurnActions);
         EventManager.Instance.onCitizenDiedEvent.RemoveListener(CheckCityDeath);
         this.incomingGenerals.Clear ();
 		this.isUnderAttack = false;
@@ -957,7 +957,8 @@ public class City{
          * Remove irrelevant scripts on hextile
          * */
 		if(!this.isDead){
-			bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.hexTile.GetComponent<PandaBehaviour> ());
+            Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+            //bool removed = BehaviourTreeManager.Instance.allTrees.Remove (this.hexTile.GetComponent<PandaBehaviour> ());
 //			Debug.Log ("REMOVED BT?: " + this.name + " = " + removed);
 
 			GameObject.Destroy (this.hexTile.GetComponent<PandaBehaviour> ());
@@ -1402,9 +1403,9 @@ public class City{
 		rebellion.warPair.isDone = true;
 		this.rebellion = rebellion;
 		ResetToDefaultHP();
-		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(CityEverydayTurnActions);
+		Messenger.RemoveListener("CityEverydayActions", CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.RemoveListener (CheckCityDeath);
-		EventManager.Instance.onCityEverydayTurnActions.AddListener(RebelFortEverydayTurnActions);
+		Messenger.AddListener("CityEverydayActions", RebelFortEverydayTurnActions);
 		KillAllCitizens (DEATH_REASONS.REBELLION);
 		TransferCityToRebellion ();
 		this.AssignNewGovernor ();
@@ -1420,8 +1421,8 @@ public class City{
 		}
 		this.rebellion.warPair.isDone = true;
 		ResetToDefaultHP();
-		EventManager.Instance.onCityEverydayTurnActions.RemoveListener(RebelFortEverydayTurnActions);
-		EventManager.Instance.onCityEverydayTurnActions.AddListener(CityEverydayTurnActions);
+		Messenger.RemoveListener("CityEverydayActions", RebelFortEverydayTurnActions);
+		Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
 		EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
 		KillAllCitizens (DEATH_REASONS.REBELLION);
 		TransferRebellionToCity ();

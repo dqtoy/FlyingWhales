@@ -68,7 +68,7 @@ public class RelationshipKingdom {
 
 	internal void MoveOnAfterRejection(){
 		if ((MONTH)GameManager.Instance.month == monthToMoveOnAfterRejection) {
-			EventManager.Instance.onWeekEnd.RemoveListener(MoveOnAfterRejection);
+			Messenger.RemoveListener("OnDayEnd", MoveOnAfterRejection);
 			this._monthToMoveOnAfterRejection = MONTH.NONE;
 		}
 	}
@@ -127,7 +127,7 @@ public class RelationshipKingdom {
 
 	internal void SetMoveOnPeriodAfterRequestPeaceRejection(int moveOnMonth){
 		this._monthToMoveOnAfterRejection = (MONTH)(moveOnMonth);
-		EventManager.Instance.onWeekEnd.AddListener(this.MoveOnAfterRejection);
+		Messenger.AddListener("OnDayEnd", this.MoveOnAfterRejection);
 	}
 
 	internal void TriggerRequestPeace(){

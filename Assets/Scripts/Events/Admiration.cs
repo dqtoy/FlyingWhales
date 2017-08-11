@@ -16,7 +16,7 @@ public class Admiration : GameEvent {
 		this.remainingDays = this.durationInDays;
 		this.kingdom1 = kingdom1;
 		this.kingdom2 = kingdom2;
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		Debug.LogError (this.description);
 	}
 
@@ -39,7 +39,7 @@ public class Admiration : GameEvent {
 
 	internal override void DoneEvent(){
         base.DoneEvent();
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 
 		RelationshipKings relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
 		RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);

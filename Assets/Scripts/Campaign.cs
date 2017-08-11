@@ -50,7 +50,7 @@ public class Campaign {
 		this.isDone = false;
 		this.startExpiration = false;
 		this._logs = new List<Log> ();
-		EventManager.Instance.onWeekEnd.AddListener (this.CheckExpiration);
+		Messenger.AddListener("OnDayEnd", this.CheckExpiration);
 	}
 
 	internal int GetArmyStrength(){

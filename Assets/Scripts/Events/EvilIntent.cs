@@ -28,7 +28,7 @@ public class EvilIntent : GameEvent {
         EventManager.Instance.AddEventToDictionary(this);
         EventIsCreated();
 
-        EventManager.Instance.onWeekEnd.AddListener(CheckEventValidity);
+        Messenger.AddListener("OnDayEnd", CheckEventValidity);
 
         DetermineFirstAction();
     }
@@ -84,13 +84,13 @@ public class EvilIntent : GameEvent {
 
         durationInDays = 5;
         remainingDays = durationInDays;
-        EventManager.Instance.onWeekEnd.AddListener(Resist);
+        Messenger.AddListener("OnDayEnd", Resist);
     }
 
     private void Resist() {
         durationInDays -= 1;
         if(durationInDays <= 0) {
-            EventManager.Instance.onWeekEnd.RemoveListener(Resist);
+            Messenger.RemoveListener("OnDayEnd", Resist);
             if(Random.Range(0, 100) < 60) {
                 //Success
                 Log resistSuccessLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "resist_success");
@@ -139,7 +139,7 @@ public class EvilIntent : GameEvent {
     private void StartRansomPlot() {
         durationInDays = 30;
         remainingDays = durationInDays;
-        EventManager.Instance.onWeekEnd.AddListener(ProcessRansomPlot);
+        Messenger.AddListener("OnDayEnd", ProcessRansomPlot);
     }
 
     private void ProcessRansomPlot() {
@@ -150,7 +150,7 @@ public class EvilIntent : GameEvent {
             successKidnapLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             successKidnapLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-            EventManager.Instance.onWeekEnd.RemoveListener(ProcessRansomPlot);
+            Messenger.RemoveListener("OnDayEnd", ProcessRansomPlot);
             Kidnap();
         } else {
             //Chance To Find out
@@ -167,7 +167,7 @@ public class EvilIntent : GameEvent {
                         otherKingRel.AddEventModifier(-20, "Evil Intent Reaction", this);
                     }
                 }
-                EventManager.Instance.onWeekEnd.RemoveListener(ProcessRansomPlot);
+                Messenger.RemoveListener("OnDayEnd", ProcessRansomPlot);
                 DoneEvent();
             }
         }
@@ -194,13 +194,13 @@ public class EvilIntent : GameEvent {
 
         durationInDays = 5;
         remainingDays = durationInDays;
-        EventManager.Instance.onWeekEnd.AddListener(ProcessRansomDecision);
+        Messenger.AddListener("OnDayEnd", ProcessRansomDecision);
     }
 
     private void ProcessRansomDecision() {
         remainingDays -= 1;
         if(remainingDays <= 0) {
-            EventManager.Instance.onWeekEnd.RemoveListener(ProcessRansomDecision);
+            Messenger.RemoveListener("OnDayEnd", ProcessRansomDecision);
             if(_targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) || _targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIFE)) {
                 KeyValuePair<CHARACTER_VALUE, int> priotiyValue = _targetKing.importantCharacterValues
                 .FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH || x.Key == CHARACTER_VALUE.LIFE);

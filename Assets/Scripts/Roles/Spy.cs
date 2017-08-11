@@ -53,7 +53,7 @@ public class Spy : Role {
 		this.warExhaustiontarget = targetKingdom;
 		this.inAction = true;
 		this.onDoAction += DecreaseWarExhaustion;
-		EventManager.Instance.onWeekEnd.AddListener(WaitForAction);
+		Messenger.AddListener("OnDayEnd", WaitForAction);
 	}*/
 
 	/*protected void DecreaseWarExhaustion(){
@@ -66,7 +66,7 @@ public class Spy : Role {
 //		}
 		this.inAction = false;
 		this.onDoAction -= DecreaseWarExhaustion;
-		EventManager.Instance.onWeekEnd.RemoveListener(WaitForAction);
+		Messenger.RemoveListener("OnDayEnd", WaitForAction);
 	}*/
 
 	/*protected void WaitForAction(){

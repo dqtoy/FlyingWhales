@@ -59,13 +59,13 @@ public class StructureObject : MonoBehaviour {
 
     public void DestroyStructure() {
         Debug.Log("DESTROY STRUCTURE!");
-        EventManager.Instance.onWeekEnd.RemoveListener(CheckForExpiry);
+        Messenger.RemoveListener("OnDayEnd", CheckForExpiry);
         Destroy(gameObject);
     }
 
     private void QueueForExpiry() {
         expiryDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 180);
-        EventManager.Instance.onWeekEnd.AddListener(CheckForExpiry);
+        Messenger.AddListener("OnDayEnd", CheckForExpiry);
     }
 
     private void CheckForExpiry() {

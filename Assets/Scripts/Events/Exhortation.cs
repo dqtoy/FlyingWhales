@@ -25,7 +25,7 @@ public class Exhortation : GameEvent {
 		}
 
 		Debug.LogError (this.description);
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 //		EventManager.Instance.AddEventToDictionary(this);
 	}
 
@@ -68,7 +68,7 @@ public class Exhortation : GameEvent {
 
 	internal override void DoneEvent(){
         base.DoneEvent();
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 //		if (citizenSent.role == ROLE.ENVOY) {
 //			((Envoy)citizenSent.assignedRole).inAction = false;
 //		}

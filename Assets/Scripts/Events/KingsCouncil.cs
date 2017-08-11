@@ -47,7 +47,7 @@ public class KingsCouncil : GameEvent {
             remainingDays -= 1;
         } else {
             //council is done
-            EventManager.Instance.onWeekEnd.RemoveListener(PerformAction);
+            Messenger.RemoveListener("OnDayEnd", PerformAction);
             OnCouncilFinish();
         }
     }
@@ -61,14 +61,14 @@ public class KingsCouncil : GameEvent {
     }
     internal override void CancelEvent() {
         base.CancelEvent();
-        EventManager.Instance.onWeekEnd.RemoveListener(PerformAction);
+        Messenger.RemoveListener("OnDayEnd", PerformAction);
         EventManager.Instance.onKingdomDiedEvent.RemoveListener(RemoveKingdomFromGuestList);
 
         Log councilCancelLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "council_cancel");
     }
     internal override void DoneEvent() {
         base.DoneEvent();
-        EventManager.Instance.onWeekEnd.RemoveListener(PerformAction);
+        Messenger.RemoveListener("OnDayEnd", PerformAction);
         EventManager.Instance.onKingdomDiedEvent.RemoveListener(RemoveKingdomFromGuestList);
     }
     #endregion
@@ -159,7 +159,7 @@ public class KingsCouncil : GameEvent {
         if (_sourceKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
             _sourceKingdom.AdjustUnrest(-10);
         }
-        EventManager.Instance.onWeekEnd.AddListener(PerformAction);
+        Messenger.AddListener("OnDayEnd", PerformAction);
     }
     protected void OnCouncilFinish() {
         for (int i = 0; i < _presentKingdoms.Count; i++) {

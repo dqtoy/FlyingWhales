@@ -30,7 +30,7 @@ public class DiplomaticCrisis : GameEvent {
 		this.activeEnvoyProvoke = null;
 		this._warTrigger = WAR_TRIGGER.DIPLOMATIC_CRISIS;
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		Debug.LogError (this.description);
 
 		this.crisis = Utilities.crisis [UnityEngine.Random.Range (0, Utilities.crisis.Length)];
@@ -142,7 +142,7 @@ public class DiplomaticCrisis : GameEvent {
 	internal override void DoneEvent(){
 		base.DoneEvent();
 
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 
 		RelationshipKings relationship1 = null;
 		if(this.kingdom1.isAlive()){

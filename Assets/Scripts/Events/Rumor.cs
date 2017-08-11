@@ -24,7 +24,7 @@ public class Rumor : GameEvent {
 		this.daysCounter = 0;
 
 		EventManager.Instance.AddEventToDictionary(this);
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
 		//TODO: Add log - event title
 		//TODO: Add log - plotting to create rumor
@@ -61,7 +61,7 @@ public class Rumor : GameEvent {
 		}
 		((King)this.sourceKingdom.king.assignedRole).isRumoring = false;
 
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 	#endregion
 

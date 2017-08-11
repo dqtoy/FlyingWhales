@@ -72,7 +72,7 @@ public class Expansion : GameEvent {
 		base.DoneEvent();
 		this.hexTileToExpandTo.isTargeted = false;
 //		this.expander.DestroyGO ();
-//		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+//		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 	}
 	internal override void CancelEvent (){
 		base.CancelEvent ();

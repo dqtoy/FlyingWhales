@@ -29,7 +29,7 @@ public class Secession : GameEvent {
         this.alreadyVisitedCities.Add(startedBy.city);
 		this.sourceKingdom.SetSecession (true);
 
-        EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+        Messenger.AddListener("OnDayEnd", this.PerformAction);
 		Debug.LogError (startedBy.name + " wants to split from " + this.sourceKingdom.name + " because his/her loyalty is " + this.governor.loyalty);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "event_title");
@@ -75,7 +75,7 @@ public class Secession : GameEvent {
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent();
-        EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+        Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		this.sourceKingdom.SetSecession (false);
         this.SplitKingdom (); //Generate new kingdom
     }

@@ -52,8 +52,8 @@ public class Role {
 		if(this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
             GameObject.Destroy (this.avatar);
-			this.location.ExitCitizen (this.citizen);
-		}
+            this.location.ExitCitizen(this.citizen);
+        }
 		this.isDestroyed = true;
 	}
 
@@ -77,8 +77,8 @@ public class Role {
         if (this.avatar != null) {
             this.avatar.GetComponent<CitizenAvatar>().UpdateFogOfWar(true);
         }
-        
-        this.location.ExitCitizen (this.citizen);
+
+        this.location.ExitCitizen(this.citizen);
         this.DisinfectPlague();
 		this.DestroyGO ();
 	}

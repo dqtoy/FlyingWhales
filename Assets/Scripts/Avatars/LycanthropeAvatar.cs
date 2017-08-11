@@ -223,11 +223,13 @@ public class LycanthropeAvatar : MonoBehaviour {
     //}
 
     internal void AddBehaviourTree() {
-        BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
+        //BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
+        Messenger.AddListener("OnDayEnd", this.pandaBehaviour.Tick);
     }
 
     internal void RemoveBehaviourTree() {
-        BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
+        //BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
+        Messenger.RemoveListener("OnDayEnd", this.pandaBehaviour.Tick);
     }
 
 

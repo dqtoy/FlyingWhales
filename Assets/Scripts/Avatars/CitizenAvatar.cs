@@ -120,8 +120,8 @@ public class CitizenAvatar : MonoBehaviour {
     }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
-		startTile.ExitCitizen (this.citizenRole.citizen);
-		targetTile.EnterCitizen (this.citizenRole.citizen);
+        startTile.ExitCitizen(this.citizenRole.citizen);
+        targetTile.EnterCitizen(this.citizenRole.citizen);
 
         if (startTile.transform.position.x <= targetTile.transform.position.x) {
             if (this.animator.gameObject.transform.localScale.x > 0) {
@@ -182,11 +182,13 @@ public class CitizenAvatar : MonoBehaviour {
 
     #region BehaviourTree Functions
     internal void AddBehaviourTree() {
-        BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
+        //BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
+        Messenger.AddListener("OnDayEnd", this.pandaBehaviour.Tick);
     }
 
     internal void RemoveBehaviourTree() {
-        BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
+        //BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
+        Messenger.RemoveListener("OnDayEnd", this.pandaBehaviour.Tick);
     }
     #endregion
 

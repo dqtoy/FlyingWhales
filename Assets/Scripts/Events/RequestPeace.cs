@@ -39,7 +39,7 @@ public class RequestPeace : GameEvent {
 		startLog.AddToFillers (this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
 		
 
-		//EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		//Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 
 	}
@@ -182,7 +182,7 @@ public class RequestPeace : GameEvent {
 //		for (int i = 0; i < this._saboteurs.Count; i++) {
 //			((Envoy)this._saboteurs[i].assignedRole).inAction = false;
 //		}
-//		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+//		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
     }
 	internal override void CancelEvent (){
 		base.CancelEvent ();

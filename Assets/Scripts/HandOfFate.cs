@@ -28,7 +28,11 @@ public class HandOfFate : MonoBehaviour {
 		this.allUnwantedEvents = new List<GameEvent> ();
 	}
 
-	[Task]
+    private void Start() {
+        Messenger.AddListener("OnDayEnd", this.GetComponent<PandaBehaviour>().Tick);
+    }
+
+    [Task]
 	public void CanCreateEvent(){
 		Task.current.Succeed();
 	}

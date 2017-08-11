@@ -33,7 +33,7 @@ public class BorderConflict : GameEvent {
 		this.activeEnvoyProvoke = null;
 		this._warTrigger = WAR_TRIGGER.BORDER_CONFLICT;
 
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		Debug.LogError (this.description);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "event_title");
@@ -175,7 +175,7 @@ public class BorderConflict : GameEvent {
 		//		}
 
 
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 
 		RelationshipKings relationship1 = null;
 		if(this.kingdom1.isAlive()){
@@ -356,7 +356,7 @@ public class BorderConflict : GameEvent {
 		chosenEnvoy.eventDuration = 5;
 		chosenEnvoy.currentEvent = this;
 		chosenEnvoy.inAction = true;
-		EventManager.Instance.onWeekEnd.AddListener (chosenEnvoy.WeeklyAction);
+		Messenger.AddListener("OnDayEnd", chosenEnvoy.WeeklyAction);
 
 		if(isFromOthers){
 			this.activeEnvoyProvoke = chosenEnvoy;

@@ -56,7 +56,7 @@ public class Raid : GameEvent {
 	internal override void DoneCitizenAction(Citizen citizen){
         //Add logs: start_raiding
         base.DoneCitizenAction(citizen);
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 	}
 	internal override void PerformAction(){
 		this.remainingDays -= 1;
@@ -94,7 +94,7 @@ public class Raid : GameEvent {
 
 	internal override void DoneEvent(){
         base.DoneEvent();
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		
 		if(this.hasBeenDiscovered){
 			this._warTrigger = WAR_TRIGGER.DISCOVERED_RAID_NO_DEATH;

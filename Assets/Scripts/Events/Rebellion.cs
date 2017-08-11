@@ -38,7 +38,7 @@ public class Rebellion : GameEvent {
 		CreateRebelFort ();
 		this.ReplenishWavesKingdom1();
 		this.ReplenishWavesKingdom2();
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		Debug.LogError (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);
 
@@ -91,7 +91,7 @@ public class Rebellion : GameEvent {
 	internal override void DoneEvent (){
 		base.DoneEvent ();
 		this.targetKingdom.rebellions.Remove (this);
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.onUpdatePath.RemoveListener (UpdatePath);
 
 	}

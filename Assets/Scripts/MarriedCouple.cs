@@ -21,17 +21,17 @@ public class MarriedCouple {
 	public MarriedCouple(Citizen husband, Citizen wife){
 		this.husband = husband;
 		this.wife = wife;
-        EventManager.Instance.onWeekEnd.AddListener(TurnActions);
+        Messenger.AddListener("OnDayEnd", TurnActions);
         
 //		if (this.wife.children.Count < 5 && this.husband.children.Count < 5 && !this.wife.isDead && !this.husband.isDead) {
-//			EventManager.Instance.onWeekEnd.AddListener(TurnActions);
+//			Messenger.AddListener("OnDayEnd", TurnActions);
 //		}
     }
 
 	protected void TurnActions(){
         this.CheckForPregnancy();
 //		if (this.wife.children.Count >= 5 || this.husband.children.Count >= 5 || this.wife.isDead || this.husband.isDead) {
-//			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+//			Messenger.RemoveListener("OnDayEnd", TurnActions);
 //			return;
 //		}
 //		if (this.isPregnant) {
@@ -43,26 +43,26 @@ public class MarriedCouple {
 
 	protected void CheckForPregnancy(){
 		if (this.wife.isDead) {
-			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+			Messenger.RemoveListener("OnDayEnd", TurnActions);
 			return;
 		}
 
         if ((this.wife.spouse != null && this.wife.spouse.id != this.husband.id) || 
             (this.husband.spouse != null && this.husband.spouse.id != this.wife.id)) {
             //the couple is already divorced
-            EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+            Messenger.RemoveListener("OnDayEnd", TurnActions);
             return;
         }
 
         if (!this.wife.isMarried || !this.husband.isMarried) {
             //the couple is already divorced
-            EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+            Messenger.RemoveListener("OnDayEnd", TurnActions);
             return;
         }
 
         if(!this.wife.city.kingdom.isGrowthEnabled || !this.husband.city.kingdom.isGrowthEnabled) {
             //growth for their kingdom is turned off
-            EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+            Messenger.RemoveListener("OnDayEnd", TurnActions);
             return;
         }
 
@@ -111,7 +111,7 @@ public class MarriedCouple {
 
 //	protected void WaitForBirth(){
 //		if (this.wife.isDead) {
-//			EventManager.Instance.onWeekEnd.RemoveListener(TurnActions);
+//			Messenger.RemoveListener("OnDayEnd", TurnActions);
 //			this.isPregnant = false;
 ////			Debug.LogError (this.husband.name + " and " + this.wife.name + "'s baby died because the mother died");
 //			return;

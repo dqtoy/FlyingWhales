@@ -42,7 +42,7 @@ public class FirstAndKeystone : GameEvent {
 		WorldEventManager.Instance.AddWorldEvent(this);
 		Initialize();
 		EventManager.Instance.AddEventToDictionary(this);
-		EventManager.Instance.onWeekEnd.AddListener(this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "TheFirstAndTheKeystone", "event_title");
 
@@ -60,7 +60,7 @@ public class FirstAndKeystone : GameEvent {
 		onPerformAction = null;
 //		onPhaseAction = null;
 		WorldEventManager.Instance.RemoveWorldEvent(this);
-		EventManager.Instance.onWeekEnd.RemoveListener(this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		ResetFirstAndKeystoneOwnershipValues();
 	}
 	internal override void DoneCitizenAction (Citizen citizen){

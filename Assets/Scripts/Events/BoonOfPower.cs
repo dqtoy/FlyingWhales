@@ -61,7 +61,7 @@ public class BoonOfPower : GameEvent {
 		this.activatedMonth = GameManager.Instance.month;
 		this.activatedDay = GameManager.Instance.days;
 		this.activatedYear = GameManager.Instance.year;
-		EventManager.Instance.onWeekEnd.AddListener (this.PerformAction);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "power_activated");
 	}
@@ -85,7 +85,7 @@ public class BoonOfPower : GameEvent {
 		this._isDestroyed = true;
 		this._isActivated = false;
 		this.ownerKingdom = null;
-		EventManager.Instance.onWeekEnd.RemoveListener (this.PerformAction);
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 
 		if(this.ownerKingdom.isAlive()){
 			this.ownerKingdom.DestroyBoonOfPower (this);

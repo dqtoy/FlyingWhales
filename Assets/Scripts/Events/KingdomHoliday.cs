@@ -23,7 +23,7 @@ public class KingdomHoliday : GameEvent {
 
         Initialize();
 
-        EventManager.Instance.onWeekEnd.AddListener(PerformAction);
+        Messenger.AddListener("OnDayEnd", PerformAction);
         EventManager.Instance.AddEventToDictionary(this);
         EventIsCreated();
     }
@@ -80,7 +80,7 @@ public class KingdomHoliday : GameEvent {
 
     internal override void DoneEvent() {
         base.DoneEvent();
-        EventManager.Instance.onWeekEnd.RemoveListener(PerformAction);
+        Messenger.RemoveListener("OnDayEnd", PerformAction);
         ResetBuffs();
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingdomHoliday", "holiday_end");
         newLogTitle.AddToFillers(null, name, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
@@ -88,7 +88,7 @@ public class KingdomHoliday : GameEvent {
 
     internal override void CancelEvent() {
         base.CancelEvent();
-        EventManager.Instance.onWeekEnd.RemoveListener(PerformAction);
+        Messenger.RemoveListener("OnDayEnd", PerformAction);
         ResetBuffs();
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingdomHoliday", "holiday_cancel");
         newLogTitle.AddToFillers(null, name, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
