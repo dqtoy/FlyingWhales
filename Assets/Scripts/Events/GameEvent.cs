@@ -122,7 +122,7 @@ public class GameEvent {
         this.endDay = GameManager.Instance.days;
         this.endYear = GameManager.Instance.year;
 
-		if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null) { //Kingdom Event
+		if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null && this.logs.Count > 0) { //Kingdom Event
 			if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
                 if (!Utilities.eventsNotToShow.Contains(eventType)) {
                     if (UIManager.Instance.currentlyShowingLogObject != null) {

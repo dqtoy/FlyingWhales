@@ -247,6 +247,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		case EVENT_TYPES.ADVENTURE:
 			CreateAdventureEvent ();
 			break;
+		case EVENT_TYPES.HUNT_LAIR:
+			CreateHuntLairEvent ();
+			break;
 		}
 //		Task.current.Succeed ();
 	}
@@ -292,6 +295,9 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	}
 	private void CreateAdventureEvent(){
         EventCreator.Instance.CreateAdventureEvent(this.firstKingdom);
+	}
+	private void CreateHuntLairEvent(){
+		EventCreator.Instance.CreateHuntLairEvent(this.firstKingdom);
 	}
 //	private void CreateBorderConflictEvent(){
 //		EventCreator.Instance.CreateBorderConflictEvent(this.firstKingdom, this.secondKingdom);
@@ -475,6 +481,8 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	}
 	private bool IsSecondKingdomNeeded(){
 		if(this.eventToCreate.eventType == EVENT_TYPES.ADVENTURE){
+			return false;
+		}else if(this.eventToCreate.eventType == EVENT_TYPES.HUNT_LAIR){
 			return false;
 		}
 		return true;

@@ -156,10 +156,12 @@ public class CitizenAvatar : MonoBehaviour {
 
     private void HighlightPath() {
         this.pathToUnhighlight.Clear();
-        for (int i = 0; i < this.citizenRole.path.Count; i++) {
-            this.citizenRole.path[i].highlightGO.SetActive(true);
-            this.pathToUnhighlight.Add(this.citizenRole.path[i]);
-        }
+		if(this.citizenRole.path != null){
+			for (int i = 0; i < this.citizenRole.path.Count; i++) {
+				this.citizenRole.path[i].highlightGO.SetActive(true);
+				this.pathToUnhighlight.Add(this.citizenRole.path[i]);
+			}
+		}
     }
 
     private void UnHighlightPath() {

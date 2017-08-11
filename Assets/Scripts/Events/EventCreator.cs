@@ -462,6 +462,36 @@ public class EventCreator: MonoBehaviour {
         WorldEventManager.Instance.ResetCurrentInterveneEvent();
         return ancientRuin;
     }
+	internal HuntLair CreateHuntLairEvent(Kingdom sourceKingdom){
+		if(sourceKingdom.isLockedDown){
+			return null;
+		}
+		if (EventManager.Instance.GetEventsStartedByKingdom(sourceKingdom, new EVENT_TYPES[] { EVENT_TYPES.HUNT_LAIR }).Count >= sourceKingdom.cities.Count) {
+			return null;
+		}
+		HexTile chosenLairTile = null;
+		Lair lair = null;
+		List<HexTile> lairTiles = new List<HexTile>();
+
+		lairTiles = sourceKingdom.fogOfWarDict [FOG_OF_WAR_STATE.VISIBLE].Where(x => x.lair != null).ToList();
+		if(lairTiles == null || lairTiles.Count <= 0){
+			lairTiles = sourceKingdom.fogOfWarDict [FOG_OF_WAR_STATE.SEEN].Where(x => x.lair != null).ToList();
+		}
+
+			
+		if(lairTiles != null && lairTiles.Count > 0){
+			chosenLairTile = lairTiles [UnityEngine.Random.Range (0, lairTiles.Count)];
+			lair = chosenLairTile.lair;
+		}
+		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.RANGER, EVENT_TYPES.HUNT_LAIR, chosenLairTile, EventManager.Instance.eventDuration[EVENT_TYPES.HUNT_LAIR]);
+		if(citizen != null){
+			Ranger ranger = (Ranger)citizen.assignedRole;
+			HuntLair huntLair = new HuntLair(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+				sourceKingdom.king, ranger, lair);
+			ranger.Initialize (huntLair);
+		}
+		return null;
+	}
 	//-------------------------------------------- PLAYER EVENTS ----------------------------------------------------//
 
 	internal KingdomDiscovery CreateKingdomDiscoveryEvent(Kingdom sourceKingdom, Kingdom targetKingdom){

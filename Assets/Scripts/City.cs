@@ -1180,7 +1180,7 @@ public class City{
 //			int maxGeneration = this.citizens.Max (x => x.generation);
 			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 1);
 			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - governor.age));
+			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age));
 			citizen.AssignRole (role);
 			this.citizens.Remove (citizen);
 			return citizen;
@@ -1192,9 +1192,12 @@ public class City{
                 } else {
                     path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.AVATAR);
                 }
-                if (path == null) {
-                    return null;
-                }
+				if(role != ROLE.RANGER){
+					if (path == null) {
+						return null;
+					}
+				}
+                
             } else {
                 path = newPath;
             }
@@ -1213,9 +1216,13 @@ public class City{
 			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age));
 			citizen.AssignRole (role);
 			citizen.assignedRole.targetLocation = targetLocation;
-			citizen.assignedRole.targetCity = targetLocation.city;
 			citizen.assignedRole.path = path;
-			citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+			if(targetLocation != null){
+				citizen.assignedRole.targetCity = targetLocation.city;
+			}
+			if(path != null){
+				citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
+			}
 //			this._kingdom.AdjustGold (-cost);
 			this.citizens.Remove (citizen);
 			return citizen;

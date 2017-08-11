@@ -6,7 +6,40 @@ using Panda;
 
 public class GeneralAvatar : CitizenAvatar {
 	public TextMesh txtDamage;
+	public SpriteRenderer kingdomIndicator;
 
+	#region Overrides
+	internal override void Init (Role citizenRole){
+		base.Init (citizenRole);
+		this.kingdomIndicator.color = this.citizenRole.citizen.city.kingdom.kingdomColor;
+	}
+	internal override void Move(){
+		if(this.citizenRole.targetLocation != null){
+			if(this.citizenRole.path != null){
+				if(this.citizenRole.path.Count > 0){
+					if(this.citizenRole.daysBeforeMoving <= 0){
+						this.MakeCitizenMove (this.citizenRole.location, this.citizenRole.path [0]);
+						this.citizenRole.daysBeforeMoving = this.citizenRole.path [0].movementDays;
+						this.citizenRole.location = this.citizenRole.path[0];
+						this.citizenRole.citizen.currentLocation = this.citizenRole.path [0];
+						this.UpdateFogOfWar();
+						this.citizenRole.path.RemoveAt (0);
+						this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
+						this.CheckForKingdomDiscovery();
+						((General)this.citizenRole).CheckSerumOfAlacrity();
+					}
+					this.citizenRole.daysBeforeMoving -= 1;
+				}
+			}
+		}
+	}
+
+	internal override void UpdateUI (){
+		if(this.txtDamage.gameObject != null){
+			this.txtDamage.text = this.citizenRole.damage.ToString ();
+		}
+	}
+	#endregion
 	#region BehaviourTree Tasks
 	[Task]
 	public void IsThereCitizen() {
@@ -56,30 +89,5 @@ public class GeneralAvatar : CitizenAvatar {
 	}
 	#endregion
 
-	internal override void Move(){
-		if(this.citizenRole.targetLocation != null){
-			if(this.citizenRole.path != null){
-				if(this.citizenRole.path.Count > 0){
-					if(this.citizenRole.daysBeforeMoving <= 0){
-						this.MakeCitizenMove (this.citizenRole.location, this.citizenRole.path [0]);
-						this.citizenRole.daysBeforeMoving = this.citizenRole.path [0].movementDays;
-						this.citizenRole.location = this.citizenRole.path[0];
-						this.citizenRole.citizen.currentLocation = this.citizenRole.path [0];
-                        this.UpdateFogOfWar();
-						this.citizenRole.path.RemoveAt (0);
-						this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
-                        this.CheckForKingdomDiscovery();
-						((General)this.citizenRole).CheckSerumOfAlacrity();
-					}
-					this.citizenRole.daysBeforeMoving -= 1;
-				}
-			}
-		}
-	}
 
-	internal override void UpdateUI (){
-		if(this.txtDamage.gameObject != null){
-			this.txtDamage.text = this.citizenRole.damage.ToString ();
-		}
-	}
 }

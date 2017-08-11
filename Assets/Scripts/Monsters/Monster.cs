@@ -68,7 +68,7 @@ public class Monster {
 		this.lair.availableTargets.Clear();
 		for (int i = 0; i < this.lair.tilesInRadius.Count; i++) {
 			if(this.lair.tilesInRadius[i] != null){
-				if(this.lair.tilesInRadius[i].isOccupied && this.lair.tilesInRadius[i].isHabitable && this.lair.tilesInRadius[i].city.id != 0){
+				if(this.lair.tilesInRadius[i].isOccupied && this.lair.tilesInRadius[i].isHabitable && (this.lair.tilesInRadius[i].city != null && this.lair.tilesInRadius[i].city.id != 0)){
 					if(this.lair.hexTile.tag == this.lair.tilesInRadius[i].tag){
 						this.lair.availableTargets.Add(this.lair.tilesInRadius[i]);
 					}
@@ -101,7 +101,7 @@ public class Monster {
 		this.occupiedTiles.Clear ();
 		List<HexTile> tileRadius = this.location.GetTilesInRange(2);
 		for (int i = 0; i < tileRadius.Count; i++) {
-			if(tileRadius[i].isHabitable && tileRadius[i].isOccupied && tileRadius[i].city.id != 0 || tileRadius[i].citizensOnTile.Count > 0){
+			if(tileRadius[i].isHabitable && tileRadius[i].isOccupied && (tileRadius[i].city != null && tileRadius[i].city.id != 0) || tileRadius[i].citizensOnTile.Count > 0){
 				this.occupiedTiles.Add (tileRadius [i]);
 			}
 		}
@@ -109,7 +109,7 @@ public class Monster {
 			this.targetLocation = this.occupiedTiles [UnityEngine.Random.Range (0, this.occupiedTiles.Count)];
 			int chance = UnityEngine.Random.Range (0, 2);
 			if(chance == 0){
-				if(this.targetLocation.isOccupied && this.targetLocation.city.id != 0){
+				if(this.targetLocation.isHabitable && this.targetLocation.isOccupied &&  (this.targetLocation.city != null && this.targetLocation.city.id != 0)){
 					this._targetObject = this.targetLocation.city;
 				}else{
 					this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
@@ -229,7 +229,10 @@ public class Monster {
 			}
 		}
 	}
-	internal virtual void Death(){}
+	internal virtual void Death(){
+		this.isDead = true;
+		this.lair.AdjustActiveMonsterCount (-1);
+	}
 
 	internal virtual void DoneAction(){}
 	#endregion

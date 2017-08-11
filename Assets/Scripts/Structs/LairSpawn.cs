@@ -10,4 +10,5 @@ public struct LairSpawn {
 	public int lairHP;
 	public int monsterHP;
 	public int spawnRate;
+	public int maxActiveMonster;
 }
