@@ -135,7 +135,7 @@ public class RelationshipKingdom {
 		if(this._sourceKingdom.cities.Count > 1 && _monthToMoveOnAfterRejection == MONTH.NONE){
 			int peaceValue = 20;
 			int chance = UnityEngine.Random.Range(0, 100);
-			if(chance < peaceValue * this._kingdomWar.citiesLost){
+			if(this._war != null && chance < peaceValue * this._kingdomWar.citiesLost){
 				//Request Peace
 				this._war.RequestPeace(this._sourceKingdom);
 			}

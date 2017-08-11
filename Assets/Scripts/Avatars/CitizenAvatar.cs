@@ -169,6 +169,7 @@ public class CitizenAvatar : MonoBehaviour {
     }
 
     public void EndAttack() {
+        UpdateFogOfWar(true);
         this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
         this.citizenRole.DestroyGO();
     }
@@ -218,10 +219,6 @@ public class CitizenAvatar : MonoBehaviour {
     private void OnDestroy() {
         RemoveBehaviourTree();
         UnHighlightPath();
-        UpdateFogOfWar(true);
-        if (UIManager.Instance.currentlyShowingKingdom.id == this.citizenRole.citizen.city.kingdom.id) {
-            UIManager.Instance.currentlyShowingKingdom.UpdateFogOfWarVisual();
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

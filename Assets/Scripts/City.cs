@@ -1027,11 +1027,26 @@ public class City{
         tilesToTransfer.AddRange(borderTiles);
         tilesToTransfer.AddRange(outerTiles);
 
+        List<City> citiesToUpdateBorders = new List<City>();
+        bool highlightState = true;
+        if(UIManager.Instance.currentlyShowingKingdom.id != conqueror.id) {
+            highlightState = false;
+        }
+
         for (int i = 0; i < tilesToTransfer.Count; i++) {
             HexTile currentTile = tilesToTransfer[i];
-            currentTile.isVisibleByCities.Remove(this);
+            if (!ownedTiles.Contains(currentTile)) {
+                currentTile.isVisibleByCities.Remove(this);
+                citiesToUpdateBorders = citiesToUpdateBorders.Union(currentTile.isVisibleByCities).ToList();
+            }
+            if (!outerTiles.Contains(currentTile)) {
+                currentTile.SetTileHighlightColor(conqueror.kingdomColor);
+            }
             //currentTile.ResetTile();
-            kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
+            if(currentTile.ownedByCity == null || currentTile.ownedByCity.id == this.id) {
+                kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
+            }
+            
             conqueror.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.VISIBLE, true);
         }
 
@@ -1050,10 +1065,15 @@ public class City{
         this.ChangeKingdom(conqueror);
         this.CreateInitialFamilies(false);
         this.UpdateBorderTiles();
-
-		//when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
-		//its initial defense will only be 300HP + (20HP x tech level)
-		WarDefeatedHP();
+        for (int i = 0; i < citiesToUpdateBorders.Count; i++) {
+            citiesToUpdateBorders[i].UpdateBorderTiles();
+        }
+        if (!highlightState) {
+            conqueror.UnHighlightAllOwnedTilesInKingdom();
+        }
+        //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
+        //its initial defense will only be 300HP + (20HP x tech level)
+        WarDefeatedHP();
 
     }
 	private void TransferItemsToConqueror(Kingdom conqueror){

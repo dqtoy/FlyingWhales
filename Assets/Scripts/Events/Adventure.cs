@@ -42,12 +42,12 @@ public class Adventure : GameEvent {
 
     internal override void CancelEvent() {
         base.CancelEvent();
-        DestroyCitizenAvatar();
+        _adventurer.citizen.Death(DEATH_REASONS.NONE);
     }
 
     internal override void DoneEvent() {
         base.DoneEvent();
-        DestroyCitizenAvatar();
+        _adventurer.citizen.Death(DEATH_REASONS.NONE);
     }
     #endregion
 }

@@ -148,11 +148,11 @@ public class GameEvent {
 	}
     internal virtual void OnCollectAvatarAction(Kingdom claimant) {
         gameEventAvatar.eventLocation.RemoveEventOnTile();
-        DestroyCitizenAvatar();
+        DestroyEventAvatar();
     }
     #endregion
 
-    internal void DestroyCitizenAvatar() {
+    internal void DestroyEventAvatar() {
         if (gameEventAvatar != null) {
             GameObject.Destroy(gameEventAvatar.gameObject);
         }

@@ -51,7 +51,7 @@ public class Role {
 	internal void DestroyGO(){
 		if(this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
-			GameObject.Destroy (this.avatar);
+            GameObject.Destroy (this.avatar);
 			this.location.ExitCitizen (this.citizen);
 		}
 		this.isDestroyed = true;
@@ -74,7 +74,11 @@ public class Role {
 		return new int[]{ 0, 0, 0, 0, 0, 0, goldProduction, 0 };
 	}
 	internal virtual void OnDeath(){
-		this.location.ExitCitizen (this.citizen);
+        if (this.avatar != null) {
+            this.avatar.GetComponent<CitizenAvatar>().UpdateFogOfWar(true);
+        }
+        
+        this.location.ExitCitizen (this.citizen);
         this.DisinfectPlague();
 		this.DestroyGO ();
 	}

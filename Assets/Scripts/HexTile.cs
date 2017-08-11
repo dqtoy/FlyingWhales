@@ -424,7 +424,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	public void SetTileHighlightColor(Color color){
-		this._kingdomColorSprite.color = color;
+        color.a = 76.5f / 255f;
+        this._kingdomColorSprite.color = color;
 	}
 
     internal void SetMinimapTileColor(Color color) {
@@ -451,11 +452,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this._centerPiece.SetActive(false);
 
         Color color = this.ownedByCity.kingdom.kingdomColor;
-        color.a = 255f / 255f;
         SetMinimapTileColor(color);
-
-        color.a = 76.5f / 255f;
-        this._kingdomColorSprite.color = color;
+        SetTileHighlightColor(color);
     }
 
     /*
@@ -986,28 +984,28 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         city.KillCity();
     }
 
-    [ContextMenu("Select All Relevant Tiles")]
-    public void SelectAllRelevantTiles() {
-        List<GameObject> allTiles = new List<GameObject>();
-        allTiles.AddRange(city.borderTiles.Select(x => x.gameObject));
-        allTiles.AddRange(city.ownedTiles.Select(x => x.gameObject));
-        allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
-        UnityEditor.Selection.objects = allTiles.ToArray();
-    }
+    //[ContextMenu("Select All Relevant Tiles")]
+    //public void SelectAllRelevantTiles() {
+    //    List<GameObject> allTiles = new List<GameObject>();
+    //    allTiles.AddRange(city.borderTiles.Select(x => x.gameObject));
+    //    allTiles.AddRange(city.ownedTiles.Select(x => x.gameObject));
+    //    allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
+    //    UnityEditor.Selection.objects = allTiles.ToArray();
+    //}
 
-    [ContextMenu("Select All Border Tiles")]
-    public void SelectAllBorderTiles() {
-        List<GameObject> allTiles = new List<GameObject>();
-        allTiles.AddRange(city.borderTiles.Select(x => x.gameObject));
-        UnityEditor.Selection.objects = allTiles.ToArray();
-    }
+    //[ContextMenu("Select All Border Tiles")]
+    //public void SelectAllBorderTiles() {
+    //    List<GameObject> allTiles = new List<GameObject>();
+    //    allTiles.AddRange(city.borderTiles.Select(x => x.gameObject));
+    //    UnityEditor.Selection.objects = allTiles.ToArray();
+    //}
 
-    [ContextMenu("Select All Outer Tiles")]
-    public void SelectAllOuterTiles() {
-        List<GameObject> allTiles = new List<GameObject>();
-        allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
-        UnityEditor.Selection.objects = allTiles.ToArray();
-    }
+    //[ContextMenu("Select All Outer Tiles")]
+    //public void SelectAllOuterTiles() {
+    //    List<GameObject> allTiles = new List<GameObject>();
+    //    allTiles.AddRange(city.outerTiles.Select(x => x.gameObject));
+    //    UnityEditor.Selection.objects = allTiles.ToArray();
+    //}
 
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
