@@ -2165,6 +2165,9 @@ public class Kingdom{
             if (fowState == FOG_OF_WAR_STATE.VISIBLE) {
                 _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
                 fogOfWarDict[fowState].Add(tile);
+                if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+                    UpdateFogOfWarVisualForTile(tile, fowState);
+                }
                 //			if(tile.lair != null){
                 //				tile.lair.ActivateLair ();
                 //			}
@@ -2173,6 +2176,9 @@ public class Kingdom{
                     if (_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
                         _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
                         fogOfWarDict[fowState].Add(tile);
+                        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+                            UpdateFogOfWarVisualForTile(tile, fowState);
+                        }
                     }
                 }
             }

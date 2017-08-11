@@ -552,8 +552,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //    namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
         //    EventManager.Instance.onUpdateUI.AddListener(UpdateNamePlate);
         //}
-		UpdateNamePlate();
-        this.cityInfo.gameObject.SetActive(true);
+        if(this.cityInfo != null) {
+            UpdateNamePlate();
+            this.cityInfo.gameObject.SetActive(true);
+        }
     }
 
     public void UpdateNamePlate() {
