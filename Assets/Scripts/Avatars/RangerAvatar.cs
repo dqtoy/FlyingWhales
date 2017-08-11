@@ -27,8 +27,7 @@ public class RangerAvatar : CitizenAvatar {
 					((Ranger)this.citizenRole).AcquireTarget ();
                     //this.GetNextTargetTile();
                 }
-                //this.UpdateFogOfWar();
-                
+                this.UpdateFogOfWar();
             }
         }
     }
