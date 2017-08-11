@@ -26,7 +26,8 @@ public class EvilIntent : GameEvent {
         newLogStart.AddToFillers(targetKing, targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         EventManager.Instance.AddEventToDictionary(this);
-        EventIsCreated();
+		this.EventIsCreated (this._sourceKing.city.kingdom, true);
+		this.EventIsCreated (this._targetKing.city.kingdom, false);
 
         Messenger.AddListener("OnDayEnd", CheckEventValidity);
 

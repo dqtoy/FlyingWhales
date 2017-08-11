@@ -27,7 +27,7 @@ public class Lycanthropy : GameEvent {
         startLog.AddToFillers(_lycanthrope.citizen, _lycanthrope.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
         EventManager.Instance.AddEventToDictionary(this);
-        this.EventIsCreated();
+		this.EventIsCreated (this.startedByKingdom, true);
     }
 
     #region overrides

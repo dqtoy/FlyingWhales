@@ -71,7 +71,8 @@ public class BorderConflict : GameEvent {
 //		newLog.AddToFillers (null, LocalizationManager.Instance.GetRandomLocalizedValue("Reasons", "BorderConflictReasons"), LOG_IDENTIFIER.TRIGGER_REASON);
 
 		EventManager.Instance.AddEventToDictionary (this);
-		this.EventIsCreated ();
+		this.EventIsCreated (this.kingdom1, true);
+		this.EventIsCreated (this.kingdom2, false);
 
 	}
 

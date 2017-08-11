@@ -23,7 +23,7 @@ public class KingsCouncil : GameEvent {
         _councilReason = GenerateCouncilReason();       
 
         EventManager.Instance.AddEventToDictionary(this);
-        EventIsCreated();
+		EventIsCreated(this._sourceKingdom, true);
 
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "event_title");
         newLogTitle.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

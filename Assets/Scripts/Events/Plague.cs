@@ -111,7 +111,7 @@ public class Plague : GameEvent {
 		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
 		this.InitializePlague();
-		base.EventIsCreated();
+		base.EventIsCreated(this.startedByKingdom, true);
 	}
 
     private string GeneratePlagueName() {

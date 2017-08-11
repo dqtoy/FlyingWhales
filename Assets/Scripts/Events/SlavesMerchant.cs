@@ -28,7 +28,7 @@ public class SlavesMerchant : GameEvent {
 
         EventManager.Instance.AddEventToDictionary(this);
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
-		this.EventIsCreated();
+		this.EventIsCreated(this.buyerKingdom, true);
 	}
 
 	#region Overrides

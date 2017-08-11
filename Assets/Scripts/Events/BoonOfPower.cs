@@ -78,7 +78,7 @@ public class BoonOfPower : GameEvent {
 			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 			newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		}
-		this.EventIsCreated ();
+		this.EventIsCreated (kingdom, true);
 	}
 	private void DestroyThis(){
 		this.DoneEvent ();

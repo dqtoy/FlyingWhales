@@ -22,7 +22,7 @@ public class HuntLair : GameEvent {
 		this._targetLair = targetLair;
 
 		EventManager.Instance.AddEventToDictionary(this);
-
+		EventIsCreated (this.startedByKingdom, true);
 	}
 
 	#region Overrides

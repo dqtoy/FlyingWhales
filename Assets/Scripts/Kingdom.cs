@@ -85,6 +85,11 @@ public class Kingdom{
 	private CrimeData _crimeData;
 	private CrimeDate _crimeDate;
 
+	//Events of Kingdom
+	private List<GameEvent> _activeEvents;
+	private List<GameEvent> _doneEvents;
+
+
     //Expansion
     private float expansionChance = 1f;
 
@@ -238,6 +243,13 @@ public class Kingdom{
 	public bool hasRiot{
 		get { return this._hasRiot;}
 	}
+
+	public List<GameEvent> activeEvents{
+		get { return this._activeEvents;}
+	}
+	public List<GameEvent> doneEvents{
+		get { return this._doneEvents;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -288,6 +300,8 @@ public class Kingdom{
         _fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new List<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())));
         _fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new List<HexTile>());
         _fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new List<HexTile>());
+		this._activeEvents = new List<GameEvent> ();
+		this._doneEvents = new List<GameEvent> ();
 
 
         this.GenerateKingdomCharacterValues();
@@ -2290,4 +2304,29 @@ public class Kingdom{
 		EventCreator.Instance.CreateCrimeEvent (this, crimeData);
 	}
 	#endregion
+
+	internal void AddActiveEvent(GameEvent gameEvent){
+		this.activeEvents.Add (gameEvent);
+	}
+	internal void RemoveActiveEvent(GameEvent gameEvent){
+		this.activeEvents.Remove (gameEvent);
+		this.doneEvents.Add (gameEvent);
+	}
+	internal bool HasActiveEvent(EVENT_TYPES eventType){
+		for (int i = 0; i < this.activeEvents.Count; i++) {
+			if(this.activeEvents[i].eventType == eventType){
+				return true;
+			}
+		}
+		return false;
+	}
+//	internal bool HasActiveEventWith(EVENT_TYPES eventType, Kingdom kingdom){
+//		for (int i = 0; i < this.activeEvents.Count; i++) {
+//			if(this.activeEvents[i].eventType == eventType){
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+
 }

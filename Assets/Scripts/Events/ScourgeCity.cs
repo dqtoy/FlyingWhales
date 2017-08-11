@@ -17,6 +17,9 @@ public class ScourgeCity : GameEvent {
 		this.targetKingdom = targetCity.kingdom;
 		this.targetCity = targetCity;
 		this.scourge = scourge;
+
+		EventIsCreated (this.sourceKingdom, false);
+		EventIsCreated (this.targetKingdom, false);
 //		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "event_title");
 //		newLogTitle.AddToFillers (this.raidedCity, this.raidedCity.name);
 //

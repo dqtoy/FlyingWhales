@@ -24,7 +24,8 @@ public class Evangelism : GameEvent {
 		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (this.targetCity, this.targetCity.name, LOG_IDENTIFIER.CITY_1);
 
-		this.EventIsCreated ();
+		this.EventIsCreated (this.sourceKingdom, true);
+		this.EventIsCreated (this.targetKingdom, false);
 	}
 
 	#region Overrides

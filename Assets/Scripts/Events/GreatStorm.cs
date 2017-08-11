@@ -38,7 +38,7 @@ public class GreatStorm : GameEvent {
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "GreatStorm", "start");
 		newLog.AddToFillers (this._affectedKingdom, this._affectedKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
-		this.EventIsCreated();
+		this.EventIsCreated(this.startedByKingdom, true);
 	}
 
 	#region Overrides

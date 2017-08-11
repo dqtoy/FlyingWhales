@@ -64,6 +64,10 @@ public class JoinWar : GameEvent {
 
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
+		EventIsCreated (this._candidateForAlliance.city.kingdom, false);
+		EventIsCreated (this.startedByKingdom, false);
+		EventIsCreated (this._kingdomToAttack, false);
+
 	}
 
 	#region Overrides

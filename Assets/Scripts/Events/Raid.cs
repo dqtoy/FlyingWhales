@@ -48,8 +48,8 @@ public class Raid : GameEvent {
 		DeflectBlame ();
 
 		EventManager.Instance.AddEventToDictionary (this);
-		this.EventIsCreated ();
-
+		this.EventIsCreated (this.sourceKingdom, true);
+		this.EventIsCreated (this.targetKingdom, false);
 	}
 
 	#region Overrides

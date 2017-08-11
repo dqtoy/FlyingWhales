@@ -208,21 +208,26 @@ public class HandOfFate : MonoBehaviour {
 //	}
 	[Task]
 	public void IsEligibleForEvent(){
-		List<GameEvent> allRaids = EventManager.Instance.GetEventsOfType (EVENT_TYPES.RAID).Where (x => x.isActive).ToList ();
-		List<GameEvent> allBorderConflicts = EventManager.Instance.GetEventsOfType (EVENT_TYPES.BORDER_CONFLICT).Where (x => x.isActive).ToList ();
-		List<GameEvent> allDiplomaticCrisis = EventManager.Instance.GetEventsOfType (EVENT_TYPES.DIPLOMATIC_CRISIS).Where (x => x.isActive).ToList ();
-		List<GameEvent> allStateVisit = EventManager.Instance.GetEventsOfType (EVENT_TYPES.STATE_VISIT).Where (x => x.isActive).ToList ();
-		this.allUnwantedEvents = allBorderConflicts.Concat (allDiplomaticCrisis).Concat(allRaids).Concat(allStateVisit).ToList ();
-
-		if (this.allUnwantedEvents.Count > 0) {
-			if (SearchForEligibility (this.firstKingdom, this.secondKingdom, this.allUnwantedEvents)) {
-				Task.current.Succeed ();
-			}else{
-				Task.current.Fail ();
-			}
+		if(this.firstKingdom.HasActiveEvent(this.eventToCreate.eventType) && this.secondKingdom.HasActiveEvent(this.eventToCreate.eventType)){
+			Task.current.Fail ();
 		}else{
 			Task.current.Succeed ();
 		}
+//		List<GameEvent> allRaids = EventManager.Instance.GetEventsOfType (EVENT_TYPES.RAID).Where (x => x.isActive).ToList ();
+//		List<GameEvent> allBorderConflicts = EventManager.Instance.GetEventsOfType (EVENT_TYPES.BORDER_CONFLICT).Where (x => x.isActive).ToList ();
+//		List<GameEvent> allDiplomaticCrisis = EventManager.Instance.GetEventsOfType (EVENT_TYPES.DIPLOMATIC_CRISIS).Where (x => x.isActive).ToList ();
+//		List<GameEvent> allStateVisit = EventManager.Instance.GetEventsOfType (EVENT_TYPES.STATE_VISIT).Where (x => x.isActive).ToList ();
+//		this.allUnwantedEvents = allBorderConflicts.Concat (allDiplomaticCrisis).Concat(allRaids).Concat(allStateVisit).ToList ();
+//
+//		if (this.allUnwantedEvents.Count > 0) {
+//			if (SearchForEligibility (this.firstKingdom, this.secondKingdom, this.allUnwantedEvents)) {
+//				Task.current.Succeed ();
+//			}else{
+//				Task.current.Fail ();
+//			}
+//		}else{
+//			Task.current.Succeed ();
+//		}
 
 	}
 	[Task]

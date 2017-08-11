@@ -27,7 +27,7 @@ public class Riot : GameEvent {
 		EventManager.Instance.AddEventToDictionary (this);
 		//		this.EventIsCreated ();
 
-		this.EventIsCreated ();
+		this.EventIsCreated (this.sourceKingdom, true);
 	}
 
 	#region Overrides

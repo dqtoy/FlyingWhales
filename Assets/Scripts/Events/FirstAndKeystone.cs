@@ -129,7 +129,7 @@ public class FirstAndKeystone : GameEvent {
 		this.firstPlacement = hexTile;
 	}
 	internal void TransferKeystone(Kingdom kingdom, Citizen citizen){
-		this.EventIsCreated ();
+		this.EventIsCreated (this.startedByKingdom, true);
 		this.keystoneOwner = kingdom;
 		this.hexTileSpawnPoint.RemoveEventOnTile();
 		ChangeKeystonePlacement();

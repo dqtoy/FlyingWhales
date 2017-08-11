@@ -39,7 +39,8 @@ public class Espionage : GameEvent {
 		this.successRate = 75;
 		EventManager.Instance.AddEventToDictionary(this);
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
-		this.EventIsCreated ();
+		this.EventIsCreated (this._sourceKingdom, true);
+		this.EventIsCreated (this._targetKingdom, false);
 	}
 	internal override void PerformAction(){
 		this.remainingDays -= 1;

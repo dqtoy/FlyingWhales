@@ -210,21 +210,25 @@ public class DailyCumulativeEvent : MonoBehaviour {
 //	}
 //	[Task]
 	public bool IsEligibleForEvent(){
-		List<GameEvent> allEventsOfType = EventManager.Instance.GetEventsOfType (this.eventToCreate.eventType).Where (x => x.isActive).ToList ();
+		if(this.firstKingdom.HasActiveEvent(this.eventToCreate.eventType) && this.secondKingdom.HasActiveEvent(this.eventToCreate.eventType)){
+			return false;
+		}
+		return true;
+//		List<GameEvent> allEventsOfType = EventManager.Instance.GetEventsOfType (this.eventToCreate.eventType).Where (x => x.isActive).ToList ();
 //		List<GameEvent> allStateVisit = EventManager.Instance.GetEventsOfType (EVENT_TYPES.STATE_VISIT).Where (x => x.isActive).ToList ();
 //		List<GameEvent> allTrade = EventManager.Instance.GetEventsOfType (EVENT_TYPES.TRADE).Where (x => x.isActive).ToList ();
 //		List<GameEvent> allStateVisit = EventManager.Instance.GetEventsOfType (EVENT_TYPES.STATE_VISIT).Where (x => x.isActive).ToList ();
 //		this.allUnwantedEvents = allRaids.Concat (allStateVisit).Concat (allTrade).Concat (allStateVisit).ToList ();
 
-		if (allEventsOfType.Count > 0) {
-			if (SearchForEligibility (this.firstKingdom, this.secondKingdom, allEventsOfType)) {
-				return true;
-			}else{
-				return false;
-			}
-		}else{
-			return true;
-		}
+//		if (allEventsOfType.Count > 0) {
+//			if (SearchForEligibility (this.firstKingdom, this.secondKingdom, allEventsOfType)) {
+//				return true;
+//			}else{
+//				return false;
+//			}
+//		}else{
+//			return true;
+//		}
 
 	}
 //	[Task]
@@ -476,7 +480,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
             }
             return false;
         } else if (eventType == EVENT_TYPES.ADVENTURE) {
-            if (EventManager.Instance.GetEventsStartedByKingdom(this.firstKingdom, new EVENT_TYPES[] { EVENT_TYPES.ADVENTURE }).Count <= 0) {
+			if (!this.firstKingdom.HasActiveEvent(eventType)) {
                 return true;
             }
             return false;

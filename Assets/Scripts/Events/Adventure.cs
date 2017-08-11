@@ -16,7 +16,7 @@ public class Adventure : GameEvent {
 
         EventManager.Instance.AddEventToDictionary(this);
         //EventIsCreated();
-
+		EventIsCreated(this.startedByKingdom, false);
 
     }
 
