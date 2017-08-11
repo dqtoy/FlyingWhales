@@ -481,13 +481,13 @@ public class City{
         List<HexTile> outmostTiles = new List<HexTile>();
         for (int i = 0; i < this.ownedTiles.Count; i++) {
             HexTile currOwnedTile = this.ownedTiles[i];
-            if(currOwnedTile.AllNeighbours.Where(x => !x.isOccupied && !x.isBorder).Count() > 0) {
+            if(currOwnedTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Count() > 0) {
                 outmostTiles.Add(currOwnedTile);
             }
         }
         for (int i = 0; i < this.borderTiles.Count; i++) {
             HexTile currBorderTile = this.borderTiles[i];
-            if (currBorderTile.AllNeighbours.Where(x => !x.isOccupied && !x.isBorder).Count() > 0) {
+            if (currBorderTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Count() > 0) {
                 outmostTiles.Add(currBorderTile);
             }
         }
@@ -915,14 +915,14 @@ public class City{
 				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
 			}
 		}
-        //List<City> citiesToUpdateBorders = new List<City>();
+        List<City> citiesToUpdateBorders = new List<City>();
         /*
          * Reset all owned, border and outer tiles!
          * */
         for (int i = 0; i < this.ownedTiles.Count; i++) {
 			HexTile currentTile = this.ownedTiles[i];
+            currentTile.city = null;
             currentTile.isVisibleByCities.Remove(this);
-            //citiesToUpdateBorders = citiesToUpdateBorders.Union(currentTile.isVisibleByCities).ToList();
             currentTile.ResetTile();
             kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
 
@@ -931,7 +931,6 @@ public class City{
 		for (int i = 0; i < this.borderTiles.Count; i++) {
 			HexTile currentTile = this.borderTiles[i];
             currentTile.isVisibleByCities.Remove(this);
-            //citiesToUpdateBorders = citiesToUpdateBorders.Union(currentTile.isVisibleByCities).ToList();
             currentTile.ResetTile();
             kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
 
@@ -940,9 +939,15 @@ public class City{
             HexTile currentTile = this.outerTiles[i];
             currentTile.isVisibleByCities.Remove(this);
             //currentTile.ResetTile();
-            //citiesToUpdateBorders = citiesToUpdateBorders.Union(currentTile.isVisibleByCities).ToList();
-            if (!currentTile.isBorder && !currentTile.isOccupied) {
+            if(currentTile.isVisibleByCities.Where(x => x.kingdom.id == kingdom.id).Count() <= 0) {
+                //tile is not visible by any other city in this kingdom
                 kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
+            }
+            if(currentTile.ownedByCity != null) {
+                currentTile.ownedByCity.UpdateBorderTiles();
+                if (!citiesToUpdateBorders.Contains(currentTile.ownedByCity)) {
+                    citiesToUpdateBorders.Add(currentTile.ownedByCity);
+                }
             }
         }
 		this.ownedTiles.Clear();
@@ -966,6 +971,10 @@ public class City{
         Debug.Log(this.id + " - City " + this.name + " of " + this._kingdom.name + " has been killed!");
         Debug.Log("Stack Trace: " + System.Environment.StackTrace);
 
+        for (int i = 0; i < citiesToUpdateBorders.Count; i++) {
+            citiesToUpdateBorders[i].UpdateBorderTiles();
+        }
+
         this._kingdom.RemoveCityFromKingdom(this);
 
         if (!this._kingdom.isDead) {
@@ -976,10 +985,6 @@ public class City{
                 }
             }
         }
-
-        //for (int i = 0; i < citiesToUpdateBorders.Count; i++) {
-        //    citiesToUpdateBorders[i].UpdateBorderTiles();
-        //}
 
         //KingdomManager.Instance.UpdateKingdomAdjacency();
         //		for (int i = 0; i < this.kingdom.relationshipsWithOtherKingdoms.Count; i++) {
@@ -1044,6 +1049,7 @@ public class City{
         }
         this.ChangeKingdom(conqueror);
         this.CreateInitialFamilies(false);
+        this.UpdateBorderTiles();
 
 		//when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
 		//its initial defense will only be 300HP + (20HP x tech level)

@@ -79,6 +79,7 @@ public class Kingdom{
 
     //FogOfWar
     private FOG_OF_WAR_STATE[,] _fogOfWar;
+    private Dictionary<FOG_OF_WAR_STATE, List<HexTile>> _fogOfWarDict;
 
 	//Crimes
 	private CrimeData _crimeData;
@@ -209,6 +210,9 @@ public class Kingdom{
     public FOG_OF_WAR_STATE[,] fogOfWar {
         get { return _fogOfWar; }
     }
+    public Dictionary<FOG_OF_WAR_STATE, List<HexTile>> fogOfWarDict {
+        get { return _fogOfWarDict; }
+    }
 
 //	public CombatStats combatStats {
 //		get { return this._combatStats; }
@@ -216,7 +220,7 @@ public class Kingdom{
 //	public int waves{
 //		get { return this._combatStats.waves - GetNumberOfWars();}
 //	}
-	public bool isLockedDown{
+    public bool isLockedDown{
 		get { return this._isLockedDown;}
 	}
 	public bool isTechProducing{
@@ -279,6 +283,12 @@ public class Kingdom{
         this.foundationMonth = GameManager.Instance.month;
         this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
         this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
+        this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
+        this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, List<HexTile>>();
+        _fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new List<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())));
+        _fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new List<HexTile>());
+        _fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new List<HexTile>());
+
 
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
@@ -295,9 +305,9 @@ public class Kingdom{
 
         this.basicResource = Utilities.GetBasicResourceForRace(race);
 
-        this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
+        
 
-        if(cities.Count > 0) {
+        if (cities.Count > 0) {
             for (int i = 0; i < cities.Count; i++) {
                 this.CreateNewCityOnTileForKingdom(cities[i]);
             }
@@ -2142,14 +2152,22 @@ public class Kingdom{
 
     #region Fog Of War
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState, bool isForced = false) {
+        FOG_OF_WAR_STATE previousStateOfTile = tile.currFogOfWarState;
+        fogOfWarDict[previousStateOfTile].Remove(tile);
+
         if (isForced) {
             _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+            fogOfWarDict[fowState].Add(tile);
             if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
                 UpdateFogOfWarVisualForTile(tile, fowState);
             }
         } else {
             if (fowState == FOG_OF_WAR_STATE.VISIBLE) {
                 _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+                fogOfWarDict[fowState].Add(tile);
+                if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+                    UpdateFogOfWarVisualForTile(tile, fowState);
+                }
                 //			if(tile.lair != null){
                 //				tile.lair.ActivateLair ();
                 //			}
@@ -2157,6 +2175,10 @@ public class Kingdom{
                 if (!(tile.isVisibleByCities != null && cities.Intersect(tile.isVisibleByCities).Count() > 0)) {
                     if (_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
                         _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+                        fogOfWarDict[fowState].Add(tile);
+                        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+                            UpdateFogOfWarVisualForTile(tile, fowState);
+                        }
                     }
                 }
             }

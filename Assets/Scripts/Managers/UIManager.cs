@@ -509,7 +509,7 @@ public class UIManager : MonoBehaviour {
 	//}
 
     private void UpdateKingdomInfo() {
-        currentlyShowingKingdom.UpdateFogOfWarVisual();
+        //currentlyShowingKingdom.UpdateFogOfWarVisual();
         kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king); //King
 
         kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
@@ -589,6 +589,8 @@ public class UIManager : MonoBehaviour {
 		//	currentlyShowingCity.HighlightAllOwnedTiles(204f/255f);
 		//}
 		currentlyShowingKingdom = kingdom;
+
+        currentlyShowingKingdom.UpdateFogOfWarVisual();
 
         currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
         CameraMove.Instance.CenterCameraOn(currentlyShowingKingdom.capitalCity.hexTile.gameObject);
@@ -3222,7 +3224,8 @@ public class UIManager : MonoBehaviour {
 			if(this.currentlyShowingCitizen != null){
 				for(int i = 0; i < this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms.Count; i++){
 					if(!this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
-						this.kingdomsForWar.AddItem (this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom.name, this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom);
+						this.kingdomsForWar.AddItem (this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom.name
+                            , this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom);
 					}
 				}
 			}
