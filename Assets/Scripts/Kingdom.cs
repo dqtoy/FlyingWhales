@@ -467,7 +467,7 @@ public class Kingdom{
         //EventManager.Instance.onKingdomDiedEvent.RemoveListener(OtherKingdomDiedActions);
 
         //EventManager.Instance.onKingdomDiedEvent.Invoke(this);
-        Messenger.Broadcast<Kingdom>("OnKingdomDied", this);
+		Messenger.Broadcast<Kingdom>("OnKingdomDied", this);
 
         KingdomManager.Instance.RemoveRelationshipToOtherKings(this.king);
         this.RemoveRelationshipsWithOtherKingdoms();
@@ -2293,7 +2293,13 @@ public class Kingdom{
 	}
 	internal void RemoveActiveEvent(GameEvent gameEvent){
 		this.activeEvents.Remove (gameEvent);
+		AddToDoneEvents (gameEvent);
+	}
+	internal void AddToDoneEvents(GameEvent gameEvent){
 		this.doneEvents.Add (gameEvent);
+		if(this.doneEvents.Count > KingdomManager.Instance.maxKingdomEventHistory){
+			this.doneEvents.RemoveAt (0);
+		}
 	}
 	internal bool HasActiveEvent(EVENT_TYPES eventType){
 		for (int i = 0; i < this.activeEvents.Count; i++) {
@@ -2302,6 +2308,15 @@ public class Kingdom{
 			}
 		}
 		return false;
+	}
+	internal int GetActiveEventsOfTypeCount(EVENT_TYPES eventType){
+		int count = 0;
+		for (int i = 0; i < this.activeEvents.Count; i++) {
+			if(this.activeEvents[i].eventType == eventType){
+				count += 1;
+			}
+		}
+		return count;
 	}
 //	internal bool HasActiveEventWith(EVENT_TYPES eventType, Kingdom kingdom){
 //		for (int i = 0; i < this.activeEvents.Count; i++) {

@@ -419,7 +419,7 @@ public class EventCreator: MonoBehaviour {
 		if(sourceKingdom.isLockedDown){
 			return null;
 		}
-        if (EventManager.Instance.GetEventsStartedByKingdom(sourceKingdom, new EVENT_TYPES[] { EVENT_TYPES.ADVENTURE }).Count > 0) {
+		if (sourceKingdom.GetActiveEventsOfTypeCount(EVENT_TYPES.ADVENTURE) > 0) {
             return null;
         }
         List<HexTile> tilesToChooseFrom = sourceKingdom.capitalCity.hexTile.AvatarTiles.ToList();
@@ -466,7 +466,7 @@ public class EventCreator: MonoBehaviour {
 		if(sourceKingdom.isLockedDown){
 			return null;
 		}
-		if (EventManager.Instance.GetEventsStartedByKingdom(sourceKingdom, new EVENT_TYPES[] { EVENT_TYPES.HUNT_LAIR }).Count >= sourceKingdom.cities.Count) {
+		if (sourceKingdom.GetActiveEventsOfTypeCount(EVENT_TYPES.HUNT_LAIR) >= sourceKingdom.cities.Count) {
 			return null;
 		}
 		HexTile chosenLairTile = null;

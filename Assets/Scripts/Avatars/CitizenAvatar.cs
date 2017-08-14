@@ -17,6 +17,7 @@ public class CitizenAvatar : MonoBehaviour {
     private Transform[] childObjects;
 
     internal DIRECTION direction;
+	internal List<HexTile> visibleTiles;
 
     #region getters/setters
     public bool hasArrived {
@@ -49,11 +50,32 @@ public class CitizenAvatar : MonoBehaviour {
                     this.citizenRole.path.RemoveAt(0);
                     this.CollectEvents();
                     this.CheckForKingdomDiscovery();
+					this.UpdateFogOfWar();
                 }
-                this.UpdateFogOfWar();
             }
         }
     }
+	public virtual void UpdateFogOfWar(bool forDeath = false) {
+		for (int i = 0; i < visibleTiles.Count; i++) {
+			HexTile currTile = visibleTiles[i];
+			this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+		}
+		visibleTiles.Clear();
+		if (!forDeath) {
+			visibleTiles.Add(this.citizenRole.location);
+			visibleTiles.AddRange(this.citizenRole.location.AllNeighbours);
+			for (int i = 0; i < visibleTiles.Count; i++) {
+				HexTile currTile = visibleTiles[i];
+				this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+			}
+		}
+		//if (this.citizenRole.citizen.city != null) {
+		//    if (UIManager.Instance.currentlyShowingKingdom.id == this.citizenRole.citizen.city.kingdom.id) {
+		//        UIManager.Instance.currentlyShowingKingdom.UpdateFogOfWarVisual();
+		//    }
+		//}
+	}
+
 	internal virtual void UpdateUI(){}
     #endregion
 
@@ -102,12 +124,8 @@ public class CitizenAvatar : MonoBehaviour {
             }
         }
     }
-
-    private List<HexTile> visibleTiles;
-    public void UpdateFogOfWar(bool forDeath = false) {
+		
         Kingdom kingdomOfAgent = this.citizenRole.citizen.city.kingdom;
-        for (int i = 0; i < visibleTiles.Count; i++) {
-            HexTile currTile = visibleTiles[i];
             if (currTile.isBorder) {
                 if (currTile.isBorderOfCities.Intersect(kingdomOfAgent.cities).Count() <= 0) {
                     kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
@@ -123,22 +141,10 @@ public class CitizenAvatar : MonoBehaviour {
             } else {
                 kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
             }
-        }
-        visibleTiles.Clear();
-
-        if (!forDeath) {
-            visibleTiles.Add(this.citizenRole.location);
-            visibleTiles.AddRange(this.citizenRole.location.AllNeighbours);
-            for (int i = 0; i < visibleTiles.Count; i++) {
-                HexTile currTile = visibleTiles[i];
-                this.citizenRole.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
-            }
-        }
-    }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
-        startTile.ExitCitizen(this.citizenRole.citizen);
-        targetTile.EnterCitizen(this.citizenRole.citizen);
+//        startTile.ExitCitizen(this.citizenRole.citizen);
+//        targetTile.EnterCitizen(this.citizenRole.citizen);
 
         if (startTile.transform.position.x <= targetTile.transform.position.x) {
             if (this.animator.gameObject.transform.localScale.x > 0) {

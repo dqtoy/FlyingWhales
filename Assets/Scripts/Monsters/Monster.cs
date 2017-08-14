@@ -108,27 +108,29 @@ public class Monster {
 		if(this.occupiedTiles.Count > 0){
 			this.targetLocation = this.occupiedTiles [UnityEngine.Random.Range (0, this.occupiedTiles.Count)];
             //this._targetObject = this.targetLocation.city;
+			this._targetObject = this.targetLocation.city;
 
-            int chance = UnityEngine.Random.Range(0, 2);
-            if (chance == 0) {
-                if (this.targetLocation.isHabitable && this.targetLocation.isOccupied && (this.targetLocation.city != null && this.targetLocation.city.id != 0)) {
-                } else {
-                    this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
-                }
-            } else {
-                if (this.targetLocation.citizensOnTile.Count > 0) {
-                    this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
-                } else {
-                    this._targetObject = this.targetLocation.city;
-                }
-            }
+//            int chance = UnityEngine.Random.Range(0, 2);
+//            if (chance == 0) {
+//                if (this.targetLocation.isHabitable && this.targetLocation.isOccupied && (this.targetLocation.city != null && this.targetLocation.city.id != 0)) {
+//					this._targetObject = this.targetLocation.city;
+//                } else {
+//                    this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
+//                }
+//            } else {
+//                if (this.targetLocation.citizensOnTile.Count > 0) {
+//                    this._targetObject = this.targetLocation.citizensOnTile[UnityEngine.Random.Range(0, this.targetLocation.citizensOnTile.Count)];
+//                } else {
+//                    this._targetObject = this.targetLocation.city;
+//                }
+//            }
         } else{
 			HexTile[] neighbors = this.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER).ToArray ();
 			int numOfNeighbors = neighbors.Length;
 			if(this.prevLocation != null){
 
 				int indexOfOppositeTile = GetIndexOfOppositeTile(this.location, this.prevLocation, neighbors);
-				if(indexOfOppositeTile == -1){
+				if(indexOfOppositeTile == -1 || indexOfOppositeTile >= numOfNeighbors){
 					indexOfOppositeTile = UnityEngine.Random.Range (0, numOfNeighbors);
 				}
 				int chance = UnityEngine.Random.Range (0, 100);
@@ -180,18 +182,18 @@ public class Monster {
 		int yDiff = prevHextile.yCoordinate - fromHextile.yCoordinate;
 		for (int i = 0; i < points.Count; i++) {
 			if(points[i].X == xDiff && points[i].Y == yDiff){
-//				return GetOppositeIndex (i);
-				int oppositeIndex = GetOppositeIndex (i);
-				xOppositeIndex = fromHextile.xCoordinate + points [oppositeIndex].X;
-				yOppositeIndex = fromHextile.yCoordinate + points [oppositeIndex].Y;
-				break;
+				return GetOppositeIndex (i);
+//				int oppositeIndex = GetOppositeIndex (i);
+//				xOppositeIndex = fromHextile.xCoordinate + points [oppositeIndex].X;
+//				yOppositeIndex = fromHextile.yCoordinate + points [oppositeIndex].Y;
+//				break;
 			}
 		}
-		for (int i = 0; i < neighbors.Length; i++) {
-			if(neighbors[i].xCoordinate == xOppositeIndex && neighbors[i].yCoordinate == yOppositeIndex){
-				return i;
-			}
-		}
+//		for (int i = 0; i < neighbors.Length; i++) {
+//			if(neighbors[i].xCoordinate == xOppositeIndex && neighbors[i].yCoordinate == yOppositeIndex){
+//				return i;
+//			}
+//		}
 		return -1;
 	}
 	private int GetOppositeIndex(int index){

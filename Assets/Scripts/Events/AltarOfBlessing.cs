@@ -9,6 +9,7 @@ public class AltarOfBlessing : GameEvent {
 	public AltarOfBlessing(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile hexTile) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ALTAR_OF_BLESSING;
 		this.name = "Altar of Blessing";
+		this.isOneTime = true;
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.avatar = null;
 		this.hexTileSpawnPoint = hexTile;

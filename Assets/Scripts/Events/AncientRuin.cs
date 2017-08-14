@@ -29,6 +29,7 @@ public class AncientRuin : GameEvent {
     public AncientRuin(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile ruinLocation) : base(startWeek, startMonth, startYear, startedBy) {
         eventType = EVENT_TYPES.ANCIENT_RUIN;
         name = "Ancient Ruin";
+		this.isOneTime = true;
         _ruinLocation = ruinLocation;
         _ruinLocation.PutEventOnTile(this);
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AncientRuin", "event_title");
@@ -76,7 +77,7 @@ public class AncientRuin : GameEvent {
         Log newDiscoveryLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AncientRuin", newDiscovery.ToString());
         newDiscoveryLog.AddToFillers(_discoveredByKingdom, _discoveredByKingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         EventManager.Instance.AddEventToDictionary(this);
-        EventIsCreated();
+		EventIsCreated(this._discoveredByKingdom, true);
         DoneEvent();
     }
 
