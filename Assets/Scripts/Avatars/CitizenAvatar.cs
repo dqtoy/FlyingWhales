@@ -56,10 +56,28 @@ public class CitizenAvatar : MonoBehaviour {
         }
     }
 	public virtual void UpdateFogOfWar(bool forDeath = false) {
-		for (int i = 0; i < visibleTiles.Count; i++) {
+        Kingdom kingdomOfAgent = this.citizenRole.citizen.homeKingdom;
+
+        for (int i = 0; i < visibleTiles.Count; i++) {
 			HexTile currTile = visibleTiles[i];
-			this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-		}
+			//this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            if (currTile.isBorder) {
+                if (currTile.isBorderOfCities.Intersect(kingdomOfAgent.cities).Count() <= 0) {
+                    kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+                }
+            } else if (currTile.isOuterTileOfCities.Count > 0) {
+                if (currTile.isOuterTileOfCities.Intersect(kingdomOfAgent.cities).Count() <= 0) {
+                    kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+                }
+            } else if (currTile.isOccupied) {
+                if (currTile.ownedByCity == null || currTile.ownedByCity.kingdom.id != kingdomOfAgent.id) {
+                    kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+                }
+            } else {
+                kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            }
+        }
+
 		visibleTiles.Clear();
 		if (!forDeath) {
 			visibleTiles.Add(this.citizenRole.location);
@@ -97,28 +115,34 @@ public class CitizenAvatar : MonoBehaviour {
         _hasArrived = state;
     }
 
-    
+    /*
+     * Check if the agent has discovered a new kingdom
+     * */
     internal void CheckForKingdomDiscovery() {
         List<HexTile> tilesToCheck = new List<HexTile>();
         tilesToCheck.Add(this.citizenRole.location);
         tilesToCheck.AddRange(visibleTiles);
+        Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
+
         for (int i = 0; i < tilesToCheck.Count; i++) {
             HexTile currTile = tilesToCheck[i];
             if (currTile.isOccupied && currTile.ownedByCity != null &&
-                currTile.ownedByCity.kingdom.id != this.citizenRole.citizen.city.kingdom.id) {
-                Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
+                currTile.ownedByCity.kingdom.id != thisKingdom.id) {
                 Kingdom otherKingdom = currTile.ownedByCity.kingdom;
-				KingdomManager.Instance.DiscoverKingdom (thisKingdom, otherKingdom);
+                if (otherKingdom.id != thisKingdom.id && !thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
+                    KingdomManager.Instance.DiscoverKingdom(thisKingdom, otherKingdom);
+                }
             } else if (currTile.isBorder) {
-                Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
-                Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currTile.isBorderOfCityID).kingdom;
-                if (otherKingdom.id != this.citizenRole.citizen.city.kingdom.id) {
-					KingdomManager.Instance.DiscoverKingdom (thisKingdom, otherKingdom);
+                for (int j = 0; j < currTile.isBorderOfCities.Count; j++) {
+                    Kingdom otherKingdom = currTile.isBorderOfCities[j].kingdom;
+                    if (otherKingdom.id != thisKingdom.id && !thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
+                        KingdomManager.Instance.DiscoverKingdom(thisKingdom, otherKingdom);
+                    }
                 }
             }
         }
     }
-		
+
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
 //        startTile.ExitCitizen(this.citizenRole.citizen);
 //        targetTile.EnterCitizen(this.citizenRole.citizen);

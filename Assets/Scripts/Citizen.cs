@@ -320,7 +320,7 @@ public class Citizen {
 	internal void DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		//		this.kingdom.royaltyList.allRoyalties.Remove (this);
 //		yield return null;
-		Debug.LogError("DEATH: " + this.name + " of " + this.city.name);
+		Debug.Log("DEATH: " + this.name + " of " + this.city.name);
 		DeathHistory(reason);
 		this.deathReason = reason;
 		this.isDead = true;

@@ -43,9 +43,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool hasFirst = false;
 	public bool isLair = false;
 
-	public int isBorderOfCityID = 0;
-	internal int isOccupiedByCityID = 0;
-    [SerializeField] internal List<City> isVisibleByCities = new List<City>();
+    [SerializeField] private List<City> _isBorderOfCities = new List<City>();
+    [SerializeField] private List<City> _isOuterTileOfCities = new List<City>();
+	//public int isBorderOfCityID = 0;
+	//internal int isOccupiedByCityID = 0;
+    //[SerializeField] internal List<City> isVisibleByCities = new List<City>();
 
     [Space(10)]
     [Header("Tile Visuals")]
@@ -106,11 +108,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [System.NonSerialized] public List<HexTile> connectedTiles = new List<HexTile>();
 
 	public IEnumerable<HexTile> AllNeighbours { get; set; }
-	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN); } }
+	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN);}}
 	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
 	public IEnumerable<HexTile> PurchasableTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER);}}
 	public IEnumerable<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER);}}
-    public IEnumerable<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER); } }
+    public IEnumerable<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER);}}
 
     public List<HexTile> elligibleNeighbourTilesForPurchase { get { return PurchasableTiles.Where(o => !o.isOccupied && !o.isHabitable).ToList(); } } 
 
@@ -143,6 +145,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     public List<Citizen> citizensOnTile {
         get { return this._citizensOnTile; }
+    }
+    public List<City> isBorderOfCities {
+        get { return _isBorderOfCities; }
+    }
+    public List<City> isOuterTileOfCities {
+        get { return _isOuterTileOfCities; }
     }
     #endregion
 
@@ -784,8 +792,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.isBorder = false;
         this.isPlagued = false;
 		this.ownedByCity = null;
-		this.isBorderOfCityID = 0;
-		this.isOccupiedByCityID = 0;
         SetMinimapTileColor(biomeColor);
         this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
@@ -794,18 +800,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._hextileEventItem = null;
         Messenger.RemoveListener("UpdateUI", UpdateNamePlate);
 		Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
-//		Messenger.RemoveListener("UpdateUI", UpdateHextileEventNamePlate);
 
-        if(structureObjOnTile != null) {
-            Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year +  " - RUIN STRUCTURE ON: " + this.name);
-            structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
-        }
-        //Transform[] children = structureParentGO.GetComponentsInChildren<Transform>();
-        //for (int i = 0; i < children.Length; i++) {
-        //    if (children[i].gameObject != null && children[i].gameObject != structureParentGO) {
-        //        Destroy(children[i].gameObject);
-        //    }
-        //}
+        RuinStructureOnTile();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             Destroy(children[i].gameObject);
@@ -828,30 +824,71 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public void Occupy(City city) {
 		this.isOccupied = true;
-        if (!isVisibleByCities.Contains(city)) {
-            this.isVisibleByCities.Add(city);
-        }
-		this.isOccupiedByCityID = city.id;		
+        //if (!isVisibleByCities.Contains(city)) {
+        //    this.isVisibleByCities.Add(city);
+        //}
+		//this.isOccupiedByCityID = city.id;		
 		this.ownedByCity = city;
         this.isBorder = false;
-        this.isBorderOfCityID = 0;
+        //this.isBorderOfCityID = 0;
+    }
+
+    public void Unoccupy() {
+        isOccupied = false;
+        ownedByCity = null;
+        SetMinimapTileColor(biomeColor);
+        this._kingdomColorSprite.color = Color.white;
+        this.kingdomColorSprite.gameObject.SetActive(false);
+        RuinStructureOnTile();
+        city = null;
+
+        //Destroy Nameplates
+        Messenger.RemoveListener("UpdateUI", UpdateNamePlate);
+        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
+        for (int i = 0; i < children.Length; i++) {
+            Destroy(children[i].gameObject);
+        }
+    }
+
+    public void RuinStructureOnTile() {
+        if (structureObjOnTile != null) {
+            Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
+            structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
+        }
     }
 
 	public void Borderize(City city) {
 		this.isBorder = true;
-        if (!isVisibleByCities.Contains(city)) {
-            this.isVisibleByCities.Add(city);
+        if (!_isBorderOfCities.Contains(city)) {
+            _isBorderOfCities.Add(city);
         }
-        this.isBorderOfCityID = city.id;
-		this.ownedByCity = city;
+        //if (!isVisibleByCities.Contains(city)) {
+        //    this.isVisibleByCities.Add(city);
+        //}
+        //this.isBorderOfCityID = city.id;
+		//this.ownedByCity = city;
 	}
 
     public void UnBorderize(City city) {
-        this.isBorder = false;
-        this.isBorderOfCityID = 0;
-        this.ownedByCity = null;
-        this.isVisibleByCities.Remove(city);
-        
+        //this.isBorderOfCityID = 0;
+        //this.ownedByCity = null;
+        _isBorderOfCities.Remove(city);
+        if(_isBorderOfCities.Count <= 0) {
+            this.isBorder = false;
+            this._kingdomColorSprite.color = Color.white;
+            this.kingdomColorSprite.gameObject.SetActive(false);
+        }
+        //this.isVisibleByCities.Remove(city);
+    }
+
+    public void SetAsOuterTileOf(City city) {
+        if (!_isOuterTileOfCities.Contains(city)) {
+            _isOuterTileOfCities.Add(city);
+        }
+    }
+
+    public void RemoveAsOuterTileOf(City city) {
+        _isOuterTileOfCities.Remove(city);
     }
 
     #region Monobehaviour Functions

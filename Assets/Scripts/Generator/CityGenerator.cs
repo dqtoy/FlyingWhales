@@ -175,9 +175,20 @@ public class CityGenerator : MonoBehaviour {
 
     public HexTile GetExpandableTileForKingdom(Kingdom kingdom) {
         BIOMES forbiddenBiomeForKingdom = GetForbiddenBiomeOfRace(kingdom.race);
-        List<HexTile> elligibleTiles = GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())
-            .Where(x => x.isHabitable && !x.isOccupied && x.biomeType != forbiddenBiomeForKingdom && x.tag == kingdom.capitalCity.hexTile.tag 
-            && kingdom.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN).ToList();
+        List<HexTile> elligibleTiles = new List<HexTile>();
+        List<HexTile> tilesToCheck = new List<HexTile>(kingdom.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE].Where(x => x.isHabitable && !x.isOccupied));
+        tilesToCheck.AddRange(kingdom.fogOfWarDict[FOG_OF_WAR_STATE.SEEN].Where(x => x.isHabitable && !x.isOccupied));
+
+        for (int i = 0; i < tilesToCheck.Count; i++) {
+            HexTile currTile = tilesToCheck[i];
+            if (currTile.isBorder) {
+                if(currTile.isBorderOfCities.Except(kingdom.cities).Count() <= 0) {
+                    elligibleTiles.Add(currTile);
+                }
+            } else {
+                elligibleTiles.Add(currTile);
+            }
+        }
         if(elligibleTiles.Count > 0) {
             elligibleTiles = elligibleTiles.OrderBy(x => kingdom.capitalCity.hexTile.GetDistanceTo(x)).ToList();
             return elligibleTiles.FirstOrDefault();
@@ -198,12 +209,14 @@ public class CityGenerator : MonoBehaviour {
 		return BIOMES.NONE;
 	}
 	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellion rebellion = null){
-        if (hexTile.isBorder) {
-            hexTile.ownedByCity.borderTiles.Remove(hexTile);
-            hexTile.isBorderOfCityID = 0;
-            hexTile.isBorder = false;
-            hexTile.ownedByCity = null;
-        }
+        //if (hexTile.isBorder && rebellion == null) {
+        //    throw new System.Exception("A new city is being created on a border tile!\n Hextile: " + hexTile.name + "\nKingdom: " + kingdom.name);
+        //    //hexTile.ownedByCity.borderTiles.Remove(hexTile);
+        //    //hexTile.isBorderOfCityID = 0;
+        //    //hexTile.isBorder = false;
+        //    //hexTile.ownedByCity = null;
+        //}
+
         if (rebellion != null){
 			hexTile.city = new RebelFort (hexTile, kingdom, rebellion);
 		}else{

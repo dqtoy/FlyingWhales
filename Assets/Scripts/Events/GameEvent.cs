@@ -114,7 +114,7 @@ public class GameEvent {
         CheckIfCitizenIsCarryingPlague(citizen);
     }
 	internal virtual void CancelEvent(){
-		Debug.LogError (this.eventType.ToString() + " EVENT IS CANCELLED");
+		Debug.Log (this.eventType.ToString() + " EVENT IS CANCELLED");
         this.isActive = false;
         this.endMonth = GameManager.Instance.month;
         this.endDay = GameManager.Instance.days;
@@ -125,7 +125,7 @@ public class GameEvent {
     }
 
 	internal virtual void DoneEvent(){
-		Debug.LogError (this.eventType.ToString () + " EVENT IS DONE");
+		Debug.Log (this.eventType.ToString () + " EVENT IS DONE");
         this.isActive = false;
         this.endMonth = GameManager.Instance.month;
         this.endDay = GameManager.Instance.days;

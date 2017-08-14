@@ -34,7 +34,7 @@ public class BorderConflict : GameEvent {
 		this._warTrigger = WAR_TRIGGER.BORDER_CONFLICT;
 
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
-		Debug.LogError (this.description);
+		Debug.Log (this.description);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BorderConflict", "event_title");
 		newLogTitle.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
