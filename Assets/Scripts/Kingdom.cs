@@ -107,7 +107,7 @@ public class Kingdom{
 	private bool _hasBioWeapon;
 	private bool _isLockedDown;
 	private bool _isTechProducing;
-	internal bool hasConflicted;
+//	internal bool hasConflicted;
 
 	private int borderConflictLoyaltyExpiration;
 	private float _techProductionPercentage;
@@ -279,7 +279,7 @@ public class Kingdom{
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._unrest = 0;
 		this._sourceKingdom = sourceKingdom;
-		this.hasConflicted = false;
+//		this.hasConflicted = false;
 		this.borderConflictLoyaltyExpiration = 0;
 		this.rebellions = new List<Rebellion> ();
 		this._discoveredKingdoms = new List<Kingdom>();
@@ -578,7 +578,7 @@ public class Kingdom{
 //		this.AttemptToCreateReinforcementEvent ();
         //		this.AttemptToIncreaseCityHP();
         this.DecreaseUnrestEveryMonth();
-		this.CheckBorderConflictLoyaltyExpiration ();
+//		this.CheckBorderConflictLoyaltyExpiration ();
 		this.IncreaseTechCounterPerTick();
         this.TriggerEvents();
         //if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
@@ -669,15 +669,15 @@ public class Kingdom{
 	 * Checks if there has been successful relationship deterioration cause by border conflcit within the past 3 months
 	 * If expiration value has reached zero (0), return all governor loyalty to normal, else, it will remain -10
 	 * */
-	private void CheckBorderConflictLoyaltyExpiration(){
-		if(this.hasConflicted){
-			if(this.borderConflictLoyaltyExpiration > 0){
-				this.borderConflictLoyaltyExpiration -= 1;
-			}else{
-				this.HasNotConflicted ();
-			}
-		}
-	}
+//	private void CheckBorderConflictLoyaltyExpiration(){
+//		if(this.hasConflicted){
+//			if(this.borderConflictLoyaltyExpiration > 0){
+//				this.borderConflictLoyaltyExpiration -= 1;
+//			}else{
+//				this.HasNotConflicted ();
+//			}
+//		}
+//	}
 
     #region Trading
     /*
@@ -1013,7 +1013,7 @@ public class Kingdom{
         //		UIManager.Instance.UpdateKingdomSuccession ();
 
         for (int i = 0; i < this.cities.Count; i++) {
-            ((Governor)this.cities[i].governor.assignedRole).ResetEventModifiers();
+//            ((Governor)this.cities[i].governor.assignedRole).ResetEventModifiers();
             ((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty();
         }
         Debug.Log("Assigned new king: " + newKing.name + " because " + previousKing.name + " died!");
@@ -1540,27 +1540,28 @@ public class Kingdom{
 		}
 		return null;
 	}
-	internal void HasConflicted(){
-		if(!this.hasConflicted){
-			this.hasConflicted = true;
-			for(int i = 0; i < this.cities.Count; i++){
-				if(this.cities[i].governor != null){
-					((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty ();
-				}
-			}
-		}
-		this.borderConflictLoyaltyExpiration = 90;
-
-	}
-	internal void HasNotConflicted(){
-		this.hasConflicted = false;
-		this.borderConflictLoyaltyExpiration = 0;
+	internal void HasConflicted(GameEvent gameEvent){
 		for(int i = 0; i < this.cities.Count; i++){
 			if(this.cities[i].governor != null){
-				((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty ();
+				((Governor)this.cities[i].governor.assignedRole).AddEventModifier (-10, "Recent border conflict", gameEvent);
 			}
 		}
+//		if(!this.hasConflicted){
+//			this.hasConflicted = true;
+//
+//		}
+//		this.borderConflictLoyaltyExpiration = 90;
+
 	}
+//	internal void HasNotConflicted(){
+//		this.hasConflicted = false;
+//		this.borderConflictLoyaltyExpiration = 0;
+//		for(int i = 0; i < this.cities.Count; i++){
+//			if(this.cities[i].governor != null){
+//				((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty ();
+//			}
+//		}
+//	}
 	#region Resource Management
 	/*
 	 * Function to adjust the gold count of this kingdom.

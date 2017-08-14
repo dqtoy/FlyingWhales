@@ -38,7 +38,7 @@ public class City{
     //	public IsActive isActive;
     public bool isUnderAttack;
 	public bool hasReinforced;
-	public bool isRaided;
+//	public bool isRaided;
 	public bool isStarving;
 	public bool isDead;
 
@@ -106,7 +106,7 @@ public class City{
 		this.hasKing = false;
 		this.isUnderAttack = false;
 		this.hasReinforced = false;
-		this.isRaided = false;
+//		this.isRaided = false;
 		this.isStarving = false;
 		this.isDead = false;
 		this.borderTiles = new List<HexTile>();
@@ -700,16 +700,16 @@ public class City{
 	private void UpdateHP(float percentageHP){
 		this._hp = (int)((float)this.maxHP * percentageHP);
 	}
-	private void CheckRaidExpiration(){
-		if(this.isRaided){
-			if(this.raidLoyaltyExpiration > 0){
-				this.raidLoyaltyExpiration -= 1;
-			}else{
-				this.HasNotBeenRaided ();
-			}
-
-		}
-	}
+//	private void CheckRaidExpiration(){
+//		if(this.isRaided){
+//			if(this.raidLoyaltyExpiration > 0){
+//				this.raidLoyaltyExpiration -= 1;
+//			}else{
+//				this.HasNotBeenRaided ();
+//			}
+//
+//		}
+//	}
 
 	#region Resource Production
 	internal void AddToDailyGrowth(){
@@ -1341,18 +1341,18 @@ public class City{
         }
     }
 
-	internal void HasBeenRaided(){
-		if(!this.isRaided){
-			this.isRaided = true;
-			((Governor)this.governor.assignedRole).UpdateLoyalty ();
-		}
-		this.raidLoyaltyExpiration = 90;
-	}
-	internal void HasNotBeenRaided(){
-		this.isRaided = false;
-		this.raidLoyaltyExpiration = 0;
-		((Governor)this.governor.assignedRole).UpdateLoyalty ();
-	}
+//	internal void HasBeenRaided(){
+//		if(!this.isRaided){
+//			this.isRaided = true;
+//			((Governor)this.governor.assignedRole).UpdateLoyalty ();
+//		}
+//		this.raidLoyaltyExpiration = 90;
+//	}
+//	internal void HasNotBeenRaided(){
+//		this.isRaided = false;
+//		this.raidLoyaltyExpiration = 0;
+//		((Governor)this.governor.assignedRole).UpdateLoyalty ();
+//	}
 	internal void AttackCity(City targetCity, List<HexTile> path, GameEvent gameEvent, bool isRebel = false){
 		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path, gameEvent, isRebel);
 //		int chance = UnityEngine.Random.Range (0, 100);

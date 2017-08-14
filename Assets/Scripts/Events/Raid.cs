@@ -175,7 +175,7 @@ public class Raid : GameEvent {
         this.raider.citizen.city.AdjustDailyGrowth(gainedGrowth);
 
         Debug.LogError(this.raidedCity.name + " lost " + stolenGrowth.ToString() + " growth and " + this.raider.citizen.city.name + " gained " + gainedGrowth.ToString());
-        this.raidedCity.HasBeenRaided ();
+		((Governor)this.raidedCity.governor.assignedRole).AddEventModifier (-10, " Recent raid", this);
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_success");
 		newLog.AddToFillers (null, stolenGrowth.ToString (), LOG_IDENTIFIER.OTHER);
