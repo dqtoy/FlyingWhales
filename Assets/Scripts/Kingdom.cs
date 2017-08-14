@@ -1859,6 +1859,7 @@ public class Kingdom{
 	#endregion
 	
 	#region Discovery
+
     /*
      * Check all the neighburs of the border tiles and owned tiles of all this kingdom's
      * cities, and check if any of them are owned by another kingdom, if so,
@@ -1871,7 +1872,7 @@ public class Kingdom{
             for (int j = 0; j < tilesToCheck.Count; j++) {
                 //Get all neighbour tiles that are owned, but not by this kingdom, 
                 //and that kingdom is not already added to this kingdom's discovered kingdoms.
-                List<HexTile> neighbours = tilesToCheck[j].PurchasableTiles.ToList();
+                List<HexTile> neighbours = tilesToCheck[j].AllNeighbours.ToList();
                     //.Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
                     //.ToList();
                 for (int k = 0; k < neighbours.Count; k++) {
@@ -1880,21 +1881,14 @@ public class Kingdom{
                         && currNeighbour.ownedByCity.kingdom.id != this.id) {
                         Kingdom otherKingdom = currNeighbour.ownedByCity.kingdom;
 						KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
-
-//                        this.DiscoverKingdom(otherKingdom);
-//                        otherKingdom.DiscoverKingdom(this);
                     } else if (currNeighbour.isBorder) {
-                        Kingdom otherKingdom = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID).kingdom;
-
-                        if (otherKingdom.id != this.id) {
-							KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
-//                            this.DiscoverKingdom(otherKingdom);
-//                            otherKingdom.DiscoverKingdom(this);
+                        for (int l = 0; l < currNeighbour.isBorderOfCities.Count; l++) {
+                            Kingdom otherKingdom = currNeighbour.isBorderOfCities[l].kingdom;
+                            if (otherKingdom.id != this.id && !this.discoveredKingdoms.Contains(otherKingdom)) {
+                                KingdomManager.Instance.DiscoverKingdom(this, otherKingdom);
+                            }
                         }
                     }
-                    //Kingdom otherKingdom = neighbours[i].ownedByCity.kingdom;
-                    //this.DiscoverKingdom(otherKingdom);
-                    //otherKingdom.DiscoverKingdom(this);
                 }
             }
         }
@@ -1909,47 +1903,30 @@ public class Kingdom{
         //and that kingdom is not already added to this kingdom's discovered kingdoms.
         List<HexTile> tilesToCheck = city.ownedTiles.Union(city.borderTiles).ToList();
         for (int i = 0; i < tilesToCheck.Count; i++) {
-            List<HexTile> neighbours = tilesToCheck[i].PurchasableTiles.ToList();
+            List<HexTile> neighbours = tilesToCheck[i].AllNeighbours.ToList();
             for (int j = 0; j < neighbours.Count; j++) {
                 HexTile currNeighbour = neighbours[j];
                 if (currNeighbour.isOccupied && currNeighbour.ownedByCity != null
                     && currNeighbour.ownedByCity.kingdom.id != this.id) {
                     Kingdom otherKingdom = currNeighbour.ownedByCity.kingdom;
-
 					KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
-
-//                    this.DiscoverKingdom(otherKingdom);
-//                    otherKingdom.DiscoverKingdom(this);
                 } else if (currNeighbour.isBorder) {
-                    City otherCity = CityGenerator.Instance.GetCityByID(currNeighbour.isBorderOfCityID);
-                    if(otherCity == null) {
-                        Debug.Log("Other City is null!");
-                        currNeighbour.isBorderOfCityID = 0;
-                        currNeighbour.isBorder = false;
-                    } else {
-                        Kingdom otherKingdom = otherCity.kingdom;
-
-                        if (otherKingdom.id != this.id) {
-					        KingdomManager.Instance.DiscoverKingdom (this, otherKingdom);
-        //                        this.DiscoverKingdom(otherKingdom);
-        //                        otherKingdom.DiscoverKingdom(this);
+                    for (int k = 0; k < currNeighbour.isBorderOfCities.Count; k++) {
+                        Kingdom otherKingdom = currNeighbour.isBorderOfCities[k].kingdom;
+                        if (otherKingdom.id != this.id && !this.discoveredKingdoms.Contains(otherKingdom)) {
+                            KingdomManager.Instance.DiscoverKingdom(this, otherKingdom);
                         }
                     }
-                    
                 }
             }
         }
-            
-            //.Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
-            //.ToList();
-        
     }
 
     internal void DiscoverKingdom(Kingdom discoveredKingdom) {
         if(discoveredKingdom.id != this.id) {
             if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
                 this._discoveredKingdoms.Add(discoveredKingdom);
-                Debug.LogError(this.name + " discovered " + discoveredKingdom.name + "!");
+                Debug.Log(this.name + " discovered " + discoveredKingdom.name + "!");
                 if (discoveredKingdom.plague != null) {
                     discoveredKingdom.plague.ForceUpdateKingRelationships(discoveredKingdom.king);
                 }
@@ -2169,38 +2146,44 @@ public class Kingdom{
 	#endregion
 
     #region Fog Of War
-    internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState, bool isForced = false) {
+    internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState, bool isForcedUpdate = false) {
         FOG_OF_WAR_STATE previousStateOfTile = tile.currFogOfWarState;
         fogOfWarDict[previousStateOfTile].Remove(tile);
 
-        if (isForced) {
-            _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
-            fogOfWarDict[fowState].Add(tile);
-            if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-                UpdateFogOfWarVisualForTile(tile, fowState);
-            }
-        } else {
-            if (fowState == FOG_OF_WAR_STATE.VISIBLE) {
-                _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
-                fogOfWarDict[fowState].Add(tile);
-                if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-                    UpdateFogOfWarVisualForTile(tile, fowState);
-                }
-                //			if(tile.lair != null){
-                //				tile.lair.ActivateLair ();
-                //			}
-            } else {
-                if (!(tile.isVisibleByCities != null && cities.Intersect(tile.isVisibleByCities).Count() > 0)) {
-                    if (_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
-                        _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
-                        fogOfWarDict[fowState].Add(tile);
-                        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-                            UpdateFogOfWarVisualForTile(tile, fowState);
-                        }
-                    }
-                }
-            }
+        _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+        fogOfWarDict[fowState].Add(tile);
+
+        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+            UpdateFogOfWarVisualForTile(tile, fowState);
         }
+
+        //if (isForcedUpdate) {
+        //    if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+        //        UpdateFogOfWarVisualForTile(tile, fowState);
+        //    }
+        //} 
+        //else {
+        //    if (fowState == FOG_OF_WAR_STATE.VISIBLE) {
+        //        _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+        //        fogOfWarDict[fowState].Add(tile);
+        //        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+        //            UpdateFogOfWarVisualForTile(tile, fowState);
+        //        }
+        //        //			if(tile.lair != null){
+        //        //				tile.lair.ActivateLair ();
+        //        //			}
+        //    } else {
+        //        //if (!(tile.isVisibleByCities != null && cities.Intersect(tile.isVisibleByCities).Count() > 0)) {
+        //            if (_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
+        //                _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+        //                fogOfWarDict[fowState].Add(tile);
+        //                if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+        //                    UpdateFogOfWarVisualForTile(tile, fowState);
+        //                }
+        //            }
+        //        //}
+        //    }
+        //}
     }
     internal void UpdateFogOfWarVisual() {
         for (int x = 0; x < fogOfWar.GetLength(0); x++) {

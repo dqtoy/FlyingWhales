@@ -26,7 +26,9 @@ public class CityTaskManager : MonoBehaviour {
             //Check for tiles 3 tiles away
 			List<HexTile> elligibleTiles = new List<HexTile> ();
 			for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-                elligibleTiles = elligibleTiles.Union(this.city.ownedTiles [i].GetTilesInRange (3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable)).ToList();
+                elligibleTiles = elligibleTiles
+                    .Union(this.city.ownedTiles[i].GetTilesInRange(3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable 
+                    && x.isBorderOfCities.Except(this.city.kingdom.cities).Count() <= 0 )).ToList();
 			}
 			//elligibleTiles.Distinct ();
 
@@ -54,8 +56,10 @@ public class CityTaskManager : MonoBehaviour {
                 //Check for tiles 5 tiles away
                 elligibleTiles.Clear ();
 				for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-                    elligibleTiles = elligibleTiles.Union (this.city.ownedTiles [i].GetTilesInRange (5).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable)).ToList();
-				}
+                    elligibleTiles = elligibleTiles
+                    .Union(this.city.ownedTiles[i].GetTilesInRange(5).Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable
+                         && x.isBorderOfCities.Except(this.city.kingdom.cities).Count() <= 0)).ToList();
+                }
 				//elligibleTiles.Distinct ();
 
 				purchasableTilesWithSpecialResource.Clear ();
