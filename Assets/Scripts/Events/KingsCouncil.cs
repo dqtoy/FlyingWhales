@@ -62,14 +62,16 @@ public class KingsCouncil : GameEvent {
     internal override void CancelEvent() {
         base.CancelEvent();
         Messenger.RemoveListener("OnDayEnd", PerformAction);
-        EventManager.Instance.onKingdomDiedEvent.RemoveListener(RemoveKingdomFromGuestList);
+        Messenger.RemoveListener<Kingdom>("OnKingdomDied", RemoveKingdomFromGuestList);
+        //EventManager.Instance.onKingdomDiedEvent.RemoveListener(RemoveKingdomFromGuestList);
 
         Log councilCancelLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "council_cancel");
     }
     internal override void DoneEvent() {
         base.DoneEvent();
         Messenger.RemoveListener("OnDayEnd", PerformAction);
-        EventManager.Instance.onKingdomDiedEvent.RemoveListener(RemoveKingdomFromGuestList);
+        Messenger.RemoveListener<Kingdom>("OnKingdomDied", RemoveKingdomFromGuestList);
+        //EventManager.Instance.onKingdomDiedEvent.RemoveListener(RemoveKingdomFromGuestList);
     }
     #endregion
 
@@ -136,7 +138,8 @@ public class KingsCouncil : GameEvent {
             for (int i = 0; i < kingdomsThatCannotAttend.Count; i++) {
                 _attendingKingdoms.Remove(kingdomsThatCannotAttend[i]);
             }
-            EventManager.Instance.onKingdomDiedEvent.AddListener(RemoveKingdomFromGuestList);
+            Messenger.AddListener<Kingdom>("OnKingdomDied", RemoveKingdomFromGuestList);
+            //EventManager.Instance.onKingdomDiedEvent.AddListener(RemoveKingdomFromGuestList);
         }
     }
     protected void CheckIfAllKingdomsHaveArrived() {
