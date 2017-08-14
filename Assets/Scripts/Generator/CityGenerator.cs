@@ -209,13 +209,13 @@ public class CityGenerator : MonoBehaviour {
 		return BIOMES.NONE;
 	}
 	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellion rebellion = null){
-        if (hexTile.isBorder && rebellion == null) {
-            throw new System.Exception("A new city is being created on a border tile!\n Hextile: " + hexTile.name + "\nKingdom: " + kingdom.name);
-            //hexTile.ownedByCity.borderTiles.Remove(hexTile);
-            //hexTile.isBorderOfCityID = 0;
-            //hexTile.isBorder = false;
-            //hexTile.ownedByCity = null;
-        }
+        //if (hexTile.isBorder && rebellion == null) {
+        //    throw new System.Exception("A new city is being created on a border tile!\n Hextile: " + hexTile.name + "\nKingdom: " + kingdom.name);
+        //    //hexTile.ownedByCity.borderTiles.Remove(hexTile);
+        //    //hexTile.isBorderOfCityID = 0;
+        //    //hexTile.isBorder = false;
+        //    //hexTile.ownedByCity = null;
+        //}
 
         if (rebellion != null){
 			hexTile.city = new RebelFort (hexTile, kingdom, rebellion);
