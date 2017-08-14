@@ -25,12 +25,33 @@ public class RangerAvatar : CitizenAvatar {
                     this.citizenRole.path.RemoveAt(0);
                     this.CheckForKingdomDiscovery();
 					((Ranger)this.citizenRole).AcquireTarget ();
+					this.UpdateFogOfWar();
                     //this.GetNextTargetTile();
                 }
-                this.UpdateFogOfWar();
             }
         }
     }
+	public override void UpdateFogOfWar(bool forDeath = false) {
+		for (int i = 0; i < visibleTiles.Count; i++) {
+			HexTile currTile = visibleTiles[i];
+			this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+		}
+		visibleTiles.Clear();
+		if (!forDeath) {
+			visibleTiles.Add(this.citizenRole.location);
+			this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(this.citizenRole.location, FOG_OF_WAR_STATE.VISIBLE);
+
+			HexTile[] neighbors = this.citizenRole.location.AllNeighbours.ToArray ();
+			for (int i = 0; i < neighbors.Length; i++) {
+				HexTile currTile = neighbors[i];
+				if (this.citizenRole.citizen.homeKingdom.GetFogOfWarStateOfTile(currTile) != FOG_OF_WAR_STATE.HIDDEN) {
+					visibleTiles.Add (currTile);
+					this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+				}
+
+			}
+		}
+	}
     #endregion
 
     #region BehaviourTree Tasks
