@@ -29,6 +29,7 @@ public class GameEvent {
 	public Kingdom startedByKingdom;
 	public City startedByCity;
 	public bool isActive;
+	public bool isOneTime;
 	public List<Log> logs;
 
 	private DateTime _startDate;
@@ -78,6 +79,7 @@ public class GameEvent {
 		this.description = "";
 		this.resolution = "";
 		this.isActive = true;
+		this.isOneTime = false;
 		this._warTrigger = WAR_TRIGGER.NONE;
 		this.relationshipHasDeteriorated = false;
 		this.relationshipHasImproved = false;
@@ -133,18 +135,21 @@ public class GameEvent {
 			this._eventKingdoms [i].RemoveActiveEvent (this);
 		}
 
-		if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null && this.logs.Count > 0) { //Kingdom Event
-			if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
-                if (!Utilities.eventsNotToShow.Contains(eventType)) {
-                    if (UIManager.Instance.currentlyShowingLogObject != null) {
-                        UIManager.Instance.eventLogsQueue.Add(this);
-                    } else {
-                        //					UIManager.Instance.Pause ();
-                        UIManager.Instance.ShowEventLogs(this);
-                    }
-                }
+		if(!this.isOneTime){
+			if (this.startedBy != null && UIManager.Instance.currentlyShowingKingdom != null && this.logs.Count > 0) { //Kingdom Event
+				if (this.startedByKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
+					if (!Utilities.eventsNotToShow.Contains(eventType)) {
+						if (UIManager.Instance.currentlyShowingLogObject != null) {
+							UIManager.Instance.eventLogsQueue.Add(this);
+						} else {
+							//					UIManager.Instance.Pause ();
+							UIManager.Instance.ShowEventLogs(this);
+						}
+					}
+				}
 			}
 		}
+
 //		if(this.goEventItem != null){
 //			this.goEventItem.GetComponent<EventItem> ().HasExpired ();
 //		}
@@ -284,7 +289,20 @@ public class GameEvent {
 //	}
 	internal void EventIsCreated(Kingdom kingdom, bool isShow){
 		if(isShow){
-			UIManager.Instance.ShowEventsOfType (this, kingdom);
+			if(!this.isOneTime){
+				UIManager.Instance.ShowEventsOfType (this, kingdom);
+			}else{
+				if (kingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
+					if (!Utilities.eventsNotToShow.Contains(eventType)) {
+						if (UIManager.Instance.currentlyShowingLogObject != null) {
+							UIManager.Instance.eventLogsQueue.Add(this);
+						} else {
+							//					UIManager.Instance.Pause ();
+							UIManager.Instance.ShowEventLogs(this);
+						}
+					}
+				}
+			}
 		}
 		if(kingdom != null){
 			AddEventInKingdom (kingdom);

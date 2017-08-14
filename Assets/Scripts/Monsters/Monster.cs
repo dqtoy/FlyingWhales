@@ -130,7 +130,7 @@ public class Monster {
 			if(this.prevLocation != null){
 
 				int indexOfOppositeTile = GetIndexOfOppositeTile(this.location, this.prevLocation, neighbors);
-				if(indexOfOppositeTile == -1 || indexOfOppositeTile > numOfNeighbors){
+				if(indexOfOppositeTile == -1 || indexOfOppositeTile >= numOfNeighbors){
 					indexOfOppositeTile = UnityEngine.Random.Range (0, numOfNeighbors);
 				}
 				int chance = UnityEngine.Random.Range (0, 100);

@@ -27,6 +27,7 @@ public class KingdomManager : MonoBehaviour {
     protected const int UNREST_INCREASE_WAR = 10;
 
 	public int initialSpawnRate;
+	public int maxKingdomEventHistory;
 
     [SerializeField] private int minimumInitialKingdomDistance;
 

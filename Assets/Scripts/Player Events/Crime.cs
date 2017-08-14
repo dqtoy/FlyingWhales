@@ -2,26 +2,28 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Crime : PlayerEvent {
+public class Crime : GameEvent {
 
 	private Kingdom kingdom;
 	private CrimeData crimeData;
 	private PUNISHMENT kingPunishment;
 
 	public Crime(int startWeek, int startMonth, int startYear, Citizen startedBy, CrimeData crimeData) : base (startWeek, startMonth, startYear, startedBy){
-		this.eventType = PLAYER_EVENT.CRIME;
+		this.eventType = EVENT_TYPES.CRIME;
 		this.name = "Crime";
+		this.isOneTime = true;
 		this.kingdom = this.startedByKingdom;
 		this.crimeData = crimeData;
-		this.affectedKingdoms.Add (this.kingdom);
+//		this.affectedKingdoms.Add (this.kingdom);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "Crime", "event_title");
 
 		Initialize ();
 
-		this.PlayerEventIsCreated ();
-
+//		this.PlayerEventIsCreated ();
+		EventIsCreated(this.kingdom, true);
 		this.DoneEvent ();
+
 	}
 
 	private void Initialize(){
@@ -47,6 +49,7 @@ public class Crime : PlayerEvent {
 		Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "Crime", "punishment");
 		newLog2.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.KING_1);
 		newLog2.AddToFillers (null, punishmentDetails, LOG_IDENTIFIER.CRIME_PUNISHMENT);
+
 
 	}
 

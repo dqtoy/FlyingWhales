@@ -29,6 +29,7 @@ public class AncientRuin : GameEvent {
     public AncientRuin(int startWeek, int startMonth, int startYear, Citizen startedBy, HexTile ruinLocation) : base(startWeek, startMonth, startYear, startedBy) {
         eventType = EVENT_TYPES.ANCIENT_RUIN;
         name = "Ancient Ruin";
+		this.isOneTime = true;
         _ruinLocation = ruinLocation;
         _ruinLocation.PutEventOnTile(this);
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AncientRuin", "event_title");
