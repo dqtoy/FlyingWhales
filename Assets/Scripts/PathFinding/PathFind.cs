@@ -43,7 +43,7 @@ namespace PathFind {
 						newPath = path.AddStep (n, d);
 						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
 					}
-				} else if (pathfindingMode == PATHFINDING_MODE.AVATAR) {
+				} else if (pathfindingMode == PATHFINDING_MODE.COMBAT) {
 					foreach (Node n in path.LastStep.CombatTiles) {
 						d = distance (path.LastStep, n);
 						newPath = path.AddStep (n, d);

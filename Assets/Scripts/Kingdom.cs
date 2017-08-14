@@ -2316,6 +2316,15 @@ public class Kingdom{
 		}
 		return false;
 	}
+	internal int GetActiveEventsOfTypeCount(EVENT_TYPES eventType){
+		int count = 0;
+		for (int i = 0; i < this.activeEvents.Count; i++) {
+			if(this.activeEvents[i].eventType == eventType){
+				count += 1;
+			}
+		}
+		return count;
+	}
 //	internal bool HasActiveEventWith(EVENT_TYPES eventType, Kingdom kingdom){
 //		for (int i = 0; i < this.activeEvents.Count; i++) {
 //			if(this.activeEvents[i].eventType == eventType){

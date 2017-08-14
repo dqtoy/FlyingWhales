@@ -24,19 +24,19 @@ public class Abductor : Role {
 		}
 	}
 
-	internal override void Attack() {
-		//		base.Attack ();
-		if (this.avatar != null) {
-			this.avatar.GetComponent<AbductorAvatar>().HasAttacked();
-			if (this.avatar.GetComponent<AbductorAvatar>().direction == DIRECTION.LEFT) {
-				this.avatar.GetComponent<AbductorAvatar>().animator.Play("Attack_Left");
-			} else if (this.avatar.GetComponent<AbductorAvatar>().direction == DIRECTION.RIGHT) {
-				this.avatar.GetComponent<AbductorAvatar>().animator.Play("Attack_Right");
-			} else if (this.avatar.GetComponent<AbductorAvatar>().direction == DIRECTION.UP) {
-				this.avatar.GetComponent<AbductorAvatar>().animator.Play("Attack_Up");
-			} else {
-				this.avatar.GetComponent<AbductorAvatar>().animator.Play("Attack_Down");
-			}
-		}
-	}
+//	internal override void Attack() {
+//		//		base.Attack ();
+//		if (this.avatar != null) {
+//			this.avatar.GetComponent<AbductorAvatar>().HasAttacked();
+//			if (this.avatar.GetComponent<AbductorAvatar>().direction == DIRECTION.LEFT) {
+//				this.avatar.GetComponent<AbductorAvatar>().animator.Play("Attack_Left");
+//			} else if (this.avatar.GetComponent<AbductorAvatar>().direction == DIRECTION.RIGHT) {
+//				this.avatar.GetComponent<AbductorAvatar>().animator.Play("Attack_Right");
+//			} else if (this.avatar.GetComponent<AbductorAvatar>().direction == DIRECTION.UP) {
+//				this.avatar.GetComponent<AbductorAvatar>().animator.Play("Attack_Up");
+//			} else {
+//				this.avatar.GetComponent<AbductorAvatar>().animator.Play("Attack_Down");
+//			}
+//		}
+//	}
 }
