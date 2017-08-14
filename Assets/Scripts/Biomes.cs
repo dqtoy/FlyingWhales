@@ -110,7 +110,7 @@ public class Biomes : MonoBehaviour {
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = snowAndTundraMountainTiles [Random.Range (0, snowAndTundraMountainTiles.Length)];
 					currentHexTile.SetCenterSprite (mountainSpriteToUse);
-					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
                     if(snowDetails.Length > 0) {
                         biomeDetailToUse = snowDetails[Random.Range(0, snowDetails.Length)];
@@ -125,7 +125,7 @@ public class Biomes : MonoBehaviour {
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = snowAndTundraMountainTiles [Random.Range (0, snowAndTundraMountainTiles.Length)];
 					currentHexTile.SetCenterSprite (mountainSpriteToUse);
-					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
                     if (tundraDetails.Length > 0) {
                         biomeDetailToUse = tundraDetails[Random.Range(0, tundraDetails.Length)];
@@ -140,7 +140,7 @@ public class Biomes : MonoBehaviour {
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = desertMountainTiles [Random.Range (0, desertMountainTiles.Length)];
 					currentHexTile.SetCenterSprite (mountainSpriteToUse);
-					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
                     if (desertDetails.Length > 0) {
                         biomeDetailToUse = desertDetails[Random.Range(0, desertDetails.Length)];
@@ -155,7 +155,7 @@ public class Biomes : MonoBehaviour {
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
 					currentHexTile.SetCenterSprite(mountainSpriteToUse);
-					Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
+					Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
                     if (grasslandDetails.Length > 0) {
                         biomeDetailToUse = grasslandDetails[Random.Range(0, grasslandDetails.Length)];
@@ -170,7 +170,7 @@ public class Biomes : MonoBehaviour {
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
 					currentHexTile.SetCenterSprite (mountainSpriteToUse);
-					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {                    
 					Sprite centerSpriteToUse = woodlandTrees [Random.Range (0, woodlandTrees.Length)];
 					currentHexTile.SetCenterSprite(centerSpriteToUse);
@@ -185,7 +185,7 @@ public class Biomes : MonoBehaviour {
 				if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
 					Sprite mountainSpriteToUse = greenMountainTiles [Random.Range (0, greenMountainTiles.Length)];
 					currentHexTile.SetCenterSprite (mountainSpriteToUse);
-					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "Structures Layer");
+					Utilities.SetSpriteSortingLayer (currentHexTile.centerPiece.GetComponent<SpriteRenderer> (), "TileDetails");
 				} else {
 					Sprite centerSpriteToUse = forestTrees [Random.Range (0, forestTrees.Length)];
 					currentHexTile.SetCenterSprite(centerSpriteToUse);
@@ -420,7 +420,10 @@ public class Biomes : MonoBehaviour {
             List<HexTile> parentTileNeighbours = parentTile.AllNeighbours.ToList();
             for (int i = 0; i < parentTileNeighbours.Count; i++) {
                 HexTile currNeighbour = parentTileNeighbours[i];
-                if(tilesToTag.Contains(currNeighbour) && currNeighbour.elevationType == currElevation) {
+                if(tilesToTag.Contains(currNeighbour) && 
+                    (currNeighbour.elevationType == currElevation 
+                    || (currNeighbour.elevationType == ELEVATION.MOUNTAIN && currElevation == ELEVATION.PLAIN) 
+                    || currNeighbour.elevationType == ELEVATION.PLAIN && currElevation == ELEVATION.MOUNTAIN)) {
                     currNeighbour.SetTag(currTag);
                     tilesToTag.Remove(currNeighbour);
                     tagQueue.Enqueue(currNeighbour);
