@@ -24,7 +24,7 @@ public class Governor : Role {
 		get { return _loyalty + this._eventModifiers.Sum(x => x.modifier); }
     }
     public string loyaltySummary {
-        get { return this._loyaltySummary + "\n" + _eventLoyaltySummary; }
+        get { return this._loyaltySummary + _eventLoyaltySummary; }
     }
 	public List<ExpirableModifier> eventModifiers {
 		get { return this._eventModifiers; }

@@ -63,9 +63,9 @@ public class SerumOfAlacrity : GameEvent {
 		if(allCities != null && allCities.Count > 0){
 			for (int i = 0; i < allCities.Count; i++) {
 				if(allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(15, "Same strength values", this);
+					((Governor)allCities[i].governor.assignedRole).AddEventModifier(4, "Same strength values", this);
 				}else{
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-15, "Opposing strength values", this);
+					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-4, "Opposing strength values", this);
 				}
 			}
 		}
@@ -87,10 +87,10 @@ public class SerumOfAlacrity : GameEvent {
 				if(relationship != null){
 					if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
                         //relationship.AdjustLikeness(10, this);
-                        relationship.AddEventModifier(10, "Opposing strength values", this);
+                        relationship.AddEventModifier(3, "Opposing strength values", this);
                     } else {
                         //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-                        relationship.AddEventModifier(-10, "Opposing strength values", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+                        relationship.AddEventModifier(-3, "Opposing strength values", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
                     }
 				}
 			}

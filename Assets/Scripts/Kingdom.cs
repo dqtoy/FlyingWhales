@@ -1012,10 +1012,7 @@ public class Kingdom{
         //		UIManager.Instance.UpdateKingsGrid();
         //		UIManager.Instance.UpdateKingdomSuccession ();
 
-        for (int i = 0; i < this.cities.Count; i++) {
-//            ((Governor)this.cities[i].governor.assignedRole).ResetEventModifiers();
-            ((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty();
-        }
+		this.UpdateAllGovernorsLoyalty ();
         Debug.Log("Assigned new king: " + newKing.name + " because " + previousKing.name + " died!");
     }
 
@@ -1540,28 +1537,6 @@ public class Kingdom{
 		}
 		return null;
 	}
-	internal void HasConflicted(GameEvent gameEvent){
-		for(int i = 0; i < this.cities.Count; i++){
-			if(this.cities[i].governor != null){
-				((Governor)this.cities[i].governor.assignedRole).AddEventModifier (-10, "Recent border conflict", gameEvent);
-			}
-		}
-//		if(!this.hasConflicted){
-//			this.hasConflicted = true;
-//
-//		}
-//		this.borderConflictLoyaltyExpiration = 90;
-
-	}
-//	internal void HasNotConflicted(){
-//		this.hasConflicted = false;
-//		this.borderConflictLoyaltyExpiration = 0;
-//		for(int i = 0; i < this.cities.Count; i++){
-//			if(this.cities[i].governor != null){
-//				((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty ();
-//			}
-//		}
-//	}
 	#region Resource Management
 	/*
 	 * Function to adjust the gold count of this kingdom.
@@ -2082,7 +2057,7 @@ public class Kingdom{
                             for (int i = 0; i < cities.Count; i++) {
                                 Governor currGovernor = (Governor)cities[i].governor.assignedRole;
                                 if (currGovernor.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-                                    currGovernor.AddEventModifier(-20, "Did not celebrate holiday", null);
+                                    currGovernor.AddEventModifier(-5, "Did not celebrate holiday", null);
                                 }
                             }
                             if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
@@ -2327,5 +2302,25 @@ public class Kingdom{
 //		}
 //		return false;
 //	}
+
+
+	#region Governors Loyalty/Opinion
+
+	internal void HasConflicted(GameEvent gameEvent){
+		for(int i = 0; i < this.cities.Count; i++){
+			if(this.cities[i].governor != null){
+				((Governor)this.cities[i].governor.assignedRole).AddEventModifier (-10, "Recent border conflict", gameEvent);
+			}
+		}
+	}
+
+	internal void UpdateAllGovernorsLoyalty(){
+		for(int i = 0; i < this.cities.Count; i++){
+			if(this.cities[i].governor != null){
+				((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty();
+			}
+		}
+	}
+	#endregion
 
 }

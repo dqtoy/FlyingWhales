@@ -115,7 +115,7 @@ public class KingsCouncil : GameEvent {
             for (int i = 0; i < _sourceKingdom.discoveredKingdoms.Count; i++) {
                 Kingdom currKingdom = _sourceKingdom.discoveredKingdoms[i];
                 RelationshipKings currRel = _sourceKingdom.king.GetRelationshipWithCitizen(currKingdom.king);
-                currRel.AddEventModifier(-10, "Declined Council Invitation", this);
+                currRel.AddEventModifier(-3, "Declined Council Invitation", this);
             }
             //Event is done
             DoneEvent();
@@ -155,12 +155,12 @@ public class KingsCouncil : GameEvent {
         for (int i = 0; i < _sourceKingdom.cities.Count; i++) {
             Governor currGov = (Governor)_sourceKingdom.cities[i].governor.assignedRole;
             if(currGov.citizen.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-                currGov.AddEventModifier(20, "King Council Approval", this);
+                currGov.AddEventModifier(5, "King Council Approval", this);
             }
         }
         //Adjust Kingdom Unrest
         if (_sourceKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-            _sourceKingdom.AdjustUnrest(-10);
+            _sourceKingdom.AdjustUnrest(-3);
         }
         Messenger.AddListener("OnDayEnd", PerformAction);
     }
@@ -173,7 +173,7 @@ public class KingsCouncil : GameEvent {
             }
             if (UnityEngine.Random.Range(0, 100) < baseChance) {
                 //approve
-                currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king).AddEventModifier(20, "Council Approval", this);
+                currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king).AddEventModifier(5, "Council Approval", this);
                 Log councilEndApproveLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "end_approve");
                 councilEndApproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
@@ -183,7 +183,7 @@ public class KingsCouncil : GameEvent {
                 }
             } else {
                 //disapprove
-                currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king).AddEventModifier(-20, "Council Disapproval", this);
+                currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king).AddEventModifier(-5, "Council Disapproval", this);
                 Log councilEndDisapproveLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "end_disapprove");
                 councilEndDisapproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 

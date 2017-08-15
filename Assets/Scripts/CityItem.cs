@@ -50,7 +50,7 @@ public class CityItem : MonoBehaviour {
             _loyaltyLbl.text = thisGovernor.loyalty.ToString();
 			thisGovernor._eventLoyaltySummary = string.Empty;
 			for (int i = 0; i < thisGovernor.eventModifiers.Count; i++) {
-				thisGovernor._eventLoyaltySummary += thisGovernor.eventModifiers [i].summary;
+				thisGovernor._eventLoyaltySummary += "\n" + thisGovernor.eventModifiers [i].summary;
 			}
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
                 UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, thisGovernor.loyaltySummary);

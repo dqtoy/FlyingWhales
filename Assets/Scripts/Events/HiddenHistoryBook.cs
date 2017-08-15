@@ -148,9 +148,9 @@ public class HiddenHistoryBook : GameEvent {
 		if(allCities != null && allCities.Count > 0){
 			for (int i = 0; i < allCities.Count; i++) {
 				if(allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(15, "Same tradition values", this);
+					((Governor)allCities[i].governor.assignedRole).AddEventModifier(4, "Same tradition values", this);
 				}else{
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-15, "Opposing tradition values", this);
+					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-4, "Opposing tradition values", this);
 				}
 			}
 		}
@@ -172,10 +172,10 @@ public class HiddenHistoryBook : GameEvent {
 				if(relationship != null){
 					if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
                         //relationship.AdjustLikeness(10, this);
-                        relationship.AddEventModifier(10, "Same tradition values", this);
+                        relationship.AddEventModifier(3, "Same tradition values", this);
                     } else{
                         //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-                        relationship.AddEventModifier(-10, "Opposing tradition values", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+                        relationship.AddEventModifier(-3, "Opposing tradition values", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
                     }
 				}
 			}

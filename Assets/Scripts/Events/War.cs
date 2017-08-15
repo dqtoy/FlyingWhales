@@ -128,8 +128,8 @@ public class War : GameEvent {
         RelationshipKings rel1 = kingdom1.king.GetRelationshipWithCitizen(kingdom2.king);
         RelationshipKings rel2 = kingdom2.king.GetRelationshipWithCitizen(kingdom1.king);
 
-        rel1.AddEventModifier(-30, "recent war with " + kingdom2.name, this);
-        rel2.AddEventModifier(-30, "recent war with " + kingdom1.name, this);
+        rel1.AddEventModifier(-15, "recent war with " + kingdom2.name, this);
+        rel2.AddEventModifier(-15, "recent war with " + kingdom1.name, this);
 
         KingdomManager.Instance.DeclarePeaceBetweenKingdoms(this._kingdom1, this._kingdom2);
 		this.DoneEvent();
@@ -260,8 +260,10 @@ public class War : GameEvent {
 		this.attackRate += 1;
 		if((this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead) || (this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead) || this.warPair.isDone){
 			if(this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead){
+				this.kingdom1Waves = 0;
 				this.ReplenishWavesKingdom2();
 			}else if(this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead){
+				this.kingdom2Waves = 0;
 				this.ReplenishWavesKingdom1();
 			}
 			UpdateWarPair ();
@@ -281,23 +283,23 @@ public class War : GameEvent {
 			}
 		}
 		this.attackRate = 0;
-		if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
-			if(this.kingdom1Waves > 0){
-				this.kingdom1Waves -= 1;
-				this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, this);
-				ReinforcementKingdom2();
-			}else if(this.kingdom2Waves > 0){
-				this.kingdom2Waves -= 1;
-				this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path, this);
-				ReinforcementKingdom1();
-			}else{
-				this.ReplenishWavesKingdom1();
-				this.ReplenishWavesKingdom2();
-				if(this.kingdom1Waves <= 0 && this.kingdom2Waves <= 0){
-                    //Peace 100% - kingdom1 will request peace while kingdom2 will accept peace 100%
-                    EventCreator.Instance.CreateRequestPeace(kingdom1, kingdom2, true);
-				}
+		if(this.kingdom1Waves > 0){
+			this.kingdom1Waves -= 1;
+			this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path, this);
+			ReinforcementKingdom2();
+		}else if(this.kingdom2Waves > 0){
+			this.kingdom2Waves -= 1;
+			this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path, this);
+			ReinforcementKingdom1();
+		}else{
+			this.ReplenishWavesKingdom1();
+			this.ReplenishWavesKingdom2();
+			if(this.kingdom1Waves <= 0 && this.kingdom2Waves <= 0){
+				//Peace 100% - kingdom1 will request peace while kingdom2 will accept peace 100%
+				EventCreator.Instance.CreateRequestPeace(kingdom1, kingdom2, true);
 			}
+		}
+//		if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {
 //				if(!this.kingdom1Attacked){
 //					this.kingdom1Attacked = true;
 //					this.warPair.kingdom1City.AttackCity (this.warPair.kingdom2City, this.warPair.path);
@@ -306,7 +308,7 @@ public class War : GameEvent {
 //					this.warPair.kingdom2City.AttackCity (this.warPair.kingdom1City, this.warPair.path);
 //				}
 //			Reinforcement ();
-		}
+//		}
 	}
 	private void ReinforcementKingdom1(){
 		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList (); 

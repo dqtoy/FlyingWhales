@@ -271,6 +271,10 @@ public class KingdomManager : MonoBehaviour {
 
 		kingdom1.ActivateBoonOfPowers ();
 		kingdom2.ActivateBoonOfPowers ();
+
+		kingdom1.UpdateAllGovernorsLoyalty ();
+		kingdom2.UpdateAllGovernorsLoyalty ();
+
 //		war.UpdateWarPair ();
         //		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
         //		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
@@ -294,6 +298,9 @@ public class KingdomManager : MonoBehaviour {
 
 		kingdom1.AdjustExhaustionToAllRelationship (-15);
 		kingdom2.AdjustExhaustionToAllRelationship (-15);
+
+		kingdom1.UpdateAllGovernorsLoyalty ();
+		kingdom2.UpdateAllGovernorsLoyalty ();
 
 //		kingdom1.RemoveInternationalWar(kingdom2);
 //		kingdom2.RemoveInternationalWar(kingdom1);
