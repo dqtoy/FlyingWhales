@@ -161,7 +161,6 @@ public class City{
 		if(hasRoyalFamily){
 			this.hasKing = true;
 			this.CreateInitialRoyalFamily ();
-			this.kingdom.UpdateAllRelationshipKings ();
 		}
 		this.CreateInitialGovernorFamily ();
 		this.UpdateDailyProduction();
@@ -631,21 +630,24 @@ public class City{
     internal void AddTilesToCity(List<HexTile> hexTilesToAdd) {
         for (int i = 0; i < hexTilesToAdd.Count; i++) {
             HexTile currTile = hexTilesToAdd[i];
-            float percentageHP = (float)this._hp / (float)this.maxHP;
-            currTile.movementDays = 2;
+            PurchaseTile(currTile);
 
-            ownedTiles.Add(currTile);
-            currTile.Occupy(this);
-            kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
-            currTile.CreateStructureOnTile(Utilities.GetStructureTypeForResource(kingdom.race, currTile.specialResource));
-            if (currTile.specialResource != RESOURCE.NONE) {
-                this._kingdom.AddResourceToKingdom(currTile.specialResource);
-            }
-            this.UpdateHP(percentageHP);
+            //HexTile currTile = hexTilesToAdd[i];
+            //float percentageHP = (float)this._hp / (float)this.maxHP;
+            //currTile.movementDays = 2;
+
+            //ownedTiles.Add(currTile);
+            //currTile.Occupy(this);
+            //kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+            //currTile.CreateStructureOnTile(Utilities.GetStructureTypeForResource(kingdom.race, currTile.specialResource));
+            //if (currTile.specialResource != RESOURCE.NONE) {
+            //    this._kingdom.AddResourceToKingdom(currTile.specialResource);
+            //}
+            //this.UpdateHP(percentageHP);
         }
-        this.UpdateBorderTiles();
-        this.UpdateDailyProduction();
-        this.kingdom.CheckForDiscoveredKingdoms(this);
+        //this.UpdateBorderTiles();
+        //this.UpdateDailyProduction();
+        //this.kingdom.CheckForDiscoveredKingdoms(this);
         
     }
 
@@ -1041,7 +1043,12 @@ public class City{
         }
 
         List<City> remainingCitiesOfConqueredKingdom = new List<City>(_kingdom.cities);
-        remainingCitiesOfConqueredKingdom.Remove(this);
+        for (int i = 0; i < remainingCitiesOfConqueredKingdom.Count; i++) {
+            if(remainingCitiesOfConqueredKingdom[i].id == this.id) {
+                remainingCitiesOfConqueredKingdom.RemoveAt(i);
+                break;
+            }
+        }
 
         //Transfer Tiles
         List<HexTile> structureTilesToTransfer = new List<HexTile>(structures);
@@ -1094,17 +1101,24 @@ public class City{
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
         RemoveListeners();
         this.isDead = true;
+        //Assign new king to conquered kingdom if, conquered city was the home of the current king
+        if (this.hasKing) {
+            this.hasKing = false;
+            if (this._kingdom.cities.Count > 0) {
+                this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
+            }
+        }
+
 
         City newCity = conqueror.CreateNewCityOnTileForKingdom(this.hexTile);
         newCity.name = this.name;
-        newCity.CreateInitialFamilies(false);
         newCity.AddTilesToCity(structureTilesToTransfer);
-
-        //Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
-        //newCity.AddTilesToCity(structureTilesToTransfer);
+        newCity.CreateInitialFamilies(false);
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
-        //newCity.WarDefeatedHP();
+        newCity.WarDefeatedHP();
+
+        Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
 
         //bool highlightState = true;
         //if(UIManager.Instance.currentlyShowingKingdom.id != conqueror.id) {

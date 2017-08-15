@@ -241,10 +241,11 @@ public class CityGenerator : MonoBehaviour {
             hexTile.gameObject.AddComponent<PandaBehaviour>();
             hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
             hexTile.gameObject.GetComponent<PandaBehaviour>().Compile(cityBehaviourTree.text);
-            Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
         }
 
         ctmOfCity.Initialize(hexTile.city);
+        Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+        
 
   //      hexTile.gameObject.AddComponent<CityTaskManager>();
   //      hexTile.gameObject.AddComponent<PandaBehaviour>();

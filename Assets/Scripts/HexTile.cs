@@ -846,7 +846,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void Unoccupy(bool immediatelyDestroyStructures = false) {
-        _seenByKingdoms.Remove(ownedByCity.kingdom);
+        if (!_isBorderOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)
+            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)) {
+            _seenByKingdoms.Remove(ownedByCity.kingdom);
+        }
         isOccupied = false;
         ownedByCity = null;
         SetMinimapTileColor(biomeColor);
@@ -896,11 +899,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.isBorderOfCityID = 0;
         //this.ownedByCity = null;
         _isBorderOfCities.Remove(city);
-        _seenByKingdoms.Remove(city.kingdom);
         if (_isBorderOfCities.Count <= 0) {
             this.isBorder = false;
             this._kingdomColorSprite.color = Color.white;
             this.kingdomColorSprite.gameObject.SetActive(false);
+        }
+
+        if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom)
+            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)) {
+            _seenByKingdoms.Remove(city.kingdom);
         }
         //this.isVisibleByCities.Remove(city);
     }
@@ -916,7 +923,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     public void RemoveAsOuterTileOf(City city) {
         _isOuterTileOfCities.Remove(city);
-        _seenByKingdoms.Remove(city.kingdom);
+        if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom) 
+            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)) {
+            _seenByKingdoms.Remove(city.kingdom);
+        }
     }
 
     #region Monobehaviour Functions
