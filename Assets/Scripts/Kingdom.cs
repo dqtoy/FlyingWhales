@@ -2335,4 +2335,16 @@ public class Kingdom{
 			}
 		}
 	}
+
+	internal void CheckSharedBorders(){
+		bool isSharingBorderNow = false;
+		for (int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++) {
+			isSharingBorderNow = KingdomManager.Instance.IsSharingBorders (this, this.relationshipsWithOtherKingdoms [i].targetKingdom);
+			if (isSharingBorderNow != this.relationshipsWithOtherKingdoms[i].isSharingBorder) {
+				this.relationshipsWithOtherKingdoms [i].SetBorderSharing (isSharingBorderNow);
+				RelationshipKingdom rel2 = this.relationshipsWithOtherKingdoms [i].targetKingdom.GetRelationshipWithOtherKingdom (this);
+				rel2.SetBorderSharing (isSharingBorderNow);
+			}
+		}
+	}
 }

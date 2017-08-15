@@ -9,6 +9,7 @@ public class RelationshipKingdom {
 	private Kingdom _targetKingdom;
 	private bool _isAdjacent;
     private bool _isAtWar;
+	private bool _isSharingBorder;
     private KingdomWar _kingdomWar;
 	private MONTH _monthToMoveOnAfterRejection;
 	private War _war;
@@ -30,6 +31,10 @@ public class RelationshipKingdom {
 
 	public bool isAtWar {
 		get { return _isAtWar;}
+	}
+
+	public bool isSharingBorder {
+		get { return _isSharingBorder;}
 	}
 
 	public KingdomWar kingdomWar {
@@ -54,6 +59,7 @@ public class RelationshipKingdom {
 		this._targetKingdom = _targetKingdom;
 		this._isAtWar = false;
 		this._isAdjacent = false;
+		this._isSharingBorder = false;
 		this._kingdomWar = new KingdomWar (_targetKingdom);
 		this._monthToMoveOnAfterRejection = MONTH.NONE;
 		this._invasionPlan = null;
@@ -87,6 +93,14 @@ public class RelationshipKingdom {
 
 	internal void SetWarStatus(bool warStatus){
 		this._isAtWar = warStatus;
+	}
+
+	internal void SetBorderSharing(bool isSharingBorder){
+		this._isSharingBorder = isSharingBorder;
+		RelationshipKings rel = this._sourceKingdom.king.GetRelationshipWithCitizen (this._targetKingdom.king);
+		if(rel != null){
+			rel.UpdateLikeness (null);
+		}
 	}
 
 	internal void CreateInvasionPlan(GameEvent gameEventTrigger){

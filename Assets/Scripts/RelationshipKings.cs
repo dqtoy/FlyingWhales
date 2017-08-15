@@ -29,7 +29,7 @@ public class RelationshipKings {
 
     #region getters/setters
     public int totalLike {
-        get { return this._like + this._eventLikenessModifier + this.likeFromMutualRelationships; }
+		get { return this._like + this._eventModifiers.Sum(x => x.modifier) + this.likeFromMutualRelationships; }
     }
 	public string relationshipSummary {
 		get { return this._relationshipSummary + this._relationshipEventsSummary; }
@@ -200,7 +200,7 @@ public class RelationshipKings {
 		if(sourceKingdom.race != targetKingdom.race && !sourceKingValues.Contains(CHARACTER_VALUE.EQUALITY)){
 			adjustment = -15;
 			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + "   diff race and does not value equality.\n";
+			this._relationshipSummary += adjustment.ToString() + "   different race.\n";
 		}
 
 		//Sharing Border
