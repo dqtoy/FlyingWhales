@@ -29,6 +29,7 @@ public class DiplomaticCrisis : GameEvent {
 		this.activeEnvoyResolve = null;
 		this.activeEnvoyProvoke = null;
 		this._warTrigger = WAR_TRIGGER.DIPLOMATIC_CRISIS;
+		this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.DIPLOMATIC_CRISIS;
 
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		Debug.LogError (this.description);
@@ -162,7 +163,7 @@ public class DiplomaticCrisis : GameEvent {
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Diplomatic Crisis caused deterioration in relationship.";
 
 			if(relationship1 != null){
-				relationship1.AddEventModifier (-7, this.name + " event", this);
+				relationship1.AddEventModifier (-7, this.name + " event", this, this._assassinationTrigger);
 				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData, this._warTrigger);
 			}
 		}

@@ -618,6 +618,8 @@ public class City{
 			}
 		}
 		this.UpdateHP (percentageHP);
+
+
 	}
 
     internal void AddTilesToCity(List<HexTile> hexTilesToAdd) {

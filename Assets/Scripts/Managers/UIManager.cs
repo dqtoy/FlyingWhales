@@ -2983,6 +2983,8 @@ public class UIManager : MonoBehaviour {
             return assassinationIcon;
 		case EVENT_TYPES.GREAT_STORM:
 			return assassinationIcon;
+		case EVENT_TYPES.ANCIENT_RUIN:
+			return marriageInvitationIcon;
         }
 		return assassinationIcon;
 	}

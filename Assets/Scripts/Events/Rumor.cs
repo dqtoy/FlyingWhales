@@ -39,7 +39,7 @@ public class Rumor : GameEvent {
 		newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
 		this.EventIsCreated(this.sourceKingdom, true);
 		this.EventIsCreated(this.rumorKingdom, false);
-		this.EventIsCreated(this.rumorKingdom, false);
+		this.EventIsCreated(this.targetKingdom, false);
 	}
 
 	#region Overrides

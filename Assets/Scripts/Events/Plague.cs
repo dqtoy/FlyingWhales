@@ -65,6 +65,7 @@ public class Plague : GameEvent {
 		this.eventType = EVENT_TYPES.PLAGUE;
 		this.name = "Plague";
 		this._warTrigger = WAR_TRIGGER.OPPOSING_APPROACH;
+		this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH;
         this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.sourceCity = sourceCity;
         this._plagueName = GeneratePlagueName();
@@ -111,7 +112,7 @@ public class Plague : GameEvent {
 		newLog.AddToFillers (null, this._plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
 
 		this.InitializePlague();
-		base.EventIsCreated(this.startedByKingdom, true);
+		EventIsCreated(this.startedByKingdom, true);
 	}
 
     private string GeneratePlagueName() {

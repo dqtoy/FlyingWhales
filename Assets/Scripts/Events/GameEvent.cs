@@ -40,6 +40,7 @@ public class GameEvent {
 
 	protected Citizen _startedBy;
 	protected WAR_TRIGGER _warTrigger;
+	protected ASSASSINATION_TRIGGER_REASONS _assassinationTrigger;
 
 	private List<Kingdom> _eventKingdoms;
 
@@ -52,6 +53,12 @@ public class GameEvent {
 	public WAR_TRIGGER warTrigger {
 		get {
 			return this._warTrigger;
+		}
+	}
+
+	public ASSASSINATION_TRIGGER_REASONS assassinationTrigger {
+		get {
+			return this._assassinationTrigger;
 		}
 	}
 
@@ -81,6 +88,7 @@ public class GameEvent {
 		this.isActive = true;
 		this.isOneTime = false;
 		this._warTrigger = WAR_TRIGGER.NONE;
+		this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.NONE;
 		this.relationshipHasDeteriorated = false;
 		this.relationshipHasImproved = false;
 		this.goEventItem = null;

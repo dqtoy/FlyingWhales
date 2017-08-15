@@ -44,7 +44,7 @@ public class Assassination : GameEvent {
 		this.hasAssassinated = false;
 		this.hasSpyDied = false;
 		this.kingdomToBlame = null;
-		this._warTrigger = GetWarTrigger ();
+		SetWarAndAssassinationTrigger ();
 		this.relationshipToAdjust = null;
 
 		EventManager.Instance.AddEventToDictionary(this);
@@ -383,15 +383,22 @@ public class Assassination : GameEvent {
 		return value;
 	}
 
-	private WAR_TRIGGER GetWarTrigger(){
+	private void SetWarAndAssassinationTrigger(){
 		if(this._targetCitizen.isKing){
-			return WAR_TRIGGER.ASSASSINATION_KING;
+			this._warTrigger = WAR_TRIGGER.ASSASSINATION_KING;
+			this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.ASSASSINATION_KING;
 		}else if(this._targetCitizen.isGovernor){
-			return WAR_TRIGGER.ASSASSINATION_GOVERNOR;
+			this._warTrigger = WAR_TRIGGER.ASSASSINATION_GOVERNOR;
+			this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.ASSASSINATION_GOVERNOR;
+
 		}else if(this._targetCitizen.isDirectDescendant){
-			return WAR_TRIGGER.ASSASSINATION_ROYALTY;
+			this._warTrigger = WAR_TRIGGER.ASSASSINATION_ROYALTY;
+			this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.ASSASSINATION_ROYALTY;
+
 		}else{
-			return WAR_TRIGGER.ASSASSINATION_CIVILIAN;
+			this._warTrigger = WAR_TRIGGER.ASSASSINATION_CIVILIAN;
+			this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.ASSASSINATION_CIVILIAN;
+
 		}
 	}
 
@@ -432,7 +439,7 @@ public class Assassination : GameEvent {
 				}
 			}
 			if(this.relationshipToAdjust != null){
-				this.relationshipToAdjust.AddEventModifier (-4, this.name + " event", this);
+				this.relationshipToAdjust.AddEventModifier (-4, this.name + " event", this, this._assassinationTrigger);
 				this.relationshipToAdjust.sourceKing.WarTrigger (this.relationshipToAdjust, this, this.relationshipToAdjust.sourceKing.city.kingdom.kingdomTypeData, this._warTrigger);
 			}
 		}

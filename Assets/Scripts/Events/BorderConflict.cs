@@ -32,6 +32,7 @@ public class BorderConflict : GameEvent {
 		this.activeEnvoyResolve = null;
 		this.activeEnvoyProvoke = null;
 		this._warTrigger = WAR_TRIGGER.BORDER_CONFLICT;
+		this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.BORDER_CONFLICT;
 
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		Debug.Log (this.description);
@@ -203,11 +204,11 @@ public class BorderConflict : GameEvent {
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Conflict caused deterioration in relationship.";
 
 			if(relationship1 != null){
-				relationship1.AddEventModifier (-4, this.name + " event", this);
+				relationship1.AddEventModifier (-4, this.name + " event", this, this._assassinationTrigger);
 				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData, this._warTrigger);
 			}
 			if (relationship2 != null) {
-				relationship2.AddEventModifier (-4, this.name + " event", this);
+				relationship2.AddEventModifier (-4, this.name + " event", this, this._assassinationTrigger);
 				relationship2.sourceKing.WarTrigger (relationship2, this, this.kingdom2.kingdomTypeData, this._warTrigger);
 			}
 

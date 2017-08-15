@@ -98,8 +98,11 @@ public class Raid : GameEvent {
 		
 		if(this.hasBeenDiscovered){
 			this._warTrigger = WAR_TRIGGER.DISCOVERED_RAID_NO_DEATH;
+			this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.DISCOVERED_RAID_NO_DEATH;
 			if(this.hasDeath){
 				this._warTrigger = WAR_TRIGGER.DISCOVERED_RAID_WITH_DEATH;
+				this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.DISCOVERED_RAID_WITH_DEATH;
+
 			}
 			RelationshipKings relationship = this.GetRelationship ();
 			if (relationship != null) {

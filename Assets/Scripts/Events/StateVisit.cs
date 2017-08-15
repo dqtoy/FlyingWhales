@@ -35,6 +35,8 @@ public class StateVisit : GameEvent {
 		this.visitorHasDied = false;
 		this.isSuccessful = false;
 		this.visitorHasArrived = false;
+		this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.STATE_VISIT;
+
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
@@ -97,7 +99,7 @@ public class StateVisit : GameEvent {
 		}else{
 			if(this.isDoneBySabotage){
 				if (relationship != null) {
-					relationship.AddEventModifier (-3, this.name + " event", this);
+					relationship.AddEventModifier (-3, this.name + " event", this, this._assassinationTrigger);
 				}
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_success");
 				newLog.AddToFillers (this.saboteurEnvoy.citizen, this.saboteurEnvoy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
