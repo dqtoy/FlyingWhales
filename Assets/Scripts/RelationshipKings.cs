@@ -203,6 +203,13 @@ public class RelationshipKings {
 			this._relationshipSummary += adjustment.ToString() + "   diff race and does not value equality.\n";
 		}
 
+		//Sharing Border
+		if(relationshipKingdom.isSharingBorder){
+			adjustment = -15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += adjustment.ToString() + "   shared borders.\n";
+		}
+
 		//Values
 		if (valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() == 1) {
 			adjustment = 0;
@@ -319,9 +326,12 @@ public class RelationshipKings {
             sourceKing.DeteriorateRelationship(this, gameEventTrigger, isDiscovery, assassinationReasons);
 			this.CheckForEmbargo(previousStatus, gameEventTrigger);
 
-            if(gameEventTrigger.eventType != EVENT_TYPES.KINGDOM_WAR) {
-                this.sourceKing.WarTrigger(this, gameEventTrigger, this.sourceKing.city.kingdom.kingdomTypeData, gameEventTrigger.warTrigger);
-            }
+			if(gameEventTrigger != null){
+				if(gameEventTrigger.eventType != EVENT_TYPES.KINGDOM_WAR) {
+					this.sourceKing.WarTrigger(this, gameEventTrigger, this.sourceKing.city.kingdom.kingdomTypeData, gameEventTrigger.warTrigger);
+				}
+			}
+            
 		}else{
 			sourceKing.ImproveRelationship(this);
 			this.CheckForDisembargo(previousStatus);
