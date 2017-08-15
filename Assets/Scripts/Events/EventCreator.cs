@@ -478,9 +478,10 @@ public class EventCreator: MonoBehaviour {
 			lairTiles = sourceKingdom.fogOfWarDict [FOG_OF_WAR_STATE.SEEN].Where(x => x.lair != null).ToList();
 		}
 
-			
+
 		if(lairTiles != null && lairTiles.Count > 0){
-			chosenLairTile = lairTiles [UnityEngine.Random.Range (0, lairTiles.Count)];
+			lairTiles = lairTiles.OrderBy (x => PathGenerator.Instance.GetDistanceBetweenTwoTiles (sourceKingdom.capitalCity.hexTile, x)).ToList();
+			chosenLairTile = lairTiles [0];
 			lair = chosenLairTile.lair;
 		}
 		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.RANGER, EVENT_TYPES.HUNT_LAIR, chosenLairTile, EventManager.Instance.eventDuration[EVENT_TYPES.HUNT_LAIR]);
