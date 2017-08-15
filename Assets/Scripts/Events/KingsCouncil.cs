@@ -23,7 +23,6 @@ public class KingsCouncil : GameEvent {
         _councilReason = GenerateCouncilReason();       
 
         EventManager.Instance.AddEventToDictionary(this);
-		EventIsCreated(this._sourceKingdom, true);
 
         Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "event_title");
         newLogTitle.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -34,7 +33,10 @@ public class KingsCouncil : GameEvent {
         newLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         newLog.AddToFillers(null, councilReason, LOG_IDENTIFIER.OTHER);
 
-        InviteKingdoms();
+		InviteKingdoms();
+
+		EventIsCreated(this._sourceKingdom, true);
+
     }
 
     #region Overrides
