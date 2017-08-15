@@ -161,7 +161,6 @@ public class City{
 		if(hasRoyalFamily){
 			this.hasKing = true;
 			this.CreateInitialRoyalFamily ();
-			this.kingdom.UpdateAllRelationshipKings ();
 		}
 		this.CreateInitialGovernorFamily ();
 		this.UpdateDailyProduction();
@@ -1042,7 +1041,12 @@ public class City{
         }
 
         List<City> remainingCitiesOfConqueredKingdom = new List<City>(_kingdom.cities);
-        remainingCitiesOfConqueredKingdom.Remove(this);
+        for (int i = 0; i < remainingCitiesOfConqueredKingdom.Count; i++) {
+            if(remainingCitiesOfConqueredKingdom[i].id == this.id) {
+                remainingCitiesOfConqueredKingdom.RemoveAt(i);
+                break;
+            }
+        }
 
         //Transfer Tiles
         List<HexTile> structureTilesToTransfer = new List<HexTile>(structures);
