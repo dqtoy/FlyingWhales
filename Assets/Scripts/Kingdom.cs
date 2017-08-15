@@ -874,9 +874,9 @@ public class Kingdom{
             this.UpdateAvailableResources();
             this.UpdateAllCitiesDailyGrowth();
             this.UpdateExpansionRate();
-			if (this._cities[0] != null && this.capitalCity.id == city.id) {
+			//if (this._cities[0] != null) {
                 SetCapitalCity(this._cities[0]);
-            }
+            //}
         }
         
     }
