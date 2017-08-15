@@ -98,7 +98,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 
     private GameEvent _gameEventInTile;
-    private Transform _cityInfoParent;
+    private Transform _namePlateParent;
     private CityItem _cityInfo;
 	private LairItem _lairItem;
 	private HextileEventItem _hextileEventItem;
@@ -516,151 +516,96 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         return structureGO;
     }
 
+    public void ShowNamePlate() {
+        _namePlateParent.gameObject.SetActive(true);
+        if(_cityInfo != null) {
+            UpdateCityNamePlate();
+        }
+        if(_lairItem != null) {
+            UpdateLairNamePlate();
+        }
+    }
+    public void HideNamePlate() {
+        _namePlateParent.gameObject.SetActive(false);
+    }
+
+    /*
+     * This will instantiate a new CityItem Prefab and set it's city 
+     * according to the passed parameter.
+     * */
     public void CreateCityNamePlate(City city) {
         Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
-        Transform namePlatePanel = UIParent.GetComponentsInChildren<Transform>().Where(x => x.name.Equals("CityNamePlatePanel")).FirstOrDefault();
-        if (namePlatePanel != null) {
-            //Destroy(namePlatePanel);
-            this._cityInfoParent = namePlatePanel.transform;
-        } else {
-            GameObject parentPanel = new GameObject("CityNamePlatePanel", typeof(UIPanel));
-            parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
-            parentPanel.transform.SetParent(UIParent);
-            parentPanel.transform.localPosition = Vector3.zero;
-            parentPanel.transform.localScale = Vector3.one;
-            this._cityInfoParent = parentPanel.transform;
-        }
 
-        CityItem cityItem = _cityInfoParent.GetComponentInChildren<CityItem>();
-        if(cityItem != null) {
-            this._cityInfo = cityItem;
-            Messenger.AddListener("UpdateUI", UpdateNamePlate);
-        } else {
-            GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, _cityInfoParent.transform);
-            this._cityInfo = namePlateGO.GetComponent<CityItem>();
-            namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
-            namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-            Messenger.AddListener("UpdateUI", UpdateNamePlate);
-        }
-        UpdateNamePlate();
+        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("CityNamePlatePanel", UIParent);
+        namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
+        _namePlateParent = namePlateGO.transform;
+        _cityInfo = namePlateGO.GetComponentInChildren<CityItem>();
+        namePlateGO.transform.localPosition = new Vector3(-2.22f, -1.02f, 0f);
+        Messenger.AddListener("UpdateUI", UpdateCityNamePlate);
+
+        UpdateCityNamePlate();
     }
-
-    public void ShowNamePlate() {
-        ////this.cityNameGO.SetActive(true);
-        ////this.cityNameLbl.GetComponent<Renderer>().sortingLayerName = "CityNames";
-        ////this.cityNameLbl.text = this.city.name + "\n" + this.city.kingdom.name;
-        //if(_cityInfo == null) {
-        //    GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
-        //    parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
-        //    //foreach (Transform child in parentPanel.transform) {
-        //    //    //child is your child transform
-        //    //    child.gameObject.layer = LayerMask.NameToLayer("HextileNamePlates");
-        //    //}
-        //    parentPanel.transform.SetParent(UIParent);
-        //    parentPanel.transform.localPosition = Vector3.zero;
-        //    parentPanel.transform.localScale = Vector3.one;
-        //    this._cityInfoParent = parentPanel.transform;
-
-        //    GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
-        //    this._cityInfo = namePlateGO.GetComponent<CityItem>();
-        //    namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
-        //    namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-        //    Messenger.AddListener("UpdateUI", UpdateNamePlate);
-        //}
-        if(this.cityInfo != null) {
-            UpdateNamePlate();
-            this.cityInfo.gameObject.SetActive(true);
-        }
-    }
-
-    public void UpdateNamePlate() {
-        if (_cityInfo == null) {
-            return;
-        }
+    public void UpdateCityNamePlate() {
+        //_cityInfo.SetCity(city);
         if (KingdomManager.Instance.useFogOfWar) {
             if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-                this._cityInfo.SetCity(this.city);
-            } else if (_currFogOfWarState == FOG_OF_WAR_STATE.SEEN) {
-                this._cityInfo.SetCity(this.city, false, true);
+                _cityInfo.SetCity(city);
+            } else {
+                _cityInfo.SetCity(city, false, true);
             }
         } else {
-            this._cityInfo.SetCity(this.city);
+            _cityInfo.SetCity(city);
         }
-        
+    }
+    public void RemoveCityNamePlate() {
+        ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
+        _namePlateParent = null;
+        _cityInfo = null;
+        Messenger.RemoveListener("UpdateUI", UpdateCityNamePlate);
     }
 
-    public void HideNamePlate() {
-        this._cityInfo.gameObject.SetActive(false);
-    }
+	public void CreateLairNamePlate() {
+        Debug.Log("Create lair nameplate on " + this.name);
 
-	public void ShowLairNamePlate() {
-		if(this._lairItem == null) {
-			GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
-			parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
-            //foreach (Transform child in parentPanel.transform) {
-            //    //child is your child transform
-            //    child.gameObject.layer = LayerMask.NameToLayer("HextileNamePlates");
-            //}
-            parentPanel.transform.SetParent(UIParent);
-			parentPanel.transform.localPosition = Vector3.zero;
-			parentPanel.transform.localScale = Vector3.one;
-			this._cityInfoParent = parentPanel.transform;
+        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("LairNamePlatePanel", UIParent);
+        namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
+        _namePlateParent = namePlateGO.transform;
+        _lairItem = namePlateGO.GetComponentInChildren<LairItem>();
+        namePlateGO.transform.localPosition = new Vector3(-2.22f, -1.02f, 0f);
+        Messenger.AddListener("UpdateUI", UpdateLairNamePlate);
 
-			GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.lairItemPrefab, parentPanel.transform);
-			this._lairItem = namePlateGO.GetComponent<LairItem>();
-			namePlateGO.transform.localPosition = new Vector3(-2.3f, -0.6f, 0f);
-			namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-			Messenger.AddListener("UpdateUI", UpdateLairNamePlate);
-		}
-		UpdateLairNamePlate();
-		this._lairItem.gameObject.SetActive(true);
+        UpdateLairNamePlate();
 	}
-
 	public void UpdateLairNamePlate() {
 		this._lairItem.SetLair(this.lair);
 	}
+    public void RemoveLairNamePlate() {
+        ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
+        _namePlateParent = null;
+        _lairItem = null;
+        Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
+    }
 
-	public void HideLairNamePlate() {
-		if(this._lairItem != null){
-			this._lairItem.gameObject.SetActive(false);
-		}
+	public void CreateEventNamePlate() {
+        Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
+
+        GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("EventNamePlatePanel", UIParent);
+        namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
+        _namePlateParent = namePlateGO.transform;
+        _hextileEventItem = namePlateGO.GetComponentInChildren<HextileEventItem>();
+        namePlateGO.transform.localPosition = new Vector3(-2.22f, -1.02f, 0f);
+        Messenger.AddListener("UpdateUI", UpdateHextileEventNamePlate);
+
+        UpdateHextileEventNamePlate();
 	}
-
-	public void ShowHextileEventNamePlate() {
-		if(this._hextileEventItem == null) {
-			GameObject parentPanel = new GameObject("NamePlatePanel", typeof(UIPanel));
-			parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
-			//foreach (Transform child in parentPanel.transform) {
-			//    //child is your child transform
-			//    child.gameObject.layer = LayerMask.NameToLayer("HextileNamePlates");
-			//}
-			parentPanel.transform.SetParent(UIParent);
-			parentPanel.transform.localPosition = Vector3.zero;
-			parentPanel.transform.localScale = Vector3.one;
-			this._cityInfoParent = parentPanel.transform;
-
-			GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.hextileEventItemPrefab, parentPanel.transform);
-			this._hextileEventItem = namePlateGO.GetComponent<HextileEventItem>();
-			namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.5f, 0f);
-			namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
-//			Messenger.AddListener("UpdateUI", UpdateHextileEventNamePlate);
-		}
-		UpdateHextileEventNamePlate();
-		this._hextileEventItem.gameObject.SetActive(true);
-	}
-
 	public void UpdateHextileEventNamePlate() {
-		this._hextileEventItem.SetHextileEvent(this._gameEventInTile);
+		_hextileEventItem.SetHextileEvent(_gameEventInTile);
 	}
-
-	public void HideHextileEventNamePlate() {
-		this._hextileEventItem.gameObject.SetActive(false);
-	}
-
     public void RemoveHextileEventNamePlate() {
-        if(this._hextileEventItem != null) {
-            Destroy(this._hextileEventItem.gameObject);
-        }
+        ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
+        _namePlateParent = null;
+        _hextileEventItem = null;
+        Messenger.RemoveListener("UpdateUI", UpdateHextileEventNamePlate);
     }
 
    // public void ShowOccupiedSprite() {
@@ -709,19 +654,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
+        //if(fowState == _currFogOfWarState) {
+        //    return;
+        //}
         _currFogOfWarState = fowState;
         if (KingdomManager.Instance.useFogOfWar) {
             Color newColor = FOWSprite.color;
             switch (fowState) {
                 case FOG_OF_WAR_STATE.VISIBLE:
                     newColor.a = 0f / 255f;
-                    if (isHabitable && isOccupied) {
+                    if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
                         ShowNamePlate();
-					}else if (isLair) {
-						ShowLairNamePlate();
-					}
-					if(gameEventInTile != null){
-						ShowHextileEventNamePlate ();
 					}
                     if (isOccupied) {
                         ShowStructures();
@@ -731,13 +674,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     break;
                 case FOG_OF_WAR_STATE.SEEN:
                     newColor.a = 128f / 255f;
-                    if (isHabitable && isOccupied) {
+                    if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
                         ShowNamePlate();
-					}else if (isLair) {
-						ShowLairNamePlate();
-					}
-					if(gameEventInTile != null){
-						ShowHextileEventNamePlate ();
 					}
                     if (isOccupied) {
                         ShowStructures();
@@ -747,13 +685,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     break;
                 case FOG_OF_WAR_STATE.HIDDEN:
                     newColor.a = 255f / 255f;
-                    if (isHabitable && isOccupied) {
+                    if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
                         HideNamePlate();
-					}else if (isLair) {
-						HideLairNamePlate();
-					}
-					if(gameEventInTile != null){
-						HideHextileEventNamePlate ();
 					}
                     if (isOccupied) {
                         HideStructures();
@@ -804,13 +737,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         SetMinimapTileColor(biomeColor);
         this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
-		this._cityInfo = null;
 		this._lairItem = null;
 		this._hextileEventItem = null;
-        Messenger.RemoveListener("UpdateUI", UpdateNamePlate);
 		Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
 
         RuinStructureOnTile();
+        RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             Destroy(children[i].gameObject);
@@ -859,13 +791,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         city = null;
 
         //Destroy Nameplates
-        Messenger.RemoveListener("UpdateUI", UpdateNamePlate);
+        RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             Destroy(children[i].gameObject);
         }
-        this._cityInfoParent = null;
-        this._cityInfo = null;
     }
 
     public void RuinStructureOnTile(bool immediatelyDestroyStructures = false) {
@@ -1176,7 +1106,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private void SetActivePlagueIcon(bool state){
 		if(state){
 			if(this.plagueIcon == null){
-				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO, this.UIParent);
+				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO.name, this.UIParent);
 				this.plagueIcon.transform.localPosition = Vector3.zero;
 			}
 		}else{
@@ -1213,13 +1143,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 gameEvent.gameEventAvatar.Init(gameEvent, this);
                 gameEvent.gameEventAvatar.transform.localPosition = Vector3.zero;
             } 
-            //else if (gameEvent is DevelopWeapons) {
-            //    DevelopWeapons currEvent = (DevelopWeapons)gameEvent;
-            //    currEvent.avatar = GameObject.Instantiate(Resources.Load("GameObjects/SacredWeapon"), gameEventObjectsParentGO.transform) as GameObject;
-            //    currEvent.avatar.transform.localPosition = Vector3.zero;
-            //    currEvent.avatar.GetComponent<DevelopWeaponsAvatar>().Init(currEvent, this);
-            //} 
-			ShowHextileEventNamePlate();
+			CreateEventNamePlate();
         }
 	}
 	internal void RemoveEventOnTile(){
@@ -1245,7 +1169,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private void SetActiveKeystoneIcon(bool state){
 		if(state){
 			if(this.plagueIcon == null){
-				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO, this.UIParent);
+				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO.name, this.UIParent);
 				this.plagueIcon.transform.localPosition = Vector3.zero;
 			}
 		}else{
@@ -1264,7 +1188,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private void SetActiveFirstIcon(bool state){
 		if(state){
 			if(this.plagueIcon == null){
-				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO, this.UIParent);
+				this.plagueIcon = UIManager.Instance.InstantiateUIObject (this.plagueIconGO.name, this.UIParent);
 				this.plagueIcon.transform.localPosition = Vector3.zero;
 			}
 		}else{

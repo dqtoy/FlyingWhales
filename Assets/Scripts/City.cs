@@ -165,12 +165,7 @@ public class City{
 		this.CreateInitialGovernorFamily ();
 		this.UpdateDailyProduction();
 
-
-		//for (int i = 0; i < this.citizens.Count; i++) {
-		//	this.citizens[i].UpdatePrestige();
-		//}
-
-        this.hexTile.CreateCityNamePlate(this);
+        //this.hexTile.CreateCityNamePlate(this);
 	}
 		
 	internal Citizen CreateNewKing(){
@@ -723,7 +718,7 @@ public class City{
 		if(this._hp < 0){
 			this._hp = 0;
 		}
-        hexTile.UpdateNamePlate();
+        hexTile.UpdateCityNamePlate();
 	}
 
 	private void UpdateHP(float percentageHP){
@@ -1407,7 +1402,7 @@ public class City{
             this._ownedTiles[i].ReColorStructure();
             this._ownedTiles[i].SetMinimapTileColor(_kingdom.kingdomColor);
         }
-        this.hexTile.UpdateNamePlate();
+        this.hexTile.UpdateCityNamePlate();
     }
 
     internal void RemoveTileFromCity(HexTile tileToRemove) {

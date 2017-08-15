@@ -193,12 +193,14 @@ public class KingdomManager : MonoBehaviour {
 		allKingdoms.Add(newKingdom);
 		if (isForInitial) {
 			for (int i = 0; i < cities.Count; i++) {
+                HexTile currCityTile = cities[i];
 				if (i == 0) {
-					cities [i].city.CreateInitialFamilies();
+                    currCityTile.city.CreateInitialFamilies();
 				} else {
-					cities [i].city.CreateInitialFamilies(false);
+                    currCityTile.city.CreateInitialFamilies(false);
 				}
-			}
+                currCityTile.CreateCityNamePlate(currCityTile.city);
+            }
 		}
         //EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
         Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);

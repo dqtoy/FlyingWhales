@@ -10,8 +10,8 @@ public class CityTaskManager : MonoBehaviour {
 	public List<HexTile> pathToTargetHexTile = new List<HexTile>();
 
 	private City city = null;
-	private General generalToUpgrade = null;
-	public ROLE roleToCreate = ROLE.UNTRAINED;
+	//private General generalToUpgrade = null;
+	//public ROLE roleToCreate = ROLE.UNTRAINED;
 
     internal void Initialize(City city) {
         this.city = city;
