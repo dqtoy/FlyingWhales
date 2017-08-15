@@ -48,6 +48,10 @@ public class CityItem : MonoBehaviour {
             _loyaltyGO.SetActive(true);
             Governor thisGovernor = (Governor)_governor.citizen.assignedRole;
             _loyaltyLbl.text = thisGovernor.loyalty.ToString();
+			thisGovernor._eventLoyaltySummary = string.Empty;
+			for (int i = 0; i < thisGovernor.eventModifiers.Count; i++) {
+				thisGovernor._eventLoyaltySummary += "\n" + thisGovernor.eventModifiers [i].summary;
+			}
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
                 UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, thisGovernor.loyaltySummary);
             });

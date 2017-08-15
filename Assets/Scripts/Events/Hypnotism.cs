@@ -67,7 +67,7 @@ public class Hypnotism : GameEvent {
                     //    otherRel.AddEventModifier(20, "Hypnotism of " + _targetKingdom.king + " reaction", this);
                     //} else {
                         RelationshipKings otherRel = currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king);
-                        otherRel.AddEventModifier(-20, "Hypnotism of " + _targetKingdom.king + " reaction", this);
+                        otherRel.AddEventModifier(-5, "Hypnotism of " + _targetKingdom.king + " reaction", this);
                     //}
                 }
             }
@@ -75,9 +75,9 @@ public class Hypnotism : GameEvent {
             for (int i = 0; i < _sourceKingdom.cities.Count; i++) {
                 Citizen currGovernor = _sourceKingdom.cities[i].governor;
                 if (currGovernor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-                    ((Governor)currGovernor.assignedRole).AddEventModifier(20, "Hypnotism of " + _targetKingdom.king + " reaction", this);
+                    ((Governor)currGovernor.assignedRole).AddEventModifier(5, "Hypnotism of " + _targetKingdom.king + " reaction", this);
                 } else {
-                    ((Governor)currGovernor.assignedRole).AddEventModifier(-20, "Hypnotism of " + _targetKingdom.king + " reaction", this);
+                    ((Governor)currGovernor.assignedRole).AddEventModifier(-5, "Hypnotism of " + _targetKingdom.king + " reaction", this);
                 }
             }
 

@@ -135,7 +135,7 @@ public class SlavesMerchant : GameEvent {
 //				}
 			}
 			if(hasFreedSlaves){
-				((Governor)allCities[i].governor.assignedRole).AddEventModifier(-10, "Anti-slavery", this);
+				((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Anti-slavery", this);
 				unrestCount += 5;
 
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "slaves_free");
@@ -143,7 +143,7 @@ public class SlavesMerchant : GameEvent {
 				newLog.AddToFillers (allCities[i], allCities[i].name, LOG_IDENTIFIER.CITY_1);
 			}else{
 				if(hasObeyedButDecreaseLoyalty){
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-10, "Anti-slavery", this);
+					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Anti-slavery", this);
 					unrestCount += 5;
 					allCities[i].AdjustSlavesCount(slavesPerCity);
 

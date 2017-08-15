@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class Governor : Role {
 
@@ -13,16 +14,21 @@ public class Governor : Role {
     private const int defaultLoyalty = 0;
 
     private int _eventLoyaltyModifier;
-    private string _eventLoyaltySummary;
+    internal string _eventLoyaltySummary;
+
+	private List<ExpirableModifier> _eventModifiers;
 
 
     #region getters/setters
     public int loyalty {
-        get { return _loyalty + _eventLoyaltyModifier; }
+		get { return _loyalty + this._eventModifiers.Sum(x => x.modifier); }
     }
     public string loyaltySummary {
-        get { return this._loyaltySummary + "\n" + _eventLoyaltySummary; }
+        get { return this._loyaltySummary + _eventLoyaltySummary; }
     }
+	public List<ExpirableModifier> eventModifiers {
+		get { return this._eventModifiers; }
+	}
     #endregion
 
     public Governor(Citizen citizen): base(citizen){
@@ -33,10 +39,13 @@ public class Governor : Role {
         this._loyaltySummary = string.Empty;
         this._eventLoyaltyModifier = 0;
         this._eventLoyaltySummary = string.Empty;
+		this._eventModifiers = new List<ExpirableModifier> ();
 
         this.SetOwnedCity(this.citizen.city);
         this.citizen.GenerateCharacterValues();
         this.UpdateLoyalty ();
+		Messenger.AddListener("OnDayEnd", CheckEventModifiers);
+
 	}
 
 	internal void SetOwnedCity(City ownedCity){
@@ -51,6 +60,7 @@ public class Governor : Role {
 	internal void UpdateLoyalty(){
         this._loyaltySummary = string.Empty;
 		int baseLoyalty = defaultLoyalty;
+		int adjustment = 0;
         //this._loyaltySummary += "+" + defaultLoyalty.ToString() + "   Base value\n";
 
         Citizen king = this.citizen.city.kingdom.king;
@@ -64,75 +74,79 @@ public class Governor : Role {
         /*POSITIVE ADJUSTMENT OF LOYALTY
 		 * */
         if (valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() == 1) {
-            int adjustment = 15;
+            adjustment = 0;
             baseLoyalty += adjustment;
             this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
         } else if (valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() == 2) {
-            int adjustment = 30;
+            adjustment = 15;
             baseLoyalty += adjustment;
             this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
         } else if(valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).Count() >= 3) {
-            int adjustment = 50;
+           adjustment = 30;
             baseLoyalty += adjustment;
             this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
-        }
+		} else{
+			adjustment = -30;
+			baseLoyalty += adjustment;
+			this._loyaltySummary += "+" + adjustment.ToString() + "   no shared values.\n";
+		}
 
         if (governorValues.Contains(CHARACTER_VALUE.HONOR)) {
-            int adjustment = 15;
+            adjustment = 15;
             baseLoyalty += adjustment;
             this._loyaltySummary += "+" + adjustment.ToString() + "   values honor.\n";
         }
 
         if (king.IsRelative(this.citizen)) {
-            int adjustment = 25;
+            adjustment = 25;
             baseLoyalty += adjustment;
             this._loyaltySummary += "+" + adjustment.ToString() + "   Governor is Relative of King.\n";
         }
 
         if(king.spouse != null && this.citizen.IsRelative(king.spouse) && ((Spouse)king.spouse)._marriageCompatibility >= 0){
-            int adjustment = 15;
+            adjustment = 15;
             baseLoyalty += adjustment;
             this._loyaltySummary += "+" + adjustment.ToString() + "   King is husband of a relative and their compatibility is positive.\n";
         }
 
         /*NEGATIVE ADJUSTMENT OF LOYALTY
 		 * */
-        if (!governorValues.Contains(CHARACTER_VALUE.HONOR)) {
-            int adjustment = -15;
-            baseLoyalty += adjustment;
-            this._loyaltySummary += adjustment.ToString() + "   does not value honor.\n";
-        }
+//        if (!governorValues.Contains(CHARACTER_VALUE.HONOR)) {
+//            int adjustment = -15;
+//            baseLoyalty += adjustment;
+//            this._loyaltySummary += adjustment.ToString() + "   does not value honor.\n";
+//        }
 
         if (governorValues.Contains(CHARACTER_VALUE.INFLUENCE)) {
-            int adjustment = -15;
+            adjustment = -15;
             baseLoyalty += adjustment;
             this._loyaltySummary += adjustment.ToString() + "   values influence.\n";
         }
 
         for (int i = 0; i < kingdom.relationshipsWithOtherKingdoms.Count; i++){
 			if(kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
-                int adjustment = 10;
-                baseLoyalty -= adjustment;
+                adjustment = -10;
+                baseLoyalty += adjustment;
                 this._loyaltySummary += "-" + adjustment.ToString() + "   Kingdom is at war.\n";
 
-                int exhaustion = (int)(kingdom.relationshipsWithOtherKingdoms [i].kingdomWar.exhaustion / 10);
-				baseLoyalty -= exhaustion;
-                this._loyaltySummary += "-" + exhaustion.ToString() + "   War exhaustion.\n";
+//                int exhaustion = (int)(kingdom.relationshipsWithOtherKingdoms [i].kingdomWar.exhaustion / 10);
+//				baseLoyalty -= exhaustion;
+//                this._loyaltySummary += "-" + exhaustion.ToString() + "   War exhaustion.\n";
             }
 		}
-		if(this.citizen.city.isRaided){
-            int adjustment = 10;
-            baseLoyalty -= adjustment;
-            this._loyaltySummary += "-" + adjustment.ToString() + "   Recent Raid.\n";
-        }
-		if(kingdom.hasConflicted){
-            int adjustment = 10;
-            baseLoyalty -= adjustment;
-            this._loyaltySummary += "-" + adjustment.ToString() + "   Recent Border Conflict.\n";
-        }
+//		if(this.citizen.city.isRaided){
+//            int adjustment = 10;
+//            baseLoyalty -= adjustment;
+//            this._loyaltySummary += "-" + adjustment.ToString() + "   Recent Raid.\n";
+//        }
+//		if(kingdom.hasConflicted){
+//            int adjustment = 10;
+//            baseLoyalty -= adjustment;
+//            this._loyaltySummary += "-" + adjustment.ToString() + "   Recent Border Conflict.\n";
+//        }
 		if(king.spouse != null && this.citizen.IsRelative(king.spouse) && ((Spouse)king.spouse)._marriageCompatibility < 0){
-            int adjustment = 15;
-            baseLoyalty -= adjustment;
+            adjustment = -15;
+            baseLoyalty += adjustment;
             this._loyaltySummary += "-" + adjustment.ToString() + "   King is husband of a relative and their compatibility is negative.\n";
         }
 
@@ -141,16 +155,48 @@ public class Governor : Role {
 	}
 
 	internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger) {
-        this._eventLoyaltyModifier += modification;
-        if(_eventLoyaltyModifier < 0) {
-            this._eventLoyaltySummary = "-" + _eventLoyaltyModifier.ToString() + "   Approval";
-        } else if (_eventLoyaltyModifier > 0) {
-            this._eventLoyaltySummary = "+" + _eventLoyaltyModifier.ToString() + "   Approval";
-        } else {
-            this._eventLoyaltySummary = _eventLoyaltyModifier.ToString() + "   Approval";
-        }
+		GameDate dateToUse = new GameDate ();
+		dateToUse.AddMonths(3);
+
+		this._eventModifiers.Add(new ExpirableModifier(gameEventTrigger, summary, dateToUse, modification));
+
+//        this._eventLoyaltyModifier += modification;
+//        if(_eventLoyaltyModifier < 0) {
+//            this._eventLoyaltySummary = "-" + _eventLoyaltyModifier.ToString() + "   Approval";
+//        } else if (_eventLoyaltyModifier > 0) {
+//            this._eventLoyaltySummary = "+" + _eventLoyaltyModifier.ToString() + "   Approval";
+//        } else {
+//            this._eventLoyaltySummary = _eventLoyaltyModifier.ToString() + "   Approval";
+//        }
     }
-    internal void SetLoyalty(int newLoyalty) {
+//	private void UpdateEventModifiers(){
+//		this._eventLoyaltyModifier = 0;
+//		this._eventLoyaltySummary = string.Empty;
+//		List<EVENT_TYPES> eventTypes = this._eventModifiers.Keys;
+//		for (int i = 0; i < eventTypes.Count; i++) {
+//			for (int j = 0; j < this._eventModifiers[eventTypes[i]].Count; j++) {
+//				ExpirableModifier expMod = this._eventModifiers [eventTypes [i]] [j];
+//				this._eventLoyaltyModifier += expMod.modifier;
+//				if(expMod.modifier < 0){
+//					this._eventLoyaltySummary += "-" + expMod.modifier.ToString() + " " + expMod.modifierReason;
+//				}else{
+//					this._eventLoyaltySummary += "+" + expMod.modifier.ToString() + " " + expMod.modifierReason;
+//				}
+//			}
+//		}
+//	}
+
+	private void CheckEventModifiers(){
+		for (int i = 0; i < this._eventModifiers.Count; i++) {
+			ExpirableModifier expMod = this._eventModifiers [i];
+			if(expMod.dueDate.day == GameManager.Instance.days && expMod.dueDate.month == GameManager.Instance.month && expMod.dueDate.year == GameManager.Instance.year){
+				this._eventModifiers.RemoveAt (i);
+				i--;
+			}
+
+		}
+	}
+	internal void SetLoyalty(int newLoyalty) {
         this._loyalty = newLoyalty;
     }
 
@@ -169,5 +215,10 @@ public class Governor : Role {
 				EventCreator.Instance.CreateSecessionEvent(this.citizen);
 			}
 		}
+	}
+
+	internal override void OnDeath (){
+		base.OnDeath ();
+		Messenger.RemoveListener("OnDayEnd", CheckEventModifiers);
 	}
 }

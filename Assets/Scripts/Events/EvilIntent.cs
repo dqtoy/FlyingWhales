@@ -100,7 +100,7 @@ public class EvilIntent : GameEvent {
                 for (int i = 0; i < _sourceKing.relationshipKings.Count; i++) {
                     Citizen otherKing = _sourceKing.relationshipKings[i].king;
                     RelationshipKings otherKingRel = otherKing.GetRelationshipWithCitizen(_sourceKing);
-                    otherKingRel.AddEventModifier(20, "Evil Intent Reaction", this);
+                    otherKingRel.AddEventModifier(5, "Evil Intent Reaction", this);
                 }
                 DoneEvent();
             } else {
@@ -165,7 +165,7 @@ public class EvilIntent : GameEvent {
                     if(KingdomManager.Instance.allKingdoms[i].id != _sourceKing.city.kingdom.id) {
                         Citizen otherKing = KingdomManager.Instance.allKingdoms[i].king;
                         RelationshipKings otherKingRel = otherKing.GetRelationshipWithCitizen(_sourceKing);
-                        otherKingRel.AddEventModifier(-20, "Evil Intent Reaction", this);
+                        otherKingRel.AddEventModifier(-5, "Evil Intent Reaction", this);
                     }
                 }
                 Messenger.RemoveListener("OnDayEnd", ProcessRansomPlot);
@@ -307,12 +307,12 @@ public class EvilIntent : GameEvent {
                 KeyValuePair<CHARACTER_VALUE, int> priotiyValue = currGovernor.citizen.importantCharacterValues
                                .FirstOrDefault(x => x.Key == chosenValue || x.Key == oppositeValue);
                 if(priotiyValue.Key == chosenValue) {
-                    currGovernor.AddEventModifier(20, "Evil Intent Opinion", this);
+                    currGovernor.AddEventModifier(5, "Evil Intent Opinion", this);
                 } else {
-                    currGovernor.AddEventModifier(-20, "Evil Intent Opinion", this);
+                    currGovernor.AddEventModifier(-5, "Evil Intent Opinion", this);
                 }
             } else {
-                currGovernor.AddEventModifier(-20, "Evil Intent Opinion", this);
+                currGovernor.AddEventModifier(-5, "Evil Intent Opinion", this);
             }
         }
     }
@@ -342,12 +342,12 @@ public class EvilIntent : GameEvent {
                 KeyValuePair<CHARACTER_VALUE, int> priotiyValue = otherKing.importantCharacterValues
                                .FirstOrDefault(x => x.Key == chosenValue || x.Key == oppositeValue);
                 if (priotiyValue.Key == chosenValue) {
-                    otherKingRel.AddEventModifier(20, "Evil Intent Opinion", this);
+                    otherKingRel.AddEventModifier(5, "Evil Intent Opinion", this);
                 } else {
-                    otherKingRel.AddEventModifier(-20, "Evil Intent Opinion", this);
+                    otherKingRel.AddEventModifier(-5, "Evil Intent Opinion", this);
                 }
             } else {
-                otherKingRel.AddEventModifier(-20, "Evil Intent Opinion", this);
+                otherKingRel.AddEventModifier(-5, "Evil Intent Opinion", this);
             }
         }
     }

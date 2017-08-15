@@ -213,8 +213,8 @@ public class BorderConflict : GameEvent {
 
 			this.kingdom1.AdjustUnrest(UNREST_ADJUSTMENT);
 			this.kingdom2.AdjustUnrest(UNREST_ADJUSTMENT);
-			this.kingdom1.HasConflicted ();
-			this.kingdom2.HasConflicted ();
+			this.kingdom1.HasConflicted (this);
+			this.kingdom2.HasConflicted (this);
 		}
 	}
 	internal override void CancelEvent (){

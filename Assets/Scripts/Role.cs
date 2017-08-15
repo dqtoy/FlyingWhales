@@ -88,7 +88,6 @@ public class Role {
     }
 	internal virtual void Attack(){
 		if (this.avatar != null) {
-			this.avatar.GetComponent<CitizenAvatar>().HasAttacked();
 			if(this.avatar.GetComponent<CitizenAvatar>().animator.gameObject.activeSelf){
 				if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.LEFT) {
 					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Left");

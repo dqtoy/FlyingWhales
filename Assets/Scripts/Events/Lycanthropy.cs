@@ -322,13 +322,13 @@ public class Lycanthropy : GameEvent {
 
             if(_lycanthrope.captor.id == citizen.city.kingdom.id && 
                 (_lycanthrope.targetKingdom != null &&_lycanthrope.targetKingdom.id == otherKingdom.id)) {
-                rel.AddEventModifier(-20, "Lycanthrope handling", this);
+                rel.AddEventModifier(-5, "Lycanthrope handling", this);
             } else {
                 EVENT_APPROACH otherKingApproach = this.DetermineApproach(otherKingdom.king);
                 if (otherKingApproach == chosenApproach) {
-                    rel.AddEventModifier(20, "Lycanthrope handling", this);
+                    rel.AddEventModifier(5, "Lycanthrope handling", this);
                 } else {
-                    rel.AddEventModifier(-20, "Lycanthrope handling", this);
+                    rel.AddEventModifier(-5, "Lycanthrope handling", this);
                 }
             }
 
@@ -347,9 +347,9 @@ public class Lycanthropy : GameEvent {
             }
 
             if (govApproach == chosenApproach) {
-                gov.AddEventModifier((int)(20 * multiplier), "Lycanthrope handling", this);
+                gov.AddEventModifier((int)(5 * multiplier), "Lycanthrope handling", this);
             } else {
-                gov.AddEventModifier((int)(-20 * multiplier), "Lycanthrope handling", this);
+                gov.AddEventModifier((int)(-5 * multiplier), "Lycanthrope handling", this);
             }
         }
     }

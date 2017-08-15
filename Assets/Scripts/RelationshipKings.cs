@@ -201,10 +201,15 @@ public class RelationshipKings {
     }
 
     internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons = ASSASSINATION_TRIGGER_REASONS.NONE, bool isDiscovery = false) {
-        DateTime dateTimeToUse = new DateTime(GameManager.Instance.year, GameManager.Instance.month, GameManager.Instance.days);
-        if(gameEventTrigger.eventType == EVENT_TYPES.KINGDOM_WAR) {
-            dateTimeToUse.AddYears(1);
-        }
+//        DateTime dateTimeToUse = new DateTime(GameManager.Instance.year, GameManager.Instance.month, GameManager.Instance.days);
+//        if(gameEventTrigger.eventType == EVENT_TYPES.KINGDOM_WAR) {
+//            dateTimeToUse.AddYears(1);
+//        }
+
+		GameDate dateTimeToUse = new GameDate();
+		if(gameEventTrigger.eventType == EVENT_TYPES.KINGDOM_WAR) {
+			dateTimeToUse.AddYears(1);
+		}
         if (this._eventModifiers.ContainsKey(gameEventTrigger.eventType)) {
             this._eventModifiers[gameEventTrigger.eventType].Add(new ExpirableModifier(gameEventTrigger, summary, dateTimeToUse, modification));
         } else {
@@ -229,10 +234,10 @@ public class RelationshipKings {
             List<ExpirableModifier> modifiersToRemove = new List<ExpirableModifier>();
             for (int i = 0; i < expirableModifiers.Count; i++) {
                 ExpirableModifier currModifier = expirableModifiers[i];
-                DateTime dueDate = currModifier.dueDate;
+                GameDate dueDate = currModifier.dueDate;
                 int modification = currModifier.modifier;
-                if (dueDate.Day == GameManager.Instance.days && dueDate.Month == GameManager.Instance.month
-                    && dueDate.Year == GameManager.Instance.year) {
+                if (dueDate.day == GameManager.Instance.days && dueDate.month == GameManager.Instance.month
+                    && dueDate.year == GameManager.Instance.year) {
                     modification += 5;
                     dueDate.AddYears(1);
                     if (modification >= 0) {

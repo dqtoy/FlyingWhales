@@ -88,25 +88,25 @@ public class Crime : GameEvent {
 			for (int i = 0; i < allCities.Count; i++) {
 				PUNISHMENT governorPunishment = GetPunishment (allCities [i].governor);
 				if(governorPunishment == this.kingPunishment){
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(15, "Same criminal judgement", null);
+					((Governor)allCities[i].governor.assignedRole).AddEventModifier(4, "Same criminal judgement", null);
 				}else{
 					if(this.kingPunishment == PUNISHMENT.NO){
 						if(governorPunishment == PUNISHMENT.LIGHT){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-5, "Different criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", null);
 						}else if(governorPunishment == PUNISHMENT.HARSH){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-10, "Opposite criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Opposite criminal judgement", null);
 						}
 					}else if(this.kingPunishment == PUNISHMENT.LIGHT){
 						if(governorPunishment == PUNISHMENT.NO){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-5, "Different criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", null);
 						}else if(governorPunishment == PUNISHMENT.HARSH){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-5, "Different criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", null);
 						}
 					}else{
 						if(governorPunishment == PUNISHMENT.LIGHT){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-5, "Different criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", null);
 						}else if(governorPunishment == PUNISHMENT.NO){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-10, "Opposite criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Opposite criminal judgement", null);
 						}
 					}
 				}

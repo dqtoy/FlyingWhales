@@ -203,12 +203,13 @@ public class CitizenAvatar : MonoBehaviour {
 
     public void EndAttack() {
         UpdateFogOfWar(true);
+		HasAttacked();
         this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
         this.citizenRole.DestroyGO();
     }
 
     internal void HasAttacked() {
-        this.GetComponent<SmoothMovement>().hasAttacked = true;
+		this.citizenRole.hasAttacked = true;
     }
 
     #region BehaviourTree Functions
@@ -246,7 +247,11 @@ public class CitizenAvatar : MonoBehaviour {
             }
             this.gameObject.GetComponent<SpriteRenderer>().enabled = state;
             for (int i = 0; i < childObjects.Length; i++) {
-                childObjects[i].gameObject.SetActive(state);
+				if(childObjects[i].GetComponent<Animator>() != null){
+					childObjects[i].GetComponent<SpriteRenderer>().enabled = state;
+				}else{
+					childObjects[i].gameObject.SetActive(state);
+				}
             } 
         }
     }

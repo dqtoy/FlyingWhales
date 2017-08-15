@@ -107,9 +107,9 @@ public class DevelopWeapons : GameEvent {
                 KeyValuePair<CHARACTER_VALUE, int> priorityValue = otherKing.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
                 || x.Key == CHARACTER_VALUE.TRADITION);
                 if(priorityValue.Key == chosenValue) {
-                    rel.AddEventModifier(20, "Developed Weapons", this);
+                    rel.AddEventModifier(5, "Developed Weapons", this);
                 } else {
-                    rel.AddEventModifier(-20, "Developed Weapons", this);
+                    rel.AddEventModifier(-5, "Developed Weapons", this);
                 }
                 
             }
@@ -124,9 +124,9 @@ public class DevelopWeapons : GameEvent {
                 || x.Key == CHARACTER_VALUE.TRADITION);
 
                 if (priorityValue.Key == chosenValue) {
-                    gov.AddEventModifier(20, "Developed Weapons", this);
+                    gov.AddEventModifier(5, "Developed Weapons", this);
                 } else {
-                    gov.AddEventModifier(-20, "Developed Weapons", this);
+                    gov.AddEventModifier(-5, "Developed Weapons", this);
                 }
             }
         }
