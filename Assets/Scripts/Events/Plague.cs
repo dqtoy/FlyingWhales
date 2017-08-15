@@ -65,6 +65,7 @@ public class Plague : GameEvent {
 		this.eventType = EVENT_TYPES.PLAGUE;
 		this.name = "Plague";
 		this._warTrigger = WAR_TRIGGER.OPPOSING_APPROACH;
+		this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH;
         this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.sourceCity = sourceCity;
         this._plagueName = GeneratePlagueName();

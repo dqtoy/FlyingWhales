@@ -39,6 +39,7 @@ public class FirstAndKeystone : GameEvent {
 		this.daysCounter = 0;
         _purgedRace = RACE.NONE;
 		this._warTrigger = WAR_TRIGGER.THE_FIRST_AND_THE_KEYSTONE;
+
 		WorldEventManager.Instance.AddWorldEvent(this);
 		Initialize();
 		EventManager.Instance.AddEventToDictionary(this);

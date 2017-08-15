@@ -48,6 +48,8 @@ public class JoinWar : GameEvent {
 		this._uncovered = new List<Citizen>();
 		this._invasionPlanThatStartedEvent = _invasionPlanThatStartedEvent;
 		this._warTrigger = WAR_TRIGGER.JOIN_WAR;
+		this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.JOIN_WAR;
+
 		this.warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.candidateForAlliance.city.kingdom, this.kingdomToAttack);
 
 		KingdomManager.Instance.DiscoverKingdom (this._candidateForAlliance.city.kingdom, kingdomToAttack);
@@ -204,7 +206,7 @@ public class JoinWar : GameEvent {
 			relationship.AddEventModifier (2, this.name + " event", this);
 
 			if (this.warEvent == null) {
-				this.warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.candidateForAlliance, 
+				this.warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.candidateForAlliance,
 					this.candidateForAlliance.city.kingdom, this.kingdomToAttack, this._warTrigger);
 			}
 
