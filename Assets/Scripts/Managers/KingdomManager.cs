@@ -275,6 +275,9 @@ public class KingdomManager : MonoBehaviour {
 		kingdom1.UpdateAllGovernorsLoyalty ();
 		kingdom2.UpdateAllGovernorsLoyalty ();
 
+		king1Rel.UpdateLikeness (null);
+		king2Rel.UpdateLikeness (null);
+
 //		war.UpdateWarPair ();
         //		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
         //		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));

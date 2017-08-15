@@ -432,7 +432,7 @@ public class Assassination : GameEvent {
 				}
 			}
 			if(this.relationshipToAdjust != null){
-				this.relationshipToAdjust.AdjustLikeness (-15, this);
+				this.relationshipToAdjust.AddEventModifier (-4, this.name + " event", this);
 				this.relationshipToAdjust.sourceKing.WarTrigger (this.relationshipToAdjust, this, this.relationshipToAdjust.sourceKing.city.kingdom.kingdomTypeData, this._warTrigger);
 			}
 		}

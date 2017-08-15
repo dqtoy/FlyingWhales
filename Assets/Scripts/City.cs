@@ -160,6 +160,7 @@ public class City{
 		if(hasRoyalFamily){
 			this.hasKing = true;
 			this.CreateInitialRoyalFamily ();
+			this.kingdom.UpdateAllRelationshipKings ();
 		}
 		this.CreateInitialGovernorFamily ();
 		this.UpdateDailyProduction();

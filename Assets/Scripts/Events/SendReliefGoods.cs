@@ -120,7 +120,7 @@ public class SendReliefGoods : GameEvent {
 
 			RelationshipKings relationship = this.receiverKingdom.king.GetRelationshipWithCitizen(this.senderKingdom.king);
 			if(relationship != null){
-				relationship.AdjustLikeness(20, this);
+				relationship.AddEventModifier(5, this.name + " event", this);
 			}
 			//TODO: Add log - received relief goods
 			Log newLog = this.gameEvent.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "GreatStorm", "receive_relief");
@@ -155,10 +155,10 @@ public class SendReliefGoods : GameEvent {
 		RelationshipKings relationshipFromSender = this.senderKingdom.king.GetRelationshipWithCitizen(this.intercepter.citizen.city.kingdom.king);
 		RelationshipKings relationshipFromReceiver = this.receiverKingdom.king.GetRelationshipWithCitizen(this.intercepter.citizen.city.kingdom.king);
 		if(relationshipFromSender != null){
-			relationshipFromSender.AdjustLikeness(-20, this);
+			relationshipFromSender.AddEventModifier(-5, this.name + " event", this);
 		}
 		if(relationshipFromReceiver != null){
-			relationshipFromReceiver.AdjustLikeness(-20, this);
+			relationshipFromReceiver.AddEventModifier(-5, this.name + " event", this);
 		}
 	}
 }

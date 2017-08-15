@@ -88,25 +88,25 @@ public class Crime : GameEvent {
 			for (int i = 0; i < allCities.Count; i++) {
 				PUNISHMENT governorPunishment = GetPunishment (allCities [i].governor);
 				if(governorPunishment == this.kingPunishment){
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(4, "Same criminal judgement", null);
+					((Governor)allCities[i].governor.assignedRole).AddEventModifier(4, "Same criminal judgement", this);
 				}else{
 					if(this.kingPunishment == PUNISHMENT.NO){
 						if(governorPunishment == PUNISHMENT.LIGHT){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", this);
 						}else if(governorPunishment == PUNISHMENT.HARSH){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Opposite criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Opposite criminal judgement", this);
 						}
 					}else if(this.kingPunishment == PUNISHMENT.LIGHT){
 						if(governorPunishment == PUNISHMENT.NO){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", this);
 						}else if(governorPunishment == PUNISHMENT.HARSH){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", this);
 						}
 					}else{
 						if(governorPunishment == PUNISHMENT.LIGHT){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-2, "Different criminal judgement", this);
 						}else if(governorPunishment == PUNISHMENT.NO){
-							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Opposite criminal judgement", null);
+							((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Opposite criminal judgement", this);
 						}
 					}
 				}
@@ -139,25 +139,25 @@ public class Crime : GameEvent {
 				if(relationship != null){
 					PUNISHMENT otherKingPunishment = GetPunishment (otherKingdoms[i].king);
 					if(otherKingPunishment == this.kingPunishment){
-						relationship.AdjustLikeness(15, null);
+						relationship.AddEventModifier(4, this.name + " event", this);
 					}else{
 						if(this.kingPunishment == PUNISHMENT.NO){
 							if(otherKingPunishment == PUNISHMENT.LIGHT){
-								relationship.AdjustLikeness(-5, null, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-2, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}else if(otherKingPunishment == PUNISHMENT.HARSH){
-								relationship.AdjustLikeness(-10, null, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}
 						}else if(this.kingPunishment == PUNISHMENT.LIGHT){
 							if(otherKingPunishment == PUNISHMENT.NO){
-								relationship.AdjustLikeness(-5, null, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-2, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}else if(otherKingPunishment == PUNISHMENT.HARSH){
-								relationship.AdjustLikeness(-5, null, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-2, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}
 						}else{
 							if(otherKingPunishment == PUNISHMENT.LIGHT){
-								relationship.AdjustLikeness(-5, null, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-2, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}else if(otherKingPunishment == PUNISHMENT.NO){
-								relationship.AdjustLikeness(-10, null, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}
 						}
 					}

@@ -115,17 +115,17 @@ public class Rumor : GameEvent {
 
 		if(chance < value){
 			if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.ALLY){
-				relationshipRumorToTarget.AdjustLikeness(20, this);
+				relationshipRumorToTarget.AddEventModifier(5, this.name + " event", this);
 			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
-				relationshipRumorToTarget.AdjustLikeness(15, this);
+				relationshipRumorToTarget.AddEventModifier(4, this.name + " event", this);
 			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.WARM){
-				relationshipRumorToTarget.AdjustLikeness(10, this);
+				relationshipRumorToTarget.AddEventModifier(3, this.name + " event", this);
 			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.COLD){
-				relationshipRumorToTarget.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
+				relationshipRumorToTarget.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
-				relationshipRumorToTarget.AdjustLikeness(-15, this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
+				relationshipRumorToTarget.AddEventModifier(-4, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
-				relationshipRumorToTarget.AdjustLikeness(-20, this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
+				relationshipRumorToTarget.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}
 			if(rumorType == RUMOR_TYPE.NEGATIVE){
 				//TODO: Add log - successful negative rumor
@@ -156,7 +156,7 @@ public class Rumor : GameEvent {
 
 					RelationshipKings relationshipRumorToSource = this.rumorKingdom.king.GetRelationshipWithCitizen(this.sourceKingdom.king);
 					if(relationshipRumorToSource != null){
-						relationshipRumorToSource.AdjustLikeness(-20, this, ASSASSINATION_TRIGGER_REASONS.CAUGHT_RUMOR);
+						relationshipRumorToSource.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.CAUGHT_RUMOR);
 					}
 				}
 			}

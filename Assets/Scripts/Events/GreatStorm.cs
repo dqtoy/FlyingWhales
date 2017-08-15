@@ -216,7 +216,7 @@ public class GreatStorm : GameEvent {
 
 			RelationshipKings relationship = this._affectedKingdom.king.GetRelationshipWithCitizen(senderKingdom.king);
 			if(relationship != null){
-				relationship.AdjustLikeness(20, this);
+				relationship.AddEventModifier(5, this.name + " event", this);
 			}
 			//TODO: Add log - received relief goods
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "GreatStorm", "receive_relief");
@@ -235,10 +235,10 @@ public class GreatStorm : GameEvent {
 		RelationshipKings relationshipFromSender = senderKingdom.king.GetRelationshipWithCitizen(intercepterKingdom.king);
 		RelationshipKings relationshipFromReceiver = this._affectedKingdom.king.GetRelationshipWithCitizen(intercepterKingdom.king);
 		if(relationshipFromSender != null){
-			relationshipFromSender.AdjustLikeness(-20, this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_INTERCEPTER);
+			relationshipFromSender.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_INTERCEPTER);
 		}
 		if(relationshipFromReceiver != null){
-			relationshipFromReceiver.AdjustLikeness(-20, this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_INTERCEPTER);
+			relationshipFromReceiver.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_INTERCEPTER);
 		}
 	}
 	private void WageWar(){

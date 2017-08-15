@@ -226,17 +226,17 @@ public class Raid : GameEvent {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_accident");
 			newLog.AddToFillers (deadCitizen, deadCitizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 			if(this.hasBeenDiscovered){
-				int amountToAdjust = -15;
+				int amountToAdjust = -4;
 				if (isGovernor || isKing) {
 					if (isGovernor) {
-						amountToAdjust = -25;
+						amountToAdjust = -7;
 					} else {
-						amountToAdjust = -35;
+						amountToAdjust = -9;
 					}
 				}
 				RelationshipKings relationship = this.GetRelationship ();
 				if(relationship != null){
-					relationship.AdjustLikeness(amountToAdjust, this);
+					relationship.AddEventModifier(amountToAdjust, this.name + " event", this);
 				}
 
 			}
@@ -275,7 +275,7 @@ public class Raid : GameEvent {
 			}
 			RelationshipKings relationship = this.GetRelationship ();
 			if(relationship != null){
-				relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_RAID_NO_DEATH);
+				relationship.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_RAID_NO_DEATH);
 			}
 		}
 	}

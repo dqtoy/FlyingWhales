@@ -1141,7 +1141,7 @@ public class Citizen {
 
 	internal void WarTrigger(RelationshipKings relationship, GameEvent gameEventTrigger, KingdomTypeData kingdomData, WAR_TRIGGER warTrigger){
 //		return;
-		if(relationship == null){
+		if(relationship == null || warTrigger == WAR_TRIGGER.NONE){
 			return;
 		}
         if(!relationship.sourceKing.city.kingdom.discoveredKingdoms.Contains(relationship.king.city.kingdom) ||
@@ -1348,7 +1348,7 @@ public class Citizen {
 			Kingdom targetKingdom = ((Assassination)hiddenEvent).targetCitizen.city.kingdom;
 
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (assassinKingdom.king.id);
-			relationship.AdjustLikeness (-15, hiddenEvent, ASSASSINATION_TRIGGER_REASONS.NONE, true);
+			relationship.AddEventModifier (-4, "found hidden event", hiddenEvent, ASSASSINATION_TRIGGER_REASONS.NONE, true);
 			relationship.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
 				GameManager.Instance.days,
@@ -1364,7 +1364,7 @@ public class Citizen {
 			Kingdom targetKingdom = ((InvasionPlan)hiddenEvent).targetKingdom;
 
 			RelationshipKings relationship = targetKingdom.king.SearchRelationshipByID (sourceKingdom.king.id);
-			relationship.AdjustLikeness (-35, hiddenEvent, ASSASSINATION_TRIGGER_REASONS.NONE, true);
+			relationship.AddEventModifier (-9, "found hidden event", hiddenEvent, ASSASSINATION_TRIGGER_REASONS.NONE, true);
 
 			relationship.relationshipHistory.Add (new History (
 				GameManager.Instance.month,
