@@ -193,7 +193,7 @@ public class Espionage : GameEvent {
 					}
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this._sourceKingdom.king.id);
-						relationshipReverse.AdjustLikeness (10, this);
+						relationshipReverse.AddEventModifier (3, this.name + " event", this);
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 						UncoverHiddenEvent (chosenEvent, target);
 					}
@@ -209,11 +209,11 @@ public class Espionage : GameEvent {
 					}
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this._sourceKingdom.king.id);
-						relationshipReverse.AdjustLikeness (10, this);
+						relationshipReverse.AddEventModifier (3, this.name + " event", this);
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 						UncoverHiddenEvent (chosenEvent, target);
 					}
-					relationshipToCreator.AdjustLikeness (-10, this);
+					relationshipToCreator.AddEventModifier (-3, this.name + " event", this);
 				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
 					int value = 80;
 					if(relationshipToCreator.lordRelationship == RELATIONSHIP_STATUS.WARM){
@@ -225,11 +225,11 @@ public class Espionage : GameEvent {
 					}
 					if(chance < value){
 						RelationshipKings relationshipReverse = target.SearchRelationshipByID (this._sourceKingdom.king.id);
-						relationshipReverse.AdjustLikeness (10, this);
+						relationshipReverse.AddEventModifier (3, this.name + " event", this);
 						target.InformedAboutHiddenEvent (chosenEvent, this.spy);
 						UncoverHiddenEvent (chosenEvent, target);
 					}
-					relationshipToCreator.AdjustLikeness (-15, this);
+					relationshipToCreator.AddEventModifier (-4, this.name + " event", this);
 				}
 			}
 		}

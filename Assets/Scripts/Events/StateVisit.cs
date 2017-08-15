@@ -88,7 +88,7 @@ public class StateVisit : GameEvent {
 		}
 		if(this.isSuccessful){
 			if(relationship != null){
-				relationship.AdjustLikeness (20, this);
+				relationship.AddEventModifier (5, this.name + " event", this);
 			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_end");
 			newLog.AddToFillers (this.invitedKingdom.king, this.invitedKingdom.king.name, LOG_IDENTIFIER.KING_1);
@@ -97,7 +97,7 @@ public class StateVisit : GameEvent {
 		}else{
 			if(this.isDoneBySabotage){
 				if (relationship != null) {
-					relationship.AdjustLikeness (-10, this);
+					relationship.AddEventModifier (-3, this.name + " event", this);
 				}
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_success");
 				newLog.AddToFillers (this.saboteurEnvoy.citizen, this.saboteurEnvoy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -107,9 +107,9 @@ public class StateVisit : GameEvent {
 				if(this.visitorHasDied){
 					if (relationship != null) {
 						if (relationship.totalLike <= 0) {
-							relationship.AdjustLikeness (-35, this);
+							relationship.AddEventModifier (-9, this.name + " event", this);
 						} else {
-							relationship.SetLikeness (-35);
+							relationship.AddEventModifier (-9,  this.name + " event", this);
 							relationship.UpdateKingRelationshipStatus ();
 						}
 					}

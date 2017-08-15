@@ -54,7 +54,7 @@ public class Evangelism : GameEvent {
 			this.targetKingdom.AdjustUnrest (-10);
 			if(this.sourceKingdom.isAlive()){
 				RelationshipKings relationship = this.targetKingdom.king.GetRelationshipWithCitizen (this.sourceKingdom.king);
-				relationship.AdjustLikeness (10, this);
+				relationship.AddEventModifier (3, this.name + " event", this);
 			}
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Evangelism", "evangelize");
 			newLog.AddToFillers (this.targetCity, this.targetCity.name, LOG_IDENTIFIER.CITY_1);

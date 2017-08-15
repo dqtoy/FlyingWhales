@@ -61,6 +61,9 @@ public class KingdomTypeData : MonoBehaviour {
 	private CharacterValue[] _characterValues;
 
 	[SerializeField]
+	private RelationshipKingdomType[] _relationshipKingdomType;
+
+	[SerializeField]
 	private CombatStats _combatStats;
 
 	[SerializeField]
@@ -83,9 +86,9 @@ public class KingdomTypeData : MonoBehaviour {
 
 	private Dictionary<RELATIONSHIP_STATUS, int> _dictAssassinationRateModifierRelationship = new Dictionary<RELATIONSHIP_STATUS, int> ();
 
-
 	private Dictionary<CHARACTER_VALUE, int> _dictCharacterValues = new Dictionary<CHARACTER_VALUE, int> ();
 
+	private Dictionary<KINGDOM_TYPE, int> _dictRelationshipKingdomType = new Dictionary<KINGDOM_TYPE, int> ();
 
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -177,6 +180,12 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
+	public RelationshipKingdomType[] relationshipKingdomType {
+		get { 
+			return this._relationshipKingdomType;
+		}
+	}
+
 	public Dictionary<WAR_TRIGGER, int> dictWarTriggers {
 		get { 
 			return this._dictWarTriggers; 
@@ -197,6 +206,11 @@ public class KingdomTypeData : MonoBehaviour {
 	public Dictionary<CHARACTER_VALUE, int> dictCharacterValues {
 		get { 
 			return this._dictCharacterValues; 
+		}
+	}
+	public Dictionary<KINGDOM_TYPE, int> dictRelationshipKingdomType {
+		get { 
+			return this._dictRelationshipKingdomType; 
 		}
 	}
 
@@ -242,6 +256,8 @@ public class KingdomTypeData : MonoBehaviour {
 			this._dailyCumulativeEventRate = this._dailyCumulativeEventRate.Concat (this.generalKingdomTypeData._dailyCumulativeEventRate).ToArray ();
 			this._reactionEventRate = this._reactionEventRate.Concat (this.generalKingdomTypeData.reactionEventRate).ToArray ();
 			this._characterValues = this._characterValues.Concat (this.generalKingdomTypeData._characterValues).ToArray ();
+			this._relationshipKingdomType = this._relationshipKingdomType.Concat (this.generalKingdomTypeData._relationshipKingdomType).ToArray ();
+
 		}
 
 
@@ -252,6 +268,7 @@ public class KingdomTypeData : MonoBehaviour {
 		this._dictAssassinationRateModifierMilitary.Clear ();
 		this._dictAssassinationRateModifierRelationship.Clear ();
 		this._dictCharacterValues.Clear ();
+		this._dictRelationshipKingdomType.Clear ();
 
 		for (int i = 0; i < this.warTriggers.Length; i++) {
 			this._dictWarTriggers.Add (this.warTriggers [i].warTrigger, this.warTriggers [i].rate);
@@ -274,6 +291,9 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 		for (int i = 0; i < this.characterValues.Length; i++) {
 			this._dictCharacterValues.Add (this.characterValues [i].character, this.characterValues [i].value);
+		}
+		for (int i = 0; i < this.relationshipKingdomType.Length; i++) {
+			this._dictRelationshipKingdomType.Add (this.relationshipKingdomType [i].kingdomType, this.relationshipKingdomType [i].relationshipModifier);
 		}
 	}
 }

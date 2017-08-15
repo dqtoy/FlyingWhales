@@ -380,6 +380,9 @@ public class Kingdom{
 
 			//Update Character Values of King and Governors
 			this.UpdateCharacterValuesOfKingsAndGovernors();
+
+			//Update Relationship Opinion
+			UpdateAllRelationshipKings();
         }
 
 //		UpdateCombatStats();
@@ -1013,6 +1016,7 @@ public class Kingdom{
         //		UIManager.Instance.UpdateKingdomSuccession ();
 
 		this.UpdateAllGovernorsLoyalty ();
+		this.UpdateAllRelationshipKings ();
         Debug.Log("Assigned new king: " + newKing.name + " because " + previousKing.name + " died!");
     }
 
@@ -2057,7 +2061,7 @@ public class Kingdom{
                             for (int i = 0; i < cities.Count; i++) {
                                 Governor currGovernor = (Governor)cities[i].governor.assignedRole;
                                 if (currGovernor.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-                                    currGovernor.AddEventModifier(-5, "Did not celebrate holiday", null);
+									currGovernor.AddEventModifier(-5, "Did not celebrate holiday", null);
                                 }
                             }
                             if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
@@ -2323,4 +2327,12 @@ public class Kingdom{
 	}
 	#endregion
 
+	internal void UpdateAllRelationshipKings(){
+		if(this.king != null){
+			for (int i = 0; i < this.king.relationshipKings.Count; i++) {
+				RelationshipKings rel = this.king.relationshipKings [i];
+				rel.UpdateLikeness (null);
+			}
+		}
+	}
 }

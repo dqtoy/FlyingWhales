@@ -130,6 +130,8 @@ public class War : GameEvent {
 
         rel1.AddEventModifier(-15, "recent war with " + kingdom2.name, this);
         rel2.AddEventModifier(-15, "recent war with " + kingdom1.name, this);
+		rel1.UpdateLikeness (null);
+		rel2.UpdateLikeness (null);
 
         KingdomManager.Instance.DeclarePeaceBetweenKingdoms(this._kingdom1, this._kingdom2);
 		this.DoneEvent();

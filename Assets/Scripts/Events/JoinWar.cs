@@ -201,7 +201,7 @@ public class JoinWar : GameEvent {
 		if (chanceForSuccess < successRate) {
 			//target king will start invasion plan
 			RelationshipKings relationship = this.startedBy.GetRelationshipWithCitizen (this.candidateForAlliance);
-			relationship.AdjustLikeness (5, this);
+			relationship.AddEventModifier (2, this.name + " event", this);
 
 			if (this.warEvent == null) {
 				this.warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.candidateForAlliance, 
