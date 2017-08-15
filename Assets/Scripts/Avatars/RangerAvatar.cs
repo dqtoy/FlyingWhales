@@ -36,21 +36,28 @@ public class RangerAvatar : CitizenAvatar {
         for (int i = 0; i < visibleTiles.Count; i++) {
 			HexTile currTile = visibleTiles[i];
             //this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-            if (currTile.isBorder) {
-                if (currTile.isBorderOfCities.Intersect(kingdomOfAgent.cities).Count() <= 0) {
-                    kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            } else if (currTile.isOuterTileOfCities.Count > 0) {
-                if (currTile.isOuterTileOfCities.Intersect(kingdomOfAgent.cities).Count() <= 0) {
-                    kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            } else if (currTile.isOccupied) {
-                if (currTile.ownedByCity == null || currTile.ownedByCity.kingdom.id != kingdomOfAgent.id) {
+            if (currTile.seenByKingdoms.Count > 0) {
+                if (!currTile.seenByKingdoms.Contains(kingdomOfAgent)) {
                     kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
                 kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
             }
+            //if (currTile.isBorder) {
+            //    if (currTile.isBorderOfCities.Intersect(kingdomOfAgent.cities).Count() <= 0) {
+            //        kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            //    }
+            //} else if (currTile.isOuterTileOfCities.Count > 0) {
+            //    if (currTile.isOuterTileOfCities.Intersect(kingdomOfAgent.cities).Count() <= 0) {
+            //        kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            //    }
+            //} else if (currTile.isOccupied) {
+            //    if (currTile.ownedByCity == null || currTile.ownedByCity.kingdom.id != kingdomOfAgent.id) {
+            //        kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            //    }
+            //} else {
+            //    kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            //}
         }
 		visibleTiles.Clear();
 		if (!forDeath) {

@@ -225,20 +225,34 @@ public class CityGenerator : MonoBehaviour {
 		}
         //hexTile.ShowCitySprite();
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
-		//hexTile.ShowNamePlate();
-		if (hexTile.gameObject.GetComponent<CityTaskManager> () != null) {
-			Destroy (hexTile.gameObject.GetComponent<CityTaskManager> ());
-		}
-		if (hexTile.gameObject.GetComponent<PandaBehaviour> () != null) {
-			Destroy (hexTile.gameObject.GetComponent<PandaBehaviour> ());
-		}
+        //hexTile.ShowNamePlate();
+        //if (hexTile.gameObject.GetComponent<CityTaskManager>() != null) {
+        //    Destroy(hexTile.gameObject.GetComponent<CityTaskManager>());
+        //}
+        //if (hexTile.gameObject.GetComponent<PandaBehaviour>() != null) {
+        //    Destroy(hexTile.gameObject.GetComponent<PandaBehaviour>());
+        //}
+        CityTaskManager ctmOfCity = hexTile.gameObject.GetComponent<CityTaskManager>();
+        if (ctmOfCity == null) {
+            ctmOfCity = hexTile.gameObject.AddComponent<CityTaskManager>();
+        }
 
-		hexTile.gameObject.AddComponent<CityTaskManager>();
-		hexTile.gameObject.AddComponent<PandaBehaviour>();
-		hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
-		hexTile.gameObject.GetComponent<PandaBehaviour>().Compile (cityBehaviourTree.text);
-        //BehaviourTreeManager.Instance.allTrees.Add(hexTile.gameObject.GetComponent<PandaBehaviour> ());
-        Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+        if (hexTile.gameObject.GetComponent<PandaBehaviour>() == null) {
+            hexTile.gameObject.AddComponent<PandaBehaviour>();
+            hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
+            hexTile.gameObject.GetComponent<PandaBehaviour>().Compile(cityBehaviourTree.text);
+            Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+        }
+
+        ctmOfCity.Initialize(hexTile.city);
+
+  //      hexTile.gameObject.AddComponent<CityTaskManager>();
+  //      hexTile.gameObject.AddComponent<PandaBehaviour>();
+		//hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
+		//hexTile.gameObject.GetComponent<PandaBehaviour>().Compile (cityBehaviourTree.text);
+  //      //BehaviourTreeManager.Instance.allTrees.Add(hexTile.gameObject.GetComponent<PandaBehaviour> ());
+  //      Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+
         hexTile.city.UpdateBorderTiles();
         return hexTile.city;
 	}
