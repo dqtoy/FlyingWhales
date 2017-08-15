@@ -382,8 +382,9 @@ public class Citizen {
 //			}
 //		}
 		if(!isConquered){
-			EventManager.Instance.onCitizenDiedEvent.Invoke ();
-		}
+            //Messenger.Broadcast("CitizenDied");
+            //EventManager.Instance.onCitizenDiedEvent.Invoke();
+        }
 
 
 		if (this.isMarried && this._spouse != null) {

@@ -13,9 +13,13 @@ public class CityTaskManager : MonoBehaviour {
 	private General generalToUpgrade = null;
 	public ROLE roleToCreate = ROLE.UNTRAINED;
 
-	void Awake(){
-		this.city = this.GetComponent<HexTile> ().city;
-	}
+    internal void Initialize(City city) {
+        this.city = city;
+    }
+
+	//void Awake(){
+	//	this.city = this.GetComponent<HexTile> ().city;
+	//}
 
 	#region Expansion Functions
 	[Task]
@@ -85,9 +89,9 @@ public class CityTaskManager : MonoBehaviour {
                     //Just buy a tile without special resource
                     elligibleTiles.Clear ();
 					for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-						elligibleTiles.AddRange (this.city.ownedTiles [i].elligibleNeighbourTilesForPurchase);
+						elligibleTiles = elligibleTiles.Union (this.city.ownedTiles [i].elligibleNeighbourTilesForPurchase
+                            .Where(x => x.isBorderOfCities.Except(this.city.kingdom.cities).Count() <= 0)).ToList();
 					}
-					elligibleTiles.Distinct ();
 					if (elligibleTiles.Count > 0) {
 						elligibleTiles = Utilities.Shuffle (elligibleTiles);
 						List<HexTile> path = new List<HexTile> ();

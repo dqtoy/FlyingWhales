@@ -514,6 +514,31 @@ public class KingdomManager : MonoBehaviour {
 		}
 	}
 
+    public bool IsSharingBorders(Kingdom kingdom1, Kingdom kingdom2) {
+        List<HexTile> allTilesOfKingdom1 = new List<HexTile>();
+        //List<HexTile> allTilesOfKingdom2 = new List<HexTile>();
+
+        for (int i = 0; i < kingdom1.cities.Count; i++) {
+            City currCity = kingdom1.cities[i];
+            allTilesOfKingdom1 = allTilesOfKingdom1.Union(currCity.ownedTiles).ToList();
+            allTilesOfKingdom1 = allTilesOfKingdom1.Union(currCity.borderTiles).ToList();
+        }
+
+        //for (int i = 0; i < kingdom2.cities.Count; i++) {
+        //    City currCity = kingdom2.cities[i];
+        //    allTilesOfKingdom2 = allTilesOfKingdom2.Union(currCity.ownedTiles).ToList();
+        //    allTilesOfKingdom2 = allTilesOfKingdom2.Union(currCity.borderTiles).ToList();
+        //}
+
+        for (int i = 0; i < allTilesOfKingdom1.Count; i++) {
+            HexTile currTileOfKingdom1 = allTilesOfKingdom1[i];
+            if (currTileOfKingdom1.seenByKingdoms.Contains(kingdom2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 	#region War Events
 	private void WarEvents(Kingdom declarerKingdom, Kingdom targetKingdom){

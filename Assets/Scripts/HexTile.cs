@@ -45,6 +45,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [SerializeField] private List<City> _isBorderOfCities = new List<City>();
     [SerializeField] private List<City> _isOuterTileOfCities = new List<City>();
+    [SerializeField] private List<Kingdom> _seenByKingdoms = new List<Kingdom>(); //This is only occupied when a tile becomes occupies, becaoms a border or becomes an outer tile of a city!
 	//public int isBorderOfCityID = 0;
 	//internal int isOccupiedByCityID = 0;
     //[SerializeField] internal List<City> isVisibleByCities = new List<City>();
@@ -151,6 +152,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     public List<City> isOuterTileOfCities {
         get { return _isOuterTileOfCities; }
+    }
+    public List<Kingdom> seenByKingdoms {
+        get { return _seenByKingdoms; }
     }
     #endregion
 
@@ -517,7 +521,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         Transform namePlatePanel = UIParent.GetComponentsInChildren<Transform>().Where(x => x.name.Equals("CityNamePlatePanel")).FirstOrDefault();
         if (namePlatePanel != null) {
             //Destroy(namePlatePanel);
-            this._cityInfo = namePlatePanel.GetComponentInChildren<CityItem>();
+            this._cityInfoParent = namePlatePanel.transform;
         } else {
             GameObject parentPanel = new GameObject("CityNamePlatePanel", typeof(UIPanel));
             parentPanel.layer = LayerMask.NameToLayer("HextileNamePlates");
@@ -525,14 +529,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             parentPanel.transform.localPosition = Vector3.zero;
             parentPanel.transform.localScale = Vector3.one;
             this._cityInfoParent = parentPanel.transform;
+        }
 
-            GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, parentPanel.transform);
+        CityItem cityItem = _cityInfoParent.GetComponentInChildren<CityItem>();
+        if(cityItem != null) {
+            this._cityInfo = cityItem;
+            Messenger.AddListener("UpdateUI", UpdateNamePlate);
+        } else {
+            GameObject namePlateGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.cityItemPrefab, _cityInfoParent.transform);
             this._cityInfo = namePlateGO.GetComponent<CityItem>();
             namePlateGO.transform.localPosition = new Vector3(-2.3f, -1.2f, 0f);
             namePlateGO.transform.localScale = new Vector3(0.02f, 0.02f, 0f);
             Messenger.AddListener("UpdateUI", UpdateNamePlate);
         }
-
         UpdateNamePlate();
     }
 
@@ -829,17 +838,21 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //}
 		//this.isOccupiedByCityID = city.id;		
 		this.ownedByCity = city;
-        this.isBorder = false;
+        if (!_seenByKingdoms.Contains(city.kingdom)) {
+            _seenByKingdoms.Add(city.kingdom);
+        }
+        //this.isBorder = false;
         //this.isBorderOfCityID = 0;
     }
 
-    public void Unoccupy() {
+    public void Unoccupy(bool immediatelyDestroyStructures = false) {
+        _seenByKingdoms.Remove(ownedByCity.kingdom);
         isOccupied = false;
         ownedByCity = null;
         SetMinimapTileColor(biomeColor);
         this._kingdomColorSprite.color = Color.white;
         this.kingdomColorSprite.gameObject.SetActive(false);
-        RuinStructureOnTile();
+        RuinStructureOnTile(immediatelyDestroyStructures);
         city = null;
 
         //Destroy Nameplates
@@ -848,12 +861,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         for (int i = 0; i < children.Length; i++) {
             Destroy(children[i].gameObject);
         }
+        this._cityInfoParent = null;
+        this._cityInfo = null;
     }
 
-    public void RuinStructureOnTile() {
+    public void RuinStructureOnTile(bool immediatelyDestroyStructures = false) {
         if (structureObjOnTile != null) {
             Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
-            structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
+            if (immediatelyDestroyStructures) {
+                structureObjOnTile.DestroyStructure();
+            } else {
+                structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
+            }
+            
         }
     }
 
@@ -862,18 +882,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (!_isBorderOfCities.Contains(city)) {
             _isBorderOfCities.Add(city);
         }
+        if (!_seenByKingdoms.Contains(city.kingdom)) {
+            _seenByKingdoms.Add(city.kingdom);
+        }
         //if (!isVisibleByCities.Contains(city)) {
         //    this.isVisibleByCities.Add(city);
         //}
         //this.isBorderOfCityID = city.id;
-		//this.ownedByCity = city;
-	}
+        //this.ownedByCity = city;
+    }
 
     public void UnBorderize(City city) {
         //this.isBorderOfCityID = 0;
         //this.ownedByCity = null;
         _isBorderOfCities.Remove(city);
-        if(_isBorderOfCities.Count <= 0) {
+        _seenByKingdoms.Remove(city.kingdom);
+        if (_isBorderOfCities.Count <= 0) {
             this.isBorder = false;
             this._kingdomColorSprite.color = Color.white;
             this.kingdomColorSprite.gameObject.SetActive(false);
@@ -885,10 +909,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (!_isOuterTileOfCities.Contains(city)) {
             _isOuterTileOfCities.Add(city);
         }
+        if (!_seenByKingdoms.Contains(city.kingdom)) {
+            _seenByKingdoms.Add(city.kingdom);
+        }
     }
 
     public void RemoveAsOuterTileOf(City city) {
         _isOuterTileOfCities.Remove(city);
+        _seenByKingdoms.Remove(city.kingdom);
     }
 
     #region Monobehaviour Functions
@@ -935,23 +963,27 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				}
 			}
             this.HideKingdomInfo();
+            if(this.ownedByCity != null) {
+                this.ownedByCity.UnHighlightAllOwnedTiles();
+            }
             if (UIManager.Instance.currentlyShowingKingdom != null) {
-                //if there is currently showing kingdom, if this city is part of that kingdom remain higlighted, but less
-                if (UIManager.Instance.currentlyShowingKingdom.id == this.city.kingdom.id) {
-                    this.city.kingdom.HighlightAllOwnedTilesInKingdom();
-                    if (UIManager.Instance.currentlyShowingCity != null) {
-                        if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
-                            this.city.HighlightAllOwnedTiles(204f / 255f);
-                        }
-                    }
-                } else {
-                    this.city.kingdom.UnHighlightAllOwnedTilesInKingdom();
-                    if (UIManager.Instance.currentlyShowingCity != null) {
-                        if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
-                            this.city.HighlightAllOwnedTiles(204f / 255f);
-                        }
-                    }
-                }
+                UIManager.Instance.currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
+                ////if there is currently showing kingdom, if this city is part of that kingdom remain higlighted, but less
+                //if (UIManager.Instance.currentlyShowingKingdom.id == this.city.kingdom.id) {
+                //    this.city.kingdom.HighlightAllOwnedTilesInKingdom();
+                //    if (UIManager.Instance.currentlyShowingCity != null) {
+                //        if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
+                //            this.city.HighlightAllOwnedTiles(204f / 255f);
+                //        }
+                //    }
+                //} else {
+                //    this.city.kingdom.UnHighlightAllOwnedTilesInKingdom();
+                //    if (UIManager.Instance.currentlyShowingCity != null) {
+                //        if (UIManager.Instance.currentlyShowingCity.id == this.city.id) {
+                //            this.city.HighlightAllOwnedTiles(204f / 255f);
+                //        }
+                //    }
+                //}
             }
         }
     }
