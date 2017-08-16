@@ -455,9 +455,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
         GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
-        GameObject structureGO = GameObject.Instantiate(
-        gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)],
-        structureParentGO.transform) as GameObject;
+        string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
+        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
         structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState);
 
@@ -560,10 +559,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
     public void RemoveCityNamePlate() {
-        ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
-        _namePlateParent = null;
-        _cityInfo = null;
-        Messenger.RemoveListener("UpdateUI", UpdateCityNamePlate);
+        if(_cityInfo != null) {
+            ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
+            _namePlateParent = null;
+            _cityInfo = null;
+            Messenger.RemoveListener("UpdateUI", UpdateCityNamePlate);
+        }
     }
 
 	public void CreateLairNamePlate() {
@@ -747,7 +748,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
-            Destroy(children[i].gameObject);
+            ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
 
@@ -796,7 +797,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
-            Destroy(children[i].gameObject);
+            ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
 
@@ -838,7 +839,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
 
         if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom)
-            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)) {
+            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)
+            && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
             _seenByKingdoms.Remove(city.kingdom);
         }
         //this.isVisibleByCities.Remove(city);
@@ -856,7 +858,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public void RemoveAsOuterTileOf(City city) {
         _isOuterTileOfCities.Remove(city);
         if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom) 
-            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)) {
+            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom) 
+            && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
             _seenByKingdoms.Remove(city.kingdom);
         }
     }
@@ -1113,7 +1116,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}else{
 			if(this.plagueIcon != null){
-				Destroy(this.plagueIcon);
+				ObjectPoolManager.Instance.DestroyObject(this.plagueIcon);
 			}
 		}
 	}
@@ -1151,13 +1154,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	internal void RemoveEventOnTile(){
 		this._gameEventInTile = null;
         RemoveHextileEventNamePlate();
-  //      Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
-		//for (int i = 0; i < children.Length; i++) {
-		//	if(children[i].gameObject.tag == "EventTileNameplate"){
-		//		Destroy(children[i].gameObject);
-		//	}
-		//}
-	}
+        //      Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
+        //for (int i = 0; i < children.Length; i++) {
+        //	if(children[i].gameObject.tag == "EventTileNameplate"){
+        //Destroy(children[i].gameObject);
+        //	}
+        //}
+    }
 	internal GameEvent GetEventFromTile(){
 		return this._gameEventInTile;
 	}
@@ -1176,7 +1179,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}else{
 			if(this.plagueIcon != null){
-				Destroy(this.plagueIcon);
+				ObjectPoolManager.Instance.DestroyObject(this.plagueIcon);
 			}
 		}
 	}
@@ -1195,7 +1198,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}else{
 			if(this.plagueIcon != null){
-				Destroy(this.plagueIcon);
+				ObjectPoolManager.Instance.DestroyObject(this.plagueIcon);
 			}
 		}
 	}

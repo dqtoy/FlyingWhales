@@ -114,11 +114,11 @@ public class CitizenAvatar : PooledObject {
         RemoveBehaviourTree();
         UnHighlightPath();
         _hasArrived = false;
-        this.citizenRole = null;
-        this.direction = DIRECTION.LEFT;
-        this.GetComponent<Avatar>().kingdom = null;
-        this.GetComponent<Avatar>().gameEvent = null;
-        this.GetComponent<Avatar>().citizen = null;
+        //this.citizenRole = null;
+        //this.direction = DIRECTION.LEFT;
+        //this.GetComponent<Avatar>().kingdom = null;
+        //this.GetComponent<Avatar>().gameEvent = null;
+        //this.GetComponent<Avatar>().citizen = null;
         //visibleTiles = new List<HexTile>();
         //childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
     }
@@ -222,8 +222,10 @@ public class CitizenAvatar : PooledObject {
         UpdateFogOfWar(true);
 		HasAttacked();
         this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
-
-        //this.citizenRole.DestroyGO();
+        if (this.citizenRole != null) {
+            this.citizenRole.DestroyGO();
+        }
+        
     }
 
     internal void HasAttacked() {

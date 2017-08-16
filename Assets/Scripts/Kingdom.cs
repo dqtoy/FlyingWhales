@@ -890,12 +890,12 @@ public class Kingdom{
         if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
             for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
                 habitableTile = CityGenerator.Instance.stoneHabitableTiles[i];
-                this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+                this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(city.hexTile, habitableTile));
             }
         } else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
             for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {
                 habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
-                this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
+                this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(city.hexTile, habitableTile));
             }
         }
     }

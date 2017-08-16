@@ -16,11 +16,11 @@ public class CityGenerator : MonoBehaviour {
 
     [Space(10)]
     [Header("Human Structures")]
-    [SerializeField] private RaceStructures humanStructures;
+    [SerializeField] private RaceStructures _humanStructures;
 
     [Space(10)]
     [Header("Elven Structures")]
-    [SerializeField] private RaceStructures elvenStructures;
+    [SerializeField] private RaceStructures _elvenStructures;
 
     [Space(10)]
     [Header("Special Structures")]
@@ -40,7 +40,16 @@ public class CityGenerator : MonoBehaviour {
 
     public TextAsset cityBehaviourTree;
 
-	void Awake(){
+    #region getters/setters
+    public RaceStructures humanStructures {
+        get { return _humanStructures; }
+    }
+    public RaceStructures elvenStructures {
+        get { return _elvenStructures; }
+    }
+    #endregion
+
+    void Awake(){
 		Instance = this;
 	}
 
@@ -269,9 +278,9 @@ public class CityGenerator : MonoBehaviour {
 	}
 
     public GameObject[] GetStructurePrefabsForRace(RACE race, STRUCTURE_TYPE structureType) {
-        RaceStructures raceStructuresToUse = humanStructures;
+        RaceStructures raceStructuresToUse = _humanStructures;
         if(race == RACE.ELVES) {
-            raceStructuresToUse = elvenStructures;
+            raceStructuresToUse = _elvenStructures;
         } 
 //		else {
 //            raceStructuresToUse = humanStructures;

@@ -3,6 +3,7 @@ using System.Collections;
 using EZObjectPools;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class ObjectPoolManager : MonoBehaviour {
 
@@ -25,6 +26,22 @@ public class ObjectPoolManager : MonoBehaviour {
         for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
             GameObject currPrefab = citizenAvatarPrefabs[i];
             CreateNewPool(currPrefab, currPrefab.name, 50, false, true, false);
+        }
+
+        for (int i = 0; i < CityGenerator.Instance.humanStructures.structures.Length; i++) {
+            Structures currStructure = CityGenerator.Instance.humanStructures.structures[i];
+            GameObject[] structurePrefabs = currStructure.structureGameObjects;
+            for (int j = 0; j < structurePrefabs.Length; j++) {
+                CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, false, true, false);
+            }
+        }
+
+        for (int i = 0; i < CityGenerator.Instance.elvenStructures.structures.Length; i++) {
+            Structures currStructure = CityGenerator.Instance.elvenStructures.structures[i];
+            GameObject[] structurePrefabs = currStructure.structureGameObjects;
+            for (int j = 0; j < structurePrefabs.Length; j++) {
+                CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, false, true, false);
+            }
         }
     }
 
