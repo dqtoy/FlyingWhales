@@ -77,7 +77,7 @@ public class Lair {
 	}
 	private void DestroyLair(){
 		if(this.goStructure != null){
-			GameObject.Destroy(this.goStructure);
+			ObjectPoolManager.Instance.DestroyObject(this.goStructure);
 			this.goStructure = null;
 		}
 		this.isDead = true;

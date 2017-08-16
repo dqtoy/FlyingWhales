@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using EZObjectPools;
 
-public class EventItem : MonoBehaviour {
+public class EventItem : PooledObject {
 
 	public delegate void OnClickEvent(object obj);
 	public OnClickEvent onClickEvent;
@@ -58,14 +59,16 @@ public class EventItem : MonoBehaviour {
 	}
 	internal void HasExpired(){
 		this.isPaused = true;
-		UIManager.Instance.HideSmallInfo ();
+
+        UIManager.Instance.HideSmallInfo();
         UIGrid parentGrid = this.transform.parent.GetComponent<UIGrid>();
         UIScrollView parentScrollView = parentGrid.transform.parent.GetComponent<UIScrollView>();
         parentGrid.RemoveChild(this.transform);
-		
-		Destroy (this.gameObject);
+
         UIManager.Instance.RepositionGridCallback(parentGrid);
         StartCoroutine(UIManager.Instance.RepositionScrollView(parentScrollView));
+
+        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
 	internal void ActivateNewLogIndicator(){
 		this.goExclaimation.SetActive (true);
@@ -95,11 +98,14 @@ public class EventItem : MonoBehaviour {
 		}
 	}
 
-	void OnDestroy(){
-		if (onClickEvent != null) {
-			onClickEvent -= UIManager.Instance.ShowEventLogs;
-		}
-//		UIManager.Instance.onPauseEventExpiration -= this.PauseExpirationTimer;
-//		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
-	}
+    #region overrides
+    public override void Reset() {
+        if (onClickEvent != null) {
+            onClickEvent -= UIManager.Instance.ShowEventLogs;
+        }
+        //		UIManager.Instance.onPauseEventExpiration -= this.PauseExpirationTimer;
+        //		UIManager.Instance.RepositionGridCallback (UIManager.Instance.gameEventsOfTypeGrid);
+    }
+    #endregion
+
 }

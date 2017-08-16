@@ -150,20 +150,43 @@ public class CitizenAvatar : PooledObject {
         tilesToCheck.AddRange(visibleTiles);
         Kingdom thisKingdom = this.citizenRole.citizen.city.kingdom;
 
+        List<City> citiesSeen = new List<City>();
+
         for (int i = 0; i < tilesToCheck.Count; i++) {
             HexTile currTile = tilesToCheck[i];
             if (currTile.isOccupied && currTile.ownedByCity != null &&
                 currTile.ownedByCity.kingdom.id != thisKingdom.id) {
+                if (!citiesSeen.Contains(currTile.ownedByCity)) {
+                    citiesSeen.Add(currTile.ownedByCity);
+                }
                 Kingdom otherKingdom = currTile.ownedByCity.kingdom;
                 if (otherKingdom.id != thisKingdom.id && !thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
                     KingdomManager.Instance.DiscoverKingdom(thisKingdom, otherKingdom);
                 }
             } else if (currTile.isBorder) {
                 for (int j = 0; j < currTile.isBorderOfCities.Count; j++) {
-                    Kingdom otherKingdom = currTile.isBorderOfCities[j].kingdom;
-                    if (otherKingdom.id != thisKingdom.id && !thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
-                        KingdomManager.Instance.DiscoverKingdom(thisKingdom, otherKingdom);
+                    City otherCity = currTile.isBorderOfCities[j];
+                    Kingdom otherKingdom = otherCity.kingdom;
+                    if (otherKingdom.id != thisKingdom.id) {
+                        if (!citiesSeen.Contains(otherCity)) {
+                            citiesSeen.Add(otherCity);
+                        }
+                        if (!thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
+                            KingdomManager.Instance.DiscoverKingdom(thisKingdom, otherKingdom);
+                        }
                     }
+                }
+            }
+        }
+
+        for (int i = 0; i < citiesSeen.Count; i++) {
+            City currCity = citiesSeen[i];
+            Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
+            List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
+            for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
+                HexTile currTile = tilesToSetAsSeen[j];
+                if (!currTile.seenByKingdoms.Contains(thisKingdom)) {
+                    thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
         }
