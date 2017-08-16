@@ -16,11 +16,11 @@ public class CityGenerator : MonoBehaviour {
 
     [Space(10)]
     [Header("Human Structures")]
-    [SerializeField] private RaceStructures humanStructures;
+    [SerializeField] private RaceStructures _humanStructures;
 
     [Space(10)]
     [Header("Elven Structures")]
-    [SerializeField] private RaceStructures elvenStructures;
+    [SerializeField] private RaceStructures _elvenStructures;
 
     [Space(10)]
     [Header("Special Structures")]
@@ -40,7 +40,16 @@ public class CityGenerator : MonoBehaviour {
 
     public TextAsset cityBehaviourTree;
 
-	void Awake(){
+    #region getters/setters
+    public RaceStructures humanStructures {
+        get { return _humanStructures; }
+    }
+    public RaceStructures elvenStructures {
+        get { return _elvenStructures; }
+    }
+    #endregion
+
+    void Awake(){
 		Instance = this;
 	}
 
@@ -223,15 +232,9 @@ public class CityGenerator : MonoBehaviour {
 			hexTile.city = new City (hexTile, kingdom);
             allCities.Add(hexTile.city);
 		}
-        //hexTile.ShowCitySprite();
+
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
-        //hexTile.ShowNamePlate();
-        //if (hexTile.gameObject.GetComponent<CityTaskManager>() != null) {
-        //    Destroy(hexTile.gameObject.GetComponent<CityTaskManager>());
-        //}
-        //if (hexTile.gameObject.GetComponent<PandaBehaviour>() != null) {
-        //    Destroy(hexTile.gameObject.GetComponent<PandaBehaviour>());
-        //}
+
         CityTaskManager ctmOfCity = hexTile.gameObject.GetComponent<CityTaskManager>();
         if (ctmOfCity == null) {
             ctmOfCity = hexTile.gameObject.AddComponent<CityTaskManager>();
@@ -245,14 +248,6 @@ public class CityGenerator : MonoBehaviour {
 
         ctmOfCity.Initialize(hexTile.city);
         Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
-        
-
-  //      hexTile.gameObject.AddComponent<CityTaskManager>();
-  //      hexTile.gameObject.AddComponent<PandaBehaviour>();
-		//hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
-		//hexTile.gameObject.GetComponent<PandaBehaviour>().Compile (cityBehaviourTree.text);
-  //      //BehaviourTreeManager.Instance.allTrees.Add(hexTile.gameObject.GetComponent<PandaBehaviour> ());
-  //      Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
 
         hexTile.city.UpdateBorderTiles();
         return hexTile.city;
@@ -283,9 +278,9 @@ public class CityGenerator : MonoBehaviour {
 	}
 
     public GameObject[] GetStructurePrefabsForRace(RACE race, STRUCTURE_TYPE structureType) {
-        RaceStructures raceStructuresToUse = humanStructures;
+        RaceStructures raceStructuresToUse = _humanStructures;
         if(race == RACE.ELVES) {
-            raceStructuresToUse = elvenStructures;
+            raceStructuresToUse = _elvenStructures;
         } 
 //		else {
 //            raceStructuresToUse = humanStructures;

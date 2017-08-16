@@ -3,8 +3,9 @@ using System.Collections;
 using Panda;
 using System.Collections.Generic;
 using System.Linq;
+using EZObjectPools;
 
-public class CitizenAvatar : MonoBehaviour {
+public class CitizenAvatar : PooledObject {
     public Role citizenRole;
     public PandaBehaviour pandaBehaviour;
     public Animator animator;
@@ -104,6 +105,24 @@ public class CitizenAvatar : MonoBehaviour {
 	internal virtual void UpdateUI(){}
     #endregion
 
+    #region overrides
+    public override void Reset() {
+        base.Reset();
+        UpdateFogOfWar(true);
+        ResetValues();
+        ResetBehaviourTree();
+        RemoveBehaviourTree();
+        UnHighlightPath();
+        _hasArrived = false;
+        //this.citizenRole = null;
+        //this.direction = DIRECTION.LEFT;
+        //this.GetComponent<Avatar>().kingdom = null;
+        //this.GetComponent<Avatar>().gameEvent = null;
+        //this.GetComponent<Avatar>().citizen = null;
+        //visibleTiles = new List<HexTile>();
+        //childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
+    }
+    #endregion
 
     internal void CollectEvents() {
         this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
@@ -183,8 +202,6 @@ public class CitizenAvatar : MonoBehaviour {
 		this.UpdateUI ();
     }
 
-
-
     private void HighlightPath() {
         this.pathToUnhighlight.Clear();
 		if(this.citizenRole.path != null){
@@ -205,7 +222,10 @@ public class CitizenAvatar : MonoBehaviour {
         UpdateFogOfWar(true);
 		HasAttacked();
         this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
-        this.citizenRole.DestroyGO();
+        if (this.citizenRole != null) {
+            this.citizenRole.DestroyGO();
+        }
+        
     }
 
     internal void HasAttacked() {
@@ -221,6 +241,10 @@ public class CitizenAvatar : MonoBehaviour {
     internal void RemoveBehaviourTree() {
         //BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
         Messenger.RemoveListener("OnDayEnd", this.pandaBehaviour.Tick);
+    }
+
+    internal void ResetBehaviourTree() {
+        this.pandaBehaviour.Reset();
     }
     #endregion
 

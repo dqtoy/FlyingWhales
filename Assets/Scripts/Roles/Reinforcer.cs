@@ -16,8 +16,6 @@ public class Reinforcer : Role {
             base.Initialize(gameEvent);
 			this.reinforcement = (Reinforcement)gameEvent;
 			this.reinforcement.reinforcer = this;
-			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Reinforcer"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<ReinforcerAvatar>().Init(this);
 		}
 	}

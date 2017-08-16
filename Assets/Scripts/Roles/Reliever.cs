@@ -15,8 +15,6 @@ public class Reliever : Role {
             base.Initialize(gameEvent);
 			this.sendReliefGoods = (SendReliefGoods)gameEvent;
 			this.sendReliefGoods.reliever = this;
-			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Reliever"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<RelieverAvatar>().Init(this);
 		}
 	}

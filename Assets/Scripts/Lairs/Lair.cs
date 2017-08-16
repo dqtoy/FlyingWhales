@@ -67,12 +67,13 @@ public class Lair {
 		this.hexTile.isLair = true;
 		this.hexTile.isOccupied = true;
 		this.hexTile.lair = this;
-		this.hexTile.ShowLairNamePlate ();
+		this.hexTile.CreateLairNamePlate();
 	}
 	private void DetachLairFromHextile(){
 		this.hexTile.isLair = false;
 		this.hexTile.isOccupied = false;
 		this.hexTile.lair = null;
+        this.hexTile.RemoveLairNamePlate();
 	}
 	private void DestroyLair(){
 		if(this.goStructure != null){
@@ -81,9 +82,6 @@ public class Lair {
 		}
 		this.isDead = true;
 		DetachLairFromHextile();
-
-        //Reset Hextile
-        this.hexTile.ResetTile();
 
         //for (int i = 0; i < this.hexTile.isVisibleByCities.Count; i++) {
         //    City currCity = this.hexTile.isVisibleByCities[i];

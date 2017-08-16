@@ -52,13 +52,13 @@ public class InvasionPlan : GameEvent {
 		this._joinWarEvents = new List<JoinWar>();
 
 		Log invasionPlanStart = this._war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Reasons", "InvasionPlanReasons", this._war.warTrigger.ToString());
-		System.DateTime newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.durationInDays);
+		GameDate newDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.durationInDays);
 
 		invasionPlanStart.AddToFillers (this._sourceKingdom.king, this._sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
 		invasionPlanStart.AddToFillers (this._sourceKingdom, this._sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		invasionPlanStart.AddToFillers (this._targetKingdom.king, this._targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
 		invasionPlanStart.AddToFillers (this._targetKingdom, this._targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		invasionPlanStart.AddToFillers (null, ((MONTH)newDate.Month).ToString() + " " + newDate.Day.ToString() + ", " + newDate.Year.ToString(), LOG_IDENTIFIER.DATE);
+		invasionPlanStart.AddToFillers (null, ((MONTH)newDate.month).ToString() + " " + newDate.day.ToString() + ", " + newDate.year.ToString(), LOG_IDENTIFIER.DATE);
 
 		if(warTrigger == WAR_TRIGGER.OPPOSING_APPROACH){
 			invasionPlanStart.AddToFillers (gameEventTrigger, gameEventTrigger.name, LOG_IDENTIFIER.GAME_EVENT);

@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Linq;
 using System;
+using EZObjectPools;
 
-public class StructureObject : MonoBehaviour {
+public class StructureObject : PooledObject {
 
     private STRUCTURE_TYPE _structureType;
     private STRUCTURE_STATE _structureState;
@@ -11,7 +12,7 @@ public class StructureObject : MonoBehaviour {
     private GameObject[] normalParents;
     private GameObject[] ruinedParents;
 
-    private DateTime expiryDate;
+    private GameDate expiryDate;
 
     [ContextMenu("List Ruined Structures")]
     public void ListRuinedObjects() {
@@ -21,8 +22,12 @@ public class StructureObject : MonoBehaviour {
     }
 
     public void Initialize(STRUCTURE_TYPE structureType, Color structureColor,  STRUCTURE_STATE structureState) {
-        normalParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Normal").Select(x => x.gameObject).ToArray();
-        ruinedParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Ruined").Select(x => x.gameObject).ToArray();
+        if(normalParents == null) {
+            normalParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Normal").Select(x => x.gameObject).ToArray();
+        }
+        if (ruinedParents == null) {
+            ruinedParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Ruined").Select(x => x.gameObject).ToArray();
+        }
         _structureType = structureType;
         SetStructureState(structureState);
         SetStructureColor(structureColor);
@@ -59,8 +64,7 @@ public class StructureObject : MonoBehaviour {
 
     public void DestroyStructure() {
         Debug.Log("DESTROY STRUCTURE!");
-        Messenger.RemoveListener("OnDayEnd", CheckForExpiry);
-        Destroy(gameObject);
+        ObjectPoolManager.Instance.DestroyObject(gameObject);
     }
 
     private void QueueForExpiry() {
@@ -69,8 +73,15 @@ public class StructureObject : MonoBehaviour {
     }
 
     private void CheckForExpiry() {
-        if (expiryDate.Year == GameManager.Instance.year && expiryDate.Month == GameManager.Instance.month && expiryDate.Day == GameManager.Instance.days) {
+        if (expiryDate.year == GameManager.Instance.year && expiryDate.month == GameManager.Instance.month && expiryDate.day == GameManager.Instance.days) {
             DestroyStructure();
         }
     }
+
+    #region overrides
+    public override void Reset() {
+        base.Reset();
+        Messenger.RemoveListener("OnDayEnd", CheckForExpiry);
+    }
+    #endregion
 }

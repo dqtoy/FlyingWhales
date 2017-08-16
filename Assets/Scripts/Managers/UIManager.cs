@@ -15,13 +15,13 @@ public class UIManager : MonoBehaviour {
     public GameObject characterPortraitPrefab;
 	public GameObject historyPortraitPrefab;
 	public GameObject eventPortraitPrefab;
-	public GameObject traitPrefab;
+	//public GameObject traitPrefab;
 	public GameObject gameEventPrefab;
 	public GameObject kingdomEventsListParentPrefab;
 	public GameObject kingdomWarEventsListParentPrefab;
 	public GameObject kingdomEventsListItemPrefab;
-	public GameObject kingdomWarEventsListItemPrefab;
-	public GameObject kingdomFlagPrefab;
+	//public GameObject kingdomWarEventsListItemPrefab;
+	//public GameObject kingdomFlagPrefab;
 	public GameObject logItemPrefab;
     public GameObject cityItemPrefab;
 	public GameObject lairItemPrefab;
@@ -536,11 +536,11 @@ public class UIManager : MonoBehaviour {
         if (resourcesInGrid.Except(allOtherResources).Count() > 0 || allOtherResources.Except(resourcesInGrid).Count() > 0) {
             for (int i = 0; i < children.Count; i++) {
                 kingdomOtherResourcesGrid.RemoveChild(children[i]);
-                Destroy(children[i].gameObject);
+                ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
             }
             for (int i = 0; i < currentlyShowingKingdom.availableResources.Keys.Count; i++) {
                 RESOURCE currResource = currentlyShowingKingdom.availableResources.Keys.ElementAt(i);
-                GameObject resourceGO = InstantiateUIObject(resourceIconPrefab, this.transform);
+                GameObject resourceGO = InstantiateUIObject(resourceIconPrefab.name, this.transform);
                 resourceGO.GetComponent<ResourceIcon>().SetResource(currResource);
                 resourceGO.transform.localScale = Vector3.one;
                 kingdomOtherResourcesGrid.AddChild(resourceGO.transform);
@@ -597,14 +597,15 @@ public class UIManager : MonoBehaviour {
 
         activeKingdomFlag.SetKingdom(currentlyShowingKingdom);
         //Load all current active events of kingdom
-        List<GameEvent> activeGameEventsStartedByKingdom = EventManager.Instance.GetEventsStartedByKingdom(currentlyShowingKingdom, new EVENT_TYPES[] { EVENT_TYPES.ALL })
-            .Where(x => !Utilities.eventsNotToShow.Contains(x.eventType)).ToList(); ;
+        List<GameEvent> activeGameEventsStartedByKingdom = currentlyShowingKingdom.activeEvents.Where(x => !Utilities.eventsNotToShow.Contains(x.eventType)).ToList();
+            //EventManager.Instance.GetEventsStartedByKingdom(currentlyShowingKingdom, new EVENT_TYPES[] { EVENT_TYPES.ALL })
+            //.Where(x => !Utilities.eventsNotToShow.Contains(x.eventType)).ToList(); ;
         List<EventItem> presentEventItems = activeKingdomFlag.eventsGrid.GetChildList().Select(x => x.GetComponent<EventItem>()).ToList();
 
         if(activeGameEventsStartedByKingdom.Count > presentEventItems.Count) {
             int missingItems = activeGameEventsStartedByKingdom.Count - presentEventItems.Count;
             for (int i = 0; i < missingItems; i++) {
-                GameObject eventGO = InstantiateUIObject(gameEventPrefab, activeKingdomFlag.eventsGrid.transform);
+                GameObject eventGO = InstantiateUIObject(gameEventPrefab.name, activeKingdomFlag.eventsGrid.transform);
                 activeKingdomFlag.AddGameObjectToGrid(eventGO);
                 presentEventItems.Add(eventGO.GetComponent<EventItem>());
             }
@@ -793,11 +794,11 @@ public class UIManager : MonoBehaviour {
 
 		List<Transform> children = this.citizenHistoryGrid.GetChildList ();
 		for (int i = 0; i < children.Count; i++) {
-			Destroy (children [i].gameObject);
+			ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
 		}
 
 		for (int i = 0; i < this.currentlyShowingCitizen.history.Count; i++) {
-			GameObject citizenGO = InstantiateUIObject(this.historyPortraitPrefab, this.citizenHistoryGrid.transform);
+			GameObject citizenGO = InstantiateUIObject(this.historyPortraitPrefab.name, this.citizenHistoryGrid.transform);
 			citizenGO.GetComponent<HistoryPortrait>().SetHistory(this.currentlyShowingCitizen.history[i]);
 			citizenGO.transform.localScale = Vector3.one;
 			citizenGO.transform.localPosition = Vector3.zero;
@@ -1018,7 +1019,7 @@ public class UIManager : MonoBehaviour {
 			for (int i = nextIndex; i < relationshipsToShow.Count; i++) {
                 RelationshipKings rel = relationshipsToShow[i];
 
-                GameObject kingGO = InstantiateUIObject(characterPortraitPrefab, this.transform);
+                GameObject kingGO = InstantiateUIObject(characterPortraitPrefab.name, this.transform);
 				kingGO.GetComponent<CharacterPortrait>().SetCitizen(rel.king, true);
 				kingGO.transform.localScale = Vector3.one;
 				kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (rel, 
@@ -1040,11 +1041,11 @@ public class UIManager : MonoBehaviour {
 		}
 		List<Transform> children = governorsRelationshipGrid.GetChildList();
 		for (int i = 0; i < children.Count; i++) {
-			Destroy (children [i].gameObject);
+			ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
 		}
 
         for (int i = 0; i < currentlyShowingCitizen.city.kingdom.cities.Count; i++) {
-			GameObject governorGO = InstantiateUIObject(characterPortraitPrefab, governorsRelationshipGrid.transform);
+			GameObject governorGO = InstantiateUIObject(characterPortraitPrefab.name, governorsRelationshipGrid.transform);
 			governorGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.city.kingdom.cities[i].governor, true);
 			governorGO.GetComponent<CharacterPortrait>().DisableHover();
 			governorGO.transform.localScale = new Vector3(1.5f, 1.5f, 0);
@@ -1077,11 +1078,11 @@ public class UIManager : MonoBehaviour {
 
 		List<Transform> children = this.relationshipHistoryGrid.GetChildList();
 		for (int i = 0; i < children.Count; i++) {
-			Destroy(children[i].gameObject);
+			ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
 		}
 
 		for (int i = 0; i < relationship.relationshipHistory.Count; i++) {
-			GameObject historyGO = InstantiateUIObject(this.historyPortraitPrefab, this.relationshipHistoryGrid.transform);
+			GameObject historyGO = InstantiateUIObject(this.historyPortraitPrefab.name, this.relationshipHistoryGrid.transform);
 			historyGO.GetComponent<HistoryPortrait> ().SetHistory(relationship.relationshipHistory[i]);
 			historyGO.transform.localScale = Vector3.one;
 			historyGO.transform.localPosition = Vector3.zero;
@@ -1164,28 +1165,28 @@ public class UIManager : MonoBehaviour {
 			familyTreeGO.SetActive (false);
 		} else {
 			if (familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>() != null) {
-				Destroy (familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+				ObjectPoolManager.Instance.DestroyObject(familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
 			}
 			if (currentlyShowingCitizen.father != null) {
-				GameObject fatherGO = InstantiateUIObject(characterPortraitPrefab, familyTreeFatherGO.transform);
+				GameObject fatherGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeFatherGO.transform);
 				fatherGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
 				fatherGO.transform.localPosition = Vector3.zero;
 				fatherGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.father);
 			}
 			if (familyTreeMotherGO.GetComponentInChildren<CharacterPortrait>() != null) {
-				Destroy (familyTreeMotherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+                ObjectPoolManager.Instance.DestroyObject(familyTreeMotherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
 			}
 			if (currentlyShowingCitizen.mother != null) {
-				GameObject motherGO = InstantiateUIObject(characterPortraitPrefab, familyTreeMotherGO.transform);
+				GameObject motherGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeMotherGO.transform);
 				motherGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
 				motherGO.transform.localPosition = Vector3.zero;
 				motherGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.mother);
 			}
 			if (familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>() != null) {
-				Destroy (familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+                ObjectPoolManager.Instance.DestroyObject(familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>().gameObject);
 			}
 			if (currentlyShowingCitizen.spouse != null) {
-				GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab, familyTreeSpouseGO.transform);
+				GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
 				spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
 				spouseGO.transform.localPosition = Vector3.zero;
 				spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.spouse);
@@ -1203,7 +1204,7 @@ public class UIManager : MonoBehaviour {
 					}
 				}
 			} else if (this.marriageHistoryOfCurrentCitizen.Count > 0) {
-				GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab, familyTreeSpouseGO.transform);
+				GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
 				spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
 				spouseGO.transform.localPosition = Vector3.zero;
 				if (currentlyShowingCitizen.gender == GENDER.MALE) {
@@ -1216,12 +1217,12 @@ public class UIManager : MonoBehaviour {
 
 			CharacterPortrait[] children = familyTreeChildGrid.GetComponentsInChildren<CharacterPortrait>();
 			for (int i = 0; i < children.Length; i++) {
-				Destroy (children [i].gameObject);
+                ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
 			}
 
 			List<Transform> childPositions = familyTreeChildGrid.GetChildList ();
 			for (int i = 0; i < currentlyShowingCitizen.children.Count; i++) {
-				GameObject childGO = InstantiateUIObject(characterPortraitPrefab, childPositions [i].transform);
+				GameObject childGO = InstantiateUIObject(characterPortraitPrefab.name, childPositions [i].transform);
 				childGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
 				childGO.transform.localPosition = Vector3.zero;
 				childGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.children [i]);
@@ -1251,22 +1252,22 @@ public class UIManager : MonoBehaviour {
 			nextIndex = 0;
 		}
 
-		Destroy(familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait> ().gameObject);
+        ObjectPoolManager.Instance.DestroyObject(familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait> ().gameObject);
 		CharacterPortrait[] children = familyTreeChildGrid.GetComponentsInChildren<CharacterPortrait>();
 		for (int i = 0; i < children.Length; i++) {
-			Destroy (children [i].gameObject);
+            ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
 		}
 
 		MarriedCouple marriedCoupleToShow = this.marriageHistoryOfCurrentCitizen[nextIndex];
 		if (marriedCoupleToShow.husband.id == currentlyShowingCitizen.id) {
 			//currentlyShowingCitizen is male
-			GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab, familyTreeSpouseGO.transform);
+			GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
 			spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
 			spouseGO.transform.localPosition = Vector3.zero;
 			spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (marriedCoupleToShow.wife);
 		} else {
 			//currentlyShowingCitizen is female	
-			GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab, familyTreeSpouseGO.transform);
+			GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
 			spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
 			spouseGO.transform.localPosition = Vector3.zero;
 			spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (marriedCoupleToShow.husband);
@@ -1274,7 +1275,7 @@ public class UIManager : MonoBehaviour {
 
 		List<Transform> childPositions = familyTreeChildGrid.GetChildList ();
 		for (int i = 0; i < marriedCoupleToShow.children.Count; i++) {
-			GameObject childGO = InstantiateUIObject(characterPortraitPrefab, childPositions[i].transform);
+			GameObject childGO = InstantiateUIObject(characterPortraitPrefab.name, childPositions[i].transform);
 			childGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
 			childGO.transform.localPosition = Vector3.zero;
 			childGO.GetComponent<CharacterPortrait>().SetCitizen(marriedCoupleToShow.children[i]);
@@ -1409,7 +1410,7 @@ public class UIManager : MonoBehaviour {
 			//	}
 			//}
 		}else{ //World Event
-			GameObject eventGO = InstantiateUIObject(this.gameEventPrefab, this.gameEventsOfTypeGrid.transform);
+			GameObject eventGO = InstantiateUIObject(this.gameEventPrefab.name, this.gameEventsOfTypeGrid.transform);
 			eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
 			//eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
 			//eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
@@ -2270,39 +2271,13 @@ public class UIManager : MonoBehaviour {
 			GameEvent ge = ((GameEvent)obj);
 			logs = ge.logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
-			elmEventProgressBar.gameObject.SetActive (false);
+            elmEventProgressBar.gameObject.SetActive (false);
 			elmProgressBarLbl.gameObject.SetActive (false);
-			//         if (ge.isActive) {
-			//	if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
-			//		elmEventProgressBar.gameObject.SetActive (false);
-			//	} else if (ge.eventType == EVENT_TYPES.EXPANSION) {
-			//		elmEventProgressBar.gameObject.SetActive (false);
-			//	} else {
-			//		elmEventProgressBar.gameObject.SetActive (true);
-			//		float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
-			//		if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
-			//			currentLerpRoutine = StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
-			//		} else {
-			//			if (currentLerpRoutine != null) {
-			//				StopCoroutine (currentLerpRoutine);
-			//				currentLerpRoutine = null;
-			//			}
-			//			elmEventProgressBar.value = targetValue;
-			//		}
-
-			//	}
-			//} else {
-			//	elmEventProgressBar.gameObject.SetActive (false);
-			//}
-		} else if (obj is Campaign) {
-			logs = ((Campaign)obj).logs;
-			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
-			elmEventProgressBar.gameObject.SetActive (false);
 		} else if (obj is PlayerEvent) {
 			PlayerEvent pe = ((PlayerEvent)obj);
 			logs = pe.logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
-			elmEventProgressBar.gameObject.SetActive (false);
+            elmEventProgressBar.gameObject.SetActive (false);
 			elmProgressBarLbl.gameObject.SetActive (false);
 		}
 		//elmProgressBarLbl.text = "Progress:";
@@ -2311,32 +2286,45 @@ public class UIManager : MonoBehaviour {
 		currentlyShowingLogObject = obj;
 
 		GameObject nextAnchorPoint = elmFirstAnchor;
-		List<Log> currentlyShowingLogs = elmEventLogsParentGO.GetComponentsInChildren<EventLogItem>().Select(x => x.thisLog).ToList();
-		if ((logs.Except (currentlyShowingLogs).Union (currentlyShowingLogs.Except (logs)).Count() - 1) > 0) {
-			List<EventLogItem> children = elmEventLogsParentGO.GetComponentsInChildren<EventLogItem> ().ToList();
-			for (int i = 0; i < children.Count; i++) {
-				Destroy (children [i].gameObject);
-			}
-			for (int i = 1; i < logs.Count; i++) {
-				GameObject logGO = InstantiateUIObject(logItemPrefab, elmEventLogsParentGO.transform);
-				logGO.transform.localScale = Vector3.one;
-				EventLogItem currELI = logGO.GetComponent<EventLogItem> ();
-				currELI.SetLog (logs [i]);
-				if (i % 2 == 0) {
-					currELI.DisableBG();
-				}
-			}
-			StartCoroutine(RepositionTable(elmEventLogsParentGO.GetComponent<UITable>()));
-            StartCoroutine(RepositionScrollView(elmScrollView));
+		List<EventLogItem> currentlyShowingLogs = elmEventLogsParentGO.GetComponentsInChildren<EventLogItem>(true).ToList();
+
+        if((logs.Count - 1) > currentlyShowingLogs.Count) {
+            int logItemsToCreate = (logs.Count - 1) - currentlyShowingLogs.Count;
+            for (int i = 0; i < logItemsToCreate; i++) {
+                GameObject logGO = InstantiateUIObject(logItemPrefab.name, elmEventLogsParentGO.transform);
+                logGO.transform.localScale = Vector3.one;
+                currentlyShowingLogs.Add(logGO.GetComponent<EventLogItem>());
+            }
         }
-		if(this.currentlyShowingLogObject is GameEvent){
-			if(((GameEvent)this.currentlyShowingLogObject).goEventItem != null){
-				((GameEvent)this.currentlyShowingLogObject).goEventItem.GetComponent<EventItem>().DeactivateNewLogIndicator ();
-			}
-		}
-		if(!this.eventLogsGO.activeSelf){
-			this.eventLogsGO.SetActive(true);
-		}
+
+        for (int i = 0; i < currentlyShowingLogs.Count; i++) {
+            EventLogItem currELI = currentlyShowingLogs[i];
+            Log currLog = logs.ElementAtOrDefault(i+1);
+            if(currLog == null) {
+                currELI.gameObject.SetActive(false);
+            } else {
+                currELI.SetLog(currLog);
+                if ((i+1) % 2 == 0) {
+                    currELI.DisableBG();
+                } else {
+                    currELI.EnableBG();
+                }
+                currELI.gameObject.SetActive(true);
+            }
+        }
+
+		StartCoroutine(RepositionTable(elmEventLogsParentGO.GetComponent<UITable>()));
+        StartCoroutine(RepositionScrollView(elmScrollView));
+
+	    if(this.currentlyShowingLogObject is GameEvent){
+		    if(((GameEvent)this.currentlyShowingLogObject).goEventItem != null){
+			    ((GameEvent)this.currentlyShowingLogObject).goEventItem.GetComponent<EventItem>().DeactivateNewLogIndicator ();
+		    }
+	    }
+
+	    if(!this.eventLogsGO.activeSelf){
+		    this.eventLogsGO.SetActive(true);
+	    }
 	}
 
 	public void HideEventLogs(){
@@ -2404,7 +2392,7 @@ public class UIManager : MonoBehaviour {
             if (currentParents.Length > 0) {
                 for (int i = 0; i < currentParents.Length; i++) {
                     EventListParent currentParent = currentParents[i];
-                    Destroy(currentParent.gameObject);
+                    ObjectPoolManager.Instance.DestroyObject(currentParent.gameObject);
                 }
             }
         } else {
@@ -2447,7 +2435,7 @@ public class UIManager : MonoBehaviour {
         }
 
         for (int i = nextItem; i < allDoneEvents.Count; i++) {
-            GameObject eventGO = InstantiateUIObject(kingdomEventsListItemPrefab, this.transform);
+            GameObject eventGO = InstantiateUIObject(kingdomEventsListItemPrefab.name, this.transform);
             eventGO.transform.localScale = Vector3.one;
             kingdomHistoryGrid.AddChild(eventGO.transform);
             eventGO.GetComponent<EventListItem>().SetEvent(allDoneEvents[i], currentlyShowingKingdom);
@@ -2489,14 +2477,14 @@ public class UIManager : MonoBehaviour {
 
 		if (politicalEvents.Count <= 0) {
 			if (politicsParentGO == null) {
-				Destroy(politicsParentGO);
+                ObjectPoolManager.Instance.DestroyObject(politicsParentGO);
 			}
 			return;
 		}
 
 		if (politicsParentGO == null) {
 			//Instantiate Politics Parent
-			politicsParentGO = InstantiateUIObject(kingdomEventsListParentPrefab, kingdomCurrentEventsContentParent.transform) as GameObject;
+			politicsParentGO = InstantiateUIObject(kingdomEventsListParentPrefab.name, kingdomCurrentEventsContentParent.transform) as GameObject;
 			politicsParentGO.name = "PoliticsParent";
 			politicsParentGO.transform.localScale = Vector3.one;
 			politicsParentGO.transform.localPosition = Vector3.zero;
@@ -2511,12 +2499,12 @@ public class UIManager : MonoBehaviour {
 		if (actualPoliticalEventIDs.Except (currentlyShowingGameEventIDs).Union (currentlyShowingGameEventIDs.Except (actualPoliticalEventIDs)).Count () > 0) {
 			for (int i = 0; i < currentlyShowingGameEvents.Count; i++) {
 				politicsParent.eventsGrid.RemoveChild (currentlyShowingGameEvents[i].transform);
-				Destroy (currentlyShowingGameEvents[i].gameObject);
+                ObjectPoolManager.Instance.DestroyObject(currentlyShowingGameEvents[i].gameObject);
 			}
 
 			//Instantiate all polical events into the politics parent grid
 			for (int i = 0; i < politicalEvents.Count; i++) {
-				GameObject eventGO = InstantiateUIObject(kingdomEventsListItemPrefab, this.transform);
+				GameObject eventGO = InstantiateUIObject(kingdomEventsListItemPrefab.name, this.transform);
 				eventGO.transform.localScale = Vector3.one;
 				politicsParent.eventsGrid.AddChild(eventGO.transform);
 				eventGO.GetComponent<EventListItem>().SetEvent (politicalEvents[i], currentlyShowingKingdom);
@@ -2555,7 +2543,7 @@ public class UIManager : MonoBehaviour {
                             break;
                         }
                     } else {
-                        Destroy(currWarParent.gameObject);
+                        ObjectPoolManager.Instance.DestroyObject(currWarParent.gameObject);
                     }
                     
                 }
@@ -2564,13 +2552,13 @@ public class UIManager : MonoBehaviour {
 
 			if (wars.Count <= 0) {
 				if (warParentGO == null) {
-					Destroy(warParentGO);
+                    ObjectPoolManager.Instance.DestroyObject(warParentGO);
 				}
 				return;
 			}
 
 			if (warParentGO == null) {
-				warParentGO = InstantiateUIObject(kingdomWarEventsListParentPrefab, kingdomCurrentEventsContentParent.transform);
+				warParentGO = InstantiateUIObject(kingdomWarEventsListParentPrefab.name, kingdomCurrentEventsContentParent.transform);
 				warParentGO.name = "WarParent-" + currentWar.id.ToString();
 				warParentGO.transform.localScale = Vector3.one;
 				warParentGO.transform.localPosition = Vector3.zero;
@@ -2701,7 +2689,7 @@ public class UIManager : MonoBehaviour {
         if (currentlyShowingKingdom.cities.Count >= nextIndex) {
             for (int i = nextIndex; i < currentlyShowingKingdom.cities.Count; i++) {
                 City currCity = currentlyShowingKingdom.cities[i];
-                GameObject cityGO = InstantiateUIObject(cityItemPrefab, this.transform);
+                GameObject cityGO = InstantiateUIObject(cityItemPrefab.name, this.transform);
                 cityGO.GetComponent<CityItem>().SetCity(currCity, true);
                 cityGO.transform.localScale = Vector3.one;
                 kingdomCitiesGrid.AddChild(cityGO.transform);
@@ -2753,7 +2741,7 @@ public class UIManager : MonoBehaviour {
     private void LoadInterveneEvents() {
         for (int i = 0; i < EventManager.Instance.playerPlacableEvents.Length; i++) {
             EVENT_TYPES currEvent = EventManager.Instance.playerPlacableEvents[i];
-            GameObject playerEventItemGO = InstantiateUIObject(playerEventItemPrefab, this.transform);
+            GameObject playerEventItemGO = InstantiateUIObject(playerEventItemPrefab.name, this.transform);
             interveneMenuGrid.AddChild(playerEventItemGO.transform);
             playerEventItemGO.transform.localPosition = Vector3.zero;
             playerEventItemGO.transform.localScale = Vector3.one;
@@ -2804,7 +2792,7 @@ public class UIManager : MonoBehaviour {
         if(kingdomsToList.Count > presentKingdomItems.Count) {
             int numOfItemsToCreate = kingdomsToList.Count - presentKingdomItems.Count;
             for (int i = 0; i < numOfItemsToCreate; i++) {
-                GameObject kingdomItemGO = InstantiateUIObject(kingdomIntervenePrefab, switchKingdomGrid.transform);
+                GameObject kingdomItemGO = InstantiateUIObject(kingdomIntervenePrefab.name, switchKingdomGrid.transform);
                 switchKingdomGrid.AddChild(kingdomItemGO.transform);
                 kingdomItemGO.transform.localScale = Vector3.one;
                 presentKingdomItems.Add(kingdomItemGO.GetComponent<KingdomInterveneItem>());
@@ -3006,8 +2994,9 @@ public class UIManager : MonoBehaviour {
 	 * Use this to instantiate UI Objects, so that the program can normalize it's
 	 * font sizes.
 	 * */
-	internal GameObject InstantiateUIObject(GameObject prefabObj, Transform parent){
-		GameObject go = GameObject.Instantiate (prefabObj, parent) as GameObject;
+	internal GameObject InstantiateUIObject(string prefabObjName, Transform parent){
+        //GameObject go = GameObject.Instantiate (prefabObj, parent) as GameObject;
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabObjName, Vector3.zero, Quaternion.identity, parent);
 		UILabel[] goLbls = go.GetComponentsInChildren<UILabel>(true);
 		for (int i = 0; i < goLbls.Length; i++) {
 			NormalizeFontSizeOfLabel(goLbls[i]);
@@ -3526,7 +3515,7 @@ public class UIManager : MonoBehaviour {
         if (allKings.Count > portraits.Count) {
             int numOfMissingPortraits = allKings.Count - portraits.Count;
             for (int i = 0; i < numOfMissingPortraits; i++) {
-                GameObject newPortrait = InstantiateUIObject(characterPortraitPrefab, evilIntentMenuSourceKingGrid.transform) as GameObject;
+                GameObject newPortrait = InstantiateUIObject(characterPortraitPrefab.name, evilIntentMenuSourceKingGrid.transform) as GameObject;
                 newPortrait.transform.localScale = Vector3.one;
                 evilIntentMenuSourceKingGrid.AddChild(newPortrait.transform);
                 StartCoroutine(RepositionGrid(evilIntentMenuSourceKingGrid));
@@ -3558,7 +3547,7 @@ public class UIManager : MonoBehaviour {
         if (allOtherKings.Count > portraits.Count) {
             int numOfMissingPortraits = allOtherKings.Count - portraits.Count;
             for (int i = 0; i < numOfMissingPortraits; i++) {
-                GameObject newPortrait = InstantiateUIObject(characterPortraitPrefab, evilIntentMenuTargetKingGrid.transform) as GameObject;
+                GameObject newPortrait = InstantiateUIObject(characterPortraitPrefab.name, evilIntentMenuTargetKingGrid.transform) as GameObject;
                 newPortrait.transform.localScale = Vector3.one;
                 evilIntentMenuTargetKingGrid.AddChild(newPortrait.transform);
                 StartCoroutine(RepositionGrid(evilIntentMenuTargetKingGrid));

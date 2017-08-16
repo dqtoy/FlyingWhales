@@ -40,4 +40,11 @@ public class EventLogItem : MonoBehaviour {
 			bgSprites [i].alpha = (0f / 255f);
 		}
 	}
+
+    internal void EnableBG() {
+        UI2DSprite[] bgSprites = this._bgGO.GetComponentsInChildren<UI2DSprite>();
+        for (int i = 0; i < bgSprites.Length; i++) {
+            bgSprites[i].alpha = (255f / 255f);
+        }
+    }
 }

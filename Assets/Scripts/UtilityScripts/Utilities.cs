@@ -952,7 +952,8 @@ public class Utilities : MonoBehaviour {
 
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {
         EVENT_TYPES.ADVENTURE,
-        EVENT_TYPES.INVASION_PLAN
+        EVENT_TYPES.INVASION_PLAN,
+        EVENT_TYPES.HUNT_LAIR
     };
 
 	public static string PronounReplacer(string word, object genderSubject){
@@ -1047,23 +1048,27 @@ public class Utilities : MonoBehaviour {
 		return words;
 	}
 
-	public static DateTime GetNewDateAfterNumberOfDays(int month, int day, int year, int numOfDaysElapsed){
-        int newDay = day;
-        int newMonth = month;
-        int newYear = year;
+	public static GameDate GetNewDateAfterNumberOfDays(int month, int day, int year, int numOfDaysElapsed){
+        GameDate newDate = new GameDate();
+        newDate.SetDate(month, day, year);
+        newDate.AddDays(numOfDaysElapsed);
 
-        for (int i = 0; i < numOfDaysElapsed; i++) {
-            newDay += 1;
-            if (newDay > GameManager.daysInMonth[newMonth]) {
-                newDay = 1;
-                newMonth += 1;
-                if (newMonth > 12) {
-                    newMonth = 1;
-                    newYear += 1;
-                }
-            }
-        }
-		DateTime newDate = new DateTime (newYear, newMonth, newDay);
+  //      int newDay = day;
+  //      int newMonth = month;
+  //      int newYear = year;
+
+  //      for (int i = 0; i < numOfDaysElapsed; i++) {
+  //          newDay += 1;
+  //          if (newDay > GameManager.daysInMonth[newMonth]) {
+  //              newDay = 1;
+  //              newMonth += 1;
+  //              if (newMonth > 12) {
+  //                  newMonth = 1;
+  //                  newYear += 1;
+  //              }
+  //          }
+  //      }
+		//DateTime newDate = new DateTime (newYear, newMonth, newDay);
 		//inputDate = inputDate.AddDays (numOfDaysElapsed);
 		return newDate;
 	}

@@ -15,8 +15,6 @@ public class Provoker : Role {
             base.Initialize(gameEvent);
 			this.provocation = (Provocation)gameEvent;
 			this.provocation.provoker = this;
-			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Provoker"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<ProvokerAvatar>().Init(this);
 		}
 	}

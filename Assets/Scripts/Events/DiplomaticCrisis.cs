@@ -32,7 +32,7 @@ public class DiplomaticCrisis : GameEvent {
 		this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.DIPLOMATIC_CRISIS;
 
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
-		Debug.LogError (this.description);
+		Debug.Log (this.description);
 
 		this.crisis = Utilities.crisis [UnityEngine.Random.Range (0, Utilities.crisis.Length)];
 

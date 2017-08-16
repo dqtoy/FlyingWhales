@@ -3,6 +3,7 @@ using System.Collections;
 using Panda;
 using System.Collections.Generic;
 using System.Linq;
+using EZObjectPools;
 
 public class AdventurerAvatar : CitizenAvatar {
 

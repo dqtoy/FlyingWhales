@@ -19,8 +19,6 @@ public class Healer : Role {
             base.Initialize(gameEvent);
             this._plagueEvent = (Plague)gameEvent;
             this._plagueEvent.AddAgentToList(this.citizen);
-            this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Healer"), this.citizen.city.hexTile.transform) as GameObject;
-            this.avatar.transform.localPosition = Vector3.zero;
             this.avatar.GetComponent<HealerAvatar>().Init(this);
         }
     }

@@ -15,8 +15,6 @@ public class Missionary : Role {
             base.Initialize(gameEvent);
 			this.evangelism = (Evangelism)gameEvent;
 			this.evangelism.missionary = this;
-			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Missionary"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<MissionaryAvatar>().Init(this);
 		}
 	}

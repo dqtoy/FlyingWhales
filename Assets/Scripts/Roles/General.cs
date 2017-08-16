@@ -61,8 +61,6 @@ public class General : Role {
 //		}else if(gameEvent is AttackLair){
 //			((AttackLair)this.gameEvent).general = this;
 //		}
-		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/General"), this.citizen.city.hexTile.transform) as GameObject;
-		this.avatar.transform.localPosition = Vector3.zero;
 		this.avatar.GetComponent<GeneralAvatar>().Init(this);
 	}
 

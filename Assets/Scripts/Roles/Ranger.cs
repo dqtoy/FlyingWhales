@@ -24,8 +24,6 @@ public class Ranger : Role {
     internal override void Initialize(GameEvent gameEvent) {
         if (gameEvent is HuntLair) {
             base.Initialize(gameEvent);
-			this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Ranger"), this.citizen.city.hexTile.transform) as GameObject;
-            this.avatar.transform.localPosition = Vector3.zero;
             this.avatar.GetComponent<RangerAvatar>().Init(this);
 			if(this.targetLocation == null){
 				AcquireTarget ();
