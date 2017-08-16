@@ -52,6 +52,7 @@ public class ObjectPoolManager : MonoBehaviour {
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null) {
+        poolName = poolName.ToUpper();
         if (!allObjectPools.ContainsKey(poolName)) {
             throw new Exception("Object Pool does not have key " + poolName);
         }
@@ -82,6 +83,7 @@ public class ObjectPoolManager : MonoBehaviour {
     }
 
     public EZObjectPool CreateNewPool(GameObject template, string poolName, int size, bool autoResize, bool instantiateImmediate, bool shared) {
+        poolName = poolName.ToUpper();
         EZObjectPool newPool = EZObjectPool.CreateObjectPool(template, poolName, size, autoResize, instantiateImmediate, shared);
         //try {
             allObjectPools.Add(poolName, newPool);
