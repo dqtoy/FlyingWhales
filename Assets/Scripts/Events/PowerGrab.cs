@@ -23,7 +23,7 @@ public class PowerGrab : GameEvent {
 		this.startedBy.UnsupportCitizen (this.startedBy.supportedCitizen);
 		this.startedBy.supportedCitizen = this.startedBy;
 
-		Debug.LogError (this.description);
+		Debug.Log (this.description);
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.AddEventToDictionary(this);
 	}

@@ -91,11 +91,8 @@ public class Role {
     }
 
     internal void CreateAvatarGO() {
-        //this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Spy"), this.citizen.city.hexTile.transform) as GameObject;
-        //this.avatar.transform.localPosition = Vector3.zero;
         this.avatar = ObjectPoolManager.Instance.InstantiateObjectFromPool(citizen.role.ToString(), Vector3.zero, Quaternion.identity,
             this.citizen.city.hexTile.transform);
-        //this.avatar.transform.localPosition = Vector3.zero;
     }
 
 	internal virtual void Attack(){

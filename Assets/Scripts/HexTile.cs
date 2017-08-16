@@ -509,8 +509,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     //}
 
     public GameObject CreateSpecialStructureOnTile(LAIR lairType) {
-        GameObject structureGO = GameObject.Instantiate(
-            CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType), structureParentGO.transform) as GameObject;
+        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType).name,
+            Vector3.zero, Quaternion.identity, structureParentGO.transform);
+        //GameObject.Instantiate(
+        //CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType), structureParentGO.transform) as GameObject;
         structureGO.transform.localPosition = Vector3.zero;
         return structureGO;
     }

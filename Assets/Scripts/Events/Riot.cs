@@ -15,7 +15,7 @@ public class Riot : GameEvent {
 		this.remainingDays = this.durationInDays;
 		this.sourceKingdom = startedBy.city.kingdom;
 		this.sourceKingdom.SetRiot (true);
-		Debug.LogError (startedBy.name + " has started a riot in " + this.sourceKingdom.name);
+		Debug.Log (startedBy.name + " has started a riot in " + this.sourceKingdom.name);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "event_title");
 		newLogTitle.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);

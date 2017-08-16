@@ -16,7 +16,7 @@ public class Reinforcement : GameEvent {
 		this.targetCity = targetCity;
 		this.sourceCity = sourceCity;
 		this.SendReinforcement ();
-		Debug.LogError (reinforcer.citizen.name + " of " + reinforcer.citizen.city.kingdom.name + " will reinforce " + targetCity.name);
+		Debug.Log (reinforcer.citizen.name + " of " + reinforcer.citizen.city.kingdom.name + " will reinforce " + targetCity.name);
 
 	}
 

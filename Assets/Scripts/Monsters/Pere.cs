@@ -24,15 +24,14 @@ public class Pere : Monster {
 //		}
 //	}
 	internal override void Initialize(){
-		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Pere"), this.originHextile.transform) as GameObject;
-		this.avatar.transform.localPosition = Vector3.zero;
+        CreateAvatarGO();
 		this.avatar.GetComponent<PereAvatar>().Init(this);
 	}
 	internal override void Death (){
 		base.Death ();
 		if(this.avatar != null){
-			GameObject.Destroy(this.avatar);
-			this.avatar = null;
+            ObjectPoolManager.Instance.DestroyObject(this.avatar);
+            this.avatar = null;
 		}
 	}
 	internal override void DoneAction (){

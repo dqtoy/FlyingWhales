@@ -24,7 +24,7 @@ public class Exhortation : GameEvent {
 			this.successRate += 10;
 		}
 
-		Debug.LogError (this.description);
+		Debug.Log (this.description);
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 //		EventManager.Instance.AddEventToDictionary(this);
 	}

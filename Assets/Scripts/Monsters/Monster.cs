@@ -212,8 +212,12 @@ public class Monster {
 		}
 		return 0;
 	}
-	#region Virtual
-	internal virtual void Initialize(){}
+    internal void CreateAvatarGO() {
+        this.avatar = ObjectPoolManager.Instance.InstantiateObjectFromPool(type.ToString(), Vector3.zero, Quaternion.identity,
+            this.originHextile.transform);
+    }
+    #region Virtual
+    internal virtual void Initialize(){}
 	internal virtual void Attack(){
 		if(this.avatar != null){
 			this.avatar.GetComponent<MonsterAvatar> ().HasAttacked();

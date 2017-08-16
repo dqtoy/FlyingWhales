@@ -24,14 +24,15 @@ public class Ghoul : Monster {
 //		}
 //	}
 	internal override void Initialize(){
-		this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Ghoul"), this.originHextile.transform) as GameObject;
-		this.avatar.transform.localPosition = Vector3.zero;
+        CreateAvatarGO();
+		//this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Ghoul"), this.originHextile.transform) as GameObject;
+		//this.avatar.transform.localPosition = Vector3.zero;
 		this.avatar.GetComponent<GhoulAvatar>().Init(this);
 	}
 	internal override void Death (){
-		base.Death ();
+		base.Death();
 		if(this.avatar != null){
-			GameObject.Destroy(this.avatar);
+			ObjectPoolManager.Instance.DestroyObject(this.avatar);
 			this.avatar = null;
 		}
 	}

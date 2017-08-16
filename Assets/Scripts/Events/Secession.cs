@@ -30,7 +30,7 @@ public class Secession : GameEvent {
 		this.sourceKingdom.SetSecession (true);
 
         Messenger.AddListener("OnDayEnd", this.PerformAction);
-		Debug.LogError (startedBy.name + " wants to split from " + this.sourceKingdom.name + " because his/her loyalty is " + this.governor.loyalty);
+		Debug.Log (startedBy.name + " wants to split from " + this.sourceKingdom.name + " because his/her loyalty is " + this.governor.loyalty);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "event_title");
 		newLogTitle.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);

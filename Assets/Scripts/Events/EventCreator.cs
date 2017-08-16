@@ -332,7 +332,7 @@ public class EventCreator: MonoBehaviour {
 		if(abductorKing.city.kingdom.isLockedDown || targetKing.city.kingdom.isLockedDown){
 			return null;
 		}
-		Debug.LogError ("Creating SPOUSE ABDUCTION: " + abductorKing.name + " wants to abduct the spouse of " + targetKing.name);
+		Debug.Log ("Creating SPOUSE ABDUCTION: " + abductorKing.name + " wants to abduct the spouse of " + targetKing.name);
 		SpouseAbduction spouseAbduction = new SpouseAbduction(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, abductorKing, targetKing);
 		return spouseAbduction;
 	}

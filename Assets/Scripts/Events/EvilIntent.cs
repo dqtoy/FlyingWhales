@@ -183,7 +183,7 @@ public class EvilIntent : GameEvent {
             _targetKing.GetRelationshipWithCitizen(_sourceKing).ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, this);
             AskForRansom();
         } else {
-            Debug.LogError("CANNOT KIDNAP ANYONE!");
+            Debug.Log("CANNOT KIDNAP ANYONE!");
             DoneEvent();
         }
     }

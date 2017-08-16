@@ -17,7 +17,7 @@ public class Admiration : GameEvent {
 		this.kingdom1 = kingdom1;
 		this.kingdom2 = kingdom2;
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
-		Debug.LogError (this.description);
+		Debug.Log (this.description);
 	}
 
 	internal override void PerformAction(){

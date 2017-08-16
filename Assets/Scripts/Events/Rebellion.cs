@@ -40,7 +40,7 @@ public class Rebellion : GameEvent {
 		this.ReplenishWavesKingdom2();
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
-		Debug.LogError (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);
+		Debug.Log (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "event_title");
 		newLogTitle.AddToFillers (this.rebelLeader.citizen, this.rebelLeader.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Panda;
+using EZObjectPools;
 
-public class MonsterAvatar : MonoBehaviour {
+public class MonsterAvatar : PooledObject {
 	public delegate void onBehavior ();
 	public static event onBehavior onBehaviorAction;
 
@@ -127,8 +128,6 @@ public class MonsterAvatar : MonoBehaviour {
 		}
 	}
 
-
-
 	private void ResetValues(){
 		this.collidedWithHostile = false;
 		this.hostile = null;
@@ -241,4 +240,14 @@ public class MonsterAvatar : MonoBehaviour {
 	internal void HasAttacked(){
 		this.GetComponent<SmoothMovement> ().hasAttacked = true;
 	}
+
+    #region overrides
+    public override void Reset() {
+        base.Reset();
+        RemoveBehaviourTree();
+        UnHighlightPath();
+        ResetValues();
+        hasArrived = false;
+    }
+    #endregion
 }

@@ -18,6 +18,7 @@ public class Scourge : Role {
             base.Initialize(gameEvent);
 			this._scourgeCity = (ScourgeCity)gameEvent;
 			this._scourgeCity.scourge = this;
+            CreateAvatarGO();
 			this.avatar.GetComponent<ScourgeAvatar>().Init(this);
 		}
 	}

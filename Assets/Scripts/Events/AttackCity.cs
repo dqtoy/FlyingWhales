@@ -16,7 +16,7 @@ public class AttackCity : GameEvent {
 		this.general = general;
 		this.targetCity = targetCity;
 		this.gameEvent = gameEvent;
-		Debug.LogError (general.citizen.name + " of " + general.citizen.city.kingdom.name + " will attack " + targetCity.name);
+		Debug.Log (general.citizen.name + " of " + general.citizen.city.kingdom.name + " will attack " + targetCity.name);
 //		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
 		//		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "event_title");
