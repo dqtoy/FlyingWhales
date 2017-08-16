@@ -21,19 +21,19 @@ public class ObjectPoolManager : MonoBehaviour {
 
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 50, false, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 50, true, true, false);
         }
 
         for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
             GameObject currPrefab = citizenAvatarPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 50, false, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 50, true, true, false);
         }
 
         for (int i = 0; i < CityGenerator.Instance.humanStructures.structures.Length; i++) {
             Structures currStructure = CityGenerator.Instance.humanStructures.structures[i];
             GameObject[] structurePrefabs = currStructure.structureGameObjects;
             for (int j = 0; j < structurePrefabs.Length; j++) {
-                CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, false, true, false);
+                CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, true, true, false);
             }
         }
 
@@ -41,13 +41,13 @@ public class ObjectPoolManager : MonoBehaviour {
             Structures currStructure = CityGenerator.Instance.elvenStructures.structures[i];
             GameObject[] structurePrefabs = currStructure.structureGameObjects;
             for (int j = 0; j < structurePrefabs.Length; j++) {
-                CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, false, true, false);
+                CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, true, true, false);
             }
         }
 
         for (int i = 0; i < monsterAvatarPrefabs.Length; i++) {
             GameObject currPrefab = monsterAvatarPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 50, false, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 50, true, true, false);
         }
     }
 
