@@ -15,8 +15,6 @@ public class Thief : Role {
             base.Initialize(gameEvent);
 			this.firstAndKeystone = (FirstAndKeystone)gameEvent;
 //			this.firstAndKeystone.raider = this;
-			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Thief"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<ThiefAvatar>().Init(this);
 		}
 	}

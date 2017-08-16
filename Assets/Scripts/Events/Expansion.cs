@@ -71,9 +71,10 @@ public class Expansion : GameEvent {
 	internal override void DoneEvent(){
 		base.DoneEvent();
 		this.hexTileToExpandTo.isTargeted = false;
-//		this.expander.DestroyGO ();
-//		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
-	}
+        //expander.citizen.Death(DEATH_REASONS.NONE);
+        this.expander.DestroyGO();
+        //		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
+    }
 	internal override void CancelEvent (){
 		base.CancelEvent ();
 		this.DoneEvent ();

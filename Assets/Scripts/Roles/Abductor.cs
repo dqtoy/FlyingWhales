@@ -18,8 +18,6 @@ public class Abductor : Role {
             base.Initialize(gameEvent);
 			this._spouseAbduction = (SpouseAbduction)gameEvent;
 			this._spouseAbduction.abductor = this;
-			this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Abductor"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<AbductorAvatar>().Init(this);
 		}
 	}

@@ -15,8 +15,6 @@ public class Raider : Role {
             base.Initialize(gameEvent);
 			this.raid = (Raid)gameEvent;
 			this.raid.raider = this;
-			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Raider"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<RaiderAvatar>().Init(this);
 		}
 	}

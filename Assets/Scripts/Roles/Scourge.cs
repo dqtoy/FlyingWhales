@@ -18,8 +18,6 @@ public class Scourge : Role {
             base.Initialize(gameEvent);
 			this._scourgeCity = (ScourgeCity)gameEvent;
 			this._scourgeCity.scourge = this;
-			this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Scourge"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<ScourgeAvatar>().Init(this);
 		}
 	}

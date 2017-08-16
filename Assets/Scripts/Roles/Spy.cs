@@ -26,10 +26,8 @@ public class Spy : Role {
             base.Initialize(gameEvent);
 			this.assassination = (Assassination)gameEvent;
 			this.assassination.spy = this;
-			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Spy"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
-			this.avatar.GetComponent<SpyAvatar>().Init(this);
-		}
+            this.avatar.GetComponent<SpyAvatar>().Init(this);
+        }
 	}
 
 //	internal override void Attack (){

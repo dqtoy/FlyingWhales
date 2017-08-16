@@ -517,7 +517,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void ShowNamePlate() {
-        _namePlateParent.gameObject.SetActive(true);
+        if(_namePlateParent != null) {
+            _namePlateParent.gameObject.SetActive(true);
+        }
         if(_cityInfo != null) {
             UpdateCityNamePlate();
         }

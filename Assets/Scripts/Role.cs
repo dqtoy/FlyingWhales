@@ -51,7 +51,7 @@ public class Role {
 	internal void DestroyGO(){
 		if(this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
-            GameObject.Destroy (this.avatar);
+            ObjectPoolManager.Instance.DestroyObject(this.avatar);
             this.location.ExitCitizen(this.citizen);
         }
 		this.isDestroyed = true;
@@ -74,9 +74,9 @@ public class Role {
 		return new int[]{ 0, 0, 0, 0, 0, 0, goldProduction, 0 };
 	}
 	internal virtual void OnDeath(){
-        if (this.avatar != null) {
-            this.avatar.GetComponent<CitizenAvatar>().UpdateFogOfWar(true);
-        }
+        //if (this.avatar != null) {
+        //    this.avatar.GetComponent<CitizenAvatar>().UpdateFogOfWar(true);
+        //}
 
         this.location.ExitCitizen(this.citizen);
         this.DisinfectPlague();
@@ -85,7 +85,19 @@ public class Role {
 	internal virtual void Initialize(GameEvent gameEvent){
         SetGameEventInvolvedIn(gameEvent);
         CheckForPlagueInfection();
+        //if (ObjectPoolManager.Instance.HasPool(citizen.role.ToString())){
+            CreateAvatarGO();
+        //}
     }
+
+    internal void CreateAvatarGO() {
+        //this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Spy"), this.citizen.city.hexTile.transform) as GameObject;
+        //this.avatar.transform.localPosition = Vector3.zero;
+        this.avatar = ObjectPoolManager.Instance.InstantiateObjectFromPool(citizen.role.ToString(), Vector3.zero, Quaternion.identity,
+            this.citizen.city.hexTile.transform);
+        //this.avatar.transform.localPosition = Vector3.zero;
+    }
+
 	internal virtual void Attack(){
 		if (this.avatar != null) {
 			if(this.avatar.GetComponent<CitizenAvatar>().animator.gameObject.activeSelf){

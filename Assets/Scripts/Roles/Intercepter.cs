@@ -15,8 +15,6 @@ public class Intercepter : Role {
             base.Initialize(gameEvent);
 			this.sendReliefGoods = (SendReliefGoods)gameEvent;
 			this.sendReliefGoods.intercepter = this;
-			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Intercepter"), this.citizen.city.hexTile.transform) as GameObject;
-			this.avatar.transform.localPosition = Vector3.zero;
 			this.avatar.GetComponent<IntercepterAvatar>().Init(this);
 		}
 	}

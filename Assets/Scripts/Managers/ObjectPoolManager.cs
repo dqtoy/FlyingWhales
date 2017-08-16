@@ -11,6 +11,7 @@ public class ObjectPoolManager : MonoBehaviour {
     private Dictionary<string, EZObjectPool> allObjectPools;
 
     [SerializeField] private GameObject[] UIPrefabs;
+    [SerializeField] private GameObject[] citizenAvatarPrefabs;
 
     private void Awake() {
         Instance = this;
@@ -18,6 +19,11 @@ public class ObjectPoolManager : MonoBehaviour {
 
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
+            CreateNewPool(currPrefab, currPrefab.name, 50, false, true, false);
+        }
+
+        for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
+            GameObject currPrefab = citizenAvatarPrefabs[i];
             CreateNewPool(currPrefab, currPrefab.name, 50, false, true, false);
         }
     }
@@ -48,6 +54,7 @@ public class ObjectPoolManager : MonoBehaviour {
             throw new Exception("Cannot Destroy Object via Object Pool! Object " + go.name + " is not from an object pool");
         } else {
             po.SendObjectBackToPool();
+            po.Reset();
         }
     }
 
@@ -60,5 +67,12 @@ public class ObjectPoolManager : MonoBehaviour {
         //}
         
         return newPool;
+    }
+
+    public bool HasPool(string key) {
+        if (allObjectPools.ContainsKey(key)) {
+            return true;
+        }
+        return false;
     }
 }

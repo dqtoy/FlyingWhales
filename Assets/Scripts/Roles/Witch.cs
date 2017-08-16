@@ -11,8 +11,6 @@ public class Witch : Role {
     internal override void Initialize(GameEvent gameEvent) {
         if(gameEvent is Hypnotism) {
             base.Initialize(gameEvent);
-            this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Witch"), this.citizen.city.hexTile.transform) as GameObject;
-            this.avatar.transform.localPosition = Vector3.zero;
             this.avatar.GetComponent<WitchAvatar>().Init(this);
         }
     }

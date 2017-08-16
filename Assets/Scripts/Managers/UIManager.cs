@@ -2271,39 +2271,13 @@ public class UIManager : MonoBehaviour {
 			GameEvent ge = ((GameEvent)obj);
 			logs = ge.logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
-			elmEventProgressBar.gameObject.SetActive (false);
+            elmEventProgressBar.gameObject.SetActive (false);
 			elmProgressBarLbl.gameObject.SetActive (false);
-			//         if (ge.isActive) {
-			//	if (ge.eventType == EVENT_TYPES.KINGDOM_WAR) {
-			//		elmEventProgressBar.gameObject.SetActive (false);
-			//	} else if (ge.eventType == EVENT_TYPES.EXPANSION) {
-			//		elmEventProgressBar.gameObject.SetActive (false);
-			//	} else {
-			//		elmEventProgressBar.gameObject.SetActive (true);
-			//		float targetValue = ((float)ge.remainingDays / (float)ge.durationInDays);
-			//		if (currentlyShowingLogObject != null && ((GameEvent)currentlyShowingLogObject).id == ge.id) {
-			//			currentLerpRoutine = StartCoroutine (LerpProgressBar (elmEventProgressBar, targetValue, GameManager.Instance.progressionSpeed));
-			//		} else {
-			//			if (currentLerpRoutine != null) {
-			//				StopCoroutine (currentLerpRoutine);
-			//				currentLerpRoutine = null;
-			//			}
-			//			elmEventProgressBar.value = targetValue;
-			//		}
-
-			//	}
-			//} else {
-			//	elmEventProgressBar.gameObject.SetActive (false);
-			//}
-		} else if (obj is Campaign) {
-			logs = ((Campaign)obj).logs;
-			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
-			elmEventProgressBar.gameObject.SetActive (false);
 		} else if (obj is PlayerEvent) {
 			PlayerEvent pe = ((PlayerEvent)obj);
 			logs = pe.logs;
 			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
-			elmEventProgressBar.gameObject.SetActive (false);
+            elmEventProgressBar.gameObject.SetActive (false);
 			elmProgressBarLbl.gameObject.SetActive (false);
 		}
 		//elmProgressBarLbl.text = "Progress:";
@@ -2312,34 +2286,45 @@ public class UIManager : MonoBehaviour {
 		currentlyShowingLogObject = obj;
 
 		GameObject nextAnchorPoint = elmFirstAnchor;
-		List<Log> currentlyShowingLogs = elmEventLogsParentGO.GetComponentsInChildren<EventLogItem>().Select(x => x.thisLog).ToList();
-		if ((logs.Except (currentlyShowingLogs).Union (currentlyShowingLogs.Except (logs)).Count() - 1) > 0) {
-			List<EventLogItem> children = elmEventLogsParentGO.GetComponentsInChildren<EventLogItem> ().ToList();
-			for (int i = 0; i < children.Count; i++) {
-                ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
-			}
-			for (int i = 1; i < logs.Count; i++) {
-				GameObject logGO = InstantiateUIObject(logItemPrefab.name, elmEventLogsParentGO.transform);
-				logGO.transform.localScale = Vector3.one;
-				EventLogItem currELI = logGO.GetComponent<EventLogItem> ();
-				currELI.SetLog (logs [i]);
-				if (i % 2 == 0) {
-					currELI.DisableBG();
+		List<EventLogItem> currentlyShowingLogs = elmEventLogsParentGO.GetComponentsInChildren<EventLogItem>(true).ToList();
+
+        if((logs.Count - 1) > currentlyShowingLogs.Count) {
+            int logItemsToCreate = (logs.Count - 1) - currentlyShowingLogs.Count;
+            for (int i = 0; i < logItemsToCreate; i++) {
+                GameObject logGO = InstantiateUIObject(logItemPrefab.name, elmEventLogsParentGO.transform);
+                logGO.transform.localScale = Vector3.one;
+                currentlyShowingLogs.Add(logGO.GetComponent<EventLogItem>());
+            }
+        }
+
+        for (int i = 0; i < currentlyShowingLogs.Count; i++) {
+            EventLogItem currELI = currentlyShowingLogs[i];
+            Log currLog = logs.ElementAtOrDefault(i+1);
+            if(currLog == null) {
+                currELI.gameObject.SetActive(false);
+            } else {
+                currELI.SetLog(currLog);
+                if ((i+1) % 2 == 0) {
+                    currELI.DisableBG();
                 } else {
                     currELI.EnableBG();
                 }
-			}
-			StartCoroutine(RepositionTable(elmEventLogsParentGO.GetComponent<UITable>()));
-            StartCoroutine(RepositionScrollView(elmScrollView));
+                currELI.gameObject.SetActive(true);
+            }
         }
-		if(this.currentlyShowingLogObject is GameEvent){
-			if(((GameEvent)this.currentlyShowingLogObject).goEventItem != null){
-				((GameEvent)this.currentlyShowingLogObject).goEventItem.GetComponent<EventItem>().DeactivateNewLogIndicator ();
-			}
-		}
-		if(!this.eventLogsGO.activeSelf){
-			this.eventLogsGO.SetActive(true);
-		}
+
+		StartCoroutine(RepositionTable(elmEventLogsParentGO.GetComponent<UITable>()));
+        StartCoroutine(RepositionScrollView(elmScrollView));
+
+	    if(this.currentlyShowingLogObject is GameEvent){
+		    if(((GameEvent)this.currentlyShowingLogObject).goEventItem != null){
+			    ((GameEvent)this.currentlyShowingLogObject).goEventItem.GetComponent<EventItem>().DeactivateNewLogIndicator ();
+		    }
+	    }
+
+	    if(!this.eventLogsGO.activeSelf){
+		    this.eventLogsGO.SetActive(true);
+	    }
 	}
 
 	public void HideEventLogs(){

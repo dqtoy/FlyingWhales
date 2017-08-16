@@ -37,8 +37,6 @@ public class Lycanthrope : Role {
         if (gameEvent is Lycanthropy) {
             base.Initialize(gameEvent);
             this._lycanthropyEvent = (Lycanthropy)gameEvent;
-            this.avatar = GameObject.Instantiate(Resources.Load("GameObjects/Lycanthrope"), this.citizen.city.hexTile.transform) as GameObject;
-            this.avatar.transform.localPosition = Vector3.zero;
             this.avatar.GetComponent<LycanthropeAvatar>().Init(this);
         }
     }
