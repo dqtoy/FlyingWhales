@@ -18,6 +18,7 @@ public class Governor : Role {
 
 	private List<ExpirableModifier> _eventModifiers;
 
+	private bool isInitial;
 
     #region getters/setters
     public int loyalty {
@@ -40,6 +41,7 @@ public class Governor : Role {
         this._eventLoyaltyModifier = 0;
         this._eventLoyaltySummary = string.Empty;
 		this._eventModifiers = new List<ExpirableModifier> ();
+		this.isInitial = true;
 
         this.SetOwnedCity(this.citizen.city);
         this.citizen.GenerateCharacterValues();
@@ -47,13 +49,13 @@ public class Governor : Role {
 		Messenger.AddListener("OnDayEnd", CheckEventModifiers);
 
 	}
-
 	internal void SetOwnedCity(City ownedCity){
 		this.ownedCity = ownedCity;
 	}
 	internal void AdjustLoyalty(int amount){
 		this._loyalty += amount;
         this._loyalty = Mathf.Clamp(this._loyalty, -100, 100);
+
 		GovernorEvents ();
 	}
 
@@ -160,6 +162,7 @@ public class Governor : Role {
 
 		this._eventModifiers.Add(new ExpirableModifier(gameEventTrigger, summary, dateToUse, modification));
 
+		GovernorEvents ();
 //        this._eventLoyaltyModifier += modification;
 //        if(_eventLoyaltyModifier < 0) {
 //            this._eventLoyaltySummary = "-" + _eventLoyaltyModifier.ToString() + "   Approval";
@@ -210,10 +213,14 @@ public class Governor : Role {
     }
 
 	private void GovernorEvents(){
-		TriggerSecession ();
+		if(!this.isInitial){
+			TriggerSecession ();
+		}else{
+			this.isInitial = false;
+		}
 	}
 	private void TriggerSecession(){
-		if(this._loyalty <= -50 && !this.citizen.city.kingdom.hasSecession){
+		if(this.loyalty <= -50 && !this.citizen.city.kingdom.hasSecession){
 			int chance = UnityEngine.Random.Range (0, 100);
 			if(chance < 25){
 				EventCreator.Instance.CreateSecessionEvent(this.citizen);

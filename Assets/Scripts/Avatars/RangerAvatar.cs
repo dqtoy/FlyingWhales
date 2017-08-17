@@ -32,7 +32,7 @@ public class RangerAvatar : CitizenAvatar {
         }
     }
 	public override void UpdateFogOfWar(bool forDeath = false) {
-        Kingdom kingdomOfAgent = this.citizenRole.citizen.homeKingdom;
+		Kingdom kingdomOfAgent = this.citizenRole.citizen.city.kingdom;
         for (int i = 0; i < visibleTiles.Count; i++) {
 			HexTile currTile = visibleTiles[i];
             //this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
@@ -62,14 +62,14 @@ public class RangerAvatar : CitizenAvatar {
 		visibleTiles.Clear();
 		if (!forDeath) {
 			visibleTiles.Add(this.citizenRole.location);
-			this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(this.citizenRole.location, FOG_OF_WAR_STATE.VISIBLE);
+			this.citizenRole.citizen.city.kingdom.SetFogOfWarStateForTile(this.citizenRole.location, FOG_OF_WAR_STATE.VISIBLE);
 
 			HexTile[] neighbors = this.citizenRole.location.AllNeighbours.ToArray ();
 			for (int i = 0; i < neighbors.Length; i++) {
 				HexTile currTile = neighbors[i];
-				if (this.citizenRole.citizen.homeKingdom.GetFogOfWarStateOfTile(currTile) != FOG_OF_WAR_STATE.HIDDEN) {
+				if (this.citizenRole.citizen.city.kingdom.GetFogOfWarStateOfTile(currTile) != FOG_OF_WAR_STATE.HIDDEN) {
 					visibleTiles.Add (currTile);
-					this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+					this.citizenRole.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
 				}
 
 			}

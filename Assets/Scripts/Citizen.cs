@@ -847,9 +847,9 @@ public class Citizen {
                 }
             }
         } else {
-            for (int i = 0; i < this.city.kingdom.king.relationshipKings.Count; i++) {
-                if (this.city.kingdom.king.relationshipKings[i].king.id == citizen.city.kingdom.king.id) {
-                    return this.city.kingdom.king.relationshipKings[i];
+            for (int i = 0; i < this.relationshipKings.Count; i++) {
+				if (this.relationshipKings[i].king.id == citizen.id) {
+                    return this.relationshipKings[i];
                 }
             }
         }

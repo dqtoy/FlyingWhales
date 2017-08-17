@@ -47,7 +47,7 @@ public class Ranger : Role {
 			}else if(this._targetObject is Monster){
 				Monster monster = (Monster)this._targetObject;
 				if(!monster.isDead && monster.avatar != null){
-					if(this.citizen.homeKingdom.GetFogOfWarStateOfTile(monster.location) != FOG_OF_WAR_STATE.HIDDEN){
+					if(this.citizen.city.kingdom.GetFogOfWarStateOfTile(monster.location) != FOG_OF_WAR_STATE.HIDDEN){
 						this.targetLocation = monster.location;
 						this.path = PathGenerator.Instance.GetPath (this.location, this.targetLocation, PATHFINDING_MODE.AVATAR);
 						return;
@@ -59,7 +59,7 @@ public class Ranger : Role {
 		this.occupiedTiles.Clear ();
 		List<HexTile> tileRadius = this.location.GetTilesInRange(2);
 		for (int i = 0; i < tileRadius.Count; i++) {
-			if(tileRadius[i].lair != null && this.citizen.homeKingdom.GetFogOfWarStateOfTile(tileRadius[i]) != FOG_OF_WAR_STATE.HIDDEN){ //tileRadius[i].citizensOnTile.Count > 0
+			if(tileRadius[i].lair != null && this.citizen.city.kingdom.GetFogOfWarStateOfTile(tileRadius[i]) != FOG_OF_WAR_STATE.HIDDEN){ //tileRadius[i].citizensOnTile.Count > 0
 				this.occupiedTiles.Add (tileRadius [i]);
 			}
 		}
@@ -81,7 +81,7 @@ public class Ranger : Role {
 //				}
 //			}
 		}else{
-			HexTile[] neighbors = this.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER && this.citizen.homeKingdom.GetFogOfWarStateOfTile(x) != FOG_OF_WAR_STATE.HIDDEN).ToArray ();
+			HexTile[] neighbors = this.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER && this.citizen.city.kingdom.GetFogOfWarStateOfTile(x) != FOG_OF_WAR_STATE.HIDDEN).ToArray ();
 			int numOfNeighbors = neighbors.Length;
 			if(this.prevLocation != null){
 
