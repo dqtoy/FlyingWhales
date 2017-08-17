@@ -173,6 +173,7 @@ public class InvasionPlan : GameEvent {
 		EventIsCreated (this._sourceKingdom, false);
 		EventIsCreated (this._targetKingdom, false);
 
+		this._war.hasInvasionPlan = true;
 //		this.StartMilitarizationEvent();
 	}
 

@@ -24,6 +24,8 @@ public class War : GameEvent {
 	private int kingdom1Waves;
 	private int kingdom2Waves;
 
+	internal bool hasInvasionPlan;
+
 	#region getters/setters
 	public Kingdom kingdom1 {
 		get { return _kingdom1; }
@@ -62,6 +64,7 @@ public class War : GameEvent {
 		this.attackRate = 0;
 		this.gameEventTrigger = null;
 		this.warTrigger = warTrigger;
+		this.hasInvasionPlan = false;
 
 		Log titleLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "event_title");
 		titleLog.AddToFillers (_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
@@ -69,8 +72,8 @@ public class War : GameEvent {
 
 		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		EventManager.Instance.AddEventToDictionary(this);
-		EventIsCreated (this.kingdom1, false);
-		EventIsCreated (this.kingdom2, false);
+//		EventIsCreated (this.kingdom1, false);
+//		EventIsCreated (this.kingdom2, false);
 
 	}
 	internal override void PerformAction (){
@@ -114,8 +117,12 @@ public class War : GameEvent {
 //            Messenger.AddListener("OnDayEnd", AttemptToRequestPeace);
 			this.ReplenishWavesKingdom1();
 			this.ReplenishWavesKingdom2();
+			UpdateWarPair ();
 			Messenger.AddListener("OnDayEnd", this.PerformAction);
-//			this.EventIsCreated (this.kingdom2);
+			if(!this.hasInvasionPlan){
+				this.EventIsCreated (this.kingdom1, true);
+			}
+			this.EventIsCreated (this.kingdom2, true);
 		}
 	}
 
@@ -264,7 +271,8 @@ public class War : GameEvent {
 			if(this.warPair.kingdom1City == null || this.warPair.kingdom1City.isDead){
 				this.kingdom1Waves = 0;
 				this.ReplenishWavesKingdom2();
-			}else if(this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead){
+			}
+			if(this.warPair.kingdom2City == null || this.warPair.kingdom2City.isDead){
 				this.kingdom2Waves = 0;
 				this.ReplenishWavesKingdom1();
 			}
