@@ -180,6 +180,14 @@ public class CombatManager : MonoBehaviour {
 		int damage = monster.hp;
 		city.AdjustHP (-damage);
 
+        Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "CombatLogs", "monster_attacked_city");
+        newLog.AddToFillers(city, city.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        newLog.AddToFillers(null, Utilities.FirstLetterToUpperCase(monster.type.ToString().ToLower()), LOG_IDENTIFIER.OTHER);
+
+        if(UIManager.Instance.currentlyShowingKingdom.id == city.kingdom.id) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+
 		if(city.hp <= 0){
             //Reset Hextile
             city.KillCity();

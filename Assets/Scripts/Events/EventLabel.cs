@@ -3,7 +3,7 @@ using System.Collections;
 
 public class EventLabel : MonoBehaviour {
 
-	[SerializeField] private EventLogItem eventLogItem;
+	[SerializeField] private GameObject logItem;
 
 	void OnClick(){
 		UILabel lbl = GetComponent<UILabel>();
@@ -11,12 +11,18 @@ public class EventLabel : MonoBehaviour {
 
 		if (!string.IsNullOrEmpty (url)) {
 			int indexToUse = int.Parse (url);
-			LogFiller lf = eventLogItem.thisLog.fillers[indexToUse];
+            LogFiller lf = new LogFiller();
+            if(logItem.GetComponent<EventLogItem>() != null) {
+                lf = logItem.GetComponent<EventLogItem>().thisLog.fillers[indexToUse];
+            }else if(logItem.GetComponent<NotificationItem>() != null) {
+                lf = logItem.GetComponent<NotificationItem>().thisLog.fillers[indexToUse];
+            }
+
 			if (lf.obj != null) {
 				if (lf.obj is City) {
                     //UIManager.Instance.ShowCityInfo ((City)lf.obj);
                     City currCity = (City)lf.obj;
-                    if(currCity.kingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
+                    if(currCity.hexTile.currFogOfWarState != FOG_OF_WAR_STATE.HIDDEN) {
                         CameraMove.Instance.CenterCameraOn(currCity.hexTile.gameObject);
                     }
                     //UIManager.Instance.SetKingdomAsSelected(((City)lf.obj).kingdom);
@@ -24,8 +30,12 @@ public class EventLabel : MonoBehaviour {
 					UIManager.Instance.ShowCitizenInfo ((Citizen)lf.obj);
 				} else if (lf.obj is Kingdom) {
                     Kingdom currKingdom = (Kingdom)lf.obj;
-                    if(currKingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
-                        CameraMove.Instance.CenterCameraOn(currKingdom.capitalCity.hexTile.gameObject);
+                    for (int i = 0; i < currKingdom.cities.Count; i++) {
+                        City currCity = currKingdom.cities[i];
+                        if(currCity.hexTile.currFogOfWarState != FOG_OF_WAR_STATE.HIDDEN) {
+                            CameraMove.Instance.CenterCameraOn(currKingdom.capitalCity.hexTile.gameObject);
+                            break;
+                        }
                     }
                     //UIManager.Instance.SetKingdomAsSelected ();
 				} else if (lf.obj is GameEvent) {

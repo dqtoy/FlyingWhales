@@ -36,6 +36,12 @@ public class CitizenAvatar : PooledObject {
         visibleTiles = new List<HexTile>();
         childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
 
+        if(citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            SetAvatarState(true);
+        } else {
+            SetAvatarState(false);
+        }
+
         ResetValues();
         AddBehaviourTree();
 		UpdateUI ();
@@ -52,6 +58,11 @@ public class CitizenAvatar : PooledObject {
                     this.CollectEvents();
                     this.CheckForKingdomDiscovery();
 					this.UpdateFogOfWar();
+                    if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+                        SetAvatarState(true);
+                    } else {
+                        SetAvatarState(false);
+                    }
                 }
             }
         }
@@ -161,7 +172,7 @@ public class CitizenAvatar : PooledObject {
         for (int i = 0; i < citiesSeen.Count; i++) {
             City currCity = citiesSeen[i];
             if (!thisKingdom.discoveredCities.Contains(currCity)){
-                Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
+                //Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
                 List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
                 for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
                     HexTile currTile = tilesToSetAsSeen[j];

@@ -1356,9 +1356,21 @@ public class City{
 		this.citizens.Remove (citizen);
 		return citizen;
 	}
-    internal void ChangeKingdom(Kingdom kingdom) {
-        kingdom.AddCityToKingdom(this);
-        this._kingdom = kingdom;
+    internal void ChangeKingdom(Kingdom otherKingdom) {
+        List<HexTile> allTilesOfCity = new List<HexTile>();
+        allTilesOfCity.AddRange(ownedTiles);
+        allTilesOfCity.AddRange(borderTiles);
+        allTilesOfCity.AddRange(outerTiles);
+        for (int i = 0; i < allTilesOfCity.Count; i++) {
+            HexTile currTile = allTilesOfCity[i];
+            if(currTile.isBorderOfCities.Intersect(_kingdom.cities).Count() <= 0 && currTile.isOuterTileOfCities.Intersect(_kingdom.cities).Count() <= 0 && 
+                (currTile.ownedByCity == null || !_kingdom.cities.Contains(currTile.ownedByCity))) {
+                _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            }
+            otherKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+        }
+        otherKingdom.AddCityToKingdom(this);
+        this._kingdom = otherKingdom;
         for (int i = 0; i < this._ownedTiles.Count; i++) {
             this._ownedTiles[i].ReColorStructure();
             this._ownedTiles[i].SetMinimapTileColor(_kingdom.kingdomColor);

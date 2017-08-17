@@ -24,10 +24,14 @@ public class KingdomDiscovery : GameEvent {
 		newLog.AddToFillers (this.discovererKingdom, this.discovererKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (this.discoveredKingdom, this.discoveredKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
-//		this.PlayerEventIsCreated ();
-		EventIsCreated(this.discovererKingdom, true);
-		EventIsCreated(this.discoveredKingdom, true);
-
+        //		this.PlayerEventIsCreated ();
+        //EventIsCreated(this.discovererKingdom, true);
+        //EventIsCreated(this.discoveredKingdom, true);
+        if(UIManager.Instance.currentlyShowingKingdom.id == this.discovererKingdom.id 
+            || UIManager.Instance.currentlyShowingKingdom.id == this.discoveredKingdom.id) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+        
 		this.DoneEvent ();
 	}
 }

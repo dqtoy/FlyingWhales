@@ -68,18 +68,23 @@ public class BoonOfPower : GameEvent {
 	internal void TransferBoonOfPower(Kingdom kingdom, Citizen citizen){
 		kingdom.CollectBoonOfPower (this);
 		GameObject.Destroy (this.avatar);
-		if(citizen == null){
+        Log newLog = null;
+        if (citizen == null){
 			//Discovered by structure/tile
-			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "discovery_structure");
+			newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "discovery_structure");
 			newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		}else{
 			//Discovered by an agent
-			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "discovery_agent");
+			newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "discovery_agent");
 			newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 			newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		}
-		this.EventIsCreated (kingdom, true);
-	}
+        
+		this.EventIsCreated (kingdom, false);
+        if(UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+    }
 	private void DestroyThis(){
 		this.DoneEvent ();
 		this._isDestroyed = true;

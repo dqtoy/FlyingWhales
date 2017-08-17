@@ -43,11 +43,21 @@ public class AltarOfBlessing : GameEvent {
 	private void IncreaseTechLevel(Kingdom kingdom){
 		Debug.Log("ALTAR: UPGRADE TECH LEVEL");
 		kingdom.UpgradeTechLevel(1);
-	}
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AltarOfBlessing", "increase_tech_level");
+        newLog.AddToFillers(kingdom, kingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        if(UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+    }
 	private void ReduceUnrest(Kingdom kingdom){
 		Debug.Log("ALTAR: REDUCE UNREST");
 		kingdom.AdjustUnrest(-50);
-	}
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AltarOfBlessing", "reduce_unrest");
+        newLog.AddToFillers(kingdom, kingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        if (UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+    }
 	private void LevelUpCity(Kingdom kingdom){
 		Debug.Log("ALTAR: LEVEL UP CITY");
 		List<City> cities = kingdom.nonRebellingCities;
@@ -55,6 +65,11 @@ public class AltarOfBlessing : GameEvent {
 			City chosenCity = cities[UnityEngine.Random.Range(0, cities.Count)];
             //Instantly purchase tile
             chosenCity.ForcePurchaseTile();
-		}
+            Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AltarOfBlessing", "level_up_city");
+            newLog.AddToFillers(kingdom, kingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            if (UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
+                UIManager.Instance.ShowNotification(newLog);
+            }
+        }
 	}
 }

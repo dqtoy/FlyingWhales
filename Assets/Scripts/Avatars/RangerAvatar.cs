@@ -102,7 +102,13 @@ public class RangerAvatar : CitizenAvatar {
 				if (!this.hasArrived) {
 					SetHasArrivedState (true);
 					this.citizenRole.Attack ();
-				}
+                    Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "CombatLogs", "ranger_attacked_lair");
+                    newLog.AddToFillers(this.citizenRole.citizen, this.citizenRole.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+                    if (UIManager.Instance.currentlyShowingKingdom.id == this.citizenRole.citizen.city.kingdom.id) {
+                        UIManager.Instance.ShowNotification(newLog);
+                    }
+                }
 				Task.current.Succeed ();
 			}else{
 				if(this.citizenRole is Ranger){
