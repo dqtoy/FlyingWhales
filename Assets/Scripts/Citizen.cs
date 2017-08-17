@@ -256,7 +256,7 @@ public class Citizen {
 	internal void TurnActions(){
 		this.AttemptToAge();
 		this.DeathReasons();
-		this.CheckSupportExpiration ();
+//		this.CheckSupportExpiration ();
 		if (!this.isDead) {
 			this.UpdatePrestige ();
 		}

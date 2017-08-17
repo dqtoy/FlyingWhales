@@ -39,7 +39,7 @@ public class Rebellion : GameEvent {
 		this.ReplenishWavesKingdom1();
 		this.ReplenishWavesKingdom2();
 		Messenger.AddListener("OnDayEnd", this.PerformAction);
-		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
+		Messenger.AddListener<HexTile>("OnUpdatePath", UpdatePath);
 		Debug.Log (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "event_title");
@@ -92,7 +92,7 @@ public class Rebellion : GameEvent {
 		base.DoneEvent ();
 		this.targetKingdom.rebellions.Remove (this);
 		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
-		EventManager.Instance.onUpdatePath.RemoveListener (UpdatePath);
+		Messenger.RemoveListener<HexTile>("OnUpdatePath", UpdatePath);
 
 	}
 

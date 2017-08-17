@@ -70,7 +70,8 @@ public class War : GameEvent {
 		titleLog.AddToFillers (_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 		titleLog.AddToFillers (_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 
-		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
+//		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
+		Messenger.AddListener<HexTile>("OnUpdatePath", UpdatePath);
 		EventManager.Instance.AddEventToDictionary(this);
 //		EventIsCreated (this.kingdom1, false);
 //		EventIsCreated (this.kingdom2, false);
@@ -382,7 +383,7 @@ public class War : GameEvent {
         }
 //        Messenger.RemoveListener("OnDayEnd", AttemptToRequestPeace);
 		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
-		EventManager.Instance.onUpdatePath.RemoveListener (UpdatePath);
+		Messenger.RemoveListener<HexTile>("OnUpdatePath", UpdatePath);
     }
 	internal override void CancelEvent (){
 		base.CancelEvent ();
