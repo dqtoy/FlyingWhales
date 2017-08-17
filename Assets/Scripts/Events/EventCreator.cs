@@ -20,7 +20,7 @@ public class EventCreator: MonoBehaviour {
         if (KingdomManager.Instance.useFogOfWar) {
             hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(kingdom);
         } else {
-            hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile(kingdom.cities[0]);
+            hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile(kingdom.capitalCity);
         }
         //HexTile hexTileToExpandTo = CityGenerator.Instance.GetNearestHabitableTile (kingdom.cities [0]);
         

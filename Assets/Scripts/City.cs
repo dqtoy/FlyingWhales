@@ -999,7 +999,9 @@ public class City{
 		this.borderTiles.Clear();
         this.outerTiles.Clear();
 
-        
+        for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+            KingdomManager.Instance.allKingdoms[i].discoveredCities.Remove(this);
+        }
 
 		this.isDead = true;
         //EventManager.Instance.onDeathToGhost.Invoke (this);
@@ -1094,6 +1096,10 @@ public class City{
             }
         }
 
+        for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+            KingdomManager.Instance.allKingdoms[i].discoveredCities.Remove(this);
+        }
+
         this._kingdom.RemoveCityFromKingdom(this);
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
         RemoveListeners();
@@ -1116,51 +1122,6 @@ public class City{
         newCity.WarDefeatedHP();
 
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
-
-        //bool highlightState = true;
-        //if(UIManager.Instance.currentlyShowingKingdom.id != conqueror.id) {
-        //    highlightState = false;
-        //}
-
-        //for (int i = 0; i < tilesToTransfer.Count; i++) {
-        //    HexTile currentTile = tilesToTransfer[i];
-        //    //if (!ownedTiles.Contains(currentTile)) {
-        //    //    //currentTile.isVisibleByCities.Remove(this);
-        //    //    citiesToUpdateBorders = citiesToUpdateBorders.Union(currentTile.isVisibleByCities).ToList();
-        //    //}
-        //    if (!outerTiles.Contains(currentTile)) {
-        //        currentTile.SetTileHighlightColor(conqueror.kingdomColor);
-        //    }
-        //    //currentTile.ResetTile();
-        //    if(currentTile.ownedByCity == null || currentTile.ownedByCity.id == this.id) {
-        //        kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN, true);
-        //    }
-
-        //    conqueror.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.VISIBLE, true);
-        //}
-
-        ////Kill all current citizens
-        //this.KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
-
-        //this.kingdom.RemoveCityFromKingdom(this);
-
-        ////Assign new king to conquered kingdom if, conquered city was the home of the current king
-        //if (this.hasKing) {
-        //    this.hasKing = false;
-        //    if (this._kingdom.cities.Count > 0) {
-        //        this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
-        //    }
-        //}
-        //this.ChangeKingdom(conqueror);
-        //this.CreateInitialFamilies(false);
-        //this.UpdateBorderTiles();
-
-        //if (!highlightState) {
-        //    conqueror.UnHighlightAllOwnedTilesInKingdom();
-        //}
-
-
-
     }
     private void TransferItemsToConqueror(Kingdom conqueror){
 		for(int i = 0; i < this.ownedTiles.Count; i++){
