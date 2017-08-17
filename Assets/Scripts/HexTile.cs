@@ -287,26 +287,32 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	/*
 	 * Returns all Hex tiles gameobjects within a radius
 	 * */
-	public List<HexTile> GetTilesInRange(int range){
+	public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter = false){
 		List<HexTile> tilesInRange = new List<HexTile>();
 		List<HexTile> checkedTiles = new List<HexTile> ();
+		List<HexTile> tilesToAdd = new List<HexTile> ();
 
 		for (int i = 0; i < range; i++) {
+			
 			if (tilesInRange.Count <= 0) {
-				tilesInRange.AddRange (this.AllNeighbours);
+				tilesInRange = this.AllNeighbours.ToList();
 				checkedTiles.Add (this);
 			}else{
-				List<HexTile> tilesToAdd = new List<HexTile> ();
+				tilesToAdd.Clear ();
 				for (int j = 0; j < tilesInRange.Count; j++) {
 					if (!checkedTiles.Contains (tilesInRange [j])) {
 						checkedTiles.Add (tilesInRange [j]);
-						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours);
+						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours.Where(x => !tilesInRange.Contains(x)).ToList());
 					}
 				}
 				tilesInRange.AddRange (tilesToAdd);
+				if(i == range - 1 && isOnlyOuter){
+					return tilesToAdd;
+				}
+//				tilesInRange = tilesInRange.Distinct ().ToList ();
 			}
 		}
-		return tilesInRange.Distinct().ToList();
+		return tilesInRange;
 	}
 
 	#region Pathfinding

@@ -1218,19 +1218,12 @@ public class City{
 		if(role == ROLE.GENERAL){
 			return null;
 		}
-//		int cost = 0;
-//		if(eventType != EVENT_TYPES.SECESSION){
-//			if(!this.kingdom.CanCreateAgent(role, ref cost)){
-//				return null;
-//			}
-//		}
 		if(role == ROLE.REBEL){
 			GENDER gender = GENDER.MALE;
 			int randomGender = UnityEngine.Random.Range (0, 100);
 			if(randomGender < 20){
 				gender = GENDER.FEMALE;
 			}
-//			int maxGeneration = this.citizens.Max (x => x.generation);
 			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 1);
 			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age));
@@ -1239,12 +1232,17 @@ public class City{
 			return citizen;
 		}else{
             List<HexTile> path = null;
+			PATHFINDING_MODE pathMode = PATHFINDING_MODE.AVATAR;
             if (newPath == null) {
                 if (role == ROLE.TRADER) {
-                    path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.NORMAL);
-                } else {
-                    path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, PATHFINDING_MODE.AVATAR);
+                    pathMode = PATHFINDING_MODE.NORMAL;
+				}else if (role == ROLE.RANGER) {
+					pathMode = PATHFINDING_MODE.NO_HIDDEN_TILES;
+				}else {
+					pathMode = PATHFINDING_MODE.AVATAR;
                 }
+				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, pathMode, BASE_RESOURCE_TYPE.STONE, this.kingdom);
+
 				if(role != ROLE.RANGER){
 					if (path == null) {
 						return null;
@@ -1263,7 +1261,6 @@ public class City{
 			if(randomGender < 20){
 				gender = GENDER.FEMALE;
 			}
-//			int maxGeneration = this.citizens.Max (x => x.generation);
 			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 1);
 			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age));
@@ -1276,7 +1273,6 @@ public class City{
 			if(path != null){
 				citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
 			}
-//			this._kingdom.AdjustGold (-cost);
 			this.citizens.Remove (citizen);
 			return citizen;
 		}

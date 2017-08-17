@@ -28,6 +28,7 @@ public class KingdomManager : MonoBehaviour {
 
 	public int initialSpawnRate;
 	public int maxKingdomEventHistory;
+	public int rangerMoveRange;
 
     [SerializeField] private int minimumInitialKingdomDistance;
 
