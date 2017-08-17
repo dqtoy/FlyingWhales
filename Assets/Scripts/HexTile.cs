@@ -482,32 +482,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         structureObj.transform.localPosition = Vector3.zero;
     }
 
-    //public void ShowCitySprite() {
-    //    GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.city.kingdom.race, STRUCTURE_TYPE.CITY);
-    //    GameObject structureGO = GameObject.Instantiate(
-    //       gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)],
-    //       structureParentGO.transform) as GameObject;
-    //    structureGO.transform.localPosition = Vector3.zero;
-    //    SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
-    //        Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
-
-    //    for (int i = 0; i < allColorizers.Length; i++) {
-    //        allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
-    //    }
-    //    this._centerPiece.SetActive(false);
-
-    //    //this.structureGO.GetComponent<SpriteRenderer>().sprite = CityGenerator.Instance.elfCitySprite;
-    //    //this.structureGO.SetActive(true);
-    //    //this.centerPiece.SetActive(false);
-    //    Color color = this.city.kingdom.kingdomColor;
-    //    color.a = 255f / 255f;
-    //    SetMinimapTileColor(color);
-    //    color.a = 76.5f / 255f;
-    //    this._kingdomColorSprite.color = color;
-    //    this.GetComponent<SpriteRenderer>().color = Color.white;
-    //    //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
-    //}
-
     public GameObject CreateSpecialStructureOnTile(LAIR lairType) {
         GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType).name,
             Vector3.zero, Quaternion.identity, structureParentGO.transform);
@@ -549,19 +523,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         UpdateCityNamePlate();
     }
     public void UpdateCityNamePlate() {
-        //_cityInfo.SetCity(city);
-        if (KingdomManager.Instance.useFogOfWar) {
-            if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-                _cityInfo.SetCity(city);
-            } else {
-                _cityInfo.SetCity(city, false, true);
-            }
-        } else {
+        if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
             _cityInfo.SetCity(city);
+        } else {
+            _cityInfo.SetCity(city, false, true);
         }
     }
     public void RemoveCityNamePlate() {
-        if(_cityInfo != null) {
+        if(_namePlateParent != null) {
             ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
             _namePlateParent = null;
             _cityInfo = null;
@@ -585,10 +554,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._lairItem.SetLair(this.lair);
 	}
     public void RemoveLairNamePlate() {
-        ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
-        _namePlateParent = null;
-        _lairItem = null;
-        Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
+        if (_namePlateParent != null) {
+            ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
+            _namePlateParent = null;
+            _lairItem = null;
+            Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
+        }
     }
 
 	public void CreateEventNamePlate() {
@@ -607,48 +578,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		_hextileEventItem.SetHextileEvent(_gameEventInTile);
 	}
     public void RemoveHextileEventNamePlate() {
-        ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
-        _namePlateParent = null;
-        _hextileEventItem = null;
-        Messenger.RemoveListener("UpdateUI", UpdateHextileEventNamePlate);
+        if (_namePlateParent != null) {
+            ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
+            _namePlateParent = null;
+            _hextileEventItem = null;
+            Messenger.RemoveListener("UpdateUI", UpdateHextileEventNamePlate);
+        }
     }
-
-   // public void ShowOccupiedSprite() {
-   //     //this.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.bareTiles[Random.Range(0, Biomes.Instance.bareTiles.Length)];
-   //     GameObject[] structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.GENERIC);
-   //     if (this.specialResource != RESOURCE.NONE) {
-   //         if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.FOOD) {
-   //             if(this.specialResource == RESOURCE.BEHEMOTH || this.specialResource == RESOURCE.DEER || 
-   //                 this.specialResource == RESOURCE.PIG) {
-   //                 structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.HUNTING_LODGE);
-   //             } else {
-   //                 structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
-   //             }
-   //} else if(Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.ownedByCity.kingdom.race == RACE.ELVES) {
-   //             structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.LUMBERYARD);
-   //} else if (Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.STONE && this.ownedByCity.kingdom.race == RACE.HUMANS) {
-   //             structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.QUARRY);
-   //         } else {
-   //             structuresToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, STRUCTURE_TYPE.MINES);
-   //         }
-   //     }
-
-    //     GameObject structureGO = GameObject.Instantiate(
-    //         structuresToChooseFrom[Random.Range(0, structuresToChooseFrom.Length)],
-    //         structureParentGO.transform) as GameObject;
-    //     structureGO.transform.localPosition = Vector3.zero;
-    //     SpriteRenderer[] allColorizers = structureGO.GetComponentsInChildren<SpriteRenderer>().
-    //         Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
-
-    //     Color color = ownedByCity.kingdom.kingdomColor;
-    //     color.a = 255f / 255f;
-    //     SetMinimapTileColor(color);
-
-    //     for (int i = 0; i < allColorizers.Length; i++) {
-    //         allColorizers[i].color = this.ownedByCity.kingdom.kingdomColor;
-    //     }
-    //     this._centerPiece.SetActive(false);
-    // }
 
     public void HideStructures() {
         structureParentGO.SetActive(false);
@@ -659,52 +595,53 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
-        //if(fowState == _currFogOfWarState) {
-        //    return;
-        //}
-        _currFogOfWarState = fowState;
-        if (KingdomManager.Instance.useFogOfWar) {
-            Color newColor = FOWSprite.color;
-            switch (fowState) {
-                case FOG_OF_WAR_STATE.VISIBLE:
-                    newColor.a = 0f / 255f;
-                    if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
-                        ShowNamePlate();
-					}
-                    if (isOccupied) {
-                        ShowStructures();
-                    }
-                    gameEventObjectsParentGO.SetActive(true);
-                    UIParent.gameObject.SetActive(true);
-                    break;
-                case FOG_OF_WAR_STATE.SEEN:
-                    newColor.a = 128f / 255f;
-                    if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
-                        ShowNamePlate();
-					}
-                    if (isOccupied) {
-                        ShowStructures();
-                    }
-                    gameEventObjectsParentGO.SetActive(false);
-                    UIParent.gameObject.SetActive(true);
-                    break;
-                case FOG_OF_WAR_STATE.HIDDEN:
-                    newColor.a = 255f / 255f;
-                    if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
-                        HideNamePlate();
-					}
-                    if (isOccupied) {
-                        HideStructures();
-                    }
-                    gameEventObjectsParentGO.SetActive(false);
-                    UIParent.gameObject.SetActive(false);
-                    break;
-                default:
-                    break;
-            }
-            FOWSprite.color = newColor;
-            minimapFOWSprite.color = newColor;
+        if (!KingdomManager.Instance.useFogOfWar) {
+            fowState = FOG_OF_WAR_STATE.VISIBLE;
         }
+        _currFogOfWarState = fowState;
+        Color newColor = FOWSprite.color;
+        switch (fowState) {
+            case FOG_OF_WAR_STATE.VISIBLE:
+                newColor.a = 0f / 255f;
+                if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
+                    ShowNamePlate();
+				}
+                if (isOccupied) {
+                    ShowStructures();
+                }
+                gameEventObjectsParentGO.SetActive(true);
+                UIParent.gameObject.SetActive(true);
+                ShowAllCitizensOnTile();
+                break;
+            case FOG_OF_WAR_STATE.SEEN:
+                newColor.a = 128f / 255f;
+                if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
+                    ShowNamePlate();
+				}
+                if (isOccupied) {
+                    ShowStructures();
+                }
+                gameEventObjectsParentGO.SetActive(false);
+                UIParent.gameObject.SetActive(true);
+                HideAllCitizensOnTile();
+                break;
+            case FOG_OF_WAR_STATE.HIDDEN:
+                newColor.a = 255f / 255f;
+                if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
+                    HideNamePlate();
+				}
+                if (isOccupied) {
+                    HideStructures();
+                }
+                gameEventObjectsParentGO.SetActive(false);
+                UIParent.gameObject.SetActive(false);
+                HideAllCitizensOnTile();
+                break;
+            default:
+                break;
+        }
+        FOWSprite.color = newColor;
+        minimapFOWSprite.color = newColor;
     }
 
     public void HideFogOfWarObjects() {
@@ -866,9 +803,23 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
+    public void ShowAllCitizensOnTile() {
+        for (int i = 0; i < _citizensOnTile.Count; i++) {
+            CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
+            currCitizenAvatar.SetAvatarState(true);
+        }
+    }
+
+    public void HideAllCitizensOnTile() {
+        for (int i = 0; i < _citizensOnTile.Count; i++) {
+            CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
+            currCitizenAvatar.SetAvatarState(false);
+        }
+    }
+
     #region Monobehaviour Functions
     void OnMouseDown() {
-        if (UIManager.Instance.IsMouseOnUI() || (KingdomManager.Instance.useFogOfWar && currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE)) {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
         if (this.isHabitable && this.isOccupied && this.city != null) {
@@ -879,7 +830,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     void OnMouseOver() {
-        if (UIManager.Instance.IsMouseOnUI() || (KingdomManager.Instance.useFogOfWar && currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE)) {
+        if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
         if (this.isOccupied) {
@@ -945,8 +896,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
     #region For Testing
+    [Space(10)]
+    [Header("For Testing")]
+    [SerializeField] private int kingdomToConquerIndex = 0;
     [SerializeField] private int range = 0;
     List<HexTile> tiles = new List<HexTile>();
+
     [ContextMenu("Show Tiles In Range")]
     public void ShowTilesInRange() {
         for (int i = 0; i < tiles.Count; i++) {
@@ -965,15 +920,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             this.city.borderTiles[i].GetComponent<SpriteRenderer>().color = Color.magenta;
         }
     }
-
-    /*[ContextMenu("Increase General HP")]
-	public void IncreaseGeneralHP(){
-		List<Citizen> generals = this.city.GetCitizensWithRole (ROLE.GENERAL);
-		for (int i = 0; i < generals.Count; i++) {
-			((General)generals[i].assignedRole).army.hp += 100;
-			Debug.Log (((General)generals [i].assignedRole).citizen.name + " hp is " + ((General)generals [i].assignedRole).army.hp.ToString ());
-		}
-	}*/
 
     [ContextMenu("Show Adjacent Cities")]
     public void ShowAdjacentCities() {
@@ -998,6 +944,21 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [ContextMenu("Force Kill City")]
     public void ForceKillCity() {
         city.KillCity();
+    }
+
+    [ContextMenu("Force Reset Tile")]
+    public void ForceResetTile() {
+        ResetTile();
+    }
+
+    [ContextMenu("Force Conquer Tile")]
+    public void ForceTileToBeConqueredByKingdom() {
+        Kingdom conqueror = KingdomManager.Instance.allKingdoms[kingdomToConquerIndex];
+        if (conqueror.id == this.city.kingdom.id) {
+            Debug.LogWarning("City is already part of " + conqueror.name);
+        } else {
+            conqueror.ConquerCity(city, null);
+        }
     }
 
     //[ContextMenu("Select All Relevant Tiles")]
@@ -1246,23 +1207,4 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     internal void ExitCitizen(Citizen citizen) {
         this._citizensOnTile.Remove(citizen);
     }
-    #region For Testing
-    [ContextMenu("Force Reset Tile")]
-    public void ForceResetTile() {
-        ResetTile();
-    }
-
-    [Space(10)]
-    [Header("For Testing")]
-    [SerializeField] private int kingdomToConquerIndex = 0;
-    [ContextMenu("Force Conquer Tile")]
-    public void ForceTileToBeConqueredByKingdom() {
-        Kingdom conqueror = KingdomManager.Instance.allKingdoms[kingdomToConquerIndex];
-        if(conqueror.id == this.city.kingdom.id) {
-            Debug.LogWarning("City is already part of " + conqueror.name);
-        } else {
-            conqueror.ConquerCity(city, null);
-        }
-    }
-    #endregion
 }

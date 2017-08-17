@@ -89,9 +89,10 @@ public class Kingdom{
 	private List<GameEvent> _activeEvents;
 	private List<GameEvent> _doneEvents;
 
-
     //Expansion
     private float expansionChance = 1f;
+
+    private List<City> _discoveredCities;
 
     protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
     protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
@@ -250,6 +251,9 @@ public class Kingdom{
 	public List<GameEvent> doneEvents{
 		get { return this._doneEvents;}
 	}
+    public List<City> discoveredCities {
+        get { return this._discoveredCities; }
+    }
     #endregion
 
     // Kingdom constructor paramters
@@ -302,7 +306,7 @@ public class Kingdom{
         _fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new List<HexTile>());
 		this._activeEvents = new List<GameEvent> ();
 		this._doneEvents = new List<GameEvent> ();
-
+        this._discoveredCities = new List<City>();
 
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
@@ -318,8 +322,6 @@ public class Kingdom{
 		this.UpdateKingdomTypeData();
 
         this.basicResource = Utilities.GetBasicResourceForRace(race);
-
-        
 
         if (cities.Count > 0) {
             for (int i = 0; i < cities.Count; i++) {
@@ -1012,8 +1014,6 @@ public class Kingdom{
 		this.successionLine.AddRange (newKing.GetSiblings());
 		UpdateKingSuccession ();
 //		this.RetrieveInternationWar();
-        //		UIManager.Instance.UpdateKingsGrid();
-        //		UIManager.Instance.UpdateKingdomSuccession ();
 
 		this.UpdateAllGovernorsLoyalty ();
 		this.UpdateAllRelationshipKings ();
@@ -1873,7 +1873,6 @@ public class Kingdom{
             }
         }
     }
-
     /*
      * Check all the neighbours of a HexTile and check if any of them are owned by another kingdom, if so,
      * the two kingdoms have now discovered each other.
@@ -1901,7 +1900,6 @@ public class Kingdom{
             }
         }
     }
-
     internal void DiscoverKingdom(Kingdom discoveredKingdom) {
         if(discoveredKingdom.id != this.id) {
             if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
@@ -1913,7 +1911,6 @@ public class Kingdom{
             }
         }
     }
-
     internal void RemoveKingdomFromDiscoveredKingdoms(Kingdom kingdomToRemove) {
         for (int i = 0; i < _discoveredKingdoms.Count; i++) {
             Kingdom currKingdom = _discoveredKingdoms[i];
@@ -1923,6 +1920,12 @@ public class Kingdom{
             }
         }
         //this._discoveredKingdoms.Remove(kingdomToRemove);
+    }
+    internal void DiscoverCity(City city) {
+        _discoveredCities.Add(city);
+    }
+    internal void RemoveCityFromDiscoveredCities(City city) {
+        _discoveredCities.Remove(city);
     }
 	#endregion
 
@@ -1937,17 +1940,14 @@ public class Kingdom{
 			}
 		}
 	}
-
     internal void GenerateKingdomCharacterValues() {
         this._dictCharacterValues.Clear();
         this._dictCharacterValues = System.Enum.GetValues(typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE>().ToDictionary(x => x, x => UnityEngine.Random.Range(1, 101));
         UpdateKingdomCharacterValues();
     }
-
     internal void UpdateKingdomCharacterValues() {
         this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
     }
-
     private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value) {
         if (this._dictCharacterValues.ContainsKey(key)) {
             this._dictCharacterValues[key] += value;
@@ -2177,11 +2177,11 @@ public class Kingdom{
 
     private void UpdateFogOfWarVisualForTile(HexTile hexTile, FOG_OF_WAR_STATE fowState) {
         hexTile.SetFogOfWarState(fowState);
-        if (KingdomManager.Instance.useFogOfWar) {
-            hexTile.ShowFogOfWarObjects();
-        } else {
-            hexTile.HideFogOfWarObjects();
-        }
+        //if (KingdomManager.Instance.useFogOfWar) {
+        //    hexTile.ShowFogOfWarObjects();
+        //} else {
+        //    hexTile.HideFogOfWarObjects();
+        //}
     }
 
 	internal FOG_OF_WAR_STATE GetFogOfWarStateOfTile(HexTile hexTile){

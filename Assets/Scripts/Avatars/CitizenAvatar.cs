@@ -61,7 +61,6 @@ public class CitizenAvatar : PooledObject {
 
         for (int i = 0; i < visibleTiles.Count; i++) {
 			HexTile currTile = visibleTiles[i];
-			//this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
             if(currTile.seenByKingdoms.Count > 0) {
                 if (!currTile.seenByKingdoms.Contains(kingdomOfAgent)) {
                     kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
@@ -69,21 +68,6 @@ public class CitizenAvatar : PooledObject {
             } else {
                 kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
             }
-            //if (currTile.isBorder) {
-            //    if (currTile.isBorderOfCities.Intersect(kingdomOfAgent.cities).Count() <= 0) {
-            //        kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-            //    }
-            //} else if (currTile.isOuterTileOfCities.Count > 0) {
-            //    if (currTile.isOuterTileOfCities.Intersect(kingdomOfAgent.cities).Count() <= 0) {
-            //        kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-            //    }
-            //} else if (currTile.isOccupied) {
-            //    if (currTile.ownedByCity == null || currTile.ownedByCity.kingdom.id != kingdomOfAgent.id) {
-            //        kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-            //    }
-            //} else {
-            //    kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-            //}
         }
 
 		visibleTiles.Clear();
@@ -95,11 +79,6 @@ public class CitizenAvatar : PooledObject {
 				this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
 			}
 		}
-		//if (this.citizenRole.citizen.city != null) {
-		//    if (UIManager.Instance.currentlyShowingKingdom.id == this.citizenRole.citizen.city.kingdom.id) {
-		//        UIManager.Instance.currentlyShowingKingdom.UpdateFogOfWarVisual();
-		//    }
-		//}
 	}
 
 	internal virtual void UpdateUI(){}
@@ -181,14 +160,17 @@ public class CitizenAvatar : PooledObject {
 
         for (int i = 0; i < citiesSeen.Count; i++) {
             City currCity = citiesSeen[i];
-            Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
-            List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
-            for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
-                HexTile currTile = tilesToSetAsSeen[j];
-                if (!currTile.seenByKingdoms.Contains(thisKingdom)) {
-                    thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            if (!thisKingdom.discoveredCities.Contains(currCity)){
+                Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
+                List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
+                for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
+                    HexTile currTile = tilesToSetAsSeen[j];
+                    if (!currTile.seenByKingdoms.Contains(thisKingdom)) {
+                        thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+                    }
                 }
             }
+            
         }
     }
 
@@ -284,24 +266,24 @@ public class CitizenAvatar : PooledObject {
         this.UnHighlightPath();
     }
 
-    private void Update() {
-        if (KingdomManager.Instance.useFogOfWar) {
-            bool state = true;
-            if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-                state = true;
-            } else {
-                state = false;
-            }
-            this.gameObject.GetComponent<SpriteRenderer>().enabled = state;
-            for (int i = 0; i < childObjects.Length; i++) {
-				if(childObjects[i].GetComponent<Animator>() != null){
-					childObjects[i].GetComponent<SpriteRenderer>().enabled = state;
-				}else{
-					childObjects[i].gameObject.SetActive(state);
-				}
-            } 
-        }
-    }
+    //private void Update() {
+    //    if (KingdomManager.Instance.useFogOfWar) {
+    //        bool state = true;
+    //        if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+    //            state = true;
+    //        } else {
+    //            state = false;
+    //        }
+    //        this.gameObject.GetComponent<SpriteRenderer>().enabled = state;
+    //        for (int i = 0; i < childObjects.Length; i++) {
+				//if(childObjects[i].GetComponent<Animator>() != null){
+				//	childObjects[i].GetComponent<SpriteRenderer>().enabled = state;
+				//}else{
+				//	childObjects[i].gameObject.SetActive(state);
+				//}
+    //        } 
+    //    }
+    //}
 
     private void OnDestroy() {
         RemoveBehaviourTree();
@@ -342,5 +324,16 @@ public class CitizenAvatar : PooledObject {
         }
     }
     #endregion
+
+    public void SetAvatarState(bool state) {
+        this.gameObject.GetComponent<SpriteRenderer>().enabled = state;
+        for (int i = 0; i < childObjects.Length; i++) {
+            if (childObjects[i].GetComponent<Animator>() != null) {
+                childObjects[i].GetComponent<SpriteRenderer>().enabled = state;
+            } else {
+                childObjects[i].gameObject.SetActive(state);
+            }
+        }
+    }
 
 }
