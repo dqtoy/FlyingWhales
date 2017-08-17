@@ -49,7 +49,7 @@ public class Adventure : GameEvent {
         base.DoneEvent();
         //_adventurer.citizen.Death(DEATH_REASONS.NONE);
         Log discoveredLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "citizen_death");
-        discoveredLog.AddToFillers(_adventurer, _adventurer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        discoveredLog.AddToFillers(_adventurer.citizen, _adventurer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
         if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
             UIManager.Instance.ShowNotification(discoveredLog);
