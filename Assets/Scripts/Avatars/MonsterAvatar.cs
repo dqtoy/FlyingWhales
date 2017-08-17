@@ -141,7 +141,7 @@ public class MonsterAvatar : PooledObject {
 					this.monster.prevLocation = this.monster.location;
 					this.monster.location = this.monster.path[0];
 					this.monster.path.RemoveAt(0);
-					this.monster.AcquireTarget ();
+//					this.monster.AcquireTarget ();
 				}
 			}
 		}

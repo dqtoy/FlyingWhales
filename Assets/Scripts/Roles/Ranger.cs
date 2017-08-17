@@ -84,9 +84,7 @@ public class Ranger : Role {
 //				}
 //			}
 		}else{
-			this.seenAndVisibleTiles.AddRange(this.citizen.city.kingdom.fogOfWarDict [FOG_OF_WAR_STATE.VISIBLE]);
-			this.seenAndVisibleTiles.AddRange(this.citizen.city.kingdom.fogOfWarDict [FOG_OF_WAR_STATE.SEEN]);
-			this.seenAndVisibleTiles = this.seenAndVisibleTiles.Where (x => x.elevationType != ELEVATION.WATER).ToList ();
+			this.seenAndVisibleTiles = this.location.GetTilesInRange(KingdomManager.Instance.rangerMoveRange).Where(x => x.elevationType != ELEVATION.WATER && this.citizen.city.kingdom.GetFogOfWarStateOfTile(x) != FOG_OF_WAR_STATE.HIDDEN).ToList ();
 			if(this.seenAndVisibleTiles.Count > 0){
 				this.targetLocation = this.seenAndVisibleTiles [UnityEngine.Random.Range (0, this.seenAndVisibleTiles.Count)];
 			}

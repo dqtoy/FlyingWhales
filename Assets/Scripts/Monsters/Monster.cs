@@ -22,6 +22,7 @@ public class Monster {
 
 	internal object _targetObject;
 	internal List<HexTile> occupiedTiles;
+	private List<HexTile> targetTiles;
 
 
 	public Monster(MONSTER type, HexTile originHextile){
@@ -38,6 +39,7 @@ public class Monster {
 		this.isDead = false;
 		this.path = new List<HexTile>();
 		this.occupiedTiles = new List<HexTile> ();
+		this.targetTiles = new List<HexTile> ();
 		RegisterBehavior ();
 	}
 	internal void UpdateUI(){
@@ -125,43 +127,48 @@ public class Monster {
 //                }
 //            }
         } else{
-			HexTile[] neighbors = this.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER).ToArray ();
-			int numOfNeighbors = neighbors.Length;
-			if(this.prevLocation != null){
 
-				int indexOfOppositeTile = GetIndexOfOppositeTile(this.location, this.prevLocation, neighbors);
-				if(indexOfOppositeTile == -1 || indexOfOppositeTile >= numOfNeighbors){
-					indexOfOppositeTile = UnityEngine.Random.Range (0, numOfNeighbors);
-				}
-				int chance = UnityEngine.Random.Range (0, 100);
-				if(chance < 50){
-					this.targetLocation = neighbors [indexOfOppositeTile];
-				}else{
-					int adder = 0;
-					if(chance >= 50 && chance < 65){
-						adder = 1;
-					}else if(chance >= 65 && chance < 73){
-						adder = 2;
-					}else if(chance >= 73 && chance < 77){
-						adder = 3;
-					}else if(chance >= 77 && chance < 85){
-						adder = 4;
-					}else{
-						adder = 5;
-					}
-					if(adder >= numOfNeighbors){
-						adder = numOfNeighbors - 1;
-					}
-					int index = indexOfOppositeTile + adder;
-					if(index >= numOfNeighbors){
-						index -= numOfNeighbors;
-					}
-					this.targetLocation = neighbors [index];
-				}
-
-			}else{
-				this.targetLocation = neighbors [UnityEngine.Random.Range (0, numOfNeighbors)];
+			this.targetTiles = this.location.GetTilesInRange(this.lair.lairSpawn.moveRange, true).Where(x => x.elevationType != ELEVATION.WATER).ToList ();
+			if(this.targetTiles.Count > 0){
+				this.targetLocation = this.targetTiles [UnityEngine.Random.Range (0, this.targetTiles.Count)];
 			}
+//			HexTile[] neighbors = this.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER).ToArray ();
+//			int numOfNeighbors = neighbors.Length;
+//			if(this.prevLocation != null){
+//
+//				int indexOfOppositeTile = GetIndexOfOppositeTile(this.location, this.prevLocation, neighbors);
+//				if(indexOfOppositeTile == -1 || indexOfOppositeTile >= numOfNeighbors){
+//					indexOfOppositeTile = UnityEngine.Random.Range (0, numOfNeighbors);
+//				}
+//				int chance = UnityEngine.Random.Range (0, 100);
+//				if(chance < 50){
+//					this.targetLocation = neighbors [indexOfOppositeTile];
+//				}else{
+//					int adder = 0;
+//					if(chance >= 50 && chance < 65){
+//						adder = 1;
+//					}else if(chance >= 65 && chance < 73){
+//						adder = 2;
+//					}else if(chance >= 73 && chance < 77){
+//						adder = 3;
+//					}else if(chance >= 77 && chance < 85){
+//						adder = 4;
+//					}else{
+//						adder = 5;
+//					}
+//					if(adder >= numOfNeighbors){
+//						adder = numOfNeighbors - 1;
+//					}
+//					int index = indexOfOppositeTile + adder;
+//					if(index >= numOfNeighbors){
+//						index -= numOfNeighbors;
+//					}
+//					this.targetLocation = neighbors [index];
+//				}
+//
+//			}else{
+//				this.targetLocation = neighbors [UnityEngine.Random.Range (0, numOfNeighbors)];
+//			}
 		}
 
 		this.path = PathGenerator.Instance.GetPath (this.location, this.targetLocation, PATHFINDING_MODE.AVATAR);
