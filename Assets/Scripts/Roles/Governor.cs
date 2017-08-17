@@ -220,7 +220,7 @@ public class Governor : Role {
 		}
 	}
 	private void TriggerSecession(){
-		if(this.loyalty <= 0 && !this.citizen.city.kingdom.hasSecession){
+		if(this.loyalty <= -50 && !this.citizen.city.kingdom.hasSecession){
 			int chance = UnityEngine.Random.Range (0, 100);
 			if(chance < 25){
 				EventCreator.Instance.CreateSecessionEvent(this.citizen);

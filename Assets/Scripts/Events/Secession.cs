@@ -83,6 +83,7 @@ public class Secession : GameEvent {
 	internal override void CancelEvent (){
 		base.CancelEvent ();
 		this.targetCity = null;
+		this.DoneEvent ();
 	}
 	#endregion
 
@@ -210,6 +211,7 @@ public class Secession : GameEvent {
 				if(kingFled){
 					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "king_flees");
 					newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
+					newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 					newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 					newLog.AddToFillers (null, newCitiesText, LOG_IDENTIFIER.SECESSION_CITIES);
 					newLog.AddToFillers (this.sourceKingdom.king, this.sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);

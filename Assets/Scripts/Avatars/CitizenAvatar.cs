@@ -57,7 +57,7 @@ public class CitizenAvatar : PooledObject {
         }
     }
 	public virtual void UpdateFogOfWar(bool forDeath = false) {
-        Kingdom kingdomOfAgent = this.citizenRole.citizen.homeKingdom;
+		Kingdom kingdomOfAgent = this.citizenRole.citizen.city.kingdom;
 
         for (int i = 0; i < visibleTiles.Count; i++) {
 			HexTile currTile = visibleTiles[i];
@@ -76,7 +76,7 @@ public class CitizenAvatar : PooledObject {
 			visibleTiles.AddRange(this.citizenRole.location.AllNeighbours);
 			for (int i = 0; i < visibleTiles.Count; i++) {
 				HexTile currTile = visibleTiles[i];
-				this.citizenRole.citizen.homeKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+				this.citizenRole.citizen.city.kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
 			}
 		}
 	}

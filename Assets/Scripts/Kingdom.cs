@@ -989,6 +989,11 @@ public class Kingdom{
         Citizen previousKing = this.king;
 		bool isNewKingdomGovernor = newKing.isGovernor;
 
+		newKing.AssignRole(ROLE.KING);
+
+		if (isNewKingdomGovernor) {
+			newKing.city.AssignNewGovernor();
+		}
         //		newKing.isKing = true;
 //        newKing.isGovernor = false;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
@@ -1005,12 +1010,6 @@ public class Kingdom{
             KingdomManager.Instance.AddRelationshipToOtherKings(newKing);
         }
 
-        newKing.AssignRole(ROLE.KING);
-
-		if (isNewKingdomGovernor) {
-			newKing.city.AssignNewGovernor();
-		}
-
         this.successionLine.Clear();
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (newKing.GetSiblings());
@@ -1019,7 +1018,7 @@ public class Kingdom{
 
 		this.UpdateAllGovernorsLoyalty ();
 		this.UpdateAllRelationshipKings ();
-        Debug.Log("Assigned new king: " + newKing.name + " because " + previousKing.name + " died!");
+//        Debug.Log("Assigned new king: " + newKing.name + " because " + previousKing.name + " died!");
     }
 
 

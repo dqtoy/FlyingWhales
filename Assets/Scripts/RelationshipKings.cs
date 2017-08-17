@@ -166,8 +166,8 @@ public class RelationshipKings {
 		int baseLoyalty = 0;
 		int adjustment = 0;
 
-		Kingdom sourceKingdom = this.sourceKing.homeKingdom;
-		Kingdom targetKingdom = this.king.homeKingdom;
+		Kingdom sourceKingdom = this.sourceKing.city.kingdom;
+		Kingdom targetKingdom = this.king.city.kingdom;
 
 		RelationshipKingdom relationshipKingdom = sourceKingdom.GetRelationshipWithOtherKingdom (targetKingdom);
 

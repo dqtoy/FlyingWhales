@@ -472,7 +472,7 @@ public class KingdomManager : MonoBehaviour {
             RelationshipKings currRel = citizenToInherit.relationshipKings[i];
             RelationshipKings relOfTargetKing = currRel.king.GetRelationshipWithCitizen(citizenInheritedFrom);
             currRel.ChangeSourceKing(citizenToInherit);
-            relOfTargetKing.ChangeTargetKing(citizenToInherit);
+			relOfTargetKing.ChangeTargetKing(citizenToInherit);
         }
     }
 
