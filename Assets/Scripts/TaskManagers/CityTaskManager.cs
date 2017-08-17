@@ -185,7 +185,9 @@ public class CityTaskManager : MonoBehaviour {
 			this.pathToTargetHexTile.Clear();
 		}
 
-		Task.current.Succeed();
+        if(Task.current != null) {
+            Task.current.Succeed();
+        }
 	}
 
 	[Task]

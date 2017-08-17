@@ -74,12 +74,15 @@ public class AncientRuin : GameEvent {
                 }
                 break;
             default:
-                break;
+                throw new System.Exception("Ancient ruing discovery is invalid!: " + newDiscovery.ToString());
         }
         Log newDiscoveryLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AncientRuin", newDiscovery.ToString());
         newDiscoveryLog.AddToFillers(_discoveredByKingdom, _discoveredByKingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         EventManager.Instance.AddEventToDictionary(this);
-		EventIsCreated(this._discoveredByKingdom, true);
+		//EventIsCreated(this._discoveredByKingdom, true);
+        if(UIManager.Instance.currentlyShowingKingdom.id == _discoveredByKingdom.id) {
+            UIManager.Instance.ShowNotification(newDiscoveryLog);
+        }
         DoneEvent();
     }
 
@@ -91,7 +94,7 @@ public class AncientRuin : GameEvent {
         for (int i = 0; i < discoveryChances.Count; i++) {
             upperBound += discoveryChances.Values.ElementAt(i);
             RUIN_DISCOVERIES currDiscovery = discoveryChances.Keys.ElementAt(i);
-            if(chance > lowerBound && chance <= upperBound) {
+            if(chance >= lowerBound && chance <= upperBound) {
                 return currDiscovery;
             }
             lowerBound = upperBound;

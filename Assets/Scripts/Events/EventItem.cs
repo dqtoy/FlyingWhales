@@ -65,8 +65,8 @@ public class EventItem : PooledObject {
         UIScrollView parentScrollView = parentGrid.transform.parent.GetComponent<UIScrollView>();
         parentGrid.RemoveChild(this.transform);
 
-        UIManager.Instance.RepositionGridCallback(parentGrid);
-        StartCoroutine(UIManager.Instance.RepositionScrollView(parentScrollView));
+        //UIManager.Instance.RepositionGridCallback(parentGrid);
+        //StartCoroutine(UIManager.Instance.RepositionScrollView(parentScrollView));
 
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
@@ -79,7 +79,7 @@ public class EventItem : PooledObject {
 	public IEnumerator StartExpiration(){
 		yield return new WaitForSeconds (10);
 		UIManager.Instance.HideSmallInfo ();
-		Destroy (this.gameObject);
+		ObjectPoolManager.Instance.DestroyObject(this.gameObject);
 	}
 
 	void OnHover(bool isOver){

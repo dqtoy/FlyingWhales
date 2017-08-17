@@ -34,20 +34,27 @@ public class Adventure : GameEvent {
 
     internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen) {
         base.DeathByAgent(citizen, deadCitizen);
-        Log discoveredLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "citizen_death");
+        Log discoveredLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "citizen_death_by_agent");
         discoveredLog.AddToFillers(deadCitizen, deadCitizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         discoveredLog.AddToFillers(citizen, citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        this.DoneEvent();
-    }
 
-    internal override void CancelEvent() {
-        base.CancelEvent();
-        _adventurer.citizen.Death(DEATH_REASONS.NONE);
+        if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+            UIManager.Instance.ShowNotification(discoveredLog);
+        }
+
+        this.DoneEvent();
     }
 
     internal override void DoneEvent() {
         base.DoneEvent();
-        _adventurer.citizen.Death(DEATH_REASONS.NONE);
+        //_adventurer.citizen.Death(DEATH_REASONS.NONE);
+        Log discoveredLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "citizen_death");
+        discoveredLog.AddToFillers(_adventurer, _adventurer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+        if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+            UIManager.Instance.ShowNotification(discoveredLog);
+        }
+        _adventurer.DestroyGO();
     }
     #endregion
 }

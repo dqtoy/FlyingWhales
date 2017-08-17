@@ -1183,13 +1183,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			} else if (gameEventInTile is AltarOfBlessing) {
 				AltarOfBlessing altarOfBlessing = (AltarOfBlessing)gameEventInTile;
 				altarOfBlessing.TransferAltarOfBlessing(claimant, citizen);
-			}else if(gameEventInTile is DevelopWeapons) {
-                if(claimant.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) 
-                    || claimant.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-                    DevelopWeapons developWeapons = (DevelopWeapons)gameEventInTile;
-                    developWeapons.ClaimWeapon(claimant);
-                }
-            } else {
+			} else {
                 gameEventInTile.OnCollectAvatarAction(claimant);
             }
         }

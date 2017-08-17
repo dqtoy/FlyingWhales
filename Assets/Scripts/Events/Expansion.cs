@@ -28,7 +28,11 @@ public class Expansion : GameEvent {
 		newLog.AddToFillers (startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		newLog.AddToFillers (startedBy.city, startedBy.city.name, LOG_IDENTIFIER.CITY_1);
 
-		this.EventIsCreated (this.startedByKingdom, true);
+        if(UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+
+		this.EventIsCreated (this.startedByKingdom, false);
 
 	}
 
@@ -43,29 +47,44 @@ public class Expansion : GameEvent {
 
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");
 			newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name, LOG_IDENTIFIER.CITY_1);
+            if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+                UIManager.Instance.ShowNotification(newLog);
+            }
 
-		} else {
+        } else {
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "beaten");
 			this.startedBy.Death (DEATH_REASONS.DISAPPEARED_EXPANSION);
-		}
+            if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+                UIManager.Instance.ShowNotification(newLog);
+            }
+        }
 		this.DoneEvent ();
 	}
 	internal void Disappearance(){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "disappearance");
 		this.startedBy.Death (DEATH_REASONS.DISAPPEARED_EXPANSION);
-		this.DoneEvent();
+        if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+        this.DoneEvent();
 	}
 	internal override void DeathByOtherReasons(){
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_other");
 		newLog.AddToFillers (this.startedBy, this.startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-		this.DoneEvent ();
+        if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+        this.DoneEvent ();
 	}
 	internal override void DeathByAgent(Citizen citizen, Citizen deadCitizen){
 		base.DeathByAgent(citizen, deadCitizen);
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "death_by_agent");
 		newLog.AddToFillers (citizen, citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
 
-		this.DoneEvent ();
+        this.DoneEvent ();
 	}
 
 	internal override void DoneEvent(){

@@ -7,20 +7,21 @@ public class TimedDisable : PooledObject
     float timer = 0;
     public float DisableTime;
 
-    void OnEnable()
-    {
+    public bool paused;
+
+    void OnEnable() {
         timer = 0;
     }
 
-    void Update()
-    {
-        timer += Time.deltaTime;
+    void Update() {
+        if (!paused) {
+            timer += Time.deltaTime;
 
-        if (timer > DisableTime)
-        {
-            transform.parent = ParentPool.transform;
-            SendObjectBackToPool();
-            //gameObject.SetActive(false);
+            if (timer > DisableTime) {
+                transform.parent = ParentPool.transform;
+                SendObjectBackToPool();
+                //gameObject.SetActive(false);
+            }
         }
     }
 }
