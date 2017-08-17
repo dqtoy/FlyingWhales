@@ -1000,7 +1000,7 @@ public class Kingdom{
             KingdomManager.Instance.InheritRelationshipFromCitizen(previousKing, newKing);
             previousKing.relationshipKings.Clear();
         } else {
-            KingdomManager.Instance.RemoveRelationshipToOtherKings(previousKing);
+//            KingdomManager.Instance.RemoveRelationshipToOtherKings(previousKing);
             newKing.CreateInitialRelationshipsToKings();
             KingdomManager.Instance.AddRelationshipToOtherKings(newKing);
         }
