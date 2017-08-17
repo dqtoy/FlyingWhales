@@ -10,17 +10,20 @@ public class PathGenerator : MonoBehaviour {
 
 	private List<HexTile> roadTiles = new List<HexTile>();
 
-    [SerializeField] private HexTile startTile;
+    #region For Testing
+    [Header("For Testing")]
+    [SerializeField]
+    private HexTile startTile;
     [SerializeField] private HexTile targetTile;
     public PATHFINDING_MODE modeToUse;
 
     [ContextMenu("Get Path")]
     public void GetPathForTesting() {
-        List<HexTile> path = GetPath(startTile, targetTile, modeToUse);
-        if(path != null) {
+        List<HexTile> path = GetPath(startTile, targetTile, modeToUse, UIManager.Instance.currentlyShowingKingdom.basicResource, UIManager.Instance.currentlyShowingKingdom);
+        if (path != null) {
             Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
             for (int i = 0; i < path.Count; i++) {
-                Debug.Log(path[i].name);
+                Debug.Log(path[i].name, path[i]);
             }
         } else {
             Debug.LogError("Cannot get path from " + startTile.name + " to " + targetTile.name + " using " + modeToUse.ToString());
@@ -28,20 +31,21 @@ public class PathGenerator : MonoBehaviour {
     }
 
     [ContextMenu("Show all road tiles")]
-	public void ShowAllRoadTiles(){
-		foreach (HexTile h in roadTiles) {
-			h.GetComponent<SpriteRenderer>().color = Color.red;
-		}
-	}
+    public void ShowAllRoadTiles() {
+        foreach (HexTile h in roadTiles) {
+            h.GetComponent<SpriteRenderer>().color = Color.red;
+        }
+    }
 
-	[ContextMenu("Hide all road tiles")]
-	public void HideAllRoadTiles(){
-		foreach (HexTile h in roadTiles) {
-			h.GetComponent<SpriteRenderer>().color = Color.white;
-		}
-	}
+    [ContextMenu("Hide all road tiles")]
+    public void HideAllRoadTiles() {
+        foreach (HexTile h in roadTiles) {
+            h.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+    }
+    #endregion
 
-	void Awake(){
+    void Awake(){
 		Instance = this;
 	}
 
@@ -152,7 +156,7 @@ public class PathGenerator : MonoBehaviour {
 	/*
 	 * Get List of tiles (Path) that will connect 2 city tiles
 	 * */
-	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE){
+	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, Kingdom kingdom = null){
 		if(startingTile == null || destinationTile == null){
 			return null;
 		}
@@ -176,7 +180,7 @@ public class PathGenerator : MonoBehaviour {
 				habitableTiles [i].isRoad = true;
 			}
 		}
-		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode);
+		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom);
 		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
 //			startingTile.isRoad = false;
 //			destinationTile.isRoad = false;
@@ -205,7 +209,7 @@ public class PathGenerator : MonoBehaviour {
 	public int GetDistanceBetweenTwoTiles(HexTile startingTile, HexTile destinationTile){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
-		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL);
+		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL, null);
 
 		if (path != null) {			
 			return (path.Count() - 1);

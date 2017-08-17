@@ -23,6 +23,13 @@ public class GameManager : MonoBehaviour {
 
     private float timeElapsed;
 
+    #region For Testing
+    [ContextMenu("Print Event Table")]
+    public void PrintEventTable() {
+        Messenger.PrintEventTable();
+    }
+    #endregion
+
     private void Awake(){
 		Instance = this;
 		this.days = 1;
