@@ -37,7 +37,7 @@ public class Citizen {
 	public List<Citizen> successionWars;
 	public List<Citizen> civilWars;
 	public MONTH birthMonth;
-	public int birthWeek;
+	public int birthDay;
 	public int birthYear;
 	public int supportExpirationWeek;
 	public int supportExpirationMonth;
@@ -155,7 +155,7 @@ public class Citizen {
 		this.successionWars = new List<Citizen> ();
 		this.civilWars = new List<Citizen> ();
 		this.birthMonth = (MONTH) GameManager.Instance.month;
-		this.birthWeek = GameManager.Instance.days;
+		this.birthDay = GameManager.Instance.days;
 		this.birthYear = GameManager.Instance.year;
 		this.horoscope = new int[3];
 		this.isIndependent = false;
@@ -184,7 +184,7 @@ public class Citizen {
 		this.UpdatePrestige();
 
         //EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
-        Messenger.AddListener("CitizenTurnActions", TurnActions);
+        //Messenger.AddListener("CitizenTurnActions", TurnActions);
         //EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
 		//EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
 		/*if(!isGhost){
@@ -216,7 +216,7 @@ public class Citizen {
 			newHoroscope[0] = 1;
 		}
 
-		if(this.birthWeek % 2 == 0){
+		if(this.birthDay % 2 == 0){
 			newHoroscope[1] = 0;
 		}else{
 			newHoroscope[1] = 1;
@@ -245,8 +245,9 @@ public class Citizen {
 	}
 	internal void AssignBirthday(MONTH month, int days, int year){
 		this.birthMonth = month;
-		this.birthWeek = days;
+		this.birthDay = days;
 		this.birthYear = year;
+        CitizenManager.Instance.RegisterCitizen(this);
 		this.horoscope = GetHoroscope ();
 		this._honestyTrait = StoryTellingManager.Instance.GenerateHonestyTrait(this);
 		this._hostilityTrait = StoryTellingManager.Instance.GenerateHostilityTrait(this);
@@ -254,12 +255,12 @@ public class Citizen {
 		this.history.Add(new History((int)month, days, year, this.name + " was born.", HISTORY_IDENTIFIER.NONE));
 	}
 	internal void TurnActions(){
-		this.AttemptToAge();
-		this.DeathReasons();
+		//this.AttemptToAge();
+		//this.DeathReasons();
 //		this.CheckSupportExpiration ();
-		if (!this.isDead) {
-			this.UpdatePrestige ();
-		}
+		//if (!this.isDead) {
+		//	this.UpdatePrestige ();
+		//}
 	}
 
 	protected void CheckSupportExpiration(){
@@ -269,8 +270,12 @@ public class Citizen {
 		}
 	}
 
+    internal void AdjustAge(int adjustment) {
+        this.age += adjustment;
+    }
+
 	protected void AttemptToAge(){
-		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.days == this.birthWeek && GameManager.Instance.year > this.birthYear){
+		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.days == this.birthDay && GameManager.Instance.year > this.birthYear){
 			this.age += 1;
             /*Every birthday starting at 16 up to 50, an unmarried King, 
              * Queen or Governor has a chance to get married. 
@@ -347,31 +352,31 @@ public class Citizen {
 		if (this.assignedRole != null) {
 			this.assignedRole.OnDeath ();
 		}
-			
-		Messenger.RemoveListener("CitizenTurnActions", TurnActions);
-		//EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
-		//EventManager.Instance.onUnsupportCitizen.Invoke (this);
-		//this.UnsupportCitizen (this);
-//		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
-		//EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
+        CitizenManager.Instance.UnregisterCitizen(this);
+        //Messenger.RemoveListener("CitizenTurnActions", TurnActions);
+        //EventManager.Instance.onUnsupportCitizen.RemoveListener (UnsupportCitizen);
+        //EventManager.Instance.onUnsupportCitizen.Invoke (this);
+        //this.UnsupportCitizen (this);
+        //		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);
+        //EventManager.Instance.onRemoveSuccessionWarCity.RemoveListener (RemoveSuccessionWarCity);
 
 
-//		if (this.role == ROLE.GENERAL && this.assignedRole != null) {
-//			if (isConquered) {
-//				((General)this.assignedRole).GeneralDeath ();
-//			} else {
-//				if (((General)this.assignedRole).army.hp <= 0) {
-//					((General)this.assignedRole).GeneralDeath ();
-//				}else{
-//					this.city.LookForNewGeneral((General)this.assignedRole);
-//					if (this.role == ROLE.GENERAL && this.assignedRole != null) {
-//						this.DetachGeneralFromCitizen ();
-//					}
-//				}
-//			}
-//
-//		}
-		if (this.city != null) {
+        //		if (this.role == ROLE.GENERAL && this.assignedRole != null) {
+        //			if (isConquered) {
+        //				((General)this.assignedRole).GeneralDeath ();
+        //			} else {
+        //				if (((General)this.assignedRole).army.hp <= 0) {
+        //					((General)this.assignedRole).GeneralDeath ();
+        //				}else{
+        //					this.city.LookForNewGeneral((General)this.assignedRole);
+        //					if (this.role == ROLE.GENERAL && this.assignedRole != null) {
+        //						this.DetachGeneralFromCitizen ();
+        //					}
+        //				}
+        //			}
+        //
+        //		}
+        if (this.city != null) {
 			this.city.citizens.Remove (this);
 		}
 //		if(isConquered){
@@ -1438,7 +1443,7 @@ public class Citizen {
 	}
 
 	internal void UnsubscribeListeners(){
-        Messenger.RemoveListener("CitizenTurnActions", TurnActions);
+        //Messenger.RemoveListener("CitizenTurnActions", TurnActions);
         //EventManager.Instance.onCitizenTurnActions.RemoveListener(TurnActions);
         //EventManager.Instance.onUnsupportCitizen.RemoveListener(UnsupportCitizen);
         //		EventManager.Instance.onCheckCitizensSupportingMe.RemoveListener(AddPrestigeToOtherCitizen);

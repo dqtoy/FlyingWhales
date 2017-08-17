@@ -11,7 +11,7 @@ public class MapGenerator : MonoBehaviour {
 		Biomes.Instance.GenerateElevation();
 		Biomes.Instance.GenerateBiome();
         Biomes.Instance.GenerateTileTags();
-		Biomes.Instance.GenerateTileDetails();
+		//Biomes.Instance.GenerateTileDetails();
 		CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
 		//PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);

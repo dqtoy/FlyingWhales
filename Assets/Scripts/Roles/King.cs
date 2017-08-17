@@ -78,7 +78,7 @@ public class King : Role {
 	}
 	internal void TriggerSpouseAbduction(){
 		if(!this.citizen.isDead){
-			if((MONTH)GameManager.Instance.month == this.citizen.birthMonth && GameManager.Instance.days == this.citizen.birthWeek && GameManager.Instance.year > this.citizen.birthYear){
+			if((MONTH)GameManager.Instance.month == this.citizen.birthMonth && GameManager.Instance.days == this.citizen.birthDay && GameManager.Instance.year > this.citizen.birthYear){
 				this.abductionCounter += 1;
 				int chance = UnityEngine.Random.Range (0, 100);
 				if(chance < 100 * this.abductionCounter){
