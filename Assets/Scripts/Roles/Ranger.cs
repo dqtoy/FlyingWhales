@@ -8,6 +8,7 @@ public class Ranger : Role {
 	private object _targetObject;
 	private List<HexTile> occupiedTiles;
 	internal HexTile prevLocation;
+	private List<HexTile> seenAndVisibleTiles;
 
 	public object targetObject{
 		get{return this._targetObject;}
@@ -18,6 +19,7 @@ public class Ranger : Role {
 		this._targetObject = null;
 		this.prevLocation = null;
 		this.occupiedTiles = new List<HexTile> ();
+		this.seenAndVisibleTiles = new List<HexTile> ();
     }
 
 	#region Overrides
@@ -57,6 +59,7 @@ public class Ranger : Role {
 		}
 		this._targetObject = null;
 		this.occupiedTiles.Clear ();
+		this.seenAndVisibleTiles.Clear ();
 		List<HexTile> tileRadius = this.location.GetTilesInRange(2);
 		for (int i = 0; i < tileRadius.Count; i++) {
 			if(tileRadius[i].lair != null && this.citizen.city.kingdom.GetFogOfWarStateOfTile(tileRadius[i]) != FOG_OF_WAR_STATE.HIDDEN){ //tileRadius[i].citizensOnTile.Count > 0
@@ -81,49 +84,57 @@ public class Ranger : Role {
 //				}
 //			}
 		}else{
-			HexTile[] neighbors = this.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER && this.citizen.city.kingdom.GetFogOfWarStateOfTile(x) != FOG_OF_WAR_STATE.HIDDEN).ToArray ();
-			int numOfNeighbors = neighbors.Length;
-			if(this.prevLocation != null){
-
-				int indexOfOppositeTile = GetIndexOfOppositeTile(this.location, this.prevLocation, neighbors);
-				if(indexOfOppositeTile == -1 || indexOfOppositeTile >= numOfNeighbors){
-					indexOfOppositeTile = UnityEngine.Random.Range (0, numOfNeighbors);
-				}
-				int chance = UnityEngine.Random.Range (0, 100);
-				if(chance < 50){
-					this.targetLocation = neighbors [indexOfOppositeTile];
-				}else{
-					int adder = 0;
-					if(chance >= 50 && chance < 65){
-						adder = 1;
-					}else if(chance >= 65 && chance < 73){
-						adder = 2;
-					}else if(chance >= 73 && chance < 77){
-						adder = 3;
-					}else if(chance >= 77 && chance < 85){
-						adder = 4;
-					}else{
-						adder = 5;
-					}
-					if(adder >= numOfNeighbors){
-						adder = numOfNeighbors - 1;
-					}
-					int index = indexOfOppositeTile + adder;
-					if(index >= numOfNeighbors){
-						index -= numOfNeighbors;
-					}
-					this.targetLocation = neighbors [index];
-				}
-
-			}else{
-				this.targetLocation = neighbors [UnityEngine.Random.Range (0, numOfNeighbors)];
+			this.seenAndVisibleTiles.AddRange(this.citizen.city.kingdom.fogOfWarDict [FOG_OF_WAR_STATE.VISIBLE]);
+			this.seenAndVisibleTiles.AddRange(this.citizen.city.kingdom.fogOfWarDict [FOG_OF_WAR_STATE.SEEN]);
+			this.seenAndVisibleTiles = this.seenAndVisibleTiles.Where (x => x.elevationType != ELEVATION.WATER).ToList ();
+			if(this.seenAndVisibleTiles.Count > 0){
+				this.targetLocation = this.seenAndVisibleTiles [UnityEngine.Random.Range (0, this.seenAndVisibleTiles.Count)];
 			}
+
+
+//			HexTile[] neighbors = this.location.AllNeighbours.Where(x => x.elevationType != ELEVATION.WATER && this.citizen.city.kingdom.GetFogOfWarStateOfTile(x) != FOG_OF_WAR_STATE.HIDDEN).ToArray ();
+//			int numOfNeighbors = neighbors.Length;
+//			if(this.prevLocation != null){
+//
+//				int indexOfOppositeTile = GetIndexOfOppositeTile(this.location, this.prevLocation, neighbors);
+//				if(indexOfOppositeTile == -1 || indexOfOppositeTile >= numOfNeighbors){
+//					indexOfOppositeTile = UnityEngine.Random.Range (0, numOfNeighbors);
+//				}
+//				int chance = UnityEngine.Random.Range (0, 100);
+//				if(chance < 50){
+//					this.targetLocation = neighbors [indexOfOppositeTile];
+//				}else{
+//					int adder = 0;
+//					if(chance >= 50 && chance < 65){
+//						adder = 1;
+//					}else if(chance >= 65 && chance < 73){
+//						adder = 2;
+//					}else if(chance >= 73 && chance < 77){
+//						adder = 3;
+//					}else if(chance >= 77 && chance < 85){
+//						adder = 4;
+//					}else{
+//						adder = 5;
+//					}
+//					if(adder >= numOfNeighbors){
+//						adder = numOfNeighbors - 1;
+//					}
+//					int index = indexOfOppositeTile + adder;
+//					if(index >= numOfNeighbors){
+//						index -= numOfNeighbors;
+//					}
+//					this.targetLocation = neighbors [index];
+//				}
+//
+//			}else{
+//				this.targetLocation = neighbors [UnityEngine.Random.Range (0, numOfNeighbors)];
+//			}
 		}
 
-		this.path = PathGenerator.Instance.GetPath (this.location, this.targetLocation, PATHFINDING_MODE.AVATAR);
-//		if(this.path == null){
-//			Debug.LogError ("path is null");
-//		}
+		this.path = PathGenerator.Instance.GetPath (this.location, this.targetLocation, PATHFINDING_MODE.NO_HIDDEN_TILES, BASE_RESOURCE_TYPE.STONE, this.citizen.city.kingdom);
+		if(this.path == null){
+			Debug.LogError ("path is null");
+		}
 	}
 	private int GetIndexOfOppositeTile(HexTile fromHextile, HexTile prevHextile, HexTile[] neighbors){
 		//		HexTile[] neighbors = fromHextile.AllNeighbours.ToArray ();

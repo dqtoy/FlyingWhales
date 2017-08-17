@@ -24,7 +24,7 @@ public class RangerAvatar : CitizenAvatar {
                     this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
                     this.citizenRole.path.RemoveAt(0);
                     this.CheckForKingdomDiscovery();
-					((Ranger)this.citizenRole).AcquireTarget ();
+//					((Ranger)this.citizenRole).AcquireTarget ();
 					this.UpdateFogOfWar();
                     //this.GetNextTargetTile();
                 }
