@@ -76,6 +76,8 @@ public class Lair {
         this.hexTile.RemoveLairNamePlate();
 	}
 	private void DestroyLair(){
+		Messenger.AddListener("OnDayEnd", PerformAction);
+
 		if(this.goStructure != null){
 			GameObject.Destroy(this.goStructure);
 			this.goStructure = null;
