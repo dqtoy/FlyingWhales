@@ -29,7 +29,6 @@ public class Secession : GameEvent {
         this.alreadyVisitedCities.Add(startedBy.city);
 		this.sourceKingdom.SetSecession (true);
 
-        Messenger.AddListener("OnDayEnd", this.PerformAction);
 		Debug.Log (startedBy.name + " wants to split from " + this.sourceKingdom.name + " because his/her loyalty is " + this.governor.loyalty);
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "event_title");
@@ -41,6 +40,8 @@ public class Secession : GameEvent {
 
 		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated (this.sourceKingdom, true);
+		Messenger.AddListener("OnDayEnd", this.PerformAction);
+
 	}
 
 	#region Overrides
@@ -192,13 +193,19 @@ public class Secession : GameEvent {
 			Kingdom newKingdom = KingdomManager.Instance.SplitKingdom (this.sourceKingdom, this.joiningCities);
 			if (newKingdom != null) {
 				string newCitiesText = string.Empty;
-				for (int i = 0; i < this.joiningCities.Count; i++) {
-					if (i != this.joiningCities.Count - 1) {
-						newCitiesText += this.joiningCities [i].name + ", ";
-					} else {
-						newCitiesText += "and" + this.joiningCities [i].name;
+
+				if(this.joiningCities.Count == 1){
+					newCitiesText += this.joiningCities [0].name;
+				}else{
+					for (int i = 0; i < this.joiningCities.Count; i++) {
+						if (i != this.joiningCities.Count - 1) {
+							newCitiesText += this.joiningCities [i].name + ", ";
+						} else {
+							newCitiesText += "and " + this.joiningCities [i].name;
+						}
 					}
 				}
+
 
 				if(kingFled){
 					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "king_flees");
@@ -211,6 +218,7 @@ public class Secession : GameEvent {
 				}else{
 					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Secession", "secession_success");
 					newLog.AddToFillers (this.governor.citizen, this.governor.citizen.name, LOG_IDENTIFIER.GOVERNOR_1);
+					newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 					newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 					newLog.AddToFillers (null, newCitiesText, LOG_IDENTIFIER.SECESSION_CITIES);
 				}

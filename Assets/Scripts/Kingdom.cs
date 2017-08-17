@@ -985,13 +985,10 @@ public class Kingdom{
 		}*/
         //		newKing.role = ROLE.KING;
         Citizen previousKing = this.king;
-		
-        if (newKing.city.governor.id == newKing.id) {
-            newKing.city.AssignNewGovernor();
-        }
+		bool isNewKingdomGovernor = newKing.isGovernor;
 
         //		newKing.isKing = true;
-        newKing.isGovernor = false;
+//        newKing.isGovernor = false;
 //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
 		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
         //		this.king = newKing;
@@ -1007,6 +1004,11 @@ public class Kingdom{
         }
 
         newKing.AssignRole(ROLE.KING);
+
+		if (isNewKingdomGovernor) {
+			newKing.city.AssignNewGovernor();
+		}
+
         this.successionLine.Clear();
 		ChangeSuccessionLineRescursively (newKing);
 		this.successionLine.AddRange (newKing.GetSiblings());

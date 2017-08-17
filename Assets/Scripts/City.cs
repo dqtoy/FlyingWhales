@@ -594,7 +594,9 @@ public class City{
         //Set tile as visible for the kingdom that bought it
         kingdom.SetFogOfWarStateForTile(tileToBuy, FOG_OF_WAR_STATE.VISIBLE);
 
-		Messenger.Broadcast<HexTile>("OnUpdatePath", tileToBuy);
+		if(Messenger.eventTable.ContainsKey("OnUpdatePath")){
+			Messenger.Broadcast<HexTile>("OnUpdatePath", tileToBuy);
+		}
         tileToBuy.CreateStructureOnTile(Utilities.GetStructureTypeForResource(kingdom.race, tileToBuy.specialResource));
 
         //Update necessary data
