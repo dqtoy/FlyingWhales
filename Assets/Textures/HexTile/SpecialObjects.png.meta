@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 26b3c1fa9ccb0524e8491e7e19f98ce7
-timeCreated: 1502174757
-licenseType: Free
+timeCreated: 1503028219
+licenseType: Pro
 TextureImporter:
   fileIDToRecycleName:
     21300000: SpecialObjects_Orb
@@ -84,19 +84,6 @@ TextureImporter:
         y: 349
         width: 133
         height: 80
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: SpecialObjects_2
-      rect:
-        serializedVersion: 2
-        x: 502
-        y: 426
-        width: 5
-        height: 4
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -207,7 +194,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     outline: []
-  spritePackingTag: 
+  spritePackingTag: TILEOBJECTS
   userData: 
   assetBundleName: 
   assetBundleVariant: 

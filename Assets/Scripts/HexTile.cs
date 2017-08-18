@@ -228,6 +228,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 //	}
 
 	internal void AssignSpecialResource(){
+		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
+			return;
+		}
 		int specialChance = UnityEngine.Random.Range (0, 100);
         int specialChanceForBiome = 0;
 
@@ -240,23 +243,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
 
 		if (specialChance < specialChanceForBiome) {
-			if (this.elevationType != ELEVATION.WATER && this.elevationType != ELEVATION.MOUNTAIN) {
-				this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
-				if (this.specialResource != RESOURCE.NONE) {
-                    resourceIcon.SetResource(specialResource);
-                    GameObject resource = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
-                    resource.transform.localPosition = Vector3.zero;
-                    resource.transform.localScale = Vector3.one;
-                    if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
-                        centerPiece.SetActive(false);
-                    }
-                }
+			this.specialResource = ComputeSpecialResource (Utilities.specialResourcesLookup [this.biomeType]);
+			if (this.specialResource != RESOURCE.NONE) {
+                resourceIcon.SetResource(specialResource);
+                GameObject resource = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
+                resource.transform.localPosition = Vector3.zero;
+                resource.transform.localScale = Vector3.one;
             }
 		} else {
 			this.specialResource = RESOURCE.NONE;
 		}
     }
-
+	internal void DeactivateCenterPiece(){
+		if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
+			centerPiece.SetActive(false);
+		}
+	}
 	public PandaBehaviour GetBehaviourTree(){
 		return this.GetComponent<PandaBehaviour>();
 	}
@@ -415,12 +417,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                         }
                     }
                     if (gameObjectToEdit != null && spriteMasksToChooseFrom != null) {
-                        gameObjectToEdit.SetActive(true);
                         gameObjectToEdit.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
                         gameObjectToEdit.GetComponent<SpriteRenderer>().sortingOrder += biomeLayerOfNeighbour;
-                        Material mat = new Material(Shader.Find("AlphaMask"));
-                        mat.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
-                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
+//                        Material mat = new Material(Shader.Find("AlphaMask"));
+						gameObjectToEdit.GetComponent<SpriteRenderer> ().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
+						gameObjectToEdit.SetActive(true);
+
+//                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
                         //gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("Alpha (A)", (Texture)spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
                         //					gameObjectToEdit.GetComponent<SpriteRenderer> ().material = materialForTile;
                     }
