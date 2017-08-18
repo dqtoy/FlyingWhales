@@ -7,7 +7,8 @@ public class BoonOfPowerAvatar : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other){
 		if(other.tag == "Avatar" || other.tag == "General"){
-			this.boonOfPower.TransferBoonOfPower (other.GetComponent<CitizenAvatar>().citizenRole.citizen.city.kingdom, other.GetComponent<CitizenAvatar>().citizenRole.citizen);
+			Citizen otherAgent = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
+			this.boonOfPower.TransferBoonOfPower (otherAgent.city.kingdom, otherAgent);
 		}
 	}
 

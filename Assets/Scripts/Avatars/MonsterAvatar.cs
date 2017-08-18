@@ -27,6 +27,7 @@ public class MonsterAvatar : PooledObject {
 
 	void Start(){
 		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
+		this.smoothMovement.avatarGO = this.gameObject;
 	}
 
 	internal void Init(Monster monster){
@@ -39,9 +40,10 @@ public class MonsterAvatar : PooledObject {
 	void OnTriggerEnter2D(Collider2D other){
 		if(other.tag == "Avatar"){
 			if(this.gameObject != null && other.gameObject != null){
-				if(!other.gameObject.GetComponent<CitizenAvatar> ().citizenRole.citizen.isDead){
-					this.hostile = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
-					CombatManager.Instance.HasCollidedWithMonster (this.monster, other.gameObject.GetComponent<CitizenAvatar>().citizenRole);
+				Citizen otherAgent = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
+				if(!otherAgent.isDead){
+					this.hostile = otherAgent;
+					CombatManager.Instance.HasCollidedWithMonster (this.monster, otherAgent.assignedRole);
 				}
 			}
 		}

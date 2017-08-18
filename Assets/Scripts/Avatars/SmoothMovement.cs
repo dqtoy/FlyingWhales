@@ -13,6 +13,7 @@ public class SmoothMovement : MonoBehaviour {
 	private float timeSinceStarted = 0f;
 
 	private Animator animator;
+	internal GameObject avatarGO;
 
 	void Start(){
 		this.animator = this.GetComponent<Animator> ();
@@ -24,7 +25,7 @@ public class SmoothMovement : MonoBehaviour {
 //				this.timeSinceStarted = Time.time - this.timeStarted;
 				this.step = Time.smoothDeltaTime / GameManager.Instance.progressionSpeed;
 				this.timeSinceStarted += this.step;
-				this.transform.position = Vector3.Lerp (this.transform.position, this.targetPosition, this.step);
+				this.avatarGO.transform.position = Vector3.Lerp (this.avatarGO.transform.position, this.targetPosition, this.step);
 				if(this.timeSinceStarted >= 1.0f){
 					StopMoving ();
 				}

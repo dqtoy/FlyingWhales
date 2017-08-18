@@ -7,7 +7,8 @@ public class AltarOfBlessingAvatar : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other){
 		if(other.tag == "Avatar" || other.tag == "General"){
-			this.altarOfBlessing.TransferAltarOfBlessing (other.GetComponent<CitizenAvatar>().citizenRole.citizen.city.kingdom, other.GetComponent<CitizenAvatar>().citizenRole.citizen);
+			Citizen otherAgent = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
+			this.altarOfBlessing.TransferAltarOfBlessing (otherAgent.city.kingdom, otherAgent);
 		}
 	}
 

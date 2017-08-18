@@ -22,6 +22,7 @@ public class LycanthropeAvatar : MonoBehaviour {
 
 	void Start(){
 		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
+		this.smoothMovement.avatarGO = this.gameObject;
 	}
 
     internal void Init(Lycanthrope lycanthrope) {

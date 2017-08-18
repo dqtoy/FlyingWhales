@@ -30,6 +30,8 @@ public class CitizenAvatar : PooledObject {
 
 	void Start(){
 		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
+		this.smoothMovement.avatarGO = this.gameObject;
+
 	}
 
     #region virtuals
@@ -306,33 +308,35 @@ public class CitizenAvatar : PooledObject {
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.tag == "Avatar") {
             if (this.gameObject != null && other.gameObject != null) {
-				Kingdom kingdomOfThis = this.citizenRole.citizen.city.kingdom;
-				Kingdom kingdomOfOther = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen.city.kingdom;
-				if(kingdomOfThis.id != kingdomOfOther.id){
-					RelationshipKingdom relationship = kingdomOfThis.GetRelationshipWithOtherKingdom (kingdomOfOther);
-					if (relationship != null) {
-						if (relationship.isAtWar) {
-							if (!other.gameObject.GetComponent<CitizenAvatar> ().citizenRole.citizen.isDead) {
-								CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<CitizenAvatar> ().citizenRole, other.gameObject.GetComponent<CitizenAvatar> ().citizenRole);
+				Citizen otherAgent = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
+				if (!otherAgent.isDead) {
+					Kingdom kingdomOfThis = this.citizenRole.citizen.city.kingdom;
+					Kingdom kingdomOfOther = otherAgent.city.kingdom;
+					if (kingdomOfThis.id != kingdomOfOther.id) {
+						RelationshipKingdom relationship = kingdomOfThis.GetRelationshipWithOtherKingdom (kingdomOfOther);
+						if (relationship != null) {
+							if (relationship.isAtWar) {
+								CombatManager.Instance.HasCollidedWithHostile (this.citizenRole, otherAgent.assignedRole);
 							}
 						}
 					}
-                }
+				}
             }
         } else if (other.tag == "Trader") {
             if (this.gameObject != null && other.gameObject != null) {
-                Kingdom kingdomOfGeneral = this.citizenRole.citizen.city.kingdom;
-                Kingdom kingdomOfTrader = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen.city.kingdom;
-                if (kingdomOfGeneral.id != kingdomOfTrader.id) {
-                    RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
-                    RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
-                    if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
-                        relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-                        if (!other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen.isDead) {
-                            CombatManager.Instance.HasCollidedWithHostile(this.GetComponent<CitizenAvatar>().citizenRole, other.gameObject.GetComponent<CitizenAvatar>().citizenRole);
-                        }
-                    }
-                }
+				Citizen otherAgent = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
+				if(!otherAgent.isDead){
+					Kingdom kingdomOfGeneral = this.citizenRole.citizen.city.kingdom;
+					Kingdom kingdomOfTrader = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen.city.kingdom;
+					if (kingdomOfGeneral.id != kingdomOfTrader.id) {
+						RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
+						RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
+						if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
+							relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+							CombatManager.Instance.HasCollidedWithHostile(this.citizenRole, otherAgent.assignedRole);
+						}
+					}
+				}
             }
         }
     }
