@@ -25,7 +25,7 @@ public class MonsterAvatar : PooledObject {
 	//	public float speed;
 	internal DIRECTION direction;
 
-	void Start(){
+	void Awake(){
 		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
 		this.smoothMovement.avatarGO = this.gameObject;
 	}

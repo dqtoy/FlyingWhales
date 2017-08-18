@@ -20,7 +20,7 @@ public class LycanthropeAvatar : MonoBehaviour {
     internal DIRECTION direction;
 	private SmoothMovement smoothMovement;
 
-	void Start(){
+	void Awake(){
 		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
 		this.smoothMovement.avatarGO = this.gameObject;
 	}
