@@ -65,18 +65,18 @@ public class MarriageManager : MonoBehaviour {
 		otherSpouse.city.citizens.Remove(father);
 		otherSpouse.city.citizens.Remove(mother);
 
-		father.UnsubscribeListeners();
-		mother.UnsubscribeListeners();
-
 		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		MONTH monthSpouse = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 
 		spouse.AssignBirthday (monthSpouse, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthSpouse] + 1), (GameManager.Instance.year - spouse.age));
-		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age);
-		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age);
+		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age, false);
+		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age, false);
 
-		Marry (otherSpouse, spouse);
+        father.UnsubscribeListeners();
+        mother.UnsubscribeListeners();
+
+        Marry (otherSpouse, spouse);
 		return spouse;
 	}
 

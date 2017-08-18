@@ -22,10 +22,10 @@ public class GeneralAvatar : CitizenAvatar {
 						this.citizenRole.daysBeforeMoving = this.citizenRole.path [0].movementDays;
 						this.citizenRole.location = this.citizenRole.path[0];
 						this.citizenRole.citizen.currentLocation = this.citizenRole.path [0];
-						this.UpdateFogOfWar();
+						//this.UpdateFogOfWar();
 						this.citizenRole.path.RemoveAt (0);
 						this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
-						this.CheckForKingdomDiscovery();
+						//this.CheckForKingdomDiscovery();
 						((General)this.citizenRole).CheckSerumOfAlacrity();
 					}
 					this.citizenRole.daysBeforeMoving -= 1;
@@ -39,6 +39,7 @@ public class GeneralAvatar : CitizenAvatar {
 			this.txtDamage.text = this.citizenRole.damage.ToString ();
 		}
 	}
+
 	#endregion
 	#region BehaviourTree Tasks
 	[Task]

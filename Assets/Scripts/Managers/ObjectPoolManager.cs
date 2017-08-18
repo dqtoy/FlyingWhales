@@ -69,6 +69,7 @@ public class ObjectPoolManager : MonoBehaviour {
                 instantiatedObj.transform.localPosition = position;
             }
         }
+        instantiatedObj.SetActive(true);
         return instantiatedObj;
     }
 
@@ -77,8 +78,8 @@ public class ObjectPoolManager : MonoBehaviour {
         if(po == null) {
             throw new Exception("Cannot Destroy Object via Object Pool! Object " + go.name + " is not from an object pool");
         } else {
-            po.SendObjectBackToPool();
             po.Reset();
+            po.SendObjectBackToPool();
         }
     }
 

@@ -244,10 +244,14 @@ public class MonsterAvatar : PooledObject {
     #region overrides
     public override void Reset() {
         base.Reset();
+        pandaBehaviour.Reset();
         RemoveBehaviourTree();
         UnHighlightPath();
         ResetValues();
         hasArrived = false;
+        this.direction = DIRECTION.LEFT;
+        this.GetComponent<SmoothMovement>().Reset();
+        this.GetComponent<BoxCollider2D>().enabled = true;
     }
     #endregion
 }

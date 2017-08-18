@@ -34,7 +34,6 @@ public class Governor : Role {
 
     public Governor(Citizen citizen): base(citizen){
 		this.citizen.city.governor = this.citizen;
-		this.citizen.workLocation = this.citizen.city.hexTile;
 		this.citizen.isGovernor = true;
 		this.citizen.isKing = false;
         this._loyaltySummary = string.Empty;

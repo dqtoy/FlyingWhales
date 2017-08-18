@@ -12,6 +12,7 @@ public class Citizen {
     public string surName;
 	public GENDER gender;
 	public int age;
+    private int _ageTableKey;
 	public int generation;
 	public int prestige;
 	public int[] horoscope; 
@@ -30,7 +31,6 @@ public class Citizen {
 	public Citizen mother;
 	protected Citizen _spouse;
 	public List<Citizen> children;
-	public HexTile workLocation;
 	public CitizenChances citizenChances;
 //	public CampaignManager campaignManager;
 	public List<RelationshipKings> relationshipKings;
@@ -65,11 +65,14 @@ public class Citizen {
     protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
 
     protected CharacterValue[] _characterValues;
-	protected const int MARRIAGE_CHANCE = 100; //8
+	protected const int MARRIAGE_CHANCE = 8;
 
 	#region getters/setters
     public string name {
         get { return firstName + " " + surName; }
+    }
+    public int ageTableKey {
+        get { return _ageTableKey; }
     }
 	public List<Citizen> possiblePretenders{
 		get{ return this._possiblePretenders;}
@@ -110,14 +113,10 @@ public class Citizen {
 
 	public Citizen(City city, int age, GENDER gender, int generation){
 		this.id = Utilities.SetID (this);
-		/*if(isGhost){
-			this.id = 0;
-		}else{
-			this.id = Utilities.SetID (this);
-		}*/
 		this.race = city.kingdom.race;
 		this.gender = gender;
 		this.age = age;
+        this._ageTableKey = -1;
         
         if(this.race == RACE.HUMANS) {
             this.firstName = RandomNameGenerator.Instance.GetHumanFirstName(gender);
@@ -125,13 +124,6 @@ public class Citizen {
         } else {
             this.firstName = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
         }
-        
-		//this.name = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
-		/*if(isGhost){
-			this.name = "GHOST";
-		}else{
-			this.name = RandomNameGenerator.Instance.GenerateRandomName(this.race, this.gender);
-		}*/
 		this.homeCity = city;
 		this.homeKingdom = city.kingdom;
 		this.generation = generation;
@@ -139,18 +131,13 @@ public class Citizen {
 		this.city = city;
 		this.role = ROLE.UNTRAINED;
 		this.assignedRole = null;
-//		this.behaviorTraits = new List<BEHAVIOR_TRAIT> ();
-//		this.skillTraits = new List<SKILL_TRAIT> ();
-//		this.miscTraits = new List<MISC_TRAIT> ();
 		this.supportedCitizen = null; //initially to king
 		this.father = null;
 		this.mother = null;
 		this._spouse = null;
 		this.children = new List<Citizen> ();
-		this.workLocation = null;
 		this.currentLocation = this.city.hexTile;
 		this.citizenChances = new CitizenChances ();
-//		this.campaignManager = new CampaignManager (this);
 		this.relationshipKings = new List<RelationshipKings> ();
 		this.successionWars = new List<Citizen> ();
 		this.civilWars = new List<Citizen> ();
@@ -180,24 +167,12 @@ public class Citizen {
         this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
 
         this.city.citizens.Add (this);
-//			this.GenerateTraits();
-		this.UpdatePrestige();
+		//this.UpdatePrestige();
 
         //EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
         //Messenger.AddListener("CitizenTurnActions", TurnActions);
         //EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
 		//EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
-		/*if(!isGhost){
-			this.city.citizens.Add (this);
-//			this.GenerateTraits();
-			this.UpdatePrestige();
-
-			EventManager.Instance.onCitizenTurnActions.AddListener(TurnActions);
-			EventManager.Instance.onUnsupportCitizen.AddListener(UnsupportCitizen);
-			EventManager.Instance.onRemoveSuccessionWarCity.AddListener (RemoveSuccessionWarCity);
-		}else{
-			EventManager.Instance.onDeathToGhost.AddListener (DeathToGhost);
-		}*/
 	}
 
 	// This function checks if the citizen has the specified trait
@@ -243,55 +218,44 @@ public class Citizen {
 	internal void AddChild(Citizen child){
 		this.children.Add (child);
 	}
-	internal void AssignBirthday(MONTH month, int days, int year){
+	internal void AssignBirthday(MONTH month, int days, int year, bool registerCitizen = true){
 		this.birthMonth = month;
 		this.birthDay = days;
 		this.birthYear = year;
-        CitizenManager.Instance.RegisterCitizen(this);
+        if (registerCitizen) {
+            CitizenManager.Instance.RegisterCitizen(this);
+        }
 		this.horoscope = GetHoroscope ();
 		this._honestyTrait = StoryTellingManager.Instance.GenerateHonestyTrait(this);
 		this._hostilityTrait = StoryTellingManager.Instance.GenerateHostilityTrait(this);
 		this._miscTrait = StoryTellingManager.Instance.GenerateMiscTrait(this);
 		this.history.Add(new History((int)month, days, year, this.name + " was born.", HISTORY_IDENTIFIER.NONE));
 	}
-	internal void TurnActions(){
-		//this.AttemptToAge();
-		//this.DeathReasons();
-//		this.CheckSupportExpiration ();
-		//if (!this.isDead) {
-		//	this.UpdatePrestige ();
-		//}
-	}
 
-	protected void CheckSupportExpiration(){
-		if ((GameManager.Instance.year == this.supportExpirationYear && GameManager.Instance.month == this.supportExpirationMonth && GameManager.Instance.days == this.supportExpirationWeek) ||
-			this.isDead) {
-			this.supportedCitizen = null;
-		}
-	}
-
+    #region Age
     internal void AdjustAge(int adjustment) {
         this.age += adjustment;
-    }
-
-	protected void AttemptToAge(){
-		if((MONTH)GameManager.Instance.month == this.birthMonth && GameManager.Instance.days == this.birthDay && GameManager.Instance.year > this.birthYear){
-			this.age += 1;
-            /*Every birthday starting at 16 up to 50, an unmarried King, 
-             * Queen or Governor has a chance to get married. 
-             * A randomly generated character will be created.
-             * */
-            if (this.role == ROLE.KING || this.role == ROLE.GOVERNOR) {
+        /*Every birthday starting at 16 up to 50, an unmarried King, 
+         * Queen or Governor has a chance to get married. 
+         * A randomly generated character will be created.
+         * */
+        if (this.role == ROLE.KING || this.role == ROLE.GOVERNOR) {
+            if (this.age >= 16 && this.age <= 50 && !this.isMarried) {
                 int chance = Random.Range(0, 100);
-                if (this.age >= 16 && this.age <= 50 && !this.isMarried && chance < MARRIAGE_CHANCE) {
+                if (chance < MARRIAGE_CHANCE) {
                     Citizen spouse = MarriageManager.Instance.GenerateSpouseForCitizen(this);
                     MarriageManager.Instance.Marry(this, spouse);
                 }
             }
         }
-	}
+    }
+    internal void SetAgeTableKey(int key) {
+        _ageTableKey = key;
+    }
+    #endregion
 
-	internal void DeathReasons(){
+
+    internal void DeathReasons(){
 		if(this.isImmortal){
 			return;
 		}
@@ -325,7 +289,7 @@ public class Citizen {
 	internal void DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false){
 		//		this.kingdom.royaltyList.allRoyalties.Remove (this);
 //		yield return null;
-		Debug.Log("DEATH: " + this.name + " of " + this.city.name);
+		Debug.Log("DEATH: " + this.name + " of " + this.city.name + ": " + reason.ToString());
 		DeathHistory(reason);
 		this.deathReason = reason;
 		this.isDead = true;

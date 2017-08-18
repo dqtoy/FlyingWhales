@@ -7,6 +7,7 @@ using Panda;
 
 public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Header("General Tile Details")]
+    public int id;
     public int xCoordinate;
 	public int yCoordinate;
     public int tag;
@@ -115,7 +116,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public IEnumerable<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER);}}
     public IEnumerable<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER);}}
 
-    public List<HexTile> elligibleNeighbourTilesForPurchase { get { return PurchasableTiles.Where(o => !o.isOccupied && !o.isHabitable).ToList(); } } 
+    public List<HexTile> elligibleNeighbourTilesForPurchase { get { return PurchasableTiles.Where(o => !o.isOccupied && !o.isHabitable).ToList(); } }
+
+    public List<HexTile> sameTagNeighbours;
 
 	//private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
 
