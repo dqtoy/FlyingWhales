@@ -35,9 +35,9 @@ public class MonsterAvatar : PooledObject {
 	void OnTriggerEnter2D(Collider2D other){
 		if(other.tag == "Avatar"){
 			if(this.gameObject != null && other.gameObject != null){
-				if(!other.gameObject.GetComponent<Avatar> ().citizen.isDead){
-					this.hostile = other.gameObject.GetComponent<Avatar>().citizen;
-					CombatManager.Instance.HasCollidedWithMonster (this.monster, other.gameObject.GetComponent<Avatar>());
+				if(!other.gameObject.GetComponent<CitizenAvatar> ().citizenRole.citizen.isDead){
+					this.hostile = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
+					CombatManager.Instance.HasCollidedWithMonster (this.monster, other.gameObject.GetComponent<CitizenAvatar>().citizenRole);
 				}
 			}
 		}

@@ -22,9 +22,6 @@ public class LycanthropeAvatar : MonoBehaviour {
     internal void Init(Lycanthrope lycanthrope) {
         this.lycanthrope = lycanthrope;
         this.direction = DIRECTION.LEFT;
-        this.GetComponent<Avatar>().kingdom = this.lycanthrope.citizen.city.kingdom;
-        this.GetComponent<Avatar>().gameEvent = this.lycanthrope.lycanthropyEvent;
-        this.GetComponent<Avatar>().citizen = this.lycanthrope.citizen;
 
         ResetValues();
         this.AddBehaviourTree();

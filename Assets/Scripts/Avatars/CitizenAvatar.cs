@@ -30,9 +30,6 @@ public class CitizenAvatar : PooledObject {
     internal virtual void Init(Role citizenRole) {
         this.citizenRole = citizenRole;
         this.direction = DIRECTION.LEFT;
-        this.GetComponent<Avatar>().kingdom = this.citizenRole.citizen.city.kingdom;
-        this.GetComponent<Avatar>().gameEvent = this.citizenRole.gameEventInvolvedIn;
-        this.GetComponent<Avatar>().citizen = this.citizenRole.citizen;
         visibleTiles = new List<HexTile>();
         childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
 
@@ -106,9 +103,9 @@ public class CitizenAvatar : PooledObject {
         _hasArrived = false;
         //this.citizenRole = null;
         //this.direction = DIRECTION.LEFT;
-        //this.GetComponent<Avatar>().kingdom = null;
-        //this.GetComponent<Avatar>().gameEvent = null;
-        //this.GetComponent<Avatar>().citizen = null;
+        //this.GetComponent<CitizenAvatar>().kingdom = null;
+        //this.GetComponent<CitizenAvatar>().gameEvent = null;
+        //this.GetComponent<CitizenAvatar>().citizen = null;
         //visibleTiles = new List<HexTile>();
         //childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
     }
@@ -305,13 +302,13 @@ public class CitizenAvatar : PooledObject {
         if (other.tag == "Avatar") {
             if (this.gameObject != null && other.gameObject != null) {
 				Kingdom kingdomOfThis = this.citizenRole.citizen.city.kingdom;
-				Kingdom kingdomOfOther = other.gameObject.GetComponent<Avatar>().kingdom;
+				Kingdom kingdomOfOther = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen.city.kingdom;
 				if(kingdomOfThis.id != kingdomOfOther.id){
 					RelationshipKingdom relationship = kingdomOfThis.GetRelationshipWithOtherKingdom (kingdomOfOther);
 					if (relationship != null) {
 						if (relationship.isAtWar) {
-							if (!other.gameObject.GetComponent<Avatar> ().citizen.isDead) {
-								CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<Avatar> (), other.gameObject.GetComponent<Avatar> ());
+							if (!other.gameObject.GetComponent<CitizenAvatar> ().citizenRole.citizen.isDead) {
+								CombatManager.Instance.HasCollidedWithHostile (this.GetComponent<CitizenAvatar> ().citizenRole, other.gameObject.GetComponent<CitizenAvatar> ().citizenRole);
 							}
 						}
 					}
@@ -320,14 +317,14 @@ public class CitizenAvatar : PooledObject {
         } else if (other.tag == "Trader") {
             if (this.gameObject != null && other.gameObject != null) {
                 Kingdom kingdomOfGeneral = this.citizenRole.citizen.city.kingdom;
-                Kingdom kingdomOfTrader = other.gameObject.GetComponent<Avatar>().kingdom;
+                Kingdom kingdomOfTrader = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen.city.kingdom;
                 if (kingdomOfGeneral.id != kingdomOfTrader.id) {
                     RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
                     RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
                     if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
                         relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
-                        if (!other.gameObject.GetComponent<Avatar>().citizen.isDead) {
-                            CombatManager.Instance.HasCollidedWithHostile(this.GetComponent<Avatar>(), other.gameObject.GetComponent<Avatar>());
+                        if (!other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen.isDead) {
+                            CombatManager.Instance.HasCollidedWithHostile(this.GetComponent<CitizenAvatar>().citizenRole, other.gameObject.GetComponent<CitizenAvatar>().citizenRole);
                         }
                     }
                 }

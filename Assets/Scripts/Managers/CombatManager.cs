@@ -561,24 +561,24 @@ public class CombatManager : MonoBehaviour {
 			agent.damage = 0;
 		}
 	}
-	public void HasCollidedWithHostile(Avatar avatar1, Avatar avatar2){
+	public void HasCollidedWithHostile(Role avatar1, Role avatar2){
 		if(avatar2.citizen.assignedRole != null){
 			if(!avatar2.citizen.isDead){
 				BattleMidway (ref avatar1.citizen.assignedRole, ref avatar2.citizen.assignedRole);
 				if(avatar1.citizen.assignedRole.markAsDead){
-					avatar1.citizen.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByAgent (avatar2.citizen, avatar1.citizen);
+					avatar1.citizen.assignedRole.avatar.GetComponent<CitizenAvatar> ().citizenRole.gameEventInvolvedIn.DeathByAgent (avatar2.citizen, avatar1.citizen);
 				}else{
 					avatar1.citizen.assignedRole.UpdateUI ();
 				}
 				if(avatar2.citizen.assignedRole.markAsDead){
-					avatar2.citizen.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByAgent (avatar1.citizen, avatar2.citizen);
+					avatar2.citizen.assignedRole.avatar.GetComponent<CitizenAvatar> ().citizenRole.gameEventInvolvedIn.DeathByAgent (avatar1.citizen, avatar2.citizen);
 				}else{
 					avatar2.citizen.assignedRole.UpdateUI ();
 				}
 			}
 		}
 	}
-	public void HasCollidedWithMonster(Monster monster, Avatar avatar){
+	public void HasCollidedWithMonster(Monster monster, Role avatar){
 		if(avatar.citizen.assignedRole != null){
 			if(!avatar.citizen.isDead){
 				BattleMidwayMonster (ref monster, ref avatar.citizen.assignedRole);
@@ -588,7 +588,7 @@ public class CombatManager : MonoBehaviour {
 					monster.UpdateUI ();
 				}
 				if(avatar.citizen.assignedRole.markAsDead){
-					avatar.citizen.assignedRole.avatar.GetComponent<Avatar> ().gameEvent.DeathByMonster (monster, avatar.citizen);
+					avatar.citizen.assignedRole.avatar.GetComponent<CitizenAvatar> ().citizenRole.gameEventInvolvedIn.DeathByMonster (monster, avatar.citizen);
 				}else{
 					avatar.citizen.assignedRole.UpdateUI ();
 				}
