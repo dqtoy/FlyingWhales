@@ -174,7 +174,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		if (elevationType == ELEVATION.MOUNTAIN) {
 			centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
 		} else {
-			centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 52;
+			centerPiece.GetComponent<SpriteRenderer> ().sortingOrder = 60; //sortingOrder + 52;
 		}
 
         SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();

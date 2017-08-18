@@ -50,34 +50,29 @@ public class MonsterAvatar : PooledObject {
 //		if(onBehaviorAction != null){
 //			onBehaviorAction ();
 //		}
-		if(this.monster.lair.lairSpawn.behavior == BEHAVIOR.HOMING){
-			if(this.monster.location == this.monster.targetLocation){
-				if(!this.hasArrived){
+		if (this.monster.location == this.monster.targetLocation) {
+			if (this.monster.lair.lairSpawn.behavior == BEHAVIOR.HOMING) {
+				if (!this.hasArrived) {
 					this.hasArrived = true;
 					this.GetComponent<BoxCollider2D> ().enabled = false;
 					this.monster.Attack ();
 				}
 				Task.current.Succeed ();
-			}else{
-				Task.current.Fail ();
-			}
-		}else if(this.monster.lair.lairSpawn.behavior == BEHAVIOR.ROAMING){
-			if(this.monster.location == this.monster.targetLocation){
-				if(this.monster.location.isOccupied && this.monster.location.isHabitable && (this.monster.location.city != null && this.monster.location.city.id != 0)){
-					if(!this.hasArrived){
+			} else if (this.monster.lair.lairSpawn.behavior == BEHAVIOR.ROAMING) {
+				if (this.monster.location.isOccupied && this.monster.location.isHabitable && (this.monster.location.city != null && this.monster.location.city.id != 0)) {
+					if (!this.hasArrived) {
 						this.hasArrived = true;
 						this.GetComponent<BoxCollider2D> ().enabled = false;
 						this.monster.Attack ();
 					}
 					Task.current.Succeed ();
-				}else{
+				} else {
 					this.monster.AcquireTarget ();
 					Task.current.Fail ();
 				}
-
-			}else{
-				Task.current.Fail ();
 			}
+		}else {
+			Task.current.Fail ();
 		}
 	}
 
