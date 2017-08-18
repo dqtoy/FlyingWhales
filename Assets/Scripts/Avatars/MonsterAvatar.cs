@@ -15,7 +15,7 @@ public class MonsterAvatar : PooledObject {
 	public TextMesh txtDamage;
 	public bool collidedWithHostile;
 	public Citizen hostile;
-
+	private SmoothMovement smoothMovement;
 
 	private bool hasArrived = false;
 	//	private bool isMoving = false;
@@ -24,6 +24,10 @@ public class MonsterAvatar : PooledObject {
 
 	//	public float speed;
 	internal DIRECTION direction;
+
+	void Start(){
+		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
+	}
 
 	internal void Init(Monster monster){
 		this.monster = monster;
@@ -108,8 +112,7 @@ public class MonsterAvatar : PooledObject {
 				this.animator.Play("Walk_Left");
 			}
 		}
-		this.GetComponent<SmoothMovement>().direction = this.direction;
-		this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
+		this.smoothMovement.Move(targetTile.transform.position, this.direction);
 		this.UpdateUI ();
 	}
 	private void StopMoving(){
@@ -233,7 +236,7 @@ public class MonsterAvatar : PooledObject {
 	}
 
 	internal void HasAttacked(){
-		this.GetComponent<SmoothMovement> ().hasAttacked = true;
+		this.smoothMovement.hasAttacked = true;
 	}
 
     #region overrides

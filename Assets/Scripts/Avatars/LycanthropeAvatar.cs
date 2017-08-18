@@ -18,6 +18,11 @@ public class LycanthropeAvatar : MonoBehaviour {
     private List<HexTile> pathToUnhighlight = new List<HexTile>();
 
     internal DIRECTION direction;
+	private SmoothMovement smoothMovement;
+
+	void Start(){
+		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
+	}
 
     internal void Init(Lycanthrope lycanthrope) {
         this.lycanthrope = lycanthrope;
@@ -64,8 +69,7 @@ public class LycanthropeAvatar : MonoBehaviour {
                 this.animator.Play("Walk_Left");
             }
         }
-        this.GetComponent<SmoothMovement>().direction = this.direction;
-        this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
+		this.smoothMovement.Move(targetTile.transform.position, this.direction);
 
     }
     private void StopMoving() {

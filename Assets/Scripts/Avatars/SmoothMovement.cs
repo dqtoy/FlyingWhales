@@ -12,6 +12,12 @@ public class SmoothMovement : MonoBehaviour {
 	private float timeStarted = 0f;
 	private float timeSinceStarted = 0f;
 
+	private Animator animator;
+
+	void Start(){
+		this.animator = this.GetComponent<Animator> ();
+	}
+
 	void FixedUpdate(){
 		if(this.isMoving){
 			if(this.targetPosition != null){
@@ -29,20 +35,21 @@ public class SmoothMovement : MonoBehaviour {
 	private void StopMoving(){
 		if (!this.hasAttacked) {
 			string idleToPlay = GetIdleDirection();
+			this.animator.Play(idleToPlay);
 
-			if(this.GetComponent<Animator>() != null){
-				this.GetComponent<Animator>().Play(idleToPlay);
-			}else{
-				if (this.GetComponentInChildren<Animator> () != null) {
-					this.GetComponentInChildren<Animator>().Play(idleToPlay);
-				}
-			}
+//			if(this.GetComponent<Animator> () != null){
+//			}else{
+//				if (this.GetComponentInChildren<Animator> () != null) {
+//					this.GetComponentInChildren<Animator>().Play(idleToPlay);
+//				}
+//			}
 		}
 		this.isMoving = false;
 		this.targetPosition = Vector3.zero;
 	}
 
-	internal void Move(Vector3 endPos){
+	internal void Move(Vector3 endPos, DIRECTION direction){
+		this.direction = direction;
 		this.targetPosition = endPos;
 		this.isMoving = true;
 		this.timeStarted = Time.time;

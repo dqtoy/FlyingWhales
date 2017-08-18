@@ -19,12 +19,18 @@ public class CitizenAvatar : PooledObject {
 
     internal DIRECTION direction;
 	internal List<HexTile> visibleTiles;
+	private SmoothMovement smoothMovement;
+
 
     #region getters/setters
     public bool hasArrived {
         get { return _hasArrived; }
     }
     #endregion
+
+	void Start(){
+		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
+	}
 
     #region virtuals
     internal virtual void Init(Role citizenRole) {
@@ -210,8 +216,7 @@ public class CitizenAvatar : PooledObject {
                 this.animator.Play("Walk_Left");
             }
         }
-        this.GetComponent<SmoothMovement>().direction = this.direction;
-        this.GetComponent<SmoothMovement>().Move(targetTile.transform.position);
+		this.smoothMovement.Move(targetTile.transform.position, this.direction);
 		this.UpdateUI ();
     }
 
