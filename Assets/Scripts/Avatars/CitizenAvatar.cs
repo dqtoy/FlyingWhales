@@ -38,6 +38,7 @@ public class CitizenAvatar : PooledObject {
     internal virtual void Init(Role citizenRole) {
         this.citizenRole = citizenRole;
         this.direction = DIRECTION.LEFT;
+        this.GetComponent<SmoothMovement>().onMoveFinihed += OnMoveFinished;
         visibleTiles = new List<HexTile>();
         childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
 
@@ -60,18 +61,22 @@ public class CitizenAvatar : PooledObject {
                     this.citizenRole.location = this.citizenRole.path[0];
                     this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
                     this.citizenRole.path.RemoveAt(0);
-                    this.CollectEvents();
-                    this.CheckForKingdomDiscovery();
-					this.UpdateFogOfWar();
-                    if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-                        SetAvatarState(true);
-                    } else {
-                        SetAvatarState(false);
-                    }
                 }
             }
         }
     }
+
+    internal virtual void OnMoveFinished() {
+        this.CollectEvents();
+        this.UpdateFogOfWar();
+        this.CheckForKingdomDiscovery();
+        //if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+        //    SetAvatarState(true);
+        //} else {
+        //    SetAvatarState(false);
+        //}
+    }
+
 	public virtual void UpdateFogOfWar(bool forDeath = false) {
 		Kingdom kingdomOfAgent = this.citizenRole.citizen.city.kingdom;
 
@@ -110,10 +115,10 @@ public class CitizenAvatar : PooledObject {
         UnHighlightPath();
         _hasArrived = false;
         //this.citizenRole = null;
-        //this.direction = DIRECTION.LEFT;
-        //this.GetComponent<CitizenAvatar>().kingdom = null;
-        //this.GetComponent<CitizenAvatar>().gameEvent = null;
-        //this.GetComponent<CitizenAvatar>().citizen = null;
+        this.direction = DIRECTION.LEFT;
+        this.GetComponent<Avatar>().Reset();
+        this.GetComponent<SmoothMovement>().Reset();
+        this.GetComponent<BoxCollider2D>().enabled = true;
         //visibleTiles = new List<HexTile>();
         //childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
     }
@@ -191,8 +196,8 @@ public class CitizenAvatar : PooledObject {
     }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
-//        startTile.ExitCitizen(this.citizenRole.citizen);
-//        targetTile.EnterCitizen(this.citizenRole.citizen);
+        startTile.ExitCitizen(this.citizenRole.citizen);
+        targetTile.EnterCitizen(this.citizenRole.citizen);
 
         if (startTile.transform.position.x <= targetTile.transform.position.x) {
             if (this.animator.gameObject.transform.localScale.x > 0) {

@@ -2,6 +2,10 @@
 using System.Collections;
 
 public class SmoothMovement : MonoBehaviour {
+
+    public delegate void OnMoveFinished();
+    public OnMoveFinished onMoveFinihed;
+
 	public float speed;
 	internal bool isMoving = false;
 	Vector3 targetPosition = Vector3.zero;
@@ -28,12 +32,23 @@ public class SmoothMovement : MonoBehaviour {
 				this.avatarGO.transform.position = Vector3.Lerp (this.avatarGO.transform.position, this.targetPosition, this.step);
 				if(this.timeSinceStarted >= 1.0f){
 					StopMoving ();
-				}
+                }
 			}
 		}
 	}
 
-	private void StopMoving(){
+    internal void Reset() {
+        step = 0f;
+        timeStarted = 0f;
+        timeSinceStarted = 0f;
+        isMoving = false;
+        targetPosition = Vector3.zero;
+        direction = DIRECTION.LEFT;
+        hasAttacked = false;
+        onMoveFinihed = null;
+    }
+
+    private void StopMoving(){
 		if (!this.hasAttacked) {
 			string idleToPlay = GetIdleDirection();
 			this.animator.Play(idleToPlay);
@@ -47,7 +62,10 @@ public class SmoothMovement : MonoBehaviour {
 		}
 		this.isMoving = false;
 		this.targetPosition = Vector3.zero;
-	}
+        if(onMoveFinihed != null) {
+            onMoveFinihed();
+        }
+    }
 
 	internal void Move(Vector3 endPos, DIRECTION direction){
 		this.direction = direction;

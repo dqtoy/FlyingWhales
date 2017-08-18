@@ -31,6 +31,7 @@ public class GridMap : MonoBehaviour {
 	internal void GenerateGrid () {
 		map = new HexTile[(int)width, (int)height];
 		listHexes = new List<GameObject>();
+        int id = 1;
 		for (int x = 0;  x < width; x++){
 			for(int y = 0; y < height; y++){
 				float xPosition = x * xOffset;
@@ -44,13 +45,16 @@ public class GridMap : MonoBehaviour {
 				hex.transform.position = new Vector3(xPosition, yPosition,0f);
 				hex.transform.localScale = new Vector3(tileSize,tileSize,0f);
 				hex.name = x + "," + y;
-				hex.GetComponent<HexTile>().tileName = hex.name;
-				hex.GetComponent<HexTile>().xCoordinate = x;
-				hex.GetComponent<HexTile>().yCoordinate = y;
+                HexTile currHex = hex.GetComponent<HexTile>();
+                currHex.id = id;
+                currHex.tileName = hex.name;
+                currHex.xCoordinate = x;
+                currHex.yCoordinate = y;
 //				int sortingOrder = x - y;
 //				hex.GetComponent<HexTile>().SetSortingOrder(sortingOrder);
 				listHexes.Add(hex);
 				map[x, y] = hex.GetComponent<HexTile>();
+                id++;
 			}
 		}
 		listHexes.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(map));
@@ -64,6 +68,13 @@ public class GridMap : MonoBehaviour {
 		}
 		return null;
 	}
+
+    public void GenerateNeighboursWithSameTag() {
+        for (int i = 0; i < listHexes.Count; i++) {
+            HexTile currHex = listHexes[i].GetComponent<HexTile>();
+            currHex.sameTagNeighbours = currHex.AllNeighbours.Where(x => x.tag == currHex.tag).ToList();
+        }
+    }
 
 //	public IEnumerable<Tile> AllTiles
 //	{

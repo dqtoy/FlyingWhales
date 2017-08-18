@@ -9,7 +9,12 @@ public class AdventurerAvatar : CitizenAvatar {
 
     [SerializeField] private HexTile newTargetTile = null;
 
-    [SerializeField] private List<EVENT_TYPES> priorityEvents;
+    private HashSet<EVENT_TYPES> priorityEvents = new HashSet<EVENT_TYPES>() {
+        EVENT_TYPES.BOON_OF_POWER,
+        EVENT_TYPES.ANCIENT_RUIN,
+        EVENT_TYPES.ALTAR_OF_BLESSING,
+        EVENT_TYPES.FIRST_AND_KEYSTONE
+    };
 
     [ContextMenu("Force Change Target Tile")]
     public void ForceChangeTargetTile() {
@@ -19,23 +24,24 @@ public class AdventurerAvatar : CitizenAvatar {
     }
 
     #region Overrides
-    internal override void Move() {
-        if (this.citizenRole.targetLocation != null) {
-            if (this.citizenRole.path != null) {
-                if (this.citizenRole.path.Count > 0) {
-                    this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
-                    //this.transform.position = new Vector2(this.citizenRole.path[0].transform.position.x, this.citizenRole.path[0].transform.position.y);
-                    this.citizenRole.location = this.citizenRole.path[0];
-                    this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
-                    this.citizenRole.path.RemoveAt(0);
-                    this.CheckForKingdomDiscovery();
-                    //this.GetNextTargetTile();
-                }
-                //this.UpdateFogOfWar();
-                
-            }
-        }
-    }
+    //internal override void Move() {
+    //    if (this.citizenRole.targetLocation != null) {
+    //        if (this.citizenRole.path != null) {
+    //            if (this.citizenRole.path.Count > 0) {
+    //                this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
+    //                //this.transform.position = new Vector2(this.citizenRole.path[0].transform.position.x, this.citizenRole.path[0].transform.position.y);
+    //                this.citizenRole.location = this.citizenRole.path[0];
+    //                this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
+    //                this.citizenRole.path.RemoveAt(0);
+    //                this.CheckForKingdomDiscovery();
+    //                //this.GetNextTargetTile();
+    //            }
+    //            this.UpdateFogOfWar();
+    //            CollectEvents();
+
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Unique Functions
@@ -47,46 +53,49 @@ public class AdventurerAvatar : CitizenAvatar {
         }
         Kingdom kingdomOfAdventurer = this.citizenRole.citizen.city.kingdom;
 
-        List<HexTile> seenTilesWithEvents = kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE]
-            .Union(kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.SEEN])
+        List<HexTile> visibleTilesWithEvents = kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE]
+            .Where(x => x.gameEventInTile != null && priorityEvents.Contains(x.gameEventInTile.eventType)).ToList();
+        if(visibleTilesWithEvents.Count > 0) {
+            newTargetTile = visibleTilesWithEvents[Random.Range(0, visibleTilesWithEvents.Count)];
+        } else {
+            List<HexTile> seenTilesWithEvents = kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.SEEN]
             .Where(x => x.gameEventInTile != null && priorityEvents.Contains(x.gameEventInTile.eventType)).ToList();
 
-        //List<HexTile> neighboursWithEvents = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag && 
-        //    x.gameEventInTile != null && priorityEvents.Contains(x.gameEventInTile.eventType)).ToList();
-        //Prioritize tiles with events in accordance to priorityEvents list
-        if (seenTilesWithEvents.Count > 0) {
-            newTargetTile = seenTilesWithEvents[Random.Range(0, seenTilesWithEvents.Count)];
-        } else {
-            List<HexTile> hiddenNeighbours = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag
-                        && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
-
-            if (hiddenNeighbours.Count > 0) {
-                //choose from hidden neighbours
-                newTargetTile = hiddenNeighbours[Random.Range(0, hiddenNeighbours.Count)];
+            //Prioritize tiles with events in accordance to priorityEvents list
+            if (seenTilesWithEvents.Count > 0) {
+                newTargetTile = seenTilesWithEvents[Random.Range(0, seenTilesWithEvents.Count)];
             } else {
-                //get nearest elligible hidden tile as target
-                List<HexTile> elligibleHiddenTiles = GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())
-                    .Where(x => x.tag == this.citizenRole.location.tag
-                    && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
+                List<HexTile> hiddenNeighbours = this.citizenRole.location.sameTagNeighbours
+                    .Where(x => kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] == FOG_OF_WAR_STATE.HIDDEN).ToList();
 
-                if (elligibleHiddenTiles.Count > 0) {
-                    //if there is an elligible hidden tile, get the nearest
-                    //order tiles by nearest from the citizens location
-                    elligibleHiddenTiles = elligibleHiddenTiles.OrderBy(x => this.citizenRole.location.GetDistanceTo(x)).ToList();
-                    newTargetTile = elligibleHiddenTiles.FirstOrDefault();
+                if (hiddenNeighbours.Count > 0) {
+                    //choose from hidden neighbours
+                    newTargetTile = hiddenNeighbours[Random.Range(0, hiddenNeighbours.Count)];
                 } else {
-                    //if no more hidden tiles choose from seen or visible neighbours
-                    List<HexTile> tilesToChooseFrom = this.citizenRole.location.AllNeighbours.Where(x => x.tag == this.citizenRole.location.tag
-                        && kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN).ToList();
+                    //get nearest elligible hidden tile as target
+                    List<HexTile> elligibleHiddenTiles = kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.HIDDEN]
+                        .Where(x => x.tag == this.citizenRole.location.tag).ToList();
+                    if (elligibleHiddenTiles.Count > 0) {
+                        //if there is an elligible hidden tile, get the nearest
+                        //order tiles by nearest from the citizens location
+                        elligibleHiddenTiles = elligibleHiddenTiles.OrderBy(x => this.citizenRole.location.GetDistanceTo(x)).ToList();
+                        newTargetTile = elligibleHiddenTiles.FirstOrDefault();
+                    } else {
+                        //if no more hidden tiles choose from seen or visible neighbours
+                        List<HexTile> tilesToChooseFrom = this.citizenRole.location.sameTagNeighbours
+                            .Where(x => kingdomOfAdventurer.fogOfWar[x.xCoordinate, x.yCoordinate] != FOG_OF_WAR_STATE.HIDDEN).ToList();
 
-                    List<HexTile> hexTilesWithEvents = tilesToChooseFrom.Where(x => x.gameEventInTile != null).ToList();
-                    if (hexTilesWithEvents.Count > 0) {
-                        tilesToChooseFrom = hexTilesWithEvents;
+                        List<HexTile> hexTilesWithEvents = tilesToChooseFrom.Where(x => x.gameEventInTile != null).ToList();
+                        if (hexTilesWithEvents.Count > 0) {
+                            tilesToChooseFrom = hexTilesWithEvents;
+                        }
+                        newTargetTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
                     }
-                    newTargetTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
                 }
             }
         }
+
+        
 
         
 

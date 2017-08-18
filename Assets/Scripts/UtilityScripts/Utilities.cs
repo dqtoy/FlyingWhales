@@ -953,7 +953,9 @@ public class Utilities : MonoBehaviour {
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {
         EVENT_TYPES.ADVENTURE,
         EVENT_TYPES.INVASION_PLAN,
-        EVENT_TYPES.HUNT_LAIR
+        EVENT_TYPES.HUNT_LAIR,
+        EVENT_TYPES.EXPANSION,
+        EVENT_TYPES.ALTAR_OF_BLESSING,
     };
 
 	public static string PronounReplacer(string word, object genderSubject){
@@ -1254,6 +1256,14 @@ public class Utilities : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    public static List<HexTile> MergeHexLists(List<HexTile> list1, List<HexTile> list2) {
+        Dictionary<int, HexTile> dict = list2.ToDictionary(h => h.id, v => v);
+        foreach (HexTile h in list1) {
+            dict[h.id] = h;
+        }
+        return dict.Values.ToList();
     }
 
     #region Lycanthropy

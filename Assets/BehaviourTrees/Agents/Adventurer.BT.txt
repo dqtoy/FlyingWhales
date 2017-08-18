@@ -4,8 +4,6 @@ tree("Root")
 		sequence
 			GetNextTargetTile
 			tree("Move")
-			ForceUpdateFogOfWar
-		ForceUpdateFogOfWar
 
 tree("Move")
 	sequence

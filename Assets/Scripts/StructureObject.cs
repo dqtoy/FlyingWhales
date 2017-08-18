@@ -31,6 +31,7 @@ public class StructureObject : PooledObject {
         _structureType = structureType;
         SetStructureState(structureState);
         SetStructureColor(structureColor);
+        gameObject.SetActive(true);
     }
 
     public void SetStructureState(STRUCTURE_STATE structureState) {

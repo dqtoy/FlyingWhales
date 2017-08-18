@@ -6,15 +6,16 @@ public class MapGenerator : MonoBehaviour {
 
 	void Start() {
 //		StartCoroutine (StartGeneration());
-		GridMap.Instance.GenerateGrid();
+        GridMap.Instance.GenerateGrid();
         CameraMove.Instance.SetMinimapCamValues();
         EquatorGenerator.Instance.GenerateEquator();
 		Biomes.Instance.GenerateElevation();
 		Biomes.Instance.GenerateBiome();
 		Biomes.Instance.GenerateSpecialResources ();
         Biomes.Instance.GenerateTileTags();
-		//Biomes.Instance.GenerateTileDetails();
-		CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
+        GridMap.Instance.GenerateNeighboursWithSameTag();
+        //Biomes.Instance.GenerateTileDetails();
+        CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
 		//PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
 		KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.stoneHabitableTiles, CityGenerator.Instance.woodHabitableTiles);

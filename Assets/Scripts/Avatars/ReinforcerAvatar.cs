@@ -64,10 +64,10 @@ public class ReinforcerAvatar : CitizenAvatar {
 						this.citizenRole.daysBeforeMoving = this.citizenRole.path [0].movementDays;
 						this.citizenRole.location = this.citizenRole.path[0];
 						this.citizenRole.citizen.currentLocation = this.citizenRole.path [0];
-						this.UpdateFogOfWar();
+						//this.UpdateFogOfWar();
 						this.citizenRole.path.RemoveAt (0);
-						this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
-						this.CheckForKingdomDiscovery();
+						//this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
+						//this.CheckForKingdomDiscovery();
 					}
 					this.citizenRole.daysBeforeMoving -= 1;
 				}
