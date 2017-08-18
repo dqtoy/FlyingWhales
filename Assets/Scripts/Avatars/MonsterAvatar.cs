@@ -250,7 +250,7 @@ public class MonsterAvatar : PooledObject {
         ResetValues();
         hasArrived = false;
         this.direction = DIRECTION.LEFT;
-        this.GetComponent<SmoothMovement>().Reset();
+		this.smoothMovement.Reset();
         this.GetComponent<BoxCollider2D>().enabled = true;
     }
     #endregion

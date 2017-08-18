@@ -38,7 +38,7 @@ public class CitizenAvatar : PooledObject {
     internal virtual void Init(Role citizenRole) {
         this.citizenRole = citizenRole;
         this.direction = DIRECTION.LEFT;
-        this.GetComponent<SmoothMovement>().onMoveFinihed += OnMoveFinished;
+        this.smoothMovement.onMoveFinihed += OnMoveFinished;
         visibleTiles = new List<HexTile>();
         childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
 
@@ -116,8 +116,7 @@ public class CitizenAvatar : PooledObject {
         _hasArrived = false;
         //this.citizenRole = null;
         this.direction = DIRECTION.LEFT;
-        this.GetComponent<Avatar>().Reset();
-        this.GetComponent<SmoothMovement>().Reset();
+		this.smoothMovement.Reset();
         this.GetComponent<BoxCollider2D>().enabled = true;
         //visibleTiles = new List<HexTile>();
         //childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);

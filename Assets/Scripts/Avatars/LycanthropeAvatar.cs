@@ -283,7 +283,7 @@ public class LycanthropeAvatar : MonoBehaviour {
     }
 
     internal void HasAttacked() {
-        this.GetComponent<SmoothMovement>().hasAttacked = true;
+		this.smoothMovement.hasAttacked = true;
     }
 
 }
