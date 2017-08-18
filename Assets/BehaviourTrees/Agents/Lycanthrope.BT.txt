@@ -1,8 +1,6 @@
 tree("Root")
 	fallback
-		not IsThereCitizen
 		HasDiedOfOtherReasons
-		not IsThereEvent
 		fallback
 			while 
 				IsWaitingForFullMoon
