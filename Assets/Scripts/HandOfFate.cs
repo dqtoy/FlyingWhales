@@ -15,6 +15,7 @@ public class HandOfFate : MonoBehaviour {
 //	public int diplomaticCrisisChance;
 //	public int stateVisitChance;
 	public List<GameEvent> allUnwantedEvents;
+	private List<Kingdom> allKingdomCandidates = new List<Kingdom> ();
 
 	void Awake(){
 		this.firstKingdom = null;
@@ -108,7 +109,7 @@ public class HandOfFate : MonoBehaviour {
 
 	[Task]
 	public void SetSecondRandomKingdom(){
-		List<Kingdom> allKingdomCandidates = new List<Kingdom> ();
+		allKingdomCandidates.Clear ();
         List<Kingdom> kingdomsToChooseFrom = this.firstKingdom.discoveredKingdoms;
 
 		for(int i = 0; i < kingdomsToChooseFrom.Count; i++){
