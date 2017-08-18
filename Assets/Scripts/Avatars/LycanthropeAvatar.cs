@@ -22,9 +22,6 @@ public class LycanthropeAvatar : MonoBehaviour {
     internal void Init(Lycanthrope lycanthrope) {
         this.lycanthrope = lycanthrope;
         this.direction = DIRECTION.LEFT;
-        this.GetComponent<Avatar>().kingdom = this.lycanthrope.citizen.city.kingdom;
-        this.GetComponent<Avatar>().gameEvent = this.lycanthrope.lycanthropyEvent;
-        this.GetComponent<Avatar>().citizen = this.lycanthrope.citizen;
 
         ResetValues();
         this.AddBehaviourTree();
@@ -77,22 +74,22 @@ public class LycanthropeAvatar : MonoBehaviour {
     }
 
     #region Behaviour Tree Tasks
-    [Task]
-    public void IsThereCitizen() {
-        if (this.lycanthrope.citizen != null) {
-            Task.current.Succeed();
-        } else {
-            Task.current.Fail();
-        }
-    }
-    [Task]
-    public void IsThereEvent() {
-        if (this.lycanthrope.lycanthropyEvent != null) {
-            Task.current.Succeed();
-        } else {
-            Task.current.Fail();
-        }
-    }
+//    [Task]
+//    public void IsThereCitizen() {
+//        if (this.lycanthrope.citizen != null) {
+//            Task.current.Succeed();
+//        } else {
+//            Task.current.Fail();
+//        }
+//    }
+//    [Task]
+//    public void IsThereEvent() {
+//        if (this.lycanthrope.lycanthropyEvent != null) {
+//            Task.current.Succeed();
+//        } else {
+//            Task.current.Fail();
+//        }
+//    }
 
     [Task]
     public void HasArrivedAtTargetHextile() {

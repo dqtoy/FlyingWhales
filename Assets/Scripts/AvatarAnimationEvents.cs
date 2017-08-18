@@ -6,7 +6,7 @@ public class AvatarAnimationEvents : MonoBehaviour {
 	public GameObject avatarGO;
 
 	public void OnEndAttack(){
-		if(this.avatarGO.GetComponent<Avatar> () != null){
+		if(this.avatarGO.GetComponent<CitizenAvatar> () != null){
 			this.avatarGO.GetComponent<CitizenAvatar> ().EndAttack ();
 //			if(role is General){
 //				this.avatarGO.GetComponent<GeneralAvatar> ().OnEndAttack ();

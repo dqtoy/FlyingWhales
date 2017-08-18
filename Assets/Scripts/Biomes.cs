@@ -194,7 +194,7 @@ public class Biomes : MonoBehaviour {
 				}
 				break;
 			}
-            currentHexTile.AssignSpecialResource();
+//            currentHexTile.AssignSpecialResource();
             if(biomeDetailToUse != null) {
                 if (currentHexTile.specialResource == RESOURCE.NONE) {
                     currentHexTile.AddBiomeDetailToTile(biomeDetailToUse);
@@ -210,7 +210,20 @@ public class Biomes : MonoBehaviour {
 		//GenerateBareBiome();
 
 	}
-
+	internal void GenerateSpecialResources(){
+		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+//			GameObject currentHexTileGO = GridMap.Instance.listHexes [i];
+			HexTile currentHexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
+			currentHexTile.AssignSpecialResource();
+		}
+	}
+	internal void DeactivateCenterPieces(){
+		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
+//			GameObject currentHexTileGO = GridMap.Instance.listHexes [i];
+			HexTile currentHexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
+			currentHexTile.DeactivateCenterPiece();
+		}
+	}
 	internal void GenerateElevation(){
 		CalculateElevationAndMoisture();
 

@@ -5,22 +5,22 @@ using Panda;
 public class WitchAvatar : CitizenAvatar {
 
     #region BehaviourTree Tasks
-    [Task]
-    public void IsThereCitizen() {
-        if (this.citizenRole.citizen != null) {
-            Task.current.Succeed();
-        } else {
-            Task.current.Fail();
-        }
-    }
-    [Task]
-    public void IsThereEvent() {
-        if (this.citizenRole.gameEventInvolvedIn != null) {
-            Task.current.Succeed();
-        } else {
-            Task.current.Fail();
-        }
-    }
+//    [Task]
+//    public void IsThereCitizen() {
+//        if (this.citizenRole.citizen != null) {
+//            Task.current.Succeed();
+//        } else {
+//            Task.current.Fail();
+//        }
+//    }
+//    [Task]
+//    public void IsThereEvent() {
+//        if (this.citizenRole.gameEventInvolvedIn != null) {
+//            Task.current.Succeed();
+//        } else {
+//            Task.current.Fail();
+//        }
+//    }
 
     [Task]
     public void HasArrivedAtTargetHextile() {
