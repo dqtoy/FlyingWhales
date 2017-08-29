@@ -653,7 +653,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._hextileEventItem = null;
 		Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
 
-        RuinStructureOnTile();
+        RuinStructureOnTile(false);
         RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
@@ -709,7 +709,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-    public void RuinStructureOnTile(bool immediatelyDestroyStructures = false) {
+    public void RuinStructureOnTile(bool immediatelyDestroyStructures) {
         if (structureObjOnTile != null) {
             Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
             if (immediatelyDestroyStructures) {
