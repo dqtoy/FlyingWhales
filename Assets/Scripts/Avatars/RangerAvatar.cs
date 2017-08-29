@@ -35,8 +35,8 @@ public class RangerAvatar : CitizenAvatar {
 		Kingdom kingdomOfAgent = this.citizenRole.citizen.city.kingdom;
         for (int i = 0; i < visibleTiles.Count; i++) {
 			HexTile currTile = visibleTiles[i];
-            if (currTile.seenByKingdoms.Count > 0) {
-                if (!currTile.seenByKingdoms.Contains(kingdomOfAgent)) {
+            if (currTile.visibleByKingdoms.Count > 0) {
+                if (!currTile.visibleByKingdoms.Contains(kingdomOfAgent)) {
                     kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {

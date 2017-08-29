@@ -25,7 +25,7 @@ public class SmoothMovement : MonoBehaviour {
 
 	void FixedUpdate(){
 		if(this.isMoving){
-			if(this.targetPosition != null){
+			if(this.targetPosition != Vector3.zero){
 //				this.timeSinceStarted = Time.time - this.timeStarted;
 				this.step = Time.smoothDeltaTime / GameManager.Instance.progressionSpeed;
 				this.timeSinceStarted += this.step;

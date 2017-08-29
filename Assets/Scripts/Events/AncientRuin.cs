@@ -68,7 +68,7 @@ public class AncientRuin : GameEvent {
                 List<HexTile> tilesToExpose = _ruinLocation.GetTilesInRange(8);
                 for (int i = 0; i < tilesToExpose.Count; i++) {
                     HexTile currTile = tilesToExpose[i];
-                    if (!currTile.seenByKingdoms.Contains(_discoveredByKingdom)) {
+                    if (!currTile.visibleByKingdoms.Contains(_discoveredByKingdom)) {
                         _discoveredByKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
                     }
                 }

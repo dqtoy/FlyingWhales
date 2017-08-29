@@ -48,8 +48,8 @@ public class Kingdom{
 	internal Color kingdomColor;
 	internal List<History> kingdomHistory;
 
-	internal List<City> adjacentCitiesFromOtherKingdoms;
-	internal List<Kingdom> adjacentKingdoms;
+	//internal List<City> adjacentCitiesFromOtherKingdoms;
+	//internal List<Kingdom> adjacentKingdoms;
 
 	private List<Kingdom> _discoveredKingdoms;
 
@@ -272,8 +272,8 @@ public class Kingdom{
 		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
-		this.adjacentCitiesFromOtherKingdoms = new List<City>();
-		this.adjacentKingdoms = new List<Kingdom>();
+		//this.adjacentCitiesFromOtherKingdoms = new List<City>();
+		//this.adjacentKingdoms = new List<Kingdom>();
 		this._goldCount = 0;
 		this._availableResources = new Dictionary<RESOURCE, int> ();
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
@@ -1336,31 +1336,31 @@ public class Kingdom{
 		}
 	}
 
-	internal void UpdateKingdomAdjacency(){
-		this.adjacentKingdoms.Clear();
-		this.adjacentCitiesFromOtherKingdoms.Clear ();
-		for (int i = 0; i < this.cities.Count; i++) {
-			List<City> adjacentCitiesOfCurrentCity = this.cities[i].adjacentCities;
-			for (int j = 0; j < adjacentCitiesOfCurrentCity.Count; j++) {
-				City currAdjacentCity = adjacentCitiesOfCurrentCity [j];
-				if (adjacentCitiesOfCurrentCity[j].kingdom.id != this.id) {
-					if (!this.adjacentKingdoms.Contains (currAdjacentCity.kingdom)) {
-						this.adjacentKingdoms.Add (currAdjacentCity.kingdom);
-					}
-					if (!currAdjacentCity.kingdom.adjacentKingdoms.Contains(this)) {
-						currAdjacentCity.kingdom.adjacentKingdoms.Add(this);
-					}
-					if (!this.adjacentCitiesFromOtherKingdoms.Contains(currAdjacentCity)) {
-						this.adjacentCitiesFromOtherKingdoms.Add(currAdjacentCity);
-					}
-					if (!currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Contains(this.cities[i])) {
-						currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
-					}
+	//internal void UpdateKingdomAdjacency(){
+	//	this.adjacentKingdoms.Clear();
+	//	this.adjacentCitiesFromOtherKingdoms.Clear ();
+	//	for (int i = 0; i < this.cities.Count; i++) {
+	//		List<City> adjacentCitiesOfCurrentCity = this.cities[i].adjacentCities;
+	//		for (int j = 0; j < adjacentCitiesOfCurrentCity.Count; j++) {
+	//			City currAdjacentCity = adjacentCitiesOfCurrentCity [j];
+	//			if (adjacentCitiesOfCurrentCity[j].kingdom.id != this.id) {
+	//				if (!this.adjacentKingdoms.Contains (currAdjacentCity.kingdom)) {
+	//					this.adjacentKingdoms.Add (currAdjacentCity.kingdom);
+	//				}
+	//				if (!currAdjacentCity.kingdom.adjacentKingdoms.Contains(this)) {
+	//					currAdjacentCity.kingdom.adjacentKingdoms.Add(this);
+	//				}
+	//				if (!this.adjacentCitiesFromOtherKingdoms.Contains(currAdjacentCity)) {
+	//					this.adjacentCitiesFromOtherKingdoms.Add(currAdjacentCity);
+	//				}
+	//				if (!currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Contains(this.cities[i])) {
+	//					currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
+	//				}
 
-				}
-			}
-		}
-	}
+	//			}
+	//		}
+	//	}
+	//}
 
 	protected List<HexTile> GetAllKingdomBorderTiles(){
 		List<HexTile> allBorderTiles = new List<HexTile>();

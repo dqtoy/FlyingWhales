@@ -47,7 +47,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [SerializeField] private List<City> _isBorderOfCities = new List<City>();
     [SerializeField] private List<City> _isOuterTileOfCities = new List<City>();
-    [SerializeField] private List<Kingdom> _seenByKingdoms = new List<Kingdom>(); //This is only occupied when a tile becomes occupies, becaoms a border or becomes an outer tile of a city!
+    [SerializeField] private List<Kingdom> _visibleByKingdoms = new List<Kingdom>(); //This is only occupied when a tile becomes occupies, becaoms a border or becomes an outer tile of a city!
 	//public int isBorderOfCityID = 0;
 	//internal int isOccupiedByCityID = 0;
     //[SerializeField] internal List<City> isVisibleByCities = new List<City>();
@@ -157,8 +157,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public List<City> isOuterTileOfCities {
         get { return _isOuterTileOfCities; }
     }
-    public List<Kingdom> seenByKingdoms {
-        get { return _seenByKingdoms; }
+    public List<Kingdom> visibleByKingdoms {
+        get { return _visibleByKingdoms; }
     }
     public int cityLevelCap {
         get { return _cityLevelCap; }
@@ -201,39 +201,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	#region Resource
-//	internal void AssignDefaultResource(){
-//		if(elevationType == ELEVATION.MOUNTAIN){
-//			this.defaultResource = RESOURCE.GRANITE;
-//		}else{
-//			if (this.elevationType != ELEVATION.WATER) {
-//				switch (biomeType) {
-//				case BIOMES.BARE:
-//					this.defaultResource = RESOURCE.NONE;
-//					break;
-//				case BIOMES.DESERT:
-//					this.defaultResource = RESOURCE.GRANITE;
-//					break;
-//				case BIOMES.FOREST:
-//					this.defaultResource = RESOURCE.OAK;
-//					break;
-//				case BIOMES.GRASSLAND:
-//					this.defaultResource = RESOURCE.CORN;
-//					break;
-//				case BIOMES.SNOW:
-//					this.defaultResource = RESOURCE.NONE;
-//					break;
-//				case BIOMES.TUNDRA:
-//					this.defaultResource = RESOURCE.CORN;
-//					break;
-//				case BIOMES.WOODLAND:
-//					this.defaultResource = RESOURCE.CEDAR;
-//					break;
-//
-//				}
-//			}
-//		}
-//	}
-
 	internal void AssignSpecialResource(){
 		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
 			return;
@@ -261,15 +228,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			this.specialResource = RESOURCE.NONE;
 		}
     }
-	internal void DeactivateCenterPiece(){
-		if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
-			centerPiece.SetActive(false);
-		}
-	}
-	public PandaBehaviour GetBehaviourTree(){
-		return this.GetComponent<PandaBehaviour>();
-	}
-
 	private RESOURCE ComputeSpecialResource(SpecialResourceChance specialResources){
 		int totalChance = 0;
 		int lowerLimit = 0;
@@ -291,12 +249,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 		return RESOURCE.NONE;
 	}
-	#endregion
-		
-	/*
+    #endregion
+
+    public PandaBehaviour GetBehaviourTree() {
+        return this.GetComponent<PandaBehaviour>();
+    }
+    /*
 	 * Returns all Hex tiles gameobjects within a radius
 	 * */
-	public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter = false){
+    public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter = false){
 		List<HexTile> tilesInRange = new List<HexTile>();
 		List<HexTile> checkedTiles = new List<HexTile> ();
 		List<HexTile> tilesToAdd = new List<HexTile> ();
@@ -349,6 +310,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     #region Tile Visuals
+    internal void DeactivateCenterPiece() {
+        if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
+            centerPiece.SetActive(false);
+        }
+    }
     internal void LoadEdges() {
         int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
         List<HexTile> neighbours = this.AllNeighbours.ToList();
@@ -441,34 +407,27 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             
         }
     }
-
-    public void SetBaseSprite(Sprite baseSprite){
+    internal void SetBaseSprite(Sprite baseSprite){
 		this.GetComponent<SpriteRenderer>().sprite = baseSprite;
 	}
-
-	public void SetCenterSprite(Sprite centerSprite){
+    internal void SetCenterSprite(Sprite centerSprite){
 		this.centerPiece.GetComponent<SpriteRenderer>().sprite = centerSprite;
 		this.centerPiece.SetActive(true);
 	}
-
-	public void SetTileHighlightColor(Color color){
+    internal void SetTileHighlightColor(Color color){
         color.a = 76.5f / 255f;
         this._kingdomColorSprite.color = color;
 	}
-
     internal void SetMinimapTileColor(Color color) {
         minimapHexSprite.color = color;
     }
-
-	public void ShowTileHighlight(){
+    internal void ShowTileHighlight(){
 		this._kingdomColorSprite.gameObject.SetActive(true);
 	}
-
-	public void HideTileHighlight(){
+    internal void HideTileHighlight(){
 		this.kingdomColorSprite.gameObject.SetActive(false);
 	}
-
-    public void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
+    internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
         //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
         GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
         string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
@@ -482,13 +441,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         SetMinimapTileColor(color);
         SetTileHighlightColor(color);
     }
-
     /*
      * Assign a structure object to this tile.
      * NOTE: This will destroy any current structures on this tile
      * and replace it with the new assigned one.
      * */
-    public void AssignStructureObjectToTile(StructureObject structureObj) {
+    internal void AssignStructureObjectToTile(StructureObject structureObj) {
         if(structureObjOnTile != null) {
             //Destroy Current Structure
             structureObjOnTile.DestroyStructure();
@@ -497,8 +455,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         structureObj.transform.SetParent(this.structureParentGO.transform);
         structureObj.transform.localPosition = Vector3.zero;
     }
-
-    public GameObject CreateSpecialStructureOnTile(LAIR lairType) {
+    internal GameObject CreateSpecialStructureOnTile(LAIR lairType) {
         GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType).name,
             Vector3.zero, Quaternion.identity, structureParentGO.transform);
         //GameObject.Instantiate(
@@ -506,8 +463,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         structureGO.transform.localPosition = Vector3.zero;
         return structureGO;
     }
-
-    public void ShowNamePlate() {
+    internal void ShowNamePlate() {
         if(_namePlateParent != null) {
             _namePlateParent.gameObject.SetActive(true);
         }
@@ -518,15 +474,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             UpdateLairNamePlate();
         }
     }
-    public void HideNamePlate() {
+    internal void HideNamePlate() {
         _namePlateParent.gameObject.SetActive(false);
     }
-
     /*
      * This will instantiate a new CityItem Prefab and set it's city 
      * according to the passed parameter.
      * */
-    public void CreateCityNamePlate(City city) {
+    internal void CreateCityNamePlate(City city) {
         Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
 
         GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("CityNamePlatePanel", UIParent);
@@ -538,14 +493,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         UpdateCityNamePlate();
     }
-    public void UpdateCityNamePlate() {
+    internal void UpdateCityNamePlate() {
         if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
             _cityInfo.SetCity(city);
         } else {
             _cityInfo.SetCity(city, false, true);
         }
     }
-    public void RemoveCityNamePlate() {
+    internal void RemoveCityNamePlate() {
         if(_namePlateParent != null) {
             ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
             _namePlateParent = null;
@@ -554,7 +509,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-	public void CreateLairNamePlate() {
+    internal void CreateLairNamePlate() {
         Debug.Log("Create lair nameplate on " + this.name);
 
         GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("LairNamePlatePanel", UIParent);
@@ -566,10 +521,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         UpdateLairNamePlate();
 	}
-	public void UpdateLairNamePlate() {
+    internal void UpdateLairNamePlate() {
 		this._lairItem.SetLair(this.lair);
 	}
-    public void RemoveLairNamePlate() {
+    internal void RemoveLairNamePlate() {
         if (_namePlateParent != null) {
             ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
             _namePlateParent = null;
@@ -578,7 +533,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-	public void CreateEventNamePlate() {
+    internal void CreateEventNamePlate() {
         Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
 
         GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("EventNamePlatePanel", UIParent);
@@ -590,10 +545,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         UpdateHextileEventNamePlate();
 	}
-	public void UpdateHextileEventNamePlate() {
+    internal void UpdateHextileEventNamePlate() {
 		_hextileEventItem.SetHextileEvent(_gameEventInTile);
 	}
-    public void RemoveHextileEventNamePlate() {
+    internal void RemoveHextileEventNamePlate() {
         if (_namePlateParent != null) {
             ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
             _namePlateParent = null;
@@ -602,15 +557,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-    public void HideStructures() {
+    internal void HideStructures() {
         structureParentGO.SetActive(false);
     }
-
-    public void ShowStructures() {
+    internal void ShowStructures() {
         structureParentGO.SetActive(true);
     }
 
-    public void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
+    internal void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
         if (!KingdomManager.Instance.useFogOfWar) {
             fowState = FOG_OF_WAR_STATE.VISIBLE;
         }
@@ -660,22 +614,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         minimapFOWSprite.color = newColor;
     }
 
-    public void HideFogOfWarObjects() {
+    internal void HideFogOfWarObjects() {
         FOWSprite.gameObject.SetActive(false);
         minimapFOWSprite.gameObject.SetActive(false);
     }
-    public void ShowFogOfWarObjects() {
+    internal void ShowFogOfWarObjects() {
         FOWSprite.gameObject.SetActive(true);
         minimapFOWSprite.gameObject.SetActive(true);
     }
 
-    public void AddBiomeDetailToTile(GameObject detailPrefab) {
+    internal void AddBiomeDetailToTile(GameObject detailPrefab) {
         GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
         detailGO.transform.localScale = Vector3.one;
         detailGO.transform.localPosition = Vector3.zero;
     }
 
-    public void SetBiomeDetailState(bool state) {
+    internal void SetBiomeDetailState(bool state) {
         biomeDetailParentGO.SetActive(state);
     }
     #endregion
@@ -728,17 +682,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //}
 		//this.isOccupiedByCityID = city.id;		
 		this.ownedByCity = city;
-        if (!_seenByKingdoms.Contains(city.kingdom)) {
-            _seenByKingdoms.Add(city.kingdom);
+        if (!_visibleByKingdoms.Contains(city.kingdom)) {
+            _visibleByKingdoms.Add(city.kingdom);
         }
         //this.isBorder = false;
         //this.isBorderOfCityID = 0;
     }
-
     public void Unoccupy(bool immediatelyDestroyStructures = false) {
         if (!_isBorderOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)
             && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)) {
-            _seenByKingdoms.Remove(ownedByCity.kingdom);
+            _visibleByKingdoms.Remove(ownedByCity.kingdom);
         }
         isOccupied = false;
         ownedByCity = null;
@@ -773,8 +726,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (!_isBorderOfCities.Contains(city)) {
             _isBorderOfCities.Add(city);
         }
-        if (!_seenByKingdoms.Contains(city.kingdom)) {
-            _seenByKingdoms.Add(city.kingdom);
+        if (!_visibleByKingdoms.Contains(city.kingdom)) {
+            _visibleByKingdoms.Add(city.kingdom);
         }
         //if (!isVisibleByCities.Contains(city)) {
         //    this.isVisibleByCities.Add(city);
@@ -782,7 +735,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.isBorderOfCityID = city.id;
         //this.ownedByCity = city;
     }
-
     public void UnBorderize(City city) {
         //this.isBorderOfCityID = 0;
         //this.ownedByCity = null;
@@ -796,7 +748,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom)
             && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)
             && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
-            _seenByKingdoms.Remove(city.kingdom);
+            _visibleByKingdoms.Remove(city.kingdom);
         }
         //this.isVisibleByCities.Remove(city);
     }
@@ -805,17 +757,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (!_isOuterTileOfCities.Contains(city)) {
             _isOuterTileOfCities.Add(city);
         }
-        if (!_seenByKingdoms.Contains(city.kingdom)) {
-            _seenByKingdoms.Add(city.kingdom);
+        if (!_visibleByKingdoms.Contains(city.kingdom)) {
+            _visibleByKingdoms.Add(city.kingdom);
         }
     }
-
     public void RemoveAsOuterTileOf(City city) {
         _isOuterTileOfCities.Remove(city);
         if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom) 
             && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom) 
             && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
-            _seenByKingdoms.Remove(city.kingdom);
+            _visibleByKingdoms.Remove(city.kingdom);
         }
     }
 
@@ -944,12 +895,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-    [ContextMenu("Show Adjacent Kingdoms")]
-    public void ShowAdjacentKingdoms() {
-        for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
-            Debug.Log("Adjacent Kingdom: " + this.city.kingdom.adjacentKingdoms[i].name);
-        }
-    }
+    //[ContextMenu("Show Adjacent Kingdoms")]
+    //public void ShowAdjacentKingdoms() {
+    //    for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
+    //        Debug.Log("Adjacent Kingdom: " + this.city.kingdom.adjacentKingdoms[i].name);
+    //    }
+    //}
 
     [ContextMenu("Show Hextile Positions")]
     public void ShowHextileBounds() {
