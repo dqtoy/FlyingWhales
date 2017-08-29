@@ -102,6 +102,10 @@ public class AdventurerAvatar : CitizenAvatar {
         if (newTargetTile != null) {
             this.citizenRole.targetLocation = newTargetTile;
             this.citizenRole.path = PathGenerator.Instance.GetPath(this.citizenRole.citizen.currentLocation, newTargetTile, PATHFINDING_MODE.AVATAR);
+            if(this.citizenRole.path == null) {
+                throw new System.Exception("An adventurer from " + kingdomOfAdventurer.name + " ran into a problem!" +
+                    this.citizenRole.citizen.currentLocation.name + " -> " + newTargetTile.name);
+            }
             this.citizenRole.daysBeforeMoving = this.citizenRole.path[0].movementDays;
             Task.current.Succeed();
         } else {

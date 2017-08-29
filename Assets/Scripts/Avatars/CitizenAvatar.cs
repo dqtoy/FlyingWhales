@@ -69,6 +69,8 @@ public class CitizenAvatar : PooledObject {
         this.CollectEvents();
         this.UpdateFogOfWar();
         this.CheckForKingdomDiscovery();
+        this.transform.SetParent(this.citizenRole.location.transform);
+        this.transform.localPosition = Vector3.zero;
         //if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
         //    SetAvatarState(true);
         //} else {
