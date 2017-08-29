@@ -1,6 +1,7 @@
 tree("Root")
 	fallback
 		HasRebellion
+		HasReachedLevelCap
 		tree ("Expand")
 
 tree("Expand")

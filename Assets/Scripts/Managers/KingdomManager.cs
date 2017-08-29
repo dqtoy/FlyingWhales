@@ -196,6 +196,7 @@ public class KingdomManager : MonoBehaviour {
 			for (int i = 0; i < cities.Count; i++) {
                 HexTile currCityTile = cities[i];
 				if (i == 0) {
+                    currCityTile.SetCityLevelCap(10);
                     currCityTile.city.CreateInitialFamilies();
 				} else {
                     currCityTile.city.CreateInitialFamilies(false);
@@ -203,9 +204,7 @@ public class KingdomManager : MonoBehaviour {
                 currCityTile.CreateCityNamePlate(currCityTile.city);
             }
 		}
-        //EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
         Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
-        //this.UpdateKingdomAdjacency();
         newKingdom.CheckForDiscoveredKingdoms();
 		return newKingdom;
 	}

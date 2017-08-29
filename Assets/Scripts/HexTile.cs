@@ -29,6 +29,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [System.NonSerialized] public City city = null;
 	internal City ownedByCity = null; // this is populated whenever the hex tile is occupied or becomes a border of a particular city
+    private int _cityLevelCap = 0;
 
 	public Lair lair;
 
@@ -158,6 +159,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     public List<Kingdom> seenByKingdoms {
         get { return _seenByKingdoms; }
+    }
+    public int cityLevelCap {
+        get { return _cityLevelCap; }
     }
     #endregion
 
@@ -999,20 +1003,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
-            "\n [b]Unrest:[/b] " + this.city.kingdom.unrest.ToString() +
-            "\n [b]GOLD:[/b] " + this.city.kingdom.goldCount.ToString() + "/" + this.city.kingdom.maxGold.ToString() +
-            "\n [b]Tech Level:[/b] " + this.city.kingdom.techLevel.ToString() +
+            "\n [b]City Level Cap:[/b] " + this.cityLevelCap.ToString() +
             "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
             "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
             "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
             "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
-        //if(this.city.kingdom.availableResources.Count > 0) {
-        //    for (int i = 0; i < this.city.kingdom.availableResources.Keys.Count; i++) {
-        //        text += this.city.kingdom.availableResources.Keys.ElementAt(i).ToString() + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
        
         text += "[b]Embargo List: [/b]\n";
         if (this.city.kingdom.embargoList.Count > 0) {
@@ -1023,16 +1018,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             text += "NONE\n";
         }
 
-        //text += "[b]Trade Routes: [/b]\n";
-        //if (this.city.kingdom.tradeRoutes.Count > 0) {
-        //    for (int i = 0; i < this.city.kingdom.tradeRoutes.Count; i++) {
-        //        TradeRoute currTradeRoute = this.city.kingdom.tradeRoutes[i];
-        //        text += currTradeRoute.sourceKingdom.name + " -> " + currTradeRoute.targetKingdom.name + ": " + currTradeRoute.resourceBeingTraded.ToString() + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
-
         text += "[b]Discovered Kingdoms: [/b]\n";
         if (this.city.kingdom.discoveredKingdoms.Count > 0) {
             for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
@@ -1042,17 +1027,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         } else {
             text += "NONE\n";
         }
-
-        //text += "[b]King Values: [/b]\n";
-        //Dictionary<CHARACTER_VALUE, int> charVals = this.city.kingdom.king.importantCharacterValues;
-        //if (charVals.Count > 0) {
-        //    for (int i = 0; i < charVals.Count(); i++) {
-        //        KeyValuePair<CHARACTER_VALUE, int> kvp = charVals.ElementAt(i);
-        //        text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
 
         text += "[b]Kingdom values: [/b]\n";
         Dictionary<CHARACTER_VALUE, int> kingdomVals = this.city.kingdom.importantCharacterValues;
@@ -1213,4 +1187,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     internal void ExitCitizen(Citizen citizen) {
         this._citizensOnTile.Remove(citizen);
     }
+
+    #region City Level Functions
+    internal void SetCityLevelCap(int cityLevelCap) {
+        _cityLevelCap = cityLevelCap;
+    }
+    internal void GenerateCityLevelCap() {
+        SetCityLevelCap(Utilities.BellCurveRandomRange(4, 10, 6, 8));
+    }
+    #endregion
 }

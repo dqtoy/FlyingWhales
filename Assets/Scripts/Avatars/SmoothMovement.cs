@@ -6,15 +6,15 @@ public class SmoothMovement : MonoBehaviour {
     public delegate void OnMoveFinished();
     public OnMoveFinished onMoveFinihed;
 
-	public float speed;
+	//public float speed;
 	internal bool isMoving = false;
 	Vector3 targetPosition = Vector3.zero;
 	internal DIRECTION direction;
 	internal bool hasAttacked;
 
-	private float step = 0f;
-	private float timeStarted = 0f;
-	private float timeSinceStarted = 0f;
+    [SerializeField] private float step = 0f;
+    [SerializeField] private float timeStarted = 0f;
+    [SerializeField] private float timeSinceStarted = 0f;
 
 	private Animator animator;
 	internal GameObject avatarGO;
@@ -46,6 +46,7 @@ public class SmoothMovement : MonoBehaviour {
         direction = DIRECTION.LEFT;
         hasAttacked = false;
         onMoveFinihed = null;
+        animator.Rebind();
     }
 
     private void StopMoving(){

@@ -12,12 +12,12 @@ public class CitizenAvatar : PooledObject {
     public bool collidedWithHostile;
     public General otherGeneral;
 
-    private bool _hasArrived = false;
+    [SerializeField] private bool _hasArrived = false;
     private List<HexTile> pathToUnhighlight = new List<HexTile>();
 
     private Transform[] childObjects;
 
-    internal DIRECTION direction;
+    [SerializeField] internal DIRECTION direction;
 	internal List<HexTile> visibleTiles;
 	private SmoothMovement smoothMovement;
 
@@ -71,11 +71,6 @@ public class CitizenAvatar : PooledObject {
         this.CheckForKingdomDiscovery();
         this.transform.SetParent(this.citizenRole.location.transform);
         this.transform.localPosition = Vector3.zero;
-        //if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-        //    SetAvatarState(true);
-        //} else {
-        //    SetAvatarState(false);
-        //}
     }
 
 	public virtual void UpdateFogOfWar(bool forDeath = false) {
@@ -114,12 +109,13 @@ public class CitizenAvatar : PooledObject {
         ResetBehaviourTree();
         RemoveBehaviourTree();
         UnHighlightPath();
-        _hasArrived = false;
+        SetHasArrivedState(false);
         //this.citizenRole = null;
+        animator.Rebind();
         this.direction = DIRECTION.LEFT;
 		this.smoothMovement.Reset();
         this.GetComponent<BoxCollider2D>().enabled = true;
-        //visibleTiles = new List<HexTile>();
+        visibleTiles = new List<HexTile>();
         //childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
     }
     #endregion
@@ -244,13 +240,9 @@ public class CitizenAvatar : PooledObject {
     }
 
     public void EndAttack() {
-        UpdateFogOfWar(true);
 		HasAttacked();
+        this.citizenRole.DestroyGO();
         this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
-        if (this.citizenRole != null) {
-            this.citizenRole.DestroyGO();
-        }
-        
     }
 
     internal void HasAttacked() {
