@@ -211,7 +211,7 @@ public class InvasionPlan : GameEvent {
 			if (friends.Count > 0) {
 				for (int i = 0; i < friends.Count; i++) {
 					War friendWarWithTargetKingdom = KingdomManager.Instance.GetWarBetweenKingdoms (friends [i].king.city.kingdom, this._targetKingdom);
-                    List<GameEvent> friendsActiveInvasionPlans = EventManager.Instance.GetEventsStartedByKingdom(friends[i].king.city.kingdom, new EVENT_TYPES[] { EVENT_TYPES.INVASION_PLAN });
+					List<GameEvent> friendsActiveInvasionPlans = friends[i].king.city.kingdom.GetEventsOfType(EVENT_TYPES.INVASION_PLAN);
                     JoinWar activeJoinWarRequest = KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, friends[i].king.city.kingdom);
                     if (friendsActiveInvasionPlans.Count > 0 || activeJoinWarRequest != null || 
                         (friendWarWithTargetKingdom != null && friendWarWithTargetKingdom.isAtWar)) {

@@ -1011,7 +1011,7 @@ public class Citizen {
 			if (warEvent != null && warEvent.isAtWar) {
 				return;
 			}
-			if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Count() > 0) {
+			if (this.city.kingdom.HasActiveEvent(EVENT_TYPES.INVASION_PLAN)) {
 				return;
 			}
 			if (warEvent == null) {
@@ -1120,7 +1120,7 @@ public class Citizen {
             return;
         }
 
-		if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Count() > 0) {
+		if (this.city.kingdom.HasActiveEvent(EVENT_TYPES.INVASION_PLAN)) {
 			return;
 		}
 		War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, relationship.king.city.kingdom);
@@ -1176,7 +1176,7 @@ public class Citizen {
 		}
 	}
 	internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
-		if (EventManager.Instance.GetEventsStartedByKingdom(this.city.kingdom, new EVENT_TYPES[]{EVENT_TYPES.INVASION_PLAN}).Count() > 0) {
+		if (this.city.kingdom.HasActiveEvent(EVENT_TYPES.INVASION_PLAN)) {
 			return;
 		}
 		War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, targetKingdom);

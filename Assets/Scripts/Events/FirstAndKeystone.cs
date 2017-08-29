@@ -217,7 +217,7 @@ public class FirstAndKeystone : GameEvent {
 	}
 	private void StartInvasionPlanPhase(){
         //Invasion plan of keystoneOwner to firstOwner, must not have existing invasion plan, include this event in war so that we can know that this is the reason they went to war
-        if (EventManager.Instance.GetEventsStartedByKingdom(this.keystoneOwner, new EVENT_TYPES[]{ EVENT_TYPES.INVASION_PLAN }).Count <= 0) {
+		if (!this.keystoneOwner.HasActiveEvent(EVENT_TYPES.INVASION_PLAN)) {
             //Check if there is a current war event between the keystoneOwner and the firstOwner.
             War warEvent = null;
             warEvent = KingdomManager.Instance.GetWarBetweenKingdoms(this.keystoneOwner, this.firstOwner);
