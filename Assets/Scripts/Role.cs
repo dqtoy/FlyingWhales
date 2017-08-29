@@ -49,11 +49,11 @@ public class Role {
 		this.markAsDead = false;
 	}
 	internal void DestroyGO(){
-		if(this.avatar != null){
+        this.location.ExitCitizen(this.citizen);
+        if (this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
             ObjectPoolManager.Instance.DestroyObject(this.avatar);
             this.avatar = null;
-            this.location.ExitCitizen(this.citizen);
         }
 		this.isDestroyed = true;
 	}
@@ -79,7 +79,7 @@ public class Role {
         //    this.avatar.GetComponent<CitizenAvatar>().UpdateFogOfWar(true);
         //}
 
-        this.location.ExitCitizen(this.citizen);
+        //this.location.ExitCitizen(this.citizen);
         this.DisinfectPlague();
 		this.DestroyGO ();
 	}

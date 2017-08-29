@@ -1090,6 +1090,7 @@ public class City{
         newCity.name = this.name;
         newCity.AddTilesToCity(structureTilesToTransfer);
         newCity.CreateInitialFamilies(false);
+        newCity.hexTile.CreateCityNamePlate(newCity);
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
         newCity.WarDefeatedHP();
