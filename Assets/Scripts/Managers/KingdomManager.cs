@@ -196,6 +196,7 @@ public class KingdomManager : MonoBehaviour {
 			for (int i = 0; i < cities.Count; i++) {
                 HexTile currCityTile = cities[i];
 				if (i == 0) {
+                    currCityTile.SetCityLevelCap(10);
                     currCityTile.city.CreateInitialFamilies();
 				} else {
                     currCityTile.city.CreateInitialFamilies(false);
@@ -203,9 +204,7 @@ public class KingdomManager : MonoBehaviour {
                 currCityTile.CreateCityNamePlate(currCityTile.city);
             }
 		}
-        //EventManager.Instance.onCreateNewKingdomEvent.Invoke(newKingdom);
         Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
-        //this.UpdateKingdomAdjacency();
         newKingdom.CheckForDiscoveredKingdoms();
 		return newKingdom;
 	}
@@ -388,28 +387,28 @@ public class KingdomManager : MonoBehaviour {
 		}
 	}
 
-	public void UpdateKingdomAdjacency(){
-		for (int i = 0; i < this.allKingdoms.Count; i++) {
-			Kingdom currentKingdom = this.allKingdoms[i];
-			currentKingdom.adjacentCitiesFromOtherKingdoms.Clear();
-			currentKingdom.ResetAdjacencyWithOtherKingdoms();
-			for (int j = 0; j < currentKingdom.cities.Count; j++) {
-				City currentCity = currentKingdom.cities[j];
-				for (int k = 0; k < currentCity.hexTile.connectedTiles.Count; k++) {
-					HexTile currentConnectedTile = currentCity.hexTile.connectedTiles[k];
-					if (currentConnectedTile.isOccupied && currentConnectedTile.city != null) {
-						if (currentConnectedTile.city.kingdom.id != currentKingdom.id) {
-							currentKingdom.GetRelationshipWithOtherKingdom(currentConnectedTile.city.kingdom).SetAdjacency(true);
-							currentConnectedTile.city.kingdom.GetRelationshipWithOtherKingdom(currentKingdom).SetAdjacency(true);
-							currentKingdom.adjacentCitiesFromOtherKingdoms.Add(currentConnectedTile.city);
-						}
-					}
+	//public void UpdateKingdomAdjacency(){
+	//	for (int i = 0; i < this.allKingdoms.Count; i++) {
+	//		Kingdom currentKingdom = this.allKingdoms[i];
+	//		currentKingdom.adjacentCitiesFromOtherKingdoms.Clear();
+	//		currentKingdom.ResetAdjacencyWithOtherKingdoms();
+	//		for (int j = 0; j < currentKingdom.cities.Count; j++) {
+	//			City currentCity = currentKingdom.cities[j];
+	//			for (int k = 0; k < currentCity.hexTile.connectedTiles.Count; k++) {
+	//				HexTile currentConnectedTile = currentCity.hexTile.connectedTiles[k];
+	//				if (currentConnectedTile.isOccupied && currentConnectedTile.city != null) {
+	//					if (currentConnectedTile.city.kingdom.id != currentKingdom.id) {
+	//						currentKingdom.GetRelationshipWithOtherKingdom(currentConnectedTile.city.kingdom).SetAdjacency(true);
+	//						currentConnectedTile.city.kingdom.GetRelationshipWithOtherKingdom(currentKingdom).SetAdjacency(true);
+	//						currentKingdom.adjacentCitiesFromOtherKingdoms.Add(currentConnectedTile.city);
+	//					}
+	//				}
 
-				}
-			}
-			currentKingdom.adjacentCitiesFromOtherKingdoms.Distinct();
-		}
-	}
+	//			}
+	//		}
+	//		currentKingdom.adjacentCitiesFromOtherKingdoms.Distinct();
+	//	}
+	//}
 
 	public List<Kingdom> GetOtherKingdomsExcept(Kingdom kingdom){
 		List<Kingdom> newKingdoms = new List<Kingdom> ();
@@ -535,7 +534,7 @@ public class KingdomManager : MonoBehaviour {
 
         for (int i = 0; i < allTilesOfKingdom1.Count; i++) {
             HexTile currTileOfKingdom1 = allTilesOfKingdom1[i];
-            if (currTileOfKingdom1.seenByKingdoms.Contains(kingdom2)) {
+            if (currTileOfKingdom1.visibleByKingdoms.Contains(kingdom2)) {
                 return true;
             }
         }

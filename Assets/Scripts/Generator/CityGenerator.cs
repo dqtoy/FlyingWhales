@@ -97,11 +97,13 @@ public class CityGenerator : MonoBehaviour {
 
 			if (nearbyStoneCount + nearbySpecialCount >= 2) {
 				SetTileAsStoneHabitable(currentHexTile);
+                currentHexTile.GenerateCityLevelCap();
 			}
 
 			if (nearbyWoodCount + nearbySpecialCount >= 2) {
 				SetTileAsWoodHabitable(currentHexTile);
-			}
+                currentHexTile.GenerateCityLevelCap();
+            }
 
 			elligibleTiles.Remove(currentHexTile.gameObject);
 			for (int j = 0; j < tilesInRange.Count; j++) {

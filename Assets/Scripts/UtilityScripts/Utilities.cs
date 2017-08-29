@@ -1266,6 +1266,28 @@ public class Utilities : MonoBehaviour {
         return dict.Values.ToList();
     }
 
+
+    /*
+     * <summary>
+     * Get a random integer given a minimum and maximum range and a minimum and maximum 
+     * mean to simulate a bell curve.
+     * </summary>
+     * <param name="min"> The distributions minimum value [inclusive]</param>
+     * <param name="max"> The distributions maximum value [inclusive]</param>
+     * <param name="minMean"> The distributions minimum mean value [minimum value for bell curve]</param>
+     * <param name="maxMean"> The distributions maximum mean value [maximum value for bell curve]</param>
+     * */
+    public static int BellCurveRandomRange(int min, int max, int minMean, int maxMean) {
+        float rand = UnityEngine.Random.value;
+
+        if (rand <= .3f)
+            return UnityEngine.Random.Range(min, minMean);
+        if (rand <= .8f)
+            return UnityEngine.Random.Range(minMean, maxMean);
+
+        return UnityEngine.Random.Range(maxMean, max);
+    }
+
     #region Lycanthropy
     public static int GetMoonPhase(int year, int month, int day) {
         /*k

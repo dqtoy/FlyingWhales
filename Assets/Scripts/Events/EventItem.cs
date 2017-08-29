@@ -14,7 +14,7 @@ public class EventItem : PooledObject {
 	private bool isHovering;
 	private bool isPaused;
 	private string toolTip;
-	private float timeElapsed;
+	//private float timeElapsed;
 
 	void Awake(){
 		this.ActivateNewLogIndicator ();
@@ -23,7 +23,7 @@ public class EventItem : PooledObject {
 		this.isHovering = false;
 //		this.isPaused = false;
 		this.toolTip = string.Empty;
-		this.timeElapsed = 0f;
+		//this.timeElapsed = 0f;
 //		UIManager.Instance.onPauseEventExpiration += this.PauseExpirationTimer;
 	}
 	void Update(){

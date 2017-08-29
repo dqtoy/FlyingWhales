@@ -169,7 +169,12 @@ public class CityTaskManager : MonoBehaviour {
 			Task.current.Fail();
 		}
 	}
-	#endregion
+
+    [Task]
+    private bool HasReachedLevelCap() {
+        return city.ownedTiles.Count >= city.hexTile.cityLevelCap;
+    }
+    #endregion
 
     /*
      * This will determine the next tile to purchase taking into account

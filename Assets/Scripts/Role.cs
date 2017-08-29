@@ -52,6 +52,7 @@ public class Role {
 		if(this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
             ObjectPoolManager.Instance.DestroyObject(this.avatar);
+            this.avatar = null;
             this.location.ExitCitizen(this.citizen);
         }
 		this.isDestroyed = true;

@@ -23,27 +23,6 @@ public class AdventurerAvatar : CitizenAvatar {
         this.citizenRole.daysBeforeMoving = this.citizenRole.path[0].movementDays;
     }
 
-    #region Overrides
-    //internal override void Move() {
-    //    if (this.citizenRole.targetLocation != null) {
-    //        if (this.citizenRole.path != null) {
-    //            if (this.citizenRole.path.Count > 0) {
-    //                this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
-    //                //this.transform.position = new Vector2(this.citizenRole.path[0].transform.position.x, this.citizenRole.path[0].transform.position.y);
-    //                this.citizenRole.location = this.citizenRole.path[0];
-    //                this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
-    //                this.citizenRole.path.RemoveAt(0);
-    //                this.CheckForKingdomDiscovery();
-    //                //this.GetNextTargetTile();
-    //            }
-    //            this.UpdateFogOfWar();
-    //            CollectEvents();
-
-    //        }
-    //    }
-    //}
-    #endregion
-
     #region Unique Functions
     [Task]
     private void GetNextTargetTile() {
@@ -95,10 +74,6 @@ public class AdventurerAvatar : CitizenAvatar {
             }
         }
 
-        
-
-        
-
         if (newTargetTile != null) {
             this.citizenRole.targetLocation = newTargetTile;
             this.citizenRole.path = PathGenerator.Instance.GetPath(this.citizenRole.citizen.currentLocation, newTargetTile, PATHFINDING_MODE.AVATAR);
@@ -117,32 +92,11 @@ public class AdventurerAvatar : CitizenAvatar {
     #endregion
 
     #region BehaviourTree Tasks
-//    [Task]
-//    public void IsThereCitizen() {
-//        if (this.citizenRole.citizen != null) {
-//            Task.current.Succeed();
-//        } else {
-//            Task.current.Fail();
-//        }
-//    }
-//    [Task]
-//    public void IsThereEvent() {
-//        if (this.citizenRole.gameEventInvolvedIn != null) {
-//            Task.current.Succeed();
-//        } else {
-//            Task.current.Fail();
-//        }
-//    }
-
     [Task]
     public void HasArrivedAtTargetHextile() {
         if (this.citizenRole.location == this.citizenRole.targetLocation) {
                 this.citizenRole.targetLocation = null;
                 newTargetTile = null;
-                //this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
-                //GetNextTargetTile();
-                //SetHasArrivedState(true);
-                //this.citizenRole.Attack();
             Task.current.Succeed();
         } else {
             Task.current.Fail();
@@ -182,13 +136,6 @@ public class AdventurerAvatar : CitizenAvatar {
             return true;
         }
         return false;
-    }
-
-    [Task]
-    private void ForceUpdateFogOfWar() {
-        this.UpdateFogOfWar();
-        CollectEvents();
-        Task.current.Succeed();
     }
     #endregion
 }

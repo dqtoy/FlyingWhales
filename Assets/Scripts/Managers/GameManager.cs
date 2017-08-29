@@ -371,23 +371,23 @@ public class GameManager : MonoBehaviour {
 			return null;
 		}
 	}*/
-	private City GetRaidedCity(General general){
-		if(general == null){
-			return null;
-		}
-//		List<City> adjacentCities = new List<City> ();
-//		for(int i = 0; i < general.citizen.city.hexTile.connectedTiles.Count; i++){
-//			if(general.citizen.city.hexTile.connectedTiles[i].isOccupied){
-//				if(general.citizen.city.hexTile.connectedTiles[i].city.kingdom.id != general.citizen.city.kingdom.id){
-//					adjacentCities.Add (general.citizen.city.hexTile.connectedTiles[i].city);
-//				}
-//			}
+//	private City GetRaidedCity(General general){
+//		if(general == null){
+//			return null;
 //		}
+////		List<City> adjacentCities = new List<City> ();
+////		for(int i = 0; i < general.citizen.city.hexTile.connectedTiles.Count; i++){
+////			if(general.citizen.city.hexTile.connectedTiles[i].isOccupied){
+////				if(general.citizen.city.hexTile.connectedTiles[i].city.kingdom.id != general.citizen.city.kingdom.id){
+////					adjacentCities.Add (general.citizen.city.hexTile.connectedTiles[i].city);
+////				}
+////			}
+////		}
 
-		if(general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Count > 0){
-			return general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms [UnityEngine.Random.Range (0, general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Count)];
-		}else{
-			return null;
-		}
-	}
+//		if(general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Count > 0){
+//			return general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms [UnityEngine.Random.Range (0, general.citizen.city.kingdom.adjacentCitiesFromOtherKingdoms.Count)];
+//		}else{
+//			return null;
+//		}
+//	}
 }

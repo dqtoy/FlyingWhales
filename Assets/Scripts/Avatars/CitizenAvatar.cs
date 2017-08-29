@@ -12,12 +12,14 @@ public class CitizenAvatar : PooledObject {
     public bool collidedWithHostile;
     public General otherGeneral;
 
-    private bool _hasArrived = false;
+    private bool currAvatarState = true;
+
+    [SerializeField] private bool _hasArrived = false;
     private List<HexTile> pathToUnhighlight = new List<HexTile>();
 
     private Transform[] childObjects;
 
-    internal DIRECTION direction;
+    [SerializeField] internal DIRECTION direction;
 	internal List<HexTile> visibleTiles;
 	private SmoothMovement smoothMovement;
 
@@ -71,11 +73,15 @@ public class CitizenAvatar : PooledObject {
         this.CheckForKingdomDiscovery();
         this.transform.SetParent(this.citizenRole.location.transform);
         this.transform.localPosition = Vector3.zero;
-        //if (citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-        //    SetAvatarState(true);
-        //} else {
-        //    SetAvatarState(false);
-        //}
+        if(this.citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
+            if (!currAvatarState) {
+                SetAvatarState(true);
+            }
+        } else {
+            if (currAvatarState) {
+                SetAvatarState(false);
+            }
+        }
     }
 
 	public virtual void UpdateFogOfWar(bool forDeath = false) {
@@ -83,8 +89,8 @@ public class CitizenAvatar : PooledObject {
 
         for (int i = 0; i < visibleTiles.Count; i++) {
 			HexTile currTile = visibleTiles[i];
-            if(currTile.seenByKingdoms.Count > 0) {
-                if (!currTile.seenByKingdoms.Contains(kingdomOfAgent)) {
+            if (currTile.visibleByKingdoms.Count > 0) {
+                if (!currTile.visibleByKingdoms.Contains(kingdomOfAgent)) {
                     kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
@@ -114,12 +120,13 @@ public class CitizenAvatar : PooledObject {
         ResetBehaviourTree();
         RemoveBehaviourTree();
         UnHighlightPath();
-        _hasArrived = false;
+        SetHasArrivedState(false);
         //this.citizenRole = null;
+        animator.Rebind();
         this.direction = DIRECTION.LEFT;
 		this.smoothMovement.Reset();
         this.GetComponent<BoxCollider2D>().enabled = true;
-        //visibleTiles = new List<HexTile>();
+        visibleTiles = new List<HexTile>();
         //childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
     }
     #endregion
@@ -156,7 +163,8 @@ public class CitizenAvatar : PooledObject {
             HexTile currTile = tilesToCheck[i];
             if (currTile.isOccupied && currTile.ownedByCity != null &&
                 currTile.ownedByCity.kingdom.id != thisKingdom.id) {
-                if (!citiesSeen.Contains(currTile.ownedByCity)) {
+                City otherCity = currTile.ownedByCity;
+                if (!citiesSeen.Contains(otherCity) && !thisKingdom.discoveredCities.Contains(otherCity)) {
                     citiesSeen.Add(currTile.ownedByCity);
                 }
                 Kingdom otherKingdom = currTile.ownedByCity.kingdom;
@@ -168,7 +176,7 @@ public class CitizenAvatar : PooledObject {
                     City otherCity = currTile.isBorderOfCities[j];
                     Kingdom otherKingdom = otherCity.kingdom;
                     if (otherKingdom.id != thisKingdom.id) {
-                        if (!citiesSeen.Contains(otherCity)) {
+                        if (!citiesSeen.Contains(otherCity) && !thisKingdom.discoveredCities.Contains(otherCity)) {
                             citiesSeen.Add(otherCity);
                         }
                         if (!thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
@@ -181,12 +189,13 @@ public class CitizenAvatar : PooledObject {
 
         for (int i = 0; i < citiesSeen.Count; i++) {
             City currCity = citiesSeen[i];
+            thisKingdom.DiscoverCity(currCity);
             if (!thisKingdom.discoveredCities.Contains(currCity)){
                 //Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
                 List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
                 for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
                     HexTile currTile = tilesToSetAsSeen[j];
-                    if (!currTile.seenByKingdoms.Contains(thisKingdom)) {
+                    if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
                         thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
                     }
                 }
@@ -244,13 +253,9 @@ public class CitizenAvatar : PooledObject {
     }
 
     public void EndAttack() {
-        UpdateFogOfWar(true);
 		HasAttacked();
+        this.citizenRole.DestroyGO();
         this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
-        if (this.citizenRole != null) {
-            this.citizenRole.DestroyGO();
-        }
-        
     }
 
     internal void HasAttacked() {
@@ -305,10 +310,10 @@ public class CitizenAvatar : PooledObject {
     //    }
     //}
 
-    private void OnDestroy() {
-        RemoveBehaviourTree();
-        UnHighlightPath();
-    }
+    //private void OnDestroy() {
+    //    RemoveBehaviourTree();
+    //    UnHighlightPath();
+    //}
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.tag == "Avatar") {
@@ -348,6 +353,7 @@ public class CitizenAvatar : PooledObject {
     #endregion
 
     public void SetAvatarState(bool state) {
+        currAvatarState = state;
         this.gameObject.GetComponent<SpriteRenderer>().enabled = state;
         for (int i = 0; i < childObjects.Length; i++) {
             if (childObjects[i].GetComponent<Animator>() != null) {

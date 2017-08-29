@@ -48,8 +48,8 @@ public class Kingdom{
 	internal Color kingdomColor;
 	internal List<History> kingdomHistory;
 
-	internal List<City> adjacentCitiesFromOtherKingdoms;
-	internal List<Kingdom> adjacentKingdoms;
+	//internal List<City> adjacentCitiesFromOtherKingdoms;
+	//internal List<Kingdom> adjacentKingdoms;
 
 	private List<Kingdom> _discoveredKingdoms;
 
@@ -272,8 +272,8 @@ public class Kingdom{
 		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
-		this.adjacentCitiesFromOtherKingdoms = new List<City>();
-		this.adjacentKingdoms = new List<Kingdom>();
+		//this.adjacentCitiesFromOtherKingdoms = new List<City>();
+		//this.adjacentKingdoms = new List<Kingdom>();
 		this._goldCount = 0;
 		this._availableResources = new Dictionary<RESOURCE, int> ();
 		this.relationshipsWithOtherKingdoms = new List<RelationshipKingdom>();
@@ -328,28 +328,6 @@ public class Kingdom{
                 this.CreateNewCityOnTileForKingdom(cities[i]);
             }
         }
-		
-		//if(this._cities.Count > 0 && this._cities[0] != null){
-		//	this.capitalCity = this._cities [0];
-
-  //          // For the kingdom's first city, setup its distance towards other habitable tiles.
-  //          HexTile habitableTile;
-  //          if (this.basicResource == BASE_RESOURCE_TYPE.STONE) {
-  //              for (int i = 0; i < CityGenerator.Instance.stoneHabitableTiles.Count; i++) {
-  //                  habitableTile = CityGenerator.Instance.stoneHabitableTiles[i];
-  //                  this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
-  //              }
-  //          } else if (this.basicResource == BASE_RESOURCE_TYPE.WOOD) {
-  //              for (int i = 0; i < CityGenerator.Instance.woodHabitableTiles.Count; i++) {
-  //                  habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
-  //                  this.cities[0].AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.cities[0].hexTile, habitableTile));
-  //              }
-  //          }
-  //      }
-		
-//		Debug.Log ("Kingdom: " + this.name + " : " + this.cities [0].habitableTileDistance.Count);
-		//this.cities [0].OrderHabitableTileDistanceList ();
-
 
 		this.CreateInitialRelationships();
 		Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
@@ -363,6 +341,7 @@ public class Kingdom{
 		ScheduleEvents ();
 
         //EventManager.Instance.onKingdomDiedEvent.AddListener(OtherKingdomDiedActions);
+
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 
@@ -1390,31 +1369,31 @@ public class Kingdom{
 		}
 	}
 
-	internal void UpdateKingdomAdjacency(){
-		this.adjacentKingdoms.Clear();
-		this.adjacentCitiesFromOtherKingdoms.Clear ();
-		for (int i = 0; i < this.cities.Count; i++) {
-			List<City> adjacentCitiesOfCurrentCity = this.cities[i].adjacentCities;
-			for (int j = 0; j < adjacentCitiesOfCurrentCity.Count; j++) {
-				City currAdjacentCity = adjacentCitiesOfCurrentCity [j];
-				if (adjacentCitiesOfCurrentCity[j].kingdom.id != this.id) {
-					if (!this.adjacentKingdoms.Contains (currAdjacentCity.kingdom)) {
-						this.adjacentKingdoms.Add (currAdjacentCity.kingdom);
-					}
-					if (!currAdjacentCity.kingdom.adjacentKingdoms.Contains(this)) {
-						currAdjacentCity.kingdom.adjacentKingdoms.Add(this);
-					}
-					if (!this.adjacentCitiesFromOtherKingdoms.Contains(currAdjacentCity)) {
-						this.adjacentCitiesFromOtherKingdoms.Add(currAdjacentCity);
-					}
-					if (!currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Contains(this.cities[i])) {
-						currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
-					}
+	//internal void UpdateKingdomAdjacency(){
+	//	this.adjacentKingdoms.Clear();
+	//	this.adjacentCitiesFromOtherKingdoms.Clear ();
+	//	for (int i = 0; i < this.cities.Count; i++) {
+	//		List<City> adjacentCitiesOfCurrentCity = this.cities[i].adjacentCities;
+	//		for (int j = 0; j < adjacentCitiesOfCurrentCity.Count; j++) {
+	//			City currAdjacentCity = adjacentCitiesOfCurrentCity [j];
+	//			if (adjacentCitiesOfCurrentCity[j].kingdom.id != this.id) {
+	//				if (!this.adjacentKingdoms.Contains (currAdjacentCity.kingdom)) {
+	//					this.adjacentKingdoms.Add (currAdjacentCity.kingdom);
+	//				}
+	//				if (!currAdjacentCity.kingdom.adjacentKingdoms.Contains(this)) {
+	//					currAdjacentCity.kingdom.adjacentKingdoms.Add(this);
+	//				}
+	//				if (!this.adjacentCitiesFromOtherKingdoms.Contains(currAdjacentCity)) {
+	//					this.adjacentCitiesFromOtherKingdoms.Add(currAdjacentCity);
+	//				}
+	//				if (!currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Contains(this.cities[i])) {
+	//					currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
+	//				}
 
-				}
-			}
-		}
-	}
+	//			}
+	//		}
+	//	}
+	//}
 
 	protected List<HexTile> GetAllKingdomBorderTiles(){
 		List<HexTile> allBorderTiles = new List<HexTile>();
@@ -2209,34 +2188,6 @@ public class Kingdom{
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
             UpdateFogOfWarVisualForTile(tile, fowState);
         }
-
-        //if (isForcedUpdate) {
-        //    if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-        //        UpdateFogOfWarVisualForTile(tile, fowState);
-        //    }
-        //} 
-        //else {
-        //    if (fowState == FOG_OF_WAR_STATE.VISIBLE) {
-        //        _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
-        //        fogOfWarDict[fowState].Add(tile);
-        //        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-        //            UpdateFogOfWarVisualForTile(tile, fowState);
-        //        }
-        //        //			if(tile.lair != null){
-        //        //				tile.lair.ActivateLair ();
-        //        //			}
-        //    } else {
-        //        //if (!(tile.isVisibleByCities != null && cities.Intersect(tile.isVisibleByCities).Count() > 0)) {
-        //            if (_fogOfWar[tile.xCoordinate, tile.yCoordinate] != FOG_OF_WAR_STATE.SEEN) {
-        //                _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
-        //                fogOfWarDict[fowState].Add(tile);
-        //                if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-        //                    UpdateFogOfWarVisualForTile(tile, fowState);
-        //                }
-        //            }
-        //        //}
-        //    }
-        //}
     }
     internal void UpdateFogOfWarVisual() {
         for (int x = 0; x < fogOfWar.GetLength(0); x++) {
@@ -2250,11 +2201,6 @@ public class Kingdom{
 
     private void UpdateFogOfWarVisualForTile(HexTile hexTile, FOG_OF_WAR_STATE fowState) {
         hexTile.SetFogOfWarState(fowState);
-        //if (KingdomManager.Instance.useFogOfWar) {
-        //    hexTile.ShowFogOfWarObjects();
-        //} else {
-        //    hexTile.HideFogOfWarObjects();
-        //}
     }
 
 	internal FOG_OF_WAR_STATE GetFogOfWarStateOfTile(HexTile hexTile){

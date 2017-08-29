@@ -18,15 +18,21 @@ public class ObjectPoolManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         allObjectPools = new Dictionary<string, EZObjectPool>();
+    }
+
+    internal void InitializeObjectPools() {
+        GameObject UIObjectPoolParent = new GameObject("EZ Object Pools UI Container");
+        UIObjectPoolParent.transform.parent = UIManager.Instance.transform;
 
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 50, true, true, false);
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
+            newUIPool.transform.SetParent(UIObjectPoolParent.transform);
         }
 
         for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
             GameObject currPrefab = citizenAvatarPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 50, true, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
         }
 
         for (int i = 0; i < CityGenerator.Instance.humanStructures.structures.Length; i++) {
@@ -47,7 +53,7 @@ public class ObjectPoolManager : MonoBehaviour {
 
         for (int i = 0; i < monsterAvatarPrefabs.Length; i++) {
             GameObject currPrefab = monsterAvatarPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 50, true, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
         }
     }
 
@@ -80,6 +86,7 @@ public class ObjectPoolManager : MonoBehaviour {
         } else {
             po.Reset();
             po.SendObjectBackToPool();
+            po.transform.SetParent(po.ParentPool.transform);
         }
     }
 
