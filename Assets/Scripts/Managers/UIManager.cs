@@ -1496,11 +1496,11 @@ public class UIManager : MonoBehaviour {
 
     public void ShowKingdomCurrentEvents() {
         HideKingdomPastEvents();
-        List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
-        List<GameEvent> politicalEvents = allActiveEventsInKingdom.Where(x => x.eventType != EVENT_TYPES.KINGDOM_WAR && x.eventType != EVENT_TYPES.INVASION_PLAN && 
+//		List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
+		List<GameEvent> politicalEvents = currentlyShowingKingdom.activeEvents.Where(x => x.eventType != EVENT_TYPES.KINGDOM_WAR && x.eventType != EVENT_TYPES.INVASION_PLAN && 
         x.eventType != EVENT_TYPES.JOIN_WAR_REQUEST && x.eventType != EVENT_TYPES.REQUEST_PEACE && !Utilities.eventsNotToShow.Contains(x.eventType)).ToList();
 
-        List<GameEvent> wars = allActiveEventsInKingdom.Where(x => x.eventType == EVENT_TYPES.KINGDOM_WAR).ToList();
+		List<GameEvent> wars = currentlyShowingKingdom.activeEvents.Where(x => x.eventType == EVENT_TYPES.KINGDOM_WAR).ToList();
 
         if (politicalEvents.Count <= 0 && wars.Count <= 0) {
             kingdomNoCurrentEventsLbl.gameObject.SetActive(true);
@@ -1531,8 +1531,8 @@ public class UIManager : MonoBehaviour {
 
     public void ShowKingdomPastEvents() {
         HideKingdomCurrentEvents();
-        List<GameEvent> allDoneEvents = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).
-            Where(x => !x.isActive && !Utilities.eventsNotToShow.Contains(x.eventType)).ToList();
+        List<GameEvent> allDoneEvents = currentlyShowingKingdom.doneEvents.
+            Where(x => !Utilities.eventsNotToShow.Contains(x.eventType)).ToList();
         allDoneEvents = allDoneEvents.OrderByDescending(x => x.startDate).ToList();
 
         List<EventListItem> currentItems = kingdomHistoryGrid.GetChildList().Select(x => x.GetComponent<EventListItem>()).ToList();

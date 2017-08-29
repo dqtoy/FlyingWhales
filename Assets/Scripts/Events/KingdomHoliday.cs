@@ -62,7 +62,7 @@ public class KingdomHoliday : GameEvent {
     }
 
     protected void CheckWars() {
-        List<GameEvent> activeWars = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(_sourceKingdom, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR }).Where(x => x.isActive).ToList();
+		List<GameEvent> activeWars = this._sourceKingdom.GetEventsOfType(EVENT_TYPES.KINGDOM_WAR);
         if (activeWars.Count > 0) {
             CancelEvent();
         }
