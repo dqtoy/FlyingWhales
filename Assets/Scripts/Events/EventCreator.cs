@@ -419,7 +419,7 @@ public class EventCreator: MonoBehaviour {
 		if(sourceKingdom.isLockedDown){
 			return null;
 		}
-		if (sourceKingdom.GetActiveEventsOfTypeCount(EVENT_TYPES.ADVENTURE) > 0) {
+		if (sourceKingdom.HasActiveEvent(EVENT_TYPES.ADVENTURE)) {
             return null;
         }
         List<HexTile> tilesToChooseFrom = sourceKingdom.capitalCity.hexTile.AvatarTiles.ToList();

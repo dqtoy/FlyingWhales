@@ -46,6 +46,14 @@ public class BoonOfPower : GameEvent {
 		base.DoneEvent ();
 	}
 	#endregion
+	private void Expiration(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < 35){
+			DestroyThis ();
+		}else{
+			SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => Expiration());
+		}
+	}
 	private void Initialize(){
 		this.hexTileSpawnPoint.PutEventOnTile (this);
 		//this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/BoonOfPower"), this.hexTileSpawnPoint.transform) as GameObject;
@@ -58,10 +66,11 @@ public class BoonOfPower : GameEvent {
 	}
 	internal void Activate(){
 		this._isActivated = true;
-		this.activatedMonth = GameManager.Instance.month;
-		this.activatedDay = GameManager.Instance.days;
-		this.activatedYear = GameManager.Instance.year;
-		Messenger.AddListener("OnDayEnd", this.PerformAction);
+//		this.activatedMonth = GameManager.Instance.month;
+//		this.activatedDay = GameManager.Instance.days;
+//		this.activatedYear = GameManager.Instance.year;
+//		Messenger.AddListener("OnDayEnd", this.PerformAction);
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => Expiration());
 
 		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "BoonOfPower", "power_activated");
 	}
@@ -90,7 +99,7 @@ public class BoonOfPower : GameEvent {
 		this._isDestroyed = true;
 		this._isActivated = false;
 		this.ownerKingdom = null;
-		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
+//		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 
 		if(this.ownerKingdom.isAlive()){
 			this.ownerKingdom.DestroyBoonOfPower (this);
