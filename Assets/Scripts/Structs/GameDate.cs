@@ -6,10 +6,10 @@ public struct GameDate {
 	public int day;
 	public int year;
 
-	public GameDate(bool isCurrent = true){
-		this.month = GameManager.Instance.month;
-		this.day = GameManager.Instance.days;
-		this.year = GameManager.Instance.year;
+	public GameDate(int month, int day, int year){
+		this.month = month;
+		this.day = day;
+		this.year = year;
 	}
 
 	public void AddDays(int amount){

@@ -1051,7 +1051,7 @@ public class Utilities : MonoBehaviour {
 	}
 
 	public static GameDate GetNewDateAfterNumberOfDays(int month, int day, int year, int numOfDaysElapsed){
-        GameDate newDate = new GameDate();
+		GameDate newDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
         newDate.SetDate(month, day, year);
         newDate.AddDays(numOfDaysElapsed);
 

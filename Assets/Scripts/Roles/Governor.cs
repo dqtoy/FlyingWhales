@@ -45,7 +45,7 @@ public class Governor : Role {
         this.SetOwnedCity(this.citizen.city);
         this.citizen.GenerateCharacterValues();
         this.UpdateLoyalty ();
-		Messenger.AddListener("OnDayEnd", CheckEventModifiers);
+//		Messenger.AddListener("OnDayEnd", CheckEventModifiers);
 
 	}
 	internal void SetOwnedCity(City ownedCity){
@@ -156,11 +156,11 @@ public class Governor : Role {
 	}
 
 	internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger) {
-		GameDate dateToUse = new GameDate ();
+		GameDate dateToUse = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		dateToUse.AddMonths(3);
-
-		this._eventModifiers.Add(new ExpirableModifier(gameEventTrigger, summary, dateToUse, modification));
-
+		ExpirableModifier expMod = new ExpirableModifier (gameEventTrigger, summary, dateToUse, modification);
+		this._eventModifiers.Add(expMod);
+		SchedulingManager.Instance.AddEntry (expMod.dueDate.month, expMod.dueDate.day, expMod.dueDate.year, () => RemoveEventModifier(expMod));
 		GovernorEvents ();
 //        this._eventLoyaltyModifier += modification;
 //        if(_eventLoyaltyModifier < 0) {
@@ -202,6 +202,10 @@ public class Governor : Role {
 		this._eventModifiers.RemoveAt (index);
 
 	}
+	private void RemoveEventModifier(ExpirableModifier expMod){
+		this._eventModifiers.Remove (expMod);
+
+	}
 	internal void SetLoyalty(int newLoyalty) {
         this._loyalty = newLoyalty;
     }
@@ -229,6 +233,6 @@ public class Governor : Role {
 
 	internal override void OnDeath (){
 		base.OnDeath ();
-		Messenger.RemoveListener("OnDayEnd", CheckEventModifiers);
+//		Messenger.RemoveListener("OnDayEnd", CheckEventModifiers);
 	}
 }

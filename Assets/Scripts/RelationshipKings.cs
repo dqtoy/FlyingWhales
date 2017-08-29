@@ -64,7 +64,7 @@ public class RelationshipKings {
         //		this.isAdjacent = false;
         //		this.isAtWar = false;
 		UpdateLikeness(null);
-        Messenger.AddListener("OnDayEnd", CheckEventModifiers);
+//        Messenger.AddListener("OnDayEnd", CheckEventModifiers);
     }
 
 	internal void UpdateKingRelationshipStatus(){
@@ -306,13 +306,16 @@ public class RelationshipKings {
 //        }
 		RELATIONSHIP_STATUS previousStatus = this.lordRelationship;
 
-		GameDate dateTimeToUse = new GameDate();
+		GameDate dateTimeToUse = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		if(gameEventTrigger.eventType == EVENT_TYPES.KINGDOM_WAR) {
 			dateTimeToUse.AddYears(1);
 		}else{
 			dateTimeToUse.AddMonths(3);
 		}
-		this._eventModifiers.Add (new ExpirableModifier (gameEventTrigger, summary, dateTimeToUse, modification));
+		ExpirableModifier expMod = new ExpirableModifier (gameEventTrigger, summary, dateTimeToUse, modification);
+		this._eventModifiers.Add (expMod);
+		SchedulingManager.Instance.AddEntry (expMod.dueDate.month, expMod.dueDate.day, expMod.dueDate.year, () => RemoveEventModifier(expMod));
+
 //        if (this._eventModifiers.ContainsKey(gameEventTrigger.eventType)) {
 //            this._eventModifiers[gameEventTrigger.eventType].Add(new ExpirableModifier(gameEventTrigger, summary, dateTimeToUse, modification));
 //        } else {
@@ -375,6 +378,10 @@ public class RelationshipKings {
     }
 	private void RemoveEventModifierAt(int index){
 		this._eventModifiers.RemoveAt (index);
+		UpdateKingRelationshipStatus();
+	}
+	private void RemoveEventModifier(ExpirableModifier expMod){
+		this._eventModifiers.Remove (expMod);
 		UpdateKingRelationshipStatus();
 	}
 //    private void UpdateEventModifiers() {

@@ -316,7 +316,7 @@ public class Kingdom{
 		this.UpdateTechCapacity ();
 		this.SetSecession (false);
 		this.SetRiot (false);
-		this.NewRandomCrimeDate (true);
+//		this.NewRandomCrimeDate (true);
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
 		this.UpdateKingdomTypeData();
@@ -333,6 +333,15 @@ public class Kingdom{
 		Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
 		Messenger.AddListener("OnDayEnd", KingdomTickActions);
         Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
+
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
+
+		ScheduleEvents ();
+
+        //EventManager.Instance.onKingdomDiedEvent.AddListener(OtherKingdomDiedActions);
+
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 
@@ -551,15 +560,15 @@ public class Kingdom{
 	 * */
 	protected void KingdomTickActions(){
         //this.ProduceGoldFromTrade();
-        this.AttemptToAge();
-        this.AdaptToKingValues();
+//        this.AttemptToAge();
+//        this.AdaptToKingValues();
         if (_isGrowthEnabled) {
             this.AttemptToExpand();
         }
 //		this.AttemptToCreateAttackCityEvent ();
 //		this.AttemptToCreateReinforcementEvent ();
         //		this.AttemptToIncreaseCityHP();
-        this.DecreaseUnrestEveryMonth();
+//        this.DecreaseUnrestEveryMonth();
 //		this.CheckBorderConflictLoyaltyExpiration ();
 		this.IncreaseTechCounterPerTick();
         this.TriggerEvents();
@@ -569,33 +578,52 @@ public class Kingdom{
     }
 
     private void AdaptToKingValues() {
-        if(GameManager.Instance.days == 1 && GameManager.Instance.month == 1) {
-            for (int i = 0; i < _dictCharacterValues.Count; i++) {
-                CHARACTER_VALUE currValue = _dictCharacterValues.ElementAt(i).Key;
-                if (king.importantCharacterValues.ContainsKey(currValue)) {
-                    UpdateSpecificCharacterValue(currValue, 1);
-                } else {
-                    UpdateSpecificCharacterValue(currValue, -1);
-                }
-            }
-            UpdateKingdomCharacterValues();
-        }
+		for (int i = 0; i < _dictCharacterValues.Count; i++) {
+			CHARACTER_VALUE currValue = _dictCharacterValues.ElementAt(i).Key;
+			if (king.importantCharacterValues.ContainsKey(currValue)) {
+				UpdateSpecificCharacterValue(currValue, 1);
+			} else {
+				UpdateSpecificCharacterValue(currValue, -1);
+			}
+		}
+		UpdateKingdomCharacterValues();
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, AdaptToKingValues);
+//        if(GameManager.Instance.days == 1 && GameManager.Instance.month == 1) {
+//            for (int i = 0; i < _dictCharacterValues.Count; i++) {
+//                CHARACTER_VALUE currValue = _dictCharacterValues.ElementAt(i).Key;
+//                if (king.importantCharacterValues.ContainsKey(currValue)) {
+//                    UpdateSpecificCharacterValue(currValue, 1);
+//                } else {
+//                    UpdateSpecificCharacterValue(currValue, -1);
+//                }
+//            }
+//            UpdateKingdomCharacterValues();
+//        }
     }
 
     private void AttemptToAge() {
-        if(GameManager.Instance.year > foundationYear && GameManager.Instance.month == foundationMonth && GameManager.Instance.days == foundationDay) {
-            age += 1;
-        }
+		age += 1;
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), AttemptToAge);
+//        if(GameManager.Instance.year > foundationYear && GameManager.Instance.month == foundationMonth && GameManager.Instance.days == foundationDay) {
+//            age += 1;
+//        }
     }
-
     private void TriggerEvents() {
-        this.TriggerSlavesMerchant();
-        this.TriggerHypnotism();
+//        this.TriggerSlavesMerchant();
+//        this.TriggerHypnotism();
         this.TriggerKingdomHoliday();
-        //this.TriggerDevelopWeapons();
-        this.TriggerKingsCouncil();
-		this.TriggerCrime ();
+//        //this.TriggerDevelopWeapons();
+//        this.TriggerKingsCouncil();
+//		this.TriggerCrime ();
     }
+	private void ScheduleEvents(){
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => TriggerSlavesMerchant());
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => TriggerHypnotism());
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => TriggerKingsCouncil());
+
+		int month = UnityEngine.Random.Range (1, 5);
+		SchedulingManager.Instance.AddEntry (month, UnityEngine.Random.Range(1, GameManager.daysInMonth[month]), GameManager.Instance.year, () => TriggerCrime());
+	}
 	/*
 	 * Attempt to create an attack city event
 	 * This will only happen if there's a war with any other kingdom
@@ -808,9 +836,14 @@ public class Kingdom{
      * Deacrease the kingdom's unrest by UNREST_DECREASE_PER_MONTH amount every month.
      * */
     protected void DecreaseUnrestEveryMonth() {
-        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
-            this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
-        }
+		this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
+		GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+		gameDate.AddMonths (1);
+		gameDate.day = GameManager.daysInMonth [gameDate.month];
+		SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => DecreaseUnrestEveryMonth());
+//        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+//            this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
+//        }
     }
 
     /*
@@ -1991,35 +2024,63 @@ public class Kingdom{
 
 	#region Slaves Merchant
 	private void TriggerSlavesMerchant(){
-		if(GameManager.Instance.days == 20){
-			int chance = UnityEngine.Random.Range(0,100);
-			if(chance < 8){
-				EventCreator.Instance.CreateSlavesMerchantEvent(this.king);
-			}
+		int chance = UnityEngine.Random.Range(0,100);
+		if(chance < 8){
+			EventCreator.Instance.CreateSlavesMerchantEvent(this.king);
 		}
+		GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+		gameDate.AddMonths (2);
+		gameDate.day = UnityEngine.Random.Range (1, GameManager.daysInMonth [gameDate.month]);
+		SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => TriggerSlavesMerchant());
+//		if(GameManager.Instance.days == 20){
+//			int chance = UnityEngine.Random.Range(0,100);
+//			if(chance < 8){
+//				EventCreator.Instance.CreateSlavesMerchantEvent(this.king);
+//			}
+//		}
 	}
     #endregion
 
     #region Hypnotism
     private void TriggerHypnotism() {
-        if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-            if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
-                List<GameEvent> previousHypnotismEvents = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.HYPNOTISM }, false);
-                if (previousHypnotismEvents.Where(x => x.startYear == GameManager.Instance.year).Count() <= 0) {
-                    List<Kingdom> notFriends = new List<Kingdom>();
-                    for (int i = 0; i < discoveredKingdoms.Count; i++) {
-                        Kingdom currKingdom = discoveredKingdoms[i];
-                        RelationshipKings rel = currKingdom.king.GetRelationshipWithCitizen(this.king);
-                        if (rel.lordRelationship != RELATIONSHIP_STATUS.FRIEND && rel.lordRelationship != RELATIONSHIP_STATUS.ALLY) {
-                            notFriends.Add(currKingdom);
-                        }
-                    }
-                    if (UnityEngine.Random.Range(0, 100) < 10 && notFriends.Count > 0) {
-                        EventCreator.Instance.CreateHypnotismEvent(this, notFriends[UnityEngine.Random.Range(0, notFriends.Count)]);
-                    }
-                }
-            }
-        }
+		if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
+			List<GameEvent> previousHypnotismEvents = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.HYPNOTISM }, false);
+			if (previousHypnotismEvents.Where(x => x.startYear == GameManager.Instance.year).Count() <= 0) {
+				List<Kingdom> notFriends = new List<Kingdom>();
+				for (int i = 0; i < discoveredKingdoms.Count; i++) {
+					Kingdom currKingdom = discoveredKingdoms[i];
+					RelationshipKings rel = currKingdom.king.GetRelationshipWithCitizen(this.king);
+					if (rel.lordRelationship != RELATIONSHIP_STATUS.FRIEND && rel.lordRelationship != RELATIONSHIP_STATUS.ALLY) {
+						notFriends.Add(currKingdom);
+					}
+				}
+				if (UnityEngine.Random.Range(0, 100) < 10 && notFriends.Count > 0) {
+					EventCreator.Instance.CreateHypnotismEvent(this, notFriends[UnityEngine.Random.Range(0, notFriends.Count)]);
+				}
+			}
+		}
+		GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+		gameDate.AddMonths (1);
+		gameDate.day = GameManager.daysInMonth [gameDate.month];
+		SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => TriggerHypnotism());
+//        if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
+//            if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+//                List<GameEvent> previousHypnotismEvents = EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.HYPNOTISM }, false);
+//                if (previousHypnotismEvents.Where(x => x.startYear == GameManager.Instance.year).Count() <= 0) {
+//                    List<Kingdom> notFriends = new List<Kingdom>();
+//                    for (int i = 0; i < discoveredKingdoms.Count; i++) {
+//                        Kingdom currKingdom = discoveredKingdoms[i];
+//                        RelationshipKings rel = currKingdom.king.GetRelationshipWithCitizen(this.king);
+//                        if (rel.lordRelationship != RELATIONSHIP_STATUS.FRIEND && rel.lordRelationship != RELATIONSHIP_STATUS.ALLY) {
+//                            notFriends.Add(currKingdom);
+//                        }
+//                    }
+//                    if (UnityEngine.Random.Range(0, 100) < 10 && notFriends.Count > 0) {
+//                        EventCreator.Instance.CreateHypnotismEvent(this, notFriends[UnityEngine.Random.Range(0, notFriends.Count)]);
+//                    }
+//                }
+//            }
+//        }
     }
     #endregion
 
@@ -2076,15 +2137,26 @@ public class Kingdom{
 
     #region Kings Council
     protected void TriggerKingsCouncil() {
-        if(this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) || this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.PEACE)) {
-            if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
-                if (UnityEngine.Random.Range(0, 100) < 2) {
-                    if (discoveredKingdoms.Count > 2 && EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR, EVENT_TYPES.KINGS_COUNCIL }).Count <= 0) {
-                        EventCreator.Instance.CreateKingsCouncilEvent(this);
-                    }
-                }
-            }
-        }
+		if(this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) || this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.PEACE)) {
+			if (UnityEngine.Random.Range(0, 100) < 2) {
+				if (discoveredKingdoms.Count > 2 && EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR, EVENT_TYPES.KINGS_COUNCIL }).Count <= 0) {
+					EventCreator.Instance.CreateKingsCouncilEvent(this);
+				}
+			}
+		}
+		GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+		gameDate.AddMonths (1);
+		gameDate.day = GameManager.daysInMonth [gameDate.month];
+		SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => TriggerKingsCouncil());
+//        if(this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) || this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.PEACE)) {
+//            if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+//                if (UnityEngine.Random.Range(0, 100) < 2) {
+//                    if (discoveredKingdoms.Count > 2 && EventManager.Instance.GetEventsStartedByKingdom(this, new EVENT_TYPES[] { EVENT_TYPES.KINGDOM_WAR, EVENT_TYPES.KINGS_COUNCIL }).Count <= 0) {
+//                        EventCreator.Instance.CreateKingsCouncilEvent(this);
+//                    }
+//                }
+//            }
+//        }
     }
     #endregion
 
@@ -2203,10 +2275,20 @@ public class Kingdom{
 	} 
 
 	private void TriggerCrime(){
-		if(GameManager.Instance.month == this._crimeDate.month && GameManager.Instance.days == this._crimeDate.day){
-			NewRandomCrimeDate ();
-			CreateCrime ();
+		CreateCrime ();
+		GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+		gameDate.AddMonths (3);
+		int chance = UnityEngine.Random.Range (0, 2);
+		if(chance == 0){
+			gameDate.AddMonths (1);
 		}
+		gameDate.day = UnityEngine.Random.Range (1, GameManager.daysInMonth [gameDate.month]);
+
+		SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => TriggerCrime());
+//		if(GameManager.Instance.month == this._crimeDate.month && GameManager.Instance.days == this._crimeDate.day){
+//			NewRandomCrimeDate ();
+//			CreateCrime ();
+//		}
 	}
 
 	private void CreateCrime(){
