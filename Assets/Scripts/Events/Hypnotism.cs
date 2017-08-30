@@ -35,7 +35,7 @@ public class Hypnotism : GameEvent {
         Log arrivedLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Hypnotism", "witch_arrived");
         arrivedLog.AddToFillers(_targetKingdom, _targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
-        RelationshipKings rel = _targetKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king);
+        KingdomRelationship rel = _targetKingdom.GetRelationshipWithKingdom(_sourceKingdom);
         if (Random.Range(0,100) < 60) {
             //Successful Hypnotize
             if(Random.Range(0,100) < 50) {
@@ -63,10 +63,10 @@ public class Hypnotism : GameEvent {
                 Kingdom currKingdom = _sourceKingdom.discoveredKingdoms[i];
                 if(currKingdom.id != _targetKingdom.id) {
                     //if (currKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-                    //    RelationshipKings otherRel = currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king);
+                    //    KingdomRelationship otherRel = currKingdom.king.GetRelationshipWithKingdom(_sourceKingdom.king);
                     //    otherRel.AddEventModifier(20, "Hypnotism of " + _targetKingdom.king + " reaction", this);
                     //} else {
-                        RelationshipKings otherRel = currKingdom.king.GetRelationshipWithCitizen(_sourceKingdom.king);
+                        KingdomRelationship otherRel = currKingdom.GetRelationshipWithKingdom(_sourceKingdom);
                         otherRel.AddEventModifier(-5, "Hypnotism of " + _targetKingdom.king + " reaction", this);
                     //}
                 }

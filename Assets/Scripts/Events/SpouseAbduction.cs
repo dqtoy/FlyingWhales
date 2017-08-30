@@ -22,7 +22,7 @@ public class SpouseAbduction : GameEvent {
 	internal int marriageCompatibilityWithTargetKing;
 	internal int marriageCompatibilityWithAbductorKing;
 
-	private RelationshipKings relationshipKing;
+	private KingdomRelationship relationshipKing;
 	private int daysCounter;
 
 	public SpouseAbduction(int startWeek, int startMonth, int startYear, Citizen startedBy, Citizen targetKing) : base (startWeek, startMonth, startYear, startedBy){
@@ -46,7 +46,7 @@ public class SpouseAbduction : GameEvent {
 
 		this._warTrigger = WAR_TRIGGER.SPOUSE_ABDUCTION;
 
-		relationshipKing = this.targetKing.GetRelationshipWithCitizen (this.abductorKing);
+		relationshipKing = this.targetKing.city.kingdom.GetRelationshipWithKingdom (this.abductorKing.city.kingdom);
 		this.daysCounter = 0;
 
 		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "event_title");
@@ -455,7 +455,7 @@ public class SpouseAbduction : GameEvent {
 	private void AdjustRelationshipFromOtherKingdoms(Citizen targetKing, int amount, CHARACTER_VALUE requiredValue){
 		for(int i = 0; i < this.otherKingdoms.Count; i++){
 			if(this.otherKingdoms[i].king.importantCharacterValues.ContainsKey(requiredValue)){
-				RelationshipKings relationship = this.otherKingdoms [i].king.GetRelationshipWithCitizen (targetKing);
+				KingdomRelationship relationship = this.otherKingdoms [i].GetRelationshipWithKingdom (targetKing.city.kingdom);
 				if(relationship != null){
 					relationship.AddEventModifier (amount, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 				}

@@ -482,7 +482,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
      * according to the passed parameter.
      * */
     internal void CreateCityNamePlate(City city) {
-        Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
+        //Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
 
         GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("CityNamePlatePanel", UIParent);
         namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
@@ -510,7 +510,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     internal void CreateLairNamePlate() {
-        Debug.Log("Create lair nameplate on " + this.name);
+        //Debug.Log("Create lair nameplate on " + this.name);
 
         GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("LairNamePlatePanel", UIParent);
         namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
@@ -534,7 +534,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     internal void CreateEventNamePlate() {
-        Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
+        //Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
 
         GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("EventNamePlatePanel", UIParent);
         namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
@@ -928,6 +928,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
+    [ContextMenu("Kill King")]
+    public void KillKing() {
+        Debug.Log("Force kill " + this.ownedByCity.kingdom.king.name + " king of " + this.ownedByCity.kingdom.name);
+        this.ownedByCity.kingdom.king.Death(DEATH_REASONS.ACCIDENT);
+    }
+
     //[ContextMenu("Select All Relevant Tiles")]
     //public void SelectAllRelevantTiles() {
     //    List<GameObject> allTiles = new List<GameObject>();
@@ -959,7 +965,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
             "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
             "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
-       
+
+        text += "[b]Relationships: [/b]\n";
+        if (this.city.kingdom.relationships.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.relationships.Count; i++) {
+                text += this.city.kingdom.relationships.Keys.ElementAt(i).name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
+
         text += "[b]Embargo List: [/b]\n";
         if (this.city.kingdom.embargoList.Count > 0) {
             for (int i = 0; i < this.city.kingdom.embargoList.Keys.Count; i++) {

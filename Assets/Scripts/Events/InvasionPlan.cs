@@ -205,14 +205,14 @@ public class InvasionPlan : GameEvent {
 				return;
 			}
 
-			List<RelationshipKings> friends = this.startedBy.friends
-                .Where(x => this.startedByKingdom.discoveredKingdoms.Contains(x.king.city.kingdom)).ToList();
+            List<Kingdom> friends = this.startedByKingdom.GetKingdomsByRelationship(new RELATIONSHIP_STATUS[] { RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY });
 
 			if (friends.Count > 0) {
 				for (int i = 0; i < friends.Count; i++) {
-					War friendWarWithTargetKingdom = KingdomManager.Instance.GetWarBetweenKingdoms (friends [i].king.city.kingdom, this._targetKingdom);
-					List<GameEvent> friendsActiveInvasionPlans = friends[i].king.city.kingdom.GetEventsOfType(EVENT_TYPES.INVASION_PLAN);
-                    JoinWar activeJoinWarRequest = KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, friends[i].king.city.kingdom);
+                    Kingdom currFriend = friends[i];
+					War friendWarWithTargetKingdom = KingdomManager.Instance.GetWarBetweenKingdoms (currFriend, this._targetKingdom);
+                    List<GameEvent> friendsActiveInvasionPlans = currFriend.activeEvents.Where(x => x.eventType == EVENT_TYPES.INVASION_PLAN).ToList();
+                    JoinWar activeJoinWarRequest = KingdomManager.Instance.GetJoinWarRequestBetweenKingdoms(this.startedByKingdom, currFriend);
                     if (friendsActiveInvasionPlans.Count > 0 || activeJoinWarRequest != null || 
                         (friendWarWithTargetKingdom != null && friendWarWithTargetKingdom.isAtWar)) {
 						//friend already has an active invasion plan or friend already has an active join war request from this startedByKingdom or is already
@@ -220,12 +220,12 @@ public class InvasionPlan : GameEvent {
 						continue;
 					}
 					int chanceToSendJoinWarRequest = 2;
-					if (friends [i].lordRelationship == RELATIONSHIP_STATUS.ALLY) {
+					if (currFriend.GetRelationshipWithKingdom(startedByKingdom).relationshipStatus == RELATIONSHIP_STATUS.ALLY) {
 						chanceToSendJoinWarRequest = 3;
 					}
 					int chance = Random.Range (0, 100);
 					if (chance < chanceToSendJoinWarRequest) {
-						JoinWar joinWar = EventCreator.Instance.CreateJoinWarEvent (this.startedByKingdom, friends [i].king.city.kingdom, this);
+						JoinWar joinWar = EventCreator.Instance.CreateJoinWarEvent (this.startedByKingdom, currFriend, this);
 						if(joinWar != null){
 							this._joinWarEvents.Add(joinWar);
 						}

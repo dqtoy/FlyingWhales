@@ -8,8 +8,8 @@ public class War : GameEvent {
 	private Kingdom _kingdom1;
 	private Kingdom _kingdom2;
 
-	private RelationshipKingdom _kingdom1Rel;
-	private RelationshipKingdom _kingdom2Rel;
+	private KingdomRelationship _kingdom1Rel;
+	private KingdomRelationship _kingdom2Rel;
 
 	internal CityWarPair warPair;
 
@@ -35,11 +35,11 @@ public class War : GameEvent {
 		get { return _kingdom2; }
 	}
 
-	public RelationshipKingdom kingdom1Rel {
+	public KingdomRelationship kingdom1Rel {
 		get { return _kingdom1Rel; }
 	}
 
-	public RelationshipKingdom kingdom2Rel {
+	public KingdomRelationship kingdom2Rel {
 		get { return _kingdom2Rel; }
 	}
 
@@ -54,8 +54,8 @@ public class War : GameEvent {
 		this.description = "War between " + _kingdom1.name + " and " + _kingdom2.name + ".";
 		this._kingdom1 = _kingdom1;
 		this._kingdom2 = _kingdom2;
-		this._kingdom1Rel = _kingdom1.GetRelationshipWithOtherKingdom(_kingdom2);
-		this._kingdom2Rel = _kingdom2.GetRelationshipWithOtherKingdom(_kingdom1);
+		this._kingdom1Rel = _kingdom1.GetRelationshipWithKingdom(_kingdom2);
+		this._kingdom2Rel = _kingdom2.GetRelationshipWithKingdom(_kingdom1);
 		this._kingdom1Rel.AssignWarEvent(this);
 		this._kingdom2Rel.AssignWarEvent(this);
 		this.warPair.DefaultValues();
@@ -133,8 +133,8 @@ public class War : GameEvent {
 		this._kingdom1Rel.DeclarePeace();
 		this._kingdom2Rel.DeclarePeace();
 
-        RelationshipKings rel1 = kingdom1.king.GetRelationshipWithCitizen(kingdom2.king);
-        RelationshipKings rel2 = kingdom2.king.GetRelationshipWithCitizen(kingdom1.king);
+        KingdomRelationship rel1 = kingdom1.GetRelationshipWithKingdom(kingdom2);
+        KingdomRelationship rel2 = kingdom2.GetRelationshipWithKingdom(kingdom1);
 
         rel1.AddEventModifier(-15, "recent war with " + kingdom2.name, this);
         rel2.AddEventModifier(-15, "recent war with " + kingdom1.name, this);
@@ -186,13 +186,13 @@ public class War : GameEvent {
         for (int i = 0; i < kingdomsInWar.Length; i++) {
             Kingdom currKingdom = kingdomsInWar[i];
             Kingdom otherKingdom = this._kingdom2;
-            RelationshipKingdom rel = this._kingdom1Rel;
+            KingdomRelationship rel = this._kingdom1Rel;
             if (currKingdom.id == this._kingdom2.id) {
                 otherKingdom = this._kingdom1;
                 rel = this._kingdom2Rel;
             }
 
-            if (rel.monthToMoveOnAfterRejection == MONTH.NONE
+            if (rel.requestPeaceCooldown.month == 0
                 && KingdomManager.Instance.GetRequestPeaceBetweenKingdoms(currKingdom, otherKingdom) == null) {
 
                 int chanceToTriggerRequestPeace = 0;

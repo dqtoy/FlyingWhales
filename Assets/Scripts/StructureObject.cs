@@ -71,6 +71,7 @@ public class StructureObject : PooledObject {
 
     private void QueueForExpiry() {
         expiryDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, 180);
+        //SchedulingManager.Instance.AddEntry(expiryDate.month, expiryDate.day, expiryDate.year, () => DestroyStructure());
         Messenger.AddListener("OnDayEnd", CheckForExpiry);
     }
 

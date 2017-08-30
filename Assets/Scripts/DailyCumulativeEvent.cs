@@ -143,7 +143,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 
 //	[Task]
 	public bool AreTheTwoKingdomsAtWar(){
-		RelationshipKingdom relationship = this.firstKingdom.GetRelationshipWithOtherKingdom (this.secondKingdom);
+		KingdomRelationship relationship = this.firstKingdom.GetRelationshipWithKingdom (this.secondKingdom);
 		if (relationship == null) {
 			return false;
 		}
@@ -275,7 +275,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	}
 	private void CreateTradeEvent(){
         //Create Trade Event
-        RelationshipKingdom relWithOtherKingdom = this.firstKingdom.GetRelationshipWithOtherKingdom(this.secondKingdom);
+        KingdomRelationship relWithOtherKingdom = this.firstKingdom.GetRelationshipWithKingdom(this.secondKingdom);
         City randomSourceCity = this.firstKingdom.cities[Random.Range(0, this.firstKingdom.cities.Count)];
         City randomTargetCity = this.secondKingdom.cities[Random.Range(0, this.secondKingdom.cities.Count)];
         List<HexTile> path = PathGenerator.Instance.GetPath(randomSourceCity.hexTile, randomTargetCity.hexTile, PATHFINDING_MODE.NORMAL);
@@ -436,12 +436,12 @@ public class DailyCumulativeEvent : MonoBehaviour {
 
 	private bool IsCompatibleRelationship(Kingdom targetKingdom){
 		if (this.eventToCreate.relationshipTargets.Length > 0) {
-			RelationshipKings relationship = this.firstKingdom.king.GetRelationshipWithCitizen (targetKingdom.king);
-//			Debug.Log ("RELATIONSHIP: " + relationship.lordRelationship.ToString());
+			KingdomRelationship relationship = this.firstKingdom.GetRelationshipWithKingdom(targetKingdom);
+//			Debug.Log ("RELATIONSHIP: " + relationship.relationshipStatus.ToString());
 			if(relationship == null){
 				return false;
 			}
-			if (this.eventToCreate.relationshipTargets.Contains (relationship.lordRelationship)) {
+			if (this.eventToCreate.relationshipTargets.Contains (relationship.relationshipStatus)) {
 				return true;
 			}else{
 				return false;

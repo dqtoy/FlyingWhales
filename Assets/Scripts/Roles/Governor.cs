@@ -124,8 +124,8 @@ public class Governor : Role {
             this._loyaltySummary += adjustment.ToString() + "   values influence.\n";
         }
 
-        for (int i = 0; i < kingdom.relationshipsWithOtherKingdoms.Count; i++){
-			if(kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
+        for (int i = 0; i < kingdom.relationships.Count; i++){
+			if(kingdom.relationships.ElementAt(i).Value.isAtWar){
                 adjustment = -10;
                 baseLoyalty += adjustment;
                 this._loyaltySummary += adjustment.ToString() + "   Kingdom is at war.\n";

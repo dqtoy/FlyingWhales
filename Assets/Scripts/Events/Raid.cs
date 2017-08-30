@@ -104,9 +104,9 @@ public class Raid : GameEvent {
 				this._assassinationTrigger = ASSASSINATION_TRIGGER_REASONS.DISCOVERED_RAID_WITH_DEATH;
 
 			}
-			RelationshipKings relationship = this.GetRelationship ();
+			KingdomRelationship relationship = this.GetRelationship ();
 			if (relationship != null) {
-				this.targetKingdom.king.WarTrigger (relationship, this, this.targetKingdom.kingdomTypeData, this._warTrigger);
+				this.targetKingdom.WarTrigger (relationship, this, this.targetKingdom.kingdomTypeData, this._warTrigger);
 			}
 		}
 
@@ -237,7 +237,7 @@ public class Raid : GameEvent {
 						amountToAdjust = -9;
 					}
 				}
-				RelationshipKings relationship = this.GetRelationship ();
+				KingdomRelationship relationship = this.GetRelationship ();
 				if(relationship != null){
 					relationship.AddEventModifier(amountToAdjust, this.name + " event", this);
 				}
@@ -276,7 +276,7 @@ public class Raid : GameEvent {
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Raid", "raid_discovery");
 				newLog.AddToFillers (this.raidedCity, this.raidedCity.name, LOG_IDENTIFIER.CITY_1);
 			}
-			RelationshipKings relationship = this.GetRelationship ();
+			KingdomRelationship relationship = this.GetRelationship ();
 			if(relationship != null){
 				relationship.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_RAID_NO_DEATH);
 			}
@@ -366,16 +366,16 @@ public class Raid : GameEvent {
 	//	}
 	//}
 
-	private RelationshipKings GetRelationship(){
-		RelationshipKings relationship = null;
+	private KingdomRelationship GetRelationship(){
+		KingdomRelationship relationship = null;
 		if(this.targetKingdom == null || !this.targetKingdom.isAlive()){
 			return relationship;
 		}
-		relationship = this.targetKingdom.king.SearchRelationshipByID (this.sourceKingdom.king.id);
+		relationship = this.targetKingdom.GetRelationshipWithKingdom (this.sourceKingdom);
 		if(this.hasDeflected){
 			if(this.kingdomToBlame != null){
 				if(this.kingdomToBlame.isAlive()){
-					relationship = this.targetKingdom.king.SearchRelationshipByID (this.kingdomToBlame.king.id);
+					relationship = this.targetKingdom.GetRelationshipWithKingdom (this.kingdomToBlame);
 				}else{
 					relationship = null;
 				}

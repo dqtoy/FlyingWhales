@@ -12,7 +12,7 @@ public class Spy : Role {
 //	protected delegate void DoAction();
 //	protected DoAction onDoAction;
 //
-//	private RelationshipKingdom warExhaustiontarget;
+//	private KingdomRelationship warExhaustiontarget;
 
 	public Spy(Citizen citizen): base(citizen){
 		this.assassination = null;
@@ -45,7 +45,7 @@ public class Spy : Role {
 //			}
 //		}
 //	}
-	/*internal void StartDecreaseWarExhaustionTask(RelationshipKingdom targetKingdom){
+	/*internal void StartDecreaseWarExhaustionTask(KingdomRelationship targetKingdom){
 //		Debug.Log(this.citizen.name + ": Start Decrease War Exhaustion Task");
 		this.actionDurationInWeeks = 2;
 		this.warExhaustiontarget = targetKingdom;

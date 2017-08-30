@@ -141,8 +141,8 @@ public class GameManager : MonoBehaviour {
 					for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
 						Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
 						if (currentKingdom.id != currentWar.kingdom1.id) {
-							RelationshipKings rel = currentKingdom.king.GetRelationshipWithCitizen (currentWar.kingdom1.king);
-							if (rel.lordRelationship == RELATIONSHIP_STATUS.ENEMY || rel.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+							KingdomRelationship rel = currentKingdom.king.GetRelationshipWithKingdom (currentWar.kingdom1.king);
+							if (rel.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || rel.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
 								kingdom1Enemies.Add(currentKingdom);
 							}
 						}
@@ -150,9 +150,9 @@ public class GameManager : MonoBehaviour {
 					List<Citizen> envoys = null;
 					for (int j = 0; j < kingdom1Enemies.Count; j++) {
 						if (kingdom1Enemies [j].id != currentWar.kingdom2.id) {
-							RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom1Enemies [j].king.GetRelationshipWithCitizen (currentWar.kingdom2.king);
-							if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
-							   relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
+							KingdomRelationship relationshipOfEnemyWithWarEnemy = kingdom1Enemies [j].king.GetRelationshipWithKingdom (currentWar.kingdom2.king);
+							if (relationshipOfEnemyWithWarEnemy.relationshipStatus != RELATIONSHIP_STATUS.ALLY ||
+							   relationshipOfEnemyWithWarEnemy.relationshipStatus != RELATIONSHIP_STATUS.FRIEND) {
 								envoys = kingdom1Enemies [j].GetAllCitizensOfType (ROLE.ENVOY).Where (x => !((Envoy)x.assignedRole).inAction).ToList ();
 								if (envoys.Count > 0) {
 									int chanceToSabotage = 5;
@@ -184,9 +184,9 @@ public class GameManager : MonoBehaviour {
 					//Check For Assassination Event
 					for (int j = 0; j < kingdom1Enemies.Count; j++) {
 						if (kingdom1Enemies [j].id != currentWar.kingdom2.id) {
-							RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom1Enemies [j].king.GetRelationshipWithCitizen (currentWar.kingdom2.king);
-							if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
-							   relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
+							KingdomRelationship relationshipOfEnemyWithWarEnemy = kingdom1Enemies [j].king.GetRelationshipWithKingdom (currentWar.kingdom2.king);
+							if (relationshipOfEnemyWithWarEnemy.relationshipStatus != RELATIONSHIP_STATUS.ALLY ||
+							   relationshipOfEnemyWithWarEnemy.relationshipStatus != RELATIONSHIP_STATUS.FRIEND) {
 								List<Citizen> assassins = kingdom1Enemies [j].GetAllCitizensOfType (ROLE.SPY).Where (x => !((Spy)x.assignedRole).inAction).ToList ();
 								if (assassins.Count > 0) {
 									int chanceToAssassinate = 3;
@@ -239,8 +239,8 @@ public class GameManager : MonoBehaviour {
 					for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
 						Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[j];
 						if (currentKingdom.id != currentWar.kingdom2.id) {
-							RelationshipKings rel = currentKingdom.king.GetRelationshipWithCitizen (currentWar.kingdom2.king);
-							if (rel.lordRelationship == RELATIONSHIP_STATUS.ENEMY || rel.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+							KingdomRelationship rel = currentKingdom.king.GetRelationshipWithKingdom (currentWar.kingdom2.king);
+							if (rel.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || rel.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
 								kingdom2Enemies.Add(currentKingdom);
 							}
 						}
@@ -249,9 +249,9 @@ public class GameManager : MonoBehaviour {
 					List<Citizen> envoys = null;
 					for (int j = 0; j < kingdom2Enemies.Count; j++) {
 						if (kingdom2Enemies [j].id != currentWar.kingdom1.id) {
-							RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom2Enemies [j].king.GetRelationshipWithCitizen (currentWar.kingdom1.king);
-							if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
-							   relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
+							KingdomRelationship relationshipOfEnemyWithWarEnemy = kingdom2Enemies [j].king.GetRelationshipWithKingdom (currentWar.kingdom1.king);
+							if (relationshipOfEnemyWithWarEnemy.relationshipStatus != RELATIONSHIP_STATUS.ALLY ||
+							   relationshipOfEnemyWithWarEnemy.relationshipStatus != RELATIONSHIP_STATUS.FRIEND) {
 								envoys = kingdom2Enemies [j].GetAllCitizensOfType (ROLE.ENVOY).Where (x => !((Envoy)x.assignedRole).inAction).ToList ();
 								if (envoys.Count > 0) {
 									int chanceToSabotage = 5;
@@ -282,9 +282,9 @@ public class GameManager : MonoBehaviour {
 					//Check For Assassination Event
 					for (int j = 0; j < kingdom2Enemies.Count; j++) {
 						if (kingdom2Enemies [j].id != currentWar.kingdom1.id) {
-							RelationshipKings relationshipOfEnemyWithWarEnemy = kingdom2Enemies [j].king.GetRelationshipWithCitizen (currentWar.kingdom1.king);
-							if (relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.ALLY ||
-							   relationshipOfEnemyWithWarEnemy.lordRelationship != RELATIONSHIP_STATUS.FRIEND) {
+							KingdomRelationship relationshipOfEnemyWithWarEnemy = kingdom2Enemies [j].king.GetRelationshipWithKingdom (currentWar.kingdom1.king);
+							if (relationshipOfEnemyWithWarEnemy.relationshipStatus != RELATIONSHIP_STATUS.ALLY ||
+							   relationshipOfEnemyWithWarEnemy.relationshipStatus != RELATIONSHIP_STATUS.FRIEND) {
 								List<Citizen> assassins = kingdom2Enemies [j].GetAllCitizensOfType (ROLE.SPY).Where (x => !((Spy)x.assignedRole).inAction).ToList ();
 								if (assassins.Count > 0) {
 									int chanceToAssassinate = 3;
@@ -335,13 +335,13 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public List<Citizen> GetAllCitizensOfType(ROLE role){
-		List<Citizen> allCitizensOfType = new List<Citizen>();
-		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-			allCitizensOfType.AddRange (KingdomManager.Instance.allKingdoms[i].GetAllCitizensOfType (role));
-		}
-		return allCitizensOfType;
-	}
+	//public List<Citizen> GetAllCitizensOfType(ROLE role){
+	//	List<Citizen> allCitizensOfType = new List<Citizen>();
+	//	for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
+	//		allCitizensOfType.AddRange (KingdomManager.Instance.allKingdoms[i].GetAllCitizensOfType (role));
+	//	}
+	//	return allCitizensOfType;
+	//}
 
 	/*private General GetGeneral(Kingdom kingdom){
 		List<Citizen> unwantedGovernors = Utilities.GetUnwantedGovernors (kingdom.king);

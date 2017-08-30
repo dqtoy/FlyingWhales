@@ -83,7 +83,7 @@ public class SerumOfAlacrity : GameEvent {
 		List<Kingdom> otherKingdoms = this.kingdom.discoveredKingdoms;
 		if(otherKingdoms != null && otherKingdoms.Count > 0){
 			for (int i = 0; i < otherKingdoms.Count; i++) {
-				RelationshipKings relationship = otherKingdoms[i].king.GetRelationshipWithCitizen(this.kingdom.king);
+				KingdomRelationship relationship = otherKingdoms[i].GetRelationshipWithKingdom(this.kingdom);
 				if(relationship != null){
 					if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
                         //relationship.AdjustLikeness(10, this);

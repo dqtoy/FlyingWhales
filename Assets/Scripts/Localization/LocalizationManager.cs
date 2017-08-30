@@ -60,7 +60,7 @@ public class LocalizationManager : MonoBehaviour {
 					for (int k = 0; k < loadedData.items.Length; k++) {
 						this._localizedText[categoryName][fileName].Add(loadedData.items [k].key, loadedData.items [k].value);   
 					}
-					Debug.Log ("Data loaded, dictionary contains: " + this._localizedText.Count + " entries");
+					//Debug.Log ("Data loaded, dictionary contains: " + this._localizedText.Count + " entries");
 				} else {
 					Debug.LogError ("Cannot find file!");
 				}

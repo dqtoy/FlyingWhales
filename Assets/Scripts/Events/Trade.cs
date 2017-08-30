@@ -90,8 +90,8 @@ public class Trade : GameEvent {
             Kingdom sourceKingdom = this._sourceCity.kingdom;
             Kingdom targetKingdom = this._targetCity.kingdom;
 
-            RelationshipKingdom rel1 = sourceKingdom.GetRelationshipWithOtherKingdom(targetKingdom);
-            RelationshipKingdom rel2 = targetKingdom.GetRelationshipWithOtherKingdom(sourceKingdom);
+            KingdomRelationship rel1 = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
+            KingdomRelationship rel2 = targetKingdom.GetRelationshipWithKingdom(sourceKingdom);
 
             List<RESOURCE> resourcesThatTargetKingdomDoesNotHave = sourceKingdom.GetResourcesOtherKingdomDoesNotHave(targetKingdom);
             List<RESOURCE> resourcesThatThisKingdomDoesNotHave = targetKingdom.GetResourcesOtherKingdomDoesNotHave(sourceKingdom);
@@ -148,8 +148,8 @@ public class Trade : GameEvent {
 
     //internal void CreateTradeRouteBetweenKingdoms() {
     //    List<RESOURCE> resourcesThatTargetKingdomDoesNotHave = this._sourceKingdom.GetResourcesOtherKingdomDoesNotHave(this._targetKingdom);
-    //    RelationshipKingdom rel1 = this._sourceKingdom.GetRelationshipWithOtherKingdom(this._targetKingdom);
-    //    RelationshipKingdom rel2 = this._targetKingdom.GetRelationshipWithOtherKingdom(this._sourceKingdom);
+    //    KingdomRelationship rel1 = this._sourceKingdom.GetRelationshipWithKingdom(this._targetKingdom);
+    //    KingdomRelationship rel2 = this._targetKingdom.GetRelationshipWithKingdom(this._sourceKingdom);
     //    if (resourcesThatTargetKingdomDoesNotHave.Count > 0 && !rel1.isAtWar && !rel2.isAtWar && 
     //        !this._sourceKingdom.embargoList.ContainsKey(this._targetKingdom) && !this._targetKingdom.embargoList.ContainsKey(this._sourceKingdom))  {
     //        RESOURCE resourceToTrade = resourcesThatTargetKingdomDoesNotHave[Random.Range(0, resourcesThatTargetKingdomDoesNotHave.Count)];

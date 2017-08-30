@@ -63,15 +63,15 @@ public class CharacterPortrait : MonoBehaviour {
 		isHoverEnabled = false;
 	}
 
-	public void ShowRelationshipLine(RelationshipKings relationship1 = null, RelationshipKings relationship2 = null){
+	public void ShowRelationshipLine(KingdomRelationship relationship1 = null, KingdomRelationship relationship2 = null){
 		relationshipLine.SetActive(true);
 		if (relationship1 != null && relationship2 != null) {
 			relationshipCircles[0].SetActive(true);
 			relationshipCircles[1].SetActive(true);
 			relationshipCircles[0].GetComponent<RelationshipItem>().SetRelationship(relationship1);
 			relationshipCircles[1].GetComponent<RelationshipItem>().SetRelationship(relationship2);
-//			relationshipCircles[0].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship1.lordRelationship);
-//			relationshipCircles[1].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship2.lordRelationship);
+//			relationshipCircles[0].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship1.relationshipStatus);
+//			relationshipCircles[1].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship2.relationshipStatus);
 		}
 	}
 

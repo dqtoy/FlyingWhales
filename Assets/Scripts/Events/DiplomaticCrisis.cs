@@ -146,9 +146,9 @@ public class DiplomaticCrisis : GameEvent {
 
 		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 
-		RelationshipKings relationship1 = null;
+		KingdomRelationship relationship1 = null;
 		if(this.kingdom1.isAlive()){
-			relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
+			relationship1 = this.kingdom1.GetRelationshipWithKingdom(this.kingdom2);
 		}
 		if(this.isResolvedPeacefully){
 			//			Debug.Log("DIPLOMATIC CRISIS BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
@@ -164,7 +164,7 @@ public class DiplomaticCrisis : GameEvent {
 
 			if(relationship1 != null){
 				relationship1.AddEventModifier (-7, this.name + " event", this, this._assassinationTrigger);
-				relationship1.sourceKing.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData, this._warTrigger);
+				relationship1.sourceKingdom.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData, this._warTrigger);
 			}
 		}
 	}
@@ -190,13 +190,13 @@ public class DiplomaticCrisis : GameEvent {
 		if(this.activeEnvoyResolve == null && this.activeEnvoyProvoke == null){
 			int chance = UnityEngine.Random.Range (0, 100);
 			int value = 1;
-			RelationshipKings relationship = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
+			KingdomRelationship relationship = this.kingdom1.GetRelationshipWithKingdom(this.kingdom2);
 			if(relationship != null){
-				if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM){
+				if(relationship.relationshipStatus == RELATIONSHIP_STATUS.WARM){
 					value += 2;
-				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
+				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
 					value += 3;
-				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
 					value += 5;
 				}
 			}
@@ -207,13 +207,13 @@ public class DiplomaticCrisis : GameEvent {
 		if (this.activeEnvoyResolve == null && this.activeEnvoyProvoke == null) {
 			int chance = UnityEngine.Random.Range (0, 100);
 			int value = 1;
-			RelationshipKings relationship = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
+			KingdomRelationship relationship = this.kingdom2.GetRelationshipWithKingdom(this.kingdom1);
 			if(relationship != null){
-				if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM){
+				if(relationship.relationshipStatus == RELATIONSHIP_STATUS.WARM){
 					value += 2;
-				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
+				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
 					value += 3;
-				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
 					value += 5;
 				}
 			}
@@ -239,17 +239,17 @@ public class DiplomaticCrisis : GameEvent {
 
 	}*/
 	private bool CheckForRelationship(Kingdom otherKingdom, ref Citizen dislikedKing){
-		RelationshipKings relationship1 = otherKingdom.king.SearchRelationshipByID (this.kingdom1.king.id);
-		RelationshipKings relationship2 = otherKingdom.king.SearchRelationshipByID (this.kingdom2.king.id);
+		KingdomRelationship relationship1 = otherKingdom.GetRelationshipWithKingdom (this.kingdom1);
+		KingdomRelationship relationship2 = otherKingdom.GetRelationshipWithKingdom (this.kingdom2);
 
 		List<RELATIONSHIP_STATUS> statuses = new List<RELATIONSHIP_STATUS> ();
-		statuses.Add (relationship1.lordRelationship);
-		statuses.Add (relationship2.lordRelationship);
+		statuses.Add (relationship1.relationshipStatus);
+		statuses.Add (relationship2.relationshipStatus);
 
-		if(relationship1.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship1.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
-			dislikedKing = relationship1.king;
-		}else if(relationship2.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship2.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
-			dislikedKing = relationship2.king;
+		if(relationship1.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship1.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
+			dislikedKing = relationship1.targetKingdom.king;
+		}else if(relationship2.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship2.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
+			dislikedKing = relationship2.targetKingdom.king;
 		}
 
 
@@ -313,7 +313,7 @@ public class DiplomaticCrisis : GameEvent {
 		}
 	}*/
 	private void CheckIfAlreadyAtWar(){
-		RelationshipKingdom relationship = this.kingdom1.GetRelationshipWithOtherKingdom (this.kingdom2);
+		KingdomRelationship relationship = this.kingdom1.GetRelationshipWithKingdom (this.kingdom2);
 		if(relationship != null){
 			if(relationship.isAtWar){
 				this.isResolvedPeacefully = false;

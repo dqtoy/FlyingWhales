@@ -33,7 +33,7 @@ public class ScourgeCity : GameEvent {
 	internal override void DoneCitizenAction(Citizen citizen){
         base.DoneCitizenAction(citizen);
 		this.DestroyASettlementInTargetCity ();
-		RelationshipKings relationship = this.targetKingdom.king.GetRelationshipWithCitizen (this.sourceKingdom.king);
+		KingdomRelationship relationship = this.targetKingdom.GetRelationshipWithKingdom (this.sourceKingdom);
 		relationship.AddEventModifier (-2, this.name + " event", this);
 		this.DoneEvent ();
 	}

@@ -141,7 +141,7 @@ public class HandOfFate : MonoBehaviour {
         } else {
             Task.current.Fail();
         }
-		//RelationshipKingdom relationship = this.firstKingdom.GetRelationshipWithOtherKingdom (this.secondKingdom);
+		//KingdomRelationship relationship = this.firstKingdom.GetRelationshipWithKingdom (this.secondKingdom);
 		//if(!relationship.isAtWar){
 		//	Task.current.Succeed ();
 		//}else{
@@ -376,12 +376,12 @@ public class HandOfFate : MonoBehaviour {
 
 	private bool IsCompatibleRelationship(Kingdom targetKingdom){
 		if (this.eventToCreate.relationshipTargets.Length > 0) {
-			RelationshipKings relationship = this.firstKingdom.king.GetRelationshipWithCitizen (targetKingdom.king);
-//			Debug.Log ("RELATIONSHIP: " + relationship.lordRelationship.ToString());
+			KingdomRelationship relationship = this.firstKingdom.GetRelationshipWithKingdom (targetKingdom);
+//			Debug.Log ("RELATIONSHIP: " + relationship.relationshipStatus.ToString());
 			if(relationship == null){
 				return false;
 			}
-			if (this.eventToCreate.relationshipTargets.Contains (relationship.lordRelationship)) {
+			if (this.eventToCreate.relationshipTargets.Contains (relationship.relationshipStatus)) {
 				return true;
 			}else{
 				return false;

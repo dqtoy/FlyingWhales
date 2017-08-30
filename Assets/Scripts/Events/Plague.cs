@@ -372,7 +372,7 @@ public class Plague : GameEvent {
     private void ChangeKingRelationshipsAfterApproach(Citizen citizen, EVENT_APPROACH chosenApproach) {
         for (int i = 0; i < citizen.city.kingdom.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = citizen.city.kingdom.discoveredKingdoms[i];
-            RelationshipKings rel = otherKingdom.king.GetRelationshipWithCitizen(citizen);
+            KingdomRelationship rel = otherKingdom.GetRelationshipWithKingdom(citizen.city.kingdom);
             EVENT_APPROACH otherKingApproach = this.DetermineApproach(otherKingdom.king);
             if (otherKingApproach == chosenApproach) {
                 rel.AddEventModifier(5, "plague handling", this);

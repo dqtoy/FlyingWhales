@@ -1003,7 +1003,7 @@ public class City{
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
 
-		RelationshipKingdom relationship = this.kingdom.GetRelationshipWithOtherKingdom(conqueror);
+		KingdomRelationship relationship = this.kingdom.GetRelationshipWithKingdom(conqueror);
 
 		//Trigger Request Peace before changing kingdoms, The losing side has a 20% chance for every city he has lost since the start of the war to send a Request for Peace
 		relationship.TriggerRequestPeace();
