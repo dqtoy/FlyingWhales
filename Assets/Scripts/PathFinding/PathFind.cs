@@ -28,7 +28,7 @@ namespace PathFind {
 				Path<Node> newPath;
                 if (pathfindingMode == PATHFINDING_MODE.RESOURCE_PRODUCTION) {
                     foreach (Node n in path.LastStep.PurchasableTiles) {
-                        if (n.tag != start.tag) {
+                        if (n.tileTag != start.tileTag) {
                             continue;
                         }
                         if (n.isOccupied) {
@@ -42,7 +42,7 @@ namespace PathFind {
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.COMBAT) {
                     foreach (Node n in path.LastStep.CombatTiles) {
-                        if (n.tag != start.tag) {
+                        if (n.tileTag != start.tileTag) {
                             continue;
                         }
                         d = distance(path.LastStep, n);
@@ -51,7 +51,7 @@ namespace PathFind {
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
                     foreach (Node n in path.LastStep.RoadTiles) {
-                        if (n.tag != start.tag) {
+                        if (n.tileTag != start.tileTag) {
                             continue;
                         }
                         d = distance(path.LastStep, n);
@@ -60,7 +60,7 @@ namespace PathFind {
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.AVATAR) {
                     foreach (Node n in path.LastStep.AvatarTiles) {
-                        if (n.tag != start.tag) {
+                        if (n.tileTag != start.tileTag) {
                             continue;
                         }
                         d = distance(path.LastStep, n);
@@ -72,7 +72,7 @@ namespace PathFind {
                         throw new Exception("Someone is trying to pathfind using NO_HIDDEN_TILES, but hasn't specified a kingdom!");
                     }
                     foreach (Node n in path.LastStep.AvatarTiles) {
-                        if (n.tag != start.tag) {
+                        if (n.tileTag != start.tileTag) {
                             continue;
                         }
                         if (kingdom.fogOfWarDict[FOG_OF_WAR_STATE.HIDDEN].Contains(n)) {
@@ -84,7 +84,7 @@ namespace PathFind {
                     }
                 } else {
                     foreach (Node n in path.LastStep.ValidTiles) {
-                        if (n.tag != start.tag) {
+                        if (n.tileTag != start.tileTag) {
                             continue;
                         }
                         d = distance(path.LastStep, n);

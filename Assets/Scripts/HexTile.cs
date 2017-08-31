@@ -10,7 +10,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public int id;
     public int xCoordinate;
 	public int yCoordinate;
-    public int tag;
+    public int tileTag;
 	public string tileName;
 
     [Space(10)]
@@ -110,12 +110,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [System.NonSerialized] public List<HexTile> connectedTiles = new List<HexTile>();
 
-	public IEnumerable<HexTile> AllNeighbours { get; set; }
-	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN);}}
-	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
-	public IEnumerable<HexTile> PurchasableTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER);}}
-	public IEnumerable<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER);}}
-    public IEnumerable<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER);}}
+	public List<HexTile> AllNeighbours { get; set; }
+	public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList();}}
+	public List<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
+	public List<HexTile> PurchasableTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER).ToList();}}
+	public List<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER).ToList();}}
+    public List<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList();}}
 
     public List<HexTile> elligibleNeighbourTilesForPurchase { get { return PurchasableTiles.Where(o => !o.isOccupied && !o.isHabitable).ToList(); } }
 
@@ -1142,7 +1142,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void SetTag(int tag) {
-        this.tag = tag;
+        this.tileTag = tag;
         tagVisual.text = tag.ToString();
         //tagVisual.gameObject.SetActive(true);
     }

@@ -880,16 +880,16 @@ public class Citizen {
 //				prestige += 5;
 //			}
 ////			List<Citizen> supportingCitizens = this.GetCitizensSupportingThisCitizen();
-////			prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count () * 20);
-////			prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
+////			prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count() * 20);
+////			prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count() * 60);
 //		}
 //		if (this.city.kingdom.successionLine.Count > 0) {
 //			if (this.city.kingdom.successionLine [0].id == this.id && this.role != ROLE.GOVERNOR) {
 //				prestige += 200;
 ////			EventManager.Instance.onCheckCitizensSupportingMe.Invoke(this);
 ////			List<Citizen> supportingCitizens = this.GetCitizensSupportingThisCitizen();
-////			prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count () * 20);
-////			prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
+////			prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count() * 20);
+////			prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count() * 60);
 //			}
 //		}
 //		if (this.isMarried && this._spouse != null) {
@@ -943,8 +943,8 @@ public class Citizen {
 
 //		//For Supporting Citizens
 //		//List<Citizen> supportingCitizens = this.GetCitizensSupportingThisCitizen();
-//		//prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count () * 20);
-//		//prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count () * 60);
+//		//prestige += (supportingCitizens.Where (x => x.role == ROLE.GOVERNOR).Count() * 20);
+//		//prestige += (supportingCitizens.Where (x => x.role == ROLE.KING).Count() * 60);
 
 //		//Add prestige for successors
 //		this.prestige = prestige;

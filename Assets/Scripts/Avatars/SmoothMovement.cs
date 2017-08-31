@@ -19,7 +19,7 @@ public class SmoothMovement : MonoBehaviour {
 	private Animator animator;
 	internal GameObject avatarGO;
 
-	void Start(){
+	void Awake(){
 		this.animator = this.GetComponent<Animator> ();
 	}
 

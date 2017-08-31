@@ -40,7 +40,7 @@ public class CitizenManager : MonoBehaviour {
 
     #region getters/setters
     public Dictionary<int, HashSet<Citizen>> elligibleCitizenAgeTable {
-        get { return citizenAgeTable.Where(x => x.Value.Count() > 0).ToDictionary(x => x.Key, v => v.Value); }
+        get { return citizenAgeTable.Where(x => x.Value.Any()).ToDictionary(x => x.Key, v => v.Value); }
     }
     #endregion
 

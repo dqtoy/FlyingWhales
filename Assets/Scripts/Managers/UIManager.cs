@@ -543,7 +543,7 @@ public class UIManager : MonoBehaviour {
         List<RESOURCE> resourcesInGrid = children.Where(x => x.GetComponent<ResourceIcon>() != null).Select(x => x.GetComponent<ResourceIcon>().resource).ToList();
         
         List<RESOURCE> allOtherResources = currentlyShowingKingdom.availableResources.Keys.ToList();
-        if (resourcesInGrid.Except(allOtherResources).Count() > 0 || allOtherResources.Except(resourcesInGrid).Count() > 0) {
+        if (resourcesInGrid.Except(allOtherResources).Any() || allOtherResources.Except(resourcesInGrid).Any()) {
             for (int i = 0; i < children.Count; i++) {
                 kingdomOtherResourcesGrid.RemoveChild(children[i]);
                 ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
@@ -1619,7 +1619,7 @@ public class UIManager : MonoBehaviour {
 		List<EventListItem> currentlyShowingGameEvents = politicsParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem>()).ToList ();
 		List<int> currentlyShowingGameEventIDs = currentlyShowingGameEvents.Select (x => x.gameEvent.id).ToList ();
 		List<int> actualPoliticalEventIDs = politicalEvents.Select (x => x.id).ToList ();
-		if (actualPoliticalEventIDs.Except (currentlyShowingGameEventIDs).Union (currentlyShowingGameEventIDs.Except (actualPoliticalEventIDs)).Count () > 0) {
+		if (actualPoliticalEventIDs.Except (currentlyShowingGameEventIDs).Union (currentlyShowingGameEventIDs.Except (actualPoliticalEventIDs)).Any()) {
 			for (int i = 0; i < currentlyShowingGameEvents.Count; i++) {
 				politicsParent.eventsGrid.RemoveChild (currentlyShowingGameEvents[i].transform);
                 ObjectPoolManager.Instance.DestroyObject(currentlyShowingGameEvents[i].gameObject);

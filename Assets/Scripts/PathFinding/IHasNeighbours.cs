@@ -5,10 +5,10 @@ using System.Text;
 
 namespace PathFind{
 	public interface IHasNeighbours<N>{
-		IEnumerable<N> ValidTiles { get; }
-		IEnumerable<N> RoadTiles { get; } 
-//		IEnumerable<N> CombatTiles { get; } 
-		IEnumerable<N> PurchasableTiles { get; } 
-		IEnumerable<N> CombatTiles { get; } 
+		List<N> ValidTiles { get; }
+        List<N> RoadTiles { get; }
+        //		IEnumerable<N> CombatTiles { get; } 
+        List<N> PurchasableTiles { get; }
+        List<N> CombatTiles { get; } 
 	}
 }

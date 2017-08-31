@@ -6,6 +6,9 @@ using System.Linq;
 using EZObjectPools;
 
 public class CitizenAvatar : PooledObject {
+    [SerializeField] private int citizenID;
+    [SerializeField] private string citizenName;
+    [SerializeField] private string roleType;
     public Role citizenRole;
     public PandaBehaviour pandaBehaviour;
     public Animator animator;
@@ -37,6 +40,9 @@ public class CitizenAvatar : PooledObject {
 
     #region virtuals
     internal virtual void Init(Role citizenRole) {
+        this.citizenID = citizenRole.citizen.id;
+        this.citizenName = citizenRole.citizen.name;
+        this.roleType = citizenRole.ToString();
         this.citizenRole = citizenRole;
         this.direction = DIRECTION.LEFT;
         this.smoothMovement.onMoveFinihed += OnMoveFinished;

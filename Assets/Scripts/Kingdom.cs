@@ -1996,7 +1996,7 @@ public class Kingdom{
 		if(!this.isDead){
 			if (this.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
 				List<GameEvent> previousHypnotismEvents = GetEventsOfType (EVENT_TYPES.HYPNOTISM, false);
-				if (previousHypnotismEvents.Where(x => x.startYear == GameManager.Instance.year).Count() <= 0) {
+				if (!previousHypnotismEvents.Where(x => x.startYear == GameManager.Instance.year).Any()) {
 					List<Kingdom> notFriends = new List<Kingdom>();
 					for (int i = 0; i < discoveredKingdoms.Count; i++) {
 						Kingdom currKingdom = discoveredKingdoms[i];

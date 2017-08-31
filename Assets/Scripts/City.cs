@@ -461,13 +461,13 @@ public class City{
             List<HexTile> outmostTiles = new List<HexTile>();
             for (int i = 0; i < this.ownedTiles.Count; i++) {
                 HexTile currOwnedTile = this.ownedTiles[i];
-                if (currOwnedTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Count() > 0) {
+                if (currOwnedTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Any()) {
                     outmostTiles.Add(currOwnedTile);
                 }
             }
             for (int i = 0; i < this.borderTiles.Count; i++) {
                 HexTile currBorderTile = this.borderTiles[i];
-                if (currBorderTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Count() > 0) {
+                if (currBorderTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Any()) {
                     outmostTiles.Add(currBorderTile);
                 }
             }
@@ -932,8 +932,8 @@ public class City{
 			HexTile currentTile = this.ownedTiles[i];
             currentTile.city = null;
             currentTile.Unoccupy();
-            if (currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Count() <= 0) {
+            if (!currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Any()
+                && !currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Any()) {
                 kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
             }
 
@@ -947,8 +947,8 @@ public class City{
                     kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
-                if (currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Count() <= 0) {
+                if (!currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Any()
+                && !currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Any()) {
                     kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
@@ -962,8 +962,8 @@ public class City{
                     kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
-                if (currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Count() <= 0) {
+                if (!currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Any()
+                && !currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Any()) {
                     kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
@@ -1028,8 +1028,8 @@ public class City{
             HexTile currentTile = this.ownedTiles[i];
             currentTile.city = null;
             currentTile.Unoccupy(true);
-            if (currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0) {
+            if (!currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()
+                && !currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()) {
                 _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
             }
 
@@ -1043,8 +1043,8 @@ public class City{
                     _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
-                if (currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0) {
+                if (!currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()
+                && !currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()) {
                     _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
@@ -1058,8 +1058,8 @@ public class City{
                     _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
-                if (currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0) {
+                if (!currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()
+                && !currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()) {
                     _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
@@ -1295,7 +1295,7 @@ public class City{
         allTilesOfCity.AddRange(outerTiles);
         for (int i = 0; i < allTilesOfCity.Count; i++) {
             HexTile currTile = allTilesOfCity[i];
-            if(currTile.isBorderOfCities.Intersect(_kingdom.cities).Count() <= 0 && currTile.isOuterTileOfCities.Intersect(_kingdom.cities).Count() <= 0 && 
+            if(!currTile.isBorderOfCities.Intersect(_kingdom.cities).Any() && !currTile.isOuterTileOfCities.Intersect(_kingdom.cities).Any() && 
                 (currTile.ownedByCity == null || !_kingdom.cities.Contains(currTile.ownedByCity))) {
                 _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
             }

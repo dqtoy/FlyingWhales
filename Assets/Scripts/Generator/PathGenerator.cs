@@ -160,7 +160,7 @@ public class PathGenerator : MonoBehaviour {
 		if(startingTile == null || destinationTile == null){
 			return null;
 		}
-        if(startingTile.tag != destinationTile.tag) {
+        if(startingTile.tileTag != destinationTile.tileTag) {
             return null;
         }
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
@@ -209,10 +209,10 @@ public class PathGenerator : MonoBehaviour {
 	public int GetDistanceBetweenTwoTiles(HexTile startingTile, HexTile destinationTile){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
-		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL, null);
+		List<HexTile> path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL, null).ToList();
 
 		if (path != null) {			
-			return (path.Count() - 1);
+			return (path.Count - 1);
 		}
 		return 99999;
 	}

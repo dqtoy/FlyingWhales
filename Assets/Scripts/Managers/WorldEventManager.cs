@@ -80,7 +80,7 @@ public class WorldEventManager : MonoBehaviour {
                     //	filteredHextile.Add (hexTile);
                     //}
                     List<HexTile> tilesInRange = hexTile.GetTilesInRange(3);
-                    if (tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Count() <= 0) {
+                    if (!tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Any()) {
                         filteredHextile.Add(hexTile);
                     }
                 }
@@ -109,7 +109,7 @@ public class WorldEventManager : MonoBehaviour {
                     //	filteredHextile.Add (hexTile);
                     //}
                     List<HexTile> tilesInRange = hexTile.GetTilesInRange(3);
-                    if (tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Count() <= 0) {
+                    if (!tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Any()) {
                         filteredHextile.Add(hexTile);
                     }
                 }
@@ -132,7 +132,7 @@ public class WorldEventManager : MonoBehaviour {
 			HexTile hexTile = GridMap.Instance.listHexes [i].GetComponent<HexTile> ();
 			if(!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE){
                 List<HexTile> tilesInRange = hexTile.GetTilesInRange(3);
-                if (tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Count() <= 0) {
+                if (!tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Any()) {
                     filteredHextile.Add(hexTile);
                 }
             }
@@ -179,7 +179,7 @@ public class WorldEventManager : MonoBehaviour {
             HexTile hexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
             if (!hexTile.isBorder && !hexTile.isOccupied && hexTile.gameEventInTile == null && hexTile.elevationType != ELEVATION.MOUNTAIN && hexTile.elevationType != ELEVATION.WATER && hexTile.specialResource == RESOURCE.NONE) {
                 List<HexTile> tilesInRange = hexTile.GetTilesInRange(3);
-                if (tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Count() <= 0) {
+                if (!tilesInRange.Where(x => x.gameEventInTile != null || x.isHabitable || x.isOccupied).Any()) {
                     filteredHextile.Add(hexTile);
                 }
             }

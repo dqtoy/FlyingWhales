@@ -592,7 +592,7 @@ public class Plague : GameEvent {
     }
 
     private void CheckIfKingdomIsCured(Kingdom kingdom) {
-        if(this.affectedCities.Intersect(kingdom.cities).Count() <= 0) {
+        if(!this.affectedCities.Intersect(kingdom.cities).Any()) {
             DisinfectAKingdom(kingdom);
         }
     }
