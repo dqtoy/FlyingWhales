@@ -1328,6 +1328,7 @@ public class Kingdom{
                 city.KillCity();
             } else {
                 city.ConquerCity(this);
+                RemoveCityFromKingdom(city);
             }
 
             //yield return null;
@@ -1335,10 +1336,7 @@ public class Kingdom{
             //newCity.hp = 100;
             //newCity.CreateInitialFamilies(false);
             //			this.AddInternationalWarCity (newCity);
-            if (UIManager.Instance.currentlyShowingKingdom.id == city.kingdom.id) {
-                city.kingdom.HighlightAllOwnedTilesInKingdom();
-            }
-            KingdomManager.Instance.CheckWarTriggerMisc(city.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+            //KingdomManager.Instance.CheckWarTriggerMisc(city.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
             //Adjust unrest because a city of this kingdom was conquered.
             this.AdjustUnrest(UNREST_INCREASE_CONQUER);
         } else {
@@ -2131,7 +2129,7 @@ public class Kingdom{
 
     #region Fog Of War
     internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState, bool isForcedUpdate = false) {
-        FOG_OF_WAR_STATE previousStateOfTile = tile.currFogOfWarState;
+        FOG_OF_WAR_STATE previousStateOfTile = _fogOfWar[tile.xCoordinate, tile.yCoordinate];
         _fogOfWarDict[previousStateOfTile].Remove(tile);
 
         _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
@@ -2141,6 +2139,11 @@ public class Kingdom{
 
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
             UpdateFogOfWarVisualForTile(tile, fowState);
+        }
+
+        int sum = _fogOfWarDict.Sum(x => x.Value.Count);
+        if (sum != GridMap.Instance.listHexes.Count) {
+            throw new Exception("Fog of war dictionary is no longer accurate!");
         }
     }
     internal void UpdateFogOfWarVisual() {

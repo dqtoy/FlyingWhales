@@ -1065,7 +1065,7 @@ public class City{
             }
         }
 
-        this._kingdom.RemoveCityFromKingdom(this);
+        //this._kingdom.RemoveCityFromKingdom(this);
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
         RemoveListeners();
         this.isDead = true;
@@ -1086,6 +1086,11 @@ public class City{
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
         newCity.WarDefeatedHP();
+        KingdomManager.Instance.CheckWarTriggerMisc(newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+
+        if (UIManager.Instance.currentlyShowingKingdom.id == conqueror.id) {
+            conqueror.HighlightAllOwnedTilesInKingdom();
+        }
 
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
     }
