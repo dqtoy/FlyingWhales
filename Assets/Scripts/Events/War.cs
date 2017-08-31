@@ -370,6 +370,8 @@ public class War : GameEvent {
 	#region Overrides
     internal override void DoneEvent() {
         base.DoneEvent();
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
+
         if (this._kingdom1.isDead) {
 			GameEventWarWinner (this._kingdom2);
             Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");

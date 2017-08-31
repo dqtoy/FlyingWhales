@@ -33,15 +33,15 @@ public class King : Role {
 		RandomTriggerDateOfSerum(true);
 		Messenger.AddListener("OnDayEnd", EverydayActions);
 	}
+	internal override void OnDeath (){
+		base.OnDeath ();
+		Messenger.RemoveListener("OnDayEnd", EverydayActions);
 
+	}
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){
 		this.ownedKingdom = ownedKingdom;
 	}
 	private void EverydayActions(){
-		if(this.citizen.isDead){
-			Messenger.RemoveListener("OnDayEnd", EverydayActions);
-			return;
-		}
 		TriggerSpouseAbduction();
 		TriggerRumor();
 		TriggerHiddenHistoryBook();

@@ -84,6 +84,8 @@ public class StateVisit : GameEvent {
 
 	internal override void DoneEvent(){
         base.DoneEvent();
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
+
 		KingdomRelationship relationship = null;
 		if(this.inviterKingdom.isAlive()){
 			relationship = this.inviterKingdom.GetRelationshipWithKingdom (this.invitedKingdom);
