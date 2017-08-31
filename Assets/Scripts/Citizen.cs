@@ -218,6 +218,7 @@ public class Citizen {
 		this.birthYear = year;
         if (registerCitizen) {
             CitizenManager.Instance.RegisterCitizen(this);
+            SchedulingManager.Instance.AddEntry((int)birthMonth, birthDay, GameManager.Instance.year, () => IncreaseAgeEveryYear());
         }
 		this.horoscope = GetHoroscope ();
 		this._honestyTrait = StoryTellingManager.Instance.GenerateHonestyTrait(this);
@@ -227,6 +228,16 @@ public class Citizen {
 	}
 
     #region Age
+    internal void IncreaseAgeEveryYear() {
+        if (!isDead) {
+            AdjustAge(1);
+            CitizenManager.Instance.RemoveCitizenFromAgeTable(this);
+            CitizenManager.Instance.AddCitizenToAgeTable(this);
+            //reschedule bday
+            SchedulingManager.Instance.AddEntry((int)birthMonth, birthDay, GameManager.Instance.year + 1, () => IncreaseAgeEveryYear());
+        }
+    }
+
     internal void AdjustAge(int adjustment) {
         this.age += adjustment;
         /*Every birthday starting at 16 up to 50, an unmarried King, 
