@@ -221,6 +221,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UITable notificationParent;
     [SerializeField] private UIScrollView notificationScrollView;
 
+    [Space(10)]
+    [Header("Prestige List")]
+    [SerializeField] private UILabel prestigeSummaryLbl;
+
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	internal Citizen currentlyShowingCitizen = null;
@@ -1775,7 +1779,6 @@ public class UIManager : MonoBehaviour {
             ShowKingdomCities();
         }
     }
-
     /*
      * Show all cities owned by currentlyShowingKingdom.
      * */
@@ -1821,7 +1824,6 @@ public class UIManager : MonoBehaviour {
         //kingdomCitiesScrollView.UpdateScrollbars();
         kingdomCitiesGO.SetActive(true);
     }
-
     public void HideKingdomCities() {
         kingdomCitiesGO.SetActive(false);
         kingdomListCityButton.SetClickState(false);
@@ -1836,7 +1838,6 @@ public class UIManager : MonoBehaviour {
         relationshipSummaryLbl.text = summary;
         relationshipSummaryGO.SetActive(true);
     }
-
     public void HideRelationshipSummary() {
         relationshipSummaryGO.SetActive(false);
     }
@@ -1848,7 +1849,6 @@ public class UIManager : MonoBehaviour {
             ShowInterveneMenu();
         }
     }
-
     private void ShowInterveneMenu() {
         if(interveneMenuGrid.GetChildList().Count <= 0) {
             LoadInterveneEvents();
@@ -1856,7 +1856,6 @@ public class UIManager : MonoBehaviour {
         interveneMenuBtn.SetClickState(true);
         interveneMenuGO.SetActive(true);
     }
-
     private void LoadInterveneEvents() {
         for (int i = 0; i < EventManager.Instance.playerPlacableEvents.Length; i++) {
             EVENT_TYPES currEvent = EventManager.Instance.playerPlacableEvents[i];
@@ -1869,7 +1868,6 @@ public class UIManager : MonoBehaviour {
         StartCoroutine(RepositionGrid(interveneMenuGrid));
         StartCoroutine(RepositionScrollView(interveneMenuScrollView));
     }
-
     private void HideInterveneMenu() {
         interveneMenuBtn.SetClickState(false);
         interveneMenuGO.SetActive(false);
@@ -1882,11 +1880,9 @@ public class UIManager : MonoBehaviour {
             ShowInterveneActionsMenu();
         }
     }
-
     private void ShowInterveneActionsMenu() {
         interveneActonsGO.SetActive(true);
     }
-
     public void HideInterveneActionsMenu() {
         HideSwitchKingdomsMenu();
         HideCreateKingdomMenu();
@@ -1901,7 +1897,6 @@ public class UIManager : MonoBehaviour {
             ShowSwitchKingdomsMenu();
         }
     }
-
     private void ShowSwitchKingdomsMenu() {
         HideCreateKingdomMenu();
         //Load Kingdoms
@@ -1932,7 +1927,6 @@ public class UIManager : MonoBehaviour {
         switchKingdomsBtn.SetClickState(true);
         switchKingdomGO.SetActive(true);
     }
-
     public void HideSwitchKingdomsMenu() {
         switchKingdomsBtn.SetClickState(false);
         switchKingdomGO.SetActive(false);
@@ -1945,7 +1939,6 @@ public class UIManager : MonoBehaviour {
             ShowCreateKingdomMenu();
         }
     }
-
     private void ShowCreateKingdomMenu() {
         HideSwitchKingdomsMenu();
         createKingdomPopupList.Clear();
@@ -1960,9 +1953,7 @@ public class UIManager : MonoBehaviour {
         createKingdomBtn.SetClickState(true);
         createKingdomGO.SetActive(true);
     }
-
     List<HexTile> tilesToChooseForNewKingdom;
-
     public void UpdateCreateKingdomErrorMessage() {
         List<HexTile> elligibleTilesForNewKingdom = CityGenerator.Instance.GetHabitableTilesForRace((RACE)createKingdomPopupList.data);
         BIOMES forbiddenBiomeForRace = CityGenerator.Instance.GetForbiddenBiomeOfRace((RACE)createKingdomPopupList.data);
@@ -1989,7 +1980,6 @@ public class UIManager : MonoBehaviour {
             createKingdomExecuteBtn.SetState(UIButtonColor.State.Normal, true);
         }
     }
-
     public void CreateNewKingdom() {
         List<HexTile> citiesForNewKingdom = new List<HexTile>() { tilesToChooseForNewKingdom[UnityEngine.Random.Range(0, tilesToChooseForNewKingdom.Count)] };
         Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom((RACE)createKingdomPopupList.data, citiesForNewKingdom, true);
@@ -1999,10 +1989,22 @@ public class UIManager : MonoBehaviour {
 
         HideInterveneActionsMenu();
     }
-
     private void HideCreateKingdomMenu() {
         createKingdomBtn.SetClickState(false);
         createKingdomGO.SetActive(false);
+    }
+
+    public void UpdatePrestigeSummary() {
+        prestigeSummaryLbl.text = string.Empty;
+        List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedByPrestige);
+        kingdomsToShow.Reverse();
+        for (int i = 0; i < kingdomsToShow.Count; i++) {
+            Kingdom currKingdom = kingdomsToShow[i];
+            prestigeSummaryLbl.text += currKingdom.name + " - " + currKingdom.prestige.ToString() + " (" + currKingdom.cityCap + ")";
+            if(i + 1 < KingdomManager.Instance.allKingdomsOrderedByPrestige.Count) {
+                prestigeSummaryLbl.text += "\n";
+            }
+        }
     }
 
     /*

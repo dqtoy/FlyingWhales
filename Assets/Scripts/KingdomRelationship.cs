@@ -60,7 +60,7 @@ public class KingdomRelationship {
     public bool isSharingBorder {
         get { return _isSharingBorder; }
     }
-    public KingdomWar kingdomWar {
+    public KingdomWar kingdomWarData {
         get { return _kingdomWarData; }
     }
     public InvasionPlan invasionPlan {

@@ -52,8 +52,12 @@ public class CityItem : MonoBehaviour {
 			for (int i = 0; i < thisGovernor.eventModifiers.Count; i++) {
 				thisGovernor._eventLoyaltySummary += "\n" + thisGovernor.eventModifiers [i].summary;
 			}
+            string loyaltySummary = thisGovernor.loyaltySummary;
+            if(thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige > 0) {
+                loyaltySummary += "\n-" + thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige.ToString() + " Lack of Prestige";
+            }
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
-                UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, thisGovernor.loyaltySummary);
+                UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, loyaltySummary);
             });
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideRelationshipSummary(); });
         }

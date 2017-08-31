@@ -8,12 +8,10 @@ public class Governor : Role {
 
 	public City ownedCity;
 	private int _loyalty;
+    private const int defaultLoyalty = 0;
+    private int _eventLoyaltyModifier;
 
     private string _loyaltySummary; //For UI, to display the factors that affected this governor's loyalty
-
-    private const int defaultLoyalty = 0;
-
-    private int _eventLoyaltyModifier;
     internal string _eventLoyaltySummary;
 
 	private List<ExpirableModifier> _eventModifiers;
@@ -22,7 +20,7 @@ public class Governor : Role {
 
     #region getters/setters
     public int loyalty {
-		get { return _loyalty + this._eventModifiers.Sum(x => x.modifier); }
+		get { return (_loyalty + _eventLoyaltyModifier) - ownedCity.kingdom.disloyaltyFromPrestige; }
     }
     public string loyaltySummary {
         get { return this._loyaltySummary + _eventLoyaltySummary; }
@@ -160,7 +158,8 @@ public class Governor : Role {
 		dateToUse.AddMonths(3);
 		ExpirableModifier expMod = new ExpirableModifier (gameEventTrigger, summary, dateToUse, modification);
 		this._eventModifiers.Add(expMod);
-		SchedulingManager.Instance.AddEntry (expMod.dueDate.month, expMod.dueDate.day, expMod.dueDate.year, () => RemoveEventModifier(expMod));
+        _eventLoyaltyModifier += modification;
+        SchedulingManager.Instance.AddEntry (expMod.dueDate.month, expMod.dueDate.day, expMod.dueDate.year, () => RemoveEventModifier(expMod));
 		GovernorEvents ();
 //        this._eventLoyaltyModifier += modification;
 //        if(_eventLoyaltyModifier < 0) {
@@ -188,25 +187,40 @@ public class Governor : Role {
 //		}
 //	}
 
-	private void CheckEventModifiers(){
-		for (int i = 0; i < this._eventModifiers.Count; i++) {
-			ExpirableModifier expMod = this._eventModifiers [i];
-			if(expMod.dueDate.day == GameManager.Instance.days && expMod.dueDate.month == GameManager.Instance.month && expMod.dueDate.year == GameManager.Instance.year){
-				RemoveEventModifierAt (i);
-				i--;
-			}
+	//private void CheckEventModifiers(){
+	//	for (int i = 0; i < this._eventModifiers.Count; i++) {
+	//		ExpirableModifier expMod = this._eventModifiers [i];
+	//		if(expMod.dueDate.day == GameManager.Instance.days && expMod.dueDate.month == GameManager.Instance.month && expMod.dueDate.year == GameManager.Instance.year){
+	//			RemoveEventModifierAt (i);
+	//			i--;
+	//		}
 
-		}
-	}
+	//	}
+	//}
+
 	private void RemoveEventModifierAt(int index){
-		this._eventModifiers.RemoveAt (index);
+        ExpirableModifier modToRemove = this._eventModifiers[index];
+        if (modToRemove.modifier < 0) {
+            //if the modifier is negative, return the previously subtracted value
+            _eventLoyaltyModifier += Mathf.Abs(modToRemove.modifier);
+        } else {
+            //if the modifier is positive, subtract the amount that was previously added
+            _eventLoyaltyModifier -= modToRemove.modifier;
+        }
+        this._eventModifiers.RemoveAt (index);
 
 	}
 	private void RemoveEventModifier(ExpirableModifier expMod){
 		if(!this.citizen.isDead){
-			this._eventModifiers.Remove (expMod);
+			if (expMod.modifier < 0) {
+				//if the modifier is negative, return the previously subtracted value
+				_eventLoyaltyModifier += Mathf.Abs(expMod.modifier);
+			} else {
+				//if the modifier is positive, subtract the amount that was previously added
+				_eventLoyaltyModifier -= expMod.modifier;
+			}
+			this._eventModifiers.Remove (expMod);		
 		}
-
 	}
 	internal void SetLoyalty(int newLoyalty) {
         this._loyalty = newLoyalty;
