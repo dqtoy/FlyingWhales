@@ -12,7 +12,8 @@ public class Kingdom{
 	public string name;
 	public RACE race;
     public int age;
-    [SerializeField] private int _prestige;
+    private int _prestige;
+    private int _disloyaltyFromPrestige; //Loyalty subtracted from governors due to too many cities and lack of prestige
     private int foundationYear;
     private int foundationMonth;
     private int foundationDay;
@@ -27,12 +28,12 @@ public class Kingdom{
     private int _goldCount;
     private int _maxGold = 5000;
     private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
+    internal BASE_RESOURCE_TYPE basicResource;
 
     //Trading
     private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
     private int _unrest;
-
     private List<City> _cities;
 	private List<Camp> camps;
 	internal City capitalCity;
@@ -41,8 +42,6 @@ public class Kingdom{
 	internal List<Citizen> pretenders;
 
 	internal List<Rebellion> rebellions;
-
-	internal BASE_RESOURCE_TYPE basicResource;
 
 	internal Dictionary<Kingdom, KingdomRelationship> relationships;
 
@@ -88,8 +87,6 @@ public class Kingdom{
     //Expansion
     private float expansionChance = 1f;
 
-    private List<City> _discoveredCities;
-
     protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
     protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
 
@@ -123,7 +120,6 @@ public class Kingdom{
 			return this._kingdomTypeData.kingdomType; 
 		}
 	}
-
 	public KingdomTypeData kingdomTypeData {
 		get { return this._kingdomTypeData; }
 	}
@@ -135,6 +131,15 @@ public class Kingdom{
     }
     public int maxGold {
         get { return this._maxGold; }
+    }
+    public int prestige {
+        get { return _prestige; }
+    }
+    public int disloyaltyFromPrestige {
+        get { return _disloyaltyFromPrestige; }
+    }
+    public int cityCap {
+        get { return Mathf.FloorToInt(_prestige / 100); }
     }
 	public Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
@@ -189,7 +194,6 @@ public class Kingdom{
     public Dictionary<CHARACTER_VALUE, int> importantCharacterValues {
         get { return this._importantCharacterValues; }
     }
-
     public bool hasBioWeapon {
 		get { return this._hasBioWeapon; }
 	}
@@ -214,7 +218,6 @@ public class Kingdom{
     public Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> fogOfWarDict {
         get { return _fogOfWarDict; }
     }
-
 //	public CombatStats combatStats {
 //		get { return this._combatStats; }
 //	}
@@ -239,16 +242,12 @@ public class Kingdom{
 	public bool hasRiot{
 		get { return this._hasRiot;}
 	}
-
 	public List<GameEvent> activeEvents{
 		get { return this._activeEvents;}
 	}
 	public List<GameEvent> doneEvents{
 		get { return this._doneEvents;}
 	}
-    public List<City> discoveredCities {
-        get { return this._discoveredCities; }
-    }
     #endregion
 
     // Kingdom constructor paramters
@@ -258,7 +257,8 @@ public class Kingdom{
     public Kingdom(RACE race, List<HexTile> cities, Kingdom sourceKingdom = null) {
 		this.id = Utilities.SetID(this);
 		this.race = race;
-        SetGrowthState(true);
+        this._prestige = 0;
+        this._disloyaltyFromPrestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
         this.successionLine = new List<Citizen>();
@@ -299,8 +299,9 @@ public class Kingdom{
         this._fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new HashSet<HexTile>());
 		this._activeEvents = new List<GameEvent> ();
 		this._doneEvents = new List<GameEvent> ();
-        this._discoveredCities = new List<City>();
 
+        AdjustPrestige(200);
+        SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
 		this.SetTechProduction(true);
@@ -329,7 +330,8 @@ public class Kingdom{
 
 		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
 		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
-		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
+        SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
+        SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
 
 		ScheduleEvents ();
 
@@ -410,44 +412,44 @@ public class Kingdom{
 		return newHoroscope;
 	}
 
-	// Function to call if you want to determine whether the Kingdom is still alive or dead
-	// At the moment, a Kingdom is considered dead if it doesnt have any cities.
-	public bool isAlive() {
-		if (this.nonRebellingCities.Count > 0) {
-			return true;
-		}
-		return false;
-	}
-
-	/*
+    #region Kingdom Death
+    // Function to call if you want to determine whether the Kingdom is still alive or dead
+    // At the moment, a Kingdom is considered dead if it doesnt have any cities.
+    public bool isAlive() {
+        if (this.nonRebellingCities.Count > 0) {
+            return true;
+        }
+        return false;
+    }
+    /*
+     * <summary>
 	 * Every time a city of this kingdom dies, check if
 	 * this kingdom has no more cities, if so, the kingdom is
 	 * considered dead. Remove all ties from other kingdoms.
+     * </summary>
 	 * */
-	internal void CheckIfKingdomIsDead(){
-		if (this.cities.Count <= 0) {
-			//Kingdom is dead
-			this.DestroyKingdom();
-		}
-	}
-
-	/*
+    internal void CheckIfKingdomIsDead() {
+        if (this.cities.Count <= 0) {
+            //Kingdom is dead
+            this.DestroyKingdom();
+        }
+    }
+    /*
+     * <summary>
 	 * Kill this kingdom. This removes all ties with other kingdoms.
 	 * Only call this when a kingdom has no more cities.
+     * </summary>
 	 * */
-	internal void DestroyKingdom(){
-		this._isDead = true;
-        this.CancelEventKingdomIsInvolvedIn(EVENT_TYPES.ALL);
-        //EventManager.Instance.onCreateNewKingdomEvent.RemoveListener(CreateNewRelationshipWithKingdom);
+    internal void DestroyKingdom() {
+        _isDead = true;
+        CancelEventKingdomIsInvolvedIn(EVENT_TYPES.ALL);
+        ResolveWars();
         Messenger.RemoveListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
         Messenger.RemoveListener("OnDayEnd", KingdomTickActions);
         Messenger.RemoveListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
-        //EventManager.Instance.onKingdomDiedEvent.RemoveListener(OtherKingdomDiedActions);
 
-        //EventManager.Instance.onKingdomDiedEvent.Invoke(this);
-		Messenger.Broadcast<Kingdom>("OnKingdomDied", this);
+        Messenger.Broadcast<Kingdom>("OnKingdomDied", this);
 
-        //KingdomManager.Instance.RemoveRelationshipToOtherKings(this.king);
         this.DeleteRelationships();
         KingdomManager.Instance.allKingdoms.Remove(this);
 
@@ -455,24 +457,32 @@ public class Kingdom{
 
         Debug.Log(this.id + " - Kingdom: " + this.name + " has died!");
         Debug.Log("Stack Trace: " + System.Environment.StackTrace);
-	}
-
-    private void CancelEventKingdomIsInvolvedIn(EVENT_TYPES eventType) {
-		for (int i = 0; i < this.activeEvents.Count; i++) {
-			this.activeEvents[i].CancelEvent();
-		}
-//        if (eventType == EVENT_TYPES.KINGDOM_WAR) {
-//			List<GameEvent> wars = GetEventsOfType (EVENT_TYPES.KINGDOM_WAR);
-//            for (int i = 0; i < wars.Count; i++) {
-//                wars[i].CancelEvent();
-//            }
-//        } else {
-////            List<GameEvent> allEvents = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(this, new EVENT_TYPES[] { EVENT_TYPES.ALL }).Where(x => x.isActive).ToList();
-//			for (int i = 0; i < this.activeEvents.Count; i++) {
-//				this.activeEvents[i].CancelEvent();
-//            }
-//        }
     }
+    private void CancelEventKingdomIsInvolvedIn(EVENT_TYPES eventType) {
+        List<GameEvent> eventsToCancel = new List<GameEvent>();
+        if(eventType == EVENT_TYPES.ALL) {
+            eventsToCancel = activeEvents;
+        } else {
+            eventsToCancel = activeEvents.Where(x => x.eventType == eventType).ToList();
+        }
+        for (int i = 0; i < eventsToCancel.Count; i++) {
+            eventsToCancel[i].CancelEvent();
+        }
+    }
+    private void ResolveWars() {
+        List<War> warsToResolve = relationships.Values.Where(x => x.war != null).Select(x => x.war).ToList();
+        for (int i = 0; i < warsToResolve.Count; i++) {
+            warsToResolve[i].DoneEvent();
+        }
+    }
+    protected void OtherKingdomDiedActions(Kingdom kingdomThatDied) {
+        if (kingdomThatDied.id != this.id) {
+            RemoveRelationshipWithKingdom(kingdomThatDied);
+            RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
+            RemoveKingdomFromEmbargoList(kingdomThatDied);
+        }
+    }
+    #endregion
 
     #region Relationship Functions
     internal void CreateInitialRelationships() {
@@ -737,14 +747,6 @@ public class Kingdom{
         }
     }
 
-    protected void OtherKingdomDiedActions(Kingdom kingdomThatDied) {
-        if (kingdomThatDied.id != this.id) {
-            RemoveRelationshipWithKingdom(kingdomThatDied);
-            RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
-            RemoveKingdomFromEmbargoList(kingdomThatDied);
-        }
-    }
-
 	/*
 	 * This function is listening to the onWeekEnd Event. Put functions that you want to
 	 * happen every tick here.
@@ -822,8 +824,15 @@ public class Kingdom{
 	 * */
     protected void AttemptToExpand() {
         if (HasActiveEvent(EVENT_TYPES.EXPANSION)) {
+            //Kingdom has a currently active expansion event
             return;
         }
+
+        if(cities.Count >= cityCap) {
+            //Kingdom has reached max city capacity
+            return;
+        }
+
         float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = UnityEngine.Random.Range(0, upperBound);
         if (chance < this.expansionChance) {
@@ -840,6 +849,40 @@ public class Kingdom{
 
         }
     }
+
+    #region Prestige
+    internal void AdjustPrestige(int adjustment) {
+        _prestige += adjustment;
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
+    }
+    internal void MonthlyPrestigeActions() {
+        //Add Prestige
+        AdjustPrestige(10 + (2 * cities.Count));
+
+        //Check if city count exceeds cap
+        if (cities.Count > cityCap) {
+            //If the Kingdom exceeds this, each month, all Governor's Opinion will decrease by 5 for every city over the cap
+            int numOfExcessCities = cities.Count - cityCap;
+            int increaseInDisloyalty = 5 * numOfExcessCities;
+            _disloyaltyFromPrestige += increaseInDisloyalty;
+        } else {
+            if(_disloyaltyFromPrestige > 0) {
+                //This will slowly recover when Prestige gets back to normal.
+                _disloyaltyFromPrestige -= 5;
+                if(_disloyaltyFromPrestige < 0) {
+                    _disloyaltyFromPrestige = 0;
+                }
+            }
+        }
+
+
+        //Reschedule event
+        GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        gameDate.AddMonths(1);
+        gameDate.day = GameManager.daysInMonth[gameDate.month];
+        SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => MonthlyPrestigeActions());
+    }
+    #endregion
 
     /*
 	 * Attempt to create an attack city event
@@ -864,7 +907,6 @@ public class Kingdom{
     //			EventCreator.Instance.CreateReinforcementEvent (this);
     //		}
     //	}
-
     /*
 	 * Checks if there has been successful relationship deterioration cause by border conflcit within the past 3 months
 	 * If expiration value has reached zero (0), return all governor loyalty to normal, else, it will remain -10
@@ -1838,13 +1880,7 @@ public class Kingdom{
         }
         //this._discoveredKingdoms.Remove(kingdomToRemove);
     }
-    internal void DiscoverCity(City city) {
-        _discoveredCities.Add(city);
-    }
-    internal void RemoveCityFromDiscoveredCities(City city) {
-        _discoveredCities.Remove(city);
-    }
-	#endregion
+    #endregion
 
 	#region Character Values
 	private void UpdateCharacterValuesOfKingsAndGovernors(){

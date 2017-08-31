@@ -73,10 +73,11 @@ public class War : GameEvent {
 //		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		Messenger.AddListener<HexTile>("OnUpdatePath", UpdatePath);
 		EventManager.Instance.AddEventToDictionary(this);
-//		EventIsCreated (this.kingdom1, false);
-//		EventIsCreated (this.kingdom2, false);
 
-	}
+        //EventIsCreated(this.kingdom1, false);
+        //EventIsCreated(this.kingdom2, false);
+
+    }
 	internal override void PerformAction (){
 		Attack ();
 	}
@@ -196,19 +197,19 @@ public class War : GameEvent {
                 && KingdomManager.Instance.GetRequestPeaceBetweenKingdoms(currKingdom, otherKingdom) == null) {
 
                 int chanceToTriggerRequestPeace = 0;
-                if (rel.kingdomWar.exhaustion >= 100) {
+                if (rel.kingdomWarData.exhaustion >= 100) {
                     if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
                         chanceToTriggerRequestPeace = 4;
                     } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
                         chanceToTriggerRequestPeace = 2;
                     }
-                } else if (rel.kingdomWar.exhaustion >= 75) {
+                } else if (rel.kingdomWarData.exhaustion >= 75) {
                     if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
                         chanceToTriggerRequestPeace = 3;
                     } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
                         chanceToTriggerRequestPeace = 1;
                     }
-                } else if (rel.kingdomWar.exhaustion >= 50) {
+                } else if (rel.kingdomWarData.exhaustion >= 50) {
                     if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
                         chanceToTriggerRequestPeace = 2;
                     } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
@@ -370,19 +371,47 @@ public class War : GameEvent {
 	#region Overrides
     internal override void DoneEvent() {
         base.DoneEvent();
-        if (this._kingdom1.isDead) {
-			GameEventWarWinner (this._kingdom2);
-            Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
-			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
-			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-        } else if (this._kingdom2.isDead) {
-			GameEventWarWinner (this._kingdom1);
-            Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
-			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_1);
-			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_2);
+
+        Kingdom winner = null;
+        Kingdom loser = null;
+
+        if(this._kingdom1.isDead || this._kingdom2.isDead) {
+            //At least 1 kingdom died
+            if(this._kingdom1.isDead && this._kingdom2.isDead) {
+                //Both kingdoms died!
+            } else {
+                if (this._kingdom1.isDead) {
+                    winner = _kingdom2;
+                    loser = _kingdom1;
+                } else if (this._kingdom2.isDead) {
+                    winner = _kingdom1;
+                    loser = _kingdom2;
+                }
+            }
+        } else {
+            //No kingdoms died at the end of the war, to determine the winner get the kingdom that lost the least cities
+            if(_kingdom1Rel.kingdomWarData.citiesLost > _kingdom2Rel.kingdomWarData.citiesLost) {
+                //Kingdom 1 lost more cities
+                loser = _kingdom1;
+                winner = _kingdom2;
+            } else if (_kingdom2Rel.kingdomWarData.citiesLost > _kingdom1Rel.kingdomWarData.citiesLost) {
+                //Kingdom 2 lost more cities
+                loser = _kingdom2;
+                winner = _kingdom1;
+            }
         }
-//        Messenger.RemoveListener("OnDayEnd", AttemptToRequestPeace);
-		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
+
+        if(loser != null && winner != null) {
+            GameEventWarWinner(winner);
+            //Increase Prestige of winner
+            winner.AdjustPrestige(100);
+            loser.AdjustPrestige(-100);
+            Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
+            titleLog.AddToFillers(loser, loser.name, LOG_IDENTIFIER.KINGDOM_1);
+            titleLog.AddToFillers(winner, winner.name, LOG_IDENTIFIER.KINGDOM_2);
+        }
+        
+        Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		Messenger.RemoveListener<HexTile>("OnUpdatePath", UpdatePath);
     }
 	internal override void CancelEvent (){

@@ -972,10 +972,6 @@ public class City{
 		this.borderTiles.Clear();
         this.outerTiles.Clear();
 
-        for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-            KingdomManager.Instance.allKingdoms[i].discoveredCities.Remove(this);
-        }
-
 		this.isDead = true;
         //EventManager.Instance.onDeathToGhost.Invoke (this);
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
@@ -1067,10 +1063,6 @@ public class City{
                     _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
-        }
-
-        for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-            KingdomManager.Instance.allKingdoms[i].discoveredCities.Remove(this);
         }
 
         this._kingdom.RemoveCityFromKingdom(this);

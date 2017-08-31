@@ -79,6 +79,9 @@ public class Secession : GameEvent {
         Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		this.sourceKingdom.SetSecession (false);
         this.SplitKingdom (); //Generate new kingdom
+
+        //Decrease sourceKingdom prestige after successful secession
+        sourceKingdom.AdjustPrestige(-100);
     }
 	internal override void CancelEvent (){
 		base.CancelEvent ();

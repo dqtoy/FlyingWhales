@@ -69,8 +69,8 @@ public class CitizenAvatar : PooledObject {
 
     internal virtual void OnMoveFinished() {
         this.CollectEvents();
-        this.UpdateFogOfWar();
         this.CheckForKingdomDiscovery();
+        this.UpdateFogOfWar();
         this.transform.SetParent(this.citizenRole.location.transform);
         this.transform.localPosition = Vector3.zero;
         if(this.citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
@@ -189,7 +189,7 @@ public class CitizenAvatar : PooledObject {
 
         for (int i = 0; i < citiesSeen.Count; i++) {
             City currCity = citiesSeen[i];
-            thisKingdom.DiscoverCity(currCity);
+            //thisKingdom.DiscoverCity(currCity);
             //Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
             List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
             for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
