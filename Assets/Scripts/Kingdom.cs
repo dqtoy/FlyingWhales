@@ -12,6 +12,7 @@ public class Kingdom{
 	public string name;
 	public RACE race;
     public int age;
+    [SerializeField] private int _prestige;
     private int foundationYear;
     private int foundationMonth;
     private int foundationDay;
@@ -335,10 +336,6 @@ public class Kingdom{
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 
-    internal void SetGrowthState(bool state) {
-        _isGrowthEnabled = state;
-    }
-
 	// Updates this kingdom's type and horoscope
 	public void UpdateKingdomTypeData() {
 		// Update Kingdom Type whenever the kingdom expands to a new city
@@ -488,8 +485,10 @@ public class Kingdom{
         }
     }
     /*
+     * <summary>
 	 * Used to create a new KingdomRelationship with the
 	 * newly created kingdom. Function is listening to onCreateNewKingdom Event.
+     * </summary>
 	 * */
     protected void CreateNewRelationshipWithKingdom(Kingdom createdKingdom) {
         if (createdKingdom.id == this.id) {
@@ -506,17 +505,37 @@ public class Kingdom{
         relationships.Add(createdKingdom, newRel);
         newRel.UpdateLikeness(null);
     }
+    /* 
+     * <summary>
+     * Clear all relationships from self.
+     * </summary>
+     * */
     protected void DeleteRelationships() {
         this.relationships.Clear();
     }
+    /*
+     * <summary>
+     * Remove a kingdom from this kingdom's list of relationships
+     * </summary>
+     * */
     protected void RemoveRelationshipWithKingdom(Kingdom kingdomThatDied) {
         relationships.Remove(kingdomThatDied);
     }
+    /*
+     * <summary>
+     * Actions to perform when a relationship that this kingdom owns, deteriorates
+     * </summary>
+     * */
     internal void OnRelationshipDeteriorated(KingdomRelationship relationship, GameEvent gameEventTrigger, bool isDiscovery, ASSASSINATION_TRIGGER_REASONS assassinationReasons) {
         if (assassinationReasons != ASSASSINATION_TRIGGER_REASONS.NONE) {
             TriggerAssassination(relationship, gameEventTrigger, assassinationReasons);
         }
     }
+    /*
+    * <summary>
+    * Actions to perform when a relationship that this kingdom owns, improves
+    * </summary>
+    * */
     internal void OnRelationshipImproved(KingdomRelationship relationship) {
         //Improvement of Relationship
         int chance = UnityEngine.Random.Range(0, 100);
@@ -532,6 +551,13 @@ public class Kingdom{
             CancelInvasionPlan(relationship);
         }
     }
+    /*
+     * <summary>
+     * Get all kingdoms that this kingdom has a specific relationshipStatus
+     * </summary>
+     * <param name="relationshipStatuses">Relationship Statuses to be checked</param>
+     * <param name="discoveredOnly">Should only return discovered kingdoms?</param>
+     * */
     internal List<Kingdom> GetKingdomsByRelationship(RELATIONSHIP_STATUS[] relationshipStatuses, bool discoveredOnly = true) {
         List<Kingdom> kingdomsWithRelationshipStatus = new List<Kingdom>();
         for (int i = 0; i < relationships.Count; i++) {
@@ -621,6 +647,14 @@ public class Kingdom{
             currRel.ResetEventModifiers();
         }
     }
+    internal void UpdateAllRelationshipsLikeness() {
+        if (this.king != null) {
+            for (int i = 0; i < relationships.Count; i++) {
+                KingdomRelationship rel = relationships.ElementAt(i).Value;
+                rel.UpdateLikeness(null);
+            }
+        }
+    }
     #endregion
 
     private void TriggerAssassination(KingdomRelationship relationship, GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons) {
@@ -705,9 +739,6 @@ public class Kingdom{
 
     protected void OtherKingdomDiedActions(Kingdom kingdomThatDied) {
         if (kingdomThatDied.id != this.id) {
-            //RemoveRelationshipWithKingdom(kingdomThatDied);
-            //RemoveAllTradeRoutesWithOtherKingdom(kingdomThatDied);
-            //RemoveRelationshipWithKing(kingdomThatDied);
             RemoveRelationshipWithKingdom(kingdomThatDied);
             RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
             RemoveKingdomFromEmbargoList(kingdomThatDied);
@@ -719,24 +750,12 @@ public class Kingdom{
 	 * happen every tick here.
 	 * */
 	protected void KingdomTickActions(){
-        //this.ProduceGoldFromTrade();
-//        this.AttemptToAge();
-//        this.AdaptToKingValues();
         if (_isGrowthEnabled) {
             this.AttemptToExpand();
         }
-//		this.AttemptToCreateAttackCityEvent ();
-//		this.AttemptToCreateReinforcementEvent ();
-        //		this.AttemptToIncreaseCityHP();
-//        this.DecreaseUnrestEveryMonth();
-//		this.CheckBorderConflictLoyaltyExpiration ();
 		this.IncreaseTechCounterPerTick();
         this.TriggerEvents();
-        //if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
-        //    this.AttemptToTrade();
-        //}
     }
-
     private void AdaptToKingValues() {
 		for (int i = 0; i < _dictCharacterValues.Count; i++) {
 			CHARACTER_VALUE currValue = _dictCharacterValues.ElementAt(i).Key;
@@ -760,7 +779,6 @@ public class Kingdom{
 //            UpdateKingdomCharacterValues();
 //        }
     }
-
     private void AttemptToAge() {
 		age += 1;
 		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), AttemptToAge);
@@ -784,70 +802,82 @@ public class Kingdom{
 		int month = UnityEngine.Random.Range (1, 5);
 		SchedulingManager.Instance.AddEntry (month, UnityEngine.Random.Range(1, GameManager.daysInMonth[month]), GameManager.Instance.year, () => TriggerCrime());
 	}
-	/*
-	 * Attempt to create an attack city event
-	 * This will only happen if there's a war with any other kingdom
-	 * */
-//	private void AttemptToCreateAttackCityEvent(){
-//		if (this.activeCitiesPairInWar.Count > 0) {
-//			CityWarPair warPair = this.activeCitiesPairInWar [0];
-//			if (warPair.sourceCity == null || warPair.targetCity == null) {
-//				return;
-//			}
-//			warPair.sourceCity.AttackCityEvent (warPair.targetCity);
-//		}
-//	}
-
-	/*
-	 * Attempt to create a reinforcement event to increase a friendly city's hp
-	 * This will only happen if there's a war with any other kingdom
-	 * */
-//	private void AttemptToCreateReinforcementEvent(){
-//		int chance = UnityEngine.Random.Range (0, 100);
-//		if(chance < this.kingdomTypeData.warReinforcementCreationRate){
-//			EventCreator.Instance.CreateReinforcementEvent (this);
-//		}
-//	}
-
-	/*
+    /*
+    * Deacrease the kingdom's unrest by UNREST_DECREASE_PER_MONTH amount every month.
+    * */
+    protected void DecreaseUnrestEveryMonth() {
+        this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
+        GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        gameDate.AddMonths(1);
+        gameDate.day = GameManager.daysInMonth[gameDate.month];
+        SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => DecreaseUnrestEveryMonth());
+        //        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
+        //            this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
+        //        }
+    }
+    /*
 	 * Kingdom will attempt to expand. 
 	 * Chance for expansion can be edited by changing the value of expansionChance.
 	 * NOTE: expansionChance increases on it's own.
 	 * */
-	protected void AttemptToExpand(){
-		if (HasActiveEvent(EVENT_TYPES.EXPANSION)) {
-			return;
-		}
+    protected void AttemptToExpand() {
+        if (HasActiveEvent(EVENT_TYPES.EXPANSION)) {
+            return;
+        }
         float upperBound = 300f + (150f * (float)this.cities.Count);
-        float chance = UnityEngine.Random.Range (0, upperBound);
-		if (chance < this.expansionChance) {
-			//Debug.Log ("Expansion Rate: " + this.expansionChance);		
-			//List<City> citiesThatCanExpand = new List<City> ();
-			//List<Citizen> allUnassignedAdultCitizens = new List<Citizen> ();
-			//List<Resource> expansionCost = new List<Resource> () {
-			//	new Resource (BASE_RESOURCE_TYPE.GOLD, 0)
-			//};
+        float chance = UnityEngine.Random.Range(0, upperBound);
+        if (chance < this.expansionChance) {
+            //Debug.Log ("Expansion Rate: " + this.expansionChance);		
+            //List<City> citiesThatCanExpand = new List<City> ();
+            //List<Citizen> allUnassignedAdultCitizens = new List<Citizen> ();
+            //List<Resource> expansionCost = new List<Resource> () {
+            //	new Resource (BASE_RESOURCE_TYPE.GOLD, 0)
+            //};
 
-			if (this.cities.Count > 0) {
-				EventCreator.Instance.CreateExpansionEvent (this);
-			}
+            if (this.cities.Count > 0) {
+                EventCreator.Instance.CreateExpansionEvent(this);
+            }
 
-		}
-	}
+        }
+    }
 
-	/*
+    /*
+	 * Attempt to create an attack city event
+	 * This will only happen if there's a war with any other kingdom
+	 * */
+    //	private void AttemptToCreateAttackCityEvent(){
+    //		if (this.activeCitiesPairInWar.Count > 0) {
+    //			CityWarPair warPair = this.activeCitiesPairInWar [0];
+    //			if (warPair.sourceCity == null || warPair.targetCity == null) {
+    //				return;
+    //			}
+    //			warPair.sourceCity.AttackCityEvent (warPair.targetCity);
+    //		}
+    //	}
+    /*
+	 * Attempt to create a reinforcement event to increase a friendly city's hp
+	 * This will only happen if there's a war with any other kingdom
+	 * */
+    //	private void AttemptToCreateReinforcementEvent(){
+    //		int chance = UnityEngine.Random.Range (0, 100);
+    //		if(chance < this.kingdomTypeData.warReinforcementCreationRate){
+    //			EventCreator.Instance.CreateReinforcementEvent (this);
+    //		}
+    //	}
+
+    /*
 	 * Checks if there has been successful relationship deterioration cause by border conflcit within the past 3 months
 	 * If expiration value has reached zero (0), return all governor loyalty to normal, else, it will remain -10
 	 * */
-//	private void CheckBorderConflictLoyaltyExpiration(){
-//		if(this.hasConflicted){
-//			if(this.borderConflictLoyaltyExpiration > 0){
-//				this.borderConflictLoyaltyExpiration -= 1;
-//			}else{
-//				this.HasNotConflicted ();
-//			}
-//		}
-//	}
+    //	private void CheckBorderConflictLoyaltyExpiration(){
+    //		if(this.hasConflicted){
+    //			if(this.borderConflictLoyaltyExpiration > 0){
+    //				this.borderConflictLoyaltyExpiration -= 1;
+    //			}else{
+    //				this.HasNotConflicted ();
+    //			}
+    //		}
+    //	}
 
     #region Trading
     internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
@@ -860,44 +890,33 @@ public class Kingdom{
         }
         
     }
-
     internal void RemoveKingdomFromEmbargoList(Kingdom kingdomToRemove) {
         this._embargoList.Remove(kingdomToRemove);
     }
     #endregion
 
-    /*
-     * Deacrease the kingdom's unrest by UNREST_DECREASE_PER_MONTH amount every month.
-     * */
-    protected void DecreaseUnrestEveryMonth() {
-		this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
-		GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-		gameDate.AddMonths (1);
-		gameDate.day = GameManager.daysInMonth [gameDate.month];
-		SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => DecreaseUnrestEveryMonth());
-//        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
-//            this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
-//        }
-    }
-
-    /*
+    #region City Management
+    /* 
+     * <summary>
 	 * Create a new city obj on the specified hextile.
 	 * Then add it to this kingdoms cities.
+     * </summary>
 	 * */
-	internal City CreateNewCityOnTileForKingdom(HexTile tile){
-		City createdCity = CityGenerator.Instance.CreateNewCity (tile, this);
-		this.AddCityToKingdom(createdCity);
-		return createdCity;
-	}
-
-    /*
+    internal City CreateNewCityOnTileForKingdom(HexTile tile) {
+        City createdCity = CityGenerator.Instance.CreateNewCity(tile, this);
+        this.AddCityToKingdom(createdCity);
+        return createdCity;
+    }
+    /* 
+     * <summary>
      * Add a city to this kingdom.
      * Recompute kingdom type data, available resources and
      * daily growth of all cities. Assign city as capital city
      * if city is first city in kingdom.
+     * </summary>
      * */
-	internal void AddCityToKingdom(City city){
-		this._cities.Add (city);
+    internal void AddCityToKingdom(City city) {
+        this._cities.Add(city);
         this.UpdateKingdomTypeData();
         this.UpdateAvailableResources();
         this.UpdateAllCitiesDailyGrowth();
@@ -906,15 +925,16 @@ public class Kingdom{
             SetCapitalCity(this._cities[0]);
         }
     }
-
-    /*
+    /* 
+     * <summary>
      * Remove city from this kingdom.
      * Check if kingdom is dead beacuse of city removal.
      * If not, recompute this kingdom's capital city, kingdom type data, 
      * available resources, and daily growth of remaining cities.
+     * </summary>
      * */
     internal void RemoveCityFromKingdom(City city) {
-		city.rebellion = null;
+        city.rebellion = null;
         this._cities.Remove(city);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
@@ -923,13 +943,12 @@ public class Kingdom{
             this.UpdateAvailableResources();
             this.UpdateAllCitiesDailyGrowth();
             this.UpdateExpansionRate();
-			//if (this._cities[0] != null) {
-                SetCapitalCity(this._cities[0]);
+            //if (this._cities[0] != null) {
+            SetCapitalCity(this._cities[0]);
             //}
         }
-        
-    }
 
+    }
     internal void SetCapitalCity(City city) {
         this.capitalCity = city;
         HexTile habitableTile;
@@ -945,73 +964,97 @@ public class Kingdom{
             }
         }
     }
+    #endregion
 
-	/*
-	 * Get a list of all the citizens in this kingdom.
-	 * */
-	internal List<Citizen> GetAllCitizensInKingdom(){
-		List<Citizen> allCitizens = new List<Citizen>();
-		for (int i = 0; i < this.cities.Count; i++) {
-			allCitizens.AddRange (this.cities [i].citizens);
-		}
-		return allCitizens;
-	}
+    #region Citizen Management
+    internal List<Citizen> GetAllCitizensOfType(ROLE role) {
+        List<Citizen> citizensOfType = new List<Citizen>();
+        for (int i = 0; i < this.cities.Count; i++) {
+            citizensOfType.AddRange(this.cities[i].GetCitizensWithRole(role));
+        }
+        return citizensOfType;
+    }
+    #endregion
 
-	internal void UpdateKingSuccession(){
-		List<Citizen> orderedMaleRoyalties = this.successionLine.Where (x => x.gender == GENDER.MALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
-		List<Citizen> orderedFemaleRoyalties = this.successionLine.Where (x => x.gender == GENDER.FEMALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
-		List<Citizen> orderedBrotherRoyalties = this.successionLine
-            .Where (x => x.gender == GENDER.MALE 
-            && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
-            && x.id != this.king.id)
+    #region Succession
+    internal void UpdateKingSuccession() {
+        List<Citizen> orderedMaleRoyalties = this.successionLine.Where(x => x.gender == GENDER.MALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
+        List<Citizen> orderedFemaleRoyalties = this.successionLine.Where(x => x.gender == GENDER.FEMALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
+        List<Citizen> orderedBrotherRoyalties = this.successionLine
+            .Where(x => x.gender == GENDER.MALE
+           && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
+           && x.id != this.king.id)
             .OrderByDescending(x => x.age).ToList();
 
         List<Citizen> orderedSisterRoyalties = this.successionLine
-            .Where (x => x.gender == GENDER.FEMALE 
-            && (x.father != null && this.king.father != null && x.father.id == this.king.father.id) 
-            && x.id != this.king.id)
+            .Where(x => x.gender == GENDER.FEMALE
+           && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
+           && x.id != this.king.id)
             .OrderByDescending(x => x.age).ToList();
 
-		List<Citizen> orderedRoyalties = orderedMaleRoyalties.Concat (orderedFemaleRoyalties).Concat(orderedBrotherRoyalties).Concat(orderedSisterRoyalties).ToList();
+        List<Citizen> orderedRoyalties = orderedMaleRoyalties.Concat(orderedFemaleRoyalties).Concat(orderedBrotherRoyalties).Concat(orderedSisterRoyalties).ToList();
 
-		this.successionLine.Clear ();
-		this.successionLine = orderedRoyalties;
-	}
+        this.successionLine.Clear();
+        this.successionLine = orderedRoyalties;
+    }
+    internal void ChangeSuccessionLineRescursively(Citizen royalty) {
+        if (this.king.id != royalty.id) {
+            if (!royalty.isDead) {
+                this.successionLine.Add(royalty);
+            }
+        }
 
-	internal void AssignNewKing(Citizen newKing, City city = null){
-		if(this.king != null){
-			if(this.king.city != null){
-				this.king.city.hasKing = false;
-			}
-		}
+        for (int i = 0; i < royalty.children.Count; i++) {
+            if (royalty.children[i] != null) {
+                this.ChangeSuccessionLineRescursively(royalty.children[i]);
+            }
+        }
+    }
+    internal void RemoveFromSuccession(Citizen citizen) {
+        if (citizen != null) {
+            for (int i = 0; i < this.successionLine.Count; i++) {
+                if (this.successionLine[i].id == citizen.id) {
+                    this.successionLine.RemoveAt(i);
+                    //					UIManager.Instance.UpdateKingdomSuccession ();
+                    break;
+                }
+            }
+        }
+    }
+    internal void AssignNewKing(Citizen newKing, City city = null) {
+        if (this.king != null) {
+            if (this.king.city != null) {
+                this.king.city.hasKing = false;
+            }
+        }
 
-		if(newKing == null){
-//			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-//			this.king.city.CreateInitialRoyalFamily ();
-//			this.king.CreateInitialRelationshipsToKings ();
-//			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+        if (newKing == null) {
+            //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+            //			this.king.city.CreateInitialRoyalFamily ();
+            //			this.king.CreateInitialRelationshipsToKings ();
+            //			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
 
-			if(city == null){
+            if (city == null) {
                 //				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING IN KINGDOM!" + this.name);
                 if (this.king.city.isDead) {
                     Debug.LogError("City of previous king is dead! But still creating king in that dead city");
                 }
-				newKing = this.king.city.CreateNewKing ();
-			} else {
-//				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING ON CITY " + city.name + " IN KINGDOM!" + this.name);
-				newKing = city.CreateNewKing ();
-			}
-			if(newKing == null){
-				if(this.king != null){
-					if(this.king.city != null){
-						this.king.city.hasKing = true;
-					}
-				}
-				return;
-			}
-		}
+                newKing = this.king.city.CreateNewKing();
+            } else {
+                //				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING ON CITY " + city.name + " IN KINGDOM!" + this.name);
+                newKing = city.CreateNewKing();
+            }
+            if (newKing == null) {
+                if (this.king != null) {
+                    if (this.king.city != null) {
+                        this.king.city.hasKing = true;
+                    }
+                }
+                return;
+            }
+        }
         SetCapitalCity(newKing.city);
-		newKing.city.hasKing = true;
+        newKing.city.hasKing = true;
 
         //if (newKing.isMarried) {
         //    if (newKing.spouse.city.kingdom.king != null && newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
@@ -1019,383 +1062,292 @@ public class Kingdom{
         //        return;
         //    }
         //}
-        if (!newKing.isDirectDescendant){
-			//				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
-			Utilities.ChangeDescendantsRecursively (newKing, true);
-            if(this.king != null) {
+        if (!newKing.isDirectDescendant) {
+            //				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
+            Utilities.ChangeDescendantsRecursively(newKing, true);
+            if (this.king != null) {
                 Utilities.ChangeDescendantsRecursively(this.king, false);
             }
-		}
+        }
         /*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
 			newKing.DetachGeneralFromCitizen ();
 		}*/
         //		newKing.role = ROLE.KING;
         Citizen previousKing = this.king;
-		bool isNewKingdomGovernor = newKing.isGovernor;
+        bool isNewKingdomGovernor = newKing.isGovernor;
 
-		newKing.AssignRole(ROLE.KING);
+        newKing.AssignRole(ROLE.KING);
 
-		if (isNewKingdomGovernor) {
-			newKing.city.AssignNewGovernor();
-		}
+        if (isNewKingdomGovernor) {
+            newKing.city.AssignNewGovernor();
+        }
         //		newKing.isKing = true;
-//        newKing.isGovernor = false;
-//			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+        //        newKing.isGovernor = false;
+        //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+        newKing.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
         //		this.king = newKing;
 
         ResetRelationshipModifiers();
         UpdateMutualRelationships();
         //Inherit relationships of previous king, otherwise, create new relationships
-//        if (previousKing != null) {
-//            KingdomManager.Instance.InheritRelationshipFromCitizen(previousKing, newKing);
-//            previousKing.relationshipKings.Clear();
-//        } else {
-////            KingdomManager.Instance.RemoveRelationshipToOtherKings(previousKing);
-//            //newKing.CreateInitialRelationshipsToKings();
-//            //KingdomManager.Instance.AddRelationshipToOtherKings(newKing);
-//        }
+        //        if (previousKing != null) {
+        //            KingdomManager.Instance.InheritRelationshipFromCitizen(previousKing, newKing);
+        //            previousKing.relationshipKings.Clear();
+        //        } else {
+        ////            KingdomManager.Instance.RemoveRelationshipToOtherKings(previousKing);
+        //            //newKing.CreateInitialRelationshipsToKings();
+        //            //KingdomManager.Instance.AddRelationshipToOtherKings(newKing);
+        //        }
 
         this.successionLine.Clear();
-		ChangeSuccessionLineRescursively (newKing);
-		this.successionLine.AddRange (newKing.GetSiblings());
-		UpdateKingSuccession ();
-//		this.RetrieveInternationWar();
+        ChangeSuccessionLineRescursively(newKing);
+        this.successionLine.AddRange(newKing.GetSiblings());
+        UpdateKingSuccession();
+        //		this.RetrieveInternationWar();
 
-		this.UpdateAllGovernorsLoyalty ();
-		this.UpdateAllRelationshipsLikeness ();
-//        Debug.Log("Assigned new king: " + newKing.name + " because " + previousKing.name + " died!");
+        this.UpdateAllGovernorsLoyalty();
+        this.UpdateAllRelationshipsLikeness();
+        //        Debug.Log("Assigned new king: " + newKing.name + " because " + previousKing.name + " died!");
     }
+    internal void AddPretender(Citizen citizen) {
+        this.pretenders.Add(citizen);
+        this.pretenders = this.pretenders.Distinct().ToList();
+    }
+    internal List<Citizen> GetPretenderClaimants(Citizen successor) {
+        List<Citizen> pretenderClaimants = new List<Citizen>();
+        for (int i = 0; i < this.pretenders.Count; i++) {
+            if (this.pretenders[i].prestige > successor.prestige) {
+                pretenderClaimants.Add(this.pretenders[i]);
+            }
+        }
+        return pretenderClaimants;
+    }
+    //    internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
+    ////		Debug.Log ("SUCCESSION WAR");
 
-    internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
-//		Debug.Log ("SUCCESSION WAR");
+    //		if(newKing.city.governor.id == newKing.id){
+    //			newKing.city.AssignNewGovernor ();
+    //		}
+    //		if(!newKing.isDirectDescendant){
+    //			Utilities.ChangeDescendantsRecursively (newKing, true);
+    //			Utilities.ChangeDescendantsRecursively (this.king, false);
+    //		}
+    //		/*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
+    //			newKing.DetachGeneralFromCitizen ();
+    //		}*/
+    ////		newKing.role = ROLE.KING;
+    //		newKing.AssignRole(ROLE.KING);
+    ////		newKing.isKing = true;
+    //		newKing.isGovernor = false;
+    ////		KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+    //		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
-		if(newKing.city.governor.id == newKing.id){
-			newKing.city.AssignNewGovernor ();
-		}
-		if(!newKing.isDirectDescendant){
-			Utilities.ChangeDescendantsRecursively (newKing, true);
-			Utilities.ChangeDescendantsRecursively (this.king, false);
-		}
-		/*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
-			newKing.DetachGeneralFromCitizen ();
-		}*/
-//		newKing.role = ROLE.KING;
-		newKing.AssignRole(ROLE.KING);
-//		newKing.isKing = true;
-		newKing.isGovernor = false;
-//		KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+    ////		this.king = newKing;
+    //		//this.king.CreateInitialRelationshipsToKings ();
+    //		//KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+    //		this.successionLine.Clear();
+    //		ChangeSuccessionLineRescursively (newKing);
+    //		this.successionLine.AddRange (newKing.GetSiblings());
+    //		UpdateKingSuccession ();
+    ////		this.RetrieveInternationWar();
+    ////		UIManager.Instance.UpdateKingsGrid();
+    ////		UIManager.Instance.UpdateKingdomSuccession ();
 
-//		this.king = newKing;
-		//this.king.CreateInitialRelationshipsToKings ();
-		//KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
-		this.successionLine.Clear();
-		ChangeSuccessionLineRescursively (newKing);
-		this.successionLine.AddRange (newKing.GetSiblings());
-		UpdateKingSuccession ();
-//		this.RetrieveInternationWar();
-//		UIManager.Instance.UpdateKingsGrid();
-//		UIManager.Instance.UpdateKingdomSuccession ();
+    //		for(int i = 0; i < claimants.Count; i++){
+    //			newKing.AddSuccessionWar (claimants [i]);
+    ////			newKing.campaignManager.CreateCampaign ();
 
-		for(int i = 0; i < claimants.Count; i++){
-			newKing.AddSuccessionWar (claimants [i]);
-//			newKing.campaignManager.CreateCampaign ();
+    //			if(claimants[i].isGovernor){
+    //				claimants [i].supportedCitizen = claimants [i];
+    //			}
+    //			claimants[i].AddSuccessionWar (newKing);
+    ////			claimants[i].campaignManager.CreateCampaign ();
+    //		}
 
-			if(claimants[i].isGovernor){
-				claimants [i].supportedCitizen = claimants [i];
-			}
-			claimants[i].AddSuccessionWar (newKing);
-//			claimants[i].campaignManager.CreateCampaign ();
-		}
+    //	}
+    //	internal void DethroneKing(Citizen newKing){
+    ////		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);
+    //
+    //		if(!newKing.isDirectDescendant){
+    ////			RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
+    //			Utilities.ChangeDescendantsRecursively (newKing, true);
+    //			Utilities.ChangeDescendantsRecursively (this.king, false);
+    //		}
+    //		this.king = newKing;
+    //		this.king.CreateInitialRelationshipsToKings ();
+    //		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
+    //		this.successionLine.Clear();
+    //		ChangeSuccessionLineRescursively (newKing);
+    //		this.successionLine.AddRange (GetSiblings (newKing));
+    //		UpdateKingSuccession ();
+    //	}
+    #endregion
 
-	}
-//	internal void DethroneKing(Citizen newKing){
-////		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);
-//
-//		if(!newKing.isDirectDescendant){
-////			RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
-//			Utilities.ChangeDescendantsRecursively (newKing, true);
-//			Utilities.ChangeDescendantsRecursively (this.king, false);
-//		}
-//		this.king = newKing;
-//		this.king.CreateInitialRelationshipsToKings ();
-//		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
-//		this.successionLine.Clear();
-//		ChangeSuccessionLineRescursively (newKing);
-//		this.successionLine.AddRange (GetSiblings (newKing));
-//		UpdateKingSuccession ();
-//	}
-	internal void ChangeSuccessionLineRescursively(Citizen royalty){
-		if(this.king.id != royalty.id){
-			if(!royalty.isDead){
-				this.successionLine.Add (royalty);
-			}
-		}
+    #region War
+    internal void AddInternationalWar(Kingdom kingdom) {
+        //		Debug.Log ("INTERNATIONAL WAR");
+        //		for(int i = 0; i < kingdom.cities.Count; i++){
+        //			if(!this.intlWarCities.Contains(kingdom.cities[i])){
+        //				this.intlWarCities.Add(kingdom.cities[i]);
+        //			}
+        //		}
+        //		this.TargetACityToAttack ();
+        //		for(int i = 0; i < this.cities.Count; i++){
+        //			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i], WAR_TYPE.INTERNATIONAL)){
+        //				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
+        //			}
+        //			if(this.cities[i].governor.supportedCitizen == null){
+        //				if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
+        //					this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
+        //				}
+        //			}else{
+        //				if(!this.king.SearchForSuccessionWar(this.cities[i].governor.supportedCitizen)){
+        //					if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
+        //						this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
+        //					}
+        //				}
+        //			}
+        //		}
+        //		this.king.campaignManager.CreateCampaign ();
+    }
+    internal void RemoveInternationalWar(Kingdom kingdom) {
+        //		this.intlWarCities.RemoveAll(x => x.kingdom.id == kingdom.id);
+        //		for(int i = 0; i < this.king.campaignManager.activeCampaigns.Count; i++){
+        //			if(this.king.campaignManager.activeCampaigns[i].warType == WAR_TYPE.INTERNATIONAL){
+        //				if(this.king.campaignManager.activeCampaigns[i].targetCity.kingdom.id == kingdom.id){
+        //					this.king.campaignManager.CampaignDone(this.king.campaignManager.activeCampaigns[i]);
+        //				}
+        //			}
+        //		}
+    }
+    //	internal void PassOnInternationalWar(){
+    //		this.holderIntlWarCities.Clear();
+    //		this.holderIntlWarCities.AddRange(this.intlWarCities);
+    //	}
+    //	internal void RetrieveInternationWar(){
+    //		this.intlWarCities.AddRange(this.holderIntlWarCities);
+    //		this.holderIntlWarCities.Clear();
+    //	}
+    //
+    //internal City SearchForCityById(int id){
+    //	for(int i = 0; i < this.cities.Count; i++){
+    //		if(this.cities[i].id == id){
+    //			return this.cities[i];
+    //		}
+    //	}
+    //	return null;
+    //}
 
-		for(int i = 0; i < royalty.children.Count; i++){
-			if(royalty.children[i] != null){
-				this.ChangeSuccessionLineRescursively (royalty.children [i]);
-			}
-		}
-	}
-		
-	internal void AddPretender(Citizen citizen){
-		this.pretenders.Add (citizen);
-		this.pretenders = this.pretenders.Distinct ().ToList ();
-	}
-	internal List<Citizen> GetPretenderClaimants(Citizen successor){
-		List<Citizen> pretenderClaimants = new List<Citizen> ();
-		for(int i = 0; i < this.pretenders.Count; i++){
-			if(this.pretenders[i].prestige > successor.prestige){
-				pretenderClaimants.Add (this.pretenders [i]);
-			}
-		}
-		return pretenderClaimants;
-	}
-	//internal bool CheckForSpecificWar(Kingdom kingdom){
-	//	for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
-	//		if(this.relationshipsWithOtherKingdoms[i].targetKingdom.id == kingdom.id){
-	//			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
-	//				return true;
-	//			}
-	//		}
-	//	}
-	//	return false;
-	//}
-	//internal void AssimilateKingdom(Kingdom newKingdom){
-	//	for(int i = 0; i < this.cities.Count; i++){
-	//		newKingdom.AddCityToKingdom (this.cities [i]);
-	//	}
-	//	KingdomManager.Instance.MakeKingdomDead(this);
-	//}
 
-	internal List<Citizen> GetAllCitizensOfType(ROLE role){
-		List<Citizen> citizensOfType = new List<Citizen>();
-		for (int i = 0; i < this.cities.Count; i++) {
-			citizensOfType.AddRange (this.cities [i].GetCitizensWithRole(role));
-		}
-		return citizensOfType;
-	}
+    //	internal void AddInternationalWarCity(City newCity){
+    //		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
+    //			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+    //				if(!this.relationshipsWithOtherKingdoms[i].targetKingdom.intlWarCities.Contains(newCity)){
+    //					this.relationshipsWithOtherKingdoms [i].targetKingdom.intlWarCities.Add (newCity);
+    //				}
+    //			}
+    //		}
+    //		if(this.IsKingdomHasWar()){
+    //			if(!this.king.campaignManager.SearchForDefenseWarCities(newCity, WAR_TYPE.INTERNATIONAL)){
+    //				this.king.campaignManager.defenseWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
+    //			}
+    //		}
 
-	internal List<HexTile> GetAllHexTilesInKingdom(){
-		List<HexTile> tilesOwnedByKingdom = new List<HexTile>();
-		for (int i = 0; i < this.cities.Count; i++) {
-			tilesOwnedByKingdom.AddRange (this.cities[i].ownedTiles);
-		}
-		return tilesOwnedByKingdom;
-	}
+    //	}
+    //internal bool IsKingdomHasWar(){
+    //	for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
+    //		if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+    //			return true;
+    //		}
+    //	}
+    //	return false;
+    //}
+    internal void AdjustExhaustionToAllRelationship(int amount) {
+        for (int i = 0; i < relationships.Count; i++) {
+            relationships.ElementAt(i).Value.AdjustExhaustion(amount);
+        }
+    }
+    internal void ConquerCity(City city, General attacker) {
+        if (this.id != city.kingdom.id) {
+            KingdomRelationship rel = this.GetRelationshipWithKingdom(city.kingdom);
+            if (rel != null && rel.war != null) {
+                rel.war.warPair.isDone = true;
+            }
 
-	internal void AddInternationalWar(Kingdom kingdom){
-//		Debug.Log ("INTERNATIONAL WAR");
-//		for(int i = 0; i < kingdom.cities.Count; i++){
-//			if(!this.intlWarCities.Contains(kingdom.cities[i])){
-//				this.intlWarCities.Add(kingdom.cities[i]);
-//			}
-//		}
-//		this.TargetACityToAttack ();
-//		for(int i = 0; i < this.cities.Count; i++){
-//			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i], WAR_TYPE.INTERNATIONAL)){
-//				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
-//			}
-//			if(this.cities[i].governor.supportedCitizen == null){
-//				if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
-//					this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
-//				}
-//			}else{
-//				if(!this.king.SearchForSuccessionWar(this.cities[i].governor.supportedCitizen)){
-//					if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
-//						this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
-//					}
-//				}
-//			}
-//		}
-//		this.king.campaignManager.CreateCampaign ();
-	}
-
-	internal void RemoveInternationalWar(Kingdom kingdom){
-//		this.intlWarCities.RemoveAll(x => x.kingdom.id == kingdom.id);
-//		for(int i = 0; i < this.king.campaignManager.activeCampaigns.Count; i++){
-//			if(this.king.campaignManager.activeCampaigns[i].warType == WAR_TYPE.INTERNATIONAL){
-//				if(this.king.campaignManager.activeCampaigns[i].targetCity.kingdom.id == kingdom.id){
-//					this.king.campaignManager.CampaignDone(this.king.campaignManager.activeCampaigns[i]);
-//				}
-//			}
-//		}
-	}
-
-//	internal void PassOnInternationalWar(){
-//		this.holderIntlWarCities.Clear();
-//		this.holderIntlWarCities.AddRange(this.intlWarCities);
-//	}
-//	internal void RetrieveInternationWar(){
-//		this.intlWarCities.AddRange(this.holderIntlWarCities);
-//		this.holderIntlWarCities.Clear();
-//	}
-//
-	internal City SearchForCityById(int id){
-		for(int i = 0; i < this.cities.Count; i++){
-			if(this.cities[i].id == id){
-				return this.cities[i];
-			}
-		}
-		return null;
-	}
-
-	internal void ConquerCity(City city, General attacker){
-		if (this.id != city.kingdom.id){
-			KingdomRelationship rel = this.GetRelationshipWithKingdom (city.kingdom);
-			if(rel != null && rel.war != null){
-				rel.war.warPair.isDone = true;
-			}
-
-			HexTile hex = city.hexTile;
+            HexTile hex = city.hexTile;
             //city.KillCity();
-            if(this.race != city.kingdom.race) {
+            if (this.race != city.kingdom.race) {
                 city.KillCity();
             } else {
                 city.ConquerCity(this);
             }
-            
-			//yield return null;
-			//City newCity = CreateNewCityOnTileForKingdom(hex);
-			//newCity.hp = 100;
-			//newCity.CreateInitialFamilies(false);
-//			this.AddInternationalWarCity (newCity);
-			if (UIManager.Instance.currentlyShowingKingdom.id == city.kingdom.id) {
+
+            //yield return null;
+            //City newCity = CreateNewCityOnTileForKingdom(hex);
+            //newCity.hp = 100;
+            //newCity.CreateInitialFamilies(false);
+            //			this.AddInternationalWarCity (newCity);
+            if (UIManager.Instance.currentlyShowingKingdom.id == city.kingdom.id) {
                 city.kingdom.HighlightAllOwnedTilesInKingdom();
-			}
-			KingdomManager.Instance.CheckWarTriggerMisc (city.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
-			//Adjust unrest because a city of this kingdom was conquered.
-			this.AdjustUnrest(UNREST_INCREASE_CONQUER);
-		}else{
-			if(city is RebelFort){
-				city.rebellion.KillFort();
-//				HexTile hex = city.hexTile;
-//				city.KillCity();
-			}else{
-				if(city.rebellion != null){
-					city.ChangeToCity ();
-				}else{
-					city.ChangeToRebelFort (attacker.citizen.city.rebellion);
-				}
-			}
+            }
+            KingdomManager.Instance.CheckWarTriggerMisc(city.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+            //Adjust unrest because a city of this kingdom was conquered.
+            this.AdjustUnrest(UNREST_INCREASE_CONQUER);
+        } else {
+            if (city is RebelFort) {
+                city.rebellion.KillFort();
+                //				HexTile hex = city.hexTile;
+                //				city.KillCity();
+            } else {
+                if (city.rebellion != null) {
+                    city.ChangeToCity();
+                } else {
+                    city.ChangeToRebelFort(attacker.citizen.city.rebellion);
+                }
+            }
 
-		}
+        }
 
-	}
-//	internal void AddInternationalWarCity(City newCity){
-//		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
-//			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
-//				if(!this.relationshipsWithOtherKingdoms[i].targetKingdom.intlWarCities.Contains(newCity)){
-//					this.relationshipsWithOtherKingdoms [i].targetKingdom.intlWarCities.Add (newCity);
-//				}
-//			}
-//		}
-//		if(this.IsKingdomHasWar()){
-//			if(!this.king.campaignManager.SearchForDefenseWarCities(newCity, WAR_TYPE.INTERNATIONAL)){
-//				this.king.campaignManager.defenseWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
-//			}
-//		}
+    }
+    //internal bool CheckForSpecificWar(Kingdom kingdom){
+    //	for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
+    //		if(this.relationshipsWithOtherKingdoms[i].targetKingdom.id == kingdom.id){
+    //			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
+    //				return true;
+    //			}
+    //		}
+    //	}
+    //	return false;
+    //}
+    //internal void AssimilateKingdom(Kingdom newKingdom){
+    //	for(int i = 0; i < this.cities.Count; i++){
+    //		newKingdom.AddCityToKingdom (this.cities [i]);
+    //	}
+    //	KingdomManager.Instance.MakeKingdomDead(this);
+    //}
+    #endregion
 
-//	}
-	//internal bool IsKingdomHasWar(){
-	//	for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
-	//		if(this.relationshipsWithOtherKingdoms[i].isAtWar){
-	//			return true;
-	//		}
-	//	}
-	//	return false;
-	//}
-	internal void RemoveFromSuccession(Citizen citizen){
-		if(citizen != null){
-			for(int i = 0; i < this.successionLine.Count; i++){
-				if(this.successionLine[i].id == citizen.id){
-					this.successionLine.RemoveAt (i);
-//					UIManager.Instance.UpdateKingdomSuccession ();
-					break;
-				}
-			}
-		}
-	}
+    #region Kingdom Tile Management
+    internal void HighlightAllOwnedTilesInKingdom() {
+        for (int i = 0; i < this.cities.Count; i++) {
+            if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities[i].id) {
+                continue;
+            }
+            this.cities[i].HighlightAllOwnedTiles(127.5f / 255f);
+        }
+    }
+    internal void UnHighlightAllOwnedTilesInKingdom() {
+        for (int i = 0; i < this.cities.Count; i++) {
+            if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities[i].id) {
+                continue;
+            }
+            this.cities[i].UnHighlightAllOwnedTiles();
+        }
+    }
+    #endregion
 
-	internal void AdjustExhaustionToAllRelationship(int amount){
-		for (int i = 0; i < relationships.Count; i++) {
-			relationships.ElementAt(i).Value.AdjustExhaustion (amount);
-		}
-	}
 
-	internal Citizen GetCitizenWithHighestPrestigeInKingdom(){
-		Citizen citizenHighest = null;
-		for(int i = 0; i < this.cities.Count; i++){
-			Citizen citizen = this.cities [i].GetCitizenWithHighestPrestige ();
-			if(citizen != null){
-				if(citizenHighest == null){
-					citizenHighest = citizen;
-				}else{
-					if(citizen.prestige > citizenHighest.prestige){
-						citizenHighest = citizen;
-					}
-				}
-
-			}
-		}
-		return citizenHighest;
-	}
-
-	internal void HighlightAllOwnedTilesInKingdom(){
-		for (int i = 0; i < this.cities.Count; i++) {
-			if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities [i].id) {
-				continue;
-			}
-			this.cities [i].HighlightAllOwnedTiles (127.5f / 255f);
-		}
-	}
-
-	internal void UnHighlightAllOwnedTilesInKingdom(){
-		for (int i = 0; i < this.cities.Count; i++) {
-			if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities [i].id) {
-				continue;
-			}
-			this.cities [i].UnHighlightAllOwnedTiles ();
-		}
-	}
-
-	//internal void UpdateKingdomAdjacency(){
-	//	this.adjacentKingdoms.Clear();
-	//	this.adjacentCitiesFromOtherKingdoms.Clear ();
-	//	for (int i = 0; i < this.cities.Count; i++) {
-	//		List<City> adjacentCitiesOfCurrentCity = this.cities[i].adjacentCities;
-	//		for (int j = 0; j < adjacentCitiesOfCurrentCity.Count; j++) {
-	//			City currAdjacentCity = adjacentCitiesOfCurrentCity [j];
-	//			if (adjacentCitiesOfCurrentCity[j].kingdom.id != this.id) {
-	//				if (!this.adjacentKingdoms.Contains (currAdjacentCity.kingdom)) {
-	//					this.adjacentKingdoms.Add (currAdjacentCity.kingdom);
-	//				}
-	//				if (!currAdjacentCity.kingdom.adjacentKingdoms.Contains(this)) {
-	//					currAdjacentCity.kingdom.adjacentKingdoms.Add(this);
-	//				}
-	//				if (!this.adjacentCitiesFromOtherKingdoms.Contains(currAdjacentCity)) {
-	//					this.adjacentCitiesFromOtherKingdoms.Add(currAdjacentCity);
-	//				}
-	//				if (!currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Contains(this.cities[i])) {
-	//					currAdjacentCity.kingdom.adjacentCitiesFromOtherKingdoms.Add(this.cities[i]);
-	//				}
-
-	//			}
-	//		}
-	//	}
-	//}
-
-	protected List<HexTile> GetAllKingdomBorderTiles(){
-		List<HexTile> allBorderTiles = new List<HexTile>();
-		for (int i = 0; i < this.cities.Count; i++) {
-			allBorderTiles.AddRange (this.cities [i].borderTiles);
-		}
-		return allBorderTiles;
-	}
-
-	internal MILITARY_STRENGTH GetMilitaryStrengthAgainst(Kingdom kingdom){
+    internal MILITARY_STRENGTH GetMilitaryStrengthAgainst(Kingdom kingdom){
 		int sourceMilStrength = this.GetAllCityHp ();
 		int targetMilStrength = kingdom.GetAllCityHp ();
 
@@ -1544,6 +1496,7 @@ public class Kingdom{
 		}
 		return null;
 	}
+
 	#region Resource Management
 	/*
 	 * Function to adjust the gold count of this kingdom.
@@ -1554,7 +1507,6 @@ public class Kingdom{
 		this._goldCount += goldAmount;
 		this._goldCount = Mathf.Clamp(this._goldCount, 0, this._maxGold);
 	}
-
 	/*
 	 * Adjusts resource count. Only reduces gold for now. edit for other
 	 * resources of necessary
@@ -1572,7 +1524,6 @@ public class Kingdom{
 			}
 		}
 	}
-
 	/*
 	 * Add resource type to this kingdoms
 	 * available resource (DO NOT ADD GOLD TO THIS!).
@@ -1594,7 +1545,6 @@ public class Kingdom{
             this.UpdateExpansionRate();
         }
     }
-
     internal void UpdateExpansionRate() {
         this.expansionChance = this.kingdomTypeData.expansionRate;
 
@@ -1610,7 +1560,6 @@ public class Kingdom{
             }
         }
     }
-
     internal void UpdateTechLevel() {
         this._techLevel = 1;
         List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
@@ -1623,7 +1572,6 @@ public class Kingdom{
             }
         }
     }
-
     internal void UpdateAllCitiesDailyGrowth() {
         //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
         List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
@@ -1633,7 +1581,6 @@ public class Kingdom{
             currCity.UpdateDailyGrowthBasedOnSpecialResources(dailyGrowthGained);
         }
     }
-
     private int ComputeDailyGrowthGainedFromResources(List<RESOURCE> allAvailableResources) {
         int dailyGrowthGained = 0;
         for (int i = 0; i < allAvailableResources.Count; i++) {
@@ -1645,43 +1592,6 @@ public class Kingdom{
         }
         return dailyGrowthGained;
     }
-
-	/*
-	 * Check if the kingdom has enough resources for a given cost.
-	 * */
-	internal bool HasEnoughResourcesForAction(List<Resource> resourceCost){
-        return true;
-		//if(resourceCost != null){
-		//	for (int i = 0; i < resourceCost.Count; i++) {
-		//		Resource currentResource = resourceCost [i];
-		//		if (currentResource.resourceType == BASE_RESOURCE_TYPE.GOLD) {
-		//			if (this._goldCount < currentResource.resourceQuantity) {
-		//				return false;
-		//			}
-		//		} 
-  //  //            else {
-		//		//	if (!this.HasResource(currentResource.resourceType)) {
-		//		//		return false;
-		//		//	}
-		//		//}
-		//	}
-		//}else{
-		//	return false;
-		//}
-		//return true;
-	}
-
-	/*
-	 * Check if kingdom is producing a resource of type.
-	 * Excluding Gold.
-	 * */
-	internal bool HasResource(RESOURCE resourceType){
-		if (this._availableResources.ContainsKey(resourceType)) {
-			return true;
-		}
-		return false;
-	}
-
 	/*
 	 * Check if this kingdom has enough gold to create role.
 	 * */
@@ -1710,7 +1620,6 @@ public class Kingdom{
 		}
 		return true;
 	}
-
     /*
      * Gets a list of resources that otherKingdom does not have access to (By self or by trade).
      * Will compare to this kingdoms available resources (excl. resources from trade)
@@ -1727,7 +1636,6 @@ public class Kingdom{
         }
         return resourcesOtherKingdomDoesNotHave;
     }
-
     internal void UpdateAvailableResources() {
         this._availableResources.Clear();
         for (int i = 0; i < this.cities.Count; i++) {
@@ -1740,9 +1648,17 @@ public class Kingdom{
             }
         }
     }
-	#endregion
+    /*
+     * <summary>
+     * Set growth state of kingdom, disabling growth will prevent expansion,
+     * building of new settlements and pregnancy
+     * */
+    internal void SetGrowthState(bool state) {
+        _isGrowthEnabled = state;
+    }
+    #endregion
 
-	#region Unrest
+    #region Unrest
     internal void AdjustUnrest(int amountToAdjust) {
         this._unrest += amountToAdjust;
         this._unrest = Mathf.Clamp(this._unrest, 0, 100);
@@ -1823,7 +1739,6 @@ public class Kingdom{
 	private void UpdateTechCapacity(){
 		this._techCapacity = 2000 * this._techLevel;
 	}
-
 	internal void AdjustTechCounter(int amount){
 		this._techCounter += amount;
 		this._techCounter = Mathf.Clamp(this._techCounter, 0, this._techCapacity);
@@ -1842,7 +1757,6 @@ public class Kingdom{
 	#endregion
 	
 	#region Discovery
-
     /*
      * Check all the neighburs of the border tiles and owned tiles of all this kingdom's
      * cities, and check if any of them are owned by another kingdom, if so,
@@ -2346,7 +2260,6 @@ public class Kingdom{
 
 
 	#region Governors Loyalty/Opinion
-
 	internal void HasConflicted(GameEvent gameEvent){
 		for(int i = 0; i < this.cities.Count; i++){
 			if(this.cities[i].governor != null){
@@ -2363,15 +2276,6 @@ public class Kingdom{
 		}
 	}
 	#endregion
-
-	internal void UpdateAllRelationshipsLikeness(){
-		if(this.king != null){
-			for (int i = 0; i < relationships.Count; i++) {
-				KingdomRelationship rel = relationships.ElementAt(i).Value;
-				rel.UpdateLikeness (null);
-			}
-		}
-	}
 
 	internal void CheckSharedBorders(){
 		bool isSharingBorderNow = false;
