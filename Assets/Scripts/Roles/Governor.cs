@@ -203,7 +203,9 @@ public class Governor : Role {
 
 	}
 	private void RemoveEventModifier(ExpirableModifier expMod){
-		this._eventModifiers.Remove (expMod);
+		if(!this.citizen.isDead){
+			this._eventModifiers.Remove (expMod);
+		}
 
 	}
 	internal void SetLoyalty(int newLoyalty) {

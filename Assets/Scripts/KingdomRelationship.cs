@@ -383,15 +383,18 @@ public class KingdomRelationship {
      * </summary>
      * */
     private void RemoveEventModifier(ExpirableModifier expMod) {
-        if(expMod.modifier < 0) {
-            //if the modifier is negative, return the previously subtracted value
-            _eventLikenessModifier += Mathf.Abs(expMod.modifier);
-        } else {
-            //if the modifier is positive, subtract the amount that was previously added
-            _eventLikenessModifier -= expMod.modifier;
-        }
-        _eventModifiers.Remove(expMod);
-        UpdateKingRelationshipStatus();
+		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead){
+			if(expMod.modifier < 0) {
+				//if the modifier is negative, return the previously subtracted value
+				_eventLikenessModifier += Mathf.Abs(expMod.modifier);
+			} else {
+				//if the modifier is positive, subtract the amount that was previously added
+				_eventLikenessModifier -= expMod.modifier;
+			}
+			_eventModifiers.Remove(expMod);
+			UpdateKingRelationshipStatus();
+		}
+        
     }
 
     /*
@@ -465,10 +468,12 @@ public class KingdomRelationship {
      * </summary>
      * */
     internal void SetMoveOnPeriodAfterRequestPeaceRejection() {
-        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        dueDate.AddMonths(3);
-        _requestPeaceCooldown = dueDate;
-        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => ResetRequestPeaceCooldown());
+		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead){
+	        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+	        dueDate.AddMonths(3);
+	        _requestPeaceCooldown = dueDate;
+	        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => ResetRequestPeaceCooldown());
+		}
     }
 
     /*
