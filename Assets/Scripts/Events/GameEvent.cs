@@ -127,6 +127,9 @@ public class GameEvent {
         this.endMonth = GameManager.Instance.month;
         this.endDay = GameManager.Instance.days;
         this.endYear = GameManager.Instance.year;
+		for (int i = 0; i < this._eventKingdoms.Count; i++) {
+			this._eventKingdoms [i].RemoveActiveEvent (this);
+		}
         if (this.goEventItem != null) {
             this.goEventItem.GetComponent<EventItem>().HasExpired();
         }

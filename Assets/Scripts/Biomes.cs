@@ -430,7 +430,7 @@ public class Biomes : MonoBehaviour {
 
             HexTile parentTile = tagQueue.Dequeue();
             
-            List<HexTile> parentTileNeighbours = parentTile.AllNeighbours.ToList();
+            List<HexTile> parentTileNeighbours = parentTile.AllNeighbours;
             for (int i = 0; i < parentTileNeighbours.Count; i++) {
                 HexTile currNeighbour = parentTileNeighbours[i];
                 if(tilesToTag.Contains(currNeighbour) && 

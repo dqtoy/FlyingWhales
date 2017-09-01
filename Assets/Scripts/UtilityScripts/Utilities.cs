@@ -1315,4 +1315,37 @@ public class Utilities : MonoBehaviour {
         return ((((e + day) * 6 + 11) % 177) / 22 & 7);
     }
     #endregion
+
+	public static List<T> Intersect<T> (List<T> firstList, List<T> secondList){
+		List<T> newList = new List<T> ();
+		for (int i = 0; i < firstList.Count; i++) {
+			for (int j = 0; j < secondList.Count; j++) {
+				if (firstList[i].Equals(secondList[j])) {
+					newList.Add (firstList [i]);
+					break;
+				}
+			}
+		}
+		return newList;
+	}
+	public static List<T> Union<T> (List<T> firstList, List<T> secondList){
+		bool hasMatched = false;
+		List<T> newList = new List<T> ();
+		for (int i = 0; i < firstList.Count; i++) {
+			newList.Add (firstList [i]);
+		}
+		for (int i = 0; i < secondList.Count; i++) {
+			hasMatched = false;
+			for (int j = 0; j < firstList.Count; j++) {
+				if (secondList [i].Equals(firstList [j])) {
+					hasMatched = true;
+					break;
+				}
+			}
+			if(!hasMatched){
+				newList.Add (secondList [i]);
+			}
+		}
+		return newList;
+	}
 }

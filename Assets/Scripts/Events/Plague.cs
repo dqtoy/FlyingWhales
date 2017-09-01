@@ -208,13 +208,20 @@ public class Plague : GameEvent {
     
     #region Event Approaches
     private void HumanisticApproach() {
+		List<City> plaguedCitiesToChooseFrom = new List<City>();
         for (int i = 0; i < this.humanisticKingdoms.Count; i++) {
             Kingdom currKingdom = this.humanisticKingdoms[i];
             if (this.IsDaysMultipleOf(5)) {
-                if (this.healers.FirstOrDefault(x => x.citizen.city.kingdom.id == currKingdom.id) != null) {
-                    //There is currently an active healer for currKingdom.
-                    return;
-                }
+				for (int j = 0; j < this.healers.Count; j++) {
+					if (this.healers[i].citizen.city.kingdom.id == currKingdom.id) {
+						//There is currently an active healer for currKingdom.
+						return;
+					}
+				}
+//                if (this.healers.FirstOrDefault(x => x.citizen.city.kingdom.id == currKingdom.id) != null) {
+//                    //There is currently an active healer for currKingdom.
+//                    return;
+//                }
                 //Every multiple of 5 day, Humanistic Kingdoms have 3% chance for each city it has to produce a Healer Agent.
 //                int chanceForHealer = 3 * currKingdom.cities.Count;
 				int chanceForHealer = 50;
@@ -223,7 +230,13 @@ public class Plague : GameEvent {
                     //Create Healer
                     List<HexTile> path = null;
                     City randCity = currKingdom.cities[Random.Range(0, currKingdom.cities.Count)];
-                    List<City> plaguedCitiesToChooseFrom = currKingdom.cities.Where(x => x.plague != null).ToList();
+//                    List<City> plaguedCitiesToChooseFrom = currKingdom.cities.Where(x => x.plague != null).ToList();
+					plaguedCitiesToChooseFrom.Clear();
+					for (int j = 0; j < currKingdom.cities.Count; j++) {
+						if (currKingdom.cities[i].plague != null) {
+							plaguedCitiesToChooseFrom.Add (currKingdom.cities [i]);
+						}
+					}
                     if (plaguedCitiesToChooseFrom.Count <= 0) {
                         //If there are no plagued cities within the kingdom, the Healer Agent 
                         //will target nearest plagued city of neutral relationship or better Kingdoms.
@@ -234,26 +247,29 @@ public class Plague : GameEvent {
                             RELATIONSHIP_STATUS.ALLY
                         });
                         for (int j = 0; j < elligibleKingdomsForHealer.Count; j++) {
-                            plaguedCitiesToChooseFrom.AddRange(elligibleKingdomsForHealer[j].cities.Where(x => x.plague != null));
+							for (int k = 0; k < elligibleKingdomsForHealer[j].cities.Count; k++) {
+								if (elligibleKingdomsForHealer[j].cities[k].plague != null) {
+									plaguedCitiesToChooseFrom.Add (elligibleKingdomsForHealer [j].cities [k]);
+								}
+							}
+//                            plaguedCitiesToChooseFrom.AddRange(elligibleKingdomsForHealer[j].cities.Where(x => x.plague != null));
                         }
-                    }
-
-                    if (plaguedCitiesToChooseFrom.Count > 0) {
-                        City targetCity = GetNearestCityFrom(randCity.hexTile, plaguedCitiesToChooseFrom, ref path);
-                        if (targetCity != null && path != null) {
-                            Citizen healer = randCity.CreateAgent(ROLE.HEALER, this.eventType, targetCity.hexTile, this.durationInDays, path);
-                            if (healer != null) {
-                                healer.assignedRole.Initialize(this);
-                            }
-                        }
-                    }
-
+					}else{
+						City targetCity = GetNearestCityFrom(randCity.hexTile, plaguedCitiesToChooseFrom, ref path);
+						if (targetCity != null && path != null) {
+							Citizen healer = randCity.CreateAgent(ROLE.HEALER, this.eventType, targetCity.hexTile, this.durationInDays, path);
+							if (healer != null) {
+								healer.assignedRole.Initialize(this);
+							}
+						}
+					}
                 }
             }
             ContributeToVaccine(currKingdom);
         }
     }
     private void PragmaticApproach() {
+		List<City> plaguedCitiesInKingdom = new List<City> ();
         for (int i = 0; i < this.pragmaticKingdoms.Count; i++) {
             Kingdom currKingdom = this.pragmaticKingdoms[i];
             if (this.IsDaysMultipleOf(5)) {
@@ -268,7 +284,13 @@ public class Plague : GameEvent {
                     //Create Exterminator
                     List<HexTile> path = null;
                     City randCity = currKingdom.cities[Random.Range(0, currKingdom.cities.Count)];
-                    List<City> plaguedCitiesInKingdom = currKingdom.cities.Where(x => x.plague != null).ToList();
+					plaguedCitiesInKingdom.Clear ();
+					for (int j = 0; j < currKingdom.cities.Count; j++) {
+						if (currKingdom.cities[i].plague != null) {
+							plaguedCitiesInKingdom.Add (currKingdom.cities [i]);
+						}
+					}
+//                    List<City> plaguedCitiesInKingdom = currKingdom.cities.Where(x => x.plague != null).ToList();
                     if (plaguedCitiesInKingdom.Count > 0) {
                         City targetCity = GetNearestCityFrom(randCity.hexTile, plaguedCitiesInKingdom, ref path);
                         if (targetCity != null && path != null) {

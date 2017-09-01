@@ -111,6 +111,11 @@ public class Kingdom{
 	private bool _hasSecession;
 	private bool _hasRiot;
 
+	private List<Citizen> orderedMaleRoyalties;
+	private List<Citizen> orderedFemaleRoyalties;
+	private List<Citizen> orderedBrotherRoyalties;
+	private List<Citizen> orderedSisterRoyalties;
+
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -200,9 +205,9 @@ public class Kingdom{
 	public EventRate[] dailyCumulativeEventRate {
 		get { return this._dailyCumulativeEventRate; }
 	}
-    public List<City> plaguedCities {
-        get { return this.cities.Where(x => x.plague != null).ToList(); }
-    }
+//    public List<City> plaguedCities {
+//        get { return this.cities.Where(x => x.plague != null).ToList(); }
+//    }
     public bool isGrowthEnabled {
         get { return _isGrowthEnabled; }
     }
@@ -299,6 +304,10 @@ public class Kingdom{
         this._fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new HashSet<HexTile>());
 		this._activeEvents = new List<GameEvent> ();
 		this._doneEvents = new List<GameEvent> ();
+		this.orderedMaleRoyalties = new List<Citizen> ();
+		this.orderedFemaleRoyalties = new List<Citizen> ();
+		this.orderedBrotherRoyalties = new List<Citizen> ();
+		this.orderedSisterRoyalties = new List<Citizen> ();
 
         AdjustPrestige(200);
         SetGrowthState(true);
@@ -458,21 +467,38 @@ public class Kingdom{
         Debug.Log("Stack Trace: " + System.Environment.StackTrace);
     }
     private void CancelEventKingdomIsInvolvedIn(EVENT_TYPES eventType) {
-        List<GameEvent> eventsToCancel = new List<GameEvent>();
-        if(eventType == EVENT_TYPES.ALL) {
-            eventsToCancel = activeEvents;
-        } else {
-            eventsToCancel = activeEvents.Where(x => x.eventType == eventType).ToList();
-        }
-        for (int i = 0; i < eventsToCancel.Count; i++) {
-            eventsToCancel[i].CancelEvent();
-        }
+		List<GameEvent> eventsToCancel = new List<GameEvent>(this.activeEvents);
+		if (eventType == EVENT_TYPES.ALL) {
+			for (int i = 0; i < eventsToCancel.Count; i++) {
+				eventsToCancel [i].CancelEvent ();
+			}
+		}else{
+			for (int i = 0; i < eventsToCancel.Count; i++) {
+				if (eventsToCancel[i].eventType == eventType) {
+					eventsToCancel[i].CancelEvent ();
+				}
+			}
+		}
+//        List<GameEvent> eventsToCancel = new List<GameEvent>();
+//        if(eventType == EVENT_TYPES.ALL) {
+//            eventsToCancel = activeEvents;
+//        } else {
+//            eventsToCancel = activeEvents.Where(x => x.eventType == eventType).ToList();
+//        }
+//        for (int i = 0; i < eventsToCancel.Count; i++) {
+//            eventsToCancel[i].CancelEvent();
+//        }
     }
     private void ResolveWars() {
-        List<War> warsToResolve = relationships.Values.Where(x => x.war != null).Select(x => x.war).ToList();
-        for (int i = 0; i < warsToResolve.Count; i++) {
-            warsToResolve[i].DoneEvent();
-        }
+//        List<War> warsToResolve = relationships.Values.Where(x => x.war != null).Select(x => x.war).ToList();
+//        for (int i = 0; i < warsToResolve.Count; i++) {
+//            warsToResolve[i].DoneEvent();
+//        }
+		foreach (KingdomRelationship rel in relationships.Values) {
+			if (rel.war != null) {
+				rel.war.DoneEvent ();
+			}
+		}
     }
     protected void OtherKingdomDiedActions(Kingdom kingdomThatDied) {
         if (kingdomThatDied.id != this.id) {
@@ -567,21 +593,37 @@ public class Kingdom{
      * <param name="relationshipStatuses">Relationship Statuses to be checked</param>
      * <param name="discoveredOnly">Should only return discovered kingdoms?</param>
      * */
-    internal List<Kingdom> GetKingdomsByRelationship(RELATIONSHIP_STATUS[] relationshipStatuses, bool discoveredOnly = true) {
+	internal List<Kingdom> GetKingdomsByRelationship(RELATIONSHIP_STATUS[] relationshipStatuses, Kingdom exception = null, bool discoveredOnly = true) {
         List<Kingdom> kingdomsWithRelationshipStatus = new List<Kingdom>();
-        for (int i = 0; i < relationships.Count; i++) {
-            Kingdom currKingdom = relationships.Keys.ElementAt(i);
-            if (discoveredOnly) {
-                if (!discoveredKingdoms.Contains(currKingdom)) {
-                    continue;
-                }
-            }
-            
-            RELATIONSHIP_STATUS currStatus = relationships[currKingdom].relationshipStatus;
-            if (relationshipStatuses.Contains(currStatus)) {
-                kingdomsWithRelationshipStatus.Add(currKingdom);
-            }
-        }
+		if(discoveredOnly){
+			foreach (Kingdom currKingdom in relationships.Keys) {
+				if(exception != null && exception.id == currKingdom.id){
+					continue;
+				}
+				//        for (int i = 0; i < relationships.Count; i++) {
+				//            Kingdom currKingdom = relationships.Keys.ElementAt(i);
+				if (!discoveredKingdoms.Contains(currKingdom)) {
+					continue;
+				}
+
+				RELATIONSHIP_STATUS currStatus = relationships[currKingdom].relationshipStatus;
+				if (relationshipStatuses.Contains(currStatus)) {
+					kingdomsWithRelationshipStatus.Add(currKingdom);
+				}
+			}
+		}else{
+			foreach (Kingdom currKingdom in relationships.Keys) {
+				//        for (int i = 0; i < relationships.Count; i++) {
+				//            Kingdom currKingdom = relationships.Keys.ElementAt(i);
+				if(exception != null && exception.id == currKingdom.id){
+					continue;
+				}
+				RELATIONSHIP_STATUS currStatus = relationships[currKingdom].relationshipStatus;
+				if (relationshipStatuses.Contains(currStatus)) {
+					kingdomsWithRelationshipStatus.Add(currKingdom);
+				}
+			}
+		}
         return kingdomsWithRelationshipStatus;
     }
     internal KingdomRelationship GetRelationshipWithKingdom(Kingdom kingdom) {
@@ -593,8 +635,9 @@ public class Kingdom{
         
     }
     internal void UpdateMutualRelationships() {
-        for (int i = 0; i < relationships.Count; i++) {
-            KingdomRelationship currRel = relationships.Values.ElementAt(i);
+		foreach (KingdomRelationship currRel in relationships.Values) {
+//        for (int i = 0; i < relationships.Count; i++) {
+//            KingdomRelationship currRel = relationships.Values.ElementAt(i);
             Kingdom targetKingdom = currRel.targetKingdom;
             KingdomRelationship targetKingdomRel = targetKingdom.GetRelationshipWithKingdom(this);
 
@@ -605,17 +648,20 @@ public class Kingdom{
             currRel.ResetMutualRelationshipModifier();
             targetKingdomRel.ResetMutualRelationshipModifier();
 
-            List<Kingdom> sourceKingRelationships = GetKingdomsByRelationship(new
+			List<Kingdom> sourceKingRelationships = GetKingdomsByRelationship (new
            [] { RELATIONSHIP_STATUS.ENEMY, RELATIONSHIP_STATUS.RIVAL,
-            RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY }).Where(x => x.id != targetKingdom.id).ToList();
+				RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY
+			}, targetKingdom);
 
-            List<Kingdom> targetKingRelationships = targetKingdom.GetKingdomsByRelationship(new
+			List<Kingdom> targetKingRelationships = targetKingdom.GetKingdomsByRelationship (new
                 [] { RELATIONSHIP_STATUS.ENEMY, RELATIONSHIP_STATUS.RIVAL,
-            RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY }).Where(x => x.id != this.id).ToList();
+				RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY
+			}, this);
 
-            List<Kingdom> kingdomsInCommon = sourceKingRelationships.Intersect(targetKingRelationships).ToList();
-            for (int j = 0; j < kingdomsInCommon.Count; j++) {
-                Kingdom currKingdom = kingdomsInCommon[j];
+//            List<Kingdom> kingdomsInCommon = sourceKingRelationships.Intersect(targetKingRelationships).ToList();
+			foreach (var currKingdom in sourceKingRelationships.Intersect(targetKingRelationships)) {
+//            for (int j = 0; j < kingdomsInCommon.Count; j++) {
+//                Kingdom currKingdom = kingdomsInCommon[j];
                 KingdomRelationship relSourceKingdom = this.GetRelationshipWithKingdom(currKingdom);
                 KingdomRelationship relTargetKingdom = targetKingdom.GetRelationshipWithKingdom(currKingdom);
 
@@ -1026,24 +1072,64 @@ public class Kingdom{
 
     #region Succession
     internal void UpdateKingSuccession() {
-        List<Citizen> orderedMaleRoyalties = this.successionLine.Where(x => x.gender == GENDER.MALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
-        List<Citizen> orderedFemaleRoyalties = this.successionLine.Where(x => x.gender == GENDER.FEMALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
-        List<Citizen> orderedBrotherRoyalties = this.successionLine
-            .Where(x => x.gender == GENDER.MALE
-           && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
-           && x.id != this.king.id)
-            .OrderByDescending(x => x.age).ToList();
+//        List<Citizen> orderedMaleRoyalties = this.successionLine.Where(x => x.gender == GENDER.MALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
+//        List<Citizen> orderedFemaleRoyalties = this.successionLine.Where(x => x.gender == GENDER.FEMALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
+//        List<Citizen> orderedBrotherRoyalties = this.successionLine
+//            .Where(x => x.gender == GENDER.MALE
+//           && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
+//           && x.id != this.king.id)
+//            .OrderByDescending(x => x.age).ToList();
+//
+//        List<Citizen> orderedSisterRoyalties = this.successionLine
+//            .Where(x => x.gender == GENDER.FEMALE
+//           && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
+//           && x.id != this.king.id)
+//            .OrderByDescending(x => x.age).ToList();
+//
+//        List<Citizen> orderedRoyalties = orderedMaleRoyalties.Concat(orderedFemaleRoyalties).Concat(orderedBrotherRoyalties).Concat(orderedSisterRoyalties).ToList();
 
-        List<Citizen> orderedSisterRoyalties = this.successionLine
-            .Where(x => x.gender == GENDER.FEMALE
-           && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
-           && x.id != this.king.id)
-            .OrderByDescending(x => x.age).ToList();
+		this.successionLine.Clear();
+		orderedMaleRoyalties.Clear ();
+		orderedFemaleRoyalties.Clear ();
+		orderedBrotherRoyalties.Clear ();
+		orderedSisterRoyalties.Clear ();
 
-        List<Citizen> orderedRoyalties = orderedMaleRoyalties.Concat(orderedFemaleRoyalties).Concat(orderedBrotherRoyalties).Concat(orderedSisterRoyalties).ToList();
+		for (int i = 0; i < this.successionLine.Count; i++) {
+			if (this.successionLine [i].isDirectDescendant) {
+				if (this.successionLine [i].generation > this.king.generation) {
+					if (this.successionLine [i].gender == GENDER.MALE) {
+						orderedMaleRoyalties.Add (this.successionLine [i]);
+					} else {
+						orderedFemaleRoyalties.Add (this.successionLine [i]);
+					}
+				}
+			}
+		}
+//		orderedMaleRoyalties = orderedMaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age);
+//		orderedFemaleRoyalties = orderedFemaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age);
+		for (int i = 0; i < this.successionLine.Count; i++) {
+			if (!this.successionLine [i].isDirectDescendant && this.successionLine [i].id != this.king.id) {
+				if ((this.successionLine [i].father != null && this.king.father != null) && this.successionLine [i].father.id == this.king.father.id) {
+					if (this.successionLine [i].gender == GENDER.MALE) {
+						orderedBrotherRoyalties.Add (this.successionLine [i]);
+					}else{
+						orderedSisterRoyalties.Add (this.successionLine [i]);
+					}
+				}
+			}
+		}
 
-        this.successionLine.Clear();
-        this.successionLine = orderedRoyalties;
+//		orderedBrotherRoyalties = orderedBrotherRoyalties.OrderByDescending (x => x.age);
+//		orderedSisterRoyalties = orderedSisterRoyalties.OrderByDescending (x => x.age);
+		this.successionLine.AddRange (orderedMaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age));
+		this.successionLine.AddRange (orderedFemaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age));
+
+		this.successionLine.AddRange (orderedBrotherRoyalties.OrderByDescending (x => x.age));
+		this.successionLine.AddRange (orderedSisterRoyalties.OrderByDescending (x => x.age));
+
+
+
+//       this.successionLine = orderedRoyalties;
     }
     internal void ChangeSuccessionLineRescursively(Citizen royalty) {
         if (this.king.id != royalty.id) {
@@ -1158,8 +1244,11 @@ public class Kingdom{
         //        Debug.Log("Assigned new king: " + newKing.name + " because " + previousKing.name + " died!");
     }
     internal void AddPretender(Citizen citizen) {
-        this.pretenders.Add(citizen);
-        this.pretenders = this.pretenders.Distinct().ToList();
+		if(!this.pretenders.Contains(citizen)){
+			this.pretenders.Add(citizen);
+		}
+//        this.pretenders.Add(citizen);
+//        this.pretenders = this.pretenders.Distinct().ToList();
     }
     internal List<Citizen> GetPretenderClaimants(Citizen successor) {
         List<Citizen> pretenderClaimants = new List<Citizen>();
@@ -1497,51 +1586,51 @@ public class Kingdom{
 //		}
 	//}
 
-	private void GetTargetCityAndSourceCityInWar(ref City sourceCity, ref City targetCity, List<City> allHostileCities){
-		int nearestDistance = 0;
-		City source = null;
-		City target = null;
-
-		for (int i = 0; i < this.cities.Count; i++) {
-			for (int j = 0; j < allHostileCities.Count; j++) {
-				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, allHostileCities [j].hexTile, PATHFINDING_MODE.AVATAR);
-				if(path != null){
-					int distance = path.Count;
-					if(source == null && target == null){
-						source = this.cities [i];
-						target = allHostileCities [j];
-						nearestDistance = distance;
-					}else{
-						if(distance < nearestDistance){
-							source = this.cities [i];
-							target = allHostileCities [j];
-							nearestDistance = distance;
-						}
-					}
-				}
-
-			}
-		}
-
-		sourceCity = source;
-		targetCity = target;
-	}
-	internal City GetSenderCityForReinforcement(){
-		List<City> candidatesForReinforcement = this.cities.Where (x => !x.isUnderAttack && x.hp >= 100).ToList ();
-		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
-			candidatesForReinforcement = candidatesForReinforcement.OrderByDescending(x => x.hp).ToList();
-			return candidatesForReinforcement [0];
-		}
-		return null;
-	}
-
-	internal City GetReceiverCityForReinforcement(){
-		List<City> candidatesForReinforcement = this.cities.Where (x => x.isUnderAttack).ToList ();
-		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
-			return candidatesForReinforcement [UnityEngine.Random.Range (0, candidatesForReinforcement.Count)];
-		}
-		return null;
-	}
+//	private void GetTargetCityAndSourceCityInWar(ref City sourceCity, ref City targetCity, List<City> allHostileCities){
+//		int nearestDistance = 0;
+//		City source = null;
+//		City target = null;
+//
+//		for (int i = 0; i < this.cities.Count; i++) {
+//			for (int j = 0; j < allHostileCities.Count; j++) {
+//				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, allHostileCities [j].hexTile, PATHFINDING_MODE.AVATAR);
+//				if(path != null){
+//					int distance = path.Count;
+//					if(source == null && target == null){
+//						source = this.cities [i];
+//						target = allHostileCities [j];
+//						nearestDistance = distance;
+//					}else{
+//						if(distance < nearestDistance){
+//							source = this.cities [i];
+//							target = allHostileCities [j];
+//							nearestDistance = distance;
+//						}
+//					}
+//				}
+//
+//			}
+//		}
+//
+//		sourceCity = source;
+//		targetCity = target;
+//	}
+//	internal City GetSenderCityForReinforcement(){
+//		List<City> candidatesForReinforcement = this.cities.Where (x => !x.isUnderAttack && x.hp >= 100).ToList ();
+//		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
+//			candidatesForReinforcement = candidatesForReinforcement.OrderByDescending(x => x.hp).ToList();
+//			return candidatesForReinforcement [0];
+//		}
+//		return null;
+//	}
+//
+//	internal City GetReceiverCityForReinforcement(){
+//		List<City> candidatesForReinforcement = this.cities.Where (x => x.isUnderAttack).ToList ();
+//		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
+//			return candidatesForReinforcement [UnityEngine.Random.Range (0, candidatesForReinforcement.Count)];
+//		}
+//		return null;
+//	}
 
 	#region Resource Management
 	/*
@@ -1608,10 +1697,10 @@ public class Kingdom{
     }
     internal void UpdateTechLevel() {
         this._techLevel = 1;
-        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
-
-        for (int i = 0; i < allAvailableResources.Count; i++) {
-            RESOURCE currResource = allAvailableResources[i];
+//        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+//        for (int i = 0; i < allAvailableResources.Count; i++) {
+		foreach (RESOURCE currResource in this._availableResources.Keys) {
+//            RESOURCE currResource = allAvailableResources[i];
 			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
             if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
                 this._techLevel += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
@@ -1815,7 +1904,7 @@ public class Kingdom{
             for (int j = 0; j < tilesToCheck.Count; j++) {
                 //Get all neighbour tiles that are owned, but not by this kingdom, 
                 //and that kingdom is not already added to this kingdom's discovered kingdoms.
-                List<HexTile> neighbours = tilesToCheck[j].AllNeighbours.ToList();
+                List<HexTile> neighbours = tilesToCheck[j].AllNeighbours;
                     //.Where(x => x.ownedByCity != null && x.ownedByCity.kingdom.id != this.id && !this._discoveredKingdoms.Contains(x.ownedByCity.kingdom))
                     //.ToList();
                 for (int k = 0; k < neighbours.Count; k++) {
@@ -1845,7 +1934,7 @@ public class Kingdom{
         //and that kingdom is not already added to this kingdom's discovered kingdoms.
         List<HexTile> tilesToCheck = city.ownedTiles.Union(city.borderTiles).ToList();
         for (int i = 0; i < tilesToCheck.Count; i++) {
-            List<HexTile> neighbours = tilesToCheck[i].AllNeighbours.ToList();
+            List<HexTile> neighbours = tilesToCheck[i].AllNeighbours;
             for (int j = 0; j < neighbours.Count; j++) {
                 HexTile currNeighbour = neighbours[j];
                 if (currNeighbour.isOccupied && currNeighbour.ownedByCity != null
