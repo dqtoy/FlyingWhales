@@ -284,7 +284,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 		return tilesInRange;
 	}
-
 	#region Pathfinding
 	public void FindNeighbours(HexTile[,] gameBoard) {
 		var neighbours = new List<HexTile>();
