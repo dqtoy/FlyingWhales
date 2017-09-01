@@ -266,7 +266,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 		for (int i = 0; i < range; i++) {
 			if (tilesInRange.Count <= 0) {
-				tilesInRange = this.AllNeighbours;
+				//tilesInRange = this.AllNeighbours;
+                for (int j = 0; j < AllNeighbours.Count; j++) {
+                    tilesInRange.Add(AllNeighbours[j]);
+                }
 				checkedTiles.Add (this);
 			}else{
 				tilesToAdd.Clear ();
@@ -301,8 +304,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		for (int i = 0; i < range; i++) {
 
 			if (tilesInRange.Count <= 0) {
-				tilesInRange = this.AllNeighbours;
-				checkedTiles.Add (this);
+				//tilesInRange = this.AllNeighbours;
+                for (int j = 0; j < AllNeighbours.Count; j++) {
+                    tilesInRange.Add(AllNeighbours[j]);
+                }
+                checkedTiles.Add (this);
 			}else{
 				tilesToAdd.Clear ();
 				for (int j = 0; j < tilesInRange.Count; j++) {

@@ -97,7 +97,7 @@ public class KingdomManager : MonoBehaviour {
         }
 	}
 
-	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false, Kingdom sourceKingdom = null){
+	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false, Kingdom sourceKingdom = null, bool broadcastCreation = true){
 		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom);
 		allKingdoms.Add(newKingdom);
         Debug.Log("Created new kingdom: " + newKingdom.name);
@@ -115,14 +115,21 @@ public class KingdomManager : MonoBehaviour {
 		}
         //Create Relationships first
         newKingdom.CreateInitialRelationships();
-        Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
+        if (broadcastCreation) {
+            Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
+        }
         newKingdom.UpdateAllRelationshipsLikeness();
         newKingdom.CheckForDiscoveredKingdoms();
 		return newKingdom;
 	}
 
-    public Kingdom SplitKingdom(Kingdom sourceKingdom, List<City> citiesToSplit) {
-        Kingdom newKingdom = GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { }, false, sourceKingdom);
+    public Kingdom SplitKingdom(Kingdom sourceKingdom, List<City> citiesToSplit, Citizen king) {
+        Kingdom newKingdom = GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { }, false, sourceKingdom, false);
+        //assign king if any
+        if (king != null) {
+            newKingdom.AssignNewKing(king);
+        }
+        Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
         TransferCitiesToOtherKingdom(sourceKingdom, newKingdom, citiesToSplit);
         return newKingdom;
     }
@@ -420,12 +427,12 @@ public class KingdomManager : MonoBehaviour {
     }
 
     #region For Testing
-    [ContextMenu("Test Split Kingdom")]
-    public void TestSplitKingdom() {
-        Kingdom sourceKingdom = this.allKingdoms.FirstOrDefault();
-        List<City> citiesToSplit = new List<City>() { sourceKingdom.cities.Last() };
-        SplitKingdom(sourceKingdom, citiesToSplit);
-        Messenger.Broadcast("UpdateUI");
-    }
+    //[ContextMenu("Test Split Kingdom")]
+    //public void TestSplitKingdom() {
+    //    Kingdom sourceKingdom = this.allKingdoms.FirstOrDefault();
+    //    List<City> citiesToSplit = new List<City>() { sourceKingdom.cities.Last() };
+    //    SplitKingdom(sourceKingdom, citiesToSplit, null);
+    //    Messenger.Broadcast("UpdateUI");
+    //}
     #endregion
 }

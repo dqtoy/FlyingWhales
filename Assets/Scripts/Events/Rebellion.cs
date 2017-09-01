@@ -62,8 +62,7 @@ public class Rebellion : GameEvent {
 				//Victory Rebellion
 				this.rebelLeader.citizen.SetImmortality(false);
 				KillFort();
-				Kingdom newKingdom = KingdomManager.Instance.SplitKingdom(this.targetKingdom, this.conqueredCities);
-				newKingdom.AssignNewKing (this.rebelLeader.citizen);
+				Kingdom newKingdom = KingdomManager.Instance.SplitKingdom(this.targetKingdom, this.conqueredCities, this.rebelLeader.citizen);
 				ResetConqueredCitiesToCityFunctionality (newKingdom);
 
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "rebel_win");

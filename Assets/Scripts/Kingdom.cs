@@ -74,7 +74,7 @@ public class Kingdom{
 
     //FogOfWar
     private FOG_OF_WAR_STATE[,] _fogOfWar;
-    private Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> _fogOfWarDict;
+    private Dictionary<FOG_OF_WAR_STATE, List<HexTile>> _fogOfWarDict;
 
 	//Crimes
 	private CrimeData _crimeData;
@@ -220,7 +220,7 @@ public class Kingdom{
     public FOG_OF_WAR_STATE[,] fogOfWar {
         get { return _fogOfWar; }
     }
-    public Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> fogOfWarDict {
+    public Dictionary<FOG_OF_WAR_STATE, List<HexTile>> fogOfWarDict {
         get { return _fogOfWarDict; }
     }
 //	public CombatStats combatStats {
@@ -298,10 +298,10 @@ public class Kingdom{
         this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
         this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
         this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
-        this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>>();
-        this._fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new HashSet<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())));
-        this._fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new HashSet<HexTile>());
-        this._fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new HashSet<HexTile>());
+        this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, List<HexTile>>();
+        this._fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new List<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())));
+        this._fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new List<HexTile>());
+        this._fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new List<HexTile>());
 		this._activeEvents = new List<GameEvent> ();
 		this._doneEvents = new List<GameEvent> ();
 		this.orderedMaleRoyalties = new List<Citizen> ();
@@ -1417,7 +1417,7 @@ public class Kingdom{
                 city.KillCity();
             } else {
                 city.ConquerCity(this);
-                RemoveCityFromKingdom(city);
+                city.kingdom.RemoveCityFromKingdom(city);
             }
 
             //yield return null;

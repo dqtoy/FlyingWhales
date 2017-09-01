@@ -75,4 +75,29 @@ public class GridMap : MonoBehaviour {
             currHex.sameTagNeighbours = currHex.AllNeighbours.Where(x => x.tileTag == currHex.tileTag).ToList();
         }
     }
+
+    
+    public List<HexTile> GetTilesInRange(HexTile center, int range) {
+        List<HexTile> tilesInRange = new List<HexTile>();
+        Vector3 cube = OddRToCube(new Vector2(center.xCoordinate, center.yCoordinate));
+        for (int dx = -range; dx <= range; dx++) {
+            for (int dy = Mathf.Max(-range, -dx -range); dy <= Mathf.Min(range, -dx + range); dy++) {
+                tilesInRange.Add(map[(int)cube.x + dx, (int)cube.y + dy]);
+            }
+        }
+        return tilesInRange.Distinct().ToList();
+    }
+
+    private Vector2 CubeToOddR(Vector3 cube) {
+        int col = (int)(cube.x + (cube.z - ((int)cube.z&1)) / 2);
+        int row = (int)cube.z;
+        return new Vector2(col, row);
+    }
+
+    public Vector3 OddRToCube(Vector2 hex) {
+        int x = (int)(hex.x - (hex.y - ((int)hex.y & 1)) / 2);
+        int z = (int)hex.y;
+        int y = -x - z;
+        return new Vector3(x, y, z);
+    }
 }

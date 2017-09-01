@@ -194,7 +194,7 @@ public class Secession : GameEvent {
 				}
 			}
 
-			Kingdom newKingdom = KingdomManager.Instance.SplitKingdom (this.sourceKingdom, this.joiningCities);
+			Kingdom newKingdom = KingdomManager.Instance.SplitKingdom (this.sourceKingdom, this.joiningCities, this.governor.citizen);
 			if (newKingdom != null) {
 				string newCitiesText = string.Empty;
 
@@ -228,7 +228,7 @@ public class Secession : GameEvent {
 					newLog.AddToFillers (null, newCitiesText, LOG_IDENTIFIER.SECESSION_CITIES);
 				}
 
-				newKingdom.AssignNewKing (this.governor.citizen);
+				//newKingdom.AssignNewKing (this.governor.citizen);
 
 
 

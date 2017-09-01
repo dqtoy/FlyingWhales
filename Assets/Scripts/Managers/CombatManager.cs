@@ -566,14 +566,14 @@ public class CombatManager : MonoBehaviour {
 			if(!avatar2.citizen.isDead){
 				BattleMidway (ref avatar1.citizen.assignedRole, ref avatar2.citizen.assignedRole);
 				if(avatar1.citizen.assignedRole.markAsDead){
-					avatar1.citizen.assignedRole.avatar.GetComponent<CitizenAvatar> ().citizenRole.gameEventInvolvedIn.DeathByAgent (avatar2.citizen, avatar1.citizen);
+					avatar1.avatar.GetComponent<CitizenAvatar> ().citizenRole.gameEventInvolvedIn.DeathByAgent (avatar2.citizen, avatar1.citizen);
 				}else{
 					avatar1.citizen.assignedRole.UpdateUI ();
 				}
 				if(avatar2.citizen.assignedRole.markAsDead){
-					avatar2.citizen.assignedRole.avatar.GetComponent<CitizenAvatar> ().citizenRole.gameEventInvolvedIn.DeathByAgent (avatar1.citizen, avatar2.citizen);
+					avatar2.avatar.GetComponent<CitizenAvatar> ().citizenRole.gameEventInvolvedIn.DeathByAgent (avatar1.citizen, avatar2.citizen);
 				}else{
-					avatar2.citizen.assignedRole.UpdateUI ();
+					avatar2.UpdateUI ();
 				}
 			}
 		}
@@ -588,9 +588,9 @@ public class CombatManager : MonoBehaviour {
 					monster.UpdateUI ();
 				}
 				if(avatar.citizen.assignedRole.markAsDead){
-					avatar.citizen.assignedRole.avatar.GetComponent<CitizenAvatar> ().citizenRole.gameEventInvolvedIn.DeathByMonster (monster, avatar.citizen);
+					avatar.avatar.GetComponent<CitizenAvatar> ().citizenRole.gameEventInvolvedIn.DeathByMonster (monster, avatar.citizen);
 				}else{
-					avatar.citizen.assignedRole.UpdateUI ();
+					avatar.UpdateUI ();
 				}
 			}
 		}

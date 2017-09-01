@@ -28,6 +28,17 @@ public class GameManager : MonoBehaviour {
     public void PrintEventTable() {
         Messenger.PrintEventTable();
     }
+
+    [SerializeField] private HexTile center;
+    [SerializeField] private int range;
+    [ContextMenu("Get Tiles In Range")]
+    public void GetTilesTester() {
+        List<HexTile> tiles = GridMap.Instance.GetTilesInRange(center, range);
+        UnityEditor.Selection.objects = tiles.Select(x => x.gameObject).ToArray();
+        for (int i = 0; i < tiles.Count; i++) {
+            Debug.Log(tiles[i].name);
+        }
+    }
     #endregion
 
     private void Awake(){

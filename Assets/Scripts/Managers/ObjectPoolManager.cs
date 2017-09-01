@@ -84,8 +84,8 @@ public class ObjectPoolManager : MonoBehaviour {
         if(po == null) {
             throw new Exception("Cannot Destroy Object via Object Pool! Object " + go.name + " is not from an object pool");
         } else {
-            po.Reset();
             po.SendObjectBackToPool();
+            po.Reset();
             po.transform.SetParent(po.ParentPool.transform);
         }
     }
