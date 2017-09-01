@@ -183,7 +183,7 @@ public class CityGenerator : MonoBehaviour {
 //					}
 
 					for (int j = 0; j < checkForOtherBorderTilesInRange.Count; j++) {
-						if (checkForOtherBorderTilesInRange[i].ownedByCity != null && checkForOtherBorderTilesInRange[i] != city.kingdom) {
+						if (checkForOtherBorderTilesInRange[i].ownedByCity != null && checkForOtherBorderTilesInRange[i].ownedByCity.kingdom != city.kingdom) {
 							numOwnedByKingdom += 1;
 							if (numOwnedByKingdom > 1) {
 								break;
