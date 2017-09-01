@@ -6,6 +6,9 @@ using System.Linq;
 using EZObjectPools;
 
 public class CitizenAvatar : PooledObject {
+    [SerializeField] private int citizenID;
+    [SerializeField] private string citizenName;
+    [SerializeField] private string roleType;
     public Role citizenRole;
     public PandaBehaviour pandaBehaviour;
     public Animator animator;
@@ -37,6 +40,9 @@ public class CitizenAvatar : PooledObject {
 
     #region virtuals
     internal virtual void Init(Role citizenRole) {
+        this.citizenID = citizenRole.citizen.id;
+        this.citizenName = citizenRole.citizen.name;
+        this.roleType = citizenRole.ToString();
         this.citizenRole = citizenRole;
         this.direction = DIRECTION.LEFT;
         this.smoothMovement.onMoveFinihed += OnMoveFinished;
@@ -69,8 +75,8 @@ public class CitizenAvatar : PooledObject {
 
     internal virtual void OnMoveFinished() {
         this.CollectEvents();
-        this.UpdateFogOfWar();
         this.CheckForKingdomDiscovery();
+        this.UpdateFogOfWar();
         this.transform.SetParent(this.citizenRole.location.transform);
         this.transform.localPosition = Vector3.zero;
         if(this.citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
@@ -164,8 +170,8 @@ public class CitizenAvatar : PooledObject {
             if (currTile.isOccupied && currTile.ownedByCity != null &&
                 currTile.ownedByCity.kingdom.id != thisKingdom.id) {
                 City otherCity = currTile.ownedByCity;
-                if (!citiesSeen.Contains(otherCity) && !thisKingdom.discoveredCities.Contains(otherCity)) {
-                    citiesSeen.Add(currTile.ownedByCity);
+                if (!citiesSeen.Contains(otherCity)) {
+                    citiesSeen.Add(otherCity);
                 }
                 Kingdom otherKingdom = currTile.ownedByCity.kingdom;
                 if (otherKingdom.id != thisKingdom.id && !thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
@@ -176,7 +182,7 @@ public class CitizenAvatar : PooledObject {
                     City otherCity = currTile.isBorderOfCities[j];
                     Kingdom otherKingdom = otherCity.kingdom;
                     if (otherKingdom.id != thisKingdom.id) {
-                        if (!citiesSeen.Contains(otherCity) && !thisKingdom.discoveredCities.Contains(otherCity)) {
+                        if (!citiesSeen.Contains(otherCity)) {
                             citiesSeen.Add(otherCity);
                         }
                         if (!thisKingdom.discoveredKingdoms.Contains(otherKingdom)) {
@@ -189,18 +195,21 @@ public class CitizenAvatar : PooledObject {
 
         for (int i = 0; i < citiesSeen.Count; i++) {
             City currCity = citiesSeen[i];
-            thisKingdom.DiscoverCity(currCity);
-            if (!thisKingdom.discoveredCities.Contains(currCity)){
-                //Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
-                List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
-                for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
-                    HexTile currTile = tilesToSetAsSeen[j];
-                    if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
-                        thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-                    }
-                }
-            }
-            
+            //thisKingdom.DiscoverCity(currCity);
+            //Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
+//            List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
+//            for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
+//                HexTile currTile = tilesToSetAsSeen[j];
+//                if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
+//                    thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+//                }
+//            }
+			foreach (var tileToSetAsSeen in currCity.ownedTiles.Union(currCity.borderTiles)) {
+				HexTile currTile = tileToSetAsSeen;
+				if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
+					thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+				}
+			}
         }
     }
 
@@ -323,7 +332,7 @@ public class CitizenAvatar : PooledObject {
 					Kingdom kingdomOfThis = this.citizenRole.citizen.city.kingdom;
 					Kingdom kingdomOfOther = otherAgent.city.kingdom;
 					if (kingdomOfThis.id != kingdomOfOther.id) {
-						RelationshipKingdom relationship = kingdomOfThis.GetRelationshipWithOtherKingdom (kingdomOfOther);
+						KingdomRelationship relationship = kingdomOfThis.GetRelationshipWithKingdom (kingdomOfOther);
 						if (relationship != null) {
 							if (relationship.isAtWar) {
 								CombatManager.Instance.HasCollidedWithHostile (this.citizenRole, otherAgent.assignedRole);
@@ -339,10 +348,10 @@ public class CitizenAvatar : PooledObject {
 					Kingdom kingdomOfGeneral = this.citizenRole.citizen.city.kingdom;
 					Kingdom kingdomOfTrader = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen.city.kingdom;
 					if (kingdomOfGeneral.id != kingdomOfTrader.id) {
-						RelationshipKings relOfGeneralWithTrader = kingdomOfGeneral.king.GetRelationshipWithCitizen(kingdomOfTrader.king);
-						RelationshipKings relOfTraderWithGeneral = kingdomOfTrader.king.GetRelationshipWithCitizen(kingdomOfGeneral.king);
-						if (relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.lordRelationship == RELATIONSHIP_STATUS.RIVAL ||
-							relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+						KingdomRelationship relOfGeneralWithTrader = kingdomOfGeneral.GetRelationshipWithKingdom(kingdomOfTrader);
+						KingdomRelationship relOfTraderWithGeneral = kingdomOfTrader.GetRelationshipWithKingdom(kingdomOfGeneral);
+						if (relOfGeneralWithTrader.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.relationshipStatus == RELATIONSHIP_STATUS.RIVAL ||
+							relOfTraderWithGeneral.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
 							CombatManager.Instance.HasCollidedWithHostile(this.citizenRole, otherAgent.assignedRole);
 						}
 					}

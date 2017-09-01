@@ -33,15 +33,15 @@ public class King : Role {
 		RandomTriggerDateOfSerum(true);
 		Messenger.AddListener("OnDayEnd", EverydayActions);
 	}
+	internal override void OnDeath (){
+		base.OnDeath ();
+		Messenger.RemoveListener("OnDayEnd", EverydayActions);
 
+	}
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){
 		this.ownedKingdom = ownedKingdom;
 	}
 	private void EverydayActions(){
-		if(this.citizen.isDead){
-			Messenger.RemoveListener("OnDayEnd", EverydayActions);
-			return;
-		}
 		TriggerSpouseAbduction();
 		TriggerRumor();
 		TriggerHiddenHistoryBook();
@@ -56,11 +56,11 @@ public class King : Role {
 					List<Kingdom> rumorKingdoms = new List<Kingdom>();
 					for (int i = 0; i < this.citizen.city.kingdom.discoveredKingdoms.Count; i++) {
 						if(this.citizen.city.kingdom.discoveredKingdoms[i].isAlive()){
-							RelationshipKings relationship = this.citizen.city.kingdom.king.GetRelationshipWithCitizen(this.citizen.city.kingdom.discoveredKingdoms[i].king);
-							if(relationship != null && (relationship.lordRelationship == RELATIONSHIP_STATUS.COLD || relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL)){
+							KingdomRelationship relationship = this.citizen.city.kingdom.GetRelationshipWithKingdom(this.citizen.city.kingdom.discoveredKingdoms[i]);
+							if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.COLD || relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL)){
 								targetKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
 							}
-							if(relationship != null && (relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY)){
+							if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY)){
 								rumorKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
 							}
 						}
@@ -148,11 +148,11 @@ public class King : Role {
 			List<Citizen> targetKings = this.citizen.city.kingdom.discoveredKingdoms.Select (x => x.king).Where (x => x.isMarried && x.spouse != null && x.gender == this.citizen.gender).ToList();
 			if(targetKings != null && targetKings.Count > 0){
 				for (int i = 0; i < targetKings.Count; i++) {
-					RelationshipKings relationship = this.citizen.GetRelationshipWithCitizen (targetKings [i]);
+					KingdomRelationship relationship = this.citizen.city.kingdom.GetRelationshipWithKingdom (targetKings [i].city.kingdom);
 					if(relationship != null){
 //						targetKing = targetKings [i];
 //						return true;
-						if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY || relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
+						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY || relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
 							targetKing = targetKings [i];
 							return true;
 						}

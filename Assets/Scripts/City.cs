@@ -461,13 +461,13 @@ public class City{
             List<HexTile> outmostTiles = new List<HexTile>();
             for (int i = 0; i < this.ownedTiles.Count; i++) {
                 HexTile currOwnedTile = this.ownedTiles[i];
-                if (currOwnedTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Count() > 0) {
+                if (currOwnedTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Any()) {
                     outmostTiles.Add(currOwnedTile);
                 }
             }
             for (int i = 0; i < this.borderTiles.Count; i++) {
                 HexTile currBorderTile = this.borderTiles[i];
-                if (currBorderTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Count() > 0) {
+                if (currBorderTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Any()) {
                     outmostTiles.Add(currBorderTile);
                 }
             }
@@ -933,8 +933,8 @@ public class City{
 			HexTile currentTile = this.ownedTiles[i];
             currentTile.city = null;
             currentTile.Unoccupy();
-            if (currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Count() <= 0) {
+            if (!currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Any()
+                && !currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Any()) {
                 kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
             }
 
@@ -948,8 +948,8 @@ public class City{
                     kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
-                if (currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Count() <= 0) {
+                if (!currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Any()
+                && !currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Any()) {
                     kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
@@ -963,8 +963,8 @@ public class City{
                     kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
-                if (currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Count() <= 0) {
+                if (!currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Any()
+                && !currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Any()) {
                     kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
@@ -972,10 +972,6 @@ public class City{
 		this.ownedTiles.Clear();
 		this.borderTiles.Clear();
         this.outerTiles.Clear();
-
-        for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-            KingdomManager.Instance.allKingdoms[i].discoveredCities.Remove(this);
-        }
 
 		this.isDead = true;
         //EventManager.Instance.onDeathToGhost.Invoke (this);
@@ -1004,7 +1000,7 @@ public class City{
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
 
-		RelationshipKingdom relationship = this.kingdom.GetRelationshipWithOtherKingdom(conqueror);
+		KingdomRelationship relationship = this.kingdom.GetRelationshipWithKingdom(conqueror);
 
 		//Trigger Request Peace before changing kingdoms, The losing side has a 20% chance for every city he has lost since the start of the war to send a Request for Peace
 		relationship.TriggerRequestPeace();
@@ -1033,8 +1029,8 @@ public class City{
             HexTile currentTile = this.ownedTiles[i];
             currentTile.city = null;
             currentTile.Unoccupy(true);
-            if (currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0) {
+            if (!currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()
+                && !currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()) {
                 _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
             }
 
@@ -1048,8 +1044,8 @@ public class City{
                     _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
-                if (currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0) {
+                if (!currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()
+                && !currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()) {
                     _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
@@ -1063,18 +1059,14 @@ public class City{
                     _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             } else {
-                if (currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0
-                && currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Count() <= 0) {
+                if (!currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()
+                && !currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()) {
                     _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
                 }
             }
         }
 
-        for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-            KingdomManager.Instance.allKingdoms[i].discoveredCities.Remove(this);
-        }
-
-        this._kingdom.RemoveCityFromKingdom(this);
+        //this._kingdom.RemoveCityFromKingdom(this);
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
         RemoveListeners();
         this.isDead = true;
@@ -1095,6 +1087,11 @@ public class City{
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
         newCity.WarDefeatedHP();
+        KingdomManager.Instance.CheckWarTriggerMisc(newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+
+        if (UIManager.Instance.currentlyShowingKingdom.id == conqueror.id) {
+            conqueror.HighlightAllOwnedTilesInKingdom();
+        }
 
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
     }
@@ -1304,7 +1301,7 @@ public class City{
         allTilesOfCity.AddRange(outerTiles);
         for (int i = 0; i < allTilesOfCity.Count; i++) {
             HexTile currTile = allTilesOfCity[i];
-            if(currTile.isBorderOfCities.Intersect(_kingdom.cities).Count() <= 0 && currTile.isOuterTileOfCities.Intersect(_kingdom.cities).Count() <= 0 && 
+            if(!currTile.isBorderOfCities.Intersect(_kingdom.cities).Any() && !currTile.isOuterTileOfCities.Intersect(_kingdom.cities).Any() && 
                 (currTile.ownedByCity == null || !_kingdom.cities.Contains(currTile.ownedByCity))) {
                 _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
             }

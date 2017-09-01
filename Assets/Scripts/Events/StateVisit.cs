@@ -84,9 +84,11 @@ public class StateVisit : GameEvent {
 
 	internal override void DoneEvent(){
         base.DoneEvent();
-		RelationshipKings relationship = null;
+		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
+
+		KingdomRelationship relationship = null;
 		if(this.inviterKingdom.isAlive()){
-			relationship = this.inviterKingdom.king.SearchRelationshipByID (this.invitedKingdom.king.id);
+			relationship = this.inviterKingdom.GetRelationshipWithKingdom (this.invitedKingdom);
 		}
 		if(this.isSuccessful){
 			if(relationship != null){
@@ -179,8 +181,8 @@ public class StateVisit : GameEvent {
 			if (chance < 1) {
 				Kingdom selectedKingdom = GetRandomKingdomForAction();
 
-                RelationshipKings relationship = selectedKingdom.king.SearchRelationshipByID (inviterKingdom.king.id);
-				if (relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL) {
+                KingdomRelationship relationship = selectedKingdom.GetRelationshipWithKingdom (inviterKingdom);
+				if (relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
 					if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
 
 						KingdomManager.Instance.DiscoverKingdom (selectedKingdom, this.visitor.citizen.city.kingdom);
@@ -252,12 +254,12 @@ public class StateVisit : GameEvent {
 		}
 	}
 	private bool CheckForRelationship(Kingdom otherKingdom, bool isIncrease){
-		RelationshipKings relationship1 = otherKingdom.king.SearchRelationshipByID (this.inviterKingdom.king.id);
-		RelationshipKings relationship2 = otherKingdom.king.SearchRelationshipByID (this.invitedKingdom.king.id);
+		KingdomRelationship relationship1 = otherKingdom.GetRelationshipWithKingdom (this.inviterKingdom);
+		KingdomRelationship relationship2 = otherKingdom.GetRelationshipWithKingdom (this.invitedKingdom);
 
 		List<RELATIONSHIP_STATUS> statuses = new List<RELATIONSHIP_STATUS> ();
-		statuses.Add (relationship1.lordRelationship);
-		statuses.Add (relationship2.lordRelationship);
+		statuses.Add (relationship1.relationshipStatus);
+		statuses.Add (relationship2.relationshipStatus);
 
 		if(!isIncrease){
 			if(statuses.Contains(RELATIONSHIP_STATUS.ENEMY) || statuses.Contains(RELATIONSHIP_STATUS.RIVAL)){
@@ -266,7 +268,7 @@ public class StateVisit : GameEvent {
 				}
 			}
 		}else{
-			if(relationship2.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship2.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+			if(relationship2.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship2.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
 				return true;
 			}
 		}

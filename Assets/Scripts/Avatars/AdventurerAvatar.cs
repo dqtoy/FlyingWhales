@@ -34,6 +34,11 @@ public class AdventurerAvatar : CitizenAvatar {
 
         List<HexTile> visibleTilesWithEvents = kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE]
             .Where(x => x.gameEventInTile != null && priorityEvents.Contains(x.gameEventInTile.eventType)).ToList();
+
+//		List<HexTile> visibleTilesWithEvents = new List<HexTile>();
+//		for (int i = 0; i < kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE].Count; i++) {
+//			
+//		}
         if(visibleTilesWithEvents.Count > 0) {
             newTargetTile = visibleTilesWithEvents[Random.Range(0, visibleTilesWithEvents.Count)];
         } else {
@@ -53,7 +58,7 @@ public class AdventurerAvatar : CitizenAvatar {
                 } else {
                     //get nearest elligible hidden tile as target
                     List<HexTile> elligibleHiddenTiles = kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.HIDDEN]
-                        .Where(x => x.tag == this.citizenRole.location.tag).ToList();
+                        .Where(x => x.tileTag == this.citizenRole.location.tileTag).ToList();
                     if (elligibleHiddenTiles.Count > 0) {
                         //if there is an elligible hidden tile, get the nearest
                         //order tiles by nearest from the citizens location

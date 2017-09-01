@@ -28,10 +28,13 @@ public class Riot : GameEvent {
 		//		this.EventIsCreated ();
 
 		this.EventIsCreated (this.sourceKingdom, true);
-	}
 
-	#region Overrides
-	internal override void PerformAction (){
+        //Decrease Presitge of source Kingdom
+        sourceKingdom.AdjustPrestige(-50);
+    }
+
+    #region Overrides
+    internal override void PerformAction (){
 		this.remainingDays -= 1;
 		if(this.remainingDays <= 0){
 			this.remainingDays = 0;

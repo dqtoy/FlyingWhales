@@ -26,7 +26,7 @@ public class CityTaskManager : MonoBehaviour {
 			for (int i = 0; i < this.city.ownedTiles.Count; i++) {
                 elligibleTiles = elligibleTiles
                     .Union(this.city.ownedTiles[i].GetTilesInRange(3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable 
-                    && x.isBorderOfCities.Except(this.city.kingdom.cities).Count() <= 0 )).ToList();
+                    && !x.isBorderOfCities.Except(this.city.kingdom.cities).Any())).ToList();
 			}
 			//elligibleTiles.Distinct ();
 
@@ -56,7 +56,7 @@ public class CityTaskManager : MonoBehaviour {
 				for (int i = 0; i < this.city.ownedTiles.Count; i++) {
                     elligibleTiles = elligibleTiles
                     .Union(this.city.ownedTiles[i].GetTilesInRange(5).Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable
-                         && x.isBorderOfCities.Except(this.city.kingdom.cities).Count() <= 0)).ToList();
+                         && !x.isBorderOfCities.Except(this.city.kingdom.cities).Any())).ToList();
                 }
 				//elligibleTiles.Distinct ();
 
@@ -84,7 +84,7 @@ public class CityTaskManager : MonoBehaviour {
                     elligibleTiles.Clear ();
 					for (int i = 0; i < this.city.ownedTiles.Count; i++) {
 						elligibleTiles = elligibleTiles.Union (this.city.ownedTiles [i].elligibleNeighbourTilesForPurchase
-                            .Where(x => x.isBorderOfCities.Except(this.city.kingdom.cities).Count() <= 0)).ToList();
+                            .Where(x => !x.isBorderOfCities.Except(this.city.kingdom.cities).Any())).ToList();
 					}
 					if (elligibleTiles.Count > 0) {
 						elligibleTiles = Utilities.Shuffle (elligibleTiles);

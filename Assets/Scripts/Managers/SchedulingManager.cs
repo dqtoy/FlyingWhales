@@ -41,9 +41,26 @@ public class SchedulingManager : MonoBehaviour {
 	internal void RemoveEntry(GameDate gameDate){
 		this.schedules.Remove (gameDate);
 	}
+	internal void RemoveSpecificEntry(int month, int day, int year, Action act){
+		GameDate gameDate;
+		gameDate.month = month;
+		gameDate.day = day;
+		gameDate.year = year;
+		if(this.schedules.ContainsKey(gameDate)){
+			List<Action> acts = this.schedules[gameDate];
+			for (int i = 0; i < acts.Count; i++) {
+				if(acts[i].Target == act.Target){
+					this.schedules[gameDate].RemoveAt(i);
+					break;
+				}
+			}
+		}
+	}
 	private void DoAsScheduled(List<Action> acts){
 		for (int i = 0; i < acts.Count; i++) {
-			acts [i] ();
+			if(acts[i].Target != null){
+				acts [i] ();
+			}
 		}
 	}
 }

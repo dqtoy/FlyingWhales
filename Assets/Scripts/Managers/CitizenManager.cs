@@ -40,7 +40,7 @@ public class CitizenManager : MonoBehaviour {
 
     #region getters/setters
     public Dictionary<int, HashSet<Citizen>> elligibleCitizenAgeTable {
-        get { return citizenAgeTable.Where(x => x.Value.Count() > 0).ToDictionary(x => x.Key, v => v.Value); }
+        get { return citizenAgeTable.Where(x => x.Value.Any()).ToDictionary(x => x.Key, v => v.Value); }
     }
     #endregion
 
@@ -48,7 +48,7 @@ public class CitizenManager : MonoBehaviour {
         Instance = this;
         allCitizens = new HashSet<Citizen>();
         citizenBirthdays = new Dictionary<MONTH, Dictionary<int, HashSet<Citizen>>>();
-        Messenger.AddListener("OnDayEnd", AgeCitizens);
+        //Messenger.AddListener("OnDayEnd", AgeCitizens);
         Messenger.AddListener("OnDayEnd", CheckForDeath);
     }
 
@@ -101,7 +101,7 @@ public class CitizenManager : MonoBehaviour {
         }
     }
 
-    private void AddCitizenToAgeTable(Citizen citizen) {
+    public void AddCitizenToAgeTable(Citizen citizen) {
         if(citizen.age >= 100) {
             citizenAgeTable[100].Add(citizen);
             citizen.SetAgeTableKey(100);
@@ -117,7 +117,7 @@ public class CitizenManager : MonoBehaviour {
         }
     }
 
-    private void RemoveCitizenFromAgeTable(Citizen citizen) {
+    public void RemoveCitizenFromAgeTable(Citizen citizen) {
         if(citizen.ageTableKey != -1) {
             citizenAgeTable[citizen.ageTableKey].Remove(citizen);
             citizen.SetAgeTableKey(-1);

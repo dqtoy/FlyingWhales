@@ -10,7 +10,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public int id;
     public int xCoordinate;
 	public int yCoordinate;
-    public int tag;
+    public int tileTag;
 	public string tileName;
 
     [Space(10)]
@@ -112,12 +112,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [System.NonSerialized] public List<HexTile> connectedTiles = new List<HexTile>();
 
-	public IEnumerable<HexTile> AllNeighbours { get; set; }
-	public IEnumerable<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN);}}
-	public IEnumerable<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad); } }
-	public IEnumerable<HexTile> PurchasableTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER);}}
-	public IEnumerable<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER);}}
-    public IEnumerable<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER);}}
+	public List<HexTile> AllNeighbours { get; set; }
+	public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList();}}
+	public List<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
+	public List<HexTile> PurchasableTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER).ToList();}}
+	public List<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER).ToList();}}
+    public List<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList();}}
 
     public List<HexTile> elligibleNeighbourTilesForPurchase { get { return PurchasableTiles.Where(o => !o.isOccupied && !o.isHabitable).ToList(); } }
 
@@ -267,7 +267,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		for (int i = 0; i < range; i++) {
 			
 			if (tilesInRange.Count <= 0) {
-				tilesInRange = this.AllNeighbours.ToList();
+				tilesInRange = this.AllNeighbours;
 				checkedTiles.Add (this);
 			}else{
 				tilesToAdd.Clear ();
@@ -282,6 +282,33 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 					return tilesToAdd;
 				}
 //				tilesInRange = tilesInRange.Distinct ().ToList ();
+			}
+		}
+		return tilesInRange;
+	}
+	public List<HexTile> GetTilesInRangeNoWater(int range, bool isOnlyOuter = false){
+		List<HexTile> tilesInRange = new List<HexTile>();
+		List<HexTile> checkedTiles = new List<HexTile> ();
+		List<HexTile> tilesToAdd = new List<HexTile> ();
+
+		for (int i = 0; i < range; i++) {
+
+			if (tilesInRange.Count <= 0) {
+				tilesInRange = this.AllNeighbours;
+				checkedTiles.Add (this);
+			}else{
+				tilesToAdd.Clear ();
+				for (int j = 0; j < tilesInRange.Count; j++) {
+					if (!checkedTiles.Contains (tilesInRange [j])) {
+						checkedTiles.Add (tilesInRange [j]);
+						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours.Where(x => !tilesInRange.Contains(x)).ToList());
+					}
+				}
+				tilesInRange.AddRange (tilesToAdd);
+				if(i == range - 1 && isOnlyOuter){
+					return tilesToAdd;
+				}
+				//				tilesInRange = tilesInRange.Distinct ().ToList ();
 			}
 		}
 		return tilesInRange;
@@ -484,7 +511,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
      * according to the passed parameter.
      * */
     internal void CreateCityNamePlate(City city) {
-        Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
+        //Debug.Log("Create nameplate for: " + city.name + " on " + this.name);
 
         GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("CityNamePlatePanel", UIParent);
         namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
@@ -513,7 +540,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	#region Lair
     internal void CreateLairNamePlate() {
-        Debug.Log("Create lair nameplate on " + this.name);
+        //Debug.Log("Create lair nameplate on " + this.name);
 
         GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("LairNamePlatePanel", UIParent);
         namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
@@ -548,7 +575,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	#endregion
     internal void CreateEventNamePlate() {
-        Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
+        //Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
 
         GameObject namePlateGO = UIManager.Instance.InstantiateUIObject("EventNamePlatePanel", UIParent);
         namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
@@ -667,7 +694,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this._hextileEventItem = null;
 		Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
 
-        RuinStructureOnTile();
+        RuinStructureOnTile(false);
         RemoveCityNamePlate();
         Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(UIParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
@@ -723,7 +750,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-    public void RuinStructureOnTile(bool immediatelyDestroyStructures = false) {
+    public void RuinStructureOnTile(bool immediatelyDestroyStructures) {
         if (structureObjOnTile != null) {
             Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
             if (immediatelyDestroyStructures) {
@@ -942,6 +969,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
+    [ContextMenu("Kill King")]
+    public void KillKing() {
+        Debug.Log("Force kill " + this.ownedByCity.kingdom.king.name + " king of " + this.ownedByCity.kingdom.name);
+        this.ownedByCity.kingdom.king.Death(DEATH_REASONS.ACCIDENT);
+    }
+
     //[ContextMenu("Select All Relevant Tiles")]
     //public void SelectAllRelevantTiles() {
     //    List<GameObject> allTiles = new List<GameObject>();
@@ -973,7 +1006,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
             "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
             "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
-       
+
+        text += "[b]Relationships: [/b]\n";
+        if (this.city.kingdom.relationships.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.relationships.Count; i++) {
+                text += this.city.kingdom.relationships.Keys.ElementAt(i).name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
+
         text += "[b]Embargo List: [/b]\n";
         if (this.city.kingdom.embargoList.Count > 0) {
             for (int i = 0; i < this.city.kingdom.embargoList.Keys.Count; i++) {
@@ -1141,7 +1183,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     public void SetTag(int tag) {
-        this.tag = tag;
+        this.tileTag = tag;
         tagVisual.text = tag.ToString();
         //tagVisual.gameObject.SetActive(true);
     }

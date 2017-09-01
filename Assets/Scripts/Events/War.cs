@@ -8,8 +8,11 @@ public class War : GameEvent {
 	private Kingdom _kingdom1;
 	private Kingdom _kingdom2;
 
-	private RelationshipKingdom _kingdom1Rel;
-	private RelationshipKingdom _kingdom2Rel;
+	private KingdomRelationship _kingdom1Rel;
+	private KingdomRelationship _kingdom2Rel;
+
+	private List<City> safeCitiesKingdom1;
+	private List<City> safeCitiesKingdom2;
 
 	internal CityWarPair warPair;
 
@@ -35,11 +38,11 @@ public class War : GameEvent {
 		get { return _kingdom2; }
 	}
 
-	public RelationshipKingdom kingdom1Rel {
+	public KingdomRelationship kingdom1Rel {
 		get { return _kingdom1Rel; }
 	}
 
-	public RelationshipKingdom kingdom2Rel {
+	public KingdomRelationship kingdom2Rel {
 		get { return _kingdom2Rel; }
 	}
 
@@ -54,10 +57,12 @@ public class War : GameEvent {
 		this.description = "War between " + _kingdom1.name + " and " + _kingdom2.name + ".";
 		this._kingdom1 = _kingdom1;
 		this._kingdom2 = _kingdom2;
-		this._kingdom1Rel = _kingdom1.GetRelationshipWithOtherKingdom(_kingdom2);
-		this._kingdom2Rel = _kingdom2.GetRelationshipWithOtherKingdom(_kingdom1);
+		this._kingdom1Rel = _kingdom1.GetRelationshipWithKingdom(_kingdom2);
+		this._kingdom2Rel = _kingdom2.GetRelationshipWithKingdom(_kingdom1);
 		this._kingdom1Rel.AssignWarEvent(this);
 		this._kingdom2Rel.AssignWarEvent(this);
+		this.safeCitiesKingdom1 = new List<City>();
+		this.safeCitiesKingdom2 = new List<City>();
 		this.warPair.DefaultValues();
 		this.kingdom1Attacked = false;
 		this.isInitialAttack = false;
@@ -73,10 +78,11 @@ public class War : GameEvent {
 //		EventManager.Instance.onUpdatePath.AddListener (UpdatePath);
 		Messenger.AddListener<HexTile>("OnUpdatePath", UpdatePath);
 		EventManager.Instance.AddEventToDictionary(this);
-//		EventIsCreated (this.kingdom1, false);
-//		EventIsCreated (this.kingdom2, false);
 
-	}
+        //EventIsCreated(this.kingdom1, false);
+        //EventIsCreated(this.kingdom2, false);
+
+    }
 	internal override void PerformAction (){
 		Attack ();
 	}
@@ -133,8 +139,8 @@ public class War : GameEvent {
 		this._kingdom1Rel.DeclarePeace();
 		this._kingdom2Rel.DeclarePeace();
 
-        RelationshipKings rel1 = kingdom1.king.GetRelationshipWithCitizen(kingdom2.king);
-        RelationshipKings rel2 = kingdom2.king.GetRelationshipWithCitizen(kingdom1.king);
+        KingdomRelationship rel1 = kingdom1.GetRelationshipWithKingdom(kingdom2);
+        KingdomRelationship rel2 = kingdom2.GetRelationshipWithKingdom(kingdom1);
 
         rel1.AddEventModifier(-15, "recent war with " + kingdom2.name, this);
         rel2.AddEventModifier(-15, "recent war with " + kingdom1.name, this);
@@ -186,29 +192,29 @@ public class War : GameEvent {
         for (int i = 0; i < kingdomsInWar.Length; i++) {
             Kingdom currKingdom = kingdomsInWar[i];
             Kingdom otherKingdom = this._kingdom2;
-            RelationshipKingdom rel = this._kingdom1Rel;
+            KingdomRelationship rel = this._kingdom1Rel;
             if (currKingdom.id == this._kingdom2.id) {
                 otherKingdom = this._kingdom1;
                 rel = this._kingdom2Rel;
             }
 
-            if (rel.monthToMoveOnAfterRejection == MONTH.NONE
+            if (rel.requestPeaceCooldown.month == 0
                 && KingdomManager.Instance.GetRequestPeaceBetweenKingdoms(currKingdom, otherKingdom) == null) {
 
                 int chanceToTriggerRequestPeace = 0;
-                if (rel.kingdomWar.exhaustion >= 100) {
+                if (rel.kingdomWarData.exhaustion >= 100) {
                     if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
                         chanceToTriggerRequestPeace = 4;
                     } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
                         chanceToTriggerRequestPeace = 2;
                     }
-                } else if (rel.kingdomWar.exhaustion >= 75) {
+                } else if (rel.kingdomWarData.exhaustion >= 75) {
                     if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
                         chanceToTriggerRequestPeace = 3;
                     } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
                         chanceToTriggerRequestPeace = 1;
                     }
-                } else if (rel.kingdomWar.exhaustion >= 50) {
+                } else if (rel.kingdomWarData.exhaustion >= 50) {
                     if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
                         chanceToTriggerRequestPeace = 2;
                     } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
@@ -322,39 +328,47 @@ public class War : GameEvent {
 //		}
 	}
 	private void ReinforcementKingdom1(){
-		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList (); 
+//		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+		safeCitiesKingdom1.Clear();
+		for (int i = 0; i < this.kingdom1.cities.Count; i++) {
+			if (!this.kingdom1.cities[i].isUnderAttack && !this.kingdom1.cities[i].hasReinforced && this.kingdom1.cities[i].hp >= 100) {
+				safeCitiesKingdom1.Add(this.kingdom1.cities[i]);
+			}
+		}
 		int chance = 0;
 		int value = 0;
 		int maxChanceKingdom1 = 100 + ((safeCitiesKingdom1.Count - 1) * 10);
 
-		if(this.warPair.kingdom1City.hp != this.warPair.kingdom1City.maxHP){
-			if(safeCitiesKingdom1 != null){
-				for(int i = 0; i < safeCitiesKingdom1.Count; i++){
-					chance = UnityEngine.Random.Range (0, maxChanceKingdom1);
-					value = 1 * safeCitiesKingdom1 [i].ownedTiles.Count;
-					if(chance < value){
-						safeCitiesKingdom1 [i].hasReinforced = true;
-						safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City);
-					}
+		if(this.warPair.kingdom1City.hp != this.warPair.kingdom1City.maxHP && safeCitiesKingdom1 != null){
+			for(int i = 0; i < safeCitiesKingdom1.Count; i++){
+				chance = UnityEngine.Random.Range (0, maxChanceKingdom1);
+				value = 1 * safeCitiesKingdom1 [i].ownedTiles.Count;
+				if(chance < value){
+					safeCitiesKingdom1 [i].hasReinforced = true;
+					safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City);
 				}
 			}
 		}
 	}
 	private void ReinforcementKingdom2(){
-		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+//		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+		safeCitiesKingdom2.Clear();
+		for (int i = 0; i < this.kingdom2.cities.Count; i++) {
+			if (!this.kingdom2.cities[i].isUnderAttack && !this.kingdom2.cities[i].hasReinforced && this.kingdom2.cities[i].hp >= 100) {
+				safeCitiesKingdom2.Add(this.kingdom2.cities[i]);
+			}
+		}
 		int chance = 0;
 		int value = 0;
 		int maxChanceKingdom2 = 100 + ((safeCitiesKingdom2.Count - 1) * 10);
 
-		if(this.warPair.kingdom2City.hp != this.warPair.kingdom2City.maxHP){
-			if(safeCitiesKingdom2 != null){
-				for(int i = 0; i < safeCitiesKingdom2.Count; i++){
-					chance = UnityEngine.Random.Range (0, maxChanceKingdom2);
-					value = 1 * safeCitiesKingdom2 [i].ownedTiles.Count;
-					if(chance < value){
-						safeCitiesKingdom2 [i].hasReinforced = true;
-						safeCitiesKingdom2 [i].ReinforceCity (this.warPair.kingdom2City);
-					}
+		if(this.warPair.kingdom2City.hp != this.warPair.kingdom2City.maxHP && safeCitiesKingdom2 != null){
+			for(int i = 0; i < safeCitiesKingdom2.Count; i++){
+				chance = UnityEngine.Random.Range (0, maxChanceKingdom2);
+				value = 1 * safeCitiesKingdom2 [i].ownedTiles.Count;
+				if(chance < value){
+					safeCitiesKingdom2 [i].hasReinforced = true;
+					safeCitiesKingdom2 [i].ReinforceCity (this.warPair.kingdom2City);
 				}
 			}
 		}
@@ -370,19 +384,48 @@ public class War : GameEvent {
 	#region Overrides
     internal override void DoneEvent() {
         base.DoneEvent();
-        if (this._kingdom1.isDead) {
-			GameEventWarWinner (this._kingdom2);
-            Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
-			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
-			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-        } else if (this._kingdom2.isDead) {
-			GameEventWarWinner (this._kingdom1);
-            Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
-			titleLog.AddToFillers(_kingdom2, _kingdom2.name, LOG_IDENTIFIER.KINGDOM_1);
-			titleLog.AddToFillers(_kingdom1, _kingdom1.name, LOG_IDENTIFIER.KINGDOM_2);
+
+        Kingdom winner = null;
+        Kingdom loser = null;
+
+        if(this._kingdom1.isDead || this._kingdom2.isDead) {
+            //At least 1 kingdom died
+            if(this._kingdom1.isDead && this._kingdom2.isDead) {
+                //Both kingdoms died!
+            } else {
+                if (this._kingdom1.isDead) {
+                    winner = _kingdom2;
+                    loser = _kingdom1;
+                } else if (this._kingdom2.isDead) {
+                    winner = _kingdom1;
+                    loser = _kingdom2;
+                }
+            }
+        } else {
+            //No kingdoms died at the end of the war, to determine the winner get the kingdom that lost the least cities
+            if(_kingdom1Rel.kingdomWarData.citiesLost > _kingdom2Rel.kingdomWarData.citiesLost) {
+                //Kingdom 1 lost more cities
+                loser = _kingdom1;
+                winner = _kingdom2;
+            } else if (_kingdom2Rel.kingdomWarData.citiesLost > _kingdom1Rel.kingdomWarData.citiesLost) {
+                //Kingdom 2 lost more cities
+                loser = _kingdom2;
+                winner = _kingdom1;
+            }
         }
-//        Messenger.RemoveListener("OnDayEnd", AttemptToRequestPeace);
-		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
+
+        if(loser != null && winner != null) {
+            GameEventWarWinner(winner);
+            //Increase Prestige of winner
+            winner.AdjustPrestige(100);
+            loser.AdjustPrestige(-100);
+            
+				Log titleLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "kingdom_defeat");
+            titleLog.AddToFillers(loser, loser.name, LOG_IDENTIFIER.KINGDOM_1);
+            titleLog.AddToFillers(winner, winner.name, LOG_IDENTIFIER.KINGDOM_2);
+        }
+        
+        Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		Messenger.RemoveListener<HexTile>("OnUpdatePath", UpdatePath);
     }
 	internal override void CancelEvent (){

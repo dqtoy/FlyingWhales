@@ -11,6 +11,8 @@ public class KingdomManager : MonoBehaviour {
 
 	public List<Kingdom> allKingdoms;
 
+    public List<Kingdom> allKingdomsOrderedByPrestige;
+
 	public KingdomTypeData kingdomTypeBarbaric;
 	public KingdomTypeData kingdomTypeHermit;
 	public KingdomTypeData kingdomTypeReligious;
@@ -93,105 +95,12 @@ public class KingdomManager : MonoBehaviour {
 				}
             }
         }
-
-//		List<HexTile> elligibleTilesForHumans = new List<HexTile>();
-
-//		for (int i = 0; i < stoneElligibleTiles.Count; i++) {
-//			if (stoneElligibleTiles [i].nearbyResourcesCount > 3) {
-//				elligibleTilesForHumans.Add (stoneElligibleTiles [i]);
-//			}
-//		}
-////		Debug.Log ("Valid capital tiles: " + elligibleTilesForHumans.Count);
-
-//		if (elligibleTilesForHumans.Count < this.numberOfKingdoms) {
-//			this.numberOfKingdoms = elligibleTilesForHumans.Count;
-//		}
-
-//		for (int i = 0; i < this.numberOfKingdoms; i++) {
-//			List<HexTile> citiesForKingdom = new List<HexTile>();
-//			for (int j = 0; j < this.numberOfCitiesPerKingdom; j++) {
-//                if (elligibleTilesForHumans.Count <= 0) {
-//                    break;
-//                }
-//                int chosenIndex = Random.Range(0, elligibleTilesForHumans.Count);
-//                HexTile chosenHexTile = elligibleTilesForHumans[chosenIndex];
-//                List<HexTile> nearHabitableTiles = chosenHexTile.GetTilesInRange(minimumInitialKingdomDistance).Where(x => x.isHabitable).ToList();
-//                citiesForKingdom.Add(elligibleTilesForHumans[chosenIndex]);
-//                elligibleTilesForHumans.RemoveAt(chosenIndex);
-//                for (int k = 0; k < nearHabitableTiles.Count; k++) {
-//                    HexTile nearTile = nearHabitableTiles[k];
-//                    if (elligibleTilesForHumans.Contains(nearTile)) {
-//                        elligibleTilesForHumans.Remove(nearTile);
-//                    }
-//                }
-//            }
-			
-//			GenerateNewKingdom (RACE.HUMANS, citiesForKingdom, true);
-//		}
-
-//		if (elligibleTilesForHumans.Count > 0) {
-//			cityForHumans1.Add (elligibleTilesForHumans [0]);
-////			cityForHumans1.Add (elligibleTilesForHumans [1]);
-//			GenerateNewKingdom (RACE.HUMANS, cityForHumans1, true);
-//		}
-//
-//		if (elligibleTilesForHumans.Count > 1) {
-//			cityForHumans2.Add (elligibleTilesForHumans[1]);
-////			cityForHumans2.Add (elligibleTilesForHumans[3]);
-//			GenerateNewKingdom (RACE.HUMANS, cityForHumans2, true);
-//		}
-//
-//		if (elligibleTilesForHumans.Count > 2) {
-//			cityForHumans3.Add (elligibleTilesForHumans [2]);
-////			cityForHumans3.Add (elligibleTilesForHumans [5]);
-//			GenerateNewKingdom (RACE.HUMANS, cityForHumans3, true);
-//		}
-//
-//		if (elligibleTilesForHumans.Count > 3) {
-//			cityForHumans4.Add (elligibleTilesForHumans [3]);
-//			GenerateNewKingdom (RACE.HUMANS, cityForHumans4, true);
-//		}
-
-//		for (int i = 0; i < elligibleTilesForHumans.Count; i++) {
-//			habitableTiles.Remove (elligibleTilesForHumans[i]);
-//		}
-
-//		//Get Statrting City For Elves
-//		List<HexTile> cityForElves = new List<HexTile>();
-//		List<HexTile> elligibleTilesForElves = new List<HexTile>();
-//		for (int i = 0; i < habitableTiles.Count; i++) {
-//
-//			List<HexTile> neighbours = habitableTiles[i].AllNeighbours.ToList();
-//			List<HexTile> tilesContainingBaseResource = new List<HexTile>();
-//			for (int j = 0; j < neighbours.Count; j++) {
-//				if (neighbours[j].specialResource == RESOURCE.NONE) {
-//					if (Utilities.GetBaseResourceType (neighbours[j].defaultResource) == BASE_RESOURCE_TYPE.WOOD) {
-//						tilesContainingBaseResource.Add(neighbours[j]);
-//					}
-//				} else {
-//					if (Utilities.GetBaseResourceType (neighbours[j].specialResource) == BASE_RESOURCE_TYPE.WOOD) {
-//						tilesContainingBaseResource.Add(neighbours[j]);
-//					}
-//				}
-//			}
-//
-//			if (tilesContainingBaseResource.Count > 0) {
-//				elligibleTilesForElves.Add(habitableTiles[i]);
-//			}
-//		}
-//		cityForElves.Add (elligibleTilesForElves [Random.Range (0, elligibleTilesForElves.Count)]);
-//		GenerateNewKingdom (RACE.ELVES, cityForElves, true);
-		CreateInitialRelationshipKings ();
 	}
 
-	internal void CreateInitialRelationshipKings(){
-		for(int i = 0; i < this.allKingdoms.Count; i++){
-			this.allKingdoms [i].king.CreateInitialRelationshipsToKings ();
-		}
-	}
 	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false, Kingdom sourceKingdom = null){
 		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom);
 		allKingdoms.Add(newKingdom);
+        Debug.Log("Created new kingdom: " + newKingdom.name);
 		if (isForInitial) {
 			for (int i = 0; i < cities.Count; i++) {
                 HexTile currCityTile = cities[i];
@@ -204,7 +113,10 @@ public class KingdomManager : MonoBehaviour {
                 currCityTile.CreateCityNamePlate(currCityTile.city);
             }
 		}
+        //Create Relationships first
+        newKingdom.CreateInitialRelationships();
         Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
+        newKingdom.UpdateAllRelationshipsLikeness();
         newKingdom.CheckForDiscoveredKingdoms();
 		return newKingdom;
 	}
@@ -244,11 +156,11 @@ public class KingdomManager : MonoBehaviour {
 	}
 
 	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2, War war){
-		RelationshipKingdom kingdom1Rel = kingdom1.GetRelationshipWithOtherKingdom(kingdom2);
-		RelationshipKingdom kingdom2Rel = kingdom2.GetRelationshipWithOtherKingdom(kingdom1);
+		KingdomRelationship kingdom1Rel = kingdom1.GetRelationshipWithKingdom(kingdom2);
+		KingdomRelationship kingdom2Rel = kingdom2.GetRelationshipWithKingdom(kingdom1);
 
-        RelationshipKings king1Rel = kingdom1.king.GetRelationshipWithCitizen(kingdom2.king);
-        RelationshipKings king2Rel = kingdom2.king.GetRelationshipWithCitizen(kingdom1.king);
+        KingdomRelationship king1Rel = kingdom1.GetRelationshipWithKingdom(kingdom2);
+        KingdomRelationship king2Rel = kingdom2.GetRelationshipWithKingdom(kingdom1);
 
         king1Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, war);
         king2Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, war);
@@ -256,8 +168,8 @@ public class KingdomManager : MonoBehaviour {
         kingdom1Rel.SetWarStatus(true);
 		kingdom2Rel.SetWarStatus(true);
 
-		kingdom1Rel.kingdomWar.ResetKingdomWar ();
-		kingdom2Rel.kingdomWar.ResetKingdomWar ();
+		kingdom1Rel.kingdomWarData.ResetKingdomWar ();
+		kingdom2Rel.kingdomWarData.ResetKingdomWar ();
 
 		kingdom1.AdjustExhaustionToAllRelationship (15);
 		kingdom2.AdjustExhaustionToAllRelationship (15);
@@ -295,8 +207,8 @@ public class KingdomManager : MonoBehaviour {
 	}
 
 	public void DeclarePeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
-//		RelationshipKingdom kingdom1Rel = kingdom1.GetRelationshipWithOtherKingdom(kingdom2);
-//		RelationshipKingdom kingdom2Rel = kingdom2.GetRelationshipWithOtherKingdom(kingdom1);
+//		KingdomRelationship kingdom1Rel = kingdom1.GetRelationshipWithKingdom(kingdom2);
+//		KingdomRelationship kingdom2Rel = kingdom2.GetRelationshipWithKingdom(kingdom1);
 //
 //		kingdom1Rel.SetWarStatus(false);
 //		kingdom2Rel.SetWarStatus(false);
@@ -356,60 +268,6 @@ public class KingdomManager : MonoBehaviour {
 		return null;
 	}
 
-	public void AddRelationshipToOtherKings(Citizen newKing){
-		for (int i = 0; i < this.allKingdoms.Count; i++) {
-			if (this.allKingdoms[i].id != newKing.city.kingdom.id) {
-				this.allKingdoms[i].king.relationshipKings.Add (new RelationshipKings(this.allKingdoms[i].king, newKing, 0));
-			}
-		}
-	}
-	public void RemoveRelationshipToOtherKings(Citizen oldKing){
-		for (int i = 0; i < this.allKingdoms.Count; i++) {
-			if (this.allKingdoms[i].id != oldKing.city.kingdom.id) {
-				this.allKingdoms[i].king.relationshipKings.RemoveAll (x => x.king.id == oldKing.id);
-			}
-		}
-	}
-
-	//public void MakeKingdomDead(Kingdom kingdomToDie){
-	//	this.allKingdoms.Remove(kingdomToDie);
-	//	RemoveRelationshipToOtherKingdoms (kingdomToDie);
-	//}
-
-	public void RemoveRelationshipToOtherKingdoms(Kingdom kingdomToRemove){
-		for (int i = 0; i < this.allKingdoms.Count; i++) {
-			for (int j = 0; j < this.allKingdoms[i].relationshipsWithOtherKingdoms.Count; j++) {
-				if (this.allKingdoms[i].relationshipsWithOtherKingdoms[j].targetKingdom.id == kingdomToRemove.id) {
-					this.allKingdoms[i].relationshipsWithOtherKingdoms.RemoveAt(j);
-					break;
-				}
-			}
-		}
-	}
-
-	//public void UpdateKingdomAdjacency(){
-	//	for (int i = 0; i < this.allKingdoms.Count; i++) {
-	//		Kingdom currentKingdom = this.allKingdoms[i];
-	//		currentKingdom.adjacentCitiesFromOtherKingdoms.Clear();
-	//		currentKingdom.ResetAdjacencyWithOtherKingdoms();
-	//		for (int j = 0; j < currentKingdom.cities.Count; j++) {
-	//			City currentCity = currentKingdom.cities[j];
-	//			for (int k = 0; k < currentCity.hexTile.connectedTiles.Count; k++) {
-	//				HexTile currentConnectedTile = currentCity.hexTile.connectedTiles[k];
-	//				if (currentConnectedTile.isOccupied && currentConnectedTile.city != null) {
-	//					if (currentConnectedTile.city.kingdom.id != currentKingdom.id) {
-	//						currentKingdom.GetRelationshipWithOtherKingdom(currentConnectedTile.city.kingdom).SetAdjacency(true);
-	//						currentConnectedTile.city.kingdom.GetRelationshipWithOtherKingdom(currentKingdom).SetAdjacency(true);
-	//						currentKingdom.adjacentCitiesFromOtherKingdoms.Add(currentConnectedTile.city);
-	//					}
-	//				}
-
-	//			}
-	//		}
-	//		currentKingdom.adjacentCitiesFromOtherKingdoms.Distinct();
-	//	}
-	//}
-
 	public List<Kingdom> GetOtherKingdomsExcept(Kingdom kingdom){
 		List<Kingdom> newKingdoms = new List<Kingdom> ();
 		for(int i = 0; i < this.allKingdoms.Count; i++){
@@ -439,13 +297,13 @@ public class KingdomManager : MonoBehaviour {
 	internal void CheckWarTriggerDeclareWar(Kingdom warDeclarer, Kingdom warReceiver){
 		for (int i = 0; i < this.allKingdoms.Count; i++) {
 			if(this.allKingdoms[i].id != warDeclarer.id && this.allKingdoms[i].id != warReceiver.id){
-				RelationshipKings relationshipToAffected = this.allKingdoms [i].king.GetRelationshipWithCitizen (warReceiver.king);
-				RelationshipKings relationshipToTarget = this.allKingdoms [i].king.GetRelationshipWithCitizen (warDeclarer.king);
+				KingdomRelationship relationshipToAffected = this.allKingdoms [i].GetRelationshipWithKingdom (warReceiver);
+				KingdomRelationship relationshipToTarget = this.allKingdoms [i].GetRelationshipWithKingdom (warDeclarer);
 
-				if(relationshipToAffected.lordRelationship == RELATIONSHIP_STATUS.ALLY){
-					this.allKingdoms [i].king.WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_ALLY);
-				}else if(relationshipToAffected.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
-					this.allKingdoms [i].king.WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_FRIEND);
+				if(relationshipToAffected.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+					this.allKingdoms[i].WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_ALLY);
+				}else if(relationshipToAffected.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
+					this.allKingdoms[i].WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_FRIEND);
 				}
 			}
 		}
@@ -454,8 +312,8 @@ public class KingdomManager : MonoBehaviour {
 	internal void CheckWarTriggerMisc(Kingdom targetKingdom, WAR_TRIGGER warTrigger){
 		for (int i = 0; i < this.allKingdoms.Count; i++) {
 			if (this.allKingdoms [i].id != targetKingdom.id) {
-				RelationshipKings relationshipToTarget = this.allKingdoms [i].king.GetRelationshipWithCitizen (targetKingdom.king);
-				this.allKingdoms [i].king.WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, warTrigger);
+				KingdomRelationship relationshipToTarget = this.allKingdoms [i].GetRelationshipWithKingdom (targetKingdom);
+				this.allKingdoms[i].WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, warTrigger);
 			}
 		}
 	}
@@ -463,16 +321,6 @@ public class KingdomManager : MonoBehaviour {
     private void UpdateDiscoveredKingdomsForAll() {
         for (int i = 0; i < this.allKingdoms.Count; i++) {
             this.allKingdoms[i].CheckForDiscoveredKingdoms();
-        }
-    }
-
-    public void InheritRelationshipFromCitizen(Citizen citizenInheritedFrom, Citizen citizenToInherit) {
-        citizenToInherit.relationshipKings = new List<RelationshipKings>(citizenInheritedFrom.relationshipKings);
-        for (int i = 0; i < citizenToInherit.relationshipKings.Count; i++) {
-            RelationshipKings currRel = citizenToInherit.relationshipKings[i];
-            RelationshipKings relOfTargetKing = currRel.king.GetRelationshipWithCitizen(citizenInheritedFrom);
-            currRel.ChangeSourceKing(citizenToInherit);
-			relOfTargetKing.ChangeTargetKing(citizenToInherit);
         }
     }
 
@@ -495,19 +343,8 @@ public class KingdomManager : MonoBehaviour {
         return kingdomsOfRace;
     }
 
-    #region For Testing
-
-    [ContextMenu("Test Split Kingdom")]
-    public void TestSplitKingdom() {
-		Kingdom sourceKingdom = this.allKingdoms.FirstOrDefault();
-        List<City> citiesToSplit = new List<City>() { sourceKingdom.cities.Last() };
-        SplitKingdom(sourceKingdom, citiesToSplit);
-        Messenger.Broadcast("UpdateUI");
-    }
-    #endregion
-
 	internal void InstantWarBetweenKingdoms(Kingdom sourceKingdom, Kingdom targetKingdom, WAR_TRIGGER warTrigger, GameEvent gameEventTrigger = null){
-		RelationshipKingdom relationship = sourceKingdom.GetRelationshipWithOtherKingdom (targetKingdom);
+		KingdomRelationship relationship = sourceKingdom.GetRelationshipWithKingdom (targetKingdom);
 		if (relationship.war == null) {
 			War newWar = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, 
 				sourceKingdom, targetKingdom, warTrigger);
@@ -540,7 +377,6 @@ public class KingdomManager : MonoBehaviour {
         }
         return false;
     }
-
 
 	#region War Events
 	private void WarEvents(Kingdom declarerKingdom, Kingdom targetKingdom){
@@ -577,4 +413,19 @@ public class KingdomManager : MonoBehaviour {
 		discovererKingdom.DiscoverKingdom(discoveredKingdom);
 		discoveredKingdom.DiscoverKingdom(discovererKingdom);
 	}
+
+    internal void UpdateKingdomPrestigeList() {
+        allKingdomsOrderedByPrestige = allKingdoms.OrderBy(x => x.prestige).ToList();
+        UIManager.Instance.UpdatePrestigeSummary();
+    }
+
+    #region For Testing
+    [ContextMenu("Test Split Kingdom")]
+    public void TestSplitKingdom() {
+        Kingdom sourceKingdom = this.allKingdoms.FirstOrDefault();
+        List<City> citiesToSplit = new List<City>() { sourceKingdom.cities.Last() };
+        SplitKingdom(sourceKingdom, citiesToSplit);
+        Messenger.Broadcast("UpdateUI");
+    }
+    #endregion
 }

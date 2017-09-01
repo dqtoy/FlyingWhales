@@ -64,6 +64,9 @@ public class DevelopWeapons : GameEvent {
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "start");
         newLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
+        GameDate dueDate = Utilities.GetNewDateAfterNumberOfDays(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, durationInDays);
+        //SchedulingManager.Instance.AddEntry
+
         Messenger.AddListener("OnDayEnd", PerformAction);
         EventManager.Instance.AddEventToDictionary(this);
 		EventIsCreated(claimant, true);
@@ -99,8 +102,9 @@ public class DevelopWeapons : GameEvent {
     protected void AdjustRelationships() {
         //Kings
         for (int i = 0; i < _sourceKingdom.discoveredKingdoms.Count; i++) {
-            Citizen otherKing = _sourceKingdom.discoveredKingdoms[i].king;
-            RelationshipKings rel = otherKing.GetRelationshipWithCitizen(_sourceKingdom.king);
+            Kingdom otherKingdom = _sourceKingdom.discoveredKingdoms[i];
+            Citizen otherKing = otherKingdom.king;
+            KingdomRelationship rel = otherKingdom.GetRelationshipWithKingdom(_sourceKingdom);
             if (otherKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)
                 || otherKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
 

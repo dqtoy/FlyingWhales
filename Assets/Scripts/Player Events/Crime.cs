@@ -135,7 +135,7 @@ public class Crime : GameEvent {
 		List<Kingdom> otherKingdoms = this.kingdom.discoveredKingdoms;
 		if(otherKingdoms != null && otherKingdoms.Count > 0){
 			for (int i = 0; i < otherKingdoms.Count; i++) {
-				RelationshipKings relationship = otherKingdoms[i].king.GetRelationshipWithCitizen(this.kingdom.king);
+				KingdomRelationship relationship = otherKingdoms[i].GetRelationshipWithKingdom(this.kingdom);
 				if(relationship != null){
 					PUNISHMENT otherKingPunishment = GetPunishment (otherKingdoms[i].king);
 					if(otherKingPunishment == this.kingPunishment){

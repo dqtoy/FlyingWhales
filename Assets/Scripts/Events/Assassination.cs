@@ -17,7 +17,7 @@ public class Assassination : GameEvent {
 	private bool hasAssassinated;
 	private bool hasSpyDied;
 	private Kingdom kingdomToBlame;
-	private RelationshipKings relationshipToAdjust;
+	private KingdomRelationship relationshipToAdjust;
 
 	public Citizen targetCitizen {
 		get { 
@@ -256,24 +256,24 @@ public class Assassination : GameEvent {
 		}
 	}
 
-	private void TriggerGuardian(){
-		Citizen kingOfTarget = this.targetKingdom.king;
-		int value = 0;
-		for(int i = 0; i < this.otherKingdoms.Count; i++){
-			if(this.otherKingdoms[i].king.hasTrait(TRAIT.HONEST) && this.otherKingdoms[i].isAlive()){
-				int chance = UnityEngine.Random.Range (0, 100);
-				RelationshipKings relationship = this.otherKingdoms [i].king.SearchRelationshipByID (kingOfTarget.id);
-				if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
-					value = 5;
-				}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
-					value = 10;
-				}
-				if(chance < value){
-					AssignGuardian (this.otherKingdoms [i]);
-				}
-			}
-		}
-	}
+	//private void TriggerGuardian(){
+	//	Citizen kingOfTarget = this.targetKingdom.king;
+	//	int value = 0;
+	//	for(int i = 0; i < this.otherKingdoms.Count; i++){
+	//		if(this.otherKingdoms[i].king.hasTrait(TRAIT.HONEST) && this.otherKingdoms[i].isAlive()){
+	//			int chance = UnityEngine.Random.Range (0, 100);
+	//			KingdomRelationship relationship = this.otherKingdoms [i].king.SearchRelationshipByID (kingOfTarget.id);
+	//			if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
+	//				value = 5;
+	//			}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+	//				value = 10;
+	//			}
+	//			if(chance < value){
+	//				AssignGuardian (this.otherKingdoms [i]);
+	//			}
+	//		}
+	//	}
+	//}
 	private void AssignGuardian(Kingdom otherKingdom){
 		Citizen guardian = GetGuardian (otherKingdom);
 		if (guardian != null) {
@@ -423,7 +423,7 @@ public class Assassination : GameEvent {
 		if(chance < value){
 			this.hasBeenDiscovered = true;
 			if(this.targetKingdom.isAlive()){
-				this.relationshipToAdjust = this.targetKingdom.king.SearchRelationshipByID (this.assassinKingdom.king.id);
+				this.relationshipToAdjust = this.targetKingdom.GetRelationshipWithKingdom(this.assassinKingdom);
 			}
 			if(this.assassinKingdom.king.hasTrait(TRAIT.SCHEMING)){
 				int deflectChance = UnityEngine.Random.Range (0, 100);
@@ -433,14 +433,14 @@ public class Assassination : GameEvent {
 						this.hasDeflected = true;
 						this.kingdomToBlame = kingdomToBlameCopy;
 						if (this.targetKingdom.isAlive ()) {
-							this.relationshipToAdjust = this.targetKingdom.king.SearchRelationshipByID (this.kingdomToBlame.king.id);
+							this.relationshipToAdjust = this.targetKingdom.GetRelationshipWithKingdom (this.kingdomToBlame);
 						}
 					}
 				}
 			}
 			if(this.relationshipToAdjust != null){
 				this.relationshipToAdjust.AddEventModifier (-4, this.name + " event", this, this._assassinationTrigger);
-				this.relationshipToAdjust.sourceKing.WarTrigger (this.relationshipToAdjust, this, this.relationshipToAdjust.sourceKing.city.kingdom.kingdomTypeData, this._warTrigger);
+				this.relationshipToAdjust.sourceKingdom.WarTrigger (this.relationshipToAdjust, this, this.relationshipToAdjust.sourceKingdom.kingdomTypeData, this._warTrigger);
 			}
 		}
 	}

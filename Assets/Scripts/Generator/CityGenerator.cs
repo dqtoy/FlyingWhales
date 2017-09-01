@@ -77,7 +77,7 @@ public class CityGenerator : MonoBehaviour {
 
 
 			List<HexTile> checkForHabitableTilesInRange = currentHexTile.GetTilesInRange (4);
-			if (checkForHabitableTilesInRange.Where (x => x.isHabitable).Count () > 0) {
+			if (checkForHabitableTilesInRange.Where (x => x.isHabitable).Any()) {
 				continue;
 			}
 
@@ -149,34 +149,74 @@ public class CityGenerator : MonoBehaviour {
 	//	- has path from capital city
 	public HexTile GetNearestHabitableTile(City city) {
 		BIOMES forbiddenBiome = GetForbiddenBiomeOfRace(city.kingdom.race);
+		List<HexTile> filteredCheckForExpandingKingdomBorderTilesInRange = new List<HexTile>();
+		int numOwnedByKingdom = 0;
+		bool hasOwnedByKingdom = false;
+
 		for (int i = 0; i < city.habitableTileDistance.Count; i++) {
 			if (!city.habitableTileDistance[i].hexTile.isOccupied && !city.habitableTileDistance[i].hexTile.isBorder && !city.habitableTileDistance[i].hexTile.isTargeted 
 				&& city.habitableTileDistance[i].hexTile.biomeType != forbiddenBiome) {
 
-				List<HexTile> checkForOtherBorderTilesInRange;
+				numOwnedByKingdom = 0;
+				List<HexTile> checkForOtherBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (4);
 				// Check if the tile is within required distance of the expanding kingdom's current borders
 				if (city.kingdom.kingdomTypeData.expansionDistanceFromBorder > 0) {
+					hasOwnedByKingdom = false;
 					List<HexTile> checkForExpandingKingdomBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (city.kingdom.kingdomTypeData.expansionDistanceFromBorder);
-					int z = checkForExpandingKingdomBorderTilesInRange.Where (y => (y.ownedByCity != null && y.ownedByCity.kingdom == city.kingdom)).Count ();
-					if (z <= 0) {
+					for (int j = 0; j < checkForExpandingKingdomBorderTilesInRange.Count; j++) {
+						if (checkForExpandingKingdomBorderTilesInRange[i].ownedByCity != null && checkForExpandingKingdomBorderTilesInRange[i].ownedByCity.kingdom == city.kingdom) {
+							hasOwnedByKingdom = true;
+							break;
+						}
+					}
+//					int z = checkForExpandingKingdomBorderTilesInRange.Where (y => (y.ownedByCity != null && y.ownedByCity.kingdom == city.kingdom)).ToList().Count;
+					if (!hasOwnedByKingdom) {
 						continue;
 					}
 
 					// Check if there are more than 2 nearby (within 3 hex tiles) hex tiles that are already part of another kingdom
-					checkForOtherBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (4);
-					if (checkForOtherBorderTilesInRange.Where (x => (x.ownedByCity != null && x.ownedByCity.kingdom != city.kingdom)).Count () > 1) {
+//					checkForOtherBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (4);
+//					if (checkForOtherBorderTilesInRange.Where (x => (x.ownedByCity != null && x.ownedByCity.kingdom != city.kingdom)).ToList().Count > 1) {
+//						continue;
+//					} else {
+//						return city.habitableTileDistance [i].hexTile;
+//					}
+
+					for (int j = 0; j < checkForOtherBorderTilesInRange.Count; j++) {
+						if (checkForOtherBorderTilesInRange[i].ownedByCity != null && checkForOtherBorderTilesInRange[i] != city.kingdom) {
+							numOwnedByKingdom += 1;
+							if (numOwnedByKingdom > 1) {
+								break;
+							}
+						}
+					}
+					if (numOwnedByKingdom > 1) {
 						continue;
 					} else {
 						return city.habitableTileDistance [i].hexTile;
 					}
 				} else {
 					// Check if there are more than 2 nearby (within 3 hex tiles) hex tiles that are already part of any kingdom (including own)
-					checkForOtherBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (4);
-					if (checkForOtherBorderTilesInRange.Where (x => (x.ownedByCity != null)).Count () > 1) {
+//					checkForOtherBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (4);
+//					if (checkForOtherBorderTilesInRange.Where (x => (x.ownedByCity != null)).ToList().Count > 1) {
+//						continue;
+//					} else {
+//						return city.habitableTileDistance [i].hexTile;
+//					}
+
+					for (int j = 0; j < checkForOtherBorderTilesInRange.Count; j++) {
+						if (checkForOtherBorderTilesInRange[i].ownedByCity != null) {
+							numOwnedByKingdom += 1;
+							if (numOwnedByKingdom > 1) {
+								break;
+							}
+						}
+					}
+					if (numOwnedByKingdom > 1) {
 						continue;
 					} else {
 						return city.habitableTileDistance [i].hexTile;
-					}					
+					}
 				}
 			}
 		}
@@ -193,7 +233,7 @@ public class CityGenerator : MonoBehaviour {
         for (int i = 0; i < tilesToCheck.Count; i++) {
             HexTile currTile = tilesToCheck[i];
             if (currTile.isBorder) {
-                if(currTile.isBorderOfCities.Except(kingdom.cities).Count() <= 0) {
+                if(!currTile.isBorderOfCities.Except(kingdom.cities).Any()) {
                     elligibleTiles.Add(currTile);
                 }
             } else {

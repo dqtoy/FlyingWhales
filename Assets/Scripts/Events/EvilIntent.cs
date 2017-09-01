@@ -97,9 +97,11 @@ public class EvilIntent : GameEvent {
                 Log resistSuccessLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "resist_success");
                 resistSuccessLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 resistSuccessLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                for (int i = 0; i < _sourceKing.relationshipKings.Count; i++) {
-                    Citizen otherKing = _sourceKing.relationshipKings[i].king;
-                    RelationshipKings otherKingRel = otherKing.GetRelationshipWithCitizen(_sourceKing);
+                Kingdom thisKingdom = _sourceKing.city.kingdom;
+                for (int i = 0; i < thisKingdom.relationships.Count; i++) {
+                    Kingdom otherKingdom = _sourceKing.city.kingdom.relationships.ElementAt(i).Value.targetKingdom;
+                    //Citizen otherKing = _sourceKing.relationshipKings[i].king;
+                    KingdomRelationship otherKingRel = otherKingdom.GetRelationshipWithKingdom(thisKingdom);
                     otherKingRel.AddEventModifier(5, "Evil Intent Reaction", this);
                 }
                 DoneEvent();
@@ -161,10 +163,11 @@ public class EvilIntent : GameEvent {
                 failKidnapLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 failKidnapLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
+                Kingdom thisKingdom = _sourceKing.city.kingdom;
                 for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
-                    if(KingdomManager.Instance.allKingdoms[i].id != _sourceKing.city.kingdom.id) {
-                        Citizen otherKing = KingdomManager.Instance.allKingdoms[i].king;
-                        RelationshipKings otherKingRel = otherKing.GetRelationshipWithCitizen(_sourceKing);
+                    Kingdom otherKingdom = KingdomManager.Instance.allKingdoms[i];
+                    if (otherKingdom.id != thisKingdom.id) {
+                        KingdomRelationship otherKingRel = otherKingdom.GetRelationshipWithKingdom(thisKingdom);
                         otherKingRel.AddEventModifier(-5, "Evil Intent Reaction", this);
                     }
                 }
@@ -180,7 +183,7 @@ public class EvilIntent : GameEvent {
         if(citizenToKidnap != null) {
             citizenToKidnap.city.RemoveCitizenFromCity(citizenToKidnap);
             _kidnappedCitizen = citizenToKidnap;
-            _targetKing.GetRelationshipWithCitizen(_sourceKing).ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, this);
+            _targetKing.city.kingdom.GetRelationshipWithKingdom(_sourceKing.city.kingdom).ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, this);
             AskForRansom();
         } else {
             Debug.Log("CANNOT KIDNAP ANYONE!");
@@ -333,9 +336,11 @@ public class EvilIntent : GameEvent {
     }
 
     private void AdjustOtherKingsRel(Citizen king, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
+        Kingdom thisKingdom = king.city.kingdom;
         for (int i = 0; i < king.city.kingdom.discoveredKingdoms.Count; i++) {
-            Citizen otherKing = king.city.kingdom.discoveredKingdoms[i].king;
-            RelationshipKings otherKingRel = otherKing.GetRelationshipWithCitizen(king);
+            Kingdom otherKingdom = king.city.kingdom.discoveredKingdoms[i];
+            Citizen otherKing = otherKingdom.king;
+            KingdomRelationship otherKingRel = otherKingdom.GetRelationshipWithKingdom(thisKingdom);
             if (otherKing.importantCharacterValues.ContainsKey(chosenValue) 
                 || otherKing.importantCharacterValues.ContainsKey(oppositeValue)) {
 

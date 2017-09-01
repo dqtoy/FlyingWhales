@@ -131,8 +131,9 @@ public class Ranger : Role {
 
 		this.path = PathGenerator.Instance.GetPath (this.location, this.targetLocation, PATHFINDING_MODE.NO_HIDDEN_TILES, BASE_RESOURCE_TYPE.STONE, this.citizen.city.kingdom);
 		if(this.path == null){
-			Debug.LogError ("path is null");
-		}
+            //throw new Exception("Ranger " + this.citizen.name + " could not find path from " + location.name.ToString() + " to " + targetLocation.name + " for kingdom " + this.citizen.city.kingdom.name);
+            Debug.LogError("path is null");
+        }
 	}
 	private int GetIndexOfOppositeTile(HexTile fromHextile, HexTile prevHextile, HexTile[] neighbors){
 		//		HexTile[] neighbors = fromHextile.AllNeighbours.ToArray ();

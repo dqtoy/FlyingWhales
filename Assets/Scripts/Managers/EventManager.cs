@@ -238,20 +238,6 @@ public class EventManager : MonoBehaviour {
                                 allGameEventsInKingdom.Add(eventsOfType[j]);
                             }
                         }
-                    } else if (key == EVENT_TYPES.ESPIONAGE) {
-                        for (int j = 0; j < eventsOfType.Count; j++) {
-                            Espionage currEvent = (Espionage)eventsOfType[j];
-                            if (currEvent.startedByKingdom.id == kingdom.id || currEvent.sourceKingdom.id == kingdom.id || currEvent.targetKingdom.id == kingdom.id) {
-                                allGameEventsInKingdom.Add(eventsOfType[j]);
-                            }
-                        }
-                    } else if (key == EVENT_TYPES.EXHORTATION) {
-                        for (int j = 0; j < eventsOfType.Count; j++) {
-                            Exhortation currEvent = (Exhortation)eventsOfType[j];
-                            if (currEvent.startedByKingdom.id == kingdom.id || currEvent.targetCitizen.city.kingdom.id == kingdom.id) {
-                                allGameEventsInKingdom.Add(eventsOfType[j]);
-                            }
-                        }
                     } else if (key == EVENT_TYPES.INVASION_PLAN) {
                         for (int j = 0; j < eventsOfType.Count; j++) {
                             InvasionPlan currEvent = (InvasionPlan)eventsOfType[j];
@@ -269,13 +255,6 @@ public class EventManager : MonoBehaviour {
                     } else if (key == EVENT_TYPES.MILITARIZATION) {
                         for (int j = 0; j < eventsOfType.Count; j++) {
                             Militarization currEvent = (Militarization)eventsOfType[j];
-                            if (currEvent.startedByKingdom.id == kingdom.id) {
-                                allGameEventsInKingdom.Add(eventsOfType[j]);
-                            }
-                        }
-                    } else if (key == EVENT_TYPES.POWER_GRAB) {
-                        for (int j = 0; j < eventsOfType.Count; j++) {
-                            PowerGrab currEvent = (PowerGrab)eventsOfType[j];
                             if (currEvent.startedByKingdom.id == kingdom.id) {
                                 allGameEventsInKingdom.Add(eventsOfType[j]);
                             }

@@ -71,7 +71,7 @@ public class Monster {
 		for (int i = 0; i < this.lair.tilesInRadius.Count; i++) {
 			if(this.lair.tilesInRadius[i] != null){
 				if(this.lair.tilesInRadius[i].isOccupied && this.lair.tilesInRadius[i].isHabitable && (this.lair.tilesInRadius[i].city != null && this.lair.tilesInRadius[i].city.id != 0)){
-					if(this.lair.hexTile.tag == this.lair.tilesInRadius[i].tag){
+					if(this.lair.hexTile.tileTag == this.lair.tilesInRadius[i].tileTag){
 						this.lair.availableTargets.Add(this.lair.tilesInRadius[i]);
 					}
 				}

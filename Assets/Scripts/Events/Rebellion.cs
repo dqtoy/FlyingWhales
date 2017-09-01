@@ -51,6 +51,9 @@ public class Rebellion : GameEvent {
 
 		EventManager.Instance.AddEventToDictionary (this);
 		this.EventIsCreated (this.targetKingdom, true);
+
+        //Decrease Presitge of target Kingdom
+        targetKingdom.AdjustPrestige(-100);
 	}
 	#region Overrides
 	internal override void PerformAction (){

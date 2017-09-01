@@ -67,9 +67,9 @@ public class Rumor : GameEvent {
 	#endregion
 
 	private void StartRumor(){
-		RelationshipKings relationshipSourceToTarget = this.sourceKingdom.king.GetRelationshipWithCitizen(this.targetKingdom.king);
-		RelationshipKings relationshipSourceToRumor = this.sourceKingdom.king.GetRelationshipWithCitizen(this.rumorKingdom.king);
-		RelationshipKings relationshipRumorToTarget = this.rumorKingdom.king.GetRelationshipWithCitizen(this.targetKingdom.king);
+		KingdomRelationship relationshipSourceToTarget = this.sourceKingdom.GetRelationshipWithKingdom(this.targetKingdom);
+		KingdomRelationship relationshipSourceToRumor = this.sourceKingdom.GetRelationshipWithKingdom(this.rumorKingdom);
+		KingdomRelationship relationshipRumorToTarget = this.rumorKingdom.GetRelationshipWithKingdom(this.targetKingdom);
 
 		if(relationshipSourceToRumor == null || relationshipRumorToTarget == null){
 			//Cancel Rumor
@@ -98,33 +98,33 @@ public class Rumor : GameEvent {
 		int chance = UnityEngine.Random.Range(0,100);
 		int value = 30;
 
-		if(relationshipSourceToRumor != null && relationshipSourceToRumor.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+		if(relationshipSourceToRumor != null && relationshipSourceToRumor.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
 			value = 40;
 		}
 
 		if(rumorType == RUMOR_TYPE.NEGATIVE){
-			if(relationshipRumorToTarget.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+			if(relationshipRumorToTarget.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
 				value -= 15;
-			}else if(relationshipRumorToTarget.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
+			}else if(relationshipRumorToTarget.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
 				value -= 10;
-			}else if(relationshipRumorToTarget.lordRelationship == RELATIONSHIP_STATUS.WARM){
+			}else if(relationshipRumorToTarget.relationshipStatus == RELATIONSHIP_STATUS.WARM){
 				value -= 5;
 			}
 		}
 
 
 		if(chance < value){
-			if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+			if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
 				relationshipRumorToTarget.AddEventModifier(5, this.name + " event", this);
-			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.FRIEND){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
 				relationshipRumorToTarget.AddEventModifier(4, this.name + " event", this);
-			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.WARM){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.WARM){
 				relationshipRumorToTarget.AddEventModifier(3, this.name + " event", this);
-			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.COLD){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.COLD){
 				relationshipRumorToTarget.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
-			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.ENEMY){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.ENEMY){
 				relationshipRumorToTarget.AddEventModifier(-4, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
-			}else if(relationshipSourceToTarget.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
 				relationshipRumorToTarget.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}
 			if(rumorType == RUMOR_TYPE.NEGATIVE){
@@ -154,7 +154,7 @@ public class Rumor : GameEvent {
 					newLog.AddToFillers (this.rumorKingdom.king, this.rumorKingdom.king.name, LOG_IDENTIFIER.KING_2);
 					newLog2.AddToFillers (this.sourceKingdom.king, this.sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
 
-					RelationshipKings relationshipRumorToSource = this.rumorKingdom.king.GetRelationshipWithCitizen(this.sourceKingdom.king);
+					KingdomRelationship relationshipRumorToSource = this.rumorKingdom.GetRelationshipWithKingdom(this.sourceKingdom);
 					if(relationshipRumorToSource != null){
 						relationshipRumorToSource.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.CAUGHT_RUMOR);
 					}
@@ -164,11 +164,11 @@ public class Rumor : GameEvent {
 		this.DoneEvent();
 	}
 
-	private RUMOR_TYPE GetRumorType(RelationshipKings relationship){
+	private RUMOR_TYPE GetRumorType(KingdomRelationship relationship){
 		if(relationship != null){
-			if(relationship.lordRelationship == RELATIONSHIP_STATUS.COLD || relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+			if(relationship.relationshipStatus == RELATIONSHIP_STATUS.COLD || relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
 				return RUMOR_TYPE.NEGATIVE;
-			}else if(relationship.lordRelationship == RELATIONSHIP_STATUS.WARM || relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+			}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.WARM || relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
 				return RUMOR_TYPE.POSITIVE;
 			}
 		}

@@ -64,13 +64,13 @@ public class SendReliefGoods : GameEvent {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[i];
 			if(currentKingdom.id != this.senderKingdom.id && currentKingdom.id != this.receiverKingdom.id){
-				RelationshipKingdom relationshipKingdomToReceiver = currentKingdom.GetRelationshipWithOtherKingdom(this.receiverKingdom);
+				KingdomRelationship relationshipKingdomToReceiver = currentKingdom.GetRelationshipWithKingdom(this.receiverKingdom);
 				if(relationshipKingdomToReceiver != null && !relationshipKingdomToReceiver.isAtWar){
-					RelationshipKings relationshipToReceiver = currentKingdom.king.GetRelationshipWithCitizen(this.receiverKingdom.king);
-					RelationshipKings relationshipToSender = currentKingdom.king.GetRelationshipWithCitizen(this.senderKingdom.king);
+					KingdomRelationship relationshipToReceiver = currentKingdom.GetRelationshipWithKingdom(this.receiverKingdom);
+					KingdomRelationship relationshipToSender = currentKingdom.GetRelationshipWithKingdom(this.senderKingdom);
 					if(relationshipToReceiver != null && relationshipToSender != null){
-						if((relationshipToReceiver.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationshipToReceiver.lordRelationship == RELATIONSHIP_STATUS.RIVAL)
-							&& (relationshipToSender.lordRelationship != RELATIONSHIP_STATUS.FRIEND && relationshipToSender.lordRelationship != RELATIONSHIP_STATUS.ALLY)){
+						if((relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.RIVAL)
+							&& (relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.FRIEND && relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.ALLY)){
 							otherKingdoms.Add(currentKingdom);
 						}
 					}
@@ -118,7 +118,7 @@ public class SendReliefGoods : GameEvent {
 			City chosenCity = this.receiverKingdom.cities.FirstOrDefault(x => x.currentGrowth == this.receiverKingdom.cities.Min(y => y.currentGrowth));
 			chosenCity.AdjustDailyGrowth(this.reliefGoods);
 
-			RelationshipKings relationship = this.receiverKingdom.king.GetRelationshipWithCitizen(this.senderKingdom.king);
+			KingdomRelationship relationship = this.receiverKingdom.GetRelationshipWithKingdom(this.senderKingdom);
 			if(relationship != null){
 				relationship.AddEventModifier(5, this.name + " event", this);
 			}
@@ -152,8 +152,8 @@ public class SendReliefGoods : GameEvent {
 		newLog.AddToFillers (this.receiverKingdom.king, this.receiverKingdom.king.name, LOG_IDENTIFIER.KING_1);
 
 		this.intercepter.citizen.Death(DEATH_REASONS.TREACHERY);
-		RelationshipKings relationshipFromSender = this.senderKingdom.king.GetRelationshipWithCitizen(this.intercepter.citizen.city.kingdom.king);
-		RelationshipKings relationshipFromReceiver = this.receiverKingdom.king.GetRelationshipWithCitizen(this.intercepter.citizen.city.kingdom.king);
+		KingdomRelationship relationshipFromSender = this.senderKingdom.GetRelationshipWithKingdom(this.intercepter.citizen.city.kingdom);
+		KingdomRelationship relationshipFromReceiver = this.receiverKingdom.GetRelationshipWithKingdom(this.intercepter.citizen.city.kingdom);
 		if(relationshipFromSender != null){
 			relationshipFromSender.AddEventModifier(-5, this.name + " event", this);
 		}

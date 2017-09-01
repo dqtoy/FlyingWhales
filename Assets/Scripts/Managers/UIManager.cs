@@ -221,13 +221,17 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UITable notificationParent;
     [SerializeField] private UIScrollView notificationScrollView;
 
+    [Space(10)]
+    [Header("Prestige List")]
+    [SerializeField] private UILabel prestigeSummaryLbl;
+
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	internal Citizen currentlyShowingCitizen = null;
 	internal City currentlyShowingCity = null;
 	internal Kingdom currentlyShowingKingdom = null;
 	private GameEvent currentlyShowingEvent;
-	private RelationshipKings currentlyShowingRelationship;
+	private KingdomRelationship currentlyShowingRelationship;
 	private GameObject lastClickedEventType = null;
 	private War currentlyShowingWar = null;
 	internal object currentlyShowingLogObject = null;
@@ -301,7 +305,7 @@ public class UIManager : MonoBehaviour {
 
     private void NormalizeFontSizes(){
 		UILabel[] allLabels = this.GetComponentsInChildren<UILabel>(true);
-		Debug.Log ("ALL LABELS COUNT: " + allLabels.Length.ToString());
+		//Debug.Log ("ALL LABELS COUNT: " + allLabels.Length.ToString());
 		for (int i = 0; i < allLabels.Length; i++) {
 			NormalizeFontSizeOfLabel(allLabels [i]);
 		}
@@ -539,7 +543,7 @@ public class UIManager : MonoBehaviour {
         List<RESOURCE> resourcesInGrid = children.Where(x => x.GetComponent<ResourceIcon>() != null).Select(x => x.GetComponent<ResourceIcon>().resource).ToList();
         
         List<RESOURCE> allOtherResources = currentlyShowingKingdom.availableResources.Keys.ToList();
-        if (resourcesInGrid.Except(allOtherResources).Count() > 0 || allOtherResources.Except(resourcesInGrid).Count() > 0) {
+        if (resourcesInGrid.Except(allOtherResources).Any() || allOtherResources.Except(resourcesInGrid).Any()) {
             for (int i = 0; i < children.Count; i++) {
                 kingdomOtherResourcesGrid.RemoveChild(children[i]);
                 ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
@@ -978,9 +982,9 @@ public class UIManager : MonoBehaviour {
 		List<CharacterPortrait> characterPortraits = kingRelationshipsGrid.gameObject.GetComponentsInChildren<CharacterPortrait>().ToList();
 
 		int nextIndex = 0;
-        //List<RelationshipKings> relationshipsToShow = currentlyShowingKingdom.king.relationshipKings.ToList();
-        List<RelationshipKings> relationshipsToShow = currentlyShowingKingdom.king.relationshipKings
-            .Where(x => currentlyShowingKingdom.discoveredKingdoms.Contains(x.king.city.kingdom)).ToList();
+        //List<KingdomRelationship> relationshipsToShow = currentlyShowingKingdom.king.relationshipKings.ToList();
+        List<KingdomRelationship> relationshipsToShow = currentlyShowingKingdom.relationships
+            .Where(x => currentlyShowingKingdom.discoveredKingdoms.Contains(x.Value.targetKingdom)).Select(x => x.Value).ToList();
 
         if (relationshipsToShow.Count > 0) {
             kingRelationshipLine.SetActive(true);
@@ -993,10 +997,10 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < characterPortraits.Count; i++) {
 			CharacterPortrait currPortrait = characterPortraits[i];
             if(i < relationshipsToShow.Count) {
-                RelationshipKings currRel = relationshipsToShow[i];
+                KingdomRelationship currRel = relationshipsToShow[i];
                 if (currRel != null) {
-                    currPortrait.SetCitizen(currRel.king, true);
-                    currPortrait.ShowRelationshipLine(currRel, currRel.king.GetRelationshipWithCitizen(currentlyShowingKingdom.king));
+                    currPortrait.SetCitizen(currRel.targetKingdom.king, true);
+                    currPortrait.ShowRelationshipLine(currRel, currRel.targetKingdom.GetRelationshipWithKingdom(currentlyShowingKingdom));
                     currPortrait.gameObject.SetActive(true);
                 } else {
                     currPortrait.gameObject.SetActive(false);
@@ -1009,13 +1013,13 @@ public class UIManager : MonoBehaviour {
 
 		if (relationshipsToShow.Count - 1 >= nextIndex) {
 			for (int i = nextIndex; i < relationshipsToShow.Count; i++) {
-                RelationshipKings rel = relationshipsToShow[i];
+                KingdomRelationship rel = relationshipsToShow[i];
 
                 GameObject kingGO = InstantiateUIObject(characterPortraitPrefab.name, this.transform);
-				kingGO.GetComponent<CharacterPortrait>().SetCitizen(rel.king, true);
+				kingGO.GetComponent<CharacterPortrait>().SetCitizen(rel.targetKingdom.king, true);
 				kingGO.transform.localScale = Vector3.one;
 				kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (rel, 
-                    rel.king.GetRelationshipWithCitizen(currentlyShowingKingdom.king));
+                    rel.targetKingdom.GetRelationshipWithKingdom(currentlyShowingKingdom));
 				kingRelationshipsGrid.AddChild(kingGO.transform);
 				//kingRelationshipsGrid.Reposition ();
 	//			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
@@ -1058,38 +1062,38 @@ public class UIManager : MonoBehaviour {
         kingdomListRelationshipButton.SetClickState(false);
 	}
 
-	public void ShowRelationshipHistory(Citizen citizenInRelationshipWith){
-		RelationshipKings relationship = currentlyShowingCitizen.GetRelationshipWithCitizen(citizenInRelationshipWith);
-		currentlyShowingRelationship = relationship;
+	//public void ShowRelationshipHistory(Citizen citizenInRelationshipWith){
+	//	KingdomRelationship relationship = currentlyShowingCitizen.GetRelationshipWithKingdom(citizenInRelationshipWith);
+	//	currentlyShowingRelationship = relationship;
 
-		if (relationship.relationshipHistory.Count <= 0) {
-			noRelationshipsToShowGO.SetActive (true);
-		} else {
-			noRelationshipsToShowGO.SetActive (false);
-		}
+	//	if (relationship.relationshipHistory.Count <= 0) {
+	//		noRelationshipsToShowGO.SetActive (true);
+	//	} else {
+	//		noRelationshipsToShowGO.SetActive (false);
+	//	}
 
-		List<Transform> children = this.relationshipHistoryGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
-			ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
-		}
+	//	List<Transform> children = this.relationshipHistoryGrid.GetChildList();
+	//	for (int i = 0; i < children.Count; i++) {
+	//		ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
+	//	}
 
-		for (int i = 0; i < relationship.relationshipHistory.Count; i++) {
-			GameObject historyGO = InstantiateUIObject(this.historyPortraitPrefab.name, this.relationshipHistoryGrid.transform);
-			historyGO.GetComponent<HistoryPortrait> ().SetHistory(relationship.relationshipHistory[i]);
-			historyGO.transform.localScale = Vector3.one;
-			historyGO.transform.localPosition = Vector3.zero;
-		}
+	//	for (int i = 0; i < relationship.relationshipHistory.Count; i++) {
+	//		GameObject historyGO = InstantiateUIObject(this.historyPortraitPrefab.name, this.relationshipHistoryGrid.transform);
+	//		historyGO.GetComponent<HistoryPortrait> ().SetHistory(relationship.relationshipHistory[i]);
+	//		historyGO.transform.localScale = Vector3.one;
+	//		historyGO.transform.localPosition = Vector3.zero;
+	//	}
 
-		StartCoroutine (RepositionGrid (relationshipHistoryGrid));
+	//	StartCoroutine (RepositionGrid (relationshipHistoryGrid));
 
-		//For Testing
-		relationshipHistoryForTestingGO.SetActive(true);
-		sourceKinglikenessLbl.text = relationship.totalLike.ToString();
-		targetKinglikenessLbl.text = citizenInRelationshipWith.GetRelationshipWithCitizen(currentlyShowingCitizen).totalLike.ToString();
+	//	//For Testing
+	//	relationshipHistoryForTestingGO.SetActive(true);
+	//	sourceKinglikenessLbl.text = relationship.totalLike.ToString();
+	//	targetKinglikenessLbl.text = citizenInRelationshipWith.GetRelationshipWithKingdom(currentlyShowingCitizen).totalLike.ToString();
 
-		relationshipStatusSprite.color = Utilities.GetColorForRelationship(relationship.lordRelationship);
-		relationshipHistoryGO.SetActive(true);
-	}
+	//	relationshipStatusSprite.color = Utilities.GetColorForRelationship(relationship.relationshipStatus);
+	//	relationshipHistoryGO.SetActive(true);
+	//}
 
 	public void HideRelationshipHistory(){
 		relationshipHistoryGO.SetActive(false);
@@ -1615,7 +1619,7 @@ public class UIManager : MonoBehaviour {
 		List<EventListItem> currentlyShowingGameEvents = politicsParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem>()).ToList ();
 		List<int> currentlyShowingGameEventIDs = currentlyShowingGameEvents.Select (x => x.gameEvent.id).ToList ();
 		List<int> actualPoliticalEventIDs = politicalEvents.Select (x => x.id).ToList ();
-		if (actualPoliticalEventIDs.Except (currentlyShowingGameEventIDs).Union (currentlyShowingGameEventIDs.Except (actualPoliticalEventIDs)).Count () > 0) {
+		if (actualPoliticalEventIDs.Except (currentlyShowingGameEventIDs).Union (currentlyShowingGameEventIDs.Except (actualPoliticalEventIDs)).Any()) {
 			for (int i = 0; i < currentlyShowingGameEvents.Count; i++) {
 				politicsParent.eventsGrid.RemoveChild (currentlyShowingGameEvents[i].transform);
                 ObjectPoolManager.Instance.DestroyObject(currentlyShowingGameEvents[i].gameObject);
@@ -1775,7 +1779,6 @@ public class UIManager : MonoBehaviour {
             ShowKingdomCities();
         }
     }
-
     /*
      * Show all cities owned by currentlyShowingKingdom.
      * */
@@ -1821,7 +1824,6 @@ public class UIManager : MonoBehaviour {
         //kingdomCitiesScrollView.UpdateScrollbars();
         kingdomCitiesGO.SetActive(true);
     }
-
     public void HideKingdomCities() {
         kingdomCitiesGO.SetActive(false);
         kingdomListCityButton.SetClickState(false);
@@ -1836,7 +1838,6 @@ public class UIManager : MonoBehaviour {
         relationshipSummaryLbl.text = summary;
         relationshipSummaryGO.SetActive(true);
     }
-
     public void HideRelationshipSummary() {
         relationshipSummaryGO.SetActive(false);
     }
@@ -1848,7 +1849,6 @@ public class UIManager : MonoBehaviour {
             ShowInterveneMenu();
         }
     }
-
     private void ShowInterveneMenu() {
         if(interveneMenuGrid.GetChildList().Count <= 0) {
             LoadInterveneEvents();
@@ -1856,7 +1856,6 @@ public class UIManager : MonoBehaviour {
         interveneMenuBtn.SetClickState(true);
         interveneMenuGO.SetActive(true);
     }
-
     private void LoadInterveneEvents() {
         for (int i = 0; i < EventManager.Instance.playerPlacableEvents.Length; i++) {
             EVENT_TYPES currEvent = EventManager.Instance.playerPlacableEvents[i];
@@ -1869,7 +1868,6 @@ public class UIManager : MonoBehaviour {
         StartCoroutine(RepositionGrid(interveneMenuGrid));
         StartCoroutine(RepositionScrollView(interveneMenuScrollView));
     }
-
     private void HideInterveneMenu() {
         interveneMenuBtn.SetClickState(false);
         interveneMenuGO.SetActive(false);
@@ -1882,11 +1880,9 @@ public class UIManager : MonoBehaviour {
             ShowInterveneActionsMenu();
         }
     }
-
     private void ShowInterveneActionsMenu() {
         interveneActonsGO.SetActive(true);
     }
-
     public void HideInterveneActionsMenu() {
         HideSwitchKingdomsMenu();
         HideCreateKingdomMenu();
@@ -1901,7 +1897,6 @@ public class UIManager : MonoBehaviour {
             ShowSwitchKingdomsMenu();
         }
     }
-
     private void ShowSwitchKingdomsMenu() {
         HideCreateKingdomMenu();
         //Load Kingdoms
@@ -1932,7 +1927,6 @@ public class UIManager : MonoBehaviour {
         switchKingdomsBtn.SetClickState(true);
         switchKingdomGO.SetActive(true);
     }
-
     public void HideSwitchKingdomsMenu() {
         switchKingdomsBtn.SetClickState(false);
         switchKingdomGO.SetActive(false);
@@ -1945,7 +1939,6 @@ public class UIManager : MonoBehaviour {
             ShowCreateKingdomMenu();
         }
     }
-
     private void ShowCreateKingdomMenu() {
         HideSwitchKingdomsMenu();
         createKingdomPopupList.Clear();
@@ -1960,9 +1953,7 @@ public class UIManager : MonoBehaviour {
         createKingdomBtn.SetClickState(true);
         createKingdomGO.SetActive(true);
     }
-
     List<HexTile> tilesToChooseForNewKingdom;
-
     public void UpdateCreateKingdomErrorMessage() {
         List<HexTile> elligibleTilesForNewKingdom = CityGenerator.Instance.GetHabitableTilesForRace((RACE)createKingdomPopupList.data);
         BIOMES forbiddenBiomeForRace = CityGenerator.Instance.GetForbiddenBiomeOfRace((RACE)createKingdomPopupList.data);
@@ -1989,20 +1980,31 @@ public class UIManager : MonoBehaviour {
             createKingdomExecuteBtn.SetState(UIButtonColor.State.Normal, true);
         }
     }
-
     public void CreateNewKingdom() {
         List<HexTile> citiesForNewKingdom = new List<HexTile>() { tilesToChooseForNewKingdom[UnityEngine.Random.Range(0, tilesToChooseForNewKingdom.Count)] };
         Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom((RACE)createKingdomPopupList.data, citiesForNewKingdom, true);
 
-        newKingdom.king.CreateInitialRelationshipsToKings();
-        KingdomManager.Instance.AddRelationshipToOtherKings(newKingdom.king);
+        //newKingdom.king.CreateInitialRelationshipsToKings();
+        //KingdomManager.Instance.AddRelationshipToOtherKings(newKingdom.king);
 
         HideInterveneActionsMenu();
     }
-
     private void HideCreateKingdomMenu() {
         createKingdomBtn.SetClickState(false);
         createKingdomGO.SetActive(false);
+    }
+
+    public void UpdatePrestigeSummary() {
+        prestigeSummaryLbl.text = string.Empty;
+        List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedByPrestige);
+        kingdomsToShow.Reverse();
+        for (int i = 0; i < kingdomsToShow.Count; i++) {
+            Kingdom currKingdom = kingdomsToShow[i];
+            prestigeSummaryLbl.text += currKingdom.name + " - " + currKingdom.prestige.ToString() + " (" + currKingdom.cityCap + ")";
+            if(i + 1 < KingdomManager.Instance.allKingdomsOrderedByPrestige.Count) {
+                prestigeSummaryLbl.text += "\n";
+            }
+        }
     }
 
     /*
@@ -2335,10 +2337,10 @@ public class UIManager : MonoBehaviour {
 		} else {
 			this.kingdomsForWar.Clear ();
 			if(this.currentlyShowingCitizen != null){
-				for(int i = 0; i < this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms.Count; i++){
-					if(!this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].isAtWar){
-						this.kingdomsForWar.AddItem (this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom.name
-                            , this.currentlyShowingCitizen.city.kingdom.relationshipsWithOtherKingdoms[i].targetKingdom);
+				for(int i = 0; i < this.currentlyShowingCitizen.city.kingdom.relationships.Count; i++){
+					if(!this.currentlyShowingCitizen.city.kingdom.relationships.ElementAt(i).Value.isAtWar){
+						this.kingdomsForWar.AddItem (this.currentlyShowingCitizen.city.kingdom.relationships.ElementAt(i).Value.targetKingdom.name
+                            , this.currentlyShowingCitizen.city.kingdom.relationships.ElementAt(i).Value.targetKingdom);
 					}
 				}
 			}

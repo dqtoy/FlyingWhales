@@ -31,7 +31,7 @@ public class Admiration : GameEvent {
 		}
 	}
 	private void CheckIfAlreadyAtWar(){
-		if(this.kingdom1.GetRelationshipWithOtherKingdom(this.kingdom2).isAtWar){
+		if(this.kingdom1.GetRelationshipWithKingdom(this.kingdom2).isAtWar){
 			this.isResolvedPeacefully = false;
 			DoneEvent ();
 		}
@@ -41,8 +41,8 @@ public class Admiration : GameEvent {
         base.DoneEvent();
 		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 
-		RelationshipKings relationship1 = this.kingdom1.king.SearchRelationshipByID (this.kingdom2.king.id);
-		RelationshipKings relationship2 = this.kingdom2.king.SearchRelationshipByID (this.kingdom1.king.id);
+		KingdomRelationship relationship1 = this.kingdom1.GetRelationshipWithKingdom (this.kingdom2);
+		KingdomRelationship relationship2 = this.kingdom2.GetRelationshipWithKingdom (this.kingdom1);
 
 		if(this.isResolvedPeacefully){
 //			Debug.Log("ADMIRATION BETWEEN " + this.kingdom1.name + " AND " + this.kingdom2.name + " ENDED PEACEFULLY!");
@@ -51,7 +51,7 @@ public class Admiration : GameEvent {
 
 			relationship1.AddEventModifier (9, this.name + " event", this);
 
-			relationship1.relationshipHistory.Add (new History (
+			relationship1.AddRelationshipHistory(new History (
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
@@ -59,7 +59,7 @@ public class Admiration : GameEvent {
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
-			relationship2.relationshipHistory.Add (new History (
+			relationship2.AddRelationshipHistory(new History (
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
@@ -72,7 +72,7 @@ public class Admiration : GameEvent {
 
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Admiration ended horribly.";
 
-			relationship1.relationshipHistory.Add (new History (
+			relationship1.AddRelationshipHistory(new History (
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,
@@ -80,7 +80,7 @@ public class Admiration : GameEvent {
 				HISTORY_IDENTIFIER.KING_RELATIONS,
 				false
 			));
-			relationship2.relationshipHistory.Add (new History (
+			relationship2.AddRelationshipHistory(new History (
 				GameManager.Instance.month,
 				GameManager.Instance.days,
 				GameManager.Instance.year,

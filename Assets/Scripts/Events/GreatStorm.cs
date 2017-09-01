@@ -148,7 +148,7 @@ public class GreatStorm : GameEvent {
 				int chance = UnityEngine.Random.Range(0,100);
 				if(chance < 50){
 					if(KingdomManager.Instance.allKingdoms[i].id != this._affectedKingdom.id){
-						RelationshipKings relationship = KingdomManager.Instance.allKingdoms[i].king.GetRelationshipWithCitizen(this._affectedKingdom.king);
+						KingdomRelationship relationship = KingdomManager.Instance.allKingdoms[i].GetRelationshipWithKingdom(this._affectedKingdom);
 						if(relationship != null){
 							//Send Reliever
 							City chosenCity = KingdomManager.Instance.allKingdoms[i].cities.FirstOrDefault(x => x.currentGrowth == KingdomManager.Instance.allKingdoms[i].cities.Max(y => y.currentGrowth));
@@ -175,13 +175,13 @@ public class GreatStorm : GameEvent {
 		for (int i = 0; i < KingdomManager.Instance.allKingdoms.Count; i++) {
 			Kingdom currentKingdom = KingdomManager.Instance.allKingdoms[i];
 			if(currentKingdom.id != senderKingdom.id && currentKingdom.id != this._affectedKingdom.id){
-				RelationshipKingdom relationshipKingdomToReceiver = currentKingdom.GetRelationshipWithOtherKingdom(this._affectedKingdom);
+				KingdomRelationship relationshipKingdomToReceiver = currentKingdom.GetRelationshipWithKingdom(this._affectedKingdom);
 				if(relationshipKingdomToReceiver != null && !relationshipKingdomToReceiver.isAtWar){
-					RelationshipKings relationshipToReceiver = currentKingdom.king.GetRelationshipWithCitizen(this._affectedKingdom.king);
-					RelationshipKings relationshipToSender = currentKingdom.king.GetRelationshipWithCitizen(senderKingdom.king);
+					KingdomRelationship relationshipToReceiver = currentKingdom.GetRelationshipWithKingdom(this._affectedKingdom);
+					KingdomRelationship relationshipToSender = currentKingdom.GetRelationshipWithKingdom(senderKingdom);
 					if(relationshipToReceiver != null && relationshipToSender != null){
-						if((relationshipToReceiver.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationshipToReceiver.lordRelationship == RELATIONSHIP_STATUS.RIVAL)
-							&& (relationshipToSender.lordRelationship != RELATIONSHIP_STATUS.FRIEND && relationshipToSender.lordRelationship != RELATIONSHIP_STATUS.ALLY)){
+						if((relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.RIVAL)
+							&& (relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.FRIEND && relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.ALLY)){
 							otherKingdoms.Add(currentKingdom);
 						}
 					}
@@ -214,7 +214,7 @@ public class GreatStorm : GameEvent {
 			City chosenCity = this._affectedKingdom.cities.FirstOrDefault(x => x.currentGrowth == this._affectedKingdom.cities.Min(y => y.currentGrowth));
 			chosenCity.AdjustDailyGrowth(reliefGoods);
 
-			RelationshipKings relationship = this._affectedKingdom.king.GetRelationshipWithCitizen(senderKingdom.king);
+			KingdomRelationship relationship = this._affectedKingdom.GetRelationshipWithKingdom(senderKingdom);
 			if(relationship != null){
 				relationship.AddEventModifier(5, this.name + " event", this);
 			}
@@ -232,8 +232,8 @@ public class GreatStorm : GameEvent {
 		newLog.AddToFillers (senderKingdom.king, senderKingdom.king.name, LOG_IDENTIFIER.KING_2);
 		newLog.AddToFillers (this._affectedKingdom.king, this._affectedKingdom.king.name, LOG_IDENTIFIER.KING_1);
 
-		RelationshipKings relationshipFromSender = senderKingdom.king.GetRelationshipWithCitizen(intercepterKingdom.king);
-		RelationshipKings relationshipFromReceiver = this._affectedKingdom.king.GetRelationshipWithCitizen(intercepterKingdom.king);
+		KingdomRelationship relationshipFromSender = senderKingdom.GetRelationshipWithKingdom(intercepterKingdom);
+		KingdomRelationship relationshipFromReceiver = this._affectedKingdom.GetRelationshipWithKingdom(intercepterKingdom);
 		if(relationshipFromSender != null){
 			relationshipFromSender.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_INTERCEPTER);
 		}
@@ -247,10 +247,10 @@ public class GreatStorm : GameEvent {
 				int chance = UnityEngine.Random.Range(0,100);
 				if(chance < 40){
 					if(KingdomManager.Instance.allKingdoms[i].id != this._affectedKingdom.id){
-						RelationshipKings relationship = KingdomManager.Instance.allKingdoms[i].king.GetRelationshipWithCitizen(this._affectedKingdom.king);
+						KingdomRelationship relationship = KingdomManager.Instance.allKingdoms[i].GetRelationshipWithKingdom(this._affectedKingdom);
 						if(relationship != null){
 							int percentToGive = 0;
-							if(relationship.lordRelationship == RELATIONSHIP_STATUS.ENEMY || relationship.lordRelationship == RELATIONSHIP_STATUS.RIVAL){
+							if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
 								//TODO: Add log - wage war
 								War war = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, KingdomManager.Instance.allKingdoms[i].king, KingdomManager.Instance.allKingdoms[i], this._affectedKingdom, this.warTrigger);
 								war.CreateInvasionPlan (KingdomManager.Instance.allKingdoms[i], this);

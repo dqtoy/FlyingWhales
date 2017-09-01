@@ -306,7 +306,7 @@ public class FirstAndKeystone : GameEvent {
 			CheckFirstAndKeystoneOwnership();
 			return;
 		}else{
-			RelationshipKings relationship = this.firstOwner.king.GetRelationshipWithCitizen(this.keystoneOwner.king);
+			KingdomRelationship relationship = this.firstOwner.GetRelationshipWithKingdom(this.keystoneOwner);
 			if(relationship != null){
 				relationship.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.FIRST_AND_KEYSTONE_STEAL);
 			}
@@ -373,9 +373,9 @@ public class FirstAndKeystone : GameEvent {
 				return true;
 			}else{
 				if(!giver.firstAndKeystoneOwnership.knowEffects){
-					RelationshipKings relationship = giver.king.GetRelationshipWithCitizen(retriever.king);
+					KingdomRelationship relationship = giver.GetRelationshipWithKingdom(retriever);
 					if(relationship != null){
-						if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
 							return true;
 						}
 					}
@@ -392,9 +392,9 @@ public class FirstAndKeystone : GameEvent {
                 }
             } else{
 				if(!giver.firstAndKeystoneOwnership.knowEffects){
-					RelationshipKings relationship = giver.king.GetRelationshipWithCitizen(retriever.king);
+					KingdomRelationship relationship = giver.GetRelationshipWithKingdom(retriever);
 					if(relationship != null){
-						if(relationship.lordRelationship == RELATIONSHIP_STATUS.FRIEND || relationship.lordRelationship == RELATIONSHIP_STATUS.ALLY){
+						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
 							return true;
 						}
 					}

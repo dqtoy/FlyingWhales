@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class RequestPeace : GameEvent {
 
-	private RelationshipKingdom _targetKingdomRel;
+	private KingdomRelationship _targetKingdomRel;
 	private Kingdom _targetKingdom;
 
     private Envoy _envoySent;
@@ -30,7 +30,7 @@ public class RequestPeace : GameEvent {
         this.isSureAccept = isSureAccept;
 		this._envoySent = _envoySent;
 		this._targetKingdom = _targetKingdom;
-		this._targetKingdomRel = _targetKingdom.GetRelationshipWithOtherKingdom(this.startedBy.city.kingdom);
+		this._targetKingdomRel = _targetKingdom.GetRelationshipWithKingdom(this.startedBy.city.kingdom);
 			
 		Log startLog = this._targetKingdomRel.war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 				            "Events", "War", "request_peace_start_envoy");
@@ -85,7 +85,7 @@ public class RequestPeace : GameEvent {
     //			requestPeaceSuccess.AddToFillers (this._startedBy, this._startedBy.name);
 
     //			//request rejected
-    //			RelationshipKingdom relationshipOfRequester = this.startedByKingdom.GetRelationshipWithOtherKingdom(this._targetKingdom);
+    //			KingdomRelationship relationshipOfRequester = this.startedByKingdom.GetRelationshipWithKingdom(this._targetKingdom);
     //			int moveOnMonth = GameManager.Instance.month;
     //			for (int i = 0; i < 3; i++) {
     //				moveOnMonth += 1;
@@ -105,7 +105,7 @@ public class RequestPeace : GameEvent {
         if (isActive) {
             base.DoneCitizenAction(citizen);
             int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 20 * (this._targetKingdomRel.kingdomWar.peaceRejected + 1) || isSureAccept) {
+            if (chance < 20 * (this._targetKingdomRel.kingdomWarData.peaceRejected + 1) || isSureAccept) {
                 //request accepted
                 Log requestPeaceSuccess = this._targetKingdomRel.war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
                     "Events", "War", "request_peace_success");
@@ -116,18 +116,11 @@ public class RequestPeace : GameEvent {
                 this.resolution = this._targetKingdom.king.name + " accepted " + this.startedBy.name + "'s request for peace.";
             } else {
                 //request rejected
-                this._targetKingdomRel.kingdomWar.peaceRejected += 1;
+                this._targetKingdomRel.kingdomWarData.peaceRejected += 1;
 
                 //Set when startedByKingdom can request for peace again
-                RelationshipKingdom relationshipOfRequester = this.startedByKingdom.GetRelationshipWithOtherKingdom(this._targetKingdom);
-                int moveOnMonth = GameManager.Instance.month;
-                for (int i = 0; i < 3; i++) {
-                    moveOnMonth += 1;
-                    if (moveOnMonth > 12) {
-                        moveOnMonth = 1;
-                    }
-                }
-                relationshipOfRequester.SetMoveOnPeriodAfterRequestPeaceRejection(moveOnMonth);
+                KingdomRelationship relationshipOfRequester = this.startedByKingdom.GetRelationshipWithKingdom(this._targetKingdom);
+                relationshipOfRequester.SetMoveOnPeriodAfterRequestPeaceRejection();
 
 				Log requestPeaceFail = this._targetKingdomRel.war.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year,
 					"Events", "War", "request_peace_fail");
@@ -165,7 +158,7 @@ public class RequestPeace : GameEvent {
         //			requestPeaceSuccess.AddToFillers(this._startedBy, this._startedBy.name, LOG_IDENTIFIER.KING_1);
         //
         //            //request rejected
-        //            RelationshipKingdom relationshipOfRequester = this.startedByKingdom.GetRelationshipWithOtherKingdom(this._targetKingdom);
+        //            KingdomRelationship relationshipOfRequester = this.startedByKingdom.GetRelationshipWithKingdom(this._targetKingdom);
         //            int moveOnMonth = GameManager.Instance.month;
         //            for (int i = 0; i < 3; i++) {
         //                moveOnMonth += 1;

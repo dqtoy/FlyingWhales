@@ -72,17 +72,7 @@ public class GridMap : MonoBehaviour {
     public void GenerateNeighboursWithSameTag() {
         for (int i = 0; i < listHexes.Count; i++) {
             HexTile currHex = listHexes[i].GetComponent<HexTile>();
-            currHex.sameTagNeighbours = currHex.AllNeighbours.Where(x => x.tag == currHex.tag).ToList();
+            currHex.sameTagNeighbours = currHex.AllNeighbours.Where(x => x.tileTag == currHex.tileTag).ToList();
         }
     }
-
-//	public IEnumerable<Tile> AllTiles
-//	{
-//		get
-//		{
-//			for (var x = 0; x < width; x++)
-//				for (var y = 0; y < height; y++)
-//					yield return GameBoard[x, y];
-//		}
-//	}
 }
