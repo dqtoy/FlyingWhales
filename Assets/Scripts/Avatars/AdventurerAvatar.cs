@@ -34,6 +34,11 @@ public class AdventurerAvatar : CitizenAvatar {
 
         List<HexTile> visibleTilesWithEvents = kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE]
             .Where(x => x.gameEventInTile != null && priorityEvents.Contains(x.gameEventInTile.eventType)).ToList();
+
+//		List<HexTile> visibleTilesWithEvents = new List<HexTile>();
+//		for (int i = 0; i < kingdomOfAdventurer.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE].Count; i++) {
+//			
+//		}
         if(visibleTilesWithEvents.Count > 0) {
             newTargetTile = visibleTilesWithEvents[Random.Range(0, visibleTilesWithEvents.Count)];
         } else {

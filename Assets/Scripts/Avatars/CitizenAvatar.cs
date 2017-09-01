@@ -197,14 +197,19 @@ public class CitizenAvatar : PooledObject {
             City currCity = citiesSeen[i];
             //thisKingdom.DiscoverCity(currCity);
             //Debug.Log("Citizen of " + thisKingdom.name + " has seen " + currCity.name);
-            List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
-            for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
-                HexTile currTile = tilesToSetAsSeen[j];
-                if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
-                    thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            }
-            
+//            List<HexTile> tilesToSetAsSeen = currCity.ownedTiles.Union(currCity.borderTiles).ToList();
+//            for (int j = 0; j < tilesToSetAsSeen.Count; j++) {
+//                HexTile currTile = tilesToSetAsSeen[j];
+//                if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
+//                    thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+//                }
+//            }
+			foreach (var tileToSetAsSeen in currCity.ownedTiles.Union(currCity.borderTiles)) {
+				HexTile currTile = tileToSetAsSeen;
+				if (!currTile.visibleByKingdoms.Contains(thisKingdom)) {
+					thisKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+				}
+			}
         }
     }
 

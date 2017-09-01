@@ -33,6 +33,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public Lair lair;
 
+	private List<Lair> _lairsInRange = new List<Lair>();
+
     [Space(10)]
     [Header("Booleans")]
     public bool isHabitable = false;
@@ -265,7 +267,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		for (int i = 0; i < range; i++) {
 			
 			if (tilesInRange.Count <= 0) {
-				tilesInRange = this.AllNeighbours.ToList();
+				tilesInRange = this.AllNeighbours;
 				checkedTiles.Add (this);
 			}else{
 				tilesToAdd.Clear ();
@@ -280,6 +282,33 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 					return tilesToAdd;
 				}
 //				tilesInRange = tilesInRange.Distinct ().ToList ();
+			}
+		}
+		return tilesInRange;
+	}
+	public List<HexTile> GetTilesInRangeNoWater(int range, bool isOnlyOuter = false){
+		List<HexTile> tilesInRange = new List<HexTile>();
+		List<HexTile> checkedTiles = new List<HexTile> ();
+		List<HexTile> tilesToAdd = new List<HexTile> ();
+
+		for (int i = 0; i < range; i++) {
+
+			if (tilesInRange.Count <= 0) {
+				tilesInRange = this.AllNeighbours;
+				checkedTiles.Add (this);
+			}else{
+				tilesToAdd.Clear ();
+				for (int j = 0; j < tilesInRange.Count; j++) {
+					if (!checkedTiles.Contains (tilesInRange [j])) {
+						checkedTiles.Add (tilesInRange [j]);
+						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours.Where(x => !tilesInRange.Contains(x)).ToList());
+					}
+				}
+				tilesInRange.AddRange (tilesToAdd);
+				if(i == range - 1 && isOnlyOuter){
+					return tilesToAdd;
+				}
+				//				tilesInRange = tilesInRange.Distinct ().ToList ();
 			}
 		}
 		return tilesInRange;
@@ -508,6 +537,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
+	#region Lair
     internal void CreateLairNamePlate() {
         //Debug.Log("Create lair nameplate on " + this.name);
 
@@ -531,7 +561,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
         }
     }
-
+	internal void AddLairsInRange(Lair lair){
+		this._lairsInRange.Add (lair);
+	}
+	internal void CheckLairsInRange(){
+		if (this._lairsInRange.Count > 0) {
+			for (int i = 0; i < this._lairsInRange.Count; i++) {
+				this._lairsInRange [i].ActivateLair ();
+			}
+			this._lairsInRange.Clear ();
+		}
+	}
+	#endregion
     internal void CreateEventNamePlate() {
         //Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
 
