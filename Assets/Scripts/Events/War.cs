@@ -11,6 +11,9 @@ public class War : GameEvent {
 	private KingdomRelationship _kingdom1Rel;
 	private KingdomRelationship _kingdom2Rel;
 
+	private List<City> safeCitiesKingdom1;
+	private List<City> safeCitiesKingdom2;
+
 	internal CityWarPair warPair;
 
 	private bool _isAtWar;
@@ -58,6 +61,8 @@ public class War : GameEvent {
 		this._kingdom2Rel = _kingdom2.GetRelationshipWithKingdom(_kingdom1);
 		this._kingdom1Rel.AssignWarEvent(this);
 		this._kingdom2Rel.AssignWarEvent(this);
+		this.safeCitiesKingdom1 = new List<City>();
+		this.safeCitiesKingdom2 = new List<City>();
 		this.warPair.DefaultValues();
 		this.kingdom1Attacked = false;
 		this.isInitialAttack = false;
@@ -323,39 +328,47 @@ public class War : GameEvent {
 //		}
 	}
 	private void ReinforcementKingdom1(){
-		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList (); 
+//		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+		safeCitiesKingdom1.Clear();
+		for (int i = 0; i < this.kingdom1.cities.Count; i++) {
+			if (!this.kingdom1.cities[i].isUnderAttack && !this.kingdom1.cities[i].hasReinforced && this.kingdom1.cities[i].hp >= 100) {
+				safeCitiesKingdom1.Add(this.kingdom1.cities[i]);
+			}
+		}
 		int chance = 0;
 		int value = 0;
 		int maxChanceKingdom1 = 100 + ((safeCitiesKingdom1.Count - 1) * 10);
 
-		if(this.warPair.kingdom1City.hp != this.warPair.kingdom1City.maxHP){
-			if(safeCitiesKingdom1 != null){
-				for(int i = 0; i < safeCitiesKingdom1.Count; i++){
-					chance = UnityEngine.Random.Range (0, maxChanceKingdom1);
-					value = 1 * safeCitiesKingdom1 [i].ownedTiles.Count;
-					if(chance < value){
-						safeCitiesKingdom1 [i].hasReinforced = true;
-						safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City);
-					}
+		if(this.warPair.kingdom1City.hp != this.warPair.kingdom1City.maxHP && safeCitiesKingdom1 != null){
+			for(int i = 0; i < safeCitiesKingdom1.Count; i++){
+				chance = UnityEngine.Random.Range (0, maxChanceKingdom1);
+				value = 1 * safeCitiesKingdom1 [i].ownedTiles.Count;
+				if(chance < value){
+					safeCitiesKingdom1 [i].hasReinforced = true;
+					safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City);
 				}
 			}
 		}
 	}
 	private void ReinforcementKingdom2(){
-		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+//		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+		safeCitiesKingdom2.Clear();
+		for (int i = 0; i < this.kingdom2.cities.Count; i++) {
+			if (!this.kingdom2.cities[i].isUnderAttack && !this.kingdom2.cities[i].hasReinforced && this.kingdom2.cities[i].hp >= 100) {
+				safeCitiesKingdom2.Add(this.kingdom2.cities[i]);
+			}
+		}
 		int chance = 0;
 		int value = 0;
 		int maxChanceKingdom2 = 100 + ((safeCitiesKingdom2.Count - 1) * 10);
 
-		if(this.warPair.kingdom2City.hp != this.warPair.kingdom2City.maxHP){
-			if(safeCitiesKingdom2 != null){
-				for(int i = 0; i < safeCitiesKingdom2.Count; i++){
-					chance = UnityEngine.Random.Range (0, maxChanceKingdom2);
-					value = 1 * safeCitiesKingdom2 [i].ownedTiles.Count;
-					if(chance < value){
-						safeCitiesKingdom2 [i].hasReinforced = true;
-						safeCitiesKingdom2 [i].ReinforceCity (this.warPair.kingdom2City);
-					}
+		if(this.warPair.kingdom2City.hp != this.warPair.kingdom2City.maxHP && safeCitiesKingdom2 != null){
+			for(int i = 0; i < safeCitiesKingdom2.Count; i++){
+				chance = UnityEngine.Random.Range (0, maxChanceKingdom2);
+				value = 1 * safeCitiesKingdom2 [i].ownedTiles.Count;
+				if(chance < value){
+					safeCitiesKingdom2 [i].hasReinforced = true;
+					safeCitiesKingdom2 [i].ReinforceCity (this.warPair.kingdom2City);
 				}
 			}
 		}

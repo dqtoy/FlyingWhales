@@ -104,17 +104,25 @@ public class Trade : GameEvent {
                 int dailyGrowthGained = 0;
                 int techGrowthGained = 0;
 
-                List<RESOURCE> resourcesToTrade = resourcesThatTargetKingdomDoesNotHave.Union(resourcesThatThisKingdomDoesNotHave).ToList();
-
-                for (int i = 0; i < resourcesToTrade.Count; i++) {
-                    RESOURCE currResource = resourcesToTrade[i];
+//                List<RESOURCE> resourcesToTrade = resourcesThatTargetKingdomDoesNotHave.Union(resourcesThatThisKingdomDoesNotHave).ToList();
+				foreach (var resourcesToTrade in resourcesThatTargetKingdomDoesNotHave.Union(resourcesThatThisKingdomDoesNotHave)) {
+					RESOURCE currResource = resourcesToTrade;
 					RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
                     if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
                         techGrowthGained += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
                     } else if (resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
                         dailyGrowthGained += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
                     }
-                }
+				}
+//                for (int i = 0; i < resourcesToTrade.Count; i++) {
+//                    RESOURCE currResource = resourcesToTrade[i];
+//					RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
+//                    if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
+//                        techGrowthGained += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
+//                    } else if (resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
+//                        dailyGrowthGained += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
+//                    }
+//                }
 
                 dailyGrowthGained = (dailyGrowthGained * 15) * sourceCity.ownedTiles.Count;
                 techGrowthGained = (techGrowthGained * 15) * sourceCity.ownedTiles.Count;
