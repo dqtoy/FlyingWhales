@@ -49,7 +49,8 @@ public class Lair {
 		this._activeMonstersCount = 0;
 		AttachLairToHextile();
 		Messenger.AddListener("OnDayEnd", PerformAction);
-		onPerformAction += CheckForActivation;
+		AddLairToTilesInRange ();
+//		onPerformAction += CheckForActivation;
 
 		if(MonsterManager.Instance.activateLairImmediately){
 			ActivateLair();
@@ -57,7 +58,7 @@ public class Lair {
 	}
 		
 	internal void ActivateLair(){
-		onPerformAction -= CheckForActivation;
+//		onPerformAction -= CheckForActivation;
 		if(!this.isActivated){
 			this.isActivated = true;
 			onPerformAction += EverydayAction;
@@ -134,7 +135,11 @@ public class Lair {
 //			}
 		}
 	}
-
+	private void AddLairToTilesInRange(){
+		for (int i = 0; i < this.tilesInRadius.Count; i++) {
+			this.tilesInRadius [i].AddLairsInRange (this);
+		}
+	}
 	internal void SummonMonster(MONSTER monster){
 		if(this._lairSpawn.behavior == BEHAVIOR.ROAMING){
 			if (this._activeMonstersCount < this._lairSpawn.maxActiveMonster) {

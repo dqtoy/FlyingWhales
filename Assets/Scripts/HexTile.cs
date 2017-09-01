@@ -33,6 +33,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public Lair lair;
 
+	private List<Lair> _lairsInRange = new List<Lair>();
+
     [Space(10)]
     [Header("Booleans")]
     public bool isHabitable = false;
@@ -509,6 +511,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
+	#region Lair
     internal void CreateLairNamePlate() {
         Debug.Log("Create lair nameplate on " + this.name);
 
@@ -532,7 +535,18 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
         }
     }
-
+	internal void AddLairsInRange(Lair lair){
+		this._lairsInRange.Add (lair);
+	}
+	internal void CheckLairsInRange(){
+		if (this._lairsInRange.Count > 0) {
+			for (int i = 0; i < this._lairsInRange.Count; i++) {
+				this._lairsInRange [i].ActivateLair ();
+			}
+			this._lairsInRange.Clear ();
+		}
+	}
+	#endregion
     internal void CreateEventNamePlate() {
         Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
 

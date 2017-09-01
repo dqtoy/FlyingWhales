@@ -20,7 +20,6 @@ public class PereLair : Lair {
 		if(this.daysCounter >= this.spawnRate){
 			this.daysCounter = 0;
 			SummonMonster(MONSTER.PERE);
-
 		}
 	}
 	#endregion

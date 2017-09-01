@@ -119,7 +119,7 @@ public class City{
 		this.plague = null;
 		this._hp = this.maxHP;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
-
+		hexTile.CheckLairsInRange ();
 //		this.CreateInitialFamilies();
 		Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
         Messenger.AddListener("CitizenDied", CheckCityDeath);
@@ -605,6 +605,7 @@ public class City{
 				this._kingdom.HighlightAllOwnedTilesInKingdom ();
 			}
 		}
+		tileToBuy.CheckLairsInRange ();
 		this.UpdateHP (percentageHP);
 
 
