@@ -106,12 +106,11 @@ public class Trade : GameEvent {
 
 //                List<RESOURCE> resourcesToTrade = resourcesThatTargetKingdomDoesNotHave.Union(resourcesThatThisKingdomDoesNotHave).ToList();
 				foreach (var resourcesToTrade in resourcesThatTargetKingdomDoesNotHave.Union(resourcesThatThisKingdomDoesNotHave)) {
-					RESOURCE currResource = resourcesToTrade;
-					RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
+					RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[resourcesToTrade].Keys.FirstOrDefault();
                     if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
-                        techGrowthGained += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
+						techGrowthGained += (int)Utilities.resourceBenefits[resourcesToTrade][resourceBenefit];
                     } else if (resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
-                        dailyGrowthGained += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
+						dailyGrowthGained += (int)Utilities.resourceBenefits[resourcesToTrade][resourceBenefit];
                     }
 				}
 //                for (int i = 0; i < resourcesToTrade.Count; i++) {

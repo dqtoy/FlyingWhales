@@ -164,7 +164,7 @@ public class CityGenerator : MonoBehaviour {
 					hasOwnedByKingdom = false;
 					List<HexTile> checkForExpandingKingdomBorderTilesInRange = city.habitableTileDistance [i].hexTile.GetTilesInRange (city.kingdom.kingdomTypeData.expansionDistanceFromBorder);
 					for (int j = 0; j < checkForExpandingKingdomBorderTilesInRange.Count; j++) {
-						if (checkForExpandingKingdomBorderTilesInRange[i].ownedByCity != null && checkForExpandingKingdomBorderTilesInRange[i].ownedByCity.kingdom == city.kingdom) {
+						if (checkForExpandingKingdomBorderTilesInRange[j].ownedByCity != null && checkForExpandingKingdomBorderTilesInRange[j].ownedByCity.kingdom == city.kingdom) {
 							hasOwnedByKingdom = true;
 							break;
 						}
@@ -183,7 +183,7 @@ public class CityGenerator : MonoBehaviour {
 //					}
 
 					for (int j = 0; j < checkForOtherBorderTilesInRange.Count; j++) {
-						if (checkForOtherBorderTilesInRange[i].ownedByCity != null && checkForOtherBorderTilesInRange[i].ownedByCity.kingdom != city.kingdom) {
+						if (checkForOtherBorderTilesInRange[j].ownedByCity != null && checkForOtherBorderTilesInRange[j].ownedByCity.kingdom != city.kingdom) {
 							numOwnedByKingdom += 1;
 							if (numOwnedByKingdom > 1) {
 								break;
@@ -205,7 +205,7 @@ public class CityGenerator : MonoBehaviour {
 //					}
 
 					for (int j = 0; j < checkForOtherBorderTilesInRange.Count; j++) {
-						if (checkForOtherBorderTilesInRange[i].ownedByCity != null) {
+						if (checkForOtherBorderTilesInRange[j].ownedByCity != null) {
 							numOwnedByKingdom += 1;
 							if (numOwnedByKingdom > 1) {
 								break;
