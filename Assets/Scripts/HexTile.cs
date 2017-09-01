@@ -270,7 +270,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				checkedTiles.Add (this);
 			}else{
 				tilesToAdd.Clear ();
-				for (int j = 0; j < tilesInRange.Count; j++) {
+				int tilesInRangeCount = tilesInRange.Count;
+				for (int j = 0; j < tilesInRangeCount; j++) {
 					if (!checkedTiles.Contains (tilesInRange [j])) {
 						checkedTiles.Add (tilesInRange [j]);
 						List<HexTile> neighbors = tilesInRange [j].AllNeighbours;
@@ -279,13 +280,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 								tilesToAdd.Add (neighbors [k]);
 							}
 						}
+						tilesInRange.AddRange (tilesToAdd);
 //						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours.Where(x => !tilesInRange.Contains(x)).ToList());
 					}
 				}
 				if(i == range - 1 && isOnlyOuter){
 					return tilesToAdd;
 				}
-				tilesInRange.AddRange (tilesToAdd);
 
 //				tilesInRange = tilesInRange.Distinct ().ToList ();
 			}
