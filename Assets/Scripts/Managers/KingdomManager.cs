@@ -14,8 +14,7 @@ public class KingdomManager : MonoBehaviour {
     public List<Kingdom> allKingdomsOrderedByPrestige;
 
 	public KingdomTypeData kingdomTypeBarbaric;
-	public KingdomTypeData kingdomTypeHermit;
-	public KingdomTypeData kingdomTypeReligious;
+	public KingdomTypeData kingdomTypeNaive;
 	public KingdomTypeData kingdomTypeOpportunistic;
 
 	public KingdomTypeData kingdomTypeNoble;
