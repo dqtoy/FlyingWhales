@@ -206,14 +206,9 @@ public class City{
         this.citizens.Remove(father);
         this.citizens.Remove(mother);
 
-        father.UnsubscribeListeners();
-        mother.UnsubscribeListeners();
-
         father.AddChild(this.kingdom.king);
         mother.AddChild(this.kingdom.king);
         king.AddParents(father, mother);
-
-        king.isBusy = true;
 
         MarriageManager.Instance.Marry(father, mother);
 
@@ -320,12 +315,8 @@ public class City{
         mother.isDead = true;
         this.citizens.Remove(father);
         this.citizens.Remove(mother);
-        father.UnsubscribeListeners();
-        mother.UnsubscribeListeners();
 
         MarriageManager.Instance.Marry(father, mother);
-
-        governor.isBusy = true;
 
         this.governor = governor;
 
@@ -863,21 +854,6 @@ public class City{
 			this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
 		}
-	}
-	internal Citizen GetCitizenWithHighestPrestige(){
-		List<Citizen> prestigeCitizens = new List<Citizen> ();
-		if (this.citizens.Count > 1) {
-			int maxPrestige = this.citizens.Where (x => !x.isGovernor && !x.isDead && !x.isKing).Max (x => x.prestige);
-			for(int i = 0; i < this.citizens.Count; i++){
-				if(this.citizens[i].prestige == maxPrestige){
-					if(!this.citizens[i].isDead && !this.citizens[i].isGovernor && !this.citizens[i].isKing){
-						prestigeCitizens.Add (this.citizens [i]);
-					}
-				}
-			}
-			return prestigeCitizens [UnityEngine.Random.Range (0, prestigeCitizens.Count)];
-		}
-		return null;
 	}
 
 	internal Citizen GetGovernorSuccession(){

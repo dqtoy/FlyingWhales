@@ -203,23 +203,11 @@ public class War : GameEvent {
 
                 int chanceToTriggerRequestPeace = 0;
                 if (rel.kingdomWarData.exhaustion >= 100) {
-                    if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
-                        chanceToTriggerRequestPeace = 4;
-                    } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
-                        chanceToTriggerRequestPeace = 2;
-                    }
+                    chanceToTriggerRequestPeace = 4;
                 } else if (rel.kingdomWarData.exhaustion >= 75) {
-                    if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
-                        chanceToTriggerRequestPeace = 3;
-                    } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
-                        chanceToTriggerRequestPeace = 1;
-                    }
+                    chanceToTriggerRequestPeace = 3;
                 } else if (rel.kingdomWarData.exhaustion >= 50) {
-                    if (currKingdom.king.hostilityTrait == TRAIT.PACIFIST) {
-                        chanceToTriggerRequestPeace = 2;
-                    } else if (currKingdom.king.hostilityTrait == TRAIT.WARMONGER) {
-                        chanceToTriggerRequestPeace = 0;
-                    }
+                    chanceToTriggerRequestPeace = 2;
                 }
 
                 int chance = Random.Range(0, 100);
