@@ -20,6 +20,7 @@ public class Kingdom{
 
 	private KingdomTypeData _kingdomTypeData;
 	private Kingdom _sourceKingdom;
+	private Kingdom _mainThreat;
 
     //Resources
     private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
@@ -95,6 +96,7 @@ public class Kingdom{
 	private bool _hasBioWeapon;
 	private bool _isLockedDown;
 	private bool _isTechProducing;
+	private bool _isMilitarize;
 
 	private int borderConflictLoyaltyExpiration;
 	private float _techProductionPercentage;
@@ -124,6 +126,9 @@ public class Kingdom{
 	}
 	public Kingdom sourceKingdom {
 		get { return this._sourceKingdom; }
+	}
+	public Kingdom mainThreat {
+		get { return this._mainThreat; }
 	}
     public int prestige {
         get { return _prestige; }
@@ -213,6 +218,9 @@ public class Kingdom{
 	public bool isTechProducing{
 		get { return this._isTechProducing;}
 	}
+	public bool isMilitarize{
+		get { return this._isMilitarize;}
+	}
 	public float productionGrowthPercentage {
 		get { return this._productionGrowthPercentage; }
 	}
@@ -244,6 +252,7 @@ public class Kingdom{
         this._disloyaltyFromPrestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
+		this._mainThreat = null;
         this.successionLine = new List<Citizen>();
 		this._cities = new List<City> ();
 		this.camps = new List<Camp> ();
@@ -253,6 +262,7 @@ public class Kingdom{
 		this.relationships = new Dictionary<Kingdom, KingdomRelationship>();
 		this._isDead = false;
 		this._isLockedDown = false;
+		this._isMilitarize = false;
 		this._hasUpheldHiddenHistoryBook = false;
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._unrest = 0;
@@ -1970,4 +1980,59 @@ public class Kingdom{
 			}
 		}
 	}
+
+	#region Balance of Power
+	internal void Militarize(bool state){
+		this._isMilitarize = state;
+	}
+
+	private void ScheduleActionDay(){
+		KingdomManager.Instance.IncrementCurrentActionDay (2);
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, KingdomManager.Instance.currentActionDay, GameManager.Instance.year, () => ActionDay ());
+	}
+	private void ActionDay(){
+		if(!this.isDead){
+			this._mainThreat = GetMainThreat ();
+			if(this._mainThreat != null){
+				//has main threat
+				if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
+					SeeksBalance ();
+				}else if (this.kingdomTypeData.purpose == PURPOSE.BANDWAGON) {
+					SeeksBandwagon ();
+				}else if (this.kingdomTypeData.purpose == PURPOSE.BUCKPASS) {
+					SeeksBuckpass ();
+				}else if (this.kingdomTypeData.purpose == PURPOSE.SUPERIORITY) {
+					SeeksSuperiority ();
+				}
+			}else{
+				//no main threat
+			}
+
+			GameDate gameDate;
+			gameDate.month = GameManager.Instance.month;
+			gameDate.day = GameManager.Instance.days;
+			gameDate.year = GameManager.Instance.year;
+
+			gameDate.AddMonths (1);
+			SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => ActionDay ());
+
+		}
+	}
+	private void GetMainThreat(){
+		Kingdom threat = null;
+		return threat;
+	}
+	private void SeeksBalance(){
+		
+	}
+	private void SeeksBandwagon(){
+
+	}
+	private void SeeksBuckpass(){
+
+	}
+	private void SeeksSuperiority(){
+
+	}
+	#endregion
 }
