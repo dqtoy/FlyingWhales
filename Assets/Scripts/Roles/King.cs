@@ -31,11 +31,11 @@ public class King : Role {
 		this.isRumoring = false;
 		this.isHiddenHistoryBooking = false;
 		RandomTriggerDateOfSerum(true);
-		Messenger.AddListener("OnDayEnd", EverydayActions);
+//		Messenger.AddListener("OnDayEnd", EverydayActions);
 	}
 	internal override void OnDeath (){
 		base.OnDeath ();
-		Messenger.RemoveListener("OnDayEnd", EverydayActions);
+//		Messenger.RemoveListener("OnDayEnd", EverydayActions);
 
 	}
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){

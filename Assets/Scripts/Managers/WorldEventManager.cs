@@ -22,7 +22,7 @@ public class WorldEventManager : MonoBehaviour {
 
     void Start() {
         ResetCurrentInterveneEvent();
-        Messenger.AddListener("OnDayEnd", this.TickActions);
+//        Messenger.AddListener("OnDayEnd", this.TickActions);
     }
     #endregion
 
@@ -52,18 +52,18 @@ public class WorldEventManager : MonoBehaviour {
         }
     }
 
-    private void TickActions(){
-		PlagueEventTrigger ();
-	}
-
-	private void PlagueEventTrigger(){
-		if((GameManager.Instance.days == 13 || GameManager.Instance.days == 23) && !HasEventOfType(EVENT_TYPES.PLAGUE)){
-			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 1){
-				EventCreator.Instance.CreatePlagueEvent ();
-			}
-		}
-	}
+//    private void TickActions(){
+//		PlagueEventTrigger ();
+//	}
+//
+//	private void PlagueEventTrigger(){
+//		if((GameManager.Instance.days == 13 || GameManager.Instance.days == 23) && !HasEventOfType(EVENT_TYPES.PLAGUE)){
+//			int chance = UnityEngine.Random.Range (0, 100);
+//			if(chance < 1){
+//				EventCreator.Instance.CreatePlagueEvent ();
+//			}
+//		}
+//	}
 	internal void ResetCurrentInterveneEvent(){
 		this.currentInterveneEvent = EVENT_TYPES.NONE;
 	}
