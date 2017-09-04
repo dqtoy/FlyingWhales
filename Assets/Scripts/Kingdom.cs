@@ -364,8 +364,6 @@ public class Kingdom{
 
 //		UpdateCombatStats();
     }
-//		} 
-		else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.OPPORTUNISTIC_TRIBE) {
 
     #region Kingdom Death
     // Function to call if you want to determine whether the Kingdom is still alive or dead
