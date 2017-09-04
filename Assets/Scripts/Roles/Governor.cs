@@ -53,7 +53,7 @@ public class Governor : Role {
 		this._loyalty += amount;
         this._loyalty = Mathf.Clamp(this._loyalty, -100, 100);
 
-		GovernorEvents ();
+//		GovernorEvents ();
 	}
 
 	internal void UpdateLoyalty(){

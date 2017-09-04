@@ -262,10 +262,6 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		}
 //		Task.current.Succeed ();
 	}
-	[Task]
-	public void Control(){
-		Task.current.Succeed();
-	}
 	private void CreateRaidEvent(){
 //		General general = GetGeneral(this.firstKingdom);
 		EventCreator.Instance.CreateRaidEvent(this.firstKingdom, this.secondKingdom);

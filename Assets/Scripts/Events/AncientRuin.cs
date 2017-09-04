@@ -49,10 +49,10 @@ public class AncientRuin : GameEvent {
         RUIN_DISCOVERIES newDiscovery = GetRuinDiscovery();
         switch (newDiscovery) {
             case RUIN_DISCOVERIES.ANCIENT_WEAPONS:
-                EventCreator.Instance.CreateDevelopWeaponsEvent(_discoveredByKingdom);
+//                EventCreator.Instance.CreateDevelopWeaponsEvent(_discoveredByKingdom);
                 break;
             case RUIN_DISCOVERIES.PLAGUE:
-                EventCreator.Instance.CreatePlagueEvent(_discoveredByKingdom);
+//                EventCreator.Instance.CreatePlagueEvent(_discoveredByKingdom);
                 break;
             case RUIN_DISCOVERIES.CONSTRUCTION_MATERIAL:
                 int totalGrowthGained = 500;

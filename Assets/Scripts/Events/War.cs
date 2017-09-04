@@ -99,13 +99,13 @@ public class War : GameEvent {
         RequestPeace requestPeaceEvent = null;
 		if (kingdomToRequest.id == this._kingdom1.id) {
             //this._kingdom1Rel.CreateRequestPeaceEvent(citizenToSend, saboteurs);
-            requestPeaceEvent = EventCreator.Instance.CreateRequestPeace(kingdomToRequest, this._kingdom2);
+//            requestPeaceEvent = EventCreator.Instance.CreateRequestPeace(kingdomToRequest, this._kingdom2);
             if (requestPeaceEvent != null) {
                 this._kingdom1Rel.AssignRequestPeaceEvent(requestPeaceEvent);
             }
         } else {
             //this._kingdom2Rel.CreateRequestPeaceEvent(citizenToSend, saboteurs);
-            requestPeaceEvent = EventCreator.Instance.CreateRequestPeace(kingdomToRequest, this._kingdom1);
+//            requestPeaceEvent = EventCreator.Instance.CreateRequestPeace(kingdomToRequest, this._kingdom1);
             if (requestPeaceEvent != null) {
                 this._kingdom2Rel.AssignRequestPeaceEvent(requestPeaceEvent);
             }
@@ -301,7 +301,7 @@ public class War : GameEvent {
 			this.ReplenishWavesKingdom2();
 			if(this.kingdom1Waves <= 0 && this.kingdom2Waves <= 0){
 				//Peace 100% - kingdom1 will request peace while kingdom2 will accept peace 100%
-				EventCreator.Instance.CreateRequestPeace(kingdom1, kingdom2, true);
+//				EventCreator.Instance.CreateRequestPeace(kingdom1, kingdom2, true);
 			}
 		}
 //		if ((this.warPair.kingdom1City != null && !this.warPair.kingdom1City.isDead) && (this.warPair.kingdom2City != null && !this.warPair.kingdom2City.isDead)) {

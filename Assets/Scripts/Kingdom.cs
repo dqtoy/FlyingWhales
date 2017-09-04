@@ -338,7 +338,7 @@ public class Kingdom{
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
 
-		ScheduleEvents ();
+//		ScheduleEvents ();
 
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
@@ -347,7 +347,9 @@ public class Kingdom{
 		// Update Kingdom Type whenever the kingdom expands to a new city
 		KingdomTypeData prevKingdomTypeData = this._kingdomTypeData;
 		this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
-		this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
+		if(this.kingdomTypeData.dailyCumulativeEventRate != null){
+			this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
+		}
 		// If the Kingdom Type Data changed
 		if (this._kingdomTypeData != prevKingdomTypeData) {			
             // Update expansion chance
@@ -362,6 +364,8 @@ public class Kingdom{
 
 //		UpdateCombatStats();
     }
+//		} 
+		else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.OPPORTUNISTIC_TRIBE) {
 
     #region Kingdom Death
     // Function to call if you want to determine whether the Kingdom is still alive or dead
@@ -505,9 +509,9 @@ public class Kingdom{
      * </summary>
      * */
     internal void OnRelationshipDeteriorated(KingdomRelationship relationship, GameEvent gameEventTrigger, bool isDiscovery, ASSASSINATION_TRIGGER_REASONS assassinationReasons) {
-        if (assassinationReasons != ASSASSINATION_TRIGGER_REASONS.NONE) {
-            TriggerAssassination(relationship, gameEventTrigger, assassinationReasons);
-        }
+//        if (assassinationReasons != ASSASSINATION_TRIGGER_REASONS.NONE) {
+//            TriggerAssassination(relationship, gameEventTrigger, assassinationReasons);
+//        }
     }
     /*
     * <summary>
@@ -655,19 +659,6 @@ public class Kingdom{
     }
     #endregion
 
-    private void TriggerAssassination(KingdomRelationship relationship, GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons) {
-        int chance = UnityEngine.Random.Range(0, 100);
-        int value = 0;
-        if (relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY) {
-                value = 5;
-        } else if (relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
-            value = 10;
-        }
-
-        if (chance < value) {
-            EventCreator.Instance.CreateAssassinationEvent(king.city.kingdom, relationship.targetKingdom.king, gameEventTrigger, EventManager.Instance.eventDuration[EVENT_TYPES.ASSASSINATION], assassinationReasons);
-        }
-    }
     private void CancelInvasionPlan(KingdomRelationship relationship) {
         //CANCEL INVASION PLAN
         if(activeEvents.Select(x => x.eventType).Contains(EVENT_TYPES.INVASION_PLAN)) {
@@ -727,11 +718,11 @@ public class Kingdom{
         }
 
         if (chance < value) {
-            if (warEvent == null) {
-                warEvent = new War(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.king,
-                    this, relationship.targetKingdom, warTrigger);
-            }
-            warEvent.CreateInvasionPlan(this, gameEventTrigger);
+//            if (warEvent == null) {
+//                warEvent = new War(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this.king,
+//                    this, relationship.targetKingdom, warTrigger);
+//            }
+//            warEvent.CreateInvasionPlan(this, gameEventTrigger);
         }
     }
 
@@ -1609,59 +1600,10 @@ public class Kingdom{
     internal void AdjustUnrest(int amountToAdjust) {
         this._unrest += amountToAdjust;
         this._unrest = Mathf.Clamp(this._unrest, 0, 100);
-		if(this._unrest == 100){
-			UnrestEvents ();
-		}
     }
 	internal void ChangeUnrest(int newAmount){
 		this._unrest = newAmount;
 		this._unrest = Mathf.Clamp(this._unrest, 0, 100);
-		if(this._unrest == 100){
-			UnrestEvents ();
-		}
-	}
-	internal void UnrestEvents(){
-		this._unrest = 0;
-		int chance = UnityEngine.Random.Range (0, 2);
-		if(chance == 0){
-			//Riot Event
-			if(!this._hasRiot){
-				EventCreator.Instance.CreateRiotEvent(this);
-			}else{
-				List<GameEvent> riots = EventManager.Instance.GetEventsOfType (EVENT_TYPES.RIOT);
-				if(riots != null && riots.Count > 0){
-					for (int i = 0; i < riots.Count; i++) {
-						Riot riot = (Riot)riots [i];
-						if(riot.sourceKingdom.id == this.id && riot.isActive){
-							riot.remainingDays += riot.durationInDays;
-							break;
-						}
-					}
-				}
-			}
-		}else{
-			//Rebellion Event
-			EventCreator.Instance.CreateRebellionEvent(this);
-		}
-
-//		Citizen chosenGovernor = null;
-//		List<Citizen> ambitiousGovernors = this.cities.Select (x => x.governor).Where (x => x != null && x.hasTrait (TRAIT.AMBITIOUS) && ((Governor)x.assignedRole).loyalty < 0).ToList ();
-//		if(ambitiousGovernors != null && ambitiousGovernors.Count > 0){
-//			chosenGovernor = ambitiousGovernors [UnityEngine.Random.Range (0, ambitiousGovernors.Count)];
-//		}
-//		if(chosenGovernor != null){
-//			//Secession Event
-//			EventCreator.Instance.CreateSecessionEvent(chosenGovernor);
-//		}else{
-//			int chance = UnityEngine.Random.Range (0, 2);
-//			if(chance == 0){
-//				//Riot Event
-//				EventCreator.Instance.CreateRiotEvent(this);
-//			}else{
-//				//Rebellion Event
-//				EventCreator.Instance.CreateRebellionEvent(this);
-//			}
-//		}
 	}
     #endregion
 

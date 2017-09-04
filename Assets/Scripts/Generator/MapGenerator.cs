@@ -24,7 +24,7 @@ public class MapGenerator : MonoBehaviour {
 		CityGenerator.Instance.GenerateLairHabitableTiles(GridMap.Instance.listHexes);
 		MonsterManager.Instance.GenerateLairs();
         //		UIManager.Instance.UpdateKingsGrid();
-        WorldEventManager.Instance.TriggerInitialWorldEvents();
+//        WorldEventManager.Instance.TriggerInitialWorldEvents();
 		//WorldEventManager.Instance.BoonOfPowerTrigger();
 		//WorldEventManager.Instance.AltarOfBlessingTrigger();
   //      WorldEventManager.Instance.FirstAndKeystoneTrigger();
@@ -58,7 +58,7 @@ public class MapGenerator : MonoBehaviour {
 		yield return null;
 		MonsterManager.Instance.GenerateLairs();
 		yield return null;
-		WorldEventManager.Instance.TriggerInitialWorldEvents();
+//		WorldEventManager.Instance.TriggerInitialWorldEvents();
 		yield return null;
 		GameManager.Instance.StartProgression();
 		yield return null;

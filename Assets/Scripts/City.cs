@@ -1316,34 +1316,12 @@ public class City{
             this.plague.CheckIfCityIsCured(this);
         }
     }
-//	internal void HasBeenRaided(){
-//		if(!this.isRaided){
-//			this.isRaided = true;
-//			((Governor)this.governor.assignedRole).UpdateLoyalty ();
-//		}
-//		this.raidLoyaltyExpiration = 90;
-//	}
-//	internal void HasNotBeenRaided(){
-//		this.isRaided = false;
-//		this.raidLoyaltyExpiration = 0;
-//		((Governor)this.governor.assignedRole).UpdateLoyalty ();
-//	}
 	internal void AttackCity(City targetCity, List<HexTile> path, GameEvent gameEvent, bool isRebel = false){
 		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path, gameEvent, isRebel);
-//		int chance = UnityEngine.Random.Range (0, 100);
-//		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
-//			
-//		}
 	}
 	internal void ReinforceCity(City targetCity, bool isRebel = false){
 		EventCreator.Instance.CreateReinforcementEvent (this, targetCity, isRebel);
 	}
-//	internal void AttackCampEvent(Camp targetCamp){
-//		int chance = UnityEngine.Random.Range (0, 100);
-//		if(chance < this.kingdom.kingdomTypeData.warGeneralCreationRate){
-//			EventCreator.Instance.CreateAttackCampEvent (this, targetCamp, false);
-//		}
-//	}
 	internal void KillAllCitizens(DEATH_REASONS deathReason){
 		int countCitizens = this.citizens.Count;
 		for (int i = 0; i < countCitizens; i++) {
