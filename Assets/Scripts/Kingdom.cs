@@ -18,8 +18,6 @@ public class Kingdom{
     private int foundationMonth;
     private int foundationDay;
 
-    [NonSerialized] public int[] horoscope; 
-
 	[SerializeField]
 	private KingdomTypeData _kingdomTypeData;
 	private Kingdom _sourceKingdom;
@@ -39,7 +37,6 @@ public class Kingdom{
 	internal City capitalCity;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
-	internal List<Citizen> pretenders;
 
 	internal List<Rebellion> rebellions;
 
@@ -267,7 +264,6 @@ public class Kingdom{
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
         this.successionLine = new List<Citizen>();
-		this.pretenders = new List<Citizen> ();
 		this._cities = new List<City> ();
 		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
@@ -354,12 +350,6 @@ public class Kingdom{
 		this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
 		// If the Kingdom Type Data changed
 		if (this._kingdomTypeData != prevKingdomTypeData) {			
-			// Update horoscope
-			if (prevKingdomTypeData == null) {
-				this.horoscope = GetHoroscope ();
-			} else {				
-				this.horoscope = GetHoroscope (prevKingdomTypeData.kingdomType);
-			}
             // Update expansion chance
             this.UpdateExpansionRate();
 
@@ -372,53 +362,6 @@ public class Kingdom{
 
 //		UpdateCombatStats();
     }
-	internal int[] GetHoroscope(KINGDOM_TYPE prevKingdomType = KINGDOM_TYPE.NONE){
-		int[] newHoroscope = new int[2];
-
-		if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.BARBARIC_TRIBE) {
-			newHoroscope [0] = UnityEngine.Random.Range (0, 2);
-			newHoroscope [1] = 0;
-		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.HERMIT_TRIBE) {
-			newHoroscope [0] = UnityEngine.Random.Range (0, 2);
-			newHoroscope [1] = 1;
-		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.RELIGIOUS_TRIBE) {
-			newHoroscope [0] = 0;
-			newHoroscope [1] = UnityEngine.Random.Range (0, 2);
-		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.OPPORTUNISTIC_TRIBE) {
-			newHoroscope [0] = 1;
-			newHoroscope [1] = UnityEngine.Random.Range (0, 2);
-		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.NOBLE_KINGDOM) {
-			newHoroscope [0] = 0;
-			newHoroscope [1] = 0;
-		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.EVIL_EMPIRE) {
-			newHoroscope [0] = 1;
-			newHoroscope [1] = 0;
-		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.MERCHANT_NATION) {
-			newHoroscope [0] = 0;
-			newHoroscope [1] = 1;
-		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.CHAOTIC_STATE) {
-			newHoroscope [0] = 1;
-			newHoroscope [1] = 1;
-		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER) {
-			if (prevKingdomType == KINGDOM_TYPE.NOBLE_KINGDOM) {
-				newHoroscope [0] = 0;
-				newHoroscope [1] = UnityEngine.Random.Range (0, 2);
-			} else if (prevKingdomType == KINGDOM_TYPE.MERCHANT_NATION) {
-				newHoroscope [0] = UnityEngine.Random.Range (0, 2);
-				newHoroscope [1] = 1;				
-			}
-		} else if (this._kingdomTypeData.kingdomType == KINGDOM_TYPE.WICKED_SUPERPOWER) {
-			if (prevKingdomType == KINGDOM_TYPE.EVIL_EMPIRE) {
-				newHoroscope [0] = 1;
-				newHoroscope [1] = UnityEngine.Random.Range (0, 2);
-			} else if (prevKingdomType == KINGDOM_TYPE.CHAOTIC_STATE) {
-				newHoroscope [0] = UnityEngine.Random.Range (0, 2);
-				newHoroscope [1] = 0;				
-			}
-		}
-
-		return newHoroscope;
-	}
 
     #region Kingdom Death
     // Function to call if you want to determine whether the Kingdom is still alive or dead
@@ -1072,22 +1015,6 @@ public class Kingdom{
 
     #region Succession
     internal void UpdateKingSuccession() {
-//        List<Citizen> orderedMaleRoyalties = this.successionLine.Where(x => x.gender == GENDER.MALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
-//        List<Citizen> orderedFemaleRoyalties = this.successionLine.Where(x => x.gender == GENDER.FEMALE && x.generation > this.king.generation && x.isDirectDescendant == true).OrderBy(x => x.generation).ThenByDescending(x => x.age).ToList();
-//        List<Citizen> orderedBrotherRoyalties = this.successionLine
-//            .Where(x => x.gender == GENDER.MALE
-//           && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
-//           && x.id != this.king.id)
-//            .OrderByDescending(x => x.age).ToList();
-//
-//        List<Citizen> orderedSisterRoyalties = this.successionLine
-//            .Where(x => x.gender == GENDER.FEMALE
-//           && (x.father != null && this.king.father != null && x.father.id == this.king.father.id)
-//           && x.id != this.king.id)
-//            .OrderByDescending(x => x.age).ToList();
-//
-//        List<Citizen> orderedRoyalties = orderedMaleRoyalties.Concat(orderedFemaleRoyalties).Concat(orderedBrotherRoyalties).Concat(orderedSisterRoyalties).ToList();
-
 		this.successionLine.Clear();
 		orderedMaleRoyalties.Clear ();
 		orderedFemaleRoyalties.Clear ();
@@ -1105,8 +1032,6 @@ public class Kingdom{
 				}
 			}
 		}
-//		orderedMaleRoyalties = orderedMaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age);
-//		orderedFemaleRoyalties = orderedFemaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age);
 		for (int i = 0; i < this.successionLine.Count; i++) {
 			if (!this.successionLine [i].isDirectDescendant && this.successionLine [i].id != this.king.id) {
 				if ((this.successionLine [i].father != null && this.king.father != null) && this.successionLine [i].father.id == this.king.father.id) {
@@ -1119,17 +1044,11 @@ public class Kingdom{
 			}
 		}
 
-//		orderedBrotherRoyalties = orderedBrotherRoyalties.OrderByDescending (x => x.age);
-//		orderedSisterRoyalties = orderedSisterRoyalties.OrderByDescending (x => x.age);
 		this.successionLine.AddRange (orderedMaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age));
 		this.successionLine.AddRange (orderedFemaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age));
 
 		this.successionLine.AddRange (orderedBrotherRoyalties.OrderByDescending (x => x.age));
 		this.successionLine.AddRange (orderedSisterRoyalties.OrderByDescending (x => x.age));
-
-
-
-//       this.successionLine = orderedRoyalties;
     }
     internal void ChangeSuccessionLineRescursively(Citizen royalty) {
         if (this.king.id != royalty.id) {
@@ -1149,7 +1068,6 @@ public class Kingdom{
             for (int i = 0; i < this.successionLine.Count; i++) {
                 if (this.successionLine[i].id == citizen.id) {
                     this.successionLine.RemoveAt(i);
-                    //					UIManager.Instance.UpdateKingdomSuccession ();
                     break;
                 }
             }
@@ -1163,19 +1081,12 @@ public class Kingdom{
         }
 
         if (newKing == null) {
-            //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-            //			this.king.city.CreateInitialRoyalFamily ();
-            //			this.king.CreateInitialRelationshipsToKings ();
-            //			KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
-
             if (city == null) {
-                //				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING IN KINGDOM!" + this.name);
                 if (this.king.city.isDead) {
                     Debug.LogError("City of previous king is dead! But still creating king in that dead city");
                 }
                 newKing = this.king.city.CreateNewKing();
             } else {
-                //				Debug.Log("NO MORE SUCCESSOR! CREATING NEW KING ON CITY " + city.name + " IN KINGDOM!" + this.name);
                 newKing = city.CreateNewKing();
             }
             if (newKing == null) {
@@ -1190,23 +1101,13 @@ public class Kingdom{
         SetCapitalCity(newKing.city);
         newKing.city.hasKing = true;
 
-        //if (newKing.isMarried) {
-        //    if (newKing.spouse.city.kingdom.king != null && newKing.spouse.city.kingdom.king.id == newKing.spouse.id) {
-        //        AssimilateKingdom(newKing.spouse.city.kingdom);
-        //        return;
-        //    }
-        //}
         if (!newKing.isDirectDescendant) {
-            //				RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
             Utilities.ChangeDescendantsRecursively(newKing, true);
             if (this.king != null) {
                 Utilities.ChangeDescendantsRecursively(this.king, false);
             }
         }
-        /*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
-			newKing.DetachGeneralFromCitizen ();
-		}*/
-        //		newKing.role = ROLE.KING;
+
         Citizen previousKing = this.king;
         bool isNewKingdomGovernor = newKing.isGovernor;
 
@@ -1215,109 +1116,20 @@ public class Kingdom{
         if (isNewKingdomGovernor) {
             newKing.city.AssignNewGovernor();
         }
-        //		newKing.isKing = true;
-        //        newKing.isGovernor = false;
-        //			KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
+
         newKing.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-        //		this.king = newKing;
 
         ResetRelationshipModifiers();
         UpdateMutualRelationships();
-        //Inherit relationships of previous king, otherwise, create new relationships
-        //        if (previousKing != null) {
-        //            KingdomManager.Instance.InheritRelationshipFromCitizen(previousKing, newKing);
-        //            previousKing.relationshipKings.Clear();
-        //        } else {
-        ////            KingdomManager.Instance.RemoveRelationshipToOtherKings(previousKing);
-        //            //newKing.CreateInitialRelationshipsToKings();
-        //            //KingdomManager.Instance.AddRelationshipToOtherKings(newKing);
-        //        }
 
         this.successionLine.Clear();
         ChangeSuccessionLineRescursively(newKing);
         this.successionLine.AddRange(newKing.GetSiblings());
         UpdateKingSuccession();
-        //		this.RetrieveInternationWar();
 
         this.UpdateAllGovernorsLoyalty();
         this.UpdateAllRelationshipsLikeness();
-        //        Debug.Log("Assigned new king: " + newKing.name + " because " + previousKing.name + " died!");
     }
-    internal void AddPretender(Citizen citizen) {
-		if(!this.pretenders.Contains(citizen)){
-			this.pretenders.Add(citizen);
-		}
-//        this.pretenders.Add(citizen);
-//        this.pretenders = this.pretenders.Distinct().ToList();
-    }
-    internal List<Citizen> GetPretenderClaimants(Citizen successor) {
-        List<Citizen> pretenderClaimants = new List<Citizen>();
-        for (int i = 0; i < this.pretenders.Count; i++) {
-            if (this.pretenders[i].prestige > successor.prestige) {
-                pretenderClaimants.Add(this.pretenders[i]);
-            }
-        }
-        return pretenderClaimants;
-    }
-    //    internal void SuccessionWar(Citizen newKing, List<Citizen> claimants){
-    ////		Debug.Log ("SUCCESSION WAR");
-
-    //		if(newKing.city.governor.id == newKing.id){
-    //			newKing.city.AssignNewGovernor ();
-    //		}
-    //		if(!newKing.isDirectDescendant){
-    //			Utilities.ChangeDescendantsRecursively (newKing, true);
-    //			Utilities.ChangeDescendantsRecursively (this.king, false);
-    //		}
-    //		/*if(newKing.assignedRole != null && newKing.role == ROLE.GENERAL){
-    //			newKing.DetachGeneralFromCitizen ();
-    //		}*/
-    ////		newKing.role = ROLE.KING;
-    //		newKing.AssignRole(ROLE.KING);
-    ////		newKing.isKing = true;
-    //		newKing.isGovernor = false;
-    ////		KingdomManager.Instance.RemoveRelationshipToOtherKings (this.king);
-    //		newKing.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-
-    ////		this.king = newKing;
-    //		//this.king.CreateInitialRelationshipsToKings ();
-    //		//KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
-    //		this.successionLine.Clear();
-    //		ChangeSuccessionLineRescursively (newKing);
-    //		this.successionLine.AddRange (newKing.GetSiblings());
-    //		UpdateKingSuccession ();
-    ////		this.RetrieveInternationWar();
-    ////		UIManager.Instance.UpdateKingsGrid();
-    ////		UIManager.Instance.UpdateKingdomSuccession ();
-
-    //		for(int i = 0; i < claimants.Count; i++){
-    //			newKing.AddSuccessionWar (claimants [i]);
-    ////			newKing.campaignManager.CreateCampaign ();
-
-    //			if(claimants[i].isGovernor){
-    //				claimants [i].supportedCitizen = claimants [i];
-    //			}
-    //			claimants[i].AddSuccessionWar (newKing);
-    ////			claimants[i].campaignManager.CreateCampaign ();
-    //		}
-
-    //	}
-    //	internal void DethroneKing(Citizen newKing){
-    ////		RoyaltyEventDelegate.TriggerMassChangeLoyalty(newLord, this.assignedLord);
-    //
-    //		if(!newKing.isDirectDescendant){
-    ////			RoyaltyEventDelegate.TriggerChangeIsDirectDescendant (false);
-    //			Utilities.ChangeDescendantsRecursively (newKing, true);
-    //			Utilities.ChangeDescendantsRecursively (this.king, false);
-    //		}
-    //		this.king = newKing;
-    //		this.king.CreateInitialRelationshipsToKings ();
-    //		KingdomManager.Instance.AddRelationshipToOtherKings (this.king);
-    //		this.successionLine.Clear();
-    //		ChangeSuccessionLineRescursively (newKing);
-    //		this.successionLine.AddRange (GetSiblings (newKing));
-    //		UpdateKingSuccession ();
-    //	}
     #endregion
 
     #region War
