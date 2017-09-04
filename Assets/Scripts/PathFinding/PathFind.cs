@@ -23,7 +23,6 @@ namespace PathFind {
 				closed.Add(path.LastStep);
 				lastStep = path.LastStep;
 
-
 				double d;
 				Path<Node> newPath;
                 if (pathfindingMode == PATHFINDING_MODE.RESOURCE_PRODUCTION) {

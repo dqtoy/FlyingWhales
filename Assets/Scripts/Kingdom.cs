@@ -71,7 +71,7 @@ public class Kingdom{
 
     //FogOfWar
     private FOG_OF_WAR_STATE[,] _fogOfWar;
-    private Dictionary<FOG_OF_WAR_STATE, List<HexTile>> _fogOfWarDict;
+	private Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> _fogOfWarDict;
 
 	//Crimes
 	private CrimeData _crimeData;
@@ -217,7 +217,7 @@ public class Kingdom{
     public FOG_OF_WAR_STATE[,] fogOfWar {
         get { return _fogOfWar; }
     }
-    public Dictionary<FOG_OF_WAR_STATE, List<HexTile>> fogOfWarDict {
+    public Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> fogOfWarDict {
         get { return _fogOfWarDict; }
     }
 //	public CombatStats combatStats {
@@ -294,10 +294,10 @@ public class Kingdom{
         this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
         this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
         this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
-        this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, List<HexTile>>();
-        this._fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new List<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())));
-        this._fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new List<HexTile>());
-        this._fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new List<HexTile>());
+		this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>>();
+		this._fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new HashSet<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())));
+		this._fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new HashSet<HexTile>());
+		this._fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new HashSet<HexTile>());
 		this._activeEvents = new List<GameEvent> ();
 		this._doneEvents = new List<GameEvent> ();
 		this.orderedMaleRoyalties = new List<Citizen> ();
@@ -688,32 +688,32 @@ public class Kingdom{
         }
         int chance = UnityEngine.Random.Range(0, 100);
         int value = 0;
-        MILITARY_STRENGTH milStrength = relationship.targetKingdom.GetMilitaryStrengthAgainst(this);
+//        MILITARY_STRENGTH milStrength = relationship.targetKingdom.GetMilitaryStrengthAgainst(this);
 
-        if (kingdomData.dictWarTriggers.ContainsKey(warTrigger)) {
-            value = kingdomData.dictWarTriggers[warTrigger];
-        }
-
-        if (kingdomData.dictWarRateModifierMilitary.ContainsKey(milStrength)) {
-            float modifier = (float)value * ((float)kingdomData.dictWarRateModifierMilitary[milStrength] / 100f);
-            value += Mathf.RoundToInt(modifier);
-        }
-        if (kingdomData.dictWarRateModifierRelationship.ContainsKey(relationship.relationshipStatus)) {
-            float modifier = (float)value * ((float)kingdomData.dictWarRateModifierRelationship[relationship.relationshipStatus] / 100f);
-            value += Mathf.RoundToInt(modifier);
-        }
-        if (kingdomData._warRateModifierPer15HexDistance != 0) {
-            int distance = PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.capitalCity.hexTile, relationship.targetKingdom.capitalCity.hexTile);
-            int multiplier = (int)(distance / kingdomData.hexDistanceModifier);
-            int dividend = kingdomData._warRateModifierPer15HexDistance * multiplier;
-            float modifier = (float)value * ((float)dividend / 100f);
-            value += Mathf.RoundToInt(modifier);
-        }
-        if (kingdomData._warRateModifierPerActiveWar != 0) {
-            int dividend = kingdomData._warRateModifierPerActiveWar * this.GetWarCount();
-            float modifier = (float)value * ((float)dividend / 100f);
-            value += Mathf.RoundToInt(modifier);
-        }
+//        if (kingdomData.dictWarTriggers.ContainsKey(warTrigger)) {
+//            value = kingdomData.dictWarTriggers[warTrigger];
+//        }
+//
+//        if (kingdomData.dictWarRateModifierMilitary.ContainsKey(milStrength)) {
+//            float modifier = (float)value * ((float)kingdomData.dictWarRateModifierMilitary[milStrength] / 100f);
+//            value += Mathf.RoundToInt(modifier);
+//        }
+//        if (kingdomData.dictWarRateModifierRelationship.ContainsKey(relationship.relationshipStatus)) {
+//            float modifier = (float)value * ((float)kingdomData.dictWarRateModifierRelationship[relationship.relationshipStatus] / 100f);
+//            value += Mathf.RoundToInt(modifier);
+//        }
+//        if (kingdomData._warRateModifierPer15HexDistance != 0) {
+//            int distance = PathGenerator.Instance.GetDistanceBetweenTwoTiles(this.capitalCity.hexTile, relationship.targetKingdom.capitalCity.hexTile);
+//            int multiplier = (int)(distance / kingdomData.hexDistanceModifier);
+//            int dividend = kingdomData._warRateModifierPer15HexDistance * multiplier;
+//            float modifier = (float)value * ((float)dividend / 100f);
+//            value += Mathf.RoundToInt(modifier);
+//        }
+//        if (kingdomData._warRateModifierPerActiveWar != 0) {
+//            int dividend = kingdomData._warRateModifierPerActiveWar * this.GetWarCount();
+//            float modifier = (float)value * ((float)dividend / 100f);
+//            value += Mathf.RoundToInt(modifier);
+//        }
 
         if (chance < value) {
 //            if (warEvent == null) {

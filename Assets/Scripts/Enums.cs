@@ -517,3 +517,14 @@ public enum BEHAVIOR{
 	HOMING,
 	ROAMING,
 }
+public enum PURPOSE{
+	BALANCE,
+	BANDWAGON,
+	BUCKPASS,
+	SUPERIORITY,
+}
+public enum KINGDOM_SIZE{
+	SMALL,
+	MEDIUM,
+	LARGE,
+}

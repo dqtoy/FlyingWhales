@@ -85,26 +85,25 @@ public class HandOfFate : MonoBehaviour {
 	}
 	[Task]
 	public void SetEventToCreate(){
-		int total = this.firstKingdom.kingdomTypeData.eventRates.Sum(x => x.rate);
-		int chance = UnityEngine.Random.Range (0, total + 1);
-		int lowerLimit = 0;
-		int upperLimit = 0;
-
-		for(int i = 0; i < this.firstKingdom.kingdomTypeData.eventRates.Length; i++){
-			upperLimit += this.firstKingdom.kingdomTypeData.eventRates[i].rate;
-			if(chance >= lowerLimit && chance < upperLimit){
-				this.eventToCreate =  this.firstKingdom.kingdomTypeData.eventRates[i];
-//				Debug.Log ("CREATING " + this.eventToCreate.eventType.ToString() + " EVENT...");
-				break;
-			}else{
-				lowerLimit = upperLimit;
-			}
-		}
-		if(this.eventToCreate.eventType == EVENT_TYPES.NONE){
-			Task.current.Fail ();
-		}else{
-			Task.current.Succeed ();
-		}
+//		int total = this.firstKingdom.kingdomTypeData.eventRates.Sum(x => x.rate);
+//		int chance = UnityEngine.Random.Range (0, total + 1);
+//		int lowerLimit = 0;
+//		int upperLimit = 0;
+//
+//		for(int i = 0; i < this.firstKingdom.kingdomTypeData.eventRates.Length; i++){
+//			upperLimit += this.firstKingdom.kingdomTypeData.eventRates[i].rate;
+//			if(chance >= lowerLimit && chance < upperLimit){
+//				this.eventToCreate =  this.firstKingdom.kingdomTypeData.eventRates[i];
+//				break;
+//			}else{
+//				lowerLimit = upperLimit;
+//			}
+//		}
+//		if(this.eventToCreate.eventType == EVENT_TYPES.NONE){
+//			Task.current.Fail ();
+//		}else{
+//			Task.current.Succeed ();
+//		}
 	}
 
 	[Task]

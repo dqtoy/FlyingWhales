@@ -229,7 +229,6 @@ public class CityGenerator : MonoBehaviour {
         List<HexTile> elligibleTiles = new List<HexTile>();
         List<HexTile> tilesToCheck = new List<HexTile>(kingdom.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE].Where(x => x.isHabitable && !x.isOccupied));
         tilesToCheck.AddRange(kingdom.fogOfWarDict[FOG_OF_WAR_STATE.SEEN].Where(x => x.isHabitable && !x.isOccupied));
-
         for (int i = 0; i < tilesToCheck.Count; i++) {
             HexTile currTile = tilesToCheck[i];
             if (currTile.isBorder) {
