@@ -52,13 +52,7 @@ public class UIManager : MonoBehaviour {
 
 	[Space(10)]
     [Header("For Testing Objects")]
-    //Trait Editor
-    public GameObject traitEditorGO;
-	public UIPopupList addTraitPopUpList;
-	public UIPopupList removeTraitPopUpList;
-	public UILabel addTraitChoiceLbl;
-	public UILabel removeTraitChoiceLbl;
-	//Relationship Editor
+   	//Relationship Editor
 	public UILabel sourceKinglikenessLbl;
 	public UILabel targetKinglikenessLbl;
 	//Relocate
@@ -95,7 +89,6 @@ public class UIManager : MonoBehaviour {
 	public UILabel citizenRoleAndKingdomLbl;
 	public UILabel citizenAgeLbl;
 	public UILabel citizenCityNameLbl;
-	public UIGrid citizenTraitsGrid;
 	public UIGrid citizenHistoryGrid;
 	public ButtonToggle characterValuesBtn;
 	public ButtonToggle familyTreeBtn;
@@ -524,7 +517,6 @@ public class UIManager : MonoBehaviour {
 
         kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
         kingdomUnrestLbl.text = currentlyShowingKingdom.unrest.ToString(); //Unrest
-        kingdomGoldLbl.text = currentlyShowingKingdom.goldCount.ToString() + "/" + currentlyShowingKingdom.maxGold.ToString(); //Gold
 		kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
 		kingdomTechMeter.value = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
 //		float newValue = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
@@ -663,9 +655,6 @@ public class UIManager : MonoBehaviour {
 		if (citizenHistoryGO.activeSelf) {
 			ShowCitizenHistory();
 		}
-		if (traitEditorGO.activeSelf) {
-			HideTraitEditor();
-		}
 		if (relocateGO.activeSelf) {
 			HideRelocate();
 		}
@@ -704,22 +693,6 @@ public class UIManager : MonoBehaviour {
 		} else {
 			citizenInfoIsDeadIcon.SetActive (false);
 		}
-
-
-		List<TraitObject> traits = citizenTraitsGrid.GetChildList().Select(x => x.GetComponent<TraitObject>()).ToList();
-		for (int i = 0; i < traits.Count; i++) {
-			TRAIT traitToUse = TRAIT.NONE;
-			if (i == 0) {
-				traitToUse = currentlyShowingCitizen.honestyTrait;
-			} else if (i == 1) {
-				traitToUse = currentlyShowingCitizen.hostilityTrait;
-			} else if (i == 2) {
-				traitToUse = currentlyShowingCitizen.miscTrait;
-			}
-			traits [i].SetTrait (traitToUse);
-		}
-
-		StartCoroutine (RepositionGrid (citizenTraitsGrid));
 
 		//if (citizenToShow.isKing) {
 		//	characterValuesBtn.gameObject.SetActive(true);
@@ -2206,104 +2179,6 @@ public class UIManager : MonoBehaviour {
 	}
 
 	#region For Testing
-	public void ToggleTraitEditor(){
-		if (traitEditorGO.activeSelf) {
-			traitEditorGO.SetActive (false);
-		} else {
-			addTraitPopUpList.Clear();
-			removeTraitPopUpList.Clear();
-			TRAIT[] allTraits = Utilities.GetEnumValues<TRAIT>();
-//			SKILL_TRAIT[] allSkillTraits = Utilities.GetEnumValues<SKILL_TRAIT>();
-//			MISC_TRAIT[] allMiscTraits = Utilities.GetEnumValues<MISC_TRAIT>();
-
-			for (int i = 0; i < allTraits.Length; i++) {
-				if (allTraits[i] != TRAIT.NONE && !currentlyShowingCitizen.hasTrait(allTraits[i])) {
-					addTraitPopUpList.AddItem (allTraits[i].ToString (), allTraits[i]);
-				}
-			}
-            //			for (int i = 0; i < allSkillTraits.Length; i++) {
-            //				if (allSkillTraits[i] != SKILL_TRAIT.NONE) {
-            //					addTraitPopUpList.AddItem (allSkillTraits[i].ToString ());
-            //				}
-            //			}
-            //			for (int i = 0; i < allMiscTraits.Length; i++) {
-            //				if (allMiscTraits[i] != MISC_TRAIT.NONE) {
-            //					addTraitPopUpList.AddItem (allMiscTraits[i].ToString ());
-            //				}
-            //			}
-
-            //			for (int i = 0; i < currentlyShowingCitizen.behaviorTraits.Count; i++) {
-            //				removeTraitPopUpList.AddItem (currentlyShowingCitizen.behaviorTraits[i].ToString());
-            //			}
-            //			for (int i = 0; i < currentlyShowingCitizen.skillTraits.Count; i++) {
-            //				removeTraitPopUpList.AddItem (currentlyShowingCitizen.skillTraits[i].ToString());
-            //			}
-            //			for (int i = 0; i < currentlyShowingCitizen.miscTraits.Count; i++) {
-            //				removeTraitPopUpList.AddItem (currentlyShowingCitizen.miscTraits[i].ToString());
-            //			}
-   //         removeTraitPopUpList.AddItem(currentlyShowingCitizen.honestyTrait.ToString());
-   //         removeTraitPopUpList.AddItem(currentlyShowingCitizen.hos.ToString());
-   //         removeTraitPopUpList.AddItem(currentlyShowingCitizen.honestyTrait.ToString());
-   //         if (removeTraitPopUpList.items.Count > 0) {
-			//	removeTraitPopUpList.value = removeTraitPopUpList.items [0];
-			//} else {
-			//	removeTraitPopUpList.value = "";
-			//}
-			addTraitPopUpList.value = addTraitPopUpList.items [0];
-			//removeTraitChoiceLbl.text = removeTraitPopUpList.value;
-			addTraitChoiceLbl.text = addTraitPopUpList.value;
-			traitEditorGO.SetActive (true);
-		}
-	}
-	public void AddTrait(){
-		TRAIT chosenTrait = (TRAIT)addTraitPopUpList.data;
-		if (chosenTrait == TRAIT.HONEST || chosenTrait == TRAIT.SCHEMING) {
-			currentlyShowingCitizen.SetHonestyTrait (chosenTrait);
-		} else if (chosenTrait == TRAIT.WARMONGER || chosenTrait == TRAIT.PACIFIST) {
-			currentlyShowingCitizen.SetHostilityTrait (chosenTrait);
-		}else if (chosenTrait == TRAIT.SMART || chosenTrait == TRAIT.STUPID || chosenTrait == TRAIT.AMBITIOUS) {
-			currentlyShowingCitizen.SetMiscTrait (chosenTrait);
-		}
-
-		ShowCitizenInfo(currentlyShowingCitizen);
-		ToggleTraitEditor();
-	}
-
-	public void RemoveTrait(){
-		return;
-//		if (string.IsNullOrEmpty (removeTraitPopUpList.value)) {
-//			return;
-//		}
-//		BEHAVIOR_TRAIT chosenBehaviourTrait = BEHAVIOR_TRAIT.NONE;
-//		SKILL_TRAIT chosenSkillTrait = SKILL_TRAIT.NONE;
-//		MISC_TRAIT chosenMiscTrait = MISC_TRAIT.NONE;
-//		if (chosenBehaviourTrait.TryParse<BEHAVIOR_TRAIT> (removeTraitPopUpList.value, out chosenBehaviourTrait)) {
-//			currentlyShowingCitizen.behaviorTraits.Remove(chosenBehaviourTrait);
-//			Debug.Log ("Removed behaviour trait : " + chosenBehaviourTrait.ToString () + " from " + currentlyShowingCitizen.name);
-//		} else if (chosenSkillTrait.TryParse<SKILL_TRAIT> (removeTraitPopUpList.value, out chosenSkillTrait)) {
-//			currentlyShowingCitizen.skillTraits.Remove(chosenSkillTrait);
-//			Debug.Log ("Removed skill trait : " + chosenSkillTrait.ToString () + " from " + currentlyShowingCitizen.name);
-//		} else if (chosenMiscTrait.TryParse<MISC_TRAIT> (removeTraitPopUpList.value, out chosenMiscTrait)) {
-//			currentlyShowingCitizen.miscTraits.Remove(chosenMiscTrait);
-//			if(chosenMiscTrait == MISC_TRAIT.TACTICAL){
-//				currentlyShowingCitizen.campaignManager.campaignLimit = 2;
-//			}else if(chosenMiscTrait == MISC_TRAIT.ACCIDENT_PRONE){
-////				currentlyShowingCitizen.citizenChances.accidentChance = currentlyShowingCitizen.citizenChances.defaultAccidentChance;
-//			}
-//			Debug.Log ("Removed misc trait : " + chosenMiscTrait.ToString () + " from " + currentlyShowingCitizen.name);
-//		}
-//
-//		ShowCitizenInfo(currentlyShowingCitizen);
-//		ToggleTraitEditor();
-//		if (currentlyShowingCitizen.city != null) {
-//			currentlyShowingCitizen.city.UpdateResourceProduction();
-//			currentlyShowingCitizen.city.UpdateCitizenCreationTable();
-//		}
-	}
-
-	public void HideTraitEditor(){
-		traitEditorGO.SetActive (false);
-	}
 	public void ToggleRelocate(){
 		if (this.relocateGO.activeSelf) {
 			this.relocateGO.SetActive (false);

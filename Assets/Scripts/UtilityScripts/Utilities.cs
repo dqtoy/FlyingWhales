@@ -440,18 +440,6 @@ public class Utilities : MonoBehaviour {
 		}
 	}
 
-	public static void ChangePossiblePretendersRecursively(Citizen parent, Citizen descendant){
-		if(!descendant.isDead){
-			parent.possiblePretenders.Add (descendant);
-		}
-
-		for(int i = 0; i < descendant.children.Count; i++){
-			if(descendant.children[i] != null){
-				ChangePossiblePretendersRecursively (parent, descendant.children [i]);
-			}
-		}
-	}
-
 	public static List<T> Shuffle<T>(List<T> list)  
 	{
 		List<T> newList = new List<T>(list);
@@ -617,27 +605,6 @@ public class Utilities : MonoBehaviour {
 		}
 		return false;
 	}
-	public static List<Citizen> GetUnwantedGovernors(Citizen king){
-		List<Citizen> unwantedGovernors = new List<Citizen> ();
-		for(int i = 0; i < king.civilWars.Count; i++){
-			if(king.civilWars[i].isGovernor){
-				unwantedGovernors.Add (king.civilWars [i]);
-			}
-		}
-		for(int i = 0; i < king.successionWars.Count; i++){
-			if(king.successionWars[i].isGovernor){
-				unwantedGovernors.Add (king.successionWars [i]);
-			}
-		}
-		for(int i = 0; i < king.city.kingdom.cities.Count; i++){
-			if(king.city.kingdom.cities[i].governor.supportedCitizen != null){
-				unwantedGovernors.Add (king.city.kingdom.cities [i].governor);
-			}
-		}
-
-		return unwantedGovernors;
-	}
-
 	public static Color[] kingdomColorCycle = new Color[] {
 		new Color32(0xDB, 0x00, 0x00, 0x91), // Red DB000091
 		new Color32(0x00, 0x51, 0xF3, 0x91), // Blue 0051F391

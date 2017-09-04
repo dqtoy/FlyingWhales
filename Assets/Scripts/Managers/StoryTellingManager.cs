@@ -9,40 +9,6 @@ public class StoryTellingManager : MonoBehaviour {
 		Instance = this;
 	}
 
-	public TRAIT GenerateHonestyTrait(Citizen citizen){
-		//switch (citizen.city.kingdom.kingdomType) {
-		//}
-		if (citizen.city.kingdom.horoscope [0] == 0) {
-			return TRAIT.HONEST;
-		} else {
-			return TRAIT.SCHEMING;
-		}
-	}
-
-	public TRAIT GenerateHostilityTrait(Citizen citizen){
-		if (citizen.city.kingdom.horoscope [1] == 0) {
-			return TRAIT.WARMONGER;
-		} else {
-			return TRAIT.PACIFIST;
-		}
-	}
-
-	public TRAIT GenerateMiscTrait(Citizen citizen){
-        //if (citizen.horoscope [2] == 0) {
-        //	return TRAIT.SMART;
-        //} else {
-        //	return TRAIT.STUPID;
-        //}
-        int chance = Random.Range(0, 100);
-        if (chance < 40) {
-            return TRAIT.SMART;
-        }else if(chance >= 40 && chance < 80) {
-            return TRAIT.STUPID;
-        } else {
-            return TRAIT.AMBITIOUS;
-        }
-	}
-
 	// Set the new kingdom type of a kingdom
 	public KingdomTypeData InitializeKingdomType(Kingdom kingdom) {
 		// if the kingdom's type is null, this means that this is the first time

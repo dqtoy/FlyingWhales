@@ -273,31 +273,8 @@ public class GameEvent {
 		}
 		return false;
 	}
-	internal List<Citizen> GetUnwantedGovernors(Citizen king){
-		List<Citizen> unwantedGovernors = new List<Citizen> ();
-		for(int i = 0; i < king.civilWars.Count; i++){
-			if(king.civilWars[i].isGovernor){
-				unwantedGovernors.Add (king.civilWars [i]);
-			}
-		}
-		for(int i = 0; i < king.successionWars.Count; i++){
-			if(king.successionWars[i].isGovernor){
-				unwantedGovernors.Add (king.successionWars [i]);
-			}
-		}
-		for(int i = 0; i < king.city.kingdom.cities.Count; i++){
-			if(king.city.kingdom.cities[i].governor.supportedCitizen != null){
-				unwantedGovernors.Add (king.city.kingdom.cities [i].governor);
-			}
-		}
-
-		return unwantedGovernors;
-	}
-
+	
 	//When an event has been constructed and created
-//	internal void EventIsCreated(){
-//		UIManager.Instance.ShowEventsOfType (this);
-//	}
 	internal void EventIsCreated(Kingdom kingdom, bool isShow){
 		if(isShow){
 			if(!this.isOneTime){

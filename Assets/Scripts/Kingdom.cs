@@ -18,13 +18,10 @@ public class Kingdom{
     private int foundationMonth;
     private int foundationDay;
 
-	[SerializeField]
 	private KingdomTypeData _kingdomTypeData;
 	private Kingdom _sourceKingdom;
 
     //Resources
-    private int _goldCount;
-    private int _maxGold = 5000;
     private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
     internal BASE_RESOURCE_TYPE basicResource;
 
@@ -45,7 +42,7 @@ public class Kingdom{
 	internal Color kingdomColor;
 	internal List<History> kingdomHistory;
 
-	private List<Kingdom> _discoveredKingdoms;
+	[NonSerialized] private List<Kingdom> _discoveredKingdoms;
 
 	//Plague
 	internal Plague plague;
@@ -128,12 +125,6 @@ public class Kingdom{
 	public Kingdom sourceKingdom {
 		get { return this._sourceKingdom; }
 	}
-    public int goldCount {
-        get { return this._goldCount; }
-    }
-    public int maxGold {
-        get { return this._maxGold; }
-    }
     public int prestige {
         get { return _prestige; }
     }
@@ -165,18 +156,8 @@ public class Kingdom{
     public int basicResourceCount {
         get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
     }
-    /*
-     * Will return all discovered kingdoms, otherwise, if useDiscoveredKingdoms
-     * is set to false will return all kingdoms except this one.
-     * */
     public List<Kingdom> discoveredKingdoms {
-        get {
-            if (KingdomManager.Instance.useDiscoveredKingdoms) {
-                return this._discoveredKingdoms;
-            } else {
-                return KingdomManager.Instance.allKingdoms.Where(x => x.id != this.id).ToList();
-            }
-        }
+        get { return this._discoveredKingdoms; }
     }
 	public int techLevel{
 		get{return this._techLevel + (3 * this._activatedBoonOfPowers.Count);}
@@ -268,7 +249,6 @@ public class Kingdom{
 		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
-		this._goldCount = 0;
 		this._availableResources = new Dictionary<RESOURCE, int> ();
 		this.relationships = new Dictionary<Kingdom, KingdomRelationship>();
 		this._isDead = false;
@@ -277,7 +257,6 @@ public class Kingdom{
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._unrest = 0;
 		this._sourceKingdom = sourceKingdom;
-//		this.hasConflicted = false;
 		this.borderConflictLoyaltyExpiration = 0;
 		this.rebellions = new List<Rebellion> ();
 		this._discoveredKingdoms = new List<Kingdom>();
@@ -424,15 +403,6 @@ public class Kingdom{
 				}
 			}
 		}
-//        List<GameEvent> eventsToCancel = new List<GameEvent>();
-//        if(eventType == EVENT_TYPES.ALL) {
-//            eventsToCancel = activeEvents;
-//        } else {
-//            eventsToCancel = activeEvents.Where(x => x.eventType == eventType).ToList();
-//        }
-//        for (int i = 0; i < eventsToCancel.Count; i++) {
-//            eventsToCancel[i].CancelEvent();
-//        }
     }
     private void ResolveWars() {
 //        List<War> warsToResolve = relationships.Values.Where(x => x.war != null).Select(x => x.war).ToList();
@@ -733,7 +703,7 @@ public class Kingdom{
             this.AttemptToExpand();
         }
 		this.IncreaseTechCounterPerTick();
-        this.TriggerEvents();
+        //this.TriggerEvents();
     }
     private void AdaptToKingValues() {
 		if(!this.isDead){
@@ -797,9 +767,6 @@ public class Kingdom{
 	        gameDate.day = GameManager.daysInMonth[gameDate.month];
 	        SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => DecreaseUnrestEveryMonth());
 		}
-        //        if (GameManager.Instance.days == GameManager.daysInMonth[GameManager.Instance.month]) {
-        //            this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
-        //        }
     }
     /*
 	 * Kingdom will attempt to expand. 
@@ -820,13 +787,6 @@ public class Kingdom{
         float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = UnityEngine.Random.Range(0, upperBound);
         if (chance < this.expansionChance) {
-            //Debug.Log ("Expansion Rate: " + this.expansionChance);		
-            //List<City> citiesThatCanExpand = new List<City> ();
-            //List<Citizen> allUnassignedAdultCitizens = new List<Citizen> ();
-            //List<Resource> expansionCost = new List<Resource> () {
-            //	new Resource (BASE_RESOURCE_TYPE.GOLD, 0)
-            //};
-
             if (this.cities.Count > 0) {
                 EventCreator.Instance.CreateExpansionEvent(this);
             }
@@ -867,43 +827,6 @@ public class Kingdom{
         SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => MonthlyPrestigeActions());
     }
     #endregion
-
-    /*
-	 * Attempt to create an attack city event
-	 * This will only happen if there's a war with any other kingdom
-	 * */
-    //	private void AttemptToCreateAttackCityEvent(){
-    //		if (this.activeCitiesPairInWar.Count > 0) {
-    //			CityWarPair warPair = this.activeCitiesPairInWar [0];
-    //			if (warPair.sourceCity == null || warPair.targetCity == null) {
-    //				return;
-    //			}
-    //			warPair.sourceCity.AttackCityEvent (warPair.targetCity);
-    //		}
-    //	}
-    /*
-	 * Attempt to create a reinforcement event to increase a friendly city's hp
-	 * This will only happen if there's a war with any other kingdom
-	 * */
-    //	private void AttemptToCreateReinforcementEvent(){
-    //		int chance = UnityEngine.Random.Range (0, 100);
-    //		if(chance < this.kingdomTypeData.warReinforcementCreationRate){
-    //			EventCreator.Instance.CreateReinforcementEvent (this);
-    //		}
-    //	}
-    /*
-	 * Checks if there has been successful relationship deterioration cause by border conflcit within the past 3 months
-	 * If expiration value has reached zero (0), return all governor loyalty to normal, else, it will remain -10
-	 * */
-    //	private void CheckBorderConflictLoyaltyExpiration(){
-    //		if(this.hasConflicted){
-    //			if(this.borderConflictLoyaltyExpiration > 0){
-    //				this.borderConflictLoyaltyExpiration -= 1;
-    //			}else{
-    //				this.HasNotConflicted ();
-    //			}
-    //		}
-    //	}
 
     #region Trading
     internal void AddKingdomToEmbargoList(Kingdom kingdomToAdd, EMBARGO_REASON embargoReason = EMBARGO_REASON.NONE) {
@@ -1315,17 +1238,6 @@ public class Kingdom{
 		}
 	}
 
-	/*internal int GetAllArmyHp(){
-		int total = 0;
-		List<Citizen> allGenerals = this.GetAllCitizensOfType (ROLE.GENERAL);
-		for(int i = 0; i < allGenerals.Count; i++){
-			if(allGenerals[i] is General){
-				total += ((General)allGenerals [i].assignedRole).GetArmyHP ();
-			}
-		}
-		return total;
-	}*/
-
 	internal int GetAllCityHp(){
 		int total = 0;
 		for(int i = 0; i < this.cities.Count; i++){
@@ -1361,105 +1273,8 @@ public class Kingdom{
 		}
 		return nearestCity;
 	}
-	//internal void TargetACityToAttack(){
-//		List<City> allHostileCities = new List<City> ();
-//		allHostileCities.AddRange (this.intlWarCities);
-//		for(int i = 0; i < this.rebellions.Count; i++){
-//			allHostileCities.AddRange (this.rebellions [i].conqueredCities);
-//		}
-//		if(allHostileCities.Count > 0 && this.activeCitiesPairInWar.Count <= 0){
-//			City sourceCity = null;
-//			City targetCity = null;
-//			GetTargetCityAndSourceCityInWar (ref sourceCity, ref targetCity, allHostileCities);
-//			if(sourceCity != null && targetCity != null){
-//				this.activeCitiesPairInWar.Add (new CityWarPair (sourceCity, targetCity));
-//				this.intlWarCities.Remove (targetCity);
-//				targetCity.isUnderAttack = true;
-//			}
-//		}
-//		if(this.intlWarCities.Count > 0 && this.activeCitiesToAttack.Count <= 0){
-//			int nearestDistance = 0f;
-//			City nearestSourceCity = null;
-//			City nearestTargetCity = null;
-//			for(int i = 0; i < this.intlWarCities.Count; i++){
-//				float min = this.cities.Min (x => x.hexTile.GetDistanceTo (this.intlWarCities [i].hexTile));
-//			}
-//		}
-	//}
-
-//	private void GetTargetCityAndSourceCityInWar(ref City sourceCity, ref City targetCity, List<City> allHostileCities){
-//		int nearestDistance = 0;
-//		City source = null;
-//		City target = null;
-//
-//		for (int i = 0; i < this.cities.Count; i++) {
-//			for (int j = 0; j < allHostileCities.Count; j++) {
-//				List<HexTile> path = PathGenerator.Instance.GetPath (this.cities [i].hexTile, allHostileCities [j].hexTile, PATHFINDING_MODE.AVATAR);
-//				if(path != null){
-//					int distance = path.Count;
-//					if(source == null && target == null){
-//						source = this.cities [i];
-//						target = allHostileCities [j];
-//						nearestDistance = distance;
-//					}else{
-//						if(distance < nearestDistance){
-//							source = this.cities [i];
-//							target = allHostileCities [j];
-//							nearestDistance = distance;
-//						}
-//					}
-//				}
-//
-//			}
-//		}
-//
-//		sourceCity = source;
-//		targetCity = target;
-//	}
-//	internal City GetSenderCityForReinforcement(){
-//		List<City> candidatesForReinforcement = this.cities.Where (x => !x.isUnderAttack && x.hp >= 100).ToList ();
-//		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
-//			candidatesForReinforcement = candidatesForReinforcement.OrderByDescending(x => x.hp).ToList();
-//			return candidatesForReinforcement [0];
-//		}
-//		return null;
-//	}
-//
-//	internal City GetReceiverCityForReinforcement(){
-//		List<City> candidatesForReinforcement = this.cities.Where (x => x.isUnderAttack).ToList ();
-//		if(candidatesForReinforcement != null && candidatesForReinforcement.Count > 0){
-//			return candidatesForReinforcement [UnityEngine.Random.Range (0, candidatesForReinforcement.Count)];
-//		}
-//		return null;
-//	}
 
 	#region Resource Management
-	/*
-	 * Function to adjust the gold count of this kingdom.
-	 * pass a negative value to reduce and a positive value
-	 * to inrease
-	 * */
-	internal void AdjustGold(int goldAmount){
-		this._goldCount += goldAmount;
-		this._goldCount = Mathf.Clamp(this._goldCount, 0, this._maxGold);
-	}
-	/*
-	 * Adjusts resource count. Only reduces gold for now. edit for other
-	 * resources of necessary
-	 * */
-	internal void AdjustResources(List<Resource> resource, bool reduce = true){
-		int currentResourceQuantity = 0;
-		for(int i = 0; i < resource.Count; i++){
-			Resource currResource = resource[i];
-			if (currResource.resourceType == BASE_RESOURCE_TYPE.GOLD) {
-				currentResourceQuantity = currResource.resourceQuantity;
-				if (reduce) {
-					currentResourceQuantity *= -1;
-				}
-				AdjustGold(currentResourceQuantity);
-			}
-		}
-	}
 	/*
 	 * Add resource type to this kingdoms
 	 * available resource (DO NOT ADD GOLD TO THIS!).
@@ -1528,34 +1343,6 @@ public class Kingdom{
         }
         return dailyGrowthGained;
     }
-	/*
-	 * Check if this kingdom has enough gold to create role.
-	 * */
-	internal bool CanCreateAgent(ROLE roleToCheck, ref int costToCreate){
-//		costToCreate = 0;
-		if (roleToCheck == ROLE.GENERAL) {
-			costToCreate = 0;
-		} else if (roleToCheck == ROLE.TRADER) {
-			costToCreate = 300;
-		} else if (roleToCheck == ROLE.ENVOY) {
-			costToCreate = 200;
-		} else if (roleToCheck == ROLE.SPY) {
-			costToCreate = 200;
-		} else if (roleToCheck == ROLE.TRADER) {
-			costToCreate = 300;
-		} else if (roleToCheck == ROLE.RAIDER) {
-			costToCreate = 100;
-		} else if (roleToCheck == ROLE.REINFORCER) {
-			costToCreate = 0;
-		} else if (roleToCheck == ROLE.REBEL) {
-			costToCreate = 0;
-		}
-
-		if (this._goldCount < costToCreate) {
-			return false;
-		}
-		return true;
-	}
     /*
      * Gets a list of resources that otherKingdom does not have access to (By self or by trade).
      * Will compare to this kingdoms available resources (excl. resources from trade)

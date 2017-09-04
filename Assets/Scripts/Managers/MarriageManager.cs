@@ -73,9 +73,6 @@ public class MarriageManager : MonoBehaviour {
 		father.AssignBirthday (monthFather, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age, false);
 		mother.AssignBirthday (monthMother, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age, false);
 
-        father.UnsubscribeListeners();
-        mother.UnsubscribeListeners();
-
         Marry (otherSpouse, spouse);
 		return spouse;
 	}
@@ -86,8 +83,6 @@ public class MarriageManager : MonoBehaviour {
 		citizen2.AssignSpouse(citizen1);
 //		citizen1.isMarried = true;
 //		citizen2.isMarried = true;
-		citizen1.isIndependent = true;
-		citizen2.isIndependent = true;
 
 //		if (wife.city.kingdom.king.id == wife.id) {
 			//if wife is currently queen of a kingdom, the husband will recieve the kingdom

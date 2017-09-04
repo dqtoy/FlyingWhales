@@ -189,14 +189,12 @@ public class Raid : GameEvent {
 
 	//Whether or not the raid party can deflect the blame to another kingdom upon discovery
 	private void DeflectBlame(){
-		if (this.startedBy.hasTrait(TRAIT.SCHEMING)) {
-			int deflectChance = UnityEngine.Random.Range (0, 100);
-			if (deflectChance < 35) {
-				Kingdom kingdomToBlame = GetRandomKingdomToBlame ();
-				if (kingdomToBlame != null) {
-					this.hasDeflected = true;
-					this.kingdomToBlame = kingdomToBlame;
-				}
+		int deflectChance = UnityEngine.Random.Range (0, 100);
+		if (deflectChance < 35) {
+			Kingdom kingdomToBlame = GetRandomKingdomToBlame ();
+			if (kingdomToBlame != null) {
+				this.hasDeflected = true;
+				this.kingdomToBlame = kingdomToBlame;
 			}
 		}
 	}
