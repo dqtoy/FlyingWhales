@@ -1013,20 +1013,25 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
+            "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
+            "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
+            "\n [b]Happiness Points:[/b] " + this.city.happinessPoints.ToString() +
+            "\n [b]Power:[/b] " + this.city.power.ToString() +
+            "\n [b]Defense:[/b] " + this.city.defense.ToString() +
             "\n [b]City Level Cap:[/b] " + this.cityLevelCap.ToString() +
             "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
             "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
             "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
             "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
 
-        text += "[b]Relationships: [/b]\n";
-        if (this.city.kingdom.relationships.Count > 0) {
-            for (int i = 0; i < this.city.kingdom.relationships.Count; i++) {
-                text += this.city.kingdom.relationships.Keys.ElementAt(i).name + "\n";
-            }
-        } else {
-            text += "NONE\n";
-        }
+        //text += "[b]Relationships: [/b]\n";
+        //if (this.city.kingdom.relationships.Count > 0) {
+        //    for (int i = 0; i < this.city.kingdom.relationships.Count; i++) {
+        //        text += this.city.kingdom.relationships.Keys.ElementAt(i).name + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
 
         text += "[b]Embargo List: [/b]\n";
         if (this.city.kingdom.embargoList.Count > 0) {

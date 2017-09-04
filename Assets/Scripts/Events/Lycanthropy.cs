@@ -158,7 +158,7 @@ public class Lycanthropy : GameEvent {
             killCitizenLog.AddToFillers(citizenToKill, citizenToKill.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             citizenToKill.Death(DEATH_REASONS.LYCANTHROPE);
         }
-        this._lycanthrope.targetCity.kingdom.AdjustUnrest(10);
+        this._lycanthrope.targetCity.kingdom.AdjustHappiness(-10);
 
         //Chance for lycanthrope to die
         if(Random.Range(0,100) < 15) {
@@ -269,7 +269,7 @@ public class Lycanthropy : GameEvent {
             govOpportunisticSuccessLog.AddToFillers(_lycanthrope.citizen.city.kingdom.king, _lycanthrope.citizen.city.kingdom.king.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             govOpportunisticSuccessLog.AddToFillers(_lycanthrope.citizen.city.governor, _lycanthrope.citizen.city.governor.name, LOG_IDENTIFIER.GOVERNOR_1);
 
-            _lycanthrope.citizen.city.kingdom.AdjustUnrest(10);
+            _lycanthrope.citizen.city.kingdom.AdjustHappiness(-10);
             _lycanthrope.citizen.city.kingdom.king.Death(DEATH_REASONS.LYCANTHROPE);
             KillLycanthrope(DEATH_REASONS.MURDER);
 
@@ -357,9 +357,9 @@ public class Lycanthropy : GameEvent {
     private void ChangeUnrestAfterApproach(Kingdom kingdom, EVENT_APPROACH chosenApproach) {
         EVENT_APPROACH approachOfKingdom = DetermineApproach(kingdom);
         if(approachOfKingdom == chosenApproach) {
-            kingdom.AdjustUnrest(-10);
+            kingdom.AdjustHappiness(10);
         } else {
-            kingdom.AdjustUnrest(10);
+            kingdom.AdjustHappiness(-10);
         }
     }
     #endregion

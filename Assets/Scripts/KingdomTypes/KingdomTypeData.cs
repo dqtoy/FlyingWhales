@@ -265,7 +265,12 @@ public class KingdomTypeData : MonoBehaviour {
 //		}
 //	}
 
-	void Awake(){
+    public ProductionPointsSpend productionPointsSpend {
+        get { return _productionPointsSpend; }
+    }
+
+
+    void Awake(){
 		if(this.generalKingdomTypeData != null){
 //			this._eventRates = this._eventRates.Concat (this.generalKingdomTypeData.eventRates).ToArray ();
 //			this._warTriggers = this._warTriggers.Concat (this.generalKingdomTypeData.warTriggers).ToArray ();

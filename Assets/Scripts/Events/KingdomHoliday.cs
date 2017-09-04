@@ -45,7 +45,7 @@ public class KingdomHoliday : GameEvent {
             }
         }
         if (_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-            _sourceKingdom.AdjustUnrest(-10);
+            _sourceKingdom.AdjustHappiness(10);
         }
 
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingdomHoliday", "start");

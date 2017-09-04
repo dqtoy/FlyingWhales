@@ -252,7 +252,7 @@ public class EventCreator: MonoBehaviour {
 
 	internal Plague CreatePlagueEvent(){
 		Debug.Log ("CREATING PLAGUE EVENT");
-		List<Kingdom> targetKingdoms = KingdomManager.Instance.allKingdoms.Where (x => x.unrest >= 0 && x.cities.FirstOrDefault (y => y.ownedTiles.Count >= 2) != null).ToList();
+		List<Kingdom> targetKingdoms = KingdomManager.Instance.allKingdoms.Where (x => x.happiness >= 0 && x.cities.FirstOrDefault (y => y.ownedTiles.Count >= 2) != null).ToList();
 		if(targetKingdoms != null && targetKingdoms.Count > 0){
 			Kingdom plaguedKingdom = targetKingdoms [UnityEngine.Random.Range (0, targetKingdoms.Count)];
 			List<City> targetCities = plaguedKingdom.cities.Where (x => x.ownedTiles.Count >= 2).ToList();

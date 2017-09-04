@@ -145,7 +145,7 @@ public class Plague : GameEvent {
         base.DoneCitizenAction(citizen);
         if (citizen.assignedRole is Exterminator) {
             DestroyASettlementInCity(citizen.assignedRole.targetCity);
-            citizen.city.kingdom.AdjustUnrest(5);
+            citizen.city.kingdom.AdjustHappiness(-5);
             this.exterminators.Remove((Exterminator)citizen.assignedRole);
         } else if (citizen.assignedRole is Healer) {
             CureASettlementInCity(citizen.assignedRole.targetCity);
@@ -179,7 +179,7 @@ public class Plague : GameEvent {
         onPerformAction += SpreadPlagueWithinKingdom;
         onPerformAction += CureAPlagueSettlementEveryday;
         onPerformAction += DestroyASettlementEveryday;
-        onPerformAction += IncreaseUnrestEveryMonth;
+        onPerformAction += DecreaseHappinessEveryMonth;
         onPerformAction += CheckForGovernorOrRelativeDeath;
         onPerformAction += CheckForKingOrRelativeDeath;
 
@@ -386,7 +386,7 @@ public class Plague : GameEvent {
 
         this.ChangeKingRelationshipsAfterApproach(citizen, chosenApproach);
         this.ChangeLoyaltyAfterApproach(citizen, chosenApproach);
-        this.ChangeUnrestAfterApproach(citizen.city.kingdom, chosenApproach);
+        this.ChangeHappinessAfterApproach(citizen.city.kingdom, chosenApproach);
 
         return chosenApproach;
     }
@@ -416,11 +416,11 @@ public class Plague : GameEvent {
         }
     }
 
-    private void ChangeUnrestAfterApproach(Kingdom kingdom, EVENT_APPROACH chosenApproach) {
+    private void ChangeHappinessAfterApproach(Kingdom kingdom, EVENT_APPROACH chosenApproach) {
         if(DetermineApproach(kingdom) == chosenApproach) {
-            kingdom.AdjustUnrest(-10);
+            kingdom.AdjustHappiness(10);
         } else {
-            kingdom.AdjustUnrest(10);
+            kingdom.AdjustHappiness(-10);
         }
     }
 
@@ -744,15 +744,15 @@ public class Plague : GameEvent {
      * At the start of each month, unrest in the kingdom 
      * increases by 1 for every plagued settlement.
      * */
-    private void IncreaseUnrestEveryMonth() {
+    private void DecreaseHappinessEveryMonth() {
         if (GameManager.Instance.days == 1) {
             for (int i = 0; i < this.affectedKingdoms.Count; i++) {
                 Kingdom currKingdom = this.affectedKingdoms[i];
-                int unrestIncrease = 1 * currKingdom.cities.Sum(x => x.plaguedSettlements.Count);
+                int happinessDecrease = 1 * currKingdom.cities.Sum(x => x.plaguedSettlements.Count);
                 if (this.humanisticKingdoms.Contains(currKingdom)) {
-                    unrestIncrease /= 2;
+                    happinessDecrease /= 2;
                 }
-                currKingdom.AdjustUnrest(unrestIncrease);
+                currKingdom.AdjustHappiness(-happinessDecrease);
             }
         }
     }

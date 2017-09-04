@@ -82,7 +82,7 @@ public class SlavesMerchant : GameEvent {
 
 		List<City> allCities = this.buyerKingdom.nonRebellingCities;
 		int slavesPerCity = this.slavesQuantity / allCities.Count;
-		int unrestCount = 0;
+		int happinessCount = 0;
 		bool hasFreedSlaves = false;
 		bool hasObeyedButDecreaseLoyalty = false;
 
@@ -136,7 +136,7 @@ public class SlavesMerchant : GameEvent {
 			}
 			if(hasFreedSlaves){
 				((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Anti-slavery", this);
-				unrestCount += 5;
+				happinessCount -= 5;
 
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "slaves_free");
 				newLog.AddToFillers (allCities[i].governor, allCities[i].governor.name, LOG_IDENTIFIER.GOVERNOR_1);
@@ -144,7 +144,7 @@ public class SlavesMerchant : GameEvent {
 			}else{
 				if(hasObeyedButDecreaseLoyalty){
 					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Anti-slavery", this);
-					unrestCount += 5;
+					happinessCount -= 5;
 					allCities[i].AdjustSlavesCount(slavesPerCity);
 
 					Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "obey_against_will");
@@ -174,10 +174,10 @@ public class SlavesMerchant : GameEvent {
 //			}
 		}
 
-		this.buyerKingdom.AdjustUnrest(unrestCount);
+		this.buyerKingdom.AdjustHappiness(happinessCount);
 
 		if(hasFreedSlaves){
-			int chanceModifier = unrestCount / 5;
+			int chanceModifier = happinessCount / 5;
 			RandomGovernorExecution(chanceModifier, allCities);
 		}
 
@@ -192,7 +192,7 @@ public class SlavesMerchant : GameEvent {
 			if(governorsForExecution != null && governorsForExecution.Count > 0){
 				Citizen chosenGovernor = governorsForExecution[UnityEngine.Random.Range(0, governorsForExecution.Count)];
 				chosenGovernor.Death(DEATH_REASONS.TREACHERY);
-				this.buyerKingdom.AdjustUnrest(20);
+				this.buyerKingdom.AdjustHappiness(-20);
 
 				//TODO: Add log - king has executed a governor
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "governor_execution");

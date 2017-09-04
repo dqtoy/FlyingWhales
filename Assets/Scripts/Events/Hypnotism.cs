@@ -82,9 +82,9 @@ public class Hypnotism : GameEvent {
             }
 
             if (_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-                _sourceKingdom.AdjustUnrest(-10);
+                _sourceKingdom.AdjustHappiness(10);
             } else {
-                _sourceKingdom.AdjustUnrest(10);
+                _sourceKingdom.AdjustHappiness(-10);
             }
         }
         DoneEvent();

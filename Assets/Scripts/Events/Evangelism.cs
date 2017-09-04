@@ -31,7 +31,7 @@ public class Evangelism : GameEvent {
 	#region Overrides
 	internal override void DoneCitizenAction (Citizen citizen){
 		base.DoneCitizenAction (citizen);
-		DecreaseUnrestAndImproveRelationship ();
+		IncreaseHappinessAndImproveRelationship ();
 	}
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();
@@ -49,9 +49,9 @@ public class Evangelism : GameEvent {
 	}
 	#endregion
 
-	private void DecreaseUnrestAndImproveRelationship(){
+	private void IncreaseHappinessAndImproveRelationship(){
 		if(this.targetKingdom.isAlive() && !this.targetCity.isDead){
-			this.targetKingdom.AdjustUnrest (-10);
+			this.targetKingdom.AdjustHappiness (10);
 			if(this.sourceKingdom.isAlive()){
 				KingdomRelationship relationship = targetKingdom.GetRelationshipWithKingdom (sourceKingdom);
 				relationship.AddEventModifier (3, this.name + " event", this);

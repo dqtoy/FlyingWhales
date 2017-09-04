@@ -16,7 +16,7 @@ public class BorderConflict : GameEvent {
 
 	public bool isResolvedPeacefully;
 
-    protected const int UNREST_ADJUSTMENT = 10;
+    protected const int HAPPINESS_ADJUSTMENT = -10;
 
 	public BorderConflict(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom kingdom1, Kingdom kingdom2) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.BORDER_CONFLICT;
@@ -205,8 +205,8 @@ public class BorderConflict : GameEvent {
 				relationship2.sourceKingdom.WarTrigger (relationship2, this, this.kingdom2.kingdomTypeData, this._warTrigger);
 			}
 
-			this.kingdom1.AdjustUnrest(UNREST_ADJUSTMENT);
-			this.kingdom2.AdjustUnrest(UNREST_ADJUSTMENT);
+			this.kingdom1.AdjustHappiness(HAPPINESS_ADJUSTMENT);
+			this.kingdom2.AdjustHappiness(HAPPINESS_ADJUSTMENT);
 			this.kingdom1.HasConflicted (this);
 			this.kingdom2.HasConflicted (this);
 		}

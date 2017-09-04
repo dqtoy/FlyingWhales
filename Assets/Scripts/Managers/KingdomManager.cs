@@ -25,7 +25,7 @@ public class KingdomManager : MonoBehaviour {
 	public KingdomTypeData kingdomTypeRighteous;
 	public KingdomTypeData kingdomTypeWicked;
 
-    protected const int UNREST_INCREASE_WAR = 10;
+    protected const int HAPPINESS_DECREASE_WAR = -10;
 
 	public int initialSpawnRate;
 	public int maxKingdomEventHistory;
@@ -182,8 +182,8 @@ public class KingdomManager : MonoBehaviour {
         //kingdom1.RemoveAllTradeRoutesWithOtherKingdom(kingdom2);
         //kingdom2.RemoveAllTradeRoutesWithOtherKingdom(kingdom1);
 
-        kingdom1.AdjustUnrest(UNREST_INCREASE_WAR);
-        kingdom2.AdjustUnrest(UNREST_INCREASE_WAR);
+        kingdom1.AdjustHappiness(HAPPINESS_DECREASE_WAR);
+        kingdom2.AdjustHappiness(HAPPINESS_DECREASE_WAR);
 
 		kingdom1.ActivateBoonOfPowers ();
 		kingdom2.ActivateBoonOfPowers ();

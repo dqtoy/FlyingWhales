@@ -21,13 +21,19 @@ public class City{
     [NonSerialized] public List<Citizen> citizens;
     [NonSerialized] public List<History> cityHistory;
 	
-
-	[Space(10)] //Resources
+	//Resources
 	private int _currentGrowth;
     private int _dailyGrowthFromStructures;
     private int _dailyGrowthFromKingdom;
     private int _dailyGrowthBuffs;
     private int _maxGrowth;
+
+    //Balance of Power
+    private int _powerPoints;
+    private int _defensePoints;
+    private int _happinessPoints;
+    private int _power;
+    private int _defense;
 
 	private int _slavesCount;
 	private int raidLoyaltyExpiration;
@@ -35,10 +41,8 @@ public class City{
 	[Space(5)]
     [Header("Booleans")]
     public bool hasKing;
-    //	public IsActive isActive;
     public bool isUnderAttack;
 	public bool hasReinforced;
-//	public bool isRaided;
 	public bool isStarving;
 	public bool isDead;
 
@@ -70,6 +74,21 @@ public class City{
 	public List<HexTile> plaguedSettlements{
 		get{ return this.structures.Where (x => x.isPlagued).ToList();} //Get plagued settlements
 	}
+    public int powerPoints {
+        get { return _powerPoints; }
+    }
+    public int defensePoints {
+        get { return _defensePoints; }
+    }
+    public int happinessPoints {
+        get { return _happinessPoints; }
+    }
+    public int power {
+        get { return _power; }
+    }
+    public int defense {
+        get { return _defense; }
+    }
 	public int hp{
 		get{ return this._hp; }
 		set{ this._hp = value; }
@@ -97,16 +116,16 @@ public class City{
 		this._kingdom = kingdom;
 		this.name = RandomNameGenerator.Instance.GenerateCityName(this._kingdom.race);
 		this.governor = null;
+        this._power = 0;
+        this._defense = 0;
 		this.adjacentCities = new List<City>();
 		this._ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<General> ();
 		this.citizens = new List<Citizen>();
 		this.cityHistory = new List<History>();
-//		this.isActive = new IsActive (false);
 		this.hasKing = false;
 		this.isUnderAttack = false;
 		this.hasReinforced = false;
-//		this.isRaided = false;
 		this.isStarving = false;
 		this.isDead = false;
 		this.borderTiles = new List<HexTile>();
@@ -120,11 +139,16 @@ public class City{
 		this._hp = this.maxHP;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 		hexTile.CheckLairsInRange ();
-//		this.CreateInitialFamilies();
-		Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
+        LevelUpBalanceOfPower();
+        AdjustDefense(100);
+        //		this.CreateInitialFamilies();
+        Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
         Messenger.AddListener("CitizenDied", CheckCityDeath);
         //EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
-	}
+        GameDate levelUpDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+        levelUpDueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(levelUpDueDate.month, levelUpDueDate.day, levelUpDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+    }
 
 	/*
 	 * This will add a new habitable hex tile to the habitableTileDistance variable.
@@ -530,30 +554,10 @@ public class City{
         KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 
-	/*internal List<General> GetIncomingAttackers(){
-		List<General> incomingAttackers = new List<General> ();
-		for(int i = 0; i < this.incomingGenerals.Count; i++){
-			if (this.incomingGenerals [i].assignedCampaign.campaignType == CAMPAIGN.OFFENSE && this.incomingGenerals [i].assignedCampaign.targetCity.id == this.id) {
-				incomingAttackers.Add (this.incomingGenerals [i]);
-			}
-		}
-		return incomingAttackers;
-	}*/
-
 	/*
 	 * Purchase new tile for city. Called in CityTaskManager.
 	 * */
 	internal void PurchaseTile(HexTile tileToBuy){
-        //City otherCity = null;
-        ////Remove tile to purchase from previous owner
-        //if (tileToBuy.ownedByCity != null && tileToBuy.ownedByCity.id != this.id) {
-        //    otherCity = tileToBuy.ownedByCity;
-        //    otherCity.borderTiles.Remove(tileToBuy);
-        //    otherCity.ownedTiles.Remove(tileToBuy);
-        //    otherCity.outerTiles.Remove(tileToBuy);
-        //    tileToBuy.ResetTile();
-        //} 
-
         float percentageHP = (float)this._hp / (float)this.maxHP;
 		tileToBuy.movementDays = 2;
 
@@ -597,6 +601,7 @@ public class City{
 			}
 		}
 		tileToBuy.CheckLairsInRange ();
+        LevelUpBalanceOfPower();
 		this.UpdateHP (percentageHP);
 
 
@@ -698,16 +703,6 @@ public class City{
 	private void UpdateHP(float percentageHP){
 		this._hp = (int)((float)this.maxHP * percentageHP);
 	}
-//	private void CheckRaidExpiration(){
-//		if(this.isRaided){
-//			if(this.raidLoyaltyExpiration > 0){
-//				this.raidLoyaltyExpiration -= 1;
-//			}else{
-//				this.HasNotBeenRaided ();
-//			}
-//
-//		}
-//	}
 
 	#region Resource Production
 	internal void AddToDailyGrowth(){
@@ -763,28 +758,6 @@ public class City{
 			this.KillCity ();
 		}
 	}
-
-	/*internal int GetCityArmyStrength(){
-		int total = 0;
-		for(int i = 0; i < this.citizens.Count; i++){
-			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
-				total += ((General)this.citizens [i].assignedRole).GetArmyHP ();
-			}
-		}
-		return total;
-	}
-	internal int GetTotalAttackerStrength(int nearest){
-		int total = 0;
-		if(nearest != -2){
-			List<General> hostiles = GetIncomingAttackers().Where(x => x.daysBeforeArrival == nearest).ToList();
-			if(hostiles.Count > 0){
-				for(int i = 0; i < hostiles.Count; i++){
-					total += hostiles[i].GetArmyHP ();
-				}
-			}
-		}
-		return total;	
-	}*/
 
 	internal List<General> GetAllGenerals(General attacker){
 		List<General> allGenerals = new List<General> ();
@@ -1088,30 +1061,6 @@ public class City{
         Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
     }
 
-	/*internal void LookForNewGeneral(General general){
-//		Debug.Log (general.citizen.name + " IS LOOKING FOR A NEW GENERAL FOR HIS/HER ARMY...");
-		general.inAction = false;
-		for(int i = 0; i < this.citizens.Count; i++){
-			if(this.citizens[i].assignedRole != null && this.citizens[i].role == ROLE.GENERAL){
-				General chosenGeneral = (General)this.citizens [i].assignedRole;
-				if(chosenGeneral.location == general.location){
-					if(!chosenGeneral.citizen.isDead){
-//						Debug.Log (chosenGeneral.citizen.name + " IS THE NEW GENERAL FOR " + general.citizen.name + "'s ARMY");
-						chosenGeneral.army.hp += general.army.hp;
-						general.army.hp = 0;
-						chosenGeneral.UpdateUI ();
-						general.GeneralDeath ();
-					}
-				}
-			}
-		}
-	}
-
-	internal void LookForLostArmy(General general){
-//		Debug.Log (general.citizen.name + " IS LOOKING FOR LOST ARMIES...");
-		EventManager.Instance.onLookForLostArmies.Invoke (general);
-	}*/
-
     internal bool HasAdjacency(int kingdomID){
 		for(int i = 0; i < this.hexTile.connectedTiles.Count; i++){
 			if(this.hexTile.connectedTiles[i].isOccupied){
@@ -1412,15 +1361,38 @@ public class City{
 			this._slavesCount = 0;
 		}
 	}
-    //private void CollectEventInTile(HexTile hexTile, Citizen citizen = null){
-    //	if(hexTile.gameEventInTile != null){
-    //		if(hexTile.gameEventInTile is BoonOfPower){
-    //			BoonOfPower boonOfPower = (BoonOfPower)hexTile.gameEventInTile;
-    //			boonOfPower.TransferBoonOfPower (this.kingdom, citizen);
-    //		}else if(hexTile.gameEventInTile is FirstAndKeystone){
-    //			FirstAndKeystone firstAndKeystone = (FirstAndKeystone)hexTile.gameEventInTile;
-    //			firstAndKeystone.TransferKeystone (this.kingdom, citizen);
-    //		}
-    //	}
-    //}
+
+    #region Balance Of Power
+    internal void AdjustPower(int adjustment) {
+        _power += adjustment;
+        _kingdom.AdjustBasePower(adjustment);
+    }
+    internal void AdjustDefense(int adjustment) {
+        _defense += adjustment;
+        _kingdom.AdjustBaseDefense(adjustment);
+    }
+    internal void IncreaseBOPAttributesEveryMonth() {
+        if (!isDead) {
+            int powerIncrease = _powerPoints * 3;
+            int defenseIncrease = _defensePoints * 4;
+            //Each City contributes a base +4 Happiness
+            int happinessIncrease = 4 + (_happinessPoints * 2);
+            int happinessDecrease = (structures.Count * 3);
+            AdjustPower(powerIncrease);
+            AdjustDefense(defenseIncrease);
+            //TODO: Add checking for militarize, put happiness increase to power but keep decrease in happiness
+            _kingdom.AdjustHappiness(happinessIncrease - happinessDecrease);
+
+            GameDate levelUpDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+            levelUpDueDate.AddMonths(1);
+            SchedulingManager.Instance.AddEntry(levelUpDueDate.month, levelUpDueDate.day, levelUpDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+        }
+    }
+
+    private void LevelUpBalanceOfPower() {
+        _powerPoints += _kingdom.kingdomTypeData.productionPointsSpend.power;
+        _defensePoints += _kingdom.kingdomTypeData.productionPointsSpend.defense;
+        _happinessPoints += _kingdom.kingdomTypeData.productionPointsSpend.happiness;
+    }
+    #endregion
 }

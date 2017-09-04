@@ -28,7 +28,9 @@ public class Kingdom{
     //Trading
     private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
-    private int _unrest;
+    private int _basePower;
+    private int _baseDefense;
+    private int _happiness;
     private List<City> _cities;
 	private List<Camp> camps;
 	internal City capitalCity;
@@ -88,8 +90,8 @@ public class Kingdom{
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
     protected const int GOLD_GAINED_FROM_TRADE = 10;
     protected const int UNREST_DECREASE_PER_MONTH = -5;
-    protected const int UNREST_INCREASE_CONQUER = 5;
-    protected const int UNREST_INCREASE_EMBARGO = 5;
+    protected const int HAPPINESS_DECREASE_CONQUER = -5;
+    protected const int HAPPINESS_DECREASE_EMBARGO = -5;
 
 	private bool _isDead;
 	private bool _hasBioWeapon;
@@ -149,9 +151,9 @@ public class Kingdom{
 //	public List<Camp> camps{
 //		get{ return this._camps; }
 //	}
-    public int unrest {
-        get { return this._unrest; }
-		set { this._unrest = value;}
+    public int happiness {
+        get { return this._happiness; }
+		set { this._happiness = value;}
     }
     public int basicResourceCount {
         get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
@@ -255,7 +257,7 @@ public class Kingdom{
 		this._isLockedDown = false;
 		this._hasUpheldHiddenHistoryBook = false;
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
-        this._unrest = 0;
+        this._happiness = 0;
 		this._sourceKingdom = sourceKingdom;
 		this.borderConflictLoyaltyExpiration = 0;
 		this.rebellions = new List<Rebellion> ();
@@ -313,7 +315,7 @@ public class Kingdom{
         Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
 		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
-		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
+		//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
 
@@ -759,15 +761,15 @@ public class Kingdom{
     /*
     * Deacrease the kingdom's unrest by UNREST_DECREASE_PER_MONTH amount every month.
     * */
-    protected void DecreaseUnrestEveryMonth() {
-		if(!this.isDead){
-	        this.AdjustUnrest(UNREST_DECREASE_PER_MONTH);
-	        GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-	        gameDate.AddMonths(1);
-	        gameDate.day = GameManager.daysInMonth[gameDate.month];
-	        SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => DecreaseUnrestEveryMonth());
-		}
-    }
+  //  protected void DecreaseUnrestEveryMonth() {
+		//if(!this.isDead){
+	 //       this.AdjustHappiness(UNREST_DECREASE_PER_MONTH);
+	 //       GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+	 //       gameDate.AddMonths(1);
+	 //       gameDate.day = GameManager.daysInMonth[gameDate.month];
+	 //       SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => DecreaseUnrestEveryMonth());
+		//}
+  //  }
     /*
 	 * Kingdom will attempt to expand. 
 	 * Chance for expansion can be edited by changing the value of expansionChance.
@@ -835,7 +837,7 @@ public class Kingdom{
             //Remove all existing trade routes between kingdomToAdd and this Kingdom
             //this.RemoveAllTradeRoutesWithOtherKingdom(kingdomToAdd);
             //kingdomToAdd.RemoveAllTradeRoutesWithOtherKingdom(this);
-            kingdomToAdd.AdjustUnrest(UNREST_INCREASE_EMBARGO);
+            kingdomToAdd.AdjustHappiness(HAPPINESS_DECREASE_EMBARGO);
         }
         
     }
@@ -1151,7 +1153,7 @@ public class Kingdom{
             //			this.AddInternationalWarCity (newCity);
             //KingdomManager.Instance.CheckWarTriggerMisc(city.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
             //Adjust unrest because a city of this kingdom was conquered.
-            this.AdjustUnrest(UNREST_INCREASE_CONQUER);
+            this.AdjustHappiness(HAPPINESS_DECREASE_CONQUER);
         } else {
             if (city is RebelFort) {
                 city.rebellion.KillFort();
@@ -1379,17 +1381,6 @@ public class Kingdom{
     internal void SetGrowthState(bool state) {
         _isGrowthEnabled = state;
     }
-    #endregion
-
-    #region Unrest
-    internal void AdjustUnrest(int amountToAdjust) {
-        this._unrest += amountToAdjust;
-        this._unrest = Mathf.Clamp(this._unrest, 0, 100);
-    }
-	internal void ChangeUnrest(int newAmount){
-		this._unrest = newAmount;
-		this._unrest = Mathf.Clamp(this._unrest, 0, 100);
-	}
     #endregion
 
     #region Tech
@@ -1682,7 +1673,7 @@ public class Kingdom{
                                 }
                             }
                             if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-                                AdjustUnrest(10);
+                                AdjustHappiness(-10);
                             }
                         }
                     }
@@ -1970,4 +1961,21 @@ public class Kingdom{
 			}
 		}
 	}
+
+    #region Balance of Power
+    internal void AdjustBasePower(int adjustment) {
+        _basePower += adjustment;
+    }
+    internal void AdjustBaseDefense(int adjustment) {
+        _baseDefense += adjustment;
+    }
+    internal void AdjustHappiness(int amountToAdjust) {
+        this._happiness += amountToAdjust;
+        this._happiness = Mathf.Clamp(this._happiness, -100, 100);
+    }
+    internal void ChangeHappiness(int newAmount) {
+        this._happiness = newAmount;
+        this._happiness = Mathf.Clamp(this._happiness, -100, 100);
+    }
+    #endregion
 }

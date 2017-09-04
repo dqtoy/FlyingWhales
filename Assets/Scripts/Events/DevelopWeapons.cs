@@ -142,9 +142,9 @@ public class DevelopWeapons : GameEvent {
                 || x.Key == CHARACTER_VALUE.TRADITION);
 
             if (priorityValue.Key == chosenValue) {
-                _sourceKingdom.AdjustUnrest(-10);
+                _sourceKingdom.AdjustHappiness(10);
             } else {
-                _sourceKingdom.AdjustUnrest(10);
+                _sourceKingdom.AdjustHappiness(-10);
             }
         }
     }
