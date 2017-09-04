@@ -27,14 +27,14 @@ public class ShowCompatibility : MonoBehaviour {
 
 	private int GetCompatibilityValue(Kingdom kingdom1, Kingdom kingdom2){
 		int compatibilityValue = 0;
-		int[] firstKingdomHoroscope = kingdom1.horoscope.Concat (kingdom1.king.horoscope).ToArray();
-		int[] secondKingdomHoroscope = kingdom2.horoscope.Concat (kingdom2.king.horoscope).ToArray();
-		int count = firstKingdomHoroscope.Length;
-		for(int i = 0; i < count; i++){
-			if(firstKingdomHoroscope[i] == secondKingdomHoroscope[i]){
-				compatibilityValue += 1;
-			}
-		}
+//		int[] firstKingdomHoroscope = kingdom1.horoscope.Concat (kingdom1.king.horoscope).ToArray();
+//		int[] secondKingdomHoroscope = kingdom2.horoscope.Concat (kingdom2.king.horoscope).ToArray();
+//		int count = firstKingdomHoroscope.Length;
+//		for(int i = 0; i < count; i++){
+//			if(firstKingdomHoroscope[i] == secondKingdomHoroscope[i]){
+//				compatibilityValue += 1;
+//			}
+//		}
 		return compatibilityValue;
 	}
 }

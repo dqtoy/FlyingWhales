@@ -221,9 +221,9 @@ public class Citizen {
             SchedulingManager.Instance.AddEntry((int)birthMonth, birthDay, GameManager.Instance.year, () => IncreaseAgeEveryYear());
         }
 		this.horoscope = GetHoroscope ();
-		this._honestyTrait = StoryTellingManager.Instance.GenerateHonestyTrait(this);
-		this._hostilityTrait = StoryTellingManager.Instance.GenerateHostilityTrait(this);
-		this._miscTrait = StoryTellingManager.Instance.GenerateMiscTrait(this);
+//		this._honestyTrait = StoryTellingManager.Instance.GenerateHonestyTrait(this);
+//		this._hostilityTrait = StoryTellingManager.Instance.GenerateHostilityTrait(this);
+//		this._miscTrait = StoryTellingManager.Instance.GenerateMiscTrait(this);
 		this.history.Add(new History((int)month, days, year, this.name + " was born.", HISTORY_IDENTIFIER.NONE));
 	}
 
