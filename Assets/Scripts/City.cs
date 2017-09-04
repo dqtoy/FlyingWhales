@@ -145,9 +145,9 @@ public class City{
         Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
         Messenger.AddListener("CitizenDied", CheckCityDeath);
         //EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
-        GameDate levelUpDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-        levelUpDueDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(levelUpDueDate.month, levelUpDueDate.day, levelUpDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+        GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+        increaseDueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
     }
 
 	/*
@@ -1383,9 +1383,9 @@ public class City{
             //TODO: Add checking for militarize, put happiness increase to power but keep decrease in happiness
             _kingdom.AdjustHappiness(happinessIncrease - happinessDecrease);
 
-            GameDate levelUpDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-            levelUpDueDate.AddMonths(1);
-            SchedulingManager.Instance.AddEntry(levelUpDueDate.month, levelUpDueDate.day, levelUpDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+            GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+            increaseDueDate.AddMonths(1);
+            SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
         }
     }
 
