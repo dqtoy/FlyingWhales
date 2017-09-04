@@ -30,6 +30,7 @@ public class KingdomManager : MonoBehaviour {
 	public int initialSpawnRate;
 	public int maxKingdomEventHistory;
 	public int rangerMoveRange;
+	public int currentActionDay;
 
     [SerializeField] private int minimumInitialKingdomDistance;
 
@@ -420,7 +421,9 @@ public class KingdomManager : MonoBehaviour {
         allKingdomsOrderedByPrestige = allKingdoms.OrderBy(x => x.prestige).ToList();
         UIManager.Instance.UpdatePrestigeSummary();
     }
-
+	internal void IncrementCurrentActionDay(int value){
+		this.currentActionDay += value;
+	}
     #region For Testing
     //[ContextMenu("Test Split Kingdom")]
     //public void TestSplitKingdom() {
