@@ -228,33 +228,6 @@ public class Assassination : GameEvent {
 			return null;
 		}
 	}*/
-	private Citizen GetGuardian(Kingdom kingdom){
-		List<Citizen> unwantedGovernors = GetUnwantedGovernors (kingdom.king);
-		List<Citizen> guardian = new List<Citizen> ();
-		for(int i = 0; i < kingdom.cities.Count; i++){
-			if(!IsItThisGovernor(kingdom.cities[i].governor, unwantedGovernors)){
-				for(int j = 0; j < kingdom.cities[i].citizens.Count; j++){
-					if(!kingdom.cities[i].citizens[j].isDead){
-						if(kingdom.cities[i].citizens[j].assignedRole != null && kingdom.cities[i].citizens[j].role == ROLE.GUARDIAN){
-							if(kingdom.cities[i].citizens[j].assignedRole is Guardian){
-								if(!((Guardian)kingdom.cities[i].citizens[j].assignedRole).inAction){
-									guardian.Add (kingdom.cities [i].citizens [j]);
-								}
-							}
-						}
-					}
-
-				}
-			}
-		}
-
-		if(guardian.Count > 0){
-			return guardian [UnityEngine.Random.Range (0, guardian.Count)];
-		}else{
-//			Debug.Log (kingdom.king.name + " CAN'T SEND GAURDIAN BECAUSE THERE IS NONE!");
-			return null;
-		}
-	}
 
 	//private void TriggerGuardian(){
 	//	Citizen kingOfTarget = this.targetKingdom.king;
@@ -274,27 +247,6 @@ public class Assassination : GameEvent {
 	//		}
 	//	}
 	//}
-	private void AssignGuardian(Kingdom otherKingdom){
-		Citizen guardian = GetGuardian (otherKingdom);
-		if (guardian != null) {
-			((Guardian)guardian.assignedRole).inAction = true;
-//			this.guardians.Add (guardian);
-
-			if(otherKingdom.king.id == this._targetCitizen.id){
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "guardian_same");
-				newLog.AddToFillers (otherKingdom.king, otherKingdom.king.name, LOG_IDENTIFIER.KING_1);
-				newLog.AddToFillers (otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-				newLog.AddToFillers (guardian, guardian.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-			}else{
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Assassination", "guardian_different");
-				newLog.AddToFillers (otherKingdom.king, otherKingdom.king.name, LOG_IDENTIFIER.KING_1);
-				newLog.AddToFillers (otherKingdom, otherKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-				newLog.AddToFillers (guardian, guardian.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-				newLog.AddToFillers (this._targetCitizen, this._targetCitizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-			}
-
-		}
-	}
 	private void AssassinationMoment(){
 		if(this.spy == null){
 //			Debug.Log ("CAN'T ASSASSINATE NO SPIES AVAILABLE");
@@ -425,16 +377,14 @@ public class Assassination : GameEvent {
 			if(this.targetKingdom.isAlive()){
 				this.relationshipToAdjust = this.targetKingdom.GetRelationshipWithKingdom(this.assassinKingdom);
 			}
-			if(this.assassinKingdom.king.hasTrait(TRAIT.SCHEMING)){
-				int deflectChance = UnityEngine.Random.Range (0, 100);
-				if(deflectChance < 35){
-					Kingdom kingdomToBlameCopy = GetRandomKingdomToBlame ();
-					if(kingdomToBlameCopy != null){
-						this.hasDeflected = true;
-						this.kingdomToBlame = kingdomToBlameCopy;
-						if (this.targetKingdom.isAlive ()) {
-							this.relationshipToAdjust = this.targetKingdom.GetRelationshipWithKingdom (this.kingdomToBlame);
-						}
+			int deflectChance = UnityEngine.Random.Range (0, 100);
+			if(deflectChance < 35){
+				Kingdom kingdomToBlameCopy = GetRandomKingdomToBlame ();
+				if(kingdomToBlameCopy != null){
+					this.hasDeflected = true;
+					this.kingdomToBlame = kingdomToBlameCopy;
+					if (this.targetKingdom.isAlive ()) {
+						this.relationshipToAdjust = this.targetKingdom.GetRelationshipWithKingdom (this.kingdomToBlame);
 					}
 				}
 			}

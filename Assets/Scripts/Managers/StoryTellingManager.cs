@@ -26,7 +26,6 @@ public class StoryTellingManager : MonoBehaviour {
 //			return TRAIT.PACIFIST;
 //		}
 //	}
-
 //	public TRAIT GenerateMiscTrait(Citizen citizen){
 //        //if (citizen.horoscope [2] == 0) {
 //        //	return TRAIT.SMART;
@@ -42,7 +41,6 @@ public class StoryTellingManager : MonoBehaviour {
 //            return TRAIT.AMBITIOUS;
 //        }
 //	}
-
 	// Set the new kingdom type of a kingdom
 	public KingdomTypeData InitializeKingdomType(Kingdom kingdom) {
 		// if the kingdom's type is null, this means that this is the first time

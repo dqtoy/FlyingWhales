@@ -396,21 +396,6 @@ public class EventManager : MonoBehaviour {
 		}
 		return false;
 	}
-	internal List<Citizen> GetUnwantedGovernors(Citizen king){
-		List<Citizen> unwantedGovernors = new List<Citizen> ();
-		for(int i = 0; i < king.civilWars.Count; i++){
-			if(king.civilWars[i].isGovernor){
-				unwantedGovernors.Add (king.civilWars [i]);
-			}
-		}
-		for(int i = 0; i < king.successionWars.Count; i++){
-			if(king.successionWars[i].isGovernor){
-				unwantedGovernors.Add (king.successionWars [i]);
-			}
-		}
-
-		return unwantedGovernors;
-	}
 
     internal Sprite GetEventAvatarSprite(EVENT_TYPES eventType) {
         return eventAvatarSprites.Where(x => x.name == eventType.ToString()).FirstOrDefault();

@@ -183,29 +183,25 @@ public class StateVisit : GameEvent {
 
                 KingdomRelationship relationship = selectedKingdom.GetRelationshipWithKingdom (inviterKingdom);
 				if (relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
-					if (selectedKingdom.king.hasTrait(TRAIT.SCHEMING)) {
-
-						KingdomManager.Instance.DiscoverKingdom (selectedKingdom, this.visitor.citizen.city.kingdom);
+					KingdomManager.Instance.DiscoverKingdom (selectedKingdom, this.visitor.citizen.city.kingdom);
 //                        selectedKingdom.DiscoverKingdom(this.visitor.citizen.city.kingdom);
 //                        this.visitor.citizen.city.kingdom.DiscoverKingdom(selectedKingdom);
 
-						KingdomManager.Instance.DiscoverKingdom (selectedKingdom, inviterKingdom);
+					KingdomManager.Instance.DiscoverKingdom (selectedKingdom, inviterKingdom);
 
 //                        selectedKingdom.DiscoverKingdom(inviterKingdom);
 //                        inviterKingdom.DiscoverKingdom(selectedKingdom);
 
-                        //ASSASSINATION EVENT
-                        int remainingDays = this.visitor.path.Sum(x => x.movementDays);
-						Assassination assassination = EventCreator.Instance.CreateAssassinationEvent (selectedKingdom, this.visitor.citizen, this, remainingDays, ASSASSINATION_TRIGGER_REASONS.STATE_VISIT);
-						if(assassination != null){
-							Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
-							newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name, LOG_IDENTIFIER.KING_1);
-							newLog.AddToFillers (assassination.spy.citizen, assassination.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-							newLog.AddToFillers (assassination, "assassinate", LOG_IDENTIFIER.GAME_EVENT);
-							newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-							newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-						}
-
+                    //ASSASSINATION EVENT
+                    int remainingDays = this.visitor.path.Sum(x => x.movementDays);
+					Assassination assassination = EventCreator.Instance.CreateAssassinationEvent (selectedKingdom, this.visitor.citizen, this, remainingDays, ASSASSINATION_TRIGGER_REASONS.STATE_VISIT);
+					if(assassination != null){
+						Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "assassination_start");
+						newLog.AddToFillers (selectedKingdom.king, selectedKingdom.king.name, LOG_IDENTIFIER.KING_1);
+						newLog.AddToFillers (assassination.spy.citizen, assassination.spy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+						newLog.AddToFillers (assassination, "assassinate", LOG_IDENTIFIER.GAME_EVENT);
+						newLog.AddToFillers (this.visitor.citizen, this.visitor.citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+						newLog.AddToFillers (this.inviterKingdom, this.inviterKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 					}
 				}
 			}
