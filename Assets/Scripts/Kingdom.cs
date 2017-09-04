@@ -2018,7 +2018,7 @@ public class Kingdom{
 
 		}
 	}
-	private void GetMainThreat(){
+	private Kingdom GetMainThreat(){
 		Kingdom threat = null;
 		return threat;
 	}
