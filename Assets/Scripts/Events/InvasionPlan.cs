@@ -102,7 +102,7 @@ public class InvasionPlan : GameEvent {
 				return;
 			}
 
-            List<Kingdom> friends = this.startedByKingdom.GetKingdomsByRelationship(new RELATIONSHIP_STATUS[] { RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY });
+            List<Kingdom> friends = this.startedByKingdom.GetKingdomsByRelationship(new RELATIONSHIP_STATUS[] { RELATIONSHIP_STATUS.AFFECTIONATE, RELATIONSHIP_STATUS.LOVE });
 
 			if (friends.Count > 0) {
 				for (int i = 0; i < friends.Count; i++) {
@@ -117,7 +117,7 @@ public class InvasionPlan : GameEvent {
 						continue;
 					}
 					int chanceToSendJoinWarRequest = 2;
-					if (currFriend.GetRelationshipWithKingdom(startedByKingdom).relationshipStatus == RELATIONSHIP_STATUS.ALLY) {
+					if (currFriend.GetRelationshipWithKingdom(startedByKingdom).relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
 						chanceToSendJoinWarRequest = 3;
 					}
 					int chance = Random.Range (0, 100);

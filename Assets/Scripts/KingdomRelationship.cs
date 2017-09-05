@@ -129,19 +129,19 @@ public class KingdomRelationship {
     internal void UpdateKingRelationshipStatus() {
         RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
         if (totalLike <= -81) {
-            _relationshipStatus = RELATIONSHIP_STATUS.RIVAL;
+            _relationshipStatus = RELATIONSHIP_STATUS.SPITE;
         } else if (totalLike >= -80 && totalLike <= -41) {
-            _relationshipStatus = RELATIONSHIP_STATUS.ENEMY;
+            _relationshipStatus = RELATIONSHIP_STATUS.HATE;
         } else if (totalLike >= -40 && totalLike <= -21) {
-            _relationshipStatus = RELATIONSHIP_STATUS.COLD;
+            _relationshipStatus = RELATIONSHIP_STATUS.DISLIKE;
         } else if (totalLike >= -20 && totalLike <= 20) {
             _relationshipStatus = RELATIONSHIP_STATUS.NEUTRAL;
         } else if (totalLike >= 21 && totalLike <= 40) {
-            _relationshipStatus = RELATIONSHIP_STATUS.WARM;
+            _relationshipStatus = RELATIONSHIP_STATUS.LIKE;
         } else if (totalLike >= 41 && totalLike <= 80) {
-            _relationshipStatus = RELATIONSHIP_STATUS.FRIEND;
+            _relationshipStatus = RELATIONSHIP_STATUS.AFFECTIONATE;
         } else {
-            _relationshipStatus = RELATIONSHIP_STATUS.ALLY;
+            _relationshipStatus = RELATIONSHIP_STATUS.LOVE;
         }
         if (previousStatus != _relationshipStatus) {
             //relationship status changed
@@ -272,23 +272,23 @@ public class KingdomRelationship {
     }
 
     internal void ChangeRelationshipStatus(RELATIONSHIP_STATUS newStatus, GameEvent gameEventTrigger = null) {
-        if (newStatus == RELATIONSHIP_STATUS.ALLY) {
+        if (newStatus == RELATIONSHIP_STATUS.LOVE) {
             this._like = 81;
-        } else if (newStatus == RELATIONSHIP_STATUS.FRIEND) {
+        } else if (newStatus == RELATIONSHIP_STATUS.AFFECTIONATE) {
             this._like = 41;
-        } else if (newStatus == RELATIONSHIP_STATUS.WARM) {
+        } else if (newStatus == RELATIONSHIP_STATUS.LIKE) {
             this._like = 21;
         } else if (newStatus == RELATIONSHIP_STATUS.NEUTRAL) {
             this._like = 0;
-        } else if (newStatus == RELATIONSHIP_STATUS.COLD) {
+        } else if (newStatus == RELATIONSHIP_STATUS.DISLIKE) {
             this._like = -21;
-        } else if (newStatus == RELATIONSHIP_STATUS.ENEMY) {
+        } else if (newStatus == RELATIONSHIP_STATUS.HATE) {
             this._like = -41;
-        } else if (newStatus == RELATIONSHIP_STATUS.RIVAL) {
+        } else if (newStatus == RELATIONSHIP_STATUS.SPITE) {
             this._like = -81;
         }
         UpdateKingRelationshipStatus();
-        if (this.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || this.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+        if (this.relationshipStatus == RELATIONSHIP_STATUS.HATE || this.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
             Embargo(gameEventTrigger);
         }
     }
@@ -312,7 +312,7 @@ public class KingdomRelationship {
     protected void CheckForEmbargo(RELATIONSHIP_STATUS previousRelationshipStatus, GameEvent gameEventTrigger) {
         if (previousRelationshipStatus != _relationshipStatus) { // Check if the relationship between the 2 kings changed in status
             //Check if the source kings relationship with king has changed to enemy or rival, if so, put king's kingdom in source king's embargo list
-            if (_relationshipStatus == RELATIONSHIP_STATUS.ENEMY || _relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+            if (_relationshipStatus == RELATIONSHIP_STATUS.HATE || _relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
                 Embargo(gameEventTrigger);
             }
         }
@@ -340,7 +340,7 @@ public class KingdomRelationship {
     protected void CheckForDisembargo(RELATIONSHIP_STATUS previousRelationshipStatus) {
         if (previousRelationshipStatus != _relationshipStatus) { // Check if the relationship between the 2 kings changed in status
             //if the relationship changed from enemy to cold, disembargo the targetKing
-            if (previousRelationshipStatus == RELATIONSHIP_STATUS.ENEMY && _relationshipStatus == RELATIONSHIP_STATUS.COLD) {
+            if (previousRelationshipStatus == RELATIONSHIP_STATUS.HATE && _relationshipStatus == RELATIONSHIP_STATUS.DISLIKE) {
                 Disembargo();
             }
         }
@@ -524,12 +524,8 @@ public class KingdomRelationship {
 	internal bool ChangeMilitaryAlliance(bool state){
 		bool hasSourceChanged = AdjustMilitaryAlliance (state);
 		KingdomRelationship targetRelationship = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		bool hasTargetChanged = targetRelationship.AdjustMilitaryAlliance (state);
-		if(hasSourceChanged == hasTargetChanged){
-			return true;
-		}else{
-			return false;
-		}
+		targetRelationship.AdjustMilitaryAlliance (state);
+		return hasSourceChanged;
 	}
 	private bool AdjustMilitaryAlliance(bool state){
 		if(this._isMilitaryAlliance != state){
@@ -548,12 +544,8 @@ public class KingdomRelationship {
 	internal bool ChangeMutualDefenseTreaty(bool state){
 		bool hasSourceChanged = AdjustMutualDefenseTreaty (state);
 		KingdomRelationship targetRelationship = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		bool hasTargetChanged = targetRelationship.AdjustMutualDefenseTreaty (state);
-		if(hasSourceChanged == hasTargetChanged){
-			return true;
-		}else{
-			return false;
-		}
+		targetRelationship.AdjustMutualDefenseTreaty (state);
+		return hasSourceChanged;
 	}
 	private bool AdjustMutualDefenseTreaty(bool state){
 		if (this._isMutualDefenseTreaty != state) {
@@ -575,7 +567,13 @@ public class KingdomRelationship {
 		kr.AdjustAdjacency (state);
 	}
 	private void AdjustAdjacency(bool state){
-		this._isAdjacent = state;
-
+		if(this._isAdjacent != state){
+			this._isAdjacent = state;
+			if(state){
+				this._sourceKingdom.AddAdjacentKingdom (this._targetKingdom);
+			}else{
+				this._sourceKingdom.RemoveAdjacentKingdom (this._targetKingdom);
+			}
+		}
 	}
 }

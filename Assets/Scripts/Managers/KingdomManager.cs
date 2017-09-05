@@ -185,8 +185,8 @@ public class KingdomManager : MonoBehaviour {
         KingdomRelationship king1Rel = kingdom1.GetRelationshipWithKingdom(kingdom2);
         KingdomRelationship king2Rel = kingdom2.GetRelationshipWithKingdom(kingdom1);
 
-        king1Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, war);
-        king2Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, war);
+        king1Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
+        king2Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
 
         kingdom1Rel.SetWarStatus(true);
 		kingdom2Rel.SetWarStatus(true);
@@ -323,9 +323,9 @@ public class KingdomManager : MonoBehaviour {
 				KingdomRelationship relationshipToAffected = this.allKingdoms [i].GetRelationshipWithKingdom (warReceiver);
 				KingdomRelationship relationshipToTarget = this.allKingdoms [i].GetRelationshipWithKingdom (warDeclarer);
 
-				if(relationshipToAffected.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+				if(relationshipToAffected.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 					this.allKingdoms[i].WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_ALLY);
-				}else if(relationshipToAffected.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
+				}else if(relationshipToAffected.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
 					this.allKingdoms[i].WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_FRIEND);
 				}
 			}

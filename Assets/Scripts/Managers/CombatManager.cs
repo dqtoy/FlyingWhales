@@ -326,8 +326,8 @@ public class CombatManager : MonoBehaviour {
 				for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
 					Kingdom currentKingdom = KingdomManager.Instance.allKingdoms [j];
 					if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
-						if (currentKingdom.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.ENEMY ||
-						   currentKingdom.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+						if (currentKingdom.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.HATE ||
+						   currentKingdom.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
 							kingdom1Enemies.Add (currentKingdom);
 						}
 					}
@@ -337,8 +337,8 @@ public class CombatManager : MonoBehaviour {
 				for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
 					Kingdom currentKingdom = KingdomManager.Instance.allKingdoms [j];
 					if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
-						if (currentKingdom.king.GetRelationshipWithKingdom (general2.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.ENEMY ||
-						   currentKingdom.king.GetRelationshipWithKingdom (general2.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+						if (currentKingdom.king.GetRelationshipWithKingdom (general2.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.HATE ||
+						   currentKingdom.king.GetRelationshipWithKingdom (general2.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
 							kingdom2Enemies.Add (currentKingdom);
 						}
 					}
@@ -354,8 +354,8 @@ public class CombatManager : MonoBehaviour {
 //				if (spies.Count > 0 && chance < 100) {
 //					Debug.Log ("Send spy to decrease tension!");
 						//Send spy to kingdom that is not enemy
-						if (possibleKingdomToTrigger.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.ENEMY ||
-						   possibleKingdomToTrigger.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+						if (possibleKingdomToTrigger.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.HATE ||
+						   possibleKingdomToTrigger.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
 							((Spy)spies [0].assignedRole).StartDecreaseWarExhaustionTask (kingdomRelationshipToGeneral1);
 
 //						Debug.Log(possibleKingdomToTrigger.name + " sent a spy(" + spies[0].name + ") to " + general2.citizen.city.kingdom.name + " to decrease exhaustion in his war" +
@@ -377,8 +377,8 @@ public class CombatManager : MonoBehaviour {
 				for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
 					Kingdom currentKingdom = KingdomManager.Instance.allKingdoms [j];
 					if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
-						if (currentKingdom.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.FRIEND ||
-						   currentKingdom.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.ALLY) {
+						if (currentKingdom.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE ||
+						   currentKingdom.king.GetRelationshipWithKingdom (general1.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
 							kingdom1Friends.Add (currentKingdom);
 						}
 					}
@@ -388,8 +388,8 @@ public class CombatManager : MonoBehaviour {
 				for (int j = 0; j < KingdomManager.Instance.allKingdoms.Count; j++) {
 					Kingdom currentKingdom = KingdomManager.Instance.allKingdoms [j];
 					if (currentKingdom.id != general1.citizen.city.kingdom.id && currentKingdom.id != general2.citizen.city.kingdom.id) {
-						if (currentKingdom.king.GetRelationshipWithKingdom (general2.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.FRIEND ||
-						   currentKingdom.king.GetRelationshipWithKingdom (general2.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.ALLY) {
+						if (currentKingdom.king.GetRelationshipWithKingdom (general2.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE ||
+						   currentKingdom.king.GetRelationshipWithKingdom (general2.citizen.city.kingdom.king).relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
 							kingdom2Friends.Add (currentKingdom);
 						}
 					}

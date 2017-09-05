@@ -91,6 +91,9 @@ public class Kingdom{
 	private int _mutualDefenseTreatyPower;
 	private List<Kingdom> _militaryAlliances;
 	private List<Kingdom> _mutualDefenseTreaties;
+	private List<Kingdom> _adjacentKingdoms;
+	private GameDate currentDefenseTreatyRejectionDate;
+	private GameDate currentMilitaryAllianceRejectionDate;
 
 
     protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
@@ -271,6 +274,9 @@ public class Kingdom{
 	public List<Kingdom> mutualDefenseTreaties{
 		get { return this._mutualDefenseTreaties;}
 	}
+	public List<Kingdom> adjacentKingdoms{
+		get { return this._adjacentKingdoms;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -327,6 +333,7 @@ public class Kingdom{
 		this.orderedSisterRoyalties = new List<Citizen> ();
 		this._militaryAlliances = new List<Kingdom> ();
 		this._mutualDefenseTreaties = new List<Kingdom> ();
+		this._adjacentKingdoms = new List<Kingdom> ();
 
         AdjustPrestige(200);
         SetGrowthState(true);
@@ -534,9 +541,9 @@ public class Kingdom{
         //Improvement of Relationship
         int chance = UnityEngine.Random.Range(0, 100);
         int value = 0;
-        if (relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+        if (relationship.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
             value = 5;
-        } else if (relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY) {
+        } else if (relationship.relationshipStatus == RELATIONSHIP_STATUS.HATE) {
             value = 15;
         } else {
             value = 25;
@@ -608,13 +615,13 @@ public class Kingdom{
             targetKingdomRel.ResetMutualRelationshipModifier();
 
 			List<Kingdom> sourceKingRelationships = GetKingdomsByRelationship (new
-           [] { RELATIONSHIP_STATUS.ENEMY, RELATIONSHIP_STATUS.RIVAL,
-				RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY
+           [] { RELATIONSHIP_STATUS.HATE, RELATIONSHIP_STATUS.SPITE,
+				RELATIONSHIP_STATUS.AFFECTIONATE, RELATIONSHIP_STATUS.LOVE
 			}, targetKingdom);
 
 			List<Kingdom> targetKingRelationships = targetKingdom.GetKingdomsByRelationship (new
-                [] { RELATIONSHIP_STATUS.ENEMY, RELATIONSHIP_STATUS.RIVAL,
-				RELATIONSHIP_STATUS.FRIEND, RELATIONSHIP_STATUS.ALLY
+                [] { RELATIONSHIP_STATUS.HATE, RELATIONSHIP_STATUS.SPITE,
+				RELATIONSHIP_STATUS.AFFECTIONATE, RELATIONSHIP_STATUS.LOVE
 			}, this);
 
 //            List<Kingdom> kingdomsInCommon = sourceKingRelationships.Intersect(targetKingRelationships).ToList();
@@ -624,29 +631,29 @@ public class Kingdom{
                 KingdomRelationship relSourceKingdom = this.GetRelationshipWithKingdom(currKingdom);
                 KingdomRelationship relTargetKingdom = targetKingdom.GetRelationshipWithKingdom(currKingdom);
 
-                if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.ENEMY) {
-                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.ENEMY ||
-                        relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+                if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.HATE) {
+                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.HATE ||
+                        relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
                         currRel.AddMutualRelationshipModifier(5);
                         targetKingdomRel.AddMutualRelationshipModifier(5);
                     }
-                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
-                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.ENEMY) {
+                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
+                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.HATE) {
                         currRel.AddMutualRelationshipModifier(5);
-                    } else if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+                    } else if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
                         targetKingdomRel.AddMutualRelationshipModifier(10);
                     }
-                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.FRIEND) {
-                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.FRIEND ||
-                        relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.ALLY) {
+                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE) {
+                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE ||
+                        relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
                         currRel.AddMutualRelationshipModifier(5);
                         targetKingdomRel.AddMutualRelationshipModifier(5);
                     }
-                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.ALLY) {
-                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.FRIEND) {
+                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
+                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE) {
                         currRel.AddMutualRelationshipModifier(5);
                         targetKingdomRel.AddMutualRelationshipModifier(5);
-                    } else if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.ALLY) {
+                    } else if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
                         currRel.AddMutualRelationshipModifier(10);
                         targetKingdomRel.AddMutualRelationshipModifier(10);
                     }
@@ -1616,8 +1623,13 @@ public class Kingdom{
 	#endregion
 
 	internal bool HasWar(){
-		for(int i = 0; i < relationships.Count; i++){
-			if(relationships.ElementAt(i).Value.isAtWar){
+//		for(int i = 0; i < relationships.Count; i++){
+//			if(relationships.ElementAt(i).Value.isAtWar){
+//				return true;
+//			}
+//		}
+		foreach (KingdomRelationship relationship in relationships.Values) {
+			if (relationship.isAtWar) {
 				return true;
 			}
 		}
@@ -1660,7 +1672,7 @@ public class Kingdom{
 					for (int i = 0; i < discoveredKingdoms.Count; i++) {
 						Kingdom currKingdom = discoveredKingdoms[i];
 						KingdomRelationship rel = currKingdom.GetRelationshipWithKingdom(this);
-						if (rel.relationshipStatus != RELATIONSHIP_STATUS.FRIEND && rel.relationshipStatus != RELATIONSHIP_STATUS.ALLY) {
+						if (rel.relationshipStatus != RELATIONSHIP_STATUS.AFFECTIONATE && rel.relationshipStatus != RELATIONSHIP_STATUS.LOVE) {
 							notFriends.Add(currKingdom);
 						}
 					}
@@ -1682,7 +1694,7 @@ public class Kingdom{
 //                    for (int i = 0; i < discoveredKingdoms.Count; i++) {
 //                        Kingdom currKingdom = discoveredKingdoms[i];
 //                        KingdomRelationship rel = currKingdom.king.GetRelationshipWithKingdom(this.king);
-//                        if (rel.relationshipStatus != RELATIONSHIP_STATUS.FRIEND && rel.relationshipStatus != RELATIONSHIP_STATUS.ALLY) {
+//                        if (rel.relationshipStatus != RELATIONSHIP_STATUS.AFFECTIONATE && rel.relationshipStatus != RELATIONSHIP_STATUS.LOVE) {
 //                            notFriends.Add(currKingdom);
 //                        }
 //                    }
@@ -2029,6 +2041,32 @@ public class Kingdom{
 				}
 			}else{
 				//no main threat
+				if(!HasWar()){
+					Kingdom currentPossibleTarget = null;
+					KingdomRelationship currentPossibleTargetRelationship = null;
+					int thisEffectivePower = this.effectivePower;
+					for (int i = 0; i < this._adjacentKingdoms.Count; i++) {
+						Kingdom targetKingdom = this._adjacentKingdoms [i];
+						KingdomRelationship relationship = GetKingdomsByRelationship (targetKingdom);
+						if(relationship.totalLike < 0){
+							int buffedEffectiveDefense = (int)(targetKingdom.effectiveDefense * 1.30f);
+							if(thisEffectivePower > buffedEffectiveDefense){
+								if(currentPossibleTarget != null){
+									if (relationship.totalLike < currentPossibleTargetRelationship.totalLike) {
+										currentPossibleTarget = targetKingdom;
+										currentPossibleTargetRelationship = relationship;
+									}
+								}else{
+									currentPossibleTarget = targetKingdom;
+									currentPossibleTargetRelationship = relationship;
+								}
+							}
+						}
+					}
+					if(currentPossibleTarget != null){
+						//Initiate War Event
+					}
+				}
 			}
 
 			GameDate gameDate;
@@ -2065,19 +2103,134 @@ public class Kingdom{
 	}
 	private void SeeksBalance(){
 		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
-		bool hasBroken = relationship.ChangeMilitaryAlliance (false);
-		if(!hasBroken){
+		if(!relationship.isMilitaryAlliance){
+			Kingdom currentPossibleAlly = null;
+			KingdomRelationship currentPossibleAllyRelationship = null;
+			bool canBeAlly = false;
+			for (int i = 0; i < this.discoveredKingdoms.Count; i++) {
+				Kingdom targetKingdom = this.discoveredKingdoms [i];
+				KingdomRelationship kingdomRelationship = GetRelationshipWithKingdom (targetKingdom);
+				KingdomRelationship mainThreatKingdomRelationship = this._mainThreat.GetRelationshipWithKingdom (targetKingdom);
 
+				canBeAlly = false;
+
+				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && !kingdomRelationship.isMutualDefenseTreaty){
+					GameDate gameDate = targetKingdom.currentDefenseTreatyRejectionDate;
+					if(gameDate.year != 0){
+						gameDate.AddMonths (3);
+						if(GameManager.Instance.year > gameDate.year){
+							canBeAlly = true;
+						}else if(GameManager.Instance.year == gameDate.year){
+							if(GameManager.Instance.month > gameDate.month){
+								canBeAlly = true;
+							}
+						}
+					}else{
+						canBeAlly = true;
+					}
+
+					if(canBeAlly){
+						if(currentPossibleAlly != null){
+							if(kingdomRelationship.totalLike > currentPossibleAllyRelationship.totalLike){
+								currentPossibleAlly = targetKingdom;
+								currentPossibleAllyRelationship = kingdomRelationship;
+							}
+						}else{
+							currentPossibleAlly = targetKingdom;
+							currentPossibleAllyRelationship = kingdomRelationship;
+						}
+					}
+				}
+			}
+
+			if(currentPossibleAlly != null){
+				//Send Defense Treaty Offer
+			}else{
+				Militarize (true);
+			}
+		}else{
+			relationship.ChangeMilitaryAlliance (false);
 		}
 	}
 	private void SeeksBandwagon(){
-
+		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
+		if(!relationship.isMilitaryAlliance){
+			if(relationship.totalLike >= 0){
+				//Send Military Alliance Offer
+			}else{
+				//Send Tribute
+				Militarize (true);
+			}
+		}
 	}
 	private void SeeksBuckpass(){
-
+		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
+		if(!relationship.isMilitaryAlliance){
+			if(relationship.totalLike >= 0){
+				Militarize (true);
+			}else{
+				Militarize (true);
+				int chance = UnityEngine.Random.Range (0, 3);
+				if(chance == 0){
+					//Send Provoker
+				}else if(chance == 1){
+					if(this._mainThreat.adjacentKingdoms.Count > 0){
+						Kingdom targetKingdom = this._mainThreat.adjacentKingdoms [UnityEngine.Random.Range (0, this._mainThreat.adjacentKingdoms.Count)];
+						//Send Instigator
+					}
+				}
+			}
+		}
 	}
 	private void SeeksSuperiority(){
+		Militarize (true);
+		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
+		if (!relationship.isMilitaryAlliance) {
+			Kingdom currentPossibleAlly = null;
+			KingdomRelationship currentPossibleAllyRelationship = null;
+			bool canBeAlly = false;
+			for (int i = 0; i < this.discoveredKingdoms.Count; i++) {
+				Kingdom targetKingdom = this.discoveredKingdoms [i];
+				KingdomRelationship kingdomRelationship = GetRelationshipWithKingdom (targetKingdom);
+				KingdomRelationship mainThreatKingdomRelationship = this._mainThreat.GetRelationshipWithKingdom (targetKingdom);
 
+				canBeAlly = false;
+
+				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && !kingdomRelationship.isMilitaryAlliance){
+					GameDate gameDate = targetKingdom.currentMilitaryAllianceRejectionDate;
+					if(gameDate.year != 0){
+						gameDate.AddMonths (3);
+						if(GameManager.Instance.year > gameDate.year){
+							canBeAlly = true;
+						}else if(GameManager.Instance.year == gameDate.year){
+							if(GameManager.Instance.month > gameDate.month){
+								canBeAlly = true;
+							}
+						}
+					}else{
+						canBeAlly = true;
+					}
+
+					if(canBeAlly){
+						if(currentPossibleAlly != null){
+							if(kingdomRelationship.totalLike > currentPossibleAllyRelationship.totalLike){
+								currentPossibleAlly = targetKingdom;
+								currentPossibleAllyRelationship = kingdomRelationship;
+							}
+						}else{
+							currentPossibleAlly = targetKingdom;
+							currentPossibleAllyRelationship = kingdomRelationship;
+						}
+					}
+				}
+			}
+
+			if(currentPossibleAlly != null){
+				//Send Military Alliance Offer
+			}
+		}else{
+			relationship.ChangeMilitaryAlliance (false);
+		}
 	}
 	internal void AdjustBasePower(int adjustment) {
         _basePower += adjustment;
@@ -2111,14 +2264,14 @@ public class Kingdom{
 			this._mutualDefenseTreaties [i].AdjustMutualDefenseTreatyPower(amount);
 		}
 	}
-	private void GetMilitaryAlliancePower(){
+	private int GetMilitaryAlliancePower(){
 		int militaryAlliancePower = 0;
 		for (int i = 0; i < this._militaryAlliances.Count; i++) {
 			militaryAlliancePower += this._militaryAlliances [i]._basePower;
 		}
 		return militaryAlliancePower;
 	}
-	private void GetMutualDefenseTreatyPower(){
+	private int GetMutualDefenseTreatyPower(){
 		int mutualDefenseTreatyPower = 0;
 		for (int i = 0; i < this._mutualDefenseTreaties.Count; i++) {
 			mutualDefenseTreatyPower += this._mutualDefenseTreaties [i]._baseDefense;
@@ -2136,6 +2289,12 @@ public class Kingdom{
 	}
 	internal void RemoveMutualDefenseTreaty(Kingdom kingdom){
 		this._mutualDefenseTreaties.Remove(kingdom);
+	}
+	internal void AddAdjacentKingdom(Kingdom kingdom){
+		this._adjacentKingdoms.Add (kingdom);
+	}
+	internal void RemoveAdjacentKingdom(Kingdom kingdom){
+		this._adjacentKingdoms.Remove(kingdom);
 	}
 	internal bool IsMilitaryAlliance(Kingdom kingdom){
 		for (int i = 0; i < this._militaryAlliances.Count; i++) {

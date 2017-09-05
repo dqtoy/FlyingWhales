@@ -183,7 +183,7 @@ public class EvilIntent : GameEvent {
         if(citizenToKidnap != null) {
             citizenToKidnap.city.RemoveCitizenFromCity(citizenToKidnap);
             _kidnappedCitizen = citizenToKidnap;
-            _targetKing.city.kingdom.GetRelationshipWithKingdom(_sourceKing.city.kingdom).ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, this);
+            _targetKing.city.kingdom.GetRelationshipWithKingdom(_sourceKing.city.kingdom).ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, this);
             AskForRansom();
         } else {
             Debug.Log("CANNOT KIDNAP ANYONE!");

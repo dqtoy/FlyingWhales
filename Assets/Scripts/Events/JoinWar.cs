@@ -111,25 +111,25 @@ public class JoinWar : GameEvent {
 			RELATIONSHIP_STATUS relationshipWithRequester = candidateForAlliance.GetRelationshipWithKingdom (this.startedBy).relationshipStatus;
 			RELATIONSHIP_STATUS relationshipWithTarget = candidateForAlliance.GetRelationshipWithKingdom (kingdomToAttack.king).relationshipStatus;
 
-			if (relationshipWithRequester == RELATIONSHIP_STATUS.WARM) {
+			if (relationshipWithRequester == RELATIONSHIP_STATUS.LIKE) {
 				successRate += 5;
-			} else if (relationshipWithRequester == RELATIONSHIP_STATUS.FRIEND) {
+			} else if (relationshipWithRequester == RELATIONSHIP_STATUS.AFFECTIONATE) {
 				successRate += 20;
-			} else if (relationshipWithRequester == RELATIONSHIP_STATUS.ALLY) {
+			} else if (relationshipWithRequester == RELATIONSHIP_STATUS.LOVE) {
 				successRate += 35;
 			} 
 
-			if (relationshipWithTarget == RELATIONSHIP_STATUS.COLD) {
+			if (relationshipWithTarget == RELATIONSHIP_STATUS.DISLIKE) {
 				successRate += 5;
-			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.ENEMY) {
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.HATE) {
 				successRate += 20;
-			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.RIVAL) {
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.SPITE) {
 				successRate += 35;
-			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.WARM) {
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.LIKE) {
 				successRate -= 5;
-			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.FRIEND) {
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.AFFECTIONATE) {
 				successRate -= 20;
-			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.ALLY) {
+			} else if (relationshipWithTarget == RELATIONSHIP_STATUS.LOVE) {
 				successRate -= 35;
 			} 
 
@@ -178,25 +178,25 @@ public class JoinWar : GameEvent {
         RELATIONSHIP_STATUS relationshipWithRequester = kingdomOfCandidate.GetRelationshipWithKingdom (startedByKingdom).relationshipStatus;
 		RELATIONSHIP_STATUS relationshipWithTarget = kingdomOfCandidate.GetRelationshipWithKingdom (kingdomToAttack).relationshipStatus;
 
-		if (relationshipWithRequester == RELATIONSHIP_STATUS.WARM) {
+		if (relationshipWithRequester == RELATIONSHIP_STATUS.LIKE) {
 			successRate += 5;
-		} else if (relationshipWithRequester == RELATIONSHIP_STATUS.FRIEND) {
+		} else if (relationshipWithRequester == RELATIONSHIP_STATUS.AFFECTIONATE) {
 			successRate += 20;
-		} else if (relationshipWithRequester == RELATIONSHIP_STATUS.ALLY) {
+		} else if (relationshipWithRequester == RELATIONSHIP_STATUS.LOVE) {
 			successRate += 35;
 		} 
 
-		if (relationshipWithTarget == RELATIONSHIP_STATUS.COLD) {
+		if (relationshipWithTarget == RELATIONSHIP_STATUS.DISLIKE) {
 			successRate += 5;
-		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.ENEMY) {
+		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.HATE) {
 			successRate += 20;
-		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.RIVAL) {
+		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.SPITE) {
 			successRate += 35;
-		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.WARM) {
+		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.LIKE) {
 			successRate -= 5;
-		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.FRIEND) {
+		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.AFFECTIONATE) {
 			successRate -= 20;
-		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.ALLY) {
+		} else if (relationshipWithTarget == RELATIONSHIP_STATUS.LOVE) {
 			successRate -= 35;
 		} 
 

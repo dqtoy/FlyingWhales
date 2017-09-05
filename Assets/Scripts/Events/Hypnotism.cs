@@ -40,20 +40,20 @@ public class Hypnotism : GameEvent {
             //Successful Hypnotize
             if(Random.Range(0,100) < 50) {
                 //Positive Effects
-                rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.FRIEND, this);
+                rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.AFFECTIONATE, this);
                 Log positive = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Hypnotism", "witch_successful_positive");
                 positive.AddToFillers(_targetKingdom.king, _targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
                 positive.AddToFillers(_sourceKingdom.king, _sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
             } else {
                 //Negative Effects
-                rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.COLD, this);
+                rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.DISLIKE, this);
                 Log negative = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Hypnotism", "witch_successful_negative");
                 negative.AddToFillers(_targetKingdom.king, _targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
                 negative.AddToFillers(_sourceKingdom.king, _sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
             }
         } else {
             //Failed to Hypnotize
-            rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.ENEMY, this);
+            rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, this);
             Log negative = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Hypnotism", "witch_failed");
             negative.AddToFillers(_targetKingdom.king, _targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
             negative.AddToFillers(_sourceKingdom.king, _sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);

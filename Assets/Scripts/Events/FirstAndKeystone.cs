@@ -375,7 +375,7 @@ public class FirstAndKeystone : GameEvent {
 				if(!giver.firstAndKeystoneOwnership.knowEffects){
 					KingdomRelationship relationship = giver.GetRelationshipWithKingdom(retriever);
 					if(relationship != null){
-						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 							return true;
 						}
 					}
@@ -394,7 +394,7 @@ public class FirstAndKeystone : GameEvent {
 				if(!giver.firstAndKeystoneOwnership.knowEffects){
 					KingdomRelationship relationship = giver.GetRelationshipWithKingdom(retriever);
 					if(relationship != null){
-						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 							return true;
 						}
 					}

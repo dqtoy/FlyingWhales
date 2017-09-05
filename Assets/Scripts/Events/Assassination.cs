@@ -236,9 +236,9 @@ public class Assassination : GameEvent {
 	//		if(this.otherKingdoms[i].king.hasTrait(TRAIT.HONEST) && this.otherKingdoms[i].isAlive()){
 	//			int chance = UnityEngine.Random.Range (0, 100);
 	//			KingdomRelationship relationship = this.otherKingdoms [i].king.SearchRelationshipByID (kingOfTarget.id);
-	//			if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
+	//			if(relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
 	//				value = 5;
-	//			}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+	//			}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 	//				value = 10;
 	//			}
 	//			if(chance < value){

@@ -242,9 +242,9 @@ public class Plague : GameEvent {
                         //will target nearest plagued city of neutral relationship or better Kingdoms.
                         List<Kingdom> elligibleKingdomsForHealer = currKingdom.GetKingdomsByRelationship(new RELATIONSHIP_STATUS[] {
                             RELATIONSHIP_STATUS.NEUTRAL,
-                            RELATIONSHIP_STATUS.WARM,
-                            RELATIONSHIP_STATUS.FRIEND,
-                            RELATIONSHIP_STATUS.ALLY
+                            RELATIONSHIP_STATUS.LIKE,
+                            RELATIONSHIP_STATUS.AFFECTIONATE,
+                            RELATIONSHIP_STATUS.LOVE
                         });
                         for (int j = 0; j < elligibleKingdomsForHealer.Count; j++) {
 							for (int k = 0; k < elligibleKingdomsForHealer[j].cities.Count; k++) {
