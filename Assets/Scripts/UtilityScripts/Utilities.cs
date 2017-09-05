@@ -1142,6 +1142,8 @@ public class Utilities : MonoBehaviour {
 			return true;
 		case EVENT_TYPES.ANCIENT_RUIN:
 			return true;
+        case EVENT_TYPES.MILITARY_ALLIANCE_OFFER:
+			return true;
 		case EVENT_TYPES.SEND_RELIEF_GOODS:
 			if(duration == -1){
 				return true;

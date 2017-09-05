@@ -570,6 +570,8 @@ public class City{
                 Kingdom otherKingdom = _adjacentCities[i].kingdom;
                 if (!checkedKingdoms.Contains(otherKingdom)) {
                     checkedKingdoms.Add(otherKingdom);
+                    otherKingdom.AddAdjacentKingdom(_kingdom);
+                    _kingdom.AddAdjacentKingdom(otherKingdom);
                     KingdomRelationship relationshipWithOtherKingdom = _kingdom.GetRelationshipWithKingdom(otherKingdom);
                     relationshipWithOtherKingdom.ChangeAdjacency(true);
                 }
@@ -597,6 +599,8 @@ public class City{
             if(_kingdom != otherKingdom) {//adjacent city's kingdom is not this city's kingdom
                 if (!checkedKingdoms.Contains(otherKingdom)) {
                     checkedKingdoms.Add(otherKingdom);
+                    otherKingdom.RemoveAdjacentKingdom(_kingdom);
+                    _kingdom.RemoveAdjacentKingdom(otherKingdom);
                     KingdomRelationship relationshipWithOtherKingdom = _kingdom.GetRelationshipWithKingdom(otherKingdom);
                     relationshipWithOtherKingdom.ChangeAdjacency(false);
                 }

@@ -368,9 +368,11 @@ public class Kingdom{
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
 
-//		ScheduleEvents ();
+        //		ScheduleEvents ();
+        ScheduleActionDay();
 
-		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
+
+        this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 	// Updates this kingdom's type and horoscope
 	public void UpdateKingdomTypeData() {
@@ -2107,8 +2109,10 @@ public class Kingdom{
 			Kingdom currentPossibleAlly = null;
 			KingdomRelationship currentPossibleAllyRelationship = null;
 			bool canBeAlly = false;
-			for (int i = 0; i < this.discoveredKingdoms.Count; i++) {
-				Kingdom targetKingdom = this.discoveredKingdoms [i];
+            List<Kingdom> possibleAllies = new List<Kingdom>(discoveredKingdoms);
+            possibleAllies.Remove(_mainThreat);
+			for (int i = 0; i < possibleAllies.Count; i++) {
+				Kingdom targetKingdom = possibleAllies[i];
 				KingdomRelationship kingdomRelationship = GetRelationshipWithKingdom (targetKingdom);
 				KingdomRelationship mainThreatKingdomRelationship = this._mainThreat.GetRelationshipWithKingdom (targetKingdom);
 
@@ -2156,7 +2160,8 @@ public class Kingdom{
 		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
 		if(!relationship.isMilitaryAlliance){
 			if(relationship.totalLike >= 0){
-				//Send Military Alliance Offer
+                //Send Military Alliance Offer
+                EventCreator.Instance.CreateMilitaryAllianceOffer(this, _mainThreat);
 			}else{
 				//Send Tribute
 				Militarize (true);
@@ -2189,8 +2194,10 @@ public class Kingdom{
 			Kingdom currentPossibleAlly = null;
 			KingdomRelationship currentPossibleAllyRelationship = null;
 			bool canBeAlly = false;
-			for (int i = 0; i < this.discoveredKingdoms.Count; i++) {
-				Kingdom targetKingdom = this.discoveredKingdoms [i];
+            List<Kingdom> possibleAllies = new List<Kingdom>(discoveredKingdoms);
+            possibleAllies.Remove(_mainThreat);
+            for (int i = 0; i < possibleAllies.Count; i++) {
+				Kingdom targetKingdom = possibleAllies[i];
 				KingdomRelationship kingdomRelationship = GetRelationshipWithKingdom (targetKingdom);
 				KingdomRelationship mainThreatKingdomRelationship = this._mainThreat.GetRelationshipWithKingdom (targetKingdom);
 
@@ -2226,8 +2233,9 @@ public class Kingdom{
 			}
 
 			if(currentPossibleAlly != null){
-				//Send Military Alliance Offer
-			}
+                //Send Military Alliance Offer
+                EventCreator.Instance.CreateMilitaryAllianceOffer(this, _mainThreat);
+            }
 		}else{
 			relationship.ChangeMilitaryAlliance (false);
 		}
@@ -2291,7 +2299,10 @@ public class Kingdom{
 		this._mutualDefenseTreaties.Remove(kingdom);
 	}
 	internal void AddAdjacentKingdom(Kingdom kingdom){
-		this._adjacentKingdoms.Add (kingdom);
+        if (!_adjacentKingdoms.Contains(kingdom)) {
+            this._adjacentKingdoms.Add(kingdom);
+        }
+		
 	}
 	internal void RemoveAdjacentKingdom(Kingdom kingdom){
 		this._adjacentKingdoms.Remove(kingdom);
