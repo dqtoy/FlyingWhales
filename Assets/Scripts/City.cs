@@ -1481,11 +1481,18 @@ public class City{
             //Each City contributes a base +4 Happiness
             int happinessIncrease = 4 + (_happinessPoints * 2);
             int happinessDecrease = (structures.Count * 3);
-            AdjustPower(powerIncrease);
-            AdjustDefense(defenseIncrease);
-            //TODO: Add checking for militarize, put happiness increase to power but keep decrease in happiness
-            _kingdom.AdjustHappiness(happinessIncrease - happinessDecrease);
-
+            
+            if (_kingdom.isMilitarize) {
+                //During militarize, all Points spent on Happiness are instead spent on Power, but keep decrease in happiness.
+                AdjustPower(powerIncrease + (happinessIncrease - happinessDecrease));
+                AdjustDefense(defenseIncrease);
+                _kingdom.AdjustHappiness(-happinessDecrease);
+                _kingdom.Militarize(false);
+            } else {
+                AdjustPower(powerIncrease);
+                AdjustDefense(defenseIncrease);
+                _kingdom.AdjustHappiness(happinessIncrease - happinessDecrease);
+            }
             GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
             increaseDueDate.AddMonths(1);
             SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());

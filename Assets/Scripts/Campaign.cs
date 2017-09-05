@@ -217,7 +217,6 @@ public class Campaign {
 
 	/*
 	 * Create new log for this Campaign.
-	 * TODO: Might edit this so that the log fillers are also added here
 	 * rather than outside. Seems cleaner that way.
 	 * */
 	internal Log CreateNewLogForCampaign(int month, int day, int year, string category, string file, string key){

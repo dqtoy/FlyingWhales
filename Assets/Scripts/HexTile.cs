@@ -1085,7 +1085,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	internal void SetPlague(bool state){
 		this.isPlagued = state;
-		//TODO: add/remove poison icon on tile
 		this.SetActivePlagueIcon(state);
         this.ownedByCity.UpdateDailyProduction();
 	}
@@ -1148,7 +1147,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	internal void SetKeystone(bool state){
 		this.hasKeystone = state;
-		//TODO: add/remove keystone icon on tile
 		this.SetActiveKeystoneIcon(state);
         this.RemoveEventOnTile();
     }
@@ -1168,7 +1166,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	internal void SetFirst(bool state){
 		this.hasFirst = state;
-		//TODO: add/remove first icon on tile
 		this.SetActiveFirstIcon(state);
 	}
 

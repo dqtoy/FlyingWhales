@@ -241,7 +241,6 @@ public class GameEvent {
 
     /*
 	 * Create new log for this Event.
-	 * TODO: Might edit this so that the log fillers are also added here
 	 * rather than outside. Seems cleaner that way.
 	 * */
     internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
