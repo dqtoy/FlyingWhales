@@ -2047,7 +2047,7 @@ public class Kingdom{
 					int thisEffectivePower = this.effectivePower;
 					for (int i = 0; i < this._adjacentKingdoms.Count; i++) {
 						Kingdom targetKingdom = this._adjacentKingdoms [i];
-						KingdomRelationship relationship = GetKingdomsByRelationship (targetKingdom);
+						KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
 						if(relationship.totalLike < 0){
 							int buffedEffectiveDefense = (int)(targetKingdom.effectiveDefense * 1.30f);
 							if(thisEffectivePower > buffedEffectiveDefense){
