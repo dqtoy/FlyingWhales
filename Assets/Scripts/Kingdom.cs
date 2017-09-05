@@ -84,6 +84,15 @@ public class Kingdom{
     //Expansion
     private float expansionChance = 1f;
 
+	//Balance of Power
+//	private int _effectivePower;
+//	private int _effectiveDefense;
+	private int _militaryAlliancePower;
+	private int _mutualDefenseTreatyPower;
+	private List<Kingdom> _militaryAlliances;
+	private List<Kingdom> _mutualDefenseTreaties;
+
+
     protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
     protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
 
@@ -241,6 +250,27 @@ public class Kingdom{
 	public List<GameEvent> doneEvents{
 		get { return this._doneEvents;}
 	}
+	public int effectivePower{
+//		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
+		get { return this._basePower + (int)(this._militaryAlliancePower / 2);}
+
+	}
+	public int effectiveDefense{
+//		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 3) + this._baseDefense + (int)(GetMutualDefenseTreatyPower() / 3);}
+		get { return this._basePower + (int)(this._militaryAlliancePower / 3) + this._baseDefense + (int)(this._mutualDefenseTreatyPower / 3);}
+	}
+	public int militaryAlliancePower{
+		get { return this._militaryAlliancePower;}
+	}
+	public int mutualDefenseTreatyPower{
+		get { return this._mutualDefenseTreatyPower;}
+	}
+	public List<Kingdom> militaryAlliances{
+		get { return this._militaryAlliances;}
+	}
+	public List<Kingdom> mutualDefenseTreaties{
+		get { return this._mutualDefenseTreaties;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -295,6 +325,8 @@ public class Kingdom{
 		this.orderedFemaleRoyalties = new List<Citizen> ();
 		this.orderedBrotherRoyalties = new List<Citizen> ();
 		this.orderedSisterRoyalties = new List<Citizen> ();
+		this._militaryAlliances = new List<Kingdom> ();
+		this._mutualDefenseTreaties = new List<Kingdom> ();
 
         AdjustPrestige(200);
         SetGrowthState(true);
@@ -2010,11 +2042,33 @@ public class Kingdom{
 		}
 	}
 	private Kingdom GetMainThreat(){
-		Kingdom threat = null;
-		return threat;
+		Kingdom currentThreat = null;
+		for (int i = 0; i < this.discoveredKingdoms.Count; i++) {
+			Kingdom targetKingdom = this.discoveredKingdoms [i];
+			KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
+			if(relationship.isAdjacent){
+				int thisEffectiveDefense = this.effectiveDefense;
+				int targetEffectivePower = targetKingdom.effectivePower;
+				int buffedTargetEffectivePower = (int)(targetEffectivePower * 1.15f);
+				if(thisEffectiveDefense < buffedTargetEffectivePower){
+					if(currentThreat != null){
+						if(targetEffectivePower > currentThreat.effectivePower){
+							currentThreat = targetKingdom;
+						}
+					}else{
+						currentThreat = targetKingdom;
+					}
+				}
+			}
+		}
+		return currentThreat;
 	}
 	private void SeeksBalance(){
-		
+		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
+		bool hasBroken = relationship.ChangeMilitaryAlliance (false);
+		if(!hasBroken){
+
+		}
 	}
 	private void SeeksBandwagon(){
 
@@ -2026,18 +2080,78 @@ public class Kingdom{
 
 	}
 	internal void AdjustBasePower(int adjustment) {
-        	_basePower += adjustment;
-    	}
-    	internal void AdjustBaseDefense(int adjustment) {
-        	_baseDefense += adjustment;
-    	}
-    	internal void AdjustHappiness(int amountToAdjust) {
-        	this._happiness += amountToAdjust;
-        	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
-    	}
-    	internal void ChangeHappiness(int newAmount) {
-        	this._happiness = newAmount;
-        	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
-    	}
+        _basePower += adjustment;
+		UpdateMilitaryAlliancePower (adjustment);
+    }
+	internal void AdjustBaseDefense(int adjustment) {
+    	_baseDefense += adjustment;
+		UpdateMutualDefenseTreatyPower (adjustment);
+	}
+	internal void AdjustHappiness(int amountToAdjust) {
+    	this._happiness += amountToAdjust;
+    	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
+	}
+	internal void ChangeHappiness(int newAmount) {
+    	this._happiness = newAmount;
+    	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
+	}
+	internal void AdjustMilitaryAlliancePower(int amount){
+		this._militaryAlliancePower += amount;
+	}
+	private void UpdateMilitaryAlliancePower(int amount){
+		for (int i = 0; i < this._militaryAlliances.Count; i++) {
+			this._militaryAlliances [i].AdjustMilitaryAlliancePower(amount);
+		}
+	}
+	internal void AdjustMutualDefenseTreatyPower(int amount){
+		this._mutualDefenseTreatyPower += amount;
+	}
+	private void UpdateMutualDefenseTreatyPower(int amount){
+		for (int i = 0; i < this._mutualDefenseTreaties.Count; i++) {
+			this._mutualDefenseTreaties [i].AdjustMutualDefenseTreatyPower(amount);
+		}
+	}
+	private void GetMilitaryAlliancePower(){
+		int militaryAlliancePower = 0;
+		for (int i = 0; i < this._militaryAlliances.Count; i++) {
+			militaryAlliancePower += this._militaryAlliances [i]._basePower;
+		}
+		return militaryAlliancePower;
+	}
+	private void GetMutualDefenseTreatyPower(){
+		int mutualDefenseTreatyPower = 0;
+		for (int i = 0; i < this._mutualDefenseTreaties.Count; i++) {
+			mutualDefenseTreatyPower += this._mutualDefenseTreaties [i]._baseDefense;
+		}
+		return mutualDefenseTreatyPower;
+	}
+	internal void AddMilitaryAlliance(Kingdom kingdom){
+		this._militaryAlliances.Add (kingdom);
+	}
+	internal void RemoveMilitaryAlliance(Kingdom kingdom){
+		this._militaryAlliances.Remove(kingdom);
+	}
+	internal void AddMutualDefenseTreaty(Kingdom kingdom){
+		this._mutualDefenseTreaties.Add (kingdom);
+	}
+	internal void RemoveMutualDefenseTreaty(Kingdom kingdom){
+		this._mutualDefenseTreaties.Remove(kingdom);
+	}
+	internal bool IsMilitaryAlliance(Kingdom kingdom){
+		for (int i = 0; i < this._militaryAlliances.Count; i++) {
+			if (this._militaryAlliances[i].id == kingdom.id) {
+				return true;
+			}
+		}
+		return false;
+	}
+	internal bool IsMutualDefenseTreaty(Kingdom kingdom){
+		for (int i = 0; i < this._mutualDefenseTreaties.Count; i++) {
+			if (this._mutualDefenseTreaties[i].id == kingdom.id) {
+				return true;
+			}
+		}
+		return false;
+	}
 	#endregion
 }
