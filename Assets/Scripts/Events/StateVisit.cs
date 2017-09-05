@@ -182,7 +182,7 @@ public class StateVisit : GameEvent {
 				Kingdom selectedKingdom = GetRandomKingdomForAction();
 
                 KingdomRelationship relationship = selectedKingdom.GetRelationshipWithKingdom (inviterKingdom);
-				if (relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+				if (relationship.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
 					KingdomManager.Instance.DiscoverKingdom (selectedKingdom, this.visitor.citizen.city.kingdom);
 //                        selectedKingdom.DiscoverKingdom(this.visitor.citizen.city.kingdom);
 //                        this.visitor.citizen.city.kingdom.DiscoverKingdom(selectedKingdom);
@@ -258,13 +258,13 @@ public class StateVisit : GameEvent {
 		statuses.Add (relationship2.relationshipStatus);
 
 		if(!isIncrease){
-			if(statuses.Contains(RELATIONSHIP_STATUS.ENEMY) || statuses.Contains(RELATIONSHIP_STATUS.RIVAL)){
-				if(!statuses.Contains(RELATIONSHIP_STATUS.FRIEND) && !statuses.Contains(RELATIONSHIP_STATUS.ALLY)){
+			if(statuses.Contains(RELATIONSHIP_STATUS.HATE) || statuses.Contains(RELATIONSHIP_STATUS.SPITE)){
+				if(!statuses.Contains(RELATIONSHIP_STATUS.AFFECTIONATE) && !statuses.Contains(RELATIONSHIP_STATUS.LOVE)){
 					return true;
 				}
 			}
 		}else{
-			if(relationship2.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship2.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+			if(relationship2.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE || relationship2.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 				return true;
 			}
 		}

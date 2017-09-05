@@ -192,11 +192,11 @@ public class DiplomaticCrisis : GameEvent {
 			int value = 1;
 			KingdomRelationship relationship = this.kingdom1.GetRelationshipWithKingdom(this.kingdom2);
 			if(relationship != null){
-				if(relationship.relationshipStatus == RELATIONSHIP_STATUS.WARM){
+				if(relationship.relationshipStatus == RELATIONSHIP_STATUS.LIKE){
 					value += 2;
-				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
+				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
 					value += 3;
-				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 					value += 5;
 				}
 			}
@@ -209,11 +209,11 @@ public class DiplomaticCrisis : GameEvent {
 			int value = 1;
 			KingdomRelationship relationship = this.kingdom2.GetRelationshipWithKingdom(this.kingdom1);
 			if(relationship != null){
-				if(relationship.relationshipStatus == RELATIONSHIP_STATUS.WARM){
+				if(relationship.relationshipStatus == RELATIONSHIP_STATUS.LIKE){
 					value += 2;
-				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
+				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
 					value += 3;
-				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+				}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 					value += 5;
 				}
 			}
@@ -246,15 +246,15 @@ public class DiplomaticCrisis : GameEvent {
 		statuses.Add (relationship1.relationshipStatus);
 		statuses.Add (relationship2.relationshipStatus);
 
-		if(relationship1.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship1.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
+		if(relationship1.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationship1.relationshipStatus == RELATIONSHIP_STATUS.SPITE){
 			dislikedKing = relationship1.targetKingdom.king;
-		}else if(relationship2.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship2.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
+		}else if(relationship2.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationship2.relationshipStatus == RELATIONSHIP_STATUS.SPITE){
 			dislikedKing = relationship2.targetKingdom.king;
 		}
 
 
-		if(statuses.Contains(RELATIONSHIP_STATUS.ENEMY) || statuses.Contains(RELATIONSHIP_STATUS.RIVAL)){
-			if(!statuses.Contains(RELATIONSHIP_STATUS.FRIEND) && !statuses.Contains(RELATIONSHIP_STATUS.ALLY)){
+		if(statuses.Contains(RELATIONSHIP_STATUS.HATE) || statuses.Contains(RELATIONSHIP_STATUS.SPITE)){
+			if(!statuses.Contains(RELATIONSHIP_STATUS.AFFECTIONATE) && !statuses.Contains(RELATIONSHIP_STATUS.LOVE)){
 				return true;
 			}
 		}

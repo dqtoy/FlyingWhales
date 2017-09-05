@@ -57,10 +57,10 @@ public class King : Role {
 					for (int i = 0; i < this.citizen.city.kingdom.discoveredKingdoms.Count; i++) {
 						if(this.citizen.city.kingdom.discoveredKingdoms[i].isAlive()){
 							KingdomRelationship relationship = this.citizen.city.kingdom.GetRelationshipWithKingdom(this.citizen.city.kingdom.discoveredKingdoms[i]);
-							if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.COLD || relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL)){
+							if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.DISLIKE || relationship.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.SPITE)){
 								targetKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
 							}
-							if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY)){
+							if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE)){
 								rumorKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
 							}
 						}
@@ -152,7 +152,7 @@ public class King : Role {
 					if(relationship != null){
 //						targetKing = targetKings [i];
 //						return true;
-						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY || relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
+						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE || relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
 							targetKing = targetKings [i];
 							return true;
 						}

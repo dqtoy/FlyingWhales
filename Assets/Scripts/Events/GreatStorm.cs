@@ -180,8 +180,8 @@ public class GreatStorm : GameEvent {
 					KingdomRelationship relationshipToReceiver = currentKingdom.GetRelationshipWithKingdom(this._affectedKingdom);
 					KingdomRelationship relationshipToSender = currentKingdom.GetRelationshipWithKingdom(senderKingdom);
 					if(relationshipToReceiver != null && relationshipToSender != null){
-						if((relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.RIVAL)
-							&& (relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.FRIEND && relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.ALLY)){
+						if((relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.SPITE)
+							&& (relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.AFFECTIONATE && relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.LOVE)){
 							otherKingdoms.Add(currentKingdom);
 						}
 					}
@@ -250,7 +250,7 @@ public class GreatStorm : GameEvent {
 						KingdomRelationship relationship = KingdomManager.Instance.allKingdoms[i].GetRelationshipWithKingdom(this._affectedKingdom);
 						if(relationship != null){
 							int percentToGive = 0;
-							if(relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
+							if(relationship.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.SPITE){
 								//TODO: Add log - wage war
 								War war = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, KingdomManager.Instance.allKingdoms[i].king, KingdomManager.Instance.allKingdoms[i], this._affectedKingdom, this.warTrigger);
 								war.CreateInvasionPlan (KingdomManager.Instance.allKingdoms[i], this);

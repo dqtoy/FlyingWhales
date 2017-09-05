@@ -350,8 +350,8 @@ public class CitizenAvatar : PooledObject {
 					if (kingdomOfGeneral.id != kingdomOfTrader.id) {
 						KingdomRelationship relOfGeneralWithTrader = kingdomOfGeneral.GetRelationshipWithKingdom(kingdomOfTrader);
 						KingdomRelationship relOfTraderWithGeneral = kingdomOfTrader.GetRelationshipWithKingdom(kingdomOfGeneral);
-						if (relOfGeneralWithTrader.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relOfGeneralWithTrader.relationshipStatus == RELATIONSHIP_STATUS.RIVAL ||
-							relOfTraderWithGeneral.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relOfTraderWithGeneral.relationshipStatus == RELATIONSHIP_STATUS.RIVAL) {
+						if (relOfGeneralWithTrader.relationshipStatus == RELATIONSHIP_STATUS.HATE || relOfGeneralWithTrader.relationshipStatus == RELATIONSHIP_STATUS.SPITE ||
+							relOfTraderWithGeneral.relationshipStatus == RELATIONSHIP_STATUS.HATE || relOfTraderWithGeneral.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
 							CombatManager.Instance.HasCollidedWithHostile(this.citizenRole, otherAgent.assignedRole);
 						}
 					}

@@ -98,33 +98,33 @@ public class Rumor : GameEvent {
 		int chance = UnityEngine.Random.Range(0,100);
 		int value = 30;
 
-		if(relationshipSourceToRumor != null && relationshipSourceToRumor.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+		if(relationshipSourceToRumor != null && relationshipSourceToRumor.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 			value = 40;
 		}
 
 		if(rumorType == RUMOR_TYPE.NEGATIVE){
-			if(relationshipRumorToTarget.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+			if(relationshipRumorToTarget.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 				value -= 15;
-			}else if(relationshipRumorToTarget.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
+			}else if(relationshipRumorToTarget.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
 				value -= 10;
-			}else if(relationshipRumorToTarget.relationshipStatus == RELATIONSHIP_STATUS.WARM){
+			}else if(relationshipRumorToTarget.relationshipStatus == RELATIONSHIP_STATUS.LIKE){
 				value -= 5;
 			}
 		}
 
 
 		if(chance < value){
-			if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+			if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 				relationshipRumorToTarget.AddEventModifier(5, this.name + " event", this);
-			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.FRIEND){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
 				relationshipRumorToTarget.AddEventModifier(4, this.name + " event", this);
-			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.WARM){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.LIKE){
 				relationshipRumorToTarget.AddEventModifier(3, this.name + " event", this);
-			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.COLD){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.DISLIKE){
 				relationshipRumorToTarget.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
-			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.ENEMY){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.HATE){
 				relationshipRumorToTarget.AddEventModifier(-4, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
-			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
+			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.SPITE){
 				relationshipRumorToTarget.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}
 			if(rumorType == RUMOR_TYPE.NEGATIVE){
@@ -166,9 +166,9 @@ public class Rumor : GameEvent {
 
 	private RUMOR_TYPE GetRumorType(KingdomRelationship relationship){
 		if(relationship != null){
-			if(relationship.relationshipStatus == RELATIONSHIP_STATUS.COLD || relationship.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationship.relationshipStatus == RELATIONSHIP_STATUS.RIVAL){
+			if(relationship.relationshipStatus == RELATIONSHIP_STATUS.DISLIKE || relationship.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.SPITE){
 				return RUMOR_TYPE.NEGATIVE;
-			}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.WARM || relationship.relationshipStatus == RELATIONSHIP_STATUS.FRIEND || relationship.relationshipStatus == RELATIONSHIP_STATUS.ALLY){
+			}else if(relationship.relationshipStatus == RELATIONSHIP_STATUS.LIKE || relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
 				return RUMOR_TYPE.POSITIVE;
 			}
 		}

@@ -82,14 +82,15 @@ public class GridMap : MonoBehaviour {
         Vector3 cube = OddRToCube(new Vector2(center.xCoordinate, center.yCoordinate));
         for (int dx = -range; dx <= range; dx++) {
             for (int dy = Mathf.Max(-range, -dx -range); dy <= Mathf.Min(range, -dx + range); dy++) {
-                tilesInRange.Add(map[(int)cube.x + dx, (int)cube.y + dy]);
+				Debug.Log (((int)cube.x + dx) + " , " + ((int)cube.y + dy));
+//                tilesInRange.Add(map[(int)cube.x + dx, (int)cube.y + dy]);
             }
         }
         return tilesInRange.Distinct().ToList();
     }
 
     private Vector2 CubeToOddR(Vector3 cube) {
-        int col = (int)(cube.x + (cube.z - ((int)cube.z&1)) / 2);
+        int col = (int)(cube.x + (cube.z - ((int)cube.z & 1)) / 2);
         int row = (int)cube.z;
         return new Vector2(col, row);
     }

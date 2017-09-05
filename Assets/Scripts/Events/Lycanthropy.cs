@@ -192,7 +192,7 @@ public class Lycanthropy : GameEvent {
 
     private void KingOpportunisticApproach() {
         List<Kingdom> possibleTargetKingdoms = _lycanthrope.captor.king.city.kingdom.GetKingdomsByRelationship(new RELATIONSHIP_STATUS[] {
-            RELATIONSHIP_STATUS.ENEMY, RELATIONSHIP_STATUS.RIVAL
+            RELATIONSHIP_STATUS.HATE, RELATIONSHIP_STATUS.SPITE
         }).Where(x => _lycanthrope.captor.king.city.kingdom.discoveredKingdoms.Contains(x)).ToList();
 
         Kingdom targetKingdom = null;

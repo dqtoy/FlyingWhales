@@ -69,8 +69,8 @@ public class SendReliefGoods : GameEvent {
 					KingdomRelationship relationshipToReceiver = currentKingdom.GetRelationshipWithKingdom(this.receiverKingdom);
 					KingdomRelationship relationshipToSender = currentKingdom.GetRelationshipWithKingdom(this.senderKingdom);
 					if(relationshipToReceiver != null && relationshipToSender != null){
-						if((relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.ENEMY || relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.RIVAL)
-							&& (relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.FRIEND && relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.ALLY)){
+						if((relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationshipToReceiver.relationshipStatus == RELATIONSHIP_STATUS.SPITE)
+							&& (relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.AFFECTIONATE && relationshipToSender.relationshipStatus != RELATIONSHIP_STATUS.LOVE)){
 							otherKingdoms.Add(currentKingdom);
 						}
 					}
