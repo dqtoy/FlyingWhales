@@ -549,18 +549,18 @@ public class City{
                     otherCity.SetCityAsAdjacent(this);
                 }
             }
-            if(currTileToCheck.isOuterTileOfCities.Count > 1) {
-                List<City> otherCities = new List<City>(currTileToCheck.isOuterTileOfCities);
-                otherCities.Remove(this);
-                for (int j = 0; j < _adjacentCities.Count; j++) { //Eliminate already adjacent cities from equation
-                    otherCities.Remove(_adjacentCities[j]);
-                }
-                for (int j = 0; j < otherCities.Count; j++) {
-                    City otherCity = otherCities[j];
-                    SetCityAsAdjacent(otherCity);
-                    otherCity.SetCityAsAdjacent(this);
-                }
-            }
+            //if(currTileToCheck.isOuterTileOfCities.Count > 1) {
+            //    List<City> otherCities = new List<City>(currTileToCheck.isOuterTileOfCities);
+            //    otherCities.Remove(this);
+            //    for (int j = 0; j < _adjacentCities.Count; j++) { //Eliminate already adjacent cities from equation
+            //        otherCities.Remove(_adjacentCities[j]);
+            //    }
+            //    for (int j = 0; j < otherCities.Count; j++) {
+            //        City otherCity = otherCities[j];
+            //        SetCityAsAdjacent(otherCity);
+            //        otherCity.SetCityAsAdjacent(this);
+            //    }
+            //}
         }
 
         //Set Kingdom Relationships adjacency
