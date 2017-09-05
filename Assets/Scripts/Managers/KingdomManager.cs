@@ -66,30 +66,50 @@ public class KingdomManager : MonoBehaviour {
             }
 
             List<HexTile> citiesForKingdom = new List<HexTile>();
-            for (int j = 0; j < initialKingdom.numOfCities; j++) {
-                if (tilesToChooseFrom.Count <= 0) {
-                    break;
+            int chosenIndex = Random.Range(0, tilesToChooseFrom.Count);
+            HexTile chosenHexTile = tilesToChooseFrom[chosenIndex];
+            citiesForKingdom.Add(chosenHexTile);
+
+            if (citiesForKingdom.Count > 0) {
+                Kingdom kingdom = GenerateNewKingdom(initialKingdom.race, citiesForKingdom, true);
+                if (i == 0) {
+                    UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
                 }
-                int chosenIndex = Random.Range(0, tilesToChooseFrom.Count);
-                HexTile chosenHexTile = tilesToChooseFrom[chosenIndex];
-                List<HexTile> nearHabitableTiles = chosenHexTile.GetTilesInRange(minimumInitialKingdomDistance).Where(x => x.isHabitable).ToList();
-                citiesForKingdom.Add(chosenHexTile);
-                tilesToChooseFrom.Remove(chosenHexTile);
-                for (int k = 0; k < nearHabitableTiles.Count; k++) {
-                    HexTile nearTile = nearHabitableTiles[k];
-                    if (stoneElligibleTiles.Contains(nearTile)) {
-                        stoneElligibleTiles.Remove(nearTile);
-                    } else if (woodElligibleTiles.Contains(nearTile)) {
-                        woodElligibleTiles.Remove(nearTile);
+                if (initialKingdom.numOfCities > 1) {
+                    for (int j = 1; j < initialKingdom.numOfCities; j++) {
+                        HexTile nextCityTile = CityGenerator.Instance.GetNearestHabitableTile(kingdom.capitalCity);
+                        if(nextCityTile == null) {
+                            break;
+                        }
+                        City newCity = kingdom.CreateNewCityOnTileForKingdom(nextCityTile);
+                        newCity.CreateInitialFamilies(false);
+                        newCity.hexTile.CreateCityNamePlate(newCity);
                     }
                 }
             }
-            if(citiesForKingdom.Count > 0) {
-                Kingdom kingdom = GenerateNewKingdom(initialKingdom.race, citiesForKingdom, true);
-				if(i == 0){
-					UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
-				}
-            }
+
+            
+           
+            
+            //for (int j = 0; j < initialKingdom.numOfCities; j++) {
+            //    if (tilesToChooseFrom.Count <= 0) {
+            //        break;
+            //    }
+            //    int chosenIndex = Random.Range(0, tilesToChooseFrom.Count);
+            //    HexTile chosenHexTile = tilesToChooseFrom[chosenIndex];
+            //    List<HexTile> nearHabitableTiles = chosenHexTile.GetTilesInRange(minimumInitialKingdomDistance).Where(x => x.isHabitable).ToList();
+            //    citiesForKingdom.Add(chosenHexTile);
+            //    tilesToChooseFrom.Remove(chosenHexTile);
+            //    for (int k = 0; k < nearHabitableTiles.Count; k++) {
+            //        HexTile nearTile = nearHabitableTiles[k];
+            //        if (stoneElligibleTiles.Contains(nearTile)) {
+            //            stoneElligibleTiles.Remove(nearTile);
+            //        } else if (woodElligibleTiles.Contains(nearTile)) {
+            //            woodElligibleTiles.Remove(nearTile);
+            //        }
+            //    }
+            //}
+            
         }
 	}
 

@@ -2026,18 +2026,18 @@ public class Kingdom{
 
 	}
 	internal void AdjustBasePower(int adjustment) {
-        	_basePower += adjustment;
-    	}
-    	internal void AdjustBaseDefense(int adjustment) {
-        	_baseDefense += adjustment;
-    	}
-    	internal void AdjustHappiness(int amountToAdjust) {
-        	this._happiness += amountToAdjust;
-        	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
-    	}
-    	internal void ChangeHappiness(int newAmount) {
-        	this._happiness = newAmount;
-        	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
-    	}
+        _basePower += adjustment;
+    }
+    internal void AdjustBaseDefense(int adjustment) {
+        _baseDefense += adjustment;
+    }
+    internal void AdjustHappiness(int amountToAdjust) {
+        this._happiness += amountToAdjust;
+        this._happiness = Mathf.Clamp(this._happiness, -100, 100);
+    }
+    internal void ChangeHappiness(int newAmount) {
+        this._happiness = newAmount;
+        this._happiness = Mathf.Clamp(this._happiness, -100, 100);
+    }
 	#endregion
 }
