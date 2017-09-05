@@ -521,22 +521,61 @@ public class KingdomRelationship {
         _relationshipHistory.Add(relHistory);
     }
     #endregion
-
-	internal void ChangeMilitaryAlliance(bool state){
-		this._isMilitaryAlliance = state;
-		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		kr.ChangeMilitaryAlliance (state);
+	internal bool ChangeMilitaryAlliance(bool state){
+		bool hasSourceChanged = AdjustMilitaryAlliance (state);
+		KingdomRelationship targetRelationship = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		bool hasTargetChanged = targetRelationship.AdjustMilitaryAlliance (state);
+		if(hasSourceChanged == hasTargetChanged){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	private bool AdjustMilitaryAlliance(bool state){
+		if(this._isMilitaryAlliance != state){
+			this._isMilitaryAlliance = state;
+			if(state){
+				this._sourceKingdom.AddMilitaryAlliance (this._targetKingdom);
+			}else{
+				this._sourceKingdom.RemoveMilitaryAlliance (this._targetKingdom);
+			}
+			return true;
+		}else{
+			return false;
+		}
 	}
 
-	internal void ChangeMutualDefenseTreaty(bool state){
-		this._isMutualDefenseTreaty = state;
-		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		kr.ChangeMutualDefenseTreaty (state);
+	internal bool ChangeMutualDefenseTreaty(bool state){
+		bool hasSourceChanged = AdjustMutualDefenseTreaty (state);
+		KingdomRelationship targetRelationship = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		bool hasTargetChanged = targetRelationship.AdjustMutualDefenseTreaty (state);
+		if(hasSourceChanged == hasTargetChanged){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	private bool AdjustMutualDefenseTreaty(bool state){
+		if (this._isMutualDefenseTreaty != state) {
+			this._isMutualDefenseTreaty = state;
+			if (state) {
+				this._sourceKingdom.AddMutualDefenseTreaty (this._targetKingdom);
+			} else {
+				this._sourceKingdom.RemoveMutualDefenseTreaty (this._targetKingdom);
+			}
+			return true;
+		}else{
+			return false;
+		}
 	}
 
-	internal void ChangeAdjancency(bool state){
+	internal void ChangeAdjacency(bool state){
+		AdjustAdjacency (state);
+		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		kr.AdjustAdjacency (state);
+	}
+	private void AdjustAdjacency(bool state){
 		this._isAdjacent = state;
-		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		kr.ChangeAdjancency (state);
+
 	}
 }
