@@ -360,6 +360,8 @@ public class Citizen {
 			this.assignedRole = new Intercepter(this);
 		}else if (role == ROLE.RANGER) {
 			this.assignedRole = new Ranger(this);
+		}else if (role == ROLE.TREATYOFFICER) {
+			this.assignedRole = new TreatyOfficer(this);
 		}
     }
 
