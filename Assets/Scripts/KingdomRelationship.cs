@@ -20,11 +20,15 @@ public class KingdomRelationship {
     private bool _isSharingBorder;
 
     private bool _isAtWar;
+	private bool _isAdjacent;
     private War _war;
     private InvasionPlan _invasionPlan;
     private RequestPeace _requestPeace;
     private KingdomWar _kingdomWarData;
     private GameDate _requestPeaceCooldown;
+
+	private bool _isMilitaryAlliance;
+	private bool _isMutualDefenseTreaty;
 
     #region getters/setters
     public Kingdom sourceKingdom {
@@ -72,6 +76,15 @@ public class KingdomRelationship {
     public GameDate requestPeaceCooldown {
         get { return _requestPeaceCooldown; }
     }
+	public bool isMilitaryAlliance {
+		get { return this._isMilitaryAlliance; }
+	}
+	public bool isMutualDefenseTreaty {
+		get { return this._isMutualDefenseTreaty; }
+	}
+	public bool isAdjacent {
+		get { return this._isAdjacent; }
+	}
     #endregion
 
     /* <summary> Create a new relationship between 2 kingdoms </summary>
@@ -91,6 +104,9 @@ public class KingdomRelationship {
         _isInitial = false;
         _kingdomWarData = new KingdomWar(_targetKingdom);
         _requestPeaceCooldown = new GameDate(0,0,0);
+		this._isMilitaryAlliance = false;
+		this._isMutualDefenseTreaty = false;
+		this._isAdjacent = false;
         //UpdateLikeness(null);
     }
 
@@ -506,4 +522,21 @@ public class KingdomRelationship {
     }
     #endregion
 
+	internal void ChangeMilitaryAlliance(bool state){
+		this._isMilitaryAlliance = state;
+		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		kr.ChangeMilitaryAlliance (state);
+	}
+
+	internal void ChangeMutualDefenseTreaty(bool state){
+		this._isMutualDefenseTreaty = state;
+		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		kr.ChangeMutualDefenseTreaty (state);
+	}
+
+	internal void ChangeAdjancency(bool state){
+		this._isAdjacent = state;
+		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		kr.ChangeAdjancency (state);
+	}
 }
