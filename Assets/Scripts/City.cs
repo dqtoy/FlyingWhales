@@ -857,6 +857,8 @@ public class City{
 	}
 
 	public void KillCity(){
+        AdjustPower(-power);
+        AdjustDefense(-defense);
         RemoveListeners();
         /*
          * Remove irrelevant scripts on hextile
