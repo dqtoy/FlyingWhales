@@ -369,6 +369,7 @@ public class Kingdom{
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
 
 //		ScheduleEvents ();
+		ScheduleActionDay();
 
 		this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
@@ -2041,7 +2042,7 @@ public class Kingdom{
 				}
 			}else{
 				//no main threat
-				if(!HasWar()){
+				if(!HasWar() && this.discoveredKingdoms.Count > 0){
 					Kingdom currentPossibleTarget = null;
 					KingdomRelationship currentPossibleTargetRelationship = null;
 					int thisEffectivePower = this.effectivePower;
