@@ -209,10 +209,10 @@ public class PathGenerator : MonoBehaviour {
 	public int GetDistanceBetweenTwoTiles(HexTile startingTile, HexTile destinationTile){
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
-		List<HexTile> path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL, null).ToList();
+		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL, null);
 
 		if (path != null) {			
-			return (path.Count - 1);
+			return (path.ToList().Count - 1);
 		}
 		return 99999;
 	}

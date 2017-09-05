@@ -15,7 +15,7 @@ public class City{
     [NonSerialized] public HexTile hexTile;
 	[NonSerialized] private Kingdom _kingdom;
     [NonSerialized] public Citizen governor;
-    [NonSerialized] public List<City> adjacentCities;
+    [NonSerialized] private List<City> _adjacentCities;
     [NonSerialized] public List<HexTile> _ownedTiles;
     [NonSerialized] public List<General> incomingGenerals;
     [NonSerialized] public List<Citizen> citizens;
@@ -74,6 +74,9 @@ public class City{
 	public List<HexTile> plaguedSettlements{
 		get{ return this.structures.Where (x => x.isPlagued).ToList();} //Get plagued settlements
 	}
+    internal List<City> adjacentCities {
+        get { return _adjacentCities; }
+    }
     public int powerPoints {
         get { return _powerPoints; }
     }
@@ -118,7 +121,7 @@ public class City{
 		this.governor = null;
         this._power = 0;
         this._defense = 0;
-		this.adjacentCities = new List<City>();
+		this._adjacentCities = new List<City>();
 		this._ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<General> ();
 		this.citizens = new List<Citizen>();
@@ -508,9 +511,102 @@ public class City{
             currBrandNewTile.Borderize(this);
             kingdom.SetFogOfWarStateForTile(currBrandNewTile, FOG_OF_WAR_STATE.VISIBLE);
         }
+        CheckForAdjacency();
     }
 
-	internal void HighlightAllOwnedTiles(float alpha){
+    #region Adjacency
+    internal void SetCityAsAdjacent(City city) {
+        if (!_adjacentCities.Contains(city)) {
+            _adjacentCities.Add(city);
+        }
+    }
+    internal void RemoveCityAsAdjacent(City city) {
+        _adjacentCities.Remove(city);
+    }
+    private void CheckForAdjacency() {
+        List<HexTile> tilesToCheck = new List<HexTile>();
+        tilesToCheck.AddRange(_ownedTiles);
+        tilesToCheck.AddRange(borderTiles);
+        tilesToCheck.AddRange(outerTiles);
+        ResetAdjacentCities();
+
+        for (int i = 0; i < tilesToCheck.Count; i++) {
+            HexTile currTileToCheck = tilesToCheck[i];
+            if(currTileToCheck.isOccupied && currTileToCheck.ownedByCity != null && currTileToCheck.ownedByCity != this) { //Tile is owned by another city and is not a lair
+                City otherCity = currTileToCheck.ownedByCity;
+                SetCityAsAdjacent(otherCity);
+                otherCity.SetCityAsAdjacent(this);
+            }
+            if(currTileToCheck.isBorder && currTileToCheck.isBorderOfCities.Count > 1) { //Tile is a border of another city
+                List<City> otherCities = new List<City>(currTileToCheck.isBorderOfCities);
+                otherCities.Remove(this);
+                for (int j = 0; j < _adjacentCities.Count; j++) { //Eliminate already adjacent cities from equation
+                    otherCities.Remove(_adjacentCities[j]);
+                }
+                for (int j = 0; j < otherCities.Count; j++) {
+                    City otherCity = otherCities[j];
+                    SetCityAsAdjacent(otherCity);
+                    otherCity.SetCityAsAdjacent(this);
+                }
+            }
+            //if(currTileToCheck.isOuterTileOfCities.Count > 1) {
+            //    List<City> otherCities = new List<City>(currTileToCheck.isOuterTileOfCities);
+            //    otherCities.Remove(this);
+            //    for (int j = 0; j < _adjacentCities.Count; j++) { //Eliminate already adjacent cities from equation
+            //        otherCities.Remove(_adjacentCities[j]);
+            //    }
+            //    for (int j = 0; j < otherCities.Count; j++) {
+            //        City otherCity = otherCities[j];
+            //        SetCityAsAdjacent(otherCity);
+            //        otherCity.SetCityAsAdjacent(this);
+            //    }
+            //}
+        }
+
+        //Set Kingdom Relationships adjacency
+        HashSet<Kingdom> checkedKingdoms = new HashSet<Kingdom>();
+        for (int i = 0; i < _adjacentCities.Count; i++) {
+            if(_kingdom != _adjacentCities[i].kingdom) { //adjacent city's kingdom is not this city's kingdom
+                Kingdom otherKingdom = _adjacentCities[i].kingdom;
+                if (!checkedKingdoms.Contains(otherKingdom)) {
+                    checkedKingdoms.Add(otherKingdom);
+                    KingdomRelationship relationshipWithOtherKingdom = _kingdom.GetRelationshipWithKingdom(otherKingdom);
+                    relationshipWithOtherKingdom.ChangeAdjacency(true);
+                }
+            }
+        }
+    }
+    /*
+     * <summary>
+     * This will reset the list of adjacent cities that
+     * this city has, as well as remove itself from the previously
+     * adjacent cities' list.
+     * </summary>
+     * 
+     * */
+    private void ResetAdjacentCities() {
+        HashSet<Kingdom> checkedKingdoms = new HashSet<Kingdom>();
+        List<City> citiesToRemove = new List<City>(_adjacentCities);
+        for (int i = 0; i < citiesToRemove.Count; i++) {
+            City currOtherCity = citiesToRemove[i];
+            RemoveCityAsAdjacent(currOtherCity);
+            currOtherCity.RemoveCityAsAdjacent(this);
+
+            //Reset Kingdom Relationships adjacency
+            Kingdom otherKingdom = currOtherCity.kingdom;
+            if(_kingdom != otherKingdom) {//adjacent city's kingdom is not this city's kingdom
+                if (!checkedKingdoms.Contains(otherKingdom)) {
+                    checkedKingdoms.Add(otherKingdom);
+                    KingdomRelationship relationshipWithOtherKingdom = _kingdom.GetRelationshipWithKingdom(otherKingdom);
+                    relationshipWithOtherKingdom.ChangeAdjacency(false);
+                }
+            }
+        }
+    }
+    #endregion
+
+
+    internal void HighlightAllOwnedTiles(float alpha){
 		Color color = this.kingdom.kingdomColor;
 		color.a = alpha;
 		for (int i = 0; i < this.ownedTiles.Count; i++) {
@@ -542,6 +638,7 @@ public class City{
 		citizenToOccupyCity.role = ROLE.UNTRAINED;
 		citizenToOccupyCity.assignedRole = null;
 		citizenToOccupyCity.AssignRole(ROLE.GOVERNOR);
+        UpdateBorderTiles();
 		this.UpdateDailyProduction();
 //		this.kingdom.AddInternationalWarCity (this);
 		if (UIManager.Instance.kingdomInfoGO.activeSelf) {
@@ -859,6 +956,7 @@ public class City{
 	public void KillCity(){
         AdjustPower(-power);
         AdjustDefense(-defense);
+        ResetAdjacentCities();
         RemoveListeners();
         /*
          * Remove irrelevant scripts on hextile
@@ -962,6 +1060,8 @@ public class City{
             this.RemoveTileFromCity(this.structures[UnityEngine.Random.Range(0, this.structures.Count)]);
         }
 
+        ResetAdjacentCities();
+
         List<City> remainingCitiesOfConqueredKingdom = new List<City>(_kingdom.cities);
         for (int i = 0; i < remainingCitiesOfConqueredKingdom.Count; i++) {
             if(remainingCitiesOfConqueredKingdom[i].id == this.id) {
@@ -1035,6 +1135,7 @@ public class City{
         newCity.AddTilesToCity(structureTilesToTransfer);
         newCity.CreateInitialFamilies(false);
         newCity.hexTile.CreateCityNamePlate(newCity);
+        newCity.UpdateBorderTiles();
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
         newCity.WarDefeatedHP();
@@ -1380,11 +1481,18 @@ public class City{
             //Each City contributes a base +4 Happiness
             int happinessIncrease = 4 + (_happinessPoints * 2);
             int happinessDecrease = (structures.Count * 3);
-            AdjustPower(powerIncrease);
-            AdjustDefense(defenseIncrease);
-            //TODO: Add checking for militarize, put happiness increase to power but keep decrease in happiness
-            _kingdom.AdjustHappiness(happinessIncrease - happinessDecrease);
-
+            
+            if (_kingdom.isMilitarize) {
+                //During militarize, all Points spent on Happiness are instead spent on Power, but keep decrease in happiness.
+                AdjustPower(powerIncrease + (happinessIncrease - happinessDecrease));
+                AdjustDefense(defenseIncrease);
+                _kingdom.AdjustHappiness(-happinessDecrease);
+                _kingdom.Militarize(false);
+            } else {
+                AdjustPower(powerIncrease);
+                AdjustDefense(defenseIncrease);
+                _kingdom.AdjustHappiness(happinessIncrease - happinessDecrease);
+            }
             GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
             increaseDueDate.AddMonths(1);
             SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());

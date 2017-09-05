@@ -290,7 +290,7 @@ public class CityGenerator : MonoBehaviour {
         ctmOfCity.Initialize(hexTile.city);
         Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
 
-        hexTile.city.UpdateBorderTiles();
+        //hexTile.city.UpdateBorderTiles();
         return hexTile.city;
 	}
 
