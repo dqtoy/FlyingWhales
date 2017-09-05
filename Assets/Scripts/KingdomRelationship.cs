@@ -29,6 +29,7 @@ public class KingdomRelationship {
 
 	private bool _isMilitaryAlliance;
 	private bool _isMutualDefenseTreaty;
+	private Dictionary<EVENT_TYPES, bool> _eventBuffs;
 
     #region getters/setters
     public Kingdom sourceKingdom {
@@ -85,6 +86,9 @@ public class KingdomRelationship {
 	public bool isAdjacent {
 		get { return this._isAdjacent; }
 	}
+	public Dictionary<EVENT_TYPES, bool> eventBuffs {
+		get { return this._eventBuffs; }
+	}
     #endregion
 
     /* <summary> Create a new relationship between 2 kingdoms </summary>
@@ -107,6 +111,11 @@ public class KingdomRelationship {
 		this._isMilitaryAlliance = false;
 		this._isMutualDefenseTreaty = false;
 		this._isAdjacent = false;
+
+		this._eventBuffs = new Dictionary<EVENT_TYPES, bool>(){
+			{EVENT_TYPES.TRIBUTE, false},
+			{EVENT_TYPES.INSTIGATION, false},
+		};
         //UpdateLikeness(null);
     }
 
@@ -365,6 +374,7 @@ public class KingdomRelationship {
      * */
     internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons = ASSASSINATION_TRIGGER_REASONS.NONE, bool isDiscovery = false) {
         RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
+		bool hasAddedModifier = false;
 
         GameDate dateTimeToUse = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
         if (gameEventTrigger.eventType == EVENT_TYPES.KINGDOM_WAR) {
@@ -373,9 +383,29 @@ public class KingdomRelationship {
             dateTimeToUse.AddMonths(3); //Relationship modifiers from all other events will take 3 months to expire
         }
 
-        ExpirableModifier expMod = new ExpirableModifier(gameEventTrigger, summary, dateTimeToUse, modification);
-        this._eventModifiers.Add(expMod);
-        SchedulingManager.Instance.AddEntry(expMod.dueDate.month, expMod.dueDate.day, expMod.dueDate.year, () => RemoveEventModifier(expMod));
+		if(this.eventBuffs.ContainsKey(gameEventTrigger.eventType)){
+			if(this.eventBuffs[gameEventTrigger.eventType]){
+				for (int i = 0; i < this._eventModifiers.Count; i++) {
+					ExpirableModifier expMod = this._eventModifiers [i];
+					if(expMod.modifierGameEvent.eventType == gameEventTrigger.eventType){
+						SchedulingManager.Instance.RemoveSpecificEntry(expMod.dueDate.month, expMod.dueDate.day, expMod.dueDate.year, () => RemoveEventModifier(expMod));
+						expMod.SetDueDate (dateTimeToUse);
+						expMod.SetModifier (expMod.modifier + modification);
+						SchedulingManager.Instance.AddEntry(expMod.dueDate.month, expMod.dueDate.day, expMod.dueDate.year, () => RemoveEventModifier(expMod));
+						hasAddedModifier = true;
+						break;
+					}
+				}
+			}else{
+				this.eventBuffs[gameEventTrigger.eventType] = true;
+			}
+		}
+		if(!hasAddedModifier){
+			ExpirableModifier expMod = new ExpirableModifier(gameEventTrigger, summary, dateTimeToUse, modification);
+			this._eventModifiers.Add(expMod);
+			SchedulingManager.Instance.AddEntry(expMod.dueDate.month, expMod.dueDate.day, expMod.dueDate.year, () => RemoveEventModifier(expMod));
+		}
+
 
         this._eventLikenessModifier += modification;
         if (modification < 0) {
@@ -408,6 +438,9 @@ public class KingdomRelationship {
 				_eventLikenessModifier -= expMod.modifier;
 			}
 			_eventModifiers.Remove(expMod);
+			if(this._eventBuffs.ContainsKey(expMod.modifierGameEvent.eventType)){
+				this._eventBuffs [expMod.modifierGameEvent.eventType] = false;
+			}
 			UpdateKingRelationshipStatus();
 		}
         

@@ -334,6 +334,8 @@ public class Kingdom{
 		this._militaryAlliances = new List<Kingdom> ();
 		this._mutualDefenseTreaties = new List<Kingdom> ();
 		this._adjacentKingdoms = new List<Kingdom> ();
+		this._currentDefenseTreatyRejectionDate = new GameDate (0, 0, 0);
+		this._currentMilitaryAllianceRejectionDate = new GameDate (0, 0, 0);
 
         AdjustPrestige(200);
         SetGrowthState(true);
@@ -2070,11 +2072,7 @@ public class Kingdom{
 				}
 			}
 
-			GameDate gameDate;
-			gameDate.month = GameManager.Instance.month;
-			gameDate.day = GameManager.Instance.days;
-			gameDate.year = GameManager.Instance.year;
-
+			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 			gameDate.AddMonths (1);
 			SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => ActionDay ());
 

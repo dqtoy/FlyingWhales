@@ -7,29 +7,27 @@ public class SchedulingManager : MonoBehaviour {
 	public static SchedulingManager Instance;
 
 	private Dictionary<GameDate, List<Action>> schedules = new Dictionary<GameDate, List<Action>> ();
+	private GameDate checkGameDate;
 
 	void Awake(){
 		Instance = this;
 	}
 	void Start(){
+		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		Messenger.AddListener ("OnDayEnd", CheckSchedule);
 	}
 	private void CheckSchedule(){
-		GameDate gameDate;
-		gameDate.month = GameManager.Instance.month;
-		gameDate.day = GameManager.Instance.days;
-		gameDate.year = GameManager.Instance.year;
-		if(this.schedules.ContainsKey(gameDate)){
-			DoAsScheduled (this.schedules [gameDate]);
-			RemoveEntry (gameDate);
+		this.checkGameDate.month = GameManager.Instance.month;
+		this.checkGameDate.day = GameManager.Instance.days;
+		this.checkGameDate.year = GameManager.Instance.year;
+		if(this.schedules.ContainsKey(this.checkGameDate)){
+			DoAsScheduled (this.schedules [this.checkGameDate]);
+			RemoveEntry (this.checkGameDate);
 		}
 	}
 
 	internal void AddEntry(int month, int day, int year, Action act){
-		GameDate gameDate;
-		gameDate.month = month;
-		gameDate.day = day;
-		gameDate.year = year;
+		GameDate gameDate = new GameDate (month, day, year);
 		if(this.schedules.ContainsKey(gameDate)){
 			this.schedules [gameDate].Add (act);
 		}else{
@@ -42,10 +40,7 @@ public class SchedulingManager : MonoBehaviour {
 		this.schedules.Remove (gameDate);
 	}
 	internal void RemoveSpecificEntry(int month, int day, int year, Action act){
-		GameDate gameDate;
-		gameDate.month = month;
-		gameDate.day = day;
-		gameDate.year = year;
+		GameDate gameDate = new GameDate (month, day, year);
 		if(this.schedules.ContainsKey(gameDate)){
 			List<Action> acts = this.schedules[gameDate];
 			for (int i = 0; i < acts.Count; i++) {

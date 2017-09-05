@@ -12,6 +12,9 @@ public class ExpirableModifier {
 	private string _summary;
 
     #region getters/setters
+	public GameEvent modifierGameEvent {
+		get { return this._modifierGameEvent; }
+	}
     public string modifierReason {
         get { return this._modifierReason; }
     }
