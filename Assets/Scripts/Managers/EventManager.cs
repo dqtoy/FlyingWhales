@@ -103,7 +103,7 @@ public class EventManager : MonoBehaviour {
 		{EVENT_TYPES.SEND_RELIEF_GOODS, -1},
 		{EVENT_TYPES.HUNT_LAIR, -1},
 		{EVENT_TYPES.ANCIENT_RUIN, -1},
-
+        {EVENT_TYPES.MILITARY_ALLIANCE_OFFER, -1},
     };
 
 	void Awake(){

@@ -490,9 +490,22 @@ public class EventCreator: MonoBehaviour {
 			HuntLair huntLair = new HuntLair(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
 				sourceKingdom.king, ranger, lair);
 			ranger.Initialize (huntLair);
+            return huntLair;
 		}
 		return null;
 	}
+
+    internal MilitaryAllianceOffer CreateMilitaryAllianceOffer(Kingdom sourceKingdom, Kingdom targetKingdom) {
+        Citizen agent = sourceKingdom.capitalCity.CreateAgent(ROLE.MILITARY_ALLIANCE_OFFICER, 
+            EVENT_TYPES.MILITARY_ALLIANCE_OFFER, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.MILITARY_ALLIANCE_OFFER]);
+        if(agent != null) {
+            MilitaryAllianceOffer mao = new MilitaryAllianceOffer(GameManager.Instance.days, GameManager.Instance.month, 
+                GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom);
+            agent.assignedRole.Initialize(mao);
+            return mao;
+        }
+        return null;
+    }
 	internal MutualDefenseTreaty CreateMutualDefenseTreatyEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
 		MutualDefenseTreaty mutualDefenseTreaty = new MutualDefenseTreaty(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);
 		return mutualDefenseTreaty;
