@@ -92,8 +92,8 @@ public class Kingdom{
 	private List<Kingdom> _militaryAlliances;
 	private List<Kingdom> _mutualDefenseTreaties;
 	private List<Kingdom> _adjacentKingdoms;
-	private GameDate currentDefenseTreatyRejectionDate;
-	private GameDate currentMilitaryAllianceRejectionDate;
+	private GameDate _currentDefenseTreatyRejectionDate;
+	private GameDate _currentMilitaryAllianceRejectionDate;
 
 
     protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
@@ -2043,7 +2043,7 @@ public class Kingdom{
 				}
 			}else{
 				//no main threat
-				if(!HasWar()){
+				if(!HasWar() && this.discoveredKingdoms.Count > 0){
 					Kingdom currentPossibleTarget = null;
 					KingdomRelationship currentPossibleTargetRelationship = null;
 					int thisEffectivePower = this.effectivePower;
@@ -2119,7 +2119,7 @@ public class Kingdom{
 				canBeAlly = false;
 
 				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && !kingdomRelationship.isMutualDefenseTreaty){
-					GameDate gameDate = targetKingdom.currentDefenseTreatyRejectionDate;
+					GameDate gameDate = targetKingdom._currentDefenseTreatyRejectionDate;
 					if(gameDate.year != 0){
 						gameDate.AddMonths (3);
 						if(GameManager.Instance.year > gameDate.year){
@@ -2149,6 +2149,7 @@ public class Kingdom{
 
 			if(currentPossibleAlly != null){
 				//Send Defense Treaty Offer
+				EventCreator.Instance.CreateMutualDefenseTreatyEvent(this, currentPossibleAlly);
 			}else{
 				Militarize (true);
 			}
@@ -2204,7 +2205,7 @@ public class Kingdom{
 				canBeAlly = false;
 
 				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && !kingdomRelationship.isMilitaryAlliance){
-					GameDate gameDate = targetKingdom.currentMilitaryAllianceRejectionDate;
+					GameDate gameDate = targetKingdom._currentMilitaryAllianceRejectionDate;
 					if(gameDate.year != 0){
 						gameDate.AddMonths (3);
 						if(GameManager.Instance.year > gameDate.year){
@@ -2322,6 +2323,16 @@ public class Kingdom{
 			}
 		}
 		return false;
+	}
+	internal void UpdateCurrentDefenseTreatyRejectionDate(int month, int day, int year){
+		this._currentDefenseTreatyRejectionDate.month = month;
+		this._currentDefenseTreatyRejectionDate.day = day;
+		this._currentDefenseTreatyRejectionDate.year = year;
+	}
+	internal void UpdateCurrenMilitaryAllianceRejectionDate(int month, int day, int year){
+		this._currentMilitaryAllianceRejectionDate.month = month;
+		this._currentMilitaryAllianceRejectionDate.day = day;
+		this._currentMilitaryAllianceRejectionDate.year = year;
 	}
 	#endregion
 }
