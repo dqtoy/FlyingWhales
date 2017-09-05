@@ -537,7 +537,7 @@ public class City{
                 SetCityAsAdjacent(otherCity);
                 otherCity.SetCityAsAdjacent(this);
             }
-            if(currTileToCheck.isBorder && currTileToCheck.isBorderOfCities.Count > 1) { //Tile is a border of another city
+            if(currTileToCheck.isBorder) { //Tile is a border of another city
                 List<City> otherCities = new List<City>(currTileToCheck.isBorderOfCities);
                 otherCities.Remove(this);
                 for (int j = 0; j < _adjacentCities.Count; j++) { //Eliminate already adjacent cities from equation
