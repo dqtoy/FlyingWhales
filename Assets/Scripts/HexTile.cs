@@ -1033,6 +1033,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //    text += "NONE\n";
         //}
 
+        text += "[b]Adjacent Cities: [/b]\n";
+        if (this.city.adjacentCities.Count > 0) {
+            for (int i = 0; i < this.city.adjacentCities.Count; i++) {
+                text += this.city.adjacentCities[i].name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
+
         text += "[b]Embargo List: [/b]\n";
         if (this.city.kingdom.embargoList.Count > 0) {
             for (int i = 0; i < this.city.kingdom.embargoList.Keys.Count; i++) {

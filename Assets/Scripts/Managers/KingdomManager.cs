@@ -84,6 +84,7 @@ public class KingdomManager : MonoBehaviour {
                         City newCity = kingdom.CreateNewCityOnTileForKingdom(nextCityTile);
                         newCity.CreateInitialFamilies(false);
                         newCity.hexTile.CreateCityNamePlate(newCity);
+                        newCity.UpdateBorderTiles();
                     }
                 }
             }
@@ -136,6 +137,9 @@ public class KingdomManager : MonoBehaviour {
         }
         newKingdom.UpdateAllRelationshipsLikeness();
         newKingdom.CheckForDiscoveredKingdoms();
+        for (int i = 0; i < newKingdom.cities.Count; i++) {
+            newKingdom.cities[i].UpdateBorderTiles();
+        }
 		return newKingdom;
 	}
 
