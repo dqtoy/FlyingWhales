@@ -1191,7 +1191,7 @@ public class Kingdom{
         if (this.id != city.kingdom.id) {
             KingdomRelationship rel = this.GetRelationshipWithKingdom(city.kingdom);
             if (rel != null && rel.war != null) {
-                rel.war.warPair.isDone = true;
+				rel.war.ChangeDoneStateWarPair (true);
             }
 
             HexTile hex = city.hexTile;
@@ -1199,7 +1199,7 @@ public class Kingdom{
             if (this.race != city.kingdom.race) {
                 city.KillCity();
             } else {
-                city.ConquerCity(this);
+				city.ConquerCity(this, rel);
                 city.kingdom.RemoveCityFromKingdom(city);
             }
 
@@ -1306,8 +1306,13 @@ public class Kingdom{
 	}
 	internal int GetWarCount(){
 		int total = 0;
-		for (int i = 0; i < relationships.Count; i++) {
-			if(relationships.ElementAt(i).Value.isAtWar){
+//		for (int i = 0; i < relationships.Count; i++) {
+//			if(relationships.ElementAt(i).Value.isAtWar){
+//				total += 1;
+//			}
+//		}
+		foreach (KingdomRelationship relationship in this.relationships.Values) {
+			if(relationship.isAtWar){
 				total += 1;
 			}
 		}
@@ -1855,8 +1860,13 @@ public class Kingdom{
 	#endregion
 	internal int GetNumberOfWars(){
 		int numOfWars = 0;
-		for (int i = 0; i < relationships.Count; i++) {
-			if(relationships.ElementAt(i).Value.isAtWar){
+//		for (int i = 0; i < relationships.Count; i++) {
+//			if(relationships.ElementAt(i).Value.isAtWar){
+//				numOfWars += 1;
+//			}
+//		}
+		foreach (KingdomRelationship relationship in this.relationships.Values) {
+			if(relationship.isAtWar){
 				numOfWars += 1;
 			}
 		}
@@ -2073,7 +2083,7 @@ public class Kingdom{
 					}
 					if(currentPossibleTarget != null){
 						//Initiate War Event
-
+						EventCreator.Instance.CreateWarEvent(this, currentPossibleTarget);
 					}
 				}
 			}

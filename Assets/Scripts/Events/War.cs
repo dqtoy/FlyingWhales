@@ -59,8 +59,8 @@ public class War : GameEvent {
 		this._kingdom2 = _kingdom2;
 		this._kingdom1Rel = _kingdom1.GetRelationshipWithKingdom(_kingdom2);
 		this._kingdom2Rel = _kingdom2.GetRelationshipWithKingdom(_kingdom1);
-		this._kingdom1Rel.AssignWarEvent(this);
-		this._kingdom2Rel.AssignWarEvent(this);
+//		this._kingdom1Rel.AssignWarEvent(this);
+//		this._kingdom2Rel.AssignWarEvent(this);
 		this.safeCitiesKingdom1 = new List<City>();
 		this.safeCitiesKingdom2 = new List<City>();
 		this.warPair.DefaultValues();
@@ -115,11 +115,11 @@ public class War : GameEvent {
 	internal void DeclareWar(Kingdom sourceKingdom){
 		if(!this._isAtWar){
 			this._isAtWar = true;
-			if(sourceKingdom.id == this._kingdom1.id){
-				KingdomManager.Instance.DeclareWarBetweenKingdoms(this._kingdom1, this._kingdom2, this);
-			}else{
-				KingdomManager.Instance.DeclareWarBetweenKingdoms(this._kingdom2, this._kingdom1, this);
-			}
+//			if(sourceKingdom.id == this._kingdom1.id){
+//				KingdomManager.Instance.DeclareWarBetweenKingdoms(this._kingdom1, this._kingdom2, this);
+//			}else{
+//				KingdomManager.Instance.DeclareWarBetweenKingdoms(this._kingdom2, this._kingdom1, this);
+//			}
 			this.isInitialAttack = true;
 //            Messenger.AddListener("OnDayEnd", AttemptToRequestPeace);
 			this.ReplenishWavesKingdom1();

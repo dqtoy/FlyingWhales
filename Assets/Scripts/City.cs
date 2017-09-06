@@ -968,13 +968,11 @@ public class City{
         UnityEngine.Object.Destroy(this.hexTile.GetComponent<PandaBehaviour>());
         UnityEngine.Object.Destroy(this.hexTile.GetComponent<CityTaskManager>());
         //EventManager.Instance.onCitizenDiedEvent.RemoveListener(CheckCityDeath);
-        this.incomingGenerals.Clear ();
+//        this.incomingGenerals.Clear ();
 		this.isUnderAttack = false;
 
 		if (this.rebellion != null) {
-			if (this.rebellion.rebelLeader.citizen.city.id == this.id) {
-				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
-			}
+			RebelCityConqueredByAnotherKingdom ();
 		}
 
         List<HexTile> tilesToSetAsSeen = new List<HexTile>();
@@ -1049,7 +1047,7 @@ public class City{
     /*
      * Conquer this city and transfer ownership to the conqueror
      * */
-    internal void ConquerCity(Kingdom conqueror) {
+	internal void ConquerCity(Kingdom conqueror, KingdomRelationship kingdomRelationship) {
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
 
@@ -1148,6 +1146,9 @@ public class City{
         if (UIManager.Instance.currentlyShowingKingdom.id == conqueror.id) {
             conqueror.HighlightAllOwnedTilesInKingdom();
         }
+		if(relationship.war != null && relationship.war.warPair.isDone){
+			relationship.war.InitializeMobilization ();
+		}
 
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
     }
@@ -1163,7 +1164,12 @@ public class City{
 	}
 
     private void RemoveListeners() {
-        Messenger.RemoveListener("CityEverydayActions", CityEverydayTurnActions);
+		if(this.rebellion == null){
+			Messenger.RemoveListener("CityEverydayActions", CityEverydayTurnActions);
+
+		}else{
+			Messenger.RemoveListener("CityEverydayActions", RebelFortEverydayTurnActions);
+		}
         Messenger.RemoveListener("CitizenDied", CheckCityDeath);
         Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
     }
@@ -1375,8 +1381,8 @@ public class City{
 	internal void AttackCity(City targetCity, List<HexTile> path, GameEvent gameEvent, bool isRebel = false){
 		EventCreator.Instance.CreateAttackCityEvent (this, targetCity, path, gameEvent, isRebel);
 	}
-	internal void ReinforceCity(City targetCity, bool isRebel = false){
-		EventCreator.Instance.CreateReinforcementEvent (this, targetCity, isRebel);
+	internal void ReinforceCity(City targetCity, int amount = -1, Wars war = null, bool isRebel = false){
+		EventCreator.Instance.CreateReinforcementEvent (this, targetCity, amount, war, isRebel);
 	}
 	internal void KillAllCitizens(DEATH_REASONS deathReason){
 		int countCitizens = this.citizens.Count;
@@ -1444,6 +1450,17 @@ public class City{
 		Log newLog = this.rebellion.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "kingdom_conquer_city");
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.CITY_2);
 		this.rebellion = null;
+	}
+	internal void RebelCityConqueredByAnotherKingdom(){
+		if (this.hexTile.cityInfo.city != null){
+			this.hexTile.cityInfo.rebelIcon.SetActive (false);
+		}
+		TransferRebellionToCity ();
+		if(this.rebellion.rebelLeader.citizen.city.id == this.id){
+			this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
+		}
+		this.rebellion = null;
+
 	}
 
 	internal void ResetToDefaultHP(){

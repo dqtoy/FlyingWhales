@@ -183,54 +183,52 @@ public class KingdomManager : MonoBehaviour {
 		}
 	}
 
-	public void DeclareWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2, War war){
-		KingdomRelationship kingdom1Rel = kingdom1.GetRelationshipWithKingdom(kingdom2);
-		KingdomRelationship kingdom2Rel = kingdom2.GetRelationshipWithKingdom(kingdom1);
+	public void DeclareWarBetweenKingdoms(Wars war){
 
-        KingdomRelationship king1Rel = kingdom1.GetRelationshipWithKingdom(kingdom2);
-        KingdomRelationship king2Rel = kingdom2.GetRelationshipWithKingdom(kingdom1);
+//        KingdomRelationship king1Rel = kingdom1.GetRelationshipWithKingdom(kingdom2);
+//        KingdomRelationship king2Rel = kingdom2.GetRelationshipWithKingdom(kingdom1);
 
-        king1Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
-        king2Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
+		war.kingdom1Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
+		war.kingdom2Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
 
-        kingdom1Rel.SetWarStatus(true);
-		kingdom2Rel.SetWarStatus(true);
+		war.kingdom1Rel.SetWarStatus(true);
+		war.kingdom2Rel.SetWarStatus(true);
 
-		kingdom1Rel.kingdomWarData.ResetKingdomWar ();
-		kingdom2Rel.kingdomWarData.ResetKingdomWar ();
+		war.kingdom1Rel.kingdomWarData.ResetKingdomWar ();
+		war.kingdom2Rel.kingdomWarData.ResetKingdomWar ();
 
-		kingdom1.AdjustExhaustionToAllRelationship (15);
-		kingdom2.AdjustExhaustionToAllRelationship (15);
+//		kingdom1.AdjustExhaustionToAllRelationship (15);
+//		kingdom2.AdjustExhaustionToAllRelationship (15);
 
-		kingdom1.AddInternationalWar(kingdom2);
-		kingdom2.AddInternationalWar(kingdom1);
+//		kingdom1.AddInternationalWar(kingdom2);
+//		kingdom2.AddInternationalWar(kingdom1);
 
         //kingdom1.RemoveAllTradeRoutesWithOtherKingdom(kingdom2);
         //kingdom2.RemoveAllTradeRoutesWithOtherKingdom(kingdom1);
 
-        kingdom1.AdjustHappiness(HAPPINESS_DECREASE_WAR);
-        kingdom2.AdjustHappiness(HAPPINESS_DECREASE_WAR);
+		war.kingdom1.AdjustHappiness(HAPPINESS_DECREASE_WAR);
+		war.kingdom2.AdjustHappiness(HAPPINESS_DECREASE_WAR);
 
-		kingdom1.ActivateBoonOfPowers ();
-		kingdom2.ActivateBoonOfPowers ();
+		war.kingdom1.ActivateBoonOfPowers ();
+		war.kingdom2.ActivateBoonOfPowers ();
 
-		kingdom1.UpdateAllGovernorsLoyalty ();
-		kingdom2.UpdateAllGovernorsLoyalty ();
-
-		king1Rel.UpdateLikeness (null);
-		king2Rel.UpdateLikeness (null);
+//		kingdom1.UpdateAllGovernorsLoyalty ();
+//		kingdom2.UpdateAllGovernorsLoyalty ();
+//
+//		king1Rel.UpdateLikeness (null);
+//		king2Rel.UpdateLikeness (null);
 
 //		war.UpdateWarPair ();
         //		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
         //		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
 
-        Log declareWarLog = war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "declare_war");
-		declareWarLog.AddToFillers (kingdom1.king, kingdom1.king.name, LOG_IDENTIFIER.KING_1);
-		declareWarLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+//        Log declareWarLog = war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "declare_war");
+//		declareWarLog.AddToFillers (kingdom1.king, kingdom1.king.name, LOG_IDENTIFIER.KING_1);
+//		declareWarLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 
-		WarEvents (kingdom1, kingdom2);
-
-		KingdomManager.Instance.CheckWarTriggerDeclareWar (kingdom1, kingdom2);
+//		WarEvents (kingdom1, kingdom2);
+//
+//		KingdomManager.Instance.CheckWarTriggerDeclareWar (kingdom1, kingdom2);
 //		War newWar = new War(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, null, kingdom1, kingdom2, invasionPlanThatStartedWar);
 	}
 

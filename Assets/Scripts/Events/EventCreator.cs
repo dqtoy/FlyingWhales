@@ -193,7 +193,7 @@ public class EventCreator: MonoBehaviour {
     	return null;
 	}
 
-	internal Reinforcement CreateReinforcementEvent(City sourceCity, City targetCity, bool isRebel = false){
+	internal Reinforcement CreateReinforcementEvent(City sourceCity, City targetCity, int amount = -1, Wars war = null, bool isRebel = false){
 //		City targetCity = sourceKingdom.GetReceiverCityForReinforcement ();
 //		if(targetCity == null){
 //			return null;
@@ -209,7 +209,7 @@ public class EventCreator: MonoBehaviour {
 		if(citizen != null){
 			Reinforcer reinforcer = (Reinforcer)citizen.assignedRole;
 			Reinforcement reinforcement = new Reinforcement(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				citizen, reinforcer, targetCity, sourceCity);
+				citizen, reinforcer, targetCity, sourceCity, amount, war);
 			reinforcer.Initialize(reinforcement);
 			reinforcer.isRebel = isRebel;
 			return reinforcement;
@@ -517,6 +517,10 @@ public class EventCreator: MonoBehaviour {
 	internal Instigation CreateInstigationEvent(Kingdom sourceKingdom, Kingdom instigatedKingdom, Kingdom targetKingdom){
 		Instigation instigation = new Instigation(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, instigatedKingdom, targetKingdom);
 		return instigation;
+	}
+	internal Wars CreateWarEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
+		Wars war = new Wars(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom);
+		return war;
 	}
 	//-------------------------------------------- PLAYER EVENTS ----------------------------------------------------//
 

@@ -244,7 +244,7 @@ public class Rebellion : GameEvent {
 				value = 1 * safeCitiesKingdom1 [i].ownedTiles.Count;
 				if(chance < value){
 					safeCitiesKingdom1 [i].hasReinforced = true;
-					safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City, true);
+//					safeCitiesKingdom1 [i].ReinforceCity (this.warPair.kingdom1City, true);
 				}
 			}
 		}
@@ -259,7 +259,7 @@ public class Rebellion : GameEvent {
 				value = 1 * safeCitiesKingdom2 [i].ownedTiles.Count;
 				if(chance < value){
 					safeCitiesKingdom2 [i].hasReinforced = true;
-					safeCitiesKingdom2 [i].ReinforceCity (this.warPair.kingdom2City);
+//					safeCitiesKingdom2 [i].ReinforceCity (this.warPair.kingdom2City);
 				}
 			}
 		}

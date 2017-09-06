@@ -6,8 +6,10 @@ public class Reinforcement : GameEvent {
 	internal Reinforcer reinforcer;
 	internal City targetCity;
 	internal City sourceCity;
+	internal int reinforcementAmount;
+	internal Wars war;
 
-	public Reinforcement(int startWeek, int startMonth, int startYear, Citizen startedBy, Reinforcer reinforcer, City targetCity, City sourceCity) : base (startWeek, startMonth, startYear, startedBy){
+	public Reinforcement(int startWeek, int startMonth, int startYear, Citizen startedBy, Reinforcer reinforcer, City targetCity, City sourceCity, int reinforcementAmount, Wars war = null) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.REINFORCEMENT;
 		this.name = "Reinforcement";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
@@ -15,6 +17,8 @@ public class Reinforcement : GameEvent {
 		this.reinforcer = reinforcer;
 		this.targetCity = targetCity;
 		this.sourceCity = sourceCity;
+		this.reinforcementAmount = reinforcementAmount;
+		this.war = war;
 		this.SendReinforcement ();
 		Debug.Log (reinforcer.citizen.name + " of " + reinforcer.citizen.city.kingdom.name + " will reinforce " + targetCity.name);
 
@@ -49,13 +53,14 @@ public class Reinforcement : GameEvent {
 	#endregion
 
 	private void SendReinforcement(){
-		int amount = Mathf.CeilToInt((float)this.reinforcer.citizen.city.hp * 0.3f);
-		int missingHP = this.targetCity.maxHP - this.targetCity.hp;
-		if(amount > missingHP){
-			amount = missingHP;
+		if(this.reinforcementAmount == -1){
+			this.reinforcementAmount = Mathf.CeilToInt(this.reinforcer.citizen.city.power * 0.3f);
 		}
-		this.sourceCity.AdjustHP (-amount);
-		this.reinforcer.reinforcementValue += amount;
+		this.sourceCity.AdjustPower (-this.reinforcementAmount);
+		this.reinforcer.reinforcementValue += this.reinforcementAmount;
+		if(this.war != null){
+			this.war.AdjustMobilizedReinforcementsCount (1);
+		}
 	}
 
 	private void ArrivedReinforcement(){
@@ -65,7 +70,10 @@ public class Reinforcement : GameEvent {
 		if(this.targetCity.isDead || this.targetCity == null){
 			return;
 		}
-		this.targetCity.AdjustHP (this.reinforcer.reinforcementValue);
+		this.targetCity.AdjustPower (this.reinforcer.reinforcementValue);
 		this.reinforcer.reinforcementValue = 0;
+		if(this.war != null){
+			this.war.AdjustMobilizedReinforcementsCount (-1);
+		}
 	}
 }

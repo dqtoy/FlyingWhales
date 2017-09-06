@@ -15,29 +15,36 @@ public class CombatManager : MonoBehaviour {
 			return;
 		}
 		int damage = generalAttacker.damage;
-		if(generalAttacker.hasSerumOfAlacrity){
-			damage = damage * 2;
-		}
-		int chance = UnityEngine.Random.Range(0,100);
-		if(chance < generalAttacker.citizen.city.kingdom.kingdomTypeData.combatStats.criticalChance){
-			damage = damage * 2;
-		}
-        if(generalAttacker.citizen.city.kingdom.weaponsCount > 0) {
-            //For Develop Weapons Event
-            if(generalAttacker.citizen.city.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) 
-                || generalAttacker.citizen.city.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-                KeyValuePair<CHARACTER_VALUE, int> priorityValue = generalAttacker.citizen.city.kingdom.king.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
-                || x.Key == CHARACTER_VALUE.TRADITION);
-                if(priorityValue.Key == CHARACTER_VALUE.STRENGTH) {
-                    damage += 100;
-                    generalAttacker.citizen.city.kingdom.AdjustWeaponsCount(-1);
-                }
-            }
-        }
+//		if(generalAttacker.hasSerumOfAlacrity){
+//			damage = damage * 2;
+//		}
+//		int chance = UnityEngine.Random.Range(0,100);
+//		if(chance < generalAttacker.citizen.city.kingdom.kingdomTypeData.combatStats.criticalChance){
+//			damage = damage * 2;
+//		}
+//        if(generalAttacker.citizen.city.kingdom.weaponsCount > 0) {
+//            //For Develop Weapons Event
+//            if(generalAttacker.citizen.city.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) 
+//                || generalAttacker.citizen.city.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+//                KeyValuePair<CHARACTER_VALUE, int> priorityValue = generalAttacker.citizen.city.kingdom.king.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
+//                || x.Key == CHARACTER_VALUE.TRADITION);
+//                if(priorityValue.Key == CHARACTER_VALUE.STRENGTH) {
+//                    damage += 100;
+//                    generalAttacker.citizen.city.kingdom.AdjustWeaponsCount(-1);
+//                }
+//            }
+//        }
+		if(damage > city.power){
+			int reduceOnDefense = damage - city.power;
+			city.AdjustPower (-city.power);
+			city.AdjustDefense (-reduceOnDefense);
 
-		city.AdjustHP (-damage);
+		}else{
+			city.AdjustPower (-damage);
+		}
 
-		if(city.hp <= 0){
+
+		if(city.defense <= 0){
 			ConquerCity (generalAttacker.citizen.city.kingdom, city, generalAttacker);
 		}
 		generalAttacker.markAsDead = true;

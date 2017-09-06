@@ -94,13 +94,16 @@ public class General : Role {
 //		int spawnRateDamage = Mathf.CeilToInt((float)this.spawnRate / 6f);
 //		return (baseDamage + cityDamage + otherCityDamage) * spawnRateDamage;
 
-		int baseDamage = UnityEngine.Random.Range (80, 131) + (_weaponCount * 100);
-		int damageBuffer1 = 20 * this.citizen.city.kingdom.techLevel;
-		int damageBuffer2 = 5 + this.citizen.city.kingdom.techLevel;
+//		int baseDamage = UnityEngine.Random.Range (80, 131) + (_weaponCount * 100);
+//		int damageBuffer1 = 20 * this.citizen.city.kingdom.techLevel;
+//		int damageBuffer2 = 5 + this.citizen.city.kingdom.techLevel;
+//
+//		int cityDamage = UnityEngine.Random.Range(0, this.citizen.city.kingdom.nonRebellingCities.Count + 1);
 
-		int cityDamage = UnityEngine.Random.Range(0, this.citizen.city.kingdom.nonRebellingCities.Count + 1);
+		int power = this.citizen.city.power;
+		this.citizen.city.AdjustPower (-power);
 
-		return baseDamage + damageBuffer1 + (damageBuffer2 * cityDamage);
+		return power;
 	}
 
     #region Weapons

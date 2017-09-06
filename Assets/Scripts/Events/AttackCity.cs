@@ -39,6 +39,14 @@ public class AttackCity : GameEvent {
 			if(citizen.id == this.general.citizen.id){
 				CombatManager.Instance.CityBattle (this.targetCity, this.general);
 				this.general.citizen.Death (DEATH_REASONS.BATTLE);
+				if(this.gameEvent is Wars){
+					if(!this.targetCity.isDead){
+						((Wars)this.gameEvent).ChangeTurn ();
+					}
+
+				}else if(this.gameEvent is Rebellion){
+
+				}
 			}
 		}
 		this.DoneEvent ();

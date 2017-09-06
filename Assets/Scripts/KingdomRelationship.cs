@@ -21,7 +21,7 @@ public class KingdomRelationship {
 
     private bool _isAtWar;
 	private bool _isAdjacent;
-    private War _war;
+    private Wars _war;
     private InvasionPlan _invasionPlan;
     private RequestPeace _requestPeace;
     private KingdomWar _kingdomWarData;
@@ -59,7 +59,7 @@ public class KingdomRelationship {
     public bool isAtWar {
         get { return _isAtWar; }
     }
-    public War war {
+    public Wars war {
         get { return _war; }
     }
     public bool isSharingBorder {
@@ -467,8 +467,8 @@ public class KingdomRelationship {
      * */
     internal void CreateInvasionPlan(GameEvent gameEventTrigger) {
         if (_invasionPlan == null) {
-            _invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-            _sourceKingdom.king, _sourceKingdom, _targetKingdom, gameEventTrigger, _war);
+//            _invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+//            _sourceKingdom.king, _sourceKingdom, _targetKingdom, gameEventTrigger, _war);
         } else {
             throw new Exception (_sourceKingdom.name + " already has an invasion plan towards " + _targetKingdom.name);
         }
@@ -490,7 +490,7 @@ public class KingdomRelationship {
         }
 
         if (this._requestPeace != null && this._requestPeace.isActive) {
-            this._war.GameEventWarWinner(this._targetKingdom);
+//            this._war.GameEventWarWinner(this._targetKingdom);
             this._requestPeace.CancelEvent();
             this._requestPeace = null;
         }
@@ -505,7 +505,7 @@ public class KingdomRelationship {
             int chance = UnityEngine.Random.Range(0, 100);
             if (this._war != null && chance < (peaceValue * this._kingdomWarData.citiesLost)) {
                 //Request Peace
-                this._war.RequestPeace(this._sourceKingdom);
+//                this._war.RequestPeace(this._sourceKingdom);
             }
         }
     }
@@ -534,7 +534,7 @@ public class KingdomRelationship {
         _requestPeaceCooldown = new GameDate(0,0,0);
     }
 
-    internal void AssignWarEvent(War war) {
+    internal void AssignWarEvent(Wars war) {
         _war = war;
     }
 
