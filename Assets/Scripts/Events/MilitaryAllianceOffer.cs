@@ -36,6 +36,7 @@ public class MilitaryAllianceOffer : GameEvent {
                 //Accept
                 _sourceKingdom.AddMilitaryAlliance(_targetKingdom);
                 _targetKingdom.AddMilitaryAlliance(_sourceKingdom);
+                Debug.Log(_targetKingdom.name + " has accepted a military alliance offer from " + _sourceKingdom.name);
             } else {
                 //Decline
                 _targetKingdom.UpdateCurrentMilitaryAllianceRejectionDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);

@@ -1973,7 +1973,8 @@ public class UIManager : MonoBehaviour {
         kingdomsToShow.Reverse();
         for (int i = 0; i < kingdomsToShow.Count; i++) {
             Kingdom currKingdom = kingdomsToShow[i];
-            prestigeSummaryLbl.text += currKingdom.name + " - " + currKingdom.prestige.ToString() + " (" + currKingdom.cityCap + ")";
+            prestigeSummaryLbl.text += currKingdom.name + " - " + currKingdom.prestige.ToString() + " (" + currKingdom.cityCap + ")" + 
+                " P: " + currKingdom.effectivePower.ToString() + " D: " + currKingdom.effectiveDefense.ToString();
             if(i + 1 < KingdomManager.Instance.allKingdomsOrderedByPrestige.Count) {
                 prestigeSummaryLbl.text += "\n";
             }

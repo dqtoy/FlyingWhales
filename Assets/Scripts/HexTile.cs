@@ -882,13 +882,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
             this.HideKingdomInfo();
             if(this.ownedByCity != null) {
-                this.ownedByCity.UnHighlightAllOwnedTiles();
+                this.ownedByCity.kingdom.UnHighlightAllOwnedTilesInKingdom();
             }
             if (UIManager.Instance.currentlyShowingKingdom != null) {
                 UIManager.Instance.currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
-                if(UIManager.Instance.currentlyShowingKingdom != this.city.kingdom) {
-                    this.city.kingdom.UnHighlightAllOwnedTilesInKingdom();
-                }
             }
         }
     }
