@@ -26,6 +26,8 @@ public class KingdomRelationship {
     private RequestPeace _requestPeace;
     private KingdomWar _kingdomWarData;
     private GameDate _requestPeaceCooldown;
+    private MilitaryAllianceOffer _currentActiveMilitaryAllianceOffer;
+    private MutualDefenseTreaty _currentActiveDefenseTreatyOffer;
 
 	private bool _isMilitaryAlliance;
 	private bool _isMutualDefenseTreaty;
@@ -77,7 +79,27 @@ public class KingdomRelationship {
     public GameDate requestPeaceCooldown {
         get { return _requestPeaceCooldown; }
     }
-	public bool isMilitaryAlliance {
+    public MilitaryAllianceOffer currentActiveMilitaryAllianceOffer {
+        get { return _currentActiveMilitaryAllianceOffer; }
+        set {
+            if(_currentActiveMilitaryAllianceOffer != null && _currentActiveMilitaryAllianceOffer.isActive) {
+                throw new System.Exception (_sourceKingdom.name + " still has an active military alliance offer with " + _targetKingdom.name);
+            } else {
+                _currentActiveMilitaryAllianceOffer = value;
+            }
+        }
+    }
+    public MutualDefenseTreaty currentActiveDefenseTreatyOffer {
+        get { return _currentActiveDefenseTreatyOffer; }
+        set {
+            if (_currentActiveDefenseTreatyOffer != null && _currentActiveDefenseTreatyOffer.isActive) {
+                throw new System.Exception(_sourceKingdom.name + " still has an active defense treaty offer with " + _targetKingdom.name);
+            } else {
+                _currentActiveDefenseTreatyOffer = value;
+            }
+        }
+    }
+    public bool isMilitaryAlliance {
 		get { return this._isMilitaryAlliance; }
 	}
 	public bool isMutualDefenseTreaty {

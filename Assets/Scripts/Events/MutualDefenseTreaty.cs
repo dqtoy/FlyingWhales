@@ -5,11 +5,21 @@ public class MutualDefenseTreaty : GameEvent {
 	public Kingdom targetKingdom;
 	public Citizen treatyOfficer;
 
-	public MutualDefenseTreaty(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom targetKingdom) : base (startWeek, startMonth, startYear, startedBy){
+    private KingdomRelationship _sourceRel;
+    private KingdomRelationship _targetRel;
+
+    public MutualDefenseTreaty(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom targetKingdom) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.MUTUAL_DEFENSE_TREATY;
 		this.name = "Mutual Defense Treaty";
 		this.targetKingdom = targetKingdom;
-		CreateTreatyOfficer ();
+
+        _sourceRel = startedByKingdom.GetRelationshipWithKingdom(targetKingdom);
+        _targetRel = targetKingdom.GetRelationshipWithKingdom(startedByKingdom);
+
+        _sourceRel.currentActiveDefenseTreatyOffer = this;
+        _targetRel.currentActiveDefenseTreatyOffer = this;
+
+        CreateTreatyOfficer ();
 	}
 
 	#region Overrides
@@ -27,7 +37,9 @@ public class MutualDefenseTreaty : GameEvent {
 
 	internal override void DoneEvent(){
 		base.DoneEvent();
-	}
+        _sourceRel.currentActiveDefenseTreatyOffer = null;
+        _targetRel.currentActiveDefenseTreatyOffer = null;
+    }
 
 	internal override void CancelEvent (){
 		base.CancelEvent ();

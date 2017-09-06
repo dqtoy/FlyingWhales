@@ -498,7 +498,9 @@ public class EventCreator: MonoBehaviour {
     internal MilitaryAllianceOffer CreateMilitaryAllianceOffer(Kingdom sourceKingdom, Kingdom targetKingdom) {
         Citizen agent = sourceKingdom.capitalCity.CreateAgent(ROLE.MILITARY_ALLIANCE_OFFICER, 
             EVENT_TYPES.MILITARY_ALLIANCE_OFFER, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.MILITARY_ALLIANCE_OFFER]);
-        if(agent != null) {
+
+        KingdomRelationship sourceRel = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
+        if(agent != null && sourceRel.currentActiveMilitaryAllianceOffer == null) {
             MilitaryAllianceOffer mao = new MilitaryAllianceOffer(GameManager.Instance.days, GameManager.Instance.month, 
                 GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom);
             agent.assignedRole.Initialize(mao);
@@ -507,8 +509,13 @@ public class EventCreator: MonoBehaviour {
         return null;
     }
 	internal MutualDefenseTreaty CreateMutualDefenseTreatyEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
-		MutualDefenseTreaty mutualDefenseTreaty = new MutualDefenseTreaty(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);
-		return mutualDefenseTreaty;
+        KingdomRelationship sourceRel = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
+        if (sourceRel.currentActiveDefenseTreatyOffer == null) {
+            MutualDefenseTreaty mutualDefenseTreaty = new MutualDefenseTreaty(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);
+            return mutualDefenseTreaty;
+        }
+        
+        return null;
 	}
 	internal Tribute CreateTributeEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
 		Tribute tribute = new Tribute(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);

@@ -2098,22 +2098,23 @@ public class Kingdom{
 		Kingdom currentThreat = null;
 		for (int i = 0; i < this.discoveredKingdoms.Count; i++) {
 			Kingdom targetKingdom = this.discoveredKingdoms [i];
-			KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
-			if(relationship.isAdjacent){
-				int thisEffectiveDefense = this.effectiveDefense;
-				int targetEffectivePower = targetKingdom.effectivePower;
-				int buffedTargetEffectivePower = (int)(targetEffectivePower * 1.15f);
-				if(thisEffectiveDefense < buffedTargetEffectivePower){
-					if(currentThreat != null){
-						if(targetEffectivePower > currentThreat.effectivePower){
-							currentThreat = targetKingdom;
-						}
-					}else{
-						currentThreat = targetKingdom;
-					}
-				}
-			}
-		}
+            currentThreat = targetKingdom;
+            //KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
+            //if(relationship.isAdjacent){
+            //	int thisEffectiveDefense = this.effectiveDefense;
+            //	int targetEffectivePower = targetKingdom.effectivePower;
+            //	int buffedTargetEffectivePower = (int)(targetEffectivePower * 1.15f);
+            //	if(thisEffectiveDefense < buffedTargetEffectivePower){
+            //		if(currentThreat != null){
+            //			if(targetEffectivePower > currentThreat.effectivePower){
+            //				currentThreat = targetKingdom;
+            //			}
+            //		}else{
+            //			currentThreat = targetKingdom;
+            //		}
+            //	}
+            //}
+        }
 		return currentThreat;
 	}
 	private void SeeksBalance(){
@@ -2131,7 +2132,8 @@ public class Kingdom{
 
 				canBeAlly = false;
 
-				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && !kingdomRelationship.isMutualDefenseTreaty){
+				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && 
+                    !kingdomRelationship.isMutualDefenseTreaty && kingdomRelationship.currentActiveDefenseTreatyOffer == null){
 					GameDate gameDate = targetKingdom._currentDefenseTreatyRejectionDate;
 					if(gameDate.year != 0){
 						gameDate.AddMonths (3);
@@ -2172,8 +2174,28 @@ public class Kingdom{
 	}
 	private void SeeksBandwagon(){
 		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
-		if(!relationship.isMilitaryAlliance){
-			if(relationship.totalLike >= 0){
+
+        //Check if main threat has not rejected a military alliance in the past 3 months.
+        bool canBeAlly = false;
+        GameDate gameDate = _mainThreat._currentMilitaryAllianceRejectionDate;
+        if (gameDate.year != 0) {
+            gameDate.AddMonths(3);
+            if (GameManager.Instance.year > gameDate.year) {
+                canBeAlly = true;
+            } else if (GameManager.Instance.year == gameDate.year) {
+                if (GameManager.Instance.month > gameDate.month) {
+                    canBeAlly = true;
+                }
+            }
+        } else {
+            canBeAlly = true;
+        }
+
+        //Check if this kingdom is not already in a military alliance with main threat and that there is no currently active
+        //military alliance offer between them.
+        if (!relationship.isMilitaryAlliance && canBeAlly && relationship.currentActiveMilitaryAllianceOffer == null){
+            KingdomRelationship relationshipOfMainThreatWithThis = _mainThreat.GetRelationshipWithKingdom(this);
+			if(relationshipOfMainThreatWithThis.totalLike >= 0){
                 //Send Military Alliance Offer
                 EventCreator.Instance.CreateMilitaryAllianceOffer(this, this._mainThreat);
 			}else{
@@ -2221,7 +2243,8 @@ public class Kingdom{
 
 				canBeAlly = false;
 
-				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && !kingdomRelationship.isMilitaryAlliance){
+				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && 
+                    !kingdomRelationship.isMilitaryAlliance && kingdomRelationship.currentActiveMilitaryAllianceOffer == null){
 					GameDate gameDate = targetKingdom._currentMilitaryAllianceRejectionDate;
 					if(gameDate.year != 0){
 						gameDate.AddMonths (3);
@@ -2252,7 +2275,7 @@ public class Kingdom{
 
 			if(currentPossibleAlly != null){
                 //Send Military Alliance Offer
-                EventCreator.Instance.CreateMilitaryAllianceOffer(this, _mainThreat);
+                EventCreator.Instance.CreateMilitaryAllianceOffer(this, currentPossibleAlly);
             }
 		}else{
 			relationship.ChangeMilitaryAlliance (false);

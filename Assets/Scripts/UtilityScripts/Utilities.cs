@@ -1146,6 +1146,10 @@ public class Utilities : MonoBehaviour {
 			return true;
 		case EVENT_TYPES.MUTUAL_DEFENSE_TREATY:
 			return true;
+        case EVENT_TYPES.TRIBUTE:
+            return true;
+        case EVENT_TYPES.INSTIGATION:
+            return true;
 		case EVENT_TYPES.SEND_RELIEF_GOODS:
 			if(duration == -1){
 				return true;
