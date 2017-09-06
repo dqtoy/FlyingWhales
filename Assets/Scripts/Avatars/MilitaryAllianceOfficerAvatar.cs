@@ -11,6 +11,7 @@ public class MilitaryAllianceOfficerAvatar : CitizenAvatar {
             if (!this.hasArrived) {
                 SetHasArrivedState(true);
                 this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(citizenRole.citizen);
+                this.citizenRole.DestroyGO();
             }
             Task.current.Succeed();
         } else {

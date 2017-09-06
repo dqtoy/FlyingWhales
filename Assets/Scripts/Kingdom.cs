@@ -854,6 +854,10 @@ public class Kingdom{
         _prestige += adjustment;
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
+    internal void SetPrestige(int adjustment) {
+        _prestige = adjustment;
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
+    }
     internal void MonthlyPrestigeActions() {
         //Add Prestige
         AdjustPrestige(10 + (2 * cities.Count));
@@ -2176,8 +2180,9 @@ public class Kingdom{
 				Militarize (true);
 				int chance = UnityEngine.Random.Range (0, 3);
 				if(chance == 0){
-					//Send Provoker
-				}else if(chance == 1){
+                    //Send Provoker
+                    EventCreator.Instance.CreateProvocationEvent(this, _mainThreat);
+                } else if(chance == 1){
 					if(this._mainThreat.adjacentKingdoms.Count > 0){
 						Kingdom targetKingdom = this._mainThreat.adjacentKingdoms [UnityEngine.Random.Range (0, this._mainThreat.adjacentKingdoms.Count)];
 						//Send Instigator
