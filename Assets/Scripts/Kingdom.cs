@@ -2160,9 +2160,10 @@ public class Kingdom{
 		if(!relationship.isMilitaryAlliance){
 			if(relationship.totalLike >= 0){
                 //Send Military Alliance Offer
-                EventCreator.Instance.CreateMilitaryAllianceOffer(this, _mainThreat);
+                EventCreator.Instance.CreateMilitaryAllianceOffer(this, this._mainThreat);
 			}else{
 				//Send Tribute
+				EventCreator.Instance.CreateTributeEvent(this, this._mainThreat);
 				Militarize (true);
 			}
 		}

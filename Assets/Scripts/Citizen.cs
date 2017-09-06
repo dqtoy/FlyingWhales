@@ -362,6 +362,8 @@ public class Citizen {
 			this.assignedRole = new Ranger(this);
 		}else if (role == ROLE.TREATYOFFICER) {
 			this.assignedRole = new TreatyOfficer(this);
+		}else if (role == ROLE.TRIBUTER) {
+			this.assignedRole = new Tributer(this);
 		}
     }
 
