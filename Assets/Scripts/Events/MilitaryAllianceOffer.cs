@@ -13,6 +13,7 @@ public class MilitaryAllianceOffer : GameEvent {
         Kingdom sourceKingdom, Kingdom targetKingdom) : base(startWeek, startMonth, startYear, startedBy) {
 
         eventType = EVENT_TYPES.MILITARY_ALLIANCE_OFFER;
+        name = "Military Alliance Offer";
 
         _sourceKingdom = sourceKingdom;
         _targetKingdom = targetKingdom;

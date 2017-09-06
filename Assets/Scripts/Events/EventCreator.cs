@@ -509,8 +509,13 @@ public class EventCreator: MonoBehaviour {
         return null;
     }
 	internal MutualDefenseTreaty CreateMutualDefenseTreatyEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
-		MutualDefenseTreaty mutualDefenseTreaty = new MutualDefenseTreaty(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);
-		return mutualDefenseTreaty;
+        KingdomRelationship sourceRel = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
+        if (sourceRel.currentActiveDefenseTreatyOffer == null) {
+            MutualDefenseTreaty mutualDefenseTreaty = new MutualDefenseTreaty(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);
+            return mutualDefenseTreaty;
+        }
+        
+        return null;
 	}
 	internal Tribute CreateTributeEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
 		Tribute tribute = new Tribute(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);
