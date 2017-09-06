@@ -2045,7 +2045,7 @@ public class Kingdom{
 				}
 			}else{
 				//no main threat
-				if(!HasWar() && this.discoveredKingdoms.Count > 0){
+				if(!HasWar() && this._adjacentKingdoms.Count > 0){
 					Kingdom currentPossibleTarget = null;
 					KingdomRelationship currentPossibleTargetRelationship = null;
 					int thisEffectivePower = this.effectivePower;
@@ -2069,6 +2069,7 @@ public class Kingdom{
 					}
 					if(currentPossibleTarget != null){
 						//Initiate War Event
+
 					}
 				}
 			}
