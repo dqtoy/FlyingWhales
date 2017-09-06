@@ -2327,7 +2327,7 @@ public class Kingdom{
 		this._currentDefenseTreatyRejectionDate.day = day;
 		this._currentDefenseTreatyRejectionDate.year = year;
 	}
-	internal void UpdateCurrenMilitaryAllianceRejectionDate(int month, int day, int year){
+	internal void UpdateCurrentMilitaryAllianceRejectionDate(int month, int day, int year){
 		this._currentMilitaryAllianceRejectionDate.month = month;
 		this._currentMilitaryAllianceRejectionDate.day = day;
 		this._currentMilitaryAllianceRejectionDate.year = year;
