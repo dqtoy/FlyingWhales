@@ -6,6 +6,9 @@ public class MilitaryAllianceOffer : GameEvent {
     private Kingdom _sourceKingdom;
     private Kingdom _targetKingdom;
 
+    private KingdomRelationship _sourceRel;
+    private KingdomRelationship _targetRel;
+
     public MilitaryAllianceOffer(int startWeek, int startMonth, int startYear, Citizen startedBy,
         Kingdom sourceKingdom, Kingdom targetKingdom) : base(startWeek, startMonth, startYear, startedBy) {
 
@@ -13,6 +16,12 @@ public class MilitaryAllianceOffer : GameEvent {
 
         _sourceKingdom = sourceKingdom;
         _targetKingdom = targetKingdom;
+
+        _sourceRel = _sourceKingdom.GetRelationshipWithKingdom(_targetKingdom);
+        _targetRel = _targetKingdom.GetRelationshipWithKingdom(_sourceKingdom);
+
+        _sourceRel.currentActiveMilitaryAllianceOffer = this;
+        _targetRel.currentActiveMilitaryAllianceOffer = this;
     }
 
     #region overrides
@@ -37,6 +46,12 @@ public class MilitaryAllianceOffer : GameEvent {
             Debug.Log(_targetKingdom.name + " has declined a military alliance offer from " + _sourceKingdom.name);
         }
         DoneEvent();
+    }
+
+    internal override void DoneEvent() {
+        base.DoneEvent();
+        _sourceRel.currentActiveMilitaryAllianceOffer = null;
+        _targetRel.currentActiveMilitaryAllianceOffer = null;
     }
     #endregion
 }

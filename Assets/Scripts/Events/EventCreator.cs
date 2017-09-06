@@ -498,7 +498,9 @@ public class EventCreator: MonoBehaviour {
     internal MilitaryAllianceOffer CreateMilitaryAllianceOffer(Kingdom sourceKingdom, Kingdom targetKingdom) {
         Citizen agent = sourceKingdom.capitalCity.CreateAgent(ROLE.MILITARY_ALLIANCE_OFFICER, 
             EVENT_TYPES.MILITARY_ALLIANCE_OFFER, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.MILITARY_ALLIANCE_OFFER]);
-        if(agent != null) {
+
+        KingdomRelationship sourceRel = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
+        if(agent != null && sourceRel.currentActiveMilitaryAllianceOffer == null) {
             MilitaryAllianceOffer mao = new MilitaryAllianceOffer(GameManager.Instance.days, GameManager.Instance.month, 
                 GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom);
             agent.assignedRole.Initialize(mao);
