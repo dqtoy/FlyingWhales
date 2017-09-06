@@ -14,7 +14,7 @@ public class Provoker : Role {
 		if(gameEvent is Provocation){
             base.Initialize(gameEvent);
 			this.provocation = (Provocation)gameEvent;
-			this.provocation.provoker = this;
+			//this.provocation.provoker = this;
 			this.avatar.GetComponent<ProvokerAvatar>().Init(this);
 		}
 	}

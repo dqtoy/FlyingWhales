@@ -25,6 +25,7 @@ public class ResourceIcon : MonoBehaviour {
                 if (sr != null) {
                     sr.sprite = this.icons [i];
 				} else if(ui2ds != null) {
+                    //ui2ds.MarkAsChanged();
                     ui2ds.sprite2D = this.icons [i];
 				}
 			}

@@ -76,6 +76,7 @@ public class KingdomManager : MonoBehaviour {
                     UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
                 }
                 if (initialKingdom.numOfCities > 1) {
+                    kingdom.SetPrestige(100 * (initialKingdom.numOfCities + 1));
                     for (int j = 1; j < initialKingdom.numOfCities; j++) {
                         HexTile nextCityTile = CityGenerator.Instance.GetNearestHabitableTile(kingdom.capitalCity);
                         if(nextCityTile == null) {
