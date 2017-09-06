@@ -2182,6 +2182,8 @@ public class Kingdom{
 					if(this._mainThreat.adjacentKingdoms.Count > 0){
 						Kingdom targetKingdom = this._mainThreat.adjacentKingdoms [UnityEngine.Random.Range (0, this._mainThreat.adjacentKingdoms.Count)];
 						//Send Instigator
+						EventCreator.Instance.CreateInstigationEvent(this, this._mainThreat, targetKingdom);
+
 					}
 				}
 			}
