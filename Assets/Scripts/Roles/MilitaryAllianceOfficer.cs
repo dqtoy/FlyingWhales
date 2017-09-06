@@ -8,6 +8,6 @@ public class MilitaryAllianceOfficer : Role {
 
     internal override void Initialize(GameEvent gameEvent) {
         base.Initialize(gameEvent);
-        this.avatar.GetComponent<MilitaryAllianceOfficer>().Initialize(gameEvent);
+        this.avatar.GetComponent<MilitaryAllianceOfficerAvatar>().Init(this);
     }
 }

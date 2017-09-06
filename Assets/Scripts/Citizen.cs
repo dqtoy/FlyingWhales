@@ -364,7 +364,9 @@ public class Citizen {
 			this.assignedRole = new TreatyOfficer(this);
 		}else if (role == ROLE.TRIBUTER) {
 			this.assignedRole = new Tributer(this);
-		}
+		}else if(role == ROLE.MILITARY_ALLIANCE_OFFICER) {
+            this.assignedRole = new MilitaryAllianceOfficer(this);
+        }
     }
 
 	internal Citizen GetKingParent(){

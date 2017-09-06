@@ -512,7 +512,7 @@ public class EventCreator: MonoBehaviour {
 	}
 	internal Tribute CreateTributeEvent(Kingdom sourceKingdom, Kingdom targetKingdom){
 		Tribute tribute = new Tribute(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, targetKingdom);
-		return Tribute;
+		return tribute;
 	}
 	//-------------------------------------------- PLAYER EVENTS ----------------------------------------------------//
 
