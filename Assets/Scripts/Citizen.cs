@@ -362,9 +362,13 @@ public class Citizen {
 			this.assignedRole = new Ranger(this);
 		}else if (role == ROLE.TREATYOFFICER) {
 			this.assignedRole = new TreatyOfficer(this);
+		}else if (role == ROLE.TRIBUTER) {
+			this.assignedRole = new Tributer(this);
 		}else if(role == ROLE.MILITARY_ALLIANCE_OFFICER) {
             this.assignedRole = new MilitaryAllianceOfficer(this);
-        }
+		}else if(role == ROLE.INSTIGATOR) {
+			this.assignedRole = new Instigator(this);
+		}
     }
 
 	internal Citizen GetKingParent(){

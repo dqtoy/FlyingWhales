@@ -2164,9 +2164,10 @@ public class Kingdom{
 		if(!relationship.isMilitaryAlliance){
 			if(relationship.totalLike >= 0){
                 //Send Military Alliance Offer
-                EventCreator.Instance.CreateMilitaryAllianceOffer(this, _mainThreat);
+                EventCreator.Instance.CreateMilitaryAllianceOffer(this, this._mainThreat);
 			}else{
 				//Send Tribute
+				EventCreator.Instance.CreateTributeEvent(this, this._mainThreat);
 				Militarize (true);
 			}
 		}
@@ -2186,6 +2187,8 @@ public class Kingdom{
 					if(this._mainThreat.adjacentKingdoms.Count > 0){
 						Kingdom targetKingdom = this._mainThreat.adjacentKingdoms [UnityEngine.Random.Range (0, this._mainThreat.adjacentKingdoms.Count)];
 						//Send Instigator
+						EventCreator.Instance.CreateInstigationEvent(this, this._mainThreat, targetKingdom);
+
 					}
 				}
 			}
