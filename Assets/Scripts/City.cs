@@ -1497,8 +1497,8 @@ public class City{
     }
     internal void IncreaseBOPAttributesEveryMonth() {
 		if (!isDead && this.rebellion == null) {
-            int powerIncrease = _powerPoints * 3;
-            int defenseIncrease = _defensePoints * 4;
+            int powerIncrease = _powerPoints * 4;
+            int defenseIncrease = _defensePoints * 3;
             //Each City contributes a base +4 Happiness
             int happinessIncrease = 4 + (_happinessPoints * 2);
             int happinessDecrease = (structures.Count * 3);
