@@ -79,27 +79,41 @@ public class GridMap : MonoBehaviour {
     
     public List<HexTile> GetTilesInRange(HexTile center, int range) {
         List<HexTile> tilesInRange = new List<HexTile>();
-        Vector3 cube = OddRToCube(new Vector2(center.xCoordinate, center.yCoordinate));
+        CubeCoordinate cube = OddRToCube(new HexCoordinate(center.xCoordinate, center.yCoordinate));
+        Debug.Log("Center in cube coordinates: " + cube.x.ToString() + "," + cube.y.ToString() + "," + cube.z.ToString());
         for (int dx = -range; dx <= range; dx++) {
-            for (int dy = Mathf.Max(-range, -dx -range); dy <= Mathf.Min(range, -dx + range); dy++) {
-				Debug.Log (((int)cube.x + dx) + " , " + ((int)cube.y + dy));
-//                tilesInRange.Add(map[(int)cube.x + dx, (int)cube.y + dy]);
+            for (int dy = Mathf.Max(-range, -dx-range); dy <= Mathf.Min(range, -dx+range); dy++) {
+                int dz = -dx - dy;
+                HexCoordinate hex = CubeToOddR(new CubeCoordinate(cube.x + dx, cube.y + dy, cube.z + dz));
+                //Debug.Log("Hex neighbour: " + hex.col.ToString() + "," + hex.row.ToString());
+                if(hex.col >= 0 && hex.row >= 0 && !(hex.col == center.xCoordinate && hex.row == center.yCoordinate)) {
+                    tilesInRange.Add(map[hex.col, hex.row]);
+                }
             }
         }
-        return tilesInRange.Distinct().ToList();
+        return tilesInRange;
     }
 
-    private Vector2 CubeToOddR(Vector3 cube) {
-        int col = (int)(cube.x + (cube.z - ((int)cube.z & 1)) / 2);
-        int row = (int)cube.z;
-        return new Vector2(col, row);
+    public HexCoordinate CubeToOddR(CubeCoordinate cube) {
+        int modifier = 0;
+        if(cube.z % 2 == 1) {
+            modifier = 1;
+        }
+        int col = cube.x + (cube.z - (modifier)) / 2;
+        int row = cube.z;
+        return new HexCoordinate(col, row);
     }
 
-    public Vector3 OddRToCube(Vector2 hex) {
-        int x = (int)(hex.x - (hex.y - ((int)hex.y & 1)) / 2);
-        int z = (int)hex.y;
+    public CubeCoordinate OddRToCube(HexCoordinate hex) {
+        int modifier = 0;
+        if (hex.row % 2 == 1) {
+            modifier = 1;
+        }
+
+        int x = hex.col - (hex.row - (modifier)) / 2;
+        int z = hex.row;
         int y = -x - z;
-        return new Vector3(x, y, z);
+        return new CubeCoordinate(x, y, z);
     }
 
     public void GenerateRegions(int numOfRegions, int refinementLevel) {

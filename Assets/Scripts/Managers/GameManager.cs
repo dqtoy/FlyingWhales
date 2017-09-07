@@ -34,12 +34,26 @@ public class GameManager : MonoBehaviour {
     [ContextMenu("Get Tiles In Range")]
     public void GetTilesTester() {
         List<HexTile> tiles = GridMap.Instance.GetTilesInRange(center, range);
-        UnityEditor.Selection.objects = tiles.Select(x => x.gameObject).ToArray();
-        for (int i = 0; i < tiles.Count; i++) {
-            Debug.Log(tiles[i].name);
-        }
+        StartCoroutine(SelectSlowly(tiles));
+        //UnityEditor.Selection.objects = tiles.Select(x => x.gameObject).ToArray();
+        //for (int i = 0; i < tiles.Count; i++) {
+        //    Debug.Log(tiles[i].name);
+        //}
     }
     #endregion
+
+
+    IEnumerator SelectSlowly(List<HexTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            yield return new WaitForSeconds(1f);
+            tiles[i].SetTileHighlightColor(Color.red);
+            tiles[i].ShowTileHighlight();
+            //List<Object> objects = UnityEditor.Selection.objects.ToList();
+            //objects.Add(tiles[i]);
+            //UnityEditor.Selection.objects = objects.ToArray();
+        }
+
+    }
 
     private void Awake(){
 		Instance = this;

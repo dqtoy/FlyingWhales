@@ -259,7 +259,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     /*
 	 * Returns all Hex tiles gameobjects within a radius
 	 * */
-    public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter = false){
+    public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter){
 		List<HexTile> tilesInRange = new List<HexTile>();
 		List<HexTile> checkedTiles = new List<HexTile> ();
 		List<HexTile> tilesToAdd = new List<HexTile> ();
@@ -296,8 +296,27 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 		return tilesInRange;
 	}
-	#region Pathfinding
-	public void FindNeighbours(HexTile[,] gameBoard) {
+
+    public List<HexTile> GetTilesInRange(int range) {
+        List<HexTile> tilesInRange = new List<HexTile>();
+        CubeCoordinate cube = GridMap.Instance.OddRToCube(new HexCoordinate(xCoordinate, yCoordinate));
+        //Debug.Log("Center in cube coordinates: " + cube.x.ToString() + "," + cube.y.ToString() + "," + cube.z.ToString());
+        for (int dx = -range; dx <= range; dx++) {
+            for (int dy = Mathf.Max(-range, -dx - range); dy <= Mathf.Min(range, -dx + range); dy++) {
+                int dz = -dx - dy;
+                HexCoordinate hex = GridMap.Instance.CubeToOddR(new CubeCoordinate(cube.x + dx, cube.y + dy, cube.z + dz));
+                //Debug.Log("Hex neighbour: " + hex.col.ToString() + "," + hex.row.ToString());
+                if (hex.col >= 0 && hex.row >= 0
+                    && hex.col < GridMap.Instance.width && hex.row < GridMap.Instance.height
+                    && !(hex.col == xCoordinate && hex.row == yCoordinate)) {
+                    tilesInRange.Add(GridMap.Instance.map[hex.col, hex.row]);
+                }
+            }
+        }
+        return tilesInRange;
+    }
+    #region Pathfinding
+    public void FindNeighbours(HexTile[,] gameBoard) {
 		var neighbours = new List<HexTile>();
 
 		List<Point> possibleExits;
