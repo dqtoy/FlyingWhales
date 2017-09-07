@@ -258,7 +258,7 @@ public class CityGenerator : MonoBehaviour {
 		}
 		return BIOMES.NONE;
 	}
-	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellion rebellion = null){
+	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellions rebellion = null){
         //if (hexTile.isBorder && rebellion == null) {
         //    throw new System.Exception("A new city is being created on a border tile!\n Hextile: " + hexTile.name + "\nKingdom: " + kingdom.name);
         //    //hexTile.ownedByCity.borderTiles.Remove(hexTile);
@@ -268,27 +268,28 @@ public class CityGenerator : MonoBehaviour {
         //}
 
         if (rebellion != null){
-			hexTile.city = new RebelFort (hexTile, kingdom, rebellion);
+			hexTile.city = new RebelFort (hexTile, kingdom, true, rebellion);
 		}else{
 			hexTile.city = new City (hexTile, kingdom);
             allCities.Add(hexTile.city);
+			CityTaskManager ctmOfCity = hexTile.gameObject.GetComponent<CityTaskManager>();
+			if (ctmOfCity == null) {
+				ctmOfCity = hexTile.gameObject.AddComponent<CityTaskManager>();
+			}
+
+			if (hexTile.gameObject.GetComponent<PandaBehaviour>() == null) {
+				hexTile.gameObject.AddComponent<PandaBehaviour>();
+				hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
+				hexTile.gameObject.GetComponent<PandaBehaviour>().Compile(cityBehaviourTree.text);
+			}
+
+			ctmOfCity.Initialize(hexTile.city);
+			Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+
 		}
 
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
 
-        CityTaskManager ctmOfCity = hexTile.gameObject.GetComponent<CityTaskManager>();
-        if (ctmOfCity == null) {
-            ctmOfCity = hexTile.gameObject.AddComponent<CityTaskManager>();
-        }
-
-        if (hexTile.gameObject.GetComponent<PandaBehaviour>() == null) {
-            hexTile.gameObject.AddComponent<PandaBehaviour>();
-            hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
-            hexTile.gameObject.GetComponent<PandaBehaviour>().Compile(cityBehaviourTree.text);
-        }
-
-        ctmOfCity.Initialize(hexTile.city);
-        Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
 
         //hexTile.city.UpdateBorderTiles();
         return hexTile.city;

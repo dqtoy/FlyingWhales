@@ -191,18 +191,18 @@ public class Citizen {
         }
 		if (this.id == this.city.kingdom.king.id) {
 			//ASSIGN NEW LORD, SUCCESSION
-			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
+//			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
             if (isDethroned) {
 				if (newKing != null) {
 					this.city.kingdom.AssignNewKing (newKing);
 				}
-			} else { 
-				if (this.city.kingdom.successionLine.Count <= 0) {
-					if (!isConquered) {
+			} else {
+				if (!isConquered) {
+					if (this.city.kingdom.successionLine.Count <= 0) {
 						this.city.kingdom.AssignNewKing (null);
+					} else {
+						this.city.kingdom.AssignNewKing (this.city.kingdom.successionLine [0]);
 					}
-				} else {
-					this.city.kingdom.AssignNewKing (this.city.kingdom.successionLine [0]);
 				}
 			}
 		}else{
@@ -517,6 +517,10 @@ public class Citizen {
 		}
         this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
     }
+	internal void ChangeCharacterValues(Dictionary<CHARACTER_VALUE, int> newCharacterValues){
+		this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>(newCharacterValues);
+		this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
+	}
     private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value){
 		if(this._dictCharacterValues.ContainsKey(key)){
 			this._dictCharacterValues [key] += value;

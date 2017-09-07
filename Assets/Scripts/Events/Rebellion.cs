@@ -31,7 +31,7 @@ public class Rebellion : GameEvent {
 		this.conqueredCities = new List<City> ();
 		this.attackRate = 0;
 		this.isInitialAttack = false;
-		this.targetKingdom.rebellions.Add (this);
+//		this.targetKingdom.rebellions.Add (this);
 		this.warPair.DefaultValues ();
 		startedBy.SetImmortality (true);
 		City cityWhereRebelFortIsCreated = startedBy.city;
@@ -92,7 +92,7 @@ public class Rebellion : GameEvent {
 	}
 	internal override void DoneEvent (){
 		base.DoneEvent ();
-		this.targetKingdom.rebellions.Remove (this);
+//		this.targetKingdom.rebellions.Remove (this);
 		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
 		Messenger.RemoveListener<HexTile>("OnUpdatePath", UpdatePath);
 
@@ -102,7 +102,7 @@ public class Rebellion : GameEvent {
 	private void CreateRebelFort(){
 		HexTile hexTile = GetRandomBorderTileForFort ();
 //		this.rebelFort = new RebelFort (hexTile, this.targetKingdom, this);
-		this.rebelFort = (RebelFort)CityGenerator.Instance.CreateNewCity (hexTile, this.targetKingdom, this);
+//		this.rebelFort = (RebelFort)CityGenerator.Instance.CreateNewCity (hexTile, this.targetKingdom, this);
 //		this.rebelLeader.citizen.city.citizens.Remove (this.rebelLeader.citizen);
 //		this.rebelFort.citizens.Add (this.rebelLeader.citizen);
 		this.rebelLeader.citizen.city = this.rebelFort;

@@ -49,7 +49,7 @@ public class City{
     [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
     [NonSerialized] internal List<HexTile> borderTiles;
     [NonSerialized] internal List<HexTile> outerTiles;
-    [NonSerialized] internal Rebellion rebellion;
+    [NonSerialized] internal Rebellions rebellion;
     [NonSerialized] internal Plague plague;
 
 	protected const int HP_INCREASE = 5;
@@ -113,7 +113,7 @@ public class City{
     }
 	#endregion
 
-	public City(HexTile hexTile, Kingdom kingdom){
+	public City(HexTile hexTile, Kingdom kingdom, bool isRebel = false){
 		this.id = Utilities.SetID(this);
 		this.hexTile = hexTile;
 		this._kingdom = kingdom;
@@ -141,16 +141,20 @@ public class City{
 		this.plague = null;
 		this._hp = this.maxHP;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
-		hexTile.CheckLairsInRange ();
-        LevelUpBalanceOfPower();
-        AdjustDefense(100);
-        //		this.CreateInitialFamilies();
-        Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
-        Messenger.AddListener("CitizenDied", CheckCityDeath);
-        //EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
-        GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-        increaseDueDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+
+		if(!isRebel){
+			hexTile.CheckLairsInRange ();
+			LevelUpBalanceOfPower();
+			AdjustDefense(100);
+			//		this.CreateInitialFamilies();
+			Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
+			Messenger.AddListener("CitizenDied", CheckCityDeath);
+			//EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
+			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+			increaseDueDate.AddMonths(1);
+			SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+		}
+
     }
 
 	/*
@@ -738,20 +742,20 @@ public class City{
 	protected void CityEverydayTurnActions(){
 		this.hasReinforced = false;
 		//this.ProduceGold();
-		this.AttemptToIncreaseHP();
-		if(this._slavesCount > 0){
-			this.AdjustSlavesCount(-1);
-		}
+//		this.AttemptToIncreaseHP();
+//		if(this._slavesCount > 0){
+//			this.AdjustSlavesCount(-1);
+//		}
 	}
 	/*
 	 * Function that listens to onWeekEnd. Performed every tick.
 	 * */
 	protected void RebelFortEverydayTurnActions(){
 		this.hasReinforced = false;
-		this.AttemptToIncreaseHP();
-		if(this._slavesCount > 0){
-			this.AdjustSlavesCount(-1);
-		}
+//		this.AttemptToIncreaseHP();
+//		if(this._slavesCount > 0){
+//			this.AdjustSlavesCount(-1);
+//		}
 	}
 	/*
 	 * Increase a city's HP every month.
@@ -1026,22 +1030,13 @@ public class City{
 
 		this.isDead = true;
         //EventManager.Instance.onDeathToGhost.Invoke (this);
-        KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
         this.hexTile.city = null;
 
         Debug.Log(this.id + " - City " + this.name + " of " + this._kingdom.name + " has been killed!");
         Debug.Log("Stack Trace: " + System.Environment.StackTrace);
 
         this._kingdom.RemoveCityFromKingdom(this);
-
-        if (!this._kingdom.isDead) {
-            if (this.hasKing) {
-                this.hasKing = false;
-                if (this._kingdom.cities.Count > 0) {
-                    this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
-                }
-            }
-        }
+		KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
     }
 
     /*
@@ -1119,17 +1114,16 @@ public class City{
             }
         }
 
-        //this._kingdom.RemoveCityFromKingdom(this);
-        KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR);
+//        this._kingdom.RemoveCityFromKingdom(this);
         RemoveListeners();
         this.isDead = true;
         //Assign new king to conquered kingdom if, conquered city was the home of the current king
-        if (this.hasKing) {
-            this.hasKing = false;
-            if (this._kingdom.cities.Count > 0) {
-                this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
-            }
-        }
+//        if (this.hasKing) {
+//            this.hasKing = false;
+//            if (this._kingdom.cities.Count > 0) {
+//                this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
+//            }
+//        }
 
 
         City newCity = conqueror.CreateNewCityOnTileForKingdom(this.hexTile);
@@ -1141,7 +1135,7 @@ public class City{
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
         newCity.WarDefeatedHP();
-        KingdomManager.Instance.CheckWarTriggerMisc(newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+//        KingdomManager.Instance.CheckWarTriggerMisc(newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 
         if (UIManager.Instance.currentlyShowingKingdom.id == conqueror.id) {
             conqueror.HighlightAllOwnedTilesInKingdom();
@@ -1149,7 +1143,8 @@ public class City{
 		if(relationship.war != null && relationship.war.warPair.isDone){
 			relationship.war.InitializeMobilization ();
 		}
-
+		this._kingdom.RemoveCityFromKingdom(this);
+		KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
     }
     private void TransferItemsToConqueror(Kingdom conqueror){
@@ -1163,15 +1158,14 @@ public class City{
 		}
 	}
 
-    private void RemoveListeners() {
+    internal void RemoveListeners() {
 		if(this.rebellion == null){
 			Messenger.RemoveListener("CityEverydayActions", CityEverydayTurnActions);
-
+			Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
 		}else{
 			Messenger.RemoveListener("CityEverydayActions", RebelFortEverydayTurnActions);
 		}
         Messenger.RemoveListener("CitizenDied", CheckCityDeath);
-        Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
     }
 
     internal bool HasAdjacency(int kingdomID){
@@ -1253,7 +1247,7 @@ public class City{
 			return citizen;
 		}
 	}
-	internal Citizen CreateGeneralForCombat(List<HexTile> path, HexTile targetLocation){
+	internal Citizen CreateGeneralForCombat(List<HexTile> path, HexTile targetLocation, bool isRebel = false){
 //		int cost = 0;
 //		if(!this.kingdom.CanCreateAgent(ROLE.GENERAL, ref cost)){
 //			return null;
@@ -1294,7 +1288,9 @@ public class City{
 			}
 		}
         general.spawnRate = path.Sum (x => x.movementDays) + 2;
-        general.damage = ((General)citizen.assignedRole).GetDamage();
+		if(!isRebel){
+			general.damage = ((General)citizen.assignedRole).GetDamage();
+		}
 //		this._kingdom.AdjustGold (-cost);
 		this.citizens.Remove (citizen);
 		return citizen;
@@ -1384,20 +1380,25 @@ public class City{
 	internal void ReinforceCity(City targetCity, int amount = -1, Wars war = null, bool isRebel = false){
 		EventCreator.Instance.CreateReinforcementEvent (this, targetCity, amount, war, isRebel);
 	}
-	internal void KillAllCitizens(DEATH_REASONS deathReason){
+	internal void KillAllCitizens(DEATH_REASONS deathReason, bool isConquered = false){
 		int countCitizens = this.citizens.Count;
 		for (int i = 0; i < countCitizens; i++) {
-			this.citizens [0].Death (deathReason, false, null, true);
+			this.citizens [0].Death (deathReason, false, null, isConquered);
+		}
+		if (!this._kingdom.isDead) {
+			if (this.hasKing) {
+				this._kingdom.AssignNewKing(null);
+			}
 		}
 	}
 	internal void TransferCityToRebellion(){
 //		this._kingdom.RemoveCityFromKingdom(this);
-		if(this.hasKing){
-			this.hasKing = false;
-			if(this._kingdom.cities.Count > 0){
-				this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
-			}
-		}
+//		if(this.hasKing){
+//			this.hasKing = false;
+//			if(this._kingdom.cities.Count > 0){
+//				this._kingdom.AssignNewKing(null, this._kingdom.cities[0]);
+//			}
+//		}
 
 		this.rebellion.conqueredCities.Add (this);
 	}
@@ -1406,7 +1407,7 @@ public class City{
 		this.rebellion.conqueredCities.Remove (this);
 //		this._kingdom.AddCityToKingdom (this);
 	}
-	internal void ChangeToRebelFort(Rebellion rebellion, bool isStart = false){
+	internal void ChangeToRebelFort(Rebellions rebellion, bool isStart = false){
 		if(rebellion == null){
 			return;
 		}
@@ -1414,41 +1415,40 @@ public class City{
 			if (this.hexTile.cityInfo.city != null){
 				this.hexTile.cityInfo.rebelIcon.SetActive (true);
 			}
+			TransferCityToRebellion ();
 		}
-		rebellion.warPair.isDone = true;
 		this.rebellion = rebellion;
-		ResetToDefaultHP();
+		AdjustDefense (-this._defense);
+//		this.kingdom.RemoveFromNonRebellingCities (this);
 		Messenger.RemoveListener("CityEverydayActions", CityEverydayTurnActions);
         Messenger.RemoveListener("CitizenDied", CheckCityDeath);
 		Messenger.AddListener("CityEverydayActions", RebelFortEverydayTurnActions);
-		KillAllCitizens (DEATH_REASONS.REBELLION);
-		TransferCityToRebellion ();
+		KillAllCitizens (DEATH_REASONS.REBELLION, true);
 		this.AssignNewGovernor ();
-		if(!isStart){
-			Log newLog = rebellion.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "rebel_conquer_city");
-			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.CITY_2);
-		}
+//		if(!isStart){
+//			Log newLog = rebellion.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "rebel_conquer_city");
+//			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.CITY_2);
+//		}
 
 	}
 	internal void ChangeToCity(){
 		if (this.hexTile.cityInfo.city != null){
 			this.hexTile.cityInfo.rebelIcon.SetActive (false);
 		}
-		this.rebellion.warPair.isDone = true;
-		ResetToDefaultHP();
+//		ResetToDefaultHP();
 		Messenger.RemoveListener("CityEverydayActions", RebelFortEverydayTurnActions);
 		Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
         Messenger.AddListener("CitizenDied", CheckCityDeath);
-		KillAllCitizens (DEATH_REASONS.REBELLION);
 		TransferRebellionToCity ();
-		this.AssignNewGovernor ();
-		if(!this.rebellion.rebelLeader.citizen.isKing){
-			if(this.rebellion.rebelLeader.citizen.city.id == this.id){
-				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
-			}
-		}
-		Log newLog = this.rebellion.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "kingdom_conquer_city");
-		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.CITY_2);
+//		KillAllCitizens (DEATH_REASONS.REBELLION, true);
+//		this.AssignNewGovernor ();
+//		if(!this.rebellion.rebelLeader.citizen.isKing){
+//			if(this.rebellion.rebelLeader.citizen.city.id == this.id){
+//				this.rebellion.rebelLeader.citizen.city = this.rebellion.conqueredCities [0];
+//			}
+//		}
+//		Log newLog = this.rebellion.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "kingdom_conquer_city");
+//		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.CITY_2);
 		this.rebellion = null;
 	}
 	internal void RebelCityConqueredByAnotherKingdom(){
@@ -1496,7 +1496,7 @@ public class City{
         _kingdom.AdjustBaseDefense(adjustment);
     }
     internal void IncreaseBOPAttributesEveryMonth() {
-        if (!isDead) {
+		if (!isDead && this.rebellion == null) {
             int powerIncrease = _powerPoints * 3;
             int defenseIncrease = _defensePoints * 4;
             //Each City contributes a base +4 Happiness

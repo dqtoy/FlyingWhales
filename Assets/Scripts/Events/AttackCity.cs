@@ -4,18 +4,28 @@ using System.Collections;
 public class AttackCity : GameEvent {
 
 	internal General general;
+	internal City sourceCity;
 	internal City targetCity;
 	internal GameEvent gameEvent;
 
-	public AttackCity(int startWeek, int startMonth, int startYear, Citizen startedBy, General general, City targetCity, GameEvent gameEvent) : base (startWeek, startMonth, startYear, startedBy){
+	public AttackCity(int startWeek, int startMonth, int startYear, Citizen startedBy, General general, City sourceCity, City targetCity, GameEvent gameEvent) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.ATTACK_CITY;
 		this.name = "Attack City";
 		//		this.description = startedBy.name + " invited " + visitor.citizen.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
 		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
 		this.remainingDays = this.durationInDays;
 		this.general = general;
+		this.sourceCity = sourceCity;
 		this.targetCity = targetCity;
 		this.gameEvent = gameEvent;
+		if(this.gameEvent is Rebellions){
+			int power = ((Rebellions)this.gameEvent).dividedPower;
+			if(power > this.sourceCity.power){
+				power = this.sourceCity.power;
+			}
+			this.sourceCity.AdjustPower (-power);
+			this.general.damage = power;
+		}
 		Debug.Log (general.citizen.name + " of " + general.citizen.city.kingdom.name + " will attack " + targetCity.name);
 //		Messenger.AddListener("OnDayEnd", this.PerformAction);
 
@@ -43,9 +53,8 @@ public class AttackCity : GameEvent {
 					if(!this.targetCity.isDead){
 						((Wars)this.gameEvent).ChangeTurn ();
 					}
-
-				}else if(this.gameEvent is Rebellion){
-
+				}else if(this.gameEvent is Rebellions){
+					((Rebellions)this.gameEvent).CheckTurns ();
 				}
 			}
 		}
