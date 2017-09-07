@@ -145,7 +145,7 @@ public class Wars : GameEvent {
 //							}
 //						}
 //					}
-					kingdom1CityToBeAttacked = GetNearestCityFrom(this.kingdom2.cities[this.kingdom2.cities.Count - 1], this.kingdom1.nonRebellingCities);
+					kingdom1CityToBeAttacked = GetNearestCityFrom(this.kingdom2.cities[this.kingdom2.cities.Count - 1].hexTile, this.kingdom1.nonRebellingCities);
 					if (kingdom1CityToBeAttacked != null) {
 						kingdom2CityToBeAttacked = this.kingdom2.cities[this.kingdom2.cities.Count - 1];
 						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
@@ -162,7 +162,7 @@ public class Wars : GameEvent {
 							}
 						}
 					}
-					kingdom2CityToBeAttacked = GetNearestCityFrom(this.kingdom1.cities[this.kingdom1.cities.Count - 1], this.kingdom2.nonRebellingCities);
+					kingdom2CityToBeAttacked = GetNearestCityFrom(this.kingdom1.cities[this.kingdom1.cities.Count - 1].hexTile, this.kingdom2.nonRebellingCities);
 					if (kingdom2CityToBeAttacked != null) {
 						kingdom1CityToBeAttacked = this.kingdom1.cities[this.kingdom1.cities.Count - 1];
 						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
@@ -181,7 +181,7 @@ public class Wars : GameEvent {
 //							}
 //						}
 //					}
-					kingdom1CityToBeAttacked = GetNearestCityFrom(this._warPair.kingdom2City, this.kingdom1.nonRebellingCities);
+					kingdom1CityToBeAttacked = GetNearestCityFrom(this._warPair.kingdom2City.hexTile, this.kingdom1.nonRebellingCities);
 					if (kingdom1CityToBeAttacked != null) {
 						kingdom2CityToBeAttacked = this._warPair.kingdom2City;
 						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
@@ -198,7 +198,7 @@ public class Wars : GameEvent {
 //							}
 //						}
 //					}
-					kingdom2CityToBeAttacked = GetNearestCityFrom(this._warPair.kingdom1City, this.kingdom2.nonRebellingCities);
+					kingdom2CityToBeAttacked = GetNearestCityFrom(this._warPair.kingdom1City.hexTile, this.kingdom2.nonRebellingCities);
 					if (kingdom2CityToBeAttacked != null) {
 						kingdom1CityToBeAttacked = this._warPair.kingdom1City;
 						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
