@@ -2031,7 +2031,9 @@ public class Kingdom{
 					}
 					if(currentPossibleTarget != null){
 						//Initiate War Event
-						EventCreator.Instance.CreateWarEvent(this, currentPossibleTarget);
+						if(!currentPossibleTargetRelationship.isAtWar){
+							EventCreator.Instance.CreateWarEvent(this, currentPossibleTarget);
+						}
 					}
 				}
 			}

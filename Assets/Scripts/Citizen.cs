@@ -388,18 +388,25 @@ public class Citizen {
 
 
 	internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE){
-		if (this.city.kingdom.HasActiveEvent(EVENT_TYPES.INVASION_PLAN)) {
-			return;
+//		if (this.city.kingdom.HasActiveEvent(EVENT_TYPES.INVASION_PLAN)) {
+//			return;
+//		}
+//		War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, targetKingdom);
+//		if (warEvent != null && warEvent.isAtWar) {
+//			return;
+//		}
+//		if (warEvent == null) {
+//			warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
+//				this.city.kingdom, targetKingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+//		}
+//		warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
+
+		KingdomRelationship relationship = this.city.kingdom.GetRelationshipWithKingdom (targetKingdom);
+		if(relationship != null){
+			if(!relationship.isAtWar){
+				EventCreator.Instance.CreateWarEvent (this.city.kingdom, targetKingdom);
+			}
 		}
-		War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, targetKingdom);
-		if (warEvent != null && warEvent.isAtWar) {
-			return;
-		}
-		if (warEvent == null) {
-			warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
-				this.city.kingdom, targetKingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
-		}
-		warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
 	}
 	
 	internal void ChangeSurname(Citizen citizenToGetSurnameFrom){
