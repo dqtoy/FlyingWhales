@@ -1191,7 +1191,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     public void SetTag(int tag) {
         this.tileTag = tag;
-        tagVisual.text = tag.ToString();
+        //tagVisual.text = xCoordinate.ToString() + "," + yCoordinate.ToString();
         //tagVisual.gameObject.SetActive(true);
     }
 

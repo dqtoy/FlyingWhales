@@ -2248,6 +2248,7 @@ public class UIManager : MonoBehaviour {
 	public void OnChangeUnrest(){
 		if(this.currentlyShowingKingdom != null){
 			this.currentlyShowingKingdom.ChangeHappiness(int.Parse(this.unrestInput.value));
+            UpdateKingdomInfo();
 		}
 	}
 	public void HideUnrest(){
