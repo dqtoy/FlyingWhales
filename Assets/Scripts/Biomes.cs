@@ -251,7 +251,7 @@ public class Biomes : MonoBehaviour {
 	}
 
 	private void CalculateElevationAndMoisture(){
-		float elevationFrequency = 6.93f;//2.66f;
+		float elevationFrequency = 14.93f;//2.66f;
 		float moistureFrequency = 3.34f;//2.94f;
 		float tempFrequency = 2.64f;//2.4f;
 
