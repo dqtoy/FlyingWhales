@@ -101,48 +101,51 @@ public class Wars : GameEvent {
 		City kingdom2CityToBeAttacked = null;
 
 		if((this._warPair.kingdom1City == null || this._warPair.kingdom2City == null) || (this._warPair.kingdom1City.isDead && this._warPair.kingdom2City.isDead)){
-			for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
-				HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
-				if(hexTile.city != null && hexTile.city.id != 0 
-					&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
-
-					if(hexTile.city.kingdom.id == this.kingdom1.id){
-						kingdom1CityToBeAttacked = hexTile.city;
-						break;
-					}
-				}
-			}
+//			for (int i = 0; i < this.kingdom1.cities.Count; i++) {
+//				City city = this.kingdom1.cities[i];
+//				if(!city.isDead && !city.isUnderAttack && city.rebellion == null){
+//
+//					if(hexTile.city.kingdom.id == this.kingdom1.id){
+//						kingdom1CityToBeAttacked = hexTile.city;
+//						break;
+//					}
+//				}
+//			}
+			kingdom1CityToBeAttacked = GetNearestCityFrom(this.kingdom2.capitalCity.hexTile, this.kingdom1.nonRebellingCities);
 			if (kingdom1CityToBeAttacked != null) {
-				for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
-					HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
-					if (hexTile.city != null && hexTile.city.id != 0 
-						&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null) {
-
-						if (hexTile.city.kingdom.id == this.kingdom2.id) {
-							path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, this.kingdom1.capitalCity.habitableTileDistance [i].hexTile, PATHFINDING_MODE.COMBAT);
-							if (path != null) {
-								kingdom2CityToBeAttacked = hexTile.city;
-								break;
-							}
-						}
-
-					}
-				}
+				kingdom2CityToBeAttacked = GetNearestCityFrom (kingdom1CityToBeAttacked.hexTile, this.kingdom2.nonRebellingCities);
+				path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
+//				for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
+//					HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
+//					if (hexTile.city != null && hexTile.city.id != 0 
+//						&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null) {
+//
+//						if (hexTile.city.kingdom.id == this.kingdom2.id) {
+//							path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, this.kingdom1.capitalCity.habitableTileDistance [i].hexTile, PATHFINDING_MODE.COMBAT);
+//							if (path != null) {
+//								kingdom2CityToBeAttacked = hexTile.city;
+//								break;
+//							}
+//						}
+//
+//					}
+//				}
 			}
 		}else{
 			if(this._warPair.isDone){
 				if(this._warPair.kingdom1City.isDead){
-					for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
-						HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
-						if(hexTile.city != null && hexTile.city.id != 0 
-							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
-
-							if(hexTile.city.kingdom.id == this.kingdom1.id){
-								kingdom1CityToBeAttacked = hexTile.city;
-								break;
-							}
-						}
-					}
+//					for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
+//						HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
+//						if(hexTile.city != null && hexTile.city.id != 0 
+//							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
+//
+//							if(hexTile.city.kingdom.id == this.kingdom1.id){
+//								kingdom1CityToBeAttacked = hexTile.city;
+//								break;
+//							}
+//						}
+//					}
+					kingdom1CityToBeAttacked = GetNearestCityFrom(this.kingdom2.cities[this.kingdom2.cities.Count - 1], this.kingdom1.nonRebellingCities);
 					if (kingdom1CityToBeAttacked != null) {
 						kingdom2CityToBeAttacked = this.kingdom2.cities[this.kingdom2.cities.Count - 1];
 						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
@@ -159,6 +162,7 @@ public class Wars : GameEvent {
 							}
 						}
 					}
+					kingdom2CityToBeAttacked = GetNearestCityFrom(this.kingdom1.cities[this.kingdom1.cities.Count - 1], this.kingdom2.nonRebellingCities);
 					if (kingdom2CityToBeAttacked != null) {
 						kingdom1CityToBeAttacked = this.kingdom1.cities[this.kingdom1.cities.Count - 1];
 						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
@@ -166,33 +170,35 @@ public class Wars : GameEvent {
 				}
 			}else{
 				if(this._warPair.kingdom1City.isDead){
-					for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
-						HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
-						if(hexTile.city != null && hexTile.city.id != 0 
-							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
-
-							if(hexTile.city.kingdom.id == this.kingdom1.id){
-								kingdom1CityToBeAttacked = hexTile.city;
-								break;
-							}
-						}
-					}
+//					for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
+//						HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
+//						if(hexTile.city != null && hexTile.city.id != 0 
+//							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
+//
+//							if(hexTile.city.kingdom.id == this.kingdom1.id){
+//								kingdom1CityToBeAttacked = hexTile.city;
+//								break;
+//							}
+//						}
+//					}
+					kingdom1CityToBeAttacked = GetNearestCityFrom(this._warPair.kingdom2City, this.kingdom1.nonRebellingCities);
 					if (kingdom1CityToBeAttacked != null) {
 						kingdom2CityToBeAttacked = this._warPair.kingdom2City;
 						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
 					}
 				}else{
-					for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
-						HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
-						if(hexTile.city != null && hexTile.city.id != 0 
-							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
-
-							if(hexTile.city.kingdom.id == this.kingdom2.id){
-								kingdom2CityToBeAttacked = hexTile.city;
-								break;
-							}
-						}
-					}
+//					for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
+//						HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
+//						if(hexTile.city != null && hexTile.city.id != 0 
+//							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
+//
+//							if(hexTile.city.kingdom.id == this.kingdom2.id){
+//								kingdom2CityToBeAttacked = hexTile.city;
+//								break;
+//							}
+//						}
+//					}
+					kingdom2CityToBeAttacked = GetNearestCityFrom(this._warPair.kingdom1City, this.kingdom2.nonRebellingCities);
 					if (kingdom2CityToBeAttacked != null) {
 						kingdom1CityToBeAttacked = this._warPair.kingdom1City;
 						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
@@ -279,6 +285,8 @@ public class Wars : GameEvent {
 			}else{
 				DeclareWar ();
 			}
+		}else if (this._attacker.kingdom.cities.Count == 1){
+			DeclareWar ();
 		}
 	}
 	private void DeclareWar(){
@@ -412,5 +420,28 @@ public class Wars : GameEvent {
 			}
 		}
 
+	}
+	private City GetNearestCityFrom(HexTile hexTile, List<City> citiesToChooseFrom) {
+		if(hexTile == null){
+			return null;
+		}
+		City nearestCity = null;
+		float nearestDistance = 0f;
+		for (int i = 0; i < citiesToChooseFrom.Count; i++) {
+			City currCity = citiesToChooseFrom[i];
+			if(!currCity.isDead && !currCity.isUnderAttack && currCity.rebellion == null){
+				float distance = Vector3.Distance (hexTile.transform.position, currCity.hexTile.transform.position);
+				if(nearestCity == null) {
+					nearestCity = currCity;
+					nearestDistance = distance;
+				} else {
+					if(distance < nearestDistance) {
+						nearestCity = currCity;
+						nearestDistance = distance;
+					}
+				}
+			}
+		}
+		return nearestCity;
 	}
 }
