@@ -101,4 +101,68 @@ public class GridMap : MonoBehaviour {
         int y = -x - z;
         return new Vector3(x, y, z);
     }
+
+    public void GenerateRegions(int numOfRegions, int refinementLevel) {
+        List<HexTile> allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
+        List<HexTile> possibleCenterTiles = new List<HexTile>(allHexTiles);
+        HexTile[] initialCenters = new HexTile[numOfRegions];
+        Region[] allRegions = new Region[numOfRegions];
+        for (int i = 0; i < numOfRegions; i++) {
+            if(allHexTiles.Count <= 0) {
+                throw new System.Exception("All tiles have been used up!");
+            }
+            HexTile chosenHexTile = possibleCenterTiles[Random.Range(0, possibleCenterTiles.Count)];
+            possibleCenterTiles.Remove(chosenHexTile);
+            allHexTiles.Remove(chosenHexTile);
+            initialCenters[i] = chosenHexTile;
+            Region newRegion = new Region(chosenHexTile);
+            allRegions[i] = newRegion;
+            //Color centerOfMassColor = newRegion.regionColor;
+            //centerOfMassColor.a = 75.6f / 255f;
+            //chosenHexTile.SetTileHighlightColor(centerOfMassColor);
+            //chosenHexTile.ShowTileHighlight();
+            foreach (HexTile hex in chosenHexTile.GetTilesInRange(8)) {
+                possibleCenterTiles.Remove(hex);
+            }
+        }
+        Debug.Log("Successfully got " + initialCenters.Length.ToString() + " center of masses!");
+
+        for (int i = 0; i < refinementLevel; i++) {
+            if(i != 0) {
+                allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
+                for (int j = 0; j < allRegions.Length; j++) {
+                    allRegions[j].ReComputeCenterOfMass();
+                    allRegions[j].ResetTilesInRegion();
+                    allHexTiles.Remove(allRegions[j].centerOfMass);
+                }
+            }
+            for (int j = 0; j < allHexTiles.Count; j++) {
+                HexTile currHexTile = allHexTiles[j];
+                Region regionClosestTo = null;
+                float closestDistance = 999999f;
+                for (int k = 0; k < allRegions.Length; k++) {
+                    Region currRegion = allRegions[k];
+                    HexTile currCenter = currRegion.centerOfMass;
+                    float distance = Vector2.Distance(currHexTile.transform.position, currCenter.transform.position);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        regionClosestTo = currRegion;
+                    }
+                }
+                if (regionClosestTo != null) {
+                    regionClosestTo.AddTile(currHexTile);
+                    //currHexTile.SetTileHighlightColor(regionClosestTo.regionColor);
+                    //currHexTile.ShowTileHighlight();
+                } else {
+                    throw new System.Exception("Could not find closest distance for tile " + currHexTile.name);
+                }
+
+            }
+        }
+
+        for (int i = 0; i < allRegions.Length; i++) {
+            allRegions[i].RevalidateCenterOfMass();
+        }
+        
+    }
 }

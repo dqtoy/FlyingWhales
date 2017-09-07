@@ -92,15 +92,15 @@ public class GameManager : MonoBehaviour {
      * Function that triggers daily actions
      * */
 	public void WeekEnded(){
-        //		TriggerRequestPeace();
-        //EventManager.Instance.onCitizenTurnActions.Invoke();
-        //EventManager.Instance.onCityEverydayTurnActions.Invoke();
-        //EventManager.Instance.onWeekEnd.Invoke();
-        //Messenger.Broadcast("CitizenTurnActions");
+        ////		TriggerRequestPeace();
+        ////EventManager.Instance.onCitizenTurnActions.Invoke();
+        ////EventManager.Instance.onCityEverydayTurnActions.Invoke();
+        ////EventManager.Instance.onWeekEnd.Invoke();
+        ////Messenger.Broadcast("CitizenTurnActions");
         Messenger.Broadcast("CityEverydayActions");
         Messenger.Broadcast("OnDayEnd");
-        //BehaviourTreeManager.Instance.Tick ();
-        //EventManager.Instance.onUpdateUI.Invoke();
+        ////BehaviourTreeManager.Instance.Tick ();
+        ////EventManager.Instance.onUpdateUI.Invoke();
         Messenger.Broadcast("UpdateUI");
 
         this.days += 1;

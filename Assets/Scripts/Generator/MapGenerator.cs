@@ -5,7 +5,7 @@ using System.Linq;
 public class MapGenerator : MonoBehaviour {
 
 	void Start() {
-//		StartCoroutine (StartGeneration());
+        //StartCoroutine (StartGeneration());
         GridMap.Instance.GenerateGrid();
         ObjectPoolManager.Instance.InitializeObjectPools();
         CameraMove.Instance.SetMinimapCamValues();
@@ -15,19 +15,20 @@ public class MapGenerator : MonoBehaviour {
 		Biomes.Instance.GenerateSpecialResources ();
         Biomes.Instance.GenerateTileTags();
         GridMap.Instance.GenerateNeighboursWithSameTag();
-        //Biomes.Instance.GenerateTileDetails();
+        //GridMap.Instance.GenerateRegions(40, 1);
+        //      //Biomes.Instance.GenerateTileDetails();
         CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
-		//PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
-		KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.stoneHabitableTiles, CityGenerator.Instance.woodHabitableTiles);
+        ////PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
+        KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.stoneHabitableTiles, CityGenerator.Instance.woodHabitableTiles);
 
-		CityGenerator.Instance.GenerateLairHabitableTiles(GridMap.Instance.listHexes);
-		MonsterManager.Instance.GenerateLairs();
-        //		UIManager.Instance.UpdateKingsGrid();
-//        WorldEventManager.Instance.TriggerInitialWorldEvents();
-		//WorldEventManager.Instance.BoonOfPowerTrigger();
-		//WorldEventManager.Instance.AltarOfBlessingTrigger();
-  //      WorldEventManager.Instance.FirstAndKeystoneTrigger();
+        CityGenerator.Instance.GenerateLairHabitableTiles(GridMap.Instance.listHexes);
+        MonsterManager.Instance.GenerateLairs();
+        //      //UIManager.Instance.UpdateKingsGrid();
+        //      //WorldEventManager.Instance.TriggerInitialWorldEvents();
+        ////WorldEventManager.Instance.BoonOfPowerTrigger();
+        ////WorldEventManager.Instance.AltarOfBlessingTrigger();
+        //      //WorldEventManager.Instance.FirstAndKeystoneTrigger();
         GameManager.Instance.StartProgression();
         CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
     }
