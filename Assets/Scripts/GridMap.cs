@@ -159,6 +159,10 @@ public class GridMap : MonoBehaviour {
 
             }
         }
+
+        for (int i = 0; i < allRegions.Length; i++) {
+            allRegions[i].RevalidateCenterOfMass();
+        }
         
     }
 }
