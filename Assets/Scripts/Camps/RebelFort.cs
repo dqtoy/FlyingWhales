@@ -5,7 +5,7 @@ using System.Linq;
 
 public class RebelFort: City {
 
-	public RebelFort(HexTile hexTile, Kingdom kingdom, Rebellion rebellion): base (hexTile, kingdom){
+	public RebelFort(HexTile hexTile, Kingdom kingdom, bool isRebel, Rebellions rebellion): base (hexTile, kingdom, isRebel){
 		this.ChangeToRebelFort (rebellion, true);
 	}
 }

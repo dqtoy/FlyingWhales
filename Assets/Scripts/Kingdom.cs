@@ -33,12 +33,13 @@ public class Kingdom{
     private int _baseDefense;
     private int _happiness;
     private List<City> _cities;
+	private List<City> _nonRebellingCities;
 	private List<Camp> camps;
 	internal City capitalCity;
 	internal Citizen king;
 	internal List<Citizen> successionLine;
 
-	internal List<Rebellion> rebellions;
+	internal List<Rebellions> rebellions;
 
 	internal Dictionary<Kingdom, KingdomRelationship> relationships;
 
@@ -209,7 +210,7 @@ public class Kingdom{
         get { return _isGrowthEnabled; }
     }
 	public List<City> nonRebellingCities {
-		get { return this.cities.Where(x => x.rebellion == null).ToList(); }
+		get { return GetNonRebellingCities(); }
 	}
 	public int serumsOfAlacrity {
 		get { return this._serumsOfAlacrity; }
@@ -253,6 +254,12 @@ public class Kingdom{
 	public List<GameEvent> doneEvents{
 		get { return this._doneEvents;}
 	}
+	public int basePower{
+		get { return this._basePower;}
+	}
+	public int baseDefense{
+		get { return this._baseDefense;}
+	}
 	public int effectivePower{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
 		get { return this._basePower + (int)(this._militaryAlliancePower / 2);}
@@ -293,6 +300,7 @@ public class Kingdom{
 		this._mainThreat = null;
         this.successionLine = new List<Citizen>();
 		this._cities = new List<City> ();
+		this._nonRebellingCities = new List<City> ();
 		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
 		this.kingdomColor = Utilities.GetColorForKingdom();
@@ -306,7 +314,7 @@ public class Kingdom{
         this._happiness = 0;
 		this._sourceKingdom = sourceKingdom;
 		this.borderConflictLoyaltyExpiration = 0;
-		this.rebellions = new List<Rebellion> ();
+		this.rebellions = new List<Rebellions> ();
 		this._discoveredKingdoms = new List<Kingdom>();
 		this._techLevel = 1;
 		this._techCounter = 0;
@@ -925,6 +933,7 @@ public class Kingdom{
      * */
     internal void AddCityToKingdom(City city) {
         this._cities.Add(city);
+//		AddToNonRebellingCities (city);
         this.UpdateKingdomTypeData();
         this.UpdateAvailableResources();
         this.UpdateAllCitiesDailyGrowth();
@@ -952,7 +961,12 @@ public class Kingdom{
             this.UpdateAllCitiesDailyGrowth();
             this.UpdateExpansionRate();
             //if (this._cities[0] != null) {
-            SetCapitalCity(this._cities[0]);
+			for (int i = 0; i < this._cities.Count; i++) {
+				if (this._cities[i].rebellion == null) {
+					SetCapitalCity(this._cities[i]);
+					break;
+				}
+			}
             //}
         }
 
@@ -1055,8 +1069,15 @@ public class Kingdom{
             if (city == null) {
                 if (this.king.city.isDead) {
                     Debug.LogError("City of previous king is dead! But still creating king in that dead city");
-                }
-                newKing = this.king.city.CreateNewKing();
+					for (int i = 0; i < this.cities.Count; i++) {
+						if(this.cities[i].rebellion == null){
+							newKing = this.cities [i].CreateNewKing ();
+							break;
+						}
+					}
+				}else{
+					newKing = this.king.city.CreateNewKing();
+				}
             } else {
                 newKing = city.CreateNewKing();
             }
@@ -1069,6 +1090,9 @@ public class Kingdom{
                 return;
             }
         }
+		if(newKing == null){
+			return;
+		}
         SetCapitalCity(newKing.city);
         newKing.city.hasKing = true;
 
@@ -1104,84 +1128,6 @@ public class Kingdom{
     #endregion
 
     #region War
-    internal void AddInternationalWar(Kingdom kingdom) {
-        //		Debug.Log ("INTERNATIONAL WAR");
-        //		for(int i = 0; i < kingdom.cities.Count; i++){
-        //			if(!this.intlWarCities.Contains(kingdom.cities[i])){
-        //				this.intlWarCities.Add(kingdom.cities[i]);
-        //			}
-        //		}
-        //		this.TargetACityToAttack ();
-        //		for(int i = 0; i < this.cities.Count; i++){
-        //			if(!this.king.campaignManager.SearchForDefenseWarCities(this.cities[i], WAR_TYPE.INTERNATIONAL)){
-        //				this.king.campaignManager.defenseWarCities.Add(new CityWar(this.cities[i], false, WAR_TYPE.INTERNATIONAL));
-        //			}
-        //			if(this.cities[i].governor.supportedCitizen == null){
-        //				if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
-        //					this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
-        //				}
-        //			}else{
-        //				if(!this.king.SearchForSuccessionWar(this.cities[i].governor.supportedCitizen)){
-        //					if(!this.king.campaignManager.SearchForDefenseWarCities(kingdom.cities[i])){
-        //						this.king.campaignManager.defenseWarCities.Add(new CityWar(kingdom.cities[i], false, WAR_TYPE.INTERNATIONAL));
-        //					}
-        //				}
-        //			}
-        //		}
-        //		this.king.campaignManager.CreateCampaign ();
-    }
-    internal void RemoveInternationalWar(Kingdom kingdom) {
-        //		this.intlWarCities.RemoveAll(x => x.kingdom.id == kingdom.id);
-        //		for(int i = 0; i < this.king.campaignManager.activeCampaigns.Count; i++){
-        //			if(this.king.campaignManager.activeCampaigns[i].warType == WAR_TYPE.INTERNATIONAL){
-        //				if(this.king.campaignManager.activeCampaigns[i].targetCity.kingdom.id == kingdom.id){
-        //					this.king.campaignManager.CampaignDone(this.king.campaignManager.activeCampaigns[i]);
-        //				}
-        //			}
-        //		}
-    }
-    //	internal void PassOnInternationalWar(){
-    //		this.holderIntlWarCities.Clear();
-    //		this.holderIntlWarCities.AddRange(this.intlWarCities);
-    //	}
-    //	internal void RetrieveInternationWar(){
-    //		this.intlWarCities.AddRange(this.holderIntlWarCities);
-    //		this.holderIntlWarCities.Clear();
-    //	}
-    //
-    //internal City SearchForCityById(int id){
-    //	for(int i = 0; i < this.cities.Count; i++){
-    //		if(this.cities[i].id == id){
-    //			return this.cities[i];
-    //		}
-    //	}
-    //	return null;
-    //}
-
-
-    //	internal void AddInternationalWarCity(City newCity){
-    //		for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
-    //			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
-    //				if(!this.relationshipsWithOtherKingdoms[i].targetKingdom.intlWarCities.Contains(newCity)){
-    //					this.relationshipsWithOtherKingdoms [i].targetKingdom.intlWarCities.Add (newCity);
-    //				}
-    //			}
-    //		}
-    //		if(this.IsKingdomHasWar()){
-    //			if(!this.king.campaignManager.SearchForDefenseWarCities(newCity, WAR_TYPE.INTERNATIONAL)){
-    //				this.king.campaignManager.defenseWarCities.Add (new CityWar (newCity, false, WAR_TYPE.INTERNATIONAL));
-    //			}
-    //		}
-
-    //	}
-    //internal bool IsKingdomHasWar(){
-    //	for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
-    //		if(this.relationshipsWithOtherKingdoms[i].isAtWar){
-    //			return true;
-    //		}
-    //	}
-    //	return false;
-    //}
     internal void AdjustExhaustionToAllRelationship(int amount) {
         for (int i = 0; i < relationships.Count; i++) {
             relationships.ElementAt(i).Value.AdjustExhaustion(amount);
@@ -1200,7 +1146,6 @@ public class Kingdom{
                 city.KillCity();
             } else {
 				city.ConquerCity(this, rel);
-                city.kingdom.RemoveCityFromKingdom(city);
             }
 
             //yield return null;
@@ -1212,17 +1157,20 @@ public class Kingdom{
             //Adjust unrest because a city of this kingdom was conquered.
             this.AdjustHappiness(HAPPINESS_DECREASE_CONQUER);
         } else {
-            if (city is RebelFort) {
-                city.rebellion.KillFort();
-                //				HexTile hex = city.hexTile;
-                //				city.KillCity();
-            } else {
-                if (city.rebellion != null) {
-                    city.ChangeToCity();
-                } else {
-                    city.ChangeToRebelFort(attacker.citizen.city.rebellion);
-                }
-            }
+			if(city.rebellion == null){
+				city.ChangeToRebelFort(attacker.citizen.city.rebellion);
+			}
+//            if (city is RebelFort) {
+//                city.rebellion.KillFort();
+//                //				HexTile hex = city.hexTile;
+//                //				city.KillCity();
+//            } else {
+//                if (city.rebellion != null) {
+//                    city.ChangeToCity();
+//                } else {
+//                    city.ChangeToRebelFort(attacker.citizen.city.rebellion);
+//                }
+//            }
 
         }
 
@@ -2375,4 +2323,20 @@ public class Kingdom{
 		this._currentMilitaryAllianceRejectionDate.year = year;
 	}
 	#endregion
+
+	internal void AddToNonRebellingCities(City city){
+		this._nonRebellingCities.Add (city);
+	}
+	internal void RemoveFromNonRebellingCities(City city){
+		this._nonRebellingCities.Remove (city);
+	}
+	internal List<City> GetNonRebellingCities(){
+		List<City> nonRebels = new List<City> ();
+		for (int i = 0; i < this.cities.Count; i++) {
+			if(this.cities[i].rebellion == null){
+				nonRebels.Add (this.cities [i]);
+			}
+		}
+		return nonRebels;
+	}
 }

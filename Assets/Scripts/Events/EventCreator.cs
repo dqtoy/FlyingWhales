@@ -154,11 +154,12 @@ public class EventCreator: MonoBehaviour {
 		if(sourceCity.kingdom.isLockedDown || targetCity.kingdom.isLockedDown){
 			return null;
 		}
-		Citizen citizen = sourceCity.CreateGeneralForCombat(path, targetCity.hexTile);
+		Citizen citizen = sourceCity.CreateGeneralForCombat(path, targetCity.hexTile, isRebel);
 		if(citizen != null){
+
 			General general = (General)citizen.assignedRole;
 			AttackCity attackCity = new AttackCity(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				citizen, general, targetCity, gameEvent);
+				citizen, general, sourceCity, targetCity, gameEvent);
 			general.Initialize (attackCity);
 			general.isRebel = isRebel;
 		}
@@ -237,13 +238,13 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
-	internal Rebellion CreateRebellionEvent(Kingdom sourceKingdom){
+	internal Rebellions CreateRebellionEvent(Kingdom sourceKingdom, Citizen provokerKing){
 		if(sourceKingdom.isLockedDown){
 			return null;
 		}
 		Citizen rebel = sourceKingdom.capitalCity.CreateAgent(ROLE.REBEL, EVENT_TYPES.REBELLION, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.REBELLION]);
 		if(rebel != null){
-			Rebellion rebellion = new Rebellion(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, rebel);
+			Rebellions rebellion = new Rebellions(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, rebel, provokerKing);
 			rebel.assignedRole.Initialize (rebellion);
 			return rebellion;
 		}

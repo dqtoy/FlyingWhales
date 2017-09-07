@@ -296,36 +296,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 		return tilesInRange;
 	}
-	public List<HexTile> GetTilesInRangeNoWater(int range, bool isOnlyOuter = false){
-		List<HexTile> tilesInRange = new List<HexTile>();
-		List<HexTile> checkedTiles = new List<HexTile> ();
-		List<HexTile> tilesToAdd = new List<HexTile> ();
-
-		for (int i = 0; i < range; i++) {
-
-			if (tilesInRange.Count <= 0) {
-				//tilesInRange = this.AllNeighbours;
-                for (int j = 0; j < AllNeighbours.Count; j++) {
-                    tilesInRange.Add(AllNeighbours[j]);
-                }
-                checkedTiles.Add (this);
-			}else{
-				tilesToAdd.Clear ();
-				for (int j = 0; j < tilesInRange.Count; j++) {
-					if (!checkedTiles.Contains (tilesInRange [j])) {
-						checkedTiles.Add (tilesInRange [j]);
-						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours.Where(x => !tilesInRange.Contains(x)).ToList());
-					}
-				}
-				tilesInRange.AddRange (tilesToAdd);
-				if(i == range - 1 && isOnlyOuter){
-					return tilesToAdd;
-				}
-				//				tilesInRange = tilesInRange.Distinct ().ToList ();
-			}
-		}
-		return tilesInRange;
-	}
 	#region Pathfinding
 	public void FindNeighbours(HexTile[,] gameBoard) {
 		var neighbours = new List<HexTile>();
@@ -358,7 +328,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     internal void LoadEdges() {
         int biomeLayerOfHexTile = Utilities.biomeLayering.IndexOf(this.biomeType);
-        List<HexTile> neighbours = this.AllNeighbours;
+		List<HexTile> neighbours = new List<HexTile>(this.AllNeighbours);
         if (this.elevationType == ELEVATION.WATER) {
             neighbours = neighbours.Where(x => x.elevationType != ELEVATION.WATER).ToList();
         }
