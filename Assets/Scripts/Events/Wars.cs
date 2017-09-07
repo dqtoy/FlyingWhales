@@ -102,24 +102,26 @@ public class Wars : GameEvent {
 
 		if((this._warPair.kingdom1City == null || this._warPair.kingdom2City == null) || (this._warPair.kingdom1City.isDead && this._warPair.kingdom2City.isDead)){
 			for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
-				if(this.kingdom2.capitalCity.habitableTileDistance[i].hexTile.city != null && this.kingdom2.capitalCity.habitableTileDistance[i].hexTile.city.id != 0 
-					&& !this.kingdom2.capitalCity.habitableTileDistance[i].hexTile.city.isDead && !this.kingdom2.capitalCity.habitableTileDistance[i].hexTile.city.isUnderAttack){
+				HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
+				if(hexTile.city != null && hexTile.city.id != 0 
+					&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
 
-					if(this.kingdom2.capitalCity.habitableTileDistance[i].hexTile.city.kingdom.id == this.kingdom1.id){
-						kingdom1CityToBeAttacked = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile.city;
+					if(hexTile.city.kingdom.id == this.kingdom1.id){
+						kingdom1CityToBeAttacked = hexTile.city;
 						break;
 					}
 				}
 			}
 			if (kingdom1CityToBeAttacked != null) {
 				for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
-					if (this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city != null && this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.id != 0 
-						&& !this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.isDead && !this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.isUnderAttack) {
+					HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
+					if (hexTile.city != null && hexTile.city.id != 0 
+						&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null) {
 
-						if (this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city.kingdom.id == this.kingdom2.id) {
+						if (hexTile.city.kingdom.id == this.kingdom2.id) {
 							path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, this.kingdom1.capitalCity.habitableTileDistance [i].hexTile, PATHFINDING_MODE.COMBAT);
 							if (path != null) {
-								kingdom2CityToBeAttacked = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile.city;
+								kingdom2CityToBeAttacked = hexTile.city;
 								break;
 							}
 						}
@@ -133,7 +135,7 @@ public class Wars : GameEvent {
 					for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
 						HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
 						if(hexTile.city != null && hexTile.city.id != 0 
-							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack){
+							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
 
 							if(hexTile.city.kingdom.id == this.kingdom1.id){
 								kingdom1CityToBeAttacked = hexTile.city;
@@ -149,7 +151,7 @@ public class Wars : GameEvent {
 					for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
 						HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
 						if(hexTile.city != null && hexTile.city.id != 0 
-							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack){
+							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
 
 							if(hexTile.city.kingdom.id == this.kingdom2.id){
 								kingdom2CityToBeAttacked = hexTile.city;
@@ -167,7 +169,7 @@ public class Wars : GameEvent {
 					for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
 						HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
 						if(hexTile.city != null && hexTile.city.id != 0 
-							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack){
+							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
 
 							if(hexTile.city.kingdom.id == this.kingdom1.id){
 								kingdom1CityToBeAttacked = hexTile.city;
@@ -183,7 +185,7 @@ public class Wars : GameEvent {
 					for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
 						HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
 						if(hexTile.city != null && hexTile.city.id != 0 
-							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack){
+							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
 
 							if(hexTile.city.kingdom.id == this.kingdom2.id){
 								kingdom2CityToBeAttacked = hexTile.city;
