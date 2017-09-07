@@ -57,7 +57,7 @@ public class Provocation : GameEvent {
             } else {
                 //Start Rebellion
                 Debug.Log("A provoker sent by " + sourceKingdom.name + " has incited a rebellion at " + targetKingdom.name);
-//                EventCreator.Instance.CreateRebellionEvent(targetKingdom);
+                EventCreator.Instance.CreateRebellionEvent(targetKingdom, sourceKingdom.king);
             }
 			
 			//Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Provocation", "provoke");
