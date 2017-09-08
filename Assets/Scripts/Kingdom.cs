@@ -88,6 +88,7 @@ public class Kingdom{
 	//Balance of Power
 //	private int _effectivePower;
 //	private int _effectiveDefense;
+	private bool _isMobilizing;
 	private int _militaryAlliancePower;
 	private int _mutualDefenseTreatyPower;
 	private List<Kingdom> _militaryAlliances;
@@ -95,7 +96,7 @@ public class Kingdom{
 	private List<Kingdom> _adjacentKingdoms;
 	private GameDate _currentDefenseTreatyRejectionDate;
 	private GameDate _currentMilitaryAllianceRejectionDate;
-
+	private List<Wars> _mobilizationQueue;
 
     protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
     protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
@@ -284,6 +285,9 @@ public class Kingdom{
 	public List<Kingdom> adjacentKingdoms{
 		get { return this._adjacentKingdoms;}
 	}
+	public bool isMobilizing{
+		get { return this._isMobilizing;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -344,6 +348,7 @@ public class Kingdom{
 		this._adjacentKingdoms = new List<Kingdom> ();
 		this._currentDefenseTreatyRejectionDate = new GameDate (0, 0, 0);
 		this._currentMilitaryAllianceRejectionDate = new GameDate (0, 0, 0);
+		this._mobilizationQueue = new List<Wars> ();
 
         AdjustPrestige(200);
         SetGrowthState(true);
@@ -2413,5 +2418,23 @@ public class Kingdom{
 			}
 		}
 		return nonRebels;
+	}
+
+	internal void AddToMobilizationQueue(Wars war){
+		this._mobilizationQueue.Add (war);
+	}
+	internal void RemoveFromMobilizationQueue(Wars war){
+		this._mobilizationQueue.Remove (war);
+	}
+	internal void MobilizingState(bool state){
+		this._isMobilizing = state;
+	}
+	internal void CheckMobilizationQueue(){
+		if (this._mobilizationQueue.Count > 0) {
+			this._mobilizationQueue [0].InitializeMobilization ();
+			this._mobilizationQueue.RemoveAt (0);
+		}else{
+			MobilizingState (false);
+		}
 	}
 }

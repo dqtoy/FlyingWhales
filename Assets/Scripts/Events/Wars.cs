@@ -76,11 +76,65 @@ public class Wars : GameEvent {
 		this.currentTurn = CURRENT_TURN.KINGDOM1;
 		this._attacker = null;
 		this._defender = null;
-
 		Messenger.AddListener<HexTile>("OnUpdatePath", UpdatePath);
 		InitializeMobilization ();
 	}
-
+	private void MilitaryAlliancesMustJoin(Kingdom kingdom, Kingdom targetKingdom){
+		for (int i = 0; i < kingdom.militaryAlliances.Count; i++) {
+			Kingdom militaryAllianceKingdom = kingdom.militaryAlliances [i];
+			KingdomRelationship allianceTargetRelationship = militaryAllianceKingdom.GetRelationshipWithKingdom (targetKingdom);
+			if(!allianceTargetRelationship.isAtWar){
+				bool hasIdleCity = false;
+				for (int j = 0; j < militaryAllianceKingdom.cities.Count; j++) {
+					City militaryAllianceCity = militaryAllianceKingdom.cities [i];
+					if (militaryAllianceCity.rebellion == null && !militaryAllianceCity.isUnderAttack) {
+						hasIdleCity = true;
+						break;
+					}
+				}
+				if(hasIdleCity){
+					if(allianceTargetRelationship.isMilitaryAlliance){
+						DissolveMilitaryAlliance (kingdom, militaryAllianceKingdom);
+					}
+				}else{
+					DissolveMilitaryAlliance (kingdom, militaryAllianceKingdom);
+				}
+			}
+		}
+	}
+	private void MutualDefenseTreatyMustJoin(Kingdom kingdom, Kingdom targetKingdom){
+		for (int i = 0; i < kingdom.mutualDefenseTreaties.Count; i++) {
+			Kingdom mutualDefenseTreatyKingdom = kingdom.mutualDefenseTreaties [i];
+			KingdomRelationship allianceTargetRelationship = mutualDefenseTreatyKingdom.GetRelationshipWithKingdom (targetKingdom);
+			if(!allianceTargetRelationship.isAtWar){
+				bool hasIdleCity = false;
+				for (int j = 0; j < mutualDefenseTreatyKingdom.cities.Count; j++) {
+					City militaryAllianceCity = mutualDefenseTreatyKingdom.cities [i];
+					if (militaryAllianceCity.rebellion == null && !militaryAllianceCity.isUnderAttack) {
+						hasIdleCity = true;
+						break;
+					}
+				}
+				if(hasIdleCity){
+					if(allianceTargetRelationship.isMutualDefenseTreaty){
+						DissolveMutualDefenseTreaty (kingdom, mutualDefenseTreatyKingdom);
+					}
+				}else{
+					DissolveMutualDefenseTreaty (kingdom, mutualDefenseTreatyKingdom);
+				}
+			}
+		}
+	}
+	private void DissolveMilitaryAlliance(Kingdom sourceKingdom, Kingdom targetKingdom){
+		//Dissolve
+		KingdomRelationship relationship = sourceKingdom.GetRelationshipWithKingdom (targetKingdom);
+		relationship.ChangeMilitaryAlliance (false);
+	}
+	private void DissolveMutualDefenseTreaty(Kingdom sourceKingdom, Kingdom targetKingdom){
+		//Dissolve
+		KingdomRelationship relationship = sourceKingdom.GetRelationshipWithKingdom (targetKingdom);
+		relationship.ChangeMutualDefenseTreaty (false);
+	}
 	private void UpdatePath(HexTile hexTile){
 		if(this._warPair.path != null && this._warPair.path.Count > 0){
 			for (int i = 0; i < this._warPair.path.Count; i++) {
@@ -96,55 +150,22 @@ public class Wars : GameEvent {
 		CreateCityWarPair ();
 	}
 	private void CreateCityWarPair(){
+		if(!this._warPair.kingdom1City.isDead && !this._warPair.kingdom2City.isDead){
+			return;
+		}
 		List<HexTile> path = null;
 		City kingdom1CityToBeAttacked = null;
 		City kingdom2CityToBeAttacked = null;
 
 		if((this._warPair.kingdom1City == null || this._warPair.kingdom2City == null) || (this._warPair.kingdom1City.isDead && this._warPair.kingdom2City.isDead)){
-//			for (int i = 0; i < this.kingdom1.cities.Count; i++) {
-//				City city = this.kingdom1.cities[i];
-//				if(!city.isDead && !city.isUnderAttack && city.rebellion == null){
-//
-//					if(hexTile.city.kingdom.id == this.kingdom1.id){
-//						kingdom1CityToBeAttacked = hexTile.city;
-//						break;
-//					}
-//				}
-//			}
 			kingdom1CityToBeAttacked = GetNearestCityFrom(this.kingdom2.capitalCity.hexTile, this.kingdom1.nonRebellingCities);
 			if (kingdom1CityToBeAttacked != null) {
 				kingdom2CityToBeAttacked = GetNearestCityFrom (kingdom1CityToBeAttacked.hexTile, this.kingdom2.nonRebellingCities);
 				path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
-//				for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
-//					HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
-//					if (hexTile.city != null && hexTile.city.id != 0 
-//						&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null) {
-//
-//						if (hexTile.city.kingdom.id == this.kingdom2.id) {
-//							path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, this.kingdom1.capitalCity.habitableTileDistance [i].hexTile, PATHFINDING_MODE.COMBAT);
-//							if (path != null) {
-//								kingdom2CityToBeAttacked = hexTile.city;
-//								break;
-//							}
-//						}
-//
-//					}
-//				}
 			}
 		}else{
 			if(this._warPair.isDone){
 				if(this._warPair.kingdom1City.isDead){
-//					for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
-//						HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
-//						if(hexTile.city != null && hexTile.city.id != 0 
-//							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
-//
-//							if(hexTile.city.kingdom.id == this.kingdom1.id){
-//								kingdom1CityToBeAttacked = hexTile.city;
-//								break;
-//							}
-//						}
-//					}
 					kingdom1CityToBeAttacked = GetNearestCityFrom(this.kingdom2.cities[this.kingdom2.cities.Count - 1].hexTile, this.kingdom1.nonRebellingCities);
 					if (kingdom1CityToBeAttacked != null) {
 						kingdom2CityToBeAttacked = this.kingdom2.cities[this.kingdom2.cities.Count - 1];
@@ -170,34 +191,12 @@ public class Wars : GameEvent {
 				}
 			}else{
 				if(this._warPair.kingdom1City.isDead){
-//					for (int i = 0; i < this.kingdom2.capitalCity.habitableTileDistance.Count; i++) {
-//						HexTile hexTile = this.kingdom2.capitalCity.habitableTileDistance [i].hexTile;
-//						if(hexTile.city != null && hexTile.city.id != 0 
-//							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
-//
-//							if(hexTile.city.kingdom.id == this.kingdom1.id){
-//								kingdom1CityToBeAttacked = hexTile.city;
-//								break;
-//							}
-//						}
-//					}
 					kingdom1CityToBeAttacked = GetNearestCityFrom(this._warPair.kingdom2City.hexTile, this.kingdom1.nonRebellingCities);
 					if (kingdom1CityToBeAttacked != null) {
 						kingdom2CityToBeAttacked = this._warPair.kingdom2City;
 						path = PathGenerator.Instance.GetPath (kingdom1CityToBeAttacked.hexTile, kingdom2CityToBeAttacked.hexTile, PATHFINDING_MODE.COMBAT);
 					}
 				}else{
-//					for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
-//						HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
-//						if(hexTile.city != null && hexTile.city.id != 0 
-//							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
-//
-//							if(hexTile.city.kingdom.id == this.kingdom2.id){
-//								kingdom2CityToBeAttacked = hexTile.city;
-//								break;
-//							}
-//						}
-//					}
 					kingdom2CityToBeAttacked = GetNearestCityFrom(this._warPair.kingdom1City.hexTile, this.kingdom2.nonRebellingCities);
 					if (kingdom2CityToBeAttacked != null) {
 						kingdom1CityToBeAttacked = this._warPair.kingdom1City;
@@ -220,15 +219,20 @@ public class Wars : GameEvent {
 		this._attacker = null;
 		this._defender = null;
 	}
-	private void Mobilize(){
+	internal void Mobilize(){
 		if(this._warPair.kingdom1City == null || this._warPair.kingdom2City == null){
+			if(this._attacker != null){
+				this._attacker.kingdom.CheckMobilizationQueue ();
+			}
 			return;
 		}
 		if(this._warPair.kingdom1City.isDead || this._warPair.kingdom2City.isDead){
 			//Peace?
+			if(this._attacker != null){
+				this._attacker.kingdom.CheckMobilizationQueue ();
+			}
 			return;
 		}
-
 		ResetToStep1 ();
 		if (this.currentTurn == CURRENT_TURN.KINGDOM1) {
 			this._attacker = this._warPair.kingdom1City;
@@ -237,13 +241,18 @@ public class Wars : GameEvent {
 			this._attacker = this._warPair.kingdom2City;
 			this._defender = this._warPair.kingdom1City;
 		}
-
+		if(this._attacker.kingdom.isMobilizing){
+			this._attacker.kingdom.AddToMobilizationQueue (this);
+			return;
+		}
+		this._attacker.kingdom.MobilizingState (true);
 		if(this._attacker.kingdom.cities.Count > 1){
 			float buffEnemyPower = UnityEngine.Random.Range (1.1f, 1.5f);
 			int enemyPower = (int)(GetEnemyPowerAndDefense (this._defender) * buffEnemyPower);
 			if(this._attacker.power < enemyPower){
 				int diffPower = enemyPower - this._attacker.power;
 				MOBILIZATION_TYPE mobType = GetMobilizationType ();
+				bool hasReinforced = false;
 				if (mobType == MOBILIZATION_TYPE.EQUAL) {
 					int powerContribution = Mathf.CeilToInt(diffPower / (this._attacker.kingdom.cities.Count - 1));
 					int powerShortage = 0;
@@ -252,7 +261,8 @@ public class Wars : GameEvent {
 					while(!isComplete){
 						for (int i = 0; i < this._attacker.kingdom.cities.Count; i++) {
 							City reinforcerCity = this._attacker.kingdom.cities [i];
-							if (this._attacker.id != reinforcerCity.id && reinforcerCity.power > 0) {
+							if (this._attacker.id != reinforcerCity.id && reinforcerCity.power > 0 && !reinforcerCity.isUnderAttack) {
+								hasReinforced = true;
 								totalNeededContribution = powerContribution + powerShortage;
 								if(reinforcerCity.power >= totalNeededContribution){
 									powerShortage = 0;
@@ -271,7 +281,8 @@ public class Wars : GameEvent {
 					int neededPower = diffPower;
 					for (int i = 0; i < this._attacker.kingdom.cities.Count; i++) {
 						City reinforcerCity = this._attacker.kingdom.cities [i];
-						if (this._attacker.id != reinforcerCity.id && reinforcerCity.power > 0) {
+						if (this._attacker.id != reinforcerCity.id && reinforcerCity.power > 0 && !reinforcerCity.isUnderAttack) {
+							hasReinforced = true;
 							if(reinforcerCity.power >= neededPower){
 								reinforcerCity.ReinforceCity (this._attacker, neededPower, this);
 								break;
@@ -281,6 +292,9 @@ public class Wars : GameEvent {
 							}
 						}
 					}
+				}
+				if(!hasReinforced){
+					DeclareWar ();
 				}
 			}else{
 				DeclareWar ();
@@ -294,13 +308,20 @@ public class Wars : GameEvent {
 			this._isAtWar = true;
 			KingdomManager.Instance.DeclareWarBetweenKingdoms (this);
 			this.isInitialAttack = true;
+			MilitaryAlliancesMustJoin (this._kingdom1, this._kingdom2);
+			MilitaryAlliancesMustJoin (this._kingdom2, this._kingdom1);
+			MutualDefenseTreatyMustJoin (this._kingdom2, this._kingdom1);
 		}
 		AttackCity ();
 	}
 	private void AttackCity(){
 		if(!this._attacker.isDead && !this._defender.isDead){
-			this._attacker.AttackCity (this._defender, this.warPair.path, this);
-			ReinforcementKingdom (this._defender);
+			if(this._attacker.power > 0){
+				this._attacker.AttackCity (this._defender, this.warPair.path, this);
+				ReinforcementKingdom (this._defender);
+			}else{
+				ChangeTurn ();	
+			}
 		}else{
 			InitializeMobilization ();
 		}
@@ -427,20 +448,37 @@ public class Wars : GameEvent {
 		}
 		City nearestCity = null;
 		float nearestDistance = 0f;
+		City nearestCityUnderAttack = null;
+		float nearestDistanceUnderAttack = 0f;
 		for (int i = 0; i < citiesToChooseFrom.Count; i++) {
 			City currCity = citiesToChooseFrom[i];
-			if(!currCity.isDead && !currCity.isUnderAttack && currCity.rebellion == null){
+			if(!currCity.isDead && currCity.rebellion == null){
 				float distance = Vector3.Distance (hexTile.transform.position, currCity.hexTile.transform.position);
-				if(nearestCity == null) {
-					nearestCity = currCity;
-					nearestDistance = distance;
-				} else {
-					if(distance < nearestDistance) {
+				if(!currCity.isUnderAttack){
+					if(nearestCity == null) {
 						nearestCity = currCity;
 						nearestDistance = distance;
+					} else {
+						if(distance < nearestDistance) {
+							nearestCity = currCity;
+							nearestDistance = distance;
+						}
+					}
+				}else{
+					if(nearestCityUnderAttack == null) {
+						nearestCityUnderAttack = currCity;
+						nearestDistanceUnderAttack = distance;
+					} else {
+						if(distance < nearestDistanceUnderAttack) {
+							nearestCityUnderAttack = currCity;
+							nearestDistanceUnderAttack = distance;
+						}
 					}
 				}
 			}
+		}
+		if(nearestCity == null){
+			nearestCityUnderAttack = nearestCity;
 		}
 		return nearestCity;
 	}
