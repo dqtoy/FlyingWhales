@@ -122,7 +122,7 @@ public class GridMap : MonoBehaviour {
         HexTile[] initialCenters = new HexTile[numOfRegions];
         Region[] allRegions = new Region[numOfRegions];
         for (int i = 0; i < numOfRegions; i++) {
-            if(allHexTiles.Count <= 0) {
+            if(possibleCenterTiles.Count <= 0) {
                 throw new System.Exception("All tiles have been used up!");
             }
             HexTile chosenHexTile = possibleCenterTiles[Random.Range(0, possibleCenterTiles.Count)];
@@ -131,11 +131,11 @@ public class GridMap : MonoBehaviour {
             initialCenters[i] = chosenHexTile;
             Region newRegion = new Region(chosenHexTile);
             allRegions[i] = newRegion;
-            //Color centerOfMassColor = newRegion.regionColor;
-            //centerOfMassColor.a = 75.6f / 255f;
-            //chosenHexTile.SetTileHighlightColor(centerOfMassColor);
-            //chosenHexTile.ShowTileHighlight();
-            foreach (HexTile hex in chosenHexTile.GetTilesInRange(8)) {
+            Color centerOfMassColor = newRegion.regionColor;
+            centerOfMassColor.a = 75.6f / 255f;
+            chosenHexTile.SetTileHighlightColor(centerOfMassColor);
+            chosenHexTile.ShowTileHighlight();
+            foreach (HexTile hex in chosenHexTile.GetTilesInRange(5)) {
                 possibleCenterTiles.Remove(hex);
             }
         }
@@ -165,8 +165,8 @@ public class GridMap : MonoBehaviour {
                 }
                 if (regionClosestTo != null) {
                     regionClosestTo.AddTile(currHexTile);
-                    //currHexTile.SetTileHighlightColor(regionClosestTo.regionColor);
-                    //currHexTile.ShowTileHighlight();
+                    currHexTile.SetTileHighlightColor(regionClosestTo.regionColor);
+                    currHexTile.ShowTileHighlight();
                 } else {
                     throw new System.Exception("Could not find closest distance for tile " + currHexTile.name);
                 }

@@ -18,8 +18,8 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private Camera traderCamera;
     [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Camera fogOfWarCamera;
-    [SerializeField] private Camera minimapCamera;
-    [SerializeField] private MinimapCamera _minimap;
+    [SerializeField] private Camera _minimapCamera;
+    //[SerializeField] private MinimapCamera _minimap;
 
 	private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
@@ -40,16 +40,19 @@ public class CameraMove : MonoBehaviour {
 	const float MIN_Z = -10f;
 	const float MAX_Z = -10f;
 
-	private float MIN_X;
-	private float MAX_X;
-	private float MIN_Y;
-	private float MAX_Y;
+	internal float MIN_X;
+    internal float MAX_X;
+    internal float MIN_Y;
+    internal float MAX_Y;
 
     private float previousCameraFOV;
 
     #region getters/setters
-    public MinimapCamera minimap {
-        get { return _minimap; }
+    //public MinimapCamera minimap {
+    //    get { return _minimap; }
+    //}
+    public Camera minimapCamera {
+        get { return _minimapCamera; }
     }
     public float currentFOV {
         get { return Camera.main.orthographicSize; }
@@ -164,7 +167,7 @@ public class CameraMove : MonoBehaviour {
 //		}
 
 		if (Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) || Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow) ||
-			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D) || minimap.isDragging) {
+			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D)) {
 			//reset target when player pushes a button to pan the camera
 			target = null;
 		}
