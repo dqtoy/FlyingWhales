@@ -2048,22 +2048,22 @@ public class Kingdom{
 		Kingdom currentThreat = null;
 		for (int i = 0; i < this.discoveredKingdoms.Count; i++) {
 			Kingdom targetKingdom = this.discoveredKingdoms [i];
-            currentThreat = targetKingdom;
-            //KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
-            //if(relationship.isAdjacent){
-            //	int thisEffectiveDefense = this.effectiveDefense;
-            //	int targetEffectivePower = targetKingdom.effectivePower;
-            //	int buffedTargetEffectivePower = (int)(targetEffectivePower * 1.15f);
-            //	if(thisEffectiveDefense < buffedTargetEffectivePower){
-            //		if(currentThreat != null){
-            //			if(targetEffectivePower > currentThreat.effectivePower){
-            //				currentThreat = targetKingdom;
-            //			}
-            //		}else{
-            //			currentThreat = targetKingdom;
-            //		}
-            //	}
-            //}
+//            currentThreat = targetKingdom;
+            KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
+            if(relationship.isAdjacent){
+            	int thisEffectiveDefense = this.effectiveDefense;
+            	int targetEffectivePower = targetKingdom.effectivePower;
+            	int buffedTargetEffectivePower = (int)(targetEffectivePower * 1.15f);
+            	if(thisEffectiveDefense < buffedTargetEffectivePower){
+            		if(currentThreat != null){
+            			if(targetEffectivePower > currentThreat.effectivePower){
+            				currentThreat = targetKingdom;
+            			}
+            		}else{
+            			currentThreat = targetKingdom;
+            		}
+            	}
+            }
         }
 		return currentThreat;
 	}
@@ -2233,11 +2233,17 @@ public class Kingdom{
 	}
 	internal void AdjustBasePower(int adjustment) {
         _basePower += adjustment;
-		UpdateMilitaryAlliancePower (adjustment);
+		if(this._basePower < 0){
+			this._basePower = 0;
+		}
+		UpdateOtherMilitaryAlliancePower (adjustment);
     }
 	internal void AdjustBaseDefense(int adjustment) {
     	_baseDefense += adjustment;
-		UpdateMutualDefenseTreatyPower (adjustment);
+		if(this._baseDefense < 0){
+			this._baseDefense = 0;
+		}
+		UpdateOtherMutualDefenseTreatyPower (adjustment);
 	}
 	internal void AdjustHappiness(int amountToAdjust) {
     	this._happiness += amountToAdjust;
@@ -2250,7 +2256,7 @@ public class Kingdom{
 	internal void AdjustMilitaryAlliancePower(int amount){
 		this._militaryAlliancePower += amount;
 	}
-	private void UpdateMilitaryAlliancePower(int amount){
+	private void UpdateOtherMilitaryAlliancePower(int amount){
 		for (int i = 0; i < this._militaryAlliances.Count; i++) {
 			this._militaryAlliances [i].AdjustMilitaryAlliancePower(amount);
 		}
@@ -2258,7 +2264,7 @@ public class Kingdom{
 	internal void AdjustMutualDefenseTreatyPower(int amount){
 		this._mutualDefenseTreatyPower += amount;
 	}
-	private void UpdateMutualDefenseTreatyPower(int amount){
+	private void UpdateOtherMutualDefenseTreatyPower(int amount){
 		for (int i = 0; i < this._mutualDefenseTreaties.Count; i++) {
 			this._mutualDefenseTreaties [i].AdjustMutualDefenseTreatyPower(amount);
 		}
@@ -2279,15 +2285,19 @@ public class Kingdom{
 	}
 	internal void AddMilitaryAlliance(Kingdom kingdom){
 		this._militaryAlliances.Add (kingdom);
+		AdjustMilitaryAlliancePower (kingdom.basePower);
 	}
 	internal void RemoveMilitaryAlliance(Kingdom kingdom){
 		this._militaryAlliances.Remove(kingdom);
+		AdjustMilitaryAlliancePower (-kingdom.basePower);
 	}
 	internal void AddMutualDefenseTreaty(Kingdom kingdom){
 		this._mutualDefenseTreaties.Add (kingdom);
+		AdjustMutualDefenseTreatyPower (kingdom.baseDefense);
 	}
 	internal void RemoveMutualDefenseTreaty(Kingdom kingdom){
 		this._mutualDefenseTreaties.Remove(kingdom);
+		AdjustMutualDefenseTreatyPower (-kingdom.baseDefense);
 	}
 	internal void AddAdjacentKingdom(Kingdom kingdom){
         if (!_adjacentKingdoms.Contains(kingdom)) {
@@ -2323,6 +2333,69 @@ public class Kingdom{
 		this._currentMilitaryAllianceRejectionDate.month = month;
 		this._currentMilitaryAllianceRejectionDate.day = day;
 		this._currentMilitaryAllianceRejectionDate.year = year;
+	}
+
+	internal bool RenewMutualDefenseTreatyWith(Kingdom targetKingdom, KingdomRelationship relationship){
+		this._mainThreat = GetMainThreat ();
+		if(this._mainThreat != null){
+			if(this._mainThreat.id == targetKingdom.id){
+				return false;
+			}else{
+				if (this.kingdomTypeData.purpose == PURPOSE.BALANCE && relationship.totalLike >= 0 && !relationship.isMutualDefenseTreaty) {
+					KingdomRelationship targetRelationship = targetKingdom.GetRelationshipWithKingdom (this);
+					if (targetRelationship.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+		if (this.kingdomTypeData.purpose == PURPOSE.BALANCE && relationship.totalLike >= 0 && !relationship.isMutualDefenseTreaty) {
+			KingdomRelationship targetRelationship = targetKingdom.GetRelationshipWithKingdom (this);
+			if (targetRelationship.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	internal bool RenewMilitaryAllianceWith(Kingdom targetKingdom, KingdomRelationship relationship){
+		this._mainThreat = GetMainThreat ();
+		if (this.kingdomTypeData.purpose == PURPOSE.BANDWAGON) {
+			if (this._mainThreat != null) {
+				if (this._mainThreat.id == targetKingdom.id) {
+					if (!relationship.isMilitaryAlliance) {
+						KingdomRelationship relationshipOfMainThreatWithThis = targetKingdom.GetRelationshipWithKingdom (this);
+						if (relationshipOfMainThreatWithThis.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}else if (this.kingdomTypeData.purpose == PURPOSE.SUPERIORITY) {
+			if (this._mainThreat != null) {
+				if (this._mainThreat.id == targetKingdom.id) {
+					return false;
+				} else {
+					if (relationship.totalLike >= 0 && !relationship.isMilitaryAlliance) {
+						KingdomRelationship targetRelationship = targetKingdom.GetRelationshipWithKingdom (this);
+						if (targetRelationship.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+							return true;
+						}
+					}
+					return false;
+				}
+			}else{
+				if (relationship.totalLike >= 0 && !relationship.isMilitaryAlliance) {
+					KingdomRelationship targetRelationship = targetKingdom.GetRelationshipWithKingdom (this);
+					if (targetRelationship.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		} 
+		return false;
 	}
 	#endregion
 

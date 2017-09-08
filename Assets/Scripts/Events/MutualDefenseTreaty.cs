@@ -53,16 +53,15 @@ public class MutualDefenseTreaty : GameEvent {
 		}
 	}
 	private void EvaluateOffer(){
-		KingdomRelationship relationship = this.targetKingdom.GetRelationshipWithKingdom (this.startedByKingdom);
-		if(relationship.totalLike >= 0 && (this.targetKingdom.mainThreat == null || this.targetKingdom.mainThreat.id != this.startedByKingdom.id)){
-			AcceptOffer (relationship);
+		if(_targetRel.totalLike >= 0 && (this.targetKingdom.mainThreat == null || this.targetKingdom.mainThreat.id != this.startedByKingdom.id)){
+			AcceptOffer ();
 		}else{
 			RejectOffer ();
 		}
 		DoneEvent ();
 	}
-	private void AcceptOffer(KingdomRelationship relationship){
-		relationship.ChangeMutualDefenseTreaty (true);
+	private void AcceptOffer(){
+		_sourceRel.ChangeMutualDefenseTreaty (true);
 	}
 	private void RejectOffer(){
 		this.targetKingdom.UpdateCurrentDefenseTreatyRejectionDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);

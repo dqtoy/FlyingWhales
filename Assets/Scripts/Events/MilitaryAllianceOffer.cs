@@ -32,10 +32,11 @@ public class MilitaryAllianceOffer : GameEvent {
         KingdomRelationship targetKingdomRelWithSource = _targetKingdom.GetRelationshipWithKingdom(_sourceKingdom);
         if(targetKingdomRelWithSource.totalLike > 0) {
             //If the receiver has a positive opinion of the sender and he doesnt consider the sender as his Main Threat, he will accept.
-            if(_targetKingdom.mainThreat == null || _targetKingdom.mainThreat != _sourceKingdom) {
+			if(_targetRel.totalLike >= 0 && (_targetKingdom.mainThreat == null || _targetKingdom.mainThreat != _sourceKingdom)) {
                 //Accept
-                _sourceKingdom.AddMilitaryAlliance(_targetKingdom);
-                _targetKingdom.AddMilitaryAlliance(_sourceKingdom);
+//                _sourceKingdom.AddMilitaryAlliance(_targetKingdom);
+//                _targetKingdom.AddMilitaryAlliance(_sourceKingdom);
+				_sourceRel.ChangeMilitaryAlliance (true);
                 Debug.Log(_targetKingdom.name + " has accepted a military alliance offer from " + _sourceKingdom.name);
             } else {
                 //Decline

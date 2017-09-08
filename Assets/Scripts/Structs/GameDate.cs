@@ -37,4 +37,21 @@ public struct GameDate {
 		this.day = day;
 		this.year = year;
 	}
+	public void SetDate(GameDate gameDate){
+		this.month = gameDate.month;
+		this.day = gameDate.day;
+		this.year = gameDate.year;
+	}
+	public bool IsSameDate(int month, int day, int year){
+		if(this.month == month && this.day == day && this.year == year){
+			return true;
+		}
+		return false;
+	}
+	public bool IsSameDate(GameDate gameDate){
+		if(this.month == gameDate.month && this.day == gameDate.day && this.year == gameDate.year){
+			return true;
+		}
+		return false;
+	}
 }

@@ -33,6 +33,9 @@ public class KingdomRelationship {
 	private bool _isMutualDefenseTreaty;
 	private Dictionary<EVENT_TYPES, bool> _eventBuffs;
 
+	private GameDate _currentExpirationDefenseTreaty;
+	private GameDate _currentExpirationMilitaryAlliance;
+
     #region getters/setters
     public Kingdom sourceKingdom {
         get { return _sourceKingdom; }
@@ -133,6 +136,8 @@ public class KingdomRelationship {
 		this._isMilitaryAlliance = false;
 		this._isMutualDefenseTreaty = false;
 		this._isAdjacent = false;
+		this._currentExpirationDefenseTreaty = new GameDate (0, 0, 0);
+		this._currentExpirationMilitaryAlliance = new GameDate (0, 0, 0);
 
 		this._eventBuffs = new Dictionary<EVENT_TYPES, bool>(){
 			{EVENT_TYPES.TRIBUTE, false},
@@ -579,7 +584,13 @@ public class KingdomRelationship {
 	internal bool ChangeMilitaryAlliance(bool state){
 		bool hasSourceChanged = AdjustMilitaryAlliance (state);
 		KingdomRelationship targetRelationship = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		targetRelationship.AdjustMilitaryAlliance (state);
+		bool hasTargetChanged = targetRelationship.AdjustMilitaryAlliance (state);
+		if(hasSourceChanged && hasTargetChanged && state){
+			GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+			gameDate.AddYears (1);
+			SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.month, gameDate.year, () => MilitaryAllianceExpiration ());
+			this._currentExpirationMilitaryAlliance.SetDate(gameDate);
+		}
 		return hasSourceChanged;
 	}
 	private bool AdjustMilitaryAlliance(bool state){
@@ -599,7 +610,13 @@ public class KingdomRelationship {
 	internal bool ChangeMutualDefenseTreaty(bool state){
 		bool hasSourceChanged = AdjustMutualDefenseTreaty (state);
 		KingdomRelationship targetRelationship = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		targetRelationship.AdjustMutualDefenseTreaty (state);
+		bool hasTargetChanged = targetRelationship.AdjustMutualDefenseTreaty (state);
+		if(hasSourceChanged && hasTargetChanged && state){
+			GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+			gameDate.AddYears (1);
+			SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.month, gameDate.year, () => DefenseTreatyExpiration ());
+			this._currentExpirationDefenseTreaty.SetDate(gameDate);
+		}
 		return hasSourceChanged;
 	}
 	private bool AdjustMutualDefenseTreaty(bool state){
@@ -629,6 +646,37 @@ public class KingdomRelationship {
 			}else{
 				this._sourceKingdom.RemoveAdjacentKingdom (this._targetKingdom);
 			}
+		}
+	}
+	private void DefenseTreatyExpiration(){
+		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead && this._isMutualDefenseTreaty 
+			&& this._currentExpirationDefenseTreaty.IsSameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year)){
+
+			ChangeMutualDefenseTreaty (false);
+			RenewDefenseTreaty ();
+
+		}
+	}
+	private void RenewDefenseTreaty(){
+		bool isSourceWillingToRenew = this._sourceKingdom.RenewMutualDefenseTreatyWith (this._targetKingdom, this);
+		if(isSourceWillingToRenew){
+			ChangeMutualDefenseTreaty (true);
+		}
+	}
+
+	private void MilitaryAllianceExpiration(){
+		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead && this._isMilitaryAlliance 
+			&& this._currentExpirationMilitaryAlliance.IsSameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year)){
+
+			ChangeMilitaryAlliance (false);
+			RenewMilitaryAlliance ();
+
+		}
+	}
+	private void RenewMilitaryAlliance(){
+		bool isSourceWillingToRenew = this._sourceKingdom.RenewMilitaryAllianceWith (this._targetKingdom, this);
+		if(isSourceWillingToRenew){
+			ChangeMilitaryAlliance (true);
 		}
 	}
 }
