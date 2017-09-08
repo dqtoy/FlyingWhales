@@ -150,7 +150,7 @@ public class Wars : GameEvent {
 		CreateCityWarPair ();
 	}
 	private void CreateCityWarPair(){
-		if(!this._warPair.kingdom1City.isDead && !this._warPair.kingdom2City.isDead){
+		if((this._warPair.kingdom1City != null && !this._warPair.kingdom1City.isDead) && (this._warPair.kingdom2City != null && !this._warPair.kingdom2City.isDead)){
 			return;
 		}
 		List<HexTile> path = null;
@@ -319,6 +319,7 @@ public class Wars : GameEvent {
 			if(this._attacker.power > 0){
 				this._attacker.AttackCity (this._defender, this.warPair.path, this);
 				ReinforcementKingdom (this._defender);
+				this._attacker.kingdom.CheckMobilizationQueue ();
 			}else{
 				ChangeTurn ();	
 			}
@@ -478,7 +479,7 @@ public class Wars : GameEvent {
 			}
 		}
 		if(nearestCity == null){
-			nearestCityUnderAttack = nearestCity;
+			nearestCity = nearestCityUnderAttack;
 		}
 		return nearestCity;
 	}
