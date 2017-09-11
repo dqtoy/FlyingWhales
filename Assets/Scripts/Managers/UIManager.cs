@@ -2328,6 +2328,9 @@ public class UIManager : MonoBehaviour {
     public void ChangePrestige() {
         currentlyShowingKingdom.SetPrestige(Int32.Parse(kingdomPrestigeLbl.text));
     }
+    public void ForceExpansion() {
+        EventCreator.Instance.CreateExpansionEvent(currentlyShowingKingdom);
+    }
     #endregion
 
 
