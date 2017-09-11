@@ -2239,12 +2239,12 @@ public class Kingdom{
 	internal void AdjustBasePower(int adjustment) {
         _basePower += adjustment;
         _basePower = Mathf.Max(_basePower, 0);
-	UpdateOtherMilitaryAlliancePower (adjustment);
+	    UpdateOtherMilitaryAlliancePower (adjustment);
     }
 	internal void AdjustBaseDefense(int adjustment) {
     	_baseDefense += adjustment;
         _baseDefense = Mathf.Max(_baseDefense, 0);
-	UpdateOtherMutualDefenseTreatyPower (adjustment);
+	    UpdateOtherMutualDefenseTreatyPower (adjustment);
 	}
 	internal void AdjustHappiness(int amountToAdjust) {
     	this._happiness += amountToAdjust;
