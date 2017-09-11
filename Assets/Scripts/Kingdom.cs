@@ -88,6 +88,7 @@ public class Kingdom{
 	//Balance of Power
 //	private int _effectivePower;
 //	private int _effectiveDefense;
+	private bool _isMobilizing;
 	private int _militaryAlliancePower;
 	private int _mutualDefenseTreatyPower;
 	private List<Kingdom> _militaryAlliances;
@@ -95,7 +96,7 @@ public class Kingdom{
 	private List<Kingdom> _adjacentKingdoms;
 	private GameDate _currentDefenseTreatyRejectionDate;
 	private GameDate _currentMilitaryAllianceRejectionDate;
-
+	private List<Wars> _mobilizationQueue;
 
     protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
     protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
@@ -284,6 +285,9 @@ public class Kingdom{
 	public List<Kingdom> adjacentKingdoms{
 		get { return this._adjacentKingdoms;}
 	}
+	public bool isMobilizing{
+		get { return this._isMobilizing;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -344,6 +348,7 @@ public class Kingdom{
 		this._adjacentKingdoms = new List<Kingdom> ();
 		this._currentDefenseTreatyRejectionDate = new GameDate (0, 0, 0);
 		this._currentMilitaryAllianceRejectionDate = new GameDate (0, 0, 0);
+		this._mobilizationQueue = new List<Wars> ();
 
         AdjustPrestige(200);
         SetGrowthState(true);
@@ -2048,22 +2053,22 @@ public class Kingdom{
 		Kingdom currentThreat = null;
 		for (int i = 0; i < this.discoveredKingdoms.Count; i++) {
 			Kingdom targetKingdom = this.discoveredKingdoms [i];
-            currentThreat = targetKingdom;
-            //KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
-            //if(relationship.isAdjacent){
-            //	int thisEffectiveDefense = this.effectiveDefense;
-            //	int targetEffectivePower = targetKingdom.effectivePower;
-            //	int buffedTargetEffectivePower = (int)(targetEffectivePower * 1.15f);
-            //	if(thisEffectiveDefense < buffedTargetEffectivePower){
-            //		if(currentThreat != null){
-            //			if(targetEffectivePower > currentThreat.effectivePower){
-            //				currentThreat = targetKingdom;
-            //			}
-            //		}else{
-            //			currentThreat = targetKingdom;
-            //		}
-            //	}
-            //}
+//            currentThreat = targetKingdom;
+            KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
+            if(relationship.isAdjacent){
+            	int thisEffectiveDefense = this.effectiveDefense;
+            	int targetEffectivePower = targetKingdom.effectivePower;
+            	int buffedTargetEffectivePower = (int)(targetEffectivePower * 1.15f);
+            	if(thisEffectiveDefense < buffedTargetEffectivePower){
+            		if(currentThreat != null){
+            			if(targetEffectivePower > currentThreat.effectivePower){
+            				currentThreat = targetKingdom;
+            			}
+            		}else{
+            			currentThreat = targetKingdom;
+            		}
+            	}
+            }
         }
 		return currentThreat;
 	}
@@ -2234,12 +2239,12 @@ public class Kingdom{
 	internal void AdjustBasePower(int adjustment) {
         _basePower += adjustment;
         _basePower = Mathf.Max(_basePower, 0);
-        UpdateMilitaryAlliancePower (adjustment);
+	UpdateOtherMilitaryAlliancePower (adjustment);
     }
 	internal void AdjustBaseDefense(int adjustment) {
     	_baseDefense += adjustment;
         _baseDefense = Mathf.Max(_baseDefense, 0);
-        UpdateMutualDefenseTreatyPower (adjustment);
+	UpdateOtherMutualDefenseTreatyPower (adjustment);
 	}
 	internal void AdjustHappiness(int amountToAdjust) {
     	this._happiness += amountToAdjust;
@@ -2253,7 +2258,7 @@ public class Kingdom{
 		this._militaryAlliancePower += amount;
         _militaryAlliancePower = Mathf.Max(_militaryAlliancePower, 0);
     }
-	private void UpdateMilitaryAlliancePower(int amount){
+	private void UpdateOtherMilitaryAlliancePower(int amount){
 		for (int i = 0; i < this._militaryAlliances.Count; i++) {
 			this._militaryAlliances [i].AdjustMilitaryAlliancePower(amount);
 		}
@@ -2262,7 +2267,7 @@ public class Kingdom{
 		this._mutualDefenseTreatyPower += amount;
         _mutualDefenseTreatyPower = Mathf.Max(_mutualDefenseTreatyPower, 0);
     }
-	private void UpdateMutualDefenseTreatyPower(int amount){
+	private void UpdateOtherMutualDefenseTreatyPower(int amount){
 		for (int i = 0; i < this._mutualDefenseTreaties.Count; i++) {
 			this._mutualDefenseTreaties [i].AdjustMutualDefenseTreatyPower(amount);
 		}
@@ -2283,15 +2288,19 @@ public class Kingdom{
 	}
 	internal void AddMilitaryAlliance(Kingdom kingdom){
 		this._militaryAlliances.Add (kingdom);
+		AdjustMilitaryAlliancePower (kingdom.basePower);
 	}
 	internal void RemoveMilitaryAlliance(Kingdom kingdom){
 		this._militaryAlliances.Remove(kingdom);
+		AdjustMilitaryAlliancePower (-kingdom.basePower);
 	}
 	internal void AddMutualDefenseTreaty(Kingdom kingdom){
 		this._mutualDefenseTreaties.Add (kingdom);
+		AdjustMutualDefenseTreatyPower (kingdom.baseDefense);
 	}
 	internal void RemoveMutualDefenseTreaty(Kingdom kingdom){
 		this._mutualDefenseTreaties.Remove(kingdom);
+		AdjustMutualDefenseTreatyPower (-kingdom.baseDefense);
 	}
 	internal void AddAdjacentKingdom(Kingdom kingdom){
         if (!_adjacentKingdoms.Contains(kingdom)) {
@@ -2328,6 +2337,69 @@ public class Kingdom{
 		this._currentMilitaryAllianceRejectionDate.day = day;
 		this._currentMilitaryAllianceRejectionDate.year = year;
 	}
+
+	internal bool RenewMutualDefenseTreatyWith(Kingdom targetKingdom, KingdomRelationship relationship){
+		this._mainThreat = GetMainThreat ();
+		if(this._mainThreat != null){
+			if(this._mainThreat.id == targetKingdom.id){
+				return false;
+			}else{
+				if (this.kingdomTypeData.purpose == PURPOSE.BALANCE && relationship.totalLike >= 0 && !relationship.isMutualDefenseTreaty) {
+					KingdomRelationship targetRelationship = targetKingdom.GetRelationshipWithKingdom (this);
+					if (targetRelationship.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		}
+		if (this.kingdomTypeData.purpose == PURPOSE.BALANCE && relationship.totalLike >= 0 && !relationship.isMutualDefenseTreaty) {
+			KingdomRelationship targetRelationship = targetKingdom.GetRelationshipWithKingdom (this);
+			if (targetRelationship.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	internal bool RenewMilitaryAllianceWith(Kingdom targetKingdom, KingdomRelationship relationship){
+		this._mainThreat = GetMainThreat ();
+		if (this.kingdomTypeData.purpose == PURPOSE.BANDWAGON) {
+			if (this._mainThreat != null) {
+				if (this._mainThreat.id == targetKingdom.id) {
+					if (!relationship.isMilitaryAlliance) {
+						KingdomRelationship relationshipOfMainThreatWithThis = targetKingdom.GetRelationshipWithKingdom (this);
+						if (relationshipOfMainThreatWithThis.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}else if (this.kingdomTypeData.purpose == PURPOSE.SUPERIORITY) {
+			if (this._mainThreat != null) {
+				if (this._mainThreat.id == targetKingdom.id) {
+					return false;
+				} else {
+					if (relationship.totalLike >= 0 && !relationship.isMilitaryAlliance) {
+						KingdomRelationship targetRelationship = targetKingdom.GetRelationshipWithKingdom (this);
+						if (targetRelationship.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+							return true;
+						}
+					}
+					return false;
+				}
+			}else{
+				if (relationship.totalLike >= 0 && !relationship.isMilitaryAlliance) {
+					KingdomRelationship targetRelationship = targetKingdom.GetRelationshipWithKingdom (this);
+					if (targetRelationship.totalLike >= 0 && (targetKingdom._mainThreat == null || targetKingdom._mainThreat.id != this.id)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		} 
+		return false;
+	}
 	#endregion
 
 	internal void AddToNonRebellingCities(City city){
@@ -2344,5 +2416,23 @@ public class Kingdom{
 			}
 		}
 		return nonRebels;
+	}
+
+	internal void AddToMobilizationQueue(Wars war){
+		this._mobilizationQueue.Add (war);
+	}
+	internal void RemoveFromMobilizationQueue(Wars war){
+		this._mobilizationQueue.Remove (war);
+	}
+	internal void MobilizingState(bool state){
+		this._isMobilizing = state;
+	}
+	internal void CheckMobilizationQueue(){
+		if (this._mobilizationQueue.Count > 0) {
+			this._mobilizationQueue [0].InitializeMobilization ();
+			this._mobilizationQueue.RemoveAt (0);
+		}else{
+			MobilizingState (false);
+		}
 	}
 }

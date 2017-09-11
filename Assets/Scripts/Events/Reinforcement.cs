@@ -56,6 +56,9 @@ public class Reinforcement : GameEvent {
 		if(this.reinforcementAmount == -1){
 			this.reinforcementAmount = Mathf.CeilToInt(this.reinforcer.citizen.city.power * 0.3f);
 		}
+		if(this.sourceCity.power < this.reinforcementAmount){
+			this.reinforcementAmount = this.sourceCity.power;
+		}
 		this.sourceCity.AdjustPower (-this.reinforcementAmount);
 		this.reinforcer.reinforcementValue += this.reinforcementAmount;
 		if(this.war != null){
