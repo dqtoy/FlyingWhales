@@ -79,6 +79,10 @@ public class CameraMove : MonoBehaviour {
 		float xAxisValue = Input.GetAxis("Horizontal");
 		float zAxisValue = Input.GetAxis("Vertical");
 
+        //Vector3 viewportPoint = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+        //Ray ray = Camera.main.ViewportPointToRay(viewportPoint);
+        //Debug.DrawRay(ray.origin, ray.direction * -10, Color.red);
+
 //		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.W)){
 //			this.direction = DIRECTION.UP;
 //			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);

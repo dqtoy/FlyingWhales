@@ -1487,13 +1487,27 @@ public class City{
 	}
 
     #region Balance Of Power
+    internal void SetPower(int newPower) {
+        _kingdom.AdjustBasePower(-_power);
+        _power = 0;
+        AdjustPower(newPower);
+    }
+    internal void SetDefense(int newDefense) {
+        _kingdom.AdjustBaseDefense(-_defense);
+        _defense = 0;
+        AdjustDefense(newDefense);
+    }
     internal void AdjustPower(int adjustment) {
         _power += adjustment;
         _kingdom.AdjustBasePower(adjustment);
+        _power = Mathf.Max(_power, 0);
+        UIManager.Instance.UpdatePrestigeSummary();
     }
     internal void AdjustDefense(int adjustment) {
         _defense += adjustment;
         _kingdom.AdjustBaseDefense(adjustment);
+        _defense = Mathf.Max(_defense, 0);
+        UIManager.Instance.UpdatePrestigeSummary();
     }
     internal void IncreaseBOPAttributesEveryMonth() {
 		if (!isDead && this.rebellion == null) {

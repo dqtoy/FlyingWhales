@@ -22,6 +22,11 @@ public class CityItem : MonoBehaviour {
 	[SerializeField] private GameObject _rebelIcon;
     [SerializeField] private UIProgressBar _growthProgBar;
 
+    [Header("For Testing")]
+    [SerializeField] private GameObject forTestingGO;
+    [SerializeField] private UILabel newPowerLbl;
+    [SerializeField] private UILabel newDefLabel;
+
     #region getters/setters
     public City city {
         get { return this._city; }
@@ -31,7 +36,7 @@ public class CityItem : MonoBehaviour {
 	}
     #endregion
 
-    public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false) {
+    public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false, bool showForTesting = false) {
         this._city = _city;
         _governor.SetCitizen(city.governor);
         _hpLbl.text = city.hp.ToString();
@@ -75,6 +80,15 @@ public class CityItem : MonoBehaviour {
             structuresParentGO.SetActive(true);
             growthMeterParentGO.SetActive(true);
         }
+
+        if (showForTesting) {
+            forTestingGO.SetActive(true);
+            newPowerLbl.text = _city.power.ToString();
+            newDefLabel.text = _city.defense.ToString();
+        } else {
+            forTestingGO.SetActive(false);
+            
+        }
     }
 
     public void CenterOnCity() {
@@ -84,4 +98,14 @@ public class CityItem : MonoBehaviour {
     public void SetKingdomAsSelected() {
         //UIManager.Instance.SetKingdomAsSelected(_city.kingdom);
     }
+
+    #region For Testing
+    public void SetPower() {
+        _city.SetPower(System.Int32.Parse(newPowerLbl.text));
+    }
+    public void SetDefense() {
+        _city.SetDefense(System.Int32.Parse(newDefLabel.text));
+    }
+    #endregion
+
 }

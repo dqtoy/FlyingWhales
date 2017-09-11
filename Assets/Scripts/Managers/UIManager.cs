@@ -208,6 +208,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Minimap")]
     [SerializeField] private GameObject minimapGO;
+    [SerializeField] private GameObject minimapTextureGO;
 
     [Space(10)]
     [Header("Notification Area")]
@@ -294,6 +295,26 @@ public class UIManager : MonoBehaviour {
                 Pause();
             }
         }
+        
+        //if (Input.GetMouseButton(0)) {
+        //    UITexture uiTexture = minimapTextureGO.GetComponent<UITexture>();
+        //    uiTexture.material.SetTexture("_MainTex", uiTexture.mainTexture);
+        //    Texture2D tex = uiTexture.material.GetTexture("_MainTex") as Texture2D;
+        //    RaycastHit hit;
+        //    if (!Physics.Raycast(uiCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition), out hit))
+        //        return;
+
+        //    Debug.Log("Hit!: " + hit.collider.gameObject.name);
+
+        //    Vector3 pixelUV = minimapTextureGO.transform.InverseTransformPoint(hit.point);
+        //    pixelUV.x *= tex.width;
+        //    pixelUV.y *= tex.height;
+
+        //    tex.SetPixel((int)pixelUV.x, (int)pixelUV.y, Color.white);
+        //    tex.Apply();
+
+        //    Debug.Log("Hit Coordinates!: " + pixelUV.x.ToString() + "," + pixelUV.y.ToString());
+        //}
     }
 
     private void NormalizeFontSizes(){
@@ -1759,6 +1780,7 @@ public class UIManager : MonoBehaviour {
         //HideKingdomHistory();
         HideRelationships();
         HideAllKingdomEvents();
+        kingdomCitiesGrid.cellHeight = 123f; //Disable if not using for testing
         List<CityItem> cityItems = kingdomCitiesGrid.gameObject.GetComponentsInChildren<Transform>(true)
             .Where(x => x.GetComponent<CityItem>() != null)
             .Select(x => x.GetComponent<CityItem>()).ToList();
@@ -1768,7 +1790,7 @@ public class UIManager : MonoBehaviour {
             if(i < currentlyShowingKingdom.cities.Count) {
                 City currCity = currentlyShowingKingdom.cities.ElementAt(i);
                 if (currCity != null) {
-                    currCityItem.SetCity(currCity, true);
+                    currCityItem.SetCity(currCity, true, false, true);
                     currCityItem.gameObject.SetActive(true);
                 } else {
                     currCityItem.gameObject.SetActive(false);
@@ -1785,7 +1807,7 @@ public class UIManager : MonoBehaviour {
             for (int i = nextIndex; i < currentlyShowingKingdom.cities.Count; i++) {
                 City currCity = currentlyShowingKingdom.cities[i];
                 GameObject cityGO = InstantiateUIObject(cityItemPrefab.name, this.transform);
-                cityGO.GetComponent<CityItem>().SetCity(currCity, true);
+                cityGO.GetComponent<CityItem>().SetCity(currCity, true, false, true);
                 cityGO.transform.localScale = Vector3.one;
                 kingdomCitiesGrid.AddChild(cityGO.transform);
                 kingdomCitiesGrid.Reposition();

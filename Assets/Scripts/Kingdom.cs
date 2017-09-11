@@ -2233,11 +2233,13 @@ public class Kingdom{
 	}
 	internal void AdjustBasePower(int adjustment) {
         _basePower += adjustment;
-		UpdateMilitaryAlliancePower (adjustment);
+        _basePower = Mathf.Max(_basePower, 0);
+        UpdateMilitaryAlliancePower (adjustment);
     }
 	internal void AdjustBaseDefense(int adjustment) {
     	_baseDefense += adjustment;
-		UpdateMutualDefenseTreatyPower (adjustment);
+        _baseDefense = Mathf.Max(_baseDefense, 0);
+        UpdateMutualDefenseTreatyPower (adjustment);
 	}
 	internal void AdjustHappiness(int amountToAdjust) {
     	this._happiness += amountToAdjust;
@@ -2249,7 +2251,8 @@ public class Kingdom{
 	}
 	internal void AdjustMilitaryAlliancePower(int amount){
 		this._militaryAlliancePower += amount;
-	}
+        _militaryAlliancePower = Mathf.Max(_militaryAlliancePower, 0);
+    }
 	private void UpdateMilitaryAlliancePower(int amount){
 		for (int i = 0; i < this._militaryAlliances.Count; i++) {
 			this._militaryAlliances [i].AdjustMilitaryAlliancePower(amount);
@@ -2257,7 +2260,8 @@ public class Kingdom{
 	}
 	internal void AdjustMutualDefenseTreatyPower(int amount){
 		this._mutualDefenseTreatyPower += amount;
-	}
+        _mutualDefenseTreatyPower = Mathf.Max(_mutualDefenseTreatyPower, 0);
+    }
 	private void UpdateMutualDefenseTreatyPower(int amount){
 		for (int i = 0; i < this._mutualDefenseTreaties.Count; i++) {
 			this._mutualDefenseTreaties [i].AdjustMutualDefenseTreatyPower(amount);
