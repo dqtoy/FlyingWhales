@@ -152,7 +152,7 @@ public class UIManager : MonoBehaviour {
     [Header("Kingdoms UI Objects")]
     public UILabel kingdomNameLbl;
     public UILabel kingdomUnrestLbl;
-    public UILabel kingdomGoldLbl;
+    [SerializeField] private UILabel kingdomPrestigeLbl;
 	public UILabel kingdomTechLbl;
 	public UIProgressBar kingdomTechMeter;
     public UI2DSprite kingdomBasicResourceSprite;
@@ -535,7 +535,7 @@ public class UIManager : MonoBehaviour {
     private void UpdateKingdomInfo() {
         //currentlyShowingKingdom.UpdateFogOfWarVisual();
         kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king); //King
-
+        kingdomPrestigeLbl.text = currentlyShowingKingdom.prestige.ToString();
         kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
         kingdomUnrestLbl.text = currentlyShowingKingdom.happiness.ToString(); //Unrest
 		kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
@@ -2306,7 +2306,6 @@ public class UIManager : MonoBehaviour {
         currentlyShowingCitizen.children.Remove(child);
         currentlyShowingCitizen.spouse.children.Remove(child);
     }
-
 	private void ShowGovernorLoyalty(){
 		if(!this.goLoyalty.activeSelf){
 			this.goLoyalty.SetActive (true);
@@ -2315,18 +2314,19 @@ public class UIManager : MonoBehaviour {
 	public void HideGovernorLoyalty(){
 		this.goLoyalty.SetActive (false);
 	}
-
     public void ChangeGovernorLoyalty() {
 		((Governor)this.currentlyShowingCitizen.assignedRole).SetLoyalty(Int32.Parse(forTestingLoyaltyLbl.text));
 		Debug.Log("Changed loyalty of: " + this.currentlyShowingCitizen.name + " to " + ((Governor)this.currentlyShowingCitizen.assignedRole).loyalty.ToString());
     }
-
     public void LogRelatives() {
         List<Citizen> allRelatives = currentlyShowingCitizen.GetRelatives(-1);
         Debug.Log("========== " + currentlyShowingCitizen.name + " Relatives ==========");
         for (int i = 0; i < allRelatives.Count; i++) {
             Debug.Log("Relative: " + allRelatives[i].name);
         }
+    }
+    public void ChangePrestige() {
+        currentlyShowingKingdom.SetPrestige(Int32.Parse(kingdomPrestigeLbl.text));
     }
     #endregion
 
