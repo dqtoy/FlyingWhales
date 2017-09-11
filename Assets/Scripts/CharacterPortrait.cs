@@ -68,8 +68,8 @@ public class CharacterPortrait : MonoBehaviour {
 		if (relationship1 != null && relationship2 != null) {
 			relationshipCircles[0].SetActive(true);
 			relationshipCircles[1].SetActive(true);
-			relationshipCircles[0].GetComponent<RelationshipItem>().SetRelationship(relationship1);
-			relationshipCircles[1].GetComponent<RelationshipItem>().SetRelationship(relationship2);
+			relationshipCircles[0].GetComponent<RelationshipItem>().SetRelationship(relationship1, true);
+			relationshipCircles[1].GetComponent<RelationshipItem>().SetRelationship(relationship2, true);
 //			relationshipCircles[0].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship1.relationshipStatus);
 //			relationshipCircles[1].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship2.relationshipStatus);
 		}

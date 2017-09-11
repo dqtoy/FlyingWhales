@@ -309,9 +309,9 @@ public class Utilities : MonoBehaviour {
 		if (resourceType == RESOURCE.CORN || resourceType == RESOURCE.WHEAT || resourceType == RESOURCE.RICE ||
 		    resourceType == RESOURCE.DEER || resourceType == RESOURCE.PIG || resourceType == RESOURCE.BEHEMOTH) {
 			return BASE_RESOURCE_TYPE.FOOD;
-		} else if (resourceType == RESOURCE.CEDAR || resourceType == RESOURCE.OAK || resourceType == RESOURCE.EBONY) {
+		} else if (resourceType == RESOURCE.OAK || resourceType == RESOURCE.EBONY) {
 			return BASE_RESOURCE_TYPE.WOOD;
-		} else if (resourceType == RESOURCE.GRANITE || resourceType == RESOURCE.SLATE || resourceType == RESOURCE.MARBLE) {
+		} else if (resourceType == RESOURCE.GRANITE || resourceType == RESOURCE.SLATE) {
 			return BASE_RESOURCE_TYPE.STONE;
 		} else if (resourceType == RESOURCE.MANA_STONE) {
 			return BASE_RESOURCE_TYPE.MANA_STONE;

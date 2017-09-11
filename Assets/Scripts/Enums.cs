@@ -100,16 +100,13 @@ public enum RESOURCE{
 	DEER,
 	PIG,
 	BEHEMOTH,
-	CEDAR,
 	OAK,
 	EBONY,
 	GRANITE,
 	SLATE,
-	MARBLE,
 	MANA_STONE,
 	MITHRIL,
 	COBALT,
-	GOLD,
 }
 
 public enum ROLE{

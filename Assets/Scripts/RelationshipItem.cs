@@ -5,14 +5,23 @@ public class RelationshipItem : MonoBehaviour {
 
 	[SerializeField] private UI2DSprite relationshipSprite;
     [SerializeField] private UILabel likenessLbl;
+    [SerializeField] private GameObject forTestingGO;
+    [SerializeField] private UILabel newLikenessModifierLbl;
 	private KingdomRelationship rk;
 
 	private bool isHovering = false;
 
-	public void SetRelationship(KingdomRelationship rk){
+	public void SetRelationship(KingdomRelationship rk, bool forTesting = false){
 		this.rk = rk;
 		this.relationshipSprite.color = Utilities.GetColorForRelationship (rk.relationshipStatus);
         likenessLbl.text = Mathf.Clamp(this.rk.totalLike, -100, 100).ToString();
+
+        if (forTesting) {
+            forTestingGO.SetActive(true);
+            newLikenessModifierLbl.text = rk.forTestingLikeModifier.ToString();
+        } else {
+            forTestingGO.SetActive(false);
+        }
 	}
 
     void OnHover(bool isOver) {
@@ -32,11 +41,27 @@ public class RelationshipItem : MonoBehaviour {
                 }
                 summary += rk.eventLikenessModifier.ToString() + " Opinions";
             }
-            
-			UIManager.Instance.ShowRelationshipSummary(this.rk.targetKingdom.king, summary);
+
+            if (rk.forTestingLikeModifier != 0) {
+                if (rk.forTestingLikeModifier > 0) {
+                    summary += "+ ";
+                }
+                summary += rk.forTestingLikeModifier.ToString() + " Admin Modifier";
+            }
+
+            UIManager.Instance.ShowRelationshipSummary(this.rk.targetKingdom.king, summary);
         } else {
             UIManager.Instance.HideRelationshipSummary();
         }
     }
+
+    #region For Testing
+    public void ChangeLikenessModifier() {
+        rk.forTestingLikeModifier = System.Int32.Parse(newLikenessModifierLbl.text);
+        rk.UpdateKingRelationshipStatus();
+        relationshipSprite.color = Utilities.GetColorForRelationship(rk.relationshipStatus);
+        likenessLbl.text = Mathf.Clamp(this.rk.totalLike, -100, 100).ToString();
+    }
+    #endregion
 
 }

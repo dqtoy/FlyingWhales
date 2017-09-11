@@ -14,6 +14,7 @@ public class KingdomRelationship {
     private int _like;
     private int _eventLikenessModifier;
     private int _likeFromMutualRelationships;
+    public int forTestingLikeModifier;
     private string _relationshipSummary;
     private string _relationshipEventsSummary;
     private bool _isInitial;
@@ -53,7 +54,7 @@ public class KingdomRelationship {
         get { return this._relationshipSummary + this._relationshipEventsSummary; }
     }
     public int totalLike {
-        get { return _like + _eventLikenessModifier + _likeFromMutualRelationships; }
+        get { return _like + _eventLikenessModifier + _likeFromMutualRelationships + forTestingLikeModifier; }
     }
     public int eventLikenessModifier {
         get { return _eventLikenessModifier; }

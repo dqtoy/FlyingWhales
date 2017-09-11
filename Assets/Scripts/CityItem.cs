@@ -22,6 +22,12 @@ public class CityItem : MonoBehaviour {
 	[SerializeField] private GameObject _rebelIcon;
     [SerializeField] private UIProgressBar _growthProgBar;
 
+    [Header("For Testing")]
+    [SerializeField] private GameObject forTestingGO;
+    [SerializeField] private UILabel newPowerLbl;
+    [SerializeField] private UILabel newDefLabel;
+    [SerializeField] private UILabel loyaltyAdjustmentLbl;
+
     #region getters/setters
     public City city {
         get { return this._city; }
@@ -31,7 +37,7 @@ public class CityItem : MonoBehaviour {
 	}
     #endregion
 
-    public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false) {
+    public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false, bool showForTesting = false) {
         this._city = _city;
         _governor.SetCitizen(city.governor);
         _hpLbl.text = city.hp.ToString();
@@ -56,6 +62,13 @@ public class CityItem : MonoBehaviour {
             if(thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige > 0) {
                 loyaltySummary += "\n-" + thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige.ToString() + " Lack of Prestige";
             }
+            if(thisGovernor.forTestingLoyaltyModifier != 0) {
+                string integralSign = "+";
+                if(thisGovernor.forTestingLoyaltyModifier < 0) {
+                    integralSign = string.Empty;
+                }
+                loyaltySummary += "\n" + integralSign + thisGovernor.forTestingLoyaltyModifier.ToString() + " Admin Modifier";
+            }
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
                 UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, loyaltySummary);
             });
@@ -75,6 +88,16 @@ public class CityItem : MonoBehaviour {
             structuresParentGO.SetActive(true);
             growthMeterParentGO.SetActive(true);
         }
+
+        if (showForTesting) {
+            forTestingGO.SetActive(true);
+            newPowerLbl.text = _city.power.ToString();
+            newDefLabel.text = _city.defense.ToString();
+            loyaltyAdjustmentLbl.text = ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier.ToString();
+        } else {
+            forTestingGO.SetActive(false);
+            
+        }
     }
 
     public void CenterOnCity() {
@@ -84,4 +107,18 @@ public class CityItem : MonoBehaviour {
     public void SetKingdomAsSelected() {
         //UIManager.Instance.SetKingdomAsSelected(_city.kingdom);
     }
+
+    #region For Testing
+    public void SetPower() {
+        _city.SetPower(System.Int32.Parse(newPowerLbl.text));
+    }
+    public void SetDefense() {
+        _city.SetDefense(System.Int32.Parse(newDefLabel.text));
+    }
+    public void SetGovernorLoyaltyAdjustment() {
+        ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier = System.Int32.Parse(loyaltyAdjustmentLbl.text);
+        SetCity(_city, true, false, true);
+    }
+    #endregion
+
 }

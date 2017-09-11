@@ -22,6 +22,8 @@ public class GridMap : MonoBehaviour {
 
 	public List<GameObject> listHexes;
 
+    public List<Region> allRegions;
+
 	public HexTile[,] map;
 
 	void Awake(){
@@ -120,7 +122,7 @@ public class GridMap : MonoBehaviour {
         List<HexTile> allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
         List<HexTile> possibleCenterTiles = new List<HexTile>(allHexTiles);
         HexTile[] initialCenters = new HexTile[numOfRegions];
-        Region[] allRegions = new Region[numOfRegions];
+        allRegions = new List<Region>();
         for (int i = 0; i < numOfRegions; i++) {
             if(possibleCenterTiles.Count <= 0) {
                 throw new System.Exception("All tiles have been used up!");
@@ -130,11 +132,11 @@ public class GridMap : MonoBehaviour {
             allHexTiles.Remove(chosenHexTile);
             initialCenters[i] = chosenHexTile;
             Region newRegion = new Region(chosenHexTile);
-            allRegions[i] = newRegion;
-            Color centerOfMassColor = newRegion.regionColor;
-            centerOfMassColor.a = 75.6f / 255f;
-            chosenHexTile.SetTileHighlightColor(centerOfMassColor);
-            chosenHexTile.ShowTileHighlight();
+            allRegions.Add(newRegion);
+            //Color centerOfMassColor = newRegion.regionColor;
+            //centerOfMassColor.a = 75.6f / 255f;
+            //chosenHexTile.SetTileHighlightColor(centerOfMassColor);
+            //chosenHexTile.ShowTileHighlight();
             foreach (HexTile hex in chosenHexTile.GetTilesInRange(5)) {
                 possibleCenterTiles.Remove(hex);
             }
@@ -144,7 +146,7 @@ public class GridMap : MonoBehaviour {
         for (int i = 0; i < refinementLevel; i++) {
             if(i != 0) {
                 allHexTiles = new List<HexTile>(listHexes.Select(x => x.GetComponent<HexTile>()));
-                for (int j = 0; j < allRegions.Length; j++) {
+                for (int j = 0; j < allRegions.Count; j++) {
                     allRegions[j].ReComputeCenterOfMass();
                     allRegions[j].ResetTilesInRegion();
                     allHexTiles.Remove(allRegions[j].centerOfMass);
@@ -154,7 +156,7 @@ public class GridMap : MonoBehaviour {
                 HexTile currHexTile = allHexTiles[j];
                 Region regionClosestTo = null;
                 float closestDistance = 999999f;
-                for (int k = 0; k < allRegions.Length; k++) {
+                for (int k = 0; k < allRegions.Count; k++) {
                     Region currRegion = allRegions[k];
                     HexTile currCenter = currRegion.centerOfMass;
                     float distance = Vector2.Distance(currHexTile.transform.position, currCenter.transform.position);
@@ -165,8 +167,8 @@ public class GridMap : MonoBehaviour {
                 }
                 if (regionClosestTo != null) {
                     regionClosestTo.AddTile(currHexTile);
-                    currHexTile.SetTileHighlightColor(regionClosestTo.regionColor);
-                    currHexTile.ShowTileHighlight();
+                    //currHexTile.SetTileHighlightColor(regionClosestTo.regionColor);
+                    //currHexTile.ShowTileHighlight();
                 } else {
                     throw new System.Exception("Could not find closest distance for tile " + currHexTile.name);
                 }
@@ -174,9 +176,36 @@ public class GridMap : MonoBehaviour {
             }
         }
 
-        for (int i = 0; i < allRegions.Length; i++) {
+        for (int i = 0; i < allRegions.Count; i++) {
             allRegions[i].RevalidateCenterOfMass();
+            allRegions[i].CheckForAdjacency();
         }
         
+    }
+
+    public void GenerateResourcesPerRegion() {
+        List<RESOURCE> allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
+        allSpecialResources.Remove(RESOURCE.NONE);
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            if(Random.Range(0,100) < 50) {
+                //Region has a special resource
+                if(allSpecialResources.Count <= 0) {
+                    allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
+                    allSpecialResources.Remove(RESOURCE.MANA_STONE);
+                    allSpecialResources.Remove(RESOURCE.COBALT);
+                    allSpecialResources.Remove(RESOURCE.MITHRIL);
+                    allSpecialResources.Remove(RESOURCE.NONE);
+                }
+                RESOURCE specialResource = allSpecialResources[Random.Range(0, allSpecialResources.Count)];
+                allSpecialResources.Remove(specialResource);
+                currRegion.SetSpecialResource(specialResource);
+            }
+            currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
+        }
+        //Debug.Log("All Special Resources Per Region:");
+        //for (int i = 0; i < allRegions.Count; i++) {
+        //    Debug.Log("Region " + i.ToString() + ": " + allRegions[i].specialResource.ToString());
+        //}
     }
 }

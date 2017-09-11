@@ -10,6 +10,7 @@ public class Governor : Role {
 	private int _loyalty;
     private const int defaultLoyalty = 0;
     private int _eventLoyaltyModifier;
+    public int forTestingLoyaltyModifier;
 
     private string _loyaltySummary; //For UI, to display the factors that affected this governor's loyalty
     internal string _eventLoyaltySummary;
@@ -20,7 +21,7 @@ public class Governor : Role {
 
     #region getters/setters
     public int loyalty {
-		get { return (_loyalty + _eventLoyaltyModifier) - ownedCity.kingdom.disloyaltyFromPrestige; }
+		get { return (_loyalty + _eventLoyaltyModifier + forTestingLoyaltyModifier) - ownedCity.kingdom.disloyaltyFromPrestige; }
     }
     public string loyaltySummary {
         get { return this._loyaltySummary + _eventLoyaltySummary; }

@@ -12,6 +12,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public int yCoordinate;
     public int tileTag;
 	public string tileName;
+    private Region _region;
 
     [Space(10)]
     [Header("Biome Settings")]
@@ -50,21 +51,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private List<City> _isBorderOfCities = new List<City>();
     [SerializeField] private List<City> _isOuterTileOfCities = new List<City>();
     [SerializeField] private List<Kingdom> _visibleByKingdoms = new List<Kingdom>(); //This is only occupied when a tile becomes occupies, becaoms a border or becomes an outer tile of a city!
-	//public int isBorderOfCityID = 0;
-	//internal int isOccupiedByCityID = 0;
-    //[SerializeField] internal List<City> isVisibleByCities = new List<City>();
 
     [Space(10)]
     [Header("Tile Visuals")]
     [SerializeField] private GameObject _centerPiece;
-    //[SerializeField] private GameObject resourceVisualGO;
     [SerializeField] private ResourceIcon resourceIcon;
 	[SerializeField] private SpriteRenderer _kingdomColorSprite;
 	[SerializeField] private GameObject _highlightGO;
     [SerializeField] private Transform UIParent;
     [SerializeField] private Transform resourceParent;
     [SerializeField] private GameObject biomeDetailParentGO;
-    [SerializeField] private TextMesh tagVisual;
+    [SerializeField] private TextMesh tileTextMesh;
 
     [Space(10)]
     [Header("Tile Edges")]
@@ -126,6 +123,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	//private List<WorldEventItem> eventsOnTile = new List<WorldEventItem>();
 
 	#region getters/setters
+    public Region region {
+        get { return _region; }
+    }
 	public GameObject centerPiece{
 		get { return this._centerPiece; }
 	}
@@ -167,6 +167,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     #endregion
 
+    #region Region Functions
+    internal void SetRegion(Region region) {
+        _region = region;
+    }
+    #endregion
+
     internal void SetBiome(BIOMES biome) {
         biomeType = biome;
         if(elevationType == ELEVATION.WATER) {
@@ -203,7 +209,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
 	#region Resource
-	internal void AssignSpecialResource(){
+    internal void AssignSpecialResource(RESOURCE resource) {
+        specialResource = resource;
+        resourceIcon.SetResource(specialResource);
+        GameObject resourceGO = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
+        resourceGO.transform.localPosition = Vector3.zero;
+        resourceGO.transform.localScale = Vector3.one;
+    }
+
+    internal void AssignSpecialResource(){
 		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
 			return;
 		}
@@ -972,6 +986,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.ownedByCity.kingdom.king.Death(DEATH_REASONS.ACCIDENT);
     }
 
+    [ContextMenu("Select Tiles in Same Region")]
+    public void SelectAllTilesInRegion() {
+        UnityEditor.Selection.objects = region.tilesInRegion.Select(x => x.gameObject).ToArray();
+    }
     //[ContextMenu("Select All Relevant Tiles")]
     //public void SelectAllRelevantTiles() {
     //    List<GameObject> allTiles = new List<GameObject>();
@@ -1192,8 +1210,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     public void SetTag(int tag) {
         this.tileTag = tag;
-        //tagVisual.text = xCoordinate.ToString() + "," + yCoordinate.ToString();
-        //tagVisual.gameObject.SetActive(true);
+        //tileTextMesh.text = xCoordinate.ToString() + "," + yCoordinate.ToString();
+        //tileTextMesh.gameObject.SetActive(true);
+    }
+
+    public void SetTileText(string text, int fontSize, Color fontColor, string layer = "Default") {
+        tileTextMesh.text = text;
+        tileTextMesh.characterSize = fontSize;
+        tileTextMesh.color = fontColor;
+        tileTextMesh.gameObject.layer = LayerMask.NameToLayer(layer);
+        tileTextMesh.gameObject.SetActive(true);
     }
 
     internal void EnterCitizen(Citizen citizen) {

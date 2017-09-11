@@ -13,7 +13,6 @@ public class MinimapCamera : MonoBehaviour {
     [SerializeField] private LayerMask raycastLayerMask;
 
     private void OnClick() {
-        
         //Vector2 mousePosInMinimapCam = minimapTextureCamera.ScreenToViewportPoint(Input.mousePosition);
         
         //Vector2 convertedToMainCam = Camera.main.ViewportToWorldPoint(mousePosInMinimapCam);
@@ -42,11 +41,10 @@ public class MinimapCamera : MonoBehaviour {
         //Rect rect = hit.collider.gameObject.GetComponent<UITexture>().uvRect;
     }
 
-    //void Update() {
-        //viewportPosition = GetComponent<Camera>().ScreenToViewportPoint(Input.mousePosition);
-
-        //Ray ray = GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-        //Debug.DrawRay(ray.origin, ray.direction * -10, Color.red);
+    void Update() {
+        Vector3 mousePosInCamera = GetComponent<Camera>().ScreenToViewportPoint(Input.mousePosition);
+        Ray ray = GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(ray.origin, ray.direction * 10, Color.red);
         //if (Input.GetMouseButton(0)) {
         //    viewportPosition = GetComponent<Camera>().ScreenToViewportPoint(Input.mousePosition);
         //Debug.Log(viewportPosition.x + "," + viewportPosition.y);
@@ -65,6 +63,6 @@ public class MinimapCamera : MonoBehaviour {
         //    isDragging = false;
         //}
         //}
-    //}
+    }
 
 }
