@@ -826,11 +826,13 @@ public class City{
         _dailyGrowthBuffs += adjustment;
     }
 	internal void UpdateDailyProduction(){
-		this._maxGrowth = 200 + ((300 + (350 * this.structures.Count)) * this.structures.Count);
+		this._maxGrowth = 200 + ((300 + (250 * this.structures.Count)) * this.structures.Count);
 		this._dailyGrowthFromStructures = 10;
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
             if (!currentStructure.isPlagued) {
+				this._dailyGrowthFromStructures += 3;
+				/*
                 if (currentStructure.biomeType == BIOMES.GRASSLAND) {
                     this._dailyGrowthFromStructures += 3;
                 } else if (currentStructure.biomeType == BIOMES.WOODLAND) {
@@ -846,6 +848,7 @@ public class City{
                 } else if (currentStructure.biomeType == BIOMES.BARE) {
                     this._dailyGrowthFromStructures += 1;
                 }
+                */
             }
 		}
 	}
