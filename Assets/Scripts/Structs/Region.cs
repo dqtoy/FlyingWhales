@@ -26,6 +26,12 @@ public class Region {
     internal List<HexTile> tilesInRegion {
         get { return _tilesInRegion; }
     }
+    internal List<Region> adjacentRegions {
+        get { return _adjacentRegions; }
+    }
+    internal City occupant {
+        get { return _occupant; }
+    }
     internal RESOURCE specialResource {
         get { return _specialResource; }
     }
@@ -136,15 +142,19 @@ public class Region {
             _tileWithSpecialResource.Occupy(occupant);
             CreateStructureOnSpecialResourceTile();
         }
-        
+        CheckForDiscoveredKingdoms();
+
+
     }
     private void SetAdjacentRegionsAsSeenForOccupant() {
         for (int i = 0; i < _adjacentRegions.Count; i++) {
             Region currRegion = _adjacentRegions[i];
-            List<HexTile> tilesInCurrRegion = currRegion.tilesInRegion;
-            for (int j = 0; j < tilesInCurrRegion.Count; j++) {
-                _occupant.kingdom.SetFogOfWarStateForTile(tilesInCurrRegion[j], FOG_OF_WAR_STATE.SEEN);
-            }
+            if(currRegion._occupant == null || currRegion._occupant.kingdom != _occupant.kingdom) {
+                List<HexTile> tilesInCurrRegion = currRegion.tilesInRegion;
+                for (int j = 0; j < tilesInCurrRegion.Count; j++) {
+                    _occupant.kingdom.SetFogOfWarStateForTile(tilesInCurrRegion[j], FOG_OF_WAR_STATE.SEEN);
+                }
+            }            
         }
     }
     private void ReColorBorderTiles(Color color) {
@@ -243,6 +253,20 @@ public class Region {
         //_centerOfMass.SetTileText(specialResource.ToString() + "\n" +
         //    naturalResourceLevel[RACE.HUMANS].ToString() + "\n" +
         //    naturalResourceLevel[RACE.ELVES].ToString(), 5, Color.white, "Minimap");
+    }
+    #endregion
+
+    #region Kingdom Discovery Functions
+    private void CheckForDiscoveredKingdoms() {
+        for (int i = 0; i < _adjacentRegions.Count; i++) {
+            Region currRegion = _adjacentRegions[i];
+            if(currRegion.occupant != null) {
+                Kingdom otherKingdom = currRegion.occupant.kingdom;
+                if(otherKingdom != occupant.kingdom && !occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
+                    KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
+                }
+            }
+        }
     }
     #endregion
 

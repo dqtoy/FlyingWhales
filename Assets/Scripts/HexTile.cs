@@ -1018,13 +1018,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-    [ContextMenu("Show Adjacent Cities")]
-    public void ShowAdjacentCities() {
-        for (int i = 0; i < this.city.adjacentCities.Count; i++) {
-            Debug.Log("Adjacent City: " + this.city.adjacentCities[i].name);
-        }
-    }
-
     //[ContextMenu("Show Adjacent Kingdoms")]
     //public void ShowAdjacentKingdoms() {
     //    for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
@@ -1117,15 +1110,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //} else {
         //    text += "NONE\n";
         //}
-
-        text += "[b]Adjacent Cities: [/b]\n";
-        if (this.city.adjacentCities.Count > 0) {
-            for (int i = 0; i < this.city.adjacentCities.Count; i++) {
-                text += this.city.adjacentCities[i].name + "\n";
-            }
-        } else {
-            text += "NONE\n";
-        }
 
         text += "[b]Embargo List: [/b]\n";
         if (this.city.kingdom.embargoList.Count > 0) {

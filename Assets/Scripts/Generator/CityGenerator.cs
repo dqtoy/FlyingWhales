@@ -223,25 +223,40 @@ public class CityGenerator : MonoBehaviour {
 	}
 
     public HexTile GetExpandableTileForKingdom(Kingdom kingdom) {
-        BIOMES forbiddenBiomeForKingdom = GetForbiddenBiomeOfRace(kingdom.race);
-        List<HexTile> elligibleTiles = new List<HexTile>();
-        List<HexTile> tilesToCheck = new List<HexTile>(kingdom.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE].Where(x => x.isHabitable && !x.isOccupied));
-        tilesToCheck.AddRange(kingdom.fogOfWarDict[FOG_OF_WAR_STATE.SEEN].Where(x => x.isHabitable && !x.isOccupied));
-        for (int i = 0; i < tilesToCheck.Count; i++) {
-            HexTile currTile = tilesToCheck[i];
-            if (currTile.isBorder) {
-                if(!currTile.isBorderOfCities.Except(kingdom.cities).Any()) {
-                    elligibleTiles.Add(currTile);
+        List<Region> unoccupiedAdjacentRegions = new List<Region>();
+        for (int i = 0; i < kingdom.cities.Count; i++) {
+            Region currRegion = kingdom.cities[i].region;
+            for (int j = 0; j < currRegion.adjacentRegions.Count; j++) {
+                Region adjacentRegion = currRegion.adjacentRegions[j];
+                if(adjacentRegion.occupant == null) {
+                    unoccupiedAdjacentRegions.Add(adjacentRegion);
                 }
-            } else {
-                elligibleTiles.Add(currTile);
             }
         }
-        if(elligibleTiles.Count > 0) {
-            elligibleTiles = elligibleTiles.OrderBy(x => kingdom.capitalCity.hexTile.GetDistanceTo(x)).ToList();
-            return elligibleTiles.FirstOrDefault();
+        if(unoccupiedAdjacentRegions.Count > 0) {
+            return unoccupiedAdjacentRegions[Random.Range(0, unoccupiedAdjacentRegions.Count)].centerOfMass;
+        } else {
+            return null;
         }
-        return null;
+        //BIOMES forbiddenBiomeForKingdom = GetForbiddenBiomeOfRace(kingdom.race);
+        //List<HexTile> elligibleTiles = new List<HexTile>();
+        //List<HexTile> tilesToCheck = new List<HexTile>(kingdom.fogOfWarDict[FOG_OF_WAR_STATE.VISIBLE].Where(x => x.isHabitable && !x.isOccupied));
+        //tilesToCheck.AddRange(kingdom.fogOfWarDict[FOG_OF_WAR_STATE.SEEN].Where(x => x.isHabitable && !x.isOccupied));
+        //for (int i = 0; i < tilesToCheck.Count; i++) {
+        //    HexTile currTile = tilesToCheck[i];
+        //    if (currTile.isBorder) {
+        //        if(!currTile.isBorderOfCities.Except(kingdom.cities).Any()) {
+        //            elligibleTiles.Add(currTile);
+        //        }
+        //    } else {
+        //        elligibleTiles.Add(currTile);
+        //    }
+        //}
+        //if(elligibleTiles.Count > 0) {
+        //    elligibleTiles = elligibleTiles.OrderBy(x => kingdom.capitalCity.hexTile.GetDistanceTo(x)).ToList();
+        //    return elligibleTiles.FirstOrDefault();
+        //}
+        //return null;
     }
 
 	public BIOMES GetForbiddenBiomeOfRace(RACE race){

@@ -768,7 +768,7 @@ public class Kingdom{
 	 * */
 	protected void KingdomTickActions(){
         if (_isGrowthEnabled) {
-            //this.AttemptToExpand();
+            this.AttemptToExpand();
         }
 		this.IncreaseTechCounterPerTick();
         //this.TriggerEvents();
@@ -854,6 +854,7 @@ public class Kingdom{
 
         float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = UnityEngine.Random.Range(0, upperBound);
+        //if (true) {
         if (chance < this.expansionChance) {
             if (this.cities.Count > 0) {
                 EventCreator.Instance.CreateExpansionEvent(this);
