@@ -572,7 +572,7 @@ public class UIManager : MonoBehaviour {
             RepositionGridCallback(kingdomOtherResourcesGrid);
         }
 
-        currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
+        //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
     }
 
     //internal void SetKingdomAsSelected(Kingdom kingdom) {
@@ -593,15 +593,15 @@ public class UIManager : MonoBehaviour {
     }
 
 	internal void SetKingdomAsActive(Kingdom kingdom){
-        if(currentlyShowingKingdom != null) {
-            currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
-        }
+        //if(currentlyShowingKingdom != null) {
+        //    currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+        //}
 
 		currentlyShowingKingdom = kingdom;
 
         currentlyShowingKingdom.UpdateFogOfWarVisual();
 
-        currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
+        //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
         CameraMove.Instance.CenterCameraOn(currentlyShowingKingdom.capitalCity.hexTile.gameObject);
 
         RemoveAllNotifications();
@@ -721,7 +721,7 @@ public class UIManager : MonoBehaviour {
   //          characterValuesBtn.gameObject.SetActive(false);
 		//}
 
-		HideCityInfo();
+		//HideCityInfo();
 		citizenInfoGO.SetActive (true);
 		this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
 
@@ -904,17 +904,17 @@ public class UIManager : MonoBehaviour {
 
 //	}
 
-	public void HideCityInfo(){
-		//unhighlight previously selected city
-		if (currentlyShowingCity != null) {
-			currentlyShowingCity.UnHighlightAllOwnedTiles ();
-		}
-		currentlyShowingCity = null;
-		if (currentlyShowingKingdom != null) {
-			currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom ();
-		}
-		cityInfoGO.SetActive (false);
-	}
+	//public void HideCityInfo(){
+	//	//unhighlight previously selected city
+	//	if (currentlyShowingCity != null) {
+	//		currentlyShowingCity.UnHighlightAllOwnedTiles ();
+	//	}
+	//	currentlyShowingCity = null;
+	//	if (currentlyShowingKingdom != null) {
+	//		currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom ();
+	//	}
+	//	cityInfoGO.SetActive (false);
+	//}
 
 	public void RepositionGridCallback(UIGrid thisGrid){
 		StartCoroutine (RepositionGrid (thisGrid));
@@ -1978,7 +1978,7 @@ public class UIManager : MonoBehaviour {
     public void CreateNewKingdom() {
         List<HexTile> citiesForNewKingdom = new List<HexTile>() { tilesToChooseForNewKingdom[UnityEngine.Random.Range(0, tilesToChooseForNewKingdom.Count)] };
         Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom((RACE)createKingdomPopupList.data, citiesForNewKingdom, true);
-
+        newKingdom.HighlightAllOwnedTilesInKingdom();
         //newKingdom.king.CreateInitialRelationshipsToKings();
         //KingdomManager.Instance.AddRelationshipToOtherKings(newKingdom.king);
 

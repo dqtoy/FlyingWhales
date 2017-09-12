@@ -143,8 +143,6 @@ public class Region {
             CreateStructureOnSpecialResourceTile();
         }
         CheckForDiscoveredKingdoms();
-
-
     }
     private void SetAdjacentRegionsAsSeenForOccupant() {
         for (int i = 0; i < _adjacentRegions.Count; i++) {

@@ -62,6 +62,7 @@ public class KingdomManager : MonoBehaviour {
             if (i == 0) {
                 UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
             }
+            newKingdom.HighlightAllOwnedTilesInKingdom();
         }
     }
 
@@ -175,7 +176,7 @@ public class KingdomManager : MonoBehaviour {
     }
 
     public void TransferCitiesToOtherKingdom(Kingdom sourceKingdom, Kingdom otherKingdom, List<City> citiesToTransfer) {
-        sourceKingdom.UnHighlightAllOwnedTilesInKingdom();
+        //sourceKingdom.UnHighlightAllOwnedTilesInKingdom();
         for (int i = 0; i < citiesToTransfer.Count; i++) {
             City currCity = citiesToTransfer[i];
             sourceKingdom.RemoveCityFromKingdom(currCity);
@@ -184,22 +185,14 @@ public class KingdomManager : MonoBehaviour {
             //currCity.hexTile.ShowCitySprite();
             //currCity.hexTile.ShowNamePlate();
         }
-        
-        if(UIManager.Instance.currentlyShowingKingdom.id == sourceKingdom.id) {
-            sourceKingdom.HighlightAllOwnedTilesInKingdom();
-        }
     }
 	public void TransferCitiesToOtherKingdom(Kingdom sourceKingdom, Kingdom otherKingdom, City city) {
-		sourceKingdom.UnHighlightAllOwnedTilesInKingdom();
+		//sourceKingdom.UnHighlightAllOwnedTilesInKingdom();
 		sourceKingdom.RemoveCityFromKingdom(city);
 		//otherKingdom.AddCityToKingdom(currCity);
 		city.ChangeKingdom(otherKingdom);
 		//currCity.hexTile.ShowCitySprite();
 		//currCity.hexTile.ShowNamePlate();
-
-		if(UIManager.Instance.currentlyShowingKingdom.id == sourceKingdom.id) {
-			sourceKingdom.HighlightAllOwnedTilesInKingdom();
-		}
 	}
 
 	public void DeclareWarBetweenKingdoms(Wars war){

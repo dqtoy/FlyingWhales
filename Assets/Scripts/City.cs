@@ -660,11 +660,8 @@ public class City{
 		citizenToOccupyCity.assignedRole = null;
 		citizenToOccupyCity.AssignRole(ROLE.GOVERNOR);
 		this.UpdateDailyProduction();
-		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
-			this.kingdom.HighlightAllOwnedTilesInKingdom();
-		}
-
         this.hexTile.CreateCityNamePlate(this);
+        HighlightAllOwnedTiles(69f / 255f);
         KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 
@@ -1133,10 +1130,6 @@ public class City{
         //its initial defense will only be 300HP + (20HP x tech level)
         newCity.WarDefeatedHP();
 //        KingdomManager.Instance.CheckWarTriggerMisc(newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
-
-        if (UIManager.Instance.currentlyShowingKingdom.id == conqueror.id) {
-            conqueror.HighlightAllOwnedTilesInKingdom();
-        }
 		if(relationship.war != null && relationship.war.warPair.isDone){
 			relationship.war.InitializeMobilization ();
 		}

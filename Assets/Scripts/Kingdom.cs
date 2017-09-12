@@ -91,9 +91,9 @@ public class Kingdom{
 	private bool _isMobilizing;
 	private int _militaryAlliancePower;
 	private int _mutualDefenseTreatyPower;
-	private List<Kingdom> _militaryAlliances;
-	private List<Kingdom> _mutualDefenseTreaties;
-	private List<Kingdom> _adjacentKingdoms;
+	[NonSerialized] private List<Kingdom> _militaryAlliances;
+    [NonSerialized] private List<Kingdom> _mutualDefenseTreaties;
+    [NonSerialized] private List<Kingdom> _adjacentKingdoms;
 	private GameDate _currentDefenseTreatyRejectionDate;
 	private GameDate _currentMilitaryAllianceRejectionDate;
 	private List<Wars> _mobilizationQueue;
@@ -283,7 +283,7 @@ public class Kingdom{
 		get { return this._mutualDefenseTreaties;}
 	}
 	public List<Kingdom> adjacentKingdoms{
-		get { return this._adjacentKingdoms;}
+		get { return _adjacentKingdoms;}
 	}
 	public bool isMobilizing{
 		get { return this._isMobilizing;}
@@ -1210,9 +1210,6 @@ public class Kingdom{
     #region Kingdom Tile Management
     internal void HighlightAllOwnedTilesInKingdom() {
         for (int i = 0; i < this.cities.Count; i++) {
-            if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities[i].id) {
-                continue;
-            }
             this.cities[i].HighlightAllOwnedTiles(69f / 255f);
         }
     }

@@ -956,7 +956,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 					}
 				}
 			}
-            this.city.kingdom.HighlightAllOwnedTilesInKingdom();
+            //this.city.kingdom.HighlightAllOwnedTilesInKingdom();
             this.city.HighlightAllOwnedTiles(127f / 255f);
             this.ShowKingdomInfo();
         }
@@ -974,12 +974,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				}
 			}
             this.HideKingdomInfo();
-            if(this.ownedByCity != null) {
-                this.ownedByCity.kingdom.UnHighlightAllOwnedTilesInKingdom();
-            }
-            if (UIManager.Instance.currentlyShowingKingdom != null) {
-                UIManager.Instance.currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
-            }
+            this.city.HighlightAllOwnedTiles(69f / 255f);
+            //if(this.ownedByCity != null) {
+            //    this.ownedByCity.kingdom.UnHighlightAllOwnedTilesInKingdom();
+            //}
+            //if (UIManager.Instance.currentlyShowingKingdom != null) {
+            //    UIManager.Instance.currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
+            //}
         }
     }
     #endregion
