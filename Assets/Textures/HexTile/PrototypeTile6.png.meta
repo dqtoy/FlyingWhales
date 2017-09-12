@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: b6e724aa95c4859418f329113b62e9c9
-timeCreated: 1501578370
+timeCreated: 1505195717
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -128,6 +128,9 @@ TextureImporter:
     21300242: PrototypeTile6_85
     21300244: PrototypeTile6_86
     21300246: PrototypeTile6_87
+    21300248: PrototypeTile6_49
+    21300250: PrototypeTile6_52
+    21300252: PrototypeTile6_88
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -1770,6 +1773,45 @@ TextureImporter:
         y: 427
         width: 51
         height: 41
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_49
+      rect:
+        serializedVersion: 2
+        x: 1714
+        y: 207
+        width: 139
+        height: 76
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_52
+      rect:
+        serializedVersion: 2
+        x: 1685
+        y: 84
+        width: 10
+        height: 142
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_88
+      rect:
+        serializedVersion: 2
+        x: 1719
+        y: 27
+        width: 137
+        height: 74
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

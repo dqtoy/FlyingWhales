@@ -40,8 +40,10 @@ public class Expansion : GameEvent {
 	internal override void DoneCitizenAction(Citizen citizen){
 		CheckIfCitizenIsCarryingPlague(citizen);
 		if (this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0) {
-			this.startedByKingdom.CreateNewCityOnTileForKingdom (this.hexTileToExpandTo);
-			this.hexTileToExpandTo.city.ExpandToThisCity (this.startedBy);
+			City newCity = this.startedByKingdom.CreateNewCityOnTileForKingdom (this.hexTileToExpandTo);
+            newCity.region.SetOccupant(newCity);
+            newCity.PopulateBorderTiles();
+            newCity.ExpandToThisCity (this.startedBy);
             this.CheckIfCitizenIsCarryingPlague(citizen);
 
 

@@ -14,8 +14,10 @@ public class Region {
     private RESOURCE _specialResource;
     private HexTile _tileWithSpecialResource;
     private Dictionary<RACE, int> _naturalResourceLevel;
+    private int _cityLevelCap;
 
-    [SerializeField] private List<HexTile> _outerTiles;
+    private List<HexTile> _outerTiles;
+    private List<SpriteRenderer> regionBorderLines;
 
     #region getters/sertters
     internal HexTile centerOfMass {
@@ -23,6 +25,12 @@ public class Region {
     }
     internal List<HexTile> tilesInRegion {
         get { return _tilesInRegion; }
+    }
+    internal List<Region> adjacentRegions {
+        get { return _adjacentRegions; }
+    }
+    internal City occupant {
+        get { return _occupant; }
     }
     internal RESOURCE specialResource {
         get { return _specialResource; }
@@ -32,6 +40,9 @@ public class Region {
     }
     internal Dictionary<RACE, int> naturalResourceLevel {
         get { return _naturalResourceLevel; }
+    }
+    internal int cityLevelCap {
+        get { return _cityLevelCap; }
     }
     #endregion
 
@@ -78,17 +89,26 @@ public class Region {
      * <summary>
      * Check For Adjacent regions, this will populate the
      * _outerTiles and _adjacentRegions Lists. This is only called at the
-     * start of the game, after all the regions have been determined.
+     * start of the game, after all the regions have been determined. This will
+     * also populate regionBorderLines.
      * </summary>
      * */
     internal void CheckForAdjacency() {
         _outerTiles = new List<HexTile>();
         _adjacentRegions = new List<Region>();
+        regionBorderLines = new List<SpriteRenderer>();
         for (int i = 0; i < _tilesInRegion.Count; i++) {
             HexTile currTile = _tilesInRegion[i];
             for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
                 HexTile currNeighbour = currTile.AllNeighbours[j];
                 if (currNeighbour.region != currTile.region) {
+                    //Load Border For currTile
+                    HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour);
+                    SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
+                    if (!regionBorderLines.Contains(border)) {
+                        regionBorderLines.Add(border);
+                    }
+
                     if (!_outerTiles.Contains(currTile)) {
                         //currTile has a neighbour that is part of a different region, this means it is an outer tile.
                         _outerTiles.Add(currTile);
@@ -114,16 +134,42 @@ public class Region {
         _tilesInRegion.Clear();
     }
     internal void SetOccupant(City occupant) {
-        this._occupant = occupant;
+        _occupant = occupant;
+        _cityLevelCap = _naturalResourceLevel[occupant.kingdom.race];
         SetAdjacentRegionsAsSeenForOccupant();
+        ReColorBorderTiles(_occupant.kingdom.kingdomColor);
+        if(_specialResource != RESOURCE.NONE) {
+            _tileWithSpecialResource.Occupy(occupant);
+            CreateStructureOnSpecialResourceTile();
+        }
+        CheckForDiscoveredKingdoms();
     }
     private void SetAdjacentRegionsAsSeenForOccupant() {
         for (int i = 0; i < _adjacentRegions.Count; i++) {
             Region currRegion = _adjacentRegions[i];
-            List<HexTile> tilesInCurrRegion = currRegion.tilesInRegion;
-            for (int j = 0; j < tilesInCurrRegion.Count; j++) {
-                _occupant.kingdom.SetFogOfWarStateForTile(tilesInCurrRegion[j], FOG_OF_WAR_STATE.SEEN);
-            }
+            if(currRegion._occupant == null || currRegion._occupant.kingdom != _occupant.kingdom) {
+                List<HexTile> tilesInCurrRegion = currRegion.tilesInRegion;
+                for (int j = 0; j < tilesInCurrRegion.Count; j++) {
+                    _occupant.kingdom.SetFogOfWarStateForTile(tilesInCurrRegion[j], FOG_OF_WAR_STATE.SEEN);
+                }
+            }            
+        }
+    }
+    private void ReColorBorderTiles(Color color) {
+        for (int i = 0; i < regionBorderLines.Count; i++) {
+            regionBorderLines[i].color = color;
+        }
+    }
+    /*
+     * <summary>
+     * Create a structure on the tile with special resource.
+     * This is for visuals only, this does not increase the city's(occupant) level.
+     * </sumary>
+     * */
+    private void CreateStructureOnSpecialResourceTile() {
+        if(_specialResource != RESOURCE.NONE) {
+            tileWithSpecialResource
+                .CreateStructureOnTile(Utilities.GetStructureTypeForResource(_occupant.kingdom.race, _specialResource));
         }
     }
     #endregion
@@ -205,6 +251,20 @@ public class Region {
         //_centerOfMass.SetTileText(specialResource.ToString() + "\n" +
         //    naturalResourceLevel[RACE.HUMANS].ToString() + "\n" +
         //    naturalResourceLevel[RACE.ELVES].ToString(), 5, Color.white, "Minimap");
+    }
+    #endregion
+
+    #region Kingdom Discovery Functions
+    private void CheckForDiscoveredKingdoms() {
+        for (int i = 0; i < _adjacentRegions.Count; i++) {
+            Region currRegion = _adjacentRegions[i];
+            if(currRegion.occupant != null) {
+                Kingdom otherKingdom = currRegion.occupant.kingdom;
+                if(otherKingdom != occupant.kingdom && !occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
+                    KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
+                }
+            }
+        }
     }
     #endregion
 

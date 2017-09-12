@@ -91,9 +91,9 @@ public class Kingdom{
 	private bool _isMobilizing;
 	private int _militaryAlliancePower;
 	private int _mutualDefenseTreatyPower;
-	private List<Kingdom> _militaryAlliances;
-	private List<Kingdom> _mutualDefenseTreaties;
-	private List<Kingdom> _adjacentKingdoms;
+	[NonSerialized] private List<Kingdom> _militaryAlliances;
+    [NonSerialized] private List<Kingdom> _mutualDefenseTreaties;
+    [NonSerialized] private List<Kingdom> _adjacentKingdoms;
 	private GameDate _currentDefenseTreatyRejectionDate;
 	private GameDate _currentMilitaryAllianceRejectionDate;
 	private List<Wars> _mobilizationQueue;
@@ -283,7 +283,7 @@ public class Kingdom{
 		get { return this._mutualDefenseTreaties;}
 	}
 	public List<Kingdom> adjacentKingdoms{
-		get { return this._adjacentKingdoms;}
+		get { return _adjacentKingdoms;}
 	}
 	public bool isMobilizing{
 		get { return this._isMobilizing;}
@@ -384,6 +384,7 @@ public class Kingdom{
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
 
         //		ScheduleEvents ();
+        ScheduleOddDayActions();
         ScheduleActionDay();
 
 
@@ -767,9 +768,9 @@ public class Kingdom{
 	 * happen every tick here.
 	 * */
 	protected void KingdomTickActions(){
-        if (_isGrowthEnabled) {
-            this.AttemptToExpand();
-        }
+        //if (_isGrowthEnabled) {
+        //    this.AttemptToExpand();
+        //}
 		this.IncreaseTechCounterPerTick();
         //this.TriggerEvents();
     }
@@ -824,18 +825,8 @@ public class Kingdom{
 		int month = UnityEngine.Random.Range (1, 5);
 		SchedulingManager.Instance.AddEntry (month, UnityEngine.Random.Range(1, GameManager.daysInMonth[month]), GameManager.Instance.year, () => TriggerCrime());
 	}
-    /*
-    * Deacrease the kingdom's unrest by UNREST_DECREASE_PER_MONTH amount every month.
-    * */
-  //  protected void DecreaseUnrestEveryMonth() {
-		//if(!this.isDead){
-	 //       this.AdjustHappiness(UNREST_DECREASE_PER_MONTH);
-	 //       GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-	 //       gameDate.AddMonths(1);
-	 //       gameDate.day = GameManager.daysInMonth[gameDate.month];
-	 //       SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => DecreaseUnrestEveryMonth());
-		//}
-  //  }
+
+    #region Expansion Functions
     /*
 	 * Kingdom will attempt to expand. 
 	 * Chance for expansion can be edited by changing the value of expansionChance.
@@ -847,13 +838,14 @@ public class Kingdom{
             return;
         }
 
-        if(cities.Count >= cityCap) {
+        if (cities.Count >= cityCap) {
             //Kingdom has reached max city capacity
             return;
         }
 
         float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = UnityEngine.Random.Range(0, upperBound);
+        //if (true) {
         if (chance < this.expansionChance) {
             if (this.cities.Count > 0) {
                 EventCreator.Instance.CreateExpansionEvent(this);
@@ -861,6 +853,23 @@ public class Kingdom{
 
         }
     }
+    #endregion
+
+    #region Odd Day Actions
+    private void ScheduleOddDayActions() {
+        KingdomManager.Instance.IncrementOddActionDay();
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, KingdomManager.Instance.oddActionDay, GameManager.Instance.year, () => OddDayActions());
+    }
+    private void OddDayActions() {
+        if (_isGrowthEnabled) {
+            AttemptToExpand();
+        }
+        GameDate nextActionDay = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        nextActionDay.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(nextActionDay.month, nextActionDay.day, nextActionDay.year, () => OddDayActions());
+    }
+    #endregion
+
 
     #region Prestige
     internal void AdjustPrestige(int adjustment) {
@@ -1201,10 +1210,7 @@ public class Kingdom{
     #region Kingdom Tile Management
     internal void HighlightAllOwnedTilesInKingdom() {
         for (int i = 0; i < this.cities.Count; i++) {
-            if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities[i].id) {
-                continue;
-            }
-            this.cities[i].HighlightAllOwnedTiles(127.5f / 255f);
+            this.cities[i].HighlightAllOwnedTiles(69f / 255f);
         }
     }
     internal void UnHighlightAllOwnedTilesInKingdom() {

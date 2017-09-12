@@ -7,7 +7,6 @@ using System.Linq;
 public class CityTaskManager : MonoBehaviour {
 
 	public HexTile targetHexTileToPurchase = null;
-	public List<HexTile> pathToTargetHexTile = new List<HexTile>();
 
 	private City city = null;
 
@@ -21,94 +20,20 @@ public class CityTaskManager : MonoBehaviour {
 		if (this.targetHexTileToPurchase != null) {
 			Task.current.Succeed ();
 		} else {
-            //Check for tiles 3 tiles away
-			List<HexTile> elligibleTiles = new List<HexTile> ();
-			for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-                elligibleTiles = elligibleTiles
-                    .Union(this.city.ownedTiles[i].GetTilesInRange(3).Where (x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable 
-                    && !x.isBorderOfCities.Except(this.city.kingdom.cities).Any())).ToList();
-			}
-			//elligibleTiles.Distinct ();
-
-			List<HexTile> purchasableTilesWithSpecialResource = new List<HexTile> ();
-			for (int i = 0; i < elligibleTiles.Count; i++) {
-				HexTile currentHexTile = elligibleTiles [i];
-				if (currentHexTile.specialResource != RESOURCE.NONE) {
-					purchasableTilesWithSpecialResource.Add (currentHexTile);
-				}
-			}
-
-			if (purchasableTilesWithSpecialResource.Count > 0) {
-				purchasableTilesWithSpecialResource = Utilities.Shuffle (purchasableTilesWithSpecialResource);
-				List<HexTile> path = new List<HexTile> ();
-				for (int i = 0; i < purchasableTilesWithSpecialResource.Count; i++) {
-					HexTile possibleTargetHextile = purchasableTilesWithSpecialResource[i];
-					path = PathGenerator.Instance.GetPath (this.city.hexTile, possibleTargetHextile, PATHFINDING_MODE.RESOURCE_PRODUCTION);
-					if (path != null) {
-						this.targetHexTileToPurchase = possibleTargetHextile;
-						this.pathToTargetHexTile = path;
-						break;
-					}
-				}
-			} else {
-                //Check for tiles 5 tiles away
-                elligibleTiles.Clear ();
-				for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-                    elligibleTiles = elligibleTiles
-                    .Union(this.city.ownedTiles[i].GetTilesInRange(5).Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !x.isHabitable
-                         && !x.isBorderOfCities.Except(this.city.kingdom.cities).Any())).ToList();
-                }
-				//elligibleTiles.Distinct ();
-
-				purchasableTilesWithSpecialResource.Clear ();
-				for (int i = 0; i < elligibleTiles.Count; i++) {
-					HexTile currentHexTile = elligibleTiles [i];
-					if (currentHexTile.specialResource != RESOURCE.NONE) {
-						purchasableTilesWithSpecialResource.Add (currentHexTile);
-					}
-				}
-				if (purchasableTilesWithSpecialResource.Count > 0) {
-					purchasableTilesWithSpecialResource = Utilities.Shuffle (purchasableTilesWithSpecialResource);
-					List<HexTile> path = new List<HexTile> ();
-					for (int i = 0; i < purchasableTilesWithSpecialResource.Count; i++) {
-						HexTile possibleTargetHextile = purchasableTilesWithSpecialResource[i];
-						path = PathGenerator.Instance.GetPath (this.city.hexTile, possibleTargetHextile, PATHFINDING_MODE.RESOURCE_PRODUCTION);
-						if (path != null) {
-							this.targetHexTileToPurchase = possibleTargetHextile;
-							this.pathToTargetHexTile = path;
-							break;
-						}
-					}
-				} else {
-                    //Just buy a tile without special resource
-                    elligibleTiles.Clear ();
-					for (int i = 0; i < this.city.ownedTiles.Count; i++) {
-						elligibleTiles = elligibleTiles.Union (this.city.ownedTiles [i].elligibleNeighbourTilesForPurchase
-                            .Where(x => !x.isBorderOfCities.Except(this.city.kingdom.cities).Any())).ToList();
-					}
-					if (elligibleTiles.Count > 0) {
-						elligibleTiles = Utilities.Shuffle (elligibleTiles);
-						List<HexTile> path = new List<HexTile> ();
-						for (int i = 0; i < elligibleTiles.Count; i++) {
-							HexTile possibleTargetHextile = elligibleTiles[i];
-							path = PathGenerator.Instance.GetPath (this.city.hexTile, possibleTargetHextile, PATHFINDING_MODE.RESOURCE_PRODUCTION);
-							if (path != null) {
-								this.targetHexTileToPurchase = possibleTargetHextile;
-								this.pathToTargetHexTile = path;
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			if (this.targetHexTileToPurchase != null && this.pathToTargetHexTile != null) {
-				Task.current.Succeed();
-			} else {
-				Task.current.Fail();
-			}
-		}
-	}
+            List<HexTile> unoccupiedTilesInSameRegion = new List<HexTile>();
+            for (int i = 0; i < city.ownedTiles.Count; i++) {
+                HexTile currOwnedTile = city.ownedTiles[i];
+                unoccupiedTilesInSameRegion.AddRange(currOwnedTile.AllNeighbours
+                    .Where(x => x.region == city.region && !x.isOccupied && !unoccupiedTilesInSameRegion.Contains(x)));
+            }
+            targetHexTileToPurchase = unoccupiedTilesInSameRegion[Random.Range(0, unoccupiedTilesInSameRegion.Count)];
+            if(targetHexTileToPurchase == null) {
+                Task.current.Fail();
+            } else {
+                Task.current.Succeed();
+            }
+        }
+    }
 
 	[Task]
 	private bool IsDailyGrowthFull(){
@@ -133,26 +58,19 @@ public class CityTaskManager : MonoBehaviour {
 	public void BuyNextTile(){
 		if (this.targetHexTileToPurchase.isOccupied) {
 			this.targetHexTileToPurchase = null;
-			this.pathToTargetHexTile.Clear();
 			Task.current.Fail();
 			return;
 		}
 
-		HexTile tileToBuy = GetNextTileToPurchase();
-
-        if (tileToBuy == null) {
-            this.targetHexTileToPurchase = null;
-            this.pathToTargetHexTile.Clear();
+        if (targetHexTileToPurchase == null) {
             Task.current.Fail();
             return;
-        } else {
-            city.PurchaseTile(tileToBuy);
-            if (tileToBuy.tileName == this.targetHexTileToPurchase.tileName) {
-                this.targetHexTileToPurchase = null;
-                this.pathToTargetHexTile.Clear();
-            }
-            Task.current.Succeed();
         }
+
+        city.PurchaseTile(targetHexTileToPurchase);
+        this.targetHexTileToPurchase = null;
+        Task.current.Succeed();
+        
 	}
 
 	[Task]
@@ -172,29 +90,7 @@ public class CityTaskManager : MonoBehaviour {
 
     [Task]
     private bool HasReachedLevelCap() {
-        return city.ownedTiles.Count >= city.hexTile.cityLevelCap;
+        return city.ownedTiles.Count >= city.region.cityLevelCap;
     }
     #endregion
-
-    /*
-     * This will determine the next tile to purchase taking into account
-     * if the path to the target tile already has occupied tiles.
-     * */
-    public HexTile GetNextTileToPurchase() {
-        HexTile tileToBuy = null;
-        if (this.pathToTargetHexTile != null && this.pathToTargetHexTile.Count > 0) {
-            //There is a path to the target hex tile, check if the path contains 
-            //already occupied tiles
-            for (int i = 0; i < this.pathToTargetHexTile.Count; i++) {
-                HexTile currentHexTile = this.pathToTargetHexTile[i];
-                if (!currentHexTile.isOccupied) {
-                    tileToBuy = currentHexTile;
-                    break;
-                }
-            }
-        } else {
-            tileToBuy = this.targetHexTileToPurchase;
-        }
-        return tileToBuy;
-    }
 }
