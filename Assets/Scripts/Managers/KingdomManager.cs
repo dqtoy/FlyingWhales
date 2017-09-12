@@ -46,6 +46,24 @@ public class KingdomManager : MonoBehaviour {
 		Instance = this;
 	}
 
+    public void GenerateInitialKingdoms() {
+        List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
+        for (int i = 0; i < initialKingdomSetup.Count; i++) {
+            InitialKingdom initialKingdom = initialKingdomSetup[i];
+            RACE initialKingdomRace = initialKingdom.race;
+            Region regionForKingdom = allRegions.OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).FirstOrDefault();
+            allRegions.Remove(regionForKingdom);
+            Kingdom newKingdom = GenerateNewKingdom(initialKingdomRace, new List<HexTile>() { regionForKingdom.centerOfMass }, true);
+            for (int j = 0; j < newKingdom.cities.Count; j++) {
+                City currCity = newKingdom.cities[j];
+                currCity.PopulateBorderTiles();
+            }
+            if (i == 0) {
+                UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
+            }
+        }
+    }
+
 	public void GenerateInitialKingdoms(List<HexTile> stoneHabitableTiles, List<HexTile> woodHabitableTiles) {
 
         List<HexTile> stoneElligibleTiles = new List<HexTile>(stoneHabitableTiles);
@@ -123,7 +141,7 @@ public class KingdomManager : MonoBehaviour {
 			for (int i = 0; i < cities.Count; i++) {
                 HexTile currCityTile = cities[i];
 				if (i == 0) {
-                    currCityTile.SetCityLevelCap(10);
+                    //currCityTile.SetCityLevelCap(10);
                     currCityTile.city.CreateInitialFamilies();
 				} else {
                     currCityTile.city.CreateInitialFamilies(false);
@@ -137,11 +155,11 @@ public class KingdomManager : MonoBehaviour {
             Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
         }
         newKingdom.UpdateAllRelationshipsLikeness();
-        newKingdom.CheckForDiscoveredKingdoms();
-        for (int i = 0; i < newKingdom.cities.Count; i++) {
-            newKingdom.cities[i].UpdateBorderTiles();
-        }
-		return newKingdom;
+        //newKingdom.CheckForDiscoveredKingdoms();
+        //for (int i = 0; i < newKingdom.cities.Count; i++) {
+        //    newKingdom.cities[i].UpdateBorderTiles();
+        //}
+        return newKingdom;
 	}
 
     public Kingdom SplitKingdom(Kingdom sourceKingdom, List<City> citiesToSplit, Citizen king) {

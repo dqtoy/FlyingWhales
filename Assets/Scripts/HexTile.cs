@@ -1016,7 +1016,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
-            "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
+            "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
+            if(this.city.region.specialResource != RESOURCE.NONE) {
+                text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
+            }
+            text += "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
             "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
             "\n [b]Happiness Points:[/b] " + this.city.happinessPoints.ToString() +
             "\n [b]Power:[/b] " + this.city.power.ToString() +

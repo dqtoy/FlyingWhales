@@ -12,6 +12,7 @@ public class City{
 	public int id;
 	public string name;
     private int _hp;
+    private Region _region;
     [NonSerialized] public HexTile hexTile;
 	[NonSerialized] private Kingdom _kingdom;
     [NonSerialized] public Citizen governor;
@@ -56,6 +57,9 @@ public class City{
 	private int increaseHpInterval = 0;
 
 	#region getters/setters
+    internal Region region {
+        get { return _region; }
+    }
 	public Kingdom kingdom{
 		get{ return this._kingdom; }
 	}
@@ -116,7 +120,8 @@ public class City{
 	public City(HexTile hexTile, Kingdom kingdom, bool isRebel = false){
 		this.id = Utilities.SetID(this);
 		this.hexTile = hexTile;
-		this._kingdom = kingdom;
+        this._region = hexTile.region;
+        this._kingdom = kingdom;
 		this.name = RandomNameGenerator.Instance.GenerateCityName(this._kingdom.race);
 		this.governor = null;
         this._power = 0;
@@ -143,13 +148,12 @@ public class City{
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 
 		if(!isRebel){
-			hexTile.CheckLairsInRange ();
+            hexTile.CheckLairsInRange ();
 			LevelUpBalanceOfPower();
 			AdjustDefense(100);
-			//		this.CreateInitialFamilies();
-			Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
+            this._region.SetOccupant(this);
+            Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
 			Messenger.AddListener("CitizenDied", CheckCityDeath);
-			//EventManager.Instance.onCitizenDiedEvent.AddListener(CheckCityDeath);
 			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 			increaseDueDate.AddMonths(1);
 			SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
@@ -517,7 +521,14 @@ public class City{
         }
         CheckForAdjacency();
     }
-
+    internal void PopulateBorderTiles() {
+        borderTiles = new List<HexTile>(_region.tilesInRegion);
+        for (int i = 0; i < borderTiles.Count; i++) {
+            HexTile currTile = borderTiles[i];
+            currTile.Borderize(this);
+            _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
+        }
+    }
     #region Adjacency
     internal void SetCityAsAdjacent(City city) {
         if (!_adjacentCities.Contains(city)) {
