@@ -113,6 +113,7 @@ public class Kingdom{
 	private bool _isLockedDown;
 	private bool _isTechProducing;
 	private bool _isMilitarize;
+	private bool _doesLackPrestige;
 
 	private int borderConflictLoyaltyExpiration;
 	private float _techProductionPercentage;
@@ -288,6 +289,9 @@ public class Kingdom{
 	public bool isMobilizing{
 		get { return this._isMobilizing;}
 	}
+	public bool doesLackPrestige{
+		get { return this._doesLackPrestige;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -320,7 +324,7 @@ public class Kingdom{
 		this.borderConflictLoyaltyExpiration = 0;
 		this.rebellions = new List<Rebellions> ();
 		this._discoveredKingdoms = new List<Kingdom>();
-		this._techLevel = 1;
+		this._techLevel = 0;
 		this._techCounter = 0;
 		this._hasBioWeapon = false;
 		this._boonOfPowers = new List<BoonOfPower> ();
@@ -350,6 +354,7 @@ public class Kingdom{
 		this._currentMilitaryAllianceRejectionDate = new GameDate (0, 0, 0);
 		this._mobilizationQueue = new List<Wars> ();
 
+		SetLackPrestigeState(false);
         AdjustPrestige(200);
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
@@ -874,10 +879,12 @@ public class Kingdom{
     #region Prestige
     internal void AdjustPrestige(int adjustment) {
         _prestige += adjustment;
+		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void SetPrestige(int adjustment) {
         _prestige = adjustment;
+		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void MonthlyPrestigeActions() {
@@ -907,6 +914,28 @@ public class Kingdom{
         gameDate.day = GameManager.daysInMonth[gameDate.month];
         SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => MonthlyPrestigeActions());
     }
+	private void CheckIfKingdomLacksPrestige(){
+		if (this.cities.Count > this.cityCap) {
+			if(!this._doesLackPrestige){
+				SetLackPrestigeState(true);
+				foreach (KingdomRelationship relationship in this.relationships) {
+					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
+					relationshipTowardsThis.AddEventModifier(-30, "Lacks prestige", null, false);
+				}
+			}
+		}else{
+			if(this._doesLackPrestige){
+				SetLackPrestigeState(false);
+				foreach (KingdomRelationship relationship in this.relationships) {
+					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
+					relationshipTowardsThis.RemoveEventModifierBySummary("Lacks prestige");
+				}
+			}
+		}
+	}
+	internal void SetLackPrestigeState(bool state){
+		this._doesLackPrestige = state;
+	}
     #endregion
 
     #region Trading
@@ -1335,14 +1364,15 @@ public class Kingdom{
         }
     }
     internal void UpdateTechLevel() {
-        this._techLevel = 1;
+        this._techLevel = 0;
 //        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
 //        for (int i = 0; i < allAvailableResources.Count; i++) {
 		foreach (RESOURCE currResource in this._availableResources.Keys) {
 //            RESOURCE currResource = allAvailableResources[i];
 			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
             if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
-                this._techLevel += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
+				int upgrade = (int)Utilities.resourceBenefits[currResource][resourceBenefit];
+				UpgradeTechLevel(upgrade);
             }
         }
     }
@@ -1434,10 +1464,12 @@ public class Kingdom{
 	}
 	internal void UpgradeTechLevel(int amount){
 		this._techLevel += amount;
-		if(this._techLevel < 1){
-			this._techLevel = 1;
+		if(this._techLevel < 0){
+			amount -= this._techLevel;
+			this._techLevel = 0;
 		}
 		this._techCounter = 0;
+		AdjustPowerPointsToAllCities(amount);
 		this.UpdateTechCapacity ();
 	}
 	#endregion
@@ -2439,6 +2471,12 @@ public class Kingdom{
 			this._mobilizationQueue.RemoveAt (0);
 		}else{
 			MobilizingState (false);
+		}
+	}
+
+	private void AdjustPowerPointsToAllCities(int amount){
+		for (int i = 0; i < this.cities.Count; i++) {
+			this.cities[i].AdjustPowerPoints(amount);
 		}
 	}
 }

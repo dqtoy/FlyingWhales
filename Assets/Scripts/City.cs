@@ -1487,6 +1487,19 @@ public class City{
 	}
 
     #region Balance Of Power
+	internal void AdjustPowerPoints(int powerPoints) {
+		this._powerPoints += powerPoints;
+	}
+	internal void SetPowerPoints(int powerPoints) {
+		this._powerPoints = powerPoints;
+	}
+	internal void AdjustDefensePoints(int defensePoints) {
+		this._defensePoints += defensePoints;
+	}
+	internal void SetDefensePoints(int defensePoints) {
+		this._defensePoints = defensePoints;
+	}
+
     internal void SetPower(int newPower) {
         _kingdom.AdjustBasePower(-_power);
         _power = 0;
