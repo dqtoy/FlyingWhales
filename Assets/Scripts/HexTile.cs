@@ -73,6 +73,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	[SerializeField] private GameObject topRightEdge;
 
     [Space(10)]
+    [Header("Tile Borders")]
+    [SerializeField] private SpriteRenderer topLeftBorder;
+	[SerializeField] private SpriteRenderer leftBorder;
+	[SerializeField] private SpriteRenderer botLeftBorder;
+	[SerializeField] private SpriteRenderer botRightBorder;
+	[SerializeField] private SpriteRenderer rightBorder;
+	[SerializeField] private SpriteRenderer topRightBorder;
+
+    [Space(10)]
     [Header("Structure Objects")]
     [SerializeField] private GameObject structureParentGO;
     private StructureObject structureObjOnTile;
@@ -351,9 +360,82 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		}
 		this.AllNeighbours = neighbours;
 	}
+    internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour) {
+        if (!AllNeighbours.Contains(neighbour)) {
+            throw new System.Exception(neighbour.name + " is not a neighbour of " + this.name);
+        }
+        Point difference = new Point((neighbour.xCoordinate - this.xCoordinate),
+                    (neighbour.yCoordinate - this.yCoordinate));
+        if (this.yCoordinate % 2 == 0) {
+            if (difference.X == -1 && difference.Y == 1) {
+                //top left
+                return HEXTILE_DIRECTION.NORTH_WEST;
+            } else if (difference.X == 0 && difference.Y == 1) {
+                //top right
+                return HEXTILE_DIRECTION.NORTH_EAST;
+            } else if (difference.X == 1 && difference.Y == 0) {
+                //right
+                return HEXTILE_DIRECTION.EAST;
+            } else if (difference.X == 0 && difference.Y == -1) {
+                //bottom right
+                return HEXTILE_DIRECTION.SOUTH_EAST;
+            } else if (difference.X == -1 && difference.Y == -1) {
+                //bottom left
+                return HEXTILE_DIRECTION.SOUTH_WEST;
+            } else if (difference.X == -1 && difference.Y == 0) {
+                //left
+                return HEXTILE_DIRECTION.WEST;
+            }
+        } else {
+            if (difference.X == 0 && difference.Y == 1) {
+                //top left
+                return HEXTILE_DIRECTION.NORTH_WEST;
+            } else if (difference.X == 1 && difference.Y == 1) {
+                //top right
+                return HEXTILE_DIRECTION.NORTH_EAST;
+            } else if (difference.X == 1 && difference.Y == 0) {
+                //right
+                return HEXTILE_DIRECTION.EAST;
+            } else if (difference.X == 1 && difference.Y == -1) {
+                //bottom right
+                return HEXTILE_DIRECTION.SOUTH_EAST;
+            } else if (difference.X == 0 && difference.Y == -1) {
+                //bottom left
+                return HEXTILE_DIRECTION.SOUTH_WEST;
+            } else if (difference.X == -1 && difference.Y == 0) {
+                //left
+                return HEXTILE_DIRECTION.WEST;
+            }
+        }
+        return HEXTILE_DIRECTION.NORTH_WEST;
+    }
     #endregion
 
     #region Tile Visuals
+    internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction) {
+        switch (direction) {
+            case HEXTILE_DIRECTION.NORTH_WEST:
+                topLeftBorder.gameObject.SetActive(true);
+                return topLeftBorder;
+            case HEXTILE_DIRECTION.NORTH_EAST:
+                topRightBorder.gameObject.SetActive(true);
+                return topRightBorder;
+            case HEXTILE_DIRECTION.EAST:
+                rightBorder.gameObject.SetActive(true);
+                return rightBorder;
+            case HEXTILE_DIRECTION.SOUTH_EAST:
+                botRightBorder.gameObject.SetActive(true);
+                return botRightBorder;
+            case HEXTILE_DIRECTION.SOUTH_WEST:
+                botLeftBorder.gameObject.SetActive(true);
+                return botLeftBorder;
+            case HEXTILE_DIRECTION.WEST:
+                leftBorder.gameObject.SetActive(true);
+                return leftBorder;
+            default:
+                return null;
+        }
+    }
     internal void DeactivateCenterPiece() {
         if (this.biomeType == BIOMES.FOREST && Utilities.GetBaseResourceType(this.specialResource) == BASE_RESOURCE_TYPE.WOOD && this.elevationType == ELEVATION.PLAIN) {
             centerPiece.SetActive(false);
@@ -459,7 +541,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.centerPiece.SetActive(true);
 	}
     internal void SetTileHighlightColor(Color color){
-        color.a = 76.5f / 255f;
+        //color.a = 30f / 255f;
         this._kingdomColorSprite.color = color;
 	}
     internal void SetMinimapTileColor(Color color) {
@@ -483,7 +565,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         Color color = this.ownedByCity.kingdom.kingdomColor;
         SetMinimapTileColor(color);
-        SetTileHighlightColor(color);
+        //SetTileHighlightColor(color);
     }
     /*
      * Assign a structure object to this tile.
@@ -879,7 +961,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				}
 			}
             this.city.kingdom.HighlightAllOwnedTilesInKingdom();
-            this.city.HighlightAllOwnedTiles(204f / 255f);
+            this.city.HighlightAllOwnedTiles(127f / 255f);
             this.ShowKingdomInfo();
         }
     }

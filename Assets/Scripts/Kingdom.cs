@@ -1204,7 +1204,7 @@ public class Kingdom{
             if (UIManager.Instance.currentlyShowingCity != null && UIManager.Instance.currentlyShowingCity.id == this.cities[i].id) {
                 continue;
             }
-            this.cities[i].HighlightAllOwnedTiles(127.5f / 255f);
+            this.cities[i].HighlightAllOwnedTiles(69f / 255f);
         }
     }
     internal void UnHighlightAllOwnedTilesInKingdom() {

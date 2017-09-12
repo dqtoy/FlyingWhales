@@ -431,10 +431,11 @@ public class City{
     }
     #endregion
 
+    #region Border Tile Functions
     /*
      * Compute to get the borders of a city.
      * */
-    internal void UpdateBorderTiles(){
+    internal void UpdateBorderTiles() {
         List<HexTile> newBorderTiles = new List<HexTile>();
         List<HexTile> oldBorderTiles = new List<HexTile>(borderTiles);
 
@@ -529,6 +530,8 @@ public class City{
             _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
         }
     }
+    #endregion
+
     #region Adjacency
     internal void SetCityAsAdjacent(City city) {
         if (!_adjacentCities.Contains(city)) {
@@ -624,34 +627,35 @@ public class City{
     }
     #endregion
 
+    #region Tile Highlight
+    internal void HighlightAllOwnedTiles(float alpha) {
+        Color color = this.kingdom.kingdomColor;
+        color.a = alpha;
+        for (int i = 0; i < this.ownedTiles.Count; i++) {
+            HexTile currentTile = this.ownedTiles[i];
+            currentTile.kingdomColorSprite.color = color;
+            currentTile.kingdomColorSprite.gameObject.SetActive(true);
+        }
 
-    internal void HighlightAllOwnedTiles(float alpha){
-		Color color = this.kingdom.kingdomColor;
-		color.a = alpha;
-		for (int i = 0; i < this.ownedTiles.Count; i++) {
-			HexTile currentTile = this.ownedTiles[i];
-			currentTile.kingdomColorSprite.color = color;
-			currentTile.kingdomColorSprite.gameObject.SetActive(true);
-		}
+        for (int i = 0; i < this.borderTiles.Count; i++) {
+            HexTile currentTile = this.borderTiles[i];
+            currentTile.kingdomColorSprite.color = color;
+            currentTile.kingdomColorSprite.gameObject.SetActive(true);
+        }
+    }
+    internal void UnHighlightAllOwnedTiles() {
+        for (int i = 0; i < this.ownedTiles.Count; i++) {
+            HexTile currentTile = this.ownedTiles[i];
+            currentTile.kingdomColorSprite.gameObject.SetActive(false);
+        }
+        for (int i = 0; i < this.borderTiles.Count; i++) {
+            HexTile currentTile = this.borderTiles[i];
+            currentTile.kingdomColorSprite.gameObject.SetActive(false);
+        }
+    }
+    #endregion
 
-		for (int i = 0; i < this.borderTiles.Count; i++) {
-			HexTile currentTile = this.borderTiles[i];
-			currentTile.kingdomColorSprite.color = color;
-			currentTile.kingdomColorSprite.gameObject.SetActive(true);
-		}
-	}
-
-	internal void UnHighlightAllOwnedTiles(){
-		for (int i = 0; i < this.ownedTiles.Count; i++) {
-			HexTile currentTile = this.ownedTiles[i];
-			currentTile.kingdomColorSprite.gameObject.SetActive(false);
-		}
-		for (int i = 0; i < this.borderTiles.Count; i++) {
-			HexTile currentTile = this.borderTiles[i];
-			currentTile.kingdomColorSprite.gameObject.SetActive(false);
-		}
-	}
-	internal void ExpandToThisCity(Citizen citizenToOccupyCity){
+    internal void ExpandToThisCity(Citizen citizenToOccupyCity){
 //		this.CreateInitialFamilies(false);
 		this.AddCitizenToCity(citizenToOccupyCity);
 		citizenToOccupyCity.role = ROLE.UNTRAINED;

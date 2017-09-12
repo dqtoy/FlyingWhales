@@ -47,6 +47,15 @@ public enum PATH_DIRECTION{
 	LEFT
 }
 
+public enum HEXTILE_DIRECTION {
+    NORTH_WEST,
+    NORTH_EAST,
+    EAST,
+    SOUTH_EAST,
+    SOUTH_WEST,
+    WEST
+}
+
 public enum REPRESENTATIVES{
 	KING,
 	MAYOR,
