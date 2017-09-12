@@ -150,7 +150,7 @@ public class City{
 		if(!isRebel){
             hexTile.CheckLairsInRange ();
 			LevelUpBalanceOfPower();
-			AdjustDefense(100);
+			AdjustDefense(50);
             Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
 			Messenger.AddListener("CitizenDied", CheckCityDeath);
 			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
@@ -1508,8 +1508,8 @@ public class City{
     }
     internal void IncreaseBOPAttributesEveryMonth() {
 		if (!isDead && this.rebellion == null) {
-            int powerIncrease = _powerPoints * 4;
-            int defenseIncrease = _defensePoints * 3;
+            int powerIncrease = _powerPoints * 2;
+            int defenseIncrease = _defensePoints * 4;
             //Each City contributes a base +4 Happiness
             int happinessIncrease = 4 + (_happinessPoints * 2);
             int happinessDecrease = (structures.Count * 3);
