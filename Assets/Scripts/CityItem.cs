@@ -6,16 +6,21 @@ public class CityItem : MonoBehaviour {
     private City _city;
 
     [SerializeField] private GameObject governorParentGO;
-    [SerializeField] private GameObject hpParentGO;
+    [SerializeField] private GameObject powerGO;
+	[SerializeField] private GameObject defenseGO;
+	[SerializeField] private GameObject hpParentGO;
     [SerializeField] private GameObject cityNameParentGO;
     [SerializeField] private GameObject structuresParentGO;
     [SerializeField] private GameObject growthMeterParentGO;
 
     [SerializeField] private CharacterPortrait _governor;
     [SerializeField] private UILabel _hpLbl;
+	[SerializeField] private UILabel _powerLbl;
+	[SerializeField] private UILabel _defenseLbl;
     [SerializeField] private UILabel _structuresLbl;
     [SerializeField] private UILabel _cityLbl;
     [SerializeField] private UIProgressBar _hpProgBar;
+
     [SerializeField] private GameObject _loyaltyGO;
     [SerializeField] private UILabel _loyaltyLbl;
     [SerializeField] private UIEventTrigger _loyaltyEventTrigger;
@@ -40,14 +45,17 @@ public class CityItem : MonoBehaviour {
     public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false, bool showForTesting = false) {
         this._city = _city;
         _governor.SetCitizen(city.governor);
-        _hpLbl.text = city.hp.ToString();
+		this._powerLbl.text = city.power.ToString();
+		this._defenseLbl.text = city.defense.ToString();
+
+//        _hpLbl.text = city.hp.ToString();
         _structuresLbl.text = city.ownedTiles.Count.ToString();
         _cityLbl.text = city.name;
-		float hpValue = (float)city.hp / (float)city.maxHP;
-		if(hpValue > 1f){
-			hpValue = 1f;
-		}
-        _hpProgBar.value = hpValue;
+//		float hpValue = (float)city.hp / (float)city.maxHP;
+//		if(hpValue > 1f){
+//			hpValue = 1f;
+//		}
+//        _hpProgBar.value = hpValue;
         _growthProgBar.value = (float)city.currentGrowth / (float)city.maxGrowth;
 
         if (showLoyalty) {
@@ -77,13 +85,17 @@ public class CityItem : MonoBehaviour {
 
         if (showNameOnly) {
             governorParentGO.SetActive(false);
-            hpParentGO.SetActive(false);
+//            hpParentGO.SetActive(false);
+			powerGO.SetActive(false);
+			defenseGO.SetActive(false);
             cityNameParentGO.SetActive(true);
             structuresParentGO.SetActive(false);
             growthMeterParentGO.SetActive(false);
         } else {
             governorParentGO.SetActive(true);
-            hpParentGO.SetActive(true);
+//            hpParentGO.SetActive(true);
+			powerGO.SetActive(true);
+			defenseGO.SetActive(true);
             cityNameParentGO.SetActive(true);
             structuresParentGO.SetActive(true);
             growthMeterParentGO.SetActive(true);
