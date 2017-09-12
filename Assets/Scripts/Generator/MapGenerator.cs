@@ -12,19 +12,19 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
 		Biomes.Instance.GenerateElevation();
 		Biomes.Instance.GenerateBiome();
-		Biomes.Instance.GenerateSpecialResources ();
+		//Biomes.Instance.GenerateSpecialResources ();
         Biomes.Instance.GenerateTileTags();
         GridMap.Instance.GenerateNeighboursWithSameTag();
         GridMap.Instance.GenerateRegions(40, 1);
         GridMap.Instance.GenerateResourcesPerRegion();
         //      //Biomes.Instance.GenerateTileDetails();
-        CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
+        //CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
         ////PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
-        KingdomManager.Instance.GenerateInitialKingdoms(CityGenerator.Instance.stoneHabitableTiles, CityGenerator.Instance.woodHabitableTiles);
+        KingdomManager.Instance.GenerateInitialKingdoms();
 
-        CityGenerator.Instance.GenerateLairHabitableTiles(GridMap.Instance.listHexes);
-        MonsterManager.Instance.GenerateLairs();
+        //CityGenerator.Instance.GenerateLairHabitableTiles(GridMap.Instance.listHexes);
+        //MonsterManager.Instance.GenerateLairs();
         //      //UIManager.Instance.UpdateKingsGrid();
         //      //WorldEventManager.Instance.TriggerInitialWorldEvents();
         ////WorldEventManager.Instance.BoonOfPowerTrigger();

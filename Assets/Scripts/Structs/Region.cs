@@ -5,31 +5,38 @@ using System.Linq;
 
 public class Region {
     private HexTile _centerOfMass;
-    private List<HexTile> _tilesInRegion;
+    private List<HexTile> _tilesInRegion; //This also includes the center of mass
     private Color regionColor;
     private List<Region> _adjacentRegions;
+    private City _occupant;
 
     //Resources
     private RESOURCE _specialResource;
     private HexTile _tileWithSpecialResource;
-    private Dictionary<RACE, int> naturalResourceLevel;
+    private Dictionary<RACE, int> _naturalResourceLevel;
 
     [SerializeField] private List<HexTile> _outerTiles;
 
     #region getters/sertters
-    public HexTile centerOfMass {
+    internal HexTile centerOfMass {
         get { return _centerOfMass; }
     }
-    public List<HexTile> tilesInRegion {
+    internal List<HexTile> tilesInRegion {
         get { return _tilesInRegion; }
     }
-    public RESOURCE specialResource {
+    internal RESOURCE specialResource {
         get { return _specialResource; }
+    }
+    internal HexTile tileWithSpecialResource {
+        get { return _tileWithSpecialResource; }
+    }
+    internal Dictionary<RACE, int> naturalResourceLevel {
+        get { return _naturalResourceLevel; }
     }
     #endregion
 
     public Region(HexTile centerOfMass) {
-        this._centerOfMass = centerOfMass;
+        SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
@@ -46,16 +53,23 @@ public class Region {
         int midPointX = (minXCoordinate + maxXCoordinate) / 2;
         int midPointY = (minYCoordinate + maxYCoordinate) / 2;
 
-        _centerOfMass = GridMap.Instance.map[midPointX, midPointY];
+        SetCenterOfMass(GridMap.Instance.map[midPointX, midPointY]);
     }
     internal void RevalidateCenterOfMass() {
         if (_centerOfMass.elevationType != ELEVATION.PLAIN || _centerOfMass.specialResource != RESOURCE.NONE) {
-            _centerOfMass = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.specialResource == RESOURCE.NONE)
-                .OrderBy(x => x.GetDistanceTo(_centerOfMass)).FirstOrDefault();
+            SetCenterOfMass(_tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.specialResource == RESOURCE.NONE)
+                .OrderBy(x => x.GetDistanceTo(_centerOfMass)).FirstOrDefault());
             if (_centerOfMass == null) {
                 throw new System.Exception("center of mass is null!");
             }
         }
+    }
+    internal void SetCenterOfMass(HexTile newCenter) {
+        if(_centerOfMass != null) {
+            _centerOfMass.isHabitable = false;
+        }
+        _centerOfMass = newCenter;
+        _centerOfMass.isHabitable = true;
     }
     #endregion
 
@@ -99,6 +113,19 @@ public class Region {
         }
         _tilesInRegion.Clear();
     }
+    internal void SetOccupant(City occupant) {
+        this._occupant = occupant;
+        SetAdjacentRegionsAsSeenForOccupant();
+    }
+    private void SetAdjacentRegionsAsSeenForOccupant() {
+        for (int i = 0; i < _adjacentRegions.Count; i++) {
+            Region currRegion = _adjacentRegions[i];
+            List<HexTile> tilesInCurrRegion = currRegion.tilesInRegion;
+            for (int j = 0; j < tilesInCurrRegion.Count; j++) {
+                _occupant.kingdom.SetFogOfWarStateForTile(tilesInCurrRegion[j], FOG_OF_WAR_STATE.SEEN);
+            }
+        }
+    }
     #endregion
 
     #region Resource Functions
@@ -120,7 +147,7 @@ public class Region {
     internal void ComputeNaturalResourceLevel() {
         int humanTilePoints = 0;
         int elvenTilePoints = 0;
-        naturalResourceLevel = new Dictionary<RACE, int>() {
+        _naturalResourceLevel = new Dictionary<RACE, int>() {
             {RACE.HUMANS, 0},
             {RACE.ELVES, 0},
             {RACE.MINGONS, 0},
@@ -172,8 +199,8 @@ public class Region {
             increaseFromSpecialResource = 3;
         }
 
-        naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 10) + increaseFromSpecialResource;
-        naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 10) + increaseFromSpecialResource;
+        _naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 10) + increaseFromSpecialResource;
+        _naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 10) + increaseFromSpecialResource;
 
         //_centerOfMass.SetTileText(specialResource.ToString() + "\n" +
         //    naturalResourceLevel[RACE.HUMANS].ToString() + "\n" +

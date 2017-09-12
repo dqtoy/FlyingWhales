@@ -259,14 +259,6 @@ public class CityGenerator : MonoBehaviour {
 		return BIOMES.NONE;
 	}
 	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellions rebellion = null){
-        //if (hexTile.isBorder && rebellion == null) {
-        //    throw new System.Exception("A new city is being created on a border tile!\n Hextile: " + hexTile.name + "\nKingdom: " + kingdom.name);
-        //    //hexTile.ownedByCity.borderTiles.Remove(hexTile);
-        //    //hexTile.isBorderOfCityID = 0;
-        //    //hexTile.isBorder = false;
-        //    //hexTile.ownedByCity = null;
-        //}
-
         if (rebellion != null){
 			hexTile.city = new RebelFort (hexTile, kingdom, true, rebellion);
 		}else{
@@ -285,12 +277,9 @@ public class CityGenerator : MonoBehaviour {
 
 			ctmOfCity.Initialize(hexTile.city);
 			Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
-
 		}
 
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
-
-
         //hexTile.city.UpdateBorderTiles();
         return hexTile.city;
 	}
