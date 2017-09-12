@@ -143,21 +143,21 @@ public class Crime : GameEvent {
 					}else{
 						if(this.kingPunishment == PUNISHMENT.NO){
 							if(otherKingPunishment == PUNISHMENT.LIGHT){
-								relationship.AddEventModifier(-2, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-2, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}else if(otherKingPunishment == PUNISHMENT.HARSH){
-								relationship.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-3, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}
 						}else if(this.kingPunishment == PUNISHMENT.LIGHT){
 							if(otherKingPunishment == PUNISHMENT.NO){
-								relationship.AddEventModifier(-2, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-2, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}else if(otherKingPunishment == PUNISHMENT.HARSH){
-								relationship.AddEventModifier(-2, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-2, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}
 						}else{
 							if(otherKingPunishment == PUNISHMENT.LIGHT){
-								relationship.AddEventModifier(-2, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-2, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}else if(otherKingPunishment == PUNISHMENT.NO){
-								relationship.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+								relationship.AddEventModifier(-3, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 							}
 						}
 					}

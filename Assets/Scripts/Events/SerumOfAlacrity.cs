@@ -90,7 +90,7 @@ public class SerumOfAlacrity : GameEvent {
                         relationship.AddEventModifier(3, "Opposing strength values", this);
                     } else {
                         //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-                        relationship.AddEventModifier(-3, "Opposing strength values", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+						relationship.AddEventModifier(-3, "Opposing strength values", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
                     }
 				}
 			}

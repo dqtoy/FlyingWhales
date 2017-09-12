@@ -121,11 +121,11 @@ public class Rumor : GameEvent {
 			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.LIKE){
 				relationshipRumorToTarget.AddEventModifier(3, this.name + " event", this);
 			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.DISLIKE){
-				relationshipRumorToTarget.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
+				relationshipRumorToTarget.AddEventModifier(-3, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.HATE){
-				relationshipRumorToTarget.AddEventModifier(-4, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
+				relationshipRumorToTarget.AddEventModifier(-4, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}else if(relationshipSourceToTarget.relationshipStatus == RELATIONSHIP_STATUS.SPITE){
-				relationshipRumorToTarget.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
+				relationshipRumorToTarget.AddEventModifier(-5, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.SUCCESS_RUMOR);
 			}
 			if(rumorType == RUMOR_TYPE.NEGATIVE){
 				//TODO: Add log - successful negative rumor
@@ -156,7 +156,7 @@ public class Rumor : GameEvent {
 
 					KingdomRelationship relationshipRumorToSource = this.rumorKingdom.GetRelationshipWithKingdom(this.sourceKingdom);
 					if(relationshipRumorToSource != null){
-						relationshipRumorToSource.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.CAUGHT_RUMOR);
+						relationshipRumorToSource.AddEventModifier(-5, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.CAUGHT_RUMOR);
 					}
 				}
 			}

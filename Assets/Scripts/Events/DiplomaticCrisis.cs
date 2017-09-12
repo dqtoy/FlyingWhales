@@ -163,7 +163,7 @@ public class DiplomaticCrisis : GameEvent {
 			this.resolution = "Ended on " + ((MONTH)this.endMonth).ToString() + " " + this.endDay + ", " + this.endYear + ". Diplomatic Crisis caused deterioration in relationship.";
 
 			if(relationship1 != null){
-				relationship1.AddEventModifier (-7, this.name + " event", this, this._assassinationTrigger);
+				relationship1.AddEventModifier (-7, this.name + " event", this, true, this._assassinationTrigger);
 				relationship1.sourceKingdom.WarTrigger (relationship1, this, this.kingdom1.kingdomTypeData, this._warTrigger);
 			}
 		}

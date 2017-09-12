@@ -276,7 +276,7 @@ public class Raid : GameEvent {
 			}
 			KingdomRelationship relationship = this.GetRelationship ();
 			if(relationship != null){
-				relationship.AddEventModifier(-3, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_RAID_NO_DEATH);
+				relationship.AddEventModifier(-3, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.DISCOVERED_RAID_NO_DEATH);
 			}
 		}
 	}

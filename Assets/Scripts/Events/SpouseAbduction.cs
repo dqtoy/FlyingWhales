@@ -457,7 +457,7 @@ public class SpouseAbduction : GameEvent {
 			if(this.otherKingdoms[i].king.importantCharacterValues.ContainsKey(requiredValue)){
 				KingdomRelationship relationship = this.otherKingdoms [i].GetRelationshipWithKingdom (targetKing.city.kingdom);
 				if(relationship != null){
-					relationship.AddEventModifier (amount, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+					relationship.AddEventModifier (amount, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 				}
 			}
 		}

@@ -175,7 +175,7 @@ public class HiddenHistoryBook : GameEvent {
                         relationship.AddEventModifier(3, "Same tradition values", this);
                     } else{
                         //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-                        relationship.AddEventModifier(-3, "Opposing tradition values", this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+						relationship.AddEventModifier(-3, "Opposing tradition values", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
                     }
 				}
 			}

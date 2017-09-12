@@ -918,7 +918,7 @@ public class Kingdom{
 		if (this.cities.Count > this.cityCap) {
 			if(!this._doesLackPrestige){
 				SetLackPrestigeState(true);
-				foreach (KingdomRelationship relationship in this.relationships) {
+				foreach (KingdomRelationship relationship in this.relationships.Values) {
 					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
 					relationshipTowardsThis.AddEventModifier(-30, "Lacks prestige", null, false);
 				}
@@ -926,7 +926,7 @@ public class Kingdom{
 		}else{
 			if(this._doesLackPrestige){
 				SetLackPrestigeState(false);
-				foreach (KingdomRelationship relationship in this.relationships) {
+				foreach (KingdomRelationship relationship in this.relationships.Values) {
 					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
 					relationshipTowardsThis.RemoveEventModifierBySummary("Lacks prestige");
 				}

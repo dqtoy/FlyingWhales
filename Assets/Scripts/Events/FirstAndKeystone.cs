@@ -308,7 +308,7 @@ public class FirstAndKeystone : GameEvent {
 		}else{
 			KingdomRelationship relationship = this.firstOwner.GetRelationshipWithKingdom(this.keystoneOwner);
 			if(relationship != null){
-				relationship.AddEventModifier(-5, this.name + " event", this, ASSASSINATION_TRIGGER_REASONS.FIRST_AND_KEYSTONE_STEAL);
+				relationship.AddEventModifier(-5, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.FIRST_AND_KEYSTONE_STEAL);
 			}
 		}
 

@@ -101,7 +101,7 @@ public class StateVisit : GameEvent {
 		}else{
 			if(this.isDoneBySabotage){
 				if (relationship != null) {
-					relationship.AddEventModifier (-3, this.name + " event", this, this._assassinationTrigger);
+					relationship.AddEventModifier (-3, this.name + " event", this, true, this._assassinationTrigger);
 				}
 				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "StateVisit", "sabotage_success");
 				newLog.AddToFillers (this.saboteurEnvoy.citizen, this.saboteurEnvoy.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
