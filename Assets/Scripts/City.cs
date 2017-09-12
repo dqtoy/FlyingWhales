@@ -28,6 +28,8 @@ public class City{
     private int _dailyGrowthFromKingdom;
     private int _dailyGrowthBuffs;
     private int _maxGrowth;
+	private int _dailyGrowthResourceBenefits;
+	private float _productionGrowthPercentage;
 
     //Balance of Power
     private int _powerPoints;
@@ -67,7 +69,7 @@ public class City{
 		get{ return this._currentGrowth; }
 	}
 	public int totalDailyGrowth{
-		get{ return (int)((_dailyGrowthFromKingdom + _dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount) * this.kingdom.productionGrowthPercentage); }
+		get{ return (int)((_dailyGrowthFromKingdom + _dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount + this._dailyGrowthResourceBenefits) * this._productionGrowthPercentage); }
 	}
 	public int maxGrowth{
 		get{ return this._maxGrowth; }
@@ -96,6 +98,9 @@ public class City{
     public int defense {
         get { return _defense; }
     }
+	public float productionGrowthPercentage {
+		get { return this._productionGrowthPercentage; }
+	}
 	public int hp{
 		get{ return this._hp; }
 		set{ this._hp = value; }
@@ -151,6 +156,9 @@ public class City{
             hexTile.CheckLairsInRange ();
 			LevelUpBalanceOfPower();
 			AdjustDefense(50);
+            this._region.SetOccupant(this);
+			DailyGrowthResourceBenefits();
+			AddOneTimeResourceBenefits();
             Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
 			Messenger.AddListener("CitizenDied", CheckCityDeath);
 			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
@@ -960,6 +968,7 @@ public class City{
         AdjustDefense(-defense);
         //ResetAdjacentCities();
         RemoveListeners();
+		RemoveOneTimeResourceBenefits();
         /*
          * Remove irrelevant scripts on hextile
          * */
@@ -1037,6 +1046,7 @@ public class City{
      * Conquer this city and transfer ownership to the conqueror
      * */
 	internal void ConquerCity(Kingdom conqueror, KingdomRelationship kingdomRelationship) {
+		RemoveOneTimeResourceBenefits();
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
 
@@ -1506,7 +1516,7 @@ public class City{
             //Each City contributes a base +4 Happiness
             int happinessIncrease = 4 + (_happinessPoints * 2);
             int happinessDecrease = (structures.Count * 3);
-            
+			MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref happinessIncrease);
             if (_kingdom.isMilitarize) {
                 //During militarize, all Points spent on Happiness are instead spent on Power, but keep decrease in happiness.
                 AdjustPower(powerIncrease + (happinessIncrease - happinessDecrease));
@@ -1529,5 +1539,79 @@ public class City{
         _defensePoints += _kingdom.kingdomTypeData.productionPointsSpend.defense;
         _happinessPoints += _kingdom.kingdomTypeData.productionPointsSpend.happiness;
     }
+	private void MonthlyResourceBenefits(ref int powerIncrease, ref int defenseIncrease, ref int happinessIncrease){
+		switch (this._region.specialResource){
+		case RESOURCE.CORN:
+			happinessIncrease += 5;
+			break;
+		case RESOURCE.WHEAT:
+			happinessIncrease += 10;
+			break;
+		case RESOURCE.RICE:
+			happinessIncrease += 15;
+			break;
+		case RESOURCE.OAK:
+			defenseIncrease += 5;
+			break;
+		case RESOURCE.EBONY:
+			defenseIncrease += 15;
+			break;
+		case RESOURCE.GRANITE:
+			powerIncrease += 5;
+			break;
+		case RESOURCE.SLATE:
+			powerIncrease += 15;
+			break;
+		case RESOURCE.COBALT:
+			this.kingdom.AdjustPrestige(10);
+			break;
+		}
+	}
+	private void DailyGrowthResourceBenefits(){
+		switch (this._region.specialResource){
+		case RESOURCE.DEER:
+			this._dailyGrowthResourceBenefits = 10;
+			break;
+		case RESOURCE.PIG:
+			this._dailyGrowthResourceBenefits = 15;
+			break;
+		case RESOURCE.BEHEMOTH:
+			this._dailyGrowthResourceBenefits = 20;
+			break;
+		default:
+			this._dailyGrowthResourceBenefits = 0;
+			break;
+		}
+	}
+	private void AddOneTimeResourceBenefits(){
+		switch (this._region.specialResource){
+		case RESOURCE.MANA_STONE:
+			SetProductionGrowthPercentage(2f);
+			for (int i = 0; i < this.kingdom.cities.Count; i++) {
+				if (this.kingdom.cities[i].id != this.id) {
+					this.kingdom.cities[i].SetProductionGrowthPercentage(1.25f);
+				}
+			}
+			break;
+		case RESOURCE.MITHRIL:
+			this.kingdom.SetTechProductionPercentage(2f);
+			break;
+		}
+	}
+	private void RemoveOneTimeResourceBenefits(){
+		switch (this._region.specialResource){
+		case RESOURCE.MANA_STONE:
+			for (int i = 0; i < this.kingdom.cities.Count; i++) {
+				this.kingdom.cities[i].SetProductionGrowthPercentage(1f);
+			}
+			break;
+		case RESOURCE.MITHRIL:
+			this.kingdom.SetTechProductionPercentage(1f);
+			break;
+		}
+	}
+	internal void SetProductionGrowthPercentage(float amount){
+		this._productionGrowthPercentage = amount;
+	}
     #endregion
 }

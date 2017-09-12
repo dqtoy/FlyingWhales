@@ -355,8 +355,8 @@ public class Kingdom{
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
 		this.SetTechProduction(true);
-		this.SetTechProductionPercentage(1);
-		this.SetProductionGrowthPercentage(1);
+		this.SetTechProductionPercentage(1f);
+		this.SetProductionGrowthPercentage(1f);
 		this.UpdateTechCapacity ();
 		this.SetSecession (false);
 		this.SetRiot (false);
