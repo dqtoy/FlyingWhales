@@ -116,11 +116,11 @@ public class CameraMove : MonoBehaviour {
 			fov = Mathf.Clamp (fov, _minFov, _maxFov);
 
             if(!Mathf.Approximately(previousCameraFOV, fov)) {
-                if(fov < (_maxFov / 2f)) {
-                    SetBiomeDetailsState(true);
-                } else {
-                    SetBiomeDetailsState(false);
-                }
+                //if(fov < (_maxFov / 2f)) {
+                //    SetBiomeDetailsState(true);
+                //} else {
+                //    SetBiomeDetailsState(false);
+                //}
                 previousCameraFOV = fov;
                 Camera.main.orthographicSize = fov;
                 eventIconCamera.orthographicSize = fov;
@@ -130,32 +130,32 @@ public class CameraMove : MonoBehaviour {
                 fogOfWarCamera.orthographicSize = fov;
             }
 
-			//adjust camera movement clamps
-			if (adjustment > 0f) {
-				MAX_X -= .9f;
-				MAX_X = Mathf.Clamp (MAX_X, maxMAX_X, minMAX_X);
+			////adjust camera movement clamps
+			//if (adjustment > 0f) {
+			//	MAX_X -= .9f;
+			//	MAX_X = Mathf.Clamp (MAX_X, maxMAX_X, minMAX_X);
 
-				MIN_X += .9f;
-				MIN_X = Mathf.Clamp (MIN_X, minMIN_X, maxMIN_X);
+			//	MIN_X += .9f;
+			//	MIN_X = Mathf.Clamp (MIN_X, minMIN_X, maxMIN_X);
 
-				MAX_Y -= .5f;
-				MAX_Y = Mathf.Clamp (MAX_Y, maxMAX_Y, minMAX_Y);
+			//	MAX_Y -= .5f;
+			//	MAX_Y = Mathf.Clamp (MAX_Y, maxMAX_Y, minMAX_Y);
 
-				MIN_Y += .5f;
-				MIN_Y = Mathf.Clamp (MIN_Y, minMIN_Y, maxMIN_Y);
-			} else if (adjustment < 0f) {
-				MAX_X += .9f;
-				MAX_X = Mathf.Clamp (MAX_X, maxMAX_X, minMAX_X);
+			//	MIN_Y += .5f;
+			//	MIN_Y = Mathf.Clamp (MIN_Y, minMIN_Y, maxMIN_Y);
+			//} else if (adjustment < 0f) {
+			//	MAX_X += .9f;
+			//	MAX_X = Mathf.Clamp (MAX_X, maxMAX_X, minMAX_X);
 
-				MIN_X -= .9f;
-				MIN_X = Mathf.Clamp (MIN_X, minMIN_X, maxMIN_X);
+			//	MIN_X -= .9f;
+			//	MIN_X = Mathf.Clamp (MIN_X, minMIN_X, maxMIN_X);
 
-				MAX_Y += .5f;
-				MAX_Y = Mathf.Clamp (MAX_Y, maxMAX_Y, minMAX_Y);
+			//	MAX_Y += .5f;
+			//	MAX_Y = Mathf.Clamp (MAX_Y, maxMAX_Y, minMAX_Y);
 
-				MIN_Y -= .5f;
-				MIN_Y = Mathf.Clamp (MIN_Y, minMIN_Y, maxMIN_Y);
-			}
+			//	MIN_Y -= .5f;
+			//	MIN_Y = Mathf.Clamp (MIN_Y, minMIN_Y, maxMIN_Y);
+			//}
 
 		}
 
@@ -188,7 +188,7 @@ public class CameraMove : MonoBehaviour {
 			}
 		}
 
-        ConstrainCameraBounds();
+        //ConstrainCameraBounds();
     }
 
     public void ConstrainCameraBounds() {
