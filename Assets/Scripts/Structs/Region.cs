@@ -14,6 +14,7 @@ public class Region {
     private RESOURCE _specialResource;
     private HexTile _tileWithSpecialResource;
     private Dictionary<RACE, int> _naturalResourceLevel;
+    private int _cityLevelCap;
 
     private List<HexTile> _outerTiles;
     private List<SpriteRenderer> regionBorderLines;
@@ -33,6 +34,9 @@ public class Region {
     }
     internal Dictionary<RACE, int> naturalResourceLevel {
         get { return _naturalResourceLevel; }
+    }
+    internal int cityLevelCap {
+        get { return _cityLevelCap; }
     }
     #endregion
 
@@ -125,6 +129,7 @@ public class Region {
     }
     internal void SetOccupant(City occupant) {
         _occupant = occupant;
+        _cityLevelCap = _naturalResourceLevel[occupant.kingdom.race];
         SetAdjacentRegionsAsSeenForOccupant();
         ReColorBorderTiles(_occupant.kingdom.kingdomColor);
         if(_specialResource != RESOURCE.NONE) {

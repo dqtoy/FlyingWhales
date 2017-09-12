@@ -30,7 +30,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [System.NonSerialized] public City city = null;
 	internal City ownedByCity = null; // this is populated whenever the hex tile is occupied or becomes a border of a particular city
-    private int _cityLevelCap = 0;
 
 	public Lair lair;
 
@@ -170,9 +169,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     public List<Kingdom> visibleByKingdoms {
         get { return _visibleByKingdoms; }
-    }
-    public int cityLevelCap {
-        get { return _cityLevelCap; }
     }
     #endregion
 
@@ -1107,7 +1103,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             "\n [b]Happiness Points:[/b] " + this.city.happinessPoints.ToString() +
             "\n [b]Power:[/b] " + this.city.power.ToString() +
             "\n [b]Defense:[/b] " + this.city.defense.ToString() +
-            "\n [b]City Level Cap:[/b] " + this.cityLevelCap.ToString() +
+            "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
             "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
             "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
             "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
@@ -1314,13 +1310,4 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     internal void ExitCitizen(Citizen citizen) {
         this._citizensOnTile.Remove(citizen);
     }
-
-    #region City Level Functions
-    internal void SetCityLevelCap(int cityLevelCap) {
-        _cityLevelCap = cityLevelCap;
-    }
-    internal void GenerateCityLevelCap() {
-        SetCityLevelCap(Utilities.BellCurveRandomRange(4, 10, 6, 8));
-    }
-    #endregion
 }

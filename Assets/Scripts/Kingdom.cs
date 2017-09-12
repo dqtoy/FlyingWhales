@@ -768,7 +768,7 @@ public class Kingdom{
 	 * */
 	protected void KingdomTickActions(){
         if (_isGrowthEnabled) {
-            this.AttemptToExpand();
+            //this.AttemptToExpand();
         }
 		this.IncreaseTechCounterPerTick();
         //this.TriggerEvents();

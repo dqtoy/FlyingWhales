@@ -683,8 +683,6 @@ public class City{
 
         //Add tileToBuy to ownedTiles
         this.ownedTiles.Add(tileToBuy);
-        //Update Border Tiles based on new owned tile
-        this.UpdateBorderTiles();
 
         //Set tile as occupied
         tileToBuy.Occupy (this);
@@ -692,39 +690,37 @@ public class City{
         //Collect any events on the purchased tile
         tileToBuy.CollectEventOnTile(kingdom);
 
-        //Set tile as visible for the kingdom that bought it
-        kingdom.SetFogOfWarStateForTile(tileToBuy, FOG_OF_WAR_STATE.VISIBLE);
+        ////Set tile as visible for the kingdom that bought it
+        //kingdom.SetFogOfWarStateForTile(tileToBuy, FOG_OF_WAR_STATE.VISIBLE);
 
 		if(Messenger.eventTable.ContainsKey("OnUpdatePath")){
 			Messenger.Broadcast<HexTile>("OnUpdatePath", tileToBuy);
 		}
-        tileToBuy.CreateStructureOnTile(Utilities.GetStructureTypeForResource(kingdom.race, tileToBuy.specialResource));
+        tileToBuy.CreateStructureOnTile(STRUCTURE_TYPE.GENERIC);
 
         //Update necessary data
         this.UpdateDailyProduction();
-        this.kingdom.CheckForDiscoveredKingdoms(this);
+        //this.kingdom.CheckForDiscoveredKingdoms(this);
         //if(otherCity != null) {
         //    otherCity.UpdateBorderTiles();
         //}
 
-        //Add special resources to kingdoms available resources, if the purchased tile has any
-        if (tileToBuy.specialResource != RESOURCE.NONE) {
-            this._kingdom.AddResourceToKingdom(tileToBuy.specialResource);
-        }
+        ////Add special resources to kingdoms available resources, if the purchased tile has any
+        //if (tileToBuy.specialResource != RESOURCE.NONE) {
+        //    this._kingdom.AddResourceToKingdom(tileToBuy.specialResource);
+        //}
 
-        //Show Highlight if kingdom or city is currently highlighted
-        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
-			this._kingdom.HighlightAllOwnedTilesInKingdom ();
-		} else {
-			if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
-				this._kingdom.HighlightAllOwnedTilesInKingdom ();
-			}
-		}
+  //      //Show Highlight if kingdom or city is currently highlighted
+  //      if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
+		//	this._kingdom.HighlightAllOwnedTilesInKingdom ();
+		//} else {
+		//	if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
+		//		this._kingdom.HighlightAllOwnedTilesInKingdom ();
+		//	}
+		//}
 		tileToBuy.CheckLairsInRange ();
         LevelUpBalanceOfPower();
 		this.UpdateHP (percentageHP);
-
-
 	}
 
     internal void AddTilesToCity(List<HexTile> hexTilesToAdd) {
@@ -736,19 +732,8 @@ public class City{
 
     internal void ForcePurchaseTile() {
         CityTaskManager ctm = hexTile.GetComponent<CityTaskManager>();
-        HexTile nextTileToPurchase = ctm.GetNextTileToPurchase();
-        if(nextTileToPurchase == null) {
-            Debug.LogWarning("A city is trying to force purchase a tile, but the city task manager has not determined a next tile to purchase");
-        } else {
-            PurchaseTile(nextTileToPurchase);
-            if (nextTileToPurchase.name.Equals(ctm.targetHexTileToPurchase.name)) {
-                ctm.targetHexTileToPurchase = null;
-                ctm.pathToTargetHexTile.Clear();
-            } else {
-                ctm.pathToTargetHexTile.Remove(nextTileToPurchase);
-            }
-        }
-        
+        PurchaseTile(ctm.targetHexTileToPurchase);
+        ctm.targetHexTileToPurchase = null;
     }
 
 	/*
