@@ -31,6 +31,10 @@ public class GridMap : MonoBehaviour {
 	}
 
 	internal void GenerateGrid () {
+        float newX = xOffset * (width / 2);
+        float newY = yOffset * (height / 2);
+        this.transform.localPosition = new Vector2(-newX, -newY);
+        //CameraMove.Instance.minimapCamera.transform.position
 		map = new HexTile[(int)width, (int)height];
 		listHexes = new List<GameObject>();
         int id = 1;
@@ -44,7 +48,7 @@ public class GridMap : MonoBehaviour {
 				}
 				GameObject hex = GameObject.Instantiate(goHex) as GameObject;
 				hex.transform.parent = this.transform;
-				hex.transform.position = new Vector3(xPosition, yPosition,0f);
+				hex.transform.localPosition = new Vector3(xPosition, yPosition,0f);
 				hex.transform.localScale = new Vector3(tileSize,tileSize,0f);
 				hex.name = x + "," + y;
                 HexTile currHex = hex.GetComponent<HexTile>();
