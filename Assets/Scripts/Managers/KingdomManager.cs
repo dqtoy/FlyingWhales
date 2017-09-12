@@ -31,6 +31,7 @@ public class KingdomManager : MonoBehaviour {
 	public int maxKingdomEventHistory;
 	public int rangerMoveRange;
 	public int currentActionDay;
+    public int oddActionDay = 1;
 
     [SerializeField] private int minimumInitialKingdomDistance;
 
@@ -465,6 +466,9 @@ public class KingdomManager : MonoBehaviour {
 	internal void IncrementCurrentActionDay(int value){
 		this.currentActionDay += value;
 	}
+    internal void IncrementOddActionDay() {
+        oddActionDay += 2;
+    }
     #region For Testing
     //[ContextMenu("Test Split Kingdom")]
     //public void TestSplitKingdom() {

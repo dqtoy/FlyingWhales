@@ -384,6 +384,7 @@ public class Kingdom{
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
 
         //		ScheduleEvents ();
+        ScheduleOddDayActions();
         ScheduleActionDay();
 
 
@@ -767,9 +768,9 @@ public class Kingdom{
 	 * happen every tick here.
 	 * */
 	protected void KingdomTickActions(){
-        if (_isGrowthEnabled) {
-            this.AttemptToExpand();
-        }
+        //if (_isGrowthEnabled) {
+        //    this.AttemptToExpand();
+        //}
 		this.IncreaseTechCounterPerTick();
         //this.TriggerEvents();
     }
@@ -824,18 +825,8 @@ public class Kingdom{
 		int month = UnityEngine.Random.Range (1, 5);
 		SchedulingManager.Instance.AddEntry (month, UnityEngine.Random.Range(1, GameManager.daysInMonth[month]), GameManager.Instance.year, () => TriggerCrime());
 	}
-    /*
-    * Deacrease the kingdom's unrest by UNREST_DECREASE_PER_MONTH amount every month.
-    * */
-  //  protected void DecreaseUnrestEveryMonth() {
-		//if(!this.isDead){
-	 //       this.AdjustHappiness(UNREST_DECREASE_PER_MONTH);
-	 //       GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-	 //       gameDate.AddMonths(1);
-	 //       gameDate.day = GameManager.daysInMonth[gameDate.month];
-	 //       SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => DecreaseUnrestEveryMonth());
-		//}
-  //  }
+
+    #region Expansion Functions
     /*
 	 * Kingdom will attempt to expand. 
 	 * Chance for expansion can be edited by changing the value of expansionChance.
@@ -847,7 +838,7 @@ public class Kingdom{
             return;
         }
 
-        if(cities.Count >= cityCap) {
+        if (cities.Count >= cityCap) {
             //Kingdom has reached max city capacity
             return;
         }
@@ -862,6 +853,23 @@ public class Kingdom{
 
         }
     }
+    #endregion
+
+    #region Odd Day Actions
+    private void ScheduleOddDayActions() {
+        KingdomManager.Instance.IncrementOddActionDay();
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, KingdomManager.Instance.oddActionDay, GameManager.Instance.year, () => OddDayActions());
+    }
+    private void OddDayActions() {
+        if (_isGrowthEnabled) {
+            AttemptToExpand();
+        }
+        GameDate nextActionDay = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        nextActionDay.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(nextActionDay.month, nextActionDay.day, nextActionDay.year, () => OddDayActions());
+    }
+    #endregion
+
 
     #region Prestige
     internal void AdjustPrestige(int adjustment) {
