@@ -7,6 +7,7 @@ public class MapGenerator : MonoBehaviour {
 	void Start() {
         //StartCoroutine (StartGeneration());
         GridMap.Instance.GenerateGrid();
+        CameraMove.Instance.CalculateCameraBounds();
         ObjectPoolManager.Instance.InitializeObjectPools();
         //CameraMove.Instance.SetMinimapCamValues();
         EquatorGenerator.Instance.GenerateEquator();

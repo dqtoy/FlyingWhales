@@ -156,7 +156,7 @@ public class City{
             hexTile.CheckLairsInRange ();
 			LevelUpBalanceOfPower();
 			AdjustDefense(50);
-            this._region.SetOccupant(this);
+            //this._region.SetOccupant(this);
 			DailyGrowthResourceBenefits();
 			AddOneTimeResourceBenefits();
             Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);

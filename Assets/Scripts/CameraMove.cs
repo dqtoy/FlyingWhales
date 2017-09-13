@@ -40,10 +40,10 @@ public class CameraMove : MonoBehaviour {
 	const float MIN_Z = -10f;
 	const float MAX_Z = -10f;
 
-	internal float MIN_X;
-    internal float MAX_X;
-    internal float MIN_Y;
-    internal float MAX_Y;
+	[SerializeField] internal float MIN_X;
+    [SerializeField] internal float MAX_X;
+    [SerializeField] internal float MIN_Y;
+    [SerializeField] internal float MAX_Y;
 
     private float previousCameraFOV;
 
@@ -73,6 +73,36 @@ public class CameraMove : MonoBehaviour {
     public void SetMinimapCamValues() {
         HexTile centerTile = GridMap.Instance.map[(int)(GridMap.Instance.width / 2), (int)(GridMap.Instance.height / 2)];
         minimapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, minimapCamera.transform.localPosition.y, -10);
+    }
+
+    private float minX;
+    private float maxX;
+    private float minY;
+    private float maxY;
+
+    public void CalculateCameraBounds() {
+        Vector2 topRightCornerCoordinates = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1].transform.localPosition;
+        float mapX = Mathf.Floor(topRightCornerCoordinates.x) - 0.8f;
+        float mapY = Mathf.Floor(topRightCornerCoordinates.y) - 0.6f;
+
+         float vertExtent = Camera.main.orthographicSize;    
+         float horzExtent = vertExtent * Screen.width / Screen.height;
+ 
+         // Calculations assume map is position at the origin
+         minX = horzExtent - mapX / 2.0f;
+         maxX = mapX / 2.0f - horzExtent;
+         minY = vertExtent - mapY / 2.0f;
+         maxY = mapY / 2.0f - vertExtent;
+
+        MIN_X = minX;
+        MAX_X = maxX;
+        MIN_Y = minY;
+        MAX_Y = maxY;
+
+        //MIN_X = minX - 0.6f;
+        //MAX_X = maxX - 0.6f;
+        //MIN_Y = minY - 3.5f;
+        //MAX_Y = maxY - 0.5f;
     }
 
 	void Update () {
@@ -128,6 +158,7 @@ public class CameraMove : MonoBehaviour {
                 generalCamera.orthographicSize = fov;
                 nameplateCamera.orthographicSize = fov;
                 fogOfWarCamera.orthographicSize = fov;
+                CalculateCameraBounds();
             }
 
 			////adjust camera movement clamps
@@ -188,7 +219,7 @@ public class CameraMove : MonoBehaviour {
 			}
 		}
 
-        //ConstrainCameraBounds();
+        ConstrainCameraBounds();
     }
 
     public void ConstrainCameraBounds() {
