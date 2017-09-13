@@ -671,6 +671,7 @@ public class City{
 		this.UpdateDailyProduction();
         this.hexTile.CreateCityNamePlate(this);
         HighlightAllOwnedTiles(69f / 255f);
+        UIManager.Instance.UpdateMinimapInfo();
         KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 
@@ -721,7 +722,8 @@ public class City{
 		tileToBuy.CheckLairsInRange ();
         LevelUpBalanceOfPower();
 		this.UpdateHP (percentageHP);
-	}
+        UIManager.Instance.UpdateMinimapInfo();
+    }
 
     internal void AddTilesToCity(List<HexTile> hexTilesToAdd) {
         for (int i = 0; i < hexTilesToAdd.Count; i++) {

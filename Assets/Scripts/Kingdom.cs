@@ -404,12 +404,13 @@ public class Kingdom{
 			this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
 		}
 		// If the Kingdom Type Data changed
-		if (this._kingdomTypeData != prevKingdomTypeData) {			
+		if (this._kingdomTypeData != prevKingdomTypeData) {
             // Update expansion chance
-//            this.UpdateExpansionRate();
+            //            this.UpdateExpansionRate();
+            //this.expansionChance = this.kingdomTypeData.expansionRate;
 
-			//Update Character Values of King and Governors
-			this.UpdateCharacterValuesOfKingsAndGovernors();
+            //Update Character Values of King and Governors
+            this.UpdateCharacterValuesOfKingsAndGovernors();
 
 			//Update Relationship Opinion
 			UpdateAllRelationshipsLikeness();
@@ -851,12 +852,12 @@ public class Kingdom{
         float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = UnityEngine.Random.Range(0, upperBound);
         //if (true) {
-        if (chance < this.expansionChance) {
-            if (this.cities.Count > 0) {
-                EventCreator.Instance.CreateExpansionEvent(this);
-            }
-
+        //if (chance < this.expansionChance) {
+        if (this.cities.Count > 0) {
+            EventCreator.Instance.CreateExpansionEvent(this);
         }
+
+        //}
     }
     #endregion
 

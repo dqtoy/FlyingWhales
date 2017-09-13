@@ -592,6 +592,13 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    internal void UpdateMinimapInfo() {
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            currRegion.ShowNaturalResourceLevelForRace(currentlyShowingKingdom.race);
+        }
+    }
+
 	internal void SetKingdomAsActive(Kingdom kingdom){
         //if(currentlyShowingKingdom != null) {
         //    currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
@@ -599,13 +606,8 @@ public class UIManager : MonoBehaviour {
 
 		currentlyShowingKingdom = kingdom;
 
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            currRegion.ShowNaturalResourceLevelForRace(currentlyShowingKingdom.race);
-        }
-
         currentlyShowingKingdom.UpdateFogOfWarVisual();
-
+        UpdateMinimapInfo();
         //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
         CameraMove.Instance.CenterCameraOn(currentlyShowingKingdom.capitalCity.hexTile.gameObject);
 

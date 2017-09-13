@@ -75,7 +75,7 @@ public class CitizenAvatar : PooledObject {
 
     internal virtual void OnMoveFinished() {
         this.CollectEvents();
-        this.CheckForKingdomDiscovery();
+        //this.CheckForKingdomDiscovery();
         this.UpdateFogOfWar();
         this.transform.SetParent(this.citizenRole.location.transform);
         this.transform.localPosition = Vector3.zero;
