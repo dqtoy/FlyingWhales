@@ -47,6 +47,30 @@ public class ExpansionAvatar : CitizenAvatar {
 		}
 	}
 	[Task]
+	public void CheckTargetLocation() {
+		if(this.citizenRole.targetLocation != null && this.citizenRole.targetLocation.isOccupied){
+			HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(this.citizenRole.citizen.city.kingdom);
+			if(hexTileToExpandTo != null){
+				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.citizenRole.location, hexTileToExpandTo, PATHFINDING_MODE.AVATAR);
+				if(newPath != null){
+					this.citizenRole.path = newPath;
+					this.citizenRole.targetLocation = hexTileToExpandTo;
+					((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;
+					Task.current.Fail();
+				}else{
+					CancelEventInvolvedIn ();
+					Task.current.Succeed();
+				}
+			}else{
+				CancelEventInvolvedIn ();
+				Task.current.Succeed();
+
+			}
+		}else{
+			Task.current.Fail();
+		}
+	}
+	[Task]
 	public void MoveToNextTile() {
 		Move();
 		Task.current.Succeed();
