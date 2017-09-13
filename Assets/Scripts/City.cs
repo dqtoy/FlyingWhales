@@ -155,8 +155,9 @@ public class City{
             hexTile.CheckLairsInRange ();
 			LevelUpBalanceOfPower();
 			AdjustDefense(50);
+            SetProductionGrowthPercentage(1f);
             //this._region.SetOccupant(this);
-			DailyGrowthResourceBenefits();
+            DailyGrowthResourceBenefits();
 			AddOneTimeResourceBenefits();
             Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
 			Messenger.AddListener("CitizenDied", CheckCityDeath);
