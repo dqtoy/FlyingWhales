@@ -25,7 +25,6 @@ public class City{
 	//Resources
 	private int _currentGrowth;
     private int _dailyGrowthFromStructures;
-    private int _dailyGrowthFromKingdom;
     private int _dailyGrowthBuffs;
     private int _maxGrowth;
 	private int _dailyGrowthResourceBenefits;
@@ -69,7 +68,7 @@ public class City{
 		get{ return this._currentGrowth; }
 	}
 	public int totalDailyGrowth{
-		get{ return (int)((_dailyGrowthFromKingdom + _dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount + this._dailyGrowthResourceBenefits) * this._productionGrowthPercentage); }
+		get{ return (int)((_dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount + this._dailyGrowthResourceBenefits) * this._productionGrowthPercentage); }
 	}
 	public int maxGrowth{
 		get{ return this._maxGrowth; }
@@ -853,13 +852,6 @@ public class City{
             }
 		}
 	}
-    /*
-     * Add to this city's daily growth based on the resources it's kingdom has.
-     * Including resources from trade. Increase is computed by kingdom.
-     * */
-    internal void UpdateDailyGrowthBasedOnSpecialResources(int dailyGrowthGained) {
-        this._dailyGrowthFromKingdom = dailyGrowthGained;
-    }
 	#endregion
 
 	internal void CheckCityDeath(){
