@@ -8,22 +8,27 @@ public class GridMap : MonoBehaviour {
 	public static GridMap Instance;
 
 	public GameObject goHex;
-
-	public float width;
+    [Space(10)]
+    [Header("Map Settings")]
+    public float width;
 	public float height;
 
-	public float xOffset;
-	public float yOffset;
+    public float xOffset;
+    public float yOffset;
 
-	public int tileSize;
+    public int tileSize;
 
-	public float elevationFrequency;
-	public float moistureFrequency;
+    public float elevationFrequency;
+    public float moistureFrequency;
 
+    [Space(10)]
+    [Header("Region Settings")]
+    public int numOfRegions;
+    public int refinementLevel;
+
+    [Space(10)]
 	public List<GameObject> listHexes;
-
     public List<Region> allRegions;
-
 	public HexTile[,] map;
 
 	void Awake(){
