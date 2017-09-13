@@ -24,7 +24,7 @@ public class CityTaskManager : MonoBehaviour {
             for (int i = 0; i < city.ownedTiles.Count; i++) {
                 HexTile currOwnedTile = city.ownedTiles[i];
                 unoccupiedTilesInSameRegion.AddRange(currOwnedTile.AllNeighbours
-                    .Where(x => x.region == city.region && !x.isOccupied && !unoccupiedTilesInSameRegion.Contains(x)));
+                    .Where(x => x.elevationType == ELEVATION.PLAIN && x.region == city.region && !x.isOccupied && !unoccupiedTilesInSameRegion.Contains(x)));
             }
             targetHexTileToPurchase = unoccupiedTilesInSameRegion[Random.Range(0, unoccupiedTilesInSameRegion.Count)];
             if(targetHexTileToPurchase == null) {
