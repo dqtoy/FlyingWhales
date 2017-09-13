@@ -267,6 +267,11 @@ public class CitizenAvatar : PooledObject {
         this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
     }
 
+	public void CancelEventInvolvedIn(){
+		this.citizenRole.DestroyGO();
+		this.citizenRole.gameEventInvolvedIn.CancelEvent();
+	}
+
     internal void HasAttacked() {
 		this.citizenRole.hasAttacked = true;
     }

@@ -1448,13 +1448,13 @@ public class Kingdom{
 		}
 		int amount = 1 * this.cities.Count;
 		int bonus = 0;
-        for (int i = 0; i < this._availableResources.Count; i++) {
-            RESOURCE currResource = this._availableResources.Keys.ElementAt(i);
-			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
-            if(resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
-                bonus += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
-            }
-        }
+//        for (int i = 0; i < this._availableResources.Count; i++) {
+//            RESOURCE currResource = this._availableResources.Keys.ElementAt(i);
+//			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
+//            if(resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
+//                bonus += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
+//            }
+//        }
 		amount += bonus;
 		amount = (int)(amount * this._techProductionPercentage);
 		this.AdjustTechCounter (amount);
