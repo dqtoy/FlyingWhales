@@ -406,7 +406,7 @@ public class Kingdom{
 		// If the Kingdom Type Data changed
 		if (this._kingdomTypeData != prevKingdomTypeData) {			
             // Update expansion chance
-            this.UpdateExpansionRate();
+//            this.UpdateExpansionRate();
 
 			//Update Character Values of King and Governors
 			this.UpdateCharacterValuesOfKingsAndGovernors();
@@ -978,9 +978,9 @@ public class Kingdom{
         this._cities.Add(city);
 //		AddToNonRebellingCities (city);
         this.UpdateKingdomTypeData();
-        this.UpdateAvailableResources();
-        this.UpdateAllCitiesDailyGrowth();
-        this.UpdateExpansionRate();
+//        this.UpdateAvailableResources();
+//        this.UpdateAllCitiesDailyGrowth();
+//        this.UpdateExpansionRate();
         if (this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
@@ -1000,9 +1000,9 @@ public class Kingdom{
         if (!this.isDead) {
             //this.RemoveInvalidTradeRoutes();
             this.UpdateKingdomTypeData();
-            this.UpdateAvailableResources();
-            this.UpdateAllCitiesDailyGrowth();
-            this.UpdateExpansionRate();
+//            this.UpdateAvailableResources();
+//            this.UpdateAllCitiesDailyGrowth();
+//            this.UpdateExpansionRate();
             //if (this._cities[0] != null) {
 			for (int i = 0; i < this._cities.Count; i++) {
 				if (this._cities[i].rebellion == null) {
@@ -1331,99 +1331,105 @@ public class Kingdom{
 	 * Add resource type to this kingdoms
 	 * available resource (DO NOT ADD GOLD TO THIS!).
 	 * */
-	internal void AddResourceToKingdom(RESOURCE resource){
-		RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[resource].Keys.FirstOrDefault();
-
-        if (!this._availableResources.ContainsKey(resource)) {
-			this._availableResources.Add(resource, 0);
-            //this.RemoveObsoleteTradeRoutes(resource);
-            if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
-                this.UpdateAllCitiesDailyGrowth();
-            } else if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
-                this.UpdateTechLevel();
-            }
-        }
-		this._availableResources[resource] += 1;
-        if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
-            this.UpdateExpansionRate();
-        }
-    }
-    internal void UpdateExpansionRate() {
-        this.expansionChance = this.kingdomTypeData.expansionRate;
-
-        for (int i = 0; i < this.availableResources.Keys.Count; i++) {
-            RESOURCE currResource = this.availableResources.Keys.ElementAt(i);
-            if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
-                int multiplier = this.availableResources[currResource];
-				RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
-                float expansionRateGained = Utilities.resourceBenefits[currResource][resourceBenefit];
-                if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
-                    this.expansionChance += expansionRateGained * multiplier;
-                }
-            }
-        }
-    }
-    internal void UpdateTechLevel() {
-        this._techLevel = 0;
+//	internal void AddResourceToKingdom(RESOURCE resource){
+//		RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[resource].Keys.FirstOrDefault();
+//
+//        if (!this._availableResources.ContainsKey(resource)) {
+//			this._availableResources.Add(resource, 0);
+//            //this.RemoveObsoleteTradeRoutes(resource);
+//            if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
+//                this.UpdateAllCitiesDailyGrowth();
+//            } else if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
+//                this.UpdateTechLevel();
+//            }
+//        }
+//		this._availableResources[resource] += 1;
+//        if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
+//            this.UpdateExpansionRate();
+//        }
+//    }
+//    internal void UpdateExpansionRate() {
+//        this.expansionChance = this.kingdomTypeData.expansionRate;
+//
+//        for (int i = 0; i < this.availableResources.Keys.Count; i++) {
+//            RESOURCE currResource = this.availableResources.Keys.ElementAt(i);
+//            if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
+//                int multiplier = this.availableResources[currResource];
+//				RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
+//                float expansionRateGained = Utilities.resourceBenefits[currResource][resourceBenefit];
+//                if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
+//                    this.expansionChance += expansionRateGained * multiplier;
+//                }
+//            }
+//        }
+//    }
+//    internal void UpdateTechLevel() {
+//        this._techLevel = 0;
+////        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+////        for (int i = 0; i < allAvailableResources.Count; i++) {
+//		foreach (RESOURCE currResource in this._availableResources.Keys) {
+////            RESOURCE currResource = allAvailableResources[i];
+//			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
+//            if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
+//				int upgrade = (int)Utilities.resourceBenefits[currResource][resourceBenefit];
+//				UpgradeTechLevel(upgrade);
+//            }
+//        }
+//    }
+//    internal void UpdateAllCitiesDailyGrowth() {
+//        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
 //        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
+//        int dailyGrowthGained = this.ComputeDailyGrowthGainedFromResources(allAvailableResources);
+//        for (int i = 0; i < this.cities.Count; i++) {
+//            City currCity = this.cities[i];
+//            currCity.UpdateDailyGrowthBasedOnSpecialResources(dailyGrowthGained);
+//        }
+//    }
+//    private int ComputeDailyGrowthGainedFromResources(List<RESOURCE> allAvailableResources) {
+//        int dailyGrowthGained = 0;
 //        for (int i = 0; i < allAvailableResources.Count; i++) {
-		foreach (RESOURCE currResource in this._availableResources.Keys) {
-//            RESOURCE currResource = allAvailableResources[i];
-			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
-            if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
-				int upgrade = (int)Utilities.resourceBenefits[currResource][resourceBenefit];
-				UpgradeTechLevel(upgrade);
-            }
-        }
-    }
-    internal void UpdateAllCitiesDailyGrowth() {
-        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
-        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
-        int dailyGrowthGained = this.ComputeDailyGrowthGainedFromResources(allAvailableResources);
-        for (int i = 0; i < this.cities.Count; i++) {
-            City currCity = this.cities[i];
-            currCity.UpdateDailyGrowthBasedOnSpecialResources(dailyGrowthGained);
-        }
-    }
-    private int ComputeDailyGrowthGainedFromResources(List<RESOURCE> allAvailableResources) {
-        int dailyGrowthGained = 0;
-        for (int i = 0; i < allAvailableResources.Count; i++) {
-            RESOURCE currentResource = allAvailableResources[i];
-			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currentResource].Keys.FirstOrDefault();
-            if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
-                dailyGrowthGained += (int)Utilities.resourceBenefits[currentResource][resourceBenefit];
-            }
-        }
-        return dailyGrowthGained;
-    }
-    /*
-     * Gets a list of resources that otherKingdom does not have access to (By self or by trade).
-     * Will compare to this kingdoms available resources (excl. resources from trade)
-     * */
+//            RESOURCE currentResource = allAvailableResources[i];
+//			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currentResource].Keys.FirstOrDefault();
+//            if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
+//                dailyGrowthGained += (int)Utilities.resourceBenefits[currentResource][resourceBenefit];
+//            }
+//        }
+//        return dailyGrowthGained;
+//    }
+//    /*
+//     * Gets a list of resources that otherKingdom does not have access to (By self or by trade).
+//     * Will compare to this kingdoms available resources (excl. resources from trade)
+//     * */
     internal List<RESOURCE> GetResourcesOtherKingdomDoesNotHave(Kingdom otherKingdom) {
         List<RESOURCE> resourcesOtherKingdomDoesNotHave = new List<RESOURCE>();
-        List<RESOURCE> allAvailableResourcesOfOtherKingdom = otherKingdom.availableResources.Keys.ToList();
-        for (int i = 0; i < this._availableResources.Keys.Count; i++) {
-            RESOURCE currKey = this._availableResources.Keys.ElementAt(i);
-            if (!allAvailableResourcesOfOtherKingdom.Contains(currKey)) {
-                //otherKingdom does not have that resource
-                resourcesOtherKingdomDoesNotHave.Add(currKey);
-            }
-        }
+//        List<RESOURCE> allAvailableResourcesOfOtherKingdom = otherKingdom.availableResources.Keys.ToList();
+		bool hasContainedResource = false;
+		foreach (RESOURCE currKey in this._availableResources.Keys) {
+			hasContainedResource = false;
+			foreach (RESOURCE otherCurrKey in otherKingdom.availableResources.Keys) {
+				if(otherCurrKey == currKey){
+					hasContainedResource = true;
+					break;
+				}
+			}
+			if(!hasContainedResource){
+				resourcesOtherKingdomDoesNotHave.Add(currKey);
+			}
+		}
         return resourcesOtherKingdomDoesNotHave;
     }
-    internal void UpdateAvailableResources() {
-        this._availableResources.Clear();
-        for (int i = 0; i < this.cities.Count; i++) {
-            City currCity = this.cities[i];
-            for (int j = 0; j < currCity.structures.Count; j++) {
-                HexTile currHexTile = currCity.structures[j];
-                if (currHexTile.specialResource != RESOURCE.NONE) {
-                    this.AddResourceToKingdom(currHexTile.specialResource);
-                }
-            }
-        }
-    }
+//    internal void UpdateAvailableResources() {
+//        this._availableResources.Clear();
+//        for (int i = 0; i < this.cities.Count; i++) {
+//            City currCity = this.cities[i];
+//            for (int j = 0; j < currCity.structures.Count; j++) {
+//                HexTile currHexTile = currCity.structures[j];
+//                if (currHexTile.specialResource != RESOURCE.NONE) {
+//                    this.AddResourceToKingdom(currHexTile.specialResource);
+//                }
+//            }
+//        }
+//    }
     /*
      * <summary>
      * Set growth state of kingdom, disabling growth will prevent expansion,

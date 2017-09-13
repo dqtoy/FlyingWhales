@@ -1358,12 +1358,12 @@ public class City{
         //tileToRemove.ResetTile();
         //this.UpdateBorderTiles();
         this.UpdateDailyProduction();
-        if (tileToRemove.specialResource != RESOURCE.NONE) {
+//        if (tileToRemove.specialResource != RESOURCE.NONE) {
             //this._kingdom.RemoveInvalidTradeRoutes();
-            this._kingdom.UpdateAvailableResources();
-            this._kingdom.UpdateAllCitiesDailyGrowth();
-            this._kingdom.UpdateExpansionRate();
-        }
+//            this._kingdom.UpdateAvailableResources();
+//            this._kingdom.UpdateAllCitiesDailyGrowth();
+//            this._kingdom.UpdateExpansionRate();
+//        }
         //if (UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
         //    this.kingdom.HighlightAllOwnedTilesInKingdom();
         //} else {
