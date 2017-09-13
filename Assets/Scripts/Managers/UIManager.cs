@@ -599,6 +599,11 @@ public class UIManager : MonoBehaviour {
 
 		currentlyShowingKingdom = kingdom;
 
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            currRegion.ShowNaturalResourceLevelForRace(currentlyShowingKingdom.race);
+        }
+
         currentlyShowingKingdom.UpdateFogOfWarVisual();
 
         //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();

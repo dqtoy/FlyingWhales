@@ -59,11 +59,9 @@ public class KingdomManager : MonoBehaviour {
                 City currCity = newKingdom.cities[j];
                 currCity.PopulateBorderTiles();
             }
-            if (i == 0) {
-                UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
-            }
             newKingdom.HighlightAllOwnedTilesInKingdom();
         }
+        UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
     }
 
 	//public void GenerateInitialKingdoms(List<HexTile> stoneHabitableTiles, List<HexTile> woodHabitableTiles) {

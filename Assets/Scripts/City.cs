@@ -642,12 +642,14 @@ public class City{
             HexTile currentTile = this.ownedTiles[i];
             currentTile.kingdomColorSprite.color = color;
             currentTile.kingdomColorSprite.gameObject.SetActive(true);
+            currentTile.SetMinimapTileColor(this.kingdom.kingdomColor);
         }
 
         for (int i = 0; i < this.borderTiles.Count; i++) {
             HexTile currentTile = this.borderTiles[i];
             currentTile.kingdomColorSprite.color = color;
             currentTile.kingdomColorSprite.gameObject.SetActive(true);
+            currentTile.SetMinimapTileColor(this.kingdom.kingdomColor);
         }
     }
     internal void UnHighlightAllOwnedTiles() {
@@ -1345,7 +1347,7 @@ public class City{
         this._kingdom = otherKingdom;
         for (int i = 0; i < this._ownedTiles.Count; i++) {
             this._ownedTiles[i].ReColorStructure();
-            this._ownedTiles[i].SetMinimapTileColor(_kingdom.kingdomColor);
+            //this._ownedTiles[i].SetMinimapTileColor(_kingdom.kingdomColor);
         }
         this.hexTile.UpdateCityNamePlate();
     }

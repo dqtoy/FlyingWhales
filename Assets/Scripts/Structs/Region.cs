@@ -252,6 +252,24 @@ public class Region {
         //    naturalResourceLevel[RACE.HUMANS].ToString() + "\n" +
         //    naturalResourceLevel[RACE.ELVES].ToString(), 5, Color.white, "Minimap");
     }
+    internal void ShowNaturalResourceLevelForRace(RACE race) {
+        int maxXCoordinate = _tilesInRegion.Max(x => x.xCoordinate);
+        int minXCoordinate = _tilesInRegion.Min(x => x.xCoordinate);
+        int maxYCoordinate = _tilesInRegion.Max(x => x.yCoordinate);
+        int minYCoordinate = _tilesInRegion.Min(x => x.yCoordinate);
+
+        int midPointX = (minXCoordinate + maxXCoordinate) / 2;
+        int midPointY = (minYCoordinate + maxYCoordinate) / 2;
+
+        HexTile midPoint = GridMap.Instance.map[midPointX, midPointY];
+
+        string text = "0";
+        if(_occupant != null) {
+            text = _occupant.ownedTiles.Count.ToString();
+        }
+        text += "/" + naturalResourceLevel[race].ToString();
+        midPoint.SetTileText(text, 6, Color.white, "Minimap");
+    }
     #endregion
 
     #region Kingdom Discovery Functions

@@ -180,12 +180,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     internal void SetBiome(BIOMES biome) {
         biomeType = biome;
-        if(elevationType == ELEVATION.WATER) {
-            SetMinimapTileColor(new Color(64f/255f, 164f/255f, 223f/255f));
-        } else {
-            SetMinimapTileColor(Utilities.biomeColor[biome]);
-        }
-        biomeColor = minimapHexSprite.color;
+        //if(elevationType == ELEVATION.WATER) {
+        //    SetMinimapTileColor(new Color(64f/255f, 164f/255f, 223f/255f));
+        //} else {
+        //    SetMinimapTileColor(Utilities.biomeColor[biome]);
+        //}
+        //biomeColor = minimapHexSprite.color;
         
     }
 
@@ -514,8 +514,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     if (gameObjectToEdit != null && spriteMasksToChooseFrom != null) {
                         gameObjectToEdit.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
                         gameObjectToEdit.GetComponent<SpriteRenderer>().sortingOrder += biomeLayerOfNeighbour;
-//                        Material mat = new Material(Shader.Find("AlphaMask"));
-						gameObjectToEdit.GetComponent<SpriteRenderer> ().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
+                        //                        Material mat = new Material(Shader.Find("AlphaMask"));
+                        gameObjectToEdit.GetComponent<SpriteRenderer> ().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
 						gameObjectToEdit.SetActive(true);
 
 //                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
@@ -559,8 +559,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         this._centerPiece.SetActive(false);
 
-        Color color = this.ownedByCity.kingdom.kingdomColor;
-        SetMinimapTileColor(color);
+        //Color color = this.ownedByCity.kingdom.kingdomColor;
+        //SetMinimapTileColor(color);
         //SetTileHighlightColor(color);
     }
     /*
@@ -792,7 +792,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.isBorder = false;
         this.isPlagued = false;
 		this.ownedByCity = null;
-        SetMinimapTileColor(biomeColor);
+        //SetMinimapTileColor(biomeColor);
         this._kingdomColorSprite.color = Color.white;
 		this.kingdomColorSprite.gameObject.SetActive(false);
 		this._lairItem = null;
@@ -841,7 +841,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
         isOccupied = false;
         ownedByCity = null;
-        SetMinimapTileColor(biomeColor);
+        //SetMinimapTileColor(biomeColor);
         this._kingdomColorSprite.color = Color.white;
         this.kingdomColorSprite.gameObject.SetActive(false);
         RuinStructureOnTile(immediatelyDestroyStructures);
@@ -1286,6 +1286,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         tileTextMesh.characterSize = fontSize;
         tileTextMesh.color = fontColor;
         tileTextMesh.gameObject.layer = LayerMask.NameToLayer(layer);
+        tileTextMesh.transform.localPosition = Vector3.zero;
         tileTextMesh.gameObject.SetActive(true);
     }
 

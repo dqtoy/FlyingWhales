@@ -18,7 +18,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateNeighboursWithSameTag();
         GridMap.Instance.GenerateRegions(40, 1);
         GridMap.Instance.GenerateResourcesPerRegion();
-        //      //Biomes.Instance.GenerateTileDetails();
+        //Biomes.Instance.GenerateTileDetails();
         //CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
         ////PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
