@@ -23,7 +23,10 @@ public class CharacterPortrait : MonoBehaviour {
 	public GameObject flagGO;
 	public UI2DSprite flagSprite;
 
-	public Citizen citizen;
+    [SerializeField] private GameObject militaryAllianceIcon;
+    [SerializeField] private GameObject mutualDefenseIcon;
+
+    public Citizen citizen;
 	private bool isHoverEnabled = true;
 	private bool isHovering = false;
 
@@ -70,9 +73,22 @@ public class CharacterPortrait : MonoBehaviour {
 			relationshipCircles[1].SetActive(true);
 			relationshipCircles[0].GetComponent<RelationshipItem>().SetRelationship(relationship1, true);
 			relationshipCircles[1].GetComponent<RelationshipItem>().SetRelationship(relationship2, true);
-//			relationshipCircles[0].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship1.relationshipStatus);
-//			relationshipCircles[1].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship2.relationshipStatus);
-		}
+            //			relationshipCircles[0].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship1.relationshipStatus);
+            //			relationshipCircles[1].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship2.relationshipStatus);
+            if (relationship1.sourceKingdom.militaryAlliances.Contains(relationship1.targetKingdom)) {
+                militaryAllianceIcon.SetActive(true);
+            } else {
+                militaryAllianceIcon.SetActive(false);
+            }
+
+            if (relationship1.sourceKingdom.mutualDefenseTreaties.Contains(relationship1.targetKingdom)) {
+                mutualDefenseIcon.SetActive(true);
+            } else {
+                mutualDefenseIcon.SetActive(false);
+            }
+
+        }
+        
 	}
 
 	void OnHover(bool isOver){

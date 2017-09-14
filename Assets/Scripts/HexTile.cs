@@ -836,15 +836,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.isBorderOfCityID = 0;
     }
     public void Unoccupy(bool immediatelyDestroyStructures = false) {
-        if (!_isBorderOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)
-            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)) {
-            _visibleByKingdoms.Remove(ownedByCity.kingdom);
-        }
+        //if (!_isBorderOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)
+        //    && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(ownedByCity.kingdom)) {
+        //    _visibleByKingdoms.Remove(ownedByCity.kingdom);
+        //}
         isOccupied = false;
         ownedByCity = null;
         //SetMinimapTileColor(biomeColor);
-        this._kingdomColorSprite.color = Color.white;
-        this.kingdomColorSprite.gameObject.SetActive(false);
+        //this._kingdomColorSprite.color = Color.white;
+        //this.kingdomColorSprite.gameObject.SetActive(false);
         RuinStructureOnTile(immediatelyDestroyStructures);
         city = null;
 
@@ -870,12 +870,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public void Borderize(City city) {
 		this.isBorder = true;
-        if (!_isBorderOfCities.Contains(city)) {
-            _isBorderOfCities.Add(city);
-        }
-        if (!_visibleByKingdoms.Contains(city.kingdom)) {
-            _visibleByKingdoms.Add(city.kingdom);
-        }
+        //if (!_isBorderOfCities.Contains(city)) {
+        //    _isBorderOfCities.Add(city);
+        //}
+        //if (!_visibleByKingdoms.Contains(city.kingdom)) {
+        //    _visibleByKingdoms.Add(city.kingdom);
+        //}
         //if (!isVisibleByCities.Contains(city)) {
         //    this.isVisibleByCities.Add(city);
         //}
@@ -892,11 +892,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             this.kingdomColorSprite.gameObject.SetActive(false);
         }
 
-        if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom)
-            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)
-            && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
-            _visibleByKingdoms.Remove(city.kingdom);
-        }
+        //if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom)
+        //    && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)
+        //    && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
+        //    _visibleByKingdoms.Remove(city.kingdom);
+        //}
         //this.isVisibleByCities.Remove(city);
     }
 
@@ -1089,20 +1089,26 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
-            "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
-            if(this.city.region.specialResource != RESOURCE.NONE) {
-                text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
-            }
-            text += "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
-            "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
-            "\n [b]Happiness Points:[/b] " + this.city.happinessPoints.ToString() +
-            "\n [b]Power:[/b] " + this.city.power.ToString() +
-            "\n [b]Defense:[/b] " + this.city.defense.ToString() +
-            "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
-            "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
-            "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
-            "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
-            "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
+        "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString() +
+        "\n [b]Main Threat:[/b] ";
+        if(this.city.kingdom.mainThreat != null) {
+            text += this.city.kingdom.mainThreat.name;
+        } else {
+            text += "NONE";
+        }
+        if(this.city.region.specialResource != RESOURCE.NONE) {
+            text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
+        }
+        text += "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
+        "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
+        "\n [b]Happiness Points:[/b] " + this.city.happinessPoints.ToString() +
+        "\n [b]Power:[/b] " + this.city.power.ToString() +
+        "\n [b]Defense:[/b] " + this.city.defense.ToString() +
+        "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
+        "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
+        "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
+        "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
+        "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
 
         //text += "[b]Relationships: [/b]\n";
         //if (this.city.kingdom.relationships.Count > 0) {

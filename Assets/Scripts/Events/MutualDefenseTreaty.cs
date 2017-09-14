@@ -20,7 +20,16 @@ public class MutualDefenseTreaty : GameEvent {
         _targetRel.currentActiveDefenseTreatyOffer = this;
 
         CreateTreatyOfficer ();
-	}
+
+        Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "MutualDefenseTreaty", "event_title");
+
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "MutualDefenseTreaty", "start");
+        newLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+
+        if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+    }
 
 	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
@@ -53,12 +62,22 @@ public class MutualDefenseTreaty : GameEvent {
 		}
 	}
 	private void EvaluateOffer(){
+        Log resultLog;
 		if(_targetRel.totalLike >= 0 && (this.targetKingdom.mainThreat == null || this.targetKingdom.mainThreat.id != this.startedByKingdom.id)){
 			AcceptOffer ();
-		}else{
+            resultLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "MilitaryAllianceOffer", "accept");
+            resultLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+            resultLog.AddToFillers(startedByKingdom, startedByKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        } else{
 			RejectOffer ();
-		}
-		DoneEvent ();
+            resultLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "MilitaryAllianceOffer", "reject");
+            resultLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+            resultLog.AddToFillers(startedByKingdom, startedByKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        }
+        if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
+            UIManager.Instance.ShowNotification(resultLog);
+        }
+        DoneEvent ();
 	}
 	private void AcceptOffer(){
 		_sourceRel.ChangeMutualDefenseTreaty (true);
