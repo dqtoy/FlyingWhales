@@ -159,7 +159,8 @@ public class CameraMove : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) || Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow) ||
-			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D)) {
+			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D) || Minimap.Instance.isDragging ||
+            HasReachedBounds()) {
 			//reset target when player pushes a button to pan the camera
 			target = null;
 		}
@@ -169,9 +170,7 @@ public class CameraMove : MonoBehaviour {
 			Vector3 delta = target.position - Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
 			Vector3 destination = transform.position + delta;
 			transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
-			if (Mathf.Approximately(transform.position.x, MAX_X) || Mathf.Approximately(transform.position.x, MIN_X) || 
-				Mathf.Approximately(transform.position.y, MAX_Y) || Mathf.Approximately(transform.position.y, MIN_Y) ||
-				(Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
+			if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
 				target = null;
 			}
 		}
@@ -184,6 +183,14 @@ public class CameraMove : MonoBehaviour {
             Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
             Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
             Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
+    }
+
+    private bool HasReachedBounds() {
+        if (Mathf.Approximately(transform.position.x, MAX_X) || Mathf.Approximately(transform.position.x, MIN_X) ||
+                Mathf.Approximately(transform.position.y, MAX_Y) || Mathf.Approximately(transform.position.y, MIN_Y)) {
+            return true;
+        }
+        return false;
     }
 
 	public void CenterCameraOn(GameObject GO){

@@ -7,6 +7,8 @@ public class Minimap : MonoBehaviour {
 
     public static Minimap Instance = null;
 
+    public bool isDragging = false;
+
     [SerializeField] private RectTransform minimapTransform;
     [SerializeField] private RectTransform cameraBordersTransform;
 
@@ -20,8 +22,13 @@ public class Minimap : MonoBehaviour {
     }
 
     public void OnPointerClickWithBaseData(BaseEventData data) {
+        isDragging = true;
         PointerEventData ped = (PointerEventData)data;
         CameraMove.Instance.MoveMainCamera(GetLocalCursorPoint(ped));
+    }
+
+    public void OnDragFinish(BaseEventData data) {
+        isDragging = false;
     }
 
     private Vector2 GetLocalCursorPoint(PointerEventData ped) {
