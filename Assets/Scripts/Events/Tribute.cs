@@ -10,7 +10,17 @@ public class Tribute : GameEvent {
 		this.name = "Tribute";
 		this.targetKingdom = targetKingdom;
 		CreateTributer ();
-	}
+
+        Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Tribute", "event_title");
+
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Tribute", "start");
+        newLog.AddToFillers(startedByKingdom, startedByKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        newLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+
+        if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+    }
 
 	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){

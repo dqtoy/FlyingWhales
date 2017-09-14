@@ -110,7 +110,10 @@ public class KingdomRelationship {
 		get { return this._isMutualDefenseTreaty; }
 	}
 	public bool isAdjacent {
-		get { return this._isAdjacent; }
+        //get { return this._isAdjacent; }
+        get {
+            return _sourceKingdom.regions.Select(x => x.adjacentRegions.Where(r => r.occupant != null && r.occupant.kingdom == _targetKingdom)).Any(); //TODO: Optimize this!
+        }
 	}
 	public Dictionary<EVENT_TYPES, bool> eventBuffs {
 		get { return this._eventBuffs; }

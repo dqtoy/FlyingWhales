@@ -543,6 +543,13 @@ public class City{
             _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
         }
     }
+    internal void UnPopulateBorderTiles() {
+        for (int i = 0; i < borderTiles.Count; i++) {
+            HexTile currTile = borderTiles[i];
+            currTile.UnBorderize(this);
+            _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+        }
+    }
     #endregion
 
     //#region Adjacency
@@ -984,53 +991,17 @@ public class City{
 		if (this.rebellion != null) {
 			RebelCityConqueredByAnotherKingdom ();
 		}
-
-        List<HexTile> tilesToSetAsSeen = new List<HexTile>();
-
-        /*
-         * Reset all owned, border and outer tiles!
-         * */
-        for (int i = 0; i < this.ownedTiles.Count; i++) {
-			HexTile currentTile = this.ownedTiles[i];
+        //Destroy owned settlements
+        for (int i = 0; i < ownedTiles.Count; i++) {
+            HexTile currentTile = this.ownedTiles[i];
             currentTile.city = null;
             currentTile.Unoccupy();
-            if (!currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Any()
-                && !currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Any()) {
-                kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-            }
-
         }
+        UnPopulateBorderTiles();
 
-		for (int i = 0; i < this.borderTiles.Count; i++) {
-			HexTile currentTile = this.borderTiles[i];
-            currentTile.UnBorderize(this);
-            if (currentTile.isOccupied) {
-                if (currentTile.ownedByCity == null || currentTile.ownedByCity.kingdom.id != kingdom.id) {
-                    kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            } else {
-                if (!currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Any()
-                && !currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Any()) {
-                    kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            }
-        }
-
-        for (int i = 0; i < this.outerTiles.Count; i++) {
-            HexTile currentTile = this.outerTiles[i];
-            currentTile.RemoveAsOuterTileOf(this);
-            if (currentTile.isOccupied) {
-                if(currentTile.ownedByCity == null || currentTile.ownedByCity.kingdom.id != kingdom.id) {
-                    kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            } else {
-                if (!currentTile.isOuterTileOfCities.Intersect(this.kingdom.cities).Any()
-                && !currentTile.isBorderOfCities.Intersect(this.kingdom.cities).Any()) {
-                    kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            }
-        }
-		this.ownedTiles.Clear();
+        region.RemoveOccupant();
+       
+        this.ownedTiles.Clear();
 		this.borderTiles.Clear();
         this.outerTiles.Clear();
 
@@ -1077,51 +1048,17 @@ public class City{
         //Transfer Tiles
         List<HexTile> structureTilesToTransfer = new List<HexTile>(structures);
 
-        /*
-         * Reset all owned, border and outer tiles!
-         * */
-        for (int i = 0; i < this.ownedTiles.Count; i++) {
+        //Destroy owned settlements
+        for (int i = 0; i < ownedTiles.Count; i++) {
             HexTile currentTile = this.ownedTiles[i];
             currentTile.city = null;
-            currentTile.Unoccupy(true);
-            if (!currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()
-                && !currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()) {
-                _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-            }
-
+            currentTile.Unoccupy();
         }
+        UnPopulateBorderTiles();
 
-        for (int i = 0; i < this.borderTiles.Count; i++) {
-            HexTile currentTile = this.borderTiles[i];
-            currentTile.UnBorderize(this);
-            if (currentTile.isOccupied) {
-                if (currentTile.ownedByCity == null || currentTile.ownedByCity.kingdom.id != kingdom.id) {
-                    _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            } else {
-                if (!currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()
-                && !currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()) {
-                    _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            }
-        }
-
-        for (int i = 0; i < this.outerTiles.Count; i++) {
-            HexTile currentTile = this.outerTiles[i];
-            currentTile.RemoveAsOuterTileOf(this);
-            if (currentTile.isOccupied) {
-                if (currentTile.ownedByCity == null || currentTile.ownedByCity.kingdom.id != kingdom.id) {
-                    _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            } else {
-                if (!currentTile.isOuterTileOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()
-                && !currentTile.isBorderOfCities.Intersect(remainingCitiesOfConqueredKingdom).Any()) {
-                    _kingdom.SetFogOfWarStateForTile(currentTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            }
-        }
-
-//        this._kingdom.RemoveCityFromKingdom(this);
+        region.RemoveOccupant();
+        
+        //        this._kingdom.RemoveCityFromKingdom(this);
         RemoveListeners();
         this.isDead = true;
         //Assign new king to conquered kingdom if, conquered city was the home of the current king
@@ -1135,10 +1072,11 @@ public class City{
 
         City newCity = conqueror.CreateNewCityOnTileForKingdom(this.hexTile);
         newCity.name = this.name;
+        newCity.region.SetOccupant(newCity);
         newCity.AddTilesToCity(structureTilesToTransfer);
         newCity.CreateInitialFamilies(false);
         newCity.hexTile.CreateCityNamePlate(newCity);
-        //newCity.UpdateBorderTiles();
+
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
         newCity.WarDefeatedHP();

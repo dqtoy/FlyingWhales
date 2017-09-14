@@ -10,6 +10,8 @@ public class Region {
     private List<Region> _adjacentRegions;
     private City _occupant;
 
+    private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
+
     //Resources
     private RESOURCE _specialResource;
     private HexTile _tileWithSpecialResource;
@@ -146,6 +148,15 @@ public class Region {
         }
         CheckForDiscoveredKingdoms();
     }
+
+    internal void RemoveOccupant() {
+        ReColorBorderTiles(defaultBorderColor);
+        _occupant = null;
+        if (_specialResource != RESOURCE.NONE) {
+            _tileWithSpecialResource.Unoccupy();
+        }
+    }
+
     private void SetAdjacentRegionsAsSeenForOccupant() {
         for (int i = 0; i < _adjacentRegions.Count; i++) {
             Region currRegion = _adjacentRegions[i];

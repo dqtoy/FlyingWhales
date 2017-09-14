@@ -35,6 +35,7 @@ public class Kingdom{
     private int _baseDefense;
     private int _happiness;
     private List<City> _cities;
+    private List<Region> _regions;
 	private List<City> _nonRebellingCities;
 	private List<Camp> camps;
 	internal City capitalCity;
@@ -171,6 +172,9 @@ public class Kingdom{
 	public List<City> cities{
 		get{ return this._cities; }
 	}
+    internal List<Region> regions {
+        get { return _regions; }
+    }
 //	public List<Camp> camps{
 //		get{ return this._camps; }
 //	}
@@ -287,8 +291,9 @@ public class Kingdom{
 		get { return this._mutualDefenseTreaties;}
 	}
 	public List<Kingdom> adjacentKingdoms{
-		get { return _adjacentKingdoms;}
-	}
+        //get { return _adjacentKingdoms;}
+        get { return relationships.Where(x => x.Value.isAdjacent).Select(x => x.Value.targetKingdom).ToList(); }//TODO: Optimize this!
+    }
 	public bool isMobilizing{
 		get { return this._isMobilizing;}
 	}
@@ -324,6 +329,7 @@ public class Kingdom{
 		this._mainThreat = null;
         this.successionLine = new List<Citizen>();
 		this._cities = new List<City> ();
+        this._regions = new List<Region>();
 		this._nonRebellingCities = new List<City> ();
 		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
@@ -513,6 +519,9 @@ public class Kingdom{
             RemoveRelationshipWithKingdom(kingdomThatDied);
             RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
             RemoveKingdomFromEmbargoList(kingdomThatDied);
+            if(_mainThreat != null && _mainThreat == kingdomThatDied) {
+                _mainThreat = null;
+            }
         }
     }
     #endregion
@@ -999,6 +1008,7 @@ public class Kingdom{
      * */
     internal void AddCityToKingdom(City city) {
         this._cities.Add(city);
+        _regions.Add(city.region);
 //		AddToNonRebellingCities (city);
         this.UpdateKingdomTypeData();
 //        this.UpdateAvailableResources();
@@ -1019,6 +1029,7 @@ public class Kingdom{
     internal void RemoveCityFromKingdom(City city) {
         city.rebellion = null;
         this._cities.Remove(city);
+        _regions.Remove(city.region);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
             //this.RemoveInvalidTradeRoutes();
@@ -2086,12 +2097,12 @@ public class Kingdom{
 				}
 			}else{
 				//no main threat
-				if(!HasWar() && this._adjacentKingdoms.Count > 0){
+				if(!HasWar() && this.adjacentKingdoms.Count > 0){
 					Kingdom currentPossibleTarget = null;
 					KingdomRelationship currentPossibleTargetRelationship = null;
 					int thisEffectivePower = this.effectivePower;
-					for (int i = 0; i < this._adjacentKingdoms.Count; i++) {
-						Kingdom targetKingdom = this._adjacentKingdoms [i];
+					for (int i = 0; i < this.adjacentKingdoms.Count; i++) {
+						Kingdom targetKingdom = this.adjacentKingdoms [i];
 						KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
 						if(relationship.totalLike < 0){
 							int buffedEffectiveDefense = (int)(targetKingdom.effectiveDefense * 1.30f);

@@ -123,9 +123,11 @@ public class CityItem : MonoBehaviour {
     #region For Testing
     public void SetPower() {
         _city.SetPower(System.Int32.Parse(newPowerLbl.text));
+        _city.hexTile.UpdateCityNamePlate();
     }
     public void SetDefense() {
         _city.SetDefense(System.Int32.Parse(newDefLabel.text));
+        _city.hexTile.UpdateCityNamePlate();
     }
     public void SetGovernorLoyaltyAdjustment() {
         ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier = System.Int32.Parse(loyaltyAdjustmentLbl.text);

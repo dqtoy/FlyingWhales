@@ -14,20 +14,24 @@ public class Provocation : GameEvent {
 		this.sourceKingdom = sourceKingdom;
 		this.targetKingdom = targetKingdom;
 		this.provoker = provoker;
-		//this.targetCity = targetKingdom.capitalCity;
+        City targetCity = targetKingdom.capitalCity;
 
-		//Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Provocation", "event_title");
-		//newLogTitle.AddToFillers (null, this.targetCity.name, LOG_IDENTIFIER.CITY_1);
+        Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Provocation", "event_title");
+        newLogTitle.AddToFillers(null, targetCity.name, LOG_IDENTIFIER.CITY_1);
 
-		//Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Provocation", "start");
-		//newLog.AddToFillers (this.sourceKingdom.king, this.sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
-		//newLog.AddToFillers (this.provoker.citizen, this.provoker.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-		//newLog.AddToFillers (this.targetCity, this.targetCity.name, LOG_IDENTIFIER.CITY_1);
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Provocation", "start");
+        newLog.AddToFillers(this.sourceKingdom.king, this.sourceKingdom.king.name, LOG_IDENTIFIER.KING_1);
+        newLog.AddToFillers(this.provoker.citizen, this.provoker.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        newLog.AddToFillers(targetCity, targetCity.name, LOG_IDENTIFIER.CITY_1);
 
-		//this.EventIsCreated (this.sourceKingdom, true);
-		//this.EventIsCreated (this.targetKingdom, false);
+        if (UIManager.Instance.currentlyShowingKingdom == sourceKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
 
-	}
+        //this.EventIsCreated (this.sourceKingdom, true);
+        //this.EventIsCreated (this.targetKingdom, false);
+
+    }
 
 	#region Overrides
 	internal override void DoneCitizenAction (Citizen citizen){
