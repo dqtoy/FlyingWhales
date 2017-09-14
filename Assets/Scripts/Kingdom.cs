@@ -1474,7 +1474,7 @@ public class Kingdom{
 		this.AdjustTechCounter (amount);
 	}
 	private void UpdateTechCapacity(){
-		this._techCapacity = 2000 * this._techLevel;
+		this._techCapacity = 500 + ((400 + (100 * this._techLevel)) * this._techLevel);
 	}
 	internal void AdjustTechCounter(int amount){
 		this._techCounter += amount;
