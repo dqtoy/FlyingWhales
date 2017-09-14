@@ -57,6 +57,8 @@ public class City{
 	protected const int HP_INCREASE = 5;
 	private int increaseHpInterval = 0;
 
+	private int _bonusHappiness;
+
 	#region getters/setters
     internal Region region {
         get { return _region; }
@@ -119,6 +121,9 @@ public class City{
     public List<HexTile> ownedTiles {
         get { return this._ownedTiles; }
     }
+	public int bonusHappiness{
+		get { return this._bonusHappiness;}
+	}
 	#endregion
 
 	public City(HexTile hexTile, Kingdom kingdom, bool isRebel = false){
@@ -130,6 +135,7 @@ public class City{
 		this.governor = null;
         this._power = 0;
         this._defense = 0;
+		this._bonusHappiness = 0;
 		//this._adjacentCities = new List<City>();
 		this._ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<General> ();
@@ -1519,12 +1525,15 @@ public class City{
         _defense = Mathf.Max(_defense, 0);
         UIManager.Instance.UpdatePrestigeSummary();
     }
+	internal void AdjustBonusHappiness(int amount){
+		this._bonusHappiness += amount;
+	}
     internal void IncreaseBOPAttributesEveryMonth() {
 		if (!isDead && this.rebellion == null) {
             int powerIncrease = _powerPoints * 2;
             int defenseIncrease = _defensePoints * 4;
             //Each City contributes a base +4 Happiness
-            int happinessIncrease = 4 + (_happinessPoints * 2);
+			int happinessIncrease = (_happinessPoints * 2) + this._bonusHappiness;
             int happinessDecrease = (structures.Count * 3);
 			MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref happinessIncrease);
             if (_kingdom.isMilitarize) {

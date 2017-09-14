@@ -542,3 +542,18 @@ public enum KINGDOM_SIZE{
 	MEDIUM,
 	LARGE,
 }
+public enum CHARISMA{
+	HIGH,
+	AVERAGE,
+	LOW,
+}
+public enum EFFICIENCY{
+	HIGH,
+	AVERAGE,
+	LOW,
+}
+public enum INTELLIGENCE{
+	HIGH,
+	AVERAGE,
+	LOW,
+}

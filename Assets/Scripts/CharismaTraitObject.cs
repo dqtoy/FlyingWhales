@@ -2,13 +2,13 @@
 using System.Collections;
 using System;
 
-public class TraitObject : MonoBehaviour {
+public class CharismaTraitObject : MonoBehaviour {
 
 //	public BEHAVIOR_TRAIT behaviourTrait = BEHAVIOR_TRAIT.NONE;
 //	public SKILL_TRAIT skillTrait = SKILL_TRAIT.NONE;
 //	public MISC_TRAIT miscTrait = MISC_TRAIT.NONE;
 
-	public TRAIT trait;
+	public CHARISMA charisma;
 
 	public UI2DSprite innerSprite;
 	private bool isHovering = false;
@@ -20,8 +20,8 @@ public class TraitObject : MonoBehaviour {
 //		innerSprite.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
 //	}
 
-	public void SetTrait(TRAIT trait){
-		this.trait = trait;
+	public void SetTrait(CHARISMA charisma){
+		this.charisma = charisma;
 		innerSprite.color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
 	}
 
@@ -44,7 +44,7 @@ public class TraitObject : MonoBehaviour {
 	void OnHover(bool isOver){
 		if (isOver) {
 			this.isHovering = true;
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.trait.ToString().Replace("_", " ") + "[/b]");
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.charisma.ToString() + " CHARISMA" + "[/b]");
 		} else {
 			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();
@@ -63,9 +63,9 @@ public class TraitObject : MonoBehaviour {
 //		}
 //	}
 
-	void Update(){
-		if (this.isHovering) {
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.trait.ToString().Replace("_", " ") + "[/b]");
-		}
-	}
+//	void Update(){
+//		if (this.isHovering) {
+//			UIManager.Instance.ShowSmallInfo ("[b]" + this.trait.ToString().Replace("_", " ") + "[/b]");
+//		}
+//	}
 }

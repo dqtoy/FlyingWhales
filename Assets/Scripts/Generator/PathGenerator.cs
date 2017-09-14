@@ -202,7 +202,6 @@ public class PathGenerator : MonoBehaviour {
 		}
 		return null;
 	}
-
 	/*
 	 * Counts the number of hex tiles between two input tiles
 	 * */

@@ -96,6 +96,7 @@ public class UIManager : MonoBehaviour {
     public GameObject characterValuesGO;
     public UILabel characterValuesLbl;
 	public GameObject citizenInfoForTestingGO;
+	public CitizenInfoUI citizenInfoUI;
 
 	[Space(10)]
     [Header("Events UI Objects")]
@@ -742,8 +743,13 @@ public class UIManager : MonoBehaviour {
 		HideGovernorLoyalty ();
 
 		if(citizenToShow.assignedRole != null){
-			if(citizenToShow.assignedRole is Governor){
+			if (citizenToShow.assignedRole is Governor) {
+				Governor governor = (Governor)citizenToShow.assignedRole;
 				ShowGovernorLoyalty ();
+				this.citizenInfoUI.SetGovernorTraits (governor);
+			} else if (citizenToShow.assignedRole is King) {
+				King king = (King)citizenToShow.assignedRole;
+				this.citizenInfoUI.SetKingTraits (king);
 			}
 		}
 	}

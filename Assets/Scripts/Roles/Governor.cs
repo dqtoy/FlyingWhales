@@ -19,6 +19,10 @@ public class Governor : Role {
 
 	private bool isInitial;
 
+	private CHARISMA _charisma;
+	private EFFICIENCY _efficiency;
+	private INTELLIGENCE _intelligence;
+
     #region getters/setters
     public int loyalty {
 		get { return (_loyalty + _eventLoyaltyModifier + forTestingLoyaltyModifier) - ownedCity.kingdom.disloyaltyFromPrestige; }
@@ -28,6 +32,16 @@ public class Governor : Role {
     }
 	public List<ExpirableModifier> eventModifiers {
 		get { return this._eventModifiers; }
+	}
+
+	public CHARISMA charisma{
+		get {return this._charisma;}
+	}
+	public EFFICIENCY efficiency{
+		get {return this._efficiency;}
+	}
+	public INTELLIGENCE intelligence{
+		get {return this._intelligence;}
 	}
     #endregion
 
@@ -43,6 +57,14 @@ public class Governor : Role {
 
         this.SetOwnedCity(this.citizen.city);
         this.citizen.GenerateCharacterValues();
+		this._charisma = (CHARISMA)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(CHARISMA)).Length));
+		this._efficiency = (EFFICIENCY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(EFFICIENCY)).Length));
+		this._intelligence = (INTELLIGENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(INTELLIGENCE)).Length));
+
+		PrestigeContribution (false);
+		HappinessContribution (false);
+		IntelligenceContribution (false);
+
         this.UpdateLoyalty ();
 //		Messenger.AddListener("OnDayEnd", CheckEventModifiers);
 
@@ -56,7 +78,67 @@ public class Governor : Role {
 
 //		GovernorEvents ();
 	}
+	private void PrestigeContribution(bool isRemove){
+		int contribution = 0;
+		switch(this._charisma){
+		case CHARISMA.HIGH:
+			contribution = 2;
+			break;
+		case CHARISMA.AVERAGE:
+			contribution = 1;
+			break;
+//		case CHARISMA.LOW:
+//			contribution = 0;
+//			break;
+		}
+		if(isRemove){
+			contribution *= -1;
+		}
+		if (contribution != 0) {
+			this.citizen.city.kingdom.AdjustBonusPrestige (contribution);
+		}
 
+	}
+	private void HappinessContribution(bool isRemove){
+		int contribution = 0;
+		switch(this._efficiency){
+		case EFFICIENCY.HIGH:
+			contribution = 2;
+			break;
+		case EFFICIENCY.AVERAGE:
+			contribution = 1;
+			break;
+//		case EFFICIENCY.LOW:
+//			contribution = 0;
+//			break;
+		}
+		if(isRemove){
+			contribution *= -1;
+		}
+		if(contribution != 0){
+			this.citizen.city.AdjustBonusHappiness (contribution);
+		}
+	}
+	private void IntelligenceContribution(bool isRemove){
+		int contribution = 0;
+		switch(this._intelligence){
+		case INTELLIGENCE.HIGH:
+			contribution = 2;
+			break;
+		case INTELLIGENCE.AVERAGE:
+			contribution = 1;
+			break;
+//		case INTELLIGENCE.LOW:
+//			contribution = 0;
+//			break;
+		}
+		if(isRemove){
+			contribution *= -1;
+		}
+		if (contribution != 0) {
+			this.citizen.city.kingdom.AdjustBonusTech (contribution);
+		}
+	}
 	internal void UpdateLoyalty(){
         this._loyaltySummary = string.Empty;
 		int baseLoyalty = defaultLoyalty;
@@ -250,6 +332,9 @@ public class Governor : Role {
 
 	internal override void OnDeath (){
 		base.OnDeath ();
+		PrestigeContribution (true);
+		HappinessContribution (true);
+		IntelligenceContribution (true);
 //		Messenger.RemoveListener("OnDayEnd", CheckEventModifiers);
 	}
 }

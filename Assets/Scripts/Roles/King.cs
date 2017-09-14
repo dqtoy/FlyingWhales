@@ -16,6 +16,20 @@ public class King : Role {
 	private int _triggerDayOfSerum;
 	private int _triggerYearOfSerum;
 
+	private CHARISMA _charisma;
+	private EFFICIENCY _efficiency;
+	private INTELLIGENCE _intelligence;
+
+	public CHARISMA charisma{
+		get {return this._charisma;}
+	}
+	public EFFICIENCY efficiency{
+		get {return this._efficiency;}
+	}
+	public INTELLIGENCE intelligence{
+		get {return this._intelligence;}
+	}
+
 	public King(Citizen citizen): base(citizen){
 		this.citizen.isKing = true;
 //		if(this.citizen.city.kingdom.king != null){
@@ -24,22 +38,86 @@ public class King : Role {
 		this.citizen.city.kingdom.king = this.citizen;
 		this.SetOwnedKingdom(this.citizen.city.kingdom);
 		this.citizen.GenerateCharacterValues ();
+		this._charisma = (CHARISMA)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(CHARISMA)).Length));
+		this._efficiency = (EFFICIENCY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(EFFICIENCY)).Length));
+		this._intelligence = (INTELLIGENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(INTELLIGENCE)).Length));
+		PrestigeContribution (false);
+		HappinessContribution (false);
+		IntelligenceContribution (false);
 		this.abductionCounter = 0;
 		if(this.citizen.city.kingdom.plague != null){
 			this.citizen.city.kingdom.plague.UpdateApproach (this.citizen.city.kingdom);
 		}
 		this.isRumoring = false;
 		this.isHiddenHistoryBooking = false;
-		RandomTriggerDateOfSerum(true);
+//		RandomTriggerDateOfSerum(true);
 //		Messenger.AddListener("OnDayEnd", EverydayActions);
 	}
 	internal override void OnDeath (){
 		base.OnDeath ();
+		PrestigeContribution (true);
+		HappinessContribution (true);
+		IntelligenceContribution (true);
 //		Messenger.RemoveListener("OnDayEnd", EverydayActions);
 
 	}
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){
 		this.ownedKingdom = ownedKingdom;
+	}
+	private void PrestigeContribution(bool isRemove){
+		int contribution = 0;
+		switch(this._charisma){
+		case CHARISMA.HIGH:
+			contribution = 10;
+			break;
+		case CHARISMA.AVERAGE:
+			contribution = 5;
+			break;
+		case CHARISMA.LOW:
+			contribution = 2;
+			break;
+		}
+		if(isRemove){
+			contribution *= -1;
+		}
+		this.ownedKingdom.AdjustBonusPrestige (contribution);
+
+	}
+	private void HappinessContribution(bool isRemove){
+		int contribution = 0;
+		switch(this._efficiency){
+		case EFFICIENCY.HIGH:
+			contribution = 5;
+			break;
+		case EFFICIENCY.AVERAGE:
+			contribution = 3;
+			break;
+		case EFFICIENCY.LOW:
+			contribution = 1;
+			break;
+		}
+		if(isRemove){
+			contribution *= -1;
+		}
+		this.citizen.city.AdjustBonusHappiness (contribution);
+	}
+	private void IntelligenceContribution(bool isRemove){
+		int contribution = 0;
+		switch(this._intelligence){
+		case INTELLIGENCE.HIGH:
+			contribution = 5;
+			break;
+		case INTELLIGENCE.AVERAGE:
+			contribution = 3;
+			break;
+		case INTELLIGENCE.LOW:
+			contribution = 1;
+			break;
+		}
+		if(isRemove){
+			contribution *= -1;
+		}
+		this.ownedKingdom.AdjustBonusTech (contribution);
 	}
 	private void EverydayActions(){
 		TriggerSpouseAbduction();
