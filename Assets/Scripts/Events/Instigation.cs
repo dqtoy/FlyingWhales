@@ -12,7 +12,20 @@ public class Instigation : GameEvent {
 		this.instigatedKingdom = instigatedKingdom;
 		this.targetKingdom = targetKingdom;
 		CreateInstigator ();
-	}
+
+        Log newLogTitle = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Instigation", "event_title");
+        newLogTitle.AddToFillers(null, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Instigation", "start");
+        newLog.AddToFillers(startedByKingdom, startedByKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(instigatedKingdom, instigatedKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        newLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
+
+        if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom
+            || UIManager.Instance.currentlyShowingKingdom == instigatedKingdom) {
+            UIManager.Instance.ShowNotification(newLog);
+        }
+    }
 
 	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
