@@ -152,7 +152,7 @@ public class Region {
             if(currRegion._occupant == null || currRegion._occupant.kingdom != _occupant.kingdom) {
                 List<HexTile> tilesInCurrRegion = currRegion.tilesInRegion;
                 for (int j = 0; j < tilesInCurrRegion.Count; j++) {
-                    _occupant.kingdom.SetFogOfWarStateForTile(tilesInCurrRegion[j], FOG_OF_WAR_STATE.SEEN);
+                    _occupant.kingdom.SetFogOfWarStateForTile(tilesInCurrRegion[j], FOG_OF_WAR_STATE.VISIBLE);
                 }
             }            
         }
@@ -282,6 +282,7 @@ public class Region {
                 Kingdom otherKingdom = currRegion.occupant.kingdom;
                 if(otherKingdom != occupant.kingdom && !occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
                     KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
+                    _occupant.kingdom.GetRelationshipWithKingdom(otherKingdom).ChangeAdjacency(true);
                 }
             }
         }

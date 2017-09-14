@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 67d668b8729fffa42b7861583184420c
-timeCreated: 1490604240
+timeCreated: 1505374026
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -88,7 +88,7 @@ TextureImporter:
         width: 46
         height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -101,7 +101,7 @@ TextureImporter:
         width: 42
         height: 39
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -161,13 +161,13 @@ TextureImporter:
       name: Citizen UI_7
       rect:
         serializedVersion: 2
-        x: 350
-        y: 265
-        width: 37
-        height: 39
+        x: 352
+        y: 270
+        width: 34
+        height: 34
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 8, y: 13, z: 7, w: 11}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
