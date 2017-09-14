@@ -926,7 +926,8 @@ public class Utilities : MonoBehaviour {
         EVENT_TYPES.TRIBUTE,
         EVENT_TYPES.PROVOCATION,
         EVENT_TYPES.MUTUAL_DEFENSE_TREATY,
-        EVENT_TYPES.MILITARY_ALLIANCE_OFFER
+        EVENT_TYPES.MILITARY_ALLIANCE_OFFER,
+        EVENT_TYPES.INSTIGATION
     };
 
 	public static string PronounReplacer(string word, object genderSubject){
