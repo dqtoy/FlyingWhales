@@ -168,6 +168,8 @@ public class UIManager : MonoBehaviour {
 	public ButtonToggle kingdomListCityButton;
     public Sprite stoneSprite;
     public Sprite lumberSprite;
+	public UILabel actionDayLbl;
+	public GameObject militarizingGO;
 
     [Space(10)]
     [Header("Event Logs UI Objects")]
@@ -547,6 +549,8 @@ public class UIManager : MonoBehaviour {
         kingdomUnrestLbl.text = currentlyShowingKingdom.happiness.ToString(); //Unrest
 		kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
 		kingdomTechMeter.value = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
+		this.militarizingGO.SetActive (currentlyShowingKingdom.isMilitarize);
+		this.actionDayLbl.text = this.currentlyShowingKingdom.actionDay.ToString();
 //		float newValue = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
 //		float oldValue = kingdomTechMeter.value;
 //		kingdomTechMeter.value = iTween.FloatUpdate(oldValue, newValue, GameManager.Instance.progressionSpeed);

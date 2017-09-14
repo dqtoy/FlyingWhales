@@ -22,6 +22,7 @@ public class Kingdom{
 	private KingdomTypeData _kingdomTypeData;
 	private Kingdom _sourceKingdom;
 	private Kingdom _mainThreat;
+	private int _actionDay;
 
     //Resources
     private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
@@ -303,6 +304,9 @@ public class Kingdom{
 	public float techProductionPercentage{
 		get { return this._techProductionPercentage;}
 	}
+	public int actionDay{
+		get { return this._actionDay;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -366,6 +370,7 @@ public class Kingdom{
 		this._currentDefenseTreatyRejectionDate = new GameDate (0, 0, 0);
 		this._currentMilitaryAllianceRejectionDate = new GameDate (0, 0, 0);
 		this._mobilizationQueue = new List<Wars> ();
+		this._actionDay = 0;
 
 		SetLackPrestigeState(false);
         AdjustPrestige(100);
@@ -2055,11 +2060,15 @@ public class Kingdom{
 	#region Balance of Power
 	internal void Militarize(bool state){
 		this._isMilitarize = state;
+		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
+			UIManager.Instance.militarizingGO.SetActive (state);
+		}
 	}
 
 	private void ScheduleActionDay(){
 		KingdomManager.Instance.IncrementCurrentActionDay (2);
 		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, KingdomManager.Instance.currentActionDay, GameManager.Instance.year, () => ActionDay ());
+		this._actionDay = KingdomManager.Instance.currentActionDay;
 	}
 	private void ActionDay(){
 		if(!this.isDead){
