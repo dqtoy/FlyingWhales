@@ -153,6 +153,7 @@ public class CameraMove : MonoBehaviour {
                 nameplateCamera.orthographicSize = fov;
                 fogOfWarCamera.orthographicSize = fov;
                 _canvasCamera.orthographicSize = fov;
+                Minimap.Instance.UpdateCameraBorderScale();
                 CalculateCameraBounds();
             }
 		}
