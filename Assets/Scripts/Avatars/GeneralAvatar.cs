@@ -26,14 +26,22 @@ public class GeneralAvatar : CitizenAvatar {
 						this.citizenRole.path.RemoveAt (0);
 						this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
 						//this.CheckForKingdomDiscovery();
-						((General)this.citizenRole).CheckSerumOfAlacrity();
+//						((General)this.citizenRole).CheckSerumOfAlacrity();
 					}
 					this.citizenRole.daysBeforeMoving -= 1;
 				}
 			}
 		}
 	}
-
+	internal override void HasArrivedAtTargetLocation (){
+		if (this.citizenRole.location == this.citizenRole.targetLocation) {
+			if (!this.hasArrived) {
+				SetHasArrivedState(true);
+				this.GetComponent<BoxCollider2D> ().enabled = false;
+				this.citizenRole.Attack ();
+			}
+		}
+	}
 	internal override void UpdateUI (){
 		if(this.txtDamage.gameObject != null){
 			this.txtDamage.text = this.citizenRole.damage.ToString ();

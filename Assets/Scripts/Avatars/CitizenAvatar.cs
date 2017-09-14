@@ -58,8 +58,11 @@ public class CitizenAvatar : PooledObject {
         ResetValues();
         AddBehaviourTree();
 		UpdateUI ();
+		StartMoving ();
     }
-
+	internal void StartMoving(){
+		NewMove ();
+	}
     internal virtual void Move() {
         if (this.citizenRole.targetLocation != null) {
             if (this.citizenRole.path != null) {
@@ -72,13 +75,26 @@ public class CitizenAvatar : PooledObject {
             }
         }
     }
+	internal virtual void NewMove() {
+		if (this.citizenRole.targetLocation != null) {
+			if (this.citizenRole.path != null) {
+				if (this.citizenRole.path.Count > 0) {
+					this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
+				}
+			}
+		}
+	}
 
     internal virtual void OnMoveFinished() {
-        this.CollectEvents();
+		this.citizenRole.location = this.citizenRole.path[0];
+		this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
+		this.citizenRole.path.RemoveAt(0);
+       
+		this.CollectEvents();
         //this.CheckForKingdomDiscovery();
         this.UpdateFogOfWar();
-        this.transform.SetParent(this.citizenRole.location.transform);
-        this.transform.localPosition = Vector3.zero;
+//        this.transform.SetParent(this.citizenRole.location.transform);
+//        this.transform.localPosition = Vector3.zero;
         if(this.citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
             if (!currAvatarState) {
                 SetAvatarState(true);
@@ -88,7 +104,14 @@ public class CitizenAvatar : PooledObject {
                 SetAvatarState(false);
             }
         }
-    }
+
+		HasArrivedAtTargetLocation ();
+		if(!this.hasArrived){
+			NewMove ();
+		}
+	}
+
+	internal virtual void HasArrivedAtTargetLocation(){}
 
 	public virtual void UpdateFogOfWar(bool forDeath = false) {
 		Kingdom kingdomOfAgent = this.citizenRole.citizen.city.kingdom;

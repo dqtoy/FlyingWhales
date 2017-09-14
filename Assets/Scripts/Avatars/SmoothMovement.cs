@@ -23,16 +23,27 @@ public class SmoothMovement : MonoBehaviour {
 		this.animator = this.GetComponent<Animator> ();
 	}
 
-	void FixedUpdate(){
-		if(this.isMoving){
-			if(this.targetPosition != Vector3.zero){
-//				this.timeSinceStarted = Time.time - this.timeStarted;
-				this.step = Time.smoothDeltaTime / GameManager.Instance.progressionSpeed;
-				this.timeSinceStarted += this.step;
-				this.avatarGO.transform.position = Vector3.Lerp (this.avatarGO.transform.position, this.targetPosition, this.step);
-				if(this.timeSinceStarted >= 1.0f){
-					StopMoving ();
-                }
+//	void FixedUpdate(){
+//		if(this.isMoving){
+//			if(this.targetPosition != Vector3.zero){
+////				this.timeSinceStarted = Time.time - this.timeStarted;
+//				this.step = Time.smoothDeltaTime / GameManager.Instance.progressionSpeed;
+//				this.timeSinceStarted += this.step;
+//				this.avatarGO.transform.position = Vector3.Lerp (this.avatarGO.transform.position, this.targetPosition, this.step);
+//				if(this.timeSinceStarted >= 1.0f){
+//					StopMoving ();
+//                }
+//			}
+//		}
+//	}
+
+	void Update(){
+		if(this.isMoving && !GameManager.Instance.isPaused){
+//			this.step = Time.smoothDeltaTime / GameManager.Instance.progressionSpeed;
+//			this.timeSinceStarted += this.step;
+			this.avatarGO.transform.position = Vector3.MoveTowards (this.avatarGO.transform.position, this.targetPosition, (10f - (GameManager.Instance.progressionSpeed * 4f)) * Time.deltaTime);
+			if(this.avatarGO.transform.position == this.targetPosition){
+				StopMoving ();
 			}
 		}
 	}

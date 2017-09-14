@@ -373,7 +373,7 @@ public class Kingdom{
 		this._actionDay = 0;
 
 		SetLackPrestigeState(false);
-        AdjustPrestige(100);
+        AdjustPrestige(200);
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
