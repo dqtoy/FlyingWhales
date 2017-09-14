@@ -14,6 +14,7 @@ public class Kingdom{
     public int age;
     private int _prestige;
     private int _disloyaltyFromPrestige; //Loyalty subtracted from governors due to too many cities and lack of prestige
+	private int _bonusPrestige; //Prestige bonuses including bonuses from governors and king traits
     private int foundationYear;
     private int foundationMonth;
     private int foundationDay;
@@ -62,6 +63,7 @@ public class Kingdom{
 	private int _techLevel;
 	private int _techCapacity;
 	private int _techCounter;
+	private int _bonusTech;
 
 	//The First and The Keystone
 	internal FirstAndKeystoneOwnership firstAndKeystoneOwnership;
@@ -292,6 +294,12 @@ public class Kingdom{
 	public bool doesLackPrestige{
 		get { return this._doesLackPrestige;}
 	}
+	public int bonusPrestige{
+		get { return this._bonusPrestige;}
+	}
+	public int bonusTech{
+		get { return this._bonusTech;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -303,6 +311,7 @@ public class Kingdom{
 		this.race = race;
         this._prestige = 0;
         this._disloyaltyFromPrestige = 0;
+		this._bonusPrestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
 		this._mainThreat = null;
@@ -326,6 +335,7 @@ public class Kingdom{
 		this._discoveredKingdoms = new List<Kingdom>();
 		this._techLevel = 0;
 		this._techCounter = 0;
+		this._bonusTech = 0;
 		this._hasBioWeapon = false;
 		this._boonOfPowers = new List<BoonOfPower> ();
 		this._activatedBoonOfPowers = new List<BoonOfPower> ();
@@ -888,9 +898,13 @@ public class Kingdom{
 		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
+	internal void AdjustBonusPrestige(int amount){
+		this._bonusPrestige += amount;
+	}
     internal void MonthlyPrestigeActions() {
         //Add Prestige
-        AdjustPrestige(10 + (2 * cities.Count));
+		int prestigeToBeAdded = 10 + (2 * cities.Count) + this._bonusPrestige;
+		AdjustPrestige(prestigeToBeAdded);
 
         //Check if city count exceeds cap
         if (cities.Count > cityCap) {
@@ -1446,8 +1460,8 @@ public class Kingdom{
 		if(!this._isTechProducing){
 			return;
 		}
-		int amount = 1 * this.cities.Count;
-		int bonus = 0;
+		int amount = (1 * this.cities.Count) + this._bonusTech;
+//		int bonus = 0;
 //        for (int i = 0; i < this._availableResources.Count; i++) {
 //            RESOURCE currResource = this._availableResources.Keys.ElementAt(i);
 //			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
@@ -1455,7 +1469,7 @@ public class Kingdom{
 //                bonus += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
 //            }
 //        }
-		amount += bonus;
+//		amount += bonus;
 		amount = (int)(amount * this._techProductionPercentage);
 		this.AdjustTechCounter (amount);
 	}
@@ -1478,6 +1492,9 @@ public class Kingdom{
 		this._techCounter = 0;
 		AdjustPowerPointsToAllCities(amount);
 		this.UpdateTechCapacity ();
+	}
+	internal void AdjustBonusTech(int amount){
+		this._bonusTech += amount;
 	}
 	#endregion
 	
@@ -2296,8 +2313,8 @@ public class Kingdom{
     	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
 	}
 	internal void ChangeHappiness(int newAmount) {
-    	this._happiness = newAmount;
-    	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
+		this._happiness = newAmount;
+		this._happiness = Mathf.Clamp (this._happiness, -100, 100);
 	}
 	internal void AdjustMilitaryAlliancePower(int amount){
 		this._militaryAlliancePower += amount;
