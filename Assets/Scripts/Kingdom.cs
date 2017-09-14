@@ -300,6 +300,9 @@ public class Kingdom{
 	public int bonusTech{
 		get { return this._bonusTech;}
 	}
+	public float techProductionPercentage{
+		get { return this._techProductionPercentage;}
+	}
     #endregion
 
     // Kingdom constructor paramters
