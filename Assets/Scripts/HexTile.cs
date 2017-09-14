@@ -512,10 +512,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                         }
                     }
                     if (gameObjectToEdit != null && spriteMasksToChooseFrom != null) {
-                        gameObjectToEdit.GetComponent<SpriteRenderer>().sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
-                        gameObjectToEdit.GetComponent<SpriteRenderer>().sortingOrder += biomeLayerOfNeighbour;
+                        SpriteRenderer sr = gameObjectToEdit.GetComponent<SpriteRenderer>();
+                        sr.sprite = Biomes.Instance.GetTextureForBiome(currentNeighbour.biomeType);
+                        sr.sortingOrder += biomeLayerOfNeighbour;
                         //                        Material mat = new Material(Shader.Find("AlphaMask"));
-                        gameObjectToEdit.GetComponent<SpriteRenderer> ().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
+                        gameObjectToEdit.GetComponent<SpriteRenderer>().material.SetTexture("_Alpha", spriteMasksToChooseFrom[Random.Range(0, spriteMasksToChooseFrom.Length)]);
 						gameObjectToEdit.SetActive(true);
 
 //                        gameObjectToEdit.GetComponent<SpriteRenderer>().material = mat;
@@ -704,15 +705,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
         _currFogOfWarState = fowState;
         Color newColor = FOWSprite.color;
-        Color minimapColor = minimapFOWSprite.color;
+        //Color minimapColor = minimapFOWSprite.color;
         switch (fowState) {
             case FOG_OF_WAR_STATE.VISIBLE:
                 newColor.a = 0f / 255f;
-                if (isHabitable && isOccupied) {
-                    minimapColor = ownedByCity.kingdom.kingdomColor;
-                } else {
-                    minimapColor = biomeColor;
-                }
+                //if (isHabitable && isOccupied) {
+                //    minimapColor = ownedByCity.kingdom.kingdomColor;
+                //} else {
+                //    minimapColor = biomeColor;
+                //}
                 if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
                     ShowNamePlate();
 				}
@@ -725,11 +726,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 break;
             case FOG_OF_WAR_STATE.SEEN:
                 newColor.a = 128f / 255f;
-                if (isHabitable && isOccupied) {
-                    minimapColor = ownedByCity.kingdom.kingdomColor;
-                } else {
-                    minimapColor = biomeColor;
-                }
+                //if (isHabitable && isOccupied) {
+                //    minimapColor = ownedByCity.kingdom.kingdomColor;
+                //} else {
+                //    minimapColor = biomeColor;
+                //}
                 if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
                     ShowNamePlate();
 				}
@@ -742,7 +743,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 break;
             case FOG_OF_WAR_STATE.HIDDEN:
                 newColor.a = 255f / 255f;
-                minimapColor = Color.black;
+                //minimapColor = Color.black;
                 if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
                     HideNamePlate();
 				}
@@ -757,16 +758,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 break;
         }
         FOWSprite.color = newColor;
-        minimapFOWSprite.color = minimapColor;
+        //minimapFOWSprite.color = minimapColor;
     }
 
     internal void HideFogOfWarObjects() {
         FOWSprite.gameObject.SetActive(false);
-        minimapFOWSprite.gameObject.SetActive(false);
+        //minimapFOWSprite.gameObject.SetActive(false);
     }
     internal void ShowFogOfWarObjects() {
         FOWSprite.gameObject.SetActive(true);
-        minimapFOWSprite.gameObject.SetActive(true);
+        //minimapFOWSprite.gameObject.SetActive(true);
     }
 
     internal void AddBiomeDetailToTile(GameObject detailPrefab) {

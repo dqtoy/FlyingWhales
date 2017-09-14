@@ -263,6 +263,12 @@ public class UIManager : MonoBehaviour {
 
 	internal List<object> eventLogsQueue = new List<object> ();
 
+    #region getters/setters
+    internal GameObject minimapTexture {
+        get { return minimapTextureGO; }
+    }
+    #endregion
+
     void Awake(){
 		Instance = this;
     }
@@ -597,6 +603,7 @@ public class UIManager : MonoBehaviour {
             Region currRegion = GridMap.Instance.allRegions[i];
             currRegion.ShowNaturalResourceLevelForRace(currentlyShowingKingdom.race);
         }
+        CameraMove.Instance.UpdateMinimapTexture();
     }
 
 	internal void SetKingdomAsActive(Kingdom kingdom){

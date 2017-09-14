@@ -137,7 +137,9 @@ public class Region {
         _occupant = occupant;
         _cityLevelCap = _naturalResourceLevel[occupant.kingdom.race];
         SetAdjacentRegionsAsSeenForOccupant();
-        ReColorBorderTiles(_occupant.kingdom.kingdomColor);
+        Color solidKingdomColor = _occupant.kingdom.kingdomColor;
+        solidKingdomColor.a = 255f / 255f;
+        ReColorBorderTiles(solidKingdomColor);
         if(_specialResource != RESOURCE.NONE) {
             _tileWithSpecialResource.Occupy(occupant);
             CreateStructureOnSpecialResourceTile();

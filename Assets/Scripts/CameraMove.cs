@@ -18,7 +18,8 @@ public class CameraMove : MonoBehaviour {
 	[SerializeField] private Camera traderCamera;
     [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Camera fogOfWarCamera;
-    [SerializeField] private Camera _minimapCamera;
+    [SerializeField] private Camera _wholeMapCamera;
+    [SerializeField] internal Camera _canvasCamera;
     //[SerializeField] private MinimapCamera _minimap;
 
 	private float dampTime = 0.2f;
@@ -51,8 +52,8 @@ public class CameraMove : MonoBehaviour {
     //public MinimapCamera minimap {
     //    get { return _minimap; }
     //}
-    public Camera minimapCamera {
-        get { return _minimapCamera; }
+    public Camera wholeMapCamera {
+        get { return _wholeMapCamera; }
     }
     public float currentFOV {
         get { return Camera.main.orthographicSize; }
@@ -72,7 +73,24 @@ public class CameraMove : MonoBehaviour {
 
     public void SetMinimapCamValues() {
         HexTile centerTile = GridMap.Instance.map[(int)(GridMap.Instance.width / 2), (int)(GridMap.Instance.height / 2)];
-        minimapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, minimapCamera.transform.localPosition.y, -10);
+        wholeMapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, wholeMapCamera.transform.localPosition.y, -10);
+    }
+
+    [ContextMenu("Set Minimap Camera Position")]
+    public void SetMinimapCameraPosition() {
+        Vector2 uiMinimapPos = UIManager.Instance.uiCamera.gameObject.GetComponent<Camera>().WorldToViewportPoint(UIManager.Instance.minimapTexture.transform.position);
+        //Vector2 newPos = Camera.main.ScreenToViewportPoint(uiMinimapPos);
+        //_minimapCamera.transform.localPosition = uiMinimapPos;
+    }
+
+    public void MoveMainCamera(Vector2 newPos) {
+        Camera.main.transform.position = newPos;
+        CameraMove.Instance.ConstrainCameraBounds();
+        //UpdateMinimapTexture();
+    }
+
+    public void UpdateMinimapTexture() {
+        wholeMapCamera.Render();
     }
 
     private float minX;
@@ -108,34 +126,10 @@ public class CameraMove : MonoBehaviour {
 	void Update () {
 		float xAxisValue = Input.GetAxis("Horizontal");
 		float zAxisValue = Input.GetAxis("Vertical");
-
-        //Vector3 viewportPoint = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-        //Ray ray = Camera.main.ViewportPointToRay(viewportPoint);
-        //Debug.DrawRay(ray.origin, ray.direction * -10, Color.red);
-
-//		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.W)){
-//			this.direction = DIRECTION.UP;
-//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
-////			Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), ref velocity, dampTime);
-////			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.deltaTime * this.moveSpeed);
-//		}
-//		if (Input.GetKey (KeyCode.DownArrow) || Input.GetKey (KeyCode.S)){
-//			this.direction = DIRECTION.DOWN;
-//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
-//		}
-//		if (Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.A)){
-//			this.direction = DIRECTION.LEFT;
-//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
-//
-//		}
-//		if (Input.GetKey (KeyCode.RightArrow) || Input.GetKey (KeyCode.D)){
-//			this.direction = DIRECTION.RIGHT;
-//			Camera.main.transform.position = Vector3.Lerp (Camera.main.transform.position, new Vector3 (Camera.main.transform.position.x + xAxisValue, Camera.main.transform.position.y + zAxisValue, Camera.main.transform.position.z), Time.smoothDeltaTime * this.moveSpeed);
-//		}
 		if (Input.GetKey (KeyCode.UpArrow) || Input.GetKey (KeyCode.DownArrow) || Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.RightArrow) ||
 			Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.A) || Input.GetKey (KeyCode.S) || Input.GetKey (KeyCode.D)) {
 			iTween.MoveUpdate (Camera.main.gameObject, iTween.Hash("x", Camera.main.transform.position.x + xAxisValue, "y", Camera.main.transform.position.y + zAxisValue, "time", 0.1f));
-		}
+        }
 
 		Rect screenRect = new Rect(0,0, Screen.width, Screen.height);
 		if (!UIManager.Instance.IsMouseOnUI () && screenRect.Contains(Input.mousePosition)) {
@@ -158,48 +152,10 @@ public class CameraMove : MonoBehaviour {
                 generalCamera.orthographicSize = fov;
                 nameplateCamera.orthographicSize = fov;
                 fogOfWarCamera.orthographicSize = fov;
+                _canvasCamera.orthographicSize = fov;
                 CalculateCameraBounds();
             }
-
-			////adjust camera movement clamps
-			//if (adjustment > 0f) {
-			//	MAX_X -= .9f;
-			//	MAX_X = Mathf.Clamp (MAX_X, maxMAX_X, minMAX_X);
-
-			//	MIN_X += .9f;
-			//	MIN_X = Mathf.Clamp (MIN_X, minMIN_X, maxMIN_X);
-
-			//	MAX_Y -= .5f;
-			//	MAX_Y = Mathf.Clamp (MAX_Y, maxMAX_Y, minMAX_Y);
-
-			//	MIN_Y += .5f;
-			//	MIN_Y = Mathf.Clamp (MIN_Y, minMIN_Y, maxMIN_Y);
-			//} else if (adjustment < 0f) {
-			//	MAX_X += .9f;
-			//	MAX_X = Mathf.Clamp (MAX_X, maxMAX_X, minMAX_X);
-
-			//	MIN_X -= .9f;
-			//	MIN_X = Mathf.Clamp (MIN_X, minMIN_X, maxMIN_X);
-
-			//	MAX_Y += .5f;
-			//	MAX_Y = Mathf.Clamp (MAX_Y, maxMAX_Y, minMAX_Y);
-
-			//	MIN_Y -= .5f;
-			//	MIN_Y = Mathf.Clamp (MIN_Y, minMIN_Y, maxMIN_Y);
-			//}
-
 		}
-
-//		float xAxisValue = Input.GetAxis("Horizontal");
-//		float zAxisValue = Input.GetAxis("Vertical");
-//		if(Camera.current != null){
-//			//camera movement code
-//			Camera.main.transform.Translate(new Vector3(xAxisValue, zAxisValue, 0.0f));
-//			Camera.main.transform.position = new Vector3(
-//				Mathf.Clamp(transform.position.x, MIN_X, MAX_X),
-//				Mathf.Clamp(transform.position.y, MIN_Y, MAX_Y),
-//				Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z));
-//		}
 
 		if (Input.GetKeyDown (KeyCode.UpArrow) || Input.GetKeyDown (KeyCode.DownArrow) || Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown (KeyCode.RightArrow) ||
 			Input.GetKeyDown (KeyCode.W) || Input.GetKeyDown (KeyCode.A) || Input.GetKeyDown (KeyCode.S) || Input.GetKeyDown (KeyCode.D)) {

@@ -18,7 +18,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateNeighboursWithSameTag();
         GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         GridMap.Instance.GenerateResourcesPerRegion();
-        //Biomes.Instance.GenerateTileDetails();
+        Biomes.Instance.GenerateTileDetails();
         //CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
         ////PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
@@ -33,6 +33,8 @@ public class MapGenerator : MonoBehaviour {
         //      //WorldEventManager.Instance.FirstAndKeystoneTrigger();
         GameManager.Instance.StartProgression();
         CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
+        CameraMove.Instance.UpdateMinimapTexture();
+        CameraMove.Instance.SetMinimapCameraPosition();
     }
 //	private IEnumerator StartGeneration(){
 //		GridMap.Instance.GenerateGrid();
