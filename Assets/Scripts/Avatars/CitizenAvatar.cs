@@ -45,6 +45,7 @@ public class CitizenAvatar : PooledObject {
         this.roleType = citizenRole.ToString();
         this.citizenRole = citizenRole;
         this.direction = DIRECTION.LEFT;
+		this.citizenRole.location.EnterCitizen (this.citizenRole.citizen);
         this.smoothMovement.onMoveFinihed += OnMoveFinished;
         visibleTiles = new List<HexTile>();
         childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
@@ -79,6 +80,7 @@ public class CitizenAvatar : PooledObject {
 		if (this.citizenRole.targetLocation != null) {
 			if (this.citizenRole.path != null) {
 				if (this.citizenRole.path.Count > 0) {
+					this.citizenRole.location.ExitCitizen (this.citizenRole.citizen);
 					this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
 				}
 			}
@@ -89,7 +91,8 @@ public class CitizenAvatar : PooledObject {
 		this.citizenRole.location = this.citizenRole.path[0];
 		this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
 		this.citizenRole.path.RemoveAt(0);
-       
+		this.citizenRole.location.EnterCitizen (this.citizenRole.citizen);
+
 		this.CollectEvents();
         //this.CheckForKingdomDiscovery();
         this.UpdateFogOfWar();
@@ -237,8 +240,8 @@ public class CitizenAvatar : PooledObject {
     }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
-        startTile.ExitCitizen(this.citizenRole.citizen);
-        targetTile.EnterCitizen(this.citizenRole.citizen);
+//        startTile.ExitCitizen(this.citizenRole.citizen);
+//        targetTile.EnterCitizen(this.citizenRole.citizen);
 
         if (startTile.transform.position.x <= targetTile.transform.position.x) {
             if (this.animator.gameObject.transform.localScale.x > 0) {
