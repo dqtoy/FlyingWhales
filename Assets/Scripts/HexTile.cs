@@ -919,15 +919,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     public void ShowAllCitizensOnTile() {
         for (int i = 0; i < _citizensOnTile.Count; i++) {
-            CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
-            currCitizenAvatar.SetAvatarState(true);
-        }
+			if(_citizensOnTile[i].assignedRole.avatar != null){
+				CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
+				currCitizenAvatar.SetAvatarState(true);
+			}
+		}
     }
 
     public void HideAllCitizensOnTile() {
         for (int i = 0; i < _citizensOnTile.Count; i++) {
-            CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
-            currCitizenAvatar.SetAvatarState(false);
+			if (_citizensOnTile [i].assignedRole.avatar != null) {
+				CitizenAvatar currCitizenAvatar = _citizensOnTile [i].assignedRole.avatar.GetComponent<CitizenAvatar> ();
+				currCitizenAvatar.SetAvatarState (false);
+			}
         }
     }
 
