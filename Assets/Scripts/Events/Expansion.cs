@@ -44,6 +44,12 @@ public class Expansion : GameEvent {
             newCity.region.SetOccupant(newCity);
             newCity.PopulateBorderTiles();
             newCity.ExpandToThisCity (this.startedBy);
+            for (int i = 0; i < startedByKingdom.discoveredKingdoms.Count; i++) {
+                Kingdom otherKingdom = startedByKingdom.discoveredKingdoms[i];
+                if(otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {
+                    otherKingdom.SetFogOfWarStateForRegion(newCity.region, FOG_OF_WAR_STATE.SEEN);
+                }
+            }
             this.CheckIfCitizenIsCarryingPlague(citizen);
 
 

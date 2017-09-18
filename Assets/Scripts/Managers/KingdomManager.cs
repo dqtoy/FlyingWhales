@@ -33,9 +33,20 @@ public class KingdomManager : MonoBehaviour {
 	public int currentActionDay;
     public int oddActionDay = 1;
 
+    [Space(10)]
+    [Header("Kingdom Type Modifiers")]
+    [SerializeField] internal float smallToMediumReqPercentage;
+    [SerializeField] internal float mediumToLargeReqPercentage;
+    [SerializeField] internal int smallToMediumReq;
+    [SerializeField] internal int mediumToLargeReq;
+
+    [Space(10)]
     [SerializeField] private int minimumInitialKingdomDistance;
 
     [SerializeField] private bool _useFogOfWar;
+
+    [SerializeField] internal int maxPrestige;
+    
 
     #region getters/setters
     public bool useFogOfWar {
@@ -48,6 +59,9 @@ public class KingdomManager : MonoBehaviour {
 	}
 
     public void GenerateInitialKingdoms() {
+        maxPrestige = Mathf.FloorToInt(GridMap.Instance.numOfRegions * .3f) * 100;
+        smallToMediumReq = Mathf.FloorToInt(GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
+        mediumToLargeReq = Mathf.FloorToInt(GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
         for (int i = 0; i < initialKingdomSetup.Count; i++) {
             InitialKingdom initialKingdom = initialKingdomSetup[i];
@@ -448,6 +462,20 @@ public class KingdomManager : MonoBehaviour {
 		}
 		discovererKingdom.DiscoverKingdom(discoveredKingdom);
 		discoveredKingdom.DiscoverKingdom(discovererKingdom);
+
+        for (int i = 0; i < discoveredKingdom.cities.Count; i++) {
+            Region otherRegion = discoveredKingdom.cities[i].region;
+            if (discovererKingdom.regionFogOfWarDict[otherRegion] != FOG_OF_WAR_STATE.VISIBLE) {
+                discovererKingdom.SetFogOfWarStateForRegion(otherRegion, FOG_OF_WAR_STATE.SEEN);
+            }
+        }
+
+        for (int i = 0; i < discovererKingdom.cities.Count; i++) {
+            Region otherRegion = discovererKingdom.cities[i].region;
+            if(discoveredKingdom.regionFogOfWarDict[otherRegion] != FOG_OF_WAR_STATE.VISIBLE) {
+                discoveredKingdom.SetFogOfWarStateForRegion(otherRegion, FOG_OF_WAR_STATE.SEEN);
+            }
+        }
 	}
 
     internal void UpdateKingdomPrestigeList() {

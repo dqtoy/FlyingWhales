@@ -540,14 +540,13 @@ public class City{
         for (int i = 0; i < borderTiles.Count; i++) {
             HexTile currTile = borderTiles[i];
             currTile.Borderize(this);
-            _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
         }
     }
+
     internal void UnPopulateBorderTiles() {
         for (int i = 0; i < borderTiles.Count; i++) {
             HexTile currTile = borderTiles[i];
             currTile.UnBorderize(this);
-            _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
         }
     }
     #endregion
@@ -1076,6 +1075,12 @@ public class City{
         newCity.AddTilesToCity(structureTilesToTransfer);
         newCity.CreateInitialFamilies(false);
         newCity.hexTile.CreateCityNamePlate(newCity);
+        for (int i = 0; i < conqueror.discoveredKingdoms.Count; i++) {
+            Kingdom otherKingdom = conqueror.discoveredKingdoms[i];
+            if (otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {
+                otherKingdom.SetFogOfWarStateForRegion(newCity.region, FOG_OF_WAR_STATE.SEEN);
+            }
+        }
 
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
@@ -1502,8 +1507,8 @@ public class City{
 	}
     internal void IncreaseBOPAttributesEveryMonth() {
 		if (!isDead && this.rebellion == null) {
-            int powerIncrease = _powerPoints * 2;
-            int defenseIncrease = _defensePoints * 4;
+            int powerIncrease = _powerPoints * 3;
+            int defenseIncrease = _defensePoints * 3;
             //Each City contributes a base +4 Happiness
 			int happinessIncrease = (_happinessPoints * 2) + this._bonusHappiness;
             int happinessDecrease = (structures.Count * 4);

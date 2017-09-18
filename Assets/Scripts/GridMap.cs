@@ -217,4 +217,13 @@ public class GridMap : MonoBehaviour {
         //    Debug.Log("Region " + i.ToString() + ": " + allRegions[i].specialResource.ToString());
         //}
     }
+
+    public void UpdateAllRegionsDiscoveredKingdoms() {
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            if(currRegion.occupant != null) {
+                currRegion.CheckForDiscoveredKingdoms();
+            }
+        }
+    }
 }

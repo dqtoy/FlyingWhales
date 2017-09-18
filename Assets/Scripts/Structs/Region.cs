@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Region {
+    private int id;
     private HexTile _centerOfMass;
     private List<HexTile> _tilesInRegion; //This also includes the center of mass
     private Color regionColor;
@@ -49,6 +50,7 @@ public class Region {
     #endregion
 
     public Region(HexTile centerOfMass) {
+        id = Utilities.SetID<Region>(this);
         SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
         AddTile(_centerOfMass);
@@ -137,8 +139,9 @@ public class Region {
     }
     internal void SetOccupant(City occupant) {
         _occupant = occupant;
+        _occupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.VISIBLE);
         _cityLevelCap = _naturalResourceLevel[occupant.kingdom.race];
-        SetAdjacentRegionsAsSeenForOccupant();
+        SetAdjacentRegionsAsVisibleForOccupant();
         Color solidKingdomColor = _occupant.kingdom.kingdomColor;
         solidKingdomColor.a = 255f / 255f;
         ReColorBorderTiles(solidKingdomColor);
@@ -150,6 +153,7 @@ public class Region {
     }
 
     internal void RemoveOccupant() {
+        _occupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.SEEN);
         ReColorBorderTiles(defaultBorderColor);
         _occupant = null;
         if (_specialResource != RESOURCE.NONE) {
@@ -157,15 +161,12 @@ public class Region {
         }
     }
 
-    private void SetAdjacentRegionsAsSeenForOccupant() {
+    private void SetAdjacentRegionsAsVisibleForOccupant() {
         for (int i = 0; i < _adjacentRegions.Count; i++) {
             Region currRegion = _adjacentRegions[i];
             if(currRegion._occupant == null || currRegion._occupant.kingdom != _occupant.kingdom) {
-                List<HexTile> tilesInCurrRegion = currRegion.tilesInRegion;
-                for (int j = 0; j < tilesInCurrRegion.Count; j++) {
-                    _occupant.kingdom.SetFogOfWarStateForTile(tilesInCurrRegion[j], FOG_OF_WAR_STATE.VISIBLE);
-                }
-            }            
+                _occupant.kingdom.SetFogOfWarStateForRegion(currRegion, FOG_OF_WAR_STATE.VISIBLE);
+            }
         }
     }
     private void ReColorBorderTiles(Color color) {
@@ -286,14 +287,33 @@ public class Region {
     #endregion
 
     #region Kingdom Discovery Functions
-    private void CheckForDiscoveredKingdoms() {
+    internal void CheckForDiscoveredKingdoms() {
+        //Check first level of adjacent regions
+        List<Region> adjacentRegionsOfOtherRegions = new List<Region>();
         for (int i = 0; i < _adjacentRegions.Count; i++) {
-            Region currRegion = _adjacentRegions[i];
-            if(currRegion.occupant != null) {
-                Kingdom otherKingdom = currRegion.occupant.kingdom;
-                if(otherKingdom != occupant.kingdom && !occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
+            Region adjacentRegion = _adjacentRegions[i];
+            if(adjacentRegion.occupant != null) {
+                Kingdom otherKingdom = adjacentRegion.occupant.kingdom;
+                if (otherKingdom != occupant.kingdom && !occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
                     KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
                     _occupant.kingdom.GetRelationshipWithKingdom(otherKingdom).ChangeAdjacency(true);
+                }
+                for (int j = 0; j < adjacentRegion.adjacentRegions.Count; j++) {
+                    Region otherAdjacentRegion = adjacentRegion.adjacentRegions[j];
+                    if (!_adjacentRegions.Contains(otherAdjacentRegion) && !adjacentRegionsOfOtherRegions.Contains(otherAdjacentRegion)) {
+                        adjacentRegionsOfOtherRegions.Add(otherAdjacentRegion);
+                    }
+                }
+            }
+        }
+
+        //When you discover another kingdom via adjacency, you also discover all other kingdoms it is adjacent to.
+        for (int i = 0; i < adjacentRegionsOfOtherRegions.Count; i++) {
+            Region otherAdjacentRegion = adjacentRegionsOfOtherRegions[i];
+            if (otherAdjacentRegion.occupant != null) {
+                Kingdom adjacentKingdomOfOtherKingdom = otherAdjacentRegion.occupant.kingdom;
+                if (adjacentKingdomOfOtherKingdom != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(adjacentKingdomOfOtherKingdom)) {
+                    KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, adjacentKingdomOfOtherKingdom);
                 }
             }
         }

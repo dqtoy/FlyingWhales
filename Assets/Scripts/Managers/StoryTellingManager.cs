@@ -65,7 +65,7 @@ public class StoryTellingManager : MonoBehaviour {
 			// otherwise, this means the kingdom already has an existing type and will just be changed based on the previous king	
 			switch (kingdom.kingdomType) {
 			case (KINGDOM_TYPE.BARBARIC_TRIBE):
-				if (kingdom.cities.Count > 4) {
+				if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq) {
 					if (randomizer < 60) {
 						return KingdomManager.Instance.kingdomTypeNoble;
 					} else {
@@ -75,7 +75,7 @@ public class StoryTellingManager : MonoBehaviour {
 				return KingdomManager.Instance.kingdomTypeBarbaric;
 
 			case (KINGDOM_TYPE.NAIVE_TRIBE):
-				if (kingdom.cities.Count >= 5) {
+				if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq) {
 					if (randomizer < 60) {
 						return KingdomManager.Instance.kingdomTypeMerchant;
 					} else {
@@ -85,7 +85,7 @@ public class StoryTellingManager : MonoBehaviour {
 				return KingdomManager.Instance.kingdomTypeNaive;
 
 			case (KINGDOM_TYPE.OPPORTUNISTIC_TRIBE):
-				if (kingdom.cities.Count > 4) {
+				if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq) {
 					if (randomizer < 50) {
 						return KingdomManager.Instance.kingdomTypeEvil;
 					} else {
@@ -95,61 +95,61 @@ public class StoryTellingManager : MonoBehaviour {
 				return KingdomManager.Instance.kingdomTypeOpportunistic;
 
 			case (KINGDOM_TYPE.NOBLE_KINGDOM):
-				if (kingdom.cities.Count <= 4) {
+				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
 					if (randomizer < 50) {
 						return KingdomManager.Instance.kingdomTypeBarbaric;
 					} else {
 						return KingdomManager.Instance.kingdomTypeNaive;
 					}
-				} else if (kingdom.cities.Count > 8) {
+				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
 					return KingdomManager.Instance.kingdomTypeRighteous;
 				}
 				return KingdomManager.Instance.kingdomTypeNoble;
 
 			case (KINGDOM_TYPE.EVIL_EMPIRE):
-				if (kingdom.cities.Count <= 4) {
+				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
 					if (randomizer < 50) {
 						return KingdomManager.Instance.kingdomTypeBarbaric;
 					} else {
 						return KingdomManager.Instance.kingdomTypeOpportunistic;
 					}
-				} else if (kingdom.cities.Count > 8) {
+				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
 					return KingdomManager.Instance.kingdomTypeWicked;
 				}
 				return KingdomManager.Instance.kingdomTypeEvil;
 
 			case (KINGDOM_TYPE.MERCHANT_NATION):
-				if (kingdom.cities.Count <= 4) {
+				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
 					if (randomizer < 50) {
 						return KingdomManager.Instance.kingdomTypeOpportunistic;
 					} else {
 						return KingdomManager.Instance.kingdomTypeNaive;
 					}
-				} else if (kingdom.cities.Count > 8) {
+				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
 					return KingdomManager.Instance.kingdomTypeRighteous;
 				}
 				return KingdomManager.Instance.kingdomTypeMerchant;
 
 			case (KINGDOM_TYPE.CHAOTIC_STATE):
-				if (kingdom.cities.Count <= 4) {
+				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
 					if (randomizer < 50) {
 						return KingdomManager.Instance.kingdomTypeOpportunistic;
 					} else {
 						return KingdomManager.Instance.kingdomTypeBarbaric;
 					}
-				} else if (kingdom.cities.Count > 8) {
+				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
 					return KingdomManager.Instance.kingdomTypeWicked;
 				}
 				return KingdomManager.Instance.kingdomTypeChaotic;
 
 			case (KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER):
-				if (kingdom.cities.Count <= 4) {
+				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
 					if (randomizer < 50) {
 						return KingdomManager.Instance.kingdomTypeNaive;
 					} else {
 						return KingdomManager.Instance.kingdomTypeBarbaric;
 					}
-				} else if (kingdom.cities.Count > 4 && kingdom.cities.Count <= 8) {
+				} else if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq && kingdom.cities.Count <= KingdomManager.Instance.mediumToLargeReq) {
 					if (randomizer < 50) {
 						return KingdomManager.Instance.kingdomTypeMerchant;
 					} else {
@@ -159,13 +159,13 @@ public class StoryTellingManager : MonoBehaviour {
 				return KingdomManager.Instance.kingdomTypeRighteous;
 
 			case (KINGDOM_TYPE.WICKED_SUPERPOWER):
-				if (kingdom.cities.Count <= 4) {
+				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
 					if (randomizer < 50) {
 						return KingdomManager.Instance.kingdomTypeOpportunistic;
 					} else {
 						return KingdomManager.Instance.kingdomTypeBarbaric;
 					}
-				} else if (kingdom.cities.Count > 4 && kingdom.cities.Count <= 8) {
+				} else if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq && kingdom.cities.Count <= KingdomManager.Instance.mediumToLargeReq) {
 					if (randomizer < 50) {
 						return KingdomManager.Instance.kingdomTypeEvil;
 					} else {
