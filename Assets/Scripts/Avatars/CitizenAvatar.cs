@@ -45,6 +45,7 @@ public class CitizenAvatar : PooledObject {
         this.roleType = citizenRole.ToString();
         this.citizenRole = citizenRole;
         this.direction = DIRECTION.LEFT;
+		this.citizenRole.location.EnterCitizen (this.citizenRole.citizen);
         this.smoothMovement.onMoveFinihed += OnMoveFinished;
         visibleTiles = new List<HexTile>();
         childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
@@ -58,8 +59,11 @@ public class CitizenAvatar : PooledObject {
         ResetValues();
         AddBehaviourTree();
 		UpdateUI ();
+		StartMoving ();
     }
-
+	internal void StartMoving(){
+		NewMove ();
+	}
     internal virtual void Move() {
         if (this.citizenRole.targetLocation != null) {
             if (this.citizenRole.path != null) {
@@ -72,13 +76,32 @@ public class CitizenAvatar : PooledObject {
             }
         }
     }
+	internal virtual void NewMove() {
+		if (this.citizenRole.targetLocation != null) {
+			if (this.citizenRole.path != null) {
+				if (this.citizenRole.path.Count > 0) {
+					this.citizenRole.location.ExitCitizen (this.citizenRole.citizen);
+					this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
+				}else{
+					CancelEventInvolvedIn ();
+				}
+			}
+		}
+	}
 
     internal virtual void OnMoveFinished() {
-        this.CollectEvents();
+		if(this.citizenRole.path.Count > 0){
+			this.citizenRole.location = this.citizenRole.path[0];
+			this.citizenRole.citizen.currentLocation = this.citizenRole.path[0];
+			this.citizenRole.path.RemoveAt(0);
+			this.citizenRole.location.EnterCitizen (this.citizenRole.citizen);
+		}
+
+		this.CollectEvents();
         //this.CheckForKingdomDiscovery();
         this.UpdateFogOfWar();
-        this.transform.SetParent(this.citizenRole.location.transform);
-        this.transform.localPosition = Vector3.zero;
+//        this.transform.SetParent(this.citizenRole.location.transform);
+//        this.transform.localPosition = Vector3.zero;
         if(this.citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
             if (!currAvatarState) {
                 SetAvatarState(true);
@@ -88,7 +111,14 @@ public class CitizenAvatar : PooledObject {
                 SetAvatarState(false);
             }
         }
-    }
+
+		HasArrivedAtTargetLocation ();
+		if(!this.hasArrived){
+			NewMove ();
+		}
+	}
+
+	internal virtual void HasArrivedAtTargetLocation(){}
 
 	public virtual void UpdateFogOfWar(bool forDeath = false) {
 		Kingdom kingdomOfAgent = this.citizenRole.citizen.city.kingdom;
@@ -214,8 +244,8 @@ public class CitizenAvatar : PooledObject {
     }
 
     internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
-        startTile.ExitCitizen(this.citizenRole.citizen);
-        targetTile.EnterCitizen(this.citizenRole.citizen);
+//        startTile.ExitCitizen(this.citizenRole.citizen);
+//        targetTile.EnterCitizen(this.citizenRole.citizen);
 
         if (startTile.transform.position.x <= targetTile.transform.position.x) {
             if (this.animator.gameObject.transform.localScale.x > 0) {

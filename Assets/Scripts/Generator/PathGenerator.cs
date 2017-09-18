@@ -173,21 +173,8 @@ public class PathGenerator : MonoBehaviour {
 			habitableTiles = CityGenerator.Instance.woodHabitableTiles;
 		}
 
-		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
-//			startingTile.isRoad = true;
-//			destinationTile.isRoad = true;
-			for (int i = 0; i < habitableTiles.Count; i++) {
-				habitableTiles [i].isRoad = true;
-			}
-		}
 		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom);
-		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
-//			startingTile.isRoad = false;
-//			destinationTile.isRoad = false;
-			for (int i = 0; i < habitableTiles.Count; i++) {
-				habitableTiles [i].isRoad = false;
-			}
-		}
+
 
 		if (path != null) {
 			if (pathfindingMode == PATHFINDING_MODE.COMBAT) {

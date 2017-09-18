@@ -1472,7 +1472,7 @@ public class City{
             int defenseIncrease = _defensePoints * 4;
             //Each City contributes a base +4 Happiness
 			int happinessIncrease = (_happinessPoints * 2) + this._bonusHappiness;
-            int happinessDecrease = (structures.Count * 3);
+            int happinessDecrease = (structures.Count * 4);
 			MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref happinessIncrease);
             if (_kingdom.isMilitarize) {
                 //During militarize, all Points spent on Happiness are instead spent on Power, but keep decrease in happiness.

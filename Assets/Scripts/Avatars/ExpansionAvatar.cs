@@ -22,7 +22,6 @@ public class ExpansionAvatar : CitizenAvatar {
 //			Task.current.Fail();
 //		}
 //	}
-
 	[Task]
 	public void HasArrivedAtTargetHextile() {
 		if (this.citizenRole.location == this.citizenRole.targetLocation) {
@@ -91,4 +90,40 @@ public class ExpansionAvatar : CitizenAvatar {
 		}
 	}
 	#endregion
+
+	internal override void NewMove (){
+		if (this.citizenRole.targetLocation != null) {
+			if(this.citizenRole.targetLocation.isOccupied){
+				HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(this.citizenRole.citizen.city.kingdom);
+				if(hexTileToExpandTo != null){
+					List<HexTile> newPath = PathGenerator.Instance.GetPath (this.citizenRole.location, hexTileToExpandTo, PATHFINDING_MODE.AVATAR);
+					if(newPath != null){
+						this.citizenRole.path = newPath;
+						this.citizenRole.targetLocation = hexTileToExpandTo;
+						((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;
+					}else{
+						CancelEventInvolvedIn ();
+						return;
+					}
+				}else{
+					CancelEventInvolvedIn ();
+					return;
+				}
+			}
+			if (this.citizenRole.path != null) {
+				if (this.citizenRole.path.Count > 0) {
+					this.citizenRole.location.ExitCitizen (this.citizenRole.citizen);
+					this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
+				}
+			}
+		}
+	}
+	internal override void HasArrivedAtTargetLocation (){
+		if (this.citizenRole.location == this.citizenRole.targetLocation) {
+			if (!this.hasArrived) {
+				SetHasArrivedState(true);
+				EndAttack ();
+			}
+		}
+	}
 }
