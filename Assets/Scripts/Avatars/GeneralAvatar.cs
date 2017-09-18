@@ -12,6 +12,7 @@ public class GeneralAvatar : CitizenAvatar {
 	internal override void Init (Role citizenRole){
 		base.Init (citizenRole);
 		this.kingdomIndicator.color = this.citizenRole.citizen.city.kingdom.kingdomColor;
+		StartMoving ();
 	}
 	internal override void Move(){
 		if(this.citizenRole.targetLocation != null){
