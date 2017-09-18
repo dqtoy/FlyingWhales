@@ -152,13 +152,13 @@ public class Kingdom{
 		get { return this._mainThreat; }
 	}
     public int prestige {
-        get { return _prestige; }
+        get { return Mathf.Min( _prestige + bonusPrestige, KingdomManager.Instance.maxPrestige); }
     }
     public int disloyaltyFromPrestige {
         get { return _disloyaltyFromPrestige; }
     }
     public int cityCap {
-        get { return Mathf.FloorToInt(_prestige / 100); }
+        get { return Mathf.FloorToInt(prestige / 100); }
     }
 	public Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
@@ -907,12 +907,14 @@ public class Kingdom{
     #region Prestige
     internal void AdjustPrestige(int adjustment) {
         _prestige += adjustment;
+        _prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
 		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void SetPrestige(int adjustment) {
         _prestige = adjustment;
-		CheckIfKingdomLacksPrestige();
+        _prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
+        CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
 	internal void AdjustBonusPrestige(int amount){
@@ -938,7 +940,6 @@ public class Kingdom{
                 }
             }
         }
-
 
         //Reschedule event
         GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
