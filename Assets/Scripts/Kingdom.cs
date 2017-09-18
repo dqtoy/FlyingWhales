@@ -438,6 +438,7 @@ public class Kingdom{
 
 			//Update Relationship Opinion
 			UpdateAllRelationshipsLikeness();
+			UpdateAllRelationshipsLikenessFromOthers ();
         }
 
 //		UpdateCombatStats();
@@ -721,12 +722,19 @@ public class Kingdom{
     }
     internal void UpdateAllRelationshipsLikeness() {
         if (this.king != null) {
-            for (int i = 0; i < relationships.Count; i++) {
-                KingdomRelationship rel = relationships.ElementAt(i).Value;
-                rel.UpdateLikeness(null);
-            }
+			foreach (KingdomRelationship relationship in relationships.Values) {
+				relationship.UpdateLikeness(null);
+			}
         }
     }
+	internal void UpdateAllRelationshipsLikenessFromOthers() {
+		if (this.king != null) {
+			foreach (KingdomRelationship relationship in relationships.Values) {
+				KingdomRelationship relationshipFromOther = relationship.targetKingdom.GetRelationshipWithKingdom(this);
+				relationshipFromOther.UpdateLikeness (null);
+			}
+		}
+	}
     #endregion
 
     private void CancelInvasionPlan(KingdomRelationship relationship) {

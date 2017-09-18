@@ -224,11 +224,11 @@ public class KingdomRelationship {
 
 
         //At War
-		if (this.isAtWar) {
-			adjustment = -30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + "   at war.\n";
-		}
+//		if (this.isAtWar) {
+//			adjustment = -30;
+//			baseLoyalty += adjustment;
+//			this._relationshipSummary += adjustment.ToString() + "   at war.\n";
+//		}
 
         //Race
         if (_sourceKingdom.race != _targetKingdom.race && !sourceKingValues.Contains(CHARACTER_VALUE.EQUALITY)) {
