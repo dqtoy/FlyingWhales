@@ -124,10 +124,12 @@ public class CityItem : MonoBehaviour {
     public void SetPower() {
         _city.SetPower(System.Int32.Parse(newPowerLbl.text));
         _city.hexTile.UpdateCityNamePlate();
+        this._powerLbl.text = city.power.ToString();
     }
     public void SetDefense() {
         _city.SetDefense(System.Int32.Parse(newDefLabel.text));
         _city.hexTile.UpdateCityNamePlate();
+        this._defenseLbl.text = city.defense.ToString();
     }
     public void SetGovernorLoyaltyAdjustment() {
         ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier = System.Int32.Parse(loyaltyAdjustmentLbl.text);
