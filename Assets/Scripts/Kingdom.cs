@@ -98,6 +98,7 @@ public class Kingdom{
 	[NonSerialized] private List<Kingdom> _militaryAlliances;
     [NonSerialized] private List<Kingdom> _mutualDefenseTreaties;
     [NonSerialized] private List<Kingdom> _adjacentKingdoms;
+//	[NonSerialized] private List<Kingdom> _allianceKingdoms;
 	private GameDate _currentDefenseTreatyRejectionDate;
 	private GameDate _currentMilitaryAllianceRejectionDate;
 	private List<Wars> _mobilizationQueue;
@@ -132,6 +133,12 @@ public class Kingdom{
 	private List<Citizen> orderedFemaleRoyalties;
 	private List<Citizen> orderedBrotherRoyalties;
 	private List<Citizen> orderedSisterRoyalties;
+
+	//Kingdom Threat
+	private int _warmongerValue;
+
+	//Alliance
+	private AlliancePool _alliancePool;
 
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
@@ -271,12 +278,13 @@ public class Kingdom{
 	}
 	public int effectivePower{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
-		get { return this._basePower + (int)(this._militaryAlliancePower / 2);}
-
+//		get { return this._basePower + (int)(this._militaryAlliancePower / 2);}
+		get { return this._basePower + (int)(GetPosAlliancePower() / 2);}
 	}
 	public int effectiveDefense{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 3) + this._baseDefense + (int)(GetMutualDefenseTreatyPower() / 3);}
-		get { return this._basePower + (int)(this._militaryAlliancePower / 3) + this._baseDefense + (int)(this._mutualDefenseTreatyPower / 3);}
+//		get { return this._basePower + (int)(this._militaryAlliancePower / 3) + this._baseDefense + (int)(this._mutualDefenseTreatyPower / 3);}
+		get { return this._baseDefense + (int)(GetPosAllianceDefense() / 2);}
 	}
 	public int militaryAlliancePower{
 		get { return this._militaryAlliancePower;}
@@ -294,6 +302,9 @@ public class Kingdom{
         //get { return _adjacentKingdoms;}
         get { return relationships.Where(x => x.Value.isAdjacent).Select(x => x.Value.targetKingdom).ToList(); }//TODO: Optimize this!
     }
+//	public List<Kingdom> allianceKingdoms{
+//		get { return this._allianceKingdoms;}
+//	}
 	public bool isMobilizing{
 		get { return this._isMobilizing;}
 	}
@@ -311,6 +322,12 @@ public class Kingdom{
 	}
 	public int actionDay{
 		get { return this._actionDay;}
+	}
+	public int warmongerValue{
+		get { return this._warmongerValue;}
+	}
+	public AlliancePool alliancePool{
+		get { return this._alliancePool;}
 	}
     #endregion
 
@@ -389,6 +406,7 @@ public class Kingdom{
 		this.UpdateTechCapacity ();
 		this.SetSecession (false);
 		this.SetRiot (false);
+		this.SetWarmongerValue (25);
 //		this.NewRandomCrimeDate (true);
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -411,7 +429,7 @@ public class Kingdom{
 		//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
-
+		SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
         //		ScheduleEvents ();
         ScheduleOddDayActions();
         ScheduleActionDay();
@@ -1677,17 +1695,26 @@ public class Kingdom{
 	}
 	#endregion
 
-	internal bool HasWar(){
+	internal bool HasWar(Kingdom exceptionKingdom = null){
 //		for(int i = 0; i < relationships.Count; i++){
 //			if(relationships.ElementAt(i).Value.isAtWar){
 //				return true;
 //			}
 //		}
-		foreach (KingdomRelationship relationship in relationships.Values) {
-			if (relationship.isAtWar) {
-				return true;
+		if(exceptionKingdom == null){
+			foreach (KingdomRelationship relationship in relationships.Values) {
+				if (relationship.isAtWar) {
+					return true;
+				}
+			}
+		}else{
+			foreach (KingdomRelationship relationship in relationships.Values) {
+				if (relationship.isAtWar && exceptionKingdom.id != relationship.targetKingdom.id) {
+					return true;
+				}
 			}
 		}
+
 		return false;
 	}
 
@@ -2091,49 +2118,10 @@ public class Kingdom{
 	}
 	private void ActionDay(){
 		if(!this.isDead){
-			this._mainThreat = GetMainThreat ();
-			if(this._mainThreat != null){
-				//has main threat
-				if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
-					SeeksBalance ();
-				}else if (this.kingdomTypeData.purpose == PURPOSE.BANDWAGON) {
-					SeeksBandwagon ();
-				}else if (this.kingdomTypeData.purpose == PURPOSE.BUCKPASS) {
-					SeeksBuckpass ();
-				}else if (this.kingdomTypeData.purpose == PURPOSE.SUPERIORITY) {
-					SeeksSuperiority ();
-				}
-			}else{
-				//no main threat
-				if(!HasWar() && this.adjacentKingdoms.Count > 0){
-					Kingdom currentPossibleTarget = null;
-					KingdomRelationship currentPossibleTargetRelationship = null;
-					int thisEffectivePower = this.effectivePower;
-					for (int i = 0; i < this.adjacentKingdoms.Count; i++) {
-						Kingdom targetKingdom = this.adjacentKingdoms [i];
-						KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
-						if(relationship.totalLike < 0){
-							int buffedEffectiveDefense = (int)(targetKingdom.effectiveDefense * 1.30f);
-							if(thisEffectivePower > buffedEffectiveDefense){
-								if(currentPossibleTarget != null){
-									if (relationship.totalLike < currentPossibleTargetRelationship.totalLike) {
-										currentPossibleTarget = targetKingdom;
-										currentPossibleTargetRelationship = relationship;
-									}
-								}else{
-									currentPossibleTarget = targetKingdom;
-									currentPossibleTargetRelationship = relationship;
-								}
-							}
-						}
-					}
-					if(currentPossibleTarget != null){
-						//Initiate War Event
-						if(!currentPossibleTargetRelationship.isAtWar){
-							EventCreator.Instance.CreateWarEvent(this, currentPossibleTarget);
-						}
-					}
-				}
+			UpdateThreatLevels ();
+			UpdateInvasionValues ();
+			if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
+				SeeksBalance ();
 			}
 
 			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
@@ -2142,6 +2130,60 @@ public class Kingdom{
 
 		}
 	}
+
+//	private void ActionDay(){
+//		if(!this.isDead){
+//			this._mainThreat = GetMainThreat ();
+//			if(this._mainThreat != null){
+//				//has main threat
+//				if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
+//					SeeksBalance ();
+//				}else if (this.kingdomTypeData.purpose == PURPOSE.BANDWAGON) {
+//					SeeksBandwagon ();
+//				}else if (this.kingdomTypeData.purpose == PURPOSE.BUCKPASS) {
+//					SeeksBuckpass ();
+//				}else if (this.kingdomTypeData.purpose == PURPOSE.SUPERIORITY) {
+//					SeeksSuperiority ();
+//				}
+//			}else{
+//				//no main threat
+//				if(!HasWar() && this.adjacentKingdoms.Count > 0){
+//					Kingdom currentPossibleTarget = null;
+//					KingdomRelationship currentPossibleTargetRelationship = null;
+//					int thisEffectivePower = this.effectivePower;
+//					for (int i = 0; i < this.adjacentKingdoms.Count; i++) {
+//						Kingdom targetKingdom = this.adjacentKingdoms [i];
+//						KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
+//						if(relationship.totalLike < 0){
+//							int buffedEffectiveDefense = (int)(targetKingdom.effectiveDefense * 1.30f);
+//							if(thisEffectivePower > buffedEffectiveDefense){
+//								if(currentPossibleTarget != null){
+//									if (relationship.totalLike < currentPossibleTargetRelationship.totalLike) {
+//										currentPossibleTarget = targetKingdom;
+//										currentPossibleTargetRelationship = relationship;
+//									}
+//								}else{
+//									currentPossibleTarget = targetKingdom;
+//									currentPossibleTargetRelationship = relationship;
+//								}
+//							}
+//						}
+//					}
+//					if(currentPossibleTarget != null){
+//						//Initiate War Event
+//						if(!currentPossibleTargetRelationship.isAtWar){
+//							EventCreator.Instance.CreateWarEvent(this, currentPossibleTarget);
+//						}
+//					}
+//				}
+//			}
+//
+//			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+//			gameDate.AddMonths (1);
+//			SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => ActionDay ());
+//
+//		}
+//	}
 	private Kingdom GetMainThreat(){
 		Kingdom currentThreat = null;
 		for (int i = 0; i < this.discoveredKingdoms.Count; i++) {
@@ -2165,60 +2207,91 @@ public class Kingdom{
         }
 		return currentThreat;
 	}
+//	private void SeeksBalance(){
+//		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
+//		if(!relationship.isMilitaryAlliance){
+//			Kingdom currentPossibleAlly = null;
+//			KingdomRelationship currentPossibleAllyRelationship = null;
+//			bool canBeAlly = false;
+//            List<Kingdom> possibleAllies = new List<Kingdom>(discoveredKingdoms);
+//            possibleAllies.Remove(_mainThreat);
+//			for (int i = 0; i < possibleAllies.Count; i++) {
+//				Kingdom targetKingdom = possibleAllies[i];
+//				KingdomRelationship kingdomRelationship = GetRelationshipWithKingdom (targetKingdom);
+//				KingdomRelationship mainThreatKingdomRelationship = this._mainThreat.GetRelationshipWithKingdom (targetKingdom);
+//
+//				canBeAlly = false;
+//
+//				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && 
+//                    !kingdomRelationship.isMutualDefenseTreaty && kingdomRelationship.currentActiveDefenseTreatyOffer == null){
+//					GameDate gameDate = targetKingdom._currentDefenseTreatyRejectionDate;
+//					if(gameDate.year != 0){
+//						gameDate.AddMonths (3);
+//						if(GameManager.Instance.year > gameDate.year){
+//							canBeAlly = true;
+//						}else if(GameManager.Instance.year == gameDate.year){
+//							if(GameManager.Instance.month > gameDate.month){
+//								canBeAlly = true;
+//							}
+//						}
+//					}else{
+//						canBeAlly = true;
+//					}
+//
+//					if(canBeAlly){
+//						if(currentPossibleAlly != null){
+//							if(kingdomRelationship.totalLike > currentPossibleAllyRelationship.totalLike){
+//								currentPossibleAlly = targetKingdom;
+//								currentPossibleAllyRelationship = kingdomRelationship;
+//							}
+//						}else{
+//							currentPossibleAlly = targetKingdom;
+//							currentPossibleAllyRelationship = kingdomRelationship;
+//						}
+//					}
+//				}
+//			}
+//
+//			if(currentPossibleAlly != null){
+//				//Send Defense Treaty Offer
+//				EventCreator.Instance.CreateMutualDefenseTreatyEvent(this, currentPossibleAlly);
+//			}else{
+//				Militarize (true);
+//			}
+//		}else{
+//			relationship.ChangeMilitaryAlliance (false);
+//		}
+//	}
+
 	private void SeeksBalance(){
-		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
-		if(!relationship.isMilitaryAlliance){
-			Kingdom currentPossibleAlly = null;
-			KingdomRelationship currentPossibleAllyRelationship = null;
-			bool canBeAlly = false;
-            List<Kingdom> possibleAllies = new List<Kingdom>(discoveredKingdoms);
-            possibleAllies.Remove(_mainThreat);
-			for (int i = 0; i < possibleAllies.Count; i++) {
-				Kingdom targetKingdom = possibleAllies[i];
-				KingdomRelationship kingdomRelationship = GetRelationshipWithKingdom (targetKingdom);
-				KingdomRelationship mainThreatKingdomRelationship = this._mainThreat.GetRelationshipWithKingdom (targetKingdom);
+//		bool mustSeekAlliance = false;
+//
+//		//break any alliances with anyone whose threat value is 100 or above and lose 50 Prestige
+//		foreach (KingdomRelationship relationship in this.relationships.Values) {
+//			if(relationship.targetKingdomThreatLevel >= 100f){
+//				relationship.ChangeAllianceState (false);
+//				AdjustPrestige (-50);
+//			}
+//			if(!mustSeekAlliance){
+//				if(relationship.targetKingdomThreatLevel >= 50f && !relationship.isAlly){
+//					mustSeekAlliance = true;
+//				}
+//			}
+//
+//		}
+//		if(mustSeekAlliance){
+//			SeekAlliances ();
+//			if(this.happiness > -50){
+//				Militarize (true);
+//			}else{
+//				int chance = UnityEngine.Random.Range (0, 100);
+//				if(chance < 25){
+//					Militarize (true);
+//				}
+//			}
+//		}
 
-				canBeAlly = false;
 
-				if((kingdomRelationship.isAdjacent || mainThreatKingdomRelationship.isAdjacent) && kingdomRelationship.totalLike >= 0 && 
-                    !kingdomRelationship.isMutualDefenseTreaty && kingdomRelationship.currentActiveDefenseTreatyOffer == null){
-					GameDate gameDate = targetKingdom._currentDefenseTreatyRejectionDate;
-					if(gameDate.year != 0){
-						gameDate.AddMonths (3);
-						if(GameManager.Instance.year > gameDate.year){
-							canBeAlly = true;
-						}else if(GameManager.Instance.year == gameDate.year){
-							if(GameManager.Instance.month > gameDate.month){
-								canBeAlly = true;
-							}
-						}
-					}else{
-						canBeAlly = true;
-					}
-
-					if(canBeAlly){
-						if(currentPossibleAlly != null){
-							if(kingdomRelationship.totalLike > currentPossibleAllyRelationship.totalLike){
-								currentPossibleAlly = targetKingdom;
-								currentPossibleAllyRelationship = kingdomRelationship;
-							}
-						}else{
-							currentPossibleAlly = targetKingdom;
-							currentPossibleAllyRelationship = kingdomRelationship;
-						}
-					}
-				}
-			}
-
-			if(currentPossibleAlly != null){
-				//Send Defense Treaty Offer
-				EventCreator.Instance.CreateMutualDefenseTreatyEvent(this, currentPossibleAlly);
-			}else{
-				Militarize (true);
-			}
-		}else{
-			relationship.ChangeMilitaryAlliance (false);
-		}
 	}
 	private void SeeksBandwagon(){
 		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
@@ -2332,12 +2405,12 @@ public class Kingdom{
 	internal void AdjustBasePower(int adjustment) {
         _basePower += adjustment;
         _basePower = Mathf.Max(_basePower, 0);
-	    UpdateOtherMilitaryAlliancePower (adjustment);
+//	    UpdateOtherMilitaryAlliancePower (adjustment);
     }
 	internal void AdjustBaseDefense(int adjustment) {
     	_baseDefense += adjustment;
         _baseDefense = Mathf.Max(_baseDefense, 0);
-	    UpdateOtherMutualDefenseTreatyPower (adjustment);
+//	    UpdateOtherMutualDefenseTreatyPower (adjustment);
 	}
 	internal void AdjustHappiness(int amountToAdjust) {
     	this._happiness += amountToAdjust;
@@ -2404,6 +2477,15 @@ public class Kingdom{
 	internal void RemoveAdjacentKingdom(Kingdom kingdom){
 		this._adjacentKingdoms.Remove(kingdom);
 	}
+//	internal void AddAllianceKingdom(Kingdom kingdom){
+//		if (!this._allianceKingdoms.Contains(kingdom)) {
+//			this._allianceKingdoms.Add(kingdom);
+//		}
+//
+//	}
+//	internal void RemoveAllianceKingdom(Kingdom kingdom){
+//		this._allianceKingdoms.Remove(kingdom);
+//	}
 	internal bool IsMilitaryAlliance(Kingdom kingdom){
 		for (int i = 0; i < this._militaryAlliances.Count; i++) {
 			if (this._militaryAlliances[i].id == kingdom.id) {
@@ -2533,5 +2615,73 @@ public class Kingdom{
 		for (int i = 0; i < this.cities.Count; i++) {
 			this.cities[i].AdjustPowerPoints(amount);
 		}
+	}
+
+	internal void AdjustWarmongerValue(int amount){
+		this._warmongerValue += amount;
+		this._warmongerValue = Mathf.Clamp(this._warmongerValue, 0, 100);
+	}
+
+	internal void SetWarmongerValue(int amount){
+		this._warmongerValue = amount;
+	}
+
+	internal void WarmongerDecreasePerYear(){
+		if(!this.isDead){
+			if (!HasWar ()) {
+				AdjustWarmongerValue (-5);
+			}
+			SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
+		}
+	}
+	internal void UpdateThreatLevels(){
+		foreach (KingdomRelationship relationship in this.relationships.Values) {
+			relationship.UpdateTargetKingdomThreatLevel ();
+		}
+	}
+	internal void UpdateInvasionValues(){
+		foreach (KingdomRelationship relationship in this.relationships.Values) {
+			relationship.UpdateTargetInvasionValue ();
+		}
+	}
+
+	internal void SeekAlliances(){
+		List<KingdomRelationship> kingdomRelationships = this.relationships.Values.OrderByDescending(x => x.totalLike).ToList ();
+		for (int i = 0; i < kingdomRelationships.Count; i++) {
+			KingdomRelationship kr = kingdomRelationships [i];
+//			if(!kr.isAlly){
+//				KingdomRelationship kingdomRelationshipFrom = kr.targetKingdom.GetRelationshipWithKingdom (this);
+//				if (kingdomRelationshipFrom.totalLike >= 1) {
+//					kr.ChangeAllianceState (true);
+//				}
+//			}
+		}
+	}
+	internal void SetAlliancePool(AlliancePool alliancePool){
+		this._alliancePool = alliancePool;
+	}
+	private int GetPosAlliancePower(){
+		int posAlliancePower = 0;
+		foreach (KingdomRelationship relationship in this.relationships.Values) {
+//			if(relationship.isAlly){
+				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
+				if(relationshipFrom.totalLike >= 35){
+					posAlliancePower += relationship.targetKingdom.basePower;
+				}
+//			}
+		}
+		return posAlliancePower;
+	}
+	private int GetPosAllianceDefense(){
+		int posAllianceDefense = 0;
+		foreach (KingdomRelationship relationship in this.relationships.Values) {
+//			if(relationship.isAlly){
+				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
+				if(relationshipFrom.totalLike >= 35){
+					posAllianceDefense += relationship.targetKingdom.baseDefense;
+				}
+//			}
+		}
+		return posAllianceDefense;
 	}
 }

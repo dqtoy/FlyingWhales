@@ -32,10 +32,17 @@ public class KingdomRelationship {
 
 	private bool _isMilitaryAlliance;
 	private bool _isMutualDefenseTreaty;
+//	private bool _isAlly;
+
 	private Dictionary<EVENT_TYPES, bool> _eventBuffs;
 
 	private GameDate _currentExpirationDefenseTreaty;
 	private GameDate _currentExpirationMilitaryAlliance;
+
+	//Kingdom Threat
+	private float _racePercentageModifier;
+	private float _targetKingdomThreatLevel;
+	private float _targetKingdomInvasionValue;
 
     #region getters/setters
     public Kingdom sourceKingdom {
@@ -109,6 +116,9 @@ public class KingdomRelationship {
 	public bool isMutualDefenseTreaty {
 		get { return this._isMutualDefenseTreaty; }
 	}
+//	public bool isAlly {
+//		get { return this._isAlly; }
+//	}
 	public bool isAdjacent {
         //get { return this._isAdjacent; }
         get {
@@ -117,6 +127,16 @@ public class KingdomRelationship {
 	}
 	public Dictionary<EVENT_TYPES, bool> eventBuffs {
 		get { return this._eventBuffs; }
+	}
+	public float targetKingdomThreatLevel{
+		get {
+			return this._targetKingdomThreatLevel;
+		}
+	}
+	public float targetKingdomInvasionValue{
+		get {
+			return this._targetKingdomInvasionValue;
+		}
 	}
     #endregion
 
@@ -147,6 +167,8 @@ public class KingdomRelationship {
 			{EVENT_TYPES.TRIBUTE, false},
 			{EVENT_TYPES.INSTIGATION, false},
 		};
+
+		SetRaceThreatModifier ();
         //UpdateLikeness(null);
     }
 
@@ -219,7 +241,7 @@ public class KingdomRelationship {
             if (adjustment >= 0) {
                 this._relationshipSummary += "+";
             }
-            this._relationshipSummary += adjustment.ToString() + "   kingdom type.\n";
+            this._relationshipSummary += adjustment.ToString() + " kingdom type.\n";
         }
 
 
@@ -234,14 +256,14 @@ public class KingdomRelationship {
         if (_sourceKingdom.race != _targetKingdom.race && !sourceKingValues.Contains(CHARACTER_VALUE.EQUALITY)) {
             adjustment = -15;
             baseLoyalty += adjustment;
-            this._relationshipSummary += adjustment.ToString() + "   different race.\n";
+            this._relationshipSummary += adjustment.ToString() + " different race.\n";
         }
 
         //Sharing Border
 		if (this.isSharingBorder) {
             adjustment = -15;
             baseLoyalty += adjustment;
-            this._relationshipSummary += adjustment.ToString() + "   shared borders.\n";
+            this._relationshipSummary += adjustment.ToString() + " shared borders.\n";
         }
 
         //Values
@@ -249,32 +271,46 @@ public class KingdomRelationship {
         if (valuesInCommonExceptInfluence.Count == 1) {
             adjustment = 5;
             baseLoyalty += adjustment;
-            this._relationshipSummary += "+" + adjustment.ToString() + "   shared values.\n";
+            this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
         } else if (valuesInCommonExceptInfluence.Count == 2) {
             adjustment = 15;
             baseLoyalty += adjustment;
-            this._relationshipSummary += "+" + adjustment.ToString() + "   shared values.\n";
+            this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
         } else if (valuesInCommonExceptInfluence.Count >= 3) {
             adjustment = 30;
             baseLoyalty += adjustment;
-            this._relationshipSummary += "+" + adjustment.ToString() + "   shared values.\n";
+            this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
         } else {
             adjustment = -15;
             baseLoyalty += adjustment;
-            this._relationshipSummary += adjustment.ToString() + "   no shared values.\n";
+            this._relationshipSummary += adjustment.ToString() + " no shared values.\n";
         }
 
         if (sourceKingValues.Contains(CHARACTER_VALUE.PEACE)) {
             adjustment = 15;
             baseLoyalty += adjustment;
-            this._relationshipSummary += "+" + adjustment.ToString() + "   values peace.\n";
+            this._relationshipSummary += "+" + adjustment.ToString() + " values peace.\n";
         }
 
         if (sourceKingValues.Contains(CHARACTER_VALUE.DOMINATION)) {
             adjustment = -15;
             baseLoyalty += adjustment;
-            this._relationshipSummary += adjustment.ToString() + "   values domination.\n";
+            this._relationshipSummary += adjustment.ToString() + " values domination.\n";
         }
+
+		if(this._targetKingdomThreatLevel == 0){
+			adjustment = 25;
+		}else if(this._targetKingdomThreatLevel >= 1 && this._targetKingdomThreatLevel < 20){
+			adjustment = 0;
+		}else if(this._targetKingdomThreatLevel >= 20 && this._targetKingdomThreatLevel < 50){
+			adjustment = -25;
+		}else if(this._targetKingdomThreatLevel >= 50 && this._targetKingdomThreatLevel < 100){
+			adjustment = -50;
+		}else{
+			adjustment = -100;
+		}
+		baseLoyalty += adjustment;
+		this._relationshipSummary += adjustment.ToString() + " kingdom threat.\n";
 
 //		//Lacks Prestige
 //		if(this.targetKingdom.doesLackPrestige){
@@ -514,7 +550,6 @@ public class KingdomRelationship {
 			}
 		}
 	}
-
     /*
      * <summary>
      * Reset all Event Modifiers for this relationship
@@ -719,6 +754,102 @@ public class KingdomRelationship {
 		bool isSourceWillingToRenew = this._sourceKingdom.RenewMilitaryAllianceWith (this._targetKingdom, this);
 		if(isSourceWillingToRenew){
 			ChangeMilitaryAlliance (true);
+		}
+	}
+
+	private void SetRaceThreatModifier(){
+		if(this._sourceKingdom.race != this._targetKingdom.race){
+			this._racePercentageModifier = 1.15f;
+		}else{
+			this._racePercentageModifier = 1f;
+		}
+	}
+
+//	internal void ChangeAllianceState(bool state){
+//		AdjustAllianceState (state);
+//		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+//		kr.AdjustAllianceState (state);
+//	}
+//	private void AdjustAllianceState(bool state){
+//		if(this._isAlly != state){
+//			this._isAlly = state;
+//			if(state){
+//				this._sourceKingdom.AddAllianceKingdom (this._targetKingdom);
+//			}else{
+//				this._sourceKingdom.RemoveAllianceKingdom (this._targetKingdom);
+//			}
+//		}
+//	}
+	internal void UpdateTargetKingdomThreatLevel(){
+
+		//+1 for every percentage point of effective power above my effective defense (max 100)
+		float threatLevel = this._targetKingdom.effectivePower - this._sourceKingdom.effectiveDefense;
+		threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
+
+		//if different race: +15%
+		threatLevel *= this._racePercentageModifier;
+
+		//if currently at war with someone else: -50%
+		if(this._sourceKingdom.HasWar(this._targetKingdom)){
+			threatLevel -= (threatLevel * 0.5f);
+		}
+
+		//if not at war but militarizing
+		if(!this._isAtWar && this._targetKingdom.isMilitarize){
+			threatLevel *= 1.25f;
+		}
+
+		//warmongering
+		if(this._targetKingdom.warmongerValue < 25){
+			threatLevel -= (threatLevel * 0.15f);
+		}else if(this._targetKingdom.warmongerValue >= 25 && this._targetKingdom.warmongerValue < 50){
+			threatLevel *= 1.05f;
+		}else if(this._targetKingdom.warmongerValue >= 50 && this._targetKingdom.warmongerValue < 75){
+			threatLevel *= 1.25f;
+		}else{
+			threatLevel *= 1.5f;
+		}
+
+		//adjacency
+		if(this._isAdjacent){
+			threatLevel *= 1.5f;
+		}
+
+		//cannot expand due to lack of prestige
+		if(this._targetKingdom.doesLackPrestige){
+			threatLevel -= (threatLevel * 0.5f);
+		}
+
+		this._targetKingdomThreatLevel = threatLevel;
+		if(this._targetKingdomThreatLevel < 0){
+			this._targetKingdomThreatLevel = 0;
+		}
+		UpdateLikeness (null);
+	}
+
+	internal void UpdateTargetInvasionValue(){
+		float invasionValue = 0;
+
+		//check if ally or adjacent
+		if (!this.isAdjacent){ //&& !this.isAlly
+			//+1 for every percentage point of my effective power above his effective defense (no max cap)
+			invasionValue = this._sourceKingdom.effectivePower - this._targetKingdom.effectiveDefense;
+			if(invasionValue < 0){
+				invasionValue = 0;
+			}
+
+			//+-% for every point of Opinion towards target
+			invasionValue += (this.totalLike * invasionValue);
+
+			//if target is currently at war with someone else
+			if(this._targetKingdom.HasWar(this._sourceKingdom)){
+				invasionValue *= 1.25f;
+			}
+		}
+
+		this._targetKingdomInvasionValue = invasionValue;
+		if(this._targetKingdomInvasionValue < 0){
+			this._targetKingdomInvasionValue = 0;
 		}
 	}
 }

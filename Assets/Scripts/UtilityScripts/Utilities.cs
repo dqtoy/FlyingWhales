@@ -17,6 +17,7 @@ public class Utilities : MonoBehaviour {
 	public static int lastCampaignID = 0;
 	public static int lastEventID = 0;
 	public static int lastKingdomColorIndex = 0;
+	public static int lastAlliancePoolID = 0;
 	public static int defaultCampaignExpiration = 8;
 	public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;

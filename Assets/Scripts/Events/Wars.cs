@@ -308,9 +308,10 @@ public class Wars : GameEvent {
 			this._isAtWar = true;
 			KingdomManager.Instance.DeclareWarBetweenKingdoms (this);
 			this.isInitialAttack = true;
-			MilitaryAlliancesMustJoin (this._kingdom1, this._kingdom2);
-			MilitaryAlliancesMustJoin (this._kingdom2, this._kingdom1);
-			MutualDefenseTreatyMustJoin (this._kingdom2, this._kingdom1);
+			this._kingdom1.AdjustWarmongerValue (25);
+//			MilitaryAlliancesMustJoin (this._kingdom1, this._kingdom2);
+//			MilitaryAlliancesMustJoin (this._kingdom2, this._kingdom1);
+//			MutualDefenseTreatyMustJoin (this._kingdom2, this._kingdom1);
 		}
 		AttackCity ();
 	}
