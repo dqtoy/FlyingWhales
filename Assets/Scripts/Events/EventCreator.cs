@@ -22,7 +22,7 @@ public class EventCreator: MonoBehaviour {
             Debug.Log(kingdom.name + " cannot find a region to expand to!");
 			return null;
 		}
-		Citizen expander = kingdom.capitalCity.CreateAgent (ROLE.EXPANDER, EVENT_TYPES.EXPANSION, hexTileToExpandTo, EventManager.Instance.eventDuration[EVENT_TYPES.EXPANSION]);
+		Citizen expander = kingdom.capitalCity.CreateNewAgent (ROLE.EXPANDER, EVENT_TYPES.EXPANSION, hexTileToExpandTo);
 		if (expander != null) {
 			Expansion expansion = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, expander, hexTileToExpandTo);
 			expander.assignedRole.Initialize (expansion);
@@ -300,7 +300,7 @@ public class EventCreator: MonoBehaviour {
 		if(sourceKingdom.isLockedDown || targetKingdom.isLockedDown){
 			return null;
 		}
-		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.PROVOKER, EVENT_TYPES.PROVOCATION, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.PROVOCATION]);
+		Citizen citizen = sourceKingdom.capitalCity.CreateNewAgent(ROLE.PROVOKER, EVENT_TYPES.PROVOCATION, targetKingdom.capitalCity.hexTile);
 		if(citizen != null){
 			Provoker provoker = (Provoker)citizen.assignedRole;
 			Provocation provocation = new Provocation(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, sourceKingdom, targetKingdom, provoker);
@@ -492,8 +492,8 @@ public class EventCreator: MonoBehaviour {
 	}
 
     internal MilitaryAllianceOffer CreateMilitaryAllianceOffer(Kingdom sourceKingdom, Kingdom targetKingdom) {
-        Citizen agent = sourceKingdom.capitalCity.CreateAgent(ROLE.MILITARY_ALLIANCE_OFFICER, 
-            EVENT_TYPES.MILITARY_ALLIANCE_OFFER, targetKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.MILITARY_ALLIANCE_OFFER]);
+        Citizen agent = sourceKingdom.capitalCity.CreateNewAgent(ROLE.MILITARY_ALLIANCE_OFFICER, 
+            EVENT_TYPES.MILITARY_ALLIANCE_OFFER, targetKingdom.capitalCity.hexTile);
 
         KingdomRelationship sourceRel = sourceKingdom.GetRelationshipWithKingdom(targetKingdom);
         if(agent != null && sourceRel.currentActiveMilitaryAllianceOffer == null) {

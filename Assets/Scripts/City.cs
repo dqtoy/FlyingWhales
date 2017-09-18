@@ -1125,6 +1125,40 @@ public class City{
 		this.AddCitizenToCity(citizenToMove);
 	}
 
+	internal Citizen CreateNewAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation){
+		if(role == ROLE.GENERAL){
+			return null;
+		}
+		if(role == ROLE.REBEL){
+			GENDER gender = GENDER.MALE;
+			int randomGender = UnityEngine.Random.Range (0, 100);
+			if(randomGender < 20){
+				gender = GENDER.FEMALE;
+			}
+			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 1);
+			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age), false);
+			citizen.AssignRole (role);
+			this.citizens.Remove (citizen);
+			return citizen;
+		}else{
+			GENDER gender = GENDER.MALE;
+			int randomGender = UnityEngine.Random.Range (0, 100);
+			if(randomGender < 20){
+				gender = GENDER.FEMALE;
+			}
+			Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 1);
+			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
+			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age), false);
+			citizen.AssignRole (role);
+			citizen.assignedRole.targetLocation = targetLocation;
+			if(targetLocation != null){
+				citizen.assignedRole.targetCity = targetLocation.city;
+			}
+			this.citizens.Remove (citizen);
+			return citizen;
+		}
+	}
 	internal Citizen CreateAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation, int duration, List<HexTile> newPath = null){
 		if(role == ROLE.GENERAL){
 			return null;
@@ -1142,16 +1176,16 @@ public class City{
 			this.citizens.Remove (citizen);
 			return citizen;
 		}else{
-            List<HexTile> path = null;
+			List<HexTile> path = null;
 			PATHFINDING_MODE pathMode = PATHFINDING_MODE.AVATAR;
-            if (newPath == null) {
-                if (role == ROLE.TRADER) {
-                    pathMode = PATHFINDING_MODE.NORMAL;
+			if (newPath == null) {
+				if (role == ROLE.TRADER) {
+					pathMode = PATHFINDING_MODE.NORMAL;
 				}else if (role == ROLE.RANGER) {
 					pathMode = PATHFINDING_MODE.NO_HIDDEN_TILES;
 				}else {
 					pathMode = PATHFINDING_MODE.AVATAR;
-                }
+				}
 				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, pathMode, BASE_RESOURCE_TYPE.STONE, this.kingdom);
 
 				if(role != ROLE.RANGER){
@@ -1159,12 +1193,12 @@ public class City{
 						return null;
 					}
 				}
-                
-            } else {
-                path = newPath;
-            }
 
-            if (!Utilities.CanReachInTime(eventType, path, duration)){
+			} else {
+				path = newPath;
+			}
+
+			if (!Utilities.CanReachInTime(eventType, path, duration)){
 				return null;
 			}
 			GENDER gender = GENDER.MALE;

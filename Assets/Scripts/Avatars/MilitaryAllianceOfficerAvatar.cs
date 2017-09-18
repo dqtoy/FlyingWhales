@@ -3,7 +3,10 @@ using System.Collections;
 using Panda;
 
 public class MilitaryAllianceOfficerAvatar : CitizenAvatar {
-
+	internal override void Init (Role citizenRole){
+		base.Init (citizenRole);
+		CreatePath (PATHFINDING_MODE.AVATAR);
+	}
     #region BehaviourTree Tasks
     [Task]
     public void HasArrivedAtTargetHextile() {

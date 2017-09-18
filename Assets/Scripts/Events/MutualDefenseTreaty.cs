@@ -56,7 +56,7 @@ public class MutualDefenseTreaty : GameEvent {
 	#endregion
 
 	private void CreateTreatyOfficer(){
-		this.treatyOfficer = this.startedByKingdom.capitalCity.CreateAgent (ROLE.TREATYOFFICER, EVENT_TYPES.MUTUAL_DEFENSE_TREATY, this.targetKingdom.capitalCity.hexTile, this.durationInDays);
+		this.treatyOfficer = this.startedByKingdom.capitalCity.CreateNewAgent (ROLE.TREATYOFFICER, EVENT_TYPES.MUTUAL_DEFENSE_TREATY, this.targetKingdom.capitalCity.hexTile);
 		if(this.treatyOfficer != null){
 			this.treatyOfficer.assignedRole.Initialize (this);
 		}

@@ -50,7 +50,7 @@ public class Instigation : GameEvent {
 	#endregion
 
 	private void CreateInstigator(){
-		this.instigator = this.startedByKingdom.capitalCity.CreateAgent (ROLE.INSTIGATOR, EVENT_TYPES.INSTIGATION, this.instigatedKingdom.capitalCity.hexTile, this.durationInDays);
+		this.instigator = this.startedByKingdom.capitalCity.CreateNewAgent (ROLE.INSTIGATOR, EVENT_TYPES.INSTIGATION, this.instigatedKingdom.capitalCity.hexTile);
 		if(this.instigator != null){
 			this.instigator.assignedRole.Initialize (this);
 		}

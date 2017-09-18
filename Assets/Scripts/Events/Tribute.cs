@@ -45,7 +45,7 @@ public class Tribute : GameEvent {
 	#endregion
 
 	private void CreateTributer(){
-		this.tributer = this.startedByKingdom.capitalCity.CreateAgent (ROLE.TRIBUTER, EVENT_TYPES.TRIBUTE, this.targetKingdom.capitalCity.hexTile, this.durationInDays);
+		this.tributer = this.startedByKingdom.capitalCity.CreateNewAgent (ROLE.TRIBUTER, EVENT_TYPES.TRIBUTE, this.targetKingdom.capitalCity.hexTile);
 		if(this.tributer != null){
 			this.tributer.assignedRole.Initialize (this);
 		}
