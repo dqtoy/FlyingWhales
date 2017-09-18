@@ -163,6 +163,7 @@ public class PathGenerator : MonoBehaviour {
         if(startingTile.tileTag != destinationTile.tileTag) {
             return null;
         }
+
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
 		List<HexTile> habitableTiles;
@@ -188,6 +189,25 @@ public class PathGenerator : MonoBehaviour {
 			}
 		}
 		return null;
+	}
+	/*
+	 * Get List of tiles (Path) that will connect 2 city tiles
+	 * */
+	public void CreatePath(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, Kingdom kingdom = null){
+		if(startingTile == null || destinationTile == null){
+			return;
+		}
+		if(startingTile.tileTag != destinationTile.tileTag) {
+			return;
+		}
+		List<HexTile> habitableTiles;
+		if (resourceType == BASE_RESOURCE_TYPE.STONE) {
+			habitableTiles = CityGenerator.Instance.stoneHabitableTiles;
+		} else {
+			habitableTiles = CityGenerator.Instance.woodHabitableTiles;
+		}
+
+		PathfindingThreadPool.Instance.AddToThreadPool (new PathFindingThread (citizenAvatar, startingTile, destinationTile, pathfindingMode, kingdom));
 	}
 
 	/*

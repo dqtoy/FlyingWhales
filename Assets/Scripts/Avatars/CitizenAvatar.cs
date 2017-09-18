@@ -59,8 +59,21 @@ public class CitizenAvatar : PooledObject {
         ResetValues();
         AddBehaviourTree();
 		UpdateUI ();
-		StartMoving ();
+//		StartMoving ();
     }
+	internal void CreatePath(PATHFINDING_MODE pathFindingMode){
+		if(this.citizenRole.targetLocation != null){
+			PathGenerator.Instance.CreatePath (this, this.citizenRole.location, this.citizenRole.targetLocation, pathFindingMode, BASE_RESOURCE_TYPE.STONE, this.citizenRole.citizen.city.kingdom);
+		}
+	}
+	internal virtual void ReceivePath(List<HexTile> path){
+		if(path != null && path.Count > 0){
+			this.citizenRole.path = path;
+			StartMoving ();
+		}else{
+			CancelEventInvolvedIn ();
+		}
+	}
 	internal void StartMoving(){
 		NewMove ();
 	}
@@ -118,7 +131,14 @@ public class CitizenAvatar : PooledObject {
 		}
 	}
 
-	internal virtual void HasArrivedAtTargetLocation(){}
+	internal virtual void HasArrivedAtTargetLocation(){
+		if (this.citizenRole.location == this.citizenRole.targetLocation) {
+			if (!this.hasArrived) {
+				SetHasArrivedState(true);
+				this.citizenRole.Attack ();
+			}
+		}
+	}
 
 	public virtual void UpdateFogOfWar(bool forDeath = false) {
 		Kingdom kingdomOfAgent = this.citizenRole.citizen.city.kingdom;
