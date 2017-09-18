@@ -77,9 +77,10 @@ public class Kingdom{
     //FogOfWar
     private FOG_OF_WAR_STATE[,] _fogOfWar;
 	private Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> _fogOfWarDict;
+    private Dictionary<Region, FOG_OF_WAR_STATE> _regionFogOfWarDict;
 
-	//Crimes
-	private CrimeData _crimeData;
+    //Crimes
+    private CrimeData _crimeData;
 	private CrimeDate _crimeDate;
 
 	//Events of Kingdom
@@ -230,6 +231,9 @@ public class Kingdom{
     public Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> fogOfWarDict {
         get { return _fogOfWarDict; }
     }
+    internal Dictionary<Region, FOG_OF_WAR_STATE> regionFogOfWarDict {
+        get { return _regionFogOfWarDict; }
+    }
 //	public CombatStats combatStats {
 //		get { return this._combatStats; }
 //	}
@@ -359,12 +363,19 @@ public class Kingdom{
         this.foundationMonth = GameManager.Instance.month;
         this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
         this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
+
+        //Fog Of War
         this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
 		this._fogOfWarDict = new Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>>();
 		this._fogOfWarDict.Add(FOG_OF_WAR_STATE.HIDDEN, new HashSet<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>())));
 		this._fogOfWarDict.Add(FOG_OF_WAR_STATE.SEEN, new HashSet<HexTile>());
 		this._fogOfWarDict.Add(FOG_OF_WAR_STATE.VISIBLE, new HashSet<HexTile>());
-		this._activeEvents = new List<GameEvent> ();
+        this._regionFogOfWarDict = new Dictionary<Region, FOG_OF_WAR_STATE>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
+            _regionFogOfWarDict.Add(GridMap.Instance.allRegions[i], FOG_OF_WAR_STATE.HIDDEN);
+        }
+
+        this._activeEvents = new List<GameEvent> ();
 		this._doneEvents = new List<GameEvent> ();
 		this.orderedMaleRoyalties = new List<Citizen> ();
 		this.orderedFemaleRoyalties = new List<Citizen> ();
@@ -402,7 +413,6 @@ public class Kingdom{
             }
         }
 
-		//this.CreateInitialRelationships();
 		Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
 		Messenger.AddListener("OnDayEnd", KingdomTickActions);
         Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
@@ -1854,27 +1864,40 @@ public class Kingdom{
 	internal void SetUpheldHiddenHistoryBook(bool state){
 		this._hasUpheldHiddenHistoryBook = state;
 	}
-	#endregion
+    #endregion
 
     #region Fog Of War
-    internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState, bool isForcedUpdate = false) {
+    internal void SetFogOfWarStateForRegion(Region region, FOG_OF_WAR_STATE fowState) {
+        _regionFogOfWarDict[region] = fowState;
+        for (int i = 0; i < region.tilesInRegion.Count; i++) {
+            SetFogOfWarStateForTile(region.tilesInRegion[i], fowState);
+        }
+    }
+    internal void SetFogOfWarStateForTile(HexTile tile, FOG_OF_WAR_STATE fowState) {
         FOG_OF_WAR_STATE previousStateOfTile = _fogOfWar[tile.xCoordinate, tile.yCoordinate];
+        //Remove tile from previous list that it belonged to
         _fogOfWarDict[previousStateOfTile].Remove(tile);
 
+        //Set new state of tile in fog of war dictionary
         _fogOfWar[tile.xCoordinate, tile.yCoordinate] = fowState;
+        //Check if tile is already in the list
         if (!_fogOfWarDict[fowState].Contains(tile)) {
+            //if not, add it to the new states list
             _fogOfWarDict[fowState].Add(tile);
         }
 
+        //if this kingdom is currently the active kingdom, automatically update the tile visual
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
             UpdateFogOfWarVisualForTile(tile, fowState);
         }
 
+        //For checking if tile dictionary is accurate, remove this when checking is no longer necessary
         int sum = _fogOfWarDict.Sum(x => x.Value.Count);
         if (sum != GridMap.Instance.listHexes.Count) {
             throw new Exception("Fog of war dictionary is no longer accurate!");
         }
     }
+
     internal void UpdateFogOfWarVisual() {
         for (int x = 0; x < fogOfWar.GetLength(0); x++) {
             for (int y = 0; y < fogOfWar.GetLength(1); y++) {

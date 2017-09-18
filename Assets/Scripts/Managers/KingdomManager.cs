@@ -451,6 +451,20 @@ public class KingdomManager : MonoBehaviour {
 		}
 		discovererKingdom.DiscoverKingdom(discoveredKingdom);
 		discoveredKingdom.DiscoverKingdom(discovererKingdom);
+
+        for (int i = 0; i < discoveredKingdom.cities.Count; i++) {
+            Region otherRegion = discoveredKingdom.cities[i].region;
+            if (discovererKingdom.regionFogOfWarDict[otherRegion] != FOG_OF_WAR_STATE.VISIBLE) {
+                discovererKingdom.SetFogOfWarStateForRegion(otherRegion, FOG_OF_WAR_STATE.SEEN);
+            }
+        }
+
+        for (int i = 0; i < discovererKingdom.cities.Count; i++) {
+            Region otherRegion = discovererKingdom.cities[i].region;
+            if(discoveredKingdom.regionFogOfWarDict[otherRegion] != FOG_OF_WAR_STATE.VISIBLE) {
+                discoveredKingdom.SetFogOfWarStateForRegion(otherRegion, FOG_OF_WAR_STATE.SEEN);
+            }
+        }
 	}
 
     internal void UpdateKingdomPrestigeList() {

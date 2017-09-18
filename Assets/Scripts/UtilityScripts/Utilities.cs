@@ -14,6 +14,7 @@ public class Utilities : MonoBehaviour {
 	public static int lastKingdomID = 0;
 	public static int lastCitizenID = 0;
 	public static int lastCityID = 0;
+    public static int lastRegionID = 0;
 	public static int lastCampaignID = 0;
 	public static int lastEventID = 0;
 	public static int lastKingdomColorIndex = 0;
@@ -60,7 +61,10 @@ public class Utilities : MonoBehaviour {
 		} else if (obj is GameEvent) {
 			lastEventID += 1;
 			return lastEventID;
-		}
+		}else if(obj is Region) {
+            lastRegionID += 1;
+            return lastRegionID;
+        }
 		return 0;
 	}
 

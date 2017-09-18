@@ -145,13 +145,16 @@ public class CitizenAvatar : PooledObject {
 
         for (int i = 0; i < visibleTiles.Count; i++) {
 			HexTile currTile = visibleTiles[i];
-            if (currTile.visibleByKingdoms.Count > 0) {
-                if (!currTile.visibleByKingdoms.Contains(kingdomOfAgent)) {
-                    kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-                }
-            } else {
+            if(kingdomOfAgent.regionFogOfWarDict[currTile.region] != FOG_OF_WAR_STATE.VISIBLE) {
                 kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
             }
+            //if (currTile.visibleByKingdoms.Count > 0) {
+            //    if (!currTile.visibleByKingdoms.Contains(kingdomOfAgent)) {
+            //        kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            //    }
+            //} else {
+            //    kingdomOfAgent.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
+            //}
         }
 
 		visibleTiles.Clear();
