@@ -247,7 +247,7 @@ public class KingdomRelationship {
         //Values
         List<CHARACTER_VALUE> valuesInCommonExceptInfluence = valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).ToList();
         if (valuesInCommonExceptInfluence.Count == 1) {
-            adjustment = 0;
+            adjustment = 5;
             baseLoyalty += adjustment;
             this._relationshipSummary += "+" + adjustment.ToString() + "   shared values.\n";
         } else if (valuesInCommonExceptInfluence.Count == 2) {
@@ -259,7 +259,7 @@ public class KingdomRelationship {
             baseLoyalty += adjustment;
             this._relationshipSummary += "+" + adjustment.ToString() + "   shared values.\n";
         } else {
-            adjustment = -30;
+            adjustment = -15;
             baseLoyalty += adjustment;
             this._relationshipSummary += adjustment.ToString() + "   no shared values.\n";
         }
