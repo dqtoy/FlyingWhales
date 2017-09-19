@@ -38,9 +38,9 @@ public class Adventure : GameEvent {
         discoveredLog.AddToFillers(deadCitizen, deadCitizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         discoveredLog.AddToFillers(citizen, citizen.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-        if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
-            UIManager.Instance.ShowNotification(discoveredLog);
-        }
+        //if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+        //    UIManager.Instance.ShowNotification(discoveredLog);
+        //}
 
         this.DoneEvent();
     }
@@ -51,9 +51,9 @@ public class Adventure : GameEvent {
         Log discoveredLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Adventure", "citizen_death");
         discoveredLog.AddToFillers(_adventurer.citizen, _adventurer.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
-        if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
-            UIManager.Instance.ShowNotification(discoveredLog);
-        }
+        //if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
+        //    UIManager.Instance.ShowNotification(discoveredLog);
+        //}
         _adventurer.DestroyGO();
     }
     #endregion

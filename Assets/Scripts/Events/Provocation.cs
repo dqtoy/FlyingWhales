@@ -24,9 +24,9 @@ public class Provocation : GameEvent {
         newLog.AddToFillers(this.provoker.citizen, this.provoker.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         newLog.AddToFillers(targetCity, targetCity.name, LOG_IDENTIFIER.CITY_1);
 
-        if (UIManager.Instance.currentlyShowingKingdom == sourceKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
-            UIManager.Instance.ShowNotification(newLog);
-        }
+        //if (UIManager.Instance.currentlyShowingKingdom == sourceKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
+        //    UIManager.Instance.ShowNotification(newLog);
+        //}
 
         //this.EventIsCreated (this.sourceKingdom, true);
         //this.EventIsCreated (this.targetKingdom, false);

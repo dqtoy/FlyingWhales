@@ -45,18 +45,18 @@ public class AltarOfBlessing : GameEvent {
 		kingdom.UpgradeTechLevel(1);
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AltarOfBlessing", "increase_tech_level");
         newLog.AddToFillers(kingdom, kingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        if(UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
-            UIManager.Instance.ShowNotification(newLog);
-        }
+        //if(UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
+        //    UIManager.Instance.ShowNotification(newLog);
+        //}
     }
 	private void IncreaseHappiness(Kingdom kingdom){
 		Debug.Log("ALTAR: REDUCE UNREST");
 		kingdom.AdjustHappiness(50);
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AltarOfBlessing", "reduce_unrest");
         newLog.AddToFillers(kingdom, kingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        if (UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
-            UIManager.Instance.ShowNotification(newLog);
-        }
+        //if (UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
+        //    UIManager.Instance.ShowNotification(newLog);
+        //}
     }
 	private void LevelUpCity(Kingdom kingdom){
 		Debug.Log("ALTAR: LEVEL UP CITY");
@@ -67,9 +67,9 @@ public class AltarOfBlessing : GameEvent {
             chosenCity.ForcePurchaseTile();
             Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AltarOfBlessing", "level_up_city");
             newLog.AddToFillers(kingdom, kingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            if (UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
-                UIManager.Instance.ShowNotification(newLog);
-            }
+            //if (UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
+            //    UIManager.Instance.ShowNotification(newLog);
+            //}
         }
 	}
 }

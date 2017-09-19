@@ -21,10 +21,10 @@ public class Instigation : GameEvent {
         newLog.AddToFillers(instigatedKingdom, instigatedKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
         newLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_3);
 
-        if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom
-            || UIManager.Instance.currentlyShowingKingdom == instigatedKingdom) {
-            UIManager.Instance.ShowNotification(newLog);
-        }
+        //if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom
+        //    || UIManager.Instance.currentlyShowingKingdom == instigatedKingdom) {
+        //    UIManager.Instance.ShowNotification(newLog);
+        //}
     }
 
 	#region Overrides

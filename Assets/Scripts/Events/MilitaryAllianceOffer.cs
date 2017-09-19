@@ -29,9 +29,9 @@ public class MilitaryAllianceOffer : GameEvent {
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "MilitaryAllianceOffer", "start");
         newLog.AddToFillers(_targetKingdom, _targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
-        if(UIManager.Instance.currentlyShowingKingdom == _sourceKingdom || UIManager.Instance.currentlyShowingKingdom == _targetKingdom) {
-            UIManager.Instance.ShowNotification(newLog);
-        }
+        //if(UIManager.Instance.currentlyShowingKingdom == _sourceKingdom || UIManager.Instance.currentlyShowingKingdom == _targetKingdom) {
+        //    UIManager.Instance.ShowNotification(newLog);
+        //}
     }
 
     #region overrides
@@ -67,9 +67,9 @@ public class MilitaryAllianceOffer : GameEvent {
             resultLog.AddToFillers(_targetKingdom, _targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
             resultLog.AddToFillers(_sourceKingdom, _sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
         }
-        if (UIManager.Instance.currentlyShowingKingdom == _sourceKingdom || UIManager.Instance.currentlyShowingKingdom == _targetKingdom) {
-            UIManager.Instance.ShowNotification(resultLog);
-        }
+        //if (UIManager.Instance.currentlyShowingKingdom == _sourceKingdom || UIManager.Instance.currentlyShowingKingdom == _targetKingdom) {
+        //    UIManager.Instance.ShowNotification(resultLog);
+        //}
         DoneEvent();
     }
 

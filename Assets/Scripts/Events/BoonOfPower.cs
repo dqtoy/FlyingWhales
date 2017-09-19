@@ -90,9 +90,9 @@ public class BoonOfPower : GameEvent {
 		}
         
 		this.EventIsCreated (kingdom, false);
-        if(UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
-            UIManager.Instance.ShowNotification(newLog);
-        }
+        //if(UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {
+        //    UIManager.Instance.ShowNotification(newLog);
+        //}
     }
 	private void DestroyThis(){
 		this.DoneEvent ();

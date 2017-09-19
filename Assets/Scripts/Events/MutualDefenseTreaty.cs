@@ -26,9 +26,9 @@ public class MutualDefenseTreaty : GameEvent {
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "MutualDefenseTreaty", "start");
         newLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 
-        if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
-            UIManager.Instance.ShowNotification(newLog);
-        }
+        //if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
+        //    UIManager.Instance.ShowNotification(newLog);
+        //}
     }
 
 	#region Overrides
@@ -74,9 +74,9 @@ public class MutualDefenseTreaty : GameEvent {
             resultLog.AddToFillers(targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
             resultLog.AddToFillers(startedByKingdom, startedByKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
         }
-        if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
-            UIManager.Instance.ShowNotification(resultLog);
-        }
+        //if (UIManager.Instance.currentlyShowingKingdom == startedByKingdom || UIManager.Instance.currentlyShowingKingdom == targetKingdom) {
+        //    UIManager.Instance.ShowNotification(resultLog);
+        //}
         DoneEvent ();
 	}
 	private void AcceptOffer(){

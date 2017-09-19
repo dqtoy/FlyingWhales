@@ -89,9 +89,9 @@ public class RangerAvatar : CitizenAvatar {
                     Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerEvents", "CombatLogs", "ranger_attacked_lair");
                     newLog.AddToFillers(this.citizenRole.citizen, this.citizenRole.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
-                    if (UIManager.Instance.currentlyShowingKingdom.id == this.citizenRole.citizen.city.kingdom.id) {
-                        UIManager.Instance.ShowNotification(newLog);
-                    }
+                    //if (UIManager.Instance.currentlyShowingKingdom.id == this.citizenRole.citizen.city.kingdom.id) {
+                    //    UIManager.Instance.ShowNotification(newLog);
+                    //}
                 }
 				Task.current.Succeed ();
 			}else{
