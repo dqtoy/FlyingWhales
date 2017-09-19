@@ -1123,10 +1123,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //    text += "NONE\n";
         //}
 
-        text += "[b]Embargo List: [/b]\n";
-        if (this.city.kingdom.embargoList.Count > 0) {
-            for (int i = 0; i < this.city.kingdom.embargoList.Keys.Count; i++) {
-                text += this.city.kingdom.embargoList.Keys.ElementAt(i).name + "\n";
+        //text += "[b]Embargo List: [/b]\n";
+        //if (this.city.kingdom.embargoList.Count > 0) {
+        //    for (int i = 0; i < this.city.kingdom.embargoList.Keys.Count; i++) {
+        //        text += this.city.kingdom.embargoList.Keys.ElementAt(i).name + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
+
+        text += "[b]Adjacent Kingdoms: [/b]\n";
+        if (this.city.kingdom.adjacentKingdoms.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
+                text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
             }
         } else {
             text += "NONE\n";

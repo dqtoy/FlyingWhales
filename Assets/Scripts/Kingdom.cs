@@ -303,8 +303,7 @@ public class Kingdom{
 		get { return this._mutualDefenseTreaties;}
 	}
 	public List<Kingdom> adjacentKingdoms{
-        //get { return _adjacentKingdoms;}
-        get { return relationships.Where(x => x.Value.isAdjacent).Select(x => x.Value.targetKingdom).ToList(); }//TODO: Optimize this!
+        get { return _adjacentKingdoms; }
     }
 //	public List<Kingdom> allianceKingdoms{
 //		get { return this._allianceKingdoms;}
@@ -548,7 +547,8 @@ public class Kingdom{
             RemoveRelationshipWithKingdom(kingdomThatDied);
             RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
             RemoveKingdomFromEmbargoList(kingdomThatDied);
-            if(_mainThreat != null && _mainThreat == kingdomThatDied) {
+            RemoveAdjacentKingdom(kingdomThatDied);
+            if (_mainThreat != null && _mainThreat == kingdomThatDied) {
                 _mainThreat = null;
             }
         }
@@ -1046,11 +1046,7 @@ public class Kingdom{
     internal void AddCityToKingdom(City city) {
         this._cities.Add(city);
         _regions.Add(city.region);
-//		AddToNonRebellingCities (city);
         this.UpdateKingdomTypeData();
-//        this.UpdateAvailableResources();
-//        this.UpdateAllCitiesDailyGrowth();
-//        this.UpdateExpansionRate();
         if (this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
@@ -1069,19 +1065,13 @@ public class Kingdom{
         _regions.Remove(city.region);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
-            //this.RemoveInvalidTradeRoutes();
             this.UpdateKingdomTypeData();
-//            this.UpdateAvailableResources();
-//            this.UpdateAllCitiesDailyGrowth();
-//            this.UpdateExpansionRate();
-            //if (this._cities[0] != null) {
 			for (int i = 0; i < this._cities.Count; i++) {
 				if (this._cities[i].rebellion == null) {
 					SetCapitalCity(this._cities[i]);
 					break;
 				}
 			}
-            //}
         }
 
     }
@@ -2492,25 +2482,71 @@ public class Kingdom{
 		this._mutualDefenseTreaties.Remove(kingdom);
 		AdjustMutualDefenseTreatyPower (-kingdom.baseDefense);
 	}
-	internal void AddAdjacentKingdom(Kingdom kingdom){
+
+    #region Adjacency
+    internal void AddAdjacentKingdom(Kingdom kingdom) {
         if (!_adjacentKingdoms.Contains(kingdom)) {
             this._adjacentKingdoms.Add(kingdom);
         }
-		
-	}
-	internal void RemoveAdjacentKingdom(Kingdom kingdom){
-		this._adjacentKingdoms.Remove(kingdom);
-	}
-//	internal void AddAllianceKingdom(Kingdom kingdom){
-//		if (!this._allianceKingdoms.Contains(kingdom)) {
-//			this._allianceKingdoms.Add(kingdom);
-//		}
-//
-//	}
-//	internal void RemoveAllianceKingdom(Kingdom kingdom){
-//		this._allianceKingdoms.Remove(kingdom);
-//	}
-	internal bool IsMilitaryAlliance(Kingdom kingdom){
+    }
+    internal void RemoveAdjacentKingdom(Kingdom kingdom) {
+        this._adjacentKingdoms.Remove(kingdom);
+    }
+    internal void RevalidateKingdomAdjacency(City removedCity) {
+        List<Kingdom> kingdomsToCheck = new List<Kingdom>();
+        for (int i = 0; i < removedCity.region.adjacentRegions.Count; i++) {
+            Region currRegion = removedCity.region.adjacentRegions[i];
+            if(currRegion.occupant != null) {
+                if (currRegion.occupant.kingdom != this && !kingdomsToCheck.Contains(currRegion.occupant.kingdom)) {
+                    kingdomsToCheck.Add(currRegion.occupant.kingdom);
+                }
+            }
+        }
+        for (int i = 0; i < kingdomsToCheck.Count; i++) {
+            Kingdom otherKingdom = kingdomsToCheck[i];
+            KingdomRelationship kr = GetRelationshipWithKingdom(otherKingdom);
+            if (kr.isAdjacent) {
+                bool isValid = false;
+                //Revalidate adjacency
+                for (int j = 0; j < cities.Count; j++) {
+                    Region regionOfCurrCity = cities[j].region;
+                    foreach (Region otherRegion in regionOfCurrCity.adjacentRegions.Where(x => x.occupant != null && x.occupant.kingdom != this)) {
+                        if(otherRegion.occupant.kingdom == otherKingdom) {
+                            //otherKingdom is still adjacent to this kingdom, validity verified!
+                            isValid = true;
+                            break;
+                        }else if (kingdomsToCheck.Contains(otherRegion.occupant.kingdom)) {
+                            //otherRegion.occupant.kingdom is still adjacent to this kingdom, validity verified!
+                            isValid = true;
+                            break;
+                        }
+                    }
+                    if (isValid) {
+                        //otherKingdom has already been verified! Skip checking of other cities
+                        break;
+                    }
+                }
+                //Loop of all cities is done, check if validity has returned a true value,
+                //if not, this kingdom and other kingdom are no longer adjacent, change appropriately
+                if (!isValid) {
+                    kr.ChangeAdjacency(false);
+                }
+            }
+        }
+
+    }
+    #endregion
+
+    //	internal void AddAllianceKingdom(Kingdom kingdom){
+    //		if (!this._allianceKingdoms.Contains(kingdom)) {
+    //			this._allianceKingdoms.Add(kingdom);
+    //		}
+    //
+    //	}
+    //	internal void RemoveAllianceKingdom(Kingdom kingdom){
+    //		this._allianceKingdoms.Remove(kingdom);
+    //	}
+    internal bool IsMilitaryAlliance(Kingdom kingdom){
 		for (int i = 0; i < this._militaryAlliances.Count; i++) {
 			if (this._militaryAlliances[i].id == kingdom.id) {
 				return true;
