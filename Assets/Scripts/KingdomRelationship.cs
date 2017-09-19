@@ -718,7 +718,9 @@ public class KingdomRelationship {
 	private void AdjustAdjacency(bool state){
 		if(this._isAdjacent != state){
 			this._isAdjacent = state;
-			if(state){
+            UpdateTargetInvasionValue();
+            UpdateTargetKingdomThreatLevel();
+            if (state){
 				this._sourceKingdom.AddAdjacentKingdom (this._targetKingdom);
 			}else{
 				this._sourceKingdom.RemoveAdjacentKingdom (this._targetKingdom);
@@ -831,7 +833,7 @@ public class KingdomRelationship {
 		float invasionValue = 0;
 
 		//check if ally or adjacent
-		if (!this.isAdjacent){ //&& !this.isAlly
+		if (this.isAdjacent){ //&& !this.isAlly
 			//+1 for every percentage point of my effective power above his effective defense (no max cap)
 			invasionValue = this._sourceKingdom.effectivePower - this._targetKingdom.effectiveDefense;
 			if(invasionValue < 0){

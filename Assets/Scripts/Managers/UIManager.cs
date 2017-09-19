@@ -384,9 +384,9 @@ public class UIManager : MonoBehaviour {
     }
 
     private void UpdateUI(){
-		dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
-		
-        if(currentlyShowingKingdom != null) {
+        dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
+        UpdatePrestigeSummary();
+        if (currentlyShowingKingdom != null) {
             UpdateKingdomInfo();
         }
 
