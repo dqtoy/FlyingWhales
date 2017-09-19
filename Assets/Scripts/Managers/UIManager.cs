@@ -979,6 +979,14 @@ public class UIManager : MonoBehaviour {
 	}
 	#endregion
 
+    public void UpdateRelationships() {
+        if (relationshipsGO.activeSelf) {
+            if (currentlyShowingKingdom != null) {
+                ShowRelationships();
+            }
+        }
+    }
+
 	public void ShowRelationships(){
         kingdomListRelationshipButton.SetClickState(true);
         relationshipsGO.SetActive (true);
