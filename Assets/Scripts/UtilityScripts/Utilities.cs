@@ -1236,6 +1236,16 @@ public class Utilities : MonoBehaviour {
         return new string(a);
     }
 
+    public static string NormalizeString(string s) {
+        s = s.ToLower();
+        string[] words = s.Split('_');
+        string normalizedString = Utilities.FirstLetterToUpperCase(words.First());
+        for (int i = 1; i < words.Length; i++) {
+            normalizedString += " " + words[i];
+        }
+        return normalizedString;
+    }
+
     public static bool IsCurrentDayMultipleOf(int multiple) {
         if ((GameManager.Instance.days % multiple) == 0) {
             return true;

@@ -33,6 +33,7 @@ public class Citizen {
 	public bool isDead;
 	public DEATH_REASONS deathReason;
 	public string deathReasonText;
+    private KINGDOM_TYPE _preferredKingdomType;
 
 	[HideInInspector]public List<History> history;
 
@@ -55,15 +56,19 @@ public class Citizen {
     public Citizen spouse {
         get { return this._spouse; }
     }
-	#endregion
+    internal KINGDOM_TYPE preferredKingdomType {
+        get { return _preferredKingdomType; }
+    }
+    #endregion
 
-	public Citizen(City city, int age, GENDER gender, int generation){
+    public Citizen(City city, int age, GENDER gender, int generation){
 		this.id = Utilities.SetID (this);
 		this.race = city.kingdom.race;
 		this.gender = gender;
 		this.age = age;
         this._ageTableKey = -1;
-        if(this.race == RACE.HUMANS) {
+        this._preferredKingdomType = StoryTellingManager.Instance.GetRandomKingdomTypeForCitizen();
+        if (this.race == RACE.HUMANS) {
             this.firstName = RandomNameGenerator.Instance.GetHumanFirstName(gender);
             this.surName = RandomNameGenerator.Instance.GetHumanSurname();
         } else {

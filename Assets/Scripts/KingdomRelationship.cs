@@ -317,6 +317,9 @@ public class KingdomRelationship {
 //		}
         this._like = 0;
         this.AdjustLikeness(baseLoyalty, gameEventTrigger, assassinationReasons, isDiscovery);
+        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom == _sourceKingdom) {
+            UIManager.Instance.UpdateRelationships();
+        }
     }
 
     /*
@@ -848,5 +851,9 @@ public class KingdomRelationship {
 		if(this._targetKingdomInvasionValue < 0){
 			this._targetKingdomInvasionValue = 0;
 		}
-	}
+
+        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom == _sourceKingdom) {
+            UIManager.Instance.UpdateRelationships();
+        }
+    }
 }

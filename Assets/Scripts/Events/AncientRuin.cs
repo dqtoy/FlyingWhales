@@ -80,9 +80,9 @@ public class AncientRuin : GameEvent {
         newDiscoveryLog.AddToFillers(_discoveredByKingdom, _discoveredByKingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         EventManager.Instance.AddEventToDictionary(this);
 		//EventIsCreated(this._discoveredByKingdom, true);
-        if(UIManager.Instance.currentlyShowingKingdom.id == _discoveredByKingdom.id) {
-            UIManager.Instance.ShowNotification(newDiscoveryLog);
-        }
+        //if(UIManager.Instance.currentlyShowingKingdom.id == _discoveredByKingdom.id) {
+        //    UIManager.Instance.ShowNotification(newDiscoveryLog);
+        //}
         DoneEvent();
     }
 

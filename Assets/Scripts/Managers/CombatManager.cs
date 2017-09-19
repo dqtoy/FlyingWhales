@@ -191,9 +191,9 @@ public class CombatManager : MonoBehaviour {
         newLog.AddToFillers(city, city.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         newLog.AddToFillers(null, Utilities.FirstLetterToUpperCase(monster.type.ToString().ToLower()), LOG_IDENTIFIER.OTHER);
 
-        if(UIManager.Instance.currentlyShowingKingdom.id == city.kingdom.id) {
-            UIManager.Instance.ShowNotification(newLog);
-        }
+        //if(UIManager.Instance.currentlyShowingKingdom.id == city.kingdom.id) {
+        //    UIManager.Instance.ShowNotification(newLog);
+        //}
 
 		if(city.hp <= 0){
             //Reset Hextile

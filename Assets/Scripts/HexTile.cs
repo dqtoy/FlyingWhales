@@ -883,14 +883,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //this.ownedByCity = city;
     }
     public void UnBorderize(City city) {
+        this.isBorder = false;
         //this.isBorderOfCityID = 0;
         //this.ownedByCity = null;
-        _isBorderOfCities.Remove(city);
-        if (_isBorderOfCities.Count <= 0) {
-            this.isBorder = false;
-            this._kingdomColorSprite.color = Color.white;
-            this.kingdomColorSprite.gameObject.SetActive(false);
-        }
+        //_isBorderOfCities.Remove(city);
+        //if (_isBorderOfCities.Count <= 0) {
+        //    this.isBorder = false;
+        //    this._kingdomColorSprite.color = Color.white;
+        //    this.kingdomColorSprite.gameObject.SetActive(false);
+        //}
 
         //if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom)
         //    && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom)
@@ -1110,9 +1111,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         "\n [b]Defense:[/b] " + this.city.defense.ToString() +
         "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
         "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
+        "\n [b]Kingdom Size:[/b] " + this.city.kingdom.kingdomSize.ToString() +
         "\n [b]Expansion Rate:[/b] " + this.city.kingdom.expansionRate.ToString() +
         "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
-        "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
+        "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() +
+        "\n [b]King Preferred K-Type: [/b]" + this.city.kingdom.king.preferredKingdomType.ToString() + "\n";
 
         //text += "[b]Relationships: [/b]\n";
         //if (this.city.kingdom.relationships.Count > 0) {
