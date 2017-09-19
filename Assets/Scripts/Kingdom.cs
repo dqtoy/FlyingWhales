@@ -20,6 +20,7 @@ public class Kingdom{
     private int foundationDay;
 
 	private KingdomTypeData _kingdomTypeData;
+    private KINGDOM_SIZE _kingdomSize;
 	private Kingdom _sourceKingdom;
 	private Kingdom _mainThreat;
 	private int _actionDay;
@@ -153,6 +154,9 @@ public class Kingdom{
 	public KingdomTypeData kingdomTypeData {
 		get { return this._kingdomTypeData; }
 	}
+    internal KINGDOM_SIZE kingdomSize {
+        get { return _kingdomSize; }
+    }
 	public Kingdom sourceKingdom {
 		get { return this._sourceKingdom; }
 	}
@@ -346,7 +350,8 @@ public class Kingdom{
 		this._bonusPrestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
-		this._mainThreat = null;
+        this._kingdomSize = KINGDOM_SIZE.SMALL;
+        this._mainThreat = null;
         this.successionLine = new List<Citizen>();
 		this._cities = new List<City> ();
         this._regions = new List<Region>();
@@ -420,15 +425,9 @@ public class Kingdom{
 //		this.NewRandomCrimeDate (true);
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
-		this.UpdateKingdomTypeData();
+		//this.UpdateKingdomTypeData();
 
         this.basicResource = Utilities.GetBasicResourceForRace(race);
-
-        if (cities.Count > 0) {
-            for (int i = 0; i < cities.Count; i++) {
-                this.CreateNewCityOnTileForKingdom(cities[i]);
-            }
-        }
 
 		Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
 		Messenger.AddListener("OnDayEnd", KingdomTickActions);
@@ -446,6 +445,55 @@ public class Kingdom{
 
         this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
+
+    public void CreateInitialCities(List<HexTile> initialCityLocations) {
+        if (initialCityLocations.Count > 0) {
+            for (int i = 0; i < initialCityLocations.Count; i++) {
+                HexTile initialCityLocation = initialCityLocations[i];
+                City newCity = this.CreateNewCityOnTileForKingdom(initialCityLocation);
+                initialCityLocation.region.SetOccupant(newCity);
+            }
+        }
+    }
+
+    public void SetKingdomType(KINGDOM_TYPE kingdomType) {
+        KINGDOM_TYPE prevKingdomType = kingdomType;
+        switch (kingdomType) {
+            case KINGDOM_TYPE.NOBLE_KINGDOM:
+                this._kingdomTypeData = KingdomManager.Instance.kingdomTypeNoble;
+                break;
+            case KINGDOM_TYPE.EVIL_EMPIRE:
+                this._kingdomTypeData = KingdomManager.Instance.kingdomTypeEvil;
+                break;
+            case KINGDOM_TYPE.MERCHANT_NATION:
+                this._kingdomTypeData = KingdomManager.Instance.kingdomTypeMerchant;
+                break;
+            case KINGDOM_TYPE.CHAOTIC_STATE:
+                this._kingdomTypeData = KingdomManager.Instance.kingdomTypeChaotic;
+                break;
+        }
+
+        if (this.kingdomTypeData.dailyCumulativeEventRate != null) {
+            this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
+        }
+
+        // If the Kingdom Type Data changed
+        if (prevKingdomType != kingdomType) {
+            //Update Character Values of King and Governors
+            this.UpdateCharacterValuesOfKingsAndGovernors();
+
+            //Update Relationship Opinion
+            UpdateAllRelationshipsLikenessFromOthers();
+
+            if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+                Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
+                updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+                updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
+                UIManager.Instance.ShowNotification(updateKingdomTypeLog);
+            }
+        }
+    }
+
 	// Updates this kingdom's type and horoscope
 	public void UpdateKingdomTypeData() {
 		// Update Kingdom Type whenever the kingdom expands to a new city
@@ -1046,7 +1094,8 @@ public class Kingdom{
     internal void AddCityToKingdom(City city) {
         this._cities.Add(city);
         _regions.Add(city.region);
-        this.UpdateKingdomTypeData();
+        //this.UpdateKingdomTypeData();
+        UpdateKingdomSize();
         if (this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
@@ -1065,8 +1114,9 @@ public class Kingdom{
         _regions.Remove(city.region);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
-            this.UpdateKingdomTypeData();
-			for (int i = 0; i < this._cities.Count; i++) {
+            UpdateKingdomSize();
+            //this.UpdateKingdomTypeData();
+            for (int i = 0; i < this._cities.Count; i++) {
 				if (this._cities[i].rebellion == null) {
 					SetCapitalCity(this._cities[i]);
 					break;
@@ -1088,6 +1138,15 @@ public class Kingdom{
                 habitableTile = CityGenerator.Instance.woodHabitableTiles[i];
                 this.capitalCity.AddHabitableTileDistance(habitableTile, PathGenerator.Instance.GetDistanceBetweenTwoTiles(city.hexTile, habitableTile));
             }
+        }
+    }
+    private void UpdateKingdomSize() {
+        if(cities.Count < KingdomManager.Instance.smallToMediumReq) {
+            _kingdomSize = KINGDOM_SIZE.SMALL;
+        } else if (cities.Count >= KingdomManager.Instance.smallToMediumReq && cities.Count < KingdomManager.Instance.mediumToLargeReq) {
+            _kingdomSize = KINGDOM_SIZE.MEDIUM;
+        } else if (cities.Count >= KingdomManager.Instance.mediumToLargeReq) {
+            _kingdomSize = KINGDOM_SIZE.LARGE;
         }
     }
     #endregion
@@ -1172,7 +1231,7 @@ public class Kingdom{
         if (newKing == null) {
             if (city == null) {
                 if (this.king.city.isDead) {
-                    Debug.LogError("City of previous king is dead! But still creating king in that dead city");
+                    //Debug.LogError("City of previous king is dead! But still creating king in that dead city");
 					for (int i = 0; i < this.cities.Count; i++) {
 						if(this.cities[i].rebellion == null){
 							newKing = this.cities [i].CreateNewKing ();
@@ -1197,6 +1256,7 @@ public class Kingdom{
 		if(newKing == null){
 			return;
 		}
+        SetKingdomType(newKing.preferredKingdomType);
         SetCapitalCity(newKing.city);
         newKing.city.hasKing = true;
 

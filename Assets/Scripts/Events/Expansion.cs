@@ -42,8 +42,8 @@ public class Expansion : GameEvent {
 		if (this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0) {
 			City newCity = this.startedByKingdom.CreateNewCityOnTileForKingdom (this.hexTileToExpandTo);
             newCity.region.SetOccupant(newCity);
-            newCity.PopulateBorderTiles();
             newCity.ExpandToThisCity (this.startedBy);
+            newCity.region.CheckForDiscoveredKingdoms();
             for (int i = 0; i < startedByKingdom.discoveredKingdoms.Count; i++) {
                 Kingdom otherKingdom = startedByKingdom.discoveredKingdoms[i];
                 if(otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {

@@ -149,7 +149,6 @@ public class Region {
             _tileWithSpecialResource.Occupy(occupant);
             CreateStructureOnSpecialResourceTile();
         }
-        CheckForDiscoveredKingdoms();
     }
     internal void RemoveOccupant() {
         _occupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.SEEN);

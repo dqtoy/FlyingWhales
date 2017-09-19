@@ -157,21 +157,35 @@ public class City{
 		this._hp = this.maxHP;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 
-		if(!isRebel){
-            hexTile.CheckLairsInRange ();
-			LevelUpBalanceOfPower();
-			AdjustDefense(50);
-            SetProductionGrowthPercentage(1f);
-            //this._region.SetOccupant(this);
-            DailyGrowthResourceBenefits();
-			AddOneTimeResourceBenefits();
-            Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
-			Messenger.AddListener("CitizenDied", CheckCityDeath);
-			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-			increaseDueDate.AddMonths(1);
-			SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
-		}
+		//if(!isRebel){
+  //          hexTile.CheckLairsInRange ();
+		//	LevelUpBalanceOfPower();
+		//	AdjustDefense(50);
+  //          SetProductionGrowthPercentage(1f);
+  //          //this._region.SetOccupant(this);
+  //          DailyGrowthResourceBenefits();
+		//	AddOneTimeResourceBenefits();
+  //          Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
+		//	Messenger.AddListener("CitizenDied", CheckCityDeath);
+		//	GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+		//	increaseDueDate.AddMonths(1);
+		//	SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+		//}
 
+    }
+
+    internal void SetupInitialValues() {
+        hexTile.CheckLairsInRange();
+        LevelUpBalanceOfPower();
+        AdjustDefense(50);
+        SetProductionGrowthPercentage(1f);
+        DailyGrowthResourceBenefits();
+        AddOneTimeResourceBenefits();
+        Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
+        Messenger.AddListener("CitizenDied", CheckCityDeath);
+        GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+        increaseDueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
     }
 
 	/*
@@ -241,11 +255,6 @@ public class City{
         mother.AssignBirthday(monthMother, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age, false);
         king.AssignBirthday(monthKing, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - king.age));
 
-        king.AssignRole(ROLE.KING);
-
-        //		this.kingdom.king.isKing = true;
-        this.kingdom.king.isDirectDescendant = true;
-
         father.isDirectDescendant = true;
         mother.isDirectDescendant = true;
         father.isDead = true;
@@ -254,8 +263,8 @@ public class City{
         this.citizens.Remove(father);
         this.citizens.Remove(mother);
 
-        father.AddChild(this.kingdom.king);
-        mother.AddChild(this.kingdom.king);
+        father.AddChild(king);
+        mother.AddChild(king);
         king.AddParents(father, mother);
 
         MarriageManager.Instance.Marry(father, mother);
@@ -265,14 +274,14 @@ public class City{
 
         int siblingsChance = UnityEngine.Random.Range(0, 100);
         if (siblingsChance < 25) {
-            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, this.kingdom.king.age));
-            Citizen sibling2 = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, this.kingdom.king.age));
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, king.age));
+            Citizen sibling2 = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, king.age));
 
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
             sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
 
         } else if (siblingsChance >= 25 && siblingsChance < 75) {
-            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, this.kingdom.king.age));
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, king.age));
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
         }
 
@@ -282,7 +291,7 @@ public class City{
 
         int spouseChance = UnityEngine.Random.Range(0, 100);
         if (spouseChance < 80) {
-            Citizen spouse = MarriageManager.Instance.CreateSpouse(this.kingdom.king);
+            Citizen spouse = MarriageManager.Instance.CreateSpouse(king);
 
             //List<int> childAges = Enumerable.Range(0, (spouse.age - 16)).ToList();
             //if(spouse.gender == GENDER.MALE){
@@ -331,6 +340,9 @@ public class City{
 
             //}
         }
+
+        _kingdom.AssignNewKing(king);
+        this.kingdom.king.isDirectDescendant = true;
     }
     private void CreateInitialGovernorFamily() {
         GENDER gender = GENDER.MALE;
@@ -547,6 +559,7 @@ public class City{
         for (int i = 0; i < borderTiles.Count; i++) {
             HexTile currTile = borderTiles[i];
             currTile.UnBorderize(this);
+            currTile.SetMinimapTileColor(Color.black);
         }
     }
     #endregion
@@ -1013,6 +1026,7 @@ public class City{
 
         this._kingdom.RemoveCityFromKingdom(this);
 		KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
+        CameraMove.Instance.UpdateMinimapTexture();
     }
 
     /*
@@ -1072,9 +1086,12 @@ public class City{
         City newCity = conqueror.CreateNewCityOnTileForKingdom(this.hexTile);
         newCity.name = this.name;
         newCity.region.SetOccupant(newCity);
+        newCity.region.CheckForDiscoveredKingdoms();
         newCity.AddTilesToCity(structureTilesToTransfer);
         newCity.CreateInitialFamilies(false);
         newCity.hexTile.CreateCityNamePlate(newCity);
+        newCity.SetupInitialValues();
+        newCity.HighlightAllOwnedTiles(69f / 255f);
         for (int i = 0; i < conqueror.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = conqueror.discoveredKingdoms[i];
             if (otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {
@@ -1092,6 +1109,7 @@ public class City{
 		this._kingdom.RemoveCityFromKingdom(this);
 		KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
+        CameraMove.Instance.UpdateMinimapTexture();
     }
     private void TransferItemsToConqueror(Kingdom conqueror){
 		for(int i = 0; i < this.ownedTiles.Count; i++){

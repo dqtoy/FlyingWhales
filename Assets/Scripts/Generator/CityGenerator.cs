@@ -297,6 +297,7 @@ public class CityGenerator : MonoBehaviour {
 		}
 
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
+        hexTile.city.PopulateBorderTiles();
         //hexTile.city.UpdateBorderTiles();
         return hexTile.city;
 	}
