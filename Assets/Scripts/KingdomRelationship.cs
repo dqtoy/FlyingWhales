@@ -773,41 +773,45 @@ public class KingdomRelationship {
 	internal void UpdateTargetKingdomThreatLevel(){
 
 		//+1 for every percentage point of effective power above my effective defense (max 100)
-		float threatLevel = this._targetKingdom.effectivePower - this._sourceKingdom.effectiveDefense;
-		threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
+		float threatLevel = 0f;
 
-		//if different race: +15%
-		threatLevel *= this._racePercentageModifier;
+		if(this._targetKingdom.effectivePower > this._sourceKingdom.effectiveDefense){
+			threatLevel = ((this._targetKingdom.effectivePower / this._sourceKingdom.effectiveDefense) * 100f) - 100f;
+			threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
 
-		//if currently at war with someone else: -50%
-		if(this._sourceKingdom.HasWar(this._targetKingdom)){
-			threatLevel -= (threatLevel * 0.5f);
-		}
+			//if different race: +15%
+			threatLevel *= this._racePercentageModifier;
 
-		//if not at war but militarizing
-		if(!this._isAtWar && this._targetKingdom.isMilitarize){
-			threatLevel *= 1.25f;
-		}
+			//if currently at war with someone else: -50%
+			if(this._sourceKingdom.HasWar(this._targetKingdom)){
+				threatLevel -= (threatLevel * 0.5f);
+			}
 
-		//warmongering
-		if(this._targetKingdom.warmongerValue < 25){
-			threatLevel -= (threatLevel * 0.15f);
-		}else if(this._targetKingdom.warmongerValue >= 25 && this._targetKingdom.warmongerValue < 50){
-			threatLevel *= 1.05f;
-		}else if(this._targetKingdom.warmongerValue >= 50 && this._targetKingdom.warmongerValue < 75){
-			threatLevel *= 1.25f;
-		}else{
-			threatLevel *= 1.5f;
-		}
+			//if not at war but militarizing
+			if(!this._isAtWar && this._targetKingdom.isMilitarize){
+				threatLevel *= 1.25f;
+			}
 
-		//adjacency
-		if(this._isAdjacent){
-			threatLevel *= 1.5f;
-		}
+			//warmongering
+			if(this._targetKingdom.warmongerValue < 25){
+				threatLevel -= (threatLevel * 0.15f);
+			}else if(this._targetKingdom.warmongerValue >= 25 && this._targetKingdom.warmongerValue < 50){
+				threatLevel *= 1.05f;
+			}else if(this._targetKingdom.warmongerValue >= 50 && this._targetKingdom.warmongerValue < 75){
+				threatLevel *= 1.25f;
+			}else{
+				threatLevel *= 1.5f;
+			}
 
-		//cannot expand due to lack of prestige
-		if(this._targetKingdom.doesLackPrestige){
-			threatLevel -= (threatLevel * 0.5f);
+			//adjacency
+			if(this._isAdjacent){
+				threatLevel *= 1.5f;
+			}
+
+			//cannot expand due to lack of prestige
+			if(this._targetKingdom.doesLackPrestige){
+				threatLevel -= (threatLevel * 0.5f);
+			}
 		}
 
 		this._targetKingdomThreatLevel = threatLevel;
@@ -820,21 +824,21 @@ public class KingdomRelationship {
 	internal void UpdateTargetInvasionValue(){
 		float invasionValue = 0;
 
+		if(this._sourceKingdom.effectivePower > this._targetKingdom.effectiveDefense){
+			if (this.isAdjacent && !AreAllies ()) {
+				//+1 for every percentage point of my effective power above his effective defense (no max cap)
+				invasionValue = ((this._sourceKingdom.effectivePower / this._targetKingdom.effectiveDefense) * 100f) - 100f;
+				if (invasionValue < 0) {
+					invasionValue = 0;
+				}
 
-		if (!this.isAdjacent && !AreAllies()){
+				//+-% for every point of Opinion towards target
+				invasionValue += (this.totalLike * invasionValue);
 
-			//+1 for every percentage point of my effective power above his effective defense (no max cap)
-			invasionValue = this._sourceKingdom.effectivePower - this._targetKingdom.effectiveDefense;
-			if(invasionValue < 0){
-				invasionValue = 0;
-			}
-
-			//+-% for every point of Opinion towards target
-			invasionValue += (this.totalLike * invasionValue);
-
-			//if target is currently at war with someone else
-			if(this._targetKingdom.HasWar(this._sourceKingdom)){
-				invasionValue *= 1.25f;
+				//if target is currently at war with someone else
+				if (this._targetKingdom.HasWar (this._sourceKingdom)) {
+					invasionValue *= 1.25f;
+				}
 			}
 		}
 
