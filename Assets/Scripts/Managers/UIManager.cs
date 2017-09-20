@@ -138,6 +138,9 @@ public class UIManager : MonoBehaviour {
 	public UIGrid familyTreeChildGrid;
 	public UI2DSprite familyTreeInnerSprite;
 	public GameObject nextMarriageBtn;
+    [SerializeField] private GameObject successorParentGO;
+    [SerializeField] private CharacterPortrait successorPortrait;
+    [SerializeField] private UILabel successorPreferredKingdomTypeLbl;
 
     [Space(10)]
     [Header("Kingdom Events UI Objects")]
@@ -1260,6 +1263,20 @@ public class UIManager : MonoBehaviour {
 
 			familyTreeInnerSprite.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
 
+            //Show Successor
+            if(currentlyShowingCitizen.role == ROLE.KING) {
+                if(currentlyShowingCitizen.city.kingdom.successionLine.Count > 0) {
+                    Citizen successor = currentlyShowingCitizen.city.kingdom.successionLine.FirstOrDefault();
+                    successorPortrait.SetCitizen(successor, false, true);
+                    successorPreferredKingdomTypeLbl.text = successor.preferredKingdomType.ToString();
+                    successorParentGO.SetActive(true);
+                } else {
+                    successorParentGO.SetActive(false);
+                }
+            } else {
+                successorParentGO.SetActive(false);
+            }
+
 			familyTreeGO.SetActive (true);
 		}
 	}
@@ -2364,6 +2381,10 @@ public class UIManager : MonoBehaviour {
     }
     public void ForceExpansion() {
         EventCreator.Instance.CreateExpansionEvent(currentlyShowingKingdom);
+    }
+    public void ForceKillCurrentCitizen() {
+        currentlyShowingCitizen.Death(DEATH_REASONS.ACCIDENT);
+        ShowCitizenInfo(currentlyShowingCitizen);
     }
     #endregion
 

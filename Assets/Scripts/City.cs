@@ -269,6 +269,9 @@ public class City{
 
         MarriageManager.Instance.Marry(father, mother);
 
+        _kingdom.AssignNewKing(king);
+        this.kingdom.king.isDirectDescendant = true;
+
         MONTH monthSibling = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
         MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
 
@@ -340,9 +343,6 @@ public class City{
 
             //}
         }
-
-        _kingdom.AssignNewKing(king);
-        this.kingdom.king.isDirectDescendant = true;
     }
     private void CreateInitialGovernorFamily() {
         GENDER gender = GENDER.MALE;
