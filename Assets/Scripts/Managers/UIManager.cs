@@ -97,6 +97,7 @@ public class UIManager : MonoBehaviour {
     public UILabel characterValuesLbl;
 	public GameObject citizenInfoForTestingGO;
 	public CitizenInfoUI citizenInfoUI;
+    [SerializeField] private UILabel preferredKingdomTypeLbl;
 
 	[Space(10)]
     [Header("Events UI Objects")]
@@ -385,7 +386,7 @@ public class UIManager : MonoBehaviour {
 
     private void UpdateUI(){
         dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
-        UpdatePrestigeSummary();
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
         if (currentlyShowingKingdom != null) {
             UpdateKingdomInfo();
         }
@@ -704,8 +705,9 @@ public class UIManager : MonoBehaviour {
 
 		//ForTesting
 		citizenInfoForTestingGO.SetActive (true);
+        preferredKingdomTypeLbl.text = currentlyShowingCitizen.preferredKingdomType.ToString();
 
-		HideSmallInfo();
+        HideSmallInfo();
 
 		citizenNameLbl.text = currentlyShowingCitizen.name;
 		string role = "Citizen";
@@ -744,12 +746,12 @@ public class UIManager : MonoBehaviour {
 		citizenInfoGO.SetActive (true);
 		this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
 
-		HideGovernorLoyalty ();
+		//HideGovernorLoyalty ();
 
 		if(citizenToShow.assignedRole != null){
 			if (citizenToShow.assignedRole is Governor) {
 				Governor governor = (Governor)citizenToShow.assignedRole;
-				ShowGovernorLoyalty ();
+				//ShowGovernorLoyalty ();
 				this.citizenInfoUI.SetGovernorTraits (governor);
 			} else if (citizenToShow.assignedRole is King) {
 				King king = (King)citizenToShow.assignedRole;
@@ -763,7 +765,7 @@ public class UIManager : MonoBehaviour {
 		citizenInfoGO.SetActive(false);
 		HideFamilyTree();
         HideCitizenCharacterValues();
-		HideGovernorLoyalty ();
+		//HideGovernorLoyalty ();
     }
 
     public void ToggleCharacterValues() {
@@ -2338,18 +2340,18 @@ public class UIManager : MonoBehaviour {
         currentlyShowingCitizen.children.Remove(child);
         currentlyShowingCitizen.spouse.children.Remove(child);
     }
-	private void ShowGovernorLoyalty(){
-		if(!this.goLoyalty.activeSelf){
-			this.goLoyalty.SetActive (true);
-		}
-	}
-	public void HideGovernorLoyalty(){
-		this.goLoyalty.SetActive (false);
-	}
-    public void ChangeGovernorLoyalty() {
-		((Governor)this.currentlyShowingCitizen.assignedRole).SetLoyalty(Int32.Parse(forTestingLoyaltyLbl.text));
-		Debug.Log("Changed loyalty of: " + this.currentlyShowingCitizen.name + " to " + ((Governor)this.currentlyShowingCitizen.assignedRole).loyalty.ToString());
-    }
+	//private void ShowGovernorLoyalty(){
+	//	if(!this.goLoyalty.activeSelf){
+	//		this.goLoyalty.SetActive (true);
+	//	}
+	//}
+	//public void HideGovernorLoyalty(){
+	//	this.goLoyalty.SetActive (false);
+	//}
+ //   public void ChangeGovernorLoyalty() {
+	//	((Governor)this.currentlyShowingCitizen.assignedRole).SetLoyalty(Int32.Parse(forTestingLoyaltyLbl.text));
+	//	Debug.Log("Changed loyalty of: " + this.currentlyShowingCitizen.name + " to " + ((Governor)this.currentlyShowingCitizen.assignedRole).loyalty.ToString());
+ //   }
     public void LogRelatives() {
         List<Citizen> allRelatives = currentlyShowingCitizen.GetRelatives(-1);
         Debug.Log("========== " + currentlyShowingCitizen.name + " Relatives ==========");

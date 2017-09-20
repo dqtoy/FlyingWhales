@@ -1009,6 +1009,11 @@ public class City{
             currentTile.city = null;
             currentTile.Unoccupy();
         }
+        for (int i = 0; i < borderTiles.Count; i++) {
+            HexTile currentTile = this.borderTiles[i];
+            currentTile.kingdomColorSprite.color = Color.white;
+            currentTile.kingdomColorSprite.gameObject.SetActive(false);
+        }
         UnPopulateBorderTiles();
 
         region.RemoveOccupant();
@@ -1512,13 +1517,13 @@ public class City{
         _power += adjustment;
         _kingdom.AdjustBasePower(adjustment);
         _power = Mathf.Max(_power, 0);
-        UIManager.Instance.UpdatePrestigeSummary();
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void AdjustDefense(int adjustment) {
         _defense += adjustment;
         _kingdom.AdjustBaseDefense(adjustment);
         _defense = Mathf.Max(_defense, 0);
-        UIManager.Instance.UpdatePrestigeSummary();
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
 	internal void AdjustBonusHappiness(int amount){
 		this._bonusHappiness += amount;

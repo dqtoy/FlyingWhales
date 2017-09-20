@@ -2785,28 +2785,44 @@ public class Kingdom{
 	internal void SetAlliancePool(AlliancePool alliancePool){
 		this._alliancePool = alliancePool;
 	}
-	private int GetPosAlliancePower(){
+	internal int GetPosAlliancePower(){
 		int posAlliancePower = 0;
-		foreach (KingdomRelationship relationship in this.relationships.Values) {
-//			if(relationship.isAlly){
-				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
-				if(relationshipFrom.totalLike >= 35){
-					posAlliancePower += relationship.targetKingdom.basePower;
-				}
-//			}
-		}
+        for (int i = 0; i < discoveredKingdoms.Count; i++) {
+            Kingdom otherKingdom = discoveredKingdoms[i];
+            KingdomRelationship relationshipFrom = otherKingdom.GetRelationshipWithKingdom(this);
+            //TODO: Add checking for alliance
+            if (relationshipFrom.totalLike >= 35) {
+                posAlliancePower += otherKingdom.basePower;
+            }
+        }
+//		foreach (KingdomRelationship relationship in this.relationships.Values) {
+////			if(relationship.isAlly){
+//				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
+//				if(relationshipFrom.totalLike >= 35){
+//					posAlliancePower += relationship.targetKingdom.basePower;
+//				}
+////			}
+//		}
 		return posAlliancePower;
 	}
-	private int GetPosAllianceDefense(){
+    internal int GetPosAllianceDefense(){
 		int posAllianceDefense = 0;
-		foreach (KingdomRelationship relationship in this.relationships.Values) {
-//			if(relationship.isAlly){
-				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
-				if(relationshipFrom.totalLike >= 35){
-					posAllianceDefense += relationship.targetKingdom.baseDefense;
-				}
-//			}
-		}
+        for (int i = 0; i < discoveredKingdoms.Count; i++) {
+            Kingdom otherKingdom = discoveredKingdoms[i];
+            KingdomRelationship relationshipFrom = otherKingdom.GetRelationshipWithKingdom(this);
+            //TODO: Add checking for alliance
+            if (relationshipFrom.totalLike >= 35) {
+                posAllianceDefense += otherKingdom.baseDefense;
+            }
+        }
+//		foreach (KingdomRelationship relationship in this.relationships.Values) {
+////			if(relationship.isAlly){
+//				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
+//				if(relationshipFrom.totalLike >= 35){
+//					posAllianceDefense += relationship.targetKingdom.baseDefense;
+//				}
+////			}
+//		}
 		return posAllianceDefense;
 	}
 }
