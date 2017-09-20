@@ -2207,9 +2207,9 @@ public class Kingdom{
 		if(!this.isDead){
 			UpdateThreatLevels ();
 			UpdateInvasionValues ();
-			if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
-				SeeksBalance ();
-			}
+//			if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
+//				SeeksBalance ();
+//			}
 
 			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 			gameDate.AddMonths (1);

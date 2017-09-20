@@ -776,7 +776,7 @@ public class KingdomRelationship {
 		float threatLevel = 0f;
 
 		if(this._targetKingdom.effectivePower > this._sourceKingdom.effectiveDefense){
-			threatLevel = ((this._targetKingdom.effectivePower / this._sourceKingdom.effectiveDefense) * 100f) - 100f;
+			threatLevel = (((float)this._targetKingdom.effectivePower / (float)this._sourceKingdom.effectiveDefense) * 100f) - 100f;
 			threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
 
 			//if different race: +15%
@@ -827,7 +827,7 @@ public class KingdomRelationship {
 		if(this._sourceKingdom.effectivePower > this._targetKingdom.effectiveDefense){
 			if (this.isAdjacent && !AreAllies ()) {
 				//+1 for every percentage point of my effective power above his effective defense (no max cap)
-				invasionValue = ((this._sourceKingdom.effectivePower / this._targetKingdom.effectiveDefense) * 100f) - 100f;
+				invasionValue = (((float)this._sourceKingdom.effectivePower / (float)this._targetKingdom.effectiveDefense) * 100f) - 100f;
 				if (invasionValue < 0) {
 					invasionValue = 0;
 				}
