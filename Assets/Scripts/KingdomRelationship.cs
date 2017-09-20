@@ -32,7 +32,6 @@ public class KingdomRelationship {
 
 	private bool _isMilitaryAlliance;
 	private bool _isMutualDefenseTreaty;
-//	private bool _isAlly;
 
 	private Dictionary<EVENT_TYPES, bool> _eventBuffs;
 
@@ -116,9 +115,6 @@ public class KingdomRelationship {
 	public bool isMutualDefenseTreaty {
 		get { return this._isMutualDefenseTreaty; }
 	}
-//	public bool isAlly {
-//		get { return this._isAlly; }
-//	}
 	public bool isAdjacent {
         get { return this._isAdjacent; }
 	}
@@ -640,7 +636,9 @@ public class KingdomRelationship {
     }
 
     internal void SetWarStatus(bool warStatus) {
-        _isAtWar = warStatus;
+		if(this._isAtWar != warStatus){
+			this._isAtWar = warStatus;
+		}
     }
 
     internal void AdjustExhaustion(int amount) {
@@ -722,6 +720,12 @@ public class KingdomRelationship {
 			}
 		}
 	}
+	internal void ChangeWarStatus(bool state){
+		SetWarStatus(state);
+		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		kr.SetWarStatus(state);
+	}
+
 	private void DefenseTreatyExpiration(){
 		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead && this._isMutualDefenseTreaty 
 			&& this._currentExpirationDefenseTreaty.IsSameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year)){
@@ -761,22 +765,6 @@ public class KingdomRelationship {
 			this._racePercentageModifier = 1f;
 		}
 	}
-
-//	internal void ChangeAllianceState(bool state){
-//		AdjustAllianceState (state);
-//		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-//		kr.AdjustAllianceState (state);
-//	}
-//	private void AdjustAllianceState(bool state){
-//		if(this._isAlly != state){
-//			this._isAlly = state;
-//			if(state){
-//				this._sourceKingdom.AddAllianceKingdom (this._targetKingdom);
-//			}else{
-//				this._sourceKingdom.RemoveAllianceKingdom (this._targetKingdom);
-//			}
-//		}
-//	}
 	internal void UpdateTargetKingdomThreatLevel(){
 
 		//+1 for every percentage point of effective power above my effective defense (max 100)
@@ -828,7 +816,7 @@ public class KingdomRelationship {
 		float invasionValue = 0;
 
 		//check if ally or adjacent
-		if (!this.isAdjacent){ //&& !this.isAlly
+		if (!this.isAdjacent && !AreAllies()){
 			//+1 for every percentage point of my effective power above his effective defense (no max cap)
 			invasionValue = this._sourceKingdom.effectivePower - this._targetKingdom.effectiveDefense;
 			if(invasionValue < 0){
@@ -848,5 +836,15 @@ public class KingdomRelationship {
 		if(this._targetKingdomInvasionValue < 0){
 			this._targetKingdomInvasionValue = 0;
 		}
+	}
+	internal bool AreAllies(){
+		if(this._sourceKingdom.alliancePool == null || this._targetKingdom.alliancePool == null){
+			return false;
+		}else{
+			if(this._sourceKingdom.alliancePool.id != this._targetKingdom.alliancePool.id){
+				return false;
+			}
+		}
+		return true;
 	}
 }

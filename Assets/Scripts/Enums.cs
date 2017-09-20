@@ -557,3 +557,8 @@ public enum INTELLIGENCE{
 	AVERAGE,
 	LOW,
 }
+public enum WAR_SIDE{
+	A,
+	B,
+	NONE,
+}

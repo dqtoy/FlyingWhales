@@ -141,6 +141,9 @@ public class Kingdom{
 	//Alliance
 	private AlliancePool _alliancePool;
 
+	//Warfare
+	private WarfareInfo _warfareInfo;
+
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -332,6 +335,9 @@ public class Kingdom{
 	public AlliancePool alliancePool{
 		get { return this._alliancePool;}
 	}
+	public WarfareInfo warfareInfo{
+		get { return this._warfareInfo;}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -404,6 +410,8 @@ public class Kingdom{
 		this._currentMilitaryAllianceRejectionDate = new GameDate (0, 0, 0);
 		this._mobilizationQueue = new List<Wars> ();
 		this._actionDay = 0;
+		this._alliancePool = null;
+		this._warfareInfo.DefaultValues();
 
 		SetLackPrestigeState(false);
         AdjustPrestige(200);
@@ -2278,32 +2286,74 @@ public class Kingdom{
 //	}
 
 	private void SeeksBalance(){
-//		bool mustSeekAlliance = false;
-//
-//		//break any alliances with anyone whose threat value is 100 or above and lose 50 Prestige
-//		foreach (KingdomRelationship relationship in this.relationships.Values) {
-//			if(relationship.targetKingdomThreatLevel >= 100f){
-//				relationship.ChangeAllianceState (false);
-//				AdjustPrestige (-50);
-//			}
-//			if(!mustSeekAlliance){
-//				if(relationship.targetKingdomThreatLevel >= 50f && !relationship.isAlly){
-//					mustSeekAlliance = true;
-//				}
-//			}
-//
-//		}
-//		if(mustSeekAlliance){
-//			SeekAlliances ();
-//			if(this.happiness > -50){
-//				Militarize (true);
-//			}else{
-//				int chance = UnityEngine.Random.Range (0, 100);
-//				if(chance < 25){
-//					Militarize (true);
-//				}
-//			}
-//		}
+		bool mustSeekAlliance = false;
+
+		//break any alliances with anyone whose threat value is 100 or above and lose 50 Prestige
+		if(this.alliancePool != null){
+			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
+				Kingdom kingdom = this.alliancePool.kingdomsInvolved[i];
+				if(this.id != kingdom.id){
+					KingdomRelationship kr = GetRelationshipWithKingdom(kingdom);
+					if(kr.targetKingdomThreatLevel >= 100){
+						this.alliancePool.RemoveKingdomInAlliance(this);
+						AdjustPrestige(-50);
+						break;
+					}
+				}
+			}
+		}
+
+		//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
+		foreach (KingdomRelationship relationship in this.relationships.Values) {
+			if(relationship.targetKingdomThreatLevel >= 50){
+				if(relationship.targetKingdom.alliancePool == null){
+					mustSeekAlliance = true;
+					break;
+				}else{
+					if(this.alliancePool == null){
+						mustSeekAlliance = true;
+						break;
+					}else{
+						if(this.alliancePool.id != relationship.targetKingdom.alliancePool.id){
+							mustSeekAlliance = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if(mustSeekAlliance){
+			//if i am not part of any alliance, create or join an alliance if possible
+			if(this.alliancePool == null){
+				SeekAlliance ();
+			}
+
+			//if Happiness is greater than -50, militarize, otherwise only 25% chance to militarize
+			if(this.happiness > -50){
+				Militarize (true);
+			}else{
+				int chance = UnityEngine.Random.Range (0, 100);
+				if(chance < 25){
+					Militarize (true);
+				}
+			}
+		}
+
+		if(this.alliancePool != null){
+			foreach (KingdomRelationship relationship in this.relationships.Values) {
+				if(!relationship.isAtWar && !relationship.AreAllies()){
+					for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
+						Kingdom kingdom = this.alliancePool.kingdomsInvolved[i];
+						if(this.id != kingdom.id){
+							KingdomRelationship kr = relationship.targetKingdom.GetRelationshipWithKingdom(kingdom);
+							if(kr.isAtWar){
+								
+							}
+						}
+					}
+				}
+			}
+		}
 
 
 	}
@@ -2705,16 +2755,21 @@ public class Kingdom{
 		}
 	}
 
-	internal void SeekAlliances(){
+	internal void SeekAlliance(){
 		List<KingdomRelationship> kingdomRelationships = this.relationships.Values.OrderByDescending(x => x.totalLike).ToList ();
 		for (int i = 0; i < kingdomRelationships.Count; i++) {
 			KingdomRelationship kr = kingdomRelationships [i];
-//			if(!kr.isAlly){
-//				KingdomRelationship kingdomRelationshipFrom = kr.targetKingdom.GetRelationshipWithKingdom (this);
-//				if (kingdomRelationshipFrom.totalLike >= 1) {
-//					kr.ChangeAllianceState (true);
-//				}
-//			}
+			if(kr.targetKingdom.alliancePool == null){
+				bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
+				if(hasCreated){
+					break;
+				}
+			}else{
+				bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this);
+				if(hasJoined){
+					break;
+				}
+			}
 		}
 	}
 	internal void SetAlliancePool(AlliancePool alliancePool){
@@ -2722,26 +2777,38 @@ public class Kingdom{
 	}
 	private int GetPosAlliancePower(){
 		int posAlliancePower = 0;
-		foreach (KingdomRelationship relationship in this.relationships.Values) {
-//			if(relationship.isAlly){
-				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
-				if(relationshipFrom.totalLike >= 35){
-					posAlliancePower += relationship.targetKingdom.basePower;
+		if(this.alliancePool != null){
+			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
+				Kingdom kingdomInAlliance = this.alliancePool.kingdomsInvolved[i];
+				if(this.id != kingdomInAlliance.id){
+					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this);
+					if(relationship.totalLike >= 35){
+						posAlliancePower += kingdomInAlliance.basePower;
+					}
 				}
-//			}
+			}
 		}
 		return posAlliancePower;
 	}
 	private int GetPosAllianceDefense(){
 		int posAllianceDefense = 0;
-		foreach (KingdomRelationship relationship in this.relationships.Values) {
-//			if(relationship.isAlly){
-				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
-				if(relationshipFrom.totalLike >= 35){
-					posAllianceDefense += relationship.targetKingdom.baseDefense;
+		if(this.alliancePool != null){
+			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
+				Kingdom kingdomInAlliance = this.alliancePool.kingdomsInvolved[i];
+				if(this.id != kingdomInAlliance.id){
+					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this);
+					if(relationship.totalLike >= 35){
+						posAllianceDefense += kingdomInAlliance.baseDefense;
+					}
 				}
-//			}
+			}
 		}
 		return posAllianceDefense;
+	}
+	internal void SetWarfareInfo(WarfareInfo info){
+		this._warfareInfo = info;
+	}
+	internal void SetWarfareInfoToDefault(){
+		this._warfareInfo.DefaultValues();
 	}
 }

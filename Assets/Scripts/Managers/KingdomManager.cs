@@ -497,4 +497,18 @@ public class KingdomManager : MonoBehaviour {
     //    Messenger.Broadcast("UpdateUI");
     //}
     #endregion
+
+	#region Alliance
+	internal bool AttemptToCreateAllianceBetweenTwoKingdoms(Kingdom firstKingdom, Kingdom secondKingdom){
+		KingdomRelationship krFirst = firstKingdom.GetRelationshipWithKingdom(secondKingdom);
+		KingdomRelationship krSecond = secondKingdom.GetRelationshipWithKingdom(firstKingdom);
+		if(krFirst.totalLike >= 1 && krSecond.totalLike >= 1){
+			AlliancePool newAlliance = new AlliancePool();
+			newAlliance.AddKingdomInAlliance(firstKingdom);
+			newAlliance.AddKingdomInAlliance(secondKingdom);
+			return true;
+		}
+		return false;
+	}
+	#endregion
 }
