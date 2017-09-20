@@ -69,110 +69,36 @@ public class KingdomManager : MonoBehaviour {
             Region regionForKingdom = allRegions.OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).FirstOrDefault();
             allRegions.Remove(regionForKingdom);
             Kingdom newKingdom = GenerateNewKingdom(initialKingdomRace, new List<HexTile>() { regionForKingdom.centerOfMass }, true);
-            for (int j = 0; j < newKingdom.cities.Count; j++) {
-                City currCity = newKingdom.cities[j];
-                currCity.PopulateBorderTiles();
-            }
             newKingdom.HighlightAllOwnedTilesInKingdom();
         }
         UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
     }
 
-	//public void GenerateInitialKingdoms(List<HexTile> stoneHabitableTiles, List<HexTile> woodHabitableTiles) {
-
- //       List<HexTile> stoneElligibleTiles = new List<HexTile>(stoneHabitableTiles);
- //       stoneElligibleTiles = stoneElligibleTiles.Where(x => x.nearbyResourcesCount >= 3).ToList();
-
- //       List<HexTile> woodElligibleTiles = new List<HexTile>(woodHabitableTiles);
- //       woodElligibleTiles = woodElligibleTiles.Where(x => x.nearbyResourcesCount >= 3).ToList();
-
- //       for (int i = 0; i < initialKingdomSetup.Count; i++) {
- //           InitialKingdom initialKingdom = initialKingdomSetup[i];
- //           List<HexTile> tilesToChooseFrom = stoneElligibleTiles;
- //           if (Utilities.GetBasicResourceForRace(initialKingdom.race) == BASE_RESOURCE_TYPE.WOOD) {
-	//			tilesToChooseFrom = woodElligibleTiles;
- //           }
-	//		tilesToChooseFrom = tilesToChooseFrom.Where(x => x.biomeType == initialKingdom.startingBiome && !x.isOccupied).ToList();
- //           if (tilesToChooseFrom.Count <= 0) {
- //               continue;
- //           }
-
- //           List<HexTile> citiesForKingdom = new List<HexTile>();
- //           int chosenIndex = Random.Range(0, tilesToChooseFrom.Count);
- //           HexTile chosenHexTile = tilesToChooseFrom[chosenIndex];
- //           citiesForKingdom.Add(chosenHexTile);
-
- //           if (citiesForKingdom.Count > 0) {
- //               Kingdom kingdom = GenerateNewKingdom(initialKingdom.race, citiesForKingdom, true);
- //               if (i == 0) {
- //                   UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
- //               }
- //               if (initialKingdom.numOfCities > 1) {
- //                   kingdom.SetPrestige(100 * (initialKingdom.numOfCities + 1));
- //                   for (int j = 1; j < initialKingdom.numOfCities; j++) {
- //                       HexTile nextCityTile = CityGenerator.Instance.GetNearestHabitableTile(kingdom.capitalCity);
- //                       if(nextCityTile == null) {
- //                           break;
- //                       }
- //                       City newCity = kingdom.CreateNewCityOnTileForKingdom(nextCityTile);
- //                       newCity.CreateInitialFamilies(false);
- //                       newCity.hexTile.CreateCityNamePlate(newCity);
- //                       newCity.UpdateBorderTiles();
- //                   }
- //               }
- //           }
-
-            
-           
-            
- //           //for (int j = 0; j < initialKingdom.numOfCities; j++) {
- //           //    if (tilesToChooseFrom.Count <= 0) {
- //           //        break;
- //           //    }
- //           //    int chosenIndex = Random.Range(0, tilesToChooseFrom.Count);
- //           //    HexTile chosenHexTile = tilesToChooseFrom[chosenIndex];
- //           //    List<HexTile> nearHabitableTiles = chosenHexTile.GetTilesInRange(minimumInitialKingdomDistance).Where(x => x.isHabitable).ToList();
- //           //    citiesForKingdom.Add(chosenHexTile);
- //           //    tilesToChooseFrom.Remove(chosenHexTile);
- //           //    for (int k = 0; k < nearHabitableTiles.Count; k++) {
- //           //        HexTile nearTile = nearHabitableTiles[k];
- //           //        if (stoneElligibleTiles.Contains(nearTile)) {
- //           //            stoneElligibleTiles.Remove(nearTile);
- //           //        } else if (woodElligibleTiles.Contains(nearTile)) {
- //           //            woodElligibleTiles.Remove(nearTile);
- //           //        }
- //           //    }
- //           //}
-            
- //       }
-	//}
-
-	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool isForInitial = false, Kingdom sourceKingdom = null, bool broadcastCreation = true){
-		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom);
-		allKingdoms.Add(newKingdom);
+	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool createFamilies = false, Kingdom sourceKingdom = null, bool broadcastCreation = true){
+		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom); //Create new kingdom
+		allKingdoms.Add(newKingdom); //add to allKingdoms
         Debug.Log("Created new kingdom: " + newKingdom.name);
-		if (isForInitial) {
-			for (int i = 0; i < cities.Count; i++) {
-                HexTile currCityTile = cities[i];
+        newKingdom.CreateInitialCities(cities); //Create initial cities
+
+        if (createFamilies) { //create families?
+			for (int i = 0; i < newKingdom.cities.Count; i++) {
+                City currCity = newKingdom.cities[i];
 				if (i == 0) {
-                    //currCityTile.SetCityLevelCap(10);
-                    currCityTile.city.CreateInitialFamilies();
+                    currCity.CreateInitialFamilies();
 				} else {
-                    currCityTile.city.CreateInitialFamilies(false);
+                    currCity.CreateInitialFamilies(false);
 				}
-                currCityTile.CreateCityNamePlate(currCityTile.city);
+                currCity.hexTile.CreateCityNamePlate(currCity);
+                currCity.SetupInitialValues();
             }
 		}
+
         //Create Relationships first
         newKingdom.CreateInitialRelationships();
         if (broadcastCreation) {
             Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
         }
         newKingdom.UpdateAllRelationshipsLikeness();
-        //newKingdom.CheckForDiscoveredKingdoms();
-        for (int i = 0; i < newKingdom.cities.Count; i++) {
-            newKingdom.cities[i].region.SetOccupant(newKingdom.cities[i]);
-        }
         return newKingdom;
 	}
 

@@ -384,9 +384,9 @@ public class UIManager : MonoBehaviour {
     }
 
     private void UpdateUI(){
-		dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
-		
-        if(currentlyShowingKingdom != null) {
+        dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
+        UpdatePrestigeSummary();
+        if (currentlyShowingKingdom != null) {
             UpdateKingdomInfo();
         }
 
@@ -978,6 +978,14 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 	#endregion
+
+    public void UpdateRelationships() {
+        if (relationshipsGO.activeSelf) {
+            if (currentlyShowingKingdom != null) {
+                ShowRelationships();
+            }
+        }
+    }
 
 	public void ShowRelationships(){
         kingdomListRelationshipButton.SetClickState(true);

@@ -26,6 +26,9 @@ public class CharacterPortrait : MonoBehaviour {
     [SerializeField] private GameObject militaryAllianceIcon;
     [SerializeField] private GameObject mutualDefenseIcon;
 
+    [SerializeField] private UILabel kingdomThreatLvlLbl;
+    [SerializeField] private UILabel invasionValueLbl;
+
     public Citizen citizen;
 	private bool isHoverEnabled = true;
 	private bool isHovering = false;
@@ -87,6 +90,8 @@ public class CharacterPortrait : MonoBehaviour {
                 mutualDefenseIcon.SetActive(false);
             }
 
+            kingdomThreatLvlLbl.text = "KT: " + relationship1.targetKingdomThreatLevel.ToString();
+            invasionValueLbl.text = "IV: " + relationship1.targetKingdomInvasionValue.ToString();
         }
         
 	}

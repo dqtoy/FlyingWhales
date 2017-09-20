@@ -149,7 +149,6 @@ public class Region {
             _tileWithSpecialResource.Occupy(occupant);
             CreateStructureOnSpecialResourceTile();
         }
-        CheckForDiscoveredKingdoms();
     }
     internal void RemoveOccupant() {
         _occupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.SEEN);
@@ -292,10 +291,13 @@ public class Region {
             Region adjacentRegion = _adjacentRegions[i];
             if(adjacentRegion.occupant != null) {
                 Kingdom otherKingdom = adjacentRegion.occupant.kingdom;
-                if (otherKingdom != occupant.kingdom && !occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
-                    KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
+                if (otherKingdom != occupant.kingdom) {
+                    if (!occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
+                        KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
+                    }
+                    _occupant.kingdom.GetRelationshipWithKingdom(otherKingdom).ChangeAdjacency(true);
                 }
-                _occupant.kingdom.GetRelationshipWithKingdom(otherKingdom).ChangeAdjacency(true);
+                
                 for (int j = 0; j < adjacentRegion.adjacentRegions.Count; j++) {
                     Region otherAdjacentRegion = adjacentRegion.adjacentRegions[j];
                     if (!_adjacentRegions.Contains(otherAdjacentRegion) && !adjacentRegionsOfOtherRegions.Contains(otherAdjacentRegion)) {

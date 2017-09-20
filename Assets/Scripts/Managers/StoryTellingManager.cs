@@ -179,4 +179,19 @@ public class StoryTellingManager : MonoBehaviour {
 		}
 		return null;
 	}
+    public KINGDOM_TYPE GetRandomKingdomTypeForCitizen() {
+        int chance = Random.Range(0, 4);
+        switch (chance) {
+            case 0:
+                return KINGDOM_TYPE.NOBLE_KINGDOM;
+            case 1:
+                return KINGDOM_TYPE.EVIL_EMPIRE;
+            case 2:
+                return KINGDOM_TYPE.MERCHANT_NATION;
+            case 3:
+                return KINGDOM_TYPE.CHAOTIC_STATE;
+            default:
+                return KINGDOM_TYPE.NOBLE_KINGDOM;
+        }
+    }
 }

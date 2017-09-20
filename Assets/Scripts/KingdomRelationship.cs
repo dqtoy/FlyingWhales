@@ -313,6 +313,9 @@ public class KingdomRelationship {
 //		}
         this._like = 0;
         this.AdjustLikeness(baseLoyalty, gameEventTrigger, assassinationReasons, isDiscovery);
+        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom == _sourceKingdom) {
+            UIManager.Instance.UpdateRelationships();
+        }
     }
 
     /*
@@ -713,7 +716,9 @@ public class KingdomRelationship {
 	private void AdjustAdjacency(bool state){
 		if(this._isAdjacent != state){
 			this._isAdjacent = state;
-			if(state){
+            UpdateTargetInvasionValue();
+            UpdateTargetKingdomThreatLevel();
+            if (state){
 				this._sourceKingdom.AddAdjacentKingdom (this._targetKingdom);
 			}else{
 				this._sourceKingdom.RemoveAdjacentKingdom (this._targetKingdom);
@@ -815,8 +820,9 @@ public class KingdomRelationship {
 	internal void UpdateTargetInvasionValue(){
 		float invasionValue = 0;
 
-		//check if ally or adjacent
+
 		if (!this.isAdjacent && !AreAllies()){
+
 			//+1 for every percentage point of my effective power above his effective defense (no max cap)
 			invasionValue = this._sourceKingdom.effectivePower - this._targetKingdom.effectiveDefense;
 			if(invasionValue < 0){
@@ -835,6 +841,9 @@ public class KingdomRelationship {
 		this._targetKingdomInvasionValue = invasionValue;
 		if(this._targetKingdomInvasionValue < 0){
 			this._targetKingdomInvasionValue = 0;
+		}
+		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom == _sourceKingdom) {
+			UIManager.Instance.UpdateRelationships();
 		}
 	}
 	internal bool AreAllies(){
