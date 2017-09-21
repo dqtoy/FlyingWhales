@@ -22,6 +22,7 @@ public class KingdomRelationship {
 
     private bool _isAtWar;
 	private bool _isAdjacent;
+	private bool _isDiscovered;
     private Wars _war;
     private InvasionPlan _invasionPlan;
     private RequestPeace _requestPeace;
@@ -130,6 +131,9 @@ public class KingdomRelationship {
 		get {
 			return this._targetKingdomInvasionValue;
 		}
+	}
+	public bool isDiscovered {
+		get { return this._isDiscovered; }
 	}
     #endregion
 
@@ -643,6 +647,11 @@ public class KingdomRelationship {
 			this._isAtWar = warStatus;
 		}
     }
+	internal void SetDiscovery(bool state) {
+		if(this._isDiscovered != state){
+			this._isDiscovered = state;
+		}
+	}
 
     internal void AdjustExhaustion(int amount) {
         if (_isAtWar) {
@@ -725,12 +734,17 @@ public class KingdomRelationship {
 			}
 		}
 	}
+
 	internal void ChangeWarStatus(bool state){
 		SetWarStatus(state);
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
 		kr.SetWarStatus(state);
 	}
-
+	internal void ChangeDiscovery(bool state){
+		SetDiscovery(state);
+		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		kr.SetDiscovery(state);
+	}
 	private void DefenseTreatyExpiration(){
 		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead && this._isMutualDefenseTreaty 
 			&& this._currentExpirationDefenseTreaty.IsSameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year)){

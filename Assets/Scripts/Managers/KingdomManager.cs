@@ -389,6 +389,9 @@ public class KingdomManager : MonoBehaviour {
 		discovererKingdom.DiscoverKingdom(discoveredKingdom);
 		discoveredKingdom.DiscoverKingdom(discovererKingdom);
 
+		KingdomRelationship kr = discovererKingdom.GetRelationshipWithKingdom (discoveredKingdom);
+		kr.ChangeDiscovery (true);
+
         for (int i = 0; i < discoveredKingdom.cities.Count; i++) {
             Region otherRegion = discoveredKingdom.cities[i].region;
             if (discovererKingdom.regionFogOfWarDict[otherRegion] != FOG_OF_WAR_STATE.VISIBLE) {

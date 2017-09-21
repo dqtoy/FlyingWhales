@@ -2349,18 +2349,20 @@ public class Kingdom{
 
 		//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
 		foreach (KingdomRelationship relationship in this.relationships.Values) {
-			if(relationship.targetKingdomThreatLevel >= 50){
-				if(relationship.targetKingdom.alliancePool == null){
-					mustSeekAlliance = true;
-					break;
-				}else{
-					if(this.alliancePool == null){
+			if(relationship.isDiscovered){
+				if(relationship.targetKingdomThreatLevel >= 50){
+					if(relationship.targetKingdom.alliancePool == null){
 						mustSeekAlliance = true;
 						break;
 					}else{
-						if(this.alliancePool.id != relationship.targetKingdom.alliancePool.id){
+						if(this.alliancePool == null){
 							mustSeekAlliance = true;
 							break;
+						}else{
+							if(this.alliancePool.id != relationship.targetKingdom.alliancePool.id){
+								mustSeekAlliance = true;
+								break;
+							}
 						}
 					}
 				}
@@ -2387,7 +2389,7 @@ public class Kingdom{
 		if(this.alliancePool != null){
 			bool hasLeftAlliance = false;
 			foreach (KingdomRelationship relationship in this.relationships.Values) {
-				if(!relationship.isAtWar && !relationship.AreAllies()){
+				if(!relationship.isAtWar && !relationship.AreAllies() && relationship.isDiscovered){
 					for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
 						Kingdom kingdom = this.alliancePool.kingdomsInvolved[i];
 						if(this.id != kingdom.id){
@@ -2853,23 +2855,25 @@ public class Kingdom{
 		List<KingdomRelationship> kingdomRelationships = this.relationships.Values.OrderByDescending(x => x.totalLike).ToList ();
 		for (int i = 0; i < kingdomRelationships.Count; i++) {
 			KingdomRelationship kr = kingdomRelationships [i];
-			if(kr.targetKingdom.alliancePool == null){
-				bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
-				if(hasCreated){
-					Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "create_alliance");
-					newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-					newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-					UIManager.Instance.ShowNotification (newLog);
-					break;
-				}
-			}else{
-				bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this);
-				if(hasJoined){
-					Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "join_alliance");
-					newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-					newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-					UIManager.Instance.ShowNotification (newLog);
-					break;
+			if(kr.isDiscovered){
+				if(kr.targetKingdom.alliancePool == null){
+					bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
+					if(hasCreated){
+						Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "create_alliance");
+						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+						newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+						UIManager.Instance.ShowNotification (newLog);
+						break;
+					}
+				}else{
+					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this);
+					if(hasJoined){
+						Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "join_alliance");
+						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+						newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+						UIManager.Instance.ShowNotification (newLog);
+						break;
+					}
 				}
 			}
 		}
