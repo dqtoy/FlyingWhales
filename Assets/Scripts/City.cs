@@ -269,6 +269,9 @@ public class City{
 
         MarriageManager.Instance.Marry(father, mother);
 
+        _kingdom.AssignNewKing(king);
+        this.kingdom.king.isDirectDescendant = true;
+
         MONTH monthSibling = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
         MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
 
@@ -340,9 +343,6 @@ public class City{
 
             //}
         }
-
-        _kingdom.AssignNewKing(king);
-        this.kingdom.king.isDirectDescendant = true;
     }
     private void CreateInitialGovernorFamily() {
         GENDER gender = GENDER.MALE;
@@ -1003,15 +1003,20 @@ public class City{
 		if (this.rebellion != null) {
 			RebelCityConqueredByAnotherKingdom ();
 		}
+
+        region.RemoveOccupant();
         //Destroy owned settlements
         for (int i = 0; i < ownedTiles.Count; i++) {
             HexTile currentTile = this.ownedTiles[i];
             currentTile.city = null;
             currentTile.Unoccupy();
         }
-        UnPopulateBorderTiles();
-
-        region.RemoveOccupant();
+        for (int i = 0; i < borderTiles.Count; i++) {
+            HexTile currentTile = this.borderTiles[i];
+            currentTile.kingdomColorSprite.color = Color.white;
+            currentTile.kingdomColorSprite.gameObject.SetActive(false);
+        }
+        UnPopulateBorderTiles();        
        
         this.ownedTiles.Clear();
 		this.borderTiles.Clear();
@@ -1061,6 +1066,7 @@ public class City{
         //Transfer Tiles
         List<HexTile> structureTilesToTransfer = new List<HexTile>(structures);
 
+        region.RemoveOccupant();
         //Destroy owned settlements
         for (int i = 0; i < ownedTiles.Count; i++) {
             HexTile currentTile = this.ownedTiles[i];
@@ -1068,8 +1074,6 @@ public class City{
             currentTile.Unoccupy();
         }
         UnPopulateBorderTiles();
-
-        region.RemoveOccupant();
         
         //        this._kingdom.RemoveCityFromKingdom(this);
         RemoveListeners();
@@ -1512,13 +1516,13 @@ public class City{
         _power += adjustment;
         _kingdom.AdjustBasePower(adjustment);
         _power = Mathf.Max(_power, 0);
-        UIManager.Instance.UpdatePrestigeSummary();
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void AdjustDefense(int adjustment) {
         _defense += adjustment;
         _kingdom.AdjustBaseDefense(adjustment);
         _defense = Mathf.Max(_defense, 0);
-        UIManager.Instance.UpdatePrestigeSummary();
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
 	internal void AdjustBonusHappiness(int amount){
 		this._bonusHappiness += amount;

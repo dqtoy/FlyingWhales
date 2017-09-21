@@ -1107,8 +1107,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         text += "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
         "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
         "\n [b]Happiness Points:[/b] " + this.city.happinessPoints.ToString() +
-        "\n [b]Power:[/b] " + this.city.power.ToString() +
-        "\n [b]Defense:[/b] " + this.city.defense.ToString() +
+        "\n [b]City Power:[/b] " + this.city.power.ToString() +
+        "\n [b]City Defense:[/b] " + this.city.defense.ToString() +
+        "\n [b]Kingdom Base Power:[/b] " + this.city.kingdom.basePower.ToString() +
+        "\n [b]Kingdom Base Defense:[/b] " + this.city.kingdom.baseDefense.ToString() +
+        "\n [b]Kingdom Power Alliance:[/b] " + this.city.kingdom.GetPosAlliancePower().ToString() +
+        "\n [b]Kingdom Defense Alliance:[/b] " + this.city.kingdom.GetPosAllianceDefense().ToString() +
         "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
         "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
         "\n [b]Kingdom Size:[/b] " + this.city.kingdom.kingdomSize.ToString() +
@@ -1154,16 +1158,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             text += "NONE\n";
         }
 
-        text += "[b]Kingdom values: [/b]\n";
-        Dictionary<CHARACTER_VALUE, int> kingdomVals = this.city.kingdom.importantCharacterValues;
-        if (kingdomVals.Count > 0) {
-            for (int i = 0; i < kingdomVals.Count(); i++) {
-                KeyValuePair<CHARACTER_VALUE, int> kvp = kingdomVals.ElementAt(i);
-                text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
-            }
-        } else {
-            text += "NONE\n";
-        }
+        //text += "[b]Kingdom values: [/b]\n";
+        //Dictionary<CHARACTER_VALUE, int> kingdomVals = this.city.kingdom.importantCharacterValues;
+        //if (kingdomVals.Count > 0) {
+        //    for (int i = 0; i < kingdomVals.Count(); i++) {
+        //        KeyValuePair<CHARACTER_VALUE, int> kvp = kingdomVals.ElementAt(i);
+        //        text += kvp.Key.ToString() + " - " + kvp.Value.ToString() + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
         UIManager.Instance.ShowSmallInfo(text);
     }
 

@@ -1002,6 +1002,7 @@ public class Kingdom{
         _prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
 		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
+        //Debug.Log("Adjusted Prestige! of " + name + ": \n" + System.Environment.StackTrace);
     }
     internal void SetPrestige(int adjustment) {
         _prestige = adjustment;
@@ -1011,7 +1012,8 @@ public class Kingdom{
     }
 	internal void AdjustBonusPrestige(int amount){
 		this._bonusPrestige += amount;
-	}
+        //Debug.Log("Adjusted Bonus Prestige! of " + name + ": \n" + System.Environment.StackTrace);
+    }
     internal void MonthlyPrestigeActions() {
         //Add Prestige
 		int prestigeToBeAdded = 10 + (2 * cities.Count) + this._bonusPrestige;
@@ -1171,7 +1173,6 @@ public class Kingdom{
 
     #region Succession
     internal void UpdateKingSuccession() {
-		this.successionLine.Clear();
 		orderedMaleRoyalties.Clear ();
 		orderedFemaleRoyalties.Clear ();
 		orderedBrotherRoyalties.Clear ();
@@ -1189,7 +1190,7 @@ public class Kingdom{
 			}
 		}
 		for (int i = 0; i < this.successionLine.Count; i++) {
-			if (!this.successionLine [i].isDirectDescendant && this.successionLine [i].id != this.king.id) {
+			if (this.successionLine [i].id != this.king.id) {
 				if ((this.successionLine [i].father != null && this.king.father != null) && this.successionLine [i].father.id == this.king.father.id) {
 					if (this.successionLine [i].gender == GENDER.MALE) {
 						orderedBrotherRoyalties.Add (this.successionLine [i]);
@@ -1200,7 +1201,8 @@ public class Kingdom{
 			}
 		}
 
-		this.successionLine.AddRange (orderedMaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age));
+        this.successionLine.Clear();
+        this.successionLine.AddRange (orderedMaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age));
 		this.successionLine.AddRange (orderedFemaleRoyalties.OrderBy (x => x.generation).ThenByDescending (x => x.age));
 
 		this.successionLine.AddRange (orderedBrotherRoyalties.OrderByDescending (x => x.age));
@@ -2814,7 +2816,7 @@ public class Kingdom{
 	internal void SetAlliancePool(AlliancePool alliancePool){
 		this._alliancePool = alliancePool;
 	}
-	private int GetPosAlliancePower(){
+	internal int GetPosAlliancePower(){
 		int posAlliancePower = 0;
 		if(this.alliancePool != null){
 			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
@@ -2826,10 +2828,18 @@ public class Kingdom{
 					}
 				}
 			}
-		}
+        }
+//		foreach (KingdomRelationship relationship in this.relationships.Values) {
+////			if(relationship.isAlly){
+//				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
+//				if(relationshipFrom.totalLike >= 35){
+//					posAlliancePower += relationship.targetKingdom.basePower;
+//				}
+////			}
+//		}
 		return posAlliancePower;
 	}
-	private int GetPosAllianceDefense(){
+    internal int GetPosAllianceDefense(){
 		int posAllianceDefense = 0;
 		if(this.alliancePool != null){
 			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
@@ -2841,7 +2851,15 @@ public class Kingdom{
 					}
 				}
 			}
-		}
+        }
+//		foreach (KingdomRelationship relationship in this.relationships.Values) {
+////			if(relationship.isAlly){
+//				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
+//				if(relationshipFrom.totalLike >= 35){
+//					posAllianceDefense += relationship.targetKingdom.baseDefense;
+//				}
+////			}
+//		}
 		return posAllianceDefense;
 	}
 	internal void SetWarfareInfo(WarfareInfo info){

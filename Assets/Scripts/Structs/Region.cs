@@ -124,6 +124,15 @@ public class Region {
             } 
         }
     }
+    internal bool IsAdjacentToKingdom(Kingdom kingdom) {
+        for (int i = 0; i < _adjacentRegions.Count; i++) {
+            Region currRegion = _adjacentRegions[i];
+            if(currRegion.occupant != null && currRegion.occupant.kingdom == kingdom) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Tile Functions
@@ -151,9 +160,50 @@ public class Region {
         }
     }
     internal void RemoveOccupant() {
-        _occupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.SEEN);
-        ReColorBorderTiles(defaultBorderColor);
+        City previousOccupant = _occupant;
         _occupant = null;
+        //Check if this region has adjacent regions that has the same occupant as this one, if so set region as visible
+        if (IsAdjacentToKingdom(previousOccupant.kingdom)) {
+            previousOccupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.VISIBLE);
+        } else {
+            previousOccupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.SEEN);
+        }
+
+        //Change fog of war of region for discovered kingdoms
+        for (int i = 0; i < previousOccupant.kingdom.discoveredKingdoms.Count; i++) {
+            Kingdom otherKingdom = previousOccupant.kingdom.discoveredKingdoms[i];
+            if (IsAdjacentToKingdom(otherKingdom)) {
+                otherKingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.VISIBLE);
+            } else {
+                otherKingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.HIDDEN);
+            }
+        }
+
+        //Check adjacent regions
+        for (int i = 0; i < adjacentRegions.Count; i++) {
+            Region adjacentRegion = adjacentRegions[i];
+            if (adjacentRegion.IsAdjacentToKingdom(previousOccupant.kingdom)) {
+                previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.VISIBLE);
+                continue;
+            }
+
+            if (adjacentRegion.occupant == null) {
+                previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.HIDDEN);
+            } else {
+                Kingdom occupantOfAdjacentRegion = adjacentRegion.occupant.kingdom;
+                if (previousOccupant.kingdom.discoveredKingdoms.Contains(occupantOfAdjacentRegion)) {
+                    previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.SEEN);
+                } else if(occupantOfAdjacentRegion == previousOccupant.kingdom) {
+                    previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.VISIBLE);
+                } else {
+                    previousOccupant.kingdom.SetFogOfWarStateForRegion(adjacentRegion, FOG_OF_WAR_STATE.HIDDEN);
+                }
+            }
+        }
+        
+        
+        ReColorBorderTiles(defaultBorderColor);
+        
         if (_specialResource != RESOURCE.NONE) {
             _tileWithSpecialResource.Unoccupy();
         }
