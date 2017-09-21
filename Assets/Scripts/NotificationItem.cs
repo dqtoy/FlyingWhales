@@ -18,6 +18,7 @@ public class NotificationItem : PooledObject {
     #endregion
 
     public void SetLog(Log log) {
+        GetComponent<UI2DSprite>().MarkAsChanged();
         this._thisLog = log;
         if (_thisLog.fillers.Count > 0) {
             this.notifLabel.text = Utilities.LogReplacer(_thisLog);

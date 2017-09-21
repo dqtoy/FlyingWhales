@@ -290,12 +290,12 @@ public class Kingdom{
 	public int effectivePower{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 2);}
-		get { return this._basePower + (int)(GetPosAlliancePower() / 2);}
+		get { return this.basePower + (int)(GetPosAlliancePower() / 2);}
 	}
 	public int effectiveDefense{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 3) + this._baseDefense + (int)(GetMutualDefenseTreatyPower() / 3);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 3) + this._baseDefense + (int)(this._mutualDefenseTreatyPower / 3);}
-		get { return this._baseDefense + (int)(GetPosAllianceDefense() / 2);}
+		get { return this.baseDefense + (int)(GetPosAllianceDefense() / 2);}
 	}
 	public int militaryAlliancePower{
 		get { return this._militaryAlliancePower;}
