@@ -1003,6 +1003,8 @@ public class City{
 		if (this.rebellion != null) {
 			RebelCityConqueredByAnotherKingdom ();
 		}
+
+        region.RemoveOccupant();
         //Destroy owned settlements
         for (int i = 0; i < ownedTiles.Count; i++) {
             HexTile currentTile = this.ownedTiles[i];
@@ -1014,9 +1016,7 @@ public class City{
             currentTile.kingdomColorSprite.color = Color.white;
             currentTile.kingdomColorSprite.gameObject.SetActive(false);
         }
-        UnPopulateBorderTiles();
-
-        region.RemoveOccupant();
+        UnPopulateBorderTiles();        
        
         this.ownedTiles.Clear();
 		this.borderTiles.Clear();
@@ -1066,6 +1066,7 @@ public class City{
         //Transfer Tiles
         List<HexTile> structureTilesToTransfer = new List<HexTile>(structures);
 
+        region.RemoveOccupant();
         //Destroy owned settlements
         for (int i = 0; i < ownedTiles.Count; i++) {
             HexTile currentTile = this.ownedTiles[i];
@@ -1073,8 +1074,6 @@ public class City{
             currentTile.Unoccupy();
         }
         UnPopulateBorderTiles();
-
-        region.RemoveOccupant();
         
         //        this._kingdom.RemoveCityFromKingdom(this);
         RemoveListeners();
