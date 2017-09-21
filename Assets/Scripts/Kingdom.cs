@@ -419,7 +419,7 @@ public class Kingdom{
 		this._warfareInfo.DefaultValues();
 
 		SetLackPrestigeState(false);
-        AdjustPrestige(200);
+        AdjustPrestige(100);
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
@@ -493,12 +493,12 @@ public class Kingdom{
             //Update Relationship Opinion
             UpdateAllRelationshipsLikenessFromOthers();
 
-            //if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+            if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
                 Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
                 updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
                 UIManager.Instance.ShowNotification(updateKingdomTypeLog);
-            //}
+            }
         }
     }
 
@@ -2169,13 +2169,13 @@ public class Kingdom{
 		this._isMilitarize = state;
 		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
 			UIManager.Instance.militarizingGO.SetActive (state);
+            if (state) {
+                Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
+                militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+                UIManager.Instance.ShowNotification(militarizeLog);
+            }
 		}
-        if (state) {
-            Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
-            militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-            UIManager.Instance.ShowNotification(militarizeLog);
-        }
-    }
+	}
 
 	private void ScheduleActionDay(){
 		KingdomManager.Instance.IncrementCurrentActionDay (2);
@@ -2339,7 +2339,7 @@ public class Kingdom{
 				if(this.id != kingdom.id){
 					KingdomRelationship kr = GetRelationshipWithKingdom(kingdom);
 					if(kr.targetKingdomThreatLevel >= 100){
-						this.alliancePool.RemoveKingdomInAlliance(this);
+						LeaveAlliance ();
 						AdjustPrestige(-50);
 						break;
 					}
@@ -2402,7 +2402,7 @@ public class Kingdom{
 									kingdom.warfareInfo.warfare.JoinWar(kingdom.warfareInfo.side, this);
 								}else{
 									//Don't join war, leave alliance, lose 100 prestige
-									this.alliancePool.RemoveKingdomInAlliance(this);
+									LeaveAlliance();
 									AdjustPrestige (-100);
 									hasLeftAlliance = true;
 									break;
@@ -2856,11 +2856,19 @@ public class Kingdom{
 			if(kr.targetKingdom.alliancePool == null){
 				bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
 				if(hasCreated){
+					Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "create_alliance");
+					newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+					newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+					UIManager.Instance.ShowNotification (newLog);
 					break;
 				}
 			}else{
 				bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this);
 				if(hasJoined){
+					Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "join_alliance");
+					newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+					newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+					UIManager.Instance.ShowNotification (newLog);
 					break;
 				}
 			}
@@ -2920,5 +2928,13 @@ public class Kingdom{
 	}
 	internal void SetWarfareInfoToDefault(){
 		this._warfareInfo.DefaultValues();
+	}
+	internal void LeaveAlliance(){
+		if(this.alliancePool != null){
+			this.alliancePool.RemoveKingdomInAlliance(this);
+			Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
+			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+			UIManager.Instance.ShowNotification (newLog);
+		}
 	}
 }
