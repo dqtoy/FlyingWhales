@@ -7,7 +7,7 @@ public class NotificationItem : PooledObject {
     [SerializeField] private UILabel notifLabel;
     [SerializeField] private int baseNotificationExpiration;
 
-    private int timeLeftBeforeExpiration;
+    [SerializeField] private int timeLeftBeforeExpiration;
 
     private Log _thisLog;
 
