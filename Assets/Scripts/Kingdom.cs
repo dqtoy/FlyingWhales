@@ -1747,10 +1747,13 @@ public class Kingdom{
 //			}
 //		}
 		if(exceptionKingdom == null){
-			foreach (KingdomRelationship relationship in relationships.Values) {
-				if (relationship.isAtWar) {
-					return true;
-				}
+//			foreach (KingdomRelationship relationship in relationships.Values) {
+//				if (relationship.isAtWar) {
+//					return true;
+//				}
+//			}
+			if(this._warfareInfo.warfare != null){
+				return true;
 			}
 		}else{
 			foreach (KingdomRelationship relationship in relationships.Values) {
@@ -2380,21 +2383,71 @@ public class Kingdom{
 			}
 		}
 
+		bool hasAllianceInWar = false;
 		if(this.alliancePool != null){
+			bool hasLeftAlliance = false;
 			foreach (KingdomRelationship relationship in this.relationships.Values) {
 				if(!relationship.isAtWar && !relationship.AreAllies()){
 					for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
 						Kingdom kingdom = this.alliancePool.kingdomsInvolved[i];
 						if(this.id != kingdom.id){
-							KingdomRelationship kr = relationship.targetKingdom.GetRelationshipWithKingdom(kingdom);
+							KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(relationship.targetKingdom);
 							if(kr.isAtWar){
-								
+								hasAllianceInWar = true;
+								KingdomRelationship krWithAlly = GetRelationshipWithKingdom (kingdom);
+								int totalChanceOfJoining = krWithAlly.totalLike * 2;
+								int chance = UnityEngine.Random.Range (0, 100);
+								if(chance < totalChanceOfJoining){
+									//Join War
+									kingdom.warfareInfo.warfare.JoinWar(kingdom.warfareInfo.side, this);
+								}else{
+									//Don't join war, leave alliance, lose 100 prestige
+									this.alliancePool.RemoveKingdomInAlliance(this);
+									AdjustPrestige (-100);
+									hasLeftAlliance = true;
+									break;
+								}
 							}
+						}
+					}
+					if(hasLeftAlliance){
+						break;
+					}
+				}
+			}
+		}
+
+		if(this.alliancePool == null || !hasAllianceInWar){
+			if(this.cities.Count < this.cityCap){
+				if(!HasWar()){
+					HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
+					if(hexTile == null){
+						//Can no longer expand
+						Kingdom targetKingdom = null;
+						float highestInvasionValue = 0;
+						foreach (KingdomRelationship relationship in this.relationships.Values) {
+							if(relationship.isAdjacent && relationship.targetKingdomInvasionValue > 50){
+								if(!relationship.AreAllies()){
+									if(targetKingdom == null){
+										targetKingdom = relationship.targetKingdom;
+										highestInvasionValue = relationship.targetKingdomInvasionValue;
+									}else{
+										if(relationship.targetKingdomInvasionValue > highestInvasionValue){
+											targetKingdom = relationship.targetKingdom;
+											highestInvasionValue = relationship.targetKingdomInvasionValue;
+										}
+									}
+								}
+							}
+						}
+						if(targetKingdom != null){
+							Warfare warfare = new Warfare (this, targetKingdom);
 						}
 					}
 				}
 			}
 		}
+
 
 
 	}

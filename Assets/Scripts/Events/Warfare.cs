@@ -8,6 +8,7 @@ public class Warfare {
 	private List<Kingdom> _sideA;
 	private List<Kingdom> _sideB;
 	private List<Battle> _battles;
+	private List<Log> _logs;
 
 	#region getters/setters
 	public int id{
@@ -51,6 +52,11 @@ public class Warfare {
 		//Conquer City if not null, if null means both dead
 		RemoveBattle (battle);
 		if(winnerCity != null && loserCity != null){
+			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "invade");
+			newLog.AddToFillers (winnerCity.kingdom, winnerCity.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (loserCity, loserCity.name, LOG_IDENTIFIER.CITY_2);
+			ShowUINotificaiton (newLog);
+
 			winnerCity.kingdom.ConquerCity(loserCity);
 			CreateNewBattle (winnerCity.kingdom);
 		}
@@ -148,5 +154,14 @@ public class Warfare {
 	}
 	private void RemoveBattle(Battle battle){
 		this._battles.Remove (battle);
+	}
+
+	internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
+		Log newLog = new Log (month, day, year, category, file, key);
+		this._logs.Add (newLog);
+		return newLog;
+	}
+	internal void ShowUINotificaiton(Log log){
+		UIManager.Instance.ShowNotification(log);
 	}
 }
