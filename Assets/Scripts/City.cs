@@ -1032,7 +1032,7 @@ public class City{
     /*
      * Conquer this city and transfer ownership to the conqueror
      * */
-	internal void ConquerCity(Kingdom conqueror, KingdomRelationship kingdomRelationship) {
+	internal void ConquerCity(Kingdom conqueror) {
 		RemoveOneTimeResourceBenefits();
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
