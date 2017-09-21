@@ -1315,56 +1315,30 @@ public class Kingdom{
             }
 
             HexTile hex = city.hexTile;
-            //city.KillCity();
             if (this.race != city.kingdom.race) {
                 city.KillCity();
             } else {
-				city.ConquerCity(this, rel);
+				city.ConquerCity(this);
             }
-
-            //yield return null;
-            //City newCity = CreateNewCityOnTileForKingdom(hex);
-            //newCity.hp = 100;
-            //newCity.CreateInitialFamilies(false);
-            //			this.AddInternationalWarCity (newCity);
-            //KingdomManager.Instance.CheckWarTriggerMisc(city.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
-            //Adjust unrest because a city of this kingdom was conquered.
             this.AdjustHappiness(HAPPINESS_DECREASE_CONQUER);
         } else {
 			if(city.rebellion == null){
 				city.ChangeToRebelFort(attacker.citizen.city.rebellion);
 			}
-//            if (city is RebelFort) {
-//                city.rebellion.KillFort();
-//                //				HexTile hex = city.hexTile;
-//                //				city.KillCity();
-//            } else {
-//                if (city.rebellion != null) {
-//                    city.ChangeToCity();
-//                } else {
-//                    city.ChangeToRebelFort(attacker.citizen.city.rebellion);
-//                }
-//            }
-
         }
 
     }
-    //internal bool CheckForSpecificWar(Kingdom kingdom){
-    //	for(int i = 0; i < this.relationshipsWithOtherKingdoms.Count; i++){
-    //		if(this.relationshipsWithOtherKingdoms[i].targetKingdom.id == kingdom.id){
-    //			if(this.relationshipsWithOtherKingdoms[i].isAtWar){
-    //				return true;
-    //			}
-    //		}
-    //	}
-    //	return false;
-    //}
-    //internal void AssimilateKingdom(Kingdom newKingdom){
-    //	for(int i = 0; i < this.cities.Count; i++){
-    //		newKingdom.AddCityToKingdom (this.cities [i]);
-    //	}
-    //	KingdomManager.Instance.MakeKingdomDead(this);
-    //}
+	internal void ConquerCity(City city){
+		if (this.id != city.kingdom.id) {
+			HexTile hex = city.hexTile;
+			if (this.race != city.kingdom.race) {
+				city.KillCity();
+			} else {
+				city.ConquerCity(this);
+			}
+			this.AdjustHappiness(HAPPINESS_DECREASE_CONQUER);
+		}
+	}
     #endregion
 
     #region Kingdom Tile Management
@@ -2209,9 +2183,9 @@ public class Kingdom{
 		if(!this.isDead){
 			UpdateThreatLevels ();
 			UpdateInvasionValues ();
-//			if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
-//				SeeksBalance ();
-//			}
+			if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
+				SeeksBalance ();
+			}
 
 			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 			gameDate.AddMonths (1);
