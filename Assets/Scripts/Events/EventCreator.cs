@@ -22,7 +22,23 @@ public class EventCreator: MonoBehaviour {
             Debug.Log(kingdom.name + " cannot find a region to expand to!");
 			return null;
 		}
-		Citizen expander = kingdom.capitalCity.CreateNewAgent (ROLE.EXPANDER, EVENT_TYPES.EXPANSION, hexTileToExpandTo);
+
+        Region regionToExpandTo = hexTileToExpandTo.region;
+        float nearestDistance = 9999f;
+        HexTile origin = null;
+        //Get nearest region from hexTileToExpandTo
+        for (int i = 0; i < regionToExpandTo.adjacentRegions.Count; i++) {
+            Region currAdjacentRegion = regionToExpandTo.adjacentRegions[i];
+            float distance = hexTileToExpandTo.GetDistanceTo(currAdjacentRegion.centerOfMass);
+            if(currAdjacentRegion.occupant != null && currAdjacentRegion.occupant.kingdom == kingdom && distance < nearestDistance) {
+                origin = currAdjacentRegion.centerOfMass;
+                nearestDistance = distance;
+            }
+        }
+        if(origin == null) {
+            throw new System.Exception("Could not find origin tile for expansion of " + kingdom.name + " to " + hexTileToExpandTo.name);
+        }
+        Citizen expander = origin.city.CreateNewAgent (ROLE.EXPANDER, EVENT_TYPES.EXPANSION, hexTileToExpandTo);
 		if (expander != null) {
 			Expansion expansion = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, expander, hexTileToExpandTo);
 			expander.assignedRole.Initialize (expansion);
