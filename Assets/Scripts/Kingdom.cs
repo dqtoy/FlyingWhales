@@ -2328,7 +2328,7 @@ public class Kingdom{
 
 	private void SeeksBalance(){
 		bool mustSeekAlliance = false;
-
+        Debug.Log("========== " + name + " is seeking balance " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
 		//break any alliances with anyone whose threat value is 100 or above and lose 50 Prestige
 		if(this.alliancePool != null){
 			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
@@ -2338,6 +2338,9 @@ public class Kingdom{
 					if(kr.targetKingdomThreatLevel >= 100){
 						LeaveAlliance ();
 						AdjustPrestige(-50);
+                        Debug.Log(name + " broke alliance with " + kingdom.name +
+                            " because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + "," + name + 
+                            " lost 50 prestige. Prestige is now " + prestige.ToString());
 						break;
 					}
 				}
@@ -2374,11 +2377,13 @@ public class Kingdom{
 			//if Happiness is greater than -50, militarize, otherwise only 25% chance to militarize
 			if(this.happiness > -50){
 				Militarize (true);
-			}else{
+                Debug.Log(name + " has " + happiness.ToString() + " happiness and starts militarizing");
+            } else{
 				int chance = UnityEngine.Random.Range (0, 100);
 				if(chance < 25){
-					Militarize (true);
-				}
+                    Militarize (true);
+                    Debug.Log(name + " has " + happiness.ToString() + " happiness and starts militarizing");
+                }
 			}
 		}
 
@@ -2399,12 +2404,14 @@ public class Kingdom{
 								if(chance < totalChanceOfJoining){
 									//Join War
 									kingdom.warfareInfo.warfare.JoinWar(kingdom.warfareInfo.side, this);
-								}else{
+                                    Debug.Log(name + " joins in " + kingdom.name + "'s war");
+                                } else{
 									//Don't join war, leave alliance, lose 100 prestige
 									LeaveAlliance();
 									AdjustPrestige (-100);
 									hasLeftAlliance = true;
-									break;
+                                    Debug.Log(name + " does not join in " + kingdom.name + "'s war, leaves the alliance and loses 100 prestige. Prestige is now " + prestige.ToString());
+                                    break;
 								}
 							}
 						}
@@ -2415,8 +2422,8 @@ public class Kingdom{
 				}
 			}
 		}
-
-		if(this.alliancePool == null || !hasAllianceInWar){
+        //if prestige can still accommodate more cities but nowhere to expand and currently not at war and none of my allies are at war
+        if (this.alliancePool == null || !hasAllianceInWar){
 			if(this.cities.Count < this.cityCap){
 				if(!HasWar()){
 					HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
@@ -2440,14 +2447,16 @@ public class Kingdom{
 							}
 						}
 						if(targetKingdom != null){
-							Warfare warfare = new Warfare (this, targetKingdom);
-						}
+                            //if there is anyone whose Invasion Value is 50 or above, prepare for war against the one with the highest Invasion Value
+                            Warfare warfare = new Warfare (this, targetKingdom);
+                            Debug.Log(name + " prepares for war against " + targetKingdom.name);
+                        }
 					}
 				}
 			}
 		}
 
-
+        Debug.Log("========== END SEEKS BALANCE " + name + " ==========");
 
 	}
 	private void SeeksBandwagon(){
@@ -2855,6 +2864,7 @@ public class Kingdom{
 	}
 
 	internal void SeekAlliance(){
+        Debug.Log(name + " is looking to create/join an alliance");
 		List<KingdomRelationship> kingdomRelationships = this.relationships.Values.OrderByDescending(x => x.totalLike).ToList ();
 		for (int i = 0; i < kingdomRelationships.Count; i++) {
 			KingdomRelationship kr = kingdomRelationships [i];
@@ -2866,7 +2876,14 @@ public class Kingdom{
 						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 						newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 						UIManager.Instance.ShowNotification (newLog);
-						break;
+                        string log = name + " has created an alliance with ";
+                        for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+                            if(_alliancePool.kingdomsInvolved[j].id != id) {
+                                log += _alliancePool.kingdomsInvolved[j].name;
+                            }
+                        }
+                        Debug.Log(log);
+                        break;
 					}
 				}else{
 					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this);
@@ -2875,11 +2892,20 @@ public class Kingdom{
 						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 						newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 						UIManager.Instance.ShowNotification (newLog);
-						break;
+                        string log = name + " has joined an alliance with ";
+                        for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+                            if (_alliancePool.kingdomsInvolved[j].id != id) {
+                                log += _alliancePool.kingdomsInvolved[j].name;
+                            }
+                        }
+                        break;
 					}
 				}
 			}
 		}
+        if(_alliancePool == null) {
+            Debug.Log(name + " has failed to create/join an alliance");
+        }
 	}
 	internal void SetAlliancePool(AlliancePool alliancePool){
 		this._alliancePool = alliancePool;

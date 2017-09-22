@@ -63,10 +63,12 @@ public class KingdomManager : MonoBehaviour {
         smallToMediumReq = Mathf.FloorToInt(GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt(GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
+
         for (int i = 0; i < initialKingdomSetup.Count; i++) {
             InitialKingdom initialKingdom = initialKingdomSetup[i];
             RACE initialKingdomRace = initialKingdom.race;
-            Region regionForKingdom = allRegions.OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).FirstOrDefault();
+            List<Region> regionsToChooseFrom = allRegions.OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).Take(Mathf.FloorToInt(GridMap.Instance.numOfRegions / 3)).ToList();
+            Region regionForKingdom = regionsToChooseFrom[Random.Range(0, regionsToChooseFrom.Count)];
             allRegions.Remove(regionForKingdom);
             Kingdom newKingdom = GenerateNewKingdom(initialKingdomRace, new List<HexTile>() { regionForKingdom.centerOfMass }, true);
             newKingdom.HighlightAllOwnedTilesInKingdom();
