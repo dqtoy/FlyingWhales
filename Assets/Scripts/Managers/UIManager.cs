@@ -2544,7 +2544,7 @@ public class UIManager : MonoBehaviour {
             Citizen currCitizen = null;
             try {
                 currCitizen = citizensToChooseFrom[i];
-            } catch(Exception e) {
+            } catch {
                 currPortrait.gameObject.SetActive(false);
                 continue;
             }

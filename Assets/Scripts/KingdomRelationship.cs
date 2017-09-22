@@ -13,7 +13,6 @@ public class KingdomRelationship {
     private List<ExpirableModifier> _eventModifiers;
     private int _like;
     private int _eventLikenessModifier;
-    private int _likeFromMutualRelationships;
     public int forTestingLikeModifier;
     private string _relationshipSummary;
     private string _relationshipEventsSummary;
@@ -66,13 +65,10 @@ public class KingdomRelationship {
         get { return this._relationshipSummary + this._relationshipEventsSummary; }
     }
     public int totalLike {
-        get { return _like + _eventLikenessModifier + _likeFromMutualRelationships + forTestingLikeModifier; }
+        get { return _like + _eventLikenessModifier + forTestingLikeModifier; }
     }
     public int eventLikenessModifier {
         get { return _eventLikenessModifier; }
-    }
-    public int likeFromMutualRelationships {
-        get { return _likeFromMutualRelationships; }
     }
     public bool isAtWar {
         get { return _isAtWar; }
@@ -153,7 +149,6 @@ public class KingdomRelationship {
         _eventModifiers = new List<ExpirableModifier>();
         _like = 0;
         _eventLikenessModifier = 0;
-        _likeFromMutualRelationships = 0;
         _relationshipSummary = string.Empty;
         _relationshipEventsSummary = string.Empty;
         _isInitial = false;
@@ -207,19 +202,19 @@ public class KingdomRelationship {
         } else {
             _relationshipStatus = RELATIONSHIP_STATUS.LOVE;
         }
-        if (previousStatus != _relationshipStatus) {
-            //relationship status changed
-            _sourceKingdom.UpdateMutualRelationships();
-        }
+        //if (previousStatus != _relationshipStatus) {
+        //    //relationship status changed
+        //    _sourceKingdom.UpdateMutualRelationships();
+        //}
     }
 
-    internal void ResetMutualRelationshipModifier() {
-        _likeFromMutualRelationships = 0;
-    }
+    //internal void ResetMutualRelationshipModifier() {
+    //    _likeFromMutualRelationships = 0;
+    //}
 
-    internal void AddMutualRelationshipModifier(int amount) {
-        this._likeFromMutualRelationships += amount;
-    }
+    //internal void AddMutualRelationshipModifier(int amount) {
+    //    this._likeFromMutualRelationships += amount;
+    //}
 
     /*
      * <summary>
