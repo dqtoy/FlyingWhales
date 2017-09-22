@@ -1064,6 +1064,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.ownedByCity.kingdom.king.Death(DEATH_REASONS.ACCIDENT);
     }
 
+    [ContextMenu("Force Transfer City")]
+    public void ForceChangeKingdom() {
+        KingdomManager.Instance.TransferCitiesToOtherKingdom(ownedByCity.kingdom, KingdomManager.Instance.allKingdoms[kingdomToConquerIndex], ownedByCity);
+    }
     //[ContextMenu("Select Tiles in Same Region")]
     //public void SelectAllTilesInRegion() {
     //    UnityEditor.Selection.objects = region.tilesInRegion.Select(x => x.gameObject).ToArray();
@@ -1152,6 +1156,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (this.city.kingdom.discoveredKingdoms.Count > 0) {
             for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
                 Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
+                text += currKingdom.name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
+
+        text += "[b]Alliance Kingdoms: [/b]\n";
+        if(this.city.kingdom.alliancePool != null) {
+            for (int i = 0; i < this.city.kingdom.alliancePool.kingdomsInvolved.Count; i++) {
+                Kingdom currKingdom = this.city.kingdom.alliancePool.kingdomsInvolved[i];
                 text += currKingdom.name + "\n";
             }
         } else {
