@@ -1012,7 +1012,7 @@ public class Kingdom{
     }
     internal void MonthlyPrestigeActions() {
         //Add Prestige
-		int prestigeToBeAdded = 10 + (2 * cities.Count) + this._bonusPrestige;
+		int prestigeToBeAdded = this._bonusPrestige;
 		AdjustPrestige(prestigeToBeAdded);
 
         //Check if city count exceeds cap
@@ -2864,13 +2864,13 @@ public class Kingdom{
 	}
 
 	internal void SeekAlliance(){
-        Debug.Log(name + " is looking to create/join an alliance");
 		List<KingdomRelationship> kingdomRelationships = this.relationships.Values.OrderByDescending(x => x.totalLike).ToList ();
 		for (int i = 0; i < kingdomRelationships.Count; i++) {
 			KingdomRelationship kr = kingdomRelationships [i];
 			if(kr.isDiscovered){
 				if(kr.targetKingdom.alliancePool == null){
-					bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
+                    Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
+                    bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
 					if(hasCreated){
 						Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "create_alliance");
 						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
@@ -2889,7 +2889,8 @@ public class Kingdom{
                         break;
 					}
 				}else{
-					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this);
+                    Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
+                    bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this);
 					if(hasJoined){
 						Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "join_alliance");
 						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
