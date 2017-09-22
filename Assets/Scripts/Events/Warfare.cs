@@ -23,6 +23,7 @@ public class Warfare {
 		this._sideA = new List<Kingdom>();
 		this._sideB = new List<Kingdom>();
 		this._battles = new List<Battle>();
+		this._logs = new List<Log> ();
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
 		CreateNewBattle (firstKingdom, true);
@@ -88,9 +89,9 @@ public class Warfare {
 		}else{
 			City friendlyCity = null;
 			City enemyCity = null;
-			List<City> nonRebellingCities = kingdom.nonRebellingCities;
-			if(nonRebellingCities.Count > 0){
-				friendlyCity = nonRebellingCities[nonRebellingCities.Count - 1];
+//			List<City> nonRebellingCities = kingdom.nonRebellingCities;
+			if(kingdom.cities.Count > 0){
+				friendlyCity = kingdom.cities[kingdom.cities.Count - 1];
 			}
 			if(friendlyCity != null){
 				enemyCity = GetEnemyCity (friendlyCity);
@@ -108,6 +109,15 @@ public class Warfare {
 		}
 	}
 
+	internal void CreateNewBattle(City city){
+		City friendlyCity = city;
+		City enemyCity = GetEnemyCity (city);
+		if(friendlyCity != null && enemyCity != null){
+			Battle newBattle = new Battle (this, friendlyCity, enemyCity);
+			AddBattle (newBattle);
+		}
+	}
+
 	private City GetEnemyCity(City sourceCity){
 		List<City> enemyCities = new List<City> ();
 		for (int j = 0; j < sourceCity.region.adjacentRegions.Count; j++) {
@@ -122,10 +132,12 @@ public class Warfare {
 				}
 			}
 		}
-		int lowestDef = enemyCities.Min (x => x.defense);
-		for (int i = 0; i < enemyCities.Count; i++) {
-			if(enemyCities[i].defense == lowestDef){
-				return enemyCities [i];
+		if (enemyCities.Count > 0) {
+			int lowestDef = enemyCities.Min (x => x.defense);
+			for (int i = 0; i < enemyCities.Count; i++) {
+				if (enemyCities [i].defense == lowestDef) {
+					return enemyCities [i];
+				}
 			}
 		}
 		return null;
@@ -148,10 +160,12 @@ public class Warfare {
 				}
 			}
 		}
-		int lowestDef = enemyCities.Min (x => x.defense);
-		for (int i = 0; i < enemyCities.Count; i++) {
-			if(enemyCities[i].defense == lowestDef){
-				return enemyCities [i];
+		if(enemyCities.Count > 0){
+			int lowestDef = enemyCities.Min (x => x.defense);
+			for (int i = 0; i < enemyCities.Count; i++) {
+				if(enemyCities[i].defense == lowestDef){
+					return enemyCities [i];
+				}
 			}
 		}
 		return null;

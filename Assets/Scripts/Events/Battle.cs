@@ -127,6 +127,8 @@ public class Battle {
 				//Defender Wins
 				ChangePositionAndGoToStep1();
 			}
+		}else{
+			CityDied ();
 		}
 	}
 	private int GetPowerBuffs(City city){
@@ -261,7 +263,17 @@ public class Battle {
 		this._kingdom2City.isUnderAttack = false;
 		this._warfare.BattleEnds (winnerCity, loserCity, this);
 	}
+	private void CityDied(){
+		this._isOver = true;
+		this._kingdom1City.isUnderAttack = false;
+		this._kingdom2City.isUnderAttack = false;
+		if(!this.attacker.isDead){
+			this._warfare.CreateNewBattle (this.attacker);
+		}else{
+			this._warfare.CreateNewBattle (this.attacker.kingdom);
+		}
 
+	}
 	private void ChangePositionAndGoToStep1(){
 		SetAttackerAndDefenderCity (this.defender, this.attacker);
 		Step1 ();

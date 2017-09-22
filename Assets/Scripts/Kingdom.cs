@@ -419,7 +419,9 @@ public class Kingdom{
 		this._warfareInfo.DefaultValues();
 
 		SetLackPrestigeState(false);
-        AdjustPrestige(GridMap.Instance.numOfRegions);
+//        AdjustPrestige(GridMap.Instance.numOfRegions);
+		AdjustPrestige(500);
+
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
@@ -1310,12 +1312,13 @@ public class Kingdom{
 				rel.war.ChangeDoneStateWarPair (true);
             }
 
-            HexTile hex = city.hexTile;
-            if (this.race != city.kingdom.race) {
-                city.KillCity();
-            } else {
-				city.ConquerCity(this);
-            }
+			city.ConquerCity(this);
+//            HexTile hex = city.hexTile;
+//            if (this.race != city.kingdom.race) {
+//                city.KillCity();
+//            } else {
+//				city.ConquerCity(this);
+//            }
             this.AdjustHappiness(HAPPINESS_DECREASE_CONQUER);
         } else {
 			if(city.rebellion == null){
@@ -1326,12 +1329,13 @@ public class Kingdom{
     }
 	internal void ConquerCity(City city){
 		if (this.id != city.kingdom.id) {
-			HexTile hex = city.hexTile;
-			if (this.race != city.kingdom.race) {
-				city.KillCity();
-			} else {
-				city.ConquerCity(this);
-			}
+			city.ConquerCity(this);
+//			HexTile hex = city.hexTile;
+//			if (this.race != city.kingdom.race) {
+//				city.KillCity();
+//			} else {
+//				city.ConquerCity(this);
+//			}
 			this.AdjustHappiness(HAPPINESS_DECREASE_CONQUER);
 		}
 	}

@@ -799,7 +799,7 @@ public class KingdomRelationship {
 
 
 		if(this._targetKingdom.effectivePower > this._sourceKingdom.effectiveDefense){
-			HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom (this._sourceKingdom);
+			HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom (this._targetKingdom);
 			if(hexTile == null){
 				threatLevel = (((float)this._targetKingdom.effectivePower / (float)this._sourceKingdom.effectiveDefense) * 100f) - 100f;
 				threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
