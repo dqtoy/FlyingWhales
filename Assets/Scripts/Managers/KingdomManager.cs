@@ -33,6 +33,8 @@ public class KingdomManager : MonoBehaviour {
 	public int currentActionDay;
     public int oddActionDay = 1;
 
+	private List<AlliancePool> _alliances = new List<AlliancePool>();
+
     [Space(10)]
     [Header("Kingdom Type Modifiers")]
     [SerializeField] internal float smallToMediumReqPercentage;
@@ -52,6 +54,9 @@ public class KingdomManager : MonoBehaviour {
     public bool useFogOfWar {
         get { return this._useFogOfWar; }
     }
+	public List<AlliancePool> alliances {
+		get { return this._alliances; }
+	}
     #endregion
 
     void Awake(){
@@ -63,10 +68,12 @@ public class KingdomManager : MonoBehaviour {
         smallToMediumReq = Mathf.FloorToInt(GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt(GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
+
         for (int i = 0; i < initialKingdomSetup.Count; i++) {
             InitialKingdom initialKingdom = initialKingdomSetup[i];
             RACE initialKingdomRace = initialKingdom.race;
-            Region regionForKingdom = allRegions.OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).FirstOrDefault();
+            List<Region> regionsToChooseFrom = allRegions.OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).Take(Mathf.FloorToInt(GridMap.Instance.numOfRegions / 3)).ToList();
+            Region regionForKingdom = regionsToChooseFrom[Random.Range(0, regionsToChooseFrom.Count)];
             allRegions.Remove(regionForKingdom);
             Kingdom newKingdom = GenerateNewKingdom(initialKingdomRace, new List<HexTile>() { regionForKingdom.centerOfMass }, true);
             newKingdom.HighlightAllOwnedTilesInKingdom();
@@ -411,6 +418,9 @@ public class KingdomManager : MonoBehaviour {
         allKingdomsOrderedByPrestige = allKingdoms.OrderBy(x => x.prestige).ToList();
         UIManager.Instance.UpdatePrestigeSummary();
     }
+	internal void UpdateAllianceList() {
+		UIManager.Instance.UpdateAllianceSummary();
+	}
 	internal void IncrementCurrentActionDay(int value){
 		this.currentActionDay += value;
 	}
@@ -435,9 +445,16 @@ public class KingdomManager : MonoBehaviour {
 			AlliancePool newAlliance = new AlliancePool();
 			newAlliance.AddKingdomInAlliance(firstKingdom);
 			newAlliance.AddKingdomInAlliance(secondKingdom);
+			AddAlliancePool (newAlliance);
 			return true;
 		}
 		return false;
+	}
+	internal void AddAlliancePool(AlliancePool alliancePool){
+		this._alliances.Add (alliancePool);
+	}
+	internal void RemoveAlliancePool(AlliancePool alliancePool){
+		this._alliances.Remove (alliancePool);
 	}
 	#endregion
 }
