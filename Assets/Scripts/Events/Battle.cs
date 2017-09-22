@@ -137,13 +137,19 @@ public class Battle {
 				if(adjacentCity.kingdom.id != city.kingdom.id){
 					if(adjacentCity.kingdom.warfareInfo.warfare != null && adjacentCity.kingdom.warfareInfo.side != WAR_SIDE.NONE){
 						if(adjacentCity.kingdom.warfareInfo.warfare.id == city.kingdom.warfareInfo.warfare.id){
-							KingdomRelationship kr = city.kingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
+							KingdomRelationship kr = adjacentCity.kingdom.GetRelationshipWithKingdom (city.kingdom);
 
 							if(adjacentCity.kingdom.warfareInfo.side != city.kingdom.warfareInfo.side){
 								powerBuff -= (adjacentCity.power * 0.15f);
 							}else{
 								if(kr.AreAllies()){
-									powerBuff += (adjacentCity.power * 0.15f);
+									if(kr.totalLike > 0){
+										powerBuff += (adjacentCity.power * 0.15f);
+									}else{
+										//Did not honor commitment
+										adjacentCity.kingdom.LeaveAlliance();
+										adjacentCity.kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
+									}
 								}
 							}
 						}
@@ -159,7 +165,17 @@ public class Battle {
 				if(city.kingdom.id != kingdom.id){
 					if(kingdom.warfareInfo.side != WAR_SIDE.NONE && kingdom.warfareInfo.warfare != null){
 						if(kingdom.warfareInfo.side == city.kingdom.warfareInfo.side && kingdom.warfareInfo.warfare.id == city.kingdom.warfareInfo.warfare.id){
-							powerBuff += (kingdom.basePower * 0.05f);
+							KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (city.kingdom);
+							if(kr.totalLike > 0){
+								powerBuff += (kingdom.basePower * 0.05f);
+							}else{
+								kingdom.LeaveAlliance();
+								kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
+								i--;
+								if(city.kingdom.alliancePool == null || city.kingdom.alliancePool.isDissolved){
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -175,13 +191,19 @@ public class Battle {
 				if(adjacentCity.kingdom.id != city.kingdom.id){
 					if(adjacentCity.kingdom.warfareInfo.warfare != null && adjacentCity.kingdom.warfareInfo.side != WAR_SIDE.NONE){
 						if(adjacentCity.kingdom.warfareInfo.warfare.id == city.kingdom.warfareInfo.warfare.id){
-							KingdomRelationship kr = city.kingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
+							KingdomRelationship kr = adjacentCity.kingdom.GetRelationshipWithKingdom (city.kingdom);
 
 							if(adjacentCity.kingdom.warfareInfo.side != city.kingdom.warfareInfo.side){
 								defenseBuff -= (adjacentCity.power * 0.15f);
 							}else{
 								if(kr.AreAllies()){
-									defenseBuff += (adjacentCity.defense * 0.15f);
+									if(kr.totalLike > 0){
+										defenseBuff += (adjacentCity.defense * 0.15f);
+									}else{
+										//Did not honor commitment
+										adjacentCity.kingdom.LeaveAlliance();
+										adjacentCity.kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
+									}
 								}
 							}
 						}
@@ -197,7 +219,17 @@ public class Battle {
 				if(city.kingdom.id != kingdom.id){
 					if(kingdom.warfareInfo.side != WAR_SIDE.NONE && kingdom.warfareInfo.warfare != null){
 						if(kingdom.warfareInfo.side == city.kingdom.warfareInfo.side && kingdom.warfareInfo.warfare.id == city.kingdom.warfareInfo.warfare.id){
-							defenseBuff += (kingdom.baseDefense * 0.05f);
+							KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (city.kingdom);
+							if(kr.totalLike > 0){
+								defenseBuff += (kingdom.baseDefense * 0.05f);
+							}else{
+								kingdom.LeaveAlliance();
+								kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
+								i--;
+								if(city.kingdom.alliancePool == null || city.kingdom.alliancePool.isDissolved){
+									break;
+								}
+							}
 						}
 					}
 				}

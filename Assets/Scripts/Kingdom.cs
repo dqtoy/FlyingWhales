@@ -2337,7 +2337,7 @@ public class Kingdom{
 					KingdomRelationship kr = GetRelationshipWithKingdom(kingdom);
 					if(kr.targetKingdomThreatLevel >= 100){
 						LeaveAlliance ();
-						AdjustPrestige(-50);
+						AdjustPrestige(-GridMap.Instance.numOfRegions);
                         Debug.Log(name + " broke alliance with " + kingdom.name +
                             " because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + "," + name + 
                             " lost 50 prestige. Prestige is now " + prestige.ToString());
@@ -2408,7 +2408,8 @@ public class Kingdom{
                                 } else{
 									//Don't join war, leave alliance, lose 100 prestige
 									LeaveAlliance();
-									AdjustPrestige (-100);
+									int prestigeLost = (int)((float)GridMap.Instance.numOfRegions * 1.5f);
+									AdjustPrestige (-prestigeLost);
 									hasLeftAlliance = true;
                                     Debug.Log(name + " does not join in " + kingdom.name + "'s war, leaves the alliance and loses 100 prestige. Prestige is now " + prestige.ToString());
                                     break;

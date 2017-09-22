@@ -44,6 +44,11 @@ public class KingdomRelationship {
 	private float _targetKingdomThreatLevel;
 	private float _targetKingdomInvasionValue;
 
+	internal int _usedSourceEffectivePower;
+	internal int _usedSourceEffectiveDef;
+	internal int _usedTargetEffectivePower;
+	internal int _usedTargetEffectiveDef;
+
     #region getters/setters
     public Kingdom sourceKingdom {
         get { return _sourceKingdom; }
@@ -789,42 +794,49 @@ public class KingdomRelationship {
 		//+1 for every percentage point of effective power above my effective defense (max 100)
 		float threatLevel = 0f;
 
+		this._usedTargetEffectivePower = this._targetKingdom.effectivePower;
+		this._usedSourceEffectiveDef = this._sourceKingdom.effectiveDefense;
+
+
 		if(this._targetKingdom.effectivePower > this._sourceKingdom.effectiveDefense){
-			threatLevel = (((float)this._targetKingdom.effectivePower / (float)this._sourceKingdom.effectiveDefense) * 100f) - 100f;
-			threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
+			HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom (this._sourceKingdom);
+			if(hexTile == null){
+				threatLevel = (((float)this._targetKingdom.effectivePower / (float)this._sourceKingdom.effectiveDefense) * 100f) - 100f;
+				threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
 
-			//if different race: +15%
-			threatLevel *= this._racePercentageModifier;
+				//if different race: +15%
+				threatLevel *= this._racePercentageModifier;
 
-			//if currently at war with someone else: -50%
-			if(this._sourceKingdom.HasWar(this._targetKingdom)){
-				threatLevel -= (threatLevel * 0.5f);
-			}
+				//if currently at war with someone else: -50%
+				if(this._sourceKingdom.HasWar(this._targetKingdom)){
+					threatLevel -= (threatLevel * 0.5f);
+				}
 
-			//if not at war but militarizing
-			if(!this._isAtWar && this._targetKingdom.isMilitarize){
-				threatLevel *= 1.25f;
-			}
+				//if not at war but militarizing
+				if(!this._isAtWar && this._targetKingdom.isMilitarize){
+					threatLevel *= 1.25f;
+				}
 
-			//warmongering
-			if(this._targetKingdom.warmongerValue < 25){
-				threatLevel -= (threatLevel * 0.15f);
-			}else if(this._targetKingdom.warmongerValue >= 25 && this._targetKingdom.warmongerValue < 50){
-				threatLevel *= 1.05f;
-			}else if(this._targetKingdom.warmongerValue >= 50 && this._targetKingdom.warmongerValue < 75){
-				threatLevel *= 1.25f;
-			}else{
-				threatLevel *= 1.5f;
-			}
+				//warmongering
+				if(this._targetKingdom.warmongerValue < 25){
+					threatLevel -= (threatLevel * 0.15f);
+				}else if(this._targetKingdom.warmongerValue >= 25 && this._targetKingdom.warmongerValue < 50){
+					threatLevel *= 1.05f;
+				}else if(this._targetKingdom.warmongerValue >= 50 && this._targetKingdom.warmongerValue < 75){
+					threatLevel *= 1.25f;
+				}else{
+					threatLevel *= 1.5f;
+				}
 
-			//adjacency
-			if(this._isAdjacent){
-				threatLevel *= 1.5f;
-			}
+				//adjacency
+				if(!this._isAdjacent){
+					threatLevel -= (threatLevel * 0.5f);
+				}
 
-			//cannot expand due to lack of prestige
-			if(this._targetKingdom.doesLackPrestige){
-				threatLevel -= (threatLevel * 0.5f);
+				//cannot expand due to lack of prestige
+				if(this._targetKingdom.doesLackPrestige){
+					threatLevel -= (threatLevel * 0.5f);
+				}
 			}
 		}
 
@@ -838,6 +850,9 @@ public class KingdomRelationship {
 	internal void UpdateTargetInvasionValue(){
 		float invasionValue = 0;
 
+		this._usedSourceEffectivePower = this._sourceKingdom.effectivePower;
+		this._usedTargetEffectiveDef = this._targetKingdom.effectiveDefense;
+
 		if(this._sourceKingdom.effectivePower > this._targetKingdom.effectiveDefense){
 			if (this.isAdjacent && !AreAllies ()) {
 				//+1 for every percentage point of my effective power above his effective defense (no max cap)
@@ -847,7 +862,8 @@ public class KingdomRelationship {
 				}
 
 				//+-% for every point of Opinion towards target
-				invasionValue += (this.totalLike * invasionValue);
+				float likePercent = (float)this.totalLike / 100f;
+				invasionValue -= (likePercent * invasionValue);
 
 				//if target is currently at war with someone else
 				if (this._targetKingdom.HasWar (this._sourceKingdom)) {
