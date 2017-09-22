@@ -2880,6 +2880,9 @@ public class Kingdom{
                         for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
                             if(_alliancePool.kingdomsInvolved[j].id != id) {
                                 log += _alliancePool.kingdomsInvolved[j].name;
+                                if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
+                                    log += ", ";
+                                }
                             }
                         }
                         Debug.Log(log);
@@ -2896,6 +2899,9 @@ public class Kingdom{
                         for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
                             if (_alliancePool.kingdomsInvolved[j].id != id) {
                                 log += _alliancePool.kingdomsInvolved[j].name;
+                                if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+                                    log += ", ";
+                                }
                             }
                         }
                         break;
