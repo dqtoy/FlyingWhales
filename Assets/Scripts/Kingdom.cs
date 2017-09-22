@@ -1581,6 +1581,7 @@ public class Kingdom{
 		}
 		this._techCounter = 0;
 		AdjustPowerPointsToAllCities(amount);
+        AdjustDefensePointsToAllCities(amount);
 		this.UpdateTechCapacity ();
 	}
 	internal void AdjustBonusTech(int amount){
@@ -2822,6 +2823,12 @@ public class Kingdom{
 			this.cities[i].AdjustPowerPoints(amount);
 		}
 	}
+
+    private void AdjustDefensePointsToAllCities(int amount) {
+        for (int i = 0; i < this.cities.Count; i++) {
+            this.cities[i].AdjustDefensePoints(amount);
+        }
+    }
 
 	internal void AdjustWarmongerValue(int amount){
 		this._warmongerValue += amount;
