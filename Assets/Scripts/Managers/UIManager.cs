@@ -2414,6 +2414,9 @@ public class UIManager : MonoBehaviour {
     }
 	public void ToggleAlliance() {
 		this.goAlliance.SetActive (!this.goAlliance.activeSelf);
+		if(this.goAlliance.activeSelf){
+			UpdateAllianceSummary ();
+		}
 	}
     public void ForceKillCurrentCitizen() {
         currentlyShowingCitizen.Death(DEATH_REASONS.ACCIDENT);

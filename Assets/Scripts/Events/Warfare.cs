@@ -10,6 +10,8 @@ public class Warfare {
 	private List<Battle> _battles;
 	private List<Log> _logs;
 
+	private bool _isOver;
+
 	#region getters/setters
 	public int id{
 		get { return this._id; }
@@ -17,6 +19,7 @@ public class Warfare {
 	#endregion
 	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom){
 		SetID();
+		this._isOver = false;
 		this._sideA = new List<Kingdom>();
 		this._sideB = new List<Kingdom>();
 		this._battles = new List<Battle>();
@@ -58,7 +61,11 @@ public class Warfare {
 			ShowUINotificaiton (newLog);
 
 			winnerCity.kingdom.ConquerCity(loserCity);
-			CreateNewBattle (winnerCity.kingdom);
+			if(winnerCity.kingdom.cities.Count >= winnerCity.kingdom.cityCap){
+				DeclarePeace (winnerCity.kingdom, loserCity.kingdom);
+			}else{
+				CreateNewBattle (winnerCity.kingdom);
+			}
 		}
 	}
 	internal void CreateNewBattle(Kingdom kingdom, bool isFirst = false){
@@ -89,7 +96,8 @@ public class Warfare {
 				enemyCity = GetEnemyCity (friendlyCity);
 			}
 			if(enemyCity != null){
-				
+				Battle newBattle = new Battle (this, friendlyCity, enemyCity);
+				AddBattle (newBattle);
 			}else{
 				enemyCity = GetEnemyCity (kingdom);
 				if (enemyCity != null) {
@@ -154,6 +162,19 @@ public class Warfare {
 	}
 	private void RemoveBattle(Battle battle){
 		this._battles.Remove (battle);
+	}
+
+	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
+		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
+		kr.ChangeWarStatus (false);
+
+		UnjoinWar (kingdom1.warfareInfo.side, kingdom1);
+		UnjoinWar (kingdom2.warfareInfo.side, kingdom2);
+
+		Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "peace");
+		newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+		ShowUINotificaiton (newLog);
 	}
 
 	internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){

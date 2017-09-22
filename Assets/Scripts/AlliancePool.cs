@@ -67,6 +67,7 @@ public class AlliancePool {
 				this._kingdomsInvolved [i].SetAlliancePool (null);
 				this._kingdomsInvolved.RemoveAt (0);
 			}
+			KingdomManager.Instance.RemoveAlliancePool (this);
 		}
 	}
 }

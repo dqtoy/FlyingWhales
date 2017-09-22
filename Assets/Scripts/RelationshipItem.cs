@@ -48,6 +48,8 @@ public class RelationshipItem : MonoBehaviour {
                 }
                 summary += rk.forTestingLikeModifier.ToString() + " Admin Modifier";
             }
+			summary += "\n SEP: " + rk._usedSourceEffectivePower.ToString() + ", SED: " + rk._usedSourceEffectiveDef.ToString();
+			summary += "\n TEP: " + rk._usedTargetEffectivePower.ToString() + ", TED: " + rk._usedTargetEffectiveDef.ToString();
 
             UIManager.Instance.ShowRelationshipSummary(this.rk.targetKingdom.king, summary);
         } else {
