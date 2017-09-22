@@ -337,11 +337,16 @@ public class Region {
     internal void CheckForDiscoveredKingdoms() {
         //Check first level of adjacent regions
         List<Region> adjacentRegionsOfOtherRegions = new List<Region>();
+        List<Kingdom> adjacentKingdoms = new List<Kingdom>();
+
         for (int i = 0; i < _adjacentRegions.Count; i++) {
             Region adjacentRegion = _adjacentRegions[i];
             if(adjacentRegion.occupant != null) {
                 Kingdom otherKingdom = adjacentRegion.occupant.kingdom;
                 if (otherKingdom != occupant.kingdom) {
+                    if (!adjacentKingdoms.Contains(otherKingdom)) {
+                        adjacentKingdoms.Add(otherKingdom);
+                    }
                     if (!occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
                         KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
                     }
@@ -364,6 +369,17 @@ public class Region {
                 Kingdom adjacentKingdomOfOtherKingdom = otherAdjacentRegion.occupant.kingdom;
                 if (adjacentKingdomOfOtherKingdom != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(adjacentKingdomOfOtherKingdom)) {
                     KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, adjacentKingdomOfOtherKingdom);
+                }
+            }
+        }
+
+        //When a kingdom expands in the middle of other kingdoms, the other kingdoms should discover each other as well
+        for (int i = 0; i < adjacentKingdoms.Count; i++) {
+            Kingdom currentKingdom = adjacentKingdoms[i];
+            for (int j = 0; j < adjacentKingdoms.Count; j++) {
+                Kingdom otherKingdom = adjacentKingdoms[j];
+                if(currentKingdom.id != otherKingdom.id) {
+                    KingdomManager.Instance.DiscoverKingdom(currentKingdom, otherKingdom);
                 }
             }
         }
