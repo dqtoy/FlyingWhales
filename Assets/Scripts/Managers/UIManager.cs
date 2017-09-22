@@ -173,6 +173,7 @@ public class UIManager : MonoBehaviour {
     public Sprite stoneSprite;
     public Sprite lumberSprite;
 	public UILabel actionDayLbl;
+	public UILabel warmongerLbl;
 	public GameObject militarizingGO;
 
     [Space(10)]
@@ -226,6 +227,10 @@ public class UIManager : MonoBehaviour {
     [Header("Prestige List")]
     [SerializeField] private UILabel prestigeSummaryLbl;
 
+	[Space(10)]
+	[Header("Alliance List")]
+	[SerializeField] private UILabel allianceSummaryLbl;
+
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	internal Citizen currentlyShowingCitizen = null;
@@ -245,6 +250,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject goPowerGrab;
 	public GameObject goExpansion;
 	public GameObject goInvasionPlan;
+	public GameObject goAlliance;
 	public UIPopupList eventDropdownList;
 	public UILabel eventDropdownCurrentSelectionLbl;
     public UILabel forTestingLoyaltyLbl;
@@ -390,6 +396,7 @@ public class UIManager : MonoBehaviour {
     private void UpdateUI(){
         dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
+		KingdomManager.Instance.UpdateAllianceList ();
         if (currentlyShowingKingdom != null) {
             UpdateKingdomInfo();
         }
@@ -555,6 +562,8 @@ public class UIManager : MonoBehaviour {
 		kingdomTechMeter.value = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
 		this.militarizingGO.SetActive (currentlyShowingKingdom.isMilitarize);
 		this.actionDayLbl.text = this.currentlyShowingKingdom.actionDay.ToString();
+		this.warmongerLbl.text = this.currentlyShowingKingdom.warmongerValue.ToString();
+
 //		float newValue = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
 //		float oldValue = kingdomTechMeter.value;
 //		kingdomTechMeter.value = iTween.FloatUpdate(oldValue, newValue, GameManager.Instance.progressionSpeed);
@@ -2053,6 +2062,22 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
+	public void UpdateAllianceSummary() {
+		if(UIManager.Instance.goAlliance.activeSelf){
+			this.allianceSummaryLbl.text = string.Empty;
+			for (int i = 0; i < KingdomManager.Instance.alliances.Count; i++) {
+				AlliancePool alliance = KingdomManager.Instance.alliances[i];
+				if(i != 0){
+					this.allianceSummaryLbl.text += "\n";
+				}
+				this.allianceSummaryLbl.text += "Alliance " + alliance.id;
+				for (int j = 0; j < alliance.kingdomsInvolved.Count; j++) {
+					Kingdom kingdom = alliance.kingdomsInvolved [j];
+					this.allianceSummaryLbl.text += "\n- " + kingdom.name;
+				}
+			}
+		}
+	}
 
     /*
 	 * Generic toggle function, toggles gameobject to on/off state.
@@ -2382,6 +2407,9 @@ public class UIManager : MonoBehaviour {
     public void ForceExpansion() {
         EventCreator.Instance.CreateExpansionEvent(currentlyShowingKingdom);
     }
+	public void ToggleAlliance() {
+		this.goAlliance.SetActive (!this.goAlliance.activeSelf);
+	}
     public void ForceKillCurrentCitizen() {
         currentlyShowingCitizen.Death(DEATH_REASONS.ACCIDENT);
         ShowCitizenInfo(currentlyShowingCitizen);
