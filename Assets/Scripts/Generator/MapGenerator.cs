@@ -23,7 +23,7 @@ public class MapGenerator : MonoBehaviour {
 
         ////PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
         KingdomManager.Instance.GenerateInitialKingdoms();
-        GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
+        //GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
 
         //CityGenerator.Instance.GenerateLairHabitableTiles(GridMap.Instance.listHexes);
         //MonsterManager.Instance.GenerateLairs();
