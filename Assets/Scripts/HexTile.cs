@@ -1064,10 +1064,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.ownedByCity.kingdom.king.Death(DEATH_REASONS.ACCIDENT);
     }
 
-    [ContextMenu("Select Tiles in Same Region")]
-    public void SelectAllTilesInRegion() {
-        UnityEditor.Selection.objects = region.tilesInRegion.Select(x => x.gameObject).ToArray();
-    }
+    //[ContextMenu("Select Tiles in Same Region")]
+    //public void SelectAllTilesInRegion() {
+    //    UnityEditor.Selection.objects = region.tilesInRegion.Select(x => x.gameObject).ToArray();
+    //}
     //[ContextMenu("Select All Relevant Tiles")]
     //public void SelectAllRelevantTiles() {
     //    List<GameObject> allTiles = new List<GameObject>();

@@ -636,7 +636,7 @@ public class UIManager : MonoBehaviour {
         //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
         CameraMove.Instance.CenterCameraOn(currentlyShowingKingdom.capitalCity.hexTile.gameObject);
 
-        RemoveAllNotifications();
+        //RemoveAllNotifications();
 
         activeKingdomFlag.SetKingdom(currentlyShowingKingdom);
         //Load all current active events of kingdom
@@ -1419,6 +1419,10 @@ public class UIManager : MonoBehaviour {
         notifGO.transform.localScale = Vector3.one;
         notifGO.GetComponent<NotificationItem>().SetLog(log);
         RepositionNotificationTable();
+        //notificationScrollView.UpdatePosition();
+        //notificationParent.Reposition();
+        notificationScrollView.UpdatePosition();
+
     }
 
     public void RemoveAllNotifications() {
@@ -1430,6 +1434,7 @@ public class UIManager : MonoBehaviour {
 
     public void RepositionNotificationTable() {
         StartCoroutine(RepositionTable(notificationParent));
+        //StartCoroutine(RepositionScrollView(notificationParent.GetComponentInParent<UIScrollView>()));
     }
 
 	/*

@@ -173,7 +173,7 @@ public class Kingdom{
         get { return _disloyaltyFromPrestige; }
     }
     public int cityCap {
-        get { return Mathf.FloorToInt(prestige / 100); }
+        get { return Mathf.FloorToInt(prestige / GridMap.Instance.numOfRegions); }
     }
 	public Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
@@ -290,12 +290,12 @@ public class Kingdom{
 	public int effectivePower{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 2);}
-		get { return this._basePower + (int)(GetPosAlliancePower() / 2);}
+		get { return this.basePower + (int)(GetPosAlliancePower() / 2);}
 	}
 	public int effectiveDefense{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 3) + this._baseDefense + (int)(GetMutualDefenseTreatyPower() / 3);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 3) + this._baseDefense + (int)(this._mutualDefenseTreatyPower / 3);}
-		get { return this._baseDefense + (int)(GetPosAllianceDefense() / 2);}
+		get { return this.baseDefense + (int)(GetPosAllianceDefense() / 2);}
 	}
 	public int militaryAlliancePower{
 		get { return this._militaryAlliancePower;}
@@ -419,7 +419,7 @@ public class Kingdom{
 		this._warfareInfo.DefaultValues();
 
 		SetLackPrestigeState(false);
-        AdjustPrestige(100);
+        AdjustPrestige(GridMap.Instance.numOfRegions);
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
@@ -493,12 +493,12 @@ public class Kingdom{
             //Update Relationship Opinion
             UpdateAllRelationshipsLikenessFromOthers();
 
-            if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+            //if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
                 Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
                 updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
                 UIManager.Instance.ShowNotification(updateKingdomTypeLog);
-            }
+            //}
         }
     }
 
@@ -970,13 +970,9 @@ public class Kingdom{
 
         float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = UnityEngine.Random.Range(0, upperBound);
-        //if (true) {
-        //if (chance < this.expansionChance) {
         if (this.cities.Count > 0) {
             EventCreator.Instance.CreateExpansionEvent(this);
         }
-
-        //}
     }
     #endregion
 
@@ -1581,6 +1577,7 @@ public class Kingdom{
 		}
 		this._techCounter = 0;
 		AdjustPowerPointsToAllCities(amount);
+        AdjustDefensePointsToAllCities(amount);
 		this.UpdateTechCapacity ();
 	}
 	internal void AdjustBonusTech(int amount){
@@ -2169,13 +2166,13 @@ public class Kingdom{
 		this._isMilitarize = state;
 		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
 			UIManager.Instance.militarizingGO.SetActive (state);
-            if (state) {
-                Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
-                militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-                UIManager.Instance.ShowNotification(militarizeLog);
-            }
 		}
-	}
+        if (state) {
+            Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
+            militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+            UIManager.Instance.ShowNotification(militarizeLog);
+        }
+    }
 
 	private void ScheduleActionDay(){
 		KingdomManager.Instance.IncrementCurrentActionDay (2);
@@ -2331,7 +2328,7 @@ public class Kingdom{
 
 	private void SeeksBalance(){
 		bool mustSeekAlliance = false;
-
+        Debug.Log("========== " + name + " is seeking balance " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
 		//break any alliances with anyone whose threat value is 100 or above and lose 50 Prestige
 		if(this.alliancePool != null){
 			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
@@ -2341,6 +2338,9 @@ public class Kingdom{
 					if(kr.targetKingdomThreatLevel >= 100){
 						LeaveAlliance ();
 						AdjustPrestige(-50);
+                        Debug.Log(name + " broke alliance with " + kingdom.name +
+                            " because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + "," + name + 
+                            " lost 50 prestige. Prestige is now " + prestige.ToString());
 						break;
 					}
 				}
@@ -2377,11 +2377,13 @@ public class Kingdom{
 			//if Happiness is greater than -50, militarize, otherwise only 25% chance to militarize
 			if(this.happiness > -50){
 				Militarize (true);
-			}else{
+                Debug.Log(name + " has " + happiness.ToString() + " happiness and starts militarizing");
+            } else{
 				int chance = UnityEngine.Random.Range (0, 100);
 				if(chance < 25){
-					Militarize (true);
-				}
+                    Militarize (true);
+                    Debug.Log(name + " has " + happiness.ToString() + " happiness and starts militarizing");
+                }
 			}
 		}
 
@@ -2402,12 +2404,14 @@ public class Kingdom{
 								if(chance < totalChanceOfJoining){
 									//Join War
 									kingdom.warfareInfo.warfare.JoinWar(kingdom.warfareInfo.side, this);
-								}else{
+                                    Debug.Log(name + " joins in " + kingdom.name + "'s war");
+                                } else{
 									//Don't join war, leave alliance, lose 100 prestige
 									LeaveAlliance();
 									AdjustPrestige (-100);
 									hasLeftAlliance = true;
-									break;
+                                    Debug.Log(name + " does not join in " + kingdom.name + "'s war, leaves the alliance and loses 100 prestige. Prestige is now " + prestige.ToString());
+                                    break;
 								}
 							}
 						}
@@ -2418,8 +2422,8 @@ public class Kingdom{
 				}
 			}
 		}
-
-		if(this.alliancePool == null || !hasAllianceInWar){
+        //if prestige can still accommodate more cities but nowhere to expand and currently not at war and none of my allies are at war
+        if (this.alliancePool == null || !hasAllianceInWar){
 			if(this.cities.Count < this.cityCap){
 				if(!HasWar()){
 					HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
@@ -2443,14 +2447,16 @@ public class Kingdom{
 							}
 						}
 						if(targetKingdom != null){
-							Warfare warfare = new Warfare (this, targetKingdom);
-						}
+                            //if there is anyone whose Invasion Value is 50 or above, prepare for war against the one with the highest Invasion Value
+                            Warfare warfare = new Warfare (this, targetKingdom);
+                            Debug.Log(name + " prepares for war against " + targetKingdom.name);
+                        }
 					}
 				}
 			}
 		}
 
-
+        Debug.Log("========== END SEEKS BALANCE " + name + " ==========");
 
 	}
 	private void SeeksBandwagon(){
@@ -2823,6 +2829,12 @@ public class Kingdom{
 		}
 	}
 
+    private void AdjustDefensePointsToAllCities(int amount) {
+        for (int i = 0; i < this.cities.Count; i++) {
+            this.cities[i].AdjustDefensePoints(amount);
+        }
+    }
+
 	internal void AdjustWarmongerValue(int amount){
 		this._warmongerValue += amount;
 		this._warmongerValue = Mathf.Clamp(this._warmongerValue, 0, 100);
@@ -2852,6 +2864,7 @@ public class Kingdom{
 	}
 
 	internal void SeekAlliance(){
+        Debug.Log(name + " is looking to create/join an alliance");
 		List<KingdomRelationship> kingdomRelationships = this.relationships.Values.OrderByDescending(x => x.totalLike).ToList ();
 		for (int i = 0; i < kingdomRelationships.Count; i++) {
 			KingdomRelationship kr = kingdomRelationships [i];
@@ -2863,7 +2876,14 @@ public class Kingdom{
 						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 						newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 						UIManager.Instance.ShowNotification (newLog);
-						break;
+                        string log = name + " has created an alliance with ";
+                        for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+                            if(_alliancePool.kingdomsInvolved[j].id != id) {
+                                log += _alliancePool.kingdomsInvolved[j].name;
+                            }
+                        }
+                        Debug.Log(log);
+                        break;
 					}
 				}else{
 					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this);
@@ -2872,11 +2892,20 @@ public class Kingdom{
 						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 						newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 						UIManager.Instance.ShowNotification (newLog);
-						break;
+                        string log = name + " has joined an alliance with ";
+                        for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+                            if (_alliancePool.kingdomsInvolved[j].id != id) {
+                                log += _alliancePool.kingdomsInvolved[j].name;
+                            }
+                        }
+                        break;
 					}
 				}
 			}
 		}
+        if(_alliancePool == null) {
+            Debug.Log(name + " has failed to create/join an alliance");
+        }
 	}
 	internal void SetAlliancePool(AlliancePool alliancePool){
 		this._alliancePool = alliancePool;
