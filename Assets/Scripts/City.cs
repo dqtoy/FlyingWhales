@@ -854,29 +854,12 @@ public class City{
         _dailyGrowthBuffs += adjustment;
     }
 	internal void UpdateDailyProduction(){
-		this._maxGrowth = 200 + ((300 + (250 * this.structures.Count)) * this.structures.Count);
-		this._dailyGrowthFromStructures = 10;
+		this._maxGrowth = 200 + ((300 + (250 * this.ownedTiles.Count)) * this.ownedTiles.Count);
+		this._dailyGrowthFromStructures = this._region.naturalResourceLevel[this.kingdom.race];
 		for (int i = 0; i < this.structures.Count; i++) {
 			HexTile currentStructure = this.structures [i];
             if (!currentStructure.isPlagued) {
 				this._dailyGrowthFromStructures += 3;
-				/*
-                if (currentStructure.biomeType == BIOMES.GRASSLAND) {
-                    this._dailyGrowthFromStructures += 3;
-                } else if (currentStructure.biomeType == BIOMES.WOODLAND) {
-                    this._dailyGrowthFromStructures += 3;
-                } else if (currentStructure.biomeType == BIOMES.FOREST) {
-                    this._dailyGrowthFromStructures += 2;
-                } else if (currentStructure.biomeType == BIOMES.DESERT) {
-                    this._dailyGrowthFromStructures += 1;
-                } else if (currentStructure.biomeType == BIOMES.TUNDRA) {
-                    this._dailyGrowthFromStructures += 2;
-                } else if (currentStructure.biomeType == BIOMES.SNOW) {
-                    this._dailyGrowthFromStructures += 1;
-                } else if (currentStructure.biomeType == BIOMES.BARE) {
-                    this._dailyGrowthFromStructures += 1;
-                }
-                */
             }
 		}
 	}
