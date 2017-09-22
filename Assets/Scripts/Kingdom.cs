@@ -736,71 +736,71 @@ public class Kingdom{
         }
         
     }
-    internal void UpdateMutualRelationships() {
-		foreach (KingdomRelationship currRel in relationships.Values) {
-//        for (int i = 0; i < relationships.Count; i++) {
-//            KingdomRelationship currRel = relationships.Values.ElementAt(i);
-            Kingdom targetKingdom = currRel.targetKingdom;
-            KingdomRelationship targetKingdomRel = targetKingdom.GetRelationshipWithKingdom(this);
+//    internal void UpdateMutualRelationships() {
+//		foreach (KingdomRelationship currRel in relationships.Values) {
+////        for (int i = 0; i < relationships.Count; i++) {
+////            KingdomRelationship currRel = relationships.Values.ElementAt(i);
+//            Kingdom targetKingdom = currRel.targetKingdom;
+//            KingdomRelationship targetKingdomRel = targetKingdom.GetRelationshipWithKingdom(this);
 
-            if (targetKingdomRel == null || currRel == null) {
-                return;
-            }
+//            if (targetKingdomRel == null || currRel == null) {
+//                return;
+//            }
 
-            currRel.ResetMutualRelationshipModifier();
-            targetKingdomRel.ResetMutualRelationshipModifier();
+//            currRel.ResetMutualRelationshipModifier();
+//            targetKingdomRel.ResetMutualRelationshipModifier();
 
-			List<Kingdom> sourceKingRelationships = GetKingdomsByRelationship (new
-           [] { RELATIONSHIP_STATUS.HATE, RELATIONSHIP_STATUS.SPITE,
-				RELATIONSHIP_STATUS.AFFECTIONATE, RELATIONSHIP_STATUS.LOVE
-			}, targetKingdom);
+//			List<Kingdom> sourceKingRelationships = GetKingdomsByRelationship (new
+//           [] { RELATIONSHIP_STATUS.HATE, RELATIONSHIP_STATUS.SPITE,
+//				RELATIONSHIP_STATUS.AFFECTIONATE, RELATIONSHIP_STATUS.LOVE
+//			}, targetKingdom);
 
-			List<Kingdom> targetKingRelationships = targetKingdom.GetKingdomsByRelationship (new
-                [] { RELATIONSHIP_STATUS.HATE, RELATIONSHIP_STATUS.SPITE,
-				RELATIONSHIP_STATUS.AFFECTIONATE, RELATIONSHIP_STATUS.LOVE
-			}, this);
+//			List<Kingdom> targetKingRelationships = targetKingdom.GetKingdomsByRelationship (new
+//                [] { RELATIONSHIP_STATUS.HATE, RELATIONSHIP_STATUS.SPITE,
+//				RELATIONSHIP_STATUS.AFFECTIONATE, RELATIONSHIP_STATUS.LOVE
+//			}, this);
 
-//            List<Kingdom> kingdomsInCommon = sourceKingRelationships.Intersect(targetKingRelationships).ToList();
-			foreach (var currKingdom in sourceKingRelationships.Intersect(targetKingRelationships)) {
-//            for (int j = 0; j < kingdomsInCommon.Count; j++) {
-//                Kingdom currKingdom = kingdomsInCommon[j];
-                KingdomRelationship relSourceKingdom = this.GetRelationshipWithKingdom(currKingdom);
-                KingdomRelationship relTargetKingdom = targetKingdom.GetRelationshipWithKingdom(currKingdom);
+////            List<Kingdom> kingdomsInCommon = sourceKingRelationships.Intersect(targetKingRelationships).ToList();
+//			foreach (var currKingdom in sourceKingRelationships.Intersect(targetKingRelationships)) {
+////            for (int j = 0; j < kingdomsInCommon.Count; j++) {
+////                Kingdom currKingdom = kingdomsInCommon[j];
+//                KingdomRelationship relSourceKingdom = this.GetRelationshipWithKingdom(currKingdom);
+//                KingdomRelationship relTargetKingdom = targetKingdom.GetRelationshipWithKingdom(currKingdom);
 
-                if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.HATE) {
-                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.HATE ||
-                        relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
-                        currRel.AddMutualRelationshipModifier(5);
-                        targetKingdomRel.AddMutualRelationshipModifier(5);
-                    }
-                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
-                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.HATE) {
-                        currRel.AddMutualRelationshipModifier(5);
-                    } else if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
-                        targetKingdomRel.AddMutualRelationshipModifier(10);
-                    }
-                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE) {
-                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE ||
-                        relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
-                        currRel.AddMutualRelationshipModifier(5);
-                        targetKingdomRel.AddMutualRelationshipModifier(5);
-                    }
-                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
-                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE) {
-                        currRel.AddMutualRelationshipModifier(5);
-                        targetKingdomRel.AddMutualRelationshipModifier(5);
-                    } else if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
-                        currRel.AddMutualRelationshipModifier(10);
-                        targetKingdomRel.AddMutualRelationshipModifier(10);
-                    }
-                }
-            }
-        }
-    }
+//                if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.HATE) {
+//                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.HATE ||
+//                        relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
+//                        currRel.AddMutualRelationshipModifier(5);
+//                        targetKingdomRel.AddMutualRelationshipModifier(5);
+//                    }
+//                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
+//                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.HATE) {
+//                        currRel.AddMutualRelationshipModifier(5);
+//                    } else if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
+//                        targetKingdomRel.AddMutualRelationshipModifier(10);
+//                    }
+//                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE) {
+//                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE ||
+//                        relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
+//                        currRel.AddMutualRelationshipModifier(5);
+//                        targetKingdomRel.AddMutualRelationshipModifier(5);
+//                    }
+//                } else if (relSourceKingdom.relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
+//                    if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE) {
+//                        currRel.AddMutualRelationshipModifier(5);
+//                        targetKingdomRel.AddMutualRelationshipModifier(5);
+//                    } else if (relTargetKingdom.relationshipStatus == RELATIONSHIP_STATUS.LOVE) {
+//                        currRel.AddMutualRelationshipModifier(10);
+//                        targetKingdomRel.AddMutualRelationshipModifier(10);
+//                    }
+//                }
+//            }
+//        }
+//    }
     internal void ResetRelationshipModifiers() {
         for (int i = 0; i < relationships.Count; i++) {
             KingdomRelationship currRel = relationships.ElementAt(i).Value;
-            currRel.ResetMutualRelationshipModifier();
+            //currRel.ResetMutualRelationshipModifier();
             currRel.ResetEventModifiers();
         }
     }
@@ -1285,7 +1285,7 @@ public class Kingdom{
         newKing.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
         ResetRelationshipModifiers();
-        UpdateMutualRelationships();
+        //UpdateMutualRelationships();
 
         this.successionLine.Clear();
         ChangeSuccessionLineRescursively(newKing);

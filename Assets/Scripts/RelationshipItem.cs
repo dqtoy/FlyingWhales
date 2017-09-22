@@ -28,13 +28,6 @@ public class RelationshipItem : MonoBehaviour {
         if (isOver) {
             string summary = string.Empty;
             summary += rk.relationshipSummary + "\n";
-            if(rk.likeFromMutualRelationships != 0) {
-                if (rk.likeFromMutualRelationships > 0) {
-                    summary += "+ ";
-                }
-                summary += rk.likeFromMutualRelationships.ToString() + " Mutual Relationships\n";
-            }
-
             if(rk.eventLikenessModifier != 0) {
                 if (rk.eventLikenessModifier > 0) {
                     summary += "+ ";
