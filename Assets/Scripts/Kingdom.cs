@@ -173,7 +173,7 @@ public class Kingdom{
         get { return _disloyaltyFromPrestige; }
     }
     public int cityCap {
-        get { return Mathf.FloorToInt(prestige / 100); }
+        get { return Mathf.FloorToInt(prestige / GridMap.Instance.numOfRegions); }
     }
 	public Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
@@ -419,7 +419,7 @@ public class Kingdom{
 		this._warfareInfo.DefaultValues();
 
 		SetLackPrestigeState(false);
-        AdjustPrestige(100);
+        AdjustPrestige(GridMap.Instance.numOfRegions);
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
@@ -970,13 +970,9 @@ public class Kingdom{
 
         float upperBound = 300f + (150f * (float)this.cities.Count);
         float chance = UnityEngine.Random.Range(0, upperBound);
-        //if (true) {
-        //if (chance < this.expansionChance) {
         if (this.cities.Count > 0) {
             EventCreator.Instance.CreateExpansionEvent(this);
         }
-
-        //}
     }
     #endregion
 
