@@ -558,7 +558,7 @@ public enum INTELLIGENCE{
 	LOW,
 }
 public enum WAR_SIDE{
+	NONE,
 	A,
 	B,
-	NONE,
 }

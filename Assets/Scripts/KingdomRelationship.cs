@@ -48,6 +48,8 @@ public class KingdomRelationship {
 	internal int _usedTargetEffectivePower;
 	internal int _usedTargetEffectiveDef;
 
+	private Warfare _warfare;
+
     #region getters/setters
     public Kingdom sourceKingdom {
         get { return _sourceKingdom; }
@@ -136,6 +138,9 @@ public class KingdomRelationship {
 	public bool isDiscovered {
 		get { return this._isDiscovered; }
 	}
+	public Warfare warfare{
+		get { return this._warfare; }
+	}
     #endregion
 
     /* <summary> Create a new relationship between 2 kingdoms </summary>
@@ -159,6 +164,7 @@ public class KingdomRelationship {
 		this._isAdjacent = false;
 		this._currentExpirationDefenseTreaty = new GameDate (0, 0, 0);
 		this._currentExpirationMilitaryAlliance = new GameDate (0, 0, 0);
+		this._warfare = null;
 
 		this._eventBuffs = new Dictionary<EVENT_TYPES, bool>(){
 			{EVENT_TYPES.TRIBUTE, false},
@@ -642,9 +648,10 @@ public class KingdomRelationship {
         _war = war;
     }
 
-    internal void SetWarStatus(bool warStatus) {
+    internal void SetWarStatus(bool warStatus, Warfare warfare) {
 		if(this._isAtWar != warStatus){
 			this._isAtWar = warStatus;
+			SetWarfare(warfare);
 		}
     }
 	internal void SetDiscovery(bool state) {
@@ -735,10 +742,10 @@ public class KingdomRelationship {
 		}
 	}
 
-	internal void ChangeWarStatus(bool state){
-		SetWarStatus(state);
+	internal void ChangeWarStatus(bool state, Warfare warfare){
+		SetWarStatus(state, warfare);
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		kr.SetWarStatus(state);
+		kr.SetWarStatus(state, warfare);
 	}
 	internal void ChangeDiscovery(bool state){
 		SetDiscovery(state);
@@ -884,5 +891,8 @@ public class KingdomRelationship {
 			}
 		}
 		return true;
+	}
+	internal void SetWarfare(Warfare warfare){
+		this._warfare = warfare;
 	}
 }

@@ -148,8 +148,8 @@ public class KingdomManager : MonoBehaviour {
 		war.kingdom1Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
 		war.kingdom2Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
 
-		war.kingdom1Rel.SetWarStatus(true);
-		war.kingdom2Rel.SetWarStatus(true);
+//		war.kingdom1Rel.SetWarStatus(true);
+//		war.kingdom2Rel.SetWarStatus(true);
 
 		war.kingdom1Rel.kingdomWarData.ResetKingdomWar ();
 		war.kingdom2Rel.kingdomWarData.ResetKingdomWar ();

@@ -143,7 +143,7 @@ public class Kingdom{
 	private AlliancePool _alliancePool;
 
 	//Warfare
-	private WarfareInfo _warfareInfo;
+	private Dictionary<int, WarfareInfo> _warfareInfo;
 
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
@@ -339,7 +339,7 @@ public class Kingdom{
 	public AlliancePool alliancePool{
 		get { return this._alliancePool;}
 	}
-	public WarfareInfo warfareInfo{
+	public Dictionary<int, WarfareInfo> warfareInfo{
 		get { return this._warfareInfo;}
 	}
     #endregion
@@ -416,11 +416,11 @@ public class Kingdom{
 		this._mobilizationQueue = new List<Wars> ();
 		this._actionDay = 0;
 		this._alliancePool = null;
-		this._warfareInfo.DefaultValues();
+		this._warfareInfo = new Dictionary<int, WarfareInfo>();
 
 		SetLackPrestigeState(false);
-//        AdjustPrestige(GridMap.Instance.numOfRegions);
-		AdjustPrestige(500);
+        AdjustPrestige(GridMap.Instance.numOfRegions);
+//		AdjustPrestige(500);
 
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
@@ -1753,7 +1753,7 @@ public class Kingdom{
 //					return true;
 //				}
 //			}
-			if(this._warfareInfo.warfare != null){
+			if(this._warfareInfo.Count > 0){
 				return true;
 			}
 		}else{
@@ -2394,29 +2394,32 @@ public class Kingdom{
 		bool hasAllianceInWar = false;
 		if(this.alliancePool != null){
 			bool hasLeftAlliance = false;
+			Dictionary<Warfare, WAR_SIDE> warsToJoin = new Dictionary<Warfare, WAR_SIDE>();
 			foreach (KingdomRelationship relationship in this.relationships.Values) {
 				if(!relationship.isAtWar && !relationship.AreAllies() && relationship.isDiscovered){
 					for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
-						Kingdom kingdom = this.alliancePool.kingdomsInvolved[i];
-						if(this.id != kingdom.id){
-							KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(relationship.targetKingdom);
+						Kingdom allyKingdom = this.alliancePool.kingdomsInvolved[i];
+						if(this.id != allyKingdom.id){
+							KingdomRelationship kr = allyKingdom.GetRelationshipWithKingdom(relationship.targetKingdom);
 							if(kr.isAtWar){
 								hasAllianceInWar = true;
-								KingdomRelationship krWithAlly = GetRelationshipWithKingdom (kingdom);
-								int totalChanceOfJoining = krWithAlly.totalLike * 2;
-								int chance = UnityEngine.Random.Range (0, 100);
-								if(chance < totalChanceOfJoining){
-									//Join War
-									kingdom.warfareInfo.warfare.JoinWar(kingdom.warfareInfo.side, this);
-                                    Debug.Log(name + " joins in " + kingdom.name + "'s war");
-                                } else{
-									//Don't join war, leave alliance, lose 100 prestige
-									LeaveAlliance();
-									int prestigeLost = (int)((float)GridMap.Instance.numOfRegions * 1.5f);
-									AdjustPrestige (-prestigeLost);
-									hasLeftAlliance = true;
-                                    Debug.Log(name + " does not join in " + kingdom.name + "'s war, leaves the alliance and loses 100 prestige. Prestige is now " + prestige.ToString());
-                                    break;
+								if(!warsToJoin.ContainsKey(kr.warfare)){
+									KingdomRelationship krWithAlly = GetRelationshipWithKingdom (allyKingdom);
+									int totalChanceOfJoining = krWithAlly.totalLike * 2;
+									int chance = UnityEngine.Random.Range (0, 100);
+									if(chance < totalChanceOfJoining){
+										//Join War
+										warsToJoin.Add(kr.warfare, kr.warfare.kingdomSides[allyKingdom]);
+										Debug.Log(name + " will join in " + allyKingdom.name + "'s war");
+	                                } else{
+										//Don't join war, leave alliance, lose 100 prestige
+										LeaveAlliance();
+										int prestigeLost = (int)((float)GridMap.Instance.numOfRegions * 1.5f);
+										AdjustPrestige (-prestigeLost);
+										hasLeftAlliance = true;
+										Debug.Log(name + " does not join in " + allyKingdom.name + "'s war, leaves the alliance and loses " + prestigeLost.ToString() + " prestige. Prestige is now " + prestige.ToString());
+	                                    break;
+									}
 								}
 							}
 						}
@@ -2424,6 +2427,11 @@ public class Kingdom{
 					if(hasLeftAlliance){
 						break;
 					}
+				}
+			}
+			if(!hasLeftAlliance && warsToJoin.Count > 0){
+				foreach (Warfare warfare in warsToJoin.Keys) {
+					warfare.JoinWar(warsToJoin[warfare], this);
 				}
 			}
 		}
@@ -2968,11 +2976,19 @@ public class Kingdom{
 //		}
 		return posAllianceDefense;
 	}
-	internal void SetWarfareInfo(WarfareInfo info){
-		this._warfareInfo = info;
+	internal void AddWarfareInfo(WarfareInfo info){
+		if(!this._warfareInfo.ContainsKey(info.warfare.id)){
+			this._warfareInfo.Add(info.warfare.id, info);
+		}
 	}
-	internal void SetWarfareInfoToDefault(){
-		this._warfareInfo.DefaultValues();
+	internal void RemoveWarfareInfo(Warfare warfare){
+		this._warfareInfo.Remove(warfare.id);
+	}
+	internal WarfareInfo GetWarfareInfo(int id){
+		if(this._warfareInfo.ContainsKey(id)){
+			return this._warfareInfo[id];
+		}
+		return new WarfareInfo(WAR_SIDE.NONE, null);
 	}
 	internal void LeaveAlliance(){
 		if(this.alliancePool != null){

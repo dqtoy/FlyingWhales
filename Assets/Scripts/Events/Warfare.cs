@@ -10,11 +10,16 @@ public class Warfare {
 	private List<Battle> _battles;
 	private List<Log> _logs;
 
+	private Dictionary<Kingdom, WAR_SIDE> _kingdomSides;
+
 	private bool _isOver;
 
 	#region getters/setters
 	public int id{
 		get { return this._id; }
+	}
+	public Dictionary<Kingdom, WAR_SIDE> kingdomSides{
+		get { return this._kingdomSides; }
 	}
 	#endregion
 	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom){
@@ -24,6 +29,7 @@ public class Warfare {
 		this._sideB = new List<Kingdom>();
 		this._battles = new List<Battle>();
 		this._logs = new List<Log> ();
+		this._kingdomSides = new Dictionary<Kingdom, WAR_SIDE>();
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
 		CreateNewBattle (firstKingdom, true);
@@ -39,7 +45,8 @@ public class Warfare {
 		}else if(side == WAR_SIDE.B){
 			this._sideB.Add(kingdom);
 		}
-		kingdom.SetWarfareInfo(new WarfareInfo(side, this));
+		this._kingdomSides.Add(kingdom, side);
+		kingdom.AddWarfareInfo(new WarfareInfo(side, this));
 		if(isCreateBattle){
 			CreateNewBattle (kingdom, true);
 		}
@@ -50,7 +57,8 @@ public class Warfare {
 		}else if(side == WAR_SIDE.B){
 			this._sideB.Remove(kingdom);
 		}
-		kingdom.SetWarfareInfoToDefault();
+		this._kingdomSides.Remove(kingdom);
+		kingdom.RemoveWarfareInfo(this);
 	}
 	internal void BattleEnds(City winnerCity, City loserCity, Battle battle){
 		//Conquer City if not null, if null means both dead
@@ -119,14 +127,21 @@ public class Warfare {
 	}
 
 	private City GetEnemyCity(City sourceCity){
+		WarfareInfo sourceWarfareInfo = sourceCity.kingdom.GetWarfareInfo(this._id);
+		if (sourceWarfareInfo.warfare == null) {
+			return null;
+		}
 		List<City> enemyCities = new List<City> ();
 		for (int j = 0; j < sourceCity.region.adjacentRegions.Count; j++) {
 			City adjacentCity = sourceCity.region.adjacentRegions [j].occupant;
 			if(adjacentCity != null){
-				if(adjacentCity.kingdom.warfareInfo.side != WAR_SIDE.NONE && adjacentCity.kingdom.warfareInfo.warfare != null){
-					if(adjacentCity.kingdom.warfareInfo.side != sourceCity.kingdom.warfareInfo.side && adjacentCity.kingdom.warfareInfo.warfare.id == sourceCity.kingdom.warfareInfo.warfare.id){
-						if(!enemyCities.Contains(adjacentCity)){
-							enemyCities.Add (adjacentCity);
+				if(!adjacentCity.isUnderAttack && adjacentCity.kingdom.warfareInfo.Count > 0){
+					WarfareInfo adjacentWarfareInfo = adjacentCity.kingdom.GetWarfareInfo(this._id);
+					if(adjacentWarfareInfo.warfare != null){
+						if(adjacentWarfareInfo.side != sourceWarfareInfo.side){
+							if(!enemyCities.Contains(adjacentCity)){
+								enemyCities.Add (adjacentCity);
+							}
 						}
 					}
 				}
@@ -143,14 +158,19 @@ public class Warfare {
 		return null;
 	}
 	private City GetEnemyCity(Kingdom sourceKingdom){
+		WarfareInfo sourceWarfareInfo = sourceKingdom.GetWarfareInfo(this._id);
+		if (sourceWarfareInfo.warfare == null) {
+			return null;
+		}
 		List<City> enemyCities = new List<City> ();
 		for (int i = 0; i < sourceKingdom.cities.Count; i++) {
 			if(!sourceKingdom.cities[i].isUnderAttack){
 				for (int j = 0; j < sourceKingdom.cities[i].region.adjacentRegions.Count; j++) {
 					City adjacentCity = sourceKingdom.cities [i].region.adjacentRegions [j].occupant;
 					if(adjacentCity != null){
-						if(adjacentCity.kingdom.warfareInfo.side != WAR_SIDE.NONE && adjacentCity.kingdom.warfareInfo.warfare != null){
-							if(adjacentCity.kingdom.warfareInfo.side != sourceKingdom.warfareInfo.side && adjacentCity.kingdom.warfareInfo.warfare.id == sourceKingdom.warfareInfo.warfare.id){
+						WarfareInfo adjacentWarfareInfo = adjacentCity.kingdom.GetWarfareInfo(this._id);
+						if(adjacentWarfareInfo.warfare != null){
+							if(adjacentWarfareInfo.side != sourceWarfareInfo.side){
 								if(!enemyCities.Contains(adjacentCity)){
 									enemyCities.Add (adjacentCity);
 								}
@@ -180,10 +200,14 @@ public class Warfare {
 
 	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
-		kr.ChangeWarStatus (false);
+		kr.ChangeWarStatus (false, null);
 
-		UnjoinWar (kingdom1.warfareInfo.side, kingdom1);
-		UnjoinWar (kingdom2.warfareInfo.side, kingdom2);
+		WarfareInfo kingdom1Info = kingdom1.GetWarfareInfo(this._id);
+		WarfareInfo kingdom2Info = kingdom2.GetWarfareInfo(this._id);
+
+		UnjoinWar (kingdom1Info.side, kingdom1);
+		UnjoinWar (kingdom2Info.side, kingdom2);
+
 
 		Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "peace");
 		newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);

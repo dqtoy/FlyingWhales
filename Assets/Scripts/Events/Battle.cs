@@ -95,7 +95,7 @@ public class Battle {
 		KingdomRelationship kr = this._kingdom1.GetRelationshipWithKingdom(this._kingdom2);
 		if(!kr.isAtWar){
 			this._isKingdomsAtWar = true;
-			kr.ChangeWarStatus(true);
+			kr.ChangeWarStatus(true, this._warfare);
 			Log newLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
 			newLog.AddToFillers (this._kingdom1, this._kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (this._kingdom2, this._kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
@@ -132,18 +132,22 @@ public class Battle {
 		}
 	}
 	private int GetPowerBuffs(City city){
+		WarfareInfo sourceWarfareInfo = city.kingdom.GetWarfareInfo(this._warfare.id);
+		if (sourceWarfareInfo.warfare == null) {
+			return 0;
+		}
 		float powerBuff = 0f;
 		for (int i = 0; i < city.region.adjacentRegions.Count; i++) {
 			City adjacentCity = city.region.adjacentRegions [i].occupant;
 			if(adjacentCity != null){
 				if(adjacentCity.kingdom.id != city.kingdom.id){
-					if(adjacentCity.kingdom.warfareInfo.warfare != null && adjacentCity.kingdom.warfareInfo.side != WAR_SIDE.NONE){
-						if(adjacentCity.kingdom.warfareInfo.warfare.id == city.kingdom.warfareInfo.warfare.id){
-							KingdomRelationship kr = adjacentCity.kingdom.GetRelationshipWithKingdom (city.kingdom);
-
-							if(adjacentCity.kingdom.warfareInfo.side != city.kingdom.warfareInfo.side){
+					WarfareInfo adjacentWarfareInfo = adjacentCity.kingdom.GetWarfareInfo(this._warfare.id);
+					if(adjacentWarfareInfo.warfare != null){
+						if(adjacentWarfareInfo.warfare.id == sourceWarfareInfo.warfare.id){
+							if(adjacentWarfareInfo.side != sourceWarfareInfo.side){
 								powerBuff -= (adjacentCity.power * 0.15f);
 							}else{
+								KingdomRelationship kr = adjacentCity.kingdom.GetRelationshipWithKingdom (city.kingdom);
 								if(kr.AreAllies()){
 									if(kr.totalLike > 0){
 										powerBuff += (adjacentCity.power * 0.15f);
@@ -165,8 +169,9 @@ public class Battle {
 			for (int i = 0; i < city.kingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom kingdom = city.kingdom.alliancePool.kingdomsInvolved [i];
 				if(city.kingdom.id != kingdom.id){
-					if(kingdom.warfareInfo.side != WAR_SIDE.NONE && kingdom.warfareInfo.warfare != null){
-						if(kingdom.warfareInfo.side == city.kingdom.warfareInfo.side && kingdom.warfareInfo.warfare.id == city.kingdom.warfareInfo.warfare.id){
+					WarfareInfo adjacentWarfareInfo = kingdom.GetWarfareInfo(this._warfare.id);
+					if(adjacentWarfareInfo.warfare != null){
+						if(adjacentWarfareInfo.side == sourceWarfareInfo.side && adjacentWarfareInfo.warfare.id == sourceWarfareInfo.warfare.id){
 							KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (city.kingdom);
 							if(kr.totalLike > 0){
 								powerBuff += (kingdom.basePower * 0.05f);
@@ -186,18 +191,22 @@ public class Battle {
 		return (int)powerBuff;
 	}
 	private int GetDefenseBuffs(City city){
+		WarfareInfo sourceWarfareInfo = city.kingdom.GetWarfareInfo(this._warfare.id);
+		if (sourceWarfareInfo.warfare == null) {
+			return 0;
+		}
 		float defenseBuff = 0f;
 		for (int i = 0; i < city.region.adjacentRegions.Count; i++) {
 			City adjacentCity = city.region.adjacentRegions [i].occupant;
 			if(adjacentCity != null){
 				if(adjacentCity.kingdom.id != city.kingdom.id){
-					if(adjacentCity.kingdom.warfareInfo.warfare != null && adjacentCity.kingdom.warfareInfo.side != WAR_SIDE.NONE){
-						if(adjacentCity.kingdom.warfareInfo.warfare.id == city.kingdom.warfareInfo.warfare.id){
-							KingdomRelationship kr = adjacentCity.kingdom.GetRelationshipWithKingdom (city.kingdom);
-
-							if(adjacentCity.kingdom.warfareInfo.side != city.kingdom.warfareInfo.side){
+					WarfareInfo adjacentWarfareInfo = adjacentCity.kingdom.GetWarfareInfo(this._warfare.id);
+					if(adjacentWarfareInfo.warfare != null){
+						if(adjacentWarfareInfo.warfare.id == sourceWarfareInfo.warfare.id){
+							if(adjacentWarfareInfo.side != sourceWarfareInfo.side){
 								defenseBuff -= (adjacentCity.power * 0.15f);
 							}else{
+								KingdomRelationship kr = adjacentCity.kingdom.GetRelationshipWithKingdom (city.kingdom);
 								if(kr.AreAllies()){
 									if(kr.totalLike > 0){
 										defenseBuff += (adjacentCity.defense * 0.15f);
@@ -219,8 +228,9 @@ public class Battle {
 			for (int i = 0; i < city.kingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom kingdom = city.kingdom.alliancePool.kingdomsInvolved [i];
 				if(city.kingdom.id != kingdom.id){
-					if(kingdom.warfareInfo.side != WAR_SIDE.NONE && kingdom.warfareInfo.warfare != null){
-						if(kingdom.warfareInfo.side == city.kingdom.warfareInfo.side && kingdom.warfareInfo.warfare.id == city.kingdom.warfareInfo.warfare.id){
+					WarfareInfo adjacentWarfareInfo = kingdom.GetWarfareInfo(this._warfare.id);
+					if(adjacentWarfareInfo.warfare != null){
+						if(adjacentWarfareInfo.side == sourceWarfareInfo.side && adjacentWarfareInfo.warfare.id == sourceWarfareInfo.warfare.id){
 							KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (city.kingdom);
 							if(kr.totalLike > 0){
 								defenseBuff += (kingdom.baseDefense * 0.05f);
