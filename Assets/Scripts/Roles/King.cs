@@ -71,10 +71,10 @@ public class King : Role {
 			contribution = 10;
 			break;
 		case CHARISMA.AVERAGE:
-			contribution = 5;
+			contribution = 6;
 			break;
 		case CHARISMA.LOW:
-			contribution = 2;
+			contribution = 4;
 			break;
 		}
 		if(isRemove){
@@ -87,13 +87,13 @@ public class King : Role {
 		int contribution = 0;
 		switch(this._efficiency){
 		case EFFICIENCY.HIGH:
-			contribution = 5;
+			contribution = 6;
 			break;
 		case EFFICIENCY.AVERAGE:
-			contribution = 3;
+			contribution = 4;
 			break;
 		case EFFICIENCY.LOW:
-			contribution = 1;
+			contribution = 2;
 			break;
 		}
 		if(isRemove){
@@ -111,7 +111,7 @@ public class King : Role {
 			contribution = 3;
 			break;
 		case INTELLIGENCE.LOW:
-			contribution = 1;
+			contribution = 2;
 			break;
 		}
 		if(isRemove){
