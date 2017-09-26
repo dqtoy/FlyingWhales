@@ -1540,7 +1540,7 @@ public class UIPanel : UIRect
 
 		// Update all widgets
 		int frame = Time.frameCount;
-		for (int i = 0, imax = widgets.Count; i < imax; ++i)
+		for (int i = 0; i < widgets.Count; i++)
 		{
 			UIWidget w = widgets[i];
 
