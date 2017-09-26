@@ -937,18 +937,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
 
     #region Monobehaviour Functions
-    void OnMouseDown() {
+    private void OnMouseDown() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
         if (this.isHabitable && this.isOccupied && this.city != null) {
             CameraMove.Instance.CenterCameraOn(this.gameObject);
-            //UIManager.Instance.SetKingdomAsSelected(this.city.kingdom);
-		}
+            if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
+                UIManager.Instance.SetKingdomAsActive(this.city.kingdom);
+            }
+        }
 		InterveneEventOnTile (WorldEventManager.Instance.currentInterveneEvent);
     }
 
-    void OnMouseOver() {
+    private void OnMouseOver() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
@@ -968,7 +970,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 
-    void OnMouseExit() {
+    private void OnMouseExit() {
         if (this.isOccupied) {
 			if(!this.isHabitable){
 				if(this.city == null){

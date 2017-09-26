@@ -117,6 +117,9 @@ public class CityItem : MonoBehaviour {
     }
 
     public void SetKingdomAsSelected() {
+        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != _city.kingdom.id) {
+            UIManager.Instance.SetKingdomAsActive(_city.kingdom);
+        }
         //UIManager.Instance.SetKingdomAsSelected(_city.kingdom);
     }
 
