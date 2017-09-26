@@ -884,7 +884,7 @@ public class KingdomRelationship {
 		this._usedTargetEffectiveDef = this._targetKingdom.effectiveDefense;
 
 		if(this._sourceKingdom.effectivePower > this._targetKingdom.effectiveDefense){
-			if (this.isAdjacent && !AreAllies ()) {
+			if (this.isAdjacent) {
 				//+1 for every percentage point of my effective power above his effective defense (no max cap)
 				invasionValue = (((float)this._sourceKingdom.effectivePower / (float)this._targetKingdom.effectiveDefense) * 100f) - 100f;
 				if (invasionValue < 0) {
@@ -895,9 +895,31 @@ public class KingdomRelationship {
 				float likePercent = (float)this.totalLike / 100f;
 				invasionValue -= (likePercent * invasionValue);
 
-				//if target is currently at war with someone else
-				if (this._targetKingdom.HasWar (this._sourceKingdom)) {
+				//if allies
+				if(AreAllies()){
+					invasionValue -= (invasionValue * 0.5f);
+				}
+
+				//if target is currently at war with someone else: +25%
+				if(this._targetKingdom.HasWar(this._sourceKingdom)){
 					invasionValue *= 1.25f;
+				}
+
+				//recent war with us
+				if(this._isRecentWar){
+					invasionValue -= (invasionValue * 0.5f);
+				}
+
+				if (this._targetKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.SMALL) {
+					if (this._sourceKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.MEDIUM) {
+						invasionValue -= (invasionValue * 0.25f);
+					} else if (this._sourceKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.LARGE) {
+						invasionValue -= (invasionValue * 0.5f);
+					}
+				} else if (this._targetKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.MEDIUM) {
+					if (this._sourceKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.LARGE) {
+						invasionValue -= (invasionValue * 0.25f);
+					}
 				}
 			}
 		}
