@@ -1051,6 +1051,12 @@ public class UIManager : MonoBehaviour {
             }
         }
 
+        if (!kingRelationshipsParentGO.activeSelf) {
+            UIScrollView sv = kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>();
+            StartCoroutine(RepositionScrollView(sv));
+            sv.UpdateScrollbars();
+        }
+
 		if (relationshipsToShow.Count - 1 >= nextIndex) {
 			for (int i = nextIndex; i < relationshipsToShow.Count; i++) {
                 KingdomRelationship rel = relationshipsToShow[i];
@@ -1061,11 +1067,11 @@ public class UIManager : MonoBehaviour {
 				kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (rel, 
                     rel.targetKingdom.GetRelationshipWithKingdom(currentlyShowingKingdom));
 				kingRelationshipsGrid.AddChild(kingGO.transform);
-				//kingRelationshipsGrid.Reposition ();
-	//			kingGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
-			}
-            StartCoroutine(RepositionGrid(kingRelationshipsGrid));
-            StartCoroutine(RepositionScrollView(kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>(), true));
+                kingdomCitiesGrid.Reposition();
+            }
+            if (kingRelationshipsParentGO.activeSelf) {
+                StartCoroutine(RepositionScrollView(kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>(), true));
+            }
         }
 
 		governorRelationshipsParentGO.SetActive(false);
@@ -1853,7 +1859,7 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < cityItems.Count; i++) {
             CityItem currCityItem = cityItems[i];
             if(i < currentlyShowingKingdom.cities.Count) {
-                City currCity = currentlyShowingKingdom.cities.ElementAt(i);
+                City currCity = currentlyShowingKingdom.cities.ElementAtOrDefault(i);
                 if (currCity != null) {
                     currCityItem.SetCity(currCity, true, false, true);
                     currCityItem.gameObject.SetActive(true);
@@ -1864,11 +1870,13 @@ public class UIManager : MonoBehaviour {
             } else {
                 currCityItem.gameObject.SetActive(false);
             }
-
-
         }
 
-        if (currentlyShowingKingdom.cities.Count >= nextIndex) {
+        if (!kingdomCitiesGO.activeSelf) {
+            StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
+        }
+
+        if (currentlyShowingKingdom.cities.Count > nextIndex) {
             for (int i = nextIndex; i < currentlyShowingKingdom.cities.Count; i++) {
                 City currCity = currentlyShowingKingdom.cities[i];
                 GameObject cityGO = InstantiateUIObject(cityItemPrefab.name, this.transform);
@@ -1877,11 +1885,10 @@ public class UIManager : MonoBehaviour {
                 kingdomCitiesGrid.AddChild(cityGO.transform);
                 kingdomCitiesGrid.Reposition();
             }
-            StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
-            //kingdomCitiesScrollView.ResetPosition();
+            if (kingdomCitiesGO.activeSelf) {
+                StartCoroutine(RepositionScrollView(kingdomCitiesScrollView, true));
+            }
         }
-        //kingdomCitiesScrollView.UpdatePosition();
-        //kingdomCitiesScrollView.UpdateScrollbars();
         kingdomCitiesGO.SetActive(true);
     }
     public void HideKingdomCities() {
