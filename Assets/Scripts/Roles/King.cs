@@ -71,10 +71,10 @@ public class King : Role {
 			contribution = 10;
 			break;
 		case CHARISMA.AVERAGE:
-			contribution = 6;
+			contribution = 7;
 			break;
 		case CHARISMA.LOW:
-			contribution = 4;
+			contribution = 5;
 			break;
 		}
 		if(isRemove){
