@@ -61,24 +61,25 @@ public class CityItem : MonoBehaviour {
         if (showLoyalty) {
             _loyaltyGO.SetActive(true);
             Governor thisGovernor = (Governor)_governor.citizen.assignedRole;
-            _loyaltyLbl.text = thisGovernor.loyalty.ToString();
-			thisGovernor._eventLoyaltySummary = string.Empty;
-			for (int i = 0; i < thisGovernor.eventModifiers.Count; i++) {
-				thisGovernor._eventLoyaltySummary += "\n" + thisGovernor.eventModifiers [i].summary;
-			}
-            string loyaltySummary = thisGovernor.loyaltySummary;
-            if(thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige > 0) {
-                loyaltySummary += "\n-" + thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige.ToString() + " Lack of Prestige";
-            }
-            if(thisGovernor.forTestingLoyaltyModifier != 0) {
-                string integralSign = "+";
-                if(thisGovernor.forTestingLoyaltyModifier < 0) {
-                    integralSign = string.Empty;
-                }
-                loyaltySummary += "\n" + integralSign + thisGovernor.forTestingLoyaltyModifier.ToString() + " Admin Modifier";
-            }
+            _loyaltyLbl.text = _governor.citizen.loyaltyToKing.ToString();
+
+            //thisGovernor._eventLoyaltySummary = string.Empty;
+            //for (int i = 0; i < thisGovernor.eventModifiers.Count; i++) {
+            //	thisGovernor._eventLoyaltySummary += "\n" + thisGovernor.eventModifiers [i].summary;
+            //}
+            //         string loyaltySummary = thisGovernor.loyaltySummary;
+            //         if(thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige > 0) {
+            //             loyaltySummary += "\n-" + thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige.ToString() + " Lack of Prestige";
+            //         }
+            //         if(thisGovernor.forTestingLoyaltyModifier != 0) {
+            //             string integralSign = "+";
+            //             if(thisGovernor.forTestingLoyaltyModifier < 0) {
+            //                 integralSign = string.Empty;
+            //             }
+            //             loyaltySummary += "\n" + integralSign + thisGovernor.forTestingLoyaltyModifier.ToString() + " Admin Modifier";
+            //         }
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
-                UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, loyaltySummary);
+                UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, thisGovernor.citizen.loyaltySummary);
             });
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideRelationshipSummary(); });
         }

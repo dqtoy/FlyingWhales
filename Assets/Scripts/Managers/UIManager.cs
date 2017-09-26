@@ -758,18 +758,18 @@ public class UIManager : MonoBehaviour {
 		citizenInfoGO.SetActive (true);
 		this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
 
-		//HideGovernorLoyalty ();
-
-		if(citizenToShow.assignedRole != null){
-			if (citizenToShow.assignedRole is Governor) {
-				Governor governor = (Governor)citizenToShow.assignedRole;
-				//ShowGovernorLoyalty ();
-				this.citizenInfoUI.SetGovernorTraits (governor);
-			} else if (citizenToShow.assignedRole is King) {
-				King king = (King)citizenToShow.assignedRole;
-				this.citizenInfoUI.SetKingTraits (king);
-			}
-		}
+        //HideGovernorLoyalty ();
+        this.citizenInfoUI.SetTraits(currentlyShowingCitizen);
+  //      if (citizenToShow.assignedRole != null){
+		//	if (citizenToShow.assignedRole is Governor) {
+		//		Governor governor = (Governor)citizenToShow.assignedRole;
+		//		//ShowGovernorLoyalty ();
+		//		this.citizenInfoUI.SetGovernorTraits (governor);
+		//	} else if (citizenToShow.assignedRole is King) {
+		//		King king = (King)citizenToShow.assignedRole;
+		//		this.citizenInfoUI.SetKingTraits (king);
+		//	}
+		//}
 	}
 
 	public void HideCitizenInfo(){
