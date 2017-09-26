@@ -120,6 +120,7 @@ public class Kingdom{
 	private bool _isLockedDown;
 	private bool _isTechProducing;
 	private bool _isMilitarize;
+	private bool _isFortifying;
 	private bool _doesLackPrestige;
 
 	private int borderConflictLoyaltyExpiration;
@@ -263,6 +264,9 @@ public class Kingdom{
 	public bool isMilitarize{
 		get { return this._isMilitarize;}
 	}
+	public bool isFortifying{
+		get { return this._isFortifying;}
+	}
 	public float productionGrowthPercentage {
 		get { return this._productionGrowthPercentage; }
 	}
@@ -370,6 +374,7 @@ public class Kingdom{
 		this._isDead = false;
 		this._isLockedDown = false;
 		this._isMilitarize = false;
+		this._isFortifying = false;
 		this._hasUpheldHiddenHistoryBook = false;
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
         this._happiness = 0;
@@ -2177,7 +2182,17 @@ public class Kingdom{
             UIManager.Instance.ShowNotification(militarizeLog);
         }
     }
-
+	internal void Fortify(bool state){
+		this._isFortifying = state;
+//		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
+//			UIManager.Instance.militarizingGO.SetActive (state);
+//		}
+		if (state) {
+			Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "fortify");
+			fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+			UIManager.Instance.ShowNotification(fortifyLog);
+		}
+	}
 	private void ScheduleActionDay(){
 		KingdomManager.Instance.IncrementCurrentActionDay (2);
 		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, KingdomManager.Instance.currentActionDay, GameManager.Instance.year, () => ActionDay ());
