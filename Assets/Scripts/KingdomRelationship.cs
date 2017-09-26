@@ -22,6 +22,7 @@ public class KingdomRelationship {
     private bool _isAtWar;
 	private bool _isAdjacent;
 	private bool _isDiscovered;
+	private bool _isRecentWar;
     private Wars _war;
     private InvasionPlan _invasionPlan;
     private RequestPeace _requestPeace;
@@ -141,6 +142,9 @@ public class KingdomRelationship {
 	public Warfare warfare{
 		get { return this._warfare; }
 	}
+	public bool isRecentWar {
+		get { return this._isRecentWar; }
+	}
     #endregion
 
     /* <summary> Create a new relationship between 2 kingdoms </summary>
@@ -162,6 +166,7 @@ public class KingdomRelationship {
 		this._isMilitaryAlliance = false;
 		this._isMutualDefenseTreaty = false;
 		this._isAdjacent = false;
+		this._isRecentWar = false;
 		this._currentExpirationDefenseTreaty = new GameDate (0, 0, 0);
 		this._currentExpirationMilitaryAlliance = new GameDate (0, 0, 0);
 		this._warfare = null;
@@ -303,16 +308,14 @@ public class KingdomRelationship {
 
 		if(this._targetKingdomThreatLevel == 0){
 			adjustment = 25;
-		}else if(this._targetKingdomThreatLevel >= 1 && this._targetKingdomThreatLevel < 20){
-			adjustment = 0;
-		}else if(this._targetKingdomThreatLevel >= 20 && this._targetKingdomThreatLevel < 50){
-			adjustment = -25;
-		}else if(this._targetKingdomThreatLevel >= 50 && this._targetKingdomThreatLevel < 100){
-			adjustment = -50;
 		}else{
-			adjustment = -100;
+			adjustment = (int)-this.targetKingdomThreatLevel;
 		}
 		baseLoyalty += adjustment;
+
+		if(adjustment >= 0){
+			this._relationshipSummary += "+";
+		}
 		this._relationshipSummary += adjustment.ToString() + " kingdom threat.\n";
 
 //		//Lacks Prestige
@@ -654,6 +657,11 @@ public class KingdomRelationship {
 			SetWarfare(warfare);
 		}
     }
+	internal void SetRecentWar(bool state) {
+		if(this._isRecentWar != state){
+			this._isRecentWar = state;
+		}
+	}
 	internal void SetDiscovery(bool state) {
 		if(this._isDiscovered != state){
 			this._isDiscovered = state;
@@ -752,6 +760,13 @@ public class KingdomRelationship {
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
 		kr.SetDiscovery(state);
 	}
+	internal void ChangeRecentWar(bool state){
+		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead){
+			SetRecentWar (state);
+			KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+			kr.SetRecentWar(state);
+		}
+	}
 	private void DefenseTreatyExpiration(){
 		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead && this._isMutualDefenseTreaty 
 			&& this._currentExpirationDefenseTreaty.IsSameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year)){
@@ -801,44 +816,57 @@ public class KingdomRelationship {
 
 
 		if(this._targetKingdom.effectivePower > this._sourceKingdom.effectiveDefense){
+
+			threatLevel = (((float)this._targetKingdom.effectivePower / (float)this._sourceKingdom.effectiveDefense) * 100f) - 100f;
+			threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
+
+			//if different race: +15%
+			threatLevel *= this._racePercentageModifier;
+
+			//if currently at war with someone else: -50%
+			if(this._sourceKingdom.HasWar(this._targetKingdom)){
+				threatLevel -= (threatLevel * 0.5f);
+			}
+			if(AreAllies()){
+				threatLevel -= (threatLevel * 0.5f);
+			}
+
+			//if not at war but militarizing
+			if(!this._isAtWar && this._targetKingdom.isMilitarize){
+				threatLevel *= 1.25f;
+			}
+
+			//recent war with us
+			if(this._isRecentWar){
+				threatLevel -= (threatLevel * 0.5f);
+			}
+
+			//warmongering
+			if(this._targetKingdom.warmongerValue == 0){
+				threatLevel -= (threatLevel * 0.5f);
+			}else if(this._targetKingdom.warmongerValue > 0 && this._targetKingdom.warmongerValue < 25){
+				threatLevel -= (threatLevel * 0.25f);
+			}else if(this._targetKingdom.warmongerValue >= 25 && this._targetKingdom.warmongerValue < 50){
+				threatLevel *= 1.25f;
+			}else if(this._targetKingdom.warmongerValue >= 50 && this._targetKingdom.warmongerValue < 75){
+				threatLevel *= 1.5f;
+			}else{
+				threatLevel *= 2f;
+			}
+
+			//adjacency
+			if(!this._isAdjacent){
+				threatLevel -= (threatLevel * 0.5f);
+			}
+
+			//cannot expand due to lack of prestige
+			if(this._targetKingdom.doesLackPrestige){
+				threatLevel -= (threatLevel * 0.5f);
+			}
+
 			HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom (this._targetKingdom);
-			if(hexTile == null){
-				threatLevel = (((float)this._targetKingdom.effectivePower / (float)this._sourceKingdom.effectiveDefense) * 100f) - 100f;
-				threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
-
-				//if different race: +15%
-				threatLevel *= this._racePercentageModifier;
-
-				//if currently at war with someone else: -50%
-				if(this._sourceKingdom.HasWar(this._targetKingdom)){
-					threatLevel -= (threatLevel * 0.5f);
-				}
-
-				//if not at war but militarizing
-				if(!this._isAtWar && this._targetKingdom.isMilitarize){
-					threatLevel *= 1.25f;
-				}
-
-				//warmongering
-				if(this._targetKingdom.warmongerValue < 25){
-					threatLevel -= (threatLevel * 0.15f);
-				}else if(this._targetKingdom.warmongerValue >= 25 && this._targetKingdom.warmongerValue < 50){
-					threatLevel *= 1.05f;
-				}else if(this._targetKingdom.warmongerValue >= 50 && this._targetKingdom.warmongerValue < 75){
-					threatLevel *= 1.25f;
-				}else{
-					threatLevel *= 1.5f;
-				}
-
-				//adjacency
-				if(!this._isAdjacent){
-					threatLevel -= (threatLevel * 0.5f);
-				}
-
-				//cannot expand due to lack of prestige
-				if(this._targetKingdom.doesLackPrestige){
-					threatLevel -= (threatLevel * 0.5f);
-				}
+			if(hexTile != null){
+				threatLevel -= (threatLevel * 0.25f);
 			}
 		}
 
@@ -856,7 +884,7 @@ public class KingdomRelationship {
 		this._usedTargetEffectiveDef = this._targetKingdom.effectiveDefense;
 
 		if(this._sourceKingdom.effectivePower > this._targetKingdom.effectiveDefense){
-			if (this.isAdjacent && !AreAllies ()) {
+			if (this.isAdjacent) {
 				//+1 for every percentage point of my effective power above his effective defense (no max cap)
 				invasionValue = (((float)this._sourceKingdom.effectivePower / (float)this._targetKingdom.effectiveDefense) * 100f) - 100f;
 				if (invasionValue < 0) {
@@ -867,9 +895,31 @@ public class KingdomRelationship {
 				float likePercent = (float)this.totalLike / 100f;
 				invasionValue -= (likePercent * invasionValue);
 
-				//if target is currently at war with someone else
-				if (this._targetKingdom.HasWar (this._sourceKingdom)) {
+				//if allies
+				if(AreAllies()){
+					invasionValue -= (invasionValue * 0.5f);
+				}
+
+				//if target is currently at war with someone else: +25%
+				if(this._targetKingdom.HasWar(this._sourceKingdom)){
 					invasionValue *= 1.25f;
+				}
+
+				//recent war with us
+				if(this._isRecentWar){
+					invasionValue -= (invasionValue * 0.5f);
+				}
+
+				if (this._targetKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.SMALL) {
+					if (this._sourceKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.MEDIUM) {
+						invasionValue -= (invasionValue * 0.25f);
+					} else if (this._sourceKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.LARGE) {
+						invasionValue -= (invasionValue * 0.5f);
+					}
+				} else if (this._targetKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.MEDIUM) {
+					if (this._sourceKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.LARGE) {
+						invasionValue -= (invasionValue * 0.25f);
+					}
 				}
 			}
 		}

@@ -45,7 +45,12 @@ public class Warfare {
 		}else if(side == WAR_SIDE.B){
 			this._sideB.Add(kingdom);
 		}
-		this._kingdomSides.Add(kingdom, side);
+        if (_kingdomSides.ContainsKey(kingdom)) {
+            this._kingdomSides[kingdom] = side;
+        } else {
+            this._kingdomSides.Add(kingdom, side);
+        }
+		
 		kingdom.AddWarfareInfo(new WarfareInfo(side, this));
 		if(isCreateBattle){
 			CreateNewBattle (kingdom, true);
@@ -201,6 +206,8 @@ public class Warfare {
 	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
 		kr.ChangeWarStatus (false, null);
+		kr.ChangeRecentWar (true);
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => kr.ChangeRecentWar (false));
 
 		WarfareInfo kingdom1Info = kingdom1.GetWarfareInfo(this._id);
 		WarfareInfo kingdom2Info = kingdom2.GetWarfareInfo(this._id);

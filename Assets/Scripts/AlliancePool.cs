@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class AlliancePool {
 	private int _id;
+	private string _name;
 	private bool _isDissolved;
 	private List<Kingdom> _kingdomsInvolved;
 
@@ -11,16 +12,21 @@ public class AlliancePool {
 	public int id{
 		get{return this._id;}
 	}
+	public string name{
+		get{return this._name;}
+	}
 	public bool isDissolved{
 		get{return this._isDissolved;}
 	}
 	public List<Kingdom> kingdomsInvolved{
 		get{return this._kingdomsInvolved;}
 	}
+
 	#endregion
 
 	public AlliancePool(){
 		SetID ();
+		this._name = Utilities.GetAllianceName ();
 		this._kingdomsInvolved = new List<Kingdom>();
 		this._isDissolved = false;
 	}

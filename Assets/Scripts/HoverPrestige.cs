@@ -7,7 +7,7 @@ public class HoverPrestige : MonoBehaviour {
 		if (isOver) {
 			if(UIManager.Instance.currentlyShowingKingdom != null){
 				Kingdom kingdom = UIManager.Instance.currentlyShowingKingdom;
-				int prestige = 10 + (2 * kingdom.cities.Count) + kingdom.bonusPrestige;
+				int prestige = kingdom.bonusPrestige;
 				UIManager.Instance.ShowSmallInfo ("[b]MONTHLY PRESTIGE: " + prestige + "[/b]");
 			}
 
