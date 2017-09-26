@@ -42,6 +42,19 @@ public class Utilities : MonoBehaviour {
 	public static string[] crisis = new string[]{
 		"Food",
 	};
+	private static string[] allianceType = new string[]{
+		"Alliance", "League", "Coalition", "Axis", "Union", "Entene", "Accord"
+	};
+	private static string[] allianceNoun = new string[]{
+		"Arms", "Baes", "Darkness", "Dogs", "Flame", "Future", "Fury", "Genius", "Guys", "Hands",
+		"Light", "Might", "Peace", "People", "Pigs", "Promise", "Power", "Sweetness", "Sword", "Terror",
+		"Unity", "World", "Zone"
+	};
+	private static string[] allianceAdjective = new string[]{
+		"Ancient", "Black", "Brave", "Calm", "Charming", "Crimson", "Cruel", "Cunning", "Eternal", "Evil",
+		"Fantastic", "Fearless", "Green", "Holy", "Huge", "Intimidating", "Loyal", "Nasty", "Nice", "Passionate",
+		"Pure", "Royal", "Ruthless", "Salty", "Sensible", "Sneaky", "Strong", "United", "White"
+	};
 	public static int specialResourceCount = 0;
 	
 	/*
@@ -84,6 +97,19 @@ public class Utilities : MonoBehaviour {
 			throw new ArgumentException("GetValues<T> can only be called for types derived from System.Enum", "T");
 		}
 		return (T[])Enum.GetValues(typeof(T));
+	}
+
+	public static string GetAllianceName(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < 35){
+			return allianceAdjective [UnityEngine.Random.Range (0, allianceAdjective.Length)] + " " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)] + " " + allianceType [UnityEngine.Random.Range (0, allianceType.Length)];
+		}else if(chance >= 35 && chance < 60){
+			return allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)] + " " + allianceType [UnityEngine.Random.Range (0, allianceType.Length)];
+		}else if(chance >= 60 && chance < 75){
+			return allianceType [UnityEngine.Random.Range (0, allianceType.Length)]+ " of " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)];
+		}else{
+			return allianceType [UnityEngine.Random.Range (0, allianceType.Length)]+ " of " + allianceAdjective [UnityEngine.Random.Range (0, allianceAdjective.Length)] + " " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)];
+		}
 	}
 
     public static List<BIOMES> biomeLayering = new List<BIOMES>() {
