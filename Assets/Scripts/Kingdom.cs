@@ -1123,6 +1123,7 @@ public class Kingdom{
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
             UpdateKingdomSize();
+            RevalidateKingdomAdjacency(city);
             //this.UpdateKingdomTypeData();
             for (int i = 0; i < this._cities.Count; i++) {
 				if (this._cities[i].rebellion == null) {

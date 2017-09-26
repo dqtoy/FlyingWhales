@@ -1021,7 +1021,9 @@ public class City{
      * Conquer this city and transfer ownership to the conqueror
      * */
 	internal void ConquerCity(Kingdom conqueror) {
-		RemoveOneTimeResourceBenefits();
+        AdjustPower(-power);
+        AdjustDefense(-defense);
+        RemoveOneTimeResourceBenefits();
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
 
@@ -1079,6 +1081,8 @@ public class City{
         newCity.hexTile.CreateCityNamePlate(newCity);
         newCity.SetupInitialValues();
         newCity.HighlightAllOwnedTiles(69f / 255f);
+        //newCity.AdjustPower(newCity.power);
+        //newCity.AdjustDefense(newCity.defense);
         for (int i = 0; i < conqueror.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = conqueror.discoveredKingdoms[i];
             if (otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {
