@@ -206,6 +206,8 @@ public class Warfare {
 	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
 		kr.ChangeWarStatus (false, null);
+		kr.ChangeRecentWar (true);
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => kr.ChangeRecentWar (false));
 
 		WarfareInfo kingdom1Info = kingdom1.GetWarfareInfo(this._id);
 		WarfareInfo kingdom2Info = kingdom2.GetWarfareInfo(this._id);
