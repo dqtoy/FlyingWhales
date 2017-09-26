@@ -45,7 +45,12 @@ public class Warfare {
 		}else if(side == WAR_SIDE.B){
 			this._sideB.Add(kingdom);
 		}
-		this._kingdomSides.Add(kingdom, side);
+        if (_kingdomSides.ContainsKey(kingdom)) {
+            this._kingdomSides[kingdom] = side;
+        } else {
+            this._kingdomSides.Add(kingdom, side);
+        }
+		
 		kingdom.AddWarfareInfo(new WarfareInfo(side, this));
 		if(isCreateBattle){
 			CreateNewBattle (kingdom, true);

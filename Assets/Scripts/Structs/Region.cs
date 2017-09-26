@@ -335,7 +335,6 @@ public class Region {
 
     #region Kingdom Discovery Functions
     internal void CheckForDiscoveredKingdoms() {
-        //Check first level of adjacent regions
         List<Region> adjacentRegionsOfOtherRegions = new List<Region>();
         List<Kingdom> adjacentKingdoms = new List<Kingdom>();
 
@@ -347,7 +346,7 @@ public class Region {
                     if (!adjacentKingdoms.Contains(otherKingdom)) {
                         adjacentKingdoms.Add(otherKingdom);
                     }
-                    if (!occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
+                    if (!_occupant.kingdom.discoveredKingdoms.Contains(otherKingdom)) {
                         KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, otherKingdom);
                     }
                     _occupant.kingdom.GetRelationshipWithKingdom(otherKingdom).ChangeAdjacency(true);
@@ -355,7 +354,7 @@ public class Region {
                 
                 for (int j = 0; j < adjacentRegion.adjacentRegions.Count; j++) {
                     Region otherAdjacentRegion = adjacentRegion.adjacentRegions[j];
-                    if (!_adjacentRegions.Contains(otherAdjacentRegion) && !adjacentRegionsOfOtherRegions.Contains(otherAdjacentRegion)) {
+                    if (!_adjacentRegions.Contains(otherAdjacentRegion) && !adjacentRegionsOfOtherRegions.Contains(otherAdjacentRegion) && otherAdjacentRegion != this) {
                         adjacentRegionsOfOtherRegions.Add(otherAdjacentRegion);
                     }
                 }
@@ -374,12 +373,14 @@ public class Region {
         }
 
         //When a kingdom expands in the middle of other kingdoms, the other kingdoms should discover each other as well
-        for (int i = 0; i < adjacentKingdoms.Count; i++) {
-            Kingdom currentKingdom = adjacentKingdoms[i];
-            for (int j = 0; j < adjacentKingdoms.Count; j++) {
-                Kingdom otherKingdom = adjacentKingdoms[j];
-                if(currentKingdom.id != otherKingdom.id) {
-                    KingdomManager.Instance.DiscoverKingdom(currentKingdom, otherKingdom);
+        if (adjacentKingdoms.Count > 1) {
+            for (int i = 0; i < adjacentKingdoms.Count; i++) {
+                Kingdom currentKingdom = adjacentKingdoms[i];
+                for (int j = 0; j < adjacentKingdoms.Count; j++) {
+                    Kingdom otherKingdom = adjacentKingdoms[j];
+                    if (currentKingdom.id != otherKingdom.id) {
+                        KingdomManager.Instance.DiscoverKingdom(currentKingdom, otherKingdom);
+                    }
                 }
             }
         }
