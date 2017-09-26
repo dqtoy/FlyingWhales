@@ -634,7 +634,7 @@ public class UIManager : MonoBehaviour {
         currentlyShowingKingdom.UpdateFogOfWarVisual();
         UpdateMinimapInfo();
         //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
-        CameraMove.Instance.CenterCameraOn(currentlyShowingKingdom.capitalCity.hexTile.gameObject);
+        //CameraMove.Instance.CenterCameraOn(currentlyShowingKingdom.capitalCity.hexTile.gameObject);
 
         //RemoveAllNotifications();
 

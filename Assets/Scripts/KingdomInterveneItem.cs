@@ -39,5 +39,6 @@ public class KingdomInterveneItem : MonoBehaviour {
     public void SwitchToKingdom() {
         UIManager.Instance.HideInterveneActionsMenu();
         UIManager.Instance.SetKingdomAsActive(kingdom);
+        CameraMove.Instance.CenterCameraOn(kingdom.capitalCity.hexTile.gameObject);
     }
 }
