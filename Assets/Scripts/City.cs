@@ -1520,21 +1520,29 @@ public class City{
 		if (!isDead && this.rebellion == null) {
             int powerIncrease = _powerPoints * 3;
             int defenseIncrease = _defensePoints * 3;
-            //Each City contributes a base +4 Happiness
-			int happinessIncrease = (_happinessPoints * 2) + this._bonusHappiness;
+			
             int happinessDecrease = (structures.Count * 4);
-			MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref happinessIncrease);
+            int happinessIncrease = ((_happinessPoints * 2) + this._bonusHappiness) - happinessDecrease;
+            MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref happinessIncrease);
             if (_kingdom.isMilitarize) {
-                //During militarize, all Points spent on Happiness are instead spent on Power, but keep decrease in happiness.
-                AdjustPower(powerIncrease + (happinessIncrease - happinessDecrease));
-                AdjustDefense(defenseIncrease);
-                _kingdom.AdjustHappiness(-happinessDecrease);
+                //Militarizing converts 15% of all cities Defense to Power.
+                int militarizingGain = Mathf.FloorToInt(defense * 0.15f);
+                powerIncrease += militarizingGain;
+                AdjustPower(powerIncrease);
+                AdjustDefense(defenseIncrease - militarizingGain);
                 _kingdom.Militarize(false);
+            } else if (_kingdom.isFortifying) {
+                //Fortifying converts 15% of all cities Power to Defense.
+                int fortifyingGain = Mathf.FloorToInt(power * 0.15f);
+                defenseIncrease += fortifyingGain;
+                AdjustPower(powerIncrease - fortifyingGain);
+                AdjustDefense(defenseIncrease);
+                _kingdom.Fortify(false);
             } else {
                 AdjustPower(powerIncrease);
                 AdjustDefense(defenseIncrease);
-                _kingdom.AdjustHappiness(happinessIncrease - happinessDecrease);
             }
+            _kingdom.AdjustHappiness(happinessIncrease);
             GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
             increaseDueDate.AddMonths(1);
             SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
@@ -1546,7 +1554,7 @@ public class City{
         _defensePoints += _kingdom.kingdomTypeData.productionPointsSpend.defense;
         _happinessPoints += _kingdom.kingdomTypeData.productionPointsSpend.happiness;
     }
-	private void MonthlyResourceBenefits(ref int powerIncrease, ref int defenseIncrease, ref int happinessIncrease){
+	internal void MonthlyResourceBenefits(ref int powerIncrease, ref int defenseIncrease, ref int happinessIncrease){
 		switch (this._region.specialResource){
 		case RESOURCE.CORN:
 			happinessIncrease += 5;

@@ -1095,6 +1095,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     //    UnityEditor.Selection.objects = allTiles.ToArray();
     //}
 
+    [ContextMenu("Toggle Militarize")]
+    public void ToggleMilitarize() {
+        ownedByCity.kingdom.Militarize(!ownedByCity.kingdom.isMilitarize);
+    }
+
+    [ContextMenu("Toggle Fortify")]
+    public void ToggleFortify() {
+        ownedByCity.kingdom.Fortify(!ownedByCity.kingdom.isFortifying);
+    }
+
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
