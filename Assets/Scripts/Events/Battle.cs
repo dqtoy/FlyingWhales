@@ -115,7 +115,7 @@ public class Battle {
 			Log newLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
 			newLog.AddToFillers (this._kingdom1, this._kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (this._kingdom2, this._kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-			this._warfare.ShowUINotificaiton (newLog);
+			this._warfare.ShowUINotification (newLog);
 		}
 	}
 	private void Attack(){
