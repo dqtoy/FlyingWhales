@@ -206,6 +206,10 @@ public class Citizen {
             this.assignedRole = new MilitaryAllianceOfficer(this);
         } else if (role == ROLE.INSTIGATOR) {
             this.assignedRole = new Instigator(this);
+        } else if (role == ROLE.GRAND_CHANCELLOR) {
+            this.assignedRole = new GrandChancellor(this);
+        } else if (role == ROLE.GRAND_MARSHAL) {
+            this.assignedRole = new GrandMarshal(this);
         }
     }
     internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE) {
