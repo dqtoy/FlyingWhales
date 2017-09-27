@@ -396,13 +396,13 @@ public class Region {
             }
         }
 
-        //When a kingdom expands in the middle of other kingdoms, the other kingdoms should discover each other as well
-        if (adjacentKingdoms.Count > 1) {
-            for (int i = 0; i < adjacentKingdoms.Count; i++) {
-                Kingdom currentKingdom = adjacentKingdoms[i];
-                for (int j = 0; j < adjacentKingdoms.Count; j++) {
-                    Kingdom otherKingdom = adjacentKingdoms[j];
-                    if (currentKingdom.id != otherKingdom.id) {
+        //When a kingdom expands kingdoms it is adjacent to should discover each other
+        if (_occupant.kingdom.adjacentKingdoms.Count > 1) {
+            for (int i = 0; i < _occupant.kingdom.adjacentKingdoms.Count; i++) {
+                Kingdom currentKingdom = _occupant.kingdom.adjacentKingdoms[i];
+                for (int j = 0; j < _occupant.kingdom.adjacentKingdoms.Count; j++) {
+                    Kingdom otherKingdom = _occupant.kingdom.adjacentKingdoms[j];
+                    if (currentKingdom.id != otherKingdom.id && !currentKingdom.discoveredKingdoms.Contains(otherKingdom)) {
                         KingdomManager.Instance.DiscoverKingdom(currentKingdom, otherKingdom);
                     }
                 }
