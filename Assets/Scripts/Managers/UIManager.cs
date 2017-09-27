@@ -1019,7 +1019,7 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 	public void ShowKingRelationships(){
-		List<CharacterPortrait> characterPortraits = kingRelationshipsGrid.gameObject.GetComponentsInChildren<CharacterPortrait>().ToList();
+		List<CharacterPortrait> characterPortraits = kingRelationshipsGrid.gameObject.GetComponentsInChildren<CharacterPortrait>(true).ToList();
 
 		int nextIndex = 0;
         //List<KingdomRelationship> relationshipsToShow = currentlyShowingKingdom.king.relationshipKings.ToList();
@@ -1051,13 +1051,8 @@ public class UIManager : MonoBehaviour {
             }
         }
 
-        if (!kingRelationshipsParentGO.activeSelf) {
-            UIScrollView sv = kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>();
-            StartCoroutine(RepositionScrollView(sv));
-            sv.UpdateScrollbars();
-        }
-
-		if (relationshipsToShow.Count - 1 >= nextIndex) {
+        UIScrollView sv = kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>();
+        if (relationshipsToShow.Count - 1 >= nextIndex) {
 			for (int i = nextIndex; i < relationshipsToShow.Count; i++) {
                 KingdomRelationship rel = relationshipsToShow[i];
 
@@ -1067,14 +1062,26 @@ public class UIManager : MonoBehaviour {
 				kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (rel, 
                     rel.targetKingdom.GetRelationshipWithKingdom(currentlyShowingKingdom));
 				kingRelationshipsGrid.AddChild(kingGO.transform);
-                kingdomCitiesGrid.Reposition();
             }
+
             if (kingRelationshipsParentGO.activeSelf) {
-                StartCoroutine(RepositionScrollView(kingRelationshipsGrid.transform.parent.GetComponent<UIScrollView>(), true));
+                StartCoroutine(RepositionGrid(kingRelationshipsGrid));
+                StartCoroutine(RepositionScrollView(sv, true));
             }
         }
 
-		governorRelationshipsParentGO.SetActive(false);
+        if(kingRelationshipsGrid.GetChildList().Count <= 0) {
+            StartCoroutine(RepositionGrid(kingRelationshipsGrid));
+            StartCoroutine(RepositionScrollView(sv));
+        }
+
+        if (!kingRelationshipsParentGO.activeSelf) {
+            StartCoroutine(RepositionGrid(kingRelationshipsGrid));
+            StartCoroutine(RepositionScrollView(sv));
+        } else {
+            StartCoroutine(RepositionGrid(kingRelationshipsGrid));
+        }
+        governorRelationshipsParentGO.SetActive(false);
 		kingRelationshipsParentGO.SetActive(true);
 	}
 	public void ShowGovernorRelationships(){
@@ -1101,7 +1108,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void HideRelationships(){
-		kingRelationshipsParentGO.SetActive (false);
+        kingRelationshipsParentGO.SetActive (false);
 		governorRelationshipsParentGO.SetActive(false);
 		relationshipsGO.SetActive (false);
         //relationshipsBtn.SetClickState(false);
