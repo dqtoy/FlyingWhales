@@ -16,7 +16,6 @@ public class Battle {
 	private City defender;
 
 	public Battle(Warfare warfare, City kingdom1City, City kingdom2City){
-		this._kr = this._kingdom1.GetRelationshipWithKingdom (this._kingdom2);
 		this._warfare = warfare;
 		this._kingdom1 = kingdom1City.kingdom;
 		this._kingdom2 = kingdom2City.kingdom;
@@ -24,6 +23,7 @@ public class Battle {
 		this._kingdom2City = kingdom2City;
 		this._kingdom1City.isPaired = true;
 		this._kingdom2City.isPaired = true;
+		this._kr = this._kingdom1.GetRelationshipWithKingdom (this._kingdom2);
 		this._isKingdomsAtWar = this._kr.isAtWar;
 
 		this._kr.ChangeHasPairedCities (true);
@@ -35,7 +35,7 @@ public class Battle {
 		Step1();
 		Log newLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "first_mobilization");
 		newLog.AddToFillers (this.attacker.kingdom, this.attacker.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		this._warfare.ShowUINotificaiton (newLog);
+		this._warfare.ShowUINotification (newLog);
 	}
 	internal void SetWarfare(Warfare warfare){
 		this._warfare = warfare;
@@ -321,13 +321,13 @@ public class Battle {
 		Log offenseLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "offense_mobilization");
 		offenseLog.AddToFillers (this.attacker.kingdom, this.attacker.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 		offenseLog.AddToFillers (this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_1);
-		this._warfare.ShowUINotificaiton (offenseLog);
+		this._warfare.ShowUINotification (offenseLog);
 
 		if(this._isKingdomsAtWar){
 			Log defenseLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "defense_mobilization");
 			defenseLog.AddToFillers (this.defender.kingdom, this.defender.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			defenseLog.AddToFillers (this.defender, this.defender.name, LOG_IDENTIFIER.CITY_1);
-			this._warfare.ShowUINotificaiton (defenseLog);
+			this._warfare.ShowUINotification (defenseLog);
 		}
 	}
 }
