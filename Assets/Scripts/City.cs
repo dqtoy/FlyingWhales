@@ -220,8 +220,8 @@ public class City{
         if (hasRoyalFamily) {
             this.hasKing = true;
             this.CreateInitialRoyalFamily();
-            this.CreateInitialChancellorFamily();
-            this.CreateInitialMarshalFamily();
+            //this.CreateInitialChancellorFamily();
+            //this.CreateInitialMarshalFamily();
         }
         this.CreateInitialGovernorFamily();
         this.UpdateDailyProduction();
