@@ -77,11 +77,11 @@ public class Warfare {
 			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "invade");
 			newLog.AddToFillers (winnerCity.kingdom, winnerCity.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (loserCity, loserCity.name, LOG_IDENTIFIER.CITY_2);
-			ShowUINotificaiton (newLog);
+			ShowUINotification (newLog);
 
 			winnerCity.kingdom.ConquerCity(loserCity);
 			if(winnerCity.kingdom.cities.Count >= winnerCity.kingdom.cityCap){
-				DeclarePeace (winnerCity.kingdom, loserCity.kingdom);
+				PeaceDeclaration (winnerCity.kingdom, loserCity.kingdom);
 			}else{
 				CreateNewBattle (winnerCity.kingdom);
 			}
@@ -211,7 +211,11 @@ public class Warfare {
 	private void RemoveBattle(Battle battle){
 		this._battles.Remove (battle);
 	}
-
+	private void PeaceDeclaration(Kingdom kingdom1, Kingdom kingdom2){
+		DeclarePeace (kingdom1, kingdom2);
+		DeclarePeaceToUnadjacentKingdoms (kingdom1);
+		DeclarePeaceToUnadjacentKingdoms (kingdom2);
+	}
 	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
 		kr.ChangeWarStatus (false, null);
@@ -221,22 +225,63 @@ public class Warfare {
 		WarfareInfo kingdom1Info = kingdom1.GetWarfareInfo(this._id);
 		WarfareInfo kingdom2Info = kingdom2.GetWarfareInfo(this._id);
 
-		UnjoinWar (kingdom1Info.side, kingdom1);
-		UnjoinWar (kingdom2Info.side, kingdom2);
+		if(CanUnjoinWar(kingdom1Info.side, kingdom1)){
+			UnjoinWar (kingdom1Info.side, kingdom1);
+		}
+		if(CanUnjoinWar(kingdom2Info.side, kingdom2)){
+			UnjoinWar (kingdom2Info.side, kingdom2);
+		}
 
 
 		Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "peace");
 		newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-		ShowUINotificaiton (newLog);
-	}
+		ShowUINotification (newLog);
 
+
+	}
+	private void DeclarePeaceToUnadjacentKingdoms(Kingdom kingdom){
+		WarfareInfo kingdomInfo = kingdom.GetWarfareInfo(this._id);
+		if(kingdomInfo.side == WAR_SIDE.A){
+			for (int i = 0; i < this._sideB.Count; i++) {
+				KingdomRelationship kr = this._sideB[i].GetRelationshipWithKingdom(kingdom);
+				if(!kr.isAdjacent && kr.isAtWar && kr.warfare.id == this._id){
+					DeclarePeace (this._sideB [i], kingdom);
+				}
+			}
+		}else{
+			for (int i = 0; i < this._sideA.Count; i++) {
+				KingdomRelationship kr = this._sideA[i].GetRelationshipWithKingdom(kingdom);
+				if(!kr.isAdjacent && kr.isAtWar && kr.warfare.id == this._id){
+					DeclarePeace (this._sideA [i], kingdom);
+				}
+			}
+		}
+	}
+	private bool CanUnjoinWar(WAR_SIDE side, Kingdom kingdom){
+		if(side == WAR_SIDE.A){
+			for (int i = 0; i < this._sideB.Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._sideB[i]);
+				if(kr.isAtWar && kr.warfare.id == this._id){
+					return false;
+				}
+			}
+		}else{
+			for (int i = 0; i < this._sideA.Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._sideA[i]);
+				if(kr.isAtWar && kr.warfare.id == this._id){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	internal Log CreateNewLogForEvent(int month, int day, int year, string category, string file, string key){
 		Log newLog = new Log (month, day, year, category, file, key);
 		this._logs.Add (newLog);
 		return newLog;
 	}
-	internal void ShowUINotificaiton(Log log){
+	internal void ShowUINotification(Log log){
 		UIManager.Instance.ShowNotification(log);
 	}
 
@@ -252,7 +297,7 @@ public class Warfare {
 			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
 			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-			ShowUINotificaiton (newLog);
+			ShowUINotification (newLog);
 		}
 	}
 }
