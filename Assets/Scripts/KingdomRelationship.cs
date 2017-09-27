@@ -770,6 +770,7 @@ public class KingdomRelationship {
 		SetWarStatus(state, warfare);
 		if(state){
 			SetPreparingWar (false);
+			this._sourceKingdom.AdjustWarmongerValue (25);
 		}
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
 		kr.SetWarStatus(state, warfare);

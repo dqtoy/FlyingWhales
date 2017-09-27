@@ -431,7 +431,7 @@ public class Kingdom{
 		this.UpdateTechCapacity ();
 		this.SetSecession (false);
 		this.SetRiot (false);
-		this.SetWarmongerValue (25);
+		this.SetWarmongerValue (15);
 //		this.NewRandomCrimeDate (true);
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
