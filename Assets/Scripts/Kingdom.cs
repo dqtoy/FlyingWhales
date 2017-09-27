@@ -13,7 +13,6 @@ public class Kingdom{
 	public RACE race;
     public int age;
     private int _prestige;
-    private int _disloyaltyFromPrestige; //Loyalty subtracted from governors due to too many cities and lack of prestige
 	private int _bonusPrestige; //Prestige bonuses including bonuses from governors and king traits
     private int foundationYear;
     private int foundationMonth;
@@ -169,9 +168,6 @@ public class Kingdom{
 	}
     public int prestige {
         get { return Mathf.Min( _prestige + bonusPrestige, KingdomManager.Instance.maxPrestige); }
-    }
-    public int disloyaltyFromPrestige {
-        get { return _disloyaltyFromPrestige; }
     }
     public int cityCap {
         get { return Mathf.FloorToInt(prestige / GridMap.Instance.numOfRegions); }
@@ -356,7 +352,6 @@ public class Kingdom{
 		this.id = Utilities.SetID(this);
 		this.race = race;
         this._prestige = 0;
-        this._disloyaltyFromPrestige = 0;
 		this._bonusPrestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
@@ -1021,23 +1016,6 @@ public class Kingdom{
         //Add Prestige
 		int prestigeToBeAdded = this._bonusPrestige;
 		AdjustPrestige(prestigeToBeAdded);
-
-        //Check if city count exceeds cap
-        if (cities.Count > cityCap) {
-            //If the Kingdom exceeds this, each month, all Governor's Opinion will decrease by 5 for every city over the cap
-            int numOfExcessCities = cities.Count - cityCap;
-            int increaseInDisloyalty = 5 * numOfExcessCities;
-            _disloyaltyFromPrestige += increaseInDisloyalty;
-        } else {
-            if(_disloyaltyFromPrestige > 0) {
-                //This will slowly recover when Prestige gets back to normal.
-                _disloyaltyFromPrestige -= 5;
-                if(_disloyaltyFromPrestige < 0) {
-                    _disloyaltyFromPrestige = 0;
-                }
-            }
-        }
-
         //Reschedule event
         GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
         gameDate.AddMonths(1);
@@ -1128,6 +1106,7 @@ public class Kingdom{
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
             UpdateKingdomSize();
+            RevalidateKingdomAdjacency(city);
             //this.UpdateKingdomTypeData();
             for (int i = 0; i < this._cities.Count; i++) {
 				if (this._cities[i].rebellion == null) {
@@ -1301,6 +1280,18 @@ public class Kingdom{
 
         this.UpdateAllGovernorsLoyalty();
         this.UpdateAllRelationshipsLikeness();
+        this.UpdateAllCitizensOpinionOfKing();
+    }
+    private void UpdateAllCitizensOpinionOfKing() {
+        for (int i = 0; i < cities.Count; i++) {
+            City currCity = cities[i];
+            for (int j = 0; j < currCity.citizens.Count; j++) {
+                Citizen currCitizen = currCity.citizens[j];
+                if(currCitizen.id != king.id) {
+                    currCitizen.UpdateKingOpinion();
+                }
+            }
+        }
     }
     #endregion
 
@@ -2147,7 +2138,6 @@ public class Kingdom{
 			}
 		}
 	}
-
 	internal void UpdateAllGovernorsLoyalty(){
 		for(int i = 0; i < this.cities.Count; i++){
 			if(this.cities[i].governor != null){
