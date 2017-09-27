@@ -7,7 +7,6 @@ using Panda;
 
 [System.Serializable]
 public class City{
-
     [Header("City Info")]
 	public int id;
 	public string name;
@@ -16,11 +15,11 @@ public class City{
     [NonSerialized] public HexTile hexTile;
 	[NonSerialized] private Kingdom _kingdom;
     [NonSerialized] public Citizen governor;
-    //[NonSerialized] private List<City> _adjacentCities;
     [NonSerialized] public List<HexTile> _ownedTiles;
     [NonSerialized] public List<General> incomingGenerals;
     [NonSerialized] public List<Citizen> citizens;
     [NonSerialized] public List<History> cityHistory;
+    private Dictionary<ROLE, Citizen> _importantCitizensInCity;
 	
 	//Resources
 	private int _currentGrowth;
@@ -126,9 +125,12 @@ public class City{
 	public int bonusHappiness{
 		get { return this._bonusHappiness;}
 	}
-	#endregion
+    internal Dictionary<ROLE, Citizen> importantCitizensInCity {
+        get { return _importantCitizensInCity; }
+    }
+    #endregion
 
-	public City(HexTile hexTile, Kingdom kingdom, bool isRebel = false){
+    public City(HexTile hexTile, Kingdom kingdom, bool isRebel = false){
 		this.id = Utilities.SetID(this);
 		this.hexTile = hexTile;
         this._region = hexTile.region;
@@ -138,7 +140,6 @@ public class City{
         this._power = 0;
         this._defense = 0;
 		this._bonusHappiness = 0;
-		//this._adjacentCities = new List<City>();
 		this._ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<General> ();
 		this.citizens = new List<Citizen>();
@@ -154,8 +155,9 @@ public class City{
         this.outerTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
 		this.raidLoyaltyExpiration = 0;
+        this._importantCitizensInCity = new Dictionary<ROLE, Citizen>();
 
-		this.hexTile.Occupy (this);
+        this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
 		this._hp = this.maxHP;
@@ -212,7 +214,7 @@ public class City{
 		}
 	}
 
-    #region Citizen Creation Functions
+    #region Citizen Functions
     /*
 	 * Initialize City With Initial Citizens aka. Families
 	 * */
@@ -220,10 +222,11 @@ public class City{
         if (hasRoyalFamily) {
             this.hasKing = true;
             this.CreateInitialRoyalFamily();
-            //this.CreateInitialChancellorFamily();
-            //this.CreateInitialMarshalFamily();
+            this.CreateInitialChancellorFamily();
+            this.CreateInitialMarshalFamily();
         }
         this.CreateInitialGovernorFamily();
+        _kingdom.UpdateAllCitizensOpinionOfKing();
         this.UpdateDailyProduction();
     }
     internal Citizen CreateNewKing() {
@@ -288,7 +291,6 @@ public class City{
 
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
             sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
-
         } else if (siblingsChance >= 25 && siblingsChance < 75) {
             Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, king.age));
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
@@ -301,7 +303,11 @@ public class City{
         int spouseChance = UnityEngine.Random.Range(0, 100);
         if (spouseChance < 80) {
             Citizen spouse = MarriageManager.Instance.CreateSpouse(king);
-
+            if(spouse.gender == GENDER.FEMALE) {
+                spouse.AssignRole(ROLE.QUEEN);
+            }else {
+                spouse.AssignRole(ROLE.QUEEN_CONSORT);
+            }
             //List<int> childAges = Enumerable.Range(0, (spouse.age - 16)).ToList();
             //if(spouse.gender == GENDER.MALE){
             //	childAges = Enumerable.Range(0, (this.kingdom.king.age - 16)).ToList();
@@ -572,99 +578,40 @@ public class City{
         this.cityHistory.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, governor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
     }
+    internal void AddCitizenToImportantCitizensInCity(Citizen citizen) {
+        if(citizen.role == ROLE.UNTRAINED) {
+            return;
+        }
+        if (_importantCitizensInCity.ContainsKey(citizen.role)) {
+            _importantCitizensInCity[citizen.role] = citizen;
+        } else {
+            _importantCitizensInCity.Add(citizen.role, citizen);
+        }
+    }
+    internal void RemoveCitizenInImportantCitizensInCity(Citizen citizen) {
+        _importantCitizensInCity.Remove(citizen.role);
+    }
+    internal void TransferRoyaltiesToOtherCity(City otherCity) {
+        List<Citizen> citizensToTransfer = new List<Citizen>();
+        foreach (Citizen currImportantCitizen in _importantCitizensInCity.Values) {
+            citizensToTransfer.Add(currImportantCitizen);
+            List<Citizen> familyOfCitizen = currImportantCitizen.GetRelatives(-1);
+            for (int i = 0; i < familyOfCitizen.Count; i++) {
+                Citizen currFamilyMember = familyOfCitizen[i];
+                if (!citizensToTransfer.Contains(currFamilyMember)) {
+                    citizensToTransfer.Add(currFamilyMember);
+                }
+            }
+        }
+        for (int i = 0; i < citizensToTransfer.Count; i++) {
+            Citizen currCitizen = citizensToTransfer[i];
+            this.RemoveCitizenFromCity(currCitizen);
+            otherCity.AddCitizenToCity(currCitizen);
+        }
+    }
     #endregion
 
     #region Border Tile Functions
-    ///*
-    // * Compute to get the borders of a city.
-    // * */
-    //internal void UpdateBorderTiles() {
-    //    List<HexTile> newBorderTiles = new List<HexTile>();
-    //    List<HexTile> oldBorderTiles = new List<HexTile>(borderTiles);
-
-    //    //Get outmost owned tiles
-    //    //To get outmost owned tiles, get tiles that still have unoccupied neighbours (unoccupied, meaning there are no structures on it yet)
-    //    List<HexTile> outmostOwnedTiles = new List<HexTile>();
-    //    for (int i = 0; i < this.ownedTiles.Count; i++) {
-    //        HexTile currHexTile = this.ownedTiles[i];
-    //        List<HexTile> currHexTileUnoccupiedNeighbours = currHexTile.AllNeighbours
-    //            .Where(x => x.elevationType != ELEVATION.WATER && !x.isOccupied && !ownedTiles.Contains(x)).ToList();
-    //        if (currHexTileUnoccupiedNeighbours.Count > 0) {
-    //            outmostOwnedTiles.Add(currHexTile);
-    //        }
-    //    }
-
-    //    //Get border tiles from outmost owned tiles, get x tiles in range
-    //    for (int i = 0; i < outmostOwnedTiles.Count; i++) {
-    //        List<HexTile> possibleBorderTiles = outmostOwnedTiles[i].GetTilesInRange(3).Where(x => !ownedTiles.Contains(x)).ToList();
-    //        newBorderTiles = newBorderTiles.Union(possibleBorderTiles).ToList();
-    //    }
-
-    //    //Get invalid border tiles (old border tiles that are no longer present in new border tiles)
-    //    HexTile[] invalidBorderTiles = oldBorderTiles.Except(newBorderTiles).ToArray();
-    //    //Get brand new border tiles (new border tiles that are not present in old border tiles)
-    //    HexTile[] brandNewBorderTiles = newBorderTiles.Except(oldBorderTiles).ToArray();
-
-    //    //Unborderize invalid border tiles
-    //    for (int i = 0; i < invalidBorderTiles.Length; i++) {
-    //        HexTile currInvalidTile = invalidBorderTiles[i];
-    //        currInvalidTile.UnBorderize(this);
-    //        kingdom.SetFogOfWarStateForTile(currInvalidTile, FOG_OF_WAR_STATE.SEEN);
-    //    }
-
-    //    borderTiles.Clear();
-    //    borderTiles.AddRange(newBorderTiles);
-
-    //    //Get outer tiles (tiles to set as visible even though they are not owned or borders of this city)
-    //    //if there are no invalid or brand new border tiles, assume that there was no change in borders and skip recomputing outer tiles
-    //    if (invalidBorderTiles.Length > 0 || brandNewBorderTiles.Length > 0) {
-    //        //Reset outer tiles, set them as seen, and remove them as outer tiles of this city
-    //        for (int i = 0; i < this.outerTiles.Count; i++) {
-    //            HexTile currOuterTile = this.outerTiles[i];
-    //            currOuterTile.RemoveAsOuterTileOf(this);
-    //            kingdom.SetFogOfWarStateForTile(currOuterTile, FOG_OF_WAR_STATE.SEEN);
-    //        }
-    //        this.outerTiles.Clear();
-
-    //        //Get outer tiles based on ownedtiles and border tiles 
-    //        //(outer tiles are those that have neighbours that are not border tiles or owned tiles of this city)
-    //        List<HexTile> outmostTiles = new List<HexTile>();
-    //        for (int i = 0; i < this.ownedTiles.Count; i++) {
-    //            HexTile currOwnedTile = this.ownedTiles[i];
-    //            if (currOwnedTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Any()) {
-    //                outmostTiles.Add(currOwnedTile);
-    //            }
-    //        }
-    //        for (int i = 0; i < this.borderTiles.Count; i++) {
-    //            HexTile currBorderTile = this.borderTiles[i];
-    //            if (currBorderTile.AllNeighbours.Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).Any()) {
-    //                outmostTiles.Add(currBorderTile);
-    //            }
-    //        }
-
-    //        //Set outer tiles as visible
-    //        for (int i = 0; i < outmostTiles.Count; i++) {
-    //            HexTile currOutmostTile = outmostTiles[i];
-    //            List<HexTile> currHexTileUnoccupiedNeighbours = currOutmostTile.AllNeighbours
-    //                .Where(x => !borderTiles.Contains(x) && !ownedTiles.Contains(x)).ToList();
-
-    //            for (int j = 0; j < currHexTileUnoccupiedNeighbours.Count; j++) {
-    //                HexTile currNeighbour = currHexTileUnoccupiedNeighbours[j];
-    //                outerTiles.Add(currNeighbour);
-    //                currNeighbour.SetAsOuterTileOf(this);
-    //                kingdom.SetFogOfWarStateForTile(currNeighbour, FOG_OF_WAR_STATE.VISIBLE);
-    //            }
-    //        }
-    //    }
-
-    //    //Borderize brand new border tiles
-    //    for (int i = 0; i < brandNewBorderTiles.Length; i++) {
-    //        HexTile currBrandNewTile = brandNewBorderTiles[i];
-    //        currBrandNewTile.Borderize(this);
-    //        kingdom.SetFogOfWarStateForTile(currBrandNewTile, FOG_OF_WAR_STATE.VISIBLE);
-    //    }
-    //    CheckForAdjacency();
-    //}
     internal void PopulateBorderTiles() {
         borderTiles = new List<HexTile>(_region.tilesInRegion);
         for (int i = 0; i < borderTiles.Count; i++) {
@@ -672,7 +619,6 @@ public class City{
             currTile.Borderize(this);
         }
     }
-
     internal void UnPopulateBorderTiles() {
         for (int i = 0; i < borderTiles.Count; i++) {
             HexTile currTile = borderTiles[i];
@@ -681,101 +627,6 @@ public class City{
         }
     }
     #endregion
-
-    //#region Adjacency
-    //internal void SetCityAsAdjacent(City city) {
-    //    if (!_adjacentCities.Contains(city)) {
-    //        _adjacentCities.Add(city);
-    //    }
-    //}
-    //internal void RemoveCityAsAdjacent(City city) {
-    //    _adjacentCities.Remove(city);
-    //}
-    //private void CheckForAdjacency() {
-    //    List<HexTile> tilesToCheck = new List<HexTile>();
-    //    tilesToCheck.AddRange(_ownedTiles);
-    //    tilesToCheck.AddRange(borderTiles);
-    //    tilesToCheck.AddRange(outerTiles);
-    //    ResetAdjacentCities();
-
-    //    for (int i = 0; i < tilesToCheck.Count; i++) {
-    //        HexTile currTileToCheck = tilesToCheck[i];
-    //        if(currTileToCheck.isOccupied && currTileToCheck.ownedByCity != null && currTileToCheck.ownedByCity != this) { //Tile is owned by another city and is not a lair
-    //            City otherCity = currTileToCheck.ownedByCity;
-    //            SetCityAsAdjacent(otherCity);
-    //            otherCity.SetCityAsAdjacent(this);
-    //        }
-    //        if(currTileToCheck.isBorder) { //Tile is a border of another city
-    //            List<City> otherCities = new List<City>(currTileToCheck.isBorderOfCities);
-    //            otherCities.Remove(this);
-    //            for (int j = 0; j < _adjacentCities.Count; j++) { //Eliminate already adjacent cities from equation
-    //                otherCities.Remove(_adjacentCities[j]);
-    //            }
-    //            for (int j = 0; j < otherCities.Count; j++) {
-    //                City otherCity = otherCities[j];
-    //                SetCityAsAdjacent(otherCity);
-    //                otherCity.SetCityAsAdjacent(this);
-    //            }
-    //        }
-    //        //if(currTileToCheck.isOuterTileOfCities.Count > 1) {
-    //        //    List<City> otherCities = new List<City>(currTileToCheck.isOuterTileOfCities);
-    //        //    otherCities.Remove(this);
-    //        //    for (int j = 0; j < _adjacentCities.Count; j++) { //Eliminate already adjacent cities from equation
-    //        //        otherCities.Remove(_adjacentCities[j]);
-    //        //    }
-    //        //    for (int j = 0; j < otherCities.Count; j++) {
-    //        //        City otherCity = otherCities[j];
-    //        //        SetCityAsAdjacent(otherCity);
-    //        //        otherCity.SetCityAsAdjacent(this);
-    //        //    }
-    //        //}
-    //    }
-
-    //    //Set Kingdom Relationships adjacency
-    //    HashSet<Kingdom> checkedKingdoms = new HashSet<Kingdom>();
-    //    for (int i = 0; i < _adjacentCities.Count; i++) {
-    //        if(_kingdom != _adjacentCities[i].kingdom) { //adjacent city's kingdom is not this city's kingdom
-    //            Kingdom otherKingdom = _adjacentCities[i].kingdom;
-    //            if (!checkedKingdoms.Contains(otherKingdom)) {
-    //                checkedKingdoms.Add(otherKingdom);
-    //                otherKingdom.AddAdjacentKingdom(_kingdom);
-    //                _kingdom.AddAdjacentKingdom(otherKingdom);
-    //                KingdomRelationship relationshipWithOtherKingdom = _kingdom.GetRelationshipWithKingdom(otherKingdom);
-    //                relationshipWithOtherKingdom.ChangeAdjacency(true);
-    //            }
-    //        }
-    //    }
-    //}
-    ///*
-    // * <summary>
-    // * This will reset the list of adjacent cities that
-    // * this city has, as well as remove itself from the previously
-    // * adjacent cities' list.
-    // * </summary>
-    // * 
-    // * */
-    //private void ResetAdjacentCities() {
-    //    HashSet<Kingdom> checkedKingdoms = new HashSet<Kingdom>();
-    //    List<City> citiesToRemove = new List<City>(_adjacentCities);
-    //    for (int i = 0; i < citiesToRemove.Count; i++) {
-    //        City currOtherCity = citiesToRemove[i];
-    //        RemoveCityAsAdjacent(currOtherCity);
-    //        currOtherCity.RemoveCityAsAdjacent(this);
-
-    //        //Reset Kingdom Relationships adjacency
-    //        Kingdom otherKingdom = currOtherCity.kingdom;
-    //        if(_kingdom != otherKingdom) {//adjacent city's kingdom is not this city's kingdom
-    //            if (!checkedKingdoms.Contains(otherKingdom)) {
-    //                checkedKingdoms.Add(otherKingdom);
-    //                otherKingdom.RemoveAdjacentKingdom(_kingdom);
-    //                _kingdom.RemoveAdjacentKingdom(otherKingdom);
-    //                KingdomRelationship relationshipWithOtherKingdom = _kingdom.GetRelationshipWithKingdom(otherKingdom);
-    //                relationshipWithOtherKingdom.ChangeAdjacency(false);
-    //            }
-    //        }
-    //    }
-    //}
-    //#endregion
 
     #region Tile Highlight
     internal void HighlightAllOwnedTiles(float alpha) {
@@ -1016,6 +867,7 @@ public class City{
 	#endregion
 
 	internal void RemoveCitizenFromCity(Citizen citizenToRemove, bool isFleeing = false){
+        RemoveCitizenInImportantCitizensInCity(citizenToRemove);
 		if(!isFleeing){
 			if (citizenToRemove.role == ROLE.GOVERNOR) {
 				this.AssignNewGovernor();
@@ -1037,7 +889,8 @@ public class City{
 		this.citizens.Add(citizenToAdd);
 		citizenToAdd.city = this;
 		citizenToAdd.currentLocation = this.hexTile;
-	}
+        AddCitizenToImportantCitizensInCity(citizenToAdd);
+    }
 
 	internal void AssignNewGovernor(){
 		if(this.isDead){
@@ -1133,6 +986,9 @@ public class City{
         Debug.Log("Stack Trace: " + System.Environment.StackTrace);
 
         this._kingdom.RemoveCityFromKingdom(this);
+        if (!this._kingdom.isDead) {
+            TransferRoyaltiesToOtherCity(this._kingdom.capitalCity);
+        }
 		KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         CameraMove.Instance.UpdateMinimapTexture();
     }
@@ -1220,7 +1076,10 @@ public class City{
 			relationship.war.InitializeMobilization ();
 		}
 		this._kingdom.RemoveCityFromKingdom(this);
-		KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
+        if (!this._kingdom.isDead) {
+            TransferRoyaltiesToOtherCity(this._kingdom.capitalCity);
+        }
+        KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
         CameraMove.Instance.UpdateMinimapTexture();
     }

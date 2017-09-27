@@ -40,6 +40,7 @@ public class Kingdom{
 	private List<Camp> camps;
 	internal City capitalCity;
 	internal Citizen king;
+    internal Citizen nextInLine;
 	internal List<Citizen> successionLine;
 
 	internal List<Rebellions> rebellions;
@@ -355,6 +356,7 @@ public class Kingdom{
 		this._bonusPrestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
+        this.nextInLine = null;
         this._kingdomSize = KINGDOM_SIZE.SMALL;
         this._mainThreat = null;
         this.successionLine = new List<Citizen>();
@@ -1189,6 +1191,17 @@ public class Kingdom{
 
 		this.successionLine.AddRange (orderedBrotherRoyalties.OrderByDescending (x => x.age));
 		this.successionLine.AddRange (orderedSisterRoyalties.OrderByDescending (x => x.age));
+
+        Citizen newNextInLine = successionLine.FirstOrDefault();
+        if (newNextInLine != null && nextInLine != null && newNextInLine != nextInLine) {
+            //next in line is no longer the next in line
+            nextInLine.AssignRole(ROLE.UNTRAINED);
+        }
+        nextInLine = newNextInLine;
+        if(newNextInLine != null) {
+            newNextInLine.AssignRole(ROLE.CROWN_PRINCE);
+        }
+        
     }
     internal void ChangeSuccessionLineRescursively(Citizen royalty) {
         if (this.king.id != royalty.id) {
@@ -1260,11 +1273,11 @@ public class Kingdom{
         }
 
         Citizen previousKing = this.king;
-        bool isNewKingdomGovernor = newKing.isGovernor;
+        bool isNewKingGovernor = newKing.isGovernor;
 
         newKing.AssignRole(ROLE.KING);
 
-        if (isNewKingdomGovernor) {
+        if (isNewKingGovernor) {
             newKing.city.AssignNewGovernor();
         }
 
@@ -1282,7 +1295,7 @@ public class Kingdom{
         this.UpdateAllRelationshipsLikeness();
         this.UpdateAllCitizensOpinionOfKing();
     }
-    private void UpdateAllCitizensOpinionOfKing() {
+    internal void UpdateAllCitizensOpinionOfKing() {
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             for (int j = 0; j < currCity.citizens.Count; j++) {

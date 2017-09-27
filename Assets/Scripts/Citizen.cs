@@ -44,6 +44,7 @@ public class Citizen {
     //A citizen's Opinion towards his King is a value between -100 to 100 representing how loyal he is towards his King.
     private int _loyaltyToKing;
     private string _loyaltySummary;
+    internal int loyaltyModifierForTesting;
 
 
 	[HideInInspector]public List<History> history;
@@ -80,7 +81,10 @@ public class Citizen {
         get { return _intelligenceLevel; }
     }
     internal int loyaltyToKing {
-        get { return _loyaltyToKing; }
+        get { return (_loyaltyToKing + loyaltyDeductionFromWar) + loyaltyModifierForTesting; }
+    }
+    internal int loyaltyDeductionFromWar {
+        get { return city.kingdom.relationships.Values.Where(x => x.isAtWar).Count() * -10; }
     }
     internal string loyaltySummary {
         get { return _loyaltySummary; }
@@ -137,6 +141,7 @@ public class Citizen {
     internal void AssignRole(ROLE role) {
         if (this.role != ROLE.UNTRAINED) {
             if (this.assignedRole != null) {
+                this.city.RemoveCitizenInImportantCitizensInCity(this);
                 this.assignedRole.OnDeath();
             }
         }
@@ -160,8 +165,10 @@ public class Citizen {
             this.assignedRole = new Trader(this);
         } else if (role == ROLE.GOVERNOR) {
             this.assignedRole = new Governor(this);
+            this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.KING) {
             this.assignedRole = new King(this);
+            this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.EXPANDER) {
             this.assignedRole = new Expander(this);
         } else if (role == ROLE.RAIDER) {
@@ -208,8 +215,16 @@ public class Citizen {
             this.assignedRole = new Instigator(this);
         } else if (role == ROLE.GRAND_CHANCELLOR) {
             this.assignedRole = new GrandChancellor(this);
+            this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.GRAND_MARSHAL) {
             this.assignedRole = new GrandMarshal(this);
+            this.city.AddCitizenToImportantCitizensInCity(this);
+        } else if (role == ROLE.QUEEN) {
+            this.city.AddCitizenToImportantCitizensInCity(this);
+        } else if (role == ROLE.QUEEN_CONSORT) {
+            this.city.AddCitizenToImportantCitizensInCity(this);
+        } else if (role == ROLE.CROWN_PRINCE) {
+            this.city.AddCitizenToImportantCitizensInCity(this);
         }
     }
     internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE) {
@@ -290,21 +305,31 @@ public class Citizen {
         if (depth == -1) {
             for (int i = 0; i < pendingCitizens.Count; i++) {
                 Citizen currCitizen = pendingCitizens[i];
-                List<Citizen> relativesOfCurrCitizen = currCitizen.GetRelatives(0).Where(x => x.id != this.id).ToList();
-                relatives = relatives.Union(relativesOfCurrCitizen).ToList();
-                pendingCitizens = pendingCitizens.Union(relativesOfCurrCitizen).ToList();
+                foreach (Citizen currRelative in currCitizen.GetRelatives(0).Where(x => x.id != this.id)) {
+                    if (!relatives.Contains(currRelative)) {
+                        relatives.Add(currRelative);
+                    }
+                    if (!pendingCitizens.Contains(currRelative)) {
+                        pendingCitizens.Add(currRelative);
+                    }
+                }
             }
         } else {
             for (int i = 0; i < depth; i++) {
                 Citizen currCitizen = null;
-                try {
-                    currCitizen = pendingCitizens[i];
-                } catch (System.Exception e) {
+                currCitizen = pendingCitizens.ElementAtOrDefault(i);
+                if(currCitizen == null) {
                     break;
                 }
-                List<Citizen> relativesOfCurrCitizen = currCitizen.GetRelatives(0).Where(x => x.id != this.id).ToList();
-                relatives = relatives.Union(relativesOfCurrCitizen).ToList();
-                pendingCitizens = pendingCitizens.Union(relativesOfCurrCitizen).ToList();
+                
+                foreach (Citizen currRelative in currCitizen.GetRelatives(0).Where(x => x.id != this.id)) {
+                    if (!relatives.Contains(currRelative)) {
+                        relatives.Add(currRelative);
+                    }
+                    if (!pendingCitizens.Contains(currRelative)) {
+                        pendingCitizens.Add(currRelative);
+                    }
+                }
             }
         }
 
@@ -423,10 +448,6 @@ public class Citizen {
         }
         CitizenManager.Instance.UnregisterCitizen(this);
 
-        if (this.city != null) {
-            this.city.citizens.Remove(this);
-        }
-
         if (this.isMarried && this._spouse != null) {
             //MarriageManager.Instance.DivorceCouple(this, spouse);
             this.isMarried = false;
@@ -455,7 +476,10 @@ public class Citizen {
                 this.city.AssignNewGovernor();
             }
         }
-
+        if(this.city != null) {
+            this.city.RemoveCitizenFromCity(this);
+        }
+        
         this.isKing = false;
         this.isGovernor = false;
     }
@@ -579,17 +603,17 @@ public class Citizen {
 
         Citizen king = city.kingdom.king;
 
-        //Per Active War
-        int disloyaltyFromWar = 0;
-        foreach(KingdomRelationship kr in city.kingdom.relationships.Values) {
-            if (kr.isAtWar) {
-                disloyaltyFromWar -= 10;
-            }
-        }
-        _loyaltyToKing += disloyaltyFromWar;
-        if(disloyaltyFromWar != 0) {
-            _loyaltySummary += disloyaltyFromWar.ToString() + "  Active Wars\n"; 
-        }
+        ////Per Active War
+        //int disloyaltyFromWar = 0;
+        //foreach(KingdomRelationship kr in city.kingdom.relationships.Values) {
+        //    if (kr.isAtWar) {
+        //        disloyaltyFromWar -= 10;
+        //    }
+        //}
+        //_loyaltyToKing += disloyaltyFromWar;
+        //if(disloyaltyFromWar != 0) {
+        //    _loyaltySummary += disloyaltyFromWar.ToString() + "  Active Wars\n"; 
+        //}
 
         int numOfSharedValues = 0;
         for (int i = 0; i < _importantCharacterValues.Keys.Count; i++) {

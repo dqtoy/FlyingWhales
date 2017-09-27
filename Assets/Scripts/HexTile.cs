@@ -1137,24 +1137,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() +
         "\n [b]King Preferred K-Type: [/b]" + this.city.kingdom.king.preferredKingdomType.ToString() + "\n";
 
-        //text += "[b]Relationships: [/b]\n";
-        //if (this.city.kingdom.relationships.Count > 0) {
-        //    for (int i = 0; i < this.city.kingdom.relationships.Count; i++) {
-        //        text += this.city.kingdom.relationships.Keys.ElementAt(i).name + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
-
-        //text += "[b]Embargo List: [/b]\n";
-        //if (this.city.kingdom.embargoList.Count > 0) {
-        //    for (int i = 0; i < this.city.kingdom.embargoList.Keys.Count; i++) {
-        //        text += this.city.kingdom.embargoList.Keys.ElementAt(i).name + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
-
         text += "[b]Adjacent Kingdoms: [/b]\n";
         if (this.city.kingdom.adjacentKingdoms.Count > 0) {
             for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
@@ -1174,11 +1156,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             text += "NONE\n";
         }
 
-        text += "[b]Alliance Kingdoms: [/b]\n";
-        if(this.city.kingdom.alliancePool != null) {
-            for (int i = 0; i < this.city.kingdom.alliancePool.kingdomsInvolved.Count; i++) {
-                Kingdom currKingdom = this.city.kingdom.alliancePool.kingdomsInvolved[i];
-                text += currKingdom.name + "\n";
+        //text += "[b]Alliance Kingdoms: [/b]\n";
+        //if(this.city.kingdom.alliancePool != null) {
+        //    for (int i = 0; i < this.city.kingdom.alliancePool.kingdomsInvolved.Count; i++) {
+        //        Kingdom currKingdom = this.city.kingdom.alliancePool.kingdomsInvolved[i];
+        //        text += currKingdom.name + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
+
+        text += "[b]Important Citizens in City: [/b]\n";
+        if (this.city.importantCitizensInCity.Count > 0) {
+            for (int i = 0; i < this.city.importantCitizensInCity.Count; i++) {
+                text += this.city.importantCitizensInCity.Values.ElementAt(i).name + " - " + this.city.importantCitizensInCity.Keys.ElementAt(i).ToString() + "\n";
             }
         } else {
             text += "NONE\n";
