@@ -34,6 +34,7 @@ public class KingdomManager : MonoBehaviour {
     public int oddActionDay = 1;
 
 	private List<AlliancePool> _alliances = new List<AlliancePool>();
+	private List<Warfare> _kingdomWars = new List<Warfare>();
 
     [Space(10)]
     [Header("Kingdom Type Modifiers")]
@@ -56,6 +57,9 @@ public class KingdomManager : MonoBehaviour {
     }
 	public List<AlliancePool> alliances {
 		get { return this._alliances; }
+	}
+	public List<Warfare> kingdomWars {
+		get { return this._kingdomWars; }
 	}
     #endregion
 
@@ -418,9 +422,6 @@ public class KingdomManager : MonoBehaviour {
         allKingdomsOrderedByPrestige = allKingdoms.OrderBy(x => x.prestige).ToList();
         UIManager.Instance.UpdatePrestigeSummary();
     }
-	internal void UpdateAllianceList() {
-		UIManager.Instance.UpdateAllianceSummary();
-	}
 	internal void IncrementCurrentActionDay(int value){
 		this.currentActionDay += value;
 	}
@@ -455,6 +456,12 @@ public class KingdomManager : MonoBehaviour {
 	}
 	internal void RemoveAlliancePool(AlliancePool alliancePool){
 		this._alliances.Remove (alliancePool);
+	}
+	internal void AddWarfare(Warfare warfare){
+		this._kingdomWars.Add (warfare);
+	}
+	internal void RemoveWarfare(Warfare warfare){
+		this._kingdomWars.Remove (warfare);
 	}
 	#endregion
 }

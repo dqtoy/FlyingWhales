@@ -282,6 +282,8 @@ public class UIManager : MonoBehaviour {
 
 	internal List<object> eventLogsQueue = new List<object> ();
 
+	private string warAllianceState = string.Empty;
+
     #region getters/setters
     internal GameObject minimapTexture {
         get { return minimapTextureGO; }
@@ -376,7 +378,7 @@ public class UIManager : MonoBehaviour {
     private void UpdateUI(){
         dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
-		KingdomManager.Instance.UpdateAllianceList ();
+		UpdateAllianceSummary ();
         if (currentlyShowingKingdom != null) {
             UpdateKingdomInfo();
         }
@@ -1757,20 +1759,36 @@ public class UIManager : MonoBehaviour {
 	public void UpdateAllianceSummary() {
 		if(UIManager.Instance.goAlliance.activeSelf){
 			this.allianceSummaryLbl.text = string.Empty;
-			for (int i = 0; i < KingdomManager.Instance.alliances.Count; i++) {
-				AlliancePool alliance = KingdomManager.Instance.alliances[i];
-				if(i != 0){
-					this.allianceSummaryLbl.text += "\n";
+			if (warAllianceState == "alliance") {
+				for (int i = 0; i < KingdomManager.Instance.alliances.Count; i++) {
+					AlliancePool alliance = KingdomManager.Instance.alliances [i];
+					if (i != 0) {
+						this.allianceSummaryLbl.text += "\n";
+					}
+					this.allianceSummaryLbl.text += alliance.name;
+					for (int j = 0; j < alliance.kingdomsInvolved.Count; j++) {
+						Kingdom kingdom = alliance.kingdomsInvolved [j];
+						this.allianceSummaryLbl.text += "\n- " + kingdom.name;
+					}
 				}
-				this.allianceSummaryLbl.text += alliance.name;
-				for (int j = 0; j < alliance.kingdomsInvolved.Count; j++) {
-					Kingdom kingdom = alliance.kingdomsInvolved [j];
-					this.allianceSummaryLbl.text += "\n- " + kingdom.name;
+			} else if (warAllianceState == "warfare") {
+				for (int i = 0; i < KingdomManager.Instance.kingdomWars.Count; i++) {
+					Warfare warfare = KingdomManager.Instance.kingdomWars [i];
+					if (i != 0) {
+						this.allianceSummaryLbl.text += "\n";
+					}
+					this.allianceSummaryLbl.text += "War " + warfare.id;
+					for (int j = 0; j < warfare.battles.Count; j++) {
+						if(warfare.battles[j].attackCity != null && warfare.battles[j].defenderCity != null){
+							this.allianceSummaryLbl.text += "\n- " + warfare.battles[j].attackCity.name + " -> " + warfare.battles[j].defenderCity.name + " (" 
+								+ ((MONTH)warfare.battles[j].supposedAttackDate.month).ToString() + " " + warfare.battles[j].supposedAttackDate.day.ToString() + ", " + warfare.battles[j].supposedAttackDate.year.ToString();
+						}
+					}
 				}
 			}
+
 		}
 	}
-
     /*
 	 * Generic toggle function, toggles gameobject to on/off state.
 	 * */
@@ -2100,8 +2118,24 @@ public class UIManager : MonoBehaviour {
         EventCreator.Instance.CreateExpansionEvent(currentlyShowingKingdom);
     }
 	public void ToggleAlliance() {
-		this.goAlliance.SetActive (!this.goAlliance.activeSelf);
+		if(warAllianceState == "alliance"){
+			this.goAlliance.SetActive (!this.goAlliance.activeSelf);
+		}else{
+			this.goAlliance.SetActive (true);
+		}
 		if(this.goAlliance.activeSelf){
+			warAllianceState = "alliance";
+			UpdateAllianceSummary ();
+		}
+	}
+	public void ToggleWarfare() {
+		if(warAllianceState == "warfare"){
+			this.goAlliance.SetActive (!this.goAlliance.activeSelf);
+		}else{
+			this.goAlliance.SetActive (true);
+		}
+		if(this.goAlliance.activeSelf){
+			warAllianceState = "warfare";
 			UpdateAllianceSummary ();
 		}
 	}
