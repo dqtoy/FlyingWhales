@@ -42,7 +42,7 @@ public class MarriedCouple {
     }
 
 	protected void CheckForPregnancy(){
-		if (this.wife.isDead) {
+		if (this.wife.isDead || this.husband.isDead) {
 			Messenger.RemoveListener("OnDayEnd", TurnActions);
 			return;
 		}
@@ -56,6 +56,11 @@ public class MarriedCouple {
 
         if (!this.wife.isMarried || !this.husband.isMarried) {
             //the couple is already divorced
+            Messenger.RemoveListener("OnDayEnd", TurnActions);
+            return;
+        }
+
+        if(this.wife.city == null || this.husband.city == null) {
             Messenger.RemoveListener("OnDayEnd", TurnActions);
             return;
         }
