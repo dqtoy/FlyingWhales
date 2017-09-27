@@ -14,7 +14,17 @@ public class Battle {
 
 	private City attacker;
 	private City defender;
+	private GameDate _supposedAttackDate;
 
+	public GameDate supposedAttackDate{
+		get{ return this._supposedAttackDate; }
+	}
+	public City attackCity{
+		get { return this.attacker; }
+	}
+	public City defenderCity{
+		get { return this.defender; }
+	}
 	public Battle(Warfare warfare, City kingdom1City, City kingdom2City){
 		this._warfare = warfare;
 		this._kingdom1 = kingdom1City.kingdom;
@@ -29,7 +39,11 @@ public class Battle {
 		this._kr.ChangeHasPairedCities (true);
 		if(!this._kr.isAtWar){
 			this._kr.SetPreparingWar (true);
+			this._kr.SetWarfare (this._warfare);
 		}
+
+		this._supposedAttackDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+		this._supposedAttackDate.AddDays (25);
 
 		SetAttackerAndDefenderCity(this._kingdom1City, this._kingdom2City);
 		Step1();

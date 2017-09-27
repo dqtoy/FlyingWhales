@@ -21,6 +21,9 @@ public class Warfare {
 	public Dictionary<Kingdom, WAR_SIDE> kingdomSides{
 		get { return this._kingdomSides; }
 	}
+	public List<Battle> battles{
+		get { return this._battles; }
+	}
 	#endregion
 	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom){
 		SetID();
@@ -34,6 +37,7 @@ public class Warfare {
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
 		InstantDeclareWarIfNotAdjacent (firstKingdom, secondKingdom);
 		CreateNewBattle (firstKingdom, true);
+		KingdomManager.Instance.AddWarfare (this);
 	}
 	private void SetID(){
 		this._id = Utilities.lastWarfareID + 1;
@@ -69,6 +73,7 @@ public class Warfare {
 		}
 		this._kingdomSides.Remove(kingdom);
 		kingdom.RemoveWarfareInfo(this);
+		CheckWarfareDone ();
 	}
 	internal void BattleEnds(City winnerCity, City loserCity, Battle battle){
 		//Conquer City if not null, if null means both dead
@@ -298,6 +303,22 @@ public class Warfare {
 			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 			ShowUINotification (newLog);
+		}
+	}
+	private void CheckWarfareDone(){
+		if(this._sideA.Count <= 0 || this._sideB.Count <= 0){
+			this._isOver = true;
+			KingdomManager.Instance.RemoveWarfare (this);
+			while(this._sideA.Count > 0){
+				this._sideA [0].RemoveWarfareInfo (this);
+				this._kingdomSides.Remove(this._sideA [0]);
+				this._sideA.RemoveAt (0);
+			}
+			while(this._sideB.Count > 0){
+				this._sideB [0].RemoveWarfareInfo (this);
+				this._kingdomSides.Remove(this._sideB [0]);
+				this._sideB.RemoveAt (0);
+			}
 		}
 	}
 }
