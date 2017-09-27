@@ -851,6 +851,7 @@ public class UIManager : MonoBehaviour {
         if(currentKingdomRelationshipShowing == null || currentKingdomRelationshipShowing.id != currentlyShowingKingdom.id) {
             StartCoroutine(RepositionGrid(kingRelationshipsGrid));
             StartCoroutine(RepositionScrollView(kingRelationshipsScrollView));
+            kingRelationshipsScrollView.UpdateScrollbars();
         }
 
         governorRelationshipsParentGO.SetActive(false);
