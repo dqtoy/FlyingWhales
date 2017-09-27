@@ -23,6 +23,8 @@ public class KingdomRelationship {
 	private bool _isAdjacent;
 	private bool _isDiscovered;
 	private bool _isRecentWar;
+	private bool _isPreparingForWar;
+	private bool _hasPairedCities;
     private Wars _war;
     private InvasionPlan _invasionPlan;
     private RequestPeace _requestPeace;
@@ -76,6 +78,12 @@ public class KingdomRelationship {
     public bool isAtWar {
         get { return _isAtWar; }
     }
+	public bool isPreparingForWar {
+		get { return this._isPreparingForWar; }
+	}
+	public bool hasPairedCities {
+		get { return this._hasPairedCities; }
+	}
     public Wars war {
         get { return _war; }
     }
@@ -167,6 +175,9 @@ public class KingdomRelationship {
 		this._isMutualDefenseTreaty = false;
 		this._isAdjacent = false;
 		this._isRecentWar = false;
+		this._isPreparingForWar = false;
+		this._hasPairedCities = false;
+		this._isAtWar = false;
 		this._currentExpirationDefenseTreaty = new GameDate (0, 0, 0);
 		this._currentExpirationMilitaryAlliance = new GameDate (0, 0, 0);
 		this._warfare = null;
@@ -667,7 +678,12 @@ public class KingdomRelationship {
 			this._isDiscovered = state;
 		}
 	}
-
+	internal void SetPreparingWar(bool state) {
+		this._isPreparingForWar = state;
+	}
+	internal void SetHasPairedCities(bool state) {
+		this._hasPairedCities = state;
+	}
     internal void AdjustExhaustion(int amount) {
         if (_isAtWar) {
             _kingdomWarData.AdjustExhaustion(amount);
@@ -752,6 +768,9 @@ public class KingdomRelationship {
 
 	internal void ChangeWarStatus(bool state, Warfare warfare){
 		SetWarStatus(state, warfare);
+		if(state){
+			SetPreparingWar (false);
+		}
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
 		kr.SetWarStatus(state, warfare);
 	}
@@ -766,6 +785,11 @@ public class KingdomRelationship {
 			KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
 			kr.SetRecentWar(state);
 		}
+	}
+	internal void ChangeHasPairedCities(bool state){
+		SetHasPairedCities (state);
+		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		kr.SetHasPairedCities(state);
 	}
 	private void DefenseTreatyExpiration(){
 		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead && this._isMutualDefenseTreaty 

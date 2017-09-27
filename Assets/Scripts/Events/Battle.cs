@@ -6,6 +6,7 @@ public class Battle {
 	private Warfare _warfare;
 	private Kingdom _kingdom1;
 	private Kingdom _kingdom2;
+	private KingdomRelationship _kr;
 	private City _kingdom1City;
 	private City _kingdom2City;
 	private bool _isOver;
@@ -20,9 +21,15 @@ public class Battle {
 		this._kingdom2 = kingdom2City.kingdom;
 		this._kingdom1City = kingdom1City;
 		this._kingdom2City = kingdom2City;
-		this._kingdom1City.isUnderAttack = true;
-		this._kingdom2City.isUnderAttack = true;
+		this._kingdom1City.isPaired = true;
+		this._kingdom2City.isPaired = true;
 		this._isKingdomsAtWar = false;
+
+		this._kr = this._kingdom1.GetRelationshipWithKingdom (this._kingdom2);
+		this._kr.ChangeHasPairedCities (true);
+		if(!this._kr.isAtWar){
+			this._kr.SetPreparingWar (true);
+		}
 
 		SetAttackerAndDefenderCity(this._kingdom1City, this._kingdom2City);
 		Step1();
@@ -36,6 +43,8 @@ public class Battle {
 	private void SetAttackerAndDefenderCity(City attacker, City defender){
 		this.attacker = attacker;
 		this.defender = defender;
+		this.attacker.ChangeAttackingState(true);
+		this.defender.ChangeDefendingState(true);
 	}
 	private void Step1(){
 		GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
@@ -269,14 +278,25 @@ public class Battle {
 
 	private void EndBattle(City winnerCity, City loserCity){
 		this._isOver = true;
-		this._kingdom1City.isUnderAttack = false;
-		this._kingdom2City.isUnderAttack = false;
+		this._kingdom1City.isPaired = false;
+		this._kingdom2City.isPaired = false;
+		this._kingdom1City.ChangeAttackingState (false);
+		this._kingdom1City.ChangeDefendingState (false);
+		this._kingdom2City.ChangeAttackingState (false);
+		this._kingdom2City.ChangeDefendingState (false);
+		this._kr.SetHasPairedCities (false);
 		this._warfare.BattleEnds (winnerCity, loserCity, this);
 	}
 	private void CityDied(){
 		this._isOver = true;
-		this._kingdom1City.isUnderAttack = false;
-		this._kingdom2City.isUnderAttack = false;
+		this._kingdom1City.isPaired = false;
+		this._kingdom2City.isPaired = false;
+		this._kingdom1City.ChangeAttackingState (false);
+		this._kingdom1City.ChangeDefendingState (false);
+		this._kingdom2City.ChangeAttackingState (false);
+		this._kingdom2City.ChangeDefendingState (false);
+		this._kr.ChangeHasPairedCities (false);
+
 		if(!this.attacker.isDead){
 			this._warfare.CreateNewBattle (this.attacker);
 		}else{

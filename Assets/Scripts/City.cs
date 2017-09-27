@@ -42,11 +42,13 @@ public class City{
 
 	[Space(5)]
     [Header("Booleans")]
-    public bool hasKing;
-    public bool isUnderAttack;
-	public bool hasReinforced;
-	public bool isStarving;
-	public bool isDead;
+    internal bool hasKing;
+	internal bool isPaired;
+	internal bool isAttacking;
+	internal bool isDefending;
+	internal bool hasReinforced;
+	internal bool isStarving;
+	internal bool isDead;
 
     [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
     [NonSerialized] internal List<HexTile> borderTiles;
@@ -142,7 +144,9 @@ public class City{
 		this.citizens = new List<Citizen>();
 		this.cityHistory = new List<History>();
 		this.hasKing = false;
-		this.isUnderAttack = false;
+		this.isPaired = false;
+		this.isAttacking = false;
+		this.isDefending = false;
 		this.hasReinforced = false;
 		this.isStarving = false;
 		this.isDead = false;
@@ -981,7 +985,7 @@ public class City{
         UnityEngine.Object.Destroy(this.hexTile.GetComponent<CityTaskManager>());
         //EventManager.Instance.onCitizenDiedEvent.RemoveListener(CheckCityDeath);
 //        this.incomingGenerals.Clear ();
-		this.isUnderAttack = false;
+		this.isPaired = false;
 
 		if (this.rebellion != null) {
 			RebelCityConqueredByAnotherKingdom ();
@@ -1006,6 +1010,8 @@ public class City{
         this.outerTiles.Clear();
 
 		this.isDead = true;
+		ChangeAttackingState (false);
+		ChangeDefendingState (false);
         //EventManager.Instance.onDeathToGhost.Invoke (this);
         this.hexTile.city = null;
 
@@ -1061,6 +1067,8 @@ public class City{
         //        this._kingdom.RemoveCityFromKingdom(this);
         RemoveListeners();
         this.isDead = true;
+		ChangeAttackingState (false);
+		ChangeDefendingState (false);
         //Assign new king to conquered kingdom if, conquered city was the home of the current king
 //        if (this.hasKing) {
 //            this.hasKing = false;
@@ -1617,4 +1625,18 @@ public class City{
 		this._productionGrowthPercentage = amount;
 	}
     #endregion
+
+	internal void ChangeAttackingState(bool state){
+		this.isAttacking = state;
+		if(state){
+			this.isDefending = false;
+		}
+	}
+
+	internal void ChangeDefendingState(bool state){
+		this.isDefending = state;
+		if(state){
+			this.isAttacking = false;
+		}
+	}
 }

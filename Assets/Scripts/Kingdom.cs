@@ -294,12 +294,12 @@ public class Kingdom{
 	public int effectivePower{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 2);}
-		get { return this.basePower + (int)(GetPosAlliancePower() / 2);}
+		get { return this.basePower + (int)(this.baseDefense / 3) + (int)(GetPosAlliancePower() / 3);}
 	}
 	public int effectiveDefense{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 3) + this._baseDefense + (int)(GetMutualDefenseTreatyPower() / 3);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 3) + this._baseDefense + (int)(this._mutualDefenseTreatyPower / 3);}
-		get { return this.baseDefense + (int)(GetPosAllianceDefense() / 2);}
+		get { return this.baseDefense + (int)(this.basePower / 3) + (int)(GetPosAllianceDefense() / 3);}
 	}
 	public int militaryAlliancePower{
 		get { return this._militaryAlliancePower;}
@@ -424,8 +424,8 @@ public class Kingdom{
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
 
 		SetLackPrestigeState(false);
-        AdjustPrestige(GridMap.Instance.numOfRegions);
-//		AdjustPrestige(500);
+//        AdjustPrestige(GridMap.Instance.numOfRegions);
+		AdjustPrestige(500);
 
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
@@ -2203,7 +2203,7 @@ public class Kingdom{
 			UpdateThreatLevels ();
 			UpdateInvasionValues ();
 			if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
-				SeeksBalance ();
+				SeeksBalance.Initialize(this);
 			}
 
 			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
@@ -2345,7 +2345,7 @@ public class Kingdom{
 //		}
 //	}
 
-	private void SeeksBalance(){
+	private void SeekBalance(){
 		bool mustSeekAlliance = false;
         Debug.Log("========== " + name + " is seeking balance " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
 		//break any alliances with anyone whose threat value is 100 or above and lose 50 Prestige
@@ -3012,5 +3012,21 @@ public class Kingdom{
 			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 			UIManager.Instance.ShowNotification (newLog);
 		}
+	}
+	internal bool IsUnderAttack(){
+		for (int i = 0; i < this.cities.Count; i++) {
+			if(this.cities[i].isDefending){
+				return true;
+			}
+		}
+		return false;
+	}
+	internal bool IsAttacking(){
+		for (int i = 0; i < this.cities.Count; i++) {
+			if(this.cities[i].isAttacking){
+				return true;
+			}
+		}
+		return false;
 	}
 }

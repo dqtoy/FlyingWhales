@@ -45,10 +45,8 @@ public class Warfare {
 		}else if(side == WAR_SIDE.B){
 			this._sideB.Add(kingdom);
 		}
-        if (_kingdomSides.ContainsKey(kingdom)) {
-            this._kingdomSides[kingdom] = side;
-        } else {
-            this._kingdomSides.Add(kingdom, side);
+        if (!this._kingdomSides.ContainsKey(kingdom)) {
+			this._kingdomSides.Add(kingdom, side);
         }
 		
 		kingdom.AddWarfareInfo(new WarfareInfo(side, this));
@@ -139,8 +137,9 @@ public class Warfare {
 		List<City> enemyCities = new List<City> ();
 		for (int j = 0; j < sourceCity.region.adjacentRegions.Count; j++) {
 			City adjacentCity = sourceCity.region.adjacentRegions [j].occupant;
-			if(adjacentCity != null){
-				if(!adjacentCity.isUnderAttack && adjacentCity.kingdom.warfareInfo.Count > 0){
+			if(adjacentCity != null && adjacentCity.kingdom.id != sourceCity.kingdom.id){
+				KingdomRelationship kr = sourceCity.kingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
+				if(!adjacentCity.isPaired && adjacentCity.kingdom.warfareInfo.Count > 0 && !kr.hasPairedCities){
 					WarfareInfo adjacentWarfareInfo = adjacentCity.kingdom.GetWarfareInfo(this._id);
 					if(adjacentWarfareInfo.warfare != null){
 						if(adjacentWarfareInfo.side != sourceWarfareInfo.side){
@@ -169,15 +168,18 @@ public class Warfare {
 		}
 		List<City> enemyCities = new List<City> ();
 		for (int i = 0; i < sourceKingdom.cities.Count; i++) {
-			if(!sourceKingdom.cities[i].isUnderAttack){
+			if(!sourceKingdom.cities[i].isPaired){
 				for (int j = 0; j < sourceKingdom.cities[i].region.adjacentRegions.Count; j++) {
 					City adjacentCity = sourceKingdom.cities [i].region.adjacentRegions [j].occupant;
-					if(adjacentCity != null){
-						WarfareInfo adjacentWarfareInfo = adjacentCity.kingdom.GetWarfareInfo(this._id);
-						if(adjacentWarfareInfo.warfare != null){
-							if(adjacentWarfareInfo.side != sourceWarfareInfo.side){
-								if(!enemyCities.Contains(adjacentCity)){
-									enemyCities.Add (adjacentCity);
+					if(adjacentCity != null && adjacentCity.kingdom.id != sourceKingdom.id){
+						KingdomRelationship kr = sourceKingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
+						if (!adjacentCity.isPaired && adjacentCity.kingdom.warfareInfo.Count > 0 && !kr.hasPairedCities) {
+							WarfareInfo adjacentWarfareInfo = adjacentCity.kingdom.GetWarfareInfo (this._id);
+							if (adjacentWarfareInfo.warfare != null) {
+								if (adjacentWarfareInfo.side != sourceWarfareInfo.side) {
+									if (!enemyCities.Contains (adjacentCity)) {
+										enemyCities.Add (adjacentCity);
+									}
 								}
 							}
 						}
