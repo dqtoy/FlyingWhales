@@ -361,13 +361,37 @@ public class Region {
             }
         }
 
-        //When you discover another kingdom via adjacency, you also discover all other kingdoms it is adjacent to.
+        ////When you discover another kingdom via adjacency, you discover all other kingdoms that it has discovered
+        //for (int i = 0; i < adjacentKingdoms.Count; i++) {
+        //    Kingdom otherKingdom = adjacentKingdoms[i];
+        //    List<Kingdom> discoveredKingdomsOfOtherKingdom = otherKingdom.adjacentKingdoms;
+        //    for (int j = 0; j < discoveredKingdomsOfOtherKingdom.Count; j++) {
+        //        Kingdom kingdomToDiscover = discoveredKingdomsOfOtherKingdom[j];
+        //        if (kingdomToDiscover != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(kingdomToDiscover)) {
+        //            KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, kingdomToDiscover);
+        //        }
+        //    }
+        //}
+
+        //When you discover another kingdom via adjacency, you also discover all other regions it is adjacent to.
         for (int i = 0; i < adjacentRegionsOfOtherRegions.Count; i++) {
             Region otherAdjacentRegion = adjacentRegionsOfOtherRegions[i];
             if (otherAdjacentRegion.occupant != null) {
                 Kingdom adjacentKingdomOfOtherKingdom = otherAdjacentRegion.occupant.kingdom;
                 if (adjacentKingdomOfOtherKingdom != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(adjacentKingdomOfOtherKingdom)) {
                     KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, adjacentKingdomOfOtherKingdom);
+                }
+            }
+        }
+
+        //When you discover another kingdom via adjacency, you also discover all other kingdoms it is adjacent to.
+        for (int i = 0; i < adjacentKingdoms.Count; i++) {
+            Kingdom otherKingdom = adjacentKingdoms[i];
+            List<Kingdom> adjacentKingdomsOfOtherKingdom = otherKingdom.adjacentKingdoms;
+            for (int j = 0; j < adjacentKingdomsOfOtherKingdom.Count; j++) {
+                Kingdom kingdomToDiscover = adjacentKingdomsOfOtherKingdom[j];
+                if (kingdomToDiscover != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(kingdomToDiscover)) {
+                    KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, kingdomToDiscover);
                 }
             }
         }

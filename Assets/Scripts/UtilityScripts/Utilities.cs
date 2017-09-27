@@ -402,17 +402,6 @@ public class Utilities : MonoBehaviour {
         return STRUCTURE_TYPE.GENERIC;
     }
             
-	public static ROLE GetRoleThatProducesResource(BASE_RESOURCE_TYPE resourceType){
-		if (resourceType == BASE_RESOURCE_TYPE.FOOD) {
-			return ROLE.FOODIE;
-		} else if (resourceType == BASE_RESOURCE_TYPE.STONE || resourceType == BASE_RESOURCE_TYPE.WOOD) {
-			return ROLE.GATHERER;
-		} else if (resourceType == BASE_RESOURCE_TYPE.MANA_STONE || resourceType == BASE_RESOURCE_TYPE.MITHRIL || resourceType == BASE_RESOURCE_TYPE.COBALT) {
-			return ROLE.MINER;
-		}
-		return ROLE.UNTRAINED;
-	}
-
 	public static Color GetColorForRelationship(RELATIONSHIP_STATUS status){
 		if (status == RELATIONSHIP_STATUS.LOVE) {
 			return new Color (0f, (139f/255f), (69f/255f), 1f);
