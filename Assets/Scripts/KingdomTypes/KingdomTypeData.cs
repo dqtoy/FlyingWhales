@@ -79,6 +79,9 @@ public class KingdomTypeData : MonoBehaviour {
 	private ProductionPointsSpend _productionPointsSpend;
 
 	[SerializeField]
+	private int _prepareForWarChance;
+
+	[SerializeField]
 	private KingdomTypeData generalKingdomTypeData;
 
 	private int _hexDistanceModifier = 15;
@@ -269,6 +272,11 @@ public class KingdomTypeData : MonoBehaviour {
         get { return _productionPointsSpend; }
     }
 
+	public int prepareForWarChance {
+		get { 
+			return this._prepareForWarChance; 
+		}
+	}
 
     void Awake(){
 		if(this.generalKingdomTypeData != null){

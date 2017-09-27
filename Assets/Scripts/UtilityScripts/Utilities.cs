@@ -43,7 +43,7 @@ public class Utilities : MonoBehaviour {
 		"Food",
 	};
 	private static string[] allianceType = new string[]{
-		"Alliance", "League", "Coalition", "Axis", "Union", "Entene", "Accord"
+		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
 	};
 	private static string[] allianceNoun = new string[]{
 		"Arms", "Baes", "Darkness", "Dogs", "Flame", "Future", "Fury", "Genius", "Guys", "Hands",

@@ -87,7 +87,7 @@ public class Wars : GameEvent {
 				bool hasIdleCity = false;
 				for (int j = 0; j < militaryAllianceKingdom.cities.Count; j++) {
 					City militaryAllianceCity = militaryAllianceKingdom.cities [i];
-					if (militaryAllianceCity.rebellion == null && !militaryAllianceCity.isUnderAttack) {
+					if (militaryAllianceCity.rebellion == null && !militaryAllianceCity.isPaired) {
 						hasIdleCity = true;
 						break;
 					}
@@ -110,7 +110,7 @@ public class Wars : GameEvent {
 				bool hasIdleCity = false;
 				for (int j = 0; j < mutualDefenseTreatyKingdom.cities.Count; j++) {
 					City militaryAllianceCity = mutualDefenseTreatyKingdom.cities [i];
-					if (militaryAllianceCity.rebellion == null && !militaryAllianceCity.isUnderAttack) {
+					if (militaryAllianceCity.rebellion == null && !militaryAllianceCity.isPaired) {
 						hasIdleCity = true;
 						break;
 					}
@@ -175,7 +175,7 @@ public class Wars : GameEvent {
 					for (int i = 0; i < this.kingdom1.capitalCity.habitableTileDistance.Count; i++) {
 						HexTile hexTile = this.kingdom1.capitalCity.habitableTileDistance [i].hexTile;
 						if(hexTile.city != null && hexTile.city.id != 0 
-							&& !hexTile.city.isDead && !hexTile.city.isUnderAttack && hexTile.city.rebellion == null){
+							&& !hexTile.city.isDead && !hexTile.city.isPaired && hexTile.city.rebellion == null){
 
 							if(hexTile.city.kingdom.id == this.kingdom2.id){
 								kingdom2CityToBeAttacked = hexTile.city;
@@ -209,8 +209,8 @@ public class Wars : GameEvent {
 
 
 		if(kingdom1CityToBeAttacked != null && kingdom2CityToBeAttacked != null && path != null){
-			kingdom1CityToBeAttacked.isUnderAttack = true;
-			kingdom2CityToBeAttacked.isUnderAttack = true;
+			kingdom1CityToBeAttacked.isPaired = true;
+			kingdom2CityToBeAttacked.isPaired = true;
 			this._warPair = new CityWarPair (kingdom1CityToBeAttacked, kingdom2CityToBeAttacked, path);
 		}
 	}
@@ -261,7 +261,7 @@ public class Wars : GameEvent {
 					while(!isComplete){
 						for (int i = 0; i < this._attacker.kingdom.cities.Count; i++) {
 							City reinforcerCity = this._attacker.kingdom.cities [i];
-							if (this._attacker.id != reinforcerCity.id && reinforcerCity.power > 0 && !reinforcerCity.isUnderAttack) {
+							if (this._attacker.id != reinforcerCity.id && reinforcerCity.power > 0 && !reinforcerCity.isPaired) {
 								hasReinforced = true;
 								totalNeededContribution = powerContribution + powerShortage;
 								if(reinforcerCity.power >= totalNeededContribution){
@@ -281,7 +281,7 @@ public class Wars : GameEvent {
 					int neededPower = diffPower;
 					for (int i = 0; i < this._attacker.kingdom.cities.Count; i++) {
 						City reinforcerCity = this._attacker.kingdom.cities [i];
-						if (this._attacker.id != reinforcerCity.id && reinforcerCity.power > 0 && !reinforcerCity.isUnderAttack) {
+						if (this._attacker.id != reinforcerCity.id && reinforcerCity.power > 0 && !reinforcerCity.isPaired) {
 							hasReinforced = true;
 							if(reinforcerCity.power >= neededPower){
 								reinforcerCity.ReinforceCity (this._attacker, neededPower, this);
@@ -375,10 +375,10 @@ public class Wars : GameEvent {
 		this._warPair.isDone = state;
 	}
 	private void ReinforcementKingdom(City city){
-		//		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+		//		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isPaired && !x.hasReinforced && x.hp >= 100).ToList ();
 		_safeCitiesKingdom.Clear();
 		for (int i = 0; i < city.kingdom.cities.Count; i++) {
-			if (!city.kingdom.cities[i].isUnderAttack && !city.kingdom.cities[i].hasReinforced && city.kingdom.cities[i].power > 0) {
+			if (!city.kingdom.cities[i].isPaired && !city.kingdom.cities[i].hasReinforced && city.kingdom.cities[i].power > 0) {
 				_safeCitiesKingdom.Add(city.kingdom.cities[i]);
 			}
 		}
@@ -398,10 +398,10 @@ public class Wars : GameEvent {
 		}
 	}
 	private void ReinforcementKingdom1(){
-		//		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+		//		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isPaired && !x.hasReinforced && x.hp >= 100).ToList ();
 		_safeCitiesKingdom1.Clear();
 		for (int i = 0; i < this.kingdom1.cities.Count; i++) {
-			if (!this.kingdom1.cities[i].isUnderAttack && !this.kingdom1.cities[i].hasReinforced && this.kingdom1.cities[i].power > 0) {
+			if (!this.kingdom1.cities[i].isPaired && !this.kingdom1.cities[i].hasReinforced && this.kingdom1.cities[i].power > 0) {
 				_safeCitiesKingdom1.Add(this.kingdom1.cities[i]);
 			}
 		}
@@ -421,10 +421,10 @@ public class Wars : GameEvent {
 		}
 	}
 	private void ReinforcementKingdom2(){
-		//		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+		//		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isPaired && !x.hasReinforced && x.hp >= 100).ToList ();
 		_safeCitiesKingdom2.Clear();
 		for (int i = 0; i < this.kingdom2.cities.Count; i++) {
-			if (!this.kingdom2.cities[i].isUnderAttack && !this.kingdom2.cities[i].hasReinforced && this.kingdom2.cities[i].power > 0) {
+			if (!this.kingdom2.cities[i].isPaired && !this.kingdom2.cities[i].hasReinforced && this.kingdom2.cities[i].power > 0) {
 				_safeCitiesKingdom2.Add(this.kingdom2.cities[i]);
 			}
 		}
@@ -456,7 +456,7 @@ public class Wars : GameEvent {
 			City currCity = citiesToChooseFrom[i];
 			if(!currCity.isDead && currCity.rebellion == null){
 				float distance = Vector3.Distance (hexTile.transform.position, currCity.hexTile.transform.position);
-				if(!currCity.isUnderAttack){
+				if(!currCity.isPaired){
 					if(nearestCity == null) {
 						nearestCity = currCity;
 						nearestDistance = distance;

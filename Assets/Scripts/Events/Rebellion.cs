@@ -235,7 +235,7 @@ public class Rebellion : GameEvent {
 		}
 	}
 	private void ReinforcementKingdom1(){
-		List<City> safeCitiesKingdom1 = this.conqueredCities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList (); 
+		List<City> safeCitiesKingdom1 = this.conqueredCities.Where (x => !x.isPaired && !x.hasReinforced && x.hp >= 100).ToList (); 
 		int chance = 0;
 		int value = 0;
 		if(safeCitiesKingdom1 != null){
@@ -250,7 +250,7 @@ public class Rebellion : GameEvent {
 		}
 	}
 	private void ReinforcementKingdom2(){
-		List<City> safeCitiesKingdom2 = this.targetKingdom.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100 && x.rebellion == null).ToList ();
+		List<City> safeCitiesKingdom2 = this.targetKingdom.cities.Where (x => !x.isPaired && !x.hasReinforced && x.hp >= 100 && x.rebellion == null).ToList ();
 		int chance = 0;
 		int value = 0;
 		if(safeCitiesKingdom2 != null){

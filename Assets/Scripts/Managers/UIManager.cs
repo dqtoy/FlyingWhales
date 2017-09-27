@@ -2089,7 +2089,7 @@ public class UIManager : MonoBehaviour {
 				if(i != 0){
 					this.allianceSummaryLbl.text += "\n";
 				}
-				this.allianceSummaryLbl.text += "Alliance " + alliance.id;
+				this.allianceSummaryLbl.text += alliance.name;
 				for (int j = 0; j < alliance.kingdomsInvolved.Count; j++) {
 					Kingdom kingdom = alliance.kingdomsInvolved [j];
 					this.allianceSummaryLbl.text += "\n- " + kingdom.name;

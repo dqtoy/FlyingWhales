@@ -250,8 +250,8 @@ public class War : GameEvent {
 
 
 			if(kingdom1CityToBeAttacked != null && kingdom2CityToBeAttacked != null && path != null){
-				kingdom1CityToBeAttacked.isUnderAttack = true;
-				kingdom2CityToBeAttacked.isUnderAttack = true;
+				kingdom1CityToBeAttacked.isPaired = true;
+				kingdom2CityToBeAttacked.isPaired = true;
 				this.warPair = new CityWarPair (kingdom1CityToBeAttacked, kingdom2CityToBeAttacked, path);
 			}
 		}
@@ -316,10 +316,10 @@ public class War : GameEvent {
 //		}
 	}
 	private void ReinforcementKingdom1(){
-//		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+//		List<City> safeCitiesKingdom1 = this.kingdom1.cities.Where (x => !x.isPaired && !x.hasReinforced && x.hp >= 100).ToList ();
 		safeCitiesKingdom1.Clear();
 		for (int i = 0; i < this.kingdom1.cities.Count; i++) {
-			if (!this.kingdom1.cities[i].isUnderAttack && !this.kingdom1.cities[i].hasReinforced && this.kingdom1.cities[i].hp >= 100) {
+			if (!this.kingdom1.cities[i].isPaired && !this.kingdom1.cities[i].hasReinforced && this.kingdom1.cities[i].hp >= 100) {
 				safeCitiesKingdom1.Add(this.kingdom1.cities[i]);
 			}
 		}
@@ -339,10 +339,10 @@ public class War : GameEvent {
 		}
 	}
 	private void ReinforcementKingdom2(){
-//		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isUnderAttack && !x.hasReinforced && x.hp >= 100).ToList ();
+//		List<City> safeCitiesKingdom2 = this.kingdom2.cities.Where (x => !x.isPaired && !x.hasReinforced && x.hp >= 100).ToList ();
 		safeCitiesKingdom2.Clear();
 		for (int i = 0; i < this.kingdom2.cities.Count; i++) {
-			if (!this.kingdom2.cities[i].isUnderAttack && !this.kingdom2.cities[i].hasReinforced && this.kingdom2.cities[i].hp >= 100) {
+			if (!this.kingdom2.cities[i].isPaired && !this.kingdom2.cities[i].hasReinforced && this.kingdom2.cities[i].hp >= 100) {
 				safeCitiesKingdom2.Add(this.kingdom2.cities[i]);
 			}
 		}
