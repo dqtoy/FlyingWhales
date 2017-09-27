@@ -143,6 +143,9 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject successorParentGO;
     [SerializeField] private CharacterPortrait successorPortrait;
     [SerializeField] private UILabel successorPreferredKingdomTypeLbl;
+    [SerializeField] private GameObject otherCitizensGO;
+    [SerializeField] private CharacterPortrait chancellorPortrait;
+    [SerializeField] private CharacterPortrait marshalPortrait;
 
     [Space(10)]
     [Header("Kingdom Events UI Objects")]
@@ -950,97 +953,101 @@ public class UIManager : MonoBehaviour {
 
 	public void ToggleFamilyTree(){
 		if (familyTreeGO.activeSelf) {
-			familyTreeGO.SetActive (false);
+            HideFamilyTree();
 		} else {
-			if (familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>() != null) {
-				ObjectPoolManager.Instance.DestroyObject(familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
-			}
-			if (currentlyShowingCitizen.father != null) {
-				GameObject fatherGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeFatherGO.transform);
-				fatherGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
-				fatherGO.transform.localPosition = Vector3.zero;
-				fatherGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.father);
-			}
-			if (familyTreeMotherGO.GetComponentInChildren<CharacterPortrait>() != null) {
-                ObjectPoolManager.Instance.DestroyObject(familyTreeMotherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
-			}
-			if (currentlyShowingCitizen.mother != null) {
-				GameObject motherGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeMotherGO.transform);
-				motherGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
-				motherGO.transform.localPosition = Vector3.zero;
-				motherGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.mother);
-			}
-			if (familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>() != null) {
-                ObjectPoolManager.Instance.DestroyObject(familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>().gameObject);
-			}
-			if (currentlyShowingCitizen.spouse != null) {
-				GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
-				spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
-				spouseGO.transform.localPosition = Vector3.zero;
-				spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.spouse);
-				for (int i = 0; i < this.marriageHistoryOfCurrentCitizen.Count; i++) {
-					if (currentlyShowingCitizen.gender == GENDER.MALE) {
-						if (this.marriageHistoryOfCurrentCitizen [i].wife.id == currentlyShowingCitizen.spouse.id) {
-							this.currentMarriageHistoryIndex = i;
-							break;
-						}
-					} else {
-						if (this.marriageHistoryOfCurrentCitizen [i].husband.id == currentlyShowingCitizen.spouse.id) {
-							this.currentMarriageHistoryIndex = i;
-							break;
-						}
-					}
-				}
-			} else if (this.marriageHistoryOfCurrentCitizen.Count > 0) {
-				GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
-				spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
-				spouseGO.transform.localPosition = Vector3.zero;
-				if (currentlyShowingCitizen.gender == GENDER.MALE) {
-					spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (this.marriageHistoryOfCurrentCitizen[0].wife);
-				} else {
-					spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (this.marriageHistoryOfCurrentCitizen[0].husband);
-				}
-				this.currentMarriageHistoryIndex = 0;
-			}
+            ShowFamilyTree();
+		}
+	}
+    public void ShowFamilyTree() {
+        if (familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>() != null) {
+            ObjectPoolManager.Instance.DestroyObject(familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+        }
+        if (currentlyShowingCitizen.father != null) {
+            GameObject fatherGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeFatherGO.transform);
+            fatherGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
+            fatherGO.transform.localPosition = Vector3.zero;
+            fatherGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.father);
+        }
+        if (familyTreeMotherGO.GetComponentInChildren<CharacterPortrait>() != null) {
+            ObjectPoolManager.Instance.DestroyObject(familyTreeMotherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+        }
+        if (currentlyShowingCitizen.mother != null) {
+            GameObject motherGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeMotherGO.transform);
+            motherGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
+            motherGO.transform.localPosition = Vector3.zero;
+            motherGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.mother);
+        }
+        if (familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>() != null) {
+            ObjectPoolManager.Instance.DestroyObject(familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+        }
+        if (currentlyShowingCitizen.spouse != null) {
+            GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
+            spouseGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
+            spouseGO.transform.localPosition = Vector3.zero;
+            spouseGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.spouse);
+            //for (int i = 0; i < this.marriageHistoryOfCurrentCitizen.Count; i++) {
+            //    if (currentlyShowingCitizen.gender == GENDER.MALE) {
+            //        if (this.marriageHistoryOfCurrentCitizen[i].wife.id == currentlyShowingCitizen.spouse.id) {
+            //            this.currentMarriageHistoryIndex = i;
+            //            break;
+            //        }
+            //    } else {
+            //        if (this.marriageHistoryOfCurrentCitizen[i].husband.id == currentlyShowingCitizen.spouse.id) {
+            //            this.currentMarriageHistoryIndex = i;
+            //            break;
+            //        }
+            //    }
+            //}
+        } 
+        //else if (this.marriageHistoryOfCurrentCitizen.Count > 0) {
+        //    GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
+        //    spouseGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
+        //    spouseGO.transform.localPosition = Vector3.zero;
+        //    if (currentlyShowingCitizen.gender == GENDER.MALE) {
+        //        spouseGO.GetComponent<CharacterPortrait>().SetCitizen(this.marriageHistoryOfCurrentCitizen[0].wife);
+        //    } else {
+        //        spouseGO.GetComponent<CharacterPortrait>().SetCitizen(this.marriageHistoryOfCurrentCitizen[0].husband);
+        //    }
+        //    this.currentMarriageHistoryIndex = 0;
+        //}
 
-			CharacterPortrait[] children = familyTreeChildGrid.GetComponentsInChildren<CharacterPortrait>();
-			for (int i = 0; i < children.Length; i++) {
-                ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
-			}
+        CharacterPortrait[] children = familyTreeChildGrid.GetComponentsInChildren<CharacterPortrait>();
+        for (int i = 0; i < children.Length; i++) {
+            ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
+        }
 
-			List<Transform> childPositions = familyTreeChildGrid.GetChildList ();
-			for (int i = 0; i < currentlyShowingCitizen.children.Count; i++) {
-				GameObject childGO = InstantiateUIObject(characterPortraitPrefab.name, childPositions [i].transform);
-				childGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
-				childGO.transform.localPosition = Vector3.zero;
-				childGO.GetComponent<CharacterPortrait> ().SetCitizen (currentlyShowingCitizen.children [i]);
-			}
+        List<Transform> childPositions = familyTreeChildGrid.GetChildList();
+        for (int i = 0; i < currentlyShowingCitizen.children.Count; i++) {
+            GameObject childGO = InstantiateUIObject(characterPortraitPrefab.name, childPositions[i].transform);
+            childGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
+            childGO.transform.localPosition = Vector3.zero;
+            childGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.children[i]);
+        }
 
-			if (this.marriageHistoryOfCurrentCitizen.Count > 1) {
-				nextMarriageBtn.SetActive (true);
-			} else {
-				nextMarriageBtn.SetActive (false);
-			}
+        if (this.marriageHistoryOfCurrentCitizen.Count > 1) {
+            nextMarriageBtn.SetActive(true);
+        } else {
+            nextMarriageBtn.SetActive(false);
+        }
 
-			familyTreeInnerSprite.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
+        familyTreeInnerSprite.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
 
-            //Show Successor
-            if(currentlyShowingCitizen.role == ROLE.KING) {
-                if(currentlyShowingCitizen.city.kingdom.successionLine.Count > 0) {
-                    Citizen successor = currentlyShowingCitizen.city.kingdom.successionLine.FirstOrDefault();
-                    successorPortrait.SetCitizen(successor, false, true);
-                    successorPreferredKingdomTypeLbl.text = successor.preferredKingdomType.ToString();
-                    successorParentGO.SetActive(true);
-                } else {
-                    successorParentGO.SetActive(false);
-                }
+        //Show Successor
+        if (currentlyShowingCitizen.role == ROLE.KING) {
+            if (currentlyShowingCitizen.city.kingdom.successionLine.Count > 0) {
+                Citizen successor = currentlyShowingCitizen.city.kingdom.successionLine.FirstOrDefault();
+                successorPortrait.SetCitizen(successor, false, true);
+                successorPreferredKingdomTypeLbl.text = successor.preferredKingdomType.ToString();
+                successorParentGO.SetActive(true);
             } else {
                 successorParentGO.SetActive(false);
             }
+        } else {
+            successorParentGO.SetActive(false);
+        }
 
-			familyTreeGO.SetActive (true);
-		}
-	}
+        familyTreeGO.SetActive(true);
+    }
 	public void HideFamilyTree(){
 		familyTreeBtn.SetClickState(false);
 		familyTreeGO.SetActive(false);
