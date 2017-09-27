@@ -2194,6 +2194,8 @@ public class Kingdom{
 			UpdateInvasionValues ();
 			if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
 				SeeksBalance.Initialize(this);
+			}else if (this.kingdomTypeData.purpose == PURPOSE.SUPERIORITY) {
+				SeeksSuperiority.Initialize(this);
 			}
 
 			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
@@ -2532,7 +2534,7 @@ public class Kingdom{
 			}
 		}
 	}
-	private void SeeksSuperiority(){
+	private void SeekSuperiority(){
 		Militarize (true);
 		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
 		if (!relationship.isMilitaryAlliance) {
