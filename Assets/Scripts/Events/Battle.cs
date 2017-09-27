@@ -16,6 +16,7 @@ public class Battle {
 	private City defender;
 
 	public Battle(Warfare warfare, City kingdom1City, City kingdom2City){
+		this._kr = this._kingdom1.GetRelationshipWithKingdom (this._kingdom2);
 		this._warfare = warfare;
 		this._kingdom1 = kingdom1City.kingdom;
 		this._kingdom2 = kingdom2City.kingdom;
@@ -23,9 +24,8 @@ public class Battle {
 		this._kingdom2City = kingdom2City;
 		this._kingdom1City.isPaired = true;
 		this._kingdom2City.isPaired = true;
-		this._isKingdomsAtWar = false;
+		this._isKingdomsAtWar = this._kr.isAtWar;
 
-		this._kr = this._kingdom1.GetRelationshipWithKingdom (this._kingdom2);
 		this._kr.ChangeHasPairedCities (true);
 		if(!this._kr.isAtWar){
 			this._kr.SetPreparingWar (true);
@@ -48,12 +48,20 @@ public class Battle {
 	}
 	private void Step1(){
 		GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-		gameDate.AddMonths(2);
+		gameDate.AddDays(5);
+		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
+		if(this._kr.isAtWar){
+			SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
+		}
+		gameDate.AddDays(5);
+		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
+		if(this._kr.isAtWar){
+			SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
+		}
 		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => Step2());
 	}
 
 	private void Step2(){
-		TransferPowerFromNonAdjacentCities ();
 		DeclareWar();
 		Attack();
 	}
@@ -73,7 +81,7 @@ public class Battle {
 		for (int i = 0; i < nonAdjacentCities.Count; i++) {
 			City nonAdjacentCity = nonAdjacentCities[i];
 			if(nonAdjacentCity.power > 0){
-				int powerTransfer = (int)(nonAdjacentCity.power * 0.15f);
+				int powerTransfer = (int)(nonAdjacentCity.power * 0.04f);
 				nonAdjacentCity.AdjustPower(-powerTransfer);
 				this.attacker.AdjustPower(powerTransfer);
 			}
@@ -91,7 +99,7 @@ public class Battle {
 		for (int i = 0; i < nonAdjacentCities.Count; i++) {
 			City nonAdjacentCity = nonAdjacentCities[i];
 			if(nonAdjacentCity.defense > 0){
-				int defenseTransfer = (int)(nonAdjacentCity.defense * 0.15f);
+				int defenseTransfer = (int)(nonAdjacentCity.defense * 0.04f);
 				nonAdjacentCity.AdjustDefense(-defenseTransfer);
 				this.defender.AdjustDefense(defenseTransfer);
 			}
@@ -101,22 +109,25 @@ public class Battle {
 
 	#region Step 2
 	private void DeclareWar(){
-		KingdomRelationship kr = this._kingdom1.GetRelationshipWithKingdom(this._kingdom2);
-		if(!kr.isAtWar){
+		if(!this._kr.isAtWar){
 			this._isKingdomsAtWar = true;
-			kr.ChangeWarStatus(true, this._warfare);
+			this._kr.ChangeWarStatus(true, this._warfare);
 			Log newLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
 			newLog.AddToFillers (this._kingdom1, this._kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (this._kingdom2, this._kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 			this._warfare.ShowUINotificaiton (newLog);
-		}else{
-			TransferDefenseFromNonAdjacentCities ();
 		}
 	}
 	private void Attack(){
 		GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-		gameDate.AddMonths(1);
-		SchedulingManager.Instance.AddEntry(gameDate.month,gameDate.day,gameDate.year, () => Step3());
+		gameDate.AddDays(5);
+		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
+		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
+		gameDate.AddDays(5);
+		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
+		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
+		gameDate.AddDays(5);
+		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => Step3());
 	}
 	#endregion
 

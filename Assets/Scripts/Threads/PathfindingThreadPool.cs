@@ -46,6 +46,7 @@ public class PathfindingThreadPool : MonoBehaviour {
 	private void RunThread(){
 		while(isRunning){
 			if(this.functionsToBeRunInThread.Count > 0){
+				Thread.Sleep (2);
 				PathFindingThread newFunction = null;
 				lock(THREAD_LOCKER){
 					newFunction = this.functionsToBeRunInThread.Dequeue ();

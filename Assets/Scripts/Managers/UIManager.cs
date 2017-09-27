@@ -175,6 +175,7 @@ public class UIManager : MonoBehaviour {
 	public UILabel actionDayLbl;
 	public UILabel warmongerLbl;
 	public GameObject militarizingGO;
+	public GameObject fortifyingGO;
 
     [Space(10)]
     [Header("Event Logs UI Objects")]
@@ -561,6 +562,7 @@ public class UIManager : MonoBehaviour {
 		kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
 		kingdomTechMeter.value = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
 		this.militarizingGO.SetActive (currentlyShowingKingdom.isMilitarize);
+		this.fortifyingGO.SetActive (currentlyShowingKingdom.isFortifying);
 		this.actionDayLbl.text = this.currentlyShowingKingdom.actionDay.ToString();
 		this.warmongerLbl.text = this.currentlyShowingKingdom.warmongerValue.ToString();
 
