@@ -419,8 +419,8 @@ public class Kingdom{
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
 
 		SetLackPrestigeState(false);
-//        AdjustPrestige(GridMap.Instance.numOfRegions);
-		AdjustPrestige(500);
+        AdjustPrestige(GridMap.Instance.numOfRegions);
+//		AdjustPrestige(500);
 
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
