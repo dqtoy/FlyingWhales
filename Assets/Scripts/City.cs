@@ -882,8 +882,8 @@ public class City{
 
 
 		this.citizens.Remove (citizenToRemove);
-		citizenToRemove.city = null;
-	}
+        citizenToRemove.city = null;
+    }
 
 	internal void AddCitizenToCity(Citizen citizenToAdd){
 		this.citizens.Add(citizenToAdd);
