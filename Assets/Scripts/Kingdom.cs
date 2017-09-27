@@ -2174,9 +2174,9 @@ public class Kingdom{
     }
 	internal void Fortify(bool state){
 		this._isFortifying = state;
-//		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
-//			UIManager.Instance.militarizingGO.SetActive (state);
-//		}
+		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
+			UIManager.Instance.fortifyingGO.SetActive (state);
+		}
 		if (state) {
 			Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "fortify");
 			fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);

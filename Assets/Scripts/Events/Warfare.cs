@@ -32,6 +32,7 @@ public class Warfare {
 		this._kingdomSides = new Dictionary<Kingdom, WAR_SIDE>();
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
+		InstantDeclareWarIfNotAdjacent (firstKingdom, secondKingdom);
 		CreateNewBattle (firstKingdom, true);
 	}
 	private void SetID(){
@@ -42,8 +43,14 @@ public class Warfare {
 	internal void JoinWar(WAR_SIDE side, Kingdom kingdom, bool isCreateBattle = true){
 		if(side == WAR_SIDE.A){
 			this._sideA.Add(kingdom);
+			for (int i = 0; i < this._sideB.Count; i++) {
+				InstantDeclareWarIfNotAdjacent (kingdom, this._sideB [i]);
+			}
 		}else if(side == WAR_SIDE.B){
 			this._sideB.Add(kingdom);
+			for (int i = 0; i < this._sideA.Count; i++) {
+				InstantDeclareWarIfNotAdjacent (kingdom, this._sideA [i]);
+			}
 		}
         if (!this._kingdomSides.ContainsKey(kingdom)) {
 			this._kingdomSides.Add(kingdom, side);
@@ -231,5 +238,21 @@ public class Warfare {
 	}
 	internal void ShowUINotificaiton(Log log){
 		UIManager.Instance.ShowNotification(log);
+	}
+
+	private bool IsAdjacent(Kingdom kingdom1, Kingdom kingdom2){
+		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom(kingdom2);
+		return kr.isAdjacent;
+	}
+
+	private void InstantDeclareWarIfNotAdjacent(Kingdom kingdom1, Kingdom kingdom2){
+		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom(kingdom2);
+		if(!kr.isAtWar && !kr.isAdjacent){
+			kr.ChangeWarStatus(true, this);
+			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "declare_war");
+			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+			ShowUINotificaiton (newLog);
+		}
 	}
 }
