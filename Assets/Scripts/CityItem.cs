@@ -60,26 +60,9 @@ public class CityItem : MonoBehaviour {
 
         if (showLoyalty) {
             _loyaltyGO.SetActive(true);
-            Governor thisGovernor = (Governor)_governor.citizen.assignedRole;
             _loyaltyLbl.text = _governor.citizen.loyaltyToKing.ToString();
-
-            //thisGovernor._eventLoyaltySummary = string.Empty;
-            //for (int i = 0; i < thisGovernor.eventModifiers.Count; i++) {
-            //	thisGovernor._eventLoyaltySummary += "\n" + thisGovernor.eventModifiers [i].summary;
-            //}
-            //         string loyaltySummary = thisGovernor.loyaltySummary;
-            //         if(thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige > 0) {
-            //             loyaltySummary += "\n-" + thisGovernor.ownedCity.kingdom.disloyaltyFromPrestige.ToString() + " Lack of Prestige";
-            //         }
-            //         if(thisGovernor.forTestingLoyaltyModifier != 0) {
-            //             string integralSign = "+";
-            //             if(thisGovernor.forTestingLoyaltyModifier < 0) {
-            //                 integralSign = string.Empty;
-            //             }
-            //             loyaltySummary += "\n" + integralSign + thisGovernor.forTestingLoyaltyModifier.ToString() + " Admin Modifier";
-            //         }
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
-                UIManager.Instance.ShowRelationshipSummary(thisGovernor.citizen, thisGovernor.citizen.loyaltySummary);
+                ShowLoyaltySummary();
             });
             EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideRelationshipSummary(); });
         }
@@ -124,6 +107,16 @@ public class CityItem : MonoBehaviour {
         //UIManager.Instance.SetKingdomAsSelected(_city.kingdom);
     }
 
+    private void ShowLoyaltySummary() {
+        Citizen thisCitizen = _governor.citizen;
+        string loyaltySummary = string.Empty;
+        if(thisCitizen.loyaltyDeductionFromWar != 0) {
+            loyaltySummary += thisCitizen.loyaltyDeductionFromWar + "   Active Wars\n";
+        }
+        loyaltySummary += thisCitizen.loyaltySummary;
+        UIManager.Instance.ShowRelationshipSummary(thisCitizen, loyaltySummary);
+    }
+
     #region For Testing
     public void SetPower() {
         _city.SetPower(System.Int32.Parse(newPowerLbl.text));
@@ -136,7 +129,7 @@ public class CityItem : MonoBehaviour {
         this._defenseLbl.text = city.defense.ToString();
     }
     public void SetGovernorLoyaltyAdjustment() {
-        ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier = System.Int32.Parse(loyaltyAdjustmentLbl.text);
+        _city.governor.loyaltyModifierForTesting = System.Int32.Parse(loyaltyAdjustmentLbl.text);
         SetCity(_city, true, false, true);
     }
     #endregion
