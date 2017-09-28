@@ -106,6 +106,8 @@ public class MarriedCouple {
         float pregnancyChance = Random.Range (0f, 100f);
 		if (pregnancyChance < PREGNANCY_CHANCE) {
             Citizen baby = MarriageManager.Instance.MakeBaby(this.husband, this.wife);
+            baby.GenerateCharacterValues();
+            baby.UpdateKingOpinion();
             //Debug.Log(this.husband.name + " and " + this.wife.name + " has made a baby named: " + baby.name);
             //this.isPregnant = true;
             //this.remainingWeeksUntilBirth = 36;

@@ -42,7 +42,7 @@ public class Governor : Role {
 		this.isInitial = true;
 
         this.SetOwnedCity(this.citizen.city);
-        this.citizen.GenerateCharacterValues();
+        //this.citizen.GenerateCharacterValues();
 
 		//PrestigeContribution (false);
 		HappinessContribution (false);

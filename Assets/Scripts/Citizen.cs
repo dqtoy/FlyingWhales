@@ -133,7 +133,7 @@ public class Citizen {
         this._intelligenceLevel = (INTELLIGENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(INTELLIGENCE)).Length));
 
         this.city.citizens.Add (this);
-	}
+    }
 
 	internal int GetCampaignLimit(){
 		return 2;

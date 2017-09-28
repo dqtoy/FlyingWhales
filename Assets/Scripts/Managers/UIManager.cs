@@ -98,6 +98,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject citizenInfoForTestingGO;
 	public CitizenInfoUI citizenInfoUI;
     [SerializeField] private UILabel preferredKingdomTypeLbl;
+    [SerializeField] private UILabel loyaltyToKingLbl;
 
 	[Space(10)]
     [Header("Events UI Objects")]
@@ -146,6 +147,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject otherCitizensGO;
     [SerializeField] private CharacterPortrait chancellorPortrait;
     [SerializeField] private CharacterPortrait marshalPortrait;
+    [SerializeField] private UILabel spouseCompatibility;
 
     [Space(10)]
     [Header("Kingdom Events UI Objects")]
@@ -618,6 +620,7 @@ public class UIManager : MonoBehaviour {
 		//ForTesting
 		citizenInfoForTestingGO.SetActive (true);
         preferredKingdomTypeLbl.text = currentlyShowingCitizen.preferredKingdomType.ToString();
+        loyaltyToKingLbl.text = currentlyShowingCitizen.loyaltyToKing.ToString();
 
         HideSmallInfo();
 
@@ -1003,6 +1006,13 @@ public class UIManager : MonoBehaviour {
             spouseGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
             spouseGO.transform.localPosition = Vector3.zero;
             spouseGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.spouse);
+            if(currentlyShowingCitizen.spouse is Spouse) {
+                spouseCompatibility.gameObject.SetActive(true);
+                spouseCompatibility.text = ((Spouse)currentlyShowingCitizen.spouse)._marriageCompatibility.ToString();
+            } else {
+                spouseCompatibility.gameObject.SetActive(false);
+            }
+            
             //for (int i = 0; i < this.marriageHistoryOfCurrentCitizen.Count; i++) {
             //    if (currentlyShowingCitizen.gender == GENDER.MALE) {
             //        if (this.marriageHistoryOfCurrentCitizen[i].wife.id == currentlyShowingCitizen.spouse.id) {
@@ -1016,7 +1026,9 @@ public class UIManager : MonoBehaviour {
             //        }
             //    }
             //}
-        } 
+        } else {
+            spouseCompatibility.gameObject.SetActive(false);
+        }
         //else if (this.marriageHistoryOfCurrentCitizen.Count > 0) {
         //    GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
         //    spouseGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
@@ -1063,8 +1075,8 @@ public class UIManager : MonoBehaviour {
 
             //Show Other Citizens
             otherCitizensGO.SetActive(true);
-            chancellorPortrait.SetCitizen(currentlyShowingCitizen.city.importantCitizensInCity[ROLE.GRAND_CHANCELLOR], false, true);
-            chancellorPortrait.SetCitizen(currentlyShowingCitizen.city.importantCitizensInCity[ROLE.GRAND_MARSHAL], false, true);
+            chancellorPortrait.SetCitizen(currentlyShowingCitizen.city.importantCitizensInCity[ROLE.GRAND_CHANCELLOR]);
+            marshalPortrait.SetCitizen(currentlyShowingCitizen.city.importantCitizensInCity[ROLE.GRAND_MARSHAL]);
         } else {
             successorParentGO.SetActive(false);
             otherCitizensGO.SetActive(false);
@@ -2093,33 +2105,6 @@ public class UIManager : MonoBehaviour {
 	public void OnClickBoonOfPower(){
 		ShowInterveneEvent (EVENT_TYPES.BOON_OF_POWER);
 	}
-    public void GenerateChildForCitizen() {
-        if (currentlyShowingCitizen.spouse == null) {
-            //			Debug.Log ("Could not generate child because no spouse");
-            return;
-        }
-        Citizen child = null;
-        if (currentlyShowingCitizen.gender == GENDER.MALE) {
-            child = MarriageManager.Instance.MakeBaby(currentlyShowingCitizen, currentlyShowingCitizen.spouse);
-        } else {
-            child = MarriageManager.Instance.MakeBaby(currentlyShowingCitizen.spouse, currentlyShowingCitizen);
-        }
-        currentlyShowingCitizen.city.RemoveCitizenFromCity(child);
-        //		Debug.Log("====== " + child.name + " Behaviour Traits ======");
-        //		for (int i = 0; i < child.behaviorTraits.Count; i++) {
-        //			Debug.Log (child.behaviorTraits [i]);
-        //		}
-        //		Debug.Log("====== " + child.name + " Skill Traits ======");
-        //		for (int i = 0; i < child.skillTraits.Count; i++) {
-        //			Debug.Log (child.skillTraits [i]);
-        //		}
-        //		Debug.Log("====== " + child.name + " Misc Traits ======");
-        //		for (int i = 0; i < child.miscTraits.Count; i++) {
-        //			Debug.Log (child.miscTraits [i]);
-        //		}
-        currentlyShowingCitizen.children.Remove(child);
-        currentlyShowingCitizen.spouse.children.Remove(child);
-    }
 	//private void ShowGovernorLoyalty(){
 	//	if(!this.goLoyalty.activeSelf){
 	//		this.goLoyalty.SetActive (true);
