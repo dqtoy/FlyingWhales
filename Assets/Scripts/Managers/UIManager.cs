@@ -1809,7 +1809,7 @@ public class UIManager : MonoBehaviour {
 					for (int j = 0; j < warfare.battles.Count; j++) {
 						if(warfare.battles[j].attackCity != null && warfare.battles[j].defenderCity != null){
 							this.allianceSummaryLbl.text += "\n- " + warfare.battles[j].attackCity.name + " -> " + warfare.battles[j].defenderCity.name + " (" 
-								+ ((MONTH)warfare.battles[j].supposedAttackDate.month).ToString() + " " + warfare.battles[j].supposedAttackDate.day.ToString() + ", " + warfare.battles[j].supposedAttackDate.year.ToString();
+								+ ((MONTH)warfare.battles[j].supposedAttackDate.month).ToString() + " " + warfare.battles[j].supposedAttackDate.day.ToString() + ", " + warfare.battles[j].supposedAttackDate.year.ToString() + ")";
 						}
 					}
 				}

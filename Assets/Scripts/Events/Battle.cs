@@ -42,9 +42,6 @@ public class Battle {
 			this._kr.SetWarfare (this._warfare);
 		}
 
-		this._supposedAttackDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-		this._supposedAttackDate.AddDays (25);
-
 		SetAttackerAndDefenderCity(this._kingdom1City, this._kingdom2City);
 		Step1();
 		Log newLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "first_mobilization");
@@ -59,6 +56,9 @@ public class Battle {
 		this.defender = defender;
 		this.attacker.ChangeAttackingState(true);
 		this.defender.ChangeDefendingState(true);
+
+		this._supposedAttackDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+		this._supposedAttackDate.AddDays (25);
 	}
 	private void Step1(){
 		GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);

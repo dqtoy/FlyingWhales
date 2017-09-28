@@ -124,7 +124,8 @@ public static class SeeksBalance {
 	private static void Phase2(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool hasAllianceInWar){
 		if(kingdom.alliancePool != null){
 			bool hasLeftAlliance = false;
-			Dictionary<Warfare, WAR_SIDE> warsToJoin = new Dictionary<Warfare, WAR_SIDE>();
+			List<WarfareInfo> warsToJoin = new List<WarfareInfo> ();
+//			Dictionary<Warfare, WAR_SIDE> warsToJoin = new Dictionary<Warfare, WAR_SIDE>();
 			foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 				if(!relationship.isAtWar && !relationship.AreAllies() && relationship.isDiscovered){
 					for (int i = 0; i < kingdom.alliancePool.kingdomsInvolved.Count; i++) {
@@ -133,14 +134,16 @@ public static class SeeksBalance {
 							KingdomRelationship kr = allyKingdom.GetRelationshipWithKingdom(relationship.targetKingdom);
 							if(kr.isAtWar || kr.isPreparingForWar){
 								hasAllianceInWar = true;
-								if(!warsToJoin.ContainsKey(kr.warfare)){
+								WarfareInfo info = new WarfareInfo (kr.warfare.kingdomSides [allyKingdom], kr.warfare);
+								if(!warsToJoin.Contains(info)){
 									KingdomRelationship krWithAlly = kingdom.GetRelationshipWithKingdom (allyKingdom);
 									int totalChanceOfJoining = krWithAlly.totalLike * 2;
 									int chance = UnityEngine.Random.Range (0, 100);
 									if(chance < totalChanceOfJoining){
 										//Join War
-										warsToJoin.Add(kr.warfare, kr.warfare.kingdomSides[allyKingdom]);
-										Debug.Log(kingdom.name + " will join in " + allyKingdom.name + "'s war");
+										warsToJoin.Add(info);
+//										warsToJoin.Add(kr.warfare, kr.warfare.kingdomSides[allyKingdom]);
+										Debug.Log(kingdom.name + " will join in " + allyKingdom.name + "'s war in side: " + info.side.ToString());
 									} else{
 										//Don't join war, leave alliance, lose 100 prestige
 										kingdom.LeaveAlliance();
@@ -160,8 +163,8 @@ public static class SeeksBalance {
 				}
 			}
 			if(!hasLeftAlliance && warsToJoin.Count > 0){
-				foreach (Warfare warfare in warsToJoin.Keys) {
-					warfare.JoinWar(warsToJoin[warfare], kingdom);
+				for (int i = 0; i < warsToJoin.Count; i++) {
+					warsToJoin [i].warfare.JoinWar (warsToJoin [i].side, kingdom);
 				}
 			}
 		}
