@@ -18,7 +18,7 @@ public class NotificationItem : PooledObject {
     }
     #endregion
 
-    public void SetLog(Log log) {
+    public void SetLog(Log log, bool shouldExpire = true) {
         GetComponent<UI2DSprite>().MarkAsChanged();
         this._thisLog = log;
         if (_thisLog.fillers.Count > 0) {
@@ -28,7 +28,9 @@ public class NotificationItem : PooledObject {
         }
         notifDateLabel.text = log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString();
         timeLeftBeforeExpiration = baseNotificationExpiration;
-        InvokeRepeating("CheckForExpiry", 1f, 1f);
+        if (shouldExpire) {
+            InvokeRepeating("CheckForExpiry", 1f, 1f);
+        }
     }
 
     private void CheckForExpiry() {
