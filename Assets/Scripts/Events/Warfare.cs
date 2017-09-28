@@ -227,7 +227,7 @@ public class Warfare {
 	}
 	private void PeaceDeclaration(Kingdom kingdom1, Kingdom kingdom2){
 		DeclarePeace (kingdom1, kingdom2);
-		for (int i = 0; i < this._sideA; i++) {
+		for (int i = 0; i < this._sideA.Count; i++) {
 			for (int j = 0; j < this._sideB.Count; j++) {
 				DeclarePeace (this._sideA[i], this._sideB[j]);
 			}
