@@ -46,7 +46,9 @@ public class Battle {
 		Step1();
 		Log newLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "first_mobilization");
 		newLog.AddToFillers (this.attacker.kingdom, this.attacker.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		this._warfare.ShowUINotification (newLog);
+        if(UIManager.Instance.currentlyShowingKingdom == attackCity.kingdom) {
+            this._warfare.ShowUINotification(newLog);
+        }
 	}
 	internal void SetWarfare(Warfare warfare){
 		this._warfare = warfare;
@@ -178,8 +180,12 @@ public class Battle {
 				//Attacker Wins
 				EndBattle(this.attacker, this.defender);
 			}else{
-				//Defender Wins
-				ChangePositionAndGoToStep1();
+                //Defender Wins
+                Log newLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "successful_defense");
+                newLog.AddToFillers(this.defender, this.defender.name, LOG_IDENTIFIER.CITY_1);
+                newLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_2);
+                this._warfare.ShowUINotification(newLog);
+                ChangePositionAndGoToStep1();
 			}
 		}else{
 			CityDied ();
@@ -332,16 +338,20 @@ public class Battle {
 	private void ChangePositionAndGoToStep1(){
 		SetAttackerAndDefenderCity (this.defender, this.attacker);
 		Step1 ();
-		Log offenseLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "offense_mobilization");
-		offenseLog.AddToFillers (this.attacker.kingdom, this.attacker.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		offenseLog.AddToFillers (this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_1);
-		this._warfare.ShowUINotification (offenseLog);
+        if (UIManager.Instance.currentlyShowingKingdom == attackCity.kingdom) {
+            Log offenseLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "offense_mobilization");
+            offenseLog.AddToFillers(this.attacker.kingdom, this.attacker.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+            offenseLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_1);
+            this._warfare.ShowUINotification(offenseLog);
+        }
 
 		if(this._isKingdomsAtWar){
-			Log defenseLog = this._warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "defense_mobilization");
-			defenseLog.AddToFillers (this.defender.kingdom, this.defender.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-			defenseLog.AddToFillers (this.defender, this.defender.name, LOG_IDENTIFIER.CITY_1);
-			this._warfare.ShowUINotification (defenseLog);
+            if (UIManager.Instance.currentlyShowingKingdom == defender.kingdom) {
+                Log defenseLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "defense_mobilization");
+                defenseLog.AddToFillers(this.defender.kingdom, this.defender.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+                defenseLog.AddToFillers(this.defender, this.defender.name, LOG_IDENTIFIER.CITY_1);
+                this._warfare.ShowUINotification(defenseLog);
+            }
 		}
 	}
 }

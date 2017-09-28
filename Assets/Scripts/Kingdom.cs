@@ -2189,8 +2189,19 @@ public class Kingdom{
 			UIManager.Instance.militarizingGO.SetActive (state);
 		}
         if (state) {
+            Kingdom kingdom2 = null;
+            float highestInvasionValue = 0;
+            foreach (KingdomRelationship kr in relationships.Values) {
+                if (kr.isDiscovered) {
+                    if(kr.targetKingdomInvasionValue > highestInvasionValue) {
+                        kingdom2 = kr.targetKingdom;
+                        highestInvasionValue = kr.targetKingdomInvasionValue;
+                    }
+                }
+            }
             Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
             militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+            militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
             UIManager.Instance.ShowNotification(militarizeLog);
         }
     }
@@ -2200,9 +2211,20 @@ public class Kingdom{
 			UIManager.Instance.fortifyingGO.SetActive (state);
 		}
 		if (state) {
-			Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "fortify");
+            Kingdom kingdom2 = null;
+            float highestKingdomThreat = 0;
+            foreach (KingdomRelationship kr in relationships.Values) {
+                if (kr.isDiscovered) {
+                    if (kr.targetKingdomThreatLevel > highestKingdomThreat) {
+                        kingdom2 = kr.targetKingdom;
+                        highestKingdomThreat = kr.targetKingdomThreatLevel;
+                    }
+                }
+            }
+            Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "fortify");
 			fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-			UIManager.Instance.ShowNotification(fortifyLog);
+            fortifyLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+            UIManager.Instance.ShowNotification(fortifyLog);
 		}
 	}
 	private void ScheduleActionDay(){
