@@ -95,7 +95,11 @@ public class Warfare {
 
 			winnerCity.kingdom.ConquerCity(loserCity);
 			if(winnerCity.kingdom.cities.Count >= winnerCity.kingdom.cityCap){
-				PeaceDeclaration (winnerCity.kingdom, loserCity.kingdom);
+				if(!loserCity.kingdom.isDead){
+					PeaceDeclaration (winnerCity.kingdom, loserCity.kingdom);
+				}else{
+					CreateNewBattle (winnerCity.kingdom);
+				}
 			}else{
 				CreateNewBattle (winnerCity.kingdom);
 			}
