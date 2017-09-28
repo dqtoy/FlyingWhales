@@ -13,7 +13,6 @@ public class Kingdom{
 	public RACE race;
     public int age;
     private int _prestige;
-	private int _bonusPrestige; //Prestige bonuses including bonuses from governors and king traits
     private int foundationYear;
     private int foundationMonth;
     private int foundationDay;
@@ -31,8 +30,8 @@ public class Kingdom{
     //Trading
     private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
-    private int _basePower;
-    private int _baseDefense;
+    //private int _basePower;
+    //private int _baseDefense;
     private int _happiness;
     private List<City> _cities;
     private List<Region> _regions;
@@ -66,7 +65,6 @@ public class Kingdom{
 	private int _techLevel;
 	private int _techCapacity;
 	private int _techCounter;
-	private int _bonusTech;
 
 	//The First and The Keystone
 	internal FirstAndKeystoneOwnership firstAndKeystoneOwnership;
@@ -168,7 +166,7 @@ public class Kingdom{
 		get { return this._mainThreat; }
 	}
     public int prestige {
-        get { return Mathf.Min( _prestige + bonusPrestige, KingdomManager.Instance.maxPrestige); }
+        get { return Mathf.Min( _prestige, KingdomManager.Instance.maxPrestige); }
     }
     public int cityCap {
         get { return Mathf.FloorToInt(prestige / GridMap.Instance.numOfRegions); }
@@ -283,10 +281,10 @@ public class Kingdom{
 		get { return this._doneEvents;}
 	}
 	public int basePower{
-		get { return this._basePower;}
+		get { return this.GetBasePower();}
 	}
 	public int baseDefense{
-		get { return this._baseDefense;}
+		get { return this.GetBaseDefense();}
 	}
 	public int effectivePower{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
@@ -322,12 +320,6 @@ public class Kingdom{
 	public bool doesLackPrestige{
 		get { return this._doesLackPrestige;}
 	}
-	public int bonusPrestige{
-		get { return this._bonusPrestige;}
-	}
-	public int bonusTech{
-		get { return this._bonusTech;}
-	}
 	public float techProductionPercentage{
 		get { return this._techProductionPercentage;}
 	}
@@ -353,7 +345,6 @@ public class Kingdom{
 		this.id = Utilities.SetID(this);
 		this.race = race;
         this._prestige = 0;
-		this._bonusPrestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
 		this.king = null;
         this.nextInLine = null;
@@ -381,7 +372,6 @@ public class Kingdom{
 		this._discoveredKingdoms = new List<Kingdom>();
 		this._techLevel = 0;
 		this._techCounter = 0;
-		this._bonusTech = 0;
 		this._hasBioWeapon = false;
 		this._boonOfPowers = new List<BoonOfPower> ();
 		this._activatedBoonOfPowers = new List<BoonOfPower> ();
@@ -1010,7 +1000,6 @@ public class Kingdom{
         _prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
 		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
-        //Debug.Log("Adjusted Prestige! of " + name + ": \n" + System.Environment.StackTrace);
     }
     internal void SetPrestige(int adjustment) {
         _prestige = adjustment;
@@ -1018,13 +1007,9 @@ public class Kingdom{
         CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
-	internal void AdjustBonusPrestige(int amount){
-		this._bonusPrestige += amount;
-        //Debug.Log("Adjusted Bonus Prestige! of " + name + ": \n" + System.Environment.StackTrace);
-    }
     internal void MonthlyPrestigeActions() {
         //Add Prestige
-		int prestigeToBeAdded = this._bonusPrestige;
+		int prestigeToBeAdded = GetMonthlyPrestigeGain();
 		AdjustPrestige(prestigeToBeAdded);
         //Reschedule event
         GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
@@ -1032,6 +1017,15 @@ public class Kingdom{
         gameDate.day = GameManager.daysInMonth[gameDate.month];
         SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => MonthlyPrestigeActions());
     }
+    internal int GetMonthlyPrestigeGain() {
+        int monthlyPrestigeGain = 0;
+        monthlyPrestigeGain += king.GetPrestigeContribution();
+        for (int i = 0; i < cities.Count; i++) {
+            monthlyPrestigeGain += cities[i].governor.GetPrestigeContribution();
+        }
+        return monthlyPrestigeGain;
+    }
+
 	private void CheckIfKingdomLacksPrestige(){
 		if (this.cities.Count > this.cityCap) {
 			if(!this._doesLackPrestige){
@@ -1100,6 +1094,7 @@ public class Kingdom{
         if (this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     /* 
      * <summary>
@@ -1124,6 +1119,7 @@ public class Kingdom{
 					break;
 				}
 			}
+            KingdomManager.Instance.UpdateKingdomPrestigeList();
         }
 
     }
@@ -1567,7 +1563,7 @@ public class Kingdom{
 		if(!this._isTechProducing){
 			return;
 		}
-		int amount = (1 * this.cities.Count) + this._bonusTech;
+		int amount = this.cities.Count + GetTechContributionFromCitizens();
 //		int bonus = 0;
 //        for (int i = 0; i < this._availableResources.Count; i++) {
 //            RESOURCE currResource = this._availableResources.Keys.ElementAt(i);
@@ -1580,6 +1576,14 @@ public class Kingdom{
 		amount = (int)(amount * this._techProductionPercentage);
 		this.AdjustTechCounter (amount);
 	}
+    internal int GetTechContributionFromCitizens() {
+        int techContributionsFromCitizens = 0;
+        techContributionsFromCitizens += king.GetTechContribution();
+        for (int i = 0; i < cities.Count; i++) {
+            techContributionsFromCitizens += cities[i].governor.GetTechContribution();
+        }
+        return techContributionsFromCitizens;
+    }
 	private void UpdateTechCapacity(){
 		this._techCapacity = 500 + ((400 + (100 * this._techLevel)) * this._techLevel);
 	}
@@ -1600,9 +1604,6 @@ public class Kingdom{
 		AdjustPowerPointsToAllCities(amount);
         AdjustDefensePointsToAllCities(amount);
 		this.UpdateTechCapacity ();
-	}
-	internal void AdjustBonusTech(int amount){
-		this._bonusTech += amount;
 	}
 	#endregion
 	
@@ -2609,16 +2610,30 @@ public class Kingdom{
 			relationship.ChangeMilitaryAlliance (false);
 		}
 	}
-	internal void AdjustBasePower(int adjustment) {
-        _basePower += adjustment;
-        _basePower = Mathf.Max(_basePower, 0);
-//	    UpdateOtherMilitaryAlliancePower (adjustment);
+    internal int GetBasePower() {
+        int basePower = 0;
+        for (int i = 0; i < cities.Count; i++) {
+            basePower += cities[i].power;
+        }
+        return basePower;
     }
-	internal void AdjustBaseDefense(int adjustment) {
-    	_baseDefense += adjustment;
-        _baseDefense = Mathf.Max(_baseDefense, 0);
-//	    UpdateOtherMutualDefenseTreatyPower (adjustment);
-	}
+    internal int GetBaseDefense() {
+        int baseDefense = 0;
+        for (int i = 0; i < cities.Count; i++) {
+            baseDefense += cities[i].defense;
+        }
+        return baseDefense;
+    }
+//	internal void AdjustBasePower(int adjustment) {
+//        _basePower += adjustment;
+//        _basePower = Mathf.Max(_basePower, 0);
+////	    UpdateOtherMilitaryAlliancePower (adjustment);
+//    }
+//	internal void AdjustBaseDefense(int adjustment) {
+//    	_baseDefense += adjustment;
+//        _baseDefense = Mathf.Max(_baseDefense, 0);
+////	    UpdateOtherMutualDefenseTreatyPower (adjustment);
+//	}
 	internal void AdjustHappiness(int amountToAdjust) {
     	this._happiness += amountToAdjust;
     	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
@@ -2648,14 +2663,14 @@ public class Kingdom{
 	private int GetMilitaryAlliancePower(){
 		int militaryAlliancePower = 0;
 		for (int i = 0; i < this._militaryAlliances.Count; i++) {
-			militaryAlliancePower += this._militaryAlliances [i]._basePower;
+			militaryAlliancePower += this._militaryAlliances [i].basePower;
 		}
 		return militaryAlliancePower;
 	}
 	private int GetMutualDefenseTreatyPower(){
 		int mutualDefenseTreatyPower = 0;
 		for (int i = 0; i < this._mutualDefenseTreaties.Count; i++) {
-			mutualDefenseTreatyPower += this._mutualDefenseTreaties [i]._baseDefense;
+			mutualDefenseTreatyPower += this._mutualDefenseTreaties [i].baseDefense;
 		}
 		return mutualDefenseTreatyPower;
 	}

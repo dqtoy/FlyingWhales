@@ -7,7 +7,7 @@ public class HoverTech : MonoBehaviour {
 		if (isOver) {
 			if(UIManager.Instance.currentlyShowingKingdom != null){
 				Kingdom kingdom = UIManager.Instance.currentlyShowingKingdom;
-				int tech = (int)(((1 * kingdom.cities.Count) + kingdom.bonusTech) * kingdom.techProductionPercentage);
+				int tech = (int)((kingdom.cities.Count + kingdom.GetTechContributionFromCitizens()) * kingdom.techProductionPercentage);
 				UIManager.Instance.ShowSmallInfo ("[b]TECH PER TICK: " + tech + "[/b]");
 			}
 

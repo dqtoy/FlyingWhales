@@ -114,6 +114,12 @@ public class CityItem : MonoBehaviour {
             loyaltySummary += thisCitizen.loyaltyDeductionFromWar + "   Active Wars\n";
         }
         loyaltySummary += thisCitizen.loyaltySummary;
+        if(thisCitizen.loyaltyModifierForTesting != 0) {
+            if(thisCitizen.loyaltyModifierForTesting > 0) {
+                loyaltySummary += "+ ";
+            }
+            loyaltySummary += thisCitizen.loyaltyModifierForTesting + "   Admin Modifier\n";
+        }
         UIManager.Instance.ShowRelationshipSummary(thisCitizen, loyaltySummary);
     }
 

@@ -108,6 +108,17 @@ public class MarriageManager : MonoBehaviour {
 				citizen1.ChangeSurname (citizen2);
 			}
 		}
+
+        if(citizen1.role == ROLE.KING) {
+            if(citizen1.gender == GENDER.MALE) {
+                //citizen 2 is female and wife of a king
+                citizen2.AssignRole(ROLE.QUEEN);
+            } else {
+                //citizen 2 is male and husband of queen
+                citizen2.AssignRole(ROLE.QUEEN_CONSORT);
+            }
+            
+        }
 	}
 
 	internal List<MarriedCouple> GetCouplesCitizenInvoledIn(Citizen citizen){
