@@ -50,50 +50,57 @@ public class Battle {
             this._warfare.ShowUINotification(newLog);
         }
 	}
-	internal void SetWarfare(Warfare warfare){
-		this._warfare = warfare;
-	}
 	private void SetAttackerAndDefenderCity(City attacker, City defender){
-		this.attacker = attacker;
-		this.defender = defender;
-		this.attacker.ChangeAttackingState(true);
-		this.defender.ChangeDefendingState(true);
+		if (!this._warfare.isOver) {
+			this.attacker = attacker;
+			this.defender = defender;
+			this.attacker.ChangeAttackingState (true);
+			this.defender.ChangeDefendingState (true);
 
-		this._supposedAttackDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-		this._supposedAttackDate.AddDays (25);
+			this._supposedAttackDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+			this._supposedAttackDate.AddDays (25);
+		}
 	}
 	private void Step1(){
-		GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-		gameDate.AddDays(5);
-		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
-		if(this._kr.isAtWar){
-			SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
+		if(!this._warfare.isOver){
+			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+			gameDate.AddDays(5);
+			SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
+			if(this._kr.isAtWar){
+				SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
+			}
+			gameDate.AddDays(5);
+			SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
+			if(this._kr.isAtWar){
+				SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
+			}
+			SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => Step2());
 		}
-		gameDate.AddDays(5);
-		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
-		if(this._kr.isAtWar){
-			SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
-		}
-		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => Step2());
 	}
 
 	private void Step2(){
-		DeclareWar();
-		Attack();
+		if (!this._warfare.isOver) {
+			DeclareWar ();
+			Attack ();
+		}
 	}
 	private void Step3(){
-		Combat ();
+		if (!this._warfare.isOver) {
+			Combat ();
+		}
 	}
 	#region Step 1
 	private void TransferPowerFromNonAdjacentCities(){
 //		List<City> nonAdjacentCities = new List<City>(this.attacker.kingdom.cities);
-		for (int i = 0; i < this.attacker.kingdom.cities.Count; i++) {
-			City otherCity = this.attacker.kingdom.cities [i];
-			if(this.attacker.id != otherCity.id){
-				if(otherCity.power > 0){
-					int powerTransfer = (int)(otherCity.power * 0.10f);
-					otherCity.AdjustPower(-powerTransfer);
-					this.attacker.AdjustPower(powerTransfer);
+		if (!this._warfare.isOver) {
+			for (int i = 0; i < this.attacker.kingdom.cities.Count; i++) {
+				City otherCity = this.attacker.kingdom.cities [i];
+				if (this.attacker.id != otherCity.id) {
+					if (otherCity.power > 0) {
+						int powerTransfer = (int)(otherCity.power * 0.10f);
+						otherCity.AdjustPower (-powerTransfer);
+						this.attacker.AdjustPower (powerTransfer);
+					}
 				}
 			}
 		}
@@ -114,13 +121,15 @@ public class Battle {
 //		}
 	}
 	private void TransferDefenseFromNonAdjacentCities(){
-		for (int i = 0; i < this.defender.kingdom.cities.Count; i++) {
-			City otherCity = this.defender.kingdom.cities [i];
-			if(this.defender.id != otherCity.id){
-				if(otherCity.defense > 0){
-					int defenseTransfer = (int)(otherCity.defense * 0.10f);
-					otherCity.AdjustDefense(-defenseTransfer);
-					this.defender.AdjustDefense(defenseTransfer);
+		if (!this._warfare.isOver) {
+			for (int i = 0; i < this.defender.kingdom.cities.Count; i++) {
+				City otherCity = this.defender.kingdom.cities [i];
+				if (this.defender.id != otherCity.id) {
+					if (otherCity.defense > 0) {
+						int defenseTransfer = (int)(otherCity.defense * 0.10f);
+						otherCity.AdjustDefense (-defenseTransfer);
+						this.defender.AdjustDefense (defenseTransfer);
+					}
 				}
 			}
 		}
