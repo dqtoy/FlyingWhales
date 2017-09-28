@@ -1818,10 +1818,31 @@ public class UIManager : MonoBehaviour {
 						this.allianceSummaryLbl.text += "\n";
 					}
 					this.allianceSummaryLbl.text += "War " + warfare.id;
-					for (int j = 0; j < warfare.battles.Count; j++) {
-						if(warfare.battles[j].attackCity != null && warfare.battles[j].defenderCity != null){
-							this.allianceSummaryLbl.text += "\n- " + warfare.battles[j].attackCity.name + " -> " + warfare.battles[j].defenderCity.name + " (" 
-								+ ((MONTH)warfare.battles[j].supposedAttackDate.month).ToString() + " " + warfare.battles[j].supposedAttackDate.day.ToString() + ", " + warfare.battles[j].supposedAttackDate.year.ToString() + ")";
+					if(warfare.sideA.Count > 0){
+						this.allianceSummaryLbl.text += "\n- SIDE A: ";
+						for (int j = 0; j < warfare.sideA.Count; j++) {
+							this.allianceSummaryLbl.text += warfare.sideA[j].name;
+							if(j < warfare.sideA.Count - 1){
+								this.allianceSummaryLbl.text += ", ";
+							}
+						}
+					}
+					if(warfare.sideB.Count > 0){
+						this.allianceSummaryLbl.text += "\n- SIDE B: ";
+						for (int j = 0; j < warfare.sideB.Count; j++) {
+							this.allianceSummaryLbl.text += warfare.sideB[j].name;
+							if(j < warfare.sideB.Count - 1){
+								this.allianceSummaryLbl.text += ", ";
+							}
+						}
+					}
+					if(warfare.battles.Count > 0){
+						this.allianceSummaryLbl.text += "\n- BATTLES:";
+						for (int j = 0; j < warfare.battles.Count; j++) {
+							if(warfare.battles[j].attackCity != null && warfare.battles[j].defenderCity != null){
+								this.allianceSummaryLbl.text += "\n-- " + warfare.battles[j].attackCity.name + " -> " + warfare.battles[j].defenderCity.name + " (" 
+									+ ((MONTH)warfare.battles[j].supposedAttackDate.month).ToString() + " " + warfare.battles[j].supposedAttackDate.day.ToString() + ", " + warfare.battles[j].supposedAttackDate.year.ToString() + ")";
+							}
 						}
 					}
 				}
