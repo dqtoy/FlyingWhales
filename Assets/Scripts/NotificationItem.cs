@@ -5,6 +5,7 @@ using EZObjectPools;
 public class NotificationItem : PooledObject {
 
     [SerializeField] private UILabel notifLabel;
+    [SerializeField] private UILabel notifDateLabel;
     [SerializeField] private int baseNotificationExpiration;
 
     [SerializeField] private int timeLeftBeforeExpiration;
@@ -25,6 +26,7 @@ public class NotificationItem : PooledObject {
         } else {
             this.notifLabel.text = LocalizationManager.Instance.GetLocalizedValue(_thisLog.category, _thisLog.file, _thisLog.key);
         }
+        notifDateLabel.text = log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString();
         timeLeftBeforeExpiration = baseNotificationExpiration;
         InvokeRepeating("CheckForExpiry", 1f, 1f);
     }
