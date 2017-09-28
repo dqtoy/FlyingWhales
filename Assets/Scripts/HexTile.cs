@@ -1066,6 +1066,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.ownedByCity.kingdom.king.Death(DEATH_REASONS.ACCIDENT);
     }
 
+    [ContextMenu("Kill Chancellor")]
+    public void KillChancellor() {
+        this.ownedByCity.importantCitizensInCity[ROLE.GRAND_CHANCELLOR].Death(DEATH_REASONS.ACCIDENT);
+    }
+
+    [ContextMenu("Kill Marshal")]
+    public void KillMarshal() {
+        this.ownedByCity.importantCitizensInCity[ROLE.GRAND_MARSHAL].Death(DEATH_REASONS.ACCIDENT);
+    }
+
     [ContextMenu("Force Transfer City")]
     public void ForceChangeKingdom() {
         KingdomManager.Instance.TransferCitiesToOtherKingdom(ownedByCity.kingdom, KingdomManager.Instance.allKingdoms[kingdomToConquerIndex], ownedByCity);

@@ -443,6 +443,7 @@ public class Citizen {
         if (this.city != null) {
             this.city.kingdom.RemoveFromSuccession(this);
         }
+        ROLE previousRole = this.role;
         if (this.assignedRole != null) {
             this.assignedRole.OnDeath();
             this.assignedRole = null;
@@ -460,6 +461,21 @@ public class Citizen {
         City previousCity = this.city;
         if (previousCity != null) {
             previousCity.RemoveCitizenFromCity(this);
+            //if citizen is a grand marshal or grand chancellor, also remove family from city and generate new marshal/chancellor family
+            if(previousRole == ROLE.GRAND_CHANCELLOR || previousRole == ROLE.GRAND_MARSHAL) {
+                List<Citizen> family = this.GetRelatives(-1);
+                for (int i = 0; i < family.Count; i++) {
+                    previousCity.RemoveCitizenFromCity(family[i]);
+                }
+            }
+            if (!previousCity.isDead) {
+                if(previousRole == ROLE.GRAND_CHANCELLOR) {
+                    previousCity.CreateInitialChancellorFamily();
+                }else if(previousRole == ROLE.GRAND_MARSHAL) {
+                    previousCity.CreateInitialMarshalFamily();
+                }
+            }
+
         }
 
         if (this.id == previousCity.kingdom.king.id) {
