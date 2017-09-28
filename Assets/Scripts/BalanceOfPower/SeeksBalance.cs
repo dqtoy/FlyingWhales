@@ -135,7 +135,7 @@ public static class SeeksBalance {
 							if(kr.isAtWar || kr.isPreparingForWar){
 								hasAllianceInWar = true;
 								WarfareInfo info = allyKingdom.GetWarfareInfo (kr.warfare.id);
-								if(!warsToJoin.Contains(info)){
+								if(info.warfare != null && !warsToJoin.Contains(info)){
 									KingdomRelationship krWithAlly = kingdom.GetRelationshipWithKingdom (allyKingdom);
 									int totalChanceOfJoining = krWithAlly.totalLike * 2;
 									int chance = UnityEngine.Random.Range (0, 100);
