@@ -93,7 +93,7 @@ public static class SeeksSuperiority {
 							KingdomRelationship kr = allyKingdom.GetRelationshipWithKingdom(relationship.targetKingdom);
 							if(kr.isAtWar || kr.isPreparingForWar){
 								hasAllianceInWar = true;
-								WarfareInfo info = new WarfareInfo (kr.warfare.kingdomSides [allyKingdom], kr.warfare);
+								WarfareInfo info = allyKingdom.GetWarfareInfo (kr.warfare.id);
 								if(!warsToJoin.Contains(info)){
 									KingdomRelationship krWithAlly = kingdom.GetRelationshipWithKingdom (allyKingdom);
 									int totalChanceOfJoining = krWithAlly.totalLike * 2;
