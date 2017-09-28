@@ -60,7 +60,7 @@ public class AlliancePool {
 		CheckKingdomsInvolved ();
 	}
 	private void CheckKingdomsInvolved(){
-		if(this._kingdomsInvolved.Count == 1){
+		if(this._kingdomsInvolved.Count <= 1){
 			//Dissolve Alliance
 			DissolveAlliance();
 		}

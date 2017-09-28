@@ -562,7 +562,10 @@ public class Kingdom{
     internal void DestroyKingdom() {
         _isDead = true;
         CancelEventKingdomIsInvolvedIn(EVENT_TYPES.ALL);
-        ResolveWars();
+		if(this.alliancePool != null){
+			LeaveAlliance ();
+		}
+      	ResolveWars();
         Messenger.RemoveListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
         Messenger.RemoveListener("OnDayEnd", KingdomTickActions);
         Messenger.RemoveListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
@@ -596,10 +599,15 @@ public class Kingdom{
 //        for (int i = 0; i < warsToResolve.Count; i++) {
 //            warsToResolve[i].DoneEvent();
 //        }
+
 		foreach (KingdomRelationship rel in relationships.Values) {
-			if (rel.war != null) {
-				rel.war.DoneEvent ();
+			if (rel.isAtWar || rel.isPreparingForWar) {
+				rel.ChangeWarStatus (false, null);
 			}
+		}
+		List<WarfareInfo> warfareInfos = this._warfareInfo.Values.ToList ();
+		for (int i = 0; i < warfareInfos.Count; i++) {
+			warfareInfos [i].warfare.UnjoinWar (this);
 		}
     }
     protected void OtherKingdomDiedActions(Kingdom kingdomThatDied) {

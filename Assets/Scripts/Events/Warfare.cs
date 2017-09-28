@@ -24,6 +24,12 @@ public class Warfare {
 	public List<Battle> battles{
 		get { return this._battles; }
 	}
+	public List<Kingdom> sideA{
+		get { return this._sideA; }
+	}
+	public List<Kingdom> sideB{
+		get { return this._sideB; }
+	}
 	#endregion
 	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom){
 		SetID();
@@ -65,15 +71,18 @@ public class Warfare {
 			}
 		}
 	}
-	internal void UnjoinWar(WAR_SIDE side, Kingdom kingdom){
-		if(side == WAR_SIDE.A){
-			this._sideA.Remove(kingdom);
-		}else if(side == WAR_SIDE.B){
-			this._sideB.Remove(kingdom);
+	internal void UnjoinWar(Kingdom kingdom){
+		if (this._kingdomSides.ContainsKey (kingdom)) {
+			if(this._kingdomSides[kingdom] == WAR_SIDE.A){
+				this._sideA.Remove(kingdom);
+			}else if(this._kingdomSides[kingdom] == WAR_SIDE.B){
+				this._sideB.Remove(kingdom);
+			}
+			kingdom.RemoveWarfareInfo(this);
+			this._kingdomSides.Remove(kingdom);
 		}
-		this._kingdomSides.Remove(kingdom);
-		kingdom.RemoveWarfareInfo(this);
-		CheckWarfareDone ();
+
+//		CheckWarfareDone ();
 	}
 	internal void BattleEnds(City winnerCity, City loserCity, Battle battle){
 		//Conquer City if not null, if null means both dead
@@ -218,32 +227,36 @@ public class Warfare {
 	}
 	private void PeaceDeclaration(Kingdom kingdom1, Kingdom kingdom2){
 		DeclarePeace (kingdom1, kingdom2);
-		DeclarePeaceToUnadjacentKingdoms (kingdom1);
-		DeclarePeaceToUnadjacentKingdoms (kingdom2);
+		for (int i = 0; i < this._sideA; i++) {
+			for (int j = 0; j < this._sideB.Count; j++) {
+				DeclarePeace (this._sideA[i], this._sideB[j]);
+			}
+		}
+		WarfareDone ();
 	}
 	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
-		kr.ChangeWarStatus (false, null);
-		kr.ChangeRecentWar (true);
-		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => kr.ChangeRecentWar (false));
+		if(kr.isAtWar){
+			kr.ChangeWarStatus (false, null);
+			kr.ChangeRecentWar (true);
+			SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => kr.ChangeRecentWar (false));
 
-		WarfareInfo kingdom1Info = kingdom1.GetWarfareInfo(this._id);
-		WarfareInfo kingdom2Info = kingdom2.GetWarfareInfo(this._id);
+			//		WarfareInfo kingdom1Info = kingdom1.GetWarfareInfo(this._id);
+			//		WarfareInfo kingdom2Info = kingdom2.GetWarfareInfo(this._id);
+			//
+			//		if(CanUnjoinWar(kingdom1Info.side, kingdom1)){
+			//			UnjoinWar (kingdom1Info.side, kingdom1);
+			//		}
+			//		if(CanUnjoinWar(kingdom2Info.side, kingdom2)){
+			//			UnjoinWar (kingdom2Info.side, kingdom2);
+			//		}
 
-		if(CanUnjoinWar(kingdom1Info.side, kingdom1)){
-			UnjoinWar (kingdom1Info.side, kingdom1);
+
+			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "peace");
+			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+			ShowUINotification (newLog);
 		}
-		if(CanUnjoinWar(kingdom2Info.side, kingdom2)){
-			UnjoinWar (kingdom2Info.side, kingdom2);
-		}
-
-
-		Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "peace");
-		newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-		ShowUINotification (newLog);
-
-
 	}
 	private void DeclarePeaceToUnadjacentKingdoms(Kingdom kingdom){
 		WarfareInfo kingdomInfo = kingdom.GetWarfareInfo(this._id);
@@ -305,20 +318,20 @@ public class Warfare {
 			ShowUINotification (newLog);
 		}
 	}
-	private void CheckWarfareDone(){
-		if(this._sideA.Count <= 0 || this._sideB.Count <= 0){
-			this._isOver = true;
-			KingdomManager.Instance.RemoveWarfare (this);
-			while(this._sideA.Count > 0){
-				this._sideA [0].RemoveWarfareInfo (this);
-				this._kingdomSides.Remove(this._sideA [0]);
-				this._sideA.RemoveAt (0);
-			}
-			while(this._sideB.Count > 0){
-				this._sideB [0].RemoveWarfareInfo (this);
-				this._kingdomSides.Remove(this._sideB [0]);
-				this._sideB.RemoveAt (0);
-			}
+	private void WarfareDone(){
+//		if(this._sideA.Count <= 0 || this._sideB.Count <= 0){
+		this._isOver = true;
+		KingdomManager.Instance.RemoveWarfare (this);
+		while(this._sideA.Count > 0){
+			this._sideA [0].RemoveWarfareInfo (this);
+			this._kingdomSides.Remove(this._sideA [0]);
+			this._sideA.RemoveAt (0);
 		}
+		while(this._sideB.Count > 0){
+			this._sideB [0].RemoveWarfareInfo (this);
+			this._kingdomSides.Remove(this._sideB [0]);
+			this._sideB.RemoveAt (0);
+		}
+//		}
 	}
 }
