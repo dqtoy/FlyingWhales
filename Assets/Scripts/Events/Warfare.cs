@@ -45,24 +45,24 @@ public class Warfare {
 	}
 
 	internal void JoinWar(WAR_SIDE side, Kingdom kingdom, bool isCreateBattle = true){
-		if(side == WAR_SIDE.A){
-			this._sideA.Add(kingdom);
-			for (int i = 0; i < this._sideB.Count; i++) {
-				InstantDeclareWarIfNotAdjacent (kingdom, this._sideB [i]);
-			}
-		}else if(side == WAR_SIDE.B){
-			this._sideB.Add(kingdom);
-			for (int i = 0; i < this._sideA.Count; i++) {
-				InstantDeclareWarIfNotAdjacent (kingdom, this._sideA [i]);
-			}
-		}
-        if (!this._kingdomSides.ContainsKey(kingdom)) {
+		if (!this._kingdomSides.ContainsKey(kingdom)) {
 			this._kingdomSides.Add(kingdom, side);
-        }
-		
-		kingdom.AddWarfareInfo(new WarfareInfo(side, this));
-		if(isCreateBattle){
-			CreateNewBattle (kingdom, true);
+
+			if(side == WAR_SIDE.A){
+				this._sideA.Add(kingdom);
+				for (int i = 0; i < this._sideB.Count; i++) {
+					InstantDeclareWarIfNotAdjacent (kingdom, this._sideB [i]);
+				}
+			}else if(side == WAR_SIDE.B){
+				this._sideB.Add(kingdom);
+				for (int i = 0; i < this._sideA.Count; i++) {
+					InstantDeclareWarIfNotAdjacent (kingdom, this._sideA [i]);
+				}
+			}
+			kingdom.AddWarfareInfo(new WarfareInfo(side, this));
+			if(isCreateBattle){
+				CreateNewBattle (kingdom, true);
+			}
 		}
 	}
 	internal void UnjoinWar(WAR_SIDE side, Kingdom kingdom){
