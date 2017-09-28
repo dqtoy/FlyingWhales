@@ -318,7 +318,9 @@ public class Battle {
 		this._kingdom1City.ChangeDefendingState (false);
 		this._kingdom2City.ChangeAttackingState (false);
 		this._kingdom2City.ChangeDefendingState (false);
-		this._kr.ChangeHasPairedCities (false);
+		if(!this._kingdom1.isDead && !this._kingdom2.isDead){
+			this._kr.ChangeHasPairedCities (false);
+		}
 
 		if(!this.attacker.isDead){
 			this._warfare.CreateNewBattle (this.attacker);
