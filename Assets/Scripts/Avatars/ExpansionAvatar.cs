@@ -110,20 +110,20 @@ public class ExpansionAvatar : CitizenAvatar {
 		Move();
 		Task.current.Succeed();
 	}
-	[Task]
-	public void HasDisappeared(){
-		if (!this.citizenRole.location.isOccupied) {
-			float chance = UnityEngine.Random.Range (0f, 99f);
-			if(chance <= 0.5f){
-				//Disappearance
-				((Expansion)this.citizenRole.gameEventInvolvedIn).Disappearance ();
-				Task.current.Succeed ();
-			}else{
-				Task.current.Fail ();
-			}
-		}else{
-			Task.current.Fail ();
-		}
-	}
+//	[Task]
+//	public void HasDisappeared(){
+//		if (!this.citizenRole.location.isOccupied) {
+//			float chance = UnityEngine.Random.Range (0f, 99f);
+//			if(chance <= 0.5f){
+//				//Disappearance
+//				((Expansion)this.citizenRole.gameEventInvolvedIn).Disappearance ();
+//				Task.current.Succeed ();
+//			}else{
+//				Task.current.Fail ();
+//			}
+//		}else{
+//			Task.current.Fail ();
+//		}
+//	}
 	#endregion
 }
