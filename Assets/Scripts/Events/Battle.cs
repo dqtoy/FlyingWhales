@@ -84,40 +84,60 @@ public class Battle {
 	}
 	#region Step 1
 	private void TransferPowerFromNonAdjacentCities(){
-		List<City> nonAdjacentCities = new List<City>(this.attacker.kingdom.cities);
-		for (int i = 0; i < this.attacker.region.adjacentRegions.Count; i++) {
-			if(this.attacker.region.adjacentRegions[i].occupant != null){
-				if(this.attacker.region.adjacentRegions[i].occupant.kingdom.id == this.attacker.kingdom.id){
-					nonAdjacentCities.Remove(this.attacker.region.adjacentRegions[i].occupant);
+//		List<City> nonAdjacentCities = new List<City>(this.attacker.kingdom.cities);
+		for (int i = 0; i < this.attacker.kingdom.cities.Count; i++) {
+			City otherCity = this.attacker.kingdom.cities [i];
+			if(this.attacker.id != otherCity.id){
+				if(otherCity.power > 0){
+					int powerTransfer = (int)(otherCity.power * 0.10f);
+					otherCity.AdjustPower(-powerTransfer);
+					this.attacker.AdjustPower(powerTransfer);
 				}
 			}
 		}
-		for (int i = 0; i < nonAdjacentCities.Count; i++) {
-			City nonAdjacentCity = nonAdjacentCities[i];
-			if(nonAdjacentCity.power > 0){
-				int powerTransfer = (int)(nonAdjacentCity.power * 0.04f);
-				nonAdjacentCity.AdjustPower(-powerTransfer);
-				this.attacker.AdjustPower(powerTransfer);
-			}
-		}
+//		for (int i = 0; i < this.attacker.region.adjacentRegions.Count; i++) {
+//			if(this.attacker.region.adjacentRegions[i].occupant != null){
+//				if(this.attacker.region.adjacentRegions[i].occupant.kingdom.id == this.attacker.kingdom.id){
+//					nonAdjacentCities.Remove(this.attacker.region.adjacentRegions[i].occupant);
+//				}
+//			}
+//		}
+//		for (int i = 0; i < nonAdjacentCities.Count; i++) {
+//			City nonAdjacentCity = nonAdjacentCities[i];
+//			if(nonAdjacentCity.power > 0){
+//				int powerTransfer = (int)(nonAdjacentCity.power * 0.04f);
+//				nonAdjacentCity.AdjustPower(-powerTransfer);
+//				this.attacker.AdjustPower(powerTransfer);
+//			}
+//		}
 	}
 	private void TransferDefenseFromNonAdjacentCities(){
-		List<City> nonAdjacentCities = new List<City>(this.defender.kingdom.cities);
-		for (int i = 0; i < this.defender.region.adjacentRegions.Count; i++) {
-			if(this.defender.region.adjacentRegions[i].occupant != null){
-				if(this.defender.region.adjacentRegions[i].occupant.kingdom.id == this.defender.kingdom.id){
-					nonAdjacentCities.Remove(this.defender.region.adjacentRegions[i].occupant);
+		for (int i = 0; i < this.defender.kingdom.cities.Count; i++) {
+			City otherCity = this.defender.kingdom.cities [i];
+			if(this.defender.id != otherCity.id){
+				if(otherCity.defense > 0){
+					int defenseTransfer = (int)(otherCity.defense * 0.10f);
+					otherCity.AdjustDefense(-defenseTransfer);
+					this.defender.AdjustDefense(defenseTransfer);
 				}
 			}
 		}
-		for (int i = 0; i < nonAdjacentCities.Count; i++) {
-			City nonAdjacentCity = nonAdjacentCities[i];
-			if(nonAdjacentCity.defense > 0){
-				int defenseTransfer = (int)(nonAdjacentCity.defense * 0.04f);
-				nonAdjacentCity.AdjustDefense(-defenseTransfer);
-				this.defender.AdjustDefense(defenseTransfer);
-			}
-		}
+//		List<City> nonAdjacentCities = new List<City>(this.defender.kingdom.cities);
+//		for (int i = 0; i < this.defender.region.adjacentRegions.Count; i++) {
+//			if(this.defender.region.adjacentRegions[i].occupant != null){
+//				if(this.defender.region.adjacentRegions[i].occupant.kingdom.id == this.defender.kingdom.id){
+//					nonAdjacentCities.Remove(this.defender.region.adjacentRegions[i].occupant);
+//				}
+//			}
+//		}
+//		for (int i = 0; i < nonAdjacentCities.Count; i++) {
+//			City nonAdjacentCity = nonAdjacentCities[i];
+//			if(nonAdjacentCity.defense > 0){
+//				int defenseTransfer = (int)(nonAdjacentCity.defense * 0.04f);
+//				nonAdjacentCity.AdjustDefense(-defenseTransfer);
+//				this.defender.AdjustDefense(defenseTransfer);
+//			}
+//		}
 	}
 	#endregion
 
