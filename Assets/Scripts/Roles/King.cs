@@ -23,7 +23,7 @@ public class King : Role {
 //		}
 		this.citizen.city.kingdom.king = this.citizen;
 		this.SetOwnedKingdom(this.citizen.city.kingdom);
-		this.citizen.GenerateCharacterValues ();
+		//this.citizen.GenerateCharacterValues ();
 		//PrestigeContribution (false);
 		HappinessContribution (false);
 		//IntelligenceContribution (false);
