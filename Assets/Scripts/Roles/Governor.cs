@@ -44,9 +44,9 @@ public class Governor : Role {
         this.SetOwnedCity(this.citizen.city);
         this.citizen.GenerateCharacterValues();
 
-		PrestigeContribution (false);
+		//PrestigeContribution (false);
 		HappinessContribution (false);
-		IntelligenceContribution (false);
+		//IntelligenceContribution (false);
 
         this.UpdateLoyalty ();
 //		Messenger.AddListener("OnDayEnd", CheckEventModifiers);
@@ -61,27 +61,27 @@ public class Governor : Role {
 
 //		GovernorEvents ();
 	}
-	private void PrestigeContribution(bool isRemove){
-		int contribution = 0;
-		switch(this.citizen.charismaLevel){
-		case CHARISMA.HIGH:
-			contribution = 2;
-			break;
-		case CHARISMA.AVERAGE:
-			contribution = 1;
-			break;
-//		case CHARISMA.LOW:
-//			contribution = 0;
+//	private void PrestigeContribution(bool isRemove){
+//		int contribution = 0;
+//		switch(this.citizen.charismaLevel){
+//		case CHARISMA.HIGH:
+//			contribution = 2;
 //			break;
-		}
-		if(isRemove){
-			contribution *= -1;
-		}
-		if (contribution != 0) {
-			this.citizen.city.kingdom.AdjustBonusPrestige (contribution);
-		}
+//		case CHARISMA.AVERAGE:
+//			contribution = 1;
+//			break;
+////		case CHARISMA.LOW:
+////			contribution = 0;
+////			break;
+//		}
+//		if(isRemove){
+//			contribution *= -1;
+//		}
+//		if (contribution != 0) {
+//			this.citizen.city.kingdom.AdjustBonusPrestige (contribution);
+//		}
 
-	}
+//	}
 	private void HappinessContribution(bool isRemove){
 		int contribution = 0;
 		switch(this.citizen.efficiencyLevel){
@@ -102,26 +102,26 @@ public class Governor : Role {
 			this.citizen.city.AdjustBonusHappiness (contribution);
 		}
 	}
-	private void IntelligenceContribution(bool isRemove){
-		int contribution = 0;
-		switch(this.citizen.intelligenceLevel){
-		case INTELLIGENCE.HIGH:
-			contribution = 2;
-			break;
-		case INTELLIGENCE.AVERAGE:
-			contribution = 1;
-			break;
-//		case INTELLIGENCE.LOW:
-//			contribution = 0;
+//	private void IntelligenceContribution(bool isRemove){
+//		int contribution = 0;
+//		switch(this.citizen.intelligenceLevel){
+//		case INTELLIGENCE.HIGH:
+//			contribution = 2;
 //			break;
-		}
-		if(isRemove){
-			contribution *= -1;
-		}
-		if (contribution != 0) {
-			this.citizen.city.kingdom.AdjustBonusTech (contribution);
-		}
-	}
+//		case INTELLIGENCE.AVERAGE:
+//			contribution = 1;
+//			break;
+////		case INTELLIGENCE.LOW:
+////			contribution = 0;
+////			break;
+//		}
+//		if(isRemove){
+//			contribution *= -1;
+//		}
+//		if (contribution != 0) {
+//			this.citizen.city.kingdom.AdjustBonusTech (contribution);
+//		}
+//	}
 	internal void UpdateLoyalty(){
         this._loyaltySummary = string.Empty;
 		int baseLoyalty = defaultLoyalty;
@@ -315,9 +315,9 @@ public class Governor : Role {
 
 	internal override void OnDeath (){
 		base.OnDeath ();
-		PrestigeContribution (true);
+		//PrestigeContribution (true);
 		HappinessContribution (true);
-		IntelligenceContribution (true);
+		//IntelligenceContribution (true);
 //		Messenger.RemoveListener("OnDayEnd", CheckEventModifiers);
 	}
 }

@@ -303,11 +303,6 @@ public class City{
         int spouseChance = UnityEngine.Random.Range(0, 100);
         if (spouseChance < 80) {
             Citizen spouse = MarriageManager.Instance.CreateSpouse(king);
-            if(spouse.gender == GENDER.FEMALE) {
-                spouse.AssignRole(ROLE.QUEEN);
-            }else {
-                spouse.AssignRole(ROLE.QUEEN_CONSORT);
-            }
             //List<int> childAges = Enumerable.Range(0, (spouse.age - 16)).ToList();
             //if(spouse.gender == GENDER.MALE){
             //	childAges = Enumerable.Range(0, (this.kingdom.king.age - 16)).ToList();
@@ -356,7 +351,7 @@ public class City{
             //}
         }
     }
-    private void CreateInitialChancellorFamily() {
+    internal void CreateInitialChancellorFamily() {
         GENDER gender = GENDER.MALE;
         int randomGender = UnityEngine.Random.Range(0, 100);
         if (randomGender < 20) {
@@ -412,7 +407,7 @@ public class City{
         }
         chancellor.AssignRole(ROLE.GRAND_CHANCELLOR);
     }
-    private void CreateInitialMarshalFamily() {
+    internal void CreateInitialMarshalFamily() {
         GENDER gender = GENDER.MALE;
         int randomGender = UnityEngine.Random.Range(0, 100);
         if (randomGender < 20) {
@@ -940,8 +935,8 @@ public class City{
 	}
 
 	public void KillCity(){
-        AdjustPower(-power);
-        AdjustDefense(-defense);
+        //AdjustPower(-power);
+        //AdjustDefense(-defense);
         //ResetAdjacentCities();
         RemoveListeners();
 		RemoveOneTimeResourceBenefits();
@@ -997,8 +992,8 @@ public class City{
      * Conquer this city and transfer ownership to the conqueror
      * */
 	internal void ConquerCity(Kingdom conqueror) {
-        AdjustPower(-power);
-        AdjustDefense(-defense);
+        //AdjustPower(-power);
+        //AdjustDefense(-defense);
         RemoveOneTimeResourceBenefits();
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
@@ -1473,24 +1468,26 @@ public class City{
 	}
 
     internal void SetPower(int newPower) {
-        _kingdom.AdjustBasePower(-_power);
+        //_kingdom.AdjustBasePower(-_power);
         _power = 0;
         AdjustPower(newPower);
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void SetDefense(int newDefense) {
-        _kingdom.AdjustBaseDefense(-_defense);
+        //_kingdom.AdjustBaseDefense(-_defense);
         _defense = 0;
         AdjustDefense(newDefense);
+        KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void AdjustPower(int adjustment) {
         _power += adjustment;
-        _kingdom.AdjustBasePower(adjustment);
+        //_kingdom.AdjustBasePower(adjustment);
         _power = Mathf.Max(_power, 0);
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void AdjustDefense(int adjustment) {
         _defense += adjustment;
-        _kingdom.AdjustBaseDefense(adjustment);
+        //_kingdom.AdjustBaseDefense(adjustment);
         _defense = Mathf.Max(_defense, 0);
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }

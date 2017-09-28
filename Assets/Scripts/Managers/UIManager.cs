@@ -622,20 +622,34 @@ public class UIManager : MonoBehaviour {
         HideSmallInfo();
 
 		citizenNameLbl.text = currentlyShowingCitizen.name;
-		string role = "Citizen";
-		if (currentlyShowingCitizen.role != ROLE.UNTRAINED) {
-			role = currentlyShowingCitizen.role.ToString();
-		}
-		if (currentlyShowingCitizen.city != null) {
-            if(currentlyShowingCitizen.role == ROLE.GOVERNOR) {
-                citizenRoleAndKingdomLbl.text = role + " of " + currentlyShowingCitizen.city.name;
-            } else {
-                citizenRoleAndKingdomLbl.text = role + " of " + currentlyShowingCitizen.city.kingdom.name;
+        ROLE roleOfCitizen = currentlyShowingCitizen.role;
+        if (currentlyShowingCitizen.city != null) {
+            switch (roleOfCitizen) {
+                case ROLE.UNTRAINED:
+                    citizenRoleAndKingdomLbl.text = "Citizen of " + currentlyShowingCitizen.city.name;
+                    break;
+                case ROLE.GOVERNOR:
+                    citizenRoleAndKingdomLbl.text = "Governor of " + currentlyShowingCitizen.city.name;
+                    break;
+                case ROLE.KING:
+                    if (currentlyShowingCitizen.gender == GENDER.MALE) {
+                        citizenRoleAndKingdomLbl.text = "King of " + currentlyShowingCitizen.city.kingdom.name;
+                    } else {
+                        citizenRoleAndKingdomLbl.text = "Queen of " + currentlyShowingCitizen.city.kingdom.name;
+                    }
+                    break;
+                case ROLE.QUEEN_CONSORT:
+                    citizenRoleAndKingdomLbl.text = "Queen's Consort of " + currentlyShowingCitizen.city.kingdom.name;
+                    break;
+                default:
+                    string role = Utilities.NormalizeString(roleOfCitizen.ToString());
+                    citizenRoleAndKingdomLbl.text = role + " of " + currentlyShowingCitizen.city.kingdom.name;
+                    break;
             }
 			citizenCityNameLbl.text = currentlyShowingCitizen.city.name;
 			ctizenPortraitBG.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
 		} else {
-			citizenRoleAndKingdomLbl.text = role;
+			citizenRoleAndKingdomLbl.text = Utilities.NormalizeString(roleOfCitizen.ToString());
 			citizenCityNameLbl.text = "No City";
 			ctizenPortraitBG.color = Color.white;
 		}
@@ -765,6 +779,8 @@ public class UIManager : MonoBehaviour {
         } else {
             thisScrollView.ResetPosition();
         }
+        yield return new WaitForEndOfFrame();
+        thisScrollView.UpdateScrollbars();
 	}
 	public IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime){
 		float elapsedTime = 0f;
@@ -853,7 +869,7 @@ public class UIManager : MonoBehaviour {
             }
         }
 
-        if(currentKingdomRelationshipShowing == null || currentKingdomRelationshipShowing.id != currentlyShowingKingdom.id) {
+        if(currentKingdomRelationshipShowing == null || currentKingdomRelationshipShowing.id != currentlyShowingKingdom.id || !kingRelationshipsParentGO.activeSelf) {
             StartCoroutine(RepositionGrid(kingRelationshipsGrid));
             StartCoroutine(RepositionScrollView(kingRelationshipsScrollView));
             kingRelationshipsScrollView.UpdateScrollbars();
@@ -1044,10 +1060,16 @@ public class UIManager : MonoBehaviour {
             } else {
                 successorParentGO.SetActive(false);
             }
+
+            //Show Other Citizens
+            otherCitizensGO.SetActive(true);
+            chancellorPortrait.SetCitizen(currentlyShowingCitizen.city.importantCitizensInCity[ROLE.GRAND_CHANCELLOR], false, true);
+            chancellorPortrait.SetCitizen(currentlyShowingCitizen.city.importantCitizensInCity[ROLE.GRAND_MARSHAL], false, true);
         } else {
             successorParentGO.SetActive(false);
+            otherCitizensGO.SetActive(false);
         }
-
+        
         familyTreeGO.SetActive(true);
     }
 	public void HideFamilyTree(){
@@ -1526,6 +1548,8 @@ public class UIManager : MonoBehaviour {
             ShowKingdomCities();
         }
     }
+
+    Kingdom currentlyShowingKingdomCities;
     /*
      * Show all cities owned by currentlyShowingKingdom.
      * */
@@ -1554,10 +1578,6 @@ public class UIManager : MonoBehaviour {
             }
         }
 
-        if (!kingdomCitiesGO.activeSelf) {
-            StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
-        }
-
         if (currentlyShowingKingdom.cities.Count > nextIndex) {
             for (int i = nextIndex; i < currentlyShowingKingdom.cities.Count; i++) {
                 City currCity = currentlyShowingKingdom.cities[i];
@@ -1571,7 +1591,15 @@ public class UIManager : MonoBehaviour {
                 StartCoroutine(RepositionScrollView(kingdomCitiesScrollView, true));
             }
         }
+
+        if (currentlyShowingKingdomCities == null || currentlyShowingKingdomCities.id != currentlyShowingKingdom.id || !kingdomCitiesGO.activeSelf) {
+            StartCoroutine(RepositionGrid(kingdomCitiesGrid));
+            StartCoroutine(RepositionScrollView(kingdomCitiesScrollView));
+            kingdomCitiesScrollView.UpdateScrollbars();
+        }
+
         kingdomCitiesGO.SetActive(true);
+        currentlyShowingKingdomCities = currentlyShowingKingdom;
     }
     public void HideKingdomCities() {
         kingdomCitiesGO.SetActive(false);

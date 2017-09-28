@@ -445,6 +445,7 @@ public class Citizen {
         }
         if (this.assignedRole != null) {
             this.assignedRole.OnDeath();
+            this.assignedRole = null;
         }
         CitizenManager.Instance.UnregisterCitizen(this);
 
@@ -455,30 +456,34 @@ public class Citizen {
             this._spouse.AssignSpouse(null);
             this.AssignSpouse(null);
         }
-        if (this.id == this.city.kingdom.king.id) {
+
+        City previousCity = this.city;
+        if (previousCity != null) {
+            previousCity.RemoveCitizenFromCity(this);
+        }
+
+        if (this.id == previousCity.kingdom.king.id) {
             //ASSIGN NEW LORD, SUCCESSION
             //			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
             if (isDethroned) {
                 if (newKing != null) {
-                    this.city.kingdom.AssignNewKing(newKing);
+                    previousCity.kingdom.AssignNewKing(newKing);
                 }
             } else {
                 if (!isConquered) {
-                    if (this.city.kingdom.successionLine.Count <= 0) {
-                        this.city.kingdom.AssignNewKing(null);
+                    if (previousCity.kingdom.successionLine.Count <= 0) {
+                        previousCity.kingdom.AssignNewKing(null);
                     } else {
-                        this.city.kingdom.AssignNewKing(this.city.kingdom.successionLine[0]);
+                        previousCity.kingdom.AssignNewKing(previousCity.kingdom.successionLine[0]);
                     }
                 }
             }
         } else {
-            if (this.city.governor.id == this.id) {
-                this.city.AssignNewGovernor();
+            if (previousCity.governor.id == this.id && !previousCity.isDead) {
+                previousCity.AssignNewGovernor();
             }
         }
-        if(this.city != null) {
-            this.city.RemoveCitizenFromCity(this);
-        }
+        
         
         this.isKing = false;
         this.isGovernor = false;
@@ -593,6 +598,68 @@ public class Citizen {
             return this._dictCharacterValues[characterValue];
         }
         return 0;
+    }
+    #endregion
+
+    #region Prestige
+    internal int GetPrestigeContribution() {
+        if(role != ROLE.GOVERNOR && role != ROLE.KING) {
+            return 0;
+        } else {
+            switch (_charismaLevel) {
+            case CHARISMA.HIGH:
+                if (role == ROLE.KING) {
+                    return 10;
+                } else if (role == ROLE.GOVERNOR) {
+                    return 2;
+                }
+                break;
+            case CHARISMA.AVERAGE:
+                if (role == ROLE.KING) {
+                    return 7;
+                } else if (role == ROLE.GOVERNOR) {
+                    return 1;
+                }
+                break;
+            case CHARISMA.LOW:
+                if (role == ROLE.KING) {
+                    return 5;
+                }
+                break;
+            }
+            return 0;
+        }
+    }
+    #endregion
+
+    #region Tech
+    internal int GetTechContribution() {
+        if (role != ROLE.GOVERNOR && role != ROLE.KING) {
+            return 0;
+        } else {
+            switch (_intelligenceLevel) {
+                case INTELLIGENCE.HIGH:
+                    if (role == ROLE.KING) {
+                        return 5;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return 2;
+                    }
+                    break;
+                case INTELLIGENCE.AVERAGE:
+                    if (role == ROLE.KING) {
+                        return 3;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return 1;
+                    }
+                    break;
+                case INTELLIGENCE.LOW:
+                    if (role == ROLE.KING) {
+                        return 2;
+                    }
+                    break;
+            }
+            return 0;
+        }
     }
     #endregion
 

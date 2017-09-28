@@ -24,9 +24,9 @@ public class King : Role {
 		this.citizen.city.kingdom.king = this.citizen;
 		this.SetOwnedKingdom(this.citizen.city.kingdom);
 		this.citizen.GenerateCharacterValues ();
-		PrestigeContribution (false);
+		//PrestigeContribution (false);
 		HappinessContribution (false);
-		IntelligenceContribution (false);
+		//IntelligenceContribution (false);
 		this.abductionCounter = 0;
 		if(this.citizen.city.kingdom.plague != null){
 			this.citizen.city.kingdom.plague.UpdateApproach (this.citizen.city.kingdom);
@@ -38,34 +38,35 @@ public class King : Role {
 	}
 	internal override void OnDeath (){
 		base.OnDeath ();
-		PrestigeContribution (true);
+		//PrestigeContribution (true);
 		HappinessContribution (true);
-		IntelligenceContribution (true);
+		//IntelligenceContribution (true);
 //		Messenger.RemoveListener("OnDayEnd", EverydayActions);
 
 	}
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){
 		this.ownedKingdom = ownedKingdom;
 	}
-	private void PrestigeContribution(bool isRemove){
-		int contribution = 0;
-		switch(this.citizen.charismaLevel){
-		case CHARISMA.HIGH:
-			contribution = 10;
-			break;
-		case CHARISMA.AVERAGE:
-			contribution = 7;
-			break;
-		case CHARISMA.LOW:
-			contribution = 5;
-			break;
-		}
-		if(isRemove){
-			contribution *= -1;
-		}
-		this.ownedKingdom.AdjustBonusPrestige (contribution);
 
-	}
+	//private void PrestigeContribution(bool isRemove){
+	//	int contribution = 0;
+	//	switch(this.citizen.charismaLevel){
+	//	case CHARISMA.HIGH:
+	//		contribution = 10;
+	//		break;
+	//	case CHARISMA.AVERAGE:
+	//		contribution = 7;
+	//		break;
+	//	case CHARISMA.LOW:
+	//		contribution = 5;
+	//		break;
+	//	}
+	//	if(isRemove){
+	//		contribution *= -1;
+	//	}
+	//	this.ownedKingdom.AdjustBonusPrestige (contribution);
+
+	//}
 	private void HappinessContribution(bool isRemove){
 		int contribution = 0;
 		switch(this.citizen.efficiencyLevel){
@@ -84,24 +85,24 @@ public class King : Role {
 		}
 		this.citizen.city.AdjustBonusHappiness (contribution);
 	}
-	private void IntelligenceContribution(bool isRemove){
-		int contribution = 0;
-		switch(this.citizen.intelligenceLevel){
-		case INTELLIGENCE.HIGH:
-			contribution = 5;
-			break;
-		case INTELLIGENCE.AVERAGE:
-			contribution = 3;
-			break;
-		case INTELLIGENCE.LOW:
-			contribution = 2;
-			break;
-		}
-		if(isRemove){
-			contribution *= -1;
-		}
-		this.ownedKingdom.AdjustBonusTech (contribution);
-	}
+	//private void IntelligenceContribution(bool isRemove){
+	//	int contribution = 0;
+	//	switch(this.citizen.intelligenceLevel){
+	//	case INTELLIGENCE.HIGH:
+	//		contribution = 5;
+	//		break;
+	//	case INTELLIGENCE.AVERAGE:
+	//		contribution = 3;
+	//		break;
+	//	case INTELLIGENCE.LOW:
+	//		contribution = 2;
+	//		break;
+	//	}
+	//	if(isRemove){
+	//		contribution *= -1;
+	//	}
+	//	this.ownedKingdom.AdjustBonusTech (contribution);
+	//}
 	private void EverydayActions(){
 		TriggerSpouseAbduction();
 		TriggerRumor();
