@@ -30,6 +30,9 @@ public class Warfare {
 	public List<Kingdom> sideB{
 		get { return this._sideB; }
 	}
+	public bool isOver{
+		get { return this._isOver; }
+	}
 	#endregion
 	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom){
 		SetID();
@@ -230,6 +233,7 @@ public class Warfare {
 		this._battles.Remove (battle);
 	}
 	private void PeaceDeclaration(Kingdom kingdom1, Kingdom kingdom2){
+		this._isOver = true;
 		DeclarePeace (kingdom1, kingdom2);
 		for (int i = 0; i < this._sideA.Count; i++) {
 			for (int j = 0; j < this._sideB.Count; j++) {

@@ -1387,8 +1387,7 @@ public class City{
 		EventCreator.Instance.CreateReinforcementEvent (this, targetCity, amount, war, isRebel);
 	}
 	internal void KillAllCitizens(DEATH_REASONS deathReason, bool isConquered = false){
-		int countCitizens = this.citizens.Count;
-		for (int i = 0; i < countCitizens; i++) {
+		while(this.citizens.Count > 0){
 			this.citizens [0].Death (deathReason, false, null, isConquered);
 		}
 		if (!this._kingdom.isDead) {
