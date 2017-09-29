@@ -35,6 +35,18 @@ public class ExpansionAvatar : CitizenAvatar {
 	}
 	internal override void HasArrivedAtTargetLocation (){
 		if (this.citizenRole.location == this.citizenRole.targetLocation) {
+			if(this.citizenRole.targetLocation.isOccupied){
+				HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(this.citizenRole.citizen.city.kingdom);
+				if(hexTileToExpandTo != null){
+					this.citizenRole.targetLocation = hexTileToExpandTo;
+					((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;
+					CreatePath (PATHFINDING_MODE.AVATAR);
+					return;
+				}else{
+					CancelEventInvolvedIn ();
+					return;
+				}
+			}
 			if (!this.hasArrived) {
 				SetHasArrivedState(true);
 				EndAttack ();

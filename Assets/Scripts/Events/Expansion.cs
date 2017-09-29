@@ -61,12 +61,6 @@ public class Expansion : GameEvent {
                 UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { startedByKingdom });
             //}
 
-        } else {
-			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "beaten");
-			this.startedBy.Death (DEATH_REASONS.DISAPPEARED_EXPANSION);
-            //if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
-                UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { startedByKingdom });
-            //}
         }
 		this.DoneEvent ();
 	}
