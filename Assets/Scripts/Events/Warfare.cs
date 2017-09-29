@@ -83,9 +83,10 @@ public class Warfare {
 			}
 			kingdom.RemoveWarfareInfo(this);
 			this._kingdomSides.Remove(kingdom);
+			CheckWarfare ();
 		}
 
-//		CheckWarfareDone ();
+
 	}
 	internal void BattleEnds(City winnerCity, City loserCity, Battle battle){
 		//Conquer City if not null, if null means both dead
@@ -235,11 +236,21 @@ public class Warfare {
 	private void PeaceDeclaration(Kingdom kingdom1, Kingdom kingdom2){
 		this._isOver = true;
 		DeclarePeace (kingdom1, kingdom2);
-		for (int i = 0; i < this._sideA.Count; i++) {
-			for (int j = 0; j < this._sideB.Count; j++) {
-				DeclarePeace (this._sideA[i], this._sideB[j]);
+		WAR_SIDE peaceDeclarerSide = this._kingdomSides [kingdom1];
+		if(peaceDeclarerSide == WAR_SIDE.A){
+			for (int i = 0; i < this._sideA.Count; i++) {
+				for (int j = 0; j < this._sideB.Count; j++) {
+					DeclarePeace (this._sideA[i], this._sideB[j]);
+				}
+			}
+		}else{
+			for (int i = 0; i < this._sideB.Count; i++) {
+				for (int j = 0; j < this._sideA.Count; j++) {
+					DeclarePeace (this._sideB[i], this._sideA[j]);
+				}
 			}
 		}
+
 		WarfareDone ();
 	}
 	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
@@ -324,6 +335,11 @@ public class Warfare {
 			newLog.AddToFillers (kingdom1, kingdom1.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
 			ShowUINotification (newLog);
+		}
+	}
+	private void CheckWarfare(){
+		if(this._sideA.Count <= 0 || this._sideB.Count <= 0){
+			WarfareDone ();
 		}
 	}
 	private void WarfareDone(){
