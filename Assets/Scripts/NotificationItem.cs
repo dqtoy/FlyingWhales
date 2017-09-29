@@ -36,8 +36,13 @@ public class NotificationItem : PooledObject {
     private void CheckForExpiry() {
         if (!GameManager.Instance.isPaused) {
             if(timeLeftBeforeExpiration <= 0) {
-                ObjectPoolManager.Instance.DestroyObject(gameObject);
+                gameObject.SetActive(false);
+                CancelInvoke("CheckForExpiry");
+                timeLeftBeforeExpiration = baseNotificationExpiration;
+                //ObjectPoolManager.Instance.DestroyObject(gameObject);
                 UIManager.Instance.RepositionNotificationTable();
+                UIManager.Instance.AddNotificationItemToReuseList(this);
+                return;
             }
             timeLeftBeforeExpiration -= 1;
         }
