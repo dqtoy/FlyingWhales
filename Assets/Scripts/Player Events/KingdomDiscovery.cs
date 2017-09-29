@@ -29,7 +29,7 @@ public class KingdomDiscovery : GameEvent {
         //EventIsCreated(this.discoveredKingdom, true);
         //if (UIManager.Instance.currentlyShowingKingdom != null && (UIManager.Instance.currentlyShowingKingdom.id == this.discovererKingdom.id
         //    || UIManager.Instance.currentlyShowingKingdom.id == this.discoveredKingdom.id)) {
-            UIManager.Instance.ShowNotification(newLog, new System.Collections.Generic.HashSet<Kingdom> { discovererKingdom, discoveredKingdom } );
+            UIManager.Instance.ShowNotification(newLog, new System.Collections.Generic.HashSet<Kingdom> { discovererKingdom, discoveredKingdom }, false);
         //}
 
         this.DoneEvent ();

@@ -1217,8 +1217,10 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 
-    public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif = null) {
-        AddLogToLogHistory(log);
+    public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif = null, bool addLogToHistory = true) {
+        if (addLogToHistory) {
+            AddLogToLogHistory(log);
+        }
         if(kingdomsThatShouldShowNotif != null) {
             if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
                 //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
