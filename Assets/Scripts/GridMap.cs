@@ -31,6 +31,9 @@ public class GridMap : MonoBehaviour {
     public List<Region> allRegions;
 	public HexTile[,] map;
 
+	internal float mapWidth;
+	internal float mapHeight;
+
 	void Awake(){
 		Instance = this;
 	}
@@ -69,6 +72,8 @@ public class GridMap : MonoBehaviour {
 			}
 		}
 		listHexes.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(map));
+		mapWidth = listHexes [listHexes.Count - 1].transform.position.x;
+		mapHeight = listHexes [listHexes.Count - 1].transform.position.y;	
 	}
 
 	internal GameObject GetHex(string hexName){
