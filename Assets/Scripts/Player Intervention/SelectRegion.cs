@@ -28,13 +28,15 @@ public class SelectRegion : MonoBehaviour {
 //		Vector3 hitPos = new Vector3 (xPos, yPos, 0f);
 		Vector2 localPoint;
 		RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, minimapCamera, out localPoint);
-		Ray ray = new Ray (new Vector3 (localPoint.x, localPoint.y, 0f), Vector3.forward);
+		Vector3 viewPos = wholeMapCamera.GetComponent<Camera> ().WorldToViewportPoint (new Vector3 (localPoint.x, localPoint.y, 0f));
+		Ray ray = wholeMapCamera.GetComponent<Camera>().ViewportPointToRay(viewPos);
+//		Ray ray = new Ray (new Vector3 (localPoint.x, localPoint.y, 0f), Vector3.forward);
 		RaycastHit hit;
 		if(Physics.Raycast(ray, out hit)){
-			Debug.Log (hit.transform.name);
+			Debug.Log (hit.transform.parent.name);
 		}
 		Debug.Log ("POSITION: " + localPoint.ToString ());
-		Debug.Log ("Screen POSITION: " + screenPoint.ToString ());
+//		Debug.Log ("Screen POSITION: " + screenPoint.ToString ());
 
 	}
 	private Vector2 GetLocalCursorPoint(PointerEventData ped) {
