@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour {
 
 	public UICamera uiCamera;
 
+    private List<Log> notificationHistory;
+
 	[Space(10)]
     [Header("Prefabs")]
     public GameObject characterPortraitPrefab;
@@ -239,6 +241,12 @@ public class UIManager : MonoBehaviour {
 	[Header("Alliance List")]
 	[SerializeField] private UILabel allianceSummaryLbl;
 
+    [Space(10)]
+	[Header("Notification History")]
+	[SerializeField] private GameObject notificationHistoryGO;
+    [SerializeField] private UITable notificationHistoryTable;
+    [SerializeField] private UIScrollView notificationHistoryScrollView;
+
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	internal Citizen currentlyShowingCitizen = null;
@@ -294,6 +302,7 @@ public class UIManager : MonoBehaviour {
 
     void Awake(){
 		Instance = this;
+        notificationHistory = new List<Log>();
     }
 
 	void Start(){
@@ -806,7 +815,7 @@ public class UIManager : MonoBehaviour {
         kingdomListRelationshipButton.SetClickState(true);
         relationshipsGO.SetActive (true);
         HideKingdomCities();
-        HideAllKingdomEvents();
+        //HideAllKingdomEvents();
         ShowKingRelationships();
 	}
 	public void ToggleRelationships(){
@@ -1208,7 +1217,16 @@ public class UIManager : MonoBehaviour {
 		}
 	}
 
-    public void ShowNotification(Log log) {
+    public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif = null, bool addLogToHistory = true) {
+        if (addLogToHistory) {
+            AddLogToLogHistory(log);
+        }
+        if(kingdomsThatShouldShowNotif != null) {
+            if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
+                //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
+                return;
+            }
+        }
         GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
         notifGO.transform.localScale = Vector3.one;
         notifGO.GetComponent<NotificationItem>().SetLog(log);
@@ -1229,10 +1247,57 @@ public class UIManager : MonoBehaviour {
         //StartCoroutine(RepositionScrollView(notificationParent.GetComponentInParent<UIScrollView>()));
     }
 
-	/*
+    #region Notification History
+    internal void AddLogToLogHistory(Log log) {
+        notificationHistory.Add(log);
+        if (notificationHistoryGO.activeSelf) {
+            ShowNotificationHistory();
+        }
+    }
+    public void ToggleNotificationHistory() {
+        if (notificationHistoryGO.activeSelf) {
+            HideNotificationHistory();
+        } else {
+            ShowNotificationHistory();
+        }
+    }
+
+    private void ShowNotificationHistory() {
+        //List<NotificationItem> presentItems = notificationHistoryTable.GetComponentsInChildren<NotificationItem>(true).ToList();
+        int counter = 0;
+        foreach (Transform item in Utilities.GetComponentsInDirectChildren<Transform>(notificationHistoryTable.gameObject)) {
+            //ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+            Log currLog = notificationHistory.ElementAtOrDefault(counter);
+            if (currLog == null) {
+                item.gameObject.SetActive(false);
+            } else {
+                item.GetComponent<NotificationItem>().SetLog(currLog, false);
+                item.gameObject.SetActive(true);
+            }
+            counter++;
+        }
+
+        for (int i = counter; i < notificationHistory.Count; i++) {
+            Log currLog = notificationHistory[i];
+            GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationHistoryTable.transform);
+            notifGO.transform.localScale = Vector3.one;
+            notifGO.GetComponent<NotificationItem>().SetLog(currLog, false);
+            StartCoroutine(RepositionTable(notificationHistoryTable));
+            StartCoroutine(RepositionScrollView(notificationHistoryScrollView));
+        }
+        notificationHistoryGO.SetActive(true);
+        kingdomListEventButton.SetClickState(true);
+    }
+    public void HideNotificationHistory() {
+        notificationHistoryGO.SetActive(false);
+        kingdomListEventButton.SetClickState(false);
+    }
+    #endregion
+
+    /*
 	 * Show Event Logs menu
 	 * */
-	public void ShowEventLogs(object obj){
+    public void ShowEventLogs(object obj){
 		if (obj == null) {
 			return;
 		}
@@ -1568,7 +1633,7 @@ public class UIManager : MonoBehaviour {
     public void ShowKingdomCities() {
         //HideKingdomHistory();
         HideRelationships();
-        HideAllKingdomEvents();
+        //HideAllKingdomEvents();
         kingdomCitiesGrid.cellHeight = 123f; //Disable if not using for testing
         List<CityItem> cityItems = kingdomCitiesGrid.gameObject.GetComponentsInChildren<Transform>(true)
             .Where(x => x.GetComponent<CityItem>() != null)

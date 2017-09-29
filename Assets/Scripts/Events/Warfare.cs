@@ -307,8 +307,8 @@ public class Warfare {
 		this._logs.Add (newLog);
 		return newLog;
 	}
-	internal void ShowUINotification(Log log){
-		UIManager.Instance.ShowNotification(log);
+	internal void ShowUINotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif = null, bool addLogToHistory = true) {
+		UIManager.Instance.ShowNotification(log, kingdomsThatShouldShowNotif, addLogToHistory);
 	}
 
 	private bool IsAdjacent(Kingdom kingdom1, Kingdom kingdom2){

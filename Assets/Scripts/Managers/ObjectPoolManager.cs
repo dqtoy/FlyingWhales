@@ -23,10 +23,12 @@ public class ObjectPoolManager : MonoBehaviour {
     internal void InitializeObjectPools() {
         GameObject UIObjectPoolParent = new GameObject("EZ Object Pools UI Container");
         UIObjectPoolParent.transform.parent = UIManager.Instance.transform;
+        UIObjectPoolParent.transform.localScale = Vector3.one;
+        UIObjectPoolParent.transform.localPosition = Vector3.zero;
 
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
-            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 500, true, true, false);
             newUIPool.transform.SetParent(UIObjectPoolParent.transform);
         }
 

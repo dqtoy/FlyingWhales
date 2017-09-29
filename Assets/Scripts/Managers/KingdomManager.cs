@@ -65,7 +65,7 @@ public class KingdomManager : MonoBehaviour {
 
     void Awake(){
 		Instance = this;
-	}
+    }
 
     public void GenerateInitialKingdoms() {
         maxPrestige = Mathf.FloorToInt(GridMap.Instance.numOfRegions * .3f) * 100;
