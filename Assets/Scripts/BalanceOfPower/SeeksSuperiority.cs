@@ -122,6 +122,9 @@ public static class SeeksSuperiority {
 			}
 			if(!hasLeftAlliance && warsToJoin.Count > 0){
 				for (int i = 0; i < warsToJoin.Count; i++) {
+					if(warsToJoin[i].warfare == null){
+						Debug.LogError ("null war");
+					}
 					warsToJoin [i].warfare.JoinWar (warsToJoin [i].side, kingdom);
 				}
 			}
@@ -155,7 +158,7 @@ public static class SeeksSuperiority {
 					Kingdom targetKingdom = null;
 					float highestInvasionValue = kingdom.relationships.Values.Max(x => x.targetKingdomInvasionValue);
 					if(highestInvasionValue >= 100f){
-						int value = kingdom.kingdomTypeData.prepareForWarChance * (int)(kingdom.prestige / GridMap.Instance.numOfRegions);
+						int value = kingdom.kingdomTypeData.prepareForWarChance * kingdom.cityCap;
 						foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 							if(relationship.isDiscovered && relationship.targetKingdomInvasionValue == highestInvasionValue && !relationship.AreAllies()){
 								int chance = UnityEngine.Random.Range (0, 100);

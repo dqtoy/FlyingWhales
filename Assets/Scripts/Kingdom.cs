@@ -1010,6 +1010,10 @@ public class Kingdom{
     internal void MonthlyPrestigeActions() {
         //Add Prestige
 		int prestigeToBeAdded = GetMonthlyPrestigeGain();
+		if(this.cityCap > this.cities.Count){
+			float reduction = GetMonthlyPrestigeReduction (this.cityCap - this.cities.Count);
+			prestigeToBeAdded -= (int)(prestigeToBeAdded * reduction);
+		}
 		AdjustPrestige(prestigeToBeAdded);
         //Reschedule event
         GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
@@ -1017,6 +1021,24 @@ public class Kingdom{
         gameDate.day = GameManager.daysInMonth[gameDate.month];
         SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => MonthlyPrestigeActions());
     }
+	private float GetMonthlyPrestigeReduction(int cityCapExcess){
+		if(cityCapExcess == 1){
+			return 0.05f;
+		}else if(cityCapExcess == 2){
+			return 0.15f;
+		}else if(cityCapExcess == 3){
+			return 0.3f;
+		}else if(cityCapExcess == 4){
+			return 0.5f;
+		}else if(cityCapExcess == 5){
+			return 0.7f;
+		}else if(cityCapExcess == 6){
+			return 0.9f;
+		}else if(cityCapExcess >= 7){
+			return 1f;
+		}
+		return 0f;
+	}
     internal int GetMonthlyPrestigeGain() {
         int monthlyPrestigeGain = 0;
         monthlyPrestigeGain += king.GetPrestigeContribution();

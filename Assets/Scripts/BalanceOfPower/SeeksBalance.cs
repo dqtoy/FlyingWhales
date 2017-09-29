@@ -164,6 +164,9 @@ public static class SeeksBalance {
 			}
 			if(!hasLeftAlliance && warsToJoin.Count > 0){
 				for (int i = 0; i < warsToJoin.Count; i++) {
+					if(warsToJoin[i].warfare == null){
+						Debug.LogError ("null war");
+					}
 					warsToJoin [i].warfare.JoinWar (warsToJoin [i].side, kingdom);
 				}
 			}
@@ -200,7 +203,7 @@ public static class SeeksBalance {
 						Kingdom targetKingdom = null;
 						float highestInvasionValue = kingdom.relationships.Values.Max(x => x.targetKingdomInvasionValue);
 						if(highestInvasionValue >= 100f){
-							int value = kingdom.kingdomTypeData.prepareForWarChance * (int)(kingdom.prestige / GridMap.Instance.numOfRegions);
+							int value = kingdom.kingdomTypeData.prepareForWarChance * kingdom.cityCap;
 							foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 								if(relationship.isDiscovered && relationship.targetKingdomInvasionValue == highestInvasionValue){
 									if(!relationship.AreAllies()){
