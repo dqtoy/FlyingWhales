@@ -1230,16 +1230,16 @@ public class UIManager : MonoBehaviour {
                 return;
             }
         }
-        //if(notificationItemsThatCanBeReused.Count > 0) {
-        //    NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
-        //    itemToUse.SetLog(log);
-        //    RemoveNotificationItemFromReuseList(itemToUse);
-        //    itemToUse.gameObject.SetActive(true);
-        //} else {
+        if (notificationItemsThatCanBeReused.Count > 0) {
+            NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
+            itemToUse.SetLog(log);
+            RemoveNotificationItemFromReuseList(itemToUse);
+            itemToUse.gameObject.SetActive(true);
+        } else {
             GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
             notifGO.transform.localScale = Vector3.one;
             notifGO.GetComponent<NotificationItem>().SetLog(log);
-        //}
+        }
         //notificationParent.AddChild(notifGO.transform);
         RepositionNotificationTable();
         //notificationScrollView.UpdatePosition();

@@ -20,7 +20,8 @@ public class Utilities : MonoBehaviour {
 	public static int lastKingdomColorIndex = 0;
 	public static int lastAlliancePoolID = 0;
 	public static int lastWarfareID = 0;
-	public static int defaultCampaignExpiration = 8;
+    public static int lastLogID = 0;
+    public static int defaultCampaignExpiration = 8;
 	public static float defenseBuff = 1.20f;
 	public static int defaultCityHP = 300;
 
@@ -79,8 +80,11 @@ public class Utilities : MonoBehaviour {
 		}else if(obj is Region) {
             lastRegionID += 1;
             return lastRegionID;
+        } else if (obj is Log) {
+            lastLogID += 1;
+            return lastLogID;
         }
-		return 0;
+        return 0;
 	}
 
 	public static Color GetColorForKingdom(){

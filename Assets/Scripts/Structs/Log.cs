@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Log {
 
+    public int id;
+
 	public MONTH month;
 	public int day;
 	public int year;
@@ -15,6 +17,7 @@ public class Log {
 	public List<LogFiller> fillers;
 
 	public Log(int month, int day, int year, string category, string file, string key){
+        this.id = Utilities.SetID<Log>(this);
 		this.month = (MONTH)month;
 		this.day = day;
 		this.year = year;
