@@ -917,7 +917,8 @@ public class KingdomRelationship {
 				}
 
 				//+-% for every point of Opinion towards target
-				float likePercent = (float)this.totalLike / 100f;
+				int likeFactor = (int)((float)(this.totalLike) / 2f);
+				float likePercent = (float)likeFactor / 100f;
 				invasionValue -= (likePercent * invasionValue);
 
 				//if allies
