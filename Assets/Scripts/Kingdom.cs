@@ -1119,6 +1119,7 @@ public class Kingdom{
 					break;
 				}
 			}
+            city.TransferRoyaltiesToOtherCity(capitalCity);
             KingdomManager.Instance.UpdateKingdomPrestigeList();
         }
 
@@ -1197,7 +1198,7 @@ public class Kingdom{
 		this.successionLine.AddRange (orderedSisterRoyalties.OrderByDescending (x => x.age));
 
         Citizen newNextInLine = successionLine.FirstOrDefault();
-        if (newNextInLine != null && nextInLine != null && newNextInLine != nextInLine) {
+        if (newNextInLine != null && nextInLine != null && newNextInLine != nextInLine && nextInLine.role == ROLE.CROWN_PRINCE) {
             //next in line is no longer the next in line
             nextInLine.AssignRole(ROLE.UNTRAINED);
         }
@@ -2190,7 +2191,7 @@ public class Kingdom{
 		}
         if (state) {
             Kingdom kingdom2 = null;
-            float highestInvasionValue = 0;
+            float highestInvasionValue = -1;
             foreach (KingdomRelationship kr in relationships.Values) {
                 if (kr.isDiscovered) {
                     if(kr.targetKingdomInvasionValue > highestInvasionValue) {
@@ -2212,7 +2213,7 @@ public class Kingdom{
 		}
 		if (state) {
             Kingdom kingdom2 = null;
-            float highestKingdomThreat = 0;
+            float highestKingdomThreat = -1;
             foreach (KingdomRelationship kr in relationships.Values) {
                 if (kr.isDiscovered) {
                     if (kr.targetKingdomThreatLevel > highestKingdomThreat) {

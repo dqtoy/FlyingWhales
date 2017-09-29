@@ -433,7 +433,12 @@ public class Citizen {
         }
     }
     internal void DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false) {
-        Debug.Log("DEATH: " + this.name + " of " + this.city.name + ": " + reason.ToString());
+        try {
+            Debug.Log("DEATH: " + this.role.ToString() + " " + this.name + " of " + this.city.name + ": " + reason.ToString());
+        }catch(System.Exception e) {
+            throw new System.Exception(this.role.ToString() + " " + this.name + " " + this.city + " " + reason + "\n" + e.Message);
+        }
+        
         DeathHistory(reason);
         this.deathReason = reason;
         this.isDead = true;
@@ -458,47 +463,49 @@ public class Citizen {
             this.AssignSpouse(null);
         }
 
-        City previousCity = this.city;
-        if (this.id == previousCity.kingdom.king.id) {
+        if (this.city != null) {
+            //this.city.RemoveCitizenFromCity(this);
+            this.city.citizens.Remove(this);
+            this.city.RemoveCitizenInImportantCitizensInCity(this);
+            if (!isConquered) { //Check if citizen died of natural causes and not from conquering
+                //if citizen is a grand marshal or grand chancellor, also remove family from city and generate new marshal/chancellor family
+                if (previousRole == ROLE.GRAND_CHANCELLOR || previousRole == ROLE.GRAND_MARSHAL) {
+                    List<Citizen> family = this.GetRelatives(-1);
+                    for (int i = 0; i < family.Count; i++) {
+                        this.city.RemoveCitizenFromCity(family[i]);
+                    }
+                }
+                if (!this.city.isDead) {
+                    if (previousRole == ROLE.GRAND_CHANCELLOR) {
+                        this.city.CreateInitialChancellorFamily();
+                    } else if (previousRole == ROLE.GRAND_MARSHAL) {
+                        this.city.CreateInitialMarshalFamily();
+                    }
+                }
+            }
+            
+
+        }
+        if (this.id == this.city.kingdom.king.id && !this.city.kingdom.isDead) {
             //ASSIGN NEW LORD, SUCCESSION
             //			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
             if (isDethroned) {
                 if (newKing != null) {
-                    previousCity.kingdom.AssignNewKing(newKing);
+                    this.city.kingdom.AssignNewKing(newKing);
                 }
             } else {
                 if (!isConquered) {
-                    if (previousCity.kingdom.successionLine.Count <= 0) {
-                        previousCity.kingdom.AssignNewKing(null);
+                    if (this.city.kingdom.successionLine.Count <= 0) {
+                        this.city.kingdom.AssignNewKing(null);
                     } else {
-                        previousCity.kingdom.AssignNewKing(previousCity.kingdom.successionLine[0]);
+                        this.city.kingdom.AssignNewKing(this.city.kingdom.successionLine[0]);
                     }
                 }
             }
         } else {
-            if (previousCity.governor.id == this.id && !previousCity.isDead) {
-                previousCity.AssignNewGovernor();
+            if (this.city.governor.id == this.id && !this.city.isDead) {
+                this.city.AssignNewGovernor();
             }
-        }
-
-        
-        if (previousCity != null) {
-            previousCity.RemoveCitizenFromCity(this);
-            //if citizen is a grand marshal or grand chancellor, also remove family from city and generate new marshal/chancellor family
-            if (previousRole == ROLE.GRAND_CHANCELLOR || previousRole == ROLE.GRAND_MARSHAL) {
-                List<Citizen> family = this.GetRelatives(-1);
-                for (int i = 0; i < family.Count; i++) {
-                    previousCity.RemoveCitizenFromCity(family[i]);
-                }
-            }
-            if (!previousCity.isDead) {
-                if (previousRole == ROLE.GRAND_CHANCELLOR) {
-                    previousCity.CreateInitialChancellorFamily();
-                } else if (previousRole == ROLE.GRAND_MARSHAL) {
-                    previousCity.CreateInitialMarshalFamily();
-                }
-            }
-
         }
 
 

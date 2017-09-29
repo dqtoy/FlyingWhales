@@ -1110,9 +1110,6 @@ public class City{
 			relationship.war.InitializeMobilization ();
 		}
 		this._kingdom.RemoveCityFromKingdom(this);
-        if (!this._kingdom.isDead) {
-            TransferRoyaltiesToOtherCity(this._kingdom.capitalCity);
-        }
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
         CameraMove.Instance.UpdateMinimapTexture();
@@ -1387,9 +1384,11 @@ public class City{
 		EventCreator.Instance.CreateReinforcementEvent (this, targetCity, amount, war, isRebel);
 	}
 	internal void KillAllCitizens(DEATH_REASONS deathReason, bool isConquered = false){
-		while(this.citizens.Count > 0){
-			this.citizens [0].Death (deathReason, false, null, isConquered);
-		}
+        List<Citizen> citizensToKill = new List<Citizen>(citizens);
+        for (int i = 0; i < citizensToKill.Count; i++) {
+            citizensToKill[i].Death(deathReason, false, null, isConquered);
+        }
+        citizens.Clear();
 		if (!this._kingdom.isDead) {
 			if (this.hasKing) {
 				this._kingdom.AssignNewKing(null);
