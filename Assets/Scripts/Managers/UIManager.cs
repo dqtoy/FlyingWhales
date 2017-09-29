@@ -10,8 +10,6 @@ public class UIManager : MonoBehaviour {
 
 	public UICamera uiCamera;
 
-    private List<Log> notificationHistory;
-
 	[Space(10)]
     [Header("Prefabs")]
     public GameObject characterPortraitPrefab;
@@ -296,6 +294,7 @@ public class UIManager : MonoBehaviour {
 	private string warAllianceState = string.Empty;
 
     private List<NotificationItem> notificationItemsThatCanBeReused;
+    private Dictionary<Log, string> logHistory;
 
     #region getters/setters
     internal GameObject minimapTexture {
@@ -305,7 +304,7 @@ public class UIManager : MonoBehaviour {
 
     void Awake(){
 		Instance = this;
-        notificationHistory = new List<Log>();
+        logHistory = new Dictionary<Log, string>();
         notificationItemsThatCanBeReused = new List<NotificationItem>();
     }
 
@@ -1231,16 +1230,16 @@ public class UIManager : MonoBehaviour {
                 return;
             }
         }
-        //if(notificationItemsThatCanBeReused.Count > 0) {
-        //    NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
-        //    itemToUse.SetLog(log);
-        //    RemoveNotificationItemFromReuseList(itemToUse);
-        //    itemToUse.gameObject.SetActive(true);
-        //} else {
+        if (notificationItemsThatCanBeReused.Count > 0) {
+            NotificationItem itemToUse = notificationItemsThatCanBeReused[0];
+            itemToUse.SetLog(log);
+            RemoveNotificationItemFromReuseList(itemToUse);
+            itemToUse.gameObject.SetActive(true);
+        } else {
             GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationParent.transform);
             notifGO.transform.localScale = Vector3.one;
             notifGO.GetComponent<NotificationItem>().SetLog(log);
-        //}
+        }
         //notificationParent.AddChild(notifGO.transform);
         RepositionNotificationTable();
         //notificationScrollView.UpdatePosition();
@@ -1269,16 +1268,37 @@ public class UIManager : MonoBehaviour {
     }
 
     #region Notification History
+    private string notificationSummary;
     internal void AddLogToLogHistory(Log log) {
-        notificationHistory.Add(log);
-        if(notificationHistory.Count > 100) {
-            int numOfExcessLogs = notificationHistory.Count - 100;
-            notificationHistory.RemoveRange(0, numOfExcessLogs);
+        string logString = log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString() + "         ";
+        if (log.fillers.Count > 0) {
+            logString += Utilities.LogReplacer(log);
+        } else {
+            logString += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
         }
+        logHistory.Add(log, logString);
+        if(logHistory.Count > 100) {
+            int numOfExcessLogs = logHistory.Count - 100;
+            for (int i = 0; i < numOfExcessLogs; i++) {
+                logHistory.Remove(logHistory.Keys.First());
+            }
+        }
+        StartCoroutine(ConstructNotificationSummary());
         if (notificationHistoryGO.activeSelf) {
             ShowNotificationHistory();
         }
     }
+    IEnumerator ConstructNotificationSummary() {
+        notificationSummary = string.Empty;
+        for (int i = logHistory.Count - 1; i >= 0; i--) {
+            notificationSummary += logHistory.Values.ElementAt(i);
+            if (i - 1 >= 0) {
+                notificationSummary += "\n";
+            }
+        }
+        yield return null;
+    }
+
     public void ToggleNotificationHistory() {
         if (notificationHistoryGO.activeSelf) {
             HideNotificationHistory();
@@ -1288,44 +1308,28 @@ public class UIManager : MonoBehaviour {
     }
 
     private void ShowNotificationHistory() {
-        //List<NotificationItem> presentItems = notificationHistoryTable.GetComponentsInChildren<NotificationItem>(true).ToList();
+        notificationHistoryLbl.text = notificationSummary;
 
-        notificationHistoryLbl.text = string.Empty;
-        foreach (Log log in notificationHistory.Reverse<Log>().Take(100)) {
-            notificationHistoryLbl.text += log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString() + "         ";
-            if (log.fillers.Count > 0) {
-                notificationHistoryLbl.text += Utilities.LogReplacer(log) + "\n";
-            } else {
-                notificationHistoryLbl.text += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key) + "\n";
-            }
-        }
+        //for (int i = logHistory.Count-1; i >= 0; i--) {
+        //    notificationHistoryLbl.text += logHistory.Values.ElementAt(i);
+        //    if(i-1 >= 0) {
+        //        notificationHistoryLbl.text += "\n";
+        //    }
+        //}
+
+        //foreach (Log log in notificationHistory.Reverse<Log>().Take(100)) {
+        //    notificationHistoryLbl.text += log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString() + "         ";
+        //    if (log.fillers.Count > 0) {
+        //        notificationHistoryLbl.text += Utilities.LogReplacer(log) + "\n";
+        //    } else {
+        //        notificationHistoryLbl.text += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key) + "\n";
+        //    }
+        //}
         if (string.IsNullOrEmpty(notificationHistoryLbl.text)) {
             notificationHistoryLbl.text = "[b][i]No History[/i][/b]";
         }
         notificationHistoryLbl.gameObject.SetActive(true);
 
-        //int counter = 0;
-        //List<Log> notifHistory = notificationHistory.Reverse<Log>().ToList();
-        //foreach (Transform item in Utilities.GetComponentsInDirectChildren<Transform>(notificationHistoryTable.gameObject)) {
-        //    //ObjectPoolManager.Instance.DestroyObject(item.gameObject);
-        //    Log currLog = notifHistory.ElementAtOrDefault(counter);
-        //    if (currLog == null) {
-        //        item.gameObject.SetActive(false);
-        //    } else {
-        //        item.GetComponent<NotificationItem>().SetLog(currLog, false);
-        //        item.gameObject.SetActive(true);
-        //    }
-        //    counter++;
-        //}
-
-        //for (int i = counter; i < notifHistory.Count; i++) {
-        //    Log currLog = notifHistory[i];
-        //    GameObject notifGO = InstantiateUIObject(notificationPrefab.name, notificationHistoryTable.transform);
-        //    notifGO.transform.localScale = Vector3.one;
-        //    notifGO.GetComponent<NotificationItem>().SetLog(currLog, false);
-        //    StartCoroutine(RepositionTable(notificationHistoryTable));
-        //    StartCoroutine(RepositionScrollView(notificationHistoryScrollView));
-        //}
         notificationHistoryGO.SetActive(true);
         kingdomListEventButton.SetClickState(true);
     }
