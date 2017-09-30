@@ -121,10 +121,14 @@ public class Warfare {
 						break;
 					}
 				}
+			}else{
+				Debug.Log ("---------------------------------Can't create battle: enemy is null");
 			}
 			if(friendlyCity != null){
 				Battle newBattle = new Battle (this, friendlyCity, enemyCity);
 				AddBattle (newBattle);
+			}else{
+				Debug.Log ("---------------------------------Can't create battle: friendly is null");
 			}
 		}else{
 			City friendlyCity = null;
@@ -144,6 +148,8 @@ public class Warfare {
 				if (enemyCity != null) {
 					Battle newBattle = new Battle (this, friendlyCity, enemyCity);
 					AddBattle (newBattle);
+				}else{
+					Debug.Log ("---------------------------------Can't create battle: enemy is null");
 				}
 			}
 		}
@@ -155,6 +161,13 @@ public class Warfare {
 		if(friendlyCity != null && enemyCity != null){
 			Battle newBattle = new Battle (this, friendlyCity, enemyCity);
 			AddBattle (newBattle);
+		}else{
+			if(friendlyCity == null){
+				Debug.Log ("---------------------------------Can't create battle: friendly is null");
+			}
+			if(enemyCity == null){
+				Debug.Log ("---------------------------------Can't create battle: enemy is null");
+			}
 		}
 	}
 
