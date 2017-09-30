@@ -40,7 +40,7 @@ public class Citizen {
     private EFFICIENCY _efficiencyLevel;
     private INTELLIGENCE _intelligenceLevel;
 
-    private HashSet<STATUS_EFFECTS> _statusEffects;
+    private Dictionary<STATUS_EFFECTS, StatusEffect> _statusEffects;
 
     //King Opinion
     //A citizen's Opinion towards his King is a value between -100 to 100 representing how loyal he is towards his King.
@@ -91,7 +91,7 @@ public class Citizen {
     internal string loyaltySummary {
         get { return _loyaltySummary; }
     }
-    internal HashSet<STATUS_EFFECTS> statusEffects {
+    internal Dictionary<STATUS_EFFECTS, StatusEffect> statusEffects {
         get { return _statusEffects; }
     }
     #endregion
@@ -137,7 +137,7 @@ public class Citizen {
         this._efficiencyLevel = (EFFICIENCY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(EFFICIENCY)).Length));
         this._intelligenceLevel = (INTELLIGENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(INTELLIGENCE)).Length));
 
-        this._statusEffects = new HashSet<STATUS_EFFECTS>();
+        this._statusEffects = new Dictionary<STATUS_EFFECTS, StatusEffect>();
 
         this.city.citizens.Add (this);
     }
@@ -826,34 +826,20 @@ public class Citizen {
     #endregion
 
     #region Status Effects
+    private StatusEffect CreateNewStatusEffectForCitizen(STATUS_EFFECTS statusEffectType) {
+        if(statusEffectType == STATUS_EFFECTS.INCURABLE_DISEASE) {
+            return new IncurableDisease(this);
+        }
+        return null;
+    }
     internal void AddStatusEffect(STATUS_EFFECTS statusEffect) {
-        if (!_statusEffects.Contains(statusEffect)) {
-            _statusEffects.Add(statusEffect);
+        if (!_statusEffects.ContainsKey(statusEffect)) {
+            _statusEffects.Add(statusEffect, CreateNewStatusEffectForCitizen(statusEffect));
             Debug.Log(this.role.ToString() + " " + this.name + " is now afflicted with " + statusEffect.ToString());
-            GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-            if(statusEffect == STATUS_EFFECTS.INCURABLE_DISEASE) {
-                dueDate.AddDays(4);
-            }
-            SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => CheckStatusEffect(statusEffect));
         }
     }
     internal void RemoveStatusEffect(STATUS_EFFECTS statusEffect) {
         _statusEffects.Remove(statusEffect);
-    }
-    private void CheckStatusEffect(STATUS_EFFECTS statusEffect) {
-        if (isDead) {
-            return;
-        }
-        if (statusEffect == STATUS_EFFECTS.INCURABLE_DISEASE) {
-            if (Random.Range(0, 100) < 3) {
-                //Citizen dies of incurable disease
-                this.Death(DEATH_REASONS.INCURABLE_DISEASE);
-            } else {
-                GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-                dueDate.AddDays(4);
-                SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => CheckStatusEffect(statusEffect));
-            }
-        }
     }
     #endregion
 

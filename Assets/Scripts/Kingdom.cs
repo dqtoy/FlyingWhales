@@ -480,7 +480,7 @@ public class Kingdom{
         }
 
         // If the Kingdom Type Data changed
-        if (prevKingdomType != kingdomType) {
+        if (prevKingdomType != this.kingdomType) {
             //Update Character Values of King and Governors
             this.UpdateCharacterValuesOfKingsAndGovernors();
 

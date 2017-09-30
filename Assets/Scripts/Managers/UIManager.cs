@@ -2616,7 +2616,7 @@ public class UIManager : MonoBehaviour {
         if (chooseCitizenGO.activeSelf) {
             HideChooseCitizenMenu();
         } else {
-            List<Citizen> kingsToChooseFrom = new List<Citizen>(KingdomManager.Instance.GetAllKings().Where(x => !x.statusEffects.Contains(STATUS_EFFECTS.INCURABLE_DISEASE)));
+            List<Citizen> kingsToChooseFrom = new List<Citizen>(KingdomManager.Instance.GetAllKings().Where(x => !x.statusEffects.ContainsKey(STATUS_EFFECTS.INCURABLE_DISEASE)));
             ShowChooseCitizenMenu(kingsToChooseFrom, InfectChosenCitizenWithIncurableDisease, "Choose a Citizen to Infect");
             onHideChooseCitizenMenu += incurableDiseaseBtn.SetAsUnClicked;
             //select default
@@ -2637,7 +2637,7 @@ public class UIManager : MonoBehaviour {
     }
     internal void UpdateChooseCitizensMenuForIncurableDisease() {
         if(chooseCitizenGO.activeSelf && incurableDiseaseBtn.isClicked) {
-            List<Citizen> kingsToChooseFrom = new List<Citizen>(KingdomManager.Instance.GetAllKings().Where(x => !x.statusEffects.Contains(STATUS_EFFECTS.INCURABLE_DISEASE)));
+            List<Citizen> kingsToChooseFrom = new List<Citizen>(KingdomManager.Instance.GetAllKings().Where(x => !x.statusEffects.ContainsKey(STATUS_EFFECTS.INCURABLE_DISEASE)));
             ShowChooseCitizenMenu(kingsToChooseFrom, InfectChosenCitizenWithIncurableDisease, "Choose a Citizen to Infect");
         }
     }
