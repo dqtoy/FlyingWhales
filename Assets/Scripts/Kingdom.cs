@@ -459,7 +459,7 @@ public class Kingdom{
     }
 
     public void SetKingdomType(KINGDOM_TYPE kingdomType) {
-        KINGDOM_TYPE prevKingdomType = kingdomType;
+        KINGDOM_TYPE prevKingdomType = this.kingdomType;
         switch (kingdomType) {
             case KINGDOM_TYPE.NOBLE_KINGDOM:
                 this._kingdomTypeData = KingdomManager.Instance.kingdomTypeNoble;
@@ -487,12 +487,12 @@ public class Kingdom{
             //Update Relationship Opinion
             UpdateAllRelationshipsLikenessFromOthers();
 
-            //if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+            if(prevKingdomType != KINGDOM_TYPE.NONE) {
                 Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
                 updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
                 UIManager.Instance.ShowNotification(updateKingdomTypeLog);
-            //}
+            }
         }
     }
 
