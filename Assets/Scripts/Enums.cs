@@ -499,6 +499,7 @@ public enum LOG_IDENTIFIER{
 	KING_3_PRONOUN_R,
 	CRIME_DETAILS,
 	CRIME_PUNISHMENT,
+	LAIR_NAME,
 	OTHER,
 }
 
@@ -510,7 +511,7 @@ public enum FOG_OF_WAR_STATE {
 
 public enum LAIR {
 	LYCAN,
-	STORM_WITCH,
+//	STORM_WITCH,
 	PERE,
 	GHOUL,
 }

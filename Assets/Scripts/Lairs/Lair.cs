@@ -4,15 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class Lair {
-	private delegate void OnPerformAction();
-	private OnPerformAction onPerformAction;
-
 	public int hp;
 	public int maxHP;
 	public LAIR type;
 	public string name;
 	public int spawnRate;
 	public HexTile hexTile;
+	public Region region;
 	public int daysCounter;
 	public GameObject goStructure;
 	public List<HexTile> tilesInRadius;
@@ -37,32 +35,32 @@ public class Lair {
 		this.type = type;
 		this.name = "Lair";
 		this.hexTile = hexTile;
-		this._lairSpawn = MonsterManager.Instance.GetLairSpawnData (this.type);
+		this.region = hexTile.region;
+//		this._lairSpawn = MonsterManager.Instance.GetLairSpawnData (this.type);
 		this.hp = this._lairSpawn.lairHP;
 		this.maxHP = this.hp;
-		this.spawnRate = this._lairSpawn.spawnRate;
+		this.spawnRate = MonsterManager.Instance.daysInterval;
 		this.goStructure = null;
-		this.tilesInRadius = this.hexTile.GetTilesInRange(this._lairSpawn.tileRadiusDetection);
+//		this.tilesInRadius = this.hexTile.GetTilesInRange(this._lairSpawn.tileRadiusDetection);
 		this.isDead = false;
-		this.isActivated = false;
+//		this.isActivated = false;
 		this.availableTargets = new List<HexTile>();
 		this._activeMonstersCount = 0;
 		AttachLairToHextile();
-		Messenger.AddListener("OnDayEnd", PerformAction);
-		AddLairToTilesInRange ();
+//		AddLairToTilesInRange ();
 //		onPerformAction += CheckForActivation;
-
-		if(MonsterManager.Instance.activateLairImmediately){
-			ActivateLair();
-		}
+		ActivateLair();
 	}
-		
+
+	#region Virtuals
+	public virtual void Initialize(){}
+	internal virtual void PerformAction(){}
+	#endregion
+
 	internal void ActivateLair(){
-//		onPerformAction -= CheckForActivation;
-		if(!this.isActivated){
-			this.isActivated = true;
-			onPerformAction += EverydayAction;
-		}
+		GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+		gameDate.AddDays (5);
+		SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => PerformAction ());
 	}
 	private void AttachLairToHextile(){
 		this.hexTile.isLair = true;
@@ -76,44 +74,42 @@ public class Lair {
 		this.hexTile.lair = null;
         this.hexTile.RemoveLairNamePlate();
 	}
-	private void DestroyLair(){
-		Messenger.RemoveListener("OnDayEnd", PerformAction);
+	internal void DestroyLair(){
 		if(this.goStructure != null){
 			ObjectPoolManager.Instance.DestroyObject(this.goStructure);
 			this.goStructure = null;
 		}
 		this.isDead = true;
 		DetachLairFromHextile();
-
-        //for (int i = 0; i < this.hexTile.isVisibleByCities.Count; i++) {
-        //    City currCity = this.hexTile.isVisibleByCities[i];
-        //    currCity.UpdateBorderTiles();
-        //    if (this.hexTile.isBorder) {
-        //        break;
-        //    }
-        //}
-
-        onPerformAction -= EverydayAction;
 		MonsterManager.Instance.RemoveFromLairList(this);
+
+		//Kingdom gains prestige
+		City city = this.region.occupant;
+		Kingdom kingdom = this.region.occupant.kingdom;
+		int prestigeToGain = (int)(GridMap.Instance.numOfRegions / 2);
+		kingdom.AdjustPrestige (prestigeToGain);
+
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerIntervention", "MonsterLair", "destroy");
+		newLog.AddToFillers (city, city.name, LOG_IDENTIFIER.CITY_1);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.LAIR_NAME);
+		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, prestigeToGain.ToString(), LOG_IDENTIFIER.OTHER);
+		UIManager.Instance.ShowNotification (newLog);
 	}
 
-	public void AdjustHP(int amount){
-		this.hexTile.UpdateLairNamePlate();
+//	public void AdjustHP(int amount){
+//		this.hexTile.UpdateLairNamePlate();
+//
+//		this.hp += amount;
+//		if(this.hp < 0){
+//			this.hp = 0;
+//			DestroyLair();
+//		}else if(this.hp > this.maxHP){
+//			this.hp = this.maxHP;
+//		}
+//	}
 
-		this.hp += amount;
-		if(this.hp < 0){
-			this.hp = 0;
-			DestroyLair();
-		}else if(this.hp > this.maxHP){
-			this.hp = this.maxHP;
-		}
-	}
 
-	private void PerformAction(){
-		if(onPerformAction != null){
-			onPerformAction ();
-		}
-	}
 	private void CheckForActivation(){
 		if(!this.isActivated){
 			for (int i = 0; i < this.tilesInRadius.Count; i++) {
@@ -218,10 +214,9 @@ public class Lair {
 		}
 	}
 
-	#region Virtual
-	public virtual void Initialize(){}
-	public virtual void EverydayAction(){
-		this.daysCounter += 1;
+	internal void DamageToCityDefense(int damage){
+		City city = this.region.occupant;
+		city.AdjustDefense (-damage);
+		Debug.Log (this.name + " damaged " + city.name + "'s defense by " + damage.ToString ());
 	}
-	#endregion
 }

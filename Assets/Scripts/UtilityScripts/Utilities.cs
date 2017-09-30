@@ -940,6 +940,7 @@ public class Utilities : MonoBehaviour {
 		{"106", LOG_IDENTIFIER.OTHER},
 		{"107", LOG_IDENTIFIER.CRIME_DETAILS},
 		{"108", LOG_IDENTIFIER.CRIME_PUNISHMENT},
+		{"109", LOG_IDENTIFIER.LAIR_NAME},
 	};
 
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {

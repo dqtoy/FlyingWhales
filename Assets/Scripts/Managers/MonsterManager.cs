@@ -7,6 +7,7 @@ public class MonsterManager : MonoBehaviour {
 	public static MonsterManager Instance;
 
 	public int minimumLairDistance;
+	public int daysInterval;
 	public bool activateLairImmediately;
 	public LairSpawn[] lairSpawn;
 
@@ -57,9 +58,9 @@ public class MonsterManager : MonoBehaviour {
 		case LAIR.LYCAN:
 			LycanLair lycanLair = new LycanLair(type, hexTile);
 			return lycanLair;
-		case LAIR.STORM_WITCH:
-			StormWitchLair stormWitchLair = new StormWitchLair(type, hexTile);
-			return stormWitchLair;
+//		case LAIR.STORM_WITCH:
+//			StormWitchLair stormWitchLair = new StormWitchLair(type, hexTile);
+//			return stormWitchLair;
 		case LAIR.PERE:
 			PereLair pereLair = new PereLair(type, hexTile);
 			return pereLair;

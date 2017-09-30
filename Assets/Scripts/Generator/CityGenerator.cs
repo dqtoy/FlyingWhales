@@ -349,8 +349,8 @@ public class CityGenerator : MonoBehaviour {
         switch (lairType) {
         case LAIR.LYCAN:
             return lycanLair;
-		case LAIR.STORM_WITCH:
-			return stormWitchLair;
+//		case LAIR.STORM_WITCH:
+//			return stormWitchLair;
 		case LAIR.PERE:
 			return pereLair;
 		case LAIR.GHOUL:
