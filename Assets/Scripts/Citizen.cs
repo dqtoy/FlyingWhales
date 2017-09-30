@@ -367,7 +367,7 @@ public class Citizen {
             if (this.mother.children != null) {
                 for (int i = 0; i < this.mother.children.Count; i++) {
                     if (this.mother.children[i].id != this.id) {
-                        if (!this.mother.children[i].isDead) {
+                        if (!this.mother.children[i].isDead && !siblings.Contains(this.mother.children[i])) {
                             siblings.Add(this.mother.children[i]);
                         }
                     }
@@ -378,7 +378,7 @@ public class Citizen {
                 if (this.father.children != null) {
                     for (int i = 0; i < this.father.children.Count; i++) {
                         if (this.father.children[i].id != this.id) {
-                            if (!this.father.children[i].isDead) {
+                            if (!this.father.children[i].isDead && !siblings.Contains(this.father.children[i])) {
                                 siblings.Add(this.father.children[i]);
                             }
                         }

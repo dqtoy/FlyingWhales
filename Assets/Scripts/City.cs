@@ -128,6 +128,9 @@ public class City{
     internal Dictionary<ROLE, Citizen> importantCitizensInCity {
         get { return _importantCitizensInCity; }
     }
+    internal int cityLevel {
+        get { return ownedTiles.Count; }
+    }
     #endregion
 
     public City(HexTile hexTile, Kingdom kingdom, bool isRebel = false){
@@ -730,25 +733,9 @@ public class City{
 
         //Update necessary data
         this.UpdateDailyProduction();
-        //this.kingdom.CheckForDiscoveredKingdoms(this);
-        //if(otherCity != null) {
-        //    otherCity.UpdateBorderTiles();
-        //}
+        _kingdom.UpdatePopulationCapacity();
 
-        ////Add special resources to kingdoms available resources, if the purchased tile has any
-        //if (tileToBuy.specialResource != RESOURCE.NONE) {
-        //    this._kingdom.AddResourceToKingdom(tileToBuy.specialResource);
-        //}
-
-  //      //Show Highlight if kingdom or city is currently highlighted
-  //      if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
-		//	this._kingdom.HighlightAllOwnedTilesInKingdom ();
-		//} else {
-		//	if (this.hexTile.kingdomColorSprite.gameObject.activeSelf) {
-		//		this._kingdom.HighlightAllOwnedTilesInKingdom ();
-		//	}
-		//}
-		tileToBuy.CheckLairsInRange ();
+        tileToBuy.CheckLairsInRange ();
         LevelUpBalanceOfPower();
 		this.UpdateHP (percentageHP);
         UIManager.Instance.UpdateMinimapInfo();
@@ -950,7 +937,7 @@ public class City{
 		List<Citizen> succession = new List<Citizen> ();
 		if (this.governor != null) {
 			for (int i = 0; i < this.governor.children.Count; i++) {
-				if (!this.governor.children [i].isGovernor) {
+				if (!this.governor.children [i].isGovernor && !this.governor.children[i].isDead) {
 					return this.governor.children [i];
 				}
 			}

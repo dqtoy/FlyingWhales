@@ -17,17 +17,18 @@ public static class SeeksBalance {
 
 	private static void Phase1(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool hasAllianceInWar){
 		Debug.Log("========== " + kingdom.name + " is seeking balance " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
-		//break any alliances with anyone whose threat value is 100 or above and lose Base Prestige
-		if(kingdom.alliancePool != null){
+        //break any alliances with anyone whose threat value is 100 or above and lose Base Prestige
+        //break any alliances with anyone that he has a -100 Opinion and lose Base Prestige
+        if (kingdom.alliancePool != null){
 			for (int i = 0; i < kingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved[i];
 				if(kingdom.id != allyKingdom.id){
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(allyKingdom);
-					if(kr.targetKingdomThreatLevel >= 100f){
+					if(kr.targetKingdomThreatLevel >= 100f || kr.totalLike <= -100){
 						kingdom.LeaveAlliance ();
 						kingdom.AdjustPrestige(-GridMap.Instance.numOfRegions);
 						Debug.Log(kingdom.name + " broke alliance with " + allyKingdom.name +
-							" because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + "," + kingdom.name + 
+							" because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + " or total like is " + kr.totalLike.ToString() + "," + kingdom.name + 
 							" lost 50 prestige. Prestige is now " + kingdom.prestige.ToString());
 						break;
 					}
@@ -202,7 +203,22 @@ public static class SeeksBalance {
 						//Can no longer expand
 						Kingdom targetKingdom = null;
 						float highestInvasionValue = kingdom.relationships.Values.Max(x => x.targetKingdomInvasionValue);
-						if(highestInvasionValue >= 100f){
+                        float invasionValueThreshold = 100f;
+                        float overpopulation = kingdom.GetOverpopulationPercentage();
+                        if(overpopulation > 0) {
+                            if(overpopulation > 0 && overpopulation <= 10) {
+                                invasionValueThreshold -= 10;
+                            } else if (overpopulation > 10 && overpopulation <= 20) {
+                                invasionValueThreshold -= 20;
+                            } else if (overpopulation > 20 && overpopulation <= 40) {
+                                invasionValueThreshold -= 35;
+                            } else if (overpopulation > 40 && overpopulation <= 60) {
+                                invasionValueThreshold -= 50;
+                            } else if (overpopulation > 60) {
+                                invasionValueThreshold -= 65;
+                            }
+                        }
+						if(highestInvasionValue >= invasionValueThreshold) {
 							int value = kingdom.kingdomTypeData.prepareForWarChance * kingdom.cityCap;
 							foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 								if(relationship.isDiscovered && relationship.targetKingdomInvasionValue == highestInvasionValue){

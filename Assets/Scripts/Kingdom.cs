@@ -13,6 +13,8 @@ public class Kingdom{
 	public RACE race;
     public int age;
     private int _prestige;
+    private int _population;
+    private int _populationCapacity;
     private int foundationYear;
     private int foundationMonth;
     private int foundationDay;
@@ -167,6 +169,12 @@ public class Kingdom{
 	}
     public int prestige {
         get { return _prestige; }
+    }
+    internal int population {
+        get { return _population; }
+    }
+    internal int populationCapacity {
+        get { return _populationCapacity; }
     }
     public int cityCap {
         get { return Mathf.FloorToInt(prestige / GridMap.Instance.numOfRegions); }
@@ -439,7 +447,8 @@ public class Kingdom{
 		//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
-		SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, 1, GameManager.Instance.year, () => IncreasePopulationEveryMonth());
+        SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
         //		ScheduleEvents ();
         ScheduleOddDayActions();
         ScheduleActionDay();
@@ -1113,6 +1122,7 @@ public class Kingdom{
         _regions.Add(city.region);
         //this.UpdateKingdomTypeData();
         UpdateKingdomSize();
+        UpdatePopulationCapacity();
         if (this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
@@ -1133,6 +1143,7 @@ public class Kingdom{
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
             UpdateKingdomSize();
+            UpdatePopulationCapacity();
             RevalidateKingdomAdjacency(city);
             //this.UpdateKingdomTypeData();
             for (int i = 0; i < this._cities.Count; i++) {
@@ -2736,60 +2747,6 @@ public class Kingdom{
 		AdjustMutualDefenseTreatyPower (-kingdom.baseDefense);
 	}
 
-    #region Adjacency
-    internal void AddAdjacentKingdom(Kingdom kingdom) {
-        if (!_adjacentKingdoms.Contains(kingdom)) {
-            this._adjacentKingdoms.Add(kingdom);
-        }
-    }
-    internal void RemoveAdjacentKingdom(Kingdom kingdom) {
-        this._adjacentKingdoms.Remove(kingdom);
-    }
-    internal void RevalidateKingdomAdjacency(City removedCity) {
-        List<Kingdom> kingdomsToCheck = new List<Kingdom>();
-        for (int i = 0; i < removedCity.region.adjacentRegions.Count; i++) {
-            Region currRegion = removedCity.region.adjacentRegions[i];
-            if(currRegion.occupant != null) {
-                if (currRegion.occupant.kingdom != this && !kingdomsToCheck.Contains(currRegion.occupant.kingdom)) {
-                    kingdomsToCheck.Add(currRegion.occupant.kingdom);
-                }
-            }
-        }
-        for (int i = 0; i < kingdomsToCheck.Count; i++) {
-            Kingdom otherKingdom = kingdomsToCheck[i];
-            KingdomRelationship kr = GetRelationshipWithKingdom(otherKingdom);
-            if (kr.isAdjacent) {
-                bool isValid = false;
-                //Revalidate adjacency
-                for (int j = 0; j < cities.Count; j++) {
-                    Region regionOfCurrCity = cities[j].region;
-                    foreach (Region otherRegion in regionOfCurrCity.adjacentRegions.Where(x => x.occupant != null && x.occupant.kingdom != this)) {
-                        if(otherRegion.occupant.kingdom == otherKingdom) {
-                            //otherKingdom is still adjacent to this kingdom, validity verified!
-                            isValid = true;
-                            break;
-                        }else if (kingdomsToCheck.Contains(otherRegion.occupant.kingdom)) {
-                            //otherRegion.occupant.kingdom is still adjacent to this kingdom, validity verified!
-                            isValid = true;
-                            break;
-                        }
-                    }
-                    if (isValid) {
-                        //otherKingdom has already been verified! Skip checking of other cities
-                        break;
-                    }
-                }
-                //Loop of all cities is done, check if validity has returned a true value,
-                //if not, this kingdom and other kingdom are no longer adjacent, change appropriately
-                if (!isValid) {
-                    kr.ChangeAdjacency(false);
-                }
-            }
-        }
-
-    }
-    #endregion
-
     //	internal void AddAllianceKingdom(Kingdom kingdom){
     //		if (!this._allianceKingdoms.Contains(kingdom)) {
     //			this._allianceKingdoms.Add(kingdom);
@@ -2888,9 +2845,96 @@ public class Kingdom{
 		} 
 		return false;
 	}
-	#endregion
+    #endregion
 
-	internal void AddToNonRebellingCities(City city){
+    #region Adjacency
+    internal void AddAdjacentKingdom(Kingdom kingdom) {
+        if (!_adjacentKingdoms.Contains(kingdom)) {
+            this._adjacentKingdoms.Add(kingdom);
+        }
+    }
+    internal void RemoveAdjacentKingdom(Kingdom kingdom) {
+        this._adjacentKingdoms.Remove(kingdom);
+    }
+    internal void RevalidateKingdomAdjacency(City removedCity) {
+        List<Kingdom> kingdomsToCheck = new List<Kingdom>();
+        for (int i = 0; i < removedCity.region.adjacentRegions.Count; i++) {
+            Region currRegion = removedCity.region.adjacentRegions[i];
+            if (currRegion.occupant != null) {
+                if (currRegion.occupant.kingdom != this && !kingdomsToCheck.Contains(currRegion.occupant.kingdom)) {
+                    kingdomsToCheck.Add(currRegion.occupant.kingdom);
+                }
+            }
+        }
+        for (int i = 0; i < kingdomsToCheck.Count; i++) {
+            Kingdom otherKingdom = kingdomsToCheck[i];
+            KingdomRelationship kr = GetRelationshipWithKingdom(otherKingdom);
+            if (kr.isAdjacent) {
+                bool isValid = false;
+                //Revalidate adjacency
+                for (int j = 0; j < cities.Count; j++) {
+                    Region regionOfCurrCity = cities[j].region;
+                    foreach (Region otherRegion in regionOfCurrCity.adjacentRegions.Where(x => x.occupant != null && x.occupant.kingdom != this)) {
+                        if (otherRegion.occupant.kingdom == otherKingdom) {
+                            //otherKingdom is still adjacent to this kingdom, validity verified!
+                            isValid = true;
+                            break;
+                        } else if (kingdomsToCheck.Contains(otherRegion.occupant.kingdom)) {
+                            //otherRegion.occupant.kingdom is still adjacent to this kingdom, validity verified!
+                            isValid = true;
+                            break;
+                        }
+                    }
+                    if (isValid) {
+                        //otherKingdom has already been verified! Skip checking of other cities
+                        break;
+                    }
+                }
+                //Loop of all cities is done, check if validity has returned a true value,
+                //if not, this kingdom and other kingdom are no longer adjacent, change appropriately
+                if (!isValid) {
+                    kr.ChangeAdjacency(false);
+                }
+            }
+        }
+
+    }
+    #endregion
+
+    #region Population
+    internal float GetOverpopulationPercentage() {
+        float overpopulationPercentage = (float)_population / (float)_populationCapacity;
+        overpopulationPercentage = Mathf.Round(overpopulationPercentage * 100f) / 100f;
+        return Mathf.Clamp(overpopulationPercentage, 0, 100); ;
+    }
+    internal void UpdatePopulationCapacity() {
+        _populationCapacity = GetPopulationCapacity();
+    }
+    internal int GetPopulationCapacity() {
+        int populationCapacity = 0;
+        for (int i = 0; i < cities.Count; i++) {
+            populationCapacity += 50 + (5 * cities[i].cityLevel);
+        }
+        return populationCapacity;
+    }
+    internal int GetPopulationGrowth() {
+        int populationGrowth = 0;
+        for (int i = 0; i < cities.Count; i++) {
+            populationGrowth += cities[i].region.populationGrowth;
+        }
+        float overpopulationPercentage = GetOverpopulationPercentage();
+        int populationGrowthReduction = Mathf.FloorToInt(populationGrowth * (overpopulationPercentage/100f));
+        return populationGrowth - populationGrowthReduction;
+    }
+    private void IncreasePopulationEveryMonth() {
+        _population += GetPopulationGrowth();
+        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        dueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreasePopulationEveryMonth());
+    }
+    #endregion
+
+    internal void AddToNonRebellingCities(City city){
 		this._nonRebellingCities.Add (city);
 	}
 	internal void RemoveFromNonRebellingCities(City city){

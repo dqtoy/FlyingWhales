@@ -183,6 +183,7 @@ public class UIManager : MonoBehaviour {
 	public UILabel warmongerLbl;
 	public GameObject militarizingGO;
 	public GameObject fortifyingGO;
+    public UILabel populationSummary;
 
     [Space(10)]
     [Header("Event Logs UI Objects")]
@@ -495,11 +496,12 @@ public class UIManager : MonoBehaviour {
 		this.fortifyingGO.SetActive (currentlyShowingKingdom.isFortifying);
 		this.actionDayLbl.text = this.currentlyShowingKingdom.actionDay.ToString();
 		this.warmongerLbl.text = this.currentlyShowingKingdom.warmongerValue.ToString();
-
+        populationSummary.text = currentlyShowingKingdom.population.ToString() + "/" + currentlyShowingKingdom.populationCapacity.ToString() + 
+            "(" + currentlyShowingKingdom.GetOverpopulationPercentage().ToString() + "%)";
 //		float newValue = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
 //		float oldValue = kingdomTechMeter.value;
 //		kingdomTechMeter.value = iTween.FloatUpdate(oldValue, newValue, GameManager.Instance.progressionSpeed);
-        //Basic Resource
+//Basic Resource
         if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
             kingdomBasicResourceSprite.sprite2D = stoneSprite;
         } else if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {

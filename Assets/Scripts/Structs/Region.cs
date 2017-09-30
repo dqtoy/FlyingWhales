@@ -19,6 +19,9 @@ public class Region {
     private Dictionary<RACE, int> _naturalResourceLevel;
     private int _cityLevelCap;
 
+    //Population
+    private int _populationGrowth;
+
     private List<HexTile> _outerTiles;
     private List<SpriteRenderer> regionBorderLines;
 
@@ -47,6 +50,9 @@ public class Region {
     internal int cityLevelCap {
         get { return _cityLevelCap; }
     }
+    internal int populationGrowth {
+        get { return _populationGrowth; }
+    }
     #endregion
 
     public Region(HexTile centerOfMass) {
@@ -56,6 +62,10 @@ public class Region {
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
         SetSpecialResource(RESOURCE.NONE);
+
+        //Generate population growth
+        int[] possiblePopulationGrowths = new int[] { 1, 3, 8, 5 };
+        _populationGrowth = possiblePopulationGrowths[Random.Range(0, possiblePopulationGrowths.Length)];
     }
 
     #region Center Of Mass Functions
