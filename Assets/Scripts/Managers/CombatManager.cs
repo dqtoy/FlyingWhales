@@ -213,7 +213,7 @@ public class CombatManager : MonoBehaviour {
 				damage = damage * 2;
 			}
 		}
-		lair.AdjustHP (-damage);
+//		lair.AdjustHP (-damage);
 
 		attacker.markAsDead = true;
 	}

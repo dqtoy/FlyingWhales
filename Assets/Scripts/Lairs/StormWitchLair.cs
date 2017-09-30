@@ -15,16 +15,16 @@ public class StormWitchLair : Lair {
         //Create structure
 		this.goStructure = this.hexTile.CreateSpecialStructureOnTile(this.type);
     }
-	public override void EverydayAction (){
-		base.EverydayAction ();
-		if(this.daysCounter >= this.spawnRate){
-			this.daysCounter = 0;
-			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 10){
-				SummonMonster(MONSTER.STORM_WITCH);
-			}
-		}
-	}
+//	public override void EverydayAction (){
+//		base.EverydayAction ();
+//		if(this.daysCounter >= this.spawnRate){
+//			this.daysCounter = 0;
+//			int chance = UnityEngine.Random.Range (0, 100);
+//			if(chance < 10){
+//				SummonMonster(MONSTER.STORM_WITCH);
+//			}
+//		}
+//	}
 	#endregion
 
 	private void SummonWitch(){
