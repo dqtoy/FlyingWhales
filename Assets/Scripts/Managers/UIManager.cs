@@ -220,6 +220,13 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UILabel createKingdomErrorLbl;
     [SerializeField] private UIPopupList createKingdomPopupList;
     [SerializeField] private UIButton createKingdomExecuteBtn;
+    //Choose Citizen Objects
+    [SerializeField] private GameObject chooseCitizenGO;
+    [SerializeField] private UIGrid chooseCitizenGrid;
+    [SerializeField] private UIButton chooseCitizenOkBtn;
+    [SerializeField] private UIButton chooseCitizenCancelBtn;
+    [SerializeField] private GameObject chooseCitizenSelectedGO;
+    [SerializeField] private UILabel chooseCitizenInstructionLbl;
 
     [Space(10)]
     [Header("Minimap")]
@@ -906,7 +913,7 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < currentlyShowingCitizen.city.kingdom.cities.Count; i++) {
 			GameObject governorGO = InstantiateUIObject(characterPortraitPrefab.name, governorsRelationshipGrid.transform);
 			governorGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.city.kingdom.cities[i].governor, true);
-			governorGO.GetComponent<CharacterPortrait>().DisableHover();
+			governorGO.GetComponent<CharacterPortrait>().SetHoverEnabled(false);
 			governorGO.transform.localScale = new Vector3(1.5f, 1.5f, 0);
 			governorGO.GetComponent<CharacterPortrait>().ShowRelationshipLine();
 //			governorGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
@@ -2373,7 +2380,6 @@ public class UIManager : MonoBehaviour {
             ShowInterveneLycanthropyEvent();
         }
     }
-
     private void ShowInterveneLycanthropyEvent() {
         int numOfCitizensToChooseFrom = 5;
         List<Citizen> allGovernors = KingdomManager.Instance.GetAllCitizensOfType(ROLE.GOVERNOR);
@@ -2420,12 +2426,11 @@ public class UIManager : MonoBehaviour {
         }
 
         if (activePortraits.Count > 0) {
-            SelectCitizenForLycanthropy(activePortraits.FirstOrDefault().citizen);
+            SelectCitizenForLycanthropy(activePortraits.FirstOrDefault().citizen, activePortraits.FirstOrDefault());
         }
         lycanthropyMenuGO.SetActive(true);
     }
-
-    private void SelectCitizenForLycanthropy(Citizen citizen) {
+    private void SelectCitizenForLycanthropy(Citizen citizen, CharacterPortrait clickedPortrait) {
         lycanthropySelectedCitizen = citizen;
         ShowCitizenInfo(citizen);
         CharacterPortrait charPortraitOfCitizen = null;
@@ -2442,7 +2447,6 @@ public class UIManager : MonoBehaviour {
         lycanthropySelectedGO.transform.localPosition = Vector3.zero;
         lycanthropySelectedGO.SetActive(true);
     }
-
     public void StartLycanthropyEvent() {
         Lycanthropy newLycanthropy = new Lycanthropy(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, lycanthropySelectedCitizen);
         HideLycanthropyMenu();
@@ -2452,7 +2456,6 @@ public class UIManager : MonoBehaviour {
         }
         
     }
-
     public void HideLycanthropyMenu() {
         lycanthropyMenuGO.SetActive(false);
     }
@@ -2479,7 +2482,6 @@ public class UIManager : MonoBehaviour {
             ShowInterveneEvilIntentEvent();
         }
     }
-
     private void ShowInterveneEvilIntentEvent() {
         evilIntentSelectedSourceKing = null;
         evilIntentSelectedTargetKing = null;
@@ -2518,7 +2520,6 @@ public class UIManager : MonoBehaviour {
 
         evilIntentMenuGO.SetActive(true);
     }
-
     private void LoadEvilIntentTargetChoices() {
         List<Citizen> allOtherKings = evilIntentSelectedSourceKing.city.kingdom.discoveredKingdoms.Select(x => x.king).Where(x => x.id != evilIntentSelectedSourceKing.id).ToList();
         List<CharacterPortrait> portraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(evilIntentMenuTargetKingGrid.gameObject).ToList();
@@ -2550,8 +2551,7 @@ public class UIManager : MonoBehaviour {
 
         evilIntentTargetKingParentGO.SetActive(true);
     }
-
-    private void SelectSourceKingForEvilIntent(Citizen citizen) {
+    private void SelectSourceKingForEvilIntent(Citizen citizen, CharacterPortrait portraitClicked) {
         evilIntentSelectedTargetKing = null;
         evilIntentSelectedTargetKingGO.SetActive(false);
         startEvilIntentBtn.GetComponent<BoxCollider>().enabled = false;
@@ -2573,8 +2573,7 @@ public class UIManager : MonoBehaviour {
         evilIntentSelectedSourceKingGO.SetActive(true);
         LoadEvilIntentTargetChoices();
     }
-
-    private void SelectTargetKingForEvilIntent(Citizen citizen) {
+    private void SelectTargetKingForEvilIntent(Citizen citizen, CharacterPortrait clickedPortrait) {
         startEvilIntentBtn.GetComponent<BoxCollider>().enabled = true;
         startEvilIntentBtn.SetState(UIButtonColor.State.Normal, true);
 
@@ -2596,7 +2595,6 @@ public class UIManager : MonoBehaviour {
 
         evilIntentTargetKingParentGO.SetActive(true);
     }
-
     public void StartEvilIntentEvent() {
         EvilIntent newEvilIntent = new EvilIntent(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, evilIntentSelectedSourceKing, evilIntentSelectedTargetKing);
         HideEvilIntentMenu();
@@ -2605,11 +2603,112 @@ public class UIManager : MonoBehaviour {
             ShowCitizenInfo(currentlyShowingCitizen);
         }
     }
-
     public void HideEvilIntentMenu() {
         evilIntentMenuGO.SetActive(false);
     }
     #endregion
 
+    #region Incurable Disease
+    [Space(10)]
+    [Header("Incurable Disease")]
+    [SerializeField] private ButtonToggle incurableDiseaseBtn;
+    public void ToggleChooseCitizensForIncurableDisease() {
+        if (chooseCitizenGO.activeSelf) {
+            HideChooseCitizenMenu();
+        } else {
+            List<Citizen> kingsToChooseFrom = new List<Citizen>(KingdomManager.Instance.GetAllKings().Where(x => !x.statusEffects.Contains(STATUS_EFFECTS.INCURABLE_DISEASE)));
+            ShowChooseCitizenMenu(kingsToChooseFrom, InfectChosenCitizenWithIncurableDisease, "Choose a Citizen to Infect");
+            onHideChooseCitizenMenu += incurableDiseaseBtn.SetAsUnClicked;
+            //select default
+            if (chooseCitizenGrid.GetChildList().Count > 0) {
+                CharacterPortrait defaultPortrait = chooseCitizenGrid.GetChild(0).GetComponent<CharacterPortrait>();
+                ChooseCitizen(defaultPortrait.citizen, defaultPortrait);
+            } else {
+                EnableUIButton(chooseCitizenOkBtn, false);
+                chooseCitizenSelectedGO.SetActive(false);
+            }
+            
+        }
+    }
+    private void InfectChosenCitizenWithIncurableDisease() {
+        currentChosenCitizen.AddStatusEffect(STATUS_EFFECTS.INCURABLE_DISEASE);
+        HideChooseCitizenMenu();
+        //UpdateChooseCitizensMenuForIncurableDisease();
+    }
+    internal void UpdateChooseCitizensMenuForIncurableDisease() {
+        if(chooseCitizenGO.activeSelf && incurableDiseaseBtn.isClicked) {
+            List<Citizen> kingsToChooseFrom = new List<Citizen>(KingdomManager.Instance.GetAllKings().Where(x => !x.statusEffects.Contains(STATUS_EFFECTS.INCURABLE_DISEASE)));
+            ShowChooseCitizenMenu(kingsToChooseFrom, InfectChosenCitizenWithIncurableDisease, "Choose a Citizen to Infect");
+        }
+    }
+    #endregion
+
+    #region Choose Citizen Menu
+    private delegate void OnHideChooseCitizenMenu();
+    private OnHideChooseCitizenMenu onHideChooseCitizenMenu;
+    private Citizen currentChosenCitizen;
+    private CharacterPortrait chosenPortrait;
+    private void ShowChooseCitizenMenu(List<Citizen> citizensToChooseFrom, EventDelegate.Callback OnClick, string instructions = "Choose a citizen") {
+        chooseCitizenInstructionLbl.text = instructions;
+        CharacterPortrait[] presentPortraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(chooseCitizenGrid.gameObject);
+        int nextIndex = 0;
+        for (int i = 0; i < presentPortraits.Length; i++) {
+            CharacterPortrait currPortrait = presentPortraits[i];
+            Citizen citizenToShow = citizensToChooseFrom.ElementAtOrDefault(i);
+            if(citizenToShow == null) {
+                currPortrait.gameObject.SetActive(false);
+            } else {
+                currPortrait.SetCitizen(citizenToShow, false, false, true);
+                currPortrait.onClickCharacterPortrait = null;
+                currPortrait.onClickCharacterPortrait += ChooseCitizen;
+                currPortrait.gameObject.SetActive(true);
+            }
+            nextIndex = i + 1;
+        }
+        for (int i = nextIndex; i < citizensToChooseFrom.Count; i++) {
+            Citizen citizenToShow = citizensToChooseFrom[i];
+            GameObject portraitGO = InstantiateUIObject(characterPortraitPrefab.name, this.transform);
+            CharacterPortrait portrait = portraitGO.GetComponent<CharacterPortrait>();
+            portrait.SetCitizen(citizenToShow, false, false, true);
+            portrait.onClickCharacterPortrait = null;
+            portrait.onClickCharacterPortrait += ChooseCitizen;
+            portraitGO.transform.localScale = Vector3.one;
+            chooseCitizenGrid.AddChild(portraitGO.transform);
+            chooseCitizenGrid.Reposition();
+        }
+        chooseCitizenOkBtn.onClick.Clear();
+        EventDelegate.Set(chooseCitizenOkBtn.onClick, delegate () { OnClick(); });
+        chooseCitizenGO.SetActive(true);
+    }
+    public void HideChooseCitizenMenu() {
+        currentChosenCitizen = null;
+        chooseCitizenGO.SetActive(false);
+        chooseCitizenOkBtn.onClick.Clear();
+        if(onHideChooseCitizenMenu != null) {
+            onHideChooseCitizenMenu();
+        }
+        onHideChooseCitizenMenu = null;
+    }
+    private void ChooseCitizen(Citizen citizen, CharacterPortrait clickedPortrait) {
+        chooseCitizenSelectedGO.transform.SetParent(clickedPortrait.transform);
+        chooseCitizenSelectedGO.transform.localPosition = Vector3.zero;
+        //chooseCitizenSelectedGO.transform.SetParent(chooseCitizenGO.transform);
+        chooseCitizenSelectedGO.SetActive(true);
+        currentChosenCitizen = citizen;
+        chosenPortrait = clickedPortrait;
+        EnableUIButton(chooseCitizenOkBtn, true);
+    }
+    #endregion
+
+    #endregion
+
+    #region UI Utilities
+    private void EnableUIButton(UIButton btn, bool state) {
+        if (state) {
+            btn.GetComponent<BoxCollider>().enabled = true;
+        } else {
+            btn.GetComponent<BoxCollider>().enabled = false;
+        }
+    }
     #endregion
 }

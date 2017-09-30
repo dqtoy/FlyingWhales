@@ -330,6 +330,14 @@ public class KingdomManager : MonoBehaviour {
         return kingdomsOfRace;
     }
 
+    public List<Citizen> GetAllKings() {
+        List<Citizen> kings = new List<Citizen>();
+        for (int i = 0; i < allKingdoms.Count; i++) {
+            kings.Add(allKingdoms[i].king);
+        }
+        return kings;
+    }
+
 	internal void InstantWarBetweenKingdoms(Kingdom sourceKingdom, Kingdom targetKingdom, WAR_TRIGGER warTrigger, GameEvent gameEventTrigger = null){
 		KingdomRelationship relationship = sourceKingdom.GetRelationshipWithKingdom (targetKingdom);
 		if (relationship.war == null) {

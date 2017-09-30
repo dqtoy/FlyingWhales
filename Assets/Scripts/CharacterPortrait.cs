@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CharacterPortrait : MonoBehaviour {
 
-	public delegate void OnClickCharacterPortrait(Citizen citizenClicked);
+	public delegate void OnClickCharacterPortrait(Citizen citizenClicked, CharacterPortrait portraitClicked);
 	public OnClickCharacterPortrait onClickCharacterPortrait;
 
 	public delegate void OnHoverCharacterPortrait ();
@@ -29,11 +29,17 @@ public class CharacterPortrait : MonoBehaviour {
     [SerializeField] private UILabel kingdomThreatLvlLbl;
     [SerializeField] private UILabel invasionValueLbl;
 
+    [Space(10)]
+    [Header("Deatiled Character Info")]
+    [SerializeField] private GameObject detailedCharacterInfoGO;
+    [SerializeField] private UILabel detailedCharacterInfoNameLbl;
+    [SerializeField] private UILabel detailedCharacterInfoOtherLbl;
+
     public Citizen citizen;
 	private bool isHoverEnabled = true;
 	private bool isHovering = false;
 
-	public void SetCitizen(Citizen citizen, bool showFlag = false, bool showInfo = false){
+	public void SetCitizen(Citizen citizen, bool showFlag = false, bool showInfo = false, bool showDetailedInfo = false){
 		this.citizen = citizen;
 		if (this.citizen.city != null) {
 			this.kingdomColorGO.color = this.citizen.city.kingdom.kingdomColor;
@@ -52,8 +58,14 @@ public class CharacterPortrait : MonoBehaviour {
 		}
 
 		if (showInfo) {
+            HideDetailedCharacterInfo();
 			ShowCitizenInfo();
 		}
+
+        if (showDetailedInfo) {
+            HideCitizenInfo();
+            ShowDetailedCharacterInfo();
+        }
 
 
 	}
@@ -62,11 +74,33 @@ public class CharacterPortrait : MonoBehaviour {
 		characterNameLbl.text = this.citizen.name;
 		characterKingdomNameLbl.text = this.citizen.city.kingdom.name;
 		characterInfoGO.SetActive(true);
-        this.DisableHover();
+        this.SetHoverEnabled(false);
 	}
 
-	public void DisableHover(){
-		isHoverEnabled = false;
+    private void HideCitizenInfo() {
+        characterInfoGO.SetActive(false);
+        this.SetHoverEnabled(true);
+    }
+
+    public void ShowDetailedCharacterInfo() {
+        detailedCharacterInfoNameLbl.text = this.citizen.name;
+        detailedCharacterInfoOtherLbl.text = this.citizen.age.ToString() + "\n"
+                                            + Utilities.NormalizeString(this.citizen.preferredKingdomType.ToString()) + "\n"
+                                            + this.citizen.city.kingdom.name;
+        //"[b]Age: [/b]" + this.citizen.age.ToString() + "\n"
+        //+ "[b]Kingdom Type: [/b]" + Utilities.NormalizeString(this.citizen.preferredKingdomType.ToString()) + "\n"
+        //+ "[b]Kingdom: [/b]" + this.citizen.city.kingdom.name;
+        detailedCharacterInfoGO.SetActive(true);
+        this.SetHoverEnabled(false);
+    }
+
+    public void HideDetailedCharacterInfo() {
+        detailedCharacterInfoGO.SetActive(false);
+        this.SetHoverEnabled(true);
+    }
+
+    public void SetHoverEnabled(bool state){
+		isHoverEnabled = state;
 	}
 
 	public void ShowRelationshipLine(KingdomRelationship relationship1 = null, KingdomRelationship relationship2 = null){
@@ -125,7 +159,7 @@ public class CharacterPortrait : MonoBehaviour {
 		}
 	}
 
-	void OnClick(){
+	public void OnClick(){
 		if (onClickCharacterPortrait == null) {
 //			if (citizen.father == null || citizen.mother == null) {
 //				Debug.Log (citizen.name + " doesn't have a father or a mother, not showing info");
@@ -133,7 +167,7 @@ public class CharacterPortrait : MonoBehaviour {
 //			}
 			UIManager.Instance.ShowCitizenInfo (citizen);
 		} else {
-			onClickCharacterPortrait(this.citizen);
+			onClickCharacterPortrait(this.citizen, this);
 		}
 	}
 

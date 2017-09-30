@@ -38,5 +38,13 @@ public class ButtonToggle : MonoBehaviour {
 		}
 	}
 
+    public void SetAsClicked() {
+        SetClickState(true);
+    }
+
+    public void SetAsUnClicked() {
+        SetClickState(false);
+    }
+
 
 }
