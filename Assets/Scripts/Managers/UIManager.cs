@@ -2093,6 +2093,7 @@ public class UIManager : MonoBehaviour {
 
     public void ToggleBorders() {
         CameraMove.Instance.ToggleMainCameraLayer("Borders");
+        CameraMove.Instance.ToggleMainCameraLayer("MinimapAndHextiles");
     }
 
 	public void ToggleResourceIcons(){

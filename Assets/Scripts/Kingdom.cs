@@ -166,7 +166,7 @@ public class Kingdom{
 		get { return this._mainThreat; }
 	}
     public int prestige {
-        get { return Mathf.Min( _prestige, KingdomManager.Instance.maxPrestige); }
+        get { return _prestige; }
     }
     public int cityCap {
         get { return Mathf.FloorToInt(prestige / GridMap.Instance.numOfRegions); }
@@ -997,13 +997,13 @@ public class Kingdom{
     #region Prestige
     internal void AdjustPrestige(int adjustment) {
         _prestige += adjustment;
-        _prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
+        //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
 		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void SetPrestige(int adjustment) {
         _prestige = adjustment;
-        _prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
+        //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
         CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
