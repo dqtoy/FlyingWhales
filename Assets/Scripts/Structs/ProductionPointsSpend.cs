@@ -5,11 +5,11 @@ using System.Collections;
 public struct ProductionPointsSpend  {
 	public int power;
 	public int defense;
-	public int happiness;
+	public int stability;
 
-	public ProductionPointsSpend(int power, int defense, int happiness){
+	public ProductionPointsSpend(int power, int defense, int stability){
 		this.power = power;
 		this.defense = defense;
-		this.happiness = happiness;
+		this.stability = stability;
 	}
 }

@@ -1132,7 +1132,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
         text += "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
         "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
-        "\n [b]Happiness Points:[/b] " + this.city.happinessPoints.ToString() +
+        "\n [b]Stability Points:[/b] " + this.city.stabilityPoints.ToString() +
         "\n [b]City Power:[/b] " + this.city.power.ToString() +
         "\n [b]City Defense:[/b] " + this.city.defense.ToString() +
         "\n [b]Kingdom Base Power:[/b] " + this.city.kingdom.basePower.ToString() +

@@ -32,7 +32,7 @@ public class AltarOfBlessing : GameEvent {
 		if(chance < 10){
 			IncreaseTechLevel(kingdom);
 		}else if(chance >= 10 && chance < 30){
-			IncreaseHappiness(kingdom);
+			IncreaseStability(kingdom);
 		}else{
 			LevelUpCity(kingdom);
 		}
@@ -49,9 +49,9 @@ public class AltarOfBlessing : GameEvent {
         //    UIManager.Instance.ShowNotification(newLog);
         //}
     }
-	private void IncreaseHappiness(Kingdom kingdom){
+	private void IncreaseStability(Kingdom kingdom){
 		Debug.Log("ALTAR: REDUCE UNREST");
-		kingdom.AdjustHappiness(50);
+		kingdom.AdjustStability(50);
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "AltarOfBlessing", "reduce_unrest");
         newLog.AddToFillers(kingdom, kingdom.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //if (UIManager.Instance.currentlyShowingKingdom.id == kingdom.id) {

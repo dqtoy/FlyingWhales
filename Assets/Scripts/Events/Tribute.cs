@@ -51,8 +51,8 @@ public class Tribute : GameEvent {
 		}
 	}
 	private void GiveTribute(){
-		this.startedByKingdom.AdjustHappiness (-5);
-		this.targetKingdom.AdjustHappiness (5);
+		this.startedByKingdom.AdjustStability (-5);
+		this.targetKingdom.AdjustStability (5);
 		this.targetKingdom.AdjustPrestige (15);
 
 		KingdomRelationship relationship = this.targetKingdom.GetRelationshipWithKingdom (this.startedByKingdom);

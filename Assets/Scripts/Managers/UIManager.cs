@@ -489,7 +489,7 @@ public class UIManager : MonoBehaviour {
         kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king); //King
         kingdomPrestigeLbl.text = currentlyShowingKingdom.prestige.ToString();
         kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
-        kingdomUnrestLbl.text = currentlyShowingKingdom.happiness.ToString(); //Unrest
+        kingdomUnrestLbl.text = currentlyShowingKingdom.stability.ToString(); //Unrest
 		kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
 		kingdomTechMeter.value = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
 		this.militarizingGO.SetActive (currentlyShowingKingdom.isMilitarize);
@@ -2229,14 +2229,14 @@ public class UIManager : MonoBehaviour {
 			this.unrestGO.SetActive (false);
 		} else {
 			if(this.currentlyShowingKingdom != null){
-				this.unrestInput.value = this.currentlyShowingKingdom.happiness.ToString();
+				this.unrestInput.value = this.currentlyShowingKingdom.stability.ToString();
 				this.unrestGO.SetActive (true);
 			}
 		}
 	}
 	public void OnChangeUnrest(){
 		if(this.currentlyShowingKingdom != null){
-			this.currentlyShowingKingdom.ChangeHappiness(int.Parse(this.unrestInput.value));
+			this.currentlyShowingKingdom.ChangeStability(int.Parse(this.unrestInput.value));
             UpdateKingdomInfo();
 		}
 	}

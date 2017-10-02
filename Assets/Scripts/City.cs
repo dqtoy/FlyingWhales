@@ -32,7 +32,7 @@ public class City{
     //Balance of Power
     private int _powerPoints;
     private int _defensePoints;
-    private int _happinessPoints;
+    private int _stabilityPoints;
     private int _power;
     private int _defense;
 
@@ -58,7 +58,7 @@ public class City{
 	protected const int HP_INCREASE = 5;
 	private int increaseHpInterval = 0;
 
-	private int _bonusHappiness;
+	private int _bonusStability;
 
 	#region getters/setters
     internal Region region {
@@ -91,8 +91,8 @@ public class City{
     public int defensePoints {
         get { return _defensePoints; }
     }
-    public int happinessPoints {
-        get { return _happinessPoints; }
+    public int stabilityPoints {
+        get { return _stabilityPoints; }
     }
     public int power {
         get { return _power; }
@@ -122,8 +122,8 @@ public class City{
     public List<HexTile> ownedTiles {
         get { return this._ownedTiles; }
     }
-	public int bonusHappiness{
-		get { return this._bonusHappiness;}
+	public int bonusStability{
+		get { return this._bonusStability;}
 	}
     internal Dictionary<ROLE, Citizen> importantCitizensInCity {
         get { return _importantCitizensInCity; }
@@ -142,7 +142,7 @@ public class City{
 		this.governor = null;
         this._power = 0;
         this._defense = 0;
-		this._bonusHappiness = 0;
+		this._bonusStability = 0;
 		this._ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<General> ();
 		this.citizens = new List<Citizen>();
@@ -1515,17 +1515,17 @@ public class City{
         _defense = Mathf.Max(_defense, 0);
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
-	internal void AdjustBonusHappiness(int amount){
-		this._bonusHappiness += amount;
+	internal void AdjustBonusStability(int amount){
+		this._bonusStability += amount;
 	}
     internal void IncreaseBOPAttributesEveryMonth() {
 		if (!isDead && this.rebellion == null) {
             int powerIncrease = _powerPoints * 3;
             int defenseIncrease = _defensePoints * 3;
 			
-            int happinessDecrease = (structures.Count * 4);
-            int happinessIncrease = ((_happinessPoints * 2) + this._bonusHappiness) - happinessDecrease;
-            MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref happinessIncrease);
+            int stabilityDecrease = (structures.Count * 4);
+            int stabilityIncrease = ((_stabilityPoints * 2) + this._bonusStability) - stabilityDecrease;
+            MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref stabilityIncrease);
             if (_kingdom.isMilitarize) {
                 //Militarizing converts 15% of all cities Defense to Power.
                 int militarizingGain = Mathf.FloorToInt(defense * 0.15f);
@@ -1544,7 +1544,7 @@ public class City{
                 AdjustPower(powerIncrease);
                 AdjustDefense(defenseIncrease);
             }
-            _kingdom.AdjustHappiness(happinessIncrease);
+            _kingdom.AdjustStability(stabilityIncrease);
             GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
             increaseDueDate.AddMonths(1);
             SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
@@ -1554,18 +1554,18 @@ public class City{
     private void LevelUpBalanceOfPower() {
         _powerPoints += _kingdom.kingdomTypeData.productionPointsSpend.power;
         _defensePoints += _kingdom.kingdomTypeData.productionPointsSpend.defense;
-        _happinessPoints += _kingdom.kingdomTypeData.productionPointsSpend.happiness;
+        _stabilityPoints += _kingdom.kingdomTypeData.productionPointsSpend.stability;
     }
-	internal void MonthlyResourceBenefits(ref int powerIncrease, ref int defenseIncrease, ref int happinessIncrease){
+	internal void MonthlyResourceBenefits(ref int powerIncrease, ref int defenseIncrease, ref int stabilityIncrease){
 		switch (this._region.specialResource){
 		case RESOURCE.CORN:
-			happinessIncrease += 5;
+			stabilityIncrease += 5;
 			break;
 		case RESOURCE.WHEAT:
-			happinessIncrease += 10;
+			stabilityIncrease += 10;
 			break;
 		case RESOURCE.RICE:
-			happinessIncrease += 15;
+			stabilityIncrease += 15;
 			break;
 		case RESOURCE.OAK:
 			defenseIncrease += 5;

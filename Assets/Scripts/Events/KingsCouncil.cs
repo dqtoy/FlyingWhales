@@ -160,9 +160,9 @@ public class KingsCouncil : GameEvent {
                 currGov.AddEventModifier(5, "King Council Approval", this);
             }
         }
-        //Adjust Kingdom Happiness
+        //Adjust Kingdom Stability
         if (_sourceKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-            _sourceKingdom.AdjustHappiness(3);
+            _sourceKingdom.AdjustStability(3);
         }
         Messenger.AddListener("OnDayEnd", PerformAction);
     }
@@ -179,9 +179,9 @@ public class KingsCouncil : GameEvent {
                 Log councilEndApproveLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "end_approve");
                 councilEndApproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
-                //Adjust kingdom happiness
+                //Adjust kingdom stability
                 if (currKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-                    currKingdom.AdjustHappiness(10);
+                    currKingdom.AdjustStability(10);
                 }
             } else {
                 //disapprove
@@ -189,9 +189,9 @@ public class KingsCouncil : GameEvent {
                 Log councilEndDisapproveLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "end_disapprove");
                 councilEndDisapproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
-                //Adjust kingdom happiness
+                //Adjust kingdom stability
                 if (currKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-                    currKingdom.AdjustHappiness(-10);
+                    currKingdom.AdjustStability(-10);
                 }
             }
         }

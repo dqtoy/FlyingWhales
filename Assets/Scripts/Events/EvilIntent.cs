@@ -326,12 +326,12 @@ public class EvilIntent : GameEvent {
             KeyValuePair<CHARACTER_VALUE, int> priotiyValue = kingdom.importantCharacterValues
                                .FirstOrDefault(x => x.Key == chosenValue || x.Key == oppositeValue);
             if (priotiyValue.Key == chosenValue) {
-                kingdom.AdjustHappiness(10);
+                kingdom.AdjustStability(10);
             } else {
-                kingdom.AdjustHappiness(-10);
+                kingdom.AdjustStability(-10);
             }
         } else {
-            kingdom.AdjustHappiness(-10);
+            kingdom.AdjustStability(-10);
         }
     }
 
