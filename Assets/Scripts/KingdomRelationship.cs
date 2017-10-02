@@ -23,7 +23,7 @@ public class KingdomRelationship {
 	private bool _isAdjacent;
 	private bool _isDiscovered;
 	private bool _isRecentWar;
-	private bool _isPreparingForWar;
+//	private bool _isPreparingForWar;
 	private bool _hasPairedCities;
     private Wars _war;
     private InvasionPlan _invasionPlan;
@@ -78,9 +78,9 @@ public class KingdomRelationship {
     public bool isAtWar {
         get { return _isAtWar; }
     }
-	public bool isPreparingForWar {
-		get { return this._isPreparingForWar; }
-	}
+//	public bool isPreparingForWar {
+//		get { return this._isPreparingForWar; }
+//	}
 	public bool hasPairedCities {
 		get { return this._hasPairedCities; }
 	}
@@ -175,7 +175,7 @@ public class KingdomRelationship {
 		this._isMutualDefenseTreaty = false;
 		this._isAdjacent = false;
 		this._isRecentWar = false;
-		this._isPreparingForWar = false;
+//		this._isPreparingForWar = false;
 		this._hasPairedCities = false;
 		this._isAtWar = false;
 		this._currentExpirationDefenseTreaty = new GameDate (0, 0, 0);
@@ -672,9 +672,9 @@ public class KingdomRelationship {
 			this._isDiscovered = state;
 		}
 	}
-	internal void SetPreparingWar(bool state) {
-		this._isPreparingForWar = state;
-	}
+//	internal void SetPreparingWar(bool state) {
+//		this._isPreparingForWar = state;
+//	}
 	internal void SetHasPairedCities(bool state) {
 		this._hasPairedCities = state;
 	}
@@ -763,7 +763,7 @@ public class KingdomRelationship {
 	internal void ChangeWarStatus(bool state, Warfare warfare){
 		SetWarStatus(state, warfare);
 		if(state){
-			SetPreparingWar (false);
+//			SetPreparingWar (false);
 			this._sourceKingdom.AdjustWarmongerValue (25);
 		}
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);

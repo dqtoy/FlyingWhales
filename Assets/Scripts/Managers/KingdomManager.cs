@@ -455,6 +455,10 @@ public class KingdomManager : MonoBehaviour {
 			newAlliance.AddKingdomInAlliance(firstKingdom);
 			newAlliance.AddKingdomInAlliance(secondKingdom);
 			AddAlliancePool (newAlliance);
+			Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "create_alliance");
+			newLog.AddToFillers (firstKingdom, firstKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (secondKingdom, secondKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+			UIManager.Instance.ShowNotification (newLog);
 			return true;
 		}
 		return false;

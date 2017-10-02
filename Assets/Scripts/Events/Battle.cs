@@ -37,10 +37,10 @@ public class Battle {
 		this._isKingdomsAtWar = this._kr.isAtWar;
 
 		this._kr.ChangeHasPairedCities (true);
-		if(!this._kr.isAtWar){
-			this._kr.SetPreparingWar (true);
-			this._kr.SetWarfare (this._warfare);
-		}
+//		if(!this._kr.isAtWar){
+//			this._kr.SetPreparingWar (true);
+//			this._kr.SetWarfare (this._warfare);
+//		}
 
 		SetAttackerAndDefenderCity(this._kingdom1City, this._kingdom2City);
 		Step1();

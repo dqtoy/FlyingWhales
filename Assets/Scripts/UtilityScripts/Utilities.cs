@@ -958,6 +958,8 @@ public class Utilities : MonoBehaviour {
 		{"107", LOG_IDENTIFIER.CRIME_DETAILS},
 		{"108", LOG_IDENTIFIER.CRIME_PUNISHMENT},
 		{"109", LOG_IDENTIFIER.LAIR_NAME},
+		{"110", LOG_IDENTIFIER.WAR_NAME},
+		{"111", LOG_IDENTIFIER.ALLIANCE_NAME},
 	};
 
     public static EVENT_TYPES[] eventsNotToShow = new EVENT_TYPES[] {

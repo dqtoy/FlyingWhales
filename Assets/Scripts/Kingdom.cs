@@ -297,12 +297,12 @@ public class Kingdom{
 	public int effectiveWeapons{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 2);}
-		get { return this.baseWeapons + (int)(this.baseArmor / 3) + (int)(GetPosAllianceWeapons() / 3);}
+		get { return this.effectiveAttack + (int)(this.effectiveDefense / 3) + (int)(GetPosAllianceWeapons() / 3);}
 	}
 	public int effectiveArmor{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 3) + this._baseDefense + (int)(GetMutualDefenseTreatyPower() / 3);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 3) + this._baseDefense + (int)(this._mutualDefenseTreatyPower / 3);}
-		get { return this.baseArmor + (int)(this.baseWeapons / 3) + (int)(GetPosAllianceArmor() / 3);}
+		get { return this.effectiveDefense + (int)(this.effectiveAttack / 3) + (int)(GetPosAllianceArmor() / 3);}
 	}
 	public int militaryAlliancePower{
 		get { return this._militaryAlliancePower;}
@@ -373,6 +373,20 @@ public class Kingdom{
             return this._kingdomTypeData.populationRates.productionRate;
         }
     }
+	internal int effectiveAttack{
+		get{ 
+			int mySoldiers = this.soldiers;
+			int myWeapons = this.baseWeapons;
+			return (int)((2 * mySoldiers * myWeapons) / (mySoldiers + myWeapons));
+		}
+	}
+	internal int effectiveDefense{
+		get{ 
+			int mySoldiers = this.soldiers;
+			int myArmor = this.baseArmor;
+			return (int)((2 * mySoldiers * myArmor) / (mySoldiers + myArmor));
+		}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -630,7 +644,7 @@ public class Kingdom{
 //        }
 
 		foreach (KingdomRelationship rel in relationships.Values) {
-			if (rel.isAtWar || rel.isPreparingForWar) {
+			if (rel.isAtWar) {
 				rel.ChangeWarStatus (false, null);
 			}
 		}
@@ -2222,7 +2236,7 @@ public class Kingdom{
 	}
 
 	#region Balance of Power
-	internal void Militarize(bool state){
+	internal void Militarize(bool state, bool isAttacking = false){
 		this._isMilitarize = state;
 		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
 			UIManager.Instance.militarizingGO.SetActive (state);
@@ -2236,9 +2250,17 @@ public class Kingdom{
                         kingdom2 = kr.targetKingdom;
                         highestInvasionValue = kr.targetKingdomInvasionValue;
                     }
+					if(kr.isAtWar && isAttacking){
+						kingdom2 = kr.targetKingdom;
+						break;
+					}
                 }
             }
             if (kingdom2 != null) {
+				string militarizeFileName = "militarize";
+				if(isAttacking){
+					militarizeFileName = "militarize_attack";
+				}
                 Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
                 militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
@@ -2246,7 +2268,7 @@ public class Kingdom{
             }
         }
     }
-	internal void Fortify(bool state){
+	internal void Fortify(bool state, bool isUnderAttack = false){
 		this._isFortifying = state;
 		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
 			UIManager.Instance.fortifyingGO.SetActive (state);
@@ -2260,10 +2282,18 @@ public class Kingdom{
                         kingdom2 = kr.targetKingdom;
                         highestKingdomThreat = kr.targetKingdomThreatLevel;
                     }
+					if(kr.isAtWar && isUnderAttack){
+						kingdom2 = kr.targetKingdom;
+						break;
+					}
                 }
             }
             if (kingdom2 != null) {
-                Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "fortify");
+				string fortifyFileName = "fortify";
+				if(isUnderAttack){
+					fortifyFileName = "fortify_under_attack";
+				}
+				Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", fortifyFileName);
                 fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 fortifyLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
                 UIManager.Instance.ShowNotification(fortifyLog, null, false);
@@ -2693,6 +2723,18 @@ public class Kingdom{
     	this._stability += amountToAdjust;
     	this._stability = Mathf.Clamp(this._stability, -100, 100);
 	}
+	internal void AdjustBaseWeapons(int amountToAdjust) {
+		this._baseWeapons += amountToAdjust;
+		if(this._baseWeapons < 0){
+			this._baseWeapons = 0;
+		}
+	}
+	internal void AdjustBaseArmors(int amountToAdjust) {
+		this._baseArmor += amountToAdjust;
+		if(this._baseArmor < 0){
+			this._baseArmor = 0;
+		}
+	}
 	internal void ChangeStability(int newAmount) {
 		this._stability = newAmount;
 		this._stability = Mathf.Clamp (this._stability, -100, 100);
@@ -3016,10 +3058,6 @@ public class Kingdom{
                     Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
                     bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
 					if(hasCreated){
-						Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "create_alliance");
-						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-						newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-						UIManager.Instance.ShowNotification (newLog);
                         string log = name + " has created an alliance with ";
                         for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
                             if(_alliancePool.kingdomsInvolved[j].id != id) {
@@ -3034,12 +3072,8 @@ public class Kingdom{
 					}
 				}else{
                     Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
-                    bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this);
+					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
 					if(hasJoined){
-						Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "join_alliance");
-						newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-						newLog.AddToFillers (kr.targetKingdom, kr.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-						UIManager.Instance.ShowNotification (newLog);
                         string log = name + " has joined an alliance with ";
                         for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
                             if (_alliancePool.kingdomsInvolved[j].id != id) {
@@ -3069,7 +3103,7 @@ public class Kingdom{
 				if(this.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this);
 					if(relationship.totalLike >= 35){
-						posAlliancePower += kingdomInAlliance.baseWeapons;
+						posAlliancePower += kingdomInAlliance.effectiveAttack;
 					}
 				}
 			}
@@ -3092,7 +3126,7 @@ public class Kingdom{
 				if(this.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this);
 					if(relationship.totalLike >= 35){
-						posAllianceDefense += kingdomInAlliance.baseArmor;
+						posAllianceDefense += kingdomInAlliance.effectiveDefense;
 					}
 				}
 			}
@@ -3121,12 +3155,14 @@ public class Kingdom{
 		}
 		return new WarfareInfo(WAR_SIDE.NONE, null);
 	}
-	internal void LeaveAlliance(){
+	internal void LeaveAlliance(bool doNotShowLog = false){
 		if(this.alliancePool != null){
 			this.alliancePool.RemoveKingdomInAlliance(this);
-			Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
-			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-			UIManager.Instance.ShowNotification (newLog);
+			if(!doNotShowLog){
+				Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
+				newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+				UIManager.Instance.ShowNotification (newLog);
+			}
 		}
 	}
 	internal bool IsUnderAttack(){
@@ -3144,5 +3180,76 @@ public class Kingdom{
 			}
 		}
 		return false;
+	}
+	internal string ProvideWeaponsArmorsAidToKingdom(Kingdom kingdomToBeProvided){
+		string weaponsOrArmor = "Weapons";
+		bool isAllyUnderAttack = kingdomToBeProvided.IsUnderAttack ();
+		bool isAllyAttacking = kingdomToBeProvided.IsAttacking ();
+		float transferPercentage = 0.1f;
+		int transferAmount = 0;
+		if(HasWar()){
+			transferPercentage = 0.05f;
+		}
+		if(isAllyUnderAttack && isAllyAttacking){
+			weaponsOrArmor = "Armors";
+		}else{
+			if(isAllyUnderAttack){
+				weaponsOrArmor = "Armors";
+			}
+		}
+
+		if(weaponsOrArmor == "Weapons"){
+			transferAmount = (int)(this.baseWeapons * transferPercentage);
+			this.AdjustBaseWeapons (-transferAmount);
+			kingdomToBeProvided.AdjustBaseWeapons (transferAmount);
+		}else{
+			transferAmount = (int)(this.baseArmor * transferPercentage);
+			this.AdjustBaseArmors (-transferAmount);
+			kingdomToBeProvided.AdjustBaseArmors (transferAmount);
+		}
+
+		return transferAmount.ToString () + " " + weaponsOrArmor;
+	}
+	internal void ShowTransferWeaponsArmorsLog(Kingdom allyKingdom, string amount){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "transfer_weapons_armors");
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (allyKingdom, allyKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (null, amount, LOG_IDENTIFIER.OTHER);
+		UIManager.Instance.ShowNotification (newLog);
+	}
+	internal void ShowJoinWarLog(Kingdom allyKingdom, Warfare warfare){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "join_war");
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
+		newLog.AddToFillers (allyKingdom, allyKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		UIManager.Instance.ShowNotification (newLog);
+	}
+	internal void ShowRefuseAndLeaveAllianceLog(AlliancePool alliance, Warfare warfare){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "refuse_and_leave_alliance");
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
+		newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+		UIManager.Instance.ShowNotification (newLog);
+	}
+	internal void ShowDoNothingLog(Warfare warfare){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "do_nothing_war");
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
+		UIManager.Instance.ShowNotification (newLog);
+	}
+	internal void ShowBetrayalWarLog(Warfare warfare, Kingdom kingdom){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_war");
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
+		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		UIManager.Instance.ShowNotification (newLog);
+	}
+	internal void ShowBetrayalProvideLog(AlliancePool alliance, string logAmount, Kingdom kingdom){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_provide");
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+		newLog.AddToFillers (null, logAmount, LOG_IDENTIFIER.OTHER);
+		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		UIManager.Instance.ShowNotification (newLog);
 	}
 }

@@ -35,7 +35,7 @@ public class AlliancePool {
 		this._id = Utilities.lastAlliancePoolID + 1;
 		Utilities.lastAlliancePoolID = this._id;
 	}
-	internal bool AttemptToJoinAlliance(Kingdom kingdom){
+	internal bool AttemptToJoinAlliance(Kingdom kingdom, Kingdom kingdomInAlliance){
 		bool canBeAccepted = true;
 		for (int i = 0; i < this._kingdomsInvolved.Count; i++) {
 			KingdomRelationship relationshipTo = kingdom.GetRelationshipWithKingdom (this._kingdomsInvolved [i]);
@@ -46,6 +46,10 @@ public class AlliancePool {
 			}
 		}
 		if(canBeAccepted){
+			Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "join_alliance");
+			newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+			newLog.AddToFillers (kingdomInAlliance, kingdomInAlliance.name, LOG_IDENTIFIER.KINGDOM_2);
+			UIManager.Instance.ShowNotification (newLog);
 			AddKingdomInAlliance (kingdom);
 		}
 		return canBeAccepted;
