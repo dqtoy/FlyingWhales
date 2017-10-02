@@ -2852,6 +2852,10 @@ public class Kingdom{
             totalWeaponsIncrease -= fortifyingGain;
             Fortify(false);
         }
+        //overpopulation reduces Stability by 1 point per 5% of Overpopulation each month
+        int overpopulation = GetOverpopulationPercentage();
+        totalStabilityIncrease -= overpopulation / 5;
+
         AdjustBaseWeapons(totalWeaponsIncrease);
         AdjustBaseArmor(totalArmorIncrease);
         AdjustStability(totalStabilityIncrease);
@@ -2878,6 +2882,9 @@ public class Kingdom{
                 currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
             }
         }
+        //overpopulation reduces Stability by 1 point per 5% of Overpopulation each month
+        int overpopulation = GetOverpopulationPercentage();
+        totalStabilityIncrease -= overpopulation / 5;
         return totalStabilityIncrease;
     }
     private int GetStabilityContributionFromCitizens() {
@@ -2962,7 +2969,7 @@ public class Kingdom{
     internal int GetPopulationCapacity() {
         int populationCapacity = 0;
         for (int i = 0; i < cities.Count; i++) {
-            populationCapacity += 50 + (5 * cities[i].cityLevel);
+            populationCapacity += 100 + (10 * cities[i].cityLevel);
         }
         return populationCapacity;
     }
@@ -2983,6 +2990,12 @@ public class Kingdom{
     }
     internal void AdjustPopulation(int adjustment) {
         _population += adjustment;
+        if(_population <= 0) {
+            //if at any time population is reduced to 0, the Kingdom will cease to exist and all his cities will be destroyed
+            foreach (City city in cities) {
+                city.KillCity();
+            }
+        }
     }
     #endregion
 
