@@ -289,10 +289,10 @@ public class Kingdom{
 		get { return this._doneEvents;}
 	}
 	public int baseWeapons{
-		get { return this.GetBaseWeapons();}
+		get { return _baseWeapons;}
 	}
 	public int baseArmor{
-		get { return this.GetBaseArmor();}
+		get { return _baseArmor;}
 	}
 	public int effectiveWeapons{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
@@ -451,7 +451,10 @@ public class Kingdom{
         //		AdjustPrestige(500);
 
 
+        AdjustPopulation(25);
         AdjustStability(50);
+        AdjustBaseWeapons(25);
+        AdjustBaseArmor(25);
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
@@ -470,11 +473,12 @@ public class Kingdom{
         this.basicResource = Utilities.GetBasicResourceForRace(race);
 
 		Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
-		Messenger.AddListener("OnDayEnd", KingdomTickActions);
+		//Messenger.AddListener("OnDayEnd", KingdomTickActions);
         Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
 		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
-		//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
+        //SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
         SchedulingManager.Instance.AddEntry(GameManager.Instance.month, 1, GameManager.Instance.year, () => IncreasePopulationEveryMonth());
@@ -596,7 +600,7 @@ public class Kingdom{
 		}
       	ResolveWars();
         Messenger.RemoveListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
-        Messenger.RemoveListener("OnDayEnd", KingdomTickActions);
+        //Messenger.RemoveListener("OnDayEnd", KingdomTickActions);
         Messenger.RemoveListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
         Messenger.Broadcast<Kingdom>("OnKingdomDied", this);
@@ -933,13 +937,13 @@ public class Kingdom{
 	 * This function is listening to the onWeekEnd Event. Put functions that you want to
 	 * happen every tick here.
 	 * */
-	protected void KingdomTickActions(){
-        //if (_isGrowthEnabled) {
-        //    this.AttemptToExpand();
-        //}
-		this.IncreaseTechCounterPerTick();
-        //this.TriggerEvents();
-    }
+	//protected void KingdomTickActions(){
+ //       //if (_isGrowthEnabled) {
+ //       //    this.AttemptToExpand();
+ //       //}
+	//	this.IncreaseTechCounterPerTick();
+ //       //this.TriggerEvents();
+ //   }
     private void AdaptToKingValues() {
 		if(!this.isDead){
 			for (int i = 0; i < _dictCharacterValues.Count; i++) {
@@ -1598,23 +1602,27 @@ public class Kingdom{
     #endregion
 
     #region Tech
-    private void IncreaseTechCounterPerTick(){
-		if(!this._isTechProducing){
-			return;
-		}
-		int amount = this.cities.Count + GetTechContributionFromCitizens();
-//		int bonus = 0;
-//        for (int i = 0; i < this._availableResources.Count; i++) {
-//            RESOURCE currResource = this._availableResources.Keys.ElementAt(i);
-//			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
-//            if(resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
-//                bonus += (int)Utilities.resourceBenefits[currResource][resourceBenefit];
-//            }
-//        }
-//		amount += bonus;
-		amount = (int)(amount * this._techProductionPercentage);
-		this.AdjustTechCounter (amount);
-	}
+ //   private void IncreaseTechCounterPerTick(){
+	//	if(!this._isTechProducing){
+	//		return;
+	//	}
+	//	int amount = this.cities.Count + GetTechContributionFromCitizens();
+	//	amount = (int)(amount * this._techProductionPercentage);
+	//	this.AdjustTechCounter (amount);
+	//}
+    internal int GetMonthlyTechGain() {
+        int monthlyTechGain = GetTechContributionFromCitizens();
+        for (int i = 0; i < cities.Count; i++) {
+            City currCity = cities[i];
+            if (!currCity.isDead && currCity.rebellion == null) {
+                monthlyTechGain += currCity.techPoints * 2;
+            }
+        }
+        //Tech Gains
+        monthlyTechGain = ((2 * scientists * monthlyTechGain) / (scientists + monthlyTechGain));
+        monthlyTechGain = Mathf.FloorToInt(monthlyTechGain * techProductionPercentage);
+        return monthlyTechGain;
+    }
     internal int GetTechContributionFromCitizens() {
         int techContributionsFromCitizens = 0;
         techContributionsFromCitizens += king.GetTechContribution();
@@ -2675,20 +2683,6 @@ public class Kingdom{
 			relationship.ChangeMilitaryAlliance (false);
 		}
 	}
-    internal int GetBaseWeapons() {
-        int baseWeapons = 0;
-        for (int i = 0; i < cities.Count; i++) {
-            baseWeapons += cities[i].weapons;
-        }
-        return baseWeapons;
-    }
-    internal int GetBaseArmor() {
-        int baseArmor = 0;
-        for (int i = 0; i < cities.Count; i++) {
-            baseArmor += cities[i].armor;
-        }
-        return baseArmor;
-    }
 	internal void AdjustStability(int amountToAdjust) {
     	this._stability += amountToAdjust;
     	this._stability = Mathf.Clamp(this._stability, -100, 100);
@@ -2844,6 +2838,67 @@ public class Kingdom{
 		} 
 		return false;
 	}
+
+    private void IncreaseBOPAttributesPerMonth() {
+        int totalWeaponsIncrease = 0;
+        int totalArmorIncrease = 0;
+        int totalTechIncrease = GetTechContributionFromCitizens();
+        int totalStabilityIncrease = GetStabilityContributionFromCitizens();
+        //Kings and Governors provide monthly Stability gains based on their Efficiency trait.  This is reduced by the Kingdom's Draft Rate.
+        totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
+        for (int i = 0; i < cities.Count; i++) {
+            City currCity = cities[i];
+            if (!currCity.isDead && currCity.rebellion == null) {
+                int weaponsContribution = currCity.powerPoints * 3;
+                int armorContribution = currCity.defensePoints * 3;
+                int techContribution = currCity.techPoints * 2;
+                currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
+                totalWeaponsIncrease += weaponsContribution;
+                totalArmorIncrease += armorContribution;
+            }
+        }
+        if (isMilitarize) {
+            //Militarizing converts 15% of all cities Defense to Power.
+            int militarizingGain = Mathf.FloorToInt(baseArmor * 0.15f);
+            totalWeaponsIncrease += militarizingGain;
+            totalArmorIncrease -= militarizingGain;
+            Militarize(false);
+        } else if (isFortifying) {
+            //Fortifying converts 15% of all cities Power to Defense.
+            int fortifyingGain = Mathf.FloorToInt(baseWeapons * 0.15f);
+            totalArmorIncrease += fortifyingGain;
+            totalWeaponsIncrease -= fortifyingGain;
+            Fortify(false);
+        }
+        AdjustBaseWeapons(totalWeaponsIncrease);
+        AdjustBaseArmor(totalArmorIncrease);
+        AdjustStability(totalStabilityIncrease);
+
+        //Tech Gains
+        totalTechIncrease = ((2 * scientists * totalTechIncrease) / (scientists + totalTechIncrease));
+        totalTechIncrease = Mathf.FloorToInt(totalTechIncrease * techProductionPercentage);
+        AdjustTechCounter(totalTechIncrease);
+
+        //Reschedule event
+        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        dueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseBOPAttributesPerMonth());
+
+    }
+    private int GetStabilityContributionFromCitizens() {
+        int stabilityContributionsFromCitizens = 0;
+        stabilityContributionsFromCitizens += king.GetStabilityContribution();
+        for (int i = 0; i < cities.Count; i++) {
+            stabilityContributionsFromCitizens += cities[i].governor.GetStabilityContribution();
+        }
+        return stabilityContributionsFromCitizens;
+    }
+    internal void AdjustBaseWeapons(int adjustment) {
+        _baseWeapons += adjustment;
+    }
+    internal void AdjustBaseArmor(int adjustment) {
+        _baseArmor += adjustment;
+    }
     #endregion
 
     #region Adjacency
@@ -2926,10 +2981,13 @@ public class Kingdom{
         return populationGrowth - populationGrowthReduction;
     }
     private void IncreasePopulationEveryMonth() {
-        _population += GetPopulationGrowth();
+        AdjustPopulation(GetPopulationGrowth());
         GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
         dueDate.AddMonths(1);
         SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreasePopulationEveryMonth());
+    }
+    internal void AdjustPopulation(int adjustment) {
+        _population += adjustment;
     }
     #endregion
 

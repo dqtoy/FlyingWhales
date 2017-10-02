@@ -12,7 +12,7 @@ public class HoverStability : MonoBehaviour {
 //				int totalStructures = 0;
 				int stability = 0;
 				for (int i = 0; i < kingdom.cities.Count; i++) {
-					int stabilityIncrease = (kingdom.cities [i].stabilityPoints * 2) + kingdom.cities [i].bonusStability;
+					int stabilityIncrease = (kingdom.cities [i].techPoints * 2) + kingdom.cities [i].bonusStability;
 					int stabilityDecrease = (kingdom.cities [i].structures.Count * 3);
 					stability += (stabilityIncrease - stabilityDecrease);
 //					stabilityPoints += kingdom.cities [i].stabilityPoints;

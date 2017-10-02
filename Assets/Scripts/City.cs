@@ -32,7 +32,7 @@ public class City{
     //Balance of Power
     private int _powerPoints;
     private int _defensePoints;
-    private int _stabilityPoints;
+    private int _techPoints;
     private int _weapons;
     private int _armor;
 
@@ -91,8 +91,8 @@ public class City{
     public int defensePoints {
         get { return _defensePoints; }
     }
-    public int stabilityPoints {
-        get { return _stabilityPoints; }
+    public int techPoints {
+        get { return _techPoints; }
     }
     public int weapons {
         get { return _weapons; }
@@ -186,7 +186,7 @@ public class City{
     internal void SetupInitialValues() {
         hexTile.CheckLairsInRange();
         LevelUpBalanceOfPower();
-        AdjustArmor(50);
+        //AdjustArmor(50);
         SetProductionGrowthPercentage(1f);
         DailyGrowthResourceBenefits();
         AddOneTimeResourceBenefits();
@@ -194,7 +194,6 @@ public class City{
         Messenger.AddListener("CitizenDied", CheckCityDeath);
         GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
         increaseDueDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
     }
 
 	/*
@@ -1490,7 +1489,9 @@ public class City{
 	internal void SetDefensePoints(int defensePoints) {
 		this._defensePoints = defensePoints;
 	}
-
+    internal void AdjustTechPoints(int techPoints) {
+        _techPoints += techPoints;
+    }
     internal void SetWeapons(int newPower) {
         //_kingdom.AdjustBasePower(-_power);
         _weapons = 0;
@@ -1515,48 +1516,49 @@ public class City{
         _armor = Mathf.Max(_armor, 0);
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
-	internal void AdjustBonusStability(int amount){
-		this._bonusStability += amount;
-	}
-    internal void IncreaseBOPAttributesEveryMonth() {
-		if (!isDead && this.rebellion == null) {
-            int powerIncrease = _powerPoints * 3;
-            int defenseIncrease = _defensePoints * 3;
-			
-            int stabilityDecrease = (structures.Count * 4);
-            int stabilityIncrease = ((_stabilityPoints * 2) + this._bonusStability) - stabilityDecrease;
-            MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref stabilityIncrease);
-            if (_kingdom.isMilitarize) {
-                //Militarizing converts 15% of all cities Defense to Power.
-                int militarizingGain = Mathf.FloorToInt(armor * 0.15f);
-                powerIncrease += militarizingGain;
-                AdjustWeapons(powerIncrease);
-                AdjustArmor(defenseIncrease - militarizingGain);
-                _kingdom.Militarize(false);
-            } else if (_kingdom.isFortifying) {
-                //Fortifying converts 15% of all cities Power to Defense.
-                int fortifyingGain = Mathf.FloorToInt(weapons * 0.15f);
-                defenseIncrease += fortifyingGain;
-                AdjustWeapons(powerIncrease - fortifyingGain);
-                AdjustArmor(defenseIncrease);
-                _kingdom.Fortify(false);
-            } else {
-                AdjustWeapons(powerIncrease);
-                AdjustArmor(defenseIncrease);
-            }
-            _kingdom.AdjustStability(stabilityIncrease);
-            GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-            increaseDueDate.AddMonths(1);
-            SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
-        }
-    }
+	//internal void AdjustBonusStability(int amount){
+	//	this._bonusStability += amount;
+	//}
+  //  internal void IncreaseBOPAttributesEveryMonth() {
+		//if (!isDead && this.rebellion == null) {
+  //          int weaponsIncrease = _powerPoints * 3;
+  //          int armorIncrease = _defensePoints * 3;
+
+  //          //int stabilityDecrease = (structures.Count * 4);
+  //          //int stabilityIncrease = ((_techPoints * 2) + this._bonusStability) - stabilityDecrease;
+  //          int stabilityIncrease = this._bonusStability;
+  //          MonthlyResourceBenefits(ref weaponsIncrease, ref armorIncrease, ref stabilityIncrease);
+  //          if (_kingdom.isMilitarize) {
+  //              //Militarizing converts 15% of all cities Defense to Power.
+  //              int militarizingGain = Mathf.FloorToInt(armor * 0.15f);
+  //              weaponsIncrease += militarizingGain;
+  //              AdjustWeapons(weaponsIncrease);
+  //              AdjustArmor(armorIncrease - militarizingGain);
+  //              _kingdom.Militarize(false);
+  //          } else if (_kingdom.isFortifying) {
+  //              //Fortifying converts 15% of all cities Power to Defense.
+  //              int fortifyingGain = Mathf.FloorToInt(weapons * 0.15f);
+  //              armorIncrease += fortifyingGain;
+  //              AdjustWeapons(weaponsIncrease - fortifyingGain);
+  //              AdjustArmor(armorIncrease);
+  //              _kingdom.Fortify(false);
+  //          } else {
+  //              AdjustWeapons(weaponsIncrease);
+  //              AdjustArmor(armorIncrease);
+  //          }
+  //          _kingdom.AdjustStability(stabilityIncrease);
+  //          GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+  //          increaseDueDate.AddMonths(1);
+  //          SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+  //      }
+  //  }
 
     private void LevelUpBalanceOfPower() {
-        _powerPoints += _kingdom.kingdomTypeData.productionPointsSpend.power;
-        _defensePoints += _kingdom.kingdomTypeData.productionPointsSpend.defense;
-        _stabilityPoints += _kingdom.kingdomTypeData.productionPointsSpend.stability;
+        AdjustPowerPoints(_kingdom.kingdomTypeData.productionPointsSpend.power);
+        AdjustDefensePoints(_kingdom.kingdomTypeData.productionPointsSpend.defense);
+        AdjustTechPoints(_kingdom.kingdomTypeData.productionPointsSpend.tech);
     }
-	internal void MonthlyResourceBenefits(ref int powerIncrease, ref int defenseIncrease, ref int stabilityIncrease){
+	internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, ref int stabilityIncrease){
 		switch (this._region.specialResource){
 		case RESOURCE.CORN:
 			stabilityIncrease += 5;
@@ -1568,16 +1570,16 @@ public class City{
 			stabilityIncrease += 15;
 			break;
 		case RESOURCE.OAK:
-			defenseIncrease += 5;
+			armorIncrease += 5;
 			break;
 		case RESOURCE.EBONY:
-			defenseIncrease += 15;
+			armorIncrease += 15;
 			break;
 		case RESOURCE.GRANITE:
-			powerIncrease += 5;
+			weaponsIncrease += 5;
 			break;
 		case RESOURCE.SLATE:
-			powerIncrease += 15;
+			weaponsIncrease += 15;
 			break;
 		case RESOURCE.COBALT:
 			this.kingdom.AdjustPrestige(10);

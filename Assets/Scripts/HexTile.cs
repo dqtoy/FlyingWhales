@@ -1120,25 +1120,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
-        "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString() +
-        "\n [b]Main Threat:[/b] ";
-        if(this.city.kingdom.mainThreat != null) {
-            text += this.city.kingdom.mainThreat.name;
-        } else {
-            text += "NONE";
-        }
+        "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
         if(this.city.region.specialResource != RESOURCE.NONE) {
             text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
         }
         text += "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
         "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
-        "\n [b]Stability Points:[/b] " + this.city.stabilityPoints.ToString() +
-        "\n [b]City Power:[/b] " + this.city.weapons.ToString() +
-        "\n [b]City Defense:[/b] " + this.city.armor.ToString() +
-        "\n [b]Kingdom Base Power:[/b] " + this.city.kingdom.baseWeapons.ToString() +
-        "\n [b]Kingdom Base Defense:[/b] " + this.city.kingdom.baseArmor.ToString() +
-        "\n [b]Kingdom Power Alliance:[/b] " + this.city.kingdom.GetPosAllianceWeapons().ToString() +
-        "\n [b]Kingdom Defense Alliance:[/b] " + this.city.kingdom.GetPosAllianceArmor().ToString() +
+        "\n [b]Tech Points:[/b] " + this.city.techPoints.ToString() +
+        "\n [b]City Weapons:[/b] " + this.city.weapons.ToString() +
+        "\n [b]City Armor:[/b] " + this.city.armor.ToString() +
+        "\n [b]Kingdom Base Weapons:[/b] " + this.city.kingdom.baseWeapons.ToString() +
+        "\n [b]Kingdom Base Armor:[/b] " + this.city.kingdom.baseArmor.ToString() +
+        "\n [b]Kingdom Weapons Alliance:[/b] " + this.city.kingdom.GetPosAllianceWeapons().ToString() +
+        "\n [b]Kingdom Armor Alliance:[/b] " + this.city.kingdom.GetPosAllianceArmor().ToString() +
         "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
         "\n [b]Region Population Growth:[/b] " + this.region.populationGrowth.ToString() +
         "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
