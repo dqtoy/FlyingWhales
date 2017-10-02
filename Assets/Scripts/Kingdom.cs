@@ -198,7 +198,7 @@ public class Kingdom{
 //	}
     public int stability {
         get { return this._stability; }
-		set { this._stability = value;}
+//		set { this._stability = value;}
     }
     public int basicResourceCount {
         get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
