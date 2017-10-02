@@ -413,8 +413,6 @@ public class Kingdom{
 		this._actionDay = 0;
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
-
-		SetLackPrestigeState(false);
         AdjustPrestige(GridMap.Instance.numOfRegions);
 //		AdjustPrestige(500);
 
