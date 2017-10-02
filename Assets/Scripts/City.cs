@@ -1494,25 +1494,25 @@ public class City{
         //_kingdom.AdjustBasePower(-_power);
         _weapons = 0;
         AdjustWeapons(newPower);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
     }
     internal void SetArmor(int newDefense) {
         //_kingdom.AdjustBaseDefense(-_defense);
         _armor = 0;
         AdjustArmor(newDefense);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
     }
     internal void AdjustWeapons(int adjustment) {
         _weapons += adjustment;
         //_kingdom.AdjustBasePower(adjustment);
         _weapons = Mathf.Max(_weapons, 0);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
     }
     internal void AdjustArmor(int adjustment) {
         _armor += adjustment;
         //_kingdom.AdjustBaseDefense(adjustment);
         _armor = Mathf.Max(_armor, 0);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
     }
 	//internal void AdjustBonusStability(int amount){
 	//	this._bonusStability += amount;

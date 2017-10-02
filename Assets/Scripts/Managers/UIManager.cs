@@ -399,7 +399,7 @@ public class UIManager : MonoBehaviour {
 
     private void UpdateUI(){
         dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
 		UpdateAllianceSummary ();
         if (currentlyShowingKingdom != null) {
             UpdateKingdomInfo();
@@ -1902,15 +1902,15 @@ public class UIManager : MonoBehaviour {
         createKingdomGO.SetActive(false);
     }
 
-    public void UpdatePrestigeSummary() {
+    public void UpdateKingdomSummary() {
         prestigeSummaryLbl.text = string.Empty;
-        List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedByPrestige);
+        List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedBySize);
         kingdomsToShow.Reverse();
         for (int i = 0; i < kingdomsToShow.Count; i++) {
             Kingdom currKingdom = kingdomsToShow[i];
-            prestigeSummaryLbl.text += currKingdom.name + " - " + currKingdom.population.ToString() + " (" + currKingdom.cityCap + ")" + 
-                " W: " + currKingdom.effectiveWeapons.ToString() + " A: " + currKingdom.effectiveArmor.ToString();
-            if(i + 1 < KingdomManager.Instance.allKingdomsOrderedByPrestige.Count) {
+            prestigeSummaryLbl.text += currKingdom.name + " - " + currKingdom.population.ToString() + " (" + currKingdom.cities.Count.ToString() + ")" + 
+                " ER: " + currKingdom.expansionRate.ToString() + " W: " + currKingdom.effectiveWeapons.ToString() + " A: " + currKingdom.effectiveArmor.ToString();
+            if(i + 1 < KingdomManager.Instance.allKingdomsOrderedBySize.Count) {
                 prestigeSummaryLbl.text += "\n";
             }
         }

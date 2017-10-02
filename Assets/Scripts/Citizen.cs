@@ -667,6 +667,37 @@ public class Citizen {
     }
     #endregion
 
+    #region Expansion
+    internal int GetExpansionRateContribution() {
+        if (role != ROLE.GOVERNOR && role != ROLE.KING) {
+            return 0;
+        } else {
+            switch (_charismaLevel) {
+                case CHARISMA.HIGH:
+                    if (role == ROLE.KING) {
+                        return 10;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return 2;
+                    }
+                    break;
+                case CHARISMA.AVERAGE:
+                    if (role == ROLE.KING) {
+                        return 7;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return 1;
+                    }
+                    break;
+                case CHARISMA.LOW:
+                    if (role == ROLE.KING) {
+                        return 5;
+                    }
+                    break;
+            }
+            return 0;
+        }
+    }
+    #endregion
+
     #region Tech
     internal int GetTechContribution() {
         if (role != ROLE.GOVERNOR && role != ROLE.KING) {

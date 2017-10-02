@@ -90,7 +90,7 @@ public class Kingdom{
 	private List<GameEvent> _doneEvents;
 
     //Expansion
-    private float expansionChance = 1f;
+    private int _expansionRate;
 
 	//Balance of Power
 //	private int _effectivePower;
@@ -216,8 +216,8 @@ public class Kingdom{
 	public int techCounter{
 		get{return this._techCounter;}
 	}
-    public float expansionRate {
-        get { return this.expansionChance; }
+    public int expansionRate {
+        get { return _expansionRate; }
     }
     public Dictionary<CHARACTER_VALUE, int> dictCharacterValues {
         get { return this._dictCharacterValues; }
@@ -478,8 +478,9 @@ public class Kingdom{
 
 		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
         //SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseExpansionRatePerMonth());
         SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
-        SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
+        //SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
         SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
         SchedulingManager.Instance.AddEntry(GameManager.Instance.month, 1, GameManager.Instance.year, () => IncreasePopulationEveryMonth());
         SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
@@ -1008,8 +1009,11 @@ public class Kingdom{
             return;
         }
 
-        if (cities.Count >= cityCap) {
-            //Kingdom has reached max city capacity
+        //if (cities.Count >= cityCap) {
+        //    //Kingdom has reached max city capacity
+        //    return;
+        //}
+        if(_expansionRate < GridMap.Instance.numOfRegions) {
             return;
         }
 
@@ -1018,6 +1022,30 @@ public class Kingdom{
         if (this.cities.Count > 0) {
             EventCreator.Instance.CreateExpansionEvent(this);
         }
+    }
+    private void IncreaseExpansionRatePerMonth() {
+        if (_expansionRate < GridMap.Instance.numOfRegions) {
+            AdjustExpansionRate(GetMonthlyExpansionRateIncrease());
+        }
+        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        dueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseExpansionRatePerMonth());
+    }
+    internal int GetMonthlyExpansionRateIncrease() {
+        int monthlyExpansionRate = king.GetExpansionRateContribution();
+        for (int i = 0; i < cities.Count; i++) {
+            monthlyExpansionRate += cities[i].governor.GetExpansionRateContribution();
+        }
+        return monthlyExpansionRate;
+    }
+    internal void ResetExpansionRate() {
+        _expansionRate = 0;
+        UIManager.Instance.UpdateKingdomSummary();
+    }
+    private void AdjustExpansionRate(int adjustment) {
+        _expansionRate += adjustment;
+        _expansionRate = Mathf.Clamp(_expansionRate, 0, GridMap.Instance.numOfRegions);
+        UIManager.Instance.UpdateKingdomSummary();
     }
     #endregion
 
@@ -1036,17 +1064,16 @@ public class Kingdom{
     }
     #endregion
 
-
     #region Prestige
     internal void AdjustPrestige(int adjustment) {
         _prestige += adjustment;
         //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        //KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void SetPrestige(int adjustment) {
         _prestige = adjustment;
         //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        //KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void MonthlyPrestigeActions() {
         //Add Prestige
@@ -1135,7 +1162,7 @@ public class Kingdom{
         if (this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
     }
     /* 
      * <summary>
@@ -1162,7 +1189,7 @@ public class Kingdom{
 				}
 			}
             city.TransferRoyaltiesToOtherCity(capitalCity);
-            KingdomManager.Instance.UpdateKingdomPrestigeList();
+            KingdomManager.Instance.UpdateKingdomList();
         }
 
     }
