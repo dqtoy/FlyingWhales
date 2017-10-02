@@ -71,8 +71,12 @@ public class City{
 		get{ return this._currentGrowth; }
 	}
 	public int totalDailyGrowth{
-		get{ return (int)((_dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount + this._dailyGrowthResourceBenefits) * this._productionGrowthPercentage); }
-	}
+        //get{ return (int)((_dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount + this._dailyGrowthResourceBenefits) * this._productionGrowthPercentage); }
+        get { return Mathf.FloorToInt((baseDailyGrowth + _dailyGrowthResourceBenefits) * _productionGrowthPercentage); }
+    }
+    internal int baseDailyGrowth {
+        get { return GetBaseDailyGrowth(); }
+    }
 	public int maxGrowth{
 		get{ return this._maxGrowth; }
 	}
@@ -827,6 +831,12 @@ public class City{
 	}
 
 	#region Resource Production
+    private int GetBaseDailyGrowth() {
+        int naturalResourceLevel = _region.naturalResourceLevel[kingdom.race];
+        int workers = _kingdom.workers;
+        int cities = _kingdom.cities.Count;
+        return (2 * naturalResourceLevel * (workers / cities)) / ((workers / cities) + naturalResourceLevel);
+    }
 	internal void AddToDailyGrowth(){
         AdjustDailyGrowth(this.totalDailyGrowth);
     }
@@ -839,18 +849,18 @@ public class City{
             this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
         }
     }
-    internal void AdjustDailyGrowthBuffs(int adjustment) {
-        _dailyGrowthBuffs += adjustment;
-    }
+    //internal void AdjustDailyGrowthBuffs(int adjustment) {
+    //    _dailyGrowthBuffs += adjustment;
+    //}
 	internal void UpdateDailyProduction(){
 		this._maxGrowth = 200 + ((300 + (250 * this.ownedTiles.Count)) * this.ownedTiles.Count);
-		this._dailyGrowthFromStructures = (int) Math.Sqrt(this._region.naturalResourceLevel[this.kingdom.race]) * 2;
-		for (int i = 0; i < this.structures.Count; i++) {
-			HexTile currentStructure = this.structures [i];
-            if (!currentStructure.isPlagued) {
-				this._dailyGrowthFromStructures += 3;
-            }
-		}
+		//this._dailyGrowthFromStructures = (int) Math.Sqrt(this._region.naturalResourceLevel[this.kingdom.race]) * 2;
+		//for (int i = 0; i < this.structures.Count; i++) {
+		//	HexTile currentStructure = this.structures [i];
+  //          if (!currentStructure.isPlagued) {
+		//		this._dailyGrowthFromStructures += 3;
+  //          }
+		//}
 	}
 	#endregion
 

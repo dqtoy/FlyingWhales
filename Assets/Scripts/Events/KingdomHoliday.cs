@@ -36,7 +36,7 @@ public class KingdomHoliday : GameEvent {
         for (int i = 0; i < _sourceKingdom.cities.Count; i++) {
             City currCity = _sourceKingdom.cities[i];
             //When a kingdom is under a holiday, it's citizens rejoice and the daily growth of the kingdoms cities is increased by 100.
-            currCity.AdjustDailyGrowthBuffs(100);
+            //currCity.AdjustDailyGrowthBuffs(100);
 
             //Once a holiday is started the king's governors will react, if he/she also values tradition his/her loyalty to the king will increase by 20.
             Citizen currGovernor = currCity.governor;
@@ -57,7 +57,7 @@ public class KingdomHoliday : GameEvent {
     protected void ResetBuffs() {
         for (int i = 0; i < _sourceKingdom.cities.Count; i++) {
             City currCity = _sourceKingdom.cities[i];
-            currCity.AdjustDailyGrowthBuffs(-100);
+            //currCity.AdjustDailyGrowthBuffs(-100);
         }
     }
 
