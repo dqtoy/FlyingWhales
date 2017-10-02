@@ -1017,8 +1017,6 @@ public class City{
      * Conquer this city and transfer ownership to the conqueror
      * */
 	internal void ConquerCity(Kingdom conqueror) {
-        //AdjustPower(-power);
-        //AdjustDefense(-defense);
         RemoveOneTimeResourceBenefits();
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
@@ -1033,16 +1031,6 @@ public class City{
         for (int i = 0; i < structuresDestroyed; i++) {
             this.RemoveTileFromCity(this.structures[UnityEngine.Random.Range(0, this.structures.Count)]);
         }
-
-        //ResetAdjacentCities();
-
-        //List<City> remainingCitiesOfConqueredKingdom = new List<City>(_kingdom.cities);
-        //for (int i = 0; i < remainingCitiesOfConqueredKingdom.Count; i++) {
-        //    if(remainingCitiesOfConqueredKingdom[i].id == this.id) {
-        //        remainingCitiesOfConqueredKingdom.RemoveAt(i);
-        //        break;
-        //    }
-        //}
 
         //Transfer Tiles
         List<HexTile> structureTilesToTransfer = new List<HexTile>(structures);
@@ -1079,8 +1067,8 @@ public class City{
         newCity.hexTile.CreateCityNamePlate(newCity);
         newCity.SetupInitialValues();
         newCity.HighlightAllOwnedTiles(69f / 255f);
-        //newCity.AdjustPower(newCity.power);
-        //newCity.AdjustDefense(newCity.defense);
+        //When occupying an invaded city, Stability is reduced by 20.
+        newCity.kingdom.AdjustStability(-20);
         for (int i = 0; i < conqueror.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = conqueror.discoveredKingdoms[i];
             if (otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {

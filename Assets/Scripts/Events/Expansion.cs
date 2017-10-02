@@ -45,6 +45,8 @@ public class Expansion : GameEvent {
             newCity.region.SetOccupant(newCity);
             newCity.ExpandToThisCity (this.startedBy);
             newCity.region.CheckForDiscoveredKingdoms();
+            //When expanding to an unoccupied region, Stability is reduced by 10.
+            newCity.kingdom.AdjustStability(-10);
             for (int i = 0; i < startedByKingdom.discoveredKingdoms.Count; i++) {
                 Kingdom otherKingdom = startedByKingdom.discoveredKingdoms[i];
                 if(otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {

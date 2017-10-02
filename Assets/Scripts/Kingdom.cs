@@ -2027,7 +2027,6 @@ public class Kingdom{
             throw new Exception("Fog of war dictionary is no longer accurate!");
         }
     }
-
     internal void UpdateFogOfWarVisual() {
         for (int x = 0; x < fogOfWar.GetLength(0); x++) {
             for (int y = 0; y < fogOfWar.GetLength(1); y++) {
@@ -2037,11 +2036,9 @@ public class Kingdom{
             }
         }
     }
-
     private void UpdateFogOfWarVisualForTile(HexTile hexTile, FOG_OF_WAR_STATE fowState) {
         hexTile.SetFogOfWarState(fowState);
     }
-
 	internal FOG_OF_WAR_STATE GetFogOfWarStateOfTile(HexTile hexTile){
 		return this._fogOfWar [hexTile.xCoordinate, hexTile.yCoordinate];
 	}
@@ -2117,7 +2114,6 @@ public class Kingdom{
 		this._crimeDate.month = month;
 		this._crimeDate.day = day;
 	} 
-
 	private void TriggerCrime(){
 		if(!this.isDead){
 			CreateCrime ();
@@ -2136,7 +2132,6 @@ public class Kingdom{
 //			CreateCrime ();
 //		}
 	}
-
 	private void CreateCrime(){
 		CrimeData crimeData = CrimeEvents.Instance.GetRandomCrime ();
 		EventCreator.Instance.CreateCrimeEvent (this, crimeData);
@@ -2215,19 +2210,6 @@ public class Kingdom{
 		}
 	}
 	#endregion
-
-	internal void CheckSharedBorders(){
-		bool isSharingBorderNow = false;
-		for (int i = 0; i < relationships.Count; i++) {
-            KingdomRelationship currRel = relationships.ElementAt(i).Value;
-            isSharingBorderNow = KingdomManager.Instance.IsSharingBorders (this, currRel.targetKingdom);
-			if (isSharingBorderNow != currRel.isSharingBorder) {
-                currRel.SetBorderSharing (isSharingBorderNow);
-				KingdomRelationship rel2 = currRel.targetKingdom.GetRelationshipWithKingdom(this);
-				rel2.SetBorderSharing (isSharingBorderNow);
-			}
-		}
-	}
 
 	#region Balance of Power
 	internal void Militarize(bool state){
@@ -2885,6 +2867,19 @@ public class Kingdom{
         SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseBOPAttributesPerMonth());
 
     }
+    internal int GetMonthlyStabilityGain() {
+        int totalStabilityIncrease = GetStabilityContributionFromCitizens();
+        totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
+        for (int i = 0; i < cities.Count; i++) {
+            City currCity = cities[i];
+            if (!currCity.isDead && currCity.rebellion == null) {
+                int weaponsContribution = 0;
+                int armorContribution = 0;
+                currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
+            }
+        }
+        return totalStabilityIncrease;
+    }
     private int GetStabilityContributionFromCitizens() {
         int stabilityContributionsFromCitizens = 0;
         stabilityContributionsFromCitizens += king.GetStabilityContribution();
@@ -3182,7 +3177,9 @@ public class Kingdom{
 	internal void LeaveAlliance(){
 		if(this.alliancePool != null){
 			this.alliancePool.RemoveKingdomInAlliance(this);
-			Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
+            //When leaving an alliance, Stability is reduced by 10
+            this.AdjustStability(-10);
+            Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
 			newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 			UIManager.Instance.ShowNotification (newLog);
 		}
