@@ -121,7 +121,6 @@ public class Kingdom{
 	private bool _isTechProducing;
 	private bool _isMilitarize;
 	private bool _isFortifying;
-	private bool _doesLackPrestige;
 
 	private int borderConflictLoyaltyExpiration;
 	private float _techProductionPercentage;
@@ -324,9 +323,6 @@ public class Kingdom{
 //	}
 	public bool isMobilizing{
 		get { return this._isMobilizing;}
-	}
-	public bool doesLackPrestige{
-		get { return this._doesLackPrestige;}
 	}
 	public float techProductionPercentage{
 		get { return this._techProductionPercentage;}
@@ -1007,13 +1003,11 @@ public class Kingdom{
     internal void AdjustPrestige(int adjustment) {
         _prestige += adjustment;
         //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void SetPrestige(int adjustment) {
         _prestige = adjustment;
         //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-        CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void MonthlyPrestigeActions() {
@@ -1056,29 +1050,6 @@ public class Kingdom{
         }
         return monthlyPrestigeGain;
     }
-
-	private void CheckIfKingdomLacksPrestige(){
-		if (this.cities.Count > this.cityCap) {
-			if(!this._doesLackPrestige){
-				SetLackPrestigeState(true);
-				foreach (KingdomRelationship relationship in this.relationships.Values) {
-					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
-					relationshipTowardsThis.AddEventModifier(-30, "Lacks prestige", null, false);
-				}
-			}
-		}else{
-			if(this._doesLackPrestige){
-				SetLackPrestigeState(false);
-				foreach (KingdomRelationship relationship in this.relationships.Values) {
-					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
-					relationshipTowardsThis.RemoveEventModifierBySummary("Lacks prestige");
-				}
-			}
-		}
-	}
-	internal void SetLackPrestigeState(bool state){
-		this._doesLackPrestige = state;
-	}
     #endregion
 
     #region Trading

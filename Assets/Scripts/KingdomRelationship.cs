@@ -329,12 +329,6 @@ public class KingdomRelationship {
 		}
 		this._relationshipSummary += adjustment.ToString() + " kingdom threat.\n";
 
-//		//Lacks Prestige
-//		if(this.targetKingdom.doesLackPrestige){
-//			adjustment = -30;
-//			baseLoyalty += adjustment;
-//			this._relationshipSummary += adjustment.ToString() + "   lacks prestige.\n";
-//		}
         this._like = 0;
         this.AdjustLikeness(baseLoyalty, gameEventTrigger, assassinationReasons, isDiscovery);
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom == _sourceKingdom) {
@@ -881,11 +875,6 @@ public class KingdomRelationship {
 
 			//adjacency
 			if(!this._isAdjacent){
-				threatLevel -= (threatLevel * 0.5f);
-			}
-
-			//cannot expand due to lack of prestige
-			if(this._targetKingdom.doesLackPrestige){
 				threatLevel -= (threatLevel * 0.5f);
 			}
 
