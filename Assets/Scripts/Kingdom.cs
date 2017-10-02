@@ -122,7 +122,6 @@ public class Kingdom{
 	private bool _isTechProducing;
 	private bool _isMilitarize;
 	private bool _isFortifying;
-	private bool _doesLackPrestige;
 
 	private int borderConflictLoyaltyExpiration;
 	private float _techProductionPercentage;
@@ -200,7 +199,7 @@ public class Kingdom{
 //	}
     public int stability {
         get { return this._stability; }
-		set { this._stability = value;}
+//		set { this._stability = value;}
     }
     public int basicResourceCount {
         get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
@@ -326,9 +325,6 @@ public class Kingdom{
 	public bool isMobilizing{
 		get { return this._isMobilizing;}
 	}
-	public bool doesLackPrestige{
-		get { return this._doesLackPrestige;}
-	}
 	public float techProductionPercentage{
 		get { return this._techProductionPercentage;}
 	}
@@ -451,8 +447,6 @@ public class Kingdom{
 		this._actionDay = 0;
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
-
-		SetLackPrestigeState(false);
         AdjustPrestige(GridMap.Instance.numOfRegions);
         //		AdjustPrestige(500);
 
@@ -1043,13 +1037,11 @@ public class Kingdom{
     internal void AdjustPrestige(int adjustment) {
         _prestige += adjustment;
         //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void SetPrestige(int adjustment) {
         _prestige = adjustment;
         //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-        CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void MonthlyPrestigeActions() {
@@ -1092,29 +1084,6 @@ public class Kingdom{
         }
         return monthlyPrestigeGain;
     }
-
-	private void CheckIfKingdomLacksPrestige(){
-		if (this.cities.Count > this.cityCap) {
-			if(!this._doesLackPrestige){
-				SetLackPrestigeState(true);
-				foreach (KingdomRelationship relationship in this.relationships.Values) {
-					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
-					relationshipTowardsThis.AddEventModifier(-30, "Lacks prestige", null, false);
-				}
-			}
-		}else{
-			if(this._doesLackPrestige){
-				SetLackPrestigeState(false);
-				foreach (KingdomRelationship relationship in this.relationships.Values) {
-					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
-					relationshipTowardsThis.RemoveEventModifierBySummary("Lacks prestige");
-				}
-			}
-		}
-	}
-	internal void SetLackPrestigeState(bool state){
-		this._doesLackPrestige = state;
-	}
     #endregion
 
     #region Trading
@@ -2932,10 +2901,10 @@ public class Kingdom{
     #endregion
 
     #region Population
-    internal float GetOverpopulationPercentage() {
-        float overpopulationPercentage = (float)_population / (float)_populationCapacity;
-        overpopulationPercentage = Mathf.Round(overpopulationPercentage * 100f) / 100f;
-        return Mathf.Clamp(overpopulationPercentage, 0, 100); ;
+    internal int GetOverpopulationPercentage() {
+		int overpopulationPercentage = (int) (((_population / _populationCapacity) * 100f) - 100f);
+        overpopulationPercentage = overpopulationPercentage * 100 - 100;
+		return (int) Mathf.Clamp(overpopulationPercentage, 0, 100); ;
     }
     internal void UpdatePopulationCapacity() {
         _populationCapacity = GetPopulationCapacity();

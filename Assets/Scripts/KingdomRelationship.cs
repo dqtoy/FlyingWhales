@@ -329,12 +329,6 @@ public class KingdomRelationship {
 		}
 		this._relationshipSummary += adjustment.ToString() + " kingdom threat.\n";
 
-//		//Lacks Prestige
-//		if(this.targetKingdom.doesLackPrestige){
-//			adjustment = -30;
-//			baseLoyalty += adjustment;
-//			this._relationshipSummary += adjustment.ToString() + "   lacks prestige.\n";
-//		}
         this._like = 0;
         this.AdjustLikeness(baseLoyalty, gameEventTrigger, assassinationReasons, isDiscovery);
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom == _sourceKingdom) {
@@ -884,11 +878,12 @@ public class KingdomRelationship {
 				threatLevel -= (threatLevel * 0.5f);
 			}
 
-			//cannot expand due to lack of prestige
-			if(this._targetKingdom.doesLackPrestige){
+			//cannot expand due to lack of stability
+			if(this._targetKingdom.stability <= 0){
 				threatLevel -= (threatLevel * 0.5f);
 			}
 
+			//still adjacent to unoccupied region / can still expand
 			HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom (this._targetKingdom);
 			if(hexTile != null){
 				threatLevel -= (threatLevel * 0.25f);

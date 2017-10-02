@@ -5,6 +5,7 @@ using System.Linq;
 
 public class Warfare {
 	private int _id;
+	private string _name;
 	private List<Kingdom> _sideA;
 	private List<Kingdom> _sideB;
 	private List<Battle> _battles;
@@ -17,6 +18,9 @@ public class Warfare {
 	#region getters/setters
 	public int id{
 		get { return this._id; }
+	}
+	public string name{
+		get { return this._name; }
 	}
 	public Dictionary<Kingdom, WAR_SIDE> kingdomSides{
 		get { return this._kingdomSides; }
@@ -36,6 +40,7 @@ public class Warfare {
 	#endregion
 	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom){
 		SetID();
+		this._name = Utilities.GetWarfareName ();
 		this._isOver = false;
 		this._sideA = new List<Kingdom>();
 		this._sideB = new List<Kingdom>();
@@ -243,7 +248,7 @@ public class Warfare {
 	private void AddBattle(Battle battle){
 		this._battles.Add (battle);
 	}
-	private void RemoveBattle(Battle battle){
+	internal void RemoveBattle(Battle battle){
 		this._battles.Remove (battle);
 	}
 	private void PeaceDeclaration(Kingdom kingdom1, Kingdom kingdom2){

@@ -1936,7 +1936,7 @@ public class UIManager : MonoBehaviour {
 					if (i != 0) {
 						this.allianceSummaryLbl.text += "\n";
 					}
-					this.allianceSummaryLbl.text += "War " + warfare.id;
+					this.allianceSummaryLbl.text += warfare.name;
 					if(warfare.sideA.Count > 0){
 						this.allianceSummaryLbl.text += "\n- SIDE A: ";
 						for (int j = 0; j < warfare.sideA.Count; j++) {
