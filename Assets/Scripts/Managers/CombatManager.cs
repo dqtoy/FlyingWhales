@@ -34,17 +34,17 @@ public class CombatManager : MonoBehaviour {
 //                }
 //            }
 //        }
-		if(damage > city.power){
-			int reduceOnDefense = damage - city.power;
-			city.AdjustPower (-city.power);
-			city.AdjustDefense (-reduceOnDefense);
+		if(damage > city.weapons){
+			int reduceOnDefense = damage - city.weapons;
+			city.AdjustWeapons (-city.weapons);
+			city.AdjustArmor (-reduceOnDefense);
 
 		}else{
-			city.AdjustPower (-damage);
+			city.AdjustWeapons (-damage);
 		}
 
 
-		if(city.defense <= 0){
+		if(city.armor <= 0){
 			ConquerCity (generalAttacker.citizen.city.kingdom, city, generalAttacker);
 		}
 		generalAttacker.markAsDead = true;

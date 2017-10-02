@@ -43,7 +43,7 @@ public class Rebellions : GameEvent {
 		this.rebelFort = (RebelFort)CityGenerator.Instance.CreateNewCity (hexTile, this.targetKingdom, this);
 		this.rebelLeader.citizen.city = this.rebelFort;
 		int power = GetRebelFortPower ();
-		this.rebelFort.AdjustPower (power);
+		this.rebelFort.AdjustWeapons (power);
 		this._dividedPower = Mathf.CeilToInt (power / this._turns);
 
 		GameDate gameDate = new GameDate (GameManager.Instance.month, 5, GameManager.Instance.year);
@@ -86,7 +86,7 @@ public class Rebellions : GameEvent {
 		return filteredBorderTiles [UnityEngine.Random.Range (0, filteredBorderTiles.Count)];
 	}
 	private int GetRebelFortPower(){
-		return (int)((this.targetKingdom.basePower + this.targetKingdom.baseDefense) / this.targetKingdom.cities.Count);
+		return (int)((this.targetKingdom.baseWeapons + this.targetKingdom.baseArmor) / this.targetKingdom.cities.Count);
 	}
 	internal void CheckTurns(){
 		if(this._turns <= 0){

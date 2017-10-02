@@ -21,7 +21,7 @@ public class GhoulLair : Lair {
 				int chance = UnityEngine.Random.Range (0, 100);
 				if (chance < 90) {
 					Kingdom kingdom = this.region.occupant.kingdom;
-					int kingdomEffDefense = kingdom.effectiveDefense;
+					int kingdomEffDefense = kingdom.effectiveArmor;
 					int damage = (int)((kingdomEffDefense / kingdom.cities.Count) / 15);
 					DamageToCityDefense (damage);
 				} else {

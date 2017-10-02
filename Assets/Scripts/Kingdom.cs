@@ -32,8 +32,9 @@ public class Kingdom{
     //Trading
     private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
-    //private int _basePower;
-    //private int _baseDefense;
+    private int _baseArmor;
+    private int _baseWeapons;
+    private int _baseStability;
     private int _stability;
     private List<City> _cities;
     private List<Region> _regions;
@@ -287,21 +288,21 @@ public class Kingdom{
 	public List<GameEvent> doneEvents{
 		get { return this._doneEvents;}
 	}
-	public int basePower{
-		get { return this.GetBasePower();}
+	public int baseWeapons{
+		get { return this.GetBaseWeapons();}
 	}
-	public int baseDefense{
-		get { return this.GetBaseDefense();}
+	public int baseArmor{
+		get { return this.GetBaseArmor();}
 	}
-	public int effectivePower{
+	public int effectiveWeapons{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 2);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 2);}
-		get { return this.basePower + (int)(this.baseDefense / 3) + (int)(GetPosAlliancePower() / 3);}
+		get { return this.baseWeapons + (int)(this.baseArmor / 3) + (int)(GetPosAllianceWeapons() / 3);}
 	}
-	public int effectiveDefense{
+	public int effectiveArmor{
 //		get { return this._basePower + (int)(GetMilitaryAlliancePower() / 3) + this._baseDefense + (int)(GetMutualDefenseTreatyPower() / 3);}
 //		get { return this._basePower + (int)(this._militaryAlliancePower / 3) + this._baseDefense + (int)(this._mutualDefenseTreatyPower / 3);}
-		get { return this.baseDefense + (int)(this.basePower / 3) + (int)(GetPosAllianceDefense() / 3);}
+		get { return this.baseArmor + (int)(this.baseWeapons / 3) + (int)(GetPosAllianceArmor() / 3);}
 	}
 	public int militaryAlliancePower{
 		get { return this._militaryAlliancePower;}
@@ -339,6 +340,39 @@ public class Kingdom{
 	public Dictionary<int, WarfareInfo> warfareInfo{
 		get { return this._warfareInfo;}
 	}
+    internal int scientists {
+        get { return Mathf.FloorToInt(population * researchRate); }
+    }
+    internal int soldiers {
+        get { return Mathf.FloorToInt(population * draftRate); }
+    }
+    internal int workers {
+        get { return Mathf.FloorToInt(population * productionRate); }
+    }
+    internal float draftRate {
+        get {
+            if (this._kingdomTypeData == null) {
+                return 0f;
+            }
+            return this._kingdomTypeData.populationRates.draftRate;
+        }
+    }
+    internal float researchRate {
+        get {
+            if (this._kingdomTypeData == null) {
+                return 0f;
+            }
+            return this._kingdomTypeData.populationRates.researchRate;
+        }
+    }
+    internal float productionRate {
+        get {
+            if (this._kingdomTypeData == null) {
+                return 0f;
+            }
+            return this._kingdomTypeData.populationRates.productionRate;
+        }
+    }
     #endregion
 
     // Kingdom constructor paramters
@@ -414,8 +448,10 @@ public class Kingdom{
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
         AdjustPrestige(GridMap.Instance.numOfRegions);
-//		AdjustPrestige(500);
+        //		AdjustPrestige(500);
 
+
+        AdjustStability(50);
         SetGrowthState(true);
         this.GenerateKingdomCharacterValues();
         this.SetLockDown(false);
@@ -1057,7 +1093,7 @@ public class Kingdom{
             //Remove all existing trade routes between kingdomToAdd and this Kingdom
             //this.RemoveAllTradeRoutesWithOtherKingdom(kingdomToAdd);
             //kingdomToAdd.RemoveAllTradeRoutesWithOtherKingdom(this);
-            kingdomToAdd.AdjustStability(STABILITY_DECREASE_EMBARGO);
+            //kingdomToAdd.AdjustStability(STABILITY_DECREASE_EMBARGO);
         }
         
     }
@@ -1335,7 +1371,7 @@ public class Kingdom{
 //            } else {
 //				city.ConquerCity(this);
 //            }
-            this.AdjustStability(STABILITY_DECREASE_CONQUER);
+            //this.AdjustStability(STABILITY_DECREASE_CONQUER);
         } else {
 			if(city.rebellion == null){
 				city.ChangeToRebelFort(attacker.citizen.city.rebellion);
@@ -1352,7 +1388,7 @@ public class Kingdom{
 //			} else {
 //				city.ConquerCity(this);
 //			}
-			this.AdjustStability(STABILITY_DECREASE_CONQUER);
+			//this.AdjustStability(STABILITY_DECREASE_CONQUER);
 		}
 	}
     #endregion
@@ -2316,12 +2352,12 @@ public class Kingdom{
 //            currentThreat = targetKingdom;
             KingdomRelationship relationship = GetRelationshipWithKingdom (targetKingdom);
             if(relationship.isAdjacent){
-            	int thisEffectiveDefense = this.effectiveDefense;
-            	int targetEffectivePower = targetKingdom.effectivePower;
+            	int thisEffectiveDefense = this.effectiveArmor;
+            	int targetEffectivePower = targetKingdom.effectiveWeapons;
             	int buffedTargetEffectivePower = (int)(targetEffectivePower * 1.15f);
             	if(thisEffectiveDefense < buffedTargetEffectivePower){
             		if(currentThreat != null){
-            			if(targetEffectivePower > currentThreat.effectivePower){
+            			if(targetEffectivePower > currentThreat.effectiveWeapons){
             				currentThreat = targetKingdom;
             			}
             		}else{
@@ -2639,30 +2675,20 @@ public class Kingdom{
 			relationship.ChangeMilitaryAlliance (false);
 		}
 	}
-    internal int GetBasePower() {
-        int basePower = 0;
+    internal int GetBaseWeapons() {
+        int baseWeapons = 0;
         for (int i = 0; i < cities.Count; i++) {
-            basePower += cities[i].power;
+            baseWeapons += cities[i].weapons;
         }
-        return basePower;
+        return baseWeapons;
     }
-    internal int GetBaseDefense() {
-        int baseDefense = 0;
+    internal int GetBaseArmor() {
+        int baseArmor = 0;
         for (int i = 0; i < cities.Count; i++) {
-            baseDefense += cities[i].defense;
+            baseArmor += cities[i].armor;
         }
-        return baseDefense;
+        return baseArmor;
     }
-//	internal void AdjustBasePower(int adjustment) {
-//        _basePower += adjustment;
-//        _basePower = Mathf.Max(_basePower, 0);
-////	    UpdateOtherMilitaryAlliancePower (adjustment);
-//    }
-//	internal void AdjustBaseDefense(int adjustment) {
-//    	_baseDefense += adjustment;
-//        _baseDefense = Mathf.Max(_baseDefense, 0);
-////	    UpdateOtherMutualDefenseTreatyPower (adjustment);
-//	}
 	internal void AdjustStability(int amountToAdjust) {
     	this._stability += amountToAdjust;
     	this._stability = Mathf.Clamp(this._stability, -100, 100);
@@ -2692,32 +2718,32 @@ public class Kingdom{
 	private int GetMilitaryAlliancePower(){
 		int militaryAlliancePower = 0;
 		for (int i = 0; i < this._militaryAlliances.Count; i++) {
-			militaryAlliancePower += this._militaryAlliances [i].basePower;
+			militaryAlliancePower += this._militaryAlliances [i].baseWeapons;
 		}
 		return militaryAlliancePower;
 	}
 	private int GetMutualDefenseTreatyPower(){
 		int mutualDefenseTreatyPower = 0;
 		for (int i = 0; i < this._mutualDefenseTreaties.Count; i++) {
-			mutualDefenseTreatyPower += this._mutualDefenseTreaties [i].baseDefense;
+			mutualDefenseTreatyPower += this._mutualDefenseTreaties [i].baseArmor;
 		}
 		return mutualDefenseTreatyPower;
 	}
 	internal void AddMilitaryAlliance(Kingdom kingdom){
 		this._militaryAlliances.Add (kingdom);
-		AdjustMilitaryAlliancePower (kingdom.basePower);
+		AdjustMilitaryAlliancePower (kingdom.baseWeapons);
 	}
 	internal void RemoveMilitaryAlliance(Kingdom kingdom){
 		this._militaryAlliances.Remove(kingdom);
-		AdjustMilitaryAlliancePower (-kingdom.basePower);
+		AdjustMilitaryAlliancePower (-kingdom.baseWeapons);
 	}
 	internal void AddMutualDefenseTreaty(Kingdom kingdom){
 		this._mutualDefenseTreaties.Add (kingdom);
-		AdjustMutualDefenseTreatyPower (kingdom.baseDefense);
+		AdjustMutualDefenseTreatyPower (kingdom.baseArmor);
 	}
 	internal void RemoveMutualDefenseTreaty(Kingdom kingdom){
 		this._mutualDefenseTreaties.Remove(kingdom);
-		AdjustMutualDefenseTreatyPower (-kingdom.baseDefense);
+		AdjustMutualDefenseTreatyPower (-kingdom.baseArmor);
 	}
 
     //	internal void AddAllianceKingdom(Kingdom kingdom){
@@ -3035,7 +3061,7 @@ public class Kingdom{
 	internal void SetAlliancePool(AlliancePool alliancePool){
 		this._alliancePool = alliancePool;
 	}
-	internal int GetPosAlliancePower(){
+	internal int GetPosAllianceWeapons(){
 		int posAlliancePower = 0;
 		if(this.alliancePool != null){
 			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
@@ -3043,7 +3069,7 @@ public class Kingdom{
 				if(this.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this);
 					if(relationship.totalLike >= 35){
-						posAlliancePower += kingdomInAlliance.basePower;
+						posAlliancePower += kingdomInAlliance.baseWeapons;
 					}
 				}
 			}
@@ -3058,7 +3084,7 @@ public class Kingdom{
 //		}
 		return posAlliancePower;
 	}
-    internal int GetPosAllianceDefense(){
+    internal int GetPosAllianceArmor(){
 		int posAllianceDefense = 0;
 		if(this.alliancePool != null){
 			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
@@ -3066,7 +3092,7 @@ public class Kingdom{
 				if(this.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this);
 					if(relationship.totalLike >= 35){
-						posAllianceDefense += kingdomInAlliance.baseDefense;
+						posAllianceDefense += kingdomInAlliance.baseArmor;
 					}
 				}
 			}

@@ -96,10 +96,10 @@ public class Battle {
 			for (int i = 0; i < this.attacker.kingdom.cities.Count; i++) {
 				City otherCity = this.attacker.kingdom.cities [i];
 				if (this.attacker.id != otherCity.id) {
-					if (otherCity.power > 0) {
-						int powerTransfer = (int)(otherCity.power * 0.10f);
-						otherCity.AdjustPower (-powerTransfer);
-						this.attacker.AdjustPower (powerTransfer);
+					if (otherCity.weapons > 0) {
+						int powerTransfer = (int)(otherCity.weapons * 0.10f);
+						otherCity.AdjustWeapons (-powerTransfer);
+						this.attacker.AdjustWeapons (powerTransfer);
 					}
 				}
 			}
@@ -125,10 +125,10 @@ public class Battle {
 			for (int i = 0; i < this.defender.kingdom.cities.Count; i++) {
 				City otherCity = this.defender.kingdom.cities [i];
 				if (this.defender.id != otherCity.id) {
-					if (otherCity.defense > 0) {
-						int defenseTransfer = (int)(otherCity.defense * 0.10f);
-						otherCity.AdjustDefense (-defenseTransfer);
-						this.defender.AdjustDefense (defenseTransfer);
+					if (otherCity.armor > 0) {
+						int defenseTransfer = (int)(otherCity.armor * 0.10f);
+						otherCity.AdjustArmor (-defenseTransfer);
+						this.defender.AdjustArmor (defenseTransfer);
 					}
 				}
 			}
@@ -179,11 +179,11 @@ public class Battle {
 	#region Step 3
 	private void Combat(){
 		if(!this.attacker.isDead && !this.defender.isDead){
-			int attackerPower = this.attacker.power + GetPowerBuffs(this.attacker);
-			int defenderDefense = this.defender.defense + GetDefenseBuffs(this.defender);
+			int attackerPower = this.attacker.weapons + GetPowerBuffs(this.attacker);
+			int defenderDefense = this.defender.armor + GetDefenseBuffs(this.defender);
 
-			this.attacker.AdjustPower (-this.defender.defense);
-			this.defender.AdjustDefense (-this.attacker.power);
+			this.attacker.AdjustWeapons (-this.defender.armor);
+			this.defender.AdjustArmor (-this.attacker.weapons);
 
 			if(attackerPower >= defenderDefense){
 				//Attacker Wins
@@ -213,7 +213,7 @@ public class Battle {
 					KingdomRelationship kr = adjacentCity.kingdom.GetRelationshipWithKingdom (city.kingdom);
 					if(kr.AreAllies()){
 						if(kr.totalLike > 0){
-							powerBuff += (adjacentCity.power * 0.15f);
+							powerBuff += (adjacentCity.weapons * 0.15f);
 						}else{
 							//Did not honor commitment
 							adjacentCity.kingdom.LeaveAlliance();
@@ -221,10 +221,10 @@ public class Battle {
 						}
 					}
 					if(kr.isAtWar){
-						powerBuff -= (adjacentCity.power * 0.15f);
+						powerBuff -= (adjacentCity.weapons * 0.15f);
 					}
 				}else{
-					powerBuff += (adjacentCity.power * 0.15f);
+					powerBuff += (adjacentCity.weapons * 0.15f);
 				}
 			}
 		}
@@ -234,7 +234,7 @@ public class Battle {
 				if(city.kingdom.id != kingdom.id){
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (city.kingdom);
 					if(kr.totalLike > 0){
-						powerBuff += (kingdom.basePower * 0.05f);
+						powerBuff += (kingdom.baseWeapons * 0.05f);
 					}else{
 						kingdom.LeaveAlliance();
 						kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
@@ -261,7 +261,7 @@ public class Battle {
 					KingdomRelationship kr = adjacentCity.kingdom.GetRelationshipWithKingdom (city.kingdom);
 					if(kr.AreAllies()){
 						if(kr.totalLike > 0){
-							defenseBuff += (adjacentCity.defense * 0.15f);
+							defenseBuff += (adjacentCity.armor * 0.15f);
 						}else{
 							//Did not honor commitment
 							adjacentCity.kingdom.LeaveAlliance();
@@ -269,10 +269,10 @@ public class Battle {
 						}
 					}
 					if(kr.isAtWar){
-						defenseBuff -= (adjacentCity.power * 0.15f);
+						defenseBuff -= (adjacentCity.weapons * 0.15f);
 					}
 				}else{
-					defenseBuff += (adjacentCity.defense * 0.15f);
+					defenseBuff += (adjacentCity.armor * 0.15f);
 				}
 			}
 		}
@@ -282,7 +282,7 @@ public class Battle {
 				if(city.kingdom.id != kingdom.id){
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (city.kingdom);
 					if(kr.totalLike > 0){
-						defenseBuff += (kingdom.baseDefense * 0.05f);
+						defenseBuff += (kingdom.baseArmor * 0.05f);
 					}else{
 						kingdom.LeaveAlliance();
 						kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);

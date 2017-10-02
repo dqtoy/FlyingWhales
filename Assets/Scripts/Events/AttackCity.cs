@@ -20,10 +20,10 @@ public class AttackCity : GameEvent {
 		this.gameEvent = gameEvent;
 		if(this.gameEvent is Rebellions){
 			int power = ((Rebellions)this.gameEvent).dividedPower;
-			if(power > this.sourceCity.power){
-				power = this.sourceCity.power;
+			if(power > this.sourceCity.weapons){
+				power = this.sourceCity.weapons;
 			}
-			this.sourceCity.AdjustPower (-power);
+			this.sourceCity.AdjustWeapons (-power);
 			this.general.damage = power;
 		}
 		Debug.Log (general.citizen.name + " of " + general.citizen.city.kingdom.name + " will attack " + targetCity.name);

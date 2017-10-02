@@ -830,13 +830,13 @@ public class KingdomRelationship {
 		//+1 for every percentage point of effective power above my effective defense (max 100)
 		float threatLevel = 0f;
 
-		this._usedTargetEffectivePower = this._targetKingdom.effectivePower;
-		this._usedSourceEffectiveDef = this._sourceKingdom.effectiveDefense;
+		this._usedTargetEffectivePower = this._targetKingdom.effectiveWeapons;
+		this._usedSourceEffectiveDef = this._sourceKingdom.effectiveArmor;
 
 
-		if(this._targetKingdom.effectivePower > this._sourceKingdom.effectiveDefense){
+		if(this._targetKingdom.effectiveWeapons > this._sourceKingdom.effectiveArmor){
 
-			threatLevel = (((float)this._targetKingdom.effectivePower / (float)this._sourceKingdom.effectiveDefense) * 100f) - 100f;
+			threatLevel = (((float)this._targetKingdom.effectiveWeapons / (float)this._sourceKingdom.effectiveArmor) * 100f) - 100f;
 			threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
 
 			//if different race: +15%
@@ -918,13 +918,13 @@ public class KingdomRelationship {
 	internal void UpdateTargetInvasionValue(){
 		float invasionValue = 0;
 
-		this._usedSourceEffectivePower = this._sourceKingdom.effectivePower;
-		this._usedTargetEffectiveDef = this._targetKingdom.effectiveDefense;
+		this._usedSourceEffectivePower = this._sourceKingdom.effectiveWeapons;
+		this._usedTargetEffectiveDef = this._targetKingdom.effectiveArmor;
 
-		if(this._sourceKingdom.effectivePower > this._targetKingdom.effectiveDefense){
+		if(this._sourceKingdom.effectiveWeapons > this._targetKingdom.effectiveArmor){
 			if (this.isAdjacent) {
 				//+1 for every percentage point of my effective power above his effective defense (no max cap)
-				invasionValue = (((float)this._sourceKingdom.effectivePower / (float)this._targetKingdom.effectiveDefense) * 100f) - 100f;
+				invasionValue = (((float)this._sourceKingdom.effectiveWeapons / (float)this._targetKingdom.effectiveArmor) * 100f) - 100f;
 				if (invasionValue < 0) {
 					invasionValue = 0;
 				}

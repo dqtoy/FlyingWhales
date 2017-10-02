@@ -1133,12 +1133,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         text += "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
         "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
         "\n [b]Stability Points:[/b] " + this.city.stabilityPoints.ToString() +
-        "\n [b]City Power:[/b] " + this.city.power.ToString() +
-        "\n [b]City Defense:[/b] " + this.city.defense.ToString() +
-        "\n [b]Kingdom Base Power:[/b] " + this.city.kingdom.basePower.ToString() +
-        "\n [b]Kingdom Base Defense:[/b] " + this.city.kingdom.baseDefense.ToString() +
-        "\n [b]Kingdom Power Alliance:[/b] " + this.city.kingdom.GetPosAlliancePower().ToString() +
-        "\n [b]Kingdom Defense Alliance:[/b] " + this.city.kingdom.GetPosAllianceDefense().ToString() +
+        "\n [b]City Power:[/b] " + this.city.weapons.ToString() +
+        "\n [b]City Defense:[/b] " + this.city.armor.ToString() +
+        "\n [b]Kingdom Base Power:[/b] " + this.city.kingdom.baseWeapons.ToString() +
+        "\n [b]Kingdom Base Defense:[/b] " + this.city.kingdom.baseArmor.ToString() +
+        "\n [b]Kingdom Power Alliance:[/b] " + this.city.kingdom.GetPosAllianceWeapons().ToString() +
+        "\n [b]Kingdom Defense Alliance:[/b] " + this.city.kingdom.GetPosAllianceArmor().ToString() +
         "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
         "\n [b]Region Population Growth:[/b] " + this.region.populationGrowth.ToString() +
         "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +

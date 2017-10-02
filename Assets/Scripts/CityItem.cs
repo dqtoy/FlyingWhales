@@ -45,8 +45,8 @@ public class CityItem : MonoBehaviour {
     public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false, bool showForTesting = false) {
         this._city = _city;
         _governor.SetCitizen(city.governor);
-		this._powerLbl.text = city.power.ToString();
-		this._defenseLbl.text = city.defense.ToString();
+		this._powerLbl.text = city.weapons.ToString();
+		this._defenseLbl.text = city.armor.ToString();
 
 //        _hpLbl.text = city.hp.ToString();
         _structuresLbl.text = city.ownedTiles.Count.ToString();
@@ -87,8 +87,8 @@ public class CityItem : MonoBehaviour {
 
         if (showForTesting) {
             forTestingGO.SetActive(true);
-            newPowerLbl.text = _city.power.ToString();
-            newDefLabel.text = _city.defense.ToString();
+            newPowerLbl.text = _city.weapons.ToString();
+            newDefLabel.text = _city.armor.ToString();
             loyaltyAdjustmentLbl.text = ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier.ToString();
         } else {
             forTestingGO.SetActive(false);
@@ -125,14 +125,14 @@ public class CityItem : MonoBehaviour {
 
     #region For Testing
     public void SetPower() {
-        _city.SetPower(System.Int32.Parse(newPowerLbl.text));
+        _city.SetWeapons(System.Int32.Parse(newPowerLbl.text));
         _city.hexTile.UpdateCityNamePlate();
-        this._powerLbl.text = city.power.ToString();
+        this._powerLbl.text = city.weapons.ToString();
     }
     public void SetDefense() {
-        _city.SetDefense(System.Int32.Parse(newDefLabel.text));
+        _city.SetArmor(System.Int32.Parse(newDefLabel.text));
         _city.hexTile.UpdateCityNamePlate();
-        this._defenseLbl.text = city.defense.ToString();
+        this._defenseLbl.text = city.armor.ToString();
     }
     public void SetGovernorLoyaltyAdjustment() {
         _city.governor.loyaltyModifierForTesting = System.Int32.Parse(loyaltyAdjustmentLbl.text);
