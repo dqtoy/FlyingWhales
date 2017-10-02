@@ -204,9 +204,9 @@ public static class SeeksBalance {
 						Kingdom targetKingdom = null;
 						float highestInvasionValue = kingdom.relationships.Values.Max(x => x.targetKingdomInvasionValue);
                         float invasionValueThreshold = 100f;
-                        float overpopulation = kingdom.GetOverpopulationPercentage();
+                        int overpopulation = kingdom.GetOverpopulationPercentage();
                         if(overpopulation > 0) {
-                            if(overpopulation > 0 && overpopulation <= 10) {
+                            if (overpopulation <= 10) {
                                 invasionValueThreshold -= 10;
                             } else if (overpopulation > 10 && overpopulation <= 20) {
                                 invasionValueThreshold -= 20;

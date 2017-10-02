@@ -2902,10 +2902,10 @@ public class Kingdom{
     #endregion
 
     #region Population
-    internal float GetOverpopulationPercentage() {
-        float overpopulationPercentage = (float)_population / (float)_populationCapacity;
-        overpopulationPercentage = Mathf.Round(overpopulationPercentage * 100f) / 100f;
-        return Mathf.Clamp(overpopulationPercentage, 0, 100); ;
+    internal int GetOverpopulationPercentage() {
+		int overpopulationPercentage = (int) (((_population / _populationCapacity) * 100f) - 100f);
+        overpopulationPercentage = overpopulationPercentage * 100 - 100;
+		return (int) Mathf.Clamp(overpopulationPercentage, 0, 100); ;
     }
     internal void UpdatePopulationCapacity() {
         _populationCapacity = GetPopulationCapacity();
