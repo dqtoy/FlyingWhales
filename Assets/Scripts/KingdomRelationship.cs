@@ -842,16 +842,34 @@ public class KingdomRelationship {
 			//if different race: +15%
 			threatLevel *= this._racePercentageModifier;
 
-			//if currently at war with someone else: -50%
-			if(this._sourceKingdom.HasWar(this._targetKingdom)){
-				threatLevel -= (threatLevel * 0.5f);
-			}
 			if(AreAllies()){
 				threatLevel -= (threatLevel * 0.5f);
+			}else{
+				//if currently at war with someone else: -50%
+				if(this._targetKingdom.HasWar()){
+					if(this._sourceKingdom.alliancePool != null){
+						bool atWarWithMyAlliance = false;
+						for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
+							Kingdom allyKingdom = this._sourceKingdom.alliancePool.kingdomsInvolved [i];
+							if(this._sourceKingdom.id != allyKingdom.id){
+								KingdomRelationship kr = allyKingdom.GetRelationshipWithKingdom (this._targetKingdom);
+								if(kr.isAtWar){
+									atWarWithMyAlliance = true;
+									break;
+								}
+							}
+						}
+						if(!atWarWithMyAlliance){
+							threatLevel -= (threatLevel * 0.5f);
+						}
+					}else{
+						threatLevel -= (threatLevel * 0.5f);
+					}
+				}
 			}
 
 			//if not at war but militarizing
-			if(!this._isAtWar && this._targetKingdom.isMilitarize){
+			if(!this._targetKingdom.HasWar() && this._targetKingdom.isMilitarize){
 				threatLevel *= 1.25f;
 			}
 
@@ -878,10 +896,10 @@ public class KingdomRelationship {
 				threatLevel -= (threatLevel * 0.5f);
 			}
 
-			//cannot expand due to lack of stability
-			if(this._targetKingdom.stability <= 0){
-				threatLevel -= (threatLevel * 0.5f);
-			}
+//			//cannot expand due to lack of stability
+//			if(this._targetKingdom.stability <= 0){
+//				threatLevel -= (threatLevel * 0.5f);
+//			}
 
 			//still adjacent to unoccupied region / can still expand
 			HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom (this._targetKingdom);
