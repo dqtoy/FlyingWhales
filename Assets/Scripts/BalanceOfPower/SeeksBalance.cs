@@ -240,54 +240,52 @@ public static class SeeksBalance {
 			}
 		}
 		if (kingdom.alliancePool == null || !hasAllianceInWar){
-			if(kingdom.cities.Count < kingdom.cityCap){
-				if(!kingdom.HasWar()){
-					HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom(kingdom);
-					if(hexTile == null){
-						//Can no longer expand
-						Kingdom targetKingdom = null;
-						float highestInvasionValue = kingdom.relationships.Values.Max(x => x.targetKingdomInvasionValue);
-                        float invasionValueThreshold = 100f;
-                        int overpopulation = kingdom.GetOverpopulationPercentage();
-                        if(overpopulation > 0) {
-                            if (overpopulation <= 10) {
-                                invasionValueThreshold -= 10;
-                            } else if (overpopulation > 10 && overpopulation <= 20) {
-                                invasionValueThreshold -= 20;
-                            } else if (overpopulation > 20 && overpopulation <= 40) {
-                                invasionValueThreshold -= 35;
-                            } else if (overpopulation > 40 && overpopulation <= 60) {
-                                invasionValueThreshold -= 50;
-                            } else if (overpopulation > 60) {
-                                invasionValueThreshold -= 65;
-                            }
+			if(!kingdom.HasWar()){
+				HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom(kingdom);
+				if(hexTile == null){
+					//Can no longer expand
+					Kingdom targetKingdom = null;
+					float highestInvasionValue = kingdom.relationships.Values.Max(x => x.targetKingdomInvasionValue);
+                    float invasionValueThreshold = 100f;
+                    int overpopulation = kingdom.GetOverpopulationPercentage();
+                    if(overpopulation > 0) {
+                        if (overpopulation <= 10) {
+                            invasionValueThreshold -= 10;
+                        } else if (overpopulation > 10 && overpopulation <= 20) {
+                            invasionValueThreshold -= 20;
+                        } else if (overpopulation > 20 && overpopulation <= 40) {
+                            invasionValueThreshold -= 35;
+                        } else if (overpopulation > 40 && overpopulation <= 60) {
+                            invasionValueThreshold -= 50;
+                        } else if (overpopulation > 60) {
+                            invasionValueThreshold -= 65;
                         }
-						if(highestInvasionValue >= invasionValueThreshold) {
-							int value = kingdom.kingdomTypeData.prepareForWarChance * kingdom.cityCap;
-							foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-								if(relationship.isDiscovered && relationship.targetKingdomInvasionValue == highestInvasionValue){
-									if(!relationship.AreAllies()){
-										int chance = UnityEngine.Random.Range (0, 100);
-										if(chance < value){
-											targetKingdom = relationship.targetKingdom;
-										}
+                    }
+					if(highestInvasionValue >= invasionValueThreshold) {
+						int value = kingdom.kingdomTypeData.prepareForWarChance * kingdom.cityCap;
+						foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
+							if(relationship.isDiscovered && relationship.targetKingdomInvasionValue == highestInvasionValue){
+								if(!relationship.AreAllies()){
+									int chance = UnityEngine.Random.Range (0, 100);
+									if(chance < value){
+										targetKingdom = relationship.targetKingdom;
 									}
 								}
 							}
-							if(targetKingdom != null){
-								//if there is anyone whose Invasion Value is 50 or above, prepare for war against the one with the highest Invasion Value
-								Warfare warfare = new Warfare (kingdom, targetKingdom);
-								Debug.Log(kingdom.name + " prepares for war against " + targetKingdom.name);
-							}
-						}else{
-							foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-								if(relationship.isDiscovered && !relationship.AreAllies()){
-									if(relationship.targetKingdomInvasionValue >= 50f && relationship.targetKingdomInvasionValue < 100f){
-										if(!kingdom.isFortifying && !kingdom.isMilitarize){
-											int chance = UnityEngine.Random.Range (0, 2);
-											if(chance == 0){
-												kingdom.Militarize (true);
-											}
+						}
+						if(targetKingdom != null){
+							//if there is anyone whose Invasion Value is 50 or above, prepare for war against the one with the highest Invasion Value
+							Warfare warfare = new Warfare (kingdom, targetKingdom);
+							Debug.Log(kingdom.name + " prepares for war against " + targetKingdom.name);
+						}
+					}else{
+						foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
+							if(relationship.isDiscovered && !relationship.AreAllies()){
+								if(relationship.targetKingdomInvasionValue >= 50f && relationship.targetKingdomInvasionValue < 100f){
+									if(!kingdom.isFortifying && !kingdom.isMilitarize){
+										int chance = UnityEngine.Random.Range (0, 2);
+										if(chance == 0){
+											kingdom.Militarize (true);
 										}
 									}
 								}
