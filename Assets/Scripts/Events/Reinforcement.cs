@@ -54,12 +54,12 @@ public class Reinforcement : GameEvent {
 
 	private void SendReinforcement(){
 		if(this.reinforcementAmount == -1){
-			this.reinforcementAmount = Mathf.CeilToInt(this.reinforcer.citizen.city.power * 0.3f);
+			this.reinforcementAmount = Mathf.CeilToInt(this.reinforcer.citizen.city.weapons * 0.3f);
 		}
-		if(this.sourceCity.power < this.reinforcementAmount){
-			this.reinforcementAmount = this.sourceCity.power;
+		if(this.sourceCity.weapons < this.reinforcementAmount){
+			this.reinforcementAmount = this.sourceCity.weapons;
 		}
-		this.sourceCity.AdjustPower (-this.reinforcementAmount);
+		this.sourceCity.AdjustWeapons (-this.reinforcementAmount);
 		this.reinforcer.reinforcementValue += this.reinforcementAmount;
 		if(this.war != null){
 			this.war.AdjustMobilizedReinforcementsCount (1);
@@ -73,7 +73,7 @@ public class Reinforcement : GameEvent {
 		if(this.targetCity.isDead || this.targetCity == null){
 			return;
 		}
-		this.targetCity.AdjustPower (this.reinforcer.reinforcementValue);
+		this.targetCity.AdjustWeapons (this.reinforcer.reinforcementValue);
 		this.reinforcer.reinforcementValue = 0;
 		if(this.war != null){
 			this.war.AdjustMobilizedReinforcementsCount (-1);

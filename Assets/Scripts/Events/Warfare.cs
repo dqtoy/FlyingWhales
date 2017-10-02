@@ -194,9 +194,9 @@ public class Warfare {
 			}
 		}
 		if (enemyCities.Count > 0) {
-			int lowestDef = enemyCities.Min (x => x.defense);
+			int lowestDef = enemyCities.Min (x => x.armor);
 			for (int i = 0; i < enemyCities.Count; i++) {
-				if (enemyCities [i].defense == lowestDef) {
+				if (enemyCities [i].armor == lowestDef) {
 					return enemyCities [i];
 				}
 			}
@@ -230,9 +230,9 @@ public class Warfare {
 			}
 		}
 		if(enemyCities.Count > 0){
-			int lowestDef = enemyCities.Min (x => x.defense);
+			int lowestDef = enemyCities.Min (x => x.armor);
 			for (int i = 0; i < enemyCities.Count; i++) {
-				if(enemyCities[i].defense == lowestDef){
+				if(enemyCities[i].armor == lowestDef){
 					return enemyCities [i];
 				}
 			}

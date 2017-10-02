@@ -100,8 +100,8 @@ public class General : Role {
 //
 //		int cityDamage = UnityEngine.Random.Range(0, this.citizen.city.kingdom.nonRebellingCities.Count + 1);
 
-		int power = this.citizen.city.power;
-		this.citizen.city.AdjustPower (-power);
+		int power = this.citizen.city.weapons;
+		this.citizen.city.AdjustWeapons (-power);
 
 		return power;
 	}

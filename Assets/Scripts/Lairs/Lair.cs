@@ -216,7 +216,7 @@ public class Lair {
 
 	internal void DamageToCityDefense(int damage){
 		City city = this.region.occupant;
-		city.AdjustDefense (-damage);
+		city.AdjustArmor (-damage);
 		Debug.Log (this.name + " damaged " + city.name + "'s defense by " + damage.ToString ());
 	}
 }

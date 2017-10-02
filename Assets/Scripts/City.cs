@@ -33,8 +33,8 @@ public class City{
     private int _powerPoints;
     private int _defensePoints;
     private int _stabilityPoints;
-    private int _power;
-    private int _defense;
+    private int _weapons;
+    private int _armor;
 
 	private int _slavesCount;
 	private int raidLoyaltyExpiration;
@@ -94,11 +94,11 @@ public class City{
     public int stabilityPoints {
         get { return _stabilityPoints; }
     }
-    public int power {
-        get { return _power; }
+    public int weapons {
+        get { return _weapons; }
     }
-    public int defense {
-        get { return _defense; }
+    public int armor {
+        get { return _armor; }
     }
 	public float productionGrowthPercentage {
 		get { return this._productionGrowthPercentage; }
@@ -140,8 +140,8 @@ public class City{
         this._kingdom = kingdom;
 		this.name = RandomNameGenerator.Instance.GenerateCityName(this._kingdom.race);
 		this.governor = null;
-        this._power = 0;
-        this._defense = 0;
+        this._weapons = 0;
+        this._armor = 0;
 		this._bonusStability = 0;
 		this._ownedTiles = new List<HexTile>();
 		this.incomingGenerals = new List<General> ();
@@ -186,7 +186,7 @@ public class City{
     internal void SetupInitialValues() {
         hexTile.CheckLairsInRange();
         LevelUpBalanceOfPower();
-        AdjustDefense(50);
+        AdjustArmor(50);
         SetProductionGrowthPercentage(1f);
         DailyGrowthResourceBenefits();
         AddOneTimeResourceBenefits();
@@ -1409,7 +1409,7 @@ public class City{
 			TransferCityToRebellion ();
 		}
 		this.rebellion = rebellion;
-		AdjustDefense (-this._defense);
+		AdjustArmor (-this._armor);
 //		this.kingdom.RemoveFromNonRebellingCities (this);
 		Messenger.RemoveListener("CityEverydayActions", CityEverydayTurnActions);
         Messenger.RemoveListener("CitizenDied", CheckCityDeath);
@@ -1491,28 +1491,28 @@ public class City{
 		this._defensePoints = defensePoints;
 	}
 
-    internal void SetPower(int newPower) {
+    internal void SetWeapons(int newPower) {
         //_kingdom.AdjustBasePower(-_power);
-        _power = 0;
-        AdjustPower(newPower);
+        _weapons = 0;
+        AdjustWeapons(newPower);
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
-    internal void SetDefense(int newDefense) {
+    internal void SetArmor(int newDefense) {
         //_kingdom.AdjustBaseDefense(-_defense);
-        _defense = 0;
-        AdjustDefense(newDefense);
+        _armor = 0;
+        AdjustArmor(newDefense);
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
-    internal void AdjustPower(int adjustment) {
-        _power += adjustment;
+    internal void AdjustWeapons(int adjustment) {
+        _weapons += adjustment;
         //_kingdom.AdjustBasePower(adjustment);
-        _power = Mathf.Max(_power, 0);
+        _weapons = Mathf.Max(_weapons, 0);
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
-    internal void AdjustDefense(int adjustment) {
-        _defense += adjustment;
+    internal void AdjustArmor(int adjustment) {
+        _armor += adjustment;
         //_kingdom.AdjustBaseDefense(adjustment);
-        _defense = Mathf.Max(_defense, 0);
+        _armor = Mathf.Max(_armor, 0);
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
 	internal void AdjustBonusStability(int amount){
@@ -1528,21 +1528,21 @@ public class City{
             MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref stabilityIncrease);
             if (_kingdom.isMilitarize) {
                 //Militarizing converts 15% of all cities Defense to Power.
-                int militarizingGain = Mathf.FloorToInt(defense * 0.15f);
+                int militarizingGain = Mathf.FloorToInt(armor * 0.15f);
                 powerIncrease += militarizingGain;
-                AdjustPower(powerIncrease);
-                AdjustDefense(defenseIncrease - militarizingGain);
+                AdjustWeapons(powerIncrease);
+                AdjustArmor(defenseIncrease - militarizingGain);
                 _kingdom.Militarize(false);
             } else if (_kingdom.isFortifying) {
                 //Fortifying converts 15% of all cities Power to Defense.
-                int fortifyingGain = Mathf.FloorToInt(power * 0.15f);
+                int fortifyingGain = Mathf.FloorToInt(weapons * 0.15f);
                 defenseIncrease += fortifyingGain;
-                AdjustPower(powerIncrease - fortifyingGain);
-                AdjustDefense(defenseIncrease);
+                AdjustWeapons(powerIncrease - fortifyingGain);
+                AdjustArmor(defenseIncrease);
                 _kingdom.Fortify(false);
             } else {
-                AdjustPower(powerIncrease);
-                AdjustDefense(defenseIncrease);
+                AdjustWeapons(powerIncrease);
+                AdjustArmor(defenseIncrease);
             }
             _kingdom.AdjustStability(stabilityIncrease);
             GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
