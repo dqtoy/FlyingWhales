@@ -58,11 +58,12 @@ public class Utilities : MonoBehaviour {
 	};
 	private static string[] warfareAdjective = new string[]{
 		"Acrid", "Bitter", "Bleeding", "Black", "Bloody", "Chilling", "Colossal", "Craven", "Daring", "Deadly",
-		"Fierce", "Lazy", "Old", "Quarreling", "Random", "Red", "Sacred", "Thundering", "Zealous"
+		"Extreme", "Fierce", "Lazy", "Old", "Quarreling", "Random", "Red", "Sacred", "Starving", "Thundering", "Zealous"
 	};
 	private static string[] warfareNoun = new string[]{
-		"Aim", "Bet", "Claim", "Crusade", "Graves", "Hearts", "Intent", "Justice", "Letters", "Lions",
-		"Lovers", "Offense", "Passion", "Potatoes", "Rage", "Survival", "Truth", "Vipers"
+		"Aim", "Artists", "Bet", "Claim", "Crusade", "Domain", "Error", "Fork", "Graves", "Hearts", 
+		"Hills", "Intent", "Insults", "Justice", "King", "Knights", "Letters", "Lions", "Lovers", "Madman",
+		"Offense", "Passion", "Peasants", "Potatoes", "Rage", "Survival", "Truth", "Vipers"
 	};
 	public static int specialResourceCount = 0;
 	
