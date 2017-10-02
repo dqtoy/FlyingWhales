@@ -242,8 +242,14 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Prestige List")]
     [SerializeField] private UILabel prestigeSummaryLbl;
+    [SerializeField] private UILabel kingdomSummaryNamesLbl;
+    [SerializeField] private UILabel kingdomSummaryPopulationsLbl;
+    [SerializeField] private UILabel kingdomSummaryCitiesLbl;
+    [SerializeField] private UILabel kingdomSummaryExpansionRatesLbl;
+    [SerializeField] private UILabel kingdomSummaryWeaponsLbl;
+    [SerializeField] private UILabel kingdomSummaryArmorsLbl;
 
-	[Space(10)]
+    [Space(10)]
 	[Header("Alliance List")]
 	[SerializeField] private UILabel allianceSummaryLbl;
 
@@ -1903,19 +1909,46 @@ public class UIManager : MonoBehaviour {
     }
 
     public void UpdateKingdomSummary() {
-        prestigeSummaryLbl.text = string.Empty;
+        //prestigeSummaryLbl.text = string.Empty;
+        //List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedBySize);
+        //kingdomsToShow.Reverse();
+        //for (int i = 0; i < kingdomsToShow.Count; i++) {
+        //    Kingdom currKingdom = kingdomsToShow[i];
+        //    prestigeSummaryLbl.text += currKingdom.name + " - " + currKingdom.population.ToString() + " (" + currKingdom.cities.Count.ToString() + ")" + 
+        //        " ER: " + currKingdom.expansionRate.ToString() + " W: " + currKingdom.effectiveWeapons.ToString() + " A: " + currKingdom.effectiveArmor.ToString();
+        //    if(i + 1 < KingdomManager.Instance.allKingdomsOrderedBySize.Count) {
+        //        prestigeSummaryLbl.text += "\n";
+        //    }
+        //}
+        kingdomSummaryNamesLbl.text = string.Empty;
+        kingdomSummaryPopulationsLbl.text = string.Empty;
+        kingdomSummaryCitiesLbl.text = string.Empty;
+        kingdomSummaryExpansionRatesLbl.text = string.Empty;
+        kingdomSummaryWeaponsLbl.text = string.Empty;
+        kingdomSummaryArmorsLbl.text = string.Empty;
+
         List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedBySize);
         kingdomsToShow.Reverse();
         for (int i = 0; i < kingdomsToShow.Count; i++) {
             Kingdom currKingdom = kingdomsToShow[i];
-            prestigeSummaryLbl.text += currKingdom.name + " - " + currKingdom.population.ToString() + " (" + currKingdom.cities.Count.ToString() + ")" + 
-                " ER: " + currKingdom.expansionRate.ToString() + " W: " + currKingdom.effectiveWeapons.ToString() + " A: " + currKingdom.effectiveArmor.ToString();
-            if(i + 1 < KingdomManager.Instance.allKingdomsOrderedBySize.Count) {
-                prestigeSummaryLbl.text += "\n";
+            kingdomSummaryNamesLbl.text += currKingdom.name;
+            kingdomSummaryPopulationsLbl.text += "P: " + currKingdom.population.ToString();
+            kingdomSummaryCitiesLbl.text += "C: " + currKingdom.cities.Count.ToString();
+            kingdomSummaryExpansionRatesLbl.text += "ER: " + currKingdom.expansionRate.ToString();
+            kingdomSummaryWeaponsLbl.text += "W: " + currKingdom.effectiveWeapons.ToString();
+            kingdomSummaryArmorsLbl.text += "A: " + currKingdom.effectiveArmor.ToString();
+
+            if (i + 1 < KingdomManager.Instance.allKingdomsOrderedBySize.Count) {
+                kingdomSummaryNamesLbl.text += "\n";
+                kingdomSummaryPopulationsLbl.text += "\n";
+                kingdomSummaryCitiesLbl.text += "\n";
+                kingdomSummaryExpansionRatesLbl.text += "\n";
+                kingdomSummaryWeaponsLbl.text += "\n";
+                kingdomSummaryArmorsLbl.text += "\n";
             }
         }
     }
-	public void UpdateAllianceSummary() {
+    public void UpdateAllianceSummary() {
 		if(UIManager.Instance.goAlliance.activeSelf){
 			this.allianceSummaryLbl.text = string.Empty;
 			if (warAllianceState == "alliance") {
