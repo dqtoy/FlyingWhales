@@ -34,7 +34,7 @@ public class Kingdom{
 
     //private int _basePower;
     //private int _baseDefense;
-    private int _happiness;
+    private int _stability;
     private List<City> _cities;
     private List<Region> _regions;
 	private List<City> _nonRebellingCities;
@@ -112,8 +112,8 @@ public class Kingdom{
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
     protected const int GOLD_GAINED_FROM_TRADE = 10;
     protected const int UNREST_DECREASE_PER_MONTH = -5;
-    protected const int HAPPINESS_DECREASE_CONQUER = -5;
-    protected const int HAPPINESS_DECREASE_EMBARGO = -5;
+    protected const int STABILITY_DECREASE_CONQUER = -5;
+    protected const int STABILITY_DECREASE_EMBARGO = -5;
 
 	private bool _isDead;
 	private bool _hasBioWeapon;
@@ -121,7 +121,6 @@ public class Kingdom{
 	private bool _isTechProducing;
 	private bool _isMilitarize;
 	private bool _isFortifying;
-	private bool _doesLackPrestige;
 
 	private int borderConflictLoyaltyExpiration;
 	private float _techProductionPercentage;
@@ -197,9 +196,9 @@ public class Kingdom{
 //	public List<Camp> camps{
 //		get{ return this._camps; }
 //	}
-    public int happiness {
-        get { return this._happiness; }
-		set { this._happiness = value;}
+    public int stability {
+        get { return this._stability; }
+		set { this._stability = value;}
     }
     public int basicResourceCount {
         get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
@@ -325,9 +324,6 @@ public class Kingdom{
 	public bool isMobilizing{
 		get { return this._isMobilizing;}
 	}
-	public bool doesLackPrestige{
-		get { return this._doesLackPrestige;}
-	}
 	public float techProductionPercentage{
 		get { return this._techProductionPercentage;}
 	}
@@ -373,7 +369,7 @@ public class Kingdom{
 		this._isFortifying = false;
 		this._hasUpheldHiddenHistoryBook = false;
         this._embargoList = new Dictionary<Kingdom, EMBARGO_REASON>();
-        this._happiness = 0;
+        this._stability = 0;
 		this._sourceKingdom = sourceKingdom;
 		this.borderConflictLoyaltyExpiration = 0;
 		this.rebellions = new List<Rebellions> ();
@@ -417,8 +413,6 @@ public class Kingdom{
 		this._actionDay = 0;
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
-
-		SetLackPrestigeState(false);
         AdjustPrestige(GridMap.Instance.numOfRegions);
 //		AdjustPrestige(500);
 
@@ -1007,13 +1001,11 @@ public class Kingdom{
     internal void AdjustPrestige(int adjustment) {
         _prestige += adjustment;
         //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-		CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void SetPrestige(int adjustment) {
         _prestige = adjustment;
         //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-        CheckIfKingdomLacksPrestige();
         KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
     internal void MonthlyPrestigeActions() {
@@ -1056,29 +1048,6 @@ public class Kingdom{
         }
         return monthlyPrestigeGain;
     }
-
-	private void CheckIfKingdomLacksPrestige(){
-		if (this.cities.Count > this.cityCap) {
-			if(!this._doesLackPrestige){
-				SetLackPrestigeState(true);
-				foreach (KingdomRelationship relationship in this.relationships.Values) {
-					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
-					relationshipTowardsThis.AddEventModifier(-30, "Lacks prestige", null, false);
-				}
-			}
-		}else{
-			if(this._doesLackPrestige){
-				SetLackPrestigeState(false);
-				foreach (KingdomRelationship relationship in this.relationships.Values) {
-					KingdomRelationship relationshipTowardsThis = relationship.targetKingdom.GetRelationshipWithKingdom(this);
-					relationshipTowardsThis.RemoveEventModifierBySummary("Lacks prestige");
-				}
-			}
-		}
-	}
-	internal void SetLackPrestigeState(bool state){
-		this._doesLackPrestige = state;
-	}
     #endregion
 
     #region Trading
@@ -1088,7 +1057,7 @@ public class Kingdom{
             //Remove all existing trade routes between kingdomToAdd and this Kingdom
             //this.RemoveAllTradeRoutesWithOtherKingdom(kingdomToAdd);
             //kingdomToAdd.RemoveAllTradeRoutesWithOtherKingdom(this);
-            kingdomToAdd.AdjustHappiness(HAPPINESS_DECREASE_EMBARGO);
+            kingdomToAdd.AdjustStability(STABILITY_DECREASE_EMBARGO);
         }
         
     }
@@ -1366,7 +1335,7 @@ public class Kingdom{
 //            } else {
 //				city.ConquerCity(this);
 //            }
-            this.AdjustHappiness(HAPPINESS_DECREASE_CONQUER);
+            this.AdjustStability(STABILITY_DECREASE_CONQUER);
         } else {
 			if(city.rebellion == null){
 				city.ChangeToRebelFort(attacker.citizen.city.rebellion);
@@ -1383,7 +1352,7 @@ public class Kingdom{
 //			} else {
 //				city.ConquerCity(this);
 //			}
-			this.AdjustHappiness(HAPPINESS_DECREASE_CONQUER);
+			this.AdjustStability(STABILITY_DECREASE_CONQUER);
 		}
 	}
     #endregion
@@ -1910,7 +1879,7 @@ public class Kingdom{
                                 }
                             }
                             if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-                                AdjustHappiness(-10);
+                                AdjustStability(-10);
                             }
                         }
                     }
@@ -2233,10 +2202,12 @@ public class Kingdom{
                     }
                 }
             }
-            Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
-            militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-            militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-            UIManager.Instance.ShowNotification(militarizeLog, null, false);
+            if (kingdom2 != null) {
+                Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
+                militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+                militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+                UIManager.Instance.ShowNotification(militarizeLog, null, false);
+            }
         }
     }
 	internal void Fortify(bool state){
@@ -2255,10 +2226,12 @@ public class Kingdom{
                     }
                 }
             }
-            Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "fortify");
-			fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-            fortifyLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-            UIManager.Instance.ShowNotification(fortifyLog, null, false);
+            if (kingdom2 != null) {
+                Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "fortify");
+                fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+                fortifyLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
+                UIManager.Instance.ShowNotification(fortifyLog, null, false);
+            }
 		}
 	}
 	private void ScheduleActionDay(){
@@ -2463,15 +2436,15 @@ public class Kingdom{
 				SeekAlliance ();
 			}
 
-			//if Happiness is greater than -50, militarize, otherwise only 25% chance to militarize
-			if(this.happiness > -50){
+			//if Stability is greater than -50, militarize, otherwise only 25% chance to militarize
+			if(this.stability > -50){
 				Militarize (true);
-                Debug.Log(name + " has " + happiness.ToString() + " happiness and starts militarizing");
+                Debug.Log(name + " has " + stability.ToString() + " stability and starts militarizing");
             } else{
 				int chance = UnityEngine.Random.Range (0, 100);
 				if(chance < 25){
                     Militarize (true);
-                    Debug.Log(name + " has " + happiness.ToString() + " happiness and starts militarizing");
+                    Debug.Log(name + " has " + stability.ToString() + " stability and starts militarizing");
                 }
 			}
 		}
@@ -2690,13 +2663,13 @@ public class Kingdom{
 //        _baseDefense = Mathf.Max(_baseDefense, 0);
 ////	    UpdateOtherMutualDefenseTreatyPower (adjustment);
 //	}
-	internal void AdjustHappiness(int amountToAdjust) {
-    	this._happiness += amountToAdjust;
-    	this._happiness = Mathf.Clamp(this._happiness, -100, 100);
+	internal void AdjustStability(int amountToAdjust) {
+    	this._stability += amountToAdjust;
+    	this._stability = Mathf.Clamp(this._stability, -100, 100);
 	}
-	internal void ChangeHappiness(int newAmount) {
-		this._happiness = newAmount;
-		this._happiness = Mathf.Clamp (this._happiness, -100, 100);
+	internal void ChangeStability(int newAmount) {
+		this._stability = newAmount;
+		this._stability = Mathf.Clamp (this._stability, -100, 100);
 	}
 	internal void AdjustMilitaryAlliancePower(int amount){
 		this._militaryAlliancePower += amount;

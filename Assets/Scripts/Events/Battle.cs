@@ -297,23 +297,6 @@ public class Battle {
 		return (int)defenseBuff;
 	}
 	#endregion
-
-	internal void CityDied(City city){
-		
-	}
-	private void DeclareWinner(){
-		if(!this._kingdom1City.isDead && this._kingdom2City.isDead){
-			//Kingdom 1 wins
-			EndBattle(this._kingdom1City, this._kingdom2City);
-		}else if(this._kingdom1City.isDead && !this._kingdom2City.isDead){
-			//Kingdom 1 wins
-			EndBattle(this._kingdom2City, this._kingdom1City);
-		}else{
-			//Both dead
-			EndBattle(null, null);
-		}
-	}
-
 	private void EndBattle(City winnerCity, City loserCity){
 		this._isOver = true;
 		this._kingdom1City.isPaired = false;
@@ -339,6 +322,7 @@ public class Battle {
 			this._kr.ChangeHasPairedCities (false);
 		}
 
+		this._warfare.RemoveBattle (this);
 		if(!this.attacker.isDead){
 			this._warfare.CreateNewBattle (this.attacker);
 		}else{

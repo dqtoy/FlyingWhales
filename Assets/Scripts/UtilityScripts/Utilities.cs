@@ -56,6 +56,14 @@ public class Utilities : MonoBehaviour {
 		"Fantastic", "Fearless", "Green", "Holy", "Huge", "Intimidating", "Loyal", "Nasty", "Nice", "Passionate",
 		"Pure", "Royal", "Ruthless", "Salty", "Sensible", "Sneaky", "Strong", "United", "White"
 	};
+	private static string[] warfareAdjective = new string[]{
+		"Acrid", "Bitter", "Bleeding", "Black", "Bloody", "Chilling", "Colossal", "Craven", "Daring", "Deadly",
+		"Fierce", "Lazy", "Old", "Quarreling", "Random", "Red", "Sacred", "Thundering", "Zealous"
+	};
+	private static string[] warfareNoun = new string[]{
+		"Aim", "Bet", "Claim", "Crusade", "Graves", "Hearts", "Intent", "Justice", "Letters", "Lions",
+		"Lovers", "Offense", "Passion", "Potatoes", "Rage", "Survival", "Truth", "Vipers"
+	};
 	public static int specialResourceCount = 0;
 	
 	/*
@@ -113,6 +121,14 @@ public class Utilities : MonoBehaviour {
 			return allianceType [UnityEngine.Random.Range (0, allianceType.Length)]+ " of " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)];
 		}else{
 			return allianceType [UnityEngine.Random.Range (0, allianceType.Length)]+ " of " + allianceAdjective [UnityEngine.Random.Range (0, allianceAdjective.Length)] + " " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)];
+		}
+	}
+	public static string GetWarfareName(){
+		int chance = UnityEngine.Random.Range (0, 2);
+		if(chance == 0){
+			return "War of " + warfareAdjective[UnityEngine.Random.Range(0, warfareAdjective.Length)] + " " + warfareNoun[UnityEngine.Random.Range(0, warfareNoun.Length)];
+		}else{
+			return "War of the " + warfareAdjective[UnityEngine.Random.Range(0, warfareAdjective.Length)] + " " + warfareNoun[UnityEngine.Random.Range(0, warfareNoun.Length)];
 		}
 	}
 

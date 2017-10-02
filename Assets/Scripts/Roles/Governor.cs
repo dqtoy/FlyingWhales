@@ -45,7 +45,7 @@ public class Governor : Role {
         //this.citizen.GenerateCharacterValues();
 
 		//PrestigeContribution (false);
-		HappinessContribution (false);
+		StabilityContribution (false);
 		//IntelligenceContribution (false);
 
         this.UpdateLoyalty ();
@@ -82,7 +82,7 @@ public class Governor : Role {
 //		}
 
 //	}
-	private void HappinessContribution(bool isRemove){
+	private void StabilityContribution(bool isRemove){
 		int contribution = 0;
 		switch(this.citizen.efficiencyLevel){
 		case EFFICIENCY.HIGH:
@@ -99,7 +99,7 @@ public class Governor : Role {
 			contribution *= -1;
 		}
 		if(contribution != 0){
-			this.citizen.city.AdjustBonusHappiness (contribution);
+			this.citizen.city.AdjustBonusStability (contribution);
 		}
 	}
 //	private void IntelligenceContribution(bool isRemove){
@@ -316,7 +316,7 @@ public class Governor : Role {
 	internal override void OnDeath (){
 		base.OnDeath ();
 		//PrestigeContribution (true);
-		HappinessContribution (true);
+		StabilityContribution (true);
 		//IntelligenceContribution (true);
 //		Messenger.RemoveListener("OnDayEnd", CheckEventModifiers);
 	}

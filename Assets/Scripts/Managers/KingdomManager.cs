@@ -25,7 +25,7 @@ public class KingdomManager : MonoBehaviour {
 	public KingdomTypeData kingdomTypeRighteous;
 	public KingdomTypeData kingdomTypeWicked;
 
-    protected const int HAPPINESS_DECREASE_WAR = -10;
+    protected const int STABILITY_DECREASE_WAR = -10;
 
 	public int initialSpawnRate;
 	public int maxKingdomEventHistory;
@@ -167,8 +167,8 @@ public class KingdomManager : MonoBehaviour {
         //kingdom1.RemoveAllTradeRoutesWithOtherKingdom(kingdom2);
         //kingdom2.RemoveAllTradeRoutesWithOtherKingdom(kingdom1);
 
-		war.kingdom1.AdjustHappiness(HAPPINESS_DECREASE_WAR);
-		war.kingdom2.AdjustHappiness(HAPPINESS_DECREASE_WAR);
+		war.kingdom1.AdjustStability(STABILITY_DECREASE_WAR);
+		war.kingdom2.AdjustStability(STABILITY_DECREASE_WAR);
 
 		war.kingdom1.ActivateBoonOfPowers ();
 		war.kingdom2.ActivateBoonOfPowers ();

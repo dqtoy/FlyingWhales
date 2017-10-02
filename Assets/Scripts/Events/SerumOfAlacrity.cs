@@ -73,9 +73,9 @@ public class SerumOfAlacrity : GameEvent {
 
     private void KingdomReaction() {
         if (this.kingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
-            this.kingdom.AdjustHappiness(10);
+            this.kingdom.AdjustStability(10);
         } else {
-            this.kingdom.AdjustHappiness(-10);
+            this.kingdom.AdjustStability(-10);
         }
     }
 

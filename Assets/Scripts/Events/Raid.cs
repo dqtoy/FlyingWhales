@@ -112,7 +112,7 @@ public class Raid : GameEvent {
 
         if (this.isSuccessful) {
             //Adjust the raided city's unrest because it was successfully raided
-            this.raidedCity.kingdom.AdjustHappiness(UNREST_ADJUSTMENT);
+            this.raidedCity.kingdom.AdjustStability(UNREST_ADJUSTMENT);
         }
 
 //		this.raider.DestroyGO ();

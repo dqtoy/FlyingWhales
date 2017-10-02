@@ -78,6 +78,9 @@ public class KingdomTypeData : MonoBehaviour {
 	[SerializeField]
 	private ProductionPointsSpend _productionPointsSpend;
 
+    [SerializeField]
+    private PopulationRates _populationRates;
+
 	[SerializeField]
 	private int _prepareForWarChance;
 
@@ -272,7 +275,11 @@ public class KingdomTypeData : MonoBehaviour {
         get { return _productionPointsSpend; }
     }
 
-	public int prepareForWarChance {
+    public PopulationRates populationRates {
+        get { return _populationRates; }
+    }
+
+    public int prepareForWarChance {
 		get { 
 			return this._prepareForWarChance; 
 		}

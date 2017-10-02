@@ -36,7 +36,7 @@ public class Provocation : GameEvent {
 	#region Overrides
 	internal override void DoneCitizenAction (Citizen citizen){
 		base.DoneCitizenAction (citizen);
-		DecreaseHappiness ();
+		DecreaseStability ();
 	}
 	internal override void DeathByOtherReasons(){
 		this.DoneEvent();
@@ -54,10 +54,10 @@ public class Provocation : GameEvent {
 	}
 	#endregion
 
-	private void DecreaseHappiness(){
+	private void DecreaseStability(){
 		if(this.targetKingdom.isAlive()){
-            if(targetKingdom.happiness != -100) {
-                targetKingdom.AdjustHappiness(-10);
+            if(targetKingdom.stability != -100) {
+                targetKingdom.AdjustStability(-10);
             } else {
                 //Start Rebellion
                 Debug.Log("A provoker sent by " + sourceKingdom.name + " has incited a rebellion at " + targetKingdom.name);

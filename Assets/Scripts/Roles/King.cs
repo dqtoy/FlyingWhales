@@ -25,7 +25,7 @@ public class King : Role {
 		this.SetOwnedKingdom(this.citizen.city.kingdom);
 		//this.citizen.GenerateCharacterValues ();
 		//PrestigeContribution (false);
-		HappinessContribution (false);
+		StabilityContribution (false);
 		//IntelligenceContribution (false);
 		this.abductionCounter = 0;
 		if(this.citizen.city.kingdom.plague != null){
@@ -39,7 +39,7 @@ public class King : Role {
 	internal override void OnDeath (){
 		base.OnDeath ();
 		//PrestigeContribution (true);
-		HappinessContribution (true);
+		StabilityContribution (true);
 		//IntelligenceContribution (true);
 //		Messenger.RemoveListener("OnDayEnd", EverydayActions);
 
@@ -67,7 +67,7 @@ public class King : Role {
 	//	this.ownedKingdom.AdjustBonusPrestige (contribution);
 
 	//}
-	private void HappinessContribution(bool isRemove){
+	private void StabilityContribution(bool isRemove){
 		int contribution = 0;
 		switch(this.citizen.efficiencyLevel){
 		case EFFICIENCY.HIGH:
@@ -83,7 +83,7 @@ public class King : Role {
 		if(isRemove){
 			contribution *= -1;
 		}
-		this.citizen.city.AdjustBonusHappiness (contribution);
+		this.citizen.city.AdjustBonusStability (contribution);
 	}
 	//private void IntelligenceContribution(bool isRemove){
 	//	int contribution = 0;
