@@ -667,6 +667,37 @@ public class Citizen {
     }
     #endregion
 
+    #region Expansion
+    internal int GetExpansionRateContribution() {
+        if (role != ROLE.GOVERNOR && role != ROLE.KING) {
+            return 0;
+        } else {
+            switch (_charismaLevel) {
+                case CHARISMA.HIGH:
+                    if (role == ROLE.KING) {
+                        return 10;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return 2;
+                    }
+                    break;
+                case CHARISMA.AVERAGE:
+                    if (role == ROLE.KING) {
+                        return 7;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return 1;
+                    }
+                    break;
+                case CHARISMA.LOW:
+                    if (role == ROLE.KING) {
+                        return 5;
+                    }
+                    break;
+            }
+            return 0;
+        }
+    }
+    #endregion
+
     #region Tech
     internal int GetTechContribution() {
         if (role != ROLE.GOVERNOR && role != ROLE.KING) {
@@ -688,6 +719,37 @@ public class Citizen {
                     }
                     break;
                 case INTELLIGENCE.LOW:
+                    if (role == ROLE.KING) {
+                        return 2;
+                    }
+                    break;
+            }
+            return 0;
+        }
+    }
+    #endregion
+
+    #region Stability
+    internal int GetStabilityContribution() {
+        if (role != ROLE.GOVERNOR && role != ROLE.KING) {
+            return 0;
+        } else {
+            switch (_efficiencyLevel) {
+                case EFFICIENCY.HIGH:
+                    if (role == ROLE.KING) {
+                        return 6;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return 2;
+                    }
+                    break;
+                case EFFICIENCY.AVERAGE:
+                    if (role == ROLE.KING) {
+                        return 4;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return 1;
+                    }
+                    break;
+                case EFFICIENCY.LOW:
                     if (role == ROLE.KING) {
                         return 2;
                     }

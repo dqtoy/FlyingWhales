@@ -32,7 +32,7 @@ public class City{
     //Balance of Power
     private int _powerPoints;
     private int _defensePoints;
-    private int _stabilityPoints;
+    private int _techPoints;
     private int _weapons;
     private int _armor;
 
@@ -71,8 +71,12 @@ public class City{
 		get{ return this._currentGrowth; }
 	}
 	public int totalDailyGrowth{
-		get{ return (int)((_dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount + this._dailyGrowthResourceBenefits) * this._productionGrowthPercentage); }
-	}
+        //get{ return (int)((_dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount + this._dailyGrowthResourceBenefits) * this._productionGrowthPercentage); }
+        get { return Mathf.FloorToInt((baseDailyGrowth + _dailyGrowthResourceBenefits) * _productionGrowthPercentage); }
+    }
+    internal int baseDailyGrowth {
+        get { return GetBaseDailyGrowth(); }
+    }
 	public int maxGrowth{
 		get{ return this._maxGrowth; }
 	}
@@ -91,8 +95,8 @@ public class City{
     public int defensePoints {
         get { return _defensePoints; }
     }
-    public int stabilityPoints {
-        get { return _stabilityPoints; }
+    public int techPoints {
+        get { return _techPoints; }
     }
     public int weapons {
         get { return _weapons; }
@@ -186,7 +190,7 @@ public class City{
     internal void SetupInitialValues() {
         hexTile.CheckLairsInRange();
         LevelUpBalanceOfPower();
-        AdjustArmor(50);
+        //AdjustArmor(50);
         SetProductionGrowthPercentage(1f);
         DailyGrowthResourceBenefits();
         AddOneTimeResourceBenefits();
@@ -194,7 +198,6 @@ public class City{
         Messenger.AddListener("CitizenDied", CheckCityDeath);
         GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
         increaseDueDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
     }
 
 	/*
@@ -828,6 +831,12 @@ public class City{
 	}
 
 	#region Resource Production
+    private int GetBaseDailyGrowth() {
+        int naturalResourceLevel = _region.naturalResourceLevel[kingdom.race];
+        int workers = _kingdom.workers;
+        int cities = _kingdom.cities.Count;
+        return (2 * naturalResourceLevel * (workers / cities)) / ((workers / cities) + naturalResourceLevel);
+    }
 	internal void AddToDailyGrowth(){
         AdjustDailyGrowth(this.totalDailyGrowth);
     }
@@ -840,18 +849,18 @@ public class City{
             this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
         }
     }
-    internal void AdjustDailyGrowthBuffs(int adjustment) {
-        _dailyGrowthBuffs += adjustment;
-    }
+    //internal void AdjustDailyGrowthBuffs(int adjustment) {
+    //    _dailyGrowthBuffs += adjustment;
+    //}
 	internal void UpdateDailyProduction(){
-		this._maxGrowth = 200 + ((300 + (250 * this.ownedTiles.Count)) * this.ownedTiles.Count);
-		this._dailyGrowthFromStructures = (int) Math.Sqrt(this._region.naturalResourceLevel[this.kingdom.race]) * 2;
-		for (int i = 0; i < this.structures.Count; i++) {
-			HexTile currentStructure = this.structures [i];
-            if (!currentStructure.isPlagued) {
-				this._dailyGrowthFromStructures += 3;
-            }
-		}
+		this._maxGrowth = 200 + ((400 + (400 * this.ownedTiles.Count)) * this.ownedTiles.Count);
+		//this._dailyGrowthFromStructures = (int) Math.Sqrt(this._region.naturalResourceLevel[this.kingdom.race]) * 2;
+		//for (int i = 0; i < this.structures.Count; i++) {
+		//	HexTile currentStructure = this.structures [i];
+  //          if (!currentStructure.isPlagued) {
+		//		this._dailyGrowthFromStructures += 3;
+  //          }
+		//}
 	}
 	#endregion
 
@@ -1018,8 +1027,6 @@ public class City{
      * Conquer this city and transfer ownership to the conqueror
      * */
 	internal void ConquerCity(Kingdom conqueror) {
-        //AdjustPower(-power);
-        //AdjustDefense(-defense);
         RemoveOneTimeResourceBenefits();
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
@@ -1034,16 +1041,6 @@ public class City{
         for (int i = 0; i < structuresDestroyed; i++) {
             this.RemoveTileFromCity(this.structures[UnityEngine.Random.Range(0, this.structures.Count)]);
         }
-
-        //ResetAdjacentCities();
-
-        //List<City> remainingCitiesOfConqueredKingdom = new List<City>(_kingdom.cities);
-        //for (int i = 0; i < remainingCitiesOfConqueredKingdom.Count; i++) {
-        //    if(remainingCitiesOfConqueredKingdom[i].id == this.id) {
-        //        remainingCitiesOfConqueredKingdom.RemoveAt(i);
-        //        break;
-        //    }
-        //}
 
         //Transfer Tiles
         List<HexTile> structureTilesToTransfer = new List<HexTile>(structures);
@@ -1080,8 +1077,8 @@ public class City{
         newCity.hexTile.CreateCityNamePlate(newCity);
         newCity.SetupInitialValues();
         newCity.HighlightAllOwnedTiles(69f / 255f);
-        //newCity.AdjustPower(newCity.power);
-        //newCity.AdjustDefense(newCity.defense);
+        //When occupying an invaded city, Stability is reduced by 20.
+        newCity.kingdom.AdjustStability(-20);
         for (int i = 0; i < conqueror.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = conqueror.discoveredKingdoms[i];
             if (otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {
@@ -1490,73 +1487,76 @@ public class City{
 	internal void SetDefensePoints(int defensePoints) {
 		this._defensePoints = defensePoints;
 	}
-
+    internal void AdjustTechPoints(int techPoints) {
+        _techPoints += techPoints;
+    }
     internal void SetWeapons(int newPower) {
         //_kingdom.AdjustBasePower(-_power);
         _weapons = 0;
         AdjustWeapons(newPower);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
     }
     internal void SetArmor(int newDefense) {
         //_kingdom.AdjustBaseDefense(-_defense);
         _armor = 0;
         AdjustArmor(newDefense);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
     }
     internal void AdjustWeapons(int adjustment) {
         _weapons += adjustment;
         //_kingdom.AdjustBasePower(adjustment);
         _weapons = Mathf.Max(_weapons, 0);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
     }
     internal void AdjustArmor(int adjustment) {
         _armor += adjustment;
         //_kingdom.AdjustBaseDefense(adjustment);
         _armor = Mathf.Max(_armor, 0);
-        KingdomManager.Instance.UpdateKingdomPrestigeList();
+        KingdomManager.Instance.UpdateKingdomList();
     }
-	internal void AdjustBonusStability(int amount){
-		this._bonusStability += amount;
-	}
-    internal void IncreaseBOPAttributesEveryMonth() {
-		if (!isDead && this.rebellion == null) {
-            int powerIncrease = _powerPoints * 3;
-            int defenseIncrease = _defensePoints * 3;
-			
-            int stabilityDecrease = (structures.Count * 4);
-            int stabilityIncrease = ((_stabilityPoints * 2) + this._bonusStability) - stabilityDecrease;
-            MonthlyResourceBenefits(ref powerIncrease, ref defenseIncrease, ref stabilityIncrease);
-            if (_kingdom.isMilitarize) {
-                //Militarizing converts 15% of all cities Defense to Power.
-                int militarizingGain = Mathf.FloorToInt(armor * 0.15f);
-                powerIncrease += militarizingGain;
-                AdjustWeapons(powerIncrease);
-                AdjustArmor(defenseIncrease - militarizingGain);
-                _kingdom.Militarize(false);
-            } else if (_kingdom.isFortifying) {
-                //Fortifying converts 15% of all cities Power to Defense.
-                int fortifyingGain = Mathf.FloorToInt(weapons * 0.15f);
-                defenseIncrease += fortifyingGain;
-                AdjustWeapons(powerIncrease - fortifyingGain);
-                AdjustArmor(defenseIncrease);
-                _kingdom.Fortify(false);
-            } else {
-                AdjustWeapons(powerIncrease);
-                AdjustArmor(defenseIncrease);
-            }
-            _kingdom.AdjustStability(stabilityIncrease);
-            GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-            increaseDueDate.AddMonths(1);
-            SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
-        }
-    }
+	//internal void AdjustBonusStability(int amount){
+	//	this._bonusStability += amount;
+	//}
+  //  internal void IncreaseBOPAttributesEveryMonth() {
+		//if (!isDead && this.rebellion == null) {
+  //          int weaponsIncrease = _powerPoints * 3;
+  //          int armorIncrease = _defensePoints * 3;
+
+  //          //int stabilityDecrease = (structures.Count * 4);
+  //          //int stabilityIncrease = ((_techPoints * 2) + this._bonusStability) - stabilityDecrease;
+  //          int stabilityIncrease = this._bonusStability;
+  //          MonthlyResourceBenefits(ref weaponsIncrease, ref armorIncrease, ref stabilityIncrease);
+  //          if (_kingdom.isMilitarize) {
+  //              //Militarizing converts 15% of all cities Defense to Power.
+  //              int militarizingGain = Mathf.FloorToInt(armor * 0.15f);
+  //              weaponsIncrease += militarizingGain;
+  //              AdjustWeapons(weaponsIncrease);
+  //              AdjustArmor(armorIncrease - militarizingGain);
+  //              _kingdom.Militarize(false);
+  //          } else if (_kingdom.isFortifying) {
+  //              //Fortifying converts 15% of all cities Power to Defense.
+  //              int fortifyingGain = Mathf.FloorToInt(weapons * 0.15f);
+  //              armorIncrease += fortifyingGain;
+  //              AdjustWeapons(weaponsIncrease - fortifyingGain);
+  //              AdjustArmor(armorIncrease);
+  //              _kingdom.Fortify(false);
+  //          } else {
+  //              AdjustWeapons(weaponsIncrease);
+  //              AdjustArmor(armorIncrease);
+  //          }
+  //          _kingdom.AdjustStability(stabilityIncrease);
+  //          GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+  //          increaseDueDate.AddMonths(1);
+  //          SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+  //      }
+  //  }
 
     private void LevelUpBalanceOfPower() {
-        _powerPoints += _kingdom.kingdomTypeData.productionPointsSpend.power;
-        _defensePoints += _kingdom.kingdomTypeData.productionPointsSpend.defense;
-        _stabilityPoints += _kingdom.kingdomTypeData.productionPointsSpend.stability;
+        AdjustPowerPoints(_kingdom.kingdomTypeData.productionPointsSpend.power);
+        AdjustDefensePoints(_kingdom.kingdomTypeData.productionPointsSpend.defense);
+        AdjustTechPoints(_kingdom.kingdomTypeData.productionPointsSpend.tech);
     }
-	internal void MonthlyResourceBenefits(ref int powerIncrease, ref int defenseIncrease, ref int stabilityIncrease){
+	internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, ref int stabilityIncrease){
 		switch (this._region.specialResource){
 		case RESOURCE.CORN:
 			stabilityIncrease += 5;
@@ -1568,16 +1568,16 @@ public class City{
 			stabilityIncrease += 15;
 			break;
 		case RESOURCE.OAK:
-			defenseIncrease += 5;
+			armorIncrease += 5;
 			break;
 		case RESOURCE.EBONY:
-			defenseIncrease += 15;
+			armorIncrease += 15;
 			break;
 		case RESOURCE.GRANITE:
-			powerIncrease += 5;
+			weaponsIncrease += 5;
 			break;
 		case RESOURCE.SLATE:
-			powerIncrease += 15;
+			weaponsIncrease += 15;
 			break;
 		case RESOURCE.COBALT:
 			this.kingdom.AdjustPrestige(10);

@@ -11,7 +11,7 @@ public class KingdomManager : MonoBehaviour {
 
 	public List<Kingdom> allKingdoms;
 
-    public List<Kingdom> allKingdomsOrderedByPrestige;
+    public List<Kingdom> allKingdomsOrderedBySize;
 
 	public KingdomTypeData kingdomTypeBarbaric;
 	public KingdomTypeData kingdomTypeNaive;
@@ -426,9 +426,9 @@ public class KingdomManager : MonoBehaviour {
         }
 	}
 
-    internal void UpdateKingdomPrestigeList() {
-        allKingdomsOrderedByPrestige = allKingdoms.OrderBy(x => x.prestige).ToList();
-        UIManager.Instance.UpdatePrestigeSummary();
+    internal void UpdateKingdomList() {
+        allKingdomsOrderedBySize = allKingdoms.OrderBy(x => x.cities.Count).ToList();
+        UIManager.Instance.UpdateKingdomSummary();
     }
 	internal void IncrementCurrentActionDay(int value){
 		this.currentActionDay += value;
