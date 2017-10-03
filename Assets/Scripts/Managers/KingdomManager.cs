@@ -476,4 +476,12 @@ public class KingdomManager : MonoBehaviour {
 		this._kingdomWars.Remove (warfare);
 	}
 	#endregion
+
+	internal int GetReducedInvasionValueThreshHold(float originalValue, int overPopulation){
+		int newValue = (int)(originalValue - (float)overPopulation);
+		if(newValue < 0){
+			newValue = 0;
+		}
+		return newValue;
+	}
 }
