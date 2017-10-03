@@ -481,13 +481,13 @@ public class Battle {
 		//Solve for max damage to weapons which is x
 		//x = attackAfterDamage * soldiers / (2 * soldiers) - attackAfterDamage;
 		float soldiers = (float)this.attacker.kingdom.soldiers;
-		return (int)(((float)attackAfterDamage * soldiers) / (2f * soldiers) - (float)attackAfterDamage);
+		return (int)(((float)attackAfterDamage * soldiers) / ((2f * soldiers) - (float)attackAfterDamage));
 	}
 	private int GetMaxDamageToArmors(int defenseAfterDamage){
 		//Solve for max damage to weapons which is x
 		//x = defenseAfterDamage * soldiers / (2 * soldiers) - defenseAfterDamage;
 		float soldiers = (float)this.defender.kingdom.soldiers;
-		return (int)(((float)defenseAfterDamage * soldiers) / (2f * soldiers) - (float)defenseAfterDamage);
+		return (int)(((float)defenseAfterDamage * soldiers) / ((2f * soldiers) - (float)defenseAfterDamage));
 	}
 
 	private int GetDamageToPopulation(int remainingEffectiveAttDef, int remainingWeapArmor){
