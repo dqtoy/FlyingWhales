@@ -44,12 +44,12 @@ public class KingdomSummaryEntry : MonoBehaviour {
     }
 
     private void OnHoverWeapons() {
-        string textToDisplay = "Total Weapons:[b] " + _kingdom.effectiveWeapons + "[/b]"
+        string textToDisplay = "Total Weapons:[b] " + _kingdom.baseWeapons + "[/b]"
                                 + "\nSoldiers:[b] " + _kingdom.soldiers.ToString() + "[/b]";
         UIManager.Instance.ShowSmallInfo(textToDisplay);
     }
     private void OnHoverArmor() {
-        string textToDisplay = "Total Armor:[b] " + _kingdom.effectiveArmor + "[/b]" 
+        string textToDisplay = "Total Armor:[b] " + _kingdom.baseArmor + "[/b]" 
                                 + "\nSoldiers:[b] " + _kingdom.soldiers.ToString() + "[/b]";
         UIManager.Instance.ShowSmallInfo(textToDisplay);
     }
