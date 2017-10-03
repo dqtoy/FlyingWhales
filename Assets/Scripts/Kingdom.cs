@@ -1239,6 +1239,23 @@ public class Kingdom{
         }
         return citizensOfType;
     }
+    internal bool IsElligibleForRebellion() {
+        if(stability <= -100) {
+            for (int i = 0; i < cities.Count; i++) {
+                City currCity = cities[i];
+                if(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50).Any()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    //internal List<Citizen> GetCitizensFroRebellion() {
+    //    List<Citizen> citizensForRebellion = new List<Citizen>();
+    //    for (int i = 0; i < cities.Count; i++) {
+
+    //    }
+    //}
     #endregion
 
     #region Succession
@@ -2999,16 +3016,17 @@ public class Kingdom{
                 //Revalidate adjacency
                 for (int j = 0; j < cities.Count; j++) {
                     Region regionOfCurrCity = cities[j].region;
-                    foreach (Region otherRegion in regionOfCurrCity.adjacentRegions.Where(x => x.occupant != null && x.occupant.kingdom != this)) {
-                        if (otherRegion.occupant.kingdom == otherKingdom) {
+                    foreach (Region otherRegion in regionOfCurrCity.adjacentRegions.Where(x => x.occupant != null && x.occupant.kingdom.id != this.id)) {
+                        if (otherRegion.occupant.kingdom.id == otherKingdom.id) {
                             //otherKingdom is still adjacent to this kingdom, validity verified!
                             isValid = true;
                             break;
-                        } else if (kingdomsToCheck.Contains(otherRegion.occupant.kingdom)) {
-                            //otherRegion.occupant.kingdom is still adjacent to this kingdom, validity verified!
-                            isValid = true;
-                            break;
-                        }
+                        } 
+                        //else if (kingdomsToCheck.Contains(otherRegion.occupant.kingdom)) {
+                        //    //otherRegion.occupant.kingdom is still adjacent to this kingdom, validity verified!
+                        //    isValid = true;
+                        //    break;
+                        //}
                     }
                     if (isValid) {
                         //otherKingdom has already been verified! Skip checking of other cities
@@ -3062,9 +3080,10 @@ public class Kingdom{
         _population += adjustment;
         if(_population <= 0) {
             //if at any time population is reduced to 0, the Kingdom will cease to exist and all his cities will be destroyed
-            foreach (City city in cities) {
-                city.KillCity();
+            while (cities.Count > 0) {
+                cities[0].KillCity();
             }
+                
         }
         KingdomManager.Instance.UpdateKingdomList();
     }
