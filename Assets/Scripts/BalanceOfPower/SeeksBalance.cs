@@ -300,7 +300,7 @@ public static class SeeksBalance {
 								int value = 1 * stabilityModifier;
 								int threshold = KingdomManager.Instance.GetReducedInvasionValueThreshHold (50f, overPopulationReduction);
 								int totalValue = ((int)kr.targetKingdomInvasionValue - threshold) * value;
-								if(chance < value){
+								if(chance < totalValue){
 									//if there is anyone whose Invasion Value is 1 or above, prepare for war against the one with the highest Invasion Value
 									Warfare warfare = new Warfare (kingdom, targetKingdom);
 									Debug.Log(kingdom.name + " prepares for war against " + targetKingdom.name);
