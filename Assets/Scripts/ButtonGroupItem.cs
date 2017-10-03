@@ -18,13 +18,14 @@ public class ButtonGroupItem : MonoBehaviour {
 		this.isClicked = isClicked;
 		if (isClicked) {
 			this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
-		} else {
+            buttonGroup.ClickedItem(this);
+        } else {
 			this.GetComponent<UI2DSprite> ().sprite2D = normalSprite;
 		}
 	}
 
 	void OnClick(){
-		buttonGroup.ClickedItem (this);
+        buttonGroup.ClickedItem (this);
 	}
 
 	void OnHover(bool isOver){
@@ -41,8 +42,9 @@ public class ButtonGroupItem : MonoBehaviour {
 
 
 	public void SetAsClicked(){
-		this.isClicked = true;
-		this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
-		buttonGroup.ClickedItem (this);
+        SetClickState(true);
+  //      this.isClicked = true;
+		//this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
+		//buttonGroup.ClickedItem (this);
 	}
 }

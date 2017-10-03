@@ -11,7 +11,8 @@ public class KingdomManager : MonoBehaviour {
 
 	public List<Kingdom> allKingdoms;
 
-    public List<Kingdom> allKingdomsOrderedBySize;
+    public List<Kingdom> allKingdomsOrderedBy;
+    [SerializeField] private KINGDOMS_ORDERED_BY orderKingdomsBy;
 
 	public KingdomTypeData kingdomTypeBarbaric;
 	public KingdomTypeData kingdomTypeNaive;
@@ -427,9 +428,28 @@ public class KingdomManager : MonoBehaviour {
 	}
 
     internal void UpdateKingdomList() {
-        allKingdomsOrderedBySize = allKingdoms.OrderBy(x => x.cities.Count).ToList();
+        if(orderKingdomsBy == KINGDOMS_ORDERED_BY.NAME) {
+            allKingdomsOrderedBy = allKingdoms.OrderByDescending(x => x.name).ToList();
+        } else if (orderKingdomsBy == KINGDOMS_ORDERED_BY.POPULATION) {
+            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.population).ToList();
+        } else if (orderKingdomsBy == KINGDOMS_ORDERED_BY.CITIES) {
+            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.cities.Count).ToList();
+        } else if (orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
+            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.expansionRate).ToList();
+        } else if (orderKingdomsBy == KINGDOMS_ORDERED_BY.WEAPONS) {
+            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.effectiveWeapons).ToList();
+        } else if (orderKingdomsBy == KINGDOMS_ORDERED_BY.ARMOR) {
+            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.effectiveArmor).ToList();
+        }
+        //allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.cities.Count).ToList();
         UIManager.Instance.UpdateKingdomSummary();
     }
+
+    internal void SetOrderKingdomsBy(KINGDOMS_ORDERED_BY orderedBy) {
+        orderKingdomsBy = orderedBy;
+        UpdateKingdomList();
+    }
+
 	internal void IncrementCurrentActionDay(int value){
 		this.currentActionDay += value;
 	}
