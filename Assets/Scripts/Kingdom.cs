@@ -463,7 +463,7 @@ public class Kingdom{
         //		AdjustPrestige(500);
 
 
-        AdjustPopulation(25);
+        AdjustPopulation(50);
         AdjustStability(50);
         AdjustBaseWeapons(25);
         AdjustBaseArmors(25);
@@ -1052,12 +1052,16 @@ public class Kingdom{
     }
     internal void ResetExpansionRate() {
         _expansionRate = 0;
-        UIManager.Instance.UpdateKingdomSummary();
+        if (KingdomManager.Instance.orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
+            KingdomManager.Instance.UpdateKingdomList();
+        }
     }
     private void AdjustExpansionRate(int adjustment) {
         _expansionRate += adjustment;
         _expansionRate = Mathf.Clamp(_expansionRate, 0, GridMap.Instance.numOfRegions);
-        UIManager.Instance.UpdateKingdomSummary();
+        if(KingdomManager.Instance.orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
+            KingdomManager.Instance.UpdateKingdomList();
+        }
     }
     #endregion
 
@@ -3026,9 +3030,10 @@ public class Kingdom{
 
     #region Population
     internal int GetOverpopulationPercentage() {
-		int overpopulationPercentage = (int) (((_population / _populationCapacity) * 100f) - 100f);
-        overpopulationPercentage = overpopulationPercentage * 100 - 100;
-		return (int) Mathf.Clamp(overpopulationPercentage, 0, 100); ;
+        float overpopulationPercentage = ((float)_population / (float)_populationCapacity);
+        //overpopulationPercentage = overpopulationPercentage * 100 - 100;
+        overpopulationPercentage = Mathf.Clamp(overpopulationPercentage, 0f, 100f);
+        return Mathf.FloorToInt(overpopulationPercentage);
     }
     internal void UpdatePopulationCapacity() {
         _populationCapacity = GetPopulationCapacity();
@@ -3036,7 +3041,7 @@ public class Kingdom{
     internal int GetPopulationCapacity() {
         int populationCapacity = 0;
         for (int i = 0; i < cities.Count; i++) {
-            populationCapacity += 100 + (10 * cities[i].cityLevel);
+            populationCapacity += 200 + (20 * cities[i].cityLevel);
         }
         return populationCapacity;
     }
@@ -3063,6 +3068,7 @@ public class Kingdom{
                 city.KillCity();
             }
         }
+        KingdomManager.Instance.UpdateKingdomList();
     }
     #endregion
 

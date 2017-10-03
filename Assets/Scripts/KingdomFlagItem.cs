@@ -17,7 +17,11 @@ public class KingdomFlagItem : MonoBehaviour {
     [SerializeField] private TweenPosition _tweenPos;
     [SerializeField] private UIGrid _eventsGrid;
     [SerializeField] private GameObject deathIcon;
-	private bool isHovering = false;
+    [SerializeField] private GameObject kingdomInfoGO;
+    [SerializeField] private UILabel kingdomInfoLbl;
+    private bool isHovering = false;
+
+    private bool isHoverEnabled = true;
 
     #region getters/setters
     public UIGrid eventsGrid {
@@ -25,14 +29,31 @@ public class KingdomFlagItem : MonoBehaviour {
     }
     #endregion
 
-    internal void SetKingdom(Kingdom kingdom){
+    internal void SetKingdom(Kingdom kingdom, bool showKingdomInfo = false){
 		this.kingdom = kingdom;
 		this._kingdomColorSprite.color = kingdom.kingdomColor;
+
+        if (showKingdomInfo) {
+            ShowKingdomInfo();
+        } else {
+            HideKingdomInfo();
+        }
     }
 
-	//void OnClick(){
- //       this.SetAsSelected();
- //   }
+    private void ShowKingdomInfo() {
+        isHoverEnabled = false;
+        kingdomInfoLbl.text = kingdom.name + "\n" + Utilities.NormalizeString(kingdom.kingdomType.ToString()) + "\nCities: " + kingdom.cities.Count;
+        kingdomInfoGO.SetActive(true);
+    }
+
+    private void HideKingdomInfo() {
+        isHoverEnabled = true;
+        kingdomInfoGO.SetActive(false);
+    }
+
+    //void OnClick(){
+    //       this.SetAsSelected();
+    //   }
 
     void OnDoubleClick() {
         //Debug.Log("DOUBLE CLICK!: " + kingdom.name);
@@ -85,17 +106,19 @@ public class KingdomFlagItem : MonoBehaviour {
 
     #region Monobehaviour Functions
     void OnHover(bool isOver) {
-        if (isOver) {
-            this.isHovering = true;
-            UIManager.Instance.ShowSmallInfo("[b]" + this.kingdom.name + "[/b]");
-            if (onHoverOver != null) {
-                this.onHoverOver();
-            }
-        } else {
-            this.isHovering = false;
-            UIManager.Instance.HideSmallInfo();
-            if (onHoverExit != null) {
-                this.onHoverExit();
+        if (isHoverEnabled) {
+            if (isOver) {
+                this.isHovering = true;
+                UIManager.Instance.ShowSmallInfo("[b]" + this.kingdom.name + "[/b]");
+                if (onHoverOver != null) {
+                    this.onHoverOver();
+                }
+            } else {
+                this.isHovering = false;
+                UIManager.Instance.HideSmallInfo();
+                if (onHoverExit != null) {
+                    this.onHoverExit();
+                }
             }
         }
     }

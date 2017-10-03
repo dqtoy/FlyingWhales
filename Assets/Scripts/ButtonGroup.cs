@@ -9,7 +9,7 @@ public class ButtonGroup : MonoBehaviour {
 		for (int i = 0; i < buttons.Length; i++) {
 			if (buttons[i] != itemClicked) {
 				buttons[i].SetClickState(false);
-			}
+            }
 		}
 	}
 }

@@ -575,3 +575,12 @@ public enum WAR_SIDE{
 public enum STATUS_EFFECTS {
     INCURABLE_DISEASE
 }
+
+public enum KINGDOMS_ORDERED_BY {
+    NAME,
+    POPULATION,
+    CITIES,
+    EXPANSION_RATE,
+    WEAPONS,
+    ARMOR
+}
