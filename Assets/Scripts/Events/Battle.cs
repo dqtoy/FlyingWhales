@@ -493,6 +493,6 @@ public class Battle {
 	private int GetDamageToPopulation(int remainingEffectiveAttDef, int remainingWeapArmor){
 		//Solve for max damage to weapons which is x
 		//x = remainingEffectiveAttDef * remainingWeapArmor / (2 * remainingWeapArmor) - remainingEffectiveAttDef;
-		return (int)(((float)remainingEffectiveAttDef * remainingWeapArmor) / (2f * remainingWeapArmor) - (float)remainingEffectiveAttDef);
+		return (int)(((float)remainingEffectiveAttDef * remainingWeapArmor) / ((2f * remainingWeapArmor) - (float)remainingEffectiveAttDef));
 	}
 }
