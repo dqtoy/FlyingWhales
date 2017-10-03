@@ -1054,12 +1054,16 @@ public class Kingdom{
     }
     internal void ResetExpansionRate() {
         _expansionRate = 0;
-        UIManager.Instance.UpdateKingdomSummary();
+        if (KingdomManager.Instance.orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
+            KingdomManager.Instance.UpdateKingdomList();
+        }
     }
     private void AdjustExpansionRate(int adjustment) {
         _expansionRate += adjustment;
         _expansionRate = Mathf.Clamp(_expansionRate, 0, GridMap.Instance.numOfRegions);
-        UIManager.Instance.UpdateKingdomSummary();
+        if(KingdomManager.Instance.orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
+            KingdomManager.Instance.UpdateKingdomList();
+        }
     }
     #endregion
 
@@ -3066,6 +3070,7 @@ public class Kingdom{
                 city.KillCity();
             }
         }
+        KingdomManager.Instance.UpdateKingdomList();
     }
     #endregion
 
