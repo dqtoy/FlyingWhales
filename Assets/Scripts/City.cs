@@ -1021,6 +1021,7 @@ public class City{
         }
 		KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         CameraMove.Instance.UpdateMinimapTexture();
+		Messenger.Broadcast<City>("CityDied", this);
     }
 
     /*
