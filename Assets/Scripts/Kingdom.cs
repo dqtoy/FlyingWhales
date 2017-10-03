@@ -2920,9 +2920,9 @@ public class Kingdom{
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             if (!currCity.isDead && currCity.rebellion == null) {
-                int weaponsContribution = currCity.powerPoints * 3;
-                int armorContribution = currCity.defensePoints * 3;
-                int techContribution = currCity.techPoints * 2;
+                int weaponsContribution = currCity.powerPoints * 2;
+                int armorContribution = currCity.defensePoints * 2;
+                int techContribution = currCity.techPoints * 1;
                 currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
                 totalWeaponsIncrease += weaponsContribution;
                 totalArmorIncrease += armorContribution;
@@ -3061,15 +3061,16 @@ public class Kingdom{
     internal int GetPopulationCapacity() {
         int populationCapacity = 0;
         for (int i = 0; i < cities.Count; i++) {
-            populationCapacity += 200 + (20 * cities[i].cityLevel);
+            populationCapacity += 500 + (50 * cities[i].cityLevel);
         }
         return populationCapacity;
     }
     internal int GetPopulationGrowth() {
         int populationGrowth = 0;
         for (int i = 0; i < cities.Count; i++) {
-            populationGrowth += cities[i].region.populationGrowth + cities[i].cityLevel;
+			populationGrowth += cities[i].region.populationGrowth + (cities[i].cityLevel * 2);
         }
+		populationGrowth += this.techLevel * cities.Count;
         float overpopulationPercentage = GetOverpopulationPercentage();
         int populationGrowthReduction = Mathf.FloorToInt(populationGrowth * (overpopulationPercentage/100f));
         return populationGrowth - populationGrowthReduction;

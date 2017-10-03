@@ -64,7 +64,7 @@ public class Region {
         SetSpecialResource(RESOURCE.NONE);
 
         //Generate population growth
-        int[] possiblePopulationGrowths = new int[] { 2, 4, 6, 10 };
+        int[] possiblePopulationGrowths = new int[] { 13, 15, 16, 17, 20, 21, 24, 25, 29 };
         _populationGrowth = possiblePopulationGrowths[Random.Range(0, possiblePopulationGrowths.Length)];
     }
 
