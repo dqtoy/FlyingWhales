@@ -199,7 +199,8 @@ public class Kingdom{
 //	}
     public int stability {
         get { return this._stability; }
-//		set { this._stability = value;}
+        //get { return -100; }
+        //		set { this._stability = value;}
     }
     public int basicResourceCount {
         get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
@@ -1250,12 +1251,14 @@ public class Kingdom{
         }
         return false;
     }
-    //internal List<Citizen> GetCitizensFroRebellion() {
-    //    List<Citizen> citizensForRebellion = new List<Citizen>();
-    //    for (int i = 0; i < cities.Count; i++) {
-
-    //    }
-    //}
+    internal List<Citizen> GetCitizensForRebellion() {
+        List<Citizen> citizensForRebellion = new List<Citizen>();
+        for (int i = 0; i < cities.Count; i++) {
+            City currCity = cities[i];
+            citizensForRebellion.AddRange(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50));
+        }
+        return citizensForRebellion;
+    }
     #endregion
 
     #region Succession
@@ -3046,8 +3049,9 @@ public class Kingdom{
 
     #region Population
     internal int GetOverpopulationPercentage() {
-        float overpopulationPercentage = ((float)_population / (float)_populationCapacity);
+        float overpopulationPercentage = ((float)_population / (float)_populationCapacity) * 100f;
         //overpopulationPercentage = overpopulationPercentage * 100 - 100;
+        overpopulationPercentage -= 100;
         overpopulationPercentage = Mathf.Clamp(overpopulationPercentage, 0f, 100f);
         return Mathf.FloorToInt(overpopulationPercentage);
     }
