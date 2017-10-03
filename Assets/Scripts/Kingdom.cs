@@ -465,7 +465,7 @@ public class Kingdom{
         //		AdjustPrestige(500);
 
 
-        AdjustPopulation(25);
+        AdjustPopulation(50);
         AdjustStability(50);
         AdjustBaseWeapons(25);
         AdjustBaseArmors(25);
@@ -3043,7 +3043,7 @@ public class Kingdom{
     internal int GetPopulationCapacity() {
         int populationCapacity = 0;
         for (int i = 0; i < cities.Count; i++) {
-            populationCapacity += 100 + (10 * cities[i].cityLevel);
+            populationCapacity += 200 + (20 * cities[i].cityLevel);
         }
         return populationCapacity;
     }
