@@ -3050,7 +3050,7 @@ public class Kingdom{
     internal int GetPopulationGrowth() {
         int populationGrowth = 0;
         for (int i = 0; i < cities.Count; i++) {
-            populationGrowth += cities[i].region.populationGrowth;
+            populationGrowth += cities[i].region.populationGrowth + cities[i].cityLevel;
         }
         float overpopulationPercentage = GetOverpopulationPercentage();
         int populationGrowthReduction = Mathf.FloorToInt(populationGrowth * (overpopulationPercentage/100f));
