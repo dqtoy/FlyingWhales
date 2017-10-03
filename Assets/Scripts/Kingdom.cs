@@ -3080,9 +3080,10 @@ public class Kingdom{
         _population += adjustment;
         if(_population <= 0) {
             //if at any time population is reduced to 0, the Kingdom will cease to exist and all his cities will be destroyed
-            foreach (City city in cities) {
-                city.KillCity();
+            while (cities.Count > 0) {
+                cities[0].KillCity();
             }
+                
         }
         KingdomManager.Instance.UpdateKingdomList();
     }
