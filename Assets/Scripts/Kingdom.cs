@@ -1052,16 +1052,12 @@ public class Kingdom{
     }
     internal void ResetExpansionRate() {
         _expansionRate = 0;
-        if (KingdomManager.Instance.orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
-            KingdomManager.Instance.UpdateKingdomList();
-        }
+        KingdomManager.Instance.UpdateKingdomList();
     }
     private void AdjustExpansionRate(int adjustment) {
         _expansionRate += adjustment;
         _expansionRate = Mathf.Clamp(_expansionRate, 0, GridMap.Instance.numOfRegions);
-        if(KingdomManager.Instance.orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
-            KingdomManager.Instance.UpdateKingdomList();
-        }
+        KingdomManager.Instance.UpdateKingdomList();
     }
     #endregion
 
@@ -2733,12 +2729,14 @@ public class Kingdom{
 		if(this._baseWeapons < 0){
 			this._baseWeapons = 0;
 		}
-	}
+        KingdomManager.Instance.UpdateKingdomList();
+    }
 	internal void AdjustBaseArmors(int amountToAdjust) {
 		this._baseArmor += amountToAdjust;
 		if(this._baseArmor < 0){
 			this._baseArmor = 0;
 		}
+        KingdomManager.Instance.UpdateKingdomList();
 	}
 	internal void ChangeStability(int newAmount) {
 		this._stability = newAmount;
