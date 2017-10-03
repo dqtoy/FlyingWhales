@@ -97,20 +97,45 @@ public class Warfare {
 		//Conquer City if not null, if null means both dead
 		RemoveBattle (battle);
 		if(winnerCity != null && loserCity != null){
+			KingdomRelationship kr = winnerCity.kingdom.GetRelationshipWithKingdom (loserCity.kingdom);
+
 			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "invade");
 			newLog.AddToFillers (winnerCity.kingdom, winnerCity.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (loserCity, loserCity.name, LOG_IDENTIFIER.CITY_2);
 			ShowUINotification (newLog);
 
+			winnerCity.kingdom.AdjustStability (-20);
 			winnerCity.kingdom.ConquerCity(loserCity);
-			if(winnerCity.kingdom.cities.Count >= winnerCity.kingdom.cityCap){
-				if(!loserCity.kingdom.isDead){
-					PeaceDeclaration (winnerCity.kingdom, loserCity.kingdom);
-				}else{
-					CreateNewBattle (winnerCity.kingdom);
+
+			bool isWinnerKingdomWipedOut = false;
+			bool isLoserKingdomWipedOut = false;
+
+			if (battle.deadAttackerKingdom != null) {
+				if (!battle.deadAttackerKingdom.isDead) {
+					isWinnerKingdomWipedOut = true;
+					battle.deadAttackerKingdom.AdjustPopulation (-battle.deadAttackerKingdom.population);
+				}
+			}
+			if (battle.deadDefenderKingdom != null) {
+				if(!battle.deadDefenderKingdom.isDead){
+					isLoserKingdomWipedOut = true;
+					battle.deadDefenderKingdom.AdjustPopulation (-battle.deadDefenderKingdom.population);
+				}
+			}
+
+
+			if (!isLoserKingdomWipedOut && !loserCity.kingdom.isDead) {
+				if(!isWinnerKingdomWipedOut && !winnerCity.kingdom.isDead){
+					if (winnerCity.kingdom.stability <= 0 || !kr.isAdjacent) {
+						PeaceDeclaration (winnerCity.kingdom, loserCity.kingdom);
+					}else{
+						CreateNewBattle (winnerCity.kingdom);
+					}
 				}
 			}else{
-				CreateNewBattle (winnerCity.kingdom);
+				if (!isWinnerKingdomWipedOut && !winnerCity.kingdom.isDead) {
+					CreateNewBattle (winnerCity.kingdom);
+				}
 			}
 		}
 	}
@@ -361,7 +386,6 @@ public class Warfare {
 		}
 	}
 	private void WarfareDone(){
-//		if(this._sideA.Count <= 0 || this._sideB.Count <= 0){
 		this._isOver = true;
 		KingdomManager.Instance.RemoveWarfare (this);
 		while(this._sideA.Count > 0){
@@ -374,6 +398,5 @@ public class Warfare {
 			this._kingdomSides.Remove(this._sideB [0]);
 			this._sideB.RemoveAt (0);
 		}
-//		}
 	}
 }

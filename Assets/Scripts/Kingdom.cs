@@ -376,15 +376,13 @@ public class Kingdom{
 	internal int effectiveAttack{
 		get{ 
 			int mySoldiers = this.soldiers;
-			int myWeapons = this.baseWeapons;
-			return (int)((2 * mySoldiers * myWeapons) / (mySoldiers + myWeapons));
+			return (int)((2 * mySoldiers * this._baseWeapons) / (mySoldiers + this._baseWeapons));
 		}
 	}
 	internal int effectiveDefense{
 		get{ 
 			int mySoldiers = this.soldiers;
-			int myArmor = this.baseArmor;
-			return (int)((2 * mySoldiers * myArmor) / (mySoldiers + myArmor));
+			return (int)((2 * mySoldiers * this._baseArmor) / (mySoldiers + this._baseArmor));
 		}
 	}
     #endregion
@@ -611,7 +609,7 @@ public class Kingdom{
         _isDead = true;
         CancelEventKingdomIsInvolvedIn(EVENT_TYPES.ALL);
 		if(this.alliancePool != null){
-			LeaveAlliance ();
+			LeaveAlliance (true);
 		}
       	ResolveWars();
         Messenger.RemoveListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
