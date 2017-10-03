@@ -128,8 +128,8 @@ public class CitizenManager : MonoBehaviour {
     private void CheckForDeath() {
         int numOfRolls = allCitizens.Count / 10;
         for (int i = 0; i < numOfRolls; i++) {
-            //a roll has a 15 out of 10000 chance to trigger a death
-            if (Random.Range(0, 10000) < 15) {
+            //a roll has a 15 out of 20000 chance to trigger a death
+            if (Random.Range(0, 20000) < 15) {
                 //Death Triggered
                 HashSet<Citizen> citizensToChooseFrom = GetCitizensToDieToChooseFrom();
                 if(citizensToChooseFrom.Count > 0) {
