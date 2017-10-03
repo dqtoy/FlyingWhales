@@ -51,6 +51,7 @@ public class AlliancePool {
 			newLog.AddToFillers (kingdomInAlliance, kingdomInAlliance.name, LOG_IDENTIFIER.KINGDOM_2);
 			UIManager.Instance.ShowNotification (newLog);
 			AddKingdomInAlliance (kingdom);
+			DiscoverKingdomsInAlliance (kingdom);
 		}
 		return canBeAccepted;
 	}
@@ -78,6 +79,16 @@ public class AlliancePool {
 				this._kingdomsInvolved.RemoveAt (0);
 			}
 			KingdomManager.Instance.RemoveAlliancePool (this);
+		}
+	}
+	private void DiscoverKingdomsInAlliance(Kingdom kingdom){
+		for (int i = 0; i < this._kingdomsInvolved.Count; i++) {
+			if(kingdom.id != this._kingdomsInvolved[i].id){
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._kingdomsInvolved [i]);
+				if(!kr.isDiscovered){
+					KingdomManager.Instance.DiscoverKingdom (kingdom, this._kingdomsInvolved [i]);
+				}
+			}
 		}
 	}
 }
