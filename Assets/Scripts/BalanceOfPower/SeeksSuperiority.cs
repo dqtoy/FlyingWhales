@@ -268,15 +268,15 @@ public static class SeeksSuperiority {
 
 					if(overpopulation > 0) {
 						if (overpopulation <= 10) {
-							overPopulationReduction = -10;
+							overPopulationReduction = 10;
 						} else if (overpopulation > 10 && overpopulation <= 20) {
-							overPopulationReduction = -20;
+							overPopulationReduction = 20;
 						} else if (overpopulation > 20 && overpopulation <= 40) {
-							overPopulationReduction = -35;
+							overPopulationReduction = 35;
 						} else if (overpopulation > 40 && overpopulation <= 60) {
-							overPopulationReduction = -50;
+							overPopulationReduction = 50;
 						} else if (overpopulation > 60) {
-							overPopulationReduction = -65;
+							overPopulationReduction = 65;
 						}
 					}
 
