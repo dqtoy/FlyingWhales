@@ -225,11 +225,11 @@ public class Battle {
 
 			int attackAfterDamage = attackerPower - defenseDamage;
 			int defenseAfterDamage = defenderDefense - attackDamage;
-			if(attackAfterDamage < 0){
+			if(attackAfterDamage <= 0){
 				attackAfterDamage = 0;
 				this._deadAttackerKingdom = this.attacker.kingdom;
 			}
-			if(defenseAfterDamage < 0){
+			if(defenseAfterDamage <= 0){
 				defenseAfterDamage = 0;
 				this._deadDefenderKingdom = this.defender.kingdom;
 			}
