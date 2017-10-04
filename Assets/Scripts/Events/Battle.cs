@@ -263,7 +263,7 @@ public class Battle {
 				int minRollForDamageInArmors = maxRollForDamageInArmors / 2;
 				int rollForDamageInArmors = UnityEngine.Random.Range (minRollForDamageInArmors, maxRollForDamageInArmors + 1);
 				this.defender.kingdom.AdjustBaseArmors (-rollForDamageInArmors);
-				int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.attacker.kingdom.baseArmor);
+				int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.defender.kingdom.baseArmor);
 				int damageToPopulationDefender = GetDamageToPopulationDefender (damageToSoldiersDefender);
 				this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
 
