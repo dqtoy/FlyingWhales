@@ -179,7 +179,7 @@ public class Battle {
 //		gameDate.AddDays(5);
 //		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
 //		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
-		gameDate.AddDays(UnityEngine.Random.Range(5, 16));
+		gameDate.AddDays(UnityEngine.Random.Range(15, 31));
 		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => Step3());
 
 		this._supposedAttackDate.SetDate (gameDate);
@@ -245,7 +245,8 @@ public class Battle {
 				int maxRollForDamageInWeapons = this.attacker.kingdom.baseWeapons - maxDamageToWeapons;
 				int rollForDamageInWeapons = UnityEngine.Random.Range (0, maxRollForDamageInWeapons + 1);
 				this.attacker.kingdom.AdjustBaseWeapons (-rollForDamageInWeapons);
-				int damageToPopulationAttacker = GetDamageToPopulation (attackAfterDamage, this.attacker.kingdom.baseWeapons);
+				int damageToSoldiersAttacker = GetDamageToSoldiers (attackAfterDamage, this.attacker.kingdom.baseWeapons);
+				int damageToPopulationAttacker = GetDamageToPopulationAttacker (damageToSoldiersAttacker);
 				this.attacker.kingdom.AdjustPopulation (-damageToPopulationAttacker);
 
 				Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);	
@@ -258,7 +259,8 @@ public class Battle {
 				int maxRollForDamageInArmors = this.defender.kingdom.baseArmor - maxDamageToArmors;
 				int rollForDamageInArmors = UnityEngine.Random.Range (0, maxRollForDamageInArmors + 1);
 				this.defender.kingdom.AdjustBaseArmors (-rollForDamageInArmors);
-				int damageToPopulationDefender = GetDamageToPopulation (defenseAfterDamage, this.defender.kingdom.baseArmor);
+				int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.attacker.kingdom.baseArmor);
+				int damageToPopulationDefender = GetDamageToPopulationDefender (damageToSoldiersDefender);
 				this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
 
 				Debug.Log ("MAX DAMAGE TO ARMORS: " + maxDamageToArmors);
@@ -529,9 +531,20 @@ public class Battle {
 		return (int)(((float)defenseAfterDamage * soldiers) / ((2f * soldiers) - (float)defenseAfterDamage));
 	}
 
-	private int GetDamageToPopulation(int remainingEffectiveAttDef, int remainingWeapArmor){
+	private int GetDamageToSoldiers(int remainingEffectiveAttDef, int remainingWeapArmor){
 		//Solve for max damage to weapons which is x
 		//x = remainingEffectiveAttDef * remainingWeapArmor / (2 * remainingWeapArmor) - remainingEffectiveAttDef;
 		return (int)(((float)remainingEffectiveAttDef * remainingWeapArmor) / ((2f * remainingWeapArmor) - (float)remainingEffectiveAttDef));
+	}
+
+	private int GetDamageToPopulationAttacker(int damageToSoldiers){
+		float soldiers = (float)this.attacker.kingdom.soldiers;
+		float remainingSoldiers = soldiers - (float)damageToSoldiers;
+		return (int)(remainingSoldiers / this.attacker.kingdom.draftRate);
+	}
+	private int GetDamageToPopulationDefender(int damageToSoldiers){
+		float soldiers = (float)this.defender.kingdom.soldiers;
+		float remainingSoldiers = soldiers - (float)damageToSoldiers;
+		return (int)(remainingSoldiers / this.defender.kingdom.draftRate);
 	}
 }
