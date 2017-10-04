@@ -250,7 +250,9 @@ public class Battle {
 				int damageToPopulationAttacker = GetDamageToPopulationAttacker (damageToSoldiersAttacker);
 				this.attacker.kingdom.AdjustPopulation (-damageToPopulationAttacker);
 
-				Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);	
+				Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);
+				Debug.Log ("MAX ROLL DAMAGE TO WEAPONS: " + maxRollForDamageInWeapons);
+				Debug.Log ("MIN ROLL DAMAGE TO WEAPONS: " + minRollForDamageInWeapons);
 				Debug.Log ("ROLL FOR DAMAGE TO WEAPONS: " + rollForDamageInWeapons);	
 				Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + damageToPopulationAttacker);
 				Debug.Log ("---------------------------");
@@ -266,6 +268,8 @@ public class Battle {
 				this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
 
 				Debug.Log ("MAX DAMAGE TO ARMORS: " + maxDamageToArmors);
+				Debug.Log ("MAX ROLL DAMAGE TO ARMORS: " + maxRollForDamageInArmors);
+				Debug.Log ("MIN ROLL DAMAGE TO ARMORS: " + minRollForDamageInArmors);
 				Debug.Log ("ROLL FOR DAMAGE TO ARMORS: " + rollForDamageInArmors);
 				Debug.Log ("DAMAGE TO DEFENDER'S POPULATION: " + damageToPopulationDefender);
 				Debug.Log ("---------------------------");
