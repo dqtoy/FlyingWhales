@@ -1564,25 +1564,25 @@ public class City{
 	internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, ref int stabilityIncrease){
 		switch (this._region.specialResource){
 		case RESOURCE.CORN:
-			stabilityIncrease += 5;
+			stabilityIncrease += 1;
 			break;
 		case RESOURCE.WHEAT:
-			stabilityIncrease += 10;
+			stabilityIncrease += 2;
 			break;
 		case RESOURCE.RICE:
-			stabilityIncrease += 15;
+			stabilityIncrease += 3;
 			break;
 		case RESOURCE.OAK:
 			armorIncrease += 5;
 			break;
 		case RESOURCE.EBONY:
-			armorIncrease += 15;
+			armorIncrease += 10;
 			break;
 		case RESOURCE.GRANITE:
 			weaponsIncrease += 5;
 			break;
 		case RESOURCE.SLATE:
-			weaponsIncrease += 15;
+			weaponsIncrease += 10;
 			break;
 		case RESOURCE.COBALT:
 			this.kingdom.AdjustPrestige(10);
