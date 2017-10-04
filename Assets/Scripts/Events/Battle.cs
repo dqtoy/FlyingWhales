@@ -179,7 +179,7 @@ public class Battle {
 //		gameDate.AddDays(5);
 //		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferPowerFromNonAdjacentCities());
 //		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => TransferDefenseFromNonAdjacentCities());
-		gameDate.AddDays(UnityEngine.Random.Range(5, 16));
+		gameDate.AddDays(UnityEngine.Random.Range(15, 31));
 		SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => Step3());
 
 		this._supposedAttackDate.SetDate (gameDate);
