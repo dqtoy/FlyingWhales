@@ -216,8 +216,8 @@ public class Battle {
 			Debug.Log ("DEFENSE ROLL: " + defenseRoll);
 			Debug.Log ("---------------------------");
 
-			int attackDamage = (int)((float)attackerPower / 10f);
-			int defenseDamage = (int)((float)defenderDefense / 10f);
+			int attackDamage = (int)((float)attackerPower / 15f);
+			int defenseDamage = (int)((float)defenderDefense / 12f);
 
 			Debug.Log ("ATTACK DAMAGE: " + attackDamage);	
 			Debug.Log ("DEFENSE DAMAGE: " + defenseDamage);
