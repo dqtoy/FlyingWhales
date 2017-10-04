@@ -699,10 +699,13 @@ public class City{
     #endregion
 
     internal void ExpandToThisCity(Citizen citizenToOccupyCity){
-		this.AddCitizenToCity(citizenToOccupyCity);
-		citizenToOccupyCity.role = ROLE.UNTRAINED;
-		citizenToOccupyCity.assignedRole = null;
-		citizenToOccupyCity.AssignRole(ROLE.GOVERNOR);
+        //this.AddCitizenToCity(citizenToOccupyCity);
+        //citizenToOccupyCity.role = ROLE.UNTRAINED;
+        //citizenToOccupyCity.assignedRole = null;
+        //citizenToOccupyCity.AssignRole(ROLE.GOVERNOR);
+        //citizenToOccupyCity.GenerateCharacterValues();
+        //citizenToOccupyCity.UpdateKingOpinion();
+        CreateInitialFamilies(false);
 		this.UpdateDailyProduction();
         this.hexTile.CreateCityNamePlate(this);
         HighlightAllOwnedTiles(69f / 255f);
@@ -965,6 +968,7 @@ public class City{
 
 		MONTH monthGovernor = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		governor.AssignBirthday (monthGovernor, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthGovernor] + 1), (GameManager.Instance.year - governor.age));
+        governor.UpdateKingOpinion();
 
 		return governor;
 	}
