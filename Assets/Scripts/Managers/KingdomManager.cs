@@ -418,6 +418,9 @@ public class KingdomManager : MonoBehaviour {
 	#endregion
 
 	internal void DiscoverKingdom(Kingdom discovererKingdom, Kingdom discoveredKingdom){
+        if(discovererKingdom.isDead || discoveredKingdom.isDead) {
+            throw new System.Exception(discoveredKingdom.name + " - " + discoveredKingdom.isDead.ToString() + "/" + discovererKingdom.name + " - " + discovererKingdom.isDead.ToString());
+        }
 		if(!discovererKingdom.discoveredKingdoms.Contains(discoveredKingdom)){
 			EventCreator.Instance.CreateKingdomDiscoveryEvent (discovererKingdom, discoveredKingdom);
 			discovererKingdom.DiscoverKingdom(discoveredKingdom);

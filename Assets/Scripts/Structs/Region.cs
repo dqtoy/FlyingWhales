@@ -388,7 +388,7 @@ public class Region {
             Region otherAdjacentRegion = adjacentRegionsOfOtherRegions[i];
             if (otherAdjacentRegion.occupant != null) {
                 Kingdom adjacentKingdomOfOtherKingdom = otherAdjacentRegion.occupant.kingdom;
-                if (adjacentKingdomOfOtherKingdom != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(adjacentKingdomOfOtherKingdom)) {
+                if (!adjacentKingdomOfOtherKingdom.isDead && adjacentKingdomOfOtherKingdom != _occupant.kingdom && !_occupant.kingdom.discoveredKingdoms.Contains(adjacentKingdomOfOtherKingdom)) {
                     KingdomManager.Instance.DiscoverKingdom(_occupant.kingdom, adjacentKingdomOfOtherKingdom);
                 }
             }
