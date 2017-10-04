@@ -622,18 +622,37 @@ public class City{
         if(citizen.role == ROLE.UNTRAINED) {
             return;
         }
+        //Check if citizen is already an imporatnt citizen but in a different field
+        foreach (KeyValuePair<ROLE, Citizen> kvp in _importantCitizensInCity) {
+            if(kvp.Value.id == citizen.id) {
+                _importantCitizensInCity.Remove(kvp.Key);
+                break;
+            }
+        }
         if (_importantCitizensInCity.ContainsKey(citizen.role)) {
             _importantCitizensInCity[citizen.role] = citizen;
         } else {
             _importantCitizensInCity.Add(citizen.role, citizen);
         }
+        
     }
     internal void RemoveCitizenInImportantCitizensInCity(Citizen citizen) {
         _importantCitizensInCity.Remove(citizen.role);
+        //Check if citizen is already an imporatnt citizen but in a different field
+        foreach (KeyValuePair<ROLE, Citizen> kvp in _importantCitizensInCity) {
+            if (kvp.Value.id == citizen.id) {
+                _importantCitizensInCity.Remove(kvp.Key);
+                break;
+            }
+        }
     }
     internal void TransferRoyaltiesToOtherCity(City otherCity) {
         List<Citizen> citizensToTransfer = new List<Citizen>();
         foreach (Citizen currImportantCitizen in _importantCitizensInCity.Values) {
+            if(currImportantCitizen.role == ROLE.GOVERNOR) {
+                //Governors should stay in the city
+                continue;
+            }
             citizensToTransfer.Add(currImportantCitizen);
             List<Citizen> familyOfCitizen = currImportantCitizen.GetRelatives(-1);
             for (int i = 0; i < familyOfCitizen.Count; i++) {
@@ -929,20 +948,21 @@ public class City{
 		if(this.isDead){
 			return;
 		}
-		Citizen newGovernor = GetGovernorSuccession ();
-		if (newGovernor != null) {
-			/*if(newGovernor.assignedRole != null && newGovernor.role == ROLE.GENERAL){
-				newGovernor.DetachGeneralFromCitizen();
-			}*/
-			if(this.governor != null){
-				this.governor.isGovernor = false;
-			}
-			newGovernor.assignedRole = null;
-			newGovernor.AssignRole(ROLE.GOVERNOR);
-			newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-			this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+        CreateInitialGovernorFamily();
+		//Citizen newGovernor = GetGovernorSuccession ();
+		//if (newGovernor != null) {
+		//	/*if(newGovernor.assignedRole != null && newGovernor.role == ROLE.GENERAL){
+		//		newGovernor.DetachGeneralFromCitizen();
+		//	}*/
+		//	if(this.governor != null){
+		//		this.governor.isGovernor = false;
+		//	}
+		//	newGovernor.assignedRole = null;
+		//	newGovernor.AssignRole(ROLE.GOVERNOR);
+		//	newGovernor.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
+		//	this.cityHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newGovernor.name + " became the new Governor of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
 
-		}
+		//}
 	}
 
 	internal Citizen GetGovernorSuccession(){
@@ -1099,6 +1119,9 @@ public class City{
 			relationship.war.InitializeMobilization ();
 		}
 		this._kingdom.RemoveCityFromKingdom(this);
+        if (!this._kingdom.isDead) {
+            TransferRoyaltiesToOtherCity(this._kingdom.capitalCity);
+        }
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
         CameraMove.Instance.UpdateMinimapTexture();
@@ -1335,11 +1358,23 @@ public class City{
         otherKingdom.AddCityToKingdom(this);
         this._kingdom = otherKingdom;
         _region.SetOccupant(this);
-        for (int i = 0; i < this._ownedTiles.Count; i++) {
-            this._ownedTiles[i].ReColorStructure();
-            //this._ownedTiles[i].SetMinimapTileColor(_kingdom.kingdomColor);
-        }
+
+        //if(_kingdom.race != otherKingdom.race) {
+        //    for (int i = 0; i < this._ownedTiles.Count; i++) {
+        //        this._ownedTiles[i].Unoccupy();
+        //        this._ownedTiles[i].Occupy(this);
+        //        //this._ownedTiles[i].SetMinimapTileColor(_kingdom.kingdomColor);
+        //    }
+        //} else {
+            for (int i = 0; i < this._ownedTiles.Count; i++) {
+                this._ownedTiles[i].ReColorStructure();
+                this._ownedTiles[i].SetMinimapTileColor(_kingdom.kingdomColor);
+            }
+        //}
+
+        _region.CheckForDiscoveredKingdoms();
         this.hexTile.UpdateCityNamePlate();
+        CameraMove.Instance.UpdateMinimapTexture();
     }
 
     internal void RemoveTileFromCity(HexTile tileToRemove) {

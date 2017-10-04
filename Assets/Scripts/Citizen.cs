@@ -227,11 +227,17 @@ public class Citizen {
             this.assignedRole = new GrandMarshal(this);
             this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.QUEEN) {
+            this.assignedRole = null;
             this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.QUEEN_CONSORT) {
+            this.assignedRole = null;
             this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.CROWN_PRINCE) {
+            this.assignedRole = null;
             this.city.AddCitizenToImportantCitizensInCity(this);
+        } else {
+            this.assignedRole = null;
+            this.role = ROLE.UNTRAINED;
         }
     }
     internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE) {
@@ -462,21 +468,13 @@ public class Citizen {
         }
         CitizenManager.Instance.UnregisterCitizen(this);
 
-        if (this.isMarried && this._spouse != null) {
-            //MarriageManager.Instance.DivorceCouple(this, spouse);
-            this.isMarried = false;
-            this._spouse.isMarried = false;
-            this._spouse.AssignSpouse(null);
-            this.AssignSpouse(null);
-        }
-
         if (this.city != null) {
             //this.city.RemoveCitizenFromCity(this);
             this.city.citizens.Remove(this);
             this.city.RemoveCitizenInImportantCitizensInCity(this);
             if (!isConquered) { //Check if citizen died of natural causes and not from conquering
                 //if citizen is a grand marshal or grand chancellor, also remove family from city and generate new marshal/chancellor family
-                if (previousRole == ROLE.GRAND_CHANCELLOR || previousRole == ROLE.GRAND_MARSHAL) {
+                if (previousRole == ROLE.GRAND_CHANCELLOR || previousRole == ROLE.GRAND_MARSHAL || previousRole == ROLE.GOVERNOR) {
                     List<Citizen> family = this.GetRelatives(-1);
                     for (int i = 0; i < family.Count; i++) {
                         this.city.RemoveCitizenFromCity(family[i]);
@@ -490,9 +488,8 @@ public class Citizen {
                     }
                 }
             }
-            
-
         }
+
         if (this.id == this.city.kingdom.king.id && !this.city.kingdom.isDead) {
             //ASSIGN NEW LORD, SUCCESSION
             //			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
@@ -504,6 +501,11 @@ public class Citizen {
                 if (!isConquered) {
                     if (this.city.kingdom.successionLine.Count <= 0) {
                         this.city.kingdom.AssignNewKing(null);
+                        //Remove family of previous king
+                        List<Citizen> family = this.GetRelatives(-1);
+                        for (int i = 0; i < family.Count; i++) {
+                            this.city.RemoveCitizenFromCity(family[i]);
+                        }
                     } else {
                         this.city.kingdom.AssignNewKing(this.city.kingdom.successionLine[0]);
                     }
@@ -515,6 +517,17 @@ public class Citizen {
             }
         }
 
+        if (this.isMarried && this._spouse != null) {
+            //MarriageManager.Instance.DivorceCouple(this, spouse);
+            if (previousRole == ROLE.KING) {
+                //Spouse of king should no longer be queen
+                this.city.RemoveCitizenInImportantCitizensInCity(_spouse);
+            }
+            this.isMarried = false;
+            this._spouse.isMarried = false;
+            this._spouse.AssignSpouse(null);
+            this.AssignSpouse(null);
+        }
 
         this.isKing = false;
         this.isGovernor = false;
@@ -907,29 +920,130 @@ public class Citizen {
 
     #region Rebellion
     internal void StartRebellion() {
-        List<City> citiesForRebellion = new List<City>();
         Kingdom sourceKingdom = city.kingdom;
-        //Get a random origin city of sourceKingdom that is adjacent to sourceKingdom capital city and has at least one other adjacent city that belongs to sourceKingdom
-        for (int i = 0; i < sourceKingdom.capitalCity.region.adjacentRegions.Count; i++) {
-            Region adjacentRegionOfCapitalCity = sourceKingdom.capitalCity.region.adjacentRegions[i];
-            if(adjacentRegionOfCapitalCity.occupant != null && adjacentRegionOfCapitalCity.occupant.kingdom.id == sourceKingdom.id) {
-                City possibleOriginCityForRebellion = adjacentRegionOfCapitalCity.occupant;
-                if(adjacentRegionOfCapitalCity.adjacentRegions.Where(x => x.occupant != null && 
-                    x.occupant.id != sourceKingdom.capitalCity.id && x.occupant.kingdom.id == sourceKingdom.id).Any()) {
-                    citiesForRebellion.Add(possibleOriginCityForRebellion);
+        List<City> citiesForRebellion = new List<City>();
+        List<City> citiesLeftInSourceKingdom = new List<City>(sourceKingdom.cities);
+
+        if (this.role == ROLE.GOVERNOR) {
+            //If Citizen to rebel is a governor, automatically add his/her owned city to cities that will rebel
+            citiesForRebellion.Add(this.city);
+        } else {
+            //Get a random origin city that is not the capital city, where the rebellion will originate from
+            List<City> citiesToChooseFrom = new List<City>(sourceKingdom.cities);
+            citiesToChooseFrom.Remove(sourceKingdom.capitalCity);
+            City chosenOriginCity = citiesToChooseFrom[Random.Range(0, citiesToChooseFrom.Count)];
+            citiesLeftInSourceKingdom.Remove(chosenOriginCity);
+            citiesForRebellion.Add(chosenOriginCity);
+        }
+
+        int maxNumOfCitiesForRebellion = Mathf.Min(sourceKingdom.cities.Count, 5);
+        int numOfCitiesForRebellion = Random.Range(2, maxNumOfCitiesForRebellion);
+        while(citiesForRebellion.Count < numOfCitiesForRebellion) {
+            //Make sure that the new kingdom has 2 to 5 cities
+            for (int i = 0; i < citiesForRebellion.Count; i++) {
+                City currCity = citiesForRebellion[i];
+                for (int j = 0; j < currCity.region.adjacentRegions.Count; j++) {
+                    //loop through the occupied adjacent regions of cities for rebellion
+                    City adjacentRegionOccupant = currCity.region.adjacentRegions[j].occupant;
+                    if(adjacentRegionOccupant != null && adjacentRegionOccupant.kingdom.id == sourceKingdom.id) {
+                        if (!citiesForRebellion.Contains(adjacentRegionOccupant)) {
+                            citiesLeftInSourceKingdom.Remove(adjacentRegionOccupant);
+                            citiesForRebellion.Add(adjacentRegionOccupant);
+                            if(citiesForRebellion.Count >= numOfCitiesForRebellion) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (citiesForRebellion.Count >= numOfCitiesForRebellion) {
                     break;
+                }
+            }
+            if(citiesForRebellion.Count < numOfCitiesForRebellion) {
+                if(citiesLeftInSourceKingdom.Count <= 1) {
+                    //There are no more cities that the source kingdom can give
+                    break;
+                }
+                City closestCity = null;
+                float nearestDistance = 99999f;
+                for (int i = 0; i < citiesLeftInSourceKingdom.Count; i++) {
+                    City currCity = citiesLeftInSourceKingdom[i];
+                    for (int j = 0; j < citiesForRebellion.Count; j++) {
+                        City cityInRebellion = citiesForRebellion[j];
+                        float distance = cityInRebellion.region.centerOfMass.GetDistanceTo(currCity.region.centerOfMass);
+                        if(distance < nearestDistance) {
+                            nearestDistance = distance;
+                            closestCity = currCity;
+                        }
+                    }
+                }
+                if(closestCity != null) {
+                    citiesForRebellion.Add(closestCity);
                 }
             }
         }
 
-        int numOfCitiesForRebellion = Random.Range(2, 5);
-        while(citiesForRebellion.Count < numOfCitiesForRebellion) {
-            bool hasAddedNewCity = false;
-            for (int i = 0; i < citiesForRebellion.Count; i++) {
-                City currCityToCheck = citiesForRebellion[i];
+        ROLE previousRole = this.role;
+        City previousCity = this.city;
+        Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { }, false, sourceKingdom, true, this);
+        KingdomManager.Instance.TransferCitiesToOtherKingdom(sourceKingdom, newKingdom, citiesForRebellion);
+        newKingdom.HighlightAllOwnedTilesInKingdom();
 
+        //Transfer family of citizen to the capital city of the new kingdom
+        //if this citizen was a crown prince, bring his/her spouse and children,
+        //if this citizen was a queen, do not bring any family,
+        //if this citizen was a governor, bring all family members
+        List<Citizen> citizensToTransfer = new List<Citizen>();
+        citizensToTransfer.Add(this);
+        if (previousRole == ROLE.CROWN_PRINCE) {
+            if(spouse != null) {
+                citizensToTransfer.Add(spouse);
             }
+            if(children != null) {
+                citizensToTransfer.AddRange(children);
+            }
+        } else if (previousRole == ROLE.QUEEN || previousRole == ROLE.QUEEN_CONSORT) {
+            if(_spouse != null) {
+                MarriageManager.Instance.DivorceCouple(this, _spouse);
+            }
+        } else if (previousRole == ROLE.GOVERNOR) {
+            citizensToTransfer.AddRange(GetRelatives(-1));
         }
+
+
+        for (int i = 0; i < citizensToTransfer.Count; i++) {
+            Citizen currCitizen = citizensToTransfer[i];
+            previousCity.RemoveCitizenInImportantCitizensInCity(currCitizen);
+            previousCity.citizens.Remove(currCitizen);
+            //previousCity.RemoveCitizenFromCity(currCitizen);
+            newKingdom.capitalCity.AddCitizenToCity(currCitizen);
+        }
+
+        newKingdom.capitalCity.CreateInitialChancellorFamily();
+        newKingdom.capitalCity.CreateInitialMarshalFamily();
+
+        newKingdom.UpdateKingSuccession();
+
+        newKingdom.UpdateAllRelationshipsLikeness();
+        newKingdom.UpdateAllCitizensOpinionOfKing();
+
+        //Transfer population from sourceKingdom
+        int totalCities = newKingdom.cities.Count + sourceKingdom.cities.Count;
+        float percentGained = ((float) newKingdom.cities.Count / (float)totalCities);
+        int populationToTransfer = Mathf.FloorToInt((float)sourceKingdom.population * percentGained);
+        sourceKingdom.AdjustPopulation(-populationToTransfer);
+        newKingdom.SetPopulation(populationToTransfer);
+
+        int weaponsGained = Mathf.FloorToInt((float)sourceKingdom.baseWeapons * percentGained);
+        sourceKingdom.AdjustBaseWeapons(-weaponsGained);
+        newKingdom.SetBaseWeapons(weaponsGained);
+
+        int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor * percentGained);
+        sourceKingdom.AdjustBaseArmors(-armorGained);
+        newKingdom.SetBaseArmor(armorGained);
+
+        Warfare warfare = new Warfare(newKingdom, sourceKingdom);
+        Debug.Log("Rebelling kingdom " + newKingdom.name + " declares war on " + sourceKingdom.name);
     }
     #endregion
 

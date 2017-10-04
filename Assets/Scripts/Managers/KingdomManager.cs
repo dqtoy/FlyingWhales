@@ -89,7 +89,7 @@ public class KingdomManager : MonoBehaviour {
         UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
     }
 
-	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool createFamilies = false, Kingdom sourceKingdom = null, bool broadcastCreation = true){
+	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool createFamilies = false, Kingdom sourceKingdom = null, bool broadcastCreation = true, Citizen king = null){
 		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom); //Create new kingdom
 		allKingdoms.Add(newKingdom); //add to allKingdoms
         Debug.Log("Created new kingdom: " + newKingdom.name);
@@ -106,7 +106,18 @@ public class KingdomManager : MonoBehaviour {
                 currCity.hexTile.CreateCityNamePlate(currCity);
                 currCity.SetupInitialValues();
             }
-		}
+        } else {
+            if(king != null) {
+                newKingdom.AssignNewKing(king);
+                if (king.spouse != null) {
+                    king.spouse.AssignRole(ROLE.QUEEN);
+                }
+            }
+        }
+
+        if(newKingdom.king == null) {
+            throw new System.Exception("New kingdom " + newKingdom.name + " has no king created on generation!\n" + System.Environment.StackTrace);
+        }
 
         //Create Relationships first
         newKingdom.CreateInitialRelationships();
@@ -114,6 +125,7 @@ public class KingdomManager : MonoBehaviour {
             Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
         }
         newKingdom.UpdateAllRelationshipsLikeness();
+        
         return newKingdom;
 	}
 
