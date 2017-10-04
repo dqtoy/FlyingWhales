@@ -2978,39 +2978,86 @@ public class Kingdom{
 
 	internal void SeekAlliance(){
 		List<KingdomRelationship> kingdomRelationships = this.relationships.Values.OrderByDescending(x => x.totalLike).ToList ();
-		for (int i = 0; i < kingdomRelationships.Count; i++) {
-			KingdomRelationship kr = kingdomRelationships [i];
-			if(kr.isDiscovered){
-				if(kr.targetKingdom.alliancePool == null){
-                    Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
-                    bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
-					if(hasCreated){
-                        string log = name + " has created an alliance with ";
-                        for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-                            if(_alliancePool.kingdomsInvolved[j].id != id) {
-                                log += _alliancePool.kingdomsInvolved[j].name;
-                                if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
-                                    log += ", ";
-                                }
-                            }
-                        }
-                        Debug.Log(log);
-                        break;
+		Kingdom kingdomWithHighestThreat = GetKingdomWithHighestThreat();
+		if(kingdomWithHighestThreat != null){
+			for (int i = 0; i < kingdomRelationships.Count; i++) {
+				KingdomRelationship kr = kingdomRelationships [i];
+				if(kr.isDiscovered){
+					if(kr.targetKingdom.id != kingdomWithHighestThreat.id){
+						KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kingdomWithHighestThreat);
+						if(rk.isAdjacent){
+							if(kr.targetKingdom.alliancePool == null){
+								Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
+								bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
+								if(hasCreated){
+									string log = name + " has created an alliance with ";
+									for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+										if(_alliancePool.kingdomsInvolved[j].id != id) {
+											log += _alliancePool.kingdomsInvolved[j].name;
+											if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
+												log += ", ";
+											}
+										}
+									}
+									Debug.Log(log);
+									break;
+								}
+							}else{
+								Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
+								bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
+								if(hasJoined){
+									string log = name + " has joined an alliance with ";
+									for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+										if (_alliancePool.kingdomsInvolved[j].id != id) {
+											log += _alliancePool.kingdomsInvolved[j].name;
+											if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+												log += ", ";
+											}
+										}
+									}
+									break;
+								}
+							}
+						}
 					}
-				}else{
-                    Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
-					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
-					if(hasJoined){
-                        string log = name + " has joined an alliance with ";
-                        for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-                            if (_alliancePool.kingdomsInvolved[j].id != id) {
-                                log += _alliancePool.kingdomsInvolved[j].name;
-                                if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
-                                    log += ", ";
-                                }
-                            }
-                        }
-                        break;
+				}
+			}
+		}
+		if(this._alliancePool == null){
+			for (int i = 0; i < kingdomRelationships.Count; i++) {
+				KingdomRelationship kr = kingdomRelationships [i];
+				if(kr.isDiscovered){
+					if(kr.targetKingdom.alliancePool == null){
+						Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
+						bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
+						if(hasCreated){
+							string log = name + " has created an alliance with ";
+							for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+								if(_alliancePool.kingdomsInvolved[j].id != id) {
+									log += _alliancePool.kingdomsInvolved[j].name;
+									if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
+										log += ", ";
+									}
+								}
+							}
+							Debug.Log(log);
+							break;
+						}
+					}else{
+						Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
+						bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
+						if(hasJoined){
+							string log = name + " has joined an alliance with ";
+							for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+								if (_alliancePool.kingdomsInvolved[j].id != id) {
+									log += _alliancePool.kingdomsInvolved[j].name;
+									if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+										log += ", ";
+									}
+								}
+							}
+							break;
+						}
 					}
 				}
 			}
@@ -3126,6 +3173,17 @@ public class Kingdom{
 		}
 
 		return transferAmount.ToString () + " " + weaponsOrArmor;
+	}
+	internal Kingdom GetKingdomWithHighestThreat(){
+		float highestThreatLevel = 0f;
+		Kingdom threat = null;
+		foreach (KingdomRelationship kr in relationships.Values) {
+			if(kr.targetKingdomThreatLevel > highestThreatLevel){
+				highestThreatLevel = kr.targetKingdomThreatLevel;
+				threat = kr.targetKingdom;
+			}
+		}
+		return threat;
 	}
 	internal void ShowTransferWeaponsArmorsLog(Kingdom allyKingdom, string amount){
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "transfer_weapons_armors");

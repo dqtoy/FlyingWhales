@@ -920,7 +920,7 @@ public class KingdomRelationship {
 		if(this._sourceKingdom.alliancePool != null){
 			for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom kingdomInAlliance = this._sourceKingdom.alliancePool.kingdomsInvolved[i];
-				if(this._sourceKingdom.id != kingdomInAlliance.id){
+				if(this._sourceKingdom.id != kingdomInAlliance.id && this._targetKingdom.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
 					if(relationship.totalLike >= 35 && !relationshipToEnemy.isAdjacent){
@@ -936,7 +936,7 @@ public class KingdomRelationship {
 		if(this._sourceKingdom.alliancePool != null){
 			for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom kingdomInAlliance = this._sourceKingdom.alliancePool.kingdomsInvolved[i];
-				if(this._sourceKingdom.id != kingdomInAlliance.id){
+				if(this._sourceKingdom.id != kingdomInAlliance.id && this._targetKingdom.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
 					if(relationship.totalLike >= 35 && relationshipToEnemy.isAdjacent){
@@ -952,7 +952,7 @@ public class KingdomRelationship {
 		if(this._sourceKingdom.alliancePool != null){
 			for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom kingdomInAlliance = this._sourceKingdom.alliancePool.kingdomsInvolved[i];
-				if(this._sourceKingdom.id != kingdomInAlliance.id){
+				if(this._sourceKingdom.id != kingdomInAlliance.id && this._targetKingdom.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
 					if(relationship.totalLike >= 35 && !relationshipToEnemy.isAdjacent){
@@ -968,7 +968,7 @@ public class KingdomRelationship {
 		if(this._sourceKingdom.alliancePool != null){
 			for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom kingdomInAlliance = this._sourceKingdom.alliancePool.kingdomsInvolved[i];
-				if(this._sourceKingdom.id != kingdomInAlliance.id){
+				if(this._sourceKingdom.id != kingdomInAlliance.id && this._targetKingdom.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
 					if(relationship.totalLike >= 35 && relationshipToEnemy.isAdjacent){
