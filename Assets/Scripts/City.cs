@@ -1045,7 +1045,10 @@ public class City{
         }
 		KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         CameraMove.Instance.UpdateMinimapTexture();
-		Messenger.Broadcast<City>("CityDied", this);
+		if(Messenger.eventTable.ContainsKey("CityDied")){
+			Messenger.Broadcast<City>("CityDied", this);
+		}
+
     }
 
     /*
@@ -1125,6 +1128,9 @@ public class City{
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
         CameraMove.Instance.UpdateMinimapTexture();
+		if (Messenger.eventTable.ContainsKey ("CityDied")) {
+			Messenger.Broadcast<City> ("CityDied", this);
+		}
     }
     private void TransferItemsToConqueror(Kingdom conqueror){
 		for(int i = 0; i < this.ownedTiles.Count; i++){
@@ -1599,25 +1605,25 @@ public class City{
 	internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, ref int stabilityIncrease){
 		switch (this._region.specialResource){
 		case RESOURCE.CORN:
-			stabilityIncrease += 5;
+			stabilityIncrease += 1;
 			break;
 		case RESOURCE.WHEAT:
-			stabilityIncrease += 10;
+			stabilityIncrease += 2;
 			break;
 		case RESOURCE.RICE:
-			stabilityIncrease += 15;
+			stabilityIncrease += 3;
 			break;
 		case RESOURCE.OAK:
 			armorIncrease += 5;
 			break;
 		case RESOURCE.EBONY:
-			armorIncrease += 15;
+			armorIncrease += 10;
 			break;
 		case RESOURCE.GRANITE:
 			weaponsIncrease += 5;
 			break;
 		case RESOURCE.SLATE:
-			weaponsIncrease += 15;
+			weaponsIncrease += 10;
 			break;
 		case RESOURCE.COBALT:
 			this.kingdom.AdjustPrestige(10);

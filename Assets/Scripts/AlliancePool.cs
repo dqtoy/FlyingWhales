@@ -91,4 +91,15 @@ public class AlliancePool {
 			}
 		}
 	}
+	internal bool HasAdjacentAllianceMember(Kingdom kingdom){
+		for (int i = 0; i < this._kingdomsInvolved.Count; i++) {
+			if(kingdom.id != this._kingdomsInvolved[i].id){
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._kingdomsInvolved [i]);
+				if(kr.isAdjacent){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

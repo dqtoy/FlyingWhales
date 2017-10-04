@@ -225,11 +225,11 @@ public class Battle {
 
 			int attackAfterDamage = attackerPower - defenseDamage;
 			int defenseAfterDamage = defenderDefense - attackDamage;
-			if(attackAfterDamage < 0){
+			if(attackAfterDamage <= 0){
 				attackAfterDamage = 0;
 				this._deadAttackerKingdom = this.attacker.kingdom;
 			}
-			if(defenseAfterDamage < 0){
+			if(defenseAfterDamage <= 0){
 				defenseAfterDamage = 0;
 				this._deadDefenderKingdom = this.defender.kingdom;
 			}
@@ -243,13 +243,16 @@ public class Battle {
 			if(attackAfterDamage > 0){
 				int maxDamageToWeapons = GetMaxDamageToWeapons(attackAfterDamage);
 				int maxRollForDamageInWeapons = this.attacker.kingdom.baseWeapons - maxDamageToWeapons;
-				int rollForDamageInWeapons = UnityEngine.Random.Range (0, maxRollForDamageInWeapons + 1);
+				int minRollForDamageInWeapons = maxRollForDamageInWeapons / 2;
+				int rollForDamageInWeapons = UnityEngine.Random.Range (minRollForDamageInWeapons, maxRollForDamageInWeapons + 1);
 				this.attacker.kingdom.AdjustBaseWeapons (-rollForDamageInWeapons);
 				int damageToSoldiersAttacker = GetDamageToSoldiers (attackAfterDamage, this.attacker.kingdom.baseWeapons);
 				int damageToPopulationAttacker = GetDamageToPopulationAttacker (damageToSoldiersAttacker);
 				this.attacker.kingdom.AdjustPopulation (-damageToPopulationAttacker);
 
-				Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);	
+				Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);
+				Debug.Log ("MAX ROLL DAMAGE TO WEAPONS: " + maxRollForDamageInWeapons);
+				Debug.Log ("MIN ROLL DAMAGE TO WEAPONS: " + minRollForDamageInWeapons);
 				Debug.Log ("ROLL FOR DAMAGE TO WEAPONS: " + rollForDamageInWeapons);	
 				Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + damageToPopulationAttacker);
 				Debug.Log ("---------------------------");
@@ -257,13 +260,16 @@ public class Battle {
 			if(defenseAfterDamage > 0){
 				int maxDamageToArmors = GetMaxDamageToArmors(defenseAfterDamage);
 				int maxRollForDamageInArmors = this.defender.kingdom.baseArmor - maxDamageToArmors;
-				int rollForDamageInArmors = UnityEngine.Random.Range (0, maxRollForDamageInArmors + 1);
+				int minRollForDamageInArmors = maxRollForDamageInArmors / 2;
+				int rollForDamageInArmors = UnityEngine.Random.Range (minRollForDamageInArmors, maxRollForDamageInArmors + 1);
 				this.defender.kingdom.AdjustBaseArmors (-rollForDamageInArmors);
-				int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.attacker.kingdom.baseArmor);
+				int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.defender.kingdom.baseArmor);
 				int damageToPopulationDefender = GetDamageToPopulationDefender (damageToSoldiersDefender);
 				this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
 
 				Debug.Log ("MAX DAMAGE TO ARMORS: " + maxDamageToArmors);
+				Debug.Log ("MAX ROLL DAMAGE TO ARMORS: " + maxRollForDamageInArmors);
+				Debug.Log ("MIN ROLL DAMAGE TO ARMORS: " + minRollForDamageInArmors);
 				Debug.Log ("ROLL FOR DAMAGE TO ARMORS: " + rollForDamageInArmors);
 				Debug.Log ("DAMAGE TO DEFENDER'S POPULATION: " + damageToPopulationDefender);
 				Debug.Log ("---------------------------");

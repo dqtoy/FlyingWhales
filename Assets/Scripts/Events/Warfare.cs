@@ -393,4 +393,49 @@ public class Warfare {
 			this._sideB.RemoveAt (0);
 		}
 	}
+	internal int GetTotalLikeOfKingdomToSide(Kingdom kingdom, WAR_SIDE side){
+		int totalLike = 0;
+		if(side == WAR_SIDE.A){
+			for (int i = 0; i < this._sideA.Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._sideA [i]);
+				if(kr.totalLike >= 0){
+					totalLike += kr.totalLike;
+				}
+			}
+		}else if(side == WAR_SIDE.B){
+			for (int i = 0; i < this._sideB.Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._sideB [i]);
+				if(kr.totalLike >= 0){
+					totalLike += kr.totalLike;
+				}
+			}
+		}
+		return totalLike;
+	}
+	internal List<Kingdom> GetListFromSide(WAR_SIDE side){
+		if(side == WAR_SIDE.A){
+			return this._sideA;
+		}else{
+			return this._sideB;
+		}
+	}
+	internal bool IsAdjacentToEnemyKingdoms(Kingdom kingdom, WAR_SIDE side){
+		if(side == WAR_SIDE.A){
+			for (int i = 0; i < this._sideB.Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._sideB [i]);
+				if(kr.isAdjacent){
+					return true;
+				}
+			}
+			return false;
+		}else{
+			for (int i = 0; i < this._sideA.Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (this._sideA [i]);
+				if(kr.isAdjacent){
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 }

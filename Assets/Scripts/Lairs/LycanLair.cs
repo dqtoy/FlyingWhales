@@ -21,7 +21,7 @@ public class LycanLair : Lair {
 				int chance = UnityEngine.Random.Range (0, 100);
 				if (chance < 90) {
 					Kingdom kingdom = this.region.occupant.kingdom;
-					int kingdomEffDefense = kingdom.effectiveArmor;
+					int kingdomEffDefense = 0;
 					int damage = (int)((kingdomEffDefense / kingdom.cities.Count) / 12);
 					DamageToCityDefense (damage);
 				} else {

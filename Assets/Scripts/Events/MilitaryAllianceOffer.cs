@@ -46,7 +46,7 @@ public class MilitaryAllianceOffer : GameEvent {
                 //Accept
 //                _sourceKingdom.AddMilitaryAlliance(_targetKingdom);
 //                _targetKingdom.AddMilitaryAlliance(_sourceKingdom);
-				_sourceRel.ChangeMilitaryAlliance (true);
+//				_sourceRel.ChangeMilitaryAlliance (true);
                 Debug.Log(_targetKingdom.name + " has accepted a military alliance offer from " + _sourceKingdom.name);
                 resultLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "MilitaryAllianceOffer", "accept");
                 resultLog.AddToFillers(_targetKingdom, _targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
