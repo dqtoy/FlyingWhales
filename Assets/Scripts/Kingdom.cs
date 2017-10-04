@@ -3302,15 +3302,11 @@ public class Kingdom{
 		}
 		return false;
 	}
-	internal string ProvideWeaponsArmorsAidToKingdom(Kingdom kingdomToBeProvided){
+	internal string ProvideWeaponsArmorsAidToKingdom(Kingdom kingdomToBeProvided, float transferPercentage){
 		string weaponsOrArmor = "Weapons";
 		bool isAllyUnderAttack = kingdomToBeProvided.IsUnderAttack ();
 		bool isAllyAttacking = kingdomToBeProvided.IsAttacking ();
-		float transferPercentage = 0.1f;
 		int transferAmount = 0;
-		if(HasWar()){
-			transferPercentage = 0.05f;
-		}
 		if(isAllyUnderAttack && isAllyAttacking){
 			weaponsOrArmor = "Armors";
 		}else{

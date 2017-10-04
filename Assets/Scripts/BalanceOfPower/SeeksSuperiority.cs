@@ -139,92 +139,108 @@ public static class SeeksSuperiority {
 	private static void Phase2(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool hasAllianceInWar){
 		if(kingdom.alliancePool != null){
 			bool hasLeftAlliance = false;
-			List<JoinWarfareInfo> warsToJoin = new List<JoinWarfareInfo> ();
-			//			Dictionary<Warfare, WAR_SIDE> warsToJoin = new Dictionary<Warfare, WAR_SIDE>();
-			foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-				if(!relationship.isAtWar && !relationship.AreAllies() && relationship.isDiscovered){
-					for (int i = 0; i < kingdom.alliancePool.kingdomsInvolved.Count; i++) {
-						Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved[i];
-						if(kingdom.id != allyKingdom.id){
-							KingdomRelationship kr = allyKingdom.GetRelationshipWithKingdom(relationship.targetKingdom);
-							if(kr.isAtWar){
-								hasAllianceInWar = true;
-								WarfareInfo info = allyKingdom.GetWarfareInfo (kr.warfare.id);
-								JoinWarfareInfo joinInfo = new JoinWarfareInfo (info, allyKingdom, relationship.isAdjacent);
-								if(info.warfare != null && !warsToJoin.Contains(joinInfo)){
-									KingdomRelationship krWithAlly = kingdom.GetRelationshipWithKingdom (allyKingdom);
-									int totalChanceOfJoining = krWithAlly.totalLike * 2;
-									int chanceReduction = relationship.totalLike;
-									if(chanceReduction >= 0){
-										totalChanceOfJoining -= chanceReduction;
-									}
-									int chance = UnityEngine.Random.Range (0, 100);
-									if(chance < totalChanceOfJoining){
-										//Join War
-										warsToJoin.Add(joinInfo);
-									} else{
-										//Don't join war, lose 10 Stability
-										kingdom.AdjustStability (-10);
-										if(relationship.totalLike > 0){
-											int leavingValue = relationship.totalLike * 2;
-											int chanceOfLeaving = UnityEngine.Random.Range (0, 100);
+			bool isKingdomHasWar = kingdom.HasWar ();
+			List<WarfareInfo> warsToJoin = new List<WarfareInfo> ();
+			for (int i = 0; i < kingdom.alliancePool.kingdomsInvolved.Count; i++) {
+				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved[i];
+				if (kingdom.id != allyKingdom.id) {
+					if (allyKingdom.warfareInfo.Count > 0) {
+						hasAllianceInWar = true;
+						foreach (WarfareInfo info in allyKingdom.warfareInfo.Values) {
+							if (!kingdom.warfareInfo.ContainsKey (info.warfare.id) && !warsToJoin.Contains (info)) {
+								WAR_SIDE allySide = info.side;
+								WAR_SIDE enemySide = WAR_SIDE.A;
+								if (allySide == WAR_SIDE.A) {
+									enemySide = WAR_SIDE.B;
+								}
+								List<Kingdom> enemySideKingdoms = info.warfare.GetListFromSide (enemySide);
 
-											if(krWithAlly.totalLike >= 0){
-												//Refuse to participate in war and leave alliance
-												if(chanceOfLeaving < leavingValue){
-													kingdom.ShowRefuseAndLeaveAllianceLog (kingdom.alliancePool, info.warfare);
-													kingdom.LeaveAlliance(true);
-													hasLeftAlliance = true;
-													break;
-												}else{
-													kingdom.ShowDoNothingLog (info.warfare);
-												}
-											}else{
-												//Leave alliance and join enemy's side
-												if(chanceOfLeaving < leavingValue){
-													kingdom.AdjustStability (-10);
-													WarfareInfo warfareInfo = relationship.targetKingdom.GetWarfareInfo (kr.warfare.id);
-													AlliancePool allianceOfSourceKingdom = kingdom.alliancePool;
-													kingdom.LeaveAlliance(true);
-													if(relationship.targetKingdom.alliancePool != null){
-														relationship.targetKingdom.alliancePool.AttemptToJoinAlliance (kingdom, relationship.targetKingdom);
-													}else{
-														KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms (kingdom, relationship.targetKingdom);
-													}
+								int totalLikeToAllies = info.warfare.GetTotalLikeOfKingdomToSide (kingdom, allySide) * 2;
+								int totalLikeToEnemies = info.warfare.GetTotalLikeOfKingdomToSide (kingdom, enemySide);
 
-													if(krWithAlly.isAdjacent){
-														warfareInfo.warfare.JoinWar (warfareInfo.side, kingdom);
-														kingdom.ShowBetrayalWarLog (warfareInfo.warfare, relationship.targetKingdom);
-													}else{
-														string logAmount = kingdom.ProvideWeaponsArmorsAidToKingdom (relationship.targetKingdom);
-														kingdom.ShowBetrayalProvideLog (allianceOfSourceKingdom, logAmount, relationship.targetKingdom);
-													}
-													break;
-												}else{
-													kingdom.ShowDoNothingLog (info.warfare);
+								int totalChanceOfJoining = totalLikeToAllies - totalLikeToEnemies;
+								int chance = UnityEngine.Random.Range (0, 100);
+								if (chance < totalChanceOfJoining) {
+									//Join War
+									warsToJoin.Add (info);
+								} else {
+									//Don't join war, lose 10 Stability
+									kingdom.AdjustStability (-10);
+									if (totalLikeToEnemies > 0) {
+										int leavingValue = totalLikeToEnemies * 2;
+										int chanceOfLeaving = UnityEngine.Random.Range (0, 100);
+
+										if (totalLikeToAllies >= 0) {
+											//Refuse to participate in war and leave alliance
+											if (chanceOfLeaving < leavingValue) {
+												kingdom.ShowRefuseAndLeaveAllianceLog (kingdom.alliancePool, info.warfare);
+												kingdom.LeaveAlliance (true);
+												hasLeftAlliance = true;
+												break;
+											} else {
+												kingdom.ShowDoNothingLog (info.warfare);
+											}
+										} else {
+											//Leave alliance and join enemy's side
+											if (chanceOfLeaving < leavingValue) {
+												kingdom.AdjustStability (-10);
+												AlliancePool allianceOfSourceKingdom = kingdom.alliancePool;
+												kingdom.LeaveAlliance (true);
+												hasLeftAlliance = true;
+												Kingdom enemyKingdom = enemySideKingdoms [0];
+												if (enemyKingdom.alliancePool != null) {
+													enemyKingdom.alliancePool.AttemptToJoinAlliance (kingdom, enemyKingdom);
+												} else {
+													KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms (kingdom, enemyKingdom);
 												}
+
+												if (kingdom.alliancePool.HasAdjacentAllianceMember (kingdom)) {
+													info.warfare.JoinWar (enemySide, kingdom);
+													kingdom.ShowBetrayalWarLog (info.warfare, enemyKingdom);
+												} else {
+													float transferPercentage = 0.1f;
+													if (isKingdomHasWar) {
+														transferPercentage = 0.05f;
+													}
+													transferPercentage /= (float)enemySideKingdoms.Count;
+													for (int j = 0; j < enemySideKingdoms.Count; j++) {
+														string logAmount = kingdom.ProvideWeaponsArmorsAidToKingdom (enemySideKingdoms [j], transferPercentage);
+														kingdom.ShowBetrayalProvideLog (allianceOfSourceKingdom, logAmount, enemySideKingdoms [j]);
+													}
+												}
+												break;
+											} else {
+												kingdom.ShowDoNothingLog (info.warfare);
 											}
 										}
+									} else {
+										kingdom.ShowDoNothingLog (info.warfare);
 									}
 								}
 							}
 						}
 					}
-					if(hasLeftAlliance){
-						break;
-					}
 				}
 			}
 			if(!hasLeftAlliance && warsToJoin.Count > 0){
 				for (int i = 0; i < warsToJoin.Count; i++) {
-					Kingdom allyKingdom = warsToJoin [i].allyKingdom;
-					if(warsToJoin [i].isAdjacentToEnemy){
-						warsToJoin [i].info.warfare.JoinWar (warsToJoin [i].info.side, kingdom);
-						kingdom.ShowJoinWarLog (allyKingdom, warsToJoin [i].info.warfare);
-						Debug.Log(kingdom.name + " will join in " + allyKingdom.name + "'s war in side: " + warsToJoin [i].info.side.ToString());
+					List<Kingdom> allySideKingdoms = warsToJoin[i].warfare.GetListFromSide (warsToJoin[i].side);
+					Kingdom allyKingdom = warsToJoin [i].warfare.GetListFromSide(warsToJoin[i].side)[0];
+					if(warsToJoin[i].warfare.IsAdjacentToEnemyKingdoms(kingdom, warsToJoin[i].side)){
+						warsToJoin [i].warfare.JoinWar (warsToJoin [i].side, kingdom);
+						kingdom.ShowJoinWarLog (allyKingdom, warsToJoin [i].warfare);
+						Debug.Log(kingdom.name + " will join in " + allyKingdom.name + "'s war in side: " + warsToJoin [i].side.ToString());
 					}else{
-						string logAmount = kingdom.ProvideWeaponsArmorsAidToKingdom (allyKingdom);
-						kingdom.ShowTransferWeaponsArmorsLog (allyKingdom, logAmount);
+						float transferPercentage = 0.1f;
+						if (isKingdomHasWar) {
+							transferPercentage = 0.05f;
+						}
+						transferPercentage /= (float)allySideKingdoms.Count;
+						for (int j = 0; j < allySideKingdoms.Count; j++) {
+							string logAmount = kingdom.ProvideWeaponsArmorsAidToKingdom (allySideKingdoms[i], transferPercentage);
+							kingdom.ShowTransferWeaponsArmorsLog (allyKingdom, logAmount);
+						}
+
 					}
 
 				}
@@ -268,15 +284,15 @@ public static class SeeksSuperiority {
 
 					if(overpopulation > 0) {
 						if (overpopulation <= 10) {
-							overPopulationReduction = -10;
+							overPopulationReduction = 10;
 						} else if (overpopulation > 10 && overpopulation <= 20) {
-							overPopulationReduction = -20;
+							overPopulationReduction = 20;
 						} else if (overpopulation > 20 && overpopulation <= 40) {
-							overPopulationReduction = -35;
+							overPopulationReduction = 35;
 						} else if (overpopulation > 40 && overpopulation <= 60) {
-							overPopulationReduction = -50;
+							overPopulationReduction = 50;
 						} else if (overpopulation > 60) {
-							overPopulationReduction = -65;
+							overPopulationReduction = 65;
 						}
 					}
 
@@ -333,6 +349,6 @@ public static class SeeksSuperiority {
 			}
 		}
 
-		Debug.Log("========== END SEEKS BALANCE " + kingdom.name + " ==========");
+		Debug.Log("========== END SEEKS SUPERIORITY " + kingdom.name + " ==========");
 	}
 }
