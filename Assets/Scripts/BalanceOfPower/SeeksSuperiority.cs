@@ -219,6 +219,9 @@ public static class SeeksSuperiority {
 								}
 							}
 						}
+						if(hasLeftAlliance){
+							break;
+						}
 					}
 				}
 			}

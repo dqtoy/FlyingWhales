@@ -205,6 +205,9 @@ public static class SeeksBalance {
 								}
 							}
 						}
+						if(hasLeftAlliance){
+							break;
+						}
 					}
 				}
 			}
