@@ -286,7 +286,10 @@ public class Battle {
 				newLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_2);
 				this._warfare.ShowUINotification(newLog);
 
-				if(this._deadAttackerKingdom == null && this._deadDefenderKingdom == null){
+                //When failing in attacking an enemy city, Stability is reduced by 10.
+                attacker.kingdom.AdjustStability(-10);
+
+                if (this._deadAttackerKingdom == null && this._deadDefenderKingdom == null){
 					ChangePositionAndGoToStep1();
 				}else{
 					ForceEndBattle ();

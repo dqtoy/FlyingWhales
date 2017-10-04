@@ -747,6 +747,12 @@ public class Citizen {
         if (role != ROLE.GOVERNOR && role != ROLE.KING) {
             return 0;
         } else {
+            if(role == ROLE.GOVERNOR) {
+                if(loyaltyToKing < 0) {
+                    return -1;
+                }
+            }
+
             switch (_efficiencyLevel) {
                 case EFFICIENCY.HIGH:
                     if (role == ROLE.KING) {
