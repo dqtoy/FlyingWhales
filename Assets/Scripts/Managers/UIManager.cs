@@ -20,9 +20,9 @@ public class UIManager : MonoBehaviour {
 	public GameObject kingdomEventsListParentPrefab;
 	public GameObject kingdomWarEventsListParentPrefab;
 	public GameObject kingdomEventsListItemPrefab;
-	//public GameObject kingdomWarEventsListItemPrefab;
-	//public GameObject kingdomFlagPrefab;
-	public GameObject logItemPrefab;
+    //public GameObject kingdomWarEventsListItemPrefab;
+    public GameObject kingdomFlagPrefab;
+    public GameObject logItemPrefab;
     public GameObject cityItemPrefab;
 	//public GameObject lairItemPrefab;
 	//public GameObject hextileEventItemPrefab;
@@ -228,6 +228,15 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UIButton chooseCitizenCancelBtn;
     [SerializeField] private GameObject chooseCitizenSelectedGO;
     [SerializeField] private UILabel chooseCitizenInstructionLbl;
+    [SerializeField] private GameObject chooseCitizenNoChoicesGO;
+    //Choose Kingdom Objects
+    [SerializeField] private GameObject chooseKingdomGO;
+    [SerializeField] private UIGrid chooseKingdomGrid;
+    [SerializeField] private UIButton chooseKingdomOkBtn;
+    [SerializeField] private UIButton chooseKingdomCancelBtn;
+    [SerializeField] private GameObject chooseKingdomSelectedGO;
+    [SerializeField] private UILabel chooseKingdomInstructionLbl;
+    [SerializeField] private GameObject chooseKingdomNoChoicesGO;
 
     [Space(10)]
     [Header("Minimap")]
@@ -1814,6 +1823,8 @@ public class UIManager : MonoBehaviour {
     public void HideInterveneActionsMenu() {
         HideSwitchKingdomsMenu();
         HideCreateKingdomMenu();
+        HideChooseKingdomMenu();
+        HideChooseCitizenMenu();
         interveneMenuBtn.SetClickState(false);
         interveneActonsGO.SetActive(false);
     }
@@ -2707,6 +2718,48 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
+    #region Rebellion
+    [Space(10)]
+    [Header("Rebellion")]
+    [SerializeField] private ButtonToggle rebellionBtn;
+    public void ToggleChooseKingdomForRebellion() {
+        if (chooseKingdomGO.activeSelf) {
+            HideChooseKingdomMenu();
+        } else {
+            List<Kingdom> kingdomsToChooseFrom = new List<Kingdom>(KingdomManager.Instance.allKingdoms.Where(x => x.IsElligibleForRebellion()));
+            ShowChooseKingdomMenu(kingdomsToChooseFrom, ShowChooseCitizensForRebellion, "Choose a Kingdom");
+            onHideChooseKingdomMenu += rebellionBtn.SetAsUnClicked;
+            //select default
+            if (chooseKingdomGrid.GetChildList().Count > 0) {
+                KingdomFlagItem defaultFlag = chooseKingdomGrid.GetChild(0).GetComponent<KingdomFlagItem>();
+                ChooseKingdom(defaultFlag.kingdom, defaultFlag);
+            } else {
+                EnableUIButton(chooseKingdomOkBtn, false);
+                chooseKingdomSelectedGO.SetActive(false);
+            }
+
+        }
+    }
+    private void ShowChooseCitizensForRebellion() {
+        Kingdom chosenKingdom = currentChosenKingdom;
+        HideChooseKingdomMenu();
+        List<Citizen> citizensToChooseFrom = chosenKingdom.GetCitizensForRebellion();
+        ShowChooseCitizenMenu(citizensToChooseFrom, StartRebellion, "Choose a Citizen to start the rebellion");
+        onHideChooseCitizenMenu += rebellionBtn.SetAsUnClicked;
+
+        //select default
+        if (chooseCitizenGrid.GetChildList().Count > 0) {
+            CharacterPortrait defaultPortrait = chooseCitizenGrid.GetChild(0).GetComponent<CharacterPortrait>();
+            ChooseCitizen(defaultPortrait.citizen, defaultPortrait);
+        }
+    }
+    private void StartRebellion() {
+        Debug.Log("Start rebellion of " + currentChosenCitizen.name + " against " + currentChosenCitizen.city.kingdom.name);
+        currentChosenCitizen.StartRebellion();
+        HideChooseCitizenMenu();
+    }
+    #endregion
+
     #region Choose Citizen Menu
     private delegate void OnHideChooseCitizenMenu();
     private OnHideChooseCitizenMenu onHideChooseCitizenMenu;
@@ -2714,6 +2767,11 @@ public class UIManager : MonoBehaviour {
     private CharacterPortrait chosenPortrait;
     private void ShowChooseCitizenMenu(List<Citizen> citizensToChooseFrom, EventDelegate.Callback OnClick, string instructions = "Choose a citizen") {
         chooseCitizenInstructionLbl.text = instructions;
+        if (citizensToChooseFrom.Count <= 0) {
+            chooseCitizenNoChoicesGO.SetActive(true);
+        } else {
+            chooseCitizenNoChoicesGO.SetActive(false);
+        }
         CharacterPortrait[] presentPortraits = Utilities.GetComponentsInDirectChildren<CharacterPortrait>(chooseCitizenGrid.gameObject);
         int nextIndex = 0;
         for (int i = 0; i < presentPortraits.Length; i++) {
@@ -2746,6 +2804,7 @@ public class UIManager : MonoBehaviour {
     }
     public void HideChooseCitizenMenu() {
         currentChosenCitizen = null;
+        chosenPortrait = null;
         chooseCitizenGO.SetActive(false);
         chooseCitizenOkBtn.onClick.Clear();
         if(onHideChooseCitizenMenu != null) {
@@ -2761,6 +2820,69 @@ public class UIManager : MonoBehaviour {
         currentChosenCitizen = citizen;
         chosenPortrait = clickedPortrait;
         EnableUIButton(chooseCitizenOkBtn, true);
+    }
+    #endregion
+
+    #region Choose Kingdom Menu
+    private delegate void OnHideChooseKingdomMenu();
+    private OnHideChooseKingdomMenu onHideChooseKingdomMenu;
+    private Kingdom currentChosenKingdom;
+    private KingdomFlagItem chosenKingdomFlag;
+    private void ShowChooseKingdomMenu(List<Kingdom> kingdomsToChooseFrom, EventDelegate.Callback OnClick, string instructions = "Choose a kingdom") {
+        chooseKingdomInstructionLbl.text = instructions;
+        if(kingdomsToChooseFrom.Count <= 0) {
+            chooseKingdomNoChoicesGO.SetActive(true);
+        } else {
+            chooseKingdomNoChoicesGO.SetActive(false);
+        }
+        KingdomFlagItem[] presentFlags = Utilities.GetComponentsInDirectChildren<KingdomFlagItem>(chooseKingdomGrid.gameObject);
+        int nextIndex = 0;
+        for (int i = 0; i < presentFlags.Length; i++) {
+            KingdomFlagItem currFlag = presentFlags[i];
+            Kingdom kingdomToShow = kingdomsToChooseFrom.ElementAtOrDefault(i);
+            if (kingdomToShow == null) {
+                currFlag.gameObject.SetActive(false);
+            } else {
+                currFlag.SetKingdom(kingdomToShow, true);
+                currFlag.onClickKingdomFlag = null;
+                currFlag.onClickKingdomFlag += ChooseKingdom;
+                currFlag.gameObject.SetActive(true);
+            }
+            nextIndex = i + 1;
+        }
+        for (int i = nextIndex; i < kingdomsToChooseFrom.Count; i++) {
+            Kingdom kingdomToShow = kingdomsToChooseFrom[i];
+            GameObject flagGO = InstantiateUIObject(kingdomFlagPrefab.name, this.transform);
+            KingdomFlagItem flag = flagGO.GetComponent<KingdomFlagItem>();
+            flag.SetKingdom(kingdomToShow, transform);
+            flag.onClickKingdomFlag = null;
+            flag.onClickKingdomFlag += ChooseKingdom;
+            flagGO.transform.localScale = Vector3.one;
+            chooseKingdomGrid.AddChild(flagGO.transform);
+            chooseKingdomGrid.Reposition();
+        }
+        chooseKingdomOkBtn.onClick.Clear();
+        EventDelegate.Set(chooseKingdomOkBtn.onClick, delegate () { OnClick(); });
+        chooseKingdomGO.SetActive(true);
+    }
+    public void HideChooseKingdomMenu() {
+        currentChosenKingdom = null;
+        chosenKingdomFlag = null;
+        chooseKingdomGO.SetActive(false);
+        chooseKingdomOkBtn.onClick.Clear();
+        if (onHideChooseKingdomMenu != null) {
+            onHideChooseKingdomMenu();
+        }
+        onHideChooseKingdomMenu = null;
+    }
+    private void ChooseKingdom(Kingdom kingdom, KingdomFlagItem clickedFlag) {
+        chooseKingdomSelectedGO.transform.SetParent(clickedFlag.transform);
+        chooseKingdomSelectedGO.transform.localPosition = new Vector3(89f, 0f, 0f);
+        //chooseCitizenSelectedGO.transform.SetParent(chooseCitizenGO.transform);
+        chooseKingdomSelectedGO.SetActive(true);
+        currentChosenKingdom = kingdom;
+        chosenKingdomFlag = clickedFlag;
+        EnableUIButton(chooseKingdomOkBtn, true);
     }
     #endregion
 

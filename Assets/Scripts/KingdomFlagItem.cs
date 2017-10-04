@@ -8,10 +8,13 @@ public class KingdomFlagItem : MonoBehaviour {
 	public delegate void OnHoverOver();
 	public OnHoverOver onHoverOver;
 
-	public delegate void OnHoverExit ();
+	public delegate void OnHoverExit();
 	public OnHoverExit onHoverExit;
 
-	internal Kingdom kingdom;
+    public delegate void OnClickKingdomFlag(Kingdom clickedKingdom, KingdomFlagItem clickedFlag);
+    public OnClickKingdomFlag onClickKingdomFlag;
+
+    internal Kingdom kingdom;
 
 	[SerializeField] private UI2DSprite _kingdomColorSprite;
     [SerializeField] private TweenPosition _tweenPos;
@@ -51,40 +54,6 @@ public class KingdomFlagItem : MonoBehaviour {
         kingdomInfoGO.SetActive(false);
     }
 
-    //void OnClick(){
-    //       this.SetAsSelected();
-    //   }
-
-    void OnDoubleClick() {
-        //Debug.Log("DOUBLE CLICK!: " + kingdom.name);
-        CameraMove.Instance.CenterCameraOn(kingdom.capitalCity.hexTile.gameObject);
-    }
-
-    //internal void SetAsSelected() {
-    //    if (UIManager.Instance.currentlyShowingKingdom != null && 
-    //        UIManager.Instance.currentlyShowingKingdom.id == this.kingdom.id) {
-    //        return;
-    //    }
-    //    this.PlayAnimation();
-    //    SetKingdomAsActive();
-    //}
-
-    //private void PlayAnimation() {
-    //    _tweenPos.enabled = true;
-    //    _tweenPos.PlayForward();
-    //}
-
-    //public void PlayAnimationReverse() {
-    //    _tweenPos.ResetToBeginning();
-    //    _tweenPos.enabled = true;
-    //    _tweenPos.PlayForward();
-    //    //_tweenPos.ReverseValues();
-    //}
-
-    //public void SetKingdomAsActive() {
-    //    UIManager.Instance.SetKingdomAsActive(this.kingdom);
-    //}
-
     public void AddGameObjectToGrid(GameObject GO) {
         _eventsGrid.AddChild(GO.transform);
         GO.transform.localPosition = Vector3.zero;
@@ -105,7 +74,16 @@ public class KingdomFlagItem : MonoBehaviour {
     }
 
     #region Monobehaviour Functions
-    void OnHover(bool isOver) {
+    private void OnDoubleClick() {
+        //Debug.Log("DOUBLE CLICK!: " + kingdom.name);
+        CameraMove.Instance.CenterCameraOn(kingdom.capitalCity.hexTile.gameObject);
+    }
+    private void OnClick() {
+        if(onClickKingdomFlag != null) {
+            onClickKingdomFlag(kingdom, this);
+        }
+    }
+    private void OnHover(bool isOver) {
         if (isHoverEnabled) {
             if (isOver) {
                 this.isHovering = true;
@@ -123,7 +101,7 @@ public class KingdomFlagItem : MonoBehaviour {
         }
     }
 
-    void Update() {
+    private void Update() {
         if (this.isHovering) {
             UIManager.Instance.ShowSmallInfo("[b]" + this.kingdom.name + "[/b]");
         }

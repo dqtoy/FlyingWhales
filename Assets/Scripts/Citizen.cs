@@ -905,4 +905,32 @@ public class Citizen {
     }
     #endregion
 
+    #region Rebellion
+    internal void StartRebellion() {
+        List<City> citiesForRebellion = new List<City>();
+        Kingdom sourceKingdom = city.kingdom;
+        //Get a random origin city of sourceKingdom that is adjacent to sourceKingdom capital city and has at least one other adjacent city that belongs to sourceKingdom
+        for (int i = 0; i < sourceKingdom.capitalCity.region.adjacentRegions.Count; i++) {
+            Region adjacentRegionOfCapitalCity = sourceKingdom.capitalCity.region.adjacentRegions[i];
+            if(adjacentRegionOfCapitalCity.occupant != null && adjacentRegionOfCapitalCity.occupant.kingdom.id == sourceKingdom.id) {
+                City possibleOriginCityForRebellion = adjacentRegionOfCapitalCity.occupant;
+                if(adjacentRegionOfCapitalCity.adjacentRegions.Where(x => x.occupant != null && 
+                    x.occupant.id != sourceKingdom.capitalCity.id && x.occupant.kingdom.id == sourceKingdom.id).Any()) {
+                    citiesForRebellion.Add(possibleOriginCityForRebellion);
+                    break;
+                }
+            }
+        }
+
+        int numOfCitiesForRebellion = Random.Range(2, 5);
+        while(citiesForRebellion.Count < numOfCitiesForRebellion) {
+            bool hasAddedNewCity = false;
+            for (int i = 0; i < citiesForRebellion.Count; i++) {
+                City currCityToCheck = citiesForRebellion[i];
+
+            }
+        }
+    }
+    #endregion
+
 }

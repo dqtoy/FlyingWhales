@@ -1080,6 +1080,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public void ForceChangeKingdom() {
         KingdomManager.Instance.TransferCitiesToOtherKingdom(ownedByCity.kingdom, KingdomManager.Instance.allKingdoms[kingdomToConquerIndex], ownedByCity);
     }
+
+    [ContextMenu("Kill Kingdom Using Population")]
+    public void KillKingdomUsingPopulation() {
+        ownedByCity.kingdom.AdjustPopulation(-ownedByCity.kingdom.population);
+    }
     //[ContextMenu("Select Tiles in Same Region")]
     //public void SelectAllTilesInRegion() {
     //    UnityEditor.Selection.objects = region.tilesInRegion.Select(x => x.gameObject).ToArray();
