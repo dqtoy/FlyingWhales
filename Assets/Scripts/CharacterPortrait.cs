@@ -83,7 +83,11 @@ public class CharacterPortrait : MonoBehaviour {
     }
 
     public void ShowDetailedCharacterInfo() {
-        detailedCharacterInfoNameLbl.text = this.citizen.name;
+        detailedCharacterInfoNameLbl.text = string.Empty;
+        if(this.citizen.role != ROLE.UNTRAINED) {
+            detailedCharacterInfoNameLbl.text += Utilities.NormalizeString(this.citizen.role.ToString()) + " ";
+        }
+        detailedCharacterInfoNameLbl.text += this.citizen.name;
         detailedCharacterInfoOtherLbl.text = this.citizen.age.ToString() + "\n"
                                             + Utilities.NormalizeString(this.citizen.preferredKingdomType.ToString()) + "\n"
                                             + this.citizen.city.kingdom.name;

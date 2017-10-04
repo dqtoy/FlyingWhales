@@ -21,8 +21,8 @@ public class King : Role {
 //		if(this.citizen.city.kingdom.king != null){
 //			this.citizen.CopyCampaignManager (this.citizen.city.kingdom.king.campaignManager);
 //		}
-		this.citizen.city.kingdom.king = this.citizen;
-		this.SetOwnedKingdom(this.citizen.city.kingdom);
+		//this.citizen.city.kingdom.king = this.citizen;
+		//this.SetOwnedKingdom(this.citizen.city.kingdom);
 		//this.citizen.GenerateCharacterValues ();
 		//PrestigeContribution (false);
 		//StabilityContribution (false);

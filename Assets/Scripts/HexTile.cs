@@ -542,6 +542,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this._kingdomColorSprite.color = color;
 	}
     internal void SetMinimapTileColor(Color color) {
+        color.a = 255f / 255f;
         minimapHexSprite.color = color;
     }
     internal void ShowTileHighlight(){

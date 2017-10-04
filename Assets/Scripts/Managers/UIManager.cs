@@ -2746,6 +2746,7 @@ public class UIManager : MonoBehaviour {
         List<Citizen> citizensToChooseFrom = chosenKingdom.GetCitizensForRebellion();
         ShowChooseCitizenMenu(citizensToChooseFrom, StartRebellion, "Choose a Citizen to start the rebellion");
         onHideChooseCitizenMenu += rebellionBtn.SetAsUnClicked;
+        EventDelegate.Set(rebellionBtn.GetComponent<UIEventTrigger>().onClick, delegate () { HideChooseCitizenMenu(); });
 
         //select default
         if (chooseCitizenGrid.GetChildList().Count > 0) {
@@ -2798,6 +2799,7 @@ public class UIManager : MonoBehaviour {
             chooseCitizenGrid.AddChild(portraitGO.transform);
             chooseCitizenGrid.Reposition();
         }
+        StartCoroutine(RepositionGrid(chooseCitizenGrid));
         chooseCitizenOkBtn.onClick.Clear();
         EventDelegate.Set(chooseCitizenOkBtn.onClick, delegate () { OnClick(); });
         chooseCitizenGO.SetActive(true);
@@ -2811,6 +2813,7 @@ public class UIManager : MonoBehaviour {
             onHideChooseCitizenMenu();
         }
         onHideChooseCitizenMenu = null;
+        EventDelegate.Set(rebellionBtn.GetComponent<UIEventTrigger>().onClick, delegate () { ToggleChooseKingdomForRebellion(); });
     }
     private void ChooseCitizen(Citizen citizen, CharacterPortrait clickedPortrait) {
         chooseCitizenSelectedGO.transform.SetParent(clickedPortrait.transform);
@@ -2861,6 +2864,7 @@ public class UIManager : MonoBehaviour {
             chooseKingdomGrid.AddChild(flagGO.transform);
             chooseKingdomGrid.Reposition();
         }
+        StartCoroutine(RepositionGrid(chooseKingdomGrid));
         chooseKingdomOkBtn.onClick.Clear();
         EventDelegate.Set(chooseKingdomOkBtn.onClick, delegate () { OnClick(); });
         chooseKingdomGO.SetActive(true);

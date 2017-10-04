@@ -862,7 +862,9 @@ public class Kingdom{
     internal void UpdateAllRelationshipsLikeness() {
         if (this.king != null) {
 			foreach (KingdomRelationship relationship in relationships.Values) {
-				relationship.UpdateLikeness(null);
+                if (relationship.isDiscovered) {
+                    relationship.UpdateLikeness(null);
+                }
 			}
         }
     }
@@ -1197,7 +1199,6 @@ public class Kingdom{
 					break;
 				}
 			}
-            city.TransferRoyaltiesToOtherCity(capitalCity);
             KingdomManager.Instance.UpdateKingdomList();
         }
 
@@ -1237,10 +1238,10 @@ public class Kingdom{
         return citizensOfType;
     }
     internal bool IsElligibleForRebellion() {
-        if(stability <= -100) {
+        if(stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
             for (int i = 0; i < cities.Count; i++) {
                 City currCity = cities[i];
-                if(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50).Any()) {
+                if(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= 100).Any()) {
                     return true;
                 }
             }
@@ -1251,7 +1252,7 @@ public class Kingdom{
         List<Citizen> citizensForRebellion = new List<Citizen>();
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
-            citizensForRebellion.AddRange(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50));
+            citizensForRebellion.AddRange(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= 100));
         }
         return citizensForRebellion;
     }
@@ -1377,7 +1378,9 @@ public class Kingdom{
         Citizen previousKing = this.king;
         bool isNewKingGovernor = newKing.isGovernor;
 
+        this.king = newKing;
         newKing.AssignRole(ROLE.KING);
+        ((King)newKing.assignedRole).SetOwnedKingdom(this);
 
         if (isNewKingGovernor) {
             newKing.city.AssignNewGovernor();
@@ -2613,6 +2616,10 @@ public class Kingdom{
 		}
         KingdomManager.Instance.UpdateKingdomList();
     }
+    internal void SetBaseWeapons(int newBaseWeapons) {
+        _baseWeapons = newBaseWeapons;
+        KingdomManager.Instance.UpdateKingdomList();
+    }
 	internal void AdjustBaseArmors(int amountToAdjust) {
 		this._baseArmor += amountToAdjust;
 		if(this._baseArmor < 0){
@@ -2620,7 +2627,11 @@ public class Kingdom{
 		}
         KingdomManager.Instance.UpdateKingdomList();
 	}
-	internal void ChangeStability(int newAmount) {
+    internal void SetBaseArmor(int newBaseArmor) {
+        _baseArmor = newBaseArmor;
+        KingdomManager.Instance.UpdateKingdomList();
+    }
+    internal void ChangeStability(int newAmount) {
 		this._stability = newAmount;
 		this._stability = Mathf.Clamp (this._stability, -100, 100);
 	}
@@ -2887,8 +2898,11 @@ public class Kingdom{
             while (cities.Count > 0) {
                 cities[0].KillCity();
             }
-                
         }
+        KingdomManager.Instance.UpdateKingdomList();
+    }
+    internal void SetPopulation(int newPopulation) {
+        _population = newPopulation;
         KingdomManager.Instance.UpdateKingdomList();
     }
     #endregion

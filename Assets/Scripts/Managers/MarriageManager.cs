@@ -125,6 +125,21 @@ public class MarriageManager : MonoBehaviour {
 		return allMarriedCouples.Where(x => x.husband.id == citizen.id || x.wife.id == citizen.id).ToList();
 	}
 
+    internal void DivorceCouple(Citizen citizen1, Citizen citizen2) {
+        //MarriageManager.Instance.DivorceCouple(this, spouse);
+        if (citizen1.role == ROLE.KING) {
+            //Spouse of king should no longer be queen
+            citizen2.city.RemoveCitizenInImportantCitizensInCity(citizen2);
+        }else if (citizen2.role == ROLE.KING) {
+            //Spouse of king should no longer be queen
+            citizen1.city.RemoveCitizenInImportantCitizensInCity(citizen1);
+        }
+        citizen1.isMarried = false;
+        citizen2.isMarried = false;
+        citizen1.AssignSpouse(null);
+        citizen2.AssignSpouse(null);
+    }
+
     public Citizen GenerateSpouseForCitizen(Citizen citizenToGetMarried) {
         int spouseAge = citizenToGetMarried.age - 5;
         spouseAge = Mathf.Clamp(spouseAge, 16, 50);
