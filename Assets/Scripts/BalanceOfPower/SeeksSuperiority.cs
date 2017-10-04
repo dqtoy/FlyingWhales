@@ -237,8 +237,8 @@ public static class SeeksSuperiority {
 						}
 						transferPercentage /= (float)allySideKingdoms.Count;
 						for (int j = 0; j < allySideKingdoms.Count; j++) {
-							string logAmount = kingdom.ProvideWeaponsArmorsAidToKingdom (allySideKingdoms[i], transferPercentage);
-							kingdom.ShowTransferWeaponsArmorsLog (allyKingdom, logAmount);
+							string logAmount = kingdom.ProvideWeaponsArmorsAidToKingdom (allySideKingdoms[j], transferPercentage);
+							kingdom.ShowTransferWeaponsArmorsLog (allySideKingdoms[j], logAmount);
 						}
 
 					}

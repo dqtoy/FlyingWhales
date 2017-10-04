@@ -1025,7 +1025,10 @@ public class City{
         }
 		KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         CameraMove.Instance.UpdateMinimapTexture();
-		Messenger.Broadcast<City>("CityDied", this);
+		if(Messenger.eventTable.ContainsKey("CityDied")){
+			Messenger.Broadcast<City>("CityDied", this);
+		}
+
     }
 
     /*
@@ -1102,7 +1105,9 @@ public class City{
         KillAllCitizens(DEATH_REASONS.INTERNATIONAL_WAR, true);
         Debug.Log("Created new city on: " + this.hexTile.name + " because " + conqueror.name + " has conquered it!");
         CameraMove.Instance.UpdateMinimapTexture();
-		Messenger.Broadcast<City>("CityDied", this);
+		if (Messenger.eventTable.ContainsKey ("CityDied")) {
+			Messenger.Broadcast<City> ("CityDied", this);
+		}
     }
     private void TransferItemsToConqueror(Kingdom conqueror){
 		for(int i = 0; i < this.ownedTiles.Count; i++){
