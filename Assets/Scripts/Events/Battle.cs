@@ -243,7 +243,8 @@ public class Battle {
 			if(attackAfterDamage > 0){
 				int maxDamageToWeapons = GetMaxDamageToWeapons(attackAfterDamage);
 				int maxRollForDamageInWeapons = this.attacker.kingdom.baseWeapons - maxDamageToWeapons;
-				int rollForDamageInWeapons = UnityEngine.Random.Range (0, maxRollForDamageInWeapons + 1);
+				int minRollForDamageInWeapons = maxRollForDamageInWeapons / 2;
+				int rollForDamageInWeapons = UnityEngine.Random.Range (minRollForDamageInWeapons, maxRollForDamageInWeapons + 1);
 				this.attacker.kingdom.AdjustBaseWeapons (-rollForDamageInWeapons);
 				int damageToSoldiersAttacker = GetDamageToSoldiers (attackAfterDamage, this.attacker.kingdom.baseWeapons);
 				int damageToPopulationAttacker = GetDamageToPopulationAttacker (damageToSoldiersAttacker);
@@ -257,7 +258,8 @@ public class Battle {
 			if(defenseAfterDamage > 0){
 				int maxDamageToArmors = GetMaxDamageToArmors(defenseAfterDamage);
 				int maxRollForDamageInArmors = this.defender.kingdom.baseArmor - maxDamageToArmors;
-				int rollForDamageInArmors = UnityEngine.Random.Range (0, maxRollForDamageInArmors + 1);
+				int minRollForDamageInArmors = maxRollForDamageInArmors / 2;
+				int rollForDamageInArmors = UnityEngine.Random.Range (minRollForDamageInArmors, maxRollForDamageInArmors + 1);
 				this.defender.kingdom.AdjustBaseArmors (-rollForDamageInArmors);
 				int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.attacker.kingdom.baseArmor);
 				int damageToPopulationDefender = GetDamageToPopulationDefender (damageToSoldiersDefender);
