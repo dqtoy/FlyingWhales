@@ -46,6 +46,9 @@ public class KingdomRelationship {
 	private float _targetKingdomThreatLevel;
 	private float _targetKingdomInvasionValue;
 
+	internal int _effectivePower;
+	internal int _effectiveDef;
+
 	internal int _usedSourceEffectivePower;
 	internal int _usedSourceEffectiveDef;
 	internal int _usedTargetEffectivePower;
@@ -690,57 +693,6 @@ public class KingdomRelationship {
         _relationshipHistory.Add(relHistory);
     }
     #endregion
-	internal bool ChangeMilitaryAlliance(bool state){
-		bool hasSourceChanged = AdjustMilitaryAlliance (state);
-		KingdomRelationship targetRelationship = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		bool hasTargetChanged = targetRelationship.AdjustMilitaryAlliance (state);
-		if(hasSourceChanged && hasTargetChanged && state){
-			GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-			gameDate.AddYears (1);
-			SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.month, gameDate.year, () => MilitaryAllianceExpiration ());
-			this._currentExpirationMilitaryAlliance.SetDate(gameDate);
-		}
-		return hasSourceChanged;
-	}
-	private bool AdjustMilitaryAlliance(bool state){
-		if(this._isMilitaryAlliance != state){
-			this._isMilitaryAlliance = state;
-			if(state){
-				this._sourceKingdom.AddMilitaryAlliance (this._targetKingdom);
-			}else{
-				this._sourceKingdom.RemoveMilitaryAlliance (this._targetKingdom);
-			}
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	internal bool ChangeMutualDefenseTreaty(bool state){
-		bool hasSourceChanged = AdjustMutualDefenseTreaty (state);
-		KingdomRelationship targetRelationship = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		bool hasTargetChanged = targetRelationship.AdjustMutualDefenseTreaty (state);
-		if(hasSourceChanged && hasTargetChanged && state){
-			GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-			gameDate.AddYears (1);
-			SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.month, gameDate.year, () => DefenseTreatyExpiration ());
-			this._currentExpirationDefenseTreaty.SetDate(gameDate);
-		}
-		return hasSourceChanged;
-	}
-	private bool AdjustMutualDefenseTreaty(bool state){
-		if (this._isMutualDefenseTreaty != state) {
-			this._isMutualDefenseTreaty = state;
-			if (state) {
-				this._sourceKingdom.AddMutualDefenseTreaty (this._targetKingdom);
-			} else {
-				this._sourceKingdom.RemoveMutualDefenseTreaty (this._targetKingdom);
-			}
-			return true;
-		}else{
-			return false;
-		}
-	}
 
 	internal void ChangeAdjacency(bool state){
 		AdjustAdjacency (state);
@@ -785,38 +737,7 @@ public class KingdomRelationship {
 		SetHasPairedCities (state);
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
 		kr.SetHasPairedCities(state);
-	}
-	private void DefenseTreatyExpiration(){
-		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead && this._isMutualDefenseTreaty 
-			&& this._currentExpirationDefenseTreaty.IsSameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year)){
-
-			ChangeMutualDefenseTreaty (false);
-			RenewDefenseTreaty ();
-
-		}
-	}
-	private void RenewDefenseTreaty(){
-		bool isSourceWillingToRenew = this._sourceKingdom.RenewMutualDefenseTreatyWith (this._targetKingdom, this);
-		if(isSourceWillingToRenew){
-			ChangeMutualDefenseTreaty (true);
-		}
-	}
-
-	private void MilitaryAllianceExpiration(){
-		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead && this._isMilitaryAlliance 
-			&& this._currentExpirationMilitaryAlliance.IsSameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year)){
-
-			ChangeMilitaryAlliance (false);
-			RenewMilitaryAlliance ();
-
-		}
-	}
-	private void RenewMilitaryAlliance(){
-		bool isSourceWillingToRenew = this._sourceKingdom.RenewMilitaryAllianceWith (this._targetKingdom, this);
-		if(isSourceWillingToRenew){
-			ChangeMilitaryAlliance (true);
-		}
-	}
+	}	
 
 	private void SetRaceThreatModifier(){
 		if(this._sourceKingdom.race != this._targetKingdom.race){
@@ -825,18 +746,24 @@ public class KingdomRelationship {
 			this._racePercentageModifier = 1f;
 		}
 	}
+	internal void UpdateThreatLevelAndInvasionValue(){
+		KingdomRelationship rk = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		UpdateTheoreticalAttackAndDefense ();
+		rk.UpdateTheoreticalAttackAndDefense ();
+
+		this._usedSourceEffectivePower = this._effectivePower;
+		this._usedSourceEffectiveDef = this._effectiveDef;
+		this._usedTargetEffectivePower = rk._effectivePower;
+		this._usedTargetEffectiveDef = rk._effectiveDef;
+
+		UpdateTargetKingdomThreatLevel ();
+		UpdateTargetInvasionValue ();
+	}
 	internal void UpdateTargetKingdomThreatLevel(){
-
-		//+1 for every percentage point of effective power above my effective defense (max 100)
 		float threatLevel = 0f;
-
-		this._usedTargetEffectivePower = this._targetKingdom.effectiveWeapons;
-		this._usedSourceEffectiveDef = this._sourceKingdom.effectiveArmor;
-
-
-		if(this._targetKingdom.effectiveWeapons > this._sourceKingdom.effectiveArmor){
-
-			threatLevel = (((float)this._targetKingdom.effectiveWeapons / (float)this._sourceKingdom.effectiveArmor) * 100f) - 100f;
+		if(this._usedTargetEffectivePower > this._usedSourceEffectiveDef){
+			//+1 for every percentage point of effective power above my effective defense (max 100)
+			threatLevel = (((float)this._usedTargetEffectivePower / (float)this._usedSourceEffectiveDef) * 100f) - 100f;
 			threatLevel = Mathf.Clamp (threatLevel, 0f, 100f);
 
 			//if different race: +15%
@@ -917,14 +844,10 @@ public class KingdomRelationship {
 
 	internal void UpdateTargetInvasionValue(){
 		float invasionValue = 0;
-
-		this._usedSourceEffectivePower = this._sourceKingdom.effectiveWeapons;
-		this._usedTargetEffectiveDef = this._targetKingdom.effectiveArmor;
-
-		if(this._sourceKingdom.effectiveWeapons > this._targetKingdom.effectiveArmor){
+		if(this._usedSourceEffectivePower > this._usedTargetEffectiveDef){
 			if (this.isAdjacent) {
 				//+1 for every percentage point of my effective power above his effective defense (no max cap)
-				invasionValue = (((float)this._sourceKingdom.effectiveWeapons / (float)this._targetKingdom.effectiveArmor) * 100f) - 100f;
+				invasionValue = (((float)this._usedSourceEffectivePower / (float)this._usedTargetEffectiveDef) * 100f) - 100f;
 				if (invasionValue < 0) {
 					invasionValue = 0;
 				}
@@ -970,6 +893,91 @@ public class KingdomRelationship {
 		if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom == _sourceKingdom) {
 			UIManager.Instance.UpdateRelationships();
 		}
+	}
+	internal void UpdateTheoreticalAttackAndDefense(){
+		int theoreticalAttack = GetTheoreticalAttack ();
+		int theoreticalDefense = GetTheoreticalDefense ();
+		int posAllianceAttack = GetAdjacentPosAllianceWeapons ();
+//		int posAllianceDefense = GetAdjacentPosAllianceArmors ();
+		int usedPosAllianceAttack = (int)((float)posAllianceAttack / 2f);
+
+		this._effectivePower = theoreticalAttack + usedPosAllianceAttack;
+		this._effectiveDef = theoreticalDefense + usedPosAllianceAttack;
+	}
+
+	private int GetTheoreticalAttack(){
+		int soldiers = this._sourceKingdom.soldiers;
+		int posAllianceAttack = GetUnadjacentPosAllianceWeapons ();
+		return (2 * soldiers * (this._sourceKingdom.baseWeapons + posAllianceAttack)) / (soldiers + (this._sourceKingdom.baseWeapons + posAllianceAttack));
+	}
+	private int GetTheoreticalDefense(){
+		int soldiers = this._sourceKingdom.soldiers;
+		int posAllianceDefense = GetUnadjacentPosAllianceArmors ();
+		return (int)(2 * soldiers * (this._sourceKingdom.baseArmor + posAllianceDefense)) / (soldiers + (this._sourceKingdom.baseArmor + posAllianceDefense));
+	}
+	private int GetUnadjacentPosAllianceWeapons(){
+		int posAlliancePower = 0;
+		if(this._sourceKingdom.alliancePool != null){
+			for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
+				Kingdom kingdomInAlliance = this._sourceKingdom.alliancePool.kingdomsInvolved[i];
+				if(this._sourceKingdom.id != kingdomInAlliance.id){
+					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
+					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
+					if(relationship.totalLike >= 35 && !relationshipToEnemy.isAdjacent){
+						posAlliancePower += (int)((float)kingdomInAlliance.baseWeapons * 0.1f);
+					}
+				}
+			}
+		}
+		return posAlliancePower;
+	}
+	private int GetAdjacentPosAllianceWeapons(){
+		int posAlliancePower = 0;
+		if(this._sourceKingdom.alliancePool != null){
+			for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
+				Kingdom kingdomInAlliance = this._sourceKingdom.alliancePool.kingdomsInvolved[i];
+				if(this._sourceKingdom.id != kingdomInAlliance.id){
+					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
+					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
+					if(relationship.totalLike >= 35 && relationshipToEnemy.isAdjacent){
+						posAlliancePower += (int)((float)kingdomInAlliance.baseWeapons * 0.1f);
+					}
+				}
+			}
+		}
+		return posAlliancePower;
+	}
+	private int GetUnadjacentPosAllianceArmors(){
+		int posAllianceDefense = 0;
+		if(this._sourceKingdom.alliancePool != null){
+			for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
+				Kingdom kingdomInAlliance = this._sourceKingdom.alliancePool.kingdomsInvolved[i];
+				if(this._sourceKingdom.id != kingdomInAlliance.id){
+					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
+					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
+					if(relationship.totalLike >= 35 && !relationshipToEnemy.isAdjacent){
+						posAllianceDefense += (int)((float)kingdomInAlliance.baseArmor * 0.1f);
+					}
+				}
+			}
+		}
+		return posAllianceDefense;
+	}
+	private int GetAdjacentPosAllianceArmors(){
+		int posAllianceDefense = 0;
+		if(this._sourceKingdom.alliancePool != null){
+			for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
+				Kingdom kingdomInAlliance = this._sourceKingdom.alliancePool.kingdomsInvolved[i];
+				if(this._sourceKingdom.id != kingdomInAlliance.id){
+					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
+					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
+					if(relationship.totalLike >= 35 && relationshipToEnemy.isAdjacent){
+						posAllianceDefense += (int)((float)kingdomInAlliance.baseArmor * 0.1f);
+					}
+				}
+			}
+		}
+		return posAllianceDefense;
 	}
 	internal bool AreAllies(){
 		if(this._sourceKingdom.alliancePool == null || this._targetKingdom.alliancePool == null){

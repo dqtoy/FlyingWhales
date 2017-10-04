@@ -128,12 +128,12 @@ public class Wars : GameEvent {
 	private void DissolveMilitaryAlliance(Kingdom sourceKingdom, Kingdom targetKingdom){
 		//Dissolve
 		KingdomRelationship relationship = sourceKingdom.GetRelationshipWithKingdom (targetKingdom);
-		relationship.ChangeMilitaryAlliance (false);
+//		relationship.ChangeMilitaryAlliance (false);
 	}
 	private void DissolveMutualDefenseTreaty(Kingdom sourceKingdom, Kingdom targetKingdom){
 		//Dissolve
 		KingdomRelationship relationship = sourceKingdom.GetRelationshipWithKingdom (targetKingdom);
-		relationship.ChangeMutualDefenseTreaty (false);
+//		relationship.ChangeMutualDefenseTreaty (false);
 	}
 	private void UpdatePath(HexTile hexTile){
 		if(this._warPair.path != null && this._warPair.path.Count > 0){

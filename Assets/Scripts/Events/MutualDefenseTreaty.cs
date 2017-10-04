@@ -80,7 +80,7 @@ public class MutualDefenseTreaty : GameEvent {
         DoneEvent ();
 	}
 	private void AcceptOffer(){
-		_sourceRel.ChangeMutualDefenseTreaty (true);
+//		_sourceRel.ChangeMutualDefenseTreaty (true);
 	}
 	private void RejectOffer(){
 		this.targetKingdom.UpdateCurrentDefenseTreatyRejectionDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
