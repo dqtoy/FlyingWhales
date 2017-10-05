@@ -30,6 +30,7 @@ public class UIManager : MonoBehaviour {
     public GameObject playerEventItemPrefab;
     [SerializeField] private GameObject kingdomIntervenePrefab;
     [SerializeField] private GameObject notificationPrefab;
+    [SerializeField] private GameObject logHistoryPrefab;
 
 	[Space(10)]
     [Header("Main UI Objects")]
@@ -325,7 +326,7 @@ public class UIManager : MonoBehaviour {
 	private string warAllianceState = string.Empty;
 
     private List<NotificationItem> notificationItemsThatCanBeReused;
-    private Dictionary<Log, string> logHistory;
+    private List<Log> logHistory;
 
     #region getters/setters
     internal GameObject minimapTexture {
@@ -335,7 +336,7 @@ public class UIManager : MonoBehaviour {
 
     void Awake(){
 		Instance = this;
-        logHistory = new Dictionary<Log, string>();
+        logHistory = new List<Log>();
         notificationItemsThatCanBeReused = new List<NotificationItem>();
     }
 
@@ -354,6 +355,7 @@ public class UIManager : MonoBehaviour {
         EventDelegate.Add(orderKingdomsByExpansionRateBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.EXPANSION_RATE); });
         EventDelegate.Add(orderKingdomsByWeaponsBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.WEAPONS); });
         EventDelegate.Add(orderKingdomsByArmorBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.ARMOR); });
+        PopulateHistoryTable();
         //LoadKingdomList();
         UpdateUI();
 	}
@@ -1308,33 +1310,41 @@ public class UIManager : MonoBehaviour {
     #region Notification History
     private string notificationSummary;
     internal void AddLogToLogHistory(Log log) {
-        string logString = log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString() + "         ";
-        if (log.fillers.Count > 0) {
-            logString += Utilities.LogReplacer(log);
-        } else {
-            logString += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
-        }
-        logHistory.Add(log, logString);
+        //string logString = log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString() + "         ";
+        //if (log.fillers.Count > 0) {
+        //    logString += Utilities.LogReplacer(log);
+        //} else {
+        //    logString += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
+        //}
+        logHistory.Add(log);
         if(logHistory.Count > 100) {
             int numOfExcessLogs = logHistory.Count - 100;
             for (int i = 0; i < numOfExcessLogs; i++) {
-                logHistory.Remove(logHistory.Keys.First());
+                logHistory.Remove(logHistory.First());
             }
         }
-        StartCoroutine(ConstructNotificationSummary());
+        //StartCoroutine(ConstructNotificationSummary());
         if (notificationHistoryGO.activeSelf) {
             ShowNotificationHistory();
         }
     }
-    IEnumerator ConstructNotificationSummary() {
-        notificationSummary = string.Empty;
-        for (int i = logHistory.Count - 1; i >= 0; i--) {
-            notificationSummary += logHistory.Values.ElementAt(i);
-            if (i - 1 >= 0) {
-                notificationSummary += "\n";
-            }
+    //IEnumerator ConstructNotificationSummary() {
+    //    notificationSummary = string.Empty;
+    //    for (int i = logHistory.Count - 1; i >= 0; i--) {
+    //        notificationSummary += logHistory.Values.ElementAt(i);
+    //        if (i - 1 >= 0) {
+    //            notificationSummary += "\n";
+    //        }
+    //    }
+    //    yield return null;
+    //}
+
+    private void PopulateHistoryTable() {
+        for (int i = 0; i < 100; i++) {
+            GameObject logGO = InstantiateUIObject(logHistoryPrefab.name, notificationHistoryTable.transform);
+            logGO.transform.localScale = Vector3.one;
         }
-        yield return null;
+        StartCoroutine(RepositionTable(notificationHistoryTable));
     }
 
     public void ToggleNotificationHistory() {
@@ -1346,7 +1356,24 @@ public class UIManager : MonoBehaviour {
     }
 
     private void ShowNotificationHistory() {
-        notificationHistoryLbl.text = notificationSummary;
+        //notificationHistoryLbl.text = notificationSummary;
+        LogHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<LogHistoryItem>(notificationHistoryTable.gameObject);
+        List<Log> logHistoryReversed = new List<Log>(logHistory);
+        logHistoryReversed.Reverse();
+        for (int i = 0; i < presentItems.Length; i++) {
+            LogHistoryItem currItem = presentItems[i];
+            //int logIndex = (presentItems.Length - 1) - i;
+            Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
+            if(logToShow == null) {
+                currItem.gameObject.SetActive(false);
+                notificationHistoryTable.Reposition();
+            } else {
+                currItem.SetLog(logToShow, i);
+                currItem.gameObject.SetActive(true);
+                notificationHistoryTable.Reposition();
+            }
+        }
+        StartCoroutine(RepositionTable(notificationHistoryTable));
 
         //for (int i = logHistory.Count-1; i >= 0; i--) {
         //    notificationHistoryLbl.text += logHistory.Values.ElementAt(i);
@@ -1363,10 +1390,16 @@ public class UIManager : MonoBehaviour {
         //        notificationHistoryLbl.text += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key) + "\n";
         //    }
         //}
-        if (string.IsNullOrEmpty(notificationHistoryLbl.text)) {
+        if (notificationHistoryTable.GetChildList().Count <= 0) {
             notificationHistoryLbl.text = "[b][i]No History[/i][/b]";
+            notificationHistoryLbl.gameObject.SetActive(true);
+        } else {
+            notificationHistoryLbl.gameObject.SetActive(false);
         }
-        notificationHistoryLbl.gameObject.SetActive(true);
+        //if (string.IsNullOrEmpty(notificationHistoryLbl.text)) {
+        //    notificationHistoryLbl.text = "[b][i]No History[/i][/b]";
+        //}
+        //notificationHistoryLbl.gameObject.SetActive(true);
 
         notificationHistoryGO.SetActive(true);
         kingdomListEventButton.SetClickState(true);
@@ -2339,6 +2372,10 @@ public class UIManager : MonoBehaviour {
     }
     public void ChangePrestige() {
         currentlyShowingKingdom.SetPrestige(Int32.Parse(kingdomPrestigeLbl.text));
+    }
+    public void ChangeStability() {
+        currentlyShowingKingdom.ChangeStability(Int32.Parse(kingdomUnrestLbl.text));
+        kingdomUnrestLbl.text = currentlyShowingKingdom.stability.ToString();
     }
     public void ForceExpansion() {
         EventCreator.Instance.CreateExpansionEvent(currentlyShowingKingdom);

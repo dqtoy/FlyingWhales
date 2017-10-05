@@ -18,6 +18,8 @@ public class Battle {
 	private City defender;
 	private GameDate _supposedAttackDate;
 
+    private List<string> _battleLogs; 
+
 	public GameDate supposedAttackDate{
 		get{ return this._supposedAttackDate; }
 	}
@@ -33,7 +35,11 @@ public class Battle {
 	public Kingdom deadDefenderKingdom{
 		get { return this._deadDefenderKingdom; }
 	}
-	public Battle(Warfare warfare, City kingdom1City, City kingdom2City){
+    public List<string> battleLogs {
+        get { return _battleLogs; }
+    }
+
+    public Battle(Warfare warfare, City kingdom1City, City kingdom2City){
 		this._warfare = warfare;
 		this._kingdom1 = kingdom1City.kingdom;
 		this._kingdom2 = kingdom2City.kingdom;
@@ -47,7 +53,7 @@ public class Battle {
 		this._isKingdomsAtWar = this._kr.isAtWar;
 		this._kr.ChangeHasPairedCities (true);
 		this._supposedAttackDate = new GameDate (1, 1, 1);
-
+        this._battleLogs = new List<string>();
 		SetAttackerAndDefenderCity(this._kingdom1City, this._kingdom2City);
 		Step2();
 
@@ -67,7 +73,9 @@ public class Battle {
 			this.defender = defender;
 			this.attacker.ChangeAttackingState (true);
 			this.defender.ChangeDefendingState (true);
-		}
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " is now attacking");
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " is now defending");
+        }
 	}
 	private void Step1(){
 		if(!this._warfare.isOver){
@@ -198,28 +206,40 @@ public class Battle {
 			int attackerPower = this.attacker.kingdom.effectiveAttack;
 			int defenderDefense = this.defender.kingdom.effectiveDefense;
 
-			Debug.Log ("EFFECTIVE ATTACK: " + attackerPower);	
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " has an attack power of " + attackerPower.ToString());
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " has defense of " + defenderDefense.ToString());
+
+            Debug.Log ("EFFECTIVE ATTACK: " + attackerPower);	
 			Debug.Log ("EFFECTIVE DEFENSE: " + defenderDefense);
 			Debug.Log ("---------------------------");
 
 			int attackMaxRoll = (int)(Mathf.Sqrt ((2000f * (float)attackerPower)) * (1f + (0.05f * (float)this.attacker.cityLevel)));
 			int defenseMaxRoll = (int)(Mathf.Sqrt ((2000f * (float)defenderDefense)) * (1f + (0.05f * (float)this.defender.cityLevel)));
 
-			Debug.Log ("ATTACK MAX ROLL: " + attackMaxRoll);	
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " can roll a max of " + attackMaxRoll.ToString());
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " can roll a max of " + defenseMaxRoll.ToString());
+
+            Debug.Log ("ATTACK MAX ROLL: " + attackMaxRoll);	
 			Debug.Log ("DEFENSE MAX ROLL: " + defenseMaxRoll);
 			Debug.Log ("---------------------------");
 
 			int attackRoll = UnityEngine.Random.Range (0, attackMaxRoll);
 			int defenseRoll = UnityEngine.Random.Range (0, defenseMaxRoll);
 
-			Debug.Log ("ATTACK ROLL: " + attackRoll);	
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " rolls " + attackRoll.ToString());
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " rolls " + defenseRoll.ToString());
+
+            Debug.Log ("ATTACK ROLL: " + attackRoll);	
 			Debug.Log ("DEFENSE ROLL: " + defenseRoll);
 			Debug.Log ("---------------------------");
 
 			int attackDamage = (int)((float)attackerPower / 15f);
 			int defenseDamage = (int)((float)defenderDefense / 12f);
 
-			Debug.Log ("ATTACK DAMAGE: " + attackDamage);	
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " deals " + attackDamage.ToString() + " damage");
+            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " defends against " + defenseDamage.ToString() + " damage");
+
+            Debug.Log ("ATTACK DAMAGE: " + attackDamage);	
 			Debug.Log ("DEFENSE DAMAGE: " + defenseDamage);
 			Debug.Log ("---------------------------");
 
@@ -256,7 +276,9 @@ public class Battle {
 				Debug.Log ("ROLL FOR DAMAGE TO WEAPONS: " + rollForDamageInWeapons);	
 				Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + damageToPopulationAttacker);
 				Debug.Log ("---------------------------");
-			}
+
+                _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " loses " + damageToPopulationAttacker.ToString() + " population");
+            }
 			if(defenseAfterDamage > 0){
 				int maxDamageToArmors = GetMaxDamageToArmors(defenseAfterDamage);
 				int maxRollForDamageInArmors = this.defender.kingdom.baseArmor - maxDamageToArmors;
@@ -274,14 +296,17 @@ public class Battle {
 				Debug.Log ("DAMAGE TO DEFENDER'S POPULATION: " + damageToPopulationDefender);
 				Debug.Log ("---------------------------");
 
-			}
+                _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " loses " + damageToPopulationDefender.ToString() + " population");
+            }
 
 			if(attackRoll > defenseRoll){
-				//Attacker Wins
-				EndBattle(this.attacker, this.defender);
+                //Attacker Wins
+                _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " wins the battle against " + defender.name);
+                EndBattle(this.attacker, this.defender);
 			}else{
-				//Defender Wins
-				Log newLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "successful_defense");
+                //Defender Wins
+                _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " wins the battle against " + attacker.name);
+                Log newLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "successful_defense");
 				newLog.AddToFillers(this.defender, this.defender.name, LOG_IDENTIFIER.CITY_1);
 				newLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_2);
 				this._warfare.ShowUINotification(newLog);
@@ -295,12 +320,14 @@ public class Battle {
 					ForceEndBattle ();
 					if(this._deadAttackerKingdom != null){
 						if(!this._deadAttackerKingdom.isDead){
-							this._deadAttackerKingdom.AdjustPopulation (-this._deadAttackerKingdom.population);
+                            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Attacker kingdom " + attacker.kingdom.name + " is wiped out by " + defender.kingdom.name);
+                            this._deadAttackerKingdom.AdjustPopulation (-this._deadAttackerKingdom.population);
 						}
 					}
 					if(this._deadDefenderKingdom != null){
 						if(!this._deadDefenderKingdom.isDead){
-							this._deadDefenderKingdom.AdjustPopulation (-this._deadDefenderKingdom.population);
+                            _battleLogs.Add(GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Defending kingdom " + defender.kingdom.name + " is wiped out by " + attacker.kingdom.name);
+                            this._deadDefenderKingdom.AdjustPopulation (-this._deadDefenderKingdom.population);
 						}
 					}
 				}
