@@ -204,19 +204,21 @@ public class Warfare {
 			Battle newBattle = new Battle (this, friendlyCity, enemyCity);
 			AddBattle (newBattle);
 		}else{
-			if(this._kingdomSides[kingdom] == WAR_SIDE.A){
-				if(this._sideB.Count > 0){
-					PeaceDeclaration(kingdom, this._sideB[0]);
-				}else{
-					WarfareDone();
-				}
-			}else{
-				if(this._sideA.Count > 0){
-					PeaceDeclaration(kingdom, this._sideA[0]);
-				}else{
-					WarfareDone();
-				}
-			}
+            if (this._kingdomSides.ContainsKey(kingdom)) {
+                if (this._kingdomSides[kingdom] == WAR_SIDE.A) {
+                    if (this._sideB.Count > 0) {
+                        PeaceDeclaration(kingdom, this._sideB[0]);
+                    } else {
+                        WarfareDone();
+                    }
+                } else {
+                    if (this._sideA.Count > 0) {
+                        PeaceDeclaration(kingdom, this._sideA[0]);
+                    } else {
+                        WarfareDone();
+                    }
+                }
+            }
 			Debug.Log ("---------------------------------Can't create battle: friendly is null");
 		}
 	}
