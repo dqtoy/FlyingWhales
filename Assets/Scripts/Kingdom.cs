@@ -618,6 +618,19 @@ public class Kingdom{
         this.DeleteRelationships();
         KingdomManager.Instance.allKingdoms.Remove(this);
 
+        Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "obliterated");
+        string yearsLasted = string.Empty;
+        if (age == 1) {
+            yearsLasted = "a year";
+        } else if (age <= 0) {
+            yearsLasted = "less than a year";
+        } else {
+            yearsLasted = age.ToString() + " years";
+        }
+        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(null, yearsLasted, LOG_IDENTIFIER.OTHER);
+        UIManager.Instance.ShowNotification(newLog);
+
         UIManager.Instance.CheckIfShowingKingdomIsAlive(this);
 
         Debug.Log(this.id + " - Kingdom: " + this.name + " has died!");
@@ -1241,7 +1254,7 @@ public class Kingdom{
         if(stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
             for (int i = 0; i < cities.Count; i++) {
                 City currCity = cities[i];
-                if(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= 100).Any()) {
+                if(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50).Any()) {
                     return true;
                 }
             }
@@ -1252,7 +1265,7 @@ public class Kingdom{
         List<Citizen> citizensForRebellion = new List<Citizen>();
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
-            citizensForRebellion.AddRange(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= 100));
+            citizensForRebellion.AddRange(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50));
         }
         return citizensForRebellion;
     }

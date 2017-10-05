@@ -1048,6 +1048,12 @@ public class Citizen {
         sourceKingdom.AdjustBaseArmors(-armorGained);
         newKingdom.SetBaseArmor(armorGained);
 
+        Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "rebellion");
+        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+        UIManager.Instance.ShowNotification(newLog);
+
         Warfare warfare = new Warfare(newKingdom, sourceKingdom);
         Debug.Log("Rebelling kingdom " + newKingdom.name + " declares war on " + sourceKingdom.name);
     }
