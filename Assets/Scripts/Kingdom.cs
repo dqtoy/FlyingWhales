@@ -2620,7 +2620,7 @@ public class Kingdom{
 	}
 	internal void AdjustStability(int amountToAdjust) {
     	this._stability += amountToAdjust;
-    	this._stability = Mathf.Clamp(this._stability, -100, 100);
+    	//this._stability = Mathf.Clamp(this._stability, -100, 100);
 	}
 	internal void AdjustBaseWeapons(int amountToAdjust) {
 		this._baseWeapons += amountToAdjust;
@@ -2646,7 +2646,7 @@ public class Kingdom{
     }
     internal void ChangeStability(int newAmount) {
 		this._stability = newAmount;
-		this._stability = Mathf.Clamp (this._stability, -100, 100);
+		//this._stability = Mathf.Clamp (this._stability, -100, 100);
 	}
 	internal void AdjustMilitaryAlliancePower(int amount){
 		this._militaryAlliancePower += amount;
