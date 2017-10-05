@@ -89,8 +89,13 @@ public class CharacterPortrait : MonoBehaviour {
         }
         detailedCharacterInfoNameLbl.text += this.citizen.name;
         detailedCharacterInfoOtherLbl.text = this.citizen.age.ToString() + "\n"
-                                            + Utilities.NormalizeString(this.citizen.preferredKingdomType.ToString()) + "\n"
-                                            + this.citizen.city.kingdom.name;
+                                            + Utilities.NormalizeString(this.citizen.preferredKingdomType.ToString()) + "\n";
+        if(this.citizen.role == ROLE.GOVERNOR) {
+            detailedCharacterInfoOtherLbl.text += this.citizen.city.name;
+        } else {
+            detailedCharacterInfoOtherLbl.text += this.citizen.city.kingdom.name;
+        }
+                                            
         //"[b]Age: [/b]" + this.citizen.age.ToString() + "\n"
         //+ "[b]Kingdom Type: [/b]" + Utilities.NormalizeString(this.citizen.preferredKingdomType.ToString()) + "\n"
         //+ "[b]Kingdom: [/b]" + this.citizen.city.kingdom.name;

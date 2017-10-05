@@ -2311,7 +2311,7 @@ public class Kingdom{
                 Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
                 militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-                UIManager.Instance.ShowNotification(militarizeLog, null, false);
+                UIManager.Instance.ShowNotification(militarizeLog, new HashSet<Kingdom>() { this }, false);
             }
         }
     }
@@ -2343,7 +2343,7 @@ public class Kingdom{
 				Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", fortifyFileName);
                 fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 fortifyLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-                UIManager.Instance.ShowNotification(fortifyLog, null, false);
+                UIManager.Instance.ShowNotification(fortifyLog, new HashSet<Kingdom>() { this }, false);
             }
 		}
 	}
@@ -2620,8 +2620,8 @@ public class Kingdom{
 	}
 	internal void AdjustStability(int amountToAdjust) {
     	this._stability += amountToAdjust;
-    	//this._stability = Mathf.Clamp(this._stability, -100, 100);
-	}
+        this._stability = Mathf.Clamp(this._stability, -100, 100);
+    }
 	internal void AdjustBaseWeapons(int amountToAdjust) {
 		this._baseWeapons += amountToAdjust;
 		if(this._baseWeapons < 0){
@@ -2646,8 +2646,8 @@ public class Kingdom{
     }
     internal void ChangeStability(int newAmount) {
 		this._stability = newAmount;
-		//this._stability = Mathf.Clamp (this._stability, -100, 100);
-	}
+        this._stability = Mathf.Clamp(this._stability, -100, 100);
+    }
 	internal void AdjustMilitaryAlliancePower(int amount){
 		this._militaryAlliancePower += amount;
         _militaryAlliancePower = Mathf.Max(_militaryAlliancePower, 0);
@@ -2743,9 +2743,9 @@ public class Kingdom{
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             if (!currCity.isDead && currCity.rebellion == null) {
-                int weaponsContribution = currCity.powerPoints * 2;
-                int armorContribution = currCity.defensePoints * 2;
-                int techContribution = currCity.techPoints * 1;
+                int weaponsContribution = currCity.powerPoints;
+                int armorContribution = currCity.defensePoints;
+                int techContribution = currCity.techPoints;
                 currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
                 totalWeaponsIncrease += weaponsContribution;
                 totalArmorIncrease += armorContribution;
