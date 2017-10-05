@@ -1048,6 +1048,11 @@ public class Citizen {
         sourceKingdom.AdjustBaseArmors(-armorGained);
         newKingdom.SetBaseArmor(armorGained);
 
+        //Once a rebellion is declared, set source Kingdom's Stability back to 50
+        sourceKingdom.ChangeStability(50);
+
+        CameraMove.Instance.UpdateMinimapTexture();
+
         Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "rebellion");
         newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
