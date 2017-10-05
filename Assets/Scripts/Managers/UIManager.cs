@@ -8,7 +8,10 @@ public class UIManager : MonoBehaviour {
 
 	public static UIManager Instance = null;
 
-	public UICamera uiCamera;
+    public delegate void OnAddNewBattleLog();
+    public OnAddNewBattleLog onAddNewBattleLog;
+
+    public UICamera uiCamera;
 
 	[Space(10)]
     [Header("Prefabs")]
@@ -31,8 +34,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject kingdomIntervenePrefab;
     [SerializeField] private GameObject notificationPrefab;
     [SerializeField] private GameObject logHistoryPrefab;
+    public GameObject warHistoryPrefab;
+    public GameObject battleHistoryPrefab;
 
-	[Space(10)]
+    [Space(10)]
     [Header("Main UI Objects")]
     public GameObject smallInfoGO;
 	public GameObject campaignInfoGO;
@@ -277,6 +282,9 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UITable notificationHistoryTable;
     [SerializeField] private UIScrollView notificationHistoryScrollView;
     [SerializeField] private UILabel notificationHistoryLbl;
+    [SerializeField] private GameObject logHistoryGO;
+    [SerializeField] private GameObject warHistoryGO;
+    [SerializeField] private UITable warHistoryTable;
 
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
@@ -338,6 +346,7 @@ public class UIManager : MonoBehaviour {
 		Instance = this;
         logHistory = new List<Log>();
         notificationItemsThatCanBeReused = new List<NotificationItem>();
+        onAddNewBattleLog += UpdateBattleLogs;
     }
 
 	void Start(){
@@ -1325,7 +1334,20 @@ public class UIManager : MonoBehaviour {
         }
         //StartCoroutine(ConstructNotificationSummary());
         if (notificationHistoryGO.activeSelf) {
-            ShowNotificationHistory();
+            if (logHistoryGO.activeSelf) {
+                ShowLogHistory();
+            }else if (warHistoryGO.activeSelf) {
+                ShowWarHistory();
+            }
+            
+        }
+    }
+
+    private void UpdateBattleLogs() {
+        if (notificationHistoryGO.activeSelf) {
+            if (warHistoryGO.activeSelf) {
+                ShowWarHistory();
+            }
         }
     }
     //IEnumerator ConstructNotificationSummary() {
@@ -1351,18 +1373,16 @@ public class UIManager : MonoBehaviour {
         if (notificationHistoryGO.activeSelf) {
             HideNotificationHistory();
         } else {
-            ShowNotificationHistory();
+            ShowLogHistory();
         }
     }
 
-    private void ShowNotificationHistory() {
-        //notificationHistoryLbl.text = notificationSummary;
+    public void ShowLogHistory() {
         LogHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<LogHistoryItem>(notificationHistoryTable.gameObject);
         List<Log> logHistoryReversed = new List<Log>(logHistory);
         logHistoryReversed.Reverse();
         for (int i = 0; i < presentItems.Length; i++) {
             LogHistoryItem currItem = presentItems[i];
-            //int logIndex = (presentItems.Length - 1) - i;
             Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
             if(logToShow == null) {
                 currItem.gameObject.SetActive(false);
@@ -1375,35 +1395,52 @@ public class UIManager : MonoBehaviour {
         }
         StartCoroutine(RepositionTable(notificationHistoryTable));
 
-        //for (int i = logHistory.Count-1; i >= 0; i--) {
-        //    notificationHistoryLbl.text += logHistory.Values.ElementAt(i);
-        //    if(i-1 >= 0) {
-        //        notificationHistoryLbl.text += "\n";
-        //    }
-        //}
-
-        //foreach (Log log in notificationHistory.Reverse<Log>().Take(100)) {
-        //    notificationHistoryLbl.text += log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString() + "         ";
-        //    if (log.fillers.Count > 0) {
-        //        notificationHistoryLbl.text += Utilities.LogReplacer(log) + "\n";
-        //    } else {
-        //        notificationHistoryLbl.text += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key) + "\n";
-        //    }
-        //}
         if (notificationHistoryTable.GetChildList().Count <= 0) {
             notificationHistoryLbl.text = "[b][i]No History[/i][/b]";
             notificationHistoryLbl.gameObject.SetActive(true);
         } else {
             notificationHistoryLbl.gameObject.SetActive(false);
         }
-        //if (string.IsNullOrEmpty(notificationHistoryLbl.text)) {
-        //    notificationHistoryLbl.text = "[b][i]No History[/i][/b]";
-        //}
-        //notificationHistoryLbl.gameObject.SetActive(true);
 
+        logHistoryGO.SetActive(true);
+        warHistoryGO.SetActive(false);
         notificationHistoryGO.SetActive(true);
         kingdomListEventButton.SetClickState(true);
     }
+
+    public void ShowWarHistory() {
+        WarHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<WarHistoryItem>(warHistoryTable.gameObject);
+        List<Warfare> warsToShow = KingdomManager.Instance.allWarsThatOccured;
+        int nextIndex = 0;
+        for (int i = 0; i < presentItems.Length; i++) {
+            WarHistoryItem currItem = presentItems[i];
+            Warfare warToShow = warsToShow.ElementAtOrDefault(i);
+            if (warToShow == null) {
+                currItem.gameObject.SetActive(false);
+            } else {
+                currItem.SetWar(warToShow);
+                currItem.gameObject.SetActive(true);
+            }
+            nextIndex = i + 1;
+        }
+
+        for (int i = nextIndex; i < warsToShow.Count; i++) {
+            GameObject warGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.warHistoryPrefab.name, warHistoryTable.transform);
+            warGO.transform.localScale = Vector3.one;
+            warGO.GetComponent<WarHistoryItem>().SetWar(warsToShow[i]);
+        }
+        StartCoroutine(RepositionTable(warHistoryTable));
+
+        warHistoryGO.SetActive(true);
+        logHistoryGO.SetActive(false);
+        notificationHistoryGO.SetActive(true);
+        kingdomListEventButton.SetClickState(true);
+    }
+
+    internal void RepositionWarHistoryTable() {
+        StartCoroutine(RepositionTable(warHistoryTable));
+    }
+
     public void HideNotificationHistory() {
         notificationHistoryGO.SetActive(false);
         kingdomListEventButton.SetClickState(false);

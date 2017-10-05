@@ -37,6 +37,8 @@ public class KingdomManager : MonoBehaviour {
 	private List<AlliancePool> _alliances = new List<AlliancePool>();
 	private List<Warfare> _kingdomWars = new List<Warfare>();
 
+    private List<Warfare> _allWarsThatOccured = new List<Warfare>();
+
     [Space(10)]
     [Header("Kingdom Type Modifiers")]
     [SerializeField] internal float smallToMediumReqPercentage;
@@ -64,6 +66,9 @@ public class KingdomManager : MonoBehaviour {
 	}
     public KINGDOMS_ORDERED_BY orderKingdomsBy {
         get { return _orderKingdomsBy; }
+    }
+    public List<Warfare> allWarsThatOccured {
+        get { return _allWarsThatOccured; }
     }
     #endregion
 
@@ -509,7 +514,8 @@ public class KingdomManager : MonoBehaviour {
 	}
 	internal void AddWarfare(Warfare warfare){
 		this._kingdomWars.Add (warfare);
-	}
+        this._allWarsThatOccured.Add(warfare);
+    }
 	internal void RemoveWarfare(Warfare warfare){
 		this._kingdomWars.Remove (warfare);
 	}
