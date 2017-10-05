@@ -2446,7 +2446,7 @@ public class Kingdom{
 									int chance = UnityEngine.Random.Range (0, 100);
 									if(chance < totalChanceOfJoining){
 										//Join War
-										warsToJoin.Add(kr.warfare, kr.warfare.kingdomSides[allyKingdom]);
+										warsToJoin.Add(kr.warfare, kr.warfare.kingdomSides[allyKingdom.id]);
 										Debug.Log(name + " will join in " + allyKingdom.name + "'s war");
 	                                } else{
 										//Don't join war, leave alliance, lose 100 prestige
