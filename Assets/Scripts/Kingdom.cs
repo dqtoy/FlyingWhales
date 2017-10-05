@@ -2311,7 +2311,7 @@ public class Kingdom{
                 Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
                 militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-                UIManager.Instance.ShowNotification(militarizeLog, null, false);
+                UIManager.Instance.ShowNotification(militarizeLog, new HashSet<Kingdom>() { this }, false);
             }
         }
     }
@@ -2343,7 +2343,7 @@ public class Kingdom{
 				Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", fortifyFileName);
                 fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 fortifyLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-                UIManager.Instance.ShowNotification(fortifyLog, null, false);
+                UIManager.Instance.ShowNotification(fortifyLog, new HashSet<Kingdom>() { this }, false);
             }
 		}
 	}
