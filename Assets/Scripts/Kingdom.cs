@@ -2743,9 +2743,9 @@ public class Kingdom{
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             if (!currCity.isDead && currCity.rebellion == null) {
-                int weaponsContribution = currCity.powerPoints * 2;
-                int armorContribution = currCity.defensePoints * 2;
-                int techContribution = currCity.techPoints * 1;
+                int weaponsContribution = currCity.powerPoints;
+                int armorContribution = currCity.defensePoints;
+                int techContribution = currCity.techPoints;
                 currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
                 totalWeaponsIncrease += weaponsContribution;
                 totalArmorIncrease += armorContribution;
