@@ -59,7 +59,7 @@ public class Lair {
 
 	internal void ActivateLair(){
 		GameDate gameDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-		gameDate.AddDays (5);
+		gameDate.AddDays (MonsterManager.Instance.daysInterval);
 		SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => PerformAction ());
 	}
 	private void AttachLairToHextile(){
@@ -86,14 +86,14 @@ public class Lair {
 		//Kingdom gains prestige
 		City city = this.region.occupant;
 		Kingdom kingdom = this.region.occupant.kingdom;
-		int prestigeToGain = (int)(GridMap.Instance.numOfRegions / 2);
-		kingdom.AdjustPrestige (prestigeToGain);
+		int stabilityGain = 30;
+		kingdom.AdjustStability (stabilityGain);
 
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "PlayerIntervention", "MonsterLair", "destroy");
 		newLog.AddToFillers (city, city.name, LOG_IDENTIFIER.CITY_1);
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.LAIR_NAME);
 		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-		newLog.AddToFillers (null, prestigeToGain.ToString(), LOG_IDENTIFIER.OTHER);
+		newLog.AddToFillers (null, stabilityGain.ToString(), LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification (newLog);
 	}
 
@@ -218,5 +218,20 @@ public class Lair {
 		City city = this.region.occupant;
 		city.AdjustArmor (-damage);
 		Debug.Log (this.name + " damaged " + city.name + "'s defense by " + damage.ToString ());
+	}
+	internal void DamageToWeapons(int damage){
+		Kingdom kingdom = this.region.occupant.kingdom;
+		kingdom.AdjustBaseWeapons (-damage);
+		Debug.Log (this.name + " damaged " + kingdom.name + "'s weapons by " + damage.ToString ());
+	}
+	internal void DamageToArmors(int damage){
+		Kingdom kingdom = this.region.occupant.kingdom;
+		kingdom.AdjustBaseArmors (-damage);
+		Debug.Log (this.name + " damaged " + kingdom.name + "'s armors by " + damage.ToString ());
+	}
+	internal void DamageToPopulation(int damage){
+		Kingdom kingdom = this.region.occupant.kingdom;
+		kingdom.AdjustPopulation (-damage);
+		Debug.Log (this.name + " damaged " + kingdom.name + "'s population by " + damage.ToString ());
 	}
 }
