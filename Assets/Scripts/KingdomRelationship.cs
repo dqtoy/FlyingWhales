@@ -322,8 +322,14 @@ public class KingdomRelationship {
 
 		if(this._targetKingdomThreatLevel == 0){
 			adjustment = 25;
+		}else if (this._targetKingdomThreatLevel >= 1 && this._targetKingdomThreatLevel < 26){
+			adjustment = 0;
+		}else if (this._targetKingdomThreatLevel >= 26 && this._targetKingdomThreatLevel < 51){
+			adjustment = -25;
+		}else if (this._targetKingdomThreatLevel >= 51 && this._targetKingdomThreatLevel < 100){
+			adjustment = -50;
 		}else{
-			adjustment = (int)-this.targetKingdomThreatLevel;
+			adjustment = -100;
 		}
 		baseLoyalty += adjustment;
 
