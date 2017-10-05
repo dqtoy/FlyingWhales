@@ -2373,6 +2373,10 @@ public class UIManager : MonoBehaviour {
     public void ChangePrestige() {
         currentlyShowingKingdom.SetPrestige(Int32.Parse(kingdomPrestigeLbl.text));
     }
+    public void ChangeStability() {
+        currentlyShowingKingdom.ChangeStability(Int32.Parse(kingdomUnrestLbl.text));
+        kingdomUnrestLbl.text = currentlyShowingKingdom.stability.ToString();
+    }
     public void ForceExpansion() {
         EventCreator.Instance.CreateExpansionEvent(currentlyShowingKingdom);
     }
