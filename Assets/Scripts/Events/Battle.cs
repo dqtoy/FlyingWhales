@@ -51,7 +51,7 @@ public class Battle {
 		this._deadDefenderKingdom = null;
 		this._kr = this._kingdom1.GetRelationshipWithKingdom (this._kingdom2);
 		this._isKingdomsAtWar = this._kr.isAtWar;
-		this._kr.ChangeHasPairedCities (true);
+		this._kr.ChangeBattle (this);
 		this._supposedAttackDate = new GameDate (1, 1, 1);
         this._battleLogs = new List<string>();
 		SetAttackerAndDefenderCity(this._kingdom1City, this._kingdom2City);
@@ -461,7 +461,7 @@ public class Battle {
 		this._kingdom2City.ChangeAttackingState (false);
 		this._kingdom2City.ChangeDefendingState (false);
 		if (!this._kingdom1.isDead && !this._kingdom2.isDead) {
-			this._kr.ChangeHasPairedCities (false);
+			this._kr.ChangeBattle(null);
 		}
 		this._warfare.RemoveBattle (this);
 	}
@@ -475,7 +475,7 @@ public class Battle {
 		this._kingdom2City.ChangeAttackingState (false);
 		this._kingdom2City.ChangeDefendingState (false);
 		if (!this._kingdom1.isDead && !this._kingdom2.isDead) {
-			this._kr.ChangeHasPairedCities (false);
+			this._kr.ChangeBattle(null);
 		}
 		this._warfare.BattleEnds (winnerCity, loserCity, this);
 	}
@@ -489,7 +489,7 @@ public class Battle {
 		this._kingdom2City.ChangeAttackingState (false);
 		this._kingdom2City.ChangeDefendingState (false);
 		if(!this._kingdom1.isDead && !this._kingdom2.isDead){
-			this._kr.ChangeHasPairedCities (false);
+			this._kr.ChangeBattle (null);
 			if(!this._kr.isAdjacent){
 				this._warfare.PeaceDeclaration (this._kingdom1, this._kingdom2);
 			}
@@ -516,7 +516,7 @@ public class Battle {
 				this._kingdom2City.ChangeAttackingState (false);
 				this._kingdom2City.ChangeDefendingState (false);
 				if(!this._kingdom1.isDead && !this._kingdom2.isDead){
-					this._kr.ChangeHasPairedCities (false);
+					this._kr.ChangeBattle (null);
 					if(!this._kr.isAdjacent){
 						this._warfare.PeaceDeclaration (this._kingdom1, this._kingdom2);
 						this._warfare.RemoveBattle (this);

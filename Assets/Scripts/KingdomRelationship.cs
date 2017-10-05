@@ -24,7 +24,6 @@ public class KingdomRelationship {
 	private bool _isDiscovered;
 	private bool _isRecentWar;
 //	private bool _isPreparingForWar;
-	private bool _hasPairedCities;
     private Wars _war;
     private InvasionPlan _invasionPlan;
     private RequestPeace _requestPeace;
@@ -55,6 +54,7 @@ public class KingdomRelationship {
 	internal int _usedTargetEffectiveDef;
 
 	private Warfare _warfare;
+	private Battle _battle;
 
     #region getters/setters
     public Kingdom sourceKingdom {
@@ -84,9 +84,6 @@ public class KingdomRelationship {
 //	public bool isPreparingForWar {
 //		get { return this._isPreparingForWar; }
 //	}
-	public bool hasPairedCities {
-		get { return this._hasPairedCities; }
-	}
     public Wars war {
         get { return _war; }
     }
@@ -153,6 +150,9 @@ public class KingdomRelationship {
 	public Warfare warfare{
 		get { return this._warfare; }
 	}
+	public Battle battle{
+		get { return this._battle; }
+	}
 	public bool isRecentWar {
 		get { return this._isRecentWar; }
 	}
@@ -179,11 +179,11 @@ public class KingdomRelationship {
 		this._isAdjacent = false;
 		this._isRecentWar = false;
 //		this._isPreparingForWar = false;
-		this._hasPairedCities = false;
 		this._isAtWar = false;
 		this._currentExpirationDefenseTreaty = new GameDate (0, 0, 0);
 		this._currentExpirationMilitaryAlliance = new GameDate (0, 0, 0);
 		this._warfare = null;
+		this._battle = null;
 
 		this._eventBuffs = new Dictionary<EVENT_TYPES, bool>(){
 			{EVENT_TYPES.TRIBUTE, false},
@@ -684,9 +684,6 @@ public class KingdomRelationship {
 //	internal void SetPreparingWar(bool state) {
 //		this._isPreparingForWar = state;
 //	}
-	internal void SetHasPairedCities(bool state) {
-		this._hasPairedCities = state;
-	}
     internal void AdjustExhaustion(int amount) {
         if (_isAtWar) {
             _kingdomWarData.AdjustExhaustion(amount);
@@ -727,6 +724,11 @@ public class KingdomRelationship {
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
 		kr.SetWarStatus(state, warfare);
 	}
+	internal void ChangeBattle(Battle battle){
+		SetBattle(battle);
+		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+		kr.SetBattle(battle);
+	}
 	internal void ChangeDiscovery(bool state){
 		SetDiscovery(state);
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
@@ -739,11 +741,6 @@ public class KingdomRelationship {
 			kr.SetRecentWar(state);
 		}
 	}
-	internal void ChangeHasPairedCities(bool state){
-		SetHasPairedCities (state);
-		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
-		kr.SetHasPairedCities(state);
-	}	
 
 	private void SetRaceThreatModifier(){
 		if(this._sourceKingdom.race != this._targetKingdom.race){
@@ -997,5 +994,8 @@ public class KingdomRelationship {
 	}
 	internal void SetWarfare(Warfare warfare){
 		this._warfare = warfare;
+	}
+	internal void SetBattle(Battle battle){
+		this._battle = battle;
 	}
 }
