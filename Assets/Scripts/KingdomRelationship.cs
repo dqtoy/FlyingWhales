@@ -320,13 +320,13 @@ public class KingdomRelationship {
             this._relationshipSummary += adjustment.ToString() + " values domination.\n";
         }
 
-		if(this._targetKingdomThreatLevel == 0){
+		if(this._targetKingdomThreatLevel >= 0f && this._targetKingdomThreatLevel < 1f){
 			adjustment = 25;
-		}else if (this._targetKingdomThreatLevel >= 1 && this._targetKingdomThreatLevel < 26){
+		}else if (this._targetKingdomThreatLevel >= 1f && this._targetKingdomThreatLevel < 26f){
 			adjustment = 0;
-		}else if (this._targetKingdomThreatLevel >= 26 && this._targetKingdomThreatLevel < 51){
+		}else if (this._targetKingdomThreatLevel >= 26f && this._targetKingdomThreatLevel < 51f){
 			adjustment = -25;
-		}else if (this._targetKingdomThreatLevel >= 51 && this._targetKingdomThreatLevel < 100){
+		}else if (this._targetKingdomThreatLevel >= 51f && this._targetKingdomThreatLevel < 100f){
 			adjustment = -50;
 		}else{
 			adjustment = -100;
@@ -839,8 +839,8 @@ public class KingdomRelationship {
 		}
 
 		this._targetKingdomThreatLevel = threatLevel;
-		if(this._targetKingdomThreatLevel < 0){
-			this._targetKingdomThreatLevel = 0;
+		if(this._targetKingdomThreatLevel < 0f){
+			this._targetKingdomThreatLevel = 0f;
 		}
 		UpdateLikeness (null);
 	}
