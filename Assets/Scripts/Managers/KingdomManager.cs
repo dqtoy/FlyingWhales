@@ -78,14 +78,14 @@ public class KingdomManager : MonoBehaviour {
 
     public void GenerateInitialKingdoms() {
         maxPrestige = Mathf.FloorToInt(GridMap.Instance.numOfRegions * .3f) * 100;
-        smallToMediumReq = Mathf.FloorToInt(GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
-        mediumToLargeReq = Mathf.FloorToInt(GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
+        smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
+        mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
 
         for (int i = 0; i < initialKingdomSetup.Count; i++) {
             InitialKingdom initialKingdom = initialKingdomSetup[i];
             RACE initialKingdomRace = initialKingdom.race;
-            List<Region> regionsToChooseFrom = allRegions.OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).Take(Mathf.FloorToInt(GridMap.Instance.numOfRegions / 3)).ToList();
+            List<Region> regionsToChooseFrom = allRegions.OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).Take(Mathf.FloorToInt((float)GridMap.Instance.numOfRegions / 3f)).ToList();
             Region regionForKingdom = regionsToChooseFrom[Random.Range(0, regionsToChooseFrom.Count)];
             allRegions.Remove(regionForKingdom);
             Kingdom newKingdom = GenerateNewKingdom(initialKingdomRace, new List<HexTile>() { regionForKingdom.centerOfMass }, true);

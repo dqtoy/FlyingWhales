@@ -21,7 +21,7 @@ public class WarHistoryItem : MonoBehaviour {
         int nextIndex = 0;
         for (int i = 0; i < presentItems.Length; i++) {
             BattleHistoryItem currItem = presentItems[i];
-            Battle battleToShow = war.battles.ElementAtOrDefault(i);
+            Battle battleToShow = war.allBattles.ElementAtOrDefault(i);
             if(battleToShow == null) {
                 currItem.gameObject.SetActive(false);
             } else {
@@ -31,10 +31,10 @@ public class WarHistoryItem : MonoBehaviour {
             nextIndex = i + 1;
         }
 
-        for (int i = nextIndex; i < war.battles.Count; i++) {
+        for (int i = nextIndex; i < war.allBattles.Count; i++) {
             GameObject battleGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.battleHistoryPrefab.name, battlesTable.transform);
             battleGO.transform.localScale = Vector3.one;
-            battleGO.GetComponent<BattleHistoryItem>().SetBattle(war.battles[i], this);
+            battleGO.GetComponent<BattleHistoryItem>().SetBattle(war.allBattles[i], this);
         }
         RepositionBattlesTable();
     }

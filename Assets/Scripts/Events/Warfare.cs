@@ -9,6 +9,7 @@ public class Warfare {
 	private List<Kingdom> _sideA;
 	private List<Kingdom> _sideB;
 	private List<Battle> _battles;
+    private List<Battle> _allBattles;
 	private List<Log> _logs;
 
 	private Dictionary<int, WAR_SIDE> _kingdomSides;
@@ -28,6 +29,9 @@ public class Warfare {
 	public List<Battle> battles{
 		get { return this._battles; }
 	}
+    public List<Battle> allBattles {
+        get { return this._allBattles; }
+    }
 	public List<Kingdom> sideA{
 		get { return this._sideA; }
 	}
@@ -45,7 +49,8 @@ public class Warfare {
 		this._sideA = new List<Kingdom>();
 		this._sideB = new List<Kingdom>();
 		this._battles = new List<Battle>();
-		this._logs = new List<Log> ();
+        this._allBattles = new List<Battle>();
+        this._logs = new List<Log> ();
 		this._kingdomSides = new Dictionary<int, WAR_SIDE>();
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
@@ -265,6 +270,7 @@ public class Warfare {
 
 	private void AddBattle(Battle battle){
 		this._battles.Add (battle);
+        this._allBattles.Add(battle);
 	}
 	internal void RemoveBattle(Battle battle){
 		this._battles.Remove (battle);

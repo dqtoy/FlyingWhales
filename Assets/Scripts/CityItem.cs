@@ -118,14 +118,14 @@ public class CityItem : MonoBehaviour {
         int loyaltyFromStability = thisCitizen.GetLoyaltyFromStability();
         if(loyaltyFromStability != 0) {
             if (loyaltyFromStability > 0) {
-                loyaltySummary += "+ ";
+                loyaltySummary += "+";
             }
             loyaltySummary += loyaltyFromStability + "   Stability\n";
         }
 
         if (thisCitizen.loyaltyModifierForTesting != 0) {
             if(thisCitizen.loyaltyModifierForTesting > 0) {
-                loyaltySummary += "+ ";
+                loyaltySummary += "+";
             }
             loyaltySummary += thisCitizen.loyaltyModifierForTesting + "   Admin Modifier\n";
         }

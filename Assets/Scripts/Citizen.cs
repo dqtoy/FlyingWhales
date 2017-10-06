@@ -99,7 +99,7 @@ public class Citizen {
         get { return this._balanceType; }
     }
     internal int loyaltyToKing {
-        get { return (_loyaltyToKing + loyaltyDeductionFromWar + GetLoyaltyFromStability()) + loyaltyModifierForTesting; }
+        get { return Mathf.Clamp((_loyaltyToKing + loyaltyDeductionFromWar + GetLoyaltyFromStability()) + loyaltyModifierForTesting, -100, 100); }
     }
     internal int loyaltyDeductionFromWar {
         get { return city.kingdom.relationships.Values.Where(x => x.isAtWar).Count() * -10; }
@@ -877,87 +877,102 @@ public class Citizen {
 
         //Charisma
         int charismaAdjustment = 0;
+        string charismaSummary = string.Empty;
         if(king.charisma == CHARISMA.REPULSIVE) {
             charismaAdjustment = -15;
+            charismaSummary = charismaAdjustment.ToString() + "  Repulsed\n";
         } else if (king.charisma == CHARISMA.CHARISMATIC) {
             charismaAdjustment = 15;
+            charismaSummary = charismaAdjustment.ToString() + "  Charmed\n";
         }
         if(charismaAdjustment != 0) {
             _loyaltyToKing += charismaAdjustment;
             if (charismaAdjustment > 0) {
                 _loyaltySummary += "+";
             }
-            _loyaltySummary += charismaAdjustment.ToString() + "  Charisma\n";
+            _loyaltySummary += charismaSummary;
         }
 
         //Military
         int militaryTraitAdjustment = 0;
+        string militarySummary = string.Empty;
         if(_military != MILITARY.NEUTRAL && king.military != MILITARY.NEUTRAL) {
             if (_military == king.military) {
                 militaryTraitAdjustment = 15;
+                militarySummary = militaryTraitAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_military.ToString()) + "\n";
             } else if((_military == MILITARY.HOSTILE && king.military == MILITARY.PACIFIST) ||
                 (_military == MILITARY.PACIFIST && king.military == MILITARY.HOSTILE)) {
                 militaryTraitAdjustment = -15;
+                militarySummary = militaryTraitAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.military.ToString())+ "\n";
             }
             if (militaryTraitAdjustment != 0) {
                 _loyaltyToKing += militaryTraitAdjustment;
                 if (militaryTraitAdjustment > 0) {
                     _loyaltySummary += "+";
                 }
-                _loyaltySummary += militaryTraitAdjustment.ToString() + "  Military\n";
+                _loyaltySummary += militarySummary;
             }
         }
 
         //Science
         int scienceTraitAdjustment = 0;
+        string scienceSummary = string.Empty;
         if (_science != SCIENCE.NEUTRAL && king.science != SCIENCE.NEUTRAL) {
             if (_science == king.science) {
                 scienceTraitAdjustment = 15;
+                scienceSummary = scienceTraitAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_science.ToString()) + "\n";
             } else if ((_science == SCIENCE.ERUDITE && king.science == SCIENCE.IGNORANT) ||
                 (_science == SCIENCE.IGNORANT && king.science == SCIENCE.ERUDITE)) {
                 scienceTraitAdjustment = -15;
+                scienceSummary = scienceTraitAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.science.ToString()) + "\n";
             }
             if (scienceTraitAdjustment != 0) {
                 _loyaltyToKing += scienceTraitAdjustment;
                 if (scienceTraitAdjustment > 0) {
                     _loyaltySummary += "+";
                 }
-                _loyaltySummary += scienceTraitAdjustment.ToString() + "  Science\n";
+                _loyaltySummary += scienceSummary;
             }
         }
 
         //Intelligence
         int intelligenceAdjustment = 0;
+        string intelligenceSummary = string.Empty;
         if(king.intelligence != INTELLIGENCE.NEUTRAL && _intelligence != INTELLIGENCE.NEUTRAL) {
             if (king.intelligence == _intelligence) {
                 intelligenceAdjustment = 15;
+                intelligenceSummary = intelligenceAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_intelligence.ToString()) + "\n";
             } else {
                 intelligenceAdjustment = -15;
+                intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.intelligence.ToString()) + "\n";
             }
             if (intelligenceAdjustment != 0) {
                 _loyaltyToKing += intelligenceAdjustment;
                 if (intelligenceAdjustment > 0) {
                     _loyaltySummary += "+";
                 }
-                _loyaltySummary += intelligenceAdjustment.ToString() + "  Intelligence\n";
+                _loyaltySummary += intelligenceSummary;
             }
         }
         
 
         //Efficiency
         int efficiencyAdjustment = 0;
+        string efficiencySummary = string.Empty;
         if (king.efficiency != EFFICIENCY.NEUTRAL && _efficiency != EFFICIENCY.NEUTRAL) {
             if (king.efficiency == _efficiency) {
                 efficiencyAdjustment = 15;
+                efficiencySummary = efficiencyAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_efficiency.ToString()) + "\n";
             } else {
                 efficiencyAdjustment = -15;
+                efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.efficiency.ToString()) + "\n";
             }
             if (efficiencyAdjustment != 0) {
                 _loyaltyToKing += efficiencyAdjustment;
                 if (efficiencyAdjustment > 0) {
                     _loyaltySummary += "+";
                 }
-                _loyaltySummary += efficiencyAdjustment.ToString() + "  Efficiency\n";
+                _loyaltySummary += efficiencySummary;
             }
         }
 
@@ -965,30 +980,24 @@ public class Citizen {
         int loyaltyAdjustment = 0;
         if(_loyalty == LOYALTY.SCHEMING) {
             loyaltyAdjustment = -30;
+            _loyaltyToKing += loyaltyAdjustment;
+            _loyaltySummary += loyaltyAdjustment.ToString() + "  Scheming\n";
         } else if (_loyalty == LOYALTY.LOYAL) {
             loyaltyAdjustment = 30;
-        }
-        if (loyaltyAdjustment != 0) {
             _loyaltyToKing += loyaltyAdjustment;
-            if (loyaltyAdjustment > 0) {
-                _loyaltySummary += "+";
-            }
-            _loyaltySummary += loyaltyAdjustment.ToString() + "  Loyalty\n";
+            _loyaltySummary += "+" + loyaltyAdjustment.ToString() + "  Loyal\n";
         }
 
         //Balance Type
         int balanceTypeAdjustment = 0;
         if(king.balanceType == _balanceType) {
             balanceTypeAdjustment = 30;
+            _loyaltyToKing += balanceTypeAdjustment;
+            _loyaltySummary += "+" + balanceTypeAdjustment.ToString() + "  Same International Policy\n";
         } else {
             balanceTypeAdjustment = -30;
-        }
-        if (balanceTypeAdjustment != 0) {
             _loyaltyToKing += balanceTypeAdjustment;
-            if (balanceTypeAdjustment > 0) {
-                _loyaltySummary += "+";
-            }
-            _loyaltySummary += balanceTypeAdjustment.ToString() + "  Balance Type\n";
+            _loyaltySummary += balanceTypeAdjustment.ToString() + "  Different International Policy\n";
         }
 
         _loyaltyToKing = Mathf.Clamp(_loyaltyToKing, -100, 100);
