@@ -802,6 +802,10 @@ public class Citizen {
 
         Citizen king = city.kingdom.king;
 
+        if(king.id == this.id) {
+            return;
+        }
+
         ////Per Active War
         //int disloyaltyFromWar = 0;
         //foreach(KingdomRelationship kr in city.kingdom.relationships.Values) {
