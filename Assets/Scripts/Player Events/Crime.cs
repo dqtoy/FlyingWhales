@@ -65,20 +65,20 @@ public class Crime : GameEvent {
 	}
 	private int GetPunishmentValue(object obj){
 		int value = 0;
-		List<CHARACTER_VALUE> charValues = null; 
+		//List<CHARACTER_VALUE> charValues = null; 
         if(obj is Citizen) {
             //charValues = new List<CHARACTER_VALUE>(((Citizen)obj).importantCharacterValues.Keys);
         } else if(obj is Kingdom) {
             //charValues = new List<CHARACTER_VALUE>(((Kingdom)obj).importantCharacterValues.Keys);
         }
-		for (int i = 0; i < charValues.Count; i++) {
-			if(this.crimeData.positiveValues.Contains(charValues[i])){
-				value += 1;
-			}
-			if(this.crimeData.negativeValues.Contains(charValues[i])){
-				value -= 1;
-			}
-		}
+		//for (int i = 0; i < charValues.Count; i++) {
+		//	if(this.crimeData.positiveValues.Contains(charValues[i])){
+		//		value += 1;
+		//	}
+		//	if(this.crimeData.negativeValues.Contains(charValues[i])){
+		//		value -= 1;
+		//	}
+		//}
 		return value;
 	}
 

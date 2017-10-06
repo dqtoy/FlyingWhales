@@ -9,7 +9,7 @@ public class KingsCouncil : GameEvent {
     protected enum COUNCIL_REASONS { RELIGION, BUILD_RELATIONS, INEQUALITY, FREEDOM_OF_SPEECH };
 
     protected Kingdom _sourceKingdom;
-    protected CHARACTER_VALUE _councilReasonVal;
+    //protected CHARACTER_VALUE _councilReasonVal;
     protected COUNCIL_REASONS _councilReason;
 
     protected List<Kingdom> _attendingKingdoms;
@@ -84,17 +84,17 @@ public class KingsCouncil : GameEvent {
     //    List<COUNCIL_REASONS> councilReasons = GetCouncilReasonForTrait(priorityValue.Key);
     //    return councilReasons[UnityEngine.Random.Range(0, councilReasons.Count)];
     //}
-    protected List<COUNCIL_REASONS> GetCouncilReasonForTrait(CHARACTER_VALUE charVal) {
-        List<COUNCIL_REASONS> councilReasons = new List<COUNCIL_REASONS>();
-        if(charVal == CHARACTER_VALUE.LIBERTY) {
-            councilReasons.Add(COUNCIL_REASONS.INEQUALITY);
-            councilReasons.Add(COUNCIL_REASONS.FREEDOM_OF_SPEECH);
-        } else if (charVal == CHARACTER_VALUE.PEACE) {
-            councilReasons.Add(COUNCIL_REASONS.RELIGION);
-            councilReasons.Add(COUNCIL_REASONS.BUILD_RELATIONS);
-        }
-        return councilReasons;
-    }
+    //protected List<COUNCIL_REASONS> GetCouncilReasonForTrait(CHARACTER_VALUE charVal) {
+    //    List<COUNCIL_REASONS> councilReasons = new List<COUNCIL_REASONS>();
+    //    if(charVal == CHARACTER_VALUE.LIBERTY) {
+    //        councilReasons.Add(COUNCIL_REASONS.INEQUALITY);
+    //        councilReasons.Add(COUNCIL_REASONS.FREEDOM_OF_SPEECH);
+    //    } else if (charVal == CHARACTER_VALUE.PEACE) {
+    //        councilReasons.Add(COUNCIL_REASONS.RELIGION);
+    //        councilReasons.Add(COUNCIL_REASONS.BUILD_RELATIONS);
+    //    }
+    //    return councilReasons;
+    //}
     protected void InviteKingdoms() {
         Log invitationLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "invitation");
         invitationLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

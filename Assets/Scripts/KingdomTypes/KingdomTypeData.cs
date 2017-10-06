@@ -101,7 +101,7 @@ public class KingdomTypeData : MonoBehaviour {
 //
 //	private Dictionary<RELATIONSHIP_STATUS, int> _dictAssassinationRateModifierRelationship = new Dictionary<RELATIONSHIP_STATUS, int> ();
 
-	private Dictionary<CHARACTER_VALUE, int> _dictCharacterValues = new Dictionary<CHARACTER_VALUE, int> ();
+	//private Dictionary<CHARACTER_VALUE, int> _dictCharacterValues = new Dictionary<CHARACTER_VALUE, int> ();
 
 	private Dictionary<KINGDOM_TYPE, int> _dictRelationshipKingdomType = new Dictionary<KINGDOM_TYPE, int> ();
 
@@ -230,11 +230,11 @@ public class KingdomTypeData : MonoBehaviour {
 //		}
 //	}
 
-	public Dictionary<CHARACTER_VALUE, int> dictCharacterValues {
-		get { 
-			return this._dictCharacterValues; 
-		}
-	}
+	//public Dictionary<CHARACTER_VALUE, int> dictCharacterValues {
+	//	get { 
+	//		return this._dictCharacterValues; 
+	//	}
+	//}
 	public Dictionary<KINGDOM_TYPE, int> dictRelationshipKingdomType {
 		get { 
 			return this._dictRelationshipKingdomType; 
@@ -308,7 +308,7 @@ public class KingdomTypeData : MonoBehaviour {
 //		this._dictAssassinationTriggers.Clear ();
 //		this._dictAssassinationRateModifierMilitary.Clear ();
 //		this._dictAssassinationRateModifierRelationship.Clear ();
-		this._dictCharacterValues.Clear ();
+		//this._dictCharacterValues.Clear ();
 		this._dictRelationshipKingdomType.Clear ();
 
 //		for (int i = 0; i < this.warTriggers.Length; i++) {
@@ -330,9 +330,9 @@ public class KingdomTypeData : MonoBehaviour {
 //		for (int i = 0; i < this.assassinationRateModifierRelationship.Length; i++) {
 //			this._dictAssassinationRateModifierRelationship.Add (this.assassinationRateModifierRelationship [i].relationshipStatus, this.assassinationRateModifierRelationship [i].rate);
 //		}
-		for (int i = 0; i < this.characterValues.Length; i++) {
-			this._dictCharacterValues.Add (this.characterValues [i].character, this.characterValues [i].value);
-		}
+		//for (int i = 0; i < this.characterValues.Length; i++) {
+		//	this._dictCharacterValues.Add (this.characterValues [i].character, this.characterValues [i].value);
+		//}
 		for (int i = 0; i < this.relationshipKingdomType.Length; i++) {
 			this._dictRelationshipKingdomType.Add (this.relationshipKingdomType [i].kingdomType, this.relationshipKingdomType [i].relationshipModifier);
 		}
