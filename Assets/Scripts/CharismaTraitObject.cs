@@ -44,7 +44,7 @@ public class CharismaTraitObject : MonoBehaviour {
 	void OnHover(bool isOver){
 		if (isOver) {
 			this.isHovering = true;
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.charisma.ToString() + " CHARISMA" + "[/b]");
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.charisma.ToString() + "[/b]");
 		} else {
 			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();

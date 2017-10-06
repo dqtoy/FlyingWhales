@@ -44,7 +44,7 @@ public class IntelligenceTraitObject : MonoBehaviour {
 	void OnHover(bool isOver){
 		if (isOver) {
 			this.isHovering = true;
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.intelligence.ToString() + " INTELLIGENCE" + "[/b]");
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.intelligence.ToString() + "[/b]");
 		} else {
 			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();

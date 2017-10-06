@@ -44,7 +44,7 @@ public class EfficiencyTraitObject : MonoBehaviour {
 	void OnHover(bool isOver){
 		if (isOver) {
 			this.isHovering = true;
-			UIManager.Instance.ShowSmallInfo ("[b]" + this.efficiency.ToString() + " EFFICIENCY" + "[/b]");
+			UIManager.Instance.ShowSmallInfo ("[b]" + this.efficiency.ToString() + "[/b]");
 		} else {
 			this.isHovering = false;
 			UIManager.Instance.HideSmallInfo ();

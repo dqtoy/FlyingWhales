@@ -551,21 +551,6 @@ public enum KINGDOM_SIZE{
 	MEDIUM,
 	LARGE,
 }
-public enum CHARISMA{
-	HIGH,
-	AVERAGE,
-	LOW,
-}
-public enum EFFICIENCY{
-	HIGH,
-	AVERAGE,
-	LOW,
-}
-public enum INTELLIGENCE{
-	HIGH,
-	AVERAGE,
-	LOW,
-}
 public enum WAR_SIDE{
 	NONE,
 	A,
@@ -583,4 +568,39 @@ public enum KINGDOMS_ORDERED_BY {
     EXPANSION_RATE,
     WEAPONS,
     ARMOR
+}
+
+public enum CHARISMA{
+	CHARISMATIC,
+	REPULSIVE,
+	NEUTRAL,
+}
+public enum EFFICIENCY{
+	EFFICIENT,
+	INEPT,
+	NEUTRAL,
+}
+public enum INTELLIGENCE{
+	SMART,
+	DUMB,
+	NEUTRAL,
+}
+public enum SCIENCE{
+	ERUDITE,
+	ACADEMIC,
+	IGNORANT,
+	NEUTRAL,
+}
+
+public enum MILITARY{
+	HOSTILE,
+	MILITANT,
+	PACIFIST,
+	NEUTRAL,
+}
+
+public enum LOYALTY{
+	LOYAL,
+	SCHEMING,
+	NEUTRAL,
 }

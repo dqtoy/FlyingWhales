@@ -36,9 +36,12 @@ public class Citizen {
     private KINGDOM_TYPE _preferredKingdomType;
 
     //Traits
-    private CHARISMA _charismaLevel;
-    private EFFICIENCY _efficiencyLevel;
-    private INTELLIGENCE _intelligenceLevel;
+    private CHARISMA _charisma;
+	private INTELLIGENCE _intelligence;
+    private EFFICIENCY _efficiency;
+	private SCIENCE _science;
+	private MILITARY _military;
+	private LOYALTY _loyalty;
 
     private Dictionary<STATUS_EFFECTS, StatusEffect> _statusEffects;
 
@@ -73,15 +76,24 @@ public class Citizen {
     internal KINGDOM_TYPE preferredKingdomType {
         get { return _preferredKingdomType; }
     }
-    internal CHARISMA charismaLevel {
-        get { return _charismaLevel; }
+    internal CHARISMA charisma {
+        get { return this._charisma; }
     }
-    internal EFFICIENCY efficiencyLevel {
-        get { return _efficiencyLevel; }
+    internal EFFICIENCY efficiency {
+        get { return this._efficiency; }
     }
-    internal INTELLIGENCE intelligenceLevel {
-        get { return _intelligenceLevel; }
+    internal INTELLIGENCE intelligence {
+		get { return this._intelligence; }
     }
+	internal SCIENCE science {
+		get { return this._science; }
+	}
+	internal MILITARY military {
+		get { return this._military; }
+	}
+	internal LOYALTY loyalty {
+		get { return this._loyalty; }
+	}
     internal int loyaltyToKing {
         get { return (_loyaltyToKing + loyaltyDeductionFromWar) + loyaltyModifierForTesting; }
     }
@@ -133,9 +145,7 @@ public class Citizen {
 		//this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
   //      this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
 
-        this._charismaLevel = (CHARISMA)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(CHARISMA)).Length));
-        this._efficiencyLevel = (EFFICIENCY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(EFFICIENCY)).Length));
-        this._intelligenceLevel = (INTELLIGENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(INTELLIGENCE)).Length));
+		GenerateTraits ();
 
         this._statusEffects = new Dictionary<STATUS_EFFECTS, StatusEffect>();
 
@@ -1064,4 +1074,12 @@ public class Citizen {
     }
     #endregion
 
+	private void GenerateTraits(){
+		this._charisma = (CHARISMA)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(CHARISMA)).Length));
+		this._efficiency = (EFFICIENCY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(EFFICIENCY)).Length));
+		this._intelligence = (INTELLIGENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(INTELLIGENCE)).Length));
+		this._science = (SCIENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(SCIENCE)).Length));
+		this._military = (MILITARY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(MILITARY)).Length));
+		this._loyalty = (LOYALTY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(LOYALTY)).Length));
+	}
 }
