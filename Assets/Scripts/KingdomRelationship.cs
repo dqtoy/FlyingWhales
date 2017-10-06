@@ -852,11 +852,11 @@ public class KingdomRelationship {
 //				threatLevel -= (threatLevel * 0.5f);
 //			}
 
-			//still adjacent to unoccupied region / can still expand
-			HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom (this._targetKingdom);
-			if(hexTile != null){
-				threatLevel -= (threatLevel * 0.25f);
-			}
+//			//still adjacent to unoccupied region / can still expand
+//			HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom (this._targetKingdom);
+//			if(hexTile != null){
+//				threatLevel -= (threatLevel * 0.25f);
+//			}
 		}
 
 		this._targetKingdomThreatLevel = threatLevel;
