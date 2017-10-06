@@ -58,25 +58,25 @@ public class EvilIntent : GameEvent {
      * for evil intent.
      * */
     private void DetermineFirstAction() {
-        if (_sourceKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.PEACE) || _sourceKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.DOMINATION)) {
-            KeyValuePair<CHARACTER_VALUE, int> priotiyValue = _sourceKing.importantCharacterValues
-                .FirstOrDefault(x => x.Key == CHARACTER_VALUE.PEACE || x.Key == CHARACTER_VALUE.DOMINATION);
+        //if (_sourceKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.PEACE) || _sourceKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.DOMINATION)) {
+        //    KeyValuePair<CHARACTER_VALUE, int> priotiyValue = _sourceKing.importantCharacterValues
+        //        .FirstOrDefault(x => x.Key == CHARACTER_VALUE.PEACE || x.Key == CHARACTER_VALUE.DOMINATION);
             
-            if (priotiyValue.Key == CHARACTER_VALUE.PEACE) {
-                AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.PEACE, CHARACTER_VALUE.DOMINATION);
-                AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.PEACE, CHARACTER_VALUE.DOMINATION);
-                ChooseToResist();
-            } else {
-                AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.PEACE);
-                AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.PEACE);
-                ChooseToFeed();
-            }
-        } else {
-            AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.PEACE);
-            AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.PEACE);
-            ChooseToFeed();
+        //    if (priotiyValue.Key == CHARACTER_VALUE.PEACE) {
+        //        AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.PEACE, CHARACTER_VALUE.DOMINATION);
+        //        AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.PEACE, CHARACTER_VALUE.DOMINATION);
+        //        ChooseToResist();
+        //    } else {
+        //        AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.PEACE);
+        //        AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.PEACE);
+        //        ChooseToFeed();
+        //    }
+        //} else {
+        //    AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.PEACE);
+        //    AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.PEACE);
+        //    ChooseToFeed();
             
-        }
+        //}
     }
 
     private void ChooseToResist() {
@@ -202,39 +202,39 @@ public class EvilIntent : GameEvent {
     }
 
     private void ProcessRansomDecision() {
-        remainingDays -= 1;
-        if(remainingDays <= 0) {
-            Messenger.RemoveListener("OnDayEnd", ProcessRansomDecision);
-            if(_targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) || _targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIFE)) {
-                KeyValuePair<CHARACTER_VALUE, int> priotiyValue = _targetKing.importantCharacterValues
-                .FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH || x.Key == CHARACTER_VALUE.LIFE);
+        //remainingDays -= 1;
+        //if(remainingDays <= 0) {
+        //    Messenger.RemoveListener("OnDayEnd", ProcessRansomDecision);
+        //    if(_targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) || _targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIFE)) {
+        //        KeyValuePair<CHARACTER_VALUE, int> priotiyValue = _targetKing.importantCharacterValues
+        //        .FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH || x.Key == CHARACTER_VALUE.LIFE);
 
-                if(priotiyValue.Key == CHARACTER_VALUE.STRENGTH) {
-                    Log ransomKillLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_decision_kill");
-                    ransomKillLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    ransomKillLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //        if(priotiyValue.Key == CHARACTER_VALUE.STRENGTH) {
+        //            Log ransomKillLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_decision_kill");
+        //            ransomKillLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //            ransomKillLog.AddToFillers(_targetKing, _targetKing.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
-                    AdjustKingdomUnrest(_targetKing.city.kingdom, CHARACTER_VALUE.STRENGTH, CHARACTER_VALUE.LIFE);
-                    AdjustGovernorsLoyalty(_targetKing, CHARACTER_VALUE.STRENGTH, CHARACTER_VALUE.LIFE);
-                    AdjustOtherKingsRel(_targetKing, CHARACTER_VALUE.STRENGTH, CHARACTER_VALUE.LIFE);
+        //            AdjustKingdomUnrest(_targetKing.city.kingdom, CHARACTER_VALUE.STRENGTH, CHARACTER_VALUE.LIFE);
+        //            AdjustGovernorsLoyalty(_targetKing, CHARACTER_VALUE.STRENGTH, CHARACTER_VALUE.LIFE);
+        //            AdjustOtherKingsRel(_targetKing, CHARACTER_VALUE.STRENGTH, CHARACTER_VALUE.LIFE);
 
-                    KillHostage();
-                    DoneEvent();
-                } else {
-                    AdjustKingdomUnrest(_targetKing.city.kingdom, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
-                    AdjustGovernorsLoyalty(_targetKing, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
-                    AdjustOtherKingsRel(_targetKing, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
-                    PayRansom();
-                }
+        //            KillHostage();
+        //            DoneEvent();
+        //        } else {
+        //            AdjustKingdomUnrest(_targetKing.city.kingdom, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
+        //            AdjustGovernorsLoyalty(_targetKing, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
+        //            AdjustOtherKingsRel(_targetKing, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
+        //            PayRansom();
+        //        }
                 
-            } else {
-                PayRansom();
-                AdjustKingdomUnrest(_targetKing.city.kingdom, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
-                AdjustGovernorsLoyalty(_targetKing, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
-                AdjustOtherKingsRel(_targetKing, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
-            }
+        //    } else {
+        //        PayRansom();
+        //        AdjustKingdomUnrest(_targetKing.city.kingdom, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
+        //        AdjustGovernorsLoyalty(_targetKing, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
+        //        AdjustOtherKingsRel(_targetKing, CHARACTER_VALUE.LIFE, CHARACTER_VALUE.STRENGTH);
+        //    }
            
-        }
+        //}
     }
 
     private void KillHostage() {
@@ -249,41 +249,41 @@ public class EvilIntent : GameEvent {
         if(citiesToChooseFrom.Count > 0) {
             City cityToGive = citiesToChooseFrom[Random.Range(0, citiesToChooseFrom.Count)];
             KingdomManager.Instance.TransferCitiesToOtherKingdom(_targetKing.city.kingdom, _sourceKing.city.kingdom, new List<City>() { cityToGive });
-            if(_sourceKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR) || _sourceKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.DOMINATION)) {
-                KeyValuePair<CHARACTER_VALUE, int> priotiyValue = _targetKing.importantCharacterValues
-                .FirstOrDefault(x => x.Key == CHARACTER_VALUE.HONOR || x.Key == CHARACTER_VALUE.DOMINATION);
-                if(priotiyValue.Key == CHARACTER_VALUE.HONOR) {
-                    AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
-                    AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
-                    AdjustOtherKingsRel(_sourceKing, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
-                    ReturnHostage();
-                } else {
-                    Log ransomKillLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_accepted_decision_kill");
-                    ransomKillLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
-                    AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
-                    AdjustOtherKingsRel(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
-                    KillHostage();
-                }
+            //if(_sourceKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR) || _sourceKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.DOMINATION)) {
+            //    KeyValuePair<CHARACTER_VALUE, int> priotiyValue = _targetKing.importantCharacterValues
+            //    .FirstOrDefault(x => x.Key == CHARACTER_VALUE.HONOR || x.Key == CHARACTER_VALUE.DOMINATION);
+            //    if(priotiyValue.Key == CHARACTER_VALUE.HONOR) {
+            //        AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
+            //        AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
+            //        AdjustOtherKingsRel(_sourceKing, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
+            //        ReturnHostage();
+            //    } else {
+            //        Log ransomKillLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_accepted_decision_kill");
+            //        ransomKillLog.AddToFillers(_sourceKing, _sourceKing.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //        AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
+            //        AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
+            //        AdjustOtherKingsRel(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
+            //        KillHostage();
+            //    }
                 
-            } else {
-                CHARACTER_VALUE chosenValue = CHARACTER_VALUE.HONOR;
-                if(Random.Range(0,2) == 1) {
-                    chosenValue = CHARACTER_VALUE.DOMINATION;
-                }
+            //} else {
+            //    CHARACTER_VALUE chosenValue = CHARACTER_VALUE.HONOR;
+            //    if(Random.Range(0,2) == 1) {
+            //        chosenValue = CHARACTER_VALUE.DOMINATION;
+            //    }
 
-                if (chosenValue == CHARACTER_VALUE.HONOR) {
-                    AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
-                    AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
-                    AdjustOtherKingsRel(_sourceKing, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
-                    ReturnHostage();
-                } else {
-                    AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
-                    AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
-                    AdjustOtherKingsRel(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
-                    KillHostage();
-                }
-            }
+            //    if (chosenValue == CHARACTER_VALUE.HONOR) {
+            //        AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
+            //        AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
+            //        AdjustOtherKingsRel(_sourceKing, CHARACTER_VALUE.HONOR, CHARACTER_VALUE.DOMINATION);
+            //        ReturnHostage();
+            //    } else {
+            //        AdjustKingdomUnrest(_sourceKing.city.kingdom, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
+            //        AdjustGovernorsLoyalty(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
+            //        AdjustOtherKingsRel(_sourceKing, CHARACTER_VALUE.DOMINATION, CHARACTER_VALUE.HONOR);
+            //        KillHostage();
+            //    }
+            //}
         } else {
             //Cannot give any city, kill hostage
             Log ransomUnableLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "EvilIntent", "ransom_decision_unable");
@@ -304,35 +304,35 @@ public class EvilIntent : GameEvent {
     private void AdjustGovernorsLoyalty(Citizen king, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
         for (int i = 0; i < king.city.kingdom.cities.Count; i++) {
             Governor currGovernor = (Governor)king.city.kingdom.cities[i].governor.assignedRole;
-            if (currGovernor.citizen.importantCharacterValues.ContainsKey(chosenValue) 
-                || currGovernor.citizen.importantCharacterValues.ContainsKey(oppositeValue)) {
+            //if (currGovernor.citizen.importantCharacterValues.ContainsKey(chosenValue) 
+            //    || currGovernor.citizen.importantCharacterValues.ContainsKey(oppositeValue)) {
 
-                KeyValuePair<CHARACTER_VALUE, int> priotiyValue = currGovernor.citizen.importantCharacterValues
-                               .FirstOrDefault(x => x.Key == chosenValue || x.Key == oppositeValue);
-                if(priotiyValue.Key == chosenValue) {
-                    currGovernor.AddEventModifier(5, "Evil Intent Opinion", this);
-                } else {
-                    currGovernor.AddEventModifier(-5, "Evil Intent Opinion", this);
-                }
-            } else {
-                currGovernor.AddEventModifier(-5, "Evil Intent Opinion", this);
-            }
+            //    KeyValuePair<CHARACTER_VALUE, int> priotiyValue = currGovernor.citizen.importantCharacterValues
+            //                   .FirstOrDefault(x => x.Key == chosenValue || x.Key == oppositeValue);
+            //    if(priotiyValue.Key == chosenValue) {
+            //        currGovernor.AddEventModifier(5, "Evil Intent Opinion", this);
+            //    } else {
+            //        currGovernor.AddEventModifier(-5, "Evil Intent Opinion", this);
+            //    }
+            //} else {
+            //    currGovernor.AddEventModifier(-5, "Evil Intent Opinion", this);
+            //}
         }
     }
 
     private void AdjustKingdomUnrest(Kingdom kingdom, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
-        if (kingdom.importantCharacterValues.ContainsKey(chosenValue) 
-            || kingdom.importantCharacterValues.ContainsKey(oppositeValue)) {
-            KeyValuePair<CHARACTER_VALUE, int> priotiyValue = kingdom.importantCharacterValues
-                               .FirstOrDefault(x => x.Key == chosenValue || x.Key == oppositeValue);
-            if (priotiyValue.Key == chosenValue) {
-                kingdom.AdjustStability(10);
-            } else {
-                kingdom.AdjustStability(-10);
-            }
-        } else {
-            kingdom.AdjustStability(-10);
-        }
+        //if (kingdom.importantCharacterValues.ContainsKey(chosenValue) 
+        //    || kingdom.importantCharacterValues.ContainsKey(oppositeValue)) {
+        //    KeyValuePair<CHARACTER_VALUE, int> priotiyValue = kingdom.importantCharacterValues
+        //                       .FirstOrDefault(x => x.Key == chosenValue || x.Key == oppositeValue);
+        //    if (priotiyValue.Key == chosenValue) {
+        //        kingdom.AdjustStability(10);
+        //    } else {
+        //        kingdom.AdjustStability(-10);
+        //    }
+        //} else {
+        //    kingdom.AdjustStability(-10);
+        //}
     }
 
     private void AdjustOtherKingsRel(Citizen king, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
@@ -341,19 +341,19 @@ public class EvilIntent : GameEvent {
             Kingdom otherKingdom = king.city.kingdom.discoveredKingdoms[i];
             Citizen otherKing = otherKingdom.king;
             KingdomRelationship otherKingRel = otherKingdom.GetRelationshipWithKingdom(thisKingdom);
-            if (otherKing.importantCharacterValues.ContainsKey(chosenValue) 
-                || otherKing.importantCharacterValues.ContainsKey(oppositeValue)) {
+            //if (otherKing.importantCharacterValues.ContainsKey(chosenValue) 
+            //    || otherKing.importantCharacterValues.ContainsKey(oppositeValue)) {
 
-                KeyValuePair<CHARACTER_VALUE, int> priotiyValue = otherKing.importantCharacterValues
-                               .FirstOrDefault(x => x.Key == chosenValue || x.Key == oppositeValue);
-                if (priotiyValue.Key == chosenValue) {
-                    otherKingRel.AddEventModifier(5, "Evil Intent Opinion", this);
-                } else {
-                    otherKingRel.AddEventModifier(-5, "Evil Intent Opinion", this);
-                }
-            } else {
-                otherKingRel.AddEventModifier(-5, "Evil Intent Opinion", this);
-            }
+            //    KeyValuePair<CHARACTER_VALUE, int> priotiyValue = otherKing.importantCharacterValues
+            //                   .FirstOrDefault(x => x.Key == chosenValue || x.Key == oppositeValue);
+            //    if (priotiyValue.Key == chosenValue) {
+            //        otherKingRel.AddEventModifier(5, "Evil Intent Opinion", this);
+            //    } else {
+            //        otherKingRel.AddEventModifier(-5, "Evil Intent Opinion", this);
+            //    }
+            //} else {
+            //    otherKingRel.AddEventModifier(-5, "Evil Intent Opinion", this);
+            //}
         }
     }
 }

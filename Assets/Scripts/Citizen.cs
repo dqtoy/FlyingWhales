@@ -51,8 +51,8 @@ public class Citizen {
 
 	[HideInInspector]public List<History> history;
 
-	protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
-    protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
+	//protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
+ //   protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
 
 	#region getters/setters
     public string name {
@@ -61,12 +61,12 @@ public class Citizen {
     public int ageTableKey {
         get { return _ageTableKey; }
     }
-	public Dictionary<CHARACTER_VALUE, int> dictCharacterValues{
-		get{ return this._dictCharacterValues;}
-	}
-    public Dictionary<CHARACTER_VALUE, int> importantCharacterValues {
-        get { return this._importantCharacterValues; }
-    }
+	//public Dictionary<CHARACTER_VALUE, int> dictCharacterValues{
+	//	get{ return this._dictCharacterValues;}
+	//}
+ //   public Dictionary<CHARACTER_VALUE, int> importantCharacterValues {
+ //       get { return this._importantCharacterValues; }
+ //   }
     public Citizen spouse {
         get { return this._spouse; }
     }
@@ -130,8 +130,8 @@ public class Citizen {
 		this.history = new List<History>();
 		this.deathReason = DEATH_REASONS.NONE;
 		this.deathReasonText = string.Empty;
-		this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
-        this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
+		//this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
+  //      this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
 
         this._charismaLevel = (CHARISMA)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(CHARISMA)).Length));
         this._efficiencyLevel = (EFFICIENCY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(EFFICIENCY)).Length));
@@ -604,35 +604,35 @@ public class Citizen {
     #endregion
 
     #region Character Value Functions
-    internal void GenerateCharacterValues() {
-        this._dictCharacterValues.Clear();
-        this._dictCharacterValues = System.Enum.GetValues(typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE>().ToDictionary(x => x, x => UnityEngine.Random.Range(1, 101));
-        //        this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(5).ToDictionary(x => x.Key, x => x.Value);
-        UpdateCharacterValues();
-        //		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
-        //		this._characterValues = new CharacterValue[character.Length];
-        //		for(int i = 0; i < this._characterValues.Length; i++){
-        //			this._characterValues [i].character = character [i];
-        //			this._characterValues [i].value = UnityEngine.Random.Range (1, 101);
-        //			this._dictCharacterValues.Add(this._characterValues [i].character, this._characterValues [i].value);
-        //		}
-    }
-    internal void UpdateCharacterValues() {
-        for (int i = 0; i < this.city.kingdom.kingdomTypeData.characterValues.Length; i++) {
-            this.UpdateSpecificCharacterValue(this.city.kingdom.kingdomTypeData.characterValues[i].character, this.city.kingdom.kingdomTypeData.characterValues[i].value);
-        }
-        this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
-    }
-    internal void ChangeCharacterValues(Dictionary<CHARACTER_VALUE, int> newCharacterValues) {
-        this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>(newCharacterValues);
-        this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
-    }
-    private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value) {
-        if (this._dictCharacterValues.ContainsKey(key)) {
-            this._dictCharacterValues[key] += value;
-            //			UpdateCharacterValueByKey(key, value);
-        }
-    }
+    //internal void GenerateCharacterValues() {
+    //    this._dictCharacterValues.Clear();
+    //    this._dictCharacterValues = System.Enum.GetValues(typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE>().ToDictionary(x => x, x => UnityEngine.Random.Range(1, 101));
+    //    //        this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(5).ToDictionary(x => x.Key, x => x.Value);
+    //    UpdateCharacterValues();
+    //    //		CHARACTER_VALUE[] character = System.Enum.GetValues (typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE> ().ToArray ();
+    //    //		this._characterValues = new CharacterValue[character.Length];
+    //    //		for(int i = 0; i < this._characterValues.Length; i++){
+    //    //			this._characterValues [i].character = character [i];
+    //    //			this._characterValues [i].value = UnityEngine.Random.Range (1, 101);
+    //    //			this._dictCharacterValues.Add(this._characterValues [i].character, this._characterValues [i].value);
+    //    //		}
+    //}
+    //internal void UpdateCharacterValues() {
+    //    for (int i = 0; i < this.city.kingdom.kingdomTypeData.characterValues.Length; i++) {
+    //        this.UpdateSpecificCharacterValue(this.city.kingdom.kingdomTypeData.characterValues[i].character, this.city.kingdom.kingdomTypeData.characterValues[i].value);
+    //    }
+    //    this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
+    //}
+    //internal void ChangeCharacterValues(Dictionary<CHARACTER_VALUE, int> newCharacterValues) {
+    //    this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>(newCharacterValues);
+    //    this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
+    //}
+    //private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value) {
+    //    if (this._dictCharacterValues.ContainsKey(key)) {
+    //        this._dictCharacterValues[key] += value;
+    //        //			UpdateCharacterValueByKey(key, value);
+    //    }
+    //}
     //private void UpdateCharacterValueByKey(CHARACTER_VALUE key, int value){
     //	for(int i = 0; i < this._characterValues.Length; i++){
     //		if(this._characterValues[i].character == key){
@@ -641,12 +641,12 @@ public class Citizen {
     //		}
     //	}
     //}
-    internal int GetCharacterValueOfType(CHARACTER_VALUE characterValue) {
-        if (this._dictCharacterValues.ContainsKey(characterValue)) {
-            return this._dictCharacterValues[characterValue];
-        }
-        return 0;
-    }
+    //internal int GetCharacterValueOfType(CHARACTER_VALUE characterValue) {
+    //    if (this._dictCharacterValues.ContainsKey(characterValue)) {
+    //        return this._dictCharacterValues[characterValue];
+    //    }
+    //    return 0;
+    //}
     #endregion
 
     #region Prestige
@@ -798,44 +798,44 @@ public class Citizen {
         //    _loyaltySummary += disloyaltyFromWar.ToString() + "  Active Wars\n"; 
         //}
 
-        int numOfSharedValues = 0;
-        for (int i = 0; i < _importantCharacterValues.Keys.Count; i++) {
-            CHARACTER_VALUE currKey = _importantCharacterValues.Keys.ElementAt(i);
-            if (king.importantCharacterValues.ContainsKey(currKey)) {
-                numOfSharedValues += 1;
-            }
-        }
+        //int numOfSharedValues = 0;
+        //for (int i = 0; i < _importantCharacterValues.Keys.Count; i++) {
+        //    CHARACTER_VALUE currKey = _importantCharacterValues.Keys.ElementAt(i);
+        //    if (king.importantCharacterValues.ContainsKey(currKey)) {
+        //        numOfSharedValues += 1;
+        //    }
+        //}
 
-        //Shared Values
-        int sharedValuesAdjustment = 0;
-        if (numOfSharedValues >= 3) {
-            sharedValuesAdjustment = 50;
-            _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
-        } else if (numOfSharedValues == 2) {
-            sharedValuesAdjustment = 25;
-            _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
-        } else if (numOfSharedValues == 1) {
-            sharedValuesAdjustment = 15;
-            _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
-        } else {
-            //No shared values
-            sharedValuesAdjustment = -30;
-            _loyaltySummary += sharedValuesAdjustment.ToString() + "  No Shared Values\n";
-        }
-        _loyaltyToKing += sharedValuesAdjustment;
+        ////Shared Values
+        //int sharedValuesAdjustment = 0;
+        //if (numOfSharedValues >= 3) {
+        //    sharedValuesAdjustment = 50;
+        //    _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
+        //} else if (numOfSharedValues == 2) {
+        //    sharedValuesAdjustment = 25;
+        //    _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
+        //} else if (numOfSharedValues == 1) {
+        //    sharedValuesAdjustment = 15;
+        //    _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
+        //} else {
+        //    //No shared values
+        //    sharedValuesAdjustment = -30;
+        //    _loyaltySummary += sharedValuesAdjustment.ToString() + "  No Shared Values\n";
+        //}
+        //_loyaltyToKing += sharedValuesAdjustment;
 
-        //Values
-        int valuesAdjustment = 0;
-        if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)) {
-            valuesAdjustment = 30;
-            _loyaltyToKing += valuesAdjustment;
-            _loyaltySummary += "+" + valuesAdjustment.ToString() + "  Values Honor\n";
-        }
-        if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-            valuesAdjustment = -30;
-            _loyaltyToKing += valuesAdjustment;
-            _loyaltySummary += valuesAdjustment.ToString() + "  Values Influence\n";
-        }
+        ////Values
+        //int valuesAdjustment = 0;
+        //if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)) {
+        //    valuesAdjustment = 30;
+        //    _loyaltyToKing += valuesAdjustment;
+        //    _loyaltySummary += "+" + valuesAdjustment.ToString() + "  Values Honor\n";
+        //}
+        //if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
+        //    valuesAdjustment = -30;
+        //    _loyaltyToKing += valuesAdjustment;
+        //    _loyaltySummary += valuesAdjustment.ToString() + "  Values Influence\n";
+        //}
 
         //Marriage
         int marriageAdjustment = 0;

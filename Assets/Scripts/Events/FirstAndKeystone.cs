@@ -404,23 +404,23 @@ public class FirstAndKeystone : GameEvent {
 		return false;
 	}
 	private EVENT_APPROACH GetApproach(Kingdom kingdom){
-        Dictionary<CHARACTER_VALUE, int> importantCharVals = kingdom.king.importantCharacterValues;
+        //Dictionary<CHARACTER_VALUE, int> importantCharVals = kingdom.king.importantCharacterValues;
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
-        if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.EQUALITY) ||
-            importantCharVals.ContainsKey(CHARACTER_VALUE.DOMINATION)) {
+        //if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.EQUALITY) ||
+        //    importantCharVals.ContainsKey(CHARACTER_VALUE.DOMINATION)) {
 
-            KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
-                .FirstOrDefault(x => x.Key == CHARACTER_VALUE.DOMINATION
-                || x.Key == CHARACTER_VALUE.LIFE || x.Key == CHARACTER_VALUE.EQUALITY);
+        //    KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
+        //        .FirstOrDefault(x => x.Key == CHARACTER_VALUE.DOMINATION
+        //        || x.Key == CHARACTER_VALUE.LIFE || x.Key == CHARACTER_VALUE.EQUALITY);
 
-            if (priotiyValue.Key == CHARACTER_VALUE.LIFE || priotiyValue.Key == CHARACTER_VALUE.EQUALITY) {
-                chosenApproach = EVENT_APPROACH.HUMANISTIC;
-            } else {
-                chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
-            }
-        } else {
-            chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
-        }
+        //    if (priotiyValue.Key == CHARACTER_VALUE.LIFE || priotiyValue.Key == CHARACTER_VALUE.EQUALITY) {
+        //        chosenApproach = EVENT_APPROACH.HUMANISTIC;
+        //    } else {
+        //        chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
+        //    }
+        //} else {
+        //    chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
+        //}
         return chosenApproach;
     }
 	private Kingdom GetOwner(Kingdom kingdom){

@@ -20,7 +20,7 @@ public class KingsCouncil : GameEvent {
         this._sourceKingdom = _sourceKingdom;
         durationInDays = 5;
         remainingDays = durationInDays;
-        _councilReason = GenerateCouncilReason();       
+        //_councilReason = GenerateCouncilReason();       
 
         EventManager.Instance.AddEventToDictionary(this);
 
@@ -77,13 +77,13 @@ public class KingsCouncil : GameEvent {
     }
     #endregion
 
-    protected COUNCIL_REASONS GenerateCouncilReason() {
-        KeyValuePair<CHARACTER_VALUE, int> priorityValue = startedBy.importantCharacterValues
-               .FirstOrDefault(x => x.Key == CHARACTER_VALUE.LIBERTY || x.Key == CHARACTER_VALUE.PEACE);
-        _councilReasonVal = priorityValue.Key;
-        List<COUNCIL_REASONS> councilReasons = GetCouncilReasonForTrait(priorityValue.Key);
-        return councilReasons[UnityEngine.Random.Range(0, councilReasons.Count)];
-    }
+    //protected COUNCIL_REASONS GenerateCouncilReason() {
+    //    KeyValuePair<CHARACTER_VALUE, int> priorityValue = startedBy.importantCharacterValues
+    //           .FirstOrDefault(x => x.Key == CHARACTER_VALUE.LIBERTY || x.Key == CHARACTER_VALUE.PEACE);
+    //    _councilReasonVal = priorityValue.Key;
+    //    List<COUNCIL_REASONS> councilReasons = GetCouncilReasonForTrait(priorityValue.Key);
+    //    return councilReasons[UnityEngine.Random.Range(0, councilReasons.Count)];
+    //}
     protected List<COUNCIL_REASONS> GetCouncilReasonForTrait(CHARACTER_VALUE charVal) {
         List<COUNCIL_REASONS> councilReasons = new List<COUNCIL_REASONS>();
         if(charVal == CHARACTER_VALUE.LIBERTY) {
@@ -156,23 +156,23 @@ public class KingsCouncil : GameEvent {
         //When the council is started, the governors of the source king will react, those that value PEACE or LIBERTY will increase their loyalty to the king by 20.
         for (int i = 0; i < _sourceKingdom.cities.Count; i++) {
             Governor currGov = (Governor)_sourceKingdom.cities[i].governor.assignedRole;
-            if(currGov.citizen.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-                currGov.AddEventModifier(5, "King Council Approval", this);
-            }
+            //if(currGov.citizen.importantCharacterValues.ContainsKey(_councilReasonVal)) {
+            //    currGov.AddEventModifier(5, "King Council Approval", this);
+            //}
         }
         //Adjust Kingdom Stability
-        if (_sourceKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-            _sourceKingdom.AdjustStability(3);
-        }
+        //if (_sourceKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
+        //    _sourceKingdom.AdjustStability(3);
+        //}
         Messenger.AddListener("OnDayEnd", PerformAction);
     }
     protected void OnCouncilFinish() {
         for (int i = 0; i < _presentKingdoms.Count; i++) {
             Kingdom currKingdom = _presentKingdoms[i];
             int baseChance = 30;
-            if (currKingdom.king.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-                baseChance += 50;
-            }
+            //if (currKingdom.king.importantCharacterValues.ContainsKey(_councilReasonVal)) {
+            //    baseChance += 50;
+            //}
             if (UnityEngine.Random.Range(0, 100) < baseChance) {
                 //approve
                 currKingdom.GetRelationshipWithKingdom(_sourceKingdom).AddEventModifier(5, "Council Approval", this);
@@ -180,9 +180,9 @@ public class KingsCouncil : GameEvent {
                 councilEndApproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
                 //Adjust kingdom stability
-                if (currKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-                    currKingdom.AdjustStability(10);
-                }
+                //if (currKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
+                //    currKingdom.AdjustStability(10);
+                //}
             } else {
                 //disapprove
                 currKingdom.GetRelationshipWithKingdom(_sourceKingdom).AddEventModifier(-5, "Council Disapproval", this);
@@ -190,9 +190,9 @@ public class KingsCouncil : GameEvent {
                 councilEndDisapproveLog.AddToFillers(currKingdom, currKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
                 //Adjust kingdom stability
-                if (currKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
-                    currKingdom.AdjustStability(-10);
-                }
+                //if (currKingdom.importantCharacterValues.ContainsKey(_councilReasonVal)) {
+                //    currKingdom.AdjustStability(-10);
+                //}
             }
         }
         Log councilEndLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingsCouncil", "council_end");

@@ -251,10 +251,10 @@ public class KingdomRelationship {
         int baseLoyalty = 0;
         int adjustment = 0;
 
-        List<CHARACTER_VALUE> sourceKingValues = _sourceKingdom.king.importantCharacterValues.Select(x => x.Key).ToList();
-        List<CHARACTER_VALUE> targetKingValues = _targetKingdom.king.importantCharacterValues.Select(x => x.Key).ToList();
+        //List<CHARACTER_VALUE> sourceKingValues = _sourceKingdom.king.importantCharacterValues.Select(x => x.Key).ToList();
+        //List<CHARACTER_VALUE> targetKingValues = _targetKingdom.king.importantCharacterValues.Select(x => x.Key).ToList();
 
-        List<CHARACTER_VALUE> valuesInCommon = sourceKingValues.Intersect(targetKingValues).ToList();
+        //List<CHARACTER_VALUE> valuesInCommon = sourceKingValues.Intersect(targetKingValues).ToList();
 
         //Kingdom Type
         if (_sourceKingdom.kingdomTypeData.dictRelationshipKingdomType.ContainsKey(_targetKingdom.kingdomType)) {
@@ -275,11 +275,11 @@ public class KingdomRelationship {
 //		}
 
         //Race
-        if (_sourceKingdom.race != _targetKingdom.race && !sourceKingValues.Contains(CHARACTER_VALUE.EQUALITY)) {
-            adjustment = -15;
-            baseLoyalty += adjustment;
-            this._relationshipSummary += adjustment.ToString() + " different race.\n";
-        }
+        //if (_sourceKingdom.race != _targetKingdom.race && !sourceKingValues.Contains(CHARACTER_VALUE.EQUALITY)) {
+        //    adjustment = -15;
+        //    baseLoyalty += adjustment;
+        //    this._relationshipSummary += adjustment.ToString() + " different race.\n";
+        //}
 
         //Sharing Border
 		if (this.isSharingBorder) {
@@ -289,36 +289,36 @@ public class KingdomRelationship {
         }
 
         //Values
-        List<CHARACTER_VALUE> valuesInCommonExceptInfluence = valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).ToList();
-        if (valuesInCommonExceptInfluence.Count == 1) {
-            adjustment = 5;
-            baseLoyalty += adjustment;
-            this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
-        } else if (valuesInCommonExceptInfluence.Count == 2) {
-            adjustment = 15;
-            baseLoyalty += adjustment;
-            this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
-        } else if (valuesInCommonExceptInfluence.Count >= 3) {
-            adjustment = 30;
-            baseLoyalty += adjustment;
-            this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
-        } else {
-            adjustment = -15;
-            baseLoyalty += adjustment;
-            this._relationshipSummary += adjustment.ToString() + " no shared values.\n";
-        }
+        //List<CHARACTER_VALUE> valuesInCommonExceptInfluence = valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).ToList();
+        //if (valuesInCommonExceptInfluence.Count == 1) {
+        //    adjustment = 5;
+        //    baseLoyalty += adjustment;
+        //    this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
+        //} else if (valuesInCommonExceptInfluence.Count == 2) {
+        //    adjustment = 15;
+        //    baseLoyalty += adjustment;
+        //    this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
+        //} else if (valuesInCommonExceptInfluence.Count >= 3) {
+        //    adjustment = 30;
+        //    baseLoyalty += adjustment;
+        //    this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
+        //} else {
+        //    adjustment = -15;
+        //    baseLoyalty += adjustment;
+        //    this._relationshipSummary += adjustment.ToString() + " no shared values.\n";
+        //}
 
-        if (sourceKingValues.Contains(CHARACTER_VALUE.PEACE)) {
-            adjustment = 15;
-            baseLoyalty += adjustment;
-            this._relationshipSummary += "+" + adjustment.ToString() + " values peace.\n";
-        }
+        //if (sourceKingValues.Contains(CHARACTER_VALUE.PEACE)) {
+        //    adjustment = 15;
+        //    baseLoyalty += adjustment;
+        //    this._relationshipSummary += "+" + adjustment.ToString() + " values peace.\n";
+        //}
 
-        if (sourceKingValues.Contains(CHARACTER_VALUE.DOMINATION)) {
-            adjustment = -15;
-            baseLoyalty += adjustment;
-            this._relationshipSummary += adjustment.ToString() + " values domination.\n";
-        }
+        //if (sourceKingValues.Contains(CHARACTER_VALUE.DOMINATION)) {
+        //    adjustment = -15;
+        //    baseLoyalty += adjustment;
+        //    this._relationshipSummary += adjustment.ToString() + " values domination.\n";
+        //}
 
 		if(this._targetKingdomThreatLevel >= 0f && this._targetKingdomThreatLevel < 1f){
 			adjustment = 25;

@@ -25,7 +25,7 @@ public class Rebellions : GameEvent {
 		this.conqueredCities = new List<City> ();
 		this.targetKingdom.rebellions.Add (this);
 		startedBy.SetImmortality (true);
-		startedBy.ChangeCharacterValues (provokerKing.dictCharacterValues);
+		//startedBy.ChangeCharacterValues (provokerKing.dictCharacterValues);
 		City cityWhereRebelFortIsCreated = startedBy.city;
 		CreateRebelFort ();
 		Debug.Log (startedBy.name + " has started a rebellion in " + this.targetKingdom.name);

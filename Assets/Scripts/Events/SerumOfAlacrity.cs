@@ -62,21 +62,21 @@ public class SerumOfAlacrity : GameEvent {
 		List<City> allCities = this.kingdom.nonRebellingCities;
 		if(allCities != null && allCities.Count > 0){
 			for (int i = 0; i < allCities.Count; i++) {
-				if(allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(4, "Same strength values", this);
-				}else{
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-4, "Opposing strength values", this);
-				}
+				//if(allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
+				//	((Governor)allCities[i].governor.assignedRole).AddEventModifier(4, "Same strength values", this);
+				//}else{
+				//	((Governor)allCities[i].governor.assignedRole).AddEventModifier(-4, "Opposing strength values", this);
+				//}
 			}
 		}
 	}
 
     private void KingdomReaction() {
-        if (this.kingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
-            this.kingdom.AdjustStability(10);
-        } else {
-            this.kingdom.AdjustStability(-10);
-        }
+        //if (this.kingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)) {
+        //    this.kingdom.AdjustStability(10);
+        //} else {
+        //    this.kingdom.AdjustStability(-10);
+        //}
     }
 
 	private void OtherKingsReactions(){
@@ -85,13 +85,13 @@ public class SerumOfAlacrity : GameEvent {
 			for (int i = 0; i < otherKingdoms.Count; i++) {
 				KingdomRelationship relationship = otherKingdoms[i].GetRelationshipWithKingdom(this.kingdom);
 				if(relationship != null){
-					if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
-                        //relationship.AdjustLikeness(10, this);
-                        relationship.AddEventModifier(3, "Opposing strength values", this);
-                    } else {
-                        //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-						relationship.AddEventModifier(-3, "Opposing strength values", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-                    }
+					//if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
+     //                   //relationship.AdjustLikeness(10, this);
+     //                   relationship.AddEventModifier(3, "Opposing strength values", this);
+     //               } else {
+     //                   //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+					//	relationship.AddEventModifier(-3, "Opposing strength values", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+     //               }
 				}
 			}
 		}

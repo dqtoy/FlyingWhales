@@ -40,13 +40,13 @@ public class KingdomHoliday : GameEvent {
 
             //Once a holiday is started the king's governors will react, if he/she also values tradition his/her loyalty to the king will increase by 20.
             Citizen currGovernor = currCity.governor;
-            if (currGovernor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-                ((Governor)currGovernor.assignedRole).AddEventModifier(5, "Kingdom Holiday Celebration", this);
-            }
+            //if (currGovernor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+            //    ((Governor)currGovernor.assignedRole).AddEventModifier(5, "Kingdom Holiday Celebration", this);
+            //}
         }
-        if (_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-            _sourceKingdom.AdjustStability(10);
-        }
+        //if (_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+        //    _sourceKingdom.AdjustStability(10);
+        //}
 
         Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "KingdomHoliday", "start");
         newLog.AddToFillers(startedBy, startedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

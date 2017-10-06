@@ -131,36 +131,36 @@ public class Governor : Role {
         Citizen king = this.citizen.city.kingdom.king;
 		Kingdom kingdom = this.citizen.city.kingdom;
 
-        List<CHARACTER_VALUE> governorValues = this.citizen.importantCharacterValues.Select(x => x.Key).ToList();
-        List<CHARACTER_VALUE> kingValues = king.importantCharacterValues.Select(x => x.Key).ToList();
+        //List<CHARACTER_VALUE> governorValues = this.citizen.importantCharacterValues.Select(x => x.Key).ToList();
+        //List<CHARACTER_VALUE> kingValues = king.importantCharacterValues.Select(x => x.Key).ToList();
 
-        List<CHARACTER_VALUE> valuesInCommon = governorValues.Intersect(kingValues).ToList();
+        //List<CHARACTER_VALUE> valuesInCommon = governorValues.Intersect(kingValues).ToList();
 
-        /*POSITIVE ADJUSTMENT OF LOYALTY
-		 * */
-        if (valuesInCommon.Count == 1) {
-            adjustment = 0;
-            baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
-        } else if (valuesInCommon.Count == 2) {
-            adjustment = 15;
-            baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
-        } else if(valuesInCommon.Count >= 3) {
-           adjustment = 30;
-            baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
-		} else{
-			adjustment = -30;
-			baseLoyalty += adjustment;
-			this._loyaltySummary += adjustment.ToString() + "   no shared values.\n";
-		}
+  //      /*POSITIVE ADJUSTMENT OF LOYALTY
+		// * */
+  //      if (valuesInCommon.Count == 1) {
+  //          adjustment = 0;
+  //          baseLoyalty += adjustment;
+  //          this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
+  //      } else if (valuesInCommon.Count == 2) {
+  //          adjustment = 15;
+  //          baseLoyalty += adjustment;
+  //          this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
+  //      } else if(valuesInCommon.Count >= 3) {
+  //         adjustment = 30;
+  //          baseLoyalty += adjustment;
+  //          this._loyaltySummary += "+" + adjustment.ToString() + "   shared values.\n";
+		//} else{
+		//	adjustment = -30;
+		//	baseLoyalty += adjustment;
+		//	this._loyaltySummary += adjustment.ToString() + "   no shared values.\n";
+		//}
 
-        if (governorValues.Contains(CHARACTER_VALUE.HONOR)) {
-            adjustment = 15;
-            baseLoyalty += adjustment;
-            this._loyaltySummary += "+" + adjustment.ToString() + "   values honor.\n";
-        }
+        //if (governorValues.Contains(CHARACTER_VALUE.HONOR)) {
+        //    adjustment = 15;
+        //    baseLoyalty += adjustment;
+        //    this._loyaltySummary += "+" + adjustment.ToString() + "   values honor.\n";
+        //}
 
         if (king.IsRelative(this.citizen)) {
             adjustment = 25;
@@ -182,11 +182,11 @@ public class Governor : Role {
 //            this._loyaltySummary += adjustment.ToString() + "   does not value honor.\n";
 //        }
 
-        if (governorValues.Contains(CHARACTER_VALUE.INFLUENCE)) {
-            adjustment = -15;
-            baseLoyalty += adjustment;
-            this._loyaltySummary += adjustment.ToString() + "   values influence.\n";
-        }
+        //if (governorValues.Contains(CHARACTER_VALUE.INFLUENCE)) {
+        //    adjustment = -15;
+        //    baseLoyalty += adjustment;
+        //    this._loyaltySummary += adjustment.ToString() + "   values influence.\n";
+        //}
 
         for (int i = 0; i < kingdom.relationships.Count; i++){
 			if(kingdom.relationships.ElementAt(i).Value.isAtWar){
