@@ -10,7 +10,7 @@ public class DevelopWeapons : GameEvent {
     //private HexTile _weaponLocation;
     private Kingdom _sourceKingdom;
 
-    private CHARACTER_VALUE chosenValue;
+    //private CHARACTER_VALUE chosenValue;
 
     public DevelopWeapons(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom) : base(startWeek, startMonth, startYear, startedBy) {
         eventType = EVENT_TYPES.DEVELOP_WEAPONS;
@@ -73,7 +73,7 @@ public class DevelopWeapons : GameEvent {
     }
 
     protected void ProduceWeapons() {
-        chosenValue = CHARACTER_VALUE.STRENGTH;
+        //chosenValue = CHARACTER_VALUE.STRENGTH;
         Log prduceWeaponsLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "produce_weapons_start");
         prduceWeaponsLog.AddToFillers(_sourceKingdom.king, _sourceKingdom.king.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 
@@ -91,7 +91,7 @@ public class DevelopWeapons : GameEvent {
     }
 
     protected void HideWeapons() {
-        chosenValue = CHARACTER_VALUE.TRADITION;
+        //chosenValue = CHARACTER_VALUE.TRADITION;
         Log prduceWeaponsLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "DevelopWeapons", "hide_weapons_start");
         prduceWeaponsLog.AddToFillers(_sourceKingdom.king, _sourceKingdom.king.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 

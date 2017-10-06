@@ -255,8 +255,8 @@ public class SpouseAbduction : GameEvent {
 		newLog.AddToFillers (this.abductor.citizen, this.abductor.citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 		newLog.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
 		 
-		AdjustRelationshipFromOtherKingdoms(this.targetKing, -3, CHARACTER_VALUE.HONOR);
-		AdjustRelationshipFromOtherKingdoms(this.abductorKing, -3, CHARACTER_VALUE.HONOR);
+		//AdjustRelationshipFromOtherKingdoms(this.targetKing, -3, CHARACTER_VALUE.HONOR);
+		//AdjustRelationshipFromOtherKingdoms(this.abductorKing, -3, CHARACTER_VALUE.HONOR);
 	}
 	private void BeginSearchForSpouse(){
 		this.daysCounter += 1;
@@ -283,7 +283,7 @@ public class SpouseAbduction : GameEvent {
 //				if(this.relationshipKing != null){
 //					this.relationshipKing.AdjustLikeness (-60, this);
 //				}
-				AdjustRelationshipFromOtherKingdoms (this.abductorKing, -5, CHARACTER_VALUE.LIFE);
+				//AdjustRelationshipFromOtherKingdoms (this.abductorKing, -5, CHARACTER_VALUE.LIFE);
 
 				//Add log - instant war because of abduction and death
 				Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "compatible_instant_war_dead");
@@ -296,7 +296,7 @@ public class SpouseAbduction : GameEvent {
 //				if(this.relationshipKing != null){
 //					this.relationshipKing.AdjustLikeness (-30, this);
 //				}
-				AdjustRelationshipFromOtherKingdoms (this.abductorKing, -5, CHARACTER_VALUE.HONOR);
+				//AdjustRelationshipFromOtherKingdoms (this.abductorKing, -5, CHARACTER_VALUE.HONOR);
 
 				Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "compatible_instant_war_alive");
 				newLog2.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
@@ -317,7 +317,7 @@ public class SpouseAbduction : GameEvent {
 //				}else{
 //					HonorableOtherKingsAdjustRelationshipToBothKings();
 //				}
-				AdjustRelationshipFromOtherKingdoms(this.abductorKing, -5, CHARACTER_VALUE.LIFE);
+				//AdjustRelationshipFromOtherKingdoms(this.abductorKing, -5, CHARACTER_VALUE.LIFE);
 			}else{
 				HonorableOtherKingsAdjustRelationshipToBothKings();
 			}
@@ -369,7 +369,7 @@ public class SpouseAbduction : GameEvent {
 ////				}
 //			}
 //		}
-		AdjustRelationshipFromOtherKingdoms (this.abductorKing, -5, CHARACTER_VALUE.HONOR);
+		//AdjustRelationshipFromOtherKingdoms (this.abductorKing, -5, CHARACTER_VALUE.HONOR);
 
 		this.DoneEvent ();
 	}
@@ -452,16 +452,16 @@ public class SpouseAbduction : GameEvent {
 		this.DoneEvent ();
 	}
 
-	private void AdjustRelationshipFromOtherKingdoms(Citizen targetKing, int amount, CHARACTER_VALUE requiredValue){
-		for(int i = 0; i < this.otherKingdoms.Count; i++){
+	//private void AdjustRelationshipFromOtherKingdoms(Citizen targetKing, int amount, CHARACTER_VALUE requiredValue){
+	//	for(int i = 0; i < this.otherKingdoms.Count; i++){
 			//if(this.otherKingdoms[i].king.importantCharacterValues.ContainsKey(requiredValue)){
 			//	KingdomRelationship relationship = this.otherKingdoms [i].GetRelationshipWithKingdom (targetKing.city.kingdom);
 			//	if(relationship != null){
 			//		relationship.AddEventModifier (amount, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
 			//	}
 			//}
-		}
-	}
+		//}
+	//}
 
 	internal void ReturnSpouseToOriginal(){
 		if(this.isCompatibleWithTargetKing){

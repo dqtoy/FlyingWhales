@@ -72,7 +72,7 @@ public class Lycanthropy : GameEvent {
      * kingdom to the appropriate list.
      * */
     private EVENT_APPROACH DetermineApproach(object obj, bool forGovernorDecision = false) {
-        Dictionary<CHARACTER_VALUE, int> importantCharVals = null;
+        //Dictionary<CHARACTER_VALUE, int> importantCharVals = null;
         if (obj is Citizen) {
             //importantCharVals = ((Citizen)obj).importantCharacterValues;
         } else if (obj is Kingdom){
@@ -81,41 +81,41 @@ public class Lycanthropy : GameEvent {
 
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
 
-        if (!forGovernorDecision) {
-            if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.LAW_AND_ORDER)) {
-                KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
-                    .FirstOrDefault(x => x.Key == CHARACTER_VALUE.LIFE || x.Key == CHARACTER_VALUE.LAW_AND_ORDER);
+        //if (!forGovernorDecision) {
+        //    if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.LAW_AND_ORDER)) {
+        //        KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
+        //            .FirstOrDefault(x => x.Key == CHARACTER_VALUE.LIFE || x.Key == CHARACTER_VALUE.LAW_AND_ORDER);
 
-                if (priotiyValue.Key == CHARACTER_VALUE.LIFE) {
-                    chosenApproach = EVENT_APPROACH.HUMANISTIC;
-                } else if (priotiyValue.Key == CHARACTER_VALUE.LAW_AND_ORDER) {
-                    chosenApproach = EVENT_APPROACH.PRAGMATIC;
-                } else {
-                    chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
-                }
-            } else {
-                //a king who does not value any of the these values will choose OPPORTUNISTIC APPROACH in dealing with the werewolf.
-                chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
-            }
-        } else {
-            if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIBERTY) || importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD)
-                || importantCharVals.ContainsKey(CHARACTER_VALUE.DOMINATION)) {
-                KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
-                    .FirstOrDefault(x => x.Key == CHARACTER_VALUE.LIBERTY || x.Key == CHARACTER_VALUE.GREATER_GOOD ||
-                     importantCharVals.ContainsKey(CHARACTER_VALUE.DOMINATION));
+        //        if (priotiyValue.Key == CHARACTER_VALUE.LIFE) {
+        //            chosenApproach = EVENT_APPROACH.HUMANISTIC;
+        //        } else if (priotiyValue.Key == CHARACTER_VALUE.LAW_AND_ORDER) {
+        //            chosenApproach = EVENT_APPROACH.PRAGMATIC;
+        //        } else {
+        //            chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
+        //        }
+        //    } else {
+        //        //a king who does not value any of the these values will choose OPPORTUNISTIC APPROACH in dealing with the werewolf.
+        //        chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
+        //    }
+        //} else {
+        //    if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIBERTY) || importantCharVals.ContainsKey(CHARACTER_VALUE.GREATER_GOOD)
+        //        || importantCharVals.ContainsKey(CHARACTER_VALUE.DOMINATION)) {
+        //        KeyValuePair<CHARACTER_VALUE, int> priotiyValue = importantCharVals
+        //            .FirstOrDefault(x => x.Key == CHARACTER_VALUE.LIBERTY || x.Key == CHARACTER_VALUE.GREATER_GOOD ||
+        //             importantCharVals.ContainsKey(CHARACTER_VALUE.DOMINATION));
 
-                if (priotiyValue.Key == CHARACTER_VALUE.LIBERTY) {
-                    chosenApproach = EVENT_APPROACH.HUMANISTIC;
-                } else if (priotiyValue.Key == CHARACTER_VALUE.DOMINATION && ((Governor)((Citizen)obj).assignedRole).loyalty <= 0) {
-                    chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
-                } else {
-                    chosenApproach = EVENT_APPROACH.PRAGMATIC;
-                }
-            } else {
-                //a king who does not value any of the these values will choose OPPORTUNISTIC APPROACH in dealing with the werewolf.
-                chosenApproach = EVENT_APPROACH.PRAGMATIC;
-            }
-        }
+        //        if (priotiyValue.Key == CHARACTER_VALUE.LIBERTY) {
+        //            chosenApproach = EVENT_APPROACH.HUMANISTIC;
+        //        } else if (priotiyValue.Key == CHARACTER_VALUE.DOMINATION && ((Governor)((Citizen)obj).assignedRole).loyalty <= 0) {
+        //            chosenApproach = EVENT_APPROACH.OPPORTUNISTIC;
+        //        } else {
+        //            chosenApproach = EVENT_APPROACH.PRAGMATIC;
+        //        }
+        //    } else {
+        //        //a king who does not value any of the these values will choose OPPORTUNISTIC APPROACH in dealing with the werewolf.
+        //        chosenApproach = EVENT_APPROACH.PRAGMATIC;
+        //    }
+        //}
         
         return chosenApproach;
     }

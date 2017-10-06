@@ -301,9 +301,9 @@ public class EvilIntent : GameEvent {
         _targetKing.city.AddCitizenToCity(_kidnappedCitizen);
     }
 
-    private void AdjustGovernorsLoyalty(Citizen king, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
-        for (int i = 0; i < king.city.kingdom.cities.Count; i++) {
-            Governor currGovernor = (Governor)king.city.kingdom.cities[i].governor.assignedRole;
+    //private void AdjustGovernorsLoyalty(Citizen king, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
+    //    for (int i = 0; i < king.city.kingdom.cities.Count; i++) {
+    //        Governor currGovernor = (Governor)king.city.kingdom.cities[i].governor.assignedRole;
             //if (currGovernor.citizen.importantCharacterValues.ContainsKey(chosenValue) 
             //    || currGovernor.citizen.importantCharacterValues.ContainsKey(oppositeValue)) {
 
@@ -317,10 +317,10 @@ public class EvilIntent : GameEvent {
             //} else {
             //    currGovernor.AddEventModifier(-5, "Evil Intent Opinion", this);
             //}
-        }
-    }
+    //    }
+    //}
 
-    private void AdjustKingdomUnrest(Kingdom kingdom, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
+    //private void AdjustKingdomUnrest(Kingdom kingdom, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
         //if (kingdom.importantCharacterValues.ContainsKey(chosenValue) 
         //    || kingdom.importantCharacterValues.ContainsKey(oppositeValue)) {
         //    KeyValuePair<CHARACTER_VALUE, int> priotiyValue = kingdom.importantCharacterValues
@@ -333,14 +333,14 @@ public class EvilIntent : GameEvent {
         //} else {
         //    kingdom.AdjustStability(-10);
         //}
-    }
+    //}
 
-    private void AdjustOtherKingsRel(Citizen king, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
-        Kingdom thisKingdom = king.city.kingdom;
-        for (int i = 0; i < king.city.kingdom.discoveredKingdoms.Count; i++) {
-            Kingdom otherKingdom = king.city.kingdom.discoveredKingdoms[i];
-            Citizen otherKing = otherKingdom.king;
-            KingdomRelationship otherKingRel = otherKingdom.GetRelationshipWithKingdom(thisKingdom);
+    //private void AdjustOtherKingsRel(Citizen king, CHARACTER_VALUE chosenValue, CHARACTER_VALUE oppositeValue) {
+    //    Kingdom thisKingdom = king.city.kingdom;
+    //    for (int i = 0; i < king.city.kingdom.discoveredKingdoms.Count; i++) {
+    //        Kingdom otherKingdom = king.city.kingdom.discoveredKingdoms[i];
+    //        Citizen otherKing = otherKingdom.king;
+    //        KingdomRelationship otherKingRel = otherKingdom.GetRelationshipWithKingdom(thisKingdom);
             //if (otherKing.importantCharacterValues.ContainsKey(chosenValue) 
             //    || otherKing.importantCharacterValues.ContainsKey(oppositeValue)) {
 
@@ -354,6 +354,6 @@ public class EvilIntent : GameEvent {
             //} else {
             //    otherKingRel.AddEventModifier(-5, "Evil Intent Opinion", this);
             //}
-        }
-    }
+        //}
+    //}
 }
