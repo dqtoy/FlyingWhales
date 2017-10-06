@@ -1053,6 +1053,11 @@ public class Kingdom{
         }
     }
     private void IncreaseExpansionRatePerMonth() {
+        if(CityGenerator.Instance.GetExpandableTileForKingdom(this) == null) {
+            //set expansion rate to 0 and don't increase expansion rate until kingdom can expand
+            ResetExpansionRate();
+            return;
+        }
         if (_expansionRate < GridMap.Instance.numOfRegions) {
             AdjustExpansionRate(GetMonthlyExpansionRateIncrease());
         }
