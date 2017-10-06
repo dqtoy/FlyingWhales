@@ -73,7 +73,7 @@ public class Battle {
     }
 
 	private void SetAttackerAndDefenderCity(City attacker, City defender){
-		if (!this._warfare.isOver) {
+		if (!this._warfare.isOver && !this._isOver) {
 			this.attacker = attacker;
 			this.defender = defender;
 			this.attacker.ChangeAttackingState (true);
@@ -100,13 +100,13 @@ public class Battle {
 	}
 
 	private void Step2(){
-		if (!this._warfare.isOver) {
+		if (!this._warfare.isOver && !this._isOver) {
 			DeclareWar ();
 			Attack ();
 		}
 	}
 	private void Step3(){
-		if (!this._warfare.isOver) {
+		if (!this._warfare.isOver && !this._isOver) {
 			Combat ();
 		}
 	}
@@ -357,8 +357,6 @@ public class Battle {
 //                this._warfare.ShowUINotification(newLog);
 //                ChangePositionAndGoToStep1();
 //			}
-		}else{
-			CityDied ();
 		}
 	}
 	private int GetPowerBuffs(City city){
@@ -525,8 +523,8 @@ public class Battle {
 				if(!this._kingdom1.isDead && !this._kingdom2.isDead){
 					this._kr.ChangeBattle (null);
 					if(!this._kr.isAdjacent){
-						this._warfare.PeaceDeclaration (this._kingdom1, this._kingdom2);
 						this._warfare.RemoveBattle (this);
+						this._warfare.PeaceDeclaration (this._kingdom1, this._kingdom2);
 						return;
 					}
 				}
@@ -541,6 +539,20 @@ public class Battle {
 				}
 			}
 		}
+	}
+	internal void ResolveBattle(){
+		this._isOver = true;
+		Messenger.RemoveListener<City> ("CityDied", CityDied);
+		this._kingdom1City.isPaired = false;
+		this._kingdom2City.isPaired = false;
+		this._kingdom1City.ChangeAttackingState (false);
+		this._kingdom1City.ChangeDefendingState (false);
+		this._kingdom2City.ChangeAttackingState (false);
+		this._kingdom2City.ChangeDefendingState (false);
+		if(!this._kingdom1.isDead && !this._kingdom2.isDead){
+			this._kr.ChangeBattle (null);
+		}
+		this._warfare.RemoveBattle (this);
 	}
 	private void ChangePositionAndGoToStep1(){
 		SetAttackerAndDefenderCity (this.defender, this.attacker);

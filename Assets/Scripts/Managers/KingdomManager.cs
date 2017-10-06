@@ -523,8 +523,8 @@ public class KingdomManager : MonoBehaviour {
 
 	internal int GetReducedInvasionValueThreshHold(float originalValue, int overPopulation){
 		int newValue = (int)(originalValue - (float)overPopulation);
-		if(newValue < 0){
-			newValue = 0;
+		if(newValue < 1){
+			newValue = 1;
 		}
 		return newValue;
 	}

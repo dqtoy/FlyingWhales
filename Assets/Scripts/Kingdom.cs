@@ -2367,148 +2367,148 @@ public class Kingdom{
 
 		}
 	}
-	private void SeekBalance(){
-		bool mustSeekAlliance = false;
-        Debug.Log("========== " + name + " is seeking balance " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
-		//break any alliances with anyone whose threat value is 100 or above and lose 50 Prestige
-		if(this.alliancePool != null){
-			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
-				Kingdom kingdom = this.alliancePool.kingdomsInvolved[i];
-				if(this.id != kingdom.id){
-					KingdomRelationship kr = GetRelationshipWithKingdom(kingdom);
-					if(kr.targetKingdomThreatLevel >= 100){
-						LeaveAlliance ();
-						AdjustPrestige(-GridMap.Instance.numOfRegions);
-                        Debug.Log(name + " broke alliance with " + kingdom.name +
-                            " because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + "," + name + 
-                            " lost 50 prestige. Prestige is now " + prestige.ToString());
-						break;
-					}
-				}
-			}
-		}
-
-		//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
-		foreach (KingdomRelationship relationship in this.relationships.Values) {
-			if(relationship.isDiscovered){
-				if(relationship.targetKingdomThreatLevel >= 50){
-					if(relationship.targetKingdom.alliancePool == null){
-						mustSeekAlliance = true;
-						break;
-					}else{
-						if(this.alliancePool == null){
-							mustSeekAlliance = true;
-							break;
-						}else{
-							if(this.alliancePool.id != relationship.targetKingdom.alliancePool.id){
-								mustSeekAlliance = true;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		if(mustSeekAlliance){
-			//if i am not part of any alliance, create or join an alliance if possible
-			if(this.alliancePool == null){
-				SeekAlliance ();
-			}
-
-			//if Stability is greater than -50, militarize, otherwise only 25% chance to militarize
-			if(this.stability > -50){
-				Militarize (true);
-                Debug.Log(name + " has " + stability.ToString() + " stability and starts militarizing");
-            } else{
-				int chance = UnityEngine.Random.Range (0, 100);
-				if(chance < 25){
-                    Militarize (true);
-                    Debug.Log(name + " has " + stability.ToString() + " stability and starts militarizing");
-                }
-			}
-		}
-
-		bool hasAllianceInWar = false;
-		if(this.alliancePool != null){
-			bool hasLeftAlliance = false;
-			Dictionary<Warfare, WAR_SIDE> warsToJoin = new Dictionary<Warfare, WAR_SIDE>();
-			foreach (KingdomRelationship relationship in this.relationships.Values) {
-				if(!relationship.isAtWar && !relationship.AreAllies() && relationship.isDiscovered){
-					for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
-						Kingdom allyKingdom = this.alliancePool.kingdomsInvolved[i];
-						if(this.id != allyKingdom.id){
-							KingdomRelationship kr = allyKingdom.GetRelationshipWithKingdom(relationship.targetKingdom);
-							if(kr.isAtWar){
-								hasAllianceInWar = true;
-								if(!warsToJoin.ContainsKey(kr.warfare)){
-									KingdomRelationship krWithAlly = GetRelationshipWithKingdom (allyKingdom);
-									int totalChanceOfJoining = krWithAlly.totalLike * 2;
-									int chance = UnityEngine.Random.Range (0, 100);
-									if(chance < totalChanceOfJoining){
-										//Join War
-										warsToJoin.Add(kr.warfare, kr.warfare.kingdomSides[allyKingdom.id]);
-										Debug.Log(name + " will join in " + allyKingdom.name + "'s war");
-	                                } else{
-										//Don't join war, leave alliance, lose 100 prestige
-										LeaveAlliance();
-										int prestigeLost = (int)((float)GridMap.Instance.numOfRegions * 1.5f);
-										AdjustPrestige (-prestigeLost);
-										hasLeftAlliance = true;
-										Debug.Log(name + " does not join in " + allyKingdom.name + "'s war, leaves the alliance and loses " + prestigeLost.ToString() + " prestige. Prestige is now " + prestige.ToString());
-	                                    break;
-									}
-								}
-							}
-						}
-					}
-					if(hasLeftAlliance){
-						break;
-					}
-				}
-			}
-			if(!hasLeftAlliance && warsToJoin.Count > 0){
-				foreach (Warfare warfare in warsToJoin.Keys) {
-					warfare.JoinWar(warsToJoin[warfare], this);
-				}
-			}
-		}
-        //if prestige can still accommodate more cities but nowhere to expand and currently not at war and none of my allies are at war
-        if (this.alliancePool == null || !hasAllianceInWar){
-			if(this.cities.Count < this.cityCap){
-				if(!HasWar()){
-					HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
-					if(hexTile == null){
-						//Can no longer expand
-						Kingdom targetKingdom = null;
-						float highestInvasionValue = 0;
-						foreach (KingdomRelationship relationship in this.relationships.Values) {
-							if(relationship.isAdjacent && relationship.targetKingdomInvasionValue > 50){
-								if(!relationship.AreAllies()){
-									if(targetKingdom == null){
-										targetKingdom = relationship.targetKingdom;
-										highestInvasionValue = relationship.targetKingdomInvasionValue;
-									}else{
-										if(relationship.targetKingdomInvasionValue > highestInvasionValue){
-											targetKingdom = relationship.targetKingdom;
-											highestInvasionValue = relationship.targetKingdomInvasionValue;
-										}
-									}
-								}
-							}
-						}
-						if(targetKingdom != null){
-                            //if there is anyone whose Invasion Value is 50 or above, prepare for war against the one with the highest Invasion Value
-                            Warfare warfare = new Warfare (this, targetKingdom);
-                            Debug.Log(name + " prepares for war against " + targetKingdom.name);
-                        }
-					}
-				}
-			}
-		}
-
-        Debug.Log("========== END SEEKS BALANCE " + name + " ==========");
-
-	}
+//	private void SeekBalance(){
+//		bool mustSeekAlliance = false;
+//        Debug.Log("========== " + name + " is seeking balance " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
+//		//break any alliances with anyone whose threat value is 100 or above and lose 50 Prestige
+//		if(this.alliancePool != null){
+//			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
+//				Kingdom kingdom = this.alliancePool.kingdomsInvolved[i];
+//				if(this.id != kingdom.id){
+//					KingdomRelationship kr = GetRelationshipWithKingdom(kingdom);
+//					if(kr.targetKingdomThreatLevel >= 100){
+//						LeaveAlliance ();
+//						AdjustPrestige(-GridMap.Instance.numOfRegions);
+//                        Debug.Log(name + " broke alliance with " + kingdom.name +
+//                            " because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + "," + name + 
+//                            " lost 50 prestige. Prestige is now " + prestige.ToString());
+//						break;
+//					}
+//				}
+//			}
+//		}
+//
+//		//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
+//		foreach (KingdomRelationship relationship in this.relationships.Values) {
+//			if(relationship.isDiscovered){
+//				if(relationship.targetKingdomThreatLevel >= 50){
+//					if(relationship.targetKingdom.alliancePool == null){
+//						mustSeekAlliance = true;
+//						break;
+//					}else{
+//						if(this.alliancePool == null){
+//							mustSeekAlliance = true;
+//							break;
+//						}else{
+//							if(this.alliancePool.id != relationship.targetKingdom.alliancePool.id){
+//								mustSeekAlliance = true;
+//								break;
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		if(mustSeekAlliance){
+//			//if i am not part of any alliance, create or join an alliance if possible
+//			if(this.alliancePool == null){
+//				SeekAlliance ();
+//			}
+//
+//			//if Stability is greater than -50, militarize, otherwise only 25% chance to militarize
+//			if(this.stability > -50){
+//				Militarize (true);
+//                Debug.Log(name + " has " + stability.ToString() + " stability and starts militarizing");
+//            } else{
+//				int chance = UnityEngine.Random.Range (0, 100);
+//				if(chance < 25){
+//                    Militarize (true);
+//                    Debug.Log(name + " has " + stability.ToString() + " stability and starts militarizing");
+//                }
+//			}
+//		}
+//
+//		bool hasAllianceInWar = false;
+//		if(this.alliancePool != null){
+//			bool hasLeftAlliance = false;
+//			Dictionary<Warfare, WAR_SIDE> warsToJoin = new Dictionary<Warfare, WAR_SIDE>();
+//			foreach (KingdomRelationship relationship in this.relationships.Values) {
+//				if(!relationship.isAtWar && !relationship.AreAllies() && relationship.isDiscovered){
+//					for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
+//						Kingdom allyKingdom = this.alliancePool.kingdomsInvolved[i];
+//						if(this.id != allyKingdom.id){
+//							KingdomRelationship kr = allyKingdom.GetRelationshipWithKingdom(relationship.targetKingdom);
+//							if(kr.isAtWar){
+//								hasAllianceInWar = true;
+//								if(!warsToJoin.ContainsKey(kr.warfare)){
+//									KingdomRelationship krWithAlly = GetRelationshipWithKingdom (allyKingdom);
+//									int totalChanceOfJoining = krWithAlly.totalLike * 2;
+//									int chance = UnityEngine.Random.Range (0, 100);
+//									if(chance < totalChanceOfJoining){
+//										//Join War
+//										warsToJoin.Add(kr.warfare, kr.warfare.kingdomSides[allyKingdom.id]);
+//										Debug.Log(name + " will join in " + allyKingdom.name + "'s war");
+//	                                } else{
+//										//Don't join war, leave alliance, lose 100 prestige
+//										LeaveAlliance();
+//										int prestigeLost = (int)((float)GridMap.Instance.numOfRegions * 1.5f);
+//										AdjustPrestige (-prestigeLost);
+//										hasLeftAlliance = true;
+//										Debug.Log(name + " does not join in " + allyKingdom.name + "'s war, leaves the alliance and loses " + prestigeLost.ToString() + " prestige. Prestige is now " + prestige.ToString());
+//	                                    break;
+//									}
+//								}
+//							}
+//						}
+//					}
+//					if(hasLeftAlliance){
+//						break;
+//					}
+//				}
+//			}
+//			if(!hasLeftAlliance && warsToJoin.Count > 0){
+//				foreach (Warfare warfare in warsToJoin.Keys) {
+//					warfare.JoinWar(warsToJoin[warfare], this);
+//				}
+//			}
+//		}
+//        //if prestige can still accommodate more cities but nowhere to expand and currently not at war and none of my allies are at war
+//        if (this.alliancePool == null || !hasAllianceInWar){
+//			if(this.cities.Count < this.cityCap){
+//				if(!HasWar()){
+//					HexTile hexTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
+//					if(hexTile == null){
+//						//Can no longer expand
+//						Kingdom targetKingdom = null;
+//						float highestInvasionValue = 0;
+//						foreach (KingdomRelationship relationship in this.relationships.Values) {
+//							if(relationship.isAdjacent && relationship.targetKingdomInvasionValue > 50){
+//								if(!relationship.AreAllies()){
+//									if(targetKingdom == null){
+//										targetKingdom = relationship.targetKingdom;
+//										highestInvasionValue = relationship.targetKingdomInvasionValue;
+//									}else{
+//										if(relationship.targetKingdomInvasionValue > highestInvasionValue){
+//											targetKingdom = relationship.targetKingdom;
+//											highestInvasionValue = relationship.targetKingdomInvasionValue;
+//										}
+//									}
+//								}
+//							}
+//						}
+//						if(targetKingdom != null){
+//                            //if there is anyone whose Invasion Value is 50 or above, prepare for war against the one with the highest Invasion Value
+//                            Warfare warfare = new Warfare (this, targetKingdom);
+//                            Debug.Log(name + " prepares for war against " + targetKingdom.name);
+//                        }
+//					}
+//				}
+//			}
+//		}
+//
+//        Debug.Log("========== END SEEKS BALANCE " + name + " ==========");
+//
+//	}
 	private void SeeksBandwagon(){
 		KingdomRelationship relationship = GetRelationshipWithKingdom (this._mainThreat);
 

@@ -284,11 +284,11 @@ public class KingdomRelationship {
 		if(this._targetKingdom.king.charisma == CHARISMA.CHARISMATIC){
 			adjustment = 15;
 			baseLoyalty += adjustment;
-			this._relationshipSummary += "+" + adjustment.ToString() + " Charismatic Target.\n";
+			this._relationshipSummary += "+" + adjustment.ToString() + " Charmed.\n";
 		}else if(this._targetKingdom.king.charisma == CHARISMA.REPULSIVE){
 			adjustment = -15;
 			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Repulsive Target.\n";
+			this._relationshipSummary += adjustment.ToString() + " Repulsed.\n";
 		}
 
 		//Military Trait
@@ -300,7 +300,7 @@ public class KingdomRelationship {
 			}else{
 				adjustment = -15;
 				baseLoyalty += adjustment;
-				this._relationshipSummary += adjustment.ToString() + " Hostile Target.\n";
+				this._relationshipSummary += adjustment.ToString() + " Disapproved Hostility.\n";
 			}
 		}else if(this._sourceKingdom.king.military == MILITARY.HOSTILE){
 			adjustment = -15;
@@ -316,7 +316,7 @@ public class KingdomRelationship {
 		}else if(this._sourceKingdom.king.science == SCIENCE.ERUDITE && this._targetKingdom.king.science == SCIENCE.IGNORANT){
 			adjustment = -15;
 			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Ignorant Target.\n";
+			this._relationshipSummary += adjustment.ToString() + " Dislikes Ignorant.\n";
 		}
 
 		//Intelligence Trait
@@ -327,7 +327,7 @@ public class KingdomRelationship {
 		}else if(this._sourceKingdom.king.intelligence == INTELLIGENCE.SMART && this._targetKingdom.king.intelligence == INTELLIGENCE.DUMB){
 			adjustment = -15;
 			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Dumb Target.\n";
+			this._relationshipSummary += adjustment.ToString() + " Dislikes Dumb.\n";
 		}
 
 		//Efficieny Trait
@@ -338,7 +338,7 @@ public class KingdomRelationship {
 		}else if(this._sourceKingdom.king.efficiency == EFFICIENCY.EFFICIENT && this._targetKingdom.king.efficiency == EFFICIENCY.INEPT){
 			adjustment = -15;
 			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Inept Target.\n";
+			this._relationshipSummary += adjustment.ToString() + " Dislikes Inept.\n";
 		}
 
 		if(this._targetKingdomThreatLevel >= 0f && this._targetKingdomThreatLevel < 1f){
@@ -726,8 +726,8 @@ public class KingdomRelationship {
 	private void AdjustAdjacency(bool state){
 		if(this._isAdjacent != state){
 			this._isAdjacent = state;
-            UpdateTargetInvasionValue();
-            UpdateTargetKingdomThreatLevel();
+//            UpdateTargetInvasionValue();
+//            UpdateTargetKingdomThreatLevel();
             if (state){
 				this._sourceKingdom.AddAdjacentKingdom (this._targetKingdom);
 			}else{
