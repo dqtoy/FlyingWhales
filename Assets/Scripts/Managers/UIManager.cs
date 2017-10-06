@@ -105,6 +105,7 @@ public class UIManager : MonoBehaviour {
 	public CitizenInfoUI citizenInfoUI;
     [SerializeField] private UILabel preferredKingdomTypeLbl;
     [SerializeField] private UILabel loyaltyToKingLbl;
+    [SerializeField] private TraitIcon[] citizenTraitIcons;
 
 	[Space(10)]
     [Header("Events UI Objects")]
@@ -680,7 +681,7 @@ public class UIManager : MonoBehaviour {
 
 		//ForTesting
 		citizenInfoForTestingGO.SetActive (true);
-        preferredKingdomTypeLbl.text = currentlyShowingCitizen.preferredKingdomType.ToString();
+        preferredKingdomTypeLbl.text = currentlyShowingCitizen.balanceType.ToString();
         loyaltyToKingLbl.text = currentlyShowingCitizen.loyaltyToKing.ToString();
 
         HideSmallInfo();
@@ -737,17 +738,50 @@ public class UIManager : MonoBehaviour {
 		this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
 
         //HideGovernorLoyalty ();
-        this.citizenInfoUI.SetTraits(currentlyShowingCitizen);
-  //      if (citizenToShow.assignedRole != null){
-		//	if (citizenToShow.assignedRole is Governor) {
-		//		Governor governor = (Governor)citizenToShow.assignedRole;
-		//		//ShowGovernorLoyalty ();
-		//		this.citizenInfoUI.SetGovernorTraits (governor);
-		//	} else if (citizenToShow.assignedRole is King) {
-		//		King king = (King)citizenToShow.assignedRole;
-		//		this.citizenInfoUI.SetKingTraits (king);
-		//	}
-		//}
+        //this.citizenInfoUI.SetTraits(currentlyShowingCitizen);
+        //Utilities.GetColorForTrait(currentlyShowingCitizen.efficiency);
+        //      if (citizenToShow.assignedRole != null){
+        //	if (citizenToShow.assignedRole is Governor) {
+        //		Governor governor = (Governor)citizenToShow.assignedRole;
+        //		//ShowGovernorLoyalty ();
+        //		this.citizenInfoUI.SetGovernorTraits (governor);
+        //	} else if (citizenToShow.assignedRole is King) {
+        //		King king = (King)citizenToShow.assignedRole;
+        //		this.citizenInfoUI.SetKingTraits (king);
+        //	}
+        //}
+
+        List<object> traitsToShow = new List<object>();
+        if(currentlyShowingCitizen.charisma != CHARISMA.NEUTRAL) {
+            traitsToShow.Add(currentlyShowingCitizen.charisma);
+        }
+        if (currentlyShowingCitizen.intelligence != INTELLIGENCE.NEUTRAL) {
+            traitsToShow.Add(currentlyShowingCitizen.intelligence);
+        }
+        if (currentlyShowingCitizen.efficiency != EFFICIENCY.NEUTRAL) {
+            traitsToShow.Add(currentlyShowingCitizen.efficiency);
+        }
+        if (currentlyShowingCitizen.science != SCIENCE.NEUTRAL) {
+            traitsToShow.Add(currentlyShowingCitizen.science);
+        }
+        if (currentlyShowingCitizen.military != MILITARY.NEUTRAL) {
+            traitsToShow.Add(currentlyShowingCitizen.military);
+        }
+        if (currentlyShowingCitizen.loyalty != LOYALTY.NEUTRAL) {
+            traitsToShow.Add(currentlyShowingCitizen.loyalty);
+        }
+
+        //traits
+        for (int i = 0; i < citizenTraitIcons.Length; i++) {
+            TraitIcon currIcon = citizenTraitIcons[i];
+            object trait = traitsToShow.ElementAtOrDefault(i);
+            if(trait == null) {
+                currIcon.gameObject.SetActive(false);
+            } else {
+                currIcon.SetTrait(trait);
+                currIcon.gameObject.SetActive(true);
+            }
+        }
 	}
 	public void HideCitizenInfo(){
 		currentlyShowingCitizen = null;
@@ -1128,7 +1162,7 @@ public class UIManager : MonoBehaviour {
             if (currentlyShowingCitizen.city.kingdom.successionLine.Count > 0) {
                 Citizen successor = currentlyShowingCitizen.city.kingdom.successionLine.FirstOrDefault();
                 successorPortrait.SetCitizen(successor, false, true);
-                successorPreferredKingdomTypeLbl.text = successor.preferredKingdomType.ToString();
+                //successorPreferredKingdomTypeLbl.text = successor.preferredKingdomType.ToString();
                 successorParentGO.SetActive(true);
             } else {
                 successorParentGO.SetActive(false);

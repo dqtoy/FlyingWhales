@@ -114,9 +114,18 @@ public class CityItem : MonoBehaviour {
             loyaltySummary += thisCitizen.loyaltyDeductionFromWar + "   Active Wars\n";
         }
         loyaltySummary += thisCitizen.loyaltySummary;
-        if(thisCitizen.loyaltyModifierForTesting != 0) {
+
+        int loyaltyFromStability = thisCitizen.GetLoyaltyFromStability();
+        if(loyaltyFromStability != 0) {
+            if (loyaltyFromStability > 0) {
+                loyaltySummary += "+";
+            }
+            loyaltySummary += loyaltyFromStability + "   Stability\n";
+        }
+
+        if (thisCitizen.loyaltyModifierForTesting != 0) {
             if(thisCitizen.loyaltyModifierForTesting > 0) {
-                loyaltySummary += "+ ";
+                loyaltySummary += "+";
             }
             loyaltySummary += thisCitizen.loyaltyModifierForTesting + "   Admin Modifier\n";
         }

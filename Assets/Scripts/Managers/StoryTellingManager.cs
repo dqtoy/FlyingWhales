@@ -42,156 +42,156 @@ public class StoryTellingManager : MonoBehaviour {
 //        }
 //	}
 	// Set the new kingdom type of a kingdom
-	public KingdomTypeData InitializeKingdomType(Kingdom kingdom) {
-		// if the kingdom's type is null, this means that this is the first time
-		if (kingdom.kingdomTypeData == null) {
-//			Debug.Log ("IKT: " + kingdom.kingdomTypeData + ". " + kingdom.sourceKingdom);
-			// if the kingdom's sourceKingdom is null, set the kingdom type based on chance
-			if (kingdom.sourceKingdom == null) {
-				int randomizer = Random.Range (0, 100);
-				if (randomizer < 40) {
-					return KingdomManager.Instance.kingdomTypeBarbaric;
-				} else if (randomizer < 70) {
-					return KingdomManager.Instance.kingdomTypeNaive;
-				} else {
-					return KingdomManager.Instance.kingdomTypeOpportunistic;
-				}
-			} else {
-				// otherwise, set the kingdom based on the kingdom's sourceKingdom type
-				return kingdom.sourceKingdom.kingdomTypeData;
-			}		
-		} else {
-			int randomizer = Random.Range (0, 100);
-			// otherwise, this means the kingdom already has an existing type and will just be changed based on the previous king	
-			switch (kingdom.kingdomType) {
-			case (KINGDOM_TYPE.BARBARIC_TRIBE):
-				if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq) {
-					if (randomizer < 60) {
-						return KingdomManager.Instance.kingdomTypeNoble;
-					} else {
-						return KingdomManager.Instance.kingdomTypeEvil;
-					}
-				}
-				return KingdomManager.Instance.kingdomTypeBarbaric;
+//	public KingdomTypeData InitializeKingdomType(Kingdom kingdom) {
+//		// if the kingdom's type is null, this means that this is the first time
+//		if (kingdom.kingdomTypeData == null) {
+////			Debug.Log ("IKT: " + kingdom.kingdomTypeData + ". " + kingdom.sourceKingdom);
+//			// if the kingdom's sourceKingdom is null, set the kingdom type based on chance
+//			if (kingdom.sourceKingdom == null) {
+//				int randomizer = Random.Range (0, 100);
+//				if (randomizer < 40) {
+//					return KingdomManager.Instance.kingdomTypeBarbaric;
+//				} else if (randomizer < 70) {
+//					return KingdomManager.Instance.kingdomTypeNaive;
+//				} else {
+//					return KingdomManager.Instance.kingdomTypeOpportunistic;
+//				}
+//			} else {
+//				// otherwise, set the kingdom based on the kingdom's sourceKingdom type
+//				return kingdom.sourceKingdom.kingdomTypeData;
+//			}		
+//		} else {
+//			int randomizer = Random.Range (0, 100);
+//			// otherwise, this means the kingdom already has an existing type and will just be changed based on the previous king	
+//			switch (kingdom.kingdomType) {
+//			case (KINGDOM_TYPE.BARBARIC_TRIBE):
+//				if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq) {
+//					if (randomizer < 60) {
+//						return KingdomManager.Instance.kingdomTypeNoble;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeEvil;
+//					}
+//				}
+//				return KingdomManager.Instance.kingdomTypeBarbaric;
 
-			case (KINGDOM_TYPE.NAIVE_TRIBE):
-				if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq) {
-					if (randomizer < 60) {
-						return KingdomManager.Instance.kingdomTypeMerchant;
-					} else {
-						return KingdomManager.Instance.kingdomTypeChaotic;
-					}
-				}
-				return KingdomManager.Instance.kingdomTypeNaive;
+//			case (KINGDOM_TYPE.NAIVE_TRIBE):
+//				if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq) {
+//					if (randomizer < 60) {
+//						return KingdomManager.Instance.kingdomTypeMerchant;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeChaotic;
+//					}
+//				}
+//				return KingdomManager.Instance.kingdomTypeNaive;
 
-			case (KINGDOM_TYPE.OPPORTUNISTIC_TRIBE):
-				if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq) {
-					if (randomizer < 50) {
-						return KingdomManager.Instance.kingdomTypeEvil;
-					} else {
-						return KingdomManager.Instance.kingdomTypeChaotic;
-					}
-				}
-				return KingdomManager.Instance.kingdomTypeOpportunistic;
+//			case (KINGDOM_TYPE.OPPORTUNISTIC_TRIBE):
+//				if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq) {
+//					if (randomizer < 50) {
+//						return KingdomManager.Instance.kingdomTypeEvil;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeChaotic;
+//					}
+//				}
+//				return KingdomManager.Instance.kingdomTypeOpportunistic;
 
-			case (KINGDOM_TYPE.NOBLE_KINGDOM):
-				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
-					if (randomizer < 50) {
-						return KingdomManager.Instance.kingdomTypeBarbaric;
-					} else {
-						return KingdomManager.Instance.kingdomTypeNaive;
-					}
-				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
-					return KingdomManager.Instance.kingdomTypeRighteous;
-				}
-				return KingdomManager.Instance.kingdomTypeNoble;
+//			case (KINGDOM_TYPE.DEFENSIVE_KINGDOM):
+//				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
+//					if (randomizer < 50) {
+//						return KingdomManager.Instance.kingdomTypeBarbaric;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeNaive;
+//					}
+//				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
+//					return KingdomManager.Instance.kingdomTypeRighteous;
+//				}
+//				return KingdomManager.Instance.kingdomTypeNoble;
 
-			case (KINGDOM_TYPE.EVIL_EMPIRE):
-				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
-					if (randomizer < 50) {
-						return KingdomManager.Instance.kingdomTypeBarbaric;
-					} else {
-						return KingdomManager.Instance.kingdomTypeOpportunistic;
-					}
-				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
-					return KingdomManager.Instance.kingdomTypeWicked;
-				}
-				return KingdomManager.Instance.kingdomTypeEvil;
+//			case (KINGDOM_TYPE.OFFENSIVE_KINGDOM):
+//				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
+//					if (randomizer < 50) {
+//						return KingdomManager.Instance.kingdomTypeBarbaric;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeOpportunistic;
+//					}
+//				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
+//					return KingdomManager.Instance.kingdomTypeWicked;
+//				}
+//				return KingdomManager.Instance.kingdomTypeEvil;
 
-			case (KINGDOM_TYPE.MERCHANT_NATION):
-				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
-					if (randomizer < 50) {
-						return KingdomManager.Instance.kingdomTypeOpportunistic;
-					} else {
-						return KingdomManager.Instance.kingdomTypeNaive;
-					}
-				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
-					return KingdomManager.Instance.kingdomTypeRighteous;
-				}
-				return KingdomManager.Instance.kingdomTypeMerchant;
+//			case (KINGDOM_TYPE.SCIENTIFIC_KINGDOM):
+//				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
+//					if (randomizer < 50) {
+//						return KingdomManager.Instance.kingdomTypeOpportunistic;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeNaive;
+//					}
+//				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
+//					return KingdomManager.Instance.kingdomTypeRighteous;
+//				}
+//				return KingdomManager.Instance.kingdomTypeMerchant;
 
-			case (KINGDOM_TYPE.CHAOTIC_STATE):
-				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
-					if (randomizer < 50) {
-						return KingdomManager.Instance.kingdomTypeOpportunistic;
-					} else {
-						return KingdomManager.Instance.kingdomTypeBarbaric;
-					}
-				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
-					return KingdomManager.Instance.kingdomTypeWicked;
-				}
-				return KingdomManager.Instance.kingdomTypeChaotic;
+//			case (KINGDOM_TYPE.BALANCED_KINGDOM):
+//				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
+//					if (randomizer < 50) {
+//						return KingdomManager.Instance.kingdomTypeOpportunistic;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeBarbaric;
+//					}
+//				} else if (kingdom.cities.Count > KingdomManager.Instance.mediumToLargeReq) {
+//					return KingdomManager.Instance.kingdomTypeWicked;
+//				}
+//				return KingdomManager.Instance.kingdomTypeChaotic;
 
-			case (KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER):
-				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
-					if (randomizer < 50) {
-						return KingdomManager.Instance.kingdomTypeNaive;
-					} else {
-						return KingdomManager.Instance.kingdomTypeBarbaric;
-					}
-				} else if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq && kingdom.cities.Count <= KingdomManager.Instance.mediumToLargeReq) {
-					if (randomizer < 50) {
-						return KingdomManager.Instance.kingdomTypeMerchant;
-					} else {
-						return KingdomManager.Instance.kingdomTypeNoble;
-					}
-				}
-				return KingdomManager.Instance.kingdomTypeRighteous;
+//			case (KINGDOM_TYPE.RIGHTEOUS_SUPERPOWER):
+//				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
+//					if (randomizer < 50) {
+//						return KingdomManager.Instance.kingdomTypeNaive;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeBarbaric;
+//					}
+//				} else if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq && kingdom.cities.Count <= KingdomManager.Instance.mediumToLargeReq) {
+//					if (randomizer < 50) {
+//						return KingdomManager.Instance.kingdomTypeMerchant;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeNoble;
+//					}
+//				}
+//				return KingdomManager.Instance.kingdomTypeRighteous;
 
-			case (KINGDOM_TYPE.WICKED_SUPERPOWER):
-				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
-					if (randomizer < 50) {
-						return KingdomManager.Instance.kingdomTypeOpportunistic;
-					} else {
-						return KingdomManager.Instance.kingdomTypeBarbaric;
-					}
-				} else if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq && kingdom.cities.Count <= KingdomManager.Instance.mediumToLargeReq) {
-					if (randomizer < 50) {
-						return KingdomManager.Instance.kingdomTypeEvil;
-					} else {
-						return KingdomManager.Instance.kingdomTypeChaotic;
-					}
-				}
-				return KingdomManager.Instance.kingdomTypeWicked;
-			}
+//			case (KINGDOM_TYPE.WICKED_SUPERPOWER):
+//				if (kingdom.cities.Count <= KingdomManager.Instance.smallToMediumReq) {
+//					if (randomizer < 50) {
+//						return KingdomManager.Instance.kingdomTypeOpportunistic;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeBarbaric;
+//					}
+//				} else if (kingdom.cities.Count > KingdomManager.Instance.smallToMediumReq && kingdom.cities.Count <= KingdomManager.Instance.mediumToLargeReq) {
+//					if (randomizer < 50) {
+//						return KingdomManager.Instance.kingdomTypeEvil;
+//					} else {
+//						return KingdomManager.Instance.kingdomTypeChaotic;
+//					}
+//				}
+//				return KingdomManager.Instance.kingdomTypeWicked;
+//			}
 
 
-		}
-		return null;
-	}
-    public KINGDOM_TYPE GetRandomKingdomTypeForCitizen() {
+//		}
+//		return null;
+//	}
+    public KINGDOM_TYPE GetRandomKingdomTypeForKingdom() {
         int chance = Random.Range(0, 4);
         switch (chance) {
             case 0:
-                return KINGDOM_TYPE.NOBLE_KINGDOM;
+                return KINGDOM_TYPE.DEFENSIVE_KINGDOM;
             case 1:
-                return KINGDOM_TYPE.EVIL_EMPIRE;
+                return KINGDOM_TYPE.OFFENSIVE_KINGDOM;
             case 2:
-                return KINGDOM_TYPE.MERCHANT_NATION;
+                return KINGDOM_TYPE.SCIENTIFIC_KINGDOM;
             case 3:
-                return KINGDOM_TYPE.CHAOTIC_STATE;
+                return KINGDOM_TYPE.BALANCED_KINGDOM;
             default:
-                return KINGDOM_TYPE.NOBLE_KINGDOM;
+                return KINGDOM_TYPE.DEFENSIVE_KINGDOM;
         }
     }
 }

@@ -146,6 +146,10 @@ public class Kingdom{
 	//Warfare
 	private Dictionary<int, WarfareInfo> _warfareInfo;
 
+    private float _researchRateFromKing;
+    private float _draftRateFromKing;
+    private float _productionRateFromKing;
+
 	#region getters/setters
 	public KINGDOM_TYPE kingdomType {
 		get { 
@@ -351,7 +355,7 @@ public class Kingdom{
             if (this._kingdomTypeData == null) {
                 return 0f;
             }
-            return this._kingdomTypeData.populationRates.draftRate;
+            return this._kingdomTypeData.populationRates.draftRate + _draftRateFromKing;
         }
     }
     internal float researchRate {
@@ -359,7 +363,7 @@ public class Kingdom{
             if (this._kingdomTypeData == null) {
                 return 0f;
             }
-            return this._kingdomTypeData.populationRates.researchRate;
+            return this._kingdomTypeData.populationRates.researchRate + _researchRateFromKing;
         }
     }
     internal float productionRate {
@@ -367,7 +371,7 @@ public class Kingdom{
             if (this._kingdomTypeData == null) {
                 return 0f;
             }
-            return this._kingdomTypeData.populationRates.productionRate;
+            return this._kingdomTypeData.populationRates.productionRate + _productionRateFromKing;
         }
     }
 	internal int effectiveAttack{
@@ -477,6 +481,7 @@ public class Kingdom{
 //		this.NewRandomCrimeDate (true);
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
+        SetKingdomType(StoryTellingManager.Instance.GetRandomKingdomTypeForKingdom());
 		//this.UpdateKingdomTypeData();
 
         this.basicResource = Utilities.GetBasicResourceForRace(race);
@@ -514,16 +519,16 @@ public class Kingdom{
     public void SetKingdomType(KINGDOM_TYPE kingdomType) {
         KINGDOM_TYPE prevKingdomType = this.kingdomType;
         switch (kingdomType) {
-            case KINGDOM_TYPE.NOBLE_KINGDOM:
+            case KINGDOM_TYPE.DEFENSIVE_KINGDOM:
                 this._kingdomTypeData = KingdomManager.Instance.kingdomTypeNoble;
                 break;
-            case KINGDOM_TYPE.EVIL_EMPIRE:
+            case KINGDOM_TYPE.OFFENSIVE_KINGDOM:
                 this._kingdomTypeData = KingdomManager.Instance.kingdomTypeEvil;
                 break;
-            case KINGDOM_TYPE.MERCHANT_NATION:
+            case KINGDOM_TYPE.SCIENTIFIC_KINGDOM:
                 this._kingdomTypeData = KingdomManager.Instance.kingdomTypeMerchant;
                 break;
-            case KINGDOM_TYPE.CHAOTIC_STATE:
+            case KINGDOM_TYPE.BALANCED_KINGDOM:
                 this._kingdomTypeData = KingdomManager.Instance.kingdomTypeChaotic;
                 break;
         }
@@ -540,39 +545,39 @@ public class Kingdom{
             //Update Relationship Opinion
             UpdateAllRelationshipsLikenessFromOthers();
 
-            if(prevKingdomType != KINGDOM_TYPE.NONE) {
-                Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
-                updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-                updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
-                UIManager.Instance.ShowNotification(updateKingdomTypeLog);
-            }
-        }
-    }
-
-	// Updates this kingdom's type and horoscope
-	public void UpdateKingdomTypeData() {
-		// Update Kingdom Type whenever the kingdom expands to a new city
-		KingdomTypeData prevKingdomTypeData = this._kingdomTypeData;
-		this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
-		if(this.kingdomTypeData.dailyCumulativeEventRate != null){
-			this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
-		}
-		// If the Kingdom Type Data changed
-		if (this._kingdomTypeData != prevKingdomTypeData) {
-            //Update Character Values of King and Governors
-            //this.UpdateCharacterValuesOfKingsAndGovernors();
-
-			//Update Relationship Opinion
-			UpdateAllRelationshipsLikeness();
-			UpdateAllRelationshipsLikenessFromOthers ();
-            //if (UIManager.Instance.currentlyShowingKingdom != null &&UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-                Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
-                updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-                updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
-                UIManager.Instance.ShowNotification(updateKingdomTypeLog);
+            //if(prevKingdomType != KINGDOM_TYPE.NONE) {
+            //    Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
+            //    updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+            //    updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
+            //    UIManager.Instance.ShowNotification(updateKingdomTypeLog);
             //}
         }
     }
+
+	//// Updates this kingdom's type and horoscope
+	//public void UpdateKingdomTypeData() {
+	//	// Update Kingdom Type whenever the kingdom expands to a new city
+	//	KingdomTypeData prevKingdomTypeData = this._kingdomTypeData;
+	//	this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
+	//	if(this.kingdomTypeData.dailyCumulativeEventRate != null){
+	//		this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
+	//	}
+	//	// If the Kingdom Type Data changed
+	//	if (this._kingdomTypeData != prevKingdomTypeData) {
+ //           //Update Character Values of King and Governors
+ //           //this.UpdateCharacterValuesOfKingsAndGovernors();
+
+	//		//Update Relationship Opinion
+	//		UpdateAllRelationshipsLikeness();
+	//		UpdateAllRelationshipsLikenessFromOthers ();
+ //           //if (UIManager.Instance.currentlyShowingKingdom != null &&UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+ //               Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
+ //               updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+ //               updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
+ //               UIManager.Instance.ShowNotification(updateKingdomTypeLog);
+ //           //}
+ //       }
+ //   }
 
     #region Kingdom Death
     // Function to call if you want to determine whether the Kingdom is still alive or dead
@@ -1048,6 +1053,11 @@ public class Kingdom{
         }
     }
     private void IncreaseExpansionRatePerMonth() {
+        if(CityGenerator.Instance.GetExpandableTileForKingdom(this) == null) {
+            //set expansion rate to 0 and don't increase expansion rate until kingdom can expand
+            ResetExpansionRate();
+            return;
+        }
         if (_expansionRate < GridMap.Instance.numOfRegions) {
             AdjustExpansionRate(GetMonthlyExpansionRateIncrease());
         }
@@ -1099,46 +1109,46 @@ public class Kingdom{
         //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
         //KingdomManager.Instance.UpdateKingdomPrestigeList();
     }
-    internal void MonthlyPrestigeActions() {
-        //Add Prestige
-		int prestigeToBeAdded = GetMonthlyPrestigeGain();
-		if(this.cityCap > this.cities.Count){
-			float reduction = GetMonthlyPrestigeReduction (this.cityCap - this.cities.Count);
-			prestigeToBeAdded -= (int)(prestigeToBeAdded * reduction);
-		}
-		AdjustPrestige(prestigeToBeAdded);
-        //Reschedule event
-        GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        gameDate.AddMonths(1);
-        gameDate.day = GameManager.daysInMonth[gameDate.month];
-        SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => MonthlyPrestigeActions());
-    }
-	private float GetMonthlyPrestigeReduction(int cityCapExcess){
-		if(cityCapExcess == 1){
-			return 0.05f;
-		}else if(cityCapExcess == 2){
-			return 0.15f;
-		}else if(cityCapExcess == 3){
-			return 0.3f;
-		}else if(cityCapExcess == 4){
-			return 0.5f;
-		}else if(cityCapExcess == 5){
-			return 0.7f;
-		}else if(cityCapExcess == 6){
-			return 0.9f;
-		}else if(cityCapExcess >= 7){
-			return 1f;
-		}
-		return 0f;
-	}
-    internal int GetMonthlyPrestigeGain() {
-        int monthlyPrestigeGain = 0;
-        monthlyPrestigeGain += king.GetPrestigeContribution();
-        for (int i = 0; i < cities.Count; i++) {
-            monthlyPrestigeGain += cities[i].governor.GetPrestigeContribution();
-        }
-        return monthlyPrestigeGain;
-    }
+  //  internal void MonthlyPrestigeActions() {
+  //      //Add Prestige
+		//int prestigeToBeAdded = GetMonthlyPrestigeGain();
+		//if(this.cityCap > this.cities.Count){
+		//	float reduction = GetMonthlyPrestigeReduction (this.cityCap - this.cities.Count);
+		//	prestigeToBeAdded -= (int)(prestigeToBeAdded * reduction);
+		//}
+		//AdjustPrestige(prestigeToBeAdded);
+  //      //Reschedule event
+  //      //GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+  //      //gameDate.AddMonths(1);
+  //      //gameDate.day = GameManager.daysInMonth[gameDate.month];
+  //      //SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => MonthlyPrestigeActions());
+  //  }
+	//private float GetMonthlyPrestigeReduction(int cityCapExcess){
+	//	if(cityCapExcess == 1){
+	//		return 0.05f;
+	//	}else if(cityCapExcess == 2){
+	//		return 0.15f;
+	//	}else if(cityCapExcess == 3){
+	//		return 0.3f;
+	//	}else if(cityCapExcess == 4){
+	//		return 0.5f;
+	//	}else if(cityCapExcess == 5){
+	//		return 0.7f;
+	//	}else if(cityCapExcess == 6){
+	//		return 0.9f;
+	//	}else if(cityCapExcess >= 7){
+	//		return 1f;
+	//	}
+	//	return 0f;
+	//}
+    //internal int GetMonthlyPrestigeGain() {
+    //    int monthlyPrestigeGain = 0;
+    //    monthlyPrestigeGain += king.GetPrestigeContribution();
+    //    for (int i = 0; i < cities.Count; i++) {
+    //        monthlyPrestigeGain += cities[i].governor.GetPrestigeContribution();
+    //    }
+    //    return monthlyPrestigeGain;
+    //}
     #endregion
 
     #region Trading
@@ -1377,7 +1387,7 @@ public class Kingdom{
 		if(newKing == null){
 			return;
 		}
-        SetKingdomType(newKing.preferredKingdomType);
+        //SetKingdomType(newKing.preferredKingdomType);
         SetCapitalCity(newKing.city);
         newKing.city.hasKing = true;
 
@@ -1409,7 +1419,8 @@ public class Kingdom{
         this.successionLine.AddRange(newKing.GetSiblings());
         UpdateKingSuccession();
 
-        this.UpdateAllGovernorsLoyalty();
+        this.UpdateProductionRatesFromKing();
+        //this.UpdateAllGovernorsLoyalty();
         this.UpdateAllRelationshipsLikeness();
         this.UpdateAllCitizensOpinionOfKing();
     }
@@ -1686,7 +1697,7 @@ public class Kingdom{
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             if (!currCity.isDead && currCity.rebellion == null) {
-                monthlyTechGain += currCity.techPoints * 2;
+                monthlyTechGain += currCity.techPoints;
             }
         }
         //Tech Gains
@@ -2207,66 +2218,67 @@ public class Kingdom{
 		CrimeData crimeData = CrimeEvents.Instance.GetRandomCrime ();
 		EventCreator.Instance.CreateCrimeEvent (this, crimeData);
 	}
-	#endregion
+    #endregion
 
-	internal void AddActiveEvent(GameEvent gameEvent){
-		this.activeEvents.Add (gameEvent);
-	}
-	internal void RemoveActiveEvent(GameEvent gameEvent){
-		this.activeEvents.Remove (gameEvent);
-		AddToDoneEvents (gameEvent);
-	}
-	internal void AddToDoneEvents(GameEvent gameEvent){
-		this.doneEvents.Add (gameEvent);
-		if(this.doneEvents.Count > KingdomManager.Instance.maxKingdomEventHistory){
-			this.doneEvents.RemoveAt (0);
-		}
-	}
-	internal bool HasActiveEvent(EVENT_TYPES eventType){
-		for (int i = 0; i < this.activeEvents.Count; i++) {
-			if(this.activeEvents[i].eventType == eventType){
-				return true;
-			}
-		}
-		return false;
-	}
-	internal int GetActiveEventsOfTypeCount(EVENT_TYPES eventType){
-		int count = 0;
-		for (int i = 0; i < this.activeEvents.Count; i++) {
-			if(this.activeEvents[i].eventType == eventType){
-				count += 1;
-			}
-		}
-		return count;
-	}
-	internal List<GameEvent> GetEventsOfType(EVENT_TYPES eventType, bool isActiveOnly = true){
-		List<GameEvent> gameEvents = new List<GameEvent> ();
-		for (int i = 0; i < this.activeEvents.Count; i++) {
-			if(this.activeEvents[i].eventType == eventType){
-				gameEvents.Add (this.activeEvents [i]);
-			}
-		}
-		if(!isActiveOnly){
-			for (int i = 0; i < this.doneEvents.Count; i++) {
-				if(this.doneEvents[i].eventType == eventType){
-					gameEvents.Add (this.doneEvents [i]);
-				}
-			}
-		}
-		return gameEvents;
-	}
-//	internal bool HasActiveEventWith(EVENT_TYPES eventType, Kingdom kingdom){
-//		for (int i = 0; i < this.activeEvents.Count; i++) {
-//			if(this.activeEvents[i].eventType == eventType){
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
+    #region Event Management
+    internal void AddActiveEvent(GameEvent gameEvent) {
+        this.activeEvents.Add(gameEvent);
+    }
+    internal void RemoveActiveEvent(GameEvent gameEvent) {
+        this.activeEvents.Remove(gameEvent);
+        AddToDoneEvents(gameEvent);
+    }
+    internal void AddToDoneEvents(GameEvent gameEvent) {
+        this.doneEvents.Add(gameEvent);
+        if (this.doneEvents.Count > KingdomManager.Instance.maxKingdomEventHistory) {
+            this.doneEvents.RemoveAt(0);
+        }
+    }
+    internal bool HasActiveEvent(EVENT_TYPES eventType) {
+        for (int i = 0; i < this.activeEvents.Count; i++) {
+            if (this.activeEvents[i].eventType == eventType) {
+                return true;
+            }
+        }
+        return false;
+    }
+    internal int GetActiveEventsOfTypeCount(EVENT_TYPES eventType) {
+        int count = 0;
+        for (int i = 0; i < this.activeEvents.Count; i++) {
+            if (this.activeEvents[i].eventType == eventType) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+    internal List<GameEvent> GetEventsOfType(EVENT_TYPES eventType, bool isActiveOnly = true) {
+        List<GameEvent> gameEvents = new List<GameEvent>();
+        for (int i = 0; i < this.activeEvents.Count; i++) {
+            if (this.activeEvents[i].eventType == eventType) {
+                gameEvents.Add(this.activeEvents[i]);
+            }
+        }
+        if (!isActiveOnly) {
+            for (int i = 0; i < this.doneEvents.Count; i++) {
+                if (this.doneEvents[i].eventType == eventType) {
+                    gameEvents.Add(this.doneEvents[i]);
+                }
+            }
+        }
+        return gameEvents;
+    }
+    //	internal bool HasActiveEventWith(EVENT_TYPES eventType, Kingdom kingdom){
+    //		for (int i = 0; i < this.activeEvents.Count; i++) {
+    //			if(this.activeEvents[i].eventType == eventType){
+    //				return true;
+    //			}
+    //		}
+    //		return false;
+    //	}
+    #endregion
 
-
-	#region Governors Loyalty/Opinion
-	internal void HasConflicted(GameEvent gameEvent){
+    #region Governors Loyalty/Opinion
+    internal void HasConflicted(GameEvent gameEvent){
 		for(int i = 0; i < this.cities.Count; i++){
 			if(this.cities[i].governor != null){
 				((Governor)this.cities[i].governor.assignedRole).AddEventModifier (-10, "Recent border conflict", gameEvent);
@@ -2355,9 +2367,9 @@ public class Kingdom{
 	private void ActionDay(){
 		if(!this.isDead){
 			UpdateThreatLevelsAndInvasionValues ();
-			if (this.kingdomTypeData.purpose == PURPOSE.BALANCE) {
+			if (this.king.balanceType == PURPOSE.BALANCE) {
 				SeeksBalance.Initialize(this);
-			}else if (this.kingdomTypeData.purpose == PURPOSE.SUPERIORITY) {
+			}else if (this.king.balanceType == PURPOSE.SUPERIORITY) {
 				SeeksSuperiority.Initialize(this);
 			}
 
@@ -2749,6 +2761,7 @@ public class Kingdom{
                 currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
                 totalWeaponsIncrease += weaponsContribution;
                 totalArmorIncrease += armorContribution;
+                totalTechIncrease += techContribution;
             }
         }
         if (isMilitarize) {
@@ -2807,12 +2820,50 @@ public class Kingdom{
         }
         return stabilityContributionsFromCitizens;
     }
-//    internal void AdjustBaseWeapons(int adjustment) {
-//        _baseWeapons += adjustment;
-//    }
-//    internal void AdjustBaseArmor(int adjustment) {
-//        _baseArmor += adjustment;
-//    }
+    //    internal void AdjustBaseWeapons(int adjustment) {
+    //        _baseWeapons += adjustment;
+    //    }
+    //    internal void AdjustBaseArmor(int adjustment) {
+    //        _baseArmor += adjustment;
+    //    }
+
+    internal void UpdateProductionRatesFromKing() {
+        _researchRateFromKing = 0f;
+        _draftRateFromKing = 0f;
+        _productionRateFromKing = 0f;
+
+        switch (king.science) {
+            case SCIENCE.ERUDITE:
+                _researchRateFromKing = 0.10f;
+                break;
+            case SCIENCE.ACADEMIC:
+                _researchRateFromKing = 0.05f;
+                break;
+            case SCIENCE.IGNORANT:
+                _researchRateFromKing = -0.05f;
+                break;
+            default:
+                break;
+        }
+        _productionRateFromKing -= _researchRateFromKing;
+
+        switch (king.military) {
+            case MILITARY.HOSTILE:
+                _draftRateFromKing = 0.10f;
+                break;
+            case MILITARY.MILITANT:
+                _draftRateFromKing = 0.05f;
+                break;
+            case MILITARY.PACIFIST:
+                _draftRateFromKing = -0.05f;
+                break;
+            default:
+                break;
+        }
+        _productionRateFromKing -= _draftRateFromKing;
+
+
+    }
     #endregion
 
     #region Adjacency

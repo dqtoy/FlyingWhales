@@ -7,8 +7,8 @@ public class HoverPrestige : MonoBehaviour {
 		if (isOver) {
 			if(UIManager.Instance.currentlyShowingKingdom != null){
 				Kingdom kingdom = UIManager.Instance.currentlyShowingKingdom;
-				int monthlyPrestigeGain = kingdom.GetMonthlyPrestigeGain();
-				UIManager.Instance.ShowSmallInfo ("[b]MONTHLY PRESTIGE: " + monthlyPrestigeGain + "[/b]");
+				//int monthlyPrestigeGain = kingdom.GetMonthlyPrestigeGain();
+				//UIManager.Instance.ShowSmallInfo ("[b]MONTHLY PRESTIGE: " + monthlyPrestigeGain + "[/b]");
 			}
 
 		} else {

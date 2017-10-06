@@ -841,20 +841,87 @@ public class Utilities : MonoBehaviour {
 		return wordToReplace;
 
 	}
-//	public static string CustomStringReplacer(string wordToBeReplaced, LogFiller objectLog, int index){
-//		string wordToReplace = string.Empty;
-//		string value = string.Empty;
-//
-//		if(wordToBeReplaced.Contains("@")){
-//			wordToReplace = "[url=" + index.ToString() + "][b]" + objectLog.value + "[/b][/url]";
-//		}else{
-//			wordToReplace = objectLog.value;
-//		}
-//
-//		return wordToReplace;
-//
-//	}
+    //	public static string CustomStringReplacer(string wordToBeReplaced, LogFiller objectLog, int index){
+    //		string wordToReplace = string.Empty;
+    //		string value = string.Empty;
+    //
+    //		if(wordToBeReplaced.Contains("@")){
+    //			wordToReplace = "[url=" + index.ToString() + "][b]" + objectLog.value + "[/b][/url]";
+    //		}else{
+    //			wordToReplace = objectLog.value;
+    //		}
+    //
+    //		return wordToReplace;
+    //
+    //	}
 
+    public static Color darkGreen = new Color(0f / 255f, 100f / 255f, 0f / 255f);
+    public static Color lightGreen = new Color(124f / 255f, 252f / 255f, 0f / 255f);
+    public static Color darkRed = new Color(139f / 255f, 0f / 255f, 0f / 255f);
+    public static Color lightRed = new Color(255f / 255f, 0f / 255f, 0f / 255f);
+
+    public static Color GetColorForTrait(object trait) {
+        if (trait is CHARISMA) {
+            switch ((CHARISMA)trait) {
+                case CHARISMA.CHARISMATIC:
+                    return darkGreen;
+                case CHARISMA.REPULSIVE:
+                    return darkRed;
+                default:
+                    return Color.white;
+            }
+        } else if (trait is INTELLIGENCE) {
+            switch ((INTELLIGENCE)trait) {
+                case INTELLIGENCE.SMART:
+                    return darkGreen;
+                case INTELLIGENCE.DUMB:
+                    return darkRed;
+                default:
+                    return Color.white;
+            }
+        } else if (trait is EFFICIENCY) {
+            switch ((EFFICIENCY)trait) {
+                case EFFICIENCY.EFFICIENT:
+                    return darkGreen;
+                case EFFICIENCY.INEPT:
+                    return darkRed;
+                default:
+                    return Color.white;
+            }
+        } else if (trait is SCIENCE) {
+            switch ((SCIENCE)trait) {
+                case SCIENCE.ERUDITE:
+                    return darkGreen;
+                case SCIENCE.ACADEMIC:
+                    return lightGreen;
+                case SCIENCE.IGNORANT:
+                    return darkRed;
+                default:
+                    return Color.white;
+            }
+        } else if (trait is MILITARY) {
+            switch ((MILITARY)trait) {
+                case MILITARY.HOSTILE:
+                    return darkRed;
+                case MILITARY.MILITANT:
+                    return lightRed;
+                case MILITARY.PACIFIST:
+                    return darkGreen;
+                default:
+                    return Color.white;
+            }
+        } else if (trait is LOYALTY) {
+            switch ((LOYALTY)trait) {
+                case LOYALTY.SCHEMING:
+                    return darkRed;
+                case LOYALTY.LOYAL:
+                    return darkGreen;
+                default:
+                    return Color.white;
+            }
+        }
+        return Color.black;
+    }
 
 	public static string GetPronoun(string type, string caseIdentifier){
 		if(type == "S"){

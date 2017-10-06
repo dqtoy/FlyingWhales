@@ -211,8 +211,8 @@ public class Battle {
 			int attackerPower = this.attacker.kingdom.effectiveAttack;
 			int defenderDefense = this.defender.kingdom.effectiveDefense;
 
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " has an attack power of " + attackerPower.ToString());
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " has defense of " + defenderDefense.ToString());
+            //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " has an attack power of " + attackerPower.ToString());
+            //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " has defense of " + defenderDefense.ToString());
 
             Debug.Log ("EFFECTIVE ATTACK: " + attackerPower);	
 			Debug.Log ("EFFECTIVE DEFENSE: " + defenderDefense);
@@ -221,8 +221,8 @@ public class Battle {
 			int attackMaxRoll = (int)(Mathf.Sqrt ((2000f * (float)attackerPower)) * (1f + (0.05f * (float)this.attacker.cityLevel)));
 			int defenseMaxRoll = (int)(Mathf.Sqrt ((2000f * (float)defenderDefense)) * (1f + (0.05f * (float)this.defender.cityLevel)));
 
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " can roll a max of " + attackMaxRoll.ToString());
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " can roll a max of " + defenseMaxRoll.ToString());
+            //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " can roll a max of " + attackMaxRoll.ToString());
+            //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " can roll a max of " + defenseMaxRoll.ToString());
 
             Debug.Log ("ATTACK MAX ROLL: " + attackMaxRoll);	
 			Debug.Log ("DEFENSE MAX ROLL: " + defenseMaxRoll);
@@ -231,8 +231,8 @@ public class Battle {
 			int attackRoll = UnityEngine.Random.Range (0, attackMaxRoll);
 			int defenseRoll = UnityEngine.Random.Range (0, defenseMaxRoll);
 
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " rolls " + attackRoll.ToString());
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " rolls " + defenseRoll.ToString());
+            //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " rolls " + attackRoll.ToString());
+            //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " rolls " + defenseRoll.ToString());
 
             Debug.Log ("ATTACK ROLL: " + attackRoll);	
 			Debug.Log ("DEFENSE ROLL: " + defenseRoll);
@@ -241,8 +241,8 @@ public class Battle {
 			int attackDamage = (int)((float)attackerPower / 15f);
 			int defenseDamage = (int)((float)defenderDefense / 12f);
 
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " deals " + attackDamage.ToString() + " damage");
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " defends against " + defenseDamage.ToString() + " damage");
+            //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " deals " + attackDamage.ToString() + " damage");
+            //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " defends against " + defenseDamage.ToString() + " damage");
 
             Debug.Log ("ATTACK DAMAGE: " + attackDamage);	
 			Debug.Log ("DEFENSE DAMAGE: " + defenseDamage);
@@ -282,6 +282,9 @@ public class Battle {
 				Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + damageToPopulationAttacker);
 				Debug.Log ("---------------------------");
 
+                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + attacker.name + " weapons " + rollForDamageInWeapons.ToString() +
+                    "(" + attacker.kingdom.baseWeapons.ToString() + ")");
+
                 AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " loses " + damageToPopulationAttacker.ToString() + " population " +
                     "(" + attacker.kingdom.population.ToString() + ")");
             }
@@ -301,6 +304,9 @@ public class Battle {
 				Debug.Log ("ROLL FOR DAMAGE TO ARMORS: " + rollForDamageInArmors);
 				Debug.Log ("DAMAGE TO DEFENDER'S POPULATION: " + damageToPopulationDefender);
 				Debug.Log ("---------------------------");
+
+                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + defender.name + " armor " + rollForDamageInArmors.ToString() +
+                    "(" + defender.kingdom.baseArmor.ToString() + ")");
 
                 AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " loses " + damageToPopulationDefender.ToString() + " population " +
                     "(" + defender.kingdom.population.ToString() + ")");
