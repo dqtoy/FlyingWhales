@@ -964,7 +964,7 @@ public class KingdomRelationship {
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
 					if(relationship.totalLike >= 35 && relationshipToEnemy.isAdjacent){
-						posAlliancePower += (int)((float)kingdomInAlliance.baseWeapons * 0.1f);
+						posAlliancePower += kingdomInAlliance.effectiveAttack;
 					}
 				}
 			}
@@ -996,7 +996,7 @@ public class KingdomRelationship {
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
 					if(relationship.totalLike >= 35 && relationshipToEnemy.isAdjacent){
-						posAllianceDefense += (int)((float)kingdomInAlliance.baseArmor * 0.1f);
+						posAllianceDefense += kingdomInAlliance.effectiveDefense;
 					}
 				}
 			}
