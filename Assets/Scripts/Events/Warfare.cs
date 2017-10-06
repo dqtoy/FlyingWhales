@@ -195,9 +195,20 @@ public class Warfare {
 			City adjacentCity = sourceCity.region.adjacentRegions [j].occupant;
 			if(adjacentCity != null && adjacentCity.kingdom.id != sourceCity.kingdom.id){
 				KingdomRelationship kr = sourceCity.kingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
-				if(kr.warfare != null && kr.battle == null){
-					if(kr.warfare.id == this._id){
-						enemyCities.Add (adjacentCity);
+				if(kr.battle == null){
+					if(kr.warfare != null){
+						if(kr.warfare.id == this._id){
+							enemyCities.Add (adjacentCity);
+						}
+					}else{
+						WarfareInfo sourceKingdomInfo = sourceCity.kingdom.GetWarfareInfo (this._id);
+						WarfareInfo targetKingdomInfo = adjacentCity.kingdom.GetWarfareInfo (this._id);
+						if(sourceKingdomInfo.warfare != null && targetKingdomInfo.warfare != null){
+							if(sourceKingdomInfo.side != targetKingdomInfo.side){
+								enemyCities.Add (adjacentCity);
+							}
+						}
+
 					}
 				}
 			}
@@ -220,9 +231,20 @@ public class Warfare {
 				City adjacentCity = sourceKingdom.cities [i].region.adjacentRegions [j].occupant;
 				if(adjacentCity != null && adjacentCity.kingdom.id != sourceKingdom.id){
 					KingdomRelationship kr = sourceKingdom.GetRelationshipWithKingdom (adjacentCity.kingdom);
-					if(kr.warfare != null && kr.battle == null){
-						if(kr.warfare.id == this._id){
-							enemyCities.Add (adjacentCity);
+					if(kr.battle == null){
+						if(kr.warfare != null){
+							if(kr.warfare.id == this._id){
+								enemyCities.Add (adjacentCity);
+							}
+						}else{
+							WarfareInfo sourceKingdomInfo = sourceKingdom.GetWarfareInfo (this._id);
+							WarfareInfo targetKingdomInfo = adjacentCity.kingdom.GetWarfareInfo (this._id);
+							if(sourceKingdomInfo.warfare != null && targetKingdomInfo.warfare != null){
+								if(sourceKingdomInfo.side != targetKingdomInfo.side){
+									enemyCities.Add (adjacentCity);
+								}
+							}
+
 						}
 					}
 				}
