@@ -251,10 +251,6 @@ public class KingdomRelationship {
         int baseLoyalty = 0;
         int adjustment = 0;
 
-        //List<CHARACTER_VALUE> sourceKingValues = _sourceKingdom.king.importantCharacterValues.Select(x => x.Key).ToList();
-        //List<CHARACTER_VALUE> targetKingValues = _targetKingdom.king.importantCharacterValues.Select(x => x.Key).ToList();
-
-        //List<CHARACTER_VALUE> valuesInCommon = sourceKingValues.Intersect(targetKingValues).ToList();
 
         //Kingdom Type
         if (_sourceKingdom.kingdomTypeData.dictRelationshipKingdomType.ContainsKey(_targetKingdom.kingdomType)) {
@@ -263,62 +259,87 @@ public class KingdomRelationship {
             if (adjustment >= 0) {
                 this._relationshipSummary += "+";
             }
-            this._relationshipSummary += adjustment.ToString() + " kingdom type.\n";
+            this._relationshipSummary += adjustment.ToString() + " Kingdom Type.\n";
         }
 
-
-        //At War
-//		if (this.isAtWar) {
-//			adjustment = -30;
-//			baseLoyalty += adjustment;
-//			this._relationshipSummary += adjustment.ToString() + "   at war.\n";
-//		}
-
-        //Race
-        //if (_sourceKingdom.race != _targetKingdom.race && !sourceKingValues.Contains(CHARACTER_VALUE.EQUALITY)) {
-        //    adjustment = -15;
-        //    baseLoyalty += adjustment;
-        //    this._relationshipSummary += adjustment.ToString() + " different race.\n";
-        //}
-
-        //Sharing Border
-		if (this.isSharingBorder) {
-            adjustment = -15;
+        //Recent War
+		if (this._isRecentWar) {
+            adjustment = -30;
             baseLoyalty += adjustment;
-            this._relationshipSummary += adjustment.ToString() + " shared borders.\n";
+            this._relationshipSummary += adjustment.ToString() + " Recent War.\n";
         }
 
-        //Values
-        //List<CHARACTER_VALUE> valuesInCommonExceptInfluence = valuesInCommon.Where(x => x != CHARACTER_VALUE.INFLUENCE).ToList();
-        //if (valuesInCommonExceptInfluence.Count == 1) {
-        //    adjustment = 5;
-        //    baseLoyalty += adjustment;
-        //    this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
-        //} else if (valuesInCommonExceptInfluence.Count == 2) {
-        //    adjustment = 15;
-        //    baseLoyalty += adjustment;
-        //    this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
-        //} else if (valuesInCommonExceptInfluence.Count >= 3) {
-        //    adjustment = 30;
-        //    baseLoyalty += adjustment;
-        //    this._relationshipSummary += "+" + adjustment.ToString() + " shared values.\n";
-        //} else {
-        //    adjustment = -15;
-        //    baseLoyalty += adjustment;
-        //    this._relationshipSummary += adjustment.ToString() + " no shared values.\n";
-        //}
+		//Race
+		if (this._sourceKingdom.race == this._targetKingdom.race) {
+			adjustment = 15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += "+" + adjustment.ToString() + " Same Race.\n";
+		}else{
+			adjustment = -15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += adjustment.ToString() + " Different Race.\n";
+		}
 
-        //if (sourceKingValues.Contains(CHARACTER_VALUE.PEACE)) {
-        //    adjustment = 15;
-        //    baseLoyalty += adjustment;
-        //    this._relationshipSummary += "+" + adjustment.ToString() + " values peace.\n";
-        //}
+		//Charisma Trait
+		if(this._targetKingdom.king.charisma == CHARISMA.CHARISMATIC){
+			adjustment = 15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += "+" + adjustment.ToString() + " Charismatic Target.\n";
+		}else if(this._targetKingdom.king.charisma == CHARISMA.REPULSIVE){
+			adjustment = -15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += adjustment.ToString() + " Repulsive Target.\n";
+		}
 
-        //if (sourceKingValues.Contains(CHARACTER_VALUE.DOMINATION)) {
-        //    adjustment = -15;
-        //    baseLoyalty += adjustment;
-        //    this._relationshipSummary += adjustment.ToString() + " values domination.\n";
-        //}
+		//Military Trait
+		if(this._sourceKingdom.king.military == MILITARY.PACIFIST){
+			if(this._targetKingdom.king.military != MILITARY.HOSTILE){
+				adjustment = 15;
+				baseLoyalty += adjustment;
+				this._relationshipSummary += "+" + adjustment.ToString() + " Pacifist.\n";
+			}else{
+				adjustment = -15;
+				baseLoyalty += adjustment;
+				this._relationshipSummary += adjustment.ToString() + " Hostile Target.\n";
+			}
+		}else if(this._sourceKingdom.king.military == MILITARY.HOSTILE){
+			adjustment = -15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += adjustment.ToString() + " Hostile.\n";
+		}
+
+		//Science Trait
+		if(this._sourceKingdom.king.science == SCIENCE.ERUDITE && this._targetKingdom.king.science == SCIENCE.ERUDITE){
+			adjustment = 15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += "+" + adjustment.ToString() + " Both Erudite.\n";
+		}else if(this._sourceKingdom.king.science == SCIENCE.ERUDITE && this._targetKingdom.king.science == SCIENCE.IGNORANT){
+			adjustment = -15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += adjustment.ToString() + " Ignorant Target.\n";
+		}
+
+		//Intelligence Trait
+		if(this._sourceKingdom.king.intelligence == INTELLIGENCE.SMART && this._targetKingdom.king.intelligence == INTELLIGENCE.SMART){
+			adjustment = 15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += "+" + adjustment.ToString() + " Both Smart.\n";
+		}else if(this._sourceKingdom.king.intelligence == INTELLIGENCE.SMART && this._targetKingdom.king.intelligence == INTELLIGENCE.DUMB){
+			adjustment = -15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += adjustment.ToString() + " Dumb Target.\n";
+		}
+
+		//Efficieny Trait
+		if(this._sourceKingdom.king.efficiency == EFFICIENCY.EFFICIENT && this._targetKingdom.king.efficiency == EFFICIENCY.EFFICIENT){
+			adjustment = 15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += "+" + adjustment.ToString() + " Both Efficient.\n";
+		}else if(this._sourceKingdom.king.efficiency == EFFICIENCY.EFFICIENT && this._targetKingdom.king.efficiency == EFFICIENCY.INEPT){
+			adjustment = -15;
+			baseLoyalty += adjustment;
+			this._relationshipSummary += adjustment.ToString() + " Inept Target.\n";
+		}
 
 		if(this._targetKingdomThreatLevel >= 0f && this._targetKingdomThreatLevel < 1f){
 			adjustment = 25;
@@ -336,7 +357,7 @@ public class KingdomRelationship {
 		if(adjustment >= 0){
 			this._relationshipSummary += "+";
 		}
-		this._relationshipSummary += adjustment.ToString() + " kingdom threat.\n";
+		this._relationshipSummary += adjustment.ToString() + " Kingdom Threat.\n";
 
         this._like = 0;
         this.AdjustLikeness(baseLoyalty, gameEventTrigger, assassinationReasons, isDiscovery);
