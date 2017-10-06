@@ -33,7 +33,7 @@ public class Citizen {
 	public bool isDead;
 	public DEATH_REASONS deathReason;
 	public string deathReasonText;
-    private KINGDOM_TYPE _preferredKingdomType;
+    //private KINGDOM_TYPE _preferredKingdomType;
 
     //Traits
     private CHARISMA _charisma;
@@ -42,6 +42,7 @@ public class Citizen {
 	private SCIENCE _science;
 	private MILITARY _military;
 	private LOYALTY _loyalty;
+    private PURPOSE _balanceType;
 
     private Dictionary<STATUS_EFFECTS, StatusEffect> _statusEffects;
 
@@ -73,9 +74,9 @@ public class Citizen {
     public Citizen spouse {
         get { return this._spouse; }
     }
-    internal KINGDOM_TYPE preferredKingdomType {
-        get { return _preferredKingdomType; }
-    }
+    //internal KINGDOM_TYPE preferredKingdomType {
+    //    get { return _preferredKingdomType; }
+    //}
     internal CHARISMA charisma {
         get { return this._charisma; }
     }
@@ -94,8 +95,11 @@ public class Citizen {
 	internal LOYALTY loyalty {
 		get { return this._loyalty; }
 	}
+    internal PURPOSE balanceType {
+        get { return this._balanceType; }
+    }
     internal int loyaltyToKing {
-        get { return (_loyaltyToKing + loyaltyDeductionFromWar) + loyaltyModifierForTesting; }
+        get { return (_loyaltyToKing + loyaltyDeductionFromWar + GetLoyaltyFromStability()) + loyaltyModifierForTesting; }
     }
     internal int loyaltyDeductionFromWar {
         get { return city.kingdom.relationships.Values.Where(x => x.isAtWar).Count() * -10; }
@@ -114,7 +118,7 @@ public class Citizen {
 		this.gender = gender;
 		this.age = age;
         this._ageTableKey = -1;
-        this._preferredKingdomType = StoryTellingManager.Instance.GetRandomKingdomTypeForCitizen();
+        //this._preferredKingdomType = StoryTellingManager.Instance.GetRandomKingdomTypeForCitizen();
         if (this.race == RACE.HUMANS) {
             this.firstName = RandomNameGenerator.Instance.GetHumanFirstName(gender);
             this.surName = RandomNameGenerator.Instance.GetHumanSurname();
@@ -726,24 +730,25 @@ public class Citizen {
         if (role != ROLE.GOVERNOR && role != ROLE.KING) {
             return 0;
         } else {
+            int baseValue = 3;
+            if(role == ROLE.GOVERNOR) {
+                baseValue = 1;
+            }
             switch (_intelligence) {
                 case INTELLIGENCE.SMART:
                     if (role == ROLE.KING) {
-                        return 5;
+                        return baseValue + 2;
                     } else if (role == ROLE.GOVERNOR) {
-                        return 2;
+                        return baseValue + 1;
                     }
                     break;
                 case INTELLIGENCE.NEUTRAL:
-                    if (role == ROLE.KING) {
-                        return 3;
-                    } else if (role == ROLE.GOVERNOR) {
-                        return 1;
-                    }
-                    break;
+                    return baseValue;
                 case INTELLIGENCE.DUMB:
                     if (role == ROLE.KING) {
-                        return 2;
+                        return baseValue - 2;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return baseValue - 1;
                     }
                     break;
             }
@@ -763,24 +768,25 @@ public class Citizen {
                 }
             }
 
+            int baseValue = 3;
+            if (role == ROLE.GOVERNOR) {
+                baseValue = 1;
+            }
             switch (_efficiency) {
                 case EFFICIENCY.EFFICIENT:
                     if (role == ROLE.KING) {
-                        return 6;
+                        return baseValue + 2;
                     } else if (role == ROLE.GOVERNOR) {
-                        return 2;
+                        return baseValue + 1;
                     }
                     break;
                 case EFFICIENCY.NEUTRAL:
-                    if (role == ROLE.KING) {
-                        return 4;
-                    } else if (role == ROLE.GOVERNOR) {
-                        return 1;
-                    }
-                    break;
+                    return baseValue;
                 case EFFICIENCY.INEPT:
                     if (role == ROLE.KING) {
-                        return 2;
+                        return baseValue - 2;
+                    } else if (role == ROLE.GOVERNOR) {
+                        return baseValue - 1;
                     }
                     break;
             }
@@ -880,39 +886,111 @@ public class Citizen {
             _loyaltySummary += charismaAdjustment.ToString() + "  Charisma\n";
         }
 
-
-        //Efficiency
-        int efficiencyAdjustment = 0;
-        if (king.efficiency == EFFICIENCY.INEPT && this.efficiency == EFFICIENCY.EFFICIENT) {
-            efficiencyAdjustment = -30;
-        } else if (king.efficiency == EFFICIENCY.EFFICIENT && this.efficiency == EFFICIENCY.EFFICIENT) {
-            efficiencyAdjustment = 30;
-        }
-        if (efficiencyAdjustment != 0) {
-            _loyaltyToKing += efficiencyAdjustment;
-            if (efficiencyAdjustment > 0) {
-                _loyaltySummary += "+";
+        //Military
+        int militaryTraitAdjustment = 0;
+        if(_military != MILITARY.NEUTRAL && king.military != MILITARY.NEUTRAL) {
+            if (_military == king.military) {
+                militaryTraitAdjustment = 15;
+            } else if((_military == MILITARY.HOSTILE && king.military == MILITARY.PACIFIST) ||
+                (_military == MILITARY.PACIFIST && king.military == MILITARY.HOSTILE)) {
+                militaryTraitAdjustment = -15;
             }
-            _loyaltySummary += efficiencyAdjustment.ToString() + "  Efficiency\n";
+            if (militaryTraitAdjustment != 0) {
+                _loyaltyToKing += militaryTraitAdjustment;
+                if (militaryTraitAdjustment > 0) {
+                    _loyaltySummary += "+";
+                }
+                _loyaltySummary += militaryTraitAdjustment.ToString() + "  Military\n";
+            }
         }
 
+        //Science
+        int scienceTraitAdjustment = 0;
+        if (_science != SCIENCE.NEUTRAL && king.science != SCIENCE.NEUTRAL) {
+            if (_science == king.science) {
+                scienceTraitAdjustment = 15;
+            } else if ((_science == SCIENCE.ERUDITE && king.science == SCIENCE.IGNORANT) ||
+                (_science == SCIENCE.IGNORANT && king.science == SCIENCE.ERUDITE)) {
+                scienceTraitAdjustment = -15;
+            }
+            if (scienceTraitAdjustment != 0) {
+                _loyaltyToKing += scienceTraitAdjustment;
+                if (scienceTraitAdjustment > 0) {
+                    _loyaltySummary += "+";
+                }
+                _loyaltySummary += scienceTraitAdjustment.ToString() + "  Science\n";
+            }
+        }
 
         //Intelligence
         int intelligenceAdjustment = 0;
-        if (king.intelligence == INTELLIGENCE.DUMB && this.intelligence == INTELLIGENCE.SMART) {
-            intelligenceAdjustment = -30;
-        } else if (king.intelligence == INTELLIGENCE.SMART && this.intelligence == INTELLIGENCE.SMART) {
-            intelligenceAdjustment = 30;
+        if(king.intelligence != INTELLIGENCE.NEUTRAL && _intelligence != INTELLIGENCE.NEUTRAL) {
+            if (king.intelligence == _intelligence) {
+                intelligenceAdjustment = 15;
+            } else {
+                intelligenceAdjustment = -15;
+            }
+            if (intelligenceAdjustment != 0) {
+                _loyaltyToKing += intelligenceAdjustment;
+                if (intelligenceAdjustment > 0) {
+                    _loyaltySummary += "+";
+                }
+                _loyaltySummary += intelligenceAdjustment.ToString() + "  Intelligence\n";
+            }
         }
-        if (intelligenceAdjustment != 0) {
-            _loyaltyToKing += intelligenceAdjustment;
-            if (intelligenceAdjustment > 0) {
+        
+
+        //Efficiency
+        int efficiencyAdjustment = 0;
+        if (king.efficiency != EFFICIENCY.NEUTRAL && _efficiency != EFFICIENCY.NEUTRAL) {
+            if (king.efficiency == _efficiency) {
+                efficiencyAdjustment = 15;
+            } else {
+                efficiencyAdjustment = -15;
+            }
+            if (efficiencyAdjustment != 0) {
+                _loyaltyToKing += efficiencyAdjustment;
+                if (efficiencyAdjustment > 0) {
+                    _loyaltySummary += "+";
+                }
+                _loyaltySummary += efficiencyAdjustment.ToString() + "  Efficiency\n";
+            }
+        }
+
+        //Loyalty
+        int loyaltyAdjustment = 0;
+        if(_loyalty == LOYALTY.SCHEMING) {
+            loyaltyAdjustment = -30;
+        } else if (_loyalty == LOYALTY.LOYAL) {
+            loyaltyAdjustment = 30;
+        }
+        if (loyaltyAdjustment != 0) {
+            _loyaltyToKing += loyaltyAdjustment;
+            if (loyaltyAdjustment > 0) {
                 _loyaltySummary += "+";
             }
-            _loyaltySummary += intelligenceAdjustment.ToString() + "  Intelligence\n";
+            _loyaltySummary += loyaltyAdjustment.ToString() + "  Loyalty\n";
+        }
+
+        //Balance Type
+        int balanceTypeAdjustment = 0;
+        if(king.balanceType == _balanceType) {
+            balanceTypeAdjustment = 30;
+        } else {
+            balanceTypeAdjustment = -30;
+        }
+        if (balanceTypeAdjustment != 0) {
+            _loyaltyToKing += balanceTypeAdjustment;
+            if (balanceTypeAdjustment > 0) {
+                _loyaltySummary += "+";
+            }
+            _loyaltySummary += balanceTypeAdjustment.ToString() + "  Balance Type\n";
         }
 
         _loyaltyToKing = Mathf.Clamp(_loyaltyToKing, -100, 100);
+    }
+    internal int GetLoyaltyFromStability() {
+        return city.kingdom.stability / 5;
     }
     #endregion
 
@@ -1081,5 +1159,6 @@ public class Citizen {
 		this._science = (SCIENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(SCIENCE)).Length));
 		this._military = (MILITARY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(MILITARY)).Length));
 		this._loyalty = (LOYALTY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(LOYALTY)).Length));
-	}
+        this._balanceType = (PURPOSE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(PURPOSE)).Length));
+    }
 }

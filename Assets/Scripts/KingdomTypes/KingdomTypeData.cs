@@ -8,11 +8,11 @@ public class KingdomTypeData : MonoBehaviour {
 	[SerializeField]
 	private KINGDOM_TYPE _kingdomType;
 
-	[SerializeField]
-	private KINGDOM_SIZE _kingdomSize;
+	//[SerializeField]
+	//private KINGDOM_SIZE _kingdomSize;
 
-	[SerializeField]
-	private PURPOSE _purpose;
+	//[SerializeField]
+	//private PURPOSE _purpose;
 	
 	[SerializeField]
 	private int _expansionRate;
@@ -66,8 +66,8 @@ public class KingdomTypeData : MonoBehaviour {
 //	[SerializeField]
 //	private EventRate[] _reactionEventRate;
 //
-	[SerializeField]
-	private CharacterValue[] _characterValues;
+	//[SerializeField]
+	//private CharacterValue[] _characterValues;
 
 	[SerializeField]
 	private RelationshipKingdomType[] _relationshipKingdomType;
@@ -111,17 +111,17 @@ public class KingdomTypeData : MonoBehaviour {
 		}
 	}
 
-	public KINGDOM_SIZE kingdomSize {
-		get { 
-			return this._kingdomSize; 
-		}
-	}
+	//public KINGDOM_SIZE kingdomSize {
+	//	get { 
+	//		return this._kingdomSize; 
+	//	}
+	//}
 
-	public PURPOSE purpose {
-		get { 
-			return this._purpose; 
-		}
-	}
+	//public PURPOSE purpose {
+	//	get { 
+	//		return this._purpose; 
+	//	}
+	//}
 
 	public int expansionRate {
 		get { 
@@ -159,11 +159,11 @@ public class KingdomTypeData : MonoBehaviour {
 //		}
 //	}
 
-	public CharacterValue[] characterValues {
-		get { 
-			return this._characterValues;
-		}
-	}
+	//public CharacterValue[] characterValues {
+	//	get { 
+	//		return this._characterValues;
+	//	}
+	//}
 
 	public CombatStats combatStats {
 		get { 
@@ -296,7 +296,7 @@ public class KingdomTypeData : MonoBehaviour {
 //			this._assassinationRateModifierRelationship = this._assassinationRateModifierRelationship.Concat (this.generalKingdomTypeData.assassinationRateModifierRelationship).ToArray ();
 			this._dailyCumulativeEventRate = this._dailyCumulativeEventRate.Concat (this.generalKingdomTypeData._dailyCumulativeEventRate).ToArray ();
 //			this._reactionEventRate = this._reactionEventRate.Concat (this.generalKingdomTypeData.reactionEventRate).ToArray ();
-			this._characterValues = this._characterValues.Concat (this.generalKingdomTypeData._characterValues).ToArray ();
+			//this._characterValues = this._characterValues.Concat (this.generalKingdomTypeData._characterValues).ToArray ();
 			this._relationshipKingdomType = this._relationshipKingdomType.Concat (this.generalKingdomTypeData._relationshipKingdomType).ToArray ();
 
 		}

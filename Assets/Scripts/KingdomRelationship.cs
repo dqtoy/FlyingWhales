@@ -875,14 +875,14 @@ public class KingdomRelationship {
 					invasionValue -= (invasionValue * 0.5f);
 				}
 
-				if (this._targetKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.SMALL) {
-					if (this._sourceKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.MEDIUM) {
+				if (this._targetKingdom.kingdomSize == KINGDOM_SIZE.SMALL) {
+					if (this._sourceKingdom.kingdomSize == KINGDOM_SIZE.MEDIUM) {
 						invasionValue -= (invasionValue * 0.25f);
-					} else if (this._sourceKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.LARGE) {
+					} else if (this._sourceKingdom.kingdomSize == KINGDOM_SIZE.LARGE) {
 						invasionValue -= (invasionValue * 0.5f);
 					}
-				} else if (this._targetKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.MEDIUM) {
-					if (this._sourceKingdom.kingdomTypeData.kingdomSize == KINGDOM_SIZE.LARGE) {
+				} else if (this._targetKingdom.kingdomSize == KINGDOM_SIZE.MEDIUM) {
+					if (this._sourceKingdom.kingdomSize == KINGDOM_SIZE.LARGE) {
 						invasionValue -= (invasionValue * 0.25f);
 					}
 				}
