@@ -50,18 +50,18 @@ public class SlavesMerchant : GameEvent {
 	#endregion
 
 	private void KingDecision(){
-		if((!this.buyerKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) && !this.buyerKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY)) && this.buyerKingdom.nonRebellingCities.Count > 0){
-			//Buy
-			BuySlaves();
-		}else{
-			//No buy
-			//TODO: Add log - king doesn't buy the slaves
-			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "no_buy");
-			newLog.AddToFillers (this.buyerKingdom.king, this.buyerKingdom.king.name, LOG_IDENTIFIER.KING_1);
-			newLog.AddToFillers (this.buyerKingdom, this.buyerKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+		//if((!this.buyerKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) && !this.buyerKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY)) && this.buyerKingdom.nonRebellingCities.Count > 0){
+		//	//Buy
+		//	BuySlaves();
+		//}else{
+		//	//No buy
+		//	//TODO: Add log - king doesn't buy the slaves
+		//	Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "no_buy");
+		//	newLog.AddToFillers (this.buyerKingdom.king, this.buyerKingdom.king.name, LOG_IDENTIFIER.KING_1);
+		//	newLog.AddToFillers (this.buyerKingdom, this.buyerKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 
-			this.DoneEvent();
-		}
+		//	this.DoneEvent();
+		//}
 	}
 
 	private void BuySlaves(){
@@ -90,50 +90,50 @@ public class SlavesMerchant : GameEvent {
 			hasFreedSlaves = false;
 			hasObeyedButDecreaseLoyalty = false;
 
-			if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LAW_AND_ORDER) && (allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) 
-				|| allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY))) {
+//			if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LAW_AND_ORDER) && (allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) 
+//				|| allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY))) {
 
-				if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LIBERTY)
-				   && allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.EQUALITY)) {
-					if (allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LIBERTY]
-						&& allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.EQUALITY]){
-						//Obey but negative
-						hasObeyedButDecreaseLoyalty = true;
-					}else{
-						//Free
-						hasFreedSlaves = true;
-					}
-				}else if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LIBERTY)) {
-					if (allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LIBERTY]){
-						//Obey but negative
-						hasObeyedButDecreaseLoyalty = true;
-					}else{
-						//Free
-						hasFreedSlaves = true;
-					}
-				}else if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.EQUALITY)) {
-					if (allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.EQUALITY]){
-						//Obey but negative
-						hasObeyedButDecreaseLoyalty = true;
-					}else{
-						//Free
-						hasFreedSlaves = true;
-					}
-				}
-
-			}else{
-				if(!allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LAW_AND_ORDER) && (allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) 
-					|| allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY))){
-					//Free
-					hasFreedSlaves = true;
-				}
-//				else if(allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LAW_AND_ORDER) && (!allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) 
-//					&& !allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY))){
-//					//Obey
-//				}else{
-//					//Obey
+//				if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LIBERTY)
+//				   && allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.EQUALITY)) {
+//					if (allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LIBERTY]
+//						&& allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.EQUALITY]){
+//						//Obey but negative
+//						hasObeyedButDecreaseLoyalty = true;
+//					}else{
+//						//Free
+//						hasFreedSlaves = true;
+//					}
+//				}else if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LIBERTY)) {
+//					if (allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LIBERTY]){
+//						//Obey but negative
+//						hasObeyedButDecreaseLoyalty = true;
+//					}else{
+//						//Free
+//						hasFreedSlaves = true;
+//					}
+//				}else if (allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.EQUALITY)) {
+//					if (allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.LAW_AND_ORDER] > allCities [i].governor.importantCharacterValues [CHARACTER_VALUE.EQUALITY]){
+//						//Obey but negative
+//						hasObeyedButDecreaseLoyalty = true;
+//					}else{
+//						//Free
+//						hasFreedSlaves = true;
+//					}
 //				}
-			}
+
+//			}else{
+//				if(!allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LAW_AND_ORDER) && (allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) 
+//					|| allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY))){
+//					//Free
+//					hasFreedSlaves = true;
+//				}
+////				else if(allCities [i].governor.importantCharacterValues.ContainsKey (CHARACTER_VALUE.LAW_AND_ORDER) && (!allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY) 
+////					&& !allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.EQUALITY))){
+////					//Obey
+////				}else{
+////					//Obey
+////				}
+//			}
 			if(hasFreedSlaves){
 				((Governor)allCities[i].governor.assignedRole).AddEventModifier(-3, "Anti-slavery", this);
 				stabilityCount -= 5;
@@ -188,18 +188,18 @@ public class SlavesMerchant : GameEvent {
 		int value = 2 * chanceModifier;
 
 		if(chance < value){
-			List<Citizen> governorsForExecution = allCities.Select(x => x.governor).Where(y => y.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY)).ToList();
-			if(governorsForExecution != null && governorsForExecution.Count > 0){
-				Citizen chosenGovernor = governorsForExecution[UnityEngine.Random.Range(0, governorsForExecution.Count)];
-				chosenGovernor.Death(DEATH_REASONS.TREACHERY);
-				this.buyerKingdom.AdjustStability(-20);
+			//List<Citizen> governorsForExecution = allCities.Select(x => x.governor).Where(y => y.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIBERTY)).ToList();
+			//if(governorsForExecution != null && governorsForExecution.Count > 0){
+			//	Citizen chosenGovernor = governorsForExecution[UnityEngine.Random.Range(0, governorsForExecution.Count)];
+			//	chosenGovernor.Death(DEATH_REASONS.TREACHERY);
+			//	this.buyerKingdom.AdjustStability(-20);
 
-				//TODO: Add log - king has executed a governor
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "governor_execution");
-				newLog.AddToFillers (this.buyerKingdom.king, this.buyerKingdom.king.name, LOG_IDENTIFIER.KING_1);
-				newLog.AddToFillers (chosenGovernor, chosenGovernor.name, LOG_IDENTIFIER.GOVERNOR_1);
-				newLog.AddToFillers (chosenGovernor.city, chosenGovernor.city.name, LOG_IDENTIFIER.CITY_1);
-			}
+			//	//TODO: Add log - king has executed a governor
+			//	Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SlavesMerchant", "governor_execution");
+			//	newLog.AddToFillers (this.buyerKingdom.king, this.buyerKingdom.king.name, LOG_IDENTIFIER.KING_1);
+			//	newLog.AddToFillers (chosenGovernor, chosenGovernor.name, LOG_IDENTIFIER.GOVERNOR_1);
+			//	newLog.AddToFillers (chosenGovernor.city, chosenGovernor.city.name, LOG_IDENTIFIER.CITY_1);
+			//}
 		}
 	}
 }

@@ -30,18 +30,18 @@ public class DevelopWeapons : GameEvent {
         if(remainingDays > 0) {
             remainingDays -= 1;
         } else {
-            if(_sourceKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) 
-                || _sourceKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+            //if(_sourceKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) 
+            //    || _sourceKingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
 
-                KeyValuePair<CHARACTER_VALUE, int> priorityValue = _sourceKingdom.king.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
-                || x.Key == CHARACTER_VALUE.TRADITION);
+            //    KeyValuePair<CHARACTER_VALUE, int> priorityValue = _sourceKingdom.king.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
+            //    || x.Key == CHARACTER_VALUE.TRADITION);
 
-                if(priorityValue.Key == CHARACTER_VALUE.STRENGTH) {
-                    ProduceWeapons();
-                } else {
-                    HideWeapons();
-                }
-            }
+            //    if(priorityValue.Key == CHARACTER_VALUE.STRENGTH) {
+            //        ProduceWeapons();
+            //    } else {
+            //        HideWeapons();
+            //    }
+            //}
             DoneEvent();
         }
     }
@@ -105,47 +105,47 @@ public class DevelopWeapons : GameEvent {
             Kingdom otherKingdom = _sourceKingdom.discoveredKingdoms[i];
             Citizen otherKing = otherKingdom.king;
             KingdomRelationship rel = otherKingdom.GetRelationshipWithKingdom(_sourceKingdom);
-            if (otherKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)
-                || otherKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+            //if (otherKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)
+            //    || otherKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
 
-                KeyValuePair<CHARACTER_VALUE, int> priorityValue = otherKing.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
-                || x.Key == CHARACTER_VALUE.TRADITION);
-                if(priorityValue.Key == chosenValue) {
-                    rel.AddEventModifier(5, "Developed Weapons", this);
-                } else {
-                    rel.AddEventModifier(-5, "Developed Weapons", this);
-                }
+            //    KeyValuePair<CHARACTER_VALUE, int> priorityValue = otherKing.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
+            //    || x.Key == CHARACTER_VALUE.TRADITION);
+            //    if(priorityValue.Key == chosenValue) {
+            //        rel.AddEventModifier(5, "Developed Weapons", this);
+            //    } else {
+            //        rel.AddEventModifier(-5, "Developed Weapons", this);
+            //    }
                 
-            }
+            //}
         }
 
         //Governors
         for (int i = 0; i < _sourceKingdom.cities.Count; i++) {
             Governor gov = (Governor)_sourceKingdom.cities[i].governor.assignedRole;
-            if (gov.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)
-                || gov.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-                KeyValuePair<CHARACTER_VALUE, int> priorityValue = gov.citizen.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
-                || x.Key == CHARACTER_VALUE.TRADITION);
+            //if (gov.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)
+            //    || gov.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+            //    KeyValuePair<CHARACTER_VALUE, int> priorityValue = gov.citizen.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
+            //    || x.Key == CHARACTER_VALUE.TRADITION);
 
-                if (priorityValue.Key == chosenValue) {
-                    gov.AddEventModifier(5, "Developed Weapons", this);
-                } else {
-                    gov.AddEventModifier(-5, "Developed Weapons", this);
-                }
-            }
+            //    if (priorityValue.Key == chosenValue) {
+            //        gov.AddEventModifier(5, "Developed Weapons", this);
+            //    } else {
+            //        gov.AddEventModifier(-5, "Developed Weapons", this);
+            //    }
+            //}
         }
 
-        //Kingdom
-        if(_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) ||
-            _sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-            KeyValuePair<CHARACTER_VALUE, int> priorityValue = _sourceKingdom.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
-                || x.Key == CHARACTER_VALUE.TRADITION);
+        ////Kingdom
+        //if(_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH) ||
+        //    _sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+        //    KeyValuePair<CHARACTER_VALUE, int> priorityValue = _sourceKingdom.importantCharacterValues.FirstOrDefault(x => x.Key == CHARACTER_VALUE.STRENGTH
+        //        || x.Key == CHARACTER_VALUE.TRADITION);
 
-            if (priorityValue.Key == chosenValue) {
-                _sourceKingdom.AdjustStability(10);
-            } else {
-                _sourceKingdom.AdjustStability(-10);
-            }
-        }
+        //    if (priorityValue.Key == chosenValue) {
+        //        _sourceKingdom.AdjustStability(10);
+        //    } else {
+        //        _sourceKingdom.AdjustStability(-10);
+        //    }
+        //}
     }
 }

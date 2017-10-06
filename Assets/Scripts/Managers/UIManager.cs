@@ -755,13 +755,13 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowCitizenCharacterValues() {
         characterValuesLbl.text = string.Empty;
-        for (int i = 0; i < currentlyShowingCitizen.importantCharacterValues.Keys.Count; i++) {
-            CHARACTER_VALUE currValue = currentlyShowingCitizen.importantCharacterValues.Keys.ElementAt(i);
-            characterValuesLbl.text += Utilities.FirstLetterToUpperCase(currValue.ToString().Replace('_', ' '));
-            if(currentlyShowingCitizen.importantCharacterValues.Keys.Last() != currValue) {
-                characterValuesLbl.text += "\n";
-            }
-        }
+        //for (int i = 0; i < currentlyShowingCitizen.importantCharacterValues.Keys.Count; i++) {
+        //    CHARACTER_VALUE currValue = currentlyShowingCitizen.importantCharacterValues.Keys.ElementAt(i);
+        //    characterValuesLbl.text += Utilities.FirstLetterToUpperCase(currValue.ToString().Replace('_', ' '));
+        //    if(currentlyShowingCitizen.importantCharacterValues.Keys.Last() != currValue) {
+        //        characterValuesLbl.text += "\n";
+        //    }
+        //}
 
         this.characterValuesGO.SetActive(true);
     }

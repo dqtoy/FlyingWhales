@@ -398,20 +398,20 @@ public class KingdomManager : MonoBehaviour {
 		if(targetKingdom.cities.Count >= 3){
 			for (int i = 0; i < targetKingdom.cities.Count; i++) {
 				Governor governor = (Governor)targetKingdom.cities [i].governor.assignedRole;
-				if(governor.loyalty <= -25 && !governor.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)){
-					List<CHARACTER_VALUE> values = new List<CHARACTER_VALUE>(declarerKingdom.king.importantCharacterValues.Keys);
-					for (int j = 0; j < values.Count; j++) {
-						if(governor.citizen.importantCharacterValues.ContainsKey(values[j])){
-							hasSameValues = true;
-							break;
-						}
-					}
+				//if(governor.loyalty <= -25 && !governor.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)){
+				//	List<CHARACTER_VALUE> values = new List<CHARACTER_VALUE>(declarerKingdom.king.importantCharacterValues.Keys);
+				//	for (int j = 0; j < values.Count; j++) {
+				//		if(governor.citizen.importantCharacterValues.ContainsKey(values[j])){
+				//			hasSameValues = true;
+				//			break;
+				//		}
+				//	}
 
-					if(hasSameValues){
-						TransferCitiesToOtherKingdom (targetKingdom, declarerKingdom, targetKingdom.cities [i]);
-						break;
-					}
-				}
+				//	if(hasSameValues){
+				//		TransferCitiesToOtherKingdom (targetKingdom, declarerKingdom, targetKingdom.cities [i]);
+				//		break;
+				//	}
+				//}
 			}
 		}
 	}

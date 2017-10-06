@@ -380,13 +380,13 @@ public class Plague : GameEvent {
      * to the appropriate list.
      * */
     private EVENT_APPROACH ChooseApproach(Citizen citizen) {
-        Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharacterValues;
+        //Dictionary<CHARACTER_VALUE, int> importantCharVals = citizen.importantCharacterValues;
         EVENT_APPROACH chosenApproach = DetermineApproach(citizen);
-        this.AddKingdomToApproach(chosenApproach, citizen.city.kingdom);
+        //this.AddKingdomToApproach(chosenApproach, citizen.city.kingdom);
 
-        this.ChangeKingRelationshipsAfterApproach(citizen, chosenApproach);
-        this.ChangeLoyaltyAfterApproach(citizen, chosenApproach);
-        this.ChangeStabilityAfterApproach(citizen.city.kingdom, chosenApproach);
+        //this.ChangeKingRelationshipsAfterApproach(citizen, chosenApproach);
+        //this.ChangeLoyaltyAfterApproach(citizen, chosenApproach);
+        //this.ChangeStabilityAfterApproach(citizen.city.kingdom, chosenApproach);
 
         return chosenApproach;
     }
@@ -432,9 +432,9 @@ public class Plague : GameEvent {
     private EVENT_APPROACH DetermineApproach(object obj) {
         Dictionary<CHARACTER_VALUE, int> importantCharVals = null;
         if(obj is Citizen) {
-            importantCharVals = ((Citizen)obj).importantCharacterValues;
+            //importantCharVals = ((Citizen)obj).importantCharacterValues;
         } else if(obj is Kingdom) {
-            importantCharVals = ((Kingdom)obj).importantCharacterValues;
+            //importantCharVals = ((Kingdom)obj).importantCharacterValues;
         }
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;
         if (importantCharVals.ContainsKey(CHARACTER_VALUE.LIFE) || importantCharVals.ContainsKey(CHARACTER_VALUE.EQUALITY) ||

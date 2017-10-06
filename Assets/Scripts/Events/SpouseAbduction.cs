@@ -305,18 +305,18 @@ public class SpouseAbduction : GameEvent {
 			}
 		}else{
 			if(this.isSpouseDead){
-				if(this.targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIFE)){
-					InstantWar();
-//					if(this.relationshipKing != null){
-//						this.relationshipKing.AdjustLikeness (-25, this);
-//					}
-					Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "instant_war_life");
-					newLog2.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
-					newLog2.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-					newLog2.AddToFillers (this.abductorKingdom, this.abductorKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-				}else{
-					HonorableOtherKingsAdjustRelationshipToBothKings();
-				}
+//				if(this.targetKing.importantCharacterValues.ContainsKey(CHARACTER_VALUE.LIFE)){
+//					InstantWar();
+////					if(this.relationshipKing != null){
+////						this.relationshipKing.AdjustLikeness (-25, this);
+////					}
+//					Log newLog2 = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "SpouseAbduction", "instant_war_life");
+//					newLog2.AddToFillers (this.targetKing, this.targetKing.name, LOG_IDENTIFIER.KING_2);
+//					newLog2.AddToFillers (this.abductee, this.abductee.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+//					newLog2.AddToFillers (this.abductorKingdom, this.abductorKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+//				}else{
+//					HonorableOtherKingsAdjustRelationshipToBothKings();
+//				}
 				AdjustRelationshipFromOtherKingdoms(this.abductorKing, -5, CHARACTER_VALUE.LIFE);
 			}else{
 				HonorableOtherKingsAdjustRelationshipToBothKings();
@@ -347,28 +347,28 @@ public class SpouseAbduction : GameEvent {
 
 		this.abductor.citizen.Death (DEATH_REASONS.TREACHERY);
 
-		if(this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.PEACE) > this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.HONOR)){
-			if(this.relationshipKing != null){
-				this.relationshipKing.AddEventModifier (-5, this.name + " event", this);
-			}
-		}else if(this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.HONOR) > this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.PEACE)){
-			InstantWar();
-//			if (this.relationshipKing != null) {
-//				this.relationshipKing.AdjustLikeness (-15, this);
+//		if(this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.PEACE) > this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.HONOR)){
+//			if(this.relationshipKing != null){
+//				this.relationshipKing.AddEventModifier (-5, this.name + " event", this);
 //			}
-		}else{
-			int chance = UnityEngine.Random.Range (0, 2);
-			if(chance == 0){
-				if (this.relationshipKing != null) {
-					this.relationshipKing.AddEventModifier (-5, this.name + " event", this);
-				}
-			}else{
-				InstantWar();
+//		}else if(this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.HONOR) > this.targetKing.GetCharacterValueOfType(CHARACTER_VALUE.PEACE)){
+//			InstantWar();
+////			if (this.relationshipKing != null) {
+////				this.relationshipKing.AdjustLikeness (-15, this);
+////			}
+//		}else{
+//			int chance = UnityEngine.Random.Range (0, 2);
+//			if(chance == 0){
 //				if (this.relationshipKing != null) {
-//					this.relationshipKing.AdjustLikeness (-15, this);
+//					this.relationshipKing.AddEventModifier (-5, this.name + " event", this);
 //				}
-			}
-		}
+//			}else{
+//				InstantWar();
+////				if (this.relationshipKing != null) {
+////					this.relationshipKing.AdjustLikeness (-15, this);
+////				}
+//			}
+//		}
 		AdjustRelationshipFromOtherKingdoms (this.abductorKing, -5, CHARACTER_VALUE.HONOR);
 
 		this.DoneEvent ();
@@ -454,12 +454,12 @@ public class SpouseAbduction : GameEvent {
 
 	private void AdjustRelationshipFromOtherKingdoms(Citizen targetKing, int amount, CHARACTER_VALUE requiredValue){
 		for(int i = 0; i < this.otherKingdoms.Count; i++){
-			if(this.otherKingdoms[i].king.importantCharacterValues.ContainsKey(requiredValue)){
-				KingdomRelationship relationship = this.otherKingdoms [i].GetRelationshipWithKingdom (targetKing.city.kingdom);
-				if(relationship != null){
-					relationship.AddEventModifier (amount, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-				}
-			}
+			//if(this.otherKingdoms[i].king.importantCharacterValues.ContainsKey(requiredValue)){
+			//	KingdomRelationship relationship = this.otherKingdoms [i].GetRelationshipWithKingdom (targetKing.city.kingdom);
+			//	if(relationship != null){
+			//		relationship.AddEventModifier (amount, this.name + " event", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+			//	}
+			//}
 		}
 	}
 

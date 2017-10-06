@@ -64,20 +64,20 @@ public class HiddenHistoryBook : GameEvent {
 	}
 	private void DecisionForSearchParty(){
 		onPerformAction -= WaitDaysBeforeDecisionForSearchParty;
-		if(this.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
-			SearchParty();
-		}else{
-			int chance = UnityEngine.Random.Range(0,100);
-			if (chance < 40){
-				SearchParty();
-			}else{
-				//TODO: Add log - ignores the existence of the book and will not look for it
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "HiddenHistoryBook", "ignore_existence");
-				newLog.AddToFillers (this.kingdom.king, this.kingdom.king.name, LOG_IDENTIFIER.KING_1);
+		//if(this.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
+		//	SearchParty();
+		//}else{
+		//	int chance = UnityEngine.Random.Range(0,100);
+		//	if (chance < 40){
+		//		SearchParty();
+		//	}else{
+		//		//TODO: Add log - ignores the existence of the book and will not look for it
+		//		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "HiddenHistoryBook", "ignore_existence");
+		//		newLog.AddToFillers (this.kingdom.king, this.kingdom.king.name, LOG_IDENTIFIER.KING_1);
 
-				this.DoneEvent();
-			}
-		}
+		//		this.DoneEvent();
+		//	}
+		//}
 	}
 	private void SearchParty(){
 		//TODO: Add log - send search party
@@ -112,20 +112,20 @@ public class HiddenHistoryBook : GameEvent {
 		}
 	}
 	private void KingDecision(){
-		if(this.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
-			UpholdOldWays();
-		}else{
-			int chance = UnityEngine.Random.Range(0,100);
-			if (chance < 20){
-				UpholdOldWays();
-			}else{
-				//TODO: Add log - ignores the old ways
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "HiddenHistoryBook", "ignore_old_ways");
-				newLog.AddToFillers (this.kingdom.king, this.kingdom.king.name, LOG_IDENTIFIER.KING_1);
+		//if(this.kingdom.king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
+		//	UpholdOldWays();
+		//}else{
+		//	int chance = UnityEngine.Random.Range(0,100);
+		//	if (chance < 20){
+		//		UpholdOldWays();
+		//	}else{
+		//		//TODO: Add log - ignores the old ways
+		//		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "HiddenHistoryBook", "ignore_old_ways");
+		//		newLog.AddToFillers (this.kingdom.king, this.kingdom.king.name, LOG_IDENTIFIER.KING_1);
 
-				this.DoneEvent();
-			}
-		}
+		//		this.DoneEvent();
+		//	}
+		//}
 	}
 
 	private void UpholdOldWays(){
@@ -147,21 +147,21 @@ public class HiddenHistoryBook : GameEvent {
 		List<City> allCities = this.kingdom.nonRebellingCities;
 		if(allCities != null && allCities.Count > 0){
 			for (int i = 0; i < allCities.Count; i++) {
-				if(allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(4, "Same tradition values", this);
-				}else{
-					((Governor)allCities[i].governor.assignedRole).AddEventModifier(-4, "Opposing tradition values", this);
-				}
+				//if(allCities[i].governor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
+				//	((Governor)allCities[i].governor.assignedRole).AddEventModifier(4, "Same tradition values", this);
+				//}else{
+				//	((Governor)allCities[i].governor.assignedRole).AddEventModifier(-4, "Opposing tradition values", this);
+				//}
 			}
 		}
 	}
 
     private void KingdomReaction() {
-        if (this.kingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
-            this.kingdom.AdjustStability(10);
-        } else {
-            this.kingdom.AdjustStability(-10);
-        }
+        //if (this.kingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)) {
+        //    this.kingdom.AdjustStability(10);
+        //} else {
+        //    this.kingdom.AdjustStability(-10);
+        //}
     }
 
     private void OtherKingsReactions(){
@@ -170,13 +170,13 @@ public class HiddenHistoryBook : GameEvent {
 			for (int i = 0; i < otherKingdoms.Count; i++) {
 				KingdomRelationship relationship = otherKingdoms[i].GetRelationshipWithKingdom(this.kingdom);
 				if(relationship != null){
-					if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
-                        //relationship.AdjustLikeness(10, this);
-                        relationship.AddEventModifier(3, "Same tradition values", this);
-                    } else{
-                        //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-						relationship.AddEventModifier(-3, "Opposing tradition values", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
-                    }
+					//if(otherKingdoms[i].king.importantCharacterValues.ContainsKey(CHARACTER_VALUE.TRADITION)){
+     //                   //relationship.AdjustLikeness(10, this);
+     //                   relationship.AddEventModifier(3, "Same tradition values", this);
+     //               } else{
+     //                   //relationship.AdjustLikeness(-10, this, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+					//	relationship.AddEventModifier(-3, "Opposing tradition values", this, true, ASSASSINATION_TRIGGER_REASONS.OPPOSING_APPROACH);
+     //               }
 				}
 			}
 		}

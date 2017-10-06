@@ -67,9 +67,9 @@ public class Crime : GameEvent {
 		int value = 0;
 		List<CHARACTER_VALUE> charValues = null; 
         if(obj is Citizen) {
-            charValues = new List<CHARACTER_VALUE>(((Citizen)obj).importantCharacterValues.Keys);
+            //charValues = new List<CHARACTER_VALUE>(((Citizen)obj).importantCharacterValues.Keys);
         } else if(obj is Kingdom) {
-            charValues = new List<CHARACTER_VALUE>(((Kingdom)obj).importantCharacterValues.Keys);
+            //charValues = new List<CHARACTER_VALUE>(((Kingdom)obj).importantCharacterValues.Keys);
         }
 		for (int i = 0; i < charValues.Count; i++) {
 			if(this.crimeData.positiveValues.Contains(charValues[i])){

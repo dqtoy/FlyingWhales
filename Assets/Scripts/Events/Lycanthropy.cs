@@ -74,9 +74,9 @@ public class Lycanthropy : GameEvent {
     private EVENT_APPROACH DetermineApproach(object obj, bool forGovernorDecision = false) {
         Dictionary<CHARACTER_VALUE, int> importantCharVals = null;
         if (obj is Citizen) {
-            importantCharVals = ((Citizen)obj).importantCharacterValues;
+            //importantCharVals = ((Citizen)obj).importantCharacterValues;
         } else if (obj is Kingdom){
-            importantCharVals = ((Kingdom)obj).importantCharacterValues;
+            //importantCharVals = ((Kingdom)obj).importantCharacterValues;
         }
 
         EVENT_APPROACH chosenApproach = EVENT_APPROACH.NONE;

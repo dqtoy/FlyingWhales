@@ -74,18 +74,18 @@ public class Hypnotism : GameEvent {
 
             for (int i = 0; i < _sourceKingdom.cities.Count; i++) {
                 Citizen currGovernor = _sourceKingdom.cities[i].governor;
-                if (currGovernor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-                    ((Governor)currGovernor.assignedRole).AddEventModifier(5, "Hypnotism of " + _targetKingdom.king + " reaction", this);
-                } else {
-                    ((Governor)currGovernor.assignedRole).AddEventModifier(-5, "Hypnotism of " + _targetKingdom.king + " reaction", this);
-                }
+                //if (currGovernor.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
+                //    ((Governor)currGovernor.assignedRole).AddEventModifier(5, "Hypnotism of " + _targetKingdom.king + " reaction", this);
+                //} else {
+                //    ((Governor)currGovernor.assignedRole).AddEventModifier(-5, "Hypnotism of " + _targetKingdom.king + " reaction", this);
+                //}
             }
 
-            if (_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-                _sourceKingdom.AdjustStability(10);
-            } else {
-                _sourceKingdom.AdjustStability(-10);
-            }
+            //if (_sourceKingdom.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
+            //    _sourceKingdom.AdjustStability(10);
+            //} else {
+            //    _sourceKingdom.AdjustStability(-10);
+            //}
         }
         DoneEvent();
     }

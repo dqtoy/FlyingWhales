@@ -113,28 +113,28 @@ public class King : Role {
 		if(GameManager.Instance.days % 10 == 0 && !this.isRumoring){
 			int chance = UnityEngine.Random.Range(0, 100);
 			if(chance < 20){
-				if(this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE) && this.citizen.city.kingdom.discoveredKingdoms.Count >= 2){
-					List<Kingdom> targetKingdoms = new List<Kingdom>();
-					List<Kingdom> rumorKingdoms = new List<Kingdom>();
-					for (int i = 0; i < this.citizen.city.kingdom.discoveredKingdoms.Count; i++) {
-						if(this.citizen.city.kingdom.discoveredKingdoms[i].isAlive()){
-							KingdomRelationship relationship = this.citizen.city.kingdom.GetRelationshipWithKingdom(this.citizen.city.kingdom.discoveredKingdoms[i]);
-							if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.DISLIKE || relationship.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.SPITE)){
-								targetKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
-							}
-							if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE)){
-								rumorKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
-							}
-						}
-					}
-					if(targetKingdoms.Count > 0 && rumorKingdoms.Count > 0){
-						Kingdom targetKingdom = targetKingdoms[UnityEngine.Random.Range(0,targetKingdoms.Count)];
-						Kingdom rumorKingdom = rumorKingdoms[UnityEngine.Random.Range(0,rumorKingdoms.Count)];
+				//if(this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE) && this.citizen.city.kingdom.discoveredKingdoms.Count >= 2){
+				//	List<Kingdom> targetKingdoms = new List<Kingdom>();
+				//	List<Kingdom> rumorKingdoms = new List<Kingdom>();
+				//	for (int i = 0; i < this.citizen.city.kingdom.discoveredKingdoms.Count; i++) {
+				//		if(this.citizen.city.kingdom.discoveredKingdoms[i].isAlive()){
+				//			KingdomRelationship relationship = this.citizen.city.kingdom.GetRelationshipWithKingdom(this.citizen.city.kingdom.discoveredKingdoms[i]);
+				//			if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.DISLIKE || relationship.relationshipStatus == RELATIONSHIP_STATUS.HATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.SPITE)){
+				//				targetKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
+				//			}
+				//			if(relationship != null && (relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE || relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE)){
+				//				rumorKingdoms.Add(this.citizen.city.kingdom.discoveredKingdoms[i]);
+				//			}
+				//		}
+				//	}
+				//	if(targetKingdoms.Count > 0 && rumorKingdoms.Count > 0){
+				//		Kingdom targetKingdom = targetKingdoms[UnityEngine.Random.Range(0,targetKingdoms.Count)];
+				//		Kingdom rumorKingdom = rumorKingdoms[UnityEngine.Random.Range(0,rumorKingdoms.Count)];
 
-						this.isRumoring = true;
-						EventCreator.Instance.CreateRumorEvent(this.citizen, rumorKingdom, targetKingdom);
-					}
-				}
+				//		this.isRumoring = true;
+				//		EventCreator.Instance.CreateRumorEvent(this.citizen, rumorKingdom, targetKingdom);
+				//	}
+				//}
 			}
 		}
 	}
@@ -164,16 +164,16 @@ public class King : Role {
 		}
 	}
 	private void TriggerSerumOfAlacrity(){
-		if(this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
-			if(GameManager.Instance.month == this._triggerMonthOfSerum && GameManager.Instance.days == this._triggerDayOfSerum && GameManager.Instance.year == this._triggerYearOfSerum){
-				int chance = UnityEngine.Random.Range(0,100);
-				if(chance < 10){
-					EventCreator.Instance.CreateSerumOfAlacrityEvent(this.citizen);
-				}else{
-					RandomTriggerDateOfSerum();
-				}
-			}
-		}
+		//if(this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.STRENGTH)){
+		//	if(GameManager.Instance.month == this._triggerMonthOfSerum && GameManager.Instance.days == this._triggerDayOfSerum && GameManager.Instance.year == this._triggerYearOfSerum){
+		//		int chance = UnityEngine.Random.Range(0,100);
+		//		if(chance < 10){
+		//			EventCreator.Instance.CreateSerumOfAlacrityEvent(this.citizen);
+		//		}else{
+		//			RandomTriggerDateOfSerum();
+		//		}
+		//	}
+		//}
 	}
 
 	private void RandomTriggerDateOfSerum(bool isFirst = false){
@@ -206,22 +206,22 @@ public class King : Role {
 		return true;
 	}
 	private bool IsReadyForAbduction(ref Citizen targetKing){
-		if(this.citizen.spouse == null && !this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)){
-			List<Citizen> targetKings = this.citizen.city.kingdom.discoveredKingdoms.Select (x => x.king).Where (x => x.isMarried && x.spouse != null && x.gender == this.citizen.gender).ToList();
-			if(targetKings != null && targetKings.Count > 0){
-				for (int i = 0; i < targetKings.Count; i++) {
-					KingdomRelationship relationship = this.citizen.city.kingdom.GetRelationshipWithKingdom (targetKings [i].city.kingdom);
-					if(relationship != null){
-//						targetKing = targetKings [i];
-//						return true;
-						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE || relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
-							targetKing = targetKings [i];
-							return true;
-						}
-					}
-				}
-			}
-		}
+//		if(this.citizen.spouse == null && !this.citizen.importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)){
+//			List<Citizen> targetKings = this.citizen.city.kingdom.discoveredKingdoms.Select (x => x.king).Where (x => x.isMarried && x.spouse != null && x.gender == this.citizen.gender).ToList();
+//			if(targetKings != null && targetKings.Count > 0){
+//				for (int i = 0; i < targetKings.Count; i++) {
+//					KingdomRelationship relationship = this.citizen.city.kingdom.GetRelationshipWithKingdom (targetKings [i].city.kingdom);
+//					if(relationship != null){
+////						targetKing = targetKings [i];
+////						return true;
+//						if(relationship.relationshipStatus == RELATIONSHIP_STATUS.LOVE || relationship.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
+//							targetKing = targetKings [i];
+//							return true;
+//						}
+//					}
+//				}
+//			}
+//		}
 		return false;
 	}
 }

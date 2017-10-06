@@ -286,7 +286,7 @@ public class City{
 
         _kingdom.AssignNewKing(king);
         this.kingdom.king.isDirectDescendant = true;
-        king.GenerateCharacterValues();
+        //king.GenerateCharacterValues();
 
         MONTH monthSibling = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
         MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
@@ -298,14 +298,14 @@ public class City{
 
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
             sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
-            sibling.GenerateCharacterValues();
-            sibling2.GenerateCharacterValues();
+            //sibling.GenerateCharacterValues();
+            //sibling2.GenerateCharacterValues();
             sibling.UpdateKingOpinion();
             sibling2.UpdateKingOpinion();
         } else if (siblingsChance >= 25 && siblingsChance < 75) {
             Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, king.age));
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
-            sibling.GenerateCharacterValues();
+            //sibling.GenerateCharacterValues();
             sibling.UpdateKingOpinion();
         }
 
@@ -316,7 +316,7 @@ public class City{
         int spouseChance = UnityEngine.Random.Range(0, 100);
         if (spouseChance < 80) {
             Citizen spouse = MarriageManager.Instance.CreateSpouse(king);
-            spouse.GenerateCharacterValues();
+            //spouse.GenerateCharacterValues();
             spouse.UpdateKingOpinion();
             //List<int> childAges = Enumerable.Range(0, (spouse.age - 16)).ToList();
             //if(spouse.gender == GENDER.MALE){
@@ -393,7 +393,7 @@ public class City{
         father.AddChild(chancellor);
         mother.AddChild(chancellor);
         chancellor.AddParents(father, mother);
-        chancellor.GenerateCharacterValues();
+        //chancellor.GenerateCharacterValues();
         chancellor.UpdateKingOpinion();
 
         MarriageManager.Instance.Marry(father, mother);
@@ -409,14 +409,14 @@ public class City{
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
             sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
 
-            sibling.GenerateCharacterValues();
-            sibling2.GenerateCharacterValues();
+            //sibling.GenerateCharacterValues();
+            //sibling2.GenerateCharacterValues();
             sibling.UpdateKingOpinion();
             sibling2.UpdateKingOpinion();
         } else if (siblingsChance >= 25 && siblingsChance < 75) {
             Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, chancellor.age));
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
-            sibling.GenerateCharacterValues();
+            //sibling.GenerateCharacterValues();
             sibling.UpdateKingOpinion();
         }
 
@@ -427,7 +427,7 @@ public class City{
         int spouseChance = UnityEngine.Random.Range(0, 100);
         if (spouseChance < 80) {
             Citizen spouse = MarriageManager.Instance.CreateSpouse(chancellor);
-            spouse.GenerateCharacterValues();
+            //spouse.GenerateCharacterValues();
             spouse.UpdateKingOpinion();
         }
         chancellor.AssignRole(ROLE.GRAND_CHANCELLOR);
@@ -460,7 +460,7 @@ public class City{
         mother.AddChild(marshal);
         marshal.AddParents(father, mother);
 
-        marshal.GenerateCharacterValues();
+        //marshal.GenerateCharacterValues();
         marshal.UpdateKingOpinion();
 
         MarriageManager.Instance.Marry(father, mother);
@@ -476,14 +476,14 @@ public class City{
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
             sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
 
-            sibling.GenerateCharacterValues();
-            sibling2.GenerateCharacterValues();
+            //sibling.GenerateCharacterValues();
+            //sibling2.GenerateCharacterValues();
             sibling.UpdateKingOpinion();
             sibling2.UpdateKingOpinion();
         } else if (siblingsChance >= 25 && siblingsChance < 75) {
             Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, marshal.age));
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
-            sibling.GenerateCharacterValues();
+            //sibling.GenerateCharacterValues();
             sibling.UpdateKingOpinion();
         }
 
@@ -494,7 +494,7 @@ public class City{
         int spouseChance = UnityEngine.Random.Range(0, 100);
         if (spouseChance < 80) {
             Citizen spouse = MarriageManager.Instance.CreateSpouse(marshal);
-            spouse.GenerateCharacterValues();
+            //spouse.GenerateCharacterValues();
             spouse.UpdateKingOpinion();
         }
         marshal.AssignRole(ROLE.GRAND_MARSHAL);
@@ -517,7 +517,7 @@ public class City{
         father.AddChild(governor);
         mother.AddChild(governor);
         governor.AddParents(father, mother);
-        governor.GenerateCharacterValues();
+        //governor.GenerateCharacterValues();
         governor.UpdateKingOpinion();
 
         MONTH monthFather = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
@@ -547,14 +547,14 @@ public class City{
 
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
             sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
-            sibling.GenerateCharacterValues();
-            sibling2.GenerateCharacterValues();
+            //sibling.GenerateCharacterValues();
+            //sibling2.GenerateCharacterValues();
             sibling.UpdateKingOpinion();
             sibling2.UpdateKingOpinion();
         } else if (siblingsChance >= 25 && siblingsChance < 75) {
             Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, governor.age));
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
-            sibling.GenerateCharacterValues();
+            //sibling.GenerateCharacterValues();
             sibling.UpdateKingOpinion();
         }
 
@@ -565,7 +565,7 @@ public class City{
         int spouseChance = UnityEngine.Random.Range(0, 100);
         if (spouseChance < 80) {
             Citizen spouse = MarriageManager.Instance.CreateSpouse(governor);
-            spouse.GenerateCharacterValues();
+            //spouse.GenerateCharacterValues();
             spouse.UpdateKingOpinion();
 
             //         List<int> childAges = Enumerable.Range(0, (spouse.age - 16)).ToList();
