@@ -1143,9 +1143,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         "\n [b]Kingdom Size:[/b] " + this.city.kingdom.kingdomSize.ToString() +
         "\n [b]Expansion Rate:[/b] " + this.city.kingdom.GetMonthlyExpansionRateIncrease().ToString() +
         "\n [b]Growth Rate: [/b]" + this.city.totalDailyGrowth.ToString() +
-        "\n [b]Draft Rate: [/b]" + this.city.kingdom.draftRate.ToString() +
-        "\n [b]Research Rate: [/b]" + this.city.kingdom.researchRate.ToString() +
-        "\n [b]Production Rate: [/b]" + this.city.kingdom.productionRate.ToString() +
+        "\n [b]Draft Rate: [/b]" + (this.city.kingdom.draftRate * 100f).ToString() + "%" +
+        "\n [b]Research Rate: [/b]" + (this.city.kingdom.researchRate * 100f).ToString() + "%" +
+        "\n [b]Production Rate: [/b]" + (this.city.kingdom.productionRate * 100f).ToString() + "%" +
         "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
 
         text += "[b]Adjacent Kingdoms: [/b]\n";
