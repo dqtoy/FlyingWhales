@@ -234,7 +234,8 @@ public class CityGenerator : MonoBehaviour {
             }
         }
         if(unoccupiedAdjacentRegions.Count > 0) {
-            Region chosenRegion = unoccupiedAdjacentRegions.OrderByDescending(x => x.naturalResourceLevel[kingdom.race]).FirstOrDefault();
+			int highestResourceLevel = unoccupiedAdjacentRegions.Max(x => x.naturalResourceLevel[kingdom.race]);
+			Region chosenRegion = unoccupiedAdjacentRegions.FirstOrDefault(x => x.naturalResourceLevel[kingdom.race] == highestResourceLevel);
             if(chosenRegion != null) {
                 return chosenRegion.centerOfMass;
             }

@@ -618,6 +618,19 @@ public class Kingdom{
         this.DeleteRelationships();
         KingdomManager.Instance.allKingdoms.Remove(this);
 
+        Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "obliterated");
+        string yearsLasted = string.Empty;
+        if (age == 1) {
+            yearsLasted = "a year";
+        } else if (age <= 0) {
+            yearsLasted = "less than a year";
+        } else {
+            yearsLasted = age.ToString() + " years";
+        }
+        newLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(null, yearsLasted, LOG_IDENTIFIER.OTHER);
+        UIManager.Instance.ShowNotification(newLog);
+
         UIManager.Instance.CheckIfShowingKingdomIsAlive(this);
 
         Debug.Log(this.id + " - Kingdom: " + this.name + " has died!");
@@ -1241,7 +1254,7 @@ public class Kingdom{
         if(stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
             for (int i = 0; i < cities.Count; i++) {
                 City currCity = cities[i];
-                if(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= 100).Any()) {
+                if(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50).Any()) {
                     return true;
                 }
             }
@@ -1252,7 +1265,7 @@ public class Kingdom{
         List<Citizen> citizensForRebellion = new List<Citizen>();
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
-            citizensForRebellion.AddRange(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= 100));
+            citizensForRebellion.AddRange(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50));
         }
         return citizensForRebellion;
     }
@@ -2298,7 +2311,7 @@ public class Kingdom{
                 Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
                 militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-                UIManager.Instance.ShowNotification(militarizeLog, null, false);
+                UIManager.Instance.ShowNotification(militarizeLog, new HashSet<Kingdom>() { this }, false);
             }
         }
     }
@@ -2330,7 +2343,7 @@ public class Kingdom{
 				Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", fortifyFileName);
                 fortifyLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 fortifyLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-                UIManager.Instance.ShowNotification(fortifyLog, null, false);
+                UIManager.Instance.ShowNotification(fortifyLog, new HashSet<Kingdom>() { this }, false);
             }
 		}
 	}
@@ -2433,7 +2446,7 @@ public class Kingdom{
 									int chance = UnityEngine.Random.Range (0, 100);
 									if(chance < totalChanceOfJoining){
 										//Join War
-										warsToJoin.Add(kr.warfare, kr.warfare.kingdomSides[allyKingdom]);
+										warsToJoin.Add(kr.warfare, kr.warfare.kingdomSides[allyKingdom.id]);
 										Debug.Log(name + " will join in " + allyKingdom.name + "'s war");
 	                                } else{
 										//Don't join war, leave alliance, lose 100 prestige
@@ -2607,8 +2620,8 @@ public class Kingdom{
 	}
 	internal void AdjustStability(int amountToAdjust) {
     	this._stability += amountToAdjust;
-    	this._stability = Mathf.Clamp(this._stability, -100, 100);
-	}
+        this._stability = Mathf.Clamp(this._stability, -100, 100);
+    }
 	internal void AdjustBaseWeapons(int amountToAdjust) {
 		this._baseWeapons += amountToAdjust;
 		if(this._baseWeapons < 0){
@@ -2633,8 +2646,8 @@ public class Kingdom{
     }
     internal void ChangeStability(int newAmount) {
 		this._stability = newAmount;
-		this._stability = Mathf.Clamp (this._stability, -100, 100);
-	}
+        this._stability = Mathf.Clamp(this._stability, -100, 100);
+    }
 	internal void AdjustMilitaryAlliancePower(int amount){
 		this._militaryAlliancePower += amount;
         _militaryAlliancePower = Mathf.Max(_militaryAlliancePower, 0);
@@ -2730,9 +2743,9 @@ public class Kingdom{
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             if (!currCity.isDead && currCity.rebellion == null) {
-                int weaponsContribution = currCity.powerPoints * 2;
-                int armorContribution = currCity.defensePoints * 2;
-                int techContribution = currCity.techPoints * 1;
+                int weaponsContribution = currCity.powerPoints;
+                int armorContribution = currCity.defensePoints;
+                int techContribution = currCity.techPoints;
                 currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
                 totalWeaponsIncrease += weaponsContribution;
                 totalArmorIncrease += armorContribution;

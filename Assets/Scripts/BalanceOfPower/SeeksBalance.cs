@@ -96,7 +96,7 @@ public static class SeeksBalance {
 					Kingdom targetKingdom = null;
 					float highestInvasionValue = kingdom.relationships.Values.Max (x => x.targetKingdomInvasionValue);
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.targetKingdomInvasionValue == highestInvasionValue && !relationship.AreAllies()){
+						if(relationship.targetKingdomInvasionValue == highestInvasionValue && !relationship.AreAllies() && relationship.warfare == null){
 							targetKingdom = relationship.targetKingdom;
 							skipPhase3 = true;
 							break;
@@ -286,7 +286,7 @@ public static class SeeksBalance {
                     }
 
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.isDiscovered && !relationship.AreAllies()){
+						if(relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null){
 							if(relationship.targetKingdomInvasionValue > highestInvasionValue){
 								highestInvasionValue = relationship.targetKingdomInvasionValue;
 								if (relationship.targetKingdomInvasionValue >= KingdomManager.Instance.GetReducedInvasionValueThreshHold (100f, overPopulationReduction)) {
