@@ -63,14 +63,14 @@ public class Governor : Role {
 	}
 //	private void PrestigeContribution(bool isRemove){
 //		int contribution = 0;
-//		switch(this.citizen.charismaLevel){
-//		case CHARISMA.HIGH:
+//		switch(this.citizen.charisma){
+//		case CHARISMA.CHARISMATIC:
 //			contribution = 2;
 //			break;
-//		case CHARISMA.AVERAGE:
+//		case CHARISMA.NEUTRAL:
 //			contribution = 1;
 //			break;
-////		case CHARISMA.LOW:
+////		case CHARISMA.REPULSIVE:
 ////			contribution = 0;
 ////			break;
 //		}
@@ -84,14 +84,14 @@ public class Governor : Role {
 //	}
 //	private void StabilityContribution(bool isRemove){
 //		int contribution = 0;
-//		switch(this.citizen.efficiencyLevel){
-//		case EFFICIENCY.HIGH:
+//		switch(this.citizen.efficiency){
+//		case EFFICIENCY.EFFICIENT:
 //			contribution = 2;
 //			break;
-//		case EFFICIENCY.AVERAGE:
+//		case EFFICIENCY.NEUTRAL:
 //			contribution = 1;
 //			break;
-////		case EFFICIENCY.LOW:
+////		case EFFICIENCY.INEPT:
 ////			contribution = 0;
 ////			break;
 //		}
@@ -104,14 +104,14 @@ public class Governor : Role {
 //	}
 //	private void IntelligenceContribution(bool isRemove){
 //		int contribution = 0;
-//		switch(this.citizen.intelligenceLevel){
-//		case INTELLIGENCE.HIGH:
+//		switch(this.citizen.intelligence){
+//		case INTELLIGENCE.SMART:
 //			contribution = 2;
 //			break;
-//		case INTELLIGENCE.AVERAGE:
+//		case INTELLIGENCE.NEUTRAL:
 //			contribution = 1;
 //			break;
-////		case INTELLIGENCE.LOW:
+////		case INTELLIGENCE.DUMB:
 ////			contribution = 0;
 ////			break;
 //		}

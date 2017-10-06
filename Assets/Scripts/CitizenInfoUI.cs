@@ -8,9 +8,9 @@ public class CitizenInfoUI : MonoBehaviour {
 	public IntelligenceTraitObject intelligenceTraitObj;
 
     public void SetTraits(Citizen citizen) {
-        this.charismaTraitObj.SetTrait(citizen.charismaLevel);
-        this.efficiencyTraitObj.SetTrait(citizen.efficiencyLevel);
-        this.intelligenceTraitObj.SetTrait(citizen.intelligenceLevel);
+        this.charismaTraitObj.SetTrait(citizen.charisma);
+        this.efficiencyTraitObj.SetTrait(citizen.efficiency);
+        this.intelligenceTraitObj.SetTrait(citizen.intelligence);
     }
 
 	//public void SetKingTraits(King king){

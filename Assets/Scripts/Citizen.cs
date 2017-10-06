@@ -664,22 +664,22 @@ public class Citizen {
         if(role != ROLE.GOVERNOR && role != ROLE.KING) {
             return 0;
         } else {
-            switch (_charismaLevel) {
-            case CHARISMA.HIGH:
+			switch (this._charisma) {
+            case CHARISMA.CHARISMATIC:
                 if (role == ROLE.KING) {
                     return 10;
                 } else if (role == ROLE.GOVERNOR) {
                     return 2;
                 }
                 break;
-            case CHARISMA.AVERAGE:
+            case CHARISMA.NEUTRAL:
                 if (role == ROLE.KING) {
                     return 7;
                 } else if (role == ROLE.GOVERNOR) {
                     return 1;
                 }
                 break;
-            case CHARISMA.LOW:
+            case CHARISMA.REPULSIVE:
                 if (role == ROLE.KING) {
                     return 5;
                 }
@@ -695,22 +695,22 @@ public class Citizen {
         if (role != ROLE.GOVERNOR && role != ROLE.KING) {
             return 0;
         } else {
-            switch (_charismaLevel) {
-                case CHARISMA.HIGH:
+            switch (_charisma) {
+                case CHARISMA.CHARISMATIC:
                     if (role == ROLE.KING) {
                         return 10;
                     } else if (role == ROLE.GOVERNOR) {
                         return 2;
                     }
                     break;
-                case CHARISMA.AVERAGE:
+                case CHARISMA.NEUTRAL:
                     if (role == ROLE.KING) {
                         return 7;
                     } else if (role == ROLE.GOVERNOR) {
                         return 1;
                     }
                     break;
-                case CHARISMA.LOW:
+                case CHARISMA.REPULSIVE:
                     if (role == ROLE.KING) {
                         return 5;
                     }
@@ -726,22 +726,22 @@ public class Citizen {
         if (role != ROLE.GOVERNOR && role != ROLE.KING) {
             return 0;
         } else {
-            switch (_intelligenceLevel) {
-                case INTELLIGENCE.HIGH:
+            switch (_intelligence) {
+                case INTELLIGENCE.SMART:
                     if (role == ROLE.KING) {
                         return 5;
                     } else if (role == ROLE.GOVERNOR) {
                         return 2;
                     }
                     break;
-                case INTELLIGENCE.AVERAGE:
+                case INTELLIGENCE.NEUTRAL:
                     if (role == ROLE.KING) {
                         return 3;
                     } else if (role == ROLE.GOVERNOR) {
                         return 1;
                     }
                     break;
-                case INTELLIGENCE.LOW:
+                case INTELLIGENCE.DUMB:
                     if (role == ROLE.KING) {
                         return 2;
                     }
@@ -763,22 +763,22 @@ public class Citizen {
                 }
             }
 
-            switch (_efficiencyLevel) {
-                case EFFICIENCY.HIGH:
+            switch (_efficiency) {
+                case EFFICIENCY.EFFICIENT:
                     if (role == ROLE.KING) {
                         return 6;
                     } else if (role == ROLE.GOVERNOR) {
                         return 2;
                     }
                     break;
-                case EFFICIENCY.AVERAGE:
+                case EFFICIENCY.NEUTRAL:
                     if (role == ROLE.KING) {
                         return 4;
                     } else if (role == ROLE.GOVERNOR) {
                         return 1;
                     }
                     break;
-                case EFFICIENCY.LOW:
+                case EFFICIENCY.INEPT:
                     if (role == ROLE.KING) {
                         return 2;
                     }
@@ -867,9 +867,9 @@ public class Citizen {
 
         //Charisma
         int charismaAdjustment = 0;
-        if(king.charismaLevel == CHARISMA.LOW) {
+        if(king.charisma == CHARISMA.REPULSIVE) {
             charismaAdjustment = -15;
-        } else if (king.charismaLevel == CHARISMA.HIGH) {
+        } else if (king.charisma == CHARISMA.CHARISMATIC) {
             charismaAdjustment = 15;
         }
         if(charismaAdjustment != 0) {
@@ -883,9 +883,9 @@ public class Citizen {
 
         //Efficiency
         int efficiencyAdjustment = 0;
-        if (king.efficiencyLevel == EFFICIENCY.LOW && this.efficiencyLevel == EFFICIENCY.HIGH) {
+        if (king.efficiency == EFFICIENCY.INEPT && this.efficiency == EFFICIENCY.EFFICIENT) {
             efficiencyAdjustment = -30;
-        } else if (king.efficiencyLevel == EFFICIENCY.HIGH && this.efficiencyLevel == EFFICIENCY.HIGH) {
+        } else if (king.efficiency == EFFICIENCY.EFFICIENT && this.efficiency == EFFICIENCY.EFFICIENT) {
             efficiencyAdjustment = 30;
         }
         if (efficiencyAdjustment != 0) {
@@ -899,9 +899,9 @@ public class Citizen {
 
         //Intelligence
         int intelligenceAdjustment = 0;
-        if (king.intelligenceLevel == INTELLIGENCE.LOW && this.intelligenceLevel == INTELLIGENCE.HIGH) {
+        if (king.intelligence == INTELLIGENCE.DUMB && this.intelligence == INTELLIGENCE.SMART) {
             intelligenceAdjustment = -30;
-        } else if (king.intelligenceLevel == INTELLIGENCE.HIGH && this.intelligenceLevel == INTELLIGENCE.HIGH) {
+        } else if (king.intelligence == INTELLIGENCE.SMART && this.intelligence == INTELLIGENCE.SMART) {
             intelligenceAdjustment = 30;
         }
         if (intelligenceAdjustment != 0) {

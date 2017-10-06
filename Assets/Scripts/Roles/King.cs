@@ -50,14 +50,14 @@ public class King : Role {
 
 	//private void PrestigeContribution(bool isRemove){
 	//	int contribution = 0;
-	//	switch(this.citizen.charismaLevel){
-	//	case CHARISMA.HIGH:
+	//	switch(this.citizen.charisma){
+	//	case CHARISMA.CHARISMATIC:
 	//		contribution = 10;
 	//		break;
-	//	case CHARISMA.AVERAGE:
+	//	case CHARISMA.NEUTRAL:
 	//		contribution = 7;
 	//		break;
-	//	case CHARISMA.LOW:
+	//	case CHARISMA.REPULSIVE:
 	//		contribution = 5;
 	//		break;
 	//	}
@@ -69,14 +69,14 @@ public class King : Role {
 	//}
 	//private void StabilityContribution(bool isRemove){
 	//	int contribution = 0;
-	//	switch(this.citizen.efficiencyLevel){
-	//	case EFFICIENCY.HIGH:
+	//	switch(this.citizen.efficiency){
+	//	case EFFICIENCY.EFFICIENT:
 	//		contribution = 6;
 	//		break;
-	//	case EFFICIENCY.AVERAGE:
+	//	case EFFICIENCY.NEUTRAL:
 	//		contribution = 4;
 	//		break;
-	//	case EFFICIENCY.LOW:
+	//	case EFFICIENCY.INEPT:
 	//		contribution = 2;
 	//		break;
 	//	}
@@ -87,14 +87,14 @@ public class King : Role {
 	//}
 	//private void IntelligenceContribution(bool isRemove){
 	//	int contribution = 0;
-	//	switch(this.citizen.intelligenceLevel){
-	//	case INTELLIGENCE.HIGH:
+	//	switch(this.citizen.intelligence){
+	//	case INTELLIGENCE.SMART:
 	//		contribution = 5;
 	//		break;
-	//	case INTELLIGENCE.AVERAGE:
+	//	case INTELLIGENCE.NEUTRAL:
 	//		contribution = 3;
 	//		break;
-	//	case INTELLIGENCE.LOW:
+	//	case INTELLIGENCE.DUMB:
 	//		contribution = 2;
 	//		break;
 	//	}
