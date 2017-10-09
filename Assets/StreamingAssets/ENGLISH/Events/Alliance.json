@@ -1,1 +1,1 @@
-{"items":[{"key":"create_alliance","value":"%01@ created an alliance with %11@."},{"key":"leave_alliance","value":"%01@ has left its alliance."},{"key":"join_alliance","value":"%01@ has joined with the alliance of %11@."}]}
+{"items":[{"key":"create_alliance","value":"%01@ and %11@ created the %111%."},{"key":"leave_alliance","value":"%01@ left %111%."},{"key":"join_alliance","value":"%01@ joined %111%."}]}
