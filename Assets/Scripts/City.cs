@@ -1113,6 +1113,7 @@ public class City{
                 otherKingdom.SetFogOfWarStateForRegion(newCity.region, FOG_OF_WAR_STATE.SEEN);
             }
         }
+        newCity.kingdom.SetStabilityDecreaseBecauseOfInvasion(true);
 
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
