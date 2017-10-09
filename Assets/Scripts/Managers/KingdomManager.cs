@@ -501,6 +501,7 @@ public class KingdomManager : MonoBehaviour {
 			Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "create_alliance");
 			newLog.AddToFillers (firstKingdom, firstKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (secondKingdom, secondKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+            newLog.AddToFillers(null, newAlliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
 			UIManager.Instance.ShowNotification (newLog);
 			return true;
 		}

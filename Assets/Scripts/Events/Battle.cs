@@ -329,10 +329,15 @@ public class Battle {
 				this._warfare.AdjustWeariness (this.defender.kingdom, 1);
 
                 AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + "(" + defender.kingdom.name + ") wins the battle against " + attacker.name + "(" + attacker.kingdom.name + ")");
+                List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
+                kingdomsToShowNotif.AddRange(_warfare.GetListFromSide(WAR_SIDE.A));
+                kingdomsToShowNotif.AddRange(_warfare.GetListFromSide(WAR_SIDE.B));
+                kingdomsToShowNotif.Add(attacker.kingdom);
+                kingdomsToShowNotif.Add(defender.kingdom);
                 Log newLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "successful_defense");
 				newLog.AddToFillers(this.defender, this.defender.name, LOG_IDENTIFIER.CITY_1);
 				newLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_2);
-				this._warfare.ShowUINotification(newLog);
+				this._warfare.ShowUINotification(newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 
                 //When failing in attacking an enemy city, Stability is reduced by 5.
                 attacker.kingdom.AdjustStability(-5);

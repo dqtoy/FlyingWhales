@@ -2759,8 +2759,6 @@ public class Kingdom{
         int totalArmorIncrease = 0;
         int totalTechIncrease = GetTechContributionFromCitizens();
         int totalStabilityIncrease = GetStabilityContributionFromCitizens();
-        //Kings and Governors provide monthly Stability gains based on their Efficiency trait.  This is reduced by the Kingdom's Draft Rate.
-        totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             if (!currCity.isDead && currCity.rebellion == null) {
@@ -2773,6 +2771,9 @@ public class Kingdom{
                 totalTechIncrease += techContribution;
             }
         }
+        //Kings and Governors provide monthly Stability gains based on their Efficiency trait.  This is reduced by the Kingdom's Draft Rate.
+        totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
+
         if (isMilitarize) {
             //Militarizing multiplies Weapon production by 2.5 for the month in exchange for 0 Armor and Tech production.
             totalWeaponsIncrease = Mathf.FloorToInt(totalWeaponsIncrease * 2.5f);
@@ -3218,12 +3219,27 @@ public class Kingdom{
 	}
 	internal void LeaveAlliance(bool doNotShowLog = false){
 		if(this.alliancePool != null){
-			this.alliancePool.RemoveKingdomInAlliance(this);
+            AlliancePool leftAlliance = this.alliancePool;
+            //List<Kingdom> kingdomsInvolved = new List<Kingdom>();
+            //for (int i = 0; i < leftAlliance.kingdomsInvolved.Count; i++) {
+            //    Kingdom kingdomInvolved = leftAlliance.kingdomsInvolved[i];
+            //    kingdomsInvolved.Add(kingdomInvolved);
+            //    if (kingdomInvolved.warfareInfo.Count > 0) {
+            //        foreach (WarfareInfo currWarFare in kingdomInvolved.warfareInfo.Values) {
+            //            foreach (List<Kingdom> kingdomsToAdd in currWarFare.warfare.kingdomSideList.Values) {
+            //                kingdomsInvolved.AddRange(kingdomsToAdd);
+            //            }
+            //        }
+            //    }
+            //}
+
+            this.alliancePool.RemoveKingdomInAlliance(this);
 			//When leaving an alliance, Stability is reduced by 15
 			this.AdjustStability(-15);
 			if(!doNotShowLog){
 				Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
 				newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+                newLog.AddToFillers(null, leftAlliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
 				UIManager.Instance.ShowNotification (newLog);
 			}
 		}
@@ -3281,45 +3297,96 @@ public class Kingdom{
 		return threat;
 	}
 	internal void ShowTransferWeaponsArmorsLog(Kingdom allyKingdom, string amount){
-		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "transfer_weapons_armors");
+        List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
+        foreach (WarfareInfo currWarFare in this.warfareInfo.Values) {
+            foreach (List<Kingdom> kingdomsInvolved in currWarFare.warfare.kingdomSideList.Values) {
+                kingdomsToShowNotif.AddRange(kingdomsInvolved);
+            }
+        }
+        foreach (WarfareInfo currWarFare in allyKingdom.warfareInfo.Values) {
+            foreach (List<Kingdom> kingdomsInvolved in currWarFare.warfare.kingdomSideList.Values) {
+                kingdomsToShowNotif.AddRange(kingdomsInvolved);
+            }
+        }
+        Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "transfer_weapons_armors");
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (allyKingdom, allyKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 		newLog.AddToFillers (null, amount, LOG_IDENTIFIER.OTHER);
-		UIManager.Instance.ShowNotification (newLog);
+		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowJoinWarLog(Kingdom allyKingdom, Warfare warfare){
-		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "join_war");
+        List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
+        kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.A));
+        kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.B));
+        foreach (WarfareInfo currWarFare in allyKingdom.warfareInfo.Values) {
+            foreach (List<Kingdom> kingdomsInvolved in currWarFare.warfare.kingdomSideList.Values) {
+                kingdomsToShowNotif.AddRange(kingdomsInvolved);
+            }
+        }
+        Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "join_war");
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
 		newLog.AddToFillers (allyKingdom, allyKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		UIManager.Instance.ShowNotification (newLog);
+		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowRefuseAndLeaveAllianceLog(AlliancePool alliance, Warfare warfare){
-		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "refuse_and_leave_alliance");
+        List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
+        kingdomsToShowNotif.Add(this);
+        kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.A));
+        kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.B));
+        kingdomsToShowNotif.AddRange(alliance.kingdomsInvolved);
+        Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "refuse_and_leave_alliance");
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
 		newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
-		UIManager.Instance.ShowNotification (newLog);
+		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowDoNothingLog(Warfare warfare){
-		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "do_nothing_war");
+        List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
+        kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.A));
+        kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.B));
+        Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "do_nothing_war");
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
-		UIManager.Instance.ShowNotification (newLog);
+		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowBetrayalWarLog(Warfare warfare, Kingdom kingdom){
-		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_war");
+        List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
+        kingdomsToShowNotif.Add(kingdom);
+        kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.A));
+        kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.B));
+        foreach (WarfareInfo currWarFare in kingdom.warfareInfo.Values) {
+            foreach (List<Kingdom> kingdomsInvolved in currWarFare.warfare.kingdomSideList.Values) {
+                kingdomsToShowNotif.AddRange(kingdomsInvolved);
+            }
+        }
+        Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_war");
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
 		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		UIManager.Instance.ShowNotification (newLog);
+		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowBetrayalProvideLog(AlliancePool alliance, string logAmount, Kingdom kingdom){
-		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_provide");
+        List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
+        kingdomsToShowNotif.Add(this);
+        kingdomsToShowNotif.Add(kingdom);
+        kingdomsToShowNotif.AddRange(alliance.kingdomsInvolved);
+
+        foreach (WarfareInfo currWarFare in this.warfareInfo.Values) {
+            foreach (List<Kingdom> kingdomsInvolved in currWarFare.warfare.kingdomSideList.Values) {
+                kingdomsToShowNotif.AddRange(kingdomsInvolved);
+            }
+        }
+        foreach (WarfareInfo currWarFare in kingdom.warfareInfo.Values) {
+            foreach (List<Kingdom> kingdomsInvolved in currWarFare.warfare.kingdomSideList.Values) {
+                kingdomsToShowNotif.AddRange(kingdomsInvolved);
+            }
+        }
+        Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "betrayal_provide");
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
 		newLog.AddToFillers (null, logAmount, LOG_IDENTIFIER.OTHER);
 		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		UIManager.Instance.ShowNotification (newLog);
+		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 }

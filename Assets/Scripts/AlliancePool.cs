@@ -48,7 +48,7 @@ public class AlliancePool {
 		if(canBeAccepted){
 			Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "join_alliance");
 			newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLog.AddToFillers (kingdomInAlliance, kingdomInAlliance.name, LOG_IDENTIFIER.KINGDOM_2);
+			newLog.AddToFillers (null, this.name, LOG_IDENTIFIER.ALLIANCE_NAME);
 			UIManager.Instance.ShowNotification (newLog);
 			AddKingdomInAlliance (kingdom);
 			DiscoverKingdomsInAlliance (kingdom);
