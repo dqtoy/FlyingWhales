@@ -2812,7 +2812,7 @@ public class UIManager : MonoBehaviour {
                 EnableUIButton(chooseCitizenOkBtn, false);
                 chooseCitizenSelectedGO.SetActive(false);
             }
-            
+            HideSmallInfo();
         }
     }
     private void InfectChosenCitizenWithIncurableDisease() {
