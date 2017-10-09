@@ -77,10 +77,14 @@ public class Warfare {
 
 	internal void JoinWar(WAR_SIDE side, Kingdom kingdom, bool isCreateBattle = true){
 		if (!this._kingdomSideWeariness.ContainsKey(kingdom.id)) {
+			WAR_SIDE oppositeSide = WAR_SIDE.A;
+			if(side == WAR_SIDE.A){
+				oppositeSide = WAR_SIDE.B;
+			}
 			this._kingdomSideWeariness.Add(kingdom.id, new SideWeariness(side, 0));
 			this._kingdomSideList [side].Add (kingdom);
-			for (int i = 0; i < this._kingdomSideList [side].Count; i++) {
-				InstantDeclareWarIfNotAdjacent (kingdom, this._kingdomSideList [side] [i]);
+			for (int i = 0; i < this._kingdomSideList [oppositeSide].Count; i++) {
+				InstantDeclareWarIfNotAdjacent (kingdom, this._kingdomSideList [oppositeSide] [i]);
 			}
 			kingdom.AddWarfareInfo(new WarfareInfo(side, this));
 			if(isCreateBattle){
@@ -402,12 +406,12 @@ public class Warfare {
 //		}
 	}
 	private bool CanUnjoinWar(WAR_SIDE side, Kingdom kingdom){
-		WAR_SIDE newSide = WAR_SIDE.A;
+		WAR_SIDE oppositeSide = WAR_SIDE.A;
 		if(side == WAR_SIDE.A){
-			newSide = WAR_SIDE.B;
+			oppositeSide = WAR_SIDE.B;
 		}
-		for (int i = 0; i < this._kingdomSideList[newSide].Count; i++) {
-			KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[newSide][i]);
+		for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
+			KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
 			if(kr.isAtWar && kr.warfare.id == this._id){
 				return false;
 			}
@@ -504,12 +508,12 @@ public class Warfare {
 		return this._kingdomSideList [side];
 	}
 	internal bool IsAdjacentToEnemyKingdoms(Kingdom kingdom, WAR_SIDE side){
-		WAR_SIDE newSide = WAR_SIDE.A;
+		WAR_SIDE oppositeSide = WAR_SIDE.A;
 		if(side == WAR_SIDE.A){
-			newSide = WAR_SIDE.B;
+			oppositeSide = WAR_SIDE.B;
 		}
-		for (int i = 0; i < this._kingdomSideList[newSide].Count; i++) {
-			KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[newSide][i]);
+		for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
+			KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
 			if(kr.isAdjacent){
 				return true;
 			}
@@ -535,11 +539,11 @@ public class Warfare {
 	}
 	private void CantPairForcePeace(Kingdom kingdom){
 		if(this._kingdomSideWeariness.ContainsKey(kingdom.id)){
-			WAR_SIDE newSide = WAR_SIDE.A;
+			WAR_SIDE oppositeSide = WAR_SIDE.A;
 			if(this._kingdomSideWeariness[kingdom.id].side == WAR_SIDE.A){
-				newSide = WAR_SIDE.B;
+				oppositeSide = WAR_SIDE.B;
 			}
-			if (this._kingdomSideList[newSide].Count > 0) {
+			if (this._kingdomSideList[oppositeSide].Count > 0) {
 				PeaceDeclaration(kingdom);
 			} else {
 				WarfareDone();
