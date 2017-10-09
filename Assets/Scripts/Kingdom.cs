@@ -150,8 +150,7 @@ public class Kingdom{
     private float _draftRateFromKing;
     private float _productionRateFromKing;
 
-    private bool _shouldReduceStabilityBecauseOfInvasion;
-    private GameDate stabilityDecreaseExpiry;
+    private int stabilityDecreaseFromInvasionCounter;
 
     #region getters/setters
     public KINGDOM_TYPE kingdomType {
@@ -389,9 +388,6 @@ public class Kingdom{
 			return (int)((2 * mySoldiers * this._baseArmor) / (mySoldiers + this._baseArmor));
 		}
 	}
-    //internal bool shouldReduceStabilityBecauseOfInvasion {
-    //    get { return _shouldReduceStabilityBecauseOfInvasion; }
-    //}
     #endregion
 
     // Kingdom constructor paramters
@@ -466,7 +462,7 @@ public class Kingdom{
 		this._actionDay = 0;
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
-        this._shouldReduceStabilityBecauseOfInvasion = false;
+        this.stabilityDecreaseFromInvasionCounter = 0;
         AdjustPrestige(GridMap.Instance.numOfRegions);
         //		AdjustPrestige(500);
 
@@ -2791,9 +2787,7 @@ public class Kingdom{
         int overpopulation = GetOverpopulationPercentage();
         totalStabilityIncrease -= overpopulation / 10;
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
-        if (_shouldReduceStabilityBecauseOfInvasion) {
-            totalStabilityIncrease -= 2;
-        }
+        totalStabilityIncrease -= (stabilityDecreaseFromInvasionCounter * 2);
 
         AdjustBaseWeapons(totalWeaponsIncrease);
         AdjustBaseArmors(totalArmorIncrease);
@@ -2821,29 +2815,22 @@ public class Kingdom{
                 currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
             }
         }
-        //overpopulation reduces Stability by 1 point per 5% of Overpopulation each month
+        //overpopulation reduces Stability by 1 point per 10% of Overpopulation each month
         int overpopulation = GetOverpopulationPercentage();
         totalStabilityIncrease -= overpopulation / 10;
-        if (_shouldReduceStabilityBecauseOfInvasion) {
-            totalStabilityIncrease -= 2;
-        }
+        //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
+        totalStabilityIncrease -= (stabilityDecreaseFromInvasionCounter * 2);
         return totalStabilityIncrease;
     }
-    internal void SetStabilityDecreaseBecauseOfInvasion(bool state) {
-        _shouldReduceStabilityBecauseOfInvasion = state;
-        if (state) {
-            if(stabilityDecreaseExpiry.day != 0) {
-                //means that there is currently a scheduled action to turn off stability decrease, reset that to next six months
-                SchedulingManager.Instance.RemoveSpecificEntry(stabilityDecreaseExpiry.month, stabilityDecreaseExpiry.day, stabilityDecreaseExpiry.year, () => SetStabilityDecreaseBecauseOfInvasion(false));
-            }
-            //Reschedule event
-            GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-            dueDate.AddMonths(6);
-            stabilityDecreaseExpiry = dueDate;
-            SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => SetStabilityDecreaseBecauseOfInvasion(false));
-        } else {
-            stabilityDecreaseExpiry = new GameDate(0,0,0);
-        }
+    internal void AddStabilityDecreaseBecauseOfInvasion() {
+        stabilityDecreaseFromInvasionCounter += 1;
+        //Reschedule event
+        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        dueDate.AddMonths(6);
+        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => ReduceStabilityDecreaseBecauseOfInvasion());
+    }
+    private void ReduceStabilityDecreaseBecauseOfInvasion() {
+        stabilityDecreaseFromInvasionCounter -= 1;
     }
     private int GetStabilityContributionFromCitizens() {
         int stabilityContributionsFromCitizens = 0;
