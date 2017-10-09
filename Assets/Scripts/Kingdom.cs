@@ -887,9 +887,9 @@ public class Kingdom{
     internal void UpdateAllRelationshipsLikeness() {
         if (this.king != null) {
 			foreach (KingdomRelationship relationship in relationships.Values) {
-                if (relationship.isDiscovered) {
+                //if (relationship.isDiscovered) {
                     relationship.UpdateLikeness(null);
-                }
+                //}
 			}
         }
     }

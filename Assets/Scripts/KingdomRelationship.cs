@@ -782,7 +782,8 @@ public class KingdomRelationship {
 
 		UpdateTargetKingdomThreatLevel ();
 		UpdateTargetInvasionValue ();
-	}
+        UpdateLikeness(null);
+    }
 	internal void UpdateTargetKingdomThreatLevel(){
 		float threatLevel = 0f;
 		if(this._usedTargetEffectivePower > this._usedSourceEffectiveDef){
@@ -863,7 +864,7 @@ public class KingdomRelationship {
 		if(this._targetKingdomThreatLevel < 0f){
 			this._targetKingdomThreatLevel = 0f;
 		}
-		UpdateLikeness (null);
+		
 	}
 
 	internal void UpdateTargetInvasionValue(){
