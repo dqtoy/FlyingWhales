@@ -924,10 +924,10 @@ public class KingdomRelationship {
 		int theoreticalDefense = GetTheoreticalDefense ();
 		int posAllianceAttack = GetAdjacentPosAllianceWeapons ();
 //		int posAllianceDefense = GetAdjacentPosAllianceArmors ();
-		int usedPosAllianceAttack = (int)((float)posAllianceAttack / 2f);
+//		int usedPosAllianceAttack = (int)((float)posAllianceAttack / 2f);
 
-		this._effectivePower = theoreticalAttack + usedPosAllianceAttack;
-		this._effectiveDef = theoreticalDefense + usedPosAllianceAttack;
+		this._effectivePower = theoreticalAttack + posAllianceAttack;
+		this._effectiveDef = theoreticalDefense + posAllianceAttack;
 	}
 
 	private int GetTheoreticalAttack(){
@@ -948,8 +948,9 @@ public class KingdomRelationship {
 				if(this._sourceKingdom.id != kingdomInAlliance.id && this._targetKingdom.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
-					if(relationship.totalLike >= 35 && !relationshipToEnemy.isAdjacent){
-						posAlliancePower += (int)((float)kingdomInAlliance.baseWeapons * 0.1f);
+					if(relationship.totalLike >= 0 && !relationshipToEnemy.isAdjacent){
+						float weapons = (float)kingdomInAlliance.baseWeapons * 0.1f;
+						posAlliancePower += (int)(weapons * GetOpinionPercentage(relationship.totalLike));
 					}
 				}
 			}
@@ -964,8 +965,8 @@ public class KingdomRelationship {
 				if(this._sourceKingdom.id != kingdomInAlliance.id && this._targetKingdom.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
-					if(relationship.totalLike >= 35 && relationshipToEnemy.isAdjacent){
-						posAlliancePower += kingdomInAlliance.effectiveAttack;
+					if(relationship.totalLike >= 0 && relationshipToEnemy.isAdjacent){
+						posAlliancePower += (int)((float)kingdomInAlliance.effectiveAttack * GetOpinionPercentage(relationship.totalLike));
 					}
 				}
 			}
@@ -980,8 +981,9 @@ public class KingdomRelationship {
 				if(this._sourceKingdom.id != kingdomInAlliance.id && this._targetKingdom.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
-					if(relationship.totalLike >= 35 && !relationshipToEnemy.isAdjacent){
-						posAllianceDefense += (int)((float)kingdomInAlliance.baseArmor * 0.1f);
+					if(relationship.totalLike >= 0 && !relationshipToEnemy.isAdjacent){
+						float armors = (float)kingdomInAlliance.baseArmor * 0.1f;
+						posAllianceDefense += (int)(armors * GetOpinionPercentage(relationship.totalLike));
 					}
 				}
 			}
@@ -996,13 +998,22 @@ public class KingdomRelationship {
 				if(this._sourceKingdom.id != kingdomInAlliance.id && this._targetKingdom.id != kingdomInAlliance.id){
 					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this._sourceKingdom);
 					KingdomRelationship relationshipToEnemy = kingdomInAlliance.GetRelationshipWithKingdom(this._targetKingdom);
-					if(relationship.totalLike >= 35 && relationshipToEnemy.isAdjacent){
-						posAllianceDefense += kingdomInAlliance.effectiveDefense;
+					if(relationship.totalLike >= 0 && relationshipToEnemy.isAdjacent){
+						posAllianceDefense += (int)((float)kingdomInAlliance.effectiveDefense * GetOpinionPercentage(relationship.totalLike));
 					}
 				}
 			}
 		}
 		return posAllianceDefense;
+	}
+	private float GetOpinionPercentage(int opinion){
+		if(opinion >= 0 && opinion < 35){
+			return 0.25f;
+		}else if(opinion >= 35 && opinion < 50){
+			return 0.5f;
+		}else{
+			return 1f;
+		}
 	}
 	internal bool AreAllies(){
 		if(this._sourceKingdom.alliancePool == null || this._targetKingdom.alliancePool == null){
