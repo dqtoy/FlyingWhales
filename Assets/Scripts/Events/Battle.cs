@@ -256,11 +256,9 @@ public class Battle {
 			int defenseAfterDamage = defenderDefense - attackDamage;
 			if(attackAfterDamage <= 0){
 				attackAfterDamage = 0;
-				this._deadAttackerKingdom = this.attacker.kingdom;
 			}
 			if(defenseAfterDamage <= 0){
 				defenseAfterDamage = 0;
-				this._deadDefenderKingdom = this.defender.kingdom;
 			}
 
 			//If attackAfterDamage/defenseAfterDamage is 0, wipe out kingdom
@@ -276,9 +274,11 @@ public class Battle {
 			this.attacker.kingdom.AdjustBaseWeapons (-rollForDamageInWeapons);
 			int damageToSoldiersAttacker = GetDamageToSoldiers (attackAfterDamage, this.attacker.kingdom.baseWeapons);
 			int damageToPopulationAttacker = GetDamageToPopulationAttacker (damageToSoldiersAttacker);
-			if(attackAfterDamage > 0){
+			if(damageToPopulationAttacker < this.attacker.kingdom.population){
 				this.attacker.kingdom.AdjustPopulation (-damageToPopulationAttacker);
-            }
+			}else{
+				this._deadAttackerKingdom = this.attacker.kingdom;
+			}
 			Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);
 			Debug.Log ("MAX ROLL DAMAGE TO WEAPONS: " + maxRollForDamageInWeapons);
 			Debug.Log ("MIN ROLL DAMAGE TO WEAPONS: " + minRollForDamageInWeapons);
@@ -300,9 +300,11 @@ public class Battle {
 			this.defender.kingdom.AdjustBaseArmors (-rollForDamageInArmors);
 			int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.defender.kingdom.baseArmor);
 			int damageToPopulationDefender = GetDamageToPopulationDefender (damageToSoldiersDefender);
-			if(defenseAfterDamage > 0){
+			if(damageToPopulationDefender < this.defender.kingdom.population){
 				this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
-            }
+			}else{
+				this._deadDefenderKingdom = this.defender.kingdom;
+			}
 			Debug.Log ("MAX DAMAGE TO ARMORS: " + maxDamageToArmors);
 			Debug.Log ("MAX ROLL DAMAGE TO ARMORS: " + maxRollForDamageInArmors);
 			Debug.Log ("MIN ROLL DAMAGE TO ARMORS: " + minRollForDamageInArmors);
