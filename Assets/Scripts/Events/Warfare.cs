@@ -350,6 +350,7 @@ public class Warfare {
 				WarfareDone ();
 				return;
 			}
+			UnjoinWar (kingdom1);
 //			WAR_SIDE peaceDeclarerSide = this._kingdomSideWeariness [kingdom1.id].side;
 //			if(peaceDeclarerSide == WAR_SIDE.A){
 //				if(this._sideB.Count > 0){
@@ -370,7 +371,6 @@ public class Warfare {
 //					return;
 //				}
 //			}
-			CheckWarfare ();
 		}
 	}
 	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
