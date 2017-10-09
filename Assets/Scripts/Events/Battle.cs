@@ -78,8 +78,8 @@ public class Battle {
 			this.defender = defender;
 			this.attacker.ChangeAttackingState (true);
 			this.defender.ChangeDefendingState (true);
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " is now attacking");
-            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " is now defending");
+            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " is now attacking(" + attacker.kingdom.name + ")");
+            AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " is now defending(" + defender.kingdom.name + ")");
         }
 	}
 	private void Step1(){
@@ -282,10 +282,10 @@ public class Battle {
 				Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + damageToPopulationAttacker);
 				Debug.Log ("---------------------------");
 
-                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + attacker.name + " weapons " + rollForDamageInWeapons.ToString() +
+                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + attacker.kingdom.name + " weapons " + rollForDamageInWeapons.ToString() +
                     "(" + attacker.kingdom.baseWeapons.ToString() + ")");
 
-                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " loses " + damageToPopulationAttacker.ToString() + " population " +
+                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.kingdom.name + " loses " + damageToPopulationAttacker.ToString() + " population " +
                     "(" + attacker.kingdom.population.ToString() + ")");
             }
 			if(defenseAfterDamage > 0){
@@ -305,27 +305,27 @@ public class Battle {
 				Debug.Log ("DAMAGE TO DEFENDER'S POPULATION: " + damageToPopulationDefender);
 				Debug.Log ("---------------------------");
 
-                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + defender.name + " armor " + rollForDamageInArmors.ToString() +
+                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + defender.kingdom.name + " armor " + rollForDamageInArmors.ToString() +
                     "(" + defender.kingdom.baseArmor.ToString() + ")");
 
-                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " loses " + damageToPopulationDefender.ToString() + " population " +
+                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.kingdom.name + " loses " + damageToPopulationDefender.ToString() + " population " +
                     "(" + defender.kingdom.population.ToString() + ")");
             }
 
 			if(attackRoll > defenseRoll){
                 //Attacker Wins
-                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " wins the battle against " + defender.name);
+                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + "(" + attacker.kingdom.name + ") wins the battle against " + defender.name + "(" + defender.kingdom.name + ")");
                 EndBattle(this.attacker, this.defender);
 			}else{
                 //Defender Wins
-                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " wins the battle against " + attacker.name);
+                AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + "(" + defender.kingdom.name + ") wins the battle against " + attacker.name + "(" + attacker.kingdom.name + ")");
                 Log newLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "successful_defense");
 				newLog.AddToFillers(this.defender, this.defender.name, LOG_IDENTIFIER.CITY_1);
 				newLog.AddToFillers(this.attacker, this.attacker.name, LOG_IDENTIFIER.CITY_2);
 				this._warfare.ShowUINotification(newLog);
 
-                //When failing in attacking an enemy city, Stability is reduced by 10.
-                attacker.kingdom.AdjustStability(-10);
+                //When failing in attacking an enemy city, Stability is reduced by 5.
+                attacker.kingdom.AdjustStability(-5);
 
                 if (this._deadAttackerKingdom == null && this._deadDefenderKingdom == null){
 					ChangePositionAndGoToStep1();
