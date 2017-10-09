@@ -150,8 +150,11 @@ public class Kingdom{
     private float _draftRateFromKing;
     private float _productionRateFromKing;
 
-	#region getters/setters
-	public KINGDOM_TYPE kingdomType {
+    private bool _shouldReduceStabilityBecauseOfInvasion;
+    private GameDate stabilityDecreaseExpiry;
+
+    #region getters/setters
+    public KINGDOM_TYPE kingdomType {
 		get { 
 			if (this._kingdomTypeData == null) {
 				return KINGDOM_TYPE.NONE;
@@ -386,6 +389,9 @@ public class Kingdom{
 			return (int)((2 * mySoldiers * this._baseArmor) / (mySoldiers + this._baseArmor));
 		}
 	}
+    //internal bool shouldReduceStabilityBecauseOfInvasion {
+    //    get { return _shouldReduceStabilityBecauseOfInvasion; }
+    //}
     #endregion
 
     // Kingdom constructor paramters
@@ -460,6 +466,7 @@ public class Kingdom{
 		this._actionDay = 0;
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
+        this._shouldReduceStabilityBecauseOfInvasion = false;
         AdjustPrestige(GridMap.Instance.numOfRegions);
         //		AdjustPrestige(500);
 
@@ -880,9 +887,9 @@ public class Kingdom{
     internal void UpdateAllRelationshipsLikeness() {
         if (this.king != null) {
 			foreach (KingdomRelationship relationship in relationships.Values) {
-                if (relationship.isDiscovered) {
+                //if (relationship.isDiscovered) {
                     relationship.UpdateLikeness(null);
-                }
+                //}
 			}
         }
     }
@@ -1053,7 +1060,12 @@ public class Kingdom{
         }
     }
     private void IncreaseExpansionRatePerMonth() {
-        if(CityGenerator.Instance.GetExpandableTileForKingdom(this) == null) {
+        //Reschedule next month
+        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        dueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseExpansionRatePerMonth());
+
+        if (CityGenerator.Instance.GetExpandableTileForKingdom(this) == null) {
             //set expansion rate to 0 and don't increase expansion rate until kingdom can expand
             ResetExpansionRate();
             return;
@@ -1061,9 +1073,6 @@ public class Kingdom{
         if (_expansionRate < GridMap.Instance.numOfRegions) {
             AdjustExpansionRate(GetMonthlyExpansionRateIncrease());
         }
-        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        dueDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseExpansionRatePerMonth());
     }
     internal int GetMonthlyExpansionRateIncrease() {
         int monthlyExpansionRate = king.GetExpansionRateContribution();
@@ -1261,7 +1270,7 @@ public class Kingdom{
         return citizensOfType;
     }
     internal bool IsElligibleForRebellion() {
-        if(stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
+        if(stability <= -50 && kingdomSize != KINGDOM_SIZE.SMALL) {
             for (int i = 0; i < cities.Count; i++) {
                 City currCity = cities[i];
                 if(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50).Any()) {
@@ -2765,21 +2774,25 @@ public class Kingdom{
             }
         }
         if (isMilitarize) {
-            //Militarizing converts 15% of all cities Defense to Power.
-            int militarizingGain = Mathf.FloorToInt(baseArmor * 0.15f);
-            totalWeaponsIncrease += militarizingGain;
-            totalArmorIncrease -= militarizingGain;
+            //Militarizing multiplies Weapon production by 2.5 for the month in exchange for 0 Armor and Tech production.
+            totalWeaponsIncrease = Mathf.FloorToInt(totalWeaponsIncrease * 2.5f);
+            totalArmorIncrease = 0;
+            totalTechIncrease = 0;
             Militarize(false);
         } else if (isFortifying) {
-            //Fortifying converts 15% of all cities Power to Defense.
-            int fortifyingGain = Mathf.FloorToInt(baseWeapons * 0.15f);
-            totalArmorIncrease += fortifyingGain;
-            totalWeaponsIncrease -= fortifyingGain;
+            //Fortifying multiplies Armor production by 2.5 for the month in exchange for 0 Weapon and Tech production.
+            totalArmorIncrease = Mathf.FloorToInt(totalArmorIncrease * 2.5f);
+            totalWeaponsIncrease = 0;
+            totalTechIncrease = 0;
             Fortify(false);
         }
-        //overpopulation reduces Stability by 1 point per 5% of Overpopulation each month
+        //overpopulation reduces Stability by 1 point per 10% of Overpopulation each month
         int overpopulation = GetOverpopulationPercentage();
-        totalStabilityIncrease -= overpopulation / 5;
+        totalStabilityIncrease -= overpopulation / 10;
+        //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
+        if (_shouldReduceStabilityBecauseOfInvasion) {
+            totalStabilityIncrease -= 2;
+        }
 
         AdjustBaseWeapons(totalWeaponsIncrease);
         AdjustBaseArmors(totalArmorIncrease);
@@ -2809,8 +2822,27 @@ public class Kingdom{
         }
         //overpopulation reduces Stability by 1 point per 5% of Overpopulation each month
         int overpopulation = GetOverpopulationPercentage();
-        totalStabilityIncrease -= overpopulation / 5;
+        totalStabilityIncrease -= overpopulation / 10;
+        if (_shouldReduceStabilityBecauseOfInvasion) {
+            totalStabilityIncrease -= 2;
+        }
         return totalStabilityIncrease;
+    }
+    internal void SetStabilityDecreaseBecauseOfInvasion(bool state) {
+        _shouldReduceStabilityBecauseOfInvasion = state;
+        if (state) {
+            if(stabilityDecreaseExpiry.day != 0) {
+                //means that there is currently a scheduled action to turn off stability decrease, reset that to next six months
+                SchedulingManager.Instance.RemoveSpecificEntry(stabilityDecreaseExpiry.month, stabilityDecreaseExpiry.day, stabilityDecreaseExpiry.year, () => SetStabilityDecreaseBecauseOfInvasion(false));
+            }
+            //Reschedule event
+            GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+            dueDate.AddMonths(6);
+            stabilityDecreaseExpiry = dueDate;
+            SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => SetStabilityDecreaseBecauseOfInvasion(false));
+        } else {
+            stabilityDecreaseExpiry = new GameDate(0,0,0);
+        }
     }
     private int GetStabilityContributionFromCitizens() {
         int stabilityContributionsFromCitizens = 0;
@@ -2826,7 +2858,6 @@ public class Kingdom{
     //    internal void AdjustBaseArmor(int adjustment) {
     //        _baseArmor += adjustment;
     //    }
-
     internal void UpdateProductionRatesFromKing() {
         _researchRateFromKing = 0f;
         _draftRateFromKing = 0f;
@@ -3188,8 +3219,8 @@ public class Kingdom{
 	internal void LeaveAlliance(bool doNotShowLog = false){
 		if(this.alliancePool != null){
 			this.alliancePool.RemoveKingdomInAlliance(this);
-			//When leaving an alliance, Stability is reduced by 10
-			this.AdjustStability(-10);
+			//When leaving an alliance, Stability is reduced by 15
+			this.AdjustStability(-15);
 			if(!doNotShowLog){
 				Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
 				newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);

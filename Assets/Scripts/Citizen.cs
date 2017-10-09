@@ -1003,7 +1003,7 @@ public class Citizen {
         _loyaltyToKing = Mathf.Clamp(_loyaltyToKing, -100, 100);
     }
     internal int GetLoyaltyFromStability() {
-        return city.kingdom.stability / 5;
+        return city.kingdom.stability / 10;
     }
     #endregion
 
@@ -1151,6 +1151,7 @@ public class Citizen {
 
         //Once a rebellion is declared, set source Kingdom's Stability back to 50
         sourceKingdom.ChangeStability(50);
+        newKingdom.ChangeStability(50);
 
         CameraMove.Instance.UpdateMinimapTexture();
 
@@ -1165,13 +1166,83 @@ public class Citizen {
     }
     #endregion
 
-	private void GenerateTraits(){
-		this._charisma = (CHARISMA)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(CHARISMA)).Length));
-		this._efficiency = (EFFICIENCY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(EFFICIENCY)).Length));
-		this._intelligence = (INTELLIGENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(INTELLIGENCE)).Length));
-		this._science = (SCIENCE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(SCIENCE)).Length));
-		this._military = (MILITARY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(MILITARY)).Length));
-		this._loyalty = (LOYALTY)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(LOYALTY)).Length));
+    #region Character Traits
+    private void GenerateTraits() {
+        this._charisma = GenerateCharismaTrait();
+        this._efficiency = GenerateEfficiencyTrait();
+        this._intelligence = GenerateIntelligenceTrait();
+        this._science = GenerateScienceTrait();
+        this._military = GenerateMilitaryTrait();
+        this._loyalty = GenerateLoyaltyTrait();
         this._balanceType = (PURPOSE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(PURPOSE)).Length));
     }
+
+    private CHARISMA GenerateCharismaTrait() {
+        int chance = Random.Range(0, 100);
+        if(chance < 20) {
+            return CHARISMA.CHARISMATIC;
+        }else if(chance >= 20 && chance < 40) {
+            return CHARISMA.REPULSIVE;
+        } else {
+            return CHARISMA.NEUTRAL;
+        }
+    }
+    private INTELLIGENCE GenerateIntelligenceTrait() {
+        int chance = Random.Range(0, 100);
+        if (chance < 20) {
+            return INTELLIGENCE.SMART;
+        } else if (chance >= 20 && chance < 40) {
+            return INTELLIGENCE.DUMB;
+        } else {
+            return INTELLIGENCE.NEUTRAL;
+        }
+    }
+    private EFFICIENCY GenerateEfficiencyTrait() {
+        int chance = Random.Range(0, 100);
+        if (chance < 20) {
+            return EFFICIENCY.EFFICIENT;
+        } else if (chance >= 20 && chance < 40) {
+            return EFFICIENCY.INEPT;
+        } else {
+            return EFFICIENCY.NEUTRAL;
+        }
+    }
+    private SCIENCE GenerateScienceTrait() {
+        int chance = Random.Range(0, 100);
+        if (chance < 10) {
+            return SCIENCE.ERUDITE;
+        } else if (chance >= 10 && chance < 25) {
+            return SCIENCE.ACADEMIC;
+        } else if (chance >= 25 && chance < 40) {
+            return SCIENCE.IGNORANT;
+        } else {
+            return SCIENCE.NEUTRAL;
+        }
+    }
+    private MILITARY GenerateMilitaryTrait() {
+        int chance = Random.Range(0, 100);
+        if (chance < 10) {
+            return MILITARY.HOSTILE;
+        } else if (chance >= 10 && chance < 25) {
+            return MILITARY.MILITANT;
+        } else if (chance >= 25 && chance < 40) {
+            return MILITARY.PACIFIST;
+        } else {
+            return MILITARY.NEUTRAL;
+        }
+    }
+    private LOYALTY GenerateLoyaltyTrait() {
+        int chance = Random.Range(0, 100);
+        if (chance < 20) {
+            return LOYALTY.LOYAL;
+        } else if (chance >= 20 && chance < 50) {
+            return LOYALTY.SCHEMING;
+        } else {
+            return LOYALTY.NEUTRAL;
+        }
+    }
+
+    #endregion
+
+
 }

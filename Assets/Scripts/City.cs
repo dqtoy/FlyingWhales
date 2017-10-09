@@ -855,9 +855,9 @@ public class City{
 	#region Resource Production
     private int GetBaseDailyGrowth() {
         int naturalResourceLevel = _region.naturalResourceLevel[kingdom.race];
-        int workers = _kingdom.workers;
+		double workerValue = Math.Sqrt(5 * (_kingdom.workers / _kingdom.cities.Count));
         int cities = _kingdom.cities.Count;
-        return (2 * naturalResourceLevel * (workers / cities)) / ((workers / cities) + naturalResourceLevel);
+		return (int)((2 * naturalResourceLevel * workerValue) / (workerValue + naturalResourceLevel));
     }
 	internal void AddToDailyGrowth(){
         AdjustDailyGrowth(this.totalDailyGrowth);
@@ -875,7 +875,7 @@ public class City{
     //    _dailyGrowthBuffs += adjustment;
     //}
 	internal void UpdateDailyProduction(){
-		this._maxGrowth = 200 + ((400 + (500 * this.ownedTiles.Count)) * this.ownedTiles.Count);
+		this._maxGrowth = 1000 + ((1500 + (1000 * this.ownedTiles.Count)) * this.ownedTiles.Count);
 		//this._dailyGrowthFromStructures = (int) Math.Sqrt(this._region.naturalResourceLevel[this.kingdom.race]) * 2;
 		//for (int i = 0; i < this.structures.Count; i++) {
 		//	HexTile currentStructure = this.structures [i];
@@ -1113,6 +1113,7 @@ public class City{
                 otherKingdom.SetFogOfWarStateForRegion(newCity.region, FOG_OF_WAR_STATE.SEEN);
             }
         }
+        newCity.kingdom.SetStabilityDecreaseBecauseOfInvasion(true);
 
         //when a city's defense reaches zero, it will be conquered by the attacking kingdom, 
         //its initial defense will only be 300HP + (20HP x tech level)
