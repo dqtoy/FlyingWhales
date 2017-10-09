@@ -208,6 +208,7 @@ public class Battle {
 	private void Combat(){
 		if(!this.attacker.isDead && !this.defender.isDead){
 			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + this.attacker.name + " of " + this.attacker.kingdom.name + " AND " + this.defender.name + " of " + this.defender.kingdom.name + "===============");
+			this._warfare.AdjustWeariness (this.attacker.kingdom, 2);
 
 			this._deadAttackerKingdom = null;
 			this._deadDefenderKingdom = null;
@@ -256,11 +257,9 @@ public class Battle {
 			int defenseAfterDamage = defenderDefense - attackDamage;
 			if(attackAfterDamage <= 0){
 				attackAfterDamage = 0;
-				this._deadAttackerKingdom = this.attacker.kingdom;
 			}
 			if(defenseAfterDamage <= 0){
 				defenseAfterDamage = 0;
-				this._deadDefenderKingdom = this.defender.kingdom;
 			}
 
 			//If attackAfterDamage/defenseAfterDamage is 0, wipe out kingdom
@@ -276,9 +275,11 @@ public class Battle {
 			this.attacker.kingdom.AdjustBaseWeapons (-rollForDamageInWeapons);
 			int damageToSoldiersAttacker = GetDamageToSoldiers (attackAfterDamage, this.attacker.kingdom.baseWeapons);
 			int damageToPopulationAttacker = GetDamageToPopulationAttacker (damageToSoldiersAttacker);
-			if(attackAfterDamage > 0){
+			if(damageToPopulationAttacker < this.attacker.kingdom.population){
 				this.attacker.kingdom.AdjustPopulation (-damageToPopulationAttacker);
-            }
+			}else{
+				this._deadAttackerKingdom = this.attacker.kingdom;
+			}
 			Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);
 			Debug.Log ("MAX ROLL DAMAGE TO WEAPONS: " + maxRollForDamageInWeapons);
 			Debug.Log ("MIN ROLL DAMAGE TO WEAPONS: " + minRollForDamageInWeapons);
@@ -300,9 +301,11 @@ public class Battle {
 			this.defender.kingdom.AdjustBaseArmors (-rollForDamageInArmors);
 			int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.defender.kingdom.baseArmor);
 			int damageToPopulationDefender = GetDamageToPopulationDefender (damageToSoldiersDefender);
-			if(defenseAfterDamage > 0){
+			if(damageToPopulationDefender < this.defender.kingdom.population){
 				this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
-            }
+			}else{
+				this._deadDefenderKingdom = this.defender.kingdom;
+			}
 			Debug.Log ("MAX DAMAGE TO ARMORS: " + maxDamageToArmors);
 			Debug.Log ("MAX ROLL DAMAGE TO ARMORS: " + maxRollForDamageInArmors);
 			Debug.Log ("MIN ROLL DAMAGE TO ARMORS: " + minRollForDamageInArmors);
@@ -323,6 +326,8 @@ public class Battle {
                 EndBattle(this.attacker, this.defender);
 			}else{
                 //Defender Wins
+				this._warfare.AdjustWeariness (this.defender.kingdom, 1);
+
                 AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + "(" + defender.kingdom.name + ") wins the battle against " + attacker.name + "(" + attacker.kingdom.name + ")");
                 Log newLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "successful_defense");
 				newLog.AddToFillers(this.defender, this.defender.name, LOG_IDENTIFIER.CITY_1);
@@ -333,7 +338,14 @@ public class Battle {
                 attacker.kingdom.AdjustStability(-5);
 
                 if (this._deadAttackerKingdom == null && this._deadDefenderKingdom == null){
-					ChangePositionAndGoToStep1();
+					float peaceMultiplier = this._warfare.PeaceMultiplier (this.defender.kingdom);
+					int value = (int)(1f * peaceMultiplier);
+					int chance = UnityEngine.Random.Range (0, 100);
+					if(chance < value){
+						this._warfare.PeaceDeclaration (this.defender.kingdom);
+					}else{
+						ChangePositionAndGoToStep1();
+					}
 				}else{
 					ForceEndBattle ();
 					if(this._deadAttackerKingdom != null){
@@ -506,9 +518,9 @@ public class Battle {
 		this._kingdom2City.ChangeDefendingState (false);
 		if(!this._kingdom1.isDead && !this._kingdom2.isDead){
 			this._kr.ChangeBattle (null);
-			if(!this._kr.isAdjacent){
-				this._warfare.PeaceDeclaration (this._kingdom1, this._kingdom2);
-			}
+//			if(!this._kr.isAdjacent){
+//				this._warfare.PeaceDeclaration (this._kingdom1, this._kingdom2);
+//			}
 		}
 
 		this._warfare.RemoveBattle (this);
@@ -533,11 +545,11 @@ public class Battle {
 				this._kingdom2City.ChangeDefendingState (false);
 				if(!this._kingdom1.isDead && !this._kingdom2.isDead){
 					this._kr.ChangeBattle (null);
-					if(!this._kr.isAdjacent){
-						this._warfare.RemoveBattle (this);
-						this._warfare.PeaceDeclaration (this._kingdom1, this._kingdom2);
-						return;
-					}
+//					if(!this._kr.isAdjacent){
+//						this._warfare.RemoveBattle (this);
+//						this._warfare.PeaceDeclaration (this._kingdom1, this._kingdom2);
+//						return;
+//					}
 				}
 
 				this._warfare.RemoveBattle (this);
