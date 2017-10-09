@@ -139,11 +139,15 @@ public class Warfare {
 
 
 			if (!winnerCity.kingdom.isDead) {
-				float peaceMultiplier = PeaceMultiplier (winnerCity.kingdom);
-				int value = (int)(1f * peaceMultiplier);
-				int chance = UnityEngine.Random.Range (0, 100);
-				if(chance < value){
-					PeaceDeclaration (winnerCity.kingdom);
+				if(!loserCity.kingdom.isDead){
+					float peaceMultiplier = PeaceMultiplier (winnerCity.kingdom);
+					int value = (int)((float)this._kingdomSideWeariness[winnerCity.kingdom.id].weariness * peaceMultiplier);
+					int chance = UnityEngine.Random.Range (0, 100);
+					if(chance < value){
+						PeaceDeclaration (winnerCity.kingdom);
+					}else{
+						CreateNewBattle (winnerCity.kingdom);
+					}
 				}else{
 					CreateNewBattle (winnerCity.kingdom);
 				}
@@ -334,9 +338,13 @@ public class Warfare {
 	internal void PeaceDeclaration(Kingdom kingdom1){
 		if(!this._isOver){
 			this._isOver = true;
-			if(this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side].Count > 0){
-				for (int i = 0; i < this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side].Count; i++) {
-					DeclarePeace (kingdom1, this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side][i]);
+			WAR_SIDE oppositeSide = WAR_SIDE.A;
+			if(this._kingdomSideWeariness [kingdom1.id].side == WAR_SIDE.A){
+				oppositeSide = WAR_SIDE.B;
+			}
+			if(this._kingdomSideList[oppositeSide].Count > 0){
+				for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
+					DeclarePeace (kingdom1, this._kingdomSideList[oppositeSide][i]);
 				}
 			}else{
 				WarfareDone ();
@@ -569,7 +577,10 @@ public class Warfare {
 	}
 	internal void AdjustWeariness(Kingdom kingdom, int amount){
 		if(this._kingdomSideWeariness.ContainsKey(kingdom.id)){
-			this._kingdomSideWeariness [kingdom.id].AdjustWeariness (amount);
+			SideWeariness sideWeariness = this._kingdomSideWeariness [kingdom.id];
+			sideWeariness.AdjustWeariness (amount);
+			this._kingdomSideWeariness [kingdom.id] = sideWeariness;
+			Debug.Log (kingdom.name + " WEARINESS: " + this._kingdomSideWeariness [kingdom.id].weariness.ToString ());
 		}
 	}
 	internal int GetAllAttackDefenseFromSide(WAR_SIDE side){
