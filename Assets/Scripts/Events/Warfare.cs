@@ -57,8 +57,8 @@ public class Warfare {
         this._logs = new List<Log> ();
 		this._kingdomSideWeariness = new Dictionary<int, SideWeariness>();
 		this._kingdomSideList = new Dictionary<WAR_SIDE, List<Kingdom>> ();
-		this._kingdomSideList.Add (WAR_SIDE.A, new List<Kingdom>(){firstKingdom});
-		this._kingdomSideList.Add (WAR_SIDE.B, new List<Kingdom>(){secondKingdom});
+		this._kingdomSideList.Add (WAR_SIDE.A, new List<Kingdom>());
+		this._kingdomSideList.Add (WAR_SIDE.B, new List<Kingdom>());
 
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
