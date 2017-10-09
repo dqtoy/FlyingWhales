@@ -2978,7 +2978,7 @@ public class Kingdom{
 		populationGrowth += this.techLevel * cities.Count;
         float overpopulationPercentage = GetOverpopulationPercentage();
         int populationGrowthReduction = Mathf.FloorToInt(populationGrowth * (overpopulationPercentage/100f));
-        return populationGrowth - populationGrowthReduction;
+		return Mathf.FloorToInt(populationGrowth * ((100f-overpopulationPercentage) * 0.01f));
     }
     private void IncreasePopulationEveryMonth() {
         AdjustPopulation(GetPopulationGrowth());
