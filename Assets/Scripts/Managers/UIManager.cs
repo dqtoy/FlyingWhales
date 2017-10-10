@@ -126,13 +126,11 @@ public class UIManager : MonoBehaviour {
 	[Space(10)]
     [Header("Relationships UI Objects")]
     public GameObject kingRelationshipsParentGO;
-	public GameObject governorRelationshipsParentGO;
     public GameObject kingRelationshipLine;
     public GameObject kingNoRelationshipsGO;
     public UIScrollView kingRelationshipsScrollView;
     public UIScrollBar kingRelationshipsScrollBar;
     public UIGrid kingRelationshipsGrid;
-	public UIGrid governorsRelationshipGrid;
 
 	[Space(10)]
     [Header("Relationship History UI Objects")]
@@ -477,7 +475,7 @@ public class UIManager : MonoBehaviour {
         //}
         if (relationshipsGO.activeSelf) {
             if (currentlyShowingKingdom != null) {
-                ShowRelationships();
+                ShowKingRelationships();
             }
         }
         
@@ -644,7 +642,7 @@ public class UIManager : MonoBehaviour {
             }
         }
         if (relationshipsGO.activeSelf) {
-            ShowRelationships();
+            ShowKingRelationships();
         }
         if (kingdomCitiesGO.activeSelf) {
             ShowKingdomCities();
@@ -657,11 +655,12 @@ public class UIManager : MonoBehaviour {
 		if (relationshipsGO.activeSelf) {
 			if (currentlyShowingCitizen.isKing) {
 				if (kingRelationshipsParentGO.activeSelf) {
-					ShowRelationships ();
-				} else {
-					ShowRelationships();
-					ShowGovernorRelationships();
+					ShowKingRelationships ();
 				}
+    //            else {
+				//	ShowRelationships();
+				//	ShowGovernorRelationships();
+				//}
 				HideRelationshipHistory();
 			}else{
 				HideRelationships();
@@ -873,15 +872,16 @@ public class UIManager : MonoBehaviour {
 	}
 	public IEnumerator RepositionScrollView(UIScrollView thisScrollView, bool keepScrollPosition = false){
 		yield return new WaitForEndOfFrame();
-		yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
         if (keepScrollPosition) {
             thisScrollView.UpdatePosition();
         } else {
             thisScrollView.ResetPosition();
+            thisScrollView.Scroll(0f);
         }
         yield return new WaitForEndOfFrame();
         thisScrollView.UpdateScrollbars();
-	}
+    }
 	public IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime){
 		float elapsedTime = 0f;
 		while (elapsedTime < lerpTime) {
@@ -895,30 +895,31 @@ public class UIManager : MonoBehaviour {
     public void UpdateRelationships() {
         if (relationshipsGO.activeSelf) {
             if (currentlyShowingKingdom != null) {
-                ShowRelationships();
+                ShowKingRelationships();
             }
         }
     }
-	public void ShowRelationships(){
-        kingdomListRelationshipButton.SetClickState(true);
-        relationshipsGO.SetActive (true);
-        HideKingdomCities();
-        //HideAllKingdomEvents();
-        ShowKingRelationships();
-	}
+	//public void ShowKingRelationships(){
+ //       kingdomListRelationshipButton.SetClickState(true);
+ //       relationshipsGO.SetActive (true);
+ //       HideKingdomCities();
+ //       //HideAllKingdomEvents();
+ //       ShowKingRelationships();
+	//}
 	public void ToggleRelationships(){
-		if (relationshipsGO.activeSelf == true) {
-			governorRelationshipsParentGO.SetActive(false);
-			kingRelationshipsParentGO.SetActive(false);
-			relationshipsGO.SetActive (false);
+		if (relationshipsGO.activeSelf) {
+            //kingRelationshipsParentGO.SetActive(false);
+            //relationshipsGO.SetActive (false);
+            HideRelationships();
 		} else {
-			ShowRelationships();
+            ShowKingRelationships();
 		}
 	}
 
     private Kingdom currentKingdomRelationshipShowing;
 	public void ShowKingRelationships(){
-		List<CharacterPortrait> characterPortraits = kingRelationshipsGrid.gameObject.GetComponentsInChildren<Transform>(true)
+        HideKingdomCities();
+        List<CharacterPortrait> characterPortraits = kingRelationshipsGrid.gameObject.GetComponentsInChildren<Transform>(true)
                                                     .Where(x => x.GetComponent<CharacterPortrait>() != null)
                                                     .Select(x => x.GetComponent<CharacterPortrait>()).ToList();
 
@@ -964,46 +965,44 @@ public class UIManager : MonoBehaviour {
                 kingRelationshipsGrid.Reposition();
             }
 
-            if (kingRelationshipsParentGO.activeSelf) {
-                StartCoroutine(RepositionScrollView(kingRelationshipsScrollView, true));
+            if (relationshipsGO.activeSelf) {
+                StartCoroutine(RepositionScrollView(kingRelationshipsScrollView));
             }
         }
 
-        if(currentKingdomRelationshipShowing == null || currentKingdomRelationshipShowing.id != currentlyShowingKingdom.id || !kingRelationshipsParentGO.activeSelf) {
+        if(currentKingdomRelationshipShowing == null || currentKingdomRelationshipShowing.id != currentlyShowingKingdom.id || !relationshipsGO.activeSelf) {
             StartCoroutine(RepositionGrid(kingRelationshipsGrid));
             StartCoroutine(RepositionScrollView(kingRelationshipsScrollView));
-            kingRelationshipsScrollView.UpdateScrollbars();
         }
 
-        governorRelationshipsParentGO.SetActive(false);
-		kingRelationshipsParentGO.SetActive(true);
+        relationshipsGO.SetActive(true);
+        kingdomListRelationshipButton.SetClickState(true);
         currentKingdomRelationshipShowing = currentlyShowingKingdom;
     }
-	public void ShowGovernorRelationships(){
-		if (governorRelationshipsParentGO.activeSelf) {
-			return;
-		}
-		List<Transform> children = governorsRelationshipGrid.GetChildList();
-		for (int i = 0; i < children.Count; i++) {
-			ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
-		}
+//	public void ShowGovernorRelationships(){
+//		if (governorRelationshipsParentGO.activeSelf) {
+//			return;
+//		}
+//		List<Transform> children = governorsRelationshipGrid.GetChildList();
+//		for (int i = 0; i < children.Count; i++) {
+//			ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
+//		}
 
-        for (int i = 0; i < currentlyShowingCitizen.city.kingdom.cities.Count; i++) {
-			GameObject governorGO = InstantiateUIObject(characterPortraitPrefab.name, governorsRelationshipGrid.transform);
-			governorGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.city.kingdom.cities[i].governor, true);
-			governorGO.GetComponent<CharacterPortrait>().SetHoverEnabled(false);
-			governorGO.transform.localScale = new Vector3(1.5f, 1.5f, 0);
-			governorGO.GetComponent<CharacterPortrait>().ShowRelationshipLine();
-//			governorGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
-		}
+//        for (int i = 0; i < currentlyShowingCitizen.city.kingdom.cities.Count; i++) {
+//			GameObject governorGO = InstantiateUIObject(characterPortraitPrefab.name, governorsRelationshipGrid.transform);
+//			governorGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.city.kingdom.cities[i].governor, true);
+//			governorGO.GetComponent<CharacterPortrait>().SetHoverEnabled(false);
+//			governorGO.transform.localScale = new Vector3(1.5f, 1.5f, 0);
+//			governorGO.GetComponent<CharacterPortrait>().ShowRelationshipLine();
+////			governorGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
+//		}
 
-		kingRelationshipsParentGO.SetActive(false);
-		governorRelationshipsParentGO.SetActive(true);
-		RepositionGridCallback(governorsRelationshipGrid);
-	}
+//		kingRelationshipsParentGO.SetActive(false);
+//		governorRelationshipsParentGO.SetActive(true);
+//		RepositionGridCallback(governorsRelationshipGrid);
+//	}
 	public void HideRelationships(){
-        kingRelationshipsParentGO.SetActive (false);
-		governorRelationshipsParentGO.SetActive(false);
+        //kingRelationshipsParentGO.SetActive (false);
 		relationshipsGO.SetActive (false);
         //relationshipsBtn.SetClickState(false);
         kingdomListRelationshipButton.SetClickState(false);
