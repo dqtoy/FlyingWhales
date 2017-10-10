@@ -267,7 +267,6 @@ public static class SeeksBalance {
 					bool hasOver100InvasionValue = false;
 					bool hasOver50InvasionValue = false;
 					float highestInvasionValue = 0f;
-					int stabilityModifier = (int)((float)kingdom.stability / 10f);
 					int overPopulationReduction = 0;
                     int overpopulation = kingdom.GetOverpopulationPercentage();
                    
@@ -305,8 +304,10 @@ public static class SeeksBalance {
 					}
 					if(targetKingdom != null){
 						if(hasOver100InvasionValue){
+							int stabilityModifier = (int)((float)kingdom.stability / 10f);
 							int chance = UnityEngine.Random.Range (0, 100);
-							int value = (int)(kingdom.king.GetWarmongerWarPercentage100() * (float)stabilityModifier);
+							int value = (int)(kingdom.king.GetWarmongerWarPercentage100());
+							value += (int)(kingdom.king.GetWarmongerWarPercentage100() * (float)stabilityModifier);
 							if(chance < value){
 								//if there is anyone whose Invasion Value is 1 or above, prepare for war against the one with the highest Invasion Value
 								Warfare warfare = new Warfare (kingdom, targetKingdom);
@@ -315,6 +316,7 @@ public static class SeeksBalance {
 						}else{
 							if(hasOver50InvasionValue){
 								KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (targetKingdom);
+								int stabilityModifier = (int)((float)kingdom.stability / 5f);
 								int chance = UnityEngine.Random.Range (0, 100);
 								int value = (int)(kingdom.king.GetWarmongerWarPercentage50() * (float)stabilityModifier);
 								int threshold = KingdomManager.Instance.GetReducedInvasionValueThreshHold (50f, overPopulationReduction);
