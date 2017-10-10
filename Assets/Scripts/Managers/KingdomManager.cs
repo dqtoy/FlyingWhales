@@ -9,7 +9,9 @@ public class KingdomManager : MonoBehaviour {
 
     [SerializeField] private List<InitialKingdom> initialKingdomSetup;
 
-	public List<Kingdom> allKingdoms;
+	public List<Kingdom> allKingdoms = new List<Kingdom>();
+	public List<Kingdom> kingdomRankings = new List<Kingdom>();
+//	public Dictionary<int, int> kingdomRankings = new Dictionary<int, int>();
 
     public List<Kingdom> allKingdomsOrderedBy;
     [SerializeField] private KINGDOMS_ORDERED_BY _orderKingdomsBy;
@@ -92,11 +94,15 @@ public class KingdomManager : MonoBehaviour {
             newKingdom.HighlightAllOwnedTilesInKingdom();
         }
         UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
+
+		GameDate nextUpdateDate = new GameDate (GameManager.Instance.month, 1, GameManager.Instance.year);
+		nextUpdateDate.AddMonths (1);
+		SchedulingManager.Instance.AddEntry (nextUpdateDate, () => MonthlyUpdateKingdomRankings ());
     }
 
 	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool createFamilies = false, Kingdom sourceKingdom = null, bool broadcastCreation = true, Citizen king = null){
 		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom); //Create new kingdom
-		allKingdoms.Add(newKingdom); //add to allKingdoms
+		AddKingdom(newKingdom);
         Debug.Log("Created new kingdom: " + newKingdom.name);
         newKingdom.CreateInitialCities(cities); //Create initial cities
 
@@ -528,5 +534,36 @@ public class KingdomManager : MonoBehaviour {
 			newValue = 1;
 		}
 		return newValue;
+	}
+	internal void AddKingdom(Kingdom kingdom){
+		this.allKingdoms.Add (kingdom);
+//		this.kingdomRankings.Add (kingdom.id, 0);
+		this.kingdomRankings.Add (kingdom);
+		UpdateKingdomRankings ();
+	}
+	internal void RemoveKingdom(Kingdom kingdom){
+		this.allKingdoms.Remove (kingdom);
+//		this.kingdomRankings.Remove (kingdom.id);
+		this.kingdomRankings.Remove (kingdom);
+		UpdateKingdomRankings ();
+	}
+	internal void UpdateKingdomRankings(){
+//		int highestEffectiveKingdom = 0;
+//		for (int i = 0; i < this.allKingdoms.Count; i++) {
+//			int effectiveAttDef = this.allKingdoms [i].effectiveAttack + this.allKingdoms [i].effectiveDefense;
+//			if(effectiveAttDef > highestEffectiveKingdom){
+//				highestEffectiveKingdom = effectiveAttDef;
+//			}
+//		}
+		this.kingdomRankings = this.kingdomRankings.OrderByDescending (x => (x.effectiveAttack + x.effectiveDefense)).ToList ();
+	}
+	private void MonthlyUpdateKingdomRankings(){
+		if(this.kingdomRankings.Count > 1){
+			UpdateKingdomRankings ();
+
+			GameDate nextUpdateDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+			nextUpdateDate.AddMonths (1);
+			SchedulingManager.Instance.AddEntry (nextUpdateDate, () => MonthlyUpdateKingdomRankings ());
+		}
 	}
 }

@@ -624,8 +624,7 @@ public class Kingdom{
         Messenger.Broadcast<Kingdom>("OnKingdomDied", this);
 
         this.DeleteRelationships();
-        KingdomManager.Instance.allKingdoms.Remove(this);
-
+        KingdomManager.Instance.RemoveKingdom(this);
         Log newLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "obliterated");
         string yearsLasted = string.Empty;
         if (age == 1) {
@@ -3148,6 +3147,38 @@ public class Kingdom{
         if(_alliancePool == null) {
             Debug.Log(name + " has failed to create/join an alliance");
         }
+	}
+	internal void SeekAllianceWith(Kingdom targetKingdom){
+		if(targetKingdom.alliancePool == null){
+			Debug.Log(name + " is looking to create an alliance with " + targetKingdom.name);
+			bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, targetKingdom);
+			if(hasCreated){
+				string log = name + " has created an alliance with ";
+				for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+					if(_alliancePool.kingdomsInvolved[j].id != id) {
+						log += _alliancePool.kingdomsInvolved[j].name;
+						if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
+							log += ", ";
+						}
+					}
+				}
+				Debug.Log(log);
+			}
+		}else{
+			Debug.Log(name + " is looking to join the alliance of " + targetKingdom.name);
+			bool hasJoined = targetKingdom.alliancePool.AttemptToJoinAlliance(this, targetKingdom);
+			if(hasJoined){
+				string log = name + " has joined an alliance with ";
+				for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+					if (_alliancePool.kingdomsInvolved[j].id != id) {
+						log += _alliancePool.kingdomsInvolved[j].name;
+						if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+							log += ", ";
+						}
+					}
+				}
+			}
+		}
 	}
 	internal void SetAlliancePool(AlliancePool alliancePool){
 		this._alliancePool = alliancePool;

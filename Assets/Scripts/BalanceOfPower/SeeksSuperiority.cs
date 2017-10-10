@@ -36,8 +36,10 @@ public static class SeeksSuperiority {
 		bool isUnderAttack = kingdom.IsUnderAttack();
 		bool isAttacking = kingdom.IsAttacking ();
 		bool mustSeekAlliance = false;
-		bool mustSeekWar = false;
-		bool mustMilitarize = false;
+		Kingdom seekWarKingdom = null;
+		Kingdom targetKingdom = null;
+		int leastLike = 0;
+		int leastLike2 = 0;
 		if (isUnderAttack && !isAttacking) {
 			if (!kingdom.isFortifying) {
 				int chance = UnityEngine.Random.Range (0, 100);
@@ -55,24 +57,34 @@ public static class SeeksSuperiority {
 		} else {
 			foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 				if(relationship.isDiscovered){
-					if(relationship.targetKingdomThreatLevel >= 100f){
-						if(relationship.targetKingdomInvasionValue < 75f){
-							if(!relationship.AreAllies()){
-								mustSeekAlliance = true;
-								break;
-							}
+					if(relationship.targetKingdomThreatLevel >= 100f && relationship.targetKingdomInvasionValue < 75f){
+						if(!relationship.AreAllies()){
+							mustSeekAlliance = true;
+							break;
 						}
-					}else if(relationship.targetKingdomThreatLevel >= 50f){
-						if(relationship.targetKingdomInvasionValue >= 25f){
-							if (!relationship.AreAllies ()) {
-								mustSeekWar = true;
+					}else if(relationship.targetKingdomThreatLevel >= 50f && relationship.targetKingdomInvasionValue >= 25f){
+						if (!relationship.AreAllies () && relationship.warfare == null) {
+							if(seekWarKingdom == null){
+								seekWarKingdom = relationship.targetKingdom;
+								leastLike = relationship.totalLike;
+							}else{
+								if(relationship.totalLike < leastLike){
+									seekWarKingdom = relationship.targetKingdom;
+									leastLike = relationship.totalLike;
+								}
 							}
 						}
 					}
-					if(!kingdom.isMilitarize){
-						if(relationship.targetKingdomInvasionValue >= 75f){
-							if (!relationship.AreAllies ()) {
-								mustMilitarize = true;
+					if(relationship.targetKingdomInvasionValue > 0f){
+						if (!relationship.AreAllies ()) {
+							if(targetKingdom == null){
+								targetKingdom = relationship.targetKingdom;
+								leastLike2 = relationship.totalLike;
+							}else{
+								if(relationship.totalLike < leastLike2){
+									targetKingdom = relationship.targetKingdom;
+									leastLike2 = relationship.totalLike;
+								}
 							}
 						}
 					}
@@ -95,31 +107,43 @@ public static class SeeksSuperiority {
 					}
 				}
 			}else{
-				if(mustSeekWar){
-					Kingdom targetKingdom = null;
-					float highestInvasionValue = kingdom.relationships.Values.Max (x => x.targetKingdomInvasionValue);
-					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.targetKingdomInvasionValue == highestInvasionValue && !relationship.AreAllies() && relationship.warfare == null){
-							targetKingdom = relationship.targetKingdom;
-							skipPhase3 = true;
-							break;
-						}
-					}
-					if(targetKingdom != null){
-						Warfare warfare = new Warfare (kingdom, targetKingdom);
-						Debug.Log(kingdom.name + " prepares for war against " + targetKingdom.name);
-					}
+				if(seekWarKingdom != null){
+					skipPhase3 = true;
+					Warfare warfare = new Warfare (kingdom, seekWarKingdom);
+					Debug.Log(kingdom.name + " prepares for war against " + seekWarKingdom.name);
 				}else{
 					//if there are kingdoms whose invasion value is 75 or above that is not part of my alliance
-					if(mustMilitarize){
+					if(targetKingdom != null){
 						if(!kingdom.isMilitarize){
 							int chance = UnityEngine.Random.Range (0, 2);
 							if (chance == 0) {
 								kingdom.Militarize (true);
 							}
 						}
+						Kingdom kingdomToAlly = null;
+						int leastLikedToEnemy = 0;
+						foreach (KingdomRelationship krToAlly in kingdom.relationships.Values) {
+							if(krToAlly.targetKingdom.id != targetKingdom.id){
+								KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom);
+								KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (targetKingdom);
+								if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
+									&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id){
+									if(kingdomToAlly == null){
+										kingdomToAlly = krToAlly.targetKingdom;
+										leastLikedToEnemy = krEnemy.totalLike;
+									}else{
+										if(krEnemy.totalLike < leastLikedToEnemy){
+											kingdomToAlly = krToAlly.targetKingdom;
+											leastLikedToEnemy = krEnemy.totalLike;
+										}
+									}
+								}
+							}
+						}
+						if(kingdomToAlly != null){
+							kingdom.SeekAllianceWith (kingdomToAlly);
+						}
 					}
-
 				}
 			}
 		}
@@ -281,7 +305,7 @@ public static class SeeksSuperiority {
 					bool hasOver100InvasionValue = false;
 					bool hasOver50InvasionValue = false;
 					float highestInvasionValue = 0f;
-					int stabilityModifier = (int)((float)kingdom.stability / 20f);
+					int stabilityModifier = (int)((float)kingdom.stability / 10f);
 					int overPopulationReduction = 0;
 					int overpopulation = kingdom.GetOverpopulationPercentage();
 

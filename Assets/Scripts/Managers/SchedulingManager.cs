@@ -36,6 +36,15 @@ public class SchedulingManager : MonoBehaviour {
 			this.schedules.Add (gameDate, acts);
 		}
 	}
+	internal void AddEntry(GameDate gameDate, Action act){
+		if(this.schedules.ContainsKey(gameDate)){
+			this.schedules [gameDate].Add (act);
+		}else{
+			List<Action> acts = new List<Action> ();
+			acts.Add (act);
+			this.schedules.Add (gameDate, acts);
+		}
+	}
 	internal void RemoveEntry(GameDate gameDate){
 		this.schedules.Remove (gameDate);
 	}
