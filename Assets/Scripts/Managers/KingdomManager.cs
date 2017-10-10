@@ -53,9 +53,6 @@ public class KingdomManager : MonoBehaviour {
 
     [SerializeField] private bool _useFogOfWar;
 
-    [SerializeField] internal int maxPrestige;
-    
-
     #region getters/setters
     public bool useFogOfWar {
         get { return this._useFogOfWar; }
@@ -79,7 +76,6 @@ public class KingdomManager : MonoBehaviour {
     }
 
     public void GenerateInitialKingdoms() {
-        maxPrestige = Mathf.FloorToInt(GridMap.Instance.numOfRegions * .3f) * 100;
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);

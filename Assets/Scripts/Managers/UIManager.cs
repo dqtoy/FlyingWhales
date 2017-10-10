@@ -1025,7 +1025,7 @@ public class UIManager : MonoBehaviour {
 		v3.z = 10.0f;
 		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
 		v3.y -= 0.15f;
-		if (v3.y <= -1f) {
+		if (v3.y <= 0f) {
 			v3 = Input.mousePosition;
 			v3.z = 10.0f;
 			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);

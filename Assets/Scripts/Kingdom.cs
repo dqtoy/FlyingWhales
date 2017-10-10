@@ -2842,6 +2842,7 @@ public class Kingdom{
         datesStabilityDecreaseWillExpire.Add(dueDate);
     }
     private void ReduceStabilityDecreaseBecauseOfInvasion() {
+        datesStabilityDecreaseWillExpire.RemoveAt(0);
         stabilityDecreaseFromInvasionCounter -= 1;
     }
     private int GetStabilityContributionFromCitizens() {
