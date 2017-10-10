@@ -152,6 +152,9 @@ public class KingdomManager : MonoBehaviour {
         for (int i = 0; i < citiesToTransfer.Count; i++) {
             City currCity = citiesToTransfer[i];
             sourceKingdom.RemoveCityFromKingdom(currCity);
+            if (!sourceKingdom.isDead) {
+                currCity.TransferRoyaltiesToOtherCity(sourceKingdom.capitalCity);
+            }
             //otherKingdom.AddCityToKingdom(currCity);
             currCity.ChangeKingdom(otherKingdom);
             //currCity.hexTile.ShowCitySprite();
@@ -161,8 +164,11 @@ public class KingdomManager : MonoBehaviour {
 	public void TransferCitiesToOtherKingdom(Kingdom sourceKingdom, Kingdom otherKingdom, City city) {
 		//sourceKingdom.UnHighlightAllOwnedTilesInKingdom();
 		sourceKingdom.RemoveCityFromKingdom(city);
-		//otherKingdom.AddCityToKingdom(currCity);
-		city.ChangeKingdom(otherKingdom);
+        if (!sourceKingdom.isDead) {
+            city.TransferRoyaltiesToOtherCity(sourceKingdom.capitalCity);
+        }
+        //otherKingdom.AddCityToKingdom(currCity);
+        city.ChangeKingdom(otherKingdom);
 		//currCity.hexTile.ShowCitySprite();
 		//currCity.hexTile.ShowNamePlate();
 	}
