@@ -1106,8 +1106,8 @@ public class City{
         newCity.hexTile.CreateCityNamePlate(newCity);
         newCity.SetupInitialValues();
         newCity.HighlightAllOwnedTiles(69f / 255f);
-        //When occupying an invaded city, Stability is reduced by 20.
-        newCity.kingdom.AdjustStability(-20);
+        ////When occupying an invaded city, Stability is reduced by 20.
+        //newCity.kingdom.AdjustStability(-20);
         for (int i = 0; i < conqueror.discoveredKingdoms.Count; i++) {
             Kingdom otherKingdom = conqueror.discoveredKingdoms[i];
             if (otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {

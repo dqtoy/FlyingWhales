@@ -2778,8 +2778,8 @@ public class Kingdom{
                 totalTechIncrease += techContribution;
             }
         }
-        //Kings and Governors provide monthly Stability gains based on their Efficiency trait.  This is reduced by the Kingdom's Draft Rate.
-        totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
+        ////Kings and Governors provide monthly Stability gains based on their Efficiency trait.  This is reduced by the Kingdom's Draft Rate.
+        //totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
 
         if (isMilitarize) {
             //Militarizing multiplies Weapon production by 2.5 for the month in exchange for 0 Armor and Tech production.
@@ -2817,7 +2817,7 @@ public class Kingdom{
     }
     internal int GetMonthlyStabilityGain() {
         int totalStabilityIncrease = GetStabilityContributionFromCitizens();
-        totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
+        //totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             if (!currCity.isDead && currCity.rebellion == null) {
