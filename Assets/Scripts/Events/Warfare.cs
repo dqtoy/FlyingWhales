@@ -376,7 +376,7 @@ public class Warfare {
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
 		if(kr.isAtWar){
 			kr.ChangeWarStatus (false, null);
-			kr.ChangeBattle (null);
+//			kr.ChangeBattle (null);
 			kr.ChangeRecentWar (true);
 			SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => kr.ChangeRecentWar (false));
 			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "peace");
