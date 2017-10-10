@@ -870,57 +870,6 @@ public class Citizen {
             return;
         }
 
-        ////Per Active War
-        //int disloyaltyFromWar = 0;
-        //foreach(KingdomRelationship kr in city.kingdom.relationships.Values) {
-        //    if (kr.isAtWar) {
-        //        disloyaltyFromWar -= 10;
-        //    }
-        //}
-        //_loyaltyToKing += disloyaltyFromWar;
-        //if(disloyaltyFromWar != 0) {
-        //    _loyaltySummary += disloyaltyFromWar.ToString() + "  Active Wars\n"; 
-        //}
-
-        //int numOfSharedValues = 0;
-        //for (int i = 0; i < _importantCharacterValues.Keys.Count; i++) {
-        //    CHARACTER_VALUE currKey = _importantCharacterValues.Keys.ElementAt(i);
-        //    if (king.importantCharacterValues.ContainsKey(currKey)) {
-        //        numOfSharedValues += 1;
-        //    }
-        //}
-
-        ////Shared Values
-        //int sharedValuesAdjustment = 0;
-        //if (numOfSharedValues >= 3) {
-        //    sharedValuesAdjustment = 50;
-        //    _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
-        //} else if (numOfSharedValues == 2) {
-        //    sharedValuesAdjustment = 25;
-        //    _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
-        //} else if (numOfSharedValues == 1) {
-        //    sharedValuesAdjustment = 15;
-        //    _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
-        //} else {
-        //    //No shared values
-        //    sharedValuesAdjustment = -30;
-        //    _loyaltySummary += sharedValuesAdjustment.ToString() + "  No Shared Values\n";
-        //}
-        //_loyaltyToKing += sharedValuesAdjustment;
-
-        ////Values
-        //int valuesAdjustment = 0;
-        //if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)) {
-        //    valuesAdjustment = 30;
-        //    _loyaltyToKing += valuesAdjustment;
-        //    _loyaltySummary += "+" + valuesAdjustment.ToString() + "  Values Honor\n";
-        //}
-        //if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-        //    valuesAdjustment = -30;
-        //    _loyaltyToKing += valuesAdjustment;
-        //    _loyaltySummary += valuesAdjustment.ToString() + "  Values Influence\n";
-        //}
-
         //Marriage
         int marriageAdjustment = 0;
         if(spouse != null && spouse.id == king.id && this is Spouse) {
@@ -1005,9 +954,9 @@ public class Citizen {
         if(king.intelligence == INTELLIGENCE.SMART) {
             intelligenceAdjustment = 15;
             intelligenceSummary = intelligenceAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(_intelligence.ToString()) + " king\n";
-        } else {
+        } else if (king.intelligence == INTELLIGENCE.DUMB){
             intelligenceAdjustment = -15;
-            intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes Unintelligent king\n";
+            intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(_intelligence.ToString()) + " king\n";
         }
         if (intelligenceAdjustment != 0) {
             _loyaltyToKing += intelligenceAdjustment;
@@ -1016,23 +965,6 @@ public class Citizen {
             }
             _loyaltySummary += intelligenceSummary;
         }
-        //if (king.intelligence != INTELLIGENCE.NEUTRAL && _intelligence != INTELLIGENCE.NEUTRAL) {
-        //    if (king.intelligence == _intelligence) {
-        //        intelligenceAdjustment = 15;
-        //        intelligenceSummary = intelligenceAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_intelligence.ToString()) + "\n";
-        //    } else {
-        //        intelligenceAdjustment = -15;
-        //        intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.intelligence.ToString()) + "\n";
-        //    }
-        //    if (intelligenceAdjustment != 0) {
-        //        _loyaltyToKing += intelligenceAdjustment;
-        //        if (intelligenceAdjustment > 0) {
-        //            _loyaltySummary += "+";
-        //        }
-        //        _loyaltySummary += intelligenceSummary;
-        //    }
-        //}
-        
 
         //Efficiency
         int efficiencyAdjustment = 0;
@@ -1040,9 +972,9 @@ public class Citizen {
         if(king.efficiency == EFFICIENCY.EFFICIENT) {
             efficiencyAdjustment = 15;
             efficiencySummary = efficiencyAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(_efficiency.ToString()) + " king\n";
-        } else {
+        } else if(king.efficiency == EFFICIENCY.INEPT){
             efficiencyAdjustment = -15;
-            efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes Inefficient king\n";
+            efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(_efficiency.ToString()) + " king\n";
         }
         if (efficiencyAdjustment != 0) {
             _loyaltyToKing += efficiencyAdjustment;
@@ -1051,23 +983,6 @@ public class Citizen {
             }
             _loyaltySummary += efficiencySummary;
         }
-
-        //if (king.efficiency != EFFICIENCY.NEUTRAL && _efficiency != EFFICIENCY.NEUTRAL) {
-        //    if (king.efficiency == _efficiency) {
-        //        efficiencyAdjustment = 15;
-        //        efficiencySummary = efficiencyAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_efficiency.ToString()) + "\n";
-        //    } else {
-        //        efficiencyAdjustment = -15;
-        //        efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.efficiency.ToString()) + "\n";
-        //    }
-        //    if (efficiencyAdjustment != 0) {
-        //        _loyaltyToKing += efficiencyAdjustment;
-        //        if (efficiencyAdjustment > 0) {
-        //            _loyaltySummary += "+";
-        //        }
-        //        _loyaltySummary += efficiencySummary;
-        //    }
-        //}
 
         //Loyalty
         int loyaltyAdjustment = 0;
