@@ -111,20 +111,20 @@ public class Warfare {
 		//Conquer City if not null, if null means both dead
 		RemoveBattle (battle);
 		if(winnerCity != null && loserCity != null){
-			KingdomRelationship kr = winnerCity.kingdom.GetRelationshipWithKingdom (loserCity.kingdom);
+//			KingdomRelationship kr = winnerCity.kingdom.GetRelationshipWithKingdom (loserCity.kingdom);
+			Kingdom winnerKingdom = winnerCity.kingdom;
+			Kingdom loserKingdom = loserCity.kingdom;
 
 			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "invade");
 			newLog.AddToFillers (winnerCity.kingdom, winnerCity.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (loserCity, loserCity.name, LOG_IDENTIFIER.CITY_2);
 			ShowUINotification (newLog, new HashSet<Kingdom>() { winnerCity.kingdom, loserCity.kingdom });
 
-			winnerCity.kingdom.AdjustStability (-20);
-			winnerCity.kingdom.ConquerCity(loserCity);
+			winnerKingdom.ConquerCity(loserCity);
+			winnerKingdom.AdjustStability (-20);
 
 //			bool isWinnerKingdomWipedOut = false;
 //			bool isLoserKingdomWipedOut = false;
-			AdjustWeariness (loserCity.kingdom, 5);
-
 
 			if (battle.deadAttackerKingdom != null) {
 				if (!battle.deadAttackerKingdom.isDead) {
@@ -138,18 +138,20 @@ public class Warfare {
 			}
 
 
-			if (!winnerCity.kingdom.isDead) {
-				if(!loserCity.kingdom.isDead){
-					float peaceMultiplier = PeaceMultiplier (winnerCity.kingdom);
-					int value = (int)((float)this._kingdomSideWeariness[winnerCity.kingdom.id].weariness * peaceMultiplier);
+			if (!winnerKingdom.isDead) {
+				if(!loserKingdom.isDead){
+					AdjustWeariness (loserKingdom, 5);
+
+					float peaceMultiplier = PeaceMultiplier (winnerKingdom);
+					int value = (int)((float)this._kingdomSideWeariness[winnerKingdom.id].weariness * peaceMultiplier);
 					int chance = UnityEngine.Random.Range (0, 100);
 					if(chance < value){
-						PeaceDeclaration (winnerCity.kingdom);
+						PeaceDeclaration (winnerKingdom);
 					}else{
-						CreateNewBattle (winnerCity.kingdom);
+						CreateNewBattle (winnerKingdom);
 					}
 				}else{
-					CreateNewBattle (winnerCity.kingdom);
+					CreateNewBattle (winnerKingdom);
 				}
 			}else{
 				CheckWarfare ();
@@ -299,8 +301,6 @@ public class Warfare {
 	}
 	internal void PeaceDeclaration(Kingdom kingdom1, Kingdom kingdom2){
 		if(!this._isOver){
-			
-			this._isOver = true;
 			DeclarePeace (kingdom1, kingdom2);
 			if(this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side].Count > 0){
 				for (int i = 0; i < this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side].Count; i++) {
@@ -337,7 +337,6 @@ public class Warfare {
 	}
 	internal void PeaceDeclaration(Kingdom kingdom1){
 		if(!this._isOver){
-			this._isOver = true;
 			WAR_SIDE oppositeSide = WAR_SIDE.A;
 			if(this._kingdomSideWeariness [kingdom1.id].side == WAR_SIDE.A){
 				oppositeSide = WAR_SIDE.B;
@@ -377,6 +376,7 @@ public class Warfare {
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
 		if(kr.isAtWar){
 			kr.ChangeWarStatus (false, null);
+			kr.ChangeBattle (null);
 			kr.ChangeRecentWar (true);
 			SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => kr.ChangeRecentWar (false));
 			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "peace");

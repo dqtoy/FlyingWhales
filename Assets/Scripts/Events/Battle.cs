@@ -400,6 +400,8 @@ public class Battle {
 //                this._warfare.ShowUINotification(newLog);
 //                ChangePositionAndGoToStep1();
 //			}
+		}else{
+			CityDied ();
 		}
 	}
 	private int GetPowerBuffs(City city){
