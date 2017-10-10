@@ -299,8 +299,6 @@ public class Warfare {
 	}
 	internal void PeaceDeclaration(Kingdom kingdom1, Kingdom kingdom2){
 		if(!this._isOver){
-			
-			this._isOver = true;
 			DeclarePeace (kingdom1, kingdom2);
 			if(this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side].Count > 0){
 				for (int i = 0; i < this._kingdomSideList[this._kingdomSideWeariness [kingdom1.id].side].Count; i++) {
@@ -337,7 +335,6 @@ public class Warfare {
 	}
 	internal void PeaceDeclaration(Kingdom kingdom1){
 		if(!this._isOver){
-			this._isOver = true;
 			WAR_SIDE oppositeSide = WAR_SIDE.A;
 			if(this._kingdomSideWeariness [kingdom1.id].side == WAR_SIDE.A){
 				oppositeSide = WAR_SIDE.B;
@@ -377,6 +374,7 @@ public class Warfare {
 		KingdomRelationship kr = kingdom1.GetRelationshipWithKingdom (kingdom2);
 		if(kr.isAtWar){
 			kr.ChangeWarStatus (false, null);
+			kr.ChangeBattle (null);
 			kr.ChangeRecentWar (true);
 			SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year + 1, () => kr.ChangeRecentWar (false));
 			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "peace");
