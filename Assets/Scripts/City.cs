@@ -1060,10 +1060,10 @@ public class City{
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
 
-		KingdomRelationship relationship = this.kingdom.GetRelationshipWithKingdom(conqueror);
+//		KingdomRelationship relationship = this.kingdom.GetRelationshipWithKingdom(conqueror);
 
 		//Trigger Request Peace before changing kingdoms, The losing side has a 20% chance for every city he has lost since the start of the war to send a Request for Peace
-		relationship.TriggerRequestPeace();
+//		relationship.TriggerRequestPeace();
 
         //and a random number of settlements (excluding capital) will be destroyed
         int structuresDestroyed = UnityEngine.Random.Range(0, this.structures.Count);
@@ -1120,9 +1120,9 @@ public class City{
         //its initial defense will only be 300HP + (20HP x tech level)
         newCity.WarDefeatedHP();
 //        KingdomManager.Instance.CheckWarTriggerMisc(newCity.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
-		if(relationship.war != null && relationship.war.warPair.isDone){
-			relationship.war.InitializeMobilization ();
-		}
+//		if(relationship.war != null && relationship.war.warPair.isDone){
+//			relationship.war.InitializeMobilization ();
+//		}
 		this._kingdom.RemoveCityFromKingdom(this);
         if (!this._kingdom.isDead) {
             TransferRoyaltiesToOtherCity(this._kingdom.capitalCity);
