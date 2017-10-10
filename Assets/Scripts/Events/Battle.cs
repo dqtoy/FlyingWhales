@@ -362,7 +362,7 @@ public class Battle {
 					int value = (int)(1f * peaceMultiplier);
 					int chance = UnityEngine.Random.Range (0, 100);
 					if(chance < value){
-						this._warfare.PeaceDeclaration (this.defender.kingdom);
+						DeclarePeaceByDefender ();
 					}else{
 						ChangePositionAndGoToStep1();
 					}
@@ -501,6 +501,22 @@ public class Battle {
 		return (int)defenseBuff;
 	}
 	#endregion
+	private void DeclarePeaceByDefender(){
+		this._isOver = true;
+		Messenger.RemoveListener<City> ("CityDied", CityDied);
+		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
+		this._kingdom1City.isPaired = false;
+		this._kingdom2City.isPaired = false;
+		this._kingdom1City.ChangeAttackingState (false);
+		this._kingdom1City.ChangeDefendingState (false);
+		this._kingdom2City.ChangeAttackingState (false);
+		this._kingdom2City.ChangeDefendingState (false);
+		if (!this._kingdom1.isDead && !this._kingdom2.isDead) {
+			this._kr.ChangeBattle(null);
+		}
+		this._warfare.RemoveBattle (this);
+		this._warfare.PeaceDeclaration (this.defender.kingdom);
+	}
 	private void ForceEndBattle(){
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
