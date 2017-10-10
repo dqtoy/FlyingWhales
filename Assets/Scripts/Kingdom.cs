@@ -151,6 +151,7 @@ public class Kingdom{
     private float _productionRateFromKing;
 
     private int stabilityDecreaseFromInvasionCounter;
+    internal List<GameDate> datesStabilityDecreaseWillExpire = new List<GameDate>(); //TODO Remove this when testing is done
 
     #region getters/setters
     public KINGDOM_TYPE kingdomType {
@@ -344,13 +345,13 @@ public class Kingdom{
 		get { return this._warfareInfo;}
 	}
     internal int scientists {
-        get { return Mathf.FloorToInt(population * researchRate); }
+        get { return Mathf.Max(1, Mathf.FloorToInt(population * researchRate)); }
     }
     internal int soldiers {
-        get { return Mathf.FloorToInt(population * draftRate); }
+        get { return Mathf.Max(1, Mathf.FloorToInt(population * draftRate)); }
     }
     internal int workers {
-        get { return Mathf.FloorToInt(population * productionRate); }
+        get { return Mathf.Max(1, Mathf.FloorToInt(population * productionRate)); }
     }
     internal float draftRate {
         get {
@@ -2637,8 +2638,14 @@ public class Kingdom{
 	internal void AdjustStability(int amountToAdjust) {
     	this._stability += amountToAdjust;
         this._stability = Mathf.Clamp(this._stability, -100, 100);
+
+        //If a Kingdom has a -100 Stability, a Rebellion will automatically occur which will be started by the one with the most 
+        //negative opinion towards the King. The Kingdom's Stability will then reset back to 50.
+        if (_stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
+            StartAutomaticRebellion();
+        }
     }
-	internal void AdjustBaseWeapons(int amountToAdjust) {
+    internal void AdjustBaseWeapons(int amountToAdjust) {
 		this._baseWeapons += amountToAdjust;
 		if(this._baseWeapons < 0){
 			this._baseWeapons = 0;
@@ -2663,6 +2670,11 @@ public class Kingdom{
     internal void ChangeStability(int newAmount) {
 		this._stability = newAmount;
         this._stability = Mathf.Clamp(this._stability, -100, 100);
+        //If a Kingdom has a -100 Stability, a Rebellion will automatically occur which will be started by the one with the most 
+        //negative opinion towards the King. The Kingdom's Stability will then reset back to 50.
+        if (_stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
+            StartAutomaticRebellion();
+        }
     }
 	internal void AdjustMilitaryAlliancePower(int amount){
 		this._militaryAlliancePower += amount;
@@ -2827,6 +2839,7 @@ public class Kingdom{
         GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
         dueDate.AddMonths(6);
         SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => ReduceStabilityDecreaseBecauseOfInvasion());
+        datesStabilityDecreaseWillExpire.Add(dueDate);
     }
     private void ReduceStabilityDecreaseBecauseOfInvasion() {
         stabilityDecreaseFromInvasionCounter -= 1;
@@ -2986,6 +2999,20 @@ public class Kingdom{
     internal void SetPopulation(int newPopulation) {
         _population = newPopulation;
         KingdomManager.Instance.UpdateKingdomList();
+    }
+    #endregion
+
+    #region Automatic Rebellion
+    private void StartAutomaticRebellion() {
+        //If a Kingdom has a -100 Stability, a Rebellion will automatically occur which will be started by the one with the most 
+        //negative opinion towards the King. The Kingdom's Stability will then reset back to 50.
+        List<Citizen> possibleCitizensForRebellion = new List<Citizen>();
+        for (int i = 0; i < cities.Count; i++) {
+            possibleCitizensForRebellion.AddRange(cities[i].importantCitizensInCity.Values.Where(x => x.role != ROLE.KING));
+        }
+        if (possibleCitizensForRebellion.Count > 0) {
+            possibleCitizensForRebellion.OrderBy(x => x.loyaltyToKing).First().StartRebellion();
+        }
     }
     #endregion
 

@@ -245,6 +245,7 @@ public class City{
 
         MONTH monthKing = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
         king.AssignBirthday(monthKing, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - king.age));
+        king.CreateFamily();
 
         return king;
     }
@@ -928,8 +929,8 @@ public class City{
 				((General)citizenToRemove.assignedRole).UntrainGeneral();
 			}*/
 
-			citizenToRemove.role = ROLE.UNTRAINED;
-			citizenToRemove.assignedRole = null;
+			//citizenToRemove.role = ROLE.UNTRAINED;
+			//citizenToRemove.assignedRole = null;
 		}
 
 
@@ -1420,11 +1421,11 @@ public class City{
             citizensToKill[i].Death(deathReason, false, null, isConquered);
         }
         citizens.Clear();
-		if (!this._kingdom.isDead) {
-			if (this.hasKing) {
-				this._kingdom.AssignNewKing(null);
-			}
-		}
+		//if (!this._kingdom.isDead) {
+		//	if (this.hasKing) {
+		//		this._kingdom.AssignNewKing(null);
+		//	}
+		//}
 	}
 	internal void TransferCityToRebellion(){
 //		this._kingdom.RemoveCityFromKingdom(this);

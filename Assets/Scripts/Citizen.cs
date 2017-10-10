@@ -277,6 +277,70 @@ public class Citizen {
     }
 
     #region Family Functions
+    internal void CreateFamily() {
+        //GENDER gender = GENDER.MALE;
+        //int randomGender = UnityEngine.Random.Range(0, 100);
+        //if (randomGender < 20) {
+        //    gender = GENDER.FEMALE;
+        //}
+        //Citizen king = new Citizen(this, UnityEngine.Random.Range(20, 36), gender, 2);
+        Citizen father = new Citizen(this.city, UnityEngine.Random.Range(60, 81), GENDER.MALE, 1);
+        Citizen mother = new Citizen(this.city, UnityEngine.Random.Range(60, 81), GENDER.FEMALE, 1);
+
+        //father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
+        //mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
+
+        MONTH monthFather = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthMother = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthKing = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        father.AssignBirthday(monthFather, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age, false);
+        mother.AssignBirthday(monthMother, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age, false);
+        //king.AssignBirthday(monthKing, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - king.age));
+
+        father.isDirectDescendant = isDirectDescendant;
+        mother.isDirectDescendant = isDirectDescendant;
+        father.isDead = true;
+        mother.isDead = true;
+
+        this.city.citizens.Remove(father);
+        this.city.citizens.Remove(mother);
+
+        father.AddChild(this);
+        mother.AddChild(this);
+        this.AddParents(father, mother);
+
+        MarriageManager.Instance.Marry(father, mother);
+
+        //_kingdom.AssignNewKing(king);
+        //this.kingdom.king.isDirectDescendant = true;
+        //king.GenerateCharacterValues();
+
+        MONTH monthSibling = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        int siblingsChance = UnityEngine.Random.Range(0, 100);
+        if (siblingsChance < 25) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, this.age));
+            Citizen sibling2 = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, this.age));
+
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
+            sibling.UpdateKingOpinion();
+            sibling2.UpdateKingOpinion();
+        } else if (siblingsChance >= 25 && siblingsChance < 75) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, this.age));
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            sibling.UpdateKingOpinion();
+        }
+
+        int spouseChance = UnityEngine.Random.Range(0, 100);
+        if (spouseChance < 80) {
+            Citizen spouse = MarriageManager.Instance.CreateSpouse(this);
+            spouse.UpdateKingOpinion();
+        }
+    }
+
     internal void AddParents(Citizen father, Citizen mother) {
         this.father = father;
         this.mother = mother;
@@ -806,57 +870,6 @@ public class Citizen {
             return;
         }
 
-        ////Per Active War
-        //int disloyaltyFromWar = 0;
-        //foreach(KingdomRelationship kr in city.kingdom.relationships.Values) {
-        //    if (kr.isAtWar) {
-        //        disloyaltyFromWar -= 10;
-        //    }
-        //}
-        //_loyaltyToKing += disloyaltyFromWar;
-        //if(disloyaltyFromWar != 0) {
-        //    _loyaltySummary += disloyaltyFromWar.ToString() + "  Active Wars\n"; 
-        //}
-
-        //int numOfSharedValues = 0;
-        //for (int i = 0; i < _importantCharacterValues.Keys.Count; i++) {
-        //    CHARACTER_VALUE currKey = _importantCharacterValues.Keys.ElementAt(i);
-        //    if (king.importantCharacterValues.ContainsKey(currKey)) {
-        //        numOfSharedValues += 1;
-        //    }
-        //}
-
-        ////Shared Values
-        //int sharedValuesAdjustment = 0;
-        //if (numOfSharedValues >= 3) {
-        //    sharedValuesAdjustment = 50;
-        //    _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
-        //} else if (numOfSharedValues == 2) {
-        //    sharedValuesAdjustment = 25;
-        //    _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
-        //} else if (numOfSharedValues == 1) {
-        //    sharedValuesAdjustment = 15;
-        //    _loyaltySummary += "+" + sharedValuesAdjustment.ToString() + "  Shared Values\n";
-        //} else {
-        //    //No shared values
-        //    sharedValuesAdjustment = -30;
-        //    _loyaltySummary += sharedValuesAdjustment.ToString() + "  No Shared Values\n";
-        //}
-        //_loyaltyToKing += sharedValuesAdjustment;
-
-        ////Values
-        //int valuesAdjustment = 0;
-        //if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.HONOR)) {
-        //    valuesAdjustment = 30;
-        //    _loyaltyToKing += valuesAdjustment;
-        //    _loyaltySummary += "+" + valuesAdjustment.ToString() + "  Values Honor\n";
-        //}
-        //if (_importantCharacterValues.ContainsKey(CHARACTER_VALUE.INFLUENCE)) {
-        //    valuesAdjustment = -30;
-        //    _loyaltyToKing += valuesAdjustment;
-        //    _loyaltySummary += valuesAdjustment.ToString() + "  Values Influence\n";
-        //}
-
         //Marriage
         int marriageAdjustment = 0;
         if(spouse != null && spouse.id == king.id && this is Spouse) {
@@ -941,9 +954,9 @@ public class Citizen {
         if(king.intelligence == INTELLIGENCE.SMART) {
             intelligenceAdjustment = 15;
             intelligenceSummary = intelligenceAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(_intelligence.ToString()) + " king\n";
-        } else {
+        } else if (king.intelligence == INTELLIGENCE.DUMB){
             intelligenceAdjustment = -15;
-            intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes Unintelligent king\n";
+            intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(_intelligence.ToString()) + " king\n";
         }
         if (intelligenceAdjustment != 0) {
             _loyaltyToKing += intelligenceAdjustment;
@@ -952,23 +965,6 @@ public class Citizen {
             }
             _loyaltySummary += intelligenceSummary;
         }
-        //if (king.intelligence != INTELLIGENCE.NEUTRAL && _intelligence != INTELLIGENCE.NEUTRAL) {
-        //    if (king.intelligence == _intelligence) {
-        //        intelligenceAdjustment = 15;
-        //        intelligenceSummary = intelligenceAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_intelligence.ToString()) + "\n";
-        //    } else {
-        //        intelligenceAdjustment = -15;
-        //        intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.intelligence.ToString()) + "\n";
-        //    }
-        //    if (intelligenceAdjustment != 0) {
-        //        _loyaltyToKing += intelligenceAdjustment;
-        //        if (intelligenceAdjustment > 0) {
-        //            _loyaltySummary += "+";
-        //        }
-        //        _loyaltySummary += intelligenceSummary;
-        //    }
-        //}
-        
 
         //Efficiency
         int efficiencyAdjustment = 0;
@@ -976,9 +972,9 @@ public class Citizen {
         if(king.efficiency == EFFICIENCY.EFFICIENT) {
             efficiencyAdjustment = 15;
             efficiencySummary = efficiencyAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(_efficiency.ToString()) + " king\n";
-        } else {
+        } else if(king.efficiency == EFFICIENCY.INEPT){
             efficiencyAdjustment = -15;
-            efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes Inefficient king\n";
+            efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(_efficiency.ToString()) + " king\n";
         }
         if (efficiencyAdjustment != 0) {
             _loyaltyToKing += efficiencyAdjustment;
@@ -987,23 +983,6 @@ public class Citizen {
             }
             _loyaltySummary += efficiencySummary;
         }
-
-        //if (king.efficiency != EFFICIENCY.NEUTRAL && _efficiency != EFFICIENCY.NEUTRAL) {
-        //    if (king.efficiency == _efficiency) {
-        //        efficiencyAdjustment = 15;
-        //        efficiencySummary = efficiencyAdjustment.ToString() + "  Both " + Utilities.NormalizeString(_efficiency.ToString()) + "\n";
-        //    } else {
-        //        efficiencyAdjustment = -15;
-        //        efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king.efficiency.ToString()) + "\n";
-        //    }
-        //    if (efficiencyAdjustment != 0) {
-        //        _loyaltyToKing += efficiencyAdjustment;
-        //        if (efficiencyAdjustment > 0) {
-        //            _loyaltySummary += "+";
-        //        }
-        //        _loyaltySummary += efficiencySummary;
-        //    }
-        //}
 
         //Loyalty
         int loyaltyAdjustment = 0;
