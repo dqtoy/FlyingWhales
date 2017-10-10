@@ -279,7 +279,7 @@ public class Battle {
 			this.attacker.kingdom.AdjustBaseWeapons (-rollForDamageInWeapons);
 			int damageToSoldiersAttacker = GetDamageToSoldiers (attackAfterDamage, this.attacker.kingdom.baseWeapons);
 			int damageToPopulationAttacker = GetDamageToPopulation (damageToSoldiersAttacker, attackerSoldiers, this.attacker.kingdom.draftRate);
-			int capAttackerPopulationDamage = attackerSoldiers * 2;
+			int capAttackerPopulationDamage = attackerSoldiers;
 			if(damageToPopulationAttacker > capAttackerPopulationDamage){
 				damageToPopulationAttacker = capAttackerPopulationDamage;
 			}
