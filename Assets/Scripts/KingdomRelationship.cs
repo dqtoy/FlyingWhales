@@ -795,7 +795,7 @@ public class KingdomRelationship {
 			threatLevel *= this._racePercentageModifier;
 
 			if(AreAllies()){
-				threatLevel -= (threatLevel * 0.5f);
+				threatLevel -= (threatLevel * 0.2f);
 			}else{
 				//if currently at war with someone else: -50%
 				if(this._targetKingdom.HasWar()){
