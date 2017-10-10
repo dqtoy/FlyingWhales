@@ -37,7 +37,9 @@ public static class SeeksBalance {
 		}
 
 		bool mustSeekAlliance = false;
-		bool mustSeekWar = false;
+		Kingdom seekWarKingdom = null;
+		int leastLike = 0;
+
 		bool isUnderAttack = kingdom.IsUnderAttack();
 		bool isAttacking = kingdom.IsAttacking ();
 		//if i am under attack and i am not attacking anyone
@@ -61,8 +63,16 @@ public static class SeeksBalance {
 				if(relationship.isDiscovered && relationship.targetKingdomThreatLevel < 100f){
 					if(relationship.targetKingdomThreatLevel >= 75f){
 						if(relationship.targetKingdomInvasionValue >= 50f){
-							if(!relationship.AreAllies()){
-								mustSeekWar = true;
+							if(!relationship.AreAllies() && relationship.warfare == null){
+								if(seekWarKingdom == null){
+									seekWarKingdom = relationship.targetKingdom;
+									leastLike = relationship.totalLike;
+								}else{
+									if(relationship.totalLike < leastLike){
+										seekWarKingdom = relationship.targetKingdom;
+										leastLike = relationship.totalLike;
+									}
+								}
 							}
 						}
 					}else if(relationship.targetKingdomThreatLevel >= 50f){
@@ -92,20 +102,10 @@ public static class SeeksBalance {
 					}
 				}
 			}else{
-				if(mustSeekWar){
-					Kingdom targetKingdom = null;
-					float highestInvasionValue = kingdom.relationships.Values.Max (x => x.targetKingdomInvasionValue);
-					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.targetKingdomInvasionValue == highestInvasionValue && !relationship.AreAllies() && relationship.warfare == null){
-							targetKingdom = relationship.targetKingdom;
-							skipPhase3 = true;
-							break;
-						}
-					}
-					if(targetKingdom != null){
-						Warfare warfare = new Warfare (kingdom, targetKingdom);
-						Debug.Log(kingdom.name + " prepares for war against " + targetKingdom.name);
-					}
+				if(seekWarKingdom != null){
+					skipPhase3 = true;
+					Warfare warfare = new Warfare (kingdom, seekWarKingdom);
+					Debug.Log(kingdom.name + " prepares for war against " + seekWarKingdom.name);
 				}
 			}
 		}
@@ -267,7 +267,7 @@ public static class SeeksBalance {
 					bool hasOver100InvasionValue = false;
 					bool hasOver50InvasionValue = false;
 					float highestInvasionValue = 0f;
-					int stabilityModifier = (int)((float)kingdom.stability / 20f);
+					int stabilityModifier = (int)((float)kingdom.stability / 10f);
 					int overPopulationReduction = 0;
                     int overpopulation = kingdom.GetOverpopulationPercentage();
                    
