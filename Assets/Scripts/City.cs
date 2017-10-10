@@ -730,7 +730,7 @@ public class City{
         this.hexTile.CreateCityNamePlate(this);
         HighlightAllOwnedTiles(69f / 255f);
         UIManager.Instance.UpdateMinimapInfo();
-        KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+//        KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 
 	/*

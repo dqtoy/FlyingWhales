@@ -604,3 +604,10 @@ public enum LOYALTY{
 	SCHEMING,
 	NEUTRAL,
 }
+public enum WARMONGER{
+	VERY_HIGH,
+	HIGH,
+	AVERAGE,
+	LOW,
+	VERY_LOW,
+}

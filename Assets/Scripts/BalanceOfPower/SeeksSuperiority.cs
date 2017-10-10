@@ -120,28 +120,30 @@ public static class SeeksSuperiority {
 								kingdom.Militarize (true);
 							}
 						}
-						Kingdom kingdomToAlly = null;
-						int leastLikedToEnemy = 0;
-						foreach (KingdomRelationship krToAlly in kingdom.relationships.Values) {
-							if(krToAlly.targetKingdom.id != targetKingdom.id){
-								KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom);
-								KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (targetKingdom);
-								if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
-									&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id){
-									if(kingdomToAlly == null){
-										kingdomToAlly = krToAlly.targetKingdom;
-										leastLikedToEnemy = krEnemy.totalLike;
-									}else{
-										if(krEnemy.totalLike < leastLikedToEnemy){
+						if(kingdom.alliancePool == null){
+							Kingdom kingdomToAlly = null;
+							int leastLikedToEnemy = 0;
+							foreach (KingdomRelationship krToAlly in kingdom.relationships.Values) {
+								if(krToAlly.targetKingdom.id != targetKingdom.id){
+									KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom);
+									KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (targetKingdom);
+									if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
+										&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id){
+										if(kingdomToAlly == null){
 											kingdomToAlly = krToAlly.targetKingdom;
 											leastLikedToEnemy = krEnemy.totalLike;
+										}else{
+											if(krEnemy.totalLike < leastLikedToEnemy){
+												kingdomToAlly = krToAlly.targetKingdom;
+												leastLikedToEnemy = krEnemy.totalLike;
+											}
 										}
 									}
 								}
 							}
-						}
-						if(kingdomToAlly != null){
-							kingdom.SeekAllianceWith (kingdomToAlly);
+							if(kingdomToAlly != null){
+								kingdom.SeekAllianceWith (kingdomToAlly);
+							}
 						}
 					}
 				}
@@ -344,7 +346,7 @@ public static class SeeksSuperiority {
 					if(targetKingdom != null){
 						if(hasOver100InvasionValue){
 							int chance = UnityEngine.Random.Range (0, 100);
-							int value = kingdom.kingdomTypeData.prepareForWarChance * stabilityModifier;
+							int value = (int)(kingdom.king.GetWarmongerWarPercentage100() * (float)stabilityModifier);
 							if(chance < value){
 								//if there is anyone whose Invasion Value is 1 or above, prepare for war against the one with the highest Invasion Value
 								Warfare warfare = new Warfare (kingdom, targetKingdom);
@@ -354,7 +356,7 @@ public static class SeeksSuperiority {
 							if(hasOver50InvasionValue){
 								KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (targetKingdom);
 								int chance = UnityEngine.Random.Range (0, 100);
-								int value = 1 * stabilityModifier;
+								int value = (int)(kingdom.king.GetWarmongerWarPercentage50() * (float)stabilityModifier);
 								int threshold = KingdomManager.Instance.GetReducedInvasionValueThreshHold (50f, overPopulationReduction);
 								int totalValue = ((int)kr.targetKingdomInvasionValue - threshold) * value;
 								if(chance < totalValue){

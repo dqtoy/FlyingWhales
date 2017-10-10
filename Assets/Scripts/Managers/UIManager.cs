@@ -105,6 +105,7 @@ public class UIManager : MonoBehaviour {
 	public CitizenInfoUI citizenInfoUI;
     [SerializeField] private UILabel preferredKingdomTypeLbl;
     [SerializeField] private UILabel loyaltyToKingLbl;
+	[SerializeField] private UILabel citizenWarmongerLbl;
     [SerializeField] private TraitIcon[] citizenTraitIcons;
 
 	[Space(10)]
@@ -683,6 +684,7 @@ public class UIManager : MonoBehaviour {
 		citizenInfoForTestingGO.SetActive (true);
         preferredKingdomTypeLbl.text = currentlyShowingCitizen.balanceType.ToString();
         loyaltyToKingLbl.text = currentlyShowingCitizen.loyaltyToKing.ToString();
+		citizenWarmongerLbl.text = currentlyShowingCitizen.warmonger.ToString() + " WARMONGERING";
 
         HideSmallInfo();
 

@@ -43,6 +43,7 @@ public class Citizen {
 	private MILITARY _military;
 	private LOYALTY _loyalty;
     private PURPOSE _balanceType;
+	private WARMONGER _warmonger;
 
     private Dictionary<STATUS_EFFECTS, StatusEffect> _statusEffects;
 
@@ -98,6 +99,9 @@ public class Citizen {
     internal PURPOSE balanceType {
         get { return this._balanceType; }
     }
+	internal WARMONGER warmonger {
+		get { return this._warmonger; }
+	}
     internal int loyaltyToKing {
         get { return Mathf.Clamp((_loyaltyToKing + loyaltyDeductionFromWar + GetLoyaltyFromStability()) + loyaltyModifierForTesting, -100, 100); }
     }
@@ -1183,6 +1187,7 @@ public class Citizen {
         this._military = GenerateMilitaryTrait();
         this._loyalty = GenerateLoyaltyTrait();
         this._balanceType = (PURPOSE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(PURPOSE)).Length));
+		this._warmonger = GenerateWarmonger ();
     }
 
     private CHARISMA GenerateCharismaTrait() {
@@ -1249,8 +1254,68 @@ public class Citizen {
             return LOYALTY.NEUTRAL;
         }
     }
-
+	private WARMONGER GenerateWarmonger(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(this._military == MILITARY.HOSTILE){
+			if(chance < 35){
+				return WARMONGER.VERY_HIGH;
+			}else{
+				return WARMONGER.HIGH;
+			}
+		}else if(this._military == MILITARY.PACIFIST){
+			if(chance < 35){
+				return WARMONGER.VERY_LOW;
+			}else{
+				return WARMONGER.LOW;
+			}
+		}else if(this._military == MILITARY.MILITANT){
+			if(chance < 15){
+				return WARMONGER.VERY_HIGH;
+			}else if(chance >= 15 && chance < 50){
+				return WARMONGER.HIGH;
+			}else{
+				return WARMONGER.AVERAGE;
+			}
+		}else{
+			if(chance < 5){
+				return WARMONGER.VERY_HIGH;
+			}else if(chance >= 5 && chance < 25){
+				return WARMONGER.HIGH;
+			}else if(chance >= 25 && chance < 75){
+				return WARMONGER.AVERAGE;
+			}else if(chance >= 75 && chance < 95){
+				return WARMONGER.LOW;
+			}else{
+				return WARMONGER.VERY_LOW;
+			}
+		}
+	}
     #endregion
 
-
+	internal float GetWarmongerWarPercentage100(){
+		if(this._warmonger == WARMONGER.VERY_HIGH){
+			return 15f;
+		}else if(this._warmonger == WARMONGER.HIGH){
+			return 10f;
+		}else if(this._warmonger == WARMONGER.AVERAGE){
+			return 5f;
+		}else if(this._warmonger == WARMONGER.LOW){
+			return 3f;
+		}else{
+			return 1f;
+		}
+	}
+	internal float GetWarmongerWarPercentage50(){
+		if(this._warmonger == WARMONGER.VERY_HIGH){
+			return 2f;
+		}else if(this._warmonger == WARMONGER.HIGH){
+			return 1f;
+		}else if(this._warmonger == WARMONGER.AVERAGE){
+			return 0.5f;
+		}else if(this._warmonger == WARMONGER.LOW){
+			return 0.25f;
+		}else{
+			return 0.1f;
+		}
+	}
 }
