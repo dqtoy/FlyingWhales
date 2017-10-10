@@ -730,7 +730,7 @@ public class City{
         this.hexTile.CreateCityNamePlate(this);
         HighlightAllOwnedTiles(69f / 255f);
         UIManager.Instance.UpdateMinimapInfo();
-        KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
+//        KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 
 	/*
@@ -1383,6 +1383,9 @@ public class City{
         _region.CheckForDiscoveredKingdoms();
         this.hexTile.UpdateCityNamePlate();
         CameraMove.Instance.UpdateMinimapTexture();
+		if(Messenger.eventTable.ContainsKey("CityTransfered")){
+			Messenger.Broadcast<City>("CityTransfered", this);
+		}
     }
 
     internal void RemoveTileFromCity(HexTile tileToRemove) {
