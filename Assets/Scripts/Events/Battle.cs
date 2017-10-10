@@ -268,13 +268,20 @@ public class Battle {
 			Debug.Log ("DEFENSE AFTER DAMAGE: " + defenseAfterDamage);
 			Debug.Log ("---------------------------");
 
-			int maxDamageToWeapons = GetMaxDamageToWeapons(attackAfterDamage);
+			Debug.Log ("ATTACKER'S POPULATION BEFORE DAMAGE: " + this.attacker.kingdom.population);
+
+			int attackerSoldiers = this.attacker.kingdom.soldiers;
+			int maxDamageToWeapons = GetMaxDamageToWeaponsArmors(attackAfterDamage, attackerSoldiers);
 			int maxRollForDamageInWeapons = this.attacker.kingdom.baseWeapons - maxDamageToWeapons;
 			int minRollForDamageInWeapons = maxRollForDamageInWeapons / 2;
 			int rollForDamageInWeapons = UnityEngine.Random.Range (minRollForDamageInWeapons, maxRollForDamageInWeapons + 1);
 			this.attacker.kingdom.AdjustBaseWeapons (-rollForDamageInWeapons);
 			int damageToSoldiersAttacker = GetDamageToSoldiers (attackAfterDamage, this.attacker.kingdom.baseWeapons);
-			int damageToPopulationAttacker = GetDamageToPopulationAttacker (damageToSoldiersAttacker);
+			int damageToPopulationAttacker = GetDamageToPopulation (damageToSoldiersAttacker, attackerSoldiers, this.attacker.kingdom.draftRate);
+			int capAttackerPopulationDamage = attackerSoldiers * 2;
+			if(damageToPopulationAttacker > capAttackerPopulationDamage){
+				damageToPopulationAttacker = capAttackerPopulationDamage;
+			}
 			if(damageToPopulationAttacker < this.attacker.kingdom.population){
 				this.attacker.kingdom.AdjustPopulation (-damageToPopulationAttacker);
 			}else{
@@ -283,7 +290,7 @@ public class Battle {
 			Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);
 			Debug.Log ("MAX ROLL DAMAGE TO WEAPONS: " + maxRollForDamageInWeapons);
 			Debug.Log ("MIN ROLL DAMAGE TO WEAPONS: " + minRollForDamageInWeapons);
-			Debug.Log ("ROLL FOR DAMAGE TO WEAPONS: " + rollForDamageInWeapons);	
+			Debug.Log ("ROLL FOR DAMAGE TO WEAPONS: " + rollForDamageInWeapons);
 			Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + damageToPopulationAttacker);
 			Debug.Log ("---------------------------");
 
@@ -294,13 +301,20 @@ public class Battle {
 				"(" + attacker.kingdom.population.ToString() + ")");
 
 
-			int maxDamageToArmors = GetMaxDamageToArmors(defenseAfterDamage);
+			Debug.Log ("DEFENDER'S POPULATION BEFORE DAMAGE: " + this.defender.kingdom.population);
+
+			int defenderSoldiers = this.defender.kingdom.soldiers;
+			int maxDamageToArmors = GetMaxDamageToWeaponsArmors(defenseAfterDamage, defenderSoldiers);
 			int maxRollForDamageInArmors = this.defender.kingdom.baseArmor - maxDamageToArmors;
 			int minRollForDamageInArmors = maxRollForDamageInArmors / 2;
 			int rollForDamageInArmors = UnityEngine.Random.Range (minRollForDamageInArmors, maxRollForDamageInArmors + 1);
 			this.defender.kingdom.AdjustBaseArmors (-rollForDamageInArmors);
 			int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.defender.kingdom.baseArmor);
-			int damageToPopulationDefender = GetDamageToPopulationDefender (damageToSoldiersDefender);
+			int damageToPopulationDefender = GetDamageToPopulation (damageToSoldiersDefender, defenderSoldiers, this.defender.kingdom.draftRate);
+			int capDefenderPopulationDamage = defenderSoldiers * 2;
+			if(damageToPopulationDefender > capDefenderPopulationDamage){
+				damageToPopulationDefender = capDefenderPopulationDamage;
+			}
 			if(damageToPopulationDefender < this.defender.kingdom.population){
 				this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
 			}else{
@@ -601,18 +615,18 @@ public class Battle {
 //		}
 	}
 
-	private int GetMaxDamageToWeapons(int attackAfterDamage){
+	private int GetMaxDamageToWeaponsArmors(int afterDamage, int soldiers){
 		//Solve for max damage to weapons which is x
 		//x = attackAfterDamage * soldiers / (2 * soldiers) - attackAfterDamage;
-		float soldiers = (float)this.attacker.kingdom.soldiers;
-		return (int)(((float)attackAfterDamage * soldiers) / ((2f * soldiers) - (float)attackAfterDamage));
+//		float soldiers = (float)this.attacker.kingdom.soldiers;
+		return (int)(((float)afterDamage * (float)soldiers) / ((2f * (float)soldiers) - (float)afterDamage));
 	}
-	private int GetMaxDamageToArmors(int defenseAfterDamage){
-		//Solve for max damage to weapons which is x
-		//x = defenseAfterDamage * soldiers / (2 * soldiers) - defenseAfterDamage;
-		float soldiers = (float)this.defender.kingdom.soldiers;
-		return (int)(((float)defenseAfterDamage * soldiers) / ((2f * soldiers) - (float)defenseAfterDamage));
-	}
+//	private int GetMaxDamageToArmors(int defenseAfterDamage, int soldiers){
+//		//Solve for max damage to weapons which is x
+//		//x = defenseAfterDamage * soldiers / (2 * soldiers) - defenseAfterDamage;
+////		float soldiers = (float)this.defender.kingdom.soldiers;
+//		return (int)(((float)defenseAfterDamage * (float)soldiers) / ((2f * (float)soldiers) - (float)defenseAfterDamage));
+//	}
 
 	private int GetDamageToSoldiers(int remainingEffectiveAttDef, int remainingWeapArmor){
 		//Solve for max damage to weapons which is x
@@ -620,14 +634,14 @@ public class Battle {
 		return (int)(((float)remainingEffectiveAttDef * remainingWeapArmor) / ((2f * remainingWeapArmor) - (float)remainingEffectiveAttDef));
 	}
 
-	private int GetDamageToPopulationAttacker(int damageToSoldiers){
-		float soldiers = (float)this.attacker.kingdom.soldiers;
-		float remainingSoldiers = soldiers - (float)damageToSoldiers;
-		return (int)(remainingSoldiers / this.attacker.kingdom.draftRate);
+	private int GetDamageToPopulation(int damageToSoldiers, int soldiers, float draftRate){
+//		float soldiers = (float)this.attacker.kingdom.soldiers;
+		float remainingSoldiers = (float)soldiers - (float)damageToSoldiers;
+		return (int)(remainingSoldiers / draftRate);
 	}
-	private int GetDamageToPopulationDefender(int damageToSoldiers){
-		float soldiers = (float)this.defender.kingdom.soldiers;
-		float remainingSoldiers = soldiers - (float)damageToSoldiers;
-		return (int)(remainingSoldiers / this.defender.kingdom.draftRate);
-	}
+//	private int GetDamageToPopulationDefender(int damageToSoldiers){
+//		float soldiers = (float)this.defender.kingdom.soldiers;
+//		float remainingSoldiers = soldiers - (float)damageToSoldiers;
+//		return (int)(remainingSoldiers / this.defender.kingdom.draftRate);
+//	}
 }
