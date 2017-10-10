@@ -344,13 +344,13 @@ public class Kingdom{
 		get { return this._warfareInfo;}
 	}
     internal int scientists {
-        get { return Mathf.FloorToInt(population * researchRate); }
+        get { return Mathf.Max(1, Mathf.FloorToInt(population * researchRate)); }
     }
     internal int soldiers {
-        get { return Mathf.FloorToInt(population * draftRate); }
+        get { return Mathf.Max(1, Mathf.FloorToInt(population * draftRate)); }
     }
     internal int workers {
-        get { return Mathf.FloorToInt(population * productionRate); }
+        get { return Mathf.Max(1, Mathf.FloorToInt(population * productionRate)); }
     }
     internal float draftRate {
         get {
