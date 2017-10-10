@@ -1383,6 +1383,9 @@ public class City{
         _region.CheckForDiscoveredKingdoms();
         this.hexTile.UpdateCityNamePlate();
         CameraMove.Instance.UpdateMinimapTexture();
+		if(Messenger.eventTable.ContainsKey("CityTransfered")){
+			Messenger.Broadcast<City>("CityTransfered", this);
+		}
     }
 
     internal void RemoveTileFromCity(HexTile tileToRemove) {

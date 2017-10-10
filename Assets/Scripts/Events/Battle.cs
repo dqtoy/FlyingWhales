@@ -58,6 +58,7 @@ public class Battle {
 		Step2();
 
 		Messenger.AddListener<City> ("CityDied", CityDied);
+		Messenger.AddListener<City> ("CityTransfered", CityTransfered);
 //		if(!this._kr.isAtWar){
 //			this._kr.SetPreparingWar (true);
 //			this._kr.SetWarfare (this._warfare);
@@ -501,6 +502,7 @@ public class Battle {
 	private void ForceEndBattle(){
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
+		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
 		this._kingdom1City.isPaired = false;
 		this._kingdom2City.isPaired = false;
 		this._kingdom1City.ChangeAttackingState (false);
@@ -515,6 +517,7 @@ public class Battle {
 	private void EndBattle(City winnerCity, City loserCity){
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
+		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
 		this._kingdom1City.isPaired = false;
 		this._kingdom2City.isPaired = false;
 		this._kingdom1City.ChangeAttackingState (false);
@@ -529,6 +532,7 @@ public class Battle {
 	private void CityDied(){
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
+		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
 		this._kingdom1City.isPaired = false;
 		this._kingdom2City.isPaired = false;
 		this._kingdom1City.ChangeAttackingState (false);
@@ -556,6 +560,7 @@ public class Battle {
 			if(city.id == this._kingdom1City.id || city.id == this._kingdom2City.id){
 				this._isOver = true;
 				Messenger.RemoveListener<City> ("CityDied", CityDied);
+				Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
 				this._kingdom1City.isPaired = false;
 				this._kingdom2City.isPaired = false;
 				this._kingdom1City.ChangeAttackingState (false);
@@ -564,11 +569,33 @@ public class Battle {
 				this._kingdom2City.ChangeDefendingState (false);
 				if(!this._kingdom1.isDead && !this._kingdom2.isDead){
 					this._kr.ChangeBattle (null);
-//					if(!this._kr.isAdjacent){
-//						this._warfare.RemoveBattle (this);
-//						this._warfare.PeaceDeclaration (this._kingdom1, this._kingdom2);
-//						return;
-//					}
+				}
+
+				this._warfare.RemoveBattle (this);
+				if(!this.attacker.isDead){
+					this._warfare.CreateNewBattle (this.attacker);
+				}else{
+					if(!this.attacker.kingdom.isDead){
+						this._warfare.CreateNewBattle (this.attacker.kingdom);
+					}
+				}
+			}
+		}
+	}
+	private void CityTransfered(City city){
+		if(!this._isOver){
+			if(city.id == this._kingdom1City.id || city.id == this._kingdom2City.id){
+				this._isOver = true;
+				Messenger.RemoveListener<City> ("CityDied", CityDied);
+				Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
+				this._kingdom1City.isPaired = false;
+				this._kingdom2City.isPaired = false;
+				this._kingdom1City.ChangeAttackingState (false);
+				this._kingdom1City.ChangeDefendingState (false);
+				this._kingdom2City.ChangeAttackingState (false);
+				this._kingdom2City.ChangeDefendingState (false);
+				if(!this._kingdom1.isDead && !this._kingdom2.isDead){
+					this._kr.ChangeBattle (null);
 				}
 
 				this._warfare.RemoveBattle (this);
@@ -585,6 +612,7 @@ public class Battle {
 	internal void ResolveBattle(){
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
+		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
 		this._kingdom1City.isPaired = false;
 		this._kingdom2City.isPaired = false;
 		this._kingdom1City.ChangeAttackingState (false);
