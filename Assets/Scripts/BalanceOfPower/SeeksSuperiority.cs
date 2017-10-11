@@ -117,8 +117,8 @@ public static class SeeksSuperiority {
 					Warfare warfare = new Warfare (kingdom, seekWarKingdom);
 				}else{
 					//if there are kingdoms whose invasion value is 75 or above that is not part of my alliance
-					Debug.Log(kingdom.name + " wants to have alliance with anyone against " + targetKingdom.name + " because it has positive invasion value and is not my ally");
 					if(targetKingdom != null){
+						Debug.Log(kingdom.name + " wants to have alliance with anyone against " + targetKingdom.name + " because it has positive invasion value and is not my ally");
 						if(!kingdom.isMilitarize){
 							int chance = UnityEngine.Random.Range (0, 2);
 							if (chance == 0) {

@@ -3272,19 +3272,12 @@ public class Kingdom{
 	internal void LeaveAlliance(bool doNotShowLog = false){
 		if(this.alliancePool != null){
             AlliancePool leftAlliance = this.alliancePool;
-            //List<Kingdom> kingdomsInvolved = new List<Kingdom>();
-            //for (int i = 0; i < leftAlliance.kingdomsInvolved.Count; i++) {
-            //    Kingdom kingdomInvolved = leftAlliance.kingdomsInvolved[i];
-            //    kingdomsInvolved.Add(kingdomInvolved);
-            //    if (kingdomInvolved.warfareInfo.Count > 0) {
-            //        foreach (WarfareInfo currWarFare in kingdomInvolved.warfareInfo.Values) {
-            //            foreach (List<Kingdom> kingdomsToAdd in currWarFare.warfare.kingdomSideList.Values) {
-            //                kingdomsInvolved.AddRange(kingdomsToAdd);
-            //            }
-            //        }
-            //    }
-            //}
-
+			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
+				if(this.alliancePool.kingdomsInvolved[i].id != this.id){
+					KingdomRelationship kr = this.alliancePool.kingdomsInvolved [i].GetRelationshipWithKingdom (this);
+					kr.AddRelationshipModifier (-50, "Broken Alliance", RELATIONSHIP_MODIFIER.LEAVE_ALLIANCE, true, false);
+				}
+			}
             this.alliancePool.RemoveKingdomInAlliance(this);
 			//When leaving an alliance, Stability is reduced by 15
 			this.AdjustStability(-15);

@@ -11,6 +11,8 @@ public class KingdomRelationship {
     private RELATIONSHIP_STATUS _relationshipStatus;
     private List<History> _relationshipHistory;
     private List<ExpirableModifier> _eventModifiers;
+	private Dictionary<RELATIONSHIP_MODIFIER, RelationshipModifier> _relationshipModifiers;
+
     private int _like;
     private int _eventLikenessModifier;
     public int forTestingLikeModifier;
@@ -69,11 +71,14 @@ public class KingdomRelationship {
     public List<ExpirableModifier> eventModifiers {
         get { return this._eventModifiers; }
     }
+	public Dictionary<RELATIONSHIP_MODIFIER, RelationshipModifier> relationshipModifiers {
+		get { return this._relationshipModifiers; }
+	}
     public string relationshipSummary {
         get { return this._relationshipSummary + this._relationshipEventsSummary; }
     }
     public int totalLike {
-        get { return _like + _eventLikenessModifier + forTestingLikeModifier; }
+        get { return _like + GetTotalRelationshipModifiers(); }
     }
     public int eventLikenessModifier {
         get { return _eventLikenessModifier; }
@@ -167,6 +172,7 @@ public class KingdomRelationship {
         this._targetKingdom = _targetKingdom;
         _relationshipHistory = new List<History>();
         _eventModifiers = new List<ExpirableModifier>();
+		this._relationshipModifiers = new Dictionary<RELATIONSHIP_MODIFIER, RelationshipModifier> ();
         _like = 0;
         _eventLikenessModifier = 0;
         _relationshipSummary = string.Empty;
@@ -486,6 +492,30 @@ public class KingdomRelationship {
      * Add an event modifier (A relationship modifier that came from a specific event that involved the sourceKingdom and targetKingdom)
      * </summary>
      * */
+	internal void AddRelationshipModifier(int modification, string reason, RELATIONSHIP_MODIFIER identifier, bool isDecaying, bool isExpiring){
+		GameDate dateTimeToUse = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+		if(identifier == RELATIONSHIP_MODIFIER.LEAVE_ALLIANCE){
+			dateTimeToUse.SetDate (dateTimeToUse.month, 1, dateTimeToUse.year);
+		}
+		if(isDecaying){
+			AddDecayingRelationshipModifier (modification, reason, identifier, dateTimeToUse);
+		}
+	}
+	private void AddDecayingRelationshipModifier(int modification, string reason, RELATIONSHIP_MODIFIER identifier, GameDate currentDate){
+		RelationshipModifier relationshipModifier = null;
+		if(this._relationshipModifiers.ContainsKey(identifier)){
+			relationshipModifier = this._relationshipModifiers [identifier];
+			relationshipModifier.SetModifier (modification);
+		}
+		if(relationshipModifier == null){
+			relationshipModifier = new RelationshipModifier (modification, reason, identifier);
+			this._relationshipModifiers.Add (identifier, relationshipModifier);
+			if(identifier == RELATIONSHIP_MODIFIER.LEAVE_ALLIANCE){
+				currentDate.AddMonths (1);
+				SchedulingManager.Instance.AddEntry (currentDate, () => DecayRelationshipModifier(relationshipModifier, 5, DECAY_INTERVAL.MONTHLY, 1));
+			}
+		}
+	}
 	internal void AddEventModifier(int modification, string summary, GameEvent gameEventTrigger = null, bool hasExpiration = true, ASSASSINATION_TRIGGER_REASONS assassinationReasons = ASSASSINATION_TRIGGER_REASONS.NONE, bool isDiscovery = false) {
         RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
 		bool hasAddedModifier = false;
@@ -553,6 +583,22 @@ public class KingdomRelationship {
      * Remove a specific event modifier
      * </summary>
      * */
+	private void DecayRelationshipModifier(RelationshipModifier relationshipModifier, int amount, DECAY_INTERVAL decayInterval, int interval){
+		relationshipModifier.AdjustModifier (amount);
+		if(relationshipModifier.modifier != 0){
+			GameDate decayDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+			if(decayInterval == DECAY_INTERVAL.DAILY){
+				decayDate.AddDays (interval);
+			}else if(decayInterval == DECAY_INTERVAL.MONTHLY){
+				decayDate.AddMonths (interval);
+			}else if(decayInterval == DECAY_INTERVAL.YEARLY){
+				decayDate.AddYears (interval);
+			}
+			SchedulingManager.Instance.AddEntry (decayDate, () => DecayRelationshipModifier(relationshipModifier, amount, decayInterval, interval));
+		}else{
+			this._relationshipModifiers.Remove (relationshipModifier.identifier);
+		}
+	}
     private void RemoveEventModifier(ExpirableModifier expMod) {
 		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead){
 			if(expMod.modifier < 0) {
@@ -604,6 +650,13 @@ public class KingdomRelationship {
         this._eventModifiers.Clear();
         UpdateKingRelationshipStatus();
     }
+	private int GetTotalRelationshipModifiers(){
+		if(this._relationshipModifiers.Count > 0){
+			return this._relationshipModifiers.Values.Sum (x => x.modifier);
+		}else{
+			return 0;
+		}
+	}
     #endregion
 
     #region War Functions
