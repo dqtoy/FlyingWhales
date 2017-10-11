@@ -44,6 +44,7 @@ public class Kingdom{
 	internal Citizen king;
     internal Citizen nextInLine;
 	internal List<Citizen> successionLine;
+    private Dictionary<City, List<Citizen>> _citizens;
 
 	internal List<Rebellions> rebellions;
 
@@ -389,6 +390,9 @@ public class Kingdom{
 			return (int)((2 * mySoldiers * this._baseArmor) / (mySoldiers + this._baseArmor));
 		}
 	}
+    internal Dictionary<City, List<Citizen>> citizens {
+        get { return _citizens; }
+    }
     #endregion
 
     // Kingdom constructor paramters
@@ -407,6 +411,7 @@ public class Kingdom{
         this.successionLine = new List<Citizen>();
 		this._cities = new List<City> ();
         this._regions = new List<Region>();
+        this._citizens = new Dictionary<City, List<Citizen>>();
 		this._nonRebellingCities = new List<City> ();
 		this.camps = new List<Camp> ();
 		this.kingdomHistory = new List<History>();
@@ -510,7 +515,8 @@ public class Kingdom{
         this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 
-    public void CreateInitialCities(List<HexTile> initialCityLocations) {
+    #region Initialization Functions
+    internal void CreateInitialCities(List<HexTile> initialCityLocations) {
         if (initialCityLocations.Count > 0) {
             for (int i = 0; i < initialCityLocations.Count; i++) {
                 HexTile initialCityLocation = initialCityLocations[i];
@@ -519,8 +525,269 @@ public class Kingdom{
             }
         }
     }
+    internal void CreateInitialFamilies() {
+        CreateInitialRoyalFamily();
+        CreateNewChancellorFamily();
+        CreateNewMarshalFamily();
+        for (int i = 0; i < cities.Count; i++) {
+            City currCity = cities[i];
+            CreateNewGovernorFamily(currCity);
+        }
+    }
+    internal void CreateInitialRoyalFamily() {
+        successionLine.Clear();
+        GENDER gender = GENDER.MALE;
+        int randomGender = UnityEngine.Random.Range(0, 100);
+        if (randomGender < 20) {
+            gender = GENDER.FEMALE;
+        }
+        Citizen king = new Citizen(capitalCity, UnityEngine.Random.Range(20, 36), gender, 2);
+        Citizen father = new Citizen(capitalCity, UnityEngine.Random.Range(60, 81), GENDER.MALE, 1);
+        Citizen mother = new Citizen(capitalCity, UnityEngine.Random.Range(60, 81), GENDER.FEMALE, 1);
 
-    public void SetKingdomType(KINGDOM_TYPE kingdomType) {
+        MONTH monthFather = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthMother = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthKing = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        father.AssignBirthday(monthFather, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age, false);
+        mother.AssignBirthday(monthMother, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age, false);
+        king.AssignBirthday(monthKing, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - king.age));
+
+        father.isDirectDescendant = true;
+        mother.isDirectDescendant = true;
+        father.isDead = true;
+        mother.isDead = true;
+
+        father.AddChild(king);
+        mother.AddChild(king);
+        king.AddParents(father, mother);
+
+        MarriageManager.Instance.Marry(father, mother);
+
+        AddCitizenToKingdom(king, capitalCity);
+        king.isDirectDescendant = true;
+        AssignNewKing(king);
+
+        MONTH monthSibling = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        int siblingsChance = UnityEngine.Random.Range(0, 100);
+        if (siblingsChance < 25) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, king.age));
+            Citizen sibling2 = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, king.age));
+
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
+            AddCitizenToKingdom(sibling, capitalCity);
+            AddCitizenToKingdom(sibling2, capitalCity);
+            sibling.UpdateKingOpinion();
+            sibling2.UpdateKingOpinion();
+        } else if (siblingsChance >= 25 && siblingsChance < 75) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, king.age));
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            AddCitizenToKingdom(sibling, capitalCity);
+            sibling.UpdateKingOpinion();
+        }
+
+        MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthChild2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthChild3 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        int spouseChance = UnityEngine.Random.Range(0, 100);
+        if (spouseChance < 80) {
+            Citizen spouse = MarriageManager.Instance.CreateSpouse(king);
+            AddCitizenToKingdom(spouse, capitalCity);
+            spouse.UpdateKingOpinion();
+        }
+    }
+    internal void CreateNewChancellorFamily() {
+        GENDER gender = GENDER.MALE;
+        int randomGender = UnityEngine.Random.Range(0, 100);
+        if (randomGender < 20) {
+            gender = GENDER.FEMALE;
+        }
+        Citizen chancellor = new Citizen(capitalCity, UnityEngine.Random.Range(20, 36), gender, 2);
+        Citizen father = new Citizen(capitalCity, UnityEngine.Random.Range(60, 81), GENDER.MALE, 1);
+        Citizen mother = new Citizen(capitalCity, UnityEngine.Random.Range(60, 81), GENDER.FEMALE, 1);
+
+        MONTH monthFather = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthMother = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthChancellor = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        father.AssignBirthday(monthFather, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age, false);
+        mother.AssignBirthday(monthMother, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age, false);
+        chancellor.AssignBirthday(monthChancellor, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthChancellor] + 1), (GameManager.Instance.year - chancellor.age));
+
+        father.isDead = true;
+        mother.isDead = true;
+
+        father.AddChild(chancellor);
+        mother.AddChild(chancellor);
+        chancellor.AddParents(father, mother);
+        AddCitizenToKingdom(chancellor, capitalCity);
+        chancellor.UpdateKingOpinion();
+
+        MarriageManager.Instance.Marry(father, mother);
+
+        MONTH monthSibling = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        int siblingsChance = UnityEngine.Random.Range(0, 100);
+        if (siblingsChance < 25) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, chancellor.age));
+            Citizen sibling2 = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, chancellor.age));
+
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
+            AddCitizenToKingdom(sibling, capitalCity);
+            AddCitizenToKingdom(sibling2, capitalCity);
+            sibling.UpdateKingOpinion();
+            sibling2.UpdateKingOpinion();
+        } else if (siblingsChance >= 25 && siblingsChance < 75) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, chancellor.age));
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            AddCitizenToKingdom(sibling, capitalCity);
+            sibling.UpdateKingOpinion();
+        }
+
+        MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthChild2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthChild3 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        int spouseChance = UnityEngine.Random.Range(0, 100);
+        if (spouseChance < 80) {
+            Citizen spouse = MarriageManager.Instance.CreateSpouse(chancellor);
+            AddCitizenToKingdom(spouse, capitalCity);
+            spouse.UpdateKingOpinion();
+        }
+        chancellor.AssignRole(ROLE.GRAND_CHANCELLOR);
+    }
+    internal void CreateNewMarshalFamily() {
+        GENDER gender = GENDER.MALE;
+        int randomGender = UnityEngine.Random.Range(0, 100);
+        if (randomGender < 20) {
+            gender = GENDER.FEMALE;
+        }
+        Citizen marshal = new Citizen(capitalCity, UnityEngine.Random.Range(20, 36), gender, 2);
+        Citizen father = new Citizen(capitalCity, UnityEngine.Random.Range(60, 81), GENDER.MALE, 1);
+        Citizen mother = new Citizen(capitalCity, UnityEngine.Random.Range(60, 81), GENDER.FEMALE, 1);
+
+        MONTH monthFather = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthMother = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthMarshal = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        father.AssignBirthday(monthFather, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age, false);
+        mother.AssignBirthday(monthMother, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age, false);
+        marshal.AssignBirthday(monthMarshal, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthMarshal] + 1), (GameManager.Instance.year - marshal.age));
+
+        father.isDead = true;
+        mother.isDead = true;
+
+        father.AddChild(marshal);
+        mother.AddChild(marshal);
+        marshal.AddParents(father, mother);
+        AddCitizenToKingdom(marshal, capitalCity);
+        marshal.UpdateKingOpinion();
+
+        MarriageManager.Instance.Marry(father, mother);
+
+        MONTH monthSibling = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        int siblingsChance = UnityEngine.Random.Range(0, 100);
+        if (siblingsChance < 25) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, marshal.age));
+            Citizen sibling2 = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, marshal.age));
+
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
+            AddCitizenToKingdom(sibling, capitalCity);
+            AddCitizenToKingdom(sibling2, capitalCity);
+            sibling.UpdateKingOpinion();
+            sibling2.UpdateKingOpinion();
+        } else if (siblingsChance >= 25 && siblingsChance < 75) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, marshal.age));
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            AddCitizenToKingdom(sibling, capitalCity);
+            sibling.UpdateKingOpinion();
+        }
+
+        MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthChild2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthChild3 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        int spouseChance = UnityEngine.Random.Range(0, 100);
+        if (spouseChance < 80) {
+            Citizen spouse = MarriageManager.Instance.CreateSpouse(marshal);
+            AddCitizenToKingdom(spouse, capitalCity);
+            spouse.UpdateKingOpinion();
+        }
+        marshal.AssignRole(ROLE.GRAND_MARSHAL);
+    }
+    internal void CreateNewGovernorFamily(City cityOfFamily) {
+        GENDER gender = GENDER.MALE;
+        int randomGender = UnityEngine.Random.Range(0, 100);
+        if (randomGender < 20) {
+            gender = GENDER.FEMALE;
+        }
+        Citizen governor = new Citizen(cityOfFamily, UnityEngine.Random.Range(20, 36), gender, 2);
+        Citizen father = new Citizen(cityOfFamily, UnityEngine.Random.Range(60, 81), GENDER.MALE, 1);
+        Citizen mother = new Citizen(cityOfFamily, UnityEngine.Random.Range(60, 81), GENDER.FEMALE, 1);
+
+        governor.AssignRole(ROLE.GOVERNOR);
+
+        father.AddChild(governor);
+        mother.AddChild(governor);
+        governor.AddParents(father, mother);
+        AddCitizenToKingdom(governor, cityOfFamily);
+        governor.UpdateKingOpinion();
+
+        MONTH monthFather = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthMother = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthGovernor = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        father.AssignBirthday(monthFather, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age, false);
+        mother.AssignBirthday(monthMother, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age, false);
+        governor.AssignBirthday(monthGovernor, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthGovernor] + 1), (GameManager.Instance.year - governor.age));
+
+        father.isDead = true;
+        mother.isDead = true;
+        MarriageManager.Instance.Marry(father, mother);
+
+        cityOfFamily.governor = governor;
+
+        MONTH monthSibling = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        int siblingsChance = UnityEngine.Random.Range(0, 100);
+        if (siblingsChance < 25) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, governor.age));
+            Citizen sibling2 = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, governor.age));
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
+            AddCitizenToKingdom(sibling, cityOfFamily);
+            AddCitizenToKingdom(sibling2, cityOfFamily);
+            sibling.UpdateKingOpinion();
+            sibling2.UpdateKingOpinion();
+        } else if (siblingsChance >= 25 && siblingsChance < 75) {
+            Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, governor.age));
+            sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            AddCitizenToKingdom(sibling, cityOfFamily);
+            sibling.UpdateKingOpinion();
+        }
+
+        MONTH monthChild1 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthChild2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        MONTH monthChild3 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+
+        int spouseChance = UnityEngine.Random.Range(0, 100);
+        if (spouseChance < 80) {
+            Citizen spouse = MarriageManager.Instance.CreateSpouse(governor);
+            AddCitizenToKingdom(spouse, cityOfFamily);
+            spouse.UpdateKingOpinion();
+        }
+    }
+    internal void SetKingdomType(KINGDOM_TYPE kingdomType) {
         KINGDOM_TYPE prevKingdomType = this.kingdomType;
         switch (kingdomType) {
             case KINGDOM_TYPE.DEFENSIVE_KINGDOM:
@@ -557,31 +824,33 @@ public class Kingdom{
             //}
         }
     }
+    #endregion
 
-	//// Updates this kingdom's type and horoscope
-	//public void UpdateKingdomTypeData() {
-	//	// Update Kingdom Type whenever the kingdom expands to a new city
-	//	KingdomTypeData prevKingdomTypeData = this._kingdomTypeData;
-	//	this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
-	//	if(this.kingdomTypeData.dailyCumulativeEventRate != null){
-	//		this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
-	//	}
-	//	// If the Kingdom Type Data changed
-	//	if (this._kingdomTypeData != prevKingdomTypeData) {
- //           //Update Character Values of King and Governors
- //           //this.UpdateCharacterValuesOfKingsAndGovernors();
 
-	//		//Update Relationship Opinion
-	//		UpdateAllRelationshipsLikeness();
-	//		UpdateAllRelationshipsLikenessFromOthers ();
- //           //if (UIManager.Instance.currentlyShowingKingdom != null &&UIManager.Instance.currentlyShowingKingdom.id == this.id) {
- //               Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
- //               updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
- //               updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
- //               UIManager.Instance.ShowNotification(updateKingdomTypeLog);
- //           //}
- //       }
- //   }
+    //// Updates this kingdom's type and horoscope
+    //public void UpdateKingdomTypeData() {
+    //	// Update Kingdom Type whenever the kingdom expands to a new city
+    //	KingdomTypeData prevKingdomTypeData = this._kingdomTypeData;
+    //	this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
+    //	if(this.kingdomTypeData.dailyCumulativeEventRate != null){
+    //		this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
+    //	}
+    //	// If the Kingdom Type Data changed
+    //	if (this._kingdomTypeData != prevKingdomTypeData) {
+    //           //Update Character Values of King and Governors
+    //           //this.UpdateCharacterValuesOfKingsAndGovernors();
+
+    //		//Update Relationship Opinion
+    //		UpdateAllRelationshipsLikeness();
+    //		UpdateAllRelationshipsLikenessFromOthers ();
+    //           //if (UIManager.Instance.currentlyShowingKingdom != null &&UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+    //               Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
+    //               updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+    //               updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
+    //               UIManager.Instance.ShowNotification(updateKingdomTypeLog);
+    //           //}
+    //       }
+    //   }
 
     #region Kingdom Death
     // Function to call if you want to determine whether the Kingdom is still alive or dead
@@ -1195,13 +1464,14 @@ public class Kingdom{
     internal void AddCityToKingdom(City city) {
         this._cities.Add(city);
         _regions.Add(city.region);
-        //this.UpdateKingdomTypeData();
         UpdateKingdomSize();
         UpdatePopulationCapacity();
-        if (this._cities.Count == 1 && this._cities[0] != null) {
+        if ((capitalCity == null || capitalCity.isDead) && this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
+        _citizens.Add(city, new List<Citizen>());
         KingdomManager.Instance.UpdateKingdomList();
+        UIManager.Instance.UpdateKingdomCitiesMenu();
     }
     /* 
      * <summary>
@@ -1211,7 +1481,7 @@ public class Kingdom{
      * available resources, and daily growth of remaining cities.
      * </summary>
      * */
-    internal void RemoveCityFromKingdom(City city) {
+    internal List<Citizen> RemoveCityFromKingdom(City city) {
         city.rebellion = null;
         this._cities.Remove(city);
         _regions.Remove(city.region);
@@ -1220,16 +1490,19 @@ public class Kingdom{
             UpdateKingdomSize();
             UpdatePopulationCapacity();
             RevalidateKingdomAdjacency(city);
-            //this.UpdateKingdomTypeData();
             for (int i = 0; i < this._cities.Count; i++) {
 				if (this._cities[i].rebellion == null) {
 					SetCapitalCity(this._cities[i]);
 					break;
 				}
 			}
+            TransferCitizensFromCityToCapital(city);
             KingdomManager.Instance.UpdateKingdomList();
         }
-
+        List<Citizen> remainingCitizens = _citizens[city];
+        _citizens.Remove(city);
+        UIManager.Instance.UpdateKingdomCitiesMenu();
+        return remainingCitizens;
     }
     internal void SetCapitalCity(City city) {
         this.capitalCity = city;
@@ -1258,18 +1531,29 @@ public class Kingdom{
     #endregion
 
     #region Citizen Management
-    internal List<Citizen> GetAllCitizensOfType(ROLE role) {
-        List<Citizen> citizensOfType = new List<Citizen>();
-        for (int i = 0; i < this.cities.Count; i++) {
-            citizensOfType.AddRange(this.cities[i].GetCitizensWithRole(role));
+    internal void AddCitizenToKingdom(Citizen citizenToAdd, City cityCitizenBelongsTo) {
+        citizenToAdd.city = cityCitizenBelongsTo;
+        if (_citizens.ContainsKey(cityCitizenBelongsTo)) {
+            if (!_citizens[cityCitizenBelongsTo].Contains(citizenToAdd)) {
+                _citizens[cityCitizenBelongsTo].Add(citizenToAdd);
+            }
+        } else {
+            _citizens.Add(cityCitizenBelongsTo, new List<Citizen>() { citizenToAdd });
         }
-        return citizensOfType;
+    }
+    internal void RemoveCitizenFromKingdom(Citizen citizenToRemove, City cityCitizenBelongedTo) {
+        if (_citizens.ContainsKey(cityCitizenBelongedTo)) {
+            _citizens[cityCitizenBelongedTo].Remove(citizenToRemove);
+        } 
+        //else {
+        //    throw new Exception(citizenToRemove.role + " " + citizenToRemove.name + " cannot be removed because " + cityCitizenBelongedTo.name + " is not a city of " + this.name);
+        //}
     }
     internal bool IsElligibleForRebellion() {
         if(stability <= -50 && kingdomSize != KINGDOM_SIZE.SMALL) {
             for (int i = 0; i < cities.Count; i++) {
                 City currCity = cities[i];
-                if(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50).Any()) {
+                if (currCity.citizens.Where(x => x.role != ROLE.KING && x.role != ROLE.UNTRAINED && x.loyaltyToKing <= -50).Any()) {
                     return true;
                 }
             }
@@ -1280,9 +1564,43 @@ public class Kingdom{
         List<Citizen> citizensForRebellion = new List<Citizen>();
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
-            citizensForRebellion.AddRange(currCity.importantCitizensInCity.Values.Where(x => x.role != ROLE.KING && x.loyaltyToKing <= -50));
+            citizensForRebellion.AddRange(currCity.citizens.Where(x => x.role != ROLE.KING && x.role != ROLE.UNTRAINED && x.loyaltyToKing <= -50));
         }
         return citizensForRebellion;
+    }
+    internal Citizen GetCitizenWithRoleInKingdom(ROLE role) {
+        for (int i = 0; i < cities.Count; i++) {
+            City currCity = cities[i];
+            for (int j = 0; j < currCity.citizens.Count; j++) {
+                Citizen currCitizen = currCity.citizens[j];
+                if(currCitizen.role == role) {
+                    return currCitizen;
+                }
+            }
+        }
+        return null;
+    }
+    internal void TransferCitizensFromCityToCapital(City sourceCity) {
+        List<Citizen> importantCitizensInCity = new List<Citizen>(sourceCity.citizens.Where(x => x.role == ROLE.KING 
+            || x.role == ROLE.GRAND_CHANCELLOR || x.role == ROLE.GRAND_MARSHAL));
+        //Get Families of important citizens
+        List<Citizen> citizensToTransfer = new List<Citizen>();
+        for (int i = 0; i < importantCitizensInCity.Count; i++) {
+            Citizen currImportantCitizen = importantCitizensInCity[i];
+            citizensToTransfer.Add(currImportantCitizen);
+            List<Citizen> familyOfCurrCitizen = currImportantCitizen.GetRelatives(-1);
+            for (int j = 0; j < familyOfCurrCitizen.Count; j++) {
+                Citizen currFamilyMember = familyOfCurrCitizen[j];
+                if (!citizensToTransfer.Contains(currFamilyMember)) {
+                    citizensToTransfer.Add(currFamilyMember);
+                }
+            }
+        }
+        for (int i = 0; i < citizensToTransfer.Count; i++) {
+            Citizen currCitizen = citizensToTransfer[i];
+            RemoveCitizenFromKingdom(currCitizen, currCitizen.city);
+            AddCitizenToKingdom(currCitizen, capitalCity);
+        }
     }
     #endregion
 
@@ -1357,44 +1675,41 @@ public class Kingdom{
             }
         }
     }
-    internal void AssignNewKing(Citizen newKing, City city = null) {
-        if (this.king != null) {
-            if (this.king.city != null) {
-                this.king.city.hasKing = false;
+    internal Citizen CreateNewKing() {
+        GENDER gender = GENDER.MALE;
+        int randomGender = UnityEngine.Random.Range(0, 100);
+        if (randomGender < 20) {
+            gender = GENDER.FEMALE;
+        }
+        Citizen king = new Citizen(capitalCity, UnityEngine.Random.Range(20, 36), gender, 2);
+
+        MONTH monthKing = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
+        king.AssignBirthday(monthKing, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - king.age));
+        king.city.kingdom.AddCitizenToKingdom(king, capitalCity);
+        king.CreateFamily();
+
+        return king;
+    }
+    internal void AssignNewKing(Citizen newKing = null) {
+        if(newKing == null) { 
+            //A new king was not specified, check succession lines first, if there are no successors generate a new king
+            if(successionLine.Count > 0) {
+                newKing = successionLine.First();
+            } else {
+                newKing = CreateNewKing();
+                List<Citizen> familyOfPreviousKing = new List<Citizen>(this.king.GetRelatives(-1));
+                familyOfPreviousKing.Add(this.king);
+                //Remove family of previous king from kingdom
+                for (int i = 0; i < familyOfPreviousKing.Count; i++) {
+                    Citizen currFamilyMember = familyOfPreviousKing[i];
+                    RemoveCitizenFromKingdom(currFamilyMember, currFamilyMember.city);
+                }
             }
         }
 
-        if (newKing == null) {
-            if (city == null) {
-                if (this.king.city.isDead) {
-                    //Debug.LogError("City of previous king is dead! But still creating king in that dead city");
-					for (int i = 0; i < this.cities.Count; i++) {
-						if(this.cities[i].rebellion == null){
-							newKing = this.cities [i].CreateNewKing ();
-							break;
-						}
-					}
-				}else{
-					newKing = this.king.city.CreateNewKing();
-				}
-            } else {
-                newKing = city.CreateNewKing();
-            }
-            if (newKing == null) {
-                if (this.king != null) {
-                    if (this.king.city != null) {
-                        this.king.city.hasKing = true;
-                    }
-                }
-                return;
-            }
+        if(newKing == null) {
+            throw new Exception("No new king was generated for " + name);
         }
-		if(newKing == null){
-			return;
-		}
-        //SetKingdomType(newKing.preferredKingdomType);
-        SetCapitalCity(newKing.city);
-        newKing.city.hasKing = true;
 
         if (!newKing.isDirectDescendant) {
             Utilities.ChangeDescendantsRecursively(newKing, true);
@@ -1403,21 +1718,9 @@ public class Kingdom{
             }
         }
 
-        Citizen previousKing = this.king;
-        bool isNewKingGovernor = newKing.isGovernor;
-
         this.king = newKing;
         newKing.AssignRole(ROLE.KING);
         ((King)newKing.assignedRole).SetOwnedKingdom(this);
-
-        if (isNewKingGovernor) {
-            newKing.city.AssignNewGovernor();
-        }
-
-        newKing.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, newKing.name + " became the new King/Queen of " + this.name + ".", HISTORY_IDENTIFIER.NONE));
-
-        ResetRelationshipModifiers();
-        //UpdateMutualRelationships();
 
         this.successionLine.Clear();
         ChangeSuccessionLineRescursively(newKing);
@@ -1425,16 +1728,16 @@ public class Kingdom{
         UpdateKingSuccession();
 
         this.UpdateProductionRatesFromKing();
-        //this.UpdateAllGovernorsLoyalty();
         this.UpdateAllRelationshipsLikeness();
         this.UpdateAllCitizensOpinionOfKing();
+
     }
     internal void UpdateAllCitizensOpinionOfKing() {
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
             for (int j = 0; j < currCity.citizens.Count; j++) {
                 Citizen currCitizen = currCity.citizens[j];
-                if(currCitizen.id != king.id) {
+                if (currCitizen.id != king.id) {
                     currCitizen.UpdateKingOpinion();
                 }
             }
@@ -2290,13 +2593,13 @@ public class Kingdom{
 			}
 		}
 	}
-	internal void UpdateAllGovernorsLoyalty(){
-		for(int i = 0; i < this.cities.Count; i++){
-			if(this.cities[i].governor != null){
-				((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty();
-			}
-		}
-	}
+	//internal void UpdateAllGovernorsLoyalty(){
+	//	for(int i = 0; i < this.cities.Count; i++){
+	//		if(this.cities[i].governor != null){
+	//			((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty();
+	//		}
+	//	}
+	//}
 	#endregion
 
 	#region Balance of Power
@@ -3009,7 +3312,7 @@ public class Kingdom{
         //negative opinion towards the King. The Kingdom's Stability will then reset back to 50.
         List<Citizen> possibleCitizensForRebellion = new List<Citizen>();
         for (int i = 0; i < cities.Count; i++) {
-            possibleCitizensForRebellion.AddRange(cities[i].importantCitizensInCity.Values.Where(x => x.role != ROLE.KING));
+            possibleCitizensForRebellion.AddRange(cities[i].citizens.Where(x => x.role != ROLE.KING && x.role != ROLE.QUEEN && x.role != ROLE.UNTRAINED));
         }
         if (possibleCitizensForRebellion.Count > 0) {
             possibleCitizensForRebellion.OrderBy(x => x.loyaltyToKing).First().StartRebellion();

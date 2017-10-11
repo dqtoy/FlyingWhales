@@ -60,15 +60,15 @@ public class Rebellion : GameEvent {
 		if(!this.targetKingdom.isAlive()){
 			if(this.conqueredCities.Count > 1){
 				//Victory Rebellion
-				this.rebelLeader.citizen.SetImmortality(false);
-				KillFort();
-				Kingdom newKingdom = KingdomManager.Instance.SplitKingdom(this.targetKingdom, this.conqueredCities, this.rebelLeader.citizen);
-				ResetConqueredCitiesToCityFunctionality (newKingdom);
+				//this.rebelLeader.citizen.SetImmortality(false);
+				//KillFort();
+				//Kingdom newKingdom = KingdomManager.Instance.SplitKingdom(this.targetKingdom, this.conqueredCities, this.rebelLeader.citizen);
+				//ResetConqueredCitiesToCityFunctionality (newKingdom);
 
-				Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "rebel_win");
-				newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-				newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-				newLog.AddToFillers (newKingdom.king, newKingdom.king.name, LOG_IDENTIFIER.KING_2);
+				//Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Rebellion", "rebel_win");
+				//newLog.AddToFillers (this.targetKingdom, this.targetKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+				//newLog.AddToFillers (newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+				//newLog.AddToFillers (newKingdom.king, newKingdom.king.name, LOG_IDENTIFIER.KING_2);
 			}
 			this.DoneEvent();
 			return;

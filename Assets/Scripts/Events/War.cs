@@ -423,9 +423,9 @@ public class War : GameEvent {
 	#endregion
 	internal void GameEventWarWinner(Kingdom winnerKingdom){
 		if (this.gameEventTrigger != null && this.gameEventTrigger.isActive) {
-			if (this.gameEventTrigger is SpouseAbduction) {
-				((SpouseAbduction)this.gameEventTrigger).WarWinner (winnerKingdom);
-			}
+			//if (this.gameEventTrigger is SpouseAbduction) {
+			//	((SpouseAbduction)this.gameEventTrigger).WarWinner (winnerKingdom);
+			//}
 			GameEventTriggerWarResults ();
 		}else{
 			GameEventTriggerWarResults ();

@@ -94,17 +94,17 @@ public class Rebellions : GameEvent {
 		}
 	}
 	private void CheckForSplit(){
-		if (this.conqueredCities.Count > 0) {
-			//Victory Rebellion
-			this.rebelLeader.citizen.SetImmortality (false);
-			KillFort ();
-			Kingdom newKingdom = KingdomManager.Instance.SplitKingdom (this.targetKingdom, this.conqueredCities, this.rebelLeader.citizen);
-			ResetConqueredCitiesToCityFunctionality (newKingdom);
-		}else{
-			this.rebelLeader.citizen.SetImmortality (false);
-			this.rebelLeader.citizen.Death (DEATH_REASONS.REBELLION);
-			KillFort ();
-		}
+		//if (this.conqueredCities.Count > 0) {
+		//	//Victory Rebellion
+		//	this.rebelLeader.citizen.SetImmortality (false);
+		//	KillFort ();
+		//	Kingdom newKingdom = KingdomManager.Instance.SplitKingdom (this.targetKingdom, this.conqueredCities, this.rebelLeader.citizen);
+		//	ResetConqueredCitiesToCityFunctionality (newKingdom);
+		//}else{
+		//	this.rebelLeader.citizen.SetImmortality (false);
+		//	this.rebelLeader.citizen.Death (DEATH_REASONS.REBELLION);
+		//	KillFort ();
+		//}
 		DoneEvent ();
 	}
 	private void ResetConqueredCitiesToCityFunctionality(Kingdom newKingdom){

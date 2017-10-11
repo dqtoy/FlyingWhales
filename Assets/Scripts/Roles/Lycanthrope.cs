@@ -26,7 +26,7 @@ public class Lycanthrope : Role {
     }
     #endregion
     public Lycanthrope(Citizen citizen): base(citizen){
-        this.citizen.city.citizens.Remove(this.citizen);
+        //this.citizen.city.citizens.Remove(this.citizen);
         _captor = null;
         _targetKingdom = null;
         _isReturningHome = false;

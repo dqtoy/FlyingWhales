@@ -24,6 +24,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public int movementDays;
 
     [Space(10)]
+    [Header("Pathfinding Objects")]
+    [SerializeField] private GameObject pathfindingGO; //Place this in layer Water, Mountain or Plain when biome & elevation is determined
+
+    [Space(10)]
     [Header("Resources")]
     public RESOURCE specialResource;
     public int nearbyResourcesCount = 0;
@@ -178,6 +182,24 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     #endregion
 
+    #region Elevation Functions
+    internal void SetElevation(ELEVATION elevationType) {
+        this.elevationType = elevationType;
+        switch (elevationType) {
+            case ELEVATION.MOUNTAIN:
+                pathfindingGO.layer = LayerMask.NameToLayer("Pathfinding_Mountains");
+                break;
+            case ELEVATION.WATER:
+                pathfindingGO.layer = LayerMask.NameToLayer("Pathfinding_Water");
+                break;
+            case ELEVATION.PLAIN:
+                pathfindingGO.layer = LayerMask.NameToLayer("Pathfinding_Plains");
+                break;
+        }
+    }
+    #endregion
+
+    #region Biome Functions
     internal void SetBiome(BIOMES biome) {
         biomeType = biome;
         //if(elevationType == ELEVATION.WATER) {
@@ -186,32 +208,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //    SetMinimapTileColor(Utilities.biomeColor[biome]);
         //}
         //biomeColor = minimapHexSprite.color;
-        
+
     }
-
-	internal void SetSortingOrder(int sortingOrder){
-		GetComponent<SpriteRenderer> ().sortingOrder = sortingOrder;
-		if (elevationType == ELEVATION.MOUNTAIN) {
-			centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
-		} else {
-			centerPiece.GetComponent<SpriteRenderer> ().sortingOrder = 60; //sortingOrder + 52;
-		}
-
-        SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();
-        for (int i = 0; i < resourcesSprites.Length; i++) {
-            resourcesSprites[i].sortingOrder = sortingOrder + 57;
-        }
-
-		kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
-		highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
-
-		topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-		topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
-	}
+    internal void AddBiomeDetailToTile(GameObject detailPrefab) {
+        GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
+        detailGO.transform.localScale = Vector3.one;
+        detailGO.transform.localPosition = Vector3.zero;
+    }
+    internal void SetBiomeDetailState(bool state) {
+        biomeDetailParentGO.SetActive(state);
+    }
+    #endregion
 
 	#region Resource
     internal void AssignSpecialResource(RESOURCE resource) {
@@ -221,7 +228,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         resourceGO.transform.localPosition = Vector3.zero;
         resourceGO.transform.localScale = Vector3.one;
     }
-
     internal void AssignSpecialResource(){
 		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
 			return;
@@ -272,50 +278,50 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
     #endregion
 
+    #region Tile Utilities
     public PandaBehaviour GetBehaviourTree() {
         return this.GetComponent<PandaBehaviour>();
     }
     /*
 	 * Returns all Hex tiles gameobjects within a radius
 	 * */
-    public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter){
-		List<HexTile> tilesInRange = new List<HexTile>();
-		List<HexTile> checkedTiles = new List<HexTile> ();
-		List<HexTile> tilesToAdd = new List<HexTile> ();
+    public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter) {
+        List<HexTile> tilesInRange = new List<HexTile>();
+        List<HexTile> checkedTiles = new List<HexTile>();
+        List<HexTile> tilesToAdd = new List<HexTile>();
 
-		for (int i = 0; i < range; i++) {
-			if (tilesInRange.Count <= 0) {
-				//tilesInRange = this.AllNeighbours;
+        for (int i = 0; i < range; i++) {
+            if (tilesInRange.Count <= 0) {
+                //tilesInRange = this.AllNeighbours;
                 for (int j = 0; j < AllNeighbours.Count; j++) {
                     tilesInRange.Add(AllNeighbours[j]);
                 }
-				checkedTiles.Add (this);
-			}else{
-				tilesToAdd.Clear ();
-				int tilesInRangeCount = tilesInRange.Count;
-				for (int j = 0; j < tilesInRangeCount; j++) {
-					if (!checkedTiles.Contains (tilesInRange [j])) {
-						checkedTiles.Add (tilesInRange [j]);
-						List<HexTile> neighbors = tilesInRange [j].AllNeighbours;
-						for (int k = 0; k < neighbors.Count; k++) {
-							if (!tilesInRange.Contains(neighbors[k])) {
-								tilesToAdd.Add (neighbors [k]);
-							}
-						}
-						tilesInRange.AddRange (tilesToAdd);
-//						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours.Where(x => !tilesInRange.Contains(x)).ToList());
-					}
-				}
-				if(i == range - 1 && isOnlyOuter){
-					return tilesToAdd;
-				}
+                checkedTiles.Add(this);
+            } else {
+                tilesToAdd.Clear();
+                int tilesInRangeCount = tilesInRange.Count;
+                for (int j = 0; j < tilesInRangeCount; j++) {
+                    if (!checkedTiles.Contains(tilesInRange[j])) {
+                        checkedTiles.Add(tilesInRange[j]);
+                        List<HexTile> neighbors = tilesInRange[j].AllNeighbours;
+                        for (int k = 0; k < neighbors.Count; k++) {
+                            if (!tilesInRange.Contains(neighbors[k])) {
+                                tilesToAdd.Add(neighbors[k]);
+                            }
+                        }
+                        tilesInRange.AddRange(tilesToAdd);
+                        //						tilesToAdd.AddRange (tilesInRange[j].AllNeighbours.Where(x => !tilesInRange.Contains(x)).ToList());
+                    }
+                }
+                if (i == range - 1 && isOnlyOuter) {
+                    return tilesToAdd;
+                }
 
-//				tilesInRange = tilesInRange.Distinct ().ToList ();
-			}
-		}
-		return tilesInRange;
-	}
-
+                //				tilesInRange = tilesInRange.Distinct ().ToList ();
+            }
+        }
+        return tilesInRange;
+    }
     public List<HexTile> GetTilesInRange(int range) {
         List<HexTile> tilesInRange = new List<HexTile>();
         CubeCoordinate cube = GridMap.Instance.OddRToCube(new HexCoordinate(xCoordinate, yCoordinate));
@@ -334,6 +340,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
         return tilesInRange;
     }
+    #endregion
+
     #region Pathfinding
     public void FindNeighbours(HexTile[,] gameBoard) {
 		var neighbours = new List<HexTile>();
@@ -408,6 +416,29 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     #region Tile Visuals
+    internal void SetSortingOrder(int sortingOrder) {
+        GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
+        if (elevationType == ELEVATION.MOUNTAIN) {
+            centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
+        } else {
+            centerPiece.GetComponent<SpriteRenderer>().sortingOrder = 60; //sortingOrder + 52;
+        }
+
+        SpriteRenderer[] resourcesSprites = resourceParent.GetComponentsInChildren<SpriteRenderer>();
+        for (int i = 0; i < resourcesSprites.Length; i++) {
+            resourcesSprites[i].sortingOrder = sortingOrder + 57;
+        }
+
+        kingdomColorSprite.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 3;
+        highlightGO.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 4;
+
+        topLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        leftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        botLeftEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        botRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        rightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+        topRightEdge.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 1;
+    }
     internal SpriteRenderer ActivateBorder(HEXTILE_DIRECTION direction) {
         switch (direction) {
             case HEXTILE_DIRECTION.NORTH_WEST:
@@ -551,50 +582,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     internal void HideTileHighlight(){
 		this.kingdomColorSprite.gameObject.SetActive(false);
 	}
-    internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
-        //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
-        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
-        string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
-        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
-        AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
-        structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState);
-
-        this._centerPiece.SetActive(false);
-
-        //Color color = this.ownedByCity.kingdom.kingdomColor;
-        //SetMinimapTileColor(color);
-        //SetTileHighlightColor(color);
-    }
-    /*
-     * Assign a structure object to this tile.
-     * NOTE: This will destroy any current structures on this tile
-     * and replace it with the new assigned one.
-     * */
-    internal void AssignStructureObjectToTile(StructureObject structureObj) {
-        if(structureObjOnTile != null) {
-            //Destroy Current Structure
-            structureObjOnTile.DestroyStructure();
-        }
-        structureObjOnTile = structureObj;
-        structureObj.transform.SetParent(this.structureParentGO.transform);
-        structureObj.transform.localPosition = Vector3.zero;
-    }
-    internal GameObject CreateSpecialStructureOnTile(LAIR lairType) {
-        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType).name,
-            Vector3.zero, Quaternion.identity, structureParentGO.transform);
-        //GameObject.Instantiate(
-        //CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType), structureParentGO.transform) as GameObject;
-        structureGO.transform.localPosition = Vector3.zero;
-        return structureGO;
-    }
     internal void ShowNamePlate() {
-        if(_namePlateParent != null) {
+        if (_namePlateParent != null) {
             _namePlateParent.gameObject.SetActive(true);
         }
-        if(_cityInfo != null) {
+        if (_cityInfo != null) {
             UpdateCityNamePlate();
         }
-        if(_lairItem != null) {
+        if (_lairItem != null) {
             UpdateLairNamePlate();
         }
     }
@@ -625,13 +620,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
     internal void RemoveCityNamePlate() {
-        if(_namePlateParent != null) {
+        if (_namePlateParent != null) {
             ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
             _namePlateParent = null;
             _cityInfo = null;
             Messenger.RemoveListener("UpdateUI", UpdateCityNamePlate);
         }
     }
+    #endregion
 
 	#region Lair
     internal void CreateLairNamePlate() {
@@ -668,7 +664,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			this._lairsInRange.Clear ();
 		}
 	}
-	#endregion
+    #endregion
+
+    #region Events Functions
     internal void CreateEventNamePlate() {
         //Debug.Log("Create " + gameEventInTile.eventType.ToString() + " nameplate on " + this.name);
 
@@ -680,10 +678,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         Messenger.AddListener("UpdateUI", UpdateHextileEventNamePlate);
 
         UpdateHextileEventNamePlate();
-	}
+    }
     internal void UpdateHextileEventNamePlate() {
-		_hextileEventItem.SetHextileEvent(_gameEventInTile);
-	}
+        _hextileEventItem.SetHextileEvent(_gameEventInTile);
+    }
     internal void RemoveHextileEventNamePlate() {
         if (_namePlateParent != null) {
             ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);
@@ -692,14 +690,78 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             Messenger.RemoveListener("UpdateUI", UpdateHextileEventNamePlate);
         }
     }
+    #endregion
 
+    #region Structures Functions
+    internal void CreateStructureOnTile(STRUCTURE_TYPE structureType, STRUCTURE_STATE structureState = STRUCTURE_STATE.NORMAL) {
+        //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
+        GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
+        string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
+        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
+        AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
+        structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState);
+
+        this._centerPiece.SetActive(false);
+
+        //Color color = this.ownedByCity.kingdom.kingdomColor;
+        //SetMinimapTileColor(color);
+        //SetTileHighlightColor(color);
+    }
+    /*
+     * Assign a structure object to this tile.
+     * NOTE: This will destroy any current structures on this tile
+     * and replace it with the new assigned one.
+     * */
+    internal void AssignStructureObjectToTile(StructureObject structureObj) {
+        if (structureObjOnTile != null) {
+            //Destroy Current Structure
+            structureObjOnTile.DestroyStructure();
+        }
+        structureObjOnTile = structureObj;
+        structureObj.transform.SetParent(this.structureParentGO.transform);
+        structureObj.transform.localPosition = Vector3.zero;
+    }
+    internal GameObject CreateSpecialStructureOnTile(LAIR lairType) {
+        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType).name,
+            Vector3.zero, Quaternion.identity, structureParentGO.transform);
+        //GameObject.Instantiate(
+        //CityGenerator.Instance.GetStructurePrefabForSpecialStructures(lairType), structureParentGO.transform) as GameObject;
+        structureGO.transform.localPosition = Vector3.zero;
+        return structureGO;
+    }
     internal void HideStructures() {
         structureParentGO.SetActive(false);
     }
     internal void ShowStructures() {
         structureParentGO.SetActive(true);
     }
+    public void ReColorStructure() {
+        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(structureParentGO);
+        for (int i = 0; i < children.Length; i++) {
+            GameObject structureToRecolor = children[i].gameObject;
 
+            SpriteRenderer[] allColorizers = structureToRecolor.GetComponentsInChildren<SpriteRenderer>().
+            Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
+
+            for (int j = 0; j < allColorizers.Length; j++) {
+                allColorizers[j].color = this.ownedByCity.kingdom.kingdomColor;
+            }
+        }
+    }
+    public void RuinStructureOnTile(bool immediatelyDestroyStructures) {
+        if (structureObjOnTile != null) {
+            Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
+            if (immediatelyDestroyStructures) {
+                structureObjOnTile.DestroyStructure();
+            } else {
+                structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
+            }
+
+        }
+    }
+    #endregion
+
+    #region Fog of War Functions
     internal void SetFogOfWarState(FOG_OF_WAR_STATE fowState) {
         if (!KingdomManager.Instance.useFogOfWar) {
             fowState = FOG_OF_WAR_STATE.VISIBLE;
@@ -717,7 +779,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 //}
                 if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
                     ShowNamePlate();
-				}
+                }
                 if (isOccupied) {
                     ShowStructures();
                 }
@@ -734,7 +796,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 //}
                 if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
                     ShowNamePlate();
-				}
+                }
                 if (isOccupied) {
                     ShowStructures();
                 }
@@ -747,7 +809,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 //minimapColor = Color.black;
                 if ((isHabitable && isOccupied) || isLair || gameEventInTile != null) {
                     HideNamePlate();
-				}
+                }
                 if (isOccupied) {
                     HideStructures();
                 }
@@ -761,7 +823,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         FOWSprite.color = newColor;
         //minimapFOWSprite.color = minimapColor;
     }
-
     internal void HideFogOfWarObjects() {
         FOWSprite.gameObject.SetActive(false);
         //minimapFOWSprite.gameObject.SetActive(false);
@@ -770,36 +831,27 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         FOWSprite.gameObject.SetActive(true);
         //minimapFOWSprite.gameObject.SetActive(true);
     }
-
-    internal void AddBiomeDetailToTile(GameObject detailPrefab) {
-        GameObject detailGO = GameObject.Instantiate(detailPrefab, biomeDetailParentGO.transform) as GameObject;
-        detailGO.transform.localScale = Vector3.one;
-        detailGO.transform.localPosition = Vector3.zero;
-    }
-
-    internal void SetBiomeDetailState(bool state) {
-        biomeDetailParentGO.SetActive(state);
-    }
     #endregion
 
+    #region Tile Functions
     /*
      * Reset all values for this tile.
      * NOTE: This will set the structure to ruined.
      * To force destroy structure, call DestroyStructure
      * in StructureObject instead.
      * */
-    public void ResetTile(){
+    public void ResetTile() {
         //this.city = null;
         this.isOccupied = false;
-		this.isBorder = false;
+        this.isBorder = false;
         this.isPlagued = false;
-		this.ownedByCity = null;
+        this.ownedByCity = null;
         //SetMinimapTileColor(biomeColor);
         this._kingdomColorSprite.color = Color.white;
-		this.kingdomColorSprite.gameObject.SetActive(false);
-		this._lairItem = null;
-		this._hextileEventItem = null;
-		Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
+        this.kingdomColorSprite.gameObject.SetActive(false);
+        this._lairItem = null;
+        this._hextileEventItem = null;
+        Messenger.RemoveListener("UpdateUI", UpdateLairNamePlate);
 
         RuinStructureOnTile(false);
         RemoveCityNamePlate();
@@ -808,28 +860,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
-
-    public void ReColorStructure() {
-        Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(structureParentGO);
-        for (int i = 0; i < children.Length; i++) {
-            GameObject structureToRecolor = children[i].gameObject;
-
-            SpriteRenderer[] allColorizers = structureToRecolor.GetComponentsInChildren<SpriteRenderer>().
-            Where(x => x.gameObject.tag == "StructureColorizers").ToArray();
-
-            for (int j = 0; j < allColorizers.Length; j++) {
-                allColorizers[j].color = this.ownedByCity.kingdom.kingdomColor;
-            }
-        }
-    }
-
-	public void Occupy(City city) {
-		this.isOccupied = true;
+    public void Occupy(City city) {
+        this.isOccupied = true;
         //if (!isVisibleByCities.Contains(city)) {
         //    this.isVisibleByCities.Add(city);
         //}
-		//this.isOccupiedByCityID = city.id;		
-		this.ownedByCity = city;
+        //this.isOccupiedByCityID = city.id;		
+        this.ownedByCity = city;
         if (!_visibleByKingdoms.Contains(city.kingdom)) {
             _visibleByKingdoms.Add(city.kingdom);
         }
@@ -856,21 +893,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
         }
     }
-
-    public void RuinStructureOnTile(bool immediatelyDestroyStructures) {
-        if (structureObjOnTile != null) {
-            Debug.Log(GameManager.Instance.month + "/" + GameManager.Instance.days + "/" + GameManager.Instance.year + " - RUIN STRUCTURE ON: " + this.name);
-            if (immediatelyDestroyStructures) {
-                structureObjOnTile.DestroyStructure();
-            } else {
-                structureObjOnTile.SetStructureState(STRUCTURE_STATE.RUINED);
-            }
-            
-        }
-    }
-
-	public void Borderize(City city) {
-		this.isBorder = true;
+    public void Borderize(City city) {
+        this.isBorder = true;
         //if (!_isBorderOfCities.Contains(city)) {
         //    _isBorderOfCities.Add(city);
         //}
@@ -901,41 +925,23 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //}
         //this.isVisibleByCities.Remove(city);
     }
-
-    public void SetAsOuterTileOf(City city) {
-        if (!_isOuterTileOfCities.Contains(city)) {
-            _isOuterTileOfCities.Add(city);
-        }
-        if (!_visibleByKingdoms.Contains(city.kingdom)) {
-            _visibleByKingdoms.Add(city.kingdom);
-        }
-    }
-    public void RemoveAsOuterTileOf(City city) {
-        _isOuterTileOfCities.Remove(city);
-        if (!_isBorderOfCities.Select(x => x.kingdom).Contains(city.kingdom) 
-            && !_isOuterTileOfCities.Select(x => x.kingdom).Contains(city.kingdom) 
-            && (ownedByCity == null || ownedByCity.kingdom.id != city.kingdom.id)) {
-            _visibleByKingdoms.Remove(city.kingdom);
-        }
-    }
-
     public void ShowAllCitizensOnTile() {
         for (int i = 0; i < _citizensOnTile.Count; i++) {
-			if(_citizensOnTile[i].assignedRole.avatar != null){
-				CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
-				currCitizenAvatar.SetAvatarState(true);
-			}
-		}
-    }
-
-    public void HideAllCitizensOnTile() {
-        for (int i = 0; i < _citizensOnTile.Count; i++) {
-			if (_citizensOnTile [i].assignedRole.avatar != null) {
-				CitizenAvatar currCitizenAvatar = _citizensOnTile [i].assignedRole.avatar.GetComponent<CitizenAvatar> ();
-				currCitizenAvatar.SetAvatarState (false);
-			}
+            if (_citizensOnTile[i].assignedRole.avatar != null) {
+                CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
+                currCitizenAvatar.SetAvatarState(true);
+            }
         }
     }
+    public void HideAllCitizensOnTile() {
+        for (int i = 0; i < _citizensOnTile.Count; i++) {
+            if (_citizensOnTile[i].assignedRole.avatar != null) {
+                CitizenAvatar currCitizenAvatar = _citizensOnTile[i].assignedRole.avatar.GetComponent<CitizenAvatar>();
+                currCitizenAvatar.SetAvatarState(false);
+            }
+        }
+    }
+    #endregion
 
     #region Monobehaviour Functions
     private void OnMouseDown() {
@@ -950,7 +956,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
 		InterveneEventOnTile (WorldEventManager.Instance.currentInterveneEvent);
     }
-
     private void OnMouseOver() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
@@ -970,7 +975,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             this.ShowKingdomInfo();
         }
     }
-
     private void OnMouseExit() {
         if (this.isOccupied) {
 			if(!this.isHabitable){
@@ -1067,20 +1071,20 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.ownedByCity.kingdom.king.Death(DEATH_REASONS.ACCIDENT);
     }
 
-    [ContextMenu("Kill Chancellor")]
-    public void KillChancellor() {
-        this.ownedByCity.importantCitizensInCity[ROLE.GRAND_CHANCELLOR].Death(DEATH_REASONS.ACCIDENT);
-    }
+    //[ContextMenu("Kill Chancellor")]
+    //public void KillChancellor() {
+    //    this.ownedByCity.importantCitizensInCity[ROLE.GRAND_CHANCELLOR].Death(DEATH_REASONS.ACCIDENT);
+    //}
 
-    [ContextMenu("Kill Marshal")]
-    public void KillMarshal() {
-        this.ownedByCity.importantCitizensInCity[ROLE.GRAND_MARSHAL].Death(DEATH_REASONS.ACCIDENT);
-    }
+    //[ContextMenu("Kill Marshal")]
+    //public void KillMarshal() {
+    //    this.ownedByCity.importantCitizensInCity[ROLE.GRAND_MARSHAL].Death(DEATH_REASONS.ACCIDENT);
+    //}
 
-    [ContextMenu("Force Transfer City")]
-    public void ForceChangeKingdom() {
-        KingdomManager.Instance.TransferCitiesToOtherKingdom(ownedByCity.kingdom, KingdomManager.Instance.allKingdoms[kingdomToConquerIndex], ownedByCity);
-    }
+    //[ContextMenu("Force Transfer City")]
+    //public void ForceChangeKingdom() {
+    //    KingdomManager.Instance.TransferCitiesToOtherKingdom(ownedByCity.kingdom, KingdomManager.Instance.allKingdoms[kingdomToConquerIndex], ownedByCity);
+    //}
 
     [ContextMenu("Kill Kingdom Using Population")]
     public void KillKingdomUsingPopulation() {
@@ -1177,10 +1181,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //    text += "NONE\n";
         //}
 
-        text += "[b]Important Citizens in City: [/b]\n";
-        if (this.city.importantCitizensInCity.Count > 0) {
-            for (int i = 0; i < this.city.importantCitizensInCity.Count; i++) {
-                text += this.city.importantCitizensInCity.Values.ElementAt(i).name + " - " + this.city.importantCitizensInCity.Keys.ElementAt(i).ToString() + "\n";
+        //text += "[b]Important Citizens in City: [/b]\n";
+        //if (this.city.importantCitizensInCity.Count > 0) {
+        //    for (int i = 0; i < this.city.importantCitizensInCity.Count; i++) {
+        //        text += this.city.importantCitizensInCity.Values.ElementAt(i).name + " - " + this.city.importantCitizensInCity.Keys.ElementAt(i).ToString() + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
+
+        text += "[b]Citizens in City: [/b]\n";
+        if (this.city.citizens.Count > 0) {
+            for (int i = 0; i < this.city.citizens.Count; i++) {
+                Citizen currCitizen = this.city.citizens[i];
+                if (currCitizen.role != ROLE.UNTRAINED) {
+                    text += currCitizen.role + " - " + currCitizen.name + "\n";
+                }
             }
         } else {
             text += "NONE\n";

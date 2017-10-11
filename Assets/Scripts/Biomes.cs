@@ -263,7 +263,9 @@ public class Biomes : MonoBehaviour {
 		int equatorY = int.Parse (splittedNameEq [1]);
 
 		for(int i = 0; i < GridMap.Instance.listHexes.Count; i++){
-			string[] splittedName = GridMap.Instance.listHexes[i].name.Split(new char[]{','});
+            HexTile currTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
+
+            string[] splittedName = GridMap.Instance.listHexes[i].name.Split(new char[]{','});
 			int[] xy = {int.Parse(splittedName[0]), int.Parse(splittedName[1])};
 
 			float nx = ((float)xy[0]/GridMap.Instance.width);
@@ -272,9 +274,9 @@ public class Biomes : MonoBehaviour {
 			float elevationNoise = Mathf.PerlinNoise((nx + elevationRand) * elevationFrequency, (ny + elevationRand) * elevationFrequency);
 			ELEVATION elevationType = GetElevationType(elevationNoise);
 
-			GridMap.Instance.listHexes[i].GetComponent<HexTile>().elevationNoise = elevationNoise;
-			GridMap.Instance.listHexes[i].GetComponent<HexTile>().elevationType = elevationType;
-			GridMap.Instance.listHexes[i].GetComponent<HexTile>().moistureNoise = Mathf.PerlinNoise((nx + moistureRand) * moistureFrequency, (ny + moistureRand) * moistureFrequency);
+            currTile.elevationNoise = elevationNoise;
+            currTile.SetElevation (elevationType);
+            currTile.moistureNoise = Mathf.PerlinNoise((nx + moistureRand) * moistureFrequency, (ny + moistureRand) * moistureFrequency);
 
 			int distanceToEquator = Mathf.Abs (xy [1] - equatorY);
 			float tempGradient = 1.23f / GridMap.Instance.height;

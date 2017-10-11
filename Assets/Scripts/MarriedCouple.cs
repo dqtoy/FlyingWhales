@@ -107,6 +107,7 @@ public class MarriedCouple {
 		if (pregnancyChance < PREGNANCY_CHANCE) {
             Citizen baby = MarriageManager.Instance.MakeBaby(this.husband, this.wife);
             //baby.GenerateCharacterValues();
+            baby.city.kingdom.AddCitizenToKingdom(baby, baby.city);
             baby.UpdateKingOpinion();
             //Debug.Log(this.husband.name + " and " + this.wife.name + " has made a baby named: " + baby.name);
             //this.isPregnant = true;
