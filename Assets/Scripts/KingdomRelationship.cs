@@ -384,7 +384,7 @@ public class KingdomRelationship {
     internal void AdjustLikeness(int adjustment, GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons = ASSASSINATION_TRIGGER_REASONS.NONE, bool isDiscovery = false) {
         RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
         this._like += adjustment;
-        this._like = Mathf.Clamp(this.totalLike, -100, 100);
+        this._like = Mathf.Clamp(this._like, -100, 100);
         this.UpdateKingRelationshipStatus();
 
         if (!this._isInitial) {
@@ -652,7 +652,9 @@ public class KingdomRelationship {
     }
 	private int GetTotalRelationshipModifiers(){
 		if(this._relationshipModifiers.Count > 0){
-			return this._relationshipModifiers.Values.Sum (x => x.modifier);
+			int totalModifier = this._relationshipModifiers.Values.Sum (x => x.modifier);
+			Debug.Log (this._sourceKingdom.name + " relationship modifier to " + this._targetKingdom.name + " : " + totalModifier.ToString());
+			return totalModifier;
 		}else{
 			return 0;
 		}
