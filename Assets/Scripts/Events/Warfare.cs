@@ -123,23 +123,20 @@ public class Warfare {
 			winnerKingdom.ConquerCity(loserCity);
 			winnerKingdom.AdjustStability (-20);
 
-//			bool isWinnerKingdomWipedOut = false;
-//			bool isLoserKingdomWipedOut = false;
-
-			if (battle.deadAttackerKingdom != null) {
-				if (!battle.deadAttackerKingdom.isDead) {
-					battle.deadAttackerKingdom.AdjustPopulation (-battle.deadAttackerKingdom.population);
-				}
-			}
-			if (battle.deadDefenderKingdom != null) {
-				if(!battle.deadDefenderKingdom.isDead){
-					battle.deadDefenderKingdom.AdjustPopulation (-battle.deadDefenderKingdom.population);
-				}
-			}
+//			if (battle.deadAttackerKingdom != null) {
+//				if (!battle.deadAttackerKingdom.isDead) {
+//					battle.deadAttackerKingdom.AdjustPopulation (-battle.deadAttackerKingdom.population);
+//				}
+//			}
+//			if (battle.deadDefenderKingdom != null) {
+//				if(!battle.deadDefenderKingdom.isDead){
+//					battle.deadDefenderKingdom.AdjustPopulation (-battle.deadDefenderKingdom.population);
+//				}
+//			}
 
 
-			if (!winnerKingdom.isDead) {
-				if(!loserKingdom.isDead){
+			if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
+				if(!loserKingdom.isDead && battle.deadDefenderKingdom == null){
 					AdjustWeariness (loserKingdom, 5);
 
 					float peaceMultiplier = PeaceMultiplier (winnerKingdom);
