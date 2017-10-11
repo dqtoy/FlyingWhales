@@ -121,7 +121,6 @@ public class Warfare {
 			ShowUINotification (newLog, new HashSet<Kingdom>() { winnerCity.kingdom, loserCity.kingdom });
 
 			winnerKingdom.ConquerCity(loserCity);
-			winnerKingdom.AdjustStability (-20);
 
 //			if (battle.deadAttackerKingdom != null) {
 //				if (!battle.deadAttackerKingdom.isDead) {
