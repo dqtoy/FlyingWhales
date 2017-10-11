@@ -799,7 +799,7 @@ public class City{
 
 	#region Resource Production
     private int GetBaseDailyGrowth() {
-        int naturalResourceLevel = _region.naturalResourceLevel[kingdom.race];
+		int naturalResourceLevel = GetNaturalResourceLevel();
 		double workerValue = Math.Sqrt(5 * (_kingdom.workers / _kingdom.cities.Count));
         int cities = _kingdom.cities.Count;
 		return (int)((2 * naturalResourceLevel * workerValue) / (workerValue + naturalResourceLevel));
@@ -1567,5 +1567,9 @@ public class City{
 		if(state){
 			this.isAttacking = false;
 		}
+	}
+
+	internal int GetNaturalResourceLevel(){
+		return (int)((float)this._region.naturalResourceLevel [kingdom.race] * (1f + (0.1f * this._kingdom.techLevel)));
 	}
 }

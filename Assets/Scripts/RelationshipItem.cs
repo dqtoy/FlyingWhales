@@ -27,21 +27,27 @@ public class RelationshipItem : MonoBehaviour {
     void OnHover(bool isOver) {
         if (isOver) {
             string summary = string.Empty;
-            summary += rk.relationshipSummary + "\n";
-            if(rk.eventLikenessModifier != 0) {
-                if (rk.eventLikenessModifier > 0) {
-                    summary += "+ ";
-                }
-                summary += rk.eventLikenessModifier.ToString() + " Opinions";
-            }
+            summary += rk.relationshipSummary;
+			if(rk.relationshipModifiers.Count > 0){
+				foreach(RelationshipModifier rm in rk.relationshipModifiers.Values){
+					summary += "\n" + rm.summary;
+				}
+			}
 
-            if (rk.forTestingLikeModifier != 0) {
-                if (rk.forTestingLikeModifier > 0) {
-                    summary += "+ ";
-                }
-                summary += rk.forTestingLikeModifier.ToString() + " Admin Modifier";
-            }
-			summary += "\n SEP: " + rk._usedSourceEffectivePower.ToString() + ", SED: " + rk._usedSourceEffectiveDef.ToString();
+//            if(rk.eventLikenessModifier != 0) {
+//                if (rk.eventLikenessModifier > 0) {
+//                    summary += "+ ";
+//                }
+//                summary += rk.eventLikenessModifier.ToString() + " Opinions";
+//            }
+//
+//            if (rk.forTestingLikeModifier != 0) {
+//                if (rk.forTestingLikeModifier > 0) {
+//                    summary += "+ ";
+//                }
+//                summary += rk.forTestingLikeModifier.ToString() + " Admin Modifier";
+//            }
+			summary += "\n\n SEP: " + rk._usedSourceEffectivePower.ToString() + ", SED: " + rk._usedSourceEffectiveDef.ToString();
 			summary += "\n TEP: " + rk._usedTargetEffectivePower.ToString() + ", TED: " + rk._usedTargetEffectiveDef.ToString();
 
             UIManager.Instance.ShowRelationshipSummary(this.rk.targetKingdom.king, summary);

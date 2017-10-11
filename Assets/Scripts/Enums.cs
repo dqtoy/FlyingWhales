@@ -611,3 +611,11 @@ public enum WARMONGER{
 	LOW,
 	VERY_LOW,
 }
+public enum RELATIONSHIP_MODIFIER{
+	LEAVE_ALLIANCE,
+}
+public enum DECAY_INTERVAL{
+	DAILY,
+	MONTHLY,
+	YEARLY,
+}

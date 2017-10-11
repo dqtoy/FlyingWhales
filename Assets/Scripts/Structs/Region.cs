@@ -338,7 +338,7 @@ public class Region {
         if(_occupant != null) {
             text = _occupant.ownedTiles.Count.ToString();
         }
-        text += "/" + naturalResourceLevel[race].ToString();
+        text += "/" + _naturalResourceLevel[race].ToString();
         midPoint.SetTileText(text, 6, Color.white, "Minimap");
     }
     #endregion

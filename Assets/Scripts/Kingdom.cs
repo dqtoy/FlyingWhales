@@ -2611,24 +2611,26 @@ public class Kingdom{
         if (state) {
             Kingdom kingdom2 = null;
             float highestInvasionValue = -1;
+			bool isAtWar = false;
             foreach (KingdomRelationship kr in relationships.Values) {
                 if (kr.isDiscovered) {
                     if(kr.targetKingdomInvasionValue > highestInvasionValue) {
                         kingdom2 = kr.targetKingdom;
                         highestInvasionValue = kr.targetKingdomInvasionValue;
                     }
-					if(kr.isAtWar && isAttacking){
-						kingdom2 = kr.targetKingdom;
-						break;
-					}
                 }
+				if(kr.isAtWar && isAttacking){
+					isAtWar = true;
+					kingdom2 = kr.targetKingdom;
+					break;
+				}
             }
             if (kingdom2 != null) {
 				string militarizeFileName = "militarize";
-				if(isAttacking){
+				if(isAttacking && isAtWar){
 					militarizeFileName = "militarize_attack";
 				}
-                Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "militarize");
+				Log militarizeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", militarizeFileName);
                 militarizeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 militarizeLog.AddToFillers(kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
                 UIManager.Instance.ShowNotification(militarizeLog, new HashSet<Kingdom>() { this }, false);
@@ -2643,21 +2645,23 @@ public class Kingdom{
 		if (state) {
             Kingdom kingdom2 = null;
             float highestKingdomThreat = -1;
+			bool isAtWar = false;
             foreach (KingdomRelationship kr in relationships.Values) {
                 if (kr.isDiscovered) {
                     if (kr.targetKingdomThreatLevel > highestKingdomThreat) {
                         kingdom2 = kr.targetKingdom;
                         highestKingdomThreat = kr.targetKingdomThreatLevel;
                     }
-					if(kr.isAtWar && isUnderAttack){
-						kingdom2 = kr.targetKingdom;
-						break;
-					}
                 }
+				if(kr.isAtWar && isUnderAttack){
+					isAtWar = true;
+					kingdom2 = kr.targetKingdom;
+					break;
+				}
             }
             if (kingdom2 != null) {
 				string fortifyFileName = "fortify";
-				if(isUnderAttack){
+				if(isUnderAttack && isAtWar){
 					fortifyFileName = "fortify_under_attack";
 				}
 				Log fortifyLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", fortifyFileName);
@@ -2680,11 +2684,11 @@ public class Kingdom{
 			}else if (this.king.balanceType == PURPOSE.SUPERIORITY) {
 				SeeksSuperiority.Initialize(this);
 			}
+			CheckStability ();
 
 			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 			gameDate.AddMonths (1);
 			SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => ActionDay ());
-
 		}
 	}
 //	private void SeekBalance(){
@@ -2942,12 +2946,14 @@ public class Kingdom{
     	this._stability += amountToAdjust;
         this._stability = Mathf.Clamp(this._stability, -100, 100);
 
-        //If a Kingdom has a -100 Stability, a Rebellion will automatically occur which will be started by the one with the most 
-        //negative opinion towards the King. The Kingdom's Stability will then reset back to 50.
-        if (_stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
-            StartAutomaticRebellion();
-        }
     }
+	internal void CheckStability(){
+		//If a Kingdom has a -100 Stability, a Rebellion will automatically occur which will be started by the one with the most 
+		//negative opinion towards the King. The Kingdom's Stability will then reset back to 50.
+		if (_stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
+			StartAutomaticRebellion();
+		}
+	}
     internal void AdjustBaseWeapons(int amountToAdjust) {
 		this._baseWeapons += amountToAdjust;
 		if(this._baseWeapons < 0){
@@ -3569,19 +3575,12 @@ public class Kingdom{
 	internal void LeaveAlliance(bool doNotShowLog = false){
 		if(this.alliancePool != null){
             AlliancePool leftAlliance = this.alliancePool;
-            //List<Kingdom> kingdomsInvolved = new List<Kingdom>();
-            //for (int i = 0; i < leftAlliance.kingdomsInvolved.Count; i++) {
-            //    Kingdom kingdomInvolved = leftAlliance.kingdomsInvolved[i];
-            //    kingdomsInvolved.Add(kingdomInvolved);
-            //    if (kingdomInvolved.warfareInfo.Count > 0) {
-            //        foreach (WarfareInfo currWarFare in kingdomInvolved.warfareInfo.Values) {
-            //            foreach (List<Kingdom> kingdomsToAdd in currWarFare.warfare.kingdomSideList.Values) {
-            //                kingdomsInvolved.AddRange(kingdomsToAdd);
-            //            }
-            //        }
-            //    }
-            //}
-
+			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
+				if(this.alliancePool.kingdomsInvolved[i].id != this.id){
+					KingdomRelationship kr = this.alliancePool.kingdomsInvolved [i].GetRelationshipWithKingdom (this);
+					kr.AddRelationshipModifier (-50, "Broken Alliance", RELATIONSHIP_MODIFIER.LEAVE_ALLIANCE, true, false);
+				}
+			}
             this.alliancePool.RemoveKingdomInAlliance(this);
 			//When leaving an alliance, Stability is reduced by 15
 			this.AdjustStability(-15);
@@ -3691,6 +3690,8 @@ public class Kingdom{
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowDoNothingLog(Warfare warfare){
+		Debug.Log(this.name + " decided to do nothing with " + warfare.name);
+
         List<Kingdom> kingdomsToShowNotif = new List<Kingdom>();
         kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.A));
         kingdomsToShowNotif.AddRange(warfare.GetListFromSide(WAR_SIDE.B));
