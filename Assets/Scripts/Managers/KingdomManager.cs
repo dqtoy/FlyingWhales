@@ -33,7 +33,7 @@ public class KingdomManager : MonoBehaviour {
 	public int initialSpawnRate;
 	public int maxKingdomEventHistory;
 	public int rangerMoveRange;
-	public int currentActionDay;
+	public int evenActionDay;
     public int oddActionDay = 1;
 
 	private List<AlliancePool> _alliances = new List<AlliancePool>();
@@ -52,6 +52,9 @@ public class KingdomManager : MonoBehaviour {
     [SerializeField] private int minimumInitialKingdomDistance;
 
     [SerializeField] private bool _useFogOfWar;
+
+    private Dictionary<int, List<Kingdom>> evenActionDays;
+    private Dictionary<int, List<Kingdom>> oddActionDays;
 
     #region getters/setters
     public bool useFogOfWar {
@@ -73,6 +76,15 @@ public class KingdomManager : MonoBehaviour {
 
     void Awake(){
 		Instance = this;
+        evenActionDays = new Dictionary<int, List<Kingdom>>();
+        for (int i = 2; i < 28; i+=2) {
+            evenActionDays.Add(i, new List<Kingdom>());
+        }
+        oddActionDays = new Dictionary<int, List<Kingdom>>();
+        for (int i = 1; i < 27; i += 2) {
+            oddActionDays.Add(i, new List<Kingdom>());
+        }
+
     }
 
     public void GenerateInitialKingdoms() {
@@ -455,8 +467,43 @@ public class KingdomManager : MonoBehaviour {
         UpdateKingdomList();
     }
 
-	internal void IncrementCurrentActionDay(int value){
-		this.currentActionDay += value;
+    internal int GetEvenActionDay(Kingdom kingdom) {
+        int actionDayWithLeastKingdoms = 2;
+        int leastNumberOfKingdomsInAnActionDay = 999;
+        foreach (KeyValuePair<int, List<Kingdom>> kvp in evenActionDays) {
+            int key = kvp.Key;
+            List<Kingdom> value = kvp.Value;
+            if(value.Count < leastNumberOfKingdomsInAnActionDay) {
+                leastNumberOfKingdomsInAnActionDay = value.Count;
+                actionDayWithLeastKingdoms = key;
+            }
+        }
+        evenActionDays[actionDayWithLeastKingdoms].Add(kingdom);
+        return actionDayWithLeastKingdoms;
+    }
+
+    internal int GetOddActionDay(Kingdom kingdom) {
+        int actionDayWithLeastKingdoms = 1;
+        int leastNumberOfKingdomsInAnActionDay = 999;
+        foreach (KeyValuePair<int, List<Kingdom>> kvp in oddActionDays) {
+            int key = kvp.Key;
+            List<Kingdom> value = kvp.Value;
+            if (value.Count < leastNumberOfKingdomsInAnActionDay) {
+                leastNumberOfKingdomsInAnActionDay = value.Count;
+                actionDayWithLeastKingdoms = key;
+            }
+        }
+        oddActionDays[actionDayWithLeastKingdoms].Add(kingdom);
+        return actionDayWithLeastKingdoms;
+    }
+
+    internal void UnregisterKingdomFromActionDays(Kingdom kingdom) {
+        evenActionDays[kingdom.actionDay].Remove(kingdom);
+        oddActionDays[kingdom.oddActionDay].Remove(kingdom);
+    }
+
+	internal void IncrementEvenActionDay(int value){
+		this.evenActionDay += value;
 	}
     internal void IncrementOddActionDay() {
         oddActionDay += 2;
