@@ -322,10 +322,8 @@ public static class SeeksSuperiority {
 				if(hexTile == null){
 					//Can no longer expand
 					Debug.Log(kingdom.name + " has no war currently, has no alliance or no alliance member is at war, and can no longer expand");
-					Kingdom targetKingdom = null;
 					bool hasOver100InvasionValue = false;
 					bool hasOver50InvasionValue = false;
-					float highestInvasionValue = 0f;
 					int overPopulationReduction = 0;
 					int overpopulation = kingdom.GetOverpopulationPercentage();
 
@@ -343,26 +341,41 @@ public static class SeeksSuperiority {
 						}
 					}
 
+					Kingdom targetKingdom = null;
+					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 						if(relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null){
-							if(relationship.targetKingdomInvasionValue > highestInvasionValue){
-								highestInvasionValue = relationship.targetKingdomInvasionValue;
-								if (relationship.targetKingdomInvasionValue >= KingdomManager.Instance.GetReducedInvasionValueThreshHold (100f, overPopulationReduction)) {
-									hasOver100InvasionValue = true;
+							if (relationship.targetKingdomInvasionValue >= KingdomManager.Instance.GetReducedInvasionValueThreshHold (100f, overPopulationReduction)) {
+								if(targetKingdom == null || !hasOver100InvasionValue){
 									targetKingdom = relationship.targetKingdom;
-								} 
-								if(!hasOver100InvasionValue){
-									if (relationship.targetKingdomInvasionValue >= KingdomManager.Instance.GetReducedInvasionValueThreshHold (50f, overPopulationReduction)
-										&& relationship.targetKingdomInvasionValue < KingdomManager.Instance.GetReducedInvasionValueThreshHold (100f, overPopulationReduction)) {
-										hasOver50InvasionValue = true;
+									leastLike = relationship.totalLike;
+								}else{
+									if(relationship.totalLike < leastLike){
 										targetKingdom = relationship.targetKingdom;
+										leastLike = relationship.totalLike;
 									}
+								}
+								hasOver100InvasionValue = true;
+							} 
+							if(!hasOver100InvasionValue){
+								if (relationship.targetKingdomInvasionValue >= KingdomManager.Instance.GetReducedInvasionValueThreshHold (50f, overPopulationReduction)
+									&& relationship.targetKingdomInvasionValue < KingdomManager.Instance.GetReducedInvasionValueThreshHold (100f, overPopulationReduction)) {
+									if(targetKingdom == null){
+										targetKingdom = relationship.targetKingdom;
+										leastLike = relationship.totalLike;
+									}else{
+										if(relationship.totalLike < leastLike){
+											targetKingdom = relationship.targetKingdom;
+											leastLike = relationship.totalLike;
+										}
+									}
+									hasOver50InvasionValue = true;
 								}
 							}
 						}
 					}
 					if(targetKingdom != null){
-						Debug.Log(targetKingdom.name + " has " + highestInvasionValue.ToString());
+						Debug.Log(kingdom.name + " has " + leastLike.ToString() + " total like towards " + targetKingdom.name);
 						if(hasOver100InvasionValue){
 							int stabilityModifier = (int)((float)kingdom.stability / 10f);
 							int chance = UnityEngine.Random.Range (0, 100);
