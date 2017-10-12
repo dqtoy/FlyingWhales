@@ -305,8 +305,7 @@ public static class SeeksBalance {
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 						if(relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null){
-							if (relationship.targetKingdomInvasionValue >= KingdomManager.Instance.GetReducedInvasionValueThreshHold (50f, overPopulationReduction)
-								&& relationship.targetKingdomInvasionValue < KingdomManager.Instance.GetReducedInvasionValueThreshHold (100f, overPopulationReduction)) {
+							if (relationship.targetKingdomThreatLevel >= 50f && relationship.targetKingdomInvasionValue > 0f) {
 								if(targetKingdom == null || !hasOver50InvasionValue){
 									targetKingdom = relationship.targetKingdom;
 									leastLike = relationship.totalLike;
