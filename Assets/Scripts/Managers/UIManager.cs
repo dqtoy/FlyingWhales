@@ -335,6 +335,7 @@ public class UIManager : MonoBehaviour {
 
     private List<NotificationItem> notificationItemsThatCanBeReused;
     private List<Log> logHistory;
+	private bool isShowKingdomHistoryOnly;
 
     #region getters/setters
     internal GameObject minimapTexture {
@@ -358,6 +359,7 @@ public class UIManager : MonoBehaviour {
         NormalizeFontSizes();
         ToggleBorders();
         toggleBordersBtn.SetClickState(true);
+		isShowKingdomHistoryOnly = false;
         EventDelegate.Add(orderKingdomsByNameBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.NAME); });
         EventDelegate.Add(orderKingdomsByPopulationBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.POPULATION); });
         EventDelegate.Add(orderKingdomsByCitiesBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.CITIES); });
@@ -648,6 +650,9 @@ public class UIManager : MonoBehaviour {
             ShowKingdomCities();
         }
 		UpdateKingdomInfo();
+		if(this.notificationHistoryGO.activeSelf && this.logHistoryGO.activeSelf && this.isShowKingdomHistoryOnly){
+			ShowLogHistory ();
+		}
 	}
 
 	internal void ShowCitizenInfo(Citizen citizenToShow){
@@ -1412,22 +1417,43 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    public void ShowLogHistory() {
+	public void ShowLogHistory() {
         LogHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<LogHistoryItem>(notificationHistoryTable.gameObject);
         List<Log> logHistoryReversed = new List<Log>(logHistory);
         logHistoryReversed.Reverse();
-        for (int i = 0; i < presentItems.Length; i++) {
-            LogHistoryItem currItem = presentItems[i];
-            Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
-            if(logToShow == null) {
-                currItem.gameObject.SetActive(false);
-                notificationHistoryTable.Reposition();
-            } else {
-                currItem.SetLog(logToShow, i);
-                currItem.gameObject.SetActive(true);
-                notificationHistoryTable.Reposition();
-            }
-        }
+		if(!isShowKingdomHistoryOnly){
+			for (int i = 0; i < presentItems.Length; i++) {
+				LogHistoryItem currItem = presentItems[i];
+				Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
+				if(logToShow == null) {
+					currItem.gameObject.SetActive(false);
+					notificationHistoryTable.Reposition();
+				} else {
+					currItem.SetLog(logToShow, i);
+					currItem.gameObject.SetActive(true);
+					notificationHistoryTable.Reposition();
+				}
+			}
+		}else{
+			for (int i = 0; i < presentItems.Length; i++) {
+				LogHistoryItem currItem = presentItems[i];
+				Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
+				if(logToShow == null) {
+					currItem.gameObject.SetActive(false);
+					notificationHistoryTable.Reposition();
+				} else {
+					if(IsKingdomPartOfLog(logToShow, this.currentlyShowingKingdom)){
+						currItem.SetLog(logToShow, i);
+						currItem.gameObject.SetActive(true);
+						notificationHistoryTable.Reposition();
+					}else{
+						currItem.gameObject.SetActive(false);
+						notificationHistoryTable.Reposition();
+					}
+				}
+			}
+		}
+      
         StartCoroutine(RepositionTable(notificationHistoryTable));
 
         if (notificationHistoryTable.GetChildList().Count <= 0) {
@@ -1436,7 +1462,6 @@ public class UIManager : MonoBehaviour {
         } else {
             notificationHistoryLbl.gameObject.SetActive(false);
         }
-
         logHistoryGO.SetActive(true);
         warHistoryGO.SetActive(false);
         notificationHistoryGO.SetActive(true);
@@ -1480,6 +1505,19 @@ public class UIManager : MonoBehaviour {
         notificationHistoryGO.SetActive(false);
         kingdomListEventButton.SetClickState(false);
     }
+	private bool IsKingdomPartOfLog(Log log, Kingdom kingdom){
+		if(log.fillers.Count > 0){
+			for (int i = 0; i < log.fillers.Count; i++) {
+				LogFiller filler = log.fillers [i];
+				if(filler.obj is Kingdom){
+					if(((Kingdom)filler.obj).id == kingdom.id){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
     #endregion
 
     /*
@@ -3020,4 +3058,9 @@ public class UIManager : MonoBehaviour {
         }
     }
     #endregion
+
+	public void ToggleKingdomHistory(){
+		this.isShowKingdomHistoryOnly = !this.isShowKingdomHistoryOnly;
+		ShowLogHistory ();
+	}
 }
