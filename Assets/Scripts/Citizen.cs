@@ -159,7 +159,7 @@ public class Citizen {
 		return 2;
 	}
     internal void AssignRole(ROLE role) {
-        if (this.role != ROLE.UNTRAINED) {
+        if (this.role != ROLE.UNTRAINED && this.role != role) {
             if (this.assignedRole != null) {
                 this.assignedRole.OnDeath();
             }

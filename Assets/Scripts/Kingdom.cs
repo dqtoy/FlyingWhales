@@ -10,6 +10,7 @@ public class Kingdom{
     [Header("General Info")]
     public int id;
 	public string name;
+    public string kingdomTag; //Used for pathfinding
 	public RACE race;
     public int age;
     private int _prestige;
@@ -23,7 +24,8 @@ public class Kingdom{
     private KINGDOM_SIZE _kingdomSize;
 	private Kingdom _sourceKingdom;
 	private Kingdom _mainThreat;
-	private int _actionDay;
+	private int _evenActionDay;
+    private int _oddActionDay;
 
     //Resources
     private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
@@ -334,9 +336,12 @@ public class Kingdom{
 		get { return this._techProductionPercentage;}
 	}
 	public int actionDay{
-		get { return this._actionDay;}
+		get { return this._evenActionDay;}
 	}
-	public int warmongerValue{
+    public int oddActionDay {
+        get { return this._oddActionDay; }
+    }
+    public int warmongerValue{
 		get { return this._warmongerValue;}
 	}
 	public AlliancePool alliancePool{
@@ -404,6 +409,7 @@ public class Kingdom{
 		this.race = race;
         this._prestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
+        this.kingdomTag = name + "_" + id;
 		this.king = null;
         this.nextInLine = null;
         this._kingdomSize = KINGDOM_SIZE.SMALL;
@@ -465,7 +471,7 @@ public class Kingdom{
 		this._currentDefenseTreatyRejectionDate = new GameDate (0, 0, 0);
 		this._currentMilitaryAllianceRejectionDate = new GameDate (0, 0, 0);
 		this._mobilizationQueue = new List<Wars> ();
-		this._actionDay = 0;
+		this._evenActionDay = 0;
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
         this.stabilityDecreaseFromInvasionCounter = 0;
@@ -886,7 +892,8 @@ public class Kingdom{
 		if(this.alliancePool != null){
 			LeaveAlliance (true);
 		}
-      	ResolveWars();
+        KingdomManager.Instance.UnregisterKingdomFromActionDays(this);
+        ResolveWars();
         Messenger.RemoveListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
         //Messenger.RemoveListener("OnDayEnd", KingdomTickActions);
         Messenger.RemoveListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
@@ -1359,8 +1366,9 @@ public class Kingdom{
 
     #region Odd Day Actions
     private void ScheduleOddDayActions() {
-        KingdomManager.Instance.IncrementOddActionDay();
-        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, KingdomManager.Instance.oddActionDay, GameManager.Instance.year, () => OddDayActions());
+        this._oddActionDay = KingdomManager.Instance.GetOddActionDay(this);
+        //KingdomManager.Instance.IncrementOddActionDay();
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, _oddActionDay, GameManager.Instance.year, () => OddDayActions());
     }
     private void OddDayActions() {
         if (_isGrowthEnabled) {
@@ -2687,9 +2695,10 @@ public class Kingdom{
 		}
 	}
 	private void ScheduleActionDay(){
-		KingdomManager.Instance.IncrementCurrentActionDay (2);
-		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, KingdomManager.Instance.currentActionDay, GameManager.Instance.year, () => ActionDay ());
-		this._actionDay = KingdomManager.Instance.currentActionDay;
+        this._evenActionDay = KingdomManager.Instance.GetEvenActionDay(this);
+        //KingdomManager.Instance.IncrementEvenActionDay (2);
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, _evenActionDay, GameManager.Instance.year, () => ActionDay ());
+		
 	}
 	private void ActionDay(){
 		if(!this.isDead){
