@@ -38,6 +38,12 @@ public class Battle {
     public List<string> battleLogs {
         get { return _battleLogs; }
     }
+	public Kingdom kingdom1 {
+		get { return this._kingdom1; }
+	}
+	public Kingdom kingdom2 {
+		get { return _kingdom2; }
+	}
 
     public Battle(Warfare warfare, City kingdom1City, City kingdom2City){
 		this._warfare = warfare;

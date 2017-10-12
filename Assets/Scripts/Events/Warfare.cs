@@ -94,14 +94,16 @@ public class Warfare {
 	}
 	internal void UnjoinWar(Kingdom kingdom){
 		if (this._kingdomSideWeariness.ContainsKey (kingdom.id)) {
+			Debug.Log ("******************* " + kingdom.name + " UNJOIN " + this.name);
 			this._kingdomSideList [this._kingdomSideWeariness[kingdom.id].side].Remove (kingdom);
-//			if(this._kingdomSideWeariness[kingdom.id].side == WAR_SIDE.A){
-//				this._sideA.Remove(kingdom);
-//			}else if(this._kingdomSideWeariness[kingdom.id].side == WAR_SIDE.B){
-//				this._sideB.Remove(kingdom);
-//			}
 			kingdom.RemoveWarfareInfo(this);
 			this._kingdomSideWeariness.Remove(kingdom.id);
+			for (int i = 0; i < this._battles.Count; i++) {
+				if(this._battles[i].kingdom1.id == kingdom.id || this._battles[i].kingdom2.id == kingdom.id){
+					this._battles [i].ResolveBattle ();
+					i--;
+				}
+			}
 			CheckWarfare ();
 		}
 
@@ -132,7 +134,6 @@ public class Warfare {
 //					battle.deadDefenderKingdom.AdjustPopulation (-battle.deadDefenderKingdom.population);
 //				}
 //			}
-
 
 			if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
 				if(!loserKingdom.isDead && battle.deadDefenderKingdom == null){
