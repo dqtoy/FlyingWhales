@@ -62,8 +62,8 @@ public class MarriageManager : MonoBehaviour {
 		father.isDead = true;
 		mother.isDead = true;
 
-		otherSpouse.city.citizens.Remove(father);
-		otherSpouse.city.citizens.Remove(mother);
+		//otherSpouse.city.citizens.Remove(father);
+		//otherSpouse.city.citizens.Remove(mother);
 
 		MONTH monthFather = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		MONTH monthMother = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
@@ -94,8 +94,8 @@ public class MarriageManager : MonoBehaviour {
 		//		wife.loyalLord = husband.kingdom.assignedLord;
 		//		husband.kingdom.royaltyList.allRoyalties.Add(wife);
 		//		wife.kingdom.royaltyList.allRoyalties.Remove(wife);
-		citizen1.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, citizen1.name + " married " + citizen2.name + ".", HISTORY_IDENTIFIER.NONE));
-		citizen2.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, citizen2.name + " married " + citizen1.name + ".", HISTORY_IDENTIFIER.NONE));
+		//citizen1.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, citizen1.name + " married " + citizen2.name + ".", HISTORY_IDENTIFIER.NONE));
+		//citizen2.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, citizen2.name + " married " + citizen1.name + ".", HISTORY_IDENTIFIER.NONE));
 
 		if (citizen1.gender == GENDER.MALE) {
 			this.allMarriedCouples.Add (new MarriedCouple (citizen1, citizen2));
@@ -126,13 +126,12 @@ public class MarriageManager : MonoBehaviour {
 	}
 
     internal void DivorceCouple(Citizen citizen1, Citizen citizen2) {
-        //MarriageManager.Instance.DivorceCouple(this, spouse);
         if (citizen1.role == ROLE.KING) {
             //Spouse of king should no longer be queen
-            citizen2.city.RemoveCitizenInImportantCitizensInCity(citizen2);
-        }else if (citizen2.role == ROLE.KING) {
+            citizen2.AssignRole(ROLE.UNTRAINED);
+        } else if (citizen2.role == ROLE.KING) {
             //Spouse of king should no longer be queen
-            citizen1.city.RemoveCitizenInImportantCitizensInCity(citizen1);
+            citizen2.AssignRole(ROLE.UNTRAINED);
         }
         citizen1.isMarried = false;
         citizen2.isMarried = false;

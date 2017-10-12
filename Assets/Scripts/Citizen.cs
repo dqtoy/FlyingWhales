@@ -27,8 +27,8 @@ public class Citizen {
 	public int birthYear;
 	public bool isMarried;
 	public bool isDirectDescendant;
-	public bool isGovernor;
-	public bool isKing;
+    private bool _isGovernor;
+	private bool _isKing;
 	public bool isImmortal;
 	public bool isDead;
 	public DEATH_REASONS deathReason;
@@ -66,18 +66,9 @@ public class Citizen {
     public int ageTableKey {
         get { return _ageTableKey; }
     }
-	//public Dictionary<CHARACTER_VALUE, int> dictCharacterValues{
-	//	get{ return this._dictCharacterValues;}
-	//}
- //   public Dictionary<CHARACTER_VALUE, int> importantCharacterValues {
- //       get { return this._importantCharacterValues; }
- //   }
     public Citizen spouse {
         get { return this._spouse; }
     }
-    //internal KINGDOM_TYPE preferredKingdomType {
-    //    get { return _preferredKingdomType; }
-    //}
     internal CHARISMA charisma {
         get { return this._charisma; }
     }
@@ -114,6 +105,12 @@ public class Citizen {
     internal Dictionary<STATUS_EFFECTS, StatusEffect> statusEffects {
         get { return _statusEffects; }
     }
+    internal bool isKing {
+        get { return (role == ROLE.KING && assignedRole is King); }
+    }
+    internal bool isGovernor {
+        get { return (role == ROLE.GOVERNOR && assignedRole is Governor); }
+    }
     #endregion
 
     public Citizen(City city, int age, GENDER gender, int generation){
@@ -143,8 +140,6 @@ public class Citizen {
 		this.birthYear = GameManager.Instance.year;
 		this.isMarried = false;
 		this.isDirectDescendant = false;
-		this.isGovernor = false;
-		this.isKing = false;
 		this.isImmortal = false;
 		this.isDead = false;
 		this.history = new List<History>();
@@ -157,7 +152,7 @@ public class Citizen {
 
         this._statusEffects = new Dictionary<STATUS_EFFECTS, StatusEffect>();
 
-        this.city.citizens.Add (this);
+        //this.city.citizens.Add (this);
     }
 
 	internal int GetCampaignLimit(){
@@ -166,7 +161,6 @@ public class Citizen {
     internal void AssignRole(ROLE role) {
         if (this.role != ROLE.UNTRAINED) {
             if (this.assignedRole != null) {
-                this.city.RemoveCitizenInImportantCitizensInCity(this);
                 this.assignedRole.OnDeath();
             }
         }
@@ -190,10 +184,8 @@ public class Citizen {
             this.assignedRole = new Trader(this);
         } else if (role == ROLE.GOVERNOR) {
             this.assignedRole = new Governor(this);
-            this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.KING) {
             this.assignedRole = new King(this);
-            this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.EXPANDER) {
             this.assignedRole = new Expander(this);
         } else if (role == ROLE.RAIDER) {
@@ -240,22 +232,16 @@ public class Citizen {
             this.assignedRole = new Instigator(this);
         } else if (role == ROLE.GRAND_CHANCELLOR) {
             this.assignedRole = new GrandChancellor(this);
-            this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.GRAND_MARSHAL) {
             this.assignedRole = new GrandMarshal(this);
-            this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.QUEEN) {
             this.assignedRole = null;
-            this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.QUEEN_CONSORT) {
             this.assignedRole = null;
-            this.city.AddCitizenToImportantCitizensInCity(this);
         } else if (role == ROLE.CROWN_PRINCE) {
             this.assignedRole = null;
-            this.city.AddCitizenToImportantCitizensInCity(this);
         } else {
             this.assignedRole = null;
-            this.role = ROLE.UNTRAINED;
         }
     }
     internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE) {
@@ -282,43 +268,25 @@ public class Citizen {
 
     #region Family Functions
     internal void CreateFamily() {
-        //GENDER gender = GENDER.MALE;
-        //int randomGender = UnityEngine.Random.Range(0, 100);
-        //if (randomGender < 20) {
-        //    gender = GENDER.FEMALE;
-        //}
-        //Citizen king = new Citizen(this, UnityEngine.Random.Range(20, 36), gender, 2);
         Citizen father = new Citizen(this.city, UnityEngine.Random.Range(60, 81), GENDER.MALE, 1);
         Citizen mother = new Citizen(this.city, UnityEngine.Random.Range(60, 81), GENDER.FEMALE, 1);
 
-        //father.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, father.gender);
-        //mother.name = RandomNameGenerator.Instance.GenerateRandomName (this.kingdom.race, mother.gender);
-
         MONTH monthFather = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
         MONTH monthMother = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
-        MONTH monthKing = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
 
         father.AssignBirthday(monthFather, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthFather] + 1), GameManager.Instance.year - father.age, false);
         mother.AssignBirthday(monthMother, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthMother] + 1), GameManager.Instance.year - mother.age, false);
-        //king.AssignBirthday(monthKing, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthKing] + 1), (GameManager.Instance.year - king.age));
 
         father.isDirectDescendant = isDirectDescendant;
         mother.isDirectDescendant = isDirectDescendant;
         father.isDead = true;
         mother.isDead = true;
 
-        this.city.citizens.Remove(father);
-        this.city.citizens.Remove(mother);
-
         father.AddChild(this);
         mother.AddChild(this);
         this.AddParents(father, mother);
-
+        
         MarriageManager.Instance.Marry(father, mother);
-
-        //_kingdom.AssignNewKing(king);
-        //this.kingdom.king.isDirectDescendant = true;
-        //king.GenerateCharacterValues();
 
         MONTH monthSibling = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
         MONTH monthSibling2 = (MONTH)(UnityEngine.Random.Range(1, System.Enum.GetNames(typeof(MONTH)).Length));
@@ -327,24 +295,26 @@ public class Citizen {
         if (siblingsChance < 25) {
             Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, this.age));
             Citizen sibling2 = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, this.age));
-
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
             sibling2.AssignBirthday(monthSibling2, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling2] + 1), (GameManager.Instance.year - sibling2.age));
+            this.city.kingdom.AddCitizenToKingdom(sibling, this.city);
+            this.city.kingdom.AddCitizenToKingdom(sibling2, this.city);
             sibling.UpdateKingOpinion();
             sibling2.UpdateKingOpinion();
         } else if (siblingsChance >= 25 && siblingsChance < 75) {
             Citizen sibling = MarriageManager.Instance.MakeBaby(father, mother, UnityEngine.Random.Range(0, this.age));
             sibling.AssignBirthday(monthSibling, UnityEngine.Random.Range(1, GameManager.daysInMonth[(int)monthSibling] + 1), (GameManager.Instance.year - sibling.age));
+            this.city.kingdom.AddCitizenToKingdom(sibling, this.city);
             sibling.UpdateKingOpinion();
         }
 
         int spouseChance = UnityEngine.Random.Range(0, 100);
         if (spouseChance < 80) {
             Citizen spouse = MarriageManager.Instance.CreateSpouse(this);
+            this.city.kingdom.AddCitizenToKingdom(spouse, this.city);
             spouse.UpdateKingOpinion();
         }
     }
-
     internal void AddParents(Citizen father, Citizen mother) {
         this.father = father;
         this.mother = mother;
@@ -521,156 +491,183 @@ public class Citizen {
     #endregion
 
     #region Death
-    internal void Death(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false) {
-        if (!this.isDead) {
-            DeathCoroutine(reason, isDethroned, newKing, isConquered);
-            Messenger.Broadcast("UpdateUI");
+    //internal void Death(DEATH_REASONS reason) {
+    //    if (!this.isDead) {
+    //        DeathCoroutine(reason);
+    //        Messenger.Broadcast("UpdateUI");
+    //    }
+    //}
+    internal void Death(DEATH_REASONS reason, bool isConquered = false) {
+        Debug.Log("DEATH: " + this.role.ToString() + " " + this.name + " of " + this.city.name + ": " + reason.ToString());
+
+        isDead = true;
+
+        //Remove Citizen From City First
+        City cityOfCitizen = this.city;
+        Kingdom kingdomOfCitizen = this.city.kingdom;
+        kingdomOfCitizen.RemoveCitizenFromKingdom(this, cityOfCitizen);
+
+        //Manage Citizen Marriage
+        if (this.isMarried && this._spouse != null) {
+            MarriageManager.Instance.DivorceCouple(this, spouse);
         }
-    }
-    internal void DeathCoroutine(DEATH_REASONS reason, bool isDethroned = false, Citizen newKing = null, bool isConquered = false) {
-        try {
-            Debug.Log("DEATH: " + this.role.ToString() + " " + this.name + " of " + this.city.name + ": " + reason.ToString());
-        }catch(System.Exception e) {
-            throw new System.Exception(this.role.ToString() + " " + this.name + " " + this.city + " " + reason + "\n" + e.Message);
+
+        //Manage Citizen Inheritance
+        kingdomOfCitizen.RemoveFromSuccession(this);
+
+        //Perform Role On Death Functions
+        //NOTE: If the citizen was a king/governor/chancellor/marshall the replacement of political figures will occur here.
+        //Do not perform succession when citizen died because of conquering, this means the kings cannot be relocated any more
+        if (!isConquered) {
+            if (this.assignedRole != null) {
+                this.assignedRole.OnDeath(); //Refer to here, when changing succession
+                this.assignedRole = null;
+            }
         }
         
-        DeathHistory(reason);
-        this.deathReason = reason;
-        this.isDead = true;
-        if (this is Spouse) {
-            ((Spouse)this).isAbducted = false;
-        }
-        if (this.city != null) {
-            this.city.kingdom.RemoveFromSuccession(this);
-        }
-        ROLE previousRole = this.role;
-        if (this.assignedRole != null) {
-            this.assignedRole.OnDeath();
-            this.assignedRole = null;
-        }
+
+        //Unregister citizen from the manager (The manager handles random deaths)
         CitizenManager.Instance.UnregisterCitizen(this);
 
-        if (this.city != null) {
-            //this.city.RemoveCitizenFromCity(this);
-            this.city.citizens.Remove(this);
-            this.city.RemoveCitizenInImportantCitizensInCity(this);
-            if (!isConquered) { //Check if citizen died of natural causes and not from conquering
-                //if citizen is a grand marshal or grand chancellor, also remove family from city and generate new marshal/chancellor family
-                if (previousRole == ROLE.GRAND_CHANCELLOR || previousRole == ROLE.GRAND_MARSHAL || previousRole == ROLE.GOVERNOR) {
-                    List<Citizen> family = this.GetRelatives(-1);
-                    for (int i = 0; i < family.Count; i++) {
-                        this.city.RemoveCitizenFromCity(family[i]);
-                    }
-                }
-                if (!this.city.isDead) {
-                    if (previousRole == ROLE.GRAND_CHANCELLOR) {
-                        this.city.CreateInitialChancellorFamily();
-                    } else if (previousRole == ROLE.GRAND_MARSHAL) {
-                        this.city.CreateInitialMarshalFamily();
-                    }
-                }
-            }
-        }
+        Messenger.Broadcast("UpdateUI");
+        //DeathHistory(reason);
+        //this.deathReason = reason;
+        //this.isDead = true;
+        //if (this is Spouse) {
+        //    ((Spouse)this).isAbducted = false;
+        //}
+        //if (this.city != null) {
+        //    this.city.kingdom.RemoveFromSuccession(this);
+        //}
+        //ROLE previousRole = this.role;
+        //if (this.assignedRole != null) {
+        //    this.assignedRole.OnDeath();
+        //    this.assignedRole = null;
+        //}
+        //CitizenManager.Instance.UnregisterCitizen(this);
 
-        if (this.id == this.city.kingdom.king.id && !this.city.kingdom.isDead) {
-            //ASSIGN NEW LORD, SUCCESSION
-            //			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
-            if (isDethroned) {
-                if (newKing != null) {
-                    this.city.kingdom.AssignNewKing(newKing);
-                }
-            } else {
-                if (!isConquered) {
-                    if (this.city.kingdom.successionLine.Count <= 0) {
-                        this.city.kingdom.AssignNewKing(null);
-                        //Remove family of previous king
-                        List<Citizen> family = this.GetRelatives(-1);
-                        for (int i = 0; i < family.Count; i++) {
-                            this.city.RemoveCitizenFromCity(family[i]);
-                        }
-                    } else {
-                        this.city.kingdom.AssignNewKing(this.city.kingdom.successionLine[0]);
-                    }
-                }
-            }
-        } else {
-            if (this.city.governor.id == this.id && !this.city.isDead) {
-                this.city.AssignNewGovernor();
-            }
-        }
+        //if (this.city != null) {
+        //    //this.city.RemoveCitizenFromCity(this);
+        //    //this.city.citizens.Remove(this);
+        //    //this.city.RemoveCitizenInImportantCitizensInCity(this);
+        //    //if (!isConquered) { //Check if citizen died of natural causes and not from conquering
+        //    //    //if citizen is a grand marshal or grand chancellor, also remove family from city and generate new marshal/chancellor family
+        //    //    if (previousRole == ROLE.GRAND_CHANCELLOR || previousRole == ROLE.GRAND_MARSHAL || previousRole == ROLE.GOVERNOR) {
+        //    //        List<Citizen> family = this.GetRelatives(-1);
+        //    //        for (int i = 0; i < family.Count; i++) {
+        //    //            this.city.RemoveCitizenFromCity(family[i]);
+        //    //        }
+        //    //    }
+        //    //    if (!this.city.isDead) {
+        //    //        if (previousRole == ROLE.GRAND_CHANCELLOR) {
+        //    //            this.city.CreateInitialChancellorFamily();
+        //    //        } else if (previousRole == ROLE.GRAND_MARSHAL) {
+        //    //            this.city.CreateInitialMarshalFamily();
+        //    //        }
+        //    //    }
+        //    //}
+        //}
 
-        if (this.isMarried && this._spouse != null) {
-            //MarriageManager.Instance.DivorceCouple(this, spouse);
-            if (previousRole == ROLE.KING) {
-                //Spouse of king should no longer be queen
-                this.city.RemoveCitizenInImportantCitizensInCity(_spouse);
-            }
-            this.isMarried = false;
-            this._spouse.isMarried = false;
-            this._spouse.AssignSpouse(null);
-            this.AssignSpouse(null);
-        }
+        //if (this.id == this.city.kingdom.king.id && !this.city.kingdom.isDead) {
+        //    //ASSIGN NEW LORD, SUCCESSION
+        //    //			this.city.kingdom.AdjustExhaustionToAllRelationship(10);
+        //    if (isDethroned) {
+        //        if (newKing != null) {
+        //            this.city.kingdom.AssignNewKing(newKing);
+        //        }
+        //    } else {
+        //        if (!isConquered) {
+        //            if (this.city.kingdom.successionLine.Count <= 0) {
+        //                this.city.kingdom.AssignNewKing(null);
+        //                //Remove family of previous king
+        //                List<Citizen> family = this.GetRelatives(-1);
+        //                for (int i = 0; i < family.Count; i++) {
+        //                    this.city.RemoveCitizenFromCity(family[i]);
+        //                }
+        //            } else {
+        //                this.city.kingdom.AssignNewKing(this.city.kingdom.successionLine[0]);
+        //            }
+        //        }
+        //    }
+        //} else {
+        //    if (this.city.governor.id == this.id && !this.city.isDead) {
+        //        this.city.AssignNewGovernor();
+        //    }
+        //}
 
-        this.isKing = false;
-        this.isGovernor = false;
+        //if (this.isMarried && this._spouse != null) {
+        //    //MarriageManager.Instance.DivorceCouple(this, spouse);
+        //    if (previousRole == ROLE.KING) {
+        //        //Spouse of king should no longer be queen
+        //        //this.city.RemoveCitizenInImportantCitizensInCity(_spouse);
+        //    }
+        //    this.isMarried = false;
+        //    this._spouse.isMarried = false;
+        //    this._spouse.AssignSpouse(null);
+        //    this.AssignSpouse(null);
+        //}
 
-        if(previousRole == ROLE.KING) {
-            UIManager.Instance.UpdateChooseCitizensMenuForIncurableDisease();
-        }
+        //this.isKing = false;
+        //this.isGovernor = false;
+
+        //if(previousRole == ROLE.KING) {
+        //    UIManager.Instance.UpdateChooseCitizensMenuForIncurableDisease();
+        //}
     }
-    internal void DeathHistory(DEATH_REASONS reason) {
-        switch (reason) {
-            case DEATH_REASONS.OLD_AGE:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died of natural causes.", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "died of natural causes";
-                break;
-            case DEATH_REASONS.ACCIDENT:
-                string selectedAccidentCause = Utilities.accidentCauses[UnityEngine.Random.Range(0, Utilities.accidentCauses.Length)];
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died " + selectedAccidentCause, HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "died " + selectedAccidentCause;
-                break;
-            case DEATH_REASONS.BATTLE:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died in battle.", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "died in battle";
-                break;
-            case DEATH_REASONS.TREACHERY:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " hanged for treason.", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "was hanged for a treason";
-                break;
-            case DEATH_REASONS.ASSASSINATION:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died from an assassin's arrow.", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "died from an assassin's arrow";
-                break;
-            case DEATH_REASONS.REBELLION:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " hanged by an usurper.", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "was hanged by an usurper";
-                break;
-            case DEATH_REASONS.INTERNATIONAL_WAR:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died at the hands of a foreign enemy.", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "died at the hands of a foreign enemy";
-                break;
-            case DEATH_REASONS.STARVATION:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died of starvation.", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "died of starvation";
-                break;
-            case DEATH_REASONS.DISAPPEARED_EXPANSION:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " disappeared during an expedition and is assumed to be dead", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "disappeared during an expedition and is assumed to be dead";
-                break;
-            case DEATH_REASONS.PLAGUE:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " succumbed to the plague", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "succumbed to the plague";
-                break;
-            case DEATH_REASONS.SUICIDE:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " drank poison", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = "drank poison";
-                break;
-            case DEATH_REASONS.SERUM_OF_ALACRITY:
-                this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died due to the serum of alacrity injection", HISTORY_IDENTIFIER.NONE));
-                this.deathReasonText = " died due to the serum of alacrity injection";
-                break;
-        }
-    }
+
+    //internal void DeathHistory(DEATH_REASONS reason) {
+    //    switch (reason) {
+    //        case DEATH_REASONS.OLD_AGE:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died of natural causes.", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "died of natural causes";
+    //            break;
+    //        case DEATH_REASONS.ACCIDENT:
+    //            string selectedAccidentCause = Utilities.accidentCauses[UnityEngine.Random.Range(0, Utilities.accidentCauses.Length)];
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died " + selectedAccidentCause, HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "died " + selectedAccidentCause;
+    //            break;
+    //        case DEATH_REASONS.BATTLE:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died in battle.", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "died in battle";
+    //            break;
+    //        case DEATH_REASONS.TREACHERY:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " hanged for treason.", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "was hanged for a treason";
+    //            break;
+    //        case DEATH_REASONS.ASSASSINATION:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died from an assassin's arrow.", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "died from an assassin's arrow";
+    //            break;
+    //        case DEATH_REASONS.REBELLION:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " hanged by an usurper.", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "was hanged by an usurper";
+    //            break;
+    //        case DEATH_REASONS.INTERNATIONAL_WAR:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died at the hands of a foreign enemy.", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "died at the hands of a foreign enemy";
+    //            break;
+    //        case DEATH_REASONS.STARVATION:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died of starvation.", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "died of starvation";
+    //            break;
+    //        case DEATH_REASONS.DISAPPEARED_EXPANSION:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " disappeared during an expedition and is assumed to be dead", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "disappeared during an expedition and is assumed to be dead";
+    //            break;
+    //        case DEATH_REASONS.PLAGUE:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " succumbed to the plague", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "succumbed to the plague";
+    //            break;
+    //        case DEATH_REASONS.SUICIDE:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " drank poison", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = "drank poison";
+    //            break;
+    //        case DEATH_REASONS.SERUM_OF_ALACRITY:
+    //            this.history.Add(new History(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, this.name + " died due to the serum of alacrity injection", HISTORY_IDENTIFIER.NONE));
+    //            this.deathReasonText = " died due to the serum of alacrity injection";
+    //            break;
+    //    }
+    //}
     internal void SetImmortality(bool state) {
         this.isImmortal = state;
         if (this.assignedRole != null) {
@@ -1102,6 +1099,27 @@ public class Citizen {
             }
         }
 
+        //Compute new capital city of source kingdom given the cities that will rebel
+        if (citiesForRebellion.Contains(sourceKingdom.capitalCity)) {
+            //Recompute capital city
+            for (int i = 0; i < sourceKingdom.cities.Count; i++) {
+                City currCity = sourceKingdom.cities[i];
+                if (!citiesForRebellion.Contains(currCity)) {
+                    sourceKingdom.SetCapitalCity(currCity);
+                    break;
+                }
+            }
+        }
+
+        //Remove citizen that started rebellion from kingdom
+        sourceKingdom.RemoveCitizenFromKingdom(this, this.city);
+        //Transfer Royalties That are in the cities for rebellion
+        for (int i = 0; i < citiesForRebellion.Count; i++) {
+            City currRebellingCity = citiesForRebellion[i];
+            sourceKingdom.TransferCitizensFromCityToCapital(currRebellingCity);
+        }
+        
+
         ROLE previousRole = this.role;
         City previousCity = this.city;
         Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { }, false, sourceKingdom, true, this);
@@ -1125,6 +1143,7 @@ public class Citizen {
             if(_spouse != null) {
                 MarriageManager.Instance.DivorceCouple(this, _spouse);
             }
+            this.children.Clear();
         } else if (previousRole == ROLE.GOVERNOR) {
             citizensToTransfer.AddRange(GetRelatives(-1));
         }
@@ -1132,14 +1151,15 @@ public class Citizen {
 
         for (int i = 0; i < citizensToTransfer.Count; i++) {
             Citizen currCitizen = citizensToTransfer[i];
-            previousCity.RemoveCitizenInImportantCitizensInCity(currCitizen);
-            previousCity.citizens.Remove(currCitizen);
+            //previousCity.RemoveCitizenInImportantCitizensInCity(currCitizen);
+            //previousCity.citizens.Remove(currCitizen);
             //previousCity.RemoveCitizenFromCity(currCitizen);
-            newKingdom.capitalCity.AddCitizenToCity(currCitizen);
+            //newKingdom.capitalCity.AddCitizenToCity(currCitizen);
+            newKingdom.AddCitizenToKingdom(currCitizen, newKingdom.capitalCity);
         }
 
-        newKingdom.capitalCity.CreateInitialChancellorFamily();
-        newKingdom.capitalCity.CreateInitialMarshalFamily();
+        newKingdom.CreateNewChancellorFamily();
+        newKingdom.CreateNewMarshalFamily();
 
         newKingdom.UpdateKingSuccession();
 
@@ -1174,6 +1194,7 @@ public class Citizen {
         UIManager.Instance.ShowNotification(newLog);
 
         Warfare warfare = new Warfare(newKingdom, sourceKingdom);
+        Debug.Log(previousRole.ToString() + " " + this.name + " of " + previousCity.name + " has rebelled against " + sourceKingdom.name);
         Debug.Log("Rebelling kingdom " + newKingdom.name + " declares war on " + sourceKingdom.name);
     }
     #endregion

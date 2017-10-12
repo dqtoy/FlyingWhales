@@ -139,7 +139,7 @@ public class LycanthropeAvatar : MonoBehaviour {
 
     [Task]
     protected void GetTargetCity() {
-        this.lycanthrope.lycanthropyEvent.GetTargetCity();
+        //this.lycanthrope.lycanthropyEvent.GetTargetCity();
         if(this.lycanthrope.targetCity != null) {
             this.hasArrived = false;
             this.lycanthrope.avatar.SetActive(true);
