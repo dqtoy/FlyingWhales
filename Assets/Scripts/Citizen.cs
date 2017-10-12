@@ -1315,13 +1315,13 @@ public class Citizen {
 
 	internal float GetWarmongerWarPercentage100(){
 		if(this._warmonger == WARMONGER.VERY_HIGH){
-			return 15f;
-		}else if(this._warmonger == WARMONGER.HIGH){
 			return 10f;
-		}else if(this._warmonger == WARMONGER.AVERAGE){
+		}else if(this._warmonger == WARMONGER.HIGH){
 			return 5f;
-		}else if(this._warmonger == WARMONGER.LOW){
+		}else if(this._warmonger == WARMONGER.AVERAGE){
 			return 3f;
+		}else if(this._warmonger == WARMONGER.LOW){
+			return 2f;
 		}else{
 			return 1f;
 		}
