@@ -1471,7 +1471,6 @@ public class Kingdom{
         }
         _citizens.Add(city, new List<Citizen>());
         KingdomManager.Instance.UpdateKingdomList();
-        UIManager.Instance.UpdateKingdomCitiesMenu();
     }
     /* 
      * <summary>
@@ -1610,6 +1609,20 @@ public class Kingdom{
 		orderedFemaleRoyalties.Clear ();
 		orderedBrotherRoyalties.Clear ();
 		orderedSisterRoyalties.Clear ();
+
+        List<Citizen> invalidCitizens = new List<Citizen>();
+        //Validate Succession line
+        for (int i = 0; i < successionLine.Count; i++) {
+            Citizen currSuccessor = successionLine[i];
+            if(currSuccessor.city.kingdom.id != king.city.kingdom.id) {
+                //successor is of a different kingdom!
+                invalidCitizens.Add(currSuccessor);
+            }
+        }
+
+        for (int i = 0; i < invalidCitizens.Count; i++) {
+            successionLine.Remove(invalidCitizens[i]);
+        }
 
 		for (int i = 0; i < this.successionLine.Count; i++) {
 			if (this.successionLine [i].isDirectDescendant) {
@@ -3318,7 +3331,7 @@ public class Kingdom{
         //negative opinion towards the King. The Kingdom's Stability will then reset back to 50.
         List<Citizen> possibleCitizensForRebellion = new List<Citizen>();
         for (int i = 0; i < cities.Count; i++) {
-            possibleCitizensForRebellion.AddRange(cities[i].citizens.Where(x => x.role != ROLE.KING && x.role != ROLE.QUEEN && x.role != ROLE.UNTRAINED));
+            possibleCitizensForRebellion.AddRange(cities[i].citizens.Where(x => x.role != ROLE.KING && x.role != ROLE.UNTRAINED));
         }
         if (possibleCitizensForRebellion.Count > 0) {
             possibleCitizensForRebellion.OrderBy(x => x.loyaltyToKing).First().StartRebellion();

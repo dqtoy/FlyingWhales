@@ -673,6 +673,7 @@ public class City{
 		this.UpdateDailyProduction();
         this.hexTile.CreateCityNamePlate(this);
         HighlightAllOwnedTiles(69f / 255f);
+        UIManager.Instance.UpdateKingdomCitiesMenu();
         UIManager.Instance.UpdateMinimapInfo();
 //        KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
