@@ -829,7 +829,7 @@ public class Citizen {
         } else {
             if(role == ROLE.GOVERNOR) {
                 if(loyaltyToKing < 0) {
-                    return -1;
+                    return -2;
                 }
             }
 
@@ -1194,7 +1194,6 @@ public class Citizen {
         UIManager.Instance.ShowNotification(newLog);
 
         Warfare warfare = new Warfare(newKingdom, sourceKingdom);
-        Debug.Log(previousRole.ToString() + " " + this.name + " of " + previousCity.name + " has rebelled against " + sourceKingdom.name);
         Debug.Log("Rebelling kingdom " + newKingdom.name + " declares war on " + sourceKingdom.name);
     }
     #endregion
