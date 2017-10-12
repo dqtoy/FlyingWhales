@@ -1173,11 +1173,13 @@ public class Citizen {
         sourceKingdom.AdjustPopulation(-populationToTransfer);
         newKingdom.SetPopulation(populationToTransfer);
 
-        int weaponsGained = Mathf.FloorToInt((float)sourceKingdom.baseWeapons * percentGained);
+        //int weaponsGained = Mathf.FloorToInt((float)sourceKingdom.baseWeapons * percentGained);
+        int weaponsGained = Mathf.FloorToInt((float)sourceKingdom.baseWeapons / 3f);
         sourceKingdom.AdjustBaseWeapons(-weaponsGained);
         newKingdom.SetBaseWeapons(weaponsGained);
 
-        int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor * percentGained);
+        //int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor * percentGained);
+        int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor / 3f);
         sourceKingdom.AdjustBaseArmors(-armorGained);
         newKingdom.SetBaseArmor(armorGained);
 
@@ -1193,9 +1195,12 @@ public class Citizen {
         newLog.AddToFillers(newKingdom, newKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
         UIManager.Instance.ShowNotification(newLog);
 
-        Warfare warfare = new Warfare(newKingdom, sourceKingdom);
-        Debug.Log(previousRole.ToString() + " " + this.name + " of " + previousCity.name + " has rebelled against " + sourceKingdom.name);
-        Debug.Log("Rebelling kingdom " + newKingdom.name + " declares war on " + sourceKingdom.name);
+        KingdomRelationship kr = newKingdom.GetRelationshipWithKingdom(sourceKingdom);
+        if (kr.isAdjacent) {
+            Warfare warfare = new Warfare(newKingdom, sourceKingdom);
+            Debug.Log(previousRole.ToString() + " " + this.name + " of " + previousCity.name + " has rebelled against " + sourceKingdom.name);
+            Debug.Log("Rebelling kingdom " + newKingdom.name + " declares war on " + sourceKingdom.name);
+        }
     }
     #endregion
 
