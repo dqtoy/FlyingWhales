@@ -135,23 +135,33 @@ public class Warfare {
 //				}
 //			}
 
-			if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
-				if(!loserKingdom.isDead && battle.deadDefenderKingdom == null){
-					AdjustWeariness (loserKingdom, 5);
+			if(!loserKingdom.isDead && !IsAdjacentToEnemyKingdoms(loserKingdom, this._kingdomSideWeariness[loserKingdom.id].side)){
+				PeaceDeclaration (loserKingdom);
+			}
+			if(!this._isOver){
+				if(!winnerKingdom.isDead && !IsAdjacentToEnemyKingdoms(winnerKingdom, this._kingdomSideWeariness[winnerKingdom.id].side)){
+					PeaceDeclaration (winnerKingdom);
+					return;
+				}
+				if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
+					if(!loserKingdom.isDead && battle.deadDefenderKingdom == null){
+						AdjustWeariness (loserKingdom, 5);
 
-					float peaceMultiplier = PeaceMultiplier (winnerKingdom);
-					int value = (int)((float)this._kingdomSideWeariness[winnerKingdom.id].weariness * peaceMultiplier);
-					int chance = UnityEngine.Random.Range (0, 100);
-					if(chance < value){
-						PeaceDeclaration (winnerKingdom);
+						float peaceMultiplier = PeaceMultiplier (winnerKingdom);
+						int value = (int)((float)this._kingdomSideWeariness[winnerKingdom.id].weariness * peaceMultiplier);
+						int chance = UnityEngine.Random.Range (0, 100);
+						if(chance < value){
+							PeaceDeclaration (winnerKingdom);
+						}else{
+							CreateNewBattle (winnerKingdom);
+						}
 					}else{
 						CreateNewBattle (winnerKingdom);
 					}
 				}else{
-					CreateNewBattle (winnerKingdom);
+					CheckWarfare ();
+
 				}
-			}else{
-				CheckWarfare ();
 			}
 		}
 	}
@@ -210,7 +220,7 @@ public class Warfare {
 		if(friendlyCity == null || enemyCity == null){
 			
 			Debug.Log ("---------------------------------Can't pair cities: force peace!");
-			CantPairForcePeace(kingdom);
+//			CantPairForcePeace(kingdom);
 		}
 	}
 	private City GetEnemyCity(City sourceCity){
@@ -570,7 +580,7 @@ public class Warfare {
 //				}
 //			}
 		}
-		CheckWarfare ();
+//		CheckWarfare ();
 	}
 	internal void AdjustWeariness(Kingdom kingdom, int amount){
 		if(this._kingdomSideWeariness.ContainsKey(kingdom.id)){

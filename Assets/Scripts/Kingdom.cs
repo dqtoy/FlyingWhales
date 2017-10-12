@@ -386,13 +386,13 @@ public class Kingdom{
 	internal int effectiveAttack{
 		get{ 
 			int mySoldiers = this.soldiers;
-			return (int)((2 * mySoldiers * this._baseWeapons) / (mySoldiers + this._baseWeapons));
+			return (2 * mySoldiers * this._baseWeapons) / (mySoldiers + this._baseWeapons);
 		}
 	}
 	internal int effectiveDefense{
 		get{ 
 			int mySoldiers = this.soldiers;
-			return (int)((2 * mySoldiers * this._baseArmor) / (mySoldiers + this._baseArmor));
+			return (2 * mySoldiers * this._baseArmor) / (mySoldiers + this._baseArmor);
 		}
 	}
     internal Dictionary<City, List<Citizen>> citizens {
