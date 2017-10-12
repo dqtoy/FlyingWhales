@@ -643,15 +643,15 @@ public class Battle {
 		if(this._deadAttackerKingdom != null){
 			if(!this._deadAttackerKingdom.isDead){
 				AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Attacker kingdom " + attacker.kingdom.name + " is wiped out by " + defender.kingdom.name);
-				this._deadAttackerKingdom.AdjustBaseWeapons (-this._deadAttackerKingdom.baseWeapons);
-				this._deadAttackerKingdom.AdjustPopulation (-this._deadAttackerKingdom.population);
+				this._deadAttackerKingdom.SetBaseWeapons (1);
+				this._deadAttackerKingdom.AdjustPopulation (-this._deadAttackerKingdom.soldiers);
 			}
 		}
 		if(this._deadDefenderKingdom != null){
 			if(!this._deadDefenderKingdom.isDead){
 				AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Defending kingdom " + defender.kingdom.name + " is wiped out by " + attacker.kingdom.name);
-				this._deadDefenderKingdom.AdjustBaseArmors (-this._deadDefenderKingdom.baseArmor);
-				this._deadDefenderKingdom.AdjustPopulation (-this._deadDefenderKingdom.population);
+				this._deadDefenderKingdom.SetBaseArmor (1);
+				this._deadDefenderKingdom.AdjustPopulation (-this._deadDefenderKingdom.soldiers);
 			}
 		}
 	}
