@@ -1499,7 +1499,9 @@ public class Kingdom{
             KingdomManager.Instance.UpdateKingdomList();
         }
         List<Citizen> remainingCitizens = _citizens[city];
-        _citizens.Remove(city);
+        if (_citizens.ContainsKey(city)) {
+            _citizens.Remove(city);
+        }
         UIManager.Instance.UpdateKingdomCitiesMenu();
         return remainingCitizens;
     }
