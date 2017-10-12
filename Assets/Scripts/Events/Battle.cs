@@ -277,8 +277,8 @@ public class Battle {
 
 			Debug.Log ("ATTACKER'S POPULATION BEFORE DAMAGE: " + this.attacker.kingdom.population);
 
+			int attackerSoldiers = this.attacker.kingdom.soldiers;
 			if(attackAfterDamage > 0){
-				int attackerSoldiers = this.attacker.kingdom.soldiers;
 				int maxDamageToWeapons = GetMaxDamageToWeaponsArmors(attackAfterDamage, attackerSoldiers);
 				int maxRollForDamageInWeapons = this.attacker.kingdom.baseWeapons - maxDamageToWeapons;
 				int minRollForDamageInWeapons = maxRollForDamageInWeapons / 2;
@@ -290,11 +290,8 @@ public class Battle {
 				if(damageToPopulationAttacker > capAttackerPopulationDamage){
 					damageToPopulationAttacker = capAttackerPopulationDamage;
 				}
-				if(damageToPopulationAttacker < this.attacker.kingdom.population){
-					this.attacker.kingdom.AdjustPopulation (-damageToPopulationAttacker);
-				}else{
-					this._deadAttackerKingdom = this.attacker.kingdom;
-				}
+				this.attacker.kingdom.AdjustPopulation (-damageToPopulationAttacker);
+
 				Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);
 				Debug.Log ("MAX ROLL DAMAGE TO WEAPONS: " + maxRollForDamageInWeapons);
 				Debug.Log ("MIN ROLL DAMAGE TO WEAPONS: " + minRollForDamageInWeapons);
@@ -308,22 +305,34 @@ public class Battle {
 					"(" + attacker.kingdom.population.ToString() + ")");
 				
 			}else{
-				this._deadAttackerKingdom = this.attacker.kingdom;
-				Debug.Log ("ATTACKER KINGDOM IS WIPED OUT BY DEFENDER KINGDOM!");
-				Debug.Log ("DAMAGE TO ATTACKER'S WEAPONS: " + this.attacker.kingdom.baseWeapons);
-				Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + this.attacker.kingdom.population);
-				AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + attacker.kingdom.name + " weapons " + this.attacker.kingdom.baseWeapons.ToString() +
-					"(0)");
+				if(attackerSoldiers < this.attacker.kingdom.population){
+					int damageToWeapons = this.attacker.kingdom.baseWeapons - 1;
+					SetAttackerToMaximumDamageReceived (attackerSoldiers);
+					Debug.Log ("DAMAGE TO ATTACKER'S WEAPONS: " + damageToWeapons);
+					Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + attackerSoldiers);
+					AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + attacker.kingdom.name + " weapons " + damageToWeapons.ToString() +
+						"(" + this.attacker.kingdom.baseWeapons + ")");
 
-				AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.kingdom.name + " loses " +  this.attacker.kingdom.population.ToString() + " population " +
-					"(0)");
+					AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.kingdom.name + " loses " +  attackerSoldiers.ToString() + " population " +
+						"(" + this.attacker.kingdom.population.ToString() + ")");
+				}else{
+					this._deadAttackerKingdom = this.attacker.kingdom;
+					Debug.Log ("ATTACKER KINGDOM IS WIPED OUT BY DEFENDER KINGDOM!");
+					Debug.Log ("DAMAGE TO ATTACKER'S WEAPONS: " + this.attacker.kingdom.baseWeapons);
+					Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + attackerSoldiers);
+					AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + attacker.kingdom.name + " weapons " + this.attacker.kingdom.baseWeapons.ToString() +
+						"(0)");
+
+					AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.kingdom.name + " loses " +  attackerSoldiers.ToString() + " population " +
+						"(0)");
+				}
+
 			}
 
 
 			Debug.Log ("DEFENDER'S POPULATION BEFORE DAMAGE: " + this.defender.kingdom.population);
-
+			int defenderSoldiers = this.defender.kingdom.soldiers;
 			if(defenseAfterDamage > 0){
-				int defenderSoldiers = this.defender.kingdom.soldiers;
 				int maxDamageToArmors = GetMaxDamageToWeaponsArmors(defenseAfterDamage, defenderSoldiers);
 				int maxRollForDamageInArmors = this.defender.kingdom.baseArmor - maxDamageToArmors;
 				int minRollForDamageInArmors = maxRollForDamageInArmors / 2;
@@ -331,15 +340,12 @@ public class Battle {
 				this.defender.kingdom.AdjustBaseArmors (-rollForDamageInArmors);
 				int damageToSoldiersDefender = GetDamageToSoldiers (defenseAfterDamage, this.defender.kingdom.baseArmor);
 				int damageToPopulationDefender = GetDamageToPopulation (damageToSoldiersDefender, defenderSoldiers, this.defender.kingdom.draftRate);
-				int capDefenderPopulationDamage = defenderSoldiers * 2;
+				int capDefenderPopulationDamage = defenderSoldiers;
 				if(damageToPopulationDefender > capDefenderPopulationDamage){
 					damageToPopulationDefender = capDefenderPopulationDamage;
 				}
-				if(damageToPopulationDefender < this.defender.kingdom.population){
-					this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
-				}else{
-					this._deadDefenderKingdom = this.defender.kingdom;
-				}
+				this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
+
 				Debug.Log ("MAX DAMAGE TO ARMORS: " + maxDamageToArmors);
 				Debug.Log ("MAX ROLL DAMAGE TO ARMORS: " + maxRollForDamageInArmors);
 				Debug.Log ("MIN ROLL DAMAGE TO ARMORS: " + minRollForDamageInArmors);
@@ -353,15 +359,27 @@ public class Battle {
 					"(" + defender.kingdom.population.ToString() + ")");
 				
 			}else{
-				this._deadDefenderKingdom = this.defender.kingdom;
-				Debug.Log ("DEFENDER KINGDOM IS WIPED OUT BY ATTACKER KINGDOM!");
-				Debug.Log ("DAMAGE TO DEFENDER'S ARMORS: " + this.defender.kingdom.baseArmor);
-				Debug.Log ("DAMAGE TO DEFENDER'S POPULATION: " + this.defender.kingdom.population);
-				AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + defender.kingdom.name + " armor " + defender.kingdom.baseArmor.ToString() +
-					"(0)");
+				if(defenderSoldiers < this.defender.kingdom.population){
+					int damageToArmors = this.defender.kingdom.baseArmor - 1;
+					SetDefenderToMaximumDamageReceived (defenderSoldiers);
+					Debug.Log ("DAMAGE TO DEFENDER'S ARMORS: " + damageToArmors);
+					Debug.Log ("DAMAGE TO DEFENDER'S POPULATION: " + defenderSoldiers);
+					AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + defender.kingdom.name + " armor " + damageToArmors.ToString() +
+						"(" + this.defender.kingdom.baseArmor + ")");
 
-				AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.kingdom.name + " loses " + defender.kingdom.population.ToString() + " population " +
-					"(0)");
+					AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.kingdom.name + " loses " + defenderSoldiers.ToString() + " population " +
+						"(" + this.defender.kingdom.population.ToString() + ")");
+				}else{
+					this._deadDefenderKingdom = this.defender.kingdom;
+					Debug.Log ("DEFENDER KINGDOM IS WIPED OUT BY ATTACKER KINGDOM!");
+					Debug.Log ("DAMAGE TO DEFENDER'S ARMORS: " + this.defender.kingdom.baseArmor);
+					Debug.Log ("DAMAGE TO DEFENDER'S POPULATION: " + defenderSoldiers);
+					AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Damage to " + defender.kingdom.name + " armor " + defender.kingdom.baseArmor.ToString() +
+						"(0)");
+
+					AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.kingdom.name + " loses " + defenderSoldiers.ToString() + " population " +
+						"(0)");
+				}
 			}
 
 
@@ -660,6 +678,14 @@ public class Battle {
 				this._deadDefenderKingdom.AdjustPopulation (-this._deadDefenderKingdom.soldiers);
 			}
 		}
+	}
+	private void SetAttackerToMaximumDamageReceived(int soldiers){
+		this.attacker.kingdom.SetBaseWeapons (1);
+		this.attacker.kingdom.AdjustPopulation (-soldiers);
+	}
+	private void SetDefenderToMaximumDamageReceived(int soldiers){
+		this.defender.kingdom.SetBaseArmor (1);
+		this.defender.kingdom.AdjustPopulation (-soldiers);
 	}
 	private void ChangePositionAndGoToStep1(){
 		SetAttackerAndDefenderCity (this.defender, this.attacker);
