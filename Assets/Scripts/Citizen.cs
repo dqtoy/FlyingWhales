@@ -829,7 +829,7 @@ public class Citizen {
         } else {
             if(role == ROLE.GOVERNOR) {
                 if(loyaltyToKing < 0) {
-                    return -1;
+                    return -2;
                 }
             }
 
