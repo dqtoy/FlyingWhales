@@ -531,6 +531,7 @@ public class KingdomManager : MonoBehaviour {
 			newLog.AddToFillers (firstKingdom, firstKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
 			newLog.AddToFillers (secondKingdom, secondKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
             newLog.AddToFillers(null, newAlliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+			newLog.AddAllInvolvedObjects (newAlliance.kingdomsInvolved.ToArray ());
 			UIManager.Instance.ShowNotification (newLog);
 			return true;
 		}

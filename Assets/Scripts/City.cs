@@ -949,7 +949,7 @@ public class City{
     /*
      * Conquer this city and transfer ownership to the conqueror
      * */
-	internal void ConquerCity(Kingdom conqueror) {
+	internal void ConquerCity(Kingdom conqueror, Warfare warfare) {
         RemoveOneTimeResourceBenefits();
         //Transfer items to conqueror
         TransferItemsToConqueror(conqueror);
@@ -1008,6 +1008,11 @@ public class City{
 		if (Messenger.eventTable.ContainsKey ("CityDied")) {
 			Messenger.Broadcast<City> ("CityDied", this);
 		}
+
+		Log newLog = warfare.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "invade");
+		newLog.AddToFillers (conqueror, conqueror.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (newCity, newCity.name, LOG_IDENTIFIER.CITY_2);
+		warfare.ShowUINotification (newLog, new HashSet<Kingdom>() { conqueror, this.kingdom });
     }
     private void TransferItemsToConqueror(Kingdom conqueror){
 		for(int i = 0; i < this.ownedTiles.Count; i++){

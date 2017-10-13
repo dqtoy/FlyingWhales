@@ -117,12 +117,7 @@ public class Warfare {
 			Kingdom winnerKingdom = winnerCity.kingdom;
 			Kingdom loserKingdom = loserCity.kingdom;
 
-			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "invade");
-			newLog.AddToFillers (winnerCity.kingdom, winnerCity.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLog.AddToFillers (loserCity, loserCity.name, LOG_IDENTIFIER.CITY_2);
-			ShowUINotification (newLog, new HashSet<Kingdom>() { winnerCity.kingdom, loserCity.kingdom });
-
-			winnerKingdom.ConquerCity(loserCity);
+			winnerKingdom.ConquerCity(loserCity, this);
 
 //			if (battle.deadAttackerKingdom != null) {
 //				if (!battle.deadAttackerKingdom.isDead) {
@@ -135,23 +130,33 @@ public class Warfare {
 //				}
 //			}
 
-			if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
-				if(!loserKingdom.isDead && battle.deadDefenderKingdom == null){
-					AdjustWeariness (loserKingdom, 5);
+			if(!loserKingdom.isDead && !IsAdjacentToEnemyKingdoms(loserKingdom, this._kingdomSideWeariness[loserKingdom.id].side)){
+				PeaceDeclaration (loserKingdom);
+			}
+			if(!this._isOver){
+				if(!winnerKingdom.isDead && !IsAdjacentToEnemyKingdoms(winnerKingdom, this._kingdomSideWeariness[winnerKingdom.id].side)){
+					PeaceDeclaration (winnerKingdom);
+					return;
+				}
+				if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
+					if(!loserKingdom.isDead && battle.deadDefenderKingdom == null){
+						AdjustWeariness (loserKingdom, 5);
 
-					float peaceMultiplier = PeaceMultiplier (winnerKingdom);
-					int value = (int)((float)this._kingdomSideWeariness[winnerKingdom.id].weariness * peaceMultiplier);
-					int chance = UnityEngine.Random.Range (0, 100);
-					if(chance < value){
-						PeaceDeclaration (winnerKingdom);
+						float peaceMultiplier = PeaceMultiplier (winnerKingdom);
+						int value = (int)((float)this._kingdomSideWeariness[winnerKingdom.id].weariness * peaceMultiplier);
+						int chance = UnityEngine.Random.Range (0, 100);
+						if(chance < value){
+							PeaceDeclaration (winnerKingdom);
+						}else{
+							CreateNewBattle (winnerKingdom);
+						}
 					}else{
 						CreateNewBattle (winnerKingdom);
 					}
 				}else{
-					CreateNewBattle (winnerKingdom);
+					CheckWarfare ();
+
 				}
-			}else{
-				CheckWarfare ();
 			}
 		}
 	}
@@ -210,7 +215,7 @@ public class Warfare {
 		if(friendlyCity == null || enemyCity == null){
 			
 			Debug.Log ("---------------------------------Can't pair cities: force peace!");
-			CantPairForcePeace(kingdom);
+//			CantPairForcePeace(kingdom);
 		}
 	}
 	private City GetEnemyCity(City sourceCity){
@@ -462,7 +467,7 @@ public class Warfare {
 			ShowUINotification (newLog);
 		}
 	}
-	private void CheckWarfare(){
+	internal void CheckWarfare(){
 		if(this._kingdomSideList[WAR_SIDE.A].Count <= 0 || this._kingdomSideList[WAR_SIDE.B].Count <= 0){
 			WarfareDone ();
 		}
@@ -570,7 +575,7 @@ public class Warfare {
 //				}
 //			}
 		}
-		CheckWarfare ();
+//		CheckWarfare ();
 	}
 	internal void AdjustWeariness(Kingdom kingdom, int amount){
 		if(this._kingdomSideWeariness.ContainsKey(kingdom.id)){

@@ -99,6 +99,7 @@ public class CityItem : MonoBehaviour {
     public void CenterOnCity() {
         CameraMove.Instance.CenterCameraOn(_city.hexTile.gameObject);
     }
+		
 
     public void SetKingdomAsSelected() {
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != _city.kingdom.id) {
@@ -131,6 +132,10 @@ public class CityItem : MonoBehaviour {
         }
         UIManager.Instance.ShowRelationshipSummary(thisCitizen, loyaltySummary);
     }
+
+	public void ShowCityHistory(){
+		UIManager.Instance.ShowCityHistory (this._city);
+	}
 
     #region For Testing
     //public void SetPower() {

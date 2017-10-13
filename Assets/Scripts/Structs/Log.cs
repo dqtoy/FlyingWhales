@@ -15,6 +15,7 @@ public class Log {
 	public string key;
 
 	public List<LogFiller> fillers;
+	public object[] allInvolved;
 
 	public Log(int month, int day, int year, string category, string file, string key){
         this.id = Utilities.SetID<Log>(this);
@@ -29,5 +30,9 @@ public class Log {
 
 	internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier){
 		this.fillers.Add (new LogFiller (obj, value, identifier));
+	}
+
+	internal void AddAllInvolvedObjects(object[] objects){
+		this.allInvolved = objects;
 	}
 }

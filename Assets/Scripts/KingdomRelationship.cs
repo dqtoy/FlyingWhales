@@ -78,7 +78,7 @@ public class KingdomRelationship {
         get { return this._relationshipSummary + this._relationshipEventsSummary; }
     }
     public int totalLike {
-        get { return _like + GetTotalRelationshipModifiers(); }
+        get { return _like + GetTotalRelationshipModifiers() + forTestingLikeModifier; }
     }
     public int eventLikenessModifier {
         get { return _eventLikenessModifier; }
@@ -496,6 +496,8 @@ public class KingdomRelationship {
 		GameDate dateTimeToUse = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
 		if(identifier == RELATIONSHIP_MODIFIER.LEAVE_ALLIANCE){
 			dateTimeToUse.SetDate (dateTimeToUse.month, 1, dateTimeToUse.year);
+		}else if(identifier == RELATIONSHIP_MODIFIER.REBELLION){
+			dateTimeToUse.SetDate (dateTimeToUse.month, 1, dateTimeToUse.year);
 		}
 		if(isDecaying){
 			AddDecayingRelationshipModifier (modification, reason, identifier, dateTimeToUse);
@@ -511,6 +513,9 @@ public class KingdomRelationship {
 			relationshipModifier = new RelationshipModifier (modification, reason, identifier);
 			this._relationshipModifiers.Add (identifier, relationshipModifier);
 			if(identifier == RELATIONSHIP_MODIFIER.LEAVE_ALLIANCE){
+				currentDate.AddMonths (1);
+				SchedulingManager.Instance.AddEntry (currentDate, () => DecayRelationshipModifier(relationshipModifier, 5, DECAY_INTERVAL.MONTHLY, 1));
+			}else if(identifier == RELATIONSHIP_MODIFIER.REBELLION){
 				currentDate.AddMonths (1);
 				SchedulingManager.Instance.AddEntry (currentDate, () => DecayRelationshipModifier(relationshipModifier, 5, DECAY_INTERVAL.MONTHLY, 1));
 			}

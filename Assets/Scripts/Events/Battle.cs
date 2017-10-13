@@ -439,7 +439,7 @@ public class Battle {
 							powerBuff += (adjacentCity.weapons * 0.15f);
 						}else{
 							//Did not honor commitment
-							adjacentCity.kingdom.LeaveAlliance();
+							adjacentCity.kingdom.LeaveAlliance(true);
 							adjacentCity.kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
 						}
 					}
@@ -459,7 +459,7 @@ public class Battle {
 					if(kr.totalLike > 0){
 						powerBuff += (kingdom.baseWeapons * 0.05f);
 					}else{
-						kingdom.LeaveAlliance();
+						kingdom.LeaveAlliance(true);
 						kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
 						i--;
 						if(city.kingdom.alliancePool == null || city.kingdom.alliancePool.isDissolved){
@@ -487,7 +487,7 @@ public class Battle {
 							defenseBuff += (adjacentCity.armor * 0.15f);
 						}else{
 							//Did not honor commitment
-							adjacentCity.kingdom.LeaveAlliance();
+							adjacentCity.kingdom.LeaveAlliance(true);
 							adjacentCity.kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
 						}
 					}
@@ -507,7 +507,7 @@ public class Battle {
 					if(kr.totalLike > 0){
 						defenseBuff += (kingdom.baseArmor * 0.05f);
 					}else{
-						kingdom.LeaveAlliance();
+						kingdom.LeaveAlliance(true);
 						kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
 						i--;
 						if(city.kingdom.alliancePool == null || city.kingdom.alliancePool.isDissolved){
@@ -586,13 +586,15 @@ public class Battle {
 		}
 
 		this._warfare.RemoveBattle (this);
-		if(!this.attacker.isDead){
-			this._warfare.CreateNewBattle (this.attacker);
-		}else{
-			if(!this.attacker.kingdom.isDead){
-				this._warfare.CreateNewBattle (this.attacker.kingdom);
-			}
-		}
+		CheckIfShouldPeaceOrPair ();
+//		if(!this.attacker.isDead){
+//			this._warfare.CreateNewBattle (this.attacker);
+//		}else{
+//			if(!this.attacker.kingdom.isDead){
+//				this._warfare.CreateNewBattle (this.attacker.kingdom);
+//			}
+//		}
+
 	}
 	private void CityDied(City city){
 		if(!this._isOver){
@@ -611,13 +613,7 @@ public class Battle {
 				}
 
 				this._warfare.RemoveBattle (this);
-				if(!this.attacker.isDead){
-					this._warfare.CreateNewBattle (this.attacker);
-				}else{
-					if(!this.attacker.kingdom.isDead){
-						this._warfare.CreateNewBattle (this.attacker.kingdom);
-					}
-				}
+				CheckIfShouldPeaceOrPair ();
 			}
 		}
 	}
@@ -638,13 +634,14 @@ public class Battle {
 				}
 
 				this._warfare.RemoveBattle (this);
-				if(!this.attacker.isDead){
-					this._warfare.CreateNewBattle (this.attacker);
-				}else{
-					if(!this.attacker.kingdom.isDead){
-						this._warfare.CreateNewBattle (this.attacker.kingdom);
-					}
-				}
+				CheckIfShouldPeaceOrPair ();
+//				if(!this.attacker.isDead){
+//					this._warfare.CreateNewBattle (this.attacker);
+//				}else{
+//					if(!this.attacker.kingdom.isDead){
+//						this._warfare.CreateNewBattle (this.attacker.kingdom);
+//					}
+//				}
 			}
 		}
 	}
@@ -676,6 +673,44 @@ public class Battle {
 				AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Defending kingdom " + defender.kingdom.name + " is wiped out by " + attacker.kingdom.name);
 				this._deadDefenderKingdom.SetBaseArmor (1);
 				this._deadDefenderKingdom.AdjustPopulation (-this._deadDefenderKingdom.soldiers);
+			}
+		}
+	}
+	private void CheckIfShouldPeaceOrPair(){
+		if(this._warfare.kingdomSideWeariness.ContainsKey(this._kingdom1.id)){
+			if(!this._kingdom1.isDead && !this._warfare.IsAdjacentToEnemyKingdoms(this._kingdom1, this._warfare.kingdomSideWeariness[this._kingdom1.id].side)){
+				this._warfare.PeaceDeclaration (this._kingdom1);
+			}
+		}
+
+		if(!this._warfare.isOver){
+			if(this._warfare.kingdomSideWeariness.ContainsKey(this._kingdom2.id)){
+				if(!this._kingdom2.isDead && !this._warfare.IsAdjacentToEnemyKingdoms(this._kingdom2, this._warfare.kingdomSideWeariness[this._kingdom2.id].side)){
+					this._warfare.PeaceDeclaration (this._kingdom2);
+				}
+			}
+			if(!this._warfare.isOver){
+				if(this._warfare.kingdomSideWeariness.ContainsKey(this.attacker.kingdom.id)){
+					if(!this.attacker.isDead){
+						this._warfare.CreateNewBattle (this.attacker);
+					}else{
+						if(!this.attacker.kingdom.isDead){
+							this._warfare.CreateNewBattle (this.attacker.kingdom);
+						}
+					}
+				}
+			}
+		}
+		if(!this._warfare.isOver){
+			this._warfare.CheckWarfare();
+		}
+	}
+	private void CreateBattleAttacker(){
+		if(!this.attacker.isDead){
+			this._warfare.CreateNewBattle (this.attacker);
+		}else{
+			if(!this.attacker.kingdom.isDead){
+				this._warfare.CreateNewBattle (this.attacker.kingdom);
 			}
 		}
 	}
