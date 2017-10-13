@@ -117,12 +117,7 @@ public class Warfare {
 			Kingdom winnerKingdom = winnerCity.kingdom;
 			Kingdom loserKingdom = loserCity.kingdom;
 
-			Log newLog = CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "invade");
-			newLog.AddToFillers (winnerCity.kingdom, winnerCity.kingdom.name, LOG_IDENTIFIER.KINGDOM_1);
-			newLog.AddToFillers (loserCity, loserCity.name, LOG_IDENTIFIER.CITY_2);
-			ShowUINotification (newLog, new HashSet<Kingdom>() { winnerCity.kingdom, loserCity.kingdom });
-
-			winnerKingdom.ConquerCity(loserCity);
+			winnerKingdom.ConquerCity(loserCity, this);
 
 //			if (battle.deadAttackerKingdom != null) {
 //				if (!battle.deadAttackerKingdom.isDead) {

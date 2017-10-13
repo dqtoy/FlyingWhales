@@ -952,6 +952,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             CameraMove.Instance.CenterCameraOn(this.gameObject);
             if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
                 UIManager.Instance.SetKingdomAsActive(this.city.kingdom);
+				if(UIManager.Instance.notificationCityHistoryGO.activeSelf){
+					UIManager.Instance.ShowCityHistory (this.city);
+				}
             }
         }
 		InterveneEventOnTile (WorldEventManager.Instance.currentInterveneEvent);

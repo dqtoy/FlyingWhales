@@ -439,7 +439,7 @@ public class Battle {
 							powerBuff += (adjacentCity.weapons * 0.15f);
 						}else{
 							//Did not honor commitment
-							adjacentCity.kingdom.LeaveAlliance();
+							adjacentCity.kingdom.LeaveAlliance(true);
 							adjacentCity.kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
 						}
 					}
@@ -459,7 +459,7 @@ public class Battle {
 					if(kr.totalLike > 0){
 						powerBuff += (kingdom.baseWeapons * 0.05f);
 					}else{
-						kingdom.LeaveAlliance();
+						kingdom.LeaveAlliance(true);
 						kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
 						i--;
 						if(city.kingdom.alliancePool == null || city.kingdom.alliancePool.isDissolved){
@@ -487,7 +487,7 @@ public class Battle {
 							defenseBuff += (adjacentCity.armor * 0.15f);
 						}else{
 							//Did not honor commitment
-							adjacentCity.kingdom.LeaveAlliance();
+							adjacentCity.kingdom.LeaveAlliance(true);
 							adjacentCity.kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
 						}
 					}
@@ -507,7 +507,7 @@ public class Battle {
 					if(kr.totalLike > 0){
 						defenseBuff += (kingdom.baseArmor * 0.05f);
 					}else{
-						kingdom.LeaveAlliance();
+						kingdom.LeaveAlliance(true);
 						kingdom.AdjustPrestige (-GridMap.Instance.numOfRegions);
 						i--;
 						if(city.kingdom.alliancePool == null || city.kingdom.alliancePool.isDissolved){

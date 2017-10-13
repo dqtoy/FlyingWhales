@@ -613,6 +613,7 @@ public enum WARMONGER{
 }
 public enum RELATIONSHIP_MODIFIER{
 	LEAVE_ALLIANCE,
+	REBELLION,
 }
 public enum DECAY_INTERVAL{
 	DAILY,

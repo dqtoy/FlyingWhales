@@ -1796,9 +1796,9 @@ public class Kingdom{
         }
 
     }
-	internal void ConquerCity(City city){
+	internal void ConquerCity(City city, Warfare warfare){
 		if (this.id != city.kingdom.id) {
-			city.ConquerCity(this);
+			city.ConquerCity(this, warfare);
 //			HexTile hex = city.hexTile;
 //			if (this.race != city.kingdom.race) {
 //				city.KillCity();
@@ -3599,6 +3599,7 @@ public class Kingdom{
 	internal void LeaveAlliance(bool doNotShowLog = false){
 		if(this.alliancePool != null){
             AlliancePool leftAlliance = this.alliancePool;
+			object[] objects = leftAlliance.kingdomsInvolved.ToArray ();
 			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
 				if(this.alliancePool.kingdomsInvolved[i].id != this.id){
 					KingdomRelationship kr = this.alliancePool.kingdomsInvolved [i].GetRelationshipWithKingdom (this);
@@ -3612,6 +3613,7 @@ public class Kingdom{
 				Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Alliance", "leave_alliance");
 				newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
                 newLog.AddToFillers(null, leftAlliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+				newLog.AddAllInvolvedObjects (objects);
 				UIManager.Instance.ShowNotification (newLog);
 			}
 		}
@@ -3711,6 +3713,7 @@ public class Kingdom{
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (null, warfare.name, LOG_IDENTIFIER.WAR_NAME);
 		newLog.AddToFillers (null, alliance.name, LOG_IDENTIFIER.ALLIANCE_NAME);
+		newLog.AddAllInvolvedObjects (alliance.kingdomsInvolved.ToArray ());
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
 	internal void ShowDoNothingLog(Warfare warfare){
