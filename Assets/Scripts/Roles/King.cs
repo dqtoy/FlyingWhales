@@ -35,7 +35,8 @@ public class King : Role {
 	internal override void OnDeath (){
 		base.OnDeath ();
         //Trigger Succession
-        ownedKingdom.AssignNewKing();
+        Citizen successor = ownedKingdom.GetCitizenWithRoleInKingdom(ROLE.CROWN_PRINCE);
+        ownedKingdom.AssignNewKing(successor);
 	}
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){
 		this.ownedKingdom = ownedKingdom;

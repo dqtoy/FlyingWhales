@@ -159,6 +159,9 @@ public class Citizen {
 		return 2;
 	}
     internal void AssignRole(ROLE role) {
+        if(this.role == role) {
+            throw new System.Exception(this.name + " is being assigned the role of " + role.ToString() + " even if he/she is already a " + this.role.ToString());
+        }
         if (this.role != ROLE.UNTRAINED && this.role != role) {
             if (this.assignedRole != null) {
                 this.assignedRole.OnDeath();
