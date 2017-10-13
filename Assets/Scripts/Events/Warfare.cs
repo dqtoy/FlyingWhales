@@ -467,7 +467,7 @@ public class Warfare {
 			ShowUINotification (newLog);
 		}
 	}
-	private void CheckWarfare(){
+	internal void CheckWarfare(){
 		if(this._kingdomSideList[WAR_SIDE.A].Count <= 0 || this._kingdomSideList[WAR_SIDE.B].Count <= 0){
 			WarfareDone ();
 		}

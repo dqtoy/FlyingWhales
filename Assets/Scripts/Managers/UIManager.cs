@@ -1441,7 +1441,7 @@ public class UIManager : MonoBehaviour {
 			for (int i = 0; i < presentItems.Length; i++) {
 				LogHistoryItem currItem = presentItems[i];
 				Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
-				if(logToShow == null) {
+				if(logToShow == null || logToShow.key == "expand") {
 					currItem.gameObject.SetActive(false);
 					notificationHistoryTable.Reposition();
 				} else {
@@ -1454,7 +1454,7 @@ public class UIManager : MonoBehaviour {
 			for (int i = 0; i < presentItems.Length; i++) {
 				LogHistoryItem currItem = presentItems[i];
 				Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
-				if(logToShow == null) {
+				if(logToShow == null || logToShow.key == "expand") {
 					currItem.gameObject.SetActive(false);
 					notificationHistoryTable.Reposition();
 				} else {
@@ -1589,7 +1589,7 @@ public class UIManager : MonoBehaviour {
 			for (int i = 0; i < log.fillers.Count; i++) {
 				LogFiller filler = log.fillers [i];
 				if(filler.obj is City){
-					if(((City)filler.obj).id == city.id){
+					if(((City)filler.obj).name == city.name){
 						return true;
 					}
 				}
@@ -1599,7 +1599,7 @@ public class UIManager : MonoBehaviour {
 			for (int i = 0; i < log.allInvolved.Length; i++) {
 				object obj = log.allInvolved [i];
 				if(obj is City){
-					if(((City)obj).id == city.id){
+					if(((City)obj).name == city.name){
 						return true;
 					}
 				}
