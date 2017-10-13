@@ -1781,7 +1781,7 @@ public class Kingdom{
 				rel.war.ChangeDoneStateWarPair (true);
             }
 
-			city.ConquerCity(this);
+//			city.ConquerCity(this, null);
 //            HexTile hex = city.hexTile;
 //            if (this.race != city.kingdom.race) {
 //                city.KillCity();

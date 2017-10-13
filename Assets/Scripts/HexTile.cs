@@ -1064,7 +1064,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (conqueror.id == this.city.kingdom.id) {
             Debug.LogWarning("City is already part of " + conqueror.name);
         } else {
-            conqueror.ConquerCity(city, null);
+//            conqueror.ConquerCity(city, null);
         }
     }
 
