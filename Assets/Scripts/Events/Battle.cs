@@ -677,19 +677,22 @@ public class Battle {
 		}
 	}
 	private void CheckIfShouldPeaceOrPair(){
-		if(!this.defender.kingdom.isDead && !this._warfare.IsAdjacentToEnemyKingdoms(this.defender.kingdom, this._warfare.kingdomSideWeariness[this.defender.kingdom.id].side)){
-			this._warfare.PeaceDeclaration (this.defender.kingdom);
+		if(!this._kingdom1.isDead && !this._warfare.IsAdjacentToEnemyKingdoms(this._kingdom1, this._warfare.kingdomSideWeariness[this._kingdom1.id].side)){
+			this._warfare.PeaceDeclaration (this._kingdom1);
 		}
 		if(!this._warfare.isOver){
-			if(!this.attacker.kingdom.isDead && !this._warfare.IsAdjacentToEnemyKingdoms(this.attacker.kingdom, this._warfare.kingdomSideWeariness[this.attacker.kingdom.id].side)){
-				this._warfare.PeaceDeclaration (this.attacker.kingdom);
-				return;
+			if(!this._kingdom2.isDead && !this._warfare.IsAdjacentToEnemyKingdoms(this._kingdom2, this._warfare.kingdomSideWeariness[this._kingdom2.id].side)){
+				this._warfare.PeaceDeclaration (this._kingdom2);
 			}
-			if(!this.attacker.isDead){
-				this._warfare.CreateNewBattle (this.attacker);
-			}else{
-				if(!this.attacker.kingdom.isDead){
-					this._warfare.CreateNewBattle (this.attacker.kingdom);
+			if(!this._warfare.isOver){
+				if(this._warfare.kingdomSideWeariness.ContainsKey(this.attacker.kingdom.id)){
+					if(!this.attacker.isDead){
+						this._warfare.CreateNewBattle (this.attacker);
+					}else{
+						if(!this.attacker.kingdom.isDead){
+							this._warfare.CreateNewBattle (this.attacker.kingdom);
+						}
+					}
 				}
 			}
 		}
