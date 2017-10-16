@@ -14,12 +14,12 @@ public class Exterminator : Role {
     }
 
     internal override void Initialize(GameEvent gameEvent) {
-        if (gameEvent is Plague) {
-            base.Initialize(gameEvent);
-            this._plagueEvent = (Plague)gameEvent;
-            this._plagueEvent.AddAgentToList(this.citizen);
-            this.avatar.GetComponent<ExterminatorAvatar>().Init(this);
-        }
+        //if (gameEvent is Plague) {
+        //    base.Initialize(gameEvent);
+        //    this._plagueEvent = (Plague)gameEvent;
+        //    this._plagueEvent.AddAgentToList(this.citizen);
+        //    this.avatar.GetComponent<ExterminatorAvatar>().Init(this);
+        //}
     }
 
 //    internal override void Attack() {

@@ -142,81 +142,6 @@ public class Utilities : MonoBehaviour {
         BIOMES.SNOW
     };
 
-    public static Dictionary<RESOURCE, Dictionary<RESOURCE_BENEFITS, float>> resourceBenefits = new Dictionary<RESOURCE, Dictionary<RESOURCE_BENEFITS, float>>() {
-        //Food
-        { RESOURCE.CORN,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.GROWTH_RATE, 4f }
-            }
-        },
-        {RESOURCE.WHEAT,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.GROWTH_RATE, 8f }
-            }
-        },
-        {RESOURCE.RICE,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.GROWTH_RATE, 8f }
-            }
-        },
-        {RESOURCE.DEER,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.GROWTH_RATE, 4f }
-            }
-        },
-        {RESOURCE.PIG,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.GROWTH_RATE, 8f }
-            }
-        },
-        {RESOURCE.BEHEMOTH,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.GROWTH_RATE, 8f }
-            }
-        },
-
-        //Lumber
-        {RESOURCE.OAK,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.EXPANSION_RATE, 1f }
-            }
-        },
-        {RESOURCE.EBONY,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.EXPANSION_RATE, 1.5f }
-            }
-        },
-
-        //Stone
-        {RESOURCE.GRANITE,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.EXPANSION_RATE, 1f }
-            }
-        },
-        {RESOURCE.SLATE,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.EXPANSION_RATE, 1.5f }
-            }
-        },
-
-        //Special
-        {RESOURCE.MANA_STONE,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.TECH_LEVEL, 3f }
-            }
-        },
-        {RESOURCE.MITHRIL,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.TECH_LEVEL, 3f }
-            }
-        },
-        {RESOURCE.COBALT,
-            new Dictionary<RESOURCE_BENEFITS, float>() {
-                { RESOURCE_BENEFITS.TECH_LEVEL, 3f }
-            }
-        },
-    };
-
 	public static Dictionary<BIOMES, SpecialResourceChance> specialResourcesLookup = new Dictionary<BIOMES, SpecialResourceChance> () { 
 		{BIOMES.BARE, new SpecialResourceChance(
 			new RESOURCE[] {RESOURCE.NONE}, 
@@ -266,81 +191,6 @@ public class Utilities : MonoBehaviour {
             new int[] {50, 50, 5})
         },
 
-	};
-
-	public static Dictionary<ROLE, int> defaultCitizenCreationTable = new Dictionary<ROLE, int>(){
-		{ROLE.TRADER, 2},
-		{ROLE.GENERAL, 2},
-		{ROLE.SPY, 1},
-		{ROLE.ENVOY, 1},
-		{ROLE.GUARDIAN, 1}
-	};
-
-	public static Dictionary<TRAIT, Dictionary<ROLE, int>> citizenCreationTable = new Dictionary<TRAIT, Dictionary<ROLE, int>>(){
-		{TRAIT.SCHEMING, new Dictionary<ROLE, int>(){
-				{ROLE.TRADER, 0},
-				{ROLE.GENERAL, 0},
-				{ROLE.SPY, 1},
-				{ROLE.ENVOY, 0},
-				{ROLE.GUARDIAN, -10}
-			}
-		},
-		{TRAIT.HONEST, new Dictionary<ROLE, int>(){
-				{ROLE.TRADER, 0},
-				{ROLE.GENERAL, 0},
-				{ROLE.SPY, -10},
-				{ROLE.ENVOY, 1},
-				{ROLE.GUARDIAN, 0}
-			}
-		},
-		{TRAIT.WARMONGER, new Dictionary<ROLE, int>(){
-				{ROLE.TRADER, -1},
-				{ROLE.GENERAL, 1},
-				{ROLE.SPY, 1},
-				{ROLE.ENVOY, -10},
-				{ROLE.GUARDIAN, 0}
-			}
-		},
-		{TRAIT.PACIFIST, new Dictionary<ROLE, int>(){
-				{ROLE.TRADER, 1},
-				{ROLE.GENERAL, -1},
-				{ROLE.SPY, -10},
-				{ROLE.ENVOY, 0},
-				{ROLE.GUARDIAN, 1}
-			}
-		},
-//		{BEHAVIOR_TRAIT.CHARISMATIC, new Dictionary<ROLE, int>(){
-//				{ROLE.TRADER, 0},
-//				{ROLE.GENERAL, 0},
-//				{ROLE.SPY, 0},
-//				{ROLE.ENVOY, 0},
-//				{ROLE.GUARDIAN, 0}
-//			}
-//		},
-//		{BEHAVIOR_TRAIT.REPULSIVE, new Dictionary<ROLE, int>(){
-//				{ROLE.TRADER, 0},
-//				{ROLE.GENERAL, 0},
-//				{ROLE.SPY, 0},
-//				{ROLE.ENVOY, 0},
-//				{ROLE.GUARDIAN, 0}
-//			}
-//		},
-//		{BEHAVIOR_TRAIT.AGGRESSIVE, new Dictionary<ROLE, int>(){
-//				{ROLE.TRADER, 0},
-//				{ROLE.GENERAL, 0},
-//				{ROLE.SPY, 0},
-//				{ROLE.ENVOY, 0},
-//				{ROLE.GUARDIAN, 0}
-//			}
-//		},
-//		{BEHAVIOR_TRAIT.DEFENSIVE, new Dictionary<ROLE, int>(){
-//				{ROLE.TRADER, 0},
-//				{ROLE.GENERAL, 0},
-//				{ROLE.SPY, 0},
-//				{ROLE.ENVOY, 0},
-//				{ROLE.GUARDIAN, 0}
-//			}
-//		},
 	};
 
 //	public static string CauseOfAccident(){
@@ -1418,7 +1268,25 @@ public class Utilities : MonoBehaviour {
     }
     #endregion
 
-	public static List<T> Intersect<T> (List<T> firstList, List<T> secondList){
+    #region Plague
+    public static string[] plagueAdjectives = new string[] {
+        "Red", "Green", "Yellow", "Black", "Rotting", "Silent", "Screaming", "Trembling", "Sleeping",
+        "Cat", "Dog", "Pig", "Lamb", "Lizard", "Bog", "Death", "Stomach", "Eye", "Finger", "Rabid",
+        "Fatal", "Blistering", "Icy", "Scaly", "Sexy", "Violent", "Necrotic", "Foul", "Vile", "Nasty",
+        "Ghastly", "Malodorous", "Cave", "Phantom", "Wicked", "Strange"
+    };
+
+    public static string[] plagueDieseases = new string[] {
+        "Sores", "Ebola", "Anthrax", "Pox", "Face", "Sneeze", "Gangrene", "Throat", "Rash", "Warts",
+        "Cholera", "Colds", "Ache", "Syndrome", "Tumor", "Chills", "Blisters", "Mouth", "Fever", "Delirium",
+        "Measles", "Mutata", "Disease"
+    };
+    public static string GeneratePlagueName() {
+        return plagueAdjectives[UnityEngine.Random.Range(0, plagueAdjectives.Length)] + " " + plagueDieseases[UnityEngine.Random.Range(0, plagueDieseases.Length)];
+    }
+    #endregion
+
+    public static List<T> Intersect<T> (List<T> firstList, List<T> secondList){
 		List<T> newList = new List<T> ();
 		for (int i = 0; i < firstList.Count; i++) {
 			for (int j = 0; j < secondList.Count; j++) {

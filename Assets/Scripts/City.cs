@@ -843,9 +843,9 @@ public class City{
         //    this.kingdom.UnHighlightAllOwnedTilesInKingdom();
         //}
 
-        if(this.plague != null) {
-            this.plague.CheckIfCityIsCured(this);
-        }
+        //if(this.plague != null) {
+        //    this.plague.CheckIfCityIsCured(this);
+        //}
     }
 
 	internal void ResetToDefaultHP(){

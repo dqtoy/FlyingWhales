@@ -25,18 +25,17 @@ public class King : Role {
 		//this.SetOwnedKingdom(this.citizen.city.kingdom);
 		//this.citizen.GenerateCharacterValues ();
 		//this.abductionCounter = 0;
-		if(this.citizen.city.kingdom.plague != null){
-			this.citizen.city.kingdom.plague.UpdateApproach (this.citizen.city.kingdom);
-		}
-		this.isRumoring = false;
-		this.isHiddenHistoryBooking = false;
+		//if(this.citizen.city.kingdom.plague != null){
+		//	this.citizen.city.kingdom.plague.UpdateApproach (this.citizen.city.kingdom);
+		//}
+		//this.isRumoring = false;
+		//this.isHiddenHistoryBooking = false;
 	}
 
 	internal override void OnDeath (){
 		base.OnDeath ();
         //Trigger Succession
-        Citizen successor = ownedKingdom.GetCitizenWithRoleInKingdom(ROLE.CROWN_PRINCE);
-        ownedKingdom.AssignNewKing(successor);
+        ownedKingdom.AssignNewKing();
 	}
 	internal void SetOwnedKingdom(Kingdom ownedKingdom){
 		this.ownedKingdom = ownedKingdom;

@@ -123,10 +123,10 @@ public class KingdomManager : MonoBehaviour {
             }
         } else {
             if (king != null) {
-                newKingdom.AssignNewKing(king);
                 if (king.spouse != null) {
                     king.spouse.AssignRole(ROLE.QUEEN);
                 }
+                newKingdom.AssignNewKing(king);
             }
         }
 

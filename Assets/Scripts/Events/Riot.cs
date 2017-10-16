@@ -5,95 +5,30 @@ using System.Linq;
 
 public class Riot : GameEvent {
 
-	public Rebel rebel;
-	internal Kingdom sourceKingdom;
-	public Riot(int startWeek, int startMonth, int startYear, Citizen startedBy) : base (startWeek, startMonth, startYear, startedBy){
+
+	public Riot(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom) : base (startWeek, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.RIOT;
 		this.name = "Riot";
-		//		this.description = startedBy.name + " invited " + visitor.citizen.name + " of " + invitedKingdom.name + " to visit his/her kingdom.";
-		this.durationInDays = EventManager.Instance.eventDuration[this.eventType];
-		this.remainingDays = this.durationInDays;
-		this.sourceKingdom = startedBy.city.kingdom;
-		this.sourceKingdom.SetRiot (true);
-		Debug.Log (startedBy.name + " has started a riot in " + this.sourceKingdom.name);
 
-		Log newLogTitle = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "event_title");
-		newLogTitle.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        //The kingdom will lose 25% of its Weapons and 25% of its Armors.
+        int weaponLoss = Mathf.FloorToInt((float)sourceKingdom.baseWeapons * 0.25f);
+        int armorLoss = Mathf.FloorToInt((float)sourceKingdom.baseArmor * 0.25f);
 
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "start");
-		newLog.AddToFillers (this.sourceKingdom, this.sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        sourceKingdom.AdjustBaseWeapons(-weaponLoss);
+        sourceKingdom.AdjustBaseArmors(-armorLoss);
 
-		Messenger.AddListener("OnDayEnd", this.PerformAction);
-		EventManager.Instance.AddEventToDictionary (this);
-		//		this.EventIsCreated ();
+        //Stability will reset to 50.
+        sourceKingdom.ChangeStability(50);
 
-		this.EventIsCreated (this.sourceKingdom, true);
+        Log newLog = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "riot_start");
+        newLog.AddToFillers(sourceKingdom, sourceKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
+        newLog.AddToFillers(null, weaponLoss.ToString(), LOG_IDENTIFIER.OTHER);
+        newLog.AddToFillers(null, armorLoss.ToString(), LOG_IDENTIFIER.WAR_NAME); //TODO: Change this to another identifier once a more appropriate one is available
 
-        //Decrease Presitge of source Kingdom
-        sourceKingdom.AdjustPrestige(-50);
+        UIManager.Instance.ShowNotification(newLog);
+
+        DoneEvent();
     }
 
-    #region Overrides
-    internal override void PerformAction (){
-		this.remainingDays -= 1;
-		if(this.remainingDays <= 0){
-			this.remainingDays = 0;
-			DoneEvent ();
-		}else{
-			if(!this.sourceKingdom.isAlive()){
-				CancelEvent ();
-				return;
-			}
-			if(this.remainingDays % 5 == 0){
-				AttemptToDestroyStructure ();
-			}
-		}
-	}
-//	internal override void DoneCitizenAction (Citizen citizen){
-//		base.DoneCitizenAction(citizen);
-//		if(this.saboteur != null){
-//			if(citizen.id == this.saboteur.citizen.id){
-//				AttemptToSabotage();
-//			}
-//		}
-//	}
-//	internal override void DeathByOtherReasons(){
-//		this.DoneEvent();
-//	}
-//	internal override void DeathByAgent(Citizen citizen){
-//		this.saboteur.citizen.Death (DEATH_REASONS.BATTLE);
-//		this.DoneEvent();
-//	}
-	internal override void DoneEvent(){
-		base.DoneEvent();
-		this.sourceKingdom.SetRiot (false);
 
-		Messenger.RemoveListener("OnDayEnd", this.PerformAction);
-
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "event_end");
-	}
-	internal override void CancelEvent (){
-		base.CancelEvent ();
-		this.DoneEvent ();
-	}
-	#endregion
-	private void AttemptToDestroyStructure(){
-		int chance = UnityEngine.Random.Range(0, 100);
-		if(chance < 15){
-			List<City> candidates = this.sourceKingdom.cities.Where (x => x.structures.Count > 0).ToList ();
-			if(candidates != null && candidates.Count > 0){
-				City chosenCity = candidates[UnityEngine.Random.Range(0, candidates.Count)];
-				DestroyStructure (chosenCity);
-			}
-		}
-	}
-
-	private void DestroyStructure(City city){
-		//Destroy a structure
-		Debug.Log("DESTROYED A STRUCTURE IN " + city.name);
-		city.RemoveTileFromCity(city.structures[city.structures.Count - 1]);
-
-		Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Riot", "destroy_settlement");
-		newLog.AddToFillers (city, city.name, LOG_IDENTIFIER.CITY_1);
-	}
 }

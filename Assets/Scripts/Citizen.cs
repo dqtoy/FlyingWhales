@@ -234,6 +234,14 @@ public class Citizen {
         } else {
             this.assignedRole = null;
         }
+
+        if(role != ROLE.UNTRAINED) {
+            List<Citizen> citizensWithSameRole = this.city.kingdom.GetCitizensWithRoleInKingdom(role);
+            if (citizensWithSameRole.Count > 1) {
+                throw new System.Exception("There is more than one " + role.ToString() + " in " + this.city.kingdom.name);
+            }
+        }
+        
     }
 
     #region Family Functions
@@ -1083,6 +1091,10 @@ public class Citizen {
 
         //Remove citizen that started rebellion from kingdom
         sourceKingdom.RemoveCitizenFromKingdom(this, this.city);
+
+        //Remove citizen that started rebellion from source kingdom succession
+        sourceKingdom.RemoveFromSuccession(this);
+
         //Transfer Royalties That are in the cities for rebellion
         for (int i = 0; i < citiesForRebellion.Count; i++) {
             City currRebellingCity = citiesForRebellion[i];

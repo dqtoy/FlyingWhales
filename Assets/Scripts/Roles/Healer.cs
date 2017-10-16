@@ -15,11 +15,11 @@ public class Healer : Role {
     }
 
     internal override void Initialize(GameEvent gameEvent) {
-        if (gameEvent is Plague) {
-            base.Initialize(gameEvent);
-            this._plagueEvent = (Plague)gameEvent;
-            this._plagueEvent.AddAgentToList(this.citizen);
-            this.avatar.GetComponent<HealerAvatar>().Init(this);
-        }
+        //if (gameEvent is Plague) {
+        //    base.Initialize(gameEvent);
+        //    this._plagueEvent = (Plague)gameEvent;
+        //    this._plagueEvent.AddAgentToList(this.citizen);
+        //    this.avatar.GetComponent<HealerAvatar>().Init(this);
+        //}
     }
 }

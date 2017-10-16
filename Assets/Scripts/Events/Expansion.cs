@@ -38,7 +38,7 @@ public class Expansion : GameEvent {
 
 	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
-		CheckIfCitizenIsCarryingPlague(citizen);
+		//CheckIfCitizenIsCarryingPlague(citizen);
 		if (this.hexTileToExpandTo.city == null || this.hexTileToExpandTo.city.id == 0) {
 			City newCity = this.startedByKingdom.CreateNewCityOnTileForKingdom (this.hexTileToExpandTo);
             newCity.SetupInitialValues();
@@ -52,7 +52,7 @@ public class Expansion : GameEvent {
                     otherKingdom.SetFogOfWarStateForRegion(newCity.region, FOG_OF_WAR_STATE.SEEN);
                 }
             }
-            this.CheckIfCitizenIsCarryingPlague(citizen);
+            //this.CheckIfCitizenIsCarryingPlague(citizen);
 
 
 			Log newLog = this.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Expansion", "expand");

@@ -49,42 +49,39 @@ public class EventCreator: MonoBehaviour {
 
 
 	internal Riot CreateRiotEvent(Kingdom sourceKingdom){
-		if(sourceKingdom.isLockedDown){
-			return null;
-		}
-		Citizen rebel = sourceKingdom.capitalCity.CreateAgent(ROLE.REBEL, EVENT_TYPES.RIOT, sourceKingdom.capitalCity.hexTile, EventManager.Instance.eventDuration[EVENT_TYPES.RIOT]);
-		if(rebel != null){
-			Riot riot = new Riot(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, rebel);
-			rebel.assignedRole.Initialize (riot);
-			return riot;
-		}
-		return null;
+		Riot riot = new Riot(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, sourceKingdom);
+		return riot;
 	}
 
-	internal Plague CreatePlagueEvent(){
-		Debug.Log ("CREATING PLAGUE EVENT");
-		List<Kingdom> targetKingdoms = KingdomManager.Instance.allKingdoms.Where (x => x.stability >= 0 && x.cities.FirstOrDefault (y => y.ownedTiles.Count >= 2) != null).ToList();
-		if(targetKingdoms != null && targetKingdoms.Count > 0){
-			Kingdom plaguedKingdom = targetKingdoms [UnityEngine.Random.Range (0, targetKingdoms.Count)];
-			List<City> targetCities = plaguedKingdom.cities.Where (x => x.ownedTiles.Count >= 2).ToList();
-			City plaguedCity = targetCities [UnityEngine.Random.Range (0, targetCities.Count)];
-			if(plaguedCity != null){
-				Plague plague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, plaguedCity);
-				return plague;
-			}
-		}
-		return null;
-	}
-	internal Plague CreatePlagueEvent(Kingdom kingdom){
-		Debug.Log ("CREATING FORCE PLAGUE EVENT");
-		List<City> targetCities = kingdom.cities.Where (x => x.structures.Count > 0).ToList();
-		City plaguedCity = targetCities [UnityEngine.Random.Range (0, targetCities.Count)];
-		if(plaguedCity != null){
-			Plague plague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, plaguedCity);
-			return plague;
-		}
-		return null;
-	}
+	//internal Plague CreatePlagueEvent(){
+	//	Debug.Log ("CREATING PLAGUE EVENT");
+	//	List<Kingdom> targetKingdoms = KingdomManager.Instance.allKingdoms.Where (x => x.stability >= 0 && x.cities.FirstOrDefault (y => y.ownedTiles.Count >= 2) != null).ToList();
+	//	if(targetKingdoms != null && targetKingdoms.Count > 0){
+	//		Kingdom plaguedKingdom = targetKingdoms [UnityEngine.Random.Range (0, targetKingdoms.Count)];
+	//		List<City> targetCities = plaguedKingdom.cities.Where (x => x.ownedTiles.Count >= 2).ToList();
+	//		City plaguedCity = targetCities [UnityEngine.Random.Range (0, targetCities.Count)];
+	//		if(plaguedCity != null){
+	//			Plague plague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, plaguedCity);
+	//			return plague;
+	//		}
+	//	}
+	//	return null;
+	//}
+	//internal Plague CreatePlagueEvent(Kingdom kingdom){
+	//	Debug.Log ("CREATING FORCE PLAGUE EVENT");
+	//	List<City> targetCities = kingdom.cities.Where (x => x.structures.Count > 0).ToList();
+	//	City plaguedCity = targetCities [UnityEngine.Random.Range (0, targetCities.Count)];
+	//	if(plaguedCity != null){
+	//		Plague plague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, plaguedCity);
+	//		return plague;
+	//	}
+	//	return null;
+	//}
+
+    internal Plague CreatePlagueEvent(Kingdom infectedKingdom) {
+        Plague newPlague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, infectedKingdom);
+        return newPlague;
+    }
 
 	internal HuntLair CreateHuntLairEvent(Kingdom sourceKingdom){
 		if(sourceKingdom.isLockedDown){
