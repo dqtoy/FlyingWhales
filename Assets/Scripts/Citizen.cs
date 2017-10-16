@@ -159,7 +159,7 @@ public class Citizen {
 		return 2;
 	}
     internal void AssignRole(ROLE role) {
-        if(this.role == role) {
+        if(this.role == role && role != ROLE.UNTRAINED) {
             throw new System.Exception(this.name + " is being assigned the role of " + role.ToString() + " even if he/she is already a " + this.role.ToString());
         }
         if (this.role != ROLE.UNTRAINED && this.role != role) {
@@ -235,7 +235,7 @@ public class Citizen {
             this.assignedRole = null;
         }
 
-        if(role != ROLE.UNTRAINED) {
+        if(role != ROLE.UNTRAINED && role != ROLE.GOVERNOR) {
             List<Citizen> citizensWithSameRole = this.city.kingdom.GetCitizensWithRoleInKingdom(role);
             if (citizensWithSameRole.Count > 1) {
                 throw new System.Exception("There is more than one " + role.ToString() + " in " + this.city.kingdom.name);
@@ -485,11 +485,6 @@ public class Citizen {
         Kingdom kingdomOfCitizen = this.city.kingdom;
         kingdomOfCitizen.RemoveCitizenFromKingdom(this, cityOfCitizen);
 
-        //Manage Citizen Marriage
-        if (this.isMarried && this._spouse != null) {
-            MarriageManager.Instance.DivorceCouple(this, spouse);
-        }
-
         //Manage Citizen Inheritance
         kingdomOfCitizen.RemoveFromSuccession(this);
 
@@ -502,7 +497,12 @@ public class Citizen {
                 this.assignedRole = null;
             }
         }
-        
+
+        //Manage Citizen Marriage
+        if (this.isMarried && this._spouse != null) {
+            MarriageManager.Instance.DivorceCouple(this, spouse);
+        }
+
 
         //Unregister citizen from the manager (The manager handles random deaths)
         CitizenManager.Instance.UnregisterCitizen(this);
@@ -1098,15 +1098,14 @@ public class Citizen {
         //Transfer Royalties That are in the cities for rebellion
         for (int i = 0; i < citiesForRebellion.Count; i++) {
             City currRebellingCity = citiesForRebellion[i];
-            sourceKingdom.TransferCitizensFromCityToCapital(currRebellingCity);
+            sourceKingdom.TransferCitizensFromCityToCapital(currRebellingCity, new HashSet<Citizen>() { this });
         }
         
 
         ROLE previousRole = this.role;
         City previousCity = this.city;
-        Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { }, false, sourceKingdom, true, this);
+        Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { }, false, sourceKingdom, false);
         KingdomManager.Instance.TransferCitiesToOtherKingdom(sourceKingdom, newKingdom, citiesForRebellion);
-        newKingdom.HighlightAllOwnedTilesInKingdom();
 
         //Transfer family of citizen to the capital city of the new kingdom
         //if this citizen was a crown prince, bring his/her spouse and children,
@@ -1130,6 +1129,10 @@ public class Citizen {
             citizensToTransfer.AddRange(GetRelatives(-1));
         }
 
+        if (this.spouse != null) {
+            this.spouse.AssignRole(ROLE.QUEEN);
+        }
+        newKingdom.AssignNewKing(this);
 
         for (int i = 0; i < citizensToTransfer.Count; i++) {
             Citizen currCitizen = citizensToTransfer[i];
@@ -1145,8 +1148,16 @@ public class Citizen {
 
         newKingdom.UpdateKingSuccession();
 
+        Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
+
+        for (int i = 0; i < newKingdom.regions.Count; i++) {
+            newKingdom.regions[i].CheckForDiscoveredKingdoms();
+        }
+
         newKingdom.UpdateAllRelationshipsLikeness();
         newKingdom.UpdateAllCitizensOpinionOfKing();
+
+        newKingdom.HighlightAllOwnedTilesInKingdom();
 
         //Transfer population from sourceKingdom
         int totalCities = newKingdom.cities.Count + sourceKingdom.cities.Count;

@@ -1044,11 +1044,15 @@ public class Kingdom{
 		}
         return kingdomsWithRelationshipStatus;
     }
-    internal KingdomRelationship GetRelationshipWithKingdom(Kingdom kingdom) {
+    internal KingdomRelationship GetRelationshipWithKingdom(Kingdom kingdom, bool ignoreException = false) {
         if (relationships.ContainsKey(kingdom)) {
             return relationships[kingdom];
         } else {
-            throw new Exception(this.name + " does not have relationship with " + kingdom.name);
+            if (ignoreException) {
+                return null;
+            } else {
+                throw new Exception(this.name + " does not have relationship with " + kingdom.name);
+            }
         }
         
     }
@@ -1366,7 +1370,9 @@ public class Kingdom{
         if ((capitalCity == null || capitalCity.isDead) && this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
-        _citizens.Add(city, new List<Citizen>());
+        if (!_citizens.ContainsKey(city)) {
+            _citizens.Add(city, new List<Citizen>());
+        }
         KingdomManager.Instance.UpdateKingdomList();
     }
     /* 
@@ -1392,8 +1398,8 @@ public class Kingdom{
         List<Citizen> remainingCitizens = new List<Citizen>();
         if (_citizens.ContainsKey(city)) {
             remainingCitizens.AddRange(_citizens[city]);
-            _citizens.Remove(city);
         }
+        _citizens.Remove(city);
         UIManager.Instance.UpdateKingdomCitiesMenu();
         return remainingCitizens;
     }
@@ -1488,9 +1494,10 @@ public class Kingdom{
         }
         return citizensWithRole;
     }
-    internal void TransferCitizensFromCityToCapital(City sourceCity) {
+    internal void TransferCitizensFromCityToCapital(City sourceCity, HashSet<Citizen> exceptions = null) {
         List<Citizen> importantCitizensInCity = new List<Citizen>(sourceCity.citizens.Where(x => x.role == ROLE.KING 
             || x.role == ROLE.GRAND_CHANCELLOR || x.role == ROLE.GRAND_MARSHAL));
+
         //Get Families of important citizens
         List<Citizen> citizensToTransfer = new List<Citizen>();
         for (int i = 0; i < importantCitizensInCity.Count; i++) {
@@ -1499,7 +1506,7 @@ public class Kingdom{
             List<Citizen> familyOfCurrCitizen = currImportantCitizen.GetRelatives(-1);
             for (int j = 0; j < familyOfCurrCitizen.Count; j++) {
                 Citizen currFamilyMember = familyOfCurrCitizen[j];
-                if (!citizensToTransfer.Contains(currFamilyMember)) {
+                if (!citizensToTransfer.Contains(currFamilyMember) && (exceptions == null || !exceptions.Contains(currFamilyMember)) && currFamilyMember.city.kingdom.id == currImportantCitizen.city.kingdom.id) {
                     citizensToTransfer.Add(currFamilyMember);
                 }
             }
@@ -2386,9 +2393,9 @@ public class Kingdom{
             if(kingdomSize != KINGDOM_SIZE.SMALL) {
                 //Large or medium kingdom
                 int chance = UnityEngine.Random.Range(0, 100);
-                if(chance < 40) {
+                if (chance < 40) {
                     StartAutomaticRebellion();
-                } else if(chance >= 40 && chance < 70) {
+                } else if (chance >= 40 && chance < 70) {
                     EventCreator.Instance.CreatePlagueEvent(this);
                 } else {
                     EventCreator.Instance.CreateRiotEvent(this);
@@ -2591,8 +2598,8 @@ public class Kingdom{
         }
         for (int i = 0; i < kingdomsToCheck.Count; i++) {
             Kingdom otherKingdom = kingdomsToCheck[i];
-            KingdomRelationship kr = GetRelationshipWithKingdom(otherKingdom);
-            if (kr.isAdjacent) {
+            KingdomRelationship kr = GetRelationshipWithKingdom(otherKingdom, true);
+            if (kr != null && kr.isAdjacent) {
                 bool isValid = false;
                 //Revalidate adjacency
                 for (int j = 0; j < cities.Count; j++) {

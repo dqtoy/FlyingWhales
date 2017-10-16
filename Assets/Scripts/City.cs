@@ -815,7 +815,6 @@ public class City{
             LevelUpBalanceOfPower();
         }
 
-        _region.CheckForDiscoveredKingdoms();
         this.hexTile.UpdateCityNamePlate();
         CameraMove.Instance.UpdateMinimapTexture();
 		if(Messenger.eventTable.ContainsKey("CityTransfered")){
