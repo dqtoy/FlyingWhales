@@ -91,15 +91,6 @@ public class CityTaskManager : MonoBehaviour {
 		Task.current.Succeed();
 	}
 
-	[Task]
-	private void HasRebellion(){
-		if(this.city.rebellion != null){
-			Task.current.Succeed();
-		}else{
-			Task.current.Fail();
-		}
-	}
-
     [Task]
     private bool HasReachedLevelCap() {
         return city.ownedTiles.Count >= city.region.cityLevelCap;

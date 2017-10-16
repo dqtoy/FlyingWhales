@@ -26,13 +26,9 @@ public class KingdomRelationship {
 	private bool _isDiscovered;
 	private bool _isRecentWar;
 //	private bool _isPreparingForWar;
-    private Wars _war;
-    private InvasionPlan _invasionPlan;
-    private RequestPeace _requestPeace;
+
     private KingdomWar _kingdomWarData;
     private GameDate _requestPeaceCooldown;
-    private MilitaryAllianceOffer _currentActiveMilitaryAllianceOffer;
-    private MutualDefenseTreaty _currentActiveDefenseTreatyOffer;
 
 	private bool _isMilitaryAlliance;
 	private bool _isMutualDefenseTreaty;
@@ -89,44 +85,18 @@ public class KingdomRelationship {
 //	public bool isPreparingForWar {
 //		get { return this._isPreparingForWar; }
 //	}
-    public Wars war {
-        get { return _war; }
-    }
+
     public bool isSharingBorder {
         get { return _isSharingBorder; }
     }
     public KingdomWar kingdomWarData {
         get { return _kingdomWarData; }
     }
-    public InvasionPlan invasionPlan {
-        get { return _invasionPlan; }
-    }
-    public RequestPeace requestPeace {
-        get { return _requestPeace; }
-    }
+
     public GameDate requestPeaceCooldown {
         get { return _requestPeaceCooldown; }
     }
-    public MilitaryAllianceOffer currentActiveMilitaryAllianceOffer {
-        get { return _currentActiveMilitaryAllianceOffer; }
-        set {
-            if(_currentActiveMilitaryAllianceOffer != null && _currentActiveMilitaryAllianceOffer.isActive) {
-                throw new System.Exception (_sourceKingdom.name + " still has an active military alliance offer with " + _targetKingdom.name);
-            } else {
-                _currentActiveMilitaryAllianceOffer = value;
-            }
-        }
-    }
-    public MutualDefenseTreaty currentActiveDefenseTreatyOffer {
-        get { return _currentActiveDefenseTreatyOffer; }
-        set {
-            if (_currentActiveDefenseTreatyOffer != null && _currentActiveDefenseTreatyOffer.isActive) {
-                throw new System.Exception(_sourceKingdom.name + " still has an active defense treaty offer with " + _targetKingdom.name);
-            } else {
-                _currentActiveDefenseTreatyOffer = value;
-            }
-        }
-    }
+
     public bool isMilitaryAlliance {
 		get { return this._isMilitaryAlliance; }
 	}
@@ -572,9 +542,6 @@ public class KingdomRelationship {
             //Deteriorate Relationship
             _sourceKingdom.OnRelationshipDeteriorated(this, gameEventTrigger, isDiscovery, assassinationReasons);
             CheckForEmbargo(previousStatus, gameEventTrigger);
-            if (gameEventTrigger != null && gameEventTrigger.eventType != EVENT_TYPES.KINGDOM_WAR) {
-                 _sourceKingdom.WarTrigger(this, gameEventTrigger, _sourceKingdom.kingdomTypeData, gameEventTrigger.warTrigger);
-            }
         } else {
             //Improve Relationship
             _sourceKingdom.OnRelationshipImproved(this);
@@ -673,78 +640,6 @@ public class KingdomRelationship {
      * NOTE: sourceKingdom and targetKingdom must already have a war event between them for this to work
      * </summary>
      * */
-    internal void CreateInvasionPlan(GameEvent gameEventTrigger) {
-        if (_invasionPlan == null) {
-//            _invasionPlan = new InvasionPlan(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-//            _sourceKingdom.king, _sourceKingdom, _targetKingdom, gameEventTrigger, _war);
-        } else {
-            throw new Exception (_sourceKingdom.name + " already has an invasion plan towards " + _targetKingdom.name);
-        }
-    }
-
-    internal void AssignRequestPeaceEvent(RequestPeace rp) {
-        _requestPeace = rp;
-    }
-
-    /*
-     * <summary>
-     * Declare peace between sourceKingdom and targetKingdom
-     * </summary>
-     * */
-    internal void DeclarePeace() {
-        if (this._invasionPlan != null && this._invasionPlan.isActive) {
-            this._invasionPlan.CancelEvent();
-            this._invasionPlan = null;
-        }
-
-        if (this._requestPeace != null && this._requestPeace.isActive) {
-//            this._war.GameEventWarWinner(this._targetKingdom);
-            this._requestPeace.CancelEvent();
-            this._requestPeace = null;
-        }
-        this._war = null;
-        this._isAtWar = false;
-    }
-
-    internal void TriggerRequestPeace() {
-        this._kingdomWarData.citiesLost += 1;
-        if (this._sourceKingdom.cities.Count > 1 && _requestPeaceCooldown.month == 0) {
-            int peaceValue = 20;
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (this._war != null && chance < (peaceValue * this._kingdomWarData.citiesLost)) {
-                //Request Peace
-//                this._war.RequestPeace(this._sourceKingdom);
-            }
-        }
-    }
-
-    /*
-     * <summary>
-     * Queue sourceKingdom for request peace cooldown.
-     * A kingdom can only request peace once every 3 months
-     * </summary>
-     * */
-    internal void SetMoveOnPeriodAfterRequestPeaceRejection() {
-		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead){
-	        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-	        dueDate.AddMonths(3);
-	        _requestPeaceCooldown = dueDate;
-	        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => ResetRequestPeaceCooldown());
-		}
-    }
-
-    /*
-     * <summary>
-     * Reset Request Peace Cooldown
-     * </summary>
-     * */
-    private void ResetRequestPeaceCooldown() {
-        _requestPeaceCooldown = new GameDate(0,0,0);
-    }
-
-    internal void AssignWarEvent(Wars war) {
-        _war = war;
-    }
 
     internal void SetWarStatus(bool warStatus, Warfare warfare) {
 		if(this._isAtWar != warStatus){

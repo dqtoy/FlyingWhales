@@ -110,7 +110,6 @@ public class CitizenAvatar : PooledObject {
 			this.citizenRole.location.EnterCitizen (this.citizenRole.citizen);
 		}
 
-		this.CollectEvents();
         //this.CheckForKingdomDiscovery();
         this.UpdateFogOfWar();
 //        this.transform.SetParent(this.citizenRole.location.transform);
@@ -189,14 +188,6 @@ public class CitizenAvatar : PooledObject {
         //childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
     }
     #endregion
-
-    internal void CollectEvents() {
-        this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
-        //for (int i = 0; i < this.citizenRole.location.AllNeighbours.Count(); i++) {
-        //    HexTile currNeighbour = this.citizenRole.location.AllNeighbours.ElementAt(i);
-        //    currNeighbour.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
-        //}
-    }
 
     private void ResetValues() {
         this.collidedWithHostile = false;
@@ -393,7 +384,7 @@ public class CitizenAvatar : PooledObject {
 						KingdomRelationship relationship = kingdomOfThis.GetRelationshipWithKingdom (kingdomOfOther);
 						if (relationship != null) {
 							if (relationship.isAtWar) {
-								CombatManager.Instance.HasCollidedWithHostile (this.citizenRole, otherAgent.assignedRole);
+//								CombatManager.Instance.HasCollidedWithHostile (this.citizenRole, otherAgent.assignedRole);
 							}
 						}
 					}
@@ -410,7 +401,7 @@ public class CitizenAvatar : PooledObject {
 						KingdomRelationship relOfTraderWithGeneral = kingdomOfTrader.GetRelationshipWithKingdom(kingdomOfGeneral);
 						if (relOfGeneralWithTrader.relationshipStatus == RELATIONSHIP_STATUS.HATE || relOfGeneralWithTrader.relationshipStatus == RELATIONSHIP_STATUS.SPITE ||
 							relOfTraderWithGeneral.relationshipStatus == RELATIONSHIP_STATUS.HATE || relOfTraderWithGeneral.relationshipStatus == RELATIONSHIP_STATUS.SPITE) {
-							CombatManager.Instance.HasCollidedWithHostile(this.citizenRole, otherAgent.assignedRole);
+//							CombatManager.Instance.HasCollidedWithHostile(this.citizenRole, otherAgent.assignedRole);
 						}
 					}
 				}

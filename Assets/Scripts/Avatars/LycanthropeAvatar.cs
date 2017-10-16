@@ -116,7 +116,7 @@ public class LycanthropeAvatar : MonoBehaviour {
     public void HasDiedOfOtherReasons() {
         if (this.lycanthrope.citizen.isDead) {
             //Citizen has died
-            this.lycanthrope.lycanthropyEvent.DeathByOtherReasons();
+//            this.lycanthrope.lycanthropyEvent.DeathByOtherReasons();
             Task.current.Succeed();
         } else {
             Task.current.Fail();
@@ -236,10 +236,10 @@ public class LycanthropeAvatar : MonoBehaviour {
 
 
     void OnMouseEnter() {
-        if (!UIManager.Instance.IsMouseOnUI()) {
-            UIManager.Instance.ShowSmallInfo(this.lycanthrope.lycanthropyEvent.name);
-            this.HighlightPath();
-        }
+//        if (!UIManager.Instance.IsMouseOnUI()) {
+//            UIManager.Instance.ShowSmallInfo(this.lycanthrope.lycanthropyEvent.name);
+//            this.HighlightPath();
+//        }
     }
 
     void OnMouseExit() {
@@ -277,7 +277,7 @@ public class LycanthropeAvatar : MonoBehaviour {
     }
 
     public void OnEndAttack() {
-        this.lycanthrope.lycanthropyEvent.DoneCitizenAction(this.lycanthrope.citizen);
+//        this.lycanthrope.lycanthropyEvent.DoneCitizenAction(this.lycanthrope.citizen);
         //this.lycanthrope.DestroyGO();
         this.lycanthrope.avatar.SetActive(false);
     }

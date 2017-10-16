@@ -31,7 +31,7 @@ public class HuntLair : GameEvent {
 		if(this._ranger != null){
 			if(citizen.id == this._ranger.citizen.id){
 				if(this._ranger.location.lair != null){
-					CombatManager.Instance.LairBattle (this._ranger.location.lair, this._ranger);
+//					CombatManager.Instance.LairBattle (this._ranger.location.lair, this._ranger);
 				}
 				this._ranger.citizen.Death (DEATH_REASONS.BATTLE);
 			}

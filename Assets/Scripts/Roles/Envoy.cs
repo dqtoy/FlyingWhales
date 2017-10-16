@@ -14,25 +14,25 @@ public class Envoy : Role {
 	internal override void Initialize(GameEvent gameEvent){
         base.Initialize(gameEvent);
 		this.gameEvent = gameEvent;
-		if(this.gameEvent is BorderConflict){
-			BorderConflict bc = (BorderConflict)this.gameEvent;
-			bc.activeEnvoyResolve = this;
-		}else if(this.gameEvent is DiplomaticCrisis){
-			DiplomaticCrisis crisis = (DiplomaticCrisis)this.gameEvent;
-			crisis.activeEnvoyResolve = this;
-		}else if(this.gameEvent is JoinWar){
-			JoinWar joinWar = (JoinWar)this.gameEvent;
-			joinWar.envoyToSend = this;
-		}else if(this.gameEvent is StateVisit){
-			StateVisit stateVisit = (StateVisit)this.gameEvent;
-			stateVisit.visitor = this;
-		}else if(this.gameEvent is RequestPeace) {
-            //RequestPeace requestPeace = (RequestPeace)this.gameEvent;
-            //requestPeace.SetEnvoySent(this);
-		}else if(this.gameEvent is Secession){
-			Secession secession = (Secession)this.gameEvent;
-			secession.convincer = this;
-		}
+//		if(this.gameEvent is BorderConflict){
+//			BorderConflict bc = (BorderConflict)this.gameEvent;
+//			bc.activeEnvoyResolve = this;
+//		}else if(this.gameEvent is DiplomaticCrisis){
+//			DiplomaticCrisis crisis = (DiplomaticCrisis)this.gameEvent;
+//			crisis.activeEnvoyResolve = this;
+//		}else if(this.gameEvent is JoinWar){
+//			JoinWar joinWar = (JoinWar)this.gameEvent;
+//			joinWar.envoyToSend = this;
+//		}else if(this.gameEvent is StateVisit){
+//			StateVisit stateVisit = (StateVisit)this.gameEvent;
+//			stateVisit.visitor = this;
+//		}else if(this.gameEvent is RequestPeace) {
+//            //RequestPeace requestPeace = (RequestPeace)this.gameEvent;
+//            //requestPeace.SetEnvoySent(this);
+//		}else if(this.gameEvent is Secession){
+//			Secession secession = (Secession)this.gameEvent;
+//			secession.convincer = this;
+//		}
 //		else if(this.gameEvent is FirstAndKeystone){
 //			FirstAndKeystone firstAndKeystone = (FirstAndKeystone)this.gameEvent;
 //			firstAndKeystone.convincer = this;

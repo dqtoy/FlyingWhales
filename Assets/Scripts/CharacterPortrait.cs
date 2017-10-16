@@ -120,19 +120,6 @@ public class CharacterPortrait : MonoBehaviour {
 			relationshipCircles[1].SetActive(true);
 			relationshipCircles[0].GetComponent<RelationshipItem>().SetRelationship(relationship1, true);
 			relationshipCircles[1].GetComponent<RelationshipItem>().SetRelationship(relationship2, true);
-            //			relationshipCircles[0].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship1.relationshipStatus);
-            //			relationshipCircles[1].GetComponent<UI2DSprite>().color = Utilities.GetColorForRelationship(relationship2.relationshipStatus);
-            if (relationship1.sourceKingdom.militaryAlliances.Contains(relationship1.targetKingdom)) {
-                militaryAllianceIcon.SetActive(true);
-            } else {
-                militaryAllianceIcon.SetActive(false);
-            }
-
-            if (relationship1.sourceKingdom.mutualDefenseTreaties.Contains(relationship1.targetKingdom)) {
-                mutualDefenseIcon.SetActive(true);
-            } else {
-                mutualDefenseIcon.SetActive(false);
-            }
 
             kingdomThreatLvlLbl.text = "KT: " + relationship1.targetKingdomThreatLevel.ToString();
             invasionValueLbl.text = "IV: " + relationship1.targetKingdomInvasionValue.ToString();

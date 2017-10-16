@@ -17,10 +17,10 @@ public class Adventurer : Role {
     }
 
     internal override void Initialize(GameEvent gameEvent) {
-        if (gameEvent is Adventure) {
-            base.Initialize(gameEvent);
-            this.avatar.GetComponent<AdventurerAvatar>().Init(this);
-        }
+//        if (gameEvent is Adventure) {
+//            base.Initialize(gameEvent);
+//            this.avatar.GetComponent<AdventurerAvatar>().Init(this);
+//        }
     }
 
 //    internal override void Attack() {

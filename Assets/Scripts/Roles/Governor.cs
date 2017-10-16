@@ -55,44 +55,7 @@ public class Governor : Role {
 		this._eventModifiers.Add(expMod);
         _eventLoyaltyModifier += modification;
         SchedulingManager.Instance.AddEntry (expMod.dueDate.month, expMod.dueDate.day, expMod.dueDate.year, () => RemoveEventModifier(expMod));
-		GovernorEvents ();
-//        this._eventLoyaltyModifier += modification;
-//        if(_eventLoyaltyModifier < 0) {
-//            this._eventLoyaltySummary = "-" + _eventLoyaltyModifier.ToString() + "   Approval";
-//        } else if (_eventLoyaltyModifier > 0) {
-//            this._eventLoyaltySummary = "+" + _eventLoyaltyModifier.ToString() + "   Approval";
-//        } else {
-//            this._eventLoyaltySummary = _eventLoyaltyModifier.ToString() + "   Approval";
-//        }
     }
-//	private void UpdateEventModifiers(){
-//		this._eventLoyaltyModifier = 0;
-//		this._eventLoyaltySummary = string.Empty;
-//		List<EVENT_TYPES> eventTypes = this._eventModifiers.Keys;
-//		for (int i = 0; i < eventTypes.Count; i++) {
-//			for (int j = 0; j < this._eventModifiers[eventTypes[i]].Count; j++) {
-//				ExpirableModifier expMod = this._eventModifiers [eventTypes [i]] [j];
-//				this._eventLoyaltyModifier += expMod.modifier;
-//				if(expMod.modifier < 0){
-//					this._eventLoyaltySummary += "-" + expMod.modifier.ToString() + " " + expMod.modifierReason;
-//				}else{
-//					this._eventLoyaltySummary += "+" + expMod.modifier.ToString() + " " + expMod.modifierReason;
-//				}
-//			}
-//		}
-//	}
-
-	//private void CheckEventModifiers(){
-	//	for (int i = 0; i < this._eventModifiers.Count; i++) {
-	//		ExpirableModifier expMod = this._eventModifiers [i];
-	//		if(expMod.dueDate.day == GameManager.Instance.days && expMod.dueDate.month == GameManager.Instance.month && expMod.dueDate.year == GameManager.Instance.year){
-	//			RemoveEventModifierAt (i);
-	//			i--;
-	//		}
-
-	//	}
-	//}
-
 	private void RemoveEventModifierAt(int index){
         ExpirableModifier modToRemove = this._eventModifiers[index];
         if (modToRemove.modifier < 0) {
@@ -125,22 +88,6 @@ public class Governor : Role {
         this._eventLoyaltyModifier = 0;
         this._eventLoyaltySummary = string.Empty;
     }
-
-	private void GovernorEvents(){
-		if(!this.isInitial){
-			TriggerSecession ();
-		}else{
-			this.isInitial = false;
-		}
-	}
-	private void TriggerSecession(){
-		if(this.loyalty <= -50 && !this.citizen.city.kingdom.hasSecession){
-			int chance = UnityEngine.Random.Range (0, 100);
-			if(chance < 25){
-				EventCreator.Instance.CreateSecessionEvent(this.citizen);
-			}
-		}
-	}
 
 	internal override void OnDeath (){
 		base.OnDeath ();

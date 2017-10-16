@@ -17,26 +17,12 @@ public class Rebel : Role {
 //			this.avatar = GameObject.Instantiate (Resources.Load ("GameObjects/Reinforcer"), this.citizen.city.hexTile.transform) as GameObject;
 //			this.avatar.transform.localPosition = Vector3.zero;
 //			this.avatar.GetComponent<ReinforcerAvatar>().Init(this);
-		}else if(gameEvent is Rebellion){
-            base.Initialize(gameEvent);
-            Rebellion rebellion = (Rebellion)this.gameEvent;
-			rebellion.rebelLeader = this;
 		}
-	}
-
-//	internal override void Attack (){
-//		//		base.Attack ();
-//		if(this.avatar != null){
-//			this.avatar.GetComponent<ReinforcerAvatar> ().HasAttacked();
-//			if(this.avatar.GetComponent<ReinforcerAvatar> ().direction == DIRECTION.LEFT){
-//				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Left");
-//			}else if(this.avatar.GetComponent<ReinforcerAvatar> ().direction == DIRECTION.RIGHT){
-//				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Right");
-//			}else if(this.avatar.GetComponent<ReinforcerAvatar> ().direction == DIRECTION.UP){
-//				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Up");
-//			}else{
-//				this.avatar.GetComponent<ReinforcerAvatar> ().animator.Play ("Attack_Down");
-//			}
+//		else if(gameEvent is Rebellion){
+//            base.Initialize(gameEvent);
+//            Rebellion rebellion = (Rebellion)this.gameEvent;
+//			rebellion.rebelLeader = this;
 //		}
-//	}
+	}
+		
 }

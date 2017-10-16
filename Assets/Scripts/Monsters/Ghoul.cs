@@ -38,9 +38,6 @@ public class Ghoul : Monster {
 	}
 	internal override void DoneAction (){
 		base.DoneAction ();
-		if(this.targetLocation.isOccupied && this.targetLocation.isHabitable && (this.targetLocation.city != null && this.targetLocation.city.id != 0 && !this.targetLocation.city.isDead)){
-			CombatManager.Instance.CityBattleMonster(this.targetLocation.city, this);
-		}
 		this.Death();
 	}
 	#endregion

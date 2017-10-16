@@ -166,55 +166,7 @@ public class KingdomManager : MonoBehaviour {
             //currCity.hexTile.ShowNamePlate();
         }
     }
-
-	public void DeclareWarBetweenKingdoms(Wars war){
-
-//        KingdomRelationship king1Rel = kingdom1.GetRelationshipWithKingdom(kingdom2);
-//        KingdomRelationship king2Rel = kingdom2.GetRelationshipWithKingdom(kingdom1);
-
-		war.kingdom1Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
-		war.kingdom2Rel.ChangeRelationshipStatus(RELATIONSHIP_STATUS.HATE, war);
-
-//		war.kingdom1Rel.SetWarStatus(true);
-//		war.kingdom2Rel.SetWarStatus(true);
-
-		war.kingdom1Rel.kingdomWarData.ResetKingdomWar ();
-		war.kingdom2Rel.kingdomWarData.ResetKingdomWar ();
-
-//		kingdom1.AdjustExhaustionToAllRelationship (15);
-//		kingdom2.AdjustExhaustionToAllRelationship (15);
-
-//		kingdom1.AddInternationalWar(kingdom2);
-//		kingdom2.AddInternationalWar(kingdom1);
-
-        //kingdom1.RemoveAllTradeRoutesWithOtherKingdom(kingdom2);
-        //kingdom2.RemoveAllTradeRoutesWithOtherKingdom(kingdom1);
-
-		war.kingdom1.AdjustStability(STABILITY_DECREASE_WAR);
-		war.kingdom2.AdjustStability(STABILITY_DECREASE_WAR);
-
-		war.kingdom1.ActivateBoonOfPowers ();
-		war.kingdom2.ActivateBoonOfPowers ();
-
-//		kingdom1.UpdateAllGovernorsLoyalty ();
-//		kingdom2.UpdateAllGovernorsLoyalty ();
-//
-//		king1Rel.UpdateLikeness (null);
-//		king2Rel.UpdateLikeness (null);
-
-//		war.UpdateWarPair ();
-        //		kingdom1.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
-        //		kingdom2.king.history.Add(new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, kingdom1.king.name + " of " + kingdom1.name + " declares war against " + kingdom2.name + ".", HISTORY_IDENTIFIER.NONE));
-
-//        Log declareWarLog = war.CreateNewLogForEvent (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "War", "declare_war");
-//		declareWarLog.AddToFillers (kingdom1.king, kingdom1.king.name, LOG_IDENTIFIER.KING_1);
-//		declareWarLog.AddToFillers (kingdom2, kingdom2.name, LOG_IDENTIFIER.KINGDOM_2);
-
-//		WarEvents (kingdom1, kingdom2);
-//
-//		KingdomManager.Instance.CheckWarTriggerDeclareWar (kingdom1, kingdom2);
-//		War newWar = new War(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, null, kingdom1, kingdom2, invasionPlanThatStartedWar);
-	}
+		
 
 	public void DeclarePeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
 //		KingdomRelationship kingdom1Rel = kingdom1.GetRelationshipWithKingdom(kingdom2);
@@ -232,52 +184,7 @@ public class KingdomManager : MonoBehaviour {
 //		kingdom1.RemoveInternationalWar(kingdom2);
 //		kingdom2.RemoveInternationalWar(kingdom1);
 	}
-
-	public War GetWarBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
-		List<GameEvent> allWars = EventManager.Instance.GetEventsOfType(EVENT_TYPES.KINGDOM_WAR).Where(x => x.isActive).ToList();
-		for (int i = 0; i < allWars.Count; i++) {
-			War currentWar = (War)allWars[i];
-			if (currentWar.kingdom1.id == kingdom1.id) {
-				if (currentWar.kingdom2.id == kingdom2.id) {
-					return currentWar;
-				}
-			} else if (currentWar.kingdom2.id == kingdom1.id) {
-				if (currentWar.kingdom1.id == kingdom2.id) {
-					return currentWar;
-				}
-			}
-		}
-		return null;
-	}
-
-	public JoinWar GetJoinWarRequestBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
-		List<GameEvent> allJoinWarRequests = EventManager.Instance.GetEventsOfType(EVENT_TYPES.JOIN_WAR_REQUEST).Where(x => x.isActive).ToList();
-		for (int i = 0; i < allJoinWarRequests.Count; i++) {
-			JoinWar currentJoinWar = (JoinWar)allJoinWarRequests[i];
-			if (currentJoinWar.startedByKingdom.id == kingdom1.id) {
-				if (currentJoinWar.candidateForAlliance.city.kingdom.id == kingdom2.id) {
-					return currentJoinWar;
-				}
-			} else if (currentJoinWar.startedByKingdom.id == kingdom1.id) {
-				if (currentJoinWar.candidateForAlliance.city.kingdom.id == kingdom2.id) {
-					return currentJoinWar;
-				}
-			}
-		}
-		return null;
-	}
-
-	public RequestPeace GetRequestPeaceBetweenKingdoms(Kingdom kingdom1, Kingdom kingdom2){
-		List<GameEvent> allPeaceRequestsPerKingdom = kingdom1.GetEventsOfType (EVENT_TYPES.REQUEST_PEACE);
-		for (int i = 0; i < allPeaceRequestsPerKingdom.Count; i++) {
-			RequestPeace currentRequestPeace = (RequestPeace)allPeaceRequestsPerKingdom[i];
-			if (currentRequestPeace.startedByKingdom.id == kingdom1.id && currentRequestPeace.targetKingdom.id == kingdom2.id) {
-				return currentRequestPeace;
-			}
-		}
-		return null;
-	}
-
+		
 	public List<Kingdom> GetOtherKingdomsExcept(Kingdom kingdom){
 		List<Kingdom> newKingdoms = new List<Kingdom> ();
 		for(int i = 0; i < this.allKingdoms.Count; i++){
@@ -303,31 +210,7 @@ public class KingdomManager : MonoBehaviour {
 
 		return count;
 	}
-
-	internal void CheckWarTriggerDeclareWar(Kingdom warDeclarer, Kingdom warReceiver){
-		for (int i = 0; i < this.allKingdoms.Count; i++) {
-			if(this.allKingdoms[i].id != warDeclarer.id && this.allKingdoms[i].id != warReceiver.id){
-				KingdomRelationship relationshipToAffected = this.allKingdoms [i].GetRelationshipWithKingdom (warReceiver);
-				KingdomRelationship relationshipToTarget = this.allKingdoms [i].GetRelationshipWithKingdom (warDeclarer);
-
-				if(relationshipToAffected.relationshipStatus == RELATIONSHIP_STATUS.LOVE){
-					this.allKingdoms[i].WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_ALLY);
-				}else if(relationshipToAffected.relationshipStatus == RELATIONSHIP_STATUS.AFFECTIONATE){
-					this.allKingdoms[i].WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, WAR_TRIGGER.TARGET_DECLARED_WAR_AGAINST_FRIEND);
-				}
-			}
-		}
-	}
-
-	internal void CheckWarTriggerMisc(Kingdom targetKingdom, WAR_TRIGGER warTrigger){
-		for (int i = 0; i < this.allKingdoms.Count; i++) {
-			if (this.allKingdoms [i].id != targetKingdom.id) {
-				KingdomRelationship relationshipToTarget = this.allKingdoms [i].GetRelationshipWithKingdom (targetKingdom);
-				this.allKingdoms[i].WarTrigger (relationshipToTarget, null, this.allKingdoms [i].kingdomTypeData, warTrigger);
-			}
-		}
-	}
-
+		
     private void UpdateDiscoveredKingdomsForAll() {
         for (int i = 0; i < this.allKingdoms.Count; i++) {
             this.allKingdoms[i].CheckForDiscoveredKingdoms();
@@ -352,16 +235,6 @@ public class KingdomManager : MonoBehaviour {
         }
         return kings;
     }
-
-	internal void InstantWarBetweenKingdoms(Kingdom sourceKingdom, Kingdom targetKingdom, WAR_TRIGGER warTrigger, GameEvent gameEventTrigger = null){
-		KingdomRelationship relationship = sourceKingdom.GetRelationshipWithKingdom (targetKingdom);
-		if (relationship.war == null) {
-			War newWar = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, sourceKingdom.king, 
-				sourceKingdom, targetKingdom, warTrigger);
-			newWar.DeclareWar (newWar.kingdom1);
-			newWar.gameEventTrigger = gameEventTrigger;
-		}
-	}
 
     public bool IsSharingBorders(Kingdom kingdom1, Kingdom kingdom2) {
         List<HexTile> allTilesOfKingdom1 = new List<HexTile>();

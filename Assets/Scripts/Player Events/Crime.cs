@@ -83,7 +83,7 @@ public class Crime : GameEvent {
 	}
 
 	private void GovernorReactions(){
-		List<City> allCities = this.kingdom.nonRebellingCities;
+		List<City> allCities = this.kingdom.cities;
 		if(allCities != null && allCities.Count > 0){
 			for (int i = 0; i < allCities.Count; i++) {
 				PUNISHMENT governorPunishment = GetPunishment (allCities [i].governor);

@@ -297,7 +297,6 @@ public class UIManager : MonoBehaviour {
 	private GameEvent currentlyShowingEvent;
 	private KingdomRelationship currentlyShowingRelationship;
 	private GameObject lastClickedEventType = null;
-	private War currentlyShowingWar = null;
 	internal object currentlyShowingLogObject = null;
 
 	[Space(10)] //FOR TESTING
@@ -1750,7 +1749,7 @@ public class UIManager : MonoBehaviour {
         } else {
             kingdomNoCurrentEventsLbl.gameObject.SetActive(false);
             LoadPoliticalEvents(politicalEvents);
-            LoadWarEvents(wars);
+//            LoadWarEvents(wars);
         }
         
         kingdomCurrentEventsBtn.SetClickState(true);
@@ -1861,66 +1860,6 @@ public class UIManager : MonoBehaviour {
 			StartCoroutine (RepositionGrid (politicsParent.eventsGrid));
 		}
 		RepositionKingdomEventsTable ();
-	}
-	/*
-	 * Load all wars onto the kingdom events menu.
-	 * War events only contain Campaigns.
-	 * */
-	private void LoadWarEvents(List<GameEvent> wars){
-		WarEventListParent currentWarParent = null;
-        List<int> allWarIDs = wars.Select(x => x.id).ToList();
-		for (int i = 0; i < wars.Count; i++) {
-			War currentWar = (War)wars [i];
-			Kingdom kingdomAtWarWith = currentWar.kingdom1;
-			if (currentWar.kingdom1.id == currentlyShowingKingdom.id) {
-				kingdomAtWarWith = currentWar.kingdom2;
-			}
-
-			List<Transform> allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomCurrentEventsContentParent.gameObject).ToList();
-
-			GameObject warParentGO = null;
-			for (int j = 0; j < allCurrentParents.Count; j++) {
-                WarEventListParent currWarParent = allCurrentParents[j].GetComponent<WarEventListParent>();
-                if (currWarParent != null) {
-                    War warOfCurrentObject = currWarParent.war;
-                    if (allWarIDs.Contains(warOfCurrentObject.id)) {
-                        if (allCurrentParents[j].name.Equals("WarParent-" + currentWar.id.ToString())) {
-                            warParentGO = allCurrentParents[j].gameObject;
-                            allCurrentParents.RemoveAt(j);
-                            break;
-                        }
-                    } else {
-                        ObjectPoolManager.Instance.DestroyObject(currWarParent.gameObject);
-                    }
-                    
-                }
-				
-			}
-
-			if (wars.Count <= 0) {
-				if (warParentGO == null) {
-                    ObjectPoolManager.Instance.DestroyObject(warParentGO);
-				}
-				return;
-			}
-
-			if (warParentGO == null) {
-				warParentGO = InstantiateUIObject(kingdomWarEventsListParentPrefab.name, kingdomCurrentEventsContentParent.transform);
-				warParentGO.name = "WarParent-" + currentWar.id.ToString();
-				warParentGO.transform.localScale = Vector3.one;
-				warParentGO.transform.localPosition = Vector3.zero;
-				warParentGO.GetComponent<WarEventListParent>().SetWarEvent (currentWar, kingdomAtWarWith);
-				warParentGO.GetComponent<WarEventListParent>().onClickEvent += ShowEventLogs;
-			}
-				
-			currentWarParent = warParentGO.GetComponent<WarEventListParent> ();
-
-			List<WarEventListItem> currentlyShowingCampaigns = currentWarParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<WarEventListItem>()).ToList ();
-			List<int> currentlyShowingCampaignIDs = currentlyShowingCampaigns.Select (x => x.campaign.id).ToList ();
-			List<int> actualCampaignIDs = new List<int>();
-			List<Campaign> campaignsToShow = new List<Campaign>();
-			RepositionKingdomEventsTable();
-		}
 	}
 	public void RepositionKingdomEventsTable(){
 		StartCoroutine (RepositionTable (kingdomCurrentEventsContentParent));
@@ -2423,11 +2362,6 @@ public class UIManager : MonoBehaviour {
 	public void ToggleTraderCamera(){
 		CameraMove.Instance.ToggleTraderCamera();
 	}
-	
-    public void ForceAdventurer() {
-        EventCreator.Instance.CreateAdventureEvent(currentlyShowingKingdom);
-    }
-
 	public void OnValueChangeEventDropdown(){
 		eventDropdownCurrentSelectionLbl.text = this.eventDropdownList.value;
 		if(this.eventDropdownList.value == "Raid"){
@@ -2524,15 +2458,6 @@ public class UIManager : MonoBehaviour {
 				}
 			}
 			this.forceWarGO.SetActive (true);
-		}
-	}
-	public void OnClickForceWar(){
-		if(this.kingdomsForWar.data != null){
-			Kingdom targetKingdom = (Kingdom)this.kingdomsForWar.data;
-			if(this.currentlyShowingCitizen != null){
-				//				Debug.LogError (this.currentlyShowingCitizen.name + " HAS MOVED FROM " + this.currentlyShowingCitizen.city.name + " TO " + newCityForCitizen.name);
-				this.currentlyShowingCitizen.ForceWar(targetKingdom, null, WAR_TRIGGER.TARGET_GAINED_A_CITY);
-			}
 		}
 	}
 	public void HideForceWar(){

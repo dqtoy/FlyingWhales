@@ -133,80 +133,6 @@ public class HandOfFate : MonoBehaviour {
 	}
 
 	[Task]
-	public void AreTheTwoKingdomsNotAtWar(){
-        War warBetweenKingdoms = KingdomManager.Instance.GetWarBetweenKingdoms(this.firstKingdom, this.secondKingdom);
-        if(warBetweenKingdoms == null) {
-            Task.current.Succeed();
-        } else {
-            Task.current.Fail();
-        }
-		//KingdomRelationship relationship = this.firstKingdom.GetRelationshipWithKingdom (this.secondKingdom);
-		//if(!relationship.isAtWar){
-		//	Task.current.Succeed ();
-		//}else{
-		//	Task.current.Fail ();
-		//}
-	}
-//	[Task]
-//	public void SetCompatibilityValue(){
-//		int[] firstKingdomHoroscope = this.firstKingdom.horoscope.Concat (this.firstKingdom.king.horoscope).ToArray();
-//		int[] secondKingdomHoroscope = this.secondKingdom.horoscope.Concat (this.secondKingdom.king.horoscope).ToArray();
-//		int count = firstKingdomHoroscope.Length;
-//
-//		for(int i = 0; i < count; i++){
-//			if(firstKingdomHoroscope[i] == secondKingdomHoroscope[i]){
-//				this.compatibilityValue += 1;
-//			}
-//		}
-//		Task.current.Succeed ();
-//	}
-//
-//	[Task]
-//	public void SetAdjacencyValue(){
-//		this.isAdjacent = this.firstKingdom.IsKingdomAdjacentTo (this.secondKingdom);
-//		Task.current.Succeed ();
-//	}
-//
-//	[Task]
-//	public void SetEventChances(){
-//		if(this.isAdjacent){
-//			if(this.compatibilityValue == 0 || this.compatibilityValue == 1){
-//				this.raidChance = 50;
-//				this.borderConflictChance = 35;
-//				this.diplomaticCrisisChance = 15;
-//				this.stateVisitChance = 0;
-//			}else if(this.compatibilityValue == 2 || this.compatibilityValue == 3){
-//				this.raidChance = 35;
-//				this.borderConflictChance = 25;
-//				this.diplomaticCrisisChance = 5;
-//				this.stateVisitChance = 35;
-//			}else if(this.compatibilityValue == 4 || this.compatibilityValue == 5){
-//				this.raidChance = 20;
-//				this.borderConflictChance = 10;
-//				this.diplomaticCrisisChance = 0;
-//				this.stateVisitChance = 70;
-//			}
-//		}else{
-//			if(this.compatibilityValue == 0 || this.compatibilityValue == 1){
-//				this.raidChance = 80;
-//				this.borderConflictChance = 0;
-//				this.diplomaticCrisisChance = 20;
-//				this.stateVisitChance = 0;
-//			}else if(this.compatibilityValue == 2 || this.compatibilityValue == 3){
-//				this.raidChance = 55;
-//				this.borderConflictChance = 0;
-//				this.diplomaticCrisisChance = 10;
-//				this.stateVisitChance = 35;
-//			}else if(this.compatibilityValue == 4 || this.compatibilityValue == 5){
-//				this.raidChance = 25;
-//				this.borderConflictChance = 0;
-//				this.diplomaticCrisisChance = 5;
-//				this.stateVisitChance = 70;
-//			}
-//		}
-//		Task.current.Succeed ();
-//	}
-	[Task]
 	public void IsEligibleForEvent(){
 		if(this.firstKingdom.HasActiveEvent(this.eventToCreate.eventType) && this.secondKingdom.HasActiveEvent(this.eventToCreate.eventType)){
 			Task.current.Fail ();
@@ -232,38 +158,10 @@ public class HandOfFate : MonoBehaviour {
 	}
 	[Task]
 	public void StartAnEvent(){
-		switch(this.eventToCreate.eventType){
-		case EVENT_TYPES.RAID:
-			CreateRaidEvent ();
-			break;
-		case EVENT_TYPES.BORDER_CONFLICT:
-			CreateBorderConflictEvent ();
-			break;
-		case EVENT_TYPES.DIPLOMATIC_CRISIS:
-			CreateDiplomaticCrisisEvent ();
-			break;
-		case EVENT_TYPES.STATE_VISIT:
-			CreateStateVisitEvent ();
-			break;
-		}
+
 		Task.current.Succeed ();
 	}
 
-	private void CreateRaidEvent(){
-		EventCreator.Instance.CreateRaidEvent(this.firstKingdom, this.secondKingdom);
-	}
-
-	private void CreateBorderConflictEvent(){
-		EventCreator.Instance.CreateBorderConflictEvent(this.firstKingdom, this.secondKingdom);
-	}
-
-	private void CreateDiplomaticCrisisEvent(){
-		EventCreator.Instance.CreateDiplomaticCrisisEvent(this.firstKingdom, this.secondKingdom);
-	}
-
-	private void CreateStateVisitEvent(){
-		EventCreator.Instance.CreateStateVisitEvent(this.firstKingdom, this.secondKingdom);
-	}
 	/*internal void StateVisit(){
 //		Debug.Log ("State Visit FROM HAND OF FATE");
 		Citizen targetKing = this.secondKingdom.king;
@@ -314,58 +212,6 @@ public class HandOfFate : MonoBehaviour {
 		}
 
 		int counter = 0;
-
-		if(gameEvent is BorderConflict){
-			if(((BorderConflict)gameEvent).kingdom1.id == kingdom1.id || ((BorderConflict)gameEvent).kingdom2.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((BorderConflict)gameEvent).kingdom1.id == kingdom2.id || ((BorderConflict)gameEvent).kingdom2.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is DiplomaticCrisis) {
-			if(((DiplomaticCrisis)gameEvent).kingdom1.id == kingdom1.id || ((DiplomaticCrisis)gameEvent).kingdom2.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((DiplomaticCrisis)gameEvent).kingdom1.id == kingdom2.id || ((DiplomaticCrisis)gameEvent).kingdom2.id == kingdom2.id){
-				counter += 1;
-			}
-		} else if(gameEvent is StateVisit) {
-			if(((StateVisit)gameEvent).invitedKingdom.id == kingdom1.id || ((StateVisit)gameEvent).inviterKingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((StateVisit)gameEvent).invitedKingdom.id == kingdom2.id || ((StateVisit)gameEvent).inviterKingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is Raid) {
-			if(((Raid)gameEvent).startedBy.city.kingdom.id == kingdom1.id || ((Raid)gameEvent).raidedCity.kingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((Raid)gameEvent).startedBy.city.kingdom.id == kingdom2.id || ((Raid)gameEvent).raidedCity.kingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is ScourgeCity) {
-			if(((ScourgeCity)gameEvent).sourceKingdom.id == kingdom1.id || ((ScourgeCity)gameEvent).targetKingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((ScourgeCity)gameEvent).sourceKingdom.id == kingdom2.id || ((ScourgeCity)gameEvent).targetKingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is Provocation) {
-			if(((Provocation)gameEvent).sourceKingdom.id == kingdom1.id || ((Provocation)gameEvent).targetKingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((Provocation)gameEvent).sourceKingdom.id == kingdom2.id || ((Provocation)gameEvent).targetKingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is Evangelism) {
-			if(((Evangelism)gameEvent).sourceKingdom.id == kingdom1.id || ((Evangelism)gameEvent).targetKingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((Evangelism)gameEvent).sourceKingdom.id == kingdom2.id || ((Evangelism)gameEvent).targetKingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}
-
 		if(counter == 2){
 			return false;
 		}else{

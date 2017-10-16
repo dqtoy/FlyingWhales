@@ -43,7 +43,7 @@ public class MonsterAvatar : PooledObject {
 				Citizen otherAgent = other.gameObject.GetComponent<CitizenAvatar>().citizenRole.citizen;
 				if(!otherAgent.isDead){
 					this.hostile = otherAgent;
-					CombatManager.Instance.HasCollidedWithMonster (this.monster, otherAgent.assignedRole);
+//					CombatManager.Instance.HasCollidedWithMonster (this.monster, otherAgent.assignedRole);
 				}
 			}
 		}

@@ -22,20 +22,4 @@ public class Healer : Role {
             this.avatar.GetComponent<HealerAvatar>().Init(this);
         }
     }
-
-//    internal override void Attack() {
-//        //		base.Attack ();
-//        if (this.avatar != null) {
-//            this.avatar.GetComponent<HealerAvatar>().HasAttacked();
-//            if (this.avatar.GetComponent<HealerAvatar>().direction == DIRECTION.LEFT) {
-//                this.avatar.GetComponent<HealerAvatar>().animator.Play("Attack_Left");
-//            } else if (this.avatar.GetComponent<HealerAvatar>().direction == DIRECTION.RIGHT) {
-//                this.avatar.GetComponent<HealerAvatar>().animator.Play("Attack_Right");
-//            } else if (this.avatar.GetComponent<HealerAvatar>().direction == DIRECTION.UP) {
-//                this.avatar.GetComponent<HealerAvatar>().animator.Play("Attack_Up");
-//            } else {
-//                this.avatar.GetComponent<HealerAvatar>().animator.Play("Attack_Down");
-//            }
-//        }
-//    }
 }

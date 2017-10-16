@@ -25,7 +25,7 @@ public class GeneralAvatar : CitizenAvatar {
 						this.citizenRole.citizen.currentLocation = this.citizenRole.path [0];
 						//this.UpdateFogOfWar();
 						this.citizenRole.path.RemoveAt (0);
-						this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
+//						this.citizenRole.location.CollectEventOnTile(this.citizenRole.citizen.city.kingdom, this.citizenRole.citizen);
 						//this.CheckForKingdomDiscovery();
 //						((General)this.citizenRole).CheckSerumOfAlacrity();
 					}

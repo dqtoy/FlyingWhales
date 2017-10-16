@@ -91,7 +91,7 @@ public class WorldEventManager : MonoBehaviour {
                     int index = UnityEngine.Random.Range(0, filteredHextile.Count);
                     HexTile targetHextile = filteredHextile[index];
                     filteredHextile.RemoveAt(index);
-                    EventCreator.Instance.CreateBoonOfPowerEvent(targetHextile);
+//                    EventCreator.Instance.CreateBoonOfPowerEvent(targetHextile);
                 }
             }			
 		}
@@ -120,7 +120,7 @@ public class WorldEventManager : MonoBehaviour {
                     int index = UnityEngine.Random.Range(0, filteredHextile.Count);
                     HexTile targetHextile = filteredHextile[index];
                     filteredHextile.RemoveAt(index);
-                    EventCreator.Instance.CreateFirstAndKeystoneEvent(targetHextile);
+//                    EventCreator.Instance.CreateFirstAndKeystoneEvent(targetHextile);
                 }
             }
 		}
@@ -142,7 +142,7 @@ public class WorldEventManager : MonoBehaviour {
 				int index = UnityEngine.Random.Range (0, filteredHextile.Count);
 				HexTile targetHextile = filteredHextile [index];
 				filteredHextile.RemoveAt (index);
-				EventCreator.Instance.CreateAltarOfBlessingEvent (targetHextile);
+//				EventCreator.Instance.CreateAltarOfBlessingEvent (targetHextile);
 			}
 		}
 	}
@@ -189,7 +189,7 @@ public class WorldEventManager : MonoBehaviour {
                 int index = UnityEngine.Random.Range(0, filteredHextile.Count);
                 HexTile targetHextile = filteredHextile[index];
                 filteredHextile.RemoveAt(index);
-                EventCreator.Instance.CreateAncientRuinEvent(targetHextile);
+//                EventCreator.Instance.CreateAncientRuinEvent(targetHextile);
             }
         }
     }

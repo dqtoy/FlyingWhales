@@ -166,13 +166,7 @@ public class Citizen {
         }
 
         this.role = role;
-        if (role == ROLE.FOODIE) {
-            this.assignedRole = new Foodie(this);
-        } else if (role == ROLE.GATHERER) {
-            this.assignedRole = new Gatherer(this);
-        } else if (role == ROLE.MINER) {
-            this.assignedRole = new Miner(this);
-        } else if (role == ROLE.GENERAL) {
+ 		if (role == ROLE.GENERAL) {
             this.assignedRole = new General(this);
         } else if (role == ROLE.ENVOY) {
             this.assignedRole = new Envoy(this);
@@ -216,18 +210,12 @@ public class Citizen {
             this.assignedRole = new Witch(this);
         } else if (role == ROLE.ADVENTURER) {
             this.assignedRole = new Adventurer(this);
-        } else if (role == ROLE.RELIEVER) {
-            this.assignedRole = new Reliever(this);
         } else if (role == ROLE.INTERCEPTER) {
             this.assignedRole = new Intercepter(this);
         } else if (role == ROLE.RANGER) {
             this.assignedRole = new Ranger(this);
-        } else if (role == ROLE.TREATYOFFICER) {
-            this.assignedRole = new TreatyOfficer(this);
         } else if (role == ROLE.TRIBUTER) {
             this.assignedRole = new Tributer(this);
-        } else if (role == ROLE.MILITARY_ALLIANCE_OFFICER) {
-            this.assignedRole = new MilitaryAllianceOfficer(this);
         } else if (role == ROLE.INSTIGATOR) {
             this.assignedRole = new Instigator(this);
         } else if (role == ROLE.GRAND_CHANCELLOR) {
@@ -242,27 +230,6 @@ public class Citizen {
             this.assignedRole = null;
         } else {
             this.assignedRole = null;
-        }
-    }
-    internal void ForceWar(Kingdom targetKingdom, GameEvent gameEventTrigger, WAR_TRIGGER warTrigger = WAR_TRIGGER.NONE) {
-        //		if (this.city.kingdom.HasActiveEvent(EVENT_TYPES.INVASION_PLAN)) {
-        //			return;
-        //		}
-        //		War warEvent = KingdomManager.Instance.GetWarBetweenKingdoms (this.city.kingdom, targetKingdom);
-        //		if (warEvent != null && warEvent.isAtWar) {
-        //			return;
-        //		}
-        //		if (warEvent == null) {
-        //			warEvent = new War (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, this, 
-        //				this.city.kingdom, targetKingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
-        //		}
-        //		warEvent.CreateInvasionPlan (this.city.kingdom, gameEventTrigger);
-
-        KingdomRelationship relationship = this.city.kingdom.GetRelationshipWithKingdom(targetKingdom);
-        if (relationship != null) {
-            if (!relationship.isAtWar) {
-                EventCreator.Instance.CreateWarEvent(this.city.kingdom, targetKingdom);
-            }
         }
     }
 

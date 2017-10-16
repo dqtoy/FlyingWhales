@@ -235,72 +235,14 @@ public class DailyCumulativeEvent : MonoBehaviour {
 	public void StartAnEvent(ref EventRate eventRate){
 		eventRate.ResetRateAndMultiplier ();
 		switch(this.eventToCreate.eventType){
-		case EVENT_TYPES.RAID:
-			CreateRaidEvent ();
-			break;
-		case EVENT_TYPES.STATE_VISIT:
-			CreateStateVisitEvent ();
-			break;
-		case EVENT_TYPES.TRADE:
-			CreateTradeEvent ();
-			break;
-		case EVENT_TYPES.SCOURGE_CITY:
-			CreateScourgeCityEvent ();
-			break;
-		case EVENT_TYPES.PROVOCATION:
-			CreateProvocationEvent ();
-			break;
-		case EVENT_TYPES.EVANGELISM:
-			CreateEvangelismEvent ();
-			break;
-		case EVENT_TYPES.ADVENTURE:
-			CreateAdventureEvent ();
-			break;
 		case EVENT_TYPES.HUNT_LAIR:
 			CreateHuntLairEvent ();
 			break;
 		}
 //		Task.current.Succeed ();
 	}
-	private void CreateRaidEvent(){
-//		General general = GetGeneral(this.firstKingdom);
-		EventCreator.Instance.CreateRaidEvent(this.firstKingdom, this.secondKingdom);
-	}
-	private void CreateStateVisitEvent(){
-		EventCreator.Instance.CreateStateVisitEvent(this.firstKingdom, this.secondKingdom);
-	}
-	private void CreateTradeEvent(){
-        //Create Trade Event
-        KingdomRelationship relWithOtherKingdom = this.firstKingdom.GetRelationshipWithKingdom(this.secondKingdom);
-        City randomSourceCity = this.firstKingdom.cities[Random.Range(0, this.firstKingdom.cities.Count)];
-        City randomTargetCity = this.secondKingdom.cities[Random.Range(0, this.secondKingdom.cities.Count)];
-        List<HexTile> path = PathGenerator.Instance.GetPath(randomSourceCity.hexTile, randomTargetCity.hexTile, PATHFINDING_MODE.NORMAL);
-        List<RESOURCE> resourcesSourceKingdomCanOffer = this.firstKingdom.GetResourcesOtherKingdomDoesNotHave(this.secondKingdom)
-			.Where(x => Utilities.resourceBenefits[x].FirstOrDefault().Key == RESOURCE_BENEFITS.GROWTH_RATE ||
-				Utilities.resourceBenefits[x].FirstOrDefault().Key == RESOURCE_BENEFITS.TECH_LEVEL).ToList();
-        /*
-         * There should be no active trade event between the two kingdoms (started by this kingdom), the 2 kingdoms should not be at war, 
-         * there should be a path from this kingdom's capital city to the otherKingdom's capital city, the otherKingdom should not be part of this kingdom's embargo list
-         * and this kingdom should have a resource that the otherKingdom does not.
-         * */
-        if (!relWithOtherKingdom.isAtWar && path != null && !this.firstKingdom.embargoList.ContainsKey(this.secondKingdom) 
-            && resourcesSourceKingdomCanOffer.Count > 0) {
-            EventCreator.Instance.CreateTradeEvent(randomSourceCity, randomTargetCity);
 
-        }
-    }
-	private void CreateScourgeCityEvent(){
-		EventCreator.Instance.CreateScourgeCityEvent (this.firstKingdom, this.secondKingdom);
-	}
-	private void CreateProvocationEvent(){
-		EventCreator.Instance.CreateProvocationEvent (this.firstKingdom, this.secondKingdom);
-	}
-	private void CreateEvangelismEvent(){
-		EventCreator.Instance.CreateEvangelismEvent (this.firstKingdom, this.secondKingdom);
-	}
-	private void CreateAdventureEvent(){
-        EventCreator.Instance.CreateAdventureEvent(this.firstKingdom);
-	}
+
 	private void CreateHuntLairEvent(){
 		EventCreator.Instance.CreateHuntLairEvent(this.firstKingdom);
 	}
@@ -363,66 +305,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 		}
 
 		int counter = 0;
-
-//		if(gameEvent is BorderConflict){
-//			if(((BorderConflict)gameEvent).kingdom1.id == kingdom1.id || ((BorderConflict)gameEvent).kingdom2.id == kingdom1.id){
-//				counter += 1;
-//			}
-//			if(((BorderConflict)gameEvent).kingdom1.id == kingdom2.id || ((BorderConflict)gameEvent).kingdom2.id == kingdom2.id){
-//				counter += 1;
-//			}
-//		}else if(gameEvent is DiplomaticCrisis) {
-//			if(((DiplomaticCrisis)gameEvent).kingdom1.id == kingdom1.id || ((DiplomaticCrisis)gameEvent).kingdom2.id == kingdom1.id){
-//				counter += 1;
-//			}
-//			if(((DiplomaticCrisis)gameEvent).kingdom1.id == kingdom2.id || ((DiplomaticCrisis)gameEvent).kingdom2.id == kingdom2.id){
-//				counter += 1;
-//			}
-//		}else 
-		if(gameEvent is StateVisit) {
-			if(((StateVisit)gameEvent).invitedKingdom.id == kingdom1.id || ((StateVisit)gameEvent).inviterKingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((StateVisit)gameEvent).invitedKingdom.id == kingdom2.id || ((StateVisit)gameEvent).inviterKingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is Raid) {
-			if(((Raid)gameEvent).startedBy.city.kingdom.id == kingdom1.id || ((Raid)gameEvent).raidedCity.kingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((Raid)gameEvent).startedBy.city.kingdom.id == kingdom2.id || ((Raid)gameEvent).raidedCity.kingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is Trade) {
-			if(((Trade)gameEvent).sourceCity.kingdom.id == kingdom1.id || ((Trade)gameEvent).targetCity.kingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((Trade)gameEvent).sourceCity.kingdom.id == kingdom2.id || ((Trade)gameEvent).targetCity.kingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is ScourgeCity) {
-			if(((ScourgeCity)gameEvent).sourceKingdom.id == kingdom1.id || ((ScourgeCity)gameEvent).targetKingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((ScourgeCity)gameEvent).sourceKingdom.id == kingdom2.id || ((ScourgeCity)gameEvent).targetKingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is Provocation) {
-			if(((Provocation)gameEvent).sourceKingdom.id == kingdom1.id || ((Provocation)gameEvent).targetKingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((Provocation)gameEvent).sourceKingdom.id == kingdom2.id || ((Provocation)gameEvent).targetKingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}else if(gameEvent is Evangelism) {
-			if(((Evangelism)gameEvent).sourceKingdom.id == kingdom1.id || ((Evangelism)gameEvent).targetKingdom.id == kingdom1.id){
-				counter += 1;
-			}
-			if(((Evangelism)gameEvent).sourceKingdom.id == kingdom2.id || ((Evangelism)gameEvent).targetKingdom.id == kingdom2.id){
-				counter += 1;
-			}
-		}
-
+	
 		if(counter == 2){
 			return false;
 		}else{

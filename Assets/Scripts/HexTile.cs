@@ -957,7 +957,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				}
             }
         }
-		InterveneEventOnTile (WorldEventManager.Instance.currentInterveneEvent);
     }
     private void OnMouseOver() {
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
@@ -967,10 +966,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			if(!this.isHabitable){
 				if(this.city == null){
 					return;
-				}else{
-					if(this.city.rebellion == null){
-						return;
-					}
 				}
 			}
             //this.city.kingdom.HighlightAllOwnedTilesInKingdom();
@@ -983,10 +978,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			if(!this.isHabitable){
 				if(this.city == null){
 					return;
-				}else{
-					if(this.city.rebellion == null){
-						return;
-					}
 				}
 			}
             this.HideKingdomInfo();
@@ -1245,37 +1236,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 	}
-
-	private void InterveneEventOnTile(EVENT_TYPES eventType){
-		switch(eventType){
-		case EVENT_TYPES.BOON_OF_POWER:
-			EventCreator.Instance.CreateBoonOfPowerEvent (this);
-			break;
-		}
-	}
-	internal void PutEventOnTile(GameEvent gameEvent){
-		if(this._gameEventInTile == null){
-			this._gameEventInTile = gameEvent;
-            if(gameEvent is FirstAndKeystone) {
-                ((FirstAndKeystone)gameEvent).avatar = GameObject.Instantiate(Resources.Load("GameObjects/Keystone"), gameEventObjectsParentGO.transform) as GameObject;
-                ((FirstAndKeystone)gameEvent).avatar.transform.localPosition = Vector3.zero;
-            } else if(gameEvent is BoonOfPower) {
-                ((BoonOfPower)gameEvent).avatar = GameObject.Instantiate(Resources.Load("GameObjects/BoonOfPower"), gameEventObjectsParentGO.transform) as GameObject;
-                ((BoonOfPower)gameEvent).avatar.transform.localPosition = Vector3.zero;
-                ((BoonOfPower)gameEvent).avatar.GetComponent<BoonOfPowerAvatar>().Init((BoonOfPower)gameEvent);
-            } else if (gameEvent is AltarOfBlessing) {
-                ((AltarOfBlessing)gameEvent).avatar = GameObject.Instantiate(Resources.Load("GameObjects/AltarOfBlessing"), gameEventObjectsParentGO.transform) as GameObject;
-                ((AltarOfBlessing)gameEvent).avatar.transform.localPosition = Vector3.zero;
-                ((AltarOfBlessing)gameEvent).avatar.GetComponent<AltarOfBlessingAvatar>().Init((AltarOfBlessing)gameEvent);
-            } else {
-                GameObject eventAvatar = GameObject.Instantiate(Resources.Load("GameObjects/GameEventAvatar"), gameEventObjectsParentGO.transform) as GameObject;
-                gameEvent.gameEventAvatar = eventAvatar.GetComponent<GameEventAvatar>();
-                gameEvent.gameEventAvatar.Init(gameEvent, this);
-                gameEvent.gameEventAvatar.transform.localPosition = Vector3.zero;
-            } 
-			CreateEventNamePlate();
-        }
-	}
+		
 	internal void RemoveEventOnTile(){
 		this._gameEventInTile = null;
         RemoveHextileEventNamePlate();
@@ -1325,29 +1286,6 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 	}
-
-    internal void CollectEventOnTile(Kingdom claimant, Citizen citizen = null) {
-        if (gameEventInTile != null) {
-            //if(citizen != null) {
-            //    if(citizen.assignedRole is Adventurer) {
-            //        ((Adventurer)citizen.assignedRole).SetLatestDiscovery(gameEventInTile);
-            //    }
-            //}
-
-            if (gameEventInTile is BoonOfPower) {
-                BoonOfPower boonOfPower = (BoonOfPower)gameEventInTile;
-                boonOfPower.TransferBoonOfPower(claimant, citizen);
-            } else if (gameEventInTile is FirstAndKeystone) {
-                FirstAndKeystone firstAndKeystone = (FirstAndKeystone)gameEventInTile;
-                firstAndKeystone.TransferKeystone(claimant, citizen);
-			} else if (gameEventInTile is AltarOfBlessing) {
-				AltarOfBlessing altarOfBlessing = (AltarOfBlessing)gameEventInTile;
-				altarOfBlessing.TransferAltarOfBlessing(claimant, citizen);
-			} else {
-                gameEventInTile.OnCollectAvatarAction(claimant);
-            }
-        }
-    }
 
     public void SetTag(int tag) {
         this.tileTag = tag;

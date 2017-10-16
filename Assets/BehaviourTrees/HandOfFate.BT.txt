@@ -7,6 +7,5 @@ tree("Root")
 		SetFirstRandomKingdom
 		SetEventToCreate
 		SetSecondRandomKingdom
-		AreTheTwoKingdomsNotAtWar
 		IsEligibleForEvent
 		StartAnEvent

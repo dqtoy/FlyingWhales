@@ -276,26 +276,22 @@ public class CityGenerator : MonoBehaviour {
 		}
 		return BIOMES.NONE;
 	}
-	public City CreateNewCity(HexTile hexTile, Kingdom kingdom, Rebellions rebellion = null){
-        if (rebellion != null){
-			hexTile.city = new RebelFort (hexTile, kingdom, true, rebellion);
-		}else{
-			hexTile.city = new City (hexTile, kingdom);
-            allCities.Add(hexTile.city);
-			CityTaskManager ctmOfCity = hexTile.gameObject.GetComponent<CityTaskManager>();
-			if (ctmOfCity == null) {
-				ctmOfCity = hexTile.gameObject.AddComponent<CityTaskManager>();
-			}
-
-			if (hexTile.gameObject.GetComponent<PandaBehaviour>() == null) {
-				hexTile.gameObject.AddComponent<PandaBehaviour>();
-				hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
-				hexTile.gameObject.GetComponent<PandaBehaviour>().Compile(cityBehaviourTree.text);
-			}
-
-			ctmOfCity.Initialize(hexTile.city);
-			Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+	public City CreateNewCity(HexTile hexTile, Kingdom kingdom){
+		hexTile.city = new City (hexTile, kingdom);
+		allCities.Add(hexTile.city);
+		CityTaskManager ctmOfCity = hexTile.gameObject.GetComponent<CityTaskManager>();
+		if (ctmOfCity == null) {
+			ctmOfCity = hexTile.gameObject.AddComponent<CityTaskManager>();
 		}
+
+		if (hexTile.gameObject.GetComponent<PandaBehaviour>() == null) {
+			hexTile.gameObject.AddComponent<PandaBehaviour>();
+			hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
+			hexTile.gameObject.GetComponent<PandaBehaviour>().Compile(cityBehaviourTree.text);
+		}
+
+		ctmOfCity.Initialize(hexTile.city);
+		Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
 
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
         hexTile.city.PopulateBorderTiles();
