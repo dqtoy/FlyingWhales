@@ -11,7 +11,8 @@ public class Kingdom{
     public int id;
 	public string name;
     public string kingdomTag; //Used for pathfinding
-	public RACE race;
+    public int kingdomTagIndex; //Used for pathfinding
+    public RACE race;
     public int age;
     private int _prestige;
     private int _population;
@@ -383,7 +384,8 @@ public class Kingdom{
         this._prestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
         this.kingdomTag = name + "_" + id;
-		this.king = null;
+        //this.kingdomTagIndex = PathfindingManager.Instance.AddNewTag(kingdomTag);
+        this.king = null;
         this.nextInLine = null;
         this._kingdomSize = KINGDOM_SIZE.SMALL;
         this._mainThreat = null;
@@ -440,6 +442,7 @@ public class Kingdom{
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
         this.stabilityDecreaseFromInvasionCounter = 0;
+
         AdjustPrestige(GridMap.Instance.numOfRegions);
         //		AdjustPrestige(500);
 
@@ -857,6 +860,7 @@ public class Kingdom{
 		if(this.alliancePool != null){
 			LeaveAlliance (true);
 		}
+        //PathfindingManager.Instance.RemoveTag(kingdomTag);
         KingdomManager.Instance.UnregisterKingdomFromActionDays(this);
         ResolveWars();
         Messenger.RemoveListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
@@ -1390,8 +1394,9 @@ public class Kingdom{
             TransferCitizensFromCityToCapital(city);
             KingdomManager.Instance.UpdateKingdomList();
         }
-        List<Citizen> remainingCitizens = _citizens[city];
+        List<Citizen> remainingCitizens = new List<Citizen>();
         if (_citizens.ContainsKey(city)) {
+            remainingCitizens.AddRange(_citizens[city]);
             _citizens.Remove(city);
         }
         UIManager.Instance.UpdateKingdomCitiesMenu();
@@ -1504,39 +1509,22 @@ public class Kingdom{
 		orderedBrotherRoyalties.Clear ();
 		orderedSisterRoyalties.Clear ();
 
-        List<Citizen> invalidCitizens = new List<Citizen>();
-        //Validate Succession line
-        for (int i = 0; i < successionLine.Count; i++) {
-            Citizen currSuccessor = successionLine[i];
-            if(currSuccessor.city.kingdom.id != king.city.kingdom.id) {
-                //successor is of a different kingdom!
-                invalidCitizens.Add(currSuccessor);
-            }
-        }
-
-        for (int i = 0; i < invalidCitizens.Count; i++) {
-            successionLine.Remove(invalidCitizens[i]);
-        }
-
 		for (int i = 0; i < this.successionLine.Count; i++) {
-			if (this.successionLine [i].isDirectDescendant) {
-				if (this.successionLine [i].generation > this.king.generation) {
-					if (this.successionLine [i].gender == GENDER.MALE) {
-						orderedMaleRoyalties.Add (this.successionLine [i]);
-					} else {
-						orderedFemaleRoyalties.Add (this.successionLine [i]);
-					}
+			if (this.successionLine [i].generation > this.king.generation) {
+				if (this.successionLine [i].gender == GENDER.MALE) {
+					orderedMaleRoyalties.Add (this.successionLine [i]);
+				} else {
+					orderedFemaleRoyalties.Add (this.successionLine [i]);
 				}
 			}
 		}
+
 		for (int i = 0; i < this.successionLine.Count; i++) {
-			if (this.successionLine [i].id != this.king.id) {
-				if ((this.successionLine [i].father != null && this.king.father != null) && this.successionLine [i].father.id == this.king.father.id) {
-					if (this.successionLine [i].gender == GENDER.MALE) {
-						orderedBrotherRoyalties.Add (this.successionLine [i]);
-					}else{
-						orderedSisterRoyalties.Add (this.successionLine [i]);
-					}
+			if ((this.successionLine [i].father != null && this.king.father != null) && this.successionLine [i].father.id == this.king.father.id) {
+				if (this.successionLine [i].gender == GENDER.MALE) {
+					orderedBrotherRoyalties.Add (this.successionLine [i]);
+				}else{
+					orderedSisterRoyalties.Add (this.successionLine [i]);
 				}
 			}
 		}
@@ -1548,13 +1536,27 @@ public class Kingdom{
 		this.successionLine.AddRange (orderedBrotherRoyalties.OrderByDescending (x => x.age));
 		this.successionLine.AddRange (orderedSisterRoyalties.OrderByDescending (x => x.age));
 
+        List<Citizen> invalidCitizens = new List<Citizen>();
+        //Validate Succession line
+        for (int i = 0; i < successionLine.Count; i++) {
+            Citizen currSuccessor = successionLine[i];
+            if (currSuccessor.city.kingdom.id != king.city.kingdom.id || currSuccessor.id == this.king.id) {
+                //successor is of a different kingdom!
+                invalidCitizens.Add(currSuccessor);
+            }
+        }
+
+        for (int i = 0; i < invalidCitizens.Count; i++) {
+            successionLine.Remove(invalidCitizens[i]);
+        }
+
         Citizen newNextInLine = successionLine.FirstOrDefault();
         if (newNextInLine != null && nextInLine != null && newNextInLine != nextInLine && nextInLine.role == ROLE.CROWN_PRINCE) {
             //next in line is no longer the next in line
             nextInLine.AssignRole(ROLE.UNTRAINED);
         }
         nextInLine = newNextInLine;
-        if(newNextInLine != null) {
+        if(newNextInLine != null && newNextInLine.role != ROLE.CROWN_PRINCE) {
             newNextInLine.AssignRole(ROLE.CROWN_PRINCE);
         }
         
