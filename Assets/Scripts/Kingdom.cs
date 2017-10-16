@@ -2388,6 +2388,9 @@ public class Kingdom{
         this._stability = Mathf.Clamp(this._stability, -100, 100);
     }
 	internal void CheckStability(){
+        if (this.isDead) {
+            return;
+        }
         //When Stability reaches -100, there will either be a rebellion, a plague or rioting.
         if (_stability <= -100) {
             if(kingdomSize != KINGDOM_SIZE.SMALL) {
@@ -2440,9 +2443,13 @@ public class Kingdom{
     }
 
     private void IncreaseBOPAttributesPerMonth() {
+        if (this.isDead) {
+            return;
+        }
         int totalWeaponsIncrease = 0;
         int totalArmorIncrease = 0;
         int totalTechIncrease = GetTechContributionFromCitizens();
+        //Kings and Governors provide monthly Stability gains based on their Efficiency trait.
         int totalStabilityIncrease = GetStabilityContributionFromCitizens();
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
@@ -2456,8 +2463,6 @@ public class Kingdom{
                 totalTechIncrease += techContribution;
             }
         }
-        ////Kings and Governors provide monthly Stability gains based on their Efficiency trait.  This is reduced by the Kingdom's Draft Rate.
-        //totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
 
         if (isMilitarize) {
             //Militarizing multiplies Weapon production by 2.5 for the month in exchange for 0 Armor and Tech production.
