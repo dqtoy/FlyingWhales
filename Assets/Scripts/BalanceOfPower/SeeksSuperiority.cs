@@ -8,168 +8,106 @@ public static class SeeksSuperiority {
 	public static void Initialize(Kingdom kingdom){
 		bool skipPhase2 = false;
 		bool skipPhase3 = false;
+		bool skipPhase4 = false;
 		bool hasAllianceInWar = false;
-		Phase1 (kingdom, skipPhase2, skipPhase3, hasAllianceInWar);
+		Phase1 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
 	}
 
-	private static void Phase1(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool hasAllianceInWar){
+	private static void Phase1(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool skipPhase4, bool hasAllianceInWar){
 		Debug.Log("========== " + kingdom.name + " is seeking superiority " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
 		Debug.Log ("========== PHASE 1 ==========");      
 		//break any alliances with anyone whose threat value is 100 or above and lose 10 Stability
-		if(kingdom.alliancePool != null){
+		if (kingdom.alliancePool != null) {
 			for (int i = 0; i < kingdom.alliancePool.kingdomsInvolved.Count; i++) {
-				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved[i];
-				if(kingdom.id != allyKingdom.id){
-					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(allyKingdom);
-					if(kr.targetKingdomInvasionValue >= 100f || kr.totalLike <= -100){
+				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved [i];
+				if (kingdom.id != allyKingdom.id) {
+					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (allyKingdom);
+					if (kr._relativeWeakness >= 100f || kr.totalLike <= -100 || allyKingdom.id == KingdomManager.Instance.kingdomRankings [0].id
+					   || (kingdom.highestRelativeStrengthAdjacentKingdom != null && allyKingdom.id == kingdom.highestRelativeStrengthAdjacentKingdom.id)) {
 						kingdom.LeaveAlliance (true);
-						kingdom.AdjustStability(-10);
-						Debug.Log(kingdom.name + " broke alliance with " + allyKingdom.name +
-							" because its invasion value is " + kr.targetKingdomInvasionValue.ToString() + " or total like is " + kr.totalLike.ToString() + "," + kingdom.name + 
-							" lost 10 Stability. Stability is now " + kingdom.stability.ToString());
+						kingdom.AdjustStability (-10);
+						Debug.Log (kingdom.name + " broke alliance with " + allyKingdom.name +
+						" because its relative weakness is " + kr._relativeWeakness.ToString () + " or total like is " + kr.totalLike.ToString ()
+						+ " or top ranked is " + KingdomManager.Instance.kingdomRankings [0].name.ToString ()
+						+ " or highest relative strength adjacent kingdom is " + kingdom.highestRelativeStrengthAdjacentKingdom.name.ToString () + "," + kingdom.name +
+						" lost 10 Stability. Stability is now " + kingdom.stability.ToString ());
+						skipPhase4 = true;
 						break;
 					}
 				}
 			}
 		}
 
-		//if i am under attack and i am not attacking anyone
-		bool isUnderAttack = kingdom.IsUnderAttack();
-		bool isAttacking = kingdom.IsAttacking ();
 		bool mustSeekAlliance = false;
-		Kingdom seekWarKingdom = null;
-		Kingdom targetKingdom = null;
-		int leastLike = 0;
-		int leastLike2 = 0;
-		if (isUnderAttack && !isAttacking) {
-			if (!kingdom.isFortifying) {
-				int chance = UnityEngine.Random.Range (0, 100);
-				if (chance < 75) {
-					Debug.Log(kingdom.name + " is fortifying because it is under attack and not attacking!");
-					kingdom.Fortify (true, isUnderAttack);
-				}
-			}
-		} else if (!isUnderAttack && isAttacking) {
-			if (!kingdom.isMilitarize) {
-				int chance = UnityEngine.Random.Range (0, 100);
-				if (chance < 75) {
-					Debug.Log(kingdom.name + " is militarizing because it is attacking and not under attack!");
-					kingdom.Militarize (true, isAttacking);
-				}
-			}
-		} else {
-			foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-				if(relationship.isDiscovered){
-					if(relationship.targetKingdomThreatLevel >= 100f && relationship.targetKingdomInvasionValue < 75f){
-						if(!relationship.AreAllies()){
-							mustSeekAlliance = true;
-							break;
-						}
-					}else if(relationship.targetKingdomThreatLevel >= 50f && relationship.targetKingdomInvasionValue >= 25f){
-						if (!relationship.AreAllies () && relationship.warfare == null) {
-							if(seekWarKingdom == null){
-								seekWarKingdom = relationship.targetKingdom;
-								leastLike = relationship.totalLike;
-							}else{
-								if(relationship.totalLike < leastLike){
-									seekWarKingdom = relationship.targetKingdom;
-									leastLike = relationship.totalLike;
-								}
-							}
-						}
-					}
-					if(relationship.targetKingdomInvasionValue > 0f){
-						if (!relationship.AreAllies ()) {
-							if(targetKingdom == null){
-								targetKingdom = relationship.targetKingdom;
-								leastLike2 = relationship.totalLike;
-							}else{
-								if(relationship.totalLike < leastLike2){
-									targetKingdom = relationship.targetKingdom;
-									leastLike2 = relationship.totalLike;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			if(mustSeekAlliance){
-				//if i am not part of any alliance, create or join an alliance if possible
-				if(kingdom.alliancePool == null){
-					Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 100 or above threat and a less than 75 invasion value");
-					kingdom.SeekAlliance ();
-					if(kingdom.alliancePool != null){
-						skipPhase2 = true;
-					}
-				}
-				if (!kingdom.isFortifying) {
-					int chance = UnityEngine.Random.Range (0, 2);
-					if (chance == 0) {
-						Debug.Log(kingdom.name + " is fortifying because it has no allies, there is a kingdom that has 100 or above threat and a less than 75 invasion value");
-						kingdom.Fortify (true);
-					}
-				}
-			}else{
-				if(seekWarKingdom != null){
-					skipPhase3 = true;
-					Debug.Log(kingdom.name + " is seeking war with " + seekWarKingdom.name + " because it is the least liked kingdom with threat 50 or above, and 25 or above invasion value");
-					Warfare warfare = new Warfare (kingdom, seekWarKingdom);
-				}else{
-					//if there are kingdoms whose invasion value is 75 or above that is not part of my alliance
-					if(targetKingdom != null){
-						Debug.Log(kingdom.name + " wants to have alliance with anyone against " + targetKingdom.name + " because it has positive invasion value and is not my ally");
-						if(!kingdom.isMilitarize){
-							int chance = UnityEngine.Random.Range (0, 2);
-							if (chance == 0) {
-								Debug.Log(kingdom.name + " militarizes against " + targetKingdom.name + " because it has positive invasion value and is not my ally");
-								kingdom.Militarize (true);
-							}
-						}
-						if(kingdom.alliancePool == null){
-							Kingdom kingdomToAlly = null;
-							int leastLikedToEnemy = 0;
-							foreach (KingdomRelationship krToAlly in kingdom.relationships.Values) {
-								if(krToAlly.targetKingdom.id != targetKingdom.id){
-									KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom);
-									KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (targetKingdom);
-									if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
-										&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id){
-										if(kingdomToAlly == null){
-											kingdomToAlly = krToAlly.targetKingdom;
-											leastLikedToEnemy = krEnemy.totalLike;
-										}else{
-											if(krEnemy.totalLike < leastLikedToEnemy){
-												kingdomToAlly = krToAlly.targetKingdom;
-												leastLikedToEnemy = krEnemy.totalLike;
-											}
-										}
+		if(kingdom.alliancePool == null){
+			if(kingdom.highestRelativeStrengthAdjacentKingdom != null){
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (kingdom.highestRelativeStrengthAdjacentKingdom);
+				if(kr._relativeWeakness < 50){
+					Kingdom kingdomToAlly = null;
+					int leastLikedToEnemy = 0;
+					foreach (KingdomRelationship krToAlly in kingdom.relationships.Values) {
+						if(krToAlly.targetKingdom.id != kingdom.highestRelativeStrengthAdjacentKingdom.id){
+							KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom);
+							KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom.highestRelativeStrengthAdjacentKingdom);
+							if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
+								&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id){
+								if(kingdomToAlly == null){
+									kingdomToAlly = krToAlly.targetKingdom;
+									leastLikedToEnemy = krEnemy.totalLike;
+								}else{
+									if(krEnemy.totalLike < leastLikedToEnemy){
+										kingdomToAlly = krToAlly.targetKingdom;
+										leastLikedToEnemy = krEnemy.totalLike;
 									}
 								}
 							}
-							if(kingdomToAlly != null){
-								Debug.Log(kingdom.name + " seeks alliance of conquest with " + kingdomToAlly.name);
-								kingdom.SeekAllianceWith (kingdomToAlly);
-							}
 						}
 					}
+					if(kingdomToAlly != null){
+						Debug.Log(kingdom.name + " seeks alliance of conquest with " + kingdomToAlly.name);
+						kingdom.SeekAllianceWith (kingdomToAlly);
+						skipPhase4 = true;
+					}
+				}else{
+					mustSeekAlliance = true;
 				}
+			}else{
+				mustSeekAlliance = true;
 			}
-		}
 
+			if(mustSeekAlliance){
+				foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
+					if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 100f && !relationship.AreAllies()){
+						Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 100 or above threat and a less than 75 invasion value");
+						kingdom.SeekAlliance ();
+						if(kingdom.alliancePool != null){
+							skipPhase2 = true;
+						}
+						skipPhase4 = true;
+						break;
+					}
+				}
+
+			}
+
+		}
 		if(!skipPhase2){
-			Phase2 (kingdom, skipPhase2, skipPhase3, hasAllianceInWar);
+			Phase2 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
 		}else{
 			if(!skipPhase3){
-				Phase3 (kingdom, skipPhase2, skipPhase3, hasAllianceInWar);
+				Phase3 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
 			}else{
-				Debug.Log("==========SKIPPED PHASE 3 END SEEKS SUPERIORITY " + kingdom.name + " ==========");
+				if(!skipPhase4){
+					Phase4 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
+				}else{
+					Debug.Log("==========SKIPPED PHASE 4 END SEEKS SUPERIORITY " + kingdom.name + " ==========");
+				}
 			}
 		}
 
 	}
 
-	private static void Phase2(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool hasAllianceInWar){
+	private static void Phase2(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool skipPhase4, bool hasAllianceInWar){
 		Debug.Log ("========== PHASE 2 ==========");
 		if(kingdom.alliancePool != null){
 			bool hasLeftAlliance = false;
@@ -183,6 +121,7 @@ public static class SeeksSuperiority {
 						hasAllianceInWar = true;
 						foreach (WarfareInfo info in allyKingdom.warfareInfo.Values) {
 							if (!kingdom.warfareInfo.ContainsKey (info.warfare.id) && !warsToJoin.Contains (info) && !checkedWarfareId.Contains(info.warfare.id)) {
+								skipPhase4 = true;
 								checkedWarfareId.Add (info.warfare.id);
 								WAR_SIDE allySide = info.side;
 								WAR_SIDE enemySide = WAR_SIDE.A;
@@ -288,19 +227,23 @@ public static class SeeksSuperiority {
 						}
 
 					}
-
 				}
+				skipPhase4 = true;
 			}
 		}
 
 		if(!skipPhase3){
-			Phase3 (kingdom, skipPhase2, skipPhase3, hasAllianceInWar);
+			Phase3 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
 		}else{
-			Debug.Log("==========SKIPPED PHASE 3 END SEEKS SUPERIORITY " + kingdom.name + " ==========");
+			if(!skipPhase4){
+				Phase4 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
+			}else{
+				Debug.Log("==========SKIPPED PHASE 4 END SEEKS SUPERIORITY " + kingdom.name + " ==========");
+			}
 		}
 	}
 
-	private static void Phase3(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool hasAllianceInWar){
+	private static void Phase3(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool skipPhase4, bool hasAllianceInWar){
 		Debug.Log ("========== PHASE 3 ==========");      
 		//if prestige can still accommodate more cities but nowhere to expand and currently not at war and none of my allies are at war
 		if(skipPhase2){
@@ -324,28 +267,28 @@ public static class SeeksSuperiority {
 					Debug.Log(kingdom.name + " has no war currently, has no alliance or no alliance member is at war, and can no longer expand");
 					bool hasOver100InvasionValue = false;
 					bool hasOver50InvasionValue = false;
-					int overPopulationReduction = 0;
-					int overpopulation = kingdom.GetOverpopulationPercentage();
+//					int overPopulationReduction = 0;
+//					int overpopulation = kingdom.GetOverpopulationPercentage();
 
-					if(overpopulation > 0) {
-						if (overpopulation <= 10) {
-							overPopulationReduction = 10;
-						} else if (overpopulation > 10 && overpopulation <= 20) {
-							overPopulationReduction = 20;
-						} else if (overpopulation > 20 && overpopulation <= 40) {
-							overPopulationReduction = 35;
-						} else if (overpopulation > 40 && overpopulation <= 60) {
-							overPopulationReduction = 50;
-						} else if (overpopulation > 60) {
-							overPopulationReduction = 65;
-						}
-					}
+//					if(overpopulation > 0) {
+//						if (overpopulation <= 10) {
+//							overPopulationReduction = 10;
+//						} else if (overpopulation > 10 && overpopulation <= 20) {
+//							overPopulationReduction = 20;
+//						} else if (overpopulation > 20 && overpopulation <= 40) {
+//							overPopulationReduction = 35;
+//						} else if (overpopulation > 40 && overpopulation <= 60) {
+//							overPopulationReduction = 50;
+//						} else if (overpopulation > 60) {
+//							overPopulationReduction = 65;
+//						}
+//					}
 
 					Kingdom targetKingdom = null;
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null){
-							if (relationship.targetKingdomInvasionValue >= KingdomManager.Instance.GetReducedInvasionValueThreshHold (100f, overPopulationReduction)) {
+						if(relationship.totalLike < 0 && relationship.isAdjacent && relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null){
+							if (relationship._relativeWeakness >= 100) {
 								if(targetKingdom == null || !hasOver100InvasionValue){
 									targetKingdom = relationship.targetKingdom;
 									leastLike = relationship.totalLike;
@@ -358,8 +301,8 @@ public static class SeeksSuperiority {
 								hasOver100InvasionValue = true;
 							} 
 							if(!hasOver100InvasionValue){
-								if (relationship.targetKingdomInvasionValue >= KingdomManager.Instance.GetReducedInvasionValueThreshHold (50f, overPopulationReduction)
-									&& relationship.targetKingdomInvasionValue < KingdomManager.Instance.GetReducedInvasionValueThreshHold (100f, overPopulationReduction)) {
+								if (relationship._relativeWeakness >= 50
+									&& relationship._relativeWeakness < 100) {
 									if(targetKingdom == null){
 										targetKingdom = relationship.targetKingdom;
 										leastLike = relationship.totalLike;
@@ -385,27 +328,21 @@ public static class SeeksSuperiority {
 								//if there is anyone whose Invasion Value is 1 or above, prepare for war against the one with the highest Invasion Value
 								Debug.Log(kingdom.name + " decided to have war with " + targetKingdom.name);
 								Warfare warfare = new Warfare (kingdom, targetKingdom);
+								skipPhase4 = true;
 							}
 						}else{
 							if(hasOver50InvasionValue){
 								KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (targetKingdom);
-								int stabilityModifier = (int)((float)kingdom.stability / 5f);
+								int stabilityModifier = (int)((float)kingdom.stability / 10f);
 								int chance = UnityEngine.Random.Range (0, 100);
 								int value = (int)(kingdom.king.GetWarmongerWarPercentage50() * (float)stabilityModifier);
-								int threshold = KingdomManager.Instance.GetReducedInvasionValueThreshHold (50f, overPopulationReduction);
+								int threshold = 50;
 								int totalValue = ((int)kr.targetKingdomInvasionValue - threshold) * value;
 								if(chance < totalValue){
 									//if there is anyone whose Invasion Value is 1 or above, prepare for war against the one with the highest Invasion Value
 									Debug.Log(kingdom.name + " decided to have war with " + targetKingdom.name);
 									Warfare warfare = new Warfare (kingdom, targetKingdom);
-								}else{
-									if(!kingdom.isFortifying && !kingdom.isMilitarize){
-										int newChance = UnityEngine.Random.Range (0, 2);
-										if(newChance == 0){
-											Debug.Log(kingdom.name + " just decided to militarize");
-											kingdom.Militarize (true);
-										}
-									}
+									skipPhase4 = true;
 								}
 							}
 						}
@@ -413,7 +350,18 @@ public static class SeeksSuperiority {
 				}
 			}
 		}
+		if(!skipPhase4){
+			Phase4 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
+		}else{
+			Debug.Log("==========SKIPPED PHASE 4 END SEEKS SUPERIORITY " + kingdom.name + " ==========");
+		}
+	}
 
+	private static void Phase4(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool skipPhase4, bool hasAllianceInWar){
+		//Subterfuge
+		Debug.Log ("========== PHASE 4 ==========");
+		kingdom.Subterfuge ();
 		Debug.Log("========== END SEEKS SUPERIORITY " + kingdom.name + " ==========");
+
 	}
 }

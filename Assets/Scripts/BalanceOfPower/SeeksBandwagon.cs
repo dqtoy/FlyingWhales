@@ -3,11 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public static class SeeksBalance {
+public static class SeeksBandwagon {
 
-//	private static bool skipPhase2;
-//	private static bool skipPhase3;
-//	private static bool hasAllianceInWar;
 	public static void Initialize(Kingdom kingdom){
 		bool skipPhase2 = false;
 		bool skipPhase3 = false;
@@ -17,85 +14,48 @@ public static class SeeksBalance {
 	}
 
 	private static void Phase1(Kingdom kingdom, bool skipPhase2, bool skipPhase3, bool skipPhase4, bool hasAllianceInWar){
-		Debug.Log("========== " + kingdom.name + " is seeking balance " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
+		Debug.Log("========== " + kingdom.name + " is seeking bandwagon " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
 		Debug.Log ("========== PHASE 1 ==========");      
 		//break any alliances with anyone whose threat value is 100 or above and lose 10 Stability
-        //break any alliances with anyone that he has a -100 Opinion and lose 10 Stability
-        if (kingdom.alliancePool != null){
+		bool mustLeaveAlliance = false;
+		bool mustSeekAlliance = false;
+
+		if (kingdom.alliancePool != null){
 			for (int i = 0; i < kingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved[i];
 				if(kingdom.id != allyKingdom.id){
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(allyKingdom);
-					if(kr.targetKingdomThreatLevel >= 100f || kr.totalLike <= -100){
+					if(kr.targetKingdomThreatLevel >= 100f){
 						kingdom.LeaveAlliance (true);
 						kingdom.AdjustStability(-10);
 						Debug.Log(kingdom.name + " broke alliance with " + allyKingdom.name +
 							" because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + " or total like is " + kr.totalLike.ToString() + "," + kingdom.name + 
 							" lost 10 stability. Stability is now " + kingdom.stability.ToString());
-						
+
 						skipPhase4 = true;
+						mustSeekAlliance = true;
 						break;
+					}else if(kr.totalLike <= -100){
+						mustLeaveAlliance = true;
 					}
 				}
 			}
-		}
-
-		bool mustSeekAlliance = false;
-		//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
-		foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-			if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 50f){
-				if (!relationship.AreAllies ()) {
-					mustSeekAlliance = true;
-					break;
-				}
-			}
-		}
-
-		if(mustSeekAlliance){
-			//if i am not part of any alliance, create or join an alliance if possible
-			if(kingdom.alliancePool == null){
-				Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 50 or above threat and a less than 75 invasion value");
-				kingdom.SeekAlliance ();
+			if(mustLeaveAlliance){
+				Debug.Log(kingdom.name + " left " + kingdom.alliancePool.name + " because there is a kingdom in alliance that I have -100 opinion and lost 10 stability. Stability is now " + kingdom.stability.ToString());
+				kingdom.LeaveAlliance (true);
+				kingdom.AdjustStability(-10);
 				skipPhase4 = true;
-				if(kingdom.alliancePool != null){
-					skipPhase2 = true;
-				}
 			}
-//			if (!kingdom.isFortifying) {
-//				int chance = UnityEngine.Random.Range (0, 2);
-//				if (chance == 0) {
-//					Debug.Log(kingdom.name + " is fortifying because it has no allies, there is a kingdom that has 50 or above threat and a less than 75 invasion value");
-//					kingdom.Fortify (true);
-//					skipPhase4 = true;
-//				}
-//			}
 		}
 
-//		bool isUnderAttack = kingdom.IsUnderAttack();
-//		bool isAttacking = kingdom.IsAttacking ();
-//		//if i am under attack and i am not attacking anyone
-//		if(isUnderAttack && !isAttacking){
-//			if (!kingdom.isFortifying) {
-//				int chance = UnityEngine.Random.Range (0, 100);
-//				if (chance < 75) {
-//					Debug.Log(kingdom.name + " is fortifying because it is under attack and not attacking!");
-//					kingdom.Fortify (true, isUnderAttack);
-//					skipPhase4 = true;
-//				}
-//			}
-//		}else if(!isUnderAttack && isAttacking){
-//			if (!kingdom.isMilitarize) {
-//				int chance = UnityEngine.Random.Range (0, 100);
-//				if (chance < 75) {
-//					Debug.Log(kingdom.name + " is militarizing because it is attacking and not under attack!");
-//					kingdom.Militarize (true, isAttacking);
-//					skipPhase4 = true;
-//				}
-//			}
-//		}else{
-//			
-//		}
-
+		if(kingdom.alliancePool == null && mustSeekAlliance){
+			Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 100 or above threat");
+			kingdom.SeekAlliance ();
+			skipPhase4 = true;
+			if(kingdom.alliancePool != null){
+				skipPhase2 = true;
+			}
+		}
 		if(!skipPhase2){
 			Phase2 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
 		}else{
@@ -105,7 +65,7 @@ public static class SeeksBalance {
 				if(!skipPhase4){
 					Phase4 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
 				}else{
-					Debug.Log("==========SKIPPED PHASE 4 END SEEKS BALANCE " + kingdom.name + " ==========");
+					Debug.Log("==========SKIPPED PHASE 4 END SEEKS BANDWAGON " + kingdom.name + " ==========");
 				}
 			}
 		}
@@ -134,10 +94,10 @@ public static class SeeksBalance {
 									enemySide = WAR_SIDE.B;
 								}
 								List<Kingdom> enemySideKingdoms = info.warfare.GetListFromSide (enemySide);
-									
+
 								int totalLikeToAllies = info.warfare.GetTotalLikeOfKingdomToSide (kingdom, allySide) * 2;
 								int totalLikeToEnemies = info.warfare.GetTotalLikeOfKingdomToSide (kingdom, enemySide);
-								
+
 								int totalChanceOfJoining = totalLikeToAllies - totalLikeToEnemies;
 								int chance = UnityEngine.Random.Range (0, 100);
 								if (chance < totalChanceOfJoining) {
@@ -243,7 +203,7 @@ public static class SeeksBalance {
 			if(!skipPhase4){
 				Phase4 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
 			}else{
-				Debug.Log("==========SKIPPED PHASE 4 END SEEKS BALANCE " + kingdom.name + " ==========");
+				Debug.Log("==========SKIPPED PHASE 4 END SEEKS BANDWAGON " + kingdom.name + " ==========");
 			}
 		}
 	}
@@ -270,31 +230,30 @@ public static class SeeksBalance {
 				if(hexTile == null){
 					//Can no longer expand
 					Debug.Log(kingdom.name + " has no war currently, has no alliance or no alliance member is at war, and can no longer expand");
-//					bool hasOver100InvasionValue = false;
-//					bool hasOver50InvasionValue = false;
-//					float highestInvasionValue = 0f;
+					bool hasOver100InvasionValue = false;
+					bool hasOver50InvasionValue = false;
 //					int overPopulationReduction = 0;
-//                    int overpopulation = kingdom.GetOverpopulationPercentage();
-//                   
+//					int overpopulation = kingdom.GetOverpopulationPercentage();
+
 //					if(overpopulation > 0) {
-//                        if (overpopulation <= 10) {
+//						if (overpopulation <= 10) {
 //							overPopulationReduction = 10;
-//                        } else if (overpopulation > 10 && overpopulation <= 20) {
+//						} else if (overpopulation > 10 && overpopulation <= 20) {
 //							overPopulationReduction = 20;
-//                        } else if (overpopulation > 20 && overpopulation <= 40) {
+//						} else if (overpopulation > 20 && overpopulation <= 40) {
 //							overPopulationReduction = 35;
-//                        } else if (overpopulation > 40 && overpopulation <= 60) {
+//						} else if (overpopulation > 40 && overpopulation <= 60) {
 //							overPopulationReduction = 50;
-//                        } else if (overpopulation > 60) {
+//						} else if (overpopulation > 60) {
 //							overPopulationReduction = 65;
-//                        }
-//                    }
+//						}
+//					}
 
 					Kingdom targetKingdom = null;
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 						if(relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null){
-							if (relationship.totalLike <= -50 && relationship.targetKingdomInvasionValue >= 25f) {
+							if (relationship.totalLike <= -50 && relationship.targetKingdomInvasionValue > 0f && relationship.targetKingdom.warfareInfo.Count > 0) {
 								if(targetKingdom == null){
 									targetKingdom = relationship.targetKingdom;
 									leastLike = relationship.totalLike;
@@ -307,37 +266,6 @@ public static class SeeksBalance {
 							}
 						}
 					}
-//					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-//						if(relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null){
-//							if (relationship.targetKingdomThreatLevel >= 50f && relationship.targetKingdomInvasionValue > 0f) {
-//								if(targetKingdom == null || !hasOver50InvasionValue){
-//									targetKingdom = relationship.targetKingdom;
-//									leastLike = relationship.totalLike;
-//								}else{
-//									if(relationship.totalLike < leastLike){
-//										targetKingdom = relationship.targetKingdom;
-//										leastLike = relationship.totalLike;
-//									}
-//								}
-//								hasOver50InvasionValue = true;
-//							}
-//
-//							if(!hasOver50InvasionValue){
-//								if (relationship.targetKingdomInvasionValue >= KingdomManager.Instance.GetReducedInvasionValueThreshHold (100f, overPopulationReduction)) {
-//									if(targetKingdom == null){
-//										targetKingdom = relationship.targetKingdom;
-//										leastLike = relationship.totalLike;
-//									}else{
-//										if(relationship.totalLike < leastLike){
-//											targetKingdom = relationship.targetKingdom;
-//											leastLike = relationship.totalLike;
-//										}
-//									}
-//									hasOver100InvasionValue = true;
-//								} 
-//							}
-//						}
-//					}
 					if(targetKingdom != null){
 						Debug.Log(kingdom.name + " has " + leastLike.ToString() + " total like towards " + targetKingdom.name);
 						int chance = UnityEngine.Random.Range (0, 100);
@@ -357,7 +285,7 @@ public static class SeeksBalance {
 		if(!skipPhase4){
 			Phase4 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
 		}else{
-			Debug.Log("==========SKIPPED PHASE 4 END SEEKS BALANCE " + kingdom.name + " ==========");
+			Debug.Log("==========SKIPPED PHASE 4 END SEEKS BANDWAGON " + kingdom.name + " ==========");
 		}
 	}
 
@@ -365,7 +293,7 @@ public static class SeeksBalance {
 		//Subterfuge
 		Debug.Log ("========== PHASE 4 ==========");
 		kingdom.Subterfuge ();
-		Debug.Log("========== END SEEKS BALANCE " + kingdom.name + " ==========");
+		Debug.Log("========== END SEEKS BANDWAGON " + kingdom.name + " ==========");
 
 	}
 }

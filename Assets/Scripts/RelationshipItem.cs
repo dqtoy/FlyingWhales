@@ -47,8 +47,8 @@ public class RelationshipItem : MonoBehaviour {
 //                }
 //                summary += rk.forTestingLikeModifier.ToString() + " Admin Modifier";
 //            }
-			summary += "\n\n SEP: " + rk._usedSourceEffectivePower.ToString() + ", SED: " + rk._usedSourceEffectiveDef.ToString();
-			summary += "\n TEP: " + rk._usedTargetEffectivePower.ToString() + ", TED: " + rk._usedTargetEffectiveDef.ToString();
+			summary += "\n\n TA: " + rk._theoreticalAttack.ToString() + ", TD: " + rk._theoreticalDefense.ToString();
+			summary += "\n RS: " + rk._relativeStrength.ToString() + ", RW: " + rk._relativeWeakness.ToString();
 
             UIManager.Instance.ShowRelationshipSummary(this.rk.targetKingdom.king, summary);
         } else {

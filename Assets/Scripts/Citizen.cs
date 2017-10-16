@@ -1295,26 +1295,26 @@ public class Citizen {
 
 	internal float GetWarmongerWarPercentage100(){
 		if(this._warmonger == WARMONGER.VERY_HIGH){
-			return 10f;
+			return 6f;
 		}else if(this._warmonger == WARMONGER.HIGH){
-			return 5f;
+			return 4f;
 		}else if(this._warmonger == WARMONGER.AVERAGE){
-			return 3f;
-		}else if(this._warmonger == WARMONGER.LOW){
 			return 2f;
-		}else{
+		}else if(this._warmonger == WARMONGER.LOW){
 			return 1f;
+		}else{
+			return 0.5f;
 		}
 	}
 	internal float GetWarmongerWarPercentage50(){
 		if(this._warmonger == WARMONGER.VERY_HIGH){
-			return 2f;
-		}else if(this._warmonger == WARMONGER.HIGH){
-			return 1f;
-		}else if(this._warmonger == WARMONGER.AVERAGE){
 			return 0.5f;
+		}else if(this._warmonger == WARMONGER.HIGH){
+			return 0.4f;
+		}else if(this._warmonger == WARMONGER.AVERAGE){
+			return 0.3f;
 		}else if(this._warmonger == WARMONGER.LOW){
-			return 0.25f;
+			return 0.2f;
 		}else{
 			return 0.1f;
 		}

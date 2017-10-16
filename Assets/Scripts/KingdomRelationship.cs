@@ -43,8 +43,10 @@ public class KingdomRelationship {
 	private float _targetKingdomThreatLevel;
 	private float _targetKingdomInvasionValue;
 
-	internal int _effectivePower;
-	internal int _effectiveDef;
+	internal int _theoreticalAttack;
+	internal int _theoreticalDefense;
+	internal int _relativeStrength;
+	internal int _relativeWeakness;
 
 	internal int _usedSourceEffectivePower;
 	internal int _usedSourceEffectiveDef;
@@ -111,12 +113,15 @@ public class KingdomRelationship {
 	}
 	public float targetKingdomThreatLevel{
 		get {
-			return this._targetKingdomThreatLevel;
+			return (float)Mathf.Min (this._targetKingdom.warmongerValue, this._relativeStrength);
 		}
 	}
 	public float targetKingdomInvasionValue{
 		get {
-			return this._targetKingdomInvasionValue;
+			if(!this._isAdjacent){
+				return 0f;
+			}
+			return (float)Mathf.Min (this._targetKingdom.warmongerValue, this._relativeWeakness);
 		}
 	}
 	public bool isDiscovered {
@@ -131,6 +136,17 @@ public class KingdomRelationship {
 	public bool isRecentWar {
 		get { return this._isRecentWar; }
 	}
+//	public int targetKingdomThreat{
+//		get { return Math.Min (this._targetKingdom.warmongerValue, this._relativeStrength);}
+//	}
+//	public int targetInvasionValue{
+//		get {
+//			if(!this._isAdjacent){
+//				return 0;
+//			}
+//			return Math.Min (this._targetKingdom.warmongerValue, this._relativeWeakness);
+//		}
+//	}
     #endregion
 
     /* <summary> Create a new relationship between 2 kingdoms </summary>
@@ -150,6 +166,10 @@ public class KingdomRelationship {
         _isInitial = false;
         _kingdomWarData = new KingdomWar(_targetKingdom);
         _requestPeaceCooldown = new GameDate(0,0,0);
+		this._theoreticalAttack = 0;
+		this._theoreticalDefense = 0;
+		this._relativeStrength = 0;
+		this._relativeWeakness = 0;
 		this._isMilitaryAlliance = false;
 		this._isMutualDefenseTreaty = false;
 		this._isAdjacent = false;
@@ -317,23 +337,27 @@ public class KingdomRelationship {
 			this._relationshipSummary += adjustment.ToString() + " Dislikes Inept.\n";
 		}
 
-		if(this._targetKingdomThreatLevel >= 0f && this._targetKingdomThreatLevel < 1f){
-			adjustment = 25;
-		}else if (this._targetKingdomThreatLevel >= 1f && this._targetKingdomThreatLevel < 26f){
-			adjustment = 0;
-		}else if (this._targetKingdomThreatLevel >= 26f && this._targetKingdomThreatLevel < 51f){
-			adjustment = -25;
-		}else if (this._targetKingdomThreatLevel >= 51f && this._targetKingdomThreatLevel < 100f){
-			adjustment = -50;
-		}else{
-			adjustment = -100;
-		}
-		baseLoyalty += adjustment;
 
-		if(adjustment >= 0){
-			this._relationshipSummary += "+";
+		//Kingdom Threat
+		adjustment = GetKingdomThreatOpinionChange();
+		if(adjustment != -1){
+			baseLoyalty += adjustment;
+			if(adjustment >= 0){
+				this._relationshipSummary += "+";
+			}
+			this._relationshipSummary += adjustment.ToString() + " Kingdom Threat.\n";
 		}
-		this._relationshipSummary += adjustment.ToString() + " Kingdom Threat.\n";
+
+
+		//Kingdom Invasion Value
+		adjustment = GetKingdomInvasionValueOpinionChange();
+		if(adjustment != -1){
+			baseLoyalty += adjustment;
+			if(adjustment >= 0){
+				this._relationshipSummary += "+";
+			}
+			this._relationshipSummary += adjustment.ToString() + " Invasion Value.\n";
+		}
 
         this._like = 0;
         this.AdjustLikeness(baseLoyalty, gameEventTrigger, assassinationReasons, isDiscovery);
@@ -468,6 +492,8 @@ public class KingdomRelationship {
 			dateTimeToUse.SetDate (dateTimeToUse.month, 1, dateTimeToUse.year);
 		}else if(identifier == RELATIONSHIP_MODIFIER.REBELLION){
 			dateTimeToUse.SetDate (dateTimeToUse.month, 1, dateTimeToUse.year);
+		}else if(identifier == RELATIONSHIP_MODIFIER.FLATTER){
+			dateTimeToUse.SetDate (dateTimeToUse.month, 1, dateTimeToUse.year);
 		}
 		if(isDecaying){
 			AddDecayingRelationshipModifier (modification, reason, identifier, dateTimeToUse);
@@ -488,6 +514,13 @@ public class KingdomRelationship {
 			}else if(identifier == RELATIONSHIP_MODIFIER.REBELLION){
 				currentDate.AddMonths (1);
 				SchedulingManager.Instance.AddEntry (currentDate, () => DecayRelationshipModifier(relationshipModifier, 5, DECAY_INTERVAL.MONTHLY, 1));
+			}else if(identifier == RELATIONSHIP_MODIFIER.FLATTER){
+				int decayAmount = 5;
+				if(modification >= 0){
+					decayAmount = -5;
+				}
+				currentDate.AddMonths (1);
+				SchedulingManager.Instance.AddEntry (currentDate, () => DecayRelationshipModifier(relationshipModifier, decayAmount, DECAY_INTERVAL.MONTHLY, 1));
 			}
 		}
 	}
@@ -730,14 +763,45 @@ public class KingdomRelationship {
 		UpdateTheoreticalAttackAndDefense ();
 		rk.UpdateTheoreticalAttackAndDefense ();
 
-		this._usedSourceEffectivePower = this._effectivePower;
-		this._usedSourceEffectiveDef = this._effectiveDef;
-		this._usedTargetEffectivePower = rk._effectivePower;
-		this._usedTargetEffectiveDef = rk._effectiveDef;
+		this._relativeStrength = rk._theoreticalAttack / this._theoreticalDefense;
+		this._relativeStrength = Mathf.Clamp (this._relativeStrength, 0, 100);
+		this._relativeWeakness = this._theoreticalAttack / rk._theoreticalDefense;
+		if(this._relativeWeakness < 0){
+			this._relativeWeakness = 0;
+		}
+		float threat = this.targetKingdomThreatLevel;
+		if(this.isAdjacent){
+			if(threat > 50f){
+				if(this._sourceKingdom.highestThreatAdjacentKingdomAbove50 == null){
+					this._sourceKingdom.highestThreatAdjacentKingdomAbove50 = this._targetKingdom;
+					this._sourceKingdom.highestThreatAdjacentKingdomAbove50Value = threat;
+				}else{
+					if(threat > this._sourceKingdom.highestThreatAdjacentKingdomAbove50Value){
+						this._sourceKingdom.highestThreatAdjacentKingdomAbove50 = this._targetKingdom;
+						this._sourceKingdom.highestThreatAdjacentKingdomAbove50Value = threat;
+					}
+				}
+			}
+			if(this._relativeStrength > 0){
+				if(this._sourceKingdom.highestRelativeStrengthAdjacentKingdom == null){
+					this._sourceKingdom.highestRelativeStrengthAdjacentKingdom = this._targetKingdom;
+					this._sourceKingdom.highestRelativeStrengthAdjacentKingdomValue = this._relativeStrength;
+				}else{
+					if(this._relativeStrength > this._sourceKingdom.highestRelativeStrengthAdjacentKingdomValue){
+						this._sourceKingdom.highestRelativeStrengthAdjacentKingdom = this._targetKingdom;
+						this._sourceKingdom.highestRelativeStrengthAdjacentKingdomValue = this._relativeStrength;
+					}
+				}
+			}
+		}
+//		this._usedSourceEffectivePower = this._theoreticalAttack;
+//		this._usedSourceEffectiveDef = this._theoreticalDefense;
+//		this._usedTargetEffectivePower = rk._effectivePower;
+//		this._usedTargetEffectiveDef = rk._effectiveDef;
 
-		UpdateTargetKingdomThreatLevel ();
-		UpdateTargetInvasionValue ();
-        UpdateLikeness(null);
+//		UpdateTargetKingdomThreatLevel ();
+//		UpdateTargetInvasionValue ();
+//      UpdateLikeness(null);
     }
 	internal void UpdateTargetKingdomThreatLevel(){
 		float threatLevel = 0f;
@@ -875,14 +939,14 @@ public class KingdomRelationship {
 		}
 	}
 	internal void UpdateTheoreticalAttackAndDefense(){
-		int theoreticalAttack = GetTheoreticalAttack ();
-		int theoreticalDefense = GetTheoreticalDefense ();
-		int posAllianceAttack = GetAdjacentPosAllianceWeapons ();
+		this._theoreticalAttack = GetTheoreticalAttack ();
+		this._theoreticalDefense = GetTheoreticalDefense ();
+//		int posAllianceAttack = GetAdjacentPosAllianceWeapons ();
 //		int posAllianceDefense = GetAdjacentPosAllianceArmors ();
 //		int usedPosAllianceAttack = (int)((float)posAllianceAttack / 2f);
 
-		this._effectivePower = theoreticalAttack + posAllianceAttack;
-		this._effectiveDef = theoreticalDefense + posAllianceAttack;
+//		this._effectivePower = theoreticalAttack;
+//		this._effectiveDef = theoreticalDefense;
 	}
 
 	private int GetTheoreticalAttack(){
@@ -985,5 +1049,73 @@ public class KingdomRelationship {
 	}
 	internal void SetBattle(Battle battle){
 		this._battle = battle;
+	}
+
+	private int GetKingdomThreatOpinionChange(){
+		//Kingdom Threat
+		int adjustment = -1;
+		float threat = this.targetKingdomThreatLevel;
+		if (this._sourceKingdom.king.balanceType == PURPOSE.BALANCE || this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
+			if (threat == 0f) {
+				adjustment = 25;
+				this._relationshipSummary += adjustment.ToString() + " Kingdom Threat.\n";
+			} else if (threat >= 1f && threat < 26f) {
+				adjustment = 0;
+			} else if (threat >= 26f && threat < 51f) {
+				adjustment = -25;
+				if (!this._isAdjacent) {
+					adjustment = -12;
+				}
+			} else if (threat >= 51f && threat < 100f) {
+				adjustment = -50;
+				if (!this._isAdjacent) {
+					adjustment = -25;
+				}
+			} else {
+				adjustment = -100;
+				if (!this._isAdjacent) {
+					adjustment = -50;
+				}
+			}
+			if (this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
+				if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
+					if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
+						adjustment = 100;
+					} else {
+						if(this._sourceKingdom.highestThreatAdjacentKingdomAbove50 != null){
+							if(this._targetKingdom.id == this._sourceKingdom.highestThreatAdjacentKingdomAbove50.id){
+								adjustment = 100;
+							}
+						}
+
+					}
+				}
+			}
+		} else if (this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
+			if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
+				if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
+					adjustment = -100;
+				}else{
+					if(this._sourceKingdom.highestRelativeStrengthAdjacentKingdom != null){
+						if(this._targetKingdom.id == this._sourceKingdom.highestRelativeStrengthAdjacentKingdom.id){
+							adjustment = -100;
+						}
+					}
+				}
+			}
+		}
+		return adjustment;
+	}
+
+	private int GetKingdomInvasionValueOpinionChange(){
+		int adjustment = -1;
+		if (this._sourceKingdom.king.balanceType == PURPOSE.BALANCE){
+			if(this._relativeWeakness >= 100){
+				adjustment = 50;
+			}else if(this._relativeWeakness >= 51 && this._relativeWeakness < 100){
+				adjustment = 25;
+			}
+		}
+		return adjustment;
 	}
 }

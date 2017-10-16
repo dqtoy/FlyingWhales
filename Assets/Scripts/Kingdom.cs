@@ -145,6 +145,12 @@ public class Kingdom{
     private int stabilityDecreaseFromInvasionCounter;
     internal List<GameDate> datesStabilityDecreaseWillExpire = new List<GameDate>(); //TODO Remove this when testing is done
 
+	internal Kingdom highestThreatAdjacentKingdomAbove50;
+	internal float highestThreatAdjacentKingdomAbove50Value;
+
+	internal Kingdom highestRelativeStrengthAdjacentKingdom;
+	internal int highestRelativeStrengthAdjacentKingdomValue;
+
     #region getters/setters
     public KINGDOM_TYPE kingdomType {
 		get { 
@@ -442,6 +448,7 @@ public class Kingdom{
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
         this.stabilityDecreaseFromInvasionCounter = 0;
+		this.highestThreatAdjacentKingdomAbove50 = null;
 
         AdjustPrestige(GridMap.Instance.numOfRegions);
         //		AdjustPrestige(500);
@@ -2364,6 +2371,8 @@ public class Kingdom{
 				SeeksBalance.Initialize(this);
 			}else if (this.king.balanceType == PURPOSE.SUPERIORITY) {
 				SeeksSuperiority.Initialize(this);
+			}else if (this.king.balanceType == PURPOSE.BANDWAGON) {
+				SeeksBandwagon.Initialize(this);
 			}
 			CheckStability ();
 
@@ -2706,8 +2715,23 @@ public class Kingdom{
 		}
 	}
 	internal void UpdateThreatLevelsAndInvasionValues(){
-		foreach (KingdomRelationship relationship in this.relationships.Values) {
-			relationship.UpdateThreatLevelAndInvasionValue ();
+		if(this.king.balanceType == PURPOSE.BANDWAGON){
+			this.highestThreatAdjacentKingdomAbove50 = null;
+			this.highestThreatAdjacentKingdomAbove50Value = 0f;
+			this.highestRelativeStrengthAdjacentKingdom = null;
+			this.highestRelativeStrengthAdjacentKingdomValue = 0;
+			foreach (KingdomRelationship relationship in this.relationships.Values) {
+				relationship.UpdateThreatLevelAndInvasionValue ();
+			}
+//			highestThreatAdjacentKingdomAbove50 = GetKingdomWithHighestAtLeastAbove50Threat ();
+			foreach (KingdomRelationship relationship in this.relationships.Values) {
+				relationship.UpdateLikeness (null);
+			}
+		}else{
+			foreach (KingdomRelationship relationship in this.relationships.Values) {
+				relationship.UpdateThreatLevelAndInvasionValue ();
+				relationship.UpdateLikeness (null);
+			}
 		}
 	}
 
@@ -3058,4 +3082,218 @@ public class Kingdom{
 		newLog.AddToFillers (kingdom, kingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 		UIManager.Instance.ShowNotification (newLog, new HashSet<Kingdom>(kingdomsToShowNotif));
 	}
+
+	internal Kingdom GetKingdomWithHighestAtLeastAbove50Threat(){
+		float highestThreat = 0f;
+		Kingdom highestThreatKingdom = null;
+		foreach (KingdomRelationship kr in relationships.Values) {
+			float threat = kr.targetKingdomThreatLevel;
+			if(kr.isAdjacent && threat > 50f){
+				if(highestThreatKingdom == null){
+					highestThreatKingdom = kr.targetKingdom;
+					highestThreat = threat;
+				}else{
+					if(threat > highestThreat){
+						highestThreatKingdom = kr.targetKingdom;
+						highestThreat = threat;
+					}
+				}
+			}
+		}
+		return highestThreatKingdom;
+	}
+	private Kingdom GetAdjacentKingdomLeastLike(){
+		int leastLike = 0;
+		Kingdom targetKingdom = null;
+		foreach (KingdomRelationship kr in relationships.Values) {
+			if(kr.isAdjacent && !kr.AreAllies()){
+				if(targetKingdom == null){
+					targetKingdom = kr.targetKingdom;
+					leastLike = kr.totalLike;
+				}else{
+					if(kr.totalLike < leastLike){
+						targetKingdom = kr.targetKingdom;
+						leastLike = kr.totalLike;
+					}
+				}
+			}
+		}
+		return targetKingdom;
+	}
+
+	#region Subterfuge
+	internal void Subterfuge(){
+		Kingdom targetKingdom = GetAdjacentKingdomLeastLike ();
+		if(targetKingdom != null){
+			int triggerChance = UnityEngine.Random.Range (0, 100);
+			int triggerValue = 5;
+			if(this.king.loyalty == LOYALTY.SCHEMING){
+				triggerValue += 3;
+			}
+			if(triggerChance < triggerValue){
+				SUBTERFUGE_ACTIONS subterfuge = GetSubterfugeAction ();
+				int successChance = UnityEngine.Random.Range (0, 100);
+				int successValue = 60;
+				if(this.king.intelligence == INTELLIGENCE.SMART){
+					successValue += 15;
+				}else if(this.king.intelligence == INTELLIGENCE.DUMB){
+					successValue -= 15;
+				}
+				if(successChance < successValue){
+					//Success
+					CreateSuccessSubterfugeAction(subterfuge, targetKingdom);
+
+				}else{
+					//Fail
+					int criticalFailChance = UnityEngine.Random.Range (0, 100);
+					int criticalFailValue = 20;
+					if(this.king.efficiency == EFFICIENCY.INEPT){
+						criticalFailValue += 5;
+					}else if(this.king.efficiency == EFFICIENCY.EFFICIENT){
+						criticalFailValue -= 5;
+					}
+					if(criticalFailChance < criticalFailValue){
+						//Critical Failure
+						CreateCriticalFailSubterfugeAction(subterfuge, targetKingdom);
+					}else{
+						//Failure
+						CreateFailSubterfugeAction(subterfuge, targetKingdom);
+					}
+				}
+			}
+		}
+	}
+	private SUBTERFUGE_ACTIONS GetSubterfugeAction(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(this.king.balanceType == PURPOSE.BALANCE){
+			if(chance < 40){
+				return SUBTERFUGE_ACTIONS.DESTROY_WEAPONS;
+			}else if(chance >= 40 && chance < 70){
+				return SUBTERFUGE_ACTIONS.REDUCE_STABILITY;
+			}else if(chance >= 70 && chance < 90){
+				return SUBTERFUGE_ACTIONS.FLATTER;
+			}else{
+				return SUBTERFUGE_ACTIONS.SPREAD_PLAGUE;
+			}
+		}else if(this.king.balanceType == PURPOSE.SUPERIORITY){
+			if(chance < 40){
+				return SUBTERFUGE_ACTIONS.DESTROY_ARMORS;
+			}else if(chance >= 40 && chance < 70){
+				return SUBTERFUGE_ACTIONS.REDUCE_STABILITY;
+			}else if(chance >= 70 && chance < 90){
+				return SUBTERFUGE_ACTIONS.DESTROY_WEAPONS;
+			}else{
+				return SUBTERFUGE_ACTIONS.SPREAD_PLAGUE;
+			}
+		}else{
+			if(chance < 40){
+				return SUBTERFUGE_ACTIONS.FLATTER;
+			}else if(chance >= 40 && chance < 70){
+				return SUBTERFUGE_ACTIONS.DESTROY_WEAPONS;
+			}else if(chance >= 70 && chance < 90){
+				return SUBTERFUGE_ACTIONS.SPREAD_PLAGUE;
+			}else{
+				return SUBTERFUGE_ACTIONS.DESTROY_ARMORS;
+			}
+		}
+	}
+
+	private void CreateSuccessSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
+		if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS){
+			int weaponsDestroyed = targetKingdom.DestroyWeaponsSubterfuge ();
+			ShowSuccessSubterfugeLog (subterfuge, targetKingdom, weaponsDestroyed);
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS){
+			int armorsDestroyed = targetKingdom.DestroyArmorsSubterfuge ();
+			ShowSuccessSubterfugeLog (subterfuge, targetKingdom, armorsDestroyed);
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
+			targetKingdom.InciteUnrestSubterfuge ();
+			ShowSuccessSubterfugeLog (subterfuge, targetKingdom);
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.FLATTER){
+			FlatterSubterfuge (targetKingdom, 25);
+			ShowSuccessSubterfugeLog (subterfuge, targetKingdom);
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE){
+			string plagueName = targetKingdom.SpreadPlague ();
+			ShowSuccessSubterfugeLog (subterfuge, targetKingdom, 0, plagueName);
+		}
+	}
+	private void CreateCriticalFailSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
+		if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS){
+			int weaponsDestroyed = DestroyWeaponsSubterfuge ();
+			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, weaponsDestroyed);
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS){
+			int armorsDestroyed = DestroyArmorsSubterfuge ();
+			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, armorsDestroyed);
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
+			InciteUnrestSubterfuge ();
+			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom);
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.FLATTER){
+			FlatterSubterfuge (targetKingdom, -25);
+			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom);
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE){
+			string plagueName = SpreadPlague ();
+			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, 0, plagueName);
+		}
+	}
+	private void CreateFailSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
+		ShowFailSubterfugeLog (subterfuge, targetKingdom);
+	}
+	private int DestroyWeaponsSubterfuge(){
+		int weaponsToBeDestroyed = (int)((float)this._baseWeapons * 0.05f);
+		this.AdjustBaseWeapons (-weaponsToBeDestroyed);
+		return weaponsToBeDestroyed;
+	}
+	private int DestroyArmorsSubterfuge(){
+		int armorsToBeDestroyed = (int)((float)this._baseArmor * 0.05f);
+		this.AdjustBaseArmors (-armorsToBeDestroyed);
+		return armorsToBeDestroyed;
+	}
+	private void InciteUnrestSubterfuge(){
+		this.AdjustStability (-5);
+	}
+	private void FlatterSubterfuge(Kingdom targetKingdom, int modifier){
+		KingdomRelationship kr = targetKingdom.GetRelationshipWithKingdom (this);
+		kr.AddRelationshipModifier (modifier, "Flatter", RELATIONSHIP_MODIFIER.FLATTER, true, false);
+	}
+	private string SpreadPlague(){
+		return string.Empty;
+	}
+	private void ShowSuccessSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_SUCCESS");
+		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.KING_1);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS || subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) {
+			newLog.AddToFillers (null, weaponsArmorsDestroyed.ToString(), LOG_IDENTIFIER.OTHER);
+		}else if (subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE) {
+			newLog.AddToFillers (null, plagueName.ToString(), LOG_IDENTIFIER.OTHER);
+		}else if (subterfuge == SUBTERFUGE_ACTIONS.FLATTER) {
+			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+		}
+		UIManager.Instance.ShowNotification (newLog);
+	}
+	private void ShowFailSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_FAIL");
+		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.KING_1);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		if (subterfuge == SUBTERFUGE_ACTIONS.FLATTER) {
+			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+		}
+		UIManager.Instance.ShowNotification (newLog);
+	}
+	private void ShowCriticalFailSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_CRITICAL");
+		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.KING_1);
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS || subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) {
+			newLog.AddToFillers (null, weaponsArmorsDestroyed.ToString(), LOG_IDENTIFIER.OTHER);
+		}else if (subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE) {
+			newLog.AddToFillers (null, plagueName.ToString(), LOG_IDENTIFIER.OTHER);
+		}else if (subterfuge == SUBTERFUGE_ACTIONS.FLATTER) {
+			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
+		}
+		UIManager.Instance.ShowNotification (newLog);
+	}
+	#endregion
 }
