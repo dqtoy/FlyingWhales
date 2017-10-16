@@ -2478,6 +2478,13 @@ public class Kingdom{
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
         totalStabilityIncrease -= (stabilityDecreaseFromInvasionCounter * 2);
 
+        //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
+        if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
+            totalStabilityIncrease -= 5;
+        } else if(kingdomSize == KINGDOM_SIZE.LARGE) {
+            totalStabilityIncrease -= 10;
+        }
+
         AdjustBaseWeapons(totalWeaponsIncrease);
         AdjustBaseArmors(totalArmorIncrease);
         AdjustStability(totalStabilityIncrease);
@@ -2510,6 +2517,14 @@ public class Kingdom{
         totalStabilityIncrease -= overpopulation / 10;
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
         totalStabilityIncrease -= (stabilityDecreaseFromInvasionCounter * 2);
+
+        //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
+        if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
+            totalStabilityIncrease -= 5;
+        } else if (kingdomSize == KINGDOM_SIZE.LARGE) {
+            totalStabilityIncrease -= 10;
+        }
+
         return totalStabilityIncrease;
     }
     internal void AddStabilityDecreaseBecauseOfInvasion() {
