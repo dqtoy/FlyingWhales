@@ -83,38 +83,38 @@ public class EventCreator: MonoBehaviour {
         return newPlague;
     }
 
-	internal HuntLair CreateHuntLairEvent(Kingdom sourceKingdom){
-		if(sourceKingdom.isLockedDown){
-			return null;
-		}
-		if (sourceKingdom.GetActiveEventsOfTypeCount(EVENT_TYPES.HUNT_LAIR) >= sourceKingdom.cities.Count) {
-			return null;
-		}
-		HexTile chosenLairTile = null;
-		Lair lair = null;
-		List<HexTile> lairTiles = new List<HexTile>();
+	//internal HuntLair CreateHuntLairEvent(Kingdom sourceKingdom){
+	//	if(sourceKingdom.isLockedDown){
+	//		return null;
+	//	}
+	//	if (sourceKingdom.GetActiveEventsOfTypeCount(EVENT_TYPES.HUNT_LAIR) >= sourceKingdom.cities.Count) {
+	//		return null;
+	//	}
+	//	HexTile chosenLairTile = null;
+	//	Lair lair = null;
+	//	List<HexTile> lairTiles = new List<HexTile>();
 
-		lairTiles = sourceKingdom.fogOfWarDict [FOG_OF_WAR_STATE.VISIBLE].Where(x => x.lair != null).ToList();
-		if(lairTiles == null || lairTiles.Count <= 0){
-			lairTiles = sourceKingdom.fogOfWarDict [FOG_OF_WAR_STATE.SEEN].Where(x => x.lair != null).ToList();
-		}
+	//	lairTiles = sourceKingdom.fogOfWarDict [FOG_OF_WAR_STATE.VISIBLE].Where(x => x.lair != null).ToList();
+	//	if(lairTiles == null || lairTiles.Count <= 0){
+	//		lairTiles = sourceKingdom.fogOfWarDict [FOG_OF_WAR_STATE.SEEN].Where(x => x.lair != null).ToList();
+	//	}
 
 
-		if(lairTiles != null && lairTiles.Count > 0){
-			lairTiles = lairTiles.OrderBy (x => PathGenerator.Instance.GetDistanceBetweenTwoTiles (sourceKingdom.capitalCity.hexTile, x)).ToList();
-			chosenLairTile = lairTiles [0];
-			lair = chosenLairTile.lair;
-		}
-		Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.RANGER, EVENT_TYPES.HUNT_LAIR, chosenLairTile, EventManager.Instance.eventDuration[EVENT_TYPES.HUNT_LAIR]);
-		if(citizen != null){
-			Ranger ranger = (Ranger)citizen.assignedRole;
-			HuntLair huntLair = new HuntLair(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
-				sourceKingdom.king, ranger, lair);
-			ranger.Initialize (huntLair);
-            return huntLair;
-		}
-		return null;
-	}
+	//	if(lairTiles != null && lairTiles.Count > 0){
+	//		lairTiles = lairTiles.OrderBy (x => PathGenerator.Instance.GetDistanceBetweenTwoTiles (sourceKingdom.capitalCity.hexTile, x)).ToList();
+	//		chosenLairTile = lairTiles [0];
+	//		lair = chosenLairTile.lair;
+	//	}
+	//	Citizen citizen = sourceKingdom.capitalCity.CreateAgent(ROLE.RANGER, EVENT_TYPES.HUNT_LAIR, chosenLairTile, EventManager.Instance.eventDuration[EVENT_TYPES.HUNT_LAIR]);
+	//	if(citizen != null){
+	//		Ranger ranger = (Ranger)citizen.assignedRole;
+	//		HuntLair huntLair = new HuntLair(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year,
+	//			sourceKingdom.king, ranger, lair);
+	//		ranger.Initialize (huntLair);
+ //           return huntLair;
+	//	}
+	//	return null;
+	//}
 		
 	//-------------------------------------------- PLAYER EVENTS ----------------------------------------------------//
 

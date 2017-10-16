@@ -244,7 +244,7 @@ public class DailyCumulativeEvent : MonoBehaviour {
 
 
 	private void CreateHuntLairEvent(){
-		EventCreator.Instance.CreateHuntLairEvent(this.firstKingdom);
+		//EventCreator.Instance.CreateHuntLairEvent(this.firstKingdom);
 	}
 //	private void CreateBorderConflictEvent(){
 //		EventCreator.Instance.CreateBorderConflictEvent(this.firstKingdom, this.secondKingdom);

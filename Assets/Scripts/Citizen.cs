@@ -159,9 +159,6 @@ public class Citizen {
 		return 2;
 	}
     internal void AssignRole(ROLE role) {
-        if(this.role == role && role != ROLE.UNTRAINED) {
-            throw new System.Exception(this.name + " is being assigned the role of " + role.ToString() + " even if he/she is already a " + this.role.ToString());
-        }
         if (this.role != ROLE.UNTRAINED && this.role != role) {
             if (this.assignedRole != null) {
                 this.assignedRole.OnDeath();
@@ -171,77 +168,19 @@ public class Citizen {
         this.role = role;
  		if (role == ROLE.GENERAL) {
             this.assignedRole = new General(this);
-        } else if (role == ROLE.ENVOY) {
-            this.assignedRole = new Envoy(this);
-        } else if (role == ROLE.GUARDIAN) {
-            this.assignedRole = new Guardian(this);
-        } else if (role == ROLE.SPY) {
-            this.assignedRole = new Spy(this);
-        } else if (role == ROLE.TRADER) {
-            this.assignedRole = new Trader(this);
         } else if (role == ROLE.GOVERNOR) {
             this.assignedRole = new Governor(this);
         } else if (role == ROLE.KING) {
             this.assignedRole = new King(this);
         } else if (role == ROLE.EXPANDER) {
             this.assignedRole = new Expander(this);
-        } else if (role == ROLE.RAIDER) {
-            this.assignedRole = new Raider(this);
-        } else if (role == ROLE.REINFORCER) {
-            this.assignedRole = new Reinforcer(this);
-        } else if (role == ROLE.REBEL) {
-            this.assignedRole = new Rebel(this);
-        } else if (role == ROLE.EXTERMINATOR) {
-            this.assignedRole = new Exterminator(this);
-        } else if (role == ROLE.SCOURGE) {
-            this.assignedRole = new Scourge(this);
-        } else if (role == ROLE.HEALER) {
-            this.assignedRole = new Healer(this);
-        } else if (role == ROLE.PROVOKER) {
-            this.assignedRole = new Provoker(this);
-        } else if (role == ROLE.MISSIONARY) {
-            this.assignedRole = new Missionary(this);
-        } else if (role == ROLE.ABDUCTOR) {
-            this.assignedRole = new Abductor(this);
-        } else if (role == ROLE.LYCANTHROPE) {
-            this.assignedRole = new Lycanthrope(this);
-        } else if (role == ROLE.INVESTIGATOR) {
-            this.assignedRole = new Investigator(this);
-        } else if (role == ROLE.THIEF) {
-            this.assignedRole = new Thief(this);
-        } else if (role == ROLE.WITCH) {
-            this.assignedRole = new Witch(this);
-        } else if (role == ROLE.ADVENTURER) {
-            this.assignedRole = new Adventurer(this);
-        } else if (role == ROLE.INTERCEPTER) {
-            this.assignedRole = new Intercepter(this);
-        } else if (role == ROLE.RANGER) {
-            this.assignedRole = new Ranger(this);
-        } else if (role == ROLE.TRIBUTER) {
-            this.assignedRole = new Tributer(this);
-        } else if (role == ROLE.INSTIGATOR) {
-            this.assignedRole = new Instigator(this);
         } else if (role == ROLE.GRAND_CHANCELLOR) {
             this.assignedRole = new GrandChancellor(this);
         } else if (role == ROLE.GRAND_MARSHAL) {
             this.assignedRole = new GrandMarshal(this);
-        } else if (role == ROLE.QUEEN) {
-            this.assignedRole = null;
-        } else if (role == ROLE.QUEEN_CONSORT) {
-            this.assignedRole = null;
-        } else if (role == ROLE.CROWN_PRINCE) {
-            this.assignedRole = null;
         } else {
             this.assignedRole = null;
         }
-
-        if(role != ROLE.UNTRAINED && role != ROLE.GOVERNOR) {
-            List<Citizen> citizensWithSameRole = this.city.kingdom.GetCitizensWithRoleInKingdom(role);
-            if (citizensWithSameRole.Count > 1) {
-                throw new System.Exception("There is more than one " + role.ToString() + " in " + this.city.kingdom.name);
-            }
-        }
-        
     }
 
     #region Family Functions
@@ -1129,17 +1068,14 @@ public class Citizen {
             citizensToTransfer.AddRange(GetRelatives(-1));
         }
 
+        newKingdom.AssignNewKing(this);
         if (this.spouse != null) {
             this.spouse.AssignRole(ROLE.QUEEN);
         }
-        newKingdom.AssignNewKing(this);
+        
 
         for (int i = 0; i < citizensToTransfer.Count; i++) {
             Citizen currCitizen = citizensToTransfer[i];
-            //previousCity.RemoveCitizenInImportantCitizensInCity(currCitizen);
-            //previousCity.citizens.Remove(currCitizen);
-            //previousCity.RemoveCitizenFromCity(currCitizen);
-            //newKingdom.capitalCity.AddCitizenToCity(currCitizen);
             newKingdom.AddCitizenToKingdom(currCitizen, newKingdom.capitalCity);
         }
 
