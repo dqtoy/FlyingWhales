@@ -585,8 +585,8 @@ public class Warfare {
 			Debug.Log (kingdom.name + " WEARINESS: " + this._kingdomSideWeariness [kingdom.id].weariness.ToString ());
 		}
 	}
-	internal int GetAllAttackDefenseFromSide(WAR_SIDE side){
-		int totalAttDef = 0;
+	internal long GetAllAttackDefenseFromSide(WAR_SIDE side){
+		long totalAttDef = 0;
 		for (int i = 0; i < this._kingdomSideList[side].Count; i++) {
 			totalAttDef += this._kingdomSideList [side] [i].effectiveAttack;
 			totalAttDef += this._kingdomSideList [side] [i].effectiveDefense;
@@ -594,8 +594,8 @@ public class Warfare {
 		return totalAttDef;
 	}
 	internal float PeaceMultiplier(Kingdom kingdom){
-		int totalAttDefSideA = GetAllAttackDefenseFromSide (WAR_SIDE.A);
-		int totalAttDefSideB = GetAllAttackDefenseFromSide (WAR_SIDE.B);
+		long totalAttDefSideA = GetAllAttackDefenseFromSide (WAR_SIDE.A);
+		long totalAttDefSideB = GetAllAttackDefenseFromSide (WAR_SIDE.B);
 		if(this._kingdomSideWeariness[kingdom.id].side == WAR_SIDE.A){
 			if(totalAttDefSideA > totalAttDefSideB){
 				return 1f;

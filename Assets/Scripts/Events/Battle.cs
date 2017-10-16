@@ -220,8 +220,8 @@ public class Battle {
 			this._deadAttackerKingdom = null;
 			this._deadDefenderKingdom = null;
 
-			int attackerPower = this.attacker.kingdom.effectiveAttack;
-			int defenderDefense = this.defender.kingdom.effectiveDefense;
+			long attackerPower = this.attacker.kingdom.effectiveAttack;
+			long defenderDefense = this.defender.kingdom.effectiveDefense;
 
             //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " has an attack power of " + attackerPower.ToString());
             //AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + defender.name + " has defense of " + defenderDefense.ToString());
@@ -260,8 +260,8 @@ public class Battle {
 			Debug.Log ("DEFENSE DAMAGE: " + defenseDamage);
 			Debug.Log ("---------------------------");
 
-			int attackAfterDamage = attackerPower - defenseDamage;
-			int defenseAfterDamage = defenderDefense - attackDamage;
+			long attackAfterDamage = attackerPower - defenseDamage;
+			long defenseAfterDamage = defenderDefense - attackDamage;
 			if(attackAfterDamage <= 0){
 				attackAfterDamage = 0;
 			}
@@ -741,7 +741,7 @@ public class Battle {
 //		}
 	}
 
-	private int GetMaxDamageToWeaponsArmors(int afterDamage, int soldiers){
+	private int GetMaxDamageToWeaponsArmors(long afterDamage, int soldiers){
 		//Solve for max damage to weapons which is x
 		//x = attackAfterDamage * soldiers / (2 * soldiers) - attackAfterDamage;
 //		float soldiers = (float)this.attacker.kingdom.soldiers;
@@ -754,7 +754,7 @@ public class Battle {
 //		return (int)(((float)defenseAfterDamage * (float)soldiers) / ((2f * (float)soldiers) - (float)defenseAfterDamage));
 //	}
 
-	private int GetDamageToSoldiers(int remainingEffectiveAttDef, int remainingWeapArmor){
+	private int GetDamageToSoldiers(long remainingEffectiveAttDef, int remainingWeapArmor){
 		//Solve for max damage to weapons which is x
 		//x = remainingEffectiveAttDef * remainingWeapArmor / (2 * remainingWeapArmor) - remainingEffectiveAttDef;
 		return (int)(((float)remainingEffectiveAttDef * remainingWeapArmor) / ((2f * remainingWeapArmor) - (float)remainingEffectiveAttDef));
