@@ -763,9 +763,9 @@ public class KingdomRelationship {
 		UpdateTheoreticalAttackAndDefense ();
 		rk.UpdateTheoreticalAttackAndDefense ();
 
-		this._relativeStrength = rk._theoreticalAttack / this._theoreticalDefense;
+		this._relativeStrength = (int)((((float)rk._theoreticalAttack / (float)this._theoreticalDefense) * 100f) - 100f);
 		this._relativeStrength = Mathf.Clamp (this._relativeStrength, 0, 100);
-		this._relativeWeakness = this._theoreticalAttack / rk._theoreticalDefense;
+		this._relativeWeakness = (int)((((float)this._theoreticalAttack / (float)rk._theoreticalDefense) * 100f) - 100f);
 		if(this._relativeWeakness < 0){
 			this._relativeWeakness = 0;
 		}

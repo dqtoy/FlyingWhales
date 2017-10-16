@@ -3155,7 +3155,7 @@ public class Kingdom{
 		int leastLike = 0;
 		Kingdom targetKingdom = null;
 		foreach (KingdomRelationship kr in relationships.Values) {
-			if(kr.isAdjacent && !kr.AreAllies()){
+			if(kr.isAdjacent && !kr.AreAllies() && kr.totalLike < 0){
 				if(targetKingdom == null){
 					targetKingdom = kr.targetKingdom;
 					leastLike = kr.totalLike;
