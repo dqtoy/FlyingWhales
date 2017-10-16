@@ -131,7 +131,7 @@ public class MarriageManager : MonoBehaviour {
             citizen2.AssignRole(ROLE.UNTRAINED);
         } else if (citizen2.role == ROLE.KING) {
             //Spouse of king should no longer be queen
-            citizen2.AssignRole(ROLE.UNTRAINED);
+            citizen1.AssignRole(ROLE.UNTRAINED);
         }
         citizen1.isMarried = false;
         citizen2.isMarried = false;

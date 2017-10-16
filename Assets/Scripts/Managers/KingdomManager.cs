@@ -108,7 +108,7 @@ public class KingdomManager : MonoBehaviour {
 		SchedulingManager.Instance.AddEntry (nextUpdateDate, () => MonthlyUpdateKingdomRankings ());
     }
 
-	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool createFamilies = false, Kingdom sourceKingdom = null, bool broadcastCreation = true, Citizen king = null){
+	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool createFamilies = false, Kingdom sourceKingdom = null, bool broadcastCreation = true){
 		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom); //Create new kingdom
 		AddKingdom(newKingdom);
         Debug.Log("Created new kingdom: " + newKingdom.name);
@@ -120,13 +120,6 @@ public class KingdomManager : MonoBehaviour {
                 City currCity = newKingdom.cities[i];
                 currCity.hexTile.CreateCityNamePlate(currCity);
                 currCity.SetupInitialValues();
-            }
-        } else {
-            if (king != null) {
-                newKingdom.AssignNewKing(king);
-                if (king.spouse != null) {
-                    king.spouse.AssignRole(ROLE.QUEEN);
-                }
             }
         }
 

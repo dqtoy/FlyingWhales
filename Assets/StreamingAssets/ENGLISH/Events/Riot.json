@@ -1,1 +1,1 @@
-{"items":[{"key":"event_name","value":"Riot"},{"key":"event_title","value":"%01@ Riots"},{"key":"start","value":"Riots are occuring all over %01@."},{"key":"destroy_settlement","value":"The rioters destroyed a settlement in %04@."},{"key":"event_end","value":"The riots have ended."}]}
+{"items":[{"key":"riot_start","value":"The people of %01@ are rioting! %106% Weapons and %110% Armors have been destroyed!"}]}

@@ -159,9 +159,6 @@ public class Citizen {
 		return 2;
 	}
     internal void AssignRole(ROLE role) {
-        if(this.role == role) {
-            throw new System.Exception(this.name + " is being assigned the role of " + role.ToString() + " even if he/she is already a " + this.role.ToString());
-        }
         if (this.role != ROLE.UNTRAINED && this.role != role) {
             if (this.assignedRole != null) {
                 this.assignedRole.OnDeath();
@@ -171,66 +168,16 @@ public class Citizen {
         this.role = role;
  		if (role == ROLE.GENERAL) {
             this.assignedRole = new General(this);
-        } else if (role == ROLE.ENVOY) {
-            this.assignedRole = new Envoy(this);
-        } else if (role == ROLE.GUARDIAN) {
-            this.assignedRole = new Guardian(this);
-        } else if (role == ROLE.SPY) {
-            this.assignedRole = new Spy(this);
-        } else if (role == ROLE.TRADER) {
-            this.assignedRole = new Trader(this);
         } else if (role == ROLE.GOVERNOR) {
             this.assignedRole = new Governor(this);
         } else if (role == ROLE.KING) {
             this.assignedRole = new King(this);
         } else if (role == ROLE.EXPANDER) {
             this.assignedRole = new Expander(this);
-        } else if (role == ROLE.RAIDER) {
-            this.assignedRole = new Raider(this);
-        } else if (role == ROLE.REINFORCER) {
-            this.assignedRole = new Reinforcer(this);
-        } else if (role == ROLE.REBEL) {
-            this.assignedRole = new Rebel(this);
-        } else if (role == ROLE.EXTERMINATOR) {
-            this.assignedRole = new Exterminator(this);
-        } else if (role == ROLE.SCOURGE) {
-            this.assignedRole = new Scourge(this);
-        } else if (role == ROLE.HEALER) {
-            this.assignedRole = new Healer(this);
-        } else if (role == ROLE.PROVOKER) {
-            this.assignedRole = new Provoker(this);
-        } else if (role == ROLE.MISSIONARY) {
-            this.assignedRole = new Missionary(this);
-        } else if (role == ROLE.ABDUCTOR) {
-            this.assignedRole = new Abductor(this);
-        } else if (role == ROLE.LYCANTHROPE) {
-            this.assignedRole = new Lycanthrope(this);
-        } else if (role == ROLE.INVESTIGATOR) {
-            this.assignedRole = new Investigator(this);
-        } else if (role == ROLE.THIEF) {
-            this.assignedRole = new Thief(this);
-        } else if (role == ROLE.WITCH) {
-            this.assignedRole = new Witch(this);
-        } else if (role == ROLE.ADVENTURER) {
-            this.assignedRole = new Adventurer(this);
-        } else if (role == ROLE.INTERCEPTER) {
-            this.assignedRole = new Intercepter(this);
-        } else if (role == ROLE.RANGER) {
-            this.assignedRole = new Ranger(this);
-        } else if (role == ROLE.TRIBUTER) {
-            this.assignedRole = new Tributer(this);
-        } else if (role == ROLE.INSTIGATOR) {
-            this.assignedRole = new Instigator(this);
         } else if (role == ROLE.GRAND_CHANCELLOR) {
             this.assignedRole = new GrandChancellor(this);
         } else if (role == ROLE.GRAND_MARSHAL) {
             this.assignedRole = new GrandMarshal(this);
-        } else if (role == ROLE.QUEEN) {
-            this.assignedRole = null;
-        } else if (role == ROLE.QUEEN_CONSORT) {
-            this.assignedRole = null;
-        } else if (role == ROLE.CROWN_PRINCE) {
-            this.assignedRole = null;
         } else {
             this.assignedRole = null;
         }
@@ -477,11 +424,6 @@ public class Citizen {
         Kingdom kingdomOfCitizen = this.city.kingdom;
         kingdomOfCitizen.RemoveCitizenFromKingdom(this, cityOfCitizen);
 
-        //Manage Citizen Marriage
-        if (this.isMarried && this._spouse != null) {
-            MarriageManager.Instance.DivorceCouple(this, spouse);
-        }
-
         //Manage Citizen Inheritance
         kingdomOfCitizen.RemoveFromSuccession(this);
 
@@ -494,7 +436,12 @@ public class Citizen {
                 this.assignedRole = null;
             }
         }
-        
+
+        //Manage Citizen Marriage
+        if (this.isMarried && this._spouse != null) {
+            MarriageManager.Instance.DivorceCouple(this, spouse);
+        }
+
 
         //Unregister citizen from the manager (The manager handles random deaths)
         CitizenManager.Instance.UnregisterCitizen(this);
@@ -1083,18 +1030,21 @@ public class Citizen {
 
         //Remove citizen that started rebellion from kingdom
         sourceKingdom.RemoveCitizenFromKingdom(this, this.city);
+
+        //Remove citizen that started rebellion from source kingdom succession
+        sourceKingdom.RemoveFromSuccession(this);
+
         //Transfer Royalties That are in the cities for rebellion
         for (int i = 0; i < citiesForRebellion.Count; i++) {
             City currRebellingCity = citiesForRebellion[i];
-            sourceKingdom.TransferCitizensFromCityToCapital(currRebellingCity);
+            sourceKingdom.TransferCitizensFromCityToCapital(currRebellingCity, new HashSet<Citizen>() { this });
         }
         
 
         ROLE previousRole = this.role;
         City previousCity = this.city;
-        Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { }, false, sourceKingdom, true, this);
+        Kingdom newKingdom = KingdomManager.Instance.GenerateNewKingdom(sourceKingdom.race, new List<HexTile>() { }, false, sourceKingdom, false);
         KingdomManager.Instance.TransferCitiesToOtherKingdom(sourceKingdom, newKingdom, citiesForRebellion);
-        newKingdom.HighlightAllOwnedTilesInKingdom();
 
         //Transfer family of citizen to the capital city of the new kingdom
         //if this citizen was a crown prince, bring his/her spouse and children,
@@ -1118,13 +1068,14 @@ public class Citizen {
             citizensToTransfer.AddRange(GetRelatives(-1));
         }
 
+        newKingdom.AssignNewKing(this);
+        if (this.spouse != null) {
+            this.spouse.AssignRole(ROLE.QUEEN);
+        }
+        
 
         for (int i = 0; i < citizensToTransfer.Count; i++) {
             Citizen currCitizen = citizensToTransfer[i];
-            //previousCity.RemoveCitizenInImportantCitizensInCity(currCitizen);
-            //previousCity.citizens.Remove(currCitizen);
-            //previousCity.RemoveCitizenFromCity(currCitizen);
-            //newKingdom.capitalCity.AddCitizenToCity(currCitizen);
             newKingdom.AddCitizenToKingdom(currCitizen, newKingdom.capitalCity);
         }
 
@@ -1133,8 +1084,16 @@ public class Citizen {
 
         newKingdom.UpdateKingSuccession();
 
+        Messenger.Broadcast<Kingdom>("OnNewKingdomCreated", newKingdom);
+
+        for (int i = 0; i < newKingdom.regions.Count; i++) {
+            newKingdom.regions[i].CheckForDiscoveredKingdoms();
+        }
+
         newKingdom.UpdateAllRelationshipsLikeness();
         newKingdom.UpdateAllCitizensOpinionOfKing();
+
+        newKingdom.HighlightAllOwnedTilesInKingdom();
 
         //Transfer population from sourceKingdom
         int totalCities = newKingdom.cities.Count + sourceKingdom.cities.Count;

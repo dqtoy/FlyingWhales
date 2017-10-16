@@ -815,7 +815,6 @@ public class City{
             LevelUpBalanceOfPower();
         }
 
-        _region.CheckForDiscoveredKingdoms();
         this.hexTile.UpdateCityNamePlate();
         CameraMove.Instance.UpdateMinimapTexture();
 		if(Messenger.eventTable.ContainsKey("CityTransfered")){
@@ -843,9 +842,9 @@ public class City{
         //    this.kingdom.UnHighlightAllOwnedTilesInKingdom();
         //}
 
-        if(this.plague != null) {
-            this.plague.CheckIfCityIsCured(this);
-        }
+        //if(this.plague != null) {
+        //    this.plague.CheckIfCityIsCured(this);
+        //}
     }
 
 	internal void ResetToDefaultHP(){

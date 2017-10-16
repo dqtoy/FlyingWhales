@@ -2606,7 +2606,7 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 		if(targetKingdom != null){
-			EventCreator.Instance.CreatePlagueEvent (targetKingdom);
+			//EventCreator.Instance.CreatePlagueEvent (targetKingdom);
 		}
 	}
     #endregion

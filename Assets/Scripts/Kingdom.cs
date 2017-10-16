@@ -122,7 +122,6 @@ public class Kingdom{
 	private bool _hasUpheldHiddenHistoryBook;
 
 	private bool _hasSecession;
-	private bool _hasRiot;
 
 	private List<Citizen> orderedMaleRoyalties;
 	private List<Citizen> orderedFemaleRoyalties;
@@ -281,9 +280,6 @@ public class Kingdom{
 	}
 	public bool hasSecession{
 		get { return this._hasSecession;}
-	}
-	public bool hasRiot{
-		get { return this._hasRiot;}
 	}
 	public List<GameEvent> activeEvents{
 		get { return this._activeEvents;}
@@ -466,7 +462,6 @@ public class Kingdom{
 		this.SetProductionGrowthPercentage(1f);
 		this.UpdateTechCapacity ();
 		this.SetSecession (false);
-		this.SetRiot (false);
 		this.SetWarmongerValue (15);
 //		this.NewRandomCrimeDate (true);
 		// Determine what type of Kingdom this will be upon initialization.
@@ -1056,11 +1051,15 @@ public class Kingdom{
 		}
         return kingdomsWithRelationshipStatus;
     }
-    internal KingdomRelationship GetRelationshipWithKingdom(Kingdom kingdom) {
+    internal KingdomRelationship GetRelationshipWithKingdom(Kingdom kingdom, bool ignoreException = false) {
         if (relationships.ContainsKey(kingdom)) {
             return relationships[kingdom];
         } else {
-            throw new Exception(this.name + " does not have relationship with " + kingdom.name);
+            if (ignoreException) {
+                return null;
+            } else {
+                throw new Exception(this.name + " does not have relationship with " + kingdom.name);
+            }
         }
         
     }
@@ -1378,7 +1377,9 @@ public class Kingdom{
         if ((capitalCity == null || capitalCity.isDead) && this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
-        _citizens.Add(city, new List<Citizen>());
+        if (!_citizens.ContainsKey(city)) {
+            _citizens.Add(city, new List<Citizen>());
+        }
         KingdomManager.Instance.UpdateKingdomList();
     }
     /* 
@@ -1404,8 +1405,8 @@ public class Kingdom{
         List<Citizen> remainingCitizens = new List<Citizen>();
         if (_citizens.ContainsKey(city)) {
             remainingCitizens.AddRange(_citizens[city]);
-            _citizens.Remove(city);
         }
+        _citizens.Remove(city);
         UIManager.Instance.UpdateKingdomCitiesMenu();
         return remainingCitizens;
     }
@@ -1449,7 +1450,7 @@ public class Kingdom{
     internal void RemoveCitizenFromKingdom(Citizen citizenToRemove, City cityCitizenBelongedTo) {
         if (_citizens.ContainsKey(cityCitizenBelongedTo)) {
             _citizens[cityCitizenBelongedTo].Remove(citizenToRemove);
-        } 
+        }
         //else {
         //    throw new Exception(citizenToRemove.role + " " + citizenToRemove.name + " cannot be removed because " + cityCitizenBelongedTo.name + " is not a city of " + this.name);
         //}
@@ -1485,9 +1486,25 @@ public class Kingdom{
         }
         return null;
     }
-    internal void TransferCitizensFromCityToCapital(City sourceCity) {
+    internal List<Citizen> GetCitizensWithRoleInKingdom(ROLE role) {
+        List<Citizen> citizensWithRole = new List<Citizen>();
+        for (int i = 0; i < cities.Count; i++) {
+            City currCity = cities[i];
+            for (int j = 0; j < currCity.citizens.Count; j++) {
+                Citizen currCitizen = currCity.citizens[j];
+                if (currCitizen.role == role) {
+                    if (!citizensWithRole.Contains(currCitizen)) {
+                        citizensWithRole.Add(currCitizen);
+                    }
+                }
+            }
+        }
+        return citizensWithRole;
+    }
+    internal void TransferCitizensFromCityToCapital(City sourceCity, HashSet<Citizen> exceptions = null) {
         List<Citizen> importantCitizensInCity = new List<Citizen>(sourceCity.citizens.Where(x => x.role == ROLE.KING 
             || x.role == ROLE.GRAND_CHANCELLOR || x.role == ROLE.GRAND_MARSHAL));
+
         //Get Families of important citizens
         List<Citizen> citizensToTransfer = new List<Citizen>();
         for (int i = 0; i < importantCitizensInCity.Count; i++) {
@@ -1496,7 +1513,7 @@ public class Kingdom{
             List<Citizen> familyOfCurrCitizen = currImportantCitizen.GetRelatives(-1);
             for (int j = 0; j < familyOfCurrCitizen.Count; j++) {
                 Citizen currFamilyMember = familyOfCurrCitizen[j];
-                if (!citizensToTransfer.Contains(currFamilyMember)) {
+                if (!citizensToTransfer.Contains(currFamilyMember) && (exceptions == null || !exceptions.Contains(currFamilyMember)) && currFamilyMember.city.kingdom.id == currImportantCitizen.city.kingdom.id) {
                     citizensToTransfer.Add(currFamilyMember);
                 }
             }
@@ -1558,7 +1575,7 @@ public class Kingdom{
         }
 
         Citizen newNextInLine = successionLine.FirstOrDefault();
-        if (newNextInLine != null && nextInLine != null && newNextInLine != nextInLine && nextInLine.role == ROLE.CROWN_PRINCE) {
+        if (newNextInLine != null && nextInLine != null && newNextInLine.id != nextInLine.id && nextInLine.role == ROLE.CROWN_PRINCE) {
             //next in line is no longer the next in line
             nextInLine.AssignRole(ROLE.UNTRAINED);
         }
@@ -1997,9 +2014,6 @@ public class Kingdom{
             if (!this._discoveredKingdoms.Contains(discoveredKingdom)) {
                 this._discoveredKingdoms.Add(discoveredKingdom);
                 Debug.Log(this.name + " discovered " + discoveredKingdom.name + "!");
-                if (discoveredKingdom.plague != null) {
-                    discoveredKingdom.plague.ForceUpdateKingRelationships(discoveredKingdom.king);
-                }
             }
         }
     }
@@ -2166,9 +2180,6 @@ public class Kingdom{
 	}
 	internal void SetSecession(bool state){
 		this._hasSecession = state;
-	}
-	internal void SetRiot(bool state){
-		this._hasRiot = state;
 	}
 
 	#region Crimes
@@ -2384,13 +2395,32 @@ public class Kingdom{
 	internal void AdjustStability(int amountToAdjust) {
     	this._stability += amountToAdjust;
         this._stability = Mathf.Clamp(this._stability, -100, 100);
-
     }
 	internal void CheckStability(){
-		//If a Kingdom has a -100 Stability, a Rebellion will automatically occur which will be started by the one with the most 
-		//negative opinion towards the King. The Kingdom's Stability will then reset back to 50.
-		if (_stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
-			StartAutomaticRebellion();
+        if (this.isDead) {
+            return;
+        }
+        //When Stability reaches -100, there will either be a rebellion, a plague or rioting.
+        if (_stability <= -100) {
+            if(kingdomSize != KINGDOM_SIZE.SMALL) {
+                //Large or medium kingdom
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 40) {
+                    StartAutomaticRebellion();
+                } else if (chance >= 40 && chance < 70) {
+                    EventCreator.Instance.CreatePlagueEvent(this);
+                } else {
+                    EventCreator.Instance.CreateRiotEvent(this);
+                }
+            } else {
+                //small kingdom (Plague and Riot only)
+                if(UnityEngine.Random.Range(0,2) == 0) {
+                    EventCreator.Instance.CreatePlagueEvent(this);
+                } else {
+                    EventCreator.Instance.CreateRiotEvent(this);
+                }
+            }
+			
 		}
 	}
     internal void AdjustBaseWeapons(int amountToAdjust) {
@@ -2418,17 +2448,17 @@ public class Kingdom{
     internal void ChangeStability(int newAmount) {
 		this._stability = newAmount;
         this._stability = Mathf.Clamp(this._stability, -100, 100);
-        //If a Kingdom has a -100 Stability, a Rebellion will automatically occur which will be started by the one with the most 
-        //negative opinion towards the King. The Kingdom's Stability will then reset back to 50.
-        if (_stability <= -100 && kingdomSize != KINGDOM_SIZE.SMALL) {
-            StartAutomaticRebellion();
-        }
+        CheckStability();
     }
 
     private void IncreaseBOPAttributesPerMonth() {
+        if (this.isDead) {
+            return;
+        }
         int totalWeaponsIncrease = 0;
         int totalArmorIncrease = 0;
         int totalTechIncrease = GetTechContributionFromCitizens();
+        //Kings and Governors provide monthly Stability gains based on their Efficiency trait.
         int totalStabilityIncrease = GetStabilityContributionFromCitizens();
         for (int i = 0; i < cities.Count; i++) {
             City currCity = cities[i];
@@ -2442,8 +2472,6 @@ public class Kingdom{
                 totalTechIncrease += techContribution;
             }
         }
-        ////Kings and Governors provide monthly Stability gains based on their Efficiency trait.  This is reduced by the Kingdom's Draft Rate.
-        //totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
 
         if (isMilitarize) {
             //Militarizing multiplies Weapon production by 2.5 for the month in exchange for 0 Armor and Tech production.
@@ -2464,6 +2492,13 @@ public class Kingdom{
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
         totalStabilityIncrease -= (stabilityDecreaseFromInvasionCounter * 2);
 
+        //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
+        if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
+            totalStabilityIncrease -= 5;
+        } else if(kingdomSize == KINGDOM_SIZE.LARGE) {
+            totalStabilityIncrease -= 10;
+        }
+
         AdjustBaseWeapons(totalWeaponsIncrease);
         AdjustBaseArmors(totalArmorIncrease);
         AdjustStability(totalStabilityIncrease);
@@ -2478,6 +2513,7 @@ public class Kingdom{
         dueDate.AddMonths(1);
         SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseBOPAttributesPerMonth());
 
+        CheckStability();
     }
     internal int GetMonthlyStabilityGain() {
         int totalStabilityIncrease = GetStabilityContributionFromCitizens();
@@ -2495,6 +2531,14 @@ public class Kingdom{
         totalStabilityIncrease -= overpopulation / 10;
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
         totalStabilityIncrease -= (stabilityDecreaseFromInvasionCounter * 2);
+
+        //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
+        if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
+            totalStabilityIncrease -= 5;
+        } else if (kingdomSize == KINGDOM_SIZE.LARGE) {
+            totalStabilityIncrease -= 10;
+        }
+
         return totalStabilityIncrease;
     }
     internal void AddStabilityDecreaseBecauseOfInvasion() {
@@ -2583,8 +2627,8 @@ public class Kingdom{
         }
         for (int i = 0; i < kingdomsToCheck.Count; i++) {
             Kingdom otherKingdom = kingdomsToCheck[i];
-            KingdomRelationship kr = GetRelationshipWithKingdom(otherKingdom);
-            if (kr.isAdjacent) {
+            KingdomRelationship kr = GetRelationshipWithKingdom(otherKingdom, true);
+            if (kr != null && kr.isAdjacent) {
                 bool isValid = false;
                 //Revalidate adjacency
                 for (int j = 0; j < cities.Count; j++) {
@@ -2642,8 +2686,13 @@ public class Kingdom{
         }
 		populationGrowth += this.techLevel * cities.Count;
         float overpopulationPercentage = GetOverpopulationPercentage();
-        int populationGrowthReduction = Mathf.FloorToInt(populationGrowth * (overpopulationPercentage/100f));
-		return Mathf.FloorToInt(populationGrowth * ((100f-overpopulationPercentage) * 0.01f));
+        populationGrowth = Mathf.FloorToInt(populationGrowth * ((100f - overpopulationPercentage) * 0.01f));
+
+        //Its possible to have multiple active plagues in the same Kingdom. The kingdom will lose 50% of its current population growth per active plague.
+        int activePlagues = GetActiveEventsOfTypeCount(EVENT_TYPES.PLAGUE);
+        float growthReductionFromPlague = ((float)populationGrowth * (activePlagues * 0.5f));
+
+        return Mathf.FloorToInt(populationGrowth - growthReductionFromPlague);
     }
     private void IncreasePopulationEveryMonth() {
         AdjustPopulation(GetPopulationGrowth());
@@ -2681,7 +2730,7 @@ public class Kingdom{
     }
     #endregion
 
-	internal void MobilizingState(bool state){
+    internal void MobilizingState(bool state){
 		this._isMobilizing = state;
 	}
 

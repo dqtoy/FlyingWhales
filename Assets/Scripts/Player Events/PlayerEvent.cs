@@ -100,61 +100,7 @@ public class PlayerEvent {
 		if(!this.isActive){
 			return;
 		}
-		CheckIfCitizenIsCarryingPlague(citizen);
-	}
-
-	/*
-    * A plague carrying citizen will spread the plague to its 
-    * destination city (if it is not yet plagued) and infect a random settlement.
-    * */
-	internal void CheckIfCitizenIsCarryingPlague(Citizen citizen) {
-		Plague plaguedCarriedByCitizen = citizen.assignedRole.plague;
-		if (plaguedCarriedByCitizen != null) {
-			City citizenTargetCity = citizen.assignedRole.targetCity;
-			if(citizenTargetCity == null) {
-				citizenTargetCity = citizen.currentLocation.city;
-			}
-			if(citizenTargetCity != null) {
-				if (citizenTargetCity.plague == null) {
-					//City is not plagued yet
-					if (plaguedCarriedByCitizen.affectedKingdoms.Contains(citizenTargetCity.kingdom)) {
-						//Kingdom that city belongs to is already affected by this plague, only infect the city
-						HexTile infectedTile = plaguedCarriedByCitizen.PlagueACity(citizenTargetCity);
-						if (infectedTile != null) {
-							Log plagueSpreadByAgent = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_agent_spread");
-							plagueSpreadByAgent.AddToFillers(citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-							plagueSpreadByAgent.AddToFillers(null, plaguedCarriedByCitizen.plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
-							plagueSpreadByAgent.AddToFillers(citizenTargetCity, citizenTargetCity.name, LOG_IDENTIFIER.CITY_1);
-
-						}
-					} else {
-						//Kingdom that city belongs to is not yet affected by this plague
-						if (citizenTargetCity.kingdom != null) {
-							if (citizenTargetCity.kingdom.plague == null) {
-								//Kingdom has no plague yet, infect that kingdom and destroy settlement
-								HexTile infectedTile = plaguedCarriedByCitizen.PlagueAKingdom(citizenTargetCity.kingdom, citizenTargetCity);
-								if (infectedTile != null) {
-									Log plagueSpreadByAgent = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_agent_spread");
-									plagueSpreadByAgent.AddToFillers(citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-									plagueSpreadByAgent.AddToFillers(null, plaguedCarriedByCitizen.plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
-									plagueSpreadByAgent.AddToFillers(citizenTargetCity, citizenTargetCity.name, LOG_IDENTIFIER.CITY_1);
-								}
-							}
-						}
-
-					}
-				} else {
-					//City is already plagued, just infect a settlement
-					HexTile infectedTile = plaguedCarriedByCitizen.InfectRandomSettlement(citizenTargetCity.structures);
-					if (infectedTile != null) {
-						Log plagueSpreadByAgent = this.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_agent_spread");
-						plagueSpreadByAgent.AddToFillers(citizen, citizen.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-						plagueSpreadByAgent.AddToFillers(null, plaguedCarriedByCitizen.plagueName, LOG_IDENTIFIER.RANDOM_GENERATED_EVENT_NAME);
-						plagueSpreadByAgent.AddToFillers(citizenTargetCity, citizenTargetCity.name, LOG_IDENTIFIER.CITY_1);
-					}
-				}
-			}
-		}
+		//CheckIfCitizenIsCarryingPlague(citizen);
 	}
 
 	internal virtual void CancelEvent(){
