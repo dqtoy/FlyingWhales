@@ -939,11 +939,14 @@ public class KingdomRelationship {
 		}
 	}
 	internal void UpdateTheoreticalAttackAndDefense(){
-		this._theoreticalAttack = GetTheoreticalAttack ();
-		this._theoreticalDefense = GetTheoreticalDefense ();
-//		int posAllianceAttack = GetAdjacentPosAllianceWeapons ();
+		int theoreticalAttack = GetTheoreticalAttack ();
+		int theoreticalDefense = GetTheoreticalDefense ();
+		int posAllianceAttack = GetAdjacentPosAllianceEffectiveAttack ();
 //		int posAllianceDefense = GetAdjacentPosAllianceArmors ();
 //		int usedPosAllianceAttack = (int)((float)posAllianceAttack / 2f);
+
+		this._theoreticalAttack = theoreticalAttack + posAllianceAttack;
+		this._theoreticalDefense = theoreticalDefense + posAllianceAttack;
 
 //		this._effectivePower = theoreticalAttack;
 //		this._effectiveDef = theoreticalDefense;
@@ -976,7 +979,7 @@ public class KingdomRelationship {
 		}
 		return posAlliancePower;
 	}
-	private int GetAdjacentPosAllianceWeapons(){
+	private int GetAdjacentPosAllianceEffectiveAttack(){
 		int posAlliancePower = 0;
 		if(this._sourceKingdom.alliancePool != null){
 			for (int i = 0; i < this._sourceKingdom.alliancePool.kingdomsInvolved.Count; i++) {
