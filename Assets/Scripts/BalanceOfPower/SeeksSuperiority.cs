@@ -26,11 +26,19 @@ public static class SeeksSuperiority {
 					   || (kingdom.highestRelativeStrengthAdjacentKingdom != null && allyKingdom.id == kingdom.highestRelativeStrengthAdjacentKingdom.id)) {
 						kingdom.LeaveAlliance (true);
 						kingdom.AdjustStability (-10);
-						Debug.Log (kingdom.name + " broke alliance with " + allyKingdom.name +
-						" because its relative weakness is " + kr._relativeWeakness.ToString () + " or total like is " + kr.totalLike.ToString ()
-						+ " or top ranked is " + KingdomManager.Instance.kingdomRankings [0].name.ToString ()
-						+ " or highest relative strength adjacent kingdom is " + kingdom.highestRelativeStrengthAdjacentKingdom.name.ToString () + "," + kingdom.name +
-						" lost 10 Stability. Stability is now " + kingdom.stability.ToString ());
+						if(kingdom.highestRelativeStrengthAdjacentKingdom != null){
+							Debug.Log (kingdom.name + " broke alliance with " + allyKingdom.name +
+								" because its relative weakness is " + kr._relativeWeakness.ToString () + " or total like is " + kr.totalLike.ToString ()
+								+ " or top ranked is " + KingdomManager.Instance.kingdomRankings [0].name.ToString ()
+								+ " or highest relative strength adjacent kingdom is " + kingdom.highestRelativeStrengthAdjacentKingdom.name.ToString () + "," + kingdom.name +
+								" lost 10 Stability. Stability is now " + kingdom.stability.ToString ());
+						}else{
+							Debug.Log (kingdom.name + " broke alliance with " + allyKingdom.name +
+								" because its relative weakness is " + kr._relativeWeakness.ToString () + " or total like is " + kr.totalLike.ToString ()
+								+ " or top ranked is " + KingdomManager.Instance.kingdomRankings [0].name.ToString () + "," + kingdom.name +
+								" lost 10 Stability. Stability is now " + kingdom.stability.ToString ());
+						}
+
 						skipPhase4 = true;
 						break;
 					}
