@@ -7,7 +7,7 @@ public class Plague : GameEvent {
     private Kingdom _infectedKingdom;
     private GameDate nextCureCheckDay;
 
-    public Plague(int startDay, int startMonth, int startYear, Citizen startedBy, Kingdom infectedKingdom) : base(startDay, startMonth, startYear, startedBy) {
+	public Plague(int startDay, int startMonth, int startYear, Citizen startedBy, Kingdom infectedKingdom, bool isResetStability = true) : base(startDay, startMonth, startYear, startedBy) {
         eventType = EVENT_TYPES.PLAGUE;
         _plagueName = Utilities.GeneratePlagueName();
         _infectedKingdom = infectedKingdom;
@@ -17,8 +17,11 @@ public class Plague : GameEvent {
         SchedulingManager.Instance.AddEntry(nextCureCheckDay, () => CheckIfPlagueIsCured());
 
         EventIsCreated(infectedKingdom, false);
-        //Stability will reset to 50.
-        infectedKingdom.ChangeStability(50);
+
+		if(isResetStability){
+			//Stability will reset to 50.
+			infectedKingdom.ChangeStability(50);
+		}
 
         Log newLog = CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_start");
         newLog.AddToFillers(null, _plagueName, LOG_IDENTIFIER.OTHER);

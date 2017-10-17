@@ -3304,7 +3304,8 @@ public class Kingdom{
 		kr.AddRelationshipModifier (modifier, "Flatter", RELATIONSHIP_MODIFIER.FLATTER, true, false);
 	}
 	private string SpreadPlague(){
-		return string.Empty;
+		Plague plague = EventCreator.Instance.CreatePlagueEvent(this, false);
+		return plague.name;
 	}
 	private void ShowSuccessSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_SUCCESS");
