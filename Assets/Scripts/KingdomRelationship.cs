@@ -1058,7 +1058,6 @@ public class KingdomRelationship {
 		if (this._sourceKingdom.king.balanceType == PURPOSE.BALANCE || this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
 			if (threat == 0f) {
 				adjustment = 25;
-				this._relationshipSummary += adjustment.ToString() + " Kingdom Threat.\n";
 			} else if (threat >= 1f && threat < 26f) {
 				adjustment = 0;
 			} else if (threat >= 26f && threat < 51f) {
