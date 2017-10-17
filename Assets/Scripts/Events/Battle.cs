@@ -614,6 +614,13 @@ public class Battle {
 
 				this._warfare.RemoveBattle (this);
 				CheckIfShouldPeaceOrPair ();
+//				if(!this.attacker.isDead){
+//					this._warfare.CreateNewBattle (this.attacker);
+//				}else{
+//					if(!this.attacker.kingdom.isDead){
+//						this._warfare.CreateNewBattle (this.attacker.kingdom);
+//					}
+//				}
 			}
 		}
 	}
@@ -677,32 +684,27 @@ public class Battle {
 		}
 	}
 	private void CheckIfShouldPeaceOrPair(){
-		if(this._warfare.kingdomSideWeariness.ContainsKey(this._kingdom1.id)){
-			if(!this._kingdom1.isDead && !this._warfare.IsAdjacentToEnemyKingdoms(this._kingdom1, this._warfare.kingdomSideWeariness[this._kingdom1.id].side)){
+		if(!this._warfare.isOver){
+			if(!this._kingdom1.isDead && !this._warfare.HasAdjacentEnemy(this._kingdom1)){
 				this._warfare.PeaceDeclaration (this._kingdom1);
 			}
 		}
-
 		if(!this._warfare.isOver){
-			if(this._warfare.kingdomSideWeariness.ContainsKey(this._kingdom2.id)){
-				if(!this._kingdom2.isDead && !this._warfare.IsAdjacentToEnemyKingdoms(this._kingdom2, this._warfare.kingdomSideWeariness[this._kingdom2.id].side)){
-					this._warfare.PeaceDeclaration (this._kingdom2);
-				}
-			}
-			if(!this._warfare.isOver){
-				if(this._warfare.kingdomSideWeariness.ContainsKey(this.attacker.kingdom.id)){
-					if(!this.attacker.isDead){
-						this._warfare.CreateNewBattle (this.attacker);
-					}else{
-						if(!this.attacker.kingdom.isDead){
-							this._warfare.CreateNewBattle (this.attacker.kingdom);
-						}
-					}
-				}
+			if(!this._kingdom2.isDead && !this._warfare.HasAdjacentEnemy(this._kingdom2)){
+				this._warfare.PeaceDeclaration (this._kingdom2);
 			}
 		}
 		if(!this._warfare.isOver){
 			this._warfare.CheckWarfare();
+		}
+		if(!this._warfare.isOver){
+			if(!this.attacker.kingdom.isDead && this._warfare.HasAdjacentEnemyWithNoBattle(this.attacker.kingdom)){
+				if(!this.attacker.isDead){
+					this._warfare.CreateNewBattle (this.attacker);
+				}else{
+					this._warfare.CreateNewBattle (this.attacker.kingdom);
+				}
+			}
 		}
 	}
 	private void CreateBattleAttacker(){
