@@ -3305,7 +3305,7 @@ public class Kingdom{
 	}
 	private string SpreadPlague(){
 		Plague plague = EventCreator.Instance.CreatePlagueEvent(this, false);
-		return plague.name;
+		return plague._plagueName;
 	}
 	private void ShowSuccessSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_SUCCESS");

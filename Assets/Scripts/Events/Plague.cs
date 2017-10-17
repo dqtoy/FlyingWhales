@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Plague : GameEvent {
 
-    private string _plagueName;
+    internal string _plagueName;
     private Kingdom _infectedKingdom;
     private GameDate nextCureCheckDay;
 
