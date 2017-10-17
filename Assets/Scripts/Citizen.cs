@@ -61,7 +61,13 @@ public class Citizen {
 
 	#region getters/setters
     public string name {
-        get { return firstName + " " + surName; }
+        get {
+            if(race == RACE.HUMANS) {
+                return firstName + " " + surName;
+            } else {
+                return firstName;
+            }
+        }
     }
     public int ageTableKey {
         get { return _ageTableKey; }
@@ -1059,7 +1065,7 @@ public class Citizen {
             if(children != null) {
                 citizensToTransfer.AddRange(children);
             }
-        } else if (previousRole == ROLE.QUEEN || previousRole == ROLE.QUEEN_CONSORT) {
+        } else if (previousRole == ROLE.QUEEN) {
             if(_spouse != null) {
                 MarriageManager.Instance.DivorceCouple(this, _spouse);
             }
