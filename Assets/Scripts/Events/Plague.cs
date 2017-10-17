@@ -31,6 +31,10 @@ public class Plague : GameEvent {
     }
 
     private void CheckIfPlagueIsCured() {
+        if (_infectedKingdom.isDead) {
+            DoneEvent();
+            return;
+        }
         //Starting 3 months after the plague, every 5 days, there will be a 3% that the plague will be done
         if (Random.Range(0, 100) < 3) {
             //Plague is cured
