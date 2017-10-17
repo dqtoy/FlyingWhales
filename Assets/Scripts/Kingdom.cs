@@ -2758,7 +2758,7 @@ public class Kingdom{
 	internal void WarmongerDecreasePerYear(){
 		if(!this.isDead){
 			if (!HasWar ()) {
-				AdjustWarmongerValue (-3);
+				AdjustWarmongerValue (-10);
 			}
 			SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
 		}
