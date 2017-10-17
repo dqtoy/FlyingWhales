@@ -877,10 +877,10 @@ public class Citizen {
         string intelligenceSummary = string.Empty;
         if(king.intelligence == INTELLIGENCE.SMART) {
             intelligenceAdjustment = 15;
-            intelligenceSummary = intelligenceAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(_intelligence.ToString()) + " king\n";
+            intelligenceSummary = intelligenceAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(king._intelligence.ToString()) + " king\n";
         } else if (king.intelligence == INTELLIGENCE.DUMB){
             intelligenceAdjustment = -15;
-            intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(_intelligence.ToString()) + " king\n";
+            intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king._intelligence.ToString()) + " king\n";
         }
         if (intelligenceAdjustment != 0) {
             _loyaltyToKing += intelligenceAdjustment;
@@ -895,10 +895,10 @@ public class Citizen {
         string efficiencySummary = string.Empty;
         if(king.efficiency == EFFICIENCY.EFFICIENT) {
             efficiencyAdjustment = 15;
-            efficiencySummary = efficiencyAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(_efficiency.ToString()) + " king\n";
+            efficiencySummary = efficiencyAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(king._efficiency.ToString()) + " king\n";
         } else if(king.efficiency == EFFICIENCY.INEPT){
             efficiencyAdjustment = -15;
-            efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(_efficiency.ToString()) + " king\n";
+            efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king._efficiency.ToString()) + " king\n";
         }
         if (efficiencyAdjustment != 0) {
             _loyaltyToKing += efficiencyAdjustment;
