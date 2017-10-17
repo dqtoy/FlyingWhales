@@ -130,11 +130,11 @@ public class Warfare {
 //				}
 //			}
 
-			if(!loserKingdom.isDead && !IsAdjacentToEnemyKingdoms(loserKingdom, this._kingdomSideWeariness[loserKingdom.id].side)){
+			if(!loserKingdom.isDead && !HasAdjacentEnemy(loserKingdom)){
 				PeaceDeclaration (loserKingdom);
 			}
 			if(!this._isOver){
-				if(!winnerKingdom.isDead && !IsAdjacentToEnemyKingdoms(winnerKingdom, this._kingdomSideWeariness[winnerKingdom.id].side)){
+				if(!winnerKingdom.isDead && !HasAdjacentEnemy(winnerKingdom)){
 					PeaceDeclaration (winnerKingdom);
 					return;
 				}
@@ -592,23 +592,38 @@ public class Warfare {
 	internal bool HasAdjacentEnemy(Kingdom kingdom){
 		if(!kingdom.warfareInfo.ContainsKey(this._id)){
 			return false;
-		}
-		foreach (KingdomRelationship kr in kingdom.relationships.Values) {
-			if(kr.isAdjacent && kr.warfare != null && kr.warfare.id == this._id){
-				return true;
+		}else{
+			WAR_SIDE side = kingdom.warfareInfo[this._id].side;
+			WAR_SIDE oppositeSide = WAR_SIDE.A;
+			if(side == WAR_SIDE.A){
+				oppositeSide = WAR_SIDE.B;
 			}
+			for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
+				if(kr.isAdjacent && kr.warfare != null && kr.warfare.id == this._id){
+					return true;
+				}
+			}
+			return false;
 		}
-		return false;
+
 	}
 	internal bool HasAdjacentEnemyWithNoBattle(Kingdom kingdom){
 		if(!kingdom.warfareInfo.ContainsKey(this._id)){
 			return false;
-		}
-		foreach (KingdomRelationship kr in kingdom.relationships.Values) {
-			if(kr.isAdjacent && kr.battle == null && kr.warfare != null && kr.warfare.id == this._id){
-				return true;
+		}else{
+			WAR_SIDE side = kingdom.warfareInfo[this._id].side;
+			WAR_SIDE oppositeSide = WAR_SIDE.A;
+			if(side == WAR_SIDE.A){
+				oppositeSide = WAR_SIDE.B;
 			}
+			for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
+				if(kr.isAdjacent && kr.battle == null && kr.warfare != null && kr.warfare.id == this._id){
+					return true;
+				}
+			}
+			return false;
 		}
-		return false;
 	}
 }

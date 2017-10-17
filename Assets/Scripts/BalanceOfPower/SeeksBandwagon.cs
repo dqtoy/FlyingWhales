@@ -174,7 +174,7 @@ public static class SeeksBandwagon {
 			if(!hasLeftAlliance && warsToJoin.Count > 0){
 				for (int i = 0; i < warsToJoin.Count; i++) {
 					List<Kingdom> allySideKingdoms = warsToJoin[i].warfare.GetListFromSide (warsToJoin[i].side);
-					Kingdom allyKingdom = warsToJoin [i].warfare.GetListFromSide(warsToJoin[i].side)[0];
+					Kingdom allyKingdom = allySideKingdoms[0];
 					if(warsToJoin[i].warfare.IsAdjacentToEnemyKingdoms(kingdom, warsToJoin[i].side)){
 						Debug.Log(kingdom.name + " decided to join in " + warsToJoin[i].warfare.name + " in " + allyKingdom.name + "'s side");
 						warsToJoin [i].warfare.JoinWar (warsToJoin [i].side, kingdom);
