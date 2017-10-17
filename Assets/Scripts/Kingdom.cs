@@ -1564,7 +1564,7 @@ public class Kingdom{
         //Validate Succession line
         for (int i = 0; i < successionLine.Count; i++) {
             Citizen currSuccessor = successionLine[i];
-            if (currSuccessor.city.kingdom.id != king.city.kingdom.id || currSuccessor.id == this.king.id) {
+            if (currSuccessor.city.kingdom.id != king.city.kingdom.id || currSuccessor.id == this.king.id || currSuccessor.role == ROLE.KING) {
                 //successor is of a different kingdom!
                 invalidCitizens.Add(currSuccessor);
             }
@@ -1575,6 +1575,10 @@ public class Kingdom{
         }
 
         Citizen newNextInLine = successionLine.FirstOrDefault();
+        if(newNextInLine != null && (newNextInLine.role == ROLE.KING || newNextInLine.role == ROLE.QUEEN)) {
+            throw new Exception("New next in line " + newNextInLine.name + " is a " + newNextInLine.role.ToString() + " which is invalid!");
+        }
+
         if (newNextInLine != null && nextInLine != null && newNextInLine.id != nextInLine.id && nextInLine.role == ROLE.CROWN_PRINCE) {
             //next in line is no longer the next in line
             nextInLine.AssignRole(ROLE.UNTRAINED);
@@ -1655,6 +1659,7 @@ public class Kingdom{
         newKing.AssignRole(ROLE.KING);
         ((King)newKing.assignedRole).SetOwnedKingdom(this);
 
+        nextInLine = null;
         this.successionLine.Clear();
         ChangeSuccessionLineRescursively(newKing);
         this.successionLine.AddRange(newKing.GetSiblings());
