@@ -17,11 +17,12 @@ public class RandomNameGenerator : MonoBehaviour {
 
 	private string[] baseHumanKingdomNames = new string[]{
 		"Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Bismuth", "Boron", "Burgundy", "Calabon", "Canton", "Chyland", "Croatia", "Ceres", 
-		"Darmid", "Dirland", "Dohati", "Duscany", "Elarus", "Esmeris", "Erebor", "Emusil", "Fernica", "Fuchia", "Friedland", "Farrah", "Garwinia", "Grazil", "Gunark", "Gehenna", 
-		"Hacatid", "Hermani", "Hisoka", "Howland", "Ianland", "Iridia", "Israel", "Imisil", "Jamalaya", "Jinni", "Jorara", "Justinia", "Karamba", "Kaedwen", "Korolus", "Kumael",
-		"Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland", "Muskovich", "Nestori", "Norsica", "Nubland", "Naralan", "Obelin", "Ovid", "Opera", 
-		"Oosmud", "Patani", "Petersen", "Polaris", "Prissia", "Quatar", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo", "Roveri", "Scythra", "Shetland", "Sundira", "Silveria", 
-		"Thenid", "Tilain", "Tesoro", "Tulisia", "Umbra", "Ulbany", "Uruk", "Virindor", "Visaya", "Vanad", "Zulu", "Zakrand", "Zerena"
+		"Darmid", "Delta", "Dirland", "Dohati", "Duscany", "Elarus", "Esmeris", "Erebor", "Emusil", "Erathia", "Folgeron", "Fernica", "Fuchia", "Friedland", "Farrah", "Garwinia", "Grazil", "Gunark", 
+		"Gehenna", "Gladius", "Hacatid", "Hermani", "Hisoka", "Howland", "Hunan", "Ianland", "Iridia", "Israel", "Indosin", "Illumina", "Jamalaya", "Jinni", "Jorara", "Justinia", "Jelsebed",
+		"Karamba", "Kaedwen", "Korolus", "Kumael", "Kestrella", "Losendro", "Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland", "Muskovich", "Nestori", "Norsica", 
+		"Nubland", "Naralan", "Nissin", "Obelin", "Ovid", "Opera", "Osmud", "Obelisk", "Patani", "Petersen", "Polaris", "Prissia", "Pusant", "Quatar", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo", 
+		"Roveri", "Scythra", "Shetland", "Sundira", "Silveria", "Sahari", "Takatak", "Thenid", "Tilain", "Tesoro", "Tulisia", "Umbra", "Ulbany", "Uruk", "Unibad", "Virindor", "Visaya", "Vanad", "Vesemin",
+		"Vortex", "Zulu", "Zakrand", "Zerena", "Ziria"
 	};
 
 	private string[] humanMaleFirstNames = new string[]{
