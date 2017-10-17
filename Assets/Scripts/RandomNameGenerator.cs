@@ -176,7 +176,7 @@ public class RandomNameGenerator : MonoBehaviour {
             int index = Random.Range(0, humanKingdomNames.Count);
             string humanKingdomName = humanKingdomNames[index];
             //humanKingdomNames.RemoveAt(index);
-            return humanKingdomName;
+            return humanKingdomName.Trim();
 		} else if(race == RACE.ELVES) {
             if (elvenKingdomNames.Count <= 0) {
                 elvenKingdomNames = generatedElvenKingdomNames.AllRaw(12).ToList();
@@ -184,7 +184,7 @@ public class RandomNameGenerator : MonoBehaviour {
             int index = Random.Range(0, elvenKingdomNames.Count);
             string elvenKingdomName = elvenKingdomNames[index];
             //elvenKingdomNames.RemoveAt(index);
-            return elvenKingdomName;
+            return elvenKingdomName.Trim();
         }
 		return "";
 	}
@@ -218,7 +218,7 @@ public class RandomNameGenerator : MonoBehaviour {
             int index = Random.Range(0, elvenMaleNames.Count);
             string elvenMaleName = elvenMaleNames[index];
             //elvenMaleNames.RemoveAt(index);
-            return elvenMaleName;
+            return elvenMaleName.Trim();
 		} else {
             if (elvenFemaleNames.Count <= 0) {
                 elvenFemaleNames = generatedElvenFemaleNames.AllRaw(12).ToList();
@@ -226,7 +226,7 @@ public class RandomNameGenerator : MonoBehaviour {
             int index = Random.Range(0, elvenFemaleNames.Count);
             string elvenFemaleName = elvenFemaleNames[index];
             //elvenFemaleNames.RemoveAt(index);
-            return elvenFemaleName;
+            return elvenFemaleName.Trim();
 		}
 //		return "";
 	}
