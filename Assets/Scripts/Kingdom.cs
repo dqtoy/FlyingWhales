@@ -2764,7 +2764,7 @@ public class Kingdom{
 		}
 	}
 	internal void UpdateThreatLevelsAndInvasionValues(){
-		if(this.king.balanceType == PURPOSE.BANDWAGON){
+		if(this.king.balanceType == PURPOSE.BANDWAGON || this.king.balanceType == PURPOSE.SUPERIORITY){
 			this.highestThreatAdjacentKingdomAbove50 = null;
 			this.highestThreatAdjacentKingdomAbove50Value = 0f;
 			this.highestRelativeStrengthAdjacentKingdom = null;
