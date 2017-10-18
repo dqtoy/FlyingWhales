@@ -1100,12 +1100,11 @@ public class KingdomRelationship {
 			if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
 				if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
 					adjustment = -100;
-				}else{
-					if(this._sourceKingdom.highestRelativeStrengthAdjacentKingdom != null){
-						if(this._targetKingdom.id == this._sourceKingdom.highestRelativeStrengthAdjacentKingdom.id){
-							adjustment = -100;
-						}
-					}
+				}
+			}
+			if(this._sourceKingdom.highestRelativeStrengthAdjacentKingdom != null){
+				if(this._targetKingdom.id == this._sourceKingdom.highestRelativeStrengthAdjacentKingdom.id && this._targetKingdom.id != KingdomManager.Instance.kingdomRankings [0].id){
+					adjustment = -100;
 				}
 			}
 		}
