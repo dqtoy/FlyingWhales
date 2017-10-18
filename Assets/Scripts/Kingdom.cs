@@ -150,6 +150,8 @@ public class Kingdom{
 	internal Kingdom highestRelativeStrengthAdjacentKingdom;
 	internal int highestRelativeStrengthAdjacentKingdomValue;
 
+	internal List<int> checkedWarfareID;
+
     #region getters/setters
     public KINGDOM_TYPE kingdomType {
 		get { 
@@ -445,6 +447,8 @@ public class Kingdom{
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
         this.stabilityDecreaseFromInvasionCounter = 0;
 		this.highestThreatAdjacentKingdomAbove50 = null;
+
+		this.checkedWarfareID = new List<int> ();
 
         AdjustPrestige(GridMap.Instance.numOfRegions);
         //		AdjustPrestige(500);

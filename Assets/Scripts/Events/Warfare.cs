@@ -108,8 +108,26 @@ public class Warfare {
 			}
 			CheckWarfare ();
 		}
-
-
+	}
+	private void CheckSides(){
+		if(this._kingdomSideList[WAR_SIDE.A].Count > 0){
+			for (int i = 0; i < this._kingdomSideList[WAR_SIDE.A].Count; i++) {
+				if (!this._isOver) {
+					if (!HasAdjacentEnemy (this._kingdomSideList [WAR_SIDE.A] [i])) {
+						PeaceDeclaration (this._kingdomSideList [WAR_SIDE.A] [i]);
+					}
+				}
+			}
+		}
+		if(this._kingdomSideList[WAR_SIDE.B].Count > 0){
+			for (int i = 0; i < this._kingdomSideList[WAR_SIDE.B].Count; i++) {
+				if(!this._isOver){
+					if(!HasAdjacentEnemy(this._kingdomSideList[WAR_SIDE.B][i])){
+						PeaceDeclaration (this._kingdomSideList [WAR_SIDE.B] [i]);
+					}
+				}
+			}
+		}
 	}
 	internal void BattleEnds(City winnerCity, City loserCity, Battle battle){
 		//Conquer City if not null, if null means both dead
@@ -620,7 +638,6 @@ public class Warfare {
 			}
 			return false;
 		}
-
 	}
 	internal bool HasAdjacentEnemyWithNoBattle(Kingdom kingdom){
 		if(!kingdom.warfareInfo.ContainsKey(this._id)){
