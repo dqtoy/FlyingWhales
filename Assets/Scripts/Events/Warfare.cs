@@ -60,6 +60,8 @@ public class Warfare {
 		this._kingdomSideList.Add (WAR_SIDE.A, new List<Kingdom>());
 		this._kingdomSideList.Add (WAR_SIDE.B, new List<Kingdom>());
 
+		firstKingdom.AdjustWarmongerValue (50);
+
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
 //		InstantDeclareWarIfNotAdjacent (firstKingdom, secondKingdom);
@@ -131,31 +133,43 @@ public class Warfare {
 //			}
 
 			if(!loserKingdom.isDead && !HasAdjacentEnemy(loserKingdom)){
+				Debug.Log ("LOSER: " + loserKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
 				PeaceDeclaration (loserKingdom);
 			}
 			if(!this._isOver){
 				if(!winnerKingdom.isDead && !HasAdjacentEnemy(winnerKingdom)){
 					PeaceDeclaration (winnerKingdom);
+					Debug.Log ("WINNER: " + winnerKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
 					return;
 				}
 				if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
 					if(!loserKingdom.isDead && battle.deadDefenderKingdom == null){
 						AdjustWeariness (loserKingdom, 5);
-
+						Debug.Log (winnerKingdom.name + " won and will try to declare peace or create new battle");
 						float peaceMultiplier = PeaceMultiplier (winnerKingdom);
 						int value = (int)((float)this._kingdomSideWeariness[winnerKingdom.id].weariness * peaceMultiplier);
 						int chance = UnityEngine.Random.Range (0, 100);
 						if(chance < value){
 							PeaceDeclaration (winnerKingdom);
 						}else{
+							Debug.Log (winnerKingdom.name + " won and did not declare peace and will create new battle");
 							CreateNewBattle (winnerKingdom);
 						}
 					}else{
+						if(battle.deadDefenderKingdom == null){
+							Debug.Log (loserKingdom.name + " lost and is dead " + winnerKingdom.name + " create new battle");
+						}else{
+							Debug.Log (loserKingdom.name + " lost and is dead or dead defender kingdom is " + battle.deadDefenderKingdom.name + ", " + winnerKingdom.name + " create new battle");
+						}
 						CreateNewBattle (winnerKingdom);
 					}
 				}else{
+					if(battle.deadAttackerKingdom == null){
+						Debug.Log (winnerKingdom.name + " won and is dead, will check this war");
+					}else{
+						Debug.Log (winnerKingdom.name + " won and is dead or dead attacker kingdom is " + battle.deadAttackerKingdom.name + ", will check this war");
+					}
 					CheckWarfare ();
-
 				}
 			}
 		}
