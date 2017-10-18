@@ -58,7 +58,7 @@ public static class SeeksSuperiority {
 							KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom);
 							KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom.highestRelativeStrengthAdjacentKingdom);
 							if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
-								&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id){
+								&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id && !krToAlly.cantAlly){
 								if(kingdomToAlly == null){
 									kingdomToAlly = krToAlly.targetKingdom;
 									leastLikedToEnemy = krEnemy.totalLike;

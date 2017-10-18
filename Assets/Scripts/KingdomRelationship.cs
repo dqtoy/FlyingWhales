@@ -53,6 +53,8 @@ public class KingdomRelationship {
 	internal int _usedTargetEffectivePower;
 	internal int _usedTargetEffectiveDef;
 
+	internal bool cantAlly;
+
 	private Warfare _warfare;
 	private Battle _battle;
 
@@ -186,6 +188,7 @@ public class KingdomRelationship {
 			{EVENT_TYPES.INSTIGATION, false},
 		};
 
+		SetCantAlly (false);
 		SetRaceThreatModifier ();
         //UpdateLikeness(null);
     }
@@ -1119,5 +1122,21 @@ public class KingdomRelationship {
 			}
 		}
 		return adjustment;
+	}
+	internal void SetCantAlly(bool state){
+		this.cantAlly = state;
+	}
+	internal void ChangeCantAlly(bool state){
+		if(!this._sourceKingdom.isDead && !this._targetKingdom.isDead){
+			SetCantAlly (state);
+			KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
+			kr.SetCantAlly (state);
+
+			if(state){
+				GameDate changeDate = new GameDate (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+				changeDate.AddYears (1);
+				SchedulingManager.Instance.AddEntry (changeDate, () => ChangeCantAlly (false));
+			}
+		}
 	}
 }
