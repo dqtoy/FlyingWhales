@@ -501,6 +501,7 @@ public class KingdomRelationship {
 		if(isDecaying){
 			AddDecayingRelationshipModifier (modification, reason, identifier, dateTimeToUse);
 		}
+        UpdateKingRelationshipStatus();
 	}
 	private void AddDecayingRelationshipModifier(int modification, string reason, RELATIONSHIP_MODIFIER identifier, GameDate currentDate){
 		RelationshipModifier relationshipModifier = null;
