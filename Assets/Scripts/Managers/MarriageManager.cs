@@ -110,14 +110,9 @@ public class MarriageManager : MonoBehaviour {
 		}
 
         if(citizen1.role == ROLE.KING) {
-            if(citizen1.gender == GENDER.MALE) {
-                //citizen 2 is female and wife of a king
-                citizen2.AssignRole(ROLE.QUEEN);
-            } else {
-                //citizen 2 is male and husband of queen
-                citizen2.AssignRole(ROLE.QUEEN_CONSORT);
-            }
-            
+            citizen2.AssignRole(ROLE.QUEEN);
+        } else if (citizen2.role == ROLE.KING) {
+            citizen1.AssignRole(ROLE.QUEEN);
         }
 	}
 

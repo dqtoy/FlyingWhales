@@ -18,12 +18,9 @@ public class UIManager : MonoBehaviour {
     public GameObject characterPortraitPrefab;
 	public GameObject historyPortraitPrefab;
 	public GameObject eventPortraitPrefab;
-	//public GameObject traitPrefab;
 	public GameObject gameEventPrefab;
 	public GameObject kingdomEventsListParentPrefab;
-	public GameObject kingdomWarEventsListParentPrefab;
 	public GameObject kingdomEventsListItemPrefab;
-    //public GameObject kingdomWarEventsListItemPrefab;
     public GameObject kingdomFlagPrefab;
     public GameObject logItemPrefab;
     public GameObject cityItemPrefab;
@@ -712,8 +709,12 @@ public class UIManager : MonoBehaviour {
                         citizenRoleAndKingdomLbl.text = "Queen of " + currentlyShowingCitizen.city.kingdom.name;
                     }
                     break;
-                case ROLE.QUEEN_CONSORT:
-                    citizenRoleAndKingdomLbl.text = "Queen's Consort of " + currentlyShowingCitizen.city.kingdom.name;
+                case ROLE.QUEEN:
+                    if (currentlyShowingCitizen.gender == GENDER.MALE) {
+                        citizenRoleAndKingdomLbl.text = "Queen's Consort of " + currentlyShowingCitizen.city.kingdom.name;
+                    } else {
+                        citizenRoleAndKingdomLbl.text = "Queen of " + currentlyShowingCitizen.city.kingdom.name;
+                    }
                     break;
                 default:
                     string role = Utilities.NormalizeString(roleOfCitizen.ToString());
@@ -2540,6 +2541,71 @@ public class UIManager : MonoBehaviour {
         currentlyShowingCitizen.Death(DEATH_REASONS.ACCIDENT);
         ShowCitizenInfo(currentlyShowingCitizen);
     }
+    //public int counter = 0;
+    //public void SpawnAIForTesting() {
+    //    GameObject aiGO = GameObject.Instantiate(Resources.Load("RoamingAI")) as GameObject;
+    //    aiGO.transform.position = currentlyShowingKingdom.capitalCity.hexTile.transform.position;
+    //    //ENTITY_TYPE randomEntity = (ENTITY_TYPE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(ENTITY_TYPE)).Length));
+    //    counter++;
+    ////    ENTITY_TYPE randomEntity = ENTITY_TYPE.WEREWOLF;
+    ////    aiGO.GetComponent<EntityAI>().Initialize(currentlyShowingKingdom.capitalCity.region, randomEntity);
+    ////}
+    //public void SpawnGuardForTesting() {
+    //    GameObject aiGO = GameObject.Instantiate(Resources.Load("GuardAI")) as GameObject;
+    //    aiGO.transform.position = currentlyShowingKingdom.capitalCity.hexTile.transform.position;
+    //    aiGO.GetComponent<GuardAI>().Initialize(currentlyShowingKingdom);
+    //}
+    //[SerializeField] private ButtonToggle guardSpawnBtn;
+    //[SerializeField] private ButtonToggle workerSpawnBtn;
+    //[SerializeField] private ButtonToggle banditSpawnBtn;
+    //[SerializeField] private ButtonToggle monsterSpawnBtn;
+
+
+    //internal ENTITY_TYPE spawnType = ENTITY_TYPE.NONE;
+
+    //public void ToggleGuardSpawn() {
+    //    if (guardSpawnBtn.isClicked) {
+    //        workerSpawnBtn.SetClickState(false);
+    //        banditSpawnBtn.SetClickState(false);
+    //        monsterSpawnBtn.SetClickState(false);
+    //        SetSpawnType(ENTITY_TYPE.GUARD);
+    //    } else {
+    //        SetSpawnType(ENTITY_TYPE.NONE);
+    //    }
+    //}
+    //public void ToggleWorkerSpawn() {
+    //    if (workerSpawnBtn.isClicked) {
+    //        guardSpawnBtn.SetClickState(false);
+    //        banditSpawnBtn.SetClickState(false);
+    //        monsterSpawnBtn.SetClickState(false);
+    //        SetSpawnType(ENTITY_TYPE.WORKER);
+    //    } else {
+    //        SetSpawnType(ENTITY_TYPE.NONE);
+    //    }
+    //}
+    //public void ToggleBanditSpawn() {
+    //    if (banditSpawnBtn.isClicked) {
+    //        guardSpawnBtn.SetClickState(false);
+    //        workerSpawnBtn.SetClickState(false);
+    //        monsterSpawnBtn.SetClickState(false);
+    //        SetSpawnType(ENTITY_TYPE.BANDIT);
+    //    } else {
+    //        SetSpawnType(ENTITY_TYPE.NONE);
+    //    }
+    //}
+    //public void ToggleMonsterSpawn() {
+    //    if (monsterSpawnBtn.isClicked) {
+    //        guardSpawnBtn.SetClickState(false);
+    //        workerSpawnBtn.SetClickState(false);
+    //        banditSpawnBtn.SetClickState(false);
+    //        SetSpawnType(ENTITY_TYPE.MONSTER);
+    //    } else {
+    //        SetSpawnType(ENTITY_TYPE.NONE);
+    //    }
+    //}
+    //private void SetSpawnType(ENTITY_TYPE spawnType) {
+    //    this.spawnType = spawnType;
+    //}
     #endregion
 
 
