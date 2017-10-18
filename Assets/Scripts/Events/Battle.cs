@@ -214,7 +214,7 @@ public class Battle {
 	#region Step 3
 	private void Combat(){
 		if(!this.attacker.isDead && !this.defender.isDead){
-			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + this.attacker.name + " of " + this.attacker.kingdom.name + " AND " + this.defender.name + " of " + this.defender.kingdom.name + "===============");
+			Debug.Log ("=============== ENTERING COMBAT BETWEEN " + this.attacker.name + " of " + this.attacker.kingdom.name + " AND " + this.defender.name + " of " + this.defender.kingdom.name + " " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ===============");
 			this._warfare.AdjustWeariness (this.attacker.kingdom, 2);
 
 			this._deadAttackerKingdom = null;
@@ -425,6 +425,7 @@ public class Battle {
 	}
 	#endregion
 	private void DeclarePeaceByDefender(){
+		Debug.Log (this.defender.kingdom + " is defender and has declared peace with " + this.attacker.kingdom);
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
 		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
@@ -441,6 +442,14 @@ public class Battle {
 		this._warfare.PeaceDeclaration (this.defender.kingdom);
 	}
 	private void ForceEndBattle(){
+		string forceBattleLog = this.attacker.kingdom + " and " + this.defender.kingdom + " has forced end battle because";
+		if (this._deadAttackerKingdom != null){
+			forceBattleLog += " dead attacker kingdom is " + this._deadAttackerKingdom.name; 
+		}
+		if (this._deadDefenderKingdom != null) {
+			forceBattleLog += " dead defender kingdom is " + this._deadDefenderKingdom.name; 
+		}
+		Debug.Log (forceBattleLog);
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
 		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
@@ -457,6 +466,7 @@ public class Battle {
 		CheckIfKingdomsAreWipedOut ();
 	}
 	private void EndBattle(City winnerCity, City loserCity){
+		Debug.Log (winnerCity.kingdom.name + " wins against " + loserCity.kingdom.name + ", battle ends");
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
 		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
@@ -473,6 +483,14 @@ public class Battle {
 		CheckIfKingdomsAreWipedOut ();
 	}
 	private void CityDied(){
+		string cityDiedLog = "Battle will end, city has died";
+		if(this.attacker.isDead){
+			cityDiedLog += " " + this.attacker.name + " of " + this.attacker.kingdom.name + " is dead";
+		}
+		if(this.defender.isDead){
+			cityDiedLog += " " + this.defender.name + " of " + this.defender.kingdom.name + " is dead";
+		}
+		Debug.Log (cityDiedLog);
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
 		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
@@ -503,6 +521,7 @@ public class Battle {
 	private void CityDied(City city){
 		if(!this._isOver){
 			if(city.id == this._kingdom1City.id || city.id == this._kingdom2City.id){
+				Debug.Log (city.name + " has died, battle will end");
 				this._isOver = true;
 				Messenger.RemoveListener<City> ("CityDied", CityDied);
 				Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
@@ -531,6 +550,7 @@ public class Battle {
 	private void CityTransfered(City city){
 		if(!this._isOver){
 			if(city.id == this._kingdom1City.id || city.id == this._kingdom2City.id){
+				Debug.Log (city.name + " has transfered, battle will end");
 				this._isOver = true;
 				Messenger.RemoveListener<City> ("CityDied", CityDied);
 				Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);
@@ -557,6 +577,7 @@ public class Battle {
 		}
 	}
 	internal void ResolveBattle(){
+		Debug.Log ("this battle is resolved, battle will end");
 		this._isOver = true;
 		Messenger.RemoveListener<City> ("CityDied", CityDied);
 		Messenger.RemoveListener<City> ("CityTransfered", CityTransfered);

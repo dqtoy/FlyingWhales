@@ -729,10 +729,9 @@ public class KingdomRelationship {
 
 	internal void ChangeWarStatus(bool state, Warfare warfare){
 		SetWarStatus(state, warfare);
-		if(state){
-//			SetPreparingWar (false);
-			this._sourceKingdom.AdjustWarmongerValue (50);
-		}
+//		if(state){
+//			this._sourceKingdom.AdjustWarmongerValue (50);
+//		}
 		KingdomRelationship kr = this._targetKingdom.GetRelationshipWithKingdom (this._sourceKingdom);
 		kr.SetWarStatus(state, warfare);
 	}
