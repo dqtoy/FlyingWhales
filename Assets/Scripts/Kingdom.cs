@@ -2696,7 +2696,7 @@ public class Kingdom{
         //Its possible to have multiple active plagues in the same Kingdom. The kingdom will lose 50% of its current population growth per active plague.
         int activePlagues = GetActiveEventsOfTypeCount(EVENT_TYPES.PLAGUE);
         if (activePlagues > 0) {
-            return Mathf.FloorToInt((float)populationGrowth * (activePlagues * 0.5f));
+            return Mathf.FloorToInt(-(float)populationGrowth * (activePlagues * 0.5f));
         } else {
             return populationGrowth;
         }
