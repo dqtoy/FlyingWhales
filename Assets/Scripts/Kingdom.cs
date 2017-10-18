@@ -2797,7 +2797,7 @@ public class Kingdom{
 		if(kingdomWithHighestThreat != null){
 			for (int i = 0; i < kingdomRelationships.Count; i++) {
 				KingdomRelationship kr = kingdomRelationships [i];
-				if(kr.isDiscovered){
+				if(kr.isDiscovered && !kr.cantAlly){
 					if(kr.targetKingdom.id != kingdomWithHighestThreat.id){
 						KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kingdomWithHighestThreat);
 						if(rk.isAdjacent){
@@ -2841,7 +2841,7 @@ public class Kingdom{
 		if(this._alliancePool == null){
 			for (int i = 0; i < kingdomRelationships.Count; i++) {
 				KingdomRelationship kr = kingdomRelationships [i];
-				if(kr.isDiscovered){
+				if(kr.isDiscovered && !kr.cantAlly){
 					if(kr.targetKingdom.alliancePool == null){
 						Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
 						bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
@@ -2976,6 +2976,7 @@ public class Kingdom{
 				if(this.alliancePool.kingdomsInvolved[i].id != this.id){
 					KingdomRelationship kr = this.alliancePool.kingdomsInvolved [i].GetRelationshipWithKingdom (this);
 					kr.AddRelationshipModifier (-50, "Broken Alliance", RELATIONSHIP_MODIFIER.LEAVE_ALLIANCE, true, false);
+					kr.ChangeCantAlly (true);
 				}
 			}
             this.alliancePool.RemoveKingdomInAlliance(this);
