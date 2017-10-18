@@ -46,41 +46,21 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
-
-
 	internal Riot CreateRiotEvent(Kingdom sourceKingdom){
 		Riot riot = new Riot(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, sourceKingdom);
 		return riot;
 	}
-
-	//internal Plague CreatePlagueEvent(){
-	//	Debug.Log ("CREATING PLAGUE EVENT");
-	//	List<Kingdom> targetKingdoms = KingdomManager.Instance.allKingdoms.Where (x => x.stability >= 0 && x.cities.FirstOrDefault (y => y.ownedTiles.Count >= 2) != null).ToList();
-	//	if(targetKingdoms != null && targetKingdoms.Count > 0){
-	//		Kingdom plaguedKingdom = targetKingdoms [UnityEngine.Random.Range (0, targetKingdoms.Count)];
-	//		List<City> targetCities = plaguedKingdom.cities.Where (x => x.ownedTiles.Count >= 2).ToList();
-	//		City plaguedCity = targetCities [UnityEngine.Random.Range (0, targetCities.Count)];
-	//		if(plaguedCity != null){
-	//			Plague plague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, plaguedCity);
-	//			return plague;
-	//		}
-	//	}
-	//	return null;
-	//}
-	//internal Plague CreatePlagueEvent(Kingdom kingdom){
-	//	Debug.Log ("CREATING FORCE PLAGUE EVENT");
-	//	List<City> targetCities = kingdom.cities.Where (x => x.structures.Count > 0).ToList();
-	//	City plaguedCity = targetCities [UnityEngine.Random.Range (0, targetCities.Count)];
-	//	if(plaguedCity != null){
-	//		Plague plague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, plaguedCity);
-	//		return plague;
-	//	}
-	//	return null;
-	//}
-
-	internal Plague CreatePlagueEvent(Kingdom infectedKingdom, bool isResetStability = true) {
+    internal RiotSettlement CreateRiotSettlementEvent(Kingdom sourceKingdom) {
+        RiotSettlement riotSettlement = new RiotSettlement(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, sourceKingdom);
+        return riotSettlement;
+    }
+    internal Plague CreatePlagueEvent(Kingdom infectedKingdom, bool isResetStability = true) {
         Plague newPlague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, infectedKingdom, isResetStability);
         return newPlague;
+    }
+    internal Regression CreateRegressionEvent(Kingdom sourceKingdom) {
+        Regression regression = new Regression(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, sourceKingdom);
+        return regression;
     }
 
 	//internal HuntLair CreateHuntLairEvent(Kingdom sourceKingdom){

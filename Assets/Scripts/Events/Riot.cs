@@ -5,9 +5,8 @@ using System.Linq;
 
 public class Riot : GameEvent {
 
-
 	public Riot(int startWeek, int startMonth, int startYear, Citizen startedBy, Kingdom sourceKingdom) : base (startWeek, startMonth, startYear, startedBy){
-		this.eventType = EVENT_TYPES.RIOT;
+		this.eventType = EVENT_TYPES.RIOT_WEAPONS;
 		this.name = "Riot";
 
         //The kingdom will lose 25% of its Weapons and 25% of its Armors.

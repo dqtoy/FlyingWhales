@@ -814,6 +814,8 @@ public class City{
             //Reevaluate points based on new kingdom
             LevelUpBalanceOfPower();
         }
+        _powerPoints += _kingdom.techLevel;
+        _defensePoints += _kingdom.techLevel;
 
         this.hexTile.UpdateCityNamePlate();
         CameraMove.Instance.UpdateMinimapTexture();

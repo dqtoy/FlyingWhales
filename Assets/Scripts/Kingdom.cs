@@ -1939,6 +1939,9 @@ public class Kingdom{
 		if(this._techCounter == this._techCapacity){
 			this.UpgradeTechLevel (1);
 		}
+        if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+            UIManager.Instance.UpdateTechMeter();
+        }
 	}
 	internal void UpgradeTechLevel(int amount){
 		this._techLevel += amount;
@@ -1949,8 +1952,24 @@ public class Kingdom{
 		this._techCounter = 0;
 		AdjustPowerPointsToAllCities(amount);
         AdjustDefensePointsToAllCities(amount);
-		this.UpdateTechCapacity ();
-	}
+		this.UpdateTechCapacity();
+        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+            UIManager.Instance.UpdateTechMeter();
+        }
+    }
+    internal void DegradeTechLevel(int amount) {
+        _techLevel -= amount;
+        if(_techLevel >= 0) {
+            AdjustPowerPointsToAllCities(-amount);
+            AdjustDefensePointsToAllCities(-amount);
+        }
+        _techLevel = Mathf.Max(0, _techLevel);
+        this._techCounter = 0;
+        UpdateTechCapacity();
+        if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
+            UIManager.Instance.UpdateTechMeter();
+        }
+    }
 	#endregion
 	
 	#region Discovery
@@ -2410,23 +2429,32 @@ public class Kingdom{
             if(kingdomSize != KINGDOM_SIZE.SMALL) {
                 //Large or medium kingdom
                 int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 40) {
+                if (chance < 15) {
                     StartAutomaticRebellion();
-                } else if (chance >= 40 && chance < 70) {
+                } else if (chance >= 15 && chance < 35) {
                     EventCreator.Instance.CreatePlagueEvent(this);
-                } else {
+                } else if (chance >= 35 && chance < 60) {
                     EventCreator.Instance.CreateRiotEvent(this);
+                } else if (chance >= 60 && chance < 85) {
+                    EventCreator.Instance.CreateRiotSettlementEvent(this);
+                } else {
+                    EventCreator.Instance.CreateRegressionEvent(this);
                 }
             } else {
-                //small kingdom (Plague and Riot only)
-                if(UnityEngine.Random.Range(0,2) == 0) {
+                //small kingdom
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 25) {
                     EventCreator.Instance.CreatePlagueEvent(this);
-                } else {
+                } else if (chance >= 25 && chance < 55) {
                     EventCreator.Instance.CreateRiotEvent(this);
+                } else if (chance >= 55 && chance < 85) {
+                    EventCreator.Instance.CreateRiotSettlementEvent(this);
+                } else {
+                    EventCreator.Instance.CreateRegressionEvent(this);
                 }
             }
-			
-		}
+
+            }
 	}
     internal void AdjustBaseWeapons(int amountToAdjust) {
 		this._baseWeapons += amountToAdjust;

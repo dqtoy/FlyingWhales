@@ -1063,7 +1063,7 @@ public class Utilities : MonoBehaviour {
             return true;
 		case EVENT_TYPES.REINFORCEMENT:
 			return true;
-		case EVENT_TYPES.RIOT:
+		case EVENT_TYPES.RIOT_WEAPONS:
 			return true;
 		case EVENT_TYPES.REBELLION:
 			return true;

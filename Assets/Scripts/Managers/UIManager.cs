@@ -533,7 +533,7 @@ public class UIManager : MonoBehaviour {
         kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
         kingdomUnrestLbl.text = currentlyShowingKingdom.stability.ToString(); //Unrest
 		kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
-		kingdomTechMeter.value = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
+        UpdateTechMeter();
 		this.militarizingGO.SetActive (currentlyShowingKingdom.isMilitarize);
 		this.fortifyingGO.SetActive (currentlyShowingKingdom.isFortifying);
 		this.actionDayLbl.text = this.currentlyShowingKingdom.actionDay.ToString();
@@ -543,7 +543,7 @@ public class UIManager : MonoBehaviour {
 //		float newValue = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
 //		float oldValue = kingdomTechMeter.value;
 //		kingdomTechMeter.value = iTween.FloatUpdate(oldValue, newValue, GameManager.Instance.progressionSpeed);
-//Basic Resource
+        //Basic Resource
         if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
             kingdomBasicResourceSprite.sprite2D = stoneSprite;
         } else if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.WOOD) {
@@ -573,6 +573,10 @@ public class UIManager : MonoBehaviour {
         }
 
         //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
+    }
+
+    internal void UpdateTechMeter() {
+        kingdomTechMeter.value = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
     }
 
     internal void CheckIfShowingKingdomIsAlive(Kingdom kingdom) {
@@ -1370,8 +1374,8 @@ public class UIManager : MonoBehaviour {
         //    logString += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
         //}
         logHistory.Add(log);
-        if(logHistory.Count > 100) {
-            int numOfExcessLogs = logHistory.Count - 100;
+        if(logHistory.Count > 269) {
+            int numOfExcessLogs = logHistory.Count - 269;
             for (int i = 0; i < numOfExcessLogs; i++) {
                 logHistory.Remove(logHistory.First());
             }
@@ -2261,7 +2265,7 @@ public class UIManager : MonoBehaviour {
 			return rebellionPlotIcon;
 		case EVENT_TYPES.ADMIRATION:
 			return requestPeaceIcon;
-		case EVENT_TYPES.RIOT:
+		case EVENT_TYPES.RIOT_WEAPONS:
 			return rebellionPlotIcon;
 		case EVENT_TYPES.SECESSION:
 			return rebellionPlotIcon;
