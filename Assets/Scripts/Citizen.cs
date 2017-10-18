@@ -1096,6 +1096,12 @@ public class Citizen {
             newKingdom.regions[i].CheckForDiscoveredKingdoms();
         }
 
+        for (int i = 0; i < newKingdom.cities.Count; i++) {
+            if (Messenger.eventTable.ContainsKey("CityTransfered")) {
+                Messenger.Broadcast<City>("CityTransfered", newKingdom.cities[i]);
+            }
+        }
+
         newKingdom.UpdateAllRelationshipsLikeness();
         newKingdom.UpdateAllCitizensOpinionOfKing();
 
