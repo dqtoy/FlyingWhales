@@ -130,11 +130,11 @@ public class Warfare {
 //				}
 //			}
 
-			if(!loserKingdom.isDead && !IsAdjacentToEnemyKingdoms(loserKingdom, this._kingdomSideWeariness[loserKingdom.id].side)){
+			if(!loserKingdom.isDead && !HasAdjacentEnemy(loserKingdom)){
 				PeaceDeclaration (loserKingdom);
 			}
 			if(!this._isOver){
-				if(!winnerKingdom.isDead && !IsAdjacentToEnemyKingdoms(winnerKingdom, this._kingdomSideWeariness[winnerKingdom.id].side)){
+				if(!winnerKingdom.isDead && !HasAdjacentEnemy(winnerKingdom)){
 					PeaceDeclaration (winnerKingdom);
 					return;
 				}
@@ -215,7 +215,7 @@ public class Warfare {
 		if(friendlyCity == null || enemyCity == null){
 			
 			Debug.Log ("---------------------------------Can't pair cities: force peace!");
-//			CantPairForcePeace(kingdom);
+			CantPairForcePeace(kingdom);
 		}
 	}
 	private City GetEnemyCity(City sourceCity){
@@ -352,26 +352,6 @@ public class Warfare {
 				return;
 			}
 			UnjoinWar (kingdom1);
-//			WAR_SIDE peaceDeclarerSide = this._kingdomSideWeariness [kingdom1.id].side;
-//			if(peaceDeclarerSide == WAR_SIDE.A){
-//				if(this._sideB.Count > 0){
-//					for (int i = 0; i < this._sideB.Count; i++) {
-//						DeclarePeace (kingdom1, this._sideB[i]);
-//					}
-//				}else{
-//					WarfareDone ();
-//					return;
-//				}
-//			}else{
-//				if(this._sideA.Count > 0){
-//					for (int i = 0; i < this._sideA.Count; i++) {
-//						DeclarePeace (kingdom1, this._sideA[i]);
-//					}
-//				}else{
-//					WarfareDone ();
-//					return;
-//				}
-//			}
 		}
 	}
 	private void DeclarePeace(Kingdom kingdom1, Kingdom kingdom2){
@@ -574,8 +554,9 @@ public class Warfare {
 //					return;
 //				}
 //			}
+		}else{
+			CheckWarfare ();	
 		}
-//		CheckWarfare ();
 	}
 	internal void AdjustWeariness(Kingdom kingdom, int amount){
 		if(this._kingdomSideWeariness.ContainsKey(kingdom.id)){
@@ -606,5 +587,43 @@ public class Warfare {
 			}
 		}
 		return 0.5f;
+	}
+
+	internal bool HasAdjacentEnemy(Kingdom kingdom){
+		if(!kingdom.warfareInfo.ContainsKey(this._id)){
+			return false;
+		}else{
+			WAR_SIDE side = kingdom.warfareInfo[this._id].side;
+			WAR_SIDE oppositeSide = WAR_SIDE.A;
+			if(side == WAR_SIDE.A){
+				oppositeSide = WAR_SIDE.B;
+			}
+			for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
+				if(kr.isAdjacent && kr.warfare != null && kr.warfare.id == this._id){
+					return true;
+				}
+			}
+			return false;
+		}
+
+	}
+	internal bool HasAdjacentEnemyWithNoBattle(Kingdom kingdom){
+		if(!kingdom.warfareInfo.ContainsKey(this._id)){
+			return false;
+		}else{
+			WAR_SIDE side = kingdom.warfareInfo[this._id].side;
+			WAR_SIDE oppositeSide = WAR_SIDE.A;
+			if(side == WAR_SIDE.A){
+				oppositeSide = WAR_SIDE.B;
+			}
+			for (int i = 0; i < this._kingdomSideList[oppositeSide].Count; i++) {
+				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(this._kingdomSideList[oppositeSide][i]);
+				if(kr.isAdjacent && kr.battle == null && kr.warfare != null && kr.warfare.id == this._id){
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

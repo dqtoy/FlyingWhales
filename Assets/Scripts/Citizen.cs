@@ -61,7 +61,13 @@ public class Citizen {
 
 	#region getters/setters
     public string name {
-        get { return firstName + " " + surName; }
+        get {
+            if(race == RACE.HUMANS) {
+                return firstName + " " + surName;
+            } else {
+                return firstName;
+            }
+        }
     }
     public int ageTableKey {
         get { return _ageTableKey; }
@@ -871,10 +877,10 @@ public class Citizen {
         string intelligenceSummary = string.Empty;
         if(king.intelligence == INTELLIGENCE.SMART) {
             intelligenceAdjustment = 15;
-            intelligenceSummary = intelligenceAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(_intelligence.ToString()) + " king\n";
+            intelligenceSummary = intelligenceAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(king._intelligence.ToString()) + " king\n";
         } else if (king.intelligence == INTELLIGENCE.DUMB){
             intelligenceAdjustment = -15;
-            intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(_intelligence.ToString()) + " king\n";
+            intelligenceSummary = intelligenceAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king._intelligence.ToString()) + " king\n";
         }
         if (intelligenceAdjustment != 0) {
             _loyaltyToKing += intelligenceAdjustment;
@@ -889,10 +895,10 @@ public class Citizen {
         string efficiencySummary = string.Empty;
         if(king.efficiency == EFFICIENCY.EFFICIENT) {
             efficiencyAdjustment = 15;
-            efficiencySummary = efficiencyAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(_efficiency.ToString()) + " king\n";
+            efficiencySummary = efficiencyAdjustment.ToString() + "  Likes " + Utilities.NormalizeString(king._efficiency.ToString()) + " king\n";
         } else if(king.efficiency == EFFICIENCY.INEPT){
             efficiencyAdjustment = -15;
-            efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(_efficiency.ToString()) + " king\n";
+            efficiencySummary = efficiencyAdjustment.ToString() + "  Dislikes " + Utilities.NormalizeString(king._efficiency.ToString()) + " king\n";
         }
         if (efficiencyAdjustment != 0) {
             _loyaltyToKing += efficiencyAdjustment;
@@ -1059,7 +1065,7 @@ public class Citizen {
             if(children != null) {
                 citizensToTransfer.AddRange(children);
             }
-        } else if (previousRole == ROLE.QUEEN || previousRole == ROLE.QUEEN_CONSORT) {
+        } else if (previousRole == ROLE.QUEEN) {
             if(_spouse != null) {
                 MarriageManager.Instance.DivorceCouple(this, _spouse);
             }
@@ -1254,28 +1260,28 @@ public class Citizen {
 
 	internal float GetWarmongerWarPercentage100(){
 		if(this._warmonger == WARMONGER.VERY_HIGH){
-			return 6f;
+			return 8f;
 		}else if(this._warmonger == WARMONGER.HIGH){
-			return 4f;
+			return 6f;
 		}else if(this._warmonger == WARMONGER.AVERAGE){
-			return 2f;
+			return 4f;
 		}else if(this._warmonger == WARMONGER.LOW){
-			return 1f;
+			return 2f;
 		}else{
-			return 0.5f;
+			return 1f;
 		}
 	}
 	internal float GetWarmongerWarPercentage50(){
 		if(this._warmonger == WARMONGER.VERY_HIGH){
-			return 0.5f;
+			return 1f;
 		}else if(this._warmonger == WARMONGER.HIGH){
-			return 0.4f;
+			return 0.8f;
 		}else if(this._warmonger == WARMONGER.AVERAGE){
-			return 0.3f;
+			return 0.6f;
 		}else if(this._warmonger == WARMONGER.LOW){
-			return 0.2f;
+			return 0.4f;
 		}else{
-			return 0.1f;
+			return 0.2f;
 		}
 	}
 }

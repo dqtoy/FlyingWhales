@@ -3,11 +3,11 @@ using System.Collections;
 
 public class Plague : GameEvent {
 
-    private string _plagueName;
+    internal string _plagueName;
     private Kingdom _infectedKingdom;
     private GameDate nextCureCheckDay;
 
-    public Plague(int startDay, int startMonth, int startYear, Citizen startedBy, Kingdom infectedKingdom) : base(startDay, startMonth, startYear, startedBy) {
+	public Plague(int startDay, int startMonth, int startYear, Citizen startedBy, Kingdom infectedKingdom, bool isResetStability = true) : base(startDay, startMonth, startYear, startedBy) {
         eventType = EVENT_TYPES.PLAGUE;
         _plagueName = Utilities.GeneratePlagueName();
         _infectedKingdom = infectedKingdom;
@@ -17,8 +17,11 @@ public class Plague : GameEvent {
         SchedulingManager.Instance.AddEntry(nextCureCheckDay, () => CheckIfPlagueIsCured());
 
         EventIsCreated(infectedKingdom, false);
-        //Stability will reset to 50.
-        infectedKingdom.ChangeStability(50);
+
+		if(isResetStability){
+			//Stability will reset to 50.
+			infectedKingdom.ChangeStability(50);
+		}
 
         Log newLog = CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Plague", "plague_start");
         newLog.AddToFillers(null, _plagueName, LOG_IDENTIFIER.OTHER);
@@ -28,6 +31,10 @@ public class Plague : GameEvent {
     }
 
     private void CheckIfPlagueIsCured() {
+        if (_infectedKingdom.isDead) {
+            DoneEvent();
+            return;
+        }
         //Starting 3 months after the plague, every 5 days, there will be a 3% that the plague will be done
         if (Random.Range(0, 100) < 3) {
             //Plague is cured

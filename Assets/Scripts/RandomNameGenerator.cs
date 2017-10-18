@@ -17,11 +17,12 @@ public class RandomNameGenerator : MonoBehaviour {
 
 	private string[] baseHumanKingdomNames = new string[]{
 		"Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Bismuth", "Boron", "Burgundy", "Calabon", "Canton", "Chyland", "Croatia", "Ceres", 
-		"Darmid", "Dirland", "Dohati", "Duscany", "Elarus", "Esmeris", "Erebor", "Emusil", "Fernica", "Fuchia", "Friedland", "Farrah", "Garwinia", "Grazil", "Gunark", "Gehenna", 
-		"Hacatid", "Hermani", "Hisoka", "Howland", "Ianland", "Iridia", "Israel", "Imisil", "Jamalaya", "Jinni", "Jorara", "Justinia", "Karamba", "Kaedwen", "Korolus", "Kumael",
-		"Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland", "Muskovich", "Nestori", "Norsica", "Nubland", "Naralan", "Obelin", "Ovid", "Opera", 
-		"Oosmud", "Patani", "Petersen", "Polaris", "Prissia", "Quatar", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo", "Roveri", "Scythra", "Shetland", "Sundira", "Silveria", 
-		"Thenid", "Tilain", "Tesoro", "Tulisia", "Umbra", "Ulbany", "Uruk", "Virindor", "Visaya", "Vanad", "Zulu", "Zakrand", "Zerena"
+		"Darmid", "Delta", "Dirland", "Dohati", "Duscany", "Elarus", "Esmeris", "Erebor", "Emusil", "Erathia", "Folgeron", "Fernica", "Fuchia", "Friedland", "Farrah", "Garwinia", "Grazil", "Gunark", 
+		"Gehenna", "Gladius", "Hacatid", "Hermani", "Hisoka", "Howland", "Hunan", "Ianland", "Iridia", "Israel", "Indosin", "Illumina", "Jamalaya", "Jinni", "Jorara", "Justinia", "Jelsebed",
+		"Karamba", "Kaedwen", "Korolus", "Kumael", "Kestrella", "Losendro", "Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland", "Muskovich", "Nestori", "Norsica", 
+		"Nubland", "Naralan", "Nissin", "Obelin", "Ovid", "Opera", "Osmud", "Obelisk", "Patani", "Petersen", "Polaris", "Prissia", "Pusant", "Quatar", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo", 
+		"Roveri", "Scythra", "Shetland", "Sundira", "Silveria", "Sahari", "Takatak", "Thenid", "Tilain", "Tesoro", "Tulisia", "Umbra", "Ulbany", "Uruk", "Unibad", "Virindor", "Visaya", "Vanad", "Vesemin",
+		"Vortex", "Zulu", "Zakrand", "Zerena", "Ziria"
 	};
 
 	private string[] humanMaleFirstNames = new string[]{
@@ -176,7 +177,7 @@ public class RandomNameGenerator : MonoBehaviour {
             int index = Random.Range(0, humanKingdomNames.Count);
             string humanKingdomName = humanKingdomNames[index];
             //humanKingdomNames.RemoveAt(index);
-            return humanKingdomName;
+            return humanKingdomName.Trim();
 		} else if(race == RACE.ELVES) {
             if (elvenKingdomNames.Count <= 0) {
                 elvenKingdomNames = generatedElvenKingdomNames.AllRaw(12).ToList();
@@ -184,7 +185,7 @@ public class RandomNameGenerator : MonoBehaviour {
             int index = Random.Range(0, elvenKingdomNames.Count);
             string elvenKingdomName = elvenKingdomNames[index];
             //elvenKingdomNames.RemoveAt(index);
-            return elvenKingdomName;
+            return elvenKingdomName.Trim();
         }
 		return "";
 	}
@@ -218,7 +219,7 @@ public class RandomNameGenerator : MonoBehaviour {
             int index = Random.Range(0, elvenMaleNames.Count);
             string elvenMaleName = elvenMaleNames[index];
             //elvenMaleNames.RemoveAt(index);
-            return elvenMaleName;
+            return elvenMaleName.Trim();
 		} else {
             if (elvenFemaleNames.Count <= 0) {
                 elvenFemaleNames = generatedElvenFemaleNames.AllRaw(12).ToList();
@@ -226,7 +227,7 @@ public class RandomNameGenerator : MonoBehaviour {
             int index = Random.Range(0, elvenFemaleNames.Count);
             string elvenFemaleName = elvenFemaleNames[index];
             //elvenFemaleNames.RemoveAt(index);
-            return elvenFemaleName;
+            return elvenFemaleName.Trim();
 		}
 //		return "";
 	}

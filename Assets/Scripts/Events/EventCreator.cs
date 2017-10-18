@@ -78,8 +78,8 @@ public class EventCreator: MonoBehaviour {
 	//	return null;
 	//}
 
-    internal Plague CreatePlagueEvent(Kingdom infectedKingdom) {
-        Plague newPlague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, infectedKingdom);
+	internal Plague CreatePlagueEvent(Kingdom infectedKingdom, bool isResetStability = true) {
+        Plague newPlague = new Plague(GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, null, infectedKingdom, isResetStability);
         return newPlague;
     }
 

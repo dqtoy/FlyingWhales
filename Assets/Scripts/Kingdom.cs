@@ -1564,7 +1564,7 @@ public class Kingdom{
         //Validate Succession line
         for (int i = 0; i < successionLine.Count; i++) {
             Citizen currSuccessor = successionLine[i];
-            if (currSuccessor.city.kingdom.id != king.city.kingdom.id || currSuccessor.id == this.king.id) {
+            if (currSuccessor.city.kingdom.id != king.city.kingdom.id || currSuccessor.id == this.king.id || currSuccessor.role == ROLE.KING) {
                 //successor is of a different kingdom!
                 invalidCitizens.Add(currSuccessor);
             }
@@ -1575,6 +1575,10 @@ public class Kingdom{
         }
 
         Citizen newNextInLine = successionLine.FirstOrDefault();
+        if(newNextInLine != null && (newNextInLine.role == ROLE.KING || newNextInLine.role == ROLE.QUEEN)) {
+            throw new Exception("New next in line " + newNextInLine.name + " is a " + newNextInLine.role.ToString() + " which is invalid!");
+        }
+
         if (newNextInLine != null && nextInLine != null && newNextInLine.id != nextInLine.id && nextInLine.role == ROLE.CROWN_PRINCE) {
             //next in line is no longer the next in line
             nextInLine.AssignRole(ROLE.UNTRAINED);
@@ -1655,6 +1659,7 @@ public class Kingdom{
         newKing.AssignRole(ROLE.KING);
         ((King)newKing.assignedRole).SetOwnedKingdom(this);
 
+        nextInLine = null;
         this.successionLine.Clear();
         ChangeSuccessionLineRescursively(newKing);
         this.successionLine.AddRange(newKing.GetSiblings());
@@ -2690,9 +2695,11 @@ public class Kingdom{
 
         //Its possible to have multiple active plagues in the same Kingdom. The kingdom will lose 50% of its current population growth per active plague.
         int activePlagues = GetActiveEventsOfTypeCount(EVENT_TYPES.PLAGUE);
-        float growthReductionFromPlague = ((float)populationGrowth * (activePlagues * 0.5f));
-
-        return Mathf.FloorToInt(populationGrowth - growthReductionFromPlague);
+        if (activePlagues > 0) {
+            return Mathf.FloorToInt(-(float)populationGrowth * (activePlagues * 0.5f));
+        } else {
+            return populationGrowth;
+        }
     }
     private void IncreasePopulationEveryMonth() {
         AdjustPopulation(GetPopulationGrowth());
@@ -2758,13 +2765,13 @@ public class Kingdom{
 	internal void WarmongerDecreasePerYear(){
 		if(!this.isDead){
 			if (!HasWar ()) {
-				AdjustWarmongerValue (-3);
+				AdjustWarmongerValue (-10);
 			}
 			SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
 		}
 	}
 	internal void UpdateThreatLevelsAndInvasionValues(){
-		if(this.king.balanceType == PURPOSE.BANDWAGON){
+		if(this.king.balanceType == PURPOSE.BANDWAGON || this.king.balanceType == PURPOSE.SUPERIORITY){
 			this.highestThreatAdjacentKingdomAbove50 = null;
 			this.highestThreatAdjacentKingdomAbove50Value = 0f;
 			this.highestRelativeStrengthAdjacentKingdom = null;
@@ -3304,7 +3311,8 @@ public class Kingdom{
 		kr.AddRelationshipModifier (modifier, "Flatter", RELATIONSHIP_MODIFIER.FLATTER, true, false);
 	}
 	private string SpreadPlague(){
-		return string.Empty;
+		Plague plague = EventCreator.Instance.CreatePlagueEvent(this, false);
+		return plague._plagueName;
 	}
 	private void ShowSuccessSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_SUCCESS");
