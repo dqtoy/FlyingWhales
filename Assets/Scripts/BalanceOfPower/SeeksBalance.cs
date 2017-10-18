@@ -27,7 +27,7 @@ public static class SeeksBalance {
 				if(kingdom.id != allyKingdom.id){
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(allyKingdom);
 					if(kr.targetKingdomThreatLevel >= 100f || kr.totalLike <= -100){
-						kingdom.LeaveAlliance (true);
+						kingdom.LeaveAlliance ();
 						kingdom.AdjustStability(-10);
 						Debug.Log(kingdom.name + " broke alliance with " + allyKingdom.name +
 							" because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + " or total like is " + kr.totalLike.ToString() + "," + kingdom.name + 
@@ -169,7 +169,7 @@ public static class SeeksBalance {
 
 												kingdom.AdjustStability (-10);
 												AlliancePool allianceOfSourceKingdom = kingdom.alliancePool;
-												kingdom.LeaveAlliance (true);
+												kingdom.LeaveAlliance ();
 												hasLeftAlliance = true;
 												Kingdom enemyKingdom = enemySideKingdoms [0];
 												if (enemyKingdom.alliancePool != null) {
