@@ -22,7 +22,7 @@ public static class SeeksSuperiority {
 				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved [i];
 				if (kingdom.id != allyKingdom.id) {
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (allyKingdom);
-					if (kr._relativeWeakness >= 100f || kr.totalLike <= -100 || allyKingdom.id == KingdomManager.Instance.kingdomRankings [0].id
+					if (kr.totalLike <= -100 || allyKingdom.id == KingdomManager.Instance.kingdomRankings [0].id
 					   || (kingdom.highestRelativeStrengthAdjacentKingdom != null && allyKingdom.id == kingdom.highestRelativeStrengthAdjacentKingdom.id)) {
 						kingdom.LeaveAlliance ();
 						kingdom.AdjustStability (-10);
