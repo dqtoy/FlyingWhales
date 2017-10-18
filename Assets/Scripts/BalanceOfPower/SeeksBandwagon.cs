@@ -26,7 +26,7 @@ public static class SeeksBandwagon {
 				if(kingdom.id != allyKingdom.id){
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(allyKingdom);
 					if(kr.targetKingdomThreatLevel >= 100f){
-						kingdom.LeaveAlliance (true);
+						kingdom.LeaveAlliance ();
 						kingdom.AdjustStability(-10);
 						Debug.Log(kingdom.name + " broke alliance with " + allyKingdom.name +
 							" because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + " or total like is " + kr.totalLike.ToString() + "," + kingdom.name + 
@@ -42,7 +42,7 @@ public static class SeeksBandwagon {
 			}
 			if(mustLeaveAlliance){
 				Debug.Log(kingdom.name + " left " + kingdom.alliancePool.name + " because there is a kingdom in alliance that I have -100 opinion and lost 10 stability. Stability is now " + kingdom.stability.ToString());
-				kingdom.LeaveAlliance (true);
+				kingdom.LeaveAlliance ();
 				kingdom.AdjustStability(-10);
 				skipPhase4 = true;
 			}
@@ -129,7 +129,7 @@ public static class SeeksBandwagon {
 
 												kingdom.AdjustStability (-10);
 												AlliancePool allianceOfSourceKingdom = kingdom.alliancePool;
-												kingdom.LeaveAlliance (true);
+												kingdom.LeaveAlliance ();
 												hasLeftAlliance = true;
 												Kingdom enemyKingdom = enemySideKingdoms [0];
 												if (enemyKingdom.alliancePool != null) {

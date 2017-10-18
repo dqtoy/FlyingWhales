@@ -2718,16 +2718,20 @@ public class Kingdom{
 			populationGrowth += cities[i].region.populationGrowth + (cities[i].cityLevel * 2);
         }
 		populationGrowth += this.techLevel * cities.Count;
+
+		// If a Kingdom has active Plagues, its Population decreases instead
+		// Its possible to have multiple active plagues in the same Kingdom. The kingdom will lose 50% of its current population growth per active plague.
+		int activePlagues = GetActiveEventsOfTypeCount(EVENT_TYPES.PLAGUE);
+		if (activePlagues > 0) {
+			return Mathf.FloorToInt(-(float)populationGrowth * (activePlagues * 0.5f));
+		}
+
+		// Positive population growth is decreased by overpopulation
         float overpopulationPercentage = GetOverpopulationPercentage();
         populationGrowth = Mathf.FloorToInt(populationGrowth * ((100f - overpopulationPercentage) * 0.01f));
 
-        //Its possible to have multiple active plagues in the same Kingdom. The kingdom will lose 50% of its current population growth per active plague.
-        int activePlagues = GetActiveEventsOfTypeCount(EVENT_TYPES.PLAGUE);
-        if (activePlagues > 0) {
-            return Mathf.FloorToInt(-(float)populationGrowth * (activePlagues * 0.5f));
-        } else {
-            return populationGrowth;
-        }
+		return populationGrowth;
+
     }
     private void IncreasePopulationEveryMonth() {
         AdjustPopulation(GetPopulationGrowth());
@@ -2825,7 +2829,7 @@ public class Kingdom{
 		if(kingdomWithHighestThreat != null){
 			for (int i = 0; i < kingdomRelationships.Count; i++) {
 				KingdomRelationship kr = kingdomRelationships [i];
-				if(kr.isDiscovered){
+				if(kr.isDiscovered && !kr.cantAlly){
 					if(kr.targetKingdom.id != kingdomWithHighestThreat.id){
 						KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kingdomWithHighestThreat);
 						if(rk.isAdjacent){
@@ -2869,7 +2873,7 @@ public class Kingdom{
 		if(this._alliancePool == null){
 			for (int i = 0; i < kingdomRelationships.Count; i++) {
 				KingdomRelationship kr = kingdomRelationships [i];
-				if(kr.isDiscovered){
+				if(kr.isDiscovered && !kr.cantAlly){
 					if(kr.targetKingdom.alliancePool == null){
 						Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
 						bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
@@ -3004,6 +3008,7 @@ public class Kingdom{
 				if(this.alliancePool.kingdomsInvolved[i].id != this.id){
 					KingdomRelationship kr = this.alliancePool.kingdomsInvolved [i].GetRelationshipWithKingdom (this);
 					kr.AddRelationshipModifier (-50, "Broken Alliance", RELATIONSHIP_MODIFIER.LEAVE_ALLIANCE, true, false);
+					kr.ChangeCantAlly (true);
 				}
 			}
             this.alliancePool.RemoveKingdomInAlliance(this);

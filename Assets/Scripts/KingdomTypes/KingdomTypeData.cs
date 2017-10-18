@@ -82,6 +82,15 @@ public class KingdomTypeData : MonoBehaviour {
     private PopulationRates _populationRates;
 
 	[SerializeField]
+	private int _balanceChance;
+
+	[SerializeField]
+	private int _superiorityChance;
+
+	[SerializeField]
+	private int _bandwagonChance;
+
+	[SerializeField]
 	private KingdomTypeData generalKingdomTypeData;
 
 	private int _hexDistanceModifier = 15;
@@ -275,6 +284,15 @@ public class KingdomTypeData : MonoBehaviour {
     public PopulationRates populationRates {
         get { return _populationRates; }
     }
+	public int balanceChance {
+		get { return _balanceChance; }
+	}
+	public int superiorityChance {
+		get { return _superiorityChance; }
+	}
+	public int bandwagonChance {
+		get { return _bandwagonChance; }
+	}
 
     void Awake(){
 		if(this.generalKingdomTypeData != null){

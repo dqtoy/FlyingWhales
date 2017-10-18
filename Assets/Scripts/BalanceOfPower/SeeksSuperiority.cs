@@ -22,9 +22,9 @@ public static class SeeksSuperiority {
 				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved [i];
 				if (kingdom.id != allyKingdom.id) {
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (allyKingdom);
-					if (kr._relativeWeakness >= 100f || kr.totalLike <= -100 || allyKingdom.id == KingdomManager.Instance.kingdomRankings [0].id
+					if (kr.totalLike <= -100 || allyKingdom.id == KingdomManager.Instance.kingdomRankings [0].id
 					   || (kingdom.highestRelativeStrengthAdjacentKingdom != null && allyKingdom.id == kingdom.highestRelativeStrengthAdjacentKingdom.id)) {
-						kingdom.LeaveAlliance (true);
+						kingdom.LeaveAlliance ();
 						kingdom.AdjustStability (-10);
 						if(kingdom.highestRelativeStrengthAdjacentKingdom != null){
 							Debug.Log (kingdom.name + " broke alliance with " + allyKingdom.name +
@@ -58,7 +58,7 @@ public static class SeeksSuperiority {
 							KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom);
 							KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom.highestRelativeStrengthAdjacentKingdom);
 							if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
-								&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id){
+								&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id && !krToAlly.cantAlly){
 								if(kingdomToAlly == null){
 									kingdomToAlly = krToAlly.targetKingdom;
 									leastLikedToEnemy = krEnemy.totalLike;
@@ -172,7 +172,7 @@ public static class SeeksSuperiority {
 
 												kingdom.AdjustStability (-10);
 												AlliancePool allianceOfSourceKingdom = kingdom.alliancePool;
-												kingdom.LeaveAlliance (true);
+												kingdom.LeaveAlliance ();
 												hasLeftAlliance = true;
 												Kingdom enemyKingdom = enemySideKingdoms [0];
 												if (enemyKingdom.alliancePool != null) {

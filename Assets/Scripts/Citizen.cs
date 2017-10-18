@@ -1152,7 +1152,7 @@ public class Citizen {
         this._science = GenerateScienceTrait();
         this._military = GenerateMilitaryTrait();
         this._loyalty = GenerateLoyaltyTrait();
-        this._balanceType = (PURPOSE)(UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(PURPOSE)).Length));
+		this._balanceType = GetBalanceType();
 		this._warmonger = GenerateWarmonger ();
     }
 
@@ -1254,6 +1254,19 @@ public class Citizen {
 			}else{
 				return WARMONGER.VERY_LOW;
 			}
+		}
+	}
+	private PURPOSE GetBalanceType(){
+		int balanceChance = this.city.kingdom.kingdomTypeData.balanceChance;
+		int superiorityChance = balanceChance + this.city.kingdom.kingdomTypeData.superiorityChance;
+		int bandwagonChance = superiorityChance + this.city.kingdom.kingdomTypeData.bandwagonChance;
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < balanceChance){
+			return PURPOSE.BALANCE;
+		}else if(chance >= balanceChance && chance < superiorityChance){
+			return PURPOSE.SUPERIORITY;
+		}else{
+			return PURPOSE.BANDWAGON;
 		}
 	}
     #endregion
