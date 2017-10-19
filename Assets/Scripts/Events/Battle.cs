@@ -16,6 +16,8 @@ public class Battle {
 
 	private City attacker;
 	private City defender;
+	private Kingdom attackerKingdom;
+	private City defenderKingdom;
 	private GameDate _supposedAttackDate;
 
     private List<string> _battleLogs; 
@@ -60,7 +62,7 @@ public class Battle {
 		this._kr.ChangeBattle (this);
 		this._supposedAttackDate = new GameDate (1, 1, 1);
         this._battleLogs = new List<string>();
-		SetAttackerAndDefenderCity(this._kingdom1City, this._kingdom2City);
+		SetAttackerAndDefenderCity(this._kingdom1City, this._kingdom2City, this._kingdom1, this._kingdom2);
 		Step2();
 
 		Messenger.AddListener<City> ("CityDied", CityDied);
@@ -79,10 +81,12 @@ public class Battle {
         UIManager.Instance.onAddNewBattleLog();
     }
 
-	private void SetAttackerAndDefenderCity(City attacker, City defender){
+	private void SetAttackerAndDefenderCity(City attacker, City defender, Kingdom attackerKingdom, Kingdom defenderKingdom){
 		if (!this._warfare.isOver && !this._isOver) {
 			this.attacker = attacker;
 			this.defender = defender;
+			this.attackerKingdom = attackerKingdom;
+			this.defenderKingdom = defenderKingdom;
 			this.attacker.ChangeAttackingState (true);
 			this.defender.ChangeDefendingState (true);
             AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + " is now attacking(" + attacker.kingdom.name + ")");
@@ -623,21 +627,12 @@ public class Battle {
 			this._warfare.CheckWarfare();
 		}
 		if(!this._warfare.isOver){
-			if(!this.attacker.kingdom.isDead && this._warfare.HasAdjacentEnemyWithNoBattle(this.attacker.kingdom)){
+			if(!this.attackerKingdom.isDead && this._warfare.HasAdjacentEnemyWithNoBattle(this.attackerKingdom)){
 				if(!this.attacker.isDead){
 					this._warfare.CreateNewBattle (this.attacker);
 				}else{
-					this._warfare.CreateNewBattle (this.attacker.kingdom);
+					this._warfare.CreateNewBattle (this.attackerKingdom);
 				}
-			}
-		}
-	}
-	private void CreateBattleAttacker(){
-		if(!this.attacker.isDead){
-			this._warfare.CreateNewBattle (this.attacker);
-		}else{
-			if(!this.attacker.kingdom.isDead){
-				this._warfare.CreateNewBattle (this.attacker.kingdom);
 			}
 		}
 	}
@@ -650,7 +645,7 @@ public class Battle {
 		this.defender.kingdom.AdjustPopulation (-soldiers);
 	}
 	private void ChangePositionAndGoToStep1(){
-		SetAttackerAndDefenderCity (this.defender, this.attacker);
+		SetAttackerAndDefenderCity (this.defender, this.attacker, this.defenderKingdom, this.attackerKingdom);
 		Step2 ();
 
 //        Log offenseLog = this._warfare.CreateNewLogForEvent(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "Events", "Warfare", "offense_mobilization");
