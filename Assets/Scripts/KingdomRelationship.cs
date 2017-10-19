@@ -945,11 +945,12 @@ public class KingdomRelationship {
 		int theoreticalAttack = GetTheoreticalAttack ();
 		int theoreticalDefense = GetTheoreticalDefense ();
 		int posAllianceAttack = GetAdjacentPosAllianceEffectiveAttack ();
+		int otherAdjacentEnemiesAttack = GetOtherAdjacentEnemiesAttack ();
 //		int posAllianceDefense = GetAdjacentPosAllianceArmors ();
 //		int usedPosAllianceAttack = (int)((float)posAllianceAttack / 2f);
 
-		this._theoreticalAttack = theoreticalAttack + posAllianceAttack;
-		this._theoreticalDefense = theoreticalDefense + posAllianceAttack;
+		this._theoreticalAttack = theoreticalAttack + posAllianceAttack + otherAdjacentEnemiesAttack;
+		this._theoreticalDefense = theoreticalDefense + posAllianceAttack + otherAdjacentEnemiesAttack;
 
 //		this._effectivePower = theoreticalAttack;
 //		this._effectiveDef = theoreticalDefense;
@@ -960,11 +961,13 @@ public class KingdomRelationship {
 		int posAllianceAttack = GetUnadjacentPosAllianceWeapons ();
 		return (2 * soldiers * (this._sourceKingdom.baseWeapons + posAllianceAttack)) / (soldiers + (this._sourceKingdom.baseWeapons + posAllianceAttack));
 	}
+
 	private int GetTheoreticalDefense(){
 		int soldiers = this._sourceKingdom.soldiers;
 		int posAllianceDefense = GetUnadjacentPosAllianceArmors ();
 		return (int)(2 * soldiers * (this._sourceKingdom.baseArmor + posAllianceDefense)) / (soldiers + (this._sourceKingdom.baseArmor + posAllianceDefense));
 	}
+
 	private int GetUnadjacentPosAllianceWeapons(){
 		int posAlliancePower = 0;
 		if(this._sourceKingdom.alliancePool != null){
@@ -982,6 +985,7 @@ public class KingdomRelationship {
 		}
 		return posAlliancePower;
 	}
+
 	private int GetAdjacentPosAllianceEffectiveAttack(){
 		int posAlliancePower = 0;
 		if(this._sourceKingdom.alliancePool != null){
@@ -998,6 +1002,30 @@ public class KingdomRelationship {
 		}
 		return posAlliancePower;
 	}
+
+	// This function returns the sum of all Effective Attack of kingdoms adjacent and at war with the target kingdom
+	// who are not allied with the current source kingdom
+	private int GetOtherAdjacentEnemiesAttack(){
+		int otherAdjacentEnemiesPower = 0;
+		// Loop through relationships of target kingdom
+		foreach (KingdomRelationship kr in this._targetKingdom.relationships.Values) {
+			// Skip relationship with current source kingdom
+			if (kr.targetKingdom.id == this._sourceKingdom.id) {
+				continue;
+			}
+			// If the other kingdom is adjacent and at war with the target kingdom
+			if (kr.isAdjacent && kr.isAtWar) {
+				// If other kingdom is not allied to current source kingdom
+				KingdomRelationship kr2 = this._sourceKingdom.GetRelationshipWithKingdom (kr.targetKingdom);
+				if (!kr2.AreAllies()) {					
+					otherAdjacentEnemiesPower += kr.targetKingdom.effectiveAttack;
+				}
+			}
+		}
+
+		return otherAdjacentEnemiesPower;
+	}
+
 	private int GetUnadjacentPosAllianceArmors(){
 		int posAllianceDefense = 0;
 		if(this._sourceKingdom.alliancePool != null){
@@ -1015,6 +1043,7 @@ public class KingdomRelationship {
 		}
 		return posAllianceDefense;
 	}
+
 	private int GetAdjacentPosAllianceArmors(){
 		int posAllianceDefense = 0;
 		if(this._sourceKingdom.alliancePool != null){
@@ -1031,6 +1060,7 @@ public class KingdomRelationship {
 		}
 		return posAllianceDefense;
 	}
+
 	private float GetOpinionPercentage(int opinion){
 		if(opinion >= 0 && opinion < 35){
 			return 0.25f;
@@ -1064,14 +1094,14 @@ public class KingdomRelationship {
 
 		if (threat == 0f) {
 			adjustment = 25;
-		} else if (threat >= 1f && threat < 26f) {
+		} else if (threat > 0f && threat <= 25f) {
 			adjustment = 0;
-		} else if (threat >= 26f && threat < 51f) {
-			adjustment = -25;
+		} else if (threat > 25f && threat <= 50f) {
+			adjustment = -30;
 			if (!this._isAdjacent) {
-				adjustment = -12;
+				adjustment = -15;
 			}
-		} else if (threat >= 51f && threat < 100f) {
+		} else if (threat > 50f && threat < 100f) {
 			adjustment = -50;
 			if (!this._isAdjacent) {
 				adjustment = -25;
@@ -1104,17 +1134,15 @@ public class KingdomRelationship {
 		if (this._sourceKingdom.king.balanceType == PURPOSE.BALANCE){
 			if(this._relativeWeakness >= 100){
 				adjustment = 50;
-			}else if(this._relativeWeakness >= 51 && this._relativeWeakness < 100){
+			}else if(this._relativeWeakness > 50 && this._relativeWeakness < 100){
 				adjustment = 25;
 			}
 		}else{
-			if(this._isAdjacent){
-				if (this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY || this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
-					if (this._relativeWeakness >= 100) {
-						adjustment = -50;
-					} else if (this._relativeWeakness >= 51 && this._relativeWeakness < 100) {
-						adjustment = -25;
-					}
+			if(this._isAdjacent){				
+				if (this._relativeWeakness >= 100) {
+					adjustment = -50;
+				} else if (this._relativeWeakness > 50 && this._relativeWeakness < 100) {
+					adjustment = -25;
 				}
 			}
 		}

@@ -1266,14 +1266,21 @@ public class Citizen {
 		int balanceChance = this.city.kingdom.kingdomTypeData.balanceChance;
 		int superiorityChance = balanceChance + this.city.kingdom.kingdomTypeData.superiorityChance;
 		int bandwagonChance = superiorityChance + this.city.kingdom.kingdomTypeData.bandwagonChance;
+
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < balanceChance){
+		if (chance < balanceChance) {
 			return PURPOSE.BALANCE;
-		}else if(chance >= balanceChance && chance < superiorityChance){
+		}
+
+		if (chance < superiorityChance) {
 			return PURPOSE.SUPERIORITY;
-		}else{
+		}
+
+		if (chance < bandwagonChance) {
 			return PURPOSE.BANDWAGON;
 		}
+
+		return PURPOSE.BALANCE;
 	}
     #endregion
 

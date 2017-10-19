@@ -16,17 +16,10 @@ public class KingdomManager : MonoBehaviour {
     public List<Kingdom> allKingdomsOrderedBy;
     [SerializeField] private KINGDOMS_ORDERED_BY _orderKingdomsBy;
 
-	public KingdomTypeData kingdomTypeBarbaric;
-	public KingdomTypeData kingdomTypeNaive;
-	public KingdomTypeData kingdomTypeOpportunistic;
-
 	public KingdomTypeData kingdomTypeNoble;
 	public KingdomTypeData kingdomTypeEvil;
 	public KingdomTypeData kingdomTypeMerchant;
 	public KingdomTypeData kingdomTypeChaotic;
-
-	public KingdomTypeData kingdomTypeRighteous;
-	public KingdomTypeData kingdomTypeWicked;
 
     protected const int STABILITY_DECREASE_WAR = -10;
 

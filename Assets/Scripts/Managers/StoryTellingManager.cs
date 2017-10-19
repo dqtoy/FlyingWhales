@@ -180,15 +180,33 @@ public class StoryTellingManager : MonoBehaviour {
 //		return null;
 //	}
     public KINGDOM_TYPE GetRandomKingdomTypeForKingdom() {
+		int defensiveKingdomRate = 30;
+		int offensiveKingdomRate = 35;
+		int scientificKingdomRate = 15;
+		int balancedKingdomRate = 20;
+
         int chance = Random.Range(0, 100);
-		if(chance < 30){
+		int chanceRotator = defensiveKingdomRate;
+
+		if (chance < chanceRotator) {
 			return KINGDOM_TYPE.DEFENSIVE_KINGDOM;
-		}else if(chance >= 30 && chance < 65){
+		}
+
+		chanceRotator += offensiveKingdomRate;
+		if(chance < chanceRotator){
 			return KINGDOM_TYPE.OFFENSIVE_KINGDOM;
-		}else if(chance >= 65 && chance < 80){
+		}
+
+		chanceRotator += scientificKingdomRate;
+		if(chance < chanceRotator){
 			return KINGDOM_TYPE.SCIENTIFIC_KINGDOM;
-		}else{
+		}
+
+		chanceRotator += balancedKingdomRate;
+		if(chance < chanceRotator){
 			return KINGDOM_TYPE.BALANCED_KINGDOM;
 		}
+
+		return KINGDOM_TYPE.NONE;
     }
 }

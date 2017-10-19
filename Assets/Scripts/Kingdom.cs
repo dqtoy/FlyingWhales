@@ -792,47 +792,12 @@ public class Kingdom{
 
         // If the Kingdom Type Data changed
         if (prevKingdomType != this.kingdomType) {
-            //Update Character Values of King and Governors
-            //this.UpdateCharacterValuesOfKingsAndGovernors();
 
             //Update Relationship Opinion
             UpdateAllRelationshipsLikenessFromOthers();
-
-            //if(prevKingdomType != KINGDOM_TYPE.NONE) {
-            //    Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
-            //    updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-            //    updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
-            //    UIManager.Instance.ShowNotification(updateKingdomTypeLog);
-            //}
         }
     }
     #endregion
-
-
-    //// Updates this kingdom's type and horoscope
-    //public void UpdateKingdomTypeData() {
-    //	// Update Kingdom Type whenever the kingdom expands to a new city
-    //	KingdomTypeData prevKingdomTypeData = this._kingdomTypeData;
-    //	this._kingdomTypeData = StoryTellingManager.Instance.InitializeKingdomType (this);
-    //	if(this.kingdomTypeData.dailyCumulativeEventRate != null){
-    //		this._dailyCumulativeEventRate = this._kingdomTypeData.dailyCumulativeEventRate;
-    //	}
-    //	// If the Kingdom Type Data changed
-    //	if (this._kingdomTypeData != prevKingdomTypeData) {
-    //           //Update Character Values of King and Governors
-    //           //this.UpdateCharacterValuesOfKingsAndGovernors();
-
-    //		//Update Relationship Opinion
-    //		UpdateAllRelationshipsLikeness();
-    //		UpdateAllRelationshipsLikenessFromOthers ();
-    //           //if (UIManager.Instance.currentlyShowingKingdom != null &&UIManager.Instance.currentlyShowingKingdom.id == this.id) {
-    //               Log updateKingdomTypeLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "change_kingdom_type");
-    //               updateKingdomTypeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.KINGDOM_1);
-    //               updateKingdomTypeLog.AddToFillers(null, Utilities.NormalizeString(this.kingdomType.ToString()), LOG_IDENTIFIER.OTHER);
-    //               UIManager.Instance.ShowNotification(updateKingdomTypeLog);
-    //           //}
-    //       }
-    //   }
 
     #region Kingdom Death
     // Function to call if you want to determine whether the Kingdom is still alive or dead
@@ -3256,7 +3221,8 @@ public class Kingdom{
 	}
 	private SUBTERFUGE_ACTIONS GetSubterfugeAction(){
 		int chance = UnityEngine.Random.Range (0, 100);
-		if(this.king.balanceType == PURPOSE.BALANCE){
+
+		if (this.king.balanceType == PURPOSE.BALANCE) {
 			if(chance < 40){
 				return SUBTERFUGE_ACTIONS.DESTROY_WEAPONS;
 			}else if(chance >= 40 && chance < 70){
@@ -3266,7 +3232,9 @@ public class Kingdom{
 			}else{
 				return SUBTERFUGE_ACTIONS.SPREAD_PLAGUE;
 			}
-		}else if(this.king.balanceType == PURPOSE.SUPERIORITY){
+		}
+
+		if (this.king.balanceType == PURPOSE.SUPERIORITY) {
 			if(chance < 40){
 				return SUBTERFUGE_ACTIONS.DESTROY_ARMORS;
 			}else if(chance >= 40 && chance < 70){
@@ -3276,7 +3244,9 @@ public class Kingdom{
 			}else{
 				return SUBTERFUGE_ACTIONS.SPREAD_PLAGUE;
 			}
-		}else{
+		}
+
+		if (this.king.balanceType == PURPOSE.BANDWAGON) {
 			if(chance < 40){
 				return SUBTERFUGE_ACTIONS.FLATTER;
 			}else if(chance >= 40 && chance < 70){
@@ -3287,6 +3257,8 @@ public class Kingdom{
 				return SUBTERFUGE_ACTIONS.DESTROY_ARMORS;
 			}
 		}
+
+		return SUBTERFUGE_ACTIONS.DESTROY_WEAPONS;
 	}
 
 	private void CreateSuccessSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
