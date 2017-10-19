@@ -151,14 +151,16 @@ public class Warfare {
 //				}
 //			}
 
-			if(!loserKingdom.isDead && !HasAdjacentEnemy(loserKingdom)){
-				Debug.Log ("LOSER: " + loserKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
-				PeaceDeclaration (loserKingdom);
-			}
 			if(!this._isOver){
+				if(!loserKingdom.isDead && !HasAdjacentEnemy(loserKingdom) && this._kingdomSideWeariness.ContainsKey(loserKingdom.id)){
+					Debug.Log ("LOSER: " + loserKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
+					PeaceDeclaration (loserKingdom);
+				}
+			}
+			if(!this._isOver && this._kingdomSideWeariness.ContainsKey(winnerKingdom.id)){
 				if(!winnerKingdom.isDead && !HasAdjacentEnemy(winnerKingdom)){
-					PeaceDeclaration (winnerKingdom);
 					Debug.Log ("WINNER: " + winnerKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
+					PeaceDeclaration (winnerKingdom);
 					return;
 				}
 				if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
