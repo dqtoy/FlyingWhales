@@ -3082,11 +3082,7 @@ public class Kingdom{
                 kingdomsToShowNotif.AddRange(kingdomsInvolved);
             }
         }
-        foreach (WarfareInfo currWarFare in allyKingdom.warfareInfo.Values) {
-            foreach (List<Kingdom> kingdomsInvolved in currWarFare.warfare.kingdomSideList.Values) {
-                kingdomsToShowNotif.AddRange(kingdomsInvolved);
-            }
-        }
+        kingdomsToShowNotif.Add(allyKingdom);
         Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Kingdom", "transfer_weapons_armors");
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (allyKingdom, allyKingdom.name, LOG_IDENTIFIER.KINGDOM_2);

@@ -975,10 +975,10 @@ public class Citizen {
             citiesForRebellion.Add(chosenOriginCity);
         }
 
-        int maxNumOfCitiesForRebellion = Mathf.Min(sourceKingdom.cities.Count, 5);
+        int maxNumOfCitiesForRebellion = Mathf.FloorToInt(sourceKingdom.cities.Count / 2);
         int numOfCitiesForRebellion = Random.Range(2, maxNumOfCitiesForRebellion);
         while(citiesForRebellion.Count < numOfCitiesForRebellion) {
-            //Make sure that the new kingdom has 2 to 5 cities
+            //Make sure that the new kingdom has 2 to half of source kingdom cities
             for (int i = 0; i < citiesForRebellion.Count; i++) {
                 City currCity = citiesForRebellion[i];
                 for (int j = 0; j < currCity.region.adjacentRegions.Count; j++) {
@@ -1096,8 +1096,8 @@ public class Citizen {
             newKingdom.regions[i].CheckForDiscoveredKingdoms();
         }
 
-        for (int i = 0; i < newKingdom.cities.Count; i++) {
-            if (Messenger.eventTable.ContainsKey("CityTransfered")) {
+        if (Messenger.eventTable.ContainsKey("CityTransfered")) {
+            for (int i = 0; i < newKingdom.cities.Count; i++) {
                 Messenger.Broadcast<City>("CityTransfered", newKingdom.cities[i]);
             }
         }
