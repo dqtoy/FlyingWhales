@@ -361,16 +361,18 @@ public class Kingdom{
             return this._kingdomTypeData.populationRates.productionRate + _productionRateFromKing;
         }
     }
-	internal long effectiveAttack{
+	internal int effectiveAttack{
 		get{ 
-			int mySoldiers = this.soldiers;
-			return Convert.ToInt64((2 * mySoldiers * this._baseWeapons) / (mySoldiers + this._baseWeapons));
+			float mySoldiers = (float)this.soldiers;
+			float numerator = 2f * mySoldiers * (float)this._baseWeapons;
+			return (int)(numerator / (mySoldiers + (float)this._baseWeapons));
 		}
 	}
-	internal long effectiveDefense{
+	internal int effectiveDefense{
 		get{ 
-			int mySoldiers = this.soldiers;
-			return Convert.ToInt64((2 * mySoldiers * this._baseArmor) / (mySoldiers + this._baseArmor));
+			float mySoldiers = (float)this.soldiers;
+			float numerator = 2f * mySoldiers * (float)this._baseArmor;
+			return (int)(numerator / (mySoldiers + (float)this._baseArmor));
 		}
 	}
     internal Dictionary<City, List<Citizen>> citizens {
