@@ -107,24 +107,25 @@ public class Warfare {
 				}
 			}
 			CheckWarfare ();
+			if(!this._isOver){
+				CheckSides ();
+			}
 		}
 	}
 	private void CheckSides(){
 		if(this._kingdomSideList[WAR_SIDE.A].Count > 0){
 			for (int i = 0; i < this._kingdomSideList[WAR_SIDE.A].Count; i++) {
-				if (!this._isOver) {
-					if (!HasAdjacentEnemy (this._kingdomSideList [WAR_SIDE.A] [i])) {
-						PeaceDeclaration (this._kingdomSideList [WAR_SIDE.A] [i]);
-					}
+				if (!IsAdjacentToEnemyKingdoms (this._kingdomSideList [WAR_SIDE.A] [i], WAR_SIDE.A)) {
+					PeaceDeclaration (this._kingdomSideList [WAR_SIDE.A] [i]);
+					return;
 				}
 			}
 		}
 		if(this._kingdomSideList[WAR_SIDE.B].Count > 0){
 			for (int i = 0; i < this._kingdomSideList[WAR_SIDE.B].Count; i++) {
-				if(!this._isOver){
-					if(!HasAdjacentEnemy(this._kingdomSideList[WAR_SIDE.B][i])){
-						PeaceDeclaration (this._kingdomSideList [WAR_SIDE.B] [i]);
-					}
+				if (!IsAdjacentToEnemyKingdoms (this._kingdomSideList [WAR_SIDE.B] [i], WAR_SIDE.B)) {
+					PeaceDeclaration (this._kingdomSideList [WAR_SIDE.B] [i]);
+					return;
 				}
 			}
 		}
