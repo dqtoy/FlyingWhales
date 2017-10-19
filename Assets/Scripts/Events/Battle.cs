@@ -17,7 +17,7 @@ public class Battle {
 	private City attacker;
 	private City defender;
 	private Kingdom attackerKingdom;
-	private City defenderKingdom;
+	private Kingdom defenderKingdom;
 	private GameDate _supposedAttackDate;
 
     private List<string> _battleLogs; 
