@@ -118,16 +118,15 @@ public static class SeeksBalance {
 			bool hasLeftAlliance = false;
 			bool isKingdomHasWar = kingdom.HasWar ();
 			List<WarfareInfo> warsToJoin = new List<WarfareInfo> ();
-			List<int> checkedWarfareId = new List<int> ();
 			for (int i = 0; i < kingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved[i];
 				if (kingdom.id != allyKingdom.id) {
 					if (allyKingdom.warfareInfo.Count > 0) {
 						hasAllianceInWar = true;
 						foreach (WarfareInfo info in allyKingdom.warfareInfo.Values) {
-							if (!kingdom.warfareInfo.ContainsKey (info.warfare.id) && !warsToJoin.Contains (info) && !checkedWarfareId.Contains(info.warfare.id)) {
+							if (!kingdom.warfareInfo.ContainsKey (info.warfare.id) && !warsToJoin.Contains (info) && !kingdom.checkedWarfareID.Contains(info.warfare.id)) {
 								skipPhase4 = true;
-								checkedWarfareId.Add (info.warfare.id);
+								kingdom.checkedWarfareID.Add (info.warfare.id);
 								WAR_SIDE allySide = info.side;
 								WAR_SIDE enemySide = WAR_SIDE.A;
 								if (allySide == WAR_SIDE.A) {

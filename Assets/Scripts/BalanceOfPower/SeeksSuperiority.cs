@@ -22,23 +22,11 @@ public static class SeeksSuperiority {
 				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved [i];
 				if (kingdom.id != allyKingdom.id) {
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (allyKingdom);
-					if (kr.totalLike <= -100 || allyKingdom.id == KingdomManager.Instance.kingdomRankings [0].id
-					   || (kingdom.highestRelativeStrengthAdjacentKingdom != null && allyKingdom.id == kingdom.highestRelativeStrengthAdjacentKingdom.id)) {
+					if (kr.totalLike <= -100) {
 						kingdom.LeaveAlliance ();
 						kingdom.AdjustStability (-10);
-						if(kingdom.highestRelativeStrengthAdjacentKingdom != null){
-							Debug.Log (kingdom.name + " broke alliance with " + allyKingdom.name +
-								" because its relative weakness is " + kr._relativeWeakness.ToString () + " or total like is " + kr.totalLike.ToString ()
-								+ " or top ranked is " + KingdomManager.Instance.kingdomRankings [0].name.ToString ()
-								+ " or highest relative strength adjacent kingdom is " + kingdom.highestRelativeStrengthAdjacentKingdom.name.ToString () + "," + kingdom.name +
-								" lost 10 Stability. Stability is now " + kingdom.stability.ToString ());
-						}else{
-							Debug.Log (kingdom.name + " broke alliance with " + allyKingdom.name +
-								" because its relative weakness is " + kr._relativeWeakness.ToString () + " or total like is " + kr.totalLike.ToString ()
-								+ " or top ranked is " + KingdomManager.Instance.kingdomRankings [0].name.ToString () + "," + kingdom.name +
-								" lost 10 Stability. Stability is now " + kingdom.stability.ToString ());
-						}
-
+						Debug.Log (kingdom.name + " broke alliance with " + allyKingdom.name + " because total like is, " + kingdom.name +
+							" lost 10 Stability. Stability is now " + kingdom.stability.ToString ());
 						skipPhase4 = true;
 						break;
 					}
@@ -121,16 +109,15 @@ public static class SeeksSuperiority {
 			bool hasLeftAlliance = false;
 			bool isKingdomHasWar = kingdom.HasWar ();
 			List<WarfareInfo> warsToJoin = new List<WarfareInfo> ();
-			List<int> checkedWarfareId = new List<int> ();
 			for (int i = 0; i < kingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved[i];
 				if (kingdom.id != allyKingdom.id) {
 					if (allyKingdom.warfareInfo.Count > 0) {
 						hasAllianceInWar = true;
 						foreach (WarfareInfo info in allyKingdom.warfareInfo.Values) {
-							if (!kingdom.warfareInfo.ContainsKey (info.warfare.id) && !warsToJoin.Contains (info) && !checkedWarfareId.Contains(info.warfare.id)) {
+							if (!kingdom.warfareInfo.ContainsKey (info.warfare.id) && !warsToJoin.Contains (info) && !kingdom.checkedWarfareID.Contains(info.warfare.id)) {
 								skipPhase4 = true;
-								checkedWarfareId.Add (info.warfare.id);
+								kingdom.checkedWarfareID.Add (info.warfare.id);
 								WAR_SIDE allySide = info.side;
 								WAR_SIDE enemySide = WAR_SIDE.A;
 								if (allySide == WAR_SIDE.A) {

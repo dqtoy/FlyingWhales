@@ -107,9 +107,28 @@ public class Warfare {
 				}
 			}
 			CheckWarfare ();
+			if(!this._isOver){
+				CheckSides ();
+			}
 		}
-
-
+	}
+	private void CheckSides(){
+		if(this._kingdomSideList[WAR_SIDE.A].Count > 0){
+			for (int i = 0; i < this._kingdomSideList[WAR_SIDE.A].Count; i++) {
+				if (!IsAdjacentToEnemyKingdoms (this._kingdomSideList [WAR_SIDE.A] [i], WAR_SIDE.A)) {
+					PeaceDeclaration (this._kingdomSideList [WAR_SIDE.A] [i]);
+					return;
+				}
+			}
+		}
+		if(this._kingdomSideList[WAR_SIDE.B].Count > 0){
+			for (int i = 0; i < this._kingdomSideList[WAR_SIDE.B].Count; i++) {
+				if (!IsAdjacentToEnemyKingdoms (this._kingdomSideList [WAR_SIDE.B] [i], WAR_SIDE.B)) {
+					PeaceDeclaration (this._kingdomSideList [WAR_SIDE.B] [i]);
+					return;
+				}
+			}
+		}
 	}
 	internal void BattleEnds(City winnerCity, City loserCity, Battle battle){
 		//Conquer City if not null, if null means both dead
@@ -132,14 +151,16 @@ public class Warfare {
 //				}
 //			}
 
-			if(!loserKingdom.isDead && !HasAdjacentEnemy(loserKingdom)){
-				Debug.Log ("LOSER: " + loserKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
-				PeaceDeclaration (loserKingdom);
-			}
 			if(!this._isOver){
+				if(!loserKingdom.isDead && !HasAdjacentEnemy(loserKingdom) && this._kingdomSideWeariness.ContainsKey(loserKingdom.id)){
+					Debug.Log ("LOSER: " + loserKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
+					PeaceDeclaration (loserKingdom);
+				}
+			}
+			if(!this._isOver && this._kingdomSideWeariness.ContainsKey(winnerKingdom.id)){
 				if(!winnerKingdom.isDead && !HasAdjacentEnemy(winnerKingdom)){
-					PeaceDeclaration (winnerKingdom);
 					Debug.Log ("WINNER: " + winnerKingdom.name + " is dead or has no adjacent kingdom and will declare peace!");
+					PeaceDeclaration (winnerKingdom);
 					return;
 				}
 				if (!winnerKingdom.isDead && battle.deadAttackerKingdom == null) {
@@ -580,8 +601,8 @@ public class Warfare {
 			Debug.Log (kingdom.name + " WEARINESS: " + this._kingdomSideWeariness [kingdom.id].weariness.ToString ());
 		}
 	}
-	internal long GetAllAttackDefenseFromSide(WAR_SIDE side){
-		long totalAttDef = 0;
+	internal int GetAllAttackDefenseFromSide(WAR_SIDE side){
+		int totalAttDef = 0;
 		for (int i = 0; i < this._kingdomSideList[side].Count; i++) {
 			totalAttDef += this._kingdomSideList [side] [i].effectiveAttack;
 			totalAttDef += this._kingdomSideList [side] [i].effectiveDefense;
@@ -589,8 +610,8 @@ public class Warfare {
 		return totalAttDef;
 	}
 	internal float PeaceMultiplier(Kingdom kingdom){
-		long totalAttDefSideA = GetAllAttackDefenseFromSide (WAR_SIDE.A);
-		long totalAttDefSideB = GetAllAttackDefenseFromSide (WAR_SIDE.B);
+		int totalAttDefSideA = GetAllAttackDefenseFromSide (WAR_SIDE.A);
+		int totalAttDefSideB = GetAllAttackDefenseFromSide (WAR_SIDE.B);
 		if(this._kingdomSideWeariness[kingdom.id].side == WAR_SIDE.A){
 			if(totalAttDefSideA > totalAttDefSideB){
 				return 1f;
@@ -620,7 +641,6 @@ public class Warfare {
 			}
 			return false;
 		}
-
 	}
 	internal bool HasAdjacentEnemyWithNoBattle(Kingdom kingdom){
 		if(!kingdom.warfareInfo.ContainsKey(this._id)){

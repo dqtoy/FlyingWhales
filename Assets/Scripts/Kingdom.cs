@@ -150,6 +150,8 @@ public class Kingdom{
 	internal Kingdom highestRelativeStrengthAdjacentKingdom;
 	internal int highestRelativeStrengthAdjacentKingdomValue;
 
+	internal List<int> checkedWarfareID;
+
     #region getters/setters
     public KINGDOM_TYPE kingdomType {
 		get { 
@@ -359,16 +361,18 @@ public class Kingdom{
             return this._kingdomTypeData.populationRates.productionRate + _productionRateFromKing;
         }
     }
-	internal long effectiveAttack{
+	internal int effectiveAttack{
 		get{ 
-			int mySoldiers = this.soldiers;
-			return Convert.ToInt64((2 * mySoldiers * this._baseWeapons) / (mySoldiers + this._baseWeapons));
+			float mySoldiers = (float)this.soldiers;
+			float numerator = 2f * mySoldiers * (float)this._baseWeapons;
+			return (int)(numerator / (mySoldiers + (float)this._baseWeapons));
 		}
 	}
-	internal long effectiveDefense{
+	internal int effectiveDefense{
 		get{ 
-			int mySoldiers = this.soldiers;
-			return Convert.ToInt64((2 * mySoldiers * this._baseArmor) / (mySoldiers + this._baseArmor));
+			float mySoldiers = (float)this.soldiers;
+			float numerator = 2f * mySoldiers * (float)this._baseArmor;
+			return (int)(numerator / (mySoldiers + (float)this._baseArmor));
 		}
 	}
     internal Dictionary<City, List<Citizen>> citizens {
@@ -445,6 +449,8 @@ public class Kingdom{
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
         this.stabilityDecreaseFromInvasionCounter = 0;
 		this.highestThreatAdjacentKingdomAbove50 = null;
+
+		this.checkedWarfareID = new List<int> ();
 
         AdjustPrestige(GridMap.Instance.numOfRegions);
         //		AdjustPrestige(500);

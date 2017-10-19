@@ -1061,49 +1061,37 @@ public class KingdomRelationship {
 		//Kingdom Threat
 		int adjustment = -1;
 		float threat = this.targetKingdomThreatLevel;
-		if (this._sourceKingdom.king.balanceType == PURPOSE.BALANCE || this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
-			if (threat == 0f) {
-				adjustment = 25;
-			} else if (threat >= 1f && threat < 26f) {
-				adjustment = 0;
-			} else if (threat >= 26f && threat < 51f) {
-				adjustment = -25;
-				if (!this._isAdjacent) {
-					adjustment = -12;
-				}
-			} else if (threat >= 51f && threat < 100f) {
-				adjustment = -50;
-				if (!this._isAdjacent) {
-					adjustment = -25;
-				}
-			} else {
-				adjustment = -100;
-				if (!this._isAdjacent) {
-					adjustment = -50;
-				}
-			}
-			if (this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
-				if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
-					if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
-						adjustment = 100;
-					} else {
-						if(this._sourceKingdom.highestThreatAdjacentKingdomAbove50 != null){
-							if(this._targetKingdom.id == this._sourceKingdom.highestThreatAdjacentKingdomAbove50.id){
-								adjustment = 100;
-							}
-						}
 
-					}
-				}
+		if (threat == 0f) {
+			adjustment = 25;
+		} else if (threat >= 1f && threat < 26f) {
+			adjustment = 0;
+		} else if (threat >= 26f && threat < 51f) {
+			adjustment = -25;
+			if (!this._isAdjacent) {
+				adjustment = -12;
 			}
-		} else if (this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
+		} else if (threat >= 51f && threat < 100f) {
+			adjustment = -50;
+			if (!this._isAdjacent) {
+				adjustment = -25;
+			}
+		} else {
+			adjustment = -100;
+			if (!this._isAdjacent) {
+				adjustment = -50;
+			}
+		}
+
+		if (this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
 			if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
 				if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
-					adjustment = -100;
+					adjustment = 100;
 				}
 			}
-			if(this._sourceKingdom.highestRelativeStrengthAdjacentKingdom != null){
-				if(this._targetKingdom.id == this._sourceKingdom.highestRelativeStrengthAdjacentKingdom.id && this._targetKingdom.id != KingdomManager.Instance.kingdomRankings [0].id){
+		}else if (this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
+			if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
+				if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
 					adjustment = -100;
 				}
 			}
@@ -1118,6 +1106,16 @@ public class KingdomRelationship {
 				adjustment = 50;
 			}else if(this._relativeWeakness >= 51 && this._relativeWeakness < 100){
 				adjustment = 25;
+			}
+		}else{
+			if(this._isAdjacent){
+				if (this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY || this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
+					if (this._relativeWeakness >= 100) {
+						adjustment = -50;
+					} else if (this._relativeWeakness >= 51 && this._relativeWeakness < 100) {
+						adjustment = -25;
+					}
+				}
 			}
 		}
 		return adjustment;
