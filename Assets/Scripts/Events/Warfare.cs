@@ -60,7 +60,7 @@ public class Warfare {
 		this._kingdomSideList.Add (WAR_SIDE.A, new List<Kingdom>());
 		this._kingdomSideList.Add (WAR_SIDE.B, new List<Kingdom>());
 
-		firstKingdom.AdjustWarmongerValue (50);
+		firstKingdom.AdjustWarmongerValue (75);
 
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
