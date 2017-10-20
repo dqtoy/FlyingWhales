@@ -282,7 +282,7 @@ public static class SeeksSuperiority {
 					Kingdom targetKingdom = null;
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.totalLike < 0 && relationship.isAdjacent && relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null){
+						if(relationship.totalLike < 0 && relationship.isAdjacent && relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null && !relationship.isRecentWar){
 							if (relationship._relativeWeakness >= 100) {
 								if(targetKingdom == null || !hasOver100InvasionValue){
 									targetKingdom = relationship.targetKingdom;
