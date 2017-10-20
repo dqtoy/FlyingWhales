@@ -1022,6 +1022,15 @@ public class Citizen {
             }
         }
 
+        if(citiesForRebellion.Count < 2) {
+            string errorMsg = "A Rebellion from " + sourceKingdom.name + " lead by " + this.role.ToString() + " " + this.name +
+                " was unsuccessful because it only got " + citiesForRebellion.Count.ToString() + " cities! Cities are:";
+            for (int i = 0; i < citiesForRebellion.Count; i++) {
+                errorMsg += "\n" + citiesForRebellion[i].name;
+            }
+            throw new System.Exception(errorMsg);
+        }
+
         //Compute new capital city of source kingdom given the cities that will rebel
         if (citiesForRebellion.Contains(sourceKingdom.capitalCity)) {
             //Recompute capital city
