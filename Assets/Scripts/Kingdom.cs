@@ -1362,7 +1362,10 @@ public class Kingdom{
      * </summary>
      * */
     internal List<Citizen> RemoveCityFromKingdom(City city) {
-        this._cities.Remove(city);
+        if (!this._cities.Remove(city)) {
+            throw new Exception("City " + city.name + " is trying to be removed from " + name + " even if it is not part of " + name);
+        }
+        
         _regions.Remove(city.region);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
