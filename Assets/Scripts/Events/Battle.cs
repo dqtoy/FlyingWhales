@@ -480,9 +480,9 @@ public class Battle {
 		this._kingdom1City.ChangeDefendingState (false);
 		this._kingdom2City.ChangeAttackingState (false);
 		this._kingdom2City.ChangeDefendingState (false);
-		if (!this._kingdom1.isDead && !this._kingdom2.isDead) {
-			this._kr.ChangeBattle(null);
-		}
+//		if (!this._kingdom1.isDead && !this._kingdom2.isDead) {
+//			this._kr.ChangeBattle(null);
+//		}
 		this._warfare.BattleEnds (winnerCity, loserCity, this);
 		CheckIfKingdomsAreWipedOut ();
 	}

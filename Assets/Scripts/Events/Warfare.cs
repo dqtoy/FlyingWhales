@@ -140,6 +140,10 @@ public class Warfare {
 
 			winnerKingdom.ConquerCity(loserCity, this);
 
+			if(!winnerKingdom.isDead && !loserKingdom.isDead){
+				KingdomRelationship kr = winnerKingdom.GetRelationshipWithKingdom (loserKingdom);
+				kr.ChangeBattle(null)
+			}
 //			if (battle.deadAttackerKingdom != null) {
 //				if (!battle.deadAttackerKingdom.isDead) {
 //					battle.deadAttackerKingdom.AdjustPopulation (-battle.deadAttackerKingdom.population);
@@ -195,6 +199,7 @@ public class Warfare {
 			}
 		}
 	}
+
 	internal void CreateNewBattle(Kingdom kingdom, bool isFirst = false){
 		if (!this._isOver) {
 			if (isFirst) {
