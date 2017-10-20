@@ -1017,6 +1017,7 @@ public class Citizen {
                     }
                 }
                 if(closestCity != null) {
+					citiesLeftInSourceKingdom.Remove(closestCity);
                     citiesForRebellion.Add(closestCity);
                 }
             }

@@ -1362,7 +1362,13 @@ public class Kingdom{
      * </summary>
      * */
     internal List<Citizen> RemoveCityFromKingdom(City city) {
-        this._cities.Remove(city);
+		if (!this._cities.Remove(city)) {
+			Debug.LogError ("CITY REMOVAL ERROR Kingdom Name: " + this.name);
+			Debug.LogError ("CITY REMOVAL ERROR City Name: " + city.name);
+			Debug.LogError ("CITY REMOVAL ERROR City Kingdom Name: " + city.kingdom.name);
+			UIManager.Instance.Pause ();
+		}
+        //this._cities.Remove(city);
         _regions.Remove(city.region);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
