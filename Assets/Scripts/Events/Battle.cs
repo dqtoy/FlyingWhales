@@ -412,7 +412,7 @@ public class Battle {
 
                 if (this._deadAttackerKingdom == null && this._deadDefenderKingdom == null){
 					float peaceMultiplier = this._warfare.PeaceMultiplier (this.defender.kingdom);
-					int value = (int)(1f * peaceMultiplier);
+					int value = (int)((float)this._warfare.kingdomSideWeariness[this.defender.kingdom.id].weariness * peaceMultiplier);
 					int chance = UnityEngine.Random.Range (0, 100);
 					if(chance < value){
 						DeclarePeaceByDefender ();
