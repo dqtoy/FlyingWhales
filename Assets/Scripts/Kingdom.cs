@@ -1888,8 +1888,10 @@ public class Kingdom{
                 monthlyTechGain += currCity.techPoints;
             }
         }
+
+		int scientistFactor = (int)Math.Sqrt (50 * scientists);
         //Tech Gains
-        monthlyTechGain = ((2 * scientists * monthlyTechGain) / (scientists + monthlyTechGain));
+		monthlyTechGain = ((2 * scientistFactor * monthlyTechGain) / (scientistFactor + monthlyTechGain));
         monthlyTechGain = Mathf.FloorToInt(monthlyTechGain * techProductionPercentage);
         return monthlyTechGain;
     }
@@ -1902,7 +1904,7 @@ public class Kingdom{
         return techContributionsFromCitizens;
     }
 	private void UpdateTechCapacity(){
-		this._techCapacity = 500 + ((400 + (100 * this._techLevel)) * this._techLevel);
+		this._techCapacity = 500 + ((800 + (500 * this._techLevel)) * this._techLevel);
 	}
 	internal void AdjustTechCounter(int amount){
 		this._techCounter += amount;
