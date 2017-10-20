@@ -27,4 +27,14 @@ public class AllianceWarLabel : MonoBehaviour {
 			}
 		}
 	}
+	internal void AddKingdom(Kingdom kingdom){
+		if(!kingdomsInLabel.ContainsKey(kingdom.id)){
+			kingdomsInLabel.Add (kingdom.id, kingdom);
+		}
+	}
+	internal void AddCity(City city){
+		if(!citiesInLabel.ContainsKey(city.id)){
+			citiesInLabel.Add (city.id, city);
+		}
+	}
 }

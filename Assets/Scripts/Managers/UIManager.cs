@@ -2187,7 +2187,7 @@ public class UIManager : MonoBehaviour {
 					this.allianceSummaryLbl.text += alliance.name;
 					for (int j = 0; j < alliance.kingdomsInvolved.Count; j++) {
 						Kingdom kingdom = alliance.kingdomsInvolved [j];
-						allianceWarLbl.kingdomsInLabel.Add (kingdom.id, kingdom);
+						allianceWarLbl.AddKingdom (kingdom);
 						this.allianceSummaryLbl.text += "\n- [url=" + kingdom.id.ToString() + "_kingdom" + "]" + kingdom.name + "[/url]";
 					}
 				}
@@ -2202,7 +2202,7 @@ public class UIManager : MonoBehaviour {
 						this.allianceSummaryLbl.text += "\n- SIDE A: ";
 						for (int j = 0; j < warfare.kingdomSideList[WAR_SIDE.A].Count; j++) {
 							Kingdom kingdom = warfare.kingdomSideList [WAR_SIDE.A] [j];
-							allianceWarLbl.kingdomsInLabel.Add (kingdom.id, kingdom);
+							allianceWarLbl.AddKingdom (kingdom);
 							this.allianceSummaryLbl.text += "[url=" + kingdom.id.ToString() + "_kingdom" + "]" + kingdom.name + "[/url](" + warfare.kingdomSideWeariness[kingdom.id].weariness.ToString() + ")";
 							if(j < warfare.kingdomSideList[WAR_SIDE.A].Count - 1){
 								this.allianceSummaryLbl.text += ", ";
@@ -2213,7 +2213,7 @@ public class UIManager : MonoBehaviour {
 						this.allianceSummaryLbl.text += "\n- SIDE B: ";
 						for (int j = 0; j < warfare.kingdomSideList[WAR_SIDE.B].Count; j++) {
 							Kingdom kingdom = warfare.kingdomSideList [WAR_SIDE.B] [j];
-							allianceWarLbl.kingdomsInLabel.Add (kingdom.id, kingdom);
+							allianceWarLbl.AddKingdom (kingdom);
 							this.allianceSummaryLbl.text += "[url=" + kingdom.id.ToString() + "_kingdom" + "]" + kingdom.name + "[/url](" + warfare.kingdomSideWeariness[kingdom.id].weariness.ToString() + ")";
 							if(j < warfare.kingdomSideList[WAR_SIDE.B].Count - 1){
 								this.allianceSummaryLbl.text += ", ";
@@ -2224,8 +2224,9 @@ public class UIManager : MonoBehaviour {
 						this.allianceSummaryLbl.text += "\n- BATTLES:";
 						for (int j = 0; j < warfare.battles.Count; j++) {
 							if(warfare.battles[j].attackCity != null && warfare.battles[j].defenderCity != null){
-								allianceWarLbl.citiesInLabel.Add (warfare.battles[j].attackCity.id, warfare.battles[j].attackCity);
-								allianceWarLbl.citiesInLabel.Add (warfare.battles[j].defenderCity.id, warfare.battles[j].defenderCity);
+								
+								allianceWarLbl.AddCity (warfare.battles[j].attackCity);
+								allianceWarLbl.AddCity (warfare.battles[j].defenderCity);
 
 								this.allianceSummaryLbl.text += "\n-- [url=" + warfare.battles[j].attackCity.id.ToString() + "_city" + "]" + warfare.battles[j].attackCity.name + "[/url] -> [url=" + warfare.battles[j].defenderCity.id.ToString() + "_city" + "]" + warfare.battles[j].defenderCity.name + "[/url] (" 
 									+ ((MONTH)warfare.battles[j].supposedAttackDate.month).ToString() + " " + warfare.battles[j].supposedAttackDate.day.ToString() + ", " + warfare.battles[j].supposedAttackDate.year.ToString() + ")";
