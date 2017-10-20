@@ -2174,6 +2174,10 @@ public class UIManager : MonoBehaviour {
     public void UpdateAllianceSummary() {
 		if(UIManager.Instance.goAlliance.activeSelf){
 			this.allianceSummaryLbl.text = string.Empty;
+			AllianceWarLabel allianceWarLbl = this.allianceSummaryLbl.GetComponent<AllianceWarLabel> ();
+			allianceWarLbl.kingdomsInLabel.Clear ();
+			allianceWarLbl.citiesInLabel.Clear ();
+
 			if (warAllianceState == "alliance") {
 				for (int i = 0; i < KingdomManager.Instance.alliances.Count; i++) {
 					AlliancePool alliance = KingdomManager.Instance.alliances [i];
@@ -2183,7 +2187,8 @@ public class UIManager : MonoBehaviour {
 					this.allianceSummaryLbl.text += alliance.name;
 					for (int j = 0; j < alliance.kingdomsInvolved.Count; j++) {
 						Kingdom kingdom = alliance.kingdomsInvolved [j];
-						this.allianceSummaryLbl.text += "\n- " + kingdom.name;
+						allianceWarLbl.kingdomsInLabel.Add (kingdom.id, kingdom);
+						this.allianceSummaryLbl.text += "\n- [url=" + kingdom.id.ToString() + "_kingdom" + "]" + kingdom.name + "[/url]";
 					}
 				}
 			} else if (warAllianceState == "warfare") {
@@ -2197,7 +2202,8 @@ public class UIManager : MonoBehaviour {
 						this.allianceSummaryLbl.text += "\n- SIDE A: ";
 						for (int j = 0; j < warfare.kingdomSideList[WAR_SIDE.A].Count; j++) {
 							Kingdom kingdom = warfare.kingdomSideList [WAR_SIDE.A] [j];
-							this.allianceSummaryLbl.text += kingdom.name + "(" + warfare.kingdomSideWeariness[kingdom.id].weariness.ToString() + ")";
+							allianceWarLbl.kingdomsInLabel.Add (kingdom.id, kingdom);
+							this.allianceSummaryLbl.text += "[url=" + kingdom.id.ToString() + "_kingdom" + "]" + kingdom.name + "[/url](" + warfare.kingdomSideWeariness[kingdom.id].weariness.ToString() + ")";
 							if(j < warfare.kingdomSideList[WAR_SIDE.A].Count - 1){
 								this.allianceSummaryLbl.text += ", ";
 							}
@@ -2207,7 +2213,8 @@ public class UIManager : MonoBehaviour {
 						this.allianceSummaryLbl.text += "\n- SIDE B: ";
 						for (int j = 0; j < warfare.kingdomSideList[WAR_SIDE.B].Count; j++) {
 							Kingdom kingdom = warfare.kingdomSideList [WAR_SIDE.B] [j];
-							this.allianceSummaryLbl.text += kingdom.name + "(" + warfare.kingdomSideWeariness[kingdom.id].weariness.ToString() + ")";
+							allianceWarLbl.kingdomsInLabel.Add (kingdom.id, kingdom);
+							this.allianceSummaryLbl.text += "[url=" + kingdom.id.ToString() + "_kingdom" + "]" + kingdom.name + "[/url](" + warfare.kingdomSideWeariness[kingdom.id].weariness.ToString() + ")";
 							if(j < warfare.kingdomSideList[WAR_SIDE.B].Count - 1){
 								this.allianceSummaryLbl.text += ", ";
 							}
@@ -2217,7 +2224,10 @@ public class UIManager : MonoBehaviour {
 						this.allianceSummaryLbl.text += "\n- BATTLES:";
 						for (int j = 0; j < warfare.battles.Count; j++) {
 							if(warfare.battles[j].attackCity != null && warfare.battles[j].defenderCity != null){
-								this.allianceSummaryLbl.text += "\n-- " + warfare.battles[j].attackCity.name + " -> " + warfare.battles[j].defenderCity.name + " (" 
+								allianceWarLbl.citiesInLabel.Add (warfare.battles[j].attackCity.id, warfare.battles[j].attackCity);
+								allianceWarLbl.citiesInLabel.Add (warfare.battles[j].defenderCity.id, warfare.battles[j].defenderCity);
+
+								this.allianceSummaryLbl.text += "\n-- [url=" + warfare.battles[j].attackCity.id.ToString() + "_city" + "]" + warfare.battles[j].attackCity.name + "[/url] -> [url=" + warfare.battles[j].defenderCity.id.ToString() + "_city" + "]" + warfare.battles[j].defenderCity.name + "[/url] (" 
 									+ ((MONTH)warfare.battles[j].supposedAttackDate.month).ToString() + " " + warfare.battles[j].supposedAttackDate.day.ToString() + ", " + warfare.battles[j].supposedAttackDate.year.ToString() + ")";
 							}
 						}
