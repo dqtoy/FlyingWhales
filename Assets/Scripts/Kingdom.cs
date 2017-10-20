@@ -468,7 +468,7 @@ public class Kingdom{
 		this.SetProductionGrowthPercentage(1f);
 		this.UpdateTechCapacity ();
 		this.SetSecession (false);
-		this.SetWarmongerValue (15);
+		this.SetWarmongerValue (25);
 //		this.NewRandomCrimeDate (true);
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -2770,7 +2770,7 @@ public class Kingdom{
 	internal void WarmongerDecreasePerYear(){
 		if(!this.isDead){
 			if (!HasWar ()) {
-				AdjustWarmongerValue (-10);
+				AdjustWarmongerValue (-5);
 			}
 			SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
 		}

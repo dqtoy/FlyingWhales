@@ -229,8 +229,8 @@ public static class SeeksBandwagon {
 				if(hexTile == null){
 					//Can no longer expand
 					Debug.Log(kingdom.name + " has no war currently, has no alliance or no alliance member is at war, and can no longer expand");
-					bool hasOver100InvasionValue = false;
-					bool hasOver50InvasionValue = false;
+					bool isFirstPart = false;
+					bool isSecondPart = false;
 //					int overPopulationReduction = 0;
 //					int overpopulation = kingdom.GetOverpopulationPercentage();
 
@@ -251,9 +251,9 @@ public static class SeeksBandwagon {
 					Kingdom targetKingdom = null;
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-						if(relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null){
+						if(relationship.isDiscovered && relationship.isAdjacent && !relationship.AreAllies() && relationship.warfare == null){
 							if (relationship.totalLike <= -50 && relationship.targetKingdomInvasionValue > 0f && relationship.targetKingdom.warfareInfo.Count > 0) {
-								if(targetKingdom == null){
+								if(targetKingdom == null || !isFirstPart){
 									targetKingdom = relationship.targetKingdom;
 									leastLike = relationship.totalLike;
 								}else{
@@ -262,20 +262,42 @@ public static class SeeksBandwagon {
 										leastLike = relationship.totalLike;
 									}
 								}
+								isFirstPart = true;
+							}
+							if(!isFirstPart){
+								if(relationship._relativeWeakness >= 100 && relationship.totalLike < 0){
+									if(targetKingdom == null){
+										targetKingdom = relationship.targetKingdom;
+										leastLike = relationship.totalLike;
+									}else{
+										if(relationship.totalLike < leastLike){
+											targetKingdom = relationship.targetKingdom;
+											leastLike = relationship.totalLike;
+										}
+									}
+									isSecondPart = true;
+								}
 							}
 						}
 					}
 					if(targetKingdom != null){
 						Debug.Log(kingdom.name + " has " + leastLike.ToString() + " total like towards " + targetKingdom.name);
-						int chance = UnityEngine.Random.Range (0, 100);
-						int stabilityModifier = (int)((float)kingdom.stability / 10f);
-						int value = (int)(kingdom.king.GetWarmongerWarPercentage100());
-						value += (int)(kingdom.king.GetWarmongerWarPercentage100() * (float)stabilityModifier);
-						if(chance < value){
-							//if there is anyone whose Invasion Value is 1 or above, prepare for war against the one with the highest Invasion Value
-							Debug.Log(kingdom.name + " decided to have war with " + targetKingdom.name);
-							Warfare warfare = new Warfare (kingdom, targetKingdom);
-							skipPhase4 = true;
+						bool skipWar = false;
+						if(!isFirstPart && isSecondPart && KingdomManager.Instance.kingdomRankings[0].id != kingdom.id){
+							Debug.Log(kingdom.name + " will not declare war because first part is " + isFirstPart.ToString() + " second part is " + isSecondPart.ToString() + " top rank is " + KingdomManager.Instance.kingdomRankings[0].name);
+							skipWar = true;
+						}
+						if(!skipWar){
+							int chance = UnityEngine.Random.Range (0, 100);
+							int stabilityModifier = (int)((float)kingdom.stability / 10f);
+							int value = (int)(kingdom.king.GetWarmongerWarPercentage100());
+							value += (int)(kingdom.king.GetWarmongerWarPercentage100() * (float)stabilityModifier);
+							if(chance < value){
+								//if there is anyone whose Invasion Value is 1 or above, prepare for war against the one with the highest Invasion Value
+								Debug.Log(kingdom.name + " decided to have war with " + targetKingdom.name);
+								Warfare warfare = new Warfare (kingdom, targetKingdom);
+								skipPhase4 = true;
+							}
 						}
 					}
 				}
