@@ -142,7 +142,7 @@ public class Warfare {
 
 			if(!winnerKingdom.isDead && !loserKingdom.isDead){
 				KingdomRelationship kr = winnerKingdom.GetRelationshipWithKingdom (loserKingdom);
-				kr.ChangeBattle(null)
+				kr.ChangeBattle (null);
 			}
 //			if (battle.deadAttackerKingdom != null) {
 //				if (!battle.deadAttackerKingdom.isDead) {
