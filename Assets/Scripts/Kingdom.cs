@@ -150,6 +150,8 @@ public class Kingdom{
 	internal Kingdom highestRelativeStrengthAdjacentKingdom;
 	internal int highestRelativeStrengthAdjacentKingdomValue;
 
+	internal bool has100OrAboveThreat;
+
 	internal List<int> checkedWarfareID;
 
     #region getters/setters
@@ -2782,6 +2784,7 @@ public class Kingdom{
 		}
 	}
 	internal void UpdateThreatLevelsAndInvasionValues(){
+		has100OrAboveThreat = false;
 		if(this.king.balanceType == PURPOSE.BANDWAGON || this.king.balanceType == PURPOSE.SUPERIORITY){
 			this.highestThreatAdjacentKingdomAbove50 = null;
 			this.highestThreatAdjacentKingdomAbove50Value = 0f;

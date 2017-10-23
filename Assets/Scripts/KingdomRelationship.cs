@@ -343,14 +343,21 @@ public class KingdomRelationship {
 
 
 		//Kingdom Threat
-		adjustment = GetKingdomThreatOpinionChange();
-		if(adjustment != -1){
+		if(this._sourceKingdom.king.balanceType != PURPOSE.BANDWAGON && this._sourceKingdom.has100OrAboveThreat && this._targetKingdomThreatLevel <= 50){
+			adjustment = 30;
 			baseLoyalty += adjustment;
-			if(adjustment >= 0){
-				this._relationshipSummary += "+";
+			this._relationshipSummary += "+" + adjustment.ToString() + " Kingdom Threat.\n";
+		}else{
+			adjustment = GetKingdomThreatOpinionChange();
+			if(adjustment != -1){
+				baseLoyalty += adjustment;
+				if(adjustment >= 0){
+					this._relationshipSummary += "+";
+				}
+				this._relationshipSummary += adjustment.ToString() + " Kingdom Threat.\n";
 			}
-			this._relationshipSummary += adjustment.ToString() + " Kingdom Threat.\n";
 		}
+
 
 
 		//Kingdom Invasion Value
@@ -775,6 +782,9 @@ public class KingdomRelationship {
 		}
 		float threat = this.targetKingdomThreatLevel;
 		if(this.isAdjacent){
+			if(threat >= 100){
+				this._sourceKingdom.has100OrAboveThreat = true;
+			}
 			if(threat > 50f){
 				if(this._sourceKingdom.highestThreatAdjacentKingdomAbove50 == null){
 					this._sourceKingdom.highestThreatAdjacentKingdomAbove50 = this._targetKingdom;
@@ -1144,6 +1154,8 @@ public class KingdomRelationship {
 					adjustment = -50;
 				} else if (this._relativeWeakness > 50 && this._relativeWeakness < 100) {
 					adjustment = -25;
+				} else if (this._relativeWeakness > 0 && this._relativeWeakness <= 50 && this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
+					adjustment = -15;
 				}
 			}
 		}
