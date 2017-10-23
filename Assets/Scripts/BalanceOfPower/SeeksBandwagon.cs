@@ -17,43 +17,44 @@ public static class SeeksBandwagon {
 		Debug.Log("========== " + kingdom.name + " is seeking bandwagon " + GameManager.Instance.month.ToString() + "/" + GameManager.Instance.days.ToString() + "/" + GameManager.Instance.year.ToString() + " ==========");
 		Debug.Log ("========== PHASE 1 ==========");      
 		//break any alliances with anyone whose threat value is 100 or above and lose 10 Stability
-		bool mustLeaveAlliance = false;
-		bool mustSeekAlliance = false;
-
 		if (kingdom.alliancePool != null){
 			for (int i = 0; i < kingdom.alliancePool.kingdomsInvolved.Count; i++) {
 				Kingdom allyKingdom = kingdom.alliancePool.kingdomsInvolved[i];
 				if(kingdom.id != allyKingdom.id){
 					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom(allyKingdom);
-					if(kr.targetKingdomThreatLevel >= 100f){
+					if(kr.totalLike <= -100){
 						kingdom.LeaveAlliance ();
 						kingdom.AdjustStability(-10);
 						Debug.Log(kingdom.name + " broke alliance with " + allyKingdom.name +
-							" because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + " or total like is " + kr.totalLike.ToString() + "," + kingdom.name + 
+							" because its total like is " + kr.totalLike.ToString() + "," + kingdom.name + 
 							" lost 10 stability. Stability is now " + kingdom.stability.ToString());
 
 						skipPhase4 = true;
-						mustSeekAlliance = true;
 						break;
-					}else if(kr.totalLike <= -100){
-						mustLeaveAlliance = true;
 					}
 				}
 			}
-			if(mustLeaveAlliance){
-				Debug.Log(kingdom.name + " left " + kingdom.alliancePool.name + " because there is a kingdom in alliance that I have -100 opinion and lost 10 stability. Stability is now " + kingdom.stability.ToString());
-				kingdom.LeaveAlliance ();
-				kingdom.AdjustStability(-10);
-				skipPhase4 = true;
-			}
 		}
 
-		if(kingdom.alliancePool == null && mustSeekAlliance){
-			Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 100 or above threat");
-			kingdom.SeekAlliance ();
-			skipPhase4 = true;
-			if(kingdom.alliancePool != null){
-				skipPhase2 = true;
+		bool mustSeekAlliance = false;
+		//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
+		foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
+			if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f){
+				if (!relationship.AreAllies ()) {
+					mustSeekAlliance = true;
+					break;
+				}
+			}
+		}
+		if(mustSeekAlliance){
+			//if i am not part of any alliance, create or join an alliance if possible
+			if(kingdom.alliancePool == null){
+				Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 50 or above threat and a less than 75 invasion value");
+				kingdom.SeekAlliance ();
+				skipPhase4 = true;
+				if(kingdom.alliancePool != null){
+					skipPhase2 = true;
+				}
 			}
 		}
 		if(!skipPhase2){

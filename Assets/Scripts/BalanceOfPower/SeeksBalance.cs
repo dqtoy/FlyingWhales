@@ -30,7 +30,7 @@ public static class SeeksBalance {
 						kingdom.LeaveAlliance ();
 						kingdom.AdjustStability(-10);
 						Debug.Log(kingdom.name + " broke alliance with " + allyKingdom.name +
-							" because it's threat level is " + kr.targetKingdomThreatLevel.ToString() + " or total like is " + kr.totalLike.ToString() + "," + kingdom.name + 
+							" because its total like is " + kr.totalLike.ToString() + "," + kingdom.name + 
 							" lost 10 stability. Stability is now " + kingdom.stability.ToString());
 						
 						skipPhase4 = true;
@@ -43,7 +43,7 @@ public static class SeeksBalance {
 		bool mustSeekAlliance = false;
 		//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
 		foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-			if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 50f){
+			if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f){
 				if (!relationship.AreAllies ()) {
 					mustSeekAlliance = true;
 					break;
