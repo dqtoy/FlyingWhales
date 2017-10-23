@@ -2766,7 +2766,7 @@ public class Kingdom{
 
 	internal void AdjustWarmongerValue(int amount){
 		this._warmongerValue += amount;
-		this._warmongerValue = Mathf.Clamp(this._warmongerValue, 0, 100);
+		this._warmongerValue = Mathf.Clamp(this._warmongerValue, 0, 200);
 	}
 
 	internal void SetWarmongerValue(int amount){
