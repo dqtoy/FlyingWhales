@@ -965,6 +965,7 @@ public class Citizen {
 
         if (this.role == ROLE.GOVERNOR) {
             //If Citizen to rebel is a governor, automatically add his/her owned city to cities that will rebel
+			citiesLeftInSourceKingdom.Remove(this.city);
             citiesForRebellion.Add(this.city);
         } else {
             //Get a random origin city that is not the capital city, where the rebellion will originate from
@@ -1017,6 +1018,7 @@ public class Citizen {
                     }
                 }
                 if(closestCity != null) {
+					citiesLeftInSourceKingdom.Remove(closestCity);
                     citiesForRebellion.Add(closestCity);
                 }
             }

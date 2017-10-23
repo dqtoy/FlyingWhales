@@ -415,7 +415,7 @@ public class City{
     //    _dailyGrowthBuffs += adjustment;
     //}
 	internal void UpdateDailyProduction(){
-		this._maxGrowth = 1000 + ((1500 + (1000 * this.ownedTiles.Count)) * this.ownedTiles.Count);
+		this._maxGrowth = 1000 + ((2000 + (1500 * this.ownedTiles.Count)) * this.ownedTiles.Count);
 		//this._dailyGrowthFromStructures = (int) Math.Sqrt(this._region.naturalResourceLevel[this.kingdom.race]) * 2;
 		//for (int i = 0; i < this.structures.Count; i++) {
 		//	HexTile currentStructure = this.structures [i];

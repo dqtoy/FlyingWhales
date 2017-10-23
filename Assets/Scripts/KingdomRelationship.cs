@@ -269,11 +269,12 @@ public class KingdomRelationship {
         }
 
 		//Race
-		if (this._sourceKingdom.race == this._targetKingdom.race) {
-			adjustment = 30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += "+" + adjustment.ToString() + " Same Race.\n";
-		}else{
+		//if (this._sourceKingdom.race == this._targetKingdom.race) {
+		//	adjustment = 30;
+		//	baseLoyalty += adjustment;
+		//	this._relationshipSummary += "+" + adjustment.ToString() + " Same Race.\n";
+		//}else{
+		if (this._sourceKingdom.race != this._targetKingdom.race) {
 			adjustment = -30;
 			baseLoyalty += adjustment;
 			this._relationshipSummary += adjustment.ToString() + " Different Race.\n";

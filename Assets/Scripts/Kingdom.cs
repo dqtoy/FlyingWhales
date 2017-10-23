@@ -468,7 +468,7 @@ public class Kingdom{
 		this.SetProductionGrowthPercentage(1f);
 		this.UpdateTechCapacity ();
 		this.SetSecession (false);
-		this.SetWarmongerValue (15);
+		this.SetWarmongerValue (25);
 //		this.NewRandomCrimeDate (true);
 		// Determine what type of Kingdom this will be upon initialization.
 		this._kingdomTypeData = null;
@@ -1362,10 +1362,13 @@ public class Kingdom{
      * </summary>
      * */
     internal List<Citizen> RemoveCityFromKingdom(City city) {
-        if (!this._cities.Remove(city)) {
-            throw new Exception("City " + city.name + " is trying to be removed from " + name + " even if it is not part of " + name);
-        }
-        
+		if (!this._cities.Remove(city)) {
+			Debug.LogError ("CITY REMOVAL ERROR Kingdom Name: " + this.name);
+			Debug.LogError ("CITY REMOVAL ERROR City Name: " + city.name);
+			Debug.LogError ("CITY REMOVAL ERROR City Kingdom Name: " + city.kingdom.name);
+			UIManager.Instance.Pause ();
+		}
+        //this._cities.Remove(city);
         _regions.Remove(city.region);
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
@@ -1891,8 +1894,10 @@ public class Kingdom{
                 monthlyTechGain += currCity.techPoints;
             }
         }
+
+		int scientistFactor = (int)Math.Sqrt (50 * scientists);
         //Tech Gains
-        monthlyTechGain = ((2 * scientists * monthlyTechGain) / (scientists + monthlyTechGain));
+		monthlyTechGain = ((2 * scientistFactor * monthlyTechGain) / (scientistFactor + monthlyTechGain));
         monthlyTechGain = Mathf.FloorToInt(monthlyTechGain * techProductionPercentage);
         return monthlyTechGain;
     }
@@ -1905,7 +1910,7 @@ public class Kingdom{
         return techContributionsFromCitizens;
     }
 	private void UpdateTechCapacity(){
-		this._techCapacity = 500 + ((400 + (100 * this._techLevel)) * this._techLevel);
+		this._techCapacity = 500 + ((800 + (500 * this._techLevel)) * this._techLevel);
 	}
 	internal void AdjustTechCounter(int amount){
 		this._techCounter += amount;
@@ -2771,7 +2776,7 @@ public class Kingdom{
 	internal void WarmongerDecreasePerYear(){
 		if(!this.isDead){
 			if (!HasWar ()) {
-				AdjustWarmongerValue (-10);
+				AdjustWarmongerValue (-5);
 			}
 			SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
 		}

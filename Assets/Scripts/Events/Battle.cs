@@ -412,7 +412,7 @@ public class Battle {
 
                 if (this._deadAttackerKingdom == null && this._deadDefenderKingdom == null){
 					float peaceMultiplier = this._warfare.PeaceMultiplier (this.defender.kingdom);
-					int value = (int)(1f * peaceMultiplier);
+					int value = (int)((float)this._warfare.kingdomSideWeariness[this.defender.kingdom.id].weariness * peaceMultiplier);
 					int chance = UnityEngine.Random.Range (0, 100);
 					if(chance < value){
 						DeclarePeaceByDefender ();
@@ -480,9 +480,9 @@ public class Battle {
 		this._kingdom1City.ChangeDefendingState (false);
 		this._kingdom2City.ChangeAttackingState (false);
 		this._kingdom2City.ChangeDefendingState (false);
-		if (!this._kingdom1.isDead && !this._kingdom2.isDead) {
-			this._kr.ChangeBattle(null);
-		}
+//		if (!this._kingdom1.isDead && !this._kingdom2.isDead) {
+//			this._kr.ChangeBattle(null);
+//		}
 		this._warfare.BattleEnds (winnerCity, loserCity, this);
 		CheckIfKingdomsAreWipedOut ();
 	}
