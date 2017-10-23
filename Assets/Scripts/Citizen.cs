@@ -1097,8 +1097,12 @@ public class Citizen {
             newKingdom.AddCitizenToKingdom(currCitizen, newKingdom.capitalCity);
         }
 
-        newKingdom.CreateNewChancellorFamily();
-        newKingdom.CreateNewMarshalFamily();
+        if(previousRole != ROLE.GRAND_CHANCELLOR) {
+            newKingdom.CreateNewChancellorFamily();
+        }
+        if (previousRole != ROLE.GRAND_MARSHAL) {
+            newKingdom.CreateNewMarshalFamily();
+        }
 
         newKingdom.UpdateKingSuccession();
 
