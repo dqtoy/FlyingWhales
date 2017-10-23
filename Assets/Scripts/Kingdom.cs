@@ -141,7 +141,7 @@ public class Kingdom{
     private float _draftRateFromKing;
     private float _productionRateFromKing;
 
-    private int stabilityDecreaseFromInvasionCounter;
+    private int _stabilityDecreaseFromInvasionCounter;
     internal List<GameDate> datesStabilityDecreaseWillExpire = new List<GameDate>(); //TODO Remove this when testing is done
 
 	internal Kingdom highestThreatAdjacentKingdomAbove50;
@@ -378,6 +378,9 @@ public class Kingdom{
     internal Dictionary<City, List<Citizen>> citizens {
         get { return _citizens; }
     }
+    internal int stabilityDecreaseFromInvasionCounter {
+        get { return _stabilityDecreaseFromInvasionCounter; }
+    }
     #endregion
 
     // Kingdom constructor paramters
@@ -447,7 +450,7 @@ public class Kingdom{
 		this._evenActionDay = 0;
 		this._alliancePool = null;
 		this._warfareInfo = new Dictionary<int, WarfareInfo>();
-        this.stabilityDecreaseFromInvasionCounter = 0;
+        this._stabilityDecreaseFromInvasionCounter = 0;
 		this.highestThreatAdjacentKingdomAbove50 = null;
 
 		this.checkedWarfareID = new List<int> ();
@@ -2502,7 +2505,7 @@ public class Kingdom{
         int overpopulation = GetOverpopulationPercentage();
         totalStabilityIncrease -= overpopulation / 10;
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
-        totalStabilityIncrease -= (stabilityDecreaseFromInvasionCounter * 2);
+        totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
 
         //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
         if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
@@ -2513,7 +2516,7 @@ public class Kingdom{
 
         AdjustBaseWeapons(totalWeaponsIncrease);
         AdjustBaseArmors(totalArmorIncrease);
-        AdjustStability(totalStabilityIncrease);
+        AdjustStability(Mathf.Clamp(totalStabilityIncrease, -5, 5));
 
         //Tech Gains
         totalTechIncrease = ((2 * scientists * totalTechIncrease) / (scientists + totalTechIncrease));
@@ -2542,7 +2545,7 @@ public class Kingdom{
         int overpopulation = GetOverpopulationPercentage();
         totalStabilityIncrease -= overpopulation / 10;
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
-        totalStabilityIncrease -= (stabilityDecreaseFromInvasionCounter * 2);
+        totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
 
         //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
         if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
@@ -2551,10 +2554,10 @@ public class Kingdom{
             totalStabilityIncrease -= 10;
         }
 
-        return totalStabilityIncrease;
+        return Mathf.Clamp(totalStabilityIncrease, -5, 5);
     }
     internal void AddStabilityDecreaseBecauseOfInvasion() {
-        stabilityDecreaseFromInvasionCounter += 1;
+        _stabilityDecreaseFromInvasionCounter += 1;
         //Reschedule event
         GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
         dueDate.AddMonths(6);
@@ -2563,7 +2566,7 @@ public class Kingdom{
     }
     private void ReduceStabilityDecreaseBecauseOfInvasion() {
         datesStabilityDecreaseWillExpire.RemoveAt(0);
-        stabilityDecreaseFromInvasionCounter -= 1;
+        _stabilityDecreaseFromInvasionCounter -= 1;
     }
     private int GetStabilityContributionFromCitizens() {
         int stabilityContributionsFromCitizens = 0;

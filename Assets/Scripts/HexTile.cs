@@ -1003,7 +1003,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #region For Testing
     [Space(10)]
     [Header("For Testing")]
-    [SerializeField] private int kingdomToConquerIndex = 0;
+    //[SerializeField] private int kingdomToConquerIndex = 0;
     [SerializeField] private int range = 0;
     List<HexTile> tiles = new List<HexTile>();
 
@@ -1049,15 +1049,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         ResetTile();
     }
 
-    [ContextMenu("Force Conquer Tile")]
-    public void ForceTileToBeConqueredByKingdom() {
-        Kingdom conqueror = KingdomManager.Instance.allKingdoms[kingdomToConquerIndex];
-        if (conqueror.id == this.city.kingdom.id) {
-            Debug.LogWarning("City is already part of " + conqueror.name);
-        } else {
-//            conqueror.ConquerCity(city, null);
-        }
-    }
+    //[ContextMenu("Force Conquer Tile")]
+    //public void ForceTileToBeConqueredByKingdom() {
+    //    Kingdom conqueror = KingdomManager.Instance.allKingdoms[kingdomToConquerIndex];
+    //    if (conqueror.id == this.city.kingdom.id) {
+    //        Debug.LogWarning("City is already part of " + conqueror.name);
+    //    } else {
+    //        conqueror.ConquerCity(city, null);
+    //    }
+    //}
 
     [ContextMenu("Kill King")]
     public void KillKing() {
