@@ -343,7 +343,7 @@ public class KingdomRelationship {
 
 
 		//Kingdom Threat
-		if(this._sourceKingdom.king.balanceType != PURPOSE.BANDWAGON && this._sourceKingdom.has100OrAboveThreat && this._targetKingdomThreatLevel <= 50){
+		if(this._sourceKingdom.king.balanceType != PURPOSE.BANDWAGON && this._sourceKingdom.has100OrAboveThreat && this.targetKingdomThreatLevel <= 50){
 			adjustment = 30;
 			baseLoyalty += adjustment;
 			this._relationshipSummary += "+" + adjustment.ToString() + " Kingdom Threat.\n";

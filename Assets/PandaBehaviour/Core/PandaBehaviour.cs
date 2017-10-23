@@ -81,6 +81,48 @@ namespace Panda
             }
         }
 
+
+        public class WaitRandomFloatInfo
+        {
+            public float elapsedTime;
+            public float duration;
+        }
+        /// <summary>
+        /// Pick a number in the specified range, wait that number of seconds then succeed.
+        /// </summary>
+        /// <param name="message"></param>
+        /// Thanks to a_horned_goat
+        [Task]
+        public void WaitRandom(float min, float max)
+        {
+            var task = Task.current;
+            var info = task.item != null ? (WaitRandomFloatInfo)task.item : (WaitRandomFloatInfo)(task.item = new WaitRandomFloatInfo());
+
+            if (task.isStarting)
+            {
+                info.duration = Random.Range(min, max);
+                info.elapsedTime = -Time.deltaTime;
+            }
+
+            var duration = info.duration;
+
+            info.elapsedTime += Time.deltaTime;
+
+            if (Task.isInspected)
+            {
+                float tta = Mathf.Clamp(duration - info.elapsedTime, 0.0f, float.PositiveInfinity);
+                task.debugInfo = string.Format("t-{0:0.000}", tta);
+            }
+
+            if (info.elapsedTime >= duration)
+            {
+                task.debugInfo = "t-0.000";
+                task.Succeed();
+            }
+        }
+
+
+
         public class TaskInfoWaitInt
         {
             public int elapsedTicks = 0;
