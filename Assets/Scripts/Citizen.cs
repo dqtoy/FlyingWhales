@@ -976,8 +976,9 @@ public class Citizen {
             citiesForRebellion.Add(chosenOriginCity);
         }
 
-        int maxNumOfCitiesForRebellion = Mathf.FloorToInt(sourceKingdom.cities.Count / 2);
-        int numOfCitiesForRebellion = Random.Range(2, maxNumOfCitiesForRebellion);
+        int halfOfSourceKingdomCities = Mathf.FloorToInt(sourceKingdom.cities.Count / 2);
+        int minNumofCitiesForRebellion = Mathf.Max(2, halfOfSourceKingdomCities - 6);
+        int numOfCitiesForRebellion = Random.Range(minNumofCitiesForRebellion, halfOfSourceKingdomCities);
         while(citiesForRebellion.Count < numOfCitiesForRebellion) {
             //Make sure that the new kingdom has 2 to half of source kingdom cities
             for (int i = 0; i < citiesForRebellion.Count; i++) {

@@ -545,9 +545,10 @@ public class City{
      * */
 	internal void ConquerCity(Kingdom conqueror, Warfare warfare) {
         RemoveOneTimeResourceBenefits();
-        //and a random number of settlements (excluding capital) will be destroyed
-        int structuresDestroyed = UnityEngine.Random.Range(0, this.structures.Count);
-        for (int i = 0; i < structuresDestroyed; i++) {
+
+        //Combat invasion should reduce City level by half.
+        int halfOfCityLevel = Mathf.FloorToInt(this.ownedTiles.Count / 2);
+        for (int i = 0; i < halfOfCityLevel; i++) {
             this.RemoveTileFromCity(this.structures[UnityEngine.Random.Range(0, this.structures.Count)]);
         }
 
