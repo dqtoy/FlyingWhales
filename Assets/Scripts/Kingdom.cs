@@ -901,7 +901,7 @@ public class Kingdom{
         if (kingdomThatDied.id != this.id) {
             RemoveRelationshipWithKingdom(kingdomThatDied);
             RemoveKingdomFromDiscoveredKingdoms(kingdomThatDied);
-            RemoveKingdomFromEmbargoList(kingdomThatDied);
+            //RemoveKingdomFromEmbargoList(kingdomThatDied);
             RemoveAdjacentKingdom(kingdomThatDied);
             if (_mainThreat != null && _mainThreat == kingdomThatDied) {
                 _mainThreat = null;
@@ -955,7 +955,13 @@ public class Kingdom{
      * </summary>
      * */
     protected void RemoveRelationshipWithKingdom(Kingdom kingdomThatDied) {
-        relationships.Remove(kingdomThatDied);
+        if (!relationships.Remove(kingdomThatDied)) {
+            string errorMsg = this.name + " cannot remove relationship with " + kingdomThatDied.name + " because it only has relationships with ";
+            for (int i = 0; i < relationships.Keys.Count; i++) {
+                errorMsg += "\n" + relationships.Keys.ElementAt(i).id + " - " + relationships.Keys.ElementAt(i).name;
+            }
+            throw new Exception(errorMsg);
+        }
     }
     /*
      * <summary>
