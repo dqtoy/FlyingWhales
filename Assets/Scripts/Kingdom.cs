@@ -150,6 +150,8 @@ public class Kingdom{
 	internal Kingdom highestRelativeStrengthAdjacentKingdom;
 	internal int highestRelativeStrengthAdjacentKingdomValue;
 
+	internal bool has100OrAboveThreat;
+
 	internal List<int> checkedWarfareID;
 
     #region getters/setters
@@ -2769,7 +2771,7 @@ public class Kingdom{
 
 	internal void AdjustWarmongerValue(int amount){
 		this._warmongerValue += amount;
-		this._warmongerValue = Mathf.Clamp(this._warmongerValue, 0, 100);
+		this._warmongerValue = Mathf.Clamp(this._warmongerValue, 0, 200);
 	}
 
 	internal void SetWarmongerValue(int amount){
@@ -2785,6 +2787,7 @@ public class Kingdom{
 		}
 	}
 	internal void UpdateThreatLevelsAndInvasionValues(){
+		has100OrAboveThreat = false;
 		if(this.king.balanceType == PURPOSE.BANDWAGON || this.king.balanceType == PURPOSE.SUPERIORITY){
 			this.highestThreatAdjacentKingdomAbove50 = null;
 			this.highestThreatAdjacentKingdomAbove50Value = 0f;
@@ -3331,6 +3334,9 @@ public class Kingdom{
 	private string SpreadPlague(){
 		Plague plague = EventCreator.Instance.CreatePlagueEvent(this, false);
 		return plague._plagueName;
+	}
+	private void AssassinateKing(Kingdom targetKingdom){
+		
 	}
 	private void ShowSuccessSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, int weaponsArmorsDestroyed = 0, string plagueName = ""){
 		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", subterfuge.ToString() + "_SUCCESS");

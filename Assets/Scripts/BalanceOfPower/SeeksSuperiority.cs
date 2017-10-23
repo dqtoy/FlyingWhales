@@ -296,8 +296,7 @@ public static class SeeksSuperiority {
 								hasOver100InvasionValue = true;
 							} 
 							if(!hasOver100InvasionValue){
-								if (relationship._relativeWeakness >= 50
-									&& relationship._relativeWeakness < 100) {
+								if (relationship._relativeWeakness > 0 && relationship._relativeWeakness < 100) {
 									if(targetKingdom == null){
 										targetKingdom = relationship.targetKingdom;
 										leastLike = relationship.totalLike;
