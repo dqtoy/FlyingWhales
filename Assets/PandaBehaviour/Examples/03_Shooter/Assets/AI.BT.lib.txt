@@ -24,12 +24,7 @@ tree("Idle")
 					SetTarget_Angle(135.0)
 					SetTarget_Angle(-135.0)
 				AimAt_Target
-				random
-					Wait(0.5)
-					Wait(1.0)
-					Wait(1.5)
-					Wait(2.0)
-
+				WaitRandom(0.5, 2.0)
 
 tree("RunForCover")
 	//Move to cover if threatened.
@@ -61,11 +56,7 @@ tree("RunForCover")
 				//Unpredictably quit cover.
 				sequence
 					not tree("IsThreatened")
-					random
-						Wait(0.0)
-						Wait(0.5)
-						Wait(1.0)
-						Wait(1.5)
+					WaitRandom(0.0, 1.5)
 					Fail //Quit Cover
 
 
@@ -113,9 +104,7 @@ tree("ChaseEnemy")
 				parallel
 					repeat
 						sequence
-							random
-								Wait(0.5)
-								Wait(1.0)
+                            WaitRandom(0.5, 1.0)
 							tree("Fire")
 
 					repeat

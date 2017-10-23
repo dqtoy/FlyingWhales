@@ -1,3 +1,15 @@
+Version 1.4.2 - 16 Augustus 2017
+-------------
+Core:
+    - GC alloc optimization:  minimize usage of RegEx during BT script parsing.
+    - Added built-in task WaitRandom(min, max)
+
+Fixes:
+    - Fixed BT script not being recompiled on Undo.
+    - Fixed 'multiple definitions' error message not displaying target class name.
+    - Highlight tasks with multiple definitions in Inspector.
+    - Fix same tree not being reset when used at different place in the BT script.
+
 Version 1.4.1 - 18 April 2017
 -------------
 Core:
