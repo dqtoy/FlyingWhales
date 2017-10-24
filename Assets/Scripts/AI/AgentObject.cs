@@ -188,6 +188,7 @@ public class AgentObject : MonoBehaviour {
     //    }
     //}
     private void Update() {
+        _aiPath.canMove = !GameManager.Instance.isPaused;
         Vector3 pos = _aiPath.transform.localPosition;
         pos.y += 0.5f;
         pos.z = 0f;

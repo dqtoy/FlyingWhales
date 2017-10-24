@@ -36,6 +36,8 @@ public class AIBehaviour {
      * </summary>
      * */
     internal virtual void OnActionDone() {
-        agentPerformingAction.agentObj.SetIsPerformingAction(false);
+        if(agentPerformingAction.agentObj != null) {
+            agentPerformingAction.agentObj.SetIsPerformingAction(false);
+        }
     }
 }
