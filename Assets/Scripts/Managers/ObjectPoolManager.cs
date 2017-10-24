@@ -15,6 +15,7 @@ public class ObjectPoolManager : MonoBehaviour {
     [SerializeField] private GameObject[] citizenAvatarPrefabs;
     [SerializeField] private GameObject[] monsterAvatarPrefabs;
     [SerializeField] private GameObject[] agentPrefabs;
+    [SerializeField] private GameObject[] otherPrefabs;
 
     private void Awake() {
         Instance = this;
@@ -41,6 +42,11 @@ public class ObjectPoolManager : MonoBehaviour {
         for (int i = 0; i < agentPrefabs.Length; i++) {
             GameObject currPrefab = agentPrefabs[i];
             CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
+        }
+
+        for (int i = 0; i < otherPrefabs.Length; i++) {
+            GameObject currPrefab = otherPrefabs[i];
+            CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
         }
 
         for (int i = 0; i < CityGenerator.Instance.humanStructures.structures.Length; i++) {
