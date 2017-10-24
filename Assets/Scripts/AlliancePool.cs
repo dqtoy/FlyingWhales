@@ -26,7 +26,7 @@ public class AlliancePool {
 
 	public AlliancePool(){
 		SetID ();
-		this._name = Utilities.GetAllianceName ();
+		this._name = RandomNameGenerator.Instance.GetAllianceName ();
 		this._kingdomsInvolved = new List<Kingdom>();
 		this._isDissolved = false;
 	}

@@ -5,7 +5,7 @@ using System.Linq;
 using Pathfinding;
 
 public class Region {
-    private int id;
+    private int _id;
     private HexTile _centerOfMass;
     private List<HexTile> _tilesInRegion; //This also includes the center of mass
     private Color regionColor;
@@ -23,6 +23,8 @@ public class Region {
     //Population
     private int _populationGrowth;
 
+	private List<HexTile> _corpseMoundTiles;
+
     private List<HexTile> _outerTiles;
     private List<SpriteRenderer> regionBorderLines;
 
@@ -30,6 +32,9 @@ public class Region {
     private GraphUpdateObject _guo;
 
     #region getters/sertters
+	internal int id {
+		get { return this._id; }
+	}
     internal HexTile centerOfMass {
         get { return _centerOfMass; }
     }
@@ -57,12 +62,19 @@ public class Region {
     internal int populationGrowth {
         get { return _populationGrowth; }
     }
+	internal List<HexTile> corpseMoundTiles {
+		get { return this._corpseMoundTiles; }
+	}
+	internal List<HexTile> outerTiles {
+		get { return this._outerTiles; }
+	}
     #endregion
 
     public Region(HexTile centerOfMass) {
-        id = Utilities.SetID<Region>(this);
+        _id = Utilities.SetID<Region>(this);
         SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
+		this._corpseMoundTiles = new List<HexTile> ();
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
         SetSpecialResource(RESOURCE.NONE);
@@ -436,6 +448,10 @@ public class Region {
     }
     #endregion
 
-
-
+	internal void AddCorpseMoundTile(HexTile hexTile){
+		this._corpseMoundTiles.Add (hexTile);
+	}
+	internal void RemoveCorpseMoundTile(HexTile hexTile){
+		this._corpseMoundTiles.Remove (hexTile);
+	}
 }

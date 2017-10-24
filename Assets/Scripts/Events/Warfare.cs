@@ -48,7 +48,7 @@ public class Warfare {
 	#endregion
 	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom){
 		SetID();
-		this._name = Utilities.GetWarfareName ();
+		this._name = RandomNameGenerator.Instance.GetWarfareName ();
 		this._isOver = false;
 //		this._sideA = new List<Kingdom>();
 //		this._sideB = new List<Kingdom>();
