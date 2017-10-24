@@ -450,8 +450,9 @@ public class KingdomManager : MonoBehaviour {
 		}
 	}
 
-	internal void StartUndeadKingdom(HexTile hexTile){
+	internal void StartUndeadKingdom(HexTile hexTile, int undeadCount){
 		Kingdom newKingdom = GenerateNewKingdom(RACE.UNDEAD, new List<HexTile>() { hexTile });
+		newKingdom.InitializeUndeadKingdom (undeadCount);
 		newKingdom.HighlightAllOwnedTilesInKingdom();
 	}
 }

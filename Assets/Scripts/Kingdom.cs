@@ -2390,13 +2390,18 @@ public class Kingdom{
 	private void ActionDay(){
 		if(!this.isDead){
 			UpdateThreatLevelsAndInvasionValues ();
-			if (this.king.balanceType == PURPOSE.BALANCE) {
-				SeeksBalance.Initialize(this);
-			}else if (this.king.balanceType == PURPOSE.SUPERIORITY) {
-				SeeksSuperiority.Initialize(this);
-			}else if (this.king.balanceType == PURPOSE.BANDWAGON) {
-				SeeksBandwagon.Initialize(this);
+			if(this.race != RACE.UNDEAD){
+				if (this.king.balanceType == PURPOSE.BALANCE) {
+					SeeksBalance.Initialize(this);
+				}else if (this.king.balanceType == PURPOSE.SUPERIORITY) {
+					SeeksSuperiority.Initialize(this);
+				}else if (this.king.balanceType == PURPOSE.BANDWAGON) {
+					SeeksBandwagon.Initialize(this);
+				}
+			}else{
+				SeeksUndead.Initialize (this);
 			}
+
 			CheckStability ();
 
 			GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
@@ -2792,22 +2797,28 @@ public class Kingdom{
 	}
 	internal void UpdateThreatLevelsAndInvasionValues(){
 		has100OrAboveThreat = false;
-		if(this.king.balanceType == PURPOSE.BANDWAGON || this.king.balanceType == PURPOSE.SUPERIORITY){
-			this.highestThreatAdjacentKingdomAbove50 = null;
-			this.highestThreatAdjacentKingdomAbove50Value = 0f;
-			this.highestRelativeStrengthAdjacentKingdom = null;
-			this.highestRelativeStrengthAdjacentKingdomValue = 0;
+		if(this.race == RACE.UNDEAD){
 			foreach (KingdomRelationship relationship in this.relationships.Values) {
 				relationship.UpdateThreatLevelAndInvasionValue ();
-			}
-//			highestThreatAdjacentKingdomAbove50 = GetKingdomWithHighestAtLeastAbove50Threat ();
-			foreach (KingdomRelationship relationship in this.relationships.Values) {
 				relationship.UpdateLikeness ();
 			}
 		}else{
-			foreach (KingdomRelationship relationship in this.relationships.Values) {
-				relationship.UpdateThreatLevelAndInvasionValue ();
-				relationship.UpdateLikeness ();
+			if(this.king.balanceType == PURPOSE.BANDWAGON || this.king.balanceType == PURPOSE.SUPERIORITY){
+				this.highestThreatAdjacentKingdomAbove50 = null;
+				this.highestThreatAdjacentKingdomAbove50Value = 0f;
+				this.highestRelativeStrengthAdjacentKingdom = null;
+				this.highestRelativeStrengthAdjacentKingdomValue = 0;
+				foreach (KingdomRelationship relationship in this.relationships.Values) {
+					relationship.UpdateThreatLevelAndInvasionValue ();
+				}
+				foreach (KingdomRelationship relationship in this.relationships.Values) {
+					relationship.UpdateLikeness ();
+				}
+			}else{
+				foreach (KingdomRelationship relationship in this.relationships.Values) {
+					relationship.UpdateThreatLevelAndInvasionValue ();
+					relationship.UpdateLikeness ();
+				}
 			}
 		}
 	}
@@ -3209,41 +3220,43 @@ public class Kingdom{
 			}
 			if(triggerChance < triggerValue){
 				SUBTERFUGE_ACTIONS subterfuge = GetSubterfugeAction ();
-				int successChance = UnityEngine.Random.Range (0, 100);
-				int caughtChance = UnityEngine.Random.Range (0, 100);
-				int successValue = 60;
-				if(this.king.intelligence == INTELLIGENCE.SMART){
-					successValue += 15;
-				}else if(this.king.intelligence == INTELLIGENCE.DUMB){
-					successValue -= 15;
-				}
-				if(successChance < successValue){
-					//Success
-					CreateSuccessSubterfugeAction(subterfuge, targetKingdom);
-
-				}else{
-					//Fail
-					int criticalFailChance = UnityEngine.Random.Range (0, 100);
-					int criticalFailValue = 20;
-					if(this.king.efficiency == EFFICIENCY.INEPT){
-						criticalFailValue += 5;
-					}else if(this.king.efficiency == EFFICIENCY.EFFICIENT){
-						criticalFailValue -= 5;
-					}
-					if(criticalFailChance < criticalFailValue){
-						//Critical Failure
-						CreateCriticalFailSubterfugeAction(subterfuge, targetKingdom);
-					}else{
-						//Failure
-						CreateFailSubterfugeAction(subterfuge, targetKingdom);
-					}
-				}
-
-				if(caughtChance < 5){
-					CreateCaughtSubterfugeAction (subterfuge, targetKingdom);
-				}
-			
+				CreateSubterfugeEvent (subterfuge, targetKingdom);
 			}
+		}
+	}
+	internal void CreateSubterfugeEvent(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
+		int successChance = UnityEngine.Random.Range (0, 100);
+		int caughtChance = UnityEngine.Random.Range (0, 100);
+		int successValue = 60;
+		if(this.king.intelligence == INTELLIGENCE.SMART){
+			successValue += 15;
+		}else if(this.king.intelligence == INTELLIGENCE.DUMB){
+			successValue -= 15;
+		}
+		if(successChance < successValue){
+			//Success
+			CreateSuccessSubterfugeAction(subterfuge, targetKingdom);
+
+		}else{
+			//Fail
+			int criticalFailChance = UnityEngine.Random.Range (0, 100);
+			int criticalFailValue = 20;
+			if(this.king.efficiency == EFFICIENCY.INEPT){
+				criticalFailValue += 5;
+			}else if(this.king.efficiency == EFFICIENCY.EFFICIENT){
+				criticalFailValue -= 5;
+			}
+			if(criticalFailChance < criticalFailValue){
+				//Critical Failure
+				CreateCriticalFailSubterfugeAction(subterfuge, targetKingdom);
+			}else{
+				//Failure
+				CreateFailSubterfugeAction(subterfuge, targetKingdom);
+			}
+		}
+
+		if(caughtChance < 5){
+			CreateCaughtSubterfugeAction (subterfuge, targetKingdom);
 		}
 	}
 	private SUBTERFUGE_ACTIONS GetSubterfugeAction(){
@@ -3399,6 +3412,12 @@ public class Kingdom{
 		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
 		newLog.AddToFillers (null, incidentName, LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification (newLog);
+	}
+	#endregion
+
+	#region Undead
+	internal void InitializeUndeadKingdom(int undeadCount){
+		this.AdjustPopulation (undeadCount);
 	}
 	#endregion
 }

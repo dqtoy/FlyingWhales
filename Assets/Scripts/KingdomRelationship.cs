@@ -274,11 +274,26 @@ public class KingdomRelationship {
 		//	baseLoyalty += adjustment;
 		//	this._relationshipSummary += "+" + adjustment.ToString() + " Same Race.\n";
 		//}else{
-		if (this._sourceKingdom.race != this._targetKingdom.race) {
-			adjustment = -30;
-			baseLoyalty += adjustment;
-			this._relationshipSummary += adjustment.ToString() + " Different Race.\n";
+		if(this._sourceKingdom.race != RACE.UNDEAD){
+			if(this._targetKingdom.race == RACE.UNDEAD){
+				adjustment = -50;
+				baseLoyalty += adjustment;
+				this._relationshipSummary += adjustment.ToString() + " Undead Race.\n";
+			}else{
+				if (this._sourceKingdom.race != this._targetKingdom.race) {
+					adjustment = -30;
+					baseLoyalty += adjustment;
+					this._relationshipSummary += adjustment.ToString() + " Different Race.\n";
+				}
+			}
+		}else{
+			if (this._targetKingdom.race != RACE.UNDEAD) {
+				adjustment = -30;
+				baseLoyalty += adjustment;
+				this._relationshipSummary += adjustment.ToString() + " Living.\n";
+			}
 		}
+
 
 		//Charisma Trait
 		if(this._targetKingdom.king.charisma == CHARISMA.CHARISMATIC){
@@ -346,7 +361,7 @@ public class KingdomRelationship {
 		if(this._sourceKingdom.king.balanceType != PURPOSE.BANDWAGON && this._sourceKingdom.has100OrAboveThreat && this.targetKingdomThreatLevel <= 50){
 			adjustment = 30;
 			baseLoyalty += adjustment;
-			this._relationshipSummary += "+" + adjustment.ToString() + " Kingdom Threat.\n";
+			this._relationshipSummary += "+" + adjustment.ToString() + " Bigger Threats.\n";
 		}else{
 			adjustment = GetKingdomThreatOpinionChange();
 			if(adjustment != -1){
@@ -953,8 +968,17 @@ public class KingdomRelationship {
 		}
 	}
 	internal void UpdateTheoreticalAttackAndDefense(){
-		int personalAttack = GetTheoreticalAttack ();
-		int personalDefense = GetTheoreticalDefense ();
+		int personalAttack = 0;
+		int personalDefense = 0;
+
+		if(this._sourceKingdom.race == RACE.UNDEAD){
+			personalAttack = this._sourceKingdom.population;
+			personalDefense = this._sourceKingdom.population;
+		}else{
+			personalAttack = GetTheoreticalAttack ();
+			personalDefense = GetTheoreticalDefense ();
+		}
+
 		int posAllianceAttack = GetAdjacentPosAllianceEffectiveAttack ();
 		int otherAdjacentEnemiesAttack = GetOtherAdjacentEnemiesAttack ();
 //		int posAllianceDefense = GetAdjacentPosAllianceArmors ();
@@ -1103,50 +1127,76 @@ public class KingdomRelationship {
 		int adjustment = -1;
 		float threat = this.targetKingdomThreatLevel;
 
-		if (threat == 0f) {
-			adjustment = 25;
-		} else if (threat > 0f && threat <= 25f) {
-			adjustment = 0;
-		} else if (threat > 25f && threat <= 50f) {
-			adjustment = -30;
-			if (!this._isAdjacent) {
-				adjustment = -15;
-			}
-		} else if (threat > 50f && threat < 100f) {
-			adjustment = -50;
-			if (!this._isAdjacent) {
-				adjustment = -25;
-			}
-		} else {
-			adjustment = -100;
-			if (!this._isAdjacent) {
+		if(this._sourceKingdom.race != RACE.UNDEAD){
+			if (threat == 0f) {
+				adjustment = 25;
+			} else if (threat > 0f && threat <= 25f) {
+				adjustment = 0;
+			} else if (threat > 25f && threat <= 50f) {
+				adjustment = -30;
+				if (!this._isAdjacent) {
+					adjustment = -15;
+				}
+			} else if (threat > 50f && threat < 100f) {
 				adjustment = -50;
+				if (!this._isAdjacent) {
+					adjustment = -25;
+				}
+			} else {
+				adjustment = -100;
+				if (!this._isAdjacent) {
+					adjustment = -50;
+				}
 			}
+
+			if (this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
+				if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
+					if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
+						adjustment = 100;
+					}
+				}
+			}else if (this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
+				if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
+					if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
+						adjustment = -100;
+					}
+				}
+			}
+		}else{
+			if (this._targetKingdom.warmongerValue == 0) {
+				adjustment = -50;
+			} else if (this._targetKingdom.warmongerValue > 0 && this._targetKingdom.warmongerValue <= 50f) {
+				adjustment = 0;
+			} else if (threat > 50f && threat < 100f) {
+				adjustment = 25;
+			} else {
+				adjustment = 50;
+			}
+
 		}
 
-		if (this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
-			if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
-				if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
-					adjustment = 100;
-				}
-			}
-		}else if (this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
-			if (this._sourceKingdom.id != KingdomManager.Instance.kingdomRankings [0].id) {
-				if (this._targetKingdom.id == KingdomManager.Instance.kingdomRankings [0].id) {
-					adjustment = -100;
-				}
-			}
-		}
 		return adjustment;
 	}
 
 	private int GetKingdomInvasionValueOpinionChange(){
 		int adjustment = -1;
-		if (this._sourceKingdom.king.balanceType == PURPOSE.BALANCE){
-			if(this._relativeWeakness >= 100){
-				adjustment = 50;
-			}else if(this._relativeWeakness > 50 && this._relativeWeakness < 100){
-				adjustment = 25;
+		if(this._sourceKingdom.race != RACE.UNDEAD){
+			if (this._sourceKingdom.king.balanceType == PURPOSE.BALANCE){
+				if(this._relativeWeakness >= 100){
+					adjustment = 50;
+				}else if(this._relativeWeakness > 50 && this._relativeWeakness < 100){
+					adjustment = 25;
+				}
+			}else{
+				if(this._isAdjacent){				
+					if (this._relativeWeakness >= 100) {
+						adjustment = -50;
+					} else if (this._relativeWeakness > 50 && this._relativeWeakness < 100) {
+						adjustment = -25;
+					} else if (this._relativeWeakness > 0 && this._relativeWeakness <= 50 && this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
+						adjustment = -15;
+					}
+				}
 			}
 		}else{
 			if(this._isAdjacent){				
@@ -1154,11 +1204,14 @@ public class KingdomRelationship {
 					adjustment = -50;
 				} else if (this._relativeWeakness > 50 && this._relativeWeakness < 100) {
 					adjustment = -25;
-				} else if (this._relativeWeakness > 0 && this._relativeWeakness <= 50 && this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
+				} else if (this._relativeWeakness > 0 && this._relativeWeakness <= 50) {
 					adjustment = -15;
+				}else{
+					adjustment = 50;
 				}
 			}
 		}
+
 		return adjustment;
 	}
 	internal void SetCantAlly(bool state){

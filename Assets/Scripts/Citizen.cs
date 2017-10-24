@@ -1179,7 +1179,16 @@ public class Citizen {
 		this._balanceType = GetBalanceType();
 		this._warmonger = GenerateWarmonger ();
     }
-
+	private void GenerateNecromancerTraits(){
+		this._charisma = GenerateNecromancerCharismaTrait();
+		this._efficiency = GenerateNecromancerEfficiencyTrait();
+		this._intelligence = GenerateNecromancerIntelligenceTrait();
+		this._science = GenerateNecromancerScienceTrait();
+		this._military = GenerateNecromancerMilitaryTrait();
+		this._loyalty = GenerateNecromancerLoyaltyTrait();
+		this._balanceType = GetBalanceType();
+		this._warmonger = GenerateNecromancerWarmonger ();
+	}
     private CHARISMA GenerateCharismaTrait() {
         int chance = Random.Range(0, 100);
         if(chance < 20) {
@@ -1278,6 +1287,66 @@ public class Citizen {
 			}else{
 				return WARMONGER.VERY_LOW;
 			}
+		}
+	}
+
+	private CHARISMA GenerateNecromancerCharismaTrait() {
+		int chance = Random.Range(0, 2);
+		if(chance == 0) {
+			return CHARISMA.REPULSIVE;
+		} else {
+			return CHARISMA.NEUTRAL;
+		}
+	}
+	private INTELLIGENCE GenerateNecromancerIntelligenceTrait() {
+		int chance = Random.Range(0, 100);
+		if (chance < 20) {
+			return INTELLIGENCE.SMART;
+		} else if (chance >= 20 && chance < 40) {
+			return INTELLIGENCE.DUMB;
+		} else {
+			return INTELLIGENCE.NEUTRAL;
+		}
+	}
+	private EFFICIENCY GenerateNecromancerEfficiencyTrait() {
+		int chance = Random.Range(0, 100);
+		if (chance < 20) {
+			return EFFICIENCY.EFFICIENT;
+		} else if (chance >= 20 && chance < 40) {
+			return EFFICIENCY.INEPT;
+		} else {
+			return EFFICIENCY.NEUTRAL;
+		}
+	}
+	private SCIENCE GenerateNecromancerScienceTrait() {
+		return SCIENCE.NEUTRAL;
+	}
+	private MILITARY GenerateNecromancerMilitaryTrait() {
+		int chance = Random.Range(0, 100);
+		if (chance < 40) {
+			return MILITARY.HOSTILE;
+		} else if (chance >= 40 && chance < 70) {
+			return MILITARY.MILITANT;
+		} else {
+			return MILITARY.NEUTRAL;
+		}
+	}
+	private LOYALTY GenerateNecromancerLoyaltyTrait() {
+		int chance = Random.Range(0, 2);
+		if(chance == 0) {
+			return LOYALTY.SCHEMING;
+		} else {
+			return LOYALTY.NEUTRAL;
+		}
+	}
+	private WARMONGER GenerateNecromancerWarmonger(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < 50){
+			return WARMONGER.HIGH;
+		}else if(chance >= 50 && chance < 80){
+			return WARMONGER.VERY_HIGH;
+		}else{
+			return WARMONGER.AVERAGE;
 		}
 	}
 	private PURPOSE GetBalanceType(){
