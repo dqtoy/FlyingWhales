@@ -740,7 +740,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			Vector3.zero, Quaternion.identity, structureParentGO.transform);
 		this._corpseMoundGO.transform.localPosition = Vector3.zero;
 		SetCorpseMound (this._corpseMoundGO.GetComponent<CorpseMound>());
-		this._corpseMound.Initialize (initialCorpseCount, this);
+		this._corpseMound.Initialize (this, initialCorpseCount);
 		return this._corpseMound;
 	}
     internal void HideStructures() {
