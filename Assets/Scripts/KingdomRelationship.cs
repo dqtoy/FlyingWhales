@@ -245,7 +245,7 @@ public class KingdomRelationship {
      * Update likeness based on set criteria (shared values, shared kingdom type, etc.)
      * </summary>
      * */
-    internal void UpdateLikeness(GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons = ASSASSINATION_TRIGGER_REASONS.NONE, bool isDiscovery = false) {
+    internal void UpdateLikeness() {
         this._relationshipSummary = string.Empty;
         int baseLoyalty = 0;
         int adjustment = 0;
@@ -434,7 +434,7 @@ public class KingdomRelationship {
      * */
     internal void SetBorderSharing(bool isSharingBorder) {
         _isSharingBorder = isSharingBorder;
-        UpdateLikeness(null);
+        UpdateLikeness();
     }
 
     #region Trading
