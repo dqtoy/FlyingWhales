@@ -116,6 +116,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private LairItem _lairItem;
 	private HextileEventItem _hextileEventItem;
 	private GameObject plagueIcon;
+	private GameObject _corpseMoundGO = null;
+	private CorpseMound _corpseMound = null;
+	private GameDate _corpseMoundDestroyDate;
 
     private List<Citizen> _citizensOnTile = new List<Citizen>();
 
@@ -174,6 +177,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public List<Kingdom> visibleByKingdoms {
         get { return _visibleByKingdoms; }
     }
+	public CorpseMound corpseMound{
+		get { return this._corpseMound; }
+	}
     #endregion
 
     #region Region Functions
@@ -729,6 +735,14 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         structureGO.transform.localPosition = Vector3.zero;
         return structureGO;
     }
+	internal CorpseMound CreateCorpseMoundObjectOnTile(int initialCorpseCount) {
+		this._corpseMoundGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(CityGenerator.Instance.GetCorpseMoundGO().name,
+			Vector3.zero, Quaternion.identity, structureParentGO.transform);
+		this._corpseMoundGO.transform.localPosition = Vector3.zero;
+		SetCorpseMound (this._corpseMoundGO.GetComponent<CorpseMound>());
+		this._corpseMound.Initialize (initialCorpseCount, this);
+		return this._corpseMound;
+	}
     internal void HideStructures() {
         structureParentGO.SetActive(false);
     }
@@ -1308,4 +1322,24 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     internal void ExitCitizen(Citizen citizen) {
         this._citizensOnTile.Remove(citizen);
     }
+
+	internal void SetCorpseMound(CorpseMound corpseMound){
+		this._corpseMound = corpseMound;
+		if(corpseMound != null){
+			this.region.AddCorpseMoundTile (this);
+		}else{
+			if(this.region.corpseMoundTiles.Count > 0){
+				this.region.RemoveCorpseMoundTile (this);
+			}
+		}
+	}
+	internal bool IsAdjacentWithRegion(Region region){
+		List<HexTile> neighbors = this.AllNeighbours;
+		for (int i = 0; i < neighbors.Count; i++) {
+			if(neighbors[i].region.id == region.id){
+				return true;
+			}
+		}
+		return false;
+	}
 }
