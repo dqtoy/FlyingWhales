@@ -1938,8 +1938,8 @@ public class Kingdom{
 			this._techLevel = 0;
 		}
 		this._techCounter = 0;
-		AdjustPowerPointsToAllCities(amount);
-        AdjustDefensePointsToAllCities(amount);
+		//AdjustPowerPointsToAllCities(amount);
+  //      AdjustDefensePointsToAllCities(amount);
 		this.UpdateTechCapacity();
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id == this.id) {
             UIManager.Instance.UpdateTechMeter();
@@ -1947,10 +1947,10 @@ public class Kingdom{
     }
     internal void DegradeTechLevel(int amount) {
         _techLevel -= amount;
-        if(_techLevel >= 0) {
-            AdjustPowerPointsToAllCities(-amount);
-            AdjustDefensePointsToAllCities(-amount);
-        }
+        //if(_techLevel >= 0) {
+        //    AdjustPowerPointsToAllCities(-amount);
+        //    AdjustDefensePointsToAllCities(-amount);
+        //}
         _techLevel = Mathf.Max(0, _techLevel);
         this._techCounter = 0;
         UpdateTechCapacity();
@@ -2761,17 +2761,17 @@ public class Kingdom{
 		this._isMobilizing = state;
 	}
 
-	private void AdjustPowerPointsToAllCities(int amount){
-		for (int i = 0; i < this.cities.Count; i++) {
-			this.cities[i].AdjustPowerPoints(amount);
-		}
-	}
+	//private void AdjustPowerPointsToAllCities(int amount){
+	//	for (int i = 0; i < this.cities.Count; i++) {
+	//		this.cities[i].AdjustPowerPoints(amount);
+	//	}
+	//}
 
-    private void AdjustDefensePointsToAllCities(int amount) {
-        for (int i = 0; i < this.cities.Count; i++) {
-            this.cities[i].AdjustDefensePoints(amount);
-        }
-    }
+ //   private void AdjustDefensePointsToAllCities(int amount) {
+ //       for (int i = 0; i < this.cities.Count; i++) {
+ //           this.cities[i].AdjustDefensePoints(amount);
+ //       }
+ //   }
 
 	internal void AdjustWarmongerValue(int amount){
 		this._warmongerValue += amount;

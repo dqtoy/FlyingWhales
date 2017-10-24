@@ -3,8 +3,8 @@ using System.Collections;
 using Panda;
 using Pathfinding;
 
-[RequireComponent(typeof(Seeker))]
-[RequireComponent(typeof(SimpleSmoothModifier))]
+//[RequireComponent(typeof(Seeker))]
+//[RequireComponent(typeof(SimpleSmoothModifier))]
 public class AgentAI : AIPath {
 
     [SerializeField] private AgentObject _agentObj;

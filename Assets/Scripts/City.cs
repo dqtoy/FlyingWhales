@@ -29,9 +29,9 @@ public class City{
 	private float _productionGrowthPercentage;
 
     //Balance of Power
-    private int _powerPoints;
-    private int _defensePoints;
-    private int _techPoints;
+    //private int _powerPoints;
+    //private int _defensePoints;
+    //private int _techPoints;
     private int _weapons;
     private int _armor;
 
@@ -91,13 +91,13 @@ public class City{
     //    get { return _adjacentCities; }
     //}
     public int powerPoints {
-        get { return _powerPoints; }
+        get { return kingdom.kingdomTypeData.productionPointsSpend.power + cityLevel + kingdom.techLevel; }
     }
     public int defensePoints {
-        get { return _defensePoints; }
+        get { return kingdom.kingdomTypeData.productionPointsSpend.defense + cityLevel + kingdom.techLevel; }
     }
     public int techPoints {
-        get { return _techPoints; }
+        get { return kingdom.kingdomTypeData.productionPointsSpend.tech + cityLevel; }
     }
     public int weapons {
         get { return _weapons; }
@@ -186,7 +186,7 @@ public class City{
 
     internal void SetupInitialValues() {
         hexTile.CheckLairsInRange();
-        LevelUpBalanceOfPower();
+        //LevelUpBalanceOfPower();
         //AdjustArmor(50);
         SetProductionGrowthPercentage(1f);
         DailyGrowthResourceBenefits();
@@ -309,8 +309,8 @@ public class City{
         _kingdom.UpdatePopulationCapacity();
 
         tileToBuy.CheckLairsInRange ();
-        LevelUpBalanceOfPower();
-		this.UpdateHP (percentageHP);
+        //LevelUpBalanceOfPower();
+		//this.UpdateHP (percentageHP);
         UIManager.Instance.UpdateMinimapInfo();
     }
 
@@ -811,18 +811,18 @@ public class City{
             Citizen citizenToAdd = citizensToAdd[i];
             otherKingdom.AddCitizenToKingdom(citizenToAdd, this);
         }
-        //Reset Points
-        _powerPoints = 0;
-        _defensePoints = 0;
-        _techPoints = 0;
+        ////Reset Points
+        //_powerPoints = 0;
+        //_defensePoints = 0;
+        //_techPoints = 0;
         for (int i = 0; i < this._ownedTiles.Count; i++) {
             this._ownedTiles[i].ReColorStructure();
             this._ownedTiles[i].SetMinimapTileColor(_kingdom.kingdomColor);
             //Reevaluate points based on new kingdom
-            LevelUpBalanceOfPower();
+            //LevelUpBalanceOfPower();
         }
-        _powerPoints += _kingdom.techLevel;
-        _defensePoints += _kingdom.techLevel;
+        //_powerPoints += _kingdom.techLevel;
+        //_defensePoints += _kingdom.techLevel;
 
         this.hexTile.UpdateCityNamePlate();
         CameraMove.Instance.UpdateMinimapTexture();
@@ -864,21 +864,21 @@ public class City{
 	}
 
     #region Balance Of Power
-	internal void AdjustPowerPoints(int powerPoints) {
-		this._powerPoints += powerPoints;
-	}
-	internal void SetPowerPoints(int powerPoints) {
-		this._powerPoints = powerPoints;
-	}
-	internal void AdjustDefensePoints(int defensePoints) {
-		this._defensePoints += defensePoints;
-	}
-	internal void SetDefensePoints(int defensePoints) {
-		this._defensePoints = defensePoints;
-	}
-    internal void AdjustTechPoints(int techPoints) {
-        _techPoints += techPoints;
-    }
+	//internal void AdjustPowerPoints(int powerPoints) {
+	//	this._powerPoints += powerPoints;
+	//}
+	//internal void SetPowerPoints(int powerPoints) {
+	//	this._powerPoints = powerPoints;
+	//}
+	//internal void AdjustDefensePoints(int defensePoints) {
+	//	this._defensePoints += defensePoints;
+	//}
+	//internal void SetDefensePoints(int defensePoints) {
+	//	this._defensePoints = defensePoints;
+	//}
+ //   internal void AdjustTechPoints(int techPoints) {
+ //       _techPoints += techPoints;
+ //   }
     internal void SetWeapons(int newPower) {
         //_kingdom.AdjustBasePower(-_power);
         _weapons = 0;
@@ -904,11 +904,11 @@ public class City{
         KingdomManager.Instance.UpdateKingdomList();
     }
 
-    private void LevelUpBalanceOfPower() {
-        AdjustPowerPoints(_kingdom.kingdomTypeData.productionPointsSpend.power);
-        AdjustDefensePoints(_kingdom.kingdomTypeData.productionPointsSpend.defense);
-        AdjustTechPoints(_kingdom.kingdomTypeData.productionPointsSpend.tech);
-    }
+    //private void LevelUpBalanceOfPower() {
+    //    AdjustPowerPoints(_kingdom.kingdomTypeData.productionPointsSpend.power);
+    //    AdjustDefensePoints(_kingdom.kingdomTypeData.productionPointsSpend.defense);
+    //    AdjustTechPoints(_kingdom.kingdomTypeData.productionPointsSpend.tech);
+    //}
 	internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, ref int stabilityIncrease){
 		switch (this._region.specialResource){
 		case RESOURCE.CORN:
