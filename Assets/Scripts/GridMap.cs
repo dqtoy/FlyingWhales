@@ -64,6 +64,7 @@ public class GridMap : MonoBehaviour {
                 currHex.tileName = hex.name;
                 currHex.xCoordinate = x;
                 currHex.yCoordinate = y;
+                currHex.SetPathfindingTag(0);
 //				int sortingOrder = x - y;
 //				hex.GetComponent<HexTile>().SetSortingOrder(sortingOrder);
 				listHexes.Add(hex);

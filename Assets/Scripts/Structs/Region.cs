@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Pathfinding;
 
 public class Region {
     private int _id;
@@ -26,6 +27,9 @@ public class Region {
 
     private List<HexTile> _outerTiles;
     private List<SpriteRenderer> regionBorderLines;
+
+    //Pathfinding
+    private GraphUpdateObject _guo;
 
     #region getters/sertters
 	internal int id {
@@ -173,6 +177,7 @@ public class Region {
         _occupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.VISIBLE);
         _cityLevelCap = _naturalResourceLevel[occupant.kingdom.race];
         SetAdjacentRegionsAsVisibleForOccupant();
+        SetRegionPathfindingTag(occupant.kingdom.kingdomTagIndex);
         Color solidKingdomColor = _occupant.kingdom.kingdomColor;
         solidKingdomColor.a = 255f / 255f;
         ReColorBorderTiles(solidKingdomColor);
@@ -222,8 +227,8 @@ public class Region {
                 }
             }
         }
-        
-        
+        SetRegionPathfindingTag(PathfindingManager.unoccupiedTagIndex);
+
         ReColorBorderTiles(defaultBorderColor);
         
         if (_specialResource != RESOURCE.NONE) {
@@ -430,6 +435,16 @@ public class Region {
                 }
             }
         }
+    }
+    #endregion
+
+    #region Pathfinding
+    private void SetRegionPathfindingTag(int pathfindingTag) {
+        for (int i = 0; i < tilesInRegion.Count; i++) {
+            tilesInRegion[i].SetPathfindingTag(pathfindingTag);
+        }
+
+        //PathfindingManager.Instance.RescanSpecificPortion(_guo);
     }
     #endregion
 

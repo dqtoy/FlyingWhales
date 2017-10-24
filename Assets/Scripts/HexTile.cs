@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using PathFind;
 using System.Linq;
 using Panda;
+using Pathfinding;
 
 public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Header("General Tile Details")]
@@ -25,7 +26,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [Space(10)]
     [Header("Pathfinding Objects")]
-    [SerializeField] private GameObject pathfindingGO; //Place this in layer Water, Mountain or Plain when biome & elevation is determined
+    [SerializeField] private GameObject pathfindingGO; //Place this in tag Water, Mountain or Plain when biome & elevation is determined
+    [SerializeField] private GraphUpdateScene gus; //This is used to tag the tiles
+    [SerializeField] private Collider2D _pathfindingCollider;
 
     [Space(10)]
     [Header("Resources")]
@@ -121,6 +124,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	private GameDate _corpseMoundDestroyDate;
 
     private List<Citizen> _citizensOnTile = new List<Citizen>();
+    private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
     [System.NonSerialized] public List<HexTile> connectedTiles = new List<HexTile>();
 
@@ -177,9 +181,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public List<Kingdom> visibleByKingdoms {
         get { return _visibleByKingdoms; }
     }
-	public CorpseMound corpseMound{
+    internal Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections {
+        get { return _neighbourDirections; }
+    }
+    internal Collider2D pathfindingCollider {
+        get { return _pathfindingCollider; }
+    }
+    	public CorpseMound corpseMound{
 		get { return this._corpseMound; }
 	}
+
     #endregion
 
     #region Region Functions
@@ -193,12 +204,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         this.elevationType = elevationType;
         switch (elevationType) {
             case ELEVATION.MOUNTAIN:
+                //AddPathfindingTag(PathfindingManager.mountainTag);
                 pathfindingGO.layer = LayerMask.NameToLayer("Pathfinding_Mountains");
                 break;
             case ELEVATION.WATER:
+                //AddPathfindingTag(PathfindingManager.waterTag);
                 pathfindingGO.layer = LayerMask.NameToLayer("Pathfinding_Water");
                 break;
             case ELEVATION.PLAIN:
+                //AddPathfindingTag(PathfindingManager.plainTag);
                 pathfindingGO.layer = LayerMask.NameToLayer("Pathfinding_Plains");
                 break;
         }
@@ -349,8 +363,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     #region Pathfinding
+    internal void SetPathfindingTag(int pathfindingTag) {
+        gus.setTag = pathfindingTag;
+        gus.Apply();
+    }
     public void FindNeighbours(HexTile[,] gameBoard) {
-		var neighbours = new List<HexTile>();
+        _neighbourDirections = new Dictionary<HEXTILE_DIRECTION, HexTile>();
+        var neighbours = new List<HexTile>();
 
 		List<Point> possibleExits;
 
@@ -364,11 +383,17 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			int neighbourCoordinateX = xCoordinate + possibleExits [i].X;
 			int neighbourCoordinateY = yCoordinate + possibleExits [i].Y;
 			if (neighbourCoordinateX >= 0 && neighbourCoordinateX < gameBoard.GetLength(0) && neighbourCoordinateY >= 0 && neighbourCoordinateY < gameBoard.GetLength(1)){
-				neighbours.Add (gameBoard [neighbourCoordinateX, neighbourCoordinateY]);
-			}
+                HexTile currNeighbour = gameBoard[neighbourCoordinateX, neighbourCoordinateY];
+                neighbours.Add (currNeighbour);
+            }
 
 		}
 		this.AllNeighbours = neighbours;
+
+        for (int i = 0; i < neighbours.Count; i++) {
+            HexTile currNeighbour = neighbours[i];
+            _neighbourDirections.Add(GetNeighbourDirection(currNeighbour), currNeighbour);
+        }
 	}
     internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour) {
         if (!AllNeighbours.Contains(neighbour)) {

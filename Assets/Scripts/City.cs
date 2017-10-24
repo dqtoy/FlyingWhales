@@ -59,7 +59,9 @@ public class City{
 
 	private int _bonusStability;
 
-	#region getters/setters
+    private List<Guard> activeGuards;
+
+    #region getters/setters
     internal Region region {
         get { return _region; }
     }
@@ -162,6 +164,7 @@ public class City{
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
 		this._hp = this.maxHP;
+        activeGuards = new List<Guard>();
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 
 		//if(!isRebel){
@@ -189,8 +192,9 @@ public class City{
         DailyGrowthResourceBenefits();
         AddOneTimeResourceBenefits();
         Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
-        GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-        increaseDueDate.AddMonths(1);
+        //GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+        //increaseDueDate.AddMonths(1);
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => SpawnGuardsAtEndOfMonth());
     }
 
 	/*
@@ -489,6 +493,7 @@ public class City{
 	public void KillCity(){
         RemoveListeners();
 		RemoveOneTimeResourceBenefits();
+        KillActiveGuards();
         /*
          * Remove irrelevant scripts on hextile
          * */
@@ -545,7 +550,7 @@ public class City{
      * */
 	internal void ConquerCity(Kingdom conqueror, Warfare warfare) {
         RemoveOneTimeResourceBenefits();
-
+        KillActiveGuards();
         //Combat invasion should reduce City level by half.
         int halfOfCityLevel = Mathf.FloorToInt(this.ownedTiles.Count / 2);
         for (int i = 0; i < halfOfCityLevel; i++) {
@@ -786,6 +791,7 @@ public class City{
 	}
     internal void ChangeKingdom(Kingdom otherKingdom, List<Citizen> citizensToAdd) {
         _region.RemoveOccupant();
+        KillActiveGuards();
         //List<HexTile> allTilesOfCity = new List<HexTile>();
         //allTilesOfCity.AddRange(ownedTiles);
         //allTilesOfCity.AddRange(borderTiles);
@@ -996,4 +1002,39 @@ public class City{
 	internal int GetNaturalResourceLevel(){
 		return (int)((float)this._region.naturalResourceLevel [kingdom.race] * (1f + (0.1f * this._kingdom.techLevel)));
 	}
+
+    #region Agent Functions
+    internal void SpawnGuardsAtEndOfMonth() {
+        int maxGuards = 1 + (cityLevel / 3);
+        if(activeGuards.Count < maxGuards) {
+            //Spawn a new guard to patrol the city
+            activeGuards.Add(SpawnPatrollingGuard());
+        }
+        GameDate nextSpawnDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        nextSpawnDate.AddMonths(1);
+        nextSpawnDate.SetDate(nextSpawnDate.month, GameManager.daysInMonth[nextSpawnDate.month], nextSpawnDate.year);
+        SchedulingManager.Instance.AddEntry(nextSpawnDate, () => SpawnGuardsAtEndOfMonth());
+    }
+    private Guard SpawnPatrollingGuard() {
+        Guard newGuard = new Guard();
+        AIBehaviour attackBehaviour = new AttackHostiles(newGuard);
+        AIBehaviour fleeBehaviour = new RunAwayFromHostile(newGuard, this._kingdom);
+        AIBehaviour randomBehaviour = new PatrolCity(newGuard, this);
+        newGuard.SetAttackBehaviour(attackBehaviour);
+        newGuard.SetFleeBehaviour(fleeBehaviour);
+        newGuard.SetRandomBehaviour(randomBehaviour);
+        GameObject guardObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", this.hexTile.transform.position, Quaternion.identity, this.hexTile.transform);
+        guardObj.transform.localPosition = Vector3.zero;
+        AgentObject agentObj = guardObj.GetComponent<AgentObject>();
+        newGuard.SetAgentObj(agentObj);
+        agentObj.Initialize(newGuard, new int[] { _kingdom.kingdomTagIndex });
+        return newGuard;
+    }
+    private void KillActiveGuards() {
+        for (int i = 0; i < activeGuards.Count; i++) {
+            activeGuards[i].KillAgent();
+        }
+        activeGuards.Clear();
+    }
+    #endregion
 }

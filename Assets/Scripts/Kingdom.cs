@@ -395,7 +395,7 @@ public class Kingdom{
         this._prestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
         this.kingdomTag = name + "_" + id;
-        //this.kingdomTagIndex = PathfindingManager.Instance.AddNewTag(kingdomTag);
+        this.kingdomTagIndex = PathfindingManager.Instance.AddNewTag(kingdomTag);
         this.king = null;
         this.nextInLine = null;
         this._kingdomSize = KINGDOM_SIZE.SMALL;
