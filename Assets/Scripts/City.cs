@@ -1005,6 +1005,9 @@ public class City{
 
     #region Agent Functions
     internal void SpawnGuardsAtEndOfMonth() {
+        if (this.isDead) {
+            return;
+        }
         int maxGuards = 1 + (cityLevel / 3);
         if(activeGuards.Count < maxGuards) {
             //Spawn a new guard to patrol the city
