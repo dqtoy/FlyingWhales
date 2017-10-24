@@ -3196,6 +3196,9 @@ public class Kingdom{
 		}
 		return targetKingdom;
 	}
+	internal int GetSumOfCityLevels(){
+		return this.cities.Sum (x => x.cityLevel);
+	}
 
 	#region Subterfuge
 	internal void Subterfuge(){
