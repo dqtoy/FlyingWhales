@@ -645,7 +645,8 @@ public enum ACTION_TYPE {
 }
 public enum MOVE_TYPE {
     GROUND,
-    FLYING
+    FLYING,
+    NONE
 }
 public enum AGENT_CATEGORY {
     LIVING,
