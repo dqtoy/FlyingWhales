@@ -297,6 +297,8 @@ public static class SeeksBandwagon {
 								//if there is anyone whose Invasion Value is 1 or above, prepare for war against the one with the highest Invasion Value
 								Debug.Log(kingdom.name + " decided to have war with " + targetKingdom.name);
 								Warfare warfare = new Warfare (kingdom, targetKingdom);
+								kingdom.checkedWarfareID.Add (warfare.id);
+								targetKingdom.checkedWarfareID.Add (warfare.id);
 								skipPhase4 = true;
 							}
 						}

@@ -152,7 +152,7 @@ public class Kingdom{
 
 	internal bool has100OrAboveThreat;
 
-	internal List<int> checkedWarfareID;
+	internal HashSet<int> checkedWarfareID;
 
     #region getters/setters
     public KINGDOM_TYPE kingdomType {
@@ -455,7 +455,7 @@ public class Kingdom{
         this._stabilityDecreaseFromInvasionCounter = 0;
 		this.highestThreatAdjacentKingdomAbove50 = null;
 
-		this.checkedWarfareID = new List<int> ();
+		this.checkedWarfareID = new HashSet<int> ();
 
         AdjustPrestige(GridMap.Instance.numOfRegions);
         //		AdjustPrestige(500);
