@@ -18,4 +18,17 @@ public class AgentAI : AIPath {
     public override void OnTargetReached() {
         _agentObj.OnTargetReached(); ;
     }
+
+    private void OnTriggerEnter(Collider other) {
+        //Debug.Log(name + " on trigger enter!: " + other.name);
+        Agent otherAgent = other.transform.parent.parent.GetComponent<AgentObject>().agent;
+        if(otherAgent != _agentObj.agent) {
+            _agentObj.AddAgentInRange(otherAgent);
+        }
+    }
+    private void OnTriggerExit(Collider other) {
+        //Debug.Log(name + " on trigger exit!: " + other.name);
+        Agent otherAgent = other.transform.parent.parent.GetComponent<AgentObject>().agent;
+        _agentObj.RemoveAgentInRange(otherAgent);
+    }
 }

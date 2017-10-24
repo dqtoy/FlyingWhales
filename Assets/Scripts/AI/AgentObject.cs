@@ -12,9 +12,11 @@ public class AgentObject : MonoBehaviour {
     //Actions
     [SerializeField] private AgentAI _aiPath;
     [SerializeField] private Seeker _seeker;
+    [SerializeField] private SphereCollider sphereCollider;
     private ACTION_TYPE _currentAction;
     private bool isPerformingAction;
     private int layerMask;
+    private List<Agent> _agentsInRange;
     private List<Agent> _targetsInRange; //Agents in range that this agent wants to attack
     private List<Agent> _alliesInRange; //Agents in range that is the same type as this
     private List<Agent> _threatsInRange; //Agents in range that wants to attack this agent;
@@ -34,6 +36,9 @@ public class AgentObject : MonoBehaviour {
     internal ACTION_TYPE currentAction {
         get { return _currentAction; }
     }
+    internal AIBehaviour currentBehaviour {
+        get { return _currentBehaviour; }
+    }
     internal List<Agent> targetsInRange {
         get { return _targetsInRange; }
     }
@@ -48,10 +53,13 @@ public class AgentObject : MonoBehaviour {
     public void Initialize(Agent agent, int[] validTags) {
         _agent = agent;
         _aiPath.speed = agent.movementSpeed;
+        _aiPath.endReachedDistance = agent.attackRange;
+        sphereCollider.radius = agent.visibilityRange;
         isPerformingAction = false;
-        //name = entityType.ToString() + UnityEngine.Random.Range(0, 5).ToString();
-        //visualSprite.gameObject.name = entityType.ToString();
+        name = agent.agentType.ToString() + UnityEngine.Random.Range(0, 5).ToString();
+        visualSprite.gameObject.name = agent.agentType.ToString();
         layerMask = 1 << LayerMask.NameToLayer("Agent");
+        _agentsInRange = new List<Agent>();
         _targetsInRange = new List<Agent>();
         _threatsInRange = new List<Agent>();
         _alliesInRange = new List<Agent>();
@@ -59,6 +67,10 @@ public class AgentObject : MonoBehaviour {
         //_threatsInRange = new List<Entity>();
         SetValidTags(validTags);
         SetSpriteColor(agent.agentColor);
+        if(agent.movementType == MOVE_TYPE.NONE) {
+            _aiPath.canMove = false;
+            _aiPath.canSearch = false;
+        }
         //Messenger.AddListener<Entity>("EntityDied", OnOtherEntityDied);
     }
 
@@ -84,6 +96,14 @@ public class AgentObject : MonoBehaviour {
     #endregion
 
     #region Target Functions
+    internal void AddAgentInRange(Agent agent) {
+        if (!_agentsInRange.Contains(agent)) {
+            _agentsInRange.Add(agent);
+        }
+    }
+    internal void RemoveAgentInRange(Agent agent) {
+        _agentsInRange.Remove(agent);
+    }
     internal void SetTarget(Transform target) {
         _aiPath.target = target;
     }
@@ -111,36 +131,35 @@ public class AgentObject : MonoBehaviour {
     #region Behaviour Tree
     [Task]
     public void DetermineAction() {
-        Collider[] objectsInRange = Physics.OverlapSphere(this.transform.position, _agent.visibilityRange, layerMask);
+        if(agent == null) {
+            return;
+        }
+        //Collider[] objectsInRange = Physics.OverlapSphere(this.transform.position, _agent.visibilityRange, layerMask);
         _targetsInRange.Clear();
         _threatsInRange.Clear();
         _alliesInRange.Clear();
-        if (objectsInRange.Length > 1) {
-            for (int i = 0; i < objectsInRange.Length; i++) {
-                GameObject currGOInRange = objectsInRange[i].gameObject;
-                if (currGOInRange != visualSprite.gameObject) {
-                    Agent otherAgent = currGOInRange.transform.parent.parent.GetComponent<AgentObject>().agent;
-                    if (this.agent.allyTypes.Contains(otherAgent.agentType)) {
-                        //other agent is considered as ally
-                        //TODO: add checking for if other agent is from another kingdom, if so, determine if that guard is considered to be an ally
-                        if (!_alliesInRange.Contains(otherAgent)) {
-                            _alliesInRange.Add(otherAgent);
-                        }
-                    } else {
-                        //other agent is not an ally
-                        //compute if it is a threat or a target, if threat value and initiative value is equal, randomize if the other agent should be considered a 
-                        //threat or target.
-                        int threatValueOfOtherAgent = this.agent.GetThreatOfAgent(otherAgent);
-                        int initiativeValueOfOtherAgent = this.agent.GetInitiativeFromAgent(otherAgent);
-                        if(threatValueOfOtherAgent > initiativeValueOfOtherAgent) {
-                            //other agent is a threat
-                            _threatsInRange.Add(otherAgent);
-                        } else if(initiativeValueOfOtherAgent > threatValueOfOtherAgent) {
-                            //other agent is a target
-                            _targetsInRange.Add(otherAgent);
-                        }
+        if (_agentsInRange.Count > 1) {
+            for (int i = 0; i < _agentsInRange.Count; i++) {
+                Agent otherAgent = _agentsInRange[i];
+                if (this.agent.allyTypes.Contains(otherAgent.agentType)) {
+                    //other agent is considered as ally
+                    //TODO: add checking for if other agent is from another kingdom, if so, determine if that guard is considered to be an ally
+                    if (!_alliesInRange.Contains(otherAgent)) {
+                        _alliesInRange.Add(otherAgent);
                     }
-                    
+                } else {
+                    //other agent is not an ally
+                    //compute if it is a threat or a target, if threat value and initiative value is equal, randomize if the other agent should be considered a 
+                    //threat or target.
+                    int threatValueOfOtherAgent = this.agent.GetThreatOfAgent(otherAgent);
+                    int initiativeValueOfOtherAgent = this.agent.GetInitiativeFromAgent(otherAgent);
+                    if (threatValueOfOtherAgent > initiativeValueOfOtherAgent) {
+                        //other agent is a threat
+                        _threatsInRange.Add(otherAgent);
+                    } else if (initiativeValueOfOtherAgent > threatValueOfOtherAgent) {
+                        //other agent is a target
+                        _targetsInRange.Add(otherAgent);
+                    }
                 }
             }
         }
@@ -188,7 +207,9 @@ public class AgentObject : MonoBehaviour {
     //    }
     //}
     private void Update() {
-        _aiPath.canMove = !GameManager.Instance.isPaused;
+        if(agent.movementType != MOVE_TYPE.NONE) {
+            _aiPath.canMove = !GameManager.Instance.isPaused;
+        }
         Vector3 pos = _aiPath.transform.localPosition;
         pos.y += 0.5f;
         pos.z = 0f;
