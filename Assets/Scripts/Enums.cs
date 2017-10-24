@@ -31,6 +31,7 @@ public enum RACE{
 	ELVES,
 	MINGONS,
 	CROMADS,
+	UNDEAD,
 }
 	
 public enum CITY_TASK { 

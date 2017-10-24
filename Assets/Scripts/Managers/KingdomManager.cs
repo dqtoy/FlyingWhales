@@ -449,4 +449,9 @@ public class KingdomManager : MonoBehaviour {
 			SchedulingManager.Instance.AddEntry (nextUpdateDate, () => MonthlyUpdateKingdomRankings ());
 		}
 	}
+
+	internal void StartUndeadKingdom(HexTile hexTile){
+		Kingdom newKingdom = GenerateNewKingdom(RACE.UNDEAD, new List<HexTile>() { hexTile });
+		newKingdom.HighlightAllOwnedTilesInKingdom();
+	}
 }

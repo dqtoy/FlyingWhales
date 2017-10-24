@@ -939,7 +939,7 @@ public class Kingdom{
 
         KingdomRelationship newRel = new KingdomRelationship(this, createdKingdom);
         relationships.Add(createdKingdom, newRel);
-        newRel.UpdateLikeness(null);
+        newRel.UpdateLikeness();
     }
     /* 
      * <summary>
@@ -1117,7 +1117,7 @@ public class Kingdom{
         if (this.king != null) {
 			foreach (KingdomRelationship relationship in relationships.Values) {
                 //if (relationship.isDiscovered) {
-                    relationship.UpdateLikeness(null);
+                    relationship.UpdateLikeness();
                 //}
 			}
         }
@@ -1126,7 +1126,7 @@ public class Kingdom{
 		if (this.king != null) {
 			foreach (KingdomRelationship relationship in relationships.Values) {
 				KingdomRelationship relationshipFromOther = relationship.targetKingdom.GetRelationshipWithKingdom(this);
-				relationshipFromOther.UpdateLikeness (null);
+				relationshipFromOther.UpdateLikeness ();
 			}
 		}
 	}
@@ -2804,12 +2804,12 @@ public class Kingdom{
 			}
 //			highestThreatAdjacentKingdomAbove50 = GetKingdomWithHighestAtLeastAbove50Threat ();
 			foreach (KingdomRelationship relationship in this.relationships.Values) {
-				relationship.UpdateLikeness (null);
+				relationship.UpdateLikeness ();
 			}
 		}else{
 			foreach (KingdomRelationship relationship in this.relationships.Values) {
 				relationship.UpdateThreatLevelAndInvasionValue ();
-				relationship.UpdateLikeness (null);
+				relationship.UpdateLikeness ();
 			}
 		}
 	}
