@@ -364,7 +364,7 @@ public class Kingdom{
         }
     }
 	internal int effectiveAttack{
-		get{ 
+		get{
 			float mySoldiers = (float)this.soldiers;
 			float numerator = 2f * mySoldiers * (float)this._baseWeapons;
 			return (int)(numerator / (mySoldiers + (float)this._baseWeapons));
@@ -389,7 +389,7 @@ public class Kingdom{
     //	race - the race of this kingdom
     //	cities - the cities that this kingdom will initially own
     //	sourceKingdom (optional) - the kingdom from which this new kingdom came from
-    public Kingdom(RACE race, List<HexTile> cities, Kingdom sourceKingdom = null) {
+	public Kingdom(RACE race, List<HexTile> cities, Kingdom sourceKingdom = null) {
 		this.id = Utilities.SetID(this);
 		this.race = race;
         this._prestige = 0;
@@ -457,48 +457,46 @@ public class Kingdom{
 
 		this.checkedWarfareID = new HashSet<int> ();
 
-        AdjustPrestige(GridMap.Instance.numOfRegions);
-        //		AdjustPrestige(500);
-
-
-        AdjustPopulation(50);
-        AdjustStability(50);
-        AdjustBaseWeapons(25);
-        AdjustBaseArmors(25);
-        SetGrowthState(true);
-        //this.GenerateKingdomCharacterValues();
-        this.SetLockDown(false);
-		this.SetTechProduction(true);
-		this.SetTechProductionPercentage(1f);
-		this.SetProductionGrowthPercentage(1f);
-		this.UpdateTechCapacity ();
-		this.SetSecession (false);
+		SetGrowthState(true);
 		this.SetWarmongerValue (25);
-//		this.NewRandomCrimeDate (true);
-		// Determine what type of Kingdom this will be upon initialization.
-		this._kingdomTypeData = null;
-        SetKingdomType(StoryTellingManager.Instance.GetRandomKingdomTypeForKingdom());
-		//this.UpdateKingdomTypeData();
+		this.SetProductionGrowthPercentage(1f);
 
-        this.basicResource = Utilities.GetBasicResourceForRace(race);
+		if(this.race != RACE.UNDEAD){
+			AdjustPrestige(GridMap.Instance.numOfRegions);
+			AdjustPopulation(50);
+			AdjustStability(50);
+			AdjustBaseWeapons(25);
+			AdjustBaseArmors(25);
+			//this.GenerateKingdomCharacterValues();
+			this.SetLockDown(false);
+			this.SetTechProduction(true);
+			this.SetTechProductionPercentage(1f);
+			this.UpdateTechCapacity ();
+			this.SetSecession (false);
+			//		this.NewRandomCrimeDate (true);
+			// Determine what type of Kingdom this will be upon initialization.
+			this._kingdomTypeData = null;
+			SetKingdomType(StoryTellingManager.Instance.GetRandomKingdomTypeForKingdom());
+			//this.UpdateKingdomTypeData();
 
-		Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
-		//Messenger.AddListener("OnDayEnd", KingdomTickActions);
-        Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
+			this.basicResource = Utilities.GetBasicResourceForRace(race);
 
-		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
-        //SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
-        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseExpansionRatePerMonth());
-        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
-        //SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
-        //SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
-        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, 1, GameManager.Instance.year, () => IncreasePopulationEveryMonth());
-        SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
-        //		ScheduleEvents ();
-        ScheduleOddDayActions();
-        ScheduleActionDay();
+			Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
+			//Messenger.AddListener("OnDayEnd", KingdomTickActions);
+			Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
-
+			SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
+			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
+			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseExpansionRatePerMonth());
+			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
+			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
+			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
+			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, 1, GameManager.Instance.year, () => IncreasePopulationEveryMonth());
+			SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
+			//		ScheduleEvents ();
+			ScheduleOddDayActions();
+			ScheduleActionDay();
+		}
         this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
 	}
 

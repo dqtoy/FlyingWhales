@@ -371,7 +371,7 @@ public class KingdomRelationship {
 		}
 
         this._like = 0;
-        this.AdjustLikeness(baseLoyalty, gameEventTrigger, assassinationReasons, isDiscovery);
+        this.AdjustLikeness(baseLoyalty);
         if (UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom == _sourceKingdom) {
             UIManager.Instance.UpdateRelationships();
         }
@@ -386,23 +386,23 @@ public class KingdomRelationship {
      * <param name="assassinationReasons"> Assassination Reason (Default to NONE) </param>
      * <param name="isDiscovery"> Is from discovery? (Default is false) </param>
      * */
-    internal void AdjustLikeness(int adjustment, GameEvent gameEventTrigger, ASSASSINATION_TRIGGER_REASONS assassinationReasons = ASSASSINATION_TRIGGER_REASONS.NONE, bool isDiscovery = false) {
+    internal void AdjustLikeness(int adjustment) {
         RELATIONSHIP_STATUS previousStatus = _relationshipStatus;
         this._like += adjustment;
         this._like = Mathf.Clamp(this._like, -100, 100);
         this.UpdateKingRelationshipStatus();
 
-        if (!this._isInitial) {
-            if (this.totalLike < 0) { //Relationship deteriorated
-                _sourceKingdom.OnRelationshipDeteriorated(this, gameEventTrigger, isDiscovery, assassinationReasons);
-                this.CheckForEmbargo(previousStatus, gameEventTrigger);
-            } else { //Relationship improved
-                _sourceKingdom.OnRelationshipImproved(this);
-                this.CheckForDisembargo(previousStatus);
-            }
-        } else {
-            this._isInitial = false;
-        }
+//        if (!this._isInitial) {
+//            if (this.totalLike < 0) { //Relationship deteriorated
+////                _sourceKingdom.OnRelationshipDeteriorated(this, gameEventTrigger, isDiscovery, assassinationReasons);
+//                this.CheckForEmbargo(previousStatus, gameEventTrigger);
+//            } else { //Relationship improved
+//                _sourceKingdom.OnRelationshipImproved(this);
+//                this.CheckForDisembargo(previousStatus);
+//            }
+//        } else {
+//            this._isInitial = false;
+//        }
     }
 
     internal void ChangeRelationshipStatus(RELATIONSHIP_STATUS newStatus, GameEvent gameEventTrigger = null) {
@@ -953,15 +953,15 @@ public class KingdomRelationship {
 		}
 	}
 	internal void UpdateTheoreticalAttackAndDefense(){
-		int theoreticalAttack = GetTheoreticalAttack ();
-		int theoreticalDefense = GetTheoreticalDefense ();
+		int personalAttack = GetTheoreticalAttack ();
+		int personalDefense = GetTheoreticalDefense ();
 		int posAllianceAttack = GetAdjacentPosAllianceEffectiveAttack ();
 		int otherAdjacentEnemiesAttack = GetOtherAdjacentEnemiesAttack ();
 //		int posAllianceDefense = GetAdjacentPosAllianceArmors ();
 //		int usedPosAllianceAttack = (int)((float)posAllianceAttack / 2f);
 
-		this._theoreticalAttack = theoreticalAttack + posAllianceAttack + otherAdjacentEnemiesAttack;
-		this._theoreticalDefense = theoreticalDefense + posAllianceAttack + otherAdjacentEnemiesAttack;
+		this._theoreticalAttack = personalAttack + posAllianceAttack + otherAdjacentEnemiesAttack;
+		this._theoreticalDefense = personalDefense + posAllianceAttack + otherAdjacentEnemiesAttack;
 
 //		this._effectivePower = theoreticalAttack;
 //		this._effectiveDef = theoreticalDefense;
