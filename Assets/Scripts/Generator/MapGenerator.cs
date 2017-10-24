@@ -6,6 +6,7 @@ public class MapGenerator : MonoBehaviour {
 
 	void Start() {
         //StartCoroutine (StartGeneration());
+        PathfindingManager.Instance.Initialize();
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         ObjectPoolManager.Instance.InitializeObjectPools();
@@ -13,7 +14,7 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
 		Biomes.Instance.GenerateElevation();
 		Biomes.Instance.GenerateBiome();
-        PathfindingManager.Instance.Initialize();
+        PathfindingManager.Instance.CreateGrid();
         //Biomes.Instance.GenerateSpecialResources ();
         Biomes.Instance.GenerateTileTags();
         GridMap.Instance.GenerateNeighboursWithSameTag();

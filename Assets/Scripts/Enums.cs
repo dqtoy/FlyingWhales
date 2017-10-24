@@ -155,7 +155,6 @@ public enum ROLE{
     GRAND_CHANCELLOR,
     GRAND_MARSHAL,
     QUEEN,
-    QUEEN_CONSORT,
     CROWN_PRINCE
 }
 
@@ -629,4 +628,31 @@ public enum SUBTERFUGE_ACTIONS{
 	REDUCE_STABILITY,
 	FLATTER,
 	SPREAD_PLAGUE,
+}
+public enum ENTITY_TYPE {
+    GUARD,
+    WORKER,
+    BANDIT,
+    MONSTER,
+    ALL,
+    NONE
+}
+public enum ACTION_TYPE {
+    ATTACK,
+    FLEE,
+    RANDOM
+}
+public enum MOVE_TYPE {
+    GROUND,
+    FLYING
+}
+public enum AGENT_CATEGORY {
+    LIVING,
+    STRUCTURE
+}
+public enum AGENT_TYPE {
+    MONSTER,
+    GUARD,
+    CITY,
+    LAIR
 }

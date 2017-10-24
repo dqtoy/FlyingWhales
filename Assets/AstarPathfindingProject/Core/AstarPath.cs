@@ -584,21 +584,44 @@ public class AstarPath : VersionedMonoBehaviour {
 	 * \see AstarPath.FindTagNames
 	 */
 	public string[] GetTagNames () {
-		if (tagNames == null || tagNames.Length != 32) {
-			tagNames = new string[32];
-			for (int i = 0; i < tagNames.Length; i++) {
-				tagNames[i] = ""+i;
-			}
-			tagNames[0] = "Basic Ground";
-		}
-		return tagNames;
+        if (tagNames == null || tagNames.Length != 32) {
+            tagNames = new string[32];
+            for (int i = 0; i < tagNames.Length; i++) {
+                tagNames[i] = "" + i;
+            }
+            tagNames[0] = "Basic Ground";
+        }
+        return tagNames;
 	}
 
-	/** Tries to find an AstarPath object and return tag names.
+    public void ClearTagNames() {
+        tagNames = new string[32];
+    }
+
+    public int AddTagName(string newTag) {
+        for (int i = 0; i < tagNames.Length; i++) {
+            if(tagNames[i] == null) {
+                tagNames[i] = newTag;
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void RemoveTagName(string newTag) {
+        for (int i = 0; i < tagNames.Length; i++) {
+            if (tagNames[i].Equals(newTag)) {
+                tagNames[i] = null;
+                break;
+            }
+        }
+    }
+
+    /** Tries to find an AstarPath object and return tag names.
 	 * If an AstarPath object cannot be found, it returns an array of length 1 with an error message.
 	 * \see AstarPath.GetTagNames
 	 */
-	public static string[] FindTagNames () {
+    public static string[] FindTagNames () {
 		if (active != null) {
 			return active.GetTagNames();
 		} else {
@@ -769,7 +792,7 @@ public class AstarPath : VersionedMonoBehaviour {
 		if (logPathResults == PathLog.InGame) {
 			inGameDebugPath = debug;
 		} else {
-			Debug.Log(debug);
+			//Debug.Log(debug);
 		}
 	}
 

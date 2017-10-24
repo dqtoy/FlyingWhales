@@ -1318,4 +1318,12 @@ public class Utilities : MonoBehaviour {
 		}
 		return newList;
 	}
+
+    #region AI
+    public static Vector2 PickRandomPointInCircle(Vector2 origin, float radius) {
+        Vector2 point = UnityEngine.Random.insideUnitCircle * radius;
+        point += (Vector2)origin;
+        return point;
+    }
+    #endregion
 }
