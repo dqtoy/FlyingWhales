@@ -1160,6 +1160,8 @@ public class Citizen {
 
         if (kr.isAdjacent) {
             Warfare warfare = new Warfare(newKingdom, sourceKingdom);
+			newKingdom.checkedWarfareID.Add (warfare.id);
+			sourceKingdom.checkedWarfareID.Add (warfare.id);
             Debug.Log(previousRole.ToString() + " " + this.name + " of " + previousCity.name + " has rebelled against " + sourceKingdom.name);
             Debug.Log("Rebelling kingdom " + newKingdom.name + " declares war on " + sourceKingdom.name);
         }
