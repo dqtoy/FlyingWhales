@@ -43,28 +43,7 @@ public class Utilities : MonoBehaviour {
 	public static string[] crisis = new string[]{
 		"Food",
 	};
-	private static string[] allianceType = new string[]{
-		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
-	};
-	private static string[] allianceNoun = new string[]{
-		"Arms", "Baes", "Darkness", "Dogs", "Flame", "Future", "Fury", "Genius", "Guys", "Hands",
-		"Light", "Might", "Peace", "People", "Pigs", "Promise", "Power", "Sweetness", "Sword", "Terror",
-		"Unity", "World", "Zone"
-	};
-	private static string[] allianceAdjective = new string[]{
-		"Ancient", "Black", "Brave", "Calm", "Charming", "Crimson", "Cruel", "Cunning", "Eternal", "Evil",
-		"Fantastic", "Fearless", "Green", "Holy", "Huge", "Intimidating", "Loyal", "Nasty", "Nice", "Passionate",
-		"Pure", "Royal", "Ruthless", "Salty", "Sensible", "Sneaky", "Strong", "United", "White"
-	};
-	private static string[] warfareAdjective = new string[]{
-		"Acrid", "Bitter", "Bleeding", "Black", "Bloody", "Chilling", "Colossal", "Craven", "Daring", "Deadly",
-		"Extreme", "Fierce", "Lazy", "Old", "Quarreling", "Random", "Red", "Sacred", "Starving", "Thundering", "Zealous"
-	};
-	private static string[] warfareNoun = new string[]{
-		"Aim", "Artists", "Bet", "Claim", "Crusade", "Domain", "Error", "Fork", "Graves", "Hearts", 
-		"Hills", "Intent", "Insults", "Justice", "King", "Knights", "Letters", "Lions", "Lovers", "Madman",
-		"Offense", "Passion", "Peasants", "Potatoes", "Rage", "Survival", "Truth", "Vipers"
-	};
+
 	public static int specialResourceCount = 0;
 	
 	/*
@@ -112,26 +91,7 @@ public class Utilities : MonoBehaviour {
 		return (T[])Enum.GetValues(typeof(T));
 	}
 
-	public static string GetAllianceName(){
-		int chance = UnityEngine.Random.Range (0, 100);
-		if(chance < 35){
-			return allianceAdjective [UnityEngine.Random.Range (0, allianceAdjective.Length)] + " " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)] + " " + allianceType [UnityEngine.Random.Range (0, allianceType.Length)];
-		}else if(chance >= 35 && chance < 60){
-			return allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)] + " " + allianceType [UnityEngine.Random.Range (0, allianceType.Length)];
-		}else if(chance >= 60 && chance < 75){
-			return allianceType [UnityEngine.Random.Range (0, allianceType.Length)]+ " of " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)];
-		}else{
-			return allianceType [UnityEngine.Random.Range (0, allianceType.Length)]+ " of " + allianceAdjective [UnityEngine.Random.Range (0, allianceAdjective.Length)] + " " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)];
-		}
-	}
-	public static string GetWarfareName(){
-		int chance = UnityEngine.Random.Range (0, 2);
-		if(chance == 0){
-			return "War of " + warfareAdjective[UnityEngine.Random.Range(0, warfareAdjective.Length)] + " " + warfareNoun[UnityEngine.Random.Range(0, warfareNoun.Length)];
-		}else{
-			return "War of the " + warfareAdjective[UnityEngine.Random.Range(0, warfareAdjective.Length)] + " " + warfareNoun[UnityEngine.Random.Range(0, warfareNoun.Length)];
-		}
-	}
+
 
     public static List<BIOMES> biomeLayering = new List<BIOMES>() {
         BIOMES.GRASSLAND,

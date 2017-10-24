@@ -71,6 +71,49 @@ public class RandomNameGenerator : MonoBehaviour {
 		"Thalion", "Turin", "Thorontur", "Voronwe", "Vaessen", "Valanyonnen"
 	};
 
+	#region Alliance
+	private string[] allianceType = new string[]{
+		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
+	};
+	private string[] allianceNoun = new string[]{
+		"Arms", "Baes", "Darkness", "Dogs", "Flame", "Future", "Fury", "Genius", "Guys", "Hands",
+		"Light", "Might", "Peace", "People", "Pigs", "Promise", "Power", "Sweetness", "Sword", "Terror",
+		"Unity", "World", "Zone"
+	};
+	private string[] allianceAdjective = new string[]{
+		"Ancient", "Black", "Brave", "Calm", "Charming", "Crimson", "Cruel", "Cunning", "Eternal", "Evil",
+		"Fantastic", "Fearless", "Green", "Holy", "Huge", "Intimidating", "Loyal", "Nasty", "Nice", "Passionate",
+		"Pure", "Royal", "Ruthless", "Salty", "Sensible", "Sneaky", "Strong", "United", "White"
+	};
+	#endregion
+
+	#region Warfare
+	private string[] warfareAdjective = new string[]{
+		"Acrid", "Bitter", "Bleeding", "Black", "Bloody", "Chilling", "Colossal", "Craven", "Daring", "Deadly",
+		"Extreme", "Fierce", "Lazy", "Old", "Quarreling", "Random", "Red", "Sacred", "Starving", "Thundering", "Zealous"
+	};
+	private string[] warfareNoun = new string[]{
+		"Aim", "Artists", "Bet", "Claim", "Crusade", "Domain", "Error", "Fork", "Graves", "Hearts", 
+		"Hills", "Intent", "Insults", "Justice", "King", "Knights", "Letters", "Lions", "Lovers", "Madman",
+		"Offense", "Passion", "Peasants", "Potatoes", "Rage", "Survival", "Truth", "Vipers"
+	};
+	#endregion
+
+	#region International Incident
+	private string[] incidentType = new string[]{
+		"Incident", "Affair", "Crisis", "Issue", "Dilemma", "Clash"	
+	};
+	private string[] incidentNoun = new string[]{
+		"Animal", "Argument", "Bastion", "Child", "Destiny", "Diplomat", "Elephant", "Face", "Farmer", "Grudge", "Lake",
+		"Leather", "Man", "Mortar", "Muse", "Nobleman", "Promise", "Rally", "Seeds", "Spring", "Shelter", "Trash", "Trader", "Trespasser",
+		"Tent", "Woman"
+	};
+	private string[] incidentAdjective = new string[] {
+		"Angry", "Bizarre", "Broken", "Crushed", "Desolate", "Eroded", "Grumbling", "Failing", "Heretical", "Isolated", "Jaded", "Jilted",
+		"Killer", "Lonely", "Missing", "Nasty", "Ornamental", "Poor", "Quiet", "Raging", "Rotten", "Sad", "Tragic", "Undulating" 
+	};
+	#endregion
+
     //private MarkovNameGenerator generatedHumanSurnames;
     //private MarkovNameGenerator generatedHumanKingdomNames;
     //private MarkovNameGenerator generatedElvenKingdomNames;
@@ -256,6 +299,31 @@ public class RandomNameGenerator : MonoBehaviour {
 			return humanFemaleFirstNames [Random.Range (0, humanFemaleFirstNames.Length)];
 		}
 //		return "";
+	}
+
+	public string GetAllianceName(){
+		int chance = UnityEngine.Random.Range (0, 100);
+		if(chance < 35){
+			return allianceAdjective [UnityEngine.Random.Range (0, allianceAdjective.Length)] + " " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)] + " " + allianceType [UnityEngine.Random.Range (0, allianceType.Length)];
+		}else if(chance >= 35 && chance < 60){
+			return allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)] + " " + allianceType [UnityEngine.Random.Range (0, allianceType.Length)];
+		}else if(chance >= 60 && chance < 75){
+			return allianceType [UnityEngine.Random.Range (0, allianceType.Length)]+ " of " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)];
+		}else{
+			return allianceType [UnityEngine.Random.Range (0, allianceType.Length)]+ " of " + allianceAdjective [UnityEngine.Random.Range (0, allianceAdjective.Length)] + " " + allianceNoun [UnityEngine.Random.Range (0, allianceNoun.Length)];
+		}
+	}
+	public string GetWarfareName(){
+		int chance = UnityEngine.Random.Range (0, 2);
+		if(chance == 0){
+			return "War of " + warfareAdjective[UnityEngine.Random.Range(0, warfareAdjective.Length)] + " " + warfareNoun[UnityEngine.Random.Range(0, warfareNoun.Length)];
+		}else{
+			return "War of the " + warfareAdjective[UnityEngine.Random.Range(0, warfareAdjective.Length)] + " " + warfareNoun[UnityEngine.Random.Range(0, warfareNoun.Length)];
+		}
+	}
+	public string GetInternationalIncidentName(){
+		return incidentAdjective[UnityEngine.Random.Range(0, incidentAdjective.Length)] + " " + incidentNoun[UnityEngine.Random.Range(0, incidentNoun.Length)] + " " + incidentType[UnityEngine.Random.Range(0, incidentType.Length)];
+
 	}
 
 //	public static string GenerateRandomName(){

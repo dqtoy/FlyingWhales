@@ -3212,6 +3212,7 @@ public class Kingdom{
 			if(triggerChance < triggerValue){
 				SUBTERFUGE_ACTIONS subterfuge = GetSubterfugeAction ();
 				int successChance = UnityEngine.Random.Range (0, 100);
+				int caughtChance = UnityEngine.Random.Range (0, 100);
 				int successValue = 60;
 				if(this.king.intelligence == INTELLIGENCE.SMART){
 					successValue += 15;
@@ -3239,6 +3240,11 @@ public class Kingdom{
 						CreateFailSubterfugeAction(subterfuge, targetKingdom);
 					}
 				}
+
+				if(caughtChance < 5){
+					CreateCaughtSubterfugeAction (subterfuge, targetKingdom);
+				}
+			
 			}
 		}
 	}
@@ -3323,6 +3329,10 @@ public class Kingdom{
 	private void CreateFailSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
 		ShowFailSubterfugeLog (subterfuge, targetKingdom);
 	}
+	private void CreateCaughtSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
+		string incidentName = RandomNameGenerator.Instance.GetInternationalIncidentName ();
+		ShowCaughtSubterfugeLog (subterfuge, targetKingdom, incidentName);
+	}
 	private int DestroyWeaponsSubterfuge(){
 		int weaponsToBeDestroyed = (int)((float)this._baseWeapons * 0.05f);
 		this.AdjustBaseWeapons (-weaponsToBeDestroyed);
@@ -3383,6 +3393,13 @@ public class Kingdom{
 		}else if (subterfuge == SUBTERFUGE_ACTIONS.FLATTER) {
 			newLog.AddToFillers (targetKingdom.king, targetKingdom.king.name, LOG_IDENTIFIER.KING_2);
 		}
+		UIManager.Instance.ShowNotification (newLog);
+	}
+	private void ShowCaughtSubterfugeLog(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom, string incidentName){
+		Log newLog = new Log (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Subterfuge", "caught");
+		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
+		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
+		newLog.AddToFillers (null, incidentName, LOG_IDENTIFIER.OTHER);
 		UIManager.Instance.ShowNotification (newLog);
 	}
 	#endregion
