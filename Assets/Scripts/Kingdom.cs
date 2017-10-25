@@ -391,6 +391,15 @@ public class Kingdom{
     internal int stabilityDecreaseFromInvasionCounter {
         get { return _stabilityDecreaseFromInvasionCounter; }
     }
+	internal int allianceValue {
+		get { 
+			if (this.alliancePool == null) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
+	}
     #endregion
 
     // Kingdom constructor paramters
@@ -2831,100 +2840,237 @@ public class Kingdom{
 		}
 	}
 
-	internal void SeekAlliance(){
-		List<KingdomRelationship> kingdomRelationships = this.relationships.Values.OrderByDescending(x => x.totalLike).ToList ();
+	internal void SeekAllianceOfProtection(){
+//		List<KingdomRelationship> kingdomRelationshipsWithAlliance = this.relationships.Values.Where(x => x.targetKingdom.alliancePool != null).ToList ();
+//		List<KingdomRelationship> kingdomRelationshipsWithoutAlliance = this.relationships.Values.Where(x => x.targetKingdom.alliancePool == null).OrderByDescending(y => y.totalLike).ToList ();
+
 		Kingdom kingdomWithHighestThreat = GetKingdomWithHighestThreat();
-		if(kingdomWithHighestThreat != null){
-			for (int i = 0; i < kingdomRelationships.Count; i++) {
-				KingdomRelationship kr = kingdomRelationships [i];
-				if(kr.isDiscovered && !kr.cantAlly){
-					if(kr.targetKingdom.id != kingdomWithHighestThreat.id){
+		if (kingdomWithHighestThreat != null) {
+			Kingdom kingdomToAlly = null;
+			int likeTheMost = 0;
+			foreach (KingdomRelationship kr in this.relationships.Values) {
+				if (kr.isDiscovered && !kr.cantAlly) {
+					if (kr.targetKingdom.id != kingdomWithHighestThreat.id) {
 						KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kingdomWithHighestThreat);
-						if(rk.isAdjacent){
-							if(kr.targetKingdom.alliancePool == null){
-								Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
-								bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
-								if(hasCreated){
-									string log = name + " has created an alliance with ";
-									for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-										if(_alliancePool.kingdomsInvolved[j].id != id) {
-											log += _alliancePool.kingdomsInvolved[j].name;
-											if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
-												log += ", ";
-											}
-										}
-									}
-									Debug.Log(log);
-									break;
-								}
-							}else{
-								Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
-								bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
-								if(hasJoined){
+						if (rk.isAdjacent) {
+							if (kr.targetKingdom.alliancePool != null) {
+								Debug.Log (name + " is looking to join the alliance of " + kr.targetKingdom.name);
+								bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance (this, kr.targetKingdom);
+								if (hasJoined) {
 									string log = name + " has joined an alliance with ";
 									for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-										if (_alliancePool.kingdomsInvolved[j].id != id) {
-											log += _alliancePool.kingdomsInvolved[j].name;
+										if (_alliancePool.kingdomsInvolved [j].id != id) {
+											log += _alliancePool.kingdomsInvolved [j].name;
 											if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
 												log += ", ";
 											}
 										}
 									}
-									break;
+									Debug.Log(log);
+									return;
 								}
+							} else {
+								if(kingdomToAlly == null){
+									kingdomToAlly = kr.targetKingdom;
+									likeTheMost = kr.totalLike;
+								}else{
+									if(kr.totalLike > likeTheMost){
+										kingdomToAlly = kr.targetKingdom;
+										likeTheMost = kr.totalLike;
+									}
+								}
+							}
+
+						}
+					}
+				}
+			}
+			if (kingdomToAlly != null) {
+				Debug.Log(name + " is looking to create an alliance with " + kingdomToAlly.name);
+				bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kingdomToAlly);
+				if(hasCreated){
+					string log = name + " has created an alliance with ";
+					for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+						if(_alliancePool.kingdomsInvolved[j].id != id) {
+							log += _alliancePool.kingdomsInvolved[j].name;
+							if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
+								log += ", ";
+							}
+						}
+					}
+					Debug.Log(log);
+				}
+			}
+		}
+		if(this._alliancePool == null){
+			Kingdom kingdomToAlly = null;
+			int likeTheMost = 0;
+			foreach (KingdomRelationship kr in this.relationships.Values) {			
+				if(kr.isDiscovered && !kr.cantAlly){
+					Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
+					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
+					if (hasJoined) {
+						string log = name + " has joined an alliance with ";
+						for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+							if (_alliancePool.kingdomsInvolved [j].id != id) {
+								log += _alliancePool.kingdomsInvolved [j].name;
+								if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+									log += ", ";
+								}
+							}
+						}
+						return;
+					} else {
+						if(kingdomToAlly == null){
+							kingdomToAlly = kr.targetKingdom;
+							likeTheMost = kr.totalLike;
+						}else{
+							if(kr.totalLike > likeTheMost){
+								kingdomToAlly = kr.targetKingdom;
+								likeTheMost = kr.totalLike;
 							}
 						}
 					}
 				}
 			}
-		}
-		if(this._alliancePool == null){
-			for (int i = 0; i < kingdomRelationships.Count; i++) {
-				KingdomRelationship kr = kingdomRelationships [i];
-				if(kr.isDiscovered && !kr.cantAlly){
-					if(kr.targetKingdom.alliancePool == null){
-						Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
-						bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
-						if(hasCreated){
-							string log = name + " has created an alliance with ";
-							for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-								if(_alliancePool.kingdomsInvolved[j].id != id) {
-									log += _alliancePool.kingdomsInvolved[j].name;
-									if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
-										log += ", ";
-									}
-								}
+			if (kingdomToAlly != null) {
+				Debug.Log(name + " is looking to create an alliance with " + kingdomToAlly.name);
+				bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kingdomToAlly);
+				if(hasCreated){
+					string log = name + " has created an alliance with ";
+					for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+						if(_alliancePool.kingdomsInvolved[j].id != id) {
+							log += _alliancePool.kingdomsInvolved[j].name;
+							if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
+								log += ", ";
 							}
-							Debug.Log(log);
-							break;
 						}
-					}else{
-						Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
-						bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
-						if(hasJoined){
+					}
+					Debug.Log(log);
+				}
+			}
+		}
+//		if (kingdomWithHighestThreat != null) {
+//			if (this._alliancePool == null) {
+//				for (int i = 0; i < kingdomRelationshipsWithoutAlliance.Count; i++) {
+//					KingdomRelationship kr = kingdomRelationshipsWithoutAlliance [i];
+//					if (kr.isDiscovered && !kr.cantAlly) {
+//						if (kr.targetKingdom.id != kingdomWithHighestThreat.id) {
+//							KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kingdomWithHighestThreat);
+//							if (rk.isAdjacent) {
+//								if(kr.targetKingdom.alliancePool == null){
+//									Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
+//									bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
+//									if(hasCreated){
+//										string log = name + " has created an alliance with ";
+//										for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+//											if(_alliancePool.kingdomsInvolved[j].id != id) {
+//												log += _alliancePool.kingdomsInvolved[j].name;
+//												if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
+//													log += ", ";
+//												}
+//											}
+//										}
+//										Debug.Log(log);
+//										return;
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+
+//		if(this._alliancePool == null){
+//			for (int i = 0; i < kingdomRelationshipsWithAlliance.Count; i++) {
+//				KingdomRelationship kr = kingdomRelationshipsWithAlliance [i];
+//				if(kr.isDiscovered && !kr.cantAlly){
+//					Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
+//					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
+//					if(hasJoined){
+//						string log = name + " has joined an alliance with ";
+//						for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+//							if (_alliancePool.kingdomsInvolved[j].id != id) {
+//								log += _alliancePool.kingdomsInvolved[j].name;
+//								if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+//									log += ", ";
+//								}
+//							}
+//						}
+//						return;
+//					}
+//				}
+//			}
+//		}
+//		if (this._alliancePool == null) {
+//			for (int i = 0; i < kingdomRelationshipsWithoutAlliance.Count; i++) {
+//				KingdomRelationship kr = kingdomRelationshipsWithoutAlliance [i];
+//				if (kr.isDiscovered && !kr.cantAlly) {
+//					Debug.Log (name + " is looking to create an alliance with " + kr.targetKingdom.name);
+//					bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms (this, kr.targetKingdom);
+//					if (hasCreated) {
+//						string log = name + " has created an alliance with ";
+//						for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+//							if (_alliancePool.kingdomsInvolved [j].id != id) {
+//								log += _alliancePool.kingdomsInvolved [j].name;
+//								if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+//									log += ", ";
+//								}
+//							}
+//						}
+//						Debug.Log (log);
+//						return;
+//					}
+//				}
+//			}
+//		}
+        if(this._alliancePool == null) {
+            Debug.Log(name + " has failed to create/join an alliance");
+        }
+	}
+	internal void SeekAllianceOfConquest(){
+		Kingdom kingdomToAlly = null;
+		int leastLikedToEnemy = 0;
+		foreach (KingdomRelationship krToAlly in this.relationships.Values) {
+			if(krToAlly.targetKingdom.id != this.highestRelativeStrengthAdjacentKingdom.id){
+				KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (this);
+				KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (this.highestRelativeStrengthAdjacentKingdom);
+				if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
+					&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id && !krToAlly.cantAlly){
+
+					if (krToAlly.targetKingdom.alliancePool != null) {
+						bool hasJoined = krToAlly.targetKingdom.alliancePool.AttemptToJoinAlliance (this, krToAlly.targetKingdom);
+						if (hasJoined) {
 							string log = name + " has joined an alliance with ";
 							for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-								if (_alliancePool.kingdomsInvolved[j].id != id) {
-									log += _alliancePool.kingdomsInvolved[j].name;
+								if (_alliancePool.kingdomsInvolved [j].id != id) {
+									log += _alliancePool.kingdomsInvolved [j].name;
 									if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
 										log += ", ";
 									}
 								}
 							}
-							break;
+							Debug.Log(log);
+							return;
+						}
+					} else {
+						if(kingdomToAlly == null){
+							kingdomToAlly = krToAlly.targetKingdom;
+							leastLikedToEnemy = krEnemy.totalLike;
+						}else{
+							if(krEnemy.totalLike < leastLikedToEnemy){
+								kingdomToAlly = krToAlly.targetKingdom;
+								leastLikedToEnemy = krEnemy.totalLike;
+							}
 						}
 					}
 				}
 			}
 		}
-        if(_alliancePool == null) {
-            Debug.Log(name + " has failed to create/join an alliance");
-        }
-	}
-	internal void SeekAllianceWith(Kingdom targetKingdom){
-		if(targetKingdom.alliancePool == null){
-			Debug.Log(name + " is looking to create an alliance with " + targetKingdom.name);
-			bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, targetKingdom);
+		if(kingdomToAlly != null){
+			Debug.Log(name + " is looking to create an alliance with " + kingdomToAlly.name);
+			bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kingdomToAlly);
 			if(hasCreated){
 				string log = name + " has created an alliance with ";
 				for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
@@ -2936,20 +3082,6 @@ public class Kingdom{
 					}
 				}
 				Debug.Log(log);
-			}
-		}else{
-			Debug.Log(name + " is looking to join the alliance of " + targetKingdom.name);
-			bool hasJoined = targetKingdom.alliancePool.AttemptToJoinAlliance(this, targetKingdom);
-			if(hasJoined){
-				string log = name + " has joined an alliance with ";
-				for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-					if (_alliancePool.kingdomsInvolved[j].id != id) {
-						log += _alliancePool.kingdomsInvolved[j].name;
-						if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
-							log += ", ";
-						}
-					}
-				}
 			}
 		}
 	}

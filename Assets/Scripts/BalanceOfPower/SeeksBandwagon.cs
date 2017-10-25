@@ -50,7 +50,7 @@ public static class SeeksBandwagon {
 			//if i am not part of any alliance, create or join an alliance if possible
 			if(kingdom.alliancePool == null){
 				Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 50 or above threat and a less than 75 invasion value");
-				kingdom.SeekAlliance ();
+				kingdom.SeekAllianceOfProtection ();
 				skipPhase4 = true;
 				if(kingdom.alliancePool != null){
 					skipPhase2 = true;

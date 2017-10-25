@@ -39,31 +39,8 @@ public static class SeeksSuperiority {
 			if(kingdom.highestRelativeStrengthAdjacentKingdom != null){
 				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (kingdom.highestRelativeStrengthAdjacentKingdom);
 				if(kr._relativeWeakness < 50){
-					Kingdom kingdomToAlly = null;
-					int leastLikedToEnemy = 0;
-					foreach (KingdomRelationship krToAlly in kingdom.relationships.Values) {
-						if(krToAlly.targetKingdom.id != kingdom.highestRelativeStrengthAdjacentKingdom.id){
-							KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom);
-							KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (kingdom.highestRelativeStrengthAdjacentKingdom);
-							if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
-								&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id && !krToAlly.cantAlly){
-								if(kingdomToAlly == null){
-									kingdomToAlly = krToAlly.targetKingdom;
-									leastLikedToEnemy = krEnemy.totalLike;
-								}else{
-									if(krEnemy.totalLike < leastLikedToEnemy){
-										kingdomToAlly = krToAlly.targetKingdom;
-										leastLikedToEnemy = krEnemy.totalLike;
-									}
-								}
-							}
-						}
-					}
-					if(kingdomToAlly != null){
-						Debug.Log(kingdom.name + " seeks alliance of conquest with " + kingdomToAlly.name);
-						kingdom.SeekAllianceWith (kingdomToAlly);
-						skipPhase4 = true;
-					}
+					Debug.Log(kingdom.name + " seeks alliance of conquest");
+					kingdom.SeekAllianceOfConquest ();
 				}else{
 					mustSeekAlliance = true;
 				}
@@ -75,7 +52,7 @@ public static class SeeksSuperiority {
 				foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 					if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 100f && !relationship.AreAllies()){
 						Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 100 or above threat and a less than 75 invasion value");
-						kingdom.SeekAlliance ();
+						kingdom.SeekAllianceOfProtection ();
 						if(kingdom.alliancePool != null){
 							skipPhase2 = true;
 						}
