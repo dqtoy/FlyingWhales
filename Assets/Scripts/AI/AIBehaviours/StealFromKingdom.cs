@@ -11,7 +11,7 @@ public class StealFromKingdom : AIBehaviour {
     private int currStealCooldown;
     private const int STEAL_COOLDOWN = 3;
 
-    public StealFromKingdom(Agent agentPerformingAction, Kingdom targetKingdom) : base(ACTION_TYPE.ATTACK, agentPerformingAction) {
+    public StealFromKingdom(GameAgent agentPerformingAction, Kingdom targetKingdom) : base(ACTION_TYPE.ATTACK, agentPerformingAction) {
         _targetKingdom = targetKingdom;
         isReadyToSteal = true;
     }

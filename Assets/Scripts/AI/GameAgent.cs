@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Agent {
+public class GameAgent {
 
     protected AGENT_CATEGORY _agentCategory;
     protected AGENT_TYPE _agentType;
@@ -74,7 +74,7 @@ public class Agent {
     }
     #endregion
 
-    public Agent(AGENT_CATEGORY agentCategory, AGENT_TYPE agentType, MOVE_TYPE movementType) {
+    public GameAgent(AGENT_CATEGORY agentCategory, AGENT_TYPE agentType, MOVE_TYPE movementType) {
         _agentCategory = agentCategory;
         _agentType = agentType;
         _movementType = movementType;
@@ -117,7 +117,7 @@ public class Agent {
     internal void SetRandomBehaviour(AIBehaviour randomBehaviour) {
         _randomBehaviour = randomBehaviour;
     }
-    internal virtual AIBehaviour DetermineAction(List<Agent> threatsInRange, List<Agent> targetsInRange, List<Agent> alliesInRange, bool isPerformingAction) {
+    internal virtual AIBehaviour DetermineAction(List<GameAgent> threatsInRange, List<GameAgent> targetsInRange, List<GameAgent> alliesInRange, bool isPerformingAction) {
         int totalSurroundingInitiative = GetTotalSurroundingInitiative(targetsInRange);
         int totalSurroundingThreat = GetTotalSurroundingThreat(threatsInRange);
         int totalInitiativeFromAllies = GetTotalInitiativeFromAllies(alliesInRange);
@@ -157,21 +157,21 @@ public class Agent {
     #endregion
 
     #region Threat/Initiative
-    protected int GetTotalSurroundingThreat(List<Agent> threats) {
+    protected int GetTotalSurroundingThreat(List<GameAgent> threats) {
         int totalThreat = 0;
         for (int i = 0; i < threats.Count; i++) {
             totalThreat += GetThreatOfAgent(threats[i]);
         }
         return totalThreat;
     }
-    protected int GetTotalSurroundingInitiative(List<Agent> targets) {
+    protected int GetTotalSurroundingInitiative(List<GameAgent> targets) {
         int totalInitiative = 0;
         for (int i = 0; i < targets.Count; i++) {
             totalInitiative += GetInitiativeFromAgent(targets[i]);
         }
         return totalInitiative;
     }
-    protected int GetTotalInitiativeFromAllies(List<Agent> allies) {
+    protected int GetTotalInitiativeFromAllies(List<GameAgent> allies) {
         int totalInitiative = 0;
         for (int i = 0; i < allies.Count; i++) {
             totalInitiative += GetInitiativeFromAlly(allies[i]);
@@ -190,7 +190,7 @@ public class Agent {
      * 0 - your hp and attack is higher than the attack and hp of the other agent
      * </summary>
      * */
-    internal int GetThreatOfAgent(Agent otherAgent) {
+    internal int GetThreatOfAgent(GameAgent otherAgent) {
         int threat = 0;
         if (otherAgent.currentHP >= this.currentHP && otherAgent.attackValue >= this.attackValue) {
             threat = 3;
@@ -210,7 +210,7 @@ public class Agent {
      * 0 - if you have lower or equal hp and attack damge than the other agent
      * </summary>
      * */
-    internal int GetInitiativeFromAgent(Agent otherAgent) {
+    internal int GetInitiativeFromAgent(GameAgent otherAgent) {
         int initiative = 0;
         if (this.currentHP > otherAgent.currentHP && this.attackValue > otherAgent.attackValue) {
             initiative = 3;
@@ -222,7 +222,7 @@ public class Agent {
         return initiative;
     }
 
-    internal int GetInitiativeFromAlly(Agent ally) {
+    internal int GetInitiativeFromAlly(GameAgent ally) {
         int initiative = 0;
         if(ally.currentHP >= this.currentHP && ally.attackValue >= this.attackValue) {
             initiative = 3;

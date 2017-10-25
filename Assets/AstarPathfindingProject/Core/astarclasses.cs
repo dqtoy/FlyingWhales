@@ -92,6 +92,7 @@ namespace Pathfinding {
 		/** Tangent of the edge which was hit */
 		public Vector3 tangent;
 
+		/** Distance from #origin to #point */
 		public float distance {
 			get {
 				return (point-origin).magnitude;
@@ -104,22 +105,23 @@ namespace Pathfinding {
 			this.point = point;
 			node = null;
 			tangent = Vector3.zero;
-			//this.distance = distance;
 		}
 	}
 
-	/** Nearest node constraint. Constrains which nodes will be returned by the GetNearest function */
+	/** Nearest node constraint. Constrains which nodes will be returned by the \link AstarPath.GetNearest GetNearest\endlink function */
 	public class NNConstraint {
 		/** Graphs treated as valid to search on.
 		 * This is a bitmask meaning that bit 0 specifies whether or not the first graph in the graphs list should be able to be included in the search,
 		 * bit 1 specifies whether or not the second graph should be included and so on.
 		 * \code
-		 * //Enables the first and third graphs to be included, but not the rest
+		 * // Enables the first and third graphs to be included, but not the rest
 		 * myNNConstraint.graphMask = (1 << 0) | (1 << 2);
 		 * \endcode
-		 * \note This does only affect which nodes are returned from a GetNearest call, if an invalid graph is linked to from a valid graph, it might be searched anyway.
+		 * \note This does only affect which nodes are returned from a \link AstarPath.GetNearest GetNearest\endlink call, if a valid graph is connected to an invalid graph using a node link then it might be searched anyway.
 		 *
-		 * \see AstarPath.GetNearest */
+		 * \see #AstarPath.GetNearest
+		 * \see #SuitableGraph
+		 */
 		public int graphMask = -1;
 
 		/** Only treat nodes in the area #area as suitable. Does not affect anything if #area is less than 0 (zero) */
@@ -128,10 +130,13 @@ namespace Pathfinding {
 		/** Area ID to constrain to. Will not affect anything if less than 0 (zero) or if #constrainArea is false */
 		public int area = -1;
 
-		/** Only treat nodes with the walkable flag set to the same as #walkable as suitable */
+		/** Constrain the search to only walkable or unwalkable nodes depending on #walkable. */
 		public bool constrainWalkability = true;
 
-		/** What must the walkable flag on a node be for it to be suitable. Does not affect anything if #constrainWalkability if false */
+		/** Only search for walkable or unwalkable nodes if #constrainWalkability is enabled.
+		 * If true, only walkable nodes will be searched for, otherwise only unwalkable nodes will be searched for.
+		 * Does not affect anything if #constrainWalkability if false.
+		 */
 		public bool walkable = true;
 
 		/** if available, do an XZ check instead of checking on all axes.
@@ -144,22 +149,30 @@ namespace Pathfinding {
 		 */
 		public bool distanceXZ;
 
-		/** Sets if tags should be constrained */
+		/** Sets if tags should be constrained.
+		 * \see #tags
+		 */
 		public bool constrainTags = true;
 
-		/** Nodes which have any of these tags set are suitable. This is a bitmask, i.e bit 0 indicates that tag 0 is good, bit 3 indicates tag 3 is good etc. */
+		/** Nodes which have any of these tags set are suitable.
+		 * This is a bitmask, i.e bit 0 indicates that tag 0 is good, bit 3 indicates tag 3 is good etc.
+		 * \see #constrainTags
+		 * \see #graphMask
+		 */
 		public int tags = -1;
 
 		/** Constrain distance to node.
-		 * Uses distance from AstarPath.maxNearestNodeDistance.
+		 * Uses distance from #AstarPath.maxNearestNodeDistance.
 		 * If this is false, it will completely ignore the distance limit.
+		 *
+		 * If there are no suitable nodes within the distance limit then the search will terminate with a null node as a result.
 		 * \note This value is not used in this class, it is used by the AstarPath.GetNearest function.
 		 */
 		public bool constrainDistance = true;
 
 		/** Returns whether or not the graph conforms to this NNConstraint's rules.
 		 * Note that only the first 31 graphs are considered using this function.
-		 * If the graphMask has bit 31 set (i.e the last graph possible to fit in the mask), all graphs
+		 * If the #graphMask has bit 31 set (i.e the last graph possible to fit in the mask), all graphs
 		 * above index 31 will also be considered suitable.
 		 */
 		public virtual bool SuitableGraph (int graphIndex, NavGraph graph) {
@@ -187,7 +200,7 @@ namespace Pathfinding {
 			}
 		}
 
-		/** Returns a constraint which will not filter the results */
+		/** Returns a constraint which does not filter the results */
 		public static NNConstraint None {
 			get {
 				return new NNConstraint {
@@ -301,15 +314,21 @@ namespace Pathfinding {
 
 	/** Progress info for e.g a progressbar.
 	 * Used by the scan functions in the project
-	 * \see AstarPath.ScanAsync
+	 * \see #AstarPath.ScanAsync
 	 */
 	public struct Progress {
+		/** Current progress as a value between 0 and 1 */
 		public readonly float progress;
+		/** Description of what is currently being done */
 		public readonly string description;
 
-		public Progress (float p, string d) {
-			progress = p;
-			description = d;
+		public Progress (float progress, string description) {
+			this.progress = progress;
+			this.description = description;
+		}
+
+		public Progress MapTo (float min, float max, string prefix = null) {
+			return new Progress(Mathf.Lerp(min, max, progress), prefix + description);
 		}
 
 		public override string ToString () {
@@ -319,14 +338,14 @@ namespace Pathfinding {
 
 	/** Graphs which can be updated during runtime */
 	public interface IUpdatableGraph {
-		/** Updates an area using the specified GraphUpdateObject.
+		/** Updates an area using the specified #GraphUpdateObject.
 		 *
 		 * Notes to implementators.
 		 * This function should (in order):
 		 * -# Call o.WillUpdateNode on the GUO for every node it will update, it is important that this is called BEFORE any changes are made to the nodes.
 		 * -# Update walkabilty using special settings such as the usePhysics flag used with the GridGraph.
 		 * -# Call Apply on the GUO for every node which should be updated with the GUO.
-		 * -# Update eventual connectivity info if appropriate (GridGraphs updates connectivity, but most other graphs don't since then the connectivity cannot be recovered later).
+		 * -# Update connectivity info if appropriate (GridGraphs updates connectivity, but most other graphs don't since then the connectivity cannot be recovered later).
 		 */
 		void UpdateArea (GraphUpdateObject o);
 
@@ -341,31 +360,6 @@ namespace Pathfinding {
 		void UpdateAreaPost (GraphUpdateObject o);
 
 		GraphUpdateThreading CanUpdateAsync (GraphUpdateObject o);
-	}
-
-	[System.Serializable]
-	/** Holds a tagmask.
-	 * This is used to store which tags to change and what to set them to in a Pathfinding.GraphUpdateObject.
-	 * All variables are bitmasks.\n
-	 * I wanted to make it a struct, but due to technical limitations when working with Unity's GenericMenu, I couldn't.
-	 * So be wary of this when passing it as it will be passed by reference, not by value as e.g LayerMask.
-	 *
-	 * \deprecated This class is being phased out
-	 */
-	public class TagMask {
-		public int tagsChange;
-		public int tagsSet;
-
-		public TagMask () {}
-
-		public TagMask (int change, int set) {
-			tagsChange = change;
-			tagsSet = set;
-		}
-
-		public override string ToString () {
-			return ""+System.Convert.ToString(tagsChange, 2)+"\n"+System.Convert.ToString(tagsSet, 2);
-		}
 	}
 
 	/** Represents a collection of settings used to update nodes in a specific region of a graph.
@@ -402,8 +396,8 @@ namespace Pathfinding {
 		 */
 		public bool updatePhysics = true;
 
-		/** When #updatePhysics is true, GridGraphs will normally reset penalties, with this option you can override it.
-		 * Good to use when you want to keep old penalties even when you update the graph.
+		/** Reset penalties to their initial values when updating grid graphs and #updatePhysics is true.
+		 * If you want to keep old penalties even when you update the graph you may want to disable this option.
 		 *
 		 * The images below shows two overlapping graph update objects, the right one happened to be applied before the left one. They both have updatePhysics = true and are
 		 * set to increase the penalty of the nodes by some amount.
@@ -475,7 +469,7 @@ namespace Pathfinding {
 		/** Nodes which were updated by this GraphUpdateObject.
 		 * Will only be filled if #trackChangedNodes is true.
 		 * \note It might take a few frames for graph update objects to be applied.
-		 * If you need this info directly, use AstarPath.FlushGraphUpdates.
+		 * If you need this info immediately, use #AstarPath.FlushGraphUpdates.
 		 */
 		public List<GraphNode> changedNodes;
 		private List<uint> backupData;
@@ -505,7 +499,10 @@ namespace Pathfinding {
 		}
 
 		/** Reverts penalties and flags (which includes walkability) on every node which was updated using this GUO.
-		 * Data for reversion is only saved if #trackChangedNodes is true */
+		 * Data for reversion is only saved if #trackChangedNodes is true.
+		 *
+		 * \note Not all data is saved. The saved data includes: penalties, walkability, tags, area, position and for grid graphs (not layered) it also includes connection data.
+		 */
 		public virtual void RevertFromBackup () {
 			if (trackChangedNodes) {
 				if (changedNodes == null) return;
@@ -524,11 +521,11 @@ namespace Pathfinding {
 					changedNodes[i].position = backupPositionData[i];
 				}
 
-				ListPool<GraphNode>.Release(changedNodes);
-				ListPool<uint>.Release(backupData);
-				ListPool<Int3>.Release(backupPositionData);
+				ListPool<GraphNode>.Release(ref changedNodes);
+				ListPool<uint>.Release(ref backupData);
+				ListPool<Int3>.Release(ref backupPositionData);
 			} else {
-				throw new System.InvalidOperationException("Changed nodes have not been tracked, cannot revert from backup");
+				throw new System.InvalidOperationException("Changed nodes have not been tracked, cannot revert from backup. Please set trackChangedNodes to true before applying the update.");
 			}
 		}
 
@@ -555,30 +552,17 @@ namespace Pathfinding {
 		}
 	}
 
+	/** Graph which has a well defined transformation from graph space to world space */
 	public interface ITransformedGraph {
 		GraphTransform transform { get; }
 	}
 
+	/** Graph which supports the Linecast method */
 	public interface IRaycastableGraph {
 		bool Linecast (Vector3 start, Vector3 end);
 		bool Linecast (Vector3 start, Vector3 end, GraphNode hint);
 		bool Linecast (Vector3 start, Vector3 end, GraphNode hint, out GraphHitInfo hit);
 		bool Linecast (Vector3 start, Vector3 end, GraphNode hint, out GraphHitInfo hit, List<GraphNode> trace);
-	}
-
-	/** Holds info about one pathfinding thread.
-	 * Mainly used to send information about how the thread should execute when starting it
-	 */
-	public struct PathThreadInfo {
-		public readonly int threadIndex;
-		public readonly AstarPath astar;
-		public readonly PathHandler runData;
-
-		public PathThreadInfo (int index, AstarPath astar, PathHandler runData) {
-			this.threadIndex = index;
-			this.astar = astar;
-			this.runData = runData;
-		}
 	}
 
 	/** Integer Rectangle.
@@ -770,19 +754,7 @@ namespace Pathfinding {
 	/* Delegate with on Path object as parameter.
 	 * This is used for callbacks when a path has finished calculation.\n
 	 * Example function:
-	 * \code
-	 * public void Start () {
-	 *  //Assumes a Seeker component is attached to the GameObject
-	 *  Seeker seeker = GetComponent<Seeker>();
-	 *
-	 *  //seeker.pathCallback is a OnPathDelegate, we add the function OnPathComplete to it so it will be called whenever a path has finished calculating on that seeker
-	 *  seeker.pathCallback += OnPathComplete;
-	 * }
-	 *
-	 * public void OnPathComplete (Path p) {
-	 *  Debug.Log ("This is called when a path is completed on the seeker attached to this GameObject");
-	 * }
-	 * \endcode
+	 * \snippet MiscSnippets.cs OnPathDelegate
 	 */
 	public delegate void OnPathDelegate (Path p);
 
@@ -790,6 +762,7 @@ namespace Pathfinding {
 
 	public delegate void OnScanDelegate (AstarPath script);
 
+	/** \deprecated */
 	public delegate void OnScanStatus (Progress progress);
 
 	#endregion
@@ -812,6 +785,7 @@ namespace Pathfinding {
 		 * might be using it (e.g calling GetNearest).
 		 */
 		UnityPost = 1 << 2,
+		/** Combination of SeparateThread and UnityInit */
 		SeparateAndUnityInit = SeparateThread | UnityInit
 	}
 
@@ -829,11 +803,18 @@ namespace Pathfinding {
 		OnlyErrors
 	}
 
-	/** Heuristic to use. Heuristic is the estimated cost from the current node to the target */
+	/** Heuristic to use. The heuristic is the estimated cost from the current node to the target */
 	public enum Heuristic {
+		/** Manhattan distance. \see https://en.wikipedia.org/wiki/Taxicab_geometry */
 		Manhattan,
+		/** Manhattan distance, but allowing diagonal movement as well */
 		DiagonalManhattan,
+		/** Ordinary distance. \see https://en.wikipedia.org/wiki/Euclidean_distance */
 		Euclidean,
+		/** Use no heuristic at all.
+		 * This reduces the pathfinding algorithm to Dijkstra's algorithm.
+		 * \see https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+		 */
 		None
 	}
 
@@ -848,6 +829,7 @@ namespace Pathfinding {
 		Tags
 	}
 
+	/** Number of threads to use */
 	public enum ThreadCount {
 		AutomaticLowLoad = -1,
 		AutomaticHighLoad = -2,
@@ -862,6 +844,7 @@ namespace Pathfinding {
 		Eight
 	}
 
+	/** Internal state of a path in the pipeline */
 	public enum PathState {
 		Created = 0,
 		PathQueue = 1,
@@ -870,11 +853,30 @@ namespace Pathfinding {
 		Returned = 4
 	}
 
+	/** State of a path request */
 	public enum PathCompleteState {
+		/** The path has not been calculated yet.
+		 * \see #Pathfinding.Path.IsDone()
+		 */
 		NotCalculated = 0,
+		/** The path calculation is done, but it failed.
+		 * \see #Pathfinding.Path.error
+		 */
 		Error = 1,
+		/** The path has been successfully calculated */
 		Complete = 2,
-		Partial = 3
+		/** The path has been calculated, but only a partial path could be found.
+		 * \see #Pathfinding.ABPath.calculatePartial
+		 */
+		Partial = 3,
+	}
+
+	/** What to do when the character is close to the destination */
+	public enum CloseToDestinationMode {
+		/** The character will stop as quickly as possible when within \a endReachedDistance (field that exist on most movement scripts) units from the destination */
+		Stop,
+		/** The character will continue to the exact position of the destination */
+		ContinueToExactDestination,
 	}
 
 	#endregion

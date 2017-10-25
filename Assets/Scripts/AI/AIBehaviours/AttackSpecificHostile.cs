@@ -3,9 +3,9 @@ using System.Collections;
 
 public class AttackSpecificHostile : AIBehaviour {
 
-    private Agent target;
+    private GameAgent target;
 
-    public AttackSpecificHostile(Agent agentPerformingAction, Agent hostileToAttack) : base(ACTION_TYPE.ATTACK, agentPerformingAction) {
+    public AttackSpecificHostile(GameAgent agentPerformingAction, GameAgent hostileToAttack) : base(ACTION_TYPE.ATTACK, agentPerformingAction) {
         target = hostileToAttack;
         //Messenger.RemoveListener<Entity>("EntityDied", OnEntityDied);
     }

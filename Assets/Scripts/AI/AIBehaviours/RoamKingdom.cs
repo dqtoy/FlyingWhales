@@ -5,7 +5,7 @@ public class RoamKingdom : AIBehaviour {
 
     private Kingdom _targetKingdom;
 
-    public RoamKingdom(Agent agentPerformingAction, Kingdom targetKingdom) : base(ACTION_TYPE.RANDOM, agentPerformingAction) {
+    public RoamKingdom(GameAgent agentPerformingAction, Kingdom targetKingdom) : base(ACTION_TYPE.RANDOM, agentPerformingAction) {
         _targetKingdom = targetKingdom;
     }
 

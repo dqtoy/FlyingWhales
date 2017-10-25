@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using Panda;
+using Pathfinding;
 
 [RequireComponent(typeof(PandaBehaviour))]
 public class AgentObject : MonoBehaviour {
 
-    private Agent _agent;
+    private GameAgent _agent;
     private AIBehaviour _currentBehaviour;
 
     //Actions
@@ -16,10 +17,10 @@ public class AgentObject : MonoBehaviour {
     private ACTION_TYPE _currentAction;
     private bool isPerformingAction;
     private int layerMask;
-    private List<Agent> _agentsInRange;
-    private List<Agent> _targetsInRange; //Agents in range that this agent wants to attack
-    private List<Agent> _alliesInRange; //Agents in range that is the same type as this
-    private List<Agent> _threatsInRange; //Agents in range that wants to attack this agent;
+    private List<GameAgent> _agentsInRange;
+    private List<GameAgent> _targetsInRange; //Agents in range that this agent wants to attack
+    private List<GameAgent> _alliesInRange; //Agents in range that is the same type as this
+    private List<GameAgent> _threatsInRange; //Agents in range that wants to attack this agent;
     //private List<Agent> _entitiesAttackingThis;
     //private List<Agent> _threatsInRange;
 
@@ -30,7 +31,7 @@ public class AgentObject : MonoBehaviour {
     [SerializeField] private UILabel agentActionLbl;
 
     #region getters/setters
-    internal Agent agent {
+    internal GameAgent agent {
         get { return _agent; }
     }
     internal ACTION_TYPE currentAction {
@@ -39,18 +40,18 @@ public class AgentObject : MonoBehaviour {
     internal AIBehaviour currentBehaviour {
         get { return _currentBehaviour; }
     }
-    internal List<Agent> targetsInRange {
+    internal List<GameAgent> targetsInRange {
         get { return _targetsInRange; }
     }
-    internal List<Agent> alliesInRange {
+    internal List<GameAgent> alliesInRange {
         get { return _alliesInRange; }
     }
-    internal List<Agent> threatsInRange {
+    internal List<GameAgent> threatsInRange {
         get { return _threatsInRange; }
     }
     #endregion
 
-    public void Initialize(Agent agent, int[] validTags) {
+    public void Initialize(GameAgent agent, int[] validTags) {
         _agent = agent;
         _aiPath.speed = agent.movementSpeed;
         _aiPath.endReachedDistance = agent.attackRange;
@@ -59,10 +60,10 @@ public class AgentObject : MonoBehaviour {
         name = agent.agentType.ToString() + UnityEngine.Random.Range(0, 5).ToString();
         visualSprite.gameObject.name = agent.agentType.ToString();
         layerMask = 1 << LayerMask.NameToLayer("Agent");
-        _agentsInRange = new List<Agent>();
-        _targetsInRange = new List<Agent>();
-        _threatsInRange = new List<Agent>();
-        _alliesInRange = new List<Agent>();
+        _agentsInRange = new List<GameAgent>();
+        _targetsInRange = new List<GameAgent>();
+        _threatsInRange = new List<GameAgent>();
+        _alliesInRange = new List<GameAgent>();
         //_entitiesAttackingThis = new List<Entity>();
         //_threatsInRange = new List<Entity>();
         SetValidTags(validTags);
@@ -96,12 +97,12 @@ public class AgentObject : MonoBehaviour {
     #endregion
 
     #region Target Functions
-    internal void AddAgentInRange(Agent agent) {
+    internal void AddAgentInRange(GameAgent agent) {
         if (!_agentsInRange.Contains(agent)) {
             _agentsInRange.Add(agent);
         }
     }
-    internal void RemoveAgentInRange(Agent agent) {
+    internal void RemoveAgentInRange(GameAgent agent) {
         _agentsInRange.Remove(agent);
     }
     internal void SetTarget(Transform target) {
@@ -140,7 +141,7 @@ public class AgentObject : MonoBehaviour {
         _alliesInRange.Clear();
         if (_agentsInRange.Count > 1) {
             for (int i = 0; i < _agentsInRange.Count; i++) {
-                Agent otherAgent = _agentsInRange[i];
+                GameAgent otherAgent = _agentsInRange[i];
                 if (this.agent.allyTypes.Contains(otherAgent.agentType)) {
                     //other agent is considered as ally
                     //TODO: add checking for if other agent is from another kingdom, if so, determine if that guard is considered to be an ally
