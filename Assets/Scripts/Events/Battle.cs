@@ -644,7 +644,7 @@ public class Battle {
 		}
 
 		for (int i = 0; i < defenderRegion.outerTiles.Count; i++) {
-			if(defenderRegion.outerTiles[i].corpseMound == null && defenderRegion.outerTiles[i].IsAdjacentWithRegion(attackerRegion)){
+			if(defenderRegion.outerTiles[i].elevationType != ELEVATION.WATER && defenderRegion.outerTiles[i].corpseMound == null && defenderRegion.outerTiles[i].IsAdjacentWithRegion(attackerRegion)){
 				defenderRegion.outerTiles [i].CreateCorpseMoundObjectOnTile (amount);
 				return;
 			}
