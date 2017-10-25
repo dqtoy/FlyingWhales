@@ -14,6 +14,8 @@ public class StructureObject : PooledObject {
 
     private GameDate expiryDate;
 
+    [SerializeField] private AgentObject _agentObj;
+
     [ContextMenu("List Ruined Structures")]
     public void ListRuinedObjects() {
         for (int i = 0; i < ruinedParents.Length; i++) {
@@ -31,6 +33,16 @@ public class StructureObject : PooledObject {
         _structureType = structureType;
         SetStructureState(structureState);
         SetStructureColor(structureColor);
+
+        if(_agentObj != null) {
+            //Initialize Agent Object
+            CityAgent newCityAgent = new CityAgent();
+            AIBehaviour attackBehaviour = new AttackHostiles(newCityAgent);
+            newCityAgent.SetAttackBehaviour(attackBehaviour);
+            newCityAgent.SetAgentObj(_agentObj);
+            _agentObj.Initialize(newCityAgent, new int[] { 0 });
+        }
+        
         gameObject.SetActive(true);
     }
 

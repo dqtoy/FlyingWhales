@@ -2,14 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class GameAgent {
 
-    protected AGENT_CATEGORY _agentCategory;
-    protected AGENT_TYPE _agentType;
+    [SerializeField] protected AGENT_CATEGORY _agentCategory;
+    [SerializeField] protected AGENT_TYPE _agentType;
 
-    protected int _attackRatio;
-    protected int _fleeRatio;
-    protected int _randomRatio;
+    [SerializeField] protected int _attackRatio;
+    [SerializeField] protected int _fleeRatio;
+    [SerializeField] protected int _randomRatio;
 
     protected int _totalHP;
     protected int _currentHP;
@@ -17,18 +18,18 @@ public class GameAgent {
     protected float _attackSpeed;
     protected int _attackValue;
     protected float _visibilityRange;
-    protected bool _isDead;
+    [SerializeField] protected bool _isDead;
 
     protected MOVE_TYPE _movementType;
     protected float _movementSpeed;
 
-    protected AIBehaviour _attackBehaviour;
-    protected AIBehaviour _fleeBehaviour;
-    protected AIBehaviour _randomBehaviour;
+    [SerializeField] protected AIBehaviour _attackBehaviour;
+    [SerializeField] protected AIBehaviour _fleeBehaviour;
+    [SerializeField] protected AIBehaviour _randomBehaviour;
 
     protected HashSet<AGENT_TYPE> _allyTypes;
 
-    protected AgentObject _agentObj;
+    [SerializeField] protected AgentObject _agentObj;
 
     internal Color agentColor;
 
@@ -100,9 +101,22 @@ public class GameAgent {
         if(agentObj.gameObject == null) {
             throw new System.Exception(agentType.ToString() + " cannot be killed because it does not have a gameobject!");
         } else {
+            if(_attackBehaviour != null) {
+                _attackBehaviour.CancelAction();
+                _attackBehaviour = null;
+            }
+            if (_fleeBehaviour != null) {
+                _fleeBehaviour.CancelAction();
+                _fleeBehaviour = null;
+            }
+            if (_randomBehaviour != null) {
+                _randomBehaviour.CancelAction();
+                _randomBehaviour = null;
+            }
             ObjectPoolManager.Instance.DestroyObject(agentObj.gameObject);
             _isDead = true;
             _agentObj = null;
+            Messenger.Broadcast<GameAgent>("OnAgentDied", this);
         }
     }
     #endregion
@@ -171,7 +185,7 @@ public class GameAgent {
         }
         return totalInitiative;
     }
-    protected int GetTotalInitiativeFromAllies(List<GameAgent> allies) {
+    internal int GetTotalInitiativeFromAllies(List<GameAgent> allies) {
         int totalInitiative = 0;
         for (int i = 0; i < allies.Count; i++) {
             totalInitiative += GetInitiativeFromAlly(allies[i]);

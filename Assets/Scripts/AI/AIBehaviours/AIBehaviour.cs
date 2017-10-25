@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public class AIBehaviour {
 
-    private ACTION_TYPE _actionType;
-    private GameAgent _agentPerformingAction;
+    [SerializeField] private ACTION_TYPE _actionType;
+    [SerializeField] private GameAgent _agentPerformingAction;
 
     #region getters/setters
     internal ACTION_TYPE actionType {
@@ -36,8 +37,12 @@ public class AIBehaviour {
      * </summary>
      * */
     internal virtual void OnActionDone() {
-        if(agentPerformingAction.agentObj != null) {
-            agentPerformingAction.agentObj.SetIsPerformingAction(false);
-        }
+        agentPerformingAction.agentObj.SetIsPerformingAction(false);
+        agentPerformingAction.agentObj.SetCurrentBehaviour(null);
+    }
+
+    internal virtual void CancelAction() {
+        agentPerformingAction.agentObj.SetIsPerformingAction(false);
+        agentPerformingAction.agentObj.SetCurrentBehaviour(null);
     }
 }
