@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Guard : Agent {
+public class Guard : GameAgent {
 
     public Guard() : base(AGENT_CATEGORY.LIVING, AGENT_TYPE.GUARD, MOVE_TYPE.GROUND) {
         _attackRange = 0.5f;

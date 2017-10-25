@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CityAgent : Agent {
+public class CityAgent : GameAgent {
 
     public CityAgent() : base(AGENT_CATEGORY.STRUCTURE, AGENT_TYPE.CITY, MOVE_TYPE.NONE) {
         _attackRange = 2f;
@@ -16,10 +16,10 @@ public class CityAgent : Agent {
     }
 
     #region overrides
-    internal override AIBehaviour DetermineAction(List<Agent> threatsInRange, List<Agent> targetsInRange, List<Agent> alliesInRange, bool isPerformingAction) {
+    internal override AIBehaviour DetermineAction(List<GameAgent> threatsInRange, List<GameAgent> targetsInRange, List<GameAgent> alliesInRange, bool isPerformingAction) {
         if (isPerformingAction) {
             if(agentObj.currentAction == ACTION_TYPE.ATTACK) {
-                Agent currTarget = ((AttackHostiles)agentObj.currentBehaviour).target;
+                GameAgent currTarget = ((AttackHostiles)agentObj.currentBehaviour).target;
                 if(!threatsInRange.Contains(currTarget) && !targetsInRange.Contains(currTarget)) {
                     return _attackBehaviour;
                 }

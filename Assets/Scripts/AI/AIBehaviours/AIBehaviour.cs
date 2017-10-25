@@ -4,18 +4,18 @@ using System.Collections;
 public class AIBehaviour {
 
     private ACTION_TYPE _actionType;
-    private Agent _agentPerformingAction;
+    private GameAgent _agentPerformingAction;
 
     #region getters/setters
     internal ACTION_TYPE actionType {
         get { return _actionType; }
     }
-    internal Agent agentPerformingAction {
+    internal GameAgent agentPerformingAction {
         get { return _agentPerformingAction; }
     }
     #endregion
 
-    public AIBehaviour(ACTION_TYPE actionType, Agent agentPerformingAction) {
+    public AIBehaviour(ACTION_TYPE actionType, GameAgent agentPerformingAction) {
         _actionType = actionType;
         _agentPerformingAction = agentPerformingAction;
     }

@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 public class AttackHostiles : AIBehaviour {
 
-    private Agent _target;
+    private GameAgent _target;
 
     #region getters/setters
-    internal Agent target {
+    internal GameAgent target {
         get { return _target; }
     }
     #endregion
-    public AttackHostiles(Agent agentPerformingAction) : base(ACTION_TYPE.ATTACK, agentPerformingAction) {
+    public AttackHostiles(GameAgent agentPerformingAction) : base(ACTION_TYPE.ATTACK, agentPerformingAction) {
         //Messenger.AddListener<Entity>("EntityDied", OnEntityDied);
     }
 
@@ -33,7 +33,7 @@ public class AttackHostiles : AIBehaviour {
             }
 
             if (_target == null && !agentPerformingAction.isDead) {
-                List<Agent> possibleTargets = new List<Agent>(agentPerformingAction.agentObj.targetsInRange);
+                List<GameAgent> possibleTargets = new List<GameAgent>(agentPerformingAction.agentObj.targetsInRange);
                 possibleTargets.AddRange(agentPerformingAction.agentObj.threatsInRange);
                 _target = possibleTargets[Random.Range(0, possibleTargets.Count)];
                 agentPerformingAction.agentObj.SetTarget(_target.agentObj.transform);

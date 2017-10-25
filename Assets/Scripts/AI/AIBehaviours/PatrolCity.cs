@@ -11,7 +11,7 @@ public class PatrolCity : AIBehaviour {
 
     private enum PATROL_DIRECTION { CLOCKWISE, COUNTER_CLOCKWISE }
 
-    public PatrolCity(Agent agentPerformingAction, City targetCity) : base(ACTION_TYPE.RANDOM, agentPerformingAction) {
+    public PatrolCity(GameAgent agentPerformingAction, City targetCity) : base(ACTION_TYPE.RANDOM, agentPerformingAction) {
         _targetCity = targetCity;
         HexTile cityTile = targetCity.hexTile;
         _patrolTiles = new List<HexTile>();

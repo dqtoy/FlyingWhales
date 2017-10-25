@@ -9,7 +9,7 @@ public class CollectResources : AIBehaviour {
 
     private bool isGoingHome;
 
-    public CollectResources(Agent agentPerformingAction, Kingdom collectResourcesFrom) : base(ACTION_TYPE.RANDOM, agentPerformingAction) {
+    public CollectResources(GameAgent agentPerformingAction, Kingdom collectResourcesFrom) : base(ACTION_TYPE.RANDOM, agentPerformingAction) {
         _collectResourcesFrom = collectResourcesFrom;
         isGoingHome = false;
     }
