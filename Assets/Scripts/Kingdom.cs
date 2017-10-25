@@ -365,16 +365,24 @@ public class Kingdom{
     }
 	internal int effectiveAttack{
 		get{
-			float mySoldiers = (float)this.soldiers;
-			float numerator = 2f * mySoldiers * (float)this._baseWeapons;
-			return (int)(numerator / (mySoldiers + (float)this._baseWeapons));
+			if (this.race != RACE.UNDEAD) {
+				float mySoldiers = (float)this.soldiers;
+				float numerator = 2f * mySoldiers * (float)this._baseWeapons;
+				return (int)(numerator / (mySoldiers + (float)this._baseWeapons));
+			} else {
+				return this._population;
+			}
 		}
 	}
 	internal int effectiveDefense{
-		get{ 
-			float mySoldiers = (float)this.soldiers;
-			float numerator = 2f * mySoldiers * (float)this._baseArmor;
-			return (int)(numerator / (mySoldiers + (float)this._baseArmor));
+		get{
+			if (this.race != RACE.UNDEAD) {
+				float mySoldiers = (float)this.soldiers;
+				float numerator = 2f * mySoldiers * (float)this._baseArmor;
+				return (int)(numerator / (mySoldiers + (float)this._baseArmor));
+			} else {
+				return this._population;
+			}
 		}
 	}
     internal Dictionary<City, List<Citizen>> citizens {
