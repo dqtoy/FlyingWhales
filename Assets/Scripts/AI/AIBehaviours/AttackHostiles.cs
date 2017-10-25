@@ -12,7 +12,7 @@ public class AttackHostiles : AIBehaviour {
     }
     #endregion
     public AttackHostiles(GameAgent agentPerformingAction) : base(ACTION_TYPE.ATTACK, agentPerformingAction) {
-        //Messenger.AddListener<Entity>("EntityDied", OnEntityDied);
+        Messenger.AddListener<GameAgent>("OnAgentDied", OnAgentDied);
     }
 
     #region overrides
@@ -49,7 +49,7 @@ public class AttackHostiles : AIBehaviour {
             int damageToTarget = agentPerformingAction.attackValue;
             //int damageToThisEntity = target.entityGO.entity.attackDamage;
 
-            //target.agentObj.OnEntityAttacked(agentPerformingAction);
+            target.agentObj.OnAttacked(agentPerformingAction);
 
             _target.AdjustHP(-damageToTarget);
             //entityPerformingAction.AdjustHP(-damageToThisEntity);
@@ -65,13 +65,13 @@ public class AttackHostiles : AIBehaviour {
     }
     #endregion
 
-    //private void OnEntityDied(Entity otherEntity) {
-    //    if(otherEntity == target) {
-    //        target = null;
-    //        agentPerformingAction.entityGO.SetTarget(null);
-    //        agentPerformingAction.entityGO.SetIsPerformingAction(false);
-    //    } else if(otherEntity == agentPerformingAction) {
-    //        Messenger.RemoveListener<Entity>("EntityDied", OnEntityDied);
-    //    }
-    //}
+    private void OnAgentDied(GameAgent otherAgent) {
+        if (otherAgent == target) {
+            _target = null;
+            agentPerformingAction.agentObj.SetTarget(null);
+            agentPerformingAction.agentObj.SetIsPerformingAction(false);
+        } else if (otherAgent == agentPerformingAction) {
+            Messenger.RemoveListener<GameAgent>("OnAgentDied", OnAgentDied);
+        }
+    }
 }

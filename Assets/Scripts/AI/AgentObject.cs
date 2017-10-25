@@ -17,10 +17,11 @@ public class AgentObject : MonoBehaviour {
     private ACTION_TYPE _currentAction;
     private bool isPerformingAction;
     private int layerMask;
-    private List<GameAgent> _agentsInRange;
-    private List<GameAgent> _targetsInRange; //Agents in range that this agent wants to attack
-    private List<GameAgent> _alliesInRange; //Agents in range that is the same type as this
-    private List<GameAgent> _threatsInRange; //Agents in range that wants to attack this agent;
+    [SerializeField] private List<GameAgent> _agentsInRange;
+    [SerializeField] private List<GameAgent> _targetsInRange; //Agents in range that this agent wants to attack
+    [SerializeField] private List<GameAgent> _alliesInRange; //Agents in range that is the same type as this
+    [SerializeField] private List<GameAgent> _threatsInRange; //Agents in range that wants to attack this agent;
+    [SerializeField] private List<GameAgent> _otherAttackersInRange;
     //private List<Agent> _entitiesAttackingThis;
     //private List<Agent> _threatsInRange;
 
@@ -53,7 +54,7 @@ public class AgentObject : MonoBehaviour {
 
     public void Initialize(GameAgent agent, int[] validTags) {
         _agent = agent;
-        _aiPath.speed = agent.movementSpeed;
+        _aiPath.maxSpeed = agent.movementSpeed;
         _aiPath.endReachedDistance = agent.attackRange;
         sphereCollider.radius = agent.visibilityRange;
         isPerformingAction = false;
@@ -64,15 +65,21 @@ public class AgentObject : MonoBehaviour {
         _targetsInRange = new List<GameAgent>();
         _threatsInRange = new List<GameAgent>();
         _alliesInRange = new List<GameAgent>();
+        _otherAttackersInRange = new List<GameAgent>();
         //_entitiesAttackingThis = new List<Entity>();
         //_threatsInRange = new List<Entity>();
         SetValidTags(validTags);
-        SetSpriteColor(agent.agentColor);
+        if(agent.agentCategory == AGENT_CATEGORY.LIVING) {
+            visualSprite.enabled = true;
+            SetSpriteColor(agent.agentColor);
+        } else {
+            visualSprite.enabled = false;
+        }
         if(agent.movementType == MOVE_TYPE.NONE) {
             _aiPath.canMove = false;
             _aiPath.canSearch = false;
         }
-        //Messenger.AddListener<Entity>("EntityDied", OnOtherEntityDied);
+        Messenger.AddListener<GameAgent>("OnAgentDied", OnAgentDied);
     }
 
     #region Visual Functions
@@ -97,6 +104,16 @@ public class AgentObject : MonoBehaviour {
     #endregion
 
     #region Target Functions
+    internal void OnAttacked(GameAgent attackedBy) {
+        for (int i = 0; i < _alliesInRange.Count; i++) {
+            _alliesInRange[i].agentObj.AddAgentAsNearbyAttacker(attackedBy);
+        }
+    }
+    internal void AddAgentAsNearbyAttacker(GameAgent otherAgent) {
+        if (!_otherAttackersInRange.Contains(otherAgent)) {
+            _otherAttackersInRange.Add(otherAgent);
+        }
+    }
     internal void AddAgentInRange(GameAgent agent) {
         if (!_agentsInRange.Contains(agent)) {
             _agentsInRange.Add(agent);
@@ -113,13 +130,29 @@ public class AgentObject : MonoBehaviour {
     }
     #endregion
 
-    #region Entity Functions
+    #region Agent Functions
+    private void OnAgentDied(GameAgent otherAgent) {
+        if(otherAgent == this.agent) {
+            Messenger.RemoveListener<GameAgent>("OnAgentDied", OnAgentDied);
+        } else {
+            _agentsInRange.Remove(otherAgent);
+            _targetsInRange.Remove(otherAgent);
+            _alliesInRange.Remove(otherAgent);
+            _threatsInRange.Remove(otherAgent);
+        }
+    }
     internal void SetIsPerformingAction(bool state) {
         isPerformingAction = state;
     }
     internal void SetCurrentBehaviour(AIBehaviour currentBehaviour) {
-        _currentBehaviour = currentBehaviour;
-        _currentAction = currentBehaviour.actionType;
+        if(currentBehaviour == null) {
+            _currentBehaviour = null;
+            _currentAction = ACTION_TYPE.NONE;
+        } else {
+            _currentBehaviour = currentBehaviour;
+            _currentAction = currentBehaviour.actionType;
+        }
+        
     }
     #endregion
 
@@ -151,9 +184,10 @@ public class AgentObject : MonoBehaviour {
                 } else {
                     //other agent is not an ally
                     //compute if it is a threat or a target, if threat value and initiative value is equal, randomize if the other agent should be considered a 
-                    //threat or target.
+                    //threat or target. Also add initiative that is gained from surroundng allies
                     int threatValueOfOtherAgent = this.agent.GetThreatOfAgent(otherAgent);
                     int initiativeValueOfOtherAgent = this.agent.GetInitiativeFromAgent(otherAgent);
+                    initiativeValueOfOtherAgent += _agent.GetTotalInitiativeFromAllies(_alliesInRange);
                     if (threatValueOfOtherAgent > initiativeValueOfOtherAgent) {
                         //other agent is a threat
                         _threatsInRange.Add(otherAgent);
@@ -165,29 +199,29 @@ public class AgentObject : MonoBehaviour {
             }
         }
 
-        ////Determine whether other entites that have attacked you or allies are to be considered as threats or targets
-        //List<Entity> otherEntites = new List<Entity>();
-        //otherEntites.AddRange(_entitiesAttackingThis);
+        //Determine whether other entites that have attacked you or allies are to be considered as threats or targets
+        List<GameAgent> otherAgents = new List<GameAgent>();
+        otherAgents.AddRange(_otherAttackersInRange);
         //otherEntites.AddRange(_threatsInRange);
 
-        //for (int i = 0; i < otherEntites.Count; i++) {
-        //    Entity otherEntity = otherEntites[i];
-        //    int threatOfEntity = _entity.GetThreatOfEntity(otherEntity);
-        //    int initiativeFromEntity = _entity.GetInitiativeFromEntity(otherEntity);
-        //    int initiativeFromAllies = _alliesInRange.Count * 2;
-        //    int totalInitiative = initiativeFromEntity + initiativeFromAllies;
-        //    if (totalInitiative > threatOfEntity) {
-        //        //other entity is to be considered a target
-        //        if (!_targetsInRange.Contains(otherEntity)) {
-        //            _targetsInRange.Add(otherEntity);
-        //        }
-        //    } else {
-        //        //other entity is to be considered a threat
-        //        if (!_threatsInRange.Contains(otherEntity)) {
-        //            _threatsInRange.Add(otherEntity);
-        //        }
-        //    }
-        //}
+        for (int i = 0; i < otherAgents.Count; i++) {
+            GameAgent otherAgent = otherAgents[i];
+            int threatOfEntity = _agent.GetThreatOfAgent(otherAgent);
+            int initiativeFromEntity = _agent.GetInitiativeFromAgent(otherAgent);
+            int initiativeFromAllies = _agent.GetTotalInitiativeFromAllies(_alliesInRange);
+            int totalInitiative = initiativeFromEntity + initiativeFromAllies;
+            if (totalInitiative > threatOfEntity) {
+                //other entity is to be considered a target
+                if (!_targetsInRange.Contains(otherAgent)) {
+                    _targetsInRange.Add(otherAgent);
+                }
+            } else {
+                //other entity is to be considered a threat
+                if (!_threatsInRange.Contains(otherAgent)) {
+                    _threatsInRange.Add(otherAgent);
+                }
+            }
+        }
 
         AIBehaviour behaviourToPerform = _agent.DetermineAction(_threatsInRange, _targetsInRange, _alliesInRange, isPerformingAction);
         if (behaviourToPerform != null) {

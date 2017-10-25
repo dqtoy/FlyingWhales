@@ -639,9 +639,11 @@ public enum ENTITY_TYPE {
     NONE
 }
 public enum ACTION_TYPE {
+    NONE,
     ATTACK,
     FLEE,
     RANDOM
+    
 }
 public enum MOVE_TYPE {
     GROUND,
