@@ -29,7 +29,8 @@ public class AttackHostiles : AIBehaviour {
             }
         } else {
             if (agentPerformingAction.agentObj.targetsInRange.Count <= 0 && agentPerformingAction.agentObj.threatsInRange.Count <= 0) {
-                throw new System.Exception(agentPerformingAction.agentObj.name + " is trying to attack but there are no targets in range!");
+                OnActionDone();
+                return;
             }
 
             if (_target == null && !agentPerformingAction.isDead) {
@@ -47,24 +48,22 @@ public class AttackHostiles : AIBehaviour {
         if(_target != null) {
             //Battle
             int damageToTarget = agentPerformingAction.attackValue;
-            //int damageToThisEntity = target.entityGO.entity.attackDamage;
 
-            _target.agentObj.OnAttacked(agentPerformingAction);
+            _target.OnAttacked(agentPerformingAction);
 
             _target.AdjustHP(-damageToTarget);
             _target.SetCombatState(true);
-            //entityPerformingAction.AdjustHP(-damageToThisEntity);
 
             if (_target.isDead) {
                 _target.KillAgent();
             }
-
-            //if (entityPerformingAction.isDead) {
-            //    entityPerformingAction.KillEntity();
-            //}
         }
     }
     #endregion
+
+    private IEnumerator ApplyAttackSpeed() {
+        yield return new WaitForSeconds(agentPerformingAction.attackSpeed);
+    }
 
     private void OnAgentDied(GameAgent otherAgent) {
         if (otherAgent == target) {

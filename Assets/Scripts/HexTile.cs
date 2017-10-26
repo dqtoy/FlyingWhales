@@ -188,7 +188,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     internal Collider2D pathfindingCollider {
         get { return _pathfindingCollider; }
     }
-    	public CorpseMound corpseMound{
+    public CorpseMound corpseMound{
 		get { return this._corpseMound; }
 	}
 
@@ -732,7 +732,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
 		structureGO.transform.localPosition = new Vector3 (0f, -0.85f, 0f);
-        structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState);
+        structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState, this);
 
         this._centerPiece.SetActive(false);
 
@@ -989,13 +989,36 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if (UIManager.Instance.IsMouseOnUI() || currFogOfWarState != FOG_OF_WAR_STATE.VISIBLE) {
             return;
         }
-        if (this.isHabitable && this.isOccupied && this.city != null) {
+        if (this.isHabitable && this.isOccupied && this.city != null && UIManager.Instance.spawnType == AGENT_TYPE.NONE) {
             CameraMove.Instance.CenterCameraOn(this.gameObject);
             if(UIManager.Instance.currentlyShowingKingdom != null && UIManager.Instance.currentlyShowingKingdom.id != this.city.kingdom.id) {
                 UIManager.Instance.SetKingdomAsActive(this.city.kingdom);
 				if(UIManager.Instance.notificationCityHistoryGO.activeSelf){
 					UIManager.Instance.ShowCityHistory (this.city);
 				}
+            }
+        }
+
+        if(UIManager.Instance.spawnType != AGENT_TYPE.NONE && GameManager.Instance.enableGameAgents) {
+            if(UIManager.Instance.spawnType == AGENT_TYPE.NECROMANCER) {
+                //Spawn New Necromancer
+                Necromancer newNecromancer = new Necromancer();
+                AIBehaviour attackBehaviour = new AttackHostiles(newNecromancer);
+                AIBehaviour fleeBehaviour = new RunAwayFromHostile(newNecromancer);
+                AIBehaviour randomBehaviour = new SearchForCorpseMound(newNecromancer);
+                newNecromancer.SetAttackBehaviour(attackBehaviour);
+                newNecromancer.SetFleeBehaviour(fleeBehaviour);
+                newNecromancer.SetRandomBehaviour(randomBehaviour);
+                
+                GameObject necromancerObj = ObjectPoolManager.Instance.InstantiateObjectFromPool("AgentGO", Vector3.zero, Quaternion.identity, this.transform);
+                AgentObject agentObj = necromancerObj.GetComponent<AgentObject>();
+                Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                pos.z = 0f;
+                agentObj.aiPath.transform.position = pos;
+                newNecromancer.SetAgentObj(agentObj);
+                agentObj.Initialize(newNecromancer, new int[] {-1});
+                UIManager.Instance.spawnType = AGENT_TYPE.NONE;
+                UIManager.Instance._spawnNecromancerBtn.SetAsUnClicked();
             }
         }
     }

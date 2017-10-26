@@ -216,13 +216,13 @@ public class Utilities : MonoBehaviour {
                 }
             } else if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.WOOD) {
                 if(race == RACE.HUMANS) {
-                    return STRUCTURE_TYPE.GENERIC;
+                    return STRUCTURE_TYPE.LUMBERYARD;
                 } else {
                     return STRUCTURE_TYPE.LUMBERYARD;
                 }
             } else if (Utilities.GetBaseResourceType(resourceType) == BASE_RESOURCE_TYPE.STONE) {
                 if (race == RACE.ELVES) {
-                    return STRUCTURE_TYPE.GENERIC;
+                    return STRUCTURE_TYPE.QUARRY;
                 } else {
                     return STRUCTURE_TYPE.QUARRY;
                 }

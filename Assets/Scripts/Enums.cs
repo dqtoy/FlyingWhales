@@ -655,8 +655,10 @@ public enum AGENT_CATEGORY {
     STRUCTURE
 }
 public enum AGENT_TYPE {
+    NONE,
     MONSTER,
     GUARD,
     CITY,
-    LAIR
+    LAIR,
+    NECROMANCER
 }

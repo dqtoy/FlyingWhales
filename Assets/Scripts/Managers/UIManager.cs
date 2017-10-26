@@ -2556,6 +2556,16 @@ public class UIManager : MonoBehaviour {
         currentlyShowingCitizen.Death(DEATH_REASONS.ACCIDENT);
         ShowCitizenInfo(currentlyShowingCitizen);
     }
+
+    internal AGENT_TYPE spawnType = AGENT_TYPE.NONE;
+    [SerializeField] internal ButtonToggle _spawnNecromancerBtn;
+    public void SpawnNecromancer() {
+        if (_spawnNecromancerBtn.isClicked) {
+            spawnType = AGENT_TYPE.NECROMANCER;
+        } else {
+            spawnType = AGENT_TYPE.NONE;
+        }
+    }
     #endregion
 
 

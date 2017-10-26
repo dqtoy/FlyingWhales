@@ -59,7 +59,8 @@ public class City{
 
 	private int _bonusStability;
 
-    private List<Guard> activeGuards;
+    private List<Guard> _activeGuards;
+    private float _cityBounds;
 
     #region getters/setters
     internal Region region {
@@ -132,6 +133,9 @@ public class City{
     internal List<Citizen> citizens {
         get { return kingdom.citizens[this]; }
     }
+    internal float cityBounds {
+        get { return _cityBounds; }
+    }
     #endregion
 
     public City(HexTile hexTile, Kingdom kingdom){
@@ -164,7 +168,8 @@ public class City{
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
 		this._hp = this.maxHP;
-        activeGuards = new List<Guard>();
+        _activeGuards = new List<Guard>();
+        _cityBounds = 50f;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 
 		//if(!isRebel){
@@ -194,7 +199,9 @@ public class City{
         Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
         //GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
         //increaseDueDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => SpawnGuardsAtEndOfMonth());
+        if (GameManager.Instance.enableGameAgents) {
+            SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => SpawnGuardsAtEndOfMonth());
+        }
     }
 
 	/*
@@ -1011,9 +1018,9 @@ public class City{
             return;
         }
         int maxGuards = 1 + (cityLevel / 3);
-        if(activeGuards.Count < maxGuards) {
+        if(_activeGuards.Count < maxGuards) {
             //Spawn a new guard to patrol the city
-            activeGuards.Add(SpawnPatrollingGuard());
+            _activeGuards.Add(SpawnPatrollingGuard());
         }
         GameDate nextSpawnDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
         nextSpawnDate.AddMonths(1);
@@ -1021,9 +1028,9 @@ public class City{
         SchedulingManager.Instance.AddEntry(nextSpawnDate, () => SpawnGuardsAtEndOfMonth());
     }
     private Guard SpawnPatrollingGuard() {
-        Guard newGuard = new Guard();
+        Guard newGuard = new Guard(this);
         AIBehaviour attackBehaviour = new AttackHostiles(newGuard);
-        AIBehaviour fleeBehaviour = new RunAwayFromHostile(newGuard, this._kingdom);
+        AIBehaviour fleeBehaviour = new RunAwayFromHostile(newGuard);
         AIBehaviour randomBehaviour = new PatrolCity(newGuard, this);
         newGuard.SetAttackBehaviour(attackBehaviour);
         newGuard.SetFleeBehaviour(fleeBehaviour);
@@ -1036,10 +1043,10 @@ public class City{
         return newGuard;
     }
     private void KillActiveGuards() {
-        for (int i = 0; i < activeGuards.Count; i++) {
-            activeGuards[i].KillAgent();
+        for (int i = 0; i < _activeGuards.Count; i++) {
+            _activeGuards[i].KillAgent();
         }
-        activeGuards.Clear();
+        _activeGuards.Clear();
     }
     #endregion
 }

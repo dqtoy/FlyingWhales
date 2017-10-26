@@ -12,8 +12,8 @@ public class GameAgent {
     [SerializeField] protected int _fleeRatio;
     [SerializeField] protected int _randomRatio;
 
-    protected int _totalHP;
-    protected float _currentHP;
+    [SerializeField] protected int _maxHP;
+    [SerializeField] protected float _currentHP;
     protected float _attackRange;
     protected float _attackSpeed;
     protected int _attackValue;
@@ -42,8 +42,8 @@ public class GameAgent {
     internal AGENT_TYPE agentType {
         get { return _agentType; }
     }
-    internal int totalHP {
-        get { return _totalHP; }
+    internal int maxHP {
+        get { return _maxHP; }
     }
     internal int currentHP {
         get { return Mathf.FloorToInt(_currentHP); }
@@ -55,7 +55,7 @@ public class GameAgent {
         get { return _attackSpeed; }
     }
     internal int attackValue {
-        get { return _attackValue; }
+        get { return _attackValue + currentHP; }
     }
     internal float visibilityRange {
         get { return _visibilityRange; }
@@ -98,7 +98,11 @@ public class GameAgent {
     }
 
     #region HP
-    private void RegainHP() {
+    internal void SetNewMaxHP(int newMaxHP) {
+        _maxHP = newMaxHP;
+        _currentHP = newMaxHP;
+    }
+    protected void RegainHP() {
         //Living Agents regenerate 1% of their max HP each day while out of combat.
         //Structures regenerate 5 % of ther max HP at the start of each month while out of combat.
 
@@ -111,20 +115,20 @@ public class GameAgent {
 
             float regeneratedHealth = 0f;
             if(_agentCategory == AGENT_CATEGORY.LIVING) {
-                regeneratedHealth = ((float)totalHP * 0.01f);
+                regeneratedHealth = ((float)maxHP * 0.01f);
             } else if(_agentCategory == AGENT_CATEGORY.STRUCTURE) {
-                regeneratedHealth = ((float)totalHP * 0.05f);
+                regeneratedHealth = ((float)maxHP * 0.05f);
             }
             AdjustHP(regeneratedHealth);
         }
     }
     internal void SetInitialHP(int currentHP, int totalHP) {
-        _totalHP = totalHP;
+        _maxHP = totalHP;
         _currentHP = currentHP;
     }
     internal void AdjustHP(int amount) {
         _currentHP += amount;
-        _currentHP = Mathf.Clamp(_currentHP, 0f, _totalHP);
+        _currentHP = Mathf.Clamp(_currentHP, 0f, _maxHP);
         if (_currentHP <= 0) {
             //Mark entity as Dead
             _isDead = true;
@@ -132,13 +136,16 @@ public class GameAgent {
     }
     private void AdjustHP(float amount) {
         _currentHP += amount;
-        _currentHP = Mathf.Clamp(_currentHP, 0f, _totalHP);
+        _currentHP = Mathf.Clamp(_currentHP, 0f, _maxHP);
         if (_currentHP <= 0) {
             //Mark entity as Dead
             _isDead = true;
         }
     }
-    internal void KillAgent() {
+    internal virtual void KillAgent() {
+        if(agentObj == null) {
+            return;
+        }
         if(agentObj.gameObject == null) {
             throw new System.Exception(agentType.ToString() + " cannot be killed because it does not have a gameobject!");
         } else {
@@ -154,16 +161,16 @@ public class GameAgent {
                 _randomBehaviour.CancelAction();
                 _randomBehaviour = null;
             }
-            if (_agentCategory == AGENT_CATEGORY.LIVING) {
-                Messenger.RemoveListener("OnDayEnd", RegainHP);
-            } else if (_agentCategory == AGENT_CATEGORY.STRUCTURE) {
-                Messenger.RemoveListener("OnMonthEnd", RegainHP);
-            }
-            ObjectPoolManager.Instance.DestroyObject(agentObj.gameObject);
+            Messenger.RemoveListener("OnDayEnd", RegainHP);
             _isDead = true;
+
+            BroadcastDeath();
+            ObjectPoolManager.Instance.DestroyObject(agentObj.gameObject);
             _agentObj = null;
-            Messenger.Broadcast<GameAgent>("OnAgentDied", this);
         }
+    }
+    internal void BroadcastDeath() {
+        Messenger.Broadcast<GameAgent>("OnAgentDied", this);
     }
     #endregion
 
@@ -184,6 +191,12 @@ public class GameAgent {
     }
     internal void SetRandomBehaviour(AIBehaviour randomBehaviour) {
         _randomBehaviour = randomBehaviour;
+    }
+    internal void OnAttacked(GameAgent attackedBy) {
+        //Determine whether this agent will attack back or flee
+        _agentObj.OnAttacked(attackedBy); //Alert allies in range
+        _agentObj.AddAgentAsNearbyAttacker(attackedBy); //Add attacker as nearby attacker for this agent
+        //Let the fixed update determine the next action given the threats, targets and allies in range.
     }
     internal virtual AIBehaviour DetermineAction(List<GameAgent> threatsInRange, List<GameAgent> targetsInRange, List<GameAgent> alliesInRange, bool isPerformingAction) {
         int totalSurroundingInitiative = GetTotalSurroundingInitiative(targetsInRange);

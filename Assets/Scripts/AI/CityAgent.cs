@@ -4,15 +4,24 @@ using System.Collections.Generic;
 
 public class CityAgent : GameAgent {
 
-    public CityAgent() : base(AGENT_CATEGORY.STRUCTURE, AGENT_TYPE.CITY, MOVE_TYPE.NONE) {
+    private StructureObject _structureObj;
+
+    #region getters/setters
+    internal StructureObject structureObj {
+        get { return _structureObj; }
+    }
+    #endregion
+
+    public CityAgent(StructureObject structureObj) : base(AGENT_CATEGORY.STRUCTURE, AGENT_TYPE.CITY, MOVE_TYPE.NONE) {
+        _structureObj = structureObj;
         _attackRange = 2f;
         _attackSpeed = 1f;
         _attackValue = 20;
-        _visibilityRange = 5f;
+        _visibilityRange = 2f;
         _movementSpeed = 0f;
         agentColor = Color.white;
         SetAllyTypes(new AGENT_TYPE[] { AGENT_TYPE.GUARD, AGENT_TYPE.CITY });
-        SetInitialHP(500, 500);
+        SetInitialHP(125, 125);
     }
 
     #region overrides
@@ -30,6 +39,39 @@ public class CityAgent : GameAgent {
             }
         }
         return null;
+    }
+    internal override void KillAgent() {
+        if (agentObj.gameObject == null) {
+            throw new System.Exception(agentType.ToString() + " cannot be killed because it does not have a gameobject!");
+        } else {
+            if (_attackBehaviour != null) {
+                _attackBehaviour.CancelAction();
+                _attackBehaviour = null;
+            }
+            if (_fleeBehaviour != null) {
+                _fleeBehaviour.CancelAction();
+                _fleeBehaviour = null;
+            }
+            if (_randomBehaviour != null) {
+                _randomBehaviour.CancelAction();
+                _randomBehaviour = null;
+            }
+            
+            Messenger.RemoveListener("OnMonthEnd", RegainHP);
+            _isDead = true;
+            BroadcastDeath();
+            StructureObject structureToDestroy = ((CityAgent)this).structureObj;
+            City cityOfStructure = structureToDestroy.hexTile.ownedByCity;
+            cityOfStructure.RemoveTileFromCity(structureToDestroy.hexTile);
+            if (structureToDestroy.hexTile.isHabitable) {
+                //city is now dead
+                cityOfStructure.KillCity();
+            } else if (cityOfStructure.ownedTiles.Count <= 0) {
+                //city is now dead
+                cityOfStructure.KillCity();
+            }
+            _agentObj = null;
+        }
     }
     #endregion
 }

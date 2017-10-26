@@ -4,11 +4,7 @@ using System.Linq;
 
 public class RunAwayFromHostile : AIBehaviour {
 
-    private Kingdom _allowedInKingdom;
-
-    public RunAwayFromHostile(GameAgent agentPerformingAction, Kingdom allowedInKingdom) : base(ACTION_TYPE.FLEE, agentPerformingAction) {
-        _allowedInKingdom = allowedInKingdom;
-    }
+    public RunAwayFromHostile(GameAgent agentPerformingAction) : base(ACTION_TYPE.FLEE, agentPerformingAction) { }
 
     #region overrides
     internal override void DoAction() {
