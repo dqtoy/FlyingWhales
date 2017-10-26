@@ -24,14 +24,20 @@ public class AgentAI : AIPath {
 
     private void OnTriggerEnter(Collider other) {
         //Debug.Log(name + " on trigger enter!: " + other.name);
-        GameAgent otherAgent = other.transform.parent.parent.GetComponent<AgentObject>().agent;
-        if(otherAgent != _agentObj.agent) {
-            _agentObj.AddAgentInRange(otherAgent);
+        AgentObject ao = other.transform.parent.parent.GetComponent<AgentObject>();
+        if(ao != null) {
+            GameAgent otherAgent = ao.agent;
+            if (otherAgent != _agentObj.agent) {
+                _agentObj.AddAgentInRange(otherAgent);
+            }
         }
     }
     private void OnTriggerExit(Collider other) {
         //Debug.Log(name + " on trigger exit!: " + other.name);
-        GameAgent otherAgent = other.transform.parent.parent.GetComponent<AgentObject>().agent;
-        _agentObj.RemoveAgentInRange(otherAgent);
+        AgentObject ao = other.transform.parent.parent.GetComponent<AgentObject>();
+        if (ao != null) {
+            GameAgent otherAgent = ao.agent;
+            _agentObj.RemoveAgentInRange(otherAgent);
+        }
     }
 }
