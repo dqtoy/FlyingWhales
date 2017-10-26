@@ -2907,25 +2907,27 @@ public class Kingdom{
 			int likeTheMost = 0;
 			foreach (KingdomRelationship kr in this.relationships.Values) {			
 				if(kr.isDiscovered && !kr.cantAlly){
-					Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
-					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
-					if (hasJoined) {
-						string log = name + " has joined an alliance with ";
-						for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-							if (_alliancePool.kingdomsInvolved [j].id != id) {
-								log += _alliancePool.kingdomsInvolved [j].name;
-								if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
-									log += ", ";
+					if (kr.targetKingdom.alliancePool != null) {
+						Debug.Log (name + " is looking to join the alliance of " + kr.targetKingdom.name);
+						bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance (this, kr.targetKingdom);
+						if (hasJoined) {
+							string log = name + " has joined an alliance with ";
+							for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+								if (_alliancePool.kingdomsInvolved [j].id != id) {
+									log += _alliancePool.kingdomsInvolved [j].name;
+									if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+										log += ", ";
+									}
 								}
 							}
+							return;
 						}
-						return;
 					} else {
-						if(kingdomToAlly == null){
+						if (kingdomToAlly == null) {
 							kingdomToAlly = kr.targetKingdom;
 							likeTheMost = kr.totalLike;
-						}else{
-							if(kr.totalLike > likeTheMost){
+						} else {
+							if (kr.totalLike > likeTheMost) {
 								kingdomToAlly = kr.targetKingdom;
 								likeTheMost = kr.totalLike;
 							}

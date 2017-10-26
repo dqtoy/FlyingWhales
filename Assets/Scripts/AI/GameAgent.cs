@@ -13,12 +13,14 @@ public class GameAgent {
     [SerializeField] protected int _randomRatio;
 
     protected int _totalHP;
-    protected int _currentHP;
+    protected float _currentHP;
     protected float _attackRange;
     protected float _attackSpeed;
     protected int _attackValue;
     protected float _visibilityRange;
     [SerializeField] protected bool _isDead;
+    protected bool _isInCombat;
+    protected GameDate _lastDamagedOn;
 
     protected MOVE_TYPE _movementType;
     protected float _movementSpeed;
@@ -44,7 +46,7 @@ public class GameAgent {
         get { return _totalHP; }
     }
     internal int currentHP {
-        get { return _currentHP; }
+        get { return Mathf.FloorToInt(_currentHP); }
     }
     internal float attackRange {
         get { return _attackRange; }
@@ -60,6 +62,9 @@ public class GameAgent {
     }
     internal bool isDead {
         get { return _isDead; }
+    }
+    internal bool isInCombat {
+        get { return _isInCombat; }
     }
     internal MOVE_TYPE movementType {
         get { return _movementType; }
@@ -79,6 +84,13 @@ public class GameAgent {
         _agentCategory = agentCategory;
         _agentType = agentType;
         _movementType = movementType;
+        _lastDamagedOn = new GameDate(0, 0, 0);
+        if(_agentCategory == AGENT_CATEGORY.LIVING) {
+            Messenger.AddListener("OnDayEnd", RegainHP);
+        }else if(_agentCategory == AGENT_CATEGORY.STRUCTURE) {
+            Messenger.AddListener("OnMonthEnd", RegainHP);
+        }
+        
     }
 
     internal void SetAgentObj(AgentObject agentObj) {
@@ -86,12 +98,41 @@ public class GameAgent {
     }
 
     #region HP
+    private void RegainHP() {
+        //Living Agents regenerate 1% of their max HP each day while out of combat.
+        //Structures regenerate 5 % of ther max HP at the start of each month while out of combat.
+
+        //Check if agent is out of combat (has not recieved damage within the last 3 days)
+        GameDate checker = new GameDate();
+        checker.SetDate(_lastDamagedOn);
+        checker.AddDays(3);
+        if(checker.year == 0 || checker.year != GameManager.Instance.year || checker.month != GameManager.Instance.month || checker.day < GameManager.Instance.days) {
+            SetCombatState(false); //agent is no longer in combat
+
+            float regeneratedHealth = 0f;
+            if(_agentCategory == AGENT_CATEGORY.LIVING) {
+                regeneratedHealth = ((float)totalHP * 0.01f);
+            } else if(_agentCategory == AGENT_CATEGORY.STRUCTURE) {
+                regeneratedHealth = ((float)totalHP * 0.05f);
+            }
+            AdjustHP(regeneratedHealth);
+        }
+    }
     internal void SetInitialHP(int currentHP, int totalHP) {
         _totalHP = totalHP;
         _currentHP = currentHP;
     }
     internal void AdjustHP(int amount) {
         _currentHP += amount;
+        _currentHP = Mathf.Clamp(_currentHP, 0f, _totalHP);
+        if (_currentHP <= 0) {
+            //Mark entity as Dead
+            _isDead = true;
+        }
+    }
+    private void AdjustHP(float amount) {
+        _currentHP += amount;
+        _currentHP = Mathf.Clamp(_currentHP, 0f, _totalHP);
         if (_currentHP <= 0) {
             //Mark entity as Dead
             _isDead = true;
@@ -113,6 +154,11 @@ public class GameAgent {
                 _randomBehaviour.CancelAction();
                 _randomBehaviour = null;
             }
+            if (_agentCategory == AGENT_CATEGORY.LIVING) {
+                Messenger.RemoveListener("OnDayEnd", RegainHP);
+            } else if (_agentCategory == AGENT_CATEGORY.STRUCTURE) {
+                Messenger.RemoveListener("OnMonthEnd", RegainHP);
+            }
             ObjectPoolManager.Instance.DestroyObject(agentObj.gameObject);
             _isDead = true;
             _agentObj = null;
@@ -122,6 +168,14 @@ public class GameAgent {
     #endregion
 
     #region Behaviour Functions
+    internal void SetCombatState(bool combatState) {
+        _isInCombat = combatState;
+        if (_isInCombat) {
+            //You are out of combat if you have not received any damage within the last 3 days.
+            //Set day the damage was taken
+            _lastDamagedOn.SetDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        }
+    }
     internal void SetAttackBehaviour(AIBehaviour attackBehaviour) {
         _attackBehaviour = attackBehaviour;
     }

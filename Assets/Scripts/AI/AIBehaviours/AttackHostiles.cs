@@ -49,9 +49,10 @@ public class AttackHostiles : AIBehaviour {
             int damageToTarget = agentPerformingAction.attackValue;
             //int damageToThisEntity = target.entityGO.entity.attackDamage;
 
-            target.agentObj.OnAttacked(agentPerformingAction);
+            _target.agentObj.OnAttacked(agentPerformingAction);
 
             _target.AdjustHP(-damageToTarget);
+            _target.SetCombatState(true);
             //entityPerformingAction.AdjustHP(-damageToThisEntity);
 
             if (_target.isDead) {
