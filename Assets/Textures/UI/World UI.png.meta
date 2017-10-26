@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 4d0d62edf3d94ca47abf569d951db9f9
-timeCreated: 1490591005
+timeCreated: 1508998231
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -30,6 +30,14 @@ TextureImporter:
     21300046: World UI_23
     21300048: World UI_24
     21300050: World UI_25
+    21300052: World UI_26
+    21300054: World UI_27
+    21300056: World UI_28
+    21300058: World UI_29
+    21300060: World UI_30
+    21300062: World UI_31
+    21300064: World UI_32
+    21300066: World UI_33
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -416,6 +424,110 @@ TextureImporter:
         y: 209
         width: 43
         height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: World UI_26
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 260
+        width: 249
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: World UI_27
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 122
+        width: 249
+        height: 134
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: World UI_28
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 43
+        width: 14
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: World UI_29
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 42
+        width: 1
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: World UI_30
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 43
+        width: 14
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: World UI_31
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 96
+        width: 2
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: World UI_32
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 96
+        width: 2
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: World UI_33
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 86
+        width: 11
+        height: 4
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

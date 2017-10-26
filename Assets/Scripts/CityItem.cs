@@ -44,6 +44,10 @@ public class CityItem : MonoBehaviour {
 
     public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false, bool showForTesting = false) {
         this._city = _city;
+		_structuresLbl.text = city.ownedTiles.Count.ToString();
+		_cityLbl.text = city.name;
+
+		/*
         _governor.SetCitizen(city.governor);
 		//this._powerLbl.text = city.weapons.ToString();
 		//this._defenseLbl.text = city.armor.ToString();
@@ -92,8 +96,8 @@ public class CityItem : MonoBehaviour {
             loyaltyAdjustmentLbl.text = ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier.ToString();
         } else {
             forTestingGO.SetActive(false);
-            
         }
+        */
     }
 
     public void CenterOnCity() {
