@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour {
 			this.timeElapsed += Time.deltaTime * 1f;
 			if(this.timeElapsed >= this.progressionSpeed){
 				this.timeElapsed = 0f;
-				this.WeekEnded ();
+				this.DayEnded ();
 			}
 		}
 	}
@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour {
     /*
      * Function that triggers daily actions
      * */
-	public void WeekEnded(){
+	public void DayEnded(){
         ////		TriggerRequestPeace();
         ////EventManager.Instance.onCitizenTurnActions.Invoke();
         ////EventManager.Instance.onCityEverydayTurnActions.Invoke();
@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour {
 		if (days > daysInMonth[this.month]) {
 			this.days = 1;
 			this.month += 1;
+            Messenger.Broadcast("OnMonthEnd");
 			if (this.month > 12) {
 				this.month = 1;
 				this.year += 1;
