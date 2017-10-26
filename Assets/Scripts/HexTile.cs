@@ -126,7 +126,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private List<Citizen> _citizensOnTile = new List<Citizen>();
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
-    [System.NonSerialized] public List<HexTile> connectedTiles = new List<HexTile>();
+	[System.NonSerialized] public Dictionary<HexTile, CityConnection> connectedTiles = new Dictionary<HexTile, CityConnection>();
+//	[System.NonSerialized] public List<GameObject> connectionsGO = new List<GameObject>();
 
 	public List<HexTile> AllNeighbours { get; set; }
 	public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList();}}
@@ -1367,5 +1368,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 		return false;
+	}
+
+	internal void DestroyConnections(){
+		while(this.connectedTiles.Count > 0){
+			KingdomManager.Instance.DestroyConnection (this, this.connectedTiles.Keys.ElementAt(0));
+		}
 	}
 }

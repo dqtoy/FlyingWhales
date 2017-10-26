@@ -62,7 +62,7 @@ public class Battle {
 		this._kr.ChangeBattle (this);
 		this._supposedAttackDate = new GameDate (1, 1, 1);
         this._battleLogs = new List<string>();
-		if(!kingdom1City.hexTile.connectedTiles.Contains(kingdom2City.hexTile)){
+		if(!kingdom1City.hexTile.connectedTiles.ContainsKey(kingdom2City.hexTile)){
 			KingdomManager.Instance.DrawConnection (kingdom1City.hexTile, kingdom2City.hexTile);
 		}
 			

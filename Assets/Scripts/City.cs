@@ -507,6 +507,8 @@ public class City{
 //		}
 
         region.RemoveOccupant();
+		this.hexTile.DestroyConnections ();
+
         //Destroy owned settlements
         for (int i = 0; i < ownedTiles.Count; i++) {
             HexTile currentTile = this.ownedTiles[i];
@@ -617,16 +619,16 @@ public class City{
 		Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
     }
 
-    internal bool HasAdjacency(int kingdomID){
-		for(int i = 0; i < this.hexTile.connectedTiles.Count; i++){
-			if(this.hexTile.connectedTiles[i].isOccupied){
-				if(this.hexTile.connectedTiles[i].city.kingdom.id == kingdomID){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+//    internal bool HasAdjacency(int kingdomID){
+//		for(int i = 0; i < this.hexTile.connectedTiles.Count; i++){
+//			if(this.hexTile.connectedTiles[i].isOccupied){
+//				if(this.hexTile.connectedTiles[i].city.kingdom.id == kingdomID){
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+//	}
 
 	//internal void MoveCitizenToThisCity(Citizen citizenToMove, bool isFleeing = false){
 	//	citizenToMove.city.RemoveCitizenFromCity(citizenToMove, isFleeing);

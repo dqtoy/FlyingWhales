@@ -67,7 +67,7 @@ public class PathGenerator : MonoBehaviour {
 					//if j has reached habitableTilesOrderedByDistance's upper bound, connect to nearest city
 					if (AreTheseTilesConnected(currentHexTile, habitableTilesOrderedByDistance[0], PATHFINDING_MODE.NORMAL)) {
 						createdRoads++;
-						if (!currentHexTile.connectedTiles.Contains(habitableTilesOrderedByDistance[0])) {
+						if (!currentHexTile.connectedTiles.ContainsKey(habitableTilesOrderedByDistance[0])) {
 							ConnectCities (currentHexTile, habitableTilesOrderedByDistance[0]);
 							if (!pendingTiles.Contains(habitableTilesOrderedByDistance[0])) {
 								pendingTiles.Add(habitableTilesOrderedByDistance[0]);
@@ -76,7 +76,7 @@ public class PathGenerator : MonoBehaviour {
 					}
 					break;
 				} else {
-					if (tileToConnectTo.connectedTiles.Count < 3 && !currentHexTile.connectedTiles.Contains(tileToConnectTo)) {
+					if (tileToConnectTo.connectedTiles.Count < 3 && !currentHexTile.connectedTiles.ContainsKey(tileToConnectTo)) {
 						if (AreTheseTilesConnected (currentHexTile, tileToConnectTo, PATHFINDING_MODE.NORMAL)) {
 							createdRoads++;
 							ConnectCities (currentHexTile, tileToConnectTo);
@@ -109,7 +109,7 @@ public class PathGenerator : MonoBehaviour {
 							}
 						}
 
-						if (possibleConnectionTile != null && !missedOutTile.connectedTiles.Contains(possibleConnectionTile)) {
+						if (possibleConnectionTile != null && !missedOutTile.connectedTiles.ContainsKey(possibleConnectionTile)) {
 							if (AreTheseTilesConnected (missedOutTile, possibleConnectionTile, PATHFINDING_MODE.NORMAL)) {
 								ConnectCities (missedOutTile, possibleConnectionTile);
 								if (!pendingTiles.Contains (missedOutTile)) {
@@ -130,8 +130,8 @@ public class PathGenerator : MonoBehaviour {
 	void ConnectCities(HexTile originTile, HexTile targetTile){
 //		Debug.Log (originTile.name + " is now connected to: " + targetTile.name);
 		this.DeterminePath (originTile, targetTile);
-		originTile.connectedTiles.Add(targetTile);
-		targetTile.connectedTiles.Add(originTile);
+//		originTile.connectedTiles.Add(targetTile);
+//		targetTile.connectedTiles.Add(originTile);
 	}
 
 
@@ -143,7 +143,7 @@ public class PathGenerator : MonoBehaviour {
 		for (int i = 0; i < roadListByDistance.Count; i++) {
 			if (AreTheseTilesConnected (roadListByDistance [i], destination, PATHFINDING_MODE.USE_ROADS)) {
 //				Debug.Log ("Connect to roadTile: " + roadListByDistance [i].name + " instead");
-				if (roadListByDistance[i].isHabitable && roadListByDistance[i].connectedTiles.Contains(start)) {
+				if (roadListByDistance[i].isHabitable && roadListByDistance[i].connectedTiles.ContainsKey(start)) {
 					return; //use the already created road between the 2 cities.
 				}
 				SetTilesAsRoads(GetPath(start, roadListByDistance[i], PATHFINDING_MODE.NORMAL));

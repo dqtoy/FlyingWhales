@@ -459,8 +459,8 @@ public class KingdomManager : MonoBehaviour {
 	}
 
 	internal void DrawConnection(HexTile fromTile, HexTile toTile){
-		fromTile.connectedTiles.Add (toTile);
-		toTile.connectedTiles.Add (fromTile);
+//		fromTile.connectedTiles.Add (toTile);
+//		toTile.connectedTiles.Add (fromTile);
 
 		Debug.Log ("DRAW CONNECTION: " + fromTile.name + ", " + toTile.name);
 		Vector3 fromPos = fromTile.gameObject.transform.position;
@@ -469,20 +469,28 @@ public class KingdomManager : MonoBehaviour {
 
 //		float angle = Vector3.Angle (targetDir, fromTile.transform.forward);
 		float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg;
-		float distance = Vector3.Distance (fromPos, toPos);
 		Debug.Log ("ANGLE: " + angle);
-		Debug.Log ("DISTANCE: " + distance);
 
 		GameObject goConnection = (GameObject)GameObject.Instantiate (connectionGO);
 		goConnection.transform.position = fromPos;
 //		goConnection.gameObject.transform.Rotate (Vector3.right, 0f, angle);
 		goConnection.transform.Rotate(new Vector3(0f,0f,angle));
-		goConnection.GetComponent<CityConnection> ().SetLength ((int)distance);
 
+		CityConnection cityConnection = goConnection.GetComponent<CityConnection> ();
+		cityConnection.SetConnection (fromTile, toTile);
+
+		fromTile.connectedTiles.Add (toTile, cityConnection);
+		toTile.connectedTiles.Add (fromTile, cityConnection);
 //		if(fromTile.city != null && toTile.city != null){
 //			if(fromTile.city.kingdom.id == toTile.city.kingdom.id){
 //				goConnection.GetComponent<CityConnection> ().SetColor (fromTile.city.kingdom.kingdomColor);
 //			}
 //		}
+	}
+	internal void DestroyConnection(HexTile fromTile, HexTile toTile){
+		CityConnection cityConnection = fromTile.connectedTiles [toTile];
+		GameObject.Destroy (cityConnection.gameObject);
+		fromTile.connectedTiles.Remove (toTile);
+		toTile.connectedTiles.Remove (fromTile);
 	}
 }
