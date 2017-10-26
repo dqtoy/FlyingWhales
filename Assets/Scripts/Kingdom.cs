@@ -490,6 +490,7 @@ public class Kingdom{
 			this.SetTechProductionPercentage(1f);
 			this.UpdateTechCapacity ();
 			this.SetSecession (false);
+
 			//		this.NewRandomCrimeDate (true);
 			// Determine what type of Kingdom this will be upon initialization.
 			this._kingdomTypeData = null;

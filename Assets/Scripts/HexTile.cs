@@ -638,7 +638,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         namePlateGO.layer = LayerMask.NameToLayer("HextileNamePlates");
         _namePlateParent = namePlateGO.transform;
         _cityInfo = namePlateGO.GetComponentInChildren<CityItem>();
-        namePlateGO.transform.localPosition = new Vector3(-2.22f, -1.02f, 0f);
+        namePlateGO.transform.localPosition = new Vector3(0f, -1.45f, 0f);
         Messenger.AddListener("UpdateUI", UpdateCityNamePlate);
 
         UpdateCityNamePlate();
@@ -728,8 +728,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         //Debug.Log("Create " + structureType.ToString() + " on " + this.name);
         GameObject[] gameObjectsToChooseFrom = CityGenerator.Instance.GetStructurePrefabsForRace(this.ownedByCity.kingdom.race, structureType);
         string structureKey = gameObjectsToChooseFrom[Random.Range(0, gameObjectsToChooseFrom.Length)].name;
-        GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
+		GameObject structureGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structureKey, Vector3.zero, Quaternion.identity, structureParentGO.transform);
         AssignStructureObjectToTile(structureGO.GetComponent<StructureObject>());
+		structureGO.transform.localPosition = new Vector3 (0f, -0.85f, 0f);
         structureObjOnTile.Initialize(structureType, this.ownedByCity.kingdom.kingdomColor, structureState, this);
 
         this._centerPiece.SetActive(false);

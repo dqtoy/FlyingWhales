@@ -62,9 +62,12 @@ public class Battle {
 		this._kr.ChangeBattle (this);
 		this._supposedAttackDate = new GameDate (1, 1, 1);
         this._battleLogs = new List<string>();
+		if(!kingdom1City.hexTile.connectedTiles.Contains(kingdom2City.hexTile)){
+			KingdomManager.Instance.DrawConnection (kingdom1City.hexTile, kingdom2City.hexTile);
+		}
+			
 		SetAttackerAndDefenderCity(this._kingdom1City, this._kingdom2City, this._kingdom1, this._kingdom2);
 		Step2();
-
 		Messenger.AddListener<City> ("CityDied", CityDied);
 		Messenger.AddListener<City> ("CityTransfered", CityTransfered);
 
