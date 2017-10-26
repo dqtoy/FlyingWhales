@@ -6,6 +6,8 @@ using EZObjectPools;
 
 public class StructureObject : PooledObject {
 
+    private HexTile _hexTile;
+
     private STRUCTURE_TYPE _structureType;
     private STRUCTURE_STATE _structureState;
 
@@ -23,7 +25,14 @@ public class StructureObject : PooledObject {
         }
     }
 
-    public void Initialize(STRUCTURE_TYPE structureType, Color structureColor,  STRUCTURE_STATE structureState) {
+    #region getters/setters
+    internal HexTile hexTile {
+        get { return _hexTile; }
+    }
+    #endregion
+
+    public void Initialize(STRUCTURE_TYPE structureType, Color structureColor,  STRUCTURE_STATE structureState, HexTile hexTile) {
+        _hexTile = hexTile;
         if(normalParents == null) {
             normalParents = gameObject.GetComponentsInChildren<Transform>(true).Where(x => x.name == "Normal").Select(x => x.gameObject).ToArray();
         }
@@ -34,13 +43,19 @@ public class StructureObject : PooledObject {
         SetStructureState(structureState);
         SetStructureColor(structureColor);
 
-        if(_agentObj != null) {
+        if(_agentObj != null && GameManager.Instance.enableGameAgents) {
             //Initialize Agent Object
-            CityAgent newCityAgent = new CityAgent();
+            CityAgent newCityAgent = new CityAgent(this);
             AIBehaviour attackBehaviour = new AttackHostiles(newCityAgent);
             newCityAgent.SetAttackBehaviour(attackBehaviour);
             newCityAgent.SetAgentObj(_agentObj);
             _agentObj.Initialize(newCityAgent, new int[] { 0 });
+            _agentObj.gameObject.SetActive(true);
+        } else {
+            if(_agentObj != null) {
+                _agentObj.gameObject.SetActive(false);
+            }
+            
         }
         
         gameObject.SetActive(true);
@@ -63,6 +78,10 @@ public class StructureObject : PooledObject {
             for (int i = 0; i < ruinedParents.Length; i++) {
                 ruinedParents[i].SetActive(true);
             }
+            if (_agentObj != null && GameManager.Instance.enableGameAgents) {
+                _agentObj.gameObject.SetActive(false);
+                _agentObj.agent.BroadcastDeath();
+            }
             QueueForExpiry();
         }
     }
@@ -79,6 +98,10 @@ public class StructureObject : PooledObject {
     public void DestroyStructure() {
         Debug.Log("DESTROY STRUCTURE!");
         ObjectPoolManager.Instance.DestroyObject(gameObject);
+        if (_agentObj != null && GameManager.Instance.enableGameAgents) {
+            _agentObj.gameObject.SetActive(false);
+            _agentObj.agent.BroadcastDeath();
+        }
     }
 
     private void QueueForExpiry() {

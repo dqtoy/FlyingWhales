@@ -11,6 +11,9 @@ public class AgentAI : AIPath {
 
     public override void OnPathComplete(Path _p) {
         if (_p.error) {
+            if(_agentObj.currentBehaviour != null) {
+                _agentObj.currentBehaviour.CancelAction();
+            }
             return;
         }
         base.OnPathComplete(_p);

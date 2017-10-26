@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
 
 	public float progressionSpeed;
 	public bool isPaused = true;
+    public bool enableGameAgents = true;
 
     private const float X1_SPEED = 2f;
     private const float X2_SPEED = 1f;
@@ -108,7 +109,9 @@ public class GameManager : MonoBehaviour {
 		if (days > daysInMonth[this.month]) {
 			this.days = 1;
 			this.month += 1;
-            Messenger.Broadcast("OnMonthEnd");
+            if (Messenger.eventTable.ContainsKey("OnMonthEnd")) {
+                Messenger.Broadcast("OnMonthEnd");
+            }
 			if (this.month > 12) {
 				this.month = 1;
 				this.year += 1;

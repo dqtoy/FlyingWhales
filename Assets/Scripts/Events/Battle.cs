@@ -353,7 +353,7 @@ public class Battle {
 				}
 			}
 
-			if(corpseCount > 0){
+			if(corpseCount > 0 && GameManager.Instance.enableGameAgents){
 				CreateCorpses (corpseCount, this.attacker.region, this.defender.region);
 			}
 			if(attackRoll > defenseRoll){

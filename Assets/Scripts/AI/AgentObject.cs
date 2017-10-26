@@ -7,15 +7,15 @@ using Pathfinding;
 [RequireComponent(typeof(PandaBehaviour))]
 public class AgentObject : MonoBehaviour {
 
-    private GameAgent _agent;
-    private AIBehaviour _currentBehaviour;
+    [SerializeField] private GameAgent _agent;
+    [SerializeField] private AIBehaviour _currentBehaviour;
 
     //Actions
     [SerializeField] private AgentAI _aiPath;
     [SerializeField] private Seeker _seeker;
     [SerializeField] private SphereCollider sphereCollider;
-    private ACTION_TYPE _currentAction;
-    private bool isPerformingAction;
+    [SerializeField] private ACTION_TYPE _currentAction;
+    [SerializeField] private bool isPerformingAction;
     private int layerMask;
     [SerializeField] private List<GameAgent> _agentsInRange;
     [SerializeField] private List<GameAgent> _targetsInRange; //Agents in range that this agent wants to attack
@@ -34,6 +34,9 @@ public class AgentObject : MonoBehaviour {
     #region getters/setters
     internal GameAgent agent {
         get { return _agent; }
+    }
+    internal AgentAI aiPath {
+        get { return _aiPath; }
     }
     internal ACTION_TYPE currentAction {
         get { return _currentAction; }
@@ -91,8 +94,16 @@ public class AgentObject : MonoBehaviour {
     #region Tag Functions
     internal void SetValidTags(int[] validTags) {
         _seeker.traversableTags = 0;
-        for (int i = 0; i < validTags.Length; i++) {
-            AddValidTag(validTags[i]);
+
+        if(System.Array.IndexOf(validTags, -1) != -1) {
+            //Set all tags as traversable
+            for (int i = 0; i < 32; i++) {
+                AddValidTag(i);
+            }
+        } else {
+            for (int i = 0; i < validTags.Length; i++) {
+                AddValidTag(validTags[i]);
+            }
         }
     }
     internal void AddValidTag(int validTag) {
@@ -165,14 +176,15 @@ public class AgentObject : MonoBehaviour {
     #region Behaviour Tree
     [Task]
     public void DetermineAction() {
-        if(agent == null) {
+        if(agent == null || agent.isDead || GameManager.Instance.isPaused) {
+            Task.current.Fail();
             return;
         }
         //Collider[] objectsInRange = Physics.OverlapSphere(this.transform.position, _agent.visibilityRange, layerMask);
         _targetsInRange.Clear();
         _threatsInRange.Clear();
         _alliesInRange.Clear();
-        if (_agentsInRange.Count > 1) {
+        if (_agentsInRange.Count > 0) {
             for (int i = 0; i < _agentsInRange.Count; i++) {
                 GameAgent otherAgent = _agentsInRange[i];
                 if (this.agent.allyTypes.Contains(otherAgent.agentType)) {
@@ -228,6 +240,10 @@ public class AgentObject : MonoBehaviour {
             behaviourToPerform.DoAction();
             Task.current.Succeed();
         } else {
+            if (!isPerformingAction) {
+                _currentAction = ACTION_TYPE.NONE;
+                _currentBehaviour = null;
+            }
             Task.current.Fail();
         }
     }
@@ -245,17 +261,27 @@ public class AgentObject : MonoBehaviour {
         if(agent.movementType != MOVE_TYPE.NONE) {
             _aiPath.canMove = !GameManager.Instance.isPaused;
         }
+        if(GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
+            _aiPath.maxSpeed = agent.movementSpeed * 1f;
+        } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+            _aiPath.maxSpeed = agent.movementSpeed * 2f;
+        } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+            _aiPath.maxSpeed = agent.movementSpeed * 4f;
+        }
+        
         Vector3 pos = _aiPath.transform.localPosition;
         pos.y += 0.5f;
         pos.z = 0f;
         agentInfoPanel.transform.localPosition = pos;
-        hpProgBar.value = (float)agent.currentHP / (float)agent.totalHP;
+        hpProgBar.value = (float)agent.currentHP / (float)agent.maxHP;
         if (currentAction == ACTION_TYPE.ATTACK) {
             agentActionLbl.text = "A";
         } else if (currentAction == ACTION_TYPE.FLEE) {
             agentActionLbl.text = "F";
         } else if (currentAction == ACTION_TYPE.RANDOM) {
             agentActionLbl.text = "W";
+        } else if(currentAction == ACTION_TYPE.NONE) {
+            agentActionLbl.text = "N";
         }
 
     }
