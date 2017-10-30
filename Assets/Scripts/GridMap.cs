@@ -251,15 +251,17 @@ public class GridMap : MonoBehaviour {
 	public void GenerateCityConnections(){
 		for (int i = 0; i < allRegions.Count; i++) {
 			Region currRegion = allRegions [i];
-			if(currRegion.centerOfMass.GetNumOfConnectedCenterOfMass() >= 3){
+			if(currRegion.centerOfMass.GetNumOfConnectedCenterOfMass() >= RoadManager.Instance.maxCityConnections){
 				continue;
 			}
-			int maxConnection = 5 - currRegion.centerOfMass.connectedTiles.Count;
+			int maxConnection = RoadManager.Instance.maxConnections - currRegion.centerOfMass.connectedTiles.Count;
 			if(maxConnection > 4){
 				maxConnection = 4;
 			}
 			int numOfConnections = UnityEngine.Random.Range (1, maxConnection);
-			List<Region> adjacentRegions = currRegion.adjacentRegions.Where(x => !currRegion.centerOfMass.connectedTiles.ContainsKey(x.centerOfMass) && x.centerOfMass.GetNumOfConnectedCenterOfMass() < 3).ToList();
+//			List<Region> adjacentRegions = currRegion.adjacentRegions.Where(x => !currRegion.centerOfMass.connectedTiles.ContainsKey(x.centerOfMass) && x.centerOfMass.GetNumOfConnectedCenterOfMass() < RoadManager.Instance.maxCityConnections
+//				&& !RoadManager.Instance.IsIntersectingWith(currRegion.centerOfMass, x.centerOfMass, ROAD_TYPE.MINOR)).ToList();
+			List<Region> adjacentRegions = currRegion.adjacentRegions.Where(x => !currRegion.centerOfMass.connectedTiles.ContainsKey(x.centerOfMass) && x.centerOfMass.GetNumOfConnectedCenterOfMass() < RoadManager.Instance.maxCityConnections).ToList();
 			if(adjacentRegions.Count > 0){
 				if(numOfConnections > adjacentRegions.Count){
 					numOfConnections = adjacentRegions.Count;
@@ -274,7 +276,7 @@ public class GridMap : MonoBehaviour {
 					}
 					RoadManager.Instance.DrawConnection (currRegion.centerOfMass, chosenRegion.centerOfMass, ROAD_TYPE.MAJOR);
 					adjacentRegions.Remove (chosenRegion);
-					if(currRegion.centerOfMass.GetNumOfConnectedCenterOfMass() >= 3){
+					if(currRegion.centerOfMass.GetNumOfConnectedCenterOfMass() >= RoadManager.Instance.maxCityConnections){
 						break;
 					}
 				}
@@ -296,23 +298,24 @@ public class GridMap : MonoBehaviour {
 		}
 	}
 	private void CreateExtraLandmarkConnections(HexTile landmark){
-		if(landmark.connectedTiles.Count < 3){
+		if(landmark.connectedTiles.Count < RoadManager.Instance.maxLandmarkConnections){
 			int chanceAdjCity = UnityEngine.Random.Range (0, 2);
 			if(chanceAdjCity == 0){
 				for (int i = 0; i < landmark.region.adjacentRegions.Count; i++) {
-					if(!landmark.connectedTiles.ContainsKey(landmark.region.adjacentRegions[i].centerOfMass)){
+					if(!landmark.connectedTiles.ContainsKey(landmark.region.adjacentRegions[i].centerOfMass) && landmark.region.adjacentRegions[i].centerOfMass.connectedTiles.Count < RoadManager.Instance.maxConnections){
 						RoadManager.Instance.DrawConnection (landmark, landmark.region.adjacentRegions[i].centerOfMass, ROAD_TYPE.MINOR);
 						break;	
 					}
 				}
 			}
 		}
-		if(landmark.connectedTiles.Count < 3){
+		if(landmark.connectedTiles.Count < RoadManager.Instance.maxLandmarkConnections){
 			int chanceAdjLandmark = UnityEngine.Random.Range (0, 2);
 			if(chanceAdjLandmark == 0){
 				int insideChance = UnityEngine.Random.Range (0, 2);
 				if(insideChance == 0){
-					List<HexTile> adjLandmarks = landmark.region.tilesInRegion.Where(x => x.hasLandmark && x.id != landmark.id && !landmark.connectedTiles.ContainsKey(x)).ToList();
+					List<HexTile> adjLandmarks = landmark.region.tilesInRegion.Where(x => x.hasLandmark && x.id != landmark.id && !landmark.connectedTiles.ContainsKey(x)
+						&& x.connectedTiles.Count < RoadManager.Instance.maxLandmarkConnections).ToList();
 					if(adjLandmarks.Count > 0){
 						for (int i = 0; i < adjLandmarks.Count; i++) {
 							RoadManager.Instance.DrawConnection (landmark, adjLandmarks[i], ROAD_TYPE.MINOR);
@@ -323,7 +326,8 @@ public class GridMap : MonoBehaviour {
 
 				List<Region> adjRegions = Utilities.Shuffle (landmark.region.adjacentRegions);
 				for (int i = 0; i < adjRegions.Count; i++) {
-					List<HexTile> adjLandmarks = adjRegions[i].tilesInRegion.Where(x => x.hasLandmark && !landmark.connectedTiles.ContainsKey(x)).ToList();
+					List<HexTile> adjLandmarks = adjRegions[i].tilesInRegion.Where(x => x.hasLandmark && !landmark.connectedTiles.ContainsKey(x)
+						&& x.connectedTiles.Count < RoadManager.Instance.maxLandmarkConnections).ToList();
 					if(adjLandmarks.Count > 0){
 						for (int j = 0; j < adjLandmarks.Count; j++) {
 							RoadManager.Instance.DrawConnection (landmark, adjLandmarks[j], ROAD_TYPE.MINOR);
@@ -333,7 +337,7 @@ public class GridMap : MonoBehaviour {
 				}
 			}
 		}
-		if (landmark.connectedTiles.Count < 3) {
+		if (landmark.connectedTiles.Count < RoadManager.Instance.maxLandmarkConnections) {
 			//connect to major road
 		}
 	}

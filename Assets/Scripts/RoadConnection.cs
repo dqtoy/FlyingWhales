@@ -10,6 +10,7 @@ public class RoadConnection : MonoBehaviour {
 
 	private HexTile _fromTile;
 	private HexTile _toTile;
+	private Vector3 _direction;
 	private ROAD_TYPE _roadType;
 
 	#region Getters/Setters
@@ -22,11 +23,15 @@ public class RoadConnection : MonoBehaviour {
 	public ROAD_TYPE roadType{
 		get { return this._roadType; }
 	}
+	public Vector3 direction{
+		get { return this._direction; }
+	}
 	#endregion
 	public void SetConnection(HexTile fromTile, HexTile toTile, ROAD_TYPE roadType){
 		this._fromTile = fromTile;
 		this._toTile = toTile;
 		this._roadType = roadType;
+		this._direction = toTile.transform.position - fromTile.transform.position;
 		float distance = Vector3.Distance (fromTile.transform.position, toTile.transform.position);
 		int intDistance = Mathf.RoundToInt (distance);
 		SetLength (intDistance);

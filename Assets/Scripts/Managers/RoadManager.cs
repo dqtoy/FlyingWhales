@@ -10,6 +10,10 @@ public class RoadManager : MonoBehaviour {
 	public GameObject majorRoadGO;
 	public GameObject minorRoadGO;
 
+	public int maxConnections;
+	public int maxCityConnections;
+	public int maxLandmarkConnections;
+
 	// Use this for initialization
 	void Awake () {
 		Instance = this;
@@ -79,28 +83,55 @@ public class RoadManager : MonoBehaviour {
 		}
 	}
 
+	internal Vector3 GetIntersection(Vector3 firstPoint1, Vector3 firstPoint2, Vector3 secondPoint1, Vector3 secondPoint2){
+		float A1 = firstPoint2.y - firstPoint1.y;
+		float B1 = firstPoint1.x - firstPoint2.x;
+		float C1 = A1 * firstPoint1.x + B1 * firstPoint1.y;
+
+		float A2 = secondPoint2.y - secondPoint1.y;
+		float B2 = secondPoint1.x - secondPoint2.x;
+		float C2 = A2 * secondPoint1.x + B2 * secondPoint1.y;
+
+		float det = A1 * B2 - A2 * B1;
+
+		float x = (B2 * C1 - B1 * C2) / det;
+		float y = (A1 * C2 - A2 * C1) / det;
+
+		return new Vector3 (x, y, 0f);
+	}
+
 	internal bool IsIntersectingWith(HexTile fromTile, HexTile toTile, ROAD_TYPE roadType){
 		Vector3 fromPos = fromTile.gameObject.transform.position;
 		Vector3 toPos = toTile.gameObject.transform.position;
 		Vector3 targetDir = toPos - fromPos;
 //		Ray2D ray = new Ray2D (fromPos, targetDir);
-		RaycastHit2D hit = Physics2D.Raycast (fromPos, targetDir);
+		float distance = Vector3.Distance (fromTile.transform.position, toTile.transform.position);
+		RaycastHit2D hit = Physics2D.Raycast (fromPos, targetDir, distance);
 		if(hit){
+//			Debug.LogError ("HIT: " + hit.collider.name);
 			string tagName = "All";
 			if(roadType == ROAD_TYPE.MAJOR){
 				tagName = "MajorRoad";
 			}else if(roadType == ROAD_TYPE.MINOR){
 				tagName = "MinorRoad";
 			}
-			if(hit.collider.tag == "Hextile" && hit.collider.name == toTile.name){
-				return false;
-			}
+//			if(hit.collider.tag == "Hextile" && hit.collider.name == toTile.name){
+//				return false;
+//			}
 			if(tagName == "All"){
 				if(hit.collider.tag == "MajorRoad" || hit.collider.tag == "MinorRoad"){
+					RoadConnection roadConnection = hit.collider.transform.parent.gameObject.GetComponent<RoadConnection>();
+//					Vector3 intersectionPoint = Vector3.zero;
+					Vector3 intersectionPoint = RoadManager.Instance.GetIntersection (fromPos, toPos, roadConnection.fromTile.transform.position, roadConnection.toTile.transform.position);
+					Debug.LogError (fromTile.name + " and " + toTile.name + " - " + roadConnection.fromTile.name + " and " + roadConnection.toTile.name + " HAS INTERSECTED AT POINT: " + intersectionPoint.ToString ());
+
 					return true;
 				}
 			}else{
 				if(hit.collider.tag == tagName){
+					RoadConnection roadConnection = hit.collider.transform.parent.gameObject.GetComponent<RoadConnection>();
+					Vector3 intersectionPoint = RoadManager.Instance.GetIntersection (fromPos, toPos, roadConnection.fromTile.transform.position, roadConnection.toTile.transform.position);
+					Debug.LogError (fromTile.name + " and " + toTile.name + " - " + roadConnection.fromTile.name + " and " + roadConnection.toTile.name + " HAS INTERSECTED AT POINT: " + intersectionPoint.ToString ());
 					return true;
 				}
 			}
