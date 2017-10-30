@@ -14,9 +14,13 @@ public class Region {
 
     private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
 
-    //Resources
+    //Landmarks
     private RESOURCE _specialResource;
     private HexTile _tileWithSpecialResource;
+	private HexTile _tileWithSummoningShrine;
+	private HexTile _tileWithHabitat;
+	private int _landmarkCount;
+
     private Dictionary<RACE, int> _naturalResourceLevel;
     private int _cityLevelCap;
 
@@ -53,6 +57,12 @@ public class Region {
     internal HexTile tileWithSpecialResource {
         get { return _tileWithSpecialResource; }
     }
+	internal HexTile tileWithSummoningShrine {
+		get { return this._tileWithSummoningShrine; }
+	}
+	internal HexTile tileWithHabitat {
+		get { return this._tileWithHabitat; }
+	}
     internal Dictionary<RACE, int> naturalResourceLevel {
         get { return _naturalResourceLevel; }
     }
@@ -67,6 +77,9 @@ public class Region {
 	}
 	internal List<HexTile> outerTiles {
 		get { return this._outerTiles; }
+	}
+	internal int landmarkCount {
+		get { return this._landmarkCount; }
 	}
     #endregion
 
@@ -107,10 +120,12 @@ public class Region {
     }
     internal void SetCenterOfMass(HexTile newCenter) {
         if(_centerOfMass != null) {
+			_centerOfMass.emptyCityGO.SetActive (false);
             _centerOfMass.isHabitable = false;
         }
         _centerOfMass = newCenter;
         _centerOfMass.isHabitable = true;
+		_centerOfMass.emptyCityGO.SetActive (true);
     }
     #endregion
 
@@ -262,15 +277,28 @@ public class Region {
     }
     #endregion
 
-    #region Resource Functions
+    #region Landmark Functions
     internal void SetSpecialResource(RESOURCE resource) {
         _specialResource = resource;
         if(_specialResource != RESOURCE.NONE) {
-            List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x != centerOfMass).ToList();
+			this._landmarkCount += 1;
+			List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark).ToList();
             _tileWithSpecialResource = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
             _tileWithSpecialResource.AssignSpecialResource(_specialResource);
         }
     }
+	internal void SetSummoningShrine(){
+		this._landmarkCount += 1;
+		List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType != ELEVATION.WATER && x.id != centerOfMass.id && !x.hasLandmark).ToList();
+		this._tileWithSummoningShrine = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
+		this._tileWithSummoningShrine.CreateSummoningShrine();
+	}
+	internal void SetHabitat(){
+		this._landmarkCount += 1;
+		List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType != ELEVATION.WATER && x.id != centerOfMass.id && !x.hasLandmark).ToList();
+		this._tileWithHabitat = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
+		this._tileWithHabitat.CreateHabitat();
+	}
     /*
      * <summary>
      * Compute the natural resource level for each race.

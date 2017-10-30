@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CityConnection : MonoBehaviour {
+public class RoadConnection : MonoBehaviour {
 
 	public UI2DSprite left;
 	public UI2DSprite center;
@@ -10,19 +10,26 @@ public class CityConnection : MonoBehaviour {
 
 	private HexTile _fromTile;
 	private HexTile _toTile;
+	private ROAD_TYPE _roadType;
 
+	#region Getters/Setters
 	public HexTile fromTile{
 		get { return this._fromTile; }
 	}
 	public HexTile toTile{
 		get { return this._toTile; }
 	}
-
-	public void SetConnection(HexTile fromTile, HexTile toTile){
+	public ROAD_TYPE roadType{
+		get { return this._roadType; }
+	}
+	#endregion
+	public void SetConnection(HexTile fromTile, HexTile toTile, ROAD_TYPE roadType){
 		this._fromTile = fromTile;
 		this._toTile = toTile;
+		this._roadType = roadType;
 		float distance = Vector3.Distance (fromTile.transform.position, toTile.transform.position);
-		SetLength ((int)distance);
+		int intDistance = Mathf.RoundToInt (distance);
+		SetLength (intDistance);
 	}
 	public void SetLength(int length){
 		left.height = length;

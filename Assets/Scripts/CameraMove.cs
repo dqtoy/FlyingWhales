@@ -197,7 +197,7 @@ public class CameraMove : MonoBehaviour {
 	}
 
 	public void ToggleResourceIcons(){
-		resourceIconCamera.gameObject.SetActive(!resourceIconCamera.gameObject.activeSelf);
+//		resourceIconCamera.gameObject.SetActive(!resourceIconCamera.gameObject.activeSelf);
 	}
 
 	public void ToggleGeneralCamera(){

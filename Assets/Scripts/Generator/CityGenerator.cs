@@ -29,6 +29,8 @@ public class CityGenerator : MonoBehaviour {
 	[SerializeField] private GameObject pereLair;
 	[SerializeField] private GameObject ghoulLair;
 	[SerializeField] private GameObject corpseMound;
+	[SerializeField] private GameObject summoningShrine;
+	[SerializeField] private GameObject habitat;
 
     //public GameObject[] genericStructures;
     //public GameObject[] cityStructures;
@@ -357,6 +359,12 @@ public class CityGenerator : MonoBehaviour {
     }
 	public GameObject GetCorpseMoundGO(){
 		return this.corpseMound;
+	}
+	public GameObject GetSummoningShrineGO(){
+		return this.summoningShrine;
+	}
+	public GameObject GetHabitatGO(){
+		return this.habitat;
 	}
 
     public List<HexTile> GetHabitableTilesForRace(RACE race, bool unoccupiedOnly = true) {

@@ -198,12 +198,15 @@ public class GridMap : MonoBehaviour {
         
     }
 
-    public void GenerateResourcesPerRegion() {
+    public void GenerateLandmarksPerRegion() {
         List<RESOURCE> allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
         allSpecialResources.Remove(RESOURCE.NONE);
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
-            if(Random.Range(0,100) < 50) {
+			int chanceResource = UnityEngine.Random.Range (0, 2);
+			int chanceShrine = UnityEngine.Random.Range (0, 2);
+			int chanceHabitat = UnityEngine.Random.Range (0, 2);
+			if(chanceResource == 0 && currRegion.landmarkCount < 2) {
                 //Region has a special resource
                 if(allSpecialResources.Count <= 0) {
                     allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
@@ -217,13 +220,123 @@ public class GridMap : MonoBehaviour {
                 currRegion.SetSpecialResource(specialResource);
             }
             currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
+
+			if(chanceShrine == 0 && currRegion.landmarkCount < 2){
+				currRegion.SetSummoningShrine();
+			}
+
+			if(chanceHabitat == 0 && currRegion.landmarkCount < 2){
+				currRegion.SetHabitat ();
+			}
         }
         //Debug.Log("All Special Resources Per Region:");
         //for (int i = 0; i < allRegions.Count; i++) {
         //    Debug.Log("Region " + i.ToString() + ": " + allRegions[i].specialResource.ToString());
         //}
     }
+	public void GenerateRoadConnectionLandmarkToCity(){
+		for (int i = 0; i < allRegions.Count; i++) {
+			Region currRegion = allRegions [i];
+			if(currRegion.tileWithSpecialResource != null){
+				RoadManager.Instance.DrawConnection (currRegion.tileWithSpecialResource, currRegion.centerOfMass, ROAD_TYPE.MINOR);
+			}
+			if(currRegion.tileWithSummoningShrine != null){
+				RoadManager.Instance.DrawConnection (currRegion.tileWithSummoningShrine, currRegion.centerOfMass, ROAD_TYPE.MINOR);
+			}
+			if(currRegion.tileWithHabitat != null){
+				RoadManager.Instance.DrawConnection (currRegion.tileWithHabitat, currRegion.centerOfMass, ROAD_TYPE.MINOR);
+			}
+		}
+	}
+	public void GenerateCityConnections(){
+		for (int i = 0; i < allRegions.Count; i++) {
+			Region currRegion = allRegions [i];
+			if(currRegion.centerOfMass.GetNumOfConnectedCenterOfMass() >= 3){
+				continue;
+			}
+			int maxConnection = 5 - currRegion.centerOfMass.connectedTiles.Count;
+			if(maxConnection > 4){
+				maxConnection = 4;
+			}
+			int numOfConnections = UnityEngine.Random.Range (1, maxConnection);
+			List<Region> adjacentRegions = currRegion.adjacentRegions.Where(x => !currRegion.centerOfMass.connectedTiles.ContainsKey(x.centerOfMass) && x.centerOfMass.GetNumOfConnectedCenterOfMass() < 3).ToList();
+			if(adjacentRegions.Count > 0){
+				if(numOfConnections > adjacentRegions.Count){
+					numOfConnections = adjacentRegions.Count;
+				}
+				Region chosenRegion = null;
+				for (int j = 0; j < numOfConnections; j++) {
+					List<Region> priorityAdjacentRegions = adjacentRegions.Where (x => x.centerOfMass.GetNumOfConnectedCenterOfMass () > 0).ToList ();
+					if(priorityAdjacentRegions.Count > 0){
+						chosenRegion = priorityAdjacentRegions [UnityEngine.Random.Range (0, priorityAdjacentRegions.Count)];
+					}else{
+						chosenRegion = adjacentRegions [UnityEngine.Random.Range (0, adjacentRegions.Count)];
+					}
+					RoadManager.Instance.DrawConnection (currRegion.centerOfMass, chosenRegion.centerOfMass, ROAD_TYPE.MAJOR);
+					adjacentRegions.Remove (chosenRegion);
+					if(currRegion.centerOfMass.GetNumOfConnectedCenterOfMass() >= 3){
+						break;
+					}
+				}
+			}
+		}
+	}
+	public void GenerateExtraLandmarkConnections(){
+		for (int i = 0; i < allRegions.Count; i++) {
+			Region currRegion = allRegions [i];
+			if(currRegion.tileWithSpecialResource != null){
+				CreateExtraLandmarkConnections (currRegion.tileWithSpecialResource);
+			}
+			if(currRegion.tileWithSummoningShrine != null){
+				CreateExtraLandmarkConnections (currRegion.tileWithSummoningShrine);
+			}
+			if(currRegion.tileWithHabitat != null){
+				CreateExtraLandmarkConnections (currRegion.tileWithHabitat);
+			}
+		}
+	}
+	private void CreateExtraLandmarkConnections(HexTile landmark){
+		if(landmark.connectedTiles.Count < 3){
+			int chanceAdjCity = UnityEngine.Random.Range (0, 2);
+			if(chanceAdjCity == 0){
+				for (int i = 0; i < landmark.region.adjacentRegions.Count; i++) {
+					if(!landmark.connectedTiles.ContainsKey(landmark.region.adjacentRegions[i].centerOfMass)){
+						RoadManager.Instance.DrawConnection (landmark, landmark.region.adjacentRegions[i].centerOfMass, ROAD_TYPE.MINOR);
+						break;	
+					}
+				}
+			}
+		}
+		if(landmark.connectedTiles.Count < 3){
+			int chanceAdjLandmark = UnityEngine.Random.Range (0, 2);
+			if(chanceAdjLandmark == 0){
+				int insideChance = UnityEngine.Random.Range (0, 2);
+				if(insideChance == 0){
+					List<HexTile> adjLandmarks = landmark.region.tilesInRegion.Where(x => x.hasLandmark && x.id != landmark.id && !landmark.connectedTiles.ContainsKey(x)).ToList();
+					if(adjLandmarks.Count > 0){
+						for (int i = 0; i < adjLandmarks.Count; i++) {
+							RoadManager.Instance.DrawConnection (landmark, adjLandmarks[i], ROAD_TYPE.MINOR);
+							return;
+						}
+					}
+				}
 
+				List<Region> adjRegions = Utilities.Shuffle (landmark.region.adjacentRegions);
+				for (int i = 0; i < adjRegions.Count; i++) {
+					List<HexTile> adjLandmarks = adjRegions[i].tilesInRegion.Where(x => x.hasLandmark && !landmark.connectedTiles.ContainsKey(x)).ToList();
+					if(adjLandmarks.Count > 0){
+						for (int j = 0; j < adjLandmarks.Count; j++) {
+							RoadManager.Instance.DrawConnection (landmark, adjLandmarks[j], ROAD_TYPE.MINOR);
+							return;
+						}
+					}
+				}
+			}
+		}
+		if (landmark.connectedTiles.Count < 3) {
+			//connect to major road
+		}
+	}
     public void UpdateAllRegionsDiscoveredKingdoms() {
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];

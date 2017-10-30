@@ -29,8 +29,6 @@ public class KingdomManager : MonoBehaviour {
 	public int evenActionDay;
     public int oddActionDay = 1;
 
-	public GameObject connectionGO;
-
 	private List<AlliancePool> _alliances = new List<AlliancePool>();
 	private List<Warfare> _kingdomWars = new List<Warfare>();
 
@@ -456,41 +454,5 @@ public class KingdomManager : MonoBehaviour {
 		Kingdom newKingdom = GenerateNewKingdom(RACE.UNDEAD, new List<HexTile>() { hexTile });
 		newKingdom.InitializeUndeadKingdom (undeadCount);
 		newKingdom.HighlightAllOwnedTilesInKingdom();
-	}
-
-	internal void DrawConnection(HexTile fromTile, HexTile toTile){
-//		fromTile.connectedTiles.Add (toTile);
-//		toTile.connectedTiles.Add (fromTile);
-
-		Debug.Log ("DRAW CONNECTION: " + fromTile.name + ", " + toTile.name);
-		Vector3 fromPos = fromTile.gameObject.transform.position;
-		Vector3 toPos = toTile.gameObject.transform.position;
-		Vector3 targetDir = toPos - fromPos;
-
-//		float angle = Vector3.Angle (targetDir, fromTile.transform.forward);
-		float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg;
-		Debug.Log ("ANGLE: " + angle);
-
-		GameObject goConnection = (GameObject)GameObject.Instantiate (connectionGO);
-		goConnection.transform.position = fromPos;
-//		goConnection.gameObject.transform.Rotate (Vector3.right, 0f, angle);
-		goConnection.transform.Rotate(new Vector3(0f,0f,angle));
-
-		CityConnection cityConnection = goConnection.GetComponent<CityConnection> ();
-		cityConnection.SetConnection (fromTile, toTile);
-
-		fromTile.connectedTiles.Add (toTile, cityConnection);
-		toTile.connectedTiles.Add (fromTile, cityConnection);
-//		if(fromTile.city != null && toTile.city != null){
-//			if(fromTile.city.kingdom.id == toTile.city.kingdom.id){
-//				goConnection.GetComponent<CityConnection> ().SetColor (fromTile.city.kingdom.kingdomColor);
-//			}
-//		}
-	}
-	internal void DestroyConnection(HexTile fromTile, HexTile toTile){
-		CityConnection cityConnection = fromTile.connectedTiles [toTile];
-		GameObject.Destroy (cityConnection.gameObject);
-		fromTile.connectedTiles.Remove (toTile);
-		toTile.connectedTiles.Remove (fromTile);
 	}
 }

@@ -46,7 +46,7 @@ public class Expansion : GameEvent {
             newCity.ExpandToThisCity (this.startedBy);
             newCity.region.CheckForDiscoveredKingdoms();
             newCity.kingdom.ResetExpansionRate();
-			KingdomManager.Instance.DrawConnection (this.startedBy.city.hexTile, newCity.hexTile);
+//			KingdomManager.Instance.DrawConnection (this.startedBy.city.hexTile, newCity.hexTile);
             for (int i = 0; i < startedByKingdom.discoveredKingdoms.Count; i++) {
                 Kingdom otherKingdom = startedByKingdom.discoveredKingdoms[i];
                 if(otherKingdom.regionFogOfWarDict[newCity.region] != FOG_OF_WAR_STATE.VISIBLE) {

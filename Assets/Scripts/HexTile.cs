@@ -53,6 +53,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public bool hasKeystone = false;
 	public bool hasFirst = false;
 	public bool isLair = false;
+	public bool hasLandmark = false;
 
     [SerializeField] private List<City> _isBorderOfCities = new List<City>();
     [SerializeField] private List<City> _isOuterTileOfCities = new List<City>();
@@ -68,6 +69,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private Transform resourceParent;
     [SerializeField] private GameObject biomeDetailParentGO;
     [SerializeField] private TextMesh tileTextMesh;
+	[SerializeField] private GameObject _emptyCityGO;
 
     [Space(10)]
     [Header("Tile Edges")]
@@ -126,7 +128,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private List<Citizen> _citizensOnTile = new List<Citizen>();
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
-	[System.NonSerialized] public Dictionary<HexTile, CityConnection> connectedTiles = new Dictionary<HexTile, CityConnection>();
+	[System.NonSerialized] public Dictionary<HexTile, RoadConnection> connectedTiles = new Dictionary<HexTile, RoadConnection>();
 //	[System.NonSerialized] public List<GameObject> connectionsGO = new List<GameObject>();
 
 	public List<HexTile> AllNeighbours { get; set; }
@@ -191,6 +193,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public CorpseMound corpseMound{
 		get { return this._corpseMound; }
 	}
+	public GameObject emptyCityGO{
+		get { return this._emptyCityGO; }
+	}
 
     #endregion
 
@@ -243,12 +248,25 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	#region Resource
     internal void AssignSpecialResource(RESOURCE resource) {
+		this.hasLandmark = true;
         specialResource = resource;
         resourceIcon.SetResource(specialResource);
         GameObject resourceGO = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
         resourceGO.transform.localPosition = Vector3.zero;
         resourceGO.transform.localScale = Vector3.one;
     }
+	internal void CreateSummoningShrine(){
+		this.hasLandmark = true;
+		GameObject shrineGO = GameObject.Instantiate(CityGenerator.Instance.GetSummoningShrineGO(), structureParentGO.transform) as GameObject;
+		shrineGO.transform.localPosition = Vector3.zero;
+		shrineGO.transform.localScale = Vector3.one;
+	}
+	internal void CreateHabitat(){
+		this.hasLandmark = true;
+		GameObject habitatGO = GameObject.Instantiate(CityGenerator.Instance.GetHabitatGO(), structureParentGO.transform) as GameObject;
+		habitatGO.transform.localPosition = Vector3.zero;
+		habitatGO.transform.localScale = Vector3.one;
+	}
     internal void AssignSpecialResource(){
 		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
 			return;
@@ -1395,7 +1413,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	internal void DestroyConnections(){
 		while(this.connectedTiles.Count > 0){
-			KingdomManager.Instance.DestroyConnection (this, this.connectedTiles.Keys.ElementAt(0));
+			RoadManager.Instance.DestroyConnection (this, this.connectedTiles.Keys.ElementAt(0));
 		}
+	}
+
+	internal int GetNumOfConnectedCenterOfMass(){
+		int count = 0;
+		if(this.connectedTiles.Count > 0){
+			foreach (HexTile tile in this.connectedTiles.Keys) {
+				if(tile.region.centerOfMass.id == tile.id){
+					count += 1;
+				}
+			}
+		}
+		return count;
 	}
 }

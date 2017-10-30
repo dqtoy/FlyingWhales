@@ -525,6 +525,7 @@ public class Kingdom{
                 HexTile initialCityLocation = initialCityLocations[i];
                 City newCity = this.CreateNewCityOnTileForKingdom(initialCityLocation);
                 initialCityLocation.region.SetOccupant(newCity);
+				initialCityLocation.emptyCityGO.SetActive (false);
             }
         }
     }

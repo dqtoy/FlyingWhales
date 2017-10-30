@@ -662,3 +662,8 @@ public enum AGENT_TYPE {
     LAIR,
     NECROMANCER
 }
+public enum ROAD_TYPE{
+	MAJOR,
+	MINOR,
+	ALL,
+}
