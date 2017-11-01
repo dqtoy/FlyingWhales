@@ -1181,21 +1181,23 @@ public class KingdomRelationship {
 	private int GetKingdomInvasionValueOpinionChange(){
 		int adjustment = -1;
 		if(this._sourceKingdom.race != RACE.UNDEAD){
-			if (this._sourceKingdom.king.balanceType == PURPOSE.BALANCE){
+			if (this._sourceKingdom.king.balanceType == PURPOSE.BALANCE) {
 				if(this._relativeWeakness >= 100){
 					adjustment = 50;
-				}else if(this._relativeWeakness > 50 && this._relativeWeakness < 100){
-					adjustment = 25;
 				}
-			}else{
+                //else if(this._relativeWeakness > 50 && this._relativeWeakness < 100){
+				//	adjustment = 25;
+				//}
+			} else if(this._sourceKingdom.king.balanceType == PURPOSE.BANDWAGON) {
 				if(this._isAdjacent){				
 					if (this._relativeWeakness >= 100) {
 						adjustment = -50;
-					} else if (this._relativeWeakness > 50 && this._relativeWeakness < 100) {
-						adjustment = -25;
-					} else if (this._relativeWeakness > 0 && this._relativeWeakness <= 50 && this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
-						adjustment = -15;
 					}
+                    //else if (this._relativeWeakness > 50 && this._relativeWeakness < 100) {
+					//	adjustment = -25;
+					//} else if (this._relativeWeakness > 0 && this._relativeWeakness <= 50 && this._sourceKingdom.king.balanceType == PURPOSE.SUPERIORITY) {
+					//	adjustment = -15;
+					//}
 				}
 			}
 		}else{
