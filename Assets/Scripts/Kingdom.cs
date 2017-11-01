@@ -2429,8 +2429,8 @@ public class Kingdom{
             }
         }
         //overpopulation reduces Stability by 1 point per 10% of Overpopulation each month
-        int overpopulation = GetOverpopulationPercentage();
-        totalStabilityIncrease -= overpopulation / 10;
+        //int overpopulation = GetOverpopulationPercentage();
+        //totalStabilityIncrease -= overpopulation / 10;
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
         totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
 
@@ -2598,8 +2598,8 @@ public class Kingdom{
             Fortify(false);
         }
         //overpopulation reduces Stability by 1 point per 10% of Overpopulation each month
-        int overpopulation = GetOverpopulationPercentage();
-        totalStabilityIncrease -= overpopulation / 10;
+        //int overpopulation = GetOverpopulationPercentage();
+        //totalStabilityIncrease -= overpopulation / 10;
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
         totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
 
