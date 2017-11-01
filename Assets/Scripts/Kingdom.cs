@@ -2322,17 +2322,151 @@ public class Kingdom{
 			}
 		}
 	}
-	//internal void UpdateAllGovernorsLoyalty(){
-	//	for(int i = 0; i < this.cities.Count; i++){
-	//		if(this.cities[i].governor != null){
-	//			((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty();
-	//		}
-	//	}
-	//}
-	#endregion
+    //internal void UpdateAllGovernorsLoyalty(){
+    //	for(int i = 0; i < this.cities.Count; i++){
+    //		if(this.cities[i].governor != null){
+    //			((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty();
+    //		}
+    //	}
+    //}
+    #endregion
 
-	#region Balance of Power
-	internal void Militarize(bool state, bool isAttacking = false){
+    #region Weapon Functions
+    internal int GetWeaponOverProductionPercentage() {
+        float overProductionPercentage = ((float)_baseWeapons / (float)_populationCapacity) * 100f;
+        overProductionPercentage -= 100;
+        overProductionPercentage = Mathf.Clamp(overProductionPercentage, 0f, 100f);
+        return Mathf.FloorToInt(overProductionPercentage);
+    }
+    internal void AdjustBaseWeapons(int amountToAdjust) {
+        this._baseWeapons += amountToAdjust;
+        if (this._baseWeapons < 0) {
+            this._baseWeapons = 0;
+        }
+        KingdomManager.Instance.UpdateKingdomList();
+    }
+    internal void SetBaseWeapons(int newBaseWeapons) {
+        _baseWeapons = newBaseWeapons;
+        KingdomManager.Instance.UpdateKingdomList();
+    }
+    #endregion
+
+    #region Armor Functions
+    internal int GetArmorOverProductionPercentage() {
+        float overProductionPercentage = ((float)_baseArmor / (float)_populationCapacity) * 100f;
+        overProductionPercentage -= 100;
+        overProductionPercentage = Mathf.Clamp(overProductionPercentage, 0f, 100f);
+        return Mathf.FloorToInt(overProductionPercentage);
+    }
+    internal void AdjustBaseArmors(int amountToAdjust) {
+        this._baseArmor += amountToAdjust;
+        if (this._baseArmor < 0) {
+            this._baseArmor = 0;
+        }
+        KingdomManager.Instance.UpdateKingdomList();
+    }
+    internal void SetBaseArmor(int newBaseArmor) {
+        _baseArmor = newBaseArmor;
+        KingdomManager.Instance.UpdateKingdomList();
+    }
+    #endregion
+
+    #region Stability Functions
+    internal void AdjustStability(int amountToAdjust) {
+        this._stability += amountToAdjust;
+        this._stability = Mathf.Clamp(this._stability, -100, 100);
+    }
+    internal void CheckStability() {
+        if (this.isDead) {
+            return;
+        }
+        //When Stability reaches -100, there will either be a rebellion, a plague or rioting.
+        if (_stability <= -100) {
+            if (kingdomSize != KINGDOM_SIZE.SMALL) {
+                //Large or medium kingdom
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 15) {
+                    StartAutomaticRebellion();
+                } else if (chance >= 15 && chance < 35) {
+                    EventCreator.Instance.CreatePlagueEvent(this);
+                } else if (chance >= 35 && chance < 60) {
+                    EventCreator.Instance.CreateRiotEvent(this);
+                } else if (chance >= 60 && chance < 85) {
+                    EventCreator.Instance.CreateRiotSettlementEvent(this);
+                } else {
+                    EventCreator.Instance.CreateRegressionEvent(this);
+                }
+            } else {
+                //small kingdom
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 25) {
+                    EventCreator.Instance.CreatePlagueEvent(this);
+                } else if (chance >= 25 && chance < 55) {
+                    EventCreator.Instance.CreateRiotEvent(this);
+                } else if (chance >= 55 && chance < 85) {
+                    EventCreator.Instance.CreateRiotSettlementEvent(this);
+                } else {
+                    EventCreator.Instance.CreateRegressionEvent(this);
+                }
+            }
+
+        }
+    }
+    internal void ChangeStability(int newAmount) {
+        this._stability = newAmount;
+        this._stability = Mathf.Clamp(this._stability, -100, 100);
+        CheckStability();
+    }
+    internal int GetMonthlyStabilityGain() {
+        int totalStabilityIncrease = GetStabilityContributionFromCitizens();
+        //totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
+        for (int i = 0; i < cities.Count; i++) {
+            City currCity = cities[i];
+            if (!currCity.isDead) {
+                int weaponsContribution = 0;
+                int armorContribution = 0;
+                currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
+            }
+        }
+        //overpopulation reduces Stability by 1 point per 10% of Overpopulation each month
+        int overpopulation = GetOverpopulationPercentage();
+        totalStabilityIncrease -= overpopulation / 10;
+        //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
+        totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
+
+        //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
+        if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
+            totalStabilityIncrease -= 5;
+        } else if (kingdomSize == KINGDOM_SIZE.LARGE) {
+            totalStabilityIncrease -= 10;
+        }
+
+        return Mathf.Clamp(totalStabilityIncrease, -5, 5);
+    }
+    internal void AddStabilityDecreaseBecauseOfInvasion() {
+        _stabilityDecreaseFromInvasionCounter += 1;
+        //Reschedule event
+        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+        dueDate.AddMonths(6);
+        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => ReduceStabilityDecreaseBecauseOfInvasion());
+        datesStabilityDecreaseWillExpire.Add(dueDate);
+    }
+    private void ReduceStabilityDecreaseBecauseOfInvasion() {
+        datesStabilityDecreaseWillExpire.RemoveAt(0);
+        _stabilityDecreaseFromInvasionCounter -= 1;
+    }
+    private int GetStabilityContributionFromCitizens() {
+        int stabilityContributionsFromCitizens = 0;
+        stabilityContributionsFromCitizens += king.GetStabilityContribution();
+        for (int i = 0; i < cities.Count; i++) {
+            stabilityContributionsFromCitizens += cities[i].governor.GetStabilityContribution();
+        }
+        return stabilityContributionsFromCitizens;
+    }
+    #endregion
+
+    #region Balance of Power
+    internal void Militarize(bool state, bool isAttacking = false){
 		this._isMilitarize = state;
 		if(UIManager.Instance.currentlyShowingKingdom.id == this.id){
 			UIManager.Instance.militarizingGO.SetActive (state);
@@ -2428,74 +2562,6 @@ public class Kingdom{
 			SchedulingManager.Instance.AddEntry (gameDate.month, gameDate.day, gameDate.year, () => ActionDay ());
 		}
 	}
-	internal void AdjustStability(int amountToAdjust) {
-    	this._stability += amountToAdjust;
-        this._stability = Mathf.Clamp(this._stability, -100, 100);
-    }
-	internal void CheckStability(){
-        if (this.isDead) {
-            return;
-        }
-        //When Stability reaches -100, there will either be a rebellion, a plague or rioting.
-        if (_stability <= -100) {
-            if(kingdomSize != KINGDOM_SIZE.SMALL) {
-                //Large or medium kingdom
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 15) {
-                    StartAutomaticRebellion();
-                } else if (chance >= 15 && chance < 35) {
-                    EventCreator.Instance.CreatePlagueEvent(this);
-                } else if (chance >= 35 && chance < 60) {
-                    EventCreator.Instance.CreateRiotEvent(this);
-                } else if (chance >= 60 && chance < 85) {
-                    EventCreator.Instance.CreateRiotSettlementEvent(this);
-                } else {
-                    EventCreator.Instance.CreateRegressionEvent(this);
-                }
-            } else {
-                //small kingdom
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 25) {
-                    EventCreator.Instance.CreatePlagueEvent(this);
-                } else if (chance >= 25 && chance < 55) {
-                    EventCreator.Instance.CreateRiotEvent(this);
-                } else if (chance >= 55 && chance < 85) {
-                    EventCreator.Instance.CreateRiotSettlementEvent(this);
-                } else {
-                    EventCreator.Instance.CreateRegressionEvent(this);
-                }
-            }
-
-            }
-	}
-    internal void AdjustBaseWeapons(int amountToAdjust) {
-		this._baseWeapons += amountToAdjust;
-		if(this._baseWeapons < 0){
-			this._baseWeapons = 0;
-		}
-        KingdomManager.Instance.UpdateKingdomList();
-    }
-    internal void SetBaseWeapons(int newBaseWeapons) {
-        _baseWeapons = newBaseWeapons;
-        KingdomManager.Instance.UpdateKingdomList();
-    }
-	internal void AdjustBaseArmors(int amountToAdjust) {
-		this._baseArmor += amountToAdjust;
-		if(this._baseArmor < 0){
-			this._baseArmor = 0;
-		}
-        KingdomManager.Instance.UpdateKingdomList();
-	}
-    internal void SetBaseArmor(int newBaseArmor) {
-        _baseArmor = newBaseArmor;
-        KingdomManager.Instance.UpdateKingdomList();
-    }
-    internal void ChangeStability(int newAmount) {
-		this._stability = newAmount;
-        this._stability = Mathf.Clamp(this._stability, -100, 100);
-        CheckStability();
-    }
-
     private void IncreaseBOPAttributesPerMonth() {
         if (this.isDead) {
             return;
@@ -2544,6 +2610,12 @@ public class Kingdom{
             totalStabilityIncrease -= 10;
         }
 
+        //Same as population. Armor and weapon production is also reduced when it is overproduced in the same way that population growth is reduced by overpopulation.
+        int weaponsOverProduction = GetWeaponOverProductionPercentage();
+        int armorOverProduction = GetArmorOverProductionPercentage();
+        totalWeaponsIncrease = Mathf.FloorToInt(totalWeaponsIncrease * ((100f - weaponsOverProduction) * 0.01f));
+        totalArmorIncrease = Mathf.FloorToInt(totalArmorIncrease * ((100f - armorOverProduction) * 0.01f));
+
         AdjustBaseWeapons(totalWeaponsIncrease);
         AdjustBaseArmors(totalArmorIncrease);
         AdjustStability(Mathf.Clamp(totalStabilityIncrease, -5, 5));
@@ -2559,52 +2631,6 @@ public class Kingdom{
         SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseBOPAttributesPerMonth());
 
         CheckStability();
-    }
-    internal int GetMonthlyStabilityGain() {
-        int totalStabilityIncrease = GetStabilityContributionFromCitizens();
-        //totalStabilityIncrease = Mathf.FloorToInt(totalStabilityIncrease * (1f - draftRate));
-        for (int i = 0; i < cities.Count; i++) {
-            City currCity = cities[i];
-            if (!currCity.isDead) {
-                int weaponsContribution = 0;
-                int armorContribution = 0;
-                currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
-            }
-        }
-        //overpopulation reduces Stability by 1 point per 10% of Overpopulation each month
-        int overpopulation = GetOverpopulationPercentage();
-        totalStabilityIncrease -= overpopulation / 10;
-        //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
-        totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
-
-        //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
-        if (kingdomSize == KINGDOM_SIZE.MEDIUM) {
-            totalStabilityIncrease -= 5;
-        } else if (kingdomSize == KINGDOM_SIZE.LARGE) {
-            totalStabilityIncrease -= 10;
-        }
-
-        return Mathf.Clamp(totalStabilityIncrease, -5, 5);
-    }
-    internal void AddStabilityDecreaseBecauseOfInvasion() {
-        _stabilityDecreaseFromInvasionCounter += 1;
-        //Reschedule event
-        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        dueDate.AddMonths(6);
-        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => ReduceStabilityDecreaseBecauseOfInvasion());
-        datesStabilityDecreaseWillExpire.Add(dueDate);
-    }
-    private void ReduceStabilityDecreaseBecauseOfInvasion() {
-        datesStabilityDecreaseWillExpire.RemoveAt(0);
-        _stabilityDecreaseFromInvasionCounter -= 1;
-    }
-    private int GetStabilityContributionFromCitizens() {
-        int stabilityContributionsFromCitizens = 0;
-        stabilityContributionsFromCitizens += king.GetStabilityContribution();
-        for (int i = 0; i < cities.Count; i++) {
-            stabilityContributionsFromCitizens += cities[i].governor.GetStabilityContribution();
-        }
-        return stabilityContributionsFromCitizens;
     }
     //    internal void AdjustBaseWeapons(int adjustment) {
     //        _baseWeapons += adjustment;

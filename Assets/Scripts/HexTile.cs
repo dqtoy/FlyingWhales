@@ -664,9 +664,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     }
     internal void UpdateCityNamePlate() {
         if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
-            _cityInfo.SetCity(city);
+            _cityInfo.SetCity(city, false, false, false, true);
         } else {
-            _cityInfo.SetCity(city, false, true);
+            _cityInfo.SetCity(city, false, true, false, true);
         }
     }
     internal void RemoveCityNamePlate() {
@@ -1213,10 +1213,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         text += "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
         "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
         "\n [b]Tech Points:[/b] " + this.city.techPoints.ToString() +
-        "\n [b]City Weapons:[/b] " + this.city.weapons.ToString() +
-        "\n [b]City Armor:[/b] " + this.city.armor.ToString() +
         "\n [b]Kingdom Base Weapons:[/b] " + this.city.kingdom.baseWeapons.ToString() +
         "\n [b]Kingdom Base Armor:[/b] " + this.city.kingdom.baseArmor.ToString() +
+        "\n [b]Weapons Over Production:[/b] " + this.city.kingdom.GetWeaponOverProductionPercentage().ToString() + "%" + 
+        "\n [b]Armor Over Production:[/b] " + this.city.kingdom.GetArmorOverProductionPercentage().ToString() + "%" +
         "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
         "\n [b]Region Population Growth:[/b] " + this.region.populationGrowth.ToString() +
         "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
@@ -1228,24 +1228,24 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         "\n [b]Production Rate: [/b]" + (this.city.kingdom.productionRate * 100f).ToString() + "%" +
         "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
 
-        text += "[b]Adjacent Kingdoms: [/b]\n";
-        if (this.city.kingdom.adjacentKingdoms.Count > 0) {
-            for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
-                text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
-            }
-        } else {
-            text += "NONE\n";
-        }
+        //text += "[b]Adjacent Kingdoms: [/b]\n";
+        //if (this.city.kingdom.adjacentKingdoms.Count > 0) {
+        //    for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
+        //        text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
 
-        text += "[b]Discovered Kingdoms: [/b]\n";
-        if (this.city.kingdom.discoveredKingdoms.Count > 0) {
-            for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
-                Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
-                text += currKingdom.name + "\n";
-            }
-        } else {
-            text += "NONE\n";
-        }
+        //text += "[b]Discovered Kingdoms: [/b]\n";
+        //if (this.city.kingdom.discoveredKingdoms.Count > 0) {
+        //    for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
+        //        Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
+        //        text += currKingdom.name + "\n";
+        //    }
+        //} else {
+        //    text += "NONE\n";
+        //}
 
         //text += "[b]Alliance Kingdoms: [/b]\n";
         //if(this.city.kingdom.alliancePool != null) {

@@ -42,62 +42,64 @@ public class CityItem : MonoBehaviour {
 	}
     #endregion
 
-    public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false, bool showForTesting = false) {
+    public void SetCity(City _city, bool showLoyalty = false, bool showNameOnly = false, bool showForTesting = false, bool forNamePlate = false) {
         this._city = _city;
 		_structuresLbl.text = city.ownedTiles.Count.ToString();
 		_cityLbl.text = city.name;
 
-		/*
-        _governor.SetCitizen(city.governor);
-		//this._powerLbl.text = city.weapons.ToString();
-		//this._defenseLbl.text = city.armor.ToString();
+        if (!forNamePlate) {
+            _governor.SetCitizen(city.governor);
+		    //this._powerLbl.text = city.weapons.ToString();
+		    //this._defenseLbl.text = city.armor.ToString();
 
-//        _hpLbl.text = city.hp.ToString();
-        _structuresLbl.text = city.ownedTiles.Count.ToString();
-        _cityLbl.text = city.name;
-//		float hpValue = (float)city.hp / (float)city.maxHP;
-//		if(hpValue > 1f){
-//			hpValue = 1f;
-//		}
-//        _hpProgBar.value = hpValue;
-        _growthProgBar.value = (float)city.currentGrowth / (float)city.maxGrowth;
+    //        _hpLbl.text = city.hp.ToString();
+            _structuresLbl.text = city.ownedTiles.Count.ToString();
+            _cityLbl.text = city.name;
+    //		float hpValue = (float)city.hp / (float)city.maxHP;
+    //		if(hpValue > 1f){
+    //			hpValue = 1f;
+    //		}
+    //        _hpProgBar.value = hpValue;
+            _growthProgBar.value = (float)city.currentGrowth / (float)city.maxGrowth;
 
-        if (showLoyalty) {
-            _loyaltyGO.SetActive(true);
-            _loyaltyLbl.text = _governor.citizen.loyaltyToKing.ToString();
-            EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
-                ShowLoyaltySummary();
-            });
-            EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideRelationshipSummary(); });
+            if (showLoyalty) {
+                _loyaltyGO.SetActive(true);
+                _loyaltyLbl.text = _governor.citizen.loyaltyToKing.ToString();
+                EventDelegate.Set(_loyaltyEventTrigger.onHoverOver, delegate () {
+                    ShowLoyaltySummary();
+                });
+                EventDelegate.Set(_loyaltyEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideRelationshipSummary(); });
+            }
+
+            if (showNameOnly) {
+                governorParentGO.SetActive(false);
+    //            hpParentGO.SetActive(false);
+			    //powerGO.SetActive(false);
+			    //defenseGO.SetActive(false);
+                cityNameParentGO.SetActive(true);
+                structuresParentGO.SetActive(false);
+                growthMeterParentGO.SetActive(false);
+            } else {
+                governorParentGO.SetActive(true);
+    //            hpParentGO.SetActive(true);
+			    //powerGO.SetActive(true);
+			    //defenseGO.SetActive(true);
+                cityNameParentGO.SetActive(true);
+                structuresParentGO.SetActive(true);
+                growthMeterParentGO.SetActive(true);
+            }
+
+            if (showForTesting) {
+                forTestingGO.SetActive(true);
+                //newPowerLbl.text = _city.weapons.ToString();
+                //newDefLabel.text = _city.armor.ToString();
+                loyaltyAdjustmentLbl.text = ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier.ToString();
+            } else {
+                forTestingGO.SetActive(false);
+            }
+        
         }
 
-        if (showNameOnly) {
-            governorParentGO.SetActive(false);
-//            hpParentGO.SetActive(false);
-			//powerGO.SetActive(false);
-			//defenseGO.SetActive(false);
-            cityNameParentGO.SetActive(true);
-            structuresParentGO.SetActive(false);
-            growthMeterParentGO.SetActive(false);
-        } else {
-            governorParentGO.SetActive(true);
-//            hpParentGO.SetActive(true);
-			//powerGO.SetActive(true);
-			//defenseGO.SetActive(true);
-            cityNameParentGO.SetActive(true);
-            structuresParentGO.SetActive(true);
-            growthMeterParentGO.SetActive(true);
-        }
-
-        if (showForTesting) {
-            forTestingGO.SetActive(true);
-            //newPowerLbl.text = _city.weapons.ToString();
-            //newDefLabel.text = _city.armor.ToString();
-            loyaltyAdjustmentLbl.text = ((Governor)_city.governor.assignedRole).forTestingLoyaltyModifier.ToString();
-        } else {
-            forTestingGO.SetActive(false);
-        }
-        */
     }
 
     public void CenterOnCity() {
