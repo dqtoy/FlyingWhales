@@ -16,9 +16,12 @@ public class RoadManager : MonoBehaviour {
     public int maxCityConnections;
     public int maxLandmarkConnections;
 
+    private List<HexTile> _roadTiles;
+
     // Use this for initialization
     void Awake() {
         Instance = this;
+        _roadTiles = new List<HexTile>();
     }
 
 
@@ -201,16 +204,17 @@ public class RoadManager : MonoBehaviour {
         if(connection == null) {
             throw new System.Exception("Cannot connect " + region1.centerOfMass.name + " to " + region2.centerOfMass.name);
         }
-        ConnectTiles(connection, ROAD_TYPE.MAJOR);
+        //CreateRoad(connection, ROAD_TYPE.MAJOR);
+        SmartCreateRoad(region1.centerOfMass, region2.centerOfMass, ROAD_TYPE.MAJOR);
     }
 
     /*
      * <summary>
-     * Connect 2 tiles given a path.
+     * Create a new road given a path.
      * This will activate the road sprites in the path
      * </summary>
      * */
-    public void ConnectTiles(List<HexTile> path, ROAD_TYPE roadType) {
+    public void CreateRoad(List<HexTile> path, ROAD_TYPE roadType) {
         for (int i = 0; i < path.Count; i++) {
             HexTile previousTile = path.ElementAtOrDefault(i - 1);
             HexTile currTile = path[i];
@@ -230,13 +234,53 @@ public class RoadManager : MonoBehaviour {
         }
     }
 
+    public void SmartCreateRoad(HexTile start, HexTile destination, ROAD_TYPE roadType) {
+        List<HexTile> roadTilesConnectedToDestination = GetRoadTilesConnectedTo(destination);
+        HexTile tileToConnectTo = destination;
+        float shortestDistanceFromStart = Vector2.Distance(start.transform.position, destination.transform.position);
+        for (int i = 0; i < roadTilesConnectedToDestination.Count; i++) {
+            HexTile currRoadTile = roadTilesConnectedToDestination[i];
+            float distanceFromStart = Vector2.Distance(start.transform.position, currRoadTile.transform.position);
+            if(distanceFromStart < shortestDistanceFromStart) {
+                shortestDistanceFromStart = distanceFromStart;
+                tileToConnectTo = currRoadTile;
+            }
+        }
+        List<HexTile> path = PathGenerator.Instance.GetPath(start, tileToConnectTo, PATHFINDING_MODE.ROAD_CREATION);
+        CreateRoad(path, roadType);
+    }
+
     public void ConnectLandmarkToRegion(HexTile landmarkLocation, Region region) {
         region.AddConnection(landmarkLocation);
         landmarkLocation.landmark.AddConnection(region);
     }
-
     public void ConnectLandmarkToLandmark(HexTile landmarkLocation1, HexTile landmarkLocation2) {
         landmarkLocation1.landmark.AddConnection(landmarkLocation2);
         landmarkLocation2.landmark.AddConnection(landmarkLocation1);
+    }
+
+    /*
+     * This will return a list of road tiles that are connected
+     * to the provided hex tile using roads.
+     * */
+    public List<HexTile> GetRoadTilesConnectedTo(HexTile destination) {
+        List<HexTile> connectedRoadTiles = new List<HexTile>();
+        for (int i = 0; i < _roadTiles.Count; i++) {
+            HexTile currTile = _roadTiles[i];
+            if(!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.USE_ROADS) != null) {
+                //There is a path from currTile to destination using roads
+                connectedRoadTiles.Add(currTile);
+            }
+        }
+        return connectedRoadTiles;
+    }
+
+    public void AddTileAsRoadTile(HexTile tile) {
+        if (!_roadTiles.Contains(tile)) {
+            _roadTiles.Add(tile);
+        }
+    }
+    public void RemoveTileAsRoadTile(HexTile tile) {
+        _roadTiles.Remove(tile);
     }
 }

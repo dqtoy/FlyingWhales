@@ -505,9 +505,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 _roadType = roadType;
             }
             region.AddTileAsRoad(this);
+            RoadManager.Instance.AddTileAsRoadTile(this);
         } else {
             _roadType = ROAD_TYPE.NONE;
             region.RemoveTileAsRoad(this);
+            RoadManager.Instance.RemoveTileAsRoadTile(this);
         }
     }
     #endregion

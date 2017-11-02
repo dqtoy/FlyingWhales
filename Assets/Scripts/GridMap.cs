@@ -252,7 +252,8 @@ public class GridMap : MonoBehaviour {
                         List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherRegion.centerOfMass, PATHFINDING_MODE.ROAD_CREATION);
                         if (path != null) {
                             RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, otherRegion);
-                            RoadManager.Instance.ConnectTiles(path, ROAD_TYPE.MINOR);
+                            //RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
+                            RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherRegion.centerOfMass, ROAD_TYPE.MINOR);
                             break;
                         }
                     }
@@ -270,7 +271,8 @@ public class GridMap : MonoBehaviour {
                         List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.ROAD_CREATION);
                         if (path != null) {
                             RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
-                            RoadManager.Instance.ConnectTiles(path, ROAD_TYPE.MINOR);
+                            //RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
+                            RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherLandmark.location, ROAD_TYPE.MINOR);
                             break;
                         }
                     }

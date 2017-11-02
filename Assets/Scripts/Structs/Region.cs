@@ -380,26 +380,8 @@ public class Region {
             throw new System.Exception("Tile with special resource is not part of this region!");
         }
         RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSpecialResource, this);
-        RoadManager.Instance.ConnectTiles(tilesToChooseFrom[_tileWithSpecialResource], ROAD_TYPE.MINOR);
-
-        ////Each resource tile has a chance to connect up to 1 other city (adjacent region)
-        //if(Random.Range(0, 2) == 0) {
-        //    //Connect to another city
-        //    for (int i = 0; i < adjacentRegions.Count; i++) {
-        //        Region currAdjacentRegion = adjacentRegions[i];
-        //        if(currAdjacentRegion.connections.Count < RoadManager.Instance.maxConnections) {
-        //            //connect to an adjacent region without intersecting any major road
-        //            List<HexTile> path = PathGenerator.Instance.GetPath(_tileWithSpecialResource, currAdjacentRegion.centerOfMass, PATHFINDING_MODE.NO_MAJOR_ROADS);
-        //            if(path != null) {
-        //                //connect this regions' resource tile to adjacent region
-        //                RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSpecialResource, currAdjacentRegion);
-        //                RoadManager.Instance.ConnectTiles(path, ROAD_TYPE.MINOR);
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
-
+        //RoadManager.Instance.CreateRoad(tilesToChooseFrom[_tileWithSpecialResource], ROAD_TYPE.MINOR);
+        RoadManager.Instance.SmartCreateRoad(_tileWithSpecialResource, centerOfMass, ROAD_TYPE.MINOR);
     }
 	internal void SetSummoningShrine(){
         if (AssignSummoningShrineToTile()) {
@@ -482,7 +464,8 @@ public class Region {
             this._tileWithSummoningShrine.CreateSummoningShrine();
 
             RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSummoningShrine, this);
-            RoadManager.Instance.ConnectTiles(tilesToChooseFrom[_tileWithSummoningShrine], ROAD_TYPE.MINOR);
+            //RoadManager.Instance.CreateRoad(tilesToChooseFrom[_tileWithSummoningShrine], ROAD_TYPE.MINOR);
+            RoadManager.Instance.SmartCreateRoad(_tileWithSummoningShrine, centerOfMass, ROAD_TYPE.MINOR);
             return true;
         } else {
             return false;
@@ -580,7 +563,8 @@ public class Region {
             this._tileWithHabitat.CreateHabitat();
 
             RoadManager.Instance.ConnectLandmarkToRegion(_tileWithHabitat, this);
-            RoadManager.Instance.ConnectTiles(tilesToChooseFrom[_tileWithHabitat], ROAD_TYPE.MINOR);
+            //RoadManager.Instance.CreateRoad(tilesToChooseFrom[_tileWithHabitat], ROAD_TYPE.MINOR);
+            RoadManager.Instance.SmartCreateRoad(_tileWithHabitat, centerOfMass, ROAD_TYPE.MINOR);
             return true;
         } else {
             return false;
