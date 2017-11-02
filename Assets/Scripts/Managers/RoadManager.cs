@@ -232,5 +232,11 @@ public class RoadManager : MonoBehaviour {
 
     public void ConnectLandmarkToRegion(HexTile landmarkLocation, Region region) {
         region.AddConnection(landmarkLocation);
+        landmarkLocation.landmark.AddConnection(region);
+    }
+
+    public void ConnectLandmarkToLandmark(HexTile landmarkLocation1, HexTile landmarkLocation2) {
+        landmarkLocation1.landmark.AddConnection(landmarkLocation2);
+        landmarkLocation2.landmark.AddConnection(landmarkLocation1);
     }
 }

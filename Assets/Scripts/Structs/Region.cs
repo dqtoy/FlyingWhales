@@ -19,6 +19,7 @@ public class Region {
     private HexTile _tileWithSpecialResource;
 	private HexTile _tileWithSummoningShrine;
 	private HexTile _tileWithHabitat;
+    private List<Landmark> _landmarks;
 	private int _landmarkCount;
 
     private Dictionary<RACE, int> _naturalResourceLevel;
@@ -82,6 +83,9 @@ public class Region {
 	internal List<HexTile> outerTiles {
 		get { return this._outerTiles; }
 	}
+    internal List<Landmark> landmarks {
+        get { return _landmarks; }
+    }
 	internal int landmarkCount {
 		get { return this._landmarkCount; }
 	}
@@ -97,6 +101,7 @@ public class Region {
 		this._corpseMoundTiles = new List<HexTile> ();
         _connections = new List<object>();
         _roadTilesInRegion = new List<HexTile>();
+        _landmarks = new List<Landmark>();
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
         SetSpecialResource(RESOURCE.NONE);
@@ -289,6 +294,11 @@ public class Region {
     #endregion
 
     #region Landmark Functions
+    internal void AddLandmarkToRegion(Landmark landmark) {
+        if (!_landmarks.Contains(landmark)) {
+            _landmarks.Add(landmark);
+        }
+    }
     internal void SetSpecialResource(RESOURCE resource) {
         if (resource != RESOURCE.NONE) {
             AssignSpecialResourceToTile(resource);
@@ -309,7 +319,7 @@ public class Region {
      * */
     private void AssignSpecialResourceToTile(RESOURCE specialResource) {
         //Get tiles in region that are plains, not the center of mass and does not have a landmark
-        List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark).ToList();
+        List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark && !x.HasNeighbourThatIsLandmark()).ToList();
 
         //Remove neighbours of the center of mass from the choices, since resource tiles are not supposed to be near the city
         for (int i = 0; i < centerOfMass.AllNeighbours.Count; i++) {
@@ -391,7 +401,6 @@ public class Region {
         //}
 
     }
-
 	internal void SetSummoningShrine(){
         if (AssignSummoningShrineToTile()) {
             this._landmarkCount += 1;
@@ -405,7 +414,7 @@ public class Region {
      * */
     private bool AssignSummoningShrineToTile() {
         //Get tiles in region that are plains, not the center of mass and does not have a landmark
-        List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark).ToList();
+        List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark && !x.HasNeighbourThatIsLandmark()).ToList();
 
         //Remove neighbours of the center of mass from the choices, since shrines are not supposed to be near the city
         for (int i = 0; i < centerOfMass.AllNeighbours.Count; i++) {
@@ -479,7 +488,6 @@ public class Region {
             return false;
         }
     }
-
 	internal void SetHabitat(){
         if (AssignHabitatToTile()) {
             this._landmarkCount += 1;
@@ -497,7 +505,7 @@ public class Region {
      * */
     private bool AssignHabitatToTile() {
         //Get tiles in region that are plains, not the center of mass and does not have a landmark
-        List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark).ToList();
+        List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark && !x.HasNeighbourThatIsLandmark()).ToList();
 
         //Remove neighbours of the center of mass from the choices, since shrines are not supposed to be near the city
         for (int i = 0; i < centerOfMass.AllNeighbours.Count; i++) {
@@ -578,7 +586,6 @@ public class Region {
             return false;
         }
     }
-
     /*
      * <summary>
      * Compute the natural resource level for each race.

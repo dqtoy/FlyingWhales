@@ -119,6 +119,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private List<HexRoads> roads;
     private ROAD_TYPE _roadType;
 
+    //Landmark
+    private Landmark _landmark = null;
+
     private GameEvent _gameEventInTile;
     private Transform _namePlateParent;
     private CityItem _cityInfo;
@@ -203,6 +206,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     internal ROAD_TYPE roadType {
         get { return _roadType; }
     }
+    internal Landmark landmark {
+        get { return _landmark; }
+    }
     #endregion
 
     #region Region Functions
@@ -260,19 +266,25 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         GameObject resourceGO = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
         resourceGO.transform.localPosition = Vector3.zero;
         resourceGO.transform.localScale = Vector3.one;
+        _landmark = new ResourceLandmark(this);
+        _region.AddLandmarkToRegion(_landmark);
     }
 	internal void CreateSummoningShrine(){
 		this.hasLandmark = true;
 		GameObject shrineGO = GameObject.Instantiate(CityGenerator.Instance.GetSummoningShrineGO(), structureParentGO.transform) as GameObject;
 		shrineGO.transform.localPosition = Vector3.zero;
 		shrineGO.transform.localScale = Vector3.one;
-	}
+        _landmark = new ShrineLandmark(this);
+        _region.AddLandmarkToRegion(_landmark);
+    }
 	internal void CreateHabitat(){
 		this.hasLandmark = true;
 		GameObject habitatGO = GameObject.Instantiate(CityGenerator.Instance.GetHabitatGO(), structureParentGO.transform) as GameObject;
 		habitatGO.transform.localPosition = Vector3.zero;
 		habitatGO.transform.localScale = Vector3.one;
-	}
+        _landmark = new HabitatLandmark(this);
+        _region.AddLandmarkToRegion(_landmark);
+    }
     internal void AssignSpecialResource(){
 		if (this.elevationType == ELEVATION.WATER || this.elevationType == ELEVATION.MOUNTAIN) {
 			return;
@@ -324,6 +336,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     #region Tile Utilities
+    public bool HasNeighbourThatIsLandmark() {
+        return AllNeighbours.Where(x => x.hasLandmark).Any();
+    }
     public PandaBehaviour GetBehaviourTree() {
         return this.GetComponent<PandaBehaviour>();
     }

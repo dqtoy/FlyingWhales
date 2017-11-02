@@ -236,28 +236,46 @@ public class GridMap : MonoBehaviour {
             }
         }
     }
-
-
-    public void GenerateResourcesPerRegion() {
-        List<RESOURCE> allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
-        allSpecialResources.Remove(RESOURCE.NONE);
+    public void GenerateLandmarkExternalConnections() {
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
-            int chanceResource = UnityEngine.Random.Range(0, 2);
-            if (chanceResource == 0) {
-                //Region has a special resource
-                if (allSpecialResources.Count <= 0) {
-                    allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
-                    allSpecialResources.Remove(RESOURCE.MANA_STONE);
-                    allSpecialResources.Remove(RESOURCE.COBALT);
-                    allSpecialResources.Remove(RESOURCE.MITHRIL);
-                    allSpecialResources.Remove(RESOURCE.NONE);
+            List<Landmark> landmarksInRegion = new List<Landmark>(currRegion.landmarks);
+            for (int j = 0; j < landmarksInRegion.Count; j++) {
+                Landmark currLandmark = landmarksInRegion[j];
+                List<Region> adjacentRegions = new List<Region>(currRegion.adjacentRegions);
+
+                //can connect to up to 1 other city
+                if(Random.Range(0, 2) == 0 && currLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
+                    List<Region> elligibleRegionsToConnectTo = new List<Region>(adjacentRegions.Where(x => x.connections.Count < RoadManager.Instance.maxConnections));
+                    for (int k = 0; k < elligibleRegionsToConnectTo.Count; k++) {
+                        Region otherRegion = elligibleRegionsToConnectTo[k];
+                        List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherRegion.centerOfMass, PATHFINDING_MODE.ROAD_CREATION);
+                        if (path != null) {
+                            RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, otherRegion);
+                            RoadManager.Instance.ConnectTiles(path, ROAD_TYPE.MINOR);
+                            break;
+                        }
+                    }
                 }
-                RESOURCE specialResource = allSpecialResources[Random.Range(0, allSpecialResources.Count)];
-                allSpecialResources.Remove(specialResource);
-                currRegion.SetSpecialResource(specialResource);
+
+                //connect to 1 other landmark within the region or from an adjacent region
+                if (Random.Range(0, 2) == 0 && currLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
+                    List<Landmark> elligibleLandmarks = new List<Landmark>();
+                    elligibleLandmarks.AddRange(currRegion.landmarks.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections));
+                    currRegion.adjacentRegions.ForEach(x => elligibleLandmarks.AddRange(x.landmarks.Where(y => y.connections.Count < RoadManager.Instance.maxLandmarkConnections)));
+                    elligibleLandmarks.Remove(currLandmark);
+
+                    for (int k = 0; k < elligibleLandmarks.Count; k++) {
+                        Landmark otherLandmark = elligibleLandmarks[k];
+                        List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.ROAD_CREATION);
+                        if (path != null) {
+                            RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
+                            RoadManager.Instance.ConnectTiles(path, ROAD_TYPE.MINOR);
+                            break;
+                        }
+                    }
+                }
             }
-            currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
         }
     }
 

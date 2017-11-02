@@ -21,6 +21,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
         RoadManager.Instance.GenerateRegionRoads();
         GridMap.Instance.GenerateLandmarksPerRegion();
+        GridMap.Instance.GenerateLandmarkExternalConnections();
         //      GridMap.Instance.GenerateLandmarksPerRegion();
         //GridMap.Instance.GenerateRoadConnectionLandmarkToCity();
         //GridMap.Instance.GenerateCityConnections ();
