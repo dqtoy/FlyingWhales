@@ -114,6 +114,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [SerializeField] private GameObject plagueIconGO;
     [SerializeField] private GameObject gameEventObjectsParentGO;
 
+    [Space(10)]
+    [Header("Road Objects")]
+    [SerializeField] private List<HexRoads> roads;
+    private ROAD_TYPE _roadType;
 
     private GameEvent _gameEventInTile;
     private Transform _namePlateParent;
@@ -133,12 +137,12 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
 	public List<HexTile> AllNeighbours { get; set; }
 	public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList();}}
-	public List<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
-	public List<HexTile> PurchasableTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER).ToList();}}
+    public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
+    public List<HexTile> RoadCreationTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && !o.hasLandmark).ToList(); } }
+    public List<HexTile> LandmarkCreationTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && !o.hasLandmark).ToList(); } }
+    public List<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
 	public List<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER).ToList();}}
     public List<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList();}}
-
-    public List<HexTile> elligibleNeighbourTilesForPurchase { get { return PurchasableTiles.Where(o => !o.isOccupied && !o.isHabitable).ToList(); } }
 
     public List<HexTile> sameTagNeighbours;
 
@@ -196,7 +200,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	public GameObject emptyCityGO{
 		get { return this._emptyCityGO; }
 	}
-
+    internal ROAD_TYPE roadType {
+        get { return _roadType; }
+    }
     #endregion
 
     #region Region Functions
@@ -462,6 +468,32 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             }
         }
         return HEXTILE_DIRECTION.NORTH_WEST;
+    }
+    #endregion
+
+    #region Roads
+    public void SetRoadColor(GameObject roadToChange, Color color) {
+        //roadToChange.GetComponent<SpriteRenderer>().color = color;
+        SpriteRenderer[] children = roadToChange.GetComponentsInChildren<SpriteRenderer>();
+        for (int i = 0; i < children.Length; i++) {
+            children[i].color = color;
+        }
+    }
+    public GameObject GetRoadGameObjectForDirection(HEXTILE_DIRECTION from, HEXTILE_DIRECTION to) {
+        List<RoadObject> availableRoads = roads.Where(x => x.from == from).First().destinations;
+        return availableRoads.Where(x => x.to == to).First().roadObj;
+    }
+    public void SetTileAsRoad(bool isRoad, ROAD_TYPE roadType) {
+        this.isRoad = isRoad;
+        if (isRoad) {
+            if(_roadType == ROAD_TYPE.NONE) {
+                _roadType = roadType;
+            }
+            region.AddTileAsRoad(this);
+        } else {
+            _roadType = ROAD_TYPE.NONE;
+            region.RemoveTileAsRoad(this);
+        }
     }
     #endregion
 
@@ -1051,8 +1083,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 				}
 			}
             //this.city.kingdom.HighlightAllOwnedTilesInKingdom();
-            this.city.HighlightAllOwnedTiles(127f / 255f);
             this.ShowKingdomInfo();
+            this.city.HighlightAllOwnedTiles(127f / 255f);
+        } else {
+            if (this.isHabitable) {
+                if (this.city == null) {
+                    ShowRegionInfo();
+                    return;
+                }
+            }
         }
     }
     private void OnMouseExit() {
@@ -1062,7 +1101,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 					return;
 				}
 			}
-            this.HideKingdomInfo();
+            this.HideSmallInfoWindow();
             this.city.HighlightAllOwnedTiles(69f / 255f);
             //if(this.ownedByCity != null) {
             //    this.ownedByCity.kingdom.UnHighlightAllOwnedTilesInKingdom();
@@ -1070,6 +1109,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             //if (UIManager.Instance.currentlyShowingKingdom != null) {
             //    UIManager.Instance.currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
             //}
+        } else {
+            if (this.isHabitable) {
+                if (this.city == null) {
+                    HideSmallInfoWindow();
+                    return;
+                }
+            }
         }
     }
     #endregion
@@ -1083,6 +1129,21 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 
     #region For Testing
+    private void HighlightTilesInRegion() {
+        for (int i = 0; i < _region.tilesInRegion.Count; i++) {
+            HexTile currTileInRegion = _region.tilesInRegion[i];
+            currTileInRegion.SetTileHighlightColor(Color.gray);
+            currTileInRegion.ShowTileHighlight();
+        }
+    }
+
+    private void UnHighlightTilesInRegion() {
+        for (int i = 0; i < _region.tilesInRegion.Count; i++) {
+            HexTile currTileInRegion = _region.tilesInRegion[i];
+            currTileInRegion.HideTileHighlight();
+        }
+    }
+
     [Space(10)]
     [Header("For Testing")]
     //[SerializeField] private int kingdomToConquerIndex = 0;
@@ -1203,10 +1264,23 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         ownedByCity.kingdom.Fortify(!ownedByCity.kingdom.isFortifying);
     }
 
+    private void ShowRegionInfo() {
+        string text = string.Empty;
+        text += "[b]Connections:[/b] " + this.region.connections.Count.ToString();
+        for (int i = 0; i < this.region.connections.Count; i++) {
+            text += "\n " + this.region.connections[i].ToString();
+        }
+        UIManager.Instance.ShowSmallInfo(text);
+    }
+
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
-        "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
+        "\n [b]Connections:[/b] " + this.region.connections.Count.ToString();
+        for (int i = 0; i < this.region.connections.Count; i++) {
+            text += "\n " + this.region.connections[i].ToString();
+        }
+        text += "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
         if(this.city.region.specialResource != RESOURCE.NONE) {
             text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
         }
@@ -1291,7 +1365,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         UIManager.Instance.ShowSmallInfo(text);
     }
 
-    private void HideKingdomInfo() {
+    private void HideSmallInfoWindow() {
         UIManager.Instance.HideSmallInfo();
     }
     #endregion

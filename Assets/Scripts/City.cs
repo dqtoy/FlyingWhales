@@ -704,7 +704,7 @@ public class City{
 				}else {
 					pathMode = PATHFINDING_MODE.AVATAR;
 				}
-				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, pathMode, BASE_RESOURCE_TYPE.STONE, this.kingdom);
+				path = PathGenerator.Instance.GetPath(this.hexTile, targetLocation, pathMode, this.kingdom);
 
 				if(role != ROLE.RANGER){
 					if (path == null) {

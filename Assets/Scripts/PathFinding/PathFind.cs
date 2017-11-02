@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace PathFind {
 	public static class PathFind {
-		public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate, PATHFINDING_MODE pathfindingMode, Kingdom kingdom = null) 
+		public static Path<Node> FindPath<Node>(Node start, Node destination, Func<Node, Node, double> distance, Func<Node, double> estimate, PATHFINDING_MODE pathfindingMode, Kingdom kingdom = null, Region region = null) 
 			where Node : HexTile, IHasNeighbours<Node> {
 
 			var closed = new HashSet<Node>();
@@ -25,21 +25,7 @@ namespace PathFind {
 
 				double d;
 				Path<Node> newPath;
-                if (pathfindingMode == PATHFINDING_MODE.RESOURCE_PRODUCTION) {
-                    foreach (Node n in path.LastStep.PurchasableTiles) {
-                        if (n.tileTag != start.tileTag) {
-                            continue;
-                        }
-                        if (n.isOccupied) {
-                            if (!start.city.ownedTiles.Contains(n)) {
-                                continue;
-                            }
-                        }
-                        d = distance(path.LastStep, n);
-                        newPath = path.AddStep(n, d);
-                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
-                    }
-                } else if (pathfindingMode == PATHFINDING_MODE.COMBAT) {
+                if (pathfindingMode == PATHFINDING_MODE.COMBAT) {
                     foreach (Node n in path.LastStep.CombatTiles) {
                         if (n.tileTag != start.tileTag) {
                             continue;
@@ -67,7 +53,7 @@ namespace PathFind {
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.NO_HIDDEN_TILES) {
-                    if(kingdom == null) {
+                    if (kingdom == null) {
                         throw new Exception("Someone is trying to pathfind using NO_HIDDEN_TILES, but hasn't specified a kingdom!");
                     }
                     foreach (Node n in path.LastStep.AvatarTiles) {
@@ -75,6 +61,39 @@ namespace PathFind {
                             continue;
                         }
                         if (kingdom.fogOfWarDict[FOG_OF_WAR_STATE.HIDDEN].Contains(n)) {
+                            continue;
+                        }
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
+                } else if (pathfindingMode == PATHFINDING_MODE.ROAD_CREATION) {
+                    foreach (Node n in path.LastStep.RoadCreationTiles) {
+                        //if (n.tileTag != start.tileTag) {
+                        //    continue;
+                        //}
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
+                } else if (pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION) {
+                    foreach (Node n in path.LastStep.LandmarkCreationTiles) {
+                        //if (n.tileTag != start.tileTag) {
+                        //    continue;
+                        //}
+                        if (region != null && !region.tilesInRegion.Contains(n)) {
+                            continue;
+                        }
+                        d = distance(path.LastStep, n);
+                        newPath = path.AddStep(n, d);
+                        queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+                    }
+                } else if (pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS) {
+                    foreach (Node n in path.LastStep.NoWaterTiles) {
+                        //if (n.tileTag != start.tileTag) {
+                        //    continue;
+                        //}
+                        if ((n.isRoad && n.roadType == ROAD_TYPE.MAJOR) || (n.isHabitable && n.id != destination.id) || n.hasLandmark) {
                             continue;
                         }
                         d = distance(path.LastStep, n);

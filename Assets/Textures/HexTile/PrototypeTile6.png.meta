@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: b6e724aa95c4859418f329113b62e9c9
-timeCreated: 1505195717
+timeCreated: 1509515882
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -131,6 +131,14 @@ TextureImporter:
     21300248: PrototypeTile6_49
     21300250: PrototypeTile6_52
     21300252: PrototypeTile6_88
+    21300254: PrototypeTile6_89
+    21300256: PrototypeTile6_90
+    21300258: PrototypeTile6_91
+    21300260: PrototypeTile6_92
+    21300262: PrototypeTile6_93
+    21300264: PrototypeTile6_94
+    21300266: PrototypeTile6_95
+    21300268: PrototypeTile6_96
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -1812,6 +1820,110 @@ TextureImporter:
         y: 27
         width: 137
         height: 74
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_89
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 1722
+        width: 159
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_90
+      rect:
+        serializedVersion: 2
+        x: 856
+        y: 1672
+        width: 158
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_91
+      rect:
+        serializedVersion: 2
+        x: 861
+        y: 1628
+        width: 159
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_92
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 1584
+        width: 155
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_93
+      rect:
+        serializedVersion: 2
+        x: 1041
+        y: 1631
+        width: 90
+        height: 121
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_94
+      rect:
+        serializedVersion: 2
+        x: 1145
+        y: 1632
+        width: 110
+        height: 120
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_95
+      rect:
+        serializedVersion: 2
+        x: 1264
+        y: 1618
+        width: 80
+        height: 134
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: PrototypeTile6_96
+      rect:
+        serializedVersion: 2
+        x: 1362
+        y: 1638
+        width: 99
+        height: 113
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

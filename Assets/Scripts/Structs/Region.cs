@@ -35,6 +35,10 @@ public class Region {
     //Pathfinding
     private GraphUpdateObject _guo;
 
+    //Roads
+    private List<object> _connections;
+    private List<HexTile> _roadTilesInRegion;
+
     #region getters/sertters
 	internal int id {
 		get { return this._id; }
@@ -81,13 +85,18 @@ public class Region {
 	internal int landmarkCount {
 		get { return this._landmarkCount; }
 	}
+    internal List<object> connections {
+        get { return _connections; }
+    }
     #endregion
 
     public Region(HexTile centerOfMass) {
-        _id = Utilities.SetID<Region>(this);
+        _id = Utilities.SetID(this);
         SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
 		this._corpseMoundTiles = new List<HexTile> ();
+        _connections = new List<object>();
+        _roadTilesInRegion = new List<HexTile>();
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
         SetSpecialResource(RESOURCE.NONE);
@@ -178,8 +187,10 @@ public class Region {
 
     #region Tile Functions
     internal void AddTile(HexTile tile) {
-        _tilesInRegion.Add(tile);
-        tile.SetRegion(this);
+        if (!_tilesInRegion.Contains(tile)) {
+            _tilesInRegion.Add(tile);
+            tile.SetRegion(this);
+        }
     }
     internal void ResetTilesInRegion() {
         for (int i = 0; i < _tilesInRegion.Count; i++) {
@@ -279,26 +290,295 @@ public class Region {
 
     #region Landmark Functions
     internal void SetSpecialResource(RESOURCE resource) {
-        _specialResource = resource;
-        if(_specialResource != RESOURCE.NONE) {
-			this._landmarkCount += 1;
-			List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark).ToList();
-            _tileWithSpecialResource = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-            _tileWithSpecialResource.AssignSpecialResource(_specialResource);
+        if (resource != RESOURCE.NONE) {
+            AssignSpecialResourceToTile(resource);
+            //if _tileWithSpecialResource is still null, this means there was no tile found for a special resource
+            if (_tileWithSpecialResource != null) {
+                this._landmarkCount += 1;
+                _specialResource = resource;
+            }
+        } else {
+            _specialResource = resource;
+        }        
+    }
+    /*
+     * <summary>
+     * Once special resource has been generated for this region,
+     * this decides on which tile it should be placed.
+     * </summary>
+     * */
+    private void AssignSpecialResourceToTile(RESOURCE specialResource) {
+        //Get tiles in region that are plains, not the center of mass and does not have a landmark
+        List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark).ToList();
+
+        //Remove neighbours of the center of mass from the choices, since resource tiles are not supposed to be near the city
+        for (int i = 0; i < centerOfMass.AllNeighbours.Count; i++) {
+            elligibleTiles.Remove(centerOfMass.AllNeighbours[i]);
+        }
+
+        //Remove road tiles from the choices and also their neighbours
+        for (int i = 0; i < _roadTilesInRegion.Count; i++) {
+            HexTile currRoadTile = _roadTilesInRegion[i];
+            elligibleTiles.Remove(currRoadTile);
+            for (int j = 0; j < currRoadTile.AllNeighbours.Count; j++) {
+                elligibleTiles.Remove(currRoadTile.AllNeighbours[j]);
+            }
+        }
+        if (elligibleTiles.Count <= 0) {
+            return;
+            //throw new System.Exception("No elligible tiles for special resource in region " + centerOfMass.name);
+        }
+
+        Dictionary<HexTile, List<HexTile>> tilesToChooseFrom = new Dictionary<HexTile, List<HexTile>>();
+
+        //Check which of the remaining elligible tiles have a path towards the center of mass. 
+        //The path must not cross water and, as much as possible, not converge with any main roads
+        for (int i = 0; i < elligibleTiles.Count; i++) {
+            HexTile currElligibleTile = elligibleTiles[i];
+            if(centerOfMass.region != currElligibleTile.region) {
+                throw new System.Exception("Center of mass is a different region from currElligibleTile");
+            }
+            //Get path from current elligible tile to the center of mass, use LANDMARK_CREATION, to limit the paths to within the region.
+            List<HexTile> path = PathGenerator.Instance.GetPath(currElligibleTile, centerOfMass, PATHFINDING_MODE.LANDMARK_CREATION, null, this);
+            if(path != null && !path.Where(x => x.isRoad).Any()) { //Check if the path that was calculated is not null, and does not contain tiles that are roads
+                if (!tilesToChooseFrom.ContainsKey(currElligibleTile)) {
+                    tilesToChooseFrom.Add(currElligibleTile, path);
+                }
+            }
+        }
+
+        //if by any chance there are no elligible tiles left, that meet the above requirements, recompute, 
+        //allow tiles that have a path that converges with a main road and paths that go outside the region
+        if (tilesToChooseFrom.Count <= 0) {
+            for (int i = 0; i < elligibleTiles.Count; i++) {
+                HexTile currElligibleTile = elligibleTiles[i];
+                if (centerOfMass.region != currElligibleTile.region) {
+                    throw new System.Exception("Center of mass is a different region from currElligibleTile");
+                }
+                List<HexTile> path = PathGenerator.Instance.GetPath(currElligibleTile, centerOfMass, PATHFINDING_MODE.ROAD_CREATION);
+                if (path != null) {
+                    if (!tilesToChooseFrom.ContainsKey(currElligibleTile)) {
+                        tilesToChooseFrom.Add(currElligibleTile, path);
+                    }
+                }
+            }
+        }
+
+        _tileWithSpecialResource = tilesToChooseFrom.Keys.ElementAt(Random.Range(0, tilesToChooseFrom.Keys.Count));
+        _tileWithSpecialResource.AssignSpecialResource(specialResource);
+        if (!_tilesInRegion.Contains(_tileWithSpecialResource)) {
+            throw new System.Exception("Tile with special resource is not part of this region!");
+        }
+        RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSpecialResource, this);
+        RoadManager.Instance.ConnectTiles(tilesToChooseFrom[_tileWithSpecialResource], ROAD_TYPE.MINOR);
+
+        ////Each resource tile has a chance to connect up to 1 other city (adjacent region)
+        //if(Random.Range(0, 2) == 0) {
+        //    //Connect to another city
+        //    for (int i = 0; i < adjacentRegions.Count; i++) {
+        //        Region currAdjacentRegion = adjacentRegions[i];
+        //        if(currAdjacentRegion.connections.Count < RoadManager.Instance.maxConnections) {
+        //            //connect to an adjacent region without intersecting any major road
+        //            List<HexTile> path = PathGenerator.Instance.GetPath(_tileWithSpecialResource, currAdjacentRegion.centerOfMass, PATHFINDING_MODE.NO_MAJOR_ROADS);
+        //            if(path != null) {
+        //                //connect this regions' resource tile to adjacent region
+        //                RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSpecialResource, currAdjacentRegion);
+        //                RoadManager.Instance.ConnectTiles(path, ROAD_TYPE.MINOR);
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+
+    }
+
+	internal void SetSummoningShrine(){
+        if (AssignSummoningShrineToTile()) {
+            this._landmarkCount += 1;
+        }
+	}
+    /*
+     * <summary>
+     * Assign a summoning shrine to a tile.
+     * This will return a true/false depending if a summoning shrine was created
+     * </summary>
+     * */
+    private bool AssignSummoningShrineToTile() {
+        //Get tiles in region that are plains, not the center of mass and does not have a landmark
+        List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark).ToList();
+
+        //Remove neighbours of the center of mass from the choices, since shrines are not supposed to be near the city
+        for (int i = 0; i < centerOfMass.AllNeighbours.Count; i++) {
+            elligibleTiles.Remove(centerOfMass.AllNeighbours[i]);
+        }
+
+        //Remove neighbours of tile with resource
+        if(_tileWithSpecialResource != null) {
+            for (int i = 0; i < _tileWithSpecialResource.AllNeighbours.Count; i++) {
+                elligibleTiles.Remove(_tileWithSpecialResource.AllNeighbours[i]);
+            }
+        }
+        
+
+        //Remove road tiles from the choices and also their neighbours
+        for (int i = 0; i < _roadTilesInRegion.Count; i++) {
+            HexTile currRoadTile = _roadTilesInRegion[i];
+            elligibleTiles.Remove(currRoadTile);
+            for (int j = 0; j < currRoadTile.AllNeighbours.Count; j++) {
+                elligibleTiles.Remove(currRoadTile.AllNeighbours[j]);
+            }
+        }
+        if (elligibleTiles.Count <= 0) {
+            return false;
+            //throw new System.Exception("No elligible tiles for special resource in region " + centerOfMass.name);
+        }
+
+        Dictionary<HexTile, List<HexTile>> tilesToChooseFrom = new Dictionary<HexTile, List<HexTile>>();
+
+        //Check which of the remaining elligible tiles have a path towards the center of mass. 
+        //The path must not cross water and, as much as possible, not converge with any main roads
+        for (int i = 0; i < elligibleTiles.Count; i++) {
+            HexTile currElligibleTile = elligibleTiles[i];
+            if (centerOfMass.region != currElligibleTile.region) {
+                throw new System.Exception("Center of mass is a different region from currElligibleTile");
+            }
+            //Get path from current elligible tile to the center of mass, use LANDMARK_CREATION, to limit the paths to within the region.
+            List<HexTile> path = PathGenerator.Instance.GetPath(currElligibleTile, centerOfMass, PATHFINDING_MODE.LANDMARK_CREATION, null, this);
+            if (path != null) { //Check if the path that was calculated is not null, and does not contain tiles that are roads
+                if (!tilesToChooseFrom.ContainsKey(currElligibleTile)) {
+                    tilesToChooseFrom.Add(currElligibleTile, path);
+                }
+            }
+        }
+
+        //if by any chance there are no elligible tiles left, that meet the above requirements, recompute, 
+        //allow tiles that have a path that converges with a main road and paths that go outside the region
+        if (tilesToChooseFrom.Count <= 0) {
+            for (int i = 0; i < elligibleTiles.Count; i++) {
+                HexTile currElligibleTile = elligibleTiles[i];
+                if (centerOfMass.region != currElligibleTile.region) {
+                    throw new System.Exception("Center of mass is a different region from currElligibleTile");
+                }
+                List<HexTile> path = PathGenerator.Instance.GetPath(currElligibleTile, centerOfMass, PATHFINDING_MODE.ROAD_CREATION);
+                if (path != null) {
+                    if (!tilesToChooseFrom.ContainsKey(currElligibleTile)) {
+                        tilesToChooseFrom.Add(currElligibleTile, path);
+                    }
+                }
+            }
+        }
+
+        if(tilesToChooseFrom.Count > 0) {
+            this._tileWithSummoningShrine = tilesToChooseFrom.Keys.ElementAt(Random.Range(0, tilesToChooseFrom.Keys.Count));
+            this._tileWithSummoningShrine.CreateSummoningShrine();
+
+            RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSummoningShrine, this);
+            RoadManager.Instance.ConnectTiles(tilesToChooseFrom[_tileWithSummoningShrine], ROAD_TYPE.MINOR);
+            return true;
+        } else {
+            return false;
         }
     }
-	internal void SetSummoningShrine(){
-		this._landmarkCount += 1;
-		List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType != ELEVATION.WATER && x.id != centerOfMass.id && !x.hasLandmark).ToList();
-		this._tileWithSummoningShrine = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-		this._tileWithSummoningShrine.CreateSummoningShrine();
-	}
+
 	internal void SetHabitat(){
-		this._landmarkCount += 1;
-		List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType != ELEVATION.WATER && x.id != centerOfMass.id && !x.hasLandmark).ToList();
-		this._tileWithHabitat = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
-		this._tileWithHabitat.CreateHabitat();
+        if (AssignHabitatToTile()) {
+            this._landmarkCount += 1;
+        }
+		
+		//List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType != ELEVATION.WATER && x.id != centerOfMass.id && !x.hasLandmark).ToList();
+		//this._tileWithHabitat = elligibleTiles[Random.Range(0, elligibleTiles.Count)];
+		//this._tileWithHabitat.CreateHabitat();
 	}
+    /*
+     * <summary>
+     * Assign a summoning shrine to a tile.
+     * This will return a true/false depending if a summoning shrine was created
+     * </summary>
+     * */
+    private bool AssignHabitatToTile() {
+        //Get tiles in region that are plains, not the center of mass and does not have a landmark
+        List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark).ToList();
+
+        //Remove neighbours of the center of mass from the choices, since shrines are not supposed to be near the city
+        for (int i = 0; i < centerOfMass.AllNeighbours.Count; i++) {
+            elligibleTiles.Remove(centerOfMass.AllNeighbours[i]);
+        }
+
+        //Remove neighbours of tile with resource
+        if (_tileWithSpecialResource != null) {
+            for (int i = 0; i < _tileWithSpecialResource.AllNeighbours.Count; i++) {
+                elligibleTiles.Remove(_tileWithSpecialResource.AllNeighbours[i]);
+            }
+        }
+
+        //Remove neighbours of tile with shrine
+        if (_tileWithSummoningShrine != null) {
+            for (int i = 0; i < _tileWithSummoningShrine.AllNeighbours.Count; i++) {
+                elligibleTiles.Remove(_tileWithSummoningShrine.AllNeighbours[i]);
+            }
+        }
+
+
+        //Remove road tiles from the choices and also their neighbours
+        for (int i = 0; i < _roadTilesInRegion.Count; i++) {
+            HexTile currRoadTile = _roadTilesInRegion[i];
+            elligibleTiles.Remove(currRoadTile);
+            for (int j = 0; j < currRoadTile.AllNeighbours.Count; j++) {
+                elligibleTiles.Remove(currRoadTile.AllNeighbours[j]);
+            }
+        }
+        if (elligibleTiles.Count <= 0) {
+            return false;
+            //throw new System.Exception("No elligible tiles for special resource in region " + centerOfMass.name);
+        }
+
+        Dictionary<HexTile, List<HexTile>> tilesToChooseFrom = new Dictionary<HexTile, List<HexTile>>();
+
+        //Check which of the remaining elligible tiles have a path towards the center of mass. 
+        //The path must not cross water and, as much as possible, not converge with any main roads
+        for (int i = 0; i < elligibleTiles.Count; i++) {
+            HexTile currElligibleTile = elligibleTiles[i];
+            if (centerOfMass.region != currElligibleTile.region) {
+                throw new System.Exception("Center of mass is a different region from currElligibleTile");
+            }
+            //Get path from current elligible tile to the center of mass, use LANDMARK_CREATION, to limit the paths to within the region.
+            List<HexTile> path = PathGenerator.Instance.GetPath(currElligibleTile, centerOfMass, PATHFINDING_MODE.LANDMARK_CREATION, null, this);
+            if (path != null) { //Check if the path that was calculated is not null, and does not contain tiles that are roads
+                if (!tilesToChooseFrom.ContainsKey(currElligibleTile)) {
+                    tilesToChooseFrom.Add(currElligibleTile, path);
+                }
+            }
+        }
+
+        //if by any chance there are no elligible tiles left, that meet the above requirements, recompute, 
+        //allow tiles that have a path that converges with a main road and paths that go outside the region
+        if (tilesToChooseFrom.Count <= 0) {
+            for (int i = 0; i < elligibleTiles.Count; i++) {
+                HexTile currElligibleTile = elligibleTiles[i];
+                if (centerOfMass.region != currElligibleTile.region) {
+                    throw new System.Exception("Center of mass is a different region from currElligibleTile");
+                }
+                List<HexTile> path = PathGenerator.Instance.GetPath(currElligibleTile, centerOfMass, PATHFINDING_MODE.ROAD_CREATION);
+                if (path != null) {
+                    if (!tilesToChooseFrom.ContainsKey(currElligibleTile)) {
+                        tilesToChooseFrom.Add(currElligibleTile, path);
+                    }
+                }
+            }
+        }
+
+        if (tilesToChooseFrom.Count > 0) {
+            this._tileWithHabitat = tilesToChooseFrom.Keys.ElementAt(Random.Range(0, tilesToChooseFrom.Keys.Count));
+            this._tileWithHabitat.CreateHabitat();
+
+            RoadManager.Instance.ConnectLandmarkToRegion(_tileWithHabitat, this);
+            RoadManager.Instance.ConnectTiles(tilesToChooseFrom[_tileWithHabitat], ROAD_TYPE.MINOR);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /*
      * <summary>
      * Compute the natural resource level for each race.
@@ -476,7 +756,23 @@ public class Region {
     }
     #endregion
 
-	internal void AddCorpseMoundTile(HexTile hexTile){
+    #region Road Functions
+    internal void AddConnection(object otherObject) {
+        if (!_connections.Contains(otherObject)) {
+            _connections.Add(otherObject);
+        }
+    }
+    internal void AddTileAsRoad(HexTile tile) {
+        if (!_roadTilesInRegion.Contains(tile)) {
+            _roadTilesInRegion.Add(tile);
+        }
+    }
+    internal void RemoveTileAsRoad(HexTile tile) {
+        _roadTilesInRegion.Remove(tile);
+    }
+    #endregion
+
+    internal void AddCorpseMoundTile(HexTile hexTile){
 		this._corpseMoundTiles.Add (hexTile);
 	}
 	internal void RemoveCorpseMoundTile(HexTile hexTile){

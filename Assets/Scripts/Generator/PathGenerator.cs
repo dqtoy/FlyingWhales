@@ -19,7 +19,7 @@ public class PathGenerator : MonoBehaviour {
 
     [ContextMenu("Get Path")]
     public void GetPathForTesting() {
-        List<HexTile> path = GetPath(startTile, targetTile, modeToUse, UIManager.Instance.currentlyShowingKingdom.basicResource, UIManager.Instance.currentlyShowingKingdom);
+        List<HexTile> path = GetPath(startTile, targetTile, modeToUse, UIManager.Instance.currentlyShowingKingdom);
         if (path != null) {
             Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
             for (int i = 0; i < path.Count; i++) {
@@ -156,7 +156,7 @@ public class PathGenerator : MonoBehaviour {
 	/*
 	 * Get List of tiles (Path) that will connect 2 city tiles
 	 * */
-	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, Kingdom kingdom = null){
+	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, Kingdom kingdom = null, Region region = null){
 		if(startingTile == null || destinationTile == null){
 			return null;
 		}
@@ -166,19 +166,13 @@ public class PathGenerator : MonoBehaviour {
 
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
-		List<HexTile> habitableTiles;
 
-		if (resourceType == BASE_RESOURCE_TYPE.STONE) {
-			habitableTiles = CityGenerator.Instance.stoneHabitableTiles;
-		} else {
-			habitableTiles = CityGenerator.Instance.woodHabitableTiles;
-		}
-
-		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom);
+		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom, region);
 
 
 		if (path != null) {
-			if (pathfindingMode == PATHFINDING_MODE.COMBAT) {
+			if (pathfindingMode == PATHFINDING_MODE.COMBAT || pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
+                || pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION || pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS) {
 				return path.Reverse ().ToList ();
 			} else {
 				List<HexTile> newPath = path.Reverse ().ToList ();

@@ -198,17 +198,23 @@ public class GridMap : MonoBehaviour {
         
     }
 
+    /*
+     * <summary>
+     * Generate landmarks for all regions
+     * Regions include: resources, shrine, habitat
+     * </summary>
+     * */
     public void GenerateLandmarksPerRegion() {
         List<RESOURCE> allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
         allSpecialResources.Remove(RESOURCE.NONE);
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
-			int chanceResource = UnityEngine.Random.Range (0, 2);
-			int chanceShrine = UnityEngine.Random.Range (0, 2);
-			int chanceHabitat = UnityEngine.Random.Range (0, 2);
-			if(chanceResource == 0 && currRegion.landmarkCount < 2) {
+            int chanceResource = UnityEngine.Random.Range(0, 2);
+            int chanceShrine = UnityEngine.Random.Range(0, 2);
+            int chanceHabitat = UnityEngine.Random.Range(0, 2);
+            if (chanceResource == 0 && currRegion.landmarkCount < 2) {
                 //Region has a special resource
-                if(allSpecialResources.Count <= 0) {
+                if (allSpecialResources.Count <= 0) {
                     allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
                     allSpecialResources.Remove(RESOURCE.MANA_STONE);
                     allSpecialResources.Remove(RESOURCE.COBALT);
@@ -221,19 +227,76 @@ public class GridMap : MonoBehaviour {
             }
             currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
 
-			if(chanceShrine == 0 && currRegion.landmarkCount < 2){
-				currRegion.SetSummoningShrine();
-			}
+            if (chanceShrine == 0 && currRegion.landmarkCount < 2) {
+                currRegion.SetSummoningShrine();
+            }
 
-			if(chanceHabitat == 0 && currRegion.landmarkCount < 2){
-				currRegion.SetHabitat ();
-			}
+            if (chanceHabitat == 0 && currRegion.landmarkCount < 2) {
+                currRegion.SetHabitat();
+            }
         }
-        //Debug.Log("All Special Resources Per Region:");
-        //for (int i = 0; i < allRegions.Count; i++) {
-        //    Debug.Log("Region " + i.ToString() + ": " + allRegions[i].specialResource.ToString());
-        //}
     }
+
+
+    public void GenerateResourcesPerRegion() {
+        List<RESOURCE> allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
+        allSpecialResources.Remove(RESOURCE.NONE);
+        for (int i = 0; i < allRegions.Count; i++) {
+            Region currRegion = allRegions[i];
+            int chanceResource = UnityEngine.Random.Range(0, 2);
+            if (chanceResource == 0) {
+                //Region has a special resource
+                if (allSpecialResources.Count <= 0) {
+                    allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
+                    allSpecialResources.Remove(RESOURCE.MANA_STONE);
+                    allSpecialResources.Remove(RESOURCE.COBALT);
+                    allSpecialResources.Remove(RESOURCE.MITHRIL);
+                    allSpecialResources.Remove(RESOURCE.NONE);
+                }
+                RESOURCE specialResource = allSpecialResources[Random.Range(0, allSpecialResources.Count)];
+                allSpecialResources.Remove(specialResource);
+                currRegion.SetSpecialResource(specialResource);
+            }
+            currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
+        }
+    }
+
+   // public void GenerateLandmarksPerRegion() {
+   //     List<RESOURCE> allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
+   //     allSpecialResources.Remove(RESOURCE.NONE);
+   //     for (int i = 0; i < allRegions.Count; i++) {
+   //         Region currRegion = allRegions[i];
+			//int chanceResource = UnityEngine.Random.Range (0, 2);
+			//int chanceShrine = UnityEngine.Random.Range (0, 2);
+			//int chanceHabitat = UnityEngine.Random.Range (0, 2);
+			//if(chanceResource == 0 && currRegion.landmarkCount < 2) {
+   //             //Region has a special resource
+   //             if(allSpecialResources.Count <= 0) {
+   //                 allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
+   //                 allSpecialResources.Remove(RESOURCE.MANA_STONE);
+   //                 allSpecialResources.Remove(RESOURCE.COBALT);
+   //                 allSpecialResources.Remove(RESOURCE.MITHRIL);
+   //                 allSpecialResources.Remove(RESOURCE.NONE);
+   //             }
+   //             RESOURCE specialResource = allSpecialResources[Random.Range(0, allSpecialResources.Count)];
+   //             allSpecialResources.Remove(specialResource);
+   //             currRegion.SetSpecialResource(specialResource);
+   //         }
+   //         currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
+
+			//if(chanceShrine == 0 && currRegion.landmarkCount < 2){
+			//	currRegion.SetSummoningShrine();
+			//}
+
+			//if(chanceHabitat == 0 && currRegion.landmarkCount < 2){
+			//	currRegion.SetHabitat ();
+			//}
+   //     }
+   //     //Debug.Log("All Special Resources Per Region:");
+   //     //for (int i = 0; i < allRegions.Count; i++) {
+   //     //    Debug.Log("Region " + i.ToString() + ": " + allRegions[i].specialResource.ToString());
+   //     //}
+   // }
 	public void GenerateRoadConnectionLandmarkToCity(){
 		for (int i = 0; i < allRegions.Count; i++) {
 			Region currRegion = allRegions [i];
@@ -341,6 +404,7 @@ public class GridMap : MonoBehaviour {
 			//connect to major road
 		}
 	}
+
     public void UpdateAllRegionsDiscoveredKingdoms() {
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
