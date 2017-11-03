@@ -980,7 +980,10 @@ public class KingdomRelationship {
 		}
 
 		int posAllianceAttack = GetAdjacentPosAllianceEffectiveAttack ();
-		int otherAdjacentEnemiesAttack = GetOtherAdjacentEnemiesAttack ();
+		int otherAdjacentEnemiesAttack = 0;
+		if(!AreAllies()){
+			GetOtherAdjacentEnemiesAttack ();
+		}
 //		int posAllianceDefense = GetAdjacentPosAllianceArmors ();
 //		int usedPosAllianceAttack = (int)((float)posAllianceAttack / 2f);
 
