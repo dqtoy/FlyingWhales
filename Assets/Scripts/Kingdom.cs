@@ -35,7 +35,7 @@ public class Kingdom{
     //Trading
     private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
-    private int _baseArmor;
+//    private int _baseArmor;
     private int _baseWeapons;
     private int _baseStability;
     private int _stability;
@@ -294,9 +294,9 @@ public class Kingdom{
 	public int baseWeapons{
 		get { return _baseWeapons;}
 	}
-	public int baseArmor{
-		get { return _baseArmor;}
-	}
+//	public int baseArmor{
+//		get { return _baseArmor;}
+//	}
 //	public int effectiveWeapons{
 //		get { return this.effectiveAttack + (int)(this.effectiveDefense / 3) + (int)(GetPosAllianceWeapons() / 3);}
 //	}
@@ -374,17 +374,17 @@ public class Kingdom{
 			}
 		}
 	}
-	internal int effectiveDefense{
-		get{
-			if (this.race != RACE.UNDEAD) {
-				float mySoldiers = (float)this.soldiers;
-				float numerator = 2f * mySoldiers * (float)this._baseArmor;
-				return (int)(numerator / (mySoldiers + (float)this._baseArmor));
-			} else {
-				return this._population;
-			}
-		}
-	}
+//	internal int effectiveDefense{
+//		get{
+//			if (this.race != RACE.UNDEAD) {
+//				float mySoldiers = (float)this.soldiers;
+//				float numerator = 2f * mySoldiers * (float)this._baseWeapons;
+//				return (int)(numerator / (mySoldiers + (float)this._baseWeapons));
+//			} else {
+//				return this._population;
+//			}
+//		}
+//	}
     internal Dictionary<City, List<Citizen>> citizens {
         get { return _citizens; }
     }
@@ -478,12 +478,14 @@ public class Kingdom{
 		this.SetWarmongerValue (25);
 		this.SetProductionGrowthPercentage(1f);
 
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
+
 		if(this.race != RACE.UNDEAD){
 			AdjustPrestige(GridMap.Instance.numOfRegions);
 			AdjustPopulation(50);
 			AdjustStability(50);
 			AdjustBaseWeapons(25);
-			AdjustBaseArmors(25);
+//			AdjustBaseArmors(25);
 			//this.GenerateKingdomCharacterValues();
 			this.SetLockDown(false);
 			this.SetTechProduction(true);
@@ -503,7 +505,6 @@ public class Kingdom{
 			//Messenger.AddListener("OnDayEnd", KingdomTickActions);
 			Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
-			SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
 			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
 			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseExpansionRatePerMonth());
 			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
@@ -2352,23 +2353,23 @@ public class Kingdom{
     #endregion
 
     #region Armor Functions
-    internal int GetArmorOverProductionPercentage() {
-        float overProductionPercentage = ((float)_baseArmor / (float)_populationCapacity) * 100f;
-        overProductionPercentage -= 100;
-        overProductionPercentage = Mathf.Clamp(overProductionPercentage, 0f, 100f);
-        return Mathf.FloorToInt(overProductionPercentage);
-    }
-    internal void AdjustBaseArmors(int amountToAdjust) {
-        this._baseArmor += amountToAdjust;
-        if (this._baseArmor < 0) {
-            this._baseArmor = 0;
-        }
-        KingdomManager.Instance.UpdateKingdomList();
-    }
-    internal void SetBaseArmor(int newBaseArmor) {
-        _baseArmor = newBaseArmor;
-        KingdomManager.Instance.UpdateKingdomList();
-    }
+//    internal int GetArmorOverProductionPercentage() {
+//        float overProductionPercentage = ((float)_baseArmor / (float)_populationCapacity) * 100f;
+//        overProductionPercentage -= 100;
+//        overProductionPercentage = Mathf.Clamp(overProductionPercentage, 0f, 100f);
+//        return Mathf.FloorToInt(overProductionPercentage);
+//    }
+//    internal void AdjustBaseArmors(int amountToAdjust) {
+//        this._baseArmor += amountToAdjust;
+//        if (this._baseArmor < 0) {
+//            this._baseArmor = 0;
+//        }
+//        KingdomManager.Instance.UpdateKingdomList();
+//    }
+//    internal void SetBaseArmor(int newBaseArmor) {
+//        _baseArmor = newBaseArmor;
+//        KingdomManager.Instance.UpdateKingdomList();
+//    }
     #endregion
 
     #region Stability Functions
@@ -2612,12 +2613,12 @@ public class Kingdom{
 
         //Same as population. Armor and weapon production is also reduced when it is overproduced in the same way that population growth is reduced by overpopulation.
         int weaponsOverProduction = GetWeaponOverProductionPercentage();
-        int armorOverProduction = GetArmorOverProductionPercentage();
+//        int armorOverProduction = GetArmorOverProductionPercentage();
         totalWeaponsIncrease = Mathf.FloorToInt(totalWeaponsIncrease * ((100f - weaponsOverProduction) * 0.01f));
-        totalArmorIncrease = Mathf.FloorToInt(totalArmorIncrease * ((100f - armorOverProduction) * 0.01f));
+//        totalArmorIncrease = Mathf.FloorToInt(totalArmorIncrease * ((100f - armorOverProduction) * 0.01f));
 
         AdjustBaseWeapons(totalWeaponsIncrease);
-        AdjustBaseArmors(totalArmorIncrease);
+//        AdjustBaseArmors(totalArmorIncrease);
         AdjustStability(Mathf.Clamp(totalStabilityIncrease, -5, 5));
 
         //Tech Gains
@@ -2877,7 +2878,7 @@ public class Kingdom{
 			Kingdom kingdomToAlly = null;
 			int likeTheMost = 0;
 			foreach (KingdomRelationship kr in this.relationships.Values) {
-				if (kr.isDiscovered && !kr.cantAlly) {
+				if (kr.isDiscovered && !kr.cantAlly && !kr.isAtWar) {
 					if (kr.targetKingdom.id != kingdomWithHighestThreat.id) {
 						KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kingdomWithHighestThreat);
 						if (rk.isAdjacent) {
@@ -2934,7 +2935,7 @@ public class Kingdom{
 			Kingdom kingdomToAlly = null;
 			int likeTheMost = 0;
 			foreach (KingdomRelationship kr in this.relationships.Values) {			
-				if(kr.isDiscovered && !kr.cantAlly){
+				if(kr.isDiscovered && !kr.cantAlly && !kr.isAtWar){
 					if (kr.targetKingdom.alliancePool != null) {
 						Debug.Log (name + " is looking to join the alliance of " + kr.targetKingdom.name);
 						bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance (this, kr.targetKingdom);
@@ -3063,35 +3064,37 @@ public class Kingdom{
 		Kingdom kingdomToAlly = null;
 		int leastLikedToEnemy = 0;
 		foreach (KingdomRelationship krToAlly in this.relationships.Values) {
-			if(krToAlly.targetKingdom.id != this.highestRelativeStrengthAdjacentKingdom.id){
-				KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (this);
-				KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (this.highestRelativeStrengthAdjacentKingdom);
-				if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
-					&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id && !krToAlly.cantAlly){
+			if (krToAlly.isDiscovered && !krToAlly.cantAlly && !krToAlly.isAtWar) {
+				if (krToAlly.targetKingdom.id != this.highestRelativeStrengthAdjacentKingdom.id) {
+					KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (this);
+					KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (this.highestRelativeStrengthAdjacentKingdom);
+					if (krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent
+					  && krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings [0].id != krToAlly.targetKingdom.id && !krToAlly.cantAlly) {
 
-					if (krToAlly.targetKingdom.alliancePool != null) {
-						bool hasJoined = krToAlly.targetKingdom.alliancePool.AttemptToJoinAlliance (this, krToAlly.targetKingdom);
-						if (hasJoined) {
-							string log = name + " has joined an alliance with ";
-							for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-								if (_alliancePool.kingdomsInvolved [j].id != id) {
-									log += _alliancePool.kingdomsInvolved [j].name;
-									if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
-										log += ", ";
+						if (krToAlly.targetKingdom.alliancePool != null) {
+							bool hasJoined = krToAlly.targetKingdom.alliancePool.AttemptToJoinAlliance (this, krToAlly.targetKingdom);
+							if (hasJoined) {
+								string log = name + " has joined an alliance with ";
+								for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+									if (_alliancePool.kingdomsInvolved [j].id != id) {
+										log += _alliancePool.kingdomsInvolved [j].name;
+										if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+											log += ", ";
+										}
 									}
 								}
+								Debug.Log (log);
+								return;
 							}
-							Debug.Log(log);
-							return;
-						}
-					} else {
-						if(kingdomToAlly == null){
-							kingdomToAlly = krToAlly.targetKingdom;
-							leastLikedToEnemy = krEnemy.totalLike;
-						}else{
-							if(krEnemy.totalLike < leastLikedToEnemy){
+						} else {
+							if (kingdomToAlly == null) {
 								kingdomToAlly = krToAlly.targetKingdom;
 								leastLikedToEnemy = krEnemy.totalLike;
+							} else {
+								if (krEnemy.totalLike < leastLikedToEnemy) {
+									kingdomToAlly = krToAlly.targetKingdom;
+									leastLikedToEnemy = krEnemy.totalLike;
+								}
 							}
 						}
 					}
@@ -3133,29 +3136,21 @@ public class Kingdom{
         }
 		return posAlliancePower;
 	}
-	internal int GetUnadjacentPosAllianceArmor(){
-		int posAllianceDefense = 0;
-		if(this.alliancePool != null){
-			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
-				Kingdom kingdomInAlliance = this.alliancePool.kingdomsInvolved[i];
-				if(this.id != kingdomInAlliance.id){
-					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom(this);
-					if(relationship.totalLike >= 35){
-						posAllianceDefense += (int)((float)kingdomInAlliance.baseArmor * 0.1f);
-					}
-				}
-			}
-        }
-//		foreach (KingdomRelationship relationship in this.relationships.Values) {
-////			if(relationship.isAlly){
-//				KingdomRelationship relationshipFrom = relationship.targetKingdom.GetRelationshipWithKingdom (this);
-//				if(relationshipFrom.totalLike >= 35){
-//					posAllianceDefense += relationship.targetKingdom.baseDefense;
+//	internal int GetUnadjacentPosAllianceArmor(){
+//		int posAllianceDefense = 0;
+//		if (this.alliancePool != null) {
+//			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
+//				Kingdom kingdomInAlliance = this.alliancePool.kingdomsInvolved [i];
+//				if (this.id != kingdomInAlliance.id) {
+//					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom (this);
+//					if (relationship.totalLike >= 35) {
+//						posAllianceDefense += (int)((float)kingdomInAlliance.baseArmor * 0.1f);
+//					}
 //				}
-////			}
+//			}
 //		}
-		return posAllianceDefense;
-	}
+//		return posAllianceDefense;
+//	}
 	internal void AddWarfareInfo(WarfareInfo info){
 		if(!this._warfareInfo.ContainsKey(info.warfare.id)){
 			this._warfareInfo.Add(info.warfare.id, info);
@@ -3210,29 +3205,30 @@ public class Kingdom{
 		return false;
 	}
 	internal string ProvideWeaponsArmorsAidToKingdom(Kingdom kingdomToBeProvided, float transferPercentage){
-		string weaponsOrArmor = "Weapons";
-		bool isAllyUnderAttack = kingdomToBeProvided.IsUnderAttack ();
-		bool isAllyAttacking = kingdomToBeProvided.IsAttacking ();
-		int transferAmount = 0;
-		if(isAllyUnderAttack && isAllyAttacking){
-			weaponsOrArmor = "Armors";
-		}else{
-			if(isAllyUnderAttack){
-				weaponsOrArmor = "Armors";
-			}
-		}
+		int transferAmount = (int)(this.baseWeapons * transferPercentage);
+		this.AdjustBaseWeapons (-transferAmount);
+		kingdomToBeProvided.AdjustBaseWeapons (transferAmount);
+//		string weaponsOrArmor = "Weapons";
+//		bool isAllyUnderAttack = kingdomToBeProvided.IsUnderAttack ();
+//		bool isAllyAttacking = kingdomToBeProvided.IsAttacking ();
+//		int transferAmount = 0;
+//		if(isAllyUnderAttack && isAllyAttacking){
+//			weaponsOrArmor = "Armors";
+//		}else{
+//			if(isAllyUnderAttack){
+//				weaponsOrArmor = "Armors";
+//			}
+//		}
+//
+//		if(weaponsOrArmor == "Weapons"){
+//			
+//		}else{
+//			transferAmount = (int)(this.baseArmor * transferPercentage);
+//			this.AdjustBaseArmors (-transferAmount);
+//			kingdomToBeProvided.AdjustBaseArmors (transferAmount);
+//		}
 
-		if(weaponsOrArmor == "Weapons"){
-			transferAmount = (int)(this.baseWeapons * transferPercentage);
-			this.AdjustBaseWeapons (-transferAmount);
-			kingdomToBeProvided.AdjustBaseWeapons (transferAmount);
-		}else{
-			transferAmount = (int)(this.baseArmor * transferPercentage);
-			this.AdjustBaseArmors (-transferAmount);
-			kingdomToBeProvided.AdjustBaseArmors (transferAmount);
-		}
-
-		return transferAmount.ToString () + " " + weaponsOrArmor;
+		return transferAmount.ToString () + " Weapons";
 	}
 	internal Kingdom GetKingdomWithHighestThreat(){
 		float highestThreatLevel = 0f;
@@ -3446,7 +3442,7 @@ public class Kingdom{
 
 		if (this.king.balanceType == PURPOSE.SUPERIORITY) {
 			if(chance < 40){
-				return SUBTERFUGE_ACTIONS.DESTROY_ARMORS;
+				return SUBTERFUGE_ACTIONS.DESTROY_WEAPONS;
 			}else if(chance >= 40 && chance < 70){
 				return SUBTERFUGE_ACTIONS.REDUCE_STABILITY;
 			}else if(chance >= 70 && chance < 90){
@@ -3464,7 +3460,7 @@ public class Kingdom{
 			}else if(chance >= 70 && chance < 90){
 				return SUBTERFUGE_ACTIONS.SPREAD_PLAGUE;
 			}else{
-				return SUBTERFUGE_ACTIONS.DESTROY_ARMORS;
+				return SUBTERFUGE_ACTIONS.DESTROY_WEAPONS;
 			}
 		}
 
@@ -3475,10 +3471,12 @@ public class Kingdom{
 		if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS){
 			int weaponsDestroyed = targetKingdom.DestroyWeaponsSubterfuge ();
 			ShowSuccessSubterfugeLog (subterfuge, targetKingdom, weaponsDestroyed);
-		}else if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS){
-			int armorsDestroyed = targetKingdom.DestroyArmorsSubterfuge ();
-			ShowSuccessSubterfugeLog (subterfuge, targetKingdom, armorsDestroyed);
-		}else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
+		}
+//		else if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS){
+//			int armorsDestroyed = targetKingdom.DestroyArmorsSubterfuge ();
+//			ShowSuccessSubterfugeLog (subterfuge, targetKingdom, armorsDestroyed);
+//		}
+		else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
 			targetKingdom.InciteUnrestSubterfuge ();
 			ShowSuccessSubterfugeLog (subterfuge, targetKingdom);
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.FLATTER){
@@ -3493,10 +3491,12 @@ public class Kingdom{
 		if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS){
 			int weaponsDestroyed = DestroyWeaponsSubterfuge ();
 			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, weaponsDestroyed);
-		}else if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS){
-			int armorsDestroyed = DestroyArmorsSubterfuge ();
-			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, armorsDestroyed);
-		}else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
+		}
+//		else if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS){
+//			int armorsDestroyed = DestroyArmorsSubterfuge ();
+//			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, armorsDestroyed);
+//		}
+		else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
 			InciteUnrestSubterfuge ();
 			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom);
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.FLATTER){
@@ -3519,11 +3519,11 @@ public class Kingdom{
 		this.AdjustBaseWeapons (-weaponsToBeDestroyed);
 		return weaponsToBeDestroyed;
 	}
-	private int DestroyArmorsSubterfuge(){
-		int armorsToBeDestroyed = (int)((float)this._baseArmor * 0.05f);
-		this.AdjustBaseArmors (-armorsToBeDestroyed);
-		return armorsToBeDestroyed;
-	}
+//	private int DestroyArmorsSubterfuge(){
+//		int armorsToBeDestroyed = (int)((float)this._baseArmor * 0.05f);
+//		this.AdjustBaseArmors (-armorsToBeDestroyed);
+//		return armorsToBeDestroyed;
+//	}
 	private void InciteUnrestSubterfuge(){
 		this.AdjustStability (-5);
 	}
@@ -3543,7 +3543,7 @@ public class Kingdom{
 		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.KING_1);
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS || subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) {
+		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) { //subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS || 
 			newLog.AddToFillers (null, weaponsArmorsDestroyed.ToString(), LOG_IDENTIFIER.OTHER);
 		}else if (subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE) {
 			newLog.AddToFillers (null, plagueName.ToString(), LOG_IDENTIFIER.OTHER);
@@ -3567,7 +3567,7 @@ public class Kingdom{
 		newLog.AddToFillers (this.king, this.king.name, LOG_IDENTIFIER.KING_1);
 		newLog.AddToFillers (this, this.name, LOG_IDENTIFIER.KINGDOM_1);
 		newLog.AddToFillers (targetKingdom, targetKingdom.name, LOG_IDENTIFIER.KINGDOM_2);
-		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS || subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) {
+		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) { //subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS ||
 			newLog.AddToFillers (null, weaponsArmorsDestroyed.ToString(), LOG_IDENTIFIER.OTHER);
 		}else if (subterfuge == SUBTERFUGE_ACTIONS.SPREAD_PLAGUE) {
 			newLog.AddToFillers (null, plagueName.ToString(), LOG_IDENTIFIER.OTHER);

@@ -40,27 +40,28 @@ public static class SeeksBalance {
 			}
 		}
 
-		bool mustSeekAlliance = false;
-		//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
-		foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-			if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f){
-				if (!relationship.AreAllies ()) {
-					mustSeekAlliance = true;
-					break;
+		if(kingdom.age >= 1){
+			bool mustSeekAlliance = false;
+			//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
+			foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
+				if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f){
+					if (!relationship.AreAllies ()) {
+						mustSeekAlliance = true;
+						break;
+					}
 				}
 			}
-		}
 
-		if(mustSeekAlliance){
-			//if i am not part of any alliance, create or join an alliance if possible
-			if(kingdom.alliancePool == null){
-				Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 50 or above threat and a less than 75 invasion value");
-				kingdom.SeekAllianceOfProtection ();
-				skipPhase4 = true;
-				if(kingdom.alliancePool != null){
-					skipPhase2 = true;
+			if(mustSeekAlliance){
+				//if i am not part of any alliance, create or join an alliance if possible
+				if(kingdom.alliancePool == null){
+					Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 50 or above threat and a less than 75 invasion value");
+					kingdom.SeekAllianceOfProtection ();
+					skipPhase4 = true;
+					if(kingdom.alliancePool != null){
+						skipPhase2 = true;
+					}
 				}
-			}
 //			if (!kingdom.isFortifying) {
 //				int chance = UnityEngine.Random.Range (0, 2);
 //				if (chance == 0) {
@@ -69,7 +70,9 @@ public static class SeeksBalance {
 //					skipPhase4 = true;
 //				}
 //			}
+			}
 		}
+
 
 //		bool isUnderAttack = kingdom.IsUnderAttack();
 //		bool isAttacking = kingdom.IsAttacking ();
@@ -269,8 +272,8 @@ public static class SeeksBalance {
 				if(hexTile == null){
 					//Can no longer expand
 					Debug.Log(kingdom.name + " has no war currently, has no alliance or no alliance member is at war, and can no longer expand");
-//					bool hasOver100InvasionValue = false;
-//					bool hasOver50InvasionValue = false;
+					bool hasOver100InvasionValue = false;
+					bool hasOver50InvasionValue = false;
 //					float highestInvasionValue = 0f;
 //					int overPopulationReduction = 0;
 //                    int overpopulation = kingdom.GetOverpopulationPercentage();
@@ -293,14 +296,34 @@ public static class SeeksBalance {
 					int leastLike = 0;
 					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
 						if(relationship.isAdjacent && relationship.isDiscovered && !relationship.AreAllies() && relationship.warfare == null && !relationship.isRecentWar){
-							if (relationship.totalLike <= -50 && relationship.targetKingdomInvasionValue >= 25f) {
-								if(targetKingdom == null){
-									targetKingdom = relationship.targetKingdom;
-									leastLike = relationship.totalLike;
-								}else{
-									if(relationship.totalLike < leastLike){
+							if (relationship.totalLike <= -50) {
+								if(relationship.targetKingdomInvasionValue >= 25f){
+									if(targetKingdom == null || !hasOver100InvasionValue){
 										targetKingdom = relationship.targetKingdom;
 										leastLike = relationship.totalLike;
+									}else{
+										if(relationship.totalLike < leastLike){
+											targetKingdom = relationship.targetKingdom;
+											leastLike = relationship.totalLike;
+										}
+									}
+									hasOver100InvasionValue = true;
+								}
+								if(!hasOver100InvasionValue){
+									if(relationship.targetKingdom.warmongerValue > 150 && relationship.targetKingdom.warfareInfo.Count > 0){
+										KingdomRelationship kr = relationship.targetKingdom.GetRelationshipWithKingdom(kingdom);
+										if(kr._relativeStrength <= 50){
+											if(targetKingdom == null){
+												targetKingdom = relationship.targetKingdom;
+												leastLike = relationship.totalLike;
+											}else{
+												if(relationship.totalLike < leastLike){
+													targetKingdom = relationship.targetKingdom;
+													leastLike = relationship.totalLike;
+												}
+											}
+											hasOver50InvasionValue = true;
+										}
 									}
 								}
 							}

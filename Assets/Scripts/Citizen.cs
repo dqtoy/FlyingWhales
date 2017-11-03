@@ -1136,9 +1136,9 @@ public class Citizen {
         newKingdom.SetBaseWeapons(weaponsGained);
 
         //int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor * percentGained);
-        int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor / 3f);
-        sourceKingdom.AdjustBaseArmors(-armorGained);
-        newKingdom.SetBaseArmor(armorGained);
+//        int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor / 3f);
+//        sourceKingdom.AdjustBaseArmors(-armorGained);
+//        newKingdom.SetBaseArmor(armorGained);
 
         //Once a rebellion is declared, set source Kingdom's Stability back to 50
         sourceKingdom.ChangeStability(50);
@@ -1159,7 +1159,7 @@ public class Citizen {
 		rk.AddRelationshipModifier (-100, "Rebellion", RELATIONSHIP_MODIFIER.REBELLION, true, false);
 
         if (kr.isAdjacent) {
-            Warfare warfare = new Warfare(newKingdom, sourceKingdom);
+            Warfare warfare = new Warfare(newKingdom, sourceKingdom, false);
 			newKingdom.checkedWarfareID.Add (warfare.id);
 			sourceKingdom.checkedWarfareID.Add (warfare.id);
             Debug.Log(previousRole.ToString() + " " + this.name + " of " + previousCity.name + " has rebelled against " + sourceKingdom.name);
