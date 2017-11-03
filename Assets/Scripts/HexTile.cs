@@ -117,7 +117,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [Space(10)]
     [Header("Road Objects")]
     [SerializeField] private List<HexRoads> roads;
-    private ROAD_TYPE _roadType;
+    [SerializeField] private ROAD_TYPE _roadType = ROAD_TYPE.NONE;
 
     //Landmark
     private Landmark _landmark = null;
@@ -516,17 +516,27 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         
     }
     public void SetTileAsRoad(bool isRoad, ROAD_TYPE roadType) {
-        this.isRoad = isRoad;
-        if (isRoad) {
-            if(_roadType == ROAD_TYPE.NONE) {
-                _roadType = roadType;
+        if(this.isHabitable || this.hasLandmark) {
+            if (isRoad) {
+                if (_roadType == ROAD_TYPE.NONE) {
+                    _roadType = roadType;
+                }
+            } else {
+                _roadType = ROAD_TYPE.NONE;
             }
-            region.AddTileAsRoad(this);
-            RoadManager.Instance.AddTileAsRoadTile(this);
         } else {
-            _roadType = ROAD_TYPE.NONE;
-            region.RemoveTileAsRoad(this);
-            RoadManager.Instance.RemoveTileAsRoadTile(this);
+            this.isRoad = isRoad;
+            if (isRoad) {
+                if (_roadType == ROAD_TYPE.NONE) {
+                    _roadType = roadType;
+                }
+                region.AddTileAsRoad(this);
+                RoadManager.Instance.AddTileAsRoadTile(this);
+            } else {
+                _roadType = ROAD_TYPE.NONE;
+                region.RemoveTileAsRoad(this);
+                RoadManager.Instance.RemoveTileAsRoadTile(this);
+            }
         }
     }
     #endregion
@@ -1125,6 +1135,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                     ShowRegionInfo();
                     return;
                 }
+            } else if (this.hasLandmark) {
+                ShowLandmarkInfo();
             }
         }
     }
@@ -1146,9 +1158,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         } else {
             if (this.isHabitable) {
                 if (this.city == null) {
-                    HideSmallInfoWindow();
-                    return;
+                    HideRegionInfo();
                 }
+            } else if (this.hasLandmark) {
+                HideLandmarkInfo();
             }
         }
     }
@@ -1300,19 +1313,67 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     private void ShowRegionInfo() {
         string text = string.Empty;
+        text += "[b]Tile:[/b] " + this.name + "\n";
         text += "[b]Connections:[/b] " + this.region.connections.Count.ToString();
         for (int i = 0; i < this.region.connections.Count; i++) {
-            text += "\n " + this.region.connections[i].ToString();
+            object currConnection = this.region.connections[i];
+            text += "\n " + currConnection.ToString();
+            if (currConnection is Region) {
+                text += " - " + ((Region)currConnection).centerOfMass.name;
+            }
         }
         UIManager.Instance.ShowSmallInfo(text);
     }
 
+    private void HideRegionInfo() {
+        HideSmallInfoWindow();
+        for (int i = 0; i < this.region.connections.Count; i++) {
+            object currConnection = this.region.connections[i];
+            //if (currConnection is Region) {
+            //    ((Region)currConnection).centerOfMass.UnHighlightTilesInRegion();
+            //} else if (currConnection is HexTile) {
+            //    ((HexTile)currConnection).HideTileHighlight();
+            //}
+        }
+    }
+
+    private void ShowLandmarkInfo() {
+        string text = string.Empty;
+        text += "[b]Tile:[/b] " + this.name + "\n";
+        text += "[b]Connections:[/b] " + this.landmark.connections.Count.ToString();
+        for (int i = 0; i < this.landmark.connections.Count; i++) {
+            object currConnection = this.landmark.connections[i];
+            text += "\n " + currConnection.ToString();
+            if (currConnection is Region) {
+                text += " - " + ((Region)currConnection).centerOfMass.name;
+            }
+        }
+        UIManager.Instance.ShowSmallInfo(text);
+    }
+
+    private void HideLandmarkInfo() {
+        HideSmallInfoWindow();
+        //for (int i = 0; i < this.landmark.connections.Count; i++) {
+        //    object currConnection = this.landmark.connections[i];
+        //    if (currConnection is Region) {
+        //        ((Region)currConnection).centerOfMass.UnHighlightTilesInRegion();
+        //    } else if (currConnection is HexTile) {
+        //        ((HexTile)currConnection).HideTileHighlight();
+        //    }
+        //}
+    }
+
     private void ShowKingdomInfo() {
         string text = this.city.name + " HP: " + this.city.hp.ToString() + "/" + this.city.maxHP.ToString() + "\n";
+        text += "[b]Tile:[/b] " + this.name + "\n";
         text += "[b]" + this.city.kingdom.name + "[/b]" +
         "\n [b]Connections:[/b] " + this.region.connections.Count.ToString();
         for (int i = 0; i < this.region.connections.Count; i++) {
-            text += "\n " + this.region.connections[i].ToString();
+            object currConnection = this.region.connections[i];
+            text += "\n " + currConnection.ToString();
+            if (currConnection is Region) {
+                text += " - " + ((Region)currConnection).centerOfMass.name;
+            }
         }
         text += "\n [b]Special Resource:[/b] " + this.city.region.specialResource.ToString();
         if(this.city.region.specialResource != RESOURCE.NONE) {

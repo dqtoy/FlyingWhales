@@ -29,8 +29,8 @@ public class HoverStability : MonoBehaviour {
                 stabilitySummary += "\n From Dissenting Governors : " + stabilityFromDissenting.ToString();
                 stabilitySummary += "\n From Resources : " + stabilityFromResources.ToString();
 
-                int overpopulation = kingdom.GetOverpopulationPercentage();
-                stabilitySummary += "\n From Overpopulation : " + (overpopulation / 10) * -1;
+                //int overpopulation = kingdom.GetOverpopulationPercentage();
+                //stabilitySummary += "\n From Overpopulation : " + (overpopulation / 10) * -1;
 
                 stabilitySummary += "\n From Recent Conquests : " + (kingdom.stabilityDecreaseFromInvasionCounter * -2).ToString();
 
