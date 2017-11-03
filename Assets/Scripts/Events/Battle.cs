@@ -359,7 +359,7 @@ public class Battle {
 			if(corpseCount > 0 && GameManager.Instance.enableGameAgents){
 				CreateCorpses (corpseCount, this.attacker.region, this.defender.region);
 			}
-			if(attackRoll > defenseRoll){
+			if(attackRoll >= defenseRoll){
                 //Attacker Wins
                 AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - " + attacker.name + "(" + attacker.kingdom.name + ") wins the battle against " + defender.name + "(" + defender.kingdom.name + ")");
                 EndBattle(this.attacker, this.defender);

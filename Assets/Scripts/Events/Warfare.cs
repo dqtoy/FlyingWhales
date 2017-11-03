@@ -46,7 +46,7 @@ public class Warfare {
 		get { return this._isOver; }
 	}
 	#endregion
-	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom){
+	public Warfare(Kingdom firstKingdom, Kingdom secondKingdom, bool affectWarmonerValue = true){
 		SetID();
 		this._name = RandomNameGenerator.Instance.GetWarfareName ();
 		this._isOver = false;
@@ -60,7 +60,9 @@ public class Warfare {
 		this._kingdomSideList.Add (WAR_SIDE.A, new List<Kingdom>());
 		this._kingdomSideList.Add (WAR_SIDE.B, new List<Kingdom>());
 
-		firstKingdom.AdjustWarmongerValue (75);
+		if(affectWarmonerValue){
+			firstKingdom.AdjustWarmongerValue (75);
+		}
 
 		JoinWar(WAR_SIDE.A, firstKingdom, false);
 		JoinWar(WAR_SIDE.B, secondKingdom, false);
