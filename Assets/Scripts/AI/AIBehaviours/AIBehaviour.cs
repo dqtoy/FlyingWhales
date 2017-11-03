@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
 public class AIBehaviour {
 
-    [SerializeField] private ACTION_TYPE _actionType;
-    [SerializeField] private GameAgent _agentPerformingAction;
+    private ACTION_TYPE _actionType;
+    private GameAgent _agentPerformingAction;
 
     #region getters/setters
     internal ACTION_TYPE actionType {

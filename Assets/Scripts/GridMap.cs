@@ -253,7 +253,7 @@ public class GridMap : MonoBehaviour {
                         if (path != null) {
                             RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, otherRegion);
                             //RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
-                            RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherRegion.centerOfMass, ROAD_TYPE.MINOR);
+                            RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherRegion.centerOfMass, PATHFINDING_MODE.ROAD_CREATION, ROAD_TYPE.MINOR);
                             break;
                         }
                     }
@@ -272,7 +272,7 @@ public class GridMap : MonoBehaviour {
                         if (path != null) {
                             RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
                             //RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
-                            RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherLandmark.location, ROAD_TYPE.MINOR);
+                            RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.ROAD_CREATION, ROAD_TYPE.MINOR);
                             break;
                         }
                     }
