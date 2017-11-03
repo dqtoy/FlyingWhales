@@ -18,7 +18,7 @@ public class ExpansionAvatar : CitizenAvatar {
 				if(hexTileToExpandTo != null){
 					this.citizenRole.targetLocation = hexTileToExpandTo;
 					((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;
-					CreatePath (PATHFINDING_MODE.AVATAR);
+					CreatePath (PATHFINDING_MODE.USE_ROADS);
 					return;
 				}else{
 					CancelEventInvolvedIn ();

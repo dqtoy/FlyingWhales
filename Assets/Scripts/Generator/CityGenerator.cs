@@ -230,7 +230,7 @@ public class CityGenerator : MonoBehaviour {
             Region currRegion = kingdom.cities[i].region;
             for (int j = 0; j < currRegion.adjacentRegions.Count; j++) {
                 Region adjacentRegion = currRegion.adjacentRegions[j];
-                if(adjacentRegion.occupant == null) {
+                if(adjacentRegion.occupant == null && currRegion.connections.Contains(adjacentRegion)) {
                     unoccupiedAdjacentRegions.Add(adjacentRegion);
                 }
             }

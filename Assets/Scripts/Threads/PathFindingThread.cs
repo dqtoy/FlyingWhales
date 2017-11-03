@@ -28,12 +28,28 @@ public class PathFindingThread {
 	}
 
 	public void FindPath(){
+		bool isStartingTileRoad = _startingTile.isRoad;
+		bool isDestinationTileRoad = _destinationTile.isRoad;
+
+		if (_pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+			_startingTile.isRoad = true;
+			_destinationTile.isRoad = true;
+		}
+
+
 		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - _destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - _destinationTile.yCoordinate, 2));
 
 		var path = PathFind.PathFind.FindPath (_startingTile, _destinationTile, distance, estimate, _pathfindingMode, _kingdom);
+
+		if (_pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+			_startingTile.isRoad = isStartingTileRoad;
+			_destinationTile.isRoad = isDestinationTileRoad;
+		}
 		if (path != null) {
-			if (_pathfindingMode == PATHFINDING_MODE.COMBAT) {
+			if (_pathfindingMode == PATHFINDING_MODE.COMBAT || _pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
+				|| _pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION || _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS 
+				|| _pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
 				receivedPath = path.Reverse ().ToList ();
 			} else {
 				receivedPath = path.Reverse ().ToList ();

@@ -98,19 +98,20 @@ public class Role {
 
 	internal virtual void Attack(){
 		if (this.avatar != null) {
-			if(this.avatar.GetComponent<CitizenAvatar>().animator.gameObject.activeSelf){
-				if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.LEFT) {
-					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Left");
-				} else if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.RIGHT) {
-					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Right");
-				} else if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.UP) {
-					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Up");
-				} else {
-					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Down");
-				}
-			}else{
-				this.avatar.GetComponent<CitizenAvatar> ().EndAttack ();
-			}
+			this.avatar.GetComponent<CitizenAvatar> ().EndAttack ();
+//			if(this.avatar.GetComponent<CitizenAvatar>().animator.gameObject.activeSelf){
+//				if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.LEFT) {
+//					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Left");
+//				} else if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.RIGHT) {
+//					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Right");
+//				} else if (this.avatar.GetComponent<CitizenAvatar>().direction == DIRECTION.UP) {
+//					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Up");
+//				} else {
+//					this.avatar.GetComponent<CitizenAvatar>().animator.Play("Attack_Down");
+//				}
+//			}else{
+//				this.avatar.GetComponent<CitizenAvatar> ().EndAttack ();
+//			}
 		}
 	}
 

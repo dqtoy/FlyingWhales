@@ -10,8 +10,8 @@ public class CitizenAvatar : PooledObject {
     [SerializeField] private string citizenName;
     [SerializeField] private string roleType;
     public Role citizenRole;
-    public PandaBehaviour pandaBehaviour;
-    public Animator animator;
+//    public PandaBehaviour pandaBehaviour;
+//    public Animator animator;
     public bool collidedWithHostile;
     public General otherGeneral;
 
@@ -24,7 +24,7 @@ public class CitizenAvatar : PooledObject {
 
     [SerializeField] internal DIRECTION direction;
 	internal List<HexTile> visibleTiles;
-	private SmoothMovement smoothMovement;
+	public SmoothMovement smoothMovement;
 
 
     #region getters/setters
@@ -34,7 +34,7 @@ public class CitizenAvatar : PooledObject {
     #endregion
 
 	void Awake(){
-		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
+//		this.smoothMovement = this.animator.GetComponent<SmoothMovement> ();
 		this.smoothMovement.avatarGO = this.gameObject;
 	}
 
@@ -57,7 +57,7 @@ public class CitizenAvatar : PooledObject {
         }
 
         ResetValues();
-        AddBehaviourTree();
+//        AddBehaviourTree();
 		UpdateUI ();
 //		StartMoving ();
     }
@@ -175,15 +175,15 @@ public class CitizenAvatar : PooledObject {
         base.Reset();
         UpdateFogOfWar(true);
         ResetValues();
-        ResetBehaviourTree();
-        RemoveBehaviourTree();
+//        ResetBehaviourTree();
+//        RemoveBehaviourTree();
         UnHighlightPath();
         SetHasArrivedState(false);
         //this.citizenRole = null;
-        animator.Rebind();
+//        animator.Rebind();
         this.direction = DIRECTION.LEFT;
 		this.smoothMovement.Reset();
-        this.GetComponent<BoxCollider2D>().enabled = true;
+//        this.GetComponent<BoxCollider2D>().enabled = true;
         visibleTiles = new List<HexTile>();
         //childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
     }
@@ -261,30 +261,30 @@ public class CitizenAvatar : PooledObject {
 //        startTile.ExitCitizen(this.citizenRole.citizen);
 //        targetTile.EnterCitizen(this.citizenRole.citizen);
 
-        if (startTile.transform.position.x <= targetTile.transform.position.x) {
-            if (this.animator.gameObject.transform.localScale.x > 0) {
-                this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
-            }
-        } else {
-            if (this.animator.gameObject.transform.localScale.x < 0) {
-                this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
-            }
-        }
-        if (startTile.transform.position.y < targetTile.transform.position.y) {
-            this.direction = DIRECTION.UP;
-            this.animator.Play("Walk_Up");
-        } else if (startTile.transform.position.y > targetTile.transform.position.y) {
-            this.direction = DIRECTION.DOWN;
-            this.animator.Play("Walk_Down");
-        } else {
-            if (startTile.transform.position.x < targetTile.transform.position.x) {
-                this.direction = DIRECTION.RIGHT;
-                this.animator.Play("Walk_Right");
-            } else {
-                this.direction = DIRECTION.LEFT;
-                this.animator.Play("Walk_Left");
-            }
-        }
+//        if (startTile.transform.position.x <= targetTile.transform.position.x) {
+//            if (this.animator.gameObject.transform.localScale.x > 0) {
+//                this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
+//            }
+//        } else {
+//            if (this.animator.gameObject.transform.localScale.x < 0) {
+//                this.animator.gameObject.transform.localScale = new Vector3(this.animator.gameObject.transform.localScale.x * -1, this.animator.gameObject.transform.localScale.y, this.animator.gameObject.transform.localScale.z);
+//            }
+//        }
+//        if (startTile.transform.position.y < targetTile.transform.position.y) {
+//            this.direction = DIRECTION.UP;
+//            this.animator.Play("Walk_Up");
+//        } else if (startTile.transform.position.y > targetTile.transform.position.y) {
+//            this.direction = DIRECTION.DOWN;
+//            this.animator.Play("Walk_Down");
+//        } else {
+//            if (startTile.transform.position.x < targetTile.transform.position.x) {
+//                this.direction = DIRECTION.RIGHT;
+//                this.animator.Play("Walk_Right");
+//            } else {
+//                this.direction = DIRECTION.LEFT;
+//                this.animator.Play("Walk_Left");
+//            }
+//        }
 		this.smoothMovement.Move(targetTile.transform.position, this.direction);
 		this.UpdateUI ();
     }
@@ -321,19 +321,19 @@ public class CitizenAvatar : PooledObject {
     }
 
     #region BehaviourTree Functions
-    internal void AddBehaviourTree() {
-        //BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
-        Messenger.AddListener("OnDayEnd", this.pandaBehaviour.Tick);
-    }
-
-    internal void RemoveBehaviourTree() {
-        //BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
-        Messenger.RemoveListener("OnDayEnd", this.pandaBehaviour.Tick);
-    }
-
-    internal void ResetBehaviourTree() {
-        this.pandaBehaviour.Reset();
-    }
+//    internal void AddBehaviourTree() {
+//        //BehaviourTreeManager.Instance.allTrees.Add(this.pandaBehaviour);
+//        Messenger.AddListener("OnDayEnd", this.pandaBehaviour.Tick);
+//    }
+//
+//    internal void RemoveBehaviourTree() {
+//        //BehaviourTreeManager.Instance.allTrees.Remove(this.pandaBehaviour);
+//        Messenger.RemoveListener("OnDayEnd", this.pandaBehaviour.Tick);
+//    }
+//
+//    internal void ResetBehaviourTree() {
+//        this.pandaBehaviour.Reset();
+//    }
     #endregion
 
     #region Monobehaviour Functions
@@ -412,7 +412,7 @@ public class CitizenAvatar : PooledObject {
 
     public void SetAvatarState(bool state) {
         currAvatarState = state;
-        this.gameObject.GetComponent<SpriteRenderer>().enabled = state;
+//        this.gameObject.GetComponent<SpriteRenderer>().enabled = state;
         for (int i = 0; i < childObjects.Length; i++) {
             if (childObjects[i].GetComponent<Animator>() != null) {
                 childObjects[i].GetComponent<SpriteRenderer>().enabled = state;

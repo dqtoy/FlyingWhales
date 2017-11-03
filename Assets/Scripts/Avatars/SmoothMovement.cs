@@ -16,11 +16,11 @@ public class SmoothMovement : MonoBehaviour {
     [SerializeField] private float timeStarted = 0f;
     [SerializeField] private float timeSinceStarted = 0f;
 
-	private Animator animator;
+//	private Animator animator;
 	internal GameObject avatarGO;
 
 	void Awake(){
-		this.animator = this.GetComponent<Animator> ();
+//		this.animator = this.GetComponent<Animator> ();
 	}
 
 //	void FixedUpdate(){
@@ -57,13 +57,13 @@ public class SmoothMovement : MonoBehaviour {
         direction = DIRECTION.LEFT;
         hasAttacked = false;
         onMoveFinihed = null;
-        animator.Rebind();
+//        animator.Rebind();
     }
 
     private void StopMoving(){
-		if (!this.hasAttacked) {
-			string idleToPlay = GetIdleDirection();
-			this.animator.Play(idleToPlay);
+//		if (!this.hasAttacked) {
+//			string idleToPlay = GetIdleDirection();
+//			this.animator.Play(idleToPlay);
 
 //			if(this.GetComponent<Animator> () != null){
 //			}else{
@@ -71,7 +71,7 @@ public class SmoothMovement : MonoBehaviour {
 //					this.GetComponentInChildren<Animator>().Play(idleToPlay);
 //				}
 //			}
-		}
+//		}
 		this.isMoving = false;
 		this.targetPosition = Vector3.zero;
         if(onMoveFinihed != null) {

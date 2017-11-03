@@ -207,12 +207,12 @@ public class PathGenerator : MonoBehaviour {
 		if(startingTile.tileTag != destinationTile.tileTag) {
 			return;
 		}
-		List<HexTile> habitableTiles;
-		if (resourceType == BASE_RESOURCE_TYPE.STONE) {
-			habitableTiles = CityGenerator.Instance.stoneHabitableTiles;
-		} else {
-			habitableTiles = CityGenerator.Instance.woodHabitableTiles;
-		}
+//		List<HexTile> habitableTiles;
+//		if (resourceType == BASE_RESOURCE_TYPE.STONE) {
+//			habitableTiles = CityGenerator.Instance.stoneHabitableTiles;
+//		} else {
+//			habitableTiles = CityGenerator.Instance.woodHabitableTiles;
+//		}
 
 		PathfindingThreadPool.Instance.AddToThreadPool (new PathFindingThread (citizenAvatar, startingTile, destinationTile, pathfindingMode, kingdom));
 	}
