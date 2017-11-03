@@ -205,7 +205,7 @@ public class RoadManager : MonoBehaviour {
             throw new System.Exception("Cannot connect " + region1.centerOfMass.name + " to " + region2.centerOfMass.name);
         }
         //CreateRoad(connection, ROAD_TYPE.MAJOR);
-        SmartCreateRoad(region1.centerOfMass, region2.centerOfMass, ROAD_TYPE.MAJOR);
+        SmartCreateRoad(region1.centerOfMass, region2.centerOfMass, PATHFINDING_MODE.ROAD_CREATION, ROAD_TYPE.MAJOR);
     }
 
     /*
@@ -219,13 +219,13 @@ public class RoadManager : MonoBehaviour {
             HexTile previousTile = path.ElementAtOrDefault(i - 1);
             HexTile currTile = path[i];
             HexTile nextTile = path.ElementAtOrDefault(i + 1);
-            if (previousTile != null && nextTile != null) {
-                HEXTILE_DIRECTION from = currTile.GetNeighbourDirection(previousTile);
-                HEXTILE_DIRECTION to = currTile.GetNeighbourDirection(nextTile);
-                GameObject roadGO = currTile.GetRoadGameObjectForDirection(from, to);
+            HEXTILE_DIRECTION from = currTile.GetNeighbourDirection(previousTile);
+            HEXTILE_DIRECTION to = currTile.GetNeighbourDirection(nextTile);
+            GameObject roadGO = currTile.GetRoadGameObjectForDirection(from, to);
+            if(roadGO != null) {
                 roadGO.SetActive(true);
                 currTile.SetTileAsRoad(true, roadType);
-                if(currTile.roadType == ROAD_TYPE.MINOR) {
+                if (currTile.roadType == ROAD_TYPE.MINOR) {
                     currTile.SetRoadColor(roadGO, Color.gray);
                 } else if (currTile.roadType == ROAD_TYPE.MAJOR) {
                     currTile.SetRoadColor(roadGO, Color.white);
@@ -234,19 +234,31 @@ public class RoadManager : MonoBehaviour {
         }
     }
 
-    public void SmartCreateRoad(HexTile start, HexTile destination, ROAD_TYPE roadType) {
-        List<HexTile> roadTilesConnectedToDestination = GetRoadTilesConnectedTo(destination);
+    public void SmartCreateRoad(HexTile start, HexTile destination, PATHFINDING_MODE pathfindingMode, ROAD_TYPE roadType) {
+        List<HexTile> roadTilesConnectedToDestination = GetRoadTilesConnectedTo(destination, start);
+
+        //order the road tiles based on their distance from the start tile
+        roadTilesConnectedToDestination = new List<HexTile>(roadTilesConnectedToDestination.OrderBy(x => Vector2.Distance(start.transform.position, x.transform.position)));
         HexTile tileToConnectTo = destination;
         float shortestDistanceFromStart = Vector2.Distance(start.transform.position, destination.transform.position);
+        List<HexTile> path = PathGenerator.Instance.GetPath(start, destination, pathfindingMode);
+
+        //Check which road tile has a path giong to the start tile
         for (int i = 0; i < roadTilesConnectedToDestination.Count; i++) {
             HexTile currRoadTile = roadTilesConnectedToDestination[i];
             float distanceFromStart = Vector2.Distance(start.transform.position, currRoadTile.transform.position);
-            if(distanceFromStart < shortestDistanceFromStart) {
+            List<HexTile> tempPath = PathGenerator.Instance.GetPath(start, currRoadTile, pathfindingMode);
+            if (distanceFromStart < shortestDistanceFromStart && path != null) {
                 shortestDistanceFromStart = distanceFromStart;
                 tileToConnectTo = currRoadTile;
+                path = tempPath;
+                //break the loop since the list was already sorted by shortest distance
+                break;
             }
         }
-        List<HexTile> path = PathGenerator.Instance.GetPath(start, tileToConnectTo, PATHFINDING_MODE.ROAD_CREATION);
+        if(path == null) {
+            throw new System.Exception("There was no path from " + start.name + " to " + tileToConnectTo.name);
+        }
         CreateRoad(path, roadType);
     }
 
@@ -263,10 +275,11 @@ public class RoadManager : MonoBehaviour {
      * This will return a list of road tiles that are connected
      * to the provided hex tile using roads.
      * */
-    public List<HexTile> GetRoadTilesConnectedTo(HexTile destination) {
+    public List<HexTile> GetRoadTilesConnectedTo(HexTile destination, HexTile start) {
         List<HexTile> connectedRoadTiles = new List<HexTile>();
-        for (int i = 0; i < _roadTiles.Count; i++) {
-            HexTile currTile = _roadTiles[i];
+        List<HexTile> tilesToCheck = _roadTiles.OrderBy(x => Vector2.Distance(start.transform.position, x.transform.position)).Take(50).ToList();
+        for (int i = 0; i < tilesToCheck.Count; i++) {
+            HexTile currTile = tilesToCheck[i];
             if(!connectedRoadTiles.Contains(currTile) && PathGenerator.Instance.GetPath(currTile, destination, PATHFINDING_MODE.USE_ROADS) != null) {
                 //There is a path from currTile to destination using roads
                 connectedRoadTiles.Add(currTile);

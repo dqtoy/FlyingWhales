@@ -2,36 +2,35 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[System.Serializable]
 public class GameAgent {
 
-    [SerializeField] protected AGENT_CATEGORY _agentCategory;
-    [SerializeField] protected AGENT_TYPE _agentType;
+    protected AGENT_CATEGORY _agentCategory;
+    protected AGENT_TYPE _agentType;
 
-    [SerializeField] protected int _attackRatio;
-    [SerializeField] protected int _fleeRatio;
-    [SerializeField] protected int _randomRatio;
+    protected int _attackRatio;
+    protected int _fleeRatio;
+    protected int _randomRatio;
 
-    [SerializeField] protected int _maxHP;
-    [SerializeField] protected float _currentHP;
+    protected int _maxHP;
+    protected float _currentHP;
     protected float _attackRange;
     protected float _attackSpeed;
     protected int _attackValue;
     protected float _visibilityRange;
-    [SerializeField] protected bool _isDead;
+    protected bool _isDead;
     protected bool _isInCombat;
     protected GameDate _lastDamagedOn;
 
     protected MOVE_TYPE _movementType;
     protected float _movementSpeed;
 
-    [SerializeField] protected AIBehaviour _attackBehaviour;
-    [SerializeField] protected AIBehaviour _fleeBehaviour;
-    [SerializeField] protected AIBehaviour _randomBehaviour;
+    protected AIBehaviour _attackBehaviour;
+    protected AIBehaviour _fleeBehaviour;
+    protected AIBehaviour _randomBehaviour;
 
     protected HashSet<AGENT_TYPE> _allyTypes;
 
-    [SerializeField] protected AgentObject _agentObj;
+    protected AgentObject _agentObj;
 
     internal Color agentColor;
 

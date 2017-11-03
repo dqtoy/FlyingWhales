@@ -54,7 +54,8 @@ public enum HEXTILE_DIRECTION {
     EAST,
     SOUTH_EAST,
     SOUTH_WEST,
-    WEST
+    WEST,
+    NONE
 }
 
 public enum REPRESENTATIVES{

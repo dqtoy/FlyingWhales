@@ -167,12 +167,18 @@ public class PathGenerator : MonoBehaviour {
         bool isStartingTileRoad = startingTile.isRoad;
         bool isDestinationTileRoad = destinationTile.isRoad;
 
+        bool doesStartingTileHaveLandmark = startingTile.hasLandmark;
+        bool doesDestinationTileHaveLandmark = destinationTile.hasLandmark;
+
         if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
             startingTile.isRoad = true;
             destinationTile.isRoad = true;
+        } else if (pathfindingMode == PATHFINDING_MODE.ROAD_CREATION || pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION) {
+            startingTile.hasLandmark = false;
+            destinationTile.hasLandmark = false;
         }
 
-		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
+        Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
 
 		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom, region);
@@ -180,6 +186,9 @@ public class PathGenerator : MonoBehaviour {
         if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
             startingTile.isRoad = isStartingTileRoad;
             destinationTile.isRoad = isDestinationTileRoad;
+        } else if (pathfindingMode == PATHFINDING_MODE.ROAD_CREATION || pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION) {
+            startingTile.hasLandmark = doesStartingTileHaveLandmark;
+            destinationTile.hasLandmark = doesDestinationTileHaveLandmark;
         }
 
         if (path != null) {

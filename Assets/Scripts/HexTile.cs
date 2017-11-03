@@ -436,6 +436,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
 	}
     internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour) {
+        if (neighbour == null) {
+            return HEXTILE_DIRECTION.NONE;
+        }
         if (!AllNeighbours.Contains(neighbour)) {
             throw new System.Exception(neighbour.name + " is not a neighbour of " + this.name);
         }
@@ -495,8 +498,22 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
     public GameObject GetRoadGameObjectForDirection(HEXTILE_DIRECTION from, HEXTILE_DIRECTION to) {
-        List<RoadObject> availableRoads = roads.Where(x => x.from == from).First().destinations;
-        return availableRoads.Where(x => x.to == to).First().roadObj;
+        if (from == HEXTILE_DIRECTION.NONE && to == HEXTILE_DIRECTION.NONE) {
+            return null;
+        }
+        if (from == HEXTILE_DIRECTION.NONE && to != HEXTILE_DIRECTION.NONE) {
+            //Show the directionGO of to
+            HexRoads roadToUse = roads.First(x => x.from == to);
+            return roadToUse.directionGO;
+        } else if (from != HEXTILE_DIRECTION.NONE && to == HEXTILE_DIRECTION.NONE) {
+            //Show the directionGO of from
+            HexRoads roadToUse = roads.First(x => x.from == from);
+            return roadToUse.directionGO;
+        } else {
+            List<RoadObject> availableRoads = roads.First(x => x.from == from).destinations;
+            return availableRoads.Where(x => x.to == to).First().roadObj;
+        }
+        
     }
     public void SetTileAsRoad(bool isRoad, ROAD_TYPE roadType) {
         this.isRoad = isRoad;

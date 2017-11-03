@@ -339,6 +339,7 @@ public class Region {
             //throw new System.Exception("No elligible tiles for special resource in region " + centerOfMass.name);
         }
 
+        PATHFINDING_MODE pathfindingModeToUse = PATHFINDING_MODE.LANDMARK_CREATION;
         Dictionary<HexTile, List<HexTile>> tilesToChooseFrom = new Dictionary<HexTile, List<HexTile>>();
 
         //Check which of the remaining elligible tiles have a path towards the center of mass. 
@@ -360,6 +361,7 @@ public class Region {
         //if by any chance there are no elligible tiles left, that meet the above requirements, recompute, 
         //allow tiles that have a path that converges with a main road and paths that go outside the region
         if (tilesToChooseFrom.Count <= 0) {
+            pathfindingModeToUse = PATHFINDING_MODE.ROAD_CREATION;
             for (int i = 0; i < elligibleTiles.Count; i++) {
                 HexTile currElligibleTile = elligibleTiles[i];
                 if (centerOfMass.region != currElligibleTile.region) {
@@ -381,7 +383,7 @@ public class Region {
         }
         RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSpecialResource, this);
         //RoadManager.Instance.CreateRoad(tilesToChooseFrom[_tileWithSpecialResource], ROAD_TYPE.MINOR);
-        RoadManager.Instance.SmartCreateRoad(_tileWithSpecialResource, centerOfMass, ROAD_TYPE.MINOR);
+        RoadManager.Instance.SmartCreateRoad(_tileWithSpecialResource, centerOfMass, pathfindingModeToUse, ROAD_TYPE.MINOR);
     }
 	internal void SetSummoningShrine(){
         if (AssignSummoningShrineToTile()) {
@@ -424,6 +426,8 @@ public class Region {
             //throw new System.Exception("No elligible tiles for special resource in region " + centerOfMass.name);
         }
 
+
+        PATHFINDING_MODE pathfindingModeToUse = PATHFINDING_MODE.LANDMARK_CREATION;
         Dictionary<HexTile, List<HexTile>> tilesToChooseFrom = new Dictionary<HexTile, List<HexTile>>();
 
         //Check which of the remaining elligible tiles have a path towards the center of mass. 
@@ -445,6 +449,7 @@ public class Region {
         //if by any chance there are no elligible tiles left, that meet the above requirements, recompute, 
         //allow tiles that have a path that converges with a main road and paths that go outside the region
         if (tilesToChooseFrom.Count <= 0) {
+            pathfindingModeToUse = PATHFINDING_MODE.ROAD_CREATION;
             for (int i = 0; i < elligibleTiles.Count; i++) {
                 HexTile currElligibleTile = elligibleTiles[i];
                 if (centerOfMass.region != currElligibleTile.region) {
@@ -465,7 +470,7 @@ public class Region {
 
             RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSummoningShrine, this);
             //RoadManager.Instance.CreateRoad(tilesToChooseFrom[_tileWithSummoningShrine], ROAD_TYPE.MINOR);
-            RoadManager.Instance.SmartCreateRoad(_tileWithSummoningShrine, centerOfMass, ROAD_TYPE.MINOR);
+            RoadManager.Instance.SmartCreateRoad(_tileWithSummoningShrine, centerOfMass, pathfindingModeToUse, ROAD_TYPE.MINOR);
             return true;
         } else {
             return false;
@@ -523,6 +528,7 @@ public class Region {
             //throw new System.Exception("No elligible tiles for special resource in region " + centerOfMass.name);
         }
 
+        PATHFINDING_MODE pathfindingModeToUse = PATHFINDING_MODE.LANDMARK_CREATION;
         Dictionary<HexTile, List<HexTile>> tilesToChooseFrom = new Dictionary<HexTile, List<HexTile>>();
 
         //Check which of the remaining elligible tiles have a path towards the center of mass. 
@@ -544,6 +550,7 @@ public class Region {
         //if by any chance there are no elligible tiles left, that meet the above requirements, recompute, 
         //allow tiles that have a path that converges with a main road and paths that go outside the region
         if (tilesToChooseFrom.Count <= 0) {
+            pathfindingModeToUse = PATHFINDING_MODE.ROAD_CREATION;
             for (int i = 0; i < elligibleTiles.Count; i++) {
                 HexTile currElligibleTile = elligibleTiles[i];
                 if (centerOfMass.region != currElligibleTile.region) {
@@ -564,7 +571,7 @@ public class Region {
 
             RoadManager.Instance.ConnectLandmarkToRegion(_tileWithHabitat, this);
             //RoadManager.Instance.CreateRoad(tilesToChooseFrom[_tileWithHabitat], ROAD_TYPE.MINOR);
-            RoadManager.Instance.SmartCreateRoad(_tileWithHabitat, centerOfMass, ROAD_TYPE.MINOR);
+            RoadManager.Instance.SmartCreateRoad(_tileWithHabitat, centerOfMass, pathfindingModeToUse, ROAD_TYPE.MINOR);
             return true;
         } else {
             return false;
