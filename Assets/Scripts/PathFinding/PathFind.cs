@@ -84,6 +84,9 @@ namespace PathFind {
                         if (region != null && !region.tilesInRegion.Contains(n)) {
                             continue;
                         }
+                        if (n.roadType == ROAD_TYPE.MAJOR && (n.id != start.id && n.id != destination.id)) {
+                            continue;
+                        }
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
