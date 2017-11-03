@@ -310,7 +310,7 @@ public class City{
 		if(Messenger.eventTable.ContainsKey("OnUpdatePath")){
 			Messenger.Broadcast<HexTile>("OnUpdatePath", tileToBuy);
 		}
-        tileToBuy.CreateStructureOnTile(STRUCTURE_TYPE.GENERIC);
+        //tileToBuy.CreateStructureOnTile(STRUCTURE_TYPE.GENERIC);
 
         //Update necessary data
         this.UpdateDailyProduction();
