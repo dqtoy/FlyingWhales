@@ -478,6 +478,8 @@ public class Kingdom{
 		this.SetWarmongerValue (25);
 		this.SetProductionGrowthPercentage(1f);
 
+		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
+
 		if(this.race != RACE.UNDEAD){
 			AdjustPrestige(GridMap.Instance.numOfRegions);
 			AdjustPopulation(50);
@@ -503,7 +505,6 @@ public class Kingdom{
 			//Messenger.AddListener("OnDayEnd", KingdomTickActions);
 			Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
-			SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
 			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
 			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseExpansionRatePerMonth());
 			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
@@ -2877,7 +2878,7 @@ public class Kingdom{
 			Kingdom kingdomToAlly = null;
 			int likeTheMost = 0;
 			foreach (KingdomRelationship kr in this.relationships.Values) {
-				if (kr.isDiscovered && !kr.cantAlly) {
+				if (kr.isDiscovered && !kr.cantAlly && !kr.isAtWar) {
 					if (kr.targetKingdom.id != kingdomWithHighestThreat.id) {
 						KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kingdomWithHighestThreat);
 						if (rk.isAdjacent) {
@@ -2934,7 +2935,7 @@ public class Kingdom{
 			Kingdom kingdomToAlly = null;
 			int likeTheMost = 0;
 			foreach (KingdomRelationship kr in this.relationships.Values) {			
-				if(kr.isDiscovered && !kr.cantAlly){
+				if(kr.isDiscovered && !kr.cantAlly && !kr.isAtWar){
 					if (kr.targetKingdom.alliancePool != null) {
 						Debug.Log (name + " is looking to join the alliance of " + kr.targetKingdom.name);
 						bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance (this, kr.targetKingdom);
@@ -3063,35 +3064,37 @@ public class Kingdom{
 		Kingdom kingdomToAlly = null;
 		int leastLikedToEnemy = 0;
 		foreach (KingdomRelationship krToAlly in this.relationships.Values) {
-			if(krToAlly.targetKingdom.id != this.highestRelativeStrengthAdjacentKingdom.id){
-				KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (this);
-				KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (this.highestRelativeStrengthAdjacentKingdom);
-				if(krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent 
-					&& krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings[0].id != krToAlly.targetKingdom.id && !krToAlly.cantAlly){
+			if (krToAlly.isDiscovered && !krToAlly.cantAlly && !krToAlly.isAtWar) {
+				if (krToAlly.targetKingdom.id != this.highestRelativeStrengthAdjacentKingdom.id) {
+					KingdomRelationship krFromAlly = krToAlly.targetKingdom.GetRelationshipWithKingdom (this);
+					KingdomRelationship krEnemy = krToAlly.targetKingdom.GetRelationshipWithKingdom (this.highestRelativeStrengthAdjacentKingdom);
+					if (krToAlly.totalLike > 0 && krFromAlly.totalLike > 0 && krEnemy.isAdjacent
+					  && krToAlly.targetKingdom.king.balanceType == PURPOSE.SUPERIORITY && KingdomManager.Instance.kingdomRankings [0].id != krToAlly.targetKingdom.id && !krToAlly.cantAlly) {
 
-					if (krToAlly.targetKingdom.alliancePool != null) {
-						bool hasJoined = krToAlly.targetKingdom.alliancePool.AttemptToJoinAlliance (this, krToAlly.targetKingdom);
-						if (hasJoined) {
-							string log = name + " has joined an alliance with ";
-							for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-								if (_alliancePool.kingdomsInvolved [j].id != id) {
-									log += _alliancePool.kingdomsInvolved [j].name;
-									if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
-										log += ", ";
+						if (krToAlly.targetKingdom.alliancePool != null) {
+							bool hasJoined = krToAlly.targetKingdom.alliancePool.AttemptToJoinAlliance (this, krToAlly.targetKingdom);
+							if (hasJoined) {
+								string log = name + " has joined an alliance with ";
+								for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
+									if (_alliancePool.kingdomsInvolved [j].id != id) {
+										log += _alliancePool.kingdomsInvolved [j].name;
+										if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
+											log += ", ";
+										}
 									}
 								}
+								Debug.Log (log);
+								return;
 							}
-							Debug.Log(log);
-							return;
-						}
-					} else {
-						if(kingdomToAlly == null){
-							kingdomToAlly = krToAlly.targetKingdom;
-							leastLikedToEnemy = krEnemy.totalLike;
-						}else{
-							if(krEnemy.totalLike < leastLikedToEnemy){
+						} else {
+							if (kingdomToAlly == null) {
 								kingdomToAlly = krToAlly.targetKingdom;
 								leastLikedToEnemy = krEnemy.totalLike;
+							} else {
+								if (krEnemy.totalLike < leastLikedToEnemy) {
+									kingdomToAlly = krToAlly.targetKingdom;
+									leastLikedToEnemy = krEnemy.totalLike;
+								}
 							}
 						}
 					}

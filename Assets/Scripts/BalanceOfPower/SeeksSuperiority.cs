@@ -34,35 +34,36 @@ public static class SeeksSuperiority {
 			}
 		}
 
-		bool mustSeekAlliance = false;
-		if(kingdom.alliancePool == null){
-			if(kingdom.highestRelativeStrengthAdjacentKingdom != null){
-				KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (kingdom.highestRelativeStrengthAdjacentKingdom);
-				if(kr._relativeWeakness < 50){
-					Debug.Log(kingdom.name + " seeks alliance of conquest");
-					kingdom.SeekAllianceOfConquest ();
-				}else{
+		if (kingdom.age >= 1) {
+			bool mustSeekAlliance = false;
+			if (kingdom.alliancePool == null) {
+				if (kingdom.highestRelativeStrengthAdjacentKingdom != null) {
+					KingdomRelationship kr = kingdom.GetRelationshipWithKingdom (kingdom.highestRelativeStrengthAdjacentKingdom);
+					if (kr._relativeWeakness < 50) {
+						Debug.Log (kingdom.name + " seeks alliance of conquest");
+						kingdom.SeekAllianceOfConquest ();
+					} else {
+						mustSeekAlliance = true;
+					}
+				} else {
 					mustSeekAlliance = true;
 				}
-			}else{
-				mustSeekAlliance = true;
-			}
 
-			if(mustSeekAlliance){
-				foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-					if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 100f && !relationship.AreAllies()){
-						Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 100 or above threat and a less than 75 invasion value");
-						kingdom.SeekAllianceOfProtection ();
-						if(kingdom.alliancePool != null){
-							skipPhase2 = true;
+				if (mustSeekAlliance) {
+					foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
+						if (relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 100f && !relationship.AreAllies ()) {
+							Debug.Log (kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 100 or above threat and a less than 75 invasion value");
+							kingdom.SeekAllianceOfProtection ();
+							if (kingdom.alliancePool != null) {
+								skipPhase2 = true;
+							}
+							skipPhase4 = true;
+							break;
 						}
-						skipPhase4 = true;
-						break;
 					}
+
 				}
-
 			}
-
 		}
 		if(!skipPhase2){
 			Phase2 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);

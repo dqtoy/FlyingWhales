@@ -36,27 +36,30 @@ public static class SeeksBandwagon {
 			}
 		}
 
-		bool mustSeekAlliance = false;
-		//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
-		foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
-			if(relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f){
-				if (!relationship.AreAllies ()) {
-					mustSeekAlliance = true;
-					break;
+		if (kingdom.age >= 1) {
+			bool mustSeekAlliance = false;
+			//if there are kingdoms whose threat value is 50 or above that is not part of my alliance
+			foreach (KingdomRelationship relationship in kingdom.relationships.Values) {
+				if (relationship.isDiscovered && relationship.targetKingdomThreatLevel >= 20f) {
+					if (!relationship.AreAllies ()) {
+						mustSeekAlliance = true;
+						break;
+					}
+				}
+			}
+			if (mustSeekAlliance) {
+				//if i am not part of any alliance, create or join an alliance if possible
+				if (kingdom.alliancePool == null) {
+					Debug.Log (kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 50 or above threat and a less than 75 invasion value");
+					kingdom.SeekAllianceOfProtection ();
+					skipPhase4 = true;
+					if (kingdom.alliancePool != null) {
+						skipPhase2 = true;
+					}
 				}
 			}
 		}
-		if(mustSeekAlliance){
-			//if i am not part of any alliance, create or join an alliance if possible
-			if(kingdom.alliancePool == null){
-				Debug.Log(kingdom.name + " is seeking alliance because it has no allies, there is a kingdom that has 50 or above threat and a less than 75 invasion value");
-				kingdom.SeekAllianceOfProtection ();
-				skipPhase4 = true;
-				if(kingdom.alliancePool != null){
-					skipPhase2 = true;
-				}
-			}
-		}
+
 		if(!skipPhase2){
 			Phase2 (kingdom, skipPhase2, skipPhase3, skipPhase4, hasAllianceInWar);
 		}else{

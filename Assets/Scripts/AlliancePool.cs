@@ -40,7 +40,7 @@ public class AlliancePool {
 		for (int i = 0; i < this._kingdomsInvolved.Count; i++) {
 			KingdomRelationship relationshipTo = kingdom.GetRelationshipWithKingdom (this._kingdomsInvolved [i]);
 			KingdomRelationship relationshipFrom = this._kingdomsInvolved [i].GetRelationshipWithKingdom (kingdom);
-			if(relationshipTo.totalLike <= 0 || relationshipFrom.totalLike <= 0){
+			if(relationshipTo.totalLike <= 0 || relationshipFrom.totalLike <= 0 || relationshipTo.isAtWar || relationshipFrom.isAtWar){
 				canBeAccepted = false;
 				break;
 			}
