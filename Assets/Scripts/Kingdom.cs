@@ -2747,7 +2747,7 @@ public class Kingdom{
     internal int GetPopulationCapacity() {
         int populationCapacity = 0;
         for (int i = 0; i < cities.Count; i++) {
-            populationCapacity += 500 + (50 * cities[i].cityLevel);
+            populationCapacity += 300 + (50 * cities[i].cityLevel);
         }
         return populationCapacity;
     }

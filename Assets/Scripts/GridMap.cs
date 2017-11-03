@@ -245,38 +245,45 @@ public class GridMap : MonoBehaviour {
                 List<Region> adjacentRegions = new List<Region>(currRegion.adjacentRegions);
 
                 //can connect to up to 1 other city
-                if(Random.Range(0, 2) == 0 && currLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
+                if (Random.Range(0, 2) == 0 && currLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
                     List<Region> elligibleRegionsToConnectTo = new List<Region>(adjacentRegions.Where(x => x.connections.Count < RoadManager.Instance.maxConnections));
+                    elligibleRegionsToConnectTo = elligibleRegionsToConnectTo
+                        .OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.centerOfMass.transform.position)).ToList();
+
                     for (int k = 0; k < elligibleRegionsToConnectTo.Count; k++) {
                         Region otherRegion = elligibleRegionsToConnectTo[k];
-                        List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherRegion.centerOfMass, PATHFINDING_MODE.ROAD_CREATION);
+                        List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherRegion.centerOfMass, PATHFINDING_MODE.NO_MAJOR_ROADS);
                         if (path != null) {
-                            RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, otherRegion);
                             //RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
-                            RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherRegion.centerOfMass, PATHFINDING_MODE.ROAD_CREATION, ROAD_TYPE.MINOR);
-                            break;
+                            if(RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherRegion.centerOfMass, PATHFINDING_MODE.NO_MAJOR_ROADS, ROAD_TYPE.MINOR, true)) {
+                                RoadManager.Instance.ConnectLandmarkToRegion(currLandmark.location, otherRegion);
+                                break;
+                            }
                         }
                     }
                 }
 
-                //connect to 1 other landmark within the region or from an adjacent region
-                if (Random.Range(0, 2) == 0 && currLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
-                    List<Landmark> elligibleLandmarks = new List<Landmark>();
-                    elligibleLandmarks.AddRange(currRegion.landmarks.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections));
-                    currRegion.adjacentRegions.ForEach(x => elligibleLandmarks.AddRange(x.landmarks.Where(y => y.connections.Count < RoadManager.Instance.maxLandmarkConnections)));
-                    elligibleLandmarks.Remove(currLandmark);
+                ////connect to 1 other landmark within the region or from an adjacent region
+                //if (Random.Range(0, 2) == 0 && currLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
+                //    List<Landmark> elligibleLandmarks = new List<Landmark>();
+                //    elligibleLandmarks.AddRange(currRegion.landmarks.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections));
+                //    currRegion.adjacentRegions.ForEach(x => elligibleLandmarks.AddRange(x.landmarks.Where(y => y.connections.Count < RoadManager.Instance.maxLandmarkConnections)));
+                //    elligibleLandmarks.Remove(currLandmark);
+                //    elligibleLandmarks = elligibleLandmarks
+                //        .OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.location.transform.position)).Take(20).ToList();
 
-                    for (int k = 0; k < elligibleLandmarks.Count; k++) {
-                        Landmark otherLandmark = elligibleLandmarks[k];
-                        List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.ROAD_CREATION);
-                        if (path != null) {
-                            RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
-                            //RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
-                            RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.ROAD_CREATION, ROAD_TYPE.MINOR);
-                            break;
-                        }
-                    }
-                }
+                //    for (int k = 0; k < elligibleLandmarks.Count; k++) {
+                //        Landmark otherLandmark = elligibleLandmarks[k];
+                //        List<HexTile> path = PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.ROAD_CREATION);
+                //        if (path != null) {
+                //            //RoadManager.Instance.CreateRoad(path, ROAD_TYPE.MINOR);
+                //            if(RoadManager.Instance.SmartCreateRoad(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.ROAD_CREATION, ROAD_TYPE.MINOR, true)) {
+                //                RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
+                //                break;
+                //            }
+                //        }
+                //    }
+                //}
             }
         }
     }
