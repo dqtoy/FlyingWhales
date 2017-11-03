@@ -47,7 +47,7 @@ public class RelationshipItem : MonoBehaviour {
 //                }
 //                summary += rk.forTestingLikeModifier.ToString() + " Admin Modifier";
 //            }
-			summary += "\n\n TA: " + rk._theoreticalAttack.ToString() + ", TD: " + rk._theoreticalDefense.ToString();
+			summary += "\n\n TA: " + rk._theoreticalAttack.ToString();
 			summary += "\n RS: " + rk._relativeStrength.ToString() + ", RW: " + rk._relativeWeakness.ToString();
 
             UIManager.Instance.ShowRelationshipSummary(this.rk.targetKingdom.king, summary);

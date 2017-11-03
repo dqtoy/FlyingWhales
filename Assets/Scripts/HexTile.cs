@@ -1305,9 +1305,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
         "\n [b]Tech Points:[/b] " + this.city.techPoints.ToString() +
         "\n [b]Kingdom Base Weapons:[/b] " + this.city.kingdom.baseWeapons.ToString() +
-        "\n [b]Kingdom Base Armor:[/b] " + this.city.kingdom.baseArmor.ToString() +
+//        "\n [b]Kingdom Base Armor:[/b] " + this.city.kingdom.baseArmor.ToString() +
         "\n [b]Weapons Over Production:[/b] " + this.city.kingdom.GetWeaponOverProductionPercentage().ToString() + "%" + 
-        "\n [b]Armor Over Production:[/b] " + this.city.kingdom.GetArmorOverProductionPercentage().ToString() + "%" +
+//        "\n [b]Armor Over Production:[/b] " + this.city.kingdom.GetArmorOverProductionPercentage().ToString() + "%" +
         "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
         "\n [b]Region Population Growth:[/b] " + this.region.populationGrowth.ToString() +
         "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +

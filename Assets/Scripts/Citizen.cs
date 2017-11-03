@@ -1136,9 +1136,9 @@ public class Citizen {
         newKingdom.SetBaseWeapons(weaponsGained);
 
         //int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor * percentGained);
-        int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor / 3f);
-        sourceKingdom.AdjustBaseArmors(-armorGained);
-        newKingdom.SetBaseArmor(armorGained);
+//        int armorGained = Mathf.FloorToInt((float)sourceKingdom.baseArmor / 3f);
+//        sourceKingdom.AdjustBaseArmors(-armorGained);
+//        newKingdom.SetBaseArmor(armorGained);
 
         //Once a rebellion is declared, set source Kingdom's Stability back to 50
         sourceKingdom.ChangeStability(50);

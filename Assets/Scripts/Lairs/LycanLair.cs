@@ -19,15 +19,17 @@ public class LycanLair : Lair {
 		if (!this.isDead) {
 			if (this.region.occupant != null) {
 				int chance = UnityEngine.Random.Range(0,100);
-				if(chance < 35){
+				if(chance < 70){
 					//Damage to Weapons
 					int damage = UnityEngine.Random.Range(7,11);
 					DamageToWeapons(damage);
-				}else if(chance >= 35 && chance < 70){
-					//Damage to Armors
-					int damage = UnityEngine.Random.Range(7,11);
-					DamageToArmors(damage);
-				}else if(chance >= 70 && chance < 80){
+				}
+//				else if(chance >= 35 && chance < 70){
+//					//Damage to Armors
+//					int damage = UnityEngine.Random.Range(7,11);
+//					DamageToArmors(damage);
+//				}
+				else if(chance >= 70 && chance < 80){
 					//Damage to Population
 					int damage = UnityEngine.Random.Range(3,6);
 					DamageToPopulation(damage);

@@ -224,11 +224,11 @@ public class Lair {
 		kingdom.AdjustBaseWeapons (-damage);
 		Debug.Log (this.name + " damaged " + kingdom.name + "'s weapons by " + damage.ToString ());
 	}
-	internal void DamageToArmors(int damage){
-		Kingdom kingdom = this.region.occupant.kingdom;
-		kingdom.AdjustBaseArmors (-damage);
-		Debug.Log (this.name + " damaged " + kingdom.name + "'s armors by " + damage.ToString ());
-	}
+//	internal void DamageToArmors(int damage){
+//		Kingdom kingdom = this.region.occupant.kingdom;
+//		kingdom.AdjustBaseArmors (-damage);
+//		Debug.Log (this.name + " damaged " + kingdom.name + "'s armors by " + damage.ToString ());
+//	}
 	internal void DamageToPopulation(int damage){
 		Kingdom kingdom = this.region.occupant.kingdom;
 		kingdom.AdjustPopulation (-damage);

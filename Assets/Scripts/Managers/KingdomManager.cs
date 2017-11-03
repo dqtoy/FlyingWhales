@@ -314,9 +314,10 @@ public class KingdomManager : MonoBehaviour {
             allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.expansionRate).ToList();
         } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.WEAPONS) {
             allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.effectiveAttack).ToList();
-        } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.ARMOR) {
-            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.effectiveDefense).ToList();
-        }
+        } 
+//		else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.ARMOR) {
+//            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.effectiveDefense).ToList();
+//        }
         //allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.cities.Count).ToList();
         UIManager.Instance.UpdateKingdomSummary();
     }
@@ -438,7 +439,7 @@ public class KingdomManager : MonoBehaviour {
 //				highestEffectiveKingdom = effectiveAttDef;
 //			}
 //		}
-		this.kingdomRankings = this.kingdomRankings.OrderByDescending (x => (x.effectiveAttack + x.effectiveDefense)).ToList ();
+		this.kingdomRankings = this.kingdomRankings.OrderByDescending (x => x.effectiveAttack).ToList ();
 	}
 	private void MonthlyUpdateKingdomRankings(){
 		if(this.kingdomRankings.Count > 1){

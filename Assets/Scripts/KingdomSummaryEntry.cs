@@ -31,7 +31,7 @@ public class KingdomSummaryEntry : MonoBehaviour {
         citiesLbl.text = kingdom.cities.Count.ToString();
         expansionRateLbl.text = kingdom.expansionRate.ToString();
         weaponsLbl.text = kingdom.effectiveAttack.ToString();
-        armorLbl.text = kingdom.effectiveDefense.ToString();
+//        armorLbl.text = kingdom.effectiveDefense.ToString();
 
         
         EventDelegate.Set(nameLblEventTrigger.onClick, delegate () { SwitchKingdom(kingdom); });
@@ -39,8 +39,8 @@ public class KingdomSummaryEntry : MonoBehaviour {
         EventDelegate.Set(weaponLblEventTrigger.onHoverOver, delegate () { OnHoverWeapons(); });
         EventDelegate.Set(weaponLblEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideSmallInfo(); });
 
-        EventDelegate.Set(armorLblEventTrigger.onHoverOver, delegate () { OnHoverArmor(); });
-        EventDelegate.Set(armorLblEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideSmallInfo(); });
+//        EventDelegate.Set(armorLblEventTrigger.onHoverOver, delegate () { OnHoverArmor(); });
+//        EventDelegate.Set(armorLblEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideSmallInfo(); });
     }
 
     private void OnHoverWeapons() {
@@ -48,11 +48,11 @@ public class KingdomSummaryEntry : MonoBehaviour {
                                 + "\nSoldiers:[b] " + _kingdom.soldiers.ToString() + "[/b]";
         UIManager.Instance.ShowSmallInfo(textToDisplay);
     }
-    private void OnHoverArmor() {
-        string textToDisplay = "Total Armor:[b] " + _kingdom.baseArmor + "[/b]" 
-                                + "\nSoldiers:[b] " + _kingdom.soldiers.ToString() + "[/b]";
-        UIManager.Instance.ShowSmallInfo(textToDisplay);
-    }
+//    private void OnHoverArmor() {
+//		string textToDisplay = "Total Weapons:[b] " + _kingdom.baseWeapons + "[/b]" 
+//                                + "\nSoldiers:[b] " + _kingdom.soldiers.ToString() + "[/b]";
+//        UIManager.Instance.ShowSmallInfo(textToDisplay);
+//    }
 
     private void SwitchKingdom(Kingdom kingdom) {
         UIManager.Instance.SetKingdomAsActive(_kingdom);

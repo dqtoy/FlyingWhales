@@ -610,7 +610,7 @@ public class Warfare {
 		int totalAttDef = 0;
 		for (int i = 0; i < this._kingdomSideList[side].Count; i++) {
 			totalAttDef += this._kingdomSideList [side] [i].effectiveAttack;
-			totalAttDef += this._kingdomSideList [side] [i].effectiveDefense;
+//			totalAttDef += this._kingdomSideList [side] [i].effectiveDefense;
 		}
 		return totalAttDef;
 	}
