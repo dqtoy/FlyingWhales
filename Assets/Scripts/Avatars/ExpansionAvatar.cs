@@ -8,7 +8,7 @@ public class ExpansionAvatar : CitizenAvatar {
 
 	internal override void Init (Role citizenRole){
 		base.Init (citizenRole);
-		CreatePath (PATHFINDING_MODE.AVATAR);
+		CreatePath (PATHFINDING_MODE.USE_ROADS);
 	}
 
 	internal override void NewMove (){
