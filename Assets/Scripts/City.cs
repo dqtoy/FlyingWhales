@@ -195,7 +195,9 @@ public class City{
         _activeGuards = new List<Guard>();
         _cityBounds = 50f;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
-
+		GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+		increaseDueDate.AddMonths(1);
+		SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => ConsumeResources());
 		//if(!isRebel){
   //          hexTile.CheckLairsInRange ();
 		//	LevelUpBalanceOfPower();
@@ -206,9 +208,7 @@ public class City{
 		//	AddOneTimeResourceBenefits();
   //          Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
 		//	Messenger.AddListener("CitizenDied", CheckCityDeath);
-		//	GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-		//	increaseDueDate.AddMonths(1);
-		//	SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+
 		//}
 
     }
@@ -476,6 +476,44 @@ public class City{
 	}
 	internal void SetOreCount(int amount){
 		this._oreCount = amount;
+	}
+	private void ConsumeResources(){
+		if(!this.isDead){
+			ConsumeFood ();
+			ConsumeMaterial ();
+			ConsumeOre ();
+
+			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+			increaseDueDate.AddMonths(1);
+			SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => ConsumeResources());
+		}
+	}
+	private void ConsumeFood(){
+		int foodToBeConsumed = this.foodRequirement;
+		if(this._foodCount >= foodToBeConsumed){
+			AdjustFoodCount (foodToBeConsumed);
+		}else{
+			AdjustFoodCount (this._foodCount);
+			//Suffer Population Decline
+		}
+	}
+	private void ConsumeMaterial(){
+		int materialToBeConsumed = this.materialRequirement;
+		if(this._materialCount >= materialToBeConsumed){
+			AdjustMaterialCount (materialToBeConsumed);
+		}else{
+			AdjustMaterialCount (this._materialCount);
+			//Suffer No City Growth
+		}
+	}
+	private void ConsumeOre(){
+		int oreToBeConsumed = this.oreRequirement;
+		if(this._oreCount >= oreToBeConsumed){
+			AdjustOreCount (oreToBeConsumed);
+		}else{
+			AdjustOreCount (this._oreCount);
+			//Suffer No City Growth
+		}
 	}
 	#endregion
 
