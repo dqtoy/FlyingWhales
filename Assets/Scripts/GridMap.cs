@@ -209,23 +209,26 @@ public class GridMap : MonoBehaviour {
         allSpecialResources.Remove(RESOURCE.NONE);
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
-            int chanceResource = UnityEngine.Random.Range(0, 2);
+			//Region has a special resource
+//			if (allSpecialResources.Count <= 0) {
+//				allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
+//				allSpecialResources.Remove(RESOURCE.MANA_STONE);
+//				allSpecialResources.Remove(RESOURCE.COBALT);
+//				allSpecialResources.Remove(RESOURCE.MITHRIL);
+//				allSpecialResources.Remove(RESOURCE.NONE);
+//			}
+			RESOURCE specialResource = allSpecialResources[Random.Range(0, allSpecialResources.Count)];
+			currRegion.SetSpecialResource(specialResource);
+			currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
+			if(!ResourcesManager.Instance.AddResourceCount(specialResource)){
+				allSpecialResources.Remove (specialResource);
+			}
+//          int chanceResource = UnityEngine.Random.Range(0, 2);
             int chanceShrine = UnityEngine.Random.Range(0, 2);
             int chanceHabitat = UnityEngine.Random.Range(0, 2);
-            if (chanceResource == 0 && currRegion.landmarkCount < 2) {
-                //Region has a special resource
-                if (allSpecialResources.Count <= 0) {
-                    allSpecialResources = Utilities.GetEnumValues<RESOURCE>().ToList();
-                    allSpecialResources.Remove(RESOURCE.MANA_STONE);
-                    allSpecialResources.Remove(RESOURCE.COBALT);
-                    allSpecialResources.Remove(RESOURCE.MITHRIL);
-                    allSpecialResources.Remove(RESOURCE.NONE);
-                }
-                RESOURCE specialResource = allSpecialResources[Random.Range(0, allSpecialResources.Count)];
-                allSpecialResources.Remove(specialResource);
-                currRegion.SetSpecialResource(specialResource);
-            }
-            currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
+//            if (chanceResource == 0 && currRegion.landmarkCount < 2) {
+//              
+//            }
 
             if (chanceShrine == 0 && currRegion.landmarkCount < 2) {
                 currRegion.SetSummoningShrine();
