@@ -27,6 +27,9 @@ public class City{
     private int _maxGrowth;
 	private int _dailyGrowthResourceBenefits;
 	private float _productionGrowthPercentage;
+	private int _foodCount;
+	private int _materialCount;
+	private int _oreCount;
 
     //Balance of Power
     //private int _powerPoints;
@@ -136,6 +139,24 @@ public class City{
     internal float cityBounds {
         get { return _cityBounds; }
     }
+	internal int foodCount{
+		get { return this._foodCount; }
+	}
+	internal int materialCount{
+		get { return this._materialCount; }
+	}
+	internal int oreCount{
+		get { return this._oreCount; }
+	}
+	internal int foodRequirement{
+		get { return 4 + this.cityLevel; }
+	}
+	internal int materialRequirement{
+		get { return 4 + this.cityLevel; }
+	}
+	internal int oreRequirement{
+		get { return 4 + this.cityLevel; }
+	}
     #endregion
 
     public City(HexTile hexTile, Kingdom kingdom){
@@ -163,6 +184,9 @@ public class City{
         this.outerTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
 		this.raidLoyaltyExpiration = 0;
+		this._foodCount = 0;
+		this._materialCount = 0;
+		this._oreCount = 0;
 
         this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
@@ -404,7 +428,7 @@ public class City{
 		this._hp = (int)((float)this.maxHP * percentageHP);
 	}
 
-	#region Resource Production
+	#region Resource
     private int GetBaseDailyGrowth() {
 		int naturalResourceLevel = GetNaturalResourceLevel();
 		double workerValue = Math.Sqrt(5 * (_kingdom.workers / _kingdom.cities.Count));
@@ -423,18 +447,35 @@ public class City{
             this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
         }
     }
-    //internal void AdjustDailyGrowthBuffs(int adjustment) {
-    //    _dailyGrowthBuffs += adjustment;
-    //}
 	internal void UpdateDailyProduction(){
 		this._maxGrowth = 2000 + ((2000 + (2000 * this.ownedTiles.Count)) * this.ownedTiles.Count);
-		//this._dailyGrowthFromStructures = (int) Math.Sqrt(this._region.naturalResourceLevel[this.kingdom.race]) * 2;
-		//for (int i = 0; i < this.structures.Count; i++) {
-		//	HexTile currentStructure = this.structures [i];
-  //          if (!currentStructure.isPlagued) {
-		//		this._dailyGrowthFromStructures += 3;
-  //          }
-		//}
+	}
+	internal void AdjustFoodCount(int amount){
+		this._foodCount += amount;
+		if(this._foodCount < 0){
+			this._foodCount = 0;
+		}
+	}
+	internal void SetFoodCount(int amount){
+		this._foodCount = amount;
+	}
+	internal void AdjustMaterialCount(int amount){
+		this._materialCount += amount;
+		if(this._materialCount < 0){
+			this._materialCount = 0;
+		}
+	}
+	internal void SetMaterialCount(int amount){
+		this._materialCount = amount;
+	}
+	internal void AdjustOreCount(int amount){
+		this._oreCount += amount;
+		if(this._oreCount < 0){
+			this._oreCount = 0;
+		}
+	}
+	internal void SetOreCount(int amount){
+		this._oreCount = amount;
 	}
 	#endregion
 
@@ -643,7 +684,7 @@ public class City{
 	//	this.AddCitizenToCity(citizenToMove);
 	//}
 
-	internal Citizen CreateNewAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation){
+	internal Citizen CreateNewAgent(ROLE role, HexTile targetLocation, HexTile sourceLocation = null){
 		if(role == ROLE.GENERAL){
 			return null;
 		}
@@ -672,6 +713,9 @@ public class City{
 			citizen.assignedRole.targetLocation = targetLocation;
 			if(targetLocation != null){
 				citizen.assignedRole.targetCity = targetLocation.city;
+			}
+			if(sourceLocation != null){
+				citizen.assignedRole.location = sourceLocation;
 			}
 			//this.citizens.Remove (citizen);
 			return citizen;

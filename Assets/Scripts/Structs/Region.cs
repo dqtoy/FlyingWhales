@@ -219,6 +219,7 @@ public class Region {
             _tileWithSpecialResource.Occupy(occupant);
             CreateStructureOnSpecialResourceTile();
         }
+		StartProducing ();
     }
     internal void RemoveOccupant() {
         City previousOccupant = _occupant;
@@ -268,6 +269,7 @@ public class Region {
         if (_specialResource != RESOURCE.NONE) {
             _tileWithSpecialResource.Unoccupy();
         }
+		StopProducing ();
     }
     private void SetAdjacentRegionsAsVisibleForOccupant() {
         for (int i = 0; i < _adjacentRegions.Count; i++) {
@@ -735,5 +737,15 @@ public class Region {
 	}
 	internal void RemoveCorpseMoundTile(HexTile hexTile){
 		this._corpseMoundTiles.Remove (hexTile);
+	}
+
+	internal void StartProducing(){
+		Messenger.AddListener("OnDayEnd", ProduceResource);
+	}
+	internal void StopProducing(){
+		Messenger.RemoveListener("OnDayEnd", ProduceResource);
+	}
+	private void ProduceResource(){
+		this._tileWithSpecialResource.ProduceResource();
 	}
 }

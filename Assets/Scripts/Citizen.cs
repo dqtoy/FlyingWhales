@@ -184,7 +184,9 @@ public class Citizen {
             this.assignedRole = new GrandChancellor(this);
         } else if (role == ROLE.GRAND_MARSHAL) {
             this.assignedRole = new GrandMarshal(this);
-        } else {
+		} else if (role == ROLE.CARAVAN) {
+			this.assignedRole = new Caravan(this);
+		} else {
             this.assignedRole = null;
         }
     }

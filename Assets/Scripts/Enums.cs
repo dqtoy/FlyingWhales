@@ -121,7 +121,11 @@ public enum RESOURCE{
 	MITHRIL,
 	COBALT,
 }
-
+public enum RESOURCE_TYPE{
+	FOOD,
+	MATERIAL,
+	ORE,
+}
 public enum ROLE{
 	UNTRAINED,
 	FOODIE, //Farming or Hunting
@@ -159,7 +163,8 @@ public enum ROLE{
     GRAND_CHANCELLOR,
     GRAND_MARSHAL,
     QUEEN,
-    CROWN_PRINCE
+    CROWN_PRINCE,
+	CARAVAN
 }
 
 public enum KINGDOM_TYPE {
@@ -271,7 +276,8 @@ public enum EVENT_TYPES{
 	TRIBUTE,
 	INSTIGATION,
     REGRESSION,
-    RIOTING_SETTLEMENTS
+    RIOTING_SETTLEMENTS,
+	SEND_RESOURCES
 }
 public enum PLAYER_EVENT{
 	KINGDOM_DISCOVERY,

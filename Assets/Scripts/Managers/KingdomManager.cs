@@ -88,7 +88,7 @@ public class KingdomManager : MonoBehaviour {
         for (int i = 0; i < initialKingdomSetup.Count; i++) {
             InitialKingdom initialKingdom = initialKingdomSetup[i];
             RACE initialKingdomRace = initialKingdom.race;
-            List<Region> regionsToChooseFrom = allRegions.OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).Take(Mathf.FloorToInt((float)GridMap.Instance.numOfRegions / 3f)).ToList();
+			List<Region> regionsToChooseFrom = allRegions.Where(x => x.specialResource == RESOURCE.DEER || x.specialResource == RESOURCE.PIG || x.specialResource == RESOURCE.WHEAT || x.specialResource == RESOURCE.RICE).OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).Take(Mathf.FloorToInt((float)GridMap.Instance.numOfRegions / 3f)).ToList();
             Region regionForKingdom = regionsToChooseFrom[Random.Range(0, regionsToChooseFrom.Count)];
             allRegions.Remove(regionForKingdom);
             Kingdom newKingdom = GenerateNewKingdom(initialKingdomRace, new List<HexTile>() { regionForKingdom.centerOfMass }, true);
