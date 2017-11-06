@@ -1481,6 +1481,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         "\n [b]Weapons Over Production:[/b] " + this.city.kingdom.GetWeaponOverProductionPercentage().ToString() + "%" + 
 //        "\n [b]Armor Over Production:[/b] " + this.city.kingdom.GetArmorOverProductionPercentage().ToString() + "%" +
         "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
+		"\n [b]Population Count:[/b] " + this.city.population.ToString() +
         "\n [b]Region Population Growth:[/b] " + this.region.populationGrowth.ToString() +
         "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
         "\n [b]Kingdom Size:[/b] " + this.city.kingdom.kingdomSize.ToString() +

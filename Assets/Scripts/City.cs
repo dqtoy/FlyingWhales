@@ -41,6 +41,8 @@ public class City{
 	private int _slavesCount;
 	private int raidLoyaltyExpiration;
 
+	private int _population;
+
 	[Space(5)]
     [Header("Booleans")]
     //internal bool hasKing;
@@ -157,6 +159,9 @@ public class City{
 	internal int oreRequirement{
 		get { return 4 + this.cityLevel; }
 	}
+	internal int population {
+		get { return _population; }
+	}
     #endregion
 
     public City(HexTile hexTile, Kingdom kingdom){
@@ -195,6 +200,9 @@ public class City{
         _activeGuards = new List<Guard>();
         _cityBounds = 50f;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
+
+		AdjustPopulation (50);
+
 		GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 		increaseDueDate.AddMonths(1);
 		SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => ConsumeResources());
@@ -1132,4 +1140,18 @@ public class City{
         _activeGuards.Clear();
     }
     #endregion
+
+	#region Population
+	internal void AdjustPopulation(int adjustment) {
+		_population += adjustment;
+		if(_population <= 0) {
+			KillCity ();
+		}
+		KingdomManager.Instance.UpdateKingdomList();
+	}
+	internal void SetPopulation(int newPopulation) {
+		_population = newPopulation;
+		KingdomManager.Instance.UpdateKingdomList();
+	}
+	#endregion
 }
