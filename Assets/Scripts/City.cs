@@ -67,6 +67,8 @@ public class City{
     private List<Guard> _activeGuards;
     private float _cityBounds;
 
+	private int[] populationIncreasePool;
+
     #region getters/setters
     internal Region region {
         get { return _region; }
@@ -162,6 +164,9 @@ public class City{
 	internal int population {
 		get { return _population; }
 	}
+	internal int populationCapacity {
+		get { return 200 + (50 * this.cityLevel); }
+	}
     #endregion
 
     public City(HexTile hexTile, Kingdom kingdom){
@@ -197,6 +202,8 @@ public class City{
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
 		this._hp = this.maxHP;
+		this.populationIncreasePool = new int[]{ 15, 17, 19, 21, 23, 25 };
+
         _activeGuards = new List<Guard>();
         _cityBounds = 50f;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
@@ -205,7 +212,7 @@ public class City{
 
 		GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 		increaseDueDate.AddMonths(1);
-		SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => ConsumeResources());
+		SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => MonthlyAction());
 		//if(!isRebel){
   //          hexTile.CheckLairsInRange ();
 		//	LevelUpBalanceOfPower();
@@ -220,7 +227,15 @@ public class City{
 		//}
 
     }
+	private void MonthlyAction(){
+		if (!this.isDead) {
+			ConsumeResources ();
 
+			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+			increaseDueDate.AddMonths(1);
+			SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => ConsumeResources());
+		}
+	}
     internal void SetupInitialValues() {
         hexTile.CheckLairsInRange();
         //LevelUpBalanceOfPower();
@@ -486,15 +501,9 @@ public class City{
 		this._oreCount = amount;
 	}
 	private void ConsumeResources(){
-		if(!this.isDead){
-			ConsumeFood ();
-			ConsumeMaterial ();
-			ConsumeOre ();
-
-			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-			increaseDueDate.AddMonths(1);
-			SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => ConsumeResources());
-		}
+		ConsumeFood ();
+		ConsumeMaterial ();
+		ConsumeOre ();
 	}
 	private void ConsumeFood(){
 		int foodToBeConsumed = this.foodRequirement;
@@ -1142,6 +1151,11 @@ public class City{
     #endregion
 
 	#region Population
+	private void MonthlyPopulationAction(){
+		int populationIncrease = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
+		populationIncrease += this.cityLevel;
+		AdjustPopulation (populationIncrease);
+	}
 	internal void AdjustPopulation(int adjustment) {
 		_population += adjustment;
 		if(_population <= 0) {
