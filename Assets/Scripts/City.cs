@@ -230,6 +230,7 @@ public class City{
 	private void MonthlyAction(){
 		if (!this.isDead) {
 			ConsumeResources ();
+			IncreasePopulationPerMonth ();
 
 			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 			increaseDueDate.AddMonths(1);
@@ -1151,7 +1152,7 @@ public class City{
     #endregion
 
 	#region Population
-	private void MonthlyPopulationAction(){
+	private void IncreasePopulationPerMonth(){
 		int populationIncrease = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
 		populationIncrease += this.cityLevel;
 		AdjustPopulation (populationIncrease);
