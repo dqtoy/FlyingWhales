@@ -491,27 +491,27 @@ public class City{
 	private void ConsumeFood(){
 		int foodToBeConsumed = this.foodRequirement;
 		if(this._foodCount >= foodToBeConsumed){
-			AdjustFoodCount (foodToBeConsumed);
+			AdjustFoodCount (-foodToBeConsumed);
 		}else{
-			AdjustFoodCount (this._foodCount);
+			AdjustFoodCount (-this._foodCount);
 			//Suffer Population Decline
 		}
 	}
 	private void ConsumeMaterial(){
 		int materialToBeConsumed = this.materialRequirement;
 		if(this._materialCount >= materialToBeConsumed){
-			AdjustMaterialCount (materialToBeConsumed);
+			AdjustMaterialCount (-materialToBeConsumed);
 		}else{
-			AdjustMaterialCount (this._materialCount);
+			AdjustMaterialCount (-this._materialCount);
 			//Suffer No City Growth
 		}
 	}
 	private void ConsumeOre(){
 		int oreToBeConsumed = this.oreRequirement;
 		if(this._oreCount >= oreToBeConsumed){
-			AdjustOreCount (oreToBeConsumed);
+			AdjustOreCount (-oreToBeConsumed);
 		}else{
-			AdjustOreCount (this._oreCount);
+			AdjustOreCount (-this._oreCount);
 			//Suffer No City Growth
 		}
 	}
