@@ -13,8 +13,6 @@ public class ResourcesManager : MonoBehaviour {
 	public Dictionary<RESOURCE, int> resourceCountDict = new Dictionary<RESOURCE, int>();
 	void Awake(){
 		Instance = this;
-	}
-	void Start(){
 		for (int i = 0; i < foodCap.Length; i++) {
 			resourceCapDict.Add (foodCap [i].resource, foodCap [i].capacity);
 			resourceCountDict.Add (foodCap [i].resource, 0);
@@ -28,7 +26,6 @@ public class ResourcesManager : MonoBehaviour {
 			resourceCountDict.Add (oresCap [i].resource, 0);
 		}
 	}
-
 
 	/// <summary>
 	/// This will add resource count to track how many regions will only have a certain resource,
