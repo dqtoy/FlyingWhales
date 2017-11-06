@@ -234,7 +234,7 @@ public class City{
 
 			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 			increaseDueDate.AddMonths(1);
-			SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => ConsumeResources());
+			SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => MonthlyAction());
 		}
 	}
     internal void SetupInitialValues() {
@@ -1162,11 +1162,11 @@ public class City{
 		if(_population <= 0) {
 			KillCity ();
 		}
-		KingdomManager.Instance.UpdateKingdomList();
+//		KingdomManager.Instance.UpdateKingdomList();
 	}
 	internal void SetPopulation(int newPopulation) {
 		_population = newPopulation;
-		KingdomManager.Instance.UpdateKingdomList();
+//		KingdomManager.Instance.UpdateKingdomList();
 	}
 	#endregion
 }
