@@ -30,6 +30,7 @@ public class GridMap : MonoBehaviour {
 
     [Space(10)]
 	public List<GameObject> listHexes;
+    public List<HexTile> hexTiles;
     public List<Region> allRegions;
 	public HexTile[,] map;
 
@@ -47,6 +48,7 @@ public class GridMap : MonoBehaviour {
         //CameraMove.Instance.minimapCamera.transform.position
 		map = new HexTile[(int)width, (int)height];
 		listHexes = new List<GameObject>();
+        hexTiles = new List<HexTile>();
         int id = 1;
 		for (int x = 0;  x < width; x++){
 			for(int y = 0; y < height; y++){
@@ -63,6 +65,7 @@ public class GridMap : MonoBehaviour {
                 hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
                 hex.name = x + "," + y;
                 HexTile currHex = hex.GetComponent<HexTile>();
+                hexTiles.Add(currHex);
                 currHex.id = id;
                 currHex.tileName = hex.name;
                 currHex.xCoordinate = x;
@@ -301,15 +304,16 @@ public class GridMap : MonoBehaviour {
                 }
 
                 List<Region> adjacentRegions = new List<Region>(currRegion.adjacentRegions);
-                List<HexTile> tilesToChooseFrom = new List<HexTile>(adjacentRegions.Where(x => x.connections.Count < RoadManager.Instance.maxConnections)
-                    .Select(x => x.centerOfMass));
+                List<HexTile> tilesToChooseFrom = new List<HexTile>(adjacentRegions.Where(x => x.connections.Count < RoadManager.Instance.maxConnections 
+                    && !x.connections.Contains(currLandmark.location)).Select(x => x.centerOfMass));
 
                 for (int k = 0; k < adjacentRegions.Count; k++) {
-                    tilesToChooseFrom.AddRange(adjacentRegions[k].landmarks.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections)
-                        .Select(x => x.location));
+                    tilesToChooseFrom.AddRange(adjacentRegions[k].landmarks.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections &&
+                        !x.connections.Contains(currLandmark.location)).Select(x => x.location));
                 }
 
-                tilesToChooseFrom.AddRange(landmarksInRegion.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections).Select(x => x.location));
+                tilesToChooseFrom.AddRange(landmarksInRegion.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections 
+                    && !x.connections.Contains(currLandmark)).Select(x => x.location));
                 tilesToChooseFrom.Remove(currLandmark.location);
 
                 tilesToChooseFrom = tilesToChooseFrom.OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.transform.position)).ToList();

@@ -17,11 +17,27 @@ public class RoadManager : MonoBehaviour {
     public int maxLandmarkConnections;
 
     private List<HexTile> _roadTiles;
+    private List<HexTile> _minorRoadTiles;
+    private List<HexTile> _majorRoadTiles;
+
+    #region getters/setters
+    internal List<HexTile> roadTiles {
+        get { return _roadTiles; }
+    }
+    internal List<HexTile> minorRoadTiles {
+        get { return _minorRoadTiles; }
+    }
+    internal List<HexTile> majorRoadTiles {
+        get { return _majorRoadTiles; }
+    }
+    #endregion
 
     // Use this for initialization
     void Awake() {
         Instance = this;
         _roadTiles = new List<HexTile>();
+        _majorRoadTiles = new List<HexTile>();
+        _minorRoadTiles = new List<HexTile>();
     }
 
 
@@ -477,8 +493,19 @@ public class RoadManager : MonoBehaviour {
         if (!_roadTiles.Contains(tile)) {
             _roadTiles.Add(tile);
         }
+        if(tile.roadType == ROAD_TYPE.MAJOR) {
+            if (_majorRoadTiles.Contains(tile)) {
+                _majorRoadTiles.Add(tile);
+            }
+        } else if (tile.roadType == ROAD_TYPE.MINOR) {
+            if (_minorRoadTiles.Contains(tile)) {
+                _minorRoadTiles.Add(tile);
+            }
+        }
     }
     public void RemoveTileAsRoadTile(HexTile tile) {
         _roadTiles.Remove(tile);
+        _majorRoadTiles.Remove(tile);
+        _minorRoadTiles.Remove(tile);
     }
 }

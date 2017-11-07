@@ -19,8 +19,8 @@ public class MapGenerator : MonoBehaviour {
         ObjectPoolManager.Instance.InitializeObjectPools();
         //CameraMove.Instance.SetMinimapCamValues();
         EquatorGenerator.Instance.GenerateEquator();
-		Biomes.Instance.GenerateElevation();
-		Biomes.Instance.GenerateBiome();
+        Biomes.Instance.GenerateElevation();
+        Biomes.Instance.GenerateBiome();
         GridMap.Instance.GenerateOuterGrid();
         PathfindingManager.Instance.CreateGrid();
         //Biomes.Instance.GenerateSpecialResources ();
@@ -40,10 +40,12 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateResourcesPerRegion();
         GridMap.Instance.GenerateOtherLandmarksPerRegion();
         GridMap.Instance.GenerateLandmarkExternalConnections();
+        Biomes.Instance.GenerateElevationAfterRoads();
         //      GridMap.Instance.GenerateLandmarksPerRegion();
         //GridMap.Instance.GenerateRoadConnectionLandmarkToCity();
         //GridMap.Instance.GenerateCityConnections ();
         //GridMap.Instance.GenerateExtraLandmarkConnections ();
+        Biomes.Instance.GenerateTileBiomeDetails();
         Biomes.Instance.GenerateTileDetails();
         //CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
