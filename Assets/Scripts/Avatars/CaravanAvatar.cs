@@ -21,7 +21,7 @@ public class CaravanAvatar : CitizenAvatar {
 		}
 		CreatePath (PATHFINDING_MODE.USE_ROADS);
 	}
-	internal virtual void NewMove() {
+	internal override void NewMove() {
 		if (this.citizenRole.targetLocation != null) {
 			if (this.citizenRole.path != null) {
 				if(this.citizenRole.targetLocation.city == null || (this.citizenRole.targetLocation.city != null && this.citizenRole.targetLocation.city.id != this.citizenRole.targetCity.id)){

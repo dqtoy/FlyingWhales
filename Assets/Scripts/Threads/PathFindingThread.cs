@@ -31,7 +31,8 @@ public class PathFindingThread {
 		bool isStartingTileRoad = _startingTile.isRoad;
 		bool isDestinationTileRoad = _destinationTile.isRoad;
 
-		if (_pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+		if (_pathfindingMode == PATHFINDING_MODE.USE_ROADS || _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM) {
 			_startingTile.isRoad = true;
 			_destinationTile.isRoad = true;
 		}
@@ -42,14 +43,16 @@ public class PathFindingThread {
 
 		var path = PathFind.PathFind.FindPath (_startingTile, _destinationTile, distance, estimate, _pathfindingMode, _kingdom);
 
-		if (_pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+		if (_pathfindingMode == PATHFINDING_MODE.USE_ROADS || _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+			|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM) {
 			_startingTile.isRoad = isStartingTileRoad;
 			_destinationTile.isRoad = isDestinationTileRoad;
 		}
 		if (path != null) {
 			if (_pathfindingMode == PATHFINDING_MODE.COMBAT || _pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
 				|| _pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION || _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS 
-				|| _pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+				|| _pathfindingMode == PATHFINDING_MODE.USE_ROADS || _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+				|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM) {
 				receivedPath = path.Reverse ().ToList ();
 			} else {
 				receivedPath = path.Reverse ().ToList ();

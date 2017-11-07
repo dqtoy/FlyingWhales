@@ -27,13 +27,15 @@ public class EventCreator: MonoBehaviour {
         float nearestDistance = 9999f;
         HexTile origin = null;
         //Get nearest region from hexTileToExpandTo
-        for (int i = 0; i < regionToExpandTo.adjacentRegions.Count; i++) {
-            Region currAdjacentRegion = regionToExpandTo.adjacentRegions[i];
-            float distance = hexTileToExpandTo.GetDistanceTo(currAdjacentRegion.centerOfMass);
-            if(currAdjacentRegion.occupant != null && currAdjacentRegion.occupant.kingdom == kingdom && distance < nearestDistance) {
-                origin = currAdjacentRegion.centerOfMass;
-                nearestDistance = distance;
-            }
+        for (int i = 0; i < regionToExpandTo.connections.Count; i++) {
+			if(regionToExpandTo.connections[i] is Region){
+				Region currAdjacentRegion = (Region)regionToExpandTo.connections[i];
+				float distance = hexTileToExpandTo.GetDistanceTo(currAdjacentRegion.centerOfMass);
+				if(currAdjacentRegion.occupant != null && currAdjacentRegion.occupant.kingdom == kingdom && distance < nearestDistance) {
+					origin = currAdjacentRegion.centerOfMass;
+					nearestDistance = distance;
+				}
+			}
         }
         if(origin == null) {
             throw new System.Exception("Could not find origin tile for expansion of " + kingdom.name + " to " + hexTileToExpandTo.name);

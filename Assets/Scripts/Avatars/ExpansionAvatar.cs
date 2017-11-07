@@ -8,7 +8,7 @@ public class ExpansionAvatar : CitizenAvatar {
 
 	internal override void Init (Role citizenRole){
 		base.Init (citizenRole);
-		CreatePath (PATHFINDING_MODE.USE_ROADS);
+		CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 	}
 
 	internal override void NewMove (){
@@ -18,7 +18,7 @@ public class ExpansionAvatar : CitizenAvatar {
 				if(hexTileToExpandTo != null){
 					this.citizenRole.targetLocation = hexTileToExpandTo;
 					((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;
-					CreatePath (PATHFINDING_MODE.USE_ROADS);
+					CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 					return;
 				}else{
 					CancelEventInvolvedIn ();
@@ -40,7 +40,7 @@ public class ExpansionAvatar : CitizenAvatar {
 				if(hexTileToExpandTo != null){
 					this.citizenRole.targetLocation = hexTileToExpandTo;
 					((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;
-					CreatePath (PATHFINDING_MODE.AVATAR);
+					CreatePath (PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM);
 					return;
 				}else{
 					CancelEventInvolvedIn ();
@@ -70,58 +70,58 @@ public class ExpansionAvatar : CitizenAvatar {
 //			Task.current.Fail();
 //		}
 //	}
-	[Task]
-	public void HasArrivedAtTargetHextile() {
-		if (this.citizenRole.location == this.citizenRole.targetLocation) {
-			if (!this.hasArrived) {
-				SetHasArrivedState(true);
-				EndAttack ();
-			}
-			Task.current.Succeed();
-		} else {
-			Task.current.Fail();
-		}
-
-	}
-	[Task]
-	public void HasDiedOfOtherReasons() {
-		if (this.citizenRole.citizen.isDead) {
-			//Citizen has died
-			this.citizenRole.gameEventInvolvedIn.DeathByOtherReasons();
-			Task.current.Succeed();
-		} else {
-			Task.current.Fail();
-		}
-	}
-	[Task]
-	public void CheckTargetLocation() {
-		if(this.citizenRole.targetLocation != null && this.citizenRole.targetLocation.isOccupied){
-			HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(this.citizenRole.citizen.city.kingdom);
-			if(hexTileToExpandTo != null){
-				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.citizenRole.location, hexTileToExpandTo, PATHFINDING_MODE.AVATAR);
-				if(newPath != null){
-					this.citizenRole.path = newPath;
-					this.citizenRole.targetLocation = hexTileToExpandTo;
-					((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;
-					Task.current.Fail();
-				}else{
-					CancelEventInvolvedIn ();
-					Task.current.Succeed();
-				}
-			}else{
-				CancelEventInvolvedIn ();
-				Task.current.Succeed();
-
-			}
-		}else{
-			Task.current.Fail();
-		}
-	}
-	[Task]
-	public void MoveToNextTile() {
-		Move();
-		Task.current.Succeed();
-	}
+//	[Task]
+//	public void HasArrivedAtTargetHextile() {
+//		if (this.citizenRole.location == this.citizenRole.targetLocation) {
+//			if (!this.hasArrived) {
+//				SetHasArrivedState(true);
+//				EndAttack ();
+//			}
+//			Task.current.Succeed();
+//		} else {
+//			Task.current.Fail();
+//		}
+//
+//	}
+//	[Task]
+//	public void HasDiedOfOtherReasons() {
+//		if (this.citizenRole.citizen.isDead) {
+//			//Citizen has died
+//			this.citizenRole.gameEventInvolvedIn.DeathByOtherReasons();
+//			Task.current.Succeed();
+//		} else {
+//			Task.current.Fail();
+//		}
+//	}
+//	[Task]
+//	public void CheckTargetLocation() {
+//		if(this.citizenRole.targetLocation != null && this.citizenRole.targetLocation.isOccupied){
+//			HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(this.citizenRole.citizen.city.kingdom);
+//			if(hexTileToExpandTo != null){
+//				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.citizenRole.location, hexTileToExpandTo, PATHFINDING_MODE.AVATAR);
+//				if(newPath != null){
+//					this.citizenRole.path = newPath;
+//					this.citizenRole.targetLocation = hexTileToExpandTo;
+//					((Expansion)this.citizenRole.gameEventInvolvedIn).hexTileToExpandTo = hexTileToExpandTo;
+//					Task.current.Fail();
+//				}else{
+//					CancelEventInvolvedIn ();
+//					Task.current.Succeed();
+//				}
+//			}else{
+//				CancelEventInvolvedIn ();
+//				Task.current.Succeed();
+//
+//			}
+//		}else{
+//			Task.current.Fail();
+//		}
+//	}
+//	[Task]
+//	public void MoveToNextTile() {
+//		Move();
+//		Task.current.Succeed();
+//	}
 //	[Task]
 //	public void HasDisappeared(){
 //		if (!this.citizenRole.location.isOccupied) {
