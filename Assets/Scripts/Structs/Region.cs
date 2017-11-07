@@ -562,8 +562,8 @@ public class Region {
                 elvenTilePoints += 1;
             } else if (currTile.elevationType == ELEVATION.WATER) {
                 //if current tile is water disregard any other additions
-                humanTilePoints += 3;
-                elvenTilePoints += 3;
+                humanTilePoints += 2;
+                elvenTilePoints += 2;
                 continue;
             }
             switch (currTile.biomeType) {
@@ -572,24 +572,24 @@ public class Region {
                     elvenTilePoints += 1;
                     break;
                 case BIOMES.TUNDRA:
-                    humanTilePoints += 2;
-                    elvenTilePoints += 2;
+                    humanTilePoints += 3;
+                    elvenTilePoints += 3;
                     break;
                 case BIOMES.DESERT:
-                    humanTilePoints += 3;
+                    humanTilePoints += 2;
                     elvenTilePoints += 1;
                     break;
                 case BIOMES.GRASSLAND:
-                    humanTilePoints += 6;
-                    elvenTilePoints += 3;
+                    humanTilePoints += 8;
+                    elvenTilePoints += 5;
                     break;
                 case BIOMES.WOODLAND:
                     humanTilePoints += 4;
-                    elvenTilePoints += 5;
+                    elvenTilePoints += 6;
                     break;
                 case BIOMES.FOREST:
-                    humanTilePoints += 2;
-                    elvenTilePoints += 6;
+                    humanTilePoints += 3;
+                    elvenTilePoints += 8;
                     break;
                 default:
                     break;
@@ -597,12 +597,12 @@ public class Region {
         }
 
         int increaseFromSpecialResource = 0;
-        if(_specialResource != RESOURCE.NONE) {
-            increaseFromSpecialResource = 3;
-        }
+        //if(_specialResource != RESOURCE.NONE) {
+        //    increaseFromSpecialResource = 3;
+        //}
 
-        _naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 10) + increaseFromSpecialResource;
-        _naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 10) + increaseFromSpecialResource;
+        _naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 15) + increaseFromSpecialResource;
+        _naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 15) + increaseFromSpecialResource;
 
         //_centerOfMass.SetTileText(specialResource.ToString() + "\n" +
         //    naturalResourceLevel[RACE.HUMANS].ToString() + "\n" +
