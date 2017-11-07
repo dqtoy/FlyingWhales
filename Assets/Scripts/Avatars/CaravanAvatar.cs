@@ -2,8 +2,23 @@
 using System.Collections;
 
 public class CaravanAvatar : CitizenAvatar {
+	public SpriteRenderer sprtCaravan;
+	public Sprite sprtFoodCaravan;
+	public Sprite sprtMaterialCaravan;
+	public Sprite sprtOreCaravan;
+
 	internal override void Init (Role citizenRole){
 		base.Init (citizenRole);
+		if(citizenRole.gameEventInvolvedIn is SendResource){
+			SendResource sendResource = (SendResource)citizenRole.gameEventInvolvedIn;
+			if(sendResource.resourceType == RESOURCE_TYPE.FOOD){
+				sprtCaravan.sprite = sprtFoodCaravan;
+			}else if(sendResource.resourceType == RESOURCE_TYPE.MATERIAL){
+				sprtCaravan.sprite = sprtMaterialCaravan;
+			}else if(sendResource.resourceType == RESOURCE_TYPE.ORE){
+				sprtCaravan.sprite = sprtOreCaravan;
+			}
+		}
 		CreatePath (PATHFINDING_MODE.USE_ROADS);
 	}
 	internal virtual void NewMove() {

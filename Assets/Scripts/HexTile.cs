@@ -406,19 +406,19 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		if(this.specialResourceType == RESOURCE_TYPE.FOOD){
 			if(this.resourceCount >= this.region.occupant.foodRequirement){
 				//Create Caravan
-				EventCreator.Instance.CreateSendResourceEvent(this.resourceCount, 0, 0, this, this.region.occupant.hexTile, this.region.occupant);
+				EventCreator.Instance.CreateSendResourceEvent(this.resourceCount, 0, 0, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
 				this.resourceCount = 0;
 			}
 		}else if(this.specialResourceType == RESOURCE_TYPE.MATERIAL){
 			if(this.resourceCount >= this.region.occupant.materialRequirement){
 				//Create Caravan
-				EventCreator.Instance.CreateSendResourceEvent(0, this.resourceCount, 0, this, this.region.occupant.hexTile, this.region.occupant);
+				EventCreator.Instance.CreateSendResourceEvent(0, this.resourceCount, 0, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
 				this.resourceCount = 0;
 			}
 		}else if(this.specialResourceType == RESOURCE_TYPE.ORE){
 			if(this.resourceCount >= this.region.occupant.oreRequirement){
 				//Create Caravan
-				EventCreator.Instance.CreateSendResourceEvent(0, 0, this.resourceCount, this, this.region.occupant.hexTile, this.region.occupant);
+				EventCreator.Instance.CreateSendResourceEvent(0, 0, this.resourceCount, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
 				this.resourceCount = 0;
 			}
 		}

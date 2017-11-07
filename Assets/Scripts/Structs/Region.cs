@@ -40,6 +40,11 @@ public class Region {
     private List<object> _connections;
     private List<HexTile> _roadTilesInRegion;
 
+	internal int foodMultiplierCapacity;
+	internal int materialMultiplierCapacity;
+	internal int oreMultiplierCapacity;
+
+
     #region getters/sertters
 	internal int id {
 		get { return this._id; }
@@ -108,6 +113,9 @@ public class Region {
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
         SetSpecialResource(RESOURCE.NONE);
+		this.foodMultiplierCapacity = 2;
+		this.materialMultiplierCapacity = 2;
+		this.oreMultiplierCapacity = 2;
 
         //Generate population growth
         int[] possiblePopulationGrowths = new int[] { 4, 5, 6, 7, 8, 9 };
@@ -311,7 +319,15 @@ public class Region {
             if (_tileWithSpecialResource != null) {
                 this._landmarkCount += 1;
                 _specialResource = resource;
+				if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
+					this.foodMultiplierCapacity = 3;
+				}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
+					this.materialMultiplierCapacity = 3;
+				}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
+					this.oreMultiplierCapacity = 3;
+				}
             }
+
         } else {
             _specialResource = resource;
         }        

@@ -46,10 +46,10 @@ public class EventCreator: MonoBehaviour {
 		}
 		return null;
 	}
-	internal SendResource CreateSendResourceEvent(int foodAmount, int materialAmount, int oreAmount, HexTile sourceLocation, HexTile targetLocation, City sourceCity){
+	internal SendResource CreateSendResourceEvent(int foodAmount, int materialAmount, int oreAmount, RESOURCE_TYPE resourceType, HexTile sourceLocation, HexTile targetLocation, City sourceCity){
 		Citizen caravan = sourceCity.CreateNewAgent (ROLE.CARAVAN, targetLocation, sourceLocation);
 		if(caravan != null){
-			SendResource sendResource = new SendResource (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, caravan, foodAmount, materialAmount, oreAmount);
+			SendResource sendResource = new SendResource (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, caravan, foodAmount, materialAmount, oreAmount, resourceType);
 			caravan.assignedRole.Initialize (sendResource);
 			return sendResource;
 		}
