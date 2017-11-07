@@ -73,7 +73,6 @@ namespace PathFind {
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
-<<<<<<< HEAD
 				} else if (pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS) {
 					foreach (Node n in path.LastStep.MajorRoadTiles) {
 						if (n.tileTag != start.tileTag) {
@@ -108,9 +107,14 @@ namespace PathFind {
 						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
 					}
 				} else if (pathfindingMode == PATHFINDING_MODE.AVATAR) {
-                    foreach (Node n in path.LastStep.AvatarTiles) {
-                        if (n.tileTag != start.tileTag) {
-=======
+					foreach (Node n in path.LastStep.AvatarTiles) {
+						if (n.tileTag != start.tileTag) {
+							continue;
+						}
+						d = distance (path.LastStep, n);
+						newPath = path.AddStep (n, d);
+						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
+					}
                 } else if (pathfindingMode == PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION) {
                     foreach (Node n in path.LastStep.LandmarkExternalConnectionTiles) {
                         if (n.region.id != region1.id && n.region.id != region2.id) {
@@ -121,7 +125,6 @@ namespace PathFind {
                             continue;
                         }
                         if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
->>>>>>> 2c70a6daacdd90fd4cd6e73dd16cd525cc4b80b4
                             continue;
                         }
                         //if (n.RoadTiles.Count > 0 && n.id != start.id && n.id != destination.id) {
