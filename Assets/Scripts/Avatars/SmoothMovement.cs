@@ -41,7 +41,7 @@ public class SmoothMovement : MonoBehaviour {
 		if(this.isMoving && !GameManager.Instance.isPaused){
 //			this.step = Time.smoothDeltaTime / GameManager.Instance.progressionSpeed;
 //			this.timeSinceStarted += this.step;
-			this.avatarGO.transform.position = Vector3.MoveTowards (this.avatarGO.transform.position, this.targetPosition, (10f - (GameManager.Instance.progressionSpeed * 4f)) * Time.deltaTime);
+			this.avatarGO.transform.position = Vector3.MoveTowards (this.avatarGO.transform.position, this.targetPosition, (10f - (GameManager.Instance.progressionSpeed * 4.8f)) * Time.deltaTime);
 			if(this.avatarGO.transform.position == this.targetPosition){
 				StopMoving ();
 			}
