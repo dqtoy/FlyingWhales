@@ -146,49 +146,184 @@ public class RoadManager : MonoBehaviour {
      * Generate roads connecting one region to another (center of mass -> center of mass)
      * </summary>
      * */
-    internal void GenerateRegionRoads() {
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            //Randomize number of connections from 1 - maxCityConnections
-            int numOfConnectionsForRegion = Random.Range(1, maxCityConnections + 1);
-            //Check if region is already connected to randomized number of regions
-            if(currRegion.connections.Count >= numOfConnectionsForRegion || currRegion.connections.Count >= maxCityConnections) {
-                //region is already connected to n amount of regions or has reached the maximum number of connections, skip it
-                continue;
+    internal bool GenerateRegionRoads() {
+        float startTime = Time.time;
+
+        List<Region> unconnectedRegions = new List<Region>(GridMap.Instance.allRegions);
+        Region activeRegion = unconnectedRegions[Random.Range(0, unconnectedRegions.Count)]; ;
+
+        int islandNum = 0;
+        Dictionary<Region, int> regionIslandDict = new Dictionary<Region, int>();
+        Dictionary<int, List<Region>> islands = new Dictionary<int, List<Region>>();
+
+        regionIslandDict.Add(activeRegion, islandNum);
+        for (int i = 0; i < unconnectedRegions.Count; i++) {
+            Region currRegion = unconnectedRegions[i];
+            if(currRegion.id != activeRegion.id) {
+                regionIslandDict.Add(currRegion, -1);
+            }
+        }
+        islands.Add(islandNum, new List<Region>() { activeRegion });
+
+        while (unconnectedRegions.Count > 0) {
+            //Choose a random region to start, the region must not have any connections yet
+            if (activeRegion == null) {
+                activeRegion = unconnectedRegions[Random.Range(0, unconnectedRegions.Count)];
+                islandNum++;
+                regionIslandDict[activeRegion] = islandNum;
+                islands.Add(islandNum, new List<Region>() { activeRegion });
             }
 
-            //Get adjacent regions that this region is not already connected to and has not exceeded the maximum number of connections
-            List<Region> elligibleRegionsToConnectTo = currRegion.adjacentRegions.Where(x => !currRegion.connections.Contains(x) && x.connections.Count < maxCityConnections).ToList();
-            if(elligibleRegionsToConnectTo.Count <= 0) {
-                //There are no elligible regions to connect to, skip
-                continue;
+            bool hasConnected = false;
+            //Order adjacent regions by least num of connections
+            List<Region> adjacentRegions = activeRegion.adjacentRegions.OrderBy(x => x.connections.Count).ToList();
+
+            //connect active region to any adjacent region, use rules
+            for (int i = 0; i < adjacentRegions.Count; i++) {
+                Region otherRegion = adjacentRegions[i];
+                //Check if other region has reached maximum number of city connections (3)
+                //and active region is not already connected to other region
+                if (otherRegion.connections.Count < maxCityConnections && !activeRegion.connections.Contains(otherRegion)) {
+                    //Check if active region has a path towards other region, use rules
+                    List<HexTile> pathToOtherRegion = PathGenerator.Instance.GetPath(activeRegion.centerOfMass, otherRegion.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
+                    if (pathToOtherRegion != null) {
+                        hasConnected = true;
+                        unconnectedRegions.Remove(activeRegion);
+                        unconnectedRegions.Remove(otherRegion);
+                        ConnectRegions(activeRegion, otherRegion);
+                        CreateRoad(pathToOtherRegion, ROAD_TYPE.MAJOR);
+
+                        int islandOfActiveRegion = regionIslandDict[activeRegion];//island ID of active region
+                        int previousIslandOfOtherRegion = regionIslandDict[otherRegion]; //Get island id of other region, -1 means it is not part of an island yet
+
+
+                        if(previousIslandOfOtherRegion == -1) {
+                            //other region is not part of an island yet, add it to the active regions' island
+                            regionIslandDict[otherRegion] = islandOfActiveRegion;
+                            islands[islandOfActiveRegion].Add(otherRegion);
+                        } else {
+                            if (islandOfActiveRegion != previousIslandOfOtherRegion) {
+                                List<Region> regionsInPreviousIsland = islands[previousIslandOfOtherRegion];
+                                for (int j = 0; j < regionsInPreviousIsland.Count; j++) {
+                                    Region regionToTransfer = regionsInPreviousIsland[j];
+                                    if (!islands[islandOfActiveRegion].Contains(regionToTransfer)) {
+                                        islands[islandOfActiveRegion].Add(regionToTransfer);
+                                    }
+                                    regionIslandDict[regionToTransfer] = islandOfActiveRegion;
+                                }
+                                islands.Remove(previousIslandOfOtherRegion);
+                            }
+                        }
+
+                        if(otherRegion.connections.Count >= 2) {
+                            //if the active region has connected to another region that already has 2 or more connections, 
+                            //randomize another active region
+                            activeRegion = null;
+                        } else {
+                            activeRegion = otherRegion;
+                        }
+                        break;
+                    }
+                }
             }
 
-            elligibleRegionsToConnectTo = elligibleRegionsToConnectTo.OrderByDescending(x => x.connections.Count).ToList();
-
-            //region has less connections that the randomized number of connections, generate n number of connections
-            //take into account this regions' current connections
-            int connectionsToGenerate = numOfConnectionsForRegion - currRegion.connections.Count;
-            if(connectionsToGenerate > elligibleRegionsToConnectTo.Count) {
-                connectionsToGenerate = elligibleRegionsToConnectTo.Count;
-            }
-
-            for (int j = 0; j < connectionsToGenerate; j++) {
-                Region regionToConnectTo = elligibleRegionsToConnectTo.First();
-                ConnectRegions(currRegion, regionToConnectTo);
-                elligibleRegionsToConnectTo.RemoveAt(0);
+            if (!hasConnected) {
+                Debug.LogWarning("Cannot connect " + activeRegion.centerOfMass.name + " to any region");
+                unconnectedRegions.Remove(activeRegion);
+                activeRegion = null;
             }
         }
 
-        //Check that all regions are connected to at least 1 other region, if not, connect that region to an adjacent region with the
-        //least amount of connections.
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            if(currRegion.connections.Count <= 0) {
-                Region regionToConnectTo = currRegion.adjacentRegions.OrderBy(x => x.connections.Count).First();
-                ConnectRegions(currRegion, regionToConnectTo);
+        //Connect Islands to each other
+        if (islands.Count > 1) {
+            if (!ConnectIslands(islands)) {
+                //failed to connect islands
+                return false;
             }
         }
+
+        //Check regions that have only 1 connection
+        List<Region> regionsToReconnect = GridMap.Instance.allRegions.Where(x => x.connections.Count == 1).ToList();
+        for (int i = 0; i < regionsToReconnect.Count; i++) {
+            Region currRegion = regionsToReconnect[i];
+            ConnectRegionToAdjacentRegion(currRegion);
+        }
+
+        //Get 1/4 of regions that have 2 connections
+        List<Region> regionsWith2Connections = GridMap.Instance.allRegions.Where(x => x.connections.Count == 2).ToList();
+        int numOfRegionsToReconnect = Mathf.FloorToInt(regionsWith2Connections.Count / 4);
+
+        for (int i = 0; i < numOfRegionsToReconnect; i++) {
+            Region chosenRegion = regionsWith2Connections[Random.Range(0, regionsWith2Connections.Count)];
+            regionsWith2Connections.Remove(chosenRegion);
+            ConnectRegionToAdjacentRegion(chosenRegion);
+        }
+
+        Debug.Log("Regions with no connections: " + GridMap.Instance.allRegions.Where(x => x.connections.Count == 0).Count().ToString());
+        Debug.Log("Regions with 1 connection: " + GridMap.Instance.allRegions.Where(x => x.connections.Count == 1).Count().ToString());
+        Debug.Log("Regions with 2 connections: " + GridMap.Instance.allRegions.Where(x => x.connections.Count == 2).Count().ToString());
+        Debug.Log("Regions with 3 connections: " + GridMap.Instance.allRegions.Where(x => x.connections.Count == 3).Count().ToString());
+        Debug.Log("Regions with 4 connections: " + GridMap.Instance.allRegions.Where(x => x.connections.Count == 4).Count().ToString());
+        return true;
+    }
+
+    private void ConnectRegionToAdjacentRegion(Region region) {
+        for (int i = 0; i < region.adjacentRegions.Count; i++) {
+            Region otherRegion = region.adjacentRegions[i];
+            //Check if other region has reached maximum number of city connections (3)
+            //and active region is not already connected to other region
+            if (region.connections.Count < maxCityConnections && otherRegion.connections.Count < maxCityConnections && !region.connections.Contains(otherRegion)) {
+                //Check if active region has a path towards other region, use rules
+                List<HexTile> pathToOtherRegion = PathGenerator.Instance.GetPath(region.centerOfMass, otherRegion.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
+                if (pathToOtherRegion != null) {
+                    ConnectRegions(region, otherRegion);
+                    CreateRoad(pathToOtherRegion, ROAD_TYPE.MAJOR);
+                    break;
+                }
+            }
+        }
+    }
+
+    private bool ConnectIslands(Dictionary<int, List<Region>> islands) {
+        int mainIslandKey = islands.Keys.First();
+        List<Region> regionsInMainIsland = islands[mainIslandKey];
+        for (int i = 1; i < islands.Keys.Count; i++) {
+            int otherIslandKey = islands.Keys.ElementAt(i);
+            List<Region> regionsInOtherIsland = islands[otherIslandKey];
+            bool hasFoundConnection = false;
+            //Find a possible connection for the 2 islands
+            for (int j = 0; j < regionsInMainIsland.Count; j++) {
+                Region currMainIslandRegion = regionsInMainIsland[j];
+                for (int k = 0; k < regionsInOtherIsland.Count; k++) {
+                    Region otherIslandRegion = regionsInOtherIsland[k];
+                    //Check if both regions are adjacent and still has a slot for connection
+                    if (currMainIslandRegion.connections.Count < maxCityConnections && otherIslandRegion.connections.Count < maxCityConnections
+                        && currMainIslandRegion.adjacentRegions.Contains(otherIslandRegion)) {
+                        //Check if the 2 regions have a path towards each other, using the rules
+                        List<HexTile> pathToOtherRegion = PathGenerator.Instance
+                            .GetPath(currMainIslandRegion.centerOfMass, otherIslandRegion.centerOfMass, PATHFINDING_MODE.REGION_CONNECTION);
+                        if (pathToOtherRegion != null) {
+                            islands[otherIslandKey].Clear();
+                            hasFoundConnection = true;
+                            ConnectRegions(currMainIslandRegion, otherIslandRegion);
+                            CreateRoad(pathToOtherRegion, ROAD_TYPE.MAJOR);
+                            break;
+                        }
+                    }
+                }
+                if (hasFoundConnection) {
+                    break;
+                }
+            }
+        }
+
+        for (int i = 1; i < islands.Keys.Count; i++) {
+            int otherIslandKey = islands.Keys.ElementAt(i);
+            if(islands[otherIslandKey].Count > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /*
@@ -200,12 +335,18 @@ public class RoadManager : MonoBehaviour {
     private void ConnectRegions(Region region1, Region region2) {
         region1.AddConnection(region2);
         region2.AddConnection(region1);
-        List<HexTile> connection = PathGenerator.Instance.GetPath(region1.centerOfMass, region2.centerOfMass, PATHFINDING_MODE.ROAD_CREATION);
-        if(connection == null) {
-            throw new System.Exception("Cannot connect " + region1.centerOfMass.name + " to " + region2.centerOfMass.name);
+        if (region1.connections.Count > RoadManager.Instance.maxCityConnections) {
+            throw new System.Exception("Exceeded maximum connections!");
         }
+        if (region2.connections.Count > RoadManager.Instance.maxCityConnections) {
+            throw new System.Exception("Exceeded maximum connections!");
+        }
+        //List<HexTile> connection = PathGenerator.Instance.GetPath(region1.centerOfMass, region2.centerOfMass, PATHFINDING_MODE.ROAD_CREATION);
+        //if(connection == null) {
+        //    throw new System.Exception("Cannot connect " + region1.centerOfMass.name + " to " + region2.centerOfMass.name);
+        //}
         //CreateRoad(connection, ROAD_TYPE.MAJOR);
-        SmartCreateRoad(region1.centerOfMass, region2.centerOfMass, PATHFINDING_MODE.ROAD_CREATION, ROAD_TYPE.MAJOR);
+        //SmartCreateRoad(region1.centerOfMass, region2.centerOfMass, PATHFINDING_MODE.ROAD_CREATION, ROAD_TYPE.MAJOR);
     }
 
     /*
@@ -240,13 +381,13 @@ public class RoadManager : MonoBehaviour {
         List<HexTile> path = PathGenerator.Instance.GetPath(start, destination, pathfindingMode);
         if (!forceConnectToDestination) {
             List<HexTile> roadTilesConnectedToDestination = null;
-            if (pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION) {
-                roadTilesConnectedToDestination = GetRoadTilesConnectedTo(destination, start, start.region);
-            } else if (pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS) {
-                roadTilesConnectedToDestination = GetMinorRoadTilesConnectedTo(destination, start);
-            } else {
+            //if (pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION) {
+            //    roadTilesConnectedToDestination = GetRoadTilesConnectedTo(destination, start, start.region);
+            //} else if (pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS) {
+            //    roadTilesConnectedToDestination = GetMinorRoadTilesConnectedTo(destination, start);
+            //} else {
                 roadTilesConnectedToDestination = GetRoadTilesConnectedTo(destination, start);
-            }
+            //}
             
             //order the road tiles based on their distance from the start tile
             roadTilesConnectedToDestination = new List<HexTile>(roadTilesConnectedToDestination.OrderBy(x => Vector2.Distance(start.transform.position, x.transform.position)));

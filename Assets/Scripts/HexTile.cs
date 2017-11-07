@@ -148,8 +148,15 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public List<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
 	public List<HexTile> MajorRoadTiles { get { return AllNeighbours.Where(o => o.isRoad && o._roadType == ROAD_TYPE.MAJOR).ToList(); } }
 	public List<HexTile> MinorRoadTiles { get { return AllNeighbours.Where(o => o.isRoad && o._roadType == ROAD_TYPE.MINOR).ToList(); } }
-	public List<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER).ToList();}}
-    public List<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList();}}
+//	public List<HexTile> CombatTiles { get { return AllNeighbours.Where (o => o.elevationType != ELEVATION.WATER).ToList();}}
+//    public List<HexTile> AvatarTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList();}}
+//    public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); }}
+    public List<HexTile> RegionConnectionTiles { get { return NoWaterTiles.Where(o => !o.isRoad).ToList(); } }
+    public List<HexTile> LandmarkConnectionTiles { get { return NoWaterTiles.Where(o => !o.isRoad || (o.isRoad && o.roadType != ROAD_TYPE.MAJOR)).ToList(); }}
+    public List<HexTile> LandmarkExternalConnectionTiles { get { return NoWaterTiles.Where(o => !o.isRoad).ToList(); } }
+//    public List<HexTile> RoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); }}
+	public List<HexTile> CombatTiles { get { return NoWaterTiles; }}
+    public List<HexTile> AvatarTiles { get { return NoWaterTiles; }}
 
     public List<HexTile> sameTagNeighbours;
 
@@ -1062,6 +1069,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #endregion
 
     #region Tile Functions
+    public void DisableColliders() {
+        this.GetComponent<Collider2D>().enabled = false;
+        Collider[] colliders = this.GetComponentsInChildren<Collider>();
+        for (int i = 0; i < colliders.Length; i++) {
+            colliders[i].enabled = false;
+        }
+    }
     /*
      * Reset all values for this tile.
      * NOTE: This will set the structure to ruined.
