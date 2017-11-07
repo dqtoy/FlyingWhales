@@ -636,6 +636,11 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     #region Tile Visuals
     internal void SetSortingOrder(int sortingOrder) {
         GetComponent<SpriteRenderer>().sortingOrder = sortingOrder;
+        UpdateSortingOrder();
+    }
+
+    internal void UpdateSortingOrder() {
+        int sortingOrder = GetComponent<SpriteRenderer>().sortingOrder;
         if (elevationType == ELEVATION.MOUNTAIN) {
             centerPiece.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder + 56;
         } else {
