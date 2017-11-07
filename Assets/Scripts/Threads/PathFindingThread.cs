@@ -47,9 +47,7 @@ public class PathFindingThread {
 			_destinationTile.isRoad = isDestinationTileRoad;
 		}
 		if (path != null) {
-			if (_pathfindingMode == PATHFINDING_MODE.COMBAT || _pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
-				|| _pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION || _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS 
-				|| _pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
+			if (_pathfindingMode == PATHFINDING_MODE.COMBAT || _pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
 				receivedPath = path.Reverse ().ToList ();
 			} else {
 				receivedPath = path.Reverse ().ToList ();

@@ -1,10 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class MapGenerator : MonoBehaviour {
 
-	void Start() {
+    public static MapGenerator Instance = null;
+
+    private void Awake() {
+        Instance = this;
+    }
+
+    internal void Start() {
         //StartCoroutine (StartGeneration());
         PathfindingManager.Instance.Initialize();
         GridMap.Instance.GenerateGrid();
@@ -14,13 +21,24 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
 		Biomes.Instance.GenerateElevation();
 		Biomes.Instance.GenerateBiome();
+        GridMap.Instance.GenerateOuterGrid();
         PathfindingManager.Instance.CreateGrid();
         //Biomes.Instance.GenerateSpecialResources ();
         Biomes.Instance.GenerateTileTags();
         GridMap.Instance.GenerateNeighboursWithSameTag();
-        GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
-        RoadManager.Instance.GenerateRegionRoads();
-        GridMap.Instance.GenerateLandmarksPerRegion();
+        if(!GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel)) {
+            Debug.LogWarning("Region generation ran into a problem, reloading scene...");
+            ReloadScene();
+            return;
+        }
+        if (!RoadManager.Instance.GenerateRegionRoads()) {
+            //reset
+            Debug.LogWarning("Road generation ran into a problem, reloading scene...");
+            ReloadScene();
+            return;
+        }
+        GridMap.Instance.GenerateResourcesPerRegion();
+        GridMap.Instance.GenerateOtherLandmarksPerRegion();
         GridMap.Instance.GenerateLandmarkExternalConnections();
         //      GridMap.Instance.GenerateLandmarksPerRegion();
         //GridMap.Instance.GenerateRoadConnectionLandmarkToCity();
@@ -44,6 +62,11 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
         CameraMove.Instance.SetMinimapCameraPosition();
+        
+    }
+
+    internal void ReloadScene() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 //	private IEnumerator StartGeneration(){
 //		GridMap.Instance.GenerateGrid();
