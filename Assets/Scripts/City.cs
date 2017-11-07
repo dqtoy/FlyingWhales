@@ -167,6 +167,15 @@ public class City{
 	internal int populationCapacity {
 		get { return 200 + (50 * this.cityLevel); }
 	}
+	internal int foodCapacity{
+		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
+	}
+	internal int materialCapacity{
+		get { return this._region.materialMultiplierCapacity * this.materialRequirement; }
+	}
+	internal int oreCapacity{
+		get { return this._region.oreMultiplierCapacity * this.oreRequirement; }
+	}
     #endregion
 
     public City(HexTile hexTile, Kingdom kingdom){
@@ -452,7 +461,7 @@ public class City{
 		this._hp = (int)((float)this.maxHP * percentageHP);
 	}
 
-	#region Resource
+	#region Resources
     private int GetBaseDailyGrowth() {
 		int naturalResourceLevel = GetNaturalResourceLevel();
 		double workerValue = Math.Sqrt(5 * (_kingdom.workers / _kingdom.cities.Count));
@@ -542,6 +551,27 @@ public class City{
 			if(chance < 5){
 				this.RemoveTileFromCity (this.structures [this.structures.Count - 1]);
 			}
+		}
+	}
+	private void CheckFoodSupply(){
+		int foodCap = this.foodCapacity;
+		if(this.foodCount > foodCap){
+			int excessFood = this.foodCount - foodCap;
+			//Send caravan to other cities to give excess food
+		}
+	}
+	private void CheckMaterialSupply(){
+		int materialCap = this.materialCapacity;
+		if(this.materialCount > materialCap){
+			int excessMaterial = this.materialCount - materialCap;
+			//Send caravan to other cities to give excess material
+		}
+	}
+	private void CheckOreSupply(){
+		int oreCap = this.oreCapacity;
+		if(this.oreCount > oreCap){
+			int excessOre = this.oreCount - oreCap;
+			//Send caravan to other cities to give excess ore
 		}
 	}
 	#endregion

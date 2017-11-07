@@ -9,13 +9,16 @@ public class SendResource : GameEvent {
 	internal int materialAmount;
 	internal int oreAmount;
 
-	public SendResource(int startDay, int startMonth, int startYear, Citizen startedBy, int foodAmount, int materialAmount, int oreAmount) : base (startDay, startMonth, startYear, startedBy){
+	internal RESOURCE_TYPE resourceType;
+
+	public SendResource(int startDay, int startMonth, int startYear, Citizen startedBy, int foodAmount, int materialAmount, int oreAmount, RESOURCE_TYPE resourceType) : base (startDay, startMonth, startYear, startedBy){
 		this.eventType = EVENT_TYPES.SEND_RESOURCES;
 		this.name = "Send Resources";
 		this.caravan = (Caravan)startedBy.assignedRole;
 		this.foodAmount = foodAmount;
 		this.materialAmount = materialAmount;
 		this.oreAmount = oreAmount;
+		this.resourceType = resourceType;
 	}
 
 	#region Overrides
