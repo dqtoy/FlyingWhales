@@ -49,7 +49,7 @@ public class CitizenAvatar : PooledObject {
         this.smoothMovement.onMoveFinihed += OnMoveFinished;
         visibleTiles = new List<HexTile>();
         childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
-
+		SetHasArrivedState (false);
         if(citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
             SetAvatarState(true);
         } else {
@@ -90,16 +90,16 @@ public class CitizenAvatar : PooledObject {
         }
     }
 	internal virtual void NewMove() {
-		if (this.citizenRole.targetLocation != null) {
-			if (this.citizenRole.path != null) {
-				if (this.citizenRole.path.Count > 0) {
-					this.citizenRole.location.ExitCitizen (this.citizenRole.citizen);
-					this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
-				}else{
-					CancelEventInvolvedIn ();
-				}
-			}
-		}
+//		if (this.citizenRole.targetLocation != null) {
+//			if (this.citizenRole.path != null) {
+//				if (this.citizenRole.path.Count > 0) {
+//					this.citizenRole.location.ExitCitizen (this.citizenRole.citizen);
+//					this.MakeCitizenMove(this.citizenRole.location, this.citizenRole.path[0]);
+//				}else{
+//					CancelEventInvolvedIn ();
+//				}
+//			}
+//		}
 	}
 
     internal virtual void OnMoveFinished() {
@@ -178,7 +178,7 @@ public class CitizenAvatar : PooledObject {
 //        ResetBehaviourTree();
 //        RemoveBehaviourTree();
         UnHighlightPath();
-        SetHasArrivedState(false);
+//        SetHasArrivedState(false);
         //this.citizenRole = null;
 //        animator.Rebind();
         this.direction = DIRECTION.LEFT;

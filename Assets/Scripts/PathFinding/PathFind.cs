@@ -73,6 +73,48 @@ namespace PathFind {
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
+				} else if (pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS) {
+					foreach (Node n in path.LastStep.MajorRoadTiles) {
+						if (n.tileTag != start.tileTag) {
+							continue;
+						}
+						d = distance(path.LastStep, n);
+						newPath = path.AddStep(n, d);
+						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+					}
+				}  else if (pathfindingMode == PATHFINDING_MODE.MINOR_ROADS) {
+					foreach (Node n in path.LastStep.MinorRoadTiles) {
+						if (n.tileTag != start.tileTag) {
+							continue;
+						}
+						d = distance(path.LastStep, n);
+						newPath = path.AddStep(n, d);
+						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+					}
+				} else if (pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM) {
+					if (kingdom == null) {
+						throw new Exception("Someone is trying to pathfind using MAJOR_ROADS_ONLY_KINGDOM, but hasn't specified a kingdom!");
+					}
+					foreach (Node n in path.LastStep.MajorRoadTiles) {
+						if (n.tileTag != start.tileTag) {
+							continue;
+						}
+						if(n.city != null && n.city.kingdom.id != kingdom.id){
+							continue;
+						}
+						d = distance(path.LastStep, n);
+						newPath = path.AddStep(n, d);
+						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+					}
+				} else if (pathfindingMode == PATHFINDING_MODE.AVATAR) {
+					foreach (Node n in path.LastStep.AvatarTiles) {
+						if (n.tileTag != start.tileTag) {
+							continue;
+						}
+						d = distance (path.LastStep, n);
+						newPath = path.AddStep (n, d);
+						queue.Enqueue (newPath.TotalCost + estimate (n), newPath);
+					}
                 } else if (pathfindingMode == PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION) {
                     foreach (Node n in path.LastStep.LandmarkExternalConnectionTiles) {
                         if (n.region.id != region1.id && n.region.id != region2.id) {

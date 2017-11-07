@@ -228,11 +228,14 @@ public class CityGenerator : MonoBehaviour {
         List<Region> unoccupiedAdjacentRegions = new List<Region>();
         for (int i = 0; i < kingdom.cities.Count; i++) {
             Region currRegion = kingdom.cities[i].region;
-            for (int j = 0; j < currRegion.adjacentRegions.Count; j++) {
-                Region adjacentRegion = currRegion.adjacentRegions[j];
-                if(adjacentRegion.occupant == null && currRegion.connections.Contains(adjacentRegion)) {
-                    unoccupiedAdjacentRegions.Add(adjacentRegion);
-                }
+            for (int j = 0; j < currRegion.connections.Count; j++) {
+				if(currRegion.connections[j] is Region){
+					Region adjacentRegion = (Region)currRegion.connections[j];
+					if(adjacentRegion.occupant == null) {
+						unoccupiedAdjacentRegions.Add(adjacentRegion);
+					}
+				}
+
             }
         }
         if(unoccupiedAdjacentRegions.Count > 0) {

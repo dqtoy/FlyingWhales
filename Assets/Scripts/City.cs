@@ -167,14 +167,23 @@ public class City{
 	internal int populationCapacity {
 		get { return 200 + (50 * this.cityLevel); }
 	}
-	internal int foodCapacity{
+	internal int foodExcessCapacity{
 		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
 	}
-	internal int materialCapacity{
+	internal int materialExcessCapacity{
 		get { return this._region.materialMultiplierCapacity * this.materialRequirement; }
 	}
-	internal int oreCapacity{
+	internal int oreExcessCapacity{
 		get { return this._region.oreMultiplierCapacity * this.oreRequirement; }
+	}
+	internal int foodCapacity{
+		get { return 10 * this.foodRequirement; }
+	}
+	internal int materialCapacity{
+		get { return 10 * this.materialRequirement; }
+	}
+	internal int oreCapacity{
+		get { return 10 * this.oreRequirement; }
 	}
     #endregion
 
@@ -485,27 +494,21 @@ public class City{
 	}
 	internal void AdjustFoodCount(int amount){
 		this._foodCount += amount;
-		if(this._foodCount < 0){
-			this._foodCount = 0;
-		}
+		this._foodCount = Mathf.Clamp (this._foodCount, 0, this.foodCapacity);
 	}
 	internal void SetFoodCount(int amount){
 		this._foodCount = amount;
 	}
 	internal void AdjustMaterialCount(int amount){
 		this._materialCount += amount;
-		if(this._materialCount < 0){
-			this._materialCount = 0;
-		}
+		this._materialCount = Mathf.Clamp (this._materialCount, 0, this.materialCapacity);
 	}
 	internal void SetMaterialCount(int amount){
 		this._materialCount = amount;
 	}
 	internal void AdjustOreCount(int amount){
 		this._oreCount += amount;
-		if(this._oreCount < 0){
-			this._oreCount = 0;
-		}
+		this._oreCount = Mathf.Clamp (this._oreCount, 0, this.oreCapacity);
 	}
 	internal void SetOreCount(int amount){
 		this._oreCount = amount;
@@ -554,21 +557,21 @@ public class City{
 		}
 	}
 	private void CheckFoodSupply(){
-		int foodCap = this.foodCapacity;
+		int foodCap = this.foodExcessCapacity;
 		if(this.foodCount > foodCap){
 			int excessFood = this.foodCount - foodCap;
 			//Send caravan to other cities to give excess food
 		}
 	}
 	private void CheckMaterialSupply(){
-		int materialCap = this.materialCapacity;
+		int materialCap = this.materialExcessCapacity;
 		if(this.materialCount > materialCap){
 			int excessMaterial = this.materialCount - materialCap;
 			//Send caravan to other cities to give excess material
 		}
 	}
 	private void CheckOreSupply(){
-		int oreCap = this.oreCapacity;
+		int oreCap = this.oreExcessCapacity;
 		if(this.oreCount > oreCap){
 			int excessOre = this.oreCount - oreCap;
 			//Send caravan to other cities to give excess ore
