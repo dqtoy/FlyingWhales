@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: be352ea3d46036640bb6df35b7b4dc2b
-timeCreated: 1509690524
+timeCreated: 1510039776
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -27,6 +27,9 @@ TextureImporter:
     21300040: Resources Icons_4
     21300042: Resources Icons_5
     21300044: Resources Icons_6
+    21300046: Resources Icons_7
+    21300048: Resources Icons_8
+    21300050: Resources Icons_9
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -248,10 +251,10 @@ TextureImporter:
       name: Resources Icons_0
       rect:
         serializedVersion: 2
-        x: 278
-        y: 461
-        width: 128
-        height: 145
+        x: 275
+        y: 464
+        width: 129
+        height: 146
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -330,6 +333,45 @@ TextureImporter:
         y: 29
         width: 124
         height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Resources Icons_7
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 174
+        width: 124
+        height: 123
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Resources Icons_8
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 27
+        width: 125
+        height: 122
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Resources Icons_9
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 318
+        width: 122
+        height: 129
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

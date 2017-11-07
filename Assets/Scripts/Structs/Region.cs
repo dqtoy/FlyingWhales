@@ -40,6 +40,11 @@ public class Region {
     private List<object> _connections;
     private List<HexTile> _roadTilesInRegion;
 
+	internal int foodMultiplierCapacity;
+	internal int materialMultiplierCapacity;
+	internal int oreMultiplierCapacity;
+
+
     #region getters/sertters
 	internal int id {
 		get { return this._id; }
@@ -108,6 +113,9 @@ public class Region {
         AddTile(_centerOfMass);
         regionColor = Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
         SetSpecialResource(RESOURCE.NONE);
+		this.foodMultiplierCapacity = 2;
+		this.materialMultiplierCapacity = 2;
+		this.oreMultiplierCapacity = 2;
 
         //Generate population growth
         int[] possiblePopulationGrowths = new int[] { 4, 5, 6, 7, 8, 9 };
@@ -233,6 +241,7 @@ public class Region {
             _tileWithSpecialResource.Occupy(occupant);
             CreateStructureOnSpecialResourceTile();
         }
+		StartProducing ();
     }
     internal void RemoveOccupant() {
         City previousOccupant = _occupant;
@@ -282,6 +291,7 @@ public class Region {
         if (_specialResource != RESOURCE.NONE) {
             _tileWithSpecialResource.Unoccupy();
         }
+		StopProducing ();
     }
     private void SetAdjacentRegionsAsVisibleForOccupant() {
         for (int i = 0; i < _adjacentRegions.Count; i++) {
@@ -323,7 +333,15 @@ public class Region {
             if (_tileWithSpecialResource != null) {
                 this._landmarkCount += 1;
                 _specialResource = resource;
+				if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
+					this.foodMultiplierCapacity = 3;
+				}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
+					this.materialMultiplierCapacity = 3;
+				}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
+					this.oreMultiplierCapacity = 3;
+				}
             }
+
         } else {
             _specialResource = resource;
         }        
@@ -650,8 +668,8 @@ public class Region {
                 elvenTilePoints += 1;
             } else if (currTile.elevationType == ELEVATION.WATER) {
                 //if current tile is water disregard any other additions
-                humanTilePoints += 3;
-                elvenTilePoints += 3;
+                humanTilePoints += 2;
+                elvenTilePoints += 2;
                 continue;
             }
             switch (currTile.biomeType) {
@@ -660,24 +678,24 @@ public class Region {
                     elvenTilePoints += 1;
                     break;
                 case BIOMES.TUNDRA:
-                    humanTilePoints += 2;
-                    elvenTilePoints += 2;
+                    humanTilePoints += 3;
+                    elvenTilePoints += 3;
                     break;
                 case BIOMES.DESERT:
-                    humanTilePoints += 3;
+                    humanTilePoints += 2;
                     elvenTilePoints += 1;
                     break;
                 case BIOMES.GRASSLAND:
-                    humanTilePoints += 6;
-                    elvenTilePoints += 3;
+                    humanTilePoints += 8;
+                    elvenTilePoints += 5;
                     break;
                 case BIOMES.WOODLAND:
                     humanTilePoints += 4;
-                    elvenTilePoints += 5;
+                    elvenTilePoints += 6;
                     break;
                 case BIOMES.FOREST:
-                    humanTilePoints += 2;
-                    elvenTilePoints += 6;
+                    humanTilePoints += 3;
+                    elvenTilePoints += 8;
                     break;
                 default:
                     break;
@@ -685,12 +703,12 @@ public class Region {
         }
 
         int increaseFromSpecialResource = 0;
-        if(_specialResource != RESOURCE.NONE) {
-            increaseFromSpecialResource = 3;
-        }
+        //if(_specialResource != RESOURCE.NONE) {
+        //    increaseFromSpecialResource = 3;
+        //}
 
-        _naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 10) + increaseFromSpecialResource;
-        _naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 10) + increaseFromSpecialResource;
+        _naturalResourceLevel[RACE.HUMANS] = (humanTilePoints / 15) + increaseFromSpecialResource;
+        _naturalResourceLevel[RACE.ELVES] = (elvenTilePoints / 15) + increaseFromSpecialResource;
 
         //_centerOfMass.SetTileText(specialResource.ToString() + "\n" +
         //    naturalResourceLevel[RACE.HUMANS].ToString() + "\n" +
@@ -825,5 +843,15 @@ public class Region {
 	}
 	internal void RemoveCorpseMoundTile(HexTile hexTile){
 		this._corpseMoundTiles.Remove (hexTile);
+	}
+
+	internal void StartProducing(){
+		Messenger.AddListener("OnDayEnd", ProduceResource);
+	}
+	internal void StopProducing(){
+		Messenger.RemoveListener("OnDayEnd", ProduceResource);
+	}
+	private void ProduceResource(){
+		this._tileWithSpecialResource.ProduceResource();
 	}
 }

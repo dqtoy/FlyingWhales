@@ -231,7 +231,7 @@ public class Lair {
 //	}
 	internal void DamageToPopulation(int damage){
 		Kingdom kingdom = this.region.occupant.kingdom;
-		kingdom.AdjustPopulation (-damage);
+		kingdom.DamagePopulation (damage);
 		Debug.Log (this.name + " damaged " + kingdom.name + "'s population by " + damage.ToString ());
 	}
 }

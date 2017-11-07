@@ -184,7 +184,9 @@ public class Citizen {
             this.assignedRole = new GrandChancellor(this);
         } else if (role == ROLE.GRAND_MARSHAL) {
             this.assignedRole = new GrandMarshal(this);
-        } else {
+		} else if (role == ROLE.CARAVAN) {
+			this.assignedRole = new Caravan(this);
+		} else {
             this.assignedRole = null;
         }
     }
@@ -1127,8 +1129,8 @@ public class Citizen {
         int totalCities = newKingdom.cities.Count + sourceKingdom.cities.Count;
         float percentGained = ((float) newKingdom.cities.Count / (float)totalCities);
         int populationToTransfer = Mathf.FloorToInt((float)sourceKingdom.population * percentGained);
-        sourceKingdom.AdjustPopulation(-populationToTransfer);
-        newKingdom.SetPopulation(populationToTransfer);
+//        sourceKingdom.AdjustPopulation(-populationToTransfer);
+//        newKingdom.SetPopulation(populationToTransfer);
 
         //int weaponsGained = Mathf.FloorToInt((float)sourceKingdom.baseWeapons * percentGained);
         int weaponsGained = Mathf.FloorToInt((float)sourceKingdom.baseWeapons / 3f);

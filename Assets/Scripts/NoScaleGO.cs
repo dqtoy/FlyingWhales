@@ -18,8 +18,9 @@ public class NoScaleGO : MonoBehaviour {
 		var osize = Camera.main.orthographicSize;
 		if (orthoCurr != osize) {
 			float minus = 0.04f * (orthoOrg - osize);
-			Vector3 size = scaleOrg * orthoOrg / osize;
-			transform.localScale = new Vector3(size.x - minus, size.y - minus, size.z - minus);
+			Vector3 size = scaleOrg * osize / orthoOrg;
+//			transform.localScale = size;
+			transform.localScale = new Vector3(size.x + minus, size.y + minus, size.z + minus);
 			orthoCurr = osize;
 //			transform.position = Camera.main.ViewportToWorldPoint(posOrg);
 		}

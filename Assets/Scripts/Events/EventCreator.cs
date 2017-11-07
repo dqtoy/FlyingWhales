@@ -38,11 +38,20 @@ public class EventCreator: MonoBehaviour {
         if(origin == null) {
             throw new System.Exception("Could not find origin tile for expansion of " + kingdom.name + " to " + hexTileToExpandTo.name);
         }
-        Citizen expander = origin.city.CreateNewAgent (ROLE.EXPANDER, EVENT_TYPES.EXPANSION, hexTileToExpandTo);
+        Citizen expander = origin.city.CreateNewAgent (ROLE.EXPANDER, hexTileToExpandTo);
 		if (expander != null) {
 			Expansion expansion = new Expansion (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, expander, hexTileToExpandTo);
 			expander.assignedRole.Initialize (expansion);
 			return expansion;
+		}
+		return null;
+	}
+	internal SendResource CreateSendResourceEvent(int foodAmount, int materialAmount, int oreAmount, RESOURCE_TYPE resourceType, HexTile sourceLocation, HexTile targetLocation, City sourceCity){
+		Citizen caravan = sourceCity.CreateNewAgent (ROLE.CARAVAN, targetLocation, sourceLocation);
+		if(caravan != null){
+			SendResource sendResource = new SendResource (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, caravan, foodAmount, materialAmount, oreAmount, resourceType);
+			caravan.assignedRole.Initialize (sendResource);
+			return sendResource;
 		}
 		return null;
 	}

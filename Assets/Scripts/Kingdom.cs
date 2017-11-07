@@ -482,7 +482,7 @@ public class Kingdom{
 
 		if(this.race != RACE.UNDEAD){
 			AdjustPrestige(GridMap.Instance.numOfRegions);
-			AdjustPopulation(50);
+//			AdjustPopulation(50);
 			AdjustStability(50);
 			AdjustBaseWeapons(25);
 //			AdjustBaseArmors(25);
@@ -510,7 +510,7 @@ public class Kingdom{
 			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
 			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
 			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
-			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, 1, GameManager.Instance.year, () => IncreasePopulationEveryMonth());
+//			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, 1, GameManager.Instance.year, () => IncreasePopulationEveryMonth());
 			SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
 			//		ScheduleEvents ();
 			ScheduleOddDayActions();
@@ -2772,19 +2772,20 @@ public class Kingdom{
 		return populationGrowth;
 
     }
-    private void IncreasePopulationEveryMonth() {
-        AdjustPopulation(GetPopulationGrowth());
-        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        dueDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreasePopulationEveryMonth());
-    }
+//    private void IncreasePopulationEveryMonth() {
+//        AdjustPopulation(GetPopulationGrowth());
+//        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+//        dueDate.AddMonths(1);
+//        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreasePopulationEveryMonth());
+//    }
     internal void AdjustPopulation(int adjustment) {
         _population += adjustment;
-        if(_population <= 0) {
+        if(_population < 0) {
+			_population = 0;
             //if at any time population is reduced to 0, the Kingdom will cease to exist and all his cities will be destroyed
-            while (cities.Count > 0) {
-                cities[0].KillCity();
-            }
+//            while (cities.Count > 0) {
+//                cities[0].KillCity();
+//            }
         }
         KingdomManager.Instance.UpdateKingdomList();
     }
@@ -2792,6 +2793,34 @@ public class Kingdom{
         _population = newPopulation;
         KingdomManager.Instance.UpdateKingdomList();
     }
+	internal void UpdatePopulation(){
+		this._population = 0;
+		for (int i = 0; i < this.cities.Count; i++) {
+			this._population += this.cities [i].population;
+		}
+		KingdomManager.Instance.UpdateKingdomList ();
+	}
+	internal void DamagePopulation(int damage){
+		int distributableDamage = damage / this.cities.Count;
+		int remainder = damage % this.cities.Count;
+		distributableDamage += remainder;
+		int excessDamage = 0;
+		for (int i = 0; i < this.cities.Count; i++) {
+			City city = this.cities [i];
+			int totalDamage = distributableDamage + excessDamage;
+			if(city.population < totalDamage){
+				excessDamage += totalDamage - city.population;
+				city.AdjustPopulation (-city.population);
+				i--;
+			}else{
+				excessDamage = 0;
+				city.AdjustPopulation (-totalDamage);
+				if(city.isDead){
+					i--;
+				}
+			}
+		}
+	}
     #endregion
 
     #region Automatic Rebellion
@@ -3587,7 +3616,7 @@ public class Kingdom{
 
 	#region Undead
 	internal void InitializeUndeadKingdom(int undeadCount){
-		this.AdjustPopulation (undeadCount);
+//		this.AdjustPopulation (undeadCount);
 	}
 	#endregion
 }

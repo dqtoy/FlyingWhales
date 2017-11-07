@@ -282,6 +282,15 @@ public class GridMap : MonoBehaviour {
             Region currRegion = allRegions[i];
             if(currRegion.landmarkCount < 2) {
                 if(Random.Range(0, 2) == 0) {
+			if(!ResourcesManager.Instance.AddResourceCount(specialResource)){
+				allSpecialResources.Remove (specialResource);
+			}
+//          int chanceResource = UnityEngine.Random.Range(0, 2);
+            int chanceShrine = UnityEngine.Random.Range(0, 2);
+            int chanceHabitat = UnityEngine.Random.Range(0, 2);
+//            if (chanceResource == 0 && currRegion.landmarkCount < 2) {
+//              
+//            }
                     currRegion.SetSummoningShrine();
                 } else {
                     currRegion.SetHabitat();

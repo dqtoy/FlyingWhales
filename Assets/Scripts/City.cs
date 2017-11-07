@@ -27,6 +27,9 @@ public class City{
     private int _maxGrowth;
 	private int _dailyGrowthResourceBenefits;
 	private float _productionGrowthPercentage;
+	private int _foodCount;
+	private int _materialCount;
+	private int _oreCount;
 
     //Balance of Power
     //private int _powerPoints;
@@ -38,6 +41,8 @@ public class City{
 	private int _slavesCount;
 	private int raidLoyaltyExpiration;
 
+	private int _population;
+
 	[Space(5)]
     [Header("Booleans")]
     //internal bool hasKing;
@@ -45,8 +50,8 @@ public class City{
 	internal bool isAttacking;
 	internal bool isDefending;
 	internal bool hasReinforced;
-	internal bool isStarving;
 	internal bool isDead;
+	private bool _isStarving;
 
     [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
     [NonSerialized] internal List<HexTile> borderTiles;
@@ -61,6 +66,8 @@ public class City{
 
     private List<Guard> _activeGuards;
     private float _cityBounds;
+
+	private int[] populationIncreasePool;
 
     #region getters/setters
     internal Region region {
@@ -136,6 +143,39 @@ public class City{
     internal float cityBounds {
         get { return _cityBounds; }
     }
+	internal int foodCount{
+		get { return this._foodCount; }
+	}
+	internal int materialCount{
+		get { return this._materialCount; }
+	}
+	internal int oreCount{
+		get { return this._oreCount; }
+	}
+	internal int foodRequirement{
+		get { return 4 + this.cityLevel; }
+	}
+	internal int materialRequirement{
+		get { return 4 + this.cityLevel; }
+	}
+	internal int oreRequirement{
+		get { return 4 + this.cityLevel; }
+	}
+	internal int population {
+		get { return _population; }
+	}
+	internal int populationCapacity {
+		get { return 200 + (50 * this.cityLevel); }
+	}
+	internal int foodCapacity{
+		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
+	}
+	internal int materialCapacity{
+		get { return this._region.materialMultiplierCapacity * this.materialRequirement; }
+	}
+	internal int oreCapacity{
+		get { return this._region.oreMultiplierCapacity * this.oreRequirement; }
+	}
     #endregion
 
     public City(HexTile hexTile, Kingdom kingdom){
@@ -157,21 +197,31 @@ public class City{
 		this.isAttacking = false;
 		this.isDefending = false;
 		this.hasReinforced = false;
-		this.isStarving = false;
+		this._isStarving = false;
 		this.isDead = false;
 		this.borderTiles = new List<HexTile>();
         this.outerTiles = new List<HexTile>();
 		this.habitableTileDistance = new List<HabitableTileDistance> ();
 		this.raidLoyaltyExpiration = 0;
+		this._foodCount = 0;
+		this._materialCount = 0;
+		this._oreCount = 0;
 
         this.hexTile.Occupy (this);
 		this.ownedTiles.Add(this.hexTile);
 		this.plague = null;
 		this._hp = this.maxHP;
+		this.populationIncreasePool = new int[]{ 15, 17, 19, 21, 23, 25 };
+
         _activeGuards = new List<Guard>();
         _cityBounds = 50f;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 
+		AdjustPopulation (50);
+
+		GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+		increaseDueDate.AddMonths(1);
+		SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => MonthlyAction());
 		//if(!isRebel){
   //          hexTile.CheckLairsInRange ();
 		//	LevelUpBalanceOfPower();
@@ -182,13 +232,20 @@ public class City{
 		//	AddOneTimeResourceBenefits();
   //          Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
 		//	Messenger.AddListener("CitizenDied", CheckCityDeath);
-		//	GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-		//	increaseDueDate.AddMonths(1);
-		//	SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => IncreaseBOPAttributesEveryMonth());
+
 		//}
 
     }
+	private void MonthlyAction(){
+		if (!this.isDead) {
+			ConsumeResources ();
+			IncreasePopulationPerMonth ();
 
+			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
+			increaseDueDate.AddMonths(1);
+			SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => MonthlyAction());
+		}
+	}
     internal void SetupInitialValues() {
         hexTile.CheckLairsInRange();
         //LevelUpBalanceOfPower();
@@ -404,7 +461,7 @@ public class City{
 		this._hp = (int)((float)this.maxHP * percentageHP);
 	}
 
-	#region Resource Production
+	#region Resources
     private int GetBaseDailyGrowth() {
 		int naturalResourceLevel = GetNaturalResourceLevel();
 		double workerValue = Math.Sqrt(5 * (_kingdom.workers / _kingdom.cities.Count));
@@ -423,18 +480,99 @@ public class City{
             this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
         }
     }
-    //internal void AdjustDailyGrowthBuffs(int adjustment) {
-    //    _dailyGrowthBuffs += adjustment;
-    //}
 	internal void UpdateDailyProduction(){
 		this._maxGrowth = 2000 + ((2000 + (2000 * this.ownedTiles.Count)) * this.ownedTiles.Count);
-		//this._dailyGrowthFromStructures = (int) Math.Sqrt(this._region.naturalResourceLevel[this.kingdom.race]) * 2;
-		//for (int i = 0; i < this.structures.Count; i++) {
-		//	HexTile currentStructure = this.structures [i];
-  //          if (!currentStructure.isPlagued) {
-		//		this._dailyGrowthFromStructures += 3;
-  //          }
-		//}
+	}
+	internal void AdjustFoodCount(int amount){
+		this._foodCount += amount;
+		if(this._foodCount < 0){
+			this._foodCount = 0;
+		}
+	}
+	internal void SetFoodCount(int amount){
+		this._foodCount = amount;
+	}
+	internal void AdjustMaterialCount(int amount){
+		this._materialCount += amount;
+		if(this._materialCount < 0){
+			this._materialCount = 0;
+		}
+	}
+	internal void SetMaterialCount(int amount){
+		this._materialCount = amount;
+	}
+	internal void AdjustOreCount(int amount){
+		this._oreCount += amount;
+		if(this._oreCount < 0){
+			this._oreCount = 0;
+		}
+	}
+	internal void SetOreCount(int amount){
+		this._oreCount = amount;
+	}
+	private void ConsumeResources(){
+		ConsumeFood ();
+		ConsumeMaterial ();
+		ConsumeOre ();
+	}
+	private void ConsumeFood(){
+		int foodToBeConsumed = this.foodRequirement;
+		if(this._foodCount >= foodToBeConsumed){
+			AdjustFoodCount (-foodToBeConsumed);
+			this._isStarving = false;
+		}else{
+			AdjustFoodCount (-this._foodCount);
+			//Suffer Population Decline
+			PopulationDecline();
+		}
+	}
+	private void ConsumeMaterial(){
+		int materialToBeConsumed = this.materialRequirement;
+		if(this._materialCount >= materialToBeConsumed){
+			AdjustMaterialCount (-materialToBeConsumed);
+		}else{
+			AdjustMaterialCount (-this._materialCount);
+			//Suffer No City Growth
+		}
+	}
+	private void ConsumeOre(){
+		int oreToBeConsumed = this.oreRequirement;
+		if(this._oreCount >= oreToBeConsumed){
+			AdjustOreCount (-oreToBeConsumed);
+		}else{
+			AdjustOreCount (-this._oreCount);
+			//Suffer No City Growth
+		}
+	}
+	private void PopulationDecline(){
+		this._isStarving = true;
+		if(this.structures.Count > 0){
+			int chance = UnityEngine.Random.Range (0, 100);
+			if(chance < 5){
+				this.RemoveTileFromCity (this.structures [this.structures.Count - 1]);
+			}
+		}
+	}
+	private void CheckFoodSupply(){
+		int foodCap = this.foodCapacity;
+		if(this.foodCount > foodCap){
+			int excessFood = this.foodCount - foodCap;
+			//Send caravan to other cities to give excess food
+		}
+	}
+	private void CheckMaterialSupply(){
+		int materialCap = this.materialCapacity;
+		if(this.materialCount > materialCap){
+			int excessMaterial = this.materialCount - materialCap;
+			//Send caravan to other cities to give excess material
+		}
+	}
+	private void CheckOreSupply(){
+		int oreCap = this.oreCapacity;
+		if(this.oreCount > oreCap){
+			int excessOre = this.oreCount - oreCap;
+			//Send caravan to other cities to give excess ore
+		}
 	}
 	#endregion
 
@@ -643,7 +781,7 @@ public class City{
 	//	this.AddCitizenToCity(citizenToMove);
 	//}
 
-	internal Citizen CreateNewAgent(ROLE role, EVENT_TYPES eventType, HexTile targetLocation){
+	internal Citizen CreateNewAgent(ROLE role, HexTile targetLocation, HexTile sourceLocation = null){
 		if(role == ROLE.GENERAL){
 			return null;
 		}
@@ -672,6 +810,9 @@ public class City{
 			citizen.assignedRole.targetLocation = targetLocation;
 			if(targetLocation != null){
 				citizen.assignedRole.targetCity = targetLocation.city;
+			}
+			if(sourceLocation != null){
+				citizen.assignedRole.location = sourceLocation;
 			}
 			//this.citizens.Remove (citizen);
 			return citizen;
@@ -1050,4 +1191,30 @@ public class City{
         _activeGuards.Clear();
     }
     #endregion
+
+	#region Population
+	private void IncreasePopulationPerMonth(){
+		int populationIncrease = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
+		populationIncrease += this.cityLevel;
+		if(this._isStarving){
+			populationIncrease /= 2;
+		}
+		AdjustPopulation (populationIncrease);
+		this._kingdom.AdjustPopulation (populationIncrease);
+	}
+	internal void AdjustPopulation(int adjustment) {
+		this._population += adjustment;
+		this._kingdom.AdjustPopulation (adjustment);
+		this._population = Mathf.Clamp (this._population, 0, this.populationCapacity);
+		if(this._population == 0) {
+			KillCity ();
+		}
+//		KingdomManager.Instance.UpdateKingdomList();
+	}
+	internal void SetPopulation(int newPopulation) {
+		this._population = newPopulation;
+		this._kingdom.UpdatePopulation ();
+//		KingdomManager.Instance.UpdateKingdomList();
+	}
+	#endregion
 }

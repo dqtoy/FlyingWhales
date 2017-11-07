@@ -32,7 +32,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [Space(10)]
     [Header("Resources")]
+	public RESOURCE_TYPE specialResourceType;
     public RESOURCE specialResource;
+	public int resourceCount;
     public int nearbyResourcesCount = 0;
 
     [System.NonSerialized] public City city = null;
@@ -263,6 +265,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     internal void AssignSpecialResource(RESOURCE resource) {
 		this.hasLandmark = true;
         specialResource = resource;
+		SetSpecialResourceType ();
         resourceIcon.SetResource(specialResource);
         GameObject resourceGO = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
         resourceGO.transform.localPosition = Vector3.zero;
@@ -333,6 +336,94 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 		}
 		return RESOURCE.NONE;
+	}
+	private void SetSpecialResourceType(){
+		if (this.specialResource == RESOURCE.DEER || this.specialResource == RESOURCE.PIG || this.specialResource == RESOURCE.BEHEMOTH
+		   || this.specialResource == RESOURCE.WHEAT || this.specialResource == RESOURCE.RICE || this.specialResource == RESOURCE.CORN) {
+
+			this.specialResourceType = RESOURCE_TYPE.FOOD;
+		} else if(this.specialResource == RESOURCE.SLATE || this.specialResource == RESOURCE.GRANITE || this.specialResource == RESOURCE.OAK
+			|| this.specialResource == RESOURCE.EBONY){
+
+			this.specialResourceType = RESOURCE_TYPE.MATERIAL;
+		} else if(this.specialResource == RESOURCE.COBALT || this.specialResource == RESOURCE.MANA_STONE || this.specialResource == RESOURCE.MITHRIL){
+
+			this.specialResourceType = RESOURCE_TYPE.ORE;
+		}
+	}
+	internal void ProduceResource(){
+		switch (this.specialResource){
+		case RESOURCE.DEER:
+			this.resourceCount += UnityEngine.Random.Range (0, 4);
+			break;
+		case RESOURCE.PIG:
+			this.resourceCount += UnityEngine.Random.Range (0, 5);
+			break;
+		case RESOURCE.BEHEMOTH:
+			this.resourceCount += UnityEngine.Random.Range (0, 6);
+			break;
+		case RESOURCE.WHEAT:
+			this.resourceCount += 1;
+			break;
+		case RESOURCE.RICE:
+			this.resourceCount += 2;
+			break;
+		case RESOURCE.CORN:
+			this.resourceCount += 3;
+			break;
+		case RESOURCE.SLATE:
+			if(this.region.occupant.kingdom.race == RACE.HUMANS){
+				this.resourceCount += UnityEngine.Random.Range (0, 4);
+			}
+			break;
+		case RESOURCE.GRANITE:
+			if(this.region.occupant.kingdom.race == RACE.HUMANS){
+				this.resourceCount += UnityEngine.Random.Range (1, 5);
+			}
+			break;
+		case RESOURCE.OAK:
+			if(this.region.occupant.kingdom.race == RACE.ELVES){
+				this.resourceCount += UnityEngine.Random.Range (0, 4);
+			}
+			break;
+		case RESOURCE.EBONY:
+			if(this.region.occupant.kingdom.race == RACE.ELVES){
+				this.resourceCount += UnityEngine.Random.Range (1, 5);
+			}
+			break;
+		case RESOURCE.COBALT:
+			this.resourceCount += UnityEngine.Random.Range (0, 4);
+			break;
+		case RESOURCE.MANA_STONE:
+			this.resourceCount += UnityEngine.Random.Range (1, 5);
+			break;
+		case RESOURCE.MITHRIL:
+			this.resourceCount += UnityEngine.Random.Range (2, 6);
+			break;
+		}
+		CheckResourceCount ();
+	}
+	private void CheckResourceCount(){
+		if(this.specialResourceType == RESOURCE_TYPE.FOOD){
+			if(this.resourceCount >= this.region.occupant.foodRequirement){
+				//Create Caravan
+				EventCreator.Instance.CreateSendResourceEvent(this.resourceCount, 0, 0, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
+				this.resourceCount = 0;
+			}
+		}else if(this.specialResourceType == RESOURCE_TYPE.MATERIAL){
+			if(this.resourceCount >= this.region.occupant.materialRequirement){
+				//Create Caravan
+				EventCreator.Instance.CreateSendResourceEvent(0, this.resourceCount, 0, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
+				this.resourceCount = 0;
+			}
+		}else if(this.specialResourceType == RESOURCE_TYPE.ORE){
+			if(this.resourceCount >= this.region.occupant.oreRequirement){
+				//Create Caravan
+				EventCreator.Instance.CreateSendResourceEvent(0, 0, this.resourceCount, this.specialResourceType, this, this.region.occupant.hexTile, this.region.occupant);
+				this.resourceCount = 0;
+			}
+		}
+
 	}
     #endregion
 
@@ -1280,7 +1371,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
     [ContextMenu("Kill Kingdom Using Population")]
     public void KillKingdomUsingPopulation() {
-        ownedByCity.kingdom.AdjustPopulation(-ownedByCity.kingdom.population);
+        ownedByCity.kingdom.DamagePopulation(ownedByCity.kingdom.population);
     }
     //[ContextMenu("Select Tiles in Same Region")]
     //public void SelectAllTilesInRegion() {
@@ -1387,7 +1478,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         if(this.city.region.specialResource != RESOURCE.NONE) {
             text += "\n [b]Special Resource Loc:[/b] " + this.city.region.tileWithSpecialResource.name;
         }
-        text += "\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
+		text += "\n [b]Food Count:[/b] " + this.city.foodCount.ToString () + "/" + this.city.foodRequirement.ToString () +
+		"\n [b]Material Count:[/b] " + this.city.materialCount.ToString () + "/" + this.city.materialRequirement.ToString () +
+		"\n [b]Ore Count:[/b] " + this.city.oreCount.ToString () + "/" + this.city.oreRequirement.ToString () +
+		"\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
         "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
         "\n [b]Tech Points:[/b] " + this.city.techPoints.ToString() +
         "\n [b]Kingdom Base Weapons:[/b] " + this.city.kingdom.baseWeapons.ToString() +
@@ -1395,6 +1489,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         "\n [b]Weapons Over Production:[/b] " + this.city.kingdom.GetWeaponOverProductionPercentage().ToString() + "%" + 
 //        "\n [b]Armor Over Production:[/b] " + this.city.kingdom.GetArmorOverProductionPercentage().ToString() + "%" +
         "\n [b]City Level Cap:[/b] " + this.region.cityLevelCap.ToString() +
+		"\n [b]Population Count:[/b] " + this.city.population.ToString() + "/" + this.city.populationCapacity.ToString() +
         "\n [b]Region Population Growth:[/b] " + this.region.populationGrowth.ToString() +
         "\n [b]Kingdom Type:[/b] " + this.city.kingdom.kingdomType.ToString() +
         "\n [b]Kingdom Size:[/b] " + this.city.kingdom.kingdomSize.ToString() +

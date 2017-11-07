@@ -93,7 +93,7 @@ public class Role {
 
     internal void CreateAvatarGO() {
         this.avatar = ObjectPoolManager.Instance.InstantiateObjectFromPool(citizen.role.ToString(), Vector3.zero, Quaternion.identity,
-            this.citizen.city.hexTile.transform);
+            this.citizen.assignedRole.location.transform);
     }
 
 	internal virtual void Attack(){
