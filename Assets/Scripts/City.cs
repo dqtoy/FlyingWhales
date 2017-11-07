@@ -50,8 +50,8 @@ public class City{
 	internal bool isAttacking;
 	internal bool isDefending;
 	internal bool hasReinforced;
-	internal bool isStarving;
 	internal bool isDead;
+	private bool _isStarving;
 
     [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
     [NonSerialized] internal List<HexTile> borderTiles;
@@ -188,7 +188,7 @@ public class City{
 		this.isAttacking = false;
 		this.isDefending = false;
 		this.hasReinforced = false;
-		this.isStarving = false;
+		this._isStarving = false;
 		this.isDead = false;
 		this.borderTiles = new List<HexTile>();
         this.outerTiles = new List<HexTile>();
@@ -510,9 +510,11 @@ public class City{
 		int foodToBeConsumed = this.foodRequirement;
 		if(this._foodCount >= foodToBeConsumed){
 			AdjustFoodCount (-foodToBeConsumed);
+			this._isStarving = false;
 		}else{
 			AdjustFoodCount (-this._foodCount);
 			//Suffer Population Decline
+			PopulationDecline();
 		}
 	}
 	private void ConsumeMaterial(){
@@ -531,6 +533,15 @@ public class City{
 		}else{
 			AdjustOreCount (-this._oreCount);
 			//Suffer No City Growth
+		}
+	}
+	private void PopulationDecline(){
+		this._isStarving = true;
+		if(this.structures.Count > 0){
+			int chance = UnityEngine.Random.Range (0, 100);
+			if(chance < 5){
+				this.RemoveTileFromCity (this.structures [this.structures.Count - 1]);
+			}
 		}
 	}
 	#endregion
@@ -1155,17 +1166,24 @@ public class City{
 	private void IncreasePopulationPerMonth(){
 		int populationIncrease = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
 		populationIncrease += this.cityLevel;
+		if(this._isStarving){
+			populationIncrease /= 2;
+		}
 		AdjustPopulation (populationIncrease);
+		this._kingdom.AdjustPopulation (populationIncrease);
 	}
 	internal void AdjustPopulation(int adjustment) {
-		_population += adjustment;
-		if(_population <= 0) {
+		this._population += adjustment;
+		this._kingdom.AdjustPopulation (adjustment);
+		this._population = Mathf.Clamp (this._population, 0, this.populationCapacity);
+		if(this._population == 0) {
 			KillCity ();
 		}
 //		KingdomManager.Instance.UpdateKingdomList();
 	}
 	internal void SetPopulation(int newPopulation) {
-		_population = newPopulation;
+		this._population = newPopulation;
+		this._kingdom.UpdatePopulation ();
 //		KingdomManager.Instance.UpdateKingdomList();
 	}
 	#endregion

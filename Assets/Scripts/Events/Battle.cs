@@ -196,7 +196,7 @@ public class Battle {
 
 			if (this.attacker.kingdom.race == RACE.UNDEAD) {
 				if (attackAfterDamage > 0) {
-					this.attacker.kingdom.AdjustPopulation (-defenseDamage);
+					this.attacker.kingdom.DamagePopulation (defenseDamage);
 
 					Debug.Log ("DAMAGE TO ATTACKER'S POPULATION: " + defenseDamage);
 					Debug.Log ("---------------------------");
@@ -233,7 +233,7 @@ public class Battle {
 					}
 					corpseCount += damageToPopulationAttacker;
 					this.attacker.kingdom.AdjustBaseWeapons (-damageToWeapons);
-					this.attacker.kingdom.AdjustPopulation (-damageToPopulationAttacker);
+					this.attacker.kingdom.DamagePopulation (damageToPopulationAttacker);
 
 					Debug.Log ("MAX DAMAGE TO WEAPONS: " + maxDamageToWeapons);
 					Debug.Log ("MAX ROLL DAMAGE TO WEAPONS: " + maxRollForDamageInWeapons);
@@ -277,7 +277,7 @@ public class Battle {
 
 			if (this.defender.kingdom.race == RACE.UNDEAD) {
 				if (defenseAfterDamage > 0) {
-					this.defender.kingdom.AdjustPopulation (-attackDamage);
+					this.defender.kingdom.DamagePopulation (attackDamage);
 
 					Debug.Log ("DAMAGE TO DEFENDER'S POPULATION: " + attackDamage);
 					Debug.Log ("---------------------------");
@@ -315,7 +315,7 @@ public class Battle {
 					}
 					corpseCount += damageToPopulationDefender;
 					this.defender.kingdom.AdjustBaseWeapons (-damageToArmors);
-					this.defender.kingdom.AdjustPopulation (-damageToPopulationDefender);
+					this.defender.kingdom.DamagePopulation (damageToPopulationDefender);
 
 					Debug.Log ("MAX DAMAGE TO ARMORS: " + maxDamageToArmors);
 					Debug.Log ("MAX ROLL DAMAGE TO ARMORS: " + maxRollForDamageInArmors);
@@ -572,14 +572,14 @@ public class Battle {
 			if(!this._deadAttackerKingdom.isDead){
 				AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Attacker kingdom " + attackerKingdom.name + " is wiped out by " + defenderKingdom.name);
 				this._deadAttackerKingdom.SetBaseWeapons (0);
-				this._deadAttackerKingdom.AdjustPopulation (-this._deadAttackerKingdom.population);
+				this._deadAttackerKingdom.DamagePopulation (this._deadAttackerKingdom.population);
 			}
 		}
 		if(this._deadDefenderKingdom != null){
 			if(!this._deadDefenderKingdom.isDead){
 				AddBattleLog((MONTH)GameManager.Instance.month + " " + GameManager.Instance.days + ", " + GameManager.Instance.year + " - Defending kingdom " + defenderKingdom.name + " is wiped out by " + attackerKingdom.name);
 				this._deadDefenderKingdom.SetBaseWeapons (0);
-				this._deadDefenderKingdom.AdjustPopulation (-this._deadDefenderKingdom.population);
+				this._deadDefenderKingdom.DamagePopulation (this._deadDefenderKingdom.population);
 			}
 		}
 	}
@@ -609,11 +609,11 @@ public class Battle {
 	}
 	private void SetAttackerToMaximumDamageReceived(int soldiers){
 		this.attacker.kingdom.SetBaseWeapons (1);
-		this.attacker.kingdom.AdjustPopulation (-soldiers);
+		this.attacker.kingdom.DamagePopulation (soldiers);
 	}
 	private void SetDefenderToMaximumDamageReceived(int soldiers){
 		this.defender.kingdom.SetBaseWeapons (1);
-		this.defender.kingdom.AdjustPopulation (-soldiers);
+		this.defender.kingdom.DamagePopulation (soldiers);
 	}
 	private void ChangePositionAndGoToStep1(){
 		SetAttackerAndDefenderCity (this.defender, this.attacker, this.defenderKingdom, this.attackerKingdom);
