@@ -32,6 +32,7 @@ public class CityGenerator : MonoBehaviour {
 	[SerializeField] private GameObject summoningShrine;
 	[SerializeField] private GameObject habitat;
 
+	internal int[] cityMonthlyMaxGrowthMultiplier = new int[]{1,2,4,8,10,12,14,16,18,20,25};
     //public GameObject[] genericStructures;
     //public GameObject[] cityStructures;
     //public GameObject[] mineStructures;
@@ -296,10 +297,11 @@ public class CityGenerator : MonoBehaviour {
 		}
 
 		ctmOfCity.Initialize(hexTile.city);
-		Messenger.AddListener("OnDayEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+		Messenger.AddListener("OnMonthEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
 
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
         hexTile.city.PopulateBorderTiles();
+		hexTile.city.UpdateDailyProduction ();
         //hexTile.city.UpdateBorderTiles();
         return hexTile.city;
 	}

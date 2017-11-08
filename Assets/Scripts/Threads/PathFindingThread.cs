@@ -50,12 +50,12 @@ public class PathFindingThread {
 		}
 		if (path != null) {
 			if (_pathfindingMode == PATHFINDING_MODE.COMBAT || _pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
-				|| _pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION || _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS 
-				|| _pathfindingMode == PATHFINDING_MODE.USE_ROADS || _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
-				|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM) {
+				|| _pathfindingMode == PATHFINDING_MODE.LANDMARK_CREATION || _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS) {
 
 				receivedPath = path.Reverse ().ToList ();
-			} else {
+			} else if (_pathfindingMode == PATHFINDING_MODE.USE_ROADS || _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+				|| _pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM) {
+
 				receivedPath = path.Reverse ().ToList ();
 				if (receivedPath.Count > 1) {
 					receivedPath.RemoveAt (0);

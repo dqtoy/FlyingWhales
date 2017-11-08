@@ -46,7 +46,7 @@ public class CitizenAvatar : PooledObject {
         this.citizenRole = citizenRole;
         this.direction = DIRECTION.LEFT;
 		this.citizenRole.location.EnterCitizen (this.citizenRole.citizen);
-        this.smoothMovement.onMoveFinihed += OnMoveFinished;
+        this.smoothMovement.onMoveFinished += OnMoveFinished;
         visibleTiles = new List<HexTile>();
         childObjects = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
 		SetHasArrivedState (false);
@@ -68,7 +68,7 @@ public class CitizenAvatar : PooledObject {
 	}
 	internal virtual void ReceivePath(List<HexTile> path){
 		if(path != null && path.Count > 0){
-			this.citizenRole.path = path;
+			this.citizenRole.path = new List<HexTile>(path);
 			StartMoving ();
 		}else{
 			CancelEventInvolvedIn ();

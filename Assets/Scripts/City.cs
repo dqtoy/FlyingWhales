@@ -81,7 +81,8 @@ public class City{
 	}
 	public int totalDailyGrowth{
         //get{ return (int)((_dailyGrowthFromStructures + _dailyGrowthBuffs + this._slavesCount + this._dailyGrowthResourceBenefits) * this._productionGrowthPercentage); }
-        get { return Mathf.FloorToInt((baseDailyGrowth + _dailyGrowthResourceBenefits) * _productionGrowthPercentage); }
+//        get { return Mathf.FloorToInt((baseDailyGrowth + _dailyGrowthResourceBenefits) * _productionGrowthPercentage); }
+		get { return GetNaturalResourceLevel(); }
     }
     internal int baseDailyGrowth {
         get { return GetBaseDailyGrowth(); }
@@ -346,7 +347,7 @@ public class City{
         //CreateInitialFamilies(false);
 		this.hexTile.emptyCityGO.SetActive(false);
         this.kingdom.CreateNewGovernorFamily(this);
-		this.UpdateDailyProduction();
+//		this.UpdateDailyProduction();
         this.hexTile.CreateCityNamePlate(this);
         HighlightAllOwnedTiles(69f / 255f);
         UIManager.Instance.UpdateKingdomCitiesMenu();
@@ -376,7 +377,7 @@ public class City{
 		if(Messenger.eventTable.ContainsKey("OnUpdatePath")){
 			Messenger.Broadcast<HexTile>("OnUpdatePath", tileToBuy);
 		}
-        //tileToBuy.CreateStructureOnTile(STRUCTURE_TYPE.GENERIC);
+//        tileToBuy.CreateStructureOnTile(STRUCTURE_TYPE.GENERIC);
 
         //Update necessary data
         this.UpdateDailyProduction();
@@ -484,13 +485,11 @@ public class City{
 		this._currentGrowth = 0;
 	}
     internal void AdjustDailyGrowth(int amount) {
-        if (kingdom.isGrowthEnabled) {
-            this._currentGrowth += amount;
-            this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
-        }
+        this._currentGrowth += amount;
+        this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
     }
 	internal void UpdateDailyProduction(){
-		this._maxGrowth = 2000 + ((2000 + (2000 * this.ownedTiles.Count)) * this.ownedTiles.Count);
+		this._maxGrowth = CityGenerator.Instance.cityMonthlyMaxGrowthMultiplier[this.cityLevel - 1] * 150;
 	}
 	internal void AdjustFoodCount(int amount){
 		this._foodCount += amount;

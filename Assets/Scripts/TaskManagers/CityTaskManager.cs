@@ -93,7 +93,7 @@ public class CityTaskManager : MonoBehaviour {
 
     [Task]
     private bool HasReachedLevelCap() {
-        return city.ownedTiles.Count >= city.region.cityLevelCap;
+        return city.cityLevel >= city.region.cityLevelCap;
     }
     #endregion
 }

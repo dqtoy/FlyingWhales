@@ -4,7 +4,7 @@ using System.Collections;
 public class SmoothMovement : MonoBehaviour {
 
     public delegate void OnMoveFinished();
-    public OnMoveFinished onMoveFinihed;
+    public OnMoveFinished onMoveFinished;
 
 	//public float speed;
 	internal bool isMoving = false;
@@ -56,7 +56,7 @@ public class SmoothMovement : MonoBehaviour {
         targetPosition = Vector3.zero;
         direction = DIRECTION.LEFT;
         hasAttacked = false;
-        onMoveFinihed = null;
+		onMoveFinished = null;
 //        animator.Rebind();
     }
 
@@ -74,8 +74,8 @@ public class SmoothMovement : MonoBehaviour {
 //		}
 		this.isMoving = false;
 		this.targetPosition = Vector3.zero;
-        if(onMoveFinihed != null) {
-            onMoveFinihed();
+		if(onMoveFinished != null) {
+			onMoveFinished();
         }
     }
 

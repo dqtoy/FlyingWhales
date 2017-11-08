@@ -48,10 +48,11 @@ public class Role {
 		this.damage = 1;
 		this.markAsDead = false;
 	}
-	internal void DestroyGO(){
+	internal virtual void DestroyGO(){
         this.location.ExitCitizen(this.citizen);
         if (this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
+//			GameObject.Destroy (this.avatar);
             ObjectPoolManager.Instance.DestroyObject(this.avatar);
             this.avatar = null;
         }
@@ -91,7 +92,7 @@ public class Role {
         //}
     }
 
-    internal void CreateAvatarGO() {
+    internal virtual void CreateAvatarGO() {
         this.avatar = ObjectPoolManager.Instance.InstantiateObjectFromPool(citizen.role.ToString(), Vector3.zero, Quaternion.identity,
             this.citizen.assignedRole.location.transform);
     }
