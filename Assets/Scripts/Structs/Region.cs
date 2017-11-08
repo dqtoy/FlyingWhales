@@ -251,7 +251,8 @@ public class Region {
     internal void SetOccupant(City occupant) {
         _occupant = occupant;
         _occupant.kingdom.SetFogOfWarStateForRegion(this, FOG_OF_WAR_STATE.VISIBLE);
-        _cityLevelCap = _naturalResourceLevel[occupant.kingdom.race];
+//        _cityLevelCap = _naturalResourceLevel[occupant.kingdom.race];
+		_cityLevelCap = 12;
         SetAdjacentRegionsAsVisibleForOccupant();
         SetRegionPathfindingTag(occupant.kingdom.kingdomTagIndex);
         Color solidKingdomColor = _occupant.kingdom.kingdomColor;
