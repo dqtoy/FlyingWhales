@@ -634,8 +634,8 @@ public class City{
 			}
 		}
 		if(chosenCity != null){
-			EventCreator.Instance.CreateSendResourceEvent (0, materialAmount, 0, RESOURCE_TYPE.MATERIAL, this.hexTile, chosenCity.hexTile, this);
 			this.AdjustMaterialCount (-materialAmount);
+			EventCreator.Instance.CreateSendResourceEvent (0, materialAmount, 0, RESOURCE_TYPE.MATERIAL, this.hexTile, chosenCity.hexTile, this);
 		}
 	}
 	private void SendOreToOtherCities(int oreAmount){
@@ -659,8 +659,8 @@ public class City{
 			}
 		}
 		if(chosenCity != null){
-			EventCreator.Instance.CreateSendResourceEvent (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, chosenCity.hexTile, this);
 			this.AdjustOreCount (-oreAmount);
+			EventCreator.Instance.CreateSendResourceEvent (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, chosenCity.hexTile, this);
 		}
 	}
 	#endregion
@@ -1289,7 +1289,6 @@ public class City{
 			populationIncrease /= 2;
 		}
 		AdjustPopulation (populationIncrease);
-		this._kingdom.AdjustPopulation (populationIncrease);
 	}
 	internal void AdjustPopulation(int adjustment) {
 		this._population += adjustment;
