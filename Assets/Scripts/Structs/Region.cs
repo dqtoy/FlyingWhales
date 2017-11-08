@@ -220,7 +220,7 @@ public class Region {
         List<HexTile> adjacentTiles = new List<HexTile>();
         for (int i = 0; i < _outerTiles.Count; i++) {
             HexTile currTile = _outerTiles[i];
-            if(currTile.AllNeighbours.Where(x => x.region.id == otherRegion.id).Any()) {
+            if(currTile.roadType != ROAD_TYPE.MAJOR && currTile.MajorRoadTiles.Count <= 0 && currTile.AllNeighbours.Where(x => x.region.id == otherRegion.id).Any()) {
                 bool isOnlyAdjacentToOtherRegion = true;
                 for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
                     HexTile currNeighbour = currTile.AllNeighbours[j];

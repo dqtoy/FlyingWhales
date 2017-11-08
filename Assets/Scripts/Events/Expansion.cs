@@ -45,7 +45,7 @@ public class Expansion : GameEvent {
             newCity.region.SetOccupant(newCity);
             newCity.ExpandToThisCity (this.startedBy);
             newCity.region.CheckForDiscoveredKingdoms();
-            newCity.kingdom.ResetExpansionRate();
+            newCity.kingdom.ResetCurrentExpansionRate();
 //			KingdomManager.Instance.DrawConnection (this.startedBy.city.hexTile, newCity.hexTile);
             for (int i = 0; i < startedByKingdom.discoveredKingdoms.Count; i++) {
                 Kingdom otherKingdom = startedByKingdom.discoveredKingdoms[i];

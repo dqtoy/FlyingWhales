@@ -21,8 +21,6 @@ public class KingdomManager : MonoBehaviour {
 	public KingdomTypeData kingdomTypeMerchant;
 	public KingdomTypeData kingdomTypeChaotic;
 
-    protected const int STABILITY_DECREASE_WAR = -10;
-
 	public int initialSpawnRate;
 	public int maxKingdomEventHistory;
 	public int rangerMoveRange;
@@ -48,6 +46,8 @@ public class KingdomManager : MonoBehaviour {
 
     private Dictionary<int, List<Kingdom>> evenActionDays;
     private Dictionary<int, List<Kingdom>> oddActionDays;
+
+    public const int KINGDOM_MAX_EXPANSION_RATE = 300;
 
     #region getters/setters
     public bool useFogOfWar {
@@ -311,7 +311,7 @@ public class KingdomManager : MonoBehaviour {
         } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.CITIES) {
             allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.cities.Count).ToList();
         } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.EXPANSION_RATE) {
-            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.expansionRate).ToList();
+            allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.currentExpansionRate).ToList();
         } else if (_orderKingdomsBy == KINGDOMS_ORDERED_BY.WEAPONS) {
             allKingdomsOrderedBy = allKingdoms.OrderBy(x => x.effectiveAttack).ToList();
         } 
