@@ -1223,6 +1223,9 @@ public class Kingdom{
         }
 
         if (expandableTile == null) {
+            if(_currentExpansionRate != 0) {
+                ResetCurrentExpansionRate();
+            }
             return;
         }
 
