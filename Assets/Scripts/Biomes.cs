@@ -154,48 +154,52 @@ public class Biomes : MonoBehaviour {
             if(currentHexTile.elevationType != ELEVATION.PLAIN) {
                 continue;
             }
-            GameObject biomeDetailToUse = null;
-            Sprite centerSpriteToUse = null;
-            switch (currentHexTile.biomeType) {
-                case BIOMES.SNOW:
-                    if (snowDetails.Length > 0) {
-                        biomeDetailToUse = snowDetails[Random.Range(0, snowDetails.Length)];
-                    }
-                    break;
-                case BIOMES.TUNDRA:
-                    if (tundraDetails.Length > 0) {
-                        biomeDetailToUse = tundraDetails[Random.Range(0, tundraDetails.Length)];
-                    }
-                    break;
-                case BIOMES.DESERT:
-                    if (desertDetails.Length > 0) {
-                        biomeDetailToUse = desertDetails[Random.Range(0, desertDetails.Length)];
-                    }
-                    break;
-                case BIOMES.GRASSLAND:
-                    if (grasslandDetails.Length > 0) {
-                        biomeDetailToUse = grasslandDetails[Random.Range(0, grasslandDetails.Length)];
-                    }
-                    break;
-                case BIOMES.WOODLAND:
-                    centerSpriteToUse = woodlandTrees[Random.Range(0, woodlandTrees.Length)];
-                    currentHexTile.SetCenterSprite(centerSpriteToUse);
-                    Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
-                    break;
-                case BIOMES.FOREST:
-                    centerSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
-                    currentHexTile.SetCenterSprite(centerSpriteToUse);
-                    Utilities.SetSpriteSortingLayer(currentHexTile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
-                    break;
-            }
-            if (biomeDetailToUse != null) {
-                if (currentHexTile.specialResource == RESOURCE.NONE) {
-                    currentHexTile.AddBiomeDetailToTile(biomeDetailToUse);
-                }
-            }
-
-            currentHexTile.UpdateSortingOrder();
+            AddBiomeDetailToTile(currentHexTile);
         }
+    }
+
+    internal void AddBiomeDetailToTile(HexTile tile) {
+        GameObject biomeDetailToUse = null;
+        Sprite centerSpriteToUse = null;
+        switch (tile.biomeType) {
+            case BIOMES.SNOW:
+                if (snowDetails.Length > 0) {
+                    biomeDetailToUse = snowDetails[Random.Range(0, snowDetails.Length)];
+                }
+                break;
+            case BIOMES.TUNDRA:
+                if (tundraDetails.Length > 0) {
+                    biomeDetailToUse = tundraDetails[Random.Range(0, tundraDetails.Length)];
+                }
+                break;
+            case BIOMES.DESERT:
+                if (desertDetails.Length > 0) {
+                    biomeDetailToUse = desertDetails[Random.Range(0, desertDetails.Length)];
+                }
+                break;
+            case BIOMES.GRASSLAND:
+                if (grasslandDetails.Length > 0) {
+                    biomeDetailToUse = grasslandDetails[Random.Range(0, grasslandDetails.Length)];
+                }
+                break;
+            case BIOMES.WOODLAND:
+                centerSpriteToUse = woodlandTrees[Random.Range(0, woodlandTrees.Length)];
+                tile.SetCenterSprite(centerSpriteToUse);
+                Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
+                break;
+            case BIOMES.FOREST:
+                centerSpriteToUse = forestTrees[Random.Range(0, forestTrees.Length)];
+                tile.SetCenterSprite(centerSpriteToUse);
+                Utilities.SetSpriteSortingLayer(tile.centerPiece.GetComponent<SpriteRenderer>(), "Structures Layer");
+                break;
+        }
+        if (biomeDetailToUse != null) {
+            if (tile.specialResource == RESOURCE.NONE) {
+                tile.AddBiomeDetailToTile(biomeDetailToUse);
+            }
+        }
+
+        tile.UpdateSortingOrder();
     }
 
     internal void SetElevationSpriteForTile(HexTile currentHexTile) {
@@ -307,7 +311,7 @@ public class Biomes : MonoBehaviour {
                     for (int k = 0; k < adjacentTiles.Count; k++) {
                         HexTile adjacentTile = adjacentTiles[k];
                         int tilesToGet = 0;
-                        if(Random.Range(0, 100) < 5) {
+                        if(Random.Range(0, 100) < 3) {
                             tilesToGet = 1;
                         }
                         List<HexTile> tilesToSetElevation = new List<HexTile>();
