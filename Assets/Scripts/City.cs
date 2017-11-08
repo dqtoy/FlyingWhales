@@ -589,75 +589,120 @@ public class City{
 		}
 	}
 	private void SendFoodToOtherCities(int foodAmount){
-//		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
+		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
+		orderedCities.Remove (this);
+
 		City chosenCity = null;
 		int lowestResourceCount = 0;
-		for (int i = 0; i < this._region.connections.Count; i++) {
-			if(this._region.connections[i] is Region){
-				Region adjacentRegion = (Region)this._region.connections [i];
-				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id == this._kingdom.id && adjacentRegion.occupant.foodCount < adjacentRegion.occupant.foodRequirement){
-					if(chosenCity == null){
-						chosenCity = adjacentRegion.occupant;
-						lowestResourceCount = adjacentRegion.occupant.foodCount;
-					}else{
-						if(adjacentRegion.occupant.foodCount < lowestResourceCount){
-							chosenCity = adjacentRegion.occupant;
-							lowestResourceCount = adjacentRegion.occupant.foodCount;
-						}
+		for (int i = 0; i < orderedCities.Count; i++) {
+			if(orderedCities[i].foodCount < orderedCities[i].foodRequirement){
+				if(chosenCity == null){
+					chosenCity = orderedCities[i];
+					lowestResourceCount = orderedCities[i].foodCount;
+				}else{
+					if(orderedCities[i].foodCount < lowestResourceCount){
+						chosenCity = orderedCities[i];
+						lowestResourceCount = orderedCities[i].foodCount;
 					}
 				}
 			}
 		}
+//		for (int i = 0; i < this._region.connections.Count; i++) {
+//			if(this._region.connections[i] is Region){
+//				Region adjacentRegion = (Region)this._region.connections [i];
+//				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id == this._kingdom.id && adjacentRegion.occupant.foodCount < adjacentRegion.occupant.foodRequirement){
+//					if(chosenCity == null){
+//						chosenCity = adjacentRegion.occupant;
+//						lowestResourceCount = adjacentRegion.occupant.foodCount;
+//					}else{
+//						if(adjacentRegion.occupant.foodCount < lowestResourceCount){
+//							chosenCity = adjacentRegion.occupant;
+//							lowestResourceCount = adjacentRegion.occupant.foodCount;
+//						}
+//					}
+//				}
+//			}
+//		}
 		if(chosenCity != null){
 			this.AdjustFoodCount (-foodAmount);
 			EventCreator.Instance.CreateSendResourceEvent (foodAmount, 0, 0, RESOURCE_TYPE.FOOD, this.hexTile, chosenCity.hexTile, this);
 		}
 	}
 	private void SendMaterialToOtherCities(int materialAmount){
-		//		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
+		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
+		orderedCities.Remove (this);
+
 		City chosenCity = null;
 		int lowestResourceCount = 0;
-		for (int i = 0; i < this._region.connections.Count; i++) {
-			if(this._region.connections[i] is Region){
-				Region adjacentRegion = (Region)this._region.connections [i];
-				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id == this._kingdom.id && adjacentRegion.occupant.materialCount < adjacentRegion.occupant.materialRequirement){
-					if(chosenCity == null){
-						chosenCity = adjacentRegion.occupant;
-						lowestResourceCount = adjacentRegion.occupant.materialCount;
-					}else{
-						if(adjacentRegion.occupant.materialCount < lowestResourceCount){
-							chosenCity = adjacentRegion.occupant;
-							lowestResourceCount = adjacentRegion.occupant.materialCount;
-						}
+		for (int i = 0; i < orderedCities.Count; i++) {
+			if(orderedCities[i].materialCount < orderedCities[i].materialRequirement){
+				if(chosenCity == null){
+					chosenCity = orderedCities[i];
+					lowestResourceCount = orderedCities[i].materialCount;
+				}else{
+					if(orderedCities[i].materialCount < lowestResourceCount){
+						chosenCity = orderedCities[i];
+						lowestResourceCount = orderedCities[i].materialCount;
 					}
 				}
 			}
 		}
+//		for (int i = 0; i < this._region.connections.Count; i++) {
+//			if(this._region.connections[i] is Region){
+//				Region adjacentRegion = (Region)this._region.connections [i];
+//				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id == this._kingdom.id && adjacentRegion.occupant.materialCount < adjacentRegion.occupant.materialRequirement){
+//					if(chosenCity == null){
+//						chosenCity = adjacentRegion.occupant;
+//						lowestResourceCount = adjacentRegion.occupant.materialCount;
+//					}else{
+//						if(adjacentRegion.occupant.materialCount < lowestResourceCount){
+//							chosenCity = adjacentRegion.occupant;
+//							lowestResourceCount = adjacentRegion.occupant.materialCount;
+//						}
+//					}
+//				}
+//			}
+//		}
 		if(chosenCity != null){
 			this.AdjustMaterialCount (-materialAmount);
 			EventCreator.Instance.CreateSendResourceEvent (0, materialAmount, 0, RESOURCE_TYPE.MATERIAL, this.hexTile, chosenCity.hexTile, this);
 		}
 	}
 	private void SendOreToOtherCities(int oreAmount){
-		//		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
+		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
+		orderedCities.Remove (this);
+
 		City chosenCity = null;
 		int lowestResourceCount = 0;
-		for (int i = 0; i < this._region.connections.Count; i++) {
-			if(this._region.connections[i] is Region){
-				Region adjacentRegion = (Region)this._region.connections [i];
-				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id == this._kingdom.id && adjacentRegion.occupant.oreCount < adjacentRegion.occupant.oreRequirement){
-					if(chosenCity == null){
-						chosenCity = adjacentRegion.occupant;
-						lowestResourceCount = adjacentRegion.occupant.oreCount;
-					}else{
-						if(adjacentRegion.occupant.oreCount < lowestResourceCount){
-							chosenCity = adjacentRegion.occupant;
-							lowestResourceCount = adjacentRegion.occupant.oreCount;
-						}
+		for (int i = 0; i < orderedCities.Count; i++) {
+			if(orderedCities[i].oreCount < orderedCities[i].oreRequirement){
+				if(chosenCity == null){
+					chosenCity = orderedCities[i];
+					lowestResourceCount = orderedCities[i].oreCount;
+				}else{
+					if(orderedCities[i].oreCount < lowestResourceCount){
+						chosenCity = orderedCities[i];
+						lowestResourceCount = orderedCities[i].oreCount;
 					}
 				}
 			}
 		}
+//		for (int i = 0; i < this._region.connections.Count; i++) {
+//			if(this._region.connections[i] is Region){
+//				Region adjacentRegion = (Region)this._region.connections [i];
+//				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id == this._kingdom.id && adjacentRegion.occupant.oreCount < adjacentRegion.occupant.oreRequirement){
+//					if(chosenCity == null){
+//						chosenCity = adjacentRegion.occupant;
+//						lowestResourceCount = adjacentRegion.occupant.oreCount;
+//					}else{
+//						if(adjacentRegion.occupant.oreCount < lowestResourceCount){
+//							chosenCity = adjacentRegion.occupant;
+//							lowestResourceCount = adjacentRegion.occupant.oreCount;
+//						}
+//					}
+//				}
+//			}
+//		}
 		if(chosenCity != null){
 			this.AdjustOreCount (-oreAmount);
 			EventCreator.Instance.CreateSendResourceEvent (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, chosenCity.hexTile, this);
