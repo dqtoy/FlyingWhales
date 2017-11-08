@@ -12,7 +12,7 @@ public class ObjectPoolManager : MonoBehaviour {
     private Dictionary<string, EZObjectPool> allObjectPools;
 
     [SerializeField] private GameObject[] UIPrefabs;
-    [SerializeField] private GameObject[] citizenAvatarPrefabs;
+    [SerializeField] internal GameObject[] citizenAvatarPrefabs;
     [SerializeField] private GameObject[] monsterAvatarPrefabs;
     [SerializeField] private GameObject[] agentPrefabs;
     [SerializeField] private GameObject[] otherPrefabs;
