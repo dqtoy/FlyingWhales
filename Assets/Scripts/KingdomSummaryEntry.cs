@@ -29,7 +29,7 @@ public class KingdomSummaryEntry : MonoBehaviour {
         kingdomNameLbl.text = kingdom.name;
         populationLbl.text = kingdom.population.ToString();
         citiesLbl.text = kingdom.cities.Count.ToString();
-        expansionRateLbl.text = kingdom.expansionRate.ToString();
+        expansionRateLbl.text = kingdom.currentExpansionRate.ToString();
         weaponsLbl.text = kingdom.effectiveAttack.ToString();
 //        armorLbl.text = kingdom.effectiveDefense.ToString();
 

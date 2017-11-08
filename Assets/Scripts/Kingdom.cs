@@ -89,7 +89,8 @@ public class Kingdom{
 	private List<GameEvent> _doneEvents;
 
     //Expansion
-    private int _expansionRate;
+    private int _currentExpansionRate;
+    private int _kingdomExpansionRate;
 
 	//Balance of Power
 //	private int _effectivePower;
@@ -225,8 +226,8 @@ public class Kingdom{
 	public int techCounter{
 		get{return this._techCounter;}
 	}
-    public int expansionRate {
-        get { return _expansionRate; }
+    public int currentExpansionRate {
+        get { return _currentExpansionRate; }
     }
     //public Dictionary<CHARACTER_VALUE, int> dictCharacterValues {
     //    get { return this._dictCharacterValues; }
@@ -444,8 +445,9 @@ public class Kingdom{
         this.foundationYear = GameManager.Instance.year;
         this.foundationDay = GameManager.Instance.days;
         this.foundationMonth = GameManager.Instance.month;
-        //this._dictCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
-        //this._importantCharacterValues = new Dictionary<CHARACTER_VALUE, int>();
+
+        //Expansion
+        this._kingdomExpansionRate = UnityEngine.Random.Range(1, 5);
 
         //Fog Of War
         this._fogOfWar = new FOG_OF_WAR_STATE[(int)GridMap.Instance.width, (int)GridMap.Instance.height];
@@ -493,27 +495,21 @@ public class Kingdom{
 			this.UpdateTechCapacity ();
 			this.SetSecession (false);
 
-			//		this.NewRandomCrimeDate (true);
+			// this.NewRandomCrimeDate (true);
 			// Determine what type of Kingdom this will be upon initialization.
 			this._kingdomTypeData = null;
 			SetKingdomType(StoryTellingManager.Instance.GetRandomKingdomTypeForKingdom());
-			//this.UpdateKingdomTypeData();
 
 			this.basicResource = Utilities.GetBasicResourceForRace(race);
 
 			Messenger.AddListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
-			//Messenger.AddListener("OnDayEnd", KingdomTickActions);
-			Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
+            Messenger.AddListener("OnDayEnd", AttemptToExpand);
+            Messenger.AddListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
-			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => DecreaseUnrestEveryMonth());
-			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseExpansionRatePerMonth());
-			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
-			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => MonthlyPrestigeActions());
-			//SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => AdaptToKingValues());
-//			SchedulingManager.Instance.AddEntry(GameManager.Instance.month, 1, GameManager.Instance.year, () => IncreasePopulationEveryMonth());
+            //SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseExpansionRatePerMonth());
+            SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, () => IncreaseBOPAttributesPerMonth());
 			SchedulingManager.Instance.AddEntry (1, 1, GameManager.Instance.year + 1, () => WarmongerDecreasePerYear ());
-			//		ScheduleEvents ();
-			ScheduleOddDayActions();
+			//ScheduleOddDayActions();
 			ScheduleActionDay();
 		}
         this.kingdomHistory.Add (new History (GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "This kingdom was born.", HISTORY_IDENTIFIER.NONE));
@@ -860,7 +856,7 @@ public class Kingdom{
         KingdomManager.Instance.UnregisterKingdomFromActionDays(this);
         ResolveWars();
         Messenger.RemoveListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
-        //Messenger.RemoveListener("OnDayEnd", KingdomTickActions);
+        Messenger.RemoveListener("OnDayEnd", AttemptToExpand);
         Messenger.RemoveListener<Kingdom>("OnKingdomDied", OtherKingdomDiedActions);
 
         Messenger.Broadcast<Kingdom>("OnKingdomDied", this);
@@ -1208,76 +1204,96 @@ public class Kingdom{
     #region Expansion Functions
     /*
 	 * Kingdom will attempt to expand. 
-	 * Chance for expansion can be edited by changing the value of expansionChance.
-	 * NOTE: expansionChance increases on it's own.
+	 * Expansion Rate is added every day. Value must reach 
+     * KingdomManager.KINGDOM_MAX_EXPANSION_RATE to create a Settler.
 	 * */
-    protected void AttemptToExpand() {
+    HexTile expandableTile = null;
+    private void AttemptToExpand() {
         if (HasActiveEvent(EVENT_TYPES.EXPANSION)) {
             //Kingdom has a currently active expansion event
             return;
         }
 
-        //if (cities.Count >= cityCap) {
-        //    //Kingdom has reached max city capacity
-        //    return;
-        //}
-        if(_expansionRate < GridMap.Instance.numOfRegions) {
+        if(expandableTile == null) {
+            expandableTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
+        } else {
+            if (expandableTile.isOccupied) {
+                expandableTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
+            }
+        }
+
+        if (expandableTile == null) {
             return;
         }
 
-        float upperBound = 300f + (150f * (float)this.cities.Count);
-        float chance = UnityEngine.Random.Range(0, upperBound);
-        if (this.cities.Count > 0) {
-            EventCreator.Instance.CreateExpansionEvent(this);
+        if(_currentExpansionRate < KingdomManager.KINGDOM_MAX_EXPANSION_RATE) {
+            IncreaseExpansionRate();
+        }
+    
+        if (_currentExpansionRate == KingdomManager.KINGDOM_MAX_EXPANSION_RATE) {
+            EventCreator.Instance.CreateExpansionEvent(this, expandableTile);
         }
     }
-    private void IncreaseExpansionRatePerMonth() {
-        //Reschedule next month
-        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        dueDate.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseExpansionRatePerMonth());
 
-        if (CityGenerator.Instance.GetExpandableTileForKingdom(this) == null) {
-            //set expansion rate to 0 and don't increase expansion rate until kingdom can expand
-            ResetExpansionRate();
-            return;
-        }
-        if (_expansionRate < GridMap.Instance.numOfRegions) {
-            AdjustExpansionRate(GetMonthlyExpansionRateIncrease());
-        }
+    /*
+     * Expansion Rate Gain is based on three values:
+     *  - Kingdom Expansion Rate (between 1 to 4) specified at the start of a Kingdom
+     *  - King Efficiency (between -1 to 1) based on Efficiency trait
+     *  - random value (between 6 - 10) randomized every day
+     * */
+    private void IncreaseExpansionRate() {
+        int expansionRateGained = _kingdomExpansionRate;
+        expansionRateGained += king.GetExpansionRateContribution();
+        expansionRateGained += UnityEngine.Random.Range(6, 11);
+        AdjustCurrentExpansionRate(expansionRateGained);
     }
-    internal int GetMonthlyExpansionRateIncrease() {
-        int monthlyExpansionRate = king.GetExpansionRateContribution();
-        for (int i = 0; i < cities.Count; i++) {
-            monthlyExpansionRate += cities[i].governor.GetExpansionRateContribution();
-        }
-        return monthlyExpansionRate;
-    }
-    internal void ResetExpansionRate() {
-        _expansionRate = 0;
+    //private void IncreaseExpansionRatePerMonth() {
+    //    //Reschedule next month
+    //    GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+    //    dueDate.AddMonths(1);
+    //    SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreaseExpansionRatePerMonth());
+
+    //    if (CityGenerator.Instance.GetExpandableTileForKingdom(this) == null) {
+    //        //set expansion rate to 0 and don't increase expansion rate until kingdom can expand
+    //        ResetExpansionRate();
+    //        return;
+    //    }
+    //    if (_expansionRate < GridMap.Instance.numOfRegions) {
+    //        AdjustExpansionRate(GetMonthlyExpansionRateIncrease());
+    //    }
+    //}
+    //internal int GetMonthlyExpansionRateIncrease() {
+    //    int monthlyExpansionRate = king.GetExpansionRateContribution();
+    //    for (int i = 0; i < cities.Count; i++) {
+    //        monthlyExpansionRate += cities[i].governor.GetExpansionRateContribution();
+    //    }
+    //    return monthlyExpansionRate;
+    //}
+    internal void ResetCurrentExpansionRate() {
+        _currentExpansionRate = 0;
         KingdomManager.Instance.UpdateKingdomList();
     }
-    private void AdjustExpansionRate(int adjustment) {
-        _expansionRate += adjustment;
-        _expansionRate = Mathf.Clamp(_expansionRate, 0, GridMap.Instance.numOfRegions);
+    private void AdjustCurrentExpansionRate(int adjustment) {
+        _currentExpansionRate += adjustment;
+        _currentExpansionRate = Mathf.Clamp(_currentExpansionRate, 0, KingdomManager.KINGDOM_MAX_EXPANSION_RATE);
         KingdomManager.Instance.UpdateKingdomList();
     }
     #endregion
 
     #region Odd Day Actions
-    private void ScheduleOddDayActions() {
-        this._oddActionDay = KingdomManager.Instance.GetOddActionDay(this);
-        //KingdomManager.Instance.IncrementOddActionDay();
-        SchedulingManager.Instance.AddEntry(GameManager.Instance.month, _oddActionDay, GameManager.Instance.year, () => OddDayActions());
-    }
-    private void OddDayActions() {
-        if (_isGrowthEnabled) {
-            AttemptToExpand();
-        }
-        GameDate nextActionDay = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-        nextActionDay.AddMonths(1);
-        SchedulingManager.Instance.AddEntry(nextActionDay.month, nextActionDay.day, nextActionDay.year, () => OddDayActions());
-    }
+    //private void ScheduleOddDayActions() {
+    //    this._oddActionDay = KingdomManager.Instance.GetOddActionDay(this);
+    //    //KingdomManager.Instance.IncrementOddActionDay();
+    //    SchedulingManager.Instance.AddEntry(GameManager.Instance.month, _oddActionDay, GameManager.Instance.year, () => OddDayActions());
+    //}
+    //private void OddDayActions() {
+    //    if (_isGrowthEnabled) {
+    //        AttemptToExpand();
+    //    }
+    //    GameDate nextActionDay = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
+    //    nextActionDay.AddMonths(1);
+    //    SchedulingManager.Instance.AddEntry(nextActionDay.month, nextActionDay.day, nextActionDay.year, () => OddDayActions());
+    //}
     #endregion
 
     #region Prestige

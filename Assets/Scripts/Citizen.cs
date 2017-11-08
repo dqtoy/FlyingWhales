@@ -686,31 +686,19 @@ public class Citizen {
 
     #region Expansion
     internal int GetExpansionRateContribution() {
-        if (role != ROLE.GOVERNOR && role != ROLE.KING) {
+        if (role != ROLE.KING) {
             return 0;
         } else {
-            switch (_charisma) {
-                case CHARISMA.CHARISMATIC:
-                    if (role == ROLE.KING) {
-                        return 10;
-                    } else if (role == ROLE.GOVERNOR) {
-                        return 2;
-                    }
-                    break;
-                case CHARISMA.NEUTRAL:
-                    if (role == ROLE.KING) {
-                        return 7;
-                    } else if (role == ROLE.GOVERNOR) {
-                        return 1;
-                    }
-                    break;
-                case CHARISMA.REPULSIVE:
-                    if (role == ROLE.KING) {
-                        return 5;
-                    }
-                    break;
+            switch (_efficiency) {
+                case EFFICIENCY.EFFICIENT:
+                    return 1;
+                case EFFICIENCY.NEUTRAL:
+                    return 0;
+                case EFFICIENCY.INEPT:
+                    return -1;
+                default:
+                    return 0;
             }
-            return 0;
         }
     }
     #endregion

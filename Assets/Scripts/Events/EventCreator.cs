@@ -9,14 +9,17 @@ public class EventCreator: MonoBehaviour {
 	void Awake(){
 		Instance = this;
 	}
-	internal Expansion CreateExpansionEvent(Kingdom kingdom){
+	internal Expansion CreateExpansionEvent(Kingdom kingdom, HexTile hexTileToExpandTo = null) {
 		if(kingdom.isLockedDown){
 			return null;
 		}
 		if(kingdom.capitalCity == null){
 			return null;
 		}
-        HexTile hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(kingdom);
+
+        if(hexTileToExpandTo == null) {
+            hexTileToExpandTo = CityGenerator.Instance.GetExpandableTileForKingdom(kingdom);
+        }
         
         if (hexTileToExpandTo == null){
             Debug.Log(kingdom.name + " cannot find a region to expand to!");
