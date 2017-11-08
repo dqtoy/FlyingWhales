@@ -359,7 +359,7 @@ public class KingdomManager : MonoBehaviour {
 
     internal void UnregisterKingdomFromActionDays(Kingdom kingdom) {
         evenActionDays[kingdom.actionDay].Remove(kingdom);
-        oddActionDays[kingdom.oddActionDay].Remove(kingdom);
+        //oddActionDays[kingdom.oddActionDay].Remove(kingdom);
     }
 
 	internal void IncrementEvenActionDay(int value){
