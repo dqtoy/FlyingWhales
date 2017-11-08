@@ -13,7 +13,9 @@ public class MapGenerator : MonoBehaviour {
 
     internal void Start() {
         //StartCoroutine (StartGeneration());
-        PathfindingManager.Instance.Initialize();
+        if (GameManager.Instance.enableGameAgents) {
+            PathfindingManager.Instance.Initialize();
+        }
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         ObjectPoolManager.Instance.InitializeObjectPools();
@@ -22,7 +24,10 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
         GridMap.Instance.GenerateOuterGrid();
-        PathfindingManager.Instance.CreateGrid();
+        if (GameManager.Instance.enableGameAgents) {
+            PathfindingManager.Instance.CreateGrid();
+        }
+        
         //Biomes.Instance.GenerateSpecialResources ();
         Biomes.Instance.GenerateTileTags();
         GridMap.Instance.GenerateNeighboursWithSameTag();

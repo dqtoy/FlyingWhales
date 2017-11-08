@@ -50,7 +50,7 @@ public class PathfindingManager : MonoBehaviour {
     }
 
     public void RescanGrid() {
-        aStarPath.Scan(mainGraph);
+        AstarPath.active.Scan(mainGraph);
     }
 
     public void RescanSpecificPortion(GraphUpdateObject guo) {
