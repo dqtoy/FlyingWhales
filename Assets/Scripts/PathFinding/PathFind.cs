@@ -182,7 +182,25 @@ namespace PathFind {
                         newPath = path.AddStep(n, d);
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
-                }  else {
+				} else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES) {
+					if (kingdom == null) {
+						throw new Exception("Someone is trying to pathfind using USE_ROADS_WITH_ALLIES, but hasn't specified a kingdom!");
+					}
+					foreach (Node n in path.LastStep.RoadTiles) {
+						if (n.tileTag != start.tileTag) {
+							continue;
+						}
+						if (n.city != null && n.city.kingdom.id != kingdom.id) {
+							KingdomRelationship kr = n.city.kingdom.GetRelationshipWithKingdom (kingdom);
+							if (!kr.AreAllies ()) {
+								continue;
+							}
+						}
+						d = distance(path.LastStep, n);
+						newPath = path.AddStep(n, d);
+						queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
+					}
+				} else {
                     foreach (Node n in path.LastStep.ValidTiles) {
                         if (n.tileTag != start.tileTag) {
                             continue;

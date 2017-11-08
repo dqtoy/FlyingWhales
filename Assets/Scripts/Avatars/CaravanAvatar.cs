@@ -19,7 +19,6 @@ public class CaravanAvatar : CitizenAvatar {
 				sprtCaravan.sprite = sprtOreCaravan;
 			}
 		}
-		CreatePath (PATHFINDING_MODE.USE_ROADS);
 	}
 	internal override void NewMove() {
 		if (this.citizenRole.targetLocation != null) {

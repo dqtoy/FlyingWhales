@@ -68,7 +68,7 @@ public class CitizenAvatar : PooledObject {
 	}
 	internal virtual void ReceivePath(List<HexTile> path){
 		if(path != null && path.Count > 0){
-			this.citizenRole.path = new List<HexTile>(path);
+			this.citizenRole.path = path;
 			StartMoving ();
 		}else{
 			CancelEventInvolvedIn ();
