@@ -368,12 +368,12 @@ public class UIManager : MonoBehaviour {
         ToggleBorders();
         toggleBordersBtn.SetClickState(true);
 		isShowKingdomHistoryOnly = false;
-        EventDelegate.Add(orderKingdomsByNameBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.NAME); });
+        //EventDelegate.Add(orderKingdomsByNameBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.NAME); });
         EventDelegate.Add(orderKingdomsByPopulationBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.POPULATION); });
         EventDelegate.Add(orderKingdomsByCitiesBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.CITIES); });
         EventDelegate.Add(orderKingdomsByExpansionRateBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.EXPANSION_RATE); });
         EventDelegate.Add(orderKingdomsByWeaponsBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.WEAPONS); });
-        EventDelegate.Add(orderKingdomsByArmorBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.ARMOR); });
+        //EventDelegate.Add(orderKingdomsByArmorBtn.onClick, delegate () { KingdomManager.Instance.SetOrderKingdomsBy(KINGDOMS_ORDERED_BY.ARMOR); });
         PopulateHistoryTable();
 		PopulateCityHistoryTable ();
         //LoadKingdomList();

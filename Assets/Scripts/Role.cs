@@ -51,7 +51,7 @@ public class Role {
 	internal virtual void DestroyGO(){
         this.location.ExitCitizen(this.citizen);
         if (this.avatar != null){
-			UIManager.Instance.HideSmallInfo ();
+			//UIManager.Instance.HideSmallInfo ();
             ObjectPoolManager.Instance.DestroyObject(this.avatar);
             this.avatar = null;
         }
