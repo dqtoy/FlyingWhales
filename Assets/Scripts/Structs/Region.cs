@@ -26,7 +26,7 @@ public class Region {
     private int _cityLevelCap;
 
     //Population
-    private int _populationGrowth;
+//    private int _populationGrowth;
 
 	private List<HexTile> _corpseMoundTiles;
 
@@ -79,9 +79,9 @@ public class Region {
     internal int cityLevelCap {
         get { return _cityLevelCap; }
     }
-    internal int populationGrowth {
-        get { return _populationGrowth; }
-    }
+//    internal int populationGrowth {
+//        get { return _populationGrowth; }
+//    }
 	internal List<HexTile> corpseMoundTiles {
 		get { return this._corpseMoundTiles; }
 	}
@@ -118,8 +118,8 @@ public class Region {
 		this.oreMultiplierCapacity = 2;
 
         //Generate population growth
-        int[] possiblePopulationGrowths = new int[] { 4, 5, 6, 7, 8, 9 };
-        _populationGrowth = possiblePopulationGrowths[Random.Range(0, possiblePopulationGrowths.Length)];
+//        int[] possiblePopulationGrowths = new int[] { 4, 5, 6, 7, 8, 9 };
+//        _populationGrowth = possiblePopulationGrowths[Random.Range(0, possiblePopulationGrowths.Length)];
     }
 
     #region Center Of Mass Functions

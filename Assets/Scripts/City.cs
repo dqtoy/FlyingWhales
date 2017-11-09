@@ -42,6 +42,7 @@ public class City{
 	private int raidLoyaltyExpiration;
 
 	private int _population;
+	private int _populationGrowth;
 
 	internal PandaBehaviour _cityBT;
 
@@ -168,6 +169,9 @@ public class City{
 	internal int population {
 		get { return _population; }
 	}
+	internal int populationGrowth {
+		get { return this._populationGrowth + this.cityLevel; }
+	}
 	internal int populationCapacity {
 		get { return 500 + (100 * this.cityLevel); }
 	}
@@ -229,6 +233,8 @@ public class City{
 		this.plague = null;
 		this._hp = this.maxHP;
 		this.populationIncreasePool = new int[]{ 15, 17, 19, 21, 23, 25 };
+		this._populationGrowth = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
+
 		this._cityBT = null;
 
         _activeGuards = new List<Guard>();
@@ -1334,8 +1340,7 @@ public class City{
 
 	#region Population
 	private void IncreasePopulationPerMonth(){
-		int populationIncrease = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
-		populationIncrease += this.cityLevel;
+		int populationIncrease = this.populationGrowth;
 		if(this._isStarving){
 			populationIncrease /= 2;
 		}
