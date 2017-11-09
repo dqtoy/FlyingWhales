@@ -378,6 +378,24 @@ public class RoadManager : MonoBehaviour {
             HexTile nextTile = path.ElementAtOrDefault(i + 1);
             HEXTILE_DIRECTION from = currTile.GetNeighbourDirection(previousTile);
             HEXTILE_DIRECTION to = currTile.GetNeighbourDirection(nextTile);
+            if(previousTile != null) {
+                if (!currTile.allNeighbourRoads.Contains(previousTile)) {
+                    currTile.allNeighbourRoads.Add(previousTile);
+                }
+                if (!previousTile.allNeighbourRoads.Contains(currTile)) {
+                    previousTile.allNeighbourRoads.Add(currTile);
+                }
+            }
+
+            if (nextTile != null) {
+                if (!currTile.allNeighbourRoads.Contains(nextTile)) {
+                    currTile.allNeighbourRoads.Add(nextTile);
+                }
+                if (!nextTile.allNeighbourRoads.Contains(currTile)) {
+                    nextTile.allNeighbourRoads.Add(currTile);
+                }
+            }
+
             GameObject roadGO = currTile.GetRoadGameObjectForDirection(from, to);
             if(roadGO != null) {
                 roadGO.SetActive(true);

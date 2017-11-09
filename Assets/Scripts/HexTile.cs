@@ -138,7 +138,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
 	[System.NonSerialized] public Dictionary<HexTile, RoadConnection> connectedTiles = new Dictionary<HexTile, RoadConnection>();
-//	[System.NonSerialized] public List<GameObject> connectionsGO = new List<GameObject>();
+    //	[System.NonSerialized] public List<GameObject> connectionsGO = new List<GameObject>();
+
+    public List<HexTile> allNeighbourRoads = new List<HexTile>();
 
 	public List<HexTile> AllNeighbours { get; set; }
 	public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList();}}
