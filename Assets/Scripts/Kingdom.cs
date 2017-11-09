@@ -2851,6 +2851,27 @@ public class Kingdom{
 			}
 		}
 	}
+	internal void DamageSoldiers(int damage){
+		int distributableDamage = damage / this.cities.Count;
+		int remainder = damage % this.cities.Count;
+		distributableDamage += remainder;
+		int excessDamage = 0;
+		for (int i = 0; i < this.cities.Count; i++) {
+			City city = this.cities [i];
+			int totalDamage = distributableDamage + excessDamage;
+			if(city.soldiers < totalDamage){
+				excessDamage += totalDamage - city.soldiers;
+				city.AdjustSoldiers (-city.soldiers);
+				i--;
+			}else{
+				excessDamage = 0;
+				city.AdjustSoldiers (-totalDamage);
+				if(city.isDead){
+					i--;
+				}
+			}
+		}
+	}
     #endregion
 
     #region Automatic Rebellion

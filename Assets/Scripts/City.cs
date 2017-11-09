@@ -1382,7 +1382,7 @@ public class City{
 	#endregion
 
 	#region Soldiers
-	private void AdjustSoldiers(int amount){
+	internal void AdjustSoldiers(int amount){
 		int supposedSoldiers = this._soldiers + amount;
 		if (supposedSoldiers < 0){
 			this._kingdom.AdjustSoldiers (-this._soldiers);
