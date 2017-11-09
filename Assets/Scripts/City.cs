@@ -43,6 +43,8 @@ public class City{
 
 	private int _population;
 
+	internal PandaBehaviour _cityBT;
+
 	[Space(5)]
     [Header("Booleans")]
     //internal bool hasKing;
@@ -52,6 +54,7 @@ public class City{
 	internal bool hasReinforced;
 	internal bool isDead;
 	private bool _isStarving;
+	private bool _isNoCityGrowth;
 
     [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
     [NonSerialized] internal List<HexTile> borderTiles;
@@ -166,16 +169,19 @@ public class City{
 		get { return _population; }
 	}
 	internal int populationCapacity {
-		get { return 200 + (50 * this.cityLevel); }
+		get { return 500 + (100 * this.cityLevel); }
 	}
 	internal int foodExcessCapacity{
-		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
+//		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
+		get { return 2 * this.foodRequirement; }
 	}
 	internal int materialExcessCapacity{
-		get { return this._region.materialMultiplierCapacity * this.materialRequirement; }
+//		get { return this._region.materialMultiplierCapacity * this.materialRequirement; }
+		get { return 2 * this.materialRequirement; }
 	}
 	internal int oreExcessCapacity{
-		get { return this._region.oreMultiplierCapacity * this.oreRequirement; }
+//		get { return this._region.oreMultiplierCapacity * this.oreRequirement; }
+		get { return 2 * this.oreRequirement; }
 	}
 	internal int foodCapacity{
 		get { return 10 * this.foodRequirement; }
@@ -208,6 +214,7 @@ public class City{
 		this.isDefending = false;
 		this.hasReinforced = false;
 		this._isStarving = false;
+		this._isNoCityGrowth = false;
 		this.isDead = false;
 		this.borderTiles = new List<HexTile>();
         this.outerTiles = new List<HexTile>();
@@ -222,6 +229,7 @@ public class City{
 		this.plague = null;
 		this._hp = this.maxHP;
 		this.populationIncreasePool = new int[]{ 15, 17, 19, 21, 23, 25 };
+		this._cityBT = null;
 
         _activeGuards = new List<Guard>();
         _cityBounds = 50f;
@@ -250,6 +258,7 @@ public class City{
 		if (!this.isDead) {
 			ConsumeResources ();
 			IncreasePopulationPerMonth ();
+			this._cityBT.Tick ();
 
 			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 			increaseDueDate.AddMonths(1);
@@ -381,7 +390,7 @@ public class City{
 
         //Update necessary data
         this.UpdateDailyProduction();
-        _kingdom.UpdatePopulationCapacity();
+//        _kingdom.UpdatePopulationCapacity();
 
         tileToBuy.CheckLairsInRange ();
         //LevelUpBalanceOfPower();
@@ -485,8 +494,10 @@ public class City{
 		this._currentGrowth = 0;
 	}
     internal void AdjustDailyGrowth(int amount) {
-        this._currentGrowth += amount;
-        this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
+		if(!this._isNoCityGrowth){
+			this._currentGrowth += amount;
+			this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
+		}
     }
 	internal void UpdateDailyProduction(){
 		this._maxGrowth = CityGenerator.Instance.cityMonthlyMaxGrowthMultiplier[this.cityLevel - 1] * 150;
@@ -535,9 +546,11 @@ public class City{
 		int materialToBeConsumed = this.materialRequirement;
 		if(this._materialCount >= materialToBeConsumed){
 			AdjustMaterialCount (-materialToBeConsumed);
+			this._isNoCityGrowth = false;
 		}else{
 			AdjustMaterialCount (-this._materialCount);
 			//Suffer No City Growth
+			this._isNoCityGrowth = true;
 		}
 	}
 	private void ConsumeOre(){
@@ -563,8 +576,10 @@ public class City{
 			int foodCap = this.foodExcessCapacity;
 			if(this.foodCount > foodCap){
 				int excessFood = this.foodCount - foodCap;
-				//Send caravan to other cities to give excess food
-				SendFoodToOtherCities(excessFood);
+				if (excessFood >= this.foodExcessCapacity) {
+					//Send caravan to other cities to give excess food
+					SendFoodToOtherCities (excessFood);
+				}
 			}
 		}
 	}
@@ -573,8 +588,10 @@ public class City{
 			int materialCap = this.materialExcessCapacity;
 			if (this.materialCount > materialCap) {
 				int excessMaterial = this.materialCount - materialCap;
-				//Send caravan to other cities to give excess material
-				SendMaterialToOtherCities(excessMaterial);
+				if (excessMaterial >= this.materialExcessCapacity) {
+					//Send caravan to other cities to give excess material
+					SendMaterialToOtherCities (excessMaterial);
+				}
 			}
 		}
 	}
@@ -583,129 +600,118 @@ public class City{
 			int oreCap = this.oreExcessCapacity;
 			if (this.oreCount > oreCap) {
 				int excessOre = this.oreCount - oreCap;
-				//Send caravan to other cities to give excess ore
-				SendOreToOtherCities(excessOre);
+				if(excessOre >= this.oreExcessCapacity){
+					//Send caravan to other cities to give excess ore
+					SendOreToOtherCities(excessOre);
+				}
 			}
 		}
 	}
 	private void SendFoodToOtherCities(int foodAmount){
-		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
-		orderedCities.Remove (this);
-
-		City chosenCity = null;
-		int lowestResourceCount = 0;
-		for (int i = 0; i < orderedCities.Count; i++) {
-			if(orderedCities[i].foodCount < orderedCities[i].foodRequirement){
-				if(chosenCity == null){
-					chosenCity = orderedCities[i];
-					lowestResourceCount = orderedCities[i].foodCount;
-				}else{
-					if(orderedCities[i].foodCount < lowestResourceCount){
-						chosenCity = orderedCities[i];
-						lowestResourceCount = orderedCities[i].foodCount;
-					}
-				}
-			}
-		}
-//		for (int i = 0; i < this._region.connections.Count; i++) {
-//			if(this._region.connections[i] is Region){
-//				Region adjacentRegion = (Region)this._region.connections [i];
-//				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id == this._kingdom.id && adjacentRegion.occupant.foodCount < adjacentRegion.occupant.foodRequirement){
+		SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (foodAmount, 0, 0, RESOURCE_TYPE.FOOD, this.hexTile, this));
+//		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
+//		orderedCities.Remove (this);
+//
+//		City chosenCity = null;
+//		int lowestResourceCount = 0;
+//		List<HexTile> path = new List<HexTile> ();
+//		for (int i = 0; i < orderedCities.Count; i++) {
+//			if(orderedCities[i].foodCount < orderedCities[i].foodRequirement){
+//				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.hexTile, orderedCities [i].hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this._kingdom);
+//				if (newPath != null && newPath.Count > 0) {
 //					if(chosenCity == null){
-//						chosenCity = adjacentRegion.occupant;
-//						lowestResourceCount = adjacentRegion.occupant.foodCount;
+//						chosenCity = orderedCities[i];
+//						lowestResourceCount = orderedCities[i].foodCount;
+//						path = newPath;
 //					}else{
-//						if(adjacentRegion.occupant.foodCount < lowestResourceCount){
-//							chosenCity = adjacentRegion.occupant;
-//							lowestResourceCount = adjacentRegion.occupant.foodCount;
+//						if(orderedCities[i].foodCount < lowestResourceCount){
+//							chosenCity = orderedCities[i];
+//							lowestResourceCount = orderedCities[i].foodCount;
+//							path = newPath;
 //						}
 //					}
 //				}
 //			}
 //		}
-		if(chosenCity != null){
-			this.AdjustFoodCount (-foodAmount);
-			EventCreator.Instance.CreateSendResourceEvent (foodAmount, 0, 0, RESOURCE_TYPE.FOOD, this.hexTile, chosenCity.hexTile, this);
-		}
+//		if(chosenCity != null){
+//			this.AdjustFoodCount (-foodAmount);
+//			EventCreator.Instance.CreateSendResourceEvent (foodAmount, 0, 0, RESOURCE_TYPE.FOOD, this.hexTile, chosenCity.hexTile, this, path);
+//		}
 	}
 	private void SendMaterialToOtherCities(int materialAmount){
-		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
-		orderedCities.Remove (this);
+		SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (0, materialAmount, 0, RESOURCE_TYPE.MATERIAL, this.hexTile, this));
 
-		City chosenCity = null;
-		int lowestResourceCount = 0;
-		for (int i = 0; i < orderedCities.Count; i++) {
-			if(orderedCities[i].materialCount < orderedCities[i].materialRequirement){
-				if(chosenCity == null){
-					chosenCity = orderedCities[i];
-					lowestResourceCount = orderedCities[i].materialCount;
-				}else{
-					if(orderedCities[i].materialCount < lowestResourceCount){
-						chosenCity = orderedCities[i];
-						lowestResourceCount = orderedCities[i].materialCount;
-					}
-				}
-			}
-		}
-//		for (int i = 0; i < this._region.connections.Count; i++) {
-//			if(this._region.connections[i] is Region){
-//				Region adjacentRegion = (Region)this._region.connections [i];
-//				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id == this._kingdom.id && adjacentRegion.occupant.materialCount < adjacentRegion.occupant.materialRequirement){
-//					if(chosenCity == null){
-//						chosenCity = adjacentRegion.occupant;
-//						lowestResourceCount = adjacentRegion.occupant.materialCount;
-//					}else{
-//						if(adjacentRegion.occupant.materialCount < lowestResourceCount){
-//							chosenCity = adjacentRegion.occupant;
-//							lowestResourceCount = adjacentRegion.occupant.materialCount;
+//		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
+//		orderedCities.Remove (this);
+//
+//		City chosenCity = null;
+//		int lowestResourceCount = 0;
+//		List<HexTile> path = new List<HexTile> ();
+//		for (int i = 0; i < orderedCities.Count; i++) {
+//			if(orderedCities[i].materialCount < orderedCities[i].materialRequirement){
+//				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.hexTile, orderedCities [i].hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this._kingdom);
+//				if (newPath != null && newPath.Count > 0) {
+//					if (chosenCity == null) {
+//						chosenCity = orderedCities [i];
+//						lowestResourceCount = orderedCities [i].materialCount;
+//						path = newPath;
+//					} else {
+//						if (orderedCities [i].materialCount < lowestResourceCount) {
+//							chosenCity = orderedCities [i];
+//							lowestResourceCount = orderedCities [i].materialCount;
+//							path = newPath;
 //						}
 //					}
 //				}
 //			}
 //		}
-		if(chosenCity != null){
-			this.AdjustMaterialCount (-materialAmount);
-			EventCreator.Instance.CreateSendResourceEvent (0, materialAmount, 0, RESOURCE_TYPE.MATERIAL, this.hexTile, chosenCity.hexTile, this);
-		}
+//		if(chosenCity != null){
+//			this.AdjustMaterialCount (-materialAmount);
+//			EventCreator.Instance.CreateSendResourceEvent (0, materialAmount, 0, RESOURCE_TYPE.MATERIAL, this.hexTile, chosenCity.hexTile, this);
+//		}
 	}
 	private void SendOreToOtherCities(int oreAmount){
-		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
-		orderedCities.Remove (this);
+		SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, this));
 
-		City chosenCity = null;
-		int lowestResourceCount = 0;
-		for (int i = 0; i < orderedCities.Count; i++) {
-			if(orderedCities[i].oreCount < orderedCities[i].oreRequirement){
-				if(chosenCity == null){
-					chosenCity = orderedCities[i];
-					lowestResourceCount = orderedCities[i].oreCount;
-				}else{
-					if(orderedCities[i].oreCount < lowestResourceCount){
-						chosenCity = orderedCities[i];
-						lowestResourceCount = orderedCities[i].oreCount;
-					}
-				}
-			}
-		}
-//		for (int i = 0; i < this._region.connections.Count; i++) {
-//			if(this._region.connections[i] is Region){
-//				Region adjacentRegion = (Region)this._region.connections [i];
-//				if(adjacentRegion.occupant != null && adjacentRegion.occupant.kingdom.id == this._kingdom.id && adjacentRegion.occupant.oreCount < adjacentRegion.occupant.oreRequirement){
-//					if(chosenCity == null){
-//						chosenCity = adjacentRegion.occupant;
-//						lowestResourceCount = adjacentRegion.occupant.oreCount;
-//					}else{
-//						if(adjacentRegion.occupant.oreCount < lowestResourceCount){
-//							chosenCity = adjacentRegion.occupant;
-//							lowestResourceCount = adjacentRegion.occupant.oreCount;
+//		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
+//		orderedCities.Remove (this);
+//
+//		City chosenCity = null;
+//		int lowestResourceCount = 0;
+//		List<HexTile> path = new List<HexTile> ();
+//		for (int i = 0; i < orderedCities.Count; i++) {
+//			if(orderedCities[i].oreCount < orderedCities[i].oreRequirement){
+//				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.hexTile, orderedCities [i].hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this._kingdom);
+//				if (newPath != null && newPath.Count > 0) {
+//					if (chosenCity == null) {
+//						chosenCity = orderedCities [i];
+//						lowestResourceCount = orderedCities [i].oreCount;
+//						path = newPath;
+//					} else {
+//						if (orderedCities [i].oreCount < lowestResourceCount) {
+//							chosenCity = orderedCities [i];
+//							lowestResourceCount = orderedCities [i].oreCount;
+//							path = newPath;
 //						}
 //					}
 //				}
 //			}
 //		}
-		if(chosenCity != null){
-			this.AdjustOreCount (-oreAmount);
-			EventCreator.Instance.CreateSendResourceEvent (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, chosenCity.hexTile, this);
+//		if(chosenCity != null){
+//			this.AdjustOreCount (-oreAmount);
+//			EventCreator.Instance.CreateSendResourceEvent (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, chosenCity.hexTile, this);
+//		}
+	}
+	internal void ReceiveSendResourceThread(int foodAmount, int materialAmount, int oreAmount, RESOURCE_TYPE resourceType, HexTile sourceHextile, HexTile targetHextile, List<HexTile> path){
+		if (targetHextile != null && (path != null || path.Count > 0)) {
+			if (resourceType == RESOURCE_TYPE.FOOD) {
+				this.AdjustFoodCount (-foodAmount);
+			}else if (resourceType == RESOURCE_TYPE.MATERIAL) {
+				this.AdjustMaterialCount (-materialAmount);
+			}else if (resourceType == RESOURCE_TYPE.ORE) {
+				this.AdjustOreCount (-oreAmount);
+			}
+			EventCreator.Instance.CreateSendResourceEvent (foodAmount, materialAmount, oreAmount, resourceType, sourceHextile, targetHextile, this, path);
 		}
 	}
 	#endregion
@@ -1336,9 +1342,21 @@ public class City{
 		AdjustPopulation (populationIncrease);
 	}
 	internal void AdjustPopulation(int adjustment) {
-		this._population += adjustment;
-		this._kingdom.AdjustPopulation (adjustment);
-		this._population = Mathf.Clamp (this._population, 0, this.populationCapacity);
+		int supposedPopulation = this._population + adjustment;
+		int populationCap = this.populationCapacity;
+		if(supposedPopulation > populationCap){
+			int addedPopulation = populationCap - this._population;
+			this._population += addedPopulation;
+			this._kingdom.AdjustPopulation (addedPopulation);
+		}else if (supposedPopulation < 0){
+			this._kingdom.AdjustPopulation (-this._population);
+			this._population = 0;
+		}else{
+			this._population += adjustment;
+			this._kingdom.AdjustPopulation (adjustment);
+		}
+
+//		this._population = Mathf.Clamp (this._population, 0, this.populationCapacity);
 		if(this._population == 0) {
 			KillCity ();
 		}

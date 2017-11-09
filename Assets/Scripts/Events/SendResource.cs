@@ -23,6 +23,7 @@ public class SendResource : GameEvent {
 
 	#region Overrides
 	internal override void DoneCitizenAction(Citizen citizen){
+		this.DoneEvent ();
 		if(foodAmount > 0){
 			citizen.assignedRole.targetCity.AdjustFoodCount (foodAmount);
 		}
@@ -32,7 +33,6 @@ public class SendResource : GameEvent {
 		if (oreAmount > 0) {
 			citizen.assignedRole.targetCity.AdjustOreCount (oreAmount);
 		}
-		this.DoneEvent ();
 	}
 	internal override void DoneEvent(){
 		base.DoneEvent();

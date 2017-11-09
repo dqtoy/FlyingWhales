@@ -52,7 +52,6 @@ public class Role {
         this.location.ExitCitizen(this.citizen);
         if (this.avatar != null){
 			UIManager.Instance.HideSmallInfo ();
-//			GameObject.Destroy (this.avatar);
             ObjectPoolManager.Instance.DestroyObject(this.avatar);
             this.avatar = null;
         }

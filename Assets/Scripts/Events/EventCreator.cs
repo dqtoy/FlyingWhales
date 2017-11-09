@@ -56,6 +56,17 @@ public class EventCreator: MonoBehaviour {
 		if(caravan != null){
 			SendResource sendResource = new SendResource (GameManager.Instance.days, GameManager.Instance.month, GameManager.Instance.year, caravan, foodAmount, materialAmount, oreAmount, resourceType);
 			caravan.assignedRole.Initialize (sendResource);
+			if (path == null) {
+				caravan.assignedRole.avatar.GetComponent<CaravanAvatar> ().CreatePath (PATHFINDING_MODE.USE_ROADS);
+			} else {
+				if(path.Count > 0){
+					caravan.assignedRole.path = path;
+					caravan.assignedRole.avatar.GetComponent<CaravanAvatar> ().StartMoving ();
+				}else{
+					caravan.assignedRole.avatar.GetComponent<CaravanAvatar> ().CancelEventInvolvedIn ();
+				}
+			}
+
 			return sendResource;
 		}
 		return null;

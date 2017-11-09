@@ -170,24 +170,25 @@ public class PathGenerator : MonoBehaviour {
         bool doesStartingTileHaveLandmark = startingTile.hasLandmark;
         bool doesDestinationTileHaveLandmark = destinationTile.hasLandmark;
 
-        if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
-            startingTile.isRoad = true;
-            destinationTile.isRoad = true;
-        }
+		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES) {
+			startingTile.isRoad = true;
+			destinationTile.isRoad = true;
+		}
 
         Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
 		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
 
 		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom);
 
-        if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
-            startingTile.isRoad = isStartingTileRoad;
-            destinationTile.isRoad = isDestinationTileRoad;
-        }
+		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES) {
+			startingTile.isRoad = isStartingTileRoad;
+			destinationTile.isRoad = isDestinationTileRoad;
+		}
 
         if (path != null) {
-			if (pathfindingMode == PATHFINDING_MODE.COMBAT || pathfindingMode == PATHFINDING_MODE.USE_ROADS 
-                || pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION || pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION 
+			if (pathfindingMode == PATHFINDING_MODE.COMBAT || pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION || pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION 
                 || pathfindingMode == PATHFINDING_MODE.LANDMARK_EXTERNAL_CONNECTION) {
 				return path.Reverse().ToList();
 			} else {

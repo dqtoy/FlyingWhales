@@ -68,7 +68,7 @@ public class CitizenAvatar : PooledObject {
 	}
 	internal virtual void ReceivePath(List<HexTile> path){
 		if(path != null && path.Count > 0){
-			this.citizenRole.path = new List<HexTile>(path);
+			this.citizenRole.path = path;
 			StartMoving ();
 		}else{
 			CancelEventInvolvedIn ();
@@ -111,7 +111,7 @@ public class CitizenAvatar : PooledObject {
 		}
 
         //this.CheckForKingdomDiscovery();
-        this.UpdateFogOfWar();
+//        this.UpdateFogOfWar();
 //        this.transform.SetParent(this.citizenRole.location.transform);
 //        this.transform.localPosition = Vector3.zero;
         if(this.citizenRole.location.currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
@@ -173,7 +173,7 @@ public class CitizenAvatar : PooledObject {
     #region overrides
     public override void Reset() {
         base.Reset();
-        UpdateFogOfWar(true);
+//        UpdateFogOfWar(true);
         ResetValues();
 //        ResetBehaviourTree();
 //        RemoveBehaviourTree();

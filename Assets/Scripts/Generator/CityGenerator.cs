@@ -294,10 +294,11 @@ public class CityGenerator : MonoBehaviour {
 			hexTile.gameObject.AddComponent<PandaBehaviour>();
 			hexTile.gameObject.GetComponent<PandaBehaviour>().tickOn = BehaviourTree.UpdateOrder.Manual;
 			hexTile.gameObject.GetComponent<PandaBehaviour>().Compile(cityBehaviourTree.text);
+			hexTile.city._cityBT = hexTile.gameObject.GetComponent<PandaBehaviour> ();
 		}
 
 		ctmOfCity.Initialize(hexTile.city);
-		Messenger.AddListener("OnMonthEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
+//		Messenger.AddListener("OnMonthEnd", hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
 
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
         hexTile.city.PopulateBorderTiles();
