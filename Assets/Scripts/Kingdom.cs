@@ -155,6 +155,8 @@ public class Kingdom{
 
 	internal HashSet<int> checkedWarfareID;
 
+	private int _soldiers;
+
     #region getters/setters
     public KINGDOM_TYPE kingdomType {
 		get { 
@@ -180,7 +182,7 @@ public class Kingdom{
         get { return _prestige; }
     }
     internal int population {
-        get { return _population; }
+        get { return _population + _soldiers; }
     }
     internal int populationCapacity {
 //		get { return this._populationCapacity; }
@@ -341,6 +343,12 @@ public class Kingdom{
     internal int workers {
         get { return Mathf.Max(1, Mathf.FloorToInt(population * productionRate)); }
     }
+	internal int soldiersCap {
+		get { return Mathf.FloorToInt(population * draftRate); }
+	}
+	internal int soldiersCount {
+		get { return this._soldiers;}
+	}
     internal float draftRate {
         get {
             if (this._kingdomTypeData == null) {
@@ -372,7 +380,7 @@ public class Kingdom{
 				float numerator = 2f * mySoldiers * (float)this._baseWeapons;
 				return (int)(numerator / (mySoldiers + (float)this._baseWeapons));
 			} else {
-				return this._population;
+				return this.population;
 			}
 		}
 	}
@@ -2798,7 +2806,7 @@ public class Kingdom{
 //        dueDate.AddMonths(1);
 //        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreasePopulationEveryMonth());
 //    }
-    internal void AdjustPopulation(int adjustment) {
+	internal void AdjustPopulation(int adjustment, bool isUpdateKingdomList = true) {
         _population += adjustment;
         if(_population < 0) {
 			_population = 0;
@@ -2807,7 +2815,9 @@ public class Kingdom{
 //                cities[0].KillCity();
 //            }
         }
-        KingdomManager.Instance.UpdateKingdomList();
+		if(isUpdateKingdomList){
+			KingdomManager.Instance.UpdateKingdomList();
+		}
     }
     internal void SetPopulation(int newPopulation) {
         _population = newPopulation;
@@ -3637,6 +3647,27 @@ public class Kingdom{
 	#region Undead
 	internal void InitializeUndeadKingdom(int undeadCount){
 //		this.AdjustPopulation (undeadCount);
+	}
+	#endregion
+
+	#region Soldiers
+	internal void AdjustSoldiers(int amount, bool isUpdateKingdomList = true){
+		this._soldiers += amount;
+		if(this._soldiers < 0) {
+			this._soldiers = 0;
+		}
+		if(isUpdateKingdomList){
+			KingdomManager.Instance.UpdateKingdomList ();
+		}
+	}
+	internal void UpdateSoldiers(bool isUpdateKingdomList = true){
+		this._soldiers = 0;
+		for (int i = 0; i < this.cities.Count; i++) {
+			this._soldiers += this.cities [i].soldiers;
+		}
+		if (isUpdateKingdomList) {
+			KingdomManager.Instance.UpdateKingdomList ();
+		}
 	}
 	#endregion
 }
