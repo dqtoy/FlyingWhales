@@ -183,7 +183,8 @@ public class Kingdom{
         get { return _population; }
     }
     internal int populationCapacity {
-        get { return _populationCapacity; }
+//		get { return this._populationCapacity; }
+		get { return this.cities.Sum(x => x.populationCapacity); }
     }
     public int cityCap {
         get { return Mathf.FloorToInt(prestige / GridMap.Instance.numOfRegions); }
@@ -1392,7 +1393,7 @@ public class Kingdom{
         this._cities.Add(city);
         _regions.Add(city.region);
         UpdateKingdomSize();
-        UpdatePopulationCapacity();
+//        UpdatePopulationCapacity();
         if ((capitalCity == null || capitalCity.isDead) && this._cities.Count == 1 && this._cities[0] != null) {
             SetCapitalCity(this._cities[0]);
         }
@@ -1421,7 +1422,7 @@ public class Kingdom{
         this.CheckIfKingdomIsDead();
         if (!this.isDead) {
             UpdateKingdomSize();
-            UpdatePopulationCapacity();
+//            UpdatePopulationCapacity();
             RevalidateKingdomAdjacency(city);
 			SetCapitalCity(this._cities[0]);
             TransferCitizensFromCityToCapital(city);
@@ -2353,7 +2354,7 @@ public class Kingdom{
 
     #region Weapon Functions
     internal int GetWeaponOverProductionPercentage() {
-        float overProductionPercentage = ((float)_baseWeapons / (float)_populationCapacity) * 100f;
+        float overProductionPercentage = ((float)_baseWeapons / (float)populationCapacity) * 100f;
         overProductionPercentage -= 100;
         overProductionPercentage = Mathf.Clamp(overProductionPercentage, 0f, 100f);
         return Mathf.FloorToInt(overProductionPercentage);
@@ -2753,44 +2754,44 @@ public class Kingdom{
     #endregion
 
     #region Population
-    internal int GetOverpopulationPercentage() {
-        float overpopulationPercentage = ((float)_population / (float)_populationCapacity) * 100f;
-        //overpopulationPercentage = overpopulationPercentage * 100 - 100;
-        overpopulationPercentage -= 100;
-        overpopulationPercentage = Mathf.Clamp(overpopulationPercentage, 0f, 100f);
-        return Mathf.FloorToInt(overpopulationPercentage);
-    }
-    internal void UpdatePopulationCapacity() {
-        _populationCapacity = GetPopulationCapacity();
-    }
-    internal int GetPopulationCapacity() {
-        int populationCapacity = 0;
-        for (int i = 0; i < cities.Count; i++) {
-            populationCapacity += 300 + (50 * cities[i].cityLevel);
-        }
-        return populationCapacity;
-    }
-    internal int GetPopulationGrowth() {
-        int populationGrowth = 0;
-        for (int i = 0; i < cities.Count; i++) {
-			populationGrowth += cities[i].region.populationGrowth + (cities[i].cityLevel * 2);
-        }
-		populationGrowth += this.techLevel * cities.Count;
-
-		// If a Kingdom has active Plagues, its Population decreases instead
-		// Its possible to have multiple active plagues in the same Kingdom. The kingdom will lose 50% of its current population growth per active plague.
-		int activePlagues = GetActiveEventsOfTypeCount(EVENT_TYPES.PLAGUE);
-		if (activePlagues > 0) {
-			return Mathf.FloorToInt(-(float)populationGrowth * (activePlagues * 0.5f));
-		}
-
-		// Positive population growth is decreased by overpopulation
-        float overpopulationPercentage = GetOverpopulationPercentage();
-        populationGrowth = Mathf.FloorToInt(populationGrowth * ((100f - overpopulationPercentage) * 0.01f));
-
-		return populationGrowth;
-
-    }
+//    internal int GetOverpopulationPercentage() {
+//        float overpopulationPercentage = ((float)_population / (float)populationCapacity) * 100f;
+//        //overpopulationPercentage = overpopulationPercentage * 100 - 100;
+//        overpopulationPercentage -= 100;
+//        overpopulationPercentage = Mathf.Clamp(overpopulationPercentage, 0f, 100f);
+//        return Mathf.FloorToInt(overpopulationPercentage);
+//    }
+//    internal void UpdatePopulationCapacity() {
+//        _populationCapacity = GetPopulationCapacity();
+//    }
+//    internal int GetPopulationCapacity() {
+//        int populationCapacity = 0;
+//        for (int i = 0; i < cities.Count; i++) {
+//            populationCapacity += 300 + (50 * cities[i].cityLevel);
+//        }
+//        return populationCapacity;
+//    }
+//    internal int GetPopulationGrowth() {
+//        int populationGrowth = 0;
+//        for (int i = 0; i < cities.Count; i++) {
+//			populationGrowth += cities[i].region.populationGrowth + (cities[i].cityLevel * 2);
+//        }
+//		populationGrowth += this.techLevel * cities.Count;
+//
+//		// If a Kingdom has active Plagues, its Population decreases instead
+//		// Its possible to have multiple active plagues in the same Kingdom. The kingdom will lose 50% of its current population growth per active plague.
+//		int activePlagues = GetActiveEventsOfTypeCount(EVENT_TYPES.PLAGUE);
+//		if (activePlagues > 0) {
+//			return Mathf.FloorToInt(-(float)populationGrowth * (activePlagues * 0.5f));
+//		}
+//
+//		// Positive population growth is decreased by overpopulation
+//        float overpopulationPercentage = GetOverpopulationPercentage();
+//        populationGrowth = Mathf.FloorToInt(populationGrowth * ((100f - overpopulationPercentage) * 0.01f));
+//
+//		return populationGrowth;
+//
+//    }
 //    private void IncreasePopulationEveryMonth() {
 //        AdjustPopulation(GetPopulationGrowth());
 //        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);

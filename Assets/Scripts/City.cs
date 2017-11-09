@@ -166,7 +166,7 @@ public class City{
 		get { return _population; }
 	}
 	internal int populationCapacity {
-		get { return 200 + (50 * this.cityLevel); }
+		get { return 500 + (100 * this.cityLevel); }
 	}
 	internal int foodExcessCapacity{
 		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
@@ -381,7 +381,7 @@ public class City{
 
         //Update necessary data
         this.UpdateDailyProduction();
-        _kingdom.UpdatePopulationCapacity();
+//        _kingdom.UpdatePopulationCapacity();
 
         tileToBuy.CheckLairsInRange ();
         //LevelUpBalanceOfPower();
@@ -1323,9 +1323,21 @@ public class City{
 		AdjustPopulation (populationIncrease);
 	}
 	internal void AdjustPopulation(int adjustment) {
-		this._population += adjustment;
-		this._kingdom.AdjustPopulation (adjustment);
-		this._population = Mathf.Clamp (this._population, 0, this.populationCapacity);
+		int supposedPopulation = this._population + adjustment;
+		int populationCap = this.populationCapacity;
+		if(supposedPopulation > populationCap){
+			int addedPopulation = populationCap - this._population;
+			this._population += addedPopulation;
+			this._kingdom.AdjustPopulation (addedPopulation);
+		}else if (supposedPopulation < 0){
+			this._kingdom.AdjustPopulation (-this._population);
+			this._population = 0;
+		}else{
+			this._population += adjustment;
+			this._kingdom.AdjustPopulation (adjustment);
+		}
+
+//		this._population = Mathf.Clamp (this._population, 0, this.populationCapacity);
 		if(this._population == 0) {
 			KillCity ();
 		}

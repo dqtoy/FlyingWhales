@@ -538,8 +538,7 @@ public class UIManager : MonoBehaviour {
 		this.fortifyingGO.SetActive (currentlyShowingKingdom.isFortifying);
 		this.actionDayLbl.text = this.currentlyShowingKingdom.actionDay.ToString();
 		this.warmongerLbl.text = this.currentlyShowingKingdom.warmongerValue.ToString();
-        populationSummary.text = currentlyShowingKingdom.population.ToString() + "/" + currentlyShowingKingdom.populationCapacity.ToString() + 
-            "(" + currentlyShowingKingdom.GetOverpopulationPercentage().ToString() + "%)";
+        populationSummary.text = currentlyShowingKingdom.population.ToString() + "/" + currentlyShowingKingdom.populationCapacity.ToString();
 //		float newValue = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
 //		float oldValue = kingdomTechMeter.value;
 //		kingdomTechMeter.value = iTween.FloatUpdate(oldValue, newValue, GameManager.Instance.progressionSpeed);
