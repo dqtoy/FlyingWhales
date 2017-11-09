@@ -43,6 +43,8 @@ public class City{
 
 	private int _population;
 
+	internal PandaBehaviour _cityBT;
+
 	[Space(5)]
     [Header("Booleans")]
     //internal bool hasKing;
@@ -52,6 +54,7 @@ public class City{
 	internal bool hasReinforced;
 	internal bool isDead;
 	private bool _isStarving;
+	private bool _isNoCityGrowth;
 
     [NonSerialized] internal List<HabitableTileDistance> habitableTileDistance; // Lists distance of habitable tiles in ascending order
     [NonSerialized] internal List<HexTile> borderTiles;
@@ -169,13 +172,16 @@ public class City{
 		get { return 500 + (100 * this.cityLevel); }
 	}
 	internal int foodExcessCapacity{
-		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
+//		get { return this._region.foodMultiplierCapacity * this.foodRequirement; }
+		get { return 2 * this.foodRequirement; }
 	}
 	internal int materialExcessCapacity{
-		get { return this._region.materialMultiplierCapacity * this.materialRequirement; }
+//		get { return this._region.materialMultiplierCapacity * this.materialRequirement; }
+		get { return 2 * this.materialRequirement; }
 	}
 	internal int oreExcessCapacity{
-		get { return this._region.oreMultiplierCapacity * this.oreRequirement; }
+//		get { return this._region.oreMultiplierCapacity * this.oreRequirement; }
+		get { return 2 * this.oreRequirement; }
 	}
 	internal int foodCapacity{
 		get { return 10 * this.foodRequirement; }
@@ -208,6 +214,7 @@ public class City{
 		this.isDefending = false;
 		this.hasReinforced = false;
 		this._isStarving = false;
+		this._isNoCityGrowth = false;
 		this.isDead = false;
 		this.borderTiles = new List<HexTile>();
         this.outerTiles = new List<HexTile>();
@@ -222,6 +229,7 @@ public class City{
 		this.plague = null;
 		this._hp = this.maxHP;
 		this.populationIncreasePool = new int[]{ 15, 17, 19, 21, 23, 25 };
+		this._cityBT = null;
 
         _activeGuards = new List<Guard>();
         _cityBounds = 50f;
@@ -250,6 +258,7 @@ public class City{
 		if (!this.isDead) {
 			ConsumeResources ();
 			IncreasePopulationPerMonth ();
+			this._cityBT.Tick ();
 
 			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 			increaseDueDate.AddMonths(1);
@@ -485,8 +494,10 @@ public class City{
 		this._currentGrowth = 0;
 	}
     internal void AdjustDailyGrowth(int amount) {
-        this._currentGrowth += amount;
-        this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
+		if(!this._isNoCityGrowth){
+			this._currentGrowth += amount;
+			this._currentGrowth = Mathf.Clamp(this._currentGrowth, 0, this._maxGrowth);
+		}
     }
 	internal void UpdateDailyProduction(){
 		this._maxGrowth = CityGenerator.Instance.cityMonthlyMaxGrowthMultiplier[this.cityLevel - 1] * 150;
@@ -535,9 +546,11 @@ public class City{
 		int materialToBeConsumed = this.materialRequirement;
 		if(this._materialCount >= materialToBeConsumed){
 			AdjustMaterialCount (-materialToBeConsumed);
+			this._isNoCityGrowth = false;
 		}else{
 			AdjustMaterialCount (-this._materialCount);
 			//Suffer No City Growth
+			this._isNoCityGrowth = true;
 		}
 	}
 	private void ConsumeOre(){
@@ -563,8 +576,10 @@ public class City{
 			int foodCap = this.foodExcessCapacity;
 			if(this.foodCount > foodCap){
 				int excessFood = this.foodCount - foodCap;
-				//Send caravan to other cities to give excess food
-				SendFoodToOtherCities(excessFood);
+				if (excessFood >= this.foodExcessCapacity) {
+					//Send caravan to other cities to give excess food
+					SendFoodToOtherCities (excessFood);
+				}
 			}
 		}
 	}
@@ -573,8 +588,10 @@ public class City{
 			int materialCap = this.materialExcessCapacity;
 			if (this.materialCount > materialCap) {
 				int excessMaterial = this.materialCount - materialCap;
-				//Send caravan to other cities to give excess material
-				SendMaterialToOtherCities(excessMaterial);
+				if (excessMaterial >= this.materialExcessCapacity) {
+					//Send caravan to other cities to give excess material
+					SendMaterialToOtherCities (excessMaterial);
+				}
 			}
 		}
 	}
@@ -583,8 +600,10 @@ public class City{
 			int oreCap = this.oreExcessCapacity;
 			if (this.oreCount > oreCap) {
 				int excessOre = this.oreCount - oreCap;
-				//Send caravan to other cities to give excess ore
-				SendOreToOtherCities(excessOre);
+				if(excessOre >= this.oreExcessCapacity){
+					//Send caravan to other cities to give excess ore
+					SendOreToOtherCities(excessOre);
+				}
 			}
 		}
 	}

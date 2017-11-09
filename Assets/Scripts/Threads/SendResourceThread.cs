@@ -36,27 +36,76 @@ public class SendResourceThread {
 //		int lowestResourceCount = 0;
 		int shortestPath = 0;
 		List<HexTile> path = new List<HexTile> ();
-		for (int i = 0; i < this.sourceCity.kingdom.cities.Count; i++) {
-			City city = this.sourceCity.kingdom.cities [i];
-			if(city.foodCount < city.foodRequirement && this.sourceCity.id != city.id){
-				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.sourceCity.hexTile, city.hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this.sourceCity.kingdom);
-				if (newPath != null && newPath.Count > 0) {
-					if(chosenCity == null){
-						chosenCity = city;
-//						lowestResourceCount = orderedCities[i].foodCount;
-						path = newPath;
-						shortestPath = newPath.Count;
-					}else{
-						if(newPath.Count < shortestPath){
+		if(resourceType == RESOURCE_TYPE.FOOD){
+			for (int i = 0; i < this.sourceCity.kingdom.cities.Count; i++) {
+				City city = this.sourceCity.kingdom.cities [i];
+				if(city.foodCount < city.foodRequirement && this.sourceCity.id != city.id){
+					List<HexTile> newPath = PathGenerator.Instance.GetPath (this.sourceCity.hexTile, city.hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this.sourceCity.kingdom);
+					if (newPath != null && newPath.Count > 0) {
+						if(chosenCity == null){
 							chosenCity = city;
 //							lowestResourceCount = orderedCities[i].foodCount;
 							path = newPath;
 							shortestPath = newPath.Count;
+						}else{
+							if(newPath.Count < shortestPath){
+								chosenCity = city;
+//								lowestResourceCount = orderedCities[i].foodCount;
+								path = newPath;
+								shortestPath = newPath.Count;
+							}
+						}
+					}
+				}
+			}
+		}else if(resourceType == RESOURCE_TYPE.MATERIAL){
+			for (int i = 0; i < this.sourceCity.kingdom.cities.Count; i++) {
+				City city = this.sourceCity.kingdom.cities [i];
+				if(city.materialCount < city.materialRequirement && this.sourceCity.id != city.id){
+					List<HexTile> newPath = PathGenerator.Instance.GetPath (this.sourceCity.hexTile, city.hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this.sourceCity.kingdom);
+					if (newPath != null && newPath.Count > 0) {
+						if(chosenCity == null){
+							chosenCity = city;
+//							lowestResourceCount = orderedCities[i].foodCount;
+							path = newPath;
+							shortestPath = newPath.Count;
+						}else{
+							if(newPath.Count < shortestPath){
+								chosenCity = city;
+//								lowestResourceCount = orderedCities[i].foodCount;
+								path = newPath;
+								shortestPath = newPath.Count;
+							}
+						}
+					}
+				}
+			}
+		}else if(resourceType == RESOURCE_TYPE.ORE){
+			for (int i = 0; i < this.sourceCity.kingdom.cities.Count; i++) {
+				City city = this.sourceCity.kingdom.cities [i];
+				if(city.oreCount < city.oreRequirement && this.sourceCity.id != city.id){
+					List<HexTile> newPath = PathGenerator.Instance.GetPath (this.sourceCity.hexTile, city.hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this.sourceCity.kingdom);
+					if (newPath != null && newPath.Count > 0) {
+						if(chosenCity == null){
+							chosenCity = city;
+//							lowestResourceCount = orderedCities[i].foodCount;
+							path = newPath;
+							shortestPath = newPath.Count;
+						}else{
+							if(newPath.Count < shortestPath){
+								chosenCity = city;
+//								lowestResourceCount = orderedCities[i].foodCount;
+								path = newPath;
+								shortestPath = newPath.Count;
+							}
 						}
 					}
 				}
 			}
 		}
+
+
+
 		if(chosenCity != null){
 			this.targetHextile = chosenCity.hexTile;
 			this.path = path;

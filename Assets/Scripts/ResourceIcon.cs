@@ -4,6 +4,7 @@ using System.Linq;
 
 public class ResourceIcon : MonoBehaviour {
 
+	public HexTile hexTile;
     private RESOURCE _resource;
     private bool isHovering = false;
 
@@ -34,7 +35,7 @@ public class ResourceIcon : MonoBehaviour {
 
     public void OnMouseOver() {
         isHovering = true;
-        UIManager.Instance.ShowSmallInfo("[b]" + resource.ToString() + "[/b]");
+		UIManager.Instance.ShowSmallInfo("[b]" + resource.ToString() + ": " + hexTile.resourceCount.ToString() + "[/b]");
     }
 
     public void OnMouseExit() {
@@ -45,7 +46,7 @@ public class ResourceIcon : MonoBehaviour {
     private void Update() {
         if (this.isHovering) {
             if (resource != RESOURCE.NONE) {
-                UIManager.Instance.ShowSmallInfo("[b]" + resource.ToString() + "[/b]");
+				UIManager.Instance.ShowSmallInfo("[b]" + resource.ToString() + ": " + hexTile.resourceCount.ToString() + "[/b]");
             }
         }
     }
