@@ -44,6 +44,8 @@ public class City{
 	private int _population;
 	private int _populationGrowth;
 
+	private int _soldiers;
+
 	internal PandaBehaviour _cityBT;
 
 	[Space(5)]
@@ -196,6 +198,12 @@ public class City{
 	internal int oreCapacity{
 		get { return 10 * this.oreRequirement; }
 	}
+	internal int soldiers{
+		get { return this._soldiers; }
+	}
+	private int[] soldiersCap{
+		get { return new int[]{ GetSoldiersCap (), this._oreCount, this._population }; }
+	}
     #endregion
 
     public City(HexTile hexTile, Kingdom kingdom){
@@ -234,9 +242,7 @@ public class City{
 		this._hp = this.maxHP;
 		this.populationIncreasePool = new int[]{ 15, 17, 19, 21, 23, 25 };
 		this._populationGrowth = populationIncreasePool [UnityEngine.Random.Range (0, populationIncreasePool.Length)];
-
 		this._cityBT = null;
-
         _activeGuards = new List<Guard>();
         _cityBounds = 50f;
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
@@ -264,6 +270,7 @@ public class City{
 		if (!this.isDead) {
 			ConsumeResources ();
 			IncreasePopulationPerMonth ();
+			IncreaseSoldiersPerMonth ();
 			this._cityBT.Tick ();
 
 			GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
@@ -1346,19 +1353,19 @@ public class City{
 		}
 		AdjustPopulation (populationIncrease);
 	}
-	internal void AdjustPopulation(int adjustment) {
+	internal void AdjustPopulation(int adjustment, bool isUpdateKingdomList = true) {
 		int supposedPopulation = this._population + adjustment;
 		int populationCap = this.populationCapacity;
 		if(supposedPopulation > populationCap){
 			int addedPopulation = populationCap - this._population;
 			this._population += addedPopulation;
-			this._kingdom.AdjustPopulation (addedPopulation);
+			this._kingdom.AdjustPopulation (addedPopulation, isUpdateKingdomList);
 		}else if (supposedPopulation < 0){
-			this._kingdom.AdjustPopulation (-this._population);
+			this._kingdom.AdjustPopulation (-this._population, isUpdateKingdomList);
 			this._population = 0;
 		}else{
 			this._population += adjustment;
-			this._kingdom.AdjustPopulation (adjustment);
+			this._kingdom.AdjustPopulation (adjustment, isUpdateKingdomList);
 		}
 
 //		this._population = Mathf.Clamp (this._population, 0, this.populationCapacity);
@@ -1371,6 +1378,58 @@ public class City{
 		this._population = newPopulation;
 		this._kingdom.UpdatePopulation ();
 //		KingdomManager.Instance.UpdateKingdomList();
+	}
+	#endregion
+
+	#region Soldiers
+	internal void AdjustSoldiers(int amount){
+		int supposedSoldiers = this._soldiers + amount;
+		if (supposedSoldiers < 0){
+			this._kingdom.AdjustSoldiers (-this._soldiers);
+			this._soldiers = 0;
+		}else{
+			this._soldiers += amount;
+			this._kingdom.AdjustSoldiers (amount);
+		}
+	}
+	internal void SetSoldiers(int amount) {
+		this._soldiers = amount;
+		this._kingdom.UpdatePopulation ();
+		//		KingdomManager.Instance.UpdateKingdomList();
+	}
+	private void IncreaseSoldiersPerMonth(){
+		int soldiersCap = this.soldiersCap.Min();
+		int kingdomMissingSoldiers = this._kingdom.soldiersCap - this._kingdom.soldiersCount;
+
+		if(soldiersCap > kingdomMissingSoldiers){
+			soldiersCap = kingdomMissingSoldiers;
+		}
+		if(soldiersCap > 0){
+			AdjustPopulation (-soldiersCap, false);
+			AdjustOreCount (-soldiersCap);
+			AdjustSoldiers (soldiersCap);
+		}
+	}
+	private int GetSoldiersCap(){
+		int baseAmount = 6;
+		if(this._kingdom.king.military == MILITARY.HOSTILE){
+			baseAmount += 2;
+		}else if(this._kingdom.king.military == MILITARY.MILITANT){
+			baseAmount += 1;
+		}else if(this._kingdom.king.military == MILITARY.PACIFIST){
+			baseAmount += -1;
+		}
+
+		if(this.governor.military == MILITARY.HOSTILE){
+			baseAmount += 1;
+		}else if(this.governor.military == MILITARY.MILITANT){
+			baseAmount += 1;
+		}else if(this.governor.military == MILITARY.PACIFIST){
+			baseAmount += -1;
+		}
+
+		baseAmount += (this.cityLevel / 2);
+		return baseAmount;
 	}
 	#endregion
 }
