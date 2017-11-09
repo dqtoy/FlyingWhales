@@ -26,7 +26,7 @@ public class KingdomSummaryEntry : MonoBehaviour {
     public void SetKingdom(Kingdom kingdom) {
         _kingdom = kingdom;
         bgSprite.color = kingdom.kingdomColor;
-        kingdomNameLbl.text = kingdom.name;
+        //kingdomNameLbl.text = kingdom.name;
         populationLbl.text = kingdom.population.ToString();
         citiesLbl.text = kingdom.cities.Count.ToString();
         expansionRateLbl.text = kingdom.currentExpansionRate.ToString();
