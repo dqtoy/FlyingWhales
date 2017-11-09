@@ -17,10 +17,15 @@ public class ButtonGroupItem : MonoBehaviour {
 	public void SetClickState(bool isClicked){
 		this.isClicked = isClicked;
 		if (isClicked) {
-			this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
+            if(clickedSprite == null) {
+                this.GetComponent<UI2DSprite>().color = Color.gray;
+            } else {
+                this.GetComponent<UI2DSprite>().sprite2D = clickedSprite;
+            }
             buttonGroup.ClickedItem(this);
         } else {
-			this.GetComponent<UI2DSprite> ().sprite2D = normalSprite;
+            this.GetComponent<UI2DSprite>().color = Color.white;
+            this.GetComponent<UI2DSprite> ().sprite2D = normalSprite;
 		}
 	}
 
@@ -30,12 +35,21 @@ public class ButtonGroupItem : MonoBehaviour {
 
 	void OnHover(bool isOver){
 		if (isOver) {
-			this.GetComponent<UI2DSprite> ().sprite2D = hoveredSprite;
+            if (hoveredSprite == null) {
+                this.GetComponent<UI2DSprite>().color = Color.yellow;
+            } else {
+                this.GetComponent<UI2DSprite>().sprite2D = hoveredSprite;
+            }
 		} else {
 			if (isClicked) {
-				this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;
+                if (clickedSprite == null) {
+                    this.GetComponent<UI2DSprite>().color = Color.gray;
+                } else {
+                    this.GetComponent<UI2DSprite>().sprite2D = clickedSprite;
+                }
 			} else {
-				this.GetComponent<UI2DSprite> ().sprite2D = normalSprite;
+                this.GetComponent<UI2DSprite>().color = Color.white;
+                this.GetComponent<UI2DSprite> ().sprite2D = normalSprite;
 			}
 		}
 	}

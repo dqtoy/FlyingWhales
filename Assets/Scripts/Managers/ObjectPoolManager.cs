@@ -36,7 +36,7 @@ public class ObjectPoolManager : MonoBehaviour {
 
         for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
             GameObject currPrefab = citizenAvatarPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
         }
 
         for (int i = 0; i < agentPrefabs.Length; i++) {

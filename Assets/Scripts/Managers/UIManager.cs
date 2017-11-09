@@ -52,6 +52,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject eventLogsGO;
     public GameObject kingdomCitiesGO;
     public GameObject interveneMenuGO;
+    [SerializeField] private GameObject kingdomSummaryGO;
 
 	[Space(10)]
     [Header("For Testing Objects")]
@@ -175,8 +176,6 @@ public class UIManager : MonoBehaviour {
     public UIGrid kingdomOtherResourcesGrid;
     public UIGrid kingdomTradeResourcesGrid;
 	public CharacterPortrait kingdomListActiveKing;
-    public KingdomFlagItem activeKingdomFlag;
-	//public UIGrid kingdomListOtherKingdomsGrid;
 	public ButtonToggle kingdomListEventButton;
 	public ButtonToggle kingdomListRelationshipButton;
 	public ButtonToggle kingdomListCityButton;
@@ -267,7 +266,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UIEventTrigger orderKingdomsByWeaponsBtn;
     [SerializeField] private UIEventTrigger orderKingdomsByArmorBtn;
     [SerializeField] private UIGrid kingdomSummaryGrid;
-    [SerializeField] private KingdomSummaryEntry[] kingdomSummaryEntries;
+    private KingdomSummaryEntry[] kingdomSummaryEntries;
 
     [Space(10)]
 	[Header("Alliance List")]
@@ -286,6 +285,13 @@ public class UIManager : MonoBehaviour {
 	[SerializeField] private UITable notificationCityHistoryTable;
 	[SerializeField] private UILabel notificationCityHistoryLbl;
 
+    [Space(10)]
+    [Header("World Info Menu")]
+    [SerializeField] private GameObject worldInfoSelectedGO;
+    [SerializeField] private GameObject worldInfoKingdomBtn;
+    [SerializeField] private GameObject worldInfoAllianceBtn;
+    [SerializeField] private GameObject worldInfoWarsBtn;
+
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
 	internal Citizen currentlyShowingCitizen = null;
@@ -295,8 +301,10 @@ public class UIManager : MonoBehaviour {
 	private KingdomRelationship currentlyShowingRelationship;
 	private GameObject lastClickedEventType = null;
 	internal object currentlyShowingLogObject = null;
+    private Kingdom currentKingdomRelationshipShowing;
+    private Kingdom currentlyShowingKingdomCities;
 
-	[Space(10)] //FOR TESTING
+    [Space(10)] //FOR TESTING
 	public GameObject goCreateEventUI;
 	public GameObject goRaid;
 	public GameObject goStateVisit;
@@ -346,6 +354,7 @@ public class UIManager : MonoBehaviour {
 		Instance = this;
         logHistory = new List<Log>();
         notificationItemsThatCanBeReused = new List<NotificationItem>();
+        kingdomSummaryEntries = Utilities.GetComponentsInDirectChildren<KingdomSummaryEntry>(kingdomSummaryGrid.gameObject);
         onAddNewBattleLog += UpdateBattleLogs;
     }
 
@@ -408,25 +417,25 @@ public class UIManager : MonoBehaviour {
         //}
     }
 
-    private void NormalizeFontSizes(){
-		UILabel[] allLabels = this.GetComponentsInChildren<UILabel>(true);
-		//Debug.Log ("ALL LABELS COUNT: " + allLabels.Length.ToString());
-		for (int i = 0; i < allLabels.Length; i++) {
-			NormalizeFontSizeOfLabel(allLabels [i]);
-		}
-	}
-
-	private void NormalizeFontSizeOfLabel(UILabel lbl){
-		string lblName = lbl.name;
+    #region Font Utilities
+    private void NormalizeFontSizes() {
+        UILabel[] allLabels = this.GetComponentsInChildren<UILabel>(true);
+        //Debug.Log ("ALL LABELS COUNT: " + allLabels.Length.ToString());
+        for (int i = 0; i < allLabels.Length; i++) {
+            NormalizeFontSizeOfLabel(allLabels[i]);
+        }
+    }
+    private void NormalizeFontSizeOfLabel(UILabel lbl) {
+        string lblName = lbl.name;
         UILabel.Overflow overflowMethod = UILabel.Overflow.ClampContent;
-		if (lblName.Contains ("HEADER")) {
-			lbl.fontSize = HEADER_FONT_SIZE;
+        if (lblName.Contains("HEADER")) {
+            lbl.fontSize = HEADER_FONT_SIZE;
             overflowMethod = UILabel.Overflow.ClampContent;
-        } else if (lblName.Contains ("BODY")) {
-			lbl.fontSize = BODY_FONT_SIZE;
+        } else if (lblName.Contains("BODY")) {
+            lbl.fontSize = BODY_FONT_SIZE;
             overflowMethod = UILabel.Overflow.ClampContent;
-        } else if (lblName.Contains ("TOOLTIP")) {
-			lbl.fontSize = TOOLTIP_FONT_SIZE;
+        } else if (lblName.Contains("TOOLTIP")) {
+            lbl.fontSize = TOOLTIP_FONT_SIZE;
             overflowMethod = UILabel.Overflow.ResizeHeight;
         } else if (lblName.Contains("SMALLEST")) {
             lbl.fontSize = SMALLEST_FONT_SIZE;
@@ -438,9 +447,11 @@ public class UIManager : MonoBehaviour {
         }
 
     }
+    #endregion
+
 
     private void UpdateUI(){
-        dateLbl.text = LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + " " + GameManager.Instance.days.ToString () + ", " + GameManager.Instance.year.ToString ();
+        dateLbl.text = GameManager.Instance.days.ToString() + " " + LocalizationManager.Instance.GetLocalizedValue("General", "Months", ((MONTH)GameManager.Instance.month).ToString()) + ", " + GameManager.Instance.year.ToString ();
         KingdomManager.Instance.UpdateKingdomList();
 		UpdateAllianceSummary ();
         if (currentlyShowingKingdom != null) {
@@ -497,52 +508,119 @@ public class UIManager : MonoBehaviour {
         //}
 	}
 
-	public void SetProgressionSpeed1X(){
-		Unpause ();
-		GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
-		x1Btn.SetAsClicked();
-	}
-	public void SetProgressionSpeed2X(){
-		Unpause ();
-		GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
-		x2Btn.SetAsClicked();
-	}
-	public void SetProgressionSpeed4X(){
-		Unpause ();
-		GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
-		x4Btn.SetAsClicked();
-	}
-	public void Pause(){
-		GameManager.Instance.SetPausedState(true);
-		pauseBtn.SetAsClicked();
-		if (onPauseEventExpiration != null) {
-			onPauseEventExpiration(true);
-		}
-	}
-	private void Unpause(){
-		GameManager.Instance.SetPausedState(false);
-		if (onPauseEventExpiration != null) {
-			onPauseEventExpiration(false);
-		}
-	}
+    #region World Controls
+    public void SetProgressionSpeed1X() {
+        Unpause();
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
+        x1Btn.SetAsClicked();
+    }
+    public void SetProgressionSpeed2X() {
+        Unpause();
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
+        x2Btn.SetAsClicked();
+    }
+    public void SetProgressionSpeed4X() {
+        Unpause();
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
+        x4Btn.SetAsClicked();
+    }
+    public void Pause() {
+        GameManager.Instance.SetPausedState(true);
+        pauseBtn.SetAsClicked();
+        if (onPauseEventExpiration != null) {
+            onPauseEventExpiration(true);
+        }
+    }
+    private void Unpause() {
+        GameManager.Instance.SetPausedState(false);
+        if (onPauseEventExpiration != null) {
+            onPauseEventExpiration(false);
+        }
+    }
+    #endregion
 
+    #region Kingdom Info
+    internal void SetKingdomAsActive(Kingdom kingdom) {
+        //if(currentlyShowingKingdom != null) {
+        //    currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
+        //}
+
+        currentlyShowingKingdom = kingdom;
+
+        currentlyShowingKingdom.UpdateFogOfWarVisual();
+        UpdateMinimapInfo();
+        //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
+        //CameraMove.Instance.CenterCameraOn(currentlyShowingKingdom.capitalCity.hexTile.gameObject);
+
+        //RemoveAllNotifications();
+
+        //Load all current active events of kingdom
+        //List<GameEvent> activeGameEventsStartedByKingdom = currentlyShowingKingdom.activeEvents.Where(x => !Utilities.eventsNotToShow.Contains(x.eventType)).ToList();;
+        //List<EventItem> presentEventItems = activeKingdomFlag.eventsGrid.GetChildList().Select(x => x.GetComponent<EventItem>()).ToList();
+
+        //if(activeGameEventsStartedByKingdom.Count > presentEventItems.Count) {
+        //    int missingItems = activeGameEventsStartedByKingdom.Count - presentEventItems.Count;
+        //    for (int i = 0; i < missingItems; i++) {
+        //        GameObject eventGO = InstantiateUIObject(gameEventPrefab.name, activeKingdomFlag.eventsGrid.transform);
+        //        activeKingdomFlag.AddGameObjectToGrid(eventGO);
+        //        presentEventItems.Add(eventGO.GetComponent<EventItem>());
+        //    }
+        //}
+
+        //for (int i = 0; i < presentEventItems.Count; i++) {
+        //    EventItem currItem = presentEventItems[i];
+        //    GameEvent currGameEvent = activeGameEventsStartedByKingdom.ElementAtOrDefault(i);
+        //    if(currGameEvent != null) {
+        //        currItem.SetEvent(currGameEvent);
+        //        currItem.gameObject.SetActive(true);
+        //    } else {
+        //        currItem.gameObject.SetActive(false);
+        //    }
+        //}
+
+
+        //		if (kingdomInfoGO.activeSelf) {
+        //			ShowKingdomInfo(currentlyShowingKingdom);
+        //		}
+        if (citizenInfoGO.activeSelf) {
+            ShowCitizenInfo(currentlyShowingKingdom.king);
+        }
+        if (allKingdomEventsGO.activeSelf) {
+            //ShowKingdomEvents();
+            if (kingdomCurrentEventsGO.activeSelf) {
+                ShowKingdomCurrentEvents();
+            } else if (kingdomHistoryGO.activeSelf) {
+                ShowKingdomPastEvents();
+            }
+        }
+        if (relationshipsGO.activeSelf) {
+            ShowKingRelationships();
+        }
+        if (kingdomCitiesGO.activeSelf) {
+            ShowKingdomCities();
+        }
+        UpdateKingdomInfo();
+        if (this.notificationHistoryGO.activeSelf && this.logHistoryGO.activeSelf && this.isShowKingdomHistoryOnly) {
+            ShowLogHistory();
+        }
+    }
     private void UpdateKingdomInfo() {
         //currentlyShowingKingdom.UpdateFogOfWarVisual();
         kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king); //King
         kingdomPrestigeLbl.text = currentlyShowingKingdom.prestige.ToString();
         kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
         kingdomUnrestLbl.text = currentlyShowingKingdom.stability.ToString(); //Unrest
-		kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
+        kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
         UpdateTechMeter();
-		this.militarizingGO.SetActive (currentlyShowingKingdom.isMilitarize);
-		this.fortifyingGO.SetActive (currentlyShowingKingdom.isFortifying);
-		this.actionDayLbl.text = this.currentlyShowingKingdom.actionDay.ToString();
-		this.warmongerLbl.text = this.currentlyShowingKingdom.warmongerValue.ToString();
-        populationSummary.text = currentlyShowingKingdom.population.ToString() + "/" + currentlyShowingKingdom.populationCapacity.ToString() + 
+        this.militarizingGO.SetActive(currentlyShowingKingdom.isMilitarize);
+        this.fortifyingGO.SetActive(currentlyShowingKingdom.isFortifying);
+        this.actionDayLbl.text = this.currentlyShowingKingdom.actionDay.ToString();
+        this.warmongerLbl.text = this.currentlyShowingKingdom.warmongerValue.ToString();
+        populationSummary.text = currentlyShowingKingdom.population.ToString() + "/" + currentlyShowingKingdom.populationCapacity.ToString() +
             "(" + currentlyShowingKingdom.GetOverpopulationPercentage().ToString() + "%)";
-//		float newValue = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
-//		float oldValue = kingdomTechMeter.value;
-//		kingdomTechMeter.value = iTween.FloatUpdate(oldValue, newValue, GameManager.Instance.progressionSpeed);
+        //		float newValue = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
+        //		float oldValue = kingdomTechMeter.value;
+        //		kingdomTechMeter.value = iTween.FloatUpdate(oldValue, newValue, GameManager.Instance.progressionSpeed);
         //Basic Resource
         if (currentlyShowingKingdom.basicResource == BASE_RESOURCE_TYPE.STONE) {
             kingdomBasicResourceSprite.sprite2D = stoneSprite;
@@ -554,7 +632,7 @@ public class UIManager : MonoBehaviour {
         //Available Resources
         List<Transform> children = kingdomOtherResourcesGrid.GetChildList();
         List<RESOURCE> resourcesInGrid = children.Where(x => x.GetComponent<ResourceIcon>() != null).Select(x => x.GetComponent<ResourceIcon>().resource).ToList();
-        
+
         List<RESOURCE> allOtherResources = currentlyShowingKingdom.availableResources.Keys.ToList();
         if (resourcesInGrid.Except(allOtherResources).Any() || allOtherResources.Except(resourcesInGrid).Any()) {
             for (int i = 0; i < children.Count; i++) {
@@ -574,17 +652,17 @@ public class UIManager : MonoBehaviour {
 
         //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
     }
-
     internal void UpdateTechMeter() {
         kingdomTechMeter.value = (float)currentlyShowingKingdom.techCounter / (float)currentlyShowingKingdom.techCapacity;
     }
-
     internal void CheckIfShowingKingdomIsAlive(Kingdom kingdom) {
-        if(currentlyShowingKingdom.id == kingdom.id) {
+        if (currentlyShowingKingdom.id == kingdom.id) {
             SetKingdomAsActive(KingdomManager.Instance.allKingdoms.FirstOrDefault());
         }
     }
+    #endregion
 
+    #region Minimap
     internal void UpdateMinimapInfo() {
         for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
@@ -592,111 +670,44 @@ public class UIManager : MonoBehaviour {
         }
         CameraMove.Instance.UpdateMinimapTexture();
     }
+    #endregion
 
-	internal void SetKingdomAsActive(Kingdom kingdom){
-        //if(currentlyShowingKingdom != null) {
-        //    currentlyShowingKingdom.UnHighlightAllOwnedTilesInKingdom();
-        //}
-
-		currentlyShowingKingdom = kingdom;
-
-        currentlyShowingKingdom.UpdateFogOfWarVisual();
-        UpdateMinimapInfo();
-        //currentlyShowingKingdom.HighlightAllOwnedTilesInKingdom();
-        //CameraMove.Instance.CenterCameraOn(currentlyShowingKingdom.capitalCity.hexTile.gameObject);
-
-        //RemoveAllNotifications();
-
-        activeKingdomFlag.SetKingdom(currentlyShowingKingdom);
-        //Load all current active events of kingdom
-        List<GameEvent> activeGameEventsStartedByKingdom = currentlyShowingKingdom.activeEvents.Where(x => !Utilities.eventsNotToShow.Contains(x.eventType)).ToList();;
-        List<EventItem> presentEventItems = activeKingdomFlag.eventsGrid.GetChildList().Select(x => x.GetComponent<EventItem>()).ToList();
-
-        if(activeGameEventsStartedByKingdom.Count > presentEventItems.Count) {
-            int missingItems = activeGameEventsStartedByKingdom.Count - presentEventItems.Count;
-            for (int i = 0; i < missingItems; i++) {
-                GameObject eventGO = InstantiateUIObject(gameEventPrefab.name, activeKingdomFlag.eventsGrid.transform);
-                activeKingdomFlag.AddGameObjectToGrid(eventGO);
-                presentEventItems.Add(eventGO.GetComponent<EventItem>());
-            }
-        }
-
-        for (int i = 0; i < presentEventItems.Count; i++) {
-            EventItem currItem = presentEventItems[i];
-            GameEvent currGameEvent = activeGameEventsStartedByKingdom.ElementAtOrDefault(i);
-            if(currGameEvent != null) {
-                currItem.SetEvent(currGameEvent);
-                currItem.gameObject.SetActive(true);
-            } else {
-                currItem.gameObject.SetActive(false);
-            }
-        }
-
-
-//		if (kingdomInfoGO.activeSelf) {
-//			ShowKingdomInfo(currentlyShowingKingdom);
-//		}
-		if (citizenInfoGO.activeSelf) {
-			ShowCitizenInfo(currentlyShowingKingdom.king);
-		}
-        if (allKingdomEventsGO.activeSelf) {
-            //ShowKingdomEvents();
-            if (kingdomCurrentEventsGO.activeSelf) {
-                ShowKingdomCurrentEvents();
-            } else if (kingdomHistoryGO.activeSelf) {
-                ShowKingdomPastEvents();
-            }
-        }
+    #region Citizen Info
+    internal void ShowCitizenInfo(Citizen citizenToShow) {
+        currentlyShowingCitizen = citizenToShow;
         if (relationshipsGO.activeSelf) {
-            ShowKingRelationships();
+            if (currentlyShowingCitizen.isKing) {
+                if (kingRelationshipsParentGO.activeSelf) {
+                    ShowKingRelationships();
+                }
+                //            else {
+                //	ShowRelationships();
+                //	ShowGovernorRelationships();
+                //}
+                HideRelationshipHistory();
+            } else {
+                HideRelationships();
+            }
         }
-        if (kingdomCitiesGO.activeSelf) {
-            ShowKingdomCities();
+        if (familyTreeGO.activeSelf) {
+            HideFamilyTree();
         }
-		UpdateKingdomInfo();
-		if(this.notificationHistoryGO.activeSelf && this.logHistoryGO.activeSelf && this.isShowKingdomHistoryOnly){
-			ShowLogHistory ();
-		}
-	}
-
-	internal void ShowCitizenInfo(Citizen citizenToShow){
-		currentlyShowingCitizen = citizenToShow;
-		if (relationshipsGO.activeSelf) {
-			if (currentlyShowingCitizen.isKing) {
-				if (kingRelationshipsParentGO.activeSelf) {
-					ShowKingRelationships ();
-				}
-    //            else {
-				//	ShowRelationships();
-				//	ShowGovernorRelationships();
-				//}
-				HideRelationshipHistory();
-			}else{
-				HideRelationships();
-			}
-		}
-		if (familyTreeGO.activeSelf) {
-			HideFamilyTree();
-		}
-		if (citizenHistoryGO.activeSelf) {
-			ShowCitizenHistory();
-		}
-		if (relocateGO.activeSelf) {
-			HideRelocate();
-		}
-        if (characterValuesGO.activeSelf) {
-            ShowCitizenCharacterValues();
+        if (citizenHistoryGO.activeSelf) {
+            ShowCitizenHistory();
+        }
+        if (relocateGO.activeSelf) {
+            HideRelocate();
         }
 
-		//ForTesting
-		citizenInfoForTestingGO.SetActive (true);
+        //ForTesting
+        citizenInfoForTestingGO.SetActive(true);
         preferredKingdomTypeLbl.text = currentlyShowingCitizen.balanceType.ToString();
         loyaltyToKingLbl.text = currentlyShowingCitizen.loyaltyToKing.ToString();
-		citizenWarmongerLbl.text = currentlyShowingCitizen.warmonger.ToString() + " WARMONGERING";
+        citizenWarmongerLbl.text = currentlyShowingCitizen.warmonger.ToString() + " WARMONGERING";
 
         HideSmallInfo();
 
-		citizenNameLbl.text = currentlyShowingCitizen.name;
+        citizenNameLbl.text = currentlyShowingCitizen.name;
         ROLE roleOfCitizen = currentlyShowingCitizen.role;
         if (currentlyShowingCitizen.city != null) {
             switch (roleOfCitizen) {
@@ -725,31 +736,31 @@ public class UIManager : MonoBehaviour {
                     citizenRoleAndKingdomLbl.text = role + " of " + currentlyShowingCitizen.city.kingdom.name;
                     break;
             }
-			citizenCityNameLbl.text = currentlyShowingCitizen.city.name;
-			ctizenPortraitBG.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
-		} else {
-			citizenRoleAndKingdomLbl.text = Utilities.NormalizeString(roleOfCitizen.ToString());
-			citizenCityNameLbl.text = "No City";
-			ctizenPortraitBG.color = Color.white;
-		}
+            citizenCityNameLbl.text = currentlyShowingCitizen.city.name;
+            ctizenPortraitBG.color = currentlyShowingCitizen.city.kingdom.kingdomColor;
+        } else {
+            citizenRoleAndKingdomLbl.text = Utilities.NormalizeString(roleOfCitizen.ToString());
+            citizenCityNameLbl.text = "No City";
+            ctizenPortraitBG.color = Color.white;
+        }
 
-		citizenAgeLbl.text = "Age: " + currentlyShowingCitizen.age.ToString();
+        citizenAgeLbl.text = "Age: " + currentlyShowingCitizen.age.ToString();
 
-		if (currentlyShowingCitizen.isDead) {
-			citizenInfoIsDeadIcon.SetActive (true);
-		} else {
-			citizenInfoIsDeadIcon.SetActive (false);
-		}
+        if (currentlyShowingCitizen.isDead) {
+            citizenInfoIsDeadIcon.SetActive(true);
+        } else {
+            citizenInfoIsDeadIcon.SetActive(false);
+        }
 
-		//if (citizenToShow.isKing) {
-		//	characterValuesBtn.gameObject.SetActive(true);
-		//} else {
-  //          characterValuesBtn.gameObject.SetActive(false);
-		//}
+        //if (citizenToShow.isKing) {
+        //	characterValuesBtn.gameObject.SetActive(true);
+        //} else {
+        //          characterValuesBtn.gameObject.SetActive(false);
+        //}
 
-		//HideCityInfo();
-		citizenInfoGO.SetActive (true);
-		this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
+        //HideCityInfo();
+        citizenInfoGO.SetActive(true);
+        this.marriageHistoryOfCurrentCitizen = MarriageManager.Instance.GetCouplesCitizenInvoledIn(citizenToShow);
 
         //HideGovernorLoyalty ();
         //this.citizenInfoUI.SetTraits(currentlyShowingCitizen);
@@ -766,7 +777,7 @@ public class UIManager : MonoBehaviour {
         //}
 
         List<object> traitsToShow = new List<object>();
-        if(currentlyShowingCitizen.charisma != CHARISMA.NEUTRAL) {
+        if (currentlyShowingCitizen.charisma != CHARISMA.NEUTRAL) {
             traitsToShow.Add(currentlyShowingCitizen.charisma);
         }
         if (currentlyShowingCitizen.intelligence != INTELLIGENCE.NEUTRAL) {
@@ -789,86 +800,61 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < citizenTraitIcons.Length; i++) {
             TraitIcon currIcon = citizenTraitIcons[i];
             object trait = traitsToShow.ElementAtOrDefault(i);
-            if(trait == null) {
+            if (trait == null) {
                 currIcon.gameObject.SetActive(false);
             } else {
                 currIcon.SetTrait(trait);
                 currIcon.gameObject.SetActive(true);
             }
         }
-	}
-	public void HideCitizenInfo(){
-		currentlyShowingCitizen = null;
-		citizenInfoGO.SetActive(false);
-		HideFamilyTree();
-        HideCitizenCharacterValues();
-		//HideGovernorLoyalty ();
     }
-
-    public void ToggleCharacterValues() {
-        if (this.characterValuesGO.activeSelf) {
-            HideCitizenCharacterValues();
+    public void HideCitizenInfo() {
+        currentlyShowingCitizen = null;
+        citizenInfoGO.SetActive(false);
+        HideFamilyTree();
+        //HideGovernorLoyalty ();
+    }
+    public void ToggleCitizenHistory() {
+        if (this.citizenHistoryGO.activeSelf) {
+            this.citizenHistoryGO.SetActive(false);
         } else {
-            ShowCitizenCharacterValues();
+            ShowCitizenHistory();
         }
     }
-    public void ShowCitizenCharacterValues() {
-        characterValuesLbl.text = string.Empty;
-        //for (int i = 0; i < currentlyShowingCitizen.importantCharacterValues.Keys.Count; i++) {
-        //    CHARACTER_VALUE currValue = currentlyShowingCitizen.importantCharacterValues.Keys.ElementAt(i);
-        //    characterValuesLbl.text += Utilities.FirstLetterToUpperCase(currValue.ToString().Replace('_', ' '));
-        //    if(currentlyShowingCitizen.importantCharacterValues.Keys.Last() != currValue) {
-        //        characterValuesLbl.text += "\n";
-        //    }
-        //}
+    public void ShowCitizenHistory() {
+        if (this.currentlyShowingCitizen == null) {
+            return;
+        }
 
-        this.characterValuesGO.SetActive(true);
+        List<Transform> children = this.citizenHistoryGrid.GetChildList();
+        for (int i = 0; i < children.Count; i++) {
+            ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
+        }
+
+        for (int i = 0; i < this.currentlyShowingCitizen.history.Count; i++) {
+            GameObject citizenGO = InstantiateUIObject(this.historyPortraitPrefab.name, this.citizenHistoryGrid.transform);
+            citizenGO.GetComponent<HistoryPortrait>().SetHistory(this.currentlyShowingCitizen.history[i]);
+            citizenGO.transform.localScale = Vector3.one;
+            citizenGO.transform.localPosition = Vector3.zero;
+        }
+
+        StartCoroutine(RepositionGrid(this.citizenHistoryGrid));
+        this.citizenHistoryGO.SetActive(true);
     }
-    public void HideCitizenCharacterValues() {
-        this.characterValuesBtn.SetClickState(false);
-        this.characterValuesGO.SetActive(false);
+    public void HideCitizenHistory() {
+        citizenHistoryBtn.SetClickState(false);
+        this.citizenHistoryGO.SetActive(false);
     }
-
-    public void ToggleCitizenHistory(){
-		if (this.citizenHistoryGO.activeSelf) {
-			this.citizenHistoryGO.SetActive (false);
-		} else {
-			ShowCitizenHistory();
-		}
-	}
-	public void ShowCitizenHistory(){
-		if (this.currentlyShowingCitizen == null) {
-			return;
-		}
-
-		List<Transform> children = this.citizenHistoryGrid.GetChildList ();
-		for (int i = 0; i < children.Count; i++) {
-			ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
-		}
-
-		for (int i = 0; i < this.currentlyShowingCitizen.history.Count; i++) {
-			GameObject citizenGO = InstantiateUIObject(this.historyPortraitPrefab.name, this.citizenHistoryGrid.transform);
-			citizenGO.GetComponent<HistoryPortrait>().SetHistory(this.currentlyShowingCitizen.history[i]);
-			citizenGO.transform.localScale = Vector3.one;
-			citizenGO.transform.localPosition = Vector3.zero;
-		}
-
-		StartCoroutine (RepositionGrid (this.citizenHistoryGrid));
-		this.citizenHistoryGO.SetActive (true);
-	}
-	public void HideCitizenHistory(){
-		citizenHistoryBtn.SetClickState(false);
-		this.citizenHistoryGO.SetActive(false);
-	}
-
-	public void ShowCurrentlyShowingCitizenCityInfo(){
-		//ShowCityInfo (currentlyShowingCitizen.city, true);
-		CameraMove.Instance.CenterCameraOn (currentlyShowingCitizen.city.hexTile.gameObject);
-	}
-
-	public void RepositionGridCallback(UIGrid thisGrid){
-		StartCoroutine (RepositionGrid (thisGrid));
-	}
+    public void ShowCurrentlyShowingCitizenCityInfo() {
+        //ShowCityInfo (currentlyShowingCitizen.city, true);
+        CameraMove.Instance.CenterCameraOn(currentlyShowingCitizen.city.hexTile.gameObject);
+    }
+    public void ShowGovernorInfo() {
+        if (this.currentlyShowingCity != null) {
+            this.ShowCitizenInfo(this.currentlyShowingCity.governor);
+        }
+    }
+    #endregion
 
 	#region coroutines
 	public IEnumerator RepositionGrid(UIGrid thisGrid){
@@ -903,8 +889,9 @@ public class UIManager : MonoBehaviour {
 			yield return null;
 		}
 	}
-	#endregion
+    #endregion
 
+    #region Relationships Menu
     public void UpdateRelationships() {
         if (relationshipsGO.activeSelf) {
             if (currentlyShowingKingdom != null) {
@@ -912,25 +899,16 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
-	//public void ShowKingRelationships(){
- //       kingdomListRelationshipButton.SetClickState(true);
- //       relationshipsGO.SetActive (true);
- //       HideKingdomCities();
- //       //HideAllKingdomEvents();
- //       ShowKingRelationships();
-	//}
-	public void ToggleRelationships(){
-		if (relationshipsGO.activeSelf) {
+    public void ToggleRelationships() {
+        if (relationshipsGO.activeSelf) {
             //kingRelationshipsParentGO.SetActive(false);
             //relationshipsGO.SetActive (false);
             HideRelationships();
-		} else {
+        } else {
             ShowKingRelationships();
-		}
-	}
-
-    private Kingdom currentKingdomRelationshipShowing;
-	public void ShowKingRelationships(){
+        }
+    }
+    public void ShowKingRelationships() {
         HideKingdomCities();
         List<CharacterPortrait> characterPortraits = kingRelationshipsGrid.gameObject.GetComponentsInChildren<Transform>(true)
                                                     .Where(x => x.GetComponent<CharacterPortrait>() != null)
@@ -949,8 +927,8 @@ public class UIManager : MonoBehaviour {
         }
 
         for (int i = 0; i < characterPortraits.Count; i++) {
-			CharacterPortrait currPortrait = characterPortraits[i];
-            if(i < relationshipsToShow.Count) {
+            CharacterPortrait currPortrait = characterPortraits[i];
+            if (i < relationshipsToShow.Count) {
                 KingdomRelationship currRel = relationshipsToShow[i];
                 if (currRel != null) {
                     currPortrait.SetCitizen(currRel.targetKingdom.king, true);
@@ -966,15 +944,15 @@ public class UIManager : MonoBehaviour {
         }
 
         if (relationshipsToShow.Count - 1 >= nextIndex) {
-			for (int i = nextIndex; i < relationshipsToShow.Count; i++) {
+            for (int i = nextIndex; i < relationshipsToShow.Count; i++) {
                 KingdomRelationship rel = relationshipsToShow[i];
 
                 GameObject kingGO = InstantiateUIObject(characterPortraitPrefab.name, this.transform);
-				kingGO.GetComponent<CharacterPortrait>().SetCitizen(rel.targetKingdom.king, true);
-				kingGO.transform.localScale = Vector3.one;
-				kingGO.GetComponent<CharacterPortrait> ().ShowRelationshipLine (rel, 
+                kingGO.GetComponent<CharacterPortrait>().SetCitizen(rel.targetKingdom.king, true);
+                kingGO.transform.localScale = Vector3.one;
+                kingGO.GetComponent<CharacterPortrait>().ShowRelationshipLine(rel,
                     rel.targetKingdom.GetRelationshipWithKingdom(currentlyShowingKingdom));
-				kingRelationshipsGrid.AddChild(kingGO.transform);
+                kingRelationshipsGrid.AddChild(kingGO.transform);
                 kingRelationshipsGrid.Reposition();
             }
 
@@ -983,7 +961,7 @@ public class UIManager : MonoBehaviour {
             }
         }
 
-        if(currentKingdomRelationshipShowing == null || currentKingdomRelationshipShowing.id != currentlyShowingKingdom.id || !relationshipsGO.activeSelf) {
+        if (currentKingdomRelationshipShowing == null || currentKingdomRelationshipShowing.id != currentlyShowingKingdom.id || !relationshipsGO.activeSelf) {
             StartCoroutine(RepositionGrid(kingRelationshipsGrid));
             StartCoroutine(RepositionScrollView(kingRelationshipsScrollView));
         }
@@ -992,102 +970,94 @@ public class UIManager : MonoBehaviour {
         kingdomListRelationshipButton.SetClickState(true);
         currentKingdomRelationshipShowing = currentlyShowingKingdom;
     }
-//	public void ShowGovernorRelationships(){
-//		if (governorRelationshipsParentGO.activeSelf) {
-//			return;
-//		}
-//		List<Transform> children = governorsRelationshipGrid.GetChildList();
-//		for (int i = 0; i < children.Count; i++) {
-//			ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
-//		}
-
-//        for (int i = 0; i < currentlyShowingCitizen.city.kingdom.cities.Count; i++) {
-//			GameObject governorGO = InstantiateUIObject(characterPortraitPrefab.name, governorsRelationshipGrid.transform);
-//			governorGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.city.kingdom.cities[i].governor, true);
-//			governorGO.GetComponent<CharacterPortrait>().SetHoverEnabled(false);
-//			governorGO.transform.localScale = new Vector3(1.5f, 1.5f, 0);
-//			governorGO.GetComponent<CharacterPortrait>().ShowRelationshipLine();
-////			governorGO.GetComponent<CharacterPortrait>().onClickCharacterPortrait += ShowRelationshipHistory;
-//		}
-
-//		kingRelationshipsParentGO.SetActive(false);
-//		governorRelationshipsParentGO.SetActive(true);
-//		RepositionGridCallback(governorsRelationshipGrid);
-//	}
-	public void HideRelationships(){
+    public void HideRelationships() {
         //kingRelationshipsParentGO.SetActive (false);
-		relationshipsGO.SetActive (false);
+        relationshipsGO.SetActive(false);
         //relationshipsBtn.SetClickState(false);
         kingdomListRelationshipButton.SetClickState(false);
-	}
+    }
+    public void HideRelationshipHistory() {
+        relationshipHistoryGO.SetActive(false);
+    }
+    public void ShowRelationshipSummary(Citizen citizen, string summary) {
+        if (citizen.assignedRole is Governor) {
+            relationshipSummaryTitleLbl.text = "Loyalty";
+        } else if (citizen.assignedRole is King) {
+            relationshipSummaryTitleLbl.text = "Affinity";
+        }
+        relationshipSummaryLbl.text = summary;
+        relationshipSummaryGO.SetActive(true);
+    }
+    public void HideRelationshipSummary() {
+        relationshipSummaryGO.SetActive(false);
+    }
+    #endregion
 
-	public void HideRelationshipHistory(){
-		relationshipHistoryGO.SetActive(false);
-	}
+    #region Tooltips
+    public void ShowSmallInfo(string info) {
+        smallInfoLbl.text = info;
 
-	public void ShowGovernorInfo(){
-		if (this.currentlyShowingCity != null) {
-			this.ShowCitizenInfo (this.currentlyShowingCity.governor);
-		}
-	}
+        var v3 = Input.mousePosition;
+        v3.z = 10.0f;
+        v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+        v3.y -= 0.15f;
 
-	public void ShowSmallInfo(string info){
-		smallInfoLbl.text = info;
+        //Bounds uiCameraBounds = uiCamera.GetComponent<Camera>().bound
 
-		var v3 = Input.mousePosition;
-		v3.z = 10.0f;
-		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-		v3.y -= 0.15f;
-		if (v3.y <= 0f) {
-			v3 = Input.mousePosition;
-			v3.z = 10.0f;
-			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-			v3.y += 0.1f;
-		}
-		if (v3.x >= -13.8f) {
-			v3 = Input.mousePosition;
-			v3.z = 10.0f;
-			v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-			v3.x -= 0.2f;
-		}
+        if (v3.y <= 0f) {
+            v3 = Input.mousePosition;
+            v3.z = 10.0f;
+            v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+            v3.y += 0.1f;
+        }
+        if (v3.x >= -13.8f) {
+            v3 = Input.mousePosition;
+            v3.z = 10.0f;
+            v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+            v3.x -= 0.2f;
+        }
 
-		smallInfoGO.transform.position = v3;
-		smallInfoGO.SetActive (true);
-	}
-	public void HideSmallInfo(){
-		smallInfoGO.SetActive (false);
-		smallInfoGO.transform.parent = this.transform;
-	}
+        smallInfoGO.transform.position = v3;
+        smallInfoGO.SetActive(true);
+    }
+    public void HideSmallInfo() {
+        smallInfoGO.SetActive(false);
+        smallInfoGO.transform.parent = this.transform;
+    }
+    #endregion
 
-	public void ShowCampaignInfo(Campaign campaign, General general, Transform parent){
-//		smallInfoLbl.text = info;
-		this.campaignInfoGO.GetComponent<CampaignInfo>().SetCampaignInfo(campaign, general);
-		var v3 = Input.mousePosition;
-		v3.z = 10.0f;
-		v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
-		v3.y -= 0.13f;
-		this.campaignInfoGO.transform.position = v3;
-		//		smallInfoGO.transform.parent = parent;
-		//		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
-		//		Vector3 newPos = smallInfoGO.transform.localPosition;
+    #region Campaign Info
+    public void ShowCampaignInfo(Campaign campaign, General general, Transform parent) {
+        //		smallInfoLbl.text = info;
+        this.campaignInfoGO.GetComponent<CampaignInfo>().SetCampaignInfo(campaign, general);
+        var v3 = Input.mousePosition;
+        v3.z = 10.0f;
+        v3 = uiCamera.GetComponent<Camera>().ScreenToWorldPoint(v3);
+        v3.y -= 0.13f;
+        this.campaignInfoGO.transform.position = v3;
+        //		smallInfoGO.transform.parent = parent;
+        //		smallInfoGO.transform.localPosition = new Vector3 (0f, -100f, 0f);
+        //		Vector3 newPos = smallInfoGO.transform.localPosition;
 
-		//		smallInfoGO.transform.localPosition = newPos;
-		//		smallInfoGO.transform.parent = this.transform;
-		//		smallInfoGO.transform.localScale = Vector3.one;
-		this.campaignInfoGO.SetActive (true);
-	}
-	public void HideCampaignInfo(){
-		this.campaignInfoGO.SetActive (false);
-		this.campaignInfoGO.transform.parent = this.transform;
-	}
+        //		smallInfoGO.transform.localPosition = newPos;
+        //		smallInfoGO.transform.parent = this.transform;
+        //		smallInfoGO.transform.localScale = Vector3.one;
+        this.campaignInfoGO.SetActive(true);
+    }
+    public void HideCampaignInfo() {
+        this.campaignInfoGO.SetActive(false);
+        this.campaignInfoGO.transform.parent = this.transform;
+    }
+    #endregion
 
-	public void ToggleFamilyTree(){
-		if (familyTreeGO.activeSelf) {
+    #region Family Tree
+    public void ToggleFamilyTree() {
+        if (familyTreeGO.activeSelf) {
             HideFamilyTree();
-		} else {
+        } else {
             ShowFamilyTree();
-		}
-	}
+        }
+    }
     public void ShowFamilyTree() {
         if (familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>() != null) {
             ObjectPoolManager.Instance.DestroyObject(familyTreeFatherGO.GetComponentInChildren<CharacterPortrait>().gameObject);
@@ -1115,13 +1085,13 @@ public class UIManager : MonoBehaviour {
             spouseGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
             spouseGO.transform.localPosition = Vector3.zero;
             spouseGO.GetComponent<CharacterPortrait>().SetCitizen(currentlyShowingCitizen.spouse);
-            if(currentlyShowingCitizen.spouse is Spouse) {
+            if (currentlyShowingCitizen.spouse is Spouse) {
                 spouseCompatibility.gameObject.SetActive(true);
                 spouseCompatibility.text = ((Spouse)currentlyShowingCitizen.spouse)._marriageCompatibility.ToString();
             } else {
                 spouseCompatibility.gameObject.SetActive(false);
             }
-            
+
             //for (int i = 0; i < this.marriageHistoryOfCurrentCitizen.Count; i++) {
             //    if (currentlyShowingCitizen.gender == GENDER.MALE) {
             //        if (this.marriageHistoryOfCurrentCitizen[i].wife.id == currentlyShowingCitizen.spouse.id) {
@@ -1190,138 +1160,57 @@ public class UIManager : MonoBehaviour {
             successorParentGO.SetActive(false);
             otherCitizensGO.SetActive(false);
         }
-        
+
         familyTreeGO.SetActive(true);
     }
-	public void HideFamilyTree(){
-		familyTreeBtn.SetClickState(false);
-		familyTreeGO.SetActive(false);
-	}
+    public void HideFamilyTree() {
+        familyTreeBtn.SetClickState(false);
+        familyTreeGO.SetActive(false);
+    }
+    public void ShowNextMarriage() {
+        int nextIndex = this.currentMarriageHistoryIndex + 1;
+        if (nextIndex == this.marriageHistoryOfCurrentCitizen.Count) {
+            //max index reached
+            nextIndex = 0;
+        }
 
-	public void ShowNextMarriage(){
-		int nextIndex = this.currentMarriageHistoryIndex + 1;
-		if (nextIndex == this.marriageHistoryOfCurrentCitizen.Count) {
-			//max index reached
-			nextIndex = 0;
-		}
+        ObjectPoolManager.Instance.DestroyObject(familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait>().gameObject);
+        CharacterPortrait[] children = familyTreeChildGrid.GetComponentsInChildren<CharacterPortrait>();
+        for (int i = 0; i < children.Length; i++) {
+            ObjectPoolManager.Instance.DestroyObject(children[i].gameObject);
+        }
 
-        ObjectPoolManager.Instance.DestroyObject(familyTreeSpouseGO.GetComponentInChildren<CharacterPortrait> ().gameObject);
-		CharacterPortrait[] children = familyTreeChildGrid.GetComponentsInChildren<CharacterPortrait>();
-		for (int i = 0; i < children.Length; i++) {
-            ObjectPoolManager.Instance.DestroyObject(children [i].gameObject);
-		}
+        MarriedCouple marriedCoupleToShow = this.marriageHistoryOfCurrentCitizen[nextIndex];
+        if (marriedCoupleToShow.husband.id == currentlyShowingCitizen.id) {
+            //currentlyShowingCitizen is male
+            GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
+            spouseGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
+            spouseGO.transform.localPosition = Vector3.zero;
+            spouseGO.GetComponent<CharacterPortrait>().SetCitizen(marriedCoupleToShow.wife);
+        } else {
+            //currentlyShowingCitizen is female	
+            GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
+            spouseGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
+            spouseGO.transform.localPosition = Vector3.zero;
+            spouseGO.GetComponent<CharacterPortrait>().SetCitizen(marriedCoupleToShow.husband);
+        }
 
-		MarriedCouple marriedCoupleToShow = this.marriageHistoryOfCurrentCitizen[nextIndex];
-		if (marriedCoupleToShow.husband.id == currentlyShowingCitizen.id) {
-			//currentlyShowingCitizen is male
-			GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
-			spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
-			spouseGO.transform.localPosition = Vector3.zero;
-			spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (marriedCoupleToShow.wife);
-		} else {
-			//currentlyShowingCitizen is female	
-			GameObject spouseGO = InstantiateUIObject(characterPortraitPrefab.name, familyTreeSpouseGO.transform);
-			spouseGO.transform.localScale = new Vector3 (2.1f, 2.1f, 0f);
-			spouseGO.transform.localPosition = Vector3.zero;
-			spouseGO.GetComponent<CharacterPortrait> ().SetCitizen (marriedCoupleToShow.husband);
-		}
+        List<Transform> childPositions = familyTreeChildGrid.GetChildList();
+        for (int i = 0; i < marriedCoupleToShow.children.Count; i++) {
+            GameObject childGO = InstantiateUIObject(characterPortraitPrefab.name, childPositions[i].transform);
+            childGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
+            childGO.transform.localPosition = Vector3.zero;
+            childGO.GetComponent<CharacterPortrait>().SetCitizen(marriedCoupleToShow.children[i]);
+        }
+    }
+    #endregion
 
-		List<Transform> childPositions = familyTreeChildGrid.GetChildList ();
-		for (int i = 0; i < marriedCoupleToShow.children.Count; i++) {
-			GameObject childGO = InstantiateUIObject(characterPortraitPrefab.name, childPositions[i].transform);
-			childGO.transform.localScale = new Vector3(2.1f, 2.1f, 0f);
-			childGO.transform.localPosition = Vector3.zero;
-			childGO.GetComponent<CharacterPortrait>().SetCitizen(marriedCoupleToShow.children[i]);
-		}
-	}
-
-	public void ToggleEventsMenu(){
-		eventsGo.SetActive(!eventsGo.activeSelf);
-		if (!eventsGo.activeSelf) {
-			eventsOfTypeGo.SetActive(false);
-//			EventManager.Instance.onHideEvents.Invoke();
-//			EventManager.Instance.onShowEventsOfType.Invoke (EVENT_TYPES.ALL);
-			List<Transform> events = eventCategoriesGrid.GetChildList();
-			for (int i = 0; i < events.Count; i++) {
-				events [i].GetComponent<ButtonToggle>().SetClickState(false);
-			}
-		}
-
-	}
-
-	public void ShowEventsOfType(GameEvent gameEvent, Kingdom kingdom = null){
-		if(Utilities.eventsNotToShow.Contains(gameEvent.eventType)){
-			return;
-		}
-		if(gameEvent.startedBy != null){ //Kingdom Event
-			if(kingdom == null){
-				if(gameEvent.startedByKingdom.id == currentlyShowingKingdom.id) {
-					activeKingdomFlag.AddEventToGrid(gameEvent);
-					if(this.currentlyShowingLogObject != null){
-						this.eventLogsQueue.Add (gameEvent);
-					}else{
-						//					Pause();
-						ShowEventLogs(gameEvent);
-					}
-				}
-			}else{
-				if(kingdom.id == currentlyShowingKingdom.id) {
-					activeKingdomFlag.AddEventToGrid(gameEvent);
-					if(this.currentlyShowingLogObject != null){
-						this.eventLogsQueue.Add (gameEvent);
-					}else{
-						//					Pause();
-						ShowEventLogs(gameEvent);
-					}
-				}
-			}
-
-
-			//KingdomFlagItem kingdomOwner = kingdomListOtherKingdomsGrid.GetChildList()
-			//	.Where(x => x.GetComponent<KingdomFlagItem>().kingdom.id == gameEvent.startedByKingdom.id)
-			//	.FirstOrDefault().GetComponent<KingdomFlagItem>();
-			//if (kingdomOwner != null) {
-			//	GameObject eventGO = InstantiateUIObject(gameEventPrefab, this.transform);
-			//	eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
-			//	eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
-			//	eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
-			//	eventGO.GetComponent<EventItem>().StartExpirationTimer();
-			//	eventGO.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
-			//	kingdomOwner.AddGameObjectToGrid(eventGO);
-			//	gameEvent.goEventItem = eventGO;
-			//	if(kingdomOwner.kingdom.id == this.currentlyShowingKingdom.id){
-			//		Pause();
-			//		ShowEventLogs(gameEvent);
-			//	}
-			//}
-		}else{ //World Event
-			GameObject eventGO = InstantiateUIObject(this.gameEventPrefab.name, this.gameEventsOfTypeGrid.transform);
-			eventGO.GetComponent<EventItem>().SetEvent(gameEvent);
-			//eventGO.GetComponent<EventItem>().SetSpriteIcon(GetSpriteForEvent(gameEvent.eventType));
-			//eventGO.GetComponent<EventItem>().onClickEvent += ShowEventLogs;
-			//eventGO.GetComponent<EventItem>().StartExpirationTimer();
-			eventGO.transform.localPosition = Vector3.zero;
-			eventGO.transform.localScale = Vector3.one;
-			RepositionGridCallback(this.gameEventsOfTypeGrid);
-			//gameEvent.goEventItem = eventGO;
-		}
-	}
-	public void ShowPlayerEventsOfType(PlayerEvent playerEvent){
-		if (playerEvent.affectedKingdoms.Contains(this.currentlyShowingKingdom)) {
-			if (this.currentlyShowingLogObject != null) {
-				this.eventLogsQueue.Add (playerEvent);
-			} else {
-//				Pause ();
-				ShowEventLogs (playerEvent);
-			}
-		}
-	}
-
+    #region Notifications Area
     public void ShowNotification(Log log, HashSet<Kingdom> kingdomsThatShouldShowNotif = null, bool addLogToHistory = true) {
         if (addLogToHistory) {
             AddLogToLogHistory(log);
         }
-        if(kingdomsThatShouldShowNotif != null) {
+        if (kingdomsThatShouldShowNotif != null) {
             if (!kingdomsThatShouldShowNotif.Contains(currentlyShowingKingdom)) {
                 //currentlyShowingKingdom is not included in kingdomsThatShouldShowNotif, don't show notification
                 return;
@@ -1363,8 +1252,9 @@ public class UIManager : MonoBehaviour {
         //StartCoroutine(RepositionGrid(notificationParent));
         //StartCoroutine(RepositionScrollView(notificationParent.GetComponentInParent<UIScrollView>()));
     }
+    #endregion
 
-    #region Notification History
+    #region World History
     private string notificationSummary;
     internal void AddLogToLogHistory(Log log) {
         //string logString = log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString() + "         ";
@@ -1395,7 +1285,6 @@ public class UIManager : MonoBehaviour {
 			}
 		}
     }
-
     private void UpdateBattleLogs() {
         if (notificationHistoryGO.activeSelf) {
             if (warHistoryGO.activeSelf) {
@@ -1403,17 +1292,6 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
-    //IEnumerator ConstructNotificationSummary() {
-    //    notificationSummary = string.Empty;
-    //    for (int i = logHistory.Count - 1; i >= 0; i--) {
-    //        notificationSummary += logHistory.Values.ElementAt(i);
-    //        if (i - 1 >= 0) {
-    //            notificationSummary += "\n";
-    //        }
-    //    }
-    //    yield return null;
-    //}
-
     private void PopulateHistoryTable() {
         for (int i = 0; i < 100; i++) {
             GameObject logGO = InstantiateUIObject(logHistoryPrefab.name, notificationHistoryTable.transform);
@@ -1428,7 +1306,6 @@ public class UIManager : MonoBehaviour {
 		}
 		StartCoroutine(RepositionTable(notificationCityHistoryTable));
 	}
-
     public void ToggleNotificationHistory() {
         if (notificationHistoryGO.activeSelf) {
             HideNotificationHistory();
@@ -1436,7 +1313,6 @@ public class UIManager : MonoBehaviour {
             ShowLogHistory();
         }
     }
-
 	public void ShowLogHistory() {
         LogHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<LogHistoryItem>(notificationHistoryTable.gameObject);
         List<Log> logHistoryReversed = new List<Log>(logHistory);
@@ -1524,7 +1400,6 @@ public class UIManager : MonoBehaviour {
 		notificationHistoryGO.SetActive (false);
 		notificationCityHistoryGO.SetActive(true);
 	}
-
     public void ShowWarHistory() {
         WarHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<WarHistoryItem>(warHistoryTable.gameObject);
         List<Warfare> warsToShow = KingdomManager.Instance.allWarsThatOccured;
@@ -1553,11 +1428,9 @@ public class UIManager : MonoBehaviour {
         notificationHistoryGO.SetActive(true);
         kingdomListEventButton.SetClickState(true);
     }
-
     internal void RepositionWarHistoryTable() {
         StartCoroutine(RepositionTable(warHistoryTable));
     }
-
     public void HideNotificationHistory() {
         notificationHistoryGO.SetActive(false);
         kingdomListEventButton.SetClickState(false);
@@ -1613,39 +1486,63 @@ public class UIManager : MonoBehaviour {
 	}
     #endregion
 
+    #region Game Events
+    public void ToggleEventsMenu() {
+        eventsGo.SetActive(!eventsGo.activeSelf);
+        if (!eventsGo.activeSelf) {
+            eventsOfTypeGo.SetActive(false);
+            //			EventManager.Instance.onHideEvents.Invoke();
+            //			EventManager.Instance.onShowEventsOfType.Invoke (EVENT_TYPES.ALL);
+            List<Transform> events = eventCategoriesGrid.GetChildList();
+            for (int i = 0; i < events.Count; i++) {
+                events[i].GetComponent<ButtonToggle>().SetClickState(false);
+            }
+        }
+
+    }
+    public void ShowPlayerEventsOfType(PlayerEvent playerEvent) {
+        if (playerEvent.affectedKingdoms.Contains(this.currentlyShowingKingdom)) {
+            if (this.currentlyShowingLogObject != null) {
+                this.eventLogsQueue.Add(playerEvent);
+            } else {
+                //				Pause ();
+                ShowEventLogs(playerEvent);
+            }
+        }
+    }
     /*
 	 * Show Event Logs menu
 	 * */
-    public void ShowEventLogs(object obj){
-		if (obj == null) {
-			return;
-		}
-		if(this.eventLogsQueue.Contains(obj)){
-			this.eventLogsQueue.Remove (obj);
-		}
-		List<Log> logs = new List<Log> ();
-		if (obj is GameEvent) {
-			GameEvent ge = ((GameEvent)obj);
-			logs = ge.logs;
-			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
-            elmEventProgressBar.gameObject.SetActive (false);
-			elmProgressBarLbl.gameObject.SetActive (false);
-		} else if (obj is PlayerEvent) {
-			PlayerEvent pe = ((PlayerEvent)obj);
-			logs = pe.logs;
-			elmEventTitleLbl.text = Utilities.LogReplacer (logs.FirstOrDefault ());
-            elmEventProgressBar.gameObject.SetActive (false);
-			elmProgressBarLbl.gameObject.SetActive (false);
-		}
-		//elmProgressBarLbl.text = "Progress:";
-		elmSuccessRateGO.SetActive (false);
+    public void ShowEventLogs(object obj) {
+        if (obj == null) {
+            return;
+        }
+        if (this.eventLogsQueue.Contains(obj)) {
+            this.eventLogsQueue.Remove(obj);
+        }
+        List<Log> logs = new List<Log>();
+        if (obj is GameEvent) {
+            GameEvent ge = ((GameEvent)obj);
+            logs = ge.logs;
+            elmEventTitleLbl.text = Utilities.LogReplacer(logs.FirstOrDefault());
+            elmEventProgressBar.gameObject.SetActive(false);
+            elmProgressBarLbl.gameObject.SetActive(false);
+        } else if (obj is PlayerEvent) {
+            PlayerEvent pe = ((PlayerEvent)obj);
+            logs = pe.logs;
+            elmEventTitleLbl.text = Utilities.LogReplacer(logs.FirstOrDefault());
+            elmEventProgressBar.gameObject.SetActive(false);
+            elmProgressBarLbl.gameObject.SetActive(false);
+        }
+        //elmProgressBarLbl.text = "Progress:";
+        elmSuccessRateGO.SetActive(false);
 
-		currentlyShowingLogObject = obj;
+        currentlyShowingLogObject = obj;
 
-		GameObject nextAnchorPoint = elmFirstAnchor;
-		List<EventLogItem> currentlyShowingLogs = elmEventLogsParentGO.GetComponentsInChildren<EventLogItem>(true).ToList();
+        GameObject nextAnchorPoint = elmFirstAnchor;
+        List<EventLogItem> currentlyShowingLogs = elmEventLogsParentGO.GetComponentsInChildren<EventLogItem>(true).ToList();
 
-        if((logs.Count - 1) > currentlyShowingLogs.Count) {
+        if ((logs.Count - 1) > currentlyShowingLogs.Count) {
             int logItemsToCreate = (logs.Count - 1) - currentlyShowingLogs.Count;
             for (int i = 0; i < logItemsToCreate; i++) {
                 GameObject logGO = InstantiateUIObject(logItemPrefab.name, elmEventLogsParentGO.transform);
@@ -1656,12 +1553,12 @@ public class UIManager : MonoBehaviour {
 
         for (int i = 0; i < currentlyShowingLogs.Count; i++) {
             EventLogItem currELI = currentlyShowingLogs[i];
-            Log currLog = logs.ElementAtOrDefault(i+1);
-            if(currLog == null) {
+            Log currLog = logs.ElementAtOrDefault(i + 1);
+            if (currLog == null) {
                 currELI.gameObject.SetActive(false);
             } else {
                 currELI.SetLog(currLog);
-                if ((i+1) % 2 == 0) {
+                if ((i + 1) % 2 == 0) {
                     currELI.DisableBG();
                 } else {
                     currELI.EnableBG();
@@ -1670,74 +1567,48 @@ public class UIManager : MonoBehaviour {
             }
         }
 
-		StartCoroutine(RepositionTable(elmEventLogsParentGO.GetComponent<UITable>()));
+        StartCoroutine(RepositionTable(elmEventLogsParentGO.GetComponent<UITable>()));
         StartCoroutine(RepositionScrollView(elmScrollView));
 
-	    if(this.currentlyShowingLogObject is GameEvent){
-		    if(((GameEvent)this.currentlyShowingLogObject).goEventItem != null){
-			    ((GameEvent)this.currentlyShowingLogObject).goEventItem.GetComponent<EventItem>().DeactivateNewLogIndicator ();
-		    }
-	    }
-
-	    if(!this.eventLogsGO.activeSelf){
-		    this.eventLogsGO.SetActive(true);
-	    }
-	}
-	public void HideEventLogs(){
-		if(this.currentlyShowingLogObject is GameEvent){
-			GameEvent gameEvent = (GameEvent)this.currentlyShowingLogObject;
-			if(!gameEvent.isActive){
-				if (gameEvent.goEventItem != null) {
-					gameEvent.goEventItem.GetComponent<EventItem>().HasExpired();
-                    StartCoroutine(RepositionGrid(activeKingdomFlag.eventsGrid));
-				}
-            } else {
-                if (gameEvent.goEventItem != null) {
-                    gameEvent.goEventItem.GetComponent<ButtonToggle>().SetClickState(false);
-                }
+        if (this.currentlyShowingLogObject is GameEvent) {
+            if (((GameEvent)this.currentlyShowingLogObject).goEventItem != null) {
+                ((GameEvent)this.currentlyShowingLogObject).goEventItem.GetComponent<EventItem>().DeactivateNewLogIndicator();
             }
-		}
-		//if(GameManager.Instance.isPaused){
-		//	SetProgressionSpeed1X();
-		//}
-		currentlyShowingLogObject = null;
-		if(this.eventLogsQueue.Count > 0){
-//			Pause();
-			object obj = this.eventLogsQueue [0];
-			ShowEventLogs (obj);
-		}
-        eventLogsGO.SetActive(false);
+        }
+
+        if (!this.eventLogsGO.activeSelf) {
+            this.eventLogsGO.SetActive(true);
+        }
     }
-	
     /*
 	 * Toggle Kingdom Events Menu
 	 * */
-	public void ToggleKingdomEvents(){
-		if (allKingdomEventsGO.activeSelf) {
-			HideAllKingdomEvents();
-		} else {
-//			Pause();
-			ShowKingdomEvents();
-		}
-	}
-	/*
+    public void ToggleKingdomEvents() {
+        if (allKingdomEventsGO.activeSelf) {
+            HideAllKingdomEvents();
+        } else {
+            //			Pause();
+            ShowKingdomEvents();
+        }
+    }
+    /*
 	 * Show Kingdom Events Menu
 	 * */
-	public void ShowKingdomEvents(){
+    public void ShowKingdomEvents() {
         //HideKingdomHistory();
         HideRelationships();
         HideKingdomCities();
         ShowKingdomCurrentEvents();
 
-        allKingdomEventsGO.SetActive (true);
-	}
+        allKingdomEventsGO.SetActive(true);
+    }
     public void ShowKingdomCurrentEvents() {
         HideKingdomPastEvents();
-//		List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
-		List<GameEvent> politicalEvents = currentlyShowingKingdom.activeEvents.Where(x => x.eventType != EVENT_TYPES.KINGDOM_WAR && x.eventType != EVENT_TYPES.INVASION_PLAN && 
+        //		List<GameEvent> allActiveEventsInKingdom = EventManager.Instance.GetAllEventsKingdomIsInvolvedIn(currentlyShowingKingdom).Where(x => x.isActive).ToList();
+        List<GameEvent> politicalEvents = currentlyShowingKingdom.activeEvents.Where(x => x.eventType != EVENT_TYPES.KINGDOM_WAR && x.eventType != EVENT_TYPES.INVASION_PLAN &&
         x.eventType != EVENT_TYPES.JOIN_WAR_REQUEST && x.eventType != EVENT_TYPES.REQUEST_PEACE && !Utilities.eventsNotToShow.Contains(x.eventType)).ToList();
 
-		List<GameEvent> wars = currentlyShowingKingdom.activeEvents.Where(x => x.eventType == EVENT_TYPES.KINGDOM_WAR).ToList();
+        List<GameEvent> wars = currentlyShowingKingdom.activeEvents.Where(x => x.eventType == EVENT_TYPES.KINGDOM_WAR).ToList();
 
         if (politicalEvents.Count <= 0 && wars.Count <= 0) {
             kingdomNoCurrentEventsLbl.gameObject.SetActive(true);
@@ -1754,9 +1625,9 @@ public class UIManager : MonoBehaviour {
         } else {
             kingdomNoCurrentEventsLbl.gameObject.SetActive(false);
             LoadPoliticalEvents(politicalEvents);
-//            LoadWarEvents(wars);
+            //            LoadWarEvents(wars);
         }
-        
+
         kingdomCurrentEventsBtn.SetClickState(true);
         kingdomCurrentEventsGO.SetActive(true);
     }
@@ -1814,69 +1685,71 @@ public class UIManager : MonoBehaviour {
 	 * Political Events incl. [STATE VISIT, RAID, ASSASSINATION, DIPLOMATIC CRISIS, BORDER CONFLICT]
 	 * update this as needed!
 	 * */
-    private void LoadPoliticalEvents(List<GameEvent> politicalEvents){
-		EventListParent politicsParent = null;
-		List<Transform> allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomCurrentEventsContentParent.gameObject).ToList();
+    private void LoadPoliticalEvents(List<GameEvent> politicalEvents) {
+        EventListParent politicsParent = null;
+        List<Transform> allCurrentParents = Utilities.GetComponentsInDirectChildren<Transform>(kingdomCurrentEventsContentParent.gameObject).ToList();
 
-		GameObject politicsParentGO = null;
-		for (int i = 0; i < allCurrentParents.Count; i++) {
-			if (allCurrentParents[i].name.Equals("PoliticsParent")) {
-				politicsParentGO = allCurrentParents[i].gameObject;
-				allCurrentParents.RemoveAt (i);
-				break;
-			}
-		}
+        GameObject politicsParentGO = null;
+        for (int i = 0; i < allCurrentParents.Count; i++) {
+            if (allCurrentParents[i].name.Equals("PoliticsParent")) {
+                politicsParentGO = allCurrentParents[i].gameObject;
+                allCurrentParents.RemoveAt(i);
+                break;
+            }
+        }
 
-		if (politicalEvents.Count <= 0) {
-			if (politicsParentGO == null) {
+        if (politicalEvents.Count <= 0) {
+            if (politicsParentGO == null) {
                 ObjectPoolManager.Instance.DestroyObject(politicsParentGO);
-			}
-			return;
-		}
+            }
+            return;
+        }
 
-		if (politicsParentGO == null) {
-			//Instantiate Politics Parent
-			politicsParentGO = InstantiateUIObject(kingdomEventsListParentPrefab.name, kingdomCurrentEventsContentParent.transform) as GameObject;
-			politicsParentGO.name = "PoliticsParent";
-			politicsParentGO.transform.localScale = Vector3.one;
-			politicsParentGO.transform.localPosition = Vector3.zero;
-			politicsParentGO.GetComponent<EventListParent>().eventTitleLbl.text = "Politics";
-		}
-		
-		politicsParent = politicsParentGO.GetComponent<EventListParent>();
+        if (politicsParentGO == null) {
+            //Instantiate Politics Parent
+            politicsParentGO = InstantiateUIObject(kingdomEventsListParentPrefab.name, kingdomCurrentEventsContentParent.transform) as GameObject;
+            politicsParentGO.name = "PoliticsParent";
+            politicsParentGO.transform.localScale = Vector3.one;
+            politicsParentGO.transform.localPosition = Vector3.zero;
+            politicsParentGO.GetComponent<EventListParent>().eventTitleLbl.text = "Politics";
+        }
 
-		List<EventListItem> currentlyShowingGameEvents = politicsParent.eventsGrid.GetChildList ().Select (x => x.GetComponent<EventListItem>()).ToList ();
-		List<int> currentlyShowingGameEventIDs = currentlyShowingGameEvents.Select (x => x.gameEvent.id).ToList ();
-		List<int> actualPoliticalEventIDs = politicalEvents.Select (x => x.id).ToList ();
-		if (actualPoliticalEventIDs.Except (currentlyShowingGameEventIDs).Union (currentlyShowingGameEventIDs.Except (actualPoliticalEventIDs)).Any()) {
-			for (int i = 0; i < currentlyShowingGameEvents.Count; i++) {
-				politicsParent.eventsGrid.RemoveChild (currentlyShowingGameEvents[i].transform);
+        politicsParent = politicsParentGO.GetComponent<EventListParent>();
+
+        List<EventListItem> currentlyShowingGameEvents = politicsParent.eventsGrid.GetChildList().Select(x => x.GetComponent<EventListItem>()).ToList();
+        List<int> currentlyShowingGameEventIDs = currentlyShowingGameEvents.Select(x => x.gameEvent.id).ToList();
+        List<int> actualPoliticalEventIDs = politicalEvents.Select(x => x.id).ToList();
+        if (actualPoliticalEventIDs.Except(currentlyShowingGameEventIDs).Union(currentlyShowingGameEventIDs.Except(actualPoliticalEventIDs)).Any()) {
+            for (int i = 0; i < currentlyShowingGameEvents.Count; i++) {
+                politicsParent.eventsGrid.RemoveChild(currentlyShowingGameEvents[i].transform);
                 ObjectPoolManager.Instance.DestroyObject(currentlyShowingGameEvents[i].gameObject);
-			}
+            }
 
-			//Instantiate all polical events into the politics parent grid
-			for (int i = 0; i < politicalEvents.Count; i++) {
-				GameObject eventGO = InstantiateUIObject(kingdomEventsListItemPrefab.name, this.transform);
-				eventGO.transform.localScale = Vector3.one;
-				politicsParent.eventsGrid.AddChild(eventGO.transform);
-				eventGO.GetComponent<EventListItem>().SetEvent (politicalEvents[i], currentlyShowingKingdom);
-				eventGO.GetComponent<EventListItem>().onClickEvent += ShowEventLogs;
-			}
-			StartCoroutine (RepositionGrid (politicsParent.eventsGrid));
-		}
-		RepositionKingdomEventsTable ();
-	}
-	public void RepositionKingdomEventsTable(){
-		StartCoroutine (RepositionTable (kingdomCurrentEventsContentParent));
-	}
-	/*
+            //Instantiate all polical events into the politics parent grid
+            for (int i = 0; i < politicalEvents.Count; i++) {
+                GameObject eventGO = InstantiateUIObject(kingdomEventsListItemPrefab.name, this.transform);
+                eventGO.transform.localScale = Vector3.one;
+                politicsParent.eventsGrid.AddChild(eventGO.transform);
+                eventGO.GetComponent<EventListItem>().SetEvent(politicalEvents[i], currentlyShowingKingdom);
+                eventGO.GetComponent<EventListItem>().onClickEvent += ShowEventLogs;
+            }
+            StartCoroutine(RepositionGrid(politicsParent.eventsGrid));
+        }
+        RepositionKingdomEventsTable();
+    }
+    public void RepositionKingdomEventsTable() {
+        StartCoroutine(RepositionTable(kingdomCurrentEventsContentParent));
+    }
+    /*
 	 * Hide Kingdom Events Menu
 	 * */
-	public void HideAllKingdomEvents(){
-		allKingdomEventsGO.SetActive (false);
-		kingdomListEventButton.SetClickState(false);
-	}
+    public void HideAllKingdomEvents() {
+        allKingdomEventsGO.SetActive(false);
+        kingdomListEventButton.SetClickState(false);
+    }
+    #endregion
 
+    #region Cities Menu
     public void ToggleKingdomCities() {
         if (kingdomCitiesGO.activeSelf) {
             HideKingdomCities();
@@ -1884,7 +1757,6 @@ public class UIManager : MonoBehaviour {
             ShowKingdomCities();
         }
     }
-
     internal void UpdateKingdomCitiesMenu() {
         if (kingdomCitiesGO.activeSelf) {
             if (currentlyShowingKingdom != null) {
@@ -1892,8 +1764,6 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
-
-    Kingdom currentlyShowingKingdomCities;
     /*
      * Show all cities owned by currentlyShowingKingdom.
      * */
@@ -1908,7 +1778,7 @@ public class UIManager : MonoBehaviour {
         int nextIndex = 0;
         for (int i = 0; i < cityItems.Count; i++) {
             CityItem currCityItem = cityItems[i];
-            if(i < currentlyShowingKingdom.cities.Count) {
+            if (i < currentlyShowingKingdom.cities.Count) {
                 City currCity = currentlyShowingKingdom.cities.ElementAtOrDefault(i);
                 if (currCity != null) {
                     currCityItem.SetCity(currCity, true, false, true);
@@ -1949,20 +1819,10 @@ public class UIManager : MonoBehaviour {
         kingdomCitiesGO.SetActive(false);
         kingdomListCityButton.SetClickState(false);
     }
+    #endregion
 
-    public void ShowRelationshipSummary(Citizen citizen, string summary) {
-        if(citizen.assignedRole is Governor) {
-            relationshipSummaryTitleLbl.text = "Loyalty";
-        } else if (citizen.assignedRole is King) {
-            relationshipSummaryTitleLbl.text = "Affinity";
-        }
-        relationshipSummaryLbl.text = summary;
-        relationshipSummaryGO.SetActive(true);
-    }
-    public void HideRelationshipSummary() {
-        relationshipSummaryGO.SetActive(false);
-    }
 
+    #region Intervene Menu
     public void ToggleInterveneMenu() {
         if (interveneMenuGO.activeSelf) {
             HideInterveneMenu();
@@ -1971,7 +1831,7 @@ public class UIManager : MonoBehaviour {
         }
     }
     private void ShowInterveneMenu() {
-        if(interveneMenuGrid.GetChildList().Count <= 0) {
+        if (interveneMenuGrid.GetChildList().Count <= 0) {
             LoadInterveneEvents();
         }
         interveneMenuBtn.SetClickState(true);
@@ -2012,7 +1872,9 @@ public class UIManager : MonoBehaviour {
         interveneMenuBtn.SetClickState(false);
         interveneActonsGO.SetActive(false);
     }
+    #endregion
 
+    #region Switch Kingdoms Menu
     public void ToggleSwitchKingdomsMenu() {
         if (switchKingdomGO.activeSelf) {
             HideSwitchKingdomsMenu();
@@ -2026,7 +1888,7 @@ public class UIManager : MonoBehaviour {
         List<Kingdom> kingdomsToList = KingdomManager.Instance.allKingdoms.Where(x => x.id != currentlyShowingKingdom.id).ToList();
 
         List<KingdomInterveneItem> presentKingdomItems = switchKingdomGrid.GetChildList().Select(x => x.GetComponent<KingdomInterveneItem>()).ToList();
-        if(kingdomsToList.Count > presentKingdomItems.Count) {
+        if (kingdomsToList.Count > presentKingdomItems.Count) {
             int numOfItemsToCreate = kingdomsToList.Count - presentKingdomItems.Count;
             for (int i = 0; i < numOfItemsToCreate; i++) {
                 GameObject kingdomItemGO = InstantiateUIObject(kingdomIntervenePrefab.name, switchKingdomGrid.transform);
@@ -2054,7 +1916,9 @@ public class UIManager : MonoBehaviour {
         switchKingdomsBtn.SetClickState(false);
         switchKingdomGO.SetActive(false);
     }
+    #endregion
 
+    #region Create Kingdom Menu
     public void ToggleCreateKingdomMenu() {
         if (createKingdomGO.activeSelf) {
             HideCreateKingdomMenu();
@@ -2116,33 +1980,18 @@ public class UIManager : MonoBehaviour {
         createKingdomBtn.SetClickState(false);
         createKingdomGO.SetActive(false);
     }
+    #endregion
 
+
+    #region Kingdoms Summary
     public void UpdateKingdomSummary() {
-        //prestigeSummaryLbl.text = string.Empty;
-        //List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedBySize);
-        //kingdomsToShow.Reverse();
-        //for (int i = 0; i < kingdomsToShow.Count; i++) {
-        //    Kingdom currKingdom = kingdomsToShow[i];
-        //    prestigeSummaryLbl.text += currKingdom.name + " - " + currKingdom.population.ToString() + " (" + currKingdom.cities.Count.ToString() + ")" + 
-        //        " ER: " + currKingdom.expansionRate.ToString() + " W: " + currKingdom.effectiveWeapons.ToString() + " A: " + currKingdom.effectiveArmor.ToString();
-        //    if(i + 1 < KingdomManager.Instance.allKingdomsOrderedBySize.Count) {
-        //        prestigeSummaryLbl.text += "\n";
-        //    }
-        //}
-        //kingdomSummaryNamesLbl.text = string.Empty;
-        //kingdomSummaryPopulationsLbl.text = string.Empty;
-        //kingdomSummaryCitiesLbl.text = string.Empty;
-        //kingdomSummaryExpansionRatesLbl.text = string.Empty;
-        //kingdomSummaryWeaponsLbl.text = string.Empty;
-        //kingdomSummaryArmorsLbl.text = string.Empty;
-
         List<Kingdom> kingdomsToShow = new List<Kingdom>(KingdomManager.Instance.allKingdomsOrderedBy);
         kingdomsToShow.Reverse();
 
         for (int i = 0; i < kingdomSummaryEntries.Length; i++) {
             KingdomSummaryEntry kse = kingdomSummaryEntries[i];
             Kingdom currKingdom = kingdomsToShow.ElementAtOrDefault(i);
-            if(currKingdom == null) {
+            if (currKingdom == null) {
                 kse.gameObject.SetActive(false);
             } else {
                 kse.SetKingdom(currKingdom);
@@ -2150,27 +1999,9 @@ public class UIManager : MonoBehaviour {
             }
             kingdomSummaryGrid.Reposition();
         }
-        
-
-        //for (int i = 0; i < kingdomsToShow.Count; i++) {
-        //    Kingdom currKingdom = kingdomsToShow[i];
-        //    kingdomSummaryNamesLbl.text += currKingdom.name;
-        //    kingdomSummaryPopulationsLbl.text += "P: " + currKingdom.population.ToString();
-        //    kingdomSummaryCitiesLbl.text += "C: " + currKingdom.cities.Count.ToString();
-        //    kingdomSummaryExpansionRatesLbl.text += "ER: " + currKingdom.expansionRate.ToString();
-        //    kingdomSummaryWeaponsLbl.text += "W: " + currKingdom.effectiveWeapons.ToString();
-        //    kingdomSummaryArmorsLbl.text += "A: " + currKingdom.effectiveArmor.ToString();
-
-        //    if (i + 1 < KingdomManager.Instance.allKingdomsOrderedBy.Count) {
-        //        kingdomSummaryNamesLbl.text += "\n";
-        //        kingdomSummaryPopulationsLbl.text += "\n";
-        //        kingdomSummaryCitiesLbl.text += "\n";
-        //        kingdomSummaryExpansionRatesLbl.text += "\n";
-        //        kingdomSummaryWeaponsLbl.text += "\n";
-        //        kingdomSummaryArmorsLbl.text += "\n";
-        //    }
-        //}
     }
+    #endregion
+
     public void UpdateAllianceSummary() {
 		if(UIManager.Instance.goAlliance.activeSelf){
 			this.allianceSummaryLbl.text = string.Empty;
@@ -2238,99 +2069,109 @@ public class UIManager : MonoBehaviour {
 
 		}
 	}
+
+    #region UI Utilities
+    public void RepositionGridCallback(UIGrid thisGrid) {
+        StartCoroutine(RepositionGrid(thisGrid));
+    }
+    private void EnableUIButton(UIButton btn, bool state) {
+        if (state) {
+            btn.GetComponent<BoxCollider>().enabled = true;
+        } else {
+            btn.GetComponent<BoxCollider>().enabled = false;
+        }
+    }
     /*
 	 * Generic toggle function, toggles gameobject to on/off state.
 	 * */
-    public void ToggleObject(GameObject objectToToggle){
-		objectToToggle.SetActive(!objectToToggle.activeSelf);
-	}
-
-	/*
+    public void ToggleObject(GameObject objectToToggle) {
+        objectToToggle.SetActive(!objectToToggle.activeSelf);
+    }
+    /*
 	 * Get the corresponding icon for each event
 	 * */
-	internal Sprite GetSpriteForEvent(EVENT_TYPES eventType){
-		switch (eventType) {
-		case EVENT_TYPES.ASSASSINATION:
-			return assassinationIcon;
-		case EVENT_TYPES.BORDER_CONFLICT:
-			return borderConflictIcon;
-		case EVENT_TYPES.EXPANSION:
-			return expansionIcon;
-		case EVENT_TYPES.INVASION_PLAN:
-			return invasionPlotIcon;
-		case EVENT_TYPES.KINGDOM_WAR:
-			return declareWarIcon;
-		case EVENT_TYPES.MARRIAGE_INVITATION:
-			return marriageInvitationIcon;
-		case EVENT_TYPES.MILITARIZATION:
-			return militarizationIcon;
-		case EVENT_TYPES.RAID:
-			return raidIcon;
-		case EVENT_TYPES.REBELLION_PLOT:
-			return rebellionPlotIcon;
-		case EVENT_TYPES.REQUEST_PEACE:
-			return requestPeaceIcon;
-		case EVENT_TYPES.STATE_VISIT:
-			return stateVisitIcon;
-		case EVENT_TYPES.DIPLOMATIC_CRISIS:
-			return rebellionPlotIcon;
-		case EVENT_TYPES.ADMIRATION:
-			return requestPeaceIcon;
-		case EVENT_TYPES.RIOT_WEAPONS:
-			return rebellionPlotIcon;
-		case EVENT_TYPES.SECESSION:
-			return rebellionPlotIcon;
-		case EVENT_TYPES.REBELLION:
-			return rebellionPlotIcon;
-		case EVENT_TYPES.PLAGUE:
-			return militarizationIcon;
-		case EVENT_TYPES.BOON_OF_POWER:
-			return marriageInvitationIcon;
-		case EVENT_TYPES.TRADE:
-			return marriageInvitationIcon;
-		case EVENT_TYPES.PROVOCATION:
-			return rebellionPlotIcon;
-		case EVENT_TYPES.EVANGELISM:
-			return requestPeaceIcon;
-		case EVENT_TYPES.SPOUSE_ABDUCTION:
-			return militarizationIcon;
-		case EVENT_TYPES.FIRST_AND_KEYSTONE:
-			return marriageInvitationIcon;
-		case EVENT_TYPES.RUMOR:
-			return militarizationIcon;
-		case EVENT_TYPES.SLAVES_MERCHANT:
-			return rebellionPlotIcon;
-		case EVENT_TYPES.HIDDEN_HISTORY_BOOK:
-			return requestPeaceIcon;
-		case EVENT_TYPES.SERUM_OF_ALACRITY:
-			return assassinationIcon;
-		case EVENT_TYPES.ALTAR_OF_BLESSING:
-			return requestPeaceIcon;
-        case EVENT_TYPES.DEVELOP_WEAPONS:
-            return assassinationIcon;
-        case EVENT_TYPES.HYPNOTISM:
-            return militarizationIcon;
-        case EVENT_TYPES.KINGS_COUNCIL:
-            return stateVisitIcon;
-        case EVENT_TYPES.KINGDOM_HOLIDAY:
-            return requestPeaceIcon;
-        case EVENT_TYPES.ADVENTURE:
-            return raidIcon;
-        case EVENT_TYPES.EVIL_INTENT:
-            return assassinationIcon;
-		case EVENT_TYPES.GREAT_STORM:
-			return assassinationIcon;
-		case EVENT_TYPES.ANCIENT_RUIN:
-			return marriageInvitationIcon;
+    internal Sprite GetSpriteForEvent(EVENT_TYPES eventType) {
+        switch (eventType) {
+            case EVENT_TYPES.ASSASSINATION:
+                return assassinationIcon;
+            case EVENT_TYPES.BORDER_CONFLICT:
+                return borderConflictIcon;
+            case EVENT_TYPES.EXPANSION:
+                return expansionIcon;
+            case EVENT_TYPES.INVASION_PLAN:
+                return invasionPlotIcon;
+            case EVENT_TYPES.KINGDOM_WAR:
+                return declareWarIcon;
+            case EVENT_TYPES.MARRIAGE_INVITATION:
+                return marriageInvitationIcon;
+            case EVENT_TYPES.MILITARIZATION:
+                return militarizationIcon;
+            case EVENT_TYPES.RAID:
+                return raidIcon;
+            case EVENT_TYPES.REBELLION_PLOT:
+                return rebellionPlotIcon;
+            case EVENT_TYPES.REQUEST_PEACE:
+                return requestPeaceIcon;
+            case EVENT_TYPES.STATE_VISIT:
+                return stateVisitIcon;
+            case EVENT_TYPES.DIPLOMATIC_CRISIS:
+                return rebellionPlotIcon;
+            case EVENT_TYPES.ADMIRATION:
+                return requestPeaceIcon;
+            case EVENT_TYPES.RIOT_WEAPONS:
+                return rebellionPlotIcon;
+            case EVENT_TYPES.SECESSION:
+                return rebellionPlotIcon;
+            case EVENT_TYPES.REBELLION:
+                return rebellionPlotIcon;
+            case EVENT_TYPES.PLAGUE:
+                return militarizationIcon;
+            case EVENT_TYPES.BOON_OF_POWER:
+                return marriageInvitationIcon;
+            case EVENT_TYPES.TRADE:
+                return marriageInvitationIcon;
+            case EVENT_TYPES.PROVOCATION:
+                return rebellionPlotIcon;
+            case EVENT_TYPES.EVANGELISM:
+                return requestPeaceIcon;
+            case EVENT_TYPES.SPOUSE_ABDUCTION:
+                return militarizationIcon;
+            case EVENT_TYPES.FIRST_AND_KEYSTONE:
+                return marriageInvitationIcon;
+            case EVENT_TYPES.RUMOR:
+                return militarizationIcon;
+            case EVENT_TYPES.SLAVES_MERCHANT:
+                return rebellionPlotIcon;
+            case EVENT_TYPES.HIDDEN_HISTORY_BOOK:
+                return requestPeaceIcon;
+            case EVENT_TYPES.SERUM_OF_ALACRITY:
+                return assassinationIcon;
+            case EVENT_TYPES.ALTAR_OF_BLESSING:
+                return requestPeaceIcon;
+            case EVENT_TYPES.DEVELOP_WEAPONS:
+                return assassinationIcon;
+            case EVENT_TYPES.HYPNOTISM:
+                return militarizationIcon;
+            case EVENT_TYPES.KINGS_COUNCIL:
+                return stateVisitIcon;
+            case EVENT_TYPES.KINGDOM_HOLIDAY:
+                return requestPeaceIcon;
+            case EVENT_TYPES.ADVENTURE:
+                return raidIcon;
+            case EVENT_TYPES.EVIL_INTENT:
+                return assassinationIcon;
+            case EVENT_TYPES.GREAT_STORM:
+                return assassinationIcon;
+            case EVENT_TYPES.ANCIENT_RUIN:
+                return marriageInvitationIcon;
         }
-		return assassinationIcon;
-	}
-
-	/*
+        return assassinationIcon;
+    }
+    /*
 	 * Checker for if the mouse is currently
 	 * over a UI Object
 	 * */
-	public bool IsMouseOnUI(){
+    public bool IsMouseOnUI() {
         if (uiCamera != null) {
             if (Minimap.Instance.isDragging) {
                 return true;
@@ -2340,100 +2181,92 @@ public class UIManager : MonoBehaviour {
             }
         }
         return false;
-	}
+    }
+    #endregion
 
-	/*
-	 * Use this to instantiate UI Objects, so that the program can normalize it's
-	 * font sizes.
-	 * */
-	internal GameObject InstantiateUIObject(string prefabObjName, Transform parent){
+    #region Object Pooling
+   /*
+    * Use this to instantiate UI Objects, so that the program can normalize it's
+    * font sizes.
+    * */
+    internal GameObject InstantiateUIObject(string prefabObjName, Transform parent) {
         //GameObject go = GameObject.Instantiate (prefabObj, parent) as GameObject;
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabObjName, Vector3.zero, Quaternion.identity, parent);
-		UILabel[] goLbls = go.GetComponentsInChildren<UILabel>(true);
-		for (int i = 0; i < goLbls.Length; i++) {
-			NormalizeFontSizeOfLabel(goLbls[i]);
-		}
-		return go;
-	}
+        UILabel[] goLbls = go.GetComponentsInChildren<UILabel>(true);
+        for (int i = 0; i < goLbls.Length; i++) {
+            NormalizeFontSizeOfLabel(goLbls[i]);
+        }
+        return go;
+    }
+    #endregion
 
-
-
-
-
-//------------------------------------------------------------------------------------------- FOR TESTING ---------------------------------------------------------------------
-
+    #region For Testing
     public void ToggleBorders() {
         CameraMove.Instance.ToggleMainCameraLayer("Borders");
         CameraMove.Instance.ToggleMainCameraLayer("MinimapAndHextiles");
     }
-
-	public void ToggleResourceIcons(){
-		CameraMove.Instance.ToggleResourceIcons();
-	}
-
-	public void ToggleGeneralCamera(){
-		CameraMove.Instance.ToggleGeneralCamera();
-	}
-
-	public void ToggleTraderCamera(){
-		CameraMove.Instance.ToggleTraderCamera();
-	}
-	public void OnValueChangeEventDropdown(){
-		eventDropdownCurrentSelectionLbl.text = this.eventDropdownList.value;
-		if(this.eventDropdownList.value == "Raid"){
-			goRaid.SetActive (true);
-			goStateVisit.SetActive (false);
-			goMarriageInvitation.SetActive (false);
-			goPowerGrab.SetActive (false);
-			goExpansion.SetActive (false);
-			goInvasionPlan.SetActive (false);
-		}else if(this.eventDropdownList.value == "State Visit"){
-			goRaid.SetActive (false);
-			goStateVisit.SetActive (true);
-			goMarriageInvitation.SetActive (false);
-			goPowerGrab.SetActive (false);
-			goExpansion.SetActive (false);
-			goInvasionPlan.SetActive (false);
-		}else if(this.eventDropdownList.value == "Marriage Invitation"){
-			goRaid.SetActive (false);
-			goStateVisit.SetActive (false);
-			goMarriageInvitation.SetActive (true);
-			goPowerGrab.SetActive (false);
-			goExpansion.SetActive (false);
-			goInvasionPlan.SetActive (false);
-		}else if(this.eventDropdownList.value == "Power Grab"){
-			goRaid.SetActive (false);
-			goStateVisit.SetActive (false);
-			goMarriageInvitation.SetActive (false);
-			goPowerGrab.SetActive (true);
-			goExpansion.SetActive (false);
-			goInvasionPlan.SetActive (false);
-		}else if(this.eventDropdownList.value == "Expansion"){
-			goRaid.SetActive (false);
-			goStateVisit.SetActive (false);
-			goMarriageInvitation.SetActive (false);
-			goPowerGrab.SetActive (false);
-			goExpansion.SetActive (true);
-			goInvasionPlan.SetActive (false);
-		}else if(this.eventDropdownList.value == "Invasion Plan"){
-			goRaid.SetActive (false);
-			goStateVisit.SetActive (false);
-			goMarriageInvitation.SetActive (false);
-			goPowerGrab.SetActive (false);
-			goExpansion.SetActive (false);
-			goInvasionPlan.SetActive (true);
-		}
-	}
-
-	public void ShowCreateEventUI(){
-		this.goCreateEventUI.SetActive (true);
-	}
-	public void HideCreateEventUI(){
-		this.goCreateEventUI.SetActive (false);
-	}
-
-	#region For Testing
-	public void ToggleRelocate(){
+    public void ToggleResourceIcons() {
+        CameraMove.Instance.ToggleResourceIcons();
+    }
+    public void ToggleGeneralCamera() {
+        CameraMove.Instance.ToggleGeneralCamera();
+    }
+    public void ToggleTraderCamera() {
+        CameraMove.Instance.ToggleTraderCamera();
+    }
+    public void OnValueChangeEventDropdown() {
+        eventDropdownCurrentSelectionLbl.text = this.eventDropdownList.value;
+        if (this.eventDropdownList.value == "Raid") {
+            goRaid.SetActive(true);
+            goStateVisit.SetActive(false);
+            goMarriageInvitation.SetActive(false);
+            goPowerGrab.SetActive(false);
+            goExpansion.SetActive(false);
+            goInvasionPlan.SetActive(false);
+        } else if (this.eventDropdownList.value == "State Visit") {
+            goRaid.SetActive(false);
+            goStateVisit.SetActive(true);
+            goMarriageInvitation.SetActive(false);
+            goPowerGrab.SetActive(false);
+            goExpansion.SetActive(false);
+            goInvasionPlan.SetActive(false);
+        } else if (this.eventDropdownList.value == "Marriage Invitation") {
+            goRaid.SetActive(false);
+            goStateVisit.SetActive(false);
+            goMarriageInvitation.SetActive(true);
+            goPowerGrab.SetActive(false);
+            goExpansion.SetActive(false);
+            goInvasionPlan.SetActive(false);
+        } else if (this.eventDropdownList.value == "Power Grab") {
+            goRaid.SetActive(false);
+            goStateVisit.SetActive(false);
+            goMarriageInvitation.SetActive(false);
+            goPowerGrab.SetActive(true);
+            goExpansion.SetActive(false);
+            goInvasionPlan.SetActive(false);
+        } else if (this.eventDropdownList.value == "Expansion") {
+            goRaid.SetActive(false);
+            goStateVisit.SetActive(false);
+            goMarriageInvitation.SetActive(false);
+            goPowerGrab.SetActive(false);
+            goExpansion.SetActive(true);
+            goInvasionPlan.SetActive(false);
+        } else if (this.eventDropdownList.value == "Invasion Plan") {
+            goRaid.SetActive(false);
+            goStateVisit.SetActive(false);
+            goMarriageInvitation.SetActive(false);
+            goPowerGrab.SetActive(false);
+            goExpansion.SetActive(false);
+            goInvasionPlan.SetActive(true);
+        }
+    }
+    public void ShowCreateEventUI() {
+        this.goCreateEventUI.SetActive(true);
+    }
+    public void HideCreateEventUI() {
+        this.goCreateEventUI.SetActive(false);
+    }
+    public void ToggleRelocate(){
 		if (this.relocateGO.activeSelf) {
 			this.relocateGO.SetActive (false);
 		} else {
@@ -2556,7 +2389,6 @@ public class UIManager : MonoBehaviour {
         currentlyShowingCitizen.Death(DEATH_REASONS.ACCIDENT);
         ShowCitizenInfo(currentlyShowingCitizen);
     }
-
     internal AGENT_TYPE spawnType = AGENT_TYPE.NONE;
     [SerializeField] internal ButtonToggle _spawnNecromancerBtn;
     public void SpawnNecromancer() {
@@ -2567,7 +2399,6 @@ public class UIManager : MonoBehaviour {
         }
     }
     #endregion
-
 
     public void CenterCameraOnCitizen(){
 		if(this.currentlyShowingCitizen != null){
@@ -3086,21 +2917,51 @@ public class UIManager : MonoBehaviour {
         EnableUIButton(chooseKingdomOkBtn, true);
     }
     #endregion
-
-    #endregion
-
-    #region UI Utilities
-    private void EnableUIButton(UIButton btn, bool state) {
-        if (state) {
-            btn.GetComponent<BoxCollider>().enabled = true;
-        } else {
-            btn.GetComponent<BoxCollider>().enabled = false;
-        }
-    }
     #endregion
 
 	public void ToggleKingdomHistory(){
 		this.isShowKingdomHistoryOnly = !this.isShowKingdomHistoryOnly;
 		ShowLogHistory ();
 	}
+
+    #region World Info Menu
+    public void ShowKingdomsSummary() {
+        HideAllianceSummary();
+        HideWarSummary();
+        UpdateKingdomSummary();
+        kingdomSummaryGO.SetActive(true);
+        SetWorldInfoMenuItemAsSelected(worldInfoKingdomBtn.transform);
+    }
+    public void HideKingdomSummary() {
+        kingdomSummaryGO.SetActive(false);
+    }
+
+    public void ShowAllianceSummary() {
+        HideKingdomSummary();
+        HideWarSummary();
+        warAllianceState = "alliance";
+        goAlliance.SetActive(true);
+        UpdateAllianceSummary();
+        SetWorldInfoMenuItemAsSelected(worldInfoAllianceBtn.transform);
+    }
+    public void HideAllianceSummary() {
+        goAlliance.SetActive(false);
+    }
+
+    public void ShowWarSummary() {
+        HideKingdomSummary();
+        HideAllianceSummary();
+        warAllianceState = "warfare";
+        goAlliance.SetActive(true);
+        UpdateAllianceSummary();
+        SetWorldInfoMenuItemAsSelected(worldInfoWarsBtn.transform);
+    }
+    public void HideWarSummary() {
+        goAlliance.SetActive(false);
+    }
+    private void SetWorldInfoMenuItemAsSelected(Transform worldInfoMenuItem) {
+        worldInfoSelectedGO.transform.parent = worldInfoMenuItem;
+        worldInfoSelectedGO.transform.localPosition = Vector3.zero;
+    }
+    #endregion
 }

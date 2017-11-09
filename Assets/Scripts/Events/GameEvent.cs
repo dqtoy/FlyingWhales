@@ -223,7 +223,7 @@ public class GameEvent {
 	internal void EventIsCreated(Kingdom kingdom, bool isShow){
 		if(isShow){
 			if(!this.isOneTime){
-				UIManager.Instance.ShowEventsOfType (this, kingdom);
+				//UIManager.Instance.ShowEventsOfType (this, kingdom);
 			}else{
 				if (kingdom.id == UIManager.Instance.currentlyShowingKingdom.id) {
 					if (!Utilities.eventsNotToShow.Contains(eventType)) {
