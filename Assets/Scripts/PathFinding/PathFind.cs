@@ -35,7 +35,7 @@ namespace PathFind {
                             //path cannot pass through other regions
                             continue;
                         }
-                        if(n.RoadTiles.Count > 0 && n.id != start.id && n.id != destination.id) {
+                        if(n.allNeighbourRoads.Count > 0 && n.id != start.id && n.id != destination.id) {
                             //current node has adjacent roads, check if it is a neighbour of start or destination
                             //if it is, allow the path
                             //else skip this node
@@ -150,7 +150,7 @@ namespace PathFind {
                         queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.USE_ROADS) {
-                    foreach (Node n in path.LastStep.RoadTiles) {
+					foreach (Node n in path.LastStep.allNeighbourRoads) {
                         if (n.tileTag != start.tileTag) {
                             continue;
                         }
@@ -186,7 +186,7 @@ namespace PathFind {
 					if (kingdom == null) {
 						throw new Exception("Someone is trying to pathfind using USE_ROADS_WITH_ALLIES, but hasn't specified a kingdom!");
 					}
-					foreach (Node n in path.LastStep.RoadTiles) {
+					foreach (Node n in path.LastStep.allNeighbourRoads) {
 						if (n.tileTag != start.tileTag) {
 							continue;
 						}
