@@ -191,6 +191,7 @@ public class Battle {
 			Debug.Log ("---------------------------");
 
 			Debug.Log ("ATTACKER'S SOLDIERS BEFORE DAMAGE: " + this.attacker.kingdom.soldiersCount);
+			Debug.Log ("DEFENDER'S POPULATION BEFORE DAMAGE: " + this.defender.kingdom.soldiersCount);
 
 			int corpseCount = 0;
 

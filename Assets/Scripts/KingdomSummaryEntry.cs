@@ -30,14 +30,14 @@ public class KingdomSummaryEntry : MonoBehaviour {
         populationLbl.text = kingdom.population.ToString();
         citiesLbl.text = kingdom.cities.Count.ToString();
         expansionRateLbl.text = kingdom.currentExpansionRate.ToString();
-        weaponsLbl.text = kingdom.effectiveAttack.ToString();
+        weaponsLbl.text = kingdom.soldiersCount.ToString();
 //        armorLbl.text = kingdom.effectiveDefense.ToString();
 
         
         EventDelegate.Set(nameLblEventTrigger.onClick, delegate () { SwitchKingdom(kingdom); });
 
-        EventDelegate.Set(weaponLblEventTrigger.onHoverOver, delegate () { OnHoverWeapons(); });
-        EventDelegate.Set(weaponLblEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideSmallInfo(); });
+//        EventDelegate.Set(weaponLblEventTrigger.onHoverOver, delegate () { OnHoverWeapons(); });
+//        EventDelegate.Set(weaponLblEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideSmallInfo(); });
 
 //        EventDelegate.Set(armorLblEventTrigger.onHoverOver, delegate () { OnHoverArmor(); });
 //        EventDelegate.Set(armorLblEventTrigger.onHoverOut, delegate () { UIManager.Instance.HideSmallInfo(); });

@@ -379,7 +379,6 @@ public class City{
         //citizenToOccupyCity.GenerateCharacterValues();
         //citizenToOccupyCity.UpdateKingOpinion();
         //CreateInitialFamilies(false);
-		this.hexTile.emptyCityGO.SetActive(false);
         this.kingdom.CreateNewGovernorFamily(this);
 //		this.UpdateDailyProduction();
         this.hexTile.CreateCityNamePlate(this);

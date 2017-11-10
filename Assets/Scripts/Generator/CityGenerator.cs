@@ -302,6 +302,8 @@ public class CityGenerator : MonoBehaviour {
         hexTile.CreateStructureOnTile(STRUCTURE_TYPE.CITY);
         hexTile.city.PopulateBorderTiles();
 		hexTile.city.UpdateDailyProduction ();
+		hexTile.emptyCityGO.SetActive(false);
+
         //hexTile.city.UpdateBorderTiles();
         return hexTile.city;
 	}

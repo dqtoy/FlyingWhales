@@ -2855,6 +2855,7 @@ public class Kingdom{
 		int distributableDamage = damage / this.cities.Count;
 		int remainder = damage % this.cities.Count;
 		distributableDamage += remainder;
+		Debug.Log (this.name + " DISTRIBUTABLE DAMAGE: " + distributableDamage.ToString() + ", REMAINDER: " + remainder.ToString ());
 		int excessDamage = 0;
 		for (int i = 0; i < this.cities.Count; i++) {
 			City city = this.cities [i];
@@ -2862,13 +2863,13 @@ public class Kingdom{
 			if(city.soldiers < totalDamage){
 				excessDamage += totalDamage - city.soldiers;
 				city.AdjustSoldiers (-city.soldiers);
-				i--;
+//				i--;
 			}else{
 				excessDamage = 0;
 				city.AdjustSoldiers (-totalDamage);
-				if(city.isDead){
-					i--;
-				}
+//				if(city.isDead){
+//					i--;
+//				}
 			}
 		}
 	}
