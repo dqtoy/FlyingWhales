@@ -406,13 +406,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 			break;
 		case RESOURCE.COBALT:
-			this.resourceCount += UnityEngine.Random.Range (0, 3);
-			break;
-		case RESOURCE.MANA_STONE:
 			this.resourceCount += UnityEngine.Random.Range (1, 4);
 			break;
-		case RESOURCE.MITHRIL:
+		case RESOURCE.MANA_STONE:
 			this.resourceCount += UnityEngine.Random.Range (2, 5);
+			break;
+		case RESOURCE.MITHRIL:
+			this.resourceCount += UnityEngine.Random.Range (3, 6);
 			break;
 		}
 		CheckResourceCount ();
