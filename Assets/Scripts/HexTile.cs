@@ -368,13 +368,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         switch (this.specialResource){
 		case RESOURCE.DEER:
-			this.resourceCount += UnityEngine.Random.Range (0, 4);
+			this.resourceCount += UnityEngine.Random.Range (0, 3);
 			break;
 		case RESOURCE.PIG:
 			this.resourceCount += UnityEngine.Random.Range (0, 5);
 			break;
 		case RESOURCE.BEHEMOTH:
-			this.resourceCount += UnityEngine.Random.Range (0, 6);
+			this.resourceCount += UnityEngine.Random.Range (0, 7);
 			break;
 		case RESOURCE.WHEAT:
 			this.resourceCount += 1;
@@ -387,7 +387,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			break;
 		case RESOURCE.SLATE:
 			if(this.region.occupant.kingdom.race == RACE.HUMANS){
-				this.resourceCount += UnityEngine.Random.Range (0, 4);
+				this.resourceCount += UnityEngine.Random.Range (0, 3);
 			}
 			break;
 		case RESOURCE.GRANITE:
@@ -397,7 +397,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			break;
 		case RESOURCE.OAK:
 			if(this.region.occupant.kingdom.race == RACE.ELVES){
-				this.resourceCount += UnityEngine.Random.Range (0, 4);
+				this.resourceCount += UnityEngine.Random.Range (0, 3);
 			}
 			break;
 		case RESOURCE.EBONY:
@@ -406,13 +406,13 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			}
 			break;
 		case RESOURCE.COBALT:
-			this.resourceCount += UnityEngine.Random.Range (0, 4);
+			this.resourceCount += UnityEngine.Random.Range (0, 3);
 			break;
 		case RESOURCE.MANA_STONE:
-			this.resourceCount += UnityEngine.Random.Range (1, 5);
+			this.resourceCount += UnityEngine.Random.Range (1, 4);
 			break;
 		case RESOURCE.MITHRIL:
-			this.resourceCount += UnityEngine.Random.Range (2, 6);
+			this.resourceCount += UnityEngine.Random.Range (2, 5);
 			break;
 		}
 		CheckResourceCount ();
@@ -848,6 +848,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         Messenger.AddListener("UpdateUI", UpdateCityNamePlate);
 
         UpdateCityNamePlate();
+		UpdateCityFoodMaterialOreUI ();
     }
     internal void UpdateCityNamePlate() {
         if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
@@ -856,6 +857,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             _cityInfo.SetCity(city, false, true, false, true);
         }
     }
+	internal void UpdateCityFoodMaterialOreUI(){
+		_cityInfo.UpdateFoodMaterialOreUI ();
+	}
     internal void RemoveCityNamePlate() {
         if (_namePlateParent != null) {
             ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);

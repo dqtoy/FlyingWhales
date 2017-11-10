@@ -30,6 +30,9 @@ public class City{
 	private int _foodCount;
 	private int _materialCount;
 	private int _oreCount;
+	private int _virtualFoodCount;
+	private int _virtualMaterialCount;
+	private int _virtualOreCount;
 
     //Balance of Power
     //private int _powerPoints;
@@ -152,6 +155,15 @@ public class City{
     }
 	internal int foodCount{
 		get { return this._foodCount; }
+	}
+	internal int virtualFoodCount{
+		get { return this._foodCount + this._virtualFoodCount; }
+	}
+	internal int virtualMaterialCount{
+		get { return this._materialCount + this._virtualMaterialCount; }
+	}
+	internal int virtualOreCount{
+		get { return this._oreCount + this._virtualOreCount; }
 	}
 	internal int materialCount{
 		get { return this._materialCount; }
@@ -518,26 +530,50 @@ public class City{
 	internal void AdjustFoodCount(int amount){
 		this._foodCount += amount;
 		this._foodCount = Mathf.Clamp (this._foodCount, 0, this.foodCapacity);
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 		CheckFoodSupply ();
+	}
+	internal void AdjustVirtualFoodCount(int amount){
+		this._virtualFoodCount += amount;
+		if(this._virtualFoodCount < 0){
+			this._virtualFoodCount = 0;
+		}
 	}
 	internal void SetFoodCount(int amount){
 		this._foodCount = amount;
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 	}
 	internal void AdjustMaterialCount(int amount){
 		this._materialCount += amount;
 		this._materialCount = Mathf.Clamp (this._materialCount, 0, this.materialCapacity);
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 		CheckMaterialSupply ();
+	}
+	internal void AdjustVirtualMaterialCount(int amount){
+		this._virtualMaterialCount += amount;
+		if(this._virtualMaterialCount < 0){
+			this._virtualMaterialCount = 0;
+		}
 	}
 	internal void SetMaterialCount(int amount){
 		this._materialCount = amount;
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 	}
 	internal void AdjustOreCount(int amount){
 		this._oreCount += amount;
 		this._oreCount = Mathf.Clamp (this._oreCount, 0, this.oreCapacity);
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 		CheckOreSupply ();
+	}
+	internal void AdjustVirtualOreCount(int amount){
+		this._virtualOreCount += amount;
+		if(this._virtualOreCount < 0){
+			this._virtualOreCount = 0;
+		}
 	}
 	internal void SetOreCount(int amount){
 		this._oreCount = amount;
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 	}
 	private void ConsumeResources(){
 		ConsumeFood ();

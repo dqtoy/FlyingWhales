@@ -27,6 +27,11 @@ public class CityItem : MonoBehaviour {
 	[SerializeField] private GameObject _rebelIcon;
     [SerializeField] private UIProgressBar _growthProgBar;
 
+	[SerializeField] private GameObject _noFoodGO;
+	[SerializeField] private GameObject _noMaterialGO;
+	[SerializeField] private GameObject _noOreGO;
+
+
     [Header("For Testing")]
     [SerializeField] private GameObject forTestingGO;
     //[SerializeField] private UILabel newPowerLbl;
@@ -101,7 +106,23 @@ public class CityItem : MonoBehaviour {
         }
 
     }
-
+	public void UpdateFoodMaterialOreUI(){
+		if(_city.foodCount <= 0){
+			_noFoodGO.SetActive (true);
+		}else{
+			_noFoodGO.SetActive (false);
+		}
+		if(_city.materialCount <= 0){
+			_noMaterialGO.SetActive (true);
+		}else{
+			_noMaterialGO.SetActive (false);
+		}
+		if(_city.oreCount <= 0){
+			_noOreGO.SetActive (true);
+		}else{
+			_noOreGO.SetActive (false);
+		}
+	}
     public void CenterOnCity() {
         CameraMove.Instance.CenterCameraOn(_city.hexTile.gameObject);
     }

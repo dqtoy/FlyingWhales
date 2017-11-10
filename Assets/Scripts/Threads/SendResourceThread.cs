@@ -39,7 +39,7 @@ public class SendResourceThread {
 		if(resourceType == RESOURCE_TYPE.FOOD){
 			for (int i = 0; i < this.sourceCity.kingdom.cities.Count; i++) {
 				City city = this.sourceCity.kingdom.cities [i];
-				if(city.foodCount < city.foodRequirement && this.sourceCity.id != city.id){
+				if(city.virtualFoodCount < city.foodRequirement && this.sourceCity.id != city.id){
 					List<HexTile> newPath = PathGenerator.Instance.GetPath (this.sourceCity.hexTile, city.hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this.sourceCity.kingdom);
 					if (newPath != null && newPath.Count > 0) {
 						if(chosenCity == null){
@@ -61,7 +61,7 @@ public class SendResourceThread {
 		}else if(resourceType == RESOURCE_TYPE.MATERIAL){
 			for (int i = 0; i < this.sourceCity.kingdom.cities.Count; i++) {
 				City city = this.sourceCity.kingdom.cities [i];
-				if(city.materialCount < city.materialRequirement && this.sourceCity.id != city.id){
+				if(city.virtualMaterialCount < city.materialRequirement && this.sourceCity.id != city.id){
 					List<HexTile> newPath = PathGenerator.Instance.GetPath (this.sourceCity.hexTile, city.hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this.sourceCity.kingdom);
 					if (newPath != null && newPath.Count > 0) {
 						if(chosenCity == null){
@@ -83,7 +83,7 @@ public class SendResourceThread {
 		}else if(resourceType == RESOURCE_TYPE.ORE){
 			for (int i = 0; i < this.sourceCity.kingdom.cities.Count; i++) {
 				City city = this.sourceCity.kingdom.cities [i];
-				if(city.oreCount < city.oreRequirement && this.sourceCity.id != city.id){
+				if(city.virtualOreCount < city.oreRequirement && this.sourceCity.id != city.id){
 					List<HexTile> newPath = PathGenerator.Instance.GetPath (this.sourceCity.hexTile, city.hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this.sourceCity.kingdom);
 					if (newPath != null && newPath.Count > 0) {
 						if(chosenCity == null){
