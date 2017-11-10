@@ -1381,11 +1381,13 @@ public class City{
 
 	#region Population
 	private void IncreasePopulationPerMonth(){
-		int populationIncrease = this.populationGrowth;
-		if(this._isStarving){
-			populationIncrease /= 2;
+		if(!this._isStarving){
+			int populationIncrease = this.populationGrowth;
+			AdjustPopulation (populationIncrease);
+		}else{
+			int populationDecrease = this._populationGrowth / 2;
+			AdjustPopulation (-populationDecrease);
 		}
-		AdjustPopulation (populationIncrease);
 	}
 	internal void AdjustPopulation(int adjustment, bool isUpdateKingdomList = true) {
 		int supposedPopulation = this._population + adjustment;
@@ -1404,7 +1406,12 @@ public class City{
 
 //		this._population = Mathf.Clamp (this._population, 0, this.populationCapacity);
 		if(this._population == 0) {
-			KillCity ();
+			if(supposedPopulation < 0){
+				AdjustSoldiers (supposedPopulation);
+				if(this._soldiers == 0){
+					KillCity ();
+				}
+			}
 		}
 //		KingdomManager.Instance.UpdateKingdomList();
 	}

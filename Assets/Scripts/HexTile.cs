@@ -368,41 +368,41 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         switch (this.specialResource){
 		case RESOURCE.DEER:
-			this.resourceCount += UnityEngine.Random.Range (0, 3);
+			this.resourceCount += UnityEngine.Random.Range (1, 4);
 			break;
 		case RESOURCE.PIG:
-			this.resourceCount += UnityEngine.Random.Range (0, 5);
+			this.resourceCount += UnityEngine.Random.Range (1, 6);
 			break;
 		case RESOURCE.BEHEMOTH:
-			this.resourceCount += UnityEngine.Random.Range (0, 7);
+			this.resourceCount += UnityEngine.Random.Range (1, 8);
 			break;
 		case RESOURCE.WHEAT:
-			this.resourceCount += 1;
-			break;
-		case RESOURCE.RICE:
 			this.resourceCount += 2;
 			break;
-		case RESOURCE.CORN:
+		case RESOURCE.RICE:
 			this.resourceCount += 3;
+			break;
+		case RESOURCE.CORN:
+			this.resourceCount += 4;
 			break;
 		case RESOURCE.SLATE:
 			if(this.region.occupant.kingdom.race == RACE.HUMANS){
-				this.resourceCount += UnityEngine.Random.Range (0, 3);
+				this.resourceCount += UnityEngine.Random.Range (1, 4);
 			}
 			break;
 		case RESOURCE.GRANITE:
 			if(this.region.occupant.kingdom.race == RACE.HUMANS){
-				this.resourceCount += UnityEngine.Random.Range (1, 5);
+				this.resourceCount += UnityEngine.Random.Range (2, 6);
 			}
 			break;
 		case RESOURCE.OAK:
 			if(this.region.occupant.kingdom.race == RACE.ELVES){
-				this.resourceCount += UnityEngine.Random.Range (0, 3);
+				this.resourceCount += UnityEngine.Random.Range (1, 4);
 			}
 			break;
 		case RESOURCE.EBONY:
 			if(this.region.occupant.kingdom.race == RACE.ELVES){
-				this.resourceCount += UnityEngine.Random.Range (1, 5);
+				this.resourceCount += UnityEngine.Random.Range (2, 6);
 			}
 			break;
 		case RESOURCE.COBALT:
