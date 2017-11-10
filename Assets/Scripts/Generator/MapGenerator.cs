@@ -19,7 +19,7 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
         ObjectPoolManager.Instance.InitializeObjectPools();
-        //CameraMove.Instance.SetMinimapCamValues();
+        CameraMove.Instance.SetWholemapCameraValues();
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
@@ -74,7 +74,6 @@ public class MapGenerator : MonoBehaviour {
         GameManager.Instance.StartProgression();
         CameraMove.Instance.CenterCameraOn(KingdomManager.Instance.allKingdoms.FirstOrDefault().cities.FirstOrDefault().hexTile.gameObject);
         CameraMove.Instance.UpdateMinimapTexture();
-        CameraMove.Instance.SetMinimapCameraPosition();
         
     }
 

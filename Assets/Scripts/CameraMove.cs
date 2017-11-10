@@ -71,16 +71,12 @@ public class CameraMove : MonoBehaviour {
 		MAX_Y = minMAX_Y;
 	}
 
-    public void SetMinimapCamValues() {
-        HexTile centerTile = GridMap.Instance.map[(int)(GridMap.Instance.width / 2), (int)(GridMap.Instance.height / 2)];
-        wholeMapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, wholeMapCamera.transform.localPosition.y, -10);
-    }
-
-    [ContextMenu("Set Minimap Camera Position")]
-    public void SetMinimapCameraPosition() {
-        Vector2 uiMinimapPos = UIManager.Instance.uiCamera.gameObject.GetComponent<Camera>().WorldToViewportPoint(UIManager.Instance.minimapTexture.transform.position);
-        //Vector2 newPos = Camera.main.ScreenToViewportPoint(uiMinimapPos);
-        //_minimapCamera.transform.localPosition = uiMinimapPos;
+    public void SetWholemapCameraValues() {
+        HexTile topTile = GridMap.Instance.map[0, (int)GridMap.Instance.height - 1];
+        float newSize = topTile.transform.position.y + 3;
+        wholeMapCamera.orthographicSize = newSize;
+        //HexTile centerTile = GridMap.Instance.map[(int)(GridMap.Instance.width / 2), (int)(GridMap.Instance.height / 2)];
+        //wholeMapCamera.transform.localPosition = new Vector3(centerTile.transform.localPosition.x, wholeMapCamera.transform.localPosition.y, -186);
     }
 
     public void MoveMainCamera(Vector2 newPos) {
@@ -112,10 +108,15 @@ public class CameraMove : MonoBehaviour {
          minY = vertExtent - mapY / 2.0f;
          maxY = mapY / 2.0f - vertExtent;
 
-        MIN_X = minX - 2.5f;
-        MAX_X = maxX + 15f;
-        MIN_Y = minY - 4.5f;
-        MAX_Y = maxY + 3f;
+        //MIN_X = minX - 2.5f;
+        //MAX_X = maxX + 15f;
+        //MIN_Y = minY - 4.5f;
+        //MAX_Y = maxY + 3f;
+
+        MIN_X = minX;
+        MAX_X = maxX;
+        MIN_Y = minY;
+        MAX_Y = maxY;
 
         //MIN_X = minX - 0.6f;
         //MAX_X = maxX - 0.6f;
