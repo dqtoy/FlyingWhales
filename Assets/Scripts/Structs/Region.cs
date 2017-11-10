@@ -44,6 +44,7 @@ public class Region {
 	internal int materialMultiplierCapacity;
 	internal int oreMultiplierCapacity;
 
+	private bool isOtherDay;
 
     #region getters/sertters
 	internal int id {
@@ -116,6 +117,7 @@ public class Region {
 		this.foodMultiplierCapacity = 2;
 		this.materialMultiplierCapacity = 2;
 		this.oreMultiplierCapacity = 2;
+		this.isOtherDay = false;
 
         //Generate population growth
 //        int[] possiblePopulationGrowths = new int[] { 4, 5, 6, 7, 8, 9 };
@@ -873,6 +875,12 @@ public class Region {
 		Messenger.RemoveListener("OnDayEnd", ProduceResource);
 	}
 	private void ProduceResource(){
+		if(!isOtherDay){
+			isOtherDay = true;
+			return;
+		}else{
+			isOtherDay = false;
+		}
 		this._tileWithSpecialResource.ProduceResource();
 	}
 }
