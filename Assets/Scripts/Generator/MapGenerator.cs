@@ -42,7 +42,11 @@ public class MapGenerator : MonoBehaviour {
             ReloadScene();
             return;
         }
+		KingdomManager.Instance.GenerateInitialKingdoms();
+		GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
+
         GridMap.Instance.GenerateResourcesPerRegion();
+//		GridMap.Instance.GenerateResourceTiles();
         GridMap.Instance.GenerateOtherLandmarksPerRegion();
         GridMap.Instance.GenerateLandmarkExternalConnections();
         Biomes.Instance.GenerateElevationAfterRoads();
@@ -55,8 +59,10 @@ public class MapGenerator : MonoBehaviour {
         //CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
         ////PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
-        KingdomManager.Instance.GenerateInitialKingdoms();
-        GridMap.Instance.UpdateAllRegionsDiscoveredKingdoms();
+		UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
+
+
+
 
         //CityGenerator.Instance.GenerateLairHabitableTiles(GridMap.Instance.listHexes);
         //MonsterManager.Instance.GenerateLairs();

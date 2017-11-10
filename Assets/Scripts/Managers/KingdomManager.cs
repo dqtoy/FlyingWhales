@@ -89,23 +89,35 @@ public class KingdomManager : MonoBehaviour {
         smallToMediumReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (smallToMediumReqPercentage / 100f));
         mediumToLargeReq = Mathf.FloorToInt((float)GridMap.Instance.numOfRegions * (mediumToLargeReqPercentage / 100f));
         List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
-
+		List<RESOURCE> initialResources = new List<RESOURCE>(){ RESOURCE.DEER, RESOURCE.PIG, RESOURCE.WHEAT, RESOURCE.RICE };
         for (int i = 0; i < initialKingdomSetup.Count; i++) {
             InitialKingdom initialKingdom = initialKingdomSetup[i];
             RACE initialKingdomRace = initialKingdom.race;
-			List<Region> regionsToChooseFrom = allRegions.Where(x => x.specialResource == RESOURCE.DEER || x.specialResource == RESOURCE.PIG || x.specialResource == RESOURCE.WHEAT || x.specialResource == RESOURCE.RICE).OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).Take(Mathf.FloorToInt((float)GridMap.Instance.numOfRegions / 3f)).ToList();
-            Region regionForKingdom = regionsToChooseFrom[Random.Range(0, regionsToChooseFrom.Count)];
+//			List<Region> regionsToChooseFrom = allRegions.Where(x => x.specialResource == RESOURCE.DEER || x.specialResource == RESOURCE.PIG || x.specialResource == RESOURCE.WHEAT || x.specialResource == RESOURCE.RICE).OrderByDescending(x => x.naturalResourceLevel[initialKingdomRace]).Take(Mathf.FloorToInt((float)GridMap.Instance.numOfRegions / 3f)).ToList();
+			Region regionForKingdom = allRegions[Random.Range(0, allRegions.Count)];
             allRegions.Remove(regionForKingdom);
+			RemoveAdjacentRegionsFrom (regionForKingdom, allRegions);
+
+			RESOURCE chosenResource = initialResources [UnityEngine.Random.Range (0, initialResources.Count)];
+			regionForKingdom.SetSpecialResource (chosenResource);
+			regionForKingdom.ComputeNaturalResourceLevel();
+			bool hasBeenRemoved = GridMap.Instance.ReduceResourceCount (chosenResource);
+			if(hasBeenRemoved){
+				initialResources.Remove (chosenResource);
+			}
+
             Kingdom newKingdom = GenerateNewKingdom(initialKingdomRace, new List<HexTile>() { regionForKingdom.centerOfMass }, true);
             newKingdom.HighlightAllOwnedTilesInKingdom();
         }
-        UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
-
 		GameDate nextUpdateDate = new GameDate (GameManager.Instance.month, 1, GameManager.Instance.year);
 		nextUpdateDate.AddMonths (1);
 		SchedulingManager.Instance.AddEntry (nextUpdateDate, () => MonthlyUpdateKingdomRankings ());
     }
-
+	private void RemoveAdjacentRegionsFrom(Region region, List<Region> allRegions){
+		for (int i = 0; i < region.adjacentRegions.Count; i++) {
+			allRegions.Remove (region.adjacentRegions [i]);
+		}
+	}
 	public Kingdom GenerateNewKingdom(RACE race, List<HexTile> cities, bool createFamilies = false, Kingdom sourceKingdom = null, bool broadcastCreation = true){
 		Kingdom newKingdom = new Kingdom (race, cities, sourceKingdom); //Create new kingdom
 		AddKingdom(newKingdom);
