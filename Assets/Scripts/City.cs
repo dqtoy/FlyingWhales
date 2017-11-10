@@ -1273,7 +1273,6 @@ public class City{
 			weaponsIncrease += 10;
 			break;
 		case RESOURCE.COBALT:
-			this.kingdom.AdjustPrestige(10);
 			break;
 		}
 	}
