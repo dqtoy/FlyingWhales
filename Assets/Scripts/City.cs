@@ -1381,12 +1381,12 @@ public class City{
 
 	#region Population
 	private void IncreasePopulationPerMonth(){
-		int populationIncrease = this.populationGrowth;
 		if(!this._isStarving){
+			int populationIncrease = this.populationGrowth;
 			AdjustPopulation (populationIncrease);
 		}else{
-			populationIncrease /= 2;
-			AdjustPopulation (-populationIncrease);
+			int populationDecrease = this._populationGrowth / 2;
+			AdjustPopulation (-populationDecrease);
 		}
 	}
 	internal void AdjustPopulation(int adjustment, bool isUpdateKingdomList = true) {
