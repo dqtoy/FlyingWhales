@@ -848,6 +848,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         Messenger.AddListener("UpdateUI", UpdateCityNamePlate);
 
         UpdateCityNamePlate();
+		UpdateCityFoodMaterialOreUI ();
     }
     internal void UpdateCityNamePlate() {
         if (_currFogOfWarState == FOG_OF_WAR_STATE.VISIBLE) {
@@ -856,6 +857,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
             _cityInfo.SetCity(city, false, true, false, true);
         }
     }
+	internal void UpdateCityFoodMaterialOreUI(){
+		_cityInfo.UpdateFoodMaterialOreUI ();
+	}
     internal void RemoveCityNamePlate() {
         if (_namePlateParent != null) {
             ObjectPoolManager.Instance.DestroyObject(_namePlateParent.gameObject);

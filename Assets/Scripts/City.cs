@@ -518,26 +518,32 @@ public class City{
 	internal void AdjustFoodCount(int amount){
 		this._foodCount += amount;
 		this._foodCount = Mathf.Clamp (this._foodCount, 0, this.foodCapacity);
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 		CheckFoodSupply ();
 	}
 	internal void SetFoodCount(int amount){
 		this._foodCount = amount;
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 	}
 	internal void AdjustMaterialCount(int amount){
 		this._materialCount += amount;
 		this._materialCount = Mathf.Clamp (this._materialCount, 0, this.materialCapacity);
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 		CheckMaterialSupply ();
 	}
 	internal void SetMaterialCount(int amount){
 		this._materialCount = amount;
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 	}
 	internal void AdjustOreCount(int amount){
 		this._oreCount += amount;
 		this._oreCount = Mathf.Clamp (this._oreCount, 0, this.oreCapacity);
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 		CheckOreSupply ();
 	}
 	internal void SetOreCount(int amount){
 		this._oreCount = amount;
+		this.hexTile.UpdateCityFoodMaterialOreUI ();
 	}
 	private void ConsumeResources(){
 		ConsumeFood ();
