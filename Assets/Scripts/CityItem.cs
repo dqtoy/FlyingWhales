@@ -31,6 +31,10 @@ public class CityItem : MonoBehaviour {
 	[SerializeField] private GameObject _noMaterialGO;
 	[SerializeField] private GameObject _noOreGO;
 
+    [SerializeField] private GameObject _emblemGO;
+    [SerializeField] private UI2DSprite _emblemBG;
+    [SerializeField] private UI2DSprite _emblemSprite;
+    [SerializeField] private UI2DSprite _emblemOutline;
 
     [Header("For Testing")]
     [SerializeField] private GameObject forTestingGO;
@@ -52,19 +56,39 @@ public class CityItem : MonoBehaviour {
 		_structuresLbl.text = city.ownedTiles.Count.ToString();
 		_cityLbl.text = city.name;
 
-        if (!forNamePlate) {
-            _governor.SetCitizen(city.governor);
-		    //this._powerLbl.text = city.weapons.ToString();
-		    //this._defenseLbl.text = city.armor.ToString();
+        if (forNamePlate) {
+            _emblemGO.SetActive(true);
+            Color emblemBGColor = _city.kingdom.kingdomColor;
+            emblemBGColor.a = 255f / 255f;
+            _emblemBG.sprite2D = _city.kingdom.emblemBG;
+            _emblemBG.color = emblemBGColor;
+            _emblemBG.MakePixelPerfect();
+            _emblemBG.width += Mathf.FloorToInt(_emblemBG.width * 0.25f);
 
-    //        _hpLbl.text = city.hp.ToString();
+            _emblemOutline.sprite2D = _city.kingdom.emblemBG;
+            _emblemOutline.MakePixelPerfect();
+            _emblemOutline.width = (_emblemBG.width + 8);
+            Color outlineColor;
+            ColorUtility.TryParseHtmlString("#2d2e2e", out outlineColor);
+            _emblemOutline.color = outlineColor;
+
+            _emblemSprite.sprite2D = _city.kingdom.emblem;
+            _emblemSprite.MakePixelPerfect();
+            _emblemSprite.width += Mathf.FloorToInt(_emblemSprite.width * 0.25f);
+        } else {
+            _emblemGO.SetActive(false);
+            _governor.SetCitizen(city.governor);
+            //this._powerLbl.text = city.weapons.ToString();
+            //this._defenseLbl.text = city.armor.ToString();
+
+            //        _hpLbl.text = city.hp.ToString();
             _structuresLbl.text = city.ownedTiles.Count.ToString();
             _cityLbl.text = city.name;
-    //		float hpValue = (float)city.hp / (float)city.maxHP;
-    //		if(hpValue > 1f){
-    //			hpValue = 1f;
-    //		}
-    //        _hpProgBar.value = hpValue;
+            //		float hpValue = (float)city.hp / (float)city.maxHP;
+            //		if(hpValue > 1f){
+            //			hpValue = 1f;
+            //		}
+            //        _hpProgBar.value = hpValue;
             _growthProgBar.value = (float)city.currentGrowth / (float)city.maxGrowth;
 
             if (showLoyalty) {
@@ -78,17 +102,17 @@ public class CityItem : MonoBehaviour {
 
             if (showNameOnly) {
                 governorParentGO.SetActive(false);
-    //            hpParentGO.SetActive(false);
-			    //powerGO.SetActive(false);
-			    //defenseGO.SetActive(false);
+                //            hpParentGO.SetActive(false);
+                //powerGO.SetActive(false);
+                //defenseGO.SetActive(false);
                 cityNameParentGO.SetActive(true);
                 structuresParentGO.SetActive(false);
                 growthMeterParentGO.SetActive(false);
             } else {
                 governorParentGO.SetActive(true);
-    //            hpParentGO.SetActive(true);
-			    //powerGO.SetActive(true);
-			    //defenseGO.SetActive(true);
+                //            hpParentGO.SetActive(true);
+                //powerGO.SetActive(true);
+                //defenseGO.SetActive(true);
                 cityNameParentGO.SetActive(true);
                 structuresParentGO.SetActive(true);
                 growthMeterParentGO.SetActive(true);
@@ -102,8 +126,9 @@ public class CityItem : MonoBehaviour {
             } else {
                 forTestingGO.SetActive(false);
             }
-        
         }
+
+        
 
     }
 	public void UpdateFoodMaterialOreUI(){

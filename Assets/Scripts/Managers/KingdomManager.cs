@@ -44,10 +44,15 @@ public class KingdomManager : MonoBehaviour {
 
     [SerializeField] private bool _useFogOfWar;
 
+    [SerializeField] private List<Sprite> _emblemBGs;
+    [SerializeField] private List<Sprite> _emblems;
+
+    [SerializeField] private List<Sprite> usedEmblems = new List<Sprite>();
+
     private Dictionary<int, List<Kingdom>> evenActionDays;
     private Dictionary<int, List<Kingdom>> oddActionDays;
 
-    public const int KINGDOM_MAX_EXPANSION_RATE = 300;
+    public const int KINGDOM_MAX_EXPANSION_RATE = 500;
 
     #region getters/setters
     public bool useFogOfWar {
@@ -468,4 +473,36 @@ public class KingdomManager : MonoBehaviour {
 		newKingdom.InitializeUndeadKingdom (undeadCount);
 		newKingdom.HighlightAllOwnedTilesInKingdom();
 	}
+
+    #region Emblem
+    /*
+     * Generate an emblem for a kingdom.
+     * This will return a sprite and set that sprite as used.
+     * Will return an error if there are no more available emblems.
+     * */
+    internal Sprite GenerateKingdomEmblem(Kingdom kingdom) {
+        List<Sprite> emblemsToUse = new List<Sprite>(_emblems);
+        for (int i = 0; i < emblemsToUse.Count; i++) {
+            Sprite currSprite = emblemsToUse[i];
+            if (!usedEmblems.Contains(currSprite)) {
+                AddEmblemAsUsed(currSprite);
+                return currSprite;
+            }
+        }
+        throw new System.Exception("There are no more emblems for kingdom: " + kingdom.name);
+    }
+    internal Sprite GenerateKingdomEmblemBG() {
+        return _emblemBGs[Random.Range(0, _emblemBGs.Count)];
+    }
+    internal void AddEmblemAsUsed(Sprite emblem) {
+        if (!usedEmblems.Contains(emblem)) {
+            usedEmblems.Add(emblem);
+        } else {
+            throw new System.Exception("Emblem " + emblem.name + " is already being used!");
+        }
+    }
+    internal void RemoveEmblemAsUsed(Sprite emblem) {
+        usedEmblems.Remove(emblem);
+    }
+    #endregion
 }
