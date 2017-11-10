@@ -40,7 +40,11 @@ public class Minimap : MonoBehaviour {
 
     private void Update() {
         ComputeBounds();
-        cameraBordersTransform.localPosition = Camera.main.transform.position;
+        //Vector3 mainCameraPosInWorld = CameraMove.Instance.wholeMapCamera.WorldToScreenPoint(Camera.main.transform.position);
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, mainCameraPosInWorld, )
+        Vector3 newPos = Camera.main.transform.position;
+        cameraBordersTransform.localPosition = newPos;
+
         ConstrainBounds();
     }
 
@@ -59,9 +63,9 @@ public class Minimap : MonoBehaviour {
         float cameraBordersHeight = cameraBordersTransform.rect.height * cameraBordersTransform.localScale.y;
 
         maxX = (minimapTextureWidth - cameraBordersWidth) / 2f;
-        minX = -maxX;
+        minX = maxX * -1f;
         maxY = (minimapTextureHeight - cameraBordersHeight) / 2f;
-        minY = -maxY;
+        minY = maxY * -1f;
     }
 
     private void ConstrainBounds() {
