@@ -363,7 +363,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	internal void ProduceResource(){
         if (this.region.occupant == null) {
-            throw new System.Exception(name + " is trying to produce resource, but occupant is " + this.region.occupant.ToString());
+            throw new System.Exception(name + " is trying to produce resource, but occupant is null");
         }
 
         switch (this.specialResource){

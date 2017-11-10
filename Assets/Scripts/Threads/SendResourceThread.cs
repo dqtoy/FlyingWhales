@@ -12,6 +12,7 @@ public class SendResourceThread {
 	private TODO _todo;
 
 	private City sourceCity;
+	private City targetCity;
 	private int foodAmount;
 	private int materialAmount;
 	private int oreAmount;
@@ -107,12 +108,13 @@ public class SendResourceThread {
 
 
 		if(chosenCity != null){
+			this.targetCity = chosenCity;
 			this.targetHextile = chosenCity.hexTile;
 			this.path = path;
 		}
 	}
 
 	public void ReturnResource(){
-		this.sourceCity.ReceiveSendResourceThread (this.foodAmount, this.materialAmount, this.oreAmount, this.resourceType, this.sourceHextile, this.targetHextile, this.path);
+		this.sourceCity.ReceiveSendResourceThread (this.foodAmount, this.materialAmount, this.oreAmount, this.resourceType, this.sourceHextile, this.targetHextile, this.targetCity, this.path);
 	}
 }

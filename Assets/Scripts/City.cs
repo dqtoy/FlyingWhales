@@ -750,16 +750,18 @@ public class City{
 //			EventCreator.Instance.CreateSendResourceEvent (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, chosenCity.hexTile, this);
 //		}
 	}
-	internal void ReceiveSendResourceThread(int foodAmount, int materialAmount, int oreAmount, RESOURCE_TYPE resourceType, HexTile sourceHextile, HexTile targetHextile, List<HexTile> path){
-		if (targetHextile != null && (path != null || path.Count > 0)) {
-			if (resourceType == RESOURCE_TYPE.FOOD) {
-				this.AdjustFoodCount (-foodAmount);
-			}else if (resourceType == RESOURCE_TYPE.MATERIAL) {
-				this.AdjustMaterialCount (-materialAmount);
-			}else if (resourceType == RESOURCE_TYPE.ORE) {
-				this.AdjustOreCount (-oreAmount);
+	internal void ReceiveSendResourceThread(int foodAmount, int materialAmount, int oreAmount, RESOURCE_TYPE resourceType, HexTile sourceHextile, HexTile targetHextile, City targetCity, List<HexTile> path){
+		if (targetHextile != null && targetHextile.city != null && targetCity != null && (path != null || path.Count > 0)) {
+			if(targetCity.id == targetHextile.city.id){
+				if (resourceType == RESOURCE_TYPE.FOOD) {
+					this.AdjustFoodCount (-foodAmount);
+				}else if (resourceType == RESOURCE_TYPE.MATERIAL) {
+					this.AdjustMaterialCount (-materialAmount);
+				}else if (resourceType == RESOURCE_TYPE.ORE) {
+					this.AdjustOreCount (-oreAmount);
+				}
+				EventCreator.Instance.CreateSendResourceEvent (foodAmount, materialAmount, oreAmount, resourceType, sourceHextile, targetHextile, this, path);
 			}
-			EventCreator.Instance.CreateSendResourceEvent (foodAmount, materialAmount, oreAmount, resourceType, sourceHextile, targetHextile, this, path);
 		}
 	}
 	#endregion
