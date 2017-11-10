@@ -352,17 +352,18 @@ public class Region {
     internal void SetSpecialResource(RESOURCE resource) {
         if (resource != RESOURCE.NONE) {
             AssignSpecialResourceToTile(resource);
+//			this._tileWithSpecialResource.AssignSpecialResource(resource);
             //if _tileWithSpecialResource is still null, this means there was no tile found for a special resource
             if (_tileWithSpecialResource != null) {
                 this._landmarkCount += 1;
                 _specialResource = resource;
-				if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
-					this.foodMultiplierCapacity = 3;
-				}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
-					this.materialMultiplierCapacity = 3;
-				}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
-					this.oreMultiplierCapacity = 3;
-				}
+//				if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.FOOD){
+//					this.foodMultiplierCapacity = 3;
+//				}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.MATERIAL){
+//					this.materialMultiplierCapacity = 3;
+//				}else if(this._tileWithSpecialResource.specialResourceType == RESOURCE_TYPE.ORE){
+//					this.oreMultiplierCapacity = 3;
+//				}
             }
 
         } else {
@@ -453,16 +454,92 @@ public class Region {
             _tileWithSpecialResource.AssignSpecialResource(specialResource);
             RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSpecialResource, this);
             RoadManager.Instance.CreateRoad(tilesToChooseFrom[_tileWithSpecialResource], ROAD_TYPE.MINOR);
-
-            //if (RoadManager.Instance.SmartCreateRoad(chosenTile, centerOfMass, pathfindingModeToUse, ROAD_TYPE.MINOR)) {
-            //    _tileWithSpecialResource = chosenTile;
-            //    _tileWithSpecialResource.AssignSpecialResource(specialResource);
-            //    RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSpecialResource, this);
-            //}
         } else {
             Debug.LogWarning("Could not assign resource tile to region on " + centerOfMass.name);
         }
     }
+
+	internal void AssignATileAsResourceTile() {
+		//Get tiles in region that are plains, not the center of mass and does not have a landmark
+		List<HexTile> elligibleTiles = _tilesInRegion.Where(x => x.elevationType == ELEVATION.PLAIN && x.id != centerOfMass.id && !x.hasLandmark && !x.HasNeighbourThatIsLandmark()).ToList();
+
+		//Remove neighbours of the center of mass from the choices, since resource tiles are not supposed to be near the city
+		for (int i = 0; i < centerOfMass.AllNeighbours.Count; i++) {
+			elligibleTiles.Remove(centerOfMass.AllNeighbours[i]);
+		}
+
+		//Remove road tiles from the choices and also their neighbours
+		for (int i = 0; i < _roadTilesInRegion.Count; i++) {
+			HexTile currRoadTile = _roadTilesInRegion[i];
+			elligibleTiles.Remove(currRoadTile);
+			//for (int j = 0; j < currRoadTile.AllNeighbours.Count; j++) {
+			//    elligibleTiles.Remove(currRoadTile.AllNeighbours[j]);
+			//}
+		}
+		if (elligibleTiles.Count <= 0) {
+			return;
+			//throw new System.Exception("No elligible tiles for special resource in region " + centerOfMass.name);
+		}
+
+		Dictionary<HexTile, List<HexTile>> tilesToChooseFrom = new Dictionary<HexTile, List<HexTile>>();
+
+		//Check minor roads in region and check if they have a path towards the center of mass, if so, connect to the nearest minor road instead
+		List<HexTile> minorRoads = new List<HexTile>(_roadTilesInRegion.Where(x => x.roadType == ROAD_TYPE.MINOR));
+		List<HexTile> elligibleRoadTiles = new List<HexTile>();
+		for (int i = 0; i < minorRoads.Count; i++) {
+			HexTile currRoadTile = minorRoads[i];
+			if (PathGenerator.Instance.GetPath(currRoadTile, centerOfMass, PATHFINDING_MODE.USE_ROADS) != null) {
+				elligibleRoadTiles.Add(currRoadTile);
+			}
+		}
+
+		if (elligibleRoadTiles.Count > 0) {
+			for (int i = 0; i < elligibleTiles.Count; i++) {
+				HexTile currElligibleTile = elligibleTiles[i];
+				float shortestDistance = Vector2.Distance(currElligibleTile.transform.position, centerOfMass.transform.position);
+				elligibleRoadTiles = elligibleRoadTiles.OrderBy(x => Vector2.Distance(currElligibleTile.transform.position, x.transform.position)).ToList();
+				for (int j = 0; j < elligibleRoadTiles.Count; j++) {
+					HexTile currRoadTile = elligibleRoadTiles[j];
+					float distance = Vector2.Distance(currElligibleTile.transform.position, currRoadTile.transform.position);
+					if (distance < shortestDistance) {
+						//Get path from current elligible tile to the road tile, use LANDMARK_CONNECTION, to limit the paths to within the region.
+						List<HexTile> path = PathGenerator.Instance.GetPath(currElligibleTile, currRoadTile, PATHFINDING_MODE.LANDMARK_CONNECTION);
+						if (path != null) { //Check if the path that was calculated is not null
+							if (!tilesToChooseFrom.ContainsKey(currElligibleTile)) {
+								tilesToChooseFrom.Add(currElligibleTile, path);
+							}
+							break; //once a valid road tile has been found, break
+						}
+					}
+				}
+			}
+		}
+
+		if (tilesToChooseFrom.Count <= 0) {
+			//Check which of the remaining elligible tiles have a path towards the center of mass. 
+			//The path must not cross water and, as much as possible, not converge with any main roads
+			for (int i = 0; i < elligibleTiles.Count; i++) {
+				HexTile currElligibleTile = elligibleTiles[i];
+				//Get path from current elligible tile to the center of mass, use LANDMARK_CONNECTION, to limit the paths to within the region.
+				List<HexTile> path = PathGenerator.Instance.GetPath(currElligibleTile, centerOfMass, PATHFINDING_MODE.LANDMARK_CONNECTION);
+				if (path != null) { //Check if the path that was calculated is not null
+					if (!tilesToChooseFrom.ContainsKey(currElligibleTile)) {
+						tilesToChooseFrom.Add(currElligibleTile, path);
+					}
+				}
+			}
+		}
+
+
+		if(tilesToChooseFrom.Count > 0) {
+			HexTile chosenTile = tilesToChooseFrom.Keys.ElementAt(Random.Range(0, tilesToChooseFrom.Keys.Count));
+			_tileWithSpecialResource = chosenTile;
+			RoadManager.Instance.ConnectLandmarkToRegion(_tileWithSpecialResource, this);
+			RoadManager.Instance.CreateRoad(tilesToChooseFrom[_tileWithSpecialResource], ROAD_TYPE.MINOR);
+		} else {
+			Debug.LogWarning("Could not assign resource tile to region on " + centerOfMass.name);
+		}
+	}
 	internal void SetSummoningShrine(){
         if (AssignSummoningShrineToTile()) {
             this._landmarkCount += 1;

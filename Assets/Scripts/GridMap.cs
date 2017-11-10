@@ -28,6 +28,7 @@ public class GridMap : MonoBehaviour {
     public int numOfRegions;
     public int refinementLevel;
     public List<InitialMapResource> resourceSetup;
+	internal Dictionary<RESOURCE, int> resources = new Dictionary<RESOURCE, int>();
 
     [Space(10)]
 	public List<GameObject> listHexes;
@@ -40,6 +41,7 @@ public class GridMap : MonoBehaviour {
 
 	void Awake(){
 		Instance = this;
+		ConvertInitialResourceSetupToDictionary ();
 	}
 
 	internal void GenerateGrid () {
@@ -295,27 +297,38 @@ public class GridMap : MonoBehaviour {
     }
 
     public void GenerateResourcesPerRegion() {
-        Dictionary<RESOURCE, int> resourcesToChooseFrom = ConvertInitialResourceSetupToDictionary();
         for (int i = 0; i < allRegions.Count; i++) {
             Region currRegion = allRegions[i];
-            RESOURCE resourceForRegion = resourcesToChooseFrom.Keys.ElementAt(Random.Range(0, resourcesToChooseFrom.Count));
-            resourcesToChooseFrom[resourceForRegion] -= 1;
-            if(resourcesToChooseFrom[resourceForRegion] <= 0) {
-                resourcesToChooseFrom.Remove(resourceForRegion);
-            }
+			if(currRegion.tileWithSpecialResource != null && currRegion.tileWithSpecialResource.specialResource != RESOURCE.NONE){
+				continue;
+			}
+			RESOURCE resourceForRegion = resources.Keys.ElementAt(Random.Range(0, resources.Count));
+			ReduceResourceCount (resourceForRegion);
             currRegion.SetSpecialResource(resourceForRegion);
             currRegion.ComputeNaturalResourceLevel(); //Compute For Natural Resource Level of current region
         }
     }
-
-    private Dictionary<RESOURCE, int> ConvertInitialResourceSetupToDictionary() {
-        Dictionary<RESOURCE, int> resources = new Dictionary<RESOURCE, int>();
+	public void GenerateResourceTiles(){
+		for (int i = 0; i < allRegions.Count; i++) {
+			Region currRegion = allRegions[i];
+			currRegion.AssignATileAsResourceTile();
+		}
+	}
+    private void ConvertInitialResourceSetupToDictionary() {
         for (int i = 0; i < resourceSetup.Count; i++) {
             InitialMapResource r = resourceSetup[i];
             resources.Add(r.resourceType, r.resourceAmount);
         }
-        return resources;
     }
+	internal bool ReduceResourceCount(RESOURCE resourceForRegion){
+		this.resources[resourceForRegion] -= 1;
+		if(this.resources[resourceForRegion] <= 0) {
+			this.resources.Remove(resourceForRegion);
+			return true;
+		}else{
+			return false;
+		}
+	}
 
     /*
      * <summary>
