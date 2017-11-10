@@ -186,6 +186,9 @@ public class UIManager : MonoBehaviour {
 	public GameObject militarizingGO;
 	public GameObject fortifyingGO;
     public UILabel populationSummary;
+    [SerializeField] private UI2DSprite kingdomListEmblemOutline;
+    [SerializeField] private UI2DSprite kingdomListEmblemBG;
+    [SerializeField] private UI2DSprite kingdomListEmblemSprite;
 
     [Space(10)]
     [Header("Event Logs UI Objects")]
@@ -607,7 +610,26 @@ public class UIManager : MonoBehaviour {
     private void UpdateKingdomInfo() {
         //currentlyShowingKingdom.UpdateFogOfWarVisual();
         kingdomListActiveKing.SetCitizen(currentlyShowingKingdom.king); //King
-        kingdomPrestigeLbl.text = currentlyShowingKingdom.prestige.ToString();
+
+        //Emblem
+        Color emblemShieldColor = currentlyShowingKingdom.kingdomColor;
+        emblemShieldColor.a = 255f / 255f;
+        kingdomListEmblemBG.sprite2D = currentlyShowingKingdom.emblemBG;
+        kingdomListEmblemBG.color = emblemShieldColor;
+        kingdomListEmblemBG.MakePixelPerfect();
+        kingdomListEmblemBG.width += Mathf.FloorToInt(kingdomListEmblemBG.width * 0.25f);
+
+        kingdomListEmblemOutline.sprite2D = currentlyShowingKingdom.emblemBG;
+        kingdomListEmblemOutline.MakePixelPerfect();
+        Color outlineColor;
+        ColorUtility.TryParseHtmlString("#2d2e2e", out outlineColor);
+        kingdomListEmblemOutline.color = outlineColor;
+        kingdomListEmblemOutline.width = (kingdomListEmblemBG.width + 8);
+
+        kingdomListEmblemSprite.sprite2D = currentlyShowingKingdom.emblem;
+        kingdomListEmblemSprite.MakePixelPerfect();
+        kingdomListEmblemSprite.width += Mathf.FloorToInt(kingdomListEmblemSprite.width * 0.25f);
+
         kingdomNameLbl.text = currentlyShowingKingdom.name; //Kingdom Name
         kingdomUnrestLbl.text = currentlyShowingKingdom.stability.ToString(); //Unrest
         kingdomTechLbl.text = currentlyShowingKingdom.techLevel.ToString(); //Tech
@@ -2351,9 +2373,6 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < allRelatives.Count; i++) {
             Debug.Log("Relative: " + allRelatives[i].name);
         }
-    }
-    public void ChangePrestige() {
-        currentlyShowingKingdom.SetPrestige(Int32.Parse(kingdomPrestigeLbl.text));
     }
     public void ChangeStability() {
         currentlyShowingKingdom.ChangeStability(Int32.Parse(kingdomUnrestLbl.text));

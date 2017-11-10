@@ -12,9 +12,10 @@ public class Kingdom{
 	public string name;
     public string kingdomTag; //Used for pathfinding
     public int kingdomTagIndex; //Used for pathfinding
+    private Sprite _emblem;
+    private Sprite _emblemBG;
     public RACE race;
     public int age;
-    private int _prestige;
     private int _population;
     private int _populationCapacity;
     private int foundationYear;
@@ -26,7 +27,6 @@ public class Kingdom{
 	private Kingdom _sourceKingdom;
 	private Kingdom _mainThreat;
 	private int _evenActionDay;
-    private int _oddActionDay;
 
     //Resources
     private Dictionary<RESOURCE, int> _availableResources; //only includes resources that the kingdom has bought via tile purchasing
@@ -158,7 +158,13 @@ public class Kingdom{
 	private int _soldiers;
 
     #region getters/setters
-    public KINGDOM_TYPE kingdomType {
+    internal Sprite emblem {
+        get { return _emblem; }
+    }
+    internal Sprite emblemBG {
+        get { return _emblemBG; }
+    }
+    internal KINGDOM_TYPE kingdomType {
 		get { 
 			if (this._kingdomTypeData == null) {
 				return KINGDOM_TYPE.NONE;
@@ -166,21 +172,18 @@ public class Kingdom{
 			return this._kingdomTypeData.kingdomType; 
 		}
 	}
-	public KingdomTypeData kingdomTypeData {
+    internal KingdomTypeData kingdomTypeData {
 		get { return this._kingdomTypeData; }
 	}
     internal KINGDOM_SIZE kingdomSize {
         get { return _kingdomSize; }
     }
-	public Kingdom sourceKingdom {
+    internal Kingdom sourceKingdom {
 		get { return this._sourceKingdom; }
 	}
-	public Kingdom mainThreat {
+    internal Kingdom mainThreat {
 		get { return this._mainThreat; }
 	}
-    public int prestige {
-        get { return _prestige; }
-    }
     internal int population {
         get { return _population + _soldiers; }
     }
@@ -188,150 +191,114 @@ public class Kingdom{
 //		get { return this._populationCapacity; }
 		get { return this.cities.Sum(x => x.populationCapacity); }
     }
-    public int cityCap {
-        get { return Mathf.FloorToInt(prestige / GridMap.Instance.numOfRegions); }
-    }
-	public Dictionary<RESOURCE, int> availableResources{
+    internal Dictionary<RESOURCE, int> availableResources{
 		get{ return this._availableResources; }
 	}
-    public Dictionary<Kingdom, EMBARGO_REASON> embargoList {
+    internal Dictionary<Kingdom, EMBARGO_REASON> embargoList {
         get { return this._embargoList;  }
     }
-	public bool isDead{
+    internal bool isDead{
 		get{ return this._isDead; }
 	}
-	public List<City> cities{
+    internal List<City> cities{
 		get{ return this._cities; }
 	}
     internal List<Region> regions {
         get { return _regions; }
     }
-//	public List<Camp> camps{
-//		get{ return this._camps; }
-//	}
-    public int stability {
+    internal int stability {
         get { return this._stability; }
         //get { return -100; }
         //		set { this._stability = value;}
     }
-    public int basicResourceCount {
+    internal int basicResourceCount {
         get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
     }
-    public List<Kingdom> discoveredKingdoms {
+    internal List<Kingdom> discoveredKingdoms {
         get { return this._discoveredKingdoms; }
     }
-	public int techLevel{
+    internal int techLevel{
 		get{return this._techLevel;}
 	}
-	public int techCapacity{
+    internal int techCapacity{
 		get{return this._techCapacity;}
 	}
-	public int techCounter{
+    internal int techCounter{
 		get{return this._techCounter;}
 	}
-    public int currentExpansionRate {
+    internal int currentExpansionRate {
         get { return _currentExpansionRate; }
     }
-    //public Dictionary<CHARACTER_VALUE, int> dictCharacterValues {
-    //    get { return this._dictCharacterValues; }
-    //}
-    //public Dictionary<CHARACTER_VALUE, int> importantCharacterValues {
-    //    get { return this._importantCharacterValues; }
-    //}
-    public bool hasBioWeapon {
+    internal bool hasBioWeapon {
 		get { return this._hasBioWeapon; }
 	}
-	public EventRate[] dailyCumulativeEventRate {
+    internal EventRate[] dailyCumulativeEventRate {
 		get { return this._dailyCumulativeEventRate; }
 	}
-//    public List<City> plaguedCities {
-//        get { return this.cities.Where(x => x.plague != null).ToList(); }
-//    }
-    public bool isGrowthEnabled {
+    internal bool isGrowthEnabled {
         get { return _isGrowthEnabled; }
     }
-	public int serumsOfAlacrity {
+    internal int serumsOfAlacrity {
 		get { return this._serumsOfAlacrity; }
 	}
-    public FOG_OF_WAR_STATE[,] fogOfWar {
+    internal FOG_OF_WAR_STATE[,] fogOfWar {
         get { return _fogOfWar; }
     }
-    public Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> fogOfWarDict {
+    internal Dictionary<FOG_OF_WAR_STATE, HashSet<HexTile>> fogOfWarDict {
         get { return _fogOfWarDict; }
     }
     internal Dictionary<Region, FOG_OF_WAR_STATE> regionFogOfWarDict {
         get { return _regionFogOfWarDict; }
     }
-//	public CombatStats combatStats {
-//		get { return this._combatStats; }
-//	}
-//	public int waves{
-//		get { return this._combatStats.waves - GetNumberOfWars();}
-//	}
-    public bool isLockedDown{
+    internal bool isLockedDown{
 		get { return this._isLockedDown;}
 	}
-	public bool isTechProducing{
+    internal bool isTechProducing{
 		get { return this._isTechProducing;}
 	}
-	public bool isMilitarize{
+    internal bool isMilitarize{
 		get { return this._isMilitarize;}
 	}
-	public bool isFortifying{
+    internal bool isFortifying{
 		get { return this._isFortifying;}
 	}
-	public float productionGrowthPercentage {
+    internal float productionGrowthPercentage {
 		get { return this._productionGrowthPercentage; }
 	}
-	public bool hasUpheldHiddenHistoryBook{
+    internal bool hasUpheldHiddenHistoryBook{
 		get { return this._hasUpheldHiddenHistoryBook;}
 	}
-	public bool hasSecession{
+    internal bool hasSecession{
 		get { return this._hasSecession;}
 	}
-	public List<GameEvent> activeEvents{
+    internal List<GameEvent> activeEvents{
 		get { return this._activeEvents;}
 	}
-	public List<GameEvent> doneEvents{
+    internal List<GameEvent> doneEvents{
 		get { return this._doneEvents;}
 	}
-	public int baseWeapons{
+    internal int baseWeapons{
 		get { return _baseWeapons;}
 	}
-//	public int baseArmor{
-//		get { return _baseArmor;}
-//	}
-//	public int effectiveWeapons{
-//		get { return this.effectiveAttack + (int)(this.effectiveDefense / 3) + (int)(GetPosAllianceWeapons() / 3);}
-//	}
-//	public int effectiveArmor{
-//		get { return this.effectiveDefense + (int)(this.effectiveAttack / 3) + (int)(GetPosAllianceArmor() / 3);}
-//	}
-	public List<Kingdom> adjacentKingdoms{
+    internal List<Kingdom> adjacentKingdoms{
         get { return _adjacentKingdoms; }
     }
-//	public List<Kingdom> allianceKingdoms{
-//		get { return this._allianceKingdoms;}
-//	}
-	public bool isMobilizing{
+    internal bool isMobilizing{
 		get { return this._isMobilizing;}
 	}
-	public float techProductionPercentage{
+    internal float techProductionPercentage{
 		get { return this._techProductionPercentage;}
 	}
-	public int actionDay{
+    internal int actionDay{
 		get { return this._evenActionDay;}
 	}
-    public int oddActionDay {
-        get { return this._oddActionDay; }
-    }
-    public int warmongerValue{
+    internal int warmongerValue{
 		get { return this._warmongerValue;}
 	}
-	public AlliancePool alliancePool{
+    internal AlliancePool alliancePool{
 		get { return this._alliancePool;}
 	}
-	public Dictionary<int, WarfareInfo> warfareInfo{
+    internal Dictionary<int, WarfareInfo> warfareInfo{
 		get { return this._warfareInfo;}
 	}
     internal int scientists {
@@ -384,17 +351,6 @@ public class Kingdom{
 			}
 		}
 	}
-//	internal int effectiveDefense{
-//		get{
-//			if (this.race != RACE.UNDEAD) {
-//				float mySoldiers = (float)this.soldiers;
-//				float numerator = 2f * mySoldiers * (float)this._baseWeapons;
-//				return (int)(numerator / (mySoldiers + (float)this._baseWeapons));
-//			} else {
-//				return this._population;
-//			}
-//		}
-//	}
     internal Dictionary<City, List<Citizen>> citizens {
         get { return _citizens; }
     }
@@ -419,8 +375,9 @@ public class Kingdom{
 	public Kingdom(RACE race, List<HexTile> cities, Kingdom sourceKingdom = null) {
 		this.id = Utilities.SetID(this);
 		this.race = race;
-        this._prestige = 0;
 		this.name = RandomNameGenerator.Instance.GenerateKingdomName(this.race);
+        this._emblem = KingdomManager.Instance.GenerateKingdomEmblem(this);
+        this._emblemBG = KingdomManager.Instance.GenerateKingdomEmblemBG();
         this.kingdomTag = name + "_" + id;
         this.kingdomTagIndex = PathfindingManager.Instance.AddNewTag(kingdomTag);
         this.king = null;
@@ -492,7 +449,6 @@ public class Kingdom{
 		SchedulingManager.Instance.AddEntry (GameManager.Instance.month, GameManager.Instance.days, (GameManager.Instance.year + 1), () => AttemptToAge());
 
 		if(this.race != RACE.UNDEAD){
-			AdjustPrestige(GridMap.Instance.numOfRegions);
 //			AdjustPopulation(50);
 			AdjustStability(50);
 			AdjustBaseWeapons(25);
@@ -863,6 +819,7 @@ public class Kingdom{
 		}
         //PathfindingManager.Instance.RemoveTag(kingdomTag);
         KingdomManager.Instance.UnregisterKingdomFromActionDays(this);
+        KingdomManager.Instance.RemoveEmblemAsUsed(_emblem);
         ResolveWars();
         Messenger.RemoveListener<Kingdom>("OnNewKingdomCreated", CreateNewRelationshipWithKingdom);
         Messenger.RemoveListener("OnDayEnd", AttemptToExpand);
@@ -1305,59 +1262,6 @@ public class Kingdom{
     //    GameDate nextActionDay = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
     //    nextActionDay.AddMonths(1);
     //    SchedulingManager.Instance.AddEntry(nextActionDay.month, nextActionDay.day, nextActionDay.year, () => OddDayActions());
-    //}
-    #endregion
-
-    #region Prestige
-    internal void AdjustPrestige(int adjustment) {
-        _prestige += adjustment;
-        //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-        //KingdomManager.Instance.UpdateKingdomPrestigeList();
-    }
-    internal void SetPrestige(int adjustment) {
-        _prestige = adjustment;
-        //_prestige = Mathf.Min(_prestige, KingdomManager.Instance.maxPrestige);
-        //KingdomManager.Instance.UpdateKingdomPrestigeList();
-    }
-  //  internal void MonthlyPrestigeActions() {
-  //      //Add Prestige
-		//int prestigeToBeAdded = GetMonthlyPrestigeGain();
-		//if(this.cityCap > this.cities.Count){
-		//	float reduction = GetMonthlyPrestigeReduction (this.cityCap - this.cities.Count);
-		//	prestigeToBeAdded -= (int)(prestigeToBeAdded * reduction);
-		//}
-		//AdjustPrestige(prestigeToBeAdded);
-  //      //Reschedule event
-  //      //GameDate gameDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-  //      //gameDate.AddMonths(1);
-  //      //gameDate.day = GameManager.daysInMonth[gameDate.month];
-  //      //SchedulingManager.Instance.AddEntry(gameDate.month, gameDate.day, gameDate.year, () => MonthlyPrestigeActions());
-  //  }
-	//private float GetMonthlyPrestigeReduction(int cityCapExcess){
-	//	if(cityCapExcess == 1){
-	//		return 0.05f;
-	//	}else if(cityCapExcess == 2){
-	//		return 0.15f;
-	//	}else if(cityCapExcess == 3){
-	//		return 0.3f;
-	//	}else if(cityCapExcess == 4){
-	//		return 0.5f;
-	//	}else if(cityCapExcess == 5){
-	//		return 0.7f;
-	//	}else if(cityCapExcess == 6){
-	//		return 0.9f;
-	//	}else if(cityCapExcess >= 7){
-	//		return 1f;
-	//	}
-	//	return 0f;
-	//}
-    //internal int GetMonthlyPrestigeGain() {
-    //    int monthlyPrestigeGain = 0;
-    //    monthlyPrestigeGain += king.GetPrestigeContribution();
-    //    for (int i = 0; i < cities.Count; i++) {
-    //        monthlyPrestigeGain += cities[i].governor.GetPrestigeContribution();
-    //    }
-    //    return monthlyPrestigeGain;
     //}
     #endregion
 
