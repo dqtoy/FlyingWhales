@@ -255,13 +255,6 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Prestige List")]
-    [SerializeField] private UILabel prestigeSummaryLbl;
-    [SerializeField] private UILabel kingdomSummaryNamesLbl;
-    [SerializeField] private UILabel kingdomSummaryPopulationsLbl;
-    [SerializeField] private UILabel kingdomSummaryCitiesLbl;
-    [SerializeField] private UILabel kingdomSummaryExpansionRatesLbl;
-    [SerializeField] private UILabel kingdomSummaryWeaponsLbl;
-    [SerializeField] private UILabel kingdomSummaryArmorsLbl;
     [SerializeField] private UIEventTrigger orderKingdomsByNameBtn;
     [SerializeField] private UIEventTrigger orderKingdomsByPopulationBtn;
     [SerializeField] private UIEventTrigger orderKingdomsByCitiesBtn;
