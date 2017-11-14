@@ -275,14 +275,17 @@ public class UIGrid : UIWidgetContainer
 
 	// Various generic sorting functions
 	static public int SortByName (Transform a, Transform b) { return string.Compare(a.name, b.name); }
-	static public int SortHorizontal (Transform a, Transform b) { return a.localPosition.x.CompareTo(b.localPosition.x); }
+    static public int SortByNameReverse (Transform a, Transform b) { return string.Compare(a.name, b.name) * -1; }
+    static public int SortHorizontal (Transform a, Transform b) { return a.localPosition.x.CompareTo(b.localPosition.x); }
 	static public int SortVertical (Transform a, Transform b) { return b.localPosition.y.CompareTo(a.localPosition.y); }
+    static public int SortNumeric(Transform a, Transform b) { return System.Convert.ToInt32(a.name).CompareTo(System.Convert.ToInt32(b.name)); }
+    static public int SortNumericReverse(Transform a, Transform b) { return (System.Convert.ToInt32(a.name).CompareTo(System.Convert.ToInt32(b.name))) * -1; }
 
-	/// <summary>
-	/// You can override this function, but in most cases it's easier to just set the onCustomSort delegate instead.
-	/// </summary>
+    /// <summary>
+    /// You can override this function, but in most cases it's easier to just set the onCustomSort delegate instead.
+    /// </summary>
 
-	protected virtual void Sort (List<Transform> list) { }
+    protected virtual void Sort (List<Transform> list) { }
 
 	/// <summary>
 	/// Recalculate the position of all elements within the grid, sorting them alphabetically if necessary.

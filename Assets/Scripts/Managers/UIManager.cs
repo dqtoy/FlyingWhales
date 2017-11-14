@@ -294,6 +294,11 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject worldInfoKingdomBtn;
     [SerializeField] private GameObject worldInfoAllianceBtn;
     [SerializeField] private GameObject worldInfoWarsBtn;
+    
+    [Space(10)]
+    [Header("World History Menu")]
+    [SerializeField] private WorldHistoryUI worldHistoryUI;
+
 
     private List<MarriedCouple> marriageHistoryOfCurrentCitizen;
 	private int currentMarriageHistoryIndex;
@@ -382,6 +387,11 @@ public class UIManager : MonoBehaviour {
         //LoadKingdomList();
         UpdateUI();
 	}
+
+    internal void InitializeUI() {
+        //Messenger.Broadcast("InitializeUI");
+        worldHistoryUI.Initialize();
+    }
 
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Space)) {
@@ -1276,35 +1286,35 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region World History
-    private string notificationSummary;
     internal void AddLogToLogHistory(Log log) {
-        //string logString = log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString() + "         ";
-        //if (log.fillers.Count > 0) {
-        //    logString += Utilities.LogReplacer(log);
-        //} else {
-        //    logString += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
-        //}
-        logHistory.Add(log);
-        if(logHistory.Count > 269) {
-            int numOfExcessLogs = logHistory.Count - 269;
-            for (int i = 0; i < numOfExcessLogs; i++) {
-                logHistory.Remove(logHistory.First());
-            }
-        }
-        //StartCoroutine(ConstructNotificationSummary());
-        if (notificationHistoryGO.activeSelf) {
-            if (logHistoryGO.activeSelf) {
-                ShowLogHistory();
-            }else if (warHistoryGO.activeSelf) {
-                ShowWarHistory();
-            }
+        Messenger.Broadcast<Log>("AddLogToHistory", log);
+  //      //string logString = log.month.ToString() + " " + log.day.ToString() + ", " + log.year.ToString() + "         ";
+  //      //if (log.fillers.Count > 0) {
+  //      //    logString += Utilities.LogReplacer(log);
+  //      //} else {
+  //      //    logString += LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
+  //      //}
+  //      logHistory.Add(log);
+  //      if(logHistory.Count > 269) {
+  //          int numOfExcessLogs = logHistory.Count - 269;
+  //          for (int i = 0; i < numOfExcessLogs; i++) {
+  //              logHistory.Remove(logHistory.First());
+  //          }
+  //      }
+  //      //StartCoroutine(ConstructNotificationSummary());
+  //      if (notificationHistoryGO.activeSelf) {
+  //          if (logHistoryGO.activeSelf) {
+  //              ShowLogHistory();
+  //          }else if (warHistoryGO.activeSelf) {
+  //              ShowWarHistory();
+  //          }
             
-        }
-		if(notificationCityHistoryGO.activeSelf){
-			if(this.currentlyShowingCity != null){
-				ShowCityHistory (this.currentlyShowingCity);
-			}
-		}
+  //      }
+		//if(notificationCityHistoryGO.activeSelf){
+		//	if(this.currentlyShowingCity != null){
+		//		ShowCityHistory (this.currentlyShowingCity);
+		//	}
+		//}
     }
     private void UpdateBattleLogs() {
         if (notificationHistoryGO.activeSelf) {
@@ -1328,39 +1338,40 @@ public class UIManager : MonoBehaviour {
 		StartCoroutine(RepositionTable(notificationCityHistoryTable));
 	}
     public void ToggleNotificationHistory() {
-        if (notificationHistoryGO.activeSelf) {
-            HideNotificationHistory();
-        } else {
-            ShowLogHistory();
-        }
+        worldHistoryUI.ToggleWorldHistoryUI();
+        //if (notificationHistoryGO.activeSelf) {
+        //    HideNotificationHistory();
+        //} else {
+        //    ShowLogHistory();
+        //}
     }
 	public void ShowLogHistory() {
-        LogHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<LogHistoryItem>(notificationHistoryTable.gameObject);
+        WorldHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<WorldHistoryItem>(notificationHistoryTable.gameObject);
         List<Log> logHistoryReversed = new List<Log>(logHistory);
         logHistoryReversed.Reverse();
 		if(!isShowKingdomHistoryOnly){
 			for (int i = 0; i < presentItems.Length; i++) {
-				LogHistoryItem currItem = presentItems[i];
+				WorldHistoryItem currItem = presentItems[i];
 				Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
 				if(logToShow == null || logToShow.key == "expand") {
 					currItem.gameObject.SetActive(false);
 					notificationHistoryTable.Reposition();
 				} else {
-					currItem.SetLog(logToShow, i);
+					currItem.SetLog(logToShow);
 					currItem.gameObject.SetActive(true);
 					notificationHistoryTable.Reposition();
 				}
 			}
 		}else{
 			for (int i = 0; i < presentItems.Length; i++) {
-				LogHistoryItem currItem = presentItems[i];
+				WorldHistoryItem currItem = presentItems[i];
 				Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
 				if(logToShow == null || logToShow.key == "expand") {
 					currItem.gameObject.SetActive(false);
 					notificationHistoryTable.Reposition();
 				} else {
 					if(IsKingdomPartOfLog(logToShow, this.currentlyShowingKingdom)){
-						currItem.SetLog(logToShow, i);
+						currItem.SetLog(logToShow);
 						currItem.gameObject.SetActive(true);
 						notificationHistoryTable.Reposition();
 					}else{
@@ -1386,11 +1397,11 @@ public class UIManager : MonoBehaviour {
     }
 	public void ShowCityHistory(City city){
 		this.currentlyShowingCity = city;
-		LogHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<LogHistoryItem>(notificationCityHistoryTable.gameObject);
+		WorldHistoryItem[] presentItems = Utilities.GetComponentsInDirectChildren<WorldHistoryItem>(notificationCityHistoryTable.gameObject);
 		List<Log> logHistoryReversed = new List<Log>(logHistory);
 		logHistoryReversed.Reverse();
 		for (int i = 0; i < presentItems.Length; i++) {
-			LogHistoryItem currItem = presentItems[i];
+			WorldHistoryItem currItem = presentItems[i];
 			Log logToShow = logHistoryReversed.ElementAtOrDefault(i);
 			if(logToShow == null) {
 				currItem.gameObject.SetActive(false);
@@ -1400,7 +1411,7 @@ public class UIManager : MonoBehaviour {
 					city = this.currentlyShowingKingdom.cities [0];
 				}
 				if(IsCityPartOfLog(logToShow, city)){
-					currItem.SetLog(logToShow, i);
+					currItem.SetLog(logToShow);
 					currItem.gameObject.SetActive(true);
 					notificationCityHistoryTable.Reposition();
 				}else{
