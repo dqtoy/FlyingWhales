@@ -1286,4 +1286,12 @@ public class Utilities : MonoBehaviour {
         return point;
     }
     #endregion
+
+	public static bool AreTwoCitiesAdjacent(City sourceCity, City targetCity, PATHFINDING_MODE pathFindingMode, Kingdom kingdom = null){
+		List<HexTile> path = PathGenerator.Instance.GetPath (sourceCity.hexTile, targetCity.hexTile, pathFindingMode, kingdom);
+		if(path != null){
+			return true;
+		}
+		return false;
+	}
 }

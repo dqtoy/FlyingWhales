@@ -170,8 +170,9 @@ public class PathGenerator : MonoBehaviour {
         bool doesStartingTileHaveLandmark = startingTile.hasLandmark;
         bool doesDestinationTileHaveLandmark = destinationTile.hasLandmark;
 
-		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
-			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES) {
+		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM
+			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
 			startingTile.isRoad = true;
 			destinationTile.isRoad = true;
 		}
@@ -181,8 +182,9 @@ public class PathGenerator : MonoBehaviour {
 
 		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, kingdom);
 
-		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
-			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES) {
+		if (pathfindingMode == PATHFINDING_MODE.USE_ROADS || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM
+			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
+			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
 			startingTile.isRoad = isStartingTileRoad;
 			destinationTile.isRoad = isDestinationTileRoad;
 		}
