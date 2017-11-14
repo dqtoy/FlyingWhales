@@ -499,7 +499,7 @@ public class Kingdom{
         if (initialCityLocations.Count > 0) {
             for (int i = 0; i < initialCityLocations.Count; i++) {
                 HexTile initialCityLocation = initialCityLocations[i];
-                City newCity = this.CreateNewCityOnTileForKingdom(initialCityLocation);
+                City newCity = this.CreateNewCityOnTileForKingdom(initialCityLocation, true);
                 initialCityLocation.region.SetOccupant(newCity);
 				initialCityLocation.emptyCityGO.SetActive (false);
             }
@@ -1302,9 +1302,12 @@ public class Kingdom{
 	 * Then add it to this kingdoms cities.
      * </summary>
 	 * */
-    internal City CreateNewCityOnTileForKingdom(HexTile tile) {
+    internal City CreateNewCityOnTileForKingdom(HexTile tile, bool hasInitialPopulation = false) {
         City createdCity = CityGenerator.Instance.CreateNewCity(tile, this);
         this.AddCityToKingdom(createdCity);
+		if(hasInitialPopulation){
+			createdCity.AdjustPopulation (50);
+		}
         return createdCity;
     }
     /* 

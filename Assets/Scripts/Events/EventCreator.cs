@@ -22,7 +22,7 @@ public class EventCreator: MonoBehaviour {
         }
         
         if (hexTileToExpandTo == null){
-            Debug.Log(kingdom.name + " cannot find a region to expand to!");
+            Debug.LogError(kingdom.name + " cannot find a region to expand to!");
 			return null;
 		}
 
@@ -34,14 +34,15 @@ public class EventCreator: MonoBehaviour {
 			if(regionToExpandTo.connections[i] is Region){
 				Region currAdjacentRegion = (Region)regionToExpandTo.connections[i];
 				float distance = hexTileToExpandTo.GetDistanceTo(currAdjacentRegion.centerOfMass);
-				if(currAdjacentRegion.occupant != null && currAdjacentRegion.occupant.kingdom == kingdom && distance < nearestDistance) {
-					origin = currAdjacentRegion.centerOfMass;
+				if(currAdjacentRegion.occupant != null && currAdjacentRegion.occupant.kingdom == kingdom && distance < nearestDistance && currAdjacentRegion.occupant.population > 50) {
+					origin = currAdjacentRegion.occupant.hexTile;
 					nearestDistance = distance;
 				}
 			}
         }
         if(origin == null) {
-            throw new System.Exception("Could not find origin tile for expansion of " + kingdom.name + " to " + hexTileToExpandTo.name);
+			Debug.LogError("Could not find origin tile for expansion of " + kingdom.name + " to " + hexTileToExpandTo.name);
+			return null;
         }
         Citizen expander = origin.city.CreateNewAgent (ROLE.EXPANDER, hexTileToExpandTo);
 		if (expander != null) {

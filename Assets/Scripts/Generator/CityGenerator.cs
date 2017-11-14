@@ -228,16 +228,18 @@ public class CityGenerator : MonoBehaviour {
     public HexTile GetExpandableTileForKingdom(Kingdom kingdom) {
         List<Region> unoccupiedAdjacentRegions = new List<Region>();
         for (int i = 0; i < kingdom.cities.Count; i++) {
-            Region currRegion = kingdom.cities[i].region;
-            for (int j = 0; j < currRegion.connections.Count; j++) {
-				if(currRegion.connections[j] is Region){
-					Region adjacentRegion = (Region)currRegion.connections[j];
-					if(adjacentRegion.occupant == null) {
-						unoccupiedAdjacentRegions.Add(adjacentRegion);
+			if(kingdom.cities[i].population	> 50){
+				Region currRegion = kingdom.cities[i].region;
+				for (int j = 0; j < currRegion.connections.Count; j++) {
+					if(currRegion.connections[j] is Region){
+						Region adjacentRegion = (Region)currRegion.connections[j];
+						if(adjacentRegion.occupant == null) {
+							unoccupiedAdjacentRegions.Add(adjacentRegion);
+						}
 					}
-				}
 
-            }
+				}
+			}
         }
         if(unoccupiedAdjacentRegions.Count > 0) {
 			int highestResourceLevel = unoccupiedAdjacentRegions.Max(x => x.naturalResourceLevel[kingdom.race]);
