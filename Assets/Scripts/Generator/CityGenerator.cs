@@ -271,6 +271,20 @@ public class CityGenerator : MonoBehaviour {
         //}
         //return null;
     }
+	internal bool HasStillExpandableTile(Kingdom kingdom){
+		for (int i = 0; i < kingdom.cities.Count; i++) {
+			Region currRegion = kingdom.cities[i].region;
+			for (int j = 0; j < currRegion.connections.Count; j++) {
+				if(currRegion.connections[j] is Region){
+					Region adjacentRegion = (Region)currRegion.connections[j];
+					if(adjacentRegion.occupant == null) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 	public BIOMES GetForbiddenBiomeOfRace(RACE race){
 		if(race == RACE.HUMANS){

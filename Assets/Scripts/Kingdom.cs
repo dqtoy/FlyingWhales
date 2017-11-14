@@ -1194,27 +1194,34 @@ public class Kingdom{
             return;
         }
 
-        if(expandableTile == null) {
-            expandableTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
-        } else {
-            if (expandableTile.isOccupied) {
-                expandableTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
-            }
-        }
+//        if(expandableTile == null) {
+//            expandableTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
+//        } else {
+//            if (expandableTile.isOccupied) {
+//                expandableTile = CityGenerator.Instance.GetExpandableTileForKingdom(this);
+//            }
+//        }
+//
+//        if (expandableTile == null) {
+//            if(_currentExpansionRate != 0) {
+//                ResetCurrentExpansionRate();
+//            }
+//            return;
+//        }
 
-        if (expandableTile == null) {
-            if(_currentExpansionRate != 0) {
-                ResetCurrentExpansionRate();
-            }
-            return;
-        }
+		if(!CityGenerator.Instance.HasStillExpandableTile(this)){
+			if(_currentExpansionRate != 0) {
+				ResetCurrentExpansionRate();
+			}
+			return;
+		}
 
         if(_currentExpansionRate < KingdomManager.KINGDOM_MAX_EXPANSION_RATE) {
             IncreaseExpansionRate();
         }
     
         if (_currentExpansionRate == KingdomManager.KINGDOM_MAX_EXPANSION_RATE) {
-            EventCreator.Instance.CreateExpansionEvent(this, expandableTile);
+            EventCreator.Instance.CreateExpansionEvent(this);
         }
     }
 
