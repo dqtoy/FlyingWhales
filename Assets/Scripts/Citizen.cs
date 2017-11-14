@@ -1114,9 +1114,9 @@ public class Citizen {
         newKingdom.HighlightAllOwnedTilesInKingdom();
 
         //Transfer population from sourceKingdom
-        int totalCities = newKingdom.cities.Count + sourceKingdom.cities.Count;
-        float percentGained = ((float) newKingdom.cities.Count / (float)totalCities);
-        int populationToTransfer = Mathf.FloorToInt((float)sourceKingdom.population * percentGained);
+//        int totalCities = newKingdom.cities.Count + sourceKingdom.cities.Count;
+//        float percentGained = ((float) newKingdom.cities.Count / (float)totalCities);
+//        int populationToTransfer = Mathf.FloorToInt((float)sourceKingdom.population * percentGained);
 //        sourceKingdom.AdjustPopulation(-populationToTransfer);
 //        newKingdom.SetPopulation(populationToTransfer);
 

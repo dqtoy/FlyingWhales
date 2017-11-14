@@ -168,6 +168,7 @@ public class KingdomManager : MonoBehaviour {
             //currCity.hexTile.ShowCitySprite();
             //currCity.hexTile.ShowNamePlate();
         }
+		KingdomManager.Instance.UpdateKingdomList();
     }
 		
 

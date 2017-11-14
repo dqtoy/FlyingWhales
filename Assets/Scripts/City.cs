@@ -1146,9 +1146,17 @@ public class City{
         //    }
         //    otherKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
         //}
+
+		this._kingdom.AdjustPopulation (-this._population, false);
+		this._kingdom.AdjustSoldiers (-this._soldiers, false);
+
         otherKingdom.AddCityToKingdom(this);
         this._kingdom = otherKingdom;
         _region.SetOccupant(this);
+
+		this._kingdom.AdjustPopulation (this._population, false);
+		this._kingdom.AdjustSoldiers (this._soldiers, false);
+
         for (int i = 0; i < citizensToAdd.Count; i++) {
             Citizen citizenToAdd = citizensToAdd[i];
             otherKingdom.AddCitizenToKingdom(citizenToAdd, this);
