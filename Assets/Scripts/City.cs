@@ -172,13 +172,13 @@ public class City{
 		get { return this._oreCount; }
 	}
 	internal int foodRequirement{
-		get { return 8 + (2 * this.cityLevel); }
+		get { return 80 + (20 * this.cityLevel); }
 	}
 	internal int materialRequirement{
-		get { return 8 + (2 * this.cityLevel); }
+		get { return 80 + (20 * this.cityLevel); }
 	}
 	internal int oreRequirement{
-		get { return 8 + (2 * this.cityLevel); }
+		get { return 80 + (20 * this.cityLevel); }
 	}
 	internal int population {
 		get { return _population; }

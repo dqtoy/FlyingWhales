@@ -368,51 +368,51 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         switch (this.specialResource){
 		case RESOURCE.DEER:
-			this.resourceCount += UnityEngine.Random.Range (1, 4);
+			this.resourceCount += UnityEngine.Random.Range (20, 40);
 			break;
 		case RESOURCE.PIG:
-			this.resourceCount += UnityEngine.Random.Range (1, 6);
+			this.resourceCount += UnityEngine.Random.Range (45, 65);
 			break;
 		case RESOURCE.BEHEMOTH:
-			this.resourceCount += UnityEngine.Random.Range (1, 8);
+			this.resourceCount += UnityEngine.Random.Range (65, 85);
 			break;
 		case RESOURCE.WHEAT:
-			this.resourceCount += 2;
+			this.resourceCount += 30;
 			break;
 		case RESOURCE.RICE:
-			this.resourceCount += 3;
+			this.resourceCount += 55;
 			break;
 		case RESOURCE.CORN:
-			this.resourceCount += 4;
+			this.resourceCount += 75;
 			break;
 		case RESOURCE.SLATE:
 			if(this.region.occupant.kingdom.race == RACE.HUMANS){
-				this.resourceCount += UnityEngine.Random.Range (1, 4);
+				this.resourceCount += UnityEngine.Random.Range (40, 60);
 			}
 			break;
 		case RESOURCE.GRANITE:
 			if(this.region.occupant.kingdom.race == RACE.HUMANS){
-				this.resourceCount += UnityEngine.Random.Range (2, 6);
+				this.resourceCount += UnityEngine.Random.Range (70, 90);
 			}
 			break;
 		case RESOURCE.OAK:
 			if(this.region.occupant.kingdom.race == RACE.ELVES){
-				this.resourceCount += UnityEngine.Random.Range (1, 4);
+				this.resourceCount += UnityEngine.Random.Range (40, 60);
 			}
 			break;
 		case RESOURCE.EBONY:
 			if(this.region.occupant.kingdom.race == RACE.ELVES){
-				this.resourceCount += UnityEngine.Random.Range (2, 6);
+				this.resourceCount += UnityEngine.Random.Range (70, 90);
 			}
 			break;
 		case RESOURCE.COBALT:
-			this.resourceCount += UnityEngine.Random.Range (1, 4);
+			this.resourceCount += UnityEngine.Random.Range (20, 40);
 			break;
 		case RESOURCE.MANA_STONE:
-			this.resourceCount += UnityEngine.Random.Range (2, 5);
+			this.resourceCount += UnityEngine.Random.Range (40, 60);
 			break;
 		case RESOURCE.MITHRIL:
-			this.resourceCount += UnityEngine.Random.Range (3, 6);
+			this.resourceCount += UnityEngine.Random.Range (60, 80);
 			break;
 		}
 		CheckResourceCount ();
