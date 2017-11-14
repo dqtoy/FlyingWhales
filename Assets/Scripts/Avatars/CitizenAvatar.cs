@@ -307,7 +307,7 @@ public class CitizenAvatar : PooledObject {
 
     public void EndAttack() {
 		HasAttacked();
-        this.citizenRole.DestroyGO();
+//      this.citizenRole.DestroyGO();
         this.citizenRole.gameEventInvolvedIn.DoneCitizenAction(this.citizenRole.citizen);
     }
 
