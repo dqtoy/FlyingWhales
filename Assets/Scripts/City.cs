@@ -1451,6 +1451,17 @@ public class City{
 			AdjustPopulation (-soldiersCap, false);
 			AdjustOreCount (-soldiersCap);
 			AdjustSoldiers (soldiersCap);
+		}else{
+			if(!this._isStarving && this._population > 0){
+				int normalSoldiersCap = GetSoldiersCap ();
+				int halfNormalSoldiersCap = normalSoldiersCap / 2;
+				if(halfNormalSoldiersCap > this._population){
+					halfNormalSoldiersCap = this._population;
+				}
+				AdjustPopulation (-halfNormalSoldiersCap, false);
+				AdjustOreCount (-halfNormalSoldiersCap);
+				AdjustSoldiers (halfNormalSoldiersCap);
+			}
 		}
 	}
 	private int GetSoldiersCap(){
