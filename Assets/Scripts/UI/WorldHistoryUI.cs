@@ -175,11 +175,13 @@ public class WorldHistoryUI : MonoBehaviour {
             worldHistoryTable.Reposition();
             worldHistoryScrollView.ResetPosition();
         }
+        worldHistoryScrollView.UpdateScrollbars();
         allLogItems.Reverse();
 
         for (int i = 0; i < allLogItems.Count; i++) {
             allLogItems[i].gameObject.SetActive(false);
         }
+        worldHistoryScrollView.UpdateScrollbars();
     }
     internal void AddLogToWorldHistory(Log log) {
         if (logHistory.Count + 1 > LOG_HISTORY_LIMIT) {
@@ -201,16 +203,13 @@ public class WorldHistoryUI : MonoBehaviour {
         if(logItemToUse == null) {
             throw new System.Exception("No log item to use!");
         }
-        worldHistoryScrollView.ResetPosition();
-        StartCoroutine(RepositionTable(worldHistoryTable));
+
         logItemToUse.SetLog(log);
         logHistory.Add(log, logItemToUse);
         if(DoesLogIncludeKingdom(log, selectedKingdoms)) {
             logItemToUse.gameObject.SetActive(true);
             StartCoroutine(RepositionTable(worldHistoryTable));
-            worldHistoryScrollView.ResetPosition();
-            //RepositionTable(worldHistoryTable);
-            //RepositionScrollView(worldHistoryScrollView);
+            StartCoroutine(RepositionScrollView(worldHistoryScrollView, true));
         }
         
     }
@@ -229,8 +228,8 @@ public class WorldHistoryUI : MonoBehaviour {
                 currItem.gameObject.SetActive(false);
             }
         }
-        worldHistoryTable.Reposition();
-        worldHistoryScrollView.UpdatePosition();
+        StartCoroutine(RepositionTable(worldHistoryTable));
+        StartCoroutine(RepositionScrollView(worldHistoryScrollView));
     }
     private bool DoesLogIncludeKingdom(Log log, List<Kingdom> includedKingdoms) {
         if (log.fillers.Count > 0) {
