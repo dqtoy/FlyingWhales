@@ -22,6 +22,9 @@ public class Minimap : MonoBehaviour {
     }
 
     public void OnPointerClickWithBaseData(BaseEventData data) {
+        if (UIManager.Instance.IsMouseOnUI()) {
+            return;
+        }
         isDragging = true;
         PointerEventData ped = (PointerEventData)data;
         CameraMove.Instance.MoveMainCamera(GetLocalCursorPoint(ped));
