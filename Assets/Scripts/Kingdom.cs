@@ -35,7 +35,7 @@ public class Kingdom{
     //Trading
     private Dictionary<Kingdom, EMBARGO_REASON> _embargoList;
 
-//    private int _baseArmor;
+//  private int _baseArmor;
     private int _baseWeapons;
     private int _baseStability;
     private int _stability;
@@ -156,6 +156,10 @@ public class Kingdom{
 	internal HashSet<int> checkedWarfareID;
 
 	private int _soldiers;
+
+	private int _foodCityCapacity;
+	private int _materialCityCapacity;
+	private int _oreCityCapacity;
 
     #region getters/setters
     internal Sprite emblem {
@@ -365,6 +369,16 @@ public class Kingdom{
 				return 1;
 			}
 		}
+	}
+
+	internal int foodCityCapacity {
+		get { return this._foodCityCapacity; }
+	}
+	internal int materialCityCapacity {
+		get { return this._materialCityCapacity; }
+	}
+	internal int oreCityCapacity {
+		get { return this._oreCityCapacity; }
 	}
     #endregion
 
@@ -3593,6 +3607,27 @@ public class Kingdom{
 		}
 		if (isUpdateKingdomList) {
 			KingdomManager.Instance.UpdateKingdomList ();
+		}
+	}
+	#endregion
+
+	#region Resources
+	internal void AdjustFoodCityCapacity(int amount){
+		this._foodCityCapacity += amount;
+		if(this._foodCityCapacity < 0){
+			this._foodCityCapacity = 0;
+		}
+	}
+	internal void AdjustMaterialCityCapacity(int amount){
+		this._materialCityCapacity += amount;
+		if(this._materialCityCapacity < 0){
+			this._materialCityCapacity = 0;
+		}
+	}
+	internal void AdjustOreCityCapacity(int amount){
+		this._oreCityCapacity += amount;
+		if(this._oreCityCapacity < 0){
+			this._oreCityCapacity = 0;
 		}
 	}
 	#endregion

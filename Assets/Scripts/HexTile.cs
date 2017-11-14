@@ -36,6 +36,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     public RESOURCE specialResource;
 	public int resourceCount;
     public int nearbyResourcesCount = 0;
+	public int cityCapacity;
 
     [System.NonSerialized] public City city = null;
 	internal City ownedByCity = null; // this is populated whenever the hex tile is occupied or becomes a border of a particular city
@@ -276,6 +277,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		this.hasLandmark = true;
         specialResource = resource;
 		SetSpecialResourceType ();
+		SetCityCapacity();
         resourceIcon.SetResource(specialResource);
         GameObject resourceGO = GameObject.Instantiate(Biomes.Instance.GetPrefabForResource(this.specialResource), resourceParent) as GameObject;
         resourceGO.transform.localPosition = Vector3.zero;
@@ -361,6 +363,49 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			this.specialResourceType = RESOURCE_TYPE.ORE;
 		}
 	}
+	private void SetCityCapacity(){
+		switch(this.specialResource){
+		case RESOURCE.DEER:
+			this.cityCapacity = 3;
+			break;
+		case RESOURCE.PIG:
+			this.cityCapacity = 4;
+			break;
+		case RESOURCE.BEHEMOTH:
+			this.cityCapacity = 5;
+			break;
+		case RESOURCE.WHEAT:
+			this.cityCapacity = 3;
+			break;
+		case RESOURCE.RICE:
+			this.cityCapacity = 4;
+			break;
+		case RESOURCE.CORN:
+			this.cityCapacity = 5;
+			break;
+		case RESOURCE.SLATE:
+			this.cityCapacity = 4;
+			break;
+		case RESOURCE.GRANITE:
+			this.cityCapacity = 5;
+			break;
+		case RESOURCE.OAK:
+			this.cityCapacity = 4;
+			break;
+		case RESOURCE.EBONY:
+			this.cityCapacity = 5;
+			break;
+		case RESOURCE.COBALT:
+			this.cityCapacity = 3;
+			break;
+		case RESOURCE.MANA_STONE:
+			this.cityCapacity = 4;
+			break;
+		case RESOURCE.MITHRIL:
+			this.cityCapacity = 5;
+			break;
+		}
+	}
 	internal void ProduceResource(){
         if (this.region.occupant == null) {
             throw new System.Exception(name + " is trying to produce resource, but occupant is null");
@@ -368,51 +413,51 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         switch (this.specialResource){
 		case RESOURCE.DEER:
-			this.resourceCount += UnityEngine.Random.Range (20, 40);
+			this.resourceCount += UnityEngine.Random.Range (15, 26);
 			break;
 		case RESOURCE.PIG:
-			this.resourceCount += UnityEngine.Random.Range (45, 65);
+			this.resourceCount += UnityEngine.Random.Range (25, 36);
 			break;
 		case RESOURCE.BEHEMOTH:
-			this.resourceCount += UnityEngine.Random.Range (65, 85);
+			this.resourceCount += UnityEngine.Random.Range (35, 46);
 			break;
 		case RESOURCE.WHEAT:
-			this.resourceCount += 30;
+			this.resourceCount += 18;
 			break;
 		case RESOURCE.RICE:
-			this.resourceCount += 55;
+			this.resourceCount += 32;
 			break;
 		case RESOURCE.CORN:
-			this.resourceCount += 75;
+			this.resourceCount += 42;
 			break;
 		case RESOURCE.SLATE:
 			if(this.region.occupant.kingdom.race == RACE.HUMANS){
-				this.resourceCount += UnityEngine.Random.Range (40, 60);
+				this.resourceCount += UnityEngine.Random.Range (25, 36);
 			}
 			break;
 		case RESOURCE.GRANITE:
 			if(this.region.occupant.kingdom.race == RACE.HUMANS){
-				this.resourceCount += UnityEngine.Random.Range (70, 90);
+				this.resourceCount += UnityEngine.Random.Range (35, 46);
 			}
 			break;
 		case RESOURCE.OAK:
 			if(this.region.occupant.kingdom.race == RACE.ELVES){
-				this.resourceCount += UnityEngine.Random.Range (40, 60);
+				this.resourceCount += UnityEngine.Random.Range (25, 36);
 			}
 			break;
 		case RESOURCE.EBONY:
 			if(this.region.occupant.kingdom.race == RACE.ELVES){
-				this.resourceCount += UnityEngine.Random.Range (70, 90);
+				this.resourceCount += UnityEngine.Random.Range (35, 46);
 			}
 			break;
 		case RESOURCE.COBALT:
-			this.resourceCount += UnityEngine.Random.Range (20, 40);
+			this.resourceCount += UnityEngine.Random.Range (10, 21);
 			break;
 		case RESOURCE.MANA_STONE:
-			this.resourceCount += UnityEngine.Random.Range (40, 60);
+			this.resourceCount += UnityEngine.Random.Range (20, 31);
 			break;
 		case RESOURCE.MITHRIL:
-			this.resourceCount += UnityEngine.Random.Range (60, 80);
+			this.resourceCount += UnityEngine.Random.Range (30, 41);
 			break;
 		}
 		CheckResourceCount ();
@@ -1504,6 +1549,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 		text += "\n [b]Food Count:[/b] " + this.city.foodCount.ToString () + "/" + this.city.foodCapacity + "(" + this.city.foodRequirement.ToString () + ")" +
 		"\n [b]Material Count:[/b] " + this.city.materialCount.ToString () + "/" + this.city.materialCapacity + "(" + this.city.materialRequirement.ToString () + ")" +
 		"\n [b]Ore Count:[/b] " + this.city.oreCount.ToString () + "/" + this.city.oreCapacity + "(" + this.city.oreRequirement.ToString () + ")" +
+		"\n [b]Kingdom Food S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.foodCityCapacity +
+		"\n [b]Kingdom Material S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.materialCityCapacity +
+		"\n [b]Kingdom Ore S/D:[/b] " + this.city.kingdom.cities.Count.ToString () + "/" + this.city.kingdom.oreCityCapacity +
 		"\n [b]Power Points:[/b] " + this.city.powerPoints.ToString() +
         "\n [b]Defense Points:[/b] " + this.city.defensePoints.ToString() +
         "\n [b]Tech Points:[/b] " + this.city.techPoints.ToString() +
