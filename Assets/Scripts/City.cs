@@ -260,6 +260,7 @@ public class City{
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 
 //		AdjustPopulation (50);
+		AdjustFoodCount(this.foodExcessCapacity);
 
 		GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 		increaseDueDate.AddMonths(1);

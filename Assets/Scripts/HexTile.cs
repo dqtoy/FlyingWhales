@@ -903,7 +903,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         }
     }
 	internal void UpdateCityFoodMaterialOreUI(){
-		_cityInfo.UpdateFoodMaterialOreUI ();
+		if(_cityInfo != null){
+			_cityInfo.UpdateFoodMaterialOreUI ();
+		}
 	}
     internal void RemoveCityNamePlate() {
         if (_namePlateParent != null) {
