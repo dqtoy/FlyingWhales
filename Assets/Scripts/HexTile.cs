@@ -408,7 +408,8 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 	}
 	internal void ProduceResource(){
         if (this.region.occupant == null) {
-            throw new System.Exception(name + " is trying to produce resource, but occupant is null");
+            Debug.Log(name + " is trying to produce resource, but occupant is null");
+			return;
         }
 
         switch (this.specialResource){
