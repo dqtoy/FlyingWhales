@@ -178,7 +178,6 @@ public class WorldHistoryUI : MonoBehaviour {
             worldHistoryTable.Reposition();
             worldHistoryScrollView.ResetPosition();
         }
-        worldHistoryScrollView.UpdateScrollbars();
         allLogItems.Reverse();
 
         for (int i = 0; i < allLogItems.Count; i++) {
