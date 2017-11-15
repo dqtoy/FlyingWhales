@@ -62,6 +62,7 @@ public class WorldHistoryUI : MonoBehaviour {
     private void ShowWorldHistory() {
         isShowing = true;
         tweenPos.PlayForward();
+        StartCoroutine(RepositionScrollView(worldHistoryScrollView));
     }
 
     public void HideWorldHistory() {
@@ -118,6 +119,7 @@ public class WorldHistoryUI : MonoBehaviour {
         allKingdomsInMenu.Remove(kingdom);
         activeEmblems.Remove(kingdom);
         inactiveEmblems.Add(emblemOfKingdom);
+        kingdomEmblemsGrid.Reposition();
     }
     public void ToggleAllSelected() {
         if (allSelectedGO.activeSelf) {
@@ -171,7 +173,8 @@ public class WorldHistoryUI : MonoBehaviour {
             GameObject logGO = UIManager.Instance.InstantiateUIObject(worldHistoryItem.name, worldHistoryTable.transform);
             logGO.name = i.ToString();
             logGO.transform.localScale = Vector3.one;
-            allLogItems.Add(logGO.GetComponent<WorldHistoryItem>());
+            WorldHistoryItem currItem = logGO.GetComponent<WorldHistoryItem>();
+            allLogItems.Add(currItem);
             worldHistoryTable.Reposition();
             worldHistoryScrollView.ResetPosition();
         }
@@ -211,6 +214,7 @@ public class WorldHistoryUI : MonoBehaviour {
             StartCoroutine(RepositionTable(worldHistoryTable));
             StartCoroutine(RepositionScrollView(worldHistoryScrollView));
         }
+        UpdateLogColors();
     }
     private void RemoveLogFromWorldHistory(Log log) {
         WorldHistoryItem itemOfLog = logHistory[log];
@@ -227,6 +231,7 @@ public class WorldHistoryUI : MonoBehaviour {
                 currItem.gameObject.SetActive(false);
             }
         }
+        UpdateLogColors();
         StartCoroutine(RepositionTable(worldHistoryTable));
         StartCoroutine(RepositionScrollView(worldHistoryScrollView));
     }
@@ -253,6 +258,12 @@ public class WorldHistoryUI : MonoBehaviour {
         }
         return false;
     }
+    private void UpdateLogColors() {
+        List<WorldHistoryItem> activeItems = new List<WorldHistoryItem>(worldHistoryTable.GetChildList().Select(x => x.GetComponent<WorldHistoryItem>()));
+        for (int i = 0; i < activeItems.Count; i++) {
+            activeItems[i].SetBGColor(i);
+        }
+    }
     #endregion
 
     public IEnumerator RepositionTable(UITable thisTable) {
@@ -269,6 +280,7 @@ public class WorldHistoryUI : MonoBehaviour {
             thisScrollView.ResetPosition();
             thisScrollView.Scroll(0f);
         }
+        yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
         thisScrollView.UpdateScrollbars();
     }

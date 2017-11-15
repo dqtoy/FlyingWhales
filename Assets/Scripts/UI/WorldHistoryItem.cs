@@ -21,5 +21,15 @@ public class WorldHistoryItem : MonoBehaviour {
         } else {
             logLbl.text = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
         }
+
+        
+    }
+
+    public void SetBGColor(int index) {
+        if (index % 2 == 0) {
+            bg.color = evenColor;
+        } else {
+            bg.color = oddColor;
+        }
     }
 }

@@ -370,9 +370,19 @@ public class GridMap : MonoBehaviour {
                         !x.connections.Contains(currLandmark.location)).Select(x => x.location));
                 }
 
-                tilesToChooseFrom.AddRange(landmarksInRegion.Where(x => x.connections.Count < RoadManager.Instance.maxLandmarkConnections 
-                    && !x.connections.Contains(currLandmark)).Select(x => x.location));
-                tilesToChooseFrom.Remove(currLandmark.location);
+                //When connecting landmarks to nearby landmarks, exclude the other landmark on the same region if they are already connected
+                for (int k = 0; k < landmarksInRegion.Count; k++) {
+                    Landmark otherLandmark = landmarksInRegion[k];
+                    if(otherLandmark != currLandmark) {
+                        if(PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.USE_ROADS) != null) {
+                            RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
+                        } else {
+                            if(otherLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
+                                tilesToChooseFrom.Add(otherLandmark.location);
+                            }
+                        }
+                    }
+                }
 
                 tilesToChooseFrom = tilesToChooseFrom.OrderBy(x => Vector2.Distance(currLandmark.location.transform.position, x.transform.position)).ToList();
                 //if it can, it should connect to the nearest landmark or city within its region or adjacent region without intersecting a 
