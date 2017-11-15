@@ -576,7 +576,9 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 			int neighbourCoordinateY = yCoordinate + possibleExits [i].Y;
 			if (neighbourCoordinateX >= 0 && neighbourCoordinateX < gameBoard.GetLength(0) && neighbourCoordinateY >= 0 && neighbourCoordinateY < gameBoard.GetLength(1)){
                 HexTile currNeighbour = gameBoard[neighbourCoordinateX, neighbourCoordinateY];
-                neighbours.Add (currNeighbour);
+                if(currNeighbour != null) {
+                    neighbours.Add(currNeighbour);
+                }
             }
 
 		}
@@ -1532,6 +1534,10 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [ContextMenu("Kill Kingdom Using Population")]
     public void KillKingdomUsingPopulation() {
         ownedByCity.kingdom.DamagePopulation(ownedByCity.kingdom.population);
+    }
+    [ContextMenu("Select Neighbours")]
+    public void SelectAllTilesInRegion() {
+        UnityEditor.Selection.objects = this.AllNeighbours.Select(x => x.gameObject).ToArray();
     }
     //[ContextMenu("Select Tiles in Same Region")]
     //public void SelectAllTilesInRegion() {

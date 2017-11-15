@@ -35,6 +35,7 @@ public class GridMap : MonoBehaviour {
     public List<HexTile> hexTiles;
     public List<Region> allRegions;
 	public HexTile[,] map;
+    public HexTile[,] outerGrid;
 
 	internal float mapWidth;
 	internal float mapHeight;
@@ -91,6 +92,9 @@ public class GridMap : MonoBehaviour {
         float newX = xOffset * (newWidth / 2);
         float newY = yOffset * (newHeight / 2);
 
+        List<HexTile> outerGridList = new List<HexTile>();
+        outerGrid = new HexTile[newWidth, newHeight];
+
         _borderParent.transform.localPosition = new Vector2(-newX, -newY);
         for (int x = 0; x < newWidth; x++) {
             for (int y = 0; y < newHeight; y++) {
@@ -112,7 +116,11 @@ public class GridMap : MonoBehaviour {
                 currHex.tileName = hex.name;
                 currHex.xCoordinate = x;
                 currHex.yCoordinate = y;
+                outerGrid[x, y] = currHex;
+                outerGridList.Add(currHex);
 
+                //int xToCopy = Mathf.Clamp(x, 0, (int)width - 1);
+                //int yToCopy = Mathf.Clamp(y, 0, (int)height - 1);
 
                 int xToCopy = Mathf.Max(x - (_borderThickness * 2), 0);
                 int yToCopy = Mathf.Max(y - (_borderThickness * 2), 0);
@@ -129,6 +137,8 @@ public class GridMap : MonoBehaviour {
                 currHex.HideFogOfWarObjects();
             }
         }
+
+        outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid));
 
 
         //List<HexTile> outerTiles = listHexes.Select(x => x.GetComponent<HexTile>()).ToList();
