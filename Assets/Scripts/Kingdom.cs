@@ -93,14 +93,13 @@ public class Kingdom{
     private int _kingdomExpansionRate;
 
 	//Balance of Power
-//	private int _effectivePower;
-//	private int _effectiveDefense;
 	private bool _isMobilizing;
     [NonSerialized] private List<Kingdom> _adjacentKingdoms;
-//	[NonSerialized] private List<Kingdom> _allianceKingdoms;
 
-    //protected Dictionary<CHARACTER_VALUE, int> _dictCharacterValues;
-    //protected Dictionary<CHARACTER_VALUE, int> _importantCharacterValues;
+	//Resources
+	private int _foodCityCapacity;
+	private int _materialCityCapacity;
+	private int _oreCityCapacity;
 
     protected const int INCREASE_CITY_HP_CHANCE = 5;
 	protected const int INCREASE_CITY_HP_AMOUNT = 20;
@@ -157,10 +156,6 @@ public class Kingdom{
 
 	private int _soldiers;
 
-	private int _foodCityCapacity;
-	private int _materialCityCapacity;
-	private int _oreCityCapacity;
-
     #region getters/setters
     internal Sprite emblem {
         get { return _emblem; }
@@ -212,8 +207,6 @@ public class Kingdom{
     }
     internal int stability {
         get { return this._stability; }
-        //get { return -100; }
-        //		set { this._stability = value;}
     }
     internal int basicResourceCount {
         get { return this._availableResources.Where(x => Utilities.GetBaseResourceType(x.Key) == this.basicResource).Sum(x => x.Value); }
@@ -1749,79 +1742,10 @@ public class Kingdom{
 	}
 
 	#region Resource Management
-	/*
-	 * Add resource type to this kingdoms
-	 * available resource (DO NOT ADD GOLD TO THIS!).
-	 * */
-//	internal void AddResourceToKingdom(RESOURCE resource){
-//		RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[resource].Keys.FirstOrDefault();
-//
-//        if (!this._availableResources.ContainsKey(resource)) {
-//			this._availableResources.Add(resource, 0);
-//            //this.RemoveObsoleteTradeRoutes(resource);
-//            if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
-//                this.UpdateAllCitiesDailyGrowth();
-//            } else if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
-//                this.UpdateTechLevel();
-//            }
-//        }
-//		this._availableResources[resource] += 1;
-//        if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
-//            this.UpdateExpansionRate();
-//        }
-//    }
-//    internal void UpdateExpansionRate() {
-//        this.expansionChance = this.kingdomTypeData.expansionRate;
-//
-//        for (int i = 0; i < this.availableResources.Keys.Count; i++) {
-//            RESOURCE currResource = this.availableResources.Keys.ElementAt(i);
-//            if (Utilities.GetBaseResourceType(currResource) == this.basicResource) {
-//                int multiplier = this.availableResources[currResource];
-//				RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
-//                float expansionRateGained = Utilities.resourceBenefits[currResource][resourceBenefit];
-//                if (resourceBenefit == RESOURCE_BENEFITS.EXPANSION_RATE) {
-//                    this.expansionChance += expansionRateGained * multiplier;
-//                }
-//            }
-//        }
-//    }
-//    internal void UpdateTechLevel() {
-//        this._techLevel = 0;
-////        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
-////        for (int i = 0; i < allAvailableResources.Count; i++) {
-//		foreach (RESOURCE currResource in this._availableResources.Keys) {
-////            RESOURCE currResource = allAvailableResources[i];
-//			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currResource].Keys.FirstOrDefault();
-//            if (resourceBenefit == RESOURCE_BENEFITS.TECH_LEVEL) {
-//				int upgrade = (int)Utilities.resourceBenefits[currResource][resourceBenefit];
-//				UpgradeTechLevel(upgrade);
-//            }
-//        }
-//    }
-//    internal void UpdateAllCitiesDailyGrowth() {
-//        //get all resources from tiles and trade routes, only include trade routes where this kingom is the target
-//        List<RESOURCE> allAvailableResources = this._availableResources.Keys.ToList();
-//        int dailyGrowthGained = this.ComputeDailyGrowthGainedFromResources(allAvailableResources);
-//        for (int i = 0; i < this.cities.Count; i++) {
-//            City currCity = this.cities[i];
-//            currCity.UpdateDailyGrowthBasedOnSpecialResources(dailyGrowthGained);
-//        }
-//    }
-//    private int ComputeDailyGrowthGainedFromResources(List<RESOURCE> allAvailableResources) {
-//        int dailyGrowthGained = 0;
-//        for (int i = 0; i < allAvailableResources.Count; i++) {
-//            RESOURCE currentResource = allAvailableResources[i];
-//			RESOURCE_BENEFITS resourceBenefit = Utilities.resourceBenefits[currentResource].Keys.FirstOrDefault();
-//            if(resourceBenefit == RESOURCE_BENEFITS.GROWTH_RATE) {
-//                dailyGrowthGained += (int)Utilities.resourceBenefits[currentResource][resourceBenefit];
-//            }
-//        }
-//        return dailyGrowthGained;
-//    }
-//    /*
-//     * Gets a list of resources that otherKingdom does not have access to (By self or by trade).
-//     * Will compare to this kingdoms available resources (excl. resources from trade)
-//     * */
+    /*
+     * Gets a list of resources that otherKingdom does not have access to (By self or by trade).
+    * Will compare to this kingdoms available resources (excl. resources from trade)
+    * */
     internal List<RESOURCE> GetResourcesOtherKingdomDoesNotHave(Kingdom otherKingdom) {
         List<RESOURCE> resourcesOtherKingdomDoesNotHave = new List<RESOURCE>();
 //        List<RESOURCE> allAvailableResourcesOfOtherKingdom = otherKingdom.availableResources.Keys.ToList();
@@ -1840,18 +1764,6 @@ public class Kingdom{
 		}
         return resourcesOtherKingdomDoesNotHave;
     }
-//    internal void UpdateAvailableResources() {
-//        this._availableResources.Clear();
-//        for (int i = 0; i < this.cities.Count; i++) {
-//            City currCity = this.cities[i];
-//            for (int j = 0; j < currCity.structures.Count; j++) {
-//                HexTile currHexTile = currCity.structures[j];
-//                if (currHexTile.specialResource != RESOURCE.NONE) {
-//                    this.AddResourceToKingdom(currHexTile.specialResource);
-//                }
-//            }
-//        }
-//    }
     /*
      * <summary>
      * Set growth state of kingdom, disabling growth will prevent expansion,
@@ -1863,14 +1775,6 @@ public class Kingdom{
     #endregion
 
     #region Tech
- //   private void IncreaseTechCounterPerTick(){
-	//	if(!this._isTechProducing){
-	//		return;
-	//	}
-	//	int amount = this.cities.Count + GetTechContributionFromCitizens();
-	//	amount = (int)(amount * this._techProductionPercentage);
-	//	this.AdjustTechCounter (amount);
-	//}
     internal int GetMonthlyTechGain() {
         int monthlyTechGain = GetTechContributionFromCitizens();
         for (int i = 0; i < cities.Count; i++) {
@@ -2017,33 +1921,6 @@ public class Kingdom{
     }
     #endregion
 
-	#region Character Values
-	//private void UpdateCharacterValuesOfKingsAndGovernors(){
-	//	if(this.king != null){
-	//		this.king.UpdateCharacterValues ();
-	//	}
-	//	for(int i = 0; i < this.cities.Count; i++){
-	//		if(this.cities[i].governor != null){
-	//			this.cities [i].governor.UpdateCharacterValues ();
-	//		}
-	//	}
-	//}
-    //internal void GenerateKingdomCharacterValues() {
-    //    this._dictCharacterValues.Clear();
-    //    this._dictCharacterValues = System.Enum.GetValues(typeof(CHARACTER_VALUE)).Cast<CHARACTER_VALUE>().ToDictionary(x => x, x => UnityEngine.Random.Range(1, 101));
-    //    UpdateKingdomCharacterValues();
-    //}
-    //internal void UpdateKingdomCharacterValues() {
-    //    this._importantCharacterValues = this._dictCharacterValues.Where(x => x.Value >= 50).OrderByDescending(x => x.Value).Take(4).ToDictionary(x => x.Key, x => x.Value);
-    //}
-    //private void UpdateSpecificCharacterValue(CHARACTER_VALUE key, int value) {
-    //    if (this._dictCharacterValues.ContainsKey(key)) {
-    //        this._dictCharacterValues[key] += value;
-    //        //			UpdateCharacterValueByKey(key, value);
-    //    }
-    //}
-    #endregion
-
     #region Bioweapon
     internal void SetBioWeapon(bool state){
 		this._hasBioWeapon = state;
@@ -2132,11 +2009,6 @@ public class Kingdom{
 
 	internal int GetNumberOfWars(){
 		int numOfWars = 0;
-//		for (int i = 0; i < relationships.Count; i++) {
-//			if(relationships.ElementAt(i).Value.isAtWar){
-//				numOfWars += 1;
-//			}
-//		}
 		foreach (KingdomRelationship relationship in this.relationships.Values) {
 			if(relationship.isAtWar){
 				numOfWars += 1;
@@ -2147,12 +2019,7 @@ public class Kingdom{
 		}
 		return numOfWars;
 	}
-
-//	private void UpdateCombatStats(){
-//		this._combatStats = this._kingdomTypeData.combatStats;
-//		this._combatStats.waves = this._kingdomTypeData.combatStats.waves - (GetNumberOfWars() + this.rebellions.Count);
-//	}
-
+		
 	internal void SetLockDown(bool state){
 		this._isLockedDown = state;
 	}
@@ -2261,14 +2128,6 @@ public class Kingdom{
         }
         return gameEvents;
     }
-    //	internal bool HasActiveEventWith(EVENT_TYPES eventType, Kingdom kingdom){
-    //		for (int i = 0; i < this.activeEvents.Count; i++) {
-    //			if(this.activeEvents[i].eventType == eventType){
-    //				return true;
-    //			}
-    //		}
-    //		return false;
-    //	}
     #endregion
 
     #region Governors Loyalty/Opinion
@@ -2279,13 +2138,6 @@ public class Kingdom{
 			}
 		}
 	}
-    //internal void UpdateAllGovernorsLoyalty(){
-    //	for(int i = 0; i < this.cities.Count; i++){
-    //		if(this.cities[i].governor != null){
-    //			((Governor)this.cities[i].governor.assignedRole).UpdateLoyalty();
-    //		}
-    //	}
-    //}
     #endregion
 
     #region Weapon Functions
@@ -2306,26 +2158,6 @@ public class Kingdom{
         _baseWeapons = newBaseWeapons;
         KingdomManager.Instance.UpdateKingdomList();
     }
-    #endregion
-
-    #region Armor Functions
-//    internal int GetArmorOverProductionPercentage() {
-//        float overProductionPercentage = ((float)_baseArmor / (float)_populationCapacity) * 100f;
-//        overProductionPercentage -= 100;
-//        overProductionPercentage = Mathf.Clamp(overProductionPercentage, 0f, 100f);
-//        return Mathf.FloorToInt(overProductionPercentage);
-//    }
-//    internal void AdjustBaseArmors(int amountToAdjust) {
-//        this._baseArmor += amountToAdjust;
-//        if (this._baseArmor < 0) {
-//            this._baseArmor = 0;
-//        }
-//        KingdomManager.Instance.UpdateKingdomList();
-//    }
-//    internal void SetBaseArmor(int newBaseArmor) {
-//        _baseArmor = newBaseArmor;
-//        KingdomManager.Instance.UpdateKingdomList();
-//    }
     #endregion
 
     #region Stability Functions
@@ -2385,10 +2217,6 @@ public class Kingdom{
                 currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
             }
         }
-        //overpopulation reduces Stability by 1 point per 10% of Overpopulation each month
-        //int overpopulation = GetOverpopulationPercentage();
-        //totalStabilityIncrease -= overpopulation / 10;
-        //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
         totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
 
         //Stability has a -5 monthly reduction when the Kingdom is Medium and a -10 monthly reduction when the Kingdom is Large
@@ -2523,8 +2351,6 @@ public class Kingdom{
         if (this.isDead) {
             return;
         }
-        int totalWeaponsIncrease = 0;
-        int totalArmorIncrease = 0;
         int totalTechIncrease = GetTechContributionFromCitizens();
         //Kings and Governors provide monthly Stability gains based on their Efficiency trait.
         int totalStabilityIncrease = GetStabilityContributionFromCitizens();
@@ -2535,28 +2361,10 @@ public class Kingdom{
                 int armorContribution = currCity.defensePoints;
                 int techContribution = currCity.techPoints;
                 currCity.MonthlyResourceBenefits(ref weaponsContribution, ref armorContribution, ref totalStabilityIncrease);
-                totalWeaponsIncrease += weaponsContribution;
-                totalArmorIncrease += armorContribution;
                 totalTechIncrease += techContribution;
             }
         }
 
-        if (isMilitarize) {
-            //Militarizing multiplies Weapon production by 2.5 for the month in exchange for 0 Armor and Tech production.
-            totalWeaponsIncrease = Mathf.FloorToInt(totalWeaponsIncrease * 2.5f);
-            totalArmorIncrease = 0;
-            totalTechIncrease = 0;
-            Militarize(false);
-        } else if (isFortifying) {
-            //Fortifying multiplies Armor production by 2.5 for the month in exchange for 0 Weapon and Tech production.
-            totalArmorIncrease = Mathf.FloorToInt(totalArmorIncrease * 2.5f);
-            totalWeaponsIncrease = 0;
-            totalTechIncrease = 0;
-            Fortify(false);
-        }
-        //overpopulation reduces Stability by 1 point per 10% of Overpopulation each month
-        //int overpopulation = GetOverpopulationPercentage();
-        //totalStabilityIncrease -= overpopulation / 10;
         //When occupying an invaded city, monthly Stability is reduced by 2 for six months.
         totalStabilityIncrease -= (_stabilityDecreaseFromInvasionCounter * 2);
 
@@ -2567,14 +2375,6 @@ public class Kingdom{
             totalStabilityIncrease -= 10;
         }
 
-        //Same as population. Armor and weapon production is also reduced when it is overproduced in the same way that population growth is reduced by overpopulation.
-        int weaponsOverProduction = GetWeaponOverProductionPercentage();
-//        int armorOverProduction = GetArmorOverProductionPercentage();
-        totalWeaponsIncrease = Mathf.FloorToInt(totalWeaponsIncrease * ((100f - weaponsOverProduction) * 0.01f));
-//        totalArmorIncrease = Mathf.FloorToInt(totalArmorIncrease * ((100f - armorOverProduction) * 0.01f));
-
-        AdjustBaseWeapons(totalWeaponsIncrease);
-//        AdjustBaseArmors(totalArmorIncrease);
         AdjustStability(Mathf.Clamp(totalStabilityIncrease, -5, 5));
 
         //Tech Gains
@@ -2589,12 +2389,7 @@ public class Kingdom{
 
         CheckStability();
     }
-    //    internal void AdjustBaseWeapons(int adjustment) {
-    //        _baseWeapons += adjustment;
-    //    }
-    //    internal void AdjustBaseArmor(int adjustment) {
-    //        _baseArmor += adjustment;
-    //    }
+
     internal void UpdateProductionRatesFromKing() {
         _researchRateFromKing = 0f;
         _draftRateFromKing = 0f;
@@ -2667,11 +2462,7 @@ public class Kingdom{
                             isValid = true;
                             break;
                         } 
-                        //else if (kingdomsToCheck.Contains(otherRegion.occupant.kingdom)) {
-                        //    //otherRegion.occupant.kingdom is still adjacent to this kingdom, validity verified!
-                        //    isValid = true;
-                        //    break;
-                        //}
+
                     }
                     if (isValid) {
                         //otherKingdom has already been verified! Skip checking of other cities
@@ -2690,58 +2481,10 @@ public class Kingdom{
     #endregion
 
     #region Population
-//    internal int GetOverpopulationPercentage() {
-//        float overpopulationPercentage = ((float)_population / (float)populationCapacity) * 100f;
-//        //overpopulationPercentage = overpopulationPercentage * 100 - 100;
-//        overpopulationPercentage -= 100;
-//        overpopulationPercentage = Mathf.Clamp(overpopulationPercentage, 0f, 100f);
-//        return Mathf.FloorToInt(overpopulationPercentage);
-//    }
-//    internal void UpdatePopulationCapacity() {
-//        _populationCapacity = GetPopulationCapacity();
-//    }
-//    internal int GetPopulationCapacity() {
-//        int populationCapacity = 0;
-//        for (int i = 0; i < cities.Count; i++) {
-//            populationCapacity += 300 + (50 * cities[i].cityLevel);
-//        }
-//        return populationCapacity;
-//    }
-//    internal int GetPopulationGrowth() {
-//        int populationGrowth = 0;
-//        for (int i = 0; i < cities.Count; i++) {
-//			populationGrowth += cities[i].region.populationGrowth + (cities[i].cityLevel * 2);
-//        }
-//		populationGrowth += this.techLevel * cities.Count;
-//
-//		// If a Kingdom has active Plagues, its Population decreases instead
-//		// Its possible to have multiple active plagues in the same Kingdom. The kingdom will lose 50% of its current population growth per active plague.
-//		int activePlagues = GetActiveEventsOfTypeCount(EVENT_TYPES.PLAGUE);
-//		if (activePlagues > 0) {
-//			return Mathf.FloorToInt(-(float)populationGrowth * (activePlagues * 0.5f));
-//		}
-//
-//		// Positive population growth is decreased by overpopulation
-//        float overpopulationPercentage = GetOverpopulationPercentage();
-//        populationGrowth = Mathf.FloorToInt(populationGrowth * ((100f - overpopulationPercentage) * 0.01f));
-//
-//		return populationGrowth;
-//
-//    }
-//    private void IncreasePopulationEveryMonth() {
-//        AdjustPopulation(GetPopulationGrowth());
-//        GameDate dueDate = new GameDate(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year);
-//        dueDate.AddMonths(1);
-//        SchedulingManager.Instance.AddEntry(dueDate.month, dueDate.day, dueDate.year, () => IncreasePopulationEveryMonth());
-//    }
 	internal void AdjustPopulation(int adjustment, bool isUpdateKingdomList = true) {
         _population += adjustment;
         if(_population < 0) {
 			_population = 0;
-            //if at any time population is reduced to 0, the Kingdom will cease to exist and all his cities will be destroyed
-//            while (cities.Count > 0) {
-//                cities[0].KillCity();
-//            }
         }
 		if(isUpdateKingdomList){
 			KingdomManager.Instance.UpdateKingdomList();
@@ -2791,13 +2534,9 @@ public class Kingdom{
 			if(city.soldiers < totalDamage){
 				excessDamage += totalDamage - city.soldiers;
 				city.AdjustSoldiers (-city.soldiers);
-//				i--;
 			}else{
 				excessDamage = 0;
 				city.AdjustSoldiers (-totalDamage);
-//				if(city.isDead){
-//					i--;
-//				}
 			}
 		}
 	}
@@ -2820,18 +2559,6 @@ public class Kingdom{
     internal void MobilizingState(bool state){
 		this._isMobilizing = state;
 	}
-
-	//private void AdjustPowerPointsToAllCities(int amount){
-	//	for (int i = 0; i < this.cities.Count; i++) {
-	//		this.cities[i].AdjustPowerPoints(amount);
-	//	}
-	//}
-
- //   private void AdjustDefensePointsToAllCities(int amount) {
- //       for (int i = 0; i < this.cities.Count; i++) {
- //           this.cities[i].AdjustDefensePoints(amount);
- //       }
- //   }
 
 	internal void AdjustWarmongerValue(int amount){
 		this._warmongerValue += amount;
@@ -2879,9 +2606,6 @@ public class Kingdom{
 	}
 
 	internal void SeekAllianceOfProtection(){
-//		List<KingdomRelationship> kingdomRelationshipsWithAlliance = this.relationships.Values.Where(x => x.targetKingdom.alliancePool != null).ToList ();
-//		List<KingdomRelationship> kingdomRelationshipsWithoutAlliance = this.relationships.Values.Where(x => x.targetKingdom.alliancePool == null).OrderByDescending(y => y.totalLike).ToList ();
-
 		Kingdom kingdomWithHighestThreat = GetKingdomWithHighestThreat();
 		if (kingdomWithHighestThreat != null) {
 			Kingdom kingdomToAlly = null;
@@ -2990,81 +2714,7 @@ public class Kingdom{
 				}
 			}
 		}
-//		if (kingdomWithHighestThreat != null) {
-//			if (this._alliancePool == null) {
-//				for (int i = 0; i < kingdomRelationshipsWithoutAlliance.Count; i++) {
-//					KingdomRelationship kr = kingdomRelationshipsWithoutAlliance [i];
-//					if (kr.isDiscovered && !kr.cantAlly) {
-//						if (kr.targetKingdom.id != kingdomWithHighestThreat.id) {
-//							KingdomRelationship rk = kr.targetKingdom.GetRelationshipWithKingdom (kingdomWithHighestThreat);
-//							if (rk.isAdjacent) {
-//								if(kr.targetKingdom.alliancePool == null){
-//									Debug.Log(name + " is looking to create an alliance with " + kr.targetKingdom.name);
-//									bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms(this, kr.targetKingdom);
-//									if(hasCreated){
-//										string log = name + " has created an alliance with ";
-//										for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-//											if(_alliancePool.kingdomsInvolved[j].id != id) {
-//												log += _alliancePool.kingdomsInvolved[j].name;
-//												if(j + 1 < _alliancePool.kingdomsInvolved.Count) {
-//													log += ", ";
-//												}
-//											}
-//										}
-//										Debug.Log(log);
-//										return;
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
 
-//		if(this._alliancePool == null){
-//			for (int i = 0; i < kingdomRelationshipsWithAlliance.Count; i++) {
-//				KingdomRelationship kr = kingdomRelationshipsWithAlliance [i];
-//				if(kr.isDiscovered && !kr.cantAlly){
-//					Debug.Log(name + " is looking to join the alliance of " + kr.targetKingdom.name);
-//					bool hasJoined = kr.targetKingdom.alliancePool.AttemptToJoinAlliance(this, kr.targetKingdom);
-//					if(hasJoined){
-//						string log = name + " has joined an alliance with ";
-//						for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-//							if (_alliancePool.kingdomsInvolved[j].id != id) {
-//								log += _alliancePool.kingdomsInvolved[j].name;
-//								if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
-//									log += ", ";
-//								}
-//							}
-//						}
-//						return;
-//					}
-//				}
-//			}
-//		}
-//		if (this._alliancePool == null) {
-//			for (int i = 0; i < kingdomRelationshipsWithoutAlliance.Count; i++) {
-//				KingdomRelationship kr = kingdomRelationshipsWithoutAlliance [i];
-//				if (kr.isDiscovered && !kr.cantAlly) {
-//					Debug.Log (name + " is looking to create an alliance with " + kr.targetKingdom.name);
-//					bool hasCreated = KingdomManager.Instance.AttemptToCreateAllianceBetweenTwoKingdoms (this, kr.targetKingdom);
-//					if (hasCreated) {
-//						string log = name + " has created an alliance with ";
-//						for (int j = 0; j < _alliancePool.kingdomsInvolved.Count; j++) {
-//							if (_alliancePool.kingdomsInvolved [j].id != id) {
-//								log += _alliancePool.kingdomsInvolved [j].name;
-//								if (j + 1 < _alliancePool.kingdomsInvolved.Count) {
-//									log += ", ";
-//								}
-//							}
-//						}
-//						Debug.Log (log);
-//						return;
-//					}
-//				}
-//			}
-//		}
         if(this._alliancePool == null) {
             Debug.Log(name + " has failed to create/join an alliance");
         }
@@ -3145,21 +2795,7 @@ public class Kingdom{
         }
 		return posAlliancePower;
 	}
-//	internal int GetUnadjacentPosAllianceArmor(){
-//		int posAllianceDefense = 0;
-//		if (this.alliancePool != null) {
-//			for (int i = 0; i < this.alliancePool.kingdomsInvolved.Count; i++) {
-//				Kingdom kingdomInAlliance = this.alliancePool.kingdomsInvolved [i];
-//				if (this.id != kingdomInAlliance.id) {
-//					KingdomRelationship relationship = kingdomInAlliance.GetRelationshipWithKingdom (this);
-//					if (relationship.totalLike >= 35) {
-//						posAllianceDefense += (int)((float)kingdomInAlliance.baseArmor * 0.1f);
-//					}
-//				}
-//			}
-//		}
-//		return posAllianceDefense;
-//	}
+
 	internal void AddWarfareInfo(WarfareInfo info){
 		if(!this._warfareInfo.ContainsKey(info.warfare.id)){
 			this._warfareInfo.Add(info.warfare.id, info);
@@ -3217,26 +2853,6 @@ public class Kingdom{
 		int transferAmount = (int)(this.baseWeapons * transferPercentage);
 		this.AdjustBaseWeapons (-transferAmount);
 		kingdomToBeProvided.AdjustBaseWeapons (transferAmount);
-//		string weaponsOrArmor = "Weapons";
-//		bool isAllyUnderAttack = kingdomToBeProvided.IsUnderAttack ();
-//		bool isAllyAttacking = kingdomToBeProvided.IsAttacking ();
-//		int transferAmount = 0;
-//		if(isAllyUnderAttack && isAllyAttacking){
-//			weaponsOrArmor = "Armors";
-//		}else{
-//			if(isAllyUnderAttack){
-//				weaponsOrArmor = "Armors";
-//			}
-//		}
-//
-//		if(weaponsOrArmor == "Weapons"){
-//			
-//		}else{
-//			transferAmount = (int)(this.baseArmor * transferPercentage);
-//			this.AdjustBaseArmors (-transferAmount);
-//			kingdomToBeProvided.AdjustBaseArmors (transferAmount);
-//		}
-
 		return transferAmount.ToString () + " Weapons";
 	}
 	internal Kingdom GetKingdomWithHighestThreat(){
@@ -3480,12 +3096,7 @@ public class Kingdom{
 		if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS){
 			int weaponsDestroyed = targetKingdom.DestroyWeaponsSubterfuge ();
 			ShowSuccessSubterfugeLog (subterfuge, targetKingdom, weaponsDestroyed);
-		}
-//		else if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS){
-//			int armorsDestroyed = targetKingdom.DestroyArmorsSubterfuge ();
-//			ShowSuccessSubterfugeLog (subterfuge, targetKingdom, armorsDestroyed);
-//		}
-		else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
 			targetKingdom.InciteUnrestSubterfuge ();
 			ShowSuccessSubterfugeLog (subterfuge, targetKingdom);
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.FLATTER){
@@ -3497,15 +3108,10 @@ public class Kingdom{
 		}
 	}
 	private void CreateCriticalFailSubterfugeAction(SUBTERFUGE_ACTIONS subterfuge, Kingdom targetKingdom){
-		if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS){
+		if (subterfuge == SUBTERFUGE_ACTIONS.DESTROY_WEAPONS) {
 			int weaponsDestroyed = DestroyWeaponsSubterfuge ();
 			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, weaponsDestroyed);
-		}
-//		else if(subterfuge == SUBTERFUGE_ACTIONS.DESTROY_ARMORS){
-//			int armorsDestroyed = DestroyArmorsSubterfuge ();
-//			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom, armorsDestroyed);
-//		}
-		else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
+		}else if(subterfuge == SUBTERFUGE_ACTIONS.REDUCE_STABILITY){
 			InciteUnrestSubterfuge ();
 			ShowCriticalFailSubterfugeLog (subterfuge, targetKingdom);
 		}else if(subterfuge == SUBTERFUGE_ACTIONS.FLATTER){
@@ -3528,11 +3134,6 @@ public class Kingdom{
 		this.AdjustBaseWeapons (-weaponsToBeDestroyed);
 		return weaponsToBeDestroyed;
 	}
-//	private int DestroyArmorsSubterfuge(){
-//		int armorsToBeDestroyed = (int)((float)this._baseArmor * 0.05f);
-//		this.AdjustBaseArmors (-armorsToBeDestroyed);
-//		return armorsToBeDestroyed;
-//	}
 	private void InciteUnrestSubterfuge(){
 		this.AdjustStability (-5);
 	}
