@@ -40,7 +40,7 @@ public class Minimap : MonoBehaviour {
         Vector2 localPoint;
         //This returns a screen point relative to the size of the image, with 0,0 at the center of the image and half of the width and height as the left, right, top and bottom bounds
         RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, minimapCamera, out localPoint);
-        Debug.Log(localPoint);
+        //Debug.Log(localPoint);
         Vector3 targetPos = new Vector3(localPoint.x / xMagicNum, localPoint.y / yMagicNum, -10f);
         CameraMove.Instance.MoveMainCamera(targetPos);
     }
@@ -49,6 +49,15 @@ public class Minimap : MonoBehaviour {
         isDragging = true;
         PointerEventData ped = (PointerEventData)data;
         CameraMove.Instance.MoveMainCamera(GetLocalCursorPoint(ped));
+    }
+
+    void OnDrag() {
+        isDragging = true;
+        OnClickMinimap();
+    }
+
+    void OnDragEnd() {
+        isDragging = false;
     }
 
     public void OnDragFinish(BaseEventData data) {
