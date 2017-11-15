@@ -12,7 +12,7 @@ public class Minimap : MonoBehaviour {
     [SerializeField] private UITexture minimapTexture;
     [SerializeField] private Camera minimapCamera;
     [SerializeField] private RectTransform minimapTransform;
-    [SerializeField] private RectTransform cameraBordersTransform;
+    [SerializeField] private UIWidget cameraBordersWidget;
 
     private float minX;
     private float maxX;
@@ -79,14 +79,14 @@ public class Minimap : MonoBehaviour {
         newPos.x *= xMagicNum;
         newPos.y *= yMagicNum;
 
-        cameraBordersTransform.localPosition = newPos;
+        cameraBordersWidget.transform.localPosition = newPos;
 
         ConstrainBounds();
     }
 
     public void UpdateCameraBorderScale() {
         float newScale = CameraMove.Instance.currentFOV / CameraMove.Instance.maxFOV;
-        cameraBordersTransform.localScale = new Vector3(newScale, newScale, 1f);
+        cameraBordersWidget.transform.localScale = new Vector3(newScale, newScale, 1f);
         ComputeBounds();
     }
     
@@ -95,8 +95,8 @@ public class Minimap : MonoBehaviour {
         float minimapTextureWidth = minimapTransform.rect.width;
         float minimapTextureHeight = minimapTransform.rect.height;
 
-        float cameraBordersWidth = cameraBordersTransform.rect.width * cameraBordersTransform.localScale.x;
-        float cameraBordersHeight = cameraBordersTransform.rect.height * cameraBordersTransform.localScale.y;
+        float cameraBordersWidth = cameraBordersWidget.width * cameraBordersWidget.transform.localScale.x;
+        float cameraBordersHeight = cameraBordersWidget.height * cameraBordersWidget.transform.localScale.y;
 
         maxX = (minimapTextureWidth - cameraBordersWidth) / 2f;
         minX = maxX * -1f;
@@ -105,9 +105,9 @@ public class Minimap : MonoBehaviour {
     }
 
     private void ConstrainBounds() {
-        cameraBordersTransform.localPosition = new Vector3(
-            Mathf.Clamp(cameraBordersTransform.localPosition.x, minX, maxX),
-            Mathf.Clamp(cameraBordersTransform.localPosition.y, minY, maxY),
-            cameraBordersTransform.localPosition.z);
+        //cameraBordersTransform.localPosition = new Vector3(
+        //    Mathf.Clamp(cameraBordersTransform.localPosition.x, minX, maxX),
+        //    Mathf.Clamp(cameraBordersTransform.localPosition.y, minY, maxY),
+        //    cameraBordersTransform.localPosition.z);
     }
 }
