@@ -430,6 +430,7 @@ public class Citizen {
         //Remove Citizen From City First
         City cityOfCitizen = this.city;
         Kingdom kingdomOfCitizen = this.city.kingdom;
+        ROLE previousRoleOfCitizen = this.role;
         kingdomOfCitizen.RemoveCitizenFromKingdom(this, cityOfCitizen);
 
         //Manage Citizen Inheritance
@@ -443,6 +444,15 @@ public class Citizen {
                 this.assignedRole.OnDeath(); //Refer to here, when changing succession
                 this.assignedRole = null;
             }
+        }
+
+        if(previousRoleOfCitizen == ROLE.KING) {
+            //Show king death notification
+            Log deathLog = new Log(GameManager.Instance.month, GameManager.Instance.days, GameManager.Instance.year, "General", "Citizen", "king_death");
+            deathLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            deathLog.AddToFillers(kingdomOfCitizen, kingdomOfCitizen.name, LOG_IDENTIFIER.KINGDOM_1);
+            deathLog.AddToFillers(kingdomOfCitizen.king, kingdomOfCitizen.king.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            UIManager.Instance.ShowNotification(deathLog);
         }
 
         //Manage Citizen Marriage

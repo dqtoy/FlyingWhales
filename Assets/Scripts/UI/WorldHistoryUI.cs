@@ -64,7 +64,7 @@ public class WorldHistoryUI : MonoBehaviour {
         tweenPos.PlayForward();
     }
 
-    private void HideWorldHistory() {
+    public void HideWorldHistory() {
         isShowing = false;
         tweenPos.PlayReverse();
     }
