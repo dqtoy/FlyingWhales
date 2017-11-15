@@ -60,7 +60,7 @@ public class Expansion : GameEvent {
             newLog.AddToFillers(this.startedByKingdom, this.startedByKingdom.name, LOG_IDENTIFIER.KINGDOM_1);
             newLog.AddToFillers (this.hexTileToExpandTo.city, this.hexTileToExpandTo.city.name, LOG_IDENTIFIER.CITY_1);
             //if (UIManager.Instance.currentlyShowingKingdom.id == startedByKingdom.id) {
-			UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { startedByKingdom }, true);
+			UIManager.Instance.ShowNotification(newLog, new HashSet<Kingdom>() { startedByKingdom }, false);
             //}
 
         }

@@ -206,12 +206,11 @@ public class WorldHistoryUI : MonoBehaviour {
 
         logItemToUse.SetLog(log);
         logHistory.Add(log, logItemToUse);
-        if(DoesLogIncludeKingdom(log, selectedKingdoms)) {
+        if (DoesLogIncludeKingdom(log, selectedKingdoms)) {
             logItemToUse.gameObject.SetActive(true);
             StartCoroutine(RepositionTable(worldHistoryTable));
-            StartCoroutine(RepositionScrollView(worldHistoryScrollView, true));
+            StartCoroutine(RepositionScrollView(worldHistoryScrollView, isShowing));
         }
-        
     }
     private void RemoveLogFromWorldHistory(Log log) {
         WorldHistoryItem itemOfLog = logHistory[log];
