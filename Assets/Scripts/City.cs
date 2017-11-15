@@ -105,9 +105,6 @@ public class City{
 	public List<HexTile> plaguedSettlements{
 		get{ return this.structures.Where (x => x.isPlagued).ToList();} //Get plagued settlements
 	}
-    //internal List<City> adjacentCities {
-    //    get { return _adjacentCities; }
-    //}
     public int powerPoints {
         get { return kingdom.kingdomTypeData.productionPointsSpend.power + cityLevel + kingdom.techLevel; }
     }
@@ -135,9 +132,6 @@ public class City{
 			return Utilities.defaultCityHP +  (40 * this.structures.Count) + (20 * this.kingdom.techLevel);
 		} //+1 since the structures list does not contain the main hex tile
 	}
-//	public int maxHPRebel {
-//		get{ return 600;}
-//	}
     public List<HexTile> ownedTiles {
         get { return this._ownedTiles; }
     }
@@ -260,24 +254,10 @@ public class City{
         kingdom.SetFogOfWarStateForTile(this.hexTile, FOG_OF_WAR_STATE.VISIBLE);
 
 //		AdjustPopulation (50);
-		AdjustFoodCount(this.foodExcessCapacity);
 
 		GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
 		increaseDueDate.AddMonths(1);
 		SchedulingManager.Instance.AddEntry(increaseDueDate.month, increaseDueDate.day, increaseDueDate.year, () => MonthlyAction());
-		//if(!isRebel){
-  //          hexTile.CheckLairsInRange ();
-		//	LevelUpBalanceOfPower();
-		//	AdjustDefense(50);
-  //          SetProductionGrowthPercentage(1f);
-  //          //this._region.SetOccupant(this);
-  //          DailyGrowthResourceBenefits();
-		//	AddOneTimeResourceBenefits();
-  //          Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
-		//	Messenger.AddListener("CitizenDied", CheckCityDeath);
-
-		//}
-
     }
 	private void MonthlyAction(){
 		if (!this.isDead) {
@@ -293,14 +273,11 @@ public class City{
 	}
     internal void SetupInitialValues() {
         hexTile.CheckLairsInRange();
-        //LevelUpBalanceOfPower();
-        //AdjustArmor(50);
+		AdjustFoodCount(this.foodExcessCapacity);
         SetProductionGrowthPercentage(1f);
         DailyGrowthResourceBenefits();
         AddOneTimeResourceBenefits();
         Messenger.AddListener("CityEverydayActions", CityEverydayTurnActions);
-        //GameDate increaseDueDate = new GameDate(GameManager.Instance.month, 1, GameManager.Instance.year);
-        //increaseDueDate.AddMonths(1);
         if (GameManager.Instance.enableGameAgents) {
             SchedulingManager.Instance.AddEntry(GameManager.Instance.month, GameManager.daysInMonth[GameManager.Instance.month], GameManager.Instance.year, () => SpawnGuardsAtEndOfMonth());
         }
@@ -381,12 +358,10 @@ public class City{
         //citizenToOccupyCity.UpdateKingOpinion();
         //CreateInitialFamilies(false);
         this.kingdom.CreateNewGovernorFamily(this);
-//		this.UpdateDailyProduction();
         this.hexTile.CreateCityNamePlate(this);
         HighlightAllOwnedTiles(69f / 255f);
         UIManager.Instance.UpdateKingdomCitiesMenu();
         UIManager.Instance.UpdateMinimapInfo();
-//        KingdomManager.Instance.CheckWarTriggerMisc (this.kingdom, WAR_TRIGGER.TARGET_GAINED_A_CITY);
 	}
 
 	/*
@@ -402,24 +377,17 @@ public class City{
         //Set tile as occupied
         tileToBuy.Occupy (this);
 
-        //Collect any events on the purchased tile
-//        tileToBuy.CollectEventOnTile(kingdom);
-
         ////Set tile as visible for the kingdom that bought it
         //kingdom.SetFogOfWarStateForTile(tileToBuy, FOG_OF_WAR_STATE.VISIBLE);
 
 		if(Messenger.eventTable.ContainsKey("OnUpdatePath")){
 			Messenger.Broadcast<HexTile>("OnUpdatePath", tileToBuy);
 		}
-//        tileToBuy.CreateStructureOnTile(STRUCTURE_TYPE.GENERIC);
 
         //Update necessary data
         this.UpdateDailyProduction();
-//        _kingdom.UpdatePopulationCapacity();
 
         tileToBuy.CheckLairsInRange ();
-        //LevelUpBalanceOfPower();
-		//this.UpdateHP (percentageHP);
         UIManager.Instance.UpdateMinimapInfo();
     }
 
@@ -441,21 +409,12 @@ public class City{
 	 * */
 	protected void CityEverydayTurnActions(){
 		this.hasReinforced = false;
-		//this.ProduceGold();
-//		this.AttemptToIncreaseHP();
-//		if(this._slavesCount > 0){
-//			this.AdjustSlavesCount(-1);
-//		}
 	}
 	/*
 	 * Function that listens to onWeekEnd. Performed every tick.
 	 * */
 	protected void RebelFortEverydayTurnActions(){
 		this.hasReinforced = false;
-//		this.AttemptToIncreaseHP();
-//		if(this._slavesCount > 0){
-//			this.AdjustSlavesCount(-1);
-//		}
 	}
 	/*
 	 * Increase a city's HP every month.
@@ -469,16 +428,6 @@ public class City{
 			}
 			this.IncreaseHP (hpIncrease);
 		}
-//		if(this.increaseHpInterval == 1){
-//			this.increaseHpInterval = 0;
-//			this.IncreaseHP (1);
-//		}else{
-//			this.increaseHpInterval += 1;
-//		}
-
-//		if (GameManager.daysInMonth[GameManager.Instance.month] == GameManager.Instance.days) {
-//			this.IncreaseHP(HP_INCREASE);
-//		}
 	}
 	/*
 	 * Function to increase HP.
@@ -487,9 +436,6 @@ public class City{
 		this._hp += amountToIncrease;
 		if (this._hp > this.maxHP) {
 			this._hp = this.maxHP;
-//			if(this.rebellion != null){
-//				this._hp = this.maxHPRebel;
-//			}
 		}
 	}
 
@@ -658,98 +604,12 @@ public class City{
 	}
 	private void SendFoodToOtherCities(int foodAmount){
 		SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (foodAmount, 0, 0, RESOURCE_TYPE.FOOD, this.hexTile, this));
-//		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
-//		orderedCities.Remove (this);
-//
-//		City chosenCity = null;
-//		int lowestResourceCount = 0;
-//		List<HexTile> path = new List<HexTile> ();
-//		for (int i = 0; i < orderedCities.Count; i++) {
-//			if(orderedCities[i].foodCount < orderedCities[i].foodRequirement){
-//				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.hexTile, orderedCities [i].hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this._kingdom);
-//				if (newPath != null && newPath.Count > 0) {
-//					if(chosenCity == null){
-//						chosenCity = orderedCities[i];
-//						lowestResourceCount = orderedCities[i].foodCount;
-//						path = newPath;
-//					}else{
-//						if(orderedCities[i].foodCount < lowestResourceCount){
-//							chosenCity = orderedCities[i];
-//							lowestResourceCount = orderedCities[i].foodCount;
-//							path = newPath;
-//						}
-//					}
-//				}
-//			}
-//		}
-//		if(chosenCity != null){
-//			this.AdjustFoodCount (-foodAmount);
-//			EventCreator.Instance.CreateSendResourceEvent (foodAmount, 0, 0, RESOURCE_TYPE.FOOD, this.hexTile, chosenCity.hexTile, this, path);
-//		}
 	}
 	private void SendMaterialToOtherCities(int materialAmount){
 		SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (0, materialAmount, 0, RESOURCE_TYPE.MATERIAL, this.hexTile, this));
-
-//		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
-//		orderedCities.Remove (this);
-//
-//		City chosenCity = null;
-//		int lowestResourceCount = 0;
-//		List<HexTile> path = new List<HexTile> ();
-//		for (int i = 0; i < orderedCities.Count; i++) {
-//			if(orderedCities[i].materialCount < orderedCities[i].materialRequirement){
-//				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.hexTile, orderedCities [i].hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this._kingdom);
-//				if (newPath != null && newPath.Count > 0) {
-//					if (chosenCity == null) {
-//						chosenCity = orderedCities [i];
-//						lowestResourceCount = orderedCities [i].materialCount;
-//						path = newPath;
-//					} else {
-//						if (orderedCities [i].materialCount < lowestResourceCount) {
-//							chosenCity = orderedCities [i];
-//							lowestResourceCount = orderedCities [i].materialCount;
-//							path = newPath;
-//						}
-//					}
-//				}
-//			}
-//		}
-//		if(chosenCity != null){
-//			this.AdjustMaterialCount (-materialAmount);
-//			EventCreator.Instance.CreateSendResourceEvent (0, materialAmount, 0, RESOURCE_TYPE.MATERIAL, this.hexTile, chosenCity.hexTile, this);
-//		}
 	}
 	private void SendOreToOtherCities(int oreAmount){
 		SendResourceThreadPool.Instance.AddToThreadPool (new SendResourceThread (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, this));
-
-//		List<City> orderedCities = this._kingdom.cities.OrderBy (x => x.hexTile.GetDistanceTo (this.hexTile)).ToList ();
-//		orderedCities.Remove (this);
-//
-//		City chosenCity = null;
-//		int lowestResourceCount = 0;
-//		List<HexTile> path = new List<HexTile> ();
-//		for (int i = 0; i < orderedCities.Count; i++) {
-//			if(orderedCities[i].oreCount < orderedCities[i].oreRequirement){
-//				List<HexTile> newPath = PathGenerator.Instance.GetPath (this.hexTile, orderedCities [i].hexTile, PATHFINDING_MODE.USE_ROADS_WITH_ALLIES, this._kingdom);
-//				if (newPath != null && newPath.Count > 0) {
-//					if (chosenCity == null) {
-//						chosenCity = orderedCities [i];
-//						lowestResourceCount = orderedCities [i].oreCount;
-//						path = newPath;
-//					} else {
-//						if (orderedCities [i].oreCount < lowestResourceCount) {
-//							chosenCity = orderedCities [i];
-//							lowestResourceCount = orderedCities [i].oreCount;
-//							path = newPath;
-//						}
-//					}
-//				}
-//			}
-//		}
-//		if(chosenCity != null){
-//			this.AdjustOreCount (-oreAmount);
-//			EventCreator.Instance.CreateSendResourceEvent (0, 0, oreAmount, RESOURCE_TYPE.ORE, this.hexTile, chosenCity.hexTile, this);
-//		}
 	}
 	internal void ReceiveSendResourceThread(int foodAmount, int materialAmount, int oreAmount, RESOURCE_TYPE resourceType, HexTile sourceHextile, HexTile targetHextile, City targetCity, List<HexTile> path){
 		if (targetHextile != null && targetHextile.city != null && targetCity != null && (path != null || path.Count > 0)) {
@@ -767,66 +627,6 @@ public class City{
 	}
 	#endregion
 
-	//internal void RemoveCitizenFromCity(Citizen citizenToRemove, bool isFleeing = false){
- //       //RemoveCitizenInImportantCitizensInCity(citizenToRemove);
-	//	if(!isFleeing){
-	//		if (citizenToRemove.role == ROLE.GOVERNOR) {
-	//			this.AssignNewGovernor();
-	//		}
-	//		/*else if (citizenToRemove.role == ROLE.GENERAL) {
-	//			((General)citizenToRemove.assignedRole).UntrainGeneral();
-	//		}*/
-
-	//		//citizenToRemove.role = ROLE.UNTRAINED;
-	//		//citizenToRemove.assignedRole = null;
-	//	}
-
-
-	//	this.citizens.Remove (citizenToRemove);
- //       //citizenToRemove.city = null;
- //   }
-
-	//internal void AddCitizenToCity(Citizen citizenToAdd){
-	//	this.citizens.Add(citizenToAdd);
-	//	citizenToAdd.city = this;
-	//	citizenToAdd.currentLocation = this.hexTile;
- //   }
-
-	//internal void AssignNewGovernor(){
-	//	if(this.isDead){
-	//		return;
-	//	}
- //       //CreateNewGovernorFamily();
-	//}
-
-	//internal Citizen GetGovernorSuccession(){
-	//	List<Citizen> succession = new List<Citizen> ();
-	//	if (this.governor != null) {
-	//		for (int i = 0; i < this.governor.children.Count; i++) {
-	//			if (!this.governor.children [i].isGovernor && !this.governor.children[i].isDead) {
-	//				return this.governor.children [i];
-	//			}
-	//		}
-	//		List<Citizen> siblings = this.governor.GetSiblings ();
-	//		if(siblings != null && siblings.Count > 0){
-	//			return siblings [0];
-	//		}
-	//	}
-
-	//	GENDER gender = GENDER.MALE;
-	//	int randomGender = UnityEngine.Random.Range (0, 100);
-	//	if(randomGender < 20){
-	//		gender = GENDER.FEMALE;
-	//	}
-	//	Citizen governor = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 2);
-
-	//	MONTH monthGovernor = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
-	//	governor.AssignBirthday (monthGovernor, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthGovernor] + 1), (GameManager.Instance.year - governor.age));
- //       governor.UpdateKingOpinion();
-
-	//	return governor;
-	//}
-
 	public void KillCity(){
         RemoveListeners();
 		RemoveOneTimeResourceBenefits();
@@ -838,10 +638,6 @@ public class City{
         UnityEngine.Object.Destroy(this.hexTile.GetComponent<CityTaskManager>());
 
 		this.isPaired = false;
-
-//		if (this.rebellion != null) {
-//			RebelCityConqueredByAnotherKingdom ();
-//		}
 
         region.RemoveOccupant();
 		this.hexTile.DestroyConnections ();
@@ -955,23 +751,7 @@ public class City{
 		Messenger.RemoveListener("CityEverydayActions", CityEverydayTurnActions);
 		Messenger.RemoveListener("OnDayEnd", this.hexTile.gameObject.GetComponent<PandaBehaviour>().Tick);
     }
-
-//    internal bool HasAdjacency(int kingdomID){
-//		for(int i = 0; i < this.hexTile.connectedTiles.Count; i++){
-//			if(this.hexTile.connectedTiles[i].isOccupied){
-//				if(this.hexTile.connectedTiles[i].city.kingdom.id == kingdomID){
-//					return true;
-//				}
-//			}
-//		}
-//		return false;
-//	}
-
-	//internal void MoveCitizenToThisCity(Citizen citizenToMove, bool isFleeing = false){
-	//	citizenToMove.city.RemoveCitizenFromCity(citizenToMove, isFleeing);
-	//	this.AddCitizenToCity(citizenToMove);
-	//}
-
+		
 	internal Citizen CreateNewAgent(ROLE role, HexTile targetLocation, HexTile sourceLocation = null){
 		if(role == ROLE.GENERAL){
 			return null;
@@ -1005,7 +785,6 @@ public class City{
 			if(sourceLocation != null){
 				citizen.assignedRole.location = sourceLocation;
 			}
-			//this.citizens.Remove (citizen);
 			return citizen;
 		}
 	}
@@ -1023,7 +802,6 @@ public class City{
 			MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 			citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age), false);
 			citizen.AssignRole (role);
-			//this.citizens.Remove (citizen);
 			return citizen;
 		}else{
 			List<HexTile> path = null;
@@ -1068,15 +846,10 @@ public class City{
 			if(path != null){
 				citizen.assignedRole.daysBeforeMoving = path [0].movementDays;
 			}
-			//this.citizens.Remove (citizen);
 			return citizen;
 		}
 	}
 	internal Citizen CreateGeneralForCombat(List<HexTile> path, HexTile targetLocation, bool isRebel = false){
-//		int cost = 0;
-//		if(!this.kingdom.CanCreateAgent(ROLE.GENERAL, ref cost)){
-//			return null;
-//		}
 		List<HexTile> newPath = new List<HexTile> (path);
 		if(targetLocation == path[0]){
 			newPath.Reverse ();
@@ -1090,7 +863,6 @@ public class City{
 		if(randomGender < 20){
 			gender = GENDER.FEMALE;
 		}
-//		int maxGeneration = this.citizens.Max (x => x.generation);
 		Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 1);
 		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age), false);
@@ -1105,8 +877,6 @@ public class City{
 		if(!isRebel){
 			general.damage = ((General)citizen.assignedRole).GetDamage();
 		}
-//		this._kingdom.AdjustGold (-cost);
-		//this.citizens.Remove (citizen);
 		return citizen;
 	}
 	internal Citizen CreateGeneralForLair(List<HexTile> path, HexTile targetLocation){
@@ -1115,7 +885,6 @@ public class City{
 		if(randomGender < 20){
 			gender = GENDER.FEMALE;
 		}
-//		int maxGeneration = this.citizens.Max (x => x.generation);
 		Citizen citizen = new Citizen (this, UnityEngine.Random.Range (20, 36), gender, 1);
 		MONTH monthCitizen = (MONTH)(UnityEngine.Random.Range (1, System.Enum.GetNames (typeof(MONTH)).Length));
 		citizen.AssignBirthday (monthCitizen, UnityEngine.Random.Range (1, GameManager.daysInMonth[(int)monthCitizen] + 1), (GameManager.Instance.year - citizen.age), false);
@@ -1127,25 +896,11 @@ public class City{
 		General general = (General)citizen.assignedRole;
 		general.spawnRate = path.Sum (x => x.movementDays) + 2;
 		general.damage = ((General)citizen.assignedRole).GetDamage();
-		//		this._kingdom.AdjustGold (-cost);
-		//this.citizens.Remove (citizen);
 		return citizen;
 	}
     internal void ChangeKingdom(Kingdom otherKingdom, List<Citizen> citizensToAdd) {
         _region.RemoveOccupant();
         KillActiveGuards();
-        //List<HexTile> allTilesOfCity = new List<HexTile>();
-        //allTilesOfCity.AddRange(ownedTiles);
-        //allTilesOfCity.AddRange(borderTiles);
-        ////allTilesOfCity.AddRange(outerTiles);
-        //for (int i = 0; i < allTilesOfCity.Count; i++) {
-        //    HexTile currTile = allTilesOfCity[i];
-        //    if(!currTile.isBorderOfCities.Intersect(_kingdom.cities).Any() && !currTile.isOuterTileOfCities.Intersect(_kingdom.cities).Any() && 
-        //        (currTile.ownedByCity == null || !_kingdom.cities.Contains(currTile.ownedByCity))) {
-        //        _kingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.SEEN);
-        //    }
-        //    otherKingdom.SetFogOfWarStateForTile(currTile, FOG_OF_WAR_STATE.VISIBLE);
-        //}
 
 		this._kingdom.AdjustPopulation (-this._population, false);
 		this._kingdom.AdjustSoldiers (-this._soldiers, false);
@@ -1161,19 +916,10 @@ public class City{
             Citizen citizenToAdd = citizensToAdd[i];
             otherKingdom.AddCitizenToKingdom(citizenToAdd, this);
         }
-        ////Reset Points
-        //_powerPoints = 0;
-        //_defensePoints = 0;
-        //_techPoints = 0;
         for (int i = 0; i < this._ownedTiles.Count; i++) {
             this._ownedTiles[i].ReColorStructure();
             this._ownedTiles[i].SetMinimapTileColor(_kingdom.kingdomColor);
-            //Reevaluate points based on new kingdom
-            //LevelUpBalanceOfPower();
         }
-        //_powerPoints += _kingdom.techLevel;
-        //_defensePoints += _kingdom.techLevel;
-
         this.hexTile.UpdateCityNamePlate();
         CameraMove.Instance.UpdateMinimapTexture();
     }
@@ -1214,21 +960,6 @@ public class City{
 	}
 
     #region Balance Of Power
-	//internal void AdjustPowerPoints(int powerPoints) {
-	//	this._powerPoints += powerPoints;
-	//}
-	//internal void SetPowerPoints(int powerPoints) {
-	//	this._powerPoints = powerPoints;
-	//}
-	//internal void AdjustDefensePoints(int defensePoints) {
-	//	this._defensePoints += defensePoints;
-	//}
-	//internal void SetDefensePoints(int defensePoints) {
-	//	this._defensePoints = defensePoints;
-	//}
- //   internal void AdjustTechPoints(int techPoints) {
- //       _techPoints += techPoints;
- //   }
     internal void SetWeapons(int newPower) {
         //_kingdom.AdjustBasePower(-_power);
         _weapons = 0;
@@ -1253,12 +984,6 @@ public class City{
         _armor = Mathf.Max(_armor, 0);
         KingdomManager.Instance.UpdateKingdomList();
     }
-
-    //private void LevelUpBalanceOfPower() {
-    //    AdjustPowerPoints(_kingdom.kingdomTypeData.productionPointsSpend.power);
-    //    AdjustDefensePoints(_kingdom.kingdomTypeData.productionPointsSpend.defense);
-    //    AdjustTechPoints(_kingdom.kingdomTypeData.productionPointsSpend.tech);
-    //}
 	internal void MonthlyResourceBenefits(ref int weaponsIncrease, ref int armorIncrease, ref int stabilityIncrease){
 		switch (this._region.specialResource){
 		case RESOURCE.CORN:
@@ -1414,8 +1139,7 @@ public class City{
 			this._population += adjustment;
 			this._kingdom.AdjustPopulation (adjustment, isUpdateKingdomList);
 		}
-
-//		this._population = Mathf.Clamp (this._population, 0, this.populationCapacity);
+			
 		if(this._population == 0) {
 			if(supposedPopulation < 0){
 				AdjustSoldiers (supposedPopulation);
@@ -1424,12 +1148,10 @@ public class City{
 				}
 			}
 		}
-//		KingdomManager.Instance.UpdateKingdomList();
 	}
 	internal void SetPopulation(int newPopulation) {
 		this._population = newPopulation;
 		this._kingdom.UpdatePopulation ();
-//		KingdomManager.Instance.UpdateKingdomList();
 	}
 	#endregion
 
