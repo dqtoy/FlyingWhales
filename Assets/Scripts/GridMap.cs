@@ -123,7 +123,7 @@ public class GridMap : MonoBehaviour {
                 currHex.SetElevation(hexToCopy.elevationType);
                 Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
                 Biomes.Instance.AddBiomeDetailToTile(currHex);
-                currHex.CopyEdgesFromOtherTile(hexToCopy);
+                //currHex.CopyEdgesFromOtherTile(hexToCopy);
 
                 currHex.DisableColliders();
                 currHex.HideFogOfWarObjects();

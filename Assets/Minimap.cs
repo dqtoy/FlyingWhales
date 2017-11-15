@@ -105,9 +105,9 @@ public class Minimap : MonoBehaviour {
     }
 
     private void ConstrainBounds() {
-        //cameraBordersTransform.localPosition = new Vector3(
-        //    Mathf.Clamp(cameraBordersTransform.localPosition.x, minX, maxX),
-        //    Mathf.Clamp(cameraBordersTransform.localPosition.y, minY, maxY),
-        //    cameraBordersTransform.localPosition.z);
+        cameraBordersWidget.transform.localPosition = new Vector3(
+            Mathf.Clamp(cameraBordersWidget.transform.localPosition.x, minX, maxX),
+            Mathf.Clamp(cameraBordersWidget.transform.localPosition.y, minY, maxY),
+            cameraBordersWidget.transform.localPosition.z);
     }
 }

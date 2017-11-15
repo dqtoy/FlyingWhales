@@ -24,7 +24,7 @@ public class MapGenerator : MonoBehaviour {
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
-        //GridMap.Instance.GenerateOuterGrid();
+        GridMap.Instance.GenerateOuterGrid();
         if (GameManager.Instance.enableGameAgents) {
             PathfindingManager.Instance.CreateGrid();
         }

@@ -113,10 +113,17 @@ public class CameraMove : MonoBehaviour {
         //MIN_Y = minY - 4.5f;
         //MAX_Y = maxY + 3f;
 
-        MIN_X = minX;
-        MAX_X = maxX;
-        MIN_Y = minY;
-        MAX_Y = maxY;
+        float halfOfHexagon = (256f / 2f) / 100f;
+
+        MIN_X = minX - halfOfHexagon;
+        MAX_X = maxX + (halfOfHexagon * 9f);
+        MIN_Y = minY - (halfOfHexagon * 2f);
+        MAX_Y = maxY + halfOfHexagon;
+
+        //MIN_X = minX;
+        //MAX_X = maxX;
+        //MIN_Y = minY;
+        //MAX_Y = maxY;
 
         //MIN_X = minX - 0.6f;
         //MAX_X = maxX - 0.6f;
