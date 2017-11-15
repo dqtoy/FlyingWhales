@@ -108,15 +108,15 @@ public class CameraMove : MonoBehaviour {
          minY = vertExtent - mapY / 2.0f;
          maxY = mapY / 2.0f - vertExtent;
 
-        MIN_X = minX - 2.5f;
-        MAX_X = maxX + 15f;
-        MIN_Y = minY - 4.5f;
-        MAX_Y = maxY + 3f;
+        //MIN_X = minX - 2.5f;
+        //MAX_X = maxX + 15f;
+        //MIN_Y = minY - 4.5f;
+        //MAX_Y = maxY + 3f;
 
-        //MIN_X = minX;
-        //MAX_X = maxX;
-        //MIN_Y = minY;
-        //MAX_Y = maxY;
+        MIN_X = minX;
+        MAX_X = maxX;
+        MIN_Y = minY;
+        MAX_Y = maxY;
 
         //MIN_X = minX - 0.6f;
         //MAX_X = maxX - 0.6f;

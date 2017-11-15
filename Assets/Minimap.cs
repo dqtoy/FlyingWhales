@@ -9,6 +9,8 @@ public class Minimap : MonoBehaviour {
 
     public bool isDragging = false;
 
+    [SerializeField] private UITexture minimapTexture;
+    [SerializeField] private Camera minimapCamera;
     [SerializeField] private RectTransform minimapTransform;
     [SerializeField] private RectTransform cameraBordersTransform;
 
@@ -17,8 +19,30 @@ public class Minimap : MonoBehaviour {
     private float minY;
     private float maxY;
 
+    private float xMagicNum;
+    private float yMagicNum;
+
     private void Awake() {
         Instance = this;
+    }
+
+    internal void Initialize() {
+        //Compute the magic numbers
+        float minimapMaxXBounds = minimapTexture.width / 2f;
+        float minimapMaxYBounds = minimapTexture.height / 2f;
+
+        HexTile topRightHexTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1];
+        xMagicNum = minimapMaxXBounds / topRightHexTile.transform.position.x;
+        yMagicNum = minimapMaxYBounds / topRightHexTile.transform.position.y;
+    }
+
+    public void OnClickMinimap() {
+        Vector2 localPoint;
+        //This returns a screen point relative to the size of the image, with 0,0 at the center of the image and half of the width and height as the left, right, top and bottom bounds
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, Input.mousePosition, minimapCamera, out localPoint);
+        Debug.Log(localPoint);
+        Vector3 targetPos = new Vector3(localPoint.x / xMagicNum, localPoint.y / yMagicNum, -10f);
+        CameraMove.Instance.MoveMainCamera(targetPos);
     }
 
     public void OnPointerClickWithBaseData(BaseEventData data) {
@@ -43,6 +67,9 @@ public class Minimap : MonoBehaviour {
         //Vector3 mainCameraPosInWorld = CameraMove.Instance.wholeMapCamera.WorldToScreenPoint(Camera.main.transform.position);
         //RectTransformUtility.ScreenPointToLocalPointInRectangle(minimapTransform, mainCameraPosInWorld, )
         Vector3 newPos = Camera.main.transform.position;
+        newPos.x *= xMagicNum;
+        newPos.y *= yMagicNum;
+
         cameraBordersTransform.localPosition = newPos;
 
         ConstrainBounds();

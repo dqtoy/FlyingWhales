@@ -18,12 +18,13 @@ public class MapGenerator : MonoBehaviour {
         }
         GridMap.Instance.GenerateGrid();
         CameraMove.Instance.CalculateCameraBounds();
+        Minimap.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
         CameraMove.Instance.SetWholemapCameraValues();
         EquatorGenerator.Instance.GenerateEquator();
         Biomes.Instance.GenerateElevation();
         Biomes.Instance.GenerateBiome();
-        GridMap.Instance.GenerateOuterGrid();
+        //GridMap.Instance.GenerateOuterGrid();
         if (GameManager.Instance.enableGameAgents) {
             PathfindingManager.Instance.CreateGrid();
         }

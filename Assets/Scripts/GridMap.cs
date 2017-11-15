@@ -108,19 +108,22 @@ public class GridMap : MonoBehaviour {
                 hex.transform.parent = _borderParent.transform;
                 hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
                 hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
-                hex.name = x + "," + y + "(Border)";
                 HexTile currHex = hex.GetComponent<HexTile>();
                 currHex.tileName = hex.name;
                 currHex.xCoordinate = x;
                 currHex.yCoordinate = y;
 
+
                 int xToCopy = Mathf.Max(x - (_borderThickness * 2), 0);
                 int yToCopy = Mathf.Max(y - (_borderThickness * 2), 0);
-
                 HexTile hexToCopy = map[xToCopy, yToCopy];
+
+                hex.name = x + "," + y + "(Border) Copied from " + hexToCopy.name;
+
                 currHex.SetElevation(hexToCopy.elevationType);
                 Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
                 Biomes.Instance.AddBiomeDetailToTile(currHex);
+                currHex.CopyEdgesFromOtherTile(hexToCopy);
 
                 currHex.DisableColliders();
                 currHex.HideFogOfWarObjects();
