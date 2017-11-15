@@ -58,6 +58,7 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateTileDetails();
         //CityGenerator.Instance.GenerateHabitableTiles(GridMap.Instance.listHexes);
 
+        UIManager.Instance.InitializeUI();
         ////PathGenerator.Instance.GenerateConnections(CityGenerator.Instance.stoneHabitableTiles);
 		UIManager.Instance.SetKingdomAsActive(KingdomManager.Instance.allKingdoms[0]);
 

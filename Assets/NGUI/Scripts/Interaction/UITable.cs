@@ -27,10 +27,13 @@ public class UITable : UIWidgetContainer
 	{
 		None,
 		Alphabetic,
+        Alphabetic_Reverse,
 		Horizontal,
 		Vertical,
 		Custom,
-	}
+        Numeric,
+        Numeric_Reverse
+    }
 
 	/// <summary>
 	/// How many columns there will be before a new line is started. 0 means unlimited.
@@ -122,9 +125,12 @@ public class UITable : UIWidgetContainer
 		if (sorting != Sorting.None)
 		{
 			if (sorting == Sorting.Alphabetic) list.Sort(UIGrid.SortByName);
-			else if (sorting == Sorting.Horizontal) list.Sort(UIGrid.SortHorizontal);
+            else if (sorting == Sorting.Alphabetic_Reverse) list.Sort(UIGrid.SortByNameReverse);
+            else if (sorting == Sorting.Horizontal) list.Sort(UIGrid.SortHorizontal);
 			else if (sorting == Sorting.Vertical) list.Sort(UIGrid.SortVertical);
-			else if (onCustomSort != null) list.Sort(onCustomSort);
+            else if (sorting == Sorting.Numeric) list.Sort(UIGrid.SortNumeric);
+            else if (sorting == Sorting.Numeric) list.Sort(UIGrid.SortNumericReverse);
+            else if (onCustomSort != null) list.Sort(onCustomSort);
 			else Sort(list);
 		}
 		return list;
