@@ -209,7 +209,7 @@ public class WorldHistoryUI : MonoBehaviour {
         if (DoesLogIncludeKingdom(log, selectedKingdoms)) {
             logItemToUse.gameObject.SetActive(true);
             StartCoroutine(RepositionTable(worldHistoryTable));
-            StartCoroutine(RepositionScrollView(worldHistoryScrollView, isShowing));
+            StartCoroutine(RepositionScrollView(worldHistoryScrollView));
         }
     }
     private void RemoveLogFromWorldHistory(Log log) {
