@@ -1625,24 +1625,24 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         "\n [b]Production Rate: [/b]" + (this.city.kingdom.productionRate * 100f).ToString() + "%" +
         "\n [b]Current Growth: [/b]" + this.city.currentGrowth.ToString() + "/" + this.city.maxGrowth.ToString() + "\n";
 
-        //text += "[b]Adjacent Kingdoms: [/b]\n";
-        //if (this.city.kingdom.adjacentKingdoms.Count > 0) {
-        //    for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
-        //        text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
+        text += "[b]Adjacent Kingdoms: [/b]\n";
+        if (this.city.kingdom.adjacentKingdoms.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.adjacentKingdoms.Count; i++) {
+                text += this.city.kingdom.adjacentKingdoms[i].name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
 
-        //text += "[b]Discovered Kingdoms: [/b]\n";
-        //if (this.city.kingdom.discoveredKingdoms.Count > 0) {
-        //    for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
-        //        Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
-        //        text += currKingdom.name + "\n";
-        //    }
-        //} else {
-        //    text += "NONE\n";
-        //}
+        text += "[b]Discovered Kingdoms: [/b]\n";
+        if (this.city.kingdom.discoveredKingdoms.Count > 0) {
+            for (int i = 0; i < this.city.kingdom.discoveredKingdoms.Count; i++) {
+                Kingdom currKingdom = this.city.kingdom.discoveredKingdoms[i];
+                text += currKingdom.name + "\n";
+            }
+        } else {
+            text += "NONE\n";
+        }
 
         //text += "[b]Alliance Kingdoms: [/b]\n";
         //if(this.city.kingdom.alliancePool != null) {

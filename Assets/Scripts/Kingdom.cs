@@ -2440,8 +2440,8 @@ public class Kingdom{
     }
     internal void RevalidateKingdomAdjacency(City removedCity) {
         List<Kingdom> kingdomsToCheck = new List<Kingdom>();
-        for (int i = 0; i < removedCity.region.adjacentRegions.Count; i++) {
-            Region currRegion = removedCity.region.adjacentRegions[i];
+        for (int i = 0; i < removedCity.region.adjacentRegionsViaMajorRoad.Count; i++) {
+            Region currRegion = removedCity.region.adjacentRegionsViaMajorRoad[i];
             if (currRegion.occupant != null) {
                 if (currRegion.occupant.kingdom != this && !kingdomsToCheck.Contains(currRegion.occupant.kingdom)) {
                     kingdomsToCheck.Add(currRegion.occupant.kingdom);
@@ -2456,7 +2456,7 @@ public class Kingdom{
                 //Revalidate adjacency
                 for (int j = 0; j < cities.Count; j++) {
                     Region regionOfCurrCity = cities[j].region;
-                    foreach (Region otherRegion in regionOfCurrCity.adjacentRegions.Where(x => x.occupant != null && x.occupant.kingdom.id != this.id)) {
+                    foreach (Region otherRegion in regionOfCurrCity.adjacentRegionsViaMajorRoad.Where(x => x.occupant != null && x.occupant.kingdom.id != this.id)) {
                         if (otherRegion.occupant.kingdom.id == otherKingdom.id) {
                             //otherKingdom is still adjacent to this kingdom, validity verified!
                             isValid = true;

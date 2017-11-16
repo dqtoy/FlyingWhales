@@ -11,6 +11,7 @@ public class Region {
     private List<HexTile> _outerGridTilesInRegion;
     private Color regionColor;
     private List<Region> _adjacentRegions;
+    private List<Region> _adjacentRegionsViaMajorRoad;
     private City _occupant;
 
     private Color defaultBorderColor = new Color(94f / 255f, 94f / 255f, 94f / 255f, 255f / 255f);
@@ -63,6 +64,9 @@ public class Region {
     internal List<Region> adjacentRegions {
         get { return _adjacentRegions; }
     }
+    internal List<Region> adjacentRegionsViaMajorRoad {
+        get { return _adjacentRegionsViaMajorRoad; }
+    }
     internal City occupant {
         get { return _occupant; }
     }
@@ -113,6 +117,7 @@ public class Region {
         _tilesInRegion = new List<HexTile>();
         _outerGridTilesInRegion = new List<HexTile>();
 		this._corpseMoundTiles = new List<HexTile> ();
+        _adjacentRegionsViaMajorRoad = new List<Region>();
         _connections = new List<object>();
         _roadTilesInRegion = new List<HexTile>();
         _landmarks = new List<Landmark>();
@@ -878,9 +883,10 @@ public class Region {
         List<Region> adjacentRegionsOfOtherRegions = new List<Region>();
         List<Kingdom> adjacentKingdoms = new List<Kingdom>();
 
-        for (int i = 0; i < _adjacentRegions.Count; i++) {
-            Region adjacentRegion = _adjacentRegions[i];
-            if(adjacentRegion.occupant != null) {
+        for (int i = 0; i < _adjacentRegionsViaMajorRoad.Count; i++) {
+            Region adjacentRegion = _adjacentRegionsViaMajorRoad[i];
+
+            if (adjacentRegion.occupant != null) {
                 Kingdom otherKingdom = adjacentRegion.occupant.kingdom;
                 if (otherKingdom != occupant.kingdom) {
                     if (!adjacentKingdoms.Contains(otherKingdom)) {
@@ -891,9 +897,9 @@ public class Region {
                     }
                     _occupant.kingdom.GetRelationshipWithKingdom(otherKingdom).ChangeAdjacency(true);
                 }
-                
-                for (int j = 0; j < adjacentRegion.adjacentRegions.Count; j++) {
-                    Region otherAdjacentRegion = adjacentRegion.adjacentRegions[j];
+
+                for (int j = 0; j < adjacentRegion.adjacentRegionsViaMajorRoad.Count; j++) {
+                    Region otherAdjacentRegion = adjacentRegion.adjacentRegionsViaMajorRoad[j];
                     if (!_adjacentRegions.Contains(otherAdjacentRegion) && !adjacentRegionsOfOtherRegions.Contains(otherAdjacentRegion) && otherAdjacentRegion != this) {
                         adjacentRegionsOfOtherRegions.Add(otherAdjacentRegion);
                     }
@@ -965,6 +971,11 @@ public class Region {
     internal void AddConnection(object otherObject) {
         if (!_connections.Contains(otherObject)) {
             _connections.Add(otherObject);
+            if(otherObject is Region) {
+                if (!_adjacentRegionsViaMajorRoad.Contains((Region)otherObject)) {
+                    _adjacentRegionsViaMajorRoad.Add((Region)otherObject);
+                }
+            }
         }
     }
     internal void AddTileAsRoad(HexTile tile) {
