@@ -207,6 +207,9 @@ public class City{
 	internal int soldiers{
 		get { return this._soldiers; }
 	}
+	internal int soldiersMax {
+		get { return Mathf.FloorToInt(this._population * this._kingdom.draftRate); }
+	}
 	private int[] soldiersCap{
 		get { return new int[]{ GetSoldiersCap (), this._oreCount, this._population }; }
 	}
@@ -1156,14 +1159,19 @@ public class City{
 	#endregion
 
 	#region Soldiers
-	internal void AdjustSoldiers(int amount){
+	internal void AdjustSoldiers(int amount, bool isUpdateKingdomList = true){
 		int supposedSoldiers = this._soldiers + amount;
-		if (supposedSoldiers < 0){
-			this._kingdom.AdjustSoldiers (-this._soldiers);
+		int maxSoldiers = this.soldiersMax;
+		if(supposedSoldiers > maxSoldiers){
+			int addedSoldiers = maxSoldiers - this._soldiers;
+			this._soldiers += addedSoldiers;
+			this._kingdom.AdjustSoldiers (addedSoldiers, isUpdateKingdomList);
+		}else if (supposedSoldiers < 0){
+			this._kingdom.AdjustSoldiers (-this._soldiers, isUpdateKingdomList);
 			this._soldiers = 0;
 		}else{
 			this._soldiers += amount;
-			this._kingdom.AdjustSoldiers (amount);
+			this._kingdom.AdjustSoldiers (amount, isUpdateKingdomList);
 		}
 	}
 	internal void SetSoldiers(int amount) {
