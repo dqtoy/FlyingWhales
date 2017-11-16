@@ -13,7 +13,7 @@ public class GridMap : MonoBehaviour {
     public float width;
 	public float height;
     [SerializeField] private Transform _borderParent;
-    [SerializeField] private int _borderThickness;
+    [SerializeField] internal int _borderThickness;
 
     public float xOffset;
     public float yOffset;
@@ -165,7 +165,7 @@ public class GridMap : MonoBehaviour {
             }
         }
 
-        outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid));
+        outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid, true));
     }
 
     internal void DivideOuterGridRegions() {
@@ -175,8 +175,35 @@ public class GridMap : MonoBehaviour {
                 HexTile currNeighbour = currTile.AllNeighbours[j];
                 if (currNeighbour.region != currTile.region) {
                     //Load Border For currTile
-                    HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour);
+                    HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour, true);
                     SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
+                    currTile.region.AddRegionBorderLineSprite(border);
+
+                    if (GridMap.Instance.hexTiles.Contains(currNeighbour)) {
+                        HEXTILE_DIRECTION neighbourBorderTileToActivate = HEXTILE_DIRECTION.NONE;
+                        if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_EAST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.NORTH_EAST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_WEST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.EAST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.WEST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_EAST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_WEST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_WEST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_EAST;
+                        } else if (borderTileToActivate == HEXTILE_DIRECTION.WEST) {
+                            neighbourBorderTileToActivate = HEXTILE_DIRECTION.EAST;
+                        }
+                        border = currNeighbour.ActivateBorder(neighbourBorderTileToActivate);
+                        currNeighbour.region.AddRegionBorderLineSprite(border);
+                    }
+
+                    //if(currTile.xCoordinate == _borderThickness - 1 && currTile.yCoordinate > _borderThickness && currTile.yCoordinate < height) {
+                    //    //tile is part of left border
+                    //    if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
+                    //        currTile.region.AddRegionBorderLineSprite(currTile.ActivateBorder(HEXTILE_DIRECTION.NORTH_EAST));
+                    //    }
+                    //}
                 }
             }
         }
@@ -381,10 +408,9 @@ public class GridMap : MonoBehaviour {
                 for (int k = 0; k < landmarksInRegion.Count; k++) {
                     Landmark otherLandmark = landmarksInRegion[k];
                     if(otherLandmark != currLandmark) {
-                        if(PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.USE_ROADS) != null) {
-                            RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
-                        } else {
-                            if(otherLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
+                        if(PathGenerator.Instance.GetPath(currLandmark.location, otherLandmark.location, PATHFINDING_MODE.USE_ROADS) == null) {
+                            //RoadManager.Instance.ConnectLandmarkToLandmark(currLandmark.location, otherLandmark.location);
+                            if (otherLandmark.connections.Count < RoadManager.Instance.maxLandmarkConnections) {
                                 tilesToChooseFrom.Add(otherLandmark.location);
                             }
                         }

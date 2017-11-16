@@ -196,9 +196,7 @@ public class Region {
                     //Load Border For currTile
                     HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour);
                     SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
-                    if (!regionBorderLines.Contains(border)) {
-                        regionBorderLines.Add(border);
-                    }
+                    AddRegionBorderLineSprite(border);
 
                     if (!_outerTiles.Contains(currTile)) {
                         //currTile has a neighbour that is part of a different region, this means it is an outer tile.
@@ -363,6 +361,11 @@ public class Region {
     private void ReColorBorderTiles(Color color) {
         for (int i = 0; i < regionBorderLines.Count; i++) {
             regionBorderLines[i].color = color;
+        }
+    }
+    internal void AddRegionBorderLineSprite(SpriteRenderer sprite) {
+        if (!regionBorderLines.Contains(sprite)) {
+            regionBorderLines.Add(sprite);
         }
     }
     /*

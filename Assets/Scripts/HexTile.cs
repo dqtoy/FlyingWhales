@@ -559,7 +559,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
         gus.setTag = pathfindingTag;
         gus.Apply();
     }
-    public void FindNeighbours(HexTile[,] gameBoard) {
+    public void FindNeighbours(HexTile[,] gameBoard, bool isForOuterGrid = false) {
         _neighbourDirections = new Dictionary<HEXTILE_DIRECTION, HexTile>();
         var neighbours = new List<HexTile>();
 
@@ -578,6 +578,16 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 HexTile currNeighbour = gameBoard[neighbourCoordinateX, neighbourCoordinateY];
                 if(currNeighbour != null) {
                     neighbours.Add(currNeighbour);
+                } else {
+                    //This part is for outerGridTiles only!
+                    try {
+                        neighbourCoordinateX -= GridMap.Instance._borderThickness;
+                        neighbourCoordinateY -= GridMap.Instance._borderThickness;
+                        currNeighbour = GridMap.Instance.map[neighbourCoordinateX, neighbourCoordinateY];
+                        neighbours.Add(currNeighbour);
+                    } catch {
+                        //No Handling
+                    }
                 }
             }
 
@@ -586,19 +596,32 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
 
         for (int i = 0; i < neighbours.Count; i++) {
             HexTile currNeighbour = neighbours[i];
-            _neighbourDirections.Add(GetNeighbourDirection(currNeighbour), currNeighbour);
+            try {
+                _neighbourDirections.Add(GetNeighbourDirection(currNeighbour, isForOuterGrid), currNeighbour);
+            } catch {
+                Debug.Log("LALALALALALALA");
+            }
+            
         }
 	}
-    internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour) {
+    internal HEXTILE_DIRECTION GetNeighbourDirection(HexTile neighbour, bool isForOuterGrid = false) {
         if (neighbour == null) {
             return HEXTILE_DIRECTION.NONE;
         }
         if (!AllNeighbours.Contains(neighbour)) {
             throw new System.Exception(neighbour.name + " is not a neighbour of " + this.name);
         }
-        Point difference = new Point((neighbour.xCoordinate - this.xCoordinate),
-                    (neighbour.yCoordinate - this.yCoordinate));
-        if (this.yCoordinate % 2 == 0) {
+        int thisXCoordinate = this.xCoordinate;
+        int thisYCoordinate = this.yCoordinate;
+        if (isForOuterGrid) {
+            if (!GridMap.Instance.outerGridList.Contains(neighbour)) {
+                thisXCoordinate -= GridMap.Instance._borderThickness;
+                thisYCoordinate -= GridMap.Instance._borderThickness;
+            }
+        }
+        Point difference = new Point((neighbour.xCoordinate - thisXCoordinate),
+                    (neighbour.yCoordinate - thisYCoordinate));
+        if (thisYCoordinate % 2 == 0) {
             if (difference.X == -1 && difference.Y == 1) {
                 //top left
                 return HEXTILE_DIRECTION.NORTH_WEST;
@@ -639,7 +662,7 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
                 return HEXTILE_DIRECTION.WEST;
             }
         }
-        return HEXTILE_DIRECTION.NORTH_WEST;
+        return HEXTILE_DIRECTION.NONE;
     }
     #endregion
 
@@ -1485,6 +1508,28 @@ public class HexTile : MonoBehaviour,  IHasNeighbours<HexTile>{
     [ContextMenu("Toggle Fortify")]
     public void ToggleFortify() {
         ownedByCity.kingdom.Fortify(!ownedByCity.kingdom.isFortifying);
+    }
+
+    [ContextMenu("Load Border Lines")]
+    public void LoadBorderLinesForTesting() {
+        HexTile currTile = this;
+        for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+            HexTile currNeighbour = currTile.AllNeighbours[j];
+            if (currNeighbour.region != currTile.region) {
+                //Load Border For currTile
+                Debug.Log(currNeighbour.name + " - " + currTile.GetNeighbourDirection(currNeighbour, true).ToString());
+                //HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour, true);
+                //SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
+                //currTile.region.AddRegionBorderLineSprite(border);
+
+                //if(currTile.xCoordinate == _borderThickness - 1 && currTile.yCoordinate > _borderThickness && currTile.yCoordinate < height) {
+                //    //tile is part of left border
+                //    if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
+                //        currTile.region.AddRegionBorderLineSprite(currTile.ActivateBorder(HEXTILE_DIRECTION.NORTH_EAST));
+                //    }
+                //}
+            }
+        }
     }
 
     private void ShowRegionInfo() {

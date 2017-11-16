@@ -115,8 +115,8 @@ public class CameraMove : MonoBehaviour {
 
         float halfOfHexagon = (256f / 2f) / 100f;
 
-        MIN_X = minX - halfOfHexagon;
-        MAX_X = maxX + (halfOfHexagon * 9f);
+        MIN_X = minX - (halfOfHexagon * 1.8f);
+        MAX_X = maxX + (halfOfHexagon * 9.5f);
         MIN_Y = minY - (halfOfHexagon * 2f);
         MAX_Y = maxY + halfOfHexagon;
 
