@@ -530,31 +530,16 @@ public class Biomes : MonoBehaviour {
 		}
 	}
 
-	internal void GenerateTileDetails(){
+	internal void GenerateTileEdges(){
 		for (int i = 0; i < GridMap.Instance.listHexes.Count; i++) {
 			HexTile currHexTile = GridMap.Instance.listHexes[i].GetComponent<HexTile>();
-			//if (currHexTile.elevationType != ELEVATION.WATER) {
-                currHexTile.LoadEdges();
-//                if (currHexTile.biomeType == BIOMES.GRASSLAND) {
-//					currHexTile.LoadEdges();
-//				} else if (currHexTile.biomeType == BIOMES.WOODLAND) {
-//					currHexTile.LoadEdges();
-//				} 
-////				else if (currHexTile.biomeType == BIOMES.FOREST) {
-////					currHexTile.LoadEdges(forestTexture, edgeMaterial);
-////				} 
-//				else if (currHexTile.biomeType == BIOMES.DESERT) {
-//					currHexTile.LoadEdges();
-//				} else if (currHexTile.biomeType == BIOMES.SNOW) {
-//					currHexTile.LoadEdges(snowTexture, edgeMaterial);
-//				}
-//				else if (currHexTile.biomeType == BIOMES.TUNDRA) {
-//					currHexTile.LoadEdges(tundraTexture, edgeMaterial);
-//				}
-			//}
-
+            currHexTile.LoadEdges();
 		}
-	}
+        for (int i = 0; i < GridMap.Instance.outerGridList.Count; i++) {
+            HexTile currHexTile = GridMap.Instance.outerGridList[i];
+            currHexTile.LoadEdges();
+        }
+    }
     [ContextMenu("Generate Tags")]
     public void GenerateTileTags() {
         List<HexTile> tilesToTag = new List<HexTile>(GridMap.Instance.listHexes.Select(x => x.GetComponent<HexTile>()));

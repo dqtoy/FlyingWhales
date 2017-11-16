@@ -32,6 +32,7 @@ public class GridMap : MonoBehaviour {
 
     [Space(10)]
 	public List<GameObject> listHexes;
+    public List<HexTile> outerGridList;
     public List<HexTile> hexTiles;
     public List<Region> allRegions;
 	public HexTile[,] map;
@@ -92,13 +93,13 @@ public class GridMap : MonoBehaviour {
         float newX = xOffset * (newWidth / 2);
         float newY = yOffset * (newHeight / 2);
 
-        List<HexTile> outerGridList = new List<HexTile>();
+        outerGridList = new List<HexTile>();
         outerGrid = new HexTile[newWidth, newHeight];
 
         _borderParent.transform.localPosition = new Vector2(-newX, -newY);
         for (int x = 0; x < newWidth; x++) {
             for (int y = 0; y < newHeight; y++) {
-                if((x > _borderThickness && x < newWidth - _borderThickness) && (y > _borderThickness && y < newHeight - _borderThickness)) {
+                if((x >= _borderThickness && x < newWidth - _borderThickness) && (y >= _borderThickness && y < newHeight - _borderThickness)) {
                     continue;
                 }
                 float xPosition = x * xOffset;
@@ -122,8 +123,34 @@ public class GridMap : MonoBehaviour {
                 //int xToCopy = Mathf.Clamp(x, 0, (int)width - 1);
                 //int yToCopy = Mathf.Clamp(y, 0, (int)height - 1);
 
-                int xToCopy = Mathf.Max(x - (_borderThickness * 2), 0);
-                int yToCopy = Mathf.Max(y - (_borderThickness * 2), 0);
+                //int xToCopy = Mathf.Max(x - (_borderThickness * 2), 0);
+                //int yToCopy = Mathf.Max(y - (_borderThickness * 2), 0);
+                int xToCopy = x - _borderThickness;
+                int yToCopy = y - _borderThickness;
+                if(x < _borderThickness && y - _borderThickness >= 0 && y < height) { //if border thickness is 2 (0 and 1)
+                    //left border
+                    xToCopy = 0;
+                    yToCopy = y - _borderThickness;
+                } else if(x >= _borderThickness && x <= width && y < _borderThickness) {
+                    //bottom border
+                    xToCopy = x - _borderThickness;
+                    yToCopy = 0;
+                } else if(x > width && (y - _borderThickness >= 0 && y -_borderThickness <= height - 1)) {
+                    //right border
+                    xToCopy = (int)width - 1;
+                    yToCopy = y - _borderThickness;
+                } else if (x >= _borderThickness && x <= width && y - _borderThickness >= height) {
+                    //top border
+                    xToCopy = x - _borderThickness;
+                    yToCopy = (int)height - 1;
+                } else {
+                    //corners
+                    xToCopy = x;
+                    yToCopy = y;
+                    xToCopy = Mathf.Clamp(xToCopy, 0, (int)width - 1);
+                    yToCopy = Mathf.Clamp(yToCopy, 0, (int)height - 1);
+                }
+
                 HexTile hexToCopy = map[xToCopy, yToCopy];
 
                 hex.name = x + "," + y + "(Border) Copied from " + hexToCopy.name;
@@ -131,61 +158,28 @@ public class GridMap : MonoBehaviour {
                 currHex.SetElevation(hexToCopy.elevationType);
                 Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
                 Biomes.Instance.AddBiomeDetailToTile(currHex);
-                //currHex.CopyEdgesFromOtherTile(hexToCopy);
+                hexToCopy.region.AddOuterGridTile(currHex);
 
                 currHex.DisableColliders();
-                currHex.HideFogOfWarObjects();
+                currHex.HideFogOfWarObjects();                
             }
         }
 
         outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighbours(outerGrid));
+    }
 
-
-        //List<HexTile> outerTiles = listHexes.Select(x => x.GetComponent<HexTile>()).ToList();
-        //outerTiles = outerTiles.Where(x => x.xCoordinate == 0 || x.xCoordinate == width - 1 || x.yCoordinate == 0 || x.yCoordinate == height - 1).ToList();
-        //for (int i = 0; i < outerTiles.Count; i++) {
-        //    HexTile currOuterTile = outerTiles[i];
-
-        //    for (int k = 0; k < _borderThickness; k++) {
-        //        int xCoordinateModifier = 1;
-        //        int yCoordinateModifier = 1;
-        //        float xPosition = currOuterTile.transform.localPosition.x;
-        //        float yPosition = currOuterTile.transform.localPosition.y;
-
-        //        if (currOuterTile.xCoordinate == 0) {
-        //            xCoordinateModifier = -1;
-        //            yCoordinateModifier = 0;
-        //        } else if (currOuterTile.yCoordinate == 0) {
-        //            xCoordinateModifier = 0;
-        //            yCoordinateModifier = -1;
-        //        } else if (currOuterTile.xCoordinate == width - 1) {
-        //            xCoordinateModifier = 1;
-        //            yCoordinateModifier = 0;
-        //        } else if (currOuterTile.yCoordinate == height - 1) {
-        //            xCoordinateModifier = 0;
-        //            yCoordinateModifier = 1;
-        //        }
-
-        //        if (k % 2 == 0 && yCoordinateModifier != 0) {
-        //            xPosition += xOffset / 2;
-        //        }
-
-        //        xPosition = xPosition + (((k + 1) * xOffset) * xCoordinateModifier);
-        //        yPosition = yPosition + (((k + 1) * yOffset) * yCoordinateModifier);
-
-        //        GameObject hex = GameObject.Instantiate(goHex) as GameObject;
-        //        HexTile currHex = hex.GetComponent<HexTile>();
-        //        hex.transform.parent = this.transform;
-        //        hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-        //        hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
-        //        hex.name = currOuterTile.name + " (Border)";
-        //        currHex.SetElevation(currOuterTile.elevationType);
-        //        Biomes.Instance.SetBiomeForTile(currOuterTile.biomeType, currHex);
-        //        Biomes.Instance.AddBiomeDetailToTile(currHex);
-        //        currHex.DisableColliders();
-        //        currHex.HideFogOfWarObjects();
-        //    }
-        //}
+    internal void DivideOuterGridRegions() {
+        for (int i = 0; i < outerGridList.Count; i++) {
+            HexTile currTile = outerGridList[i];
+            for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
+                HexTile currNeighbour = currTile.AllNeighbours[j];
+                if (currNeighbour.region != currTile.region) {
+                    //Load Border For currTile
+                    HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour);
+                    SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate);
+                }
+            }
+        }
     }
 
 	internal GameObject GetHex(string hexName){

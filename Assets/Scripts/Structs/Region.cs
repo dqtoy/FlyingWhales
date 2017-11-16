@@ -8,6 +8,7 @@ public class Region {
     private int _id;
     private HexTile _centerOfMass;
     private List<HexTile> _tilesInRegion; //This also includes the center of mass
+    private List<HexTile> _outerGridTilesInRegion;
     private Color regionColor;
     private List<Region> _adjacentRegions;
     private City _occupant;
@@ -55,6 +56,9 @@ public class Region {
     }
     internal List<HexTile> tilesInRegion {
         get { return _tilesInRegion; }
+    }
+    internal List<HexTile> outerGridTilesInRegion {
+        get { return _outerGridTilesInRegion; }
     }
     internal List<Region> adjacentRegions {
         get { return _adjacentRegions; }
@@ -107,6 +111,7 @@ public class Region {
         _id = Utilities.SetID(this);
         SetCenterOfMass(centerOfMass);
         _tilesInRegion = new List<HexTile>();
+        _outerGridTilesInRegion = new List<HexTile>();
 		this._corpseMoundTiles = new List<HexTile> ();
         _connections = new List<object>();
         _roadTilesInRegion = new List<HexTile>();
@@ -241,6 +246,12 @@ public class Region {
     internal void AddTile(HexTile tile) {
         if (!_tilesInRegion.Contains(tile)) {
             _tilesInRegion.Add(tile);
+            tile.SetRegion(this);
+        }
+    }
+    internal void AddOuterGridTile(HexTile tile) {
+        if (!_outerGridTilesInRegion.Contains(tile)) {
+            _outerGridTilesInRegion.Add(tile);
             tile.SetRegion(this);
         }
     }
